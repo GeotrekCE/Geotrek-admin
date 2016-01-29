@@ -5,7 +5,7 @@ CHANGELOG
 2.8.1.dev0
 ------------------
 
-*
+* Synchronize information desk thumbnails
 
 
 2.8.0 (2016-01-28)

@@ -110,6 +110,8 @@ class Command(BaseCommand):
         for pk in tourism_models.InformationDeskType.objects.values_list('pk', flat=True):
             name = 'information_desks-{}.geojson'.format(pk)
             self.sync_geojson(lang, tourism_views.InformationDeskViewSet, name, type=pk)
+        for desk in tourism_models.InformationDesk.objects.all():
+            self.sync_media_file(lang, desk.thumbnail)
 
         self.zipfile.close()
 
