@@ -172,8 +172,8 @@ class EspritParcParser(AttachmentParserMixin, Parser):
     }
 
     field_options = {
-        'name': {'required': True,},
-        'geom': {'required': True,},
+        'name': {'required': True, },
+        'geom': {'required': True, },
     }
 
     natural_keys = {
@@ -216,7 +216,6 @@ class EspritParcParser(AttachmentParserMixin, Parser):
 
         for row in self.items:
             yield row
-
 
     def normalize_field_name(self, name):
         return name
