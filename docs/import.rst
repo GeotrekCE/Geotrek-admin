@@ -33,6 +33,28 @@ Then set up appropriate values:
 You can duplicate the class. Each class must have a different name.
 Don't forget the u character before strings if they contain non-ascii characters.
 
+Configure Marque Esprit Parc import
+----------------------
+
+To import touristic content from national park database, create (or update) ``bulkimport/parsers.py`` file with the following content:
+
+::
+
+    # -*- coding: utf8 -*-
+
+    from geotrek.tourism.parsers import EspritParcParser
+
+    class XXXEspritParcParserParser(EspritParcParser):
+        label = u"Marque Esprit Parc"
+        url = u"http://gestion.espritparcnational.com/ws/?f=getProduitsSelonParc&codeParc=XXX"
+
+Then set up appropriate values:
+
+* ``XXX`` by unique national park code (ex: PNE)
+
+You can duplicate the class. Each class must have a different name.
+Don't forget the u character before strings if they contain non-ascii characters.
+
 
 Start import from command line
 ------------------------------

@@ -327,7 +327,8 @@ class Parser(object):
     def filter_m2m(self, src, val, model, field, mapping=None, partial=False, create=False):
         if not val:
             return []
-        val = val.split(self.separator)
+        if self.separator:
+            val = val.split(self.separator)
         dst = []
         for subval in val:
             subval = subval.strip()

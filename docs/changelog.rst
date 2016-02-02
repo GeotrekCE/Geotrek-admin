@@ -5,7 +5,9 @@ CHANGELOG
 2.8.2.dev0
 ------------------
 
-*
+**New features**
+
+* French National Park touristic content automatic import
 
 
 2.8.1 (2016-01-29)
