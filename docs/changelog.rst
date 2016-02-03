@@ -9,6 +9,10 @@ CHANGELOG
 
 * Add parser for brand "Esprit Parc National"
 
+**Bug fixes**
+
+* Set user structure as related structure for all new objects
+
 
 2.8.1 (2016-01-29)
 ------------------
