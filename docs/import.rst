@@ -44,7 +44,7 @@ To import touristic content from national park database, create (or update) ``bu
 
     from geotrek.tourism.parsers import EspritParcParser
 
-    class XXXEspritParcParserParser(EspritParcParser):
+    class XXXEspritParcParser(EspritParcParser):
         label = u"Marque Esprit Parc"
         url = u"http://gestion.espritparcnational.com/ws/?f=getProduitsSelonParc&codeParc=XXX"
         LIMIT_CATEGORIES = ()
