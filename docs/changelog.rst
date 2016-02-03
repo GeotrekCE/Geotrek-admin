@@ -5,7 +5,9 @@ CHANGELOG
 2.8.2.dev0
 ------------------
 
-*
+**Bug fixes**
+
+* Fix using structure user instead of default structure in objects
 
 
 2.8.1 (2016-01-29)
