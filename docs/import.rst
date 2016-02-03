@@ -34,7 +34,7 @@ You can duplicate the class. Each class must have a different name.
 Don't forget the u character before strings if they contain non-ascii characters.
 
 Configure Marque Esprit Parc import
-----------------------
+-----------------------------------
 
 To import touristic content from national park database, create (or update) ``bulkimport/parsers.py`` file with the following content:
 
