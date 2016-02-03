@@ -1,13 +1,14 @@
 # -*- coding: utf8 -*-
 
 import json
-import requests
 
+import requests
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.utils.translation import ugettext as _
 
-from geotrek.common.parsers import AttachmentParserMixin, Parser, GlobalImportError
+from geotrek.common.parsers import (AttachmentParserMixin, Parser,
+                                    GlobalImportError, RowImportError)
 from geotrek.tourism.models import TouristicContent
 
 
@@ -140,6 +141,8 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
 
 
 class EspritParcParser(AttachmentParserMixin, Parser):
+    LIMIT_CATEGORIES = ()
+    LIMIT_TYPES = ()
     model = TouristicContent
     eid = 'eid'
     separator = None
@@ -262,9 +265,19 @@ class EspritParcParser(AttachmentParserMixin, Parser):
     def filter_name(self, src, val):
         return val[:128]
 
+    def filter_category(self, src, val):
+        if val in self.LIMIT_CATEGORIES:
+            raise RowImportError(u"{} : {}".format(_(u"Category excluded"), val))
+
+        return self.apply_filter('category', src, val)
+
     def filter_type1(self, src, val):
         if not val:
             return None
+
+        elif val in self.LIMIT_TYPES:
+            raise RowImportError(u"{} : {}".format(_(u"Type excluded"), val))
+
         val = [x['label'] for x in val]
 
         return self.apply_filter('type1', src, val)

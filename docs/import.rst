@@ -47,10 +47,14 @@ To import touristic content from national park database, create (or update) ``bu
     class XXXEspritParcParserParser(EspritParcParser):
         label = u"Marque Esprit Parc"
         url = u"http://gestion.espritparcnational.com/ws/?f=getProduitsSelonParc&codeParc=XXX"
+        LIMIT_CATEGORIES = ()
+        LIMIT_TYPES = ()
 
 Then set up appropriate values:
 
 * ``XXX`` by unique national park code (ex: PNE)
+* ``LIMIT_CATEGORIES`` by a list separated by commas (ex: (u"Sorties de découverte",) )
+* ``LIMIT_TYPES`` by unique national park code (ex: (u"Randonnées pédestres",) )
 
 You can duplicate the class. Each class must have a different name.
 Don't forget the u character before strings if they contain non-ascii characters.
