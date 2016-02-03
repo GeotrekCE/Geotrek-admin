@@ -1,13 +1,14 @@
 # -*- coding: utf8 -*-
 
 import json
-import requests
 
+import requests
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.utils.translation import ugettext as _
 
-from geotrek.common.parsers import AttachmentParserMixin, Parser, GlobalImportError
+from geotrek.common.parsers import (AttachmentParserMixin, Parser,
+                                    GlobalImportError, RowImportError)
 from geotrek.tourism.models import TouristicContent
 
 
@@ -137,3 +138,153 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
         geom = Point(float(lng), float(lat), srid=4326)  # WGS84
         geom.transform(settings.SRID)
         return geom
+
+
+class EspritParcParser(AttachmentParserMixin, Parser):
+    LIMIT_CATEGORIES = ()
+    LIMIT_TYPES = ()
+    model = TouristicContent
+    eid = 'eid'
+    separator = None
+    fields = {
+        'eid': 'eid',
+        'name': 'nomCommercial',
+        'description': 'descriptionDetaillee',
+        'practical_info': 'informationsPratiques',
+        'category': 'type.0.label',
+        'date_insert': 'historique.dateCreation',
+        'date_update': 'historique.dateDerniereModification',
+        'contact': (
+            'contact.adresse',
+            'contact.codePostal',
+            'contact.commune',
+            'contact.telephone',
+            'contact.gsm',
+            'contact.fax',
+            'contact.facebook',
+            'contact.twitter'
+        ),
+        'email': 'contact.courriel',
+        'website': 'contact.siteWeb',
+        'geom': 'geo',
+    }
+
+    constant_fields = {
+        'published': True,
+        'approved': True
+    }
+
+    field_options = {
+        'name': {'required': True, },
+        'geom': {'required': True, },
+    }
+
+    natural_keys = {
+        'category': 'label',
+        'type1': 'label',
+        'type2': 'label'
+    }
+
+    m2m_fields = {
+        'type1': 'sousType',
+        'type2': 'classement',
+    }
+
+    non_fields = {
+        'attachments': 'photo',
+    }
+
+    def filter_attachments(self, src, val):
+        result = []
+        for subval in val or []:
+            if 'url' in subval:
+                result.append((subval['url'],
+                               subval.get('legend', None),
+                               subval.get('credits', None)))
+        return result
+
+    @property
+    def items(self):
+        return self.root['responseData']
+
+    def next_row(self):
+        response = requests.get(self.url)
+        if response.status_code != 200:
+            msg = _(u"Failed to download {url}. HTTP status code {status_code}")
+            raise GlobalImportError(msg.format(url=response.url,
+                                               status_code=response.status_code))
+
+        self.root = response.json()
+        self.nb = int(self.root['numFound'])
+
+        for row in self.items:
+            yield row
+
+    def normalize_field_name(self, name):
+        return name
+
+    def filter_eid(self, src, val):
+        return u"{}".format(val)
+
+    def filter_contact(self, src, val):
+        (address, zipCode, commune, telephone, gsm, fax, facebook, twitter) = val
+
+        result = u""
+        if address:
+            result = u"{}<br/>{}".format(result, address)
+
+        cp_com = u' '.join([part for part in [zipCode, commune] if part])
+
+        if cp_com:
+            result = u"{}<br/>{}".format(result, cp_com)
+
+        if telephone:
+            result = u"{}<br/>{}".format(result, u"Tél. " + telephone)
+
+        if gsm:
+            result = u"{}<br/>{}".format(result, u"Portable " + gsm)
+
+        if fax:
+            result = u"{}<br/>{}".format(result, u"Fax " + fax)
+
+        if facebook:
+            result = u"{}<br/>{}".format(result, u"Facebook " + facebook)
+
+        if twitter:
+            result = u"{}<br/>{}".format(result, u"Twitter " + twitter)
+
+        return result
+
+    def filter_geom(self, src, val):
+        lng = val['lon']
+        lat = val['lat']
+        geom = Point(float(lng), float(lat), srid=4326)  # WGS84
+        geom.transform(settings.SRID)
+        return geom
+
+    def filter_name(self, src, val):
+        return val[:128]
+
+    def filter_category(self, src, val):
+        if val in self.LIMIT_CATEGORIES:
+            raise RowImportError(u"{} : {}".format(_(u"Category excluded"), val))
+
+        return self.apply_filter('category', src, val)
+
+    def filter_type1(self, src, val):
+        if not val:
+            return None
+
+        elif val in self.LIMIT_TYPES:
+            raise RowImportError(u"{} : {}".format(_(u"Type excluded"), val))
+
+        val = [x['label'] for x in val]
+
+        return self.apply_filter('type1', src, val)
+
+    def filter_type2(self, src, val):
+        if not val:
+            return []
+        val = [x['labelType'] for x in val]
+
+        return self.apply_filter('type2', src, val)
