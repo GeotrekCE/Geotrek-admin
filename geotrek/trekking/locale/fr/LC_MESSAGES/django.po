@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-21 11:24+0200\n"
+"POT-Creation-Date: 2016-01-27 12:27+0100\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -116,8 +116,8 @@ msgstr "Infrastructure à disposition"
 msgid "Duration"
 msgstr "Durée"
 
-msgid "In decimal hours (ex. 1.5 for 1 h 30)"
-msgstr "En heures décimales (ex: 1.5 pour 1 h 30)"
+msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
+msgstr "En heures (1.5 = 1 h 30, 24 = 1 jour, 48 = 2 jours)"
 
 msgid "Is in the midst of the park"
 msgstr "En coeur de parc"
@@ -253,6 +253,12 @@ msgstr ""
 
 msgid "Cirkwi locomotion"
 msgstr "Locomotion Cirkwi"
+
+msgid "Order"
+msgstr "Ordre"
+
+msgid "Alphabetical order if blank"
+msgstr "Ordre alphabétique si vide"
 
 msgid "Cirkwi tag"
 msgstr "Tag Cirkwi"
@@ -531,6 +537,9 @@ msgstr "Longueur"
 msgid "Trek_ascent"
 msgstr "Dénivelé positif"
 
+msgid "Stages"
+msgstr "Étapes"
+
 msgid "Disabled Infrastructure"
 msgstr "Aménagement handicapés"
 
@@ -550,10 +559,6 @@ msgid "Add Web link"
 msgstr "Ajouter un lien web"
 
 #, python-format
-msgid "More than %s days"
-msgstr "Plus de %s jours"
-
-#, python-format
 msgid "%s days"
 msgstr "%s jours"
 
@@ -568,18 +573,3 @@ msgstr "%(hour)s h"
 #, python-format
 msgid "%s min"
 msgstr "%s min"
-
-msgid "Stages"
-msgstr "Étapes"
-
-#~ msgid "Skip tiles"
-#~ msgstr "Passer les tuiles"
-
-#~ msgid "Skip PDF"
-#~ msgstr "Passer les PDF"
-
-#~ msgid "Skip DEM"
-#~ msgstr "Passer les DEM"
-
-#~ msgid "Skip profile PNG"
-#~ msgstr "Passer les profils PNG"

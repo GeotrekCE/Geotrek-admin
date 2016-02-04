@@ -161,7 +161,7 @@ class TrekForm(BaseTrekForm):
             queryset_children = OrderedTrekChild.objects.filter(parent__id=self.instance.pk)\
                                                         .order_by('order')
             # init multiple children field with data
-            self.fields['children_trek'].queryset = Trek.objects.all().exclude(pk=self.instance.pk)
+            self.fields['children_trek'].queryset = Trek.objects.existing().exclude(pk=self.instance.pk)
             self.fields['children_trek'].initial = [c.child.pk for c in self.instance.trek_children.all()]
 
             # init hidden field with children order

@@ -306,6 +306,23 @@ class TouristicEventViewSet(MapEntityViewSet):
         return qs
 
 
+class InformationDeskViewSet(viewsets.ModelViewSet):
+    model = InformationDesk
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_serializer_class(self):
+        class Serializer(InformationDeskSerializer, GeoFeatureModelSerializer):
+            pass
+        return Serializer
+
+    def get_queryset(self):
+        qs = super(InformationDeskViewSet, self).get_queryset()
+        if self.kwargs.get('type'):
+            qs = qs.filter(type_id=self.kwargs['type'])
+        qs = qs.transform(settings.API_SRID, field_name='geom')
+        return qs
+
+
 class TrekInformationDeskViewSet(viewsets.ModelViewSet):
     model = InformationDesk
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]

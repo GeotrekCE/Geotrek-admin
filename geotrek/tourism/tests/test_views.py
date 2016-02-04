@@ -25,6 +25,7 @@ from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.tourism.models import DATA_SOURCE_TYPES
 from geotrek.tourism.factories import (DataSourceFactory,
+                                       InformationDeskFactory,
                                        TouristicContentFactory,
                                        TouristicEventFactory,
                                        TouristicContentCategoryFactory,
@@ -640,11 +641,21 @@ class TouristicEventViewSetTest(TestCase):
         self.assertEqual(len(geojson['features']), 10)
 
     def test_touristic_events_with_enddate_filter(self):
-        TouristicEventFactory.create_batch(5, published=True)
+        """
+        Relative date: 2020-01-01
+        5 events with no end date
+        5 events with end date after relative date
+        7 events with end date before relative date
+                 ->  only events with no end or end in after relative date must be included
+        """
+
+        TouristicEventFactory.create_batch(5, end_date=None, published=True)
         TouristicEventFactory.create_batch(5, end_date=datetime.strptime('2020-05-10', '%Y-%m-%d'), published=True)
+        TouristicEventFactory.create_batch(7, end_date=datetime.strptime('2010-05-10', '%Y-%m-%d'), published=True)
         response = self.client.get('/api/en/touristicevents.geojson', data={'ends_after': '2020-01-01'})
         geojson = json.loads(response.content)
-        self.assertEqual(len(geojson['features']), 5)
+
+        self.assertEqual(len(geojson['features']), 10)
 
 
 class TouristicContentCategoryViewSetTest(TestCase):
@@ -657,3 +668,17 @@ class TouristicContentCategoryViewSetTest(TestCase):
         response = self.client.get(reverse('tourism:touristic_categories_json', kwargs={'lang': 'en'}))
         json_response = json.loads(response.content)
         self.assertEqual(len(json_response), nb_elements)
+
+
+class InformationDeskAPITest(TestCase):
+    def test_json(self):
+        InformationDeskFactory.create()
+        desk2 = InformationDeskFactory.create()
+        response = self.client.get('/api/en/information_desks-{}.geojson'.format(desk2.type.id))
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.content)
+        self.assertIn('features', result)
+        self.assertEqual(len(result['features']), 1)
+        self.assertEqual(result['features'][0]['type'], 'Feature')
+        self.assertEqual(result['features'][0]['geometry']['type'], 'Point')
+        self.assertEqual(result['features'][0]['properties']['name'], desk2.name)

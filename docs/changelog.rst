@@ -2,10 +2,48 @@
 CHANGELOG
 =========
 
-2.7.2.dev0
+2.8.2.dev0
 ------------------
 
-*
+**New features**
+
+* French National Park touristic content automatic import
+
+
+2.8.1 (2016-01-29)
+------------------
+
+**Bug fixes**
+
+* Synchronize information desk thumbnails
+
+
+2.8.0 (2016-01-28)
+------------------
+
+**New features**
+
+* Use POI pictures in PDF if the trek has no picture itself
+* Use a placeholder in PDF if there is no picture
+* Parser to import touristic contents from SITRA
+* Add list of all information desks to API
+
+**Bug fixes**
+
+* Allow NULL values for id_externe fields in database
+* Fix missing elements (eg. POI enumeration) on trek map capture
+* Prevent overlaping controls at bottom of list view
+* Translation of column names in shapefiles export
+* UTF-8 and truncated alerts in shapefile export
+
+
+2.7.2 (2016-01-26)
+------------------
+
+**Bug fixes**
+
+* Synchronize touristic events with no end date
+* Fix PDF synchronization (eg. missing list of POI)
 
 
 2.7.1 (2016-01-18)

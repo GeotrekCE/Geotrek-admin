@@ -122,9 +122,13 @@ class PicturesMixin(object):
         for picture in self.pictures:
             thumbnailer = get_thumbnailer(picture.attachment_file)
             try:
-                return thumbnailer.get_thumbnail(aliases.get('print'))
+                thumbnail = thumbnailer.get_thumbnail(aliases.get('print'))
             except InvalidImageFormatError:
                 logger.warning(_("Image %s invalid or missing from disk.") % picture.attachment_file)
+                continue
+            thumbnail.author = picture.author
+            thumbnail.legend = picture.legend
+            return thumbnail
         return None
 
     @property

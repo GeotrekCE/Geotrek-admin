@@ -522,7 +522,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.assertEqual(self.result['elevation_area_url'],
                          '/api/en/treks/{pk}/dem.json'.format(pk=self.pk))
         self.assertEqual(self.result['map_image_url'],
-                         '/image/trek-%s.png' % self.pk)
+                         '/image/trek-%s-en.png' % self.pk)
         self.assertEqual(self.result['altimetric_profile'],
                          '/api/en/treks/{pk}/profile.json'.format(pk=self.pk))
         self.assertEqual(self.result['filelist_url'],

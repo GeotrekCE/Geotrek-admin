@@ -44,7 +44,7 @@ Synchronization options
                             Filter by source(s)
       -p, --skip-pdf        Skip generation of PDF files
       -t, --skip-tiles      Skip generation of map tiles files for mobile app
-      -d, --skip-dem        Skip generation of Digital Elevation Model files for mobile app
+      -d, --skip-dem        Skip generation of Digital Elevation Model files for 3D view
       -w, --with-touristicevents
                             include touristic events by trek in global.zip
       -c CONTENT_CATEGORIES, --with-touristiccontent-categories=CONTENT_CATEGORIES
