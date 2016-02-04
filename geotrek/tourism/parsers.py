@@ -152,8 +152,6 @@ class EspritParcParser(AttachmentParserMixin, Parser):
         'description': 'descriptionDetaillee',
         'practical_info': 'informationsPratiques',
         'category': 'type.0.label',
-        'date_insert': 'historique.dateCreation',
-        'date_update': 'historique.dateDerniereModification',
         'contact': (
             'contact.adresse',
             'contact.codePostal',
