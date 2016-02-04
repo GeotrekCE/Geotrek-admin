@@ -117,8 +117,6 @@ BEGIN
     FOR troncon IN SELECT *
                    FROM l_t_troncon t
                    WHERE id != NEW.id
-                         -- AND ST_Intersects(geom, NEW.geom)
-                         -- sometimes ST_Intersects is false whereas ST_Distance is 0 and St_intersection not empty
                          AND ST_DWITHIN(t.geom, NEW.geom, 0)
                          AND GeometryType(ST_Intersection(geom, NEW.geom)) IN ('POINT', 'MULTIPOINT')
     LOOP
