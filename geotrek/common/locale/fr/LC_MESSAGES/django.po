@@ -168,7 +168,7 @@ msgid ""
 "{model} '{val}' did not exist in Geotrek-Admin and was automatically created"
 msgstr ""
 "{model} '{val}' n'existait pas dans Geotrek-Admin. Il a été créé "
-"autoamtiquement"
+"automatiquement"
 
 #, python-brace-format
 msgid "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
