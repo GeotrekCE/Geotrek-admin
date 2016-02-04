@@ -8,8 +8,8 @@ from django.contrib.gis.geos import Point
 from django.utils.translation import ugettext as _
 
 from geotrek.common.parsers import (AttachmentParserMixin, Parser,
-                                    GlobalImportError, RowImportError)
-from geotrek.tourism.models import TouristicContent
+                                    GlobalImportError)
+from geotrek.tourism.models import TouristicContent, TouristicContentType
 
 
 class TouristicContentSitraParser(AttachmentParserMixin, Parser):
@@ -141,11 +141,10 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
 
 
 class EspritParcParser(AttachmentParserMixin, Parser):
-    LIMIT_CATEGORIES = ()
-    LIMIT_TYPES = ()
     model = TouristicContent
     eid = 'eid'
     separator = None
+    delete = True
     fields = {
         'eid': 'eid',
         'name': 'nomCommercial',
@@ -175,6 +174,9 @@ class EspritParcParser(AttachmentParserMixin, Parser):
     field_options = {
         'name': {'required': True, },
         'geom': {'required': True, },
+        'category': {'create': True},
+        'type1': {'create': True},
+        'type2': {'create': True},
     }
 
     natural_keys = {
@@ -264,25 +266,35 @@ class EspritParcParser(AttachmentParserMixin, Parser):
         return val[:128]
 
     def filter_category(self, src, val):
-        if val in self.LIMIT_CATEGORIES:
-            raise RowImportError(u"{} : {}".format(_(u"Category excluded"), val))
-
-        return self.apply_filter('category', src, val)
-
-    def filter_type1(self, src, val):
         if not val:
             return None
 
-        elif val in self.LIMIT_TYPES:
-            raise RowImportError(u"{} : {}".format(_(u"Type excluded"), val))
+        return self.apply_filter('category', src, val)
 
+    def filter_type(self, dst, in_list, src, val):
+        ret = []
+        for subval in val:
+            if self.field_options[dst].get('create', False):
+                subval, created = TouristicContentType.objects.get_or_create(**{'label': subval, 'in_list': in_list, 'category': self.obj.category})
+                if created:
+                    self.add_warning(_(u"{model} '{val}' did not exist in Geotrek-Admin and was automatically created").format(model=dst, val=subval))
+                ret.append(subval)
+                continue
+            try:
+                ret.append(TouristicContentType.objects.get(**{'label': subval, 'in_list': in_list, 'category': self.obj.category}))
+            except TouristicContentType.DoesNotExist:
+                self.add_warning(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=dst, val=subval))
+                continue
+        return ret
+
+    def filter_type1(self, src, val):
+        if not val:
+            return []
         val = [x['label'] for x in val]
-
-        return self.apply_filter('type1', src, val)
+        return self.filter_type('type1', 1, src, val)
 
     def filter_type2(self, src, val):
         if not val:
             return []
         val = [x['labelType'] for x in val]
-
-        return self.apply_filter('type2', src, val)
+        return self.filter_type('type2', 2, src, val)

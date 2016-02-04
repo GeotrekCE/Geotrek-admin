@@ -7,7 +7,7 @@ CHANGELOG
 
 **New features**
 
-* French National Park touristic content automatic import
+* Add parser for brand "Esprit Parc National"
 
 
 2.8.1 (2016-01-29)
