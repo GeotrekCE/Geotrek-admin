@@ -577,9 +577,18 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
     @mock.patch('mapentity.helpers.requests.get')
     def test_public_document_pdf(self, mocked):
         content = TouristicContentFactory.create(published=True)
-        url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
+
+        with open(content.get_map_image_path(), 'w') as f:
+            f.write('***' * 1000)
+
         mocked.return_value.status_code = 200
-        response = self.client.get(url, SERVER_NAME="localhost:8000")
+
+        response = self.client.get(
+            reverse('tourism:touristiccontent_printable',
+                    kwargs={'lang': settings.LANGUAGE_CODE,
+                            'pk': content.pk,
+                            'slug': 'slug', })
+        )
         self.assertEqual(response.status_code, 200)
 
     @unittest.skipIf(settings.MAPENTITY_CONFIG.get('MAPENTITY_WEASYPRINT', False), "weasyprint mode")
@@ -618,9 +627,17 @@ class TouristicEventCustomViewTests(TrekkingManagerTest):
     @mock.patch('mapentity.helpers.requests.get')
     def test_public_document_pdf(self, mocked):
         content = TouristicEventFactory.create(published=True)
-        url = '/api/en/touristicevents/{pk}/slug.pdf'.format(pk=content.pk)
+
+        with open(content.get_map_image_path(), 'w') as f:
+            f.write('***' * 1000)
+
         mocked.return_value.status_code = 200
-        response = self.client.get(url, SERVER_NAME="localhost:8000")
+        response = self.client.get(
+            reverse('tourism:touristicevent_printable',
+                    kwargs={'lang': settings.LANGUAGE_CODE,
+                            'pk': content.pk,
+                            'slug': 'slug', })
+        )
         self.assertEqual(response.status_code, 200)
 
     @unittest.skipIf(settings.MAPENTITY_CONFIG.get('MAPENTITY_WEASYPRINT', False), "weasyprint mode")
