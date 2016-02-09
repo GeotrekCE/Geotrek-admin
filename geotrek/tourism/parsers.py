@@ -140,7 +140,25 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
         return geom
 
 
-class EspritParcParser(AttachmentParserMixin, Parser):
+class TouristicContentTypesParserMixin(object):
+    def filter_type(self, dst, in_list, src, val):
+        ret = []
+        for subval in val:
+            if self.field_options[dst].get('create', False):
+                subval, created = TouristicContentType.objects.get_or_create(**{'label': subval, 'in_list': in_list, 'category': self.obj.category})
+                if created:
+                    self.add_warning(_(u"{model} '{val}' did not exist in Geotrek-Admin and was automatically created").format(model=dst, val=subval))
+                ret.append(subval)
+                continue
+            try:
+                ret.append(TouristicContentType.objects.get(**{'label': subval, 'in_list': in_list, 'category': self.obj.category}))
+            except TouristicContentType.DoesNotExist:
+                self.add_warning(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=dst, val=subval))
+                continue
+        return ret
+
+
+class EspritParcParser(AttachmentParserMixin, TouristicContentTypesParserMixin, Parser):
     model = TouristicContent
     eid = 'eid'
     separator = None
@@ -270,22 +288,6 @@ class EspritParcParser(AttachmentParserMixin, Parser):
             return None
 
         return self.apply_filter('category', src, val)
-
-    def filter_type(self, dst, in_list, src, val):
-        ret = []
-        for subval in val:
-            if self.field_options[dst].get('create', False):
-                subval, created = TouristicContentType.objects.get_or_create(**{'label': subval, 'in_list': in_list, 'category': self.obj.category})
-                if created:
-                    self.add_warning(_(u"{model} '{val}' did not exist in Geotrek-Admin and was automatically created").format(model=dst, val=subval))
-                ret.append(subval)
-                continue
-            try:
-                ret.append(TouristicContentType.objects.get(**{'label': subval, 'in_list': in_list, 'category': self.obj.category}))
-            except TouristicContentType.DoesNotExist:
-                self.add_warning(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=dst, val=subval))
-                continue
-        return ret
 
     def filter_type1(self, src, val):
         if not val:
