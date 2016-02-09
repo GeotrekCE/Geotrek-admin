@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 import json
-
 import mock
+import unittest
 
 from datetime import datetime
 from requests.exceptions import ConnectionError
@@ -556,6 +556,7 @@ class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
 
 
 class TouristicContentCustomViewTests(TrekkingManagerTest):
+    @unittest.skipIf(settings.MAPENTITY_CONFIG.get('MAPENTITY_WEASYPRINT', False), "weasyprint mode")
     def test_overriden_document(self):
         content = TouristicContentFactory.create(published=True)
 
@@ -581,6 +582,7 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
+    @unittest.skipIf(settings.MAPENTITY_CONFIG.get('MAPENTITY_WEASYPRINT', False), "weasyprint mode")
     def test_not_published_document(self):
         content = TouristicContentFactory.create(published=False)
         url = '/api/en/touristiccontents/{pk}/slug.odt'.format(pk=content.pk)
@@ -595,6 +597,7 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
 
 
 class TouristicEventCustomViewTests(TrekkingManagerTest):
+    @unittest.skipIf(settings.MAPENTITY_CONFIG.get('MAPENTITY_WEASYPRINT', False), "weasyprint mode")
     def test_overriden_document(self):
         event = TouristicEventFactory.create(published=True)
 
@@ -620,6 +623,7 @@ class TouristicEventCustomViewTests(TrekkingManagerTest):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
+    @unittest.skipIf(settings.MAPENTITY_CONFIG.get('MAPENTITY_WEASYPRINT', False), "weasyprint mode")
     def test_not_published_document_odt(self):
         content = TouristicEventFactory.create(published=False)
         url = '/api/en/touristicevents/{pk}/slug.odt'.format(pk=content.pk)
