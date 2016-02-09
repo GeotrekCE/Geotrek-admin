@@ -9,6 +9,7 @@ CHANGELOG
 
 * Don't forget to sync touristic contents/events media when skipping PDF
 * Don't delete attachments of other objects when importing
+* Don't delete other objects when constant fields are set in parsers
 
 
 2.9.0 (2016-02-04)

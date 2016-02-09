@@ -349,7 +349,27 @@ class Parser(object):
         return dst
 
     def start(self):
-        self.to_delete = set(self.model.objects.values_list('pk', flat=True))
+        # FIXME: use mapping if it exists
+        kwargs = {}
+        for dst, val in self.constant_fields.iteritems():
+            field = self.model._meta.get_field_by_name(dst)[0]
+            if isinstance(field, models.ForeignKey):
+                natural_key = self.natural_keys[dst]
+                try:
+                    kwargs[dst] = field.rel.to.objects.get(**{natural_key: val})
+                except field.rel.to.DoesNotExist:
+                    raise GlobalImportError(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=field.rel.to._meta.verbose_name.title(), val=val))
+            else:
+                kwargs[dst] = val
+        for dst, val in self.m2m_constant_fields.iteritems():
+            assert not self.separator or self.separator not in val
+            field = self.model._meta.get_field_by_name(dst)[0]
+            natural_key = self.natural_keys[dst]
+            try:
+                kwargs[dst] = field.rel.to.objects.get(**{natural_key: val})
+            except field.rel.to.DoesNotExist:
+                raise GlobalImportError(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=field.rel.to._meta.verbose_name.title(), val=val))
+        self.to_delete = set(self.model.objects.filter(**kwargs).values_list('pk', flat=True))
 
     def end(self):
         if self.delete:
