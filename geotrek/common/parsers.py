@@ -451,19 +451,11 @@ class AttachmentParserMixin(object):
         except FileType.DoesNotExist:
             raise GlobalImportError(_(u"FileType '{name}' does not exists in Geotrek-Admin. Please add it").format(name=self.filetype_name))
         self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
-        self.attachments_to_delete = {obj.pk: set(Attachment.objects.attachments_for_object(obj)) for obj in self.model.objects.all()}
-
-    def end(self):
-        if self.delete_attachments:
-            for atts in self.attachments_to_delete.itervalues():
-                for att in atts:
-                    att.delete()
-        super(AttachmentParserMixin, self).end()
 
     def filter_attachments(self, src, val):
         if not val:
             return []
-        return [(subval.strip(), '', '') for subval in val.split(self.separator)]
+        return [(subval.strip(), '', '') for subval in val.split(self.separator) if subval.strip()]
 
     def has_size_changed(self, url, attachment):
         try:
@@ -505,18 +497,19 @@ class AttachmentParserMixin(object):
 
     def save_attachments(self, src, val):
         updated = False
+        attachments_to_delete = list(Attachment.objects.attachments_for_object(self.obj))
         for url, legend, author in self.filter_attachments(src, val):
             url = self.base_url + url
             legend = legend or u""
             author = author or u""
             name = os.path.basename(url)
             found = False
-            for attachment in self.attachments_to_delete.get(self.obj.pk, set()):
+            for attachment in attachments_to_delete:
                 upload_name, ext = os.path.splitext(attachment_upload(attachment, name))
                 existing_name = attachment.attachment_file.name
                 if re.search(ur"^{name}(_\d+)?{ext}$".format(name=upload_name, ext=ext), existing_name) and not self.has_size_changed(url, attachment):
                     found = True
-                    self.attachments_to_delete[self.obj.pk].remove(attachment)
+                    attachments_to_delete.remove(attachment)
                     if author != attachment.author or legend != attachment.legend:
                         attachment.author = author
                         attachment.legend = legend
@@ -538,6 +531,9 @@ class AttachmentParserMixin(object):
             attachment.legend = legend
             attachment.save()
             updated = True
+        if self.delete_attachments:
+            for att in attachments_to_delete:
+                att.delete()
         return updated
 
 
@@ -569,7 +565,7 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
     def filter_attachments(self, src, val):
         if not val:
             return []
-        return [subval.split('||') for subval in val.split('##') if subval.split('||') != ['', '', '']]
+        return [subval.split('||') for subval in val.split('##') if subval.split('||')[0]]
 
 
 class TourismSystemParser(AttachmentParserMixin, Parser):

@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Don't forget to sync touristic contents/events media when skipping PDF
+* Don't delete attachments of other objects when importing
 
 
 2.9.0 (2016-02-04)
