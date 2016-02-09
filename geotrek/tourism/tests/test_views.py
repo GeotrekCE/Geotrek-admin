@@ -579,7 +579,7 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
         content = TouristicContentFactory.create(published=True)
         url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
         mocked.return_value.status_code = 200
-        response = self.client.get(url)
+        response = self.client.get(url, SERVER_NAME="localhost")
         self.assertEqual(response.status_code, 200)
 
     @unittest.skipIf(settings.MAPENTITY_CONFIG.get('MAPENTITY_WEASYPRINT', False), "weasyprint mode")
@@ -620,7 +620,7 @@ class TouristicEventCustomViewTests(TrekkingManagerTest):
         content = TouristicEventFactory.create(published=True)
         url = '/api/en/touristicevents/{pk}/slug.pdf'.format(pk=content.pk)
         mocked.return_value.status_code = 200
-        response = self.client.get(url)
+        response = self.client.get(url, SERVER_NAME="localhost")
         self.assertEqual(response.status_code, 200)
 
     @unittest.skipIf(settings.MAPENTITY_CONFIG.get('MAPENTITY_WEASYPRINT', False), "weasyprint mode")
