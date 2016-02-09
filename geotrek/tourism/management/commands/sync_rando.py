@@ -39,19 +39,17 @@ class Command(BaseCommand):
         super(Command, self).handle(*args, **options)
 
     def sync_content(self, lang, content):
-        if self.skip_pdf:
-            return
-        view = tourism_views.TouristicContentDocumentPublic.as_view(model=type(content))
-        self.sync_object_view(lang, content, view, '{obj.slug}.pdf')
+        if not self.skip_pdf:
+            view = tourism_views.TouristicContentDocumentPublic.as_view(model=type(content))
+            self.sync_object_view(lang, content, view, '{obj.slug}.pdf')
 
         for picture, resized in content.resized_pictures:
             self.sync_media_file(lang, resized)
 
     def sync_event(self, lang, event):
-        if self.skip_pdf:
-            return
-        view = tourism_views.TouristicEventDocumentPublic.as_view(model=type(event))
-        self.sync_object_view(lang, event, view, '{obj.slug}.pdf')
+        if not self.skip_pdf:
+            view = tourism_views.TouristicEventDocumentPublic.as_view(model=type(event))
+            self.sync_object_view(lang, event, view, '{obj.slug}.pdf')
 
         for picture, resized in event.resized_pictures:
             self.sync_media_file(lang, resized)

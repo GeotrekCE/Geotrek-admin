@@ -5,7 +5,9 @@ CHANGELOG
 2.9.1.dev0
 ------------------
 
-*
+**Bug fixes**
+
+* Don't forget to sync touristic contents/events media when skipping PDF
 
 
 2.9.0 (2016-02-04)
