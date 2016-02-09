@@ -389,9 +389,9 @@ class Parser(object):
             try:
                 self.parse_row(row)
             except Exception as e:
-                self.add_warning(unicode(e))
                 if settings.DEBUG:
                     raise
+                self.add_warning(unicode(e))
         self.end()
 
 
