@@ -9,6 +9,10 @@ CHANGELOG
 
 * Increase web link size
 
+**Bug fixes**
+
+* Fix path split
+
 
 2.9.1 (2016-02-10)
 ------------------
