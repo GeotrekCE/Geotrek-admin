@@ -161,7 +161,8 @@ Restore database on the new server:
     sudo -u postgres psql -c "drop database geotrekdb;"
     sudo -u postgres psql -c "create database geotrekdb owner geotrek;"
     sudo -u postgres pg_restore -d geotrekdb geotrekdb.backup
-    make update deploy
+    make update
+    sudo service geotrek start
 
 
 Tips and Tricks
