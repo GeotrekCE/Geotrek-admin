@@ -5,7 +5,9 @@ CHANGELOG
 2.9.2.dev0
 ------------------
 
-*
+**Minor changes**
+
+* Increase web link size
 
 
 2.9.1 (2016-02-10)

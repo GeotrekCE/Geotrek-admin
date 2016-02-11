@@ -535,7 +535,7 @@ class WebLinkManager(models.Manager):
 class WebLink(models.Model):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
-    url = models.URLField(verbose_name=_(u"URL"), max_length=128, db_column='url')
+    url = models.URLField(verbose_name=_(u"URL"), max_length=2048, db_column='url')
     category = models.ForeignKey('WebLinkCategory', verbose_name=_(u"Category"),
                                  related_name='links', null=True, blank=True,
                                  db_column='categorie')
