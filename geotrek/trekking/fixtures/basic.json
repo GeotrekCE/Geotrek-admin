@@ -317,12 +317,12 @@
         "pk": 2,
         "model": "trekking.difficultylevel",
         "fields": {
-            "pictogram": "upload/difficulty-rookie.svg",
+            "pictogram": "upload/difficulty-medium.svg",
             "cirkwi_level": 3,
-            "difficulty_en": "Rookie",
+            "difficulty_en": "Medium",
             "cirkwi": 12,
-            "difficulty": "Rookie",
-            "difficulty_fr": "Confirm\u00e9"
+            "difficulty": "Medium",
+            "difficulty_fr": "Moyen"
         }
     },
     {
@@ -335,18 +335,6 @@
             "cirkwi": 11,
             "difficulty": "Hard",
             "difficulty_fr": "Difficile"
-        }
-    },
-    {
-        "pk": 4,
-        "model": "trekking.difficultylevel",
-        "fields": {
-            "pictogram": "upload/difficulty-active.svg",
-            "cirkwi_level": 7,
-            "difficulty_en": "Active",
-            "cirkwi": 16,
-            "difficulty": "Active",
-            "difficulty_fr": "Actif"
         }
     },
     {
@@ -398,40 +386,40 @@
         }
     },
     {
-        "pk": 1, 
-        "model": "trekking.servicetype", 
+        "pk": 1,
+        "model": "trekking.servicetype",
         "fields": {
-            "name_fr": "Eau potable", 
-            "name": "Drinking water", 
-            "review": false, 
+            "name_fr": "Eau potable",
+            "name": "Drinking water",
+            "review": false,
             "pictogram": "upload/drinking_water.svg",
             "practices": [
-                1, 
-                2, 
-                3, 
+                1,
+                2,
+                3,
                 4
-            ], 
-            "published": true, 
-            "publication_date": null, 
+            ],
+            "published": true,
+            "publication_date": null,
             "name_en": "Drinking water"
         }
     },
     {
-        "pk": 2, 
-        "model": "trekking.servicetype", 
+        "pk": 2,
+        "model": "trekking.servicetype",
         "fields": {
-            "name_fr": "Descente pentue", 
-            "name": "Steep descent", 
-            "review": false, 
-            "pictogram": "upload/steep_descent.svg", 
+            "name_fr": "Descente pentue",
+            "name": "Steep descent",
+            "review": false,
+            "pictogram": "upload/steep_descent.svg",
             "practices": [
-                1, 
-                2, 
-                3, 
+                1,
+                2,
+                3,
                 4
-            ], 
-            "published": true, 
-            "publication_date": null, 
+            ],
+            "published": true,
+            "publication_date": null,
             "name_en": "Steep descent"
         }
     }
