@@ -26,6 +26,7 @@ from modeltranslation.fields import TranslationField
 from modeltranslation.translator import translator, NotRegistered
 from paperclip.models import Attachment, attachment_upload
 
+from geotrek.authent.models import default_structure
 from geotrek.common.models import FileType
 
 
@@ -467,7 +468,7 @@ class AttachmentParserMixin(object):
     def start(self):
         super(AttachmentParserMixin, self).start()
         try:
-            self.filetype = FileType.objects.get(type=self.filetype_name)
+            self.filetype = FileType.objects.get(type=self.filetype_name, structure=default_structure())
         except FileType.DoesNotExist:
             raise GlobalImportError(_(u"FileType '{name}' does not exists in Geotrek-Admin. Please add it").format(name=self.filetype_name))
         self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})

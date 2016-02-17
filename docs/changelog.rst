@@ -12,6 +12,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix path split
+* Fix attachment parsing with same document type for several structures
 
 
 2.9.1 (2016-02-10)
