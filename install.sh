@@ -508,6 +508,7 @@ function geotrek_setup {
 
 precise=$(grep "Ubuntu 12.04" /etc/issue | wc -l)
 trusty=$(grep "Ubuntu 14.04" /etc/issue | wc -l)
+vivid=$(grep "Ubuntu 15.04" /etc/issue | wc -l)
 
 if [ $precise -eq 1 ]; then
     psql_version=9.1
@@ -517,8 +518,12 @@ if [ $trusty -eq 1 ]; then
     psql_version=9.3
     pgis_version=2.1
 fi
+if [ $vivid -eq 1 ]; then
+    psql_version=9.4
+    pgis_version=2.1
+fi
 
-if [ $precise -eq 1 -o $trusty -eq 1 ] ; then
+if [ $precise -eq 1 -o $trusty -eq 1 -o $vivid -eq 1 ] ; then
     geotrek_setup
 else
     exit_error 5 "Unsupported operating system. Aborted."
