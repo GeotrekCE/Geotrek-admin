@@ -246,32 +246,8 @@ class EspritParcParser(AttachmentParserMixin, TouristicContentTypesParserMixin, 
 
     def filter_contact(self, src, val):
         (address, zipCode, commune, telephone, gsm, fax, facebook, twitter) = val
-
-        result = u""
-        if address:
-            result = u"{}<br/>{}".format(result, address)
-
-        cp_com = u' '.join([part for part in [zipCode, commune] if part])
-
-        if cp_com:
-            result = u"{}<br/>{}".format(result, cp_com)
-
-        if telephone:
-            result = u"{}<br/>{}".format(result, u"Tél. " + telephone)
-
-        if gsm:
-            result = u"{}<br/>{}".format(result, u"Portable " + gsm)
-
-        if fax:
-            result = u"{}<br/>{}".format(result, u"Fax " + fax)
-
-        if facebook:
-            result = u"{}<br/>{}".format(result, u"Facebook " + facebook)
-
-        if twitter:
-            result = u"{}<br/>{}".format(result, u"Twitter " + twitter)
-
-        return result
+        cp_com = u' '.join([part for part in (zipCode, commune) if part])
+        return u'<br>'.join([part for part in (address, cp_com, telephone, gsm, fax, facebook, twitter) if part])
 
     def filter_geom(self, src, val):
         lng = val['lon']
