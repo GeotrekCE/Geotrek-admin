@@ -5,7 +5,9 @@ CHANGELOG
 2.9.3.dev0
 ------------------
 
-*
+**Bug fixes**
+
+* Fix line break at start of contact in ExpritParcParser
 
 
 2.9.2 (2016-02-17)
