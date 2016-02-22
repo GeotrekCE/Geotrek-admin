@@ -9,6 +9,10 @@ CHANGELOG
 
 * Fix line break at start of contact in ExpritParcParser
 
+**Minor changes**
+
+* Add a parameters.json file to API
+
 
 2.9.2 (2016-02-17)
 ------------------

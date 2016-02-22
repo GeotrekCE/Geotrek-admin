@@ -20,6 +20,7 @@ from landez import TilesManager
 from landez.sources import DownloadError
 from geotrek.altimetry.views import ElevationProfile, ElevationArea, serve_elevation_chart
 from geotrek.common import models as common_models
+from geotrek.core.views import ParametersView
 from geotrek.feedback.views import CategoryList as FeedbackCategoryList
 from geotrek.flatpages.views import FlatPageViewSet
 from geotrek.tourism import models as tourism_models
@@ -283,6 +284,7 @@ class Command(BaseCommand):
         self.mkdirs(zipfullname)
         self.trek_zipfile = ZipFile(zipfullname, 'w')
 
+        self.sync_json(lang, ParametersView, 'parameters', zipfile=self.zipfile)
         self.sync_trek_pois(lang, trek, zipfile=self.zipfile)
         self.sync_trek_services(lang, trek, zipfile=self.zipfile)
         self.sync_gpx(lang, trek)
