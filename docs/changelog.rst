@@ -11,7 +11,7 @@ CHANGELOG
 
 **Minor changes**
 
-* Add a parameters.json file to API
+* Add parameters.json and themes.json files to API
 
 
 2.9.2 (2016-02-17)

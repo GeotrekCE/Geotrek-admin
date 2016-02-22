@@ -17,6 +17,8 @@ from geotrek.celery import app as celery_app
 from geotrek.common.utils import sql_extent
 from geotrek import __version__
 
+from rest_framework import permissions as rest_permissions, viewsets
+
 # async data imports
 import ast
 import os
@@ -30,6 +32,8 @@ from .utils.import_celery import create_tmp_destination, discover_available_pars
 
 from .tasks import import_datas, import_datas_from_web
 from .forms import ImportDatasetForm, ImportDatasetFormWithFile
+from .models import Theme
+from .serializers import ThemeSerializer
 
 
 class FormsetMixin(object):
@@ -305,3 +309,13 @@ def import_update_json(request):
             )
 
     return HttpResponse(json.dumps(results), content_type="application/json")
+
+
+class ThemeViewSet(viewsets.ModelViewSet):
+    model = Theme
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+    serializer_class = ThemeSerializer
+
+    def get_queryset(self):
+        qs = super(ThemeViewSet, self).get_queryset()
+        return qs.order_by('id')

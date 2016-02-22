@@ -20,6 +20,7 @@ from landez import TilesManager
 from landez.sources import DownloadError
 from geotrek.altimetry.views import ElevationProfile, ElevationArea, serve_elevation_chart
 from geotrek.common import models as common_models
+from geotrek.common.views import ThemeViewSet
 from geotrek.core.views import ParametersView
 from geotrek.feedback.views import CategoryList as FeedbackCategoryList
 from geotrek.flatpages.views import FlatPageViewSet
@@ -185,8 +186,8 @@ class Command(BaseCommand):
         if self.verbosity == '2':
             self.stdout.write(u"\x1b[3D\x1b[32mgenerated\x1b[0m")
 
-    def sync_json(self, lang, viewset, name, zipfile=None, params={}, **kwargs):
-        view = viewset.as_view()
+    def sync_json(self, lang, viewset, name, zipfile=None, params={}, as_view_args=[], **kwargs):
+        view = viewset.as_view(*as_view_args)
         name = os.path.join('api', lang, '{name}.json'.format(name=name))
         if self.source:
             params['source'] = ','.join(self.source)
@@ -285,6 +286,7 @@ class Command(BaseCommand):
         self.trek_zipfile = ZipFile(zipfullname, 'w')
 
         self.sync_json(lang, ParametersView, 'parameters', zipfile=self.zipfile)
+        self.sync_json(lang, ThemeViewSet, 'themes', as_view_args=[{'get': 'list'}], zipfile=self.zipfile)
         self.sync_trek_pois(lang, trek, zipfile=self.zipfile)
         self.sync_trek_services(lang, trek, zipfile=self.zipfile)
         self.sync_gpx(lang, trek)
