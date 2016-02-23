@@ -70,13 +70,13 @@ Les pictogrammes contribués dans Geotrek doivent être au format :
 
 * SVG (de préférence, cela permet de conserver la qualité en cas de redimensionnement) ou PNG,
 * SVG pour les thèmes (afin de permettre un changement de couleur pour les thèmes sélectionnés),
-* SVG si l'application mobile est déployée (le support du format PNG n'est pas assuré sur l'application mobile).
 
 Il doivent :
 
 * Avoir un viewport carré afin de ne pas être déformés sur le portail,
 * Ne pas déborder du cercle inscrit pour les pratiques et les catégories de contenus touristiques, en prévoyant une
   marge si nécessaire.
+* Avoir une dimension minimale de 56x56 pixels en ce qui concerne les PNG,
 
 Afin de s'intégrer au mieux dans le design standard, les couleurs suivantes sont recommandées :
 
