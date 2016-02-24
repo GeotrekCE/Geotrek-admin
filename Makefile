@@ -112,7 +112,7 @@ update:
 	make all_compilemessages
 
 deploy: update
-	bin/supervisorctl reload
+	sudo supervisorctl reload
 
 all_makemessages:
 	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin makemessages --no-location --all; popd > /dev/null; done

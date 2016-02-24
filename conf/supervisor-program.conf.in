@@ -1,0 +1,8 @@
+[program:${options.program}]
+command = ${options.command}
+process_name = ${options.program}
+directory = ${parts['buildout'].directory}/etc
+priority = ${options.priority}
+redirect_stderr = ${options.redirect_stderr}
+stdout_logfile = ${options.stdout_logfile}
+stderr_logfile = ${options.stderr_logfile}
