@@ -517,7 +517,7 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
         self.assertDictEqual(self.result['category'],
                              {u"id": 'E',
                               u"order": None,
-                              u"label": u"Touristic event",
+                              u"label": u"Touristic events",
                               u"slug": u"touristic-event",
                               u"type1_label": u"Type",
                               u"pictogram": u"/static/tourism/touristicevent.svg"})
