@@ -205,10 +205,10 @@ function minimum_system_dependencies {
     if [ $precise -eq 1 ]; then
         sudo apt-add-repository -y ppa:git-core/ppa
         sudo apt-add-repository -y ppa:ubuntugis/ppa
+        sudo apt-get update -qq
         echo_progress
     fi
-    sudo apt-get update -qq
-    echo_progress
+
     sudo apt-get install -y -qq git gettext python-virtualenv build-essential python-dev
     echo_progress
 }
@@ -426,7 +426,7 @@ function geotrek_setup {
     fi
 
     echo_step "Configure Unicode and French locales..."
-    sudo apt-get update > /dev/null
+    #sudo apt-get update > /dev/null
     echo_progress
     sudo apt-get install -y -qq language-pack-en-base language-pack-fr-base
     sudo locale-gen fr_FR.UTF-8
@@ -493,8 +493,8 @@ function geotrek_setup {
 			
 			# if 15.04 or higher
 			if [ $vivid -eq 1 -o $xenial -eq 1 ]; then
-			    sudo systemctl restart nginx
-			else
+                sudo systemctl restart nginx
+            else
                 sudo /etc/init.d/nginx restart
             fi
 
@@ -514,10 +514,19 @@ function geotrek_setup {
                 sudo rm -f /etc/init/geotrek.conf
             fi
             
+            sudo chgrp www-data -R ./var/static
+            sudo chmod g+r -R ./var/static
+            sudo chgrp www-data -R ./var/media/upload
+            
             sudo cp etc/supervisor-geotrek.conf /etc/supervisor/conf.d/
             sudo cp etc/supervisor-geotrek-api.conf /etc/supervisor/conf.d/
             sudo cp etc/supervisor-geotrek-celery.conf /etc/supervisor/conf.d/
             sudo cp etc/supervisor-tilecache.conf /etc/supervisor/conf.d/
+            
+            if $standalone ; then
+                sudo cp etc/supervisor-convertit.conf /etc/supervisor/conf.d/
+                sudo cp etc/supervisor-screamshotter.conf /etc/supervisor/conf.d/
+            fi
             
             sudo supervisorctl reread
             sudo supervisorctl reload
