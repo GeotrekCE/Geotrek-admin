@@ -81,7 +81,7 @@ class Command(BaseCommand):
         make_option('--skip-tiles', '-t', action='store_true', dest='skip_tiles',
                     default=False, help='Skip generation of zip tiles files'),
         make_option('--skip-dem', '-d', action='store_true', dest='skip_dem',
-                    default=False, help='Skip generation of DEM files for mobile app'),
+                    default=False, help='Skip generation of DEM files for 3D'),
         make_option('--skip-profile-png', '-e', action='store_true', dest='skip_profile_png',
                     default=False, help='Skip generation of PNG elevation profile'),
         make_option('--languages', '-l', action='store', dest='languages',
