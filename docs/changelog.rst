@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-* Fix line break at start of contact in ExpritParcParser
+* Fix line break at start of contact in EspritParcParser
 
 **Minor changes**
 
