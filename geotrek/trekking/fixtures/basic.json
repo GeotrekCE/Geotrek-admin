@@ -208,7 +208,7 @@
         "fields": {
             "name_fr": "VTT",
             "name": "Mountain Bike",
-            "pictogram": "upload/practice-mountainbike.png",
+            "pictogram": "upload/practice-mountainbike.svg",
             "cirkwi": 3,
             "name_en": "Mountain Bike"
         }
@@ -219,7 +219,7 @@
         "fields": {
             "name_fr": "V\u00e9lo",
             "name": "Cycling",
-            "pictogram": "upload/practice-bike.png",
+            "pictogram": "upload/practice-bike.svg",
             "cirkwi": 14,
             "name_en": "Cycling"
         }
@@ -230,7 +230,7 @@
         "fields": {
             "name_fr": "Cheval",
             "name": "Horse",
-            "pictogram": "upload/practice-horse.png",
+            "pictogram": "upload/practice-horse.svg",
             "cirkwi": 4,
             "name_en": "Horse"
         }
@@ -240,7 +240,7 @@
         "model": "trekking.practice",
         "fields": {
             "name": "P\u00e9destre",
-            "pictogram": "upload/practice-foot.png",
+            "pictogram": "upload/practice-foot.svg",
             "cirkwi": 1
         }
     },
