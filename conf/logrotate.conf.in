@@ -8,6 +8,6 @@ ${parts['buildout'].directory}/var/log/*.log {
     postrotate
         [ ! -f /var/run/nginx.pid ] || kill -USR1 `cat /var/run/nginx.pid`
         [ ! -f /var/run/supervisord.pid ] || kill -USR2 `cat /var/run/supervisord.pid`
-        for pidfile in /var/run/gunicorn-*.pid; do kill -USR1 `cat $$pidfile`; done
+        for pidfile in /tmp/gunicorn-*.pid; do kill -USR1 `cat $$pidfile`; done
     endscript
 }
