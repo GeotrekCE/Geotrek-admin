@@ -11,7 +11,6 @@ Architecture
     :width: 50%
 
 * **Geotrek**, the web application
-* **TileCache**, tile and cache remote WMS servers
 * **Convertit**, a Web API to convert document and image formats (*.odt to .doc*, *.svg to .png*)
 * **Screamshotter**, a Web API to perform Web pages screenshots (*map image exports*).
 

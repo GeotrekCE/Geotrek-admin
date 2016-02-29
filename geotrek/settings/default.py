@@ -109,10 +109,6 @@ DEFAULT_STRUCTURE_NAME = envini.get('defaultstructure')
 SRID = int(envini.get('srid', SRID))
 SPATIAL_EXTENT = tuple(envini.getfloats('spatial_extent'))
 
-LEAFLET_CONFIG['TILES'] = [
-    (gettext_noop('Scan'), '%s/tiles/scan/{z}/{x}/{y}.png' % ROOT_URL, envini.get('scan_attributions', '')),
-    (gettext_noop('Ortho'), '%s/tiles/ortho/{z}/{x}/{y}.jpg' % ROOT_URL, envini.get('ortho_attributions', '')),
-]
 LEAFLET_CONFIG['SRID'] = SRID
 LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 

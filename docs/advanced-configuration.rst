@@ -353,29 +353,6 @@ the one you installed as standalone) :
     MAPENTITY_CONFIG['CAPTURE_SERVER'] = 'http://SERVER:8001'
 
 
-Tilecache
-~~~~~~~~~
-
-Only if you use a WMS server, you will have to share the Tilecache tile server.
-
-In ``custom.py``, point the tiles URL towards the shared  :
-
-.. code-block :: python
-
-    LEAFLET_CONFIG['TILES'] = [
-        ('Scan', 'http://SERVER/tiles/scan/{z}/{x}/{y}.png', '&copy; Attributions'),
-        ('Ortho', 'http://SERVER/tiles/ortho/{z}/{x}/{y}.png', '&copy; Attributions'),
-    ]
-
-:notes:
-
-    This is a short tip, it will only work if the spatial extent and projection srid
-    is the same on all instances.
-
-    Otherwise configure Tilecache manually, or simply use external tile services
-    such as *IGN Geoportail WMTS*.
-
-
 Shutdown useless services
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 

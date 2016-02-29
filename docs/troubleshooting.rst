@@ -37,8 +37,6 @@ No background tiles
 
 Check the values of your WMS settings (server name should end with ``?``, layers names should exist on server).
 
-Check the values in the generated TileCache configuration in ``etc/tilecache.cfg``.
-
 
 Error at loading DEM
 --------------------

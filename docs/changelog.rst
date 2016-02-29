@@ -9,6 +9,10 @@ CHANGELOG
 
 * Fix sync_rando after deleting a trek with children
 
+**Breaking changes**
+
+* Remove TileCache service
+
 
 2.9.3 (2016-02-25)
 ------------------
