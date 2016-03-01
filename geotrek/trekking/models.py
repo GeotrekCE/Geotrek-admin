@@ -258,7 +258,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
 
     @property
     def parents(self):
-        return Trek.objects.filter(trek_children__child=self)
+        return Trek.objects.filter(trek_children__child=self, deleted=False)
 
     @property
     def parents_id(self):
@@ -267,7 +267,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
 
     @property
     def children(self):
-        return Trek.objects.filter(trek_parents__parent=self).order_by('trek_parents__order')
+        return Trek.objects.filter(trek_parents__parent=self, deleted=False).order_by('trek_parents__order')
 
     @property
     def children_id(self):
@@ -298,14 +298,14 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         """
         Dict of parent -> previous child
         """
-        return {parent.id: self.previous_id_for(parent) for parent in self.parents.filter(published=True)}
+        return {parent.id: self.previous_id_for(parent) for parent in self.parents.filter(published=True, deleted=False)}
 
     @property
     def next_id(self):
         """
         Dict of parent -> next child
         """
-        return {parent.id: self.next_id_for(parent) for parent in self.parents.filter(published=True)}
+        return {parent.id: self.next_id_for(parent) for parent in self.parents.filter(published=True, deleted=False)}
 
     def clean(self):
         """

@@ -5,7 +5,9 @@ CHANGELOG
 2.9.4.dev0
 ------------------
 
-*
+**Bug fixes**
+
+* Fix sync_rando after deleting a trek with children
 
 
 2.9.3 (2016-02-25)
