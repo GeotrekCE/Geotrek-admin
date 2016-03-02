@@ -109,7 +109,6 @@ DEFAULT_STRUCTURE_NAME = envini.get('defaultstructure')
 SRID = int(envini.get('srid', SRID))
 SPATIAL_EXTENT = tuple(envini.getfloats('spatial_extent'))
 
-LEAFLET_CONFIG['SRID'] = SRID
 LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 
 MAP_STYLES['path']['color'] = envini.get('layercolor_paths', MAP_STYLES['path']['color'])

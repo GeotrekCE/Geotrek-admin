@@ -380,7 +380,7 @@ PAPERCLIP_CONFIG = {
 
 
 # Data projection
-SRID = 3857
+SRID = 2154  # Lambert-93 for Metropolitan France
 
 # API projection (client-side), can differ from SRID (database). Leaflet requires 4326.
 API_SRID = 4326
@@ -425,7 +425,7 @@ ALTIMETRIC_AREA_MARGIN = 0.15
 
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
-    'SRID': SRID,
+    'SRID': 3857,
     'TILES': [
         ('Scan', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '(c) OpenStreetMap Contributors'),
         ('Ortho', 'http://oatile1.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png', '(c) MapQuest'),

@@ -35,8 +35,6 @@ LEAFLET_CONFIG['OVERLAYS'] = [
     (gettext_noop('Coeur de parc'), 'http://{s}.tilestream.makina-corpus.net/v2/coeur-ecrins/{z}/{x}/{y}.png', 'Ecrins'),
 ]
 
-LEAFLET_CONFIG['SRID'] = 3857
-
 LOGGING['loggers']['geotrek']['level'] = 'DEBUG'
 LOGGING['loggers']['']['level'] = 'DEBUG'
 
