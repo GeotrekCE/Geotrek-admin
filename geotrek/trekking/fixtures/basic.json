@@ -305,19 +305,31 @@
         "pk": 1,
         "model": "trekking.difficultylevel",
         "fields": {
-            "pictogram": "upload/difficulty-easy.svg",
+            "pictogram": "upload/difficulty-1.svg",
             "cirkwi_level": 1,
-            "difficulty_en": "Easy",
+            "difficulty_en": "Very easy",
             "cirkwi": 5,
-            "difficulty": "Easy",
-            "difficulty_fr": "Facile"
+            "difficulty": "Very easy",
+            "difficulty_fr": "Très facile"
         }
     },
     {
         "pk": 2,
         "model": "trekking.difficultylevel",
         "fields": {
-            "pictogram": "upload/difficulty-medium.svg",
+            "pictogram": "upload/difficulty-2.svg",
+            "cirkwi_level": 2,
+            "difficulty_en": "Easy",
+            "cirkwi": 12,
+            "difficulty": "Easy",
+            "difficulty_fr": "Facile"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "trekking.difficultylevel",
+        "fields": {
+            "pictogram": "upload/difficulty-3.svg",
             "cirkwi_level": 3,
             "difficulty_en": "Medium",
             "cirkwi": 12,
@@ -326,15 +338,27 @@
         }
     },
     {
-        "pk": 3,
+        "pk": 4,
         "model": "trekking.difficultylevel",
         "fields": {
-            "pictogram": "upload/difficulty-hard.svg",
-            "cirkwi_level": 5,
+            "pictogram": "upload/difficulty-4.svg",
+            "cirkwi_level": 4,
             "difficulty_en": "Hard",
             "cirkwi": 11,
             "difficulty": "Hard",
             "difficulty_fr": "Difficile"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "trekking.difficultylevel",
+        "fields": {
+            "pictogram": "upload/difficulty-5.svg",
+            "cirkwi_level": 5,
+            "difficulty_en": "Very hard",
+            "cirkwi": 16,
+            "difficulty": "Very hard",
+            "difficulty_fr": "Très difficile"
         }
     },
     {

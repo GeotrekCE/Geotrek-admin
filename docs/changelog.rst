@@ -5,6 +5,10 @@ CHANGELOG
 2.9.4.dev0
 ------------------
 
+**Minor changes**
+
+* Update default pictograms
+
 **Bug fixes**
 
 * Fix sync_rando after deleting a trek with children
