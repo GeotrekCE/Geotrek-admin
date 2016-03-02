@@ -8,12 +8,6 @@ upstream api_server {
     server ${parts['gunicorn-api-conf'].bind} fail_timeout=0;
 }
 
-{% if 'tilecache-conf' in parts %}
-upstream tile_server {
-    server ${parts['gunicorn-tilecache-conf'].bind} fail_timeout=0;
-}
-{% end %}
-
 {% if options.cors %}
 add_header Access-Control-Allow-Origin ${options.cors};
 {% end %}
@@ -70,19 +64,6 @@ server {
         expires ${options.expiretime};
         alias ${parts['django'].mediaroot};
     }
-
-    {% if 'tilecache-conf' in parts %}
-    location /tiles {
-        {% if options.cache in ['True', 'true'] %}
-            proxy_cache             ${options.cachename};
-            proxy_cache_key         $$scheme$$host$$uri$$is_args$$args;
-            proxy_cache_valid       200  ${options.cachetime};
-            proxy_cache_use_stale   error timeout invalid_header;
-        {% end %}
-
-        proxy_pass  http://tile_server/1.0.0;
-    }
-    {% end %}
 
     location / {
         proxy_set_header X-Forwarded-Host $$host;
