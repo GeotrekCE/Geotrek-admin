@@ -87,6 +87,8 @@ Copy your old configuration and uploaded files to your new folder.
     # If you have advanced settings
     cp ../previous-version/geotrek/settings/custom.py geotrek/settings/custom.py
 
+    # If you have import parsers
+    cp ../previous-version/bulkimport/parsers.py bulkimport/parsers.py
 
 Deploy the new version :
 
