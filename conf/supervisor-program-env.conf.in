@@ -7,5 +7,4 @@ directory=${options.directory}
 priority=${options.priority}
 redirect_stderr=${options.redirect_stderr}
 stdout_logfile=${options.stdout_logfile}
-sterr_logfile=${options.sterr_logfile}
 environment=${options.environment}
