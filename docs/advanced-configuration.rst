@@ -148,7 +148,7 @@ All layers colors can be customized from the settings.
 See `Leaflet reference <http://leafletjs.com/reference.html#path>`_ for vectorial
 layer style.
 
-* To apply these style changes, re-run ``bin/supervisorctl restart all``.
+* To apply these style changes, re-run ``sudo supervisorctl restart all``.
 
 .. code-block :: python
 

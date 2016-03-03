@@ -5,17 +5,23 @@ CHANGELOG
 2.9.4.dev0
 ------------------
 
+**New features**
+
+* Add support for Ubuntu 15.04 Vivid
+
+**Breaking changes**
+
+* Remove TileCache service (you should set up tiles source with LEAFLET_CONFIG variable in `geotrek/settings/custom.py` now)
+* Run supervisor as root (you should now run `sudo supervisorctl` instead of `./bin/supervisor`)
+* Move nginx and supervisor logs to system dir `/var/log/`
+
 **Minor changes**
 
-* Update default pictograms
+* Update default pictograms for difficulty levels
 
 **Bug fixes**
 
 * Fix sync_rando after deleting a trek with children
-
-**Breaking changes**
-
-* Remove TileCache service
 
 
 2.9.3 (2016-02-25)
