@@ -352,6 +352,11 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
+        'weasyprint': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': False,
+        },
         '': {
             'handlers': ['console', 'mail_admins'],
             'level': 'INFO',

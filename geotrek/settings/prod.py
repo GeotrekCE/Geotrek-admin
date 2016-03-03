@@ -23,6 +23,7 @@ LOGGING['handlers']['logfile'] = {'class': 'logging.FileHandler',
                                   'filename': os.path.join(DEPLOY_ROOT, 'var', 'log', 'geotrek.log')}
 LOGGING['loggers']['geotrek']['handlers'].append('logfile')
 LOGGING['loggers']['mapentity']['handlers'].append('logfile')
+LOGGING['loggers']['weasyprint']['level'] = 'ERROR'
 
 #
 # Optimitizations
