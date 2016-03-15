@@ -308,7 +308,7 @@ function install_postgres_local {
     # Create user if missing
     if user_does_not_exists ${dbuser}
     then
-        echo_step "Create user ${dbuser}  and configure database access rights..."
+        echo_step "Create user ${dbuser} and configure database access rights..."
         sudo -n -u postgres -s -- psql -c "CREATE USER ${dbuser} WITH PASSWORD '${dbpassword}';"
         sudo -n -u postgres -s -- psql -c "GRANT ALL PRIVILEGES ON DATABASE ${dbname} TO ${dbuser};"
         sudo -n -u postgres -s -- psql -d ${dbname} -c "GRANT ALL ON spatial_ref_sys, geometry_columns, raster_columns TO ${dbuser};"
