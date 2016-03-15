@@ -107,6 +107,22 @@ class Parser(object):
         warnings = self.warnings.setdefault(key, [])
         warnings.append(msg)
 
+    def get_part(self, dst, src, val):
+        for part in src.split('.'):
+            try:
+                if part.isdigit():
+                    val = val[int(part)]
+                elif part == '*':
+                    val = [subval[part] for subval in val]
+                else:
+                    val = val[part]
+            except (KeyError, IndexError):
+                required = u"required " if self.field_options.get(dst, {}).get('required', False) else ""
+                raise ValueImportError(_(u"Missing {required}field '{src}'").format(required=required, src=src))
+            if val is None:
+                break
+        return val
+
     def get_val(self, row, dst, src):
         if hasattr(src, '__iter__'):
             val = []
@@ -117,18 +133,9 @@ class Parser(object):
                     if self.warn_on_missing_fields:
                         self.add_warning(unicode(warning))
                     val.append(None)
+            return val
         else:
-            val = row
-            for part in src.split('.'):
-                try:
-                    if part.isdigit():
-                        val = val[int(part)]
-                    else:
-                        val = val[part]
-                except (KeyError, IndexError):
-                    required = u"required " if self.field_options.get(dst, {}).get('required', False) else ""
-                    raise ValueImportError(_(u"Missing {required}field '{src}'").format(required=required, src=src))
-        return val
+            return self.get_part(dst, src, row)
 
     def apply_filter(self, dst, src, val):
         field = self.model._meta.get_field_by_name(dst)[0]
@@ -160,7 +167,7 @@ class Parser(object):
             raise RowImportError(_(u"Blank value not allowed for field '{src}'".format(src=src)))
         setattr(self.obj, dst, val)
 
-    def parse_field(self, dst, src, val):
+    def parse_real_field(self, dst, src, val):
         """Returns True if modified"""
         if hasattr(self, 'filter_{0}'.format(dst)):
             val = getattr(self, 'filter_{0}'.format(dst))(src, val)
@@ -184,24 +191,29 @@ class Parser(object):
             self.set_value(dst, src, val)
             return True
 
+    def parse_field(self, row, dst, src, updated, non_field):
+        if dst in self.constant_fields:
+            val = self.constant_fields[dst]
+        elif dst in self.m2m_constant_fields:
+            val = self.m2m_constant_fields[dst]
+        else:
+            src = self.normalize_src(src)
+            val = self.get_val(row, dst, src)
+        if non_field:
+            modified = self.parse_non_field(dst, src, val)
+        else:
+            modified = self.parse_real_field(dst, src, val)
+        if modified:
+            updated.append(dst)
+            if dst in self.translated_fields:
+                lang = translation.get_language()
+                updated.append('{field}_{lang}'.format(field=dst, lang=lang))
+
     def parse_fields(self, row, fields, non_field=False):
         updated = []
         for dst, src in fields.items():
             try:
-                if dst in self.constant_fields or dst in self.m2m_constant_fields:
-                    val = src
-                else:
-                    src = self.normalize_src(src)
-                    val = self.get_val(row, dst, src)
-                if non_field:
-                    modified = self.parse_non_field(dst, src, val)
-                else:
-                    modified = self.parse_field(dst, src, val)
-                if modified:
-                    updated.append(dst)
-                    if dst in self.translated_fields:
-                        lang = translation.get_language()
-                        updated.append('{field}_{lang}'.format(field=dst, lang=lang))
+                self.parse_field(row, dst, src, updated, non_field)
             except ValueImportError as warning:
                 if self.field_options.get(dst, {}).get('required', False):
                     raise RowImportError(warning)
@@ -285,7 +297,7 @@ class Parser(object):
             'nb_lines': self.line,
             'nb_created': self.nb_created,
             'nb_updated': self.nb_updated,
-            'nb_deleted': len(self.to_delete) if self.delete else 0,
+            'nb_deleted': len(self.to_delete) if self.delete else None,
             'nb_unmodified': self.nb_unmodified,
             'warnings': self.warnings,
         }
@@ -367,7 +379,7 @@ class Parser(object):
             field = self.model._meta.get_field_by_name(dst)[0]
             natural_key = self.natural_keys[dst]
             try:
-                kwargs[dst] = field.rel.to.objects.get(**{natural_key: val})
+                kwargs[dst] = field.rel.to.objects.get(**{natural_key: subval for subval in val})
             except field.rel.to.DoesNotExist:
                 raise GlobalImportError(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=field.rel.to._meta.verbose_name.title(), val=val))
         self.to_delete = set(self.model.objects.filter(**kwargs).values_list('pk', flat=True))

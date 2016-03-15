@@ -9,7 +9,7 @@ from django.utils.translation import ugettext as _
 
 from geotrek.common.parsers import (AttachmentParserMixin, Parser,
                                     GlobalImportError)
-from geotrek.tourism.models import TouristicContent, TouristicContentType
+from geotrek.tourism.models import TouristicContent
 
 
 class TouristicContentSitraParser(AttachmentParserMixin, Parser):
@@ -140,25 +140,7 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
         return geom
 
 
-class TouristicContentTypesParserMixin(object):
-    def filter_type(self, dst, in_list, src, val):
-        ret = []
-        for subval in val:
-            if self.field_options[dst].get('create', False):
-                subval, created = TouristicContentType.objects.get_or_create(**{'label': subval, 'in_list': in_list, 'category': self.obj.category})
-                if created:
-                    self.add_warning(_(u"{model} '{val}' did not exist in Geotrek-Admin and was automatically created").format(model=dst, val=subval))
-                ret.append(subval)
-                continue
-            try:
-                ret.append(TouristicContentType.objects.get(**{'label': subval, 'in_list': in_list, 'category': self.obj.category}))
-            except TouristicContentType.DoesNotExist:
-                self.add_warning(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=dst, val=subval))
-                continue
-        return ret
-
-
-class EspritParcParser(AttachmentParserMixin, TouristicContentTypesParserMixin, Parser):
+class EspritParcParser(AttachmentParserMixin, Parser):
     model = TouristicContent
     eid = 'eid'
     separator = None
@@ -204,8 +186,8 @@ class EspritParcParser(AttachmentParserMixin, TouristicContentTypesParserMixin, 
     }
 
     m2m_fields = {
-        'type1': 'sousType',
-        'type2': 'classement',
+        'type1': 'sousType.*.label',
+        'type2': 'classement.*.labelType',
     }
 
     non_fields = {
@@ -264,15 +246,3 @@ class EspritParcParser(AttachmentParserMixin, TouristicContentTypesParserMixin, 
             return None
 
         return self.apply_filter('category', src, val)
-
-    def filter_type1(self, src, val):
-        if not val:
-            return []
-        val = [x['label'] for x in val]
-        return self.filter_type('type1', 1, src, val)
-
-    def filter_type2(self, src, val):
-        if not val:
-            return []
-        val = [x['labelType'] for x in val]
-        return self.filter_type('type2', 2, src, val)

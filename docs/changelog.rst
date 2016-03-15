@@ -5,7 +5,9 @@ CHANGELOG
 2.10.1.dev0
 -------------------
 
-*
+**Minor changes**
+
+* Parsers improvements
 
 
 2.10.0 (2016-03-03)

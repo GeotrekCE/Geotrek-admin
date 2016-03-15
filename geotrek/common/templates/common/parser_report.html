@@ -21,7 +21,7 @@
 		</div>
 	{% endif %}
 
-	{% if nb_deleted %}
+	{% if not nb_deleted == None %}
 		<div class="nb-deleted">
 		{% blocktrans count n=nb_deleted %}{{ n }} record deleted.{% plural %}{{ n }} records deleted.{% endblocktrans %}
 		</div>
