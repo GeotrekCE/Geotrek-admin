@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-27 12:27+0100\n"
+"POT-Creation-Date: 2016-03-16 18:14+0100\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -373,17 +373,23 @@ msgstr "itineraire"
 msgid "Init sync ..."
 msgstr "Début de synchro"
 
+msgid "Advices"
+msgstr "Recommandations"
+
+msgid "All usefull informations"
+msgstr "Toutes les infos pratiques"
+
 msgid "Altimetric profile"
 msgstr "Profil altimétrique"
 
 msgid "Attribution"
 msgstr "Crédit photo"
 
-msgid "Edition of"
-msgstr "Édition du"
+msgid "Geographical location"
+msgstr "Situation géographique"
 
-msgid "In more details..."
-msgstr "En plus détaillé..."
+msgid "Markings"
+msgstr "Balisage"
 
 msgid "Max elevation"
 msgstr "Altitude max"
@@ -391,33 +397,27 @@ msgstr "Altitude max"
 msgid "Min elevation"
 msgstr "Altitude min"
 
-msgid "On the way..."
-msgstr "Sur le chemin..."
+msgid "On your path..."
+msgstr "Sur votre chemin..."
 
-msgid "Page"
-msgstr "Page"
-
-msgid "Powered by http://geotrek.fr"
-msgstr "Propulsé par http://geotrek.fr"
+msgid "Powered by geotrek.fr"
+msgstr "Propulsé par geotrek.fr"
 
 msgid ""
-"This hike is at the heart of the national park > The national park is an "
-"unrestricted natural area but subjected to regulations which must be known "
-"by all visitors."
+"The national park is an unrestricted natural area but subjected to "
+"regulations which must be known by all visitors."
 msgstr ""
-"Cet itinéraire est dans le cœur du Parc national > Le Parc national est un "
-"territoire naturel, ouvert à tous, mais soumis à une réglementation qu’il "
-"est utile de connaître pour préparer son séjour"
+"Le Parc national est un territoire naturel, ouvert à tous, mais soumis à une "
+"réglementation qu’il est utile de connaître pour préparer son séjour"
 
-msgid ""
-"To check the practicability of the hiking paths and to know more about the "
-"National park, please visit us or call us at"
-msgstr ""
-"Afin de vérifier que les sentiers soient praticables et pour en savoir plus "
-"sur la découverte du territoire, veuillez-vous renseigner préalablement"
+msgid "This hike is at the heart of the national park"
+msgstr "Cet itinéraire est dans le cœur du Parc national"
 
 msgid "Trek ascent"
 msgstr "Dénivelé positif"
+
+msgid "Usefull informations"
+msgstr "Infos pratiques"
 
 msgid "Global tiles syncing ..."
 msgstr "Synchro des tuiles globales..."
@@ -451,6 +451,9 @@ msgstr "Vignette"
 
 msgid "Elevation"
 msgstr "Élévation"
+
+msgid "Powered by http://geotrek.fr"
+msgstr "Propulsé par http://geotrek.fr"
 
 msgid ""
 "Your <strong>pictures should have the same ratio<strong> (height/width) for "
@@ -534,17 +537,39 @@ msgstr "Choisir valeur(s)"
 msgid "Length"
 msgstr "Longueur"
 
-msgid "Trek_ascent"
-msgstr "Dénivelé positif"
-
-msgid "Stages"
-msgstr "Étapes"
+msgid "Transports"
+msgstr "Transports"
 
 msgid "Disabled Infrastructure"
 msgstr "Aménagement handicapés"
 
+msgid "Trek_ascent"
+msgstr "Dénivelé positif"
+
+msgid ""
+"This hike is at the heart of the national park > The national park is an "
+"unrestricted natural area but subjected to regulations which must be known "
+"by all visitors."
+msgstr ""
+"Cet itinéraire est dans le cœur du Parc national > Le Parc national est un "
+"territoire naturel, ouvert à tous, mais soumis à une réglementation qu’il "
+"est utile de connaître pour préparer son séjour"
+
+msgid "Stages"
+msgstr "Étapes"
+
+msgid "On the way..."
+msgstr "Sur le chemin..."
+
 msgid "Related Treks"
 msgstr "Itinéraires liés"
+
+msgid ""
+"To check the practicability of the hiking paths and to know more about the "
+"National park, please visit us or call us at"
+msgstr ""
+"Afin de vérifier que les sentiers soient praticables et pour en savoir plus "
+"sur la découverte du territoire, veuillez-vous renseigner préalablement"
 
 msgid "Trekking"
 msgstr "Itinéraire"

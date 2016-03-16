@@ -132,3 +132,6 @@ load_data:
 
 load_demo: load_data
 	bin/django loaddata development-pne
+
+css:
+	for f in `find geotrek/ -name '*.scss'`; do node-sass --output-style=expanded $$f -o `dirname $$f`; done

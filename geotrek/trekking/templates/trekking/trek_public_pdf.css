@@ -1,281 +1,426 @@
-/**
- * node-sass --output-style=expanded trek_public_pdf.scss -o .
- */
 @page {
-  margin: 1.3cm 1.8cm 2.5cm 1.8cm;
-  @bottom-left {
-    font-family: sans, sans-serif;
-    color: #646464;
+  margin: 1cm 1.4cm 2.5cm 1.4cm;
+  @bottom-right {
+    font-family: sans-serif;
+    font-size: .7em;
     font-weight: 100;
-    font-size: .8em;
-    font-style: italic;
-    content: "Page " counter(page);
+    content: counter(page) "/" counter(pages);
+    color: #646464;
   }
 }
 
 html {
-  -weasy-hyphens: auto;
+  -weasy-hyphens: manual;
 }
 
 * {
   box-sizing: border-box;
+  -weasy-bookmark-level: none;
 }
 
 body {
-  font-family: sans, sans-serif;
-  color: #646464;
-  font-weight: 100;
+  font-family: sans-serif;
+  font-weight: normal;
+  font-size: 17px;
+  line-height: 1.2;
   margin: 0;
   padding: 0;
+  color: #646464;
 }
 
 img {
   max-width: 100%;
 }
 
-h1, h2, h3, h4, h5 {
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-weight: normal;
   color: black;
-  font-weight: normal;
-}
-
-h1 {
-  font-weight: normal;
-}
-
-h2 {
-  font-weight: 100;
-}
-
-section {
-  page-break-inside: avoid;
 }
 
 #footer {
   position: fixed;
-  height: 2cm;
-  bottom: -2cm;
+  bottom: -3.2cm;
   left: 0;
-  right: 0;
+  height: 2cm;
+  width: 100%;
+  text-align: center;
 }
 
 #footer .text {
+  font-size: .7em;
   display: inline-block;
-  vertical-align: middle;
   max-width: 60%;
-  font-size: .8em;
-  font-style: italic;
-}
-
-#footer .loire-atlantique {
-  float: right;
-  height: 1cm;
-}
-
-.main-title {
-  text-align: center;
-  padding-bottom: 2.36em;
-}
-
-.main-title h1, .main-title h2 {
-  margin: 0;
-}
-
-.main-title h2 {
-  font-size: 1.25em;
-}
-
-.map img {
-  max-width: 100%;
-}
-
-header .meta {
-  margin-top: 1em;
-  font-size: .65em;
-}
-
-.ambiance {
-  margin-top: 1em;
-  font-style: italic;
-}
-
-.teaser {
-  margin-top: 1em;
-}
-
-.description ol {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  counter-reset: li;
-}
-
-.description ol li {
-  position: relative;
-  margin-top: 1em;
-  line-height: 1.5em;
   vertical-align: middle;
-  padding-left: 2em;
-  padding-bottom: 0.5em;
-  orphans: 3;
-  text-indent: -36px;
 }
 
-.description ol li:empty {
-  display: none;
-}
-
-.description ol li:before {
-  content: counter(li);
-  /* Use the counter as content */
-  counter-increment: li;
-  display: inline-block;
-  background: #E83737;
-  color: white;
-  font-weight: bold;
-  vertical-align: middle;
-  font-size: .9em;
-  text-align: center;
-  line-height: 26px;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  page-break-after: avoid;
-  text-indent: 0;
-  margin-right: 10px;
-}
-
-.meta .lists {
-  display: inline;
-}
-
-.meta-item {
-  display: inline-block;
-  vertical-align: middle;
-  border-radius: .05em;
-  margin-bottom: 0.236em;
-  margin-top: .236em;
-  margin-right: .472em;
-  padding-right: .354em;
-}
-
-.meta-item .item-label,
-.meta-item .item-value {
-  border-radius: .25mm 0 0 .25mm;
-  display: inline-block;
-}
-
-.meta-item .item-label {
-  margin: -1px 0 -1px -1px;
-  padding: 1.2mm 1.5mm;
-}
-
-.meta-item .item-value + .item-value:before {
-  content: ", ";
-}
-
-.meta-item {
-  background-color: #f7fcda;
-  border: 1px solid rgba(174, 201, 14, 0.45);
-  color: #323a04;
-}
-
-.meta-item .item-label {
-  background-color: #aec90e;
-}
-
-.lists .meta-item {
-  background-color: #f3fbc2;
-  border: 1px solid rgba(153, 177, 12, 0.45);
-  color: #1e2202;
-}
-
-.lists .meta-item .item-label {
-  background-color: #99b10c;
-}
-
-.centered {
-  font-size: .80em;
-  padding: 2mm;
-  margin-top: 1.2em;
-  background-color: #f7fcda;
-}
-
-.text-content {
-  line-height: 1.5;
-}
-
-.elevation img {
-  padding: 2mm;
-  border: 1px solid #aaa;
-  background-color: #f7fcda;
-  border: 1px solid rgba(174, 201, 14, 0.45);
-}
-
-.pic legend {
-  font-style: italic;
-  text-align: right;
-  font-size: .8em;
-}
-
-.pois-summary {
-  page-break-inside: auto;
-}
-
-.pois-summary:after {
-  content: "";
+header:after {
   display: table;
   clear: both;
+  content: '';
 }
 
-.pois-summary .poi {
-  page-break-inside: avoid;
-  clear: both;
+header .logo {
+  float: left;
+  max-width: 50%;
+  height: 2.5cm;
 }
 
-.pois-summary .thumbnail {
+header .logo img {
+  max-height: 100%;
+}
+
+header .url {
   float: right;
-  margin-left: 1.5em;
+  max-width: 50%;
+  padding-top: .8cm;
+  text-align: right;
 }
 
-.pois-summary .icon {
+header .url .main {
+  font-weight: bold;
+}
+
+header .url .geo {
+  font-size: .75em;
+  margin-top: .35em;
+}
+
+.gray {
+  clear: both;
+  margin: .5cm -1.4cm 0 -1.4cm;
+  padding: 1cm 1.4cm .7cm 1.4cm;
+  background-color: #eee;
+  page-break-inside: avoid;
+}
+
+.gray hr {
+  visibility: hidden;
+}
+
+.main-icon {
+  position: relative;
+  float: right;
+  width: 1.5cm;
+  height: 1.5cm;
+  margin-top: 0;
+  border-radius: 50%;
+  background-color: #444;
+}
+
+.main-icon img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.trademark {
+  float: right;
+  width: 3cm;
+  height: 1.5cm;
+  margin-top: 0;
+  margin-right: 1cm;
+  text-align: right;
+}
+
+.trademark img {
   display: inline-block;
-  width: 1.5em;
-  height: 1em;
-  vertical-align: baseline;
-}
-
-.pois-summary .icon img {
-  display: block;
+  vertical-align: middle;
   max-width: 100%;
   max-height: 100%;
 }
 
-.information-desks .intro {
-  font-style: italic;
-  font-size: .85em;
+.main-title {
+  max-width: 80%;
 }
 
-.desks {
-  margin-top: 1em;
-  font-size: .8em;
-}
-
-.desk {
-  padding: .5em;
-  margin-top: .5em;
-}
-
-.desk .content {
-  padding-left: 2em;
-}
-
-.desk-name {
+.main-title h1 {
   font-weight: bold;
+  margin: 0 0 0 0;
 }
 
-footer {
-  margin-top: 2em;
+.main-title h2 {
+  font-size: 1em;
+  font-weight: 200;
+  margin: 0 0 1mm 0;
+}
+
+.main-picture,
+.main-map {
+  display: inline-block;
+  height: 7cm;
+  margin-top: .7cm;
+  background-color: #ccc;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.main-picture {
+  width: 11.2cm;
+  background-size: cover;
+}
+
+.main-map {
+  width: 7cm;
+  background-size: contain;
+}
+
+.intro-left,
+.meta-items {
+  max-height: 11.5cm;
+}
+
+.intro-left {
+  float: left;
+  width: 60%;
+  margin-top: .8cm;
+  padding-right: .5cm;
+}
+
+.intro-left .teaser {
+  font-family: serif;
+  font-size: 1.2em;
+  font-style: italic;
+  color: orange;
+}
+
+.intro-left .teaser > *:first-child {
+  margin-top: 0;
+}
+
+.intro-left .ambiance {
+  line-height: 1.4;
+}
+
+.meta-items {
+  float: right;
+  width: 40%;
+  margin-top: .8cm;
+  padding-left: .5cm;
+  border-left: 1px solid #888;
+}
+
+.meta-items-title {
+  font-weight: 600;
+  color: orange;
+}
+
+.meta-items-list {
+  margin-top: 2mm;
+}
+
+.meta-item {
+  display: block;
+  margin-top: 2mm;
+  padding-top: 2mm;
+  border-top: 1px solid #888;
+}
+
+.meta-item-label:after {
+  content: ' :';
+}
+
+.lists .meta-item-value + .meta-item-value:before {
+  content: ', ';
+}
+
+.inner-title {
+  page-break-before: always;
+  clear: both;
+}
+
+.inner-title .doc-title {
+  margin: 0;
+}
+
+.inner-title h2 {
+  margin: 0.1cm 0 0 0;
+  font-weight: bold;
+  font-size: 1.8em;
+  color: #333;
+}
+
+.advice {
+  margin-top: .5cm;
+  padding: .5cm .3cm;
   background-color: #eee;
-  padding: .3em;
-  text-align: center;
+}
+
+.advice-title {
+  font-weight: bold;
+  color: orange;
+}
+
+.advice-content {
+  margin-top: .5cm;
+}
+
+.elevation {
+  margin-top: .8cm;
+}
+
+.elevation-title {
+  font-weight: bold;
+  color: orange;
+}
+
+.elevation-chart {
+  display: inline-block;
+  width: 50%;
+  margin-top: .3cm;
+}
+
+.elevation-meta {
+  display: inline-block;
+  width: 48%;
+  padding-top: 3mm;
+  vertical-align: top;
+}
+
+.elevation-meta-item {
+  display: block;
+}
+
+.half-block {
+  float: left;
+  width: 50%;
+  padding-right: .5cm;
+}
+
+.half-block h2 {
+  font-size: 1em;
+  font-weight: bold;
+  color: orange;
+}
+
+.information-desks h2 {
+  font-size: 1em;
+  font-weight: bold;
+  margin-top: 0;
+  color: orange;
+}
+
+.information-desks .intro {
+  font-size: .8em;
+  float: right;
+  width: 50%;
+}
+
+.information-desks .desks {
+  width: 48%;
+  margin: 0;
+  padding: 0;
+  padding-right: .5cm;
+  list-style-type: none;
+}
+
+.information-desks .desk + .desk {
+  margin-top: .5cm;
+}
+
+.information-desks .desk-email {
+  margin-top: .15cm;
+}
+
+.information-desks a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.pois-summary {
+  margin: .5cm 0;
+}
+
+.pois-summary .poi {
+  display: inline-block;
+  width: 48%;
+  padding-right: .5cm;
+  vertical-align: top;
+}
+
+.pois-summary .icon img {
+  max-width: .5cm;
+  max-height: .5cm;
+}
+
+.pois-details .poi {
+  margin-top: .5cm;
+  margin-bottom: .5cm;
+  padding-top: .5cm;
+  border-top: 1px solid #888;
+}
+
+.pois-details .icon img {
+  max-width: .5cm;
+  max-height: .5cm;
+}
+
+.pois-details h3 {
+  margin-top: 0;
+}
+
+.pois-details .thumbnail,
+.pois-details .poi > .content {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.pois-details .thumbnail {
+  width: 20%;
+}
+
+.pois-details .poi > .content {
+  width: 100%;
+}
+
+.pois-details .poi > .content.with-pic {
+  width: 75%;
+}
+
+.advice-icon,
+.information-desks-icon,
+.network-icon {
+  display: inline-block;
+  vertical-align: text-bottom;
+}
+
+.advice-icon img,
+.information-desks-icon img,
+.network-icon img {
+  display: block;
+  max-width: .75cm;
+  max-height: .75cm;
+}
+
+.network-icon img {
+  max-width: 1em;
+  max-height: 1em;
+}
+
+.departure-arrival ul {
+  margin: 0;
+  padding: 0;
+}
+
+.departure-arrival ul li {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.source .text-content + .text-content {
+  clear: both;
+  padding-top: .5cm;
+}
+
+.source img {
+  float: left;
+  vertical-align: top;
+  margin-right: .5cm;
+  max-width: 3cm;
+  max-height: 3cm;
 }
