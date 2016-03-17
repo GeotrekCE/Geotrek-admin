@@ -5,6 +5,10 @@ CHANGELOG
 2.10.1.dev0
 -------------------
 
+**Bug fixes**
+
+* Allow access to information desks in API (and so to map capture and PDF) for unpublished treks
+
 **Minor changes**
 
 * Parsers improvements

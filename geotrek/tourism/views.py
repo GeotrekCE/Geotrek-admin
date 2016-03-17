@@ -335,7 +335,7 @@ class TrekInformationDeskViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         pk = self.kwargs['pk']
         try:
-            trek = Trek.objects.existing().get(pk=pk, published=True)
+            trek = Trek.objects.existing().get(pk=pk)
         except Trek.DoesNotExist:
             raise Http404
         return trek.information_desks.all().transform(settings.API_SRID, field_name='geom')
