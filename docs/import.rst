@@ -36,7 +36,7 @@ Don't forget the u character before strings if they contain non-ascii characters
 Configure Marque Esprit Parc import
 -----------------------------------
 
-To import touristic content from national park database, create (or update) ``bulkimport/parsers.py`` file with the following content:
+To import touristic content from Esprit Parc national database, create (or update) ``bulkimport/parsers.py`` file with the following content:
 
 ::
 
@@ -55,13 +55,27 @@ Then set up appropriate values:
 You can duplicate the class. Each class must have a different name.
 Don't forget the u character before strings if they contain non-ascii characters.
 
-If you use an url that filters a unique category, you can change its name:
+In this case categories and types in Geotrek database have to be the same as in Esprit parc database. Otherwise missing categories and types will be created in Geotrek database.
 
-class HebergementsParser(EspritParcParser):
-    label = u"Hébergements Marqués Esprit Parc"
-    url = u"http://gestion.espritparcnational.com/ws/?f=getProduitsSelonParc&codeParc=XXX&..."
-    constant_fields = {'category': u"New name for Hébergements"}
+Imported contents will be automatically published and approved. 
 
+If you use an url that filters a unique category, you can change its name. Example to get only Honey products and set the Geotrek category and type in which import them:
+
+::
+
+    class MielEspritParcParser(EspritParcParser):
+        label = u"Miel Esprit Parc national"
+        url = u"http://gestion.espritparcnational.com/ws/?f=getProduitsSelonParc&codeParc=XXX&typologie=API"
+        constant_fields = {
+            'category': u"GeotrekCategoryName",
+            'published': True,
+            'approved': True,
+        }
+        m2m_constant_fields = {
+            'type1': [u"GeotrekTypeName"],
+        }
+
+URL to get Esprit parc types: `http://gestion.espritparcnational.com/ws/?f=getTypologieProduits`.
 
 Start import from command line
 ------------------------------
