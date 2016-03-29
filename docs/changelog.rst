@@ -5,7 +5,9 @@ CHANGELOG
 2.10.2.dev0
 -------------------
 
-*
+**Minor changes**
+
+* Add source filter to touristic contents/events
 
 
 2.10.1 (2016-03-17)
