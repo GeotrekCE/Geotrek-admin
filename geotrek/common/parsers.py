@@ -274,13 +274,13 @@ class Parser(object):
             objects = self.model.objects.filter(**eid_kwargs)
         if len(objects) == 0 and self.update_only:
             if self.warn_on_missing_objects:
-                self.add_warning(_(u"Bad value '{eid_val}' for field '{eid_src}'. No trek with this identifier").format(eid_val=self.eid_val, eid_src=self.eid_src))
+                self.add_warning(_(u"Bad value '{eid_val}' for field '{eid_src}'. No object with this identifier").format(eid_val=self.eid_val, eid_src=self.eid_src))
             return
         elif len(objects) == 0:
             objects = [self.model(**eid_kwargs)]
             operation = u"created"
         elif len(objects) >= 2 and not self.duplicate_eid_allowed:
-            self.add_warning(_(u"Bad value '{eid_val}' for field '{eid_src}'. Multiple treks with this identifier").format(eid_val=self.eid_val, eid_src=self.eid_src))
+            self.add_warning(_(u"Bad value '{eid_val}' for field '{eid_src}'. Multiple objects with this identifier").format(eid_val=self.eid_val, eid_src=self.eid_src))
             return
         else:
             operation = u"updated"
