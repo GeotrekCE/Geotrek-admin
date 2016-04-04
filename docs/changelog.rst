@@ -9,6 +9,10 @@ CHANGELOG
 
 * Add source filter to touristic contents/events
 
+**Bug fixes**
+
+* Restore contents deleted and then created again in EspritParcParser
+
 
 2.10.1 (2016-03-17)
 -------------------

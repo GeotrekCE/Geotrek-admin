@@ -168,7 +168,8 @@ class EspritParcParser(AttachmentParserMixin, Parser):
 
     constant_fields = {
         'published': True,
-        'approved': True
+        'approved': True,
+        'deleted': False,
     }
 
     field_options = {
