@@ -8,6 +8,7 @@ CHANGELOG
 **Minor changes**
 
 * Add source filter to touristic contents/events
+* Allow installation as root (not recommended, use with caution)
 
 **Bug fixes**
 

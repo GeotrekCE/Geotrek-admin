@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 if [ "$(id -u)" == "0" ]; then
-   echo "This script must NOT be run as root" 1>&2
-   exit 2
+   echo -e "\e[91m\e[1mThis script should NOT be run as root\e[0m" >&2
 fi
 
 # Go to folder of install.sh
