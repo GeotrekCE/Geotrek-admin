@@ -12,6 +12,7 @@ CHANGELOG
 **Bug fixes**
 
 * Restore contents deleted and then created again in EspritParcParser
+* Add a warning if type1/type2 is not created in EspritParcParser
 
 
 2.10.1 (2016-03-17)

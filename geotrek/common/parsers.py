@@ -108,20 +108,20 @@ class Parser(object):
         warnings.append(msg)
 
     def get_part(self, dst, src, val):
-        for part in src.split('.'):
-            try:
-                if part.isdigit():
-                    val = val[int(part)]
-                elif part == '*':
-                    val = [subval[part] for subval in val]
-                else:
-                    val = val[part]
-            except (KeyError, IndexError):
-                required = u"required " if self.field_options.get(dst, {}).get('required', False) else ""
-                raise ValueImportError(_(u"Missing {required}field '{src}'").format(required=required, src=src))
-            if val is None:
-                break
-        return val
+        if not src:
+            return val
+        if val is None:
+            return None
+        if '.' in src:
+            part, left = src.split('.', 1)
+        else:
+            part, left = src, ''
+        if part.isdigit():
+            return self.get_part(dst, left, val[int(part)])
+        elif part == '*':
+            return [self.get_part(dst, left, subval) for subval in val]
+        else:
+            return self.get_part(dst, left, val[part])
 
     def get_val(self, row, dst, src):
         if hasattr(src, '__iter__'):
@@ -135,7 +135,11 @@ class Parser(object):
                     val.append(None)
             return val
         else:
-            return self.get_part(dst, src, row)
+            try:
+                return self.get_part(dst, src, row)
+            except (KeyError, IndexError):
+                required = u"required " if self.field_options.get(dst, {}).get('required', False) else ""
+                raise ValueImportError(_(u"Missing {required}field '{src}'").format(required=required, src=src))
 
     def apply_filter(self, dst, src, val):
         field = self.model._meta.get_field_by_name(dst)[0]

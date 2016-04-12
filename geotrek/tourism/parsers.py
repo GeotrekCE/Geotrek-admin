@@ -9,7 +9,7 @@ from django.utils.translation import ugettext as _
 
 from geotrek.common.parsers import (AttachmentParserMixin, Parser,
                                     GlobalImportError)
-from geotrek.tourism.models import TouristicContent
+from geotrek.tourism.models import TouristicContent, TouristicContentType1, TouristicContentType2
 
 
 class TouristicContentSitraParser(AttachmentParserMixin, Parser):
@@ -176,8 +176,6 @@ class EspritParcParser(AttachmentParserMixin, Parser):
         'name': {'required': True, },
         'geom': {'required': True, },
         'category': {'create': True},
-        'type1': {'create': True},
-        'type2': {'create': True},
     }
 
     natural_keys = {
@@ -247,3 +245,24 @@ class EspritParcParser(AttachmentParserMixin, Parser):
             return None
 
         return self.apply_filter('category', src, val)
+
+    def filter_type1(self, src, val):
+        dst = []
+        for subval in val or []:
+            try:
+                dst.append(TouristicContentType1.objects.get(category=self.obj.category, label=subval))
+            except TouristicContentType1.DoesNotExist:
+                self.add_warning(
+                    _(u"Type 1 '{subval}' does not exist for category '{cat}'. Please add it").format(
+                        subval=subval, cat=self.obj.category.label))
+        return dst
+
+    def filter_type2(self, src, val):
+        dst = []
+        for subval in val or []:
+            try:
+                dst.append(TouristicContentType2.objects.get(category=self.obj.category, label=subval))
+            except TouristicContentType2.DoesNotExist:
+                self.add_warning(_(u"Type 2 '{subval}' does not exist for category '{cat}'. Please add it").format(
+                    subval=subval, cat=self.obj.category.label))
+        return dst
