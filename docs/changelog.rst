@@ -9,6 +9,10 @@ CHANGELOG
 
 * Update default pictograms for touristic content categories
 
+**Bug fixes**
+
+* Workaround a bun in supervisor init script
+
 
 2.10.2 (2016-04-12)
 -------------------

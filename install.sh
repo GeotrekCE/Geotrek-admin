@@ -476,7 +476,7 @@ function geotrek_setup {
         echo_step "Generate services configuration files..."
         
         # restart supervisor in case of xenial before 'make deploy'
-        sudo service supervisor restart
+        /etc/init.d/supervisor force-stop && /etc/init.d/supervisor stop && /etc/init.d/supervisor start
         make deploy
         echo_progress
 
