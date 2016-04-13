@@ -5,7 +5,9 @@ CHANGELOG
 2.10.3.dev0
 -------------------
 
-*
+**Minor changes**
+
+* Update default pictograms for touristic content categories
 
 
 2.10.2 (2016-04-12)
