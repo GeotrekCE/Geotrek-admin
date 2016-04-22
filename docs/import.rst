@@ -70,6 +70,7 @@ If you use an url that filters a unique category, you can change its name. Examp
             'category': u"GeotrekCategoryName",
             'published': True,
             'approved': True,
+            'deleted': False,
         }
         m2m_constant_fields = {
             'type1': [u"GeotrekTypeName"],
