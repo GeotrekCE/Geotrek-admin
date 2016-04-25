@@ -12,6 +12,7 @@ CHANGELOG
 **Bug fixes**
 
 * Workaround a bun in supervisor init script
+* Fix multilinestring instead of linestring in trek shapefile parser
 
 
 2.10.2 (2016-04-12)
