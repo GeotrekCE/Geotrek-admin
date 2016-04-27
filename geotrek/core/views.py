@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import last_modified as cache_last_modified
 from django.views.decorators.cache import never_cache as force_cache_validation
+from django.views.generic import View
 from django.utils.translation import ugettext as _
 from django.core.cache import get_cache
 from django.core.urlresolvers import reverse
@@ -275,3 +276,11 @@ def merge_path(request):
             response = {'error': exc, }
 
     return HttpResponse(json.dumps(response), mimetype="application/json")
+
+
+class ParametersView(View):
+    def get(request, *args, **kwargs):
+        response = {
+            'geotrek_admin_version': settings.VERSION,
+        }
+        return HttpResponse(json.dumps(response), mimetype="application/json")

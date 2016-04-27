@@ -1,7 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 
 import django_filters
-
+from django.db.models import Q
 from geotrek.common.filters import StructureRelatedFilterSet
 from django.utils.datetime_safe import datetime
 
@@ -12,7 +12,7 @@ class TouristicContentFilterSet(StructureRelatedFilterSet):
     class Meta(StructureRelatedFilterSet.Meta):
         model = TouristicContent
         fields = StructureRelatedFilterSet.Meta.fields + [
-            'published', 'category', 'themes', 'type1', 'type2', 'approved']
+            'published', 'category', 'themes', 'type1', 'type2', 'approved', 'source']
 
 
 class AfterFilter(django_filters.DateFilter):
@@ -55,12 +55,18 @@ class TouristicEventFilterSet(StructureRelatedFilterSet):
     class Meta(StructureRelatedFilterSet.Meta):
         model = TouristicEvent
         fields = StructureRelatedFilterSet.Meta.fields + [
-            'published', 'type', 'themes', 'after', 'before', 'approved']
+            'published', 'type', 'themes', 'after', 'before', 'approved', 'source']
 
 
 class TouristicEventApiFilterSet(django_filters.FilterSet):
-    ends_after = django_filters.DateFilter('end_date', lookup_type='gte')
+    ends_after = django_filters.MethodFilter(action='events_end_after')
 
     class Meta:
         model = TouristicEvent
         fields = ['end_date', ]
+
+    def events_end_after(self, queryset, value):
+        return queryset.filter(
+            Q(end_date__isnull=True) |
+            Q(end_date__gte=value)
+        )

@@ -16,6 +16,6 @@ def forced_layers(request):
         if forced_layer[0] in [layer[0] for layer in settings.LEAFLET_CONFIG['TILES']]:
             response.append(
                 Polygon([forced_layer[1]],
-                        layer=[layer[1] for layer in settings.LEAFLET_CONFIG['TILES'] if layer[0] == forced_layer[0]][0])
+                        layer=[layer[0] for layer in settings.LEAFLET_CONFIG['TILES'] if layer[0] == forced_layer[0]][0])
             )
     return {'FORCED_LAYERS': response, }

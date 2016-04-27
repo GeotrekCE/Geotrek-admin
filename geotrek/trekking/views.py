@@ -172,6 +172,13 @@ class TrekDetail(MapEntityDetail):
 class TrekMapImage(MapEntityMapImage):
     queryset = Trek.objects.existing()
 
+    def dispatch(self, *args, **kwargs):
+        lang = kwargs.pop('lang')
+        if lang:
+            translation.activate(lang)
+            self.request.LANGUAGE_CODE = lang
+        return super(TrekMapImage, self).dispatch(*args, **kwargs)
+
 
 class TrekDocument(MapEntityDocument):
     queryset = Trek.objects.existing()
@@ -590,15 +597,17 @@ def sync_update_json(request):
 
 
 # Translations for public PDF
+translation.ugettext_noop(u"Advices")
+translation.ugettext_noop(u"All usefull informations")
 translation.ugettext_noop(u"Altimetric profile")
 translation.ugettext_noop(u"Attribution")
-translation.ugettext_noop(u"Edition of")
-translation.ugettext_noop(u"In more details...")
+translation.ugettext_noop(u"Geographical location")
+translation.ugettext_noop(u"Markings")
 translation.ugettext_noop(u"Max elevation")
 translation.ugettext_noop(u"Min elevation")
-translation.ugettext_noop(u"On the way...")
-translation.ugettext_noop(u"Page")
-translation.ugettext_noop(u"Powered by http://geotrek.fr")
-translation.ugettext_noop(u"This hike is at the heart of the national park > The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors.")
-translation.ugettext_noop(u"To check the practicability of the hiking paths and to know more about the National park, please visit us or call us at")
+translation.ugettext_noop(u"On your path...")
+translation.ugettext_noop(u"Powered by geotrek.fr")
+translation.ugettext_noop(u"The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors.")
+translation.ugettext_noop(u"This hike is at the heart of the national park")
 translation.ugettext_noop(u"Trek ascent")
+translation.ugettext_noop(u"Usefull informations")

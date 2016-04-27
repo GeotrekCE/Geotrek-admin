@@ -140,18 +140,18 @@ msgstr "L'identifiant '{eid_src}' est manquant"
 
 #, python-brace-format
 msgid ""
-"Bad value '{eid_val}' for field '{eid_src}'. No trek with this identifier"
+"Bad value '{eid_val}' for field '{eid_src}'. No object with this identifier"
 msgstr ""
 "Mauvaise valeur '{eid_val}' pour le champ '{eid_src}'. Il n'y a pas "
-"d'itinéraire avec cet identifiant"
+"d'objet avec cet identifiant"
 
 #, python-brace-format
 msgid ""
-"Bad value '{eid_val}' for field '{eid_src}'. Multiple treks with this "
+"Bad value '{eid_val}' for field '{eid_src}'. Multiple objects with this "
 "identifier"
 msgstr ""
 "Mauvaise valeur '{eid_val}' pour le champ '{eid_src}'. Il y plusieurs "
-"itinéraires avec cet identifiant"
+"objets avec cet identifiant"
 
 #, python-brace-format
 msgid "Bad value '{val}' for field {src}. Should contain {values}"
@@ -168,7 +168,7 @@ msgid ""
 "{model} '{val}' did not exist in Geotrek-Admin and was automatically created"
 msgstr ""
 "{model} '{val}' n'existait pas dans Geotrek-Admin. Il a été créé "
-"autoamtiquement"
+"automatiquement"
 
 #, python-brace-format
 msgid "{model} '{val}' does not exists in Geotrek-Admin. Please add it"

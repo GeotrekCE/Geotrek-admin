@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-18 17:00+0100\n"
+"POT-Creation-Date: 2016-03-16 18:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -113,7 +113,7 @@ msgstr ""
 msgid "Duration"
 msgstr ""
 
-msgid "In decimal hours (ex. 1.5 for 1 h 30)"
+msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
 msgstr ""
 
 msgid "Is in the midst of the park"
@@ -249,6 +249,12 @@ msgstr ""
 msgid "Cirkwi locomotion"
 msgstr ""
 
+msgid "Order"
+msgstr ""
+
+msgid "Alphabetical order if blank"
+msgstr ""
+
 msgid "Cirkwi tag"
 msgstr ""
 
@@ -356,16 +362,22 @@ msgstr ""
 msgid "Init sync ..."
 msgstr ""
 
+msgid "Advices"
+msgstr ""
+
+msgid "All usefull informations"
+msgstr ""
+
 msgid "Altimetric profile"
 msgstr ""
 
 msgid "Attribution"
 msgstr ""
 
-msgid "Edition of"
+msgid "Geographical location"
 msgstr ""
 
-msgid "In more details..."
+msgid "Markings"
 msgstr ""
 
 msgid "Max elevation"
@@ -374,27 +386,24 @@ msgstr ""
 msgid "Min elevation"
 msgstr ""
 
-msgid "On the way..."
+msgid "On your path..."
 msgstr ""
 
-msgid "Page"
-msgstr ""
-
-msgid "Powered by http://geotrek.fr"
+msgid "Powered by geotrek.fr"
 msgstr ""
 
 msgid ""
-"This hike is at the heart of the national park > The national park is an "
-"unrestricted natural area but subjected to regulations which must be known "
-"by all visitors."
+"The national park is an unrestricted natural area but subjected to "
+"regulations which must be known by all visitors."
 msgstr ""
 
-msgid ""
-"To check the practicability of the hiking paths and to know more about the "
-"National park, please visit us or call us at"
+msgid "This hike is at the heart of the national park"
 msgstr ""
 
 msgid "Trek ascent"
+msgstr ""
+
+msgid "Usefull informations"
 msgstr ""
 
 msgid "Global tiles syncing ..."
@@ -428,6 +437,9 @@ msgid "Thumbnail"
 msgstr ""
 
 msgid "Elevation"
+msgstr ""
+
+msgid "Powered by http://geotrek.fr"
 msgstr ""
 
 msgid ""
@@ -510,13 +522,33 @@ msgstr ""
 msgid "Length"
 msgstr ""
 
-msgid "Trek_ascent"
+msgid "Transports"
 msgstr ""
 
 msgid "Disabled Infrastructure"
 msgstr ""
 
+msgid "Trek_ascent"
+msgstr ""
+
+msgid ""
+"This hike is at the heart of the national park > The national park is an "
+"unrestricted natural area but subjected to regulations which must be known "
+"by all visitors."
+msgstr ""
+
+msgid "Stages"
+msgstr ""
+
+msgid "On the way..."
+msgstr ""
+
 msgid "Related Treks"
+msgstr ""
+
+msgid ""
+"To check the practicability of the hiking paths and to know more about the "
+"National park, please visit us or call us at"
 msgstr ""
 
 msgid "Trekking"
@@ -529,10 +561,6 @@ msgid "Add a new service"
 msgstr ""
 
 msgid "Add Web link"
-msgstr ""
-
-#, python-format
-msgid "More than %s days"
 msgstr ""
 
 #, python-format

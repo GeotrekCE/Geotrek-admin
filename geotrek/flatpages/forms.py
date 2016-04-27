@@ -8,10 +8,14 @@ from modeltranslation.settings import AVAILABLE_LANGUAGES
 
 
 class FlatPageForm(CommonForm):
-    content = forms.CharField(widget=forms.TextInput, label=_(u"Content"))
+    content = forms.CharField(widget=forms.Textarea, label=_(u"Content"))
 
     def __init__(self, *args, **kwargs):
         super(FlatPageForm, self).__init__(*args, **kwargs)
+        # Revert widget modifications done by MapentityForm.__init__()
+        for fieldname in self.fields.keys():
+            if fieldname.startswith('content_'):
+                self.fields[fieldname].widget = forms.Textarea()
         self.fields['source'].help_text = None
 
     class Meta:

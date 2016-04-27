@@ -2,13 +2,153 @@
 CHANGELOG
 =========
 
-2.6.1.dev0
+2.10.2 (2016-04-12)
+-------------------
+
+**Minor changes**
+
+* Add source filter to touristic contents/events
+* Allow installation as root (not recommended, use with caution)
+
+**Bug fixes**
+
+* Restore contents deleted and then created again in EspritParcParser
+* Add a warning if type1/type2 is not created in EspritParcParser
+* Replace <input> by <textarea> in flatpage form
+
+
+2.10.1 (2016-03-17)
+-------------------
+
+**Bug fixes**
+
+* Allow access to information desks in API (and so to map capture and PDF) for unpublished treks
+
+**Minor changes**
+
+* Parsers improvements
+
+
+2.10.0 (2016-03-03)
+-------------------
+
+**New features**
+
+* Add support for Ubuntu 15.04 Vivid
+
+**Breaking changes**
+
+* Remove TileCache service (you should set up tiles source with LEAFLET_CONFIG variable in `geotrek/settings/custom.py` now)
+* Run supervisor as root (you should now run `sudo supervisorctl` instead of `./bin/supervisor`)
+* Move nginx and supervisor logs to system dir `/var/log/`
+
+**Minor changes**
+
+* Update default pictograms for difficulty levels
+
+**Bug fixes**
+
+* Fix sync_rando after deleting a trek with children
+
+
+2.9.3 (2016-02-25)
+------------------
+
+**Bug fixes**
+
+* Fix line break at start of contact in EspritParcParser
+
+**Minor changes**
+
+* Add parameters.json and themes.json files to API
+
+
+2.9.2 (2016-02-17)
+------------------
+
+**Minor changes**
+
+* Increase web link size
+
+**Bug fixes**
+
+* Fix path split
+* Fix attachment parsing with same document type for several structures
+
+
+2.9.1 (2016-02-10)
+------------------
+
+**Bug fixes**
+
+* Don't forget to sync touristic contents/events media when skipping PDF
+* Don't delete attachments of other objects when importing
+* Don't delete other objects when constant fields are set in parsers
+
+
+2.9.0 (2016-02-04)
+------------------
+
+**New features**
+
+* Add parser for brand "Esprit Parc National"
+
+**Bug fixes**
+
+* Set user structure as related structure for all new objects
+
+
+2.8.1 (2016-01-29)
+------------------
+
+**Bug fixes**
+
+* Synchronize information desk thumbnails
+
+
+2.8.0 (2016-01-28)
+------------------
+
+**New features**
+
+* Use POI pictures in PDF if the trek has no picture itself
+* Use a placeholder in PDF if there is no picture
+* Parser to import touristic contents from SITRA
+* Add list of all information desks to API
+
+**Bug fixes**
+
+* Allow NULL values for id_externe fields in database
+* Fix missing elements (eg. POI enumeration) on trek map capture
+* Prevent overlaping controls at bottom of list view
+* Translation of column names in shapefiles export
+* UTF-8 and truncated alerts in shapefile export
+
+
+2.7.2 (2016-01-26)
+------------------
+
+**Bug fixes**
+
+* Synchronize touristic events with no end date
+* Fix PDF synchronization (eg. missing list of POI)
+
+
+2.7.1 (2016-01-18)
+------------------
+
+**Bug fixes**
+
+* Fix random z-index on forced layer polygon
+* Fix pretty duration
+
+
+2.7.0 (2016-01-14)
 ------------------
 
 **New features**
 
 * New button to add Youtube videos in flat pages
-* Change map background in map screenshots depending on location
 
 **Bug fixes**
 
@@ -17,6 +157,8 @@ CHANGELOG
 * Fix validation on flatpages for combo external_url + content.
 * Fix responsive layout for provided templates in flatpages.
 * Don't catch all domain names if it is defined in settings.ini
+* Fix event link to closest visible path only
+* Do not log anymore an error when submitting a form with an empty geometry
 
 
 2.6.0 (2015-12-30)

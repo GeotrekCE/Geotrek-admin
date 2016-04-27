@@ -18,10 +18,10 @@ from django.utils import translation
 from django.utils.translation import ugettext as _
 from landez import TilesManager
 from landez.sources import DownloadError
-from mapentity.settings import app_settings as mapentity_settings
 from geotrek.altimetry.views import ElevationProfile, ElevationArea, serve_elevation_chart
 from geotrek.common import models as common_models
-from geotrek.common.views import DocumentPublic, DocumentPublicPDF
+from geotrek.common.views import ThemeViewSet
+from geotrek.core.views import ParametersView
 from geotrek.feedback.views import CategoryList as FeedbackCategoryList
 from geotrek.flatpages.views import FlatPageViewSet
 from geotrek.tourism import models as tourism_models
@@ -29,7 +29,7 @@ from geotrek.tourism.views import TrekTouristicContentAndPOIViewSet
 from geotrek.trekking import models as trekking_models
 from geotrek.trekking.views import (TrekViewSet, POIViewSet, TrekPOIViewSet,
                                     TrekGPXDetail, TrekKMLDetail, TrekServiceViewSet,
-                                    ServiceViewSet)
+                                    ServiceViewSet, TrekDocumentPublic)
 
 # Register mapentity models
 from geotrek.trekking import urls  # NOQA
@@ -83,7 +83,7 @@ class Command(BaseCommand):
         make_option('--skip-tiles', '-t', action='store_true', dest='skip_tiles',
                     default=False, help='Skip generation of zip tiles files'),
         make_option('--skip-dem', '-d', action='store_true', dest='skip_dem',
-                    default=False, help='Skip generation of DEM files for mobile app'),
+                    default=False, help='Skip generation of DEM files for 3D'),
         make_option('--skip-profile-png', '-e', action='store_true', dest='skip_profile_png',
                     default=False, help='Skip generation of PNG elevation profile'),
         make_option('--languages', '-l', action='store', dest='languages',
@@ -186,8 +186,8 @@ class Command(BaseCommand):
         if self.verbosity == '2':
             self.stdout.write(u"\x1b[3D\x1b[32mgenerated\x1b[0m")
 
-    def sync_json(self, lang, viewset, name, zipfile=None, params={}, **kwargs):
-        view = viewset.as_view()
+    def sync_json(self, lang, viewset, name, zipfile=None, params={}, as_view_args=[], **kwargs):
+        view = viewset.as_view(*as_view_args)
         name = os.path.join('api', lang, '{name}.json'.format(name=name))
         if self.source:
             params['source'] = ','.join(self.source)
@@ -195,7 +195,7 @@ class Command(BaseCommand):
 
     def sync_geojson(self, lang, viewset, name, zipfile=None, params={}, **kwargs):
         view = viewset.as_view({'get': 'list'})
-        name = os.path.join('api', lang, '{name}.geojson'.format(name=name))
+        name = os.path.join('api', lang, name)
         params.update({'format': 'geojson'})
         if self.source:
             params['source'] = ','.join(self.source)
@@ -224,13 +224,10 @@ class Command(BaseCommand):
         name = os.path.join('api', lang, '{modelname}s'.format(modelname=modelname), str(obj.pk), basename_fmt.format(obj=obj))
         self.sync_view(lang, view, name, zipfile=zipfile, pk=obj.pk, **kwargs)
 
-    def sync_pdf(self, lang, obj):
+    def sync_trek_pdf(self, lang, obj):
         if self.skip_pdf:
             return
-        if mapentity_settings['MAPENTITY_WEASYPRINT']:
-            view = DocumentPublic.as_view(model=type(obj))
-        else:
-            view = DocumentPublicPDF.as_view(model=type(obj))
+        view = TrekDocumentPublic.as_view(model=type(obj))
         self.sync_object_view(lang, obj, view, '{obj.slug}.pdf')
 
     def sync_profile_json(self, lang, obj, zipfile=None):
@@ -288,11 +285,13 @@ class Command(BaseCommand):
         self.mkdirs(zipfullname)
         self.trek_zipfile = ZipFile(zipfullname, 'w')
 
+        self.sync_json(lang, ParametersView, 'parameters', zipfile=self.zipfile)
+        self.sync_json(lang, ThemeViewSet, 'themes', as_view_args=[{'get': 'list'}], zipfile=self.zipfile)
         self.sync_trek_pois(lang, trek, zipfile=self.zipfile)
         self.sync_trek_services(lang, trek, zipfile=self.zipfile)
         self.sync_gpx(lang, trek)
         self.sync_kml(lang, trek)
-        self.sync_pdf(lang, trek)
+        self.sync_trek_pdf(lang, trek)
         self.sync_profile_json(lang, trek)
         if not self.skip_profile_png:
             self.sync_profile_png(lang, trek, zipfile=self.zipfile)
@@ -344,10 +343,10 @@ class Command(BaseCommand):
         self.mkdirs(zipfullname)
         self.zipfile = ZipFile(zipfullname, 'w')
 
-        self.sync_geojson(lang, TrekViewSet, 'treks', zipfile=self.zipfile)
-        self.sync_geojson(lang, POIViewSet, 'pois')
-        self.sync_geojson(lang, FlatPageViewSet, 'flatpages', zipfile=self.zipfile)
-        self.sync_geojson(lang, ServiceViewSet, 'services', zipfile=self.zipfile)
+        self.sync_geojson(lang, TrekViewSet, 'treks.geojson', zipfile=self.zipfile)
+        self.sync_geojson(lang, POIViewSet, 'pois.geojson')
+        self.sync_geojson(lang, FlatPageViewSet, 'flatpages.geojson', zipfile=self.zipfile)
+        self.sync_geojson(lang, ServiceViewSet, 'services.geojson', zipfile=self.zipfile)
         self.sync_view(lang, FeedbackCategoryList.as_view(),
                        os.path.join('api', lang, 'feedback', 'categories.json'),
                        zipfile=self.zipfile)

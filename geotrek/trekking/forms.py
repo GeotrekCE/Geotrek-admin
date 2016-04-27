@@ -161,7 +161,7 @@ class TrekForm(BaseTrekForm):
             queryset_children = OrderedTrekChild.objects.filter(parent__id=self.instance.pk)\
                                                         .order_by('order')
             # init multiple children field with data
-            self.fields['children_trek'].queryset = Trek.objects.all().exclude(pk=self.instance.pk)
+            self.fields['children_trek'].queryset = Trek.objects.existing().exclude(pk=self.instance.pk)
             self.fields['children_trek'].initial = [c.child.pk for c in self.instance.trek_children.all()]
 
             # init hidden field with children order
@@ -233,7 +233,7 @@ class TrekForm(BaseTrekForm):
              'disabled_infrastructure', 'advised_parking', 'parking_location',
              'public_transport', 'advice', 'themes', 'networks', 'practice',
              'accessibilities', 'web_links', 'information_desks', 'source',
-             'children_trek', 'eid', 'eid2', 'hidden_ordered_children', ]
+             'children_trek', 'eid', 'eid2', 'hidden_ordered_children', 'structure']
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
 
@@ -271,7 +271,7 @@ class POIForm(BasePOIForm):
     ]
 
     class Meta(BasePOIForm.Meta):
-        fields = BasePOIForm.Meta.fields + ['name', 'description', 'type', 'published', 'review']
+        fields = BasePOIForm.Meta.fields + ['name', 'description', 'type', 'published', 'review', 'structure']
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -308,7 +308,7 @@ class ServiceForm(BaseServiceForm):
     ]
 
     class Meta(BaseServiceForm.Meta):
-        fields = BaseServiceForm.Meta.fields + ['type']
+        fields = BaseServiceForm.Meta.fields + ['type', 'structure']
 
 
 class WebLinkCreateFormPopup(forms.ModelForm):

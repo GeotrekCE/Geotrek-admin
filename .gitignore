@@ -6,6 +6,7 @@
 /var/
 /etc/
 /install
+/.idea/
 
 # buildout stuff
 .mr.developer.cfg

@@ -26,6 +26,7 @@ from mapentity import app_settings
 from mapentity.tests import MapEntityLiveTest
 from mapentity.factories import SuperUserFactory
 
+from geotrek.authent.models import default_structure
 from geotrek.common.factories import AttachmentFactory, ThemeFactory, RecordSourceFactory
 from geotrek.common.tests import CommonTest, TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
@@ -62,13 +63,15 @@ class POIViewsTest(CommonTest):
             'description_fr': 'ici',
             'description_en': 'here',
             'type': POITypeFactory.create().pk,
-            'topology': '{"lat": 5.1, "lng": 6.6}'
+            'topology': '{"lat": 5.1, "lng": 6.6}',
+            'structure': default_structure().pk
         }
 
     def test_empty_topology(self):
         self.login()
         data = self.get_good_data()
         data['topology'] = ''
+
         response = self.client.post(self.model.get_add_url(), data)
         self.assertEqual(response.status_code, 200)
         form = self.get_form(response)
@@ -251,6 +254,7 @@ class TrekViewsTest(CommonTest):
             'trek_relationship_a-1-has_common_edge': '',
             'trek_relationship_a-1-has_common_departure': '',
             'trek_relationship_a-1-is_circuit_step': 'on',
+            'structure': default_structure().pk
         }
 
     def test_badfield_goodgeom(self):
@@ -522,7 +526,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.assertEqual(self.result['elevation_area_url'],
                          '/api/en/treks/{pk}/dem.json'.format(pk=self.pk))
         self.assertEqual(self.result['map_image_url'],
-                         '/image/trek-%s.png' % self.pk)
+                         '/image/trek-%s-en.png' % self.pk)
         self.assertEqual(self.result['altimetric_profile'],
                          '/api/en/treks/{pk}/profile.json'.format(pk=self.pk))
         self.assertEqual(self.result['filelist_url'],
@@ -885,11 +889,12 @@ class TemplateTagsTest(TestCase):
         self.assertEqual(u"4 h", trekking_tags.duration(4))
         self.assertEqual(u"6 h", trekking_tags.duration(6))
         self.assertEqual(u"10 h", trekking_tags.duration(10))
-        self.assertEqual(u"2 days", trekking_tags.duration(11))
+        self.assertEqual(u"1 days", trekking_tags.duration(24))
         self.assertEqual(u"2 days", trekking_tags.duration(32))
         self.assertEqual(u"2 days", trekking_tags.duration(48))
-        self.assertEqual(u"More than 8 days", trekking_tags.duration(24 * 8))
-        self.assertEqual(u"More than 8 days", trekking_tags.duration(24 * 9))
+        self.assertEqual(u"3 days", trekking_tags.duration(49))
+        self.assertEqual(u"8 days", trekking_tags.duration(24 * 8))
+        self.assertEqual(u"9 days", trekking_tags.duration(24 * 9))
 
 
 class TrekViewsSameStructureTests(AuthentFixturesTest):
@@ -1145,7 +1150,8 @@ class ServiceViewsTest(CommonTest):
         PathFactory.create()
         return {
             'type': ServiceTypeFactory.create().pk,
-            'topology': '{"lat": 5.1, "lng": 6.6}'
+            'topology': '{"lat": 5.1, "lng": 6.6}',
+            'structure': default_structure().pk
         }
 
     def test_empty_topology(self):

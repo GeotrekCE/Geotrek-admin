@@ -73,7 +73,7 @@
         tpl1 = "{% trans "Template 1" %}";
         tpl2 = "{% trans "Template 2" %}";
 
-        $('input[id^=id_content_]').each(function () {
+        $('textarea[id^=id_content_]').each(function () {
             var id = 'grid_' + $(this).attr('id');
             $(this).hide();
             $(this).parent().append('<div id="' + id + '"></div>');
@@ -189,7 +189,7 @@
 
         $("#save_changes").removeAttr("onclick");
         $('#save_changes').click(function () {
-            $('input[id^=id_content_]').each(function () {
+            $('textarea[id^=id_content_]').each(function () {
                 var gm = $(this).next().data('gridmanager');
                 gm.deinitCanvas();
                 var canvas = gm.$el.find("#" + gm.options.canvasId);

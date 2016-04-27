@@ -85,7 +85,7 @@ class PicturesMixin(object):
         """
         if hasattr(self, '_pictures'):
             return self._pictures
-        all_attachments = self.attachments.order_by('-starred').all()
+        all_attachments = self.attachments.order_by('-starred', 'attachment_file').all()
         return [a for a in all_attachments if a.is_image and a.title != 'mapimage']
 
     @pictures.setter
@@ -122,9 +122,13 @@ class PicturesMixin(object):
         for picture in self.pictures:
             thumbnailer = get_thumbnailer(picture.attachment_file)
             try:
-                return thumbnailer.get_thumbnail(aliases.get('print'))
+                thumbnail = thumbnailer.get_thumbnail(aliases.get('print'))
             except InvalidImageFormatError:
                 logger.warning(_("Image %s invalid or missing from disk.") % picture.attachment_file)
+                continue
+            thumbnail.author = picture.author
+            thumbnail.legend = picture.legend
+            return thumbnail
         return None
 
     @property
@@ -132,9 +136,13 @@ class PicturesMixin(object):
         for picture in self.pictures:
             thumbnailer = get_thumbnailer(picture.attachment_file)
             try:
-                return thumbnailer.get_thumbnail(aliases.get('small-square'))
+                thumbnail = thumbnailer.get_thumbnail(aliases.get('small-square'))
             except InvalidImageFormatError:
                 logger.warning(_("Image %s invalid or missing from disk.") % picture.attachment_file)
+                continue
+            thumbnail.author = picture.author
+            thumbnail.legend = picture.legend
+            return thumbnail
         return None
 
     @classproperty

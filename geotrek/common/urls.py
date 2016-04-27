@@ -2,7 +2,8 @@ from django.conf.urls import patterns, url
 from mapentity.registry import MapEntityOptions
 from mapentity.settings import app_settings
 
-from .views import JSSettings, admin_check_extents, DocumentPublic, DocumentPublicPDF, import_view, import_update_json
+from .views import (JSSettings, admin_check_extents, DocumentPublic, DocumentPublicPDF, import_view, import_update_json,
+                    ThemeViewSet)
 
 
 urlpatterns = patterns(
@@ -11,6 +12,7 @@ urlpatterns = patterns(
     url(r'^tools/extents/', admin_check_extents, name='check_extents'),
     url(r'^commands/import-update.json$', import_update_json, name='import_update_json'),
     url(r'^commands/import$', import_view, name='import_dataset'),
+    url(r'^api/(?P<lang>\w\w)/themes.json$', ThemeViewSet.as_view({'get': 'list'}), name="themes_json"),
 )
 
 

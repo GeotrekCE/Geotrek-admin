@@ -137,7 +137,7 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
         return {
             'id': obj.category_id_prefix,
             'order': settings.TOURISTIC_EVENT_CATEGORY_ORDER,
-            'label': obj._meta.verbose_name,
+            'label': obj._meta.verbose_name_plural,
             'type1_label': obj._meta.get_field('type').verbose_name,
             'pictogram': '/static/tourism/touristicevent.svg',
             'slug': _(u'touristic-event'),

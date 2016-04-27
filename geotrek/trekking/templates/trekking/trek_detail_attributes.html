@@ -71,7 +71,7 @@
         </tr>
         <tr>
             <th>{{ trek|verbose:"advised_parking" }}</th>
-            <td>{% if trek.advised_parking %}{{ trek.advised_parking|safe }}
+            <td>{% if trek.advised_parking %}{{ trek.advised_parking }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
