@@ -8,6 +8,7 @@ CHANGELOG
 **Minor changes**
 
 * Update default pictograms for touristic content categories
+* Update default pictograms for themes
 
 **Bug fixes**
 
