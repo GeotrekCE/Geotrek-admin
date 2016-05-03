@@ -56,7 +56,7 @@ DECLARE
     current_values float;
     val geometry;
     element geometry;
-    
+
 BEGIN
     IF step <= 0
     THEN
@@ -69,7 +69,7 @@ BEGIN
 
     FOR i IN 0 .. array_length(points, 1) LOOP
         current_values := 0.0;
-        
+
 	FOREACH val in ARRAY points[i-step:i+step] LOOP
 	    -- val is null when out of array
 	    IF val IS NOT NULL
@@ -77,10 +77,10 @@ BEGIN
 		current_values := current_values + ST_Z(val) / array_length(points[i-step:i+step], 1);
 	    END IF;
 	END LOOP;
-	
+
 	points_output := array_append(points_output, ST_MAKEPOINT(ST_X(points[i]), ST_Y(points[i]), current_values::integer));
     END LOOP;
-    
+
     RETURN QUERY SELECT (ST_DumpPoints(ST_SetSRID(ST_MakeLine(points_output), ST_SRID(linegeom)))).geom as geom;
 
 END;
@@ -103,10 +103,9 @@ BEGIN
         -- (Use-case is when assembling paths geometries to build topologies)
         RETURN QUERY SELECT (ST_DumpPoints(ST_Force_3D(linegeom))).geom AS geom;
 
-    ELSE 
-	RETURN QUERY 
-        with
-                 -- Get endings of each segment of the line
+    ELSE
+        RETURN QUERY
+            WITH -- Get endings of each segment of the line
                  r1 AS (SELECT ST_PointN(linegeom, generate_series(1, ST_NPoints(linegeom)-1)) as p1,
                                ST_PointN(linegeom, generate_series(2, ST_NPoints(linegeom))) as p2,
                                generate_series(2, ST_NPoints(linegeom)) = ST_NPoints(linegeom) as is_last),
@@ -120,14 +119,12 @@ BEGIN
                                ST_SRID(p1) AS srid FROM r3),
                  -- Set SRID of new points
                  r5 AS (SELECT ST_SetSRID(p, srid) as p FROM r4)
+            SELECT add_point_elevation(p) FROM r5;
 
-		
-                SELECT add_point_elevation(p) FROM r5;
-		
     END IF;
 END;
-
 $$ LANGUAGE plpgsql;
+
 
 
 CREATE OR REPLACE FUNCTION geotrek.add_point_elevation(geom geometry) RETURNS geometry AS $$
@@ -269,22 +266,22 @@ BEGIN
     points3d := ARRAY[]::geometry[];
     points3d_smoothed := ARRAY[]::geometry[];
     points3d_simplified := ARRAY[]::geometry[];
-    
+
     FOR current IN SELECT * FROM ft_drape_line(geom, {{ALTIMETRIC_PROFILE_PRECISION}}) LOOP
         -- Create the 3d points
-        points3d := array_append(points3d, current);   
+        points3d := array_append(points3d, current);
     END LOOP;
 
     -- smoothing line
     FOR current IN SELECT * FROM ft_smooth_line(St_MakeLine(points3d), {{ALTIMETRIC_PROFILE_AVERAGE}}) LOOP
         -- Create the 3d points
-        points3d_smoothed := array_append(points3d_smoothed, current);   
+        points3d_smoothed := array_append(points3d_smoothed, current);
     END LOOP;
 
     -- simplify gain calculs
 
     previous_geom := NULL;
-    
+
     -- Compute gain using simplification
     -- see http://www.postgis.org/docs/ST_Simplify.html
     --     https://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm
@@ -298,17 +295,17 @@ BEGIN
 							     ST_Z(current)), 0);
 	previous_geom := current;
     END LOOP;
-    
+
     result.draped := ST_SetSRID(ST_MakeLine(points3d_smoothed), ST_SRID(geom));
 
     -- Compute elevation using (higher resolution)
     result.min_elevation := ST_ZMin(result.draped)::integer;
     result.max_elevation := ST_ZMax(result.draped)::integer;
 
-    
+
     -- Compute slope
     result.slope := 0.0;
-    
+
     IF ST_Length2D(geom) > 0 THEN
         result.slope := (result.max_elevation - result.min_elevation) / ST_Length2D(geom);
     END IF;
