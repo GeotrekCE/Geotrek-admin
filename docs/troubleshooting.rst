@@ -37,8 +37,6 @@ No background tiles
 
 Check the values of your WMS settings (server name should end with ``?``, layers names should exist on server).
 
-Check the values in the generated TileCache configuration in ``etc/tilecache.cfg``.
-
 
 Error at loading DEM
 --------------------
@@ -54,13 +52,13 @@ services run with the following commands :
 
 ::
 
-    bin/supervisorctl status
+    sudo supervisorctl status
 
 You may want to force their restart :
 
 ::
 
-    bin/supervisorctl restart all
+    sudo supervisorctl restart all
 
 
 If they don't stay alive, check the log files in the ``var/log/`` folder.

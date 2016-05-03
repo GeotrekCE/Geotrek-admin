@@ -73,6 +73,7 @@
                 map.addLayer(pois);
 
                 pois.showEnumeration();
+                $('.map-panel').addClass('poi_enum_loaded');
             });
 
             //
@@ -90,6 +91,7 @@
                 });
                 map.layerscontrol.addOverlay(services, tr('services'), tr('Objects'));
                 map.addLayer(services);
+                $('.map-panel').addClass('services_loaded');
             });
 
             //
@@ -105,6 +107,7 @@
                         return L.marker(latlng, {icon: infoDeskIcon});
                     }
                 }).addTo(map);
+                $('.map-panel').addClass('info_desks_loaded');
             });
 
             //
@@ -119,11 +122,13 @@
                                                   className: 'point-reference'});
                             return L.marker(latlng, {
                                 clickable: false,
-                                icon: icon
+                                icon: icon,
+                                zIndexOffset: 9999
                             }).addTo(map);
                         };
                     })()
                 }).addTo(map);
+                $('.map-panel').addClass('ref_points_loaded');
             })(map);
 
         });

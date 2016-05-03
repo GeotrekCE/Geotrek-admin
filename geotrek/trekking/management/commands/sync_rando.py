@@ -1,33 +1,35 @@
-from landez import TilesManager
-from landez.sources import DownloadError
+# -*- encoding: UTF-8 -
+
 import logging
 from optparse import make_option
 import os
 import re
+import sys
 import shutil
-import tempfile
+from time import sleep
 from zipfile import ZipFile
 
-from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.management.base import BaseCommand, CommandError
+from django.db.models import Q
 from django.test.client import RequestFactory
 from django.utils import translation
-
-from mapentity.settings import app_settings as mapentity_settings
-
+from django.utils.translation import ugettext as _
+from landez import TilesManager
+from landez.sources import DownloadError
 from geotrek.altimetry.views import ElevationProfile, ElevationArea, serve_elevation_chart
 from geotrek.common import models as common_models
-from geotrek.trekking import models as trekking_models
+from geotrek.common.views import ThemeViewSet
+from geotrek.core.views import ParametersView
+from geotrek.feedback.views import CategoryList as FeedbackCategoryList
+from geotrek.flatpages.views import FlatPageViewSet
 from geotrek.tourism import models as tourism_models
-from geotrek.common.views import DocumentPublic, DocumentPublicPDF
+from geotrek.tourism.views import TrekTouristicContentAndPOIViewSet
+from geotrek.trekking import models as trekking_models
 from geotrek.trekking.views import (TrekViewSet, POIViewSet, TrekPOIViewSet,
                                     TrekGPXDetail, TrekKMLDetail, TrekServiceViewSet,
-                                    ServiceViewSet)
-from geotrek.tourism.views import TrekTouristicContentAndPOIViewSet
-from geotrek.flatpages.views import FlatPageViewSet
-from geotrek.feedback.views import CategoryList as FeedbackCategoryList
+                                    ServiceViewSet, TrekDocumentPublic)
 
 # Register mapentity models
 from geotrek.trekking import urls  # NOQA
@@ -81,9 +83,11 @@ class Command(BaseCommand):
         make_option('--skip-tiles', '-t', action='store_true', dest='skip_tiles',
                     default=False, help='Skip generation of zip tiles files'),
         make_option('--skip-dem', '-d', action='store_true', dest='skip_dem',
-                    default=False, help='Skip generation of DEM files for mobile app'),
+                    default=False, help='Skip generation of DEM files for 3D'),
         make_option('--skip-profile-png', '-e', action='store_true', dest='skip_profile_png',
                     default=False, help='Skip generation of PNG elevation profile'),
+        make_option('--languages', '-l', action='store', dest='languages',
+                    default='', help='Languages to sync'),
     )
 
     def mkdirs(self, name):
@@ -160,11 +164,19 @@ class Command(BaseCommand):
         request = self.factory.get(url, params, HTTP_HOST=self.host)
         request.LANGUAGE_CODE = lang
         request.user = AnonymousUser()
-        response = view(request, **kwargs)
+        try:
+            response = view(request, **kwargs)
+        except Exception as e:
+            self.successfull = False
+            if self.verbosity == '2':
+                self.stdout.write(u"\x1b[3D\x1b[31mfailed ({})\x1b[0m".format(e))
+            return
         if hasattr(response, 'render'):
             response.render()
         if response.status_code != 200:
-            self.stdout.write(u"\x1b[3D\x1b[31;1mfailed (HTTP {code})\x1b[0m".format(code=response.status_code))
+            self.successfull = False
+            if self.verbosity == '2':
+                self.stdout.write(u"\x1b[3D\x1b[31;1mfailed (HTTP {code})\x1b[0m".format(code=response.status_code))
             return
         f = open(fullname, 'w')
         f.write(response.content)
@@ -174,13 +186,20 @@ class Command(BaseCommand):
         if self.verbosity == '2':
             self.stdout.write(u"\x1b[3D\x1b[32mgenerated\x1b[0m")
 
-    def sync_geojson(self, lang, viewset, name, zipfile=None):
-        view = viewset.as_view({'get': 'list'})
-        name = os.path.join('api', lang, '{name}.geojson'.format(name=name))
-        params = {'format': 'geojson'}
+    def sync_json(self, lang, viewset, name, zipfile=None, params={}, as_view_args=[], **kwargs):
+        view = viewset.as_view(*as_view_args)
+        name = os.path.join('api', lang, '{name}.json'.format(name=name))
         if self.source:
             params['source'] = ','.join(self.source)
-        self.sync_view(lang, view, name, params=params, zipfile=zipfile)
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile, **kwargs)
+
+    def sync_geojson(self, lang, viewset, name, zipfile=None, params={}, **kwargs):
+        view = viewset.as_view({'get': 'list'})
+        name = os.path.join('api', lang, name)
+        params.update({'format': 'geojson'})
+        if self.source:
+            params['source'] = ','.join(self.source)
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile, **kwargs)
 
     def sync_trek_pois(self, lang, trek, zipfile=None):
         params = {'format': 'geojson'}
@@ -205,13 +224,10 @@ class Command(BaseCommand):
         name = os.path.join('api', lang, '{modelname}s'.format(modelname=modelname), str(obj.pk), basename_fmt.format(obj=obj))
         self.sync_view(lang, view, name, zipfile=zipfile, pk=obj.pk, **kwargs)
 
-    def sync_pdf(self, lang, obj):
+    def sync_trek_pdf(self, lang, obj):
         if self.skip_pdf:
             return
-        if mapentity_settings['MAPENTITY_WEASYPRINT']:
-            view = DocumentPublic.as_view(model=type(obj))
-        else:
-            view = DocumentPublicPDF.as_view(model=type(obj))
+        view = TrekDocumentPublic.as_view(model=type(obj))
         self.sync_object_view(lang, obj, view, '{obj.slug}.pdf')
 
     def sync_profile_json(self, lang, obj, zipfile=None):
@@ -221,7 +237,7 @@ class Command(BaseCommand):
     def sync_profile_png(self, lang, obj, zipfile=None):
         view = serve_elevation_chart
         model_name = type(obj)._meta.model_name
-        self.sync_object_view(lang, obj, view, 'profile.png', zipfile=zipfile, model_name=model_name)
+        self.sync_object_view(lang, obj, view, 'profile.png', zipfile=zipfile, model_name=model_name, from_command=True)
 
     def sync_dem(self, lang, obj):
         if self.skip_dem:
@@ -269,11 +285,13 @@ class Command(BaseCommand):
         self.mkdirs(zipfullname)
         self.trek_zipfile = ZipFile(zipfullname, 'w')
 
+        self.sync_json(lang, ParametersView, 'parameters', zipfile=self.zipfile)
+        self.sync_json(lang, ThemeViewSet, 'themes', as_view_args=[{'get': 'list'}], zipfile=self.zipfile)
         self.sync_trek_pois(lang, trek, zipfile=self.zipfile)
         self.sync_trek_services(lang, trek, zipfile=self.zipfile)
         self.sync_gpx(lang, trek)
         self.sync_kml(lang, trek)
-        self.sync_pdf(lang, trek)
+        self.sync_trek_pdf(lang, trek)
         self.sync_profile_json(lang, trek)
         if not self.skip_profile_png:
             self.sync_profile_png(lang, trek, zipfile=self.zipfile)
@@ -325,13 +343,16 @@ class Command(BaseCommand):
         self.mkdirs(zipfullname)
         self.zipfile = ZipFile(zipfullname, 'w')
 
-        self.sync_geojson(lang, TrekViewSet, 'treks', zipfile=self.zipfile)
-        self.sync_geojson(lang, POIViewSet, 'pois')
-        self.sync_geojson(lang, FlatPageViewSet, 'flatpages', zipfile=self.zipfile)
-        self.sync_geojson(lang, ServiceViewSet, 'services', zipfile=self.zipfile)
-        self.sync_view(lang, FeedbackCategoryList.as_view(), os.path.join('api', lang, 'feedback', 'categories.json'), zipfile=self.zipfile)
+        self.sync_geojson(lang, TrekViewSet, 'treks.geojson', zipfile=self.zipfile)
+        self.sync_geojson(lang, POIViewSet, 'pois.geojson')
+        self.sync_geojson(lang, FlatPageViewSet, 'flatpages.geojson', zipfile=self.zipfile)
+        self.sync_geojson(lang, ServiceViewSet, 'services.geojson', zipfile=self.zipfile)
+        self.sync_view(lang, FeedbackCategoryList.as_view(),
+                       os.path.join('api', lang, 'feedback', 'categories.json'),
+                       zipfile=self.zipfile)
         self.sync_static_file(lang, 'trekking/trek.svg')
         self.sync_pictograms(lang, common_models.Theme, zipfile=self.zipfile)
+        self.sync_pictograms(lang, common_models.RecordSource, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.TrekNetwork, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.Practice, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.Accessibility, zipfile=self.zipfile)
@@ -345,6 +366,7 @@ class Command(BaseCommand):
 
         treks = trekking_models.Trek.objects.existing().order_by('pk')
         treks = treks.filter(Q(**{'published_{lang}'.format(lang=lang): True}) | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True}))
+
         if self.source:
             treks = treks.filter(source__name__in=self.source)
 
@@ -357,41 +379,116 @@ class Command(BaseCommand):
         self.close_zip(self.zipfile, zipname)
 
     def sync_tiles(self):
-        if self.skip_tiles:
-            return
-        self.sync_global_tiles()
-        for trek in trekking_models.Trek.objects.existing().order_by('pk'):
-            if trek.any_published:
-                self.sync_trek_tiles(trek)
+        if not self.skip_tiles:
+
+            if self.celery_task:
+                self.celery_task.update_state(
+                    state='PROGRESS',
+                    meta={
+                        'name': self.celery_task.name,
+                        'current': 10,
+                        'total': 100,
+                        'infos': u"{}".format(_(u"Global tiles syncing ..."))
+                    }
+                )
+
+            self.sync_global_tiles()
+
+            if self.celery_task:
+                self.celery_task.update_state(
+                    state='PROGRESS',
+                    meta={
+                        'name': self.celery_task.name,
+                        'current': 20,
+                        'total': 100,
+                        'infos': u"{}".format(_(u"Trek tiles syncing ..."))
+                    }
+                )
+
+            treks = trekking_models.Trek.objects.existing().order_by('pk')
+            if self.source:
+                treks = treks.filter(source__name__in=self.source)
+
+            for trek in treks:
+                if trek.any_published or any([parent.any_published for parent in trek.parents]):
+                    self.sync_trek_tiles(trek)
+
+            if self.celery_task:
+                self.celery_task.update_state(
+                    state='PROGRESS',
+                    meta={
+                        'name': self.celery_task.name,
+                        'current': 30,
+                        'total': 100,
+                        'infos': u"{}".format(_(u"Tiles synced ..."))
+                    }
+                )
 
     def sync(self):
         self.sync_tiles()
 
-        for lang in settings.MODELTRANSLATION_LANGUAGES:
+        step_value = int(50 / len(settings.MODELTRANSLATION_LANGUAGES))
+        current_value = 30
+
+        for lang in self.languages:
+            if self.celery_task:
+                self.celery_task.update_state(
+                    state='PROGRESS',
+                    meta={
+                        'name': self.celery_task.name,
+                        'current': current_value + step_value,
+                        'total': 100,
+                        'infos': u"{} : {} ...".format(_(u"Language"), lang)
+                    }
+                )
+                current_value = current_value + step_value
+
             translation.activate(lang)
             self.sync_trekking(lang)
+            translation.deactivate()
+
+    def check_dst_root_is_empty(self):
+        if not os.path.exists(self.dst_root):
+            return
+        existing = set([os.path.basename(p) for p in os.listdir(self.dst_root)])
+        remaining = existing - set(('api', 'media', 'static', 'zip'))
+        if remaining:
+            raise CommandError(u"Destination directory contains extra data")
+
+    def rename_root(self):
+        if os.path.exists(self.dst_root):
+            tmp_root2 = os.path.join(os.path.dirname(self.dst_root), 'deprecated_sync_rando')
+            os.rename(self.dst_root, tmp_root2)
+            os.rename(self.tmp_root, self.dst_root)
+            shutil.rmtree(tmp_root2)
+        else:
+            os.rename(self.tmp_root, self.dst_root)
 
     def handle(self, *args, **options):
+        self.successfull = True
         self.verbosity = options.get('verbosity', '1')
         if len(args) < 1:
             raise CommandError(u"Missing parameter destination directory")
         self.dst_root = args[0].rstrip('/')
-        if os.path.exists(self.dst_root):
-            existing = set([os.path.basename(p) for p in os.listdir(self.dst_root)])
-            remaining = existing - set(('api', 'media', 'static', 'zip'))
-            if remaining:
-                raise CommandError(u"Destination directory contains extra data")
+        self.check_dst_root_is_empty()
         if(options['url'][:7] != 'http://'):
             raise CommandError('url parameter should start with http://')
         self.referer = options['url']
         self.host = self.referer[7:]
         self.factory = RequestFactory()
-        self.tmp_root = tempfile.mkdtemp('_sync_rando', dir=os.path.dirname(self.dst_root))
+        self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_rando')
+        os.mkdir(self.tmp_root)
         self.skip_pdf = options['skip_pdf']
         self.skip_tiles = options['skip_tiles']
         self.skip_dem = options['skip_dem']
         self.skip_profile_png = options['skip_profile_png']
         self.source = options['source']
+        if options['languages']:
+            self.languages = options['languages'].split(',')
+        else:
+            self.languages = settings.MODELTRANSLATION_LANGUAGES
+        self.celery_task = options.get('task', None)
+
         if self.source is not None:
             self.source = self.source.split(',')
         self.builder_args = {
@@ -403,17 +500,27 @@ class Command(BaseCommand):
 
         try:
             self.sync()
+            if self.celery_task:
+                self.celery_task.update_state(
+                    state='PROGRESS',
+                    meta={
+                        'name': self.celery_task.name,
+                        'current': 100,
+                        'total': 100,
+                        'infos': u"{}".format(_(u"Sync ended"))
+                    }
+                )
         except:
             shutil.rmtree(self.tmp_root)
             raise
 
-        if os.path.exists(self.dst_root):
-            tmp_root2 = tempfile.mkdtemp('_sync_rando', dir=os.path.dirname(self.dst_root))
-            os.rename(self.dst_root, os.path.join(tmp_root2, 'to_delete'))
-            os.rename(self.tmp_root, self.dst_root)
-            shutil.rmtree(tmp_root2)
-        else:
-            os.rename(self.tmp_root, self.dst_root)
+        self.rename_root()
 
         if self.verbosity >= '1':
             self.stdout.write('Done')
+
+        if not self.successfull:
+            self.stdout.write('Some errors raised during synchronization.')
+            sys.exit(1)
+
+        sleep(2)  # end sleep to ensure sync page get result

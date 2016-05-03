@@ -98,22 +98,10 @@ files will be opened in the browser :
     MAPENTITY_CONFIG['SERVE_MEDIA_AS_ATTACHMENT'] = False
 
 
-Using Google Maps projection in the Web interface
--------------------------------------------------
+Using IGN Geoportail WMTS tiles
+-------------------------------
 
-Your data will still be stored using the SRID you specified in the ``settings.ini``
-file, but the maps in the Web interface will be using the Google Mercator projection (EPSG:3857).
-
-It allows you to use *IGN Geoportail* WMTS or *OpenStreetMap* tiles for example
-
-Start by adding this line in your custom Django setting file :
-
-.. code-block :: python
-
-    LEAFLET_CONFIG['SRID'] = 3857
-
-
-And specify the tiles URLs this way :
+Specify the tiles URLs this way in your custom Django setting file:
 
 .. code-block :: python
 
@@ -160,7 +148,7 @@ All layers colors can be customized from the settings.
 See `Leaflet reference <http://leafletjs.com/reference.html#path>`_ for vectorial
 layer style.
 
-* To apply these style changes, re-run ``bin/supervisorctl restart all``.
+* To apply these style changes, re-run ``sudo supervisorctl restart all``.
 
 .. code-block :: python
 
@@ -351,29 +339,6 @@ the one you installed as standalone) :
 
     MAPENTITY_CONFIG['CONVERSION_SERVER'] = 'http://SERVER:6543'
     MAPENTITY_CONFIG['CAPTURE_SERVER'] = 'http://SERVER:8001'
-
-
-Tilecache
-~~~~~~~~~
-
-Only if you use a WMS server, you will have to share the Tilecache tile server.
-
-In ``custom.py``, point the tiles URL towards the shared  :
-
-.. code-block :: python
-
-    LEAFLET_CONFIG['TILES'] = [
-        ('Scan', 'http://SERVER/tiles/scan/{z}/{x}/{y}.png', '&copy; Attributions'),
-        ('Ortho', 'http://SERVER/tiles/ortho/{z}/{x}/{y}.png', '&copy; Attributions'),
-    ]
-
-:notes:
-
-    This is a short tip, it will only work if the spatial extent and projection srid
-    is the same on all instances.
-
-    Otherwise configure Tilecache manually, or simply use external tile services
-    such as *IGN Geoportail WMTS*.
 
 
 Shutdown useless services

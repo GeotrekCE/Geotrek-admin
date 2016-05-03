@@ -26,6 +26,7 @@ from mapentity import app_settings
 from mapentity.tests import MapEntityLiveTest
 from mapentity.factories import SuperUserFactory
 
+from geotrek.authent.models import default_structure
 from geotrek.common.factories import AttachmentFactory, ThemeFactory, RecordSourceFactory
 from geotrek.common.tests import CommonTest, TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
@@ -62,13 +63,15 @@ class POIViewsTest(CommonTest):
             'description_fr': 'ici',
             'description_en': 'here',
             'type': POITypeFactory.create().pk,
-            'topology': '{"lat": 5.1, "lng": 6.6}'
+            'topology': '{"lat": 5.1, "lng": 6.6}',
+            'structure': default_structure().pk
         }
 
     def test_empty_topology(self):
         self.login()
         data = self.get_good_data()
         data['topology'] = ''
+
         response = self.client.post(self.model.get_add_url(), data)
         self.assertEqual(response.status_code, 200)
         form = self.get_form(response)
@@ -251,6 +254,7 @@ class TrekViewsTest(CommonTest):
             'trek_relationship_a-1-has_common_edge': '',
             'trek_relationship_a-1-has_common_departure': '',
             'trek_relationship_a-1-is_circuit_step': 'on',
+            'structure': default_structure().pk
         }
 
     def test_badfield_goodgeom(self):
@@ -441,7 +445,6 @@ class TrekJSONDetailTest(TrekkingManagerTest):
 
         self.trek = TrekFactory.create(
             name='Step 2',
-            #  parent=self.parent,
             no_path=True,
             points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
             parking_location=Point(0, 0, srid=settings.SRID)
@@ -523,7 +526,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.assertEqual(self.result['elevation_area_url'],
                          '/api/en/treks/{pk}/dem.json'.format(pk=self.pk))
         self.assertEqual(self.result['map_image_url'],
-                         '/image/trek-%s.png' % self.pk)
+                         '/image/trek-%s-en.png' % self.pk)
         self.assertEqual(self.result['altimetric_profile'],
                          '/api/en/treks/{pk}/profile.json'.format(pk=self.pk))
         self.assertEqual(self.result['filelist_url'],
@@ -643,6 +646,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                               u'trek': {u'pk': self.trek_b.pk,
                                         u'id': self.trek_b.id,
                                         u'slug': self.trek_b.slug,
+                                        u'category_slug': u'trek',
                                         u'name': self.trek_b.name}})
 
     def test_parking_location_in_wgs84(self):
@@ -691,7 +695,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                               u"label": u"Trek",
                               u"slug": u"trek",
                               u"type1_label": u"Practice",
-                              u"type2_label": u"Accessibilities",
+                              u"type2_label": u"Accessibility",
                               u"pictogram": u"/static/trekking/trek.svg"})
 
     def test_sources(self):
@@ -702,6 +706,9 @@ class TrekJSONDetailTest(TrekkingManagerTest):
 
     def test_children(self):
         self.assertEqual(self.result['children'], [self.child2.pk, self.child1.pk])
+
+    def test_parents(self):
+        self.assertEqual(self.result['parents'], [self.parent.pk])
 
     def test_previous(self):
         self.assertDictEqual(self.result['previous'],
@@ -882,11 +889,12 @@ class TemplateTagsTest(TestCase):
         self.assertEqual(u"4 h", trekking_tags.duration(4))
         self.assertEqual(u"6 h", trekking_tags.duration(6))
         self.assertEqual(u"10 h", trekking_tags.duration(10))
-        self.assertEqual(u"2 days", trekking_tags.duration(11))
+        self.assertEqual(u"1 days", trekking_tags.duration(24))
         self.assertEqual(u"2 days", trekking_tags.duration(32))
         self.assertEqual(u"2 days", trekking_tags.duration(48))
-        self.assertEqual(u"More than 8 days", trekking_tags.duration(24 * 8))
-        self.assertEqual(u"More than 8 days", trekking_tags.duration(24 * 9))
+        self.assertEqual(u"3 days", trekking_tags.duration(49))
+        self.assertEqual(u"8 days", trekking_tags.duration(24 * 8))
+        self.assertEqual(u"9 days", trekking_tags.duration(24 * 9))
 
 
 class TrekViewsSameStructureTests(AuthentFixturesTest):
@@ -1085,7 +1093,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '</pois>'.format(**attrs))
 
 
-class TrekWorkflowTest(TestCase):
+class TrekWorkflowTest(TranslationResetMixin, TestCase):
     def setUp(self):
         call_command('update_permissions')
         self.trek = TrekFactory.create(published=False)
@@ -1116,12 +1124,20 @@ class SyncRandoViewTest(TestCase):
         self.user = User.objects.create_user('bart', password='mahaha')
 
     def test_return_redirect(self):
-        response = self.client.get(reverse('trekking:sync_randos'))
+        response = self.client.get(reverse('trekking:sync_randos_view'))
         self.assertEqual(response.status_code, 302)
 
     def test_return_redirect_superuser(self):
         self.user.is_superuser = True
-        response = self.client.get(reverse('trekking:sync_randos'))
+        response = self.client.get(reverse('trekking:sync_randos_view'))
+        self.assertEqual(response.status_code, 302)
+
+    def test_post_sync_redirect(self):
+        """
+        test if sync can be launched by superuser post
+        """
+        self.user.is_superuser = True
+        response = self.client.post(reverse('trekking:sync_randos'))
         self.assertEqual(response.status_code, 302)
 
 
@@ -1134,7 +1150,8 @@ class ServiceViewsTest(CommonTest):
         PathFactory.create()
         return {
             'type': ServiceTypeFactory.create().pk,
-            'topology': '{"lat": 5.1, "lng": 6.6}'
+            'topology': '{"lat": 5.1, "lng": 6.6}',
+            'structure': default_structure().pk
         }
 
     def test_empty_topology(self):

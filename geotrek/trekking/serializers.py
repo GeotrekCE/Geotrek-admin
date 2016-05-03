@@ -111,10 +111,18 @@ class CloseTrekSerializer(TranslatedModelSerializer):
 class RelatedTrekSerializer(TranslatedModelSerializer):
     pk = rest_serializers.Field(source='id')
     slug = rest_serializers.Field(source='slug')
+    category_slug = rest_serializers.SerializerMethodField('get_category_slug')
 
     class Meta:
         model = trekking_models.Trek
-        fields = ('id', 'pk', 'slug', 'name')
+        fields = ('id', 'pk', 'slug', 'name', 'category_slug')
+
+    def get_category_slug(self, obj):
+        if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and obj.practice:
+            return obj.practice.slug
+        else:
+            # Translators: This is a slug (without space, accent or special char)
+            return _('trek')
 
 
 class TrekRelationshipSerializer(rest_serializers.ModelSerializer):
@@ -155,6 +163,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     treks = CloseTrekSerializer(many=True, source='published_treks')
     source = RecordSourceSerializer()
     children = rest_serializers.Field(source='children_id')
+    parents = rest_serializers.Field(source='parents_id')
     previous = rest_serializers.Field(source='previous_id')
     next = rest_serializers.Field(source='next_id')
 
@@ -170,6 +179,9 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     type1 = TypeSerializer(source='usages', many=True)
     type2 = TypeSerializer(source='accessibilities', many=True)
     category = rest_serializers.SerializerMethodField('get_category')
+
+    # Method called to retrieve relevant pictures based on settings
+    pictures = rest_serializers.SerializerMethodField('get_pictures')
 
     def __init__(self, instance=None, *args, **kwargs):
         # duplicate each trek for each one of its accessibilities
@@ -208,11 +220,19 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                   'web_links', 'is_park_centered', 'disabled_infrastructure',
                   'parking_location', 'relationships', 'points_reference',
                   'gpx', 'kml', 'source', 'type1', 'type2', 'category', 'structure',
-                  'treks', 'children', 'previous', 'next') + \
+                  'treks', 'children', 'parents', 'previous', 'next') + \
             AltimetrySerializerMixin.Meta.fields + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
+
+    def get_pictures(self, obj):
+        pictures_list = []
+        pictures_list.extend(obj.serializable_pictures)
+        if settings.TREK_WITH_POIS_PICTURES:
+            for poi in obj.published_pois:
+                pictures_list.extend(poi.serializable_pictures)
+        return pictures_list
 
     def get_parking_location(self, obj):
         if not obj.parking_location:
@@ -256,7 +276,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                 'slug': _('trek'),
             }
         if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
-            data['order'] = obj.practice and obj.practice.id
+            data['order'] = obj.practice and obj.practice.order
         else:
             data['order'] = settings.TREK_CATEGORY_ORDER
         if not settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:

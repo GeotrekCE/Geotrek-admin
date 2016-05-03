@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
 	{% load i18n mapentity_tags staticfiles %}
 
 	<head>
@@ -13,7 +15,7 @@
 
 		{% block footer %}
 			<div id="footer">
-				<div class="text">{{ object.name }} - {{ object.districts_display }}{% if object.districts_display and object.city_departure %} - {% endif %}{{ object.city_departure }}</div>
+				<div class="text">{{ object.name }} - {{ object.districts_display }}{% if object.districts_display and object.city_departure %} - {% endif %}{{ object.city_departure }}</div>
 			</div>
 		{% endblock footer %}
 
@@ -90,7 +92,7 @@
 
 			{% if object.ambiance %}
 				<section class="ambiance text-content">
-					{{ object.ambiance }}
+					{{ object.ambiance|safe }}
 				</section>
 			{% endif %}
 
@@ -98,7 +100,7 @@
 
 			{% if object.description_teaser %}
 				<section class="teaser text-content">
-					{{ object.description_teaser }}
+					{{ object.description_teaser|safe }}
 				</section>
 			{% endif %}
 		</header>
@@ -111,12 +113,39 @@
 		{% endif %}
 
 
+		{% block stages %}
+			{% if object.children %}
+				<section class="stages">
+					<h2>{% trans "Stages" %}</h2>
+					<ol>
+						{% for child in object.children %}
+							<li>{{ child.name }}</li>
+						{% endfor %}
+					</ol>
+				</section>
+			{% endif %}
+		{% endblock stages %}
+
+
+		{% block itinerancy %}
+			{% if object.parents %}
+				<section class="itinerancy">
+					<h2>{% trans "Itinerancy" %}</h2>
+					<ul>
+						{% for parent in object.parents %}
+							<li>{{ parent.name }}</li>
+						{% endfor %}
+					</ul>
+				</section>
+			{% endif %}
+		{% endblock itinerancy %}
+
 
 		{% block description %}
 			{% if object.description %}
 				<section class="description">
 					<h2>{% trans "Trek" %}</h2>
-					<div class="text-content">{{ object.description }}</div>
+					<div class="text-content">{{ object.description|safe }}</div>
 				</section>
 			{% endif %}
 		{% endblock description %}
@@ -127,7 +156,7 @@
 			{% if object.advice %}
 				<section class="advice">
 					<h2>{% trans "Advice" %}</h2>
-					<div class="text-content">{{ object.advice }}</div>
+					<div class="text-content">{{ object.advice|safe }}</div>
 				</section>
 			{% endif %}
 		{% endblock advice %}
@@ -163,6 +192,31 @@
 		{% endblock Picture %}
 
 
+		{% block touristicContents %}
+			<section class="pois-summary">
+				{% if object.published_touristic_contents.all %}
+					<h2>{% trans "On the way..." %}</h2>
+					{% for ct in object.published_touristic_contents.all %}
+						<div class="poi">
+							{% if ct.thumbnail %}
+								<div class="thumbnail"><img src="{{ MEDIA_URL|add:ct.thumbnail.name }}"></div>
+							{% endif %}
+              <h3>{% if ct.category.pictogram %}<span class="icon"><img src="{{ MEDIA_URL|add:ct.category.pictogram.name }}"></span>{% endif %}{{ ct.name }}</h3>
+							<div class="description">
+                  {{ ct.description_teaser|safe }}
+                  {% if ct.contact %}{% if ct.description_teaser %}<br>{% endif %}{{ ct.contact|safe }}{% endif %}
+							    {% if ct.email %}<br><a href="mailto:{{ ct.email }}">{{ ct.email }}</a>{% endif %}
+							    {% if ct.website %}<br><a href="{{ ct.website }}">{{ ct.website }}</a>{% endif %}
+							</div>
+							{% if ct.thumbnail and ct.picture.0.author %}
+								<legend>{% trans "Attribution" %} : {{ ct.picture.0.author }}</legend>
+							{% endif %}
+						</div>
+					{% endfor %}
+				{% endif %}
+			</section>
+		{% endblock touristicContents %}
+
 
 		{% block poisSummary %}
 			<section class="pois-summary">
@@ -170,9 +224,11 @@
 					<h2>{% trans "On the way..." %}</h2>
 					{% for poi in pois %}
 						<div class="poi">
-							<div class="thumbnail"><img src="{{ MEDIA_URL|add:poi.thumbnail.name }}"></div>
-							<h3><span class="icon"><img src="{{ MEDIA_URL|add:poi.type.pictogram.name }}"></span>{{ poi.name }} {{ enumeration.poi.pk }}</h3>
-							<div class="description">{{ poi.description }}</div>
+							{% if poi.thumbnail %}
+								<div class="thumbnail"><img src="{{ MEDIA_URL|add:poi.thumbnail.name }}"></div>
+							{% endif %}
+              <h3>{% if poi.type.pictogram %}<span class="icon"><img src="{{ MEDIA_URL|add:poi.type.pictogram.name }}"></span>{% endif %}{{ poi.name }} {{ poi.letter }}</h3>
+							<div class="description">{{ poi.description|safe }}</div>
 							{% if poi.thumbnail and poi.picture.0.author %}
 								<legend>{% trans "Attribution" %} : {{ poi.picture.0.author }}</legend>
 							{% endif %}
@@ -188,7 +244,7 @@
 			{% if object.disabled_infrastructure %}
 				<section class="disabled-infrastructure">
 					<h2>{% trans "Disabled Infrastructure" %}</h2>
-					<div class="text-content">{{ object.disabled_infrastructure }}</div>
+					<div class="text-content">{{ object.disabled_infrastructure|safe }}</div>
 				</section>
 			{% endif %}
 		{% endblock disabledInfrastructure %}
@@ -199,7 +255,7 @@
 			{% if object.access %}
 				<section class="access">
 					<h2>{% trans "Access" %}</h2>
-					<div class="text-content">{{ object.access }}</div>
+					<div class="text-content">{{ object.access|safe }}</div>
 				</section>
 			{% endif %}
 		{% endblock access %}
@@ -229,22 +285,22 @@
 
 
 		{% block informationDesks %}
-			{% if  object.information_desks.all.count > 0 %}
+			{% if  object.information_desks.all > 0 %}
 				<section class="information-desks">
 					<h2>{% trans "Information desks" %}</h2>
 					<div class="text-content intro">
 						{% trans "To check the practicability of the hiking paths and to know more about the National park, please visit us or call us at" %}
 					</div>
 					<ul class="desks">
-						{% for desk in information_desks %}
+						{% for desk in object.information_desks.all %}
 							<li class="desk">
 								<div class="desk-name">{{ desk.name }}</div>
 								<div class="content">
 									<div class="desk-description text-content">{{ desk.description_strip }}</div>
-									<picture class="desk-picture"><img src="{{ MEDIA_URL|add:desk.photo.name }}"></picture>
+									{% if deks.photo %}<picture class="desk-picture"><img src="{{ MEDIA_URL|add:desk.photo.name }}"></picture>{% endif %}
 									{% if desk.phone %}<div class="desk-tel">Tel : {{ desk.phone }}</div>{% endif %}
-									{% if desk.website %}<div class="desk-website"><a href="{{ desk.website }}"></a></div>{% endif %}
-									{% if desk.email %}<div class="desk-email"><a href="{{ desk.email }}"></a></div>{% endif %}
+									{% if desk.website %}<div class="desk-website"><a href="{{ desk.website }}">{{ desk.website }}</a></div>{% endif %}
+									{% if desk.email %}<div class="desk-email"><a href="mailto:{{ desk.email }}">{{ desk.email }}</a></div>{% endif %}
 									{% if desk.street %}<div class="desk-address">{{ desk.street }}, {{ desk.postal_code }} {{ desk.municipality }}</div>{% endif %}
 									{% if desk.geom %}<div class="desk-coords">Lat : {{ desk.lattitude }} Long : {{ desk.longitude }}</div>{% endif %}
 								</div>

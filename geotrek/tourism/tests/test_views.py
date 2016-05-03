@@ -3,11 +3,14 @@ import os
 import json
 
 import mock
+
+from datetime import datetime
 from requests.exceptions import ConnectionError
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.test.utils import override_settings
+from django.test import TestCase
 from django.utils import translation
 
 from geotrek.authent.factories import StructureFactory, UserProfileFactory
@@ -22,10 +25,12 @@ from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.tourism.models import DATA_SOURCE_TYPES
 from geotrek.tourism.factories import (DataSourceFactory,
+                                       InformationDeskFactory,
                                        TouristicContentFactory,
                                        TouristicEventFactory,
                                        TouristicContentCategoryFactory,
                                        TouristicContentTypeFactory)
+from embed_video.backends import detect_backend
 
 
 class TourismAdminViewsTests(TrekkingManagerTest):
@@ -347,7 +352,9 @@ class BasicJSONAPITest(TranslationResetMixin):
         self.document = common_factories.AttachmentFactory(obj=self.content,
                                                            attachment_file=get_dummy_uploaded_document())
         self.video = common_factories.AttachmentFactory(obj=self.content, attachment_file='',
-                                                        attachment_video='https://www.youtube.com/watch?v=Jm3anSjly0Y')
+                                                        attachment_video='http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque')
+        self.video_detected = detect_backend(self.video.attachment_video)
+
         self.theme = common_factories.ThemeFactory()
         self.content.themes.add(self.theme)
         self.source = common_factories.RecordSourceFactory()
@@ -384,10 +391,11 @@ class BasicJSONAPITest(TranslationResetMixin):
     def test_videos(self):
         self.assertDictEqual(self.result['videos'][0],
                              {u'backend': 'Youtube',
-                              u'url': 'https://www.youtube.com/watch?v=Jm3anSjly0Y',
+                              u'url': 'http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque',
                               u'title': self.video.title,
                               u'legend': self.video.legend,
-                              u'author': self.video.author})
+                              u'author': self.video.author,
+                              u'code': self.video_detected.code})
 
     def test_cities(self):
         self.assertDictEqual(self.result['cities'][0],
@@ -509,7 +517,7 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
         self.assertDictEqual(self.result['category'],
                              {u"id": 'E',
                               u"order": None,
-                              u"label": u"Touristic event",
+                              u"label": u"Touristic events",
                               u"slug": u"touristic-event",
                               u"type1_label": u"Type",
                               u"pictogram": u"/static/tourism/touristicevent.svg"})
@@ -623,3 +631,54 @@ class TouristicEventCustomViewTests(TrekkingManagerTest):
         url = '/api/en/touristicevents/{pk}/slug.pdf'.format(pk=content.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
+
+
+class TouristicEventViewSetTest(TestCase):
+    def test_touristic_events_without_enddate_filter(self):
+        TouristicEventFactory.create_batch(10, published=True)
+        response = self.client.get('/api/en/touristicevents.geojson')
+        geojson = json.loads(response.content)
+        self.assertEqual(len(geojson['features']), 10)
+
+    def test_touristic_events_with_enddate_filter(self):
+        """
+        Relative date: 2020-01-01
+        5 events with no end date
+        5 events with end date after relative date
+        7 events with end date before relative date
+                 ->  only events with no end or end in after relative date must be included
+        """
+
+        TouristicEventFactory.create_batch(5, end_date=None, published=True)
+        TouristicEventFactory.create_batch(5, end_date=datetime.strptime('2020-05-10', '%Y-%m-%d'), published=True)
+        TouristicEventFactory.create_batch(7, end_date=datetime.strptime('2010-05-10', '%Y-%m-%d'), published=True)
+        response = self.client.get('/api/en/touristicevents.geojson', data={'ends_after': '2020-01-01'})
+        geojson = json.loads(response.content)
+
+        self.assertEqual(len(geojson['features']), 10)
+
+
+class TouristicContentCategoryViewSetTest(TestCase):
+    def test_get_categories(self):
+        """
+        Test category json serialization via api
+        """
+        nb_elements = 10
+        TouristicContentCategoryFactory.create_batch(nb_elements)
+        response = self.client.get(reverse('tourism:touristic_categories_json', kwargs={'lang': 'en'}))
+        json_response = json.loads(response.content)
+        self.assertEqual(len(json_response), nb_elements)
+
+
+class InformationDeskAPITest(TestCase):
+    def test_json(self):
+        InformationDeskFactory.create()
+        desk2 = InformationDeskFactory.create()
+        response = self.client.get('/api/en/information_desks-{}.geojson'.format(desk2.type.id))
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.content)
+        self.assertIn('features', result)
+        self.assertEqual(len(result['features']), 1)
+        self.assertEqual(result['features'][0]['type'], 'Feature')
+        self.assertEqual(result['features'][0]['geometry']['type'], 'Point')
+        self.assertEqual(result['features'][0]['properties']['name'], desk2.name)

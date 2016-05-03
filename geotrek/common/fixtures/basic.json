@@ -87,7 +87,7 @@
         "pk": 1,
         "model": "common.theme",
         "fields": {
-            "pictogram": "upload/theme-fauna@2x.png",
+            "pictogram": "upload/theme-fauna.png",
             "label": "Fauna",
             "label_en": "Fauna",
             "label_fr": "Faune",
@@ -98,7 +98,7 @@
         "pk": 2,
         "model": "common.theme",
         "fields": {
-            "pictogram": "upload/theme-flora@2x.png",
+            "pictogram": "upload/theme-flora.png",
             "label": "Flora",
             "label_en": "Flora",
             "label_fr": "Flore",
@@ -109,7 +109,7 @@
         "pk": 4,
         "model": "common.theme",
         "fields": {
-            "pictogram": "upload/theme-panorama@2x.png",
+            "pictogram": "upload/theme-panorama.png",
             "label": "Point de vue",
             "label_fr": "Point de vue",
             "cirkwi": null
@@ -119,7 +119,7 @@
         "pk": 5,
         "model": "common.theme",
         "fields": {
-            "pictogram": "upload/theme-architecture@2x.png",
+            "pictogram": "upload/theme-architecture.png",
             "label": "Architecture",
             "label_fr": "Architecture",
             "cirkwi": null
@@ -129,7 +129,7 @@
         "pk": 6,
         "model": "common.theme",
         "fields": {
-            "pictogram": "upload/theme-pastoral@2x.png",
+            "pictogram": "upload/theme-pastoral.png",
             "label": "Pastoralisme",
             "label_en": "Pastoralism",
             "label_fr": "Pastoralisme",
@@ -140,7 +140,7 @@
         "pk": 7,
         "model": "common.theme",
         "fields": {
-            "pictogram": "upload/theme-geology@2x.png",
+            "pictogram": "upload/theme-geology.png",
             "label": "G\u00e9ologie",
             "label_fr": "G\u00e9ologie",
             "cirkwi": null
@@ -150,7 +150,7 @@
         "pk": 8,
         "model": "common.theme",
         "fields": {
-            "pictogram": "upload/theme-lake@2x.png",
+            "pictogram": "upload/theme-lake.png",
             "label": "Lac et glacier",
             "label_fr": "Lac et glacier",
             "cirkwi": null
@@ -160,7 +160,7 @@
         "pk": 9,
         "model": "common.theme",
         "fields": {
-            "pictogram": "upload/theme-peak@2x.png",
+            "pictogram": "upload/theme-peak.png",
             "label": "Sommet",
             "label_fr": "Sommet",
             "cirkwi": null
@@ -170,7 +170,7 @@
         "pk": 10,
         "model": "common.theme",
         "fields": {
-            "pictogram": "upload/theme-refugee@2x.png",
+            "pictogram": "upload/theme-refugee.png",
             "label": "Refuge",
             "label_fr": "Refuge",
             "cirkwi": null
@@ -180,7 +180,7 @@
         "pk": 11,
         "model": "common.theme",
         "fields": {
-            "pictogram": "upload/theme-history@2x.png",
+            "pictogram": "upload/theme-history.png",
             "label": "Arch\u00e9ologie et histoire",
             "label_fr": "Arch\u00e9ologie et histoire",
             "cirkwi": 39

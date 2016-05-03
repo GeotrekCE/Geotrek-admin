@@ -2,12 +2,34 @@ from __future__ import absolute_import
 
 import importlib
 import sys
-from celery import shared_task, current_task
+from celery import Task, shared_task, current_task
 from django.utils.translation import ugettext as _
 
 
-@shared_task(name='geotrek.common.import-file')
-def import_datas(filename, class_name, module_name="bulkimport.parsers"):
+class GeotrekImportTask(Task):
+    '''
+    Task destined to define a on_failure callback
+    This callback is called upon exception if need be by celery.
+     It trigger the final update state and sets the relevant informations
+     to be displayed on the web interface.
+    '''
+    def on_failure(self, exc, task_id, args, kwargs, einfo):
+        filename, class_name, module_name = args
+        self.update_state(
+            task_id,
+            'FAILURE',
+            {
+                'exc_type': type(exc).__name__,
+                'exc_message': unicode(exc),
+                'filename': filename.split('/').pop(-1),
+                'parser': class_name,
+                'name': self.name
+            }
+        )
+
+
+@shared_task(base=GeotrekImportTask, name='geotrek.common.import-file')
+def import_datas(class_name, filename, module_name="bulkimport.parsers"):
     try:
         module = importlib.import_module(module_name)
         Parser = getattr(module, class_name)
@@ -45,7 +67,7 @@ def import_datas(filename, class_name, module_name="bulkimport.parsers"):
     }
 
 
-@shared_task(name='geotrek.common.import-web')
+@shared_task(base=GeotrekImportTask, name='geotrek.common.import-web')
 def import_datas_from_web(class_name, module_name="bulkimport.parsers"):
     try:
         module = importlib.import_module(module_name)

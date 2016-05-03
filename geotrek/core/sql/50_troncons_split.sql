@@ -113,19 +113,23 @@ BEGIN
     newgeom := NEW.geom;
     intersections_on_new := ARRAY[0::float];
 
-    -- Iterate paths intersecting, excluding those touching by extremities
+    -- Iterate paths intersecting, excluding those touching only by extremities
     FOR troncon IN SELECT *
                    FROM l_t_troncon t
                    WHERE id != NEW.id
-                         AND ST_Intersects(geom, NEW.geom)
-                         AND NOT ST_Relate(geom, NEW.geom, 'FF*F*****')
+                         AND ST_DWITHIN(t.geom, NEW.geom, 0)
                          AND GeometryType(ST_Intersection(geom, NEW.geom)) IN ('POINT', 'MULTIPOINT')
     LOOP
 
         RAISE NOTICE '%-% (%) intersects %-% (%) : %', NEW.id, NEW.nom, ST_AsText(NEW.geom), troncon.id, troncon.nom, ST_AsText(troncon.geom), ST_AsText(ST_Intersection(troncon.geom, NEW.geom));
 
         -- Locate intersecting point(s) on NEW, for later use
-        FOR fraction IN SELECT ST_Line_Locate_Point(NEW.geom, (ST_Dump(ST_Intersection(troncon.geom, NEW.geom))).geom)
+        FOR fraction IN SELECT ST_Line_Locate_Point(NEW.geom,
+                                                    (ST_Dump(ST_Intersection(troncon.geom, NEW.geom))).geom)
+                        WHERE NOT ST_EQUALS(ST_STARTPOINT(NEW.geom), ST_STARTPOINT(troncon.geom))
+                          AND NOT ST_EQUALS(ST_STARTPOINT(NEW.geom), ST_ENDPOINT(troncon.geom))
+                          AND NOT ST_EQUALS(ST_ENDPOINT(NEW.geom), ST_STARTPOINT(troncon.geom))
+                          AND NOT ST_EQUALS(ST_ENDPOINT(NEW.geom), ST_ENDPOINT(troncon.geom))
         LOOP
             intersections_on_new := array_append(intersections_on_new, fraction);
         END LOOP;

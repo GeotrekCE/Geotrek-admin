@@ -90,7 +90,8 @@ MAPENTITY_CONFIG['CONVERSION_SERVER'] = '%s://%s:%s' % (envini.get('protocol', s
 MAPENTITY_CONFIG['CAPTURE_SERVER'] = '%s://%s:%s' % (envini.get('protocol', section='screamshotter', default='http'),
                                                      envini.get('host', section='screamshotter', default='127.0.0.1'),
                                                      envini.get('port', section='screamshotter', default='8001'))
-TEMPLATE_DIRS = (os.path.join(DEPLOY_ROOT, 'lib', 'parts', 'omelette',
+TEMPLATE_DIRS = (os.path.join(DEPLOY_ROOT, 'geotrek', 'templates'),
+                 os.path.join(DEPLOY_ROOT, 'lib', 'parts', 'omelette',
                               'mapentity', 'templates'),
                  os.path.join(MEDIA_ROOT, 'templates')) + TEMPLATE_DIRS
 
@@ -108,11 +109,6 @@ DEFAULT_STRUCTURE_NAME = envini.get('defaultstructure')
 SRID = int(envini.get('srid', SRID))
 SPATIAL_EXTENT = tuple(envini.getfloats('spatial_extent'))
 
-LEAFLET_CONFIG['TILES'] = [
-    (gettext_noop('Scan'), '%s/tiles/scan/{z}/{x}/{y}.png' % ROOT_URL, envini.get('scan_attributions', '')),
-    (gettext_noop('Ortho'), '%s/tiles/ortho/{z}/{x}/{y}.jpg' % ROOT_URL, envini.get('ortho_attributions', '')),
-]
-LEAFLET_CONFIG['SRID'] = SRID
 LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 
 MAP_STYLES['path']['color'] = envini.get('layercolor_paths', MAP_STYLES['path']['color'])

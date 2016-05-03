@@ -33,15 +33,14 @@ SELECT create_schema_if_not_exist('geotrek');
 
 CREATE OR REPLACE FUNCTION geotrek.ft_date_insert() RETURNS trigger AS $$
 BEGIN
-    NEW.date_insert := statement_timestamp() AT TIME ZONE 'UTC';
+    NEW.date_insert := statement_timestamp();
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION geotrek.ft_date_update() RETURNS trigger AS $$
 BEGIN
-    NEW.date_update := statement_timestamp() AT TIME ZONE 'UTC';
+    NEW.date_update := statement_timestamp();
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-

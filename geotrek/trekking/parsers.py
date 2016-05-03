@@ -1,30 +1,13 @@
 # -*- encoding: utf-8 -*-
 
-from django.contrib.gis.geos import Point, MultiLineString
+from django.contrib.gis.geos import Point
 from django.utils.translation import ugettext as _
 
 from geotrek.common.parsers import ShapeParser, AttachmentParserMixin
 from geotrek.trekking.models import Trek
 
 
-class TrekParser(AttachmentParserMixin, ShapeParser):
-    model = Trek
-    simplify_tolerance = 2
-    eid = 'name'
-    constant_fields = {
-        'published': True,
-        'is_park_centered': False,
-        'deleted': False,
-    }
-    natural_keys = {
-        'difficulty': 'difficulty',
-        'route': 'route',
-        'themes': 'label',
-        'practice': 'name',
-        'accessibilities': 'name',
-        'networks': 'network',
-    }
-
+class DurationParserMixin(object):
     def filter_duration(self, src, val):
         val = val.upper().replace(',', '.')
         try:
@@ -44,6 +27,25 @@ class TrekParser(AttachmentParserMixin, ShapeParser):
             self.add_warning(_(u"Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'".format(val=val, src=src)))
             return None
 
+
+class TrekParser(DurationParserMixin, AttachmentParserMixin, ShapeParser):
+    model = Trek
+    simplify_tolerance = 2
+    eid = 'name'
+    constant_fields = {
+        'published': True,
+        'is_park_centered': False,
+        'deleted': False,
+    }
+    natural_keys = {
+        'difficulty': 'difficulty',
+        'route': 'route',
+        'themes': 'label',
+        'practice': 'name',
+        'accessibilities': 'name',
+        'networks': 'network',
+    }
+
     def filter_geom(self, src, val):
         if val is None:
             return None
@@ -54,7 +56,7 @@ class TrekParser(AttachmentParserMixin, ShapeParser):
                 if distance > 5:
                     self.add_warning(_(u"Not contiguous segment {i} ({distance} m) for geometry for field '{src}'").format(i=i + 2, p1=points[-1], p2=path[0], distance=int(distance), src=src))
                 points += path
-            return MultiLineString(points)
+            return points
         elif val.geom_type != 'LineString':
             self.add_warning(_(u"Invalid geometry type for field '{src}'. Should be LineString, not {geom_type}").format(src=src, geom_type=val.geom_type))
             return None

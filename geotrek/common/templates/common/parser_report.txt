@@ -1,7 +1,7 @@
 {% load i18n %}{% blocktrans count n=nb_success %}{{ n }}/{{ nb_lines }} line imported.{% plural %}{{ n }}/{{ nb_lines }} lines imported.{% endblocktrans %}
 {% if nb_created %}{% blocktrans count n=nb_created %}{{ n }} record created.{% plural %}{{ n }} records created.{% endblocktrans %}
 {% endif %}{% if nb_updated %}{% blocktrans count n=nb_updated %}{{ n }} record updated.{% plural %}{{ n }} records updated.{% endblocktrans %}
-{% endif %}{% if nb_deleted %}{% blocktrans count n=nb_deleted %}{{ n }} record deleted.{% plural %}{{ n }} records deleted.{% endblocktrans %}
+{% endif %}{% if not nb_deleted == None %}{% blocktrans count n=nb_deleted %}{{ n }} record deleted.{% plural %}{{ n }} records deleted.{% endblocktrans %}
 {% endif %}{% if nb_unmodified %}{% blocktrans count n=nb_unmodified %}{{ n }} record unmodified.{% plural %}{{ n }} records unmodified.{% endblocktrans %}
 {% endif %}{% if warnings %}{% blocktrans count n=warnings|length %}{{ n }} warning:{% plural %}{{ n }} warnings:{% endblocktrans %}
 {% for id, msgs in warnings.iteritems %}# {{ id }}:

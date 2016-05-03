@@ -59,8 +59,8 @@ Download and extract the new version in a separate folder (**recommended**).
 
 .. code-block:: bash
 
-    wget https://github.com/makinacorpus/Geotrek/archive/vX.Y.Z.zip
-    unzip vX.Y.Z.zip
+    wget https://github.com/makinacorpus/Geotrek/archive/X.Y.Z.zip
+    unzip X.Y.Z.zip
     cd Geotrek-X.Y.Z/
 
 Before upgrading, **READ CAREFULLY** the release notes, either from the ``docs/changelog.rst``
@@ -87,6 +87,8 @@ Copy your old configuration and uploaded files to your new folder.
     # If you have advanced settings
     cp ../previous-version/geotrek/settings/custom.py geotrek/settings/custom.py
 
+    # If you have import parsers
+    cp ../previous-version/bulkimport/parsers.py bulkimport/parsers.py
 
 Deploy the new version :
 
@@ -161,7 +163,8 @@ Restore database on the new server:
     sudo -u postgres psql -c "drop database geotrekdb;"
     sudo -u postgres psql -c "create database geotrekdb owner geotrek;"
     sudo -u postgres pg_restore -d geotrekdb geotrekdb.backup
-    make update deploy
+    make update
+    sudo service geotrek start
 
 
 Tips and Tricks

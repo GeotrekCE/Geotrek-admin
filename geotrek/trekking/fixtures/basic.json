@@ -208,7 +208,7 @@
         "fields": {
             "name_fr": "VTT",
             "name": "Mountain Bike",
-            "pictogram": "upload/practice-mountainbike.png",
+            "pictogram": "upload/practice-mountainbike.svg",
             "cirkwi": 3,
             "name_en": "Mountain Bike"
         }
@@ -219,7 +219,7 @@
         "fields": {
             "name_fr": "V\u00e9lo",
             "name": "Cycling",
-            "pictogram": "upload/practice-bike.png",
+            "pictogram": "upload/practice-bike.svg",
             "cirkwi": 14,
             "name_en": "Cycling"
         }
@@ -230,7 +230,7 @@
         "fields": {
             "name_fr": "Cheval",
             "name": "Horse",
-            "pictogram": "upload/practice-horse.png",
+            "pictogram": "upload/practice-horse.svg",
             "cirkwi": 4,
             "name_en": "Horse"
         }
@@ -240,7 +240,7 @@
         "model": "trekking.practice",
         "fields": {
             "name": "P\u00e9destre",
-            "pictogram": "upload/practice-foot.png",
+            "pictogram": "upload/practice-foot.svg",
             "cirkwi": 1
         }
     },
@@ -305,32 +305,44 @@
         "pk": 1,
         "model": "trekking.difficultylevel",
         "fields": {
-            "pictogram": "upload/difficulty-easy.svg",
+            "pictogram": "upload/difficulty-1.svg",
             "cirkwi_level": 1,
-            "difficulty_en": "Easy",
+            "difficulty_en": "Very easy",
             "cirkwi": 5,
-            "difficulty": "Easy",
-            "difficulty_fr": "Facile"
+            "difficulty": "Very easy",
+            "difficulty_fr": "Très facile"
         }
     },
     {
         "pk": 2,
         "model": "trekking.difficultylevel",
         "fields": {
-            "pictogram": "upload/difficulty-rookie.svg",
-            "cirkwi_level": 3,
-            "difficulty_en": "Rookie",
+            "pictogram": "upload/difficulty-2.svg",
+            "cirkwi_level": 2,
+            "difficulty_en": "Easy",
             "cirkwi": 12,
-            "difficulty": "Rookie",
-            "difficulty_fr": "Confirm\u00e9"
+            "difficulty": "Easy",
+            "difficulty_fr": "Facile"
         }
     },
     {
         "pk": 3,
         "model": "trekking.difficultylevel",
         "fields": {
-            "pictogram": "upload/difficulty-hard.svg",
-            "cirkwi_level": 5,
+            "pictogram": "upload/difficulty-3.svg",
+            "cirkwi_level": 3,
+            "difficulty_en": "Medium",
+            "cirkwi": 12,
+            "difficulty": "Medium",
+            "difficulty_fr": "Intermédiaire"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "trekking.difficultylevel",
+        "fields": {
+            "pictogram": "upload/difficulty-4.svg",
+            "cirkwi_level": 4,
             "difficulty_en": "Hard",
             "cirkwi": 11,
             "difficulty": "Hard",
@@ -338,15 +350,15 @@
         }
     },
     {
-        "pk": 4,
+        "pk": 5,
         "model": "trekking.difficultylevel",
         "fields": {
-            "pictogram": "upload/difficulty-active.svg",
-            "cirkwi_level": 7,
-            "difficulty_en": "Active",
+            "pictogram": "upload/difficulty-5.svg",
+            "cirkwi_level": 5,
+            "difficulty_en": "Very hard",
             "cirkwi": 16,
-            "difficulty": "Active",
-            "difficulty_fr": "Actif"
+            "difficulty": "Very hard",
+            "difficulty_fr": "Très difficile"
         }
     },
     {
@@ -398,40 +410,40 @@
         }
     },
     {
-        "pk": 1, 
-        "model": "trekking.servicetype", 
+        "pk": 1,
+        "model": "trekking.servicetype",
         "fields": {
-            "name_fr": "Eau potable", 
-            "name": "Drinking water", 
-            "review": false, 
+            "name_fr": "Eau potable",
+            "name": "Drinking water",
+            "review": false,
             "pictogram": "upload/drinking_water.svg",
             "practices": [
-                1, 
-                2, 
-                3, 
+                1,
+                2,
+                3,
                 4
-            ], 
-            "published": true, 
-            "publication_date": null, 
+            ],
+            "published": true,
+            "publication_date": null,
             "name_en": "Drinking water"
         }
     },
     {
-        "pk": 2, 
-        "model": "trekking.servicetype", 
+        "pk": 2,
+        "model": "trekking.servicetype",
         "fields": {
-            "name_fr": "Descente pentue", 
-            "name": "Steep descent", 
-            "review": false, 
-            "pictogram": "upload/steep_descent.svg", 
+            "name_fr": "Descente pentue",
+            "name": "Steep descent",
+            "review": false,
+            "pictogram": "upload/steep_descent.svg",
             "practices": [
-                1, 
-                2, 
-                3, 
+                1,
+                2,
+                3,
                 4
-            ], 
-            "published": true, 
-            "publication_date": null, 
+            ],
+            "published": true,
+            "publication_date": null,
             "name_en": "Steep descent"
         }
     }

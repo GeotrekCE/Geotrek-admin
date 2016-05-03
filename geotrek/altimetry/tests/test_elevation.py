@@ -44,6 +44,11 @@ class ElevationTest(TestCase):
         self.assertEqual(profile[5][3], 16.0)
         self.assertEqual(profile[6][3], 23.0)
 
+    def test_elevation_limits(self):
+        limits = self.path.get_elevation_limits()
+        self.assertEqual(limits[0], 1104)
+        self.assertEqual(limits[1], -96)
+
     def test_elevation_topology_line(self):
         topo = TopologyFactory.create(no_path=True)
         topo.add_path(self.path, start=0.2, end=0.8)
@@ -105,6 +110,14 @@ class ElevationProfileTest(TestCase):
         self.assertIn('Generated with pygal', svg)
         self.assertIn(settings.ALTIMETRIC_PROFILE_BACKGROUND, svg)
         self.assertIn(settings.ALTIMETRIC_PROFILE_COLOR, svg)
+
+    def test_elevation_altimetry_limits(self):
+        geom = LineString((1.5, 2.5, 8), (2.5, 2.5, 10),
+                          srid=settings.SRID)
+        profile = AltimetryHelper.elevation_profile(geom)
+        limits = AltimetryHelper.altimetry_limits(profile)
+        self.assertEqual(limits[0], 1108)
+        self.assertEqual(limits[1], -92)
 
 
 class ElevationAreaTest(TestCase):

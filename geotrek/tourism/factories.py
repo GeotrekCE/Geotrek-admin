@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+
 from django.contrib.gis.geos import Point
+from django.utils import timezone
 
 import factory
 
@@ -7,6 +9,8 @@ from geotrek.authent.factories import StructureRelatedDefaultFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, dummy_filefield_as_sequence
 
 from . import models
+from geotrek.trekking.factories import TrekFactory
+from django.conf import settings
 
 
 class DataSourceFactory(factory.Factory):
@@ -89,5 +93,39 @@ class TouristicEventFactory(factory.Factory):
     name = factory.Sequence(lambda n: u"TouristicEvent %s" % n)
     geom = 'POINT(0 0)'
     published = True
+    begin_date = timezone.now()
+    end_date = timezone.now()
 
     type = factory.SubFactory(TouristicEventTypeFactory)
+
+
+class TrekWithTouristicEventFactory(TrekFactory):
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        trek = super(TrekWithTouristicEventFactory, cls)._prepare(create, **kwargs)
+        TouristicEventFactory.create(geom='POINT(700000 6600000)')
+        TouristicEventFactory.create(geom='POINT(700100 6600100)')
+
+        if create:
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                setattr(trek, 'published_{}'.format(lang), True)
+            trek.save()
+
+        return trek
+
+
+class TrekWithTouristicContentFactory(TrekFactory):
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        trek = super(TrekWithTouristicContentFactory, cls)._prepare(create, **kwargs)
+        TouristicContentFactory.create(category=TouristicContentCategoryFactory(label=u"Restaurant"),
+                                       geom='POINT(700000 6600000)')
+        TouristicContentFactory.create(category=TouristicContentCategoryFactory(label=u"Musée"),
+                                       geom='POINT(700100 6600100)')
+
+        if create:
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                setattr(trek, 'published_{}'.format(lang), True)
+            trek.save()
+
+        return trek
