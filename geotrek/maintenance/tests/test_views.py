@@ -366,8 +366,8 @@ class ExportTest(TestCase):
                 u'id', u'name', u'period', u'type', u'domain', u'constraint',
                 u'global_cos', u'interventi', u'interven_1', u'comments',
                 u'contractor', u'project_ow', u'project_ma', u'founders',
-                u'structure', u'date_inser', u'date_updat',
-                u'cities', u'districts', u'areas'
+                u'related_st', u'insertion_', u'update_dat',
+                u'cities', u'districts', u'restricted'
             ])
 
         self.assertEquals(len(layer_point), 1)

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
+	{% load i18n mapentity_tags staticfiles %}
+
+	<head>
+		{% block style %}
+		<style type="text/css">
+		{% include template_css %}
+		</style>
+		{% endblock style %}
+	</head>
+	<body>
+
+		{% block footer %}
+			<div id="footer">
+				<div class="text">{{ object.name }} - {{ object.districts_display }}</div>
+			</div>
+		{% endblock footer %}
+
+		{% block body %}
+
+		<header>
+			<div class="main-title">
+				<h1>{{ object.name }}</h1>
+				<h2>{{ object.districts_display }}</h2>
+			</div>
+
+
+
+			{% block Map %}
+				<section class="map">
+					<img src="{{ map_url }}">
+				</section>
+			{% endblock Map %}
+
+
+
+			<section class="meta">
+				{% if object.category %}
+					<span class="meta-item">
+						<span class="item-label">{% trans "Category" %}</span>
+						<span class="item-value">{{ object.category }}</span>
+					</span>
+				{% endif %}
+				<div class="lists">
+					{% if object.type1.all %}
+						<span class="meta-item">
+							<span class="item-label">{{ object.type1_label }}</span>
+							{% for type in object.type1.all %}<span class="item-value">{{ type }}</span>{% endfor %}
+						</span>
+					{% endif %}
+					{% if object.type2.all %}
+						<span class="meta-item">
+							<span class="item-label">{{ object.type2_label }}</span>
+							{% for type in object.type2.all %}<span class="item-value">{{ type }}</span>{% endfor %}
+						</span>
+					{% endif %}
+					{% if object.themes.all %}
+						<span class="meta-item">
+							<span class="item-label">{% trans "Themes" %}</span>
+							{% for theme in object.themes.all %}<span class="item-value">{{ theme.label }}</span>{% endfor %}
+						</span>
+					{% endif %}
+				</div>
+			</section>
+
+
+
+			{% if object.description_teaser %}
+				<section class="teaser text-content">
+					{{ object.description_teaser|safe }}
+				</section>
+			{% endif %}
+		</header>
+
+
+
+		{% block description %}
+			{% if object.description %}
+				<section class="description">
+					<h2>{% trans "Description" %}</h2>
+					<div class="text-content">{{ object.description|safe }}</div>
+				</section>
+			{% endif %}
+		{% endblock description %}
+
+
+
+		{% block advice %}
+			{% if object.advice %}
+				<section class="advice">
+					<h2>{% trans "Advice" %}</h2>
+					<div class="text-content">{{ object.advice|safe }}</div>
+				</section>
+			{% endif %}
+		{% endblock advice %}
+
+
+
+		{% block Picture %}
+			<section class="pic">
+				{% if object.picture_print %}
+					<section class="pic">
+						<img src="{{ object.picture_print.url }}" alt="attached_picture_alt">
+						{% if object.pictures.0.legend and object.pictures.0.author %}<legend>{% trans "Attribution" %} : {{ object.pictures.0.legend }} ({{ object.pictures.0.author }})</legend>{% endif %}
+					</section>
+				{% endif %}
+			</section>
+		{% endblock Picture %}
+
+
+
+		{% block practical_info %}
+			{% if object.practical_info %}
+				<section class="practical_info">
+					<h2>{% trans "Practical info" %}</h2>
+					<div class="text-content">{{ object.practical_info|safe }}</div>
+				</section>
+			{% endif %}
+		{% endblock practical_info %}
+
+
+
+		{% block related %}
+			{% if object.related %}
+				<section class="related">
+					<h2>{% trans "Related Treks" %}</h2>
+					<ul>
+						{% for other in object.related.all %}<li>{{ other.name }}</li>{% endfor %}
+					</ul>
+				</section>
+			{% endif %}
+		{% endblock related %}
+
+
+
+		{% block contact %}
+			<section class="contact">
+				<h2>{% trans "Contact" %}</h2>
+				<div class="content">
+					<div class="contact-description text-content">{{ object.contact|safe }}</div>
+					{% if object.website %}<div class="desk-website"><a href="{{ object.website }}">{{ object.website }}</a></div>{% endif %}
+					{% if object.email %}<div class="desk-email"><a href="mailto:{{ object.email }}">{{ object.email }}</a></div>{% endif %}
+				</div>
+			</section>
+		{% endblock contact %}
+
+		{% endblock body %}
+
+		{% block credits %}
+			<footer class="credits">
+				<a href="http://geotrek.fr">{% trans "Powered by http://geotrek.fr" %}</a>
+			</footer>
+		{% endblock credits %}
+
+	</body>
+</html>

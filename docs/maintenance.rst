@@ -33,7 +33,7 @@ Media files
 
 .. code-block:: bash
 
-    cd Geotrek-vX.Y.Z/
+    cd Geotrek-X.Y.Z/
     tar -zcvf /home/sentiers/`date +%Y%m%d%H%M`-media.tar.gz var/media/
 
 
@@ -41,7 +41,7 @@ Configuration
 
 .. code-block:: bash
 
-    # Folder Geotrek-vX.Y.Z/
+    # Folder Geotrek-X.Y.Z/
     tar -zcvf /home/sentiers/`date +%Y%m%d%H%M`-conf.tar.gz etc/ geotrek/settings/custom.py
 
 
@@ -71,7 +71,7 @@ Extract media and configuration files :
 
 .. code-block:: bash
 
-    cd Geotrek-vX.Y.Z/
+    cd Geotrek-X.Y.Z/
     tar -zxvf 20140610-media.tar.gz
     tar -zxvf 20140610-conf.tar.gz
 

@@ -13,12 +13,18 @@ class AltimetryMixin(models.Model):
     # Computed values (managed at DB-level with triggers)
     geom_3d = models.GeometryField(dim=3, srid=settings.SRID, spatial_index=False,
                                    editable=False, null=True, default=None)
-    length = models.FloatField(editable=False, default=0.0, null=True, blank=True, db_column='longueur', verbose_name=_(u"Length"))
-    ascent = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='denivelee_positive', verbose_name=_(u"Ascent"))
-    descent = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='denivelee_negative', verbose_name=_(u"Descent"))
-    min_elevation = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='altitude_minimum', verbose_name=_(u"Minimum elevation"))
-    max_elevation = models.IntegerField(editable=False, default=0, null=True, blank=True, db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
-    slope = models.FloatField(editable=False, null=True, blank=True, default=0.0, verbose_name=_(u"Slope"), db_column='pente')
+    length = models.FloatField(editable=False, default=0.0, null=True, blank=True, db_column='longueur',
+                               verbose_name=_(u"3D Length"))
+    ascent = models.IntegerField(editable=False, default=0, null=True, blank=True,
+                                 db_column='denivelee_positive', verbose_name=_(u"Ascent"))
+    descent = models.IntegerField(editable=False, default=0, null=True, blank=True,
+                                  db_column='denivelee_negative', verbose_name=_(u"Descent"))
+    min_elevation = models.IntegerField(editable=False, default=0, null=True, blank=True,
+                                        db_column='altitude_minimum', verbose_name=_(u"Minimum elevation"))
+    max_elevation = models.IntegerField(editable=False, default=0, null=True, blank=True,
+                                        db_column='altitude_maximum', verbose_name=_(u"Maximum elevation"))
+    slope = models.FloatField(editable=False, null=True, blank=True, default=0.0,
+                              verbose_name=_(u"Slope"), db_column='pente')
 
     COLUMNS = ['length', 'ascent', 'descent', 'min_elevation', 'max_elevation', 'slope']
 
@@ -48,6 +54,9 @@ class AltimetryMixin(models.Model):
 
     def get_elevation_area(self):
         return AltimetryHelper.elevation_area(self.geom)
+
+    def get_elevation_limits(self):
+        return AltimetryHelper.altimetry_limits(self.get_elevation_profile())
 
     def get_elevation_profile_svg(self):
         return AltimetryHelper.profile_svg(self.get_elevation_profile())

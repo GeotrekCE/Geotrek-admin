@@ -17,6 +17,7 @@ from geotrek.common.utils.postgresql import debug_pg_notices
 from geotrek.altimetry.models import AltimetryMixin
 
 from .helpers import PathHelper, TopologyHelper
+from django.db import connections, DEFAULT_DB_ALIAS
 
 
 logger = logging.getLogger(__name__)
@@ -32,10 +33,17 @@ class PathManager(models.GeoManager):
         return super(PathManager, self).get_queryset().filter(visible=True)
 
 
+class PathInvisibleManager(models.GeoManager):
+    use_for_related_fields = True
+
+    def get_queryset(self):
+        return super(PathInvisibleManager, self).get_queryset()
+
 # GeoDjango note:
 # Django automatically creates indexes on geometry fields but it uses a
 # syntax which is not compatible with PostGIS 2.0. That's why index creation
 # is explicitly disbaled here (see manual index creation in custom SQL files).
+
 
 class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
            TimeStampedModelMixin, StructureRelated):
@@ -71,11 +79,27 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     networks = models.ManyToManyField('Network',
                                       blank=True, null=True, related_name="paths",
                                       verbose_name=_(u"Networks"), db_table="l_r_troncon_reseau")
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
 
     objects = PathManager()
+    include_invisible = PathInvisibleManager()
 
     is_reversed = False
+
+    @property
+    def length_2d(self):
+        if self.geom:
+            return round(self.geom.length, 1)
+        else:
+            return None
+
+    @classproperty
+    def length_2d_verbose_name(cls):
+        return _(u"2D Length")
+
+    @property
+    def length_2d_display(self):
+        return self.length_2d
 
     def __unicode__(self):
         return self.name or _('path %d') % self.pk
@@ -94,7 +118,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         # TODO: move to custom manager
         if point.srid != settings.SRID:
             point = point.transform(settings.SRID, clone=True)
-        return cls.objects.all().distance(point).order_by('distance')[0]
+        return cls.objects.all().exclude(visible=False).distance(point).order_by('distance')[0]
 
     def is_overlap(self):
         return not PathHelper.disjoint(self.geom, self.pk)
@@ -176,6 +200,39 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     def get_create_label(cls):
         return _(u"Add a new path")
 
+    @property
+    def checkbox(self):
+        return u'<input type="checkbox" name="{}[]" value="{}" />'.format('path',
+                                                                          self.pk)
+
+    @classproperty
+    def checkbox_verbose_name(cls):
+        return _("Action")
+
+    @property
+    def checkbox_display(self):
+        return self.checkbox
+
+    def merge_path(self, path_to_merge):
+        """
+        Path unification
+        :param path_to path_to_merge: Path instance to merge
+        :return: Boolean
+        """
+        if (self.pk and path_to_merge) and (self.pk != path_to_merge.pk):
+            conn = connections[DEFAULT_DB_ALIAS]
+            cursor = conn.cursor()
+            sql = "SELECT ft_merge_path({}, {});".format(self.pk, path_to_merge.pk)
+            cursor.execute(sql)
+
+            result = cursor.fetchall()[0][0]
+
+            if result:
+                # reload object after unification
+                self.reload()
+
+            return result
+
 
 class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDeleteMixin):
     paths = models.ManyToManyField(Path, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
@@ -201,6 +258,22 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
         super(Topology, self).__init__(*args, **kwargs)
         if not self.pk:
             self.kind = self.__class__.KIND
+
+    @property
+    def length_2d(self):
+        if self.geom and not self.ispoint():
+            return round(self.geom.length, 1)
+
+        else:
+            return None
+
+    @classproperty
+    def length_2d_verbose_name(cls):
+        return _(u"2D Length")
+
+    @property
+    def length_2d_display(self):
+        return self.length_2d
 
     @classproperty
     def KIND(cls):

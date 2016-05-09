@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -15,6 +17,7 @@ from geotrek.core.forms import TopologyForm
 from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
 from .models import Trek, POI, WebLink, Service, ServiceType, OrderedTrekChild
 from django.db import transaction
+from django.core.urlresolvers import reverse
 
 
 class TrekRelationshipForm(forms.ModelForm):
@@ -31,7 +34,9 @@ class TrekRelationshipForm(forms.ModelForm):
                                     'is_circuit_step',
                                     'DELETE')
 
-TrekRelationshipFormSet = inlineformset_factory(Trek, Trek.related_treks.through, form=TrekRelationshipForm, fk_name='trek_a', extra=1)
+TrekRelationshipFormSet = inlineformset_factory(Trek, Trek.related_treks.through,
+                                                form=TrekRelationshipForm, fk_name='trek_a',
+                                                extra=1)
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
 
@@ -74,7 +79,7 @@ class TrekForm(BaseTrekForm):
 
     leftpanel_scrollable = False
 
-    fieldslayout = [
+    base_fieldslayout = [
         Div(
             HTML("""
             <ul class="nav nav-tabs">
@@ -128,7 +133,11 @@ class TrekForm(BaseTrekForm):
     ]
 
     def __init__(self, *args, **kwargs):
+        self.fieldslayout = deepcopy(self.base_fieldslayout)
+        self.fieldslayout[0][1][0].append(HTML('<div class="controls">' + _('Insert service:') + ''.join(['<a class="servicetype" data-url="{url}" data-name={name}"><img src="{url}"></a>'.format(url=t.pictogram.url, name=t.name) for t in ServiceType.objects.all()]) + '</div>'))
+
         super(TrekForm, self).__init__(*args, **kwargs)
+
         self.fields['web_links'].widget = SelectMultipleWithPop(choices=self.fields['web_links'].choices,
                                                                 add_url=WebLink.get_add_url())
         # Make sure (force) that name is required, in default language only
@@ -152,13 +161,11 @@ class TrekForm(BaseTrekForm):
             queryset_children = OrderedTrekChild.objects.filter(parent__id=self.instance.pk)\
                                                         .order_by('order')
             # init multiple children field with data
-            self.fields['children_trek'].queryset = Trek.objects.all().exclude(pk=self.instance.pk)
+            self.fields['children_trek'].queryset = Trek.objects.existing().exclude(pk=self.instance.pk)
             self.fields['children_trek'].initial = [c.child.pk for c in self.instance.trek_children.all()]
 
             # init hidden field with children order
             self.fields['hidden_ordered_children'].initial = ",".join(str(x) for x in queryset_children.values_list('child__id', flat=True))
-
-        self.fieldslayout[0][1][0].append(HTML('<div class="controls">' + _('Insert service:') + ''.join(['<a class="servicetype" data-url="{url}" data-name={name}"><img src="{url}"></a>'.format(url=t.pictogram.url, name=t.name) for t in ServiceType.objects.all()]) + '</div>'))
 
     def clean_children_trek(self):
         """
@@ -226,7 +233,7 @@ class TrekForm(BaseTrekForm):
              'disabled_infrastructure', 'advised_parking', 'parking_location',
              'public_transport', 'advice', 'themes', 'networks', 'practice',
              'accessibilities', 'web_links', 'information_desks', 'source',
-             'children_trek', 'eid', 'eid2', 'hidden_ordered_children', ]
+             'children_trek', 'eid', 'eid2', 'hidden_ordered_children', 'structure']
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
 
@@ -264,7 +271,7 @@ class POIForm(BasePOIForm):
     ]
 
     class Meta(BasePOIForm.Meta):
-        fields = BasePOIForm.Meta.fields + ['name', 'description', 'type', 'published', 'review']
+        fields = BasePOIForm.Meta.fields + ['name', 'description', 'type', 'published', 'review', 'structure']
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -301,7 +308,7 @@ class ServiceForm(BaseServiceForm):
     ]
 
     class Meta(BaseServiceForm.Meta):
-        fields = BaseServiceForm.Meta.fields + ['type']
+        fields = BaseServiceForm.Meta.fields + ['type', 'structure']
 
 
 class WebLinkCreateFormPopup(forms.ModelForm):
@@ -325,3 +332,23 @@ class WebLinkCreateFormPopup(forms.ModelForm):
         model = WebLink
         fields = ['name_{0}'.format(l[0]) for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']] + \
                  ['url', 'category']
+
+
+class SyncRandoForm(forms.Form):
+    """
+    Sync Rando View Form
+    """
+
+    @property
+    def helper(self):
+        helper = FormHelper()
+        helper.form_id = 'form-sync'
+        helper.form_action = reverse('trekking:sync_randos')
+        helper.form_class = 'search'
+        # submit button with boostrap attributes, disabled by default
+        helper.add_input(Submit('sync-web', _("Launch Sync"),
+                                **{'data-toggle': "modal",
+                                   'data-target': "#confirm-submit",
+                                   'disabled': 'disabled'}))
+
+        return helper

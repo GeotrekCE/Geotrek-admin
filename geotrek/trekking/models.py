@@ -70,7 +70,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     disabled_infrastructure = models.TextField(verbose_name=_(u"Disabled infrastructure"), db_column='handicap',
                                                blank=True, help_text=_(u"Any specific infrastructure"))
     duration = models.FloatField(verbose_name=_(u"Duration"), default=0, blank=True, db_column='duree',
-                                 help_text=_(u"In decimal hours (ex. 1.5 for 1 h 30)"),
+                                 help_text=_(u"In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"),
                                  validators=[MinValueValidator(0)])
     is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"), db_column='coeur',
                                            help_text=_(u"Crosses center of park"))
@@ -92,7 +92,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                                  blank=True, null=True, verbose_name=_(u"Practice"), db_column='pratique')
     accessibilities = models.ManyToManyField('Accessibility', related_name="treks",
                                              db_table="o_r_itineraire_accessibilite", blank=True, null=True,
-                                             verbose_name=_(u"Accessibilities"))
+                                             verbose_name=_(u"Accessibility"))
     route = models.ForeignKey('Route', related_name='treks',
                               blank=True, null=True, verbose_name=_(u"Route"), db_column='parcours')
     difficulty = models.ForeignKey('DifficultyLevel', related_name='treks',
@@ -113,12 +113,13 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     source = models.ManyToManyField('common.RecordSource',
                                     null=True, blank=True, related_name='treks',
                                     verbose_name=_("Source"), db_table='o_r_itineraire_source')
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
-    eid2 = models.CharField(verbose_name=_(u"Second external id"), max_length=128, blank=True, db_column='id_externe2')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
+    eid2 = models.CharField(verbose_name=_(u"Second external id"), max_length=128, blank=True, null=True, db_column='id_externe2')
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
     category_id_prefix = 'T'
+    capture_map_image_waitfor = '.poi_enum_loaded.services_loaded.info_desks_loaded.ref_points_loaded'
 
     class Meta:
         db_table = 'o_t_itineraire'
@@ -128,6 +129,16 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
 
     def __unicode__(self):
         return self.name
+
+    @models.permalink
+    def get_map_image_url(self):
+        return ('trekking:trek_map_image', [], {'pk': str(self.pk), 'lang': get_language()})
+
+    def get_map_image_path(self):
+        basefolder = os.path.join(settings.MEDIA_ROOT, 'maps')
+        if not os.path.exists(basefolder):
+            os.makedirs(basefolder)
+        return os.path.join(basefolder, '%s-%s-%s.png' % (self._meta.module_name, self.pk, get_language()))
 
     @models.permalink
     def get_document_public_url(self):
@@ -247,11 +258,16 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
 
     @property
     def parents(self):
-        return Trek.objects.filter(trek_children__child=self)
+        return Trek.objects.filter(trek_children__child=self, deleted=False)
+
+    @property
+    def parents_id(self):
+        parents = self.trek_parents.values_list('parent__id', flat=True)
+        return list(parents)
 
     @property
     def children(self):
-        return Trek.objects.filter(trek_parents__parent=self).order_by('trek_parents__order')
+        return Trek.objects.filter(trek_parents__parent=self, deleted=False).order_by('trek_parents__order')
 
     @property
     def children_id(self):
@@ -282,14 +298,14 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         """
         Dict of parent -> previous child
         """
-        return {parent.id: self.previous_id_for(parent) for parent in self.parents.filter(published=True)}
+        return {parent.id: self.previous_id_for(parent) for parent in self.parents.filter(published=True, deleted=False)}
 
     @property
     def next_id(self):
         """
         Dict of parent -> next child
         """
-        return {parent.id: self.next_id_for(parent) for parent in self.parents.filter(published=True)}
+        return {parent.id: self.next_id_for(parent) for parent in self.parents.filter(published=True, deleted=False)}
 
     def clean(self):
         """
@@ -316,6 +332,16 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
             if parent.any_published:
                 return True
         return self.any_published
+
+    @property
+    def picture_print(self):
+        picture = super(Trek, self).picture_print
+        if picture:
+            return picture
+        for poi in self.published_pois:
+            picture = poi.picture_print
+            if picture:
+                return picture
 
     def save(self, *args, **kwargs):
         if self.pk is not None and kwargs.get('update_fields', None) is None:
@@ -412,12 +438,14 @@ class Practice(PictogramMixin):
     distance = models.IntegerField(verbose_name=_(u"Distance"), blank=True, null=True, db_column='distance',
                                    help_text=_(u"Touristic contents and events will associate within this distance (meters)"))
     cirkwi = models.ForeignKey('cirkwi.CirkwiLocomotion', verbose_name=_(u"Cirkwi locomotion"), null=True, blank=True)
+    order = models.IntegerField(verbose_name=_(u"Order"), null=True, blank=True, db_column='tri',
+                                help_text=_(u"Alphabetical order if blank"))
 
     class Meta:
         db_table = 'o_b_pratique'
         verbose_name = _(u"Practice")
         verbose_name_plural = _(u"Practices")
-        ordering = ['name']
+        ordering = ['order', 'name']
 
     def __unicode__(self):
         return self.name
@@ -507,7 +535,7 @@ class WebLinkManager(models.Manager):
 class WebLink(models.Model):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
-    url = models.URLField(verbose_name=_(u"URL"), max_length=128, db_column='url')
+    url = models.URLField(verbose_name=_(u"URL"), max_length=2048, db_column='url')
     category = models.ForeignKey('WebLinkCategory', verbose_name=_(u"Category"),
                                  related_name='links', null=True, blank=True,
                                  db_column='categorie')
@@ -556,7 +584,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     description = models.TextField(verbose_name=_(u"Description"), db_column='description',
                                    help_text=_(u"History, details,  ..."))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"), db_column='type')
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
 
     class Meta:
         db_table = 'o_t_poi'
@@ -665,7 +693,7 @@ class Service(StructureRelated, MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_(u"Type"), db_column='type')
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, db_column='id_externe')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
 
     class Meta:
         db_table = 'o_t_service'

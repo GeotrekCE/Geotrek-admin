@@ -2,8 +2,303 @@
 CHANGELOG
 =========
 
-2.1.1.dev0
+2.10.3.dev0
+-------------------
+
+**Minor changes**
+
+* Update default pictograms for touristic content categories
+
+**Bug fixes**
+
+* Workaround a bun in supervisor init script
+
+
+2.10.2 (2016-04-12)
+-------------------
+
+**Minor changes**
+
+* Add source filter to touristic contents/events
+* Allow installation as root (not recommended, use with caution)
+
+**Bug fixes**
+
+* Restore contents deleted and then created again in EspritParcParser
+* Add a warning if type1/type2 is not created in EspritParcParser
+* Replace input by textarea in flatpage form
+
+
+2.10.1 (2016-03-17)
+-------------------
+
+**Bug fixes**
+
+* Allow access to information desks in API (and so to map capture and PDF) for unpublished treks
+
+**Minor changes**
+
+* Parsers improvements
+
+
+2.10.0 (2016-03-03)
+-------------------
+
+**New features**
+
+* Add support for Ubuntu 15.04 Vivid
+
+**Breaking changes**
+
+* Remove TileCache service (you should set up tiles source with LEAFLET_CONFIG variable in `geotrek/settings/custom.py` now)
+* Run supervisor as root (you should now run `sudo supervisorctl` instead of `./bin/supervisor`)
+* Move nginx and supervisor logs to system dir `/var/log/`
+
+**Minor changes**
+
+* Update default pictograms for difficulty levels
+
+**Bug fixes**
+
+* Fix sync_rando after deleting a trek with children
+
+
+2.9.3 (2016-02-25)
 ------------------
+
+**Bug fixes**
+
+* Fix line break at start of contact in EspritParcParser
+
+**Minor changes**
+
+* Add parameters.json and themes.json files to API
+
+
+2.9.2 (2016-02-17)
+------------------
+
+**Minor changes**
+
+* Increase web link size
+
+**Bug fixes**
+
+* Fix path split
+* Fix attachment parsing with same document type for several structures
+
+
+2.9.1 (2016-02-10)
+------------------
+
+**Bug fixes**
+
+* Don't forget to sync touristic contents/events media when skipping PDF
+* Don't delete attachments of other objects when importing
+* Don't delete other objects when constant fields are set in parsers
+
+
+2.9.0 (2016-02-04)
+------------------
+
+**New features**
+
+* Add parser for brand "Esprit Parc National"
+
+**Bug fixes**
+
+* Set user structure as related structure for all new objects
+
+
+2.8.1 (2016-01-29)
+------------------
+
+**Bug fixes**
+
+* Synchronize information desk thumbnails
+
+
+2.8.0 (2016-01-28)
+------------------
+
+**New features**
+
+* Use POI pictures in PDF if the trek has no picture itself
+* Use a placeholder in PDF if there is no picture
+* Parser to import touristic contents from SITRA
+* Add list of all information desks to API
+
+**Bug fixes**
+
+* Allow NULL values for id_externe fields in database
+* Fix missing elements (eg. POI enumeration) on trek map capture
+* Prevent overlaping controls at bottom of list view
+* Translation of column names in shapefiles export
+* UTF-8 and truncated alerts in shapefile export
+
+
+2.7.2 (2016-01-26)
+------------------
+
+**Bug fixes**
+
+* Synchronize touristic events with no end date
+* Fix PDF synchronization (eg. missing list of POI)
+
+
+2.7.1 (2016-01-18)
+------------------
+
+**Bug fixes**
+
+* Fix random z-index on forced layer polygon
+* Fix pretty duration
+
+
+2.7.0 (2016-01-14)
+------------------
+
+**New features**
+
+* New button to add Youtube videos in flat pages
+
+**Bug fixes**
+
+* Fix iframe inclusion in flatpages.
+* Fix double column buttons in gridmanager.
+* Fix validation on flatpages for combo external_url + content.
+* Fix responsive layout for provided templates in flatpages.
+* Fix event link to closest visible path only
+* Do not log anymore an error when submitting a form with an empty geometry
+
+
+2.6.0 (2015-12-30)
+------------------
+
+**New features**
+
+* Customization of practices ordering
+
+**Bug fixes**
+
+* Synchronize record source pictograms
+* Add buttons to attachment update form
+* Fix timestamps in database when connection with timezone other than UTC
+
+
+2.5.2 (2015-12-29)
+------------------
+
+**Bug fixes**
+
+* Fix hyphenation language in public PDF templates
+* Add parents to trek public PDF template
+* Fix numbering style in trek public PDF template
+* Show points of reference over other features on trek detail map
+
+
+2.5.1 (2015-12-18)
+------------------
+
+**Bug fixes**
+
+* Trek public PDF fixes (size of service pictos, style of numbered lists, stages)
+
+
+2.5.0 (2015-12-08)
+------------------
+
+**New features**
+
+* Order has been added to flatpages which is reflected in the export for geotrek-rando frontend.
+* Added 2 templates buttons for flatpages creating two layouts
+* Option to add pois pictures to trek ones in Geotrek-Rando
+
+**Bug fixes**
+
+* Generate tiles zip files for all children of published treks
+* Fix URL of video/audio media in API
+* Fix default filtering of past touristic events in UI
+
+
+2.4.4 (2015-12-02)
+------------------
+
+**Bug fixes**
+
+* Show pending import/sync tasks
+
+2.4.3 (2015-11-27)
+------------------
+
+**Bug fixes**
+
+* Fix filtering by source in sync_rando for flatpages and tiles too
+
+
+2.4.2 (2015-11-26)
+------------------
+
+**Bug fixes**
+
+* Fix permissions of sync rando output directory
+* Fix filtering by source in sync_rando
+
+
+2.4.1 (2015-11-25)
+------------------
+
+**Bug fixes**
+
+* Condition field of infrastructures is no more required
+* Fix zipfile detection at import.
+* Fix error handling at import (raise exception to browser).
+
+
+2.4.0 (2015-11-18)
+------------------
+
+**New features**
+
+* Paths can be merged
+* Add trek parents to API
+* Allow to sync public web site from web interface
+* Add begin and end dates to touristic events list
+* Filter conmpleted touristic events by default
+
+**Bug fixes**
+
+* Prevent concurrent imports and/or synchronization
+* Fix rendering of HTML markup in weasyprint templates
+* Fix missing publication field in some cases
+
+
+2.3.0 (2015-11-09)
+------------------
+
+**New features**
+
+* Sync rando now synchronizes touristic contents and events.
+* Sync rando now exports only future events based on current date.
+* Sync rando now synchronizes touristic content categories.
+
+**Bug fixes**
+
+* Added a custom validation to accept url only contribution in flatpages without content.
+* Sync rando now handles crashes when it calls django views.
+
+
+2.2.0 (2015-10-09)
+------------------
+
+**New features**
+
+* Added normalisation for altimetry's json export
+* Clarify 2D/3D lengths (fixes #1400)
+
+**Bug fixes**
+
+* Change plural on accessibility label for admin filter
 
 
 2.1.0 (2015-09-29)

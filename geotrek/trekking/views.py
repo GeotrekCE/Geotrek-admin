@@ -1,54 +1,66 @@
+from datetime import datetime, timedelta
+import json
+import redis
+
 from django.conf import settings
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q
 from django.http import HttpResponse, Http404
+from django.shortcuts import render_to_response
+from django.template.context import RequestContext
+from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
-from django.utils import translation
 from django.views.generic import CreateView, ListView, RedirectView
 from django.views.generic.detail import BaseDetailView
-from django.contrib.auth.decorators import login_required, user_passes_test
-
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
-                             MapEntityDetail, MapEntityMapImage, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete,
-                             LastModifiedMixin, MapEntityViewSet)
+from djcelery.models import TaskMeta
 from mapentity.helpers import alphabet_enumeration
-from mapentity.settings import app_settings
+from mapentity.settings import app_settings as mapentity_settings
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
+                             MapEntityFormat, MapEntityDetail, MapEntityMapImage,
+                             MapEntityDocument, MapEntityCreate, MapEntityUpdate,
+                             MapEntityDelete, LastModifiedMixin, MapEntityViewSet)
 from paperclip.models import Attachment
 from rest_framework import permissions as rest_permissions, viewsets
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
-from geotrek.core.models import AltimetryMixin
-from geotrek.core.views import CreateFromTopologyMixin
-
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import plain_text_preserve_linebreaks
 from geotrek.common.views import FormsetMixin, PublicOrReadPermMixin, DocumentPublic
+from geotrek.core.models import AltimetryMixin
+from geotrek.core.views import CreateFromTopologyMixin
+from geotrek.trekking.forms import SyncRandoForm
 from geotrek.zoning.models import District, City, RestrictedArea
+from geotrek.celery import app as celery_app
 
-from .models import Trek, POI, WebLink, Service
 from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
                     WebLinkCreateFormPopup, ServiceForm)
+from .models import Trek, POI, WebLink, Service
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
                           CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer)
 from .tasks import launch_sync_rando
 
 
 class SyncRandoRedirect(RedirectView):
-    http_method_names = ['get']
+    http_method_names = ['post']
     permanent = False
     query_string = False
 
     @method_decorator(login_required)
     @method_decorator(user_passes_test(lambda u: u.is_superuser))
-    def get(self, request, *args, **kwargs):
-        url = "{scheme}://{host}".format(scheme='https' if self.request.is_secure() else 'http', host=self.request.get_host())
-        launch_sync_rando.delay(url=url)
-        return super(SyncRandoRedirect, self).get(request, *args, **kwargs)
+    def post(self, request, *args, **kwargs):
+        url = "{scheme}://{host}".format(scheme='https' if self.request.is_secure() else 'http',
+                                         host=self.request.get_host())
+        self.job = launch_sync_rando.delay(url=url)
+        return super(SyncRandoRedirect,
+                     self).post(request, *args, **kwargs)
 
     def get_redirect_url(self, *args, **kwargs):
         self.url = self.request.META.get('HTTP_REFERER')
-        return super(SyncRandoRedirect, self).get_redirect_url(*args, **kwargs)
+        return super(SyncRandoRedirect,
+                     self).get_redirect_url(*args,
+                                            **kwargs)
 
 
 class FlattenPicturesMixin(object):
@@ -107,7 +119,7 @@ class TrekFormatList(MapEntityFormat, TrekList):
         'children', 'parents', 'pois',
         'review', 'published', 'publication_date',
         'structure', 'date_insert', 'date_update',
-        'cities', 'districts', 'areas', 'source',
+        'cities', 'districts', 'areas', 'source', 'length_2d'
     ] + AltimetryMixin.COLUMNS
 
 
@@ -160,6 +172,13 @@ class TrekDetail(MapEntityDetail):
 class TrekMapImage(MapEntityMapImage):
     queryset = Trek.objects.existing()
 
+    def dispatch(self, *args, **kwargs):
+        lang = kwargs.pop('lang')
+        if lang:
+            translation.activate(lang)
+            self.request.LANGUAGE_CODE = lang
+        return super(TrekMapImage, self).dispatch(*args, **kwargs)
+
 
 class TrekDocument(MapEntityDocument):
     queryset = Trek.objects.existing()
@@ -179,27 +198,22 @@ class TrekDocumentPublicBase(DocumentPublic):
             information_desks = information_desks[:settings.TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT]
         context['information_desks'] = information_desks
 
-        pois = list(trek.pois.filter(published=True))
+        pois = list(trek.published_pois.all())
         if settings.TREK_EXPORT_POI_LIST_LIMIT > 0:
             pois = pois[:settings.TREK_EXPORT_POI_LIST_LIMIT]
+        letters = alphabet_enumeration(len(pois))
+        for i, poi in enumerate(pois):
+            poi.letter = letters[i]
         context['pois'] = pois
 
-        # Replace HTML text with plain text
-        for attr in ['description', 'description_teaser', 'ambiance', 'advice', 'access',
-                     'public_transport', 'advised_parking', 'disabled_infrastructure']:
-            setattr(trek, attr, plain_text_preserve_linebreaks(getattr(trek, attr)))
+        if not mapentity_settings['MAPENTITY_WEASYPRINT']:
+            # Replace HTML text with plain text
+            for attr in ['description', 'description_teaser', 'ambiance', 'advice', 'access',
+                         'public_transport', 'advised_parking', 'disabled_infrastructure']:
+                setattr(trek, attr, plain_text_preserve_linebreaks(getattr(trek, attr)))
 
-        for poi in context['pois']:
-            setattr(poi, 'description', plain_text_preserve_linebreaks(getattr(poi, 'description')))
-
-        #
-        # POIs enumeration, like shown on the map
-        # https://github.com/makinacorpus/Geotrek/issues/871
-        enumeration = {}
-        letters = alphabet_enumeration(len(trek.pois))
-        for i, p in enumerate(trek.pois):
-            enumeration[p.pk] = letters[i]
-        context['enumeration'] = enumeration
+            for poi in context['pois']:
+                setattr(poi, 'description', plain_text_preserve_linebreaks(getattr(poi, 'description')))
 
         context['object'] = context['trek'] = trek
 
@@ -216,7 +230,7 @@ class TrekDocumentPublicOdt(TrekDocumentPublicBase):
         return super(TrekDocumentPublicOdt, self).render_to_response(context, **response_kwargs)
 
 
-if app_settings['MAPENTITY_WEASYPRINT']:
+if mapentity_settings['MAPENTITY_WEASYPRINT']:
     TrekDocumentPublic = TrekDocumentPublicBase
 else:
     TrekDocumentPublic = TrekDocumentPublicOdt
@@ -373,7 +387,7 @@ class TrekViewSet(MapEntityViewSet):
         qs = qs.filter(Q(published=True) | Q(trek_parents__parent__published=True))\
                .order_by('pk').distinct('pk')
         if 'source' in self.request.GET:
-            qs = qs.filter(source__name__in=self.request.GET['source'])
+            qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
         qs = qs.transform(settings.API_SRID, field_name='geom')
         return qs
 
@@ -519,16 +533,81 @@ class CirkwiPOIView(ListView):
         serializer.serialize(pois)
         return response
 
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def sync_view(request):
+    """
+    Custom views to view / track / launch a sync rando
+    """
+
+    return render_to_response(
+        'trekking/sync_rando.html',
+        {'form': SyncRandoForm(), },
+        context_instance=RequestContext(request)
+    )
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def sync_update_json(request):
+    """
+    get info from sync_rando celery_task
+    """
+    results = []
+    threshold = datetime.now() - timedelta(seconds=60)
+    for task in TaskMeta.objects.filter(date_done__gte=threshold, status='PROGRESS'):
+        if (hasattr(task, 'result') and
+                'name' in task.result and
+                task.result.get('name', '').startswith('geotrek.trekking')):
+            results.append({
+                'id': task.task_id,
+                'result': task.result or {'current': 0,
+                                          'total': 0},
+                'status': task.status
+            })
+    i = celery_app.control.inspect([u'celery@geotrek'])
+    try:
+        reserved = i.reserved()
+    except redis.exceptions.ConnectionError:
+        reserved = None
+    tasks = [] if reserved is None else reversed(reserved[u'celery@geotrek'])
+    for task in tasks:
+        if task['name'].startswith('geotrek.trekking'):
+            results.append(
+                {
+                    'id': task['id'],
+                    'result': {'current': 0, 'total': 0},
+                    'status': 'PENDING',
+                }
+            )
+    for task in TaskMeta.objects.filter(date_done__gte=threshold, status='FAILURE').order_by('-date_done'):
+        if (hasattr(task, 'result') and
+                'name' in task.result and
+                task.result.get('name', '').startswith('geotrek.trekking')):
+            results.append({
+                'id': task.task_id,
+                'result': task.result or {'current': 0,
+                                          'total': 0},
+                'status': task.status
+            })
+
+    return HttpResponse(json.dumps(results),
+                        content_type="application/json")
+
+
 # Translations for public PDF
+translation.ugettext_noop(u"Advices")
+translation.ugettext_noop(u"All usefull informations")
 translation.ugettext_noop(u"Altimetric profile")
 translation.ugettext_noop(u"Attribution")
-translation.ugettext_noop(u"Edition of")
-translation.ugettext_noop(u"In more details...")
+translation.ugettext_noop(u"Geographical location")
+translation.ugettext_noop(u"Markings")
 translation.ugettext_noop(u"Max elevation")
 translation.ugettext_noop(u"Min elevation")
-translation.ugettext_noop(u"On the way...")
-translation.ugettext_noop(u"Page")
-translation.ugettext_noop(u"Powered by http://geotrek.fr")
-translation.ugettext_noop(u"This hike is at the heart of the national park > The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors.")
-translation.ugettext_noop(u"To check the practicability of the hiking paths and to know more about the National park, please visit us or call us at")
+translation.ugettext_noop(u"On your path...")
+translation.ugettext_noop(u"Powered by geotrek.fr")
+translation.ugettext_noop(u"The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors.")
+translation.ugettext_noop(u"This hike is at the heart of the national park")
 translation.ugettext_noop(u"Trek ascent")
+translation.ugettext_noop(u"Usefull informations")

@@ -44,7 +44,12 @@ Synchronization options
                             Filter by source(s)
       -p, --skip-pdf        Skip generation of PDF files
       -t, --skip-tiles      Skip generation of map tiles files for mobile app
-      -d, --skip-dem        Skip generation of Digital Elevation Model files for mobile app
+      -d, --skip-dem        Skip generation of Digital Elevation Model files for 3D view
+      -w, --with-touristicevents
+                            include touristic events by trek in global.zip
+      -c CONTENT_CATEGORIES, --with-touristiccontent-categories=CONTENT_CATEGORIES
+                            include touristic contents by trek in global.zip
+                            (filtered by category ID ex: --with-touristiccontent-categories="1,2,3")
 
 
 Synchronization filtered by source
@@ -58,6 +63,18 @@ You can filter treks, touristic contents, touristic events and static pages by s
 
 Multiple sources are separated with comas (without space before or after coma). Do not forget to add double quotes after and before the parameter if there are spaces in source names.
 You can run several commands to export several sources combinations into several directories and use them to publish several distinct web portals.
+
+
+Synchronization filtered by touristic content categories
+--------------------------------------------------------
+
+You can include touristic content per trek. You must specify ID categories :
+
+::
+
+    ./bin/django sync_rando --with-touristiccontent-categories="1,3"
+
+Multiple categories are separated with comas (without space before or after coma).
 
 
 Synchronization with a distant Geotrek-Rando serveur

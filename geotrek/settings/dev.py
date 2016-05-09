@@ -10,13 +10,18 @@ TEMPLATE_DEBUG = True
 SOUTH_TESTS_MIGRATE = False  # Tested at settings.tests
 
 #
-# Developper Toolbar
+# Developper additions
 # ..........................
 
 INSTALLED_APPS = (
     # 'debug_toolbar',
     'django_extensions',
 ) + INSTALLED_APPS
+
+INTERNAL_IPS = (
+    '127.0.0.1',  # localhost default
+    '10.0.3.1',  # lxc default
+)
 
 #
 # Use some default tiles
@@ -29,8 +34,6 @@ LEAFLET_CONFIG['TILES'] = [
 LEAFLET_CONFIG['OVERLAYS'] = [
     (gettext_noop('Coeur de parc'), 'http://{s}.tilestream.makina-corpus.net/v2/coeur-ecrins/{z}/{x}/{y}.png', 'Ecrins'),
 ]
-
-LEAFLET_CONFIG['SRID'] = 3857
 
 LOGGING['loggers']['geotrek']['level'] = 'DEBUG'
 LOGGING['loggers']['']['level'] = 'DEBUG'

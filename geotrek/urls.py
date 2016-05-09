@@ -5,7 +5,6 @@ from django.contrib import admin
 
 from mapentity.forms import AttachmentForm
 
-
 admin.autodiscover()
 
 handler403 = 'mapentity.views.handler403'
@@ -32,12 +31,11 @@ urlpatterns = patterns(
     url(r'', include('geotrek.feedback.urls', namespace='feedback', app_name='feedback')),
 
     url(r'', include('mapentity.urls', namespace='mapentity', app_name='mapentity')),
-    url(r'^paperclip/', include('paperclip.urls')),
-    url(r'^add-for/(?P<app_label>[\w\-]+)/(?P<module_name>[\w\-]+)/(?P<pk>\d+)/$',
-        'paperclip.views.add_attachment', kwargs={'attachment_form': AttachmentForm},
-        name="add_attachment"),
-    url(r'^update/(?P<attachment_pk>\d+)/$', 'paperclip.views.update_attachment',
+    url(r'^paperclip/add-for/(?P<app_label>[\w\-]+)/(?P<module_name>[\w\-]+)/(?P<pk>\d+)/$',
+        'paperclip.views.add_attachment', kwargs={'attachment_form': AttachmentForm}, name="add_attachment"),
+    url(r'^paperclip/update/(?P<attachment_pk>\d+)/$', 'paperclip.views.update_attachment',
         kwargs={'attachment_form': AttachmentForm}, name="update_attachment"),
+    url(r'^paperclip/', include('paperclip.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )

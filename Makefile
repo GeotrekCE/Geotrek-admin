@@ -26,7 +26,7 @@ etc/settings.ini:
 	chmod -f 600 etc/settings.ini
 
 bin/python:
-	virtualenv .
+	virtualenv -p /usr/bin/python2 .
 	bin/pip install -U setuptools
 	mkdir -p lib/src
 	mkdir -p lib/eggs
@@ -112,7 +112,7 @@ update:
 	make all_compilemessages
 
 deploy: update
-	bin/supervisorctl reload
+	sudo supervisorctl reload
 
 all_makemessages:
 	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin makemessages --no-location --all; popd > /dev/null; done
@@ -132,3 +132,6 @@ load_data:
 
 load_demo: load_data
 	bin/django loaddata development-pne
+
+css:
+	for f in `find geotrek/ -name '*.scss'`; do node-sass --output-style=expanded $$f -o `dirname $$f`; done

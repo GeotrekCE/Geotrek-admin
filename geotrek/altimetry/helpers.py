@@ -49,20 +49,25 @@ class AltimetryHelper(object):
         return dxyz
 
     @classmethod
+    def altimetry_limits(cls, profile):
+        elevations = [int(v[3]) for v in profile]
+        min_elevation = int(min(elevations))
+        max_elevation = int(max(elevations))
+        floor_elevation = round(min_elevation, 100) - 100
+        ceil_elevation = round(max_elevation, 100) + 100
+        if ceil_elevation < floor_elevation + settings.ALTIMETRIC_PROFILE_MIN_YSCALE:
+            ceil_elevation = floor_elevation + settings.ALTIMETRIC_PROFILE_MIN_YSCALE
+
+        return ceil_elevation, floor_elevation
+
+    @classmethod
     def profile_svg(cls, profile):
         """
         Plot the altimetric graph in SVG using PyGal.
         Most of the job done here is dedicated to preparing
         nice labels scales.
         """
-        elevations = [int(v[3]) for v in profile]
-        min_elevation = int(min(elevations))
-        floor_elevation = round(min_elevation, 100) - 100
-        max_elevation = int(max(elevations))
-        ceil_elevation = round(max_elevation, 100) + 100
-        if ceil_elevation < floor_elevation + settings.ALTIMETRIC_PROFILE_MIN_YSCALE:
-            ceil_elevation = floor_elevation + settings.ALTIMETRIC_PROFILE_MIN_YSCALE
-
+        ceil_elevation, floor_elevation = cls.altimetry_limits(profile)
         config = dict(show_legend=False,
                       print_values=False,
                       show_dots=False,

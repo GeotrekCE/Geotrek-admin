@@ -5,17 +5,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-23 13:48+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2015-10-08 15:27+0200\n"
+"PO-Revision-Date: 2015-11-06 11:07+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 1.8.4\n"
 
 msgid "Topology is empty."
 msgstr "La topologie est vide."
@@ -103,7 +104,10 @@ msgid "Networks"
 msgstr "Réseaux"
 
 msgid "External id"
-msgstr ""
+msgstr "ID externe"
+
+msgid "2D Length"
+msgstr "Longueur 2D"
 
 #, python-format
 msgid "path %d"
@@ -123,6 +127,9 @@ msgstr "Aucun(e)"
 
 msgid "Add a new path"
 msgstr "Ajouter un tronçon"
+
+msgid "Action"
+msgstr "Action"
 
 msgid "Offset"
 msgstr "Décalage"
@@ -172,6 +179,12 @@ msgstr "Usage"
 msgid "Network"
 msgstr "Réseau"
 
+msgid "Paths merged successfully"
+msgstr "Les tronçons ont été fusionnés."
+
+msgid "No matching points to merge paths found"
+msgstr "Aucun point de correspondance trouvé pour fusionner les tronçons"
+
 msgid "Management"
 msgstr "Gestion"
 
@@ -186,3 +199,24 @@ msgstr "Non validé"
 
 msgid "Attributes"
 msgstr "Informations"
+
+msgid "Select two paths to merge them"
+msgstr "Sélectionner deux tronçons pour les fusionner"
+
+msgid "Are you sure you want to merge these paths ?"
+msgstr "Etes-vous certain de vouloir fusionner ces tronçons ?"
+
+msgid "Unknown error"
+msgstr "Erreur inconnue"
+
+msgid "Merge paths"
+msgstr "Fusionner les tronçons"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Merge"
+msgstr "Fusionner"
+
+msgid "You don't have the right to change these paths"
+msgstr "Vous n'avez pas le droit de modifier ces tronçons"
