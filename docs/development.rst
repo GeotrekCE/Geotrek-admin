@@ -177,7 +177,7 @@ To develop mapentity and Geotrek together, add the following lines to ``etc/sett
 ::
 
     [sources]
-    mapentity = git https://github.com/makinacorpus/django-mapentity.git branch=develop
+    mapentity = git https://github.com/makinacorpus/django-mapentity.git
 
     [buildout]
     auto-checkout += mapentity
