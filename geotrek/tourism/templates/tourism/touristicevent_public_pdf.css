@@ -21,7 +21,7 @@ html {
 body {
   font-family: sans-serif;
   font-weight: normal;
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.2;
   margin: 0;
   padding: 0;
@@ -66,7 +66,7 @@ header:after {
 header .logo {
   float: left;
   max-width: 50%;
-  height: 2.5cm;
+  height: 2cm;
 }
 
 header .logo img {
@@ -76,12 +76,8 @@ header .logo img {
 header .url {
   float: right;
   max-width: 50%;
-  padding-top: .8cm;
+  padding-top: 0;
   text-align: right;
-}
-
-header .url .main {
-  font-weight: bold;
 }
 
 header .url .geo {
@@ -92,7 +88,7 @@ header .url .geo {
 .gray {
   clear: both;
   margin: .5cm -1.4cm 0 -1.4cm;
-  padding: 1cm 1.4cm .7cm 1.4cm;
+  padding: .7cm 1.4cm .7cm 1.4cm;
   background-color: #eee;
   page-break-inside: avoid;
 }
@@ -135,10 +131,12 @@ header .url .geo {
 }
 
 .main-title {
+  outline: 1px red;
   max-width: 80%;
 }
 
 .main-title h1 {
+  font-size: 1.75em;
   font-weight: bold;
   margin: 0 0 0 0;
 }

@@ -89,7 +89,6 @@
       {% block description %}
         {% if object.description %}
           <div class="inner-title">
-            <div class="doc-title">{{ object.name }}</div>
             <h2>{% trans "Description" %}</h2>
           </div>
           <section class="description">
@@ -98,14 +97,12 @@
         {% endif %}
       {% endblock description %}
       <div class="inner-title">
-        <div>{{ object.name }}</div>
         <h2>{% trans "Geographical location" %}</h2>
       </div>
       <div class="full-map">
         <img src="{{ map_url }}" alt="">
       </div>
       <div class="inner-title">
-        <div class="doc-title">{{ object.name }}</div>
         <h2>{% trans "All usefull informations" %}</h2>
       </div>
       {% if object.practical_info %}
@@ -140,7 +137,7 @@
     {% endblock body %}
     {% block footer %}
       <div id="footer">
-        <div class="text">{% now 'SHORT_DATE_FORMAT' %} &#8226; {{ object.name }}</div>
+        <div class="text">{% now 'SHORT_DATE_FORMAT' %} &#8226; {{ object.name }} &#8226;</div>
       </div>
     {% endblock footer %}
   </body>

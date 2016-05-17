@@ -10,6 +10,10 @@ CHANGELOG
 * Deprecate MAPENTITY_WEASYPRINT setting. Now public PDF use Weasyprint HTML templates and private PDF use legacy
   ODT template.
 
+**Minor changes**
+
+* Improve HTML templates for public exports
+
 
 2.10.3 (2016-05-11)
 -------------------
