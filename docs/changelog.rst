@@ -109,6 +109,10 @@ CHANGELOG
 2.9.0 (2016-02-04)
 ------------------
 
+**Breaking changes**
+
+* Weasyprint is now the default PDF engine
+
 **New features**
 
 * Add parser for brand "Esprit Parc National"

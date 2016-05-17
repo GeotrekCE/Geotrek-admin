@@ -247,7 +247,7 @@ function geotrek_system_dependencies {
 function convertit_system_dependencies {
     if $standalone ; then
         echo_step "Conversion server dependencies..."
-        sudo apt-get install -y -qq libreoffice unoconv inkscape
+        sudo apt-get install -y -qq inkscape
         echo_progress
     fi
 }

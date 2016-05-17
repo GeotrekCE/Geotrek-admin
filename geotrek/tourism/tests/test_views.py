@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 import json
-
 import mock
+import unittest
 
 from datetime import datetime
 from requests.exceptions import ConnectionError
@@ -556,6 +556,7 @@ class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
 
 
 class TouristicContentCustomViewTests(TrekkingManagerTest):
+    @unittest.skipIf(settings.MAPENTITY_CONFIG.get('MAPENTITY_WEASYPRINT', False), "weasyprint mode")
     def test_overriden_document(self):
         content = TouristicContentFactory.create(published=True)
 
@@ -576,11 +577,21 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
     @mock.patch('mapentity.helpers.requests.get')
     def test_public_document_pdf(self, mocked):
         content = TouristicContentFactory.create(published=True)
-        url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
+
+        with open(content.get_map_image_path(), 'w') as f:
+            f.write('***' * 1000)
+
         mocked.return_value.status_code = 200
-        response = self.client.get(url)
+
+        response = self.client.get(
+            reverse('tourism:touristiccontent_printable',
+                    kwargs={'lang': settings.LANGUAGE_CODE,
+                            'pk': content.pk,
+                            'slug': 'slug', })
+        )
         self.assertEqual(response.status_code, 200)
 
+    @unittest.skipIf(settings.MAPENTITY_CONFIG.get('MAPENTITY_WEASYPRINT', False), "weasyprint mode")
     def test_not_published_document(self):
         content = TouristicContentFactory.create(published=False)
         url = '/api/en/touristiccontents/{pk}/slug.odt'.format(pk=content.pk)
@@ -595,6 +606,7 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
 
 
 class TouristicEventCustomViewTests(TrekkingManagerTest):
+    @unittest.skipIf(settings.MAPENTITY_CONFIG.get('MAPENTITY_WEASYPRINT', False), "weasyprint mode")
     def test_overriden_document(self):
         event = TouristicEventFactory.create(published=True)
 
@@ -615,11 +627,20 @@ class TouristicEventCustomViewTests(TrekkingManagerTest):
     @mock.patch('mapentity.helpers.requests.get')
     def test_public_document_pdf(self, mocked):
         content = TouristicEventFactory.create(published=True)
-        url = '/api/en/touristicevents/{pk}/slug.pdf'.format(pk=content.pk)
+
+        with open(content.get_map_image_path(), 'w') as f:
+            f.write('***' * 1000)
+
         mocked.return_value.status_code = 200
-        response = self.client.get(url)
+        response = self.client.get(
+            reverse('tourism:touristicevent_printable',
+                    kwargs={'lang': settings.LANGUAGE_CODE,
+                            'pk': content.pk,
+                            'slug': 'slug', })
+        )
         self.assertEqual(response.status_code, 200)
 
+    @unittest.skipIf(settings.MAPENTITY_CONFIG.get('MAPENTITY_WEASYPRINT', False), "weasyprint mode")
     def test_not_published_document_odt(self):
         content = TouristicEventFactory.create(published=False)
         url = '/api/en/touristicevents/{pk}/slug.odt'.format(pk=content.pk)
