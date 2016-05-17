@@ -400,6 +400,7 @@ MAPENTITY_CONFIG = {
     'GEOJSON_LAYERS_CACHE_BACKEND': 'fat',
     'SENDFILE_HTTP_HEADER': 'X-Accel-Redirect',
     'DRF_API_URL_PREFIX': r'^api/(?P<lang>\w+)/',
+    'MAPENTITY_WEASYPRINT': False,
 }
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')

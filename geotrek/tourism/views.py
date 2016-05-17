@@ -15,7 +15,6 @@ from mapentity.views import (JSONResponseMixin, MapEntityCreate,
                              MapEntityUpdate, MapEntityLayer, MapEntityList,
                              MapEntityDetail, MapEntityDelete, MapEntityViewSet,
                              MapEntityFormat, MapEntityDocument)
-from mapentity.settings import app_settings as mapentity_settings
 import requests
 from requests.exceptions import RequestException
 from rest_framework import permissions as rest_permissions, viewsets
@@ -26,7 +25,6 @@ from rest_framework.views import APIView
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.utils import plain_text_preserve_linebreaks
 from geotrek.common.views import DocumentPublic
 from geotrek.tourism.serializers import TouristicContentCategorySerializer
 from geotrek.trekking.models import Trek
@@ -175,11 +173,6 @@ class TouristicContentDocumentPublic(DocumentPublic):
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['touristiccontent']
 
-        if not mapentity_settings['MAPENTITY_WEASYPRINT']:
-            # Replace HTML text with plain text
-            for attr in ['description', 'description_teaser', 'contact', 'practical_info']:
-                setattr(content, attr, plain_text_preserve_linebreaks(getattr(content, attr)))
-
         context['object'] = context['content'] = content
 
         return context
@@ -251,12 +244,6 @@ class TouristicEventDocumentPublic(DocumentPublic):
         event = self.get_object()
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['touristicevent']
-
-        if not mapentity_settings['MAPENTITY_WEASYPRINT']:
-            # Replace HTML text with plain text
-            for attr in ['description', 'description_teaser', 'contact', 'booking', 'practical_info']:
-                setattr(event, attr, plain_text_preserve_linebreaks(getattr(event, attr)))
-
         context['object'] = context['event'] = event
 
         return context
