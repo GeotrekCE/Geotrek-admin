@@ -54,6 +54,7 @@ DECLARE
     points geometry[];
     points_output geometry[];
     current_values float;
+    count_values integer;
     val geometry;
     element geometry;
 
@@ -64,23 +65,29 @@ BEGIN
     END IF;
 
     FOR element in SELECT (ST_DumpPoints(linegeom)).geom LOOP
-	points := array_append(points, element);
+		points := array_append(points, element);
     END LOOP;
 
     FOR i IN 0 .. array_length(points, 1) LOOP
+
         current_values := 0.0;
+		count_values := 0;
+		
+		FOREACH val in ARRAY points[i-step:i+step] LOOP
+			-- val is null when out of array
+			IF val IS NOT NULL
+			THEN
+				count_values := count_values + 1;
+				current_values := current_values + ST_Z(val);
+			END IF;
+		END LOOP;
 
-	FOREACH val in ARRAY points[i-step:i+step] LOOP
-	    -- val is null when out of array
-	    IF val IS NOT NULL
-	    THEN
-		current_values := current_values + ST_Z(val) / array_length(points[i-step:i+step], 1);
-	    END IF;
-	END LOOP;
+		points_output := array_append(points_output, ST_MAKEPOINT(ST_X(points[i]), ST_Y(points[i]), (current_values / count_values)::integer));
+		
 
-	points_output := array_append(points_output, ST_MAKEPOINT(ST_X(points[i]), ST_Y(points[i]), current_values::integer));
     END LOOP;
-
+    --RAISE EXCEPTION 'Nonexistent ID --> %', ST_ASEWKT(ST_SetSRID(ST_MakeLine(points_output), ST_SRID(linegeom)));
+    
     RETURN QUERY SELECT (ST_DumpPoints(ST_SetSRID(ST_MakeLine(points_output), ST_SRID(linegeom)))).geom as geom;
 
 END;
