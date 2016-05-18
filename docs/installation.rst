@@ -71,7 +71,7 @@ Shutdown previous running version :
 ::
 
     # Shutdown previous version
-    sudo stop geotrek
+    sudo supervisorctl stop all
 
 
 Copy your old configuration and uploaded files to your new folder.
