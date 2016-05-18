@@ -495,11 +495,12 @@ LAND_BBOX_AREAS_ENABLED = False
 PUBLISHED_BY_LANG = True
 
 EXPORT_MAP_IMAGE_SIZE = {
-    'trek': (14.1, 11),
-    'poi': (14.1, 11),
-    'touristiccontent': (14.1, 11),
-    'touristicevent': (14.1, 11),
+    'trek': (18.2, 18.2),
+    'poi': (18.2, 18.2),
+    'touristiccontent': (18.2, 18.2),
+    'touristicevent': (18.2, 18.2),
 }
+
 EXPORT_HEADER_IMAGE_SIZE = {
     'trek': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
     'poi': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
