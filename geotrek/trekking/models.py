@@ -212,7 +212,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
             kml.newpoint(name=poi.name,
                          description=plain_text(poi.description),
                          coords=[place.coords])
-        return kml._genkml()
+        return kml.kml()
 
     def has_geom_valid(self):
         """A trek should be a LineString, even if it's a loop.

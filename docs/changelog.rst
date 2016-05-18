@@ -14,6 +14,10 @@ CHANGELOG
 
 * Improve HTML templates for public exports
 
+**Bug fixes**
+
+* Upgrade simplekml lib (should fix KML exports)
+
 
 2.10.3 (2016-05-11)
 -------------------
