@@ -26,10 +26,12 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
     fields = {
         'eid': 'id',
         'name': 'nom.libelleFr',
-        'description': 'presentation.descriptifCourt.libelleFr',
+        'description': 'presentation.descriptifDetaille.libelleFr',
+        'description_teaser': 'presentation.descriptifCourt.libelleFr',
         'contact': (
             'localisation.adresse.adresse1',
             'localisation.adresse.adresse2',
+            'localisation.adresse.adresse3',
             'localisation.adresse.codePostal',
             'localisation.adresse.commune.nom',
             'informations.moyensCommunication',
@@ -107,27 +109,31 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
     def filter_eid(self, src, val):
         return unicode(val)
 
-    def filter_comm(self, val, code):
+    def filter_comm(self, val, code, multiple=True):
         if not val:
             return None
-        for subval in val:
-            if subval['type']['id'] == code:
-                return subval['coordonnees']['fr']
+        vals = [subval['coordonnees']['fr'] for subval in val if subval['type']['id'] == code]
+        if multiple:
+            return ' / '.join(vals)
+        if vals:
+            return vals[0]
+        return None
 
     def filter_email(self, src, val):
-        return self.filter_comm(val, 204)
+        return self.filter_comm(val, 204, multiple=False)
 
     def filter_website(self, src, val):
-        return self.filter_comm(val, 205)
+        return self.filter_comm(val, 205, multiple=False)
 
     def filter_contact(self, src, val):
-        (address1, address2, zipCode, commune, comm) = val
-        tel = self.filter_comm(comm, 201)
+        (address1, address2, address3, zipCode, commune, comm) = val
+        tel = self.filter_comm(comm, 201, multiple=True)
         if tel:
             tel = u"Tél. " + tel
         lines = [line for line in [
             address1,
             address2,
+            address3,
             ' '.join([part for part in [zipCode, commune] if part]),
             tel,
         ] if line]
@@ -138,6 +144,14 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
         geom = Point(float(lng), float(lat), srid=4326)  # WGS84
         geom.transform(settings.SRID)
         return geom
+
+
+class HebergementsSitraParser(TouristicContentSitraParser):
+    label = u"Hébergements SITRA"
+    category = u"Hébergements"
+    m2m_fields = {
+        'type1': 'informationsHebergementCollectif.hebergementCollectifType.libelleFr',
+    }
 
 
 class EspritParcParser(AttachmentParserMixin, Parser):
