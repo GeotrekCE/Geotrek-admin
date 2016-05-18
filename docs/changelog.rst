@@ -19,6 +19,7 @@ CHANGELOG
 
 **Bug fixes**
 
+* Fix comparison of zip files to keep mtime when nothing changed
 * Upgrade simplekml lib (should fix KML exports)
 
 

@@ -14,10 +14,11 @@ from django.contrib.auth.models import AnonymousUser
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
 from django.test.client import RequestFactory
-from django.utils import translation
+from django.utils import translation, timezone
 from django.utils.translation import ugettext as _
 from landez import TilesManager
 from landez.sources import DownloadError
+from geotrek.common.models import FileType  # NOQA
 from geotrek.altimetry.views import ElevationProfile, ElevationArea, serve_elevation_chart
 from geotrek.common import models as common_models
 from geotrek.common.views import ThemeViewSet
@@ -25,7 +26,7 @@ from geotrek.core.views import ParametersView
 from geotrek.feedback.views import CategoryList as FeedbackCategoryList
 from geotrek.flatpages.views import FlatPageViewSet
 from geotrek.tourism import models as tourism_models
-from geotrek.tourism.views import TrekTouristicContentAndPOIViewSet
+from geotrek.tourism import views as tourism_views
 from geotrek.trekking import models as trekking_models
 from geotrek.trekking.views import (TrekViewSet, POIViewSet, TrekPOIViewSet,
                                     TrekGPXDetail, TrekKMLDetail, TrekServiceViewSet,
@@ -33,6 +34,7 @@ from geotrek.trekking.views import (TrekViewSet, POIViewSet, TrekPOIViewSet,
 
 # Register mapentity models
 from geotrek.trekking import urls  # NOQA
+from geotrek.tourism import urls  # NOQA
 
 
 logger = logging.getLogger(__name__)
@@ -88,6 +90,10 @@ class Command(BaseCommand):
                     default=False, help='Skip generation of PNG elevation profile'),
         make_option('--languages', '-l', action='store', dest='languages',
                     default='', help='Languages to sync'),
+        make_option('--with-touristicevents', '-w', action='store_true', dest='with_events',
+                    default=False, help='include touristic events by trek in global.zip'),
+        make_option('--with-touristiccontent-categories', '-c', action='store', dest='content_categories',
+                    default=None, help='include touristic contents by trek in global.zip (filtered by category ID ex: --with-touristiccontent-categories="1,2,3")'),
     )
 
     def mkdirs(self, name):
@@ -204,7 +210,7 @@ class Command(BaseCommand):
     def sync_trek_pois(self, lang, trek, zipfile=None):
         params = {'format': 'geojson'}
         if settings.ZIP_TOURISTIC_CONTENTS_AS_POI:
-            view = TrekTouristicContentAndPOIViewSet.as_view({'get': 'list'})
+            view = tourism_views.TrekTouristicContentAndPOIViewSet.as_view({'get': 'list'})
             name = os.path.join('api', lang, 'treks', str(trek.pk), 'pois.geojson')
             self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
             view = TrekPOIViewSet.as_view({'get': 'list'})
@@ -308,8 +314,15 @@ class Command(BaseCommand):
         for picture, resized in trek.resized_pictures:
             self.sync_media_file(lang, resized, zipfile=self.trek_zipfile)
 
+        if self.with_events:
+            self.sync_trek_touristicevents(lang, trek, zipfile=self.zipfile)
+
+        if self.categories:
+            self.sync_trek_touristiccontents(lang, trek, zipfile=self.zipfile)
+
         if self.verbosity == '2':
-            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname), ending="")
+            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname),
+                              ending="")
 
         self.close_zip(self.trek_zipfile, zipname)
 
@@ -373,6 +386,8 @@ class Command(BaseCommand):
         for trek in treks:
             self.sync_trek(lang, trek)
 
+        self.sync_tourism(lang)
+
         if self.verbosity == '2':
             self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname), ending="")
 
@@ -424,6 +439,106 @@ class Command(BaseCommand):
                     }
                 )
 
+    def sync_content(self, lang, content):
+        if not self.skip_pdf:
+            view = tourism_views.TouristicContentDocumentPublic.as_view(model=type(content))
+            self.sync_object_view(lang, content, view, '{obj.slug}.pdf')
+
+        for picture, resized in content.resized_pictures:
+            self.sync_media_file(lang, resized)
+
+    def sync_event(self, lang, event):
+        if not self.skip_pdf:
+            view = tourism_views.TouristicEventDocumentPublic.as_view(model=type(event))
+            self.sync_object_view(lang, event, view, '{obj.slug}.pdf')
+
+        for picture, resized in event.resized_pictures:
+            self.sync_media_file(lang, resized)
+
+    def sync_tourism(self, lang):
+        self.sync_geojson(lang, tourism_views.TouristicContentViewSet, 'touristiccontents.geojson')
+        self.sync_geojson(lang, tourism_views.TouristicEventViewSet, 'touristicevents.geojson',
+                          params={'ends_after': timezone.now().strftime('%Y-%m-%d')})
+
+        # picto touristic events
+        self.sync_file(lang,
+                       os.path.join('tourism', 'touristicevent.svg'),
+                       settings.STATIC_ROOT,
+                       settings.STATIC_URL,
+                       zipfile=self.zipfile)
+
+        # json with
+        params = {}
+
+        if self.categories:
+            params.update({'categories': ','.join(category for category in self.categories), })
+
+        if self.with_events:
+            params.update({'events': '1'})
+
+        self.sync_json(lang, tourism_views.TouristicCategoryView,
+                       'touristiccategories',
+                       zipfile=self.zipfile, params=params)
+
+        # pictos touristic content catgories
+        for category in tourism_models.TouristicContentCategory.objects.all():
+            self.sync_media_file(lang, category.pictogram, zipfile=self.zipfile)
+
+        contents = tourism_models.TouristicContent.objects.existing().order_by('pk')
+        contents = contents.filter(**{'published_{lang}'.format(lang=lang): True})
+
+        if self.source:
+            contents = contents.filter(source__name__in=self.source)
+        for content in contents:
+            self.sync_content(lang, content)
+
+        events = tourism_models.TouristicEvent.objects.existing().order_by('pk')
+        events = events.filter(**{'published_{lang}'.format(lang=lang): True})
+        if self.source:
+            events = events.filter(source__name__in=self.source)
+        for event in events:
+            self.sync_event(lang, event)
+
+        # Information desks
+        self.sync_geojson(lang, tourism_views.InformationDeskViewSet, 'information_desks.geojson')
+        for pk in tourism_models.InformationDeskType.objects.values_list('pk', flat=True):
+            name = 'information_desks-{}.geojson'.format(pk)
+            self.sync_geojson(lang, tourism_views.InformationDeskViewSet, name, type=pk)
+        for desk in tourism_models.InformationDesk.objects.all():
+            self.sync_media_file(lang, desk.thumbnail)
+
+    def sync_trek_touristiccontents(self, lang, trek, zipfile=None):
+        params = {'format': 'geojson',
+                  'categories': ','.join(category for category in self.categories), }
+
+        view = tourism_views.TrekTouristicContentViewSet.as_view({'get': 'list'})
+        name = os.path.join('api', lang, 'treks', str(trek.pk), 'touristiccontents.geojson')
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
+
+        for content in trek.touristic_contents.all():
+            self.sync_touristiccontent_media(lang, content, zipfile=self.trek_zipfile)
+
+    def sync_trek_touristicevents(self, lang, trek, zipfile=None):
+        params = {'format': 'geojson', }
+        view = tourism_views.TrekTouristicEventViewSet.as_view({'get': 'list'})
+        name = os.path.join('api', lang, 'treks', str(trek.pk), 'touristicevents.geojson')
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
+
+        for event in trek.touristic_events.all():
+            self.sync_touristicevent_media(lang, event, zipfile=self.trek_zipfile)
+
+    def sync_touristicevent_media(self, lang, event, zipfile=None):
+        if event.resized_pictures:
+            self.sync_media_file(lang, event.resized_pictures[0][1], zipfile=zipfile)
+        for picture, resized in event.resized_pictures[1:]:
+            self.sync_media_file(lang, resized)
+
+    def sync_touristiccontent_media(self, lang, content, zipfile=None):
+        if content.resized_pictures:
+            self.sync_media_file(lang, content.resized_pictures[0][1], zipfile=zipfile)
+        for picture, resized in content.resized_pictures[1:]:
+            self.sync_media_file(lang, resized)
+
     def sync(self):
         self.sync_tiles()
 
@@ -446,6 +561,12 @@ class Command(BaseCommand):
             translation.activate(lang)
             self.sync_trekking(lang)
             translation.deactivate()
+
+        self.sync_static_file('**', 'tourism/touristicevent.svg')
+        self.sync_pictograms('**', tourism_models.InformationDeskType)
+        self.sync_pictograms('**', tourism_models.TouristicContentCategory)
+        self.sync_pictograms('**', tourism_models.TouristicContentType)
+        self.sync_pictograms('**', tourism_models.TouristicEventType)
 
     def check_dst_root_is_empty(self):
         if not os.path.exists(self.dst_root):
@@ -487,6 +608,10 @@ class Command(BaseCommand):
             self.languages = options['languages'].split(',')
         else:
             self.languages = settings.MODELTRANSLATION_LANGUAGES
+        self.with_events = options.get('with_events', False)
+        self.categories = None
+        if options.get('content_categories', u""):
+            self.categories = options.get('content_categories', u"").split(',')
         self.celery_task = options.get('task', None)
 
         if self.source is not None:
