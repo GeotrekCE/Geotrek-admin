@@ -24,6 +24,7 @@ from rest_framework import permissions as rest_permissions, viewsets
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.models import RecordSource
 from geotrek.common.views import FormsetMixin, PublicOrReadPermMixin, DocumentPublic
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
@@ -204,6 +205,12 @@ class TrekDocumentPublicBase(DocumentPublic):
             poi.letter = letters[i]
         context['pois'] = pois
         context['object'] = context['trek'] = trek
+        source = self.request.GET.get('source')
+        if source:
+            try:
+                context['source'] = RecordSource.objects.get(name=source)
+            except RecordSource.DoesNotExist:
+                pass
 
         return context
 

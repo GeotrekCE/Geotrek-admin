@@ -15,6 +15,7 @@ CHANGELOG
 * Improve altitude profile computation (increase smoothing)
 * Improve HTML templates for public exports
 * Improve SITRA parser
+* Allow to use source variable in PDF templates
 
 **Bug fixes**
 

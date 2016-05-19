@@ -225,16 +225,19 @@ class Command(BaseCommand):
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'services.geojson')
         self.sync_view(lang, view, name, params={'format': 'geojson'}, zipfile=zipfile, pk=trek.pk)
 
-    def sync_object_view(self, lang, obj, view, basename_fmt, zipfile=None, **kwargs):
+    def sync_object_view(self, lang, obj, view, basename_fmt, zipfile=None, params={}, **kwargs):
         modelname = obj._meta.model_name
         name = os.path.join('api', lang, '{modelname}s'.format(modelname=modelname), str(obj.pk), basename_fmt.format(obj=obj))
-        self.sync_view(lang, view, name, zipfile=zipfile, pk=obj.pk, **kwargs)
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=obj.pk, **kwargs)
 
     def sync_trek_pdf(self, lang, obj):
         if self.skip_pdf:
             return
         view = TrekDocumentPublic.as_view(model=type(obj))
-        self.sync_object_view(lang, obj, view, '{obj.slug}.pdf')
+        params = {}
+        if self.source:
+            params['source'] = self.source[0]
+        self.sync_object_view(lang, obj, view, '{obj.slug}.pdf', params=params)
 
     def sync_profile_json(self, lang, obj, zipfile=None):
         view = ElevationProfile.as_view(model=type(obj))
@@ -441,16 +444,22 @@ class Command(BaseCommand):
 
     def sync_content(self, lang, content):
         if not self.skip_pdf:
+            params = {}
+            if self.source:
+                params['source'] = self.source[0]
             view = tourism_views.TouristicContentDocumentPublic.as_view(model=type(content))
-            self.sync_object_view(lang, content, view, '{obj.slug}.pdf')
+            self.sync_object_view(lang, content, view, '{obj.slug}.pdf', params=params)
 
         for picture, resized in content.resized_pictures:
             self.sync_media_file(lang, resized)
 
     def sync_event(self, lang, event):
         if not self.skip_pdf:
+            params = {}
+            if self.source:
+                params['source'] = self.source[0]
             view = tourism_views.TouristicEventDocumentPublic.as_view(model=type(event))
-            self.sync_object_view(lang, event, view, '{obj.slug}.pdf')
+            self.sync_object_view(lang, event, view, '{obj.slug}.pdf', params=params)
 
         for picture, resized in event.resized_pictures:
             self.sync_media_file(lang, resized)

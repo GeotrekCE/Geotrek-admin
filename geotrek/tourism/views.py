@@ -25,6 +25,7 @@ from rest_framework.views import APIView
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.models import RecordSource
 from geotrek.common.views import DocumentPublic
 from geotrek.tourism.serializers import TouristicContentCategorySerializer
 from geotrek.trekking.models import Trek
@@ -174,6 +175,12 @@ class TouristicContentDocumentPublic(DocumentPublic):
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['touristiccontent']
 
         context['object'] = context['content'] = content
+        source = self.request.GET.get('source')
+        if source:
+            try:
+                context['source'] = RecordSource.objects.get(name=source)
+            except RecordSource.DoesNotExist:
+                pass
 
         return context
 
@@ -245,6 +252,12 @@ class TouristicEventDocumentPublic(DocumentPublic):
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['touristicevent']
         context['object'] = context['event'] = event
+        source = self.request.GET.get('source')
+        if source:
+            try:
+                context['source'] = RecordSource.objects.get(name=source)
+            except RecordSource.DoesNotExist:
+                pass
 
         return context
 
