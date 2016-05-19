@@ -12,10 +12,9 @@ CHANGELOG
 
 **Minor changes**
 
+* Improve altitude profile computation (increase smoothing)
 * Improve HTML templates for public exports
-* Multiple tel numbers in SITRA parser
-* Import Adresse3 line in SITRA parser
-* Move descriptifCourt to description_teaser in SITRA parser
+* Improve SITRA parser
 
 **Bug fixes**
 
