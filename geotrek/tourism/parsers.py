@@ -15,12 +15,14 @@ from geotrek.tourism.models import TouristicContent, TouristicContentType1, Tour
 
 class TouristicContentSitraParser(AttachmentParserMixin, Parser):
     """Parser to import touristic contents from SITRA"""
+    separator = None
     api_key = None
     project_id = None
     selection_id = None
     category = None
     type1 = None
     type2 = None
+    source = None
     url = 'http://api.sitra-tourisme.com/api/v002/recherche/list-objets-touristiques/'
     model = TouristicContent
     eid = 'eid'
@@ -62,6 +64,7 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
     natural_keys = {
         'category': 'label',
         'type1': 'label',
+        'source': 'name',
     }
     field_options = {
         'name': {'required': True},
@@ -76,6 +79,8 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
             self.m2m_constant_fields['type1'] = self.type1
         if self.type2:
             self.m2m_constant_fields['type2'] = self.type2
+        if self.source:
+            self.m2m_constant_fields['source'] = self.source
 
     @property
     def items(self):
