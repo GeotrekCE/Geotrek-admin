@@ -107,6 +107,7 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
                     'informations.moyensCommunication',
                     'ouverture.periodeEnClair',
                     'informationsHebergementCollectif.capacite.capaciteTotale',
+                    'informationsHebergementCollectif.hebergementCollectifType.libelleFr',
                     'descriptionTarif.tarifsEnClair',
                     'descriptionTarif.modesPaiement',
                     'prestations.services',
