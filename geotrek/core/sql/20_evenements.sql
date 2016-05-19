@@ -138,7 +138,7 @@ BEGIN
     END IF;
 
     IF t_count > 0 THEN
-        SELECT * FROM ft_elevation_infos(egeom_3d) INTO elevation;
+        SELECT * FROM ft_elevation_infos(egeom_3d, {{ALTIMETRIC_PROFILE_STEP}}) INTO elevation;
         UPDATE e_t_evenement SET geom = ST_Force_2D(egeom),
                                  geom_3d = ST_Force_3DZ(elevation.draped),
                                  longueur = ST_3DLength(elevation.draped),
@@ -190,7 +190,7 @@ BEGIN
     IF {{TREKKING_TOPOLOGY_ENABLED}} THEN
         RETURN NEW;
     END IF;
-    SELECT * FROM ft_elevation_infos(NEW.geom) INTO elevation;
+    SELECT * FROM ft_elevation_infos(NEW.geom, {{ALTIMETRIC_PROFILE_STEP}}) INTO elevation;
     -- Update path geometry
     NEW.geom_3d := elevation.draped;
     NEW.longueur := ST_3DLength(elevation.draped);

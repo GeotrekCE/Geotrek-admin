@@ -25,10 +25,10 @@ class ElevationTest(TestCase):
         self.path = Path.objects.create(geom=LineString((78, 117), (3, 17)))
 
     def test_elevation_path(self):
-        self.assertEqual(self.path.ascent, 19)
-        self.assertEqual(self.path.descent, -1)
-        self.assertEqual(self.path.min_elevation, 4)
-        self.assertEqual(self.path.max_elevation, 23)
+        self.assertEqual(self.path.ascent, 16)
+        self.assertEqual(self.path.descent, 0)
+        self.assertEqual(self.path.min_elevation, 6)
+        self.assertEqual(self.path.max_elevation, 22)
         self.assertEqual(len(self.path.geom_3d.coords), 7)
 
     def test_elevation_profile(self):
@@ -36,18 +36,18 @@ class ElevationTest(TestCase):
         self.assertEqual(len(profile), 7)
         self.assertEqual(profile[0][0], 0.0)
         self.assertEqual(profile[-1][0], 125.0)
-        self.assertEqual(profile[0][3], 5.0)
-        self.assertEqual(profile[1][3], 4.0)
-        self.assertEqual(profile[2][3], 7.0)
-        self.assertEqual(profile[3][3], 11.0)
-        self.assertEqual(profile[4][3], 13.0)
-        self.assertEqual(profile[5][3], 16.0)
-        self.assertEqual(profile[6][3], 23.0)
+        self.assertEqual(profile[0][3], 6.0)
+        self.assertEqual(profile[1][3], 8.0)
+        self.assertEqual(profile[2][3], 10.0)
+        self.assertEqual(profile[3][3], 13.0)
+        self.assertEqual(profile[4][3], 18.0)
+        self.assertEqual(profile[5][3], 20.0)
+        self.assertEqual(profile[6][3], 22.0)
 
     def test_elevation_limits(self):
         limits = self.path.get_elevation_limits()
-        self.assertEqual(limits[0], 1104)
-        self.assertEqual(limits[1], -96)
+        self.assertEqual(limits[0], 1106)
+        self.assertEqual(limits[1], -94)
 
     def test_elevation_topology_line(self):
         topo = TopologyFactory.create(no_path=True)
@@ -57,8 +57,8 @@ class ElevationTest(TestCase):
         topo.get_elevation_profile()
         self.assertEqual(topo.ascent, 7)
         self.assertEqual(topo.descent, 0)
-        self.assertEqual(topo.min_elevation, 5)
-        self.assertEqual(topo.max_elevation, 12)
+        self.assertEqual(topo.min_elevation, 10)
+        self.assertEqual(topo.max_elevation, 17)
         self.assertEqual(len(topo.geom_3d.coords), 5)
 
     def test_elevation_topology_point(self):
@@ -218,7 +218,7 @@ class LengthTest(TestCase):
         # before smoothing: (1 101 0, 21 101 0, 41 101 0, 61 101 3, 81 101 5, 81 99 15)
         # after smoothing:  (1 101 0, 21 101 0, 41 101 0, 61 101 1, 81 101 3, 81 99  9)
         # length: 20 + 20 + (20 ** 2 + 1) ** .5 + (20 ** 2 + 2 ** 2) ** .5 + (2 ** 2 + 6 ** 2) ** .5
-        self.assertEqual(round(self.path.length, 9), 86.449290957)
+        self.assertEqual(round(self.path.length, 9), 83.127128724)
 
 
 class SamplingTest(TestCase):
