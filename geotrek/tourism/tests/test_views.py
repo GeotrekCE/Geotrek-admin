@@ -20,7 +20,6 @@ from geotrek.core import factories as core_factories
 from geotrek.trekking import factories as trekking_factories
 from geotrek.zoning import factories as zoning_factories
 from geotrek.common import factories as common_factories
-from geotrek.common.factories import AttachmentFactory
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.tourism.models import DATA_SOURCE_TYPES
@@ -556,36 +555,14 @@ class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
 
 
 class TouristicContentCustomViewTests(TrekkingManagerTest):
-    def test_overriden_document(self):
-        content = TouristicContentFactory.create(published=True)
-
-        with open(content.get_map_image_path(), 'w') as f:
-            f.write('***' * 1000)
-
-        url = '/api/en/touristiccontents/{pk}/slug.odt'.format(pk=content.pk)
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(len(response.content) > 1000)
-
-        AttachmentFactory.create(obj=content, title="docprint", attachment_file=get_dummy_uploaded_document(size=100))
-        url = '/api/en/touristiccontents/{pk}/slug.odt'.format(pk=content.pk)
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(len(response.content) < 1000)
-
     @mock.patch('mapentity.helpers.requests.get')
     def test_public_document_pdf(self, mocked):
         content = TouristicContentFactory.create(published=True)
         url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
         mocked.return_value.status_code = 200
+        mocked.return_value.content = 'fake'
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-
-    def test_not_published_document(self):
-        content = TouristicContentFactory.create(published=False)
-        url = '/api/en/touristiccontents/{pk}/slug.odt'.format(pk=content.pk)
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 403)
 
     def test_not_published_document_pdf(self):
         content = TouristicContentFactory.create(published=False)
@@ -595,36 +572,14 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
 
 
 class TouristicEventCustomViewTests(TrekkingManagerTest):
-    def test_overriden_document(self):
-        event = TouristicEventFactory.create(published=True)
-
-        with open(event.get_map_image_path(), 'w') as f:
-            f.write('***' * 1000)
-
-        url = '/api/en/touristicevents/{pk}/slug.odt'.format(pk=event.pk)
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(len(response.content) > 1000)
-
-        AttachmentFactory.create(obj=event, title="docprint", attachment_file=get_dummy_uploaded_document(size=100))
-        url = '/api/en/touristicevents/{pk}/slug.odt'.format(pk=event.pk)
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(len(response.content) < 1000)
-
     @mock.patch('mapentity.helpers.requests.get')
     def test_public_document_pdf(self, mocked):
         content = TouristicEventFactory.create(published=True)
         url = '/api/en/touristicevents/{pk}/slug.pdf'.format(pk=content.pk)
         mocked.return_value.status_code = 200
+        mocked.return_value.content = 'fake'
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-
-    def test_not_published_document_odt(self):
-        content = TouristicEventFactory.create(published=False)
-        url = '/api/en/touristicevents/{pk}/slug.odt'.format(pk=content.pk)
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 403)
 
     def test_not_published_document_pdf(self):
         content = TouristicEventFactory.create(published=False)
