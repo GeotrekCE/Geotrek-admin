@@ -344,7 +344,7 @@ class Parser(object):
     def filter_m2m(self, src, val, model, field, mapping=None, partial=False, create=False):
         if not val:
             return []
-        if self.separator:
+        if self.separator and not isinstance(val, list):
             val = val.split(self.separator)
         dst = []
         for subval in val:
