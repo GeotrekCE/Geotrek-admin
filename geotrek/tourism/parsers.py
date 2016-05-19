@@ -2,6 +2,7 @@
 
 import json
 
+import datetime
 import requests
 from django.conf import settings
 from django.contrib.gis.geos import Point
@@ -39,6 +40,16 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
         'email': 'informations.moyensCommunication',
         'website': 'informations.moyensCommunication',
         'geom': 'localisation.geolocalisation.geoJson.coordinates',
+        'practical_info': (
+            'ouverture.periodeEnClair.libelleFr',
+            'informationsHebergementCollectif.capacite.capaciteTotale',
+            'descriptionTarif.tarifsEnClair.libelleFr',
+            'descriptionTarif.modesPaiement',
+            'prestations.services',
+            'localisation.geolocalisation.complement.libelleFr',
+            'gestion.dateModification',
+            'gestion.membreProprietaire.nom',
+        ),
     }
     constant_fields = {
         'published': True,
@@ -87,7 +98,15 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
                     'presentation.descriptifDetaille',
                     'localisation.adresse',
                     'localisation.geolocalisation.geoJson.coordinates',
+                    'localisation.geolocalisation.complement.libelleFr',
                     'informations.moyensCommunication',
+                    'ouverture.periodeEnClair',
+                    'informationsHebergementCollectif.capacite.capaciteTotale',
+                    'descriptionTarif.tarifsEnClair',
+                    'descriptionTarif.modesPaiement',
+                    'prestations.services',
+                    'gestion.dateModification',
+                    'gestion.membreProprietaire.nom',
                 ],
             }
             response = requests.get(self.url, params={'query': json.dumps(params)})
@@ -147,6 +166,39 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
             tel,
         ] if line]
         return '<br>'.join(lines)
+
+    def filter_practical_info(self, src, val):
+        (ouverture, capacite, tarifs, paiement, services, localisation, datemodif, proprio) = val
+        if ouverture:
+            ouverture = u"<b>Ouverture:</b><br>" + u"<br>".join(ouverture.splitlines()) + u"<br>"
+        if capacite:
+            capacite = u"<b>Capacité totale:</b><br>" + str(capacite) + u"<br>"
+        if tarifs:
+            tarifs = u"<b>Tarifs:</b><br>" + u"<br>".join(tarifs.splitlines()) + u"<br>"
+        if paiement:
+            paiement = u"<b>Modes de paiement:</b><br>" + ", ".join([i['libelleFr'] for i in paiement]) + u"<br>"
+        if services:
+            services = u"<b>Services:</b><br>" + ", ".join([i['libelleFr'] for i in services]) + u"<br>"
+        if localisation:
+            localisation = u"<b>Accès:</b><br>" + u"<br>".join(localisation.splitlines()) + u"<br>"
+        datemodif = datetime.datetime.strptime(datemodif[:10], "%Y-%m-%d").strftime("%d/%m/%Y")
+        modif = u"<i>Fiche mise à jour par " + proprio + u" le " + datemodif + u"</i>"
+        lines = [line for line in [
+            ouverture,
+            capacite,
+            tarifs,
+            paiement,
+            services,
+            localisation,
+            modif,
+        ] if line]
+        return '<br>'.join(lines)
+
+    def filter_description(self, src, val):
+        return '<br>'.join(val.splitlines())
+
+    def filter_description_teaser(self, src, val):
+        return '<br>'.join(val.splitlines())
 
     def filter_geom(self, src, val):
         lng, lat = val
