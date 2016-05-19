@@ -80,6 +80,15 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
                 'selectionIds': [self.selection_id],
                 'count': size,
                 'first': skip,
+                'responseFields': [
+                    'id',
+                    'nom',
+                    'presentation.descriptifCourt',
+                    'presentation.descriptifDetaille',
+                    'localisation.adresse',
+                    'localisation.geolocalisation.geoJson.coordinates',
+                    'informations.moyensCommunication',
+                ],
             }
             response = requests.get(self.url, params={'query': json.dumps(params)})
             if response.status_code != 200:
