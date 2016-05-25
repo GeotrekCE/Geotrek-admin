@@ -365,7 +365,7 @@ msgstr ""
 msgid "Advices"
 msgstr ""
 
-msgid "All usefull informations"
+msgid "All useful information"
 msgstr ""
 
 msgid "Altimetric profile"
@@ -397,13 +397,13 @@ msgid ""
 "regulations which must be known by all visitors."
 msgstr ""
 
-msgid "This hike is at the heart of the national park"
+msgid "This hike is in the core of the national park"
 msgstr ""
 
 msgid "Trek ascent"
 msgstr ""
 
-msgid "Usefull informations"
+msgid "Useful information"
 msgstr ""
 
 msgid "Global tiles syncing ..."
@@ -532,7 +532,7 @@ msgid "Trek_ascent"
 msgstr ""
 
 msgid ""
-"This hike is at the heart of the national park > The national park is an "
+"This hike is in the core of the national park > The national park is an "
 "unrestricted natural area but subjected to regulations which must be known "
 "by all visitors."
 msgstr ""

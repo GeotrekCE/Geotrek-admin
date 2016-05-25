@@ -874,7 +874,7 @@ msgid "Powered by http://geotrek.fr"
 msgstr "Propulsé par http://geotrek.fr"
 
 msgid ""
-"This hike is at the heart of the national park > The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors."
+"This hike is in the core of the national park > The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors."
 msgstr ""
 "Questo itinerario si snoda nel cuore del Parco nazionale > Il Parco nazionale è un territorio naturale, aperto a tutti ma soggetto ad una specifica regolamentazione che è utile conoscere per organizzare il proprio soggiorno."
 

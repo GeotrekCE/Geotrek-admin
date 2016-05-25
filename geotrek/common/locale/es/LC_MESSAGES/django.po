@@ -1119,7 +1119,7 @@ msgstr "Generado por http://geotrek.fr"
 
 
 msgid ""
-"This hike is at the heart of the national park > The national park is an "
+"This hike is in the core of the national park > The national park is an "
 "unrestricted natural area but subjected to regulations which must be known "
 "by all visitors."
 msgstr ""
