@@ -376,7 +376,7 @@ msgstr "Début de synchro"
 msgid "Advices"
 msgstr "Recommandations"
 
-msgid "All usefull informations"
+msgid "All useful information"
 msgstr "Toutes les infos pratiques"
 
 msgid "Altimetric profile"
@@ -410,13 +410,13 @@ msgstr ""
 "Le Parc national est un territoire naturel, ouvert à tous, mais soumis à une "
 "réglementation qu’il est utile de connaître pour préparer son séjour"
 
-msgid "This hike is at the heart of the national park"
+msgid "This hike is in the core of the national park"
 msgstr "Cet itinéraire est dans le cœur du Parc national"
 
 msgid "Trek ascent"
 msgstr "Dénivelé positif"
 
-msgid "Usefull informations"
+msgid "Useful information"
 msgstr "Infos pratiques"
 
 msgid "Global tiles syncing ..."
@@ -547,7 +547,7 @@ msgid "Trek_ascent"
 msgstr "Dénivelé positif"
 
 msgid ""
-"This hike is at the heart of the national park > The national park is an "
+"This hike is in the core of the national park > The national park is an "
 "unrestricted natural area but subjected to regulations which must be known "
 "by all visitors."
 msgstr ""
