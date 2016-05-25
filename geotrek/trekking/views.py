@@ -587,7 +587,7 @@ def sync_update_json(request):
 
 # Translations for public PDF
 translation.ugettext_noop(u"Advices")
-translation.ugettext_noop(u"All usefull informations")
+translation.ugettext_noop(u"All useful information")
 translation.ugettext_noop(u"Altimetric profile")
 translation.ugettext_noop(u"Attribution")
 translation.ugettext_noop(u"Geographical location")
@@ -597,6 +597,6 @@ translation.ugettext_noop(u"Min elevation")
 translation.ugettext_noop(u"On your path...")
 translation.ugettext_noop(u"Powered by geotrek.fr")
 translation.ugettext_noop(u"The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors.")
-translation.ugettext_noop(u"This hike is at the heart of the national park")
+translation.ugettext_noop(u"This hike is in the core of the national park")
 translation.ugettext_noop(u"Trek ascent")
-translation.ugettext_noop(u"Usefull informations")
+translation.ugettext_noop(u"Useful information")
