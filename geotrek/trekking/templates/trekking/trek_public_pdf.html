@@ -128,20 +128,22 @@
                     {% endfor %}
                   </li>
                 {% endif %}
-                {% if object.children %}
-                  {% trans "Stages" %} :
-                  <ul>
-                    {% for child in object.children %}
-                      <li><strong>{{ forloop.counter }}.</strong> {{ child.name }}, {{ child.length_kilometer }} km, {{ child.ascent }} m D+, {{ child.duration_pretty }}</li>
-                    {% endfor %}
-                  </ul>
-                {% endif %}
               </ul>
             </div>
           {% endif %}
           <section class="description">
             <div class="text-content">{{ object.description|safe }}</div>
           </section>
+          {% if object.children %}
+            <div class="gray text-content departure-arrival">
+              <strong>{% trans "Stages" %} :</strong><br/><br/>
+              <ul>
+                {% for child in object.children %}
+                  <li><strong>{{ forloop.counter }}.</strong> {{ child.name }}<br/>&nbsp;&nbsp;&nbsp;&nbsp;{{ child.length_kilometer }} km / {{ child.ascent }} m D+ / {{ child.duration_pretty }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
         {% endif %}
       {% endblock description %}
       <div class="inner-title">
@@ -169,7 +171,7 @@
         <div class="advice">
           <div class="advice-title">
             <div class="advice-icon">
-              <img src="{% static 'trekking/advice.svg' %}">
+              <img src="{% static 'trekking/information.svg' %}">
             </div>
             {% trans "This hike is in the core of the national park" %}
           </div>
@@ -241,9 +243,9 @@
           </section>
         {% endif %}
       {% endblock source %}
-      <div class="gray">
-        {% block informationDesks %}
-          {% if  object.information_desks.all %}
+      {% if  object.information_desks.all %}
+        <div class="gray">
+          {% block informationDesks %}
             <section class="information-desks">
               <h2>
                 <div class="information-desks-icon">
@@ -271,12 +273,15 @@
                 {% endfor %}
               </ul>
             </section>
-          {% endif %}
-        {% endblock informationDesks %}
-      </div>
+          {% endblock informationDesks %}
+        </div>
+      {% endif %}
       {% block poisDetails %}
         <section class="pois-details">
           {% if pois %}
+            <div class="inner-title">
+              <h2>{% trans "On your path..." %}</h2>
+            </div>
             {% for poi in pois %}
               <div class="poi">
                 <div class="thumbnail">
@@ -291,7 +296,7 @@
                   </h3>
                   <div class="description">{{ poi.description|safe }}</div>
                   {% if poi.thumbnail and poi.thumbnail.author %}
-                    <legend>{{ poi.thumbnail.author }}</legend>
+                    <legend>{% trans "Attribution" %} : {{ poi.thumbnail.author }}</legend>
                   {% endif %}
                 </div>
               </div>
