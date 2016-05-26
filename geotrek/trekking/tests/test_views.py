@@ -22,14 +22,13 @@ from django.utils import translation
 from django.utils.timezone import utc, make_aware
 from django.utils.unittest import util as testutil
 
-from mapentity import app_settings
 from mapentity.tests import MapEntityLiveTest
 from mapentity.factories import SuperUserFactory
 
 from geotrek.authent.models import default_structure
 from geotrek.common.factories import AttachmentFactory, ThemeFactory, RecordSourceFactory
 from geotrek.common.tests import CommonTest, TranslationResetMixin
-from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.authent.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.core.factories import PathFactory
@@ -371,26 +370,6 @@ class TrekCustomViewTests(TrekkingManagerTest):
 
 
 class TrekCustomPublicViewTests(TrekkingManagerTest):
-    if not app_settings['MAPENTITY_WEASYPRINT']:
-        @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
-        def test_overriden_document(self, get_attributes_html):
-            trek = TrekFactory.create()
-
-            get_attributes_html.return_value = '<p>mock</p>'
-            with open(trek.get_map_image_path(), 'w') as f:
-                f.write('***' * 1000)
-            with open(trek.get_elevation_chart_path('fr'), 'w') as f:
-                f.write('***' * 1000)
-
-            response = self.client.get(trek.get_document_public_url())
-            self.assertEqual(response.status_code, 200)
-            self.assertTrue(len(response.content) > 1000)
-
-            AttachmentFactory.create(obj=trek, title="docprint", attachment_file=get_dummy_uploaded_document(size=100))
-            response = self.client.get(trek.get_document_public_url())
-            self.assertEqual(response.status_code, 200)
-            self.assertTrue(len(response.content) < 1000)
-
     @mock.patch('django.template.loaders.filesystem.open', create=True)
     def test_overriden_public_template(self, open_patched):
         overriden_template = os.path.join(settings.MEDIA_ROOT, 'templates', 'trekking', 'trek_public.odt')

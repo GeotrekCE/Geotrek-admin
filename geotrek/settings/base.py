@@ -400,6 +400,7 @@ MAPENTITY_CONFIG = {
     'GEOJSON_LAYERS_CACHE_BACKEND': 'fat',
     'SENDFILE_HTTP_HEADER': 'X-Accel-Redirect',
     'DRF_API_URL_PREFIX': r'^api/(?P<lang>\w+)/',
+    'MAPENTITY_WEASYPRINT': False,
 }
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
@@ -412,6 +413,8 @@ SNAP_DISTANCE = 30  # Distance of snapping in pixels
 PATH_MERGE_SNAPPING_DISTANCE = 2  # minimum distance to merge paths
 
 ALTIMETRIC_PROFILE_PRECISION = 25  # Sampling precision in meters
+ALTIMETRIC_PROFILE_AVERAGE = 2  # nb of points for altimetry moving average
+ALTIMETRIC_PROFILE_STEP = 1  # Step min precision for positive / negative altimetry gain
 ALTIMETRIC_PROFILE_BACKGROUND = 'white'
 ALTIMETRIC_PROFILE_COLOR = '#F77E00'
 ALTIMETRIC_PROFILE_HEIGHT = 400
@@ -494,11 +497,12 @@ LAND_BBOX_AREAS_ENABLED = False
 PUBLISHED_BY_LANG = True
 
 EXPORT_MAP_IMAGE_SIZE = {
-    'trek': (14.1, 11),
-    'poi': (14.1, 11),
-    'touristiccontent': (14.1, 11),
-    'touristicevent': (14.1, 11),
+    'trek': (18.2, 18.2),
+    'poi': (18.2, 18.2),
+    'touristiccontent': (18.2, 18.2),
+    'touristicevent': (18.2, 18.2),
 }
+
 EXPORT_HEADER_IMAGE_SIZE = {
     'trek': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
     'poi': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']

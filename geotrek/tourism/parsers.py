@@ -2,6 +2,7 @@
 
 import json
 
+import datetime
 import requests
 from django.conf import settings
 from django.contrib.gis.geos import Point
@@ -14,22 +15,26 @@ from geotrek.tourism.models import TouristicContent, TouristicContentType1, Tour
 
 class TouristicContentSitraParser(AttachmentParserMixin, Parser):
     """Parser to import touristic contents from SITRA"""
+    separator = None
     api_key = None
     project_id = None
     selection_id = None
     category = None
     type1 = None
     type2 = None
+    source = None
     url = 'http://api.sitra-tourisme.com/api/v002/recherche/list-objets-touristiques/'
     model = TouristicContent
     eid = 'eid'
     fields = {
         'eid': 'id',
         'name': 'nom.libelleFr',
-        'description': 'presentation.descriptifCourt.libelleFr',
+        'description': 'presentation.descriptifDetaille.libelleFr',
+        'description_teaser': 'presentation.descriptifCourt.libelleFr',
         'contact': (
             'localisation.adresse.adresse1',
             'localisation.adresse.adresse2',
+            'localisation.adresse.adresse3',
             'localisation.adresse.codePostal',
             'localisation.adresse.commune.nom',
             'informations.moyensCommunication',
@@ -37,6 +42,16 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
         'email': 'informations.moyensCommunication',
         'website': 'informations.moyensCommunication',
         'geom': 'localisation.geolocalisation.geoJson.coordinates',
+        'practical_info': (
+            'ouverture.periodeEnClair.libelleFr',
+            'informationsHebergementCollectif.capacite.capaciteTotale',
+            'descriptionTarif.tarifsEnClair.libelleFr',
+            'descriptionTarif.modesPaiement',
+            'prestations.services',
+            'localisation.geolocalisation.complement.libelleFr',
+            'gestion.dateModification',
+            'gestion.membreProprietaire.nom',
+        ),
     }
     constant_fields = {
         'published': True,
@@ -49,6 +64,7 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
     natural_keys = {
         'category': 'label',
         'type1': 'label',
+        'source': 'name',
     }
     field_options = {
         'name': {'required': True},
@@ -63,6 +79,8 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
             self.m2m_constant_fields['type1'] = self.type1
         if self.type2:
             self.m2m_constant_fields['type2'] = self.type2
+        if self.source:
+            self.m2m_constant_fields['source'] = self.source
 
     @property
     def items(self):
@@ -78,6 +96,23 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
                 'selectionIds': [self.selection_id],
                 'count': size,
                 'first': skip,
+                'responseFields': [
+                    'id',
+                    'nom',
+                    'presentation.descriptifCourt',
+                    'presentation.descriptifDetaille',
+                    'localisation.adresse',
+                    'localisation.geolocalisation.geoJson.coordinates',
+                    'localisation.geolocalisation.complement.libelleFr',
+                    'informations.moyensCommunication',
+                    'ouverture.periodeEnClair',
+                    'informationsHebergementCollectif.capacite.capaciteTotale',
+                    'descriptionTarif.tarifsEnClair',
+                    'descriptionTarif.modesPaiement',
+                    'prestations.services',
+                    'gestion.dateModification',
+                    'gestion.membreProprietaire.nom',
+                ],
             }
             response = requests.get(self.url, params={'query': json.dumps(params)})
             if response.status_code != 200:
@@ -107,37 +142,82 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
     def filter_eid(self, src, val):
         return unicode(val)
 
-    def filter_comm(self, val, code):
+    def filter_comm(self, val, code, multiple=True):
         if not val:
             return None
-        for subval in val:
-            if subval['type']['id'] == code:
-                return subval['coordonnees']['fr']
+        vals = [subval['coordonnees']['fr'] for subval in val if subval['type']['id'] == code]
+        if multiple:
+            return ' / '.join(vals)
+        if vals:
+            return vals[0]
+        return None
 
     def filter_email(self, src, val):
-        return self.filter_comm(val, 204)
+        return self.filter_comm(val, 204, multiple=False)
 
     def filter_website(self, src, val):
-        return self.filter_comm(val, 205)
+        return self.filter_comm(val, 205, multiple=False)
 
     def filter_contact(self, src, val):
-        (address1, address2, zipCode, commune, comm) = val
-        tel = self.filter_comm(comm, 201)
+        (address1, address2, address3, zipCode, commune, comm) = val
+        tel = self.filter_comm(comm, 201, multiple=True)
         if tel:
             tel = u"Tél. " + tel
         lines = [line for line in [
             address1,
             address2,
+            address3,
             ' '.join([part for part in [zipCode, commune] if part]),
             tel,
         ] if line]
         return '<br>'.join(lines)
+
+    def filter_practical_info(self, src, val):
+        (ouverture, capacite, tarifs, paiement, services, localisation, datemodif, proprio) = val
+        if ouverture:
+            ouverture = u"<b>Ouverture:</b><br>" + u"<br>".join(ouverture.splitlines()) + u"<br>"
+        if capacite:
+            capacite = u"<b>Capacité totale:</b><br>" + str(capacite) + u"<br>"
+        if tarifs:
+            tarifs = u"<b>Tarifs:</b><br>" + u"<br>".join(tarifs.splitlines()) + u"<br>"
+        if paiement:
+            paiement = u"<b>Modes de paiement:</b><br>" + ", ".join([i['libelleFr'] for i in paiement]) + u"<br>"
+        if services:
+            services = u"<b>Services:</b><br>" + ", ".join([i['libelleFr'] for i in services]) + u"<br>"
+        if localisation:
+            localisation = u"<b>Accès:</b><br>" + u"<br>".join(localisation.splitlines()) + u"<br>"
+        datemodif = datetime.datetime.strptime(datemodif[:10], "%Y-%m-%d").strftime("%d/%m/%Y")
+        modif = u"<i>Fiche mise à jour par " + proprio + u" le " + datemodif + u"</i>"
+        lines = [line for line in [
+            ouverture,
+            capacite,
+            tarifs,
+            paiement,
+            services,
+            localisation,
+            modif,
+        ] if line]
+        return '<br>'.join(lines)
+
+    def filter_description(self, src, val):
+        return '<br>'.join(val.splitlines())
+
+    def filter_description_teaser(self, src, val):
+        return '<br>'.join(val.splitlines())
 
     def filter_geom(self, src, val):
         lng, lat = val
         geom = Point(float(lng), float(lat), srid=4326)  # WGS84
         geom.transform(settings.SRID)
         return geom
+
+
+class HebergementsSitraParser(TouristicContentSitraParser):
+    label = u"Hébergements SITRA"
+    category = u"Hébergements"
+    m2m_fields = {
+        'type1': 'informationsHebergementCollectif.hebergementCollectifType.libelleFr',
+    }
 
 
 class EspritParcParser(AttachmentParserMixin, Parser):

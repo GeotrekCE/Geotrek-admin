@@ -15,7 +15,6 @@ from django.views.generic import CreateView, ListView, RedirectView
 from django.views.generic.detail import BaseDetailView
 from djcelery.models import TaskMeta
 from mapentity.helpers import alphabet_enumeration
-from mapentity.settings import app_settings as mapentity_settings
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityFormat, MapEntityDetail, MapEntityMapImage,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate,
@@ -25,7 +24,7 @@ from rest_framework import permissions as rest_permissions, viewsets
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.utils import plain_text_preserve_linebreaks
+from geotrek.common.models import RecordSource
 from geotrek.common.views import FormsetMixin, PublicOrReadPermMixin, DocumentPublic
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
@@ -205,35 +204,25 @@ class TrekDocumentPublicBase(DocumentPublic):
         for i, poi in enumerate(pois):
             poi.letter = letters[i]
         context['pois'] = pois
-
-        if not mapentity_settings['MAPENTITY_WEASYPRINT']:
-            # Replace HTML text with plain text
-            for attr in ['description', 'description_teaser', 'ambiance', 'advice', 'access',
-                         'public_transport', 'advised_parking', 'disabled_infrastructure']:
-                setattr(trek, attr, plain_text_preserve_linebreaks(getattr(trek, attr)))
-
-            for poi in context['pois']:
-                setattr(poi, 'description', plain_text_preserve_linebreaks(getattr(poi, 'description')))
-
         context['object'] = context['trek'] = trek
+        source = self.request.GET.get('source')
+        if source:
+            try:
+                context['source'] = RecordSource.objects.get(name=source)
+            except RecordSource.DoesNotExist:
+                pass
 
         return context
 
 
-class TrekDocumentPublicOdt(TrekDocumentPublicBase):
+class TrekDocumentPublic(TrekDocumentPublicBase):
 
     def render_to_response(self, context, **response_kwargs):
         # Prepare altimetric graph
         trek = self.get_object()
         language = self.request.LANGUAGE_CODE
         trek.prepare_elevation_chart(language, self.request.build_absolute_uri('/'))
-        return super(TrekDocumentPublicOdt, self).render_to_response(context, **response_kwargs)
-
-
-if mapentity_settings['MAPENTITY_WEASYPRINT']:
-    TrekDocumentPublic = TrekDocumentPublicBase
-else:
-    TrekDocumentPublic = TrekDocumentPublicOdt
+        return super(TrekDocumentPublic, self).render_to_response(context, **response_kwargs)
 
 
 class TrekRelationshipFormsetMixin(FormsetMixin):

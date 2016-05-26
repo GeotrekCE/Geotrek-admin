@@ -19,7 +19,7 @@ exec 1> install.log 2>&1
 
 #------------------------------------------------------------------------------
 
-STABLE_VERSION=${STABLE_VERSION:-2.10.2}
+STABLE_VERSION=${STABLE_VERSION:-2.10.4}
 dev=false
 tests=false
 prod=false
@@ -475,8 +475,8 @@ function geotrek_setup {
 
         echo_step "Generate services configuration files..."
         
-        # restart supervisor in case of xenial before 'make deploy'
-        sudo service supervisor restart
+        # restart supervisor in case of xenial before 'make deploy'
+        /etc/init.d/supervisor force-stop && /etc/init.d/supervisor stop && /etc/init.d/supervisor start
         make deploy
         echo_progress
 

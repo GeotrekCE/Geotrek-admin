@@ -12,9 +12,93 @@ CREATE TYPE elevation_infos AS (
     negative_gain integer
 );
 
+CREATE OR REPLACE FUNCTION geotrek.ft_smooth_line(geom geometry)
+  RETURNS SETOF geometry AS $$
+DECLARE
+    current geometry;
+    points3d geometry[];
+    ele integer;
+    last_ele integer;
+    last_last_ele integer;
+BEGIN
+    points3d := ARRAY[]::geometry[];
+    ele := NULL;
+    last_ele := NULL;
+    last_last_ele := NULL;
+
+    FOR current IN SELECT (ST_DumpPoints(ST_Force_3D(geom))).geom AS geom LOOP
+
+         -- smoothing with last element
+         ele := (ST_Z(current)::integer + coalesce(last_ele, ST_Z(current)::integer)) / 2;
+         points3d := array_append(points3d, ST_MakePoint(ST_X(current), ST_Y(current), ele));
+
+	 last_last_ele := last_ele;
+	 last_ele := ele;
+
+    END LOOP;
+
+    RETURN QUERY SELECT (ST_DumpPoints(ST_SetSRID(ST_MakeLine(points3d), ST_SRID(geom)))).geom as geom;
+
+END;
+
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION geotrek.ft_smooth_line(
+    linegeom geometry,
+    step integer)
+  RETURNS SETOF geometry AS $$
+-- function moving average on altitude lines with specified step
+
+DECLARE
+
+    points geometry[];
+    points_output geometry[];
+    current_values float;
+    count_values integer;
+    val geometry;
+    element geometry;
+
+BEGIN
+    IF step <= 0
+    THEN
+        RETURN QUERY SELECT * FROM ft_smooth_line(linegeom);
+    END IF;
+
+    FOR element in SELECT (ST_DumpPoints(linegeom)).geom LOOP
+		points := array_append(points, element);
+    END LOOP;
+
+    FOR i IN 0 .. array_length(points, 1) LOOP
+
+        current_values := 0.0;
+		count_values := 0;
+		
+		FOREACH val in ARRAY points[i-step:i+step] LOOP
+			-- val is null when out of array
+			IF val IS NOT NULL
+			THEN
+				count_values := count_values + 1;
+				current_values := current_values + ST_Z(val);
+			END IF;
+		END LOOP;
+
+		points_output := array_append(points_output, ST_MAKEPOINT(ST_X(points[i]), ST_Y(points[i]), (current_values / count_values)::integer));
+		
+
+    END LOOP;
+    --RAISE EXCEPTION 'Nonexistent ID --> %', ST_ASEWKT(ST_SetSRID(ST_MakeLine(points_output), ST_SRID(linegeom)));
+    
+    RETURN QUERY SELECT (ST_DumpPoints(ST_SetSRID(ST_MakeLine(points_output), ST_SRID(linegeom)))).geom as geom;
+
+END;
+
+$$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION geotrek.ft_drape_line(linegeom geometry, step integer)
     RETURNS SETOF geometry AS $$
+DECLARE
+    points geometry[];
+result geometry[];
 BEGIN
     -- Use sampling steps for draping geometry on DEM
     -- http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html
@@ -43,6 +127,7 @@ BEGIN
                  -- Set SRID of new points
                  r5 AS (SELECT ST_SetSRID(p, srid) as p FROM r4)
             SELECT add_point_elevation(p) FROM r5;
+
     END IF;
 END;
 $$ LANGUAGE plpgsql;
@@ -118,9 +203,9 @@ BEGIN
 
     FOR current IN SELECT * FROM ft_drape_line(geom, {{ALTIMETRIC_PROFILE_PRECISION}}) LOOP
         -- Smooth the elevation profile
-        ele := (ST_Z(current)::integer + coalesce(last_ele, ST_Z(current)::integer)) / 2;
+        ele := ST_Z(current);
         -- Create the 3d points
-        points3d := array_append(points3d, ST_MakePoint(ST_X(current), ST_Y(current), ele));
+        points3d := array_append(points3d, current);
         -- Add positive only if ele - last_ele > 0
         result.positive_gain := result.positive_gain + greatest(ele - coalesce(last_ele, ele), 0);
         -- Add negative only if ele - last_ele < 0
@@ -141,4 +226,98 @@ BEGIN
 
     RETURN result;
 END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION geotrek.ft_elevation_infos(geom geometry, epsilon float) RETURNS elevation_infos AS $$
+DECLARE
+    num_points integer;
+    current geometry;
+    points3d geometry[];
+    points3d_smoothed geometry[];
+    points3d_simplified geometry[];
+    result elevation_infos;
+    previous_geom geometry;
+BEGIN
+    -- Skip if no DEM (speed-up tests)
+    PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
+    IF NOT FOUND THEN
+        SELECT ST_Force_3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
+        RETURN result;
+    END IF;
+
+    -- Ensure parameter is a point or a line
+    IF ST_GeometryType(geom) NOT IN ('ST_Point', 'ST_LineString') THEN
+        SELECT ST_Force_3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
+        RETURN result;
+    END IF;
+
+    -- Specific case for points
+    IF ST_GeometryType(geom) = 'ST_Point' THEN
+        current := add_point_elevation(geom);
+        SELECT current, 0.0, ST_Z(current), ST_Z(current), 0, 0 INTO result;
+        RETURN result;
+    END IF;
+
+    -- Case of epsilon <= 0:
+    IF epsilon <= 0
+    THEN
+        SELECT * FROM ft_elevation_infos(geom) INTO result;
+        RETURN result;
+    END IF;
+
+    -- Now geom is LineString only.
+
+
+    result.positive_gain := 0;
+    result.negative_gain := 0;
+    points3d := ARRAY[]::geometry[];
+    points3d_smoothed := ARRAY[]::geometry[];
+    points3d_simplified := ARRAY[]::geometry[];
+
+    FOR current IN SELECT * FROM ft_drape_line(geom, {{ALTIMETRIC_PROFILE_PRECISION}}) LOOP
+        -- Create the 3d points
+        points3d := array_append(points3d, current);
+    END LOOP;
+
+    -- smoothing line
+    FOR current IN SELECT * FROM ft_smooth_line(St_MakeLine(points3d), {{ALTIMETRIC_PROFILE_AVERAGE}}) LOOP
+        -- Create the 3d points
+        points3d_smoothed := array_append(points3d_smoothed, current);
+    END LOOP;
+
+    -- simplify gain calculs
+
+    previous_geom := NULL;
+
+    -- Compute gain using simplification
+    -- see http://www.postgis.org/docs/ST_Simplify.html
+    --     https://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm
+    FOR current IN SELECT (ST_DUMPPOINTS(ST_SIMPLIFYPRESERVETOPOLOGY(ST_MAKELINE(points3d_smoothed), epsilon))).geom
+    LOOP
+        -- Add positive only if current - previous_geom > 0
+	result.positive_gain := result.positive_gain + greatest(ST_Z(current) - coalesce(ST_Z(previous_geom),
+								ST_Z(current)), 0);
+	-- Add negative only if current - previous_geom < 0
+	result.negative_gain := result.negative_gain + least(ST_Z(current) - coalesce(ST_Z(previous_geom),
+							     ST_Z(current)), 0);
+	previous_geom := current;
+    END LOOP;
+
+    result.draped := ST_SetSRID(ST_MakeLine(points3d_smoothed), ST_SRID(geom));
+
+    -- Compute elevation using (higher resolution)
+    result.min_elevation := ST_ZMin(result.draped)::integer;
+    result.max_elevation := ST_ZMax(result.draped)::integer;
+
+
+    -- Compute slope
+    result.slope := 0.0;
+
+    IF ST_Length2D(geom) > 0 THEN
+        result.slope := (result.max_elevation - result.min_elevation) / ST_Length2D(geom);
+    END IF;
+
+    RETURN result;
+END;
+
 $$ LANGUAGE plpgsql;

@@ -2,6 +2,41 @@
 CHANGELOG
 =========
 
+2.10.4 (2016-05-19)
+-------------------
+
+**Breaking changes**
+
+* Deprecate MAPENTITY_WEASYPRINT setting. Now public PDF use Weasyprint HTML templates and private PDF use legacy
+  ODT template.
+
+**Minor changes**
+
+* Improve altitude profile computation (increase smoothing)
+* Improve HTML templates for public exports
+* Improve SITRA parser
+* Allow to use source variable in PDF templates
+
+**Bug fixes**
+
+* Fix comparison of zip files to keep mtime when nothing changed
+* Upgrade simplekml lib (should fix KML exports)
+
+
+2.10.3 (2016-05-11)
+-------------------
+
+**Minor changes**
+
+* Update default pictograms for touristic content categories
+* Update default pictograms for themes
+
+**Bug fixes**
+
+* Workaround a bun in supervisor init script
+* Fix multilinestring instead of linestring in trek shapefile parser
+
+
 2.10.2 (2016-04-12)
 -------------------
 
@@ -14,7 +49,7 @@ CHANGELOG
 
 * Restore contents deleted and then created again in EspritParcParser
 * Add a warning if type1/type2 is not created in EspritParcParser
-* Replace <input> by <textarea> in flatpage form
+* Replace input by textarea in flatpage form
 
 
 2.10.1 (2016-03-17)

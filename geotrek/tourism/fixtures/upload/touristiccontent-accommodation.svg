@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1"
-	 id="svg2" inkscape:version="0.48.3.1 r9886" sodipodi:docname="The_Noun_Project_Single_Icon_Template_v1.1.ai" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:cc="http://creativecommons.org/ns#" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:svg="http://www.w3.org/2000/svg"
-	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100px" height="87.978px"
-	 viewBox="12.5 18.511 100 87.978" enable-background="new 12.5 18.511 100 87.978" xml:space="preserve">
-<path id="path4520-9" inkscape:original="M -97 1117.625 L -147 1167.625 L -134.5 1167.625 L -134.5 1205.125 L -121.34375 1205.125 L -103.25 1205.125 L -90.75 1205.125 L -72.1875 1205.125 L -59.5 1205.125 L -59.5 1167.625 L -47 1167.625 L -59.75 1154.875 L -59.75 1137.375 L -68 1137.375 L -68 1146.625 L -97 1117.625 z " sodipodi:type="inkscape:offset" inkscape:radius="1.9445436" d="
-	M62.289,18.522c-0.422,0.049-0.814,0.24-1.113,0.542L13.042,67.199c-0.728,0.734-0.721,1.92,0.014,2.647
-	c0.349,0.345,0.819,0.539,1.31,0.541h10.168v34.236c0.003,1.028,0.836,1.861,1.865,1.865h12.666h17.418h12.035h17.869h12.215
-	c1.028-0.004,1.861-0.837,1.865-1.865V70.388h10.168c1.034-0.004,1.869-0.845,1.865-1.879c-0.002-0.491-0.196-0.961-0.541-1.31
-	l-11.733-11.733V39.401c-0.003-1.028-0.837-1.861-1.865-1.865h-7.942c-1.028,0.004-1.861,0.837-1.865,1.865v4.392L63.824,19.064
-	C63.422,18.659,62.856,18.459,62.289,18.522z"/>
+<svg version="1.1" id="Calque_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="36.41px" height="36.409px" viewBox="0 0 36.41 36.409" enable-background="new 0 0 36.41 36.409" xml:space="preserve">
+<path fill="#FFFFFF" d="M10.282,8.368l0.81-0.426l0.81,0.426l-0.154-0.902l0.655-0.639l-0.906-0.132l-0.405-0.82l-0.405,0.82
+	L9.782,6.828l0.655,0.639L10.282,8.368z M18.272,8.599l-0.239-0.215l-0.237,0.217L8.274,19.346l-0.25,0.229l0.253,0.225l1.635,1.449
+	l0.243,0.215l0.236-0.224l0.416-0.503v6.197H9.296v1.182H26.92v-1.182h-1.494v-6.177l0.371,0.44l0.23,0.212l0.24-0.202l1.682-1.426
+	l0.266-0.226l-0.258-0.232L18.272,8.599z M20.756,26.934h-5.277v-5.471h5.277V26.934z M29.723,9.597l-2.059-0.299l-0.92-1.865
+	l-0.92,1.865l-2.059,0.299l1.49,1.452l-0.352,2.049l1.84-0.968l1.842,0.968l-0.352-2.049L29.723,9.597z M8.641,13.359l1.227,0.645
+	l-0.234-1.366l0.992-0.967l-1.371-0.199l-0.613-1.243l-0.613,1.243l-1.371,0.199l0.992,0.967l-0.234,1.366L8.641,13.359z"/>
 </svg>

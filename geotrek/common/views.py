@@ -5,13 +5,11 @@ from django.conf import settings
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.utils import DatabaseError
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.utils.translation import ugettext as _
 
 from mapentity.helpers import api_bbox
 from mapentity import views as mapentity_views
-from mapentity.settings import app_settings
 
 from geotrek.celery import app as celery_app
 from geotrek.common.utils import sql_extent
@@ -78,17 +76,7 @@ class PublicOrReadPermMixin(object):
         return obj
 
 
-class DocumentPublicPDF(PublicOrReadPermMixin, mapentity_views.DocumentConvert):
-    # Override login_required
-
-    def dispatch(self, *args, **kwargs):
-        return super(mapentity_views.Convert, self).dispatch(*args, **kwargs)
-
-    def source_url(self):
-        return self.get_object().get_document_public_url()
-
-
-class DocumentPublicBase(PublicOrReadPermMixin, mapentity_views.MapEntityDocument):
+class DocumentPublic(PublicOrReadPermMixin, mapentity_views.MapEntityDocumentWeasyprint):
     template_name_suffix = "_public"
 
     # Override view_permission_required
@@ -96,34 +84,10 @@ class DocumentPublicBase(PublicOrReadPermMixin, mapentity_views.MapEntityDocumen
         return super(mapentity_views.MapEntityDocumentBase, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(DocumentPublicBase, self).get_context_data(**kwargs)
+        context = super(DocumentPublic, self).get_context_data(**kwargs)
         modelname = self.get_model()._meta.object_name.lower()
         context['mapimage_ratio'] = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
         return context
-
-
-class DocumentPublicOdt(DocumentPublicBase):
-    with_html_attributes = False
-
-    def render_to_response(self, context, **response_kwargs):
-        # Use attachment that overrides document print, if any.
-        # And return it as response
-        try:
-            overriden = self.object.get_attachment_print()
-            response = HttpResponse(
-                mimetype='application/vnd.oasis.opendocument.text')
-            with open(overriden, 'rb') as f:
-                response.write(f.read())
-            return response
-        except ObjectDoesNotExist:
-            pass
-        return super(DocumentPublicOdt, self).render_to_response(context, **response_kwargs)
-
-
-if app_settings['MAPENTITY_WEASYPRINT']:
-    DocumentPublic = DocumentPublicBase
-else:
-    DocumentPublic = DocumentPublicOdt
 
 #
 # Concrete views

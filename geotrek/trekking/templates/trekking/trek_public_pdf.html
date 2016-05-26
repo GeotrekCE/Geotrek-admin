@@ -34,7 +34,6 @@
           <div class="main-picture" style="background-image: url({{ object.picture_print.url }});"></div><div class="main-map" style="background-image: url({{ map_url }});"></div>
           {% if object.picture_print.legend or object.picture_print.author %}
             <legend>
-              {% trans "Attribution" %} :
               {{ object.picture_print.legend }}
               {% if object.picture_print.author %}({{ object.picture_print.author }}){% endif %}
             </legend>
@@ -113,7 +112,6 @@
       {% block description %}
         {% if object.description or object.networks.all or object.departure or object.arrival %}
           <div class="inner-title">
-            <div class="doc-title">{{ object.name }}</div>
             <h2>{% trans "Trek" %}</h2>
           </div>
           {% if object.departure or object.departure or object.networks.all %}
@@ -130,6 +128,14 @@
                     {% endfor %}
                   </li>
                 {% endif %}
+                {% if object.children %}
+                  {% trans "Stages" %} :
+                  <ul>
+                    {% for child in object.children %}
+                      <li><strong>{{ forloop.counter }}.</strong> {{ child.name }}, {{ child.length_kilometer }} km, {{ child.ascent }} m D+, {{ child.duration_pretty }}</li>
+                    {% endfor %}
+                  </ul>
+                {% endif %}
               </ul>
             </div>
           {% endif %}
@@ -139,8 +145,10 @@
         {% endif %}
       {% endblock description %}
       <div class="inner-title">
-        <div>{{ object.name }}</div>
         <h2>{% trans "On your path..." %}</h2>
+      </div>
+      <div class="full-map">
+        <img src="{{ map_url }}" alt="">
       </div>
       {% block poisSummary %}
         <section class="pois-summary">
@@ -154,18 +162,14 @@
           {% endif %}
         </section>
       {% endblock poisSummary %}
-      <div class="full-map">
-        <img src="{{ map_url }}" alt="">
-      </div>
       <div class="inner-title">
-        <div class="doc-title">{{ object.name }}</div>
         <h2>{% trans "All usefull informations" %}</h2>
       </div>
       {% if object.is_park_centered %}
         <div class="advice">
           <div class="advice-title">
             <div class="advice-icon">
-              <img src="{%  static 'trekking/advice.svg' %}">
+              <img src="{% static 'trekking/advice.svg' %}">
             </div>
             {% trans "This hike is at the heart of the national park" %}
           </div>
@@ -176,7 +180,7 @@
         <div class="advice">
           <div class="advice-title">
             <div class="advice-icon">
-              <img src="{%  static 'trekking/advice.svg' %}">
+              <img src="{% static 'trekking/advice.svg' %}">
             </div>
             {% trans "Advices" %}
           </div>
@@ -287,7 +291,7 @@
                   </h3>
                   <div class="description">{{ poi.description|safe }}</div>
                   {% if poi.thumbnail and poi.thumbnail.author %}
-                    <legend>{% trans "Attribution" %} : {{ poi.thumbnail.author }}</legend>
+                    <legend>{{ poi.thumbnail.author }}</legend>
                   {% endif %}
                 </div>
               </div>
