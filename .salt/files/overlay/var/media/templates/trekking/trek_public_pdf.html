@@ -15,13 +15,13 @@
           <img src="{{ MEDIA_URL|add:'upload/logo-header.png' }}" alt="">
         </div>
         <div class="url">
-          <div class="main">www.geotrek.fr</div>
-          <div class="geo">{% trans "by Makina Corpus" %}</div>
+          <div class="main">rando.geotrek.fr</div>
+          <div class="geo">{% trans "Powered by geotrek.fr" %}</div>
         </div>
       </header>
       <div class="gray">
         {% if object.practice %}
-          <div class="main-icon">
+          <div class="main-icon category-T{{ object.practice.pk }}">
             <img src="{{ object.practice.pictogram.url }}" alt="">
           </div>
         {% endif %}
@@ -34,7 +34,6 @@
           <div class="main-picture" style="background-image: url({{ object.picture_print.url }});"></div><div class="main-map" style="background-image: url({{ map_url }});"></div>
           {% if object.picture_print.legend or object.picture_print.author %}
             <legend>
-              {% trans "Attribution" %} :
               {{ object.picture_print.legend }}
               {% if object.picture_print.author %}({{ object.picture_print.author }}){% endif %}
             </legend>
@@ -78,7 +77,7 @@
           {% endif %}
           {% if object.ascent %}
             <span class="meta-item">
-              <span class="meta-item-label">{% trans "Trek_ascent" %}</span>
+              <span class="meta-item-label">{% trans "Trek ascent" %}</span>
               <span class="meta-item-value">{{ object.ascent }} m</span>
             </span>
           {% endif %}
@@ -113,7 +112,6 @@
       {% block description %}
         {% if object.description or object.networks.all or object.departure or object.arrival %}
           <div class="inner-title">
-            <div class="doc-title">{{ object.name }}</div>
             <h2>{% trans "Trek" %}</h2>
           </div>
           {% if object.departure or object.departure or object.networks.all %}
@@ -130,6 +128,14 @@
                     {% endfor %}
                   </li>
                 {% endif %}
+                {% if object.children %}
+                  {% trans "Stages" %} :
+                  <ul>
+                    {% for child in object.children %}
+                      <li><strong>{{ forloop.counter }}.</strong> {{ child.name }}, {{ child.length_kilometer }} km, {{ child.ascent }} m D+, {{ child.duration_pretty }}</li>
+                    {% endfor %}
+                  </ul>
+                {% endif %}
               </ul>
             </div>
           {% endif %}
@@ -139,8 +145,10 @@
         {% endif %}
       {% endblock description %}
       <div class="inner-title">
-        <div>{{ object.name }}</div>
         <h2>{% trans "On your path..." %}</h2>
+      </div>
+      <div class="full-map">
+        <img src="{{ map_url }}" alt="">
       </div>
       {% block poisSummary %}
         <section class="pois-summary">
@@ -154,18 +162,14 @@
           {% endif %}
         </section>
       {% endblock poisSummary %}
-      <div class="full-map">
-        <img src="{{ map_url }}" alt="">
-      </div>
       <div class="inner-title">
-        <div class="doc-title">{{ object.name }}</div>
         <h2>{% trans "All usefull informations" %}</h2>
       </div>
       {% if object.is_park_centered %}
         <div class="advice">
           <div class="advice-title">
             <div class="advice-icon">
-              <img src="{{ MEDIA_URL|add:'upload/advice.svg' }}">
+              <img src="{% static 'trekking/advice.svg' %}">
             </div>
             {% trans "This hike is at the heart of the national park" %}
           </div>
@@ -176,7 +180,7 @@
         <div class="advice">
           <div class="advice-title">
             <div class="advice-icon">
-              <img src="{{ MEDIA_URL|add:'upload/advice.svg' }}">
+              <img src="{% static 'trekking/advice.svg' %}">
             </div>
             {% trans "Advices" %}
           </div>
@@ -243,12 +247,14 @@
             <section class="information-desks">
               <h2>
                 <div class="information-desks-icon">
-                  <img src="{{ MEDIA_URL|add:'upload/information.svg' }}">
+                  <img src="{% static 'trekking/information.svg' %}">
                 </div>
                 {% trans "Information desks" %}
               </h2>
               <div class="text-content intro">
-                Les différents relais d'information renseignent sur le patrimoine naturel et culturel, sur la réglementation qui s’applique en zone cœur, sur les activités et missions de l’établissement public. Ces acteurs du tourisme sont aussi fortement impliqués dans la promotion du Festival nature et des écomusées.
+                {% if object.information_desks.first.thumbnail %}
+                  <img src="{{ object.information_desks.first.thumbnail.url }}">
+                {% endif %}
               </div>
               <ul class="desks">
                 {% for desk in object.information_desks.all %}
@@ -285,7 +291,7 @@
                   </h3>
                   <div class="description">{{ poi.description|safe }}</div>
                   {% if poi.thumbnail and poi.thumbnail.author %}
-                    <legend>{% trans "Attribution" %} : {{ poi.thumbnail.author }}</legend>
+                    <legend>{{ poi.thumbnail.author }}</legend>
                   {% endif %}
                 </div>
               </div>
@@ -296,7 +302,7 @@
     {% endblock body %}
     {% block footer %}
       <div id="footer">
-        <div class="text">{% now 'SHORT_DATE_FORMAT' %} &#8226; {{ object.name }} &#8226;</div>
+        <div class="text">{% now 'SHORT_DATE_FORMAT' %} &#8226; {{ object.name }}</div>
       </div>
     {% endblock footer %}
   </body>

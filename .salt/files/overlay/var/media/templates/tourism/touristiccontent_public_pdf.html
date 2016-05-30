@@ -15,14 +15,19 @@
           <img src="{{ MEDIA_URL|add:'upload/logo-header.png' }}" alt="">
         </div>
         <div class="url">
-          <div class="main">www.geotrek.fr</div>
-          <div class="geo">{% trans "by Makina Corpus" %}</div>
+          <div class="main">rando.geotrek.fr</div>
+          <div class="geo">{% trans "Powered by geotrek.fr" %}</div>
         </div>
       </header>
       <div class="gray">
         {% if object.category %}
-          <div class="main-icon">
+          <div class="main-icon category-C{{ object.category.pk }}">
             <img src="{{ object.category.pictogram.url }}" alt="">
+          </div>
+        {% endif %}
+        {% if object.approved %}
+          <div class="trademark">
+            <img src="{{ MEDIA_URL|add:'upload/trademark.svg' }}" alt="">
           </div>
         {% endif %}
         <div class="main-title">
@@ -84,7 +89,6 @@
       {% block description %}
         {% if object.description %}
           <div class="inner-title">
-            <div class="doc-title">{{ object.name }}</div>
             <h2>{% trans "Description" %}</h2>
           </div>
           <section class="description">
@@ -93,14 +97,12 @@
         {% endif %}
       {% endblock description %}
       <div class="inner-title">
-        <div>{{ object.name }}</div>
         <h2>{% trans "Geographical location" %}</h2>
       </div>
       <div class="full-map">
         <img src="{{ map_url }}" alt="">
       </div>
       <div class="inner-title">
-        <div class="doc-title">{{ object.name }}</div>
         <h2>{% trans "All usefull informations" %}</h2>
       </div>
       {% if object.practical_info %}
@@ -111,30 +113,27 @@
           <div class="advice-content">{{ object.practical_info | safe }}</div>
         </div>
       {% endif %}
+      <section class="half-block contact">
+        <h2>{% trans "Contact" %}</h2>
+        <div class="text-content">
+          {% if object.contact %}<div>{{ object.contact|safe }}</div>{% endif %}
+          {% if object.email %}<div><a href="mailto:{{ object.email }}">{{ object.email }}</a></div>{% endif %}
+          {% if object.website %}<div><a href="{{ object.website }}">{{ object.website }}</a></div>{% endif %}
+        </div>
+      </section>
       {% block source %}
         {% if object.source.all %}
           <section class="half-block source">
             <h2>{% trans "Source" %}</h2>
             {% for s in object.source.all %}
-               <div class="text-content">{% if s.pictogram %}<span class="source-icon"><img src="{{ MEDIA_URL|add:s.pictogram.name }}"></span> {% endif %}{{ s.name }}</div>
+               <div class="text-content">
+                 {% if s.pictogram %}<img src="{{ MEDIA_URL|add:s.pictogram.name }}">{% endif %}
+                 {{ s.name }}
+               </div>
             {% endfor %}
           </section>
         {% endif %}
       {% endblock source %}
-      <section class="information-desks">
-        <h2>
-          {% trans "Contact" %}
-        </h2>
-        <ul class="desks">
-          <li class="desk">
-            <div class="content">
-              {% if object.contact %}<div class="desk-address">{{ object.contact|safe }}</div>{% endif %}
-              {% if object.email %}<div class="desk-email"><a href="mailto:{{ object.email }}">{{ object.email }}</a></div>{% endif %}
-              {% if object.website %}<div class="desk-website"><a href="{{ object.website }}">{{ object.website }}</a></div>{% endif %}
-            </div>
-          </li>
-        </ul>
-      </section>
     {% endblock body %}
     {% block footer %}
       <div id="footer">

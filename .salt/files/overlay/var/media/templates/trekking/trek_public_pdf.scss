@@ -8,11 +8,11 @@ $quoteBgColor:    lighten($highlightColor1, 50);;
 @page {
     margin: 1cm 1.4cm 2.5cm 1.4cm;
     @bottom-right {
-        font-family: sans, sans-serif;
+        font-family: sans-serif;
         font-size: .7em;
         font-weight: 100;
 
-        content:  counter(page) '/' counter(pages);
+        content: counter(page) '/' counter(pages);
 
         color: $textColor;
     }
@@ -28,9 +28,9 @@ html {
 }
 
 body {
-    font-family: 'Frutiger LT Std 45 Light', sans-serif;
+    font-family: sans-serif;
     font-weight: normal;
-    font-size: 17px;
+    font-size: 16px;
     line-height: 1.2;
 
     margin: 0;
@@ -55,13 +55,12 @@ h5 {
 
 #footer {
     position: fixed;
-    right: .75cm;
-    bottom: -3.03cm;
+    bottom: -3.2cm;
     left: 0;
 
     height: 2cm;
-
-    text-align: right;
+    width: 100%;
+    text-align: center;
 
     .text {
         font-size: .7em;
@@ -86,7 +85,7 @@ header {
         float: left;
 
         max-width: 50%;
-        height: 2.5cm;
+        height: 2cm;
 
         img {
             max-height: 100%;
@@ -97,12 +96,11 @@ header {
         float: right;
 
         max-width: 50%;
-        padding-top: .8cm;
+        padding-top: 0;
 
         text-align: right;
 
         .main {
-            font-weight: bold;
         }
         .geo {
             font-size: .75em;
@@ -116,7 +114,7 @@ header {
     clear: both;
 
     margin: .5cm -1.4cm 0 -1.4cm;
-    padding: 1cm 1.4cm .7cm 1.4cm;
+    padding: .7cm 1.4cm .7cm 1.4cm;
 
     background-color: #eee;
 
@@ -164,8 +162,10 @@ header {
 }
 
 .main-title {
+    outline: 1px red;
     max-width: 80%;
     h1 {
+        font-size: 1.75em;
         font-weight: bold;
 
         margin: 0 0 0 0;
@@ -214,8 +214,8 @@ header {
     padding-right: .5cm;
 
     .teaser {
-        font-family: 'Sabon_Bold', serif;
-        font-size: 1.5em;
+        font-family: serif;
+        font-size: 1.2em;
         font-style: italic;
 
         color: orange;
@@ -455,25 +455,14 @@ header {
 
 .advice-icon,
 .information-desks-icon,
-.network-icon,
-.source-icon {
+.network-icon {
     display: inline-block;
 
     vertical-align: text-bottom;
     img {
         display: block;
-
         max-width: .75cm;
         max-height: .75cm;
-    }
-}
-
-.source-icon {
-    vertical-align: middle;
-    img {
-        max-width: 3cm;
-        max-height: 3cm;
-        margin-bottom: .5cm;
     }
 }
 
@@ -494,4 +483,22 @@ header {
             list-style-type: none;
         }
     }
+}
+
+.source {
+    .text-content + .text-content {
+        clear: both;
+        padding-top: .5cm;
+    }
+    img {
+        float: left;
+        vertical-align: top;
+        margin-right: .5cm;
+        max-width: 3cm;
+        max-height: 3cm;
+    }
+}
+
+.main-icon {
+//    &.category-T1 { background-color: #xxxxxx; }
 }
