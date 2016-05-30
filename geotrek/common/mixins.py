@@ -112,7 +112,7 @@ class PicturesMixin(object):
             try:
                 thdetail = thumbnailer.get_thumbnail(aliases.get('medium'))
             except InvalidImageFormatError:
-                logger.warning(_("Image %s invalid or missing from disk.") % picture.attachment_file)
+                logger.info(_("Image %s invalid or missing from disk.") % picture.attachment_file)
             else:
                 resized.append((picture, thdetail))
         return resized
@@ -124,7 +124,7 @@ class PicturesMixin(object):
             try:
                 thumbnail = thumbnailer.get_thumbnail(aliases.get('print'))
             except InvalidImageFormatError:
-                logger.warning(_("Image %s invalid or missing from disk.") % picture.attachment_file)
+                logger.info(_("Image %s invalid or missing from disk.") % picture.attachment_file)
                 continue
             thumbnail.author = picture.author
             thumbnail.legend = picture.legend
@@ -138,7 +138,7 @@ class PicturesMixin(object):
             try:
                 thumbnail = thumbnailer.get_thumbnail(aliases.get('small-square'))
             except InvalidImageFormatError:
-                logger.warning(_("Image %s invalid or missing from disk.") % picture.attachment_file)
+                logger.info(_("Image %s invalid or missing from disk.") % picture.attachment_file)
                 continue
             thumbnail.author = picture.author
             thumbnail.legend = picture.legend
