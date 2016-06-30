@@ -5,7 +5,14 @@ CHANGELOG
 2.10.5.dev0
 -------------------
 
-*
+**Bug fixes**
+
+* Fix weasyprint install
+
+**Minor changes**
+
+* Update translations
+* Update import documentation
 
 
 2.10.4 (2016-05-19)
