@@ -118,6 +118,7 @@ class TrekForm(BaseTrekForm):
                     'web_links',
                     'information_desks',
                     'source',
+                    'portal',
                     'children_trek',
                     'eid',
                     'eid2',
@@ -232,7 +233,7 @@ class TrekForm(BaseTrekForm):
              'access', 'description_teaser', 'description', 'points_reference',
              'disabled_infrastructure', 'advised_parking', 'parking_location',
              'public_transport', 'advice', 'themes', 'networks', 'practice',
-             'accessibilities', 'web_links', 'information_desks', 'source',
+             'accessibilities', 'web_links', 'information_desks', 'source', 'portal',
              'children_trek', 'eid', 'eid2', 'hidden_ordered_children', 'structure']
 
 if settings.TREKKING_TOPOLOGY_ENABLED:

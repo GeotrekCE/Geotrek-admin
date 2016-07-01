@@ -5,7 +5,7 @@ from django.utils.translation import get_language
 from rest_framework import serializers as rest_serializers
 from rest_framework import serializers as rest_fields
 
-from .models import Theme, RecordSource
+from .models import Theme, RecordSource, TargetPortal
 
 
 class TranslatedModelSerializer(rest_serializers.ModelSerializer):
@@ -77,3 +77,9 @@ class RecordSourceSerializer(PictogramSerializerMixin, rest_serializers.ModelSer
     class Meta:
         model = RecordSource
         fields = ('name', 'website', 'pictogram')
+
+
+class TargetPortalSerializer(rest_serializers.ModelSerializer):
+    class Meta:
+        model = TargetPortal
+        fields = ('name', 'website',)

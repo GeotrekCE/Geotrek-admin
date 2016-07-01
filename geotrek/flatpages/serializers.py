@@ -15,5 +15,5 @@ class FlatPageSerializer(BasePublishableSerializerMixin, TranslatedModelSerializ
     class Meta:
         model = flatpages_models.FlatPage
         fields = ('id', 'title', 'external_url', 'content', 'target',
-                  'last_modified', 'slug', 'media', 'source') + \
+                  'last_modified', 'slug', 'media', 'source', 'portal') + \
             BasePublishableSerializerMixin.Meta.fields

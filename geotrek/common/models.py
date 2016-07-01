@@ -90,3 +90,18 @@ class RecordSource(StructureRelated, OptionalPictogramMixin):
 
     def __unicode__(self):
         return self.name
+
+
+class TargetPortal(models.Model):
+    name = models.CharField(verbose_name=_(u"Name used by sync"), max_length=50, unique="True")
+    website = models.URLField(verbose_name=_(u"Website"), max_length=256,
+                              db_column='website', unique="True")
+
+    class Meta:
+        db_table = 'o_b_target_portal'
+        verbose_name = _(u"Portail cible")
+        verbose_name_plural = _(u"Portails cibles")
+        ordering = ('name',)
+
+    def __unicode__(self):
+        return self.name
