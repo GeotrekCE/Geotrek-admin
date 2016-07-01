@@ -455,7 +455,7 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
             'filelist_url', 'files', 'id', 'map_image_url', 'name', 'pictures',
             'pois', 'practical_info', 'printable', 'publication_date',
             'published', 'published_status', 'reservation_id', 'reservation_system',
-            'slug', 'source', 'themes', 'thumbnail', 'touristic_contents',
+            'slug', 'source', 'portal', 'themes', 'thumbnail', 'touristic_contents',
             'touristic_events', 'treks', 'type1', 'type2', 'videos', 'website', ]),
             sorted(self.result.keys()))
 
@@ -495,8 +495,8 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
             'id', 'map_image_url', 'meeting_point', 'meeting_time', 'name',
             'organizer', 'participant_number', 'pictures', 'pois', 'practical_info',
             'printable', 'publication_date', 'published', 'published_status',
-            'slug', 'source', 'speaker', 'target_audience', 'themes', 'thumbnail',
-            'touristic_contents', 'touristic_events', 'treks', 'type',
+            'slug', 'source', 'portal', 'speaker', 'target_audience', 'themes',
+            'thumbnail', 'touristic_contents', 'touristic_events', 'treks', 'type',
             'type1', 'videos', 'website'],
             sorted(self.result.keys()))
 

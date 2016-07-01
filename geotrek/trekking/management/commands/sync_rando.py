@@ -80,6 +80,8 @@ class Command(BaseCommand):
                     default='http://localhost', help='Base url'),
         make_option('--source', '-s', action='store', dest='source',
                     default=None, help='Filter by source(s)'),
+        make_option('--portal', '-P', action='store', dest='portal',
+                    default=None, help='Filter by portal(s)'),
         make_option('--skip-pdf', '-p', action='store_true', dest='skip_pdf',
                     default=False, help='Skip generation of PDF files'),
         make_option('--skip-tiles', '-t', action='store_true', dest='skip_tiles',
@@ -197,6 +199,8 @@ class Command(BaseCommand):
         name = os.path.join('api', lang, '{name}.json'.format(name=name))
         if self.source:
             params['source'] = ','.join(self.source)
+        if self.portal:
+            params['portal'] = ','.join(self.portal)
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, **kwargs)
 
     def sync_geojson(self, lang, viewset, name, zipfile=None, params={}, **kwargs):
@@ -205,6 +209,8 @@ class Command(BaseCommand):
         params.update({'format': 'geojson'})
         if self.source:
             params['source'] = ','.join(self.source)
+        if self.portal:
+            params['portal'] = ','.join(self.portal)
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, **kwargs)
 
     def sync_trek_pois(self, lang, trek, zipfile=None):
@@ -237,6 +243,8 @@ class Command(BaseCommand):
         params = {}
         if self.source:
             params['source'] = self.source[0]
+        if self.portal:
+            params['portal'] = ','.join(self.portal)
         self.sync_object_view(lang, obj, view, '{obj.slug}.pdf', params=params)
 
     def sync_profile_json(self, lang, obj, zipfile=None):
@@ -386,7 +394,11 @@ class Command(BaseCommand):
         if self.source:
             treks = treks.filter(source__name__in=self.source)
 
+        if self.portal:
+            treks = treks.filter(portal__name__in=self.portal)
+
         for trek in treks:
+            print(trek.pk)
             self.sync_trek(lang, trek)
 
         self.sync_tourism(lang)
@@ -427,6 +439,9 @@ class Command(BaseCommand):
             if self.source:
                 treks = treks.filter(source__name__in=self.source)
 
+            if self.portal:
+                treks = treks.filter(portal__name__in=self.portal)
+
             for trek in treks:
                 if trek.any_published or any([parent.any_published for parent in trek.parents]):
                     self.sync_trek_tiles(trek)
@@ -447,6 +462,7 @@ class Command(BaseCommand):
             params = {}
             if self.source:
                 params['source'] = self.source[0]
+
             view = tourism_views.TouristicContentDocumentPublic.as_view(model=type(content))
             self.sync_object_view(lang, content, view, '{obj.slug}.pdf', params=params)
 
@@ -458,6 +474,8 @@ class Command(BaseCommand):
             params = {}
             if self.source:
                 params['source'] = self.source[0]
+            if self.portal:
+                params['portal'] = self.portal[0]
             view = tourism_views.TouristicEventDocumentPublic.as_view(model=type(event))
             self.sync_object_view(lang, event, view, '{obj.slug}.pdf', params=params)
 
@@ -498,13 +516,22 @@ class Command(BaseCommand):
 
         if self.source:
             contents = contents.filter(source__name__in=self.source)
+
+        if self.portal:
+            contents = contents.filter(portal__name__in=self.portal)
+
         for content in contents:
             self.sync_content(lang, content)
 
         events = tourism_models.TouristicEvent.objects.existing().order_by('pk')
         events = events.filter(**{'published_{lang}'.format(lang=lang): True})
+
         if self.source:
             events = events.filter(source__name__in=self.source)
+
+        if self.portal:
+            events = events.filter(portal__name__in=self.portal)
+
         for event in events:
             self.sync_event(lang, event)
 
@@ -625,6 +652,11 @@ class Command(BaseCommand):
 
         if self.source is not None:
             self.source = self.source.split(',')
+
+        self.portal = options['portal']
+        if self.portal is not None:
+            self.portal = self.portal.split(',')
+
         self.builder_args = {
             'tiles_url': settings.MOBILE_TILES_URL,
             'tiles_headers': {"Referer": self.referer},
