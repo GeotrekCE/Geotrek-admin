@@ -214,7 +214,6 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
 
 
 class HebergementsSitraParser(TouristicContentSitraParser):
-    label = u"Hébergements SITRA"
     category = u"Hébergements"
     m2m_fields = {
         'type1': 'informationsHebergementCollectif.hebergementCollectifType.libelleFr',
