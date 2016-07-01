@@ -39,3 +39,8 @@ geotrek/settings/custom.py
 /.settings/
 screamshotter.log
 
+/share/
+Supprimerait conf/templates/
+Supprimerait pip-selfcheck.json
+Supprimerait public/
+Supprimerait share/

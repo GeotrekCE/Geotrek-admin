@@ -359,6 +359,9 @@ class BasicJSONAPITest(TranslationResetMixin):
         self.source = common_factories.RecordSourceFactory()
         self.content.source.add(self.source)
 
+        self.portal = common_factories.TargetPortalFactory()
+        self.content.portal.add(self.portal)
+
         path = core_factories.PathFactory(geom='SRID=%s;LINESTRING(0 10, 10 10)' % settings.SRID)
         self.trek = trekking_factories.TrekFactory(no_path=True)
         self.trek.add_path(path)
@@ -433,6 +436,11 @@ class BasicJSONAPITest(TranslationResetMixin):
             u'website': self.source.website,
             u"pictogram": os.path.join(settings.MEDIA_URL, self.source.pictogram.name)})
 
+    def test_portals(self):
+        self.assertDictEqual(self.result['portal'][0], {
+            u'name': self.source.name,
+            u'website': self.source.website,})
+
     def test_approved(self):
         self.assertFalse(self.result['approved'])
 
@@ -450,14 +458,14 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
 
     def test_expected_properties(self):
         self.assertEqual(sorted([
-            'approved', 'areas', 'category', 'cities', 'contact',
-            'description', 'description_teaser', 'districts', 'email',
-            'filelist_url', 'files', 'id', 'map_image_url', 'name', 'pictures',
-            'pois', 'practical_info', 'printable', 'publication_date',
-            'published', 'published_status', 'reservation_id', 'reservation_system',
-            'slug', 'source', 'portal', 'themes', 'thumbnail', 'touristic_contents',
-            'touristic_events', 'treks', 'type1', 'type2', 'videos', 'website', ]),
-            sorted(self.result.keys()))
+            u'approved', u'areas', u'category', u'cities', u'contact',
+            u'description', u'description_teaser', u'districts', u'email',
+            u'filelist_url', u'files', u'id', u'map_image_url', u'name', u'pictures',
+            u'pois', u'practical_info', u'printable', u'publication_date',
+            u'published', u'published_status', u'reservation_id', u'reservation_system',
+            u'slug', u'source', u'portal', u'themes', u'thumbnail', u'touristic_contents',
+            u'touristic_events', u'treks', u'type1', u'type2', u'videos', u'website', ]),
+            sorted(self.result.keys()), sorted(self.result.keys()))
 
     def test_type1(self):
         self.assertDictEqual(self.result['type1'][0],
@@ -488,16 +496,16 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
     factory = TouristicEventFactory
 
     def test_expected_properties(self):
-        self.assertEqual([
-            'accessibility', 'approved', 'areas', 'begin_date', 'booking', 'category',
-            'cities', 'contact', 'description', 'description_teaser',
-            'districts', 'duration', 'email', 'end_date', 'filelist_url', 'files',
-            'id', 'map_image_url', 'meeting_point', 'meeting_time', 'name',
-            'organizer', 'participant_number', 'pictures', 'pois', 'practical_info',
-            'printable', 'publication_date', 'published', 'published_status',
-            'slug', 'source', 'portal', 'speaker', 'target_audience', 'themes',
-            'thumbnail', 'touristic_contents', 'touristic_events', 'treks', 'type',
-            'type1', 'videos', 'website'],
+        self.assertEqual(sorted([
+            u'accessibility', u'approved', u'areas', u'begin_date', u'booking', u'category',
+            u'cities', u'contact', u'description', u'description_teaser',
+            u'districts', u'duration', u'email', u'end_date', u'filelist_url', u'files',
+            u'id', u'map_image_url', u'meeting_point', u'meeting_time', u'name',
+            u'organizer', u'participant_number', u'pictures', u'pois', u'portal', u'practical_info',
+            u'printable', u'publication_date', u'published', u'published_status',
+            u'slug', u'source', u'speaker', u'target_audience', u'themes',
+            u'thumbnail', u'touristic_contents', u'touristic_events', u'treks', u'type',
+            u'type1', u'videos', u'website']),
             sorted(self.result.keys()))
 
     def test_type(self):
