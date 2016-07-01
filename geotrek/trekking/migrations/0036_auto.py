@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
@@ -17,11 +17,9 @@ class Migration(SchemaMigration):
         ))
         db.create_unique(m2m_table_name, ['trek_id', 'targetportal_id'])
 
-
     def backwards(self, orm):
         # Removing M2M table for field portal on 'Trek'
         db.delete_table('o_r_itineraire_portal')
-
 
     models = {
         u'authent.structure': {

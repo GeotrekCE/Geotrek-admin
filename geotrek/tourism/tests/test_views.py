@@ -439,7 +439,7 @@ class BasicJSONAPITest(TranslationResetMixin):
     def test_portals(self):
         self.assertDictEqual(self.result['portal'][0], {
             u'name': self.source.name,
-            u'website': self.source.website,})
+            u'website': self.source.website, })
 
     def test_approved(self):
         self.assertFalse(self.result['approved'])

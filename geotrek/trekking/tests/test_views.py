@@ -690,7 +690,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
     def portals(self):
         self.assertDictEqual(self.result['portal'][0], {
             u'name': self.portal.name,
-            u'website': self.portal.website,})
+            u'website': self.portal.website, })
 
     def test_children(self):
         self.assertEqual(self.result['children'], [self.child2.pk, self.child1.pk])

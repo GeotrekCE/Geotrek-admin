@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
+
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
@@ -8,9 +8,6 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-
-        # Changing field 'InformationDesk.geom'
-        db.alter_column('t_b_renseignement', 'geom', self.gf('django.contrib.gis.db.models.fields.PointField')(srid=2154, null=True, spatial_index=False, db_column='geom'))
         # Adding M2M table for field portal on 'TouristicContent'
         m2m_table_name = 't_r_contenu_touristique_portal'
         db.create_table(m2m_table_name, (
@@ -20,9 +17,6 @@ class Migration(SchemaMigration):
         ))
         db.create_unique(m2m_table_name, ['touristiccontent_id', 'targetportal_id'])
 
-
-        # Changing field 'TouristicContent.geom'
-        db.alter_column('t_t_contenu_touristique', 'geom', self.gf('django.contrib.gis.db.models.fields.GeometryField')(srid=2154))
         # Adding M2M table for field portal on 'TouristicEvent'
         m2m_table_name = 't_r_evenement_touristique_portal'
         db.create_table(m2m_table_name, (
@@ -32,26 +26,13 @@ class Migration(SchemaMigration):
         ))
         db.create_unique(m2m_table_name, ['touristicevent_id', 'targetportal_id'])
 
-
-        # Changing field 'TouristicEvent.geom'
-        db.alter_column('t_t_evenement_touristique', 'geom', self.gf('django.contrib.gis.db.models.fields.PointField')(srid=2154))
-
     def backwards(self, orm):
-
-        # Changing field 'InformationDesk.geom'
-        db.alter_column('t_b_renseignement', 'geom', self.gf('django.contrib.gis.db.models.fields.PointField')(srid=2154, null=True, spatial_index=False, db_column='geom'))
         # Removing M2M table for field portal on 'TouristicContent'
         db.delete_table('t_r_contenu_touristique_portal')
 
-
-        # Changing field 'TouristicContent.geom'
-        db.alter_column('t_t_contenu_touristique', 'geom', self.gf('django.contrib.gis.db.models.fields.GeometryField')(srid=2154))
         # Removing M2M table for field portal on 'TouristicEvent'
         db.delete_table('t_r_evenement_touristique_portal')
 
-
-        # Changing field 'TouristicEvent.geom'
-        db.alter_column('t_t_evenement_touristique', 'geom', self.gf('django.contrib.gis.db.models.fields.PointField')(srid=2154))
 
     models = {
         u'authent.structure': {
