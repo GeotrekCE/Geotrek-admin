@@ -3,6 +3,7 @@
 from django.db import models
 from south.db import db
 from south.v2 import SchemaMigration
+from django.conf import settings
 
 
 class Migration(SchemaMigration):
@@ -59,8 +60,8 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "('name',)", 'object_name': 'TargetPortal', 'db_table': "'o_b_target_portal'"},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': "'True'", 'max_length': '50'}),
-            'website': (
-            'django.db.models.fields.URLField', [], {'unique': "'True'", 'max_length': '256', 'db_column': "'website'"})
+            'website': ('django.db.models.fields.URLField', [],
+                        {'unique': "'True'", 'max_length': '256', 'db_column': "'website'"})
         },
         u'common.theme': {
             'Meta': {'ordering': "['label']", 'object_name': 'Theme', 'db_table': "'o_b_theme'"},
@@ -75,8 +76,8 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "['title', 'url']", 'object_name': 'DataSource', 'db_table': "'t_t_source_donnees'"},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'pictogram': ('django.db.models.fields.files.FileField', [], {'max_length': '512', 'db_column': "'picto'"}),
-            'targets': (
-            'multiselectfield.db.fields.MultiSelectField', [], {'max_length': '512', 'null': 'True', 'blank': 'True'}),
+            'targets': ('multiselectfield.db.fields.MultiSelectField', [],
+                        {'max_length': '512', 'null': 'True', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'titre'"}),
             'type': ('django.db.models.fields.CharField', [], {'max_length': '32', 'db_column': "'type'"}),
             'url': ('django.db.models.fields.URLField', [], {'max_length': '400', 'db_column': "'url'"})
@@ -87,7 +88,7 @@ class Migration(SchemaMigration):
             'email': ('django.db.models.fields.EmailField', [],
                       {'max_length': '256', 'null': 'True', 'db_column': "'email'", 'blank': 'True'}),
             'geom': ('django.contrib.gis.db.models.fields.PointField', [],
-                     {'srid': '2154', 'null': 'True', 'spatial_index': 'False', 'db_column': "'geom'",
+                     {'srid': settings.SRID, 'null': 'True', 'spatial_index': 'False', 'db_column': "'geom'",
                       'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'municipality': ('django.db.models.fields.CharField', [],
@@ -132,20 +133,20 @@ class Migration(SchemaMigration):
                             {'auto_now': 'True', 'db_column': "'date_update'", 'blank': 'True'}),
             'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'supprime'"}),
             'description': ('django.db.models.fields.TextField', [], {'db_column': "'description'", 'blank': 'True'}),
-            'description_teaser': (
-            'django.db.models.fields.TextField', [], {'db_column': "'chapeau'", 'blank': 'True'}),
+            'description_teaser': ('django.db.models.fields.TextField', [],
+                                   {'db_column': "'chapeau'", 'blank': 'True'}),
             'eid': ('django.db.models.fields.CharField', [],
                     {'max_length': '128', 'null': 'True', 'db_column': "'id_externe'", 'blank': 'True'}),
             'email': ('django.db.models.fields.EmailField', [],
                       {'max_length': '256', 'null': 'True', 'db_column': "'email'", 'blank': 'True'}),
-            'geom': ('django.contrib.gis.db.models.fields.GeometryField', [], {'srid': '2154'}),
+            'geom': ('django.contrib.gis.db.models.fields.GeometryField', [], {'srid': settings.SRID}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'nom'"}),
             'portal': ('django.db.models.fields.related.ManyToManyField', [],
                        {'symmetrical': 'False', 'related_name': "'touristiccontents'", 'blank': 'True',
                         'db_table': "'t_r_contenu_touristique_portal'", 'to': u"orm['common.TargetPortal']"}),
-            'practical_info': (
-            'django.db.models.fields.TextField', [], {'db_column': "'infos_pratiques'", 'blank': 'True'}),
+            'practical_info': ('django.db.models.fields.TextField', [],
+                               {'db_column': "'infos_pratiques'", 'blank': 'True'}),
             'publication_date': ('django.db.models.fields.DateField', [],
                                  {'null': 'True', 'db_column': "'date_publication'", 'blank': 'True'}),
             'published': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'public'"}),
@@ -179,8 +180,8 @@ class Migration(SchemaMigration):
                               {'default': "'point'", 'max_length': '16', 'db_column': "'type_geometrie'"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'label': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'nom'"}),
-            'order': (
-            'django.db.models.fields.IntegerField', [], {'null': 'True', 'db_column': "'tri'", 'blank': 'True'}),
+            'order': ('django.db.models.fields.IntegerField', [],
+                      {'null': 'True', 'db_column': "'tri'", 'blank': 'True'}),
             'pictogram': ('django.db.models.fields.files.FileField', [],
                           {'max_length': '512', 'null': 'True', 'db_column': "'picto'"}),
             'type1_label': ('django.db.models.fields.CharField', [],
@@ -206,8 +207,8 @@ class Migration(SchemaMigration):
             'accessibility': ('django.db.models.fields.CharField', [],
                               {'max_length': '256', 'db_column': "'accessibilite'", 'blank': 'True'}),
             'approved': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'labellise'"}),
-            'begin_date': (
-            'django.db.models.fields.DateField', [], {'null': 'True', 'db_column': "'date_debut'", 'blank': 'True'}),
+            'begin_date': ('django.db.models.fields.DateField', [],
+                           {'null': 'True', 'db_column': "'date_debut'", 'blank': 'True'}),
             'booking': ('django.db.models.fields.TextField', [], {'db_column': "'reservation'", 'blank': 'True'}),
             'contact': ('django.db.models.fields.TextField', [], {'db_column': "'contact'", 'blank': 'True'}),
             'date_insert': ('django.db.models.fields.DateTimeField', [],
@@ -216,22 +217,22 @@ class Migration(SchemaMigration):
                             {'auto_now': 'True', 'db_column': "'date_update'", 'blank': 'True'}),
             'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'supprime'"}),
             'description': ('django.db.models.fields.TextField', [], {'db_column': "'description'", 'blank': 'True'}),
-            'description_teaser': (
-            'django.db.models.fields.TextField', [], {'db_column': "'chapeau'", 'blank': 'True'}),
-            'duration': (
-            'django.db.models.fields.CharField', [], {'max_length': '64', 'db_column': "'duree'", 'blank': 'True'}),
+            'description_teaser': ('django.db.models.fields.TextField', [],
+                                   {'db_column': "'chapeau'", 'blank': 'True'}),
+            'duration': ('django.db.models.fields.CharField', [],
+                         {'max_length': '64', 'db_column': "'duree'", 'blank': 'True'}),
             'eid': ('django.db.models.fields.CharField', [],
                     {'max_length': '128', 'null': 'True', 'db_column': "'id_externe'", 'blank': 'True'}),
             'email': ('django.db.models.fields.EmailField', [],
                       {'max_length': '256', 'null': 'True', 'db_column': "'email'", 'blank': 'True'}),
-            'end_date': (
-            'django.db.models.fields.DateField', [], {'null': 'True', 'db_column': "'date_fin'", 'blank': 'True'}),
-            'geom': ('django.contrib.gis.db.models.fields.PointField', [], {'srid': '2154'}),
+            'end_date': ('django.db.models.fields.DateField', [],
+                         {'null': 'True', 'db_column': "'date_fin'", 'blank': 'True'}),
+            'geom': ('django.contrib.gis.db.models.fields.PointField', [], {'srid': settings.SRID}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'meeting_point': ('django.db.models.fields.CharField', [],
                               {'max_length': '256', 'db_column': "'point_rdv'", 'blank': 'True'}),
-            'meeting_time': (
-            'django.db.models.fields.TimeField', [], {'null': 'True', 'db_column': "'heure_rdv'", 'blank': 'True'}),
+            'meeting_time': ('django.db.models.fields.TimeField', [],
+                             {'null': 'True', 'db_column': "'heure_rdv'", 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'nom'"}),
             'organizer': ('django.db.models.fields.CharField', [],
                           {'max_length': '256', 'db_column': "'organisateur'", 'blank': 'True'}),
@@ -240,8 +241,8 @@ class Migration(SchemaMigration):
             'portal': ('django.db.models.fields.related.ManyToManyField', [],
                        {'symmetrical': 'False', 'related_name': "'touristicevents'", 'blank': 'True',
                         'db_table': "'t_r_evenement_touristique_portal'", 'to': u"orm['common.TargetPortal']"}),
-            'practical_info': (
-            'django.db.models.fields.TextField', [], {'db_column': "'infos_pratiques'", 'blank': 'True'}),
+            'practical_info': ('django.db.models.fields.TextField', [],
+                               {'db_column': "'infos_pratiques'", 'blank': 'True'}),
             'publication_date': ('django.db.models.fields.DateField', [],
                                  {'null': 'True', 'db_column': "'date_publication'", 'blank': 'True'}),
             'published': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'public'"}),

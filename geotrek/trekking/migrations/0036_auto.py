@@ -3,6 +3,7 @@
 from django.db import models
 from south.db import db
 from south.v2 import SchemaMigration
+from django.conf import settings
 
 
 class Migration(SchemaMigration):
@@ -60,8 +61,8 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "('name',)", 'object_name': 'TargetPortal', 'db_table': "'o_b_target_portal'"},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': "'True'", 'max_length': '50'}),
-            'website': (
-            'django.db.models.fields.URLField', [], {'unique': "'True'", 'max_length': '256', 'db_column': "'website'"})
+            'website': ('django.db.models.fields.URLField', [],
+                        {'unique': "'True'", 'max_length': '256', 'db_column': "'website'"})
         },
         u'common.theme': {
             'Meta': {'ordering': "['label']", 'object_name': 'Theme', 'db_table': "'o_b_theme'"},
@@ -96,8 +97,8 @@ class Migration(SchemaMigration):
             'comfort': ('django.db.models.fields.related.ForeignKey', [],
                         {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'db_column': "'confort'",
                          'to': u"orm['core.Comfort']"}),
-            'comments': (
-            'django.db.models.fields.TextField', [], {'null': 'True', 'db_column': "'remarques'", 'blank': 'True'}),
+            'comments': ('django.db.models.fields.TextField', [],
+                         {'null': 'True', 'db_column': "'remarques'", 'blank': 'True'}),
             'date_insert': ('django.db.models.fields.DateTimeField', [],
                             {'auto_now_add': 'True', 'db_column': "'date_insert'", 'blank': 'True'}),
             'date_update': ('django.db.models.fields.DateTimeField', [],
@@ -109,12 +110,13 @@ class Migration(SchemaMigration):
                         {'default': '0', 'null': 'True', 'db_column': "'denivelee_negative'", 'blank': 'True'}),
             'eid': ('django.db.models.fields.CharField', [],
                     {'max_length': '128', 'null': 'True', 'db_column': "'id_externe'", 'blank': 'True'}),
-            'geom': (
-            'django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '2154', 'spatial_index': 'False'}),
+            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [],
+                     {'srid': settings.SRID, 'spatial_index': 'False'}),
             'geom_3d': ('django.contrib.gis.db.models.fields.GeometryField', [],
-                        {'default': 'None', 'dim': '3', 'spatial_index': 'False', 'null': 'True', 'srid': '2154'}),
+                        {'default': 'None', 'dim': '3', 'spatial_index': 'False',
+                         'null': 'True', 'srid': settings.SRID}),
             'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [],
-                              {'srid': '2154', 'null': 'True', 'spatial_index': 'False'}),
+                              {'srid': settings.SRID, 'null': 'True', 'spatial_index': 'False'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'length': ('django.db.models.fields.FloatField', [],
                        {'default': '0.0', 'null': 'True', 'db_column': "'longueur'", 'blank': 'True'}),
@@ -152,8 +154,8 @@ class Migration(SchemaMigration):
             'path': ('django.db.models.fields.related.ForeignKey', [],
                      {'related_name': "'aggregations'", 'on_delete': 'models.DO_NOTHING', 'db_column': "'troncon'",
                       'to': u"orm['core.Path']"}),
-            'start_position': (
-            'django.db.models.fields.FloatField', [], {'db_column': "'pk_debut'", 'db_index': 'True'}),
+            'start_position': ('django.db.models.fields.FloatField', [],
+                               {'db_column': "'pk_debut'", 'db_index': 'True'}),
             'topo_object': ('django.db.models.fields.related.ForeignKey', [],
                             {'related_name': "'aggregations'", 'db_column': "'evenement'",
                              'to': u"orm['core.Topology']"})
@@ -184,9 +186,10 @@ class Migration(SchemaMigration):
             'descent': ('django.db.models.fields.IntegerField', [],
                         {'default': '0', 'null': 'True', 'db_column': "'denivelee_negative'", 'blank': 'True'}),
             'geom': ('django.contrib.gis.db.models.fields.GeometryField', [],
-                     {'default': 'None', 'srid': '2154', 'null': 'True', 'spatial_index': 'False'}),
+                     {'default': 'None', 'srid': settings.SRID, 'null': 'True', 'spatial_index': 'False'}),
             'geom_3d': ('django.contrib.gis.db.models.fields.GeometryField', [],
-                        {'default': 'None', 'dim': '3', 'spatial_index': 'False', 'null': 'True', 'srid': '2154'}),
+                        {'default': 'None', 'dim': '3', 'spatial_index': 'False',
+                         'null': 'True', 'srid': settings.SRID}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'kind': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
             'length': ('django.db.models.fields.FloatField', [],
@@ -215,7 +218,7 @@ class Migration(SchemaMigration):
             'email': ('django.db.models.fields.EmailField', [],
                       {'max_length': '256', 'null': 'True', 'db_column': "'email'", 'blank': 'True'}),
             'geom': ('django.contrib.gis.db.models.fields.PointField', [],
-                     {'srid': '2154', 'null': 'True', 'spatial_index': 'False', 'db_column': "'geom'",
+                     {'srid': settings.SRID, 'null': 'True', 'spatial_index': 'False', 'db_column': "'geom'",
                       'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'municipality': ('django.db.models.fields.CharField', [],
@@ -303,12 +306,12 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "['order', 'name']", 'object_name': 'Practice', 'db_table': "'o_b_pratique'"},
             'cirkwi': ('django.db.models.fields.related.ForeignKey', [],
                        {'to': u"orm['cirkwi.CirkwiLocomotion']", 'null': 'True', 'blank': 'True'}),
-            'distance': (
-            'django.db.models.fields.IntegerField', [], {'null': 'True', 'db_column': "'distance'", 'blank': 'True'}),
+            'distance': ('django.db.models.fields.IntegerField', [],
+                         {'null': 'True', 'db_column': "'distance'", 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'nom'"}),
-            'order': (
-            'django.db.models.fields.IntegerField', [], {'null': 'True', 'db_column': "'tri'", 'blank': 'True'}),
+            'order': ('django.db.models.fields.IntegerField', [],
+                      {'null': 'True', 'db_column': "'tri'", 'blank': 'True'}),
             'pictogram': ('django.db.models.fields.files.FileField', [],
                           {'max_length': '512', 'null': 'True', 'db_column': "'picto'"})
         },
@@ -355,23 +358,23 @@ class Migration(SchemaMigration):
                                  'db_table': "'o_r_itineraire_accessibilite'", 'blank': 'True', 'symmetrical': 'False',
                                  'null': 'True'}),
             'advice': ('django.db.models.fields.TextField', [], {'db_column': "'recommandation'", 'blank': 'True'}),
-            'advised_parking': (
-            'django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'parking'", 'blank': 'True'}),
+            'advised_parking': ('django.db.models.fields.CharField', [],
+                                {'max_length': '128', 'db_column': "'parking'", 'blank': 'True'}),
             'ambiance': ('django.db.models.fields.TextField', [], {'db_column': "'ambiance'", 'blank': 'True'}),
-            'arrival': (
-            'django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'arrivee'", 'blank': 'True'}),
-            'departure': (
-            'django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'depart'", 'blank': 'True'}),
+            'arrival': ('django.db.models.fields.CharField', [],
+                        {'max_length': '128', 'db_column': "'arrivee'", 'blank': 'True'}),
+            'departure': ('django.db.models.fields.CharField', [],
+                          {'max_length': '128', 'db_column': "'depart'", 'blank': 'True'}),
             'description': ('django.db.models.fields.TextField', [], {'db_column': "'description'", 'blank': 'True'}),
-            'description_teaser': (
-            'django.db.models.fields.TextField', [], {'db_column': "'chapeau'", 'blank': 'True'}),
+            'description_teaser': ('django.db.models.fields.TextField', [],
+                                   {'db_column': "'chapeau'", 'blank': 'True'}),
             'difficulty': ('django.db.models.fields.related.ForeignKey', [],
                            {'blank': 'True', 'related_name': "'treks'", 'null': 'True', 'db_column': "'difficulte'",
                             'to': u"orm['trekking.DifficultyLevel']"}),
-            'disabled_infrastructure': (
-            'django.db.models.fields.TextField', [], {'db_column': "'handicap'", 'blank': 'True'}),
-            'duration': (
-            'django.db.models.fields.FloatField', [], {'default': '0', 'db_column': "'duree'", 'blank': 'True'}),
+            'disabled_infrastructure': ('django.db.models.fields.TextField', [],
+                                        {'db_column': "'handicap'", 'blank': 'True'}),
+            'duration': ('django.db.models.fields.FloatField', [],
+                         {'default': '0', 'db_column': "'duree'", 'blank': 'True'}),
             'eid': ('django.db.models.fields.CharField', [],
                     {'max_length': '128', 'null': 'True', 'db_column': "'id_externe'", 'blank': 'True'}),
             'eid2': ('django.db.models.fields.CharField', [],
@@ -387,10 +390,10 @@ class Migration(SchemaMigration):
                           'db_table': "'o_r_itineraire_reseau'", 'blank': 'True', 'symmetrical': 'False',
                           'null': 'True'}),
             'parking_location': ('django.contrib.gis.db.models.fields.PointField', [],
-                                 {'srid': '2154', 'null': 'True', 'spatial_index': 'False',
+                                 {'srid': settings.SRID, 'null': 'True', 'spatial_index': 'False',
                                   'db_column': "'geom_parking'", 'blank': 'True'}),
             'points_reference': ('django.contrib.gis.db.models.fields.MultiPointField', [],
-                                 {'srid': '2154', 'null': 'True', 'spatial_index': 'False',
+                                 {'srid': settings.SRID, 'null': 'True', 'spatial_index': 'False',
                                   'db_column': "'geom_points_reference'", 'blank': 'True'}),
             'portal': ('django.db.models.fields.related.ManyToManyField', [],
                        {'symmetrical': 'False', 'related_name': "'treks'", 'blank': 'True',
@@ -398,8 +401,8 @@ class Migration(SchemaMigration):
             'practice': ('django.db.models.fields.related.ForeignKey', [],
                          {'blank': 'True', 'related_name': "'treks'", 'null': 'True', 'db_column': "'pratique'",
                           'to': u"orm['trekking.Practice']"}),
-            'public_transport': (
-            'django.db.models.fields.TextField', [], {'db_column': "'transport'", 'blank': 'True'}),
+            'public_transport': ('django.db.models.fields.TextField', [],
+                                 {'db_column': "'transport'", 'blank': 'True'}),
             'publication_date': ('django.db.models.fields.DateField', [],
                                  {'null': 'True', 'db_column': "'date_publication'", 'blank': 'True'}),
             'published': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'public'"}),
@@ -435,13 +438,13 @@ class Migration(SchemaMigration):
         u'trekking.trekrelationship': {
             'Meta': {'unique_together': "(('trek_a', 'trek_b'),)", 'object_name': 'TrekRelationship',
                      'db_table': "'o_r_itineraire_itineraire'"},
-            'has_common_departure': (
-            'django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'depart_commun'"}),
-            'has_common_edge': (
-            'django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'troncons_communs'"}),
+            'has_common_departure': ('django.db.models.fields.BooleanField', [],
+                                     {'default': 'False', 'db_column': "'depart_commun'"}),
+            'has_common_edge': ('django.db.models.fields.BooleanField', [],
+                                {'default': 'False', 'db_column': "'troncons_communs'"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_circuit_step': (
-            'django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'etape_circuit'"}),
+            'is_circuit_step': ('django.db.models.fields.BooleanField', [],
+                                {'default': 'False', 'db_column': "'etape_circuit'"}),
             'trek_a': ('django.db.models.fields.related.ForeignKey', [],
                        {'related_name': "'trek_relationship_a'", 'db_column': "'itineraire_a'",
                         'to': u"orm['trekking.Trek']"}),
