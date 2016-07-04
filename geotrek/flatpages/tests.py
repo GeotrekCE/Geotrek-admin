@@ -158,11 +158,12 @@ class RESTViewsTest(TestCase):
         response = self.client.get('/api/en/flatpages.json')
         records = json.loads(response.content)
         record = records[0]
-        self.assertEquals(sorted(record.keys()),
-                          [u'content', u'external_url', u'id', u'last_modified',
-                           u'media',
-                           u'publication_date', u'published', u'published_status',
-                           u'slug', u'source', u'target', u'title'])
+        self.assertEquals(
+            sorted(record.keys()),
+            sorted([u'content', u'external_url', u'id', u'last_modified',
+                    u'media', u'portal', u'publication_date', u'published',
+                    u'published_status', u'slug', u'source', u'target',
+                    u'title']))
 
 
 def factory(factory, source):

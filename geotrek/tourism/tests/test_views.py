@@ -437,9 +437,13 @@ class BasicJSONAPITest(TranslationResetMixin):
             u"pictogram": os.path.join(settings.MEDIA_URL, self.source.pictogram.name)})
 
     def test_portals(self):
-        self.assertDictEqual(self.result['portal'][0], {
-            u'name': self.source.name,
-            u'website': self.source.website, })
+        '''
+        Test if portal correctly serialized
+        '''
+        self.assertDictEqual(
+            self.result['portal'][0],
+            {u'name': self.portal.name,
+             u'website': self.portal.website, })
 
     def test_approved(self):
         self.assertFalse(self.result['approved'])
