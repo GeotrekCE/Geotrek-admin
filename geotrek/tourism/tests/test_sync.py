@@ -52,7 +52,7 @@ class SyncTest(TranslationResetMixin, TestCase):
                     self.assertEquals(len(tcontents['features']), 2)
 
                 with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristicevents.geojson'), 'r') as f:
-                    # only 1 event
+                    #  only 1 event
                     tevents = json.load(f)
                     self.assertEquals(len(tevents['features']), 1)
 

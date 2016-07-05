@@ -76,5 +76,5 @@ class SyncTest(TestCase):
                 self.assertEquals(len(treks['features']),
                                   trek_models.Trek.objects.filter(published=True,
                                                                   portal__name__in=[self.portal_a.name,
-                                                                                    self.portal_b.name, ])\
+                                                                                    self.portal_b.name, ])
                                                           .distinct('pk').count())

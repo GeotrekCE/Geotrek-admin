@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 import json
-import shutil
 from django.core import management
 from django.conf import settings
 from django.test import TestCase
@@ -213,4 +212,4 @@ class SyncTest(TestCase):
         management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000', source='Source A', skip_tiles=True, verbosity='0')
         with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'flatpages.geojson'), 'r') as f:
             flatpages = json.load(f)
-        self.assertEquals(len(flatpages), 1)
+            self.assertEquals(len(flatpages), 1)
