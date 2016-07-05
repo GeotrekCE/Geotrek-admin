@@ -11,23 +11,23 @@ from geotrek.trekking import models as trek_models
 
 class SyncTest(TestCase):
     @classmethod
-    def setUpClass(cls):
-        cls.source_a = RecordSourceFactory(name='Source A')
-        cls.source_b = RecordSourceFactory(name='Source B')
+    def setUpClass(self):
+        self.source_a = RecordSourceFactory()
+        self.source_b = RecordSourceFactory()
 
-        cls.portal_a = TargetPortalFactory(name='Portal A')
-        cls.portal_b = TargetPortalFactory(name='Portal B')
+        self.portal_a = TargetPortalFactory()
+        self.portal_b = TargetPortalFactory()
 
-        cls.trek_1 = TrekFactory.create(sources=(cls.source_a, ),
-                                        portals=(cls.portal_b,),
-                                        published=True)
-        cls.trek_2 = TrekFactory.create(sources=(cls.source_b,),
-                                        published=True)
-        cls.trek_3 = TrekFactory.create(portals=(cls.portal_b,
-                                                 cls.portal_a),
-                                        published=True)
-        cls.trek_4 = TrekFactory.create(portals=(cls.portal_a,),
-                                        published=True)
+        self.trek_1 = TrekFactory.create(sources=(self.source_a, ),
+                                         portals=(self.portal_b,),
+                                         published=True)
+        self.trek_2 = TrekFactory.create(sources=(self.source_b,),
+                                         published=True)
+        self.trek_3 = TrekFactory.create(portals=(self.portal_b,
+                                                  self.portal_a),
+                                         published=True)
+        self.trek_4 = TrekFactory.create(portals=(self.portal_a,),
+                                         published=True)
 
     def test_sync(self):
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
