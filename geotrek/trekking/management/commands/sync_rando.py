@@ -207,10 +207,13 @@ class Command(BaseCommand):
         view = viewset.as_view({'get': 'list'})
         name = os.path.join('api', lang, name)
         params.update({'format': 'geojson'})
+
         if self.source:
             params['source'] = ','.join(self.source)
+
         if self.portal:
             params['portal'] = ','.join(self.portal)
+
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, **kwargs)
 
     def sync_trek_pois(self, lang, trek, zipfile=None):
@@ -545,7 +548,8 @@ class Command(BaseCommand):
 
     def sync_trek_touristiccontents(self, lang, trek, zipfile=None):
         params = {'format': 'geojson',
-                  'categories': ','.join(category for category in self.categories), }
+                  'categories': ','.join(category for category in self.categories),
+                  'portal': ','.join(portal for portal in self.portal)}
 
         view = tourism_views.TrekTouristicContentViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'touristiccontents.geojson')
@@ -555,7 +559,8 @@ class Command(BaseCommand):
             self.sync_touristiccontent_media(lang, content, zipfile=self.trek_zipfile)
 
     def sync_trek_touristicevents(self, lang, trek, zipfile=None):
-        params = {'format': 'geojson', }
+        params = {'format': 'geojson',
+                  'portal': ','.join(portal for portal in self.portal)}
         view = tourism_views.TrekTouristicEventViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'touristicevents.geojson')
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
@@ -654,8 +659,12 @@ class Command(BaseCommand):
             self.source = self.source.split(',')
 
         self.portal = options['portal']
+
         if self.portal is not None:
             self.portal = self.portal.split(',')
+
+        else:
+            self.portal = []
 
         self.builder_args = {
             'tiles_url': settings.MOBILE_TILES_URL,

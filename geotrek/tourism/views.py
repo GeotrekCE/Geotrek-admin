@@ -401,14 +401,19 @@ class TrekTouristicContentViewSet(viewsets.ModelViewSet):
         except Trek.DoesNotExist:
             raise Http404
 
-        queryset = trek.touristic_contents.filter(published=True)\
-                                          .transform(settings.API_SRID,
-                                                     field_name='geom')
+        queryset = trek.touristic_contents.filter(published=True)
 
         if 'categories' in self.request.GET:
             queryset = queryset.filter(category__pk__in=self.request.GET['categories'].split(','))
 
-        return queryset
+        if 'source' in self.request.GET:
+            queryset = queryset.filter(source__name__in=self.request.GET['source'].split(','))
+
+        if 'portal' in self.request.GET:
+            queryset = queryset.filter(portal__name__in=self.request.GET['portal'].split(','))
+
+        return queryset.transform(settings.API_SRID,
+                                  field_name='geom')
 
 
 class TrekTouristicEventViewSet(viewsets.ModelViewSet):
@@ -427,11 +432,16 @@ class TrekTouristicEventViewSet(viewsets.ModelViewSet):
         except Trek.DoesNotExist:
             raise Http404
 
-        queryset = trek.touristic_events.filter(published=True)\
-                                        .transform(settings.API_SRID,
-                                                   field_name='geom')
+        queryset = trek.touristic_events.filter(published=True)
 
-        return queryset
+        if 'source' in self.request.GET:
+            queryset = queryset.filter(source__name__in=self.request.GET['source'].split(','))
+
+        if 'portal' in self.request.GET:
+            queryset = queryset.filter(portal__name__in=self.request.GET['portal'].split(','))
+
+        return queryset.transform(settings.API_SRID,
+                                  field_name='geom')
 
 
 class TouristicCategoryView(APIView):

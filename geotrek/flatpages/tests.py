@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import os
 import json
-
+import shutil
 from django.core import management
 from django.conf import settings
 from django.test import TestCase
 from mapentity.factories import SuperUserFactory
-from geotrek.common.factories import RecordSourceFactory
+from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.flatpages.factories import FlatPageFactory
 from geotrek.authent.factories import UserProfileFactory
 from geotrek.flatpages.forms import FlatPageForm
@@ -164,6 +164,37 @@ class RESTViewsTest(TestCase):
                     u'media', u'portal', u'publication_date', u'published',
                     u'published_status', u'slug', u'source', u'target',
                     u'title']))
+
+
+class SyncTestPortal(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.source_a = RecordSourceFactory.create(name='Source A')
+        cls.source_b = RecordSourceFactory.create(name='Source B')
+        cls.portal_a = TargetPortalFactory.create(name='Portal A')
+        cls.portal_b = TargetPortalFactory.create(name='Portal B')
+
+        cls.flatpage_1 = FlatPageFactory.create(sources=(cls.source_a,),
+                                                published=True)
+        cls.flatpage_2 = FlatPageFactory.create(sources=(cls.source_b,),
+                                                portals=(cls.portal_a,
+                                                         cls.portal_b),
+                                                published=True)
+        cls.flatpage_3 = FlatPageFactory.create(published=True)
+        cls.flatpage_4 = FlatPageFactory.create(portals=(cls.portal_a,),
+                                                published=True)
+
+    def test_sync_filtering_portal(self):
+        os.unlink(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'flatpages.geojson'))
+        management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
+                                portal=self.portal_a.name, skip_tiles=True, verbosity='0')
+        with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'flatpages.geojson'), 'r') as f_file:
+            flatpages = json.loads(f_file.read())
+            self.assertEquals(len(flatpages),
+                              FlatPage.objects.filter(published=True,
+                                                      portal__name__in=[self.portal_a.name, ]).count(),
+                              flatpages)
+            f_file.close()
 
 
 def factory(factory, source):

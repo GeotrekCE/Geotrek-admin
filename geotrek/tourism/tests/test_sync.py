@@ -9,38 +9,73 @@ from django.conf import settings
 from django.core import management
 from django.test import TestCase
 
-from geotrek.common.factories import RecordSourceFactory
+from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.tourism.factories import (TouristicContentFactory, TouristicEventFactory,
                                        TrekWithTouristicEventFactory, TrekWithTouristicContentFactory)
 
 
-def factory(factory, source):
-    obj = factory()
-    obj.source = (source, )
-    obj.save()
-
-
 class SyncTest(TranslationResetMixin, TestCase):
-    def test_sync(self):
+    @classmethod
+    def setUpClass(cls):
+        cls.contents = []
+        cls.events = []
+        cls.portals = []
+
+        portal_a = TargetPortalFactory(name='Portal A')
+        portal_b = TargetPortalFactory(name='Portal B')
+
         source_a = RecordSourceFactory(name='Source A')
         source_b = RecordSourceFactory(name='Source B')
-        factory(TouristicContentFactory, source_a)
-        factory(TouristicContentFactory, source_b)
-        factory(TouristicEventFactory, source_a)
-        factory(TouristicEventFactory, source_b)
+
+        cls.content_1 = TouristicContentFactory.create(portals=(portal_a, portal_b),
+                                                       sources=(source_a, source_b))
+
+        cls.content_2 = TouristicContentFactory.create(portals=(portal_a,),
+                                                       sources=(source_a, source_b))
+
+        cls.event_1 = TouristicEventFactory.create(portals=(portal_a, portal_b),
+                                                   sources=(source_b, ))
+
+        cls.event_2 = TouristicEventFactory.create(portals=(portal_b,),
+                                                   sources=(source_a, source_b))
+
+    def test_sync(self):
         with mock.patch('geotrek.tourism.models.TouristicContent.prepare_map_image'):
             with mock.patch('geotrek.tourism.models.TouristicEvent.prepare_map_image'):
                 management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
                                         source='Source A', skip_tiles=True, verbosity='0')
 
+                with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccontents.geojson'), 'r') as f:
+                    # 2 contents
+                    tcontents = json.load(f)
+                    self.assertEquals(len(tcontents['features']), 2)
+
+                with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristicevents.geojson'), 'r') as f:
+                    # only 1 event
+                    tevents = json.load(f)
+                    self.assertEquals(len(tevents['features']), 1)
+
+                with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccategories.json'), 'r') as f:
+                    tcategories = json.load(f)
+                    self.assertEquals(len(tcategories), 2)
+
+    def test_sync_portal_filtering(self):
+
+        with mock.patch('geotrek.tourism.models.TouristicContent.prepare_map_image'):
+            with mock.patch('geotrek.tourism.models.TouristicEvent.prepare_map_image'):
+                management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
+                                        portal='Portal B', skip_tiles=True, verbosity='0')
+
         with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccontents.geojson'), 'r') as f:
             tcontents = json.load(f)
+        # 1 content on portal b
         self.assertEquals(len(tcontents['features']), 1)
 
         with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristicevents.geojson'), 'r') as f:
             tevents = json.load(f)
-        self.assertEquals(len(tevents['features']), 1)
+        # 2 events on portal b
+        self.assertEquals(len(tevents['features']), 2)
 
         with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccategories.json'), 'r') as f:
             tevents = json.load(f)
