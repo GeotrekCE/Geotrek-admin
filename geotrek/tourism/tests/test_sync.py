@@ -68,13 +68,13 @@ class SyncTest(TranslationResetMixin, TestCase):
 
         with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccontents.geojson'), 'r') as f:
             tcontents = json.load(f)
-        # 1 content on portal b
-        self.assertEquals(len(tcontents['features']), 1)
+            # 1 content on portal b
+            self.assertEquals(len(tcontents['features']), 1)
 
         with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristicevents.geojson'), 'r') as f:
             tevents = json.load(f)
-        # 2 events on portal b
-        self.assertEquals(len(tevents['features']), 2)
+            # 2 events on portal b
+            self.assertEquals(len(tevents['features']), 2)
 
         with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccategories.json'), 'r') as f:
             tevents = json.load(f)

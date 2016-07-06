@@ -166,49 +166,57 @@ class RESTViewsTest(TestCase):
 
 
 class SyncTestPortal(TestCase):
-    def setUp(self):
-        self.source_a = RecordSourceFactory.create(name='Source A')
-        self.source_b = RecordSourceFactory.create(name='Source B')
-        self.portal_a = TargetPortalFactory.create(name='Portal A')
-        self.portal_b = TargetPortalFactory.create(name='Portal B')
+    @classmethod
+    def setUpClass(cls):
+        cls.source_a = RecordSourceFactory()
+        cls.source_b = RecordSourceFactory()
+        cls.portal_a = TargetPortalFactory()
+        cls.portal_b = TargetPortalFactory()
 
-        self.flatpage_1 = FlatPageFactory.create(sources=(self.source_a,),
-                                                 published=True)
-        self.flatpage_2 = FlatPageFactory.create(sources=(self.source_b,),
-                                                 portals=(self.portal_a,
-                                                          self.portal_b),
-                                                 published=True)
-        self.flatpage_3 = FlatPageFactory.create(published=True)
-        self.flatpage_4 = FlatPageFactory.create(portals=(self.portal_a,),
-                                                 published=True)
+        FlatPageFactory.create(published=True,
+                               sources=(cls.source_a,))
+        FlatPageFactory.create(portals=(cls.portal_a, cls.portal_b),
+                               published=True)
+        FlatPageFactory.create(published=True,
+                               sources=(cls.source_b,))
+        FlatPageFactory.create(portals=(cls.portal_a,),
+                               published=True)
+
+    def test_sync(self):
+        '''
+        Test synced flatpages
+        '''
+        management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
+                                skip_tiles=True, verbosity='0')
+        for lang in settings.MODELTRANSLATION_LANGUAGES:
+            with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', lang, 'flatpages.geojson'), 'r') as f:
+                flatpages = json.load(f)
+                self.assertEquals(len(flatpages),
+                                  FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
+
+    def test_sync_filtering_sources(self):
+        '''
+        Test if synced flatpages are filtered by source
+        '''
+        management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
+                                source=self.source_a.name, skip_tiles=True, verbosity='0')
+        for lang in settings.MODELTRANSLATION_LANGUAGES:
+            with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', lang, 'flatpages.geojson'), 'r') as f:
+                flatpages = json.load(f)
+                self.assertEquals(len(flatpages),
+                                  FlatPage.objects.filter(source__name__in=[self.source_a.name, ],
+                                                          **{'published_{}'.format(lang): True}).count())
 
     def test_sync_filtering_portal(self):
-        os.unlink(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'flatpages.geojson'))
+        '''
+        Test if synced flatpages are filtered by portal
+        '''
         management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
                                 portal=self.portal_a.name, skip_tiles=True, verbosity='0')
-        with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'flatpages.geojson'), 'r') as f_file:
-            flatpages = json.loads(f_file.read())
-            self.assertEquals(len(flatpages),
-                              FlatPage.objects.filter(published=True,
-                                                      portal__name__in=[self.portal_a.name, ]).count(),
-                              flatpages)
-            f_file.close()
+        for lang in settings.MODELTRANSLATION_LANGUAGES:
+            with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', lang, 'flatpages.geojson'), 'r') as f_file:
+                flatpages = json.load(f_file)
+                self.assertEquals(len(flatpages),
+                                  FlatPage.objects.filter(portal__name__in=[self.portal_a.name, ],
+                                                          **{'published_{}'.format(lang): True}).count())
 
-
-def factory(factory, source):
-    obj = factory()
-    obj.source = (source, )
-    obj.published = True
-    obj.save()
-
-
-class SyncTest(TestCase):
-    def test_sync(self):
-        source_a = RecordSourceFactory(name='Source A')
-        source_b = RecordSourceFactory(name='Source B')
-        factory(FlatPageFactory, source_a)
-        factory(FlatPageFactory, source_b)
-        management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000', source='Source A', skip_tiles=True, verbosity='0')
-        with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'flatpages.geojson'), 'r') as f:
-            flatpages = json.load(f)
-            self.assertEquals(len(flatpages), 1)

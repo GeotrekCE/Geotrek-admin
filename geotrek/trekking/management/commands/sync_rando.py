@@ -211,8 +211,15 @@ class Command(BaseCommand):
         if self.source:
             params['source'] = ','.join(self.source)
 
+        elif 'source' in params.keys():
+            # bug source is still in cache when executing command
+            del params['source']
+
         if self.portal:
             params['portal'] = ','.join(self.portal)
+
+        elif 'portal' in params.keys():
+            del params['portal']
 
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, **kwargs)
 
@@ -658,10 +665,8 @@ class Command(BaseCommand):
         if self.source is not None:
             self.source = self.source.split(',')
 
-        self.portal = options['portal']
-
-        if self.portal is not None:
-            self.portal = self.portal.split(',')
+        if options['portal'] is not None:
+            self.portal = options['portal'].split(',')
 
         else:
             self.portal = []
@@ -672,7 +677,6 @@ class Command(BaseCommand):
             'ignore_errors': True,
             'tiles_dir': os.path.join(settings.DEPLOY_ROOT, 'var', 'tiles'),
         }
-
         try:
             self.sync()
             if self.celery_task:

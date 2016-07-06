@@ -65,5 +65,5 @@ class RecordSourceFactory(factory.Factory):
 class TargetPortalFactory(factory.Factory):
     FACTORY_FOR = models.TargetPortal
 
-    name = factory.Sequence(lambda n: u"Record source %s" % n)
+    name = factory.Sequence(lambda n: u"Target Portal %s" % n)
     website = factory.Sequence(lambda n: u"http://geotrek-rando-{}.fr".format(n))
