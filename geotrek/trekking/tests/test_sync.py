@@ -10,8 +10,7 @@ from geotrek.trekking import models as trek_models
 
 
 class SyncTest(TestCase):
-    @classmethod
-    def setUpClass(self):
+    def setUp(self):
         self.source_a = RecordSourceFactory()
         self.source_b = RecordSourceFactory()
 

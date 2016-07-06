@@ -166,22 +166,21 @@ class RESTViewsTest(TestCase):
 
 
 class SyncTestPortal(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.source_a = RecordSourceFactory.create(name='Source A')
-        cls.source_b = RecordSourceFactory.create(name='Source B')
-        cls.portal_a = TargetPortalFactory.create(name='Portal A')
-        cls.portal_b = TargetPortalFactory.create(name='Portal B')
+    def setUp(self):
+        self.source_a = RecordSourceFactory.create(name='Source A')
+        self.source_b = RecordSourceFactory.create(name='Source B')
+        self.portal_a = TargetPortalFactory.create(name='Portal A')
+        self.portal_b = TargetPortalFactory.create(name='Portal B')
 
-        cls.flatpage_1 = FlatPageFactory.create(sources=(cls.source_a,),
-                                                published=True)
-        cls.flatpage_2 = FlatPageFactory.create(sources=(cls.source_b,),
-                                                portals=(cls.portal_a,
-                                                         cls.portal_b),
-                                                published=True)
-        cls.flatpage_3 = FlatPageFactory.create(published=True)
-        cls.flatpage_4 = FlatPageFactory.create(portals=(cls.portal_a,),
-                                                published=True)
+        self.flatpage_1 = FlatPageFactory.create(sources=(self.source_a,),
+                                                 published=True)
+        self.flatpage_2 = FlatPageFactory.create(sources=(self.source_b,),
+                                                 portals=(self.portal_a,
+                                                          self.portal_b),
+                                                 published=True)
+        self.flatpage_3 = FlatPageFactory.create(published=True)
+        self.flatpage_4 = FlatPageFactory.create(portals=(self.portal_a,),
+                                                 published=True)
 
     def test_sync_filtering_portal(self):
         os.unlink(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'flatpages.geojson'))

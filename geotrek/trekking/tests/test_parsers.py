@@ -124,7 +124,7 @@ class TrekParserTests(TestCase):
     def test_create(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'trek.shp')
         call_command('import', 'geotrek.trekking.parsers.TrekParser', filename, verbosity=0)
-        trek = Trek.objects.get()
+        trek = Trek.objects.all().last()
         self.assertEqual(trek.name, u"Balade")
         self.assertEqual(trek.difficulty, self.difficulty)
         self.assertEqual(trek.route, self.route)

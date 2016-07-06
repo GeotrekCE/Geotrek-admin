@@ -16,35 +16,34 @@ from geotrek.tourism.factories import (TouristicContentFactory, TouristicEventFa
 
 
 class SyncTest(TranslationResetMixin, TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.contents = []
-        cls.events = []
-        cls.portals = []
+    def setUp(self):
+        self.contents = []
+        self.events = []
+        self.portals = []
 
-        portal_a = TargetPortalFactory(name='Portal A')
-        portal_b = TargetPortalFactory(name='Portal B')
+        self.portal_a = TargetPortalFactory()
+        self.portal_b = TargetPortalFactory()
 
-        source_a = RecordSourceFactory(name='Source A')
-        source_b = RecordSourceFactory(name='Source B')
+        self.source_a = RecordSourceFactory()
+        self.source_b = RecordSourceFactory()
 
-        cls.content_1 = TouristicContentFactory.create(portals=(portal_a, portal_b),
-                                                       sources=(source_a, source_b))
+        self.content_1 = TouristicContentFactory.create(portals=(self.portal_a, self.portal_b),
+                                                        sources=(self.source_a, self.source_b))
 
-        cls.content_2 = TouristicContentFactory.create(portals=(portal_a,),
-                                                       sources=(source_a, source_b))
+        self.content_2 = TouristicContentFactory.create(portals=(self.portal_a,),
+                                                        sources=(self.source_a, self.source_b))
 
-        cls.event_1 = TouristicEventFactory.create(portals=(portal_a, portal_b),
-                                                   sources=(source_b, ))
+        self.event_1 = TouristicEventFactory.create(portals=(self.portal_a, self.portal_b),
+                                                    sources=(self.source_b, ))
 
-        cls.event_2 = TouristicEventFactory.create(portals=(portal_b,),
-                                                   sources=(source_a, source_b))
+        self.event_2 = TouristicEventFactory.create(portals=(self.portal_b,),
+                                                    sources=(self.source_a, self.source_b))
 
     def test_sync(self):
         with mock.patch('geotrek.tourism.models.TouristicContent.prepare_map_image'):
             with mock.patch('geotrek.tourism.models.TouristicEvent.prepare_map_image'):
                 management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
-                                        source='Source A', skip_tiles=True, verbosity='0')
+                                        source=self.source_a.name, skip_tiles=True, verbosity='0')
 
                 with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccontents.geojson'), 'r') as f:
                     # 2 contents
@@ -65,7 +64,7 @@ class SyncTest(TranslationResetMixin, TestCase):
         with mock.patch('geotrek.tourism.models.TouristicContent.prepare_map_image'):
             with mock.patch('geotrek.tourism.models.TouristicEvent.prepare_map_image'):
                 management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
-                                        portal='Portal B', skip_tiles=True, verbosity='0')
+                                        portal=self.portal_b.name, skip_tiles=True, verbosity='0')
 
         with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccontents.geojson'), 'r') as f:
             tcontents = json.load(f)
