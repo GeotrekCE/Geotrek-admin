@@ -219,4 +219,3 @@ class SyncTestPortal(TestCase):
                 self.assertEquals(len(flatpages),
                                   FlatPage.objects.filter(portal__name__in=[self.portal_a.name, ],
                                                           **{'published_{}'.format(lang): True}).count())
-
