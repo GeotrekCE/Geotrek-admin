@@ -5,7 +5,8 @@ from django.utils.translation import ugettext as _
 
 from geotrek.common.serializers import (ThemeSerializer, PublishableSerializerMixin,
                                         PictogramSerializerMixin, RecordSourceSerializer,
-                                        PicturesSerializerMixin, TranslatedModelSerializer)
+                                        PicturesSerializerMixin, TranslatedModelSerializer,
+                                        TargetPortalSerializer)
 from geotrek.zoning.serializers import ZoningSerializerMixin
 from geotrek.trekking import serializers as trekking_serializers
 from geotrek.tourism import models as tourism_models
@@ -74,6 +75,7 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
     type1 = TouristicContentTypeSerializer(many=True)
     type2 = TouristicContentTypeSerializer(many=True)
     source = RecordSourceSerializer()
+    portal = TargetPortalSerializer()
     reservation_system = rest_serializers.Field(source='reservation_system.name')
 
     # Nearby
@@ -88,8 +90,8 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
         fields = ('id', 'description', 'description_teaser', 'category',
                   'themes', 'contact', 'email', 'website', 'practical_info',
                   'type1', 'type2', 'touristic_contents', 'touristic_events',
-                  'treks', 'pois', 'source', 'approved', 'reservation_id',
-                  'reservation_system',) + \
+                  'treks', 'pois', 'source', 'portal', 'approved',
+                  'reservation_id', 'reservation_system',) + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
@@ -108,6 +110,7 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
     themes = ThemeSerializer(many=True)
     type = TouristicEventTypeSerializer()
     source = RecordSourceSerializer()
+    portal = TargetPortalSerializer()
 
     # Nearby
     touristic_contents = CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
@@ -128,7 +131,7 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
                   'organizer', 'speaker', 'type', 'accessibility',
                   'participant_number', 'booking', 'target_audience',
                   'practical_info', 'touristic_contents', 'touristic_events',
-                  'treks', 'pois', 'type1', 'category', 'source', 'approved') + \
+                  'treks', 'pois', 'type1', 'category', 'source', 'portal', 'approved') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields

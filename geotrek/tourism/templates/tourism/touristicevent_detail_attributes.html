@@ -96,6 +96,12 @@
             </td>
         </tr>
         <tr>
+            <th>{% trans "Portal" %}</th>
+            <td>
+                {% valuelist object.portal.all %}
+            </td>
+        </tr>
+        <tr>
             <th>{% trans "External id" %}</th>
             <td>{{ object.eid }}</td>
         </tr>

@@ -89,6 +89,23 @@ class TrekFactory(TopologyFactory):
     difficulty = factory.SubFactory(DifficultyLevelFactory)
     practice = factory.SubFactory(PracticeFactory)
 
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        sources = kwargs.pop('sources', None)
+        portals = kwargs.pop('portals', None)
+
+        trek = super(TrekFactory, cls)._prepare(create, **kwargs)
+
+        if create:
+            if sources:
+                for source in sources:
+                    trek.source.add(source)
+
+            if portals:
+                for portal in portals:
+                    trek.portal.add(portal)
+        return trek
+
 
 class TrekWithPOIsFactory(TrekFactory):
     @classmethod

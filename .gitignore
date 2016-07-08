@@ -39,3 +39,4 @@ geotrek/settings/custom.py
 /.settings/
 screamshotter.log
 
+/share/

@@ -20,8 +20,13 @@ class FlatPageViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = flatpages_models.FlatPage.objects.filter(published=True)
-        if 'source' in self.request.GET:
+
+        if self.request.GET.get('source', '') != '':
             qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
+
+        if self.request.GET.get('portal', '') != '':
+            qs = qs.filter(portal__name__in=self.request.GET['portal'].split(','))
+
         return qs
 
 

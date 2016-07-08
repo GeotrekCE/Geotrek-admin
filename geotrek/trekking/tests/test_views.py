@@ -26,7 +26,8 @@ from mapentity.tests import MapEntityLiveTest
 from mapentity.factories import SuperUserFactory
 
 from geotrek.authent.models import default_structure
-from geotrek.common.factories import AttachmentFactory, ThemeFactory, RecordSourceFactory
+from geotrek.common.factories import (AttachmentFactory, ThemeFactory,
+                                      RecordSourceFactory, TargetPortalFactory)
 from geotrek.common.tests import CommonTest, TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.authent.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
@@ -452,6 +453,9 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.source = RecordSourceFactory.create()
         self.trek.source.add(self.source)
 
+        self.portal = TargetPortalFactory.create()
+        self.trek.portal.add(self.portal)
+
         self.trek_b = TrekFactory.create(no_path=True,
                                          geom='SRID=%s;POINT(2 2)' % settings.SRID,
                                          published=True)
@@ -682,6 +686,11 @@ class TrekJSONDetailTest(TrekkingManagerTest):
             u'name': self.source.name,
             u'website': self.source.website,
             u"pictogram": os.path.join(settings.MEDIA_URL, self.source.pictogram.name)})
+
+    def portals(self):
+        self.assertDictEqual(self.result['portal'][0], {
+            u'name': self.portal.name,
+            u'website': self.portal.website, })
 
     def test_children(self):
         self.assertEqual(self.result['children'], [self.child2.pk, self.child1.pk])

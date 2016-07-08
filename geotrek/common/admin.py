@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from modeltranslation.admin import TranslationAdmin
 from paperclip.models import Attachment
-from .models import FileType, Organism, Theme, RecordSource
+from . import models as common_models
 
 
 class OrganismAdmin(admin.ModelAdmin):
@@ -59,8 +59,13 @@ class RecordSourceAdmin(admin.ModelAdmin):
     list_filter = ('structure',)
 
 
-admin.site.register(Organism, OrganismAdmin)
+class TargetPortalAdmin(admin.ModelAdmin):
+    list_display = ('name', 'website')
+    search_fields = ('name', 'website')
+
+admin.site.register(common_models.Organism, OrganismAdmin)
 admin.site.register(Attachment, AttachmentAdmin)
-admin.site.register(FileType, FileTypeAdmin)
-admin.site.register(Theme, ThemeAdmin)
-admin.site.register(RecordSource, RecordSourceAdmin)
+admin.site.register(common_models.FileType, FileTypeAdmin)
+admin.site.register(common_models.Theme, ThemeAdmin)
+admin.site.register(common_models.RecordSource, RecordSourceAdmin)
+admin.site.register(common_models.TargetPortal, TargetPortalAdmin)

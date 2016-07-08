@@ -20,7 +20,10 @@ class FlatPageForm(CommonForm):
 
     class Meta:
         model = FlatPage
-        fields = ('title', 'order', 'published', 'source', 'external_url', 'target', 'content')
+        fields = (
+            'title', 'order', 'published', 'source',
+            'portal', 'external_url', 'target', 'content'
+        )
 
     def clean(self):
         cleaned_data = super(FlatPageForm, self).clean()

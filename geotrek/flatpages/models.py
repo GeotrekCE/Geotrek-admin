@@ -37,8 +37,11 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
     target = models.CharField(verbose_name=_(u'Target'), max_length=12, choices=FLATPAGES_TARGETS,
                               db_column='cible', default=FLATPAGES_TARGETS.ALL)
     source = models.ManyToManyField('common.RecordSource',
-                                    null=True, blank=True, related_name='flatpages',
+                                    blank=True, related_name='flatpages',
                                     verbose_name=_("Source"), db_table='t_r_page_source')
+    portal = models.ManyToManyField('common.TargetPortal',
+                                    blank=True, related_name='flatpages',
+                                    verbose_name=_("Portal"), db_table='t_r_page_portal')
     order = models.IntegerField(default=None, null=True, blank=True,
                                 help_text=_(u"ID order if blank", ),
                                 verbose_name=_(u"Order"))

@@ -24,7 +24,7 @@ from rest_framework import permissions as rest_permissions, viewsets
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.models import RecordSource
+from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import FormsetMixin, PublicOrReadPermMixin, DocumentPublic
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
@@ -110,15 +110,13 @@ class TrekFormatList(MapEntityFormat, TrekList):
     columns = [
         'id', 'eid', 'eid2', 'name', 'departure', 'arrival', 'duration',
         'duration_pretty', 'description', 'description_teaser',
-        'networks', 'advice', 'ambiance', 'difficulty',
-        'information_desks', 'themes', 'practice', 'accessibilities', 'access',
-        'route', 'public_transport', 'advised_parking',
-        'web_links', 'is_park_centered', 'disabled_infrastructure',
-        'parking_location', 'points_reference', 'related',
-        'children', 'parents', 'pois',
-        'review', 'published', 'publication_date',
-        'structure', 'date_insert', 'date_update',
-        'cities', 'districts', 'areas', 'source', 'length_2d'
+        'networks', 'advice', 'ambiance', 'difficulty', 'information_desks',
+        'themes', 'practice', 'accessibilities', 'access', 'route',
+        'public_transport', 'advised_parking', 'web_links', 'is_park_centered',
+        'disabled_infrastructure', 'parking_location', 'points_reference',
+        'related', 'children', 'parents', 'pois', 'review', 'published',
+        'publication_date', 'structure', 'date_insert', 'date_update',
+        'cities', 'districts', 'areas', 'source', 'portal', 'length_2d'
     ] + AltimetryMixin.COLUMNS
 
 
@@ -211,7 +209,12 @@ class TrekDocumentPublicBase(DocumentPublic):
                 context['source'] = RecordSource.objects.get(name=source)
             except RecordSource.DoesNotExist:
                 pass
-
+        portal = self.request.GET.get('portal')
+        if portal:
+            try:
+                context['portal'] = TargetPortal.objects.get(name=portal)
+            except TargetPortal.DoesNotExist:
+                pass
         return context
 
 
@@ -375,9 +378,15 @@ class TrekViewSet(MapEntityViewSet):
         qs = Trek.objects.existing()
         qs = qs.filter(Q(published=True) | Q(trek_parents__parent__published=True))\
                .order_by('pk').distinct('pk')
+
         if 'source' in self.request.GET:
             qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
+
+        if 'portal' in self.request.GET:
+            qs = qs.filter(portal__name__in=self.request.GET['portal'].split(','))
+
         qs = qs.transform(settings.API_SRID, field_name='geom')
+
         return qs
 
 

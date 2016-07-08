@@ -25,7 +25,7 @@ from rest_framework.views import APIView
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.models import RecordSource
+from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic
 from geotrek.tourism.serializers import TouristicContentCategorySerializer
 from geotrek.trekking.models import Trek
@@ -112,7 +112,7 @@ class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
     columns = [
         'id', 'eid', 'name', 'category', 'type1', 'type2', 'description_teaser',
         'description', 'themes', 'contact', 'email', 'website', 'practical_info',
-        'review', 'published', 'publication_date', 'source',
+        'review', 'published', 'publication_date', 'source', 'portal',
         'structure', 'date_insert', 'date_update',
         'cities', 'districts', 'areas',
     ]
@@ -181,6 +181,13 @@ class TouristicContentDocumentPublic(DocumentPublic):
                 context['source'] = RecordSource.objects.get(name=source)
             except RecordSource.DoesNotExist:
                 pass
+        portal = self.request.GET.get('portal', None)
+
+        if portal:
+            try:
+                context['portal'] = TargetPortal.objects.get(name=portal)
+            except TargetPortal.DoesNotExist:
+                pass
 
         return context
 
@@ -202,7 +209,7 @@ class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
         'begin_date', 'end_date', 'duration', 'meeting_point', 'meeting_time',
         'contact', 'email', 'website', 'organizer', 'speaker', 'accessibility',
         'participant_number', 'booking', 'target_audience', 'practical_info',
-        'structure', 'date_insert', 'date_update', 'source',
+        'structure', 'date_insert', 'date_update', 'source', 'portal',
         'review', 'published', 'publication_date',
         'cities', 'districts', 'areas',
     ]
@@ -259,6 +266,13 @@ class TouristicEventDocumentPublic(DocumentPublic):
             except RecordSource.DoesNotExist:
                 pass
 
+        portal = self.request.GET.get('portal')
+        if portal:
+            try:
+                context['portal'] = TargetPortal.objects.get(name=portal)
+            except TargetPortal.DoesNotExist:
+                pass
+
         return context
 
 
@@ -270,8 +284,13 @@ class TouristicContentViewSet(MapEntityViewSet):
     def get_queryset(self):
         qs = TouristicContent.objects.existing()
         qs = qs.filter(published=True)
+
         if 'source' in self.request.GET:
             qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
+
+        if 'portal' in self.request.GET:
+            qs = qs.filter(portal__name__in=self.request.GET['portal'].split(','))
+
         qs = qs.transform(settings.API_SRID, field_name='geom')
         return qs
 
@@ -300,8 +319,13 @@ class TouristicEventViewSet(MapEntityViewSet):
     def get_queryset(self):
         qs = TouristicEvent.objects.existing()
         qs = qs.filter(published=True)
+
         if 'source' in self.request.GET:
             qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
+
+        if 'portal' in self.request.GET:
+            qs = qs.filter(portal__name__in=self.request.GET['portal'].split(','))
+
         qs = qs.transform(settings.API_SRID, field_name='geom')
         return qs
 
@@ -377,14 +401,19 @@ class TrekTouristicContentViewSet(viewsets.ModelViewSet):
         except Trek.DoesNotExist:
             raise Http404
 
-        queryset = trek.touristic_contents.filter(published=True)\
-                                          .transform(settings.API_SRID,
-                                                     field_name='geom')
+        queryset = trek.touristic_contents.filter(published=True)
 
         if 'categories' in self.request.GET:
             queryset = queryset.filter(category__pk__in=self.request.GET['categories'].split(','))
 
-        return queryset
+        if 'source' in self.request.GET:
+            queryset = queryset.filter(source__name__in=self.request.GET['source'].split(','))
+
+        if 'portal' in self.request.GET:
+            queryset = queryset.filter(portal__name__in=self.request.GET['portal'].split(','))
+
+        return queryset.transform(settings.API_SRID,
+                                  field_name='geom')
 
 
 class TrekTouristicEventViewSet(viewsets.ModelViewSet):
@@ -403,11 +432,16 @@ class TrekTouristicEventViewSet(viewsets.ModelViewSet):
         except Trek.DoesNotExist:
             raise Http404
 
-        queryset = trek.touristic_events.filter(published=True)\
-                                        .transform(settings.API_SRID,
-                                                   field_name='geom')
+        queryset = trek.touristic_events.filter(published=True)
 
-        return queryset
+        if 'source' in self.request.GET:
+            queryset = queryset.filter(source__name__in=self.request.GET['source'].split(','))
+
+        if 'portal' in self.request.GET:
+            queryset = queryset.filter(portal__name__in=self.request.GET['portal'].split(','))
+
+        return queryset.transform(settings.API_SRID,
+                                  field_name='geom')
 
 
 class TouristicCategoryView(APIView):
