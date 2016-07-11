@@ -8,11 +8,16 @@ CHANGELOG
 **Bug fixes**
 
 * Fix weasyprint install
+* Fix label displayed twice with Sitra Parser
 
 **Minor changes**
 
 * Update translations
 * Update import documentation
+
+**New features**
+
+* ability to filter synchronized content with different portals
 
 
 2.10.4 (2016-05-19)
