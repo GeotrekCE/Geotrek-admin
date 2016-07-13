@@ -110,6 +110,18 @@ msgstr "Source des fiches"
 msgid "Record sources"
 msgstr "Sources des fiches"
 
+msgid "Portal"
+msgstr "Portail"
+
+msgid "Portals"
+msgstr "Portails"
+
+msgid "Target portal"
+msgstr "Portail cible"
+
+msgid "Target portals"
+msgstr "Portails cibles"
+
 #, python-brace-format
 msgid "Line {line}"
 msgstr "Ligne {line}"
