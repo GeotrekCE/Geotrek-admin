@@ -42,6 +42,8 @@ Synchronization options
       -u URL, --url=URL     Base url of Geotrek-Admin (eg. http://geotrek.myorganization.com)
       -s SOURCE, --source=SOURCE
                             Filter by source(s)
+      -P PORTAL, --portal=PORTAL
+                            Filter by portal(s)
       -p, --skip-pdf        Skip generation of PDF files
       -t, --skip-tiles      Skip generation of map tiles files for mobile app
       -d, --skip-dem        Skip generation of Digital Elevation Model files for 3D view
