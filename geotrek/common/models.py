@@ -99,8 +99,8 @@ class TargetPortal(models.Model):
 
     class Meta:
         db_table = 'o_b_target_portal'
-        verbose_name = _(u"Portail cible")
-        verbose_name_plural = _(u"Portails cibles")
+        verbose_name = _(u"Target portal")
+        verbose_name_plural = _(u"Target portals")
         ordering = ('name',)
 
     def __unicode__(self):
