@@ -12,7 +12,7 @@ from django.template.defaultfilters import slugify
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
-from embed_video.backends import detect_backend
+from embed_video.backends import detect_backend, VideoDoesntExistException
 
 from geotrek.common.utils import classproperty
 
@@ -177,14 +177,17 @@ class PicturesMixin(object):
         serialized = []
         for att in self.videos:
             video = detect_backend(att.attachment_video)
-            serialized.append({
-                'author': att.author,
-                'title': att.title,
-                'legend': att.legend,
-                'backend': type(video).__name__.replace('Backend', ''),
-                'url': video.get_url(),
-                'code': video.code,
-            })
+            try:
+                serialized.append({
+                    'author': att.author,
+                    'title': att.title,
+                    'legend': att.legend,
+                    'backend': type(video).__name__.replace('Backend', ''),
+                    'url': video.get_url(),
+                    'code': video.code,
+                })
+            except VideoDoesntExistException:
+                pass
         return serialized
 
     @property
