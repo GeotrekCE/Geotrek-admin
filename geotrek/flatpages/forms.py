@@ -17,6 +17,7 @@ class FlatPageForm(CommonForm):
             if fieldname.startswith('content_'):
                 self.fields[fieldname].widget = forms.Textarea()
         self.fields['source'].help_text = None
+        self.fields['portal'].help_text = None
 
     class Meta:
         model = FlatPage

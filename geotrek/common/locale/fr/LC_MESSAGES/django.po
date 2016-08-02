@@ -291,6 +291,9 @@ msgstr "a une géométrie invalide;"
 msgid "Topology is not valid."
 msgstr "L'événement n'est pas valide"
 
+msgid "Used for sync"
+msgstr "Utilisé pour la synchro"
+
 #~ msgid "Parser"
 #~ msgstr "Parseur"
 

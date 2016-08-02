@@ -93,7 +93,7 @@ class RecordSource(StructureRelated, OptionalPictogramMixin):
 
 
 class TargetPortal(models.Model):
-    name = models.CharField(verbose_name=_(u"Name used by sync"), max_length=50, unique="True")
+    name = models.CharField(verbose_name=_(u"Name"), max_length=50, unique="True", help_text=_(u"Used for sync"))
     website = models.URLField(verbose_name=_(u"Website"), max_length=256,
                               db_column='website', unique="True")
 
