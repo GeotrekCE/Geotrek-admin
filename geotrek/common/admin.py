@@ -54,9 +54,8 @@ class ThemeAdmin(TranslationAdmin):
 
 
 class RecordSourceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'structure', 'pictogram_img')
-    search_fields = ('name', 'structure')
-    list_filter = ('structure',)
+    list_display = ('name', 'pictogram_img')
+    search_fields = ('name', )
 
 
 class TargetPortalAdmin(admin.ModelAdmin):

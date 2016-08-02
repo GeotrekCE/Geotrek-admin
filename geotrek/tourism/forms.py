@@ -17,7 +17,7 @@ class TouristicContentForm(CommonForm):
     def __init__(self, *args, **kwargs):
         super(TouristicContentForm, self).__init__(*args, **kwargs)
         # Since we use chosen() in trek_form.html, we don't need the default help text
-        for f in ['themes', 'type1', 'type2', 'source']:
+        for f in ['themes', 'type1', 'type2', 'source', 'portal']:
             self.fields[f].help_text = ''
 
 

@@ -155,7 +155,7 @@ class TrekForm(BaseTrekForm):
 
         # Since we use chosen() in trek_form.html, we don't need the default help text
         for f in ['themes', 'networks', 'accessibilities',
-                  'web_links', 'information_desks', 'source']:
+                  'web_links', 'information_desks', 'source', 'portal']:
             self.fields[f].help_text = ''
 
         if self.instance:

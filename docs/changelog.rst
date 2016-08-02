@@ -14,6 +14,7 @@ CHANGELOG
 
 * Update translations
 * Update import documentation
+* Record source is no nore structure related
 
 **New features**
 

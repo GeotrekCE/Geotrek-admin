@@ -76,7 +76,7 @@ class Theme(PictogramMixin):
         return open(output)
 
 
-class RecordSource(StructureRelated, OptionalPictogramMixin):
+class RecordSource(OptionalPictogramMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=50)
     website = models.URLField(verbose_name=_(u"Website"), max_length=256,
