@@ -18,7 +18,7 @@ var PolylineTextPath = {
     onRemove: function (map) {
         map = map || this._map;
         if (map && this._textNode)
-            map._pathRoot.removeChild(this._textNode);
+            map._renderer._container.removeChild(this._textNode);
         this.__onRemove.call(this, map);
     },
 
@@ -50,18 +50,18 @@ var PolylineTextPath = {
         /* If empty text, hide */
         if (!text) {
             if (this._textNode)
-                this._map._pathRoot.removeChild(this._textNode);
+                this._map._renderer._container.removeChild(this._textNode);
             return this;
         }
 
         text = text.replace(/ /g, '\u00A0');  // Non breakable spaces
         var id = 'pathdef-' + L.Util.stamp(this);
-        var svg = this._map._pathRoot;
+        var svg = this._map._renderer._container;
         this._path.setAttribute('id', id);
 
         if (options.repeat) {
             /* Compute single pattern length */
-            var pattern = L.Path.prototype._createElement('text');
+            var pattern = L.SVG.create('text');
             for (var attr in options.attributes)
                 pattern.setAttribute(attr, options.attributes[attr]);
             pattern.appendChild(document.createTextNode(text));
@@ -74,8 +74,8 @@ var PolylineTextPath = {
         }
 
         /* Put it along the path using textPath */
-        var textNode = L.Path.prototype._createElement('text'),
-            textPath = L.Path.prototype._createElement('textPath');
+        var textNode = L.SVG.create('text'),
+            textPath = L.SVG.create('textPath');
 
         var dy = options.offset || this._path.getAttribute('stroke-width');
 

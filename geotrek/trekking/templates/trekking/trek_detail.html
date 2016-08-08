@@ -53,7 +53,7 @@
                 // Make sure parking icon is visible on the map
                 var bounds = map.getBounds();
                 bounds.extend(location);
-                map.fitBounds(bounds);
+                map.fitBounds(bounds, {'padding': L.point([20, 20])});
             {% endif %}
 
             //

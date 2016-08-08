@@ -799,15 +799,13 @@ L.Handler.MultiPath = L.Handler.extend({
               , closest_point = null
               , matching_group_layer = null;
 
-            topology.layer && topology.layer.eachLayer(function(group_layer) {
-                group_layer.eachLayer(function(layer) {
-                    var p = layer.closestLayerPoint(layerPoint);
-                    if (p && p.distance < min_dist && p.distance < MIN_DIST) {
-                        min_dist = p.distance;
-                        closest_point = p;
-                        matching_group_layer = group_layer;
-                    }
-                });
+            topology.layer && topology.layer.eachLayer(function(layer) {
+                var p = layer.closestLayerPoint(layerPoint);
+                if (p && p.distance < min_dist && p.distance < MIN_DIST) {
+                    min_dist = p.distance;
+                    closest_point = p;
+                    matching_group_layer = layer;
+                }
             });
 
             if (closest_point) {

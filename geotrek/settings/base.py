@@ -428,6 +428,8 @@ ALTIMETRIC_AREA_MARGIN = 0.15
 
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
+    'ZOOM_SNAP': 0,
+    'ZOOM_DELTA': .5,
     'SRID': 3857,
     'TILES': [
         ('Scan', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '(c) OpenStreetMap Contributors'),

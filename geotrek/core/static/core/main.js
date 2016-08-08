@@ -106,7 +106,7 @@ $(window).on('detailmap:ready', function (e, data) {
 
     // Show start and end
     layer.eachLayer(function (layer) {
-        if (layer instanceof L.MultiPolyline)
+        if (layer instanceof L.Polyline)
             return;
         if (layer instanceof L.Polygon)
             return;
