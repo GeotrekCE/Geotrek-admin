@@ -5,7 +5,9 @@ CHANGELOG
 2.11.1.dev0
 -------------------
 
-*
+**Minor changes**
+
+* Fix slug URL for "oe" ligature
 
 
 2.11.0 (2016-08-02)

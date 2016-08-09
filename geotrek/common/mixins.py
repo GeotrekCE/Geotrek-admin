@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import logging
 import shutil
@@ -291,7 +292,7 @@ class PublishableMixin(BasePublishableMixin):
 
     @property
     def slug(self):
-        return slugify(self.name) or str(self.pk)
+        return slugify(self.name.lower().replace(u"œ", u"oe")) or str(self.pk)
 
     @property
     def name_display(self):
