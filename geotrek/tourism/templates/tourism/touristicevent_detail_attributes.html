@@ -43,7 +43,7 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"meeting_time" }}</th>
-            <td>{{ object.meeting_time }}</td>
+            <td>{{ object.meeting_time|default:"" }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"contact" }}</th>
@@ -51,11 +51,11 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"email" }}</th>
-            <td>{{ object.email }}</td>
+            <td>{{ object.email|default:"" }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"website" }}</th>
-            <td>{{ object.website }}</td>
+            <td>{{ object.website|default:"" }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"organizer" }}</th>
