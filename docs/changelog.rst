@@ -8,6 +8,7 @@ CHANGELOG
 **Minor changes**
 
 * Fix slug URL for "oe" ligature
+* Improve zoom of map captures in PDF
 
 
 2.11.0 (2016-08-02)

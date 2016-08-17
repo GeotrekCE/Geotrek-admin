@@ -7,7 +7,9 @@
 <h3>{{ object.districts.0 }}</h3>
 <h3>{{ object.cities.0 }}</h3>
 
-<img src="{{ MEDIA_URL|add:object.picture_print.name }}">
+{% if object.picture_print %}
+  <img src="{{ MEDIA_URL|add:object.picture_print.name }}">
+{% endif %}
 
 <table>
 	<tr>
