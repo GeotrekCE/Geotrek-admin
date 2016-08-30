@@ -101,7 +101,7 @@ class AltimetryHelper(object):
     def _nice_extent(cls, geom):
         xmin, ymin, xmax, ymax = geom.extent
         amplitude = max(xmax - xmin, ymax - ymin)
-        geom_buffer = geom.buffer(amplitude * settings.ALTIMETRIC_AREA_MARGIN)
+        geom_buffer = geom.envelope.buffer(amplitude * settings.ALTIMETRIC_AREA_MARGIN)
         xmin, ymin, xmax, ymax = geom_buffer.extent
         width = xmax - xmin
         height = ymax - ymin
