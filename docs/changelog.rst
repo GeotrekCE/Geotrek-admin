@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Improve performances of DEM computation for huge treks
+* Do not synchronize not-published treks with published but deleted parents
 
 
 2.11.1 (2016-08-17)
