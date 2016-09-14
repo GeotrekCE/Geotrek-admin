@@ -411,7 +411,6 @@ class Command(BaseCommand):
             treks = treks.filter(portal__name__in=self.portal)
 
         for trek in treks:
-            print(trek.pk)
             self.sync_trek(lang, trek)
 
         self.sync_tourism(lang)

@@ -31,7 +31,7 @@ class SyncTest(TestCase):
     def test_sync(self):
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
             management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
-                                    skip_tiles=True, verbosity='0')
+                                    skip_tiles=True, skip_pdf=True, verbosity='0')
             with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
                 # there are 4 treks
@@ -42,7 +42,7 @@ class SyncTest(TestCase):
         # source A only
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
             management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
-                                    source=self.source_a.name, skip_tiles=True, verbosity='0')
+                                    source=self.source_a.name, skip_tiles=True, skip_pdf=True, verbosity='0')
             with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
                 # only 1 trek in Source A
@@ -54,7 +54,7 @@ class SyncTest(TestCase):
         # portal B only
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
             management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
-                                    portal=self.portal_b.name, skip_tiles=True, verbosity='0')
+                                    portal=self.portal_b.name, skip_tiles=True, skip_pdf=True, verbosity='0')
             with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
 
@@ -67,7 +67,7 @@ class SyncTest(TestCase):
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
             management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
                                     portal='{},{}'.format(self.portal_a.name, self.portal_b.name),
-                                    skip_tiles=True, verbosity='0')
+                                    skip_tiles=True, skip_pdf=True, verbosity='0')
             with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
 
