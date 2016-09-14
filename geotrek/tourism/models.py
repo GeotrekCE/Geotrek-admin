@@ -383,6 +383,15 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     def max_elevation(self):
         return 0
 
+    @property
+    def portal_display(self):
+        return ', '.join([unicode(portal) for portal in self.portal.all()])
+
+    @property
+    def source_display(self):
+        return ','.join([unicode(source) for source in self.source.all()])
+
+
 Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))
 Topology.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True), _(u"Published touristic contents"))
 TouristicContent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))
@@ -500,6 +509,15 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
 
     def distance(self, to_cls):
         return settings.TOURISM_INTERSECTION_MARGIN
+
+    @property
+    def portal_display(self):
+        return ', '.join([unicode(portal) for portal in self.portal.all()])
+
+    @property
+    def source_display(self):
+        return ', '.join([unicode(source) for source in self.source.all()])
+
 
 TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))
 TouristicEvent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True), _(u"Published touristic contents"))

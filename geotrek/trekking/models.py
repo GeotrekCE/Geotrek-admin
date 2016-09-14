@@ -360,6 +360,15 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
             return super(Trek, self).save(update_fields=field_names, *args, **kwargs)
         super(Trek, self).save(*args, **kwargs)
 
+    @property
+    def portal_display(self):
+        return ', '.join([unicode(portal) for portal in self.portal.all()])
+
+    @property
+    def source_display(self):
+        return ','.join([unicode(source) for source in self.source.all()])
+
+
 Path.add_property('treks', Trek.path_treks, _(u"Treks"))
 Topology.add_property('treks', Trek.topology_treks, _(u"Treks"))
 if settings.HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES:
