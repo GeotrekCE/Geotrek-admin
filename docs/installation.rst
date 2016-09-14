@@ -122,13 +122,13 @@ It is a new installation with an additional backup/restore and a file transfert
 in between. The commands below are examples to adapt to your actual configuration
 (server names, database configuration).
 
-Backup files and database on the old server:
+Backup settings, media files and database on the old server:
 
 ::
 
     cd Geotrek
     sudo -u postgres pg_dump -Fc geotrekdb > geotrekdb.backup
-    tar cvzf data.tgz geotrekdb.backup var/static/ var/media/paperclip/ var/media/upload/
+    tar cvzf data.tgz geotrekdb.backup var/static/ var/media/paperclip/ var/media/upload/ etc/settings.ini geotrek/settings/custom.py
 
 Get and unzip Geotrek sources on the new server:
 
@@ -159,12 +159,12 @@ Restore database on the new server:
 
 ::
 
-    sudo service geotrek stop
+    sudo supervisorctl stop all
     sudo -u postgres psql -c "drop database geotrekdb;"
     sudo -u postgres psql -c "create database geotrekdb owner geotrek;"
     sudo -u postgres pg_restore -d geotrekdb geotrekdb.backup
     make update
-    sudo service geotrek start
+    sudo supervisorctl start all
 
 
 Tips and Tricks
