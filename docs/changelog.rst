@@ -9,6 +9,8 @@ CHANGELOG
 
 * Improve performances of DEM computation for huge treks
 * Do not synchronize not-published treks with published but deleted parents
+* Allow to specify portal in touristic content parsers
+* Fix import of type1 in HebergementsSitraParser
 
 
 2.11.1 (2016-08-17)

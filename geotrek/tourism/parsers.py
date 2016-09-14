@@ -23,6 +23,7 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
     type1 = None
     type2 = None
     source = None
+    portal = None
     url = 'http://api.sitra-tourisme.com/api/v002/recherche/list-objets-touristiques/'
     model = TouristicContent
     eid = 'eid'
@@ -64,7 +65,9 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
     natural_keys = {
         'category': 'label',
         'type1': 'label',
+        'type2': 'label',
         'source': 'name',
+        'portal': 'name',
     }
     field_options = {
         'name': {'required': True},
@@ -81,6 +84,8 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
             self.m2m_constant_fields['type2'] = self.type2
         if self.source:
             self.m2m_constant_fields['source'] = self.source
+        if self.portal:
+            self.m2m_constant_fields['portal'] = self.portal
 
     @property
     def items(self):
@@ -218,6 +223,9 @@ class HebergementsSitraParser(TouristicContentSitraParser):
     m2m_fields = {
         'type1': 'informationsHebergementCollectif.hebergementCollectifType.libelleFr',
     }
+
+    def filter_type1(self, src, val):
+        return self.apply_filter('type1', src, [val])
 
 
 class EspritParcParser(AttachmentParserMixin, Parser):
