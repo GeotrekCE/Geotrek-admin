@@ -8,6 +8,7 @@ from zipfile import ZipFile
 from django.conf import settings
 from django.core import management
 from django.test import TestCase
+from django.utils import translation
 
 from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.common.tests import TranslationResetMixin
@@ -17,6 +18,8 @@ from geotrek.tourism.factories import (TouristicContentFactory, TouristicEventFa
 
 class SyncTest(TranslationResetMixin, TestCase):
     def setUp(self):
+        translation.deactivate()
+
         self.contents = []
         self.events = []
         self.portals = []
