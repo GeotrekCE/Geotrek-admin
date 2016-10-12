@@ -5,7 +5,9 @@ CHANGELOG
 2.11.3.dev0
 -------------------
 
-*
+**Bug fixes**
+
+* Upgrade mapentity (fix map centering in PDF exports)
 
 
 2.11.2 (2016-09-15)
