@@ -480,6 +480,10 @@ function geotrek_setup {
         # restart supervisor in case of xenial before 'make deploy'
         /etc/init.d/supervisor force-stop && /etc/init.d/supervisor stop && /etc/init.d/supervisor start
         make deploy
+        success=$?
+        if [ $success -ne 0 ]; then
+            exit_error 3 "Could not update data !"
+        fi
         echo_progress
 
         # If buildout was successful, deploy really !
