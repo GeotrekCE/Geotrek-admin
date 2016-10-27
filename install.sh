@@ -135,8 +135,10 @@ function echo_header () {
 
 
 function existing_version {
-    existing=`cat /etc/nginx/sites-available/* | grep gunicorn-geotrek.sock | sed "s/^.*unix://" | sed "s/var\\/run.*$//"`
-    version=`cat $existing/VERSION`
+    existing=`cat /etc/supervisor/conf.d/supervisor-geotrek.conf | grep directory | sed "s/^directory=\(.*\)etc$/\1VERSION/"`
+    if [ ! -z $existing ]; then
+        version=`cat $existing`
+    fi
     echo $version
 }
 
