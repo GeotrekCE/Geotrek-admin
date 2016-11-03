@@ -110,6 +110,18 @@ msgstr "Source des fiches"
 msgid "Record sources"
 msgstr "Sources des fiches"
 
+msgid "Portal"
+msgstr "Portail"
+
+msgid "Portals"
+msgstr "Portails"
+
+msgid "Target portal"
+msgstr "Portail cible"
+
+msgid "Target portals"
+msgstr "Portails cibles"
+
 #, python-brace-format
 msgid "Line {line}"
 msgstr "Ligne {line}"
@@ -278,6 +290,9 @@ msgstr "a une géométrie invalide;"
 
 msgid "Topology is not valid."
 msgstr "L'événement n'est pas valide"
+
+msgid "Used for sync"
+msgstr "Utilisé pour la synchro"
 
 #~ msgid "Parser"
 #~ msgstr "Parseur"

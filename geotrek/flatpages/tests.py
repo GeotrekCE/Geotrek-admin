@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 import json
-
 from django.core import management
 from django.conf import settings
 from django.test import TestCase
 from mapentity.factories import SuperUserFactory
-from geotrek.common.factories import RecordSourceFactory
+from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.flatpages.factories import FlatPageFactory
 from geotrek.authent.factories import UserProfileFactory
 from geotrek.flatpages.forms import FlatPageForm
@@ -158,27 +157,65 @@ class RESTViewsTest(TestCase):
         response = self.client.get('/api/en/flatpages.json')
         records = json.loads(response.content)
         record = records[0]
-        self.assertEquals(sorted(record.keys()),
-                          [u'content', u'external_url', u'id', u'last_modified',
-                           u'media',
-                           u'publication_date', u'published', u'published_status',
-                           u'slug', u'source', u'target', u'title'])
+        self.assertEquals(
+            sorted(record.keys()),
+            sorted([u'content', u'external_url', u'id', u'last_modified',
+                    u'media', u'portal', u'publication_date', u'published',
+                    u'published_status', u'slug', u'source', u'target',
+                    u'title']))
 
 
-def factory(factory, source):
-    obj = factory()
-    obj.source = (source, )
-    obj.published = True
-    obj.save()
+class SyncTestPortal(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.source_a = RecordSourceFactory()
+        cls.source_b = RecordSourceFactory()
+        cls.portal_a = TargetPortalFactory()
+        cls.portal_b = TargetPortalFactory()
 
+        FlatPageFactory.create(published=True,
+                               sources=(cls.source_a,))
+        FlatPageFactory.create(portals=(cls.portal_a, cls.portal_b),
+                               published=True)
+        FlatPageFactory.create(published=True,
+                               sources=(cls.source_b,))
+        FlatPageFactory.create(portals=(cls.portal_a,),
+                               published=True)
 
-class SyncTest(TestCase):
     def test_sync(self):
-        source_a = RecordSourceFactory(name='Source A')
-        source_b = RecordSourceFactory(name='Source B')
-        factory(FlatPageFactory, source_a)
-        factory(FlatPageFactory, source_b)
-        management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000', source='Source A', skip_tiles=True, verbosity='0')
-        with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'flatpages.geojson'), 'r') as f:
-            flatpages = json.load(f)
-        self.assertEquals(len(flatpages), 1)
+        '''
+        Test synced flatpages
+        '''
+        management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
+                                skip_tiles=True, verbosity='0')
+        for lang in settings.MODELTRANSLATION_LANGUAGES:
+            with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', lang, 'flatpages.geojson'), 'r') as f:
+                flatpages = json.load(f)
+                self.assertEquals(len(flatpages),
+                                  FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
+
+    def test_sync_filtering_sources(self):
+        '''
+        Test if synced flatpages are filtered by source
+        '''
+        management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
+                                source=self.source_a.name, skip_tiles=True, verbosity='0')
+        for lang in settings.MODELTRANSLATION_LANGUAGES:
+            with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', lang, 'flatpages.geojson'), 'r') as f:
+                flatpages = json.load(f)
+                self.assertEquals(len(flatpages),
+                                  FlatPage.objects.filter(source__name__in=[self.source_a.name, ],
+                                                          **{'published_{}'.format(lang): True}).count())
+
+    def test_sync_filtering_portal(self):
+        '''
+        Test if synced flatpages are filtered by portal
+        '''
+        management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
+                                portal=self.portal_a.name, skip_tiles=True, verbosity='0')
+        for lang in settings.MODELTRANSLATION_LANGUAGES:
+            with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', lang, 'flatpages.geojson'), 'r') as f_file:
+                flatpages = json.load(f_file)
+                self.assertEquals(len(flatpages),
+                                  FlatPage.objects.filter(portal__name__in=[self.portal_a.name, ],
+                                                          **{'published_{}'.format(lang): True}).count())

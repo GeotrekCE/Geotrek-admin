@@ -111,8 +111,11 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     points_reference = models.MultiPointField(verbose_name=_(u"Points of reference"), db_column='geom_points_reference',
                                               srid=settings.SRID, spatial_index=False, blank=True, null=True)
     source = models.ManyToManyField('common.RecordSource',
-                                    null=True, blank=True, related_name='treks',
+                                    blank=True, related_name='treks',
                                     verbose_name=_("Source"), db_table='o_r_itineraire_source')
+    portal = models.ManyToManyField('common.TargetPortal',
+                                    blank=True, related_name='treks',
+                                    verbose_name=_("Portal"), db_table='o_r_itineraire_portal')
     eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
     eid2 = models.CharField(verbose_name=_(u"Second external id"), max_length=128, blank=True, null=True, db_column='id_externe2')
 
@@ -356,6 +359,15 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                 field_names.remove('geom_3d')
             return super(Trek, self).save(update_fields=field_names, *args, **kwargs)
         super(Trek, self).save(*args, **kwargs)
+
+    @property
+    def portal_display(self):
+        return ', '.join([unicode(portal) for portal in self.portal.all()])
+
+    @property
+    def source_display(self):
+        return ','.join([unicode(source) for source in self.source.all()])
+
 
 Path.add_property('treks', Trek.path_treks, _(u"Treks"))
 Topology.add_property('treks', Trek.topology_treks, _(u"Treks"))

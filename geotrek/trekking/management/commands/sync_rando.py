@@ -80,6 +80,8 @@ class Command(BaseCommand):
                     default='http://localhost', help='Base url'),
         make_option('--source', '-s', action='store', dest='source',
                     default=None, help='Filter by source(s)'),
+        make_option('--portal', '-P', action='store', dest='portal',
+                    default=None, help='Filter by portal(s)'),
         make_option('--skip-pdf', '-p', action='store_true', dest='skip_pdf',
                     default=False, help='Skip generation of PDF files'),
         make_option('--skip-tiles', '-t', action='store_true', dest='skip_tiles',
@@ -197,14 +199,28 @@ class Command(BaseCommand):
         name = os.path.join('api', lang, '{name}.json'.format(name=name))
         if self.source:
             params['source'] = ','.join(self.source)
+        if self.portal:
+            params['portal'] = ','.join(self.portal)
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, **kwargs)
 
     def sync_geojson(self, lang, viewset, name, zipfile=None, params={}, **kwargs):
         view = viewset.as_view({'get': 'list'})
         name = os.path.join('api', lang, name)
         params.update({'format': 'geojson'})
+
         if self.source:
             params['source'] = ','.join(self.source)
+
+        elif 'source' in params.keys():
+            # bug source is still in cache when executing command
+            del params['source']
+
+        if self.portal:
+            params['portal'] = ','.join(self.portal)
+
+        elif 'portal' in params.keys():
+            del params['portal']
+
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, **kwargs)
 
     def sync_trek_pois(self, lang, trek, zipfile=None):
@@ -237,6 +253,8 @@ class Command(BaseCommand):
         params = {}
         if self.source:
             params['source'] = self.source[0]
+        if self.portal:
+            params['portal'] = ','.join(self.portal)
         self.sync_object_view(lang, obj, view, '{obj.slug}.pdf', params=params)
 
     def sync_profile_json(self, lang, obj, zipfile=None):
@@ -381,10 +399,16 @@ class Command(BaseCommand):
             self.sync_pictograms('**', tourism_models.TouristicContentCategory, zipfile=self.zipfile)
 
         treks = trekking_models.Trek.objects.existing().order_by('pk')
-        treks = treks.filter(Q(**{'published_{lang}'.format(lang=lang): True}) | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True}))
+        treks = treks.filter(
+            Q(**{'published_{lang}'.format(lang=lang): True}) |
+            Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True, 'trek_parents__parent__deleted': False})
+        )
 
         if self.source:
             treks = treks.filter(source__name__in=self.source)
+
+        if self.portal:
+            treks = treks.filter(portal__name__in=self.portal)
 
         for trek in treks:
             self.sync_trek(lang, trek)
@@ -427,6 +451,9 @@ class Command(BaseCommand):
             if self.source:
                 treks = treks.filter(source__name__in=self.source)
 
+            if self.portal:
+                treks = treks.filter(portal__name__in=self.portal)
+
             for trek in treks:
                 if trek.any_published or any([parent.any_published for parent in trek.parents]):
                     self.sync_trek_tiles(trek)
@@ -447,6 +474,7 @@ class Command(BaseCommand):
             params = {}
             if self.source:
                 params['source'] = self.source[0]
+
             view = tourism_views.TouristicContentDocumentPublic.as_view(model=type(content))
             self.sync_object_view(lang, content, view, '{obj.slug}.pdf', params=params)
 
@@ -458,6 +486,8 @@ class Command(BaseCommand):
             params = {}
             if self.source:
                 params['source'] = self.source[0]
+            if self.portal:
+                params['portal'] = self.portal[0]
             view = tourism_views.TouristicEventDocumentPublic.as_view(model=type(event))
             self.sync_object_view(lang, event, view, '{obj.slug}.pdf', params=params)
 
@@ -498,13 +528,22 @@ class Command(BaseCommand):
 
         if self.source:
             contents = contents.filter(source__name__in=self.source)
+
+        if self.portal:
+            contents = contents.filter(portal__name__in=self.portal)
+
         for content in contents:
             self.sync_content(lang, content)
 
         events = tourism_models.TouristicEvent.objects.existing().order_by('pk')
         events = events.filter(**{'published_{lang}'.format(lang=lang): True})
+
         if self.source:
             events = events.filter(source__name__in=self.source)
+
+        if self.portal:
+            events = events.filter(portal__name__in=self.portal)
+
         for event in events:
             self.sync_event(lang, event)
 
@@ -518,7 +557,8 @@ class Command(BaseCommand):
 
     def sync_trek_touristiccontents(self, lang, trek, zipfile=None):
         params = {'format': 'geojson',
-                  'categories': ','.join(category for category in self.categories), }
+                  'categories': ','.join(category for category in self.categories),
+                  'portal': ','.join(portal for portal in self.portal)}
 
         view = tourism_views.TrekTouristicContentViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'touristiccontents.geojson')
@@ -528,7 +568,8 @@ class Command(BaseCommand):
             self.sync_touristiccontent_media(lang, content, zipfile=self.trek_zipfile)
 
     def sync_trek_touristicevents(self, lang, trek, zipfile=None):
-        params = {'format': 'geojson', }
+        params = {'format': 'geojson',
+                  'portal': ','.join(portal for portal in self.portal)}
         view = tourism_views.TrekTouristicEventViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'touristicevents.geojson')
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
@@ -625,13 +666,19 @@ class Command(BaseCommand):
 
         if self.source is not None:
             self.source = self.source.split(',')
+
+        if options['portal'] is not None:
+            self.portal = options['portal'].split(',')
+
+        else:
+            self.portal = []
+
         self.builder_args = {
             'tiles_url': settings.MOBILE_TILES_URL,
             'tiles_headers': {"Referer": self.referer},
             'ignore_errors': True,
             'tiles_dir': os.path.join(settings.DEPLOY_ROOT, 'var', 'tiles'),
         }
-
         try:
             self.sync()
             if self.celery_task:

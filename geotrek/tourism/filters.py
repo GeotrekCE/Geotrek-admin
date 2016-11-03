@@ -12,7 +12,9 @@ class TouristicContentFilterSet(StructureRelatedFilterSet):
     class Meta(StructureRelatedFilterSet.Meta):
         model = TouristicContent
         fields = StructureRelatedFilterSet.Meta.fields + [
-            'published', 'category', 'themes', 'type1', 'type2', 'approved', 'source']
+            'published', 'category', 'themes', 'type1',
+            'type2', 'approved', 'source', 'portal'
+        ]
 
 
 class AfterFilter(django_filters.DateFilter):
@@ -55,7 +57,9 @@ class TouristicEventFilterSet(StructureRelatedFilterSet):
     class Meta(StructureRelatedFilterSet.Meta):
         model = TouristicEvent
         fields = StructureRelatedFilterSet.Meta.fields + [
-            'published', 'type', 'themes', 'after', 'before', 'approved', 'source']
+            'published', 'type', 'themes', 'after',
+            'before', 'approved', 'source', 'portal'
+        ]
 
 
 class TouristicEventApiFilterSet(django_filters.FilterSet):

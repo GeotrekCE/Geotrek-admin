@@ -60,3 +60,10 @@ class RecordSourceFactory(factory.Factory):
     name = factory.Sequence(lambda n: u"Record source %s" % n)
     website = 'http://geotrek.fr'
     pictogram = dummy_filefield_as_sequence('thumbnail %s')
+
+
+class TargetPortalFactory(factory.Factory):
+    FACTORY_FOR = models.TargetPortal
+
+    name = factory.Sequence(lambda n: u"Target Portal %s" % n)
+    website = factory.Sequence(lambda n: u"http://geotrek-rando-{}.fr".format(n))

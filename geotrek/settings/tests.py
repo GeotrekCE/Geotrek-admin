@@ -1,4 +1,4 @@
-from .default import *  # NOQA
+from .default import *
 
 #
 #  Django Tests

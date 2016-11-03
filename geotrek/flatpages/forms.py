@@ -17,10 +17,14 @@ class FlatPageForm(CommonForm):
             if fieldname.startswith('content_'):
                 self.fields[fieldname].widget = forms.Textarea()
         self.fields['source'].help_text = None
+        self.fields['portal'].help_text = None
 
     class Meta:
         model = FlatPage
-        fields = ('title', 'order', 'published', 'source', 'external_url', 'target', 'content')
+        fields = (
+            'title', 'order', 'published', 'source',
+            'portal', 'external_url', 'target', 'content'
+        )
 
     def clean(self):
         cleaned_data = super(FlatPageForm, self).clean()

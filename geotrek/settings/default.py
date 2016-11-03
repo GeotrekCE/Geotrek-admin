@@ -15,7 +15,7 @@ import os
 from django.conf.global_settings import LANGUAGES as LANGUAGES_LIST
 
 from . import EnvIniReader
-from .base import *  # NOQA
+from .base import *
 
 
 DEPLOY_ROOT = os.getenv('DEPLOY_ROOT', os.path.dirname(PROJECT_ROOT_PATH))

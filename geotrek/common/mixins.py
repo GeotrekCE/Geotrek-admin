@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import logging
 import shutil
@@ -12,7 +13,7 @@ from django.template.defaultfilters import slugify
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
-from embed_video.backends import detect_backend
+from embed_video.backends import detect_backend, VideoDoesntExistException
 
 from geotrek.common.utils import classproperty
 
@@ -112,7 +113,7 @@ class PicturesMixin(object):
             try:
                 thdetail = thumbnailer.get_thumbnail(aliases.get('medium'))
             except InvalidImageFormatError:
-                logger.warning(_("Image %s invalid or missing from disk.") % picture.attachment_file)
+                logger.info(_("Image %s invalid or missing from disk.") % picture.attachment_file)
             else:
                 resized.append((picture, thdetail))
         return resized
@@ -124,7 +125,7 @@ class PicturesMixin(object):
             try:
                 thumbnail = thumbnailer.get_thumbnail(aliases.get('print'))
             except InvalidImageFormatError:
-                logger.warning(_("Image %s invalid or missing from disk.") % picture.attachment_file)
+                logger.info(_("Image %s invalid or missing from disk.") % picture.attachment_file)
                 continue
             thumbnail.author = picture.author
             thumbnail.legend = picture.legend
@@ -138,7 +139,7 @@ class PicturesMixin(object):
             try:
                 thumbnail = thumbnailer.get_thumbnail(aliases.get('small-square'))
             except InvalidImageFormatError:
-                logger.warning(_("Image %s invalid or missing from disk.") % picture.attachment_file)
+                logger.info(_("Image %s invalid or missing from disk.") % picture.attachment_file)
                 continue
             thumbnail.author = picture.author
             thumbnail.legend = picture.legend
@@ -177,14 +178,17 @@ class PicturesMixin(object):
         serialized = []
         for att in self.videos:
             video = detect_backend(att.attachment_video)
-            serialized.append({
-                'author': att.author,
-                'title': att.title,
-                'legend': att.legend,
-                'backend': type(video).__name__.replace('Backend', ''),
-                'url': video.get_url(),
-                'code': video.code,
-            })
+            try:
+                serialized.append({
+                    'author': att.author,
+                    'title': att.title,
+                    'legend': att.legend,
+                    'backend': type(video).__name__.replace('Backend', ''),
+                    'url': video.get_url(),
+                    'code': video.code,
+                })
+            except VideoDoesntExistException:
+                pass
         return serialized
 
     @property
@@ -288,7 +292,7 @@ class PublishableMixin(BasePublishableMixin):
 
     @property
     def slug(self):
-        return slugify(self.name) or str(self.pk)
+        return slugify(self.name.lower().replace(u"œ", u"oe")) or str(self.pk)
 
     @property
     def name_display(self):

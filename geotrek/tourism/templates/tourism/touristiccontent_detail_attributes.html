@@ -38,11 +38,11 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"email" }}</th>
-            <td>{{ object.email }}</td>
+            <td>{{ object.email|default:"" }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"website" }}</th>
-            <td>{{ object.website }}</td>
+            <td>{{ object.website|default:"" }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"practical_info" }}</th>
@@ -56,6 +56,12 @@
             <th>{% trans "Source" %}</th>
             <td>
                 {% valuelist object.source.all %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "Portal" %}</th>
+            <td>
+                {% valuelist object.portal.all %}
             </td>
         </tr>
         <tr>

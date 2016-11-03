@@ -67,7 +67,7 @@ class AltimetryMixin(models.Model):
         for the required model (see core.Path and trekking.Trek)
         """
         app_label = self._meta.app_label
-        model_name = self._meta.module_name
+        model_name = self._meta.model_name
         return ('%s:%s_profile_svg' % (app_label, model_name), [], {'lang': get_language(), 'pk': self.pk})
 
     def get_elevation_chart_path(self, language):
@@ -76,7 +76,7 @@ class AltimetryMixin(models.Model):
         basefolder = os.path.join(settings.MEDIA_ROOT, 'profiles')
         if not os.path.exists(basefolder):
             os.mkdir(basefolder)
-        return os.path.join(basefolder, '%s-%s-%s.png' % (self._meta.module_name, self.pk, language))
+        return os.path.join(basefolder, '%s-%s-%s.png' % (self._meta.model_name, self.pk, language))
 
     def prepare_elevation_chart(self, language, rooturl):
         """Converts SVG elevation URI to PNG on disk.

@@ -17,6 +17,7 @@ from geotrek.common.serializers import (
     PictogramSerializerMixin, ThemeSerializer,
     TranslatedModelSerializer, PicturesSerializerMixin,
     PublishableSerializerMixin, RecordSourceSerializer,
+    TargetPortalSerializer
 )
 from geotrek.authent import models as authent_models
 from geotrek.cirkwi.models import CirkwiTag
@@ -162,6 +163,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     relationships = TrekRelationshipSerializer(many=True, source='published_relationships')
     treks = CloseTrekSerializer(many=True, source='published_treks')
     source = RecordSourceSerializer()
+    portal = TargetPortalSerializer()
     children = rest_serializers.Field(source='children_id')
     parents = rest_serializers.Field(source='parents_id')
     previous = rest_serializers.Field(source='previous_id')
@@ -212,15 +214,15 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         model = trekking_models.Trek
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
         geo_field = 'geom'
-        fields = ('id', 'departure', 'arrival', 'duration',
-                  'duration_pretty', 'description', 'description_teaser',
-                  'networks', 'advice', 'ambiance', 'difficulty',
-                  'information_desks', 'themes', 'practice', 'accessibilities',
-                  'usages', 'access', 'route', 'public_transport', 'advised_parking',
-                  'web_links', 'is_park_centered', 'disabled_infrastructure',
-                  'parking_location', 'relationships', 'points_reference',
-                  'gpx', 'kml', 'source', 'type1', 'type2', 'category', 'structure',
-                  'treks', 'children', 'parents', 'previous', 'next') + \
+        fields = ('id', 'departure', 'arrival', 'duration', 'duration_pretty',
+                  'description', 'description_teaser', 'networks', 'advice',
+                  'ambiance', 'difficulty', 'information_desks', 'themes',
+                  'practice', 'accessibilities', 'usages', 'access', 'route',
+                  'public_transport', 'advised_parking', 'web_links', 'is_park_centered',
+                  'disabled_infrastructure', 'parking_location', 'relationships',
+                  'points_reference', 'gpx', 'kml', 'source', 'portal', 'type1',
+                  'type2', 'category', 'structure', 'treks', 'children', 'parents',
+                  'previous', 'next') + \
             AltimetrySerializerMixin.Meta.fields + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \

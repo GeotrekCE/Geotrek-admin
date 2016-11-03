@@ -737,10 +737,10 @@ class TopologySerialization(TestCase):
 
     def test_serialize_line(self):
         path = PathFactory.create()
-        test_objdict = dict(kind=Topology.KIND,
-                            offset=1.0,
-                            positions={},
-                            paths=[path.pk])
+        test_objdict = {u'kind': Topology.KIND,
+                        u'offset': 1.0,
+                        u'positions': {},
+                        u'paths': [path.pk]}
         # +|========>+
         topo = TopologyFactory.create(offset=1.0, no_path=True)
         topo.add_path(path)

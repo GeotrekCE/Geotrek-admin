@@ -79,6 +79,23 @@ class TouristicContentFactory(StructureRelatedDefaultFactory):
     reservation_system = factory.SubFactory(ReservationSystemFactory)
     reservation_id = 'XXXXXXXXX'
 
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        sources = kwargs.pop('sources', None)
+        portals = kwargs.pop('portals', None)
+
+        content = super(TouristicContentFactory, cls)._prepare(create, **kwargs)
+
+        if create:
+            if sources:
+                for source in sources:
+                    content.source.add(source)
+
+            if portals:
+                for portal in portals:
+                    content.portal.add(portal)
+        return content
+
 
 class TouristicEventTypeFactory(factory.Factory):
     FACTORY_FOR = models.TouristicEventType
@@ -97,6 +114,23 @@ class TouristicEventFactory(factory.Factory):
     end_date = timezone.now()
 
     type = factory.SubFactory(TouristicEventTypeFactory)
+
+    @classmethod
+    def _prepare(cls, create, **kwargs):
+        sources = kwargs.pop('sources', None)
+        portals = kwargs.pop('portals', None)
+
+        event = super(TouristicEventFactory, cls)._prepare(create, **kwargs)
+
+        if create:
+            if sources:
+                for source in sources:
+                    event.source.add(source)
+
+            if portals:
+                for portal in portals:
+                    event.portal.add(portal)
+        return event
 
 
 class TrekWithTouristicEventFactory(TrekFactory):

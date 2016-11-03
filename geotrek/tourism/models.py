@@ -315,8 +315,11 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
                                    verbose_name=_(u"Type 2"), db_table="t_r_contenu_touristique_type2",
                                    blank=True)
     source = models.ManyToManyField('common.RecordSource',
-                                    null=True, blank=True, related_name='touristiccontents',
+                                    blank=True, related_name='touristiccontents',
                                     verbose_name=_("Source"), db_table='t_r_contenu_touristique_source')
+    portal = models.ManyToManyField('common.TargetPortal',
+                                    blank=True, related_name='touristiccontents',
+                                    verbose_name=_("Portal"), db_table='t_r_contenu_touristique_portal')
     eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
     reservation_system = models.ForeignKey(ReservationSystem, verbose_name=_(u"Reservation system"),
                                            blank=True, null=True)
@@ -380,6 +383,15 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     def max_elevation(self):
         return 0
 
+    @property
+    def portal_display(self):
+        return ', '.join([unicode(portal) for portal in self.portal.all()])
+
+    @property
+    def source_display(self):
+        return ','.join([unicode(source) for source in self.source.all()])
+
+
 Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))
 Topology.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True), _(u"Published touristic contents"))
 TouristicContent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))
@@ -435,8 +447,11 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
     practical_info = models.TextField(verbose_name=_(u"Practical info"), blank=True, db_column='infos_pratiques',
                                       help_text=_(u"Recommandations / To plan / Advices"))
     source = models.ManyToManyField('common.RecordSource',
-                                    null=True, blank=True, related_name='touristicevents',
+                                    blank=True, related_name='touristicevents',
                                     verbose_name=_("Source"), db_table='t_r_evenement_touristique_source')
+    portal = models.ManyToManyField('common.TargetPortal',
+                                    blank=True, related_name='touristicevents',
+                                    verbose_name=_("Portal"), db_table='t_r_evenement_touristique_portal')
     eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
     approved = models.BooleanField(verbose_name=_(u"Approved"), default=False, db_column='labellise')
 
@@ -494,6 +509,15 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
 
     def distance(self, to_cls):
         return settings.TOURISM_INTERSECTION_MARGIN
+
+    @property
+    def portal_display(self):
+        return ', '.join([unicode(portal) for portal in self.portal.all()])
+
+    @property
+    def source_display(self):
+        return ', '.join([unicode(source) for source in self.source.all()])
+
 
 TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))
 TouristicEvent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True), _(u"Published touristic contents"))

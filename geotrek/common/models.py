@@ -76,7 +76,7 @@ class Theme(PictogramMixin):
         return open(output)
 
 
-class RecordSource(StructureRelated, OptionalPictogramMixin):
+class RecordSource(OptionalPictogramMixin):
 
     name = models.CharField(verbose_name=_(u"Name"), max_length=50)
     website = models.URLField(verbose_name=_(u"Website"), max_length=256,
@@ -87,6 +87,21 @@ class RecordSource(StructureRelated, OptionalPictogramMixin):
         verbose_name = _(u"Record source")
         verbose_name_plural = _(u"Record sources")
         ordering = ['name']
+
+    def __unicode__(self):
+        return self.name
+
+
+class TargetPortal(models.Model):
+    name = models.CharField(verbose_name=_(u"Name"), max_length=50, unique="True", help_text=_(u"Used for sync"))
+    website = models.URLField(verbose_name=_(u"Website"), max_length=256,
+                              db_column='website', unique="True")
+
+    class Meta:
+        db_table = 'o_b_target_portal'
+        verbose_name = _(u"Target portal")
+        verbose_name_plural = _(u"Target portals")
+        ordering = ('name',)
 
     def __unicode__(self):
         return self.name

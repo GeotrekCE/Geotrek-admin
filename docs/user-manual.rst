@@ -32,8 +32,9 @@ Geotrek est composé de différents modules.
 
 * Itinéraires (randonnées)
 * POI (points d'intérêt patrimoniaux)
-* Objets touristiques (activités de pleine nature, musées, produits labellisés...)
-* Evènements (animations, expositions, sorties...)
+* Services (informations pratiques comme les points d'eau, passages délicats... selon la typologie que vous souhaitez)
+* Contenus touristiques (hébergements, restaurants, services, activités de pleine nature, musées, produits labellisés... Vous pouvez créer les catégories que vous souhaitez)
+* Evènements touristiques (animations, expositions, sorties...)
 * Signalements (problèmes signalés par les internautes sur un itinéraire depuis Geotrek-rando)
 
 Chaque module est accessible depuis le bandeau vertical. 
@@ -63,6 +64,96 @@ Fiches détails
 Edition d'un objet
 ------------------
 
+Pages statiques
+---------------
+
+Les pages statiques sont les pages d'information et de contextualisation de votre portail web Geotrek-rando. Comme pourraient l'être les premières pages d'un topo-guide papier. Elles peuvent aussi être consultées dans votre application Geotrek-mobile.
+
+.. image :: images/user-manual/flatpages-gtecrins.jpg
+*Exemple de page statique (http://www.grand-tour-ecrins.fr/informations/le-grand-tour-des-ecrins/)*
+
+Elles permettent de fournir à l'internaute et futur randonneur des informations génériques : présentation de votre structure, votre projet de randonnée, recommandations, informations pratiques, etc.
+
+Elles sont gérées depuis l'administe de Geotrek-admin et sont ensuite publiées sur Geotrek-rando à chaque synchronisation du contenu. 
+
+.. image :: images/user-manual/flatpages-adminsite.jpg
+
+**Créer une page statique**
+
+Depuis l'Adminsite de Geotrek, sélectionnez "Pages statiques" dans la rubrique "Flatpages".
+
+.. image :: images/user-manual/flatpages-flatpages.jpg
+
+Vous accédez alors à la liste des pages statiques. 
+Cliquer sur "Ajouter Page statique" en haut à droite de l'écran pour créer une première page.
+
+**Construire une page statique**
+
+Sélectionnez la langue du contenu que vous souhaitez saisir : en / fr / it...
+
+Saisissez :
+
+* un titre (sans guillemets, parenthèses, etc.)
+* un ordre optionnel (pour définir l'ordre d'apparition dans le menu de votre Geotrek-rando)
+* cochez « publié » lorsque vous souhaiterez mettre en ligne votre page
+* définissez la « source » (comprendre ici la destination d'affichage et donc votre Geotrek-rando)
+* sélectionnez une cible (Geotrek-rando et/ou Geotrek-mobile ou cachée pour créer une page qui ne sera pas listée dans le menu).
+
+Attention, à chaque fois que cela vous est demandé, veillez à sélectionner la langue de votre contenu.
+
+.. image :: images/user-manual/flatpages-form.jpg
+
+L'interface permet de construire sa page en responsive design, c'est-à-dire qu'il est possible de disposer les blocs de contenu pour s'adaptera aux différentes tailles d'écrans des utilisateurs.
+
+.. image :: images/user-manual/flatpages-bootstrap-responsive.jpg
+
+Choisissez le gabarit sur lequel vous souhaitez construire votre page : 12 / 6-6 / 4-4-4 / etc. Ce sont des formats prédéfinis d'assemblage de blocs basés sur 12 colonnes qui occupent 100% de la largeur de l'écran (Bootstrap).
+
+.. image :: images/user-manual/flatpages-bootstrap-grids.jpg
+
+Vous pouvez aussi utiliser ou vous inspirer des 2 gabarits d'exemple (Gabarit 1 et Gabarit 2).
+
+.. image :: images/user-manual/flatpages-blocks.jpg
+
+Vous pouvez ajouter autant de gabarits que vous le souhaitez sur une seule page.
+
+Une fois que vous avez ajusté vos blocs de contenu pour un affiche sur ordinateur (Desktop), vous devez basculer sur l'affichage sur mobile (Phone) pour l'adapter à des plus petits écrans (en cliquant sur les + et - bleus de chaque bloc). Privilégiez alors des blocs sur une colonne faisant 100% de large.
+
+.. image :: images/user-manual/flatpages-blocks-edit.jpg
+
+**Ajouter du contenu dans un bloc**
+
+En cliquant dans la zone de texte, une barre d'édition apparaît. Sur un format classique comme dans les logiciels de traitement texte, plusieurs menus et outils sont alors disponibles :
+
+* File : (fichier)
+* Edit : retour, copier-coller, 
+* Insert : Insérer une image, un lien, des caractères spéciaux
+
+.. image :: images/user-manual/flatpages-wysiwyg.jpg
+	
+Insérer une image : cela ouvre une nouvelle fenêtre avec différents champs à remplir :
+
+* Source : insérer l'URL de l'image (idéalement dans le répertoire /custom/public/images/ de votre Geotrek-rando)
+* Image description : légender l'image pour optimiser son référencement
+* Dimensions : ajuster le format et cocher « Constrain proportions »
+
+Insérer un lien : cela ouvre une nouvelle fenêtre avec différents champs à remplir :
+
+* URL : lien de destination
+* Title : texte à afficher pour le lien
+* Target : « New window » si vous souhaitez que le lien s'ouvre dans un nouvel onglet
+
+- View : « Show blocks » permet de faire apparaître les différents paragraphes de votre texte. Elles sont utiles à la structure de votre texte. 
+- Format : gras, italique, souligner, etc. Le sous-menu « Formats » permet de choisir un style prédéfini pour les titres (Heading 1, Heading 2, etc.). Pour que le style s'applique uniquement au titre et non pas à tout le texte, faire un retour à la ligne et vérifier sa prise en compte en activant « Shox blocks ».
+- Table : insertion de tableau
+- Tools : Afficher le code source de la page
+
+**Astuces**
+
+1. Ne jamais utiliser la touche retour du clavier [ ? ] sans avoir le curseur sélectionné dans une zone de texte. Cela équivaut à revenir à la page précédente et vous perdrez tout votre contenu sans le sauvegarder. 
+2. Pour reproduire une page dans une langue différente : copier le Code Source et coller-le Code Source de votre nouvelle langue. Nous n'aurez plus qu'à traduire votre texte ! Idem pour traduire un contenu dans une autre langue.
+3. Si deux de vos pages ont le même numéro d'ordre d'apparition, une seule des deux sera affichée sur la plate-forme numérique.
+
 Pictogrammes
 ------------
 
@@ -83,3 +174,28 @@ Afin de s'intégrer au mieux dans le design standard, les couleurs suivantes son
 * Blanc sur fond transparent pour les pratiques et les catégories de contenus touristiques,
 * Gris sur fond transparent pour les thèmes,
 * Blanc sur fond orange pour les types de POI.
+
+Geotrek et Espace Loisir IGN
+----------------------------
+
+Depuis la version 0.32.0, Geotrek-admin est capable de produire un flux des itinéraires et POIs présents dans sa BDD au format Cirkwi pour pouvoir les importer directement dans l'Espace Loisir IGN.
+
+Exemple des randonnées et POIs du Parc national des Ecrins publiées sur l'Espace loisir IGN depuis Geotrek-admin : http://espaceloisirs.ign.fr/fr/communautes/parc-national-des-ecrins
+
+Depuis cette version, 2 flux sont automatiquement générés par Geotrek-admin au format attendu par l'IGN : 
+
+- [URL_GEOTREK-ADMIN]/api/cirkwi/circuits.xml
+- [URL_GEOTREK-ADMIN]/api/cirkwi/pois.xml
+
+Le référentiel CIRKWI a été intégré dans 3 tables accessibles dans l'Adminsite (à ne pas modifier) : 
+
+.. image :: images/user-manual/cirkwi-tables.jpg
+
+Si vous ne souhaitez pas utiliser les valeurs par défaut ou avez créez vos propres typologies, il faut que vous renseigniez les correspondances entre les catégories de votre Geotrek et celles du référentiel IGN (Cirkwi) dans votre Adminsite. Comme indiqué ici : https://github.com/makinacorpus/Geotrek/issues/806
+
+* Pratique >> locomotion/loisirs
+* Accessibilite >> thematiques/tags
+* Themes >> thematiques/tags
+* Types de POI >> Categories POI
+
+Les correspondances avec les valeurs de ces 3 tables sont donc à renseigner dans les tables Geotrek des Pratiques, Accessibilités, Thèmes et Types de POI. 

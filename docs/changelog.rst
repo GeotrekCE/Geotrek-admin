@@ -2,6 +2,49 @@
 CHANGELOG
 =========
 
+2.11.2 (2016-09-15)
+-------------------
+
+**Bug fixes**
+
+* Do not synchronize not-published treks with published but deleted parents
+* Allow to specify portal in touristic content parsers
+* Fix import of type1 in HebergementsSitraParser
+* Fix source and portal missing in shapefile exports
+
+**Performances**
+
+* Improve performances of DEM computation for huge treks
+
+
+2.11.1 (2016-08-17)
+-------------------
+
+**Minor changes**
+
+* Fix slug URL for "oe" ligature
+* Improve zoom of map captures in PDF
+
+
+2.11.0 (2016-08-02)
+-------------------
+
+**Bug fixes**
+
+* Fix weasyprint install
+* Fix label displayed twice with Sitra Parser
+
+**Minor changes**
+
+* Update translations
+* Update import documentation
+* Record source is no nore structure related
+
+**New features**
+
+* ability to filter synchronized content with different portals
+
+
 2.10.4 (2016-05-19)
 -------------------
 
