@@ -432,7 +432,12 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
 
     def serialize_trace(self, trek):
         self.xml.startElement('trace', {})
-        for c in trek.geom.transform(4326, clone=True).coords:
+        coords = trek.geom.transform(4326, clone=True).coords
+        if trek.geom.geom_typeid == 5:
+            coords = coords[0]
+        elif trek.geom.geom_typeid != 1:
+            coords = []
+        for c in coords:
             self.xml.startElement('point', {})
             self.serialize_field('lat', c[1])
             self.serialize_field('lng', c[0])
