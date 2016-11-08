@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Upgrade mapentity (fix map centering in PDF exports)
+* Fix cirkwi export when trek geom is not a linestring
 
 
 2.11.2 (2016-09-15)
