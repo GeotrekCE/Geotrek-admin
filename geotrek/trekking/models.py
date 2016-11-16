@@ -653,6 +653,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     def distance(self, to_cls):
         return settings.TOURISM_INTERSECTION_MARGIN
 
+
 Path.add_property('pois', POI.path_pois, _(u"POIs"))
 Topology.add_property('pois', POI.topology_pois, _(u"POIs"))
 Topology.add_property('published_pois', POI.published_topology_pois, _(u"Published POIs"))
@@ -768,6 +769,7 @@ class Service(StructureRelated, MapEntityMixin, Topology):
 
     def distance(self, to_cls):
         return settings.TOURISM_INTERSECTION_MARGIN
+
 
 Path.add_property('services', Service.path_services, _(u"Services"))
 Topology.add_property('services', Service.topology_services, _(u"Services"))

@@ -32,6 +32,7 @@ class TouristicContentEntityOptions(PublishableEntityOptions):
     def get_queryset(self):
         return self.model.objects.existing()
 
+
 if settings.TOURISM_ENABLED:
     urlpatterns += registry.register(models.TouristicContent, TouristicContentEntityOptions)
 
@@ -44,6 +45,7 @@ class TouristicEventEntityOptions(PublishableEntityOptions):
 
     def get_queryset(self):
         return self.model.objects.existing()
+
 
 if settings.TOURISM_ENABLED:
     urlpatterns += registry.register(models.TouristicEvent, TouristicEventEntityOptions)

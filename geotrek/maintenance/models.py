@@ -273,6 +273,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         topos = Topology.overlapping(topology).values_list('pk', flat=True)
         return cls.objects.existing().filter(topology__in=topos).distinct('pk')
 
+
 Path.add_property('interventions', lambda self: Intervention.path_interventions(self), _(u"Interventions"))
 Topology.add_property('interventions', lambda self: Intervention.topology_interventions(self), _(u"Interventions"))
 
@@ -523,6 +524,7 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
     @classmethod
     def get_create_label(cls):
         return _(u"Add a new project")
+
 
 Path.add_property('projects', lambda self: Project.path_projects(self), _(u"Projects"))
 Topology.add_property('projects', lambda self: Project.topology_projects(self), _(u"Projects"))

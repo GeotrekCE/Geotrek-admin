@@ -34,6 +34,7 @@ class TrekRelationshipForm(forms.ModelForm):
                                     'is_circuit_step',
                                     'DELETE')
 
+
 TrekRelationshipFormSet = inlineformset_factory(Trek, Trek.related_treks.through,
                                                 form=TrekRelationshipForm, fk_name='trek_a',
                                                 extra=1)
@@ -235,6 +236,7 @@ class TrekForm(BaseTrekForm):
              'public_transport', 'advice', 'themes', 'networks', 'practice',
              'accessibilities', 'web_links', 'information_desks', 'source', 'portal',
              'children_trek', 'eid', 'eid2', 'hidden_ordered_children', 'structure']
+
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
 

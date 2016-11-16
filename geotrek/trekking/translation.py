@@ -57,6 +57,7 @@ class WebLinkCategoryTO(TranslationOptions):
 class ServiceTypeTO(TranslationOptions):
     fields = ('name', )
 
+
 # Register previously defined translation options
 trek_translation_to_register = [
     (trekking_models.Trek, TrekTO),

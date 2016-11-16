@@ -391,6 +391,8 @@ class PictogramMixin(models.Model):
 class OptionalPictogramMixin(PictogramMixin):
     class Meta:
         abstract = True
+
+
 OptionalPictogramMixin._meta.get_field('pictogram').blank = True
 
 
