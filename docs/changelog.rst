@@ -5,7 +5,12 @@ CHANGELOG
 2.11.4.dev0
 -------------------
 
-*
+**Bug fixes**
+
+* Stop install.sh if make update fails
+* Create database with right owner if user exists but database does not
+* Make sure supervisor service is started after install
+* Install postgis package (required by loaddem command)
 
 
 2.11.3 (2016-11-15)
