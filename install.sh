@@ -478,11 +478,13 @@ function geotrek_setup {
         echo_step "Generate services configuration files..."
         
         # restart supervisor in case of xenial before 'make deploy'
-        /etc/init.d/supervisor force-stop && /etc/init.d/supervisor stop && /etc/init.d/supervisor start
+        sudo service supervisor force-stop && sudo service supervisor stop && sudo service supervisor start
+        if [ $? -ne 0 ]; then
+            exit_error 10 "Could not restart supervisor !"
+        fi
         make deploy
-        success=$?
-        if [ $success -ne 0 ]; then
-            exit_error 3 "Could not update data !"
+        if [ $? -ne 0 ]; then
+            exit_error 11 "Could not update data !"
         fi
         echo_progress
 
