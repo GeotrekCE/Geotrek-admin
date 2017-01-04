@@ -135,8 +135,10 @@ function echo_header () {
 
 
 function existing_version {
-    existing=`cat /etc/nginx/sites-available/* | grep gunicorn-geotrek.sock | sed "s/^.*unix://" | sed "s/var\\/run.*$//"`
-    version=`cat $existing/VERSION`
+    existing=`cat /etc/supervisor/conf.d/supervisor-geotrek.conf | grep directory | sed "s/^directory=\(.*\)etc$/\1VERSION/"`
+    if [ ! -z $existing ]; then
+        version=`cat $existing`
+    fi
     echo $version
 }
 
@@ -264,6 +266,7 @@ function screamshotter_system_dependencies {
         mkdir -p $binpath
 
         wget --quiet https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-$arch.tar.bz2 -O phantomjs.tar.bz2
+        if [ ! $? -eq 0 ]; then exit_error 8 "Failed to download phantomjs"; fi
         rm -rf $libpath/*phantomjs*/
         tar -jxvf phantomjs.tar.bz2 -C $libpath/ > /dev/null
         rm phantomjs.tar.bz2
@@ -271,6 +274,7 @@ function screamshotter_system_dependencies {
         echo_progress
 
         wget --quiet https://github.com/n1k0/casperjs/archive/1.1-beta3.zip -O casperjs.zip
+        if [ ! $? -eq 0 ]; then exit_error 9 "Failed to download casperjs"; fi
         rm -rf $libpath/*casperjs*/
         unzip -o casperjs.zip -d $libpath/ > /dev/null
         rm casperjs.zip
@@ -296,21 +300,11 @@ function install_postgres_local {
     dbuser=$(ini_value $settingsfile dbuser)
     dbpassword=$(ini_value $settingsfile dbpassword)
 
-    # Activate PostGIS in database
-    if ! database_exists ${dbname}
-    then
-        echo_step "Create database ${dbname}..."
-        sudo -n -u postgres -s -- psql -c "CREATE DATABASE ${dbname} ENCODING 'UTF8' TEMPLATE template0;"
-        sudo -n -u postgres -s -- psql -d ${dbname} -c "CREATE EXTENSION postgis;"
-    fi
-
     # Create user if missing
     if user_does_not_exists ${dbuser}
     then
         echo_step "Create user ${dbuser}  and configure database access rights..."
         sudo -n -u postgres -s -- psql -c "CREATE USER ${dbuser} WITH PASSWORD '${dbpassword}';"
-        sudo -n -u postgres -s -- psql -c "GRANT ALL PRIVILEGES ON DATABASE ${dbname} TO ${dbuser};"
-        sudo -n -u postgres -s -- psql -d ${dbname} -c "GRANT ALL ON spatial_ref_sys, geometry_columns, raster_columns TO ${dbuser};"
         echo_progress
 
         # Open local and host connection for this user as md5
@@ -325,6 +319,14 @@ host     ${dbname}     ${dbuser}     0.0.0.0/0     md5
 _EOF_
         sudo /etc/init.d/postgresql restart
         echo_progress
+    fi
+
+    # Create database and activate PostGIS in database
+    if ! database_exists ${dbname}
+    then
+        echo_step "Create database ${dbname}..."
+        sudo -n -u postgres -s -- psql -c "CREATE DATABASE ${dbname} ENCODING 'UTF8' TEMPLATE template0 OWNER ${dbuser};"
+        sudo -n -u postgres -s -- psql -d ${dbname} -c "CREATE EXTENSION postgis;"
     fi
 
     if $dev || $tests ; then
@@ -476,8 +478,18 @@ function geotrek_setup {
         echo_step "Generate services configuration files..."
         
         # restart supervisor in case of xenial before 'make deploy'
-        /etc/init.d/supervisor force-stop && /etc/init.d/supervisor stop && /etc/init.d/supervisor start
-        make deploy
+        sudo service supervisor force-stop && sudo service supervisor stop && sudo service supervisor start
+        if [ $? -ne 0 ]; then
+            exit_error 10 "Could not restart supervisor !"
+        fi
+        make update
+        if [ $? -ne 0 ]; then
+            exit_error 11 "Could not update data !"
+        fi
+        sudo service supervisor force-stop && sudo service supervisor stop && sudo service supervisor start
+        if [ $? -ne 0 ]; then
+            exit_error 12 "Could not restart supervisor !"
+        fi
         echo_progress
 
         # If buildout was successful, deploy really !
