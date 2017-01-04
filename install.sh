@@ -482,9 +482,13 @@ function geotrek_setup {
         if [ $? -ne 0 ]; then
             exit_error 10 "Could not restart supervisor !"
         fi
-        make deploy
+        make update
         if [ $? -ne 0 ]; then
             exit_error 11 "Could not update data !"
+        fi
+        sudo service supervisor force-stop && sudo service supervisor stop && sudo service supervisor start
+        if [ $? -ne 0 ]; then
+            exit_error 12 "Could not restart supervisor !"
         fi
         echo_progress
 
