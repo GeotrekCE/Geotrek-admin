@@ -7,10 +7,9 @@ CHANGELOG
 
 **Bug fixes**
 
-* Stop install.sh if make update fails
+* Stop install.sh if make update or wget fails
 * Create database with right owner if user exists but database does not
 * Make sure supervisor service is started after install
-* Install postgis package (required by loaddem command)
 * Fix HTML entities in feedback email
 
 
