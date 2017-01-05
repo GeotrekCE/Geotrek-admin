@@ -143,8 +143,8 @@ Release
 Model modification
 ------------------
 
-    bin/django schemamigration <appName> --auto
-    bin/django syncdb --migrate
+    bin/django makemigrations <appName>
+    bin/django migrate
 
 :notes:
 

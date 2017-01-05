@@ -471,7 +471,7 @@ function geotrek_setup {
 
     if $tests ; then
         # XXX: Why Django tests require the main database :( ?
-        bin/django syncdb --noinput
+        bin/django migrate --noinput
         bin/django collectstatic --clear --noinput --verbosity=0
     fi
 

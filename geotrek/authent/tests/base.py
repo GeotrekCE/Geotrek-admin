@@ -33,6 +33,6 @@ class AuthentFixturesTest(TestCase):
             from geotrek.trekking import urls  # NOQA
             from geotrek.tourism import urls  # NOQA
 
-        call_command('update_permissions')
+        call_command('update_geotrek_permissions')
 
         return super(AuthentFixturesTest, self)._pre_setup()

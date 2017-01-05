@@ -13,6 +13,7 @@ from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
+from django.http import StreamingHttpResponse
 from django.test.client import RequestFactory
 from django.utils import translation, timezone
 from django.utils.translation import ugettext as _
@@ -187,7 +188,11 @@ class Command(BaseCommand):
                 self.stdout.write(u"\x1b[3D\x1b[31;1mfailed (HTTP {code})\x1b[0m".format(code=response.status_code))
             return
         f = open(fullname, 'w')
-        f.write(response.content)
+        if isinstance(response, StreamingHttpResponse):
+            content = b''.join(response.streaming_content)
+        else:
+            content = response.content
+        f.write(content)
         f.close()
         if zipfile:
             zipfile.write(fullname, name)

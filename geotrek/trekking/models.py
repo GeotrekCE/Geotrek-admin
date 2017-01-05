@@ -73,7 +73,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                                  help_text=_(u"In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"),
                                  validators=[MinValueValidator(0)])
     is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"), db_column='coeur',
-                                           help_text=_(u"Crosses center of park"))
+                                           help_text=_(u"Crosses center of park"), default=False)
     advised_parking = models.CharField(verbose_name=_(u"Advised parking"), max_length=128, blank=True, db_column='parking',
                                        help_text=_(u"Where to park"))
     parking_location = models.PointField(verbose_name=_(u"Parking location"), db_column='geom_parking',
@@ -128,7 +128,6 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         db_table = 'o_t_itineraire'
         verbose_name = _(u"Trek")
         verbose_name_plural = _(u"Treks")
-        ordering = ['name']
 
     def __unicode__(self):
         return self.name
@@ -192,6 +191,18 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     @property
     def themes_display(self):
         return ', '.join([unicode(n) for n in self.themes.all()])
+
+    @property
+    def information_desks_display(self):
+        return ', '.join([unicode(n) for n in self.information_desks.all()])
+
+    @property
+    def accessibilities_display(self):
+        return ', '.join([unicode(n) for n in self.accessibilities.all()])
+
+    @property
+    def web_links_display(self):
+        return ', '.join([unicode(n) for n in self.web_links.all()])
 
     @property
     def city_departure(self):

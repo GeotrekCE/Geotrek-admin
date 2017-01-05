@@ -28,7 +28,6 @@ class UserProfileTest(TestCase):
 
     def test_profile(self):
         self.assertTrue(isinstance(self.user.profile, UserProfile))
-        self.assertEqual(self.user.profile, self.user.get_profile())
 
         self.assertEqual(self.user.profile.structure.name, settings.DEFAULT_STRUCTURE_NAME)
         self.assertEqual(self.user.profile.language, settings.LANGUAGE_CODE)

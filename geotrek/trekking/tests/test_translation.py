@@ -1,6 +1,5 @@
 from collections import namedtuple
 
-from django.contrib import admin
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
@@ -43,7 +42,6 @@ class TraductionTestCase(TestCase):
         """
         self.cred = Credential('admin', 'adminpass')
         self.superuser = create_superuser_from_cred(self.cred)
-        admin.autodiscover()
 
     @classmethod
     def get_dummy_data_trad(cls):

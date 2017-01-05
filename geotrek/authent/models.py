@@ -34,6 +34,10 @@ def default_structure():
     return Structure.objects.get_or_create(name=settings.DEFAULT_STRUCTURE_NAME)[0]
 
 
+def default_structure_pk():
+    return default_structure().pk
+
+
 class StructureRelatedQuerySet(models.query.QuerySet):
     def for_user(self, user):
         return StructureRelatedQuerySet.queryset_for_user(self, user)
@@ -57,7 +61,7 @@ class StructureRelated(models.Model):
     """
     A mixin used for any entities that belong to a structure
     """
-    structure = models.ForeignKey(Structure, default=default_structure,
+    structure = models.ForeignKey(Structure, default=default_structure_pk,
                                   verbose_name=_(u"Related structure"), db_column='structure')
 
     objects = models.Manager()

@@ -196,6 +196,14 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
             return ", ".join([unicode(t) for t in trails])
         return _("None")
 
+    @property
+    def usages_display(self):
+        return u", ".join([unicode(u) for u in self.usages.all()])
+
+    @property
+    def networks_display(self):
+        return u", ".join([unicode(n) for n in self.networks.all()])
+
     @classmethod
     def get_create_label(cls):
         return _(u"Add a new path")

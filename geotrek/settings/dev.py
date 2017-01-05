@@ -7,8 +7,6 @@ from .default import *
 DEBUG = True
 TEMPLATE_DEBUG = True
 
-SOUTH_TESTS_MIGRATE = False  # Tested at settings.tests
-
 #
 # Developper additions
 # ..........................

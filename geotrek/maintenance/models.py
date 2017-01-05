@@ -469,6 +469,14 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
         return [unicode(i) for i in self.interventions.existing()]
 
     @property
+    def contractors_display(self):
+        return [unicode(c) for c in self.contractors.all()]
+
+    @property
+    def founders_display(self):
+        return [unicode(f) for f in self.founders.all()]
+
+    @property
     def period(self):
         return "%s - %s" % (self.begin_year, self.end_year)
 

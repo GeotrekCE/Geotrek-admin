@@ -20,7 +20,7 @@ from django.test import RequestFactory
 from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.timezone import utc, make_aware
-from django.utils.unittest import util as testutil
+from unittest import util as testutil
 
 from mapentity.tests import MapEntityLiveTest
 from mapentity.factories import SuperUserFactory
@@ -1083,7 +1083,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
 
 class TrekWorkflowTest(TranslationResetMixin, TestCase):
     def setUp(self):
-        call_command('update_permissions')
+        call_command('update_geotrek_permissions')
         self.trek = TrekFactory.create(published=False)
         self.user = User.objects.create_user('omer', password='booh')
         self.user.user_permissions.add(Permission.objects.get(codename='add_trek'))

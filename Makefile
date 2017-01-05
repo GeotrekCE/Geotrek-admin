@@ -105,10 +105,10 @@ services:
 update:
 	bin/develop update -f
 	bin/django collectstatic --clear --noinput --verbosity=0
-	bin/django syncdb --noinput --migrate
+	bin/django migrate --noinput
 	bin/django sync_translation_fields --noinput
 	bin/django update_translation_fields
-	bin/django update_permissions
+	bin/django update_geotrek_permissions
 	make all_compilemessages
 
 deploy: update
@@ -135,3 +135,4 @@ load_demo: load_data
 
 css:
 	for f in `find geotrek/ -name '*.scss'`; do node-sass --output-style=expanded $$f -o `dirname $$f`; done
+

@@ -32,6 +32,9 @@ DATABASES = {
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        'TEST': {
+            'SERIALIZE': False,
+        },
     }
 }
 
@@ -45,10 +48,10 @@ DATABASES = {
 DATABASE_SCHEMAS = {
     'default': 'geotrek',
 
+    'gis': 'public',
     'auth': 'django',
     'django': 'django',
     'easy_thumbnails': 'django',
-    'south': 'django',
     'feedback': 'gestion',
     'infrastructure': 'gestion',
     'maintenance': 'gestion',
@@ -66,7 +69,6 @@ DATABASES['default']['OPTIONS'] = {
 # Authentication
 #
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
-AUTH_PROFILE_MODULE = 'authent.UserProfile'
 
 # Settings required for geotrek.authent.backend.DatabaseBackend :
 AUTHENT_DATABASE = None
@@ -220,12 +222,23 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'mapentity.context_processors.settings',
 )
 
+
+# Do not migrate translated fields, they differ per instance, and
+# can be added/removed using `update_translation_fields`
+# modeltranslation should be kept before django.contrib.admin
+if 'makemigrations' in sys.argv:
+    PROJECT_APPS = ()
+else:
+    PROJECT_APPS = (
+        'modeltranslation',
+    )
+
 #
 # /!\ Application names (last levels) must be unique
 # (c.f. auth/authent)
 # https://code.djangoproject.com/ticket/12288
 #
-PROJECT_APPS = (
+PROJECT_APPS += (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -237,15 +250,7 @@ PROJECT_APPS = (
 )
 
 
-# Do not migrate translated fields, they differ per instance, and
-# can be added/removed using `update_translation_fields`
-if 'schemamigration' not in sys.argv:
-    PROJECT_APPS += ('modeltranslation',)
-
-
 PROJECT_APPS += (
-    'south',
-    'leaflet',
     'floppyforms',
     'crispy_forms',
     'compressor',
@@ -255,6 +260,7 @@ PROJECT_APPS += (
     'shapes',
     'paperclip',
     'mapentity',
+    'leaflet',  # After mapentity to allow it to patch settings
     'rest_framework',
     'embed_video',
     'djcelery',
@@ -333,11 +339,6 @@ LOGGING = {
             'propagate': False,
         },
         'django': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'south': {
             'handlers': ['console', 'mail_admins'],
             'level': 'ERROR',
             'propagate': False,

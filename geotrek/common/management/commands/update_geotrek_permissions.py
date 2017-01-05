@@ -2,7 +2,7 @@ import logging
 
 from django.conf import settings
 from django.utils.importlib import import_module
-from django.db.models import get_apps
+from django.apps import apps
 from django.contrib.auth.management import create_permissions
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
@@ -23,8 +23,8 @@ class Command(BaseCommand):
     def execute(self, *args, **options):
         logger.info("Synchronize django permissions")
 
-        for app in get_apps():
-            create_permissions(app, [], int(options.get('verbosity', 1)))
+        for app_config in apps.get_app_configs():
+            create_permissions(app_config, [], int(options.get('verbosity', 1)))
 
         logger.info("Done.")
 

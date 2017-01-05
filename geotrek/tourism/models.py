@@ -356,11 +356,11 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
         return self.category.type2_label
 
     @property
-    def types1_display(self):
+    def type1_display(self):
         return ', '.join([unicode(n) for n in self.type1.all()])
 
     @property
-    def types2_display(self):
+    def type2_display(self):
         return ', '.join([unicode(n) for n in self.type2.all()])
 
     @property
@@ -390,6 +390,10 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     @property
     def source_display(self):
         return ','.join([unicode(source) for source in self.source.all()])
+
+    @property
+    def themes_display(self):
+        return ','.join([unicode(source) for source in self.themes.all()])
 
 
 Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))
@@ -517,6 +521,10 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
     @property
     def source_display(self):
         return ', '.join([unicode(source) for source in self.source.all()])
+
+    @property
+    def themes_display(self):
+        return ','.join([unicode(source) for source in self.themes.all()])
 
 
 TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))

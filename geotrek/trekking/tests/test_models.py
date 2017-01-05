@@ -105,8 +105,9 @@ class TrekTest(TranslationResetMixin, TestCase):
         TrekFactory.create(name='Ca')
         TrekFactory.create(name='A')
         TrekFactory.create(name='B')
-        self.assertEqual([u'A', u'B', u'Ca', u'Cb'],
-                         list(Trek.objects.all().values_list('name', flat=True)))
+        self.assertQuerysetEqual(Trek.objects.all(),
+                                 [u'<Trek: A>', u'<Trek: B>', u'<Trek: Ca>', u'<Trek: Cb>'],
+                                 ordered=False)
 
     def test_trek_itself_as_parent(self):
         """
@@ -339,7 +340,7 @@ class TrekItinerancyTest(TestCase):
         OrderedTrekChild(parent=trekB, child=trekA, order=1).save()
         OrderedTrekChild(parent=trekC, child=trekA, order=2).save()
         self.assertTrue(OrderedTrekChild.objects.filter(parent=trekB).exists())
-        self.assertQuerysetEqual(trekA.parents, ['<Trek: B>', '<Trek: C>'])
+        self.assertQuerysetEqual(trekA.parents, ['<Trek: B>', '<Trek: C>'], ordered=False)
         self.assertQuerysetEqual(trekB.children, ['<Trek: A>'])
         self.assertQuerysetEqual(trekC.children, ['<Trek: A>'])
         self.assertEqual(trekA.parents_id, [trekB.id, trekC.id])
