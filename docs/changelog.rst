@@ -11,6 +11,7 @@ CHANGELOG
 * Create database with right owner if user exists but database does not
 * Make sure supervisor service is started after install
 * Install postgis package (required by loaddem command)
+* Fix HTML entities in feedback email
 
 
 2.11.3 (2016-11-15)

@@ -1,4 +1,5 @@
 {% load i18n l10n %}
+{% autoescape off %}
 {% blocktrans with name=report.name email=report.email %}{{name}} ({{email}}) has sent a feedback.{% endblocktrans %}
 {% trans "Category" %} : {{report.category}}
 {% if report.comment %}{% blocktrans with comment=report.comment %}Comment : {{comment}}{% endblocktrans %}{% endif %}
@@ -6,3 +7,4 @@
 Lat : {{lat}} / Lon : {{lng}}
 http://www.openstreetmap.org/?mlat={{lat}}&mlon={{lng}}
 {% endblocktrans %}{% endif %}
+{% endautoescape %}
