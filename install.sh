@@ -327,6 +327,8 @@ _EOF_
         echo_step "Create database ${dbname}..."
         sudo -n -u postgres -s -- psql -c "CREATE DATABASE ${dbname} ENCODING 'UTF8' TEMPLATE template0 OWNER ${dbuser};"
         sudo -n -u postgres -s -- psql -d ${dbname} -c "CREATE EXTENSION postgis;"
+        sudo -n -u postgres -s -- psql -c "GRANT ALL PRIVILEGES ON DATABASE ${dbname} TO ${dbuser};"
+        sudo -n -u postgres -s -- psql -d ${dbname} -c "GRANT ALL ON spatial_ref_sys, geometry_columns, raster_columns TO ${dbuser};"
     fi
 
     if $dev || $tests ; then
