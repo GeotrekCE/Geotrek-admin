@@ -5,7 +5,7 @@ from .default import *
 # ..........................
 
 DEBUG = True
-TEMPLATE_DEBUG = True
+TEMPLATES[1]['OPTIONS']['debug'] = True
 
 #
 # Developper additions

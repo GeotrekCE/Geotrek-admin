@@ -16,6 +16,7 @@ from geotrek.authent.factories import PathManagerFactory
 from geotrek.core.factories import StakeFactory
 from geotrek.core.helpers import TopologyHelper
 from geotrek.common.factories import OrganismFactory
+from geotrek.common.tests import TranslationResetMixin
 from geotrek.maintenance.models import Intervention, InterventionStatus, Project
 from geotrek.maintenance.views import ProjectFormatList
 from geotrek.core.factories import (PathFactory, PathAggregationFactory,
@@ -314,7 +315,7 @@ class ProjectViewsTest(CommonTest):
         self.assertNotContains(response, intervention.name)
 
 
-class ExportTest(TestCase):
+class ExportTest(TranslationResetMixin, TestCase):
 
     def test_shape_mixed(self):
         """

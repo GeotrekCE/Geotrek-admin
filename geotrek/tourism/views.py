@@ -10,7 +10,7 @@ from mapentity.views import (MapEntityCreate,
                              MapEntityDetail, MapEntityDelete, MapEntityViewSet,
                              MapEntityFormat, MapEntityDocument)
 from rest_framework import permissions as rest_permissions, viewsets
-from rest_framework.filters import DjangoFilterBackend
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -274,12 +274,17 @@ class TouristicEventViewSet(MapEntityViewSet):
 
 class InformationDeskViewSet(viewsets.ModelViewSet):
     model = InformationDesk
+    queryset = InformationDesk.objects.all()
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_serializer_class(self):
-        class Serializer(InformationDeskSerializer, GeoFeatureModelSerializer):
-            pass
-        return Serializer
+        renderer, media_type = self.perform_content_negotiation(self.request)
+        if getattr(renderer, 'format') == 'geojson':
+            class Serializer(InformationDeskSerializer, GeoFeatureModelSerializer):
+                class Meta(InformationDeskSerializer.Meta):
+                    pass
+            return Serializer
+        return InformationDeskSerializer
 
     def get_queryset(self):
         qs = super(InformationDeskViewSet, self).get_queryset()
@@ -333,7 +338,8 @@ class TrekTouristicContentViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         class Serializer(TouristicContentSerializer, GeoFeatureModelSerializer):
-            pass
+            class Meta(TouristicContentSerializer.Meta):
+                pass
         return Serializer
 
     def get_queryset(self):
@@ -364,7 +370,8 @@ class TrekTouristicEventViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         class Serializer(TouristicEventSerializer, GeoFeatureModelSerializer):
-            pass
+            class Meta(TouristicEventSerializer.Meta):
+                pass
         return Serializer
 
     def get_queryset(self):

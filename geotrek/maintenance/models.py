@@ -188,7 +188,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     def paths(self):
         if self.topology:
             return self.topology.paths.all()
-        return []
+        return Path.objects.none()
 
     @property
     def signages(self):

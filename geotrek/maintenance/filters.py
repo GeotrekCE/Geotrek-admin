@@ -14,7 +14,7 @@ class PolygonTopologyFilter(PolygonFilter):
     def filter(self, qs, value):
         if not value:
             return qs
-        lookup = self.lookup_type
+        lookup = self.lookup_expr
         inner_qs = Topology.objects.filter(**{'geom__%s' % lookup: value})
         return qs.filter(**{'%s__in' % self.name: inner_qs})
 
@@ -27,7 +27,7 @@ class InterventionYearSelect(YearSelect):
 
 
 class InterventionFilterSet(StructureRelatedFilterSet):
-    bbox = PolygonTopologyFilter(name='topology', lookup_type='intersects')
+    bbox = PolygonTopologyFilter(name='topology', lookup_expr='intersects')
     year = YearFilter(name='date',
                       widget=InterventionYearSelect,
                       label=_(u"Year"))

@@ -8,48 +8,55 @@ from geotrek.core.factories import TopologyFactory, PointTopologyFactory
 from geotrek.common.utils.testdata import dummy_filefield_as_sequence
 
 
-class TrekNetworkFactory(factory.Factory):
-    FACTORY_FOR = models.TrekNetwork
+class TrekNetworkFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.TrekNetwork
 
     network = factory.Sequence(lambda n: u"network %s" % n)
 
 
-class PracticeFactory(factory.Factory):
-    FACTORY_FOR = models.Practice
+class PracticeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Practice
 
     name = factory.Sequence(lambda n: u"usage %s" % n)
     pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
-class AccessibilityFactory(factory.Factory):
-    FACTORY_FOR = models.Accessibility
+class AccessibilityFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Accessibility
 
     name = factory.Sequence(lambda n: u"accessibility %s" % n)
     pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
-class RouteFactory(factory.Factory):
-    FACTORY_FOR = models.Route
+class RouteFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Route
 
     route = factory.Sequence(lambda n: u"route %s" % n)
 
 
-class DifficultyLevelFactory(factory.Factory):
-    FACTORY_FOR = models.DifficultyLevel
+class DifficultyLevelFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.DifficultyLevel
 
     difficulty = factory.Sequence(lambda n: u"difficulty %s" % n)
     pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
-class WebLinkCategoryFactory(factory.Factory):
-    FACTORY_FOR = models.WebLinkCategory
+class WebLinkCategoryFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.WebLinkCategory
 
     label = factory.Sequence(lambda n: u"Category %s" % n)
     pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
-class WebLinkFactory(factory.Factory):
-    FACTORY_FOR = models.WebLink
+class WebLinkFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.WebLink
 
     name = factory.Sequence(lambda n: u"web link name %s" % n)
     url = factory.Sequence(lambda n: u"http://dummy.url/%s" % n)
@@ -57,7 +64,8 @@ class WebLinkFactory(factory.Factory):
 
 
 class TrekFactory(TopologyFactory):
-    FACTORY_FOR = models.Trek
+    class Meta:
+        model = models.Trek
 
     name = factory.Sequence(lambda n: u"name %s" % n)
     departure = factory.Sequence(lambda n: u"departure %s" % n)
@@ -137,8 +145,9 @@ class TrekWithServicesFactory(TrekFactory):
         return trek
 
 
-class TrekRelationshipFactory(factory.Factory):
-    FACTORY_FOR = models.TrekRelationship
+class TrekRelationshipFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.TrekRelationship
 
     has_common_departure = False
     has_common_edge = False
@@ -148,15 +157,17 @@ class TrekRelationshipFactory(factory.Factory):
     trek_b = factory.SubFactory(TrekFactory)
 
 
-class POITypeFactory(factory.Factory):
-    FACTORY_FOR = models.POIType
+class POITypeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.POIType
 
     label = factory.Sequence(lambda n: u"POIType %s" % n)
     pictogram = dummy_filefield_as_sequence('pictogram %s')
 
 
 class POIFactory(PointTopologyFactory):
-    FACTORY_FOR = models.POI
+    class Meta:
+        model = models.POI
 
     name = factory.Sequence(lambda n: u"POI %s" % n)
     description = factory.Sequence(lambda n: u"<p>description %s</p>" % n)
@@ -164,8 +175,9 @@ class POIFactory(PointTopologyFactory):
     published = True
 
 
-class ServiceTypeFactory(factory.Factory):
-    FACTORY_FOR = models.ServiceType
+class ServiceTypeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.ServiceType
 
     name = factory.Sequence(lambda n: u"ServiceType %s" % n)
     pictogram = dummy_filefield_as_sequence('pictogram %s')
@@ -173,6 +185,7 @@ class ServiceTypeFactory(factory.Factory):
 
 
 class ServiceFactory(PointTopologyFactory):
-    FACTORY_FOR = models.Service
+    class Meta:
+        model = models.Service
 
     type = factory.SubFactory(ServiceTypeFactory)

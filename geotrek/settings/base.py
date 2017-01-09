@@ -13,7 +13,6 @@ def gettext_noop(s):
 
 
 DEBUG = False
-TEMPLATE_DEBUG = DEBUG
 TEST = 'test' in sys.argv
 VERSION = __version__
 
@@ -174,13 +173,36 @@ COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'public_key'
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-    'geotrek.templateloaders.Loader',
-    # 'django.template.loaders.eggs.Loader',
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'djappypod.backend.OdtTemplates',
+    },
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': (),
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.core.context_processors.debug',
+                'django.core.context_processors.i18n',
+                'django.core.context_processors.media',
+                'django.core.context_processors.static',
+                'django.core.context_processors.tz',
+                'django.core.context_processors.request',
+                'django.contrib.messages.context_processors.messages',
+                'geotrek.context_processors.forced_layers',
+                'mapentity.context_processors.settings',
+            ],
+            'loaders': [
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+                'geotrek.templateloaders.Loader',
+                # 'django.template.loaders.eggs.Loader',
+            ],
+            'debug': True,
+        },
+    },
+]
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
@@ -201,26 +223,6 @@ ROOT_URLCONF = 'geotrek.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'geotrek.wsgi.application'
-
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-)
-
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.debug',
-    'django.core.context_processors.i18n',
-    'django.core.context_processors.media',
-    'django.core.context_processors.static',
-    'django.core.context_processors.tz',
-    'django.core.context_processors.request',
-    'django.contrib.messages.context_processors.messages',
-    'geotrek.context_processors.forced_layers',
-
-    'mapentity.context_processors.settings',
-)
 
 
 # Do not migrate translated fields, they differ per instance, and
@@ -262,6 +264,7 @@ PROJECT_APPS += (
     'mapentity',
     'leaflet',  # After mapentity to allow it to patch settings
     'rest_framework',
+    'rest_framework_gis',
     'embed_video',
     'djcelery',
 )

@@ -122,7 +122,7 @@ class BasicJSONAPITest(TranslationResetMixin):
         self._build_object()
 
         self.pk = self.content.pk
-        url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.module_name, pk=self.pk)
+        url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.model_name, pk=self.pk)
         self.response = self.client.get(url)
         self.result = json.loads(self.response.content)
 
@@ -255,8 +255,8 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
             u'pois', u'practical_info', u'printable', u'publication_date',
             u'published', u'published_status', u'reservation_id', u'reservation_system',
             u'slug', u'source', u'portal', u'themes', u'thumbnail', u'touristic_contents',
-            u'touristic_events', u'treks', u'type1', u'type2', u'videos', u'website', ]),
-            sorted(self.result.keys()), sorted(self.result.keys()))
+            u'touristic_events', u'treks', u'type1', u'type2', u'videos', u'website']),
+            sorted(self.result.keys()))
 
     def test_type1(self):
         self.assertDictEqual(self.result['type1'][0],
@@ -425,7 +425,7 @@ class TouristicContentCategoryViewSetTest(TestCase):
 
 
 class InformationDeskAPITest(TestCase):
-    def test_json(self):
+    def test_geojson(self):
         InformationDeskFactory.create()
         desk2 = InformationDeskFactory.create()
         response = self.client.get('/api/en/information_desks-{}.geojson'.format(desk2.type.id))

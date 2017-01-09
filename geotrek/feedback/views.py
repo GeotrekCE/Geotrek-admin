@@ -40,6 +40,7 @@ class CategoryList(mapentity_views.JSONResponseMixin, ListView):
 class ReportViewSet(mapentity_views.MapEntityViewSet):
     """Disable permissions requirement"""
     model = feedback_models.Report
+    queryset = feedback_models.Report.objects.all()
     serializer_class = feedback_serializers.ReportSerializer
     authentication_classes = []
     permission_classes = [AllowAny]
@@ -52,6 +53,6 @@ class ReportViewSet(mapentity_views.MapEntityViewSet):
                 settings.MAILALERTSUBJECT,
                 settings.MAILALERTMESSAGE,
                 settings.DEFAULT_FROM_EMAIL,
-                [request.DATA.get('email')]
+                [request.data.get('email')]
             )
         return response

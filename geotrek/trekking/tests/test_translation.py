@@ -22,12 +22,12 @@ def login_from_cred(client, cred):
 
 
 def admin_add_url_from_model(model):
-    info = model._meta.app_label, model._meta.module_name
+    info = model._meta.app_label, model._meta.model_name
     return reverse('admin:%s_%s_add' % info)
 
 
 def admin_list_url_from_model(model):
-    info = model._meta.app_label, model._meta.module_name
+    info = model._meta.app_label, model._meta.model_name
     return reverse('admin:%s_%s_changelist' % info)
 
 

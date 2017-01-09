@@ -9,6 +9,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
 from django.contrib.auth.signals import user_logged_in
+from django.utils.translation import LANGUAGE_SESSION_KEY
 
 from geotrek.common.utils import reify
 
@@ -110,4 +111,4 @@ User.profile = reify(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 def lang(sender, **kwargs):
     """ Set user's language in session when he logs in. """
     lang_code = kwargs['user'].profile.language
-    kwargs['request'].session['django_language'] = lang_code
+    kwargs['request'].session[LANGUAGE_SESSION_KEY] = lang_code

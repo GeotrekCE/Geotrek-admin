@@ -8,11 +8,10 @@ from geotrek.common.serializers import (
 
 
 class FlatPageSerializer(BasePublishableSerializerMixin, TranslatedModelSerializer):
-    slug = rest_serializers.Field(source='slug')
-    last_modified = rest_serializers.Field(source='date_update')
-    media = rest_serializers.Field(source='parse_media')
-    source = RecordSourceSerializer()
-    portal = TargetPortalSerializer()
+    last_modified = rest_serializers.ReadOnlyField(source='date_update')
+    media = rest_serializers.ReadOnlyField(source='parse_media')
+    source = RecordSourceSerializer(many=True)
+    portal = TargetPortalSerializer(many=True)
 
     class Meta:
         model = flatpages_models.FlatPage

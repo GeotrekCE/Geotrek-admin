@@ -74,10 +74,10 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                               null=True, blank=True, related_name='paths',
                               verbose_name=_("Maintenance stake"), db_column='enjeu')
     usages = models.ManyToManyField('Usage',
-                                    blank=True, null=True, related_name="paths",
+                                    blank=True, related_name="paths",
                                     verbose_name=_(u"Usages"), db_table="l_r_troncon_usage")
     networks = models.ManyToManyField('Network',
-                                      blank=True, null=True, related_name="paths",
+                                      blank=True, related_name="paths",
                                       verbose_name=_(u"Networks"), db_table="l_r_troncon_reseau")
     eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
 

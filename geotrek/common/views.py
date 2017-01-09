@@ -277,6 +277,7 @@ def import_update_json(request):
 
 class ThemeViewSet(viewsets.ModelViewSet):
     model = Theme
+    queryset = Theme.objects.all()
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
     serializer_class = ThemeSerializer
 

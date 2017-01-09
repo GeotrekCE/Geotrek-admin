@@ -15,7 +15,7 @@ from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core.management import call_command
 from django.core.urlresolvers import reverse
 from django.db import connection, connections, DEFAULT_DB_ALIAS
-from django.template.loader import find_template
+from django.template.loader import get_template
 from django.test import RequestFactory
 from django.test.utils import override_settings
 from django.utils import translation
@@ -371,18 +371,16 @@ class TrekCustomViewTests(TrekkingManagerTest):
 
 
 class TrekCustomPublicViewTests(TrekkingManagerTest):
-    @mock.patch('django.template.loaders.filesystem.open', create=True)
-    def test_overriden_public_template(self, open_patched):
+    @mock.patch('djappypod.backend.os.path.exists', create=True)
+    def test_overriden_public_template(self, exists_patched):
         overriden_template = os.path.join(settings.MEDIA_ROOT, 'templates', 'trekking', 'trek_public.odt')
 
-        def fake_exists(f, *args):
-            if f == overriden_template:
-                return mock.MagicMock(spec=file)
-            raise IOError
+        def fake_exists(path):
+            return path == overriden_template
 
-        open_patched.side_effect = fake_exists
-        find_template('trekking/trek_public.odt')
-        open_patched.assert_called_with(overriden_template, 'rb')
+        exists_patched.side_effect = fake_exists
+        template = get_template('trekking/trek_public.odt')
+        self.assertEqual(template.path, overriden_template)
 
     def test_profile_json(self):
         trek = TrekFactory.create(published=True)
@@ -603,6 +601,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
 
     def test_information_desks(self):
         desk_type = self.information_desk.type
+        self.maxDiff = None
         self.assertDictEqual(self.result['information_desks'][0],
                              {u'description': self.information_desk.description,
                               u'email': self.information_desk.email,
@@ -634,12 +633,12 @@ class TrekJSONDetailTest(TrekkingManagerTest):
 
     def test_parking_location_in_wgs84(self):
         parking_location = self.result['parking_location']
-        self.assertEqual(parking_location[0], -1.3630812101179004)
+        self.assertEqual(parking_location[0], -1.3630812101179008)
 
     def test_points_reference_are_exported_in_wgs84(self):
         geojson = self.result['points_reference']
         self.assertEqual(geojson['type'], 'MultiPoint')
-        self.assertEqual(geojson['coordinates'][0][0], -1.3630812101179)
+        self.assertEqual(geojson['coordinates'][0][0], -1.363081210117901)
 
     def test_touristic_contents(self):
         self.assertEqual(len(self.result['touristic_contents']), 1)
@@ -789,7 +788,7 @@ class TrekGPXTest(TrekkingManagerTest):
 
 class TrekViewTranslationTest(TrekkingManagerTest):
     def setUp(self):
-        self.trek = TrekFactory.build()
+        self.trek = TrekFactory.create()
         self.trek.name_fr = 'Voie lactee'
         self.trek.name_en = 'Milky way'
         self.trek.name_it = 'Via Lattea'

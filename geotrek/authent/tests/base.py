@@ -8,13 +8,19 @@ from django.core.management import call_command
 from mapentity import registry
 
 
-class AuthentFixturesTest(TestCase):
+class AuthentFixturesMixin(object):
     fixtures = [os.path.join(settings.PROJECT_ROOT_PATH, 'authent', 'fixtures', 'minimal.json'),
                 os.path.join(settings.PROJECT_ROOT_PATH, 'authent', 'fixtures', 'basic.json')]
 
     def _pre_setup(self):
+        if not isinstance(self, TestCase):
+            call_command('update_geotrek_permissions')
+        super(AuthentFixturesMixin, self)._pre_setup()
+
+    @classmethod
+    def setUpClass(cls):
         """
-        Override _pre_setup() of test to make sure MapEntity models are
+        Override setUpClass() of test to make sure MapEntity models are
         registered when test is setup.
         Indeed since permissions are created on model registering, and since
         models are registered in `urls.py` modules, and since `urls.py` are
@@ -35,4 +41,8 @@ class AuthentFixturesTest(TestCase):
 
         call_command('update_geotrek_permissions')
 
-        return super(AuthentFixturesTest, self)._pre_setup()
+        return super(AuthentFixturesMixin, cls).setUpClass()
+
+
+class AuthentFixturesTest(AuthentFixturesMixin, TestCase):
+    pass

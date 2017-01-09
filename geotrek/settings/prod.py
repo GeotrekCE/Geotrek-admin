@@ -29,9 +29,9 @@ LOGGING['loggers']['mapentity']['handlers'].append('logfile')
 # ..........................
 
 DATABASES['default']['CONN_MAX_AGE'] = 600
-TEMPLATE_LOADERS = (
+TEMPLATES[1]['OPTIONS']['loaders'] = (
     ('django.template.loaders.cached.Loader',
-     TEMPLATE_LOADERS),
+     TEMPLATES[1]['OPTIONS']['loaders']),
 )
 # SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 

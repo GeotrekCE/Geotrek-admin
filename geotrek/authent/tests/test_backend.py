@@ -1,3 +1,5 @@
+from django.test import TransactionTestCase
+
 from django.db import connections
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
@@ -5,7 +7,7 @@ from django.test.utils import override_settings
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import Group
 
-from .base import AuthentFixturesTest
+from .base import AuthentFixturesMixin
 from ..models import Structure
 from ..backend import DatabaseBackend
 
@@ -38,7 +40,7 @@ def password2md5(password):
 @override_settings(AUTHENT_DATABASE='default',
                    AUTHENT_TABLENAME='authent_table',
                    AUTHENTICATION_BACKENDS=('geotrek.authent.backend.DatabaseBackend',))
-class AuthentDatabaseTest(AuthentFixturesTest):
+class AuthentDatabaseTest(AuthentFixturesMixin, TransactionTestCase):
     def setUp(self):
         self.backend = DatabaseBackend()
         query_db(_CREATE_TABLE_STATEMENT % settings.AUTHENT_TABLENAME)

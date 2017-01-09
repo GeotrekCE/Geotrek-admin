@@ -261,7 +261,7 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
                                    help_text=_(u"Complete description"))
     themes = models.ManyToManyField(Theme, related_name="touristiccontents",
-                                    db_table="t_r_contenu_touristique_theme", blank=True, null=True, verbose_name=_(u"Themes"),
+                                    db_table="t_r_contenu_touristique_theme", blank=True, verbose_name=_(u"Themes"),
                                     help_text=_(u"Main theme(s)"))
     geom = models.GeometryField(verbose_name=_(u"Location"), srid=settings.SRID)
     category = models.ForeignKey(TouristicContentCategory, related_name='contents',
@@ -391,7 +391,7 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
     description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
                                    help_text=_(u"Complete description"))
     themes = models.ManyToManyField(Theme, related_name="touristic_events",
-                                    db_table="t_r_evenement_touristique_theme", blank=True, null=True, verbose_name=_(u"Themes"),
+                                    db_table="t_r_evenement_touristique_theme", blank=True, verbose_name=_(u"Themes"),
                                     help_text=_(u"Main theme(s)"))
     geom = models.PointField(verbose_name=_(u"Location"), srid=settings.SRID)
     begin_date = models.DateField(blank=True, null=True, verbose_name=_(u"Begin date"), db_column='date_debut')
