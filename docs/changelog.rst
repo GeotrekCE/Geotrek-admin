@@ -37,6 +37,7 @@ CHANGELOG
 
 **Bug fixes**
 
+* Remove deprecated datasource (replaced by import parsers)
 * Stop install.sh if make update or wget fails
 * Create database with right owner if user exists but database does not
 * Make sure supervisor service is started after install

@@ -14,14 +14,6 @@ else:
     TranslationTabularInline = admin.TabularInline
 
 
-class DataSourceAdmin(TranslationAdmin):
-    list_display = ('title', 'pictogram_img')
-    search_fields = ('title',)
-
-
-admin.site.register(tourism_models.DataSource, DataSourceAdmin)
-
-
 class InformationDeskTypeAdmin(TranslationAdmin):
     list_display = ('label', 'pictogram_img')
     search_fields = ('label', )
