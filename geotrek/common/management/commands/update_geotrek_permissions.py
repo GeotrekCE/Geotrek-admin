@@ -46,7 +46,8 @@ class Command(BaseCommand):
             if model and issubclass(model, BasePublishableMixin):
                 Permission.objects.get_or_create(
                     codename='publish_%s' % content_type.model,
-                    name='Can publish %s' % content_type.name,
-                    content_type=content_type)
+                    content_type=content_type,
+                    defaults={'name': 'Can publish %s' % content_type.name}
+                )
 
         logger.info("Done.")
