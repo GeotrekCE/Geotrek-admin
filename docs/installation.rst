@@ -21,12 +21,27 @@ A first estimation on system resources is :
 Installation
 ------------
 
-Once the OS is installed (basic installation, with OpenSSH server), install
-the last version with the following commands :
+Once the OS is installed (basic installation, with OpenSSH server), log in with your linux user (not root).
+
+Make sure you are in the user folder :
 
 ::
 
-    curl https://raw.githubusercontent.com/makinacorpus/Geotrek/master/install.sh > install.sh
+    cd /home/mylinuxuser
+
+Create a folder where you will install Geotrek-admin : 
+
+::
+
+    mkdir Geotrek-admin
+    cd Geotrek-admin
+
+Install the latest version with the following commands (X.Y.Z to replace 
+with the latest stable version number : https://github.com/GeotrekCE/Geotrekadmin/releases) :
+
+::
+
+    curl https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/X.Y.Z/install.sh > install.sh
     chmod +x install.sh
     ./install.sh
 
@@ -54,17 +69,17 @@ to create the admin user and fill the database with your data!
 Software update
 ---------------
 
-All versions are published on `the Github forge <https://github.com/makinacorpus/Geotrek/releases>`_.
+All versions are published on `the Github forge <https://github.com/GeotrekCE/Geotrek-admin/releases>`_.
 Download and extract the new version in a separate folder (**recommended**).
 
 .. code-block:: bash
 
-    wget https://github.com/makinacorpus/Geotrek/archive/X.Y.Z.zip
+    wget https://github.com/GeotrekCE/Geotrek-admin/archive/X.Y.Z.zip
     unzip X.Y.Z.zip
     cd Geotrek-X.Y.Z/
 
 Before upgrading, **READ CAREFULLY** the release notes, either from the ``docs/changelog.rst``
-files `or online <https://github.com/makinacorpus/Geotrek/releases>`_.
+files `or online <https://github.com/GeotrekCE/Geotrek-admin/releases>`_.
 
 Shutdown previous running version :
 
@@ -134,7 +149,7 @@ Get and unzip Geotrek sources on the new server:
 
 ::
 
-    wget https://github.com/makinacorpus/Geotrek/archive/2.0.0.zip
+    wget https://github.com/GeotrekCE/Geotrek-admin/archive/2.0.0.zip
     unzip 2.0.0.zip
     mv Geotrek-2.0.0 Geotrek
     cd Geotrek
