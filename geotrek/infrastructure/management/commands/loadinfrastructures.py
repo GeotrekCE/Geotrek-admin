@@ -47,22 +47,23 @@ class Command(BaseCommand):
 
             if name:
                 name = name.decode('utf-8')
-            poitype = feature.GetFieldAsString(self.field_infrastructure_type)
-            if poitype:
-                poitype = poitype.decode('utf-8')
+
+            infra_type = feature.GetFieldAsString(self.field_infrastructure_type)
+            if infra_type:
+                infra_type = infra_type.decode('utf-8')
 
             #ajout theo
             etat = feature.GetFieldAsString(self.field_condition_type)
             if etat:
-                poitype = poitype.decode('utf-8')
+                etat = etat.decode('utf-8')
 
-            self.create_infrastructure(geometry, name, poitype, etat)
-
-
+            self.create_infrastructure(geometry, name, infra_type, etat)
 
 
-    def create_infrastructure(self, geometry, name, poitype, etat ):
-        infraType, created = InfrastructureType.objects.get_or_create(label=poitype)
+
+
+    def create_infrastructure(self, geometry, name, infra_type, etat ):
+        infraType, created = InfrastructureType.objects.get_or_create(label=infra_type)
         etatType, created = InfrastructureCondition.objects.get_or_create(label=etat)
 
         infra = Infrastructure.objects.create(type=infraType, name=name, condition=etatType)
@@ -73,4 +74,3 @@ class Command(BaseCommand):
         # Move deserialization aggregations to the POI
         infra.mutate(topology)
         return infra
-
