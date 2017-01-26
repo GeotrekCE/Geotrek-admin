@@ -16,6 +16,7 @@ CHANGELOG
 
 * Add filter usages on paths
 * Add filters name and description on infrastructures and signages
+* Add picture to PDF for feedback reports (only in Weasyprint mode)
 
 
 2.11.3 (2016-11-15)
