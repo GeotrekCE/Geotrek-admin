@@ -7,6 +7,9 @@ from geotrek.core.helpers import TopologyHelper
 
 from geotrek.infrastructure.models import Infrastructure, InfrastructureType, InfrastructureCondition
 
+from geotrek.authent.models import Structure
+
+
 
 class Command(BaseCommand):
     args = '<point_layer>'
@@ -15,6 +18,8 @@ class Command(BaseCommand):
     field_name = 'name'
     field_infrastructure_type = 'type'
     field_condition_type = 'etat'
+    field_structure_type = 'structure'
+    field_description='desc'
 
     def handle(self, *args, **options):
 
@@ -43,30 +48,39 @@ class Command(BaseCommand):
             feature = layer.GetFeature(i)
             featureGeom = feature.GetGeometryRef()
             geometry = GEOSGeometry(featureGeom.ExportToWkt())
-            name = feature.GetFieldAsString(self.field_name)
 
+            name = feature.GetFieldAsString(self.field_name)
             if name:
                 name = name.decode('utf-8')
 
-            infra_type = feature.GetFieldAsString(self.field_infrastructure_type)
-            if infra_type:
-                infra_type = infra_type.decode('utf-8')
+            infra = feature.GetFieldAsString(self.field_infrastructure_type)
+            if infra:
+                infra = infra.decode('utf-8')
 
-            #ajout theo
-            etat = feature.GetFieldAsString(self.field_condition_type)
-            if etat:
-                etat = etat.decode('utf-8')
+            condition = feature.GetFieldAsString(self.field_condition_type)
+            if condition:
+                condition = condition.decode('utf-8')
 
-            self.create_infrastructure(geometry, name, infra_type, etat)
+            structure = feature.GetFieldAsString(self.field_structure_type)
+            if structure:
+                structure = structure.decode('utf-8')
+
+            description = feature.GetFieldAsString(self.field_description)
+            if description:
+                description = description.decode('utf-8')
+
+            self.create_infrastructure(geometry, name, infra, condition, structure, description)
 
 
 
 
-    def create_infrastructure(self, geometry, name, infra_type, etat ):
-        infraType, created = InfrastructureType.objects.get_or_create(label=infra_type)
-        etatType, created = InfrastructureCondition.objects.get_or_create(label=etat)
+    def create_infrastructure(self, geometry, name, infra, condition, structure, description ):
+        infraType, created = InfrastructureType.objects.get_or_create(label=infra)
+        condition_type, created = InfrastructureCondition.objects.get_or_create(label=condition)
+        structure_type, created = Structure.objects.get_or_create(name=structure)
 
-        infra = Infrastructure.objects.create(type=infraType, name=name, condition=etatType)
+
+        infra = Infrastructure.objects.create(type=infraType, name=name, condition=condition_type, structure=structure_type, description=description)
         # Use existing topology helpers to transform a Point(x, y)
         # to a path aggregation (topology)
         serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
