@@ -46,8 +46,6 @@ class TopologyFilter(ModelChoiceFilter):
         """
         This piece of code should be rewritten nicely with managers : TODO !
         """
-        import geotrek.maintenance as maintenance
-
         overlapping = Topology.overlapping(edges)
 
         # In case, we filter on paths
