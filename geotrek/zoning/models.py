@@ -10,7 +10,7 @@ from django.contrib.gis.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-from geotrek.common.utils import uniquify, intersecting
+from geotrek.common.utils import uniquify, uniquify_labels, intersecting
 from geotrek.core.models import Topology, Path
 from geotrek.maintenance.models import Intervention, Project
 from geotrek.tourism.models import TouristicContent, TouristicEvent
@@ -83,25 +83,31 @@ class RestrictedAreaEdge(Topology):
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
     Path.add_property('area_edges', RestrictedAreaEdge.path_area_edges, _(u"Restricted area edges"))
-    Path.add_property('areas', lambda self: uniquify(intersecting(RestrictedArea, self, distance=0)),
+    Path.add_property('areas', lambda self: uniquify_labels(intersecting(RestrictedArea, self, distance=0,
+                                                                         no_order=True)),
                       _(u"Restricted areas"))
     Topology.add_property('area_edges', RestrictedAreaEdge.topology_area_edges, _(u"Restricted area edges"))
-    Topology.add_property('areas', lambda self: uniquify(intersecting(RestrictedArea, self, distance=0)),
+    Topology.add_property('areas', lambda self: uniquify_labels(intersecting(RestrictedArea, self, distance=0,
+                                                                             no_order=True)),
                           _(u"Restricted areas"))
     Intervention.add_property('area_edges', lambda self: self.topology.area_edges if self.topology else [],
                               _(u"Restricted area edges"))
-    Intervention.add_property('areas', lambda self: uniquify(intersecting(RestrictedArea, self, distance=0)),
+    Intervention.add_property('areas', lambda self: uniquify_labels(intersecting(RestrictedArea, self, distance=0,
+                                                                                 no_order=True)),
                               _(u"Restricted areas"))
     Project.add_property('area_edges', lambda self: self.edges_by_attr('area_edges'), _(u"Restricted area edges"))
-    Project.add_property('areas', lambda self: uniquify(intersecting(RestrictedArea, self, distance=0)),
+    Project.add_property('areas', lambda self: uniquify_labels(intersecting(RestrictedArea, self, distance=0,
+                                                                            no_order=True)),
                          _(u"Restricted areas"))
 else:
     Topology.add_property('areas', lambda self: uniquify(intersecting(RestrictedArea, self, distance=0)),
                           _(u"Restricted areas"))
 
-TouristicContent.add_property('areas', lambda self: intersecting(RestrictedArea, self, distance=0),
+TouristicContent.add_property('areas', lambda self: uniquify_labels(intersecting(RestrictedArea, self, distance=0,
+                                                                                 no_order=True)),
                               _(u"Restricted areas"))
-TouristicEvent.add_property('areas', lambda self: intersecting(RestrictedArea, self, distance=0),
+TouristicEvent.add_property('areas', lambda self: uniquify_labels(intersecting(RestrictedArea, self, distance=0,
+                                                                               no_order=True)),
                             _(u"Restricted areas"))
 
 

@@ -106,7 +106,14 @@ def uniquify(values):
     return unique
 
 
-def intersecting(cls, obj, distance=None):
+def uniquify_labels(values, field_name='name'):
+    """
+    Return unique values by field
+    """
+    return values.order_by(field_name).distinct(field_name)
+
+
+def intersecting(cls, obj, distance=None, no_order=None):
     """ Small helper to filter all model instances by geometry intersection
     """
     qs = cls.objects
@@ -114,15 +121,14 @@ def intersecting(cls, obj, distance=None):
         qs = qs.existing()
     if distance is None:
         distance = obj.distance(cls)
-    if distance:
-        qs = qs.filter(geom__dwithin=(obj.geom, Distance(m=distance)))
-    else:
-        qs = qs.filter(geom__intersects=obj.geom)
-        if obj.geom.geom_type == 'LineString':
-            # FIXME: move transform from DRF viewset to DRF itself and remove transform here
-            ewkt = obj.geom.transform(settings.SRID, clone=True).ewkt
-            qs = qs.extra(select={'d': 'ST_Line_Locate_Point(ST_GeomFromEWKT(\'{ewkt}\'), ST_StartPoint((ST_Dump(ST_Intersection(ST_GeomFromEWKT(\'{ewkt}\'), geom))).geom))'.format(ewkt=ewkt)})
-            qs = qs.extra(order_by=['d'])
+    qs = qs.filter(geom__dwithin=(obj.geom, Distance(m=distance)))
+
+    if obj.geom.geom_type == 'LineString' and distance == 0 and no_order is None:
+        # FIXME: move transform from DRF viewset to DRF itself and remove transform here
+        ewkt = obj.geom.transform(settings.SRID, clone=True).ewkt
+        qs = qs.extra(select={'d': 'ST_Line_Locate_Point(ST_GeomFromEWKT(\'{ewkt}\'), ST_StartPoint((ST_Dump(ST_Intersection(ST_GeomFromEWKT(\'{ewkt}\'), geom))).geom))'.format(ewkt=ewkt)})
+        qs = qs.extra(order_by=['d'])
+
     if obj.__class__ == cls:
         # Prevent self intersection
         qs = qs.exclude(pk=obj.pk)
