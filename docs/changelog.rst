@@ -11,6 +11,7 @@ CHANGELOG
 * Create database with right owner if user exists but database does not
 * Make sure supervisor service is started after install
 * Fix HTML entities in feedback email
+* Fix topologies and cities intersections
 
 
 2.11.3 (2016-11-15)
