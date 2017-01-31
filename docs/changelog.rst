@@ -12,6 +12,11 @@ CHANGELOG
 * Make sure supervisor service is started after install
 * Fix HTML entities in feedback email
 
+**Minor changes**
+
+* Add filter usages on paths
+* Add filters name and description on infrastructures and signages
+
 
 2.11.3 (2016-11-15)
 -------------------
