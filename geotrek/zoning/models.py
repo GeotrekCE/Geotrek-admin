@@ -4,7 +4,6 @@
    (not MapEntity : just layers, on which intersections with objects is done in triggers)
 
 """
-from operator import attrgetter
 
 from django.contrib.gis.db import models
 from django.conf import settings
