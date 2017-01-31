@@ -7,6 +7,7 @@ from .models import Topology, Path, Trail
 from geotrek.common.filters import OptionalRangeFilter, StructureRelatedFilterSet
 from geotrek.infrastructure.filters import InfrastructureFilterSet, SignageFilterSet
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
+from geotrek.maintenance import models as maintenace_models
 
 
 class TopologyFilter(ModelChoiceFilter):
@@ -57,13 +58,13 @@ class TopologyFilter(ModelChoiceFilter):
             return qs.filter(pk__in=[path.pk for path in set(paths)])
 
         # TODO: This is (amazingly) ugly in terms of OOP. Should refactor overlapping()
-        elif issubclass(qs.model, maintenance.models.Intervention):
+        elif issubclass(qs.model, maintenace_models.Intervention):
             return qs.filter(topology__in=[topo.pk for topo in overlapping])
-        elif issubclass(qs.model, maintenance.models.Project):
+        elif issubclass(qs.model, maintenace_models.Project):
             # Find all interventions overlapping those edges
-            interventions = self._topology_filter(maintenance.models.Intervention.objects.existing()
-                                                                    .select_related('project')
-                                                                    .filter(project__in=qs),
+            interventions = self._topology_filter(maintenace_models.Intervention.objects.existing()
+                                                                   .select_related('project')
+                                                                   .filter(project__in=qs),
                                                   edges)
             # Return only the projects concerned by the interventions
             projects = []
@@ -84,7 +85,7 @@ class PathFilterSet(StructureRelatedFilterSet):
     class Meta(StructureRelatedFilterSet.Meta):
         model = Path
         fields = StructureRelatedFilterSet.Meta.fields + \
-            ['valid', 'length', 'networks']
+            ['valid', 'length', 'networks', 'usages']
 
 
 class TrailFilterSet(StructureRelatedFilterSet):
