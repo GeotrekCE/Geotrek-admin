@@ -121,7 +121,12 @@ def intersecting(cls, obj, distance=None, no_order=None):
         qs = qs.existing()
     if distance is None:
         distance = obj.distance(cls)
-    qs = qs.filter(geom__dwithin=(obj.geom, Distance(m=distance)))
+
+    if distance > 0:
+        qs = qs.filter(geom__dwithin=(obj.geom, Distance(m=distance)))
+
+    else:
+        qs = qs.filter(geom__dwithin=(obj.geom, 0))
 
     if obj.geom.geom_type == 'LineString' and distance == 0 and no_order is None:
         # FIXME: move transform from DRF viewset to DRF itself and remove transform here
