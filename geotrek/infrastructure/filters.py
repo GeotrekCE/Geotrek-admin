@@ -12,7 +12,7 @@ class InfrastructureYearSelect(InterventionYearSelect):
 
 class InfrastructureFilterSet(StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_type='icontains')
-    comments = CharFilter(label=_('Comments'), lookup_type='icontains')
+    description = CharFilter(label=_('Description'), lookup_type='icontains')
     intervention_year = YearFilter(name='interventions_set__date',
                                    widget=InfrastructureYearSelect)
 
@@ -33,7 +33,7 @@ class InfrastructureFilterSet(StructureRelatedFilterSet):
 
 class SignageFilterSet(StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_type='icontains')
-    comments = CharFilter(label=_('Comments'), lookup_type='icontains')
+    description = CharFilter(label=_('Description'), lookup_type='icontains')
     intervention_year = YearFilter(name='interventions_set__date',
                                    widget=InfrastructureYearSelect)
 
