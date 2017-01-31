@@ -238,7 +238,7 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
                                                               (-1, 3), (-1, -1)))))
         city2 = CityFactory.create(geom=MultiPolygon(Polygon(((3, 3), (9, 3), (9, 9),
                                                               (3, 9), (3, 3)))))
-        self.assertEqual(trek.cities, [city1, city2])
+        self.assertEqual(list(trek.cities.values_list('pk', flat=True)), [city1.pk, city2.pk])
         self.assertEqual(trek.city_departure, unicode(city1))
 
 
