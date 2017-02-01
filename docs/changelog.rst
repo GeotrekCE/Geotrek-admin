@@ -19,6 +19,7 @@ CHANGELOG
 * Create database with right owner if user exists but database does not
 * Make sure supervisor service is started after install
 * Fix HTML entities in feedback email
+* Fix cirkwi export for treks with multilinestring geom
 
 **Minor changes**
 
