@@ -140,7 +140,8 @@ def intersecting(cls, obj, distance=None, no_order=None):
     if obj.__class__ == cls:
         # Prevent self intersection
         qs = qs.exclude(pk=obj.pk)
-    return qs
+
+    return qs.all()
 
 
 def plain_text_preserve_linebreaks(value):
