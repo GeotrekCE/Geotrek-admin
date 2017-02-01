@@ -4,6 +4,7 @@
    (not MapEntity : just layers, on which intersections with objects is done in triggers)
 
 """
+from operator import attrgetter
 
 from django.contrib.gis.db import models
 from django.conf import settings
@@ -89,15 +90,10 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
     Topology.add_property('areas', lambda self: uniquify_labels(intersecting(RestrictedArea, self, distance=0,
                                                                              no_order=True)),
                           _(u"Restricted areas"))
-    Intervention.add_property('area_edges', lambda self: self.topology.area_edges if self.topology else [],
-                              _(u"Restricted area edges"))
-    Intervention.add_property('areas', lambda self: uniquify_labels(intersecting(RestrictedArea, self, distance=0,
-                                                                                 no_order=True)),
-                              _(u"Restricted areas"))
+    Intervention.add_property('area_edges', lambda self: self.topology.area_edges if self.topology else [], _(u"Restricted area edges"))
+    Intervention.add_property('areas', lambda self: self.topology.areas if self.topology else [], _(u"Restricted areas"))
     Project.add_property('area_edges', lambda self: self.edges_by_attr('area_edges'), _(u"Restricted area edges"))
-    Project.add_property('areas', lambda self: uniquify_labels(intersecting(RestrictedArea, self, distance=0,
-                                                                            no_order=True)),
-                         _(u"Restricted areas"))
+    Project.add_property('areas', lambda self: uniquify(map(attrgetter('restricted_area'), self.area_edges)), _(u"Restricted areas"))
 else:
     Topology.add_property('areas', lambda self: uniquify(intersecting(RestrictedArea, self, distance=0)),
                           _(u"Restricted areas"))
@@ -159,11 +155,10 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
     Path.add_property('cities', lambda self: uniquify(intersecting(City, self, distance=0)), _(u"Cities"))
     Topology.add_property('city_edges', CityEdge.topology_city_edges, _(u"City edges"))
     Topology.add_property('cities', lambda self: uniquify(intersecting(City, self, distance=0)), _(u"Cities"))
-    Intervention.add_property('city_edges', lambda self: self.topology.city_edges if self.topology else [],
-                              _(u"City edges"))
-    Intervention.add_property('cities', lambda self: uniquify(intersecting(City, self, distance=0)), _(u"Cities"))
+    Intervention.add_property('city_edges', lambda self: self.topology.city_edges if self.topology else [], _(u"City edges"))
+    Intervention.add_property('cities', lambda self: self.topology.cities if self.topology else [], _(u"Cities"))
     Project.add_property('city_edges', lambda self: self.edges_by_attr('city_edges'), _(u"City edges"))
-    Project.add_property('cities', lambda self: uniquify(intersecting(City, self, distance=0)), _(u"Cities"))
+    Project.add_property('cities', lambda self: uniquify(map(attrgetter('city'), self.city_edges)), _(u"Cities"))
 else:
     Topology.add_property('cities', lambda self: uniquify(intersecting(City, self, distance=0)), _(u"Cities"))
 
@@ -219,12 +214,10 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
     Topology.add_property('district_edges', DistrictEdge.topology_district_edges, _(u"District edges"))
     Topology.add_property('districts', lambda self: uniquify(intersecting(District, self, distance=0)),
                           _(u"Districts"))
-    Intervention.add_property('district_edges', lambda self: self.topology.district_edges if self.topology else [],
-                              _(u"District edges"))
-    Intervention.add_property('districts', lambda self: uniquify(intersecting(District, self)),
-                              _(u"Districts"))
+    Intervention.add_property('district_edges', lambda self: self.topology.district_edges if self.topology else [], _(u"District edges"))
+    Intervention.add_property('districts', lambda self: self.topology.districts if self.topology else [], _(u"Districts"))
     Project.add_property('district_edges', lambda self: self.edges_by_attr('district_edges'), _(u"District edges"))
-    Project.add_property('districts', lambda self: uniquify(intersecting(District, self)), _(u"Districts"))
+    Project.add_property('districts', lambda self: uniquify(map(attrgetter('district'), self.district_edges)), _(u"Districts"))
 else:
     Topology.add_property('districts', lambda self: uniquify(intersecting(District, self, distance=0)),
                           _(u"Districts"))
