@@ -83,7 +83,7 @@ class RestrictedAreaEdge(Topology):
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
     Path.add_property('area_edges', RestrictedAreaEdge.path_area_edges, _(u"Restricted area edges"))
-    Path.add_property('areas', lambda self: uniquify(intersecting(RestrictedArea, self)),
+    Path.add_property('areas', lambda self: uniquify(intersecting(RestrictedArea, self, distance=0)),
                       _(u"Restricted areas"))
     Topology.add_property('area_edges', RestrictedAreaEdge.topology_area_edges, _(u"Restricted area edges"))
     Topology.add_property('areas', lambda self: uniquify(intersecting(RestrictedArea, self)),
@@ -151,7 +151,7 @@ class CityEdge(Topology):
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
     Path.add_property('city_edges', CityEdge.path_city_edges, _(u"City edges"))
-    Path.add_property('cities', lambda self: uniquify(intersecting(City, self,)), _(u"Cities"))
+    Path.add_property('cities', lambda self: uniquify(intersecting(City, self, distance=0)), _(u"Cities"))
     Topology.add_property('city_edges', CityEdge.topology_city_edges, _(u"City edges"))
     Topology.add_property('cities', lambda self: uniquify(intersecting(City, self,)), _(u"Cities"))
     Intervention.add_property('city_edges', lambda self: self.topology.city_edges if self.topology else [], _(u"City edges"))
@@ -209,7 +209,7 @@ class DistrictEdge(Topology):
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
     Path.add_property('district_edges', DistrictEdge.path_district_edges, _(u"District edges"))
-    Path.add_property('districts', lambda self: uniquify(intersecting(District, self)), _(u"Districts"))
+    Path.add_property('districts', lambda self: uniquify(intersecting(District, self, distance=0)), _(u"Districts"))
     Topology.add_property('district_edges', DistrictEdge.topology_district_edges, _(u"District edges"))
     Topology.add_property('districts', lambda self: uniquify(intersecting(District, self)),
                           _(u"Districts"))
