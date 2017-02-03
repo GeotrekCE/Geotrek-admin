@@ -300,7 +300,7 @@ Le référentiel CIRKWI a été intégré dans 3 tables accessibles dans l'Admin
 
 .. image :: images/user-manual/cirkwi-tables.jpg
 
-Si vous ne souhaitez pas utiliser les valeurs par défaut ou avez créez vos propres typologies, il faut que vous renseigniez les correspondances entre les catégories de votre Geotrek et celles du référentiel IGN (Cirkwi) dans votre Adminsite. Comme indiqué ici : https://github.com/makinacorpus/Geotrek/issues/806
+Si vous ne souhaitez pas utiliser les valeurs par défaut ou avez créez vos propres typologies, il faut que vous renseigniez les correspondances entre les catégories de votre Geotrek et celles du référentiel IGN (Cirkwi) dans votre Adminsite. Comme indiqué ici : https://github.com/GeotrekCE/Geotrek-admin/issues/806
 
 * Pratique >> locomotion/loisirs
 * Accessibilite >> thematiques/tags
