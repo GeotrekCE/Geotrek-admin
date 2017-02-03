@@ -22,7 +22,14 @@ In brief
 * Track maintenance of equipments and infrastructures
 * Control objets by district, protected areas, physical and legal status of paths
 * Compute 3D attributes using DEM draping
-* Publish a public website (e.g. `PNE <http://rando.ecrins-parcnational.fr>`_, `PNM-PNAM <http://rando.mercantour.eu>`_)
+* Publish a public website with `Geotrek-rando <https://github.com/GeotrekCE/Geotrek-rando>`_ (e.g. `PNE <http://rando.ecrins-parcnational.fr>`_, `PNM-PNAM <http://rando.mercantour.eu>`_)
+* Publish a public mobile application with `Geotrek-mobile <https://github.com/GeotrekCE/Geotrek-mobile>`_ (e.g. `PNE <https://play.google.com/store/apps/details?id=com.makinacorpus.randoecrins>`_, `PNM-PNAM <https://itunes.apple.com/app/rando-marittime-mercantour/id1032288665?mt=8>`_)
+
+.. image:: http://geotrek.fr/assets/img/screen-1.png
+
+.. image:: http://geotrek.fr/assets/img/screen-2.png
+
+.. image:: http://geotrek.fr/assets/img/mobile-screenshot.png
 
 More information on product website http://geotrek.fr
 
@@ -37,7 +44,7 @@ License
 -------
 
 * OpenSource - BSD
-* Copyright (c) 2012-2015 - Makina Corpus
+* Copyright (c) 2012-2018 - Makina Corpus / Parc national des Ecrins - Parc National du Mercantour - Parco delle Alpi Marittime
 
 .. image:: http://depot.makina-corpus.org/public/logo.gif
     :target: http://www.makina-corpus.com
