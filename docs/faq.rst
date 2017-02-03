@@ -22,8 +22,8 @@ and we add some smoothing to avoid noise.
 
 For more details :
 
-* `The smoothing explanation <https://github.com/makinacorpus/Geotrek/issues/840#issuecomment-30229813>`_
-* `The piece of code to compute positive and negative accumulations <https://github.com/makinacorpus/Geotrek/blob/v0.27.2/geotrek/altimetry/sql/00_utilities.sql#L113-L132>`_
+* `The smoothing explanation <https://github.com/GeotrekCE/Geotrek-admin/issues/840#issuecomment-30229813>`_
+* `The piece of code to compute positive and negative accumulations <https://github.com/GeotrekCE/Geotrek-admin/blob/v0.27.2/geotrek/altimetry/sql/00_utilities.sql#L113-L132>`_
 * `Draping lines with PostGIS <http://blog.mathieu-leplatre.info/drape-lines-on-a-dem-with-postgis.html>`_
   (or `french version <http://makina-corpus.com/blog/metier/2013/draper-des-lignes-sur-un-mnt-avec-postgis>`_)
 
