@@ -1,0 +1,182 @@
+{% load mapentity_tags %}
+
+.autohide {
+	display: none;
+	visibility: hidden;
+}
+
+@page {
+    size: A4;/* 21 x 29.7 cm */
+    /* Header */
+    margin-top: 2.5cm;
+    @top-left {
+        content: "";
+        height: 1.5cm;
+        width: 1.5cm;
+        background: url("{% media_static_fallback "upload/logo-header.png" "images/logo-header.png" %}") center center no-repeat;
+        background-size: auto 100%;
+        margin-left: 0cm;
+        margin-bottom: 0.2cm;
+    }
+}
+
+/* Picture */
+#EntityImage {
+    margin-top: 1cm;
+    max-width: 16cm;
+    max_height: 16cm;
+}
+
+/* Map image */
+#EntityScreenshot {
+    margin-left: auto;
+    margin-right: auto;
+    /* keep ratio of 14.1(h) / 11(w) as it is the default in geotrek */
+    width: 100%;
+    height: auto;
+}
+
+body {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    color: #333;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+h3 {
+    margin: 10px 0px;
+    font-family: inherit;
+    font-weight: bold;
+    line-height: 20px;
+    color: inherit;
+    line-height: 40px;
+    font-size: 24.5px;
+    border-bottom: 1px solid #333;
+}
+
+table {
+    max-width: 100%;
+    background-color: transparent;
+    border-collapse: collapse;
+    border-spacing: 0px;
+/*    margin-right: 10px;*/
+}
+
+.table {
+    width: 100%;
+    margin-bottom: 20px;
+    table-layout: fixed;
+}
+
+.table-bordered {
+    border-width: 1px 1px 1px 0px;
+    border-style: solid solid solid none;
+    border-collapse: separate;
+    border-radius: 4px;
+}
+
+table.table {
+    clear: both;
+    margin-bottom: 0px !important;
+}
+
+.table th, .table td {
+    padding: 8px;
+    line-height: 20px;
+    text-align: left;
+    vertical-align: top;
+    border-top: 1px solid #DDD;
+    padding: 4px;
+    line-height: 25px;
+}
+.table th {
+    font-weight: bold;
+}
+
+.table-bordered th, .table-bordered td {
+    border-left: 1px solid #DDD;
+}
+
+th, td {
+    border-top: 0px none;
+    border-bottom: 1px solid #DDD;
+}
+
+.table th {
+    width: 30%;
+}
+
+.table-striped tbody > tr:nth-child(2n+1) > td, .table-striped tbody > tr:nth-child(2n+1) > th {
+    background-color: #F9F9F9;
+}
+
+.table-bordered caption + thead tr:first-child th, .table-bordered caption + tbody tr:first-child th, .table-bordered caption + tbody tr:first-child td, .table-bordered colgroup + thead tr:first-child th, .table-bordered colgroup + tbody tr:first-child th, .table-bordered colgroup + tbody tr:first-child td, .table-bordered thead:first-child tr:first-child th, .table-bordered tbody:first-child tr:first-child th, .table-bordered tbody:first-child tr:first-child td {
+    border-top: 0px none;
+}
+
+.table-bordered thead:first-child tr:first-child > th:first-child, .table-bordered tbody:first-child tr:first-child > td:first-child, .table-bordered tbody:first-child tr:first-child > th:first-child {
+    border-top-left-radius: 4px;
+}
+
+td {
+    color: #636363;
+}
+
+th, td {
+    border-top: 0px none;
+    border-bottom: 1px solid #DDD;
+}
+
+ul, ol {
+    padding: 0px;
+    margin: 0px 0px 10px 25px;
+}
+
+td ul {
+    margin: 0px;
+}
+
+li {
+    line-height: 20px;
+}
+
+td ul li {
+    list-style: outside none none;
+}
+
+.enumeration-icon, .enumeration-value {
+    display: none;
+}
+
+.label, .badge {
+    display: inline-block;
+    padding: 2px 4px;
+    font-size: 11.844px;
+    font-weight: bold;
+    line-height: 14px;
+    color: #FFF;
+    white-space: nowrap;
+    vertical-align: baseline;
+    background-color: #999;
+}
+
+.badge {
+    padding-right: 9px;
+    padding-left: 9px;
+    border-radius: 9px;
+}
+
+.label-success, .badge-success {
+    background-color: #468847;
+}
+
+a {
+    color: #08C;
+    text-decoration: none;
+}
+
+span.none {
+    opacity: 0.4;
+}
