@@ -1,0 +1,28 @@
+{% load i18n mapentity_tags staticfiles %}
+
+{% block body %}
+	<body>
+		{% block style %}
+
+			<style type="text/css">
+				{% include template_css %}
+			</style>
+
+		{% endblock style %}
+
+		{% block EntityDetail %}
+
+			{% include template_attributes %}
+
+			{% if object.pictures %}
+				<img src="{{ object.pictures.0.attachment_file.url }}" id="EntityImage">
+			{% endif %}
+
+			{% block Map %}
+				<h3>{% trans "Map" %}</h3>
+				<img src="{{ map_url }}" id="EntityScreenshot">
+			{% endblock Map %}
+
+		{% endblock EntityDetail %}
+	</body>
+{% endblock body %}

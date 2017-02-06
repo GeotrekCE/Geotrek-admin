@@ -2,7 +2,15 @@
 CHANGELOG
 =========
 
-2.11.4.dev0
+2.11.5.dev0
+-------------------
+
+**Bug fixes**
+
+* Fix topologies and cities intersections
+
+
+2.11.4 (2017-02-01)
 -------------------
 
 **Bug fixes**
@@ -11,7 +19,13 @@ CHANGELOG
 * Create database with right owner if user exists but database does not
 * Make sure supervisor service is started after install
 * Fix HTML entities in feedback email
-* Fix topologies and cities intersections
+* Fix cirkwi export for treks with multilinestring geom
+
+**Minor changes**
+
+* Add filter usages on paths
+* Add filters name and description on infrastructures and signages
+* Add picture to PDF for feedback reports (only in Weasyprint mode)
 
 
 2.11.3 (2016-11-15)
