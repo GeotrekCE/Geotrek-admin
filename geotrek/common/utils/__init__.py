@@ -106,14 +106,7 @@ def uniquify(values):
     return unique
 
 
-def uniquify_labels(values, field_name='name'):
-    """
-    Return unique values by field
-    """
-    return values.order_by(field_name).distinct(field_name)
-
-
-def intersecting(cls, obj, distance=None, no_order=None):
+def intersecting(cls, obj, distance=None):
     """
     Small helper to filter all model instances by geometry intersection
     """
@@ -126,7 +119,7 @@ def intersecting(cls, obj, distance=None, no_order=None):
         qs = qs.filter(geom__dwithin=(obj.geom, Distance(m=distance)))
     else:
         qs = qs.filter(geom__intersects=obj.geom)
-        if obj.geom.geom_type == 'LineString' and no_order is None:
+        if obj.geom.geom_type == 'LineString':
             # FIXME: move transform from DRF viewset to DRF itself and remove transform here
             ewkt = obj.geom.transform(settings.SRID, clone=True).ewkt
             qs = qs.extra(select={'d': 'ST_Line_Locate_Point(ST_GeomFromEWKT(\'{ewkt}\'), ST_StartPoint((ST_Dump(ST_Intersection(ST_GeomFromEWKT(\'{ewkt}\'), geom))).geom))'.format(ewkt=ewkt)})
