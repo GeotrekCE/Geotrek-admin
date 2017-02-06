@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-*
+* Fix topologies and cities intersections
 
 
 2.11.4 (2017-02-01)
