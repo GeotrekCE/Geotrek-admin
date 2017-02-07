@@ -480,7 +480,10 @@ function geotrek_setup {
         echo_step "Generate services configuration files..."
         
         # restart supervisor in case of xenial before 'make deploy'
-        sudo service supervisor force-stop && sudo service supervisor stop && sudo service supervisor start
+        if [ $vivid -eq 1 -o $xenial -eq 1 ]; then
+            sudo systemctl enable supervisor
+            sudo systemctl start supervisor
+        fi
         if [ $? -ne 0 ]; then
             exit_error 10 "Could not restart supervisor !"
         fi
@@ -488,10 +491,13 @@ function geotrek_setup {
         if [ $? -ne 0 ]; then
             exit_error 11 "Could not update data !"
         fi
-        sudo service supervisor force-stop && sudo service supervisor stop && sudo service supervisor start
+        if [ $precise -eq 1 -o $trusty -eq 1 ]; then
+            sudo service supervisor force-stop && sudo service supervisor stop && sudo service supervisor start
+        fi
         if [ $? -ne 0 ]; then
             exit_error 12 "Could not restart supervisor !"
         fi
+
         echo_progress
 
         # If buildout was successful, deploy really !
