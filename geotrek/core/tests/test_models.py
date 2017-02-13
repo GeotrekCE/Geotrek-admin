@@ -112,7 +112,7 @@ class PathGeometryTest(TestCase):
         self.assertRaises(IntegrityError, create_path)
 
     def test_valid_geometry_can_be_saved(self):
-        p = PathFactory.create(geom=LineString((0, 0), (2, 0), (1, 1)))
+        PathFactory.create(geom=LineString((0, 0), (2, 0), (1, 1)))
 
     def test_modify_self_intersection_raises_integrity_error(self):
         p = PathFactory.create(geom=LineString((0, 0), (2, 0), (1, 1)))

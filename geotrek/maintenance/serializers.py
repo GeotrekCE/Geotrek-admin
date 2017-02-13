@@ -1,5 +1,4 @@
 from rest_framework.serializers import ModelSerializer
-from rest_framework_gis.fields import GeometryField
 from .models import Intervention, Project
 
 
