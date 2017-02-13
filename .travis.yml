@@ -17,6 +17,12 @@ cache:
 dist: trusty
 sudo: required
 
+before_script:
+  - sudo apt-get update
+  - sudo apt-get autoremove postgis*
+  - sudo apt-get autoremove postgresql*
+  - sudo apt-get install postgresql-9.3-postgis-2.1 -y -qq
+
 before_install:
 
   # Download bundle of python eggs, and use it as download cache
@@ -34,7 +40,6 @@ before_install:
   - sed -i "s/localhost/127.0.0.1/" etc/settings.ini
   # GDAL-fix -- Use Travis PostGIS, initialize DB
   - sudo sed -i "s/^client_min_messages.*$/client_min_messages = log/" /etc/postgresql/*/main/postgresql.conf
-  - sudo apt-get install -y -qq postgresql-9.3-postgis-2.1
   - sudo /etc/init.d/postgresql restart
   - psql -c "CREATE DATABASE geotrekdb ENCODING 'UTF8' TEMPLATE template0;" -U postgres
   - psql -c 'CREATE EXTENSION postgis;' -U postgres -d geotrekdb
