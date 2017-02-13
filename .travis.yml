@@ -17,13 +17,11 @@ cache:
 dist: trusty
 sudo: required
 
-before_script:
+before_install:
   - sudo apt-get update
   - sudo apt-get autoremove postgis*
   - sudo apt-get autoremove postgresql*
   - sudo apt-get install postgresql-9.3-postgis-2.1 -y -qq
-
-before_install:
 
   # Download bundle of python eggs, and use it as download cache
   - mkdir -p $HOME/.buildout/downloads
