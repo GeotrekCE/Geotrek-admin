@@ -1,6 +1,3 @@
-dist: trusty
-sudo: required
-
 language: python
 python:
   - "2.7"
@@ -19,6 +16,14 @@ matrix:
 cache:
   - apt
 
+dist: trusty
+sudo: required
+
+services:
+  - postgresql
+
+addons:
+  postgresql: "9.4"
 
 before_install:
 
