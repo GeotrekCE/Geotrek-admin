@@ -272,6 +272,8 @@ function screamshotter_system_dependencies {
             # Install system-wide binaries
             sudo ln -sf $binpath/phantomjs /usr/local/bin/phantomjs
             sudo ln -sf $binpath/casperjs /usr/local/bin/casperjs
+            sudo chmod +x /usr/local/bin/phantomjs
+            sudo chmod +x /usr/local/bin/casperjs
         fi
     fi
 }
