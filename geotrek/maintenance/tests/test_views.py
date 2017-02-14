@@ -146,8 +146,9 @@ class InterventionViewsTest(CommonTest):
         response = self.client.post(Intervention.get_add_url(), data)
         self.assertEqual(response.status_code, 302)
 
-    def test_update_infrastruture(self):
+    def test_update_infrastructure(self):
         self.login()
+        target_year = 2017
         intervention = InfrastructureInterventionFactory.create()
         infra = intervention.infrastructure
         # Save infrastructure form
@@ -155,6 +156,7 @@ class InterventionViewsTest(CommonTest):
         form = response.context['form']
         data = form.initial
         data['name'] = 'modified'
+        data['implantation_year'] = target_year
         data['topology'] = '{"paths": [%s]}' % PathFactory.create().pk
         response = self.client.post(infra.get_update_url(), data)
         self.assertEqual(response.status_code, 302)
@@ -162,6 +164,7 @@ class InterventionViewsTest(CommonTest):
         intervention.reload()
         self.assertFalse(intervention.deleted)
         self.assertEqual(intervention.infrastructure.name, 'modified')
+        self.assertEqual(intervention.infrastructure.implantation_year, target_year)
 
     def test_form_default_stake(self):
         self.login()
