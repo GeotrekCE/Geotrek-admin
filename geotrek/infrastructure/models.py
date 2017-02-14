@@ -87,6 +87,10 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
         return self.name
 
     @property
+    def implantation_year_display(self):
+        return u"{}".format(self.implantation_year)
+
+    @property
     def name_display(self):
         return '<a href="%s" title="%s" >%s</a>' % (self.get_detail_url(),
                                                     self,
