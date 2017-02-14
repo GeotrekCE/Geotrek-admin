@@ -2,7 +2,6 @@ from django.conf import settings
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from paperclip.models import Attachment
 from . import models as common_models
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
@@ -69,7 +68,7 @@ class TargetPortalAdmin(admin.ModelAdmin):
 
 
 admin.site.register(common_models.Organism, OrganismAdmin)
-admin.site.register(Attachment, AttachmentAdmin)
+admin.site.register(common_models.Attachment, AttachmentAdmin)
 admin.site.register(common_models.FileType, FileTypeAdmin)
 admin.site.register(common_models.Theme, ThemeAdmin)
 admin.site.register(common_models.RecordSource, RecordSourceAdmin)

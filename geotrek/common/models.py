@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from paperclip.models import FileType as BaseFileType
+from paperclip.models import FileType as BaseFileType, Attachment as BaseAttachment
 
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins import PictogramMixin, OptionalPictogramMixin
@@ -37,6 +37,11 @@ class FileType(StructureRelated, BaseFileType):
         """Override this method to filter form choices depending on structure.
         """
         return cls.for_user(request.user)
+
+
+class Attachment(BaseAttachment):
+    class Meta(BaseAttachment.Meta):
+        db_table = 'fl_t_fichier'
 
 
 class Theme(PictogramMixin):

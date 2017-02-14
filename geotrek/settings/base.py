@@ -376,11 +376,9 @@ THUMBNAIL_ALIASES = {
 }
 
 
-PAPERCLIP_CONFIG = {
-    'ENABLE_VIDEO': True,
-    'FILETYPE_MODEL': 'common.FileType',
-    'ATTACHMENT_TABLE_NAME': 'fl_t_fichier',
-}
+PAPERCLIP_ENABLE_VIDEO = True
+PAPERCLIP_FILETYPE_MODEL = 'common.FileType'
+PAPERCLIP_ATTACHMENT_MODEL = 'common.Attachment'
 
 
 # Data projection
