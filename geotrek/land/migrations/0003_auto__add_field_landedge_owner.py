@@ -13,11 +13,9 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.TextField')(default='', blank=True),
                       keep_default=False)
 
-
     def backwards(self, orm):
         # Deleting field 'LandEdge.owner'
         db.delete_column('f_t_foncier', 'owner')
-
 
     models = {
         u'authent.structure': {

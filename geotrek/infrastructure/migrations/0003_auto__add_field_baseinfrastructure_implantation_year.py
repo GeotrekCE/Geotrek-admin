@@ -13,11 +13,9 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.PositiveSmallIntegerField')(null=True),
                       keep_default=False)
 
-
     def backwards(self, orm):
         # Deleting field 'BaseInfrastructure.implantation_year'
         db.delete_column('a_t_amenagement', 'implantation_year')
-
 
     models = {
         u'authent.structure': {

@@ -13,11 +13,9 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.BooleanField')(default=False),
                       keep_default=False)
 
-
     def backwards(self, orm):
         # Deleting field 'LandEdge.agreement'
         db.delete_column('f_t_foncier', 'agreement')
-
 
     models = {
         u'authent.structure': {
