@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -34,6 +34,5 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Flat pages',
                 'permissions': (('read_flatpage', 'Can read FlatPage'),),
             },
-            bases=(models.Model,),
         ),
     ]

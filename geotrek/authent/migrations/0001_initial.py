@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations, models
 from django.conf import settings
 import geotrek.authent.models
 
@@ -25,7 +25,6 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Structures',
                 'permissions': (('can_bypass_structure', 'Can bypass structure'),),
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='UserProfile',
@@ -39,6 +38,5 @@ class Migration(migrations.Migration):
                 'verbose_name': "User's profile",
                 'verbose_name_plural': "User's profiles",
             },
-            bases=(models.Model,),
         ),
     ]

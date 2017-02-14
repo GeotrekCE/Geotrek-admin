@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.conf import settings
-from django.db import models, migrations
+from django.db import migrations, models
 import datetime
 import mapentity.models
 import django.contrib.gis.db.models.fields
@@ -32,7 +31,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Contractor',
                 'verbose_name_plural': 'Contractors',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Funding',
@@ -46,7 +44,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Funding',
                 'verbose_name_plural': 'Fundings',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Intervention',
@@ -55,7 +52,7 @@ class Migration(migrations.Migration):
                 ('date_insert', models.DateTimeField(auto_now_add=True, verbose_name='Insertion date', db_column=b'date_insert')),
                 ('date_update', models.DateTimeField(auto_now=True, verbose_name='Update date', db_column=b'date_update')),
                 ('deleted', models.BooleanField(default=False, verbose_name='Deleted', editable=False, db_column=b'supprime')),
-                ('geom_3d', django.contrib.gis.db.models.fields.GeometryField(dim=3, default=None, editable=False, srid=settings.SRID, null=True, spatial_index=False)),
+                ('geom_3d', django.contrib.gis.db.models.fields.GeometryField(dim=3, default=None, editable=False, srid=2154, null=True, spatial_index=False)),
                 ('length', models.FloatField(db_column=b'longueur', default=0.0, editable=False, blank=True, null=True, verbose_name='3D Length')),
                 ('ascent', models.IntegerField(db_column=b'denivelee_positive', default=0, editable=False, blank=True, null=True, verbose_name='Ascent')),
                 ('descent', models.IntegerField(db_column=b'denivelee_negative', default=0, editable=False, blank=True, null=True, verbose_name='Descent')),
@@ -93,7 +90,6 @@ class Migration(migrations.Migration):
                 'verbose_name': "Intervention's disorder",
                 'verbose_name_plural': "Intervention's disorders",
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='InterventionJob',
@@ -109,7 +105,6 @@ class Migration(migrations.Migration):
                 'verbose_name': "Intervention's job",
                 'verbose_name_plural': "Intervention's jobs",
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='InterventionStatus',
@@ -124,7 +119,6 @@ class Migration(migrations.Migration):
                 'verbose_name': "Intervention's status",
                 'verbose_name_plural': "Intervention's statuses",
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='InterventionType',
@@ -139,7 +133,6 @@ class Migration(migrations.Migration):
                 'verbose_name': "Intervention's type",
                 'verbose_name_plural': "Intervention's types",
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='ManDay',
@@ -154,7 +147,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Manday',
                 'verbose_name_plural': 'Mandays',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Project',
@@ -192,7 +184,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Project domain',
                 'verbose_name_plural': 'Project domains',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='ProjectType',
@@ -207,96 +198,80 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Project type',
                 'verbose_name_plural': 'Project types',
             },
-            bases=(models.Model,),
         ),
         migrations.AddField(
             model_name='project',
             name='domain',
             field=models.ForeignKey(db_column=b'domaine', blank=True, to='maintenance.ProjectDomain', null=True, verbose_name='Domain'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='project',
             name='founders',
             field=models.ManyToManyField(to='common.Organism', verbose_name='Founders', through='maintenance.Funding'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='project',
             name='project_manager',
             field=models.ForeignKey(related_name='manage', db_column=b'maitre_ouvrage', verbose_name='Project manager', to='common.Organism'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='project',
             name='project_owner',
             field=models.ForeignKey(related_name='own', db_column=b'maitre_oeuvre', verbose_name='Project owner', to='common.Organism'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='project',
             name='structure',
             field=models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='project',
             name='type',
             field=models.ForeignKey(db_column=b'type', blank=True, to='maintenance.ProjectType', null=True, verbose_name='Type'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='intervention',
             name='disorders',
             field=models.ManyToManyField(related_name='interventions', db_table=b'm_r_intervention_desordre', verbose_name='Disorders', to='maintenance.InterventionDisorder', blank=True),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='intervention',
             name='jobs',
             field=models.ManyToManyField(to='maintenance.InterventionJob', verbose_name='Jobs', through='maintenance.ManDay'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='intervention',
             name='project',
             field=models.ForeignKey(related_name='interventions', db_column=b'chantier', blank=True, to='maintenance.Project', null=True, verbose_name='Project'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='intervention',
             name='stake',
             field=models.ForeignKey(related_name='interventions', db_column=b'enjeu', verbose_name='Stake', to='core.Stake', null=True),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='intervention',
             name='status',
             field=models.ForeignKey(db_column=b'status', verbose_name='Status', to='maintenance.InterventionStatus'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='intervention',
             name='structure',
             field=models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='intervention',
             name='topology',
             field=models.ForeignKey(related_name='interventions_set', verbose_name='Interventions', to='core.Topology', null=True),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='intervention',
             name='type',
             field=models.ForeignKey(db_column=b'type', blank=True, to='maintenance.InterventionType', null=True, verbose_name='Type'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='funding',
             name='project',
             field=models.ForeignKey(db_column=b'chantier', verbose_name='Project', to='maintenance.Project'),
-            preserve_default=True,
         ),
     ]

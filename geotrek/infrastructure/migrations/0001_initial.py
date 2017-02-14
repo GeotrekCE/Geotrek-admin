@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations, models
 import mapentity.models
 import django.db.models.deletion
 import geotrek.authent.models
@@ -39,7 +39,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Infrastructure Condition',
                 'verbose_name_plural': 'Infrastructure Conditions',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='InfrastructureType',
@@ -55,25 +54,21 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Infrastructure Type',
                 'verbose_name_plural': 'Infrastructure Types',
             },
-            bases=(models.Model,),
         ),
         migrations.AddField(
             model_name='baseinfrastructure',
             name='condition',
             field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, db_column=b'etat', blank=True, to='infrastructure.InfrastructureCondition', null=True, verbose_name='Condition'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='baseinfrastructure',
             name='structure',
             field=models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='baseinfrastructure',
             name='type',
             field=models.ForeignKey(db_column=b'type', verbose_name='Type', to='infrastructure.InfrastructureType'),
-            preserve_default=True,
         ),
         migrations.CreateModel(
             name='Infrastructure',

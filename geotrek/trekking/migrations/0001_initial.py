@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.conf import settings
-from django.db import models, migrations
+from django.db import migrations, models
 import mapentity.models
 import django.contrib.gis.db.models.fields
 import geotrek.common.mixins
@@ -35,7 +34,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Accessibility',
                 'verbose_name_plural': 'Accessibilities',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='DifficultyLevel',
@@ -52,7 +50,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Difficulty level',
                 'verbose_name_plural': 'Difficulty levels',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='OrderedTrekChild',
@@ -64,7 +61,6 @@ class Migration(migrations.Migration):
                 'ordering': ('parent__id', 'order'),
                 'db_table': 'o_r_itineraire_itineraire2',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='POI',
@@ -99,7 +95,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'POI type',
                 'verbose_name_plural': 'POI types',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Practice',
@@ -117,7 +112,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Practice',
                 'verbose_name_plural': 'Practices',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Route',
@@ -132,7 +126,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Route',
                 'verbose_name_plural': 'Routes',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Service',
@@ -157,7 +150,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(help_text='Public name (Change carefully)', max_length=128, verbose_name='Name', db_column=b'nom')),
                 ('review', models.BooleanField(default=False, verbose_name='Waiting for publication', db_column=b'relecture')),
                 ('pictogram', models.FileField(max_length=512, null=True, verbose_name='Pictogram', db_column=b'picto', upload_to=b'upload')),
-                ('practices', models.ManyToManyField(related_name='services', to='trekking.Practice', db_table=b'o_r_service_pratique', blank=True, null=True, verbose_name='Practices')),
+                ('practices', models.ManyToManyField(related_name='services', db_table=b'o_r_service_pratique', verbose_name='Practices', to='trekking.Practice', blank=True)),
             ],
             options={
                 'ordering': ['name'],
@@ -165,7 +158,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Service type',
                 'verbose_name_plural': 'Service types',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Trek',
@@ -185,18 +177,17 @@ class Migration(migrations.Migration):
                 ('duration', models.FloatField(db_column=b'duree', default=0, validators=[django.core.validators.MinValueValidator(0)], blank=True, help_text='In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)', verbose_name='Duration')),
                 ('is_park_centered', models.BooleanField(default=False, help_text='Crosses center of park', verbose_name='Is in the midst of the park', db_column=b'coeur')),
                 ('advised_parking', models.CharField(help_text='Where to park', max_length=128, verbose_name='Advised parking', db_column=b'parking', blank=True)),
-                ('parking_location', django.contrib.gis.db.models.fields.PointField(db_column=b'geom_parking', verbose_name='Parking location', blank=True, srid=settings.SRID, null=True, spatial_index=False)),
+                ('parking_location', django.contrib.gis.db.models.fields.PointField(db_column=b'geom_parking', verbose_name='Parking location', blank=True, srid=2154, null=True, spatial_index=False)),
                 ('public_transport', models.TextField(help_text='Train, bus (see web links)', verbose_name='Public transport', db_column=b'transport', blank=True)),
                 ('advice', models.TextField(help_text='Risks, danger, best period, ...', verbose_name='Advice', db_column=b'recommandation', blank=True)),
-                ('points_reference', django.contrib.gis.db.models.fields.MultiPointField(db_column=b'geom_points_reference', verbose_name='Points of reference', blank=True, srid=settings.SRID, null=True, spatial_index=False)),
+                ('points_reference', django.contrib.gis.db.models.fields.MultiPointField(db_column=b'geom_points_reference', verbose_name='Points of reference', blank=True, srid=2154, null=True, spatial_index=False)),
                 ('eid', models.CharField(max_length=128, null=True, verbose_name='External id', db_column=b'id_externe', blank=True)),
                 ('eid2', models.CharField(max_length=128, null=True, verbose_name='Second external id', db_column=b'id_externe2', blank=True)),
-                ('accessibilities', models.ManyToManyField(related_name='treks', to='trekking.Accessibility', db_table=b'o_r_itineraire_accessibilite', blank=True, null=True, verbose_name='Accessibility')),
+                ('accessibilities', models.ManyToManyField(related_name='treks', db_table=b'o_r_itineraire_accessibilite', verbose_name='Accessibility', to='trekking.Accessibility', blank=True)),
                 ('difficulty', models.ForeignKey(related_name='treks', db_column=b'difficulte', blank=True, to='trekking.DifficultyLevel', null=True, verbose_name='Difficulty')),
-                ('information_desks', models.ManyToManyField(related_name='treks', to='tourism.InformationDesk', db_table=b'o_r_itineraire_renseignement', blank=True, help_text='Where to obtain information', null=True, verbose_name='Information desks')),
+                ('information_desks', models.ManyToManyField(related_name='treks', to='tourism.InformationDesk', db_table=b'o_r_itineraire_renseignement', blank=True, help_text='Where to obtain information', verbose_name='Information desks')),
             ],
             options={
-                'ordering': ['name'],
                 'db_table': 'o_t_itineraire',
                 'verbose_name': 'Trek',
                 'verbose_name_plural': 'Treks',
@@ -216,7 +207,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Trek network',
                 'verbose_name_plural': 'Trek networks',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='TrekRelationship',
@@ -233,7 +223,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Trek relationship',
                 'verbose_name_plural': 'Trek relationships',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='WebLink',
@@ -248,7 +237,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Web link',
                 'verbose_name_plural': 'Web links',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='WebLinkCategory',
@@ -263,95 +251,80 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Web link category',
                 'verbose_name_plural': 'Web link categories',
             },
-            bases=(models.Model,),
         ),
         migrations.AddField(
             model_name='weblink',
             name='category',
             field=models.ForeignKey(related_name='links', db_column=b'categorie', blank=True, to='trekking.WebLinkCategory', null=True, verbose_name='Category'),
-            preserve_default=True,
-        ),
-        migrations.AlterUniqueTogether(
-            name='trekrelationship',
-            unique_together=set([('trek_a', 'trek_b')]),
         ),
         migrations.AddField(
             model_name='trek',
             name='networks',
-            field=models.ManyToManyField(related_name='treks', to='trekking.TrekNetwork', db_table=b'o_r_itineraire_reseau', blank=True, help_text='Hiking networks', null=True, verbose_name='Networks'),
-            preserve_default=True,
+            field=models.ManyToManyField(related_name='treks', to='trekking.TrekNetwork', db_table=b'o_r_itineraire_reseau', blank=True, help_text='Hiking networks', verbose_name='Networks'),
         ),
         migrations.AddField(
             model_name='trek',
             name='portal',
             field=models.ManyToManyField(related_name='treks', db_table=b'o_r_itineraire_portal', verbose_name='Portal', to='common.TargetPortal', blank=True),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='trek',
             name='practice',
             field=models.ForeignKey(related_name='treks', db_column=b'pratique', blank=True, to='trekking.Practice', null=True, verbose_name='Practice'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='trek',
             name='related_treks',
-            field=models.ManyToManyField(help_text='Connections between treks', related_name='related_treks+', verbose_name='Related treks', through='trekking.TrekRelationship', to='trekking.Trek'),
-            preserve_default=True,
+            field=models.ManyToManyField(help_text='Connections between treks', related_name='_trek_related_treks_+', verbose_name='Related treks', through='trekking.TrekRelationship', to='trekking.Trek'),
         ),
         migrations.AddField(
             model_name='trek',
             name='route',
             field=models.ForeignKey(related_name='treks', db_column=b'parcours', blank=True, to='trekking.Route', null=True, verbose_name='Route'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='trek',
             name='source',
             field=models.ManyToManyField(related_name='treks', db_table=b'o_r_itineraire_source', verbose_name='Source', to='common.RecordSource', blank=True),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='trek',
             name='structure',
             field=models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='trek',
             name='themes',
-            field=models.ManyToManyField(related_name='treks', to='common.Theme', db_table=b'o_r_itineraire_theme', blank=True, help_text='Main theme(s)', null=True, verbose_name='Themes'),
-            preserve_default=True,
+            field=models.ManyToManyField(related_name='treks', to='common.Theme', db_table=b'o_r_itineraire_theme', blank=True, help_text='Main theme(s)', verbose_name='Themes'),
         ),
         migrations.AddField(
             model_name='trek',
             name='web_links',
-            field=models.ManyToManyField(related_name='treks', to='trekking.WebLink', db_table=b'o_r_itineraire_web', blank=True, help_text='External resources', null=True, verbose_name='Web links'),
-            preserve_default=True,
+            field=models.ManyToManyField(related_name='treks', to='trekking.WebLink', db_table=b'o_r_itineraire_web', blank=True, help_text='External resources', verbose_name='Web links'),
         ),
         migrations.AddField(
             model_name='service',
             name='type',
             field=models.ForeignKey(related_name='services', db_column=b'type', verbose_name='Type', to='trekking.ServiceType'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='poi',
             name='type',
             field=models.ForeignKey(related_name='pois', db_column=b'type', verbose_name='Type', to='trekking.POIType'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='orderedtrekchild',
             name='child',
             field=models.ForeignKey(related_name='trek_parents', to='trekking.Trek'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='orderedtrekchild',
             name='parent',
             field=models.ForeignKey(related_name='trek_children', to='trekking.Trek'),
-            preserve_default=True,
+        ),
+        migrations.AlterUniqueTogether(
+            name='trekrelationship',
+            unique_together=set([('trek_a', 'trek_b')]),
         ),
         migrations.AlterUniqueTogether(
             name='orderedtrekchild',

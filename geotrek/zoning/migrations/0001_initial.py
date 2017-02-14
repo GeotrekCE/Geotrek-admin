@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.conf import settings
-from django.db import models, migrations
+from django.db import migrations, models
 import django.contrib.gis.db.models.fields
 
 
@@ -18,7 +17,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('code', models.CharField(max_length=6, serialize=False, primary_key=True, db_column=b'insee')),
                 ('name', models.CharField(max_length=128, verbose_name='Name', db_column=b'commune')),
-                ('geom', django.contrib.gis.db.models.fields.MultiPolygonField(srid=settings.SRID, spatial_index=False)),
+                ('geom', django.contrib.gis.db.models.fields.MultiPolygonField(srid=2154, spatial_index=False)),
             ],
             options={
                 'ordering': ['name'],
@@ -26,7 +25,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'City',
                 'verbose_name_plural': 'Cities',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='CityEdge',
@@ -46,7 +44,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=128, verbose_name='Name', db_column=b'secteur')),
-                ('geom', django.contrib.gis.db.models.fields.MultiPolygonField(srid=settings.SRID, spatial_index=False)),
+                ('geom', django.contrib.gis.db.models.fields.MultiPolygonField(srid=2154, spatial_index=False)),
             ],
             options={
                 'ordering': ['name'],
@@ -54,7 +52,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'District',
                 'verbose_name_plural': 'Districts',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='DistrictEdge',
@@ -74,7 +71,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=250, verbose_name='Name', db_column=b'zonage')),
-                ('geom', django.contrib.gis.db.models.fields.MultiPolygonField(srid=settings.SRID, spatial_index=False)),
+                ('geom', django.contrib.gis.db.models.fields.MultiPolygonField(srid=2154, spatial_index=False)),
             ],
             options={
                 'ordering': ['area_type', 'name'],
@@ -82,7 +79,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Restricted area',
                 'verbose_name_plural': 'Restricted areas',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='RestrictedAreaEdge',
@@ -107,12 +103,10 @@ class Migration(migrations.Migration):
                 'db_table': 'f_b_zonage',
                 'verbose_name': 'Restricted area type',
             },
-            bases=(models.Model,),
         ),
         migrations.AddField(
             model_name='restrictedarea',
             name='area_type',
             field=models.ForeignKey(db_column=b'type', verbose_name='Restricted area', to='zoning.RestrictedAreaType'),
-            preserve_default=True,
         ),
     ]

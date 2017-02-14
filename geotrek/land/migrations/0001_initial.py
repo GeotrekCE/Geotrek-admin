@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations, models
 import mapentity.models
 import geotrek.authent.models
 
@@ -54,7 +54,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Land type',
                 'verbose_name_plural': 'Land types',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='PhysicalEdge',
@@ -81,7 +80,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Physical type',
                 'verbose_name_plural': 'Physical types',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='SignageManagementEdge',
@@ -113,12 +111,10 @@ class Migration(migrations.Migration):
             model_name='physicaledge',
             name='physical_type',
             field=models.ForeignKey(db_column=b'type', verbose_name='Physical type', to='land.PhysicalType'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='landedge',
             name='land_type',
             field=models.ForeignKey(db_column=b'type', verbose_name='Land type', to='land.LandType'),
-            preserve_default=True,
         ),
     ]

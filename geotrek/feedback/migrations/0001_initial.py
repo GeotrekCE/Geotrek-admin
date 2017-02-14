@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.conf import settings
-from django.db import models, migrations
+from django.db import migrations, models
+import geotrek.common.mixins
 import mapentity.models
 import django.contrib.gis.db.models.fields
 
@@ -10,7 +10,7 @@ import django.contrib.gis.db.models.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('contenttypes', '0001_initial'),
+        ('contenttypes', '0002_remove_content_type_name'),
     ]
 
     operations = [
@@ -21,9 +21,9 @@ class Migration(migrations.Migration):
                 ('date_insert', models.DateTimeField(auto_now_add=True, verbose_name='Insertion date', db_column=b'date_insert')),
                 ('date_update', models.DateTimeField(auto_now=True, verbose_name='Update date', db_column=b'date_update')),
                 ('name', models.CharField(max_length=256, verbose_name='Name')),
-                ('email', models.EmailField(max_length=75, verbose_name='Email')),
+                ('email', models.EmailField(max_length=254, verbose_name='Email')),
                 ('comment', models.TextField(default=b'', verbose_name='Comment', blank=True)),
-                ('geom', django.contrib.gis.db.models.fields.PointField(default=None, srid=settings.SRID, null=True, verbose_name='Location', blank=True)),
+                ('geom', django.contrib.gis.db.models.fields.PointField(default=None, srid=2154, null=True, verbose_name='Location', blank=True)),
                 ('context_object_id', models.PositiveIntegerField(null=True, editable=False, blank=True)),
             ],
             options={
@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Report',
                 'verbose_name_plural': 'Reports',
             },
-            bases=(mapentity.models.MapEntityMixin, models.Model),
+            bases=(mapentity.models.MapEntityMixin, geotrek.common.mixins.PicturesMixin, models.Model),
         ),
         migrations.CreateModel(
             name='ReportCategory',
@@ -45,7 +45,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Category',
                 'verbose_name_plural': 'Categories',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='ReportStatus',
@@ -58,24 +57,20 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Status',
                 'verbose_name_plural': 'Status',
             },
-            bases=(models.Model,),
         ),
         migrations.AddField(
             model_name='report',
             name='category',
             field=models.ForeignKey(default=None, blank=True, to='feedback.ReportCategory', null=True, verbose_name='Category'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='report',
             name='context_content_type',
             field=models.ForeignKey(blank=True, editable=False, to='contenttypes.ContentType', null=True),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='report',
             name='status',
             field=models.ForeignKey(default=None, blank=True, to='feedback.ReportStatus', null=True, verbose_name='Status'),
-            preserve_default=True,
         ),
     ]

@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.conf import settings
-from django.db import models, migrations
+from django.db import migrations, models
 import mapentity.models
 import django.contrib.gis.db.models.fields
-import multiselectfield.db.fields
 import geotrek.common.mixins
 import geotrek.authent.models
 
@@ -19,24 +17,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='DataSource',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('title', models.CharField(max_length=128, verbose_name='Title', db_column=b'titre')),
-                ('url', models.URLField(max_length=400, db_column=b'url')),
-                ('pictogram', models.FileField(upload_to=b'upload', max_length=512, verbose_name='Pictogram', db_column=b'picto')),
-                ('type', models.CharField(max_length=32, db_column=b'type', choices=[(b'GEOJSON', 'GeoJSON'), (b'TOURINFRANCE', 'TourInFrance'), (b'SITRA', 'Sitra')])),
-                ('targets', multiselectfield.db.fields.MultiSelectField(blank=True, max_length=512, null=True, verbose_name='Display', choices=[(b'public', 'Public website')])),
-            ],
-            options={
-                'ordering': ['title', 'url'],
-                'db_table': 't_t_source_donnees',
-                'verbose_name': 'External data source',
-                'verbose_name_plural': 'External data sources',
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
             name='InformationDesk',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -49,7 +29,7 @@ class Migration(migrations.Migration):
                 ('street', models.CharField(max_length=256, null=True, verbose_name='Street', db_column=b'rue', blank=True)),
                 ('postal_code', models.CharField(max_length=8, null=True, verbose_name='Postal code', db_column=b'code', blank=True)),
                 ('municipality', models.CharField(max_length=256, null=True, verbose_name='Municipality', db_column=b'commune', blank=True)),
-                ('geom', django.contrib.gis.db.models.fields.PointField(db_column=b'geom', verbose_name='Emplacement', blank=True, srid=settings.SRID, null=True, spatial_index=False)),
+                ('geom', django.contrib.gis.db.models.fields.PointField(db_column=b'geom', verbose_name='Emplacement', blank=True, srid=2154, null=True, spatial_index=False)),
             ],
             options={
                 'ordering': ['name'],
@@ -57,7 +37,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Information desk',
                 'verbose_name_plural': 'Information desks',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='InformationDeskType',
@@ -72,7 +51,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Information desk type',
                 'verbose_name_plural': 'Information desk types',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='ReservationSystem',
@@ -85,7 +63,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Reservation system',
                 'verbose_name_plural': 'Reservation systems',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='TouristicContent',
@@ -100,7 +77,7 @@ class Migration(migrations.Migration):
                 ('review', models.BooleanField(default=False, verbose_name='Waiting for publication', db_column=b'relecture')),
                 ('description_teaser', models.TextField(help_text='A brief summary', verbose_name='Description teaser', db_column=b'chapeau', blank=True)),
                 ('description', models.TextField(help_text='Complete description', verbose_name='Description', db_column=b'description', blank=True)),
-                ('geom', django.contrib.gis.db.models.fields.GeometryField(srid=settings.SRID, verbose_name='Location')),
+                ('geom', django.contrib.gis.db.models.fields.GeometryField(srid=2154, verbose_name='Location')),
                 ('contact', models.TextField(help_text='Address, phone, etc.', verbose_name='Contact', db_column=b'contact', blank=True)),
                 ('email', models.EmailField(max_length=256, null=True, verbose_name='Email', db_column=b'email', blank=True)),
                 ('website', models.URLField(max_length=256, null=True, verbose_name='Website', db_column=b'website', blank=True)),
@@ -133,7 +110,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Touristic content category',
                 'verbose_name_plural': 'Touristic content categories',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='TouristicContentType',
@@ -150,7 +126,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Touristic content type',
                 'verbose_name_plural': 'Touristic content type',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='TouristicEvent',
@@ -165,7 +140,7 @@ class Migration(migrations.Migration):
                 ('review', models.BooleanField(default=False, verbose_name='Waiting for publication', db_column=b'relecture')),
                 ('description_teaser', models.TextField(help_text='A brief summary', verbose_name='Description teaser', db_column=b'chapeau', blank=True)),
                 ('description', models.TextField(help_text='Complete description', verbose_name='Description', db_column=b'description', blank=True)),
-                ('geom', django.contrib.gis.db.models.fields.PointField(srid=settings.SRID, verbose_name='Location')),
+                ('geom', django.contrib.gis.db.models.fields.PointField(srid=2154, verbose_name='Location')),
                 ('begin_date', models.DateField(null=True, verbose_name='Begin date', db_column=b'date_debut', blank=True)),
                 ('end_date', models.DateField(null=True, verbose_name='End date', db_column=b'date_fin', blank=True)),
                 ('duration', models.CharField(help_text='3 days, season, ...', max_length=64, verbose_name='Duration', db_column=b'duree', blank=True)),
@@ -186,7 +161,7 @@ class Migration(migrations.Migration):
                 ('portal', models.ManyToManyField(related_name='touristicevents', db_table=b't_r_evenement_touristique_portal', verbose_name='Portal', to='common.TargetPortal', blank=True)),
                 ('source', models.ManyToManyField(related_name='touristicevents', db_table=b't_r_evenement_touristique_source', verbose_name='Source', to='common.RecordSource', blank=True)),
                 ('structure', models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
-                ('themes', models.ManyToManyField(related_name='touristic_events', to='common.Theme', db_table=b't_r_evenement_touristique_theme', blank=True, help_text='Main theme(s)', null=True, verbose_name='Themes')),
+                ('themes', models.ManyToManyField(related_name='touristic_events', to='common.Theme', db_table=b't_r_evenement_touristique_theme', blank=True, help_text='Main theme(s)', verbose_name='Themes')),
             ],
             options={
                 'ordering': ['-begin_date'],
@@ -209,67 +184,56 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Touristic event type',
                 'verbose_name_plural': 'Touristic event types',
             },
-            bases=(models.Model,),
         ),
         migrations.AddField(
             model_name='touristicevent',
             name='type',
             field=models.ForeignKey(db_column=b'type', blank=True, to='tourism.TouristicEventType', null=True, verbose_name='Type'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='touristiccontent',
             name='category',
             field=models.ForeignKey(related_name='contents', db_column=b'categorie', verbose_name='Category', to='tourism.TouristicContentCategory'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='touristiccontent',
             name='portal',
             field=models.ManyToManyField(related_name='touristiccontents', db_table=b't_r_contenu_touristique_portal', verbose_name='Portal', to='common.TargetPortal', blank=True),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='touristiccontent',
             name='reservation_system',
             field=models.ForeignKey(verbose_name='Reservation system', blank=True, to='tourism.ReservationSystem', null=True),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='touristiccontent',
             name='source',
             field=models.ManyToManyField(related_name='touristiccontents', db_table=b't_r_contenu_touristique_source', verbose_name='Source', to='common.RecordSource', blank=True),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='touristiccontent',
             name='structure',
             field=models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='touristiccontent',
             name='themes',
-            field=models.ManyToManyField(related_name='touristiccontents', to='common.Theme', db_table=b't_r_contenu_touristique_theme', blank=True, help_text='Main theme(s)', null=True, verbose_name='Themes'),
-            preserve_default=True,
+            field=models.ManyToManyField(related_name='touristiccontents', to='common.Theme', db_table=b't_r_contenu_touristique_theme', blank=True, help_text='Main theme(s)', verbose_name='Themes'),
         ),
         migrations.AddField(
             model_name='touristiccontent',
             name='type1',
             field=models.ManyToManyField(related_name='contents1', db_table=b't_r_contenu_touristique_type1', verbose_name='Type 1', to='tourism.TouristicContentType', blank=True),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='touristiccontent',
             name='type2',
             field=models.ManyToManyField(related_name='contents2', db_table=b't_r_contenu_touristique_type2', verbose_name='Type 2', to='tourism.TouristicContentType', blank=True),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='informationdesk',
             name='type',
             field=models.ForeignKey(related_name='desks', db_column=b'type', verbose_name='Type', to='tourism.InformationDeskType'),
-            preserve_default=True,
         ),
         migrations.CreateModel(
             name='TouristicContentType1',

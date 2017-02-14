@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.conf import settings
-from django.db import models, migrations
+from django.db import migrations, models
 import mapentity.models
 import django.contrib.gis.db.models.fields
 import django.db.models.deletion
@@ -30,7 +29,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Comfort',
                 'verbose_name_plural': 'Comforts',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Network',
@@ -45,7 +43,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Network',
                 'verbose_name_plural': 'Networks',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Path',
@@ -53,15 +50,15 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('date_insert', models.DateTimeField(auto_now_add=True, verbose_name='Insertion date', db_column=b'date_insert')),
                 ('date_update', models.DateTimeField(auto_now=True, verbose_name='Update date', db_column=b'date_update')),
-                ('geom_3d', django.contrib.gis.db.models.fields.GeometryField(dim=3, default=None, editable=False, srid=settings.SRID, null=True, spatial_index=False)),
+                ('geom_3d', django.contrib.gis.db.models.fields.GeometryField(dim=3, default=None, editable=False, srid=2154, null=True, spatial_index=False)),
                 ('length', models.FloatField(db_column=b'longueur', default=0.0, editable=False, blank=True, null=True, verbose_name='3D Length')),
                 ('ascent', models.IntegerField(db_column=b'denivelee_positive', default=0, editable=False, blank=True, null=True, verbose_name='Ascent')),
                 ('descent', models.IntegerField(db_column=b'denivelee_negative', default=0, editable=False, blank=True, null=True, verbose_name='Descent')),
                 ('min_elevation', models.IntegerField(db_column=b'altitude_minimum', default=0, editable=False, blank=True, null=True, verbose_name='Minimum elevation')),
                 ('max_elevation', models.IntegerField(db_column=b'altitude_maximum', default=0, editable=False, blank=True, null=True, verbose_name='Maximum elevation')),
                 ('slope', models.FloatField(db_column=b'pente', default=0.0, editable=False, blank=True, null=True, verbose_name='Slope')),
-                ('geom', django.contrib.gis.db.models.fields.LineStringField(srid=settings.SRID, spatial_index=False)),
-                ('geom_cadastre', django.contrib.gis.db.models.fields.LineStringField(srid=settings.SRID, spatial_index=False, null=True, editable=False)),
+                ('geom', django.contrib.gis.db.models.fields.LineStringField(srid=2154, spatial_index=False)),
+                ('geom_cadastre', django.contrib.gis.db.models.fields.LineStringField(srid=2154, spatial_index=False, null=True, editable=False)),
                 ('valid', models.BooleanField(default=True, help_text='Approved by manager', verbose_name='Validity', db_column=b'valide')),
                 ('visible', models.BooleanField(default=True, help_text='Shown in lists and maps', verbose_name='Visible', db_column=b'visible')),
                 ('name', models.CharField(db_column=b'nom', max_length=20, blank=True, help_text='Official name', null=True, verbose_name='Name')),
@@ -70,7 +67,7 @@ class Migration(migrations.Migration):
                 ('arrival', models.CharField(db_column=b'arrivee', default=b'', max_length=250, blank=True, help_text='Arrival place', null=True, verbose_name='Arrival')),
                 ('eid', models.CharField(max_length=128, null=True, verbose_name='External id', db_column=b'id_externe', blank=True)),
                 ('comfort', models.ForeignKey(related_name='paths', db_column=b'confort', blank=True, to='core.Comfort', null=True, verbose_name='Comfort')),
-                ('networks', models.ManyToManyField(related_name='paths', to='core.Network', db_table=b'l_r_troncon_reseau', blank=True, null=True, verbose_name='Networks')),
+                ('networks', models.ManyToManyField(related_name='paths', db_table=b'l_r_troncon_reseau', verbose_name='Networks', to='core.Network', blank=True)),
             ],
             options={
                 'db_table': 'l_t_troncon',
@@ -94,7 +91,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Path aggregation',
                 'verbose_name_plural': 'Path aggregations',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='PathSource',
@@ -109,7 +105,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Path source',
                 'verbose_name_plural': 'Path sources',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Stake',
@@ -124,7 +119,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Maintenance stake',
                 'verbose_name_plural': 'Maintenance stakes',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='Topology',
@@ -133,7 +127,7 @@ class Migration(migrations.Migration):
                 ('date_insert', models.DateTimeField(auto_now_add=True, verbose_name='Insertion date', db_column=b'date_insert')),
                 ('date_update', models.DateTimeField(auto_now=True, verbose_name='Update date', db_column=b'date_update')),
                 ('deleted', models.BooleanField(default=False, verbose_name='Deleted', editable=False, db_column=b'supprime')),
-                ('geom_3d', django.contrib.gis.db.models.fields.GeometryField(dim=3, default=None, editable=False, srid=settings.SRID, null=True, spatial_index=False)),
+                ('geom_3d', django.contrib.gis.db.models.fields.GeometryField(dim=3, default=None, editable=False, srid=2154, null=True, spatial_index=False)),
                 ('length', models.FloatField(db_column=b'longueur', default=0.0, editable=False, blank=True, null=True, verbose_name='3D Length')),
                 ('ascent', models.IntegerField(db_column=b'denivelee_positive', default=0, editable=False, blank=True, null=True, verbose_name='Ascent')),
                 ('descent', models.IntegerField(db_column=b'denivelee_negative', default=0, editable=False, blank=True, null=True, verbose_name='Descent')),
@@ -142,7 +136,7 @@ class Migration(migrations.Migration):
                 ('slope', models.FloatField(db_column=b'pente', default=0.0, editable=False, blank=True, null=True, verbose_name='Slope')),
                 ('offset', models.FloatField(default=0.0, verbose_name='Offset', db_column=b'decallage')),
                 ('kind', models.CharField(verbose_name='Kind', max_length=32, editable=False)),
-                ('geom', django.contrib.gis.db.models.fields.GeometryField(default=None, srid=settings.SRID, spatial_index=False, null=True, editable=False)),
+                ('geom', django.contrib.gis.db.models.fields.GeometryField(default=None, srid=2154, spatial_index=False, null=True, editable=False)),
             ],
             options={
                 'db_table': 'e_t_evenement',
@@ -150,6 +144,20 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Topologies',
             },
             bases=(geotrek.common.mixins.AddPropertyMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='Usage',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('usage', models.CharField(max_length=50, verbose_name='Usage', db_column=b'usage')),
+                ('structure', models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+            ],
+            options={
+                'ordering': ['usage'],
+                'db_table': 'l_b_usage',
+                'verbose_name': 'Usage',
+                'verbose_name_plural': 'Usages',
+            },
         ),
         migrations.CreateModel(
             name='Trail',
@@ -169,55 +177,34 @@ class Migration(migrations.Migration):
             },
             bases=(mapentity.models.MapEntityMixin, 'core.topology', models.Model),
         ),
-        migrations.CreateModel(
-            name='Usage',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('usage', models.CharField(max_length=50, verbose_name='Usage', db_column=b'usage')),
-                ('structure', models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
-            ],
-            options={
-                'ordering': ['usage'],
-                'db_table': 'l_b_usage',
-                'verbose_name': 'Usage',
-                'verbose_name_plural': 'Usages',
-            },
-            bases=(models.Model,),
-        ),
         migrations.AddField(
             model_name='topology',
             name='paths',
             field=models.ManyToManyField(to='core.Path', through='core.PathAggregation', verbose_name='Path', db_column=b'troncons'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='pathaggregation',
             name='topo_object',
             field=models.ForeignKey(related_name='aggregations', db_column=b'evenement', verbose_name='Topology', to='core.Topology'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='path',
             name='source',
             field=models.ForeignKey(related_name='paths', db_column=b'source', blank=True, to='core.PathSource', null=True, verbose_name='Source'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='path',
             name='stake',
             field=models.ForeignKey(related_name='paths', db_column=b'enjeu', blank=True, to='core.Stake', null=True, verbose_name='Maintenance stake'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='path',
             name='structure',
             field=models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure'),
-            preserve_default=True,
         ),
         migrations.AddField(
             model_name='path',
             name='usages',
-            field=models.ManyToManyField(related_name='paths', to='core.Usage', db_table=b'l_r_troncon_usage', blank=True, null=True, verbose_name='Usages'),
-            preserve_default=True,
+            field=models.ManyToManyField(related_name='paths', db_table=b'l_r_troncon_usage', verbose_name='Usages', to='core.Usage', blank=True),
         ),
     ]

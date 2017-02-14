@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -23,7 +23,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Cirkwi locomotion',
                 'verbose_name_plural': 'Cirkwi locomotions',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='CirkwiPOICategory',
@@ -38,7 +37,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Cirkwi POI category',
                 'verbose_name_plural': 'Cirkwi POI categories',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='CirkwiTag',
@@ -53,6 +51,5 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Cirkwi tag',
                 'verbose_name_plural': 'Cirkwi tags',
             },
-            bases=(models.Model,),
         ),
     ]
