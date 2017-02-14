@@ -88,7 +88,7 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
 
     @property
     def implantation_year_display(self):
-        return u"{}".format(self.implantation_year)
+        return u"{}".format(self.implantation_year) if self.implantation_year else ""
 
     @property
     def name_display(self):
