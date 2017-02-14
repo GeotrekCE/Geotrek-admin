@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from django.conf import settings
 from south.db import db
 from south.v2 import SchemaMigration
-from django.conf import settings
 
 
 class Migration(SchemaMigration):
@@ -10,12 +10,12 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'BaseInfrastructure.implantation_year'
         db.add_column('a_t_amenagement', 'implantation_year',
-                      self.gf('django.db.models.fields.PositiveSmallIntegerField')(null=True),
+                      self.gf('django.db.models.fields.PositiveSmallIntegerField')(null=True, db_column='annee_implantation'),
                       keep_default=False)
 
     def backwards(self, orm):
         # Deleting field 'BaseInfrastructure.implantation_year'
-        db.delete_column('a_t_amenagement', 'implantation_year')
+        db.delete_column('a_t_amenagement', 'annee_implantation')
 
     models = {
         u'authent.structure': {
@@ -112,7 +112,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'BaseInfrastructure', 'db_table': "'a_t_amenagement'", '_ormbases': [u'core.Topology']},
             'condition': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['infrastructure.InfrastructureCondition']", 'null': 'True', 'on_delete': 'models.PROTECT', 'db_column': "'etat'", 'blank': 'True'}),
             'description': ('django.db.models.fields.TextField', [], {'db_column': "'description'", 'blank': 'True'}),
-            'implantation_year': ('django.db.models.fields.PositiveSmallIntegerField', [], {'null': 'True'}),
+            'implantation_year': ('django.db.models.fields.PositiveSmallIntegerField', [], {'null': 'True', 'db_column': "'annee_implantation'"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'nom'"}),
             'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"}),
             'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['core.Topology']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"}),
