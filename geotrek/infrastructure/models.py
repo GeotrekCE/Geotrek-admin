@@ -79,7 +79,7 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
                                   verbose_name=_("Condition"), blank=True, null=True,
                                   on_delete=models.PROTECT)
     implantation_year = models.PositiveSmallIntegerField(verbose_name=_("Implantation year"),
-                                                         db_column = 'annee_implantation', null=True)
+                                                         db_column='annee_implantation', null=True)
 
     class Meta:
         db_table = 'a_t_amenagement'

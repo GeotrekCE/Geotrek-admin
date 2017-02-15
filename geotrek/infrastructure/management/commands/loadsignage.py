@@ -140,9 +140,9 @@ class Command(BaseCommand):
                     self.create_signage(feature_geom, name, infra, condition, structure, description, year)
 
             transaction.savepoint_commit(sid)
-            self.stdout.write(self.style.NOTICE( u"{} objects created.".format(self.counter)))
+            self.stdout.write(self.style.NOTICE(u"{} objects created.".format(self.counter)))
 
-        except Exception as exc:
+        except Exception:
             self.stdout.write(self.style.ERROR(u"An error occured, rolling back operations."))
             transaction.savepoint_rollback(sid)
             raise
