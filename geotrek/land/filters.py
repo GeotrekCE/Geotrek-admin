@@ -26,7 +26,7 @@ class PhysicalEdgeFilterSet(MapEntityFilterSet):
 class LandEdgeFilterSet(StructureRelatedFilterSet):
     class Meta:
         model = LandEdge
-        fields = ['land_type']
+        fields = ['land_type', 'owner', 'agreement']
 
 
 class OrganismFilterSet(MapEntityFilterSet):

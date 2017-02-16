@@ -1,5 +1,5 @@
 from django.utils.translation import ugettext_lazy as _
-from django_filters import CharFilter
+from django_filters import CharFilter, NumberFilter
 
 from geotrek.common.filters import StructureRelatedFilterSet, YearFilter
 from geotrek.maintenance.filters import InterventionYearSelect
@@ -13,6 +13,7 @@ class InfrastructureYearSelect(InterventionYearSelect):
 class InfrastructureFilterSet(StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_type='icontains')
     description = CharFilter(label=_('Description'), lookup_type='icontains')
+    implantation_year = NumberFilter(label=_('Implantation year'))
     intervention_year = YearFilter(name='interventions_set__date',
                                    widget=InfrastructureYearSelect)
 
@@ -28,12 +29,13 @@ class InfrastructureFilterSet(StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Infrastructure
-        fields = StructureRelatedFilterSet.Meta.fields + ['type__type', 'type', 'condition']
+        fields = StructureRelatedFilterSet.Meta.fields + ['type__type', 'type', 'condition', 'implantation_year']
 
 
 class SignageFilterSet(StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_type='icontains')
     description = CharFilter(label=_('Description'), lookup_type='icontains')
+    implantation_year = NumberFilter(label=_('Implantation year'))
     intervention_year = YearFilter(name='interventions_set__date',
                                    widget=InfrastructureYearSelect)
 
@@ -44,4 +46,4 @@ class SignageFilterSet(StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Signage
-        fields = StructureRelatedFilterSet.Meta.fields + ['type', 'condition']
+        fields = StructureRelatedFilterSet.Meta.fields + ['type', 'condition', 'implantation_year']

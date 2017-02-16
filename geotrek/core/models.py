@@ -355,6 +355,7 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
             AltimetryMixin.reload(self, fromdb)
             TimeStampedModelMixin.reload(self, fromdb)
             NoDeleteMixin.reload(self, fromdb)
+
         return self
 
     @debug_pg_notices

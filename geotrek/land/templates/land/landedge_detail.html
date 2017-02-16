@@ -7,6 +7,20 @@
             <th>{{ landedge|verbose:"land_type" }}</th>
             <td>{{ landedge.land_type }}</td>
         </tr>
+        <tr>
+            <th>{{ landedge|verbose:"owner" }}</th>
+            <td>{{ landedge.owner|safe }}</td>
+        </tr>
+        <tr>
+            <th>{{ landedge|verbose:"agreement" }}</th>
+            <td>
+                {% if landedge.agreement %}
+                    {% trans "Yes" %}
+                {% else %}
+                    {% trans "No" %}
+                {% endif %}
+            </td>
+        </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>

@@ -78,12 +78,18 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
     condition = models.ForeignKey(InfrastructureCondition, db_column='etat',
                                   verbose_name=_("Condition"), blank=True, null=True,
                                   on_delete=models.PROTECT)
+    implantation_year = models.PositiveSmallIntegerField(verbose_name=_("Implantation year"),
+                                                         db_column='annee_implantation', null=True)
 
     class Meta:
         db_table = 'a_t_amenagement'
 
     def __unicode__(self):
         return self.name
+
+    @property
+    def implantation_year_display(self):
+        return u"{}".format(self.implantation_year) if self.implantation_year else ""
 
     @property
     def name_display(self):
