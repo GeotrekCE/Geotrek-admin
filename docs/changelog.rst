@@ -2,22 +2,18 @@
 CHANGELOG
 =========
 
-2.11.6.dev0
------------
+2.12.0 (2017-02-16)
+-------------------
 
-**Bug fixes**
+**New features**
 
-*
+* add loadsignage command
 
 **Minor changes**
 
 * add field implantation_year to model BaseInfrastructure
 * add field owner to model LandEdge
 * add field agreement to model LandEdge
-
-**New features**
-
-* add loadsignage command
 
 
 2.11.5 (2017-02-06)
