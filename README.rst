@@ -6,19 +6,14 @@
 :develop: |develop-status|
 
 .. |master-status| image::
-    https://api.travis-ci.org/makinacorpus/Geotrek.png?branch=master
+    https://api.travis-ci.org/GeotrekCE/Geotrek-admin.png?branch=master
     :alt: Build Status
-    :target: https://travis-ci.org/makinacorpus/Geotrek
+    :target: https://travis-ci.org/GeotrekCE/Geotrek-admin
 
 .. |master-coverage| image::
-    https://coveralls.io/repos/makinacorpus/Geotrek/badge.png?branch=master
+    https://coveralls.io/repos/GeotrekCE/Geotrek-admin/badge.png?branch=master
     :alt: Coverage
-    :target: https://coveralls.io/r/makinacorpus/Geotrek
-
-.. |develop-status| image::
-    https://api.travis-ci.org/makinacorpus/Geotrek.png?branch=develop
-    :alt: Build Status
-    :target: https://travis-ci.org/makinacorpus/Geotrek
+    :target: https://coveralls.io/r/GeotrekCE/Geotrek-admin
 
 
 In brief
