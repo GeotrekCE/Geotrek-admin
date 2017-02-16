@@ -10,9 +10,9 @@
     :target: https://travis-ci.org/GeotrekCE/Geotrek-admin
 
 .. |master-coverage| image::
-    https://coveralls.io/repos/GeotrekCE/Geotrek-admin/badge.png?branch=master
+    https://coveralls.io/repos/github/GeotrekCE/Geotrek-admin/badge.svg
     :alt: Coverage
-    :target: https://coveralls.io/r/GeotrekCE/Geotrek-admin
+    :target: https://coveralls.io/github/GeotrekCE/Geotrek-admin
 
 
 In brief
