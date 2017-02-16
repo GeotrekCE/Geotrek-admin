@@ -1,9 +1,8 @@
 **Geotrek**, *paths* management for *National Parks* and *Tourism organizations*.
 
-.. image:: http://geotrek.fr/images/logo-128.png
+.. image:: http://geotrek.fr/assets/img/logo.svg
 
 :master: |master-status| |master-coverage|
-:develop: |develop-status|
 
 .. |master-status| image::
     https://api.travis-ci.org/GeotrekCE/Geotrek-admin.png?branch=master
@@ -24,12 +23,6 @@ In brief
 * Control objets by district, protected areas, physical and legal status of paths
 * Compute 3D attributes using DEM draping
 * Publish a public website (e.g. `PNE <http://rando.ecrins-parcnational.fr>`_, `PNM-PNAM <http://rando.mercantour.eu>`_)
-
-.. image:: http://geotrek.fr/images/capture-3.jpg
-
-.. image:: http://geotrek.fr/images/geotrek_rando.png
-
-.. image:: http://geotrek.fr/images/capture-webgl.jpg
 
 More information on product website http://geotrek.fr
 
@@ -53,15 +46,15 @@ License
 
 ----------
 
-.. image:: http://geotrek.fr/images/parc_ecrins_big.png
+.. image:: http://geotrek.fr/assets/img/parc_ecrins.png
     :target: http://www.ecrins-parcnational.fr
 
 
-.. image:: http://geotrek.fr/images/parc_mercantour_big.png
+.. image:: http://geotrek.fr/assets/img/parc_mercantour.png
     :target: http://www.mercantour.eu
 
 
-.. image:: http://geotrek.fr/images/alpi_maritime_big.png
+.. image:: http://geotrek.fr/assets/img/alpi_maritime.png
     :target: http://www.parcoalpimarittime.it
 
 
@@ -91,8 +84,8 @@ Status of sub-projects
 .. |Leaflet.GeometryUtil| image:: https://travis-ci.org/makinacorpus/Leaflet.GeometryUtil.png?branch=master
     :target: https://travis-ci.org/makinacorpus/Leaflet.GeometryUtil?branch=master
 
-.. |Leaflet.FileLayer| image:: https://travis-ci.org/makinacorpus/Leaflet.FileLayer.png?branch=gh-pages
-    :target: https://travis-ci.org/makinacorpus/Leaflet.FileLayer?branch=gh-pages
+.. |Leaflet.FileLayer| image:: https://travis-ci.org/makinacorpus/Leaflet.FileLayer.png?branch=master
+    :target: https://travis-ci.org/makinacorpus/Leaflet.FileLayer?branch=master
 
 .. |Leaflet.AlmostOver| image:: https://travis-ci.org/makinacorpus/Leaflet.GeometryUtil.png?branch=master
     :target: https://travis-ci.org/makinacorpus/Leaflet.AlmostOver?branch=master
