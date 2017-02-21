@@ -113,11 +113,11 @@
 
 
 
-                ["read_attachment", "paperclip", "attachment"],
-                ["add_attachment", "paperclip", "attachment"],
-                ["change_attachment", "paperclip", "attachment"],
-                ["delete_attachment", "paperclip", "attachment"],
-                ["delete_attachment_others", "paperclip", "attachment"],
+                ["read_attachment", "common", "attachment"],
+                ["add_attachment", "common", "attachment"],
+                ["change_attachment", "common", "attachment"],
+                ["delete_attachment", "common", "attachment"],
+                ["delete_attachment_others", "common", "attachment"],
 
                 ["read_path", "core", "path"],
                 ["read_trail", "core", "trail"],
@@ -210,11 +210,11 @@
                 ["delete_flatpage", "flatpages", "flatpage"],
 
 
-                ["read_attachment", "paperclip", "attachment"],
-                ["add_attachment", "paperclip", "attachment"],
-                ["change_attachment", "paperclip", "attachment"],
-                ["delete_attachment", "paperclip", "attachment"],
-                ["delete_attachment_others", "paperclip", "attachment"],
+                ["read_attachment", "common", "attachment"],
+                ["add_attachment", "common", "attachment"],
+                ["change_attachment", "common", "attachment"],
+                ["delete_attachment", "common", "attachment"],
+                ["delete_attachment_others", "common", "attachment"],
 
                 ["read_path", "core", "path"],
                 ["read_trail", "core", "trail"],
@@ -305,11 +305,11 @@
 
 
 
-                ["read_attachment", "paperclip", "attachment"],
-                ["add_attachment", "paperclip", "attachment"],
-                ["change_attachment", "paperclip", "attachment"],
-                ["delete_attachment", "paperclip", "attachment"],
-                ["delete_attachment_others", "paperclip", "attachment"],
+                ["read_attachment", "common", "attachment"],
+                ["add_attachment", "common", "attachment"],
+                ["change_attachment", "common", "attachment"],
+                ["delete_attachment", "common", "attachment"],
+                ["delete_attachment_others", "common", "attachment"],
 
                 ["read_path", "core", "path"],
                 ["read_trail", "core", "trail"],
@@ -342,8 +342,8 @@
             "name": "Geotrek-rando",
             "permissions": [
 
-                ["read_attachment", "paperclip", "attachment"],
-                ["add_attachment", "paperclip", "attachment"],
+                ["read_attachment", "common", "attachment"],
+                ["add_attachment", "common", "attachment"],
 
                 ["read_trek", "trekking", "trek"],
                 ["export_trek", "trekking", "trek"],
