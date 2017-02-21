@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.db import migrations, models
 import mapentity.models
 import django.contrib.gis.db.models.fields
@@ -50,15 +51,15 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('date_insert', models.DateTimeField(auto_now_add=True, verbose_name='Insertion date', db_column=b'date_insert')),
                 ('date_update', models.DateTimeField(auto_now=True, verbose_name='Update date', db_column=b'date_update')),
-                ('geom_3d', django.contrib.gis.db.models.fields.GeometryField(dim=3, default=None, editable=False, srid=2154, null=True, spatial_index=False)),
+                ('geom_3d', django.contrib.gis.db.models.fields.GeometryField(dim=3, default=None, editable=False, srid=settings.SRID, null=True, spatial_index=False)),
                 ('length', models.FloatField(db_column=b'longueur', default=0.0, editable=False, blank=True, null=True, verbose_name='3D Length')),
                 ('ascent', models.IntegerField(db_column=b'denivelee_positive', default=0, editable=False, blank=True, null=True, verbose_name='Ascent')),
                 ('descent', models.IntegerField(db_column=b'denivelee_negative', default=0, editable=False, blank=True, null=True, verbose_name='Descent')),
                 ('min_elevation', models.IntegerField(db_column=b'altitude_minimum', default=0, editable=False, blank=True, null=True, verbose_name='Minimum elevation')),
                 ('max_elevation', models.IntegerField(db_column=b'altitude_maximum', default=0, editable=False, blank=True, null=True, verbose_name='Maximum elevation')),
                 ('slope', models.FloatField(db_column=b'pente', default=0.0, editable=False, blank=True, null=True, verbose_name='Slope')),
-                ('geom', django.contrib.gis.db.models.fields.LineStringField(srid=2154, spatial_index=False)),
-                ('geom_cadastre', django.contrib.gis.db.models.fields.LineStringField(srid=2154, spatial_index=False, null=True, editable=False)),
+                ('geom', django.contrib.gis.db.models.fields.LineStringField(srid=settings.SRID, spatial_index=False)),
+                ('geom_cadastre', django.contrib.gis.db.models.fields.LineStringField(srid=settings.SRID, spatial_index=False, null=True, editable=False)),
                 ('valid', models.BooleanField(default=True, help_text='Approved by manager', verbose_name='Validity', db_column=b'valide')),
                 ('visible', models.BooleanField(default=True, help_text='Shown in lists and maps', verbose_name='Visible', db_column=b'visible')),
                 ('name', models.CharField(db_column=b'nom', max_length=20, blank=True, help_text='Official name', null=True, verbose_name='Name')),
@@ -127,7 +128,7 @@ class Migration(migrations.Migration):
                 ('date_insert', models.DateTimeField(auto_now_add=True, verbose_name='Insertion date', db_column=b'date_insert')),
                 ('date_update', models.DateTimeField(auto_now=True, verbose_name='Update date', db_column=b'date_update')),
                 ('deleted', models.BooleanField(default=False, verbose_name='Deleted', editable=False, db_column=b'supprime')),
-                ('geom_3d', django.contrib.gis.db.models.fields.GeometryField(dim=3, default=None, editable=False, srid=2154, null=True, spatial_index=False)),
+                ('geom_3d', django.contrib.gis.db.models.fields.GeometryField(dim=3, default=None, editable=False, srid=settings.SRID, null=True, spatial_index=False)),
                 ('length', models.FloatField(db_column=b'longueur', default=0.0, editable=False, blank=True, null=True, verbose_name='3D Length')),
                 ('ascent', models.IntegerField(db_column=b'denivelee_positive', default=0, editable=False, blank=True, null=True, verbose_name='Ascent')),
                 ('descent', models.IntegerField(db_column=b'denivelee_negative', default=0, editable=False, blank=True, null=True, verbose_name='Descent')),
@@ -136,7 +137,7 @@ class Migration(migrations.Migration):
                 ('slope', models.FloatField(db_column=b'pente', default=0.0, editable=False, blank=True, null=True, verbose_name='Slope')),
                 ('offset', models.FloatField(default=0.0, verbose_name='Offset', db_column=b'decallage')),
                 ('kind', models.CharField(verbose_name='Kind', max_length=32, editable=False)),
-                ('geom', django.contrib.gis.db.models.fields.GeometryField(default=None, srid=2154, spatial_index=False, null=True, editable=False)),
+                ('geom', django.contrib.gis.db.models.fields.GeometryField(default=None, srid=settings.SRID, spatial_index=False, null=True, editable=False)),
             ],
             options={
                 'db_table': 'e_t_evenement',

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.db import migrations, models
 import mapentity.models
 import django.contrib.gis.db.models.fields
@@ -29,7 +30,7 @@ class Migration(migrations.Migration):
                 ('street', models.CharField(max_length=256, null=True, verbose_name='Street', db_column=b'rue', blank=True)),
                 ('postal_code', models.CharField(max_length=8, null=True, verbose_name='Postal code', db_column=b'code', blank=True)),
                 ('municipality', models.CharField(max_length=256, null=True, verbose_name='Municipality', db_column=b'commune', blank=True)),
-                ('geom', django.contrib.gis.db.models.fields.PointField(db_column=b'geom', verbose_name='Emplacement', blank=True, srid=2154, null=True, spatial_index=False)),
+                ('geom', django.contrib.gis.db.models.fields.PointField(db_column=b'geom', verbose_name='Emplacement', blank=True, srid=settings.SRID, null=True, spatial_index=False)),
             ],
             options={
                 'ordering': ['name'],
@@ -77,7 +78,7 @@ class Migration(migrations.Migration):
                 ('review', models.BooleanField(default=False, verbose_name='Waiting for publication', db_column=b'relecture')),
                 ('description_teaser', models.TextField(help_text='A brief summary', verbose_name='Description teaser', db_column=b'chapeau', blank=True)),
                 ('description', models.TextField(help_text='Complete description', verbose_name='Description', db_column=b'description', blank=True)),
-                ('geom', django.contrib.gis.db.models.fields.GeometryField(srid=2154, verbose_name='Location')),
+                ('geom', django.contrib.gis.db.models.fields.GeometryField(srid=settings.SRID, verbose_name='Location')),
                 ('contact', models.TextField(help_text='Address, phone, etc.', verbose_name='Contact', db_column=b'contact', blank=True)),
                 ('email', models.EmailField(max_length=256, null=True, verbose_name='Email', db_column=b'email', blank=True)),
                 ('website', models.URLField(max_length=256, null=True, verbose_name='Website', db_column=b'website', blank=True)),
@@ -140,7 +141,7 @@ class Migration(migrations.Migration):
                 ('review', models.BooleanField(default=False, verbose_name='Waiting for publication', db_column=b'relecture')),
                 ('description_teaser', models.TextField(help_text='A brief summary', verbose_name='Description teaser', db_column=b'chapeau', blank=True)),
                 ('description', models.TextField(help_text='Complete description', verbose_name='Description', db_column=b'description', blank=True)),
-                ('geom', django.contrib.gis.db.models.fields.PointField(srid=2154, verbose_name='Location')),
+                ('geom', django.contrib.gis.db.models.fields.PointField(srid=settings.SRID, verbose_name='Location')),
                 ('begin_date', models.DateField(null=True, verbose_name='Begin date', db_column=b'date_debut', blank=True)),
                 ('end_date', models.DateField(null=True, verbose_name='End date', db_column=b'date_fin', blank=True)),
                 ('duration', models.CharField(help_text='3 days, season, ...', max_length=64, verbose_name='Duration', db_column=b'duree', blank=True)),

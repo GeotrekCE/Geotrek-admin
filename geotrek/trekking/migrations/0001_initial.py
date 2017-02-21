@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.db import migrations, models
 import mapentity.models
 import django.contrib.gis.db.models.fields
@@ -177,10 +178,10 @@ class Migration(migrations.Migration):
                 ('duration', models.FloatField(db_column=b'duree', default=0, validators=[django.core.validators.MinValueValidator(0)], blank=True, help_text='In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)', verbose_name='Duration')),
                 ('is_park_centered', models.BooleanField(default=False, help_text='Crosses center of park', verbose_name='Is in the midst of the park', db_column=b'coeur')),
                 ('advised_parking', models.CharField(help_text='Where to park', max_length=128, verbose_name='Advised parking', db_column=b'parking', blank=True)),
-                ('parking_location', django.contrib.gis.db.models.fields.PointField(db_column=b'geom_parking', verbose_name='Parking location', blank=True, srid=2154, null=True, spatial_index=False)),
+                ('parking_location', django.contrib.gis.db.models.fields.PointField(db_column=b'geom_parking', verbose_name='Parking location', blank=True, srid=settings.SRID, null=True, spatial_index=False)),
                 ('public_transport', models.TextField(help_text='Train, bus (see web links)', verbose_name='Public transport', db_column=b'transport', blank=True)),
                 ('advice', models.TextField(help_text='Risks, danger, best period, ...', verbose_name='Advice', db_column=b'recommandation', blank=True)),
-                ('points_reference', django.contrib.gis.db.models.fields.MultiPointField(db_column=b'geom_points_reference', verbose_name='Points of reference', blank=True, srid=2154, null=True, spatial_index=False)),
+                ('points_reference', django.contrib.gis.db.models.fields.MultiPointField(db_column=b'geom_points_reference', verbose_name='Points of reference', blank=True, srid=settings.SRID, null=True, spatial_index=False)),
                 ('eid', models.CharField(max_length=128, null=True, verbose_name='External id', db_column=b'id_externe', blank=True)),
                 ('eid2', models.CharField(max_length=128, null=True, verbose_name='Second external id', db_column=b'id_externe2', blank=True)),
                 ('accessibilities', models.ManyToManyField(related_name='treks', db_table=b'o_r_itineraire_accessibilite', verbose_name='Accessibility', to='trekking.Accessibility', blank=True)),

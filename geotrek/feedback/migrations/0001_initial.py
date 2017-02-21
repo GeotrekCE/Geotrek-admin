@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.db import migrations, models
 import geotrek.common.mixins
 import mapentity.models
@@ -23,7 +24,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=256, verbose_name='Name')),
                 ('email', models.EmailField(max_length=254, verbose_name='Email')),
                 ('comment', models.TextField(default=b'', verbose_name='Comment', blank=True)),
-                ('geom', django.contrib.gis.db.models.fields.PointField(default=None, srid=2154, null=True, verbose_name='Location', blank=True)),
+                ('geom', django.contrib.gis.db.models.fields.PointField(default=None, srid=settings.SRID, null=True, verbose_name='Location', blank=True)),
                 ('context_object_id', models.PositiveIntegerField(null=True, editable=False, blank=True)),
             ],
             options={
