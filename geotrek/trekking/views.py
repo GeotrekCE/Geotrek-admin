@@ -19,12 +19,11 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityFormat, MapEntityDetail, MapEntityMapImage,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, LastModifiedMixin, MapEntityViewSet)
-from paperclip.models import Attachment
 from rest_framework import permissions as rest_permissions, viewsets
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.models import RecordSource, TargetPortal
+from geotrek.common.models import RecordSource, TargetPortal, Attachment
 from geotrek.common.views import FormsetMixin, PublicOrReadPermMixin, DocumentPublic
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin

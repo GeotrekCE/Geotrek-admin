@@ -12,10 +12,8 @@ from django.core.management.base import CommandError
 from django.test.utils import override_settings
 from django.template.base import TemplateDoesNotExist
 
-from paperclip.models import Attachment
-
 from geotrek.trekking.models import Trek
-from geotrek.common.models import Organism, FileType
+from geotrek.common.models import Organism, FileType, Attachment
 from geotrek.common.parsers import ExcelParser, AttachmentParserMixin, TourInSoftParser
 
 

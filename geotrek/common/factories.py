@@ -2,9 +2,8 @@ import factory
 
 from django.contrib.contenttypes.models import ContentType
 
-from paperclip.models import Attachment
-
 from geotrek.authent.factories import UserFactory
+from geotrek.common.models import Attachment
 from geotrek.common.utils.testdata import (dummy_filefield_as_sequence,
                                            get_dummy_uploaded_file)
 
