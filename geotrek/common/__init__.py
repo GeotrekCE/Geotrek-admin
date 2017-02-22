@@ -10,8 +10,6 @@ from django.db import connection
 from django.db.models.signals import pre_migrate, post_migrate
 from django.core.exceptions import ImproperlyConfigured
 
-from mapentity.helpers import api_bbox
-
 from geotrek.common.utils.postgresql import load_sql_files, move_models_to_schemas
 
 
@@ -41,9 +39,3 @@ def check_srid_has_meter_unit(sender, **kwargs):
 
 pre_migrate.connect(check_srid_has_meter_unit, dispatch_uid="geotrek.core.checksrid")
 post_migrate.connect(run_initial_sql_post_migrate, dispatch_uid="geotrek.core.sqlautoload")
-
-
-"""
-    Computed client-side setting.
-"""
-settings.LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(settings.SPATIAL_EXTENT, buffer=settings.VIEWPORT_MARGIN)

@@ -388,7 +388,7 @@ SRID = 2154  # Lambert-93 for Metropolitan France
 API_SRID = 4326
 
 # Extent in native projection (Toulouse area)
-SPATIAL_EXTENT = (144968, 5415668, 175412, 5388753)
+SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
 
 
 MAPENTITY_CONFIG = {
