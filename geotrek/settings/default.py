@@ -107,6 +107,7 @@ DEFAULT_STRUCTURE_NAME = envini.get('defaultstructure')
 # GIS settings
 # ..........................
 
+
 def api_bbox(bbox, buffer):
     wkt_box = 'POLYGON(({0} {1}, {2} {1}, {2} {3}, {0} {3}, {0} {1}))'
     wkt = wkt_box.format(*bbox)
@@ -116,6 +117,7 @@ def api_bbox(bbox, buffer):
     width = extent[2] - extent[0]
     native = native.buffer(width * buffer)
     return tuple(native.extent)
+
 
 SRID = int(envini.get('srid', SRID))
 SPATIAL_EXTENT = tuple(envini.getfloats('spatial_extent'))
