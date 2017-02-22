@@ -39,8 +39,9 @@ class Migration(migrations.Migration):
                 'abstract': False,
                 'verbose_name_plural': 'Attachments',
                 'db_table': 'fl_t_fichier',
+                'default_permissions': (),
                 'verbose_name': 'Attachment',
-                'permissions': (('read_attachment', 'Can read attachments'), ('delete_attachment_others', "Can delete others' attachments")),
+                'permissions': (('add_attachment', 'Can add attachments'), ('change_attachment', 'Can change attachments'), ('delete_attachment', 'Can delete attachments'), ('read_attachment', 'Can read attachments'), ('delete_attachment_others', "Can delete others' attachments")),
             },
         ),
         migrations.CreateModel(

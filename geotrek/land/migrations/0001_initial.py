@@ -32,6 +32,8 @@ class Migration(migrations.Migration):
             name='LandEdge',
             fields=[
                 ('topo_object', models.OneToOneField(parent_link=True, primary_key=True, db_column=b'evenement', serialize=False, to='core.Topology')),
+                ('owner', models.TextField(verbose_name='Owner', db_column=b'proprietaire', blank=True)),
+                ('agreement', models.BooleanField(default=False, verbose_name='Agreement', db_column=b'convention')),
             ],
             options={
                 'db_table': 'f_t_foncier',

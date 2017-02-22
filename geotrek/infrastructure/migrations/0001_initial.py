@@ -21,6 +21,7 @@ class Migration(migrations.Migration):
                 ('topo_object', models.OneToOneField(parent_link=True, primary_key=True, db_column=b'evenement', serialize=False, to='core.Topology')),
                 ('name', models.CharField(help_text='Reference, code, ...', max_length=128, verbose_name='Name', db_column=b'nom')),
                 ('description', models.TextField(help_text='Specificites', verbose_name='Description', db_column=b'description', blank=True)),
+                ('implantation_year', models.PositiveSmallIntegerField(null=True, verbose_name='Implantation year', db_column=b'annee_implantation')),
             ],
             options={
                 'db_table': 'a_t_amenagement',
