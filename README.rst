@@ -27,10 +27,6 @@ In brief
 
 .. image:: http://geotrek.fr/assets/img/screen-1.png
 
-.. image:: http://geotrek.fr/assets/img/screen-2.png
-
-.. image:: http://geotrek.fr/assets/img/mobile-screenshot.png
-
 More information on product website http://geotrek.fr
 
 Documentation
