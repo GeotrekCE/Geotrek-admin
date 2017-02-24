@@ -28,6 +28,8 @@ urlpatterns = patterns(
     url(r'', include('geotrek.flatpages.urls', namespace='flatpages', app_name='flatpages')),
     url(r'', include('geotrek.feedback.urls', namespace='feedback', app_name='feedback')),
 
+    url(r'^api/v2/', include('geotrek.api.v2.urls', namespace='apiv2', app_name='apiv2')),
+
     url(r'', include('mapentity.urls', namespace='mapentity', app_name='mapentity')),
     url(r'^paperclip/add-for/(?P<app_label>[\w\-]+)/(?P<model_name>[\w\-]+)/(?P<pk>\d+)/$',
         'paperclip.views.add_attachment', kwargs={'attachment_form': AttachmentForm}, name="add_attachment"),
@@ -40,3 +42,9 @@ urlpatterns = patterns(
 
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += patterns('',
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    )

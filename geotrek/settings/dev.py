@@ -12,7 +12,7 @@ TEMPLATES[1]['OPTIONS']['debug'] = True
 # ..........................
 
 INSTALLED_APPS = (
-    # 'debug_toolbar',
+    'debug_toolbar',
     'django_extensions',
 ) + INSTALLED_APPS
 
@@ -37,3 +37,6 @@ LOGGING['loggers']['geotrek']['level'] = 'DEBUG'
 LOGGING['loggers']['']['level'] = 'DEBUG'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+DEBUG_TOOLBAR_PATCH_SETTINGS = False
+MIDDLEWARE_CLASSES = ('debug_toolbar.middleware.DebugToolbarMiddleware',) + MIDDLEWARE_CLASSES
