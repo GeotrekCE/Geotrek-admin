@@ -20,10 +20,8 @@ sudo: required
 before_install:
   # Fix postgresql / postgis for travis trusty
   - sudo apt-get update
-  - sudo apt-get install -y -qq libreoffice unoconv inkscape
   - sudo apt-get remove postgis*
   - sudo apt-get remove postgresql*
-  - sudo apt-get remove phantomjs*
   - sudo rm -rf /usr/local/bin/phantomjs*
   - sudo rm -rf /usr/bin/phantomjs*
 
@@ -41,7 +39,7 @@ install:
   - if [[ $ACTION != codestyle ]]; then deactivate; fi
   - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
   - if [[ $ACTION == test ]]; then ./install.sh --tests || (cat ./install.log; false); fi
-  - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput || (cat ./install.log; false); fi
+  - if [[ $ACTION == deploy || $ACTION == integration ]]; then travis_wait 30 ./install.sh --noinput || (cat ./install.log; false); fi
 script:
   - if [[ $ACTION == codestyle ]]; then flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings; fi
   - if [[ $ACTION == codestyle ]]; then flake8 geotrek; fi
