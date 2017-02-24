@@ -243,7 +243,7 @@ function convertit_system_dependencies {
 
 
 function screamshotter_system_dependencies {
-    if $dev || $tests || $standalone ; then
+    if $dev || $tests || $standalone || !$interactive; then
         # Note: because tests require casper and phantomjs
         echo_step "Capture server dependencies..."
         arch=`uname -m`
