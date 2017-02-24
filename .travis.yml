@@ -38,6 +38,8 @@ before_install:
 install:
   - if [[ $ACTION != codestyle ]]; then deactivate; fi
   - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
+  - casperjs --version
+  - phantomjs --version
   - if [[ $ACTION == test ]]; then ./install.sh --tests || (cat ./install.log; false); fi
   - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput || (cat ./install.log; false); fi
 script:
