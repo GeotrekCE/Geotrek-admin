@@ -78,10 +78,10 @@ class PathTest(TestCase):
         self.assertFalse(t1 > Path.latest_updated())
 
     def test_length(self):
-        p = PathFactory.build()
-        self.assertEqual(p.length, 0)
-        p.save()
-        self.assertNotEqual(p.length, 0)
+        p1 = PathFactory.build()
+        self.assertEqual(p1.length, 0)
+        p2 = PathFactory.create()
+        self.assertNotEqual(p2.length, 0)
 
 
 class PathVisibilityTest(TestCase):
@@ -107,16 +107,15 @@ class PathVisibilityTest(TestCase):
 class PathGeometryTest(TestCase):
     def test_self_intersection_raises_integrity_error(self):
         # Create path with self-intersection
-        p = PathFactory.build(geom=LineString((0, 0), (2, 0), (1, 1), (1, -1)))
-        self.assertRaises(IntegrityError, p.save)
+        def create_path():
+            PathFactory.create(geom=LineString((0, 0), (2, 0), (1, 1), (1, -1)))
+        self.assertRaises(IntegrityError, create_path)
 
     def test_valid_geometry_can_be_saved(self):
-        p = PathFactory.build(geom=LineString((0, 0), (2, 0), (1, 1)))
-        p.save()
+        PathFactory.create(geom=LineString((0, 0), (2, 0), (1, 1)))
 
     def test_modify_self_intersection_raises_integrity_error(self):
-        p = PathFactory.build(geom=LineString((0, 0), (2, 0), (1, 1)))
-        p.save()
+        p = PathFactory.create(geom=LineString((0, 0), (2, 0), (1, 1)))
         p.geom = LineString((0, 0), (2, 0), (1, 1), (1, -1))
         self.assertRaises(IntegrityError, p.save)
 

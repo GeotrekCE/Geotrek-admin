@@ -460,7 +460,7 @@ function geotrek_setup {
 
     if $tests ; then
         # XXX: Why Django tests require the main database :( ?
-        bin/django syncdb --noinput
+        bin/django migrate --noinput
         bin/django collectstatic --clear --noinput --verbosity=0
     fi
 
@@ -475,6 +475,21 @@ function geotrek_setup {
         fi
         if [ $? -ne 0 ]; then
             exit_error 10 "Could not restart supervisor !"
+        fi
+        if [ ! -z $existing -a $existing \< "2.12" -a $ $STABLE_VERSION \>= "2.12" ]; then
+            bin/django migrate --fake mapentity 0001
+            bin/django migrate --fake authent 0001
+            bin/django migrate --fake cirkwi 0001
+            bin/django migrate --fake common 0001
+            bin/django migrate --fake core 0001
+            bin/django migrate --fake feedback 0001
+            bin/django migrate --fake flatpages 0001
+            bin/django migrate --fake infrastructure 0001
+            bin/django migrate --fake land 0001
+            bin/django migrate --fake maintenance 0001
+            bin/django migrate --fake tourism 0001
+            bin/django migrate --fake trekking 0001
+            bin/django migrate --fake zoning 0001
         fi
         make update
         if [ $? -ne 0 ]; then

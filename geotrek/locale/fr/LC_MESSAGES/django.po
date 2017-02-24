@@ -1,0 +1,61 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-09-15 15:32+0200\n"
+"PO-Revision-Date: 2015-09-15 15:33+0100\n"
+"Last-Translator: \n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Verésion: PACKAGE VERSION\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Project-Id-Version: \n"
+"X-Generator: Poedit 1.5.4\n"
+
+msgid "Usefull informations"
+msgstr "Informations pratiques"
+
+msgid "All usefull informations"
+msgstr "Toutes les informations pratiques"
+
+msgid "On your path..."
+msgstr "Sur votre chemin..."
+
+msgid "Advices"
+msgstr "Recommandations"
+
+msgid "Powered by geotrek.fr"
+msgstr "Propulsé par geotrek.fr"
+
+msgid "Markings"
+msgstr "Balisage"
+
+msgid ""
+"This hike is at the heart of the national park"
+msgstr ""
+"Cet itinéraire est dans le cœur du Parc national"
+
+msgid ""
+"The national park is an unrestricted natural area but subjected to "
+"regulations which must be known by all visitors."
+msgstr ""
+"Le Parc national est un territoire naturel, ouvert à tous, mais soumis à "
+"une réglementation qu’il est utile de connaître pour préparer son séjour"
+
+msgid "Geographical location"
+msgstr "Situation géographique"
+
+msgid "Disabled Infrastructure"
+msgstr "Aménagements handicapés"
+
+msgid "Information desks"
+msgstr "Lieux de renseignements"
+
+msgid "In partnership with"
+msgstr "En partenariat avec"

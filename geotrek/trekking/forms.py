@@ -22,6 +22,14 @@ from django.core.urlresolvers import reverse
 
 class TrekRelationshipForm(forms.ModelForm):
 
+    class Meta:
+        fields = ('id',
+                  'trek_a',
+                  'trek_b',
+                  'has_common_departure',
+                  'has_common_edge',
+                  'is_circuit_step')
+
     def __init__(self, *args, **kwargs):
         super(TrekRelationshipForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()

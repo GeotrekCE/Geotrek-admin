@@ -1,5 +1,3 @@
-proxy_cache_path ${parts['django'].deployroot}/var/nginxcache/ keys_zone=${options.cachename}:10m;
-
 upstream app_server {
     server ${parts['gunicorn-app-conf'].bind} fail_timeout=0;
 }
@@ -74,13 +72,6 @@ server {
         proxy_redirect off;
 
         keepalive_timeout 0;
-
-        {% if options.cache in ['True', 'true'] %}
-            proxy_cache             ${options.cachename};
-            proxy_cache_key         $$scheme$$host$$uri$$is_args$$args;
-            proxy_cache_valid       200  ${options.cachetime};
-            proxy_cache_use_stale   error timeout invalid_header;
-        {% end %}
 
         {% if parts['settings'].rooturl %}
         # For capture and some redirections problems behind reverse proxy

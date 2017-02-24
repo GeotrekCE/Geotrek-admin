@@ -5,9 +5,7 @@ from .default import *
 # ..........................
 
 DEBUG = True
-TEMPLATE_DEBUG = True
-
-SOUTH_TESTS_MIGRATE = False  # Tested at settings.tests
+TEMPLATES[1]['OPTIONS']['debug'] = True
 
 #
 # Developper additions

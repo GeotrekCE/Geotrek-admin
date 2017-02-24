@@ -284,10 +284,6 @@ msgid "Trail"
 msgstr "Sendero"
 
 
-msgid "Datasource"
-msgstr "Fuente de datos"
-
-
 msgid "Stake"
 msgstr "Interés"
 
@@ -355,10 +351,6 @@ msgstr "Agregaciones de tramos"
 
 msgid "Source"
 msgstr "Fuente"
-
-
-msgid "Datasources"
-msgstr "Fuente de datos"
 
 
 msgid "Stakes"

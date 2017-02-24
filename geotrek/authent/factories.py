@@ -29,25 +29,28 @@ class TrekkingManagerFactory(UserFactory):
         return super(TrekkingManagerFactory, cls)._prepare(create, **kwargs)
 
 
-class StructureFactory(factory.Factory):
-    FACTORY_FOR = core_models.Structure
+class StructureFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = core_models.Structure
 
     name = factory.Sequence('structure {0}'.format)
 
 
 # Abstract
-class StructureRelatedRandomFactory(factory.Factory):
+class StructureRelatedRandomFactory(factory.DjangoModelFactory):
     """Create a new structure each time"""
-    FACTORY_FOR = core_models.StructureRelated
+    class Meta:
+        model = core_models.StructureRelated
 
     # Return the default structure
     structure = factory.SubFactory(StructureFactory)
 
 
 # Abstract
-class StructureRelatedDefaultFactory(factory.Factory):
+class StructureRelatedDefaultFactory(factory.DjangoModelFactory):
     """Use the default structure"""
-    FACTORY_FOR = core_models.StructureRelated
+    class Meta:
+        model = core_models.StructureRelated
 
     structure = factory.LazyAttribute(lambda _: core_models.default_structure())
 
@@ -56,7 +59,8 @@ class UserProfileFactory(StructureRelatedDefaultFactory):
     """
     Create a normal user (language=fr and structure=default)
     """
-    FACTORY_FOR = core_models.UserProfile
+    class Meta:
+        model = core_models.UserProfile
 
     user = factory.SubFactory(UserFactory)
     language = 'fr'

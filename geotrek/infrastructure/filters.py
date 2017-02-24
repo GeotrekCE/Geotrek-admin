@@ -11,8 +11,8 @@ class InfrastructureYearSelect(InterventionYearSelect):
 
 
 class InfrastructureFilterSet(StructureRelatedFilterSet):
-    name = CharFilter(label=_('Name'), lookup_type='icontains')
-    description = CharFilter(label=_('Description'), lookup_type='icontains')
+    name = CharFilter(label=_('Name'), lookup_expr='icontains')
+    description = CharFilter(label=_('Description'), lookup_expr='icontains')
     implantation_year = NumberFilter(label=_('Implantation year'))
     intervention_year = YearFilter(name='interventions_set__date',
                                    widget=InfrastructureYearSelect)
@@ -33,8 +33,8 @@ class InfrastructureFilterSet(StructureRelatedFilterSet):
 
 
 class SignageFilterSet(StructureRelatedFilterSet):
-    name = CharFilter(label=_('Name'), lookup_type='icontains')
-    description = CharFilter(label=_('Description'), lookup_type='icontains')
+    name = CharFilter(label=_('Name'), lookup_expr='icontains')
+    description = CharFilter(label=_('Description'), lookup_expr='icontains')
     implantation_year = NumberFilter(label=_('Implantation year'))
     intervention_year = YearFilter(name='interventions_set__date',
                                    widget=InfrastructureYearSelect)

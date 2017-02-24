@@ -11,6 +11,7 @@ from mapentity.factories import SuperUserFactory, UserFactory
 from geotrek.common.tests import CommonTest, TranslationResetMixin
 from geotrek.feedback import models as feedback_models
 from geotrek.feedback import factories as feedback_factories
+from rest_framework.test import APIClient
 
 
 class ReportViewsetMailSend(TestCase):
@@ -74,8 +75,9 @@ class CreateReportsAPITest(BaseAPITest):
         }
 
     def post_report_data(self, data):
-        response = self.client.post(self.add_url, data=data,
-                                    allow_redirects=False)
+        client = APIClient()
+        response = client.post(self.add_url, data=data,
+                               allow_redirects=False)
         self.assertEqual(response.status_code, 201)
 
     def test_reports_can_be_created_using_post(self):

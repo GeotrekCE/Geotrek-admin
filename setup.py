@@ -16,7 +16,6 @@ setup(
                       open(os.path.join(here, 'docs', 'changelog.rst')).read()),
     install_requires=[
         # pinned by buildout
-        'South',
         'psycopg2',
         'docutils',
         'GDAL',

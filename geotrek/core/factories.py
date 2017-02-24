@@ -12,38 +12,44 @@ from geotrek.common.utils import dbnow
 from . import models
 
 
-class PathSourceFactory(factory.Factory):
-    FACTORY_FOR = models.PathSource
+class PathSourceFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.PathSource
 
     source = factory.Sequence(lambda n: u"PathSource %s" % n)
 
 
-class StakeFactory(factory.Factory):
-    FACTORY_FOR = models.Stake
+class StakeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Stake
 
     stake = factory.Sequence(lambda n: u"Stake %s" % n)
 
 
-class UsageFactory(factory.Factory):
-    FACTORY_FOR = models.Usage
+class UsageFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Usage
 
     usage = factory.Sequence(lambda n: u"Usage %s" % n)
 
 
-class NetworkFactory(factory.Factory):
-    FACTORY_FOR = models.Network
+class NetworkFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Network
 
     network = factory.Sequence(lambda n: u"Network %s" % n)
 
 
-class ComfortFactory(factory.Factory):
-    FACTORY_FOR = models.Comfort
+class ComfortFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Comfort
 
     comfort = factory.Sequence(lambda n: u"Comfort %s" % n)
 
 
 class PathFactory(StructureRelatedDefaultFactory):
-    FACTORY_FOR = models.Path
+    class Meta:
+        model = models.Path
 
     # (700000, 6600000) = Lambert93 origin (3.0° E, 46.5° N)
     geom = LineString(Point(700000, 6600000), Point(700100, 6600100), srid=settings.SRID)
@@ -109,8 +115,9 @@ class PathInBoundsExistingGeomFactory(PathFactory):
     geom = factory.Sequence(getExistingLineStringInBounds)
 
 
-class TopologyFactory(factory.Factory):
-    FACTORY_FOR = models.Topology
+class TopologyFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Topology
 
     # Factory
     # troncons (M2M)
@@ -149,8 +156,9 @@ class PointTopologyFactory(TopologyFactory):
                                              end_position=0.0)
 
 
-class PathAggregationFactory(factory.Factory):
-    FACTORY_FOR = models.PathAggregation
+class PathAggregationFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.PathAggregation
 
     path = factory.SubFactory(PathFactory)
     topo_object = factory.SubFactory(TopologyFactory)
@@ -161,7 +169,8 @@ class PathAggregationFactory(factory.Factory):
 
 
 class TrailFactory(TopologyFactory):
-    FACTORY_FOR = models.Trail
+    class Meta:
+        model = models.Trail
 
     name = factory.Sequence(lambda n: u"Name %s" % n)
     departure = factory.Sequence(lambda n: u"Departure %s" % n)

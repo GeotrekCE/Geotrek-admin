@@ -117,7 +117,7 @@ class InfraFilterTestMixin():
     def test_intervention_filter(self):
         self.login()
 
-        model = self.factory._associated_class
+        model = self.factory._meta.model
         # We will filter by this year
         year = 2014
         good_date_year = datetime.datetime(year=year, month=2, day=2)
@@ -146,7 +146,7 @@ class InfraFilterTestMixin():
 
     def test_intervention_filter_has_correct_label(self):
         self.login()
-        model = self.factory._associated_class
+        model = self.factory._meta.model
         response = self.client.get(model.get_list_url())
         self.assertContains(response, '<option value="-1">Intervention year</option>')
 

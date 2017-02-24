@@ -96,7 +96,7 @@
 
             //
             // Trek information desks layer
-            $.getJSON('{% url 'tourism:trek_information_desk_geojson' pk=object.pk %}', function (data) {
+            $.getJSON('{% url 'tourism:trek_information_desk_geojson' pk=object.pk format='geojson' %}', function (data) {
                 L.geoJson(data, {
                     pointToLayer: function (feature, latlng) {
                         var infoDeskIcon = L.icon({

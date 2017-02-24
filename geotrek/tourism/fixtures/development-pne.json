@@ -1,18 +1,4 @@
-[{
-    "pk": 1,
-    "model": "tourism.datasource",
-    "fields": {
-        "title": "OSM - Refuges",
-        "url": "https://gist.githubusercontent.com/leplatrem/b0abc6842c79916301ac/raw/046c52c1dae9e6ee6b262d2a0fdc0e8b6f8c7959/map.geojson",
-        "pictogram": "upload/datasource-refugee.svg",
-        "title_en": "OSM - Alpine Huts",
-        "title_es": "OSM - Refugios",
-        "title_it": "OSM - Refugi",
-        "type": "GEOJSON",
-        "title_fr": "OSM - Refuges",
-        "targets": ["trekking"]
-    }
-},
+[
 {
     "pk": 1,
     "model": "tourism.touristicevent",

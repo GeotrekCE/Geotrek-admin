@@ -6,40 +6,46 @@ from geotrek.infrastructure.factories import InfrastructureFactory, SignageFacto
 from . import models
 
 
-class InterventionStatusFactory(factory.Factory):
-    FACTORY_FOR = models.InterventionStatus
+class InterventionStatusFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.InterventionStatus
 
     status = factory.Sequence(lambda n: u"Status %s" % n)
 
 
-class InterventionDisorderFactory(factory.Factory):
-    FACTORY_FOR = models.InterventionDisorder
+class InterventionDisorderFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.InterventionDisorder
 
     disorder = factory.Sequence(lambda n: u"Disorder %s" % n)
 
 
-class InterventionTypeFactory(factory.Factory):
-    FACTORY_FOR = models.InterventionType
+class InterventionTypeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.InterventionType
 
     type = factory.Sequence(lambda n: u"Type %s" % n)
 
 
-class InterventionJobFactory(factory.Factory):
-    FACTORY_FOR = models.InterventionJob
+class InterventionJobFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.InterventionJob
 
     job = factory.Sequence(lambda n: u"Job %s" % n)
     cost = 500.0
 
 
-class ManDayFactory(factory.Factory):
-    FACTORY_FOR = models.ManDay
+class ManDayFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.ManDay
 
     nb_days = 1
     job = factory.SubFactory(InterventionJobFactory)
 
 
-class InterventionFactory(factory.Factory):
-    FACTORY_FOR = models.Intervention
+class InterventionFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Intervention
 
     name = factory.Sequence(lambda n: u"Intervention %s" % n)
     status = factory.SubFactory(InterventionStatusFactory)
@@ -89,26 +95,30 @@ class SignageInterventionFactory(InterventionFactory):
         return intervention
 
 
-class ContractorFactory(factory.Factory):
-    FACTORY_FOR = models.Contractor
+class ContractorFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Contractor
 
     contractor = factory.Sequence(lambda n: u"Contractor %s" % n)
 
 
-class ProjectTypeFactory(factory.Factory):
-    FACTORY_FOR = models.ProjectType
+class ProjectTypeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.ProjectType
 
     type = factory.Sequence(lambda n: u"Type %s" % n)
 
 
-class ProjectDomainFactory(factory.Factory):
-    FACTORY_FOR = models.ProjectDomain
+class ProjectDomainFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.ProjectDomain
 
     domain = factory.Sequence(lambda n: u"Domain %s" % n)
 
 
-class ProjectFactory(factory.Factory):
-    FACTORY_FOR = models.Project
+class ProjectFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Project
 
     name = factory.Sequence(lambda n: u"Project %s" % n)
     type = factory.SubFactory(ProjectTypeFactory)
@@ -127,8 +137,9 @@ class ProjectFactory(factory.Factory):
         return project
 
 
-class FundingFactory(factory.Factory):
-    FACTORY_FOR = models.Funding
+class FundingFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Funding
 
     project = factory.SubFactory(ProjectFactory)
     organism = factory.SubFactory(OrganismFactory)

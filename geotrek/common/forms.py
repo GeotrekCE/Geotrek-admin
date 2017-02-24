@@ -38,7 +38,7 @@ class CommonForm(MapEntityForm):
     def replace_orig_fields(self):
         model = self._meta.model
         codeperm = '%s.publish_%s' % (
-            model._meta.app_label, model._meta.object_name.lower())
+            model._meta.app_label, model._meta.model_name)
         if 'published' in self.fields and self.user and not self.user.has_perm(codeperm):
             del self.fields['published']
         if 'review' in self.fields and self.instance and self.instance.any_published:
@@ -55,7 +55,7 @@ class CommonForm(MapEntityForm):
             modelfield = None
         if not isinstance(modelfield, (ForeignKey, ManyToManyField)):
             return
-        model = modelfield.related.parent_model
+        model = modelfield.related.to
         # Filter structured choice fields according to user's structure
         if issubclass(model, StructureRelated):
             field.queryset = StructureRelatedQuerySet.queryset_for_user(
@@ -82,7 +82,7 @@ class CommonForm(MapEntityForm):
         # allow to modify layout per instance
         self.helper.fieldlayout = deepcopy(self.fieldslayout)
         model = self._meta.model
-        codeperm = '%s.publish_%s' % (model._meta.app_label, model._meta.object_name.lower())
+        codeperm = '%s.publish_%s' % (model._meta.app_label, model._meta.model_name)
         if 'published' in self.fields and self.user and not self.user.has_perm(codeperm):
             self.deep_remove(self.helper.fieldslayout, 'published')
         if 'review' in self.fields and self.instance and self.instance.any_published:

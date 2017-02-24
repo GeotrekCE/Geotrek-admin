@@ -5,7 +5,6 @@ import logging
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils.translation import get_language, ugettext_lazy as _
-from django.utils.functional import lazy
 from django.utils.formats import date_format
 
 from easy_thumbnails.alias import aliases
@@ -26,7 +25,6 @@ from geotrek.common.models import Theme
 from geotrek.common.utils import intersecting
 
 from extended_choices import Choices
-from multiselectfield import MultiSelectField
 
 
 logger = logging.getLogger(__name__)
@@ -47,38 +45,6 @@ def _get_target_choices():
             appname = model._meta.app_label.lower()
             apps.append((appname, unicode(entity.label)))
     return tuple(apps)
-
-
-class DataSource(models.Model):
-    title = models.CharField(verbose_name=_(u"Title"),
-                             max_length=128, db_column='titre')
-    url = models.URLField(max_length=400, db_column='url')
-    pictogram = models.FileField(verbose_name=_(u"Pictogram"),
-                                 upload_to=settings.UPLOAD_DIR,
-                                 db_column='picto', max_length=512)
-    type = models.CharField(db_column="type", max_length=32,
-                            choices=DATA_SOURCE_TYPES)
-    targets = MultiSelectField(verbose_name=_(u"Display"),
-                               max_length=512,
-                               choices=lazy(_get_target_choices, tuple)(), null=True, blank=True)
-
-    def __unicode__(self):
-        return self.title
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('tourism:datasource_geojson', [str(self.id)])
-
-    def pictogram_img(self):
-        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
-    pictogram_img.short_description = _("Pictogram")
-    pictogram_img.allow_tags = True
-
-    class Meta:
-        db_table = 't_t_source_donnees'
-        verbose_name = _(u"External data source")
-        verbose_name_plural = _(u"External data sources")
-        ordering = ['title', 'url']
 
 
 class InformationDeskType(PictogramMixin):
@@ -295,7 +261,7 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
                                    help_text=_(u"Complete description"))
     themes = models.ManyToManyField(Theme, related_name="touristiccontents",
-                                    db_table="t_r_contenu_touristique_theme", blank=True, null=True, verbose_name=_(u"Themes"),
+                                    db_table="t_r_contenu_touristique_theme", blank=True, verbose_name=_(u"Themes"),
                                     help_text=_(u"Main theme(s)"))
     geom = models.GeometryField(verbose_name=_(u"Location"), srid=settings.SRID)
     category = models.ForeignKey(TouristicContentCategory, related_name='contents',
@@ -356,11 +322,11 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
         return self.category.type2_label
 
     @property
-    def types1_display(self):
+    def type1_display(self):
         return ', '.join([unicode(n) for n in self.type1.all()])
 
     @property
-    def types2_display(self):
+    def type2_display(self):
         return ', '.join([unicode(n) for n in self.type2.all()])
 
     @property
@@ -390,6 +356,10 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     @property
     def source_display(self):
         return ','.join([unicode(source) for source in self.source.all()])
+
+    @property
+    def themes_display(self):
+        return ','.join([unicode(source) for source in self.themes.all()])
 
 
 Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))
@@ -421,7 +391,7 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
     description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
                                    help_text=_(u"Complete description"))
     themes = models.ManyToManyField(Theme, related_name="touristic_events",
-                                    db_table="t_r_evenement_touristique_theme", blank=True, null=True, verbose_name=_(u"Themes"),
+                                    db_table="t_r_evenement_touristique_theme", blank=True, verbose_name=_(u"Themes"),
                                     help_text=_(u"Main theme(s)"))
     geom = models.PointField(verbose_name=_(u"Location"), srid=settings.SRID)
     begin_date = models.DateField(blank=True, null=True, verbose_name=_(u"Begin date"), db_column='date_debut')
@@ -517,6 +487,10 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
     @property
     def source_display(self):
         return ', '.join([unicode(source) for source in self.source.all()])
+
+    @property
+    def themes_display(self):
+        return ','.join([unicode(source) for source in self.themes.all()])
 
 
 TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))

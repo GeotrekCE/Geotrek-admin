@@ -1,6 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 
 import django_filters
+import django_filters.rest_framework
 from django.db.models import Q
 from geotrek.common.filters import StructureRelatedFilterSet
 from django.utils.datetime_safe import datetime
@@ -62,14 +63,14 @@ class TouristicEventFilterSet(StructureRelatedFilterSet):
         ]
 
 
-class TouristicEventApiFilterSet(django_filters.FilterSet):
-    ends_after = django_filters.MethodFilter(action='events_end_after')
+class TouristicEventApiFilterSet(django_filters.rest_framework.FilterSet):
+    ends_after = django_filters.DateFilter(method='events_end_after')
 
     class Meta:
         model = TouristicEvent
-        fields = ['end_date', ]
+        fields = ('ends_after', )
 
-    def events_end_after(self, queryset, value):
+    def events_end_after(self, queryset, name, value):
         return queryset.filter(
             Q(end_date__isnull=True) |
             Q(end_date__gte=value)

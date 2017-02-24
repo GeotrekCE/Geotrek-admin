@@ -16,6 +16,9 @@ from .models import Intervention, Project
 
 class ManDayForm(forms.ModelForm):
 
+    class Meta:
+        fields = ('id', 'nb_days', 'job')
+
     def __init__(self, *args, **kwargs):
         super(ManDayForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -31,6 +34,9 @@ ManDayFormSet = inlineformset_factory(Intervention, Intervention.jobs.through, f
 
 
 class FundingForm(forms.ModelForm):
+
+    class Meta:
+        fields = ('id', 'amount', 'organism')
 
     def __init__(self, *args, **kwargs):
         super(FundingForm, self).__init__(*args, **kwargs)
