@@ -1,4 +1,5 @@
 from django.db.models.aggregates import Count
+from rest_framework.decorators import detail_route
 
 from geotrek.tourism import models as tourism_models
 from geotrek.trekking import models as trekking_models
@@ -14,7 +15,9 @@ class TouristicContentViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewS
     """
     A simple ViewSet for viewing accounts.
     """
-    queryset = tourism_models.TouristicContent.objects.filter(deleted=False).select_related('category').transform(settings.API_SRID, field_name='geom')
+    queryset = tourism_models.TouristicContent.objects.filter(deleted=False)\
+                                              .select_related('category')\
+                                              .transform(settings.API_SRID, field_name='geom')
     queryset_detail = queryset.prefetch_related('groups__permissions')
     serializer_class = api_serializers.TouristicContentSerializer
     serializer_detail_class = api_serializers.TouristicContentDetailSerializer
@@ -34,15 +37,9 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     distance_filter_field = 'geom'
 
 
-class RoamingViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
-    queryset = trekking_models.Trek.objects.filter(deleted=False)\
-                                           .select_related('topo_object', 'difficulty')
-    queryset_detail = queryset.prefetch_related('themes', 'networks').transform(settings.API_SRID, field_name='geom')
+class RoamingViewSet(TrekViewSet):
     serializer_class = api_serializers.RoamingListSerializer
     serializer_detail_class = api_serializers.RoamingDetailSerializer
-    filter_backends = (DjangoFilterBackend, InBBOXFilter, DistanceToPointFilter)
-    filter_fields = ('difficulty', 'published')
-    distance_filter_field = 'geom'
 
     def get_queryset(self, *args, **kwargs):
         qs = super(RoamingViewSet, self).get_queryset(*args, **kwargs)

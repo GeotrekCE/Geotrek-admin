@@ -144,9 +144,32 @@ class POIListSerializer(TrekListSerializer):
 
 
 class POIDetailSerializer(geo_serializers.GeoFeatureModelSerializer):
+    name = serializers.SerializerMethodField(read_only=True)
+    description = serializers.SerializerMethodField(read_only=True)
+    pictures = serializers.SerializerMethodField(read_only=True)
+
+    def get_name(self, obj):
+        names = {}
+
+        for language in settings.MODELTRANSLATION_LANGUAGES:
+            names.update({language: getattr(obj, 'name_{}'.format(language))})
+
+        return names
+
+    def get_description(self, obj):
+        descriptions = {}
+
+        for language in settings.MODELTRANSLATION_LANGUAGES:
+            descriptions.update({language: getattr(obj, 'description_{}'.format(language))})
+
+        return descriptions
+
+    def get_pictures(self, obj):
+        return obj.serializable_pictures
+
     class Meta:
         model = trekking_models.POI
         geo_field = 'geom'
         fields = (
-            'id', 'description', 'type', 'eid'
+            'id', 'name', 'description', 'type', 'eid', 'pictures'
         )
