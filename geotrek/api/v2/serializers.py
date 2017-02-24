@@ -143,9 +143,26 @@ class POIListSerializer(TrekListSerializer):
         model = trekking_models.POI
 
 
+class POITypeSerializer(serializers.ModelSerializer):
+    label = serializers.SerializerMethodField(read_only=True)
+
+    def get_label(self, obj):
+        labels = {}
+
+        for language in settings.MODELTRANSLATION_LANGUAGES:
+            labels.update({language: getattr(obj, 'label_{}'.format(language))})
+
+        return labels
+
+    class Meta:
+        model = trekking_models.POIType
+        fields = ('id', 'label', 'pictogram')
+
+
 class POIDetailSerializer(geo_serializers.GeoFeatureModelSerializer):
     name = serializers.SerializerMethodField(read_only=True)
     description = serializers.SerializerMethodField(read_only=True)
+    type = POITypeSerializer(read_only=True)
     pictures = serializers.SerializerMethodField(read_only=True)
 
     def get_name(self, obj):

@@ -1,9 +1,10 @@
 from django.db.models.aggregates import Count
 from rest_framework.decorators import detail_route
+from rest_framework.generics import get_object_or_404
 
 from geotrek.tourism import models as tourism_models
 from geotrek.trekking import models as trekking_models
-from rest_framework import viewsets
+from rest_framework import viewsets, response
 from geotrek.api.v2 import serializers as api_serializers
 from rest_framework_extensions.mixins import DetailSerializerMixin
 from django.conf import settings
@@ -35,6 +36,14 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend, InBBOXFilter, DistanceToPointFilter)
     filter_fields = ('difficulty', 'published')
     distance_filter_field = 'geom'
+
+    @detail_route(methods=['get'])
+    def touristiccontent(self, request, *args, **kwargs):
+        instance = get_object_or_404(self.get_queryset(), pk=kwargs.get('pk'))
+        qs = instance.touristic_contents
+        qs = qs.prefetch_related('themes',)
+        data = api_serializers.TouristicContentDetailSerializer(instance.touristic_contents, many=True).data
+        return response.Response(data)
 
 
 class RoamingViewSet(TrekViewSet):
