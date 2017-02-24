@@ -40,3 +40,4 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 MIDDLEWARE_CLASSES = ('debug_toolbar.middleware.DebugToolbarMiddleware',) + MIDDLEWARE_CLASSES
+ALLOWED_HOSTS = ['geotrek.dev',]

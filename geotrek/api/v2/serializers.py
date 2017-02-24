@@ -50,6 +50,21 @@ class TrekListSerializer(serializers.ModelSerializer):
         )
 
 
+class RoamingListSerializer(serializers.ModelSerializer):
+    url = HyperlinkedIdentityField(view_name='apiv2:roaming-detail')
+    last_modified = serializers.SerializerMethodField(read_only=True)
+
+    def get_last_modified(self, obj):
+        #return obj.last_author.logentry_set.last().action_time
+        return obj.topo_object.date_update
+
+    class Meta:
+        model = trekking_models.Trek
+        fields = (
+            'id', 'url', 'last_modified'
+        )
+
+
 class TrekDetailSerializer(geo_serializers.GeoFeatureModelSerializer):
     length = serializers.SerializerMethodField(read_only=True)
     name = serializers.SerializerMethodField(read_only=True)
@@ -111,7 +126,7 @@ class TrekDetailSerializer(geo_serializers.GeoFeatureModelSerializer):
         )
 
 
-class ItineranceDetailSerializer(TrekDetailSerializer):
+class RoamingDetailSerializer(TrekDetailSerializer):
     children = serializers.SerializerMethodField(read_only=True)
 
     def get_children(self, obj):
@@ -122,7 +137,16 @@ class ItineranceDetailSerializer(TrekDetailSerializer):
 
 
 class POIListSerializer(TrekListSerializer):
-    url = HyperlinkedIdentityField(view_name='apiv2:trek-detail')
+    url = HyperlinkedIdentityField(view_name='apiv2:poi-detail')
 
     class Meta(TrekListSerializer.Meta):
-        model = trekking_models.Trek
+        model = trekking_models.POI
+
+
+class POIDetailSerializer(geo_serializers.GeoFeatureModelSerializer):
+    class Meta:
+        model = trekking_models.POI
+        geo_field = 'geom'
+        fields = (
+            'id', 'description', 'type', 'eid'
+        )
