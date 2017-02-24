@@ -252,21 +252,23 @@ function screamshotter_system_dependencies {
         mkdir -p $libpath
         mkdir -p $binpath
 
-        wget --quiet https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-$arch.tar.bz2 -O phantomjs.tar.bz2
+        wget --quiet https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-$arch.tar.bz2 -O phantomjs.tar.bz2
         if [ ! $? -eq 0 ]; then exit_error 8 "Failed to download phantomjs"; fi
+        echo_step "PhantomJS downloaded..."
         rm -rf $libpath/*phantomjs*/
         tar -jxvf phantomjs.tar.bz2 -C $libpath/ > /dev/null
         rm phantomjs.tar.bz2
         ln -sf $libpath/*phantomjs*/bin/phantomjs $binpath/phantomjs
-        echo_progress
+        echo_step "PhantomJS installed..."
 
         wget --quiet https://github.com/n1k0/casperjs/archive/1.1-beta3.zip -O casperjs.zip
         if [ ! $? -eq 0 ]; then exit_error 9 "Failed to download casperjs"; fi
+        echo_step "CasperJS downloaded..."
         rm -rf $libpath/*casperjs*/
         unzip -o casperjs.zip -d $libpath/ > /dev/null
         rm casperjs.zip
         ln -sf $libpath/*casperjs*/bin/casperjs $binpath/casperjs
-        echo_progress
+        echo_step "CasperJS installed..."
 
         if ! $dev ; then
             # Install system-wide binaries
@@ -274,6 +276,8 @@ function screamshotter_system_dependencies {
             sudo ln -sf $binpath/casperjs /usr/local/bin/casperjs
             sudo chmod +x /usr/local/bin/phantomjs
             sudo chmod +x /usr/local/bin/casperjs
+            capserjs --version
+            phantomjs --version
         fi
     fi
 }
