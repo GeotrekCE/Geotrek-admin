@@ -18,11 +18,27 @@ class TouristicContentViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewS
     serializer_detail_class = api_serializers.TouristicContentDetailSerializer
 
 
-class ItineranceViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
+class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     queryset = trekking_models.Trek.objects.filter(deleted=False)\
-                                           .annotate(count_childs=Count('trek_children')) \
-                                           .filter(count_childs__gt=0) \
                                            .select_related('topo_object', 'difficulty')
     queryset_detail = queryset.prefetch_related('themes', 'networks').transform(settings.API_SRID, field_name='geom')
     serializer_class = api_serializers.TrekListSerializer
+    serializer_detail_class = api_serializers.TrekDetailSerializer
+
+
+class RoamingViewSet(TrekViewSet):
+    serializer_class = api_serializers.TrekListSerializer
     serializer_detail_class = api_serializers.ItineranceDetailSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super(RoamingViewSet, self).get_queryset(*args, **kwargs)
+        return qs.annotate(count_childs=Count('trek_children')) \
+                 .filter(count_childs__gt=0)
+
+
+class POIViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
+    queryset = trekking_models.POI.objects.filter(deleted=False)\
+                                          .select_related('topo_object',)
+    queryset_detail = queryset.transform(settings.API_SRID, field_name='geom')
+    serializer_class = api_serializers.POIListSerializer
+    serializer_detail_class = api_serializers.POIListSerializer

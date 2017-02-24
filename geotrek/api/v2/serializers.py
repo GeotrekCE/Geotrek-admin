@@ -119,3 +119,10 @@ class ItineranceDetailSerializer(TrekDetailSerializer):
 
     class Meta(TrekDetailSerializer.Meta):
         fields = TrekDetailSerializer.Meta.fields + ('children',)
+
+
+class POIListSerializer(TrekListSerializer):
+    url = HyperlinkedIdentityField(view_name='apiv2:trek-detail')
+
+    class Meta(TrekListSerializer.Meta):
+        model = trekking_models.Trek
