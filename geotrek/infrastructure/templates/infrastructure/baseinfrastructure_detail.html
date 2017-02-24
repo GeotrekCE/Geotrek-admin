@@ -21,6 +21,10 @@
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
+        <tr>
+            <th>{{ object|verbose:"implantation_year" }}</th>
+            <td>{{ object.implantation_year|default:"" }}</td>
+        </tr>
 
         {% include "altimetry/elevationinfo_fragment.html" %}
 

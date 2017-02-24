@@ -92,6 +92,8 @@ class LandEdge(MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     land_type = models.ForeignKey(LandType, verbose_name=_(u"Land type"), db_column='type')
+    owner = models.TextField(verbose_name=_(u"Owner"), db_column='proprietaire', blank=True)
+    agreement = models.BooleanField(verbose_name=_(u"Agreement"), db_column='convention', default=False)
 
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()

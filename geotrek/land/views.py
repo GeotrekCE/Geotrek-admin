@@ -71,7 +71,7 @@ class LandEdgeJsonList(MapEntityJsonList, LandEdgeList):
 
 class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
     columns = [
-        'id', 'land_type',
+        'id', 'land_type', 'owner', 'agreement',
         'date_insert', 'date_update',
         'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
