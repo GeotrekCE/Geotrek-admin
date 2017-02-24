@@ -23,7 +23,8 @@ before_install:
   - sudo apt-get remove postgis*
   - sudo apt-get remove postgresql*
   - sudo apt-get remove phantomjs*
-  - sudo rm -rf /usr/local/bin/phantomjs
+  - sudo rm -rf /usr/local/bin/phantomjs*
+  - sudo rm -rf /usr/bin/phantomjs*
 
   # Download bundle of python eggs, and use it as download cache
   - mkdir -p $HOME/.buildout/downloads

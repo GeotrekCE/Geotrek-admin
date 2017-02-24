@@ -243,7 +243,7 @@ function convertit_system_dependencies {
 
 
 function screamshotter_system_dependencies {
-    if $dev || $tests || $standalone || !$interactive; then
+    if $dev || $tests || $standalone ; then
         # Note: because tests require casper and phantomjs
         echo_step "Capture server dependencies..."
         arch=`uname -m`
@@ -260,7 +260,7 @@ function screamshotter_system_dependencies {
         ln -sf $libpath/*phantomjs*/bin/phantomjs $binpath/phantomjs
         echo_progress
 
-        wget --quiet https://github.com/n1k0/casperjs/archive/1.1-beta3.zip -O casperjs.zip
+        wget --quiet https://codeload.github.com/casperjs/casperjs/zip/1.1.4 -O casperjs.zip
         if [ ! $? -eq 0 ]; then exit_error 9 "Failed to download casperjs"; fi
         rm -rf $libpath/*casperjs*/
         unzip -o casperjs.zip -d $libpath/ > /dev/null
