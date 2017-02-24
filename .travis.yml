@@ -20,9 +20,10 @@ sudo: required
 before_install:
   # Fix postgresql / postgis for travis trusty
   - sudo apt-get update
-  - sudo apt-get autoremove postgis*
-  - sudo apt-get autoremove postgresql*
-  - sudo apt-get autoremove phantomjs*
+  - sudo apt-get remove postgis*
+  - sudo apt-get remove postgresql*
+  - sudo apt-get remove phantomjs*
+  - sudo rm -rf /usr/local/bin/phantomjs
 
   # Download bundle of python eggs, and use it as download cache
   - mkdir -p $HOME/.buildout/downloads

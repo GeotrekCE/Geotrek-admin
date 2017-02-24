@@ -75,10 +75,10 @@ test:
 	bin/django test --noinput geotrek
 
 test_nav:
-	/usr/local/bin/casperjs test --baseurl=$(baseurl) geotrek/jstests/nav-*.js
+	casperjs test --baseurl=$(baseurl) geotrek/jstests/nav-*.js
 
 test_export:
-	/usr/local/bin/casperjs test --baseurl=$(baseurl) geotrek/jstests/nav-auth.js geotrek/jstests/export-*.js
+	casperjs test --baseurl=$(baseurl) geotrek/jstests/nav-auth.js geotrek/jstests/export-*.js
 
 
 node_modules:
