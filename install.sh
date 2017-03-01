@@ -276,8 +276,7 @@ function screamshotter_system_dependencies {
             sudo ln -sf $binpath/casperjs /usr/local/bin/casperjs
             sudo chmod +x /usr/local/bin/phantomjs
             sudo chmod +x /usr/local/bin/casperjs
-            capserjs --version
-            phantomjs --version
+            echo_step "Binaries installed in path..."
         fi
     fi
 }
