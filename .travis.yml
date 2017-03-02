@@ -23,8 +23,7 @@ before_install:
   - sudo apt-get install -y -qq unoconv inkscape
   - sudo apt-get remove postgis*
   - sudo apt-get remove postgresql*
-  - sudo rm -rf /usr/local/bin/phantomjs*
-  - sudo rm -rf /usr/bin/phantomjs*
+  - sudo rm -rf /usr/local/phantomjs*
 
   # Download bundle of python eggs, and use it as download cache
   - mkdir -p $HOME/.buildout/downloads
@@ -68,7 +67,7 @@ after_failure:
   - which casperjs
   - which phantomjs
   - casperjs --version
-  - phantomjs --version
+  - find / |grep phantomjs
 
 notifications:
   irc: "irc.freenode.org#geotrek"
