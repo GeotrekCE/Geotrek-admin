@@ -47,7 +47,7 @@ class ZipTilesBuilder(object):
         self.zipfile = ZipFile(filepath, 'w')
         self.tm = TilesManager(**builder_args)
 
-        if len(settings.MOBILE_TILES_URL) > 1:
+        if not isinstance(settings.MOBILE_TILES_URL, str) and len(settings.MOBILE_TILES_URL) > 1:
             for url in settings.MOBILE_TILES_URL[1:]:
                 args = builder_args
                 args['tiles_url'] = url
@@ -681,8 +681,12 @@ class Command(BaseCommand):
         else:
             self.portal = []
 
+        if isinstance(settings.MOBILE_TILES_URL, str):
+            tiles_url = settings.MOBILE_TILES_URL
+        else:
+            tiles_url = settings.MOBILE_TILES_URL[0]
         self.builder_args = {
-            'tiles_url': settings.MOBILE_TILES_URL[0],
+            'tiles_url': tiles_url,
             'tiles_headers': {"Referer": self.referer},
             'ignore_errors': True,
             'tiles_dir': os.path.join(settings.DEPLOY_ROOT, 'var', 'tiles'),
