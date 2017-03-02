@@ -72,7 +72,7 @@ class ZipTilesBuilder(object):
 
     def run(self):
         for tile in self.tiles:
-            name = '{0}/{1}/{2}.png'.format(*tile)
+            name = '{0}/{1}/{2}{ext}'.format(*tile, ext=self.tm._tile_extension)
             try:
                 data = self.tm.tile(tile)
             except DownloadError:
