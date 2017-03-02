@@ -9,6 +9,10 @@ CHANGELOG
 
 *
 
+**Minor changes**
+
+* MOBILE_TILES_URL settings is now a list which be used to merge different layers in zip mobil tiles
+
 
 2.12.0 (2017-02-16)
 -------------------

@@ -46,6 +46,14 @@ class ZipTilesBuilder(object):
         self.close_zip = close_zip
         self.zipfile = ZipFile(filepath, 'w')
         self.tm = TilesManager(**builder_args)
+
+        if len(settings.MOBILE_TILES_URL) > 1:
+            for url in settings.MOBILE_TILES_URL[1:]:
+                args = builder_args
+                args['tiles_url'] = url
+                args['tile_format'] = self.format_from_url(args['tiles_url'])
+                self.tm.add_layer(TilesManager(**args), opacity=1)
+
         self.tiles = set()
 
     def format_from_url(self, url):
@@ -674,7 +682,7 @@ class Command(BaseCommand):
             self.portal = []
 
         self.builder_args = {
-            'tiles_url': settings.MOBILE_TILES_URL,
+            'tiles_url': settings.MOBILE_TILES_URL[0],
             'tiles_headers': {"Referer": self.referer},
             'ignore_errors': True,
             'tiles_dir': os.path.join(settings.DEPLOY_ROOT, 'var', 'tiles'),
