@@ -252,7 +252,7 @@ function screamshotter_system_dependencies {
         mkdir -p $libpath
         mkdir -p $binpath
 
-        wget --quiet https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-$arch.tar.bz2 -O phantomjs.tar.bz2
+        wget --quiet https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-$arch.tar.bz2 -O phantomjs.tar.bz2
         if [ ! $? -eq 0 ]; then exit_error 8 "Failed to download phantomjs"; fi
         echo_step "PhantomJS downloaded..."
         rm -rf $libpath/*phantomjs*/
@@ -261,7 +261,7 @@ function screamshotter_system_dependencies {
         ln -sf $libpath/*phantomjs*/bin/phantomjs $binpath/phantomjs
         echo_step "PhantomJS installed..."
 
-        wget --quiet https://github.com/n1k0/casperjs/archive/1.1-beta3.zip -O casperjs.zip
+        wget --quiet https://codeload.github.com/casperjs/casperjs/zip/1.1.4 -O casperjs.zip
         if [ ! $? -eq 0 ]; then exit_error 9 "Failed to download casperjs"; fi
         echo_step "CasperJS downloaded..."
         rm -rf $libpath/*casperjs*/
