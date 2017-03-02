@@ -19,6 +19,7 @@ sudo: required
 
 before_install:
   # Fix postgresql / postgis for travis trusty
+  - echo $PATH
   - sudo apt-get update
   - sudo apt-get install -y -qq unoconv inkscape
   - sudo apt-get remove postgis*
@@ -66,10 +67,6 @@ after_failure:
   - cat var/log/nginx-access.log
   - cat var/log/nginx-error.log
   - cat var/log/supervisord.log
-  - which casperjs
-  - which phantomjs
-  - casperjs --version
-  - find / |grep phantomjs
 
 notifications:
   irc: "irc.freenode.org#geotrek"
