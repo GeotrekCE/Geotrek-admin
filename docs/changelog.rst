@@ -2,17 +2,13 @@
 CHANGELOG
 =========
 
-2.12.1.dev0
+2.13.0 (2017-03-02)
 -------------------
-
-**Bug fixes**
-
-*
 
 **Minor changes**
 
-* MOBILE_TILES_URL settings is now a list which be used to merge
-  different layers in tiles zip file for mobile application
+* MOBILE_TILES_URL settings is now a list which can be used to merge
+  different layers in mobile application
 
 
 2.12.0 (2017-02-16)
