@@ -236,7 +236,7 @@ function geotrek_system_dependencies {
 function convertit_system_dependencies {
     if $standalone ; then
         echo_step "Conversion server dependencies..."
-        sudo apt-get install -y -qq unoconv inkscape
+        sudo apt-get install -y -qq libreoffice unoconv inkscape
         echo_progress
     fi
 }
@@ -251,32 +251,27 @@ function screamshotter_system_dependencies {
         binpath=`pwd`/bin
         mkdir -p $libpath
         mkdir -p $binpath
-        echo_step "Downloading PhantomJS..."
+
         wget --quiet https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-$arch.tar.bz2 -O phantomjs.tar.bz2
         if [ ! $? -eq 0 ]; then exit_error 8 "Failed to download phantomjs"; fi
-        echo_step "PhantomJS downloaded..."
         rm -rf $libpath/*phantomjs*/
         tar -jxvf phantomjs.tar.bz2 -C $libpath/ > /dev/null
         rm phantomjs.tar.bz2
         ln -sf $libpath/*phantomjs*/bin/phantomjs $binpath/phantomjs
-        echo_step "PhantomJS installed..."
-        echo_step "Downloading CasperJS..."
+        echo_progress
+
         wget --quiet https://github.com/n1k0/casperjs/archive/1.1-beta3.zip -O casperjs.zip
         if [ ! $? -eq 0 ]; then exit_error 9 "Failed to download casperjs"; fi
-        echo_step "CasperJS downloaded..."
         rm -rf $libpath/*casperjs*/
         unzip -o casperjs.zip -d $libpath/ > /dev/null
         rm casperjs.zip
         ln -sf $libpath/*casperjs*/bin/casperjs $binpath/casperjs
-        echo_step "CasperJS installed..."
+        echo_progress
 
         if ! $dev ; then
             # Install system-wide binaries
             sudo ln -sf $binpath/phantomjs /usr/local/bin/phantomjs
             sudo ln -sf $binpath/casperjs /usr/local/bin/casperjs
-            sudo chmod +x /usr/local/bin/phantomjs
-            sudo chmod +x /usr/local/bin/casperjs
-            echo_step "Binaries installed in path..."
         fi
     fi
 }
