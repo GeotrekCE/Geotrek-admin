@@ -252,7 +252,7 @@ function screamshotter_system_dependencies {
         mkdir -p $libpath
         mkdir -p $binpath
 
-        wget --quiet https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-$arch.tar.bz2 -O phantomjs.tar.bz2
+        wget --quiet https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-$arch.tar.bz2 -O phantomjs.tar.bz2
         if [ ! $? -eq 0 ]; then exit_error 8 "Failed to download phantomjs"; fi
         echo_step "PhantomJS downloaded..."
         rm -rf $libpath/*phantomjs*/
