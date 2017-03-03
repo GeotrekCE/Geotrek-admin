@@ -70,5 +70,5 @@ after_failure:
   - cat var/log/nginx-error.log
   - cat var/log/supervisord.log
 
-notifications:
-  irc: "irc.freenode.org#geotrek"
+#notifications:
+  #irc: "irc.freenode.org#geotrek"
