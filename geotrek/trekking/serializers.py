@@ -349,7 +349,7 @@ def timestamp(dt):
     return str(int((dt - epoch).total_seconds()))
 
 
-class CirkwiPOISerializer:
+class CirkwiPOISerializer(object):
     def __init__(self, request, stream):
         self.xml = SimplerXMLGenerator(stream, 'utf8')
         self.request = request
