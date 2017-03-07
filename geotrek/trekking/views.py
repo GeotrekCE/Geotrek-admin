@@ -510,7 +510,7 @@ class CirkwiTrekView(ListView):
 
     def get(self, request):
         response = HttpResponse(content_type='application/xml')
-        serializer = CirkwiTrekSerializer(request, response)
+        serializer = CirkwiTrekSerializer(request, response, request.GET)
         treks = self.get_queryset()
         serializer.serialize(treks)
         return response
