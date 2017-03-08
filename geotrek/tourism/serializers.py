@@ -20,9 +20,6 @@ class InformationDeskTypeSerializer(PictogramSerializerMixin, TranslatedModelSer
 
 class InformationDeskSerializer(TranslatedModelSerializer):
     type = InformationDeskTypeSerializer()
-    photo_url = rest_serializers.Field(source='photo_url')
-    latitude = rest_serializers.Field(source='latitude')
-    longitude = rest_serializers.Field(source='longitude')
 
     class Meta:
         model = tourism_models.InformationDesk
@@ -33,7 +30,7 @@ class InformationDeskSerializer(TranslatedModelSerializer):
 
 
 class CloseTouristicContentSerializer(TranslatedModelSerializer):
-    category_id = rest_serializers.Field(source='prefixed_category_id')
+    category_id = rest_serializers.ReadOnlyField(source='prefixed_category_id')
 
     class Meta:
         model = tourism_models.TouristicContent
@@ -41,7 +38,7 @@ class CloseTouristicContentSerializer(TranslatedModelSerializer):
 
 
 class CloseTouristicEventSerializer(TranslatedModelSerializer):
-    category_id = rest_serializers.Field(source='prefixed_category_id')
+    category_id = rest_serializers.ReadOnlyField(source='prefixed_category_id')
 
     class Meta:
         model = tourism_models.TouristicEvent
@@ -49,7 +46,7 @@ class CloseTouristicEventSerializer(TranslatedModelSerializer):
 
 
 class TouristicContentTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    name = rest_serializers.Field(source='label')
+    name = rest_serializers.ReadOnlyField(source='label')
 
     class Meta:
         model = tourism_models.TouristicContentType
@@ -57,8 +54,8 @@ class TouristicContentTypeSerializer(PictogramSerializerMixin, TranslatedModelSe
 
 
 class TouristicContentCategorySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    id = rest_serializers.Field(source='prefixed_id')
-    slug = rest_serializers.SerializerMethodField('get_slug')
+    id = rest_serializers.ReadOnlyField(source='prefixed_id')
+    slug = rest_serializers.SerializerMethodField()
 
     class Meta:
         model = tourism_models.TouristicContentCategory
@@ -74,9 +71,9 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
     category = TouristicContentCategorySerializer()
     type1 = TouristicContentTypeSerializer(many=True)
     type2 = TouristicContentTypeSerializer(many=True)
-    source = RecordSourceSerializer()
-    portal = TargetPortalSerializer()
-    reservation_system = rest_serializers.Field(source='reservation_system.name')
+    source = RecordSourceSerializer(many=True)
+    portal = TargetPortalSerializer(many=True)
+    reservation_system = rest_serializers.ReadOnlyField(source='reservation_system.name')
 
     # Nearby
     touristic_contents = CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
@@ -98,7 +95,7 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
 
 
 class TouristicEventTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    name = rest_serializers.Field(source='type')
+    name = rest_serializers.ReadOnlyField(source='type')
 
     class Meta:
         model = tourism_models.TouristicEventType
@@ -109,8 +106,8 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
                                ZoningSerializerMixin, TranslatedModelSerializer):
     themes = ThemeSerializer(many=True)
     type = TouristicEventTypeSerializer()
-    source = RecordSourceSerializer()
-    portal = TargetPortalSerializer()
+    source = RecordSourceSerializer(many=True)
+    portal = TargetPortalSerializer(many=True)
 
     # Nearby
     touristic_contents = CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
@@ -120,7 +117,7 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
 
     # For consistency with touristic contents
     type1 = TouristicEventTypeSerializer(many=True)
-    category = rest_serializers.SerializerMethodField('get_category')
+    category = rest_serializers.SerializerMethodField()
 
     class Meta:
         model = tourism_models.TouristicEvent

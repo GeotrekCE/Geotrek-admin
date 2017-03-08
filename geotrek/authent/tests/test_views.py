@@ -6,6 +6,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.utils.translation import LANGUAGE_SESSION_KEY
 
 from mapentity.factories import SuperUserFactory
 
@@ -28,7 +29,6 @@ class UserProfileTest(TestCase):
 
     def test_profile(self):
         self.assertTrue(isinstance(self.user.profile, UserProfile))
-        self.assertEqual(self.user.profile, self.user.get_profile())
 
         self.assertEqual(self.user.profile.structure.name, settings.DEFAULT_STRUCTURE_NAME)
         self.assertEqual(self.user.profile.language, settings.LANGUAGE_CODE)
@@ -52,7 +52,7 @@ class UserProfileTest(TestCase):
 
         self.client.login(username=self.user.username, password=u"Bar")
         response = self.client.get(reverse('core:path_list'))
-        self.assertEqual(self.client.session['django_language'], u"fr")
+        self.assertEqual(self.client.session[LANGUAGE_SESSION_KEY], u"fr")
         self.assertContains(response, u"Déconnexion")
 
     def test_link_to_adminsite_visible_to_staff(self):

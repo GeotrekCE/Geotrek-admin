@@ -3,11 +3,11 @@ CHANGELOG
 =========
 
 2.13.1.dev0
--------------------
+-----------
 
-**Bug fixes**
+**New features**
 
-*
+* Upgrade to Django 1.8 (this is a big step, migrations are reset, please backup before upgrade)
 
 **Minor changes**
 
@@ -50,6 +50,7 @@ CHANGELOG
 
 **Bug fixes**
 
+* Remove deprecated datasource (replaced by import parsers)
 * Stop install.sh if make update or wget fails
 * Create database with right owner if user exists but database does not
 * Make sure supervisor service is started after install

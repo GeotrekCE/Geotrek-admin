@@ -33,7 +33,7 @@ secret_key = change_this_key_with_a_value_of_your_choice
 # EPSG code of the coordinate system to use (projection unit must be meter)
 srid = 2154
 # (minx, miny, maxx, maxy) expressed in the coordinate system above
-spatial_extent = 924861,6375196,985649,6448688
+spatial_extent = 105000, 6150000, 1100000, 7150000
 
 #
 #  Email settings

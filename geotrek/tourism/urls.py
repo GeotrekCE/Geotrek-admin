@@ -12,13 +12,11 @@ from . import serializers as tourism_serializers
 
 urlpatterns = patterns(
     '',
-    url(r'^api/datasource/datasources.json$', tourism_views.DataSourceList.as_view(), name="datasource_list_json"),
-    url(r'^api/datasource/datasource-(?P<pk>\d+).geojson$', tourism_views.DataSourceGeoJSON.as_view(), name="datasource_geojson"),
-    url(r'^api/(?P<lang>\w\w)/information_desks.geojson$', tourism_views.InformationDeskViewSet.as_view({'get': 'list'}), name="information_desk_geojson"),
-    url(r'^api/(?P<lang>\w\w)/information_desks-(?P<type>\d+).geojson$', tourism_views.InformationDeskViewSet.as_view({'get': 'list'})),
-    url(r'^api/treks/(?P<pk>\d+)/information_desks.geojson$', tourism_views.TrekInformationDeskViewSet.as_view({'get': 'list'}), name="trek_information_desk_geojson"),
-    url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/touristicevents\.geojson$', tourism_views.TrekTouristicEventViewSet.as_view({'get': 'list'}), name="trek_events_geojson"),
-    url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/touristiccontents\.geojson$', tourism_views.TrekTouristicContentViewSet.as_view({'get': 'list'}), name="trek_contents_geojson"),
+    url(r'^api/(?P<lang>\w\w)/information_desks.(?P<format>geojson)$', tourism_views.InformationDeskViewSet.as_view({'get': 'list'}), name="information_desk_geojson"),
+    url(r'^api/(?P<lang>\w\w)/information_desks-(?P<type>\d+).(?P<format>geojson)$', tourism_views.InformationDeskViewSet.as_view({'get': 'list'})),
+    url(r'^api/treks/(?P<pk>\d+)/information_desks.(?P<format>geojson)$', tourism_views.TrekInformationDeskViewSet.as_view({'get': 'list'}), name="trek_information_desk_geojson"),
+    url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/touristicevents\.(?P<format>geojson)$', tourism_views.TrekTouristicEventViewSet.as_view({'get': 'list'}), name="trek_events_geojson"),
+    url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/touristiccontents\.(?P<format>geojson)$', tourism_views.TrekTouristicContentViewSet.as_view({'get': 'list'}), name="trek_contents_geojson"),
     url(r'^api/(?P<lang>\w\w)/touristiccategories\.json$', tourism_views.TouristicCategoryView.as_view(), name="touristic_categories_json"),
 )
 

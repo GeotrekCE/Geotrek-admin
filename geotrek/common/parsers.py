@@ -24,10 +24,10 @@ from django.utils.encoding import force_text
 
 from modeltranslation.fields import TranslationField
 from modeltranslation.translator import translator, NotRegistered
-from paperclip.models import Attachment, attachment_upload
+from paperclip.models import attachment_upload
 
 from geotrek.authent.models import default_structure
-from geotrek.common.models import FileType
+from geotrek.common.models import FileType, Attachment
 
 
 class ImportError(Exception):

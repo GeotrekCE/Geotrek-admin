@@ -274,7 +274,7 @@ def merge_path(request):
         except Exception as exc:
             response = {'error': exc, }
 
-    return HttpResponse(json.dumps(response), mimetype="application/json")
+    return HttpResponse(json.dumps(response), content_type="application/json")
 
 
 class ParametersView(View):
@@ -282,4 +282,4 @@ class ParametersView(View):
         response = {
             'geotrek_admin_version': settings.VERSION,
         }
-        return HttpResponse(json.dumps(response), mimetype="application/json")
+        return HttpResponse(json.dumps(response), content_type="application/json")

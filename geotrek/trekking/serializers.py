@@ -40,7 +40,7 @@ class TrekGPXSerializer(GPXSerializer):
 
 
 class DifficultyLevelSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    label = rest_serializers.Field(source='difficulty')
+    label = rest_serializers.ReadOnlyField(source='difficulty')
 
     class Meta:
         model = trekking_models.DifficultyLevel
@@ -48,7 +48,7 @@ class DifficultyLevelSerializer(PictogramSerializerMixin, TranslatedModelSeriali
 
 
 class RouteSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    label = rest_serializers.Field(source='route')
+    label = rest_serializers.ReadOnlyField(source='route')
 
     class Meta:
         model = trekking_models.Route
@@ -56,7 +56,7 @@ class RouteSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
 
 
 class NetworkSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    name = rest_serializers.Field(source='network')
+    name = rest_serializers.ReadOnlyField(source='network')
 
     class Meta:
         model = trekking_models.Route
@@ -64,7 +64,7 @@ class NetworkSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
 
 
 class PracticeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    label = rest_serializers.Field(source='name')
+    label = rest_serializers.ReadOnlyField(source='name')
 
     class Meta:
         model = trekking_models.Practice
@@ -72,7 +72,7 @@ class PracticeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
 
 
 class AccessibilitySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    label = rest_serializers.Field(source='name')
+    label = rest_serializers.ReadOnlyField(source='name')
 
     class Meta:
         model = trekking_models.Accessibility
@@ -80,8 +80,6 @@ class AccessibilitySerializer(PictogramSerializerMixin, TranslatedModelSerialize
 
 
 class TypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    name = rest_serializers.Field(source='name')
-
     class Meta:
         model = trekking_models.Practice
         fields = ('id', 'pictogram', 'name')
@@ -102,7 +100,7 @@ class WebLinkSerializer(TranslatedModelSerializer):
 
 
 class CloseTrekSerializer(TranslatedModelSerializer):
-    category_id = rest_serializers.Field(source='prefixed_category_id')
+    category_id = rest_serializers.ReadOnlyField(source='prefixed_category_id')
 
     class Meta:
         model = trekking_models.Trek
@@ -110,9 +108,8 @@ class CloseTrekSerializer(TranslatedModelSerializer):
 
 
 class RelatedTrekSerializer(TranslatedModelSerializer):
-    pk = rest_serializers.Field(source='id')
-    slug = rest_serializers.Field(source='slug')
-    category_slug = rest_serializers.SerializerMethodField('get_category_slug')
+    pk = rest_serializers.ReadOnlyField(source='id')
+    category_slug = rest_serializers.SerializerMethodField()
 
     class Meta:
         model = trekking_models.Trek
@@ -127,7 +124,7 @@ class RelatedTrekSerializer(TranslatedModelSerializer):
 
 
 class TrekRelationshipSerializer(rest_serializers.ModelSerializer):
-    published = rest_serializers.Field(source='trek_b.published')
+    published = rest_serializers.ReadOnlyField(source='trek_b.published')
     trek = RelatedTrekSerializer(source='trek_b')
 
     class Meta:
@@ -151,27 +148,26 @@ class ChildSerializer(TranslatedModelSerializer):
 class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                      AltimetrySerializerMixin, ZoningSerializerMixin,
                      TranslatedModelSerializer):
-    duration_pretty = rest_serializers.Field(source='duration_pretty')
     difficulty = DifficultyLevelSerializer()
     route = RouteSerializer()
     networks = NetworkSerializer(many=True)
     themes = ThemeSerializer(many=True)
     practice = PracticeSerializer()
-    usages = PracticeSerializer(source='usages', many=True)  # Rando v1 compat
+    usages = PracticeSerializer(many=True)  # Rando v1 compat
     accessibilities = AccessibilitySerializer(many=True)
     web_links = WebLinkSerializer(many=True)
     relationships = TrekRelationshipSerializer(many=True, source='published_relationships')
     treks = CloseTrekSerializer(many=True, source='published_treks')
-    source = RecordSourceSerializer()
-    portal = TargetPortalSerializer()
-    children = rest_serializers.Field(source='children_id')
-    parents = rest_serializers.Field(source='parents_id')
-    previous = rest_serializers.Field(source='previous_id')
-    next = rest_serializers.Field(source='next_id')
+    source = RecordSourceSerializer(many=True)
+    portal = TargetPortalSerializer(many=True)
+    children = rest_serializers.ReadOnlyField(source='children_id')
+    parents = rest_serializers.ReadOnlyField(source='parents_id')
+    previous = rest_serializers.ReadOnlyField(source='previous_id')
+    next = rest_serializers.ReadOnlyField(source='next_id')
 
     # Idea: use rest-framework-gis
-    parking_location = rest_serializers.SerializerMethodField('get_parking_location')
-    points_reference = rest_serializers.SerializerMethodField('get_points_reference')
+    parking_location = rest_serializers.SerializerMethodField()
+    points_reference = rest_serializers.SerializerMethodField()
 
     gpx = rest_serializers.SerializerMethodField('get_gpx_url')
     kml = rest_serializers.SerializerMethodField('get_kml_url')
@@ -180,10 +176,10 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     # For consistency with touristic contents
     type1 = TypeSerializer(source='usages', many=True)
     type2 = TypeSerializer(source='accessibilities', many=True)
-    category = rest_serializers.SerializerMethodField('get_category')
+    category = rest_serializers.SerializerMethodField()
 
     # Method called to retrieve relevant pictures based on settings
-    pictures = rest_serializers.SerializerMethodField('get_pictures')
+    pictures = rest_serializers.SerializerMethodField()
 
     def __init__(self, instance=None, *args, **kwargs):
         # duplicate each trek for each one of its accessibilities
@@ -295,7 +291,6 @@ class POITypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
 
 
 class ClosePOISerializer(TranslatedModelSerializer):
-    slug = rest_serializers.Field(source='slug')
     type = POITypeSerializer()
 
     class Meta:

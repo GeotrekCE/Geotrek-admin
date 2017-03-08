@@ -4,17 +4,14 @@ from django.contrib import admin
 
 from leaflet.admin import LeafletGeoAdmin
 from tinymce.widgets import TinyMCE
-from modeltranslation.admin import TranslationAdmin, TranslationTabularInline
 
 from geotrek.tourism import models as tourism_models
 
-
-class DataSourceAdmin(TranslationAdmin):
-    list_display = ('title', 'pictogram_img')
-    search_fields = ('title',)
-
-
-admin.site.register(tourism_models.DataSource, DataSourceAdmin)
+if 'modeltranslation' in settings.INSTALLED_APPS:
+    from modeltranslation.admin import TranslationAdmin, TranslationTabularInline
+else:
+    TranslationAdmin = admin.ModelAdmin
+    TranslationTabularInline = admin.TabularInline
 
 
 class InformationDeskTypeAdmin(TranslationAdmin):

@@ -9,6 +9,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
 from django.contrib.auth.signals import user_logged_in
+from django.utils.translation import LANGUAGE_SESSION_KEY
 
 from geotrek.common.utils import reify
 
@@ -34,6 +35,10 @@ def default_structure():
     return Structure.objects.get_or_create(name=settings.DEFAULT_STRUCTURE_NAME)[0]
 
 
+def default_structure_pk():
+    return default_structure().pk
+
+
 class StructureRelatedQuerySet(models.query.QuerySet):
     def for_user(self, user):
         return StructureRelatedQuerySet.queryset_for_user(self, user)
@@ -57,7 +62,7 @@ class StructureRelated(models.Model):
     """
     A mixin used for any entities that belong to a structure
     """
-    structure = models.ForeignKey(Structure, default=default_structure,
+    structure = models.ForeignKey(Structure, default=default_structure_pk,
                                   verbose_name=_(u"Related structure"), db_column='structure')
 
     objects = models.Manager()
@@ -106,4 +111,4 @@ User.profile = reify(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 def lang(sender, **kwargs):
     """ Set user's language in session when he logs in. """
     lang_code = kwargs['user'].profile.language
-    kwargs['request'].session['django_language'] = lang_code
+    kwargs['request'].session[LANGUAGE_SESSION_KEY] = lang_code

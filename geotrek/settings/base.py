@@ -13,7 +13,6 @@ def gettext_noop(s):
 
 
 DEBUG = False
-TEMPLATE_DEBUG = DEBUG
 TEST = 'test' in sys.argv
 VERSION = __version__
 
@@ -32,6 +31,9 @@ DATABASES = {
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        'TEST': {
+            'SERIALIZE': False,
+        },
     }
 }
 
@@ -45,10 +47,10 @@ DATABASES = {
 DATABASE_SCHEMAS = {
     'default': 'geotrek',
 
+    'gis': 'public',
     'auth': 'django',
     'django': 'django',
     'easy_thumbnails': 'django',
-    'south': 'django',
     'feedback': 'gestion',
     'infrastructure': 'gestion',
     'maintenance': 'gestion',
@@ -66,7 +68,6 @@ DATABASES['default']['OPTIONS'] = {
 # Authentication
 #
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',)
-AUTH_PROFILE_MODULE = 'authent.UserProfile'
 
 # Settings required for geotrek.authent.backend.DatabaseBackend :
 AUTHENT_DATABASE = None
@@ -172,13 +173,36 @@ COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'public_key'
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-    'geotrek.templateloaders.Loader',
-    # 'django.template.loaders.eggs.Loader',
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'djappypod.backend.OdtTemplates',
+    },
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': (),
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.core.context_processors.debug',
+                'django.core.context_processors.i18n',
+                'django.core.context_processors.media',
+                'django.core.context_processors.static',
+                'django.core.context_processors.tz',
+                'django.core.context_processors.request',
+                'django.contrib.messages.context_processors.messages',
+                'geotrek.context_processors.forced_layers',
+                'mapentity.context_processors.settings',
+            ],
+            'loaders': [
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+                'geotrek.templateloaders.Loader',
+                # 'django.template.loaders.eggs.Loader',
+            ],
+            'debug': True,
+        },
+    },
+]
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
@@ -200,32 +224,23 @@ ROOT_URLCONF = 'geotrek.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'geotrek.wsgi.application'
 
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-)
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.debug',
-    'django.core.context_processors.i18n',
-    'django.core.context_processors.media',
-    'django.core.context_processors.static',
-    'django.core.context_processors.tz',
-    'django.core.context_processors.request',
-    'django.contrib.messages.context_processors.messages',
-    'geotrek.context_processors.forced_layers',
-
-    'mapentity.context_processors.settings',
-)
+# Do not migrate translated fields, they differ per instance, and
+# can be added/removed using `update_translation_fields`
+# modeltranslation should be kept before django.contrib.admin
+if 'makemigrations' in sys.argv:
+    PROJECT_APPS = ()
+else:
+    PROJECT_APPS = (
+        'modeltranslation',
+    )
 
 #
 # /!\ Application names (last levels) must be unique
 # (c.f. auth/authent)
 # https://code.djangoproject.com/ticket/12288
 #
-PROJECT_APPS = (
+PROJECT_APPS += (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -237,15 +252,7 @@ PROJECT_APPS = (
 )
 
 
-# Do not migrate translated fields, they differ per instance, and
-# can be added/removed using `update_translation_fields`
-if 'schemamigration' not in sys.argv:
-    PROJECT_APPS += ('modeltranslation',)
-
-
 PROJECT_APPS += (
-    'south',
-    'leaflet',
     'floppyforms',
     'crispy_forms',
     'compressor',
@@ -255,7 +262,9 @@ PROJECT_APPS += (
     'shapes',
     'paperclip',
     'mapentity',
+    'leaflet',  # After mapentity to allow it to patch settings
     'rest_framework',
+    'rest_framework_gis',
     'embed_video',
     'djcelery',
 )
@@ -337,11 +346,6 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': False,
         },
-        'south': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
         'geotrek': {
             'handlers': ['console', 'mail_admins'],
             'level': 'INFO',
@@ -372,11 +376,9 @@ THUMBNAIL_ALIASES = {
 }
 
 
-PAPERCLIP_CONFIG = {
-    'ENABLE_VIDEO': True,
-    'FILETYPE_MODEL': 'common.FileType',
-    'ATTACHMENT_TABLE_NAME': 'fl_t_fichier',
-}
+PAPERCLIP_ENABLE_VIDEO = True
+PAPERCLIP_FILETYPE_MODEL = 'common.FileType'
+PAPERCLIP_ATTACHMENT_MODEL = 'common.Attachment'
 
 
 # Data projection
@@ -386,7 +388,7 @@ SRID = 2154  # Lambert-93 for Metropolitan France
 API_SRID = 4326
 
 # Extent in native projection (Toulouse area)
-SPATIAL_EXTENT = (144968, 5415668, 175412, 5388753)
+SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
 
 
 MAPENTITY_CONFIG = {
@@ -550,7 +552,6 @@ MESSAGE_TAGS = {
 }
 
 CACHE_TIMEOUT_LAND_LAYERS = 60 * 60 * 24
-CACHE_TIMEOUT_TOURISM_DATASOURCES = 60 * 60 * 24
 
 TREK_CATEGORY_ORDER = None
 TOURISTIC_EVENT_CATEGORY_ORDER = None

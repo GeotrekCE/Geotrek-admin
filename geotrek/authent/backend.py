@@ -91,7 +91,7 @@ class DatabaseBackend(ModelBackend):
             result = None
             cursor = connections[settings.AUTHENT_DATABASE].cursor()
 
-            table_list = connections[settings.AUTHENT_DATABASE].introspection.get_table_list(cursor)
+            table_list = [table.name for table in connections[settings.AUTHENT_DATABASE].introspection.get_table_list(cursor)]
             tablename = settings.AUTHENT_TABLENAME if '.' not in settings.AUTHENT_TABLENAME else settings.AUTHENT_TABLENAME.split('.', 1)[1]
             if tablename not in table_list:
                 raise ImproperlyConfigured("Database backend is used, and AUTHENT_TABLENAME does not exists.")

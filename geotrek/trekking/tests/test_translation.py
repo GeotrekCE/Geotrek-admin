@@ -1,6 +1,5 @@
 from collections import namedtuple
 
-from django.contrib import admin
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
@@ -23,12 +22,12 @@ def login_from_cred(client, cred):
 
 
 def admin_add_url_from_model(model):
-    info = model._meta.app_label, model._meta.module_name
+    info = model._meta.app_label, model._meta.model_name
     return reverse('admin:%s_%s_add' % info)
 
 
 def admin_list_url_from_model(model):
-    info = model._meta.app_label, model._meta.module_name
+    info = model._meta.app_label, model._meta.model_name
     return reverse('admin:%s_%s_changelist' % info)
 
 
@@ -43,7 +42,6 @@ class TraductionTestCase(TestCase):
         """
         self.cred = Credential('admin', 'adminpass')
         self.superuser = create_superuser_from_cred(self.cred)
-        admin.autodiscover()
 
     @classmethod
     def get_dummy_data_trad(cls):

@@ -13,6 +13,7 @@ create config files of nginx, etc.
 import os
 
 from django.conf.global_settings import LANGUAGES as LANGUAGES_LIST
+from django.contrib.gis.geos import fromstr
 
 from . import EnvIniReader
 from .base import *
@@ -90,10 +91,10 @@ MAPENTITY_CONFIG['CONVERSION_SERVER'] = '%s://%s:%s' % (envini.get('protocol', s
 MAPENTITY_CONFIG['CAPTURE_SERVER'] = '%s://%s:%s' % (envini.get('protocol', section='screamshotter', default='http'),
                                                      envini.get('host', section='screamshotter', default='127.0.0.1'),
                                                      envini.get('port', section='screamshotter', default='8001'))
-TEMPLATE_DIRS = (os.path.join(DEPLOY_ROOT, 'geotrek', 'templates'),
-                 os.path.join(DEPLOY_ROOT, 'lib', 'parts', 'omelette',
-                              'mapentity', 'templates'),
-                 os.path.join(MEDIA_ROOT, 'templates')) + TEMPLATE_DIRS
+TEMPLATES[1]['DIRS'] = (os.path.join(DEPLOY_ROOT, 'geotrek', 'templates'),
+                        os.path.join(DEPLOY_ROOT, 'lib', 'parts', 'omelette',
+                                     'mapentity', 'templates'),
+                        os.path.join(MEDIA_ROOT, 'templates')) + TEMPLATES[1]['DIRS']
 
 
 #
@@ -106,10 +107,23 @@ DEFAULT_STRUCTURE_NAME = envini.get('defaultstructure')
 # GIS settings
 # ..........................
 
+
+def api_bbox(bbox, buffer):
+    wkt_box = 'POLYGON(({0} {1}, {2} {1}, {2} {3}, {0} {3}, {0} {1}))'
+    wkt = wkt_box.format(*bbox)
+    native = fromstr(wkt, srid=SRID)
+    native.transform(API_SRID)
+    extent = native.extent
+    width = extent[2] - extent[0]
+    native = native.buffer(width * buffer)
+    return tuple(native.extent)
+
+
 SRID = int(envini.get('srid', SRID))
 SPATIAL_EXTENT = tuple(envini.getfloats('spatial_extent'))
 
 LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
+LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
 
 MAP_STYLES['path']['color'] = envini.get('layercolor_paths', MAP_STYLES['path']['color'])
 MAP_STYLES['city']['color'] = envini.get('layercolor_land', MAP_STYLES['city']['color'])

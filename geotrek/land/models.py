@@ -76,7 +76,7 @@ Project.add_property('physical_edges', lambda self: self.edges_by_attr('physical
 
 class LandType(StructureRelated):
     name = models.CharField(max_length=128, db_column='foncier', verbose_name=_(u"Name"))
-    right_of_way = models.BooleanField(db_column='droit_de_passage', verbose_name=_(u"Right of way"))
+    right_of_way = models.BooleanField(default=False, db_column='droit_de_passage', verbose_name=_(u"Right of way"))
 
     class Meta:
         db_table = 'f_b_foncier'
