@@ -762,7 +762,7 @@ class TrekGPXTest(TrekkingManagerTest):
         self.assertEqual(self.response.status_code, 200)
         self.assertEqual(self.response['Content-Type'], 'application/gpx+xml')
 
-    def test_gpx_trek_as_trak_points(self):
+    def test_gpx_trek_as_track_points(self):
         self.assertEqual(len(self.parsed.findAll('trk')), 1)
         self.assertEqual(len(self.parsed.findAll('trkpt')), 2)
 
