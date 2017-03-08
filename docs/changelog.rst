@@ -2,12 +2,21 @@
 CHANGELOG
 =========
 
-2.13.0.dev0
+2.13.1.dev0
 -----------
 
 **New features**
 
 * Upgrade to Django 1.8 (this is a big step, migrations are reset, please backup before upgrade)
+
+
+2.13.0 (2017-03-02)
+-------------------
+
+**Minor changes**
+
+* MOBILE_TILES_URL settings is now a list which can be used to merge
+  different layers in mobile application
 
 
 2.12.0 (2017-02-16)

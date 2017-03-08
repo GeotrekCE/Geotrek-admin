@@ -47,6 +47,14 @@ class ZipTilesBuilder(object):
         self.close_zip = close_zip
         self.zipfile = ZipFile(filepath, 'w')
         self.tm = TilesManager(**builder_args)
+
+        if not isinstance(settings.MOBILE_TILES_URL, str) and len(settings.MOBILE_TILES_URL) > 1:
+            for url in settings.MOBILE_TILES_URL[1:]:
+                args = builder_args
+                args['tiles_url'] = url
+                args['tile_format'] = self.format_from_url(args['tiles_url'])
+                self.tm.add_layer(TilesManager(**args), opacity=1)
+
         self.tiles = set()
 
     def format_from_url(self, url):
@@ -65,7 +73,7 @@ class ZipTilesBuilder(object):
 
     def run(self):
         for tile in self.tiles:
-            name = '{0}/{1}/{2}.png'.format(*tile)
+            name = '{0}/{1}/{2}{ext}'.format(*tile, ext=self.tm._tile_extension)
             try:
                 data = self.tm.tile(tile)
             except DownloadError:
@@ -678,8 +686,12 @@ class Command(BaseCommand):
         else:
             self.portal = []
 
+        if isinstance(settings.MOBILE_TILES_URL, str):
+            tiles_url = settings.MOBILE_TILES_URL
+        else:
+            tiles_url = settings.MOBILE_TILES_URL[0]
         self.builder_args = {
-            'tiles_url': settings.MOBILE_TILES_URL,
+            'tiles_url': tiles_url,
             'tiles_headers': {"Referer": self.referer},
             'ignore_errors': True,
             'tiles_dir': os.path.join(settings.DEPLOY_ROOT, 'var', 'tiles'),
