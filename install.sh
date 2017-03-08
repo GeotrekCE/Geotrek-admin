@@ -397,8 +397,12 @@ function geotrek_setup {
 
     echo_header $existing
 
-    if [ ! -z $existing -a $existing \< "2.13.0" ]; then
-        exit_error 13 "Please upgrade to 2.13.0 before."
+    south_migrations=$(sudo -u postgres -s -- psql -d ${dbname} -c "SELECT * FROM django.south_migrationhistory;")
+    if [ $? -eq 0 ]; then
+        echo $south_migrations | grep '0003_auto__add_field_landedge_owner__add_field_landedge_agreement'
+        if [ $? -ne 0 ]; then
+            exit_error 15 "Please upgrade to version 2.13.0 before upgrading to version $STABLE_VERSION."
+        fi
     fi
 
     echo_step "Install system minimum components..."
@@ -488,21 +492,27 @@ function geotrek_setup {
         if [ $? -ne 0 ]; then
             exit_error 10 "Could not restart supervisor !"
         fi
-        if [ ! -z $existing -a $existing \< "2.14.0" ]; then
-            bin/django migrate --fake mapentity 0001
-            bin/django migrate --fake authent 0001
-            bin/django migrate --fake cirkwi 0001
-            bin/django migrate --fake common 0001
-            bin/django migrate --fake core 0001
-            bin/django migrate --fake feedback 0001
-            bin/django migrate --fake flatpages 0001
-            bin/django migrate --fake infrastructure 0001
-            bin/django migrate --fake land 0001
-            bin/django migrate --fake maintenance 0001
-            bin/django migrate --fake tourism 0001
-            bin/django migrate --fake trekking 0001
-            bin/django migrate --fake zoning 0001
+
+        sudo -u postgres -s -- psql -d ${dbname} -c "SELECT * FROM django.south_migrationhistory;"
+        if [ $? -eq 0 ]; then
+            sudo -u postgres -s -- psql -d ${dbname} -c "SELECT * FROM django.migrationhistory;"
+            if [ $? -ne 0 ]; then
+                bin/django migrate --fake mapentity 0001
+                bin/django migrate --fake authent 0001
+                bin/django migrate --fake cirkwi 0001
+                bin/django migrate --fake common 0001
+                bin/django migrate --fake core 0001
+                bin/django migrate --fake feedback 0001
+                bin/django migrate --fake flatpages 0001
+                bin/django migrate --fake infrastructure 0001
+                bin/django migrate --fake land 0001
+                bin/django migrate --fake maintenance 0001
+                bin/django migrate --fake tourism 0001
+                bin/django migrate --fake trekking 0001
+                bin/django migrate --fake zoning 0001
+            fi
         fi
+
         make update
         if [ $? -ne 0 ]; then
             exit_error 11 "Could not update data !"
