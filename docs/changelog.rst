@@ -2,12 +2,16 @@
 CHANGELOG
 =========
 
-2.13.1.dev0
+2.14.0.dev0
 -----------
+
+**WARNING!**
+
+* Upgrade to version 2.14.0 is only possible from version 2.13.0
 
 **New features**
 
-* Upgrade to Django 1.8 (this is a big step, migrations are reset, please backup before upgrade)
+* Upgrade to Django 1.8. This is a big step, migrations are reset, please backup before upgrade.
 
 **Minor changes**
 

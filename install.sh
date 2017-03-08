@@ -397,6 +397,10 @@ function geotrek_setup {
 
     echo_header $existing
 
+    if [ ! -z $existing -a $existing \< "2.13.0" ]; then
+        exit_error 13 "Please upgrade to 2.13.0 before."
+    fi
+
     echo_step "Install system minimum components..."
     minimum_system_dependencies
 
@@ -484,7 +488,7 @@ function geotrek_setup {
         if [ $? -ne 0 ]; then
             exit_error 10 "Could not restart supervisor !"
         fi
-        if [ ! -z $existing -a $existing \< "2.12" -a $ $STABLE_VERSION \>= "2.12" ]; then
+        if [ ! -z $existing -a $existing \< "2.14.0" ]; then
             bin/django migrate --fake mapentity 0001
             bin/django migrate --fake authent 0001
             bin/django migrate --fake cirkwi 0001
