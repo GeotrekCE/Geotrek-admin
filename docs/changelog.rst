@@ -9,6 +9,10 @@ CHANGELOG
 
 *
 
+**Minor changes**
+
+* Possibility to exclude pois in cirkwi xml export by adding ?withoutpois=1 to url (http://XXXXX/api/cirkwi/circuits.xml?withoutpois=1
+
 
 2.13.0 (2017-03-02)
 -------------------
