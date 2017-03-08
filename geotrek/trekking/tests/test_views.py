@@ -762,13 +762,13 @@ class TrekGPXTest(TrekkingManagerTest):
         self.assertEqual(self.response.status_code, 200)
         self.assertEqual(self.response['Content-Type'], 'application/gpx+xml')
 
-    def test_gpx_trek_as_route_points(self):
-        self.assertEqual(len(self.parsed.findAll('rte')), 1)
-        self.assertEqual(len(self.parsed.findAll('rtept')), 2)
+    def test_gpx_trek_as_trak_points(self):
+        self.assertEqual(len(self.parsed.findAll('trk')), 1)
+        self.assertEqual(len(self.parsed.findAll('trkpt')), 2)
 
     def test_gpx_translated_using_another_language(self):
-        route = self.parsed.findAll('rte')[0]
-        description = route.find('desc').string
+        track = self.parsed.findAll('trk')[0]
+        description = track.find('desc').string
         self.assertTrue(description.startswith(self.trek.description_it))
 
     def test_gpx_contains_pois(self):
