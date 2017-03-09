@@ -203,26 +203,13 @@ function minimum_system_dependencies {
     echo_progress
     sudo apt-get install -y -qq python unzip wget python-software-properties
     echo_progress
-    if [ $precise -eq 1 ]; then
-        sudo apt-add-repository -y ppa:git-core/ppa
-        sudo apt-add-repository -y ppa:ubuntugis/ppa
-        sudo apt-get update -qq
-        echo_progress
-    fi
-
     sudo apt-get install -y -qq git gettext python-virtualenv build-essential python-dev
     echo_progress
 }
 
 
 function geotrek_system_dependencies {
-    sudo apt-get install -y -q --no-upgrade libjson0 gdal-bin libgdal-dev
-    
-    if [ $xenial -eq 1 ]; then
-        sudo apt-get install libgeos-c1v5 libproj9
-    else
-        sudo apt-get install libgeos-c1 libproj0
-    fi
+    sudo apt-get install -y -q --no-upgrade libjson0 gdal-bin libgdal-dev binutils libproj-dev
     
     echo_progress
     # PostgreSQL client and headers
@@ -488,7 +475,10 @@ function geotrek_setup {
         echo_step "Generate services configuration files..."
         
         # restart supervisor in case of xenial before 'make deploy'
-        sudo service supervisor force-stop && sudo service supervisor stop && sudo service supervisor start
+        if [ $vivid -eq 1 -o $xenial -eq 1 ]; then
+            sudo systemctl enable supervisor
+            sudo systemctl start supervisor
+        fi
         if [ $? -ne 0 ]; then
             exit_error 10 "Could not restart supervisor !"
         fi
@@ -520,10 +510,13 @@ function geotrek_setup {
         if [ $? -ne 0 ]; then
             exit_error 11 "Could not update data !"
         fi
-        sudo service supervisor force-stop && sudo service supervisor stop && sudo service supervisor start
+        if [ -o $trusty -eq 1 ]; then
+            sudo service supervisor force-stop && sudo service supervisor stop && sudo service supervisor start
+        fi
         if [ $? -ne 0 ]; then
             exit_error 12 "Could not restart supervisor !"
         fi
+
         echo_progress
 
         # If buildout was successful, deploy really !
@@ -592,10 +585,7 @@ trusty=$(grep "Ubuntu 14.04" /etc/issue | wc -l)
 vivid=$(grep "Ubuntu 15.04" /etc/issue | wc -l)
 xenial=$(grep "Ubuntu 16.04" /etc/issue | wc -l)
 
-if [ $precise -eq 1 ]; then
-    psql_version=9.1
-    pgis_version=2.0
-elif [ $trusty -eq 1 ]; then
+if [ $trusty -eq 1 ]; then
     psql_version=9.3
     pgis_version=2.1
 elif [ $vivid -eq 1 ]; then
@@ -606,8 +596,10 @@ elif [ $xenial -eq 1 ]; then
     pgis_version=2.2
 fi
 
-if [ $precise -eq 1 -o $trusty -eq 1 -o $vivid -eq 1 -o $xenial -eq 1 ] ; then
+if [ $trusty -eq 1 -o $vivid -eq 1 -o $xenial -eq 1 ] ; then
     geotrek_setup
+elif [ $precise -eq 1 ] ; then
+    exit_error 5 "Support for Ubuntu Precise 12.04 was dropped. Upgrade your server first. Aborted."
 else
     exit_error 5 "Unsupported operating system. Aborted."
 fi
