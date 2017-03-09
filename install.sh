@@ -493,9 +493,9 @@ function geotrek_setup {
             exit_error 10 "Could not restart supervisor !"
         fi
 
-        sudo -u postgres -s -- psql -d ${dbname} -c "SELECT * FROM django.south_migrationhistory;"
+        sudo -u postgres -s -- PGHOST=${dbhost} PGPORT=${dbport} PGUSER=${dbuser} PGPASSWORD=${dbpassword} psql -d ${dbname} -c "SELECT * FROM django.south_migrationhistory;"
         if [ $? -eq 0 ]; then
-            sudo -u postgres -s -- psql -d ${dbname} -c "SELECT * FROM django.django_migration;"
+            sudo -u postgres -s -- PGHOST=${dbhost} PGPORT=${dbport} PGUSER=${dbuser} PGPASSWORD=${dbpassword} psql -d ${dbname} -c "SELECT * FROM django.django_migration;"
             if [ $? -ne 0 ]; then
                 bin/django migrate --fake contenttypes 0001
                 bin/django migrate --fake auth 0001
