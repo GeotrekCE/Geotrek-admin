@@ -83,10 +83,12 @@ class RestrictedAreaEdge(Topology):
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
     Path.add_property('area_edges', RestrictedAreaEdge.path_area_edges, _(u"Restricted area edges"))
-    Path.add_property('areas', lambda self: uniquify(map(attrgetter('restricted_area'))),
+    Path.add_property('areas', lambda self: uniquify(map(attrgetter('restricted_area'), self.area_edges)),
                       _(u"Restricted areas"))
     Topology.add_property('area_edges', RestrictedAreaEdge.topology_area_edges, _(u"Restricted area edges"))
-    Topology.add_property('areas', lambda self: uniquify(intersecting(RestrictedArea, self)) if self.topo_object.ispoint() else uniquify(map(attrgetter('restricted_area'), self.area_edges)),
+    Topology.add_property('areas', lambda self: uniquify(intersecting(RestrictedArea, self))
+                                       if self.topo_object.ispoint() else uniquify(map(attrgetter('restricted_area'),
+                                                                                       self.area_edges)),
                           _(u"Restricted areas"))
     Intervention.add_property('area_edges', lambda self: self.topology.area_edges if self.topology else [],
                               _(u"Restricted area edges"))
@@ -151,10 +153,14 @@ class CityEdge(Topology):
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
     Path.add_property('city_edges', CityEdge.path_city_edges, _(u"City edges"))
-    Path.add_property('cities', lambda self: uniquify(intersecting(City, self, distance=0)), _(u"Cities"))
+    Path.add_property('cities', lambda self: uniquify(map(attrgetter('city'), self.city_edges)), _(u"Cities"))
     Topology.add_property('city_edges', CityEdge.topology_city_edges, _(u"City edges"))
-    Topology.add_property('cities', lambda self: uniquify(intersecting(City, self,)), _(u"Cities"))
-    Intervention.add_property('city_edges', lambda self: self.topology.city_edges if self.topology else [], _(u"City edges"))
+    Topology.add_property('cities', lambda self: uniquify(intersecting(City, self,))
+                                        if self.topo_object.ispoint() else uniquify(map(attrgetter('city'),
+                                                                                        self.city_edges)),
+                          _(u"Cities"))
+    Intervention.add_property('city_edges', lambda self: self.topology.city_edges if self.topology else [],
+                              _(u"City edges"))
     Intervention.add_property('cities', lambda self: self.topology.cities if self.topology else [], _(u"Cities"))
     Project.add_property('city_edges', lambda self: self.edges_by_attr('city_edges'), _(u"City edges"))
     Project.add_property('cities', lambda self: uniquify(map(attrgetter('city'), self.city_edges)), _(u"Cities"))
@@ -209,9 +215,12 @@ class DistrictEdge(Topology):
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
     Path.add_property('district_edges', DistrictEdge.path_district_edges, _(u"District edges"))
-    Path.add_property('districts', lambda self: uniquify(intersecting(District, self, distance=0)), _(u"Districts"))
+    Path.add_property('districts', lambda self: uniquify(map(attrgetter('district'), self.district_edges)),
+                      _(u"Districts"))
     Topology.add_property('district_edges', DistrictEdge.topology_district_edges, _(u"District edges"))
-    Topology.add_property('districts', lambda self: uniquify(intersecting(District, self)),
+    Topology.add_property('districts', lambda self: uniquify(intersecting(District, self))
+                                           if self.topo_object.ispoint() else uniquify(map(attrgetter('district'),
+                                                                                           self.district_edges)),
                           _(u"Districts"))
     Intervention.add_property('district_edges', lambda self: self.topology.district_edges if self.topology else [],
                               _(u"District edges"))
@@ -221,7 +230,8 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
     Project.add_property('districts', lambda self: uniquify(map(attrgetter('district'), self.district_edges)),
                          _(u"Districts"))
 else:
-    Topology.add_property('districts', lambda self: uniquify(intersecting(District, self, distance=0)), _(u"Districts"))
+    Topology.add_property('districts', lambda self: uniquify(intersecting(District, self, distance=0)),
+                          _(u"Districts"))
 
 TouristicContent.add_property('districts', lambda self: intersecting(District, self, distance=0), _(u"Districts"))
 TouristicEvent.add_property('districts', lambda self: intersecting(District, self, distance=0), _(u"Districts"))
