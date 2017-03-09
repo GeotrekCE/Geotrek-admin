@@ -86,7 +86,7 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
                       _(u"Restricted areas"))
     Topology.add_property('area_edges', RestrictedAreaEdge.topology_area_edges, _(u"Restricted area edges"))
     Topology.add_property('areas', lambda self: uniquify(
-        intersecting(RestrictedArea, self)) if self.topo_object.ispoint() else uniquify(
+        intersecting(RestrictedArea, self)) if self.ispoint() else uniquify(
         map(attrgetter('restricted_area'), self.area_edges)), _(u"Restricted areas"))
     Intervention.add_property('area_edges', lambda self: self.topology.area_edges if self.topology else [],
                               _(u"Restricted area edges"))
@@ -154,7 +154,7 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
     Path.add_property('cities', lambda self: uniquify(map(attrgetter('city'), self.city_edges)), _(u"Cities"))
     Topology.add_property('city_edges', CityEdge.topology_city_edges, _(u"City edges"))
     Topology.add_property('cities',
-                          lambda self: uniquify(intersecting(City, self, )) if self.topo_object.ispoint() else uniquify(
+                          lambda self: uniquify(intersecting(City, self, )) if self.ispoint() else uniquify(
                               map(attrgetter('city'), self.city_edges)), _(u"Cities"))
     Intervention.add_property('city_edges', lambda self: self.topology.city_edges if self.topology else [],
                               _(u"City edges"))
@@ -216,7 +216,7 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
                       _(u"Districts"))
     Topology.add_property('district_edges', DistrictEdge.topology_district_edges, _(u"District edges"))
     Topology.add_property('districts', lambda self: uniquify(
-        intersecting(District, self)) if self.topo_object.ispoint() else uniquify(
+        intersecting(District, self)) if self.ispoint() else uniquify(
         map(attrgetter('district'), self.district_edges)), _(u"Districts"))
     Intervention.add_property('district_edges', lambda self: self.topology.district_edges if self.topology else [],
                               _(u"District edges"))
