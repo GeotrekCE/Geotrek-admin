@@ -495,8 +495,10 @@ function geotrek_setup {
 
         sudo -u postgres -s -- psql -d ${dbname} -c "SELECT * FROM django.south_migrationhistory;"
         if [ $? -eq 0 ]; then
-            sudo -u postgres -s -- psql -d ${dbname} -c "SELECT * FROM django.migrationhistory;"
+            sudo -u postgres -s -- psql -d ${dbname} -c "SELECT * FROM django.django_migration;"
             if [ $? -ne 0 ]; then
+                bin/django migrate --fake contenttypes 0001
+                bin/django migrate --fake auth 0001
                 bin/django migrate --fake mapentity 0001
                 bin/django migrate --fake authent 0001
                 bin/django migrate --fake cirkwi 0001
