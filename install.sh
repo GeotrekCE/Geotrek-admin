@@ -493,25 +493,26 @@ function geotrek_setup {
             exit_error 10 "Could not restart supervisor !"
         fi
 
-        sudo -u postgres -s -- PGHOST=${dbhost} PGPORT=${dbport} PGUSER=${dbuser} PGPASSWORD=${dbpassword} psql -d ${dbname} -c "SELECT * FROM django.south_migrationhistory;"
+        export PGPASSWORD=$dbpassword
+        psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT * FROM django.south_migrationhistory;"
         if [ $? -eq 0 ]; then
-            sudo -u postgres -s -- PGHOST=${dbhost} PGPORT=${dbport} PGUSER=${dbuser} PGPASSWORD=${dbpassword} psql -d ${dbname} -c "SELECT * FROM django.django_migration;"
+            psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT * FROM django.django_migration;"
             if [ $? -ne 0 ]; then
-                bin/django migrate --fake contenttypes 0001
-                bin/django migrate --fake auth 0001
-                bin/django migrate --fake mapentity 0001
-                bin/django migrate --fake authent 0001
-                bin/django migrate --fake cirkwi 0001
-                bin/django migrate --fake common 0001
-                bin/django migrate --fake core 0001
-                bin/django migrate --fake feedback 0001
-                bin/django migrate --fake flatpages 0001
-                bin/django migrate --fake infrastructure 0001
-                bin/django migrate --fake land 0001
-                bin/django migrate --fake maintenance 0001
-                bin/django migrate --fake tourism 0001
-                bin/django migrate --fake trekking 0001
-                bin/django migrate --fake zoning 0001
+                bin/django migrate --fake-initial contenttypes --noinput
+                bin/django migrate --fake-initial auth --noinput
+                bin/django migrate --fake-initial mapentity --noinput
+                bin/django migrate --fake-initial authent --noinput
+                bin/django migrate --fake-initial cirkwi --noinput
+                bin/django migrate --fake-initial common --noinput
+                bin/django migrate --fake-initial core --noinput
+                bin/django migrate --fake-initial feedback --noinput
+                bin/django migrate --fake-initial flatpages --noinput
+                bin/django migrate --fake-initial infrastructure --noinput
+                bin/django migrate --fake-initial land --noinput
+                bin/django migrate --fake-initial maintenance --noinput
+                bin/django migrate --fake-initial tourism --noinput
+                bin/django migrate --fake-initial trekking --noinput
+                bin/django migrate --fake-initial zoning --noinput
             fi
         fi
 
