@@ -83,7 +83,7 @@ class RestrictedAreaEdge(Topology):
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
     Path.add_property('area_edges', RestrictedAreaEdge.path_area_edges, _(u"Restricted area edges"))
-    Path.add_property('areas', lambda self: uniquify(intersecting(RestrictedArea, self, distance=0), self.area_edges) if self.topology.ispoint() else uniquify(map(attrgetter('restricted_area'))),
+    Path.add_property('areas', lambda self: uniquify(map(attrgetter('restricted_area'))),
                       _(u"Restricted areas"))
     Topology.add_property('area_edges', RestrictedAreaEdge.topology_area_edges, _(u"Restricted area edges"))
     Topology.add_property('areas', lambda self: uniquify(intersecting(RestrictedArea, self)) if self.topo_object.ispoint() else uniquify(map(attrgetter('restricted_area'), self.area_edges)),
