@@ -397,7 +397,13 @@ function geotrek_setup {
 
     echo_header $existing
 
-    south_migrations=$(sudo -u postgres -s -- psql -d ${dbname} -c "SELECT * FROM django.south_migrationhistory;")
+    dbname=$(ini_value $settingsfile dbname)
+    dbhost=$(ini_value $settingsfile dbhost)
+    dbport=$(ini_value $settingsfile dbport)
+    dbuser=$(ini_value $settingsfile dbuser)
+    dbpassword=$(ini_value $settingsfile dbpassword)
+
+    south_migrations=$( psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT * FROM django.south_migrationhistory;")
     if [ $? -eq 0 ]; then
         echo $south_migrations | grep '0003_auto__add_field_landedge_owner__add_field_landedge_agreement'
         if [ $? -ne 0 ]; then
