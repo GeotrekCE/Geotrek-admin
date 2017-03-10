@@ -408,7 +408,8 @@ function geotrek_setup {
     if [ $? -eq 0 ]; then
         echo $south_migrations | grep '0003_auto__add_field_landedge_owner__add_field_landedge_agreement'
         if [ $? -ne 0 ]; then
-            exit_error 15 "Please upgrade to version 2.13.0 before upgrading to version $STABLE_VERSION."
+            version=$(cat VERSION)
+            exit_error 15 "Please upgrade to version 2.13.0 before upgrading to version $version."
         fi
     fi
 
