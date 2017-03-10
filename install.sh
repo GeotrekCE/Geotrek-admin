@@ -403,6 +403,7 @@ function geotrek_setup {
     dbuser=$(ini_value $settingsfile dbuser)
     dbpassword=$(ini_value $settingsfile dbpassword)
 
+    export PGPASSWORD=$dbpassword
     south_migrations=$( psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT * FROM django.south_migrationhistory;")
     if [ $? -eq 0 ]; then
         echo $south_migrations | grep '0003_auto__add_field_landedge_owner__add_field_landedge_agreement'
