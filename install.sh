@@ -487,6 +487,7 @@ function geotrek_setup {
             echo_step "Migrate from django < 1.7 version ..."
             bin/django migrate --fake-initial contenttypes --noinput
             bin/django migrate --fake-initial auth --noinput
+            bin/django migrate --fake-initial sessions --noinput
             bin/django migrate --fake-initial mapentity --noinput
             bin/django migrate --fake-initial authent --noinput
             bin/django migrate --fake-initial cirkwi --noinput
