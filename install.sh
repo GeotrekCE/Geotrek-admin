@@ -476,7 +476,7 @@ function geotrek_setup {
     if [ $? -eq 0 ]; then
         psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT * FROM django.django_migration;"
         if [ $? -ne 0 ]; then
-            echo_step "Migrate from django 1.7 version ..."
+            echo_step "Migrate from django < 1.7 version ..."
             bin/django migrate --fake-initial contenttypes --noinput
             bin/django migrate --fake-initial auth --noinput
             bin/django migrate --fake-initial mapentity --noinput
