@@ -12,6 +12,7 @@ CHANGELOG
 **New features**
 
 * Upgrade to Django 1.8. This is a big step, migrations are reset, please backup before upgrade.
+* Ability to skip attachment download in parsers and use extrernal links.
 
 **Minor changes**
 
