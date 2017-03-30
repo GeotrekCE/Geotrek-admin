@@ -474,6 +474,7 @@ class AtomParser(Parser):
 
 
 class AttachmentParserMixin(object):
+    download_attachments = True
     base_url = ''
     delete_attachments = False
     filetype_name = u"Photographie"
@@ -483,6 +484,8 @@ class AttachmentParserMixin(object):
 
     def start(self):
         super(AttachmentParserMixin, self).start()
+        if settings.PAPERCLIP_ENABLE_LINK is False and self.download_attachments is False:
+            raise Exception(u'You need to enable PAPERCLIP_ENABLE_LINK to use this function')
         try:
             self.filetype = FileType.objects.get(type=self.filetype_name, structure=default_structure())
         except FileType.DoesNotExist:
@@ -512,10 +515,12 @@ class AttachmentParserMixin(object):
                 return int(size) != attachment.attachment_file.size
         except:
             return False
+
         return True
 
     def download_attachment(self, url):
-        if url[:6] == 'ftp://':
+        parsed_url = urlparse(url)
+        if parsed_url.scheme == 'ftp':
             try:
                 response = urllib2.urlopen(url)
             except:
@@ -523,14 +528,16 @@ class AttachmentParserMixin(object):
                 return None
             return response.read()
         else:
-            try:
-                response = requests.get(url)
-            except requests.exceptions.RequestException as e:
-                raise ValueImportError('Failed to load attachment: ' + unicode(e))
-            if response.status_code != requests.codes.ok:
-                self.add_warning(_(u"Failed to download '{url}'").format(url=url))
-                return None
-            return response.content
+            if self.download_attachments:
+                try:
+                    response = requests.get(url)
+                except requests.exceptions.RequestException as e:
+                    raise ValueImportError('Failed to load attachment: {exc}'.format(exc=e))
+                if response.status_code != requests.codes.ok:
+                    self.add_warning(_(u"Failed to download '{url}'").format(url=url))
+                    return None
+                return response.content
+            return None
 
     def save_attachments(self, src, val):
         updated = False
@@ -555,19 +562,27 @@ class AttachmentParserMixin(object):
                     break
             if found:
                 continue
-            content = self.download_attachment(url)
-            if content is None:
-                continue
-            f = ContentFile(content)
+
+            parsed_url = urlparse(url)
+
             attachment = Attachment()
             attachment.content_object = self.obj
-            attachment.attachment_file.save(name, f, save=False)
             attachment.filetype = self.filetype
             attachment.creator = self.creator
             attachment.author = author
             attachment.legend = legend
+
+            if (parsed_url.scheme in ('http', 'https') and self.download_attachments) or parsed_url.scheme == 'ftp':
+                content = self.download_attachment(url)
+                if content is None:
+                    continue
+                f = ContentFile(content)
+                attachment.attachment_file.save(name, f, save=False)
+            else:
+                attachment.attachment_link = url
             attachment.save()
             updated = True
+
         if self.delete_attachments:
             for att in attachments_to_delete:
                 att.delete()
