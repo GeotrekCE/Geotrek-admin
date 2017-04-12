@@ -52,7 +52,6 @@ class LeiParser(AttachmentParserMixin, XmlParser):
     type1 = None
     non_fields = {
         'attachments': ('CRITERES/Crit[@CLEF_CRITERE="1900421"]', 'CRITERES/Crit[@CLEF_CRITERE="1900480"]'),
-        'charte': 'CRITERES/Crit[@CLEF_MODA="1911106"]',
     }
     constant_fields = {
         'published': True,
@@ -68,12 +67,13 @@ class LeiParser(AttachmentParserMixin, XmlParser):
         if self.type1:
             self.constant_fields['type1'] = self.type1
 
+    def start(self):
+        super(LeiParser, self).start()
+        lei = set(self.model.objects.filter(eid__startswith='LEI').values_list('pk', flat=True))
+        self.to_delete = self.to_delete & lei
+
     def filter_eid(self, src, val):
         return 'LEI' + val
-
-    def save_charte(self, src, val):
-        if val is None:
-            raise RowImportError("Non signataire de la charte du parc")
 
     def filter_attachments(self, src, val):
         (url, legend) = val
@@ -135,10 +135,10 @@ class LeiActivitesParser(LeiParser):
     category = u"Activités"
 
 
-class LeiCommercesParser(LeiParser):
-    label = u"LEI - Commerces et services"
-    url = 'http://apps.tourisme-alsace.info/batchs/LIENS_PERMANENTS/2002084000004_pnrvn_services_commerces.xml'
-    category = u"Commerces"
+# class LeiCommercesParser(LeiParser):
+#     label = u"LEI - Commerces et services"
+#     url = 'http://apps.tourisme-alsace.info/batchs/LIENS_PERMANENTS/2002084000004_pnrvn_services_commerces.xml'
+#     category = u"Commerces"
 
 
 # Pour les événements
@@ -271,17 +271,17 @@ class SitlorHotellerieParser(SitlorParser):
     type1 = u"Hôtellerie"
 
 
-class SitlorParser(SitlorParser):
+class SitlorCampingParser(SitlorParser):
     label = "SITLOR - Hôtellerie de plein air"
     url = 'http://www.sitlor.fr/xml/exploitation/listeproduits.asp?rfrom=1&rto=20&user=2000640&pwkey=86a9bc7359cf106c904a28bb8b5c7002&urlnames=tous&PVALUES=4000003,PNRVNETENDU,2000640,,+12M&PNAMES=alcat,elsector,utilisador,horariodu,horarioau&tshor=Y&clause=2000640000011'
 
 
-class SitlorParser(SitlorParser):
+class SitlorMeubleParser(SitlorParser):
     label = "SITLOR - Meublé"
     url = 'http://www.sitlor.fr/xml/exploitation/listeproduits.asp?rfrom=1&rto=20&user=2000640&pwkey=86a9bc7359cf106c904a28bb8b5c7002&urlnames=tous&PVALUES=4000012,PNRVNETENDU,2000640,,+12M&PNAMES=eltypo,elsector,utilisador,horariodu,horarioau&tshor=Y&clause=2000640000012'
 
 
-class SitlorParser(SitlorParser):
+class SitlorRestaurantParser(SitlorParser):
     label = "SITLOR - Restaurants"
     url = 'http://www.sitlor.fr/xml/exploitation/listeproduits.asp?rfrom=1&rto=20&user=2000640&pwkey=86a9bc7359cf106c904a28bb8b5c7002&urlnames=tous&PVALUES=4000007,PNRVNETENDU,2000640,,+12M&PNAMES=alcat,elsector,utilisador,horariodu,horarioau&tshor=Y&clause=2000640000013'
 
