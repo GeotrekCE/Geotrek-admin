@@ -11,11 +11,11 @@ Geotrek configuration is currently restricted to values present in ``etc/setting
 
 However, it is still possible to write a custom Django setting file.
 
-* Create your a file in *geotrek/settings/custom.py* with the following content :
+* Create your a file in *etc/custom.py* with the following content :
 
 .. code-block :: python
 
-    from .prod import *
+    from geotrek.settings.prod import *
 
     # My custom value
     HIDDEN_OPTION = 3.14
@@ -25,7 +25,7 @@ However, it is still possible to write a custom Django setting file.
 .. code-block :: ini
 
     [django]
-    settings = settings.custom
+    settings = custom
 
 * As for any change in settings, re-run ``make env_standalone deploy``.
 
