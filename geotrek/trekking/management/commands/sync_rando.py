@@ -117,7 +117,7 @@ class Command(BaseCommand):
         """
         zipname = os.path.join('zip', 'tiles', 'global.zip')
 
-        if self.verbosity == '2':
+        if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
             self.stdout.flush()
 
@@ -142,7 +142,7 @@ class Command(BaseCommand):
         """
         zipname = os.path.join('zip', 'tiles', '{pk}.zip'.format(pk=trek.pk))
 
-        if self.verbosity == '2':
+        if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
             self.stdout.flush()
 
@@ -173,7 +173,7 @@ class Command(BaseCommand):
         tiles.run()
 
     def sync_view(self, lang, view, name, url='/', params={}, zipfile=None, **kwargs):
-        if self.verbosity == '2':
+        if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=name), ending="")
             self.stdout.flush()
         fullname = os.path.join(self.tmp_root, name)
@@ -185,14 +185,14 @@ class Command(BaseCommand):
             response = view(request, **kwargs)
         except Exception as e:
             self.successfull = False
-            if self.verbosity == '2':
+            if self.verbosity == 2:
                 self.stdout.write(u"\x1b[3D\x1b[31mfailed ({})\x1b[0m".format(e))
             return
         if hasattr(response, 'render'):
             response.render()
         if response.status_code != 200:
             self.successfull = False
-            if self.verbosity == '2':
+            if self.verbosity == 2:
                 self.stdout.write(u"\x1b[3D\x1b[31;1mfailed (HTTP {code})\x1b[0m".format(code=response.status_code))
             return
         f = open(fullname, 'w')
@@ -204,7 +204,7 @@ class Command(BaseCommand):
         f.close()
         if zipfile:
             zipfile.write(fullname, name)
-        if self.verbosity == '2':
+        if self.verbosity == 2:
             self.stdout.write(u"\x1b[3D\x1b[32mgenerated\x1b[0m")
 
     def sync_json(self, lang, viewset, name, zipfile=None, params={}, as_view_args=[], **kwargs):
@@ -299,7 +299,7 @@ class Command(BaseCommand):
         shutil.copyfile(src, dst)
         if zipfile:
             zipfile.write(dst, os.path.join(url, name))
-        if self.verbosity == '2':
+        if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(lang=lang, url=url, name=name))
 
     def sync_static_file(self, lang, name):
@@ -354,7 +354,7 @@ class Command(BaseCommand):
         if self.categories:
             self.sync_trek_touristiccontents(lang, trek, zipfile=self.zipfile)
 
-        if self.verbosity == '2':
+        if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname),
                               ending="")
 
@@ -378,7 +378,7 @@ class Command(BaseCommand):
             stat = os.stat(oldzipfilename)
             os.utime(zipfilename, (stat.st_atime, stat.st_mtime))
 
-        if self.verbosity == '2':
+        if self.verbosity == 2:
             if uptodate:
                 self.stdout.write(u"\x1b[3D\x1b[32munchanged\x1b[0m")
             else:
@@ -428,7 +428,7 @@ class Command(BaseCommand):
 
         self.sync_tourism(lang)
 
-        if self.verbosity == '2':
+        if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname), ending="")
 
         self.close_zip(self.zipfile, zipname)
@@ -650,7 +650,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.successfull = True
-        self.verbosity = options.get('verbosity', '1')
+        self.verbosity = options.get('verbosity', 1)
         if len(args) < 1:
             raise CommandError(u"Missing parameter destination directory")
         self.dst_root = args[0].rstrip('/')
@@ -714,7 +714,7 @@ class Command(BaseCommand):
 
         self.rename_root()
 
-        if self.verbosity >= '1':
+        if self.verbosity >= 1:
             self.stdout.write('Done')
 
         if not self.successfull:
