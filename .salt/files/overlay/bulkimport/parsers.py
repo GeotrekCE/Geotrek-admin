@@ -45,9 +45,10 @@ class LeiParser(AttachmentParserMixin, XmlParser):
         'eid': 'PRODUIT',
         'name': 'NOM',
         'description': 'COMMENTAIRE',
-        'contact': ('ADRPROD_NUM_VOIE', 'ADRPROD_LIB_VOIE', 'ADRPROD_CP', 'ADRPROD_LIBELLE_COMMUNE', 'ADRPROD_TEL'),
-        'email': 'ADRPROD_EMAIL',
-        'website': 'ADRPROD_URL',
+        'contact': ('ADRPROD_NUM_VOIE', 'ADRPROD_LIB_VOIE', 'ADRPROD_CP', 'ADRPROD_LIBELLE_COMMUNE', 'ADRPROD_TEL',
+                    'ADRPROD_TEL2', 'ADRPREST_TEL', 'ADRPREST_TEL2'),
+        'email': ('ADRPROD_EMAIL', 'ADRPREST_EMAIL'),
+        'website': ('ADRPROD_URL', 'ADRPREST_URL'),
         'geom': ('LATITUDE', 'LONGITUDE'),
     }
     category = None
@@ -86,7 +87,8 @@ class LeiParser(AttachmentParserMixin, XmlParser):
         return [(url, legend, '')]
 
     def filter_description(self, src, val):
-        return val.replace('\n', '<br>')
+        val = val.replace('\n', '<br>')
+        return val
 
     def filter_geom(self, src, val):
         lat, lng = val
@@ -102,7 +104,7 @@ class LeiParser(AttachmentParserMixin, XmlParser):
         return geom
 
     def filter_contact(self, src, val):
-        (num, voie, cp, commune, tel) = val
+        (num, voie, cp, commune, tel1, tel2, tel3, tel4) = val
         val = num or u""
         if num and voie:
             val += u" "
@@ -115,14 +117,26 @@ class LeiParser(AttachmentParserMixin, XmlParser):
         val += commune or u""
         if cp or commune:
             val += u"<br>"
-        if tel:
-            val += u"Tél. : " + tel
+        if tel1:
+            val += u"Tél. : " + tel1 + u"<br>"
+        if tel2:
+            val += u"Tél. : " + tel2 + u"<br>"
+        if tel3:
+            val += u"Tél. : " + tel3 + u"<br>"
+        if tel4:
+            val += u"Tél. : " + tel4 + u"<br>"
         return val
 
     def filter_website(self, src, val):
-        if not val:
-            return None
-        return 'http://' + val
+        (val1, val2) = val
+        if val1:
+            return 'http://' + val1
+        if val2:
+            return 'http://' + val2
+
+    def filter_email(self, src, val):
+        (val1, val2) = val
+        return val1 or val2
 
 
 class LeiHebergementParser(LeiParser):
