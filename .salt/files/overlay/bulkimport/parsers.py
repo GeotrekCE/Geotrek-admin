@@ -142,13 +142,13 @@ class LeiParser(AttachmentParserMixin, XmlParser):
 class LeiHebergementParser(LeiParser):
     label = u"LEI - Hébergement"
     url = 'http://apps.tourisme-alsace.info/batchs/LIENS_PERMANENTS/2002084000002_pnrvn_hebergements.xml'
-    category = u"Hébergement"
+    category = u"Hébergement Rando+"
 
 
 class LeiActivitesParser(LeiParser):
     label = u"LEI - Activités / lieux à visiter"
     url = 'http://apps.tourisme-alsace.info/batchs/LIENS_PERMANENTS/2002084000003_pnrvn_lieux_activites.xml'
-    category = u"Activités"
+    category = u"Activités Rando+"
 
 
 # class LeiCommercesParser(LeiParser):
@@ -164,7 +164,7 @@ class LeiActivitesParser(LeiParser):
 class SitlorParser(LeiParser):
     label = "SITLOR"
     url = 'http://www.sitlor.fr/xml/exploitation/listeproduits.asp?rfrom=1&rto=20&user=233&pwkey=4dc5b1e31e5e8bf0d22810a9e5e8bbc8&urlnames=tous&PVALUES=4000001,25/04/2017%2000:00:00,20/04/2018%2023:59:59,MOSELLE,2,853000026,853000077&PNAMES=elgendro,validaddu,validadau,elsector,utilisador,elcriterio0,modalidad0&lesvalid=@|@+12M&clause=233000264'
-    category = u"Hébergement"
+    category = u"Hébergement Rando+"
 
     def __init__(self, *args, **kwargs):
         super(SitlorParser, self).__init__(*args, **kwargs)
