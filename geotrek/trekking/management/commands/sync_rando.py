@@ -183,13 +183,13 @@ class Command(BaseCommand):
         request.user = AnonymousUser()
         try:
             response = view(request, **kwargs)
+            if hasattr(response, 'render'):
+                response.render()
         except Exception as e:
             self.successfull = False
             if self.verbosity == 2:
                 self.stdout.write(u"\x1b[3D\x1b[31mfailed ({})\x1b[0m".format(e))
             return
-        if hasattr(response, 'render'):
-            response.render()
         if response.status_code != 200:
             self.successfull = False
             if self.verbosity == 2:
