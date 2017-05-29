@@ -35,6 +35,7 @@ setup(
         'landez',
         'django-celery',
         'redis',
+        'drf-extensions'
     ],
     license='BSD, see LICENSE file.',
     packages=find_packages(),

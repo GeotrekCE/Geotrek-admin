@@ -28,7 +28,7 @@ urlpatterns = patterns(
     url(r'', include('geotrek.flatpages.urls', namespace='flatpages', app_name='flatpages')),
     url(r'', include('geotrek.feedback.urls', namespace='feedback', app_name='feedback')),
 
-    url(r'^api/v2/', include('geotrek.api.v2.urls', namespace='apiv2', app_name='apiv2')),
+    url(r'^apiv2/', include('geotrek.api.v2.urls', namespace='apiv2', app_name='apiv2')),
 
     url(r'', include('mapentity.urls', namespace='mapentity', app_name='mapentity')),
     url(r'^paperclip/add-for/(?P<app_label>[\w\-]+)/(?P<model_name>[\w\-]+)/(?P<pk>\d+)/$',
