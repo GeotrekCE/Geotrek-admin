@@ -152,10 +152,9 @@ class CityEdge(Topology):
 if settings.TREKKING_TOPOLOGY_ENABLED:
     Path.add_property('city_edges', CityEdge.path_city_edges, _(u"City edges"))
     Path.add_property('cities', lambda self: uniquify(map(attrgetter('city'), self.city_edges)), _(u"Cities"))
-    Topology.add_property('city_edges', CityEdge.topology_city_edges, _(u"City edges"))
+    Topology.add_property('city_edges', lambda self: intersecting(City, self, distance=0), _(u"City edges"))
     Topology.add_property('cities',
-                          lambda self: uniquify(intersecting(City, self, )) if self.ispoint() else uniquify(
-                              map(attrgetter('city'), self.city_edges)), _(u"Cities"))
+                          lambda self: intersecting(City, self, distance=0), _(u"Cities"))
     Intervention.add_property('city_edges', lambda self: self.topology.city_edges if self.topology else [],
                               _(u"City edges"))
     Intervention.add_property('cities', lambda self: self.topology.cities if self.topology else [], _(u"Cities"))
