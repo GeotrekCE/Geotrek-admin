@@ -46,6 +46,7 @@ from geotrek.tourism import factories as tourism_factories
 
 # Make sur to register Trek model
 from geotrek.trekking import urls  # NOQA
+from geotrek.zoning.models import City
 
 from .base import TrekkingManagerTest
 
@@ -161,9 +162,7 @@ class POIJSONDetailTest(TrekkingManagerTest):
         self.assertEqual(self.result['min_elevation'], 0.0)
 
     def test_cities(self):
-        self.assertDictEqual(self.result['cities'][0],
-                             {u"code": self.city.code,
-                              u"name": self.city.name})
+        self.assertEqual(self.result['cities'], [])
 
     def test_districts(self):
         self.assertDictEqual(self.result['districts'][0],
