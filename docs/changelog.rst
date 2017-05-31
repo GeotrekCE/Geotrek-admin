@@ -18,6 +18,11 @@ CHANGELOG
 
 * Possibility to exclude pois in cirkwi xml export by adding ?withoutpois=1 to url (http://XXXXX/api/cirkwi/circuits.xml?withoutpois=1
 * Add MOBILE_TILES_EXTENSION setting (for compatibility with old mobile apps, set it to 'png')
+* API optimization
+
+**Bug fixes**
+
+* Fix topologies and cities intersections
 
 
 2.13.0 (2017-03-02)

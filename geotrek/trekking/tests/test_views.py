@@ -161,9 +161,7 @@ class POIJSONDetailTest(TrekkingManagerTest):
         self.assertEqual(self.result['min_elevation'], 0.0)
 
     def test_cities(self):
-        self.assertDictEqual(self.result['cities'][0],
-                             {u"code": self.city.code,
-                              u"name": self.city.name})
+        self.assertEqual(self.result['cities'], [])
 
     def test_districts(self):
         self.assertDictEqual(self.result['districts'][0],
