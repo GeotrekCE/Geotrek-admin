@@ -46,7 +46,6 @@ from geotrek.tourism import factories as tourism_factories
 
 # Make sur to register Trek model
 from geotrek.trekking import urls  # NOQA
-from geotrek.zoning.models import City
 
 from .base import TrekkingManagerTest
 
