@@ -17,8 +17,10 @@ urlpatterns = patterns(
 
 
 class PathEntityOptions(AltimetryEntityOptions):
-    # Profiles for paths
-    pass
+    def get_queryset(self):
+        qs = super(PathEntityOptions, self).get_queryset()
+        qs = qs.prefetch_related('networks', 'usages')
+        return qs
 
 
 urlpatterns += registry.register(Path, PathEntityOptions, menu=settings.TREKKING_TOPOLOGY_ENABLED)
