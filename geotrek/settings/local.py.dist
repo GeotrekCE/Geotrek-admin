@@ -1,6 +1,6 @@
 from .dev import *
 
-DEBUG_TOOLBAR = True
+DEBUG_TOOLBAR = False
 
 INTERNAL_IPS += ('10.0.3.1',)
 
