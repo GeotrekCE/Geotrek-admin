@@ -482,7 +482,7 @@ function geotrek_setup {
     export PGPASSWORD=$dbpassword
     psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT * FROM django.south_migrationhistory;"
     if [ $? -eq 0 ]; then
-        psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT * FROM django.django_migration;"
+        psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT * FROM django_migrations;"
         if [ $? -ne 0 ]; then
             echo_step "Migrate from django < 1.7 version ..."
             bin/django migrate --fake-initial contenttypes --noinput
