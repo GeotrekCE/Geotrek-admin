@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-14 10:43+0100\n"
+"POT-Creation-Date: 2017-06-16 09:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,9 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+msgid "Land"
+msgstr "Foncier"
 
 msgid "Physical type"
 msgstr "Type physique"
@@ -83,9 +86,6 @@ msgstr "Tronçon de gestion signalétique"
 msgid "Signage management edges"
 msgstr "Tronçons de gestion signalétique"
 
-msgid "Land"
-msgstr "Foncier"
-
 msgid "Add a new land edge"
 msgstr "Renseigner la nature foncière"
 
@@ -106,3 +106,9 @@ msgstr "Zones de compétence"
 
 msgid "Competence paths"
 msgstr "Compétence sentiers"
+
+msgid "Yes"
+msgstr "Oui"
+
+msgid "No"
+msgstr "Non"

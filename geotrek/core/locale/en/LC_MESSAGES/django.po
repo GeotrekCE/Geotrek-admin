@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-18 17:00+0100\n"
+"POT-Creation-Date: 2017-06-16 09:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+msgid "Core"
+msgstr ""
 
 msgid "Topology is empty."
 msgstr ""
@@ -178,15 +181,6 @@ msgstr ""
 msgid "Network"
 msgstr ""
 
-msgid "You don't have the right to change these paths"
-msgstr ""
-
-msgid "Paths merged successfully"
-msgstr ""
-
-msgid "No matching points to merge paths found"
-msgstr ""
-
 msgid "Management"
 msgstr ""
 
@@ -218,4 +212,13 @@ msgid "Merge paths"
 msgstr ""
 
 msgid "Cancel"
+msgstr ""
+
+msgid "You don't have the right to change these paths"
+msgstr ""
+
+msgid "Paths merged successfully"
+msgstr ""
+
+msgid "No matching points to merge paths found"
 msgstr ""
