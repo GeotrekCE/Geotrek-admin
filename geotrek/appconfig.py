@@ -42,3 +42,13 @@ class SessionsGeotrekConfig(SessionsConfig, GeotrekConfig):
 
 class AdminGeotrekConfig(AdminConfig, GeotrekConfig):
     pass
+
+
+class CeleryGeotrekConfig(GeotrekConfig):
+    name = 'djcelery'
+    verbose_name = 'Django Celery'
+
+
+class EasyThumbnailsGeotrekConfig(GeotrekConfig):
+    name = 'easy_thumbnails'
+    verbose_name = 'Easy thumbnails'

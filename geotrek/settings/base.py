@@ -257,7 +257,7 @@ PROJECT_APPS += (
     'compressor',
     'djgeojson',
     'tinymce',
-    'easy_thumbnails',
+    'geotrek.appconfig.EasyThumbnailsGeotrekConfig',  # easy_thumbnails
     'shapes',
     'paperclip',
     'mapentity',
@@ -265,7 +265,7 @@ PROJECT_APPS += (
     'rest_framework',
     'rest_framework_gis',
     'embed_video',
-    'djcelery',
+    'geotrek.appconfig.CeleryGeotrekConfig',  # djcelery
 )
 
 
