@@ -1,4 +1,8 @@
 from django.apps import AppConfig
+from django.contrib.admin.apps import AdminConfig
+from django.contrib.auth.apps import AuthConfig
+from django.contrib.contenttypes.apps import ContentTypesConfig
+from django.contrib.sessions.apps import SessionsConfig
 from django.db.models.signals import post_migrate, pre_migrate
 
 from geotrek.common.utils.signals import pm_callback, check_srid_has_meter_unit
@@ -18,29 +22,23 @@ class GeotrekConfig(AppConfig):
         post_migrate.connect(pm_callback, sender=self, dispatch_uid='geotrek.core.movetoschemas')
 
 
-class AuthConfig(GeotrekConfig):
+class AuthConfig(AuthConfig, GeotrekConfig):
     """
     bind for django.contrib.auth
     """
-    name = 'django.contrib.auth'
+    pass
 
 
-class ContenttypeConfig(GeotrekConfig):
+class ContenttypeConfig(GeotrekConfig, ContentTypesConfig):
     """
     bind for django.contrib.contenttype
     """
-    name = 'django.contrib.contenttypes'
+    pass
 
 
-class SessionConfig(GeotrekConfig):
-    """
-    bind for django.contrib.sessions
-    """
-    name = 'django.contrib.sessions'
+class SessionConfig(SessionsConfig, GeotrekConfig):
+    pass
 
 
-class AdminConfig(GeotrekConfig):
-    """
-    bind for django.contrib.admin
-    """
-    name = 'django.contrib.admin'
+class AdminConfig(GeotrekConfig, AdminConfig):
+    pass

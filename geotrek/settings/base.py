@@ -46,7 +46,6 @@ DATABASES = {
 #
 DATABASE_SCHEMAS = {
     'default': 'geotrek',
-
     'gis': 'public',
     'auth': 'django',
     'django': 'django',
