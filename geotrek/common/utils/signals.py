@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connection
 
-from common.utils.postgresql import load_sql_files, move_models_to_schemas
+from geotrek.common.utils.postgresql import load_sql_files, move_models_to_schemas
 
 
 def pm_callback(sender, **kwargs):

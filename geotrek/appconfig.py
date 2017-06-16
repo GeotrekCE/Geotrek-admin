@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.apps import AppConfig
 from django.db.models.signals import post_migrate, pre_migrate
 
-from common.utils.signals import pm_callback, check_srid_has_meter_unit
+from geotrek.common.utils.signals import pm_callback, check_srid_has_meter_unit
 
 
 class GeotrekConfig(AppConfig):
