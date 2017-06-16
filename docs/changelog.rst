@@ -7,7 +7,12 @@ CHANGELOG
 
 **Minor changes**
 
-*
+* Refactor signals pre / post migrate according Django 1.8
+* Update translations
+
+**Bug fixes**
+
+* Fix path splitting
 
 
 2.14.0
