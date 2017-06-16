@@ -1,14 +1,12 @@
-import re
-import os
 import logging
 import traceback
 from functools import wraps
 
-from django.db import connection, models
+import os
+import re
 from django.conf import settings
+from django.db import connection, models
 from django.db.models import get_app, get_models
-from django.core.exceptions import ImproperlyConfigured
-
 
 logger = logging.getLogger(__name__)
 
@@ -151,24 +149,3 @@ def move_models_to_schemas(app_label):
         search_path = 'public,%s' % ','.join(set(settings.DATABASE_SCHEMAS.values()))
         sql = "ALTER ROLE %s IN DATABASE %s SET search_path=%s;" % (dbuser, dbname, search_path)
         cursor.execute(sql)
-
-
-def pm_callback(sender, **kwargs):
-    """
-    Post Migrate callbghack Re/load sql files and move models to schemas
-    """
-    load_sql_files(sender.label)
-    move_models_to_schemas(sender.label)
-
-
-def check_srid_has_meter_unit(sender, **kwargs):
-    if not hasattr(check_srid_has_meter_unit, '_checked'):
-        cursor = connection.cursor()
-        cursor.execute("""
-            SELECT * FROM spatial_ref_sys
-            WHERE srtext ILIKE '%%meter%%' AND srid=%s;""", [settings.SRID])
-        results = cursor.fetchall()
-        if len(results) == 0:
-            err_msg = 'Unit of SRID EPSG:%s is not meter.' % settings.SRID
-            raise ImproperlyConfigured(err_msg)
-    check_srid_has_meter_unit._checked = True
