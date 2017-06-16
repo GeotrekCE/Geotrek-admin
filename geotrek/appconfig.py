@@ -22,7 +22,7 @@ class GeotrekConfig(AppConfig):
         post_migrate.connect(pm_callback, sender=self, dispatch_uid='geotrek.core.movetoschemas')
 
 
-class AuthGeotrekConfig(AuthConfig, GeotrekConfig):
+class AuthGeotrekConfig(GeotrekConfig, AuthConfig):
     """
     bind for django.contrib.auth
     """
@@ -36,7 +36,7 @@ class ContenttypeGeotrekConfig(GeotrekConfig, ContentTypesConfig):
     pass
 
 
-class SessionsGeotrekConfig(SessionsConfig, GeotrekConfig):
+class SessionsGeotrekConfig(GeotrekConfig, SessionsConfig):
     pass
 
 
