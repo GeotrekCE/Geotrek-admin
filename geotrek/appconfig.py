@@ -22,23 +22,23 @@ class GeotrekConfig(AppConfig):
         post_migrate.connect(pm_callback, sender=self, dispatch_uid='geotrek.core.movetoschemas')
 
 
-class AuthConfig(AuthConfig, GeotrekConfig):
+class AuthGeotrekConfig(AuthConfig, GeotrekConfig):
     """
     bind for django.contrib.auth
     """
     pass
 
 
-class ContenttypeConfig(GeotrekConfig, ContentTypesConfig):
+class ContenttypeGeotrekConfig(GeotrekConfig, ContentTypesConfig):
     """
     bind for django.contrib.contenttype
     """
     pass
 
 
-class SessionConfig(SessionsConfig, GeotrekConfig):
+class SessionsGeotrekConfig(SessionsConfig, GeotrekConfig):
     pass
 
 
-class AdminConfig(GeotrekConfig, AdminConfig):
+class AdminGeotrekConfig(GeotrekConfig, AdminConfig):
     pass
