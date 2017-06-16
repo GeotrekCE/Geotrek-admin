@@ -4,7 +4,7 @@ import os
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
 
-from common.utils.signals import check_srid_has_meter_unit
+from geotrek.common.utils.signals import check_srid_has_meter_unit
 from geotrek.settings import EnvIniReader
 
 
