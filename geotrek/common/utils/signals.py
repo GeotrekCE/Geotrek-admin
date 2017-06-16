@@ -16,9 +16,14 @@ def pm_callback(sender, **kwargs):
 def check_srid_has_meter_unit(sender, **kwargs):
     if not hasattr(check_srid_has_meter_unit, '_checked'):
         cursor = connection.cursor()
-        cursor.execute("""
-            SELECT * FROM spatial_ref_sys
-            WHERE srtext ILIKE '%%meter%%' AND srid=%s;""", [settings.SRID])
+        cursor.execute(
+            """
+            SELECT
+                *
+            FROM spatial_ref_sys
+            WHERE
+                 srtext ILIKE '%%meter%%'
+            AND srid=%s;""", [settings.SRID])
         results = cursor.fetchall()
         if len(results) == 0:
             err_msg = 'Unit of SRID EPSG:%s is not meter.' % settings.SRID

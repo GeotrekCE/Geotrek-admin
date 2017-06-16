@@ -241,12 +241,12 @@ else:
 # https://code.djangoproject.com/ticket/12288
 #
 PROJECT_APPS += (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
+    'geotrek.appconfig.AuthConfig',  # django.contrib.app
+    'geotrek.appconfig.ContenttypeConfig',  # django.contrib.contenttypes
+    'geotrek.appconfig.SessionConfig',  # django.contrib.sessions
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.admin',
+    'geotrek.appconfig.AdminConfig',   # django.contrib.admin
     'django.contrib.admindocs',
     'django.contrib.gis',
 )
