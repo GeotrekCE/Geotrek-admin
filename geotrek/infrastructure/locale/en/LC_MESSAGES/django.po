@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-13 17:23+0100\n"
+"POT-Creation-Date: 2017-06-16 09:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,9 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+msgid "Infrastructure"
+msgstr ""
+
 msgid "Intervention year"
 msgstr ""
 
@@ -24,6 +27,9 @@ msgid "Name"
 msgstr ""
 
 msgid "Description"
+msgstr ""
+
+msgid "Implantation year"
 msgstr ""
 
 msgid "Category"
@@ -62,13 +68,7 @@ msgstr ""
 msgid "Condition"
 msgstr ""
 
-msgid "Implantation year"
-msgstr ""
-
 msgid "Cities"
-msgstr ""
-
-msgid "Infrastructure"
 msgstr ""
 
 msgid "Infrastructures"

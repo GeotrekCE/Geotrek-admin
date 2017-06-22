@@ -46,7 +46,6 @@ DATABASES = {
 #
 DATABASE_SCHEMAS = {
     'default': 'geotrek',
-
     'gis': 'public',
     'auth': 'django',
     'django': 'django',
@@ -241,12 +240,12 @@ else:
 # https://code.djangoproject.com/ticket/12288
 #
 PROJECT_APPS += (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
+    'geotrek.appconfig.AuthGeotrekConfig',  # django.contrib.app
+    'geotrek.appconfig.ContenttypeGeotrekConfig',  # django.contrib.contenttypes
+    'geotrek.appconfig.SessionsGeotrekConfig',  # django.contrib.sessions
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.admin',
+    'geotrek.appconfig.AdminGeotrekConfig',   # django.contrib.admin
     'django.contrib.admindocs',
     'django.contrib.gis',
 )
@@ -258,7 +257,7 @@ PROJECT_APPS += (
     'compressor',
     'djgeojson',
     'tinymce',
-    'easy_thumbnails',
+    'geotrek.appconfig.EasyThumbnailsGeotrekConfig',  # easy_thumbnails
     'shapes',
     'paperclip',
     'mapentity',
@@ -266,7 +265,7 @@ PROJECT_APPS += (
     'rest_framework',
     'rest_framework_gis',
     'embed_video',
-    'djcelery',
+    'geotrek.appconfig.CeleryGeotrekConfig',  # djcelery
 )
 
 

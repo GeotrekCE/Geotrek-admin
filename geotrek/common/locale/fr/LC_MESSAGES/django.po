@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-02 16:00+0200\n"
+"POT-Creation-Date: 2017-06-16 09:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,6 +19,9 @@ msgstr ""
 
 msgid "content type"
 msgstr "type d'objet"
+
+msgid "Common"
+msgstr "Commun"
 
 #, python-format
 msgid "min %s"
@@ -110,11 +113,8 @@ msgstr "Source des fiches"
 msgid "Record sources"
 msgstr "Sources des fiches"
 
-msgid "Portal"
-msgstr "Portail"
-
-msgid "Portals"
-msgstr "Portails"
+msgid "Used for sync"
+msgstr "Utilisé pour la synchro"
 
 msgid "Target portal"
 msgstr "Portail cible"
@@ -154,16 +154,16 @@ msgstr "L'identifiant '{eid_src}' est manquant"
 msgid ""
 "Bad value '{eid_val}' for field '{eid_src}'. No object with this identifier"
 msgstr ""
-"Mauvaise valeur '{eid_val}' pour le champ '{eid_src}'. Il n'y a pas "
-"d'objet avec cet identifiant"
+"Mauvaise valeur '{eid_val}' pour le champ '{eid_src}'. Il n'y a pas d'objet "
+"avec cet identifiant"
 
 #, python-brace-format
 msgid ""
 "Bad value '{eid_val}' for field '{eid_src}'. Multiple objects with this "
 "identifier"
 msgstr ""
-"Mauvaise valeur '{eid_val}' pour le champ '{eid_src}'. Il y plusieurs "
-"objets avec cet identifiant"
+"Mauvaise valeur '{eid_val}' pour le champ '{eid_src}'. Il y plusieurs objets "
+"avec cet identifiant"
 
 #, python-brace-format
 msgid "Bad value '{val}' for field {src}. Should contain {values}"
@@ -215,9 +215,6 @@ msgstr "Impossible de télécharger '{url}'. Code de statut HTTP {status_code}"
 
 msgid "Import from web."
 msgstr "Importer du web."
-
-msgid "Any year"
-msgstr "N'importe quelle année"
 
 msgid "Paths"
 msgstr "Tronçons"
@@ -291,11 +288,5 @@ msgstr "a une géométrie invalide;"
 msgid "Topology is not valid."
 msgstr "L'événement n'est pas valide"
 
-msgid "Used for sync"
-msgstr "Utilisé pour la synchro"
-
-#~ msgid "Parser"
-#~ msgstr "Parseur"
-
-#~ msgid "Upload"
-#~ msgstr "Télécharger"
+msgid "Any year"
+msgstr "N'importe quelle année"
