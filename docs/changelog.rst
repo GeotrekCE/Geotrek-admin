@@ -5,9 +5,9 @@ CHANGELOG
 2.14.1.dev0
 -----------
 
-**Minor changes**
+**Bug fixes**
 
-*
+* Fix AutoLogin Middleware with mapentity 3.1.4
 
 
 2.14.0
