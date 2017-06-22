@@ -86,7 +86,7 @@ class PicturesMixin(object):
         """
         if hasattr(self, '_pictures'):
             return self._pictures
-        all_attachments = self.attachments.order_by('-starred', 'attachment_file').all()
+        all_attachments = self.attachments.all().order_by('-starred', 'attachment_file')
         return [a for a in all_attachments if a.is_image and a.title != 'mapimage']
 
     @pictures.setter
@@ -170,7 +170,7 @@ class PicturesMixin(object):
 
     @property
     def videos(self):
-        all_attachments = self.attachments.order_by('-starred')
+        all_attachments = self.attachments.all().order_by('-starred')
         return all_attachments.exclude(attachment_video='')
 
     @property
@@ -193,7 +193,7 @@ class PicturesMixin(object):
 
     @property
     def files(self):
-        all_attachments = self.attachments.order_by('-starred')
+        all_attachments = self.attachments.all().order_by('-starred')
         all_attachments = all_attachments.exclude(attachment_file='')
         return [a for a in all_attachments if not a.is_image]
 

@@ -376,10 +376,10 @@ class TrekViewSet(MapEntityViewSet):
 
     def get_queryset(self):
         qs = self.model.objects.existing()
-        qs = qs.select_related('structure',)
+        qs = qs.select_related('structure', 'difficulty', 'practice', 'route')
         qs = qs.prefetch_related(
             'networks', 'source', 'portal', 'web_links', 'accessibilities', 'themes', 'aggregations',
-            'information_desks',
+            'information_desks', 'attachments',
             Prefetch('trek_relationship_a', queryset=TrekRelationship.objects.select_related('trek_a', 'trek_b')),
             Prefetch('trek_relationship_b', queryset=TrekRelationship.objects.select_related('trek_a', 'trek_b')),
             Prefetch('trek_children', queryset=OrderedTrekChild.objects.select_related('parent', 'child')),
