@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-*
+* Fix attachments
 
 
 2.14.1 (2017-06-22)
@@ -31,7 +31,7 @@ CHANGELOG
 **New features**
 
 * Upgrade to Django 1.8. This is a big step, migrations are reset, please backup before upgrade.
-* Ability to skip attachment download in parsers and use extrernal links.
+* Ability to skip attachment download in parsers and use external links.
 
 **Minor changes**
 
