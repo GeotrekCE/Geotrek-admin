@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.14.2.dev0
+2.14.2 (2017-06-21)
 -------------------
 
 **Bug fixes**
 
-* Fix attachments
+* Fix attachments edition
 
 
 2.14.1 (2017-06-22)
