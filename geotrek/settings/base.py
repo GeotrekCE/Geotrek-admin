@@ -46,7 +46,6 @@ DATABASES = {
 #
 DATABASE_SCHEMAS = {
     'default': 'geotrek',
-
     'gis': 'public',
     'auth': 'django',
     'django': 'django',
@@ -241,12 +240,12 @@ else:
 # https://code.djangoproject.com/ticket/12288
 #
 PROJECT_APPS += (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
+    'geotrek.appconfig.AuthGeotrekConfig',  # django.contrib.app
+    'geotrek.appconfig.ContenttypeGeotrekConfig',  # django.contrib.contenttypes
+    'geotrek.appconfig.SessionsGeotrekConfig',  # django.contrib.sessions
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.admin',
+    'geotrek.appconfig.AdminGeotrekConfig',   # django.contrib.admin
     'django.contrib.admindocs',
     'django.contrib.gis',
 )
@@ -258,7 +257,7 @@ PROJECT_APPS += (
     'compressor',
     'djgeojson',
     'tinymce',
-    'easy_thumbnails',
+    'geotrek.appconfig.EasyThumbnailsGeotrekConfig',  # easy_thumbnails
     'shapes',
     'paperclip',
     'mapentity',
@@ -266,7 +265,7 @@ PROJECT_APPS += (
     'rest_framework',
     'rest_framework_gis',
     'embed_video',
-    'djcelery',
+    'geotrek.appconfig.CeleryGeotrekConfig',  # djcelery
 )
 
 
@@ -377,6 +376,7 @@ THUMBNAIL_ALIASES = {
 
 
 PAPERCLIP_ENABLE_VIDEO = True
+PAPERCLIP_ENABLE_LINK = True
 PAPERCLIP_FILETYPE_MODEL = 'common.FileType'
 PAPERCLIP_ATTACHMENT_MODEL = 'common.Attachment'
 
@@ -564,7 +564,10 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap', 'bootstrap3')
 CRISPY_TEMPLATE_PACK = 'bootstrap'
 
 # Mobile app_directories
-MOBILE_TILES_URL = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+MOBILE_TILES_URL = [
+    'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+]
+MOBILE_TILES_EXTENSION = None  # auto
 MOBILE_TILES_RADIUS_LARGE = 0.01  # ~1 km
 MOBILE_TILES_RADIUS_SMALL = 0.005  # ~500 m
 MOBILE_TILES_GLOBAL_ZOOMS = range(13)

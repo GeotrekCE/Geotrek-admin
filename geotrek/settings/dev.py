@@ -6,13 +6,13 @@ from .default import *
 
 DEBUG = True
 TEMPLATES[1]['OPTIONS']['debug'] = True
+DEBUG_TOOLBAR = False
 
 #
 # Developper additions
 # ..........................
 
 INSTALLED_APPS = (
-    'debug_toolbar',
     'django_extensions',
 ) + INSTALLED_APPS
 
@@ -20,6 +20,10 @@ INTERNAL_IPS = (
     '127.0.0.1',  # localhost default
     '10.0.3.1',  # lxc default
 )
+
+ALLOWED_HOSTS = [
+    '*',
+]
 
 #
 # Use some default tiles
@@ -38,6 +42,8 @@ LOGGING['loggers']['']['level'] = 'DEBUG'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-DEBUG_TOOLBAR_PATCH_SETTINGS = False
-MIDDLEWARE_CLASSES = ('debug_toolbar.middleware.DebugToolbarMiddleware',) + MIDDLEWARE_CLASSES
-ALLOWED_HOSTS = ['geotrek.dev',]
+try:
+    from .local import *  # NOQA
+    # set local settings for dev
+except ImportError:
+    pass

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-23 13:49+0200\n"
+"POT-Creation-Date: 2017-06-16 09:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,9 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
+
+msgid "Feedback"
+msgstr "Retours utilisateurs"
 
 #, python-brace-format
 msgid "Feedback from {name} ({email})"
@@ -53,6 +56,9 @@ msgstr "Catégories"
 
 msgid "Attributes"
 msgstr "Informations"
+
+msgid "Map"
+msgstr ""
 
 #, python-format
 msgid "%(name)s (%(email)s) has sent a feedback."

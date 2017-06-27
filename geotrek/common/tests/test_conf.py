@@ -1,12 +1,11 @@
 # -*- encoding: utf-8 -*-
 
 import os
-
-from django.test import TestCase
 from django.core.exceptions import ImproperlyConfigured
+from django.test import TestCase
 
+from geotrek.common.utils.signals import check_srid_has_meter_unit
 from geotrek.settings import EnvIniReader
-from .. import check_srid_has_meter_unit
 
 
 class StartupCheckTest(TestCase):

@@ -291,17 +291,17 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         children = self.trek_children.order_by('order')\
                                      .values_list('child__id',
                                                   flat=True)
-        return list(children)
+        return children
 
     def previous_id_for(self, parent):
-        children_id = parent.children_id
+        children_id = list(parent.children_id)
         index = children_id.index(self.id)
         if index == 0:
             return None
         return children_id[index - 1]
 
     def next_id_for(self, parent):
-        children_id = parent.children_id
+        children_id = list(parent.children_id)
         index = children_id.index(self.id)
         if index == len(children_id) - 1:
             return None

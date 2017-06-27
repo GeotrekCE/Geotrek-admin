@@ -4,7 +4,7 @@
 
 {% block mainform %}
 
-    <script type="text/javascript" src="/static/trekking/chosen.order.jquery.min.js"></script>
+    <script type="text/javascript" src="{% static 'trekking/chosen.order.jquery.min.js' %}"></script>
     <script type="text/javascript" src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
 
     <script type="text/javascript">
@@ -13,7 +13,7 @@
                $("#id_hidden_ordered_children").val($("#id_children_trek").getSelectionOrder().toString());
             });
 
-            $('#id_children_trek_chosen ul').sortable();
+            $('#id_children_trek_chosen').find('ul').sortable();
         });
     </script>
 
@@ -52,31 +52,31 @@
                 addCssClass: 'btn btn-success add-row',
                 deleteCssClass: 'delete-row',
                 addText: '{% trans "Add relation" %}',
-                deleteText: '{% trans "Remove" %}',
-            })
+                deleteText: '{% trans "Remove" %}'
+            });
 
             $('select[multiple]').chosen({
                 no_results_text: "{% trans "No result" %}",
-                placeholder_text_multiple: "{% trans "Choose value(s)" %}",
+                placeholder_text_multiple: "{% trans "Choose value(s)" %}"
             });
 
             /* Show advanced tab if error in there */
             if ($('.tab-content #advanced .error').length > 0) {
-                $('#tab-advanced a').addClass('error').click();
+                $('#tab-advanced').find('a').addClass('error').click();
             }
 
             // Tab changed
             $('.nav-tabs a').on('shown', function (e) {
                 // Recompute scrollable panels
                 $(window).trigger('resize');
-            })
+            });
 
             // Insert service buttons
             $('.servicetype').click(function(e) {
                 var url = $(this).data('url');
                 var name = $(this).data('name');
                 var id = $('div[id^="description_"]:not([id*="teaser"]):visible textarea').attr('id');
-                tinymce.get(id).execCommand('mceInsertContent', false, '<img src="' + url + '" alt="' + name + '" style="height: 18px; width: 18px;" />');
+                tinymce.get(id).execCommand('mceInsertContent', false, '<img src="' + url + '" alt="' + name + '" />');
                 return false;
             });
 

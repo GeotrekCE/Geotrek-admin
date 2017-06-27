@@ -239,7 +239,7 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
                                                               (-1, 3), (-1, -1)))))
         city2 = CityFactory.create(geom=MultiPolygon(Polygon(((3, 3), (9, 3), (9, 9),
                                                               (3, 9), (3, 3)))))
-        self.assertEqual(trek.cities, [city1, city2])
+        self.assertEqual([city for city in trek.cities], [city1, city2])
         self.assertEqual(trek.city_departure, unicode(city1))
 
 
@@ -296,10 +296,10 @@ class TrekItinerancyTest(TestCase):
         OrderedTrekChild(parent=trekC, child=trekA, order=42).save()
         OrderedTrekChild(parent=trekC, child=trekB, order=15).save()
         OrderedTrekChild(parent=trekD, child=trekA, order=1).save()
-        self.assertEqual(trekA.children_id, [])
-        self.assertEqual(trekB.children_id, [])
-        self.assertEqual(trekC.children_id, [trekB.id, trekA.id])
-        self.assertEqual(trekD.children_id, [trekA.id])
+        self.assertEqual(list(trekA.children_id), [])
+        self.assertEqual(list(trekB.children_id), [])
+        self.assertEqual(list(trekC.children_id), [trekB.id, trekA.id])
+        self.assertEqual(list(trekD.children_id), [trekA.id])
         self.assertEqual(trekA.next_id, {trekC.id: None, trekD.id: None})
         self.assertEqual(trekB.next_id, {trekC.id: trekA.id})
         self.assertEqual(trekC.next_id, {})
@@ -319,7 +319,7 @@ class TrekItinerancyTest(TestCase):
         self.assertQuerysetEqual(trekA.children, ['<Trek: B>', '<Trek: C>'])
         self.assertQuerysetEqual(trekB.parents, ['<Trek: A>'])
         self.assertQuerysetEqual(trekC.parents, ['<Trek: A>'])
-        self.assertEqual(trekA.children_id, [trekB.id, trekC.id])
+        self.assertEqual(list(trekA.children_id), [trekB.id, trekC.id])
         self.assertEqual(trekB.parents_id, [trekA.id])
         self.assertEqual(trekC.parents_id, [trekA.id])
         trekB.delete()
@@ -330,7 +330,7 @@ class TrekItinerancyTest(TestCase):
         self.assertFalse(OrderedTrekChild.objects.filter(child=trekB).exists())
         self.assertQuerysetEqual(trekA.children, ['<Trek: C>'])
         self.assertQuerysetEqual(trekC.parents, ['<Trek: A>'])
-        self.assertEqual(trekA.children_id, [trekC.id])
+        self.assertEqual(list(trekA.children_id), [trekC.id])
         self.assertEqual(trekC.parents_id, [trekA.id])
 
     def test_delete_parent(self):
@@ -344,8 +344,8 @@ class TrekItinerancyTest(TestCase):
         self.assertQuerysetEqual(trekB.children, ['<Trek: A>'])
         self.assertQuerysetEqual(trekC.children, ['<Trek: A>'])
         self.assertEqual(trekA.parents_id, [trekB.id, trekC.id])
-        self.assertEqual(trekB.children_id, [trekA.id])
-        self.assertEqual(trekC.children_id, [trekA.id])
+        self.assertEqual(list(trekB.children_id), [trekA.id])
+        self.assertEqual(list(trekC.children_id), [trekA.id])
         trekB.delete()
         self.assertEqual(trekA.previous_id_for(trekC), None)
         self.assertEqual(trekA.next_id_for(trekC), None)
@@ -355,4 +355,4 @@ class TrekItinerancyTest(TestCase):
         self.assertQuerysetEqual(trekA.parents, ['<Trek: C>'])
         self.assertQuerysetEqual(trekC.children, ['<Trek: A>'])
         self.assertEqual(trekA.parents_id, [trekC.id])
-        self.assertEqual(trekC.children_id, [trekA.id])
+        self.assertEqual(list(trekC.children_id), [trekA.id])

@@ -19,7 +19,7 @@ exec 1> install.log 2>&1
 
 #------------------------------------------------------------------------------
 
-STABLE_VERSION=${STABLE_VERSION:-2.12.0}
+STABLE_VERSION=${STABLE_VERSION:-2.14.2}
 dev=false
 tests=false
 prod=false
@@ -397,6 +397,22 @@ function geotrek_setup {
 
     echo_header $existing
 
+    dbname=$(ini_value $settingsfile dbname)
+    dbhost=$(ini_value $settingsfile dbhost)
+    dbport=$(ini_value $settingsfile dbport)
+    dbuser=$(ini_value $settingsfile dbuser)
+    dbpassword=$(ini_value $settingsfile dbpassword)
+
+    export PGPASSWORD=$dbpassword
+    south_migrations=$( psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT * FROM django.south_migrationhistory;")
+    if [ $? -eq 0 ]; then
+        echo $south_migrations | grep '0003_auto__add_field_landedge_owner__add_field_landedge_agreement'
+        if [ $? -ne 0 ]; then
+            version=$(cat VERSION)
+            exit_error 15 "Please upgrade to version 2.13.0 before upgrading to version $version."
+        fi
+    fi
+
     echo_step "Install system minimum components..."
     minimum_system_dependencies
 
@@ -463,6 +479,31 @@ function geotrek_setup {
         exit_error 3 "Could not setup python environment !"
     fi
 
+    export PGPASSWORD=$dbpassword
+    psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT * FROM django.south_migrationhistory;"
+    if [ $? -eq 0 ]; then
+        psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT * FROM django_migrations;"
+        if [ $? -ne 0 ]; then
+            echo_step "Migrate from django < 1.7 version ..."
+            bin/django migrate --fake-initial contenttypes --noinput
+            bin/django migrate --fake-initial auth --noinput
+            bin/django migrate --fake-initial sessions --noinput
+            bin/django migrate --fake-initial mapentity --noinput
+            bin/django migrate --fake-initial authent --noinput
+            bin/django migrate --fake-initial cirkwi --noinput
+            bin/django migrate --fake-initial common --noinput
+            bin/django migrate --fake-initial core --noinput
+            bin/django migrate --fake-initial feedback --noinput
+            bin/django migrate --fake-initial flatpages --noinput
+            bin/django migrate --fake-initial infrastructure --noinput
+            bin/django migrate --fake-initial land --noinput
+            bin/django migrate --fake-initial maintenance --noinput
+            bin/django migrate --fake-initial tourism --noinput
+            bin/django migrate --fake-initial trekking --noinput
+            bin/django migrate --fake-initial zoning --noinput
+        fi
+    fi
+
     if $dev ; then
         echo_step "Initializing data..."
         make update
@@ -476,38 +517,20 @@ function geotrek_setup {
     fi
 
     if $prod || $standalone ; then
+        echo_step "Updating data..."
+
+        make update
+        if [ $? -ne 0 ]; then
+            exit_error 11 "Could not update data !"
+        fi
 
         echo_step "Generate services configuration files..."
-        
+
         # restart supervisor in case of xenial before 'make deploy'
         sudo service supervisor force-stop && sudo service supervisor stop && sudo service supervisor start
         if [ $? -ne 0 ]; then
             exit_error 10 "Could not restart supervisor !"
         fi
-        if [ ! -z $existing -a $existing \< "2.12" -a $ $STABLE_VERSION \>= "2.12" ]; then
-            bin/django migrate --fake mapentity 0001
-            bin/django migrate --fake authent 0001
-            bin/django migrate --fake cirkwi 0001
-            bin/django migrate --fake common 0001
-            bin/django migrate --fake core 0001
-            bin/django migrate --fake feedback 0001
-            bin/django migrate --fake flatpages 0001
-            bin/django migrate --fake infrastructure 0001
-            bin/django migrate --fake land 0001
-            bin/django migrate --fake maintenance 0001
-            bin/django migrate --fake tourism 0001
-            bin/django migrate --fake trekking 0001
-            bin/django migrate --fake zoning 0001
-        fi
-        make update
-        if [ $? -ne 0 ]; then
-            exit_error 11 "Could not update data !"
-        fi
-        sudo service supervisor force-stop && sudo service supervisor stop && sudo service supervisor start
-        if [ $? -ne 0 ]; then
-            exit_error 12 "Could not restart supervisor !"
-        fi
-        echo_progress
 
         # If buildout was successful, deploy really !
         if [ -f /etc/supervisor/supervisord.conf ]; then

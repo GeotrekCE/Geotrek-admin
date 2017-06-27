@@ -2,12 +2,64 @@
 CHANGELOG
 =========
 
-2.13.0.dev0
------------
+2.14.3.dev0
+-------------------
+
+**Bug fixes**
+
+*
+
+
+2.14.2 (2017-06-21)
+-------------------
+
+**Bug fixes**
+
+* Fix attachments edition
+
+
+2.14.1 (2017-06-22)
+-------------------
+
+**Bug fixes**
+
+* Refactor signals pre / post migrate according Django 1.8
+* Update translations
+* Fix path splitting
+* Fix AutoLogin Middleware with mapentity 3.1.4
+
+
+2.14.0
+------
+
+**WARNING!**
+
+* Upgrade to version 2.14.0 is only possible from version 2.13.0
 
 **New features**
 
-* Upgrade to Django 1.8 (this is a big step, migrations are reset, please backup before upgrade)
+* Upgrade to Django 1.8. This is a big step, migrations are reset, please backup before upgrade.
+* Ability to skip attachment download in parsers and use external links.
+
+**Minor changes**
+
+* Possibility to exclude pois in cirkwi xml export by adding ?withoutpois=1 to url (http://XXXXX/api/cirkwi/circuits.xml?withoutpois=1
+* Add MOBILE_TILES_EXTENSION setting (for compatibility with old mobile apps, set it to 'png')
+* API optimization
+* Disable auto size for service icon in trek description.
+
+**Bug fixes**
+
+* Fix topologies and cities intersections
+
+
+2.13.0 (2017-03-02)
+-------------------
+
+**Minor changes**
+
+* MOBILE_TILES_URL settings is now a list which can be used to merge
+  different layers in mobile application
 
 
 2.12.0 (2017-02-16)

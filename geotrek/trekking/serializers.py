@@ -344,7 +344,7 @@ def timestamp(dt):
     return str(int((dt - epoch).total_seconds()))
 
 
-class CirkwiPOISerializer:
+class CirkwiPOISerializer(object):
     def __init__(self, request, stream):
         self.xml = SimplerXMLGenerator(stream, 'utf8')
         self.request = request
@@ -415,6 +415,10 @@ class CirkwiPOISerializer:
 
 
 class CirkwiTrekSerializer(CirkwiPOISerializer):
+    def __init__(self, request, stream, get_params=None):
+        super(CirkwiTrekSerializer, self).__init__(request, stream)
+        self.exclude_pois = get_params.get('withoutpois', None)
+
     def serialize_additionnal_info(self, trek, name):
         value = getattr(trek, name)
         if not value:
@@ -506,10 +510,11 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
             self.serialize_field('distance', int(trek.length))
             self.serialize_locomotions(trek)
             self.serialize_trace(trek)
-            if trek.published_pois:
-                self.xml.startElement('pois', {})
-                self.serialize_pois(trek.published_pois.transform(4326, field_name='geom'))
-                self.xml.endElement('pois')
+            if not self.exclude_pois:
+                if trek.published_pois:
+                    self.xml.startElement('pois', {})
+                    self.serialize_pois(trek.published_pois.transform(4326, field_name='geom'))
+                    self.xml.endElement('pois')
             self.xml.endElement('circuit')
         self.xml.endElement('circuits')
         self.xml.endDocument()

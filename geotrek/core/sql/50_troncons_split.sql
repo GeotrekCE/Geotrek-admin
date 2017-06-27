@@ -373,7 +373,7 @@ BEGIN
                                      AND e.decallage > 0
                                      AND et.troncon = troncon.id
                                      AND et.id = ANY(existing_et)
-                                     GROUP BY e.id
+                                     GROUP BY e.id, e.decallage, e.geom
                                      HAVING COUNT(et.id) = 1 AND BOOL_OR(et.pk_debut = et.pk_fin)),
                  closest_path AS (SELECT er.id AS et_id, t.id AS closest_id
                                     FROM l_t_troncon t, existing_rec er

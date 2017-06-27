@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-07 14:07+0200\n"
+"POT-Creation-Date: 2017-06-16 09:02+0000\n"
 "PO-Revision-Date: 2015-10-06 12:11+0100\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -16,6 +16,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 1.7.5\n"
+
+msgid "Altimetry"
+msgstr "Altimetrie"
 
 msgid "Distance (m)"
 msgstr "Distance (m)"
@@ -52,6 +55,9 @@ msgstr "Profil altimétrique"
 
 msgid "Elevation"
 msgstr "Altitude"
+
+msgid "Length"
+msgstr "Longueur"
 
 msgid "3D"
 msgstr "3D"

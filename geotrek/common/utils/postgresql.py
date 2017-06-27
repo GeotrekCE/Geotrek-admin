@@ -1,13 +1,12 @@
-import re
-import os
 import logging
 import traceback
 from functools import wraps
 
-from django.db import connection, models
+import os
+import re
 from django.conf import settings
+from django.db import connection, models
 from django.db.models import get_app, get_models
-
 
 logger = logging.getLogger(__name__)
 

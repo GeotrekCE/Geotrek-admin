@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-16 18:14+0100\n"
+"POT-Creation-Date: 2017-06-16 09:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,6 +26,9 @@ msgid "Difficulty id {old} was changed to {new} successfully."
 msgstr ""
 
 msgid "Practices"
+msgstr ""
+
+msgid "Trekking"
 msgstr ""
 
 msgid "Trek"
@@ -66,6 +69,21 @@ msgid "Create"
 msgstr ""
 
 msgid "Launch Sync"
+msgstr ""
+
+msgid "Global tiles syncing ..."
+msgstr ""
+
+msgid "Trek tiles syncing ..."
+msgstr ""
+
+msgid "Tiles synced ..."
+msgstr ""
+
+msgid "Language"
+msgstr ""
+
+msgid "Sync ended"
 msgstr ""
 
 msgid "Departure"
@@ -186,6 +204,9 @@ msgid "Points of reference"
 msgstr ""
 
 msgid "Source"
+msgstr ""
+
+msgid "Portal"
 msgstr ""
 
 msgid "External id"
@@ -362,65 +383,6 @@ msgstr ""
 msgid "Init sync ..."
 msgstr ""
 
-msgid "Advices"
-msgstr ""
-
-msgid "All useful information"
-msgstr ""
-
-msgid "Altimetric profile"
-msgstr ""
-
-msgid "Attribution"
-msgstr ""
-
-msgid "Geographical location"
-msgstr ""
-
-msgid "Markings"
-msgstr ""
-
-msgid "Max elevation"
-msgstr ""
-
-msgid "Min elevation"
-msgstr ""
-
-msgid "On your path..."
-msgstr ""
-
-msgid "Powered by geotrek.fr"
-msgstr ""
-
-msgid ""
-"The national park is an unrestricted natural area but subjected to "
-"regulations which must be known by all visitors."
-msgstr ""
-
-msgid "This hike is in the core of the national park"
-msgstr ""
-
-msgid "Trek ascent"
-msgstr ""
-
-msgid "Useful information"
-msgstr ""
-
-msgid "Global tiles syncing ..."
-msgstr ""
-
-msgid "Trek tiles syncing ..."
-msgstr ""
-
-msgid "Tiles synced ..."
-msgstr ""
-
-msgid "Language"
-msgstr ""
-
-msgid "Sync ended"
-msgstr ""
-
 msgid "Public print"
 msgstr ""
 
@@ -437,6 +399,9 @@ msgid "Thumbnail"
 msgstr ""
 
 msgid "Elevation"
+msgstr ""
+
+msgid "Attribution"
 msgstr ""
 
 msgid "Powered by http://geotrek.fr"
@@ -519,7 +484,48 @@ msgstr ""
 msgid "Choose value(s)"
 msgstr ""
 
+msgid "Powered by geotrek.fr"
+msgstr ""
+
+msgid "Useful information"
+msgstr ""
+
 msgid "Length"
+msgstr ""
+
+msgid "Trek ascent"
+msgstr ""
+
+msgid "Markings"
+msgstr ""
+
+msgid "Stages"
+msgstr ""
+
+msgid "On your path..."
+msgstr ""
+
+msgid "All useful information"
+msgstr ""
+
+msgid "This hike is in the core of the national park"
+msgstr ""
+
+msgid ""
+"The national park is an unrestricted natural area but subjected to "
+"regulations which must be known by all visitors."
+msgstr ""
+
+msgid "Advices"
+msgstr ""
+
+msgid "Altimetric profile"
+msgstr ""
+
+msgid "Min elevation"
+msgstr ""
+
+msgid "Max elevation"
 msgstr ""
 
 msgid "Transports"
@@ -537,9 +543,6 @@ msgid ""
 "by all visitors."
 msgstr ""
 
-msgid "Stages"
-msgstr ""
-
 msgid "On the way..."
 msgstr ""
 
@@ -549,9 +552,6 @@ msgstr ""
 msgid ""
 "To check the practicability of the hiking paths and to know more about the "
 "National park, please visit us or call us at"
-msgstr ""
-
-msgid "Trekking"
 msgstr ""
 
 msgid "Add a new poi"
@@ -577,4 +577,7 @@ msgstr ""
 
 #, python-format
 msgid "%s min"
+msgstr ""
+
+msgid "Geographical location"
 msgstr ""
