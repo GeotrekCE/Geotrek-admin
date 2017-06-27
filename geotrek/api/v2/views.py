@@ -48,13 +48,23 @@ class TouristicContentViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewS
 class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     queryset = trekking_models.Trek.objects.filter(deleted=False)\
                                            .select_related('topo_object', 'difficulty')\
-                                           .prefetch_related('topo_object__aggregations',)
-    queryset_detail = queryset.prefetch_related('themes', 'networks').transform(settings.API_SRID, field_name='geom')
-    serializer_class = api_serializers.TrekListSerializer
-    serializer_detail_class = api_serializers.TrekDetailSerializer
+                                           .prefetch_related('topo_object__aggregations', 'themes', 'networks')\
+                                           .transform(settings.API_SRID, field_name='geom')
     filter_backends = (DjangoFilterBackend, InBBOXFilter, DistanceToPointFilter)
-    filter_fields = ('difficulty', 'published', 'themes')
+    filter_fields = ('difficulty', 'published', 'themes', 'networks')
     distance_filter_field = 'geom'
+
+    def get_serializer_class(self):
+        if self.request.query_params.get('format', None) == 'geojson':
+            return api_serializers.TrekListGeoSerializer
+        else:
+            return api_serializers.TrekListSerializer
+
+    def get_serializer_detail_class(self):
+        if self.request.query_params.get('format', None) == 'geojson':
+            return api_serializers.TrekDetailGeoSerializer
+        else:
+            return api_serializers.TrekDetailSerializer
 
     @detail_route(methods=['get'])
     def touristiccontent(self, request, *args, **kwargs):

@@ -1,4 +1,5 @@
 from django.conf import settings
+from drf_dynamic_fields import DynamicFieldsMixin
 from rest_framework import serializers
 from rest_framework.relations import HyperlinkedIdentityField
 from rest_framework_gis import serializers as geo_serializers
@@ -8,13 +9,13 @@ from geotrek.trekking import models as trekking_models
 from geotrek.common import models as common_models
 
 
-class FileTypeSerializer(serializers.ModelSerializer):
+class FileTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = common_models.FileType
         fields = ('type')
 
 
-class AttachmentSerializer(serializers.ModelSerializer):
+class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     file_type = FileTypeSerializer(read_only=True)
 
     class Meta:
@@ -23,13 +24,13 @@ class AttachmentSerializer(serializers.ModelSerializer):
                   'date_insert', 'date_update')
 
 
-class TouristicContentCategorySerializer(serializers.ModelSerializer):
+class TouristicContentCategorySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = tourism_models.TouristicContentCategory
         fields = ('id', 'label', 'pictogram', 'type1_label', 'type2_label', 'order')
 
 
-class TouristicContentSerializer(serializers.ModelSerializer):
+class TouristicContentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     url = HyperlinkedIdentityField(view_name='apiv2:touristiccontent-detail')
     category = TouristicContentCategorySerializer()
     location = serializers.SerializerMethodField()
@@ -51,7 +52,7 @@ class TouristicContentGeoSerializer(TouristicContentSerializer, geo_serializers.
         geo_field = 'geom'
 
 
-class TouristicContentDetailSerializer(serializers.ModelSerializer):
+class TouristicContentDetailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     category = TouristicContentCategorySerializer()
     pictures = serializers.SerializerMethodField()
 
@@ -73,9 +74,15 @@ class TouristicContentGeoDetailSerializer(TouristicContentDetailSerializer, geo_
         geo_field = 'geom'
 
 
-class TrekListSerializer(serializers.ModelSerializer):
+class TrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     last_modified = serializers.SerializerMethodField(read_only=True)
     url = HyperlinkedIdentityField(view_name='apiv2:trek-detail')
+    geom = serializers.SerializerMethodField(read_only=True)
+
+    def get_geom(self, obj):
+        if obj.geom:
+            return obj.geom.ewkt
+
 
     def get_last_modified(self, obj):
         # return obj.last_author.logentry_set.last().action_time
@@ -84,11 +91,16 @@ class TrekListSerializer(serializers.ModelSerializer):
     class Meta:
         model = trekking_models.Trek
         fields = (
-            'id', 'url', 'last_modified'
+            'id', 'url', 'geom','last_modified'
         )
 
 
-class RoamingListSerializer(serializers.ModelSerializer):
+class TrekListGeoSerializer(TrekListSerializer, geo_serializers.GeoFeatureModelSerializer):
+    class Meta(TrekListSerializer.Meta):
+        geo_field = 'geom'
+
+
+class RoamingListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     url = HyperlinkedIdentityField(view_name='apiv2:roaming-detail')
     last_modified = serializers.SerializerMethodField(read_only=True)
     difficulty = serializers.SlugRelatedField(slug_field='difficulty', read_only=True)
@@ -110,7 +122,7 @@ class RoamingListGeoSerializer(RoamingListSerializer, geo_serializers.GeoFeature
         geo_field = 'geom'
 
 
-class TrekDetailSerializer(serializers.ModelSerializer):
+class TrekDetailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     length = serializers.SerializerMethodField(read_only=True)
     name = serializers.SerializerMethodField(read_only=True)
     description = serializers.SerializerMethodField(read_only=True)
@@ -198,7 +210,7 @@ class POIListGeoSerializer(POIListSerializer, geo_serializers.GeoFeatureModelSer
         geo_field = 'geom'
 
 
-class POITypeSerializer(serializers.ModelSerializer):
+class POITypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     label = serializers.SerializerMethodField(read_only=True)
 
     def get_label(self, obj):
@@ -214,7 +226,7 @@ class POITypeSerializer(serializers.ModelSerializer):
         fields = ('id', 'label', 'pictogram')
 
 
-class POIDetailSerializer(serializers.ModelSerializer):
+class POIDetailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     name = serializers.SerializerMethodField(read_only=True)
     description = serializers.SerializerMethodField(read_only=True)
     type = POITypeSerializer(read_only=True)
