@@ -234,11 +234,12 @@ class RoamingDetailSerializer(TrekDetailSerializer):
         fields = TrekDetailSerializer.Meta.fields + ('children',)
 
 
-class POIListSerializer(TrekListSerializer):
+class POIListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     url = HyperlinkedIdentityField(view_name='apiv2:poi-detail')
 
-    class Meta(TrekListSerializer.Meta):
+    class Meta:
         model = trekking_models.POI
+        fields = "__all__"
 
 
 class POITypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -284,6 +285,4 @@ class POIDetailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = trekking_models.POI
-        fields = (
-            'id', 'name', 'description', 'type', 'eid', 'pictures', 'geom'
-        )
+        fields = "__all__"

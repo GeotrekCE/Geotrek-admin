@@ -84,7 +84,7 @@ class RoamingViewSet(TrekViewSet):
         return qs
 
 
-class POIViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
+class POIViewSet(api_viewsets.GeotrekViewset):
     serializer_class = api_serializers.POIListSerializer
     serializer_detail_class = api_serializers.POIDetailSerializer
     queryset = trekking_models.POI.objects.filter(deleted=False) \
