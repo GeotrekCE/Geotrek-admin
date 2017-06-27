@@ -256,6 +256,7 @@ PROJECT_APPS += (
     'crispy_forms',
     'compressor',
     'djgeojson',
+    'django_filters',
     'tinymce',
     'geotrek.appconfig.EasyThumbnailsGeotrekConfig',  # easy_thumbnails
     'shapes',

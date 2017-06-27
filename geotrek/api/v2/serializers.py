@@ -149,7 +149,7 @@ class TrekDetailSerializer(serializers.ModelSerializer):
         return obj.serializable_pictures
 
     def get_difficulty(self, obj):
-        return obj.difficulty.difficulty
+        return obj.difficulty.difficulty if obj.difficulty else None
 
     class Meta:
         model = trekking_models.Trek

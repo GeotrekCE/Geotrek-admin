@@ -47,7 +47,8 @@ class TouristicContentViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewS
 
 class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     queryset = trekking_models.Trek.objects.filter(deleted=False)\
-                                           .select_related('topo_object', 'difficulty')
+                                           .select_related('topo_object', 'difficulty')\
+                                           .prefetch_related('topo_object__aggregations',)
     queryset_detail = queryset.prefetch_related('themes', 'networks').transform(settings.API_SRID, field_name='geom')
     serializer_class = api_serializers.TrekListSerializer
     serializer_detail_class = api_serializers.TrekDetailSerializer
