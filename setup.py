@@ -30,6 +30,7 @@ setup(
         'mapentity',
         'pytz',
         'djangorestframework-gis',
+        'drf-dynamic-fields',
         'django-embed-video',
         'xlrd',
         'landez',
