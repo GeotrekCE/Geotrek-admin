@@ -1,7 +1,9 @@
-from rest_framework import routers
-from geotrek.api.v2 import views as api_views
-from django.conf.urls import url, include
+from __future__ import unicode_literals
 
+from django.conf.urls import url, include
+from rest_framework import routers
+
+from geotrek.api.v2 import views as api_views
 
 router = routers.DefaultRouter()
 router.register(r'touristiccontent', api_views.TouristicContentViewSet)
@@ -14,4 +16,4 @@ urlpatterns = [
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 
-#urlpatterns += router.urls
+# urlpatterns += router.urls

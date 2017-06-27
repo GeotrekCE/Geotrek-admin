@@ -1,24 +1,27 @@
+from __future__ import unicode_literals
+
+from django.conf import settings
 from django.db.models.aggregates import Count
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets, response
 from rest_framework.decorators import detail_route
 from rest_framework.generics import get_object_or_404
+from rest_framework_extensions.mixins import DetailSerializerMixin
+from rest_framework_gis.filters import InBBOXFilter, DistanceToPointFilter
 
+from geotrek.api.v2 import pagination as api_pagination
+from geotrek.api.v2 import serializers as api_serializers
 from geotrek.tourism import models as tourism_models
 from geotrek.trekking import models as trekking_models
-from rest_framework import viewsets, response
-from geotrek.api.v2 import serializers as api_serializers
-from rest_framework_extensions.mixins import DetailSerializerMixin
-from django.conf import settings
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework_gis.filters import InBBOXFilter, DistanceToPointFilter
 
 
 class TouristicContentViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     """
     A simple ViewSet for viewing accounts.
     """
-    queryset = tourism_models.TouristicContent.objects.filter(deleted=False, published=True)\
-                                              .select_related('category')\
-                                              .transform(settings.API_SRID, field_name='geom')
+    queryset = tourism_models.TouristicContent.objects.filter(deleted=False, published=True) \
+        .select_related('category') \
+        .transform(settings.API_SRID, field_name='geom')
     filter_backends = (DjangoFilterBackend, InBBOXFilter, DistanceToPointFilter)
     filter_fields = ('category', 'published')
 
@@ -46,37 +49,51 @@ class TouristicContentViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewS
 
 
 class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
-    queryset = trekking_models.Trek.objects.filter(deleted=False)\
-                                           .select_related('topo_object', 'difficulty')\
-                                           .prefetch_related('topo_object__aggregations', 'themes', 'networks')\
-                                           .transform(settings.API_SRID, field_name='geom')
+    queryset = trekking_models.Trek.objects.filter(deleted=False) \
+        .select_related('topo_object', 'difficulty') \
+        .prefetch_related('topo_object__aggregations', 'themes', 'networks', 'attachments') \
+        .transform(settings.API_SRID, field_name='geom')
     filter_backends = (DjangoFilterBackend, InBBOXFilter, DistanceToPointFilter)
     filter_fields = ('difficulty', 'published', 'themes', 'networks')
     distance_filter_field = 'geom'
+    pagination_class = api_pagination.StandardResultsSetPagination
 
     def get_serializer_class(self):
-        if self.request.query_params.get('format', None) == 'geojson':
-            return api_serializers.TrekListGeoSerializer
+        if self._is_request_to_detail_endpoint():
+            # detail view
+            if self.request.query_params.get('format', None) == 'geojson':
+                # geojson
+                if self.request.query_params.get('dim', '2') == '3':
+                    # 3D
+                    return api_serializers.TrekDetailGeo3DSerializer
+                else:
+                    # 2D
+                    return api_serializers.TrekDetailGeoSerializer
+            else:
+                # JSON
+                if self.request.query_params.get('dim', '2') == '3':
+                    # 3D
+                    return api_serializers.TrekDetail3DSerializer
+                else:
+                    # 2D
+                    return api_serializers.TrekDetailSerializer
         else:
-            return api_serializers.TrekListSerializer
-
-    def get_serializer_detail_class(self):
-        if self.request.query_params.get('format', None) == 'geojson':
-            return api_serializers.TrekDetailGeoSerializer
-        else:
-            return api_serializers.TrekDetailSerializer
+            if self.request.query_params.get('format', None) == 'geojson':
+                return api_serializers.TrekListGeoSerializer
+            else:
+                return api_serializers.TrekListSerializer
 
     @detail_route(methods=['get'])
     def touristiccontent(self, request, *args, **kwargs):
         instance = get_object_or_404(self.get_queryset(), pk=kwargs.get('pk'))
         qs = instance.touristic_contents
-        qs = qs.prefetch_related('themes',)
+        qs = qs.prefetch_related('themes', )
         data = api_serializers.TouristicContentDetailSerializer(instance.touristic_contents, many=True).data
         return response.Response(data)
 
 
 class RoamingViewSet(TrekViewSet):
-    #serializer_detail_class = api_serializers.RoamingDetailSerializer
+    # serializer_detail_class = api_serializers.RoamingDetailSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('themes', 'networks', 'accessibilities', 'published', 'practice', 'difficulty')
 
@@ -96,9 +113,9 @@ class RoamingViewSet(TrekViewSet):
         qs = super(RoamingViewSet, self).get_queryset(*args, **kwargs)
         # keep only treks with child
         qs = qs.annotate(count_childs=Count('trek_children')) \
-               .filter(count_childs__gt=0)
+            .filter(count_childs__gt=0)
         # prefetch m2m
-        qs = qs.prefetch_related('themes', 'networks', 'accessibilities',)
+        qs = qs.prefetch_related('themes', 'networks', 'accessibilities', )
         # prefetch FK
         qs = qs.select_related('practice', 'difficulty')
         # transform
@@ -107,8 +124,8 @@ class RoamingViewSet(TrekViewSet):
 
 
 class POIViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
-    queryset = trekking_models.POI.objects.filter(deleted=False)\
-                                          .select_related('topo_object', 'type',)
+    queryset = trekking_models.POI.objects.filter(deleted=False) \
+        .select_related('topo_object', 'type', )
     queryset_detail = queryset.transform(settings.API_SRID, field_name='geom')
     filter_backends = (DjangoFilterBackend, InBBOXFilter, DistanceToPointFilter)
     filter_fields = ('type', 'published')
@@ -129,4 +146,3 @@ class POIViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
                 return api_serializers.POIListGeoSerializer
             else:
                 return api_serializers.POIListSerializer
-
