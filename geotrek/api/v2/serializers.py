@@ -11,6 +11,24 @@ from geotrek.tourism import models as tourism_models
 from geotrek.trekking import models as trekking_models
 
 
+class Base3DSerializer(object):
+    """
+    Mixin use to replace geom with geom_3d field
+    """
+    geom = serializers.SerializerMethodField(read_only=True)
+
+    def get_geom(self, obj):
+        return obj.geom_3d.ewkt if obj.geom_3d else None
+
+
+class BaseGeoJSONSerializer(geo_serializers.GeoFeatureModelSerializer):
+    """
+    Mixin use to serialize in geojson
+    """
+    class Meta:
+        geo_field = 'geom'
+
+
 class FileTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = common_models.FileType
@@ -135,11 +153,6 @@ class TrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         )
 
 
-class TrekListGeoSerializer(TrekListSerializer, geo_serializers.GeoFeatureModelSerializer):
-    class Meta(TrekListSerializer.Meta):
-        geo_field = 'geom'
-
-
 class RoamingListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     url = HyperlinkedIdentityField(view_name='apiv2:roaming-detail')
     last_modified = serializers.SerializerMethodField(read_only=True)
@@ -155,11 +168,6 @@ class RoamingListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
             'id', 'name', 'url', 'last_modified', 'practice',
             'difficulty', 'themes', 'networks', 'accessibilities',
         )
-
-
-class RoamingListGeoSerializer(RoamingListSerializer, geo_serializers.GeoFeatureModelSerializer):
-    class Meta(RoamingListSerializer.Meta):
-        geo_field = 'geom'
 
 
 class TrekDetailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -216,40 +224,7 @@ class TrekDetailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         )
 
 
-class TrekDetail3DSerializer(TrekDetailSerializer):
-    geom = serializers.SerializerMethodField(read_only=True)
-
-    def get_geom(self, obj):
-        return obj.geom_3d.ewkt if obj.geom_3d else None
-
-    class Meta(TrekDetailSerializer.Meta):
-        geo_field = 'geom_3d'
-        fields = TrekDetailSerializer.Meta.fields
-
-
-class TrekDetailGeoSerializer(TrekDetailSerializer, geo_serializers.GeoFeatureModelSerializer):
-    class Meta(TrekDetailSerializer.Meta):
-        geo_field = 'geom'
-        # auto_bbox = True
-
-
-class TrekDetailGeo3DSerializer(TrekDetailGeoSerializer):
-    class Meta(TrekDetailGeoSerializer.Meta):
-        geo_field = 'geom_3d'
-        fields = TrekDetailGeoSerializer.Meta.fields + ('geom_3d',)
-
-
 class RoamingDetailSerializer(TrekDetailSerializer):
-    children = serializers.SerializerMethodField(read_only=True)
-
-    def get_children(self, obj):
-        return TrekDetailSerializer(obj.children.transform(settings.API_SRID, field_name='geom'), many=True).data
-
-    class Meta(TrekDetailSerializer.Meta):
-        fields = TrekDetailSerializer.Meta.fields + ('children',)
-
-
-class RoamingDetailGeoSerializer(TrekDetailGeoSerializer):
     children = serializers.SerializerMethodField(read_only=True)
 
     def get_children(self, obj):
@@ -264,11 +239,6 @@ class POIListSerializer(TrekListSerializer):
 
     class Meta(TrekListSerializer.Meta):
         model = trekking_models.POI
-
-
-class POIListGeoSerializer(POIListSerializer, geo_serializers.GeoFeatureModelSerializer):
-    class Meta(POIListSerializer.Meta):
-        geo_field = 'geom'
 
 
 class POITypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -317,8 +287,3 @@ class POIDetailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = (
             'id', 'name', 'description', 'type', 'eid', 'pictures', 'geom'
         )
-
-
-class POIDetailGeoSerializer(POIDetailSerializer, geo_serializers.GeoFeatureModelSerializer):
-    class Meta(POIDetailSerializer.Meta):
-        geo_field = 'geom'

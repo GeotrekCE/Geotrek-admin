@@ -9,8 +9,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework_extensions.mixins import DetailSerializerMixin
 from rest_framework_gis.filters import InBBOXFilter, DistanceToPointFilter
 
-from geotrek.api.v2 import pagination as api_pagination
-from geotrek.api.v2 import serializers as api_serializers
+from geotrek.api.v2 import serializers as api_serializers, viewsets as api_viewsets
 from geotrek.tourism import models as tourism_models
 from geotrek.trekking import models as trekking_models
 
@@ -48,40 +47,14 @@ class TouristicContentViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewS
                 return api_serializers.TouristicContentSerializer
 
 
-class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
+class TrekViewSet(api_viewsets.GeotrekViewset):
+    serializer_class = api_serializers.TrekListSerializer
+    serializer_detail_class = api_serializers.TrekDetailSerializer
     queryset = trekking_models.Trek.objects.filter(deleted=False) \
         .select_related('topo_object', 'difficulty') \
         .prefetch_related('topo_object__aggregations', 'themes', 'networks', 'attachments') \
         .transform(settings.API_SRID, field_name='geom')
-    filter_backends = (DjangoFilterBackend, InBBOXFilter, DistanceToPointFilter)
     filter_fields = ('difficulty', 'published', 'themes', 'networks')
-    distance_filter_field = 'geom'
-    pagination_class = api_pagination.StandardResultsSetPagination
-
-    def get_serializer_class(self):
-        if self._is_request_to_detail_endpoint():
-            # detail view
-            if self.request.query_params.get('format', None) == 'geojson':
-                # geojson
-                if self.request.query_params.get('dim', '2') == '3':
-                    # 3D
-                    return api_serializers.TrekDetailGeo3DSerializer
-                else:
-                    # 2D
-                    return api_serializers.TrekDetailGeoSerializer
-            else:
-                # JSON
-                if self.request.query_params.get('dim', '2') == '3':
-                    # 3D
-                    return api_serializers.TrekDetail3DSerializer
-                else:
-                    # 2D
-                    return api_serializers.TrekDetailSerializer
-        else:
-            if self.request.query_params.get('format', None) == 'geojson':
-                return api_serializers.TrekListGeoSerializer
-            else:
-                return api_serializers.TrekListSerializer
 
     @detail_route(methods=['get'])
     def touristiccontent(self, request, *args, **kwargs):
@@ -93,21 +66,9 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
 
 
 class RoamingViewSet(TrekViewSet):
-    # serializer_detail_class = api_serializers.RoamingDetailSerializer
-    filter_backends = (DjangoFilterBackend,)
+    serializer_class = api_serializers.RoamingListSerializer
+    serializer_detail_class = api_serializers.RoamingDetailSerializer
     filter_fields = ('themes', 'networks', 'accessibilities', 'published', 'practice', 'difficulty')
-
-    def get_serializer_class(self):
-        if self.request.query_params.get('format', None) == 'geojson':
-            return api_serializers.RoamingListGeoSerializer
-        else:
-            return api_serializers.RoamingListSerializer
-
-    def get_serializer_detail_class(self):
-        if self.request.query_params.get('format', None) == 'geojson':
-            return api_serializers.RoamingDetailGeoSerializer
-        else:
-            return api_serializers.RoamingDetailSerializer
 
     def get_queryset(self, *args, **kwargs):
         qs = super(RoamingViewSet, self).get_queryset(*args, **kwargs)
@@ -124,25 +85,10 @@ class RoamingViewSet(TrekViewSet):
 
 
 class POIViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
+    serializer_class = api_serializers.POIListSerializer
+    serializer_detail_class = api_serializers.POIDetailSerializer
     queryset = trekking_models.POI.objects.filter(deleted=False) \
         .select_related('topo_object', 'type', )
     queryset_detail = queryset.transform(settings.API_SRID, field_name='geom')
-    filter_backends = (DjangoFilterBackend, InBBOXFilter, DistanceToPointFilter)
     filter_fields = ('type', 'published')
-    distance_filter_field = 'geom'
 
-    def get_serializer_class(self):
-        """
-        Obtain serializer switch List/Detail or GeoJSON / Simple JSON
-        :return:
-        """
-        if self._is_request_to_detail_endpoint():
-            if self.request.query_params.get('format', None) == 'geojson':
-                return api_serializers.POIDetailGeoSerializer
-            else:
-                return api_serializers.POIDetailSerializer
-        else:
-            if self.request.query_params.get('format', None) == 'geojson':
-                return api_serializers.POIListGeoSerializer
-            else:
-                return api_serializers.POIListSerializer
