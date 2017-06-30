@@ -379,6 +379,9 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     def source_display(self):
         return ','.join([unicode(source) for source in self.source.all()])
 
+    @property
+    def extent(self):
+        return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom.extent else None
 
 Path.add_property('treks', Trek.path_treks, _(u"Treks"))
 Topology.add_property('treks', Trek.topology_treks, _(u"Treks"))
@@ -663,6 +666,10 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
 
     def distance(self, to_cls):
         return settings.TOURISM_INTERSECTION_MARGIN
+
+    @property
+    def extent(self):
+        return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom.extent else None
 
 
 Path.add_property('pois', POI.path_pois, _(u"POIs"))

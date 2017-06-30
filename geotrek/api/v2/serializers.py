@@ -1,3 +1,5 @@
+# coding: utf8
+
 from __future__ import unicode_literals
 
 from django.conf import settings
@@ -15,10 +17,10 @@ class Base3DSerializer(object):
     """
     Mixin use to replace geom with geom_3d field
     """
-    geom = serializers.SerializerMethodField(read_only=True)
+    geometry = geo_serializers.GeometryField(read_only=True)
 
-    def get_geom(self, obj):
-        return obj.geom_3d.ewkt if obj.geom_3d else None
+    def get_geometry(self, obj):
+        return obj.geom3d_transformed
 
 
 class BaseGeoJSONSerializer(geo_serializers.GeoFeatureModelSerializer):
@@ -26,7 +28,8 @@ class BaseGeoJSONSerializer(geo_serializers.GeoFeatureModelSerializer):
     Mixin use to serialize in geojson
     """
     class Meta:
-        geo_field = 'geom'
+        geo_field = 'geometry'
+        auto_bbox = True
 
 
 class FileTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -95,28 +98,27 @@ class TouristicContentGeoDetailSerializer(TouristicContentDetailSerializer, geo_
 
 
 class TrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    last_modified = serializers.SerializerMethodField(read_only=True)
+    create_datetime = serializers.SerializerMethodField(read_only=True)
+    update_datetime = serializers.SerializerMethodField(read_only=True)
     url = HyperlinkedIdentityField(view_name='apiv2:trek-detail')
-    geom = serializers.SerializerMethodField(read_only=True)
+    geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
     length = serializers.SerializerMethodField(read_only=True)
     name = serializers.SerializerMethodField(read_only=True)
     description = serializers.SerializerMethodField(read_only=True)
     description_teaser = serializers.SerializerMethodField(read_only=True)
     difficulty = serializers.SerializerMethodField(read_only=True)
 
-    def get_geom(self, obj):
-        if obj.geom:
-            return obj.geom.ewkt
-
-    def get_last_modified(self, obj):
-        # return obj.last_author.logentry_set.last().action_time
+    def get_update_datetime(self, obj):
         return obj.topo_object.date_update
+
+    def get_create_datetime(self, obj):
+        return obj.topo_object.date_insert
 
     def get_name(self, obj):
         names = {}
 
         for language in settings.MODELTRANSLATION_LANGUAGES:
-            names.update({language: getattr(obj, 'name_{}'.format(language))})
+            names.update({language: "{}".format(getattr(obj, 'name_{}'.format(language)))})
 
         return names
 
@@ -142,6 +144,9 @@ class TrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     def get_difficulty(self, obj):
         return obj.difficulty.difficulty if obj.difficulty else None
 
+    def get_geometry(self, obj):
+        return obj.geom2d_transformed
+
     class Meta:
         model = trekking_models.Trek
         fields = (
@@ -149,7 +154,7 @@ class TrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
             'description', 'duration', 'difficulty',
             'length', 'ascent', 'descent',
             'min_elevation', 'max_elevation', 'url',
-            'geom', 'last_modified'
+            'geometry', 'update_datetime', 'create_datetime'
         )
 
 
@@ -177,10 +182,10 @@ class TrekDetailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     description_teaser = serializers.SerializerMethodField(read_only=True)
     pictures = serializers.SerializerMethodField(read_only=True)
     difficulty = serializers.SerializerMethodField(read_only=True)
-    geom = serializers.SerializerMethodField(read_only=True)
+    geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
 
-    def get_geom(self, obj):
-        return obj.geom.ewkt if obj.geom else None
+    def get_geometry(self, obj):
+        return obj.geom2d_transformed
 
     def get_name(self, obj):
         names = {}
@@ -220,7 +225,7 @@ class TrekDetailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = (
             'id', 'name', 'description_teaser', 'description',
             'duration', 'difficulty', 'length', 'ascent', 'descent',
-            'min_elevation', 'max_elevation', 'pictures', 'geom'
+            'min_elevation', 'max_elevation', 'pictures', 'geometry'
         )
 
 
@@ -236,10 +241,31 @@ class RoamingDetailSerializer(TrekDetailSerializer):
 
 class POIListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     url = HyperlinkedIdentityField(view_name='apiv2:poi-detail')
+    description = serializers.SerializerMethodField(read_only=True)
+    create_datetime = serializers.SerializerMethodField(read_only=True)
+    update_datetime = serializers.SerializerMethodField(read_only=True)
+    geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
+
+    def get_update_datetime(self, obj):
+        return obj.topo_object.date_update
+
+    def get_create_datetime(self, obj):
+        return obj.topo_object.date_insert
+
+    def get_description(self, obj):
+        descriptions = {}
+
+        for language in settings.MODELTRANSLATION_LANGUAGES:
+            descriptions.update({language: getattr(obj, 'description_{}'.format(language))})
+
+        return descriptions
+
+    def get_geometry(self, obj):
+        return obj.geom2d_transformed
 
     class Meta:
         model = trekking_models.POI
-        fields = "__all__"
+        fields = ('id','url', 'description', 'geometry', 'update_datetime', 'create_datetime')
 
 
 class POITypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

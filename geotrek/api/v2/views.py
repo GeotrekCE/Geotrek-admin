@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
+from django.db.models import Func, F
 from django.db.models.aggregates import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, response
@@ -9,6 +10,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework_extensions.mixins import DetailSerializerMixin
 from rest_framework_gis.filters import InBBOXFilter, DistanceToPointFilter
 
+from api.v2.functions import Transform
 from geotrek.api.v2 import serializers as api_serializers, viewsets as api_viewsets
 from geotrek.tourism import models as tourism_models
 from geotrek.trekking import models as trekking_models
@@ -53,7 +55,8 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
     queryset = trekking_models.Trek.objects.filter(deleted=False) \
         .select_related('topo_object', 'difficulty') \
         .prefetch_related('topo_object__aggregations', 'themes', 'networks', 'attachments') \
-        .transform(settings.API_SRID, field_name='geom')
+        .annotate(geom2d_transformed=Transform('geom', settings.API_SRID),
+                  geom3d_transformed=Transform('geom_3d', settings.API_SRID),)
     filter_fields = ('difficulty', 'published', 'themes', 'networks')
 
     @detail_route(methods=['get'])
@@ -80,15 +83,23 @@ class RoamingViewSet(TrekViewSet):
         # prefetch FK
         qs = qs.select_related('practice', 'difficulty')
         # transform
-        qs = qs.transform(settings.API_SRID, field_name='geom')
+        qs = qs.annotate(geom2d_transformed=Func(F('geom'),
+                                                 settings.API_SRID,
+                                                 function='ST_TRANSFORM'),
+                         geom3d_transformed=Func(F('geom_3d'),
+                                                 settings.API_SRID,
+                                                 function='ST_TRANSFORM'))
         return qs
+
 
 
 class POIViewSet(api_viewsets.GeotrekViewset):
     serializer_class = api_serializers.POIListSerializer
     serializer_detail_class = api_serializers.POIDetailSerializer
     queryset = trekking_models.POI.objects.filter(deleted=False) \
-        .select_related('topo_object', 'type', )
-    queryset_detail = queryset.transform(settings.API_SRID, field_name='geom')
+        .select_related('topo_object', 'type', )\
+        .prefetch_related('topo_object__aggregations')\
+        .annotate(geom2d_transformed=Transform('geom', settings.API_SRID),
+                  geom3d_transformed=Transform('geom_3d', settings.API_SRID))
     filter_fields = ('type', 'published')
 
