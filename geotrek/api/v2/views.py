@@ -1,19 +1,41 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
-from django.db.models import Func, F
 from django.db.models.aggregates import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, response
+from rest_framework_swagger import renderers
+
 from rest_framework.decorators import detail_route
 from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import AllowAny
+from rest_framework.schemas import SchemaGenerator
+from rest_framework.views import APIView
 from rest_framework_extensions.mixins import DetailSerializerMixin
 from rest_framework_gis.filters import InBBOXFilter, DistanceToPointFilter
 
+from api.v2.filters import GeotrekInBBoxFilter
 from api.v2.functions import Transform
 from geotrek.api.v2 import serializers as api_serializers, viewsets as api_viewsets
 from geotrek.tourism import models as tourism_models
 from geotrek.trekking import models as trekking_models
+
+class SwaggerSchemaView(APIView):
+    permission_classes = (AllowAny,)
+    renderer_classes = [
+        renderers.OpenAPIRenderer,
+        renderers.SwaggerUIRenderer
+    ]
+
+    def get(self, request):
+        generator = SchemaGenerator(
+            title='Geotrek API v2',
+            urlconf='geotrek.api.v2.urls',
+            url='/apiv2'
+        )
+        schema = generator.get_schema(request=request)
+
+        return response.Response(schema)
 
 
 class TouristicContentViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
@@ -23,7 +45,6 @@ class TouristicContentViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewS
     queryset = tourism_models.TouristicContent.objects.filter(deleted=False, published=True) \
         .select_related('category') \
         .transform(settings.API_SRID, field_name='geom')
-    filter_backends = (DjangoFilterBackend, InBBOXFilter, DistanceToPointFilter)
     filter_fields = ('category', 'published')
 
     distance_filter_field = 'geom'
@@ -64,7 +85,8 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
         instance = get_object_or_404(self.get_queryset(), pk=kwargs.get('pk'))
         qs = instance.touristic_contents
         qs = qs.prefetch_related('themes', )
-        data = api_serializers.TouristicContentDetailSerializer(instance.touristic_contents, many=True).data
+        data = api_serializers.TouristicContentDetailSerializer(instance.touristic_contents,
+                                                                many=True).data
         return response.Response(data)
 
 
@@ -83,14 +105,9 @@ class RoamingViewSet(TrekViewSet):
         # prefetch FK
         qs = qs.select_related('practice', 'difficulty')
         # transform
-        qs = qs.annotate(geom2d_transformed=Func(F('geom'),
-                                                 settings.API_SRID,
-                                                 function='ST_TRANSFORM'),
-                         geom3d_transformed=Func(F('geom_3d'),
-                                                 settings.API_SRID,
-                                                 function='ST_TRANSFORM'))
+        qs = qs.annotate(geom2d_transformed=Transform('geom', settings.API_SRID),
+                         geom3d_transformed=Transform('geom_3d', settings.API_SRID))
         return qs
-
 
 
 class POIViewSet(api_viewsets.GeotrekViewset):

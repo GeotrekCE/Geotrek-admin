@@ -265,6 +265,7 @@ PROJECT_APPS += (
     'leaflet',  # After mapentity to allow it to patch settings
     'rest_framework',
     'rest_framework_gis',
+    'rest_framework_swagger',
     'embed_video',
     'geotrek.appconfig.CeleryGeotrekConfig',  # djcelery
 )

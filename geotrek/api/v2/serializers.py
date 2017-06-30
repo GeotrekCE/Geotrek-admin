@@ -241,10 +241,23 @@ class RoamingDetailSerializer(TrekDetailSerializer):
 
 class POIListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     url = HyperlinkedIdentityField(view_name='apiv2:poi-detail')
+    name = serializers.SerializerMethodField(read_only=True)
     description = serializers.SerializerMethodField(read_only=True)
+    external_id = serializers.SerializerMethodField(read_only=True)
     create_datetime = serializers.SerializerMethodField(read_only=True)
     update_datetime = serializers.SerializerMethodField(read_only=True)
     geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
+
+    def get_external_id(self, obj):
+        return obj.eid
+
+    def get_name(self, obj):
+        names = {}
+
+        for language in settings.MODELTRANSLATION_LANGUAGES:
+            names.update({language: getattr(obj, 'name_{}'.format(language))})
+
+        return names
 
     def get_update_datetime(self, obj):
         return obj.topo_object.date_update
@@ -265,7 +278,10 @@ class POIListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = trekking_models.POI
-        fields = ('id','url', 'description', 'geometry', 'update_datetime', 'create_datetime')
+        fields = (
+            'id','url', 'name', 'description', 'external_id',
+            'geometry', 'update_datetime', 'create_datetime'
+        )
 
 
 class POITypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

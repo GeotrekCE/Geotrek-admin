@@ -5,11 +5,12 @@ from rest_framework import viewsets
 from rest_framework_extensions.mixins import DetailSerializerMixin
 from rest_framework_gis.filters import InBBOXFilter, DistanceToPointFilter
 
+from geotrek.api.v2.filters import GeotrekInBBoxFilter
 from geotrek.api.v2 import pagination as api_pagination, serializers as api_serializers
 
 
 class GeotrekViewset(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
-    filter_backends = (DjangoFilterBackend, InBBOXFilter, DistanceToPointFilter)
+    filter_backends = (DjangoFilterBackend, GeotrekInBBoxFilter, DistanceToPointFilter)
     distance_filter_field = 'geom'
     pagination_class = api_pagination.StandardResultsSetPagination
 
