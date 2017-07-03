@@ -3,15 +3,17 @@ from __future__ import unicode_literals
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework_extensions.mixins import DetailSerializerMixin
-from rest_framework_gis.filters import InBBOXFilter, DistanceToPointFilter
 
-from geotrek.api.v2.filters import GeotrekInBBoxFilter
-from geotrek.api.v2 import pagination as api_pagination, serializers as api_serializers
+from geotrek.api.v2 import pagination as api_pagination,\
+    serializers as api_serializers, filters as api_filters
 
 
 class GeotrekViewset(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
-    filter_backends = (DjangoFilterBackend, GeotrekInBBoxFilter, DistanceToPointFilter)
+    filter_backends = (DjangoFilterBackend,
+                       api_filters.GeotrekInBBoxFilter,
+                       api_filters.GeotrekDistanceToPointFilter)
     distance_filter_field = 'geom'
+    distance_filter_convert_meters = True
     pagination_class = api_pagination.StandardResultsSetPagination
 
     def get_serializer_class(self):

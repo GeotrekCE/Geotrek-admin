@@ -2,23 +2,19 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.db.models.aggregates import Count
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, response
-from rest_framework_swagger import renderers
-
-from rest_framework.decorators import detail_route
+from rest_framework import viewsets, response, decorators
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.schemas import SchemaGenerator
 from rest_framework.views import APIView
 from rest_framework_extensions.mixins import DetailSerializerMixin
-from rest_framework_gis.filters import InBBOXFilter, DistanceToPointFilter
+from rest_framework_swagger import renderers
 
-from api.v2.filters import GeotrekInBBoxFilter
 from api.v2.functions import Transform
 from geotrek.api.v2 import serializers as api_serializers, viewsets as api_viewsets
 from geotrek.tourism import models as tourism_models
 from geotrek.trekking import models as trekking_models
+
 
 class SwaggerSchemaView(APIView):
     permission_classes = (AllowAny,)
@@ -33,21 +29,21 @@ class SwaggerSchemaView(APIView):
             urlconf='geotrek.api.v2.urls',
             url='/apiv2'
         )
-        schema = generator.get_schema(request=request)
+        schema = generator.get_schema(request=request, )
 
         return response.Response(schema)
 
 
-class TouristicContentViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
+class TouristicContentViewSet(api_viewsets.GeotrekViewset):
     """
     A simple ViewSet for viewing accounts.
     """
+    serializer_class = api_serializers.TouristicContentSerializer
+    serializer_detail_class = api_serializers.TouristicContentDetailSerializer
     queryset = tourism_models.TouristicContent.objects.filter(deleted=False, published=True) \
         .select_related('category') \
         .transform(settings.API_SRID, field_name='geom')
     filter_fields = ('category', 'published')
-
-    distance_filter_field = 'geom'
 
     def get_serializer_class(self):
         """
@@ -80,7 +76,7 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
                   geom3d_transformed=Transform('geom_3d', settings.API_SRID),)
     filter_fields = ('difficulty', 'published', 'themes', 'networks')
 
-    @detail_route(methods=['get'])
+    @decorators.detail_route(methods=['get'])
     def touristiccontent(self, request, *args, **kwargs):
         instance = get_object_or_404(self.get_queryset(), pk=kwargs.get('pk'))
         qs = instance.touristic_contents
