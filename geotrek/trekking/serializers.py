@@ -368,9 +368,11 @@ class CirkwiPOISerializer(object):
         self.xml.startElement('images', {})
         for picture in pictures:
             self.xml.startElement('image', {})
-            self.serialize_field('legende', picture['legend'])
+            if picture['legend']:
+                self.serialize_field('legende', picture['legend'])
             self.serialize_field('url', request.build_absolute_uri(picture['url']))
-            self.serialize_field('credit', picture['author'])
+            if picture['author']:
+                self.serialize_field('credit', picture['author'])
             self.xml.endElement('image')
         self.xml.endElement('images')
         self.xml.endElement('medias')
