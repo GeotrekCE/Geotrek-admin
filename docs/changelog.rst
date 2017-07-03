@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-*
+* Cirkwi export fixes and improvements
 
 
 2.14.2 (2017-06-21)

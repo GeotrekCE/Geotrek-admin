@@ -410,7 +410,7 @@ class CirkwiPOISerializer(object):
 
     def serialize(self, pois):
         self.xml.startDocument()
-        self.xml.startElement('pois', {'version': '2'})
+        self.xml.startElement('pois', {'version': '3'})
         self.serialize_pois(pois)
         self.xml.endElement('pois')
         self.xml.endDocument()
@@ -422,6 +422,7 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
 
     def __init__(self, request, stream, get_params=None):
         super(CirkwiTrekSerializer, self).__init__(request, stream)
+        self.request = request
         self.exclude_pois = get_params.get('withoutpois', None)
 
     def serialize_additionnal_info(self, trek, name):
@@ -433,20 +434,6 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
         self.serialize_field('titre', trek._meta.get_field(name).verbose_name)
         self.serialize_field('description', value)
         self.xml.endElement('information_complementaire')
-
-    def serialize_trace(self, trek):
-        self.xml.startElement('trace', {})
-        coords = trek.geom.transform(4326, clone=True).coords
-        if trek.geom.geom_typeid == 5:
-            coords = coords[0]
-        elif trek.geom.geom_typeid != 1:
-            coords = []
-        for c in coords:
-            self.xml.startElement('point', {})
-            self.serialize_field('lat', c[1])
-            self.serialize_field('lng', c[0])
-            self.xml.endElement('point')
-        self.xml.endElement('trace')
 
     def serialize_locomotions(self, trek):
         attrs = {}
@@ -484,7 +471,7 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
     # TODO: parking location (POI?), points_reference
     def serialize(self, treks):
         self.xml.startDocument()
-        self.xml.startElement('circuits', {'version': '2'})
+        self.xml.startElement('circuits', {'version': '3'})
         for trek in treks:
             self.xml.startElement('circuit', {
                 'date_creation': timestamp(trek.date_insert),
@@ -510,7 +497,9 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
             self.xml.endElement('informations')
             self.serialize_field('distance', int(trek.length))
             self.serialize_locomotions(trek)
-            self.serialize_trace(trek)
+            kml_url = reverse('trekking:trek_kml_detail',
+                              kwargs={'lang': get_language(), 'pk': trek.pk, 'slug': trek.slug})
+            self.serialize_field('fichier_trace', self.request.build_absolute_uri(kml_url))
             if not self.exclude_pois:
                 if trek.published_pois:
                     self.xml.startElement('pois', {})
