@@ -14,6 +14,7 @@ from api.v2.functions import Transform
 from geotrek.api.v2 import serializers as api_serializers, viewsets as api_viewsets
 from geotrek.tourism import models as tourism_models
 from geotrek.trekking import models as trekking_models
+from geotrek.core import models as core_models
 
 
 class SwaggerSchemaView(APIView):
@@ -32,6 +33,12 @@ class SwaggerSchemaView(APIView):
         schema = generator.get_schema(request=request, )
 
         return response.Response(schema)
+
+
+class PathViewSet(api_viewsets.GeotrekViewset):
+    serializer_class = api_serializers.PathListSerializer
+    serializer_detail_class = api_serializers.PathListSerializer
+    queryset = core_models.Path.objects.all()
 
 
 class TouristicContentViewSet(api_viewsets.GeotrekViewset):
@@ -89,21 +96,8 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
 class RoamingViewSet(TrekViewSet):
     serializer_class = api_serializers.RoamingListSerializer
     serializer_detail_class = api_serializers.RoamingDetailSerializer
-    filter_fields = ('themes', 'networks', 'accessibilities', 'published', 'practice', 'difficulty')
-
-    def get_queryset(self, *args, **kwargs):
-        qs = super(RoamingViewSet, self).get_queryset(*args, **kwargs)
-        # keep only treks with child
-        qs = qs.annotate(count_childs=Count('trek_children')) \
-            .filter(count_childs__gt=0)
-        # prefetch m2m
-        qs = qs.prefetch_related('themes', 'networks', 'accessibilities', )
-        # prefetch FK
-        qs = qs.select_related('practice', 'difficulty')
-        # transform
-        qs = qs.annotate(geom2d_transformed=Transform('geom', settings.API_SRID),
-                         geom3d_transformed=Transform('geom_3d', settings.API_SRID))
-        return qs
+    queryset = TrekViewSet.queryset.annotate(count_children=Count('trek_children'))\
+        .filter(count_children__gt=0)
 
 
 class POIViewSet(api_viewsets.GeotrekViewset):

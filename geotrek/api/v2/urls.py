@@ -12,6 +12,8 @@ router.register(r'touristiccontent', api_views.TouristicContentViewSet)
 router.register(r'trek', api_views.TrekViewSet, base_name='trek')
 router.register(r'roaming', api_views.RoamingViewSet, base_name='roaming')
 router.register(r'poi', api_views.POIViewSet, base_name='poi')
+router.register(r'path', api_views.PathViewSet, base_name='path')
+
 
 urlpatterns = [
     url(r'^$', api_views.SwaggerSchemaView.as_view(), name="schema"),
