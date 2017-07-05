@@ -172,18 +172,7 @@ class TrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         return obj.topo_object.date_insert
 
     def get_name(self, obj):
-        lang = self.context.get('request').META.get('HTTP_ACCEPT_LANGUAGE', 'all')
-
-        if lang != 'all':
-            data = "{}".format(getattr(obj, 'name_{}'.format(lang)))
-
-        else:
-            data = {}
-
-            for language in settings.MODELTRANSLATION_LANGUAGES:
-                data.update({language: "{}".format(getattr(obj, 'name_{}'.format(language)))})
-
-        return data
+        return get_translation_or_dict('name', self, obj)
 
     def get_description(self, obj):
         return get_translation_or_dict('description', self, obj)
@@ -260,6 +249,17 @@ class RoamingDetailSerializer(TrekDetailSerializer):
         fields = TrekDetailSerializer.Meta.fields + ('steps',)
 
 
+class POITypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    label = serializers.SerializerMethodField(read_only=True)
+
+    def get_label(self, obj):
+        return get_translation_or_dict('label', self, obj)
+
+    class Meta:
+        model = trekking_models.POIType
+        fields = ('id', 'label', 'pictogram')
+
+
 class POIListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     url = HyperlinkedIdentityField(view_name='apiv2:poi-detail')
     name = serializers.SerializerMethodField(read_only=True)
@@ -268,6 +268,11 @@ class POIListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     create_datetime = serializers.SerializerMethodField(read_only=True)
     update_datetime = serializers.SerializerMethodField(read_only=True)
     geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
+    type = POITypeSerializer(read_only=True)
+    pictures = serializers.SerializerMethodField(read_only=True)
+
+    def get_pictures(self, obj):
+        return obj.serializable_pictures
 
     def get_external_id(self, obj):
         return obj.eid
@@ -290,40 +295,20 @@ class POIListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = trekking_models.POI
         fields = (
-            'id','url', 'name', 'description', 'external_id',
+            'id','url', 'name', 'type', 'description', 'external_id',
+            'pictures',
             'geometry', 'update_datetime', 'create_datetime'
         )
-
-
-class POITypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    label = serializers.SerializerMethodField(read_only=True)
-
-    def get_label(self, obj):
-        labels = {}
-
-        for language in settings.MODELTRANSLATION_LANGUAGES:
-            labels.update({language: getattr(obj, 'label_{}'.format(language))})
-
-        return labels
-
-    class Meta:
-        model = trekking_models.POIType
-        fields = ('id', 'label', 'pictogram')
 
 
 class POIDetailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     name = serializers.SerializerMethodField(read_only=True)
     description = serializers.SerializerMethodField(read_only=True)
-    type = POITypeSerializer(read_only=True)
     pictures = serializers.SerializerMethodField(read_only=True)
+    type = POITypeSerializer(read_only=True)
 
     def get_name(self, obj):
-        names = {}
-
-        for language in settings.MODELTRANSLATION_LANGUAGES:
-            names.update({language: getattr(obj, 'name_{}'.format(language))})
-
-        return names
+        return get_translation_or_dict('name', self, obj)
 
     def get_description(self, obj):
         descriptions = {}
