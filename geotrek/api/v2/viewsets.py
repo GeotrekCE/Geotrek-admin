@@ -11,12 +11,13 @@ from geotrek.api.v2 import pagination as api_pagination, filters as api_filters
 
 class GeotrekViewset(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,
+                       api_filters.GeotrekQueryParamsFilter,
                        api_filters.GeotrekInBBoxFilter,
                        api_filters.GeotrekDistanceToPointFilter)
     distance_filter_field = 'geom'
     distance_filter_convert_meters = True
     pagination_class = api_pagination.StandardResultsSetPagination
-    permission_classes = [AllowAny,]
+    permission_classes = [AllowAny, ]
 
     def get_serializer_class(self):
         base_serializer_class = super(GeotrekViewset, self).get_serializer_class()

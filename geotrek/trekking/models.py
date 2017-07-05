@@ -445,7 +445,6 @@ class TrekRelationship(models.Model):
 
 
 class TrekNetwork(PictogramMixin):
-
     network = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='reseau')
 
     class Meta:
@@ -669,7 +668,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
 
     @property
     def extent(self):
-        return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom.extent else None
+        return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom else None
 
 
 Path.add_property('pois', POI.path_pois, _(u"POIs"))

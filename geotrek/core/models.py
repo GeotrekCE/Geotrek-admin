@@ -241,6 +241,10 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
             return result
 
+    @property
+    def extent(self):
+        return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom else None
+
 
 class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDeleteMixin):
     paths = models.ManyToManyField(Path, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
