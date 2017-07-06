@@ -383,6 +383,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     def extent(self):
         return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom.extent else None
 
+
 Path.add_property('treks', Trek.path_treks, _(u"Treks"))
 Topology.add_property('treks', Trek.topology_treks, _(u"Treks"))
 if settings.HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES:

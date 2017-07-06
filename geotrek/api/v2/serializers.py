@@ -32,7 +32,7 @@ class BaseGeoJSONSerializer(geo_serializers.GeoFeatureModelSerializer):
 
     class Meta:
         geo_field = 'geometry'
-        #auto_bbox = True
+        auto_bbox = True
 
 
 def override_serializer(format_output, dimension, base_serializer_class):
@@ -240,7 +240,7 @@ class TrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
             'description', 'departure', 'arrival', 'duration',
             'difficulty', 'length_2d', 'length_3d', 'ascent', 'descent',
             'min_elevation', 'max_elevation', 'themes', 'networks',
-            'geometry', 'update_datetime', 'create_datetime'
+            'extent', 'geometry', 'update_datetime', 'create_datetime'
         )
 
 
