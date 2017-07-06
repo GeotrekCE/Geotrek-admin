@@ -12,7 +12,7 @@ class GeotrekQueryParamsFilter(BaseFilterBackend):
     def get_schema_fields(self, view):
         field_dim = Field(name='dim', required=False,
                           description='Set geometry dimension (2 by default for 2D, 3 for 3D)',
-                          example=3, type=int())
+                          example=3, type='integer')
         field_language = Field(name='language', required=False,
                                description="Set language for translation. 'all' by default",
                                example="fr")
@@ -29,8 +29,8 @@ class GeotrekInBBoxFilter(InBBOXFilter):
 
     def get_schema_fields(self, view):
         field_in_bbox = Field(name=self.bbox_param, required=False,
-                              description='Filter elements contained in bbox',
-                              example='XXX')
+                              description='Filter elements contained in bbox formatted like SW-lng,SW-lat,NE-lng,NE-lat',
+                              example='1.15,46.1,1.56,47.6')
 
         return field_in_bbox,
 
@@ -42,7 +42,8 @@ class GeotrekDistanceToPointFilter(DistanceToPointFilter):
 
     def get_schema_fields(self, view):
         field_dist = Field(name=self.dist_param, required=False,
-                           description='Distance max between point and elements',
+                           description='Max distance in meters between point and elements',
+                           type='number',
                            example='XXX')
         field_point = Field(name=self.point_param, required=False,
                             description='Reference point to compute distance',

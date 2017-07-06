@@ -21,7 +21,7 @@ class SwaggerSchemaView(APIView):
     permission_classes = (AllowAny,)
     renderer_classes = [
         renderers.OpenAPIRenderer,
-        renderers.SwaggerUIRenderer
+        renderers.SwaggerUIRenderer,
     ]
 
     def get(self, request):

@@ -17,7 +17,7 @@ from geotrek.trekking import models as trekking_models
 
 class Base3DSerializer(object):
     """
-    Mixin use to replace geom with geom_3d field
+    Mixin used to replace geom with geom_3d field
     """
     geometry = geo_serializers.GeometryField(read_only=True)
 
@@ -27,15 +27,18 @@ class Base3DSerializer(object):
 
 class BaseGeoJSONSerializer(geo_serializers.GeoFeatureModelSerializer):
     """
-    Mixin use to serialize in geojson
+    Mixin used to serialize geojson
     """
 
     class Meta:
         geo_field = 'geometry'
-        auto_bbox = True
+        #auto_bbox = True
 
 
 def override_serializer(format_output, dimension, base_serializer_class):
+    """
+    Override Serializer switch output format and dimension data
+    """
     if format_output == 'geojson':
         if dimension == '3':
             class GeneratedGeo3DSerializer(Base3DSerializer,
@@ -103,19 +106,15 @@ class DifficultySerializer(serializers.ModelSerializer):
         fields = ('id', 'label', 'cirkwi_level')
 
 
-class FileTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    class Meta:
-        model = common_models.FileType
-        fields = ('type')
-
-
 class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    file_type = FileTypeSerializer(read_only=True)
+    url = serializers.FileField(source='attachment_file')
 
     class Meta:
         model = common_models.Attachment
-        fields = ('file_type', 'attachment_file', 'creator', 'author', 'title', 'legend', 'starred',
-                  'date_insert', 'date_update')
+        fields = (
+            'url', 'author', 'title', 'legend',
+            'starred', 'date_insert', 'date_update'
+        )
 
 
 class TouristicContentCategorySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -189,8 +188,6 @@ class PathListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
 
 class TrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    create_datetime = serializers.SerializerMethodField(read_only=True)
-    update_datetime = serializers.SerializerMethodField(read_only=True)
     url = HyperlinkedIdentityField(view_name='apiv2:trek-detail')
     geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
     length_2d = serializers.SerializerMethodField(read_only=True)
@@ -203,6 +200,8 @@ class TrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     arrival = serializers.SerializerMethodField(read_only=True)
     themes = TrekThemeSerializer(many=True, read_only=True)
     networks = TrekNetworkSerializer(many=True, read_only=True)
+    create_datetime = serializers.SerializerMethodField(read_only=True)
+    update_datetime = serializers.SerializerMethodField(read_only=True)
 
     def get_update_datetime(self, obj):
         return obj.topo_object.date_update
@@ -231,9 +230,6 @@ class TrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     def get_length_3d(self, obj):
         return round(obj.length_3d_m, 1)
 
-    def get_difficulty(self, obj):
-        return obj.difficulty.difficulty if obj.difficulty else None
-
     def get_geometry(self, obj):
         return obj.geom2d_transformed
 
@@ -241,16 +237,21 @@ class TrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         model = trekking_models.Trek
         fields = (
             'id', 'url', 'name', 'description_teaser',
-            'description', 'departure', 'arrival', 'duration', 'difficulty',
-            'length_2d', 'length_3d', 'ascent', 'descent',
+            'description', 'departure', 'arrival', 'duration',
+            'difficulty', 'length_2d', 'length_3d', 'ascent', 'descent',
             'min_elevation', 'max_elevation', 'themes', 'networks',
             'geometry', 'update_datetime', 'create_datetime'
         )
 
 
 class TrekDetailSerializer(TrekListSerializer):
+    pictures = AttachmentSerializer(many=True, read_only=True, source='get_pictures')
+
+    def get_pictures(self, obj):
+        return obj.pictures
+
     class Meta(TrekListSerializer.Meta):
-        fields = tuple((field for field in TrekListSerializer.Meta.fields if field != 'url'))
+        fields = tuple((field for field in TrekListSerializer.Meta.fields if field != 'url')) + ('pictures', )
 
 
 class RoamingListSerializer(TrekListSerializer):
@@ -306,9 +307,6 @@ class POIListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
     type = POITypeSerializer(read_only=True)
 
-    def get_pictures(self, obj):
-        return obj.serializable_pictures
-
     def get_external_id(self, obj):
         return obj.eid
 
@@ -336,13 +334,10 @@ class POIListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
 
 class POIDetailSerializer(POIListSerializer):
-    pictures = serializers.SerializerMethodField(read_only=True)
+    pictures = AttachmentSerializer(many=True, read_only=True, source='get_pictures')
 
     def get_pictures(self, obj):
-        return obj.serializable_pictures
+        return obj.pictures
 
     class Meta(POIListSerializer.Meta):
-        fields = (
-            'id', 'pictures', 'name', 'type', 'description', 'external_id',
-            'geometry', 'update_datetime', 'create_datetime'
-        )
+        fields = tuple((field for field in POIListSerializer.Meta.fields if field != 'url')) + ('pictures',)

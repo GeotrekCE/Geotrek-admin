@@ -5,7 +5,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework_extensions.mixins import DetailSerializerMixin
 
-from api.v2.serializers import override_serializer
+from geotrek.api.v2.serializers import override_serializer
 from geotrek.api.v2 import pagination as api_pagination, filters as api_filters
 
 
@@ -14,7 +14,7 @@ class GeotrekViewset(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
                        api_filters.GeotrekQueryParamsFilter,
                        api_filters.GeotrekInBBoxFilter,
                        api_filters.GeotrekDistanceToPointFilter)
-    distance_filter_field = 'geom'
+    distance_filter_field = 'geometry'
     distance_filter_convert_meters = True
     pagination_class = api_pagination.StandardResultsSetPagination
     permission_classes = [AllowAny, ]
