@@ -20,6 +20,6 @@ def get_translation_or_dict(model_field_name, serializer, instance):
         data = {}
 
         for language in settings.MODELTRANSLATION_LANGUAGES:
-            data.update({language: "{}".format(getattr(instance, '{}_{}'.format(model_field_name, language)))})
+            data.update({language: "{}".format(getattr(instance, '{}_{}'.format(model_field_name, language),))})
 
     return data

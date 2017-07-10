@@ -361,6 +361,10 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     def themes_display(self):
         return ','.join([unicode(source) for source in self.themes.all()])
 
+    @property
+    def extent(self):
+        return self.geom.buffer(10).transform(settings.API_SRID, clone=True).extent
+
 
 Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))
 Topology.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True), _(u"Published touristic contents"))

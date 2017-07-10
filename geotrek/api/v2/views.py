@@ -2,9 +2,8 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.db.models.aggregates import Count
-from rest_framework import response, decorators
+from rest_framework import response, decorators, permissions
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import AllowAny
 from rest_framework.schemas import SchemaGenerator
 from rest_framework.views import APIView
 from rest_framework_swagger import renderers
@@ -18,7 +17,7 @@ from geotrek.trekking import models as trekking_models
 
 
 class SwaggerSchemaView(APIView):
-    permission_classes = (AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
     renderer_classes = [
         renderers.OpenAPIRenderer,
         renderers.SwaggerUIRenderer,
@@ -48,35 +47,17 @@ class PathViewSet(api_viewsets.GeotrekViewset):
 
 
 class TouristicContentViewSet(api_viewsets.GeotrekViewset):
-    """
-    A simple ViewSet for viewing accounts.
-    """
-    serializer_class = api_serializers.TouristicContentSerializer
+    serializer_class = api_serializers.TouristicContentListSerializer
     serializer_detail_class = api_serializers.TouristicContentDetailSerializer
     queryset = tourism_models.TouristicContent.objects.filter(deleted=False, published=True) \
         .select_related('category') \
-        .transform(settings.API_SRID, field_name='geom')
+        .annotate(geom2d_transformed=Transform('geom', settings.API_SRID),)
     filter_fields = ('category', 'published')
 
     def get_serializer_class(self):
-        """
-        Obtain serializer switch List/Detail or GeoJSON / Simple JSON
-        :return:
-        """
-        format = self.request.query_params.get('format', None)
-
-        if self._is_request_to_detail_endpoint():
-            if format == 'geojson':
-                return api_serializers.TouristicContentGeoDetailSerializer
-
-            else:
-                return api_serializers.TouristicContentDetailSerializer
-        else:
-            if format == 'geojson':
-                return api_serializers.TouristicContentGeoSerializer
-
-            else:
-                return api_serializers.TouristicContentSerializer
+        format_output = self.request.query_params.get('format', 'json')
+        # force 2D because 3D unavailable
+        return api_serializers.override_serializer(format_output, '2', self.serializer_class)
 
 
 class TrekViewSet(api_viewsets.GeotrekViewset):

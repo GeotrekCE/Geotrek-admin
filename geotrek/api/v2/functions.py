@@ -25,7 +25,3 @@ class Length3D(Func):
     """
     function = 'ST_3DLENGTH'
     output_field = FloatField()
-
-
-class Round(Func):
-    function = 'ROUND'

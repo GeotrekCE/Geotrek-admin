@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from coreapi.document import Field
+from django.utils.translation import ugettext as _
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import InBBOXFilter, DistanceToPointFilter
 
@@ -19,7 +20,9 @@ class GeotrekQueryParamsFilter(BaseFilterBackend):
         field_format = Field(name='format', required=False,
                              description="Set output format (json / geojson). JSON by default",
                              example="geojson")
-        return field_dim, field_language, field_format
+        field_fields = Field(name='fields', required=False, description=_("Limit required fields to increase performances. Ex : id,url,geometry"))
+        field_omit = Field(name='omit', required=False, description=_("Omit specified fields to increase performance. Ex: url,category"))
+        return field_dim, field_language, field_format, field_fields, field_omit
 
 
 class GeotrekInBBoxFilter(InBBOXFilter):

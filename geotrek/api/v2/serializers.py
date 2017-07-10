@@ -123,48 +123,28 @@ class TouristicContentCategorySerializer(DynamicFieldsMixin, serializers.ModelSe
         fields = ('id', 'label', 'pictogram', 'type1_label', 'type2_label', 'order')
 
 
-class TouristicContentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+class TouristicContentListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     url = HyperlinkedIdentityField(view_name='apiv2:touristiccontent-detail')
     category = TouristicContentCategorySerializer()
-    location = serializers.SerializerMethodField()
+    geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
 
-    def get_location(self, obj):
-        location = obj.geom.transform(settings.API_SRID, clone=True)
-        return {
-            'latitude': location.y,
-            'longitude': location.x
-        }
+    def get_geometry(self, obj):
+        return obj.geom2d_transformed
 
     class Meta:
         model = tourism_models.TouristicContent
-        fields = ('id', 'url', 'description_teaser', 'description', 'category', 'approved', 'location')
+        fields = ('id', 'url', 'description_teaser', 'description', 'category', 'approved', 'geometry')
 
 
-class TouristicContentGeoSerializer(TouristicContentSerializer, geo_serializers.GeoFeatureModelSerializer):
-    class Meta(TouristicContentSerializer.Meta):
-        geo_field = 'geom'
 
-
-class TouristicContentDetailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    category = TouristicContentCategorySerializer()
+class TouristicContentDetailSerializer(TouristicContentListSerializer):
     pictures = serializers.SerializerMethodField()
 
     def get_pictures(self, obj):
-        return obj.serializable_pictures
+        return obj.pictures
 
-    class Meta:
-        model = tourism_models.TouristicContent
-        fields = (
-            'id', 'description_teaser', 'description', 'themes',
-            'category', 'contact', 'email', 'website', 'practical_info',
-            'source', 'portal', 'eid', 'reservation_id', 'approved',
-            'pictures', 'geom'
-        )
-
-
-class TouristicContentGeoDetailSerializer(TouristicContentDetailSerializer, geo_serializers.GeoFeatureModelSerializer):
-    class Meta(TouristicContentDetailSerializer.Meta):
-        geo_field = 'geom'
+    class Meta(TouristicContentListSerializer.Meta):
+        fields = tuple(field for field in TouristicContentListSerializer.Meta.fields if field != 'url') + ('pictures',)
 
 
 class PathListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
