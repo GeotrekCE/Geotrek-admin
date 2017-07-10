@@ -220,15 +220,12 @@ class TrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
             'description', 'departure', 'arrival', 'duration',
             'difficulty', 'length_2d', 'length_3d', 'ascent', 'descent',
             'min_elevation', 'max_elevation', 'themes', 'networks',
-            'extent', 'geometry', 'update_datetime', 'create_datetime'
+            'geometry', 'update_datetime', 'create_datetime'
         )
 
 
 class TrekDetailSerializer(TrekListSerializer):
-    pictures = AttachmentSerializer(many=True, read_only=True, source='get_pictures')
-
-    def get_pictures(self, obj):
-        return obj.pictures
+    pictures = AttachmentSerializer(many=True,)
 
     class Meta(TrekListSerializer.Meta):
         fields = tuple((field for field in TrekListSerializer.Meta.fields if field != 'url')) + ('pictures', )
