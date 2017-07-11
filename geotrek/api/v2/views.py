@@ -128,3 +128,13 @@ class POIViewSet(api_viewsets.GeotrekViewset):
         .annotate(geom2d_transformed=Transform('geom', settings.API_SRID),
                   geom3d_transformed=Transform('geom_3d', settings.API_SRID))
     filter_fields = ('type', 'published')
+
+    @decorators.list_route(methods=['get'])
+    def alltypes(self, request, *args, **kwargs):
+        """
+        Get all POI types
+        """
+        data = api_serializers.POITypeSerializer(trekking_models.POIType.objects.all(),
+                                                 many=True,
+                                                 context={'request': request}).data
+        return response.Response(data)
