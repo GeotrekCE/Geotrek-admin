@@ -2,9 +2,8 @@ from __future__ import unicode_literals
 
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import viewsets
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_extensions.mixins import DetailSerializerMixin
-from rest_framework_gis.pagination import GeoJsonPagination
 
 from geotrek.api.v2.serializers import override_serializer
 from geotrek.api.v2 import pagination as api_pagination, filters as api_filters
@@ -19,7 +18,6 @@ class GeotrekViewset(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     distance_filter_convert_meters = True
     pagination_class = api_pagination.StandardResultsSetPagination
     permission_classes = [IsAuthenticated, ]
-
 
     def get_serializer_class(self):
         base_serializer_class = super(GeotrekViewset, self).get_serializer_class()

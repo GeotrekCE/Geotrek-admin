@@ -51,7 +51,7 @@ class TouristicContentViewSet(api_viewsets.GeotrekViewset):
     serializer_detail_class = api_serializers.TouristicContentDetailSerializer
     queryset = tourism_models.TouristicContent.objects.filter(deleted=False, published=True) \
         .select_related('category') \
-        .annotate(geom2d_transformed=Transform('geom', settings.API_SRID),)
+        .annotate(geom2d_transformed=Transform('geom', settings.API_SRID), )
     filter_fields = ('category', 'published')
 
     def get_serializer_class(self):
@@ -64,21 +64,51 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
     serializer_class = api_serializers.TrekListSerializer
     serializer_detail_class = api_serializers.TrekDetailSerializer
     queryset = trekking_models.Trek.objects.filter(deleted=False) \
-        .select_related('topo_object', 'difficulty') \
+        .select_related('topo_object', 'difficulty', 'practice') \
         .prefetch_related('topo_object__aggregations', 'themes', 'networks', 'attachments') \
         .annotate(geom2d_transformed=Transform('geom', settings.API_SRID),
                   geom3d_transformed=Transform('geom_3d', settings.API_SRID),
                   length_2d_m=Length('geom'),
                   length_3d_m=Length3D('geom_3d'))
-    filter_fields = ('difficulty', 'published', 'themes', 'networks')
+    filter_fields = ('difficulty', 'published', 'themes', 'networks', 'practice')
 
-    @decorators.detail_route(methods=['get'])
-    def touristiccontent(self, request, *args, **kwargs):
-        instance = get_object_or_404(self.get_queryset(), pk=kwargs.get('pk'))
-        qs = instance.touristic_contents
-        qs = qs.prefetch_related('themes', )
-        data = api_serializers.TouristicContentDetailSerializer(instance.touristic_contents,
-                                                                many=True).data
+    @decorators.list_route(methods=['get'])
+    def practices(self, request, *args, **kwargs):
+        """
+        Get practice list
+        """
+        data = api_serializers.TrekPracticeSerializer(trekking_models.Practice.objects.all(),
+                                                      many=True,
+                                                      context={'request': request}).data
+        return response.Response(data)
+
+    @decorators.list_route(methods=['get'])
+    def themes(self, request, *args, **kwargs):
+        """
+        Get theme list
+        """
+        data = api_serializers.TrekThemeSerializer(trekking_models.Theme.objects.all(),
+                                                   many=True,
+                                                   context={'request': request}).data
+        return response.Response(data)
+
+    @decorators.list_route(methods=['get'])
+    def networks(self, request, *args, **kwargs):
+        """
+        Get network list
+        """
+        data = api_serializers.TrekNetworkSerializer(trekking_models.TrekNetwork.objects.all(),
+                                                     many=True,
+                                                     context={'request': request}).data
+        return response.Response(data)
+
+    @decorators.list_route(methods=['get'])
+    def difficulties(self, request, *args, **kwargs):
+        """
+        Get network list
+        """
+        qs = trekking_models.DifficultyLevel.objects.all()
+        data = api_serializers.DifficultySerializer(qs, many=True, context={'request': request}).data
         return response.Response(data)
 
 

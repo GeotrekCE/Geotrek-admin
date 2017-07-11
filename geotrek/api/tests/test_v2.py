@@ -29,25 +29,36 @@ GEOJSON_STRUCTURE = sorted([
 TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'arrival', 'ascent', 'create_datetime', 'departure', 'descent', 'description', 'description_teaser',
     'difficulty', 'duration', 'id', 'length_2d', 'length_3d', 'max_elevation', 'min_elevation',
-    'name', 'networks', 'themes', 'update_datetime', 'url'
+    'name', 'networks', 'themes', 'update_datetime', 'url', 'practice', 'external_id'
 ])
 
 
 TREK_DETAIL_JSON_STRUCTURE = sorted([
     'arrival', 'ascent', 'create_datetime', 'departure', 'descent', 'description', 'description_teaser',
     'difficulty', 'duration', 'id', 'length_2d', 'length_3d', 'max_elevation', 'min_elevation',
-    'name', 'networks', 'themes', 'update_datetime', 'geometry', 'pictures',
+    'name', 'networks', 'themes', 'update_datetime', 'geometry', 'pictures', 'practice', 'external_id'
 ])
 
 TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'arrival', 'ascent', 'create_datetime', 'departure', 'descent', 'description', 'description_teaser',
     'difficulty', 'duration', 'length_2d', 'length_3d', 'max_elevation', 'min_elevation',
-    'name', 'networks', 'themes', 'update_datetime',  'pictures',
+    'name', 'networks', 'themes', 'update_datetime',  'pictures', 'practice', 'external_id'
 ])
 
 POI_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'create_datetime','description', 'type', 'external_id',
     'id', 'name', 'update_datetime', 'url',
+])
+
+POI_DETAIL_JSON_STRUCTURE = sorted([
+    'create_datetime', 'description',
+    'id', 'external_id', 'type',
+    'name', 'update_datetime', 'geometry', 'pictures',
+])
+
+POI_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
+    'id', 'create_datetime', 'description', 'external_id', 'type',
+    'name','update_datetime', 'pictures',
 ])
 
 
@@ -74,6 +85,22 @@ class BaseApiTest(TestCase):
         self.login()
         return self.client.get(reverse('apiv2:trek-detail', args=(id_trek,)), params)
 
+    def get_trek_difficulty_list(self, params=None):
+        self.login()
+        return self.client.get(reverse('apiv2:trek-difficulties'), params)
+
+    def get_trek_practice_list(self, params=None):
+        self.login()
+        return self.client.get(reverse('apiv2:trek-practices'), params)
+
+    def get_trek_network_list(self, params=None):
+        self.login()
+        return self.client.get(reverse('apiv2:trek-networks'), params)
+
+    def get_trek_theme_list(self, params=None):
+        self.login()
+        return self.client.get(reverse('apiv2:trek-themes'), params)
+
     def get_poi_list(self, params=None):
         self.login()
         return self.client.get(reverse('apiv2:poi-list'), params)
@@ -96,6 +123,26 @@ class APIAnonymousTestCase(BaseApiTest):
     def test_trek_detail(self):
         self.client.logout()
         response = self.get_trek_detail(trek_models.Trek.objects.order_by('?').first().pk)
+        self.assertEqual(response.status_code, 403)
+
+    def test_trek_difficulty_list(self):
+        self.client.logout()
+        response = self.get_trek_difficulty_list()
+        self.assertEqual(response.status_code, 403)
+
+    def test_trek_practice_list(self):
+        self.client.logout()
+        response = self.get_trek_practice_list()
+        self.assertEqual(response.status_code, 403)
+
+    def test_trek_theme_list(self):
+        self.client.logout()
+        response = self.get_trek_theme_list()
+        self.assertEqual(response.status_code, 403)
+
+    def test_trek_network_list(self):
+        self.client.logout()
+        response = self.get_trek_network_list()
         self.assertEqual(response.status_code, 403)
 
     def test_poi_list(self):
@@ -190,6 +237,26 @@ class APIAccessAdministratorTestCase(BaseApiTest):
         self.assertEqual(sorted(json_response.get('properties').keys()),
                          TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
 
+    def test_trek_difficulty_list(self):
+        self.client.logout()
+        response = self.get_trek_difficulty_list()
+        self.assertEqual(response.status_code, 200)
+
+    def test_trek_practice_list(self):
+        self.client.logout()
+        response = self.get_trek_practice_list()
+        self.assertEqual(response.status_code, 200)
+
+    def test_trek_theme_list(self):
+        self.client.logout()
+        response = self.get_trek_theme_list()
+        self.assertEqual(response.status_code, 200)
+
+    def test_trek_network_list(self):
+        self.client.logout()
+        response = self.get_trek_network_list()
+        self.assertEqual(response.status_code, 200)
+
     def test_poi_list(self):
         response = self.get_poi_list()
         #  test response code
@@ -227,3 +294,24 @@ class APIAccessAdministratorTestCase(BaseApiTest):
 
         self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
                          POI_LIST_PROPERTIES_GEOJSON_STRUCTURE)
+
+    def test_poi_detail(self):
+        self.client.logout()
+        id_poi = trek_models.POI.objects.order_by('?').first().pk
+        response = self.get_poi_detail(id_poi)
+        # test response code
+        self.assertEqual(response.status_code, 200)
+
+        json_response = json.loads(response.content.decode('utf-8'))
+        # test default structure
+        self.assertEqual(sorted(json_response.keys()),
+                         POI_DETAIL_JSON_STRUCTURE)
+
+        response = self.get_poi_detail(id_poi, {'format': "geojson", "dim": "3"})
+        json_response = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(sorted(json_response.keys()),
+                         GEOJSON_STRUCTURE)
+
+        self.assertEqual(sorted(json_response.get('properties').keys()),
+                         POI_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
