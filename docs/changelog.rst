@@ -2,12 +2,16 @@
 CHANGELOG
 =========
 
-2.14.3.dev0
+2.15.0 (2017-07-11)
 -------------------
+
+**New features**
+
+* API v2 Beta 1. Optimized multilingual filtered endpoints for paths, treks and pois.
 
 **Bug fixes**
 
-*
+* Fix pdf default public templates (weasyprint)
 
 
 2.14.2 (2017-06-21)

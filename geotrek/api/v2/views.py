@@ -27,7 +27,7 @@ class SwaggerSchemaView(APIView):
         generator = SchemaGenerator(
             title='Geotrek API v2 beta 1',
             urlconf='geotrek.api.v2.urls',
-            url='/apiv2'
+            url='/api/v2'
         )
         schema = generator.get_schema(request=request, )
 

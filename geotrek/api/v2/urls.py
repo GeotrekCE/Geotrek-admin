@@ -14,7 +14,5 @@ router.register(r'path', api_views.PathViewSet, base_name='path')
 
 urlpatterns = [
     url(r'^$', api_views.SwaggerSchemaView.as_view(), name="schema"),
-    url(r'^', include(router.urls)),
-    url(r'^auth/login/$', views.login, name='rest_framework:login'),
-    url(r'^auth/logout/$', views.logout, name='logout'),
+    url(r'^', include(router.urls))
 ]
