@@ -118,42 +118,42 @@ class APIAnonymousTestCase(BaseApiTest):
     def test_trek_list(self):
         self.client.logout()
         response = self.get_trek_list()
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
     def test_trek_detail(self):
         self.client.logout()
         response = self.get_trek_detail(trek_models.Trek.objects.order_by('?').first().pk)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
     def test_trek_difficulty_list(self):
         self.client.logout()
         response = self.get_trek_all_difficulties_list()
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
     def test_trek_practice_list(self):
         self.client.logout()
         response = self.get_trek_all_practices_list()
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
     def test_trek_theme_list(self):
         self.client.logout()
         response = self.get_trek_all_themes_list()
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
     def test_trek_network_list(self):
         self.client.logout()
         response = self.get_trek_all_networks_list()
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
     def test_poi_list(self):
         self.client.logout()
         response = self.get_poi_list()
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
     def test_poi_detail(self):
         self.client.logout()
         response = self.get_poi_detail(trek_models.POI.objects.order_by('?').first().pk)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
 
 class APIAccessAdministratorTestCase(BaseApiTest):
