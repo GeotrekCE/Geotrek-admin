@@ -8,7 +8,7 @@
 <h3>{{ object.cities.0 }}</h3>
 
 {% if object.picture_print %}
-  <img src="{{ MEDIA_URL|add:object.picture_print.name }}">
+  <img src="{{ MEDIA_URL}}/{{ object.picture_print.name }}">
 {% endif %}
 
 <table>
