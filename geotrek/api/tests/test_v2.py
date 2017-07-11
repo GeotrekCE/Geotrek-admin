@@ -85,21 +85,21 @@ class BaseApiTest(TestCase):
         self.login()
         return self.client.get(reverse('apiv2:trek-detail', args=(id_trek,)), params)
 
-    def get_trek_difficulty_list(self, params=None):
+    def get_trek_all_difficulties_list(self, params=None):
         self.login()
-        return self.client.get(reverse('apiv2:trek-difficulties'), params)
+        return self.client.get(reverse('apiv2:trek-all-difficulties'), params)
 
-    def get_trek_practice_list(self, params=None):
+    def get_trek_all_practices_list(self, params=None):
         self.login()
-        return self.client.get(reverse('apiv2:trek-practices'), params)
+        return self.client.get(reverse('apiv2:trek-all-practices'), params)
 
-    def get_trek_network_list(self, params=None):
+    def get_trek_all_networks_list(self, params=None):
         self.login()
-        return self.client.get(reverse('apiv2:trek-networks'), params)
+        return self.client.get(reverse('apiv2:trek-all-networks'), params)
 
-    def get_trek_theme_list(self, params=None):
+    def get_trek_all_themes_list(self, params=None):
         self.login()
-        return self.client.get(reverse('apiv2:trek-themes'), params)
+        return self.client.get(reverse('apiv2:trek-all-themes'), params)
 
     def get_poi_list(self, params=None):
         self.login()
@@ -127,22 +127,22 @@ class APIAnonymousTestCase(BaseApiTest):
 
     def test_trek_difficulty_list(self):
         self.client.logout()
-        response = self.get_trek_difficulty_list()
+        response = self.get_trek_all_difficulties_list()
         self.assertEqual(response.status_code, 403)
 
     def test_trek_practice_list(self):
         self.client.logout()
-        response = self.get_trek_practice_list()
+        response = self.get_trek_all_practices_list()
         self.assertEqual(response.status_code, 403)
 
     def test_trek_theme_list(self):
         self.client.logout()
-        response = self.get_trek_theme_list()
+        response = self.get_trek_all_themes_list()
         self.assertEqual(response.status_code, 403)
 
     def test_trek_network_list(self):
         self.client.logout()
-        response = self.get_trek_network_list()
+        response = self.get_trek_all_networks_list()
         self.assertEqual(response.status_code, 403)
 
     def test_poi_list(self):
@@ -239,22 +239,22 @@ class APIAccessAdministratorTestCase(BaseApiTest):
 
     def test_trek_difficulty_list(self):
         self.client.logout()
-        response = self.get_trek_difficulty_list()
+        response = self.get_trek_all_difficulties_list()
         self.assertEqual(response.status_code, 200)
 
     def test_trek_practice_list(self):
         self.client.logout()
-        response = self.get_trek_practice_list()
+        response = self.get_trek_all_practices_list()
         self.assertEqual(response.status_code, 200)
 
     def test_trek_theme_list(self):
         self.client.logout()
-        response = self.get_trek_theme_list()
+        response = self.get_trek_all_themes_list()
         self.assertEqual(response.status_code, 200)
 
     def test_trek_network_list(self):
         self.client.logout()
-        response = self.get_trek_network_list()
+        response = self.get_trek_all_networks_list()
         self.assertEqual(response.status_code, 200)
 
     def test_poi_list(self):
