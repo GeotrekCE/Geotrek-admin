@@ -9,6 +9,7 @@ CHANGELOG
 
 * Fix pdf templates
 * Fix cirkwi tests
+* Fix screamshotter standalone install
 
 
 2.14.3 (2017-07-03)
