@@ -7,7 +7,8 @@ CHANGELOG
 
 **Bug fixes**
 
-*
+* Fix pdf templates
+* Fix cirkwi tests
 
 
 2.14.3 (2017-07-03)
