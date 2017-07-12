@@ -259,7 +259,7 @@ class TrekDetailSerializer(TrekListSerializer):
 
 
 class TourListSerializer(TrekListSerializer):
-    url = HyperlinkedIdentityField(view_name='apiv2:roaming-detail')
+    url = HyperlinkedIdentityField(view_name='apiv2:tour-detail')
     count_children = serializers.SerializerMethodField(read_only=True)
 
     def get_count_children(self, obj):
