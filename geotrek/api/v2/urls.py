@@ -4,7 +4,6 @@ from django.conf.urls import url, include
 from rest_framework import routers
 
 from geotrek.api.v2 import views as api_views
-from django.contrib.auth import views
 
 router = routers.DefaultRouter()
 router.register(r'trek', api_views.TrekViewSet, base_name='trek')

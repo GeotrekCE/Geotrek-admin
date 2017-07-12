@@ -9,7 +9,6 @@ from django.test.testcases import TestCase
 
 from geotrek.trekking import factories as trek_factory, models as trek_models
 
-
 PAGINATED_JSON_STRUCTURE = sorted([
     'count', 'next', 'previous', 'results',
 ])
@@ -17,7 +16,6 @@ PAGINATED_JSON_STRUCTURE = sorted([
 PAGINATED_GEOJSON_STRUCTURE = sorted([
     'count', 'next', 'previous', 'features', 'type'
 ])
-
 
 GEOJSON_STRUCTURE = sorted([
     'geometry',
@@ -32,7 +30,6 @@ TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'name', 'networks', 'themes', 'update_datetime', 'url', 'practice', 'external_id'
 ])
 
-
 TREK_DETAIL_JSON_STRUCTURE = sorted([
     'arrival', 'ascent', 'create_datetime', 'departure', 'descent', 'description', 'description_teaser',
     'difficulty', 'duration', 'id', 'length_2d', 'length_3d', 'max_elevation', 'min_elevation',
@@ -42,12 +39,11 @@ TREK_DETAIL_JSON_STRUCTURE = sorted([
 TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'arrival', 'ascent', 'create_datetime', 'departure', 'descent', 'description', 'description_teaser',
     'difficulty', 'duration', 'length_2d', 'length_3d', 'max_elevation', 'min_elevation',
-    'name', 'networks', 'themes', 'update_datetime',  'pictures', 'practice', 'external_id'
+    'name', 'networks', 'themes', 'update_datetime', 'pictures', 'practice', 'external_id'
 ])
 
 POI_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'create_datetime','description', 'type', 'external_id',
-    'id', 'name', 'update_datetime', 'url',
+    'create_datetime', 'description', 'type', 'external_id', 'id', 'name', 'update_datetime', 'url',
 ])
 
 POI_DETAIL_JSON_STRUCTURE = sorted([
@@ -58,7 +54,7 @@ POI_DETAIL_JSON_STRUCTURE = sorted([
 
 POI_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'create_datetime', 'description', 'external_id', 'type',
-    'name','update_datetime', 'pictures',
+    'name', 'update_datetime', 'pictures',
 ])
 
 
