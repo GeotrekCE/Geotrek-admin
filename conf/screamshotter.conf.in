@@ -1,0 +1,7 @@
+backlog = 2048
+bind = "${options.bind}"
+pidfile = "${options.pidfile}"
+workers = ${options.workers}
+timeout = ${options.timeout}
+debug = False
+raw_env = ['DJANGO_SETTINGS_MODULE=screamshotter.settings']
