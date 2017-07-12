@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-*
+* Fix screamshotter standalone install
 
 
 2.14.3 (2017-07-03)
