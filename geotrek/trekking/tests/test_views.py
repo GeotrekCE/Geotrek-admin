@@ -1044,7 +1044,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '</informations>'
             '<distance>141</distance>'
             '<locomotions><locomotion duree="5400"></locomotion></locomotions>'
-            '<trace><point><lat>46.5</lat><lng>3.0</lng></point><point><lat>46.5009004423</lat><lng>3.00130397672</lng></point></trace>'
+            '<fichier_trace>http://testserver/api/en/treks/{pk}/name-{n}.kml</fichier_trace>'
             '<pois>'
             '<poi id_poi="{poi_pk}" date_modification="{poi_date_update}" date_creation="1388534400">'
             '<informations>'
