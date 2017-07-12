@@ -33,6 +33,9 @@ class SwaggerSchemaView(APIView):
 
 
 class PathViewSet(api_viewsets.GeotrekViewset):
+    """
+    Use HTTP basic authentication to access this endpoint.
+    """
     serializer_class = api_serializers.PathListSerializer
     serializer_detail_class = api_serializers.PathListSerializer
     queryset = core_models.Path.objects.all() \

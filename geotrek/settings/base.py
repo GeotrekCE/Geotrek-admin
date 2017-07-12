@@ -599,3 +599,8 @@ If true; displays the attached pois pictures in the Trek's geojson pictures prop
 In Geotrek Rando it enables correlated pictures to be displayed in the slideshow.
 '''
 TREK_WITH_POIS_PICTURES = False
+
+
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False
+}

@@ -7,7 +7,7 @@ CHANGELOG
 
 **New features**
 
-* API v2 Beta 1. Optimized multilingual filtered endpoints for paths, treks and pois.
+* API v2 Beta 1. Optimized multilingual filtered endpoints for paths, treks and pois. See HTML doc in /api/v2/
 
 **Bug fixes**
 
