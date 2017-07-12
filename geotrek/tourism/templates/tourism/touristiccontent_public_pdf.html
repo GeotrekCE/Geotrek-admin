@@ -12,7 +12,7 @@
     {% block body %}
       <header>
         <div class="logo">
-          <img src="{{ MEDIA_URL|add:'upload/logo-header.png' }}" alt="">
+          <img src="{{ MEDIA_URL }}/upload/logo-header.png" alt="">
         </div>
         <div class="url">
           <div class="main">rando.geotrek.fr</div>
@@ -27,7 +27,7 @@
         {% endif %}
         {% if object.approved %}
           <div class="trademark">
-            <img src="{{ MEDIA_URL|add:'upload/trademark.svg' }}" alt="">
+            <img src="{{ MEDIA_URL }}/upload/trademark.svg" alt="">
           </div>
         {% endif %}
         <div class="main-title">
@@ -45,7 +45,7 @@
             </legend>
           {% endif %}
         {% else %}
-          <div class="main-picture" style="background-image: url('{{ MEDIA_URL|add:'upload/placeholder.png' }}');"></div><div class="main-map" style="background-image: url({{ map_url }});"></div>
+          <div class="main-picture" style="background-image: url('{{ MEDIA_URL }}/upload/placeholder.png');"></div><div class="main-map" style="background-image: url({{ map_url }});"></div>
         {% endif %}
       </div>
       <div class="intro-left">
@@ -127,7 +127,7 @@
             <h2>{% trans "Source" %}</h2>
             {% for s in object.source.all %}
                <div class="text-content">
-                 {% if s.pictogram %}<img src="{{ MEDIA_URL|add:s.pictogram.name }}">{% endif %}
+                 {% if s.pictogram %}<img src="{{ s.pictogram.url }}">{% endif %}
                  {{ s.name }}
                </div>
             {% endfor %}

@@ -7,6 +7,8 @@ CHANGELOG
 
 **Bug fixes**
 
+* Fix pdf templates
+* Fix cirkwi tests
 * Fix screamshotter standalone install
 
 
