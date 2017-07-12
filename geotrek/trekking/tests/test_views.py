@@ -1039,7 +1039,6 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<information_complementaire><titre>Advised parking</titre><description>Advised parking {n}</description></information_complementaire>'
             '<information_complementaire><titre>Public transport</titre><description>Public transport {n}</description></information_complementaire>'
             '<information_complementaire><titre>Advice</titre><description>Advice {n}</description></information_complementaire></informations_complementaires>'
-            '<tags_publics></tags_publics>'
             '</information>'
             '</informations>'
             '<distance>141</distance>'
