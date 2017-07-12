@@ -258,7 +258,7 @@ class TrekDetailSerializer(TrekListSerializer):
         fields = tuple((field for field in TrekListSerializer.Meta.fields if field != 'url')) + ('pictures', )
 
 
-class RoamingListSerializer(TrekListSerializer):
+class TourListSerializer(TrekListSerializer):
     url = HyperlinkedIdentityField(view_name='apiv2:roaming-detail')
     count_children = serializers.SerializerMethodField(read_only=True)
 
@@ -269,7 +269,7 @@ class RoamingListSerializer(TrekListSerializer):
         fields = TrekListSerializer.Meta.fields + ('count_children',)
 
 
-class RoamingDetailSerializer(TrekDetailSerializer):
+class TourDetailSerializer(TrekDetailSerializer):
     steps = serializers.SerializerMethodField(read_only=True)
 
     def get_steps(self, obj):

@@ -75,7 +75,7 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
     @decorators.list_route(methods=['get'])
     def all_practices(self, request, *args, **kwargs):
         """
-        Get all practice list
+        Get all practices list
         """
         data = api_serializers.TrekPracticeSerializer(trekking_models.Practice.objects.all(),
                                                       many=True,
@@ -96,7 +96,7 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
     @decorators.list_route(methods=['get'])
     def all_themes(self, request, *args, **kwargs):
         """
-        Get all theme list
+        Get all themes list
         """
         data = api_serializers.TrekThemeSerializer(trekking_models.Theme.objects.all(),
                                                    many=True,
@@ -106,7 +106,7 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
     @decorators.list_route(methods=['get'])
     def used_themes(self, request, *args, **kwargs):
         """
-        Get practices used by Trek instances
+        Get themes used by Trek instances
         """
         data = api_serializers.TrekThemeSerializer(trekking_models.Theme.objects.filter(
             pk__in=trekking_models.Trek.objects.existing().values_list('themes', flat=True)),
@@ -117,7 +117,7 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
     @decorators.list_route(methods=['get'])
     def all_networks(self, request, *args, **kwargs):
         """
-        Get all network list
+        Get all networks list
         """
         data = api_serializers.TrekNetworkSerializer(trekking_models.TrekNetwork.objects.all(),
                                                      many=True,
@@ -127,7 +127,7 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
     @decorators.list_route(methods=['get'])
     def used_networks(self, request, *args, **kwargs):
         """
-        Get practices used by Trek instances
+        Get networks used by Trek instances
         """
         data = api_serializers.TrekNetworkSerializer(trekking_models.TrekNetwork.objects.filter(
             pk__in=trekking_models.Trek.objects.existing().values_list('networks', flat=True)),
@@ -138,7 +138,7 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
     @decorators.list_route(methods=['get'])
     def all_difficulties(self, request, *args, **kwargs):
         """
-        Get all network list
+        Get all difficulties list
         """
         qs = trekking_models.DifficultyLevel.objects.all()
         data = api_serializers.DifficultySerializer(qs, many=True, context={'request': request}).data
@@ -147,7 +147,7 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
     @decorators.list_route(methods=['get'])
     def used_difficulties(self, request, *args, **kwargs):
         """
-        Get practices used by Trek instances
+        Get difficulties used by Trek instances
         """
         data = api_serializers.DifficultySerializer(trekking_models.DifficultyLevel.objects.filter(
             pk__in=trekking_models.Trek.objects.existing().values_list('difficulty_id', flat=True)),
@@ -156,9 +156,9 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
         return response.Response(data)
 
 
-class RoamingViewSet(TrekViewSet):
-    serializer_class = api_serializers.RoamingListSerializer
-    serializer_detail_class = api_serializers.RoamingDetailSerializer
+class TourViewSet(TrekViewSet):
+    serializer_class = api_serializers.TourListSerializer
+    serializer_detail_class = api_serializers.TourDetailSerializer
     queryset = TrekViewSet.queryset.annotate(count_children=Count('trek_children')) \
         .filter(count_children__gt=0)
 
