@@ -1,9 +1,13 @@
 from __future__ import unicode_literals
 
 from coreapi.document import Field
+from django.db.models.query_utils import Q
+import operator
 from django.utils.translation import ugettext as _
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import InBBOXFilter, DistanceToPointFilter
+from django.conf import settings
+from functools import reduce
 
 
 class GeotrekQueryParamsFilter(BaseFilterBackend):
@@ -52,3 +56,52 @@ class GeotrekDistanceToPointFilter(DistanceToPointFilter):
                             description='Reference point to compute distance',
                             example='YES MAN', )
         return field_dist, field_point
+
+
+class GeotrekPublishedFilter(BaseFilterBackend):
+    """
+    Filter with published state in combination with language
+    """
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        published = request.GET.get('published', None)
+
+        if published == 'true':
+            published = True
+
+        elif published == 'false':
+            published = False
+
+        if published is not None:
+            language = request.GET.get('language', 'all')
+
+            if published is True:
+                # if language, check language published. Else, if true one language must me published, if false none
+                if language == 'all':
+                    filters = list()
+                    for lang in settings.MODELTRANSLATION_LANGUAGES:
+                        filters.append(Q(**{'published_{}'.format(lang): published}))
+
+                    qs = qs.filter(reduce(operator.or_, filters))
+
+                else:
+                    qs = qs.filter(**{'published_{}'.format(language): published})
+            else:
+                if language == 'all':
+                    filters = {}
+                    for lang in settings.MODELTRANSLATION_LANGUAGES:
+                        filters.update({'published_{}'.format(lang): False })
+
+                    qs = qs.filter(**filters)
+
+                else:
+                    qs = qs.filter(**{'published_{}'.format(language): published})
+        print(qs.query)
+        return qs
+
+    def get_schema_fields(self, view):
+        field_published = Field(name='published', required=False,
+                                description='Publication state. If language specified, only language published are filterted. true / false',
+                                type='boolean',
+                                example='true')
+        return field_published,

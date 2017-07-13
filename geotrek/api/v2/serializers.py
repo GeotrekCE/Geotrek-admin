@@ -190,6 +190,7 @@ class PathListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
 class TrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     url = HyperlinkedIdentityField(view_name='apiv2:trek-detail')
+    published = serializers.SerializerMethodField(read_only=True)
     geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
     length_2d = serializers.SerializerMethodField(read_only=True)
     length_3d = serializers.SerializerMethodField(read_only=True)
@@ -211,6 +212,9 @@ class TrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     def get_create_datetime(self, obj):
         return obj.topo_object.date_insert
+
+    def get_published(self, obj):
+        return get_translation_or_dict('published', self, obj)
 
     def get_name(self, obj):
         return get_translation_or_dict('name', self, obj)
@@ -246,7 +250,7 @@ class TrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
             'description', 'departure', 'arrival', 'duration',
             'difficulty', 'length_2d', 'length_3d', 'ascent', 'descent',
             'min_elevation', 'max_elevation', 'themes', 'networks', 'practice',
-            'external_id',
+            'external_id', 'published',
             'geometry', 'update_datetime', 'create_datetime'
         )
 
@@ -306,10 +310,14 @@ class POIListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     name = serializers.SerializerMethodField(read_only=True)
     description = serializers.SerializerMethodField(read_only=True)
     external_id = serializers.SerializerMethodField(read_only=True, help_text=_("External ID"))
+    published = serializers.SerializerMethodField(read_only=True)
     create_datetime = serializers.SerializerMethodField(read_only=True)
     update_datetime = serializers.SerializerMethodField(read_only=True)
     geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
     type = POITypeSerializer(read_only=True)
+
+    def get_published(self, obj):
+        return get_translation_or_dict('published', self, obj)
 
     def get_external_id(self, obj):
         return obj.eid
@@ -333,6 +341,7 @@ class POIListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         model = trekking_models.POI
         fields = (
             'id', 'url', 'name', 'type', 'description', 'external_id',
+            'published',
             'geometry', 'update_datetime', 'create_datetime'
         )
 

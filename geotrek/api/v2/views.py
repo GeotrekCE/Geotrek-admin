@@ -7,6 +7,7 @@ from rest_framework.schemas import SchemaGenerator
 from rest_framework.views import APIView
 from rest_framework_swagger import renderers
 
+from api.v2.filters import GeotrekPublishedFilter
 from geotrek.api.v2 import serializers as api_serializers, \
     viewsets as api_viewsets
 from geotrek.api.v2.functions import Transform, Length, Length3D
@@ -58,7 +59,7 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
                   geom3d_transformed=Transform('geom_3d', settings.API_SRID),
                   length_2d_m=Length('geom'),
                   length_3d_m=Length3D('geom_3d'))
-    filter_fields = ('difficulty', 'published', 'themes', 'networks', 'practice')
+    filter_fields = ('difficulty', 'themes', 'networks', 'practice')
 
     @decorators.list_route(methods=['get'])
     def all_practices(self, request, *args, **kwargs):
@@ -159,7 +160,7 @@ class POIViewSet(api_viewsets.GeotrekViewset):
         .prefetch_related('topo_object__aggregations', 'attachments') \
         .annotate(geom2d_transformed=Transform('geom', settings.API_SRID),
                   geom3d_transformed=Transform('geom_3d', settings.API_SRID))
-    filter_fields = ('type', 'published')
+    filter_fields = ('type', )
 
     @decorators.list_route(methods=['get'])
     def all_types(self, request, *args, **kwargs):

@@ -27,34 +27,34 @@ GEOJSON_STRUCTURE = sorted([
 TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'arrival', 'ascent', 'create_datetime', 'departure', 'descent', 'description', 'description_teaser',
     'difficulty', 'duration', 'id', 'length_2d', 'length_3d', 'max_elevation', 'min_elevation',
-    'name', 'networks', 'themes', 'update_datetime', 'url', 'practice', 'external_id'
+    'name', 'networks', 'themes', 'update_datetime', 'url', 'practice', 'external_id', 'published'
 ])
 
 TREK_DETAIL_JSON_STRUCTURE = sorted([
     'arrival', 'ascent', 'create_datetime', 'departure', 'descent', 'description', 'description_teaser',
     'difficulty', 'duration', 'id', 'length_2d', 'length_3d', 'max_elevation', 'min_elevation',
-    'name', 'networks', 'themes', 'update_datetime', 'geometry', 'pictures', 'practice', 'external_id'
+    'name', 'networks', 'themes', 'update_datetime', 'geometry', 'pictures', 'practice', 'external_id', 'published'
 ])
 
 TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'arrival', 'ascent', 'create_datetime', 'departure', 'descent', 'description', 'description_teaser',
     'difficulty', 'duration', 'length_2d', 'length_3d', 'max_elevation', 'min_elevation',
-    'name', 'networks', 'themes', 'update_datetime', 'pictures', 'practice', 'external_id'
+    'name', 'networks', 'themes', 'update_datetime', 'pictures', 'practice', 'external_id', 'published'
 ])
 
 POI_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'create_datetime', 'description', 'type', 'external_id', 'id', 'name', 'update_datetime', 'url',
+    'create_datetime', 'description', 'type', 'external_id', 'id', 'name', 'update_datetime', 'url', 'published'
 ])
 
 POI_DETAIL_JSON_STRUCTURE = sorted([
     'create_datetime', 'description',
     'id', 'external_id', 'type',
-    'name', 'update_datetime', 'geometry', 'pictures',
+    'name', 'update_datetime', 'geometry', 'pictures', 'published'
 ])
 
 POI_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'create_datetime', 'description', 'external_id', 'type',
-    'name', 'update_datetime', 'pictures',
+    'name', 'update_datetime', 'pictures', 'published'
 ])
 
 

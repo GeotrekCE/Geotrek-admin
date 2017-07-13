@@ -14,7 +14,8 @@ class GeotrekViewset(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,
                        api_filters.GeotrekQueryParamsFilter,
                        api_filters.GeotrekInBBoxFilter,
-                       api_filters.GeotrekDistanceToPointFilter)
+                       api_filters.GeotrekDistanceToPointFilter,
+                       api_filters.GeotrekPublishedFilter)
     distance_filter_field = 'geometry'
     distance_filter_convert_meters = True
     pagination_class = api_pagination.StandardResultsSetPagination
