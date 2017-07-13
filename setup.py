@@ -30,11 +30,14 @@ setup(
         'mapentity',
         'pytz',
         'djangorestframework-gis',
+        'drf-dynamic-fields',
+        'django-rest-swagger',
         'django-embed-video',
         'xlrd',
         'landez',
         'django-celery',
         'redis',
+        'drf-extensions'
     ],
     license='BSD, see LICENSE file.',
     packages=find_packages(),
@@ -42,5 +45,5 @@ setup(
                  'Environment :: Web Environment',
                  'Framework :: Django',
                  'Development Status :: 5 - Production/Stable',
-                 'Programming Language :: Python :: 2.5'],
+                 'Programming Language :: Python :: 2.7'],
 )

@@ -11,7 +11,7 @@ from django.utils.translation import ugettext as _
 from mapentity.helpers import api_bbox
 from mapentity import views as mapentity_views
 
-from geotrek.celery import app as celery_app
+from geotrek.celery_conf import app as celery_app
 from geotrek.common.utils import sql_extent
 from geotrek import __version__
 

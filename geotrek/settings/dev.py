@@ -18,6 +18,7 @@ INSTALLED_APPS = (
 
 INTERNAL_IPS = (
     '127.0.0.1',  # localhost default
+    '10.0.3.1',  # lxc default
 )
 
 ALLOWED_HOSTS = [

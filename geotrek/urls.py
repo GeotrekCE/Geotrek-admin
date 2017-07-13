@@ -12,6 +12,7 @@ handler500 = 'mapentity.views.handler500'
 
 urlpatterns = patterns(
     '',
+    url(r'^api/v2/', include('geotrek.api.v2.urls', namespace='apiv2', app_name='apiv2')),
     url(r'^$', 'geotrek.core.views.home', name='home'),
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': settings.ROOT_URL + '/'}, name='logout',),
@@ -27,6 +28,8 @@ urlpatterns = patterns(
     url(r'', include('geotrek.tourism.urls', namespace='tourism', app_name='tourism')),
     url(r'', include('geotrek.flatpages.urls', namespace='flatpages', app_name='flatpages')),
     url(r'', include('geotrek.feedback.urls', namespace='feedback', app_name='feedback')),
+
+
 
     url(r'', include('mapentity.urls', namespace='mapentity', app_name='mapentity')),
     url(r'^paperclip/add-for/(?P<app_label>[\w\-]+)/(?P<model_name>[\w\-]+)/(?P<pk>\d+)/$',

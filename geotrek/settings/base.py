@@ -256,6 +256,7 @@ PROJECT_APPS += (
     'crispy_forms',
     'compressor',
     'djgeojson',
+    'django_filters',
     'tinymce',
     'geotrek.appconfig.EasyThumbnailsGeotrekConfig',  # easy_thumbnails
     'shapes',
@@ -264,6 +265,7 @@ PROJECT_APPS += (
     'leaflet',  # After mapentity to allow it to patch settings
     'rest_framework',
     'rest_framework_gis',
+    'rest_framework_swagger',
     'embed_video',
     'geotrek.appconfig.CeleryGeotrekConfig',  # djcelery
 )
@@ -597,3 +599,9 @@ If true; displays the attached pois pictures in the Trek's geojson pictures prop
 In Geotrek Rando it enables correlated pictures to be displayed in the slideshow.
 '''
 TREK_WITH_POIS_PICTURES = False
+
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
+    'APIS_SORTER': 'alpha',
+    'JSON_EDITOR': True
+}
