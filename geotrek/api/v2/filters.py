@@ -1,13 +1,14 @@
 from __future__ import unicode_literals
 
-from coreapi.document import Field
-from django.db.models.query_utils import Q
 import operator
+from functools import reduce
+
+from coreapi.document import Field
+from django.conf import settings
+from django.db.models.query_utils import Q
 from django.utils.translation import ugettext as _
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import InBBOXFilter, DistanceToPointFilter
-from django.conf import settings
-from functools import reduce
 
 
 class GeotrekQueryParamsFilter(BaseFilterBackend):
@@ -24,8 +25,10 @@ class GeotrekQueryParamsFilter(BaseFilterBackend):
         field_format = Field(name='format', required=False,
                              description="Set output format (json / geojson). JSON by default",
                              example="geojson")
-        field_fields = Field(name='fields', required=False, description=_("Limit required fields to increase performances. Ex : id,url,geometry"))
-        field_omit = Field(name='omit', required=False, description=_("Omit specified fields to increase performance. Ex: url,category"))
+        field_fields = Field(name='fields', required=False,
+                             description=_("Limit required fields to increase performances. Ex : id,url,geometry"))
+        field_omit = Field(name='omit', required=False,
+                           description=_("Omit specified fields to increase performance. Ex: url,category"))
         return field_dim, field_language, field_format, field_fields, field_omit
 
 
@@ -62,6 +65,7 @@ class GeotrekPublishedFilter(BaseFilterBackend):
     """
     Filter with published state in combination with language
     """
+
     def filter_queryset(self, request, queryset, view):
         qs = queryset
         published = request.GET.get('published', None)
@@ -90,7 +94,7 @@ class GeotrekPublishedFilter(BaseFilterBackend):
                 if language == 'all':
                     filters = {}
                     for lang in settings.MODELTRANSLATION_LANGUAGES:
-                        filters.update({'published_{}'.format(lang): False })
+                        filters.update({'published_{}'.format(lang): False})
 
                     qs = qs.filter(**filters)
 

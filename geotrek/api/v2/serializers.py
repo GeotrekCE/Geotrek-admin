@@ -256,10 +256,10 @@ class TrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
 
 class TrekDetailSerializer(TrekListSerializer):
-    pictures = AttachmentSerializer(many=True,)
+    pictures = AttachmentSerializer(many=True, )
 
     class Meta(TrekListSerializer.Meta):
-        fields = tuple((field for field in TrekListSerializer.Meta.fields if field != 'url')) + ('pictures', )
+        fields = tuple((field for field in TrekListSerializer.Meta.fields if field != 'url')) + ('pictures',)
 
 
 class TourListSerializer(TrekListSerializer):
@@ -279,7 +279,7 @@ class TourDetailSerializer(TrekDetailSerializer):
     def get_steps(self, obj):
         qs = obj.children \
             .select_related('topo_object', 'difficulty') \
-            .prefetch_related('topo_object__aggregations', 'themes', 'networks', 'attachments')\
+            .prefetch_related('topo_object__aggregations', 'themes', 'networks', 'attachments') \
             .annotate(geom2d_transformed=Transform('geom', settings.API_SRID),
                       geom3d_transformed=Transform('geom_3d', settings.API_SRID),
                       length_2d_m=Length('geom'),
