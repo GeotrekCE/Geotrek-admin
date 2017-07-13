@@ -2,16 +2,27 @@
 CHANGELOG
 =========
 
-2.15.0 (2017-07-11)
+2.15.0.dev0
 -------------------
 
 **New features**
 
-* API v2 Beta 1. Optimized multilingual filtered endpoints for paths, treks and pois. See HTML doc in /api/v2/
+* API v2 Beta 1. Optimized multilingual filtered endpoints for paths, treks, tours and pois.
+* See HTML doc and examples in /api/v2/. Authentication with Basic HTTP (https://en.wikipedia.org/wiki/Basic_access_authentication).
+* Don't use it in production without HTTPS
 
 **Bug fixes**
 
 * Fix pdf default public templates (weasyprint)
+* Fix screamshotter standalone install (map screenshots)
+
+
+2.14.3 (2017-07-03)
+-------------------
+
+**Bug fixes**
+
+* Cirkwi export fixes and improvements
 
 
 2.14.2 (2017-06-21)
