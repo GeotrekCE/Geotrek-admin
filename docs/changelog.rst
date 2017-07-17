@@ -7,7 +7,8 @@ CHANGELOG
 
 **Bug fixes**
 
-*
+* Fix APIDAE import illustrations
+* Fix double import parsers
 
 
 2.15.0 (2017-07-13)
