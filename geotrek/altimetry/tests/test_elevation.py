@@ -169,8 +169,8 @@ class ElevationAreaTest(TestCase):
         self.assertEqual(area['resolution']['step'], 866)
 
     def test_area_provides_center_as_latlng(self):
-        self.assertEqual(self.area['center']['lng'], -1.3594758650394245)
-        self.assertEqual(self.area['center']['lat'], -5.981351702397734)
+        self.assertAlmostEqual(self.area['center']['lng'], -1.3594758650394245)
+        self.assertAlmostEqual(self.area['center']['lat'], -5.981351702397734)
 
     def test_area_provides_center_as_xy(self):
         self.assertEqual(self.area['center']['x'], 600.0)
@@ -185,10 +185,10 @@ class ElevationAreaTest(TestCase):
 
     def test_area_provides_extent_as_latlng(self):
         extent = self.area['extent']
-        self.assertEqual(extent['northeast']['lat'], -5.9786368380250385)
-        self.assertEqual(extent['northeast']['lng'], -1.35556992351484)
-        self.assertEqual(extent['southwest']['lat'], -5.9840665893459875)
-        self.assertEqual(extent['southwest']['lng'], -1.3633815583740085)
+        self.assertAlmostEqual(extent['northeast']['lat'], -5.9786368380250385)
+        self.assertAlmostEqual(extent['northeast']['lng'], -1.35556992351484)
+        self.assertAlmostEqual(extent['southwest']['lat'], -5.9840665893459875)
+        self.assertAlmostEqual(extent['southwest']['lng'], -1.3633815583740085)
 
     def test_area_provides_altitudes_extent(self):
         extent = self.area['extent']
