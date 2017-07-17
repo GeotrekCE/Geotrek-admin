@@ -169,6 +169,8 @@ class Parser(object):
                 raise RowImportError(_(u"Null value not allowed for field '{src}'".format(src=src)))
         if val == u"" and not field.blank:
             raise RowImportError(_(u"Blank value not allowed for field '{src}'".format(src=src)))
+        if isinstance(field, models.CharField):
+            val = val[:256]
         setattr(self.obj, dst, val)
 
     def parse_real_field(self, dst, src, val):

@@ -33,12 +33,13 @@ def discover_available_parsers():
 
     classes = subclasses(Parser)
     for index, cls in enumerate(classes):
-        if cls.label is None:
-            continue
-        if not getattr(cls, 'url', None) and not getattr(cls, 'base_url', None):
-            choices.append((index, cls.label))
-        else:
-            choices_url.append((index, cls.label))
+        if cls.__module__.startswith('bulkimport') or cls.__module__.startswith('geotrek'):
+            if cls.label is None:
+                continue
+            if not getattr(cls, 'url', None) and not getattr(cls, 'base_url', None):
+                choices.append((index, cls.label))
+            else:
+                choices_url.append((index, cls.label))
 
     choices = sorted(choices, key=lambda x: x[1])
     choices_url = sorted(choices_url, key=lambda x: x[1])

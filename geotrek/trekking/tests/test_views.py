@@ -631,12 +631,12 @@ class TrekJSONDetailTest(TrekkingManagerTest):
 
     def test_parking_location_in_wgs84(self):
         parking_location = self.result['parking_location']
-        self.assertEqual(parking_location[0], -1.3630812101179008)
+        self.assertAlmostEqual(parking_location[0], -1.3630812101179008)
 
     def test_points_reference_are_exported_in_wgs84(self):
         geojson = self.result['points_reference']
         self.assertEqual(geojson['type'], 'MultiPoint')
-        self.assertEqual(geojson['coordinates'][0][0], -1.363081210117901)
+        self.assertAlmostEqual(geojson['coordinates'][0][0], -1.363081210117901)
 
     def test_touristic_contents(self):
         self.assertEqual(len(self.result['touristic_contents']), 1)

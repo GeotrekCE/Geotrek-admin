@@ -15,6 +15,8 @@ def debug_pg_notices(f):
 
     @wraps(f)
     def wrapped(*args, **kwargs):
+        r = None
+
         if connection.connection:
             del connection.connection.notices[:]
         try:
@@ -45,7 +47,7 @@ def debug_pg_notices(f):
                             logger.debug('Context %s...:' % context.strip()[:80])
                         current = context
                     notice = notice.replace('NOTICE: ', '')
-                    prefix = '' if context == '' else '        '
+                    prefix = ''
                     logger.debug('%s%s' % (prefix, notice.strip()))
         return r
 
