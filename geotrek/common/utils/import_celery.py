@@ -33,7 +33,7 @@ def discover_available_parsers():
 
     classes = subclasses(Parser)
     for index, cls in enumerate(classes):
-        if (cls.__module__.startswith('bulkimport') or cls.__module__.startswith('geotrek')):
+        if cls.__module__.startswith('bulkimport') or cls.__module__.startswith('geotrek'):
             if cls.label is None:
                 continue
             if not getattr(cls, 'url', None) and not getattr(cls, 'base_url', None):
