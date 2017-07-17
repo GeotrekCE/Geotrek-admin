@@ -14,7 +14,13 @@ class GeotrekImportTask(Task):
      to be displayed on the web interface.
     '''
     def on_failure(self, exc, task_id, args, kwargs, einfo):
-        filename, class_name, module_name = args
+        try:
+            filename, class_name, module_name = args
+
+        except ValueError:
+            class_name, module_name = args
+            filename = ''
+
         self.update_state(
             task_id,
             'FAILURE',
