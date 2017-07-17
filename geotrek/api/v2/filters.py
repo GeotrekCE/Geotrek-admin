@@ -100,7 +100,6 @@ class GeotrekPublishedFilter(BaseFilterBackend):
 
                 else:
                     qs = qs.filter(**{'published_{}'.format(language): published})
-        print(qs.query)
         return qs
 
     def get_schema_fields(self, view):
