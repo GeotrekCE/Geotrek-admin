@@ -17,13 +17,13 @@ class GeotrekQueryParamsFilter(BaseFilterBackend):
 
     def get_schema_fields(self, view):
         field_dim = Field(name='dim', required=False,
-                          description='Set geometry dimension (2 by default for 2D, 3 for 3D)',
+                          description=_('Set geometry dimension (2 by default for 2D, 3 for 3D)'),
                           example=3, type='integer')
         field_language = Field(name='language', required=False,
-                               description="Set language for translation. 'all' by default",
+                               description=_("Set language for translation. 'all' by default"),
                                example="fr")
         field_format = Field(name='format', required=False,
-                             description="Set output format (json / geojson). JSON by default",
+                             description=_("Set output format (json / geojson). JSON by default"),
                              example="geojson")
         field_fields = Field(name='fields', required=False,
                              description=_("Limit required fields to increase performances. Ex : id,url,geometry"))
@@ -39,7 +39,7 @@ class GeotrekInBBoxFilter(InBBOXFilter):
 
     def get_schema_fields(self, view):
         field_in_bbox = Field(name=self.bbox_param, required=False,
-                              description='Filter elements contained in bbox formatted like SW-lng,SW-lat,NE-lng,NE-lat',
+                              description=_('Filter elements contained in bbox formatted like SW-lng,SW-lat,NE-lng,NE-lat'),
                               example='1.15,46.1,1.56,47.6')
 
         return field_in_bbox,
@@ -52,12 +52,12 @@ class GeotrekDistanceToPointFilter(DistanceToPointFilter):
 
     def get_schema_fields(self, view):
         field_dist = Field(name=self.dist_param, required=False,
-                           description='Max distance in meters between point and elements',
+                           description=_('Max distance in meters between point and elements'),
                            type='number',
                            example='XXX')
         field_point = Field(name=self.point_param, required=False,
-                            description='Reference point to compute distance',
-                            example='YES MAN', )
+                            description=_('Reference point to compute distance LNG,LAT'),
+                            example='1.2563,46.5214', )
         return field_dist, field_point
 
 
@@ -79,7 +79,7 @@ class GeotrekPublishedFilter(BaseFilterBackend):
         if published is not None:
             language = request.GET.get('language', 'all')
 
-            if published is True:
+            if published:
                 # if language, check language published. Else, if true one language must me published, if false none
                 if language == 'all':
                     filters = list()
@@ -104,7 +104,7 @@ class GeotrekPublishedFilter(BaseFilterBackend):
 
     def get_schema_fields(self, view):
         field_published = Field(name='published', required=False,
-                                description='Publication state. If language specified, only language published are filterted. true / false',
+                                description=_('Publication state. If language specified, only language published are filterted. true / false'),
                                 type='boolean',
                                 example='true')
         return field_published,
