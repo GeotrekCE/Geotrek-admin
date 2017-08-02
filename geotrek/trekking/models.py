@@ -221,7 +221,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         line.style.linestyle.color = simplekml.Color.red  # Red
         line.style.linestyle.width = 4  # pixels
         # Place marks
-        for poi in self.pois:
+        for poi in self.published_pois:
             place = poi.geom_3d.transform(settings.API_SRID, clone=True)
             kml.newpoint(name=poi.name,
                          description=plain_text(poi.description),

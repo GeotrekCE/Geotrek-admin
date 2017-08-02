@@ -10,6 +10,7 @@ CHANGELOG
 * Fix APIDAE import illustrations
 * Fix double import parsers
 * Fix cirkwi export
+* Select only published POIs in GPX and KML files
 
 
 2.15.0 (2017-07-13)

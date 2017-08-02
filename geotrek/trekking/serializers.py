@@ -29,7 +29,7 @@ from geotrek.trekking import models as trekking_models
 class TrekGPXSerializer(GPXSerializer):
     def end_object(self, trek):
         super(TrekGPXSerializer, self).end_object(trek)
-        for poi in trek.pois.all():
+        for poi in trek.published_pois.all():
             geom_3d = poi.geom_3d.transform(4326, clone=True)  # GPX uses WGS84
             wpt = gpxpy.gpx.GPXWaypoint(latitude=geom_3d.y,
                                         longitude=geom_3d.x,
