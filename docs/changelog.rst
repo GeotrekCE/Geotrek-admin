@@ -5,6 +5,10 @@ CHANGELOG
 2.15.1.dev0
 -------------------
 
+**New features**
+
+* Add es translation for PDF
+
 **Bug fixes**
 
 * Fix APIDAE import illustrations

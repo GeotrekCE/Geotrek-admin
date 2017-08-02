@@ -549,9 +549,6 @@ msgstr "Transports"
 msgid "Disabled Infrastructure"
 msgstr "Aménagement handicapés"
 
-msgid "Trek_ascent"
-msgstr "Dénivelé positif"
-
 msgid ""
 "This hike is in the core of the national park > The national park is an "
 "unrestricted natural area but subjected to regulations which must be known "
