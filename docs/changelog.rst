@@ -9,6 +9,7 @@ CHANGELOG
 
 * Fix APIDAE import illustrations
 * Fix double import parsers
+* Fix cirkwi export
 
 
 2.15.0 (2017-07-13)
