@@ -61,12 +61,5 @@ mailalertmessage = Hello,
                     The Geotrek Team
                     http://www.geotrek.fr
 
-#
-#  Internal settings
-#..........................
-
-# Enable features marked as experimental
-experimental = False
-
 [nginx-conf]
 cors = domain.name.of.geotrek-rando.com # comment this line if you do not install Geotrek-Rando
