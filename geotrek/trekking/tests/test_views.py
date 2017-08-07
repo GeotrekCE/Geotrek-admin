@@ -747,6 +747,7 @@ class TrekGPXTest(TrekkingManagerTest):
 
         for poi in self.trek.pois.all():
             poi.description_it = poi.description
+            poi.published_it = True
             poi.save()
 
         url = '/api/it/treks/{pk}/slug.gpx'.format(pk=self.trek.pk)
@@ -771,7 +772,7 @@ class TrekGPXTest(TrekkingManagerTest):
 
     def test_gpx_contains_pois(self):
         waypoints = self.parsed.findAll('wpt')
-        pois = self.trek.pois.all()
+        pois = self.trek.published_pois.all()
         self.assertEqual(len(waypoints), len(pois))
         waypoint = waypoints[0]
         name = waypoint.find('name').string
