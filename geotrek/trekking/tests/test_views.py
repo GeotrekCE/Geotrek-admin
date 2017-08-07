@@ -1024,7 +1024,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
         self.assertXMLEqual(
             response.content,
             '<?xml version="1.0" encoding="utf8"?>\n'
-            '<circuits version="3">'
+            '<circuits version="2">'
             '<circuit id_circuit="{pk}" date_modification="{date_update}" date_creation="1388534400">'
             '<informations>'
             '<information langue="en">'
@@ -1043,7 +1043,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '</informations>'
             '<distance>141</distance>'
             '<locomotions><locomotion duree="5400"></locomotion></locomotions>'
-            '<fichier_trace>http://testserver/api/en/treks/{pk}/name-{n}.kml</fichier_trace>'
+            '<fichier_trace url="http://testserver/api/en/treks/{pk}/name-{n}.kml"/>'
             '<pois>'
             '<poi id_poi="{poi_pk}" date_modification="{poi_date_update}" date_creation="1388534400">'
             '<informations>'
@@ -1067,7 +1067,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
         self.assertXMLEqual(
             response.content,
             '<?xml version="1.0" encoding="utf8"?>\n'
-            '<pois version="3">'
+            '<pois version="2">'
             '<poi id_poi="{pk}" date_modification="{date_update}" date_creation="1388534400">'
             '<informations>'
             '<information langue="en"><titre>{title}</titre><description>{description}</description></information>'
