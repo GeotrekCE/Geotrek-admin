@@ -8,6 +8,7 @@ CHANGELOG
 **New features**
 
 * Add es translation for PDF
+* Add mailssl setting
 
 **Bug fixes**
 

@@ -50,6 +50,7 @@ mailuser =
 mailpassword =
 mailport = 25
 mailtls = False
+mailssl = False
 
 mailalertsubject = Geotrek : Signal a mistake
 mailalertmessage = Hello,
