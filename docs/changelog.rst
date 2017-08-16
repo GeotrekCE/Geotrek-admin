@@ -39,6 +39,10 @@ CHANGELOG
 2.15.2 (2017-09-28)
 -------------------
 
+**New features**
+
+* Sensitive Areas
+
 **Bug fixes**
 
 * Fix existing path split in particular cases where postgis doesn't see real intersections.

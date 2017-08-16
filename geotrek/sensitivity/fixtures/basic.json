@@ -1,0 +1,29 @@
+[
+{
+    "fields": {
+        "name_en": "Land",
+        "name_fr": "Terrestre",
+        "name": "Terrestre"
+    },
+    "model": "sensitivity.sportpractice",
+    "pk": 1
+},
+{
+    "fields": {
+        "name_en": "Vertical",
+        "name_fr": "Vertical",
+        "name": "Vertical"
+    },
+    "model": "sensitivity.sportpractice",
+    "pk": 2
+},
+{
+    "fields": {
+        "name_en": "Aerial",
+        "name_fr": "A\u00e9rien",
+        "name": "A\u00e9rien"
+    },
+    "model": "sensitivity.sportpractice",
+    "pk": 3
+}
+]

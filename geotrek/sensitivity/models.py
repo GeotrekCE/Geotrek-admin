@@ -1,0 +1,74 @@
+"""
+   Sensitivity models
+"""
+
+
+from django.conf import settings
+from django.contrib.gis.db import models
+from django.utils.translation import pgettext_lazy, ugettext_lazy as _
+from mapentity.models import MapEntityMixin
+from geotrek.authent.models import StructureRelated
+from geotrek.common.mixins import (PictogramMixin, NoDeleteMixin, TimeStampedModelMixin, BasePublishableMixin,
+                                   AddPropertyMixin)
+from geotrek.common.utils import intersecting
+from geotrek.core.models import Topology
+
+
+class SportPractice(models.Model):
+    name = models.CharField(max_length=250, db_column='nom', verbose_name=_(u"Name"))
+
+    class Meta:
+        ordering = ['name']
+        db_table = 's_b_pratique_sportive'
+        verbose_name = _(u"Sport practice")
+        verbose_name_plural = _(u"Sport practices")
+
+    def __unicode__(self):
+        return self.name
+
+
+class Species(PictogramMixin):
+    name = models.CharField(max_length=250, db_column='nom', verbose_name=_(u"Name"))
+    period01 = models.BooleanField(default=False, db_column='periode01', verbose_name=_(u"January"))
+    period02 = models.BooleanField(default=False, db_column='periode02', verbose_name=_(u"February"))
+    period03 = models.BooleanField(default=False, db_column='periode03', verbose_name=_(u"March"))
+    period04 = models.BooleanField(default=False, db_column='periode04', verbose_name=_(u"April"))
+    period05 = models.BooleanField(default=False, db_column='periode05', verbose_name=_(u"May"))
+    period06 = models.BooleanField(default=False, db_column='periode06', verbose_name=_(u"June"))
+    period07 = models.BooleanField(default=False, db_column='periode07', verbose_name=_(u"July"))
+    period08 = models.BooleanField(default=False, db_column='periode08', verbose_name=_(u"August"))
+    period09 = models.BooleanField(default=False, db_column='periode09', verbose_name=_(u"September"))
+    period10 = models.BooleanField(default=False, db_column='periode10', verbose_name=_(u"October"))
+    period11 = models.BooleanField(default=False, db_column='periode11', verbose_name=_(u"November"))
+    period12 = models.BooleanField(default=False, db_column='periode12', verbose_name=_(u"Decembre"))
+    practices = models.ManyToManyField(SportPractice, db_table='s_r_espece_pratique_sportive', verbose_name=_(u"Sport practices"))
+    url = models.URLField(blank=True, verbose_name="URL")
+
+    class Meta:
+        ordering = ['name']
+        db_table = 's_b_espece'
+        verbose_name = pgettext_lazy(u"Singular", u"Species")
+        verbose_name_plural = _(u"Species")
+
+    def __unicode__(self):
+        return self.name
+
+
+class SensitiveArea(BasePublishableMixin, MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
+                    AddPropertyMixin):
+    geom = models.PolygonField(srid=settings.SRID)
+    species = models.ForeignKey(Species, verbose_name=pgettext_lazy(u"Singular", u"Species"), db_column='espece')
+
+    objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
+
+    class Meta:
+        db_table = 's_t_zone_sensible'
+        verbose_name = _(u"Sensitive area")
+        verbose_name_plural = _(u"Sensitive areas")
+
+    def __unicode__(self):
+        return self.species.name
+
+
+Topology.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self), _(u"Sensitive areas"))
+Topology.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self).filter(published=True), _(u"Published sensitive areas"))

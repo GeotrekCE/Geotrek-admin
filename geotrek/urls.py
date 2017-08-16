@@ -28,6 +28,7 @@ urlpatterns = patterns(
     url(r'', include('geotrek.tourism.urls', namespace='tourism', app_name='tourism')),
     url(r'', include('geotrek.flatpages.urls', namespace='flatpages', app_name='flatpages')),
     url(r'', include('geotrek.feedback.urls', namespace='feedback', app_name='feedback')),
+    url(r'', include('geotrek.sensitivity.urls', namespace='sensitivity', app_name='sensitivity')),
 
 
 
