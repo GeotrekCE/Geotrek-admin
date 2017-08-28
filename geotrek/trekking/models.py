@@ -142,6 +142,22 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
             os.makedirs(basefolder)
         return os.path.join(basefolder, '%s-%s-%s.png' % (self._meta.model_name, self.pk, get_language()))
 
+    def get_map_image_extent(self, srid=settings.API_SRID):
+        extent = list(super(Trek, self).get_map_image_extent(srid))
+        if self.parking_location:
+            self.parking_location.transform(srid)
+            extent[0] = min(extent[0], self.parking_location.x)
+            extent[1] = min(extent[1], self.parking_location.y)
+            extent[2] = max(extent[2], self.parking_location.x)
+            extent[3] = max(extent[3], self.parking_location.y)
+        for poi in self.published_pois:
+            poi.geom.transform(srid)
+            extent[0] = min(extent[0], poi.geom.x)
+            extent[1] = min(extent[1], poi.geom.y)
+            extent[2] = max(extent[2], poi.geom.x)
+            extent[3] = max(extent[3], poi.geom.y)
+        return extent
+
     @models.permalink
     def get_document_public_url(self):
         """ Override ``geotrek.common.mixins.PublishableMixin``

@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-*
+* Include POIs to compute map screenshot zoom level
 
 
 2.15.1 (2017-08-23)
