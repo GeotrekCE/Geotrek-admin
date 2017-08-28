@@ -150,6 +150,13 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
             extent[1] = min(extent[1], self.parking_location.y)
             extent[2] = max(extent[2], self.parking_location.x)
             extent[3] = max(extent[3], self.parking_location.y)
+        if self.points_reference:
+            self.points_reference.transform(srid)
+            prextent = self.points_reference.extent
+            extent[0] = min(extent[0], prextent[0])
+            extent[1] = min(extent[1], prextent[1])
+            extent[2] = max(extent[2], prextent[2])
+            extent[3] = max(extent[3], prextent[3])
         for poi in self.published_pois:
             poi.geom.transform(srid)
             extent[0] = min(extent[0], poi.geom.x)
