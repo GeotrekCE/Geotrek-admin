@@ -29,7 +29,7 @@ from geotrek.trekking import models as trekking_models
 class TrekGPXSerializer(GPXSerializer):
     def end_object(self, trek):
         super(TrekGPXSerializer, self).end_object(trek)
-        for poi in trek.pois.all():
+        for poi in trek.published_pois.all():
             geom_3d = poi.geom_3d.transform(4326, clone=True)  # GPX uses WGS84
             wpt = gpxpy.gpx.GPXWaypoint(latitude=geom_3d.y,
                                         longitude=geom_3d.x,
@@ -366,7 +366,7 @@ class CirkwiPOISerializer(object):
             return
         self.xml.startElement('medias', {})
         self.xml.startElement('images', {})
-        for picture in pictures:
+        for picture in pictures[:10]:
             self.xml.startElement('image', {})
             if picture['legend']:
                 self.serialize_field('legende', picture['legend'])
@@ -412,7 +412,7 @@ class CirkwiPOISerializer(object):
 
     def serialize(self, pois):
         self.xml.startDocument()
-        self.xml.startElement('pois', {'version': '3'})
+        self.xml.startElement('pois', {'version': '2'})
         self.serialize_pois(pois)
         self.xml.endElement('pois')
         self.xml.endDocument()
@@ -460,8 +460,8 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
             self.serialize_field('description', plain_text(description))
 
     def serialize_tags(self, trek):
-        tag_ids = list(trek.themes.values_list('cirkwi_id', flat=True))
-        tag_ids += trek.accessibilities.values_list('cirkwi_id', flat=True)
+        tag_ids = list(trek.themes.filter(cirkwi_id__isnull=False).values_list('cirkwi_id', flat=True))
+        tag_ids += trek.accessibilities.filter(cirkwi_id__isnull=False).values_list('cirkwi_id', flat=True)
         if trek.difficulty and trek.difficulty.cirkwi_id:
             tag_ids.append(trek.difficulty.cirkwi_id)
         if tag_ids:
@@ -473,7 +473,7 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
     # TODO: parking location (POI?), points_reference
     def serialize(self, treks):
         self.xml.startDocument()
-        self.xml.startElement('circuits', {'version': '3'})
+        self.xml.startElement('circuits', {'version': '2'})
         for trek in treks:
             self.xml.startElement('circuit', {
                 'date_creation': timestamp(trek.date_insert),
@@ -501,7 +501,7 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
             self.serialize_locomotions(trek)
             kml_url = reverse('trekking:trek_kml_detail',
                               kwargs={'lang': get_language(), 'pk': trek.pk, 'slug': trek.slug})
-            self.serialize_field('fichier_trace', self.request.build_absolute_uri(kml_url))
+            self.serialize_field('fichier_trace', '', {'url': self.request.build_absolute_uri(kml_url)})
             if not self.exclude_pois:
                 if trek.published_pois:
                     self.xml.startElement('pois', {})

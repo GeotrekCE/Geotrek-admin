@@ -52,6 +52,7 @@ EMAIL_HOST_USER = envini.get('mailhost')
 EMAIL_HOST_PASSWORD = envini.get('mailpassword')
 EMAIL_HOST_PORT = envini.get('mailport', 25)
 EMAIL_USE_TLS = envini.getbool('mailtls', 'False')
+EMAIL_USE_SSL = envini.getbool('mailssl', 'False')
 
 #
 # External authent

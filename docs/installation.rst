@@ -8,13 +8,13 @@ For a developer instance, please follow  :ref:`the dedicated procedure <developm
 Requirements
 ------------
 
-* Ubuntu Server 12.04 Precise Pangolin (http://releases.ubuntu.com/12.04/) or
+* Ubuntu Server 16.04 Xenial Xerus (http://releases.ubuntu.com/16.04/) or
   Ubuntu Server 14.04 Trusty Tahr (http://releases.ubuntu.com/14.04/)
 
 
 A first estimation on system resources is :
 
-* 1 Go RAM
+* 2 Go RAM
 * 10 Go disk space
 
 

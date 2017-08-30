@@ -2,13 +2,30 @@
 CHANGELOG
 =========
 
-2.15.1.dev0
+2.14.2.dev0
 -------------------
+
+**Bug fixes**
+
+* Include POIs to compute map screenshot zoom level
+
+
+2.15.1 (2017-08-23)
+-------------------
+
+**New features**
+
+* Add es translation for PDF
+* Add mailssl setting
 
 **Bug fixes**
 
 * Fix APIDAE import illustrations
 * Fix double import parsers
+* Fix cirkwi export
+* Select only published POIs in GPX and KML files
+* Remove deprecated experimental setting
+* Fix HTML tags & entities in feedback email
 
 
 2.15.0 (2017-07-13)
