@@ -69,6 +69,16 @@ class SensitiveArea(BasePublishableMixin, MapEntityMixin, StructureRelated, Time
     def __unicode__(self):
         return self.species.name
 
+    @property
+    def species_display(self):
+        s = u'<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
+                                                              self.get_detail_url(),
+                                                              self.species.name,
+                                                              self.species.name)
+        if self.published:
+            s = u'<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
+        return s
+
 
 Topology.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self), _(u"Sensitive areas"))
 Topology.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self).filter(published=True), _(u"Published sensitive areas"))

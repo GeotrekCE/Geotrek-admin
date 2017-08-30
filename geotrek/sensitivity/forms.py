@@ -6,5 +6,5 @@ class SensitiveAreaForm(CommonForm):
     geomfields = ['geom']
 
     class Meta:
-        fields = ['species', 'geom']
+        fields = ['species', 'published', 'geom']
         model = SensitiveArea

@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 class SensitiveAreaLayer(MapEntityLayer):
     queryset = SensitiveArea.objects.existing()
-    properties = ['species']
+    properties = ['species', 'published']
 
 
 class SensitiveAreaList(MapEntityList):
