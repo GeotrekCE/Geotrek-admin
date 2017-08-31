@@ -79,21 +79,11 @@ class BasicJSONAPITest(TranslationResetMixin, TrekkingManagerTest):
         self.response = self.client.get(url)
         self.result = json.loads(self.response.content)
 
-    def test_published_status(self):
-        self.assertDictEqual(self.result['published_status'][0],
-                             {u'lang': u'en', u'status': True, u'language': u'English'})
-
     def test_expected_properties(self):
         self.assertDictEqual(self.result, {
             u'id': self.pk,
             u'publication_date': self.sensitivearea.publication_date.strftime('%Y-%m-%d'),
             u'published': True,
-            u'published_status': [
-                {u'lang': u'en', u'language': u'English', u'status': True},
-                {u'lang': u'es', u'language': u'Spanish', u'status': False},
-                {u'lang': u'fr', u'language': u'French', u'status': False},
-                {u'lang': u'it', u'language': u'Italian', u'status': False},
-            ],
             u'species': {
                 u"id": self.species.id,
                 u"name": self.species.name,

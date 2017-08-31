@@ -2,14 +2,14 @@
    Sensitivity models
 """
 
+import datetime
 
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils.translation import pgettext_lazy, ugettext_lazy as _
 from mapentity.models import MapEntityMixin
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins import (PictogramMixin, NoDeleteMixin, TimeStampedModelMixin, BasePublishableMixin,
-                                   AddPropertyMixin)
+from geotrek.common.mixins import (PictogramMixin, NoDeleteMixin, TimeStampedModelMixin, AddPropertyMixin)
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Topology
 
@@ -54,10 +54,15 @@ class Species(PictogramMixin):
         return self.name
 
 
-class SensitiveArea(BasePublishableMixin, MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
+class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
                     AddPropertyMixin):
     geom = models.PolygonField(srid=settings.SRID)
     species = models.ForeignKey(Species, verbose_name=pgettext_lazy(u"Singular", u"Species"), db_column='espece')
+    published = models.BooleanField(verbose_name=_(u"Published"), default=False,
+                                    help_text=_(u"Online"), db_column='public')
+    publication_date = models.DateField(verbose_name=_(u"Publication date"),
+                                        null=True, blank=True, editable=False,
+                                        db_column='date_publication')
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
 
@@ -68,6 +73,13 @@ class SensitiveArea(BasePublishableMixin, MapEntityMixin, StructureRelated, Time
 
     def __unicode__(self):
         return self.species.name
+
+    def save(self, *args, **kwargs):
+        if self.publication_date is None and self.published:
+            self.publication_date = datetime.date.today()
+        if self.publication_date is not None and not self.published:
+            self.publication_date = None
+        super(SensitiveArea, self).save(*args, **kwargs)
 
     @property
     def species_display(self):
