@@ -118,7 +118,7 @@ BEGIN
                    FROM l_t_troncon t
                    WHERE id != NEW.id
                          AND ST_DWITHIN(t.geom, NEW.geom, 0)
-                         AND GeometryType(ST_Intersection(geom, NEW.geom)) IN ('POINT', 'MULTIPOINT')
+                         AND GeometryType(ST_Intersection(geom, NEW.geom)) NOT IN ('LINESTRING', 'MULTILINESTRING')
     LOOP
 
         RAISE NOTICE '%-% (%) intersects %-% (%) : %', NEW.id, NEW.nom, ST_AsText(NEW.geom), troncon.id, troncon.nom, ST_AsText(troncon.geom), ST_AsText(ST_Intersection(troncon.geom, NEW.geom));
@@ -141,6 +141,22 @@ BEGIN
 
         -- Locate intersecting point(s) on current path (array of  : {0, 0.32, 0.89, 1})
         intersections_on_current := ARRAY[0::float];
+
+        IF ST_DWITHIN(ST_STARTPOINT(NEW.geom), troncon.geom, 0)
+        THEN
+            intersections_on_current := array_append(intersections_on_current,
+                                                 ST_Line_Locate_Point(troncon.geom,
+                                                                      ST_CLOSESTPOINT(troncon.geom, ST_STARTPOINT(NEW.geom))));
+        END IF;
+
+        IF ST_DWITHIN(ST_ENDPOINT(NEW.geom), troncon.geom, 0)
+        THEN
+            intersections_on_current := array_append(intersections_on_current,
+                                                 ST_Line_Locate_Point(troncon.geom,
+                                                                      ST_CLOSESTPOINT(troncon.geom, ST_ENDPOINT(NEW.geom))));
+
+        END IF;
+        RAISE NOTICE 'EEE : %', array_to_string(intersections_on_current, ', ');
         FOR fraction IN SELECT ST_Line_Locate_Point(troncon.geom, (ST_Dump(ST_Intersection(troncon.geom, NEW.geom))).geom)
         LOOP
             intersections_on_current := array_append(intersections_on_current, fraction);
@@ -150,6 +166,8 @@ BEGIN
         -- Sort intersection points and remove duplicates (0 and 1 can appear twice)
         SELECT array_agg(sub.fraction) INTO intersections_on_current
             FROM (SELECT DISTINCT unnest(intersections_on_current) AS fraction ORDER BY fraction) AS sub;
+
+
 
         IF array_length(intersections_on_new, 1) > 2 AND array_length(intersections_on_current, 1) > 2 THEN
             -- If both intersects, one is enough, since split trigger will be applied recursively.

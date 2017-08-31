@@ -265,6 +265,28 @@ class SplitPathTest(TestCase):
         cd.reload()
         self.assertEqual(len(Path.objects.all()), 3)
 
+    def test_split_particular_postgis_sucks(self):
+        """
+        Same as test_split_almost_4 but with particular case where postgis SAYS 'Hey ! DWITHIN and DISTANCE = 0 but
+        there is NO INTERSECTION !
+                 C
+            -----+----+ A
+            |    |
+            |    |
+            -----+----+ B
+                 D
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((906922.77594628, 6711339.34379721),
+                                                           (906617.646677858, 6711323.89299994),
+                                                           (906644.49103274, 6711165.20449349),
+                                                           (906820.790930756, 6711164.88630011),
+                                                           (906924.174901373, 6711168.48416289)))
+        cd = PathFactory.create(name="CD", geom=LineString((906787.523777861, 6711332.49504801),
+                                                           (906801.0012688, 6711164.92201732)))
+        ab.reload()
+        cd.reload()
+        self.assertEqual(len(Path.objects.all()), 4)
+
     def test_split_multiple(self):
         """
 
