@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix existing path split in particular cases where postgis doesn't see real intersections.
+* Fix project and intervention detail template.
 
 
 2.15.1 (2017-08-23)
