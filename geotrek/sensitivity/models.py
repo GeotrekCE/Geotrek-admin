@@ -56,6 +56,8 @@ class Species(PictogramMixin):
 
 class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
                     AddPropertyMixin):
+    SPECIES = 1
+    REGULATORY = 2
     geom = models.PolygonField(srid=settings.SRID)
     species = models.ForeignKey(Species, verbose_name=pgettext_lazy(u"Singular", u"Species"), db_column='espece')
     published = models.BooleanField(verbose_name=_(u"Published"), default=False,
@@ -63,6 +65,8 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
     publication_date = models.DateField(verbose_name=_(u"Publication date"),
                                         null=True, blank=True, editable=False,
                                         db_column='date_publication')
+    category = models.IntegerField(verbose_name=_(u"Category"), db_column='categorie',
+                                   choices=((SPECIES, _(u"Species")), (REGULATORY, _(u"Regulatory"))))
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
 

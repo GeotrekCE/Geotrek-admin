@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-16 15:30+0200\n"
+"POT-Creation-Date: 2017-08-31 17:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -72,8 +72,35 @@ msgstr "Espèce"
 msgid "Species"
 msgstr "Espèces"
 
+msgid "Published"
+msgstr "Publiée"
+
+msgid "Online"
+msgstr "En ligne"
+
+msgid "Publication date"
+msgstr "Date de publication"
+
+msgid "Category"
+msgstr "Catégorie"
+
+msgid "Regulatory"
+msgstr "Réglementaires"
+
 msgid "Sensitive area"
 msgstr "Zone sensible"
 
 msgid "Sensitive areas"
 msgstr "Zones sensibles"
+
+msgid "Published sensitive areas"
+msgstr "Zones sensibles publiées"
+
+msgid "Attributes"
+msgstr "Informations"
+
+msgid "All"
+msgstr "Toutes"
+
+msgid "Invalid geometry value."
+msgstr "Valeur de géométrie invalide"

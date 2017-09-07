@@ -1,0 +1,6 @@
+{% load static sensitivity_tags %}
+
+{% is_sensitivity_enabled as enabled %}
+{% if enabled %}
+<script type="text/javascript" src="{% static "sensitivity/main.js" %}"></script>
+{% endif %}

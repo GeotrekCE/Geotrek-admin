@@ -44,6 +44,7 @@ class SensitiveAreaFactory(StructureRelatedDefaultFactory):
     class Meta:
         model = models.SensitiveArea
 
+    category = models.SensitiveArea.SPECIES
     species = factory.SubFactory(SpeciesFactory)
     geom = 'POLYGON((700000 6600000, 700000 6600003, 700003 6600003, 700003 6600000, 700000 6600000))'
     published = True

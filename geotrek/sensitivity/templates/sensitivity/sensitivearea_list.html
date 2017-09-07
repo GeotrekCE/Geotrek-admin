@@ -1,0 +1,12 @@
+{% extends "mapentity/mapentity_list.html" %}
+{% load i18n staticfiles %}
+
+{% block mainactions %}
+    {{ block.super }}
+
+    <div class="btn-group categories-filter">
+        <a class="btn btn-warning" href="#" title="{% trans "All" %}">{% trans "All" %}</a>
+        <a class="btn" href="#" data-category="1" title="{%  trans "Species" %}">{%  trans "Species" %}</a>
+        <a class="btn" href="#" data-category="2" title="{%  trans "Regulatory" %}">{%  trans "Regulatory" %}</a>
+    </div>
+{% endblock mainactions %}
