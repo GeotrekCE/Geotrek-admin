@@ -104,3 +104,6 @@ msgstr "Toutes"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
+
+msgid "Add a new sensitive area"
+msgstr "Ajouter une nouvelle zone sensible"

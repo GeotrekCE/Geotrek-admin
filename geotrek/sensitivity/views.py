@@ -7,7 +7,7 @@ from rest_framework import permissions as rest_permissions
 from geotrek.authent.decorators import same_structure_required
 
 from .filters import SensitiveAreaFilterSet
-from .forms import SensitiveAreaForm
+from .forms import SensitiveAreaForm, RegulatorySensitiveAreaForm
 from .models import SensitiveArea
 from .serializers import SensitiveAreaSerializer
 
@@ -43,12 +43,20 @@ class SensitiveAreaDetail(MapEntityDetail):
 
 class SensitiveAreaCreate(MapEntityCreate):
     model = SensitiveArea
-    form_class = SensitiveAreaForm
+
+    def get_form_class(self):
+        if self.request.GET.get('category') == str(SensitiveArea.REGULATORY):
+            return RegulatorySensitiveAreaForm
+        return SensitiveAreaForm
 
 
 class SensitiveAreaUpdate(MapEntityUpdate):
     queryset = SensitiveArea.objects.existing()
-    form_class = SensitiveAreaForm
+
+    def get_form_class(self):
+        if self.request.GET.get('category') == str(SensitiveArea.REGULATORY):
+            return RegulatorySensitiveAreaForm
+        return SensitiveAreaForm
 
     @same_structure_required('sensitivity:sensitivearea_detail')
     def dispatch(self, *args, **kwargs):
