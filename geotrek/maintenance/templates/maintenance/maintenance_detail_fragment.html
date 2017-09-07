@@ -5,7 +5,7 @@
 <h3>{% trans "Works" %}</h3>
 <table class="table">
     <tr>
-        <td>
+        <td colspan="3">
         <strong>{% trans "Interventions" %}</strong>
             {% with columns="infrastructure,name,status,stake,total_cost,date" %}
                 {% if modelname == "infrastructure" or modelname == "signage" %}
@@ -31,11 +31,31 @@
 
     {% if modelname != "project" %}
     <tr>
-        <th>{% trans "Projects" %}</th>
-        <td>
-            {% valuelist object.projects.all %}
-        </td>
+        <th colspan="3">{% trans "Projects" %}<br/></th>
     </tr>
+        {% with object.projects.all as projects %}
+            {% if projects.exists %}
+            <tr>
+                <th>{% trans "Name" %}</th>
+                <th>{% trans "Begin year" %}</th>
+                <th>{% trans "End year" %}</th>
+            </tr>
+        {% for project in projects %}
+        <tr>
+            <td>
+                <a href="{% url 'maintenance:project_detail' project.pk %}">{{ project.name }}
+            </td>
+        <td>
+                {{ project.begin_year }}
+            </td>
+        <td>
+                {{ project.end_year }}
+            </td>
+        </tr>
+
+        {% endfor %}
+            {% endif %}
+        {% endwith %}
     {% endif %}
 
 </table>

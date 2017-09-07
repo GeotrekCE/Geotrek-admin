@@ -2,12 +2,13 @@
 CHANGELOG
 =========
 
-2.14.2.dev0
+2.15.2.dev0
 -------------------
 
 **Bug fixes**
 
-* Include POIs to compute map screenshot zoom level
+* Fix existing path split in particular cases where postgis doesn't see real intersections.
+* Fix project and intervention detail template.
 
 
 2.15.1 (2017-08-23)

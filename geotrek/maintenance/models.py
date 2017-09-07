@@ -412,8 +412,13 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
         s = []
         for i in self.interventions.existing():
             for p in i.paths.all():
-                if p.trail:
-                    s.append(p.trail)
+                try:
+                    if p.trail:
+                        s.append(p.trail)
+
+                except AttributeError:
+                    pass
+
         return Trail.objects.filter(pk__in=[t.pk for t in set(s)])
 
     @property
