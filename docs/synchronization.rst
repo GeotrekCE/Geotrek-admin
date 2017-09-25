@@ -17,6 +17,7 @@ The parameter is the destination directory for synchronized data.
 If Geotrek-Admin is not accessible on localhost:80, you have to use the ``--url`` option.
 To make output less or more verbose, you can use the ``--verbose`` option.
 
+Since version 2.4.0 of Geotrek-admin, you can also launch the command ``sync_rando`` from the web interface. You can add synchronization options with advanced configuration setting ``SYNC_RANDO_OPTIONS = {}``.
 
 Automatic synchronization
 -------------------------
@@ -27,7 +28,7 @@ You can set up automatic synchronization by creating a file ``/etc/crond.d/geotr
 
     0 3 * * * root /path/to/geotrek/bin/django sync_rando /where/to/generate/data
 
-This will automatically synchronize data a 3 am every day.
+This example will automatically synchronize data a 3 am every day.
 
 
 Synchronization options
