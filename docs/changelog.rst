@@ -9,6 +9,7 @@ CHANGELOG
 
 * Fix existing path split in particular cases where postgis doesn't see real intersections.
 * Fix project and intervention detail template.
+* Fix synchronization of POI media other than images
 
 
 2.15.1 (2017-08-23)

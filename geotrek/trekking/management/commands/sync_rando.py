@@ -318,6 +318,8 @@ class Command(BaseCommand):
             self.sync_media_file(lang, poi.resized_pictures[0][1], zipfile=self.trek_zipfile)
         for picture, resized in poi.resized_pictures[1:]:
             self.sync_media_file(lang, resized)
+        for other_file in poi.files:
+            self.sync_media_file(lang, other_file.attachment_file)
 
     def sync_trek(self, lang, trek):
         zipname = os.path.join('zip', 'treks', lang, '{pk}.zip'.format(pk=trek.pk))
