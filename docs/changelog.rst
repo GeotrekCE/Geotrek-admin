@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.15.2.dev0
+2.15.2 (2017-09-28)
 -------------------
 
 **Bug fixes**
@@ -10,6 +10,7 @@ CHANGELOG
 * Fix existing path split in particular cases where postgis doesn't see real intersections.
 * Fix project and intervention detail template.
 * Fix synchronization of POI media other than images
+* Include pois, parking and reference points to compute PDF map zoom
 
 
 2.15.1 (2017-08-23)
