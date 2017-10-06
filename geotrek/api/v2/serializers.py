@@ -288,7 +288,7 @@ class TourDetailSerializer(TrekDetailSerializer):
                                          self.context.get('request').GET.get('dim'),
                                          TrekDetailSerializer)
         return FinalClass(qs,
-                          many=True).data
+                          many=True, context=self.context).data
 
     class Meta(TrekDetailSerializer.Meta):
         fields = TrekDetailSerializer.Meta.fields + ('steps',)
