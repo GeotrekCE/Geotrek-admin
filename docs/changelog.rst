@@ -7,7 +7,7 @@ CHANGELOG
 
 *Bug fixes**
 
-*
+* API v2 : Fix full URL pictures in nested serializers
 
 
 2.15.2 (2017-09-28)
