@@ -1,22 +1,29 @@
 from django.conf import settings
+from django.conf.urls import patterns, url
 
 from mapentity import registry
 
 from geotrek.common.urls import PublishableEntityOptions
 
 from . import models
-from . import serializers as sensitivity_serializers
+from . import serializers
+from . import views
 
 
 class SensitiveAreaEntityOptions(PublishableEntityOptions):
     def get_serializer(self):
-        return sensitivity_serializers.SensitiveAreaSerializer
+        return serializers.SensitiveAreaSerializer
 
     def get_queryset(self):
         return self.model.objects.existing()
 
 
 if settings.SENSITIVITY_ENABLED:
-    urlpatterns = registry.register(models.SensitiveArea, SensitiveAreaEntityOptions)
+    urlpatterns = [
+        url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/sensitiveareas\.geojson$',
+            views.TrekSensitiveAreaViewSet.as_view({'get': 'list'}),
+            name="trek_sensitivearea_geojson"),
+    ]
+    urlpatterns += registry.register(models.SensitiveArea, SensitiveAreaEntityOptions)
 else:
     urlpatterns = []
