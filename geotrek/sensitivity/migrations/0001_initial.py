@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.db import migrations, models
 import geotrek.common.mixins
 import geotrek.authent.models
@@ -23,7 +24,7 @@ class Migration(migrations.Migration):
                 ('deleted', models.BooleanField(default=False, verbose_name='Deleted', editable=False, db_column=b'supprime')),
                 ('published', models.BooleanField(default=False, help_text='Online', verbose_name='Published', db_column=b'public')),
                 ('publication_date', models.DateField(verbose_name='Publication date', null=True, editable=False, db_column=b'date_publication', blank=True)),
-                ('geom', django.contrib.gis.db.models.fields.PolygonField(srid=2154)),
+                ('geom', django.contrib.gis.db.models.fields.PolygonField(srid=settings.SRID)),
             ],
             options={
                 'db_table': 's_t_zone_sensible',
