@@ -24,6 +24,7 @@ class SpeciesFactory(factory.DjangoModelFactory):
     url = factory.Sequence(lambda n: u"http://url%s.com" % n)
     period06 = True
     period07 = True
+    category = models.Species.SPECIES
 
     @classmethod
     def _prepare(cls, create, **kwargs):
@@ -44,7 +45,6 @@ class SensitiveAreaFactory(StructureRelatedDefaultFactory):
     class Meta:
         model = models.SensitiveArea
 
-    category = models.SensitiveArea.SPECIES
     species = factory.SubFactory(SpeciesFactory)
     geom = 'POLYGON((700000 6600000, 700000 6600003, 700003 6600003, 700003 6600000, 700000 6600000))'
     published = True
