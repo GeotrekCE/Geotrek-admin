@@ -11,7 +11,7 @@ from geotrek.authent.decorators import same_structure_required
 from geotrek.trekking.models import Trek
 from .filters import SensitiveAreaFilterSet
 from .forms import SensitiveAreaForm, RegulatorySensitiveAreaForm
-from .models import SensitiveArea
+from .models import SensitiveArea, Species
 from .serializers import SensitiveAreaSerializer
 
 
@@ -48,7 +48,7 @@ class SensitiveAreaCreate(MapEntityCreate):
     model = SensitiveArea
 
     def get_form_class(self):
-        if self.request.GET.get('category') == str(SensitiveArea.REGULATORY):
+        if self.request.GET.get('category') == str(Species.REGULATORY):
             return RegulatorySensitiveAreaForm
         return SensitiveAreaForm
 
@@ -57,7 +57,7 @@ class SensitiveAreaUpdate(MapEntityUpdate):
     queryset = SensitiveArea.objects.existing()
 
     def get_form_class(self):
-        if self.request.GET.get('category') == str(SensitiveArea.REGULATORY):
+        if self.request.GET.get('category') == str(Species.REGULATORY):
             return RegulatorySensitiveAreaForm
         return SensitiveAreaForm
 

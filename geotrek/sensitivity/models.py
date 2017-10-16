@@ -28,6 +28,9 @@ class SportPractice(models.Model):
 
 
 class Species(PictogramMixin):
+    SPECIES = 1
+    REGULATORY = 2
+
     name = models.CharField(max_length=250, db_column='nom', verbose_name=_(u"Name"))
     period01 = models.BooleanField(default=False, db_column='periode01', verbose_name=_(u"January"))
     period02 = models.BooleanField(default=False, db_column='periode02', verbose_name=_(u"February"))
@@ -41,8 +44,14 @@ class Species(PictogramMixin):
     period10 = models.BooleanField(default=False, db_column='periode10', verbose_name=_(u"October"))
     period11 = models.BooleanField(default=False, db_column='periode11', verbose_name=_(u"November"))
     period12 = models.BooleanField(default=False, db_column='periode12', verbose_name=_(u"Decembre"))
-    practices = models.ManyToManyField(SportPractice, db_table='s_r_espece_pratique_sportive', verbose_name=_(u"Sport practices"))
+    practices = models.ManyToManyField(SportPractice, db_table='s_r_espece_pratique_sportive',
+                                       verbose_name=_(u"Sport practices"))
     url = models.URLField(blank=True, verbose_name="URL")
+    radius = models.IntegerField(blank=True, null=True, verbose_name=_(u"Bubble radius"),
+                                 help_text=_(u"meters"))
+    category = models.IntegerField(verbose_name=_(u"Category"), db_column='categorie', editable=False,
+                                   choices=((SPECIES, _(u"Species")), (REGULATORY, _(u"Regulatory"))),
+                                   default=SPECIES)
 
     class Meta:
         ordering = ['name']
@@ -56,18 +65,14 @@ class Species(PictogramMixin):
 
 class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
                     AddPropertyMixin):
-    SPECIES = 1
-    REGULATORY = 2
-    geom = models.PolygonField(srid=settings.SRID)
-    species = models.ForeignKey(Species, verbose_name=pgettext_lazy(u"Singular", u"Species"), db_column='espece')
+    geom = models.GeometryField(srid=settings.SRID)
+    species = models.ForeignKey(Species, verbose_name=pgettext_lazy(u"Singular", u"Species"), db_column='espece',
+                                on_delete=models.PROTECT)
     published = models.BooleanField(verbose_name=_(u"Published"), default=False,
                                     help_text=_(u"Online"), db_column='public')
     publication_date = models.DateField(verbose_name=_(u"Publication date"),
                                         null=True, blank=True, editable=False,
                                         db_column='date_publication')
-    category = models.IntegerField(verbose_name=_(u"Category"), db_column='categorie',
-                                   choices=((SPECIES, _(u"Species")), (REGULATORY, _(u"Regulatory"))),
-                                   default=SPECIES)
     description = models.TextField(verbose_name=_("Description"), blank=True)
     email = models.EmailField(verbose_name=_("Email"), blank=True)
 

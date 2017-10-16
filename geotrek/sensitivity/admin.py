@@ -8,7 +8,8 @@ class SportPracticeAdmin(admin.ModelAdmin):
 
 
 class SpeciesAdmin(admin.ModelAdmin):
-    pass
+    def get_queryset(self, request):
+        return super(SpeciesAdmin, self).get_queryset(request).filter(category=Species.SPECIES)
 
 
 if settings.SENSITIVITY_ENABLED:

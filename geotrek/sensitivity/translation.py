@@ -1,5 +1,5 @@
 from modeltranslation.translator import translator, TranslationOptions
-from geotrek.sensitivity.models import SportPractice, Species
+from geotrek.sensitivity.models import SportPractice, Species, SensitiveArea
 
 
 # Sensitivity app
@@ -9,8 +9,13 @@ class SportPracticeTO(TranslationOptions):
 
 
 class SpeciesTO(TranslationOptions):
-    fields = ('name', )
+    fields = ('name', 'url')
+
+
+class SensitiveAreaTO(TranslationOptions):
+    fields = ('description', )
 
 
 translator.register(SportPractice, SportPracticeTO)
 translator.register(Species, SpeciesTO)
+translator.register(SensitiveArea, SensitiveAreaTO)

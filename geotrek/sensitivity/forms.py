@@ -6,6 +6,7 @@ from django.utils.translation import ugettext as _
 
 class SensitiveAreaForm(CommonForm):
     geomfields = ['geom']
+    species = forms.ModelChoiceField(queryset=Species.objects.filter(category=Species.SPECIES))
 
     class Meta:
         fields = ['species', 'description', 'email', 'published', 'geom']
@@ -15,6 +16,7 @@ class SensitiveAreaForm(CommonForm):
 class RegulatorySensitiveAreaForm(CommonForm):
     geomfields = ['geom']
     name = forms.CharField(max_length=250, label=_(u"Name"))
+    pictogram = forms.FileField()
     period01 = forms.BooleanField(label=_(u"January"), required=False)
     period02 = forms.BooleanField(label=_(u"February"), required=False)
     period03 = forms.BooleanField(label=_(u"March"), required=False)
@@ -31,7 +33,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
     url = forms.URLField(label="URL", required=False)
 
     class Meta:
-        fields = ['name', 'published', 'practices'] + ['period{:02}'.format(p) for p in range(1, 13)] + ['url', 'geom']
+        fields = ['name', 'published', 'pictogram', 'practices'] + ['period{:02}'.format(p) for p in range(1, 13)] + ['url', 'geom']
         model = SensitiveArea
 
     def __init__(self, *args, **kwargs):
@@ -48,10 +50,10 @@ class RegulatorySensitiveAreaForm(CommonForm):
         for p in range(1, 13):
             fieldname = 'period{:02}'.format(p)
             setattr(species, fieldname, self.cleaned_data[fieldname])
+        species.category = Species.REGULATORY
         species.save()
         species.practices = self.cleaned_data['practices']
         area = super(RegulatorySensitiveAreaForm, self).save(commit=False)
         area.species = species
-        area.category = SensitiveArea.REGULATORY
         area.save()
         return area

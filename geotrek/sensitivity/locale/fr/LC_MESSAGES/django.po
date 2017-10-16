@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-31 17:54+0200\n"
+"POT-Creation-Date: 2017-10-16 13:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,12 +22,6 @@ msgstr "Sensibilité"
 
 msgid "Name"
 msgstr "Nom"
-
-msgid "Sport practice"
-msgstr "Pratique sportive"
-
-msgid "Sport practices"
-msgstr "Pratiques sportives"
 
 msgid "January"
 msgstr "Janvier"
@@ -65,12 +59,30 @@ msgstr "Novembre"
 msgid "Decembre"
 msgstr "Décembre"
 
-msgctxt "Singular"
-msgid "Species"
-msgstr "Espèce"
+msgid "Sport practices"
+msgstr "Pratiques sportives"
+
+msgid "Sport practice"
+msgstr "Pratique sportive"
+
+msgid "Bubble radius"
+msgstr "Rayon de la bulle"
+
+msgid "meters"
+msgstr "mètres"
+
+msgid "Category"
+msgstr "Catégorie"
 
 msgid "Species"
 msgstr "Espèces"
+
+msgid "Regulatory"
+msgstr "Réglementaires"
+
+msgctxt "Singular"
+msgid "Species"
+msgstr "Espèce"
 
 msgid "Published"
 msgstr "Publiée"
@@ -81,11 +93,11 @@ msgstr "En ligne"
 msgid "Publication date"
 msgstr "Date de publication"
 
-msgid "Category"
-msgstr "Catégorie"
+msgid "Description"
+msgstr "Description"
 
-msgid "Regulatory"
-msgstr "Réglementaires"
+msgid "Email"
+msgstr "Email"
 
 msgid "Sensitive area"
 msgstr "Zone sensible"

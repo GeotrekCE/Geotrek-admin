@@ -23,14 +23,14 @@ $(window).on('entity:view:list', function (e, data) {
         var category = $this.data('category');
         if (category) {
             // Category chosen
-            $('select#id_category').val(category)
-                                   .addClass('filter-set');
+            $('select#id_species__category').val(category)
+                                            .addClass('filter-set');
             $addButton.attr('href', addUrl + '?category=' + category);
         }
         else {
             // All chosen.
-            $("select#id_category option").prop("selected", false);
-            $('select#id_category').removeClass('filter-set');
+            $("select#id_species__category option").prop("selected", false);
+            $('select#id_species__category').removeClass('filter-set');
             $addButton.attr('href', addUrl);
         }
 
