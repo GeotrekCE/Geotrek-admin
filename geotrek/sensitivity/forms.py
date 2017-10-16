@@ -40,15 +40,18 @@ class RegulatorySensitiveAreaForm(CommonForm):
 
     def save(self):
         if not self.instance.pk:
-            self.instance.species = Species()
-        self.instance.species.name = self.cleaned_data['name']
-        self.instance.species.url = self.cleaned_data['url']
+            species = Species()
+        else:
+            species = self.instance.species
+        species.name = self.cleaned_data['name']
+        species.url = self.cleaned_data['url']
         for p in range(1, 13):
             fieldname = 'period{:02}'.format(p)
-            setattr(self.instance.species, fieldname, self.cleaned_data[fieldname])
-        self.instance.species.save()
-        self.instance.species.practices = self.cleaned_data['practices']
-        print(self.instance.species)
-        print(self.instance.species.pk)
-        print(self.instance.pk)
-        return super(RegulatorySensitiveAreaForm, self).save()
+            setattr(species, fieldname, self.cleaned_data[fieldname])
+        species.save()
+        species.practices = self.cleaned_data['practices']
+        area = super(RegulatorySensitiveAreaForm, self).save(commit=False)
+        area.species = species
+        area.category = SensitiveArea.REGULATORY
+        area.save()
+        return area
