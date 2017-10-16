@@ -9,7 +9,7 @@ class SensitiveAreaForm(CommonForm):
     species = forms.ModelChoiceField(queryset=Species.objects.filter(category=Species.SPECIES))
 
     class Meta:
-        fields = ['species', 'description', 'email', 'published', 'geom']
+        fields = ['species', 'published', 'description', 'email', 'geom']
         model = SensitiveArea
 
 
@@ -33,7 +33,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
     url = forms.URLField(label="URL", required=False)
 
     class Meta:
-        fields = ['name', 'published', 'pictogram', 'practices'] + ['period{:02}'.format(p) for p in range(1, 13)] + ['url', 'geom']
+        fields = ['name', 'published', 'description', 'email', 'pictogram', 'practices'] + ['period{:02}'.format(p) for p in range(1, 13)] + ['url', 'geom']
         model = SensitiveArea
 
     def __init__(self, *args, **kwargs):

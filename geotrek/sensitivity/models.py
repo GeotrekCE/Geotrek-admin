@@ -62,6 +62,14 @@ class Species(PictogramMixin):
     def __unicode__(self):
         return self.name
 
+    def pretty_period(self):
+        return u", ".join([unicode(self._meta.get_field('period{:02}'.format(p)).verbose_name)
+                           for p in range(1, 13)
+                           if getattr(self, 'period{:02}'.format(p))])
+
+    def pretty_practices(self):
+        return u", ".join([unicode(practice) for practice in self.practices.all()])
+
 
 class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
                     AddPropertyMixin):
