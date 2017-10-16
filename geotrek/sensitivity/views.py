@@ -57,7 +57,7 @@ class SensitiveAreaUpdate(MapEntityUpdate):
     queryset = SensitiveArea.objects.existing()
 
     def get_form_class(self):
-        if self.request.GET.get('category') == str(Species.REGULATORY):
+        if self.object.species.category == Species.REGULATORY:
             return RegulatorySensitiveAreaForm
         return SensitiveAreaForm
 

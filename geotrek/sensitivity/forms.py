@@ -37,6 +37,16 @@ class RegulatorySensitiveAreaForm(CommonForm):
         model = SensitiveArea
 
     def __init__(self, *args, **kwargs):
+        if 'instance' in kwargs:
+            species = kwargs['instance'].species
+            kwargs['initial'] = {
+                'name': species.name,
+                'url': species.url,
+                'practices': species.practices.all(),
+            }
+            for p in range(1, 13):
+                name = 'period{:02}'.format(p)
+                kwargs['initial'][name] = getattr(species, name)
         super(RegulatorySensitiveAreaForm, self).__init__(*args, **kwargs)
         self.helper.form_action += '?category=2'
 
@@ -51,8 +61,8 @@ class RegulatorySensitiveAreaForm(CommonForm):
             fieldname = 'period{:02}'.format(p)
             setattr(species, fieldname, self.cleaned_data[fieldname])
         species.category = Species.REGULATORY
-        species.save()
         species.practices = self.cleaned_data['practices']
+        species.save()
         area = super(RegulatorySensitiveAreaForm, self).save(commit=False)
         area.species = species
         area.save()
