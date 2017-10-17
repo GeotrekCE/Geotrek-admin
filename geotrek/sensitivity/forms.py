@@ -38,7 +38,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
         model = SensitiveArea
 
     def __init__(self, *args, **kwargs):
-        if 'instance' in kwargs:
+        if kwargs['instance']:
             species = kwargs['instance'].species
             kwargs['initial'] = {
                 'name': species.name,
