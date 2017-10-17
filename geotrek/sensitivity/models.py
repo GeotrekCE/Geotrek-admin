@@ -73,7 +73,7 @@ class Species(PictogramMixin):
 
 class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
                     AddPropertyMixin):
-    geom = models.GeometryField(srid=settings.SRID)
+    geom = models.PolygonField(srid=settings.SRID)
     species = models.ForeignKey(Species, verbose_name=pgettext_lazy(u"Singular", u"Species"), db_column='espece',
                                 on_delete=models.PROTECT)
     published = models.BooleanField(verbose_name=_(u"Published"), default=False,
