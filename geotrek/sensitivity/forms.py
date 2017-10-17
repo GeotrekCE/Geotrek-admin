@@ -1,12 +1,13 @@
 from django import forms
 from .models import SensitiveArea, SportPractice, Species
 from geotrek.common.forms import CommonForm
-from django.utils.translation import ugettext as _
+from django.utils.translation import pgettext, ugettext as _
 
 
 class SensitiveAreaForm(CommonForm):
     geomfields = ['geom']
-    species = forms.ModelChoiceField(queryset=Species.objects.filter(category=Species.SPECIES))
+    species = forms.ModelChoiceField(queryset=Species.objects.filter(category=Species.SPECIES),
+                                     label=pgettext(u"Singular", u"Species"))
 
     class Meta:
         fields = ['species', 'published', 'description', 'email', 'geom']
@@ -16,7 +17,7 @@ class SensitiveAreaForm(CommonForm):
 class RegulatorySensitiveAreaForm(CommonForm):
     geomfields = ['geom']
     name = forms.CharField(max_length=250, label=_(u"Name"))
-    pictogram = forms.FileField()
+    pictogram = forms.FileField(label=_(u"Pictogram"))
     period01 = forms.BooleanField(label=_(u"January"), required=False)
     period02 = forms.BooleanField(label=_(u"February"), required=False)
     period03 = forms.BooleanField(label=_(u"March"), required=False)
@@ -30,7 +31,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
     period11 = forms.BooleanField(label=_(u"November"), required=False)
     period12 = forms.BooleanField(label=_(u"Decembre"), required=False)
     practices = forms.ModelMultipleChoiceField(label=_(u"Sport practices"), queryset=SportPractice.objects)
-    url = forms.URLField(label="URL", required=False)
+    url = forms.URLField(label=_(u"URL"), required=False)
 
     class Meta:
         fields = ['name', 'published', 'description', 'email', 'pictogram', 'practices'] + ['period{:02}'.format(p) for p in range(1, 13)] + ['url', 'geom']
