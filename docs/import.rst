@@ -20,8 +20,8 @@ To import touristic content from APIDAE (ex-SITRA), create a ``bulkimport/parser
         project_id = 9999
         selection_id = 99999
         category = u"Hébergement"
-        type1 = u""
-        type2 = u""
+        type1 = [u"Camping"]
+        type2 = [u"3 étoiles", "Tourisme et Handicap"]  # just remove this line if no type2
 
 Then set up appropriate values:
 
