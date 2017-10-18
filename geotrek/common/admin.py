@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
+from djcelery.models import TaskState, WorkerState, PeriodicTask, IntervalSchedule, CrontabSchedule
 
 from . import models as common_models
 
@@ -73,3 +74,9 @@ admin.site.register(common_models.FileType, FileTypeAdmin)
 admin.site.register(common_models.Theme, ThemeAdmin)
 admin.site.register(common_models.RecordSource, RecordSourceAdmin)
 admin.site.register(common_models.TargetPortal, TargetPortalAdmin)
+
+admin.site.unregister(TaskState)
+admin.site.unregister(WorkerState)
+admin.site.unregister(IntervalSchedule)
+admin.site.unregister(CrontabSchedule)
+admin.site.unregister(PeriodicTask)
