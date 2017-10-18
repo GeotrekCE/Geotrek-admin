@@ -42,8 +42,9 @@ class RegulatorySensitiveAreaForm(CommonForm):
             species = kwargs['instance'].species
             kwargs['initial'] = {
                 'name': species.name,
-                'url': species.url,
+                'pictogram': species.pictogram,
                 'practices': species.practices.all(),
+                'url': species.url,
             }
             for p in range(1, 13):
                 name = 'period{:02}'.format(p)
@@ -56,13 +57,14 @@ class RegulatorySensitiveAreaForm(CommonForm):
             species = Species()
         else:
             species = self.instance.species
+        species.category = Species.REGULATORY
         species.name = self.cleaned_data['name']
+        species.pictogram = self.cleaned_data['pictogram']
+        species.practices = self.cleaned_data['practices']
         species.url = self.cleaned_data['url']
         for p in range(1, 13):
             fieldname = 'period{:02}'.format(p)
             setattr(species, fieldname, self.cleaned_data[fieldname])
-        species.category = Species.REGULATORY
-        species.practices = self.cleaned_data['practices']
         species.save()
         area = super(RegulatorySensitiveAreaForm, self).save(commit=False)
         area.species = species
