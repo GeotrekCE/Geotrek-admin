@@ -29,12 +29,12 @@ from geotrek.flatpages.models import FlatPage
 from geotrek.flatpages.views import FlatPageViewSet, FlatPageMeta
 from geotrek.tourism import models as tourism_models
 from geotrek.tourism import views as tourism_views
-if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
-    from geotrek.sensitivity import views as sensitivity_views
 from geotrek.trekking import models as trekking_models
 from geotrek.trekking.views import (TrekViewSet, POIViewSet, TrekPOIViewSet,
                                     TrekGPXDetail, TrekKMLDetail, TrekServiceViewSet,
                                     ServiceViewSet, TrekDocumentPublic, TrekMeta, Meta)
+if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+    from geotrek.sensitivity import views as sensitivity_views
 
 # Register mapentity models
 from geotrek.trekking import urls  # NOQA
