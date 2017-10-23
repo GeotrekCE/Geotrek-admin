@@ -13,6 +13,7 @@ from geotrek.common import models as common_models
 from geotrek.core import models as core_models
 from geotrek.tourism import models as tourism_models
 from geotrek.trekking import models as trekking_models
+from geotrek.sensitivity import models as sensitivity_models
 
 
 class Base3DSerializer(object):
@@ -351,3 +352,51 @@ class POIDetailSerializer(POIListSerializer):
 
     class Meta(POIListSerializer.Meta):
         fields = tuple((field for field in POIListSerializer.Meta.fields if field != 'url')) + ('pictures',)
+
+
+class SensitiveAreaListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    url = HyperlinkedIdentityField(view_name='apiv2:sensitivearea-detail')
+    name = serializers.SerializerMethodField(read_only=True)
+    description = serializers.SerializerMethodField(read_only=True)
+    period = serializers.SerializerMethodField(read_only=True)
+    practices = serializers.SerializerMethodField(read_only=True)
+    info_url = serializers.SerializerMethodField(read_only=True)
+    create_datetime = serializers.SerializerMethodField(read_only=True)
+    update_datetime = serializers.SerializerMethodField(read_only=True)
+    geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
+
+    def get_name(self, obj):
+        return get_translation_or_dict('name', self, obj.species)
+
+    def get_description(self, obj):
+        return get_translation_or_dict('description', self, obj)
+
+    def get_period(self, obj):
+        return [getattr(obj.species, 'period{:02}'.format(p)) for p in range(1, 13)]
+
+    def get_practices(self, obj):
+        return [practice.name for practice in obj.species.practices.all()]
+
+    def get_info_url(self, obj):
+        return obj.species.url
+
+    def get_update_datetime(self, obj):
+        return obj.date_update
+
+    def get_create_datetime(self, obj):
+        return obj.date_insert
+
+    def get_geometry(self, obj):
+        return obj.geom2d_transformed
+
+    class Meta:
+        model = sensitivity_models.SensitiveArea
+        fields = (
+            'id', 'url', 'name', 'description', 'period', 'email', 'practices', 'info_url',
+            'published',
+            'geometry', 'update_datetime', 'create_datetime'
+        )
+
+
+class SensitiveAreaDetailSerializer(SensitiveAreaListSerializer):
+    pass

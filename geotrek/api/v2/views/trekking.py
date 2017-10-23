@@ -3,49 +3,11 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.db.models.aggregates import Count
 from rest_framework import response, decorators, permissions
-from rest_framework.schemas import SchemaGenerator
-from rest_framework.views import APIView
-from rest_framework_swagger import renderers
 
 from geotrek.api.v2 import serializers as api_serializers, \
     viewsets as api_viewsets
 from geotrek.api.v2.functions import Transform, Length, Length3D
-from geotrek.core import models as core_models
 from geotrek.trekking import models as trekking_models
-
-
-class SwaggerSchemaView(APIView):
-    permission_classes = (permissions.AllowAny,)
-    renderer_classes = [
-        renderers.OpenAPIRenderer,
-        renderers.SwaggerUIRenderer,
-    ]
-
-    def get(self, request):
-        generator = SchemaGenerator(
-            title='Geotrek API v2 beta 1',
-            urlconf='geotrek.api.v2.urls',
-            url='/api/v2',
-            description="New Geotrek OpenAPI. Please Authorize first."
-        )
-        schema = generator.get_schema(request=request)
-
-        return response.Response(schema)
-
-
-class PathViewSet(api_viewsets.GeotrekViewset):
-    """
-    Use HTTP basic authentication to access this endpoint.
-    """
-    serializer_class = api_serializers.PathListSerializer
-    serializer_detail_class = api_serializers.PathListSerializer
-    queryset = core_models.Path.objects.all() \
-        .select_related('comfort', 'source', 'stake') \
-        .prefetch_related('usages', 'networks') \
-        .annotate(geom2d_transformed=Transform('geom', settings.API_SRID),
-                  geom3d_transformed=Transform('geom_3d', settings.API_SRID),
-                  length_2d_m=Length('geom'),
-                  length_3d_m=Length3D('geom_3d'))
 
 
 class TrekViewSet(api_viewsets.GeotrekViewset):
