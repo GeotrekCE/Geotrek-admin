@@ -10,7 +10,7 @@ from django.utils.translation import pgettext_lazy, ugettext_lazy as _
 from mapentity.models import MapEntityMixin
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins import (PictogramMixin, NoDeleteMixin, TimeStampedModelMixin, AddPropertyMixin)
-from geotrek.common.utils import intersecting
+from geotrek.common.utils import intersecting, classproperty
 from geotrek.core.models import Topology
 
 
@@ -73,7 +73,7 @@ class Species(PictogramMixin):
 
 class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
                     AddPropertyMixin):
-    geom = models.PolygonField(srid=settings.SRID)
+    geom = models.GeometryField(srid=settings.SRID)
     species = models.ForeignKey(Species, verbose_name=pgettext_lazy(u"Singular", u"Species"), db_column='espece',
                                 on_delete=models.PROTECT)
     published = models.BooleanField(verbose_name=_(u"Published"), default=False,
@@ -93,6 +93,14 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
 
     def __unicode__(self):
         return self.species.name
+
+    @property
+    def radius(self):
+        return self.species.radius
+
+    @classproperty
+    def radius_verbose_name(cls):
+        return _("Radius")
 
     def save(self, *args, **kwargs):
         if self.publication_date is None and self.published:

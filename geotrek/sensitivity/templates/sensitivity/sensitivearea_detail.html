@@ -1,0 +1,31 @@
+{% extends "mapentity/mapentity_detail.html" %}
+
+
+{% block mappanel %}
+    {% if object.get_geom %}
+        {% load i18n static mapentity_tags leaflet_tags geojson_tags %}
+        <div id="detailmap"
+             data-fitmaxzoom="{{ MAP_FIT_MAX_ZOOM }}"
+             data-mapextent="{{ object|latlngbounds }}"
+             data-readonly="{% if readonly %}readonly{% endif %}">
+            <script type="application/json" class="geojsonfeature">
+                {{ object|geojsonfeature:"radius"|safe }}
+            </script>
+        </div>
+        {% leaflet_map "detailmap" fitextent=False creatediv=False %}
+    {% else %}
+        <p class="nomap">{{ empty_map_message }}</p>
+    {% endif %}
+{% endblock mappanel %}
+
+
+{% block extrabody %}
+    {{ block.super }}
+    <script type="text/javascript">
+    console.log("ici1");
+    L.ObjectsLayer.pointToLayer = function (geojson, latlng) {
+        console.log("ici2")
+        return new L.Circle(latlng, {{ object.species.radius }});
+    };
+    </script>
+{% endblock extrabody %}

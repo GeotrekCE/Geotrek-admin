@@ -2,6 +2,11 @@ from django import forms
 from .models import SensitiveArea, SportPractice, Species
 from geotrek.common.forms import CommonForm
 from django.utils.translation import pgettext, ugettext as _
+from mapentity.widgets import MapWidget
+
+
+class BubbleMapWidget(MapWidget):
+    geometry_field_class = 'bubbleGeometryField'
 
 
 class SensitiveAreaForm(CommonForm):
@@ -12,6 +17,7 @@ class SensitiveAreaForm(CommonForm):
     class Meta:
         fields = ['species', 'published', 'description', 'email', 'geom']
         model = SensitiveArea
+        widgets = {'geom': BubbleMapWidget()}
 
 
 class RegulatorySensitiveAreaForm(CommonForm):

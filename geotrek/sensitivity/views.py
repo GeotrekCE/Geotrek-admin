@@ -1,3 +1,4 @@
+import json
 import logging
 from django.conf import settings
 from django.http import Http404
@@ -20,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 class SensitiveAreaLayer(MapEntityLayer):
     queryset = SensitiveArea.objects.existing()
-    properties = ['species', 'published']
+    properties = ['species', 'radius', 'published']
 
 
 class SensitiveAreaList(MapEntityList):
@@ -47,6 +48,12 @@ class SensitiveAreaDetail(MapEntityDetail):
 class SensitiveAreaCreate(MapEntityCreate):
     model = SensitiveArea
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(SensitiveAreaCreate, self).get_context_data(*args, **kwargs)
+        species = Species.objects.filter(category=Species.SPECIES)
+        context['radii'] = json.dumps({str(s.id): s.radius for s in species})
+        return context
+
     def get_form_class(self):
         if self.request.GET.get('category') == str(Species.REGULATORY):
             return RegulatorySensitiveAreaForm
@@ -55,6 +62,12 @@ class SensitiveAreaCreate(MapEntityCreate):
 
 class SensitiveAreaUpdate(MapEntityUpdate):
     queryset = SensitiveArea.objects.existing()
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(SensitiveAreaUpdate, self).get_context_data(*args, **kwargs)
+        species = Species.objects.filter(category=Species.SPECIES)
+        context['radii'] = json.dumps({str(s.id): s.radius for s in species})
+        return context
 
     def get_form_class(self):
         if self.object.species.category == Species.REGULATORY:
