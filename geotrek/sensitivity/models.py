@@ -49,9 +49,9 @@ class Species(PictogramMixin):
     url = models.URLField(blank=True, verbose_name="URL")
     radius = models.IntegerField(blank=True, null=True, verbose_name=_(u"Bubble radius"),
                                  help_text=_(u"meters"))
-    category = models.IntegerField(verbose_name=_(u"Category"), db_column='categorie', editable=False,
-                                   choices=((SPECIES, _(u"Species")), (REGULATORY, _(u"Regulatory"))),
-                                   default=SPECIES)
+    category = models.IntegerField(verbose_name=_(u"Category"), db_column='categorie', editable=False, default=SPECIES,
+                                   choices=((SPECIES, pgettext_lazy(u"Singular", u"Species")),
+                                            (REGULATORY, _(u"Regulatory"))))
 
     class Meta:
         ordering = ['name']
@@ -74,7 +74,7 @@ class Species(PictogramMixin):
 class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
                     AddPropertyMixin):
     geom = models.GeometryField(srid=settings.SRID)
-    species = models.ForeignKey(Species, verbose_name=pgettext_lazy(u"Singular", u"Species"), db_column='espece',
+    species = models.ForeignKey(Species, verbose_name=_(u"Sensitive area"), db_column='espece',
                                 on_delete=models.PROTECT)
     published = models.BooleanField(verbose_name=_(u"Published"), default=False,
                                     help_text=_(u"Online"), db_column='public')
@@ -103,6 +103,14 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
     @classproperty
     def radius_verbose_name(cls):
         return _("Radius")
+
+    @property
+    def category_display(self):
+        return self.species.get_category_display()
+
+    @classproperty
+    def category_verbose_name(cls):
+        return _("Category")
 
     def save(self, *args, **kwargs):
         if self.publication_date is None and self.published:

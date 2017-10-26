@@ -27,7 +27,7 @@ class SensitiveAreaLayer(MapEntityLayer):
 class SensitiveAreaList(MapEntityList):
     queryset = SensitiveArea.objects.existing()
     filterform = SensitiveAreaFilterSet
-    columns = ['id', 'species']
+    columns = ['id', 'species', 'category']
 
 
 class SensitiveAreaFormatList(MapEntityFormat, SensitiveAreaList):

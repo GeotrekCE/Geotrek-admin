@@ -40,7 +40,8 @@ class RegulatorySensitiveAreaForm(CommonForm):
     url = forms.URLField(label=_(u"URL"), required=False)
 
     class Meta:
-        fields = ['name', 'published', 'description', 'email', 'pictogram', 'practices'] + ['period{:02}'.format(p) for p in range(1, 13)] + ['url', 'geom']
+        fields = ['name', 'published', 'description', 'email', 'pictogram', 'practices'] + \
+                 ['period{:02}'.format(p) for p in range(1, 13)] + ['url', 'geom']
         model = SensitiveArea
 
     def __init__(self, *args, **kwargs):

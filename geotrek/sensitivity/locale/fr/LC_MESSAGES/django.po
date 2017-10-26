@@ -78,7 +78,7 @@ msgid "Species"
 msgstr "Espèces"
 
 msgid "Regulatory"
-msgstr "Réglementaires"
+msgstr "Réglementaire"
 
 msgctxt "Singular"
 msgid "Species"
