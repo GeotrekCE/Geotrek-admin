@@ -608,3 +608,5 @@ SWAGGER_SETTINGS = {
     'APIS_SORTER': 'alpha',
     'JSON_EDITOR': True
 }
+
+SENSITIVITY_DEFAULT_RADIUS = 100  # meters

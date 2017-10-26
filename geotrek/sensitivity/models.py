@@ -96,6 +96,8 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
 
     @property
     def radius(self):
+        if self.species.radius is None:
+            return settings.SENSITIVITY_DEFAULT_RADIUS
         return self.species.radius
 
     @classproperty

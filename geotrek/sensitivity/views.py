@@ -45,14 +45,18 @@ class SensitiveAreaDetail(MapEntityDetail):
         return context
 
 
-class SensitiveAreaCreate(MapEntityCreate):
-    model = SensitiveArea
-
+class SensitiveAreaRadiiMixin(object):
     def get_context_data(self, *args, **kwargs):
-        context = super(SensitiveAreaCreate, self).get_context_data(*args, **kwargs)
+        context = super(SensitiveAreaRadiiMixin, self).get_context_data(*args, **kwargs)
         species = Species.objects.filter(category=Species.SPECIES)
-        context['radii'] = json.dumps({str(s.id): s.radius for s in species})
+        context['radii'] = json.dumps({
+            str(s.id): settings.SENSITIVITY_DEFAULT_RADIUS if s.radius is None else s.radius for s in species
+        })
         return context
+
+
+class SensitiveAreaCreate(SensitiveAreaRadiiMixin, MapEntityCreate):
+    model = SensitiveArea
 
     def get_form_class(self):
         if self.request.GET.get('category') == str(Species.REGULATORY):
@@ -60,14 +64,8 @@ class SensitiveAreaCreate(MapEntityCreate):
         return SensitiveAreaForm
 
 
-class SensitiveAreaUpdate(MapEntityUpdate):
+class SensitiveAreaUpdate(SensitiveAreaRadiiMixin, MapEntityUpdate):
     queryset = SensitiveArea.objects.existing()
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(SensitiveAreaUpdate, self).get_context_data(*args, **kwargs)
-        species = Species.objects.filter(category=Species.SPECIES)
-        context['radii'] = json.dumps({str(s.id): s.radius for s in species})
-        return context
 
     def get_form_class(self):
         if self.object.species.category == Species.REGULATORY:
