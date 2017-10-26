@@ -30,7 +30,7 @@ class Command(BaseCommand):
             module_name, class_name = args[0].rsplit('.', 1)
             module = importlib.import_module(module_name)
             Parser = getattr(module, class_name)
-        except:
+        except (ImportError, AttributeError):
             raise CommandError("Failed to import parser class '{0}'".format(args[0]))
 
         if not Parser.filename and not Parser.url and len(args) < 2:

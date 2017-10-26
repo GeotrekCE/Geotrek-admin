@@ -32,7 +32,7 @@ class reify(object):
         self.wrapped = wrapped
         try:
             self.__doc__ = wrapped.__doc__
-        except:  # pragma: no cover
+        except AttributeError:
             pass
 
     def __get__(self, inst, objtype=None):

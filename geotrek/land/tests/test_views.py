@@ -22,10 +22,10 @@ class EdgeHelperTest(TestCase):
             return   # ignore abstract test
         p = PathFactory.create()
         self.assertEquals(len(getattr(p, self.helper_name)), 0)
-        l = self.factory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=l, path=p)
+        e = self.factory.create(no_path=True)
+        PathAggregationFactory.create(topo_object=e, path=p)
         self.assertEqual([o.pk for o in getattr(p, self.helper_name).all()],
-                         [l.pk])
+                         [e.pk])
 
 
 class LandEdgeTest(EdgeHelperTest):

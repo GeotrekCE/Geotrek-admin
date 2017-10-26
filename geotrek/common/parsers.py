@@ -15,7 +15,7 @@ from urlparse import urlparse
 from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.gis.gdal import DataSource
+from django.contrib.gis.gdal import DataSource, GDALException
 from django.core.files.base import ContentFile
 from django.template.loader import render_to_string
 from django.utils import translation
@@ -425,7 +425,7 @@ class ShapeParser(Parser):
             row = {self.normalize_field_name(field.name): field.value for field in feature}
             try:
                 ogrgeom = feature.geom
-            except:
+            except GDALException:
                 print _(u"Invalid geometry pointer"), i
                 geom = None
             else:
@@ -500,23 +500,20 @@ class AttachmentParserMixin(object):
         return [(subval.strip(), '', '') for subval in val.split(self.separator) if subval.strip()]
 
     def has_size_changed(self, url, attachment):
-        try:
-            parsed_url = urlparse(url)
-            if parsed_url.scheme == 'ftp':
-                directory = dirname(parsed_url.path)
+        parsed_url = urlparse(url)
+        if parsed_url.scheme == 'ftp':
+            directory = dirname(parsed_url.path)
 
-                ftp = FTP(parsed_url.hostname)
-                ftp.login(user=parsed_url.username, passwd=parsed_url.password)
-                ftp.cwd(directory)
-                size = ftp.size(parsed_url.path.split('/')[-1:][0])
-                return size != attachment.attachment_file.size
+            ftp = FTP(parsed_url.hostname)
+            ftp.login(user=parsed_url.username, passwd=parsed_url.password)
+            ftp.cwd(directory)
+            size = ftp.size(parsed_url.path.split('/')[-1:][0])
+            return size != attachment.attachment_file.size
 
-            if parsed_url.scheme == 'http' or parsed_url.scheme == 'https':
-                http = urllib2.urlopen(url)
-                size = http.headers.getheader('content-length')
-                return int(size) != attachment.attachment_file.size
-        except:
-            return False
+        if parsed_url.scheme == 'http' or parsed_url.scheme == 'https':
+            http = urllib2.urlopen(url)
+            size = http.headers.getheader('content-length')
+            return int(size) != attachment.attachment_file.size
 
         return True
 
@@ -525,7 +522,7 @@ class AttachmentParserMixin(object):
         if parsed_url.scheme == 'ftp':
             try:
                 response = urllib2.urlopen(url)
-            except:
+            except Exception:
                 self.add_warning(_(u"Failed to download '{url}'").format(url=url))
                 return None
             return response.read()

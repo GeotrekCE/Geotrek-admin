@@ -710,7 +710,7 @@ class Command(BaseCommand):
                         'infos': u"{}".format(_(u"Sync ended"))
                     }
                 )
-        except:
+        except Exception:
             shutil.rmtree(self.tmp_root)
             raise
 

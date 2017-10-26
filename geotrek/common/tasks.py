@@ -39,7 +39,7 @@ def import_datas(class_name, filename, module_name="bulkimport.parsers"):
     try:
         module = importlib.import_module(module_name)
         Parser = getattr(module, class_name)
-    except:
+    except ImportError:
         raise ImportError("Failed to import parser class '{0}' from module '{1}'".format(
             class_name, module_name))
 
@@ -78,7 +78,7 @@ def import_datas_from_web(class_name, module_name="bulkimport.parsers"):
     try:
         module = importlib.import_module(module_name)
         Parser = getattr(module, class_name)
-    except:
+    except ImportError:
         raise ImportError("Failed to import parser class '{0}' from module '{1}'".format(
             class_name, module_name))
 
