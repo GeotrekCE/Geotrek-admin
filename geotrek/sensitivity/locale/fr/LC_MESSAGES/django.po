@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-16 13:19+0000\n"
+"POT-Creation-Date: 2017-10-26 16:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,8 +20,15 @@ msgstr ""
 msgid "Sensitivity"
 msgstr "Sensibilité"
 
+msgctxt "Singular"
+msgid "Species"
+msgstr "Espèce"
+
 msgid "Name"
 msgstr "Nom"
+
+msgid "Pictogram"
+msgstr "Pictogramme"
 
 msgid "January"
 msgstr "Janvier"
@@ -62,6 +69,9 @@ msgstr "Décembre"
 msgid "Sport practices"
 msgstr "Pratiques sportives"
 
+msgid "URL"
+msgstr "URL"
+
 msgid "Sport practice"
 msgstr "Pratique sportive"
 
@@ -74,15 +84,14 @@ msgstr "mètres"
 msgid "Category"
 msgstr "Catégorie"
 
-msgid "Species"
-msgstr "Espèces"
-
 msgid "Regulatory"
 msgstr "Réglementaire"
 
-msgctxt "Singular"
 msgid "Species"
-msgstr "Espèce"
+msgstr "Espèces"
+
+msgid "Sensitive area"
+msgstr "Zone sensible"
 
 msgid "Published"
 msgstr "Publiée"
@@ -99,11 +108,11 @@ msgstr "Description"
 msgid "Email"
 msgstr "Email"
 
-msgid "Sensitive area"
-msgstr "Zone sensible"
-
 msgid "Sensitive areas"
 msgstr "Zones sensibles"
+
+msgid "Radius"
+msgstr "Rayon"
 
 msgid "Published sensitive areas"
 msgstr "Zones sensibles publiées"
@@ -111,11 +120,14 @@ msgstr "Zones sensibles publiées"
 msgid "Attributes"
 msgstr "Informations"
 
-msgid "All"
-msgstr "Toutes"
+msgid "Period"
+msgstr "Période"
+
+msgid "Add a sensitive area (Species)"
+msgstr "Ajouter une zone espèce"
+
+msgid "Add a sensitive area (Regulatory)"
+msgstr "Ajouter une zone réglementaire"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
-
-msgid "Add a new sensitive area"
-msgstr "Ajouter une nouvelle zone sensible"
