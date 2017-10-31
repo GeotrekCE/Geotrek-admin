@@ -105,8 +105,8 @@ msgstr "Date de publication"
 msgid "Description"
 msgstr "Description"
 
-msgid "Email"
-msgstr "Email"
+msgid "Contact"
+msgstr "Contact"
 
 msgid "Sensitive areas"
 msgstr "Zones sensibles"

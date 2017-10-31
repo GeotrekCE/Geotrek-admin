@@ -82,7 +82,7 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
                                         null=True, blank=True, editable=False,
                                         db_column='date_publication')
     description = models.TextField(verbose_name=_("Description"), blank=True)
-    email = models.EmailField(verbose_name=_("Email"), blank=True)
+    contact = models.TextField(verbose_name=_("Contact"), blank=True)
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
 

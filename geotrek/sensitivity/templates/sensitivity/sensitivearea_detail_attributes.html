@@ -40,8 +40,8 @@
             <td>{{ sensitivearea.description }}</td>
         </tr>
         <tr>
-            <th>{{ sensitivearea|verbose:"email" }}</th>
-            <td><a href="mailto:{{ sensitivearea.email }}">{{ sensitivearea.email }}</a></td>
+            <th>{{ sensitivearea|verbose:"contact" }}</th>
+            <td>{{ sensitivearea.contact }}</td>
         </tr>
         {% include "common/publication_info_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}

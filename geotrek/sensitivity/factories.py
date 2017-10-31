@@ -49,4 +49,4 @@ class SensitiveAreaFactory(StructureRelatedDefaultFactory):
     geom = 'POLYGON((700000 6600000, 700000 6600003, 700003 6600003, 700003 6600000, 700000 6600000))'
     published = True
     description = "Blabla"
-    email = "toto@tata.com"
+    contact = "<a href=\"mailto:toto@tata.com\">toto@tata.com</a>"

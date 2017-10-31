@@ -27,4 +27,4 @@ class SensitiveAreaSerializer(TranslatedModelSerializer):
     class Meta:
         model = sensitivity_models.SensitiveArea
         geo_field = 'geom'
-        fields = ('id', 'species', 'description', 'email', 'published', 'publication_date')
+        fields = ('id', 'species', 'description', 'contact', 'published', 'publication_date')

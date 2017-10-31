@@ -15,7 +15,7 @@ class SensitiveAreaForm(CommonForm):
                                      label=pgettext(u"Singular", u"Species"))
 
     class Meta:
-        fields = ['species', 'published', 'description', 'email', 'geom']
+        fields = ['species', 'published', 'description', 'contact', 'geom']
         model = SensitiveArea
         widgets = {'geom': BubbleMapWidget()}
 
@@ -40,7 +40,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
     url = forms.URLField(label=_(u"URL"), required=False)
 
     class Meta:
-        fields = ['name', 'published', 'description', 'email', 'pictogram', 'practices'] + \
+        fields = ['name', 'published', 'description', 'contact', 'pictogram', 'practices'] + \
                  ['period{:02}'.format(p) for p in range(1, 13)] + ['url', 'geom']
         model = SensitiveArea
 

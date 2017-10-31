@@ -85,7 +85,7 @@ class BasicJSONAPITest(TranslationResetMixin, TrekkingManagerTest):
             u'publication_date': self.sensitivearea.publication_date.strftime('%Y-%m-%d'),
             u'published': True,
             u'description': 'Blabla',
-            u'email': 'toto@tata.com',
+            u'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
             u'species': {
                 u"id": self.species.id,
                 u"name": self.species.name,
