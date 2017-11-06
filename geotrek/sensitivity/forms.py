@@ -43,6 +43,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
         fields = ['name', 'published', 'description', 'contact', 'pictogram', 'practices'] + \
                  ['period{:02}'.format(p) for p in range(1, 13)] + ['url', 'geom']
         model = SensitiveArea
+        widgets = {'geom': BubbleMapWidget()}
 
     def __init__(self, *args, **kwargs):
         if kwargs['instance']:
