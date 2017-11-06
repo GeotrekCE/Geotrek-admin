@@ -37,11 +37,11 @@
         {% endif %}
         <tr>
             <th>{{ sensitivearea|verbose:"description" }}</th>
-            <td>{{ sensitivearea.description }}</td>
+            <td>{{ sensitivearea.description|safe }}</td>
         </tr>
         <tr>
             <th>{{ sensitivearea|verbose:"contact" }}</th>
-            <td>{{ sensitivearea.contact }}</td>
+            <td>{{ sensitivearea.contact|safe }}</td>
         </tr>
         {% include "common/publication_info_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
