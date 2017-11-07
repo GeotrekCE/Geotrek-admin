@@ -17,7 +17,7 @@
 
         $("#id_species").change(function() {
             sensitiveareaCurrentRadius = sensitiveareaRadii[$(this).val()];
-            if (sensitiveareaCurrentFeature) {
+            if (sensitiveareaCurrentFeature && sensitiveareaCurrentFeature.setRadius) {
                 sensitiveareaCurrentFeature.setRadius(sensitiveareaCurrentRadius);
             }
         });
@@ -26,7 +26,9 @@
             load: function() {
                 self = this;
                 this._map.on(L.Draw.Event.CREATED, function (e) {
-                    e.layer.setRadius(sensitiveareaCurrentRadius);
+                    if (e.layer.setRadius) {
+                        e.layer.setRadius(sensitiveareaCurrentRadius);
+                    }
                     sensitiveareaCurrentFeature = e.layer;
                 });
                 var value = (this.store.formfield.value || '');
