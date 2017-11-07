@@ -405,7 +405,7 @@ MAPENTITY_CONFIG = {
     'MAP_BACKGROUND_FOGGED': True,
     'GEOJSON_LAYERS_CACHE_BACKEND': 'fat',
     'SENDFILE_HTTP_HEADER': 'X-Accel-Redirect',
-    'DRF_API_URL_PREFIX': r'^api/(?P<lang>\w+)/',
+    'DRF_API_URL_PREFIX': r'^api/(?P<lang>[a-z]{2})/',
     'MAPENTITY_WEASYPRINT': False,
 }
 

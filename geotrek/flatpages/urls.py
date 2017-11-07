@@ -13,6 +13,6 @@ router.register(r'flatpages', FlatPageViewSet, base_name='flatpages')
 
 urlpatterns = patterns(
     '',
-    url(r'^api/(?P<lang>\w+)/', include(router.urls)),
-    url(r'^api/(?P<lang>\w\w)/flatpages/(?P<pk>\d+)/meta.html$', FlatPageMeta.as_view(), name="flatpage_meta"),
+    url(r'^api/(?P<lang>[a-z]{2})/', include(router.urls)),
+    url(r'^api/(?P<lang>[a-z]{2})/flatpages/(?P<pk>\d+)/meta.html$', FlatPageMeta.as_view(), name="flatpage_meta"),
 )
