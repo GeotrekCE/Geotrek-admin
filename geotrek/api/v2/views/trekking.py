@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.db.models.aggregates import Count
-from rest_framework import response, decorators, permissions
+from rest_framework import response, decorators
 
 from geotrek.api.v2 import serializers as api_serializers, \
     viewsets as api_viewsets
