@@ -9,6 +9,10 @@ class BubbleMapWidget(MapWidget):
     geometry_field_class = 'bubbleGeometryField'
 
 
+class PolygonMapWidget(MapWidget):
+    geometry_field_class = 'polygonGeometryField'
+
+
 class SensitiveAreaForm(CommonForm):
     geomfields = ['geom']
     species = forms.ModelChoiceField(queryset=Species.objects.filter(category=Species.SPECIES),
@@ -43,7 +47,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
         fields = ['name', 'published', 'description', 'contact', 'pictogram', 'practices'] + \
                  ['period{:02}'.format(p) for p in range(1, 13)] + ['url', 'geom']
         model = SensitiveArea
-        widgets = {'geom': BubbleMapWidget()}
+        widgets = {'geom': PolygonMapWidget()}
 
     def __init__(self, *args, **kwargs):
         if kwargs['instance']:

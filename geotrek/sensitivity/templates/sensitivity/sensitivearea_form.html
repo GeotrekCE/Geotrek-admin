@@ -22,6 +22,24 @@
             }
         });
 
+        polygonGeometryField = L.GeometryField.extend({
+            _controlDrawOptions: function () {
+                return {
+                    edit: {
+                        featureGroup: this.drawnItems
+                    },
+                    draw: {
+                        circlemarker: false,
+                        polyline: false,
+                        rectangle: false,
+                        circle: false,
+                        marker: false
+                    }
+                };
+            }
+
+        });
+
         bubbleGeometryField = L.GeometryField.extend({
             load: function() {
                 self = this;
@@ -58,6 +76,7 @@
                     draw: {
                         circlemarker: {radius: function() { return sensitiveareaCurrentRadius; }},
                         polyline: false,
+                        rectangle: false,
                         circle: false,
                         marker: false
                     }
