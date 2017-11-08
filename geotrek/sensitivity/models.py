@@ -47,7 +47,7 @@ class Species(OptionalPictogramMixin):
     practices = models.ManyToManyField(SportPractice, db_table='s_r_espece_pratique_sportive',
                                        verbose_name=_(u"Sport practices"))
     url = models.URLField(blank=True, verbose_name="URL")
-    radius = models.IntegerField(blank=True, null=True, verbose_name=_(u"Bubble radius"),
+    radius = models.IntegerField(db_column='rayon', blank=True, null=True, verbose_name=_(u"Bubble radius"),
                                  help_text=_(u"meters"))
     category = models.IntegerField(verbose_name=_(u"Category"), db_column='categorie', editable=False, default=SPECIES,
                                    choices=((SPECIES, pgettext_lazy(u"Singular", u"Species")),
