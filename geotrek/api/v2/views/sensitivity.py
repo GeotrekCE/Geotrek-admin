@@ -29,6 +29,6 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekViewset):
         .prefetch_related('species') \
         .annotate(geom_type=GeometryType(F('geom'))) \
         .annotate(geom2d_transformed=Case(
-            When(geom_type='POINT', then=Buffer(Transform('geom', settings.API_SRID), F('species__radius'), 16)),
-            defaut=Transform('geom', settings.API_SRID)
+            When(geom_type='POINT', then=Transform(Buffer(F('geom'), F('species__radius'), 4), settings.API_SRID)),
+            When(geom_type='POLYGON', then=Transform(F('geom'), settings.API_SRID))
         ))

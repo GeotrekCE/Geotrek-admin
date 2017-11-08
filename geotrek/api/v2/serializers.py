@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
+from django.db.models import F
 from django.utils.translation import ugettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
 from rest_framework import serializers
@@ -281,8 +282,8 @@ class TourDetailSerializer(TrekDetailSerializer):
         qs = obj.children \
             .select_related('topo_object', 'difficulty') \
             .prefetch_related('topo_object__aggregations', 'themes', 'networks', 'attachments') \
-            .annotate(geom2d_transformed=Transform('geom', settings.API_SRID),
-                      geom3d_transformed=Transform('geom_3d', settings.API_SRID),
+            .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID),
+                      geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),
                       length_2d_m=Length('geom'),
                       length_3d_m=Length3D('geom_3d'))
         FinalClass = override_serializer(self.context.get('request').GET.get('format'),
