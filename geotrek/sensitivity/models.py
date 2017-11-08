@@ -9,7 +9,7 @@ from django.contrib.gis.db import models
 from django.utils.translation import pgettext_lazy, ugettext_lazy as _
 from mapentity.models import MapEntityMixin
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins import (PictogramMixin, NoDeleteMixin, TimeStampedModelMixin, AddPropertyMixin)
+from geotrek.common.mixins import (OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin, AddPropertyMixin)
 from geotrek.common.utils import intersecting, classproperty
 from geotrek.core.models import Topology
 
@@ -27,7 +27,7 @@ class SportPractice(models.Model):
         return self.name
 
 
-class Species(PictogramMixin):
+class Species(OptionalPictogramMixin):
     SPECIES = 1
     REGULATORY = 2
 

@@ -27,7 +27,7 @@ class SensitiveAreaForm(CommonForm):
 class RegulatorySensitiveAreaForm(CommonForm):
     geomfields = ['geom']
     name = forms.CharField(max_length=250, label=_(u"Name"))
-    pictogram = forms.FileField(label=_(u"Pictogram"))
+    pictogram = forms.FileField(label=_(u"Pictogram"), required=False)
     period01 = forms.BooleanField(label=_(u"January"), required=False)
     period02 = forms.BooleanField(label=_(u"February"), required=False)
     period03 = forms.BooleanField(label=_(u"March"), required=False)
