@@ -14,4 +14,3 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekViewset):
     queryset = sensitivity_models.SensitiveArea.objects.existing() \
         .prefetch_related('species') \
         .annotate(geom2d_transformed=Transform('geom', settings.API_SRID))
-    filter_fields = ('species', )

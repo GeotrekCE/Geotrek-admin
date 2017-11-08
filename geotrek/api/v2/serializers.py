@@ -360,9 +360,9 @@ class SensitiveAreaListSerializer(DynamicFieldsMixin, serializers.ModelSerialize
     description = serializers.SerializerMethodField(read_only=True)
     period = serializers.SerializerMethodField(read_only=True)
     practices = serializers.SerializerMethodField(read_only=True)
-    info_url = serializers.SerializerMethodField(read_only=True)
-    create_datetime = serializers.SerializerMethodField(read_only=True)
-    update_datetime = serializers.SerializerMethodField(read_only=True)
+    info_url = serializers.URLField(source='species.url')
+    create_datetime = serializers.DateTimeField(source='date_insert')
+    update_datetime = serializers.DateTimeField(source='date_update')
     geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
 
     def get_name(self, obj):
@@ -377,22 +377,13 @@ class SensitiveAreaListSerializer(DynamicFieldsMixin, serializers.ModelSerialize
     def get_practices(self, obj):
         return [practice.name for practice in obj.species.practices.all()]
 
-    def get_info_url(self, obj):
-        return obj.species.url
-
-    def get_update_datetime(self, obj):
-        return obj.date_update
-
-    def get_create_datetime(self, obj):
-        return obj.date_insert
-
     def get_geometry(self, obj):
         return obj.geom2d_transformed
 
     class Meta:
         model = sensitivity_models.SensitiveArea
         fields = (
-            'id', 'url', 'name', 'description', 'period', 'email', 'practices', 'info_url',
+            'id', 'url', 'name', 'description', 'period', 'contact', 'practices', 'info_url',
             'published',
             'geometry', 'update_datetime', 'create_datetime'
         )

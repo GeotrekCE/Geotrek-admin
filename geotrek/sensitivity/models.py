@@ -129,6 +129,10 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
             s = u'<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
         return s
 
+    @property
+    def extent(self):
+        return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom else None
+
 
 Topology.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self), _(u"Sensitive areas"))
 Topology.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self).filter(published=True), _(u"Published sensitive areas"))
