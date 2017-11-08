@@ -22,7 +22,7 @@
             }
         });
 
-        polygonGeometryField = L.GeometryField.extend({
+        polygonGeometryField = MapEntity.GeometryField.extend({
             _controlDrawOptions: function () {
                 return {
                     edit: {
@@ -40,7 +40,7 @@
 
         });
 
-        bubbleGeometryField = L.GeometryField.extend({
+        bubbleGeometryField = MapEntity.GeometryField.extend({
             load: function() {
                 self = this;
                 this._map.on(L.Draw.Event.CREATED, function (e) {
