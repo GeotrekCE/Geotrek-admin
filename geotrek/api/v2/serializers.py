@@ -361,6 +361,7 @@ class SensitiveAreaListSerializer(DynamicFieldsMixin, serializers.ModelSerialize
     period = serializers.SerializerMethodField(read_only=True)
     practices = serializers.SerializerMethodField(read_only=True)
     info_url = serializers.URLField(source='species.url')
+    structure = serializers.CharField(source='structure.name')
     create_datetime = serializers.DateTimeField(source='date_insert')
     update_datetime = serializers.DateTimeField(source='date_update')
     geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
@@ -384,10 +385,6 @@ class SensitiveAreaListSerializer(DynamicFieldsMixin, serializers.ModelSerialize
         model = sensitivity_models.SensitiveArea
         fields = (
             'id', 'url', 'name', 'description', 'period', 'contact', 'practices', 'info_url',
-            'published',
+            'published', 'structure',
             'geometry', 'update_datetime', 'create_datetime'
         )
-
-
-class SensitiveAreaDetailSerializer(SensitiveAreaListSerializer):
-    pass

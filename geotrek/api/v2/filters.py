@@ -68,13 +68,14 @@ class GeotrekPublishedFilter(BaseFilterBackend):
 
     def filter_queryset(self, request, queryset, view):
         qs = queryset
-        published = request.GET.get('published', None)
+        published = request.GET.get('published', 'true')
 
         if published == 'true':
             published = True
-
         elif published == 'false':
             published = False
+        else:
+            published = None
 
         if published is not None:
             language = request.GET.get('language', 'all')
@@ -104,7 +105,28 @@ class GeotrekPublishedFilter(BaseFilterBackend):
 
     def get_schema_fields(self, view):
         field_published = Field(name='published', required=False,
-                                description=_('Publication state. If language specified, only language published are filterted. true / false'),
+                                description=_('Publication state. If language specified, only language published are filterted. true/false/all. true by default.'),
                                 type='boolean',
                                 example='true')
         return field_published,
+
+
+class GeotrekSensitiveAreaFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        practices = request.GET.get('practices', '')
+        if practices:
+            qs = qs.filter(species__practices__name__in=practices.split(','))
+        structure = request.GET.get('structure', '')
+        if structure:
+            qs = qs.filter(structure__name=structure)
+        return qs
+
+    def get_schema_fields(self, view):
+        field_practices = Field(name='practices', required=False,
+                                description=_('Practices names separated by comas.'),
+                                example=u'Terrestre,Vertical')
+        field_structure = Field(name='structure', required=False,
+                                description=_('Structure name.'),
+                                example=u'PNM')
+        return field_practices, field_structure
