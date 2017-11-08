@@ -1,7 +1,8 @@
 from __future__ import unicode_literals
 
 from django.db.models import Func, F
-from django.db.models.fields import FloatField
+from django.db.models.fields import FloatField, CharField
+from django.contrib.gis.db.models import GeometryField
 
 
 def Transform(field_name, srid):
@@ -9,6 +10,20 @@ def Transform(field_name, srid):
     ST_TRANSFORM postgis function
     """
     return Func(F(field_name), srid, function='ST_TRANSFORM')
+
+
+def Buffer(geom, radius, num_seg):
+    """
+    ST_Buffer postgis function
+    """
+    return Func(geom, radius, num_seg, function='ST_Buffer', output_field=GeometryField())
+
+
+def GeometryType(geom):
+    """
+    GeometryType postgis function
+    """
+    return Func(geom, function='GeometryType', output_field=CharField())
 
 
 class Length(Func):
