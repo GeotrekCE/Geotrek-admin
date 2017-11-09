@@ -557,12 +557,13 @@ class Command(BaseCommand):
             self.sync_media_file(lang, resized)
 
     def sync_sensitiveareas(self, lang):
-        self.sync_geojson(lang, sensitivity_views.SensitiveAreaViewSet, 'sensitiveareas.geojson')
+        self.sync_geojson(lang, sensitivity_views.SensitiveAreaViewSet, 'sensitiveareas.geojson',
+                          params={'practices': 'Terrestre'})
         for area in sensitivity_models.SensitiveArea.objects.filter(published=True):
             self.sync_media_file(lang, area.species.pictogram)
 
     def sync_trek_sensitiveareas(self, lang, trek):
-        params = {'format': 'geojson'}
+        params = {'format': 'geojson', 'practices': 'Terrestre'}
 
         view = sensitivity_views.TrekSensitiveAreaViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'sensitiveareas.geojson')
