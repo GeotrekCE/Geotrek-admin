@@ -1,4 +1,5 @@
 from rest_framework import serializers as rest_serializers
+from rest_framework_gis import serializers as geo_serializers
 from geotrek.common.serializers import PictogramSerializerMixin, TranslatedModelSerializer
 from geotrek.sensitivity import models as sensitivity_models
 
@@ -23,8 +24,12 @@ class SpeciesSerializer(TranslatedModelSerializer, PictogramSerializerMixin):
 
 class SensitiveAreaSerializer(TranslatedModelSerializer):
     species = SpeciesSerializer()
+    geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
+
+    def get_geometry(self, obj):
+        return obj.geom2d_transformed
 
     class Meta:
         model = sensitivity_models.SensitiveArea
-        geo_field = 'geom'
+        geo_field = 'geometry'
         fields = ('id', 'species', 'description', 'contact', 'published', 'publication_date')
