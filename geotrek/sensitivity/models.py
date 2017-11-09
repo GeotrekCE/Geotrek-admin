@@ -55,7 +55,7 @@ class Species(OptionalPictogramMixin):
 
     class Meta:
         ordering = ['name']
-        db_table = 's_b_espece'
+        db_table = 's_b_espece_ou_suite_zone_regl'
         verbose_name = pgettext_lazy(u"Singular", u"Species")
         verbose_name_plural = _(u"Species")
 
