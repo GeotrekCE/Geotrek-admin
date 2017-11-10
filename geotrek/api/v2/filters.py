@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from datetime import date
 import operator
 from functools import reduce
 
@@ -120,13 +121,26 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
         structure = request.GET.get('structure', '')
         if structure:
             qs = qs.filter(structure__name=structure)
+        period = request.GET.get('period', '')
+        if not period:
+            qs = qs.filter(**{'species__period{:02}'.format(date.today().month): True})
+        elif period == 'any':
+            qs = qs.filter(reduce(operator.or_, (Q(**{'species__period{:02}'.format(m): True}) for m in range(1, 13))))
+        elif period == 'ignore':
+            pass
+        else:
+            months = [int(m) for m in period.split(',')]
+            qs = qs.filter(reduce(operator.or_, (Q(**{'species__period{:02}'.format(m): True}) for m in months)))
         return qs
 
     def get_schema_fields(self, view):
+        field_period =  Field(name='period', required=False,
+                              description=_('Period of occupancy. Month numbers (1-12) separated by comas. any = occupied at any time in the year. ignore = occupied or not.'),
+                              example=u'7,8 for july and august')
         field_practices = Field(name='practices', required=False,
                                 description=_('Practices names separated by comas.'),
                                 example=u'Terrestre,Vertical')
         field_structure = Field(name='structure', required=False,
                                 description=_('Structure name.'),
                                 example=u'PNM')
-        return field_practices, field_structure
+        return field_period, field_practices, field_structure
