@@ -26,7 +26,8 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekViewset):
 
     queryset = sensitivity_models.SensitiveArea.objects.existing() \
         .filter(published=True) \
-        .prefetch_related('species') \
+        .select_related('species', 'structure') \
+        .prefetch_related('species__practices') \
         .annotate(geom_type=GeometryType(F('geom'))) \
         .annotate(geom2d_transformed=Case(
             When(geom_type='POINT', then=Transform(Buffer(F('geom'), F('species__radius'), 4), settings.API_SRID)),
