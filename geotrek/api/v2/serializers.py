@@ -366,6 +366,7 @@ class SensitiveAreaListSerializer(DynamicFieldsMixin, serializers.ModelSerialize
     create_datetime = serializers.DateTimeField(source='date_insert')
     update_datetime = serializers.DateTimeField(source='date_update')
     geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
+    species_id = serializers.SerializerMethodField(read_only=True)
 
     def get_name(self, obj):
         return get_translation_or_dict('name', self, obj.species)
@@ -382,10 +383,15 @@ class SensitiveAreaListSerializer(DynamicFieldsMixin, serializers.ModelSerialize
     def get_geometry(self, obj):
         return obj.geom2d_transformed
 
+    def get_species_id(self, obj):
+        if obj.species.category == sensitivity_models.Species.SPECIES:
+            return obj.species.id
+        return None
+
     class Meta:
         model = sensitivity_models.SensitiveArea
         fields = (
             'id', 'url', 'name', 'description', 'period', 'contact', 'practices', 'info_url',
-            'published', 'structure',
+            'published', 'structure', 'species_id',
             'geometry', 'update_datetime', 'create_datetime'
         )
