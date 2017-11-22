@@ -37,6 +37,7 @@ setup(
         'landez',
         'django-celery',
         'redis',
+        'requests[security]',
         'drf-extensions'
     ],
     license='BSD, see LICENSE file.',
