@@ -216,7 +216,7 @@ function minimum_system_dependencies {
 
 
 function geotrek_system_dependencies {
-    sudo apt-get install -y -q --no-upgrade libjson0 gdal-bin libgdal-dev
+    sudo apt-get install -y -q --no-upgrade libjson0 gdal-bin libgdal-dev libssl-dev
     
     if [ $xenial -eq 1 ]; then
         sudo apt-get install libgeos-c1v5 libproj9
