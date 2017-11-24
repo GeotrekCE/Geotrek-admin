@@ -367,7 +367,7 @@ class Parser(object):
                 continue
         return dst
 
-    def start(self):
+    def get_to_delete_kwargs(self):
         # FIXME: use mapping if it exists
         kwargs = {}
         for dst, val in self.constant_fields.iteritems():
@@ -388,7 +388,10 @@ class Parser(object):
                 kwargs[dst] = field.rel.to.objects.get(**{natural_key: subval for subval in val})
             except field.rel.to.DoesNotExist:
                 raise GlobalImportError(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=field.rel.to._meta.verbose_name.title(), val=val))
-        self.to_delete = set(self.model.objects.filter(**kwargs).values_list('pk', flat=True))
+        return kwargs
+
+    def start(self):
+        self.to_delete = set(self.model.objects.filter(**self.get_to_delete_kwargs()).values_list('pk', flat=True))
 
     def end(self):
         if self.delete:
