@@ -6,6 +6,7 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 
 from mapentity.factories import UserFactory
+from geotrek.common.parsers import Parser
 
 
 class ViewsTest(TestCase):
@@ -75,6 +76,8 @@ class ViewsImportTest(TestCase):
         self.user.is_superuser = True
         self.user.save()
 
+        Parser.label = "Test"
+
         fake_archive = SimpleUploadedFile(
             "file.doc", "file_content", content_type="application/msword")
         url = reverse('common:import_dataset')
@@ -88,3 +91,5 @@ class ViewsImportTest(TestCase):
         )
         self.assertEqual(response_fake.status_code, 200)
         self.assertContains(response_fake, "File must be of ZIP type.", 1)
+
+        Parser.label = None

@@ -225,7 +225,8 @@ def import_view(request):
                 )
 
     # Hide second form if parser has no web based imports.
-    render_dict['form'] = form
+    if choices:
+        render_dict['form'] = form
     if choices_url:
         render_dict['form_without_file'] = form_without_file
 
