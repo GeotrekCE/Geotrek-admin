@@ -124,6 +124,32 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
         super(SensitiveArea, self).save(*args, **kwargs)
 
     @property
+    def any_published(self):
+        return self.published
+
+    @property
+    def published_status(self):
+        """Returns the publication status by language.
+        """
+        status = []
+        for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
+            status.append({
+                'lang': l[0],
+                'language': l[1],
+                'status': self.published
+            })
+        return status
+
+    @property
+    def published_langs(self):
+        """Returns languages in which the object is published.
+        """
+        if self.published:
+            return [l[0] for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
+        else:
+            return []
+
+    @property
     def species_display(self):
         s = u'<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
                                                               self.get_detail_url(),
