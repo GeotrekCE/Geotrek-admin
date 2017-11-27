@@ -1,10 +1,12 @@
+# -*- encoding: utf-8 -*-
+
 import requests
 
 from django.conf import settings
 from django.contrib.gis.geos import Polygon
 from django.utils.translation import ugettext as _
 
-from geotrek.common.parsers import Parser, GlobalImportError
+from geotrek.common.parsers import Parser, ShapeParser, GlobalImportError
 from .models import SensitiveArea, Species, SportPractice
 
 
@@ -105,3 +107,25 @@ for i in range(12):
     def filter_period(self, src, val):
         return val[i]
     setattr(BiodivParser, 'filter_period{:02}'.format(i + 1), filter_period)
+
+
+class SpeciesSensitiveAreaShapeParser(ShapeParser):
+    model = SensitiveArea
+    label = u"Shapefile zone sensible espèce"
+    separator = ','
+    delete = False
+    fields = {
+        'geom': 'geom',
+        'contact': 'contact',
+        'species': 'espece',
+    }
+    constant_fields = {
+        'published': True,
+        'deleted': False,
+    }
+    natural_keys = {
+        'species': 'name',
+    }
+    field_options = {
+        'species': {'required': True}
+    }

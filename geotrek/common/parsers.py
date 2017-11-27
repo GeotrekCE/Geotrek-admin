@@ -328,7 +328,7 @@ class Parser(object):
                 val = mapping[val]
         return val
 
-    def filter_fk(self, src, val, model, field, mapping=None, partial=False, create=False):
+    def filter_fk(self, src, val, model, field, mapping=None, partial=False, create=False, **kwargs):
         val = self.get_mapping(src, val, mapping, partial)
         if val is None:
             return None
@@ -343,7 +343,7 @@ class Parser(object):
             self.add_warning(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=model._meta.verbose_name.title(), val=val))
             return None
 
-    def filter_m2m(self, src, val, model, field, mapping=None, partial=False, create=False):
+    def filter_m2m(self, src, val, model, field, mapping=None, partial=False, create=False, **kwargs):
         if not val:
             return []
         if self.separator and not isinstance(val, list):
