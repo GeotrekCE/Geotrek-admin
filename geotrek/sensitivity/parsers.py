@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.gis.geos import Polygon
 from django.utils.translation import ugettext as _
 
-from geotrek.common.parsers import Parser, ShapeParser, GlobalImportError
+from geotrek.common.parsers import Parser, ShapeParser, GlobalImportError, RowImportError
 from .models import SensitiveArea, Species, SportPractice
 
 
@@ -118,18 +118,24 @@ class SpeciesSensitiveAreaShapeParser(ShapeParser):
     fields = {
         'geom': 'geom',
         'contact': 'contact',
+        'description': 'description',
         'species': 'espece',
     }
     constant_fields = {
         'published': True,
         'deleted': False,
     }
-    natural_keys = {
-        'species': 'name',
-    }
     field_options = {
         'species': {'required': True}
     }
+
+    def filter_species(self, src, val):
+        try:
+            species = Species.objects.get(category=Species.SPECIES, name=val)
+        except Species.DoesNotExist:
+            msg = u"L'espèce {} n'existe pas dans Geotrek. Merci de la créer.".format(val)
+            raise RowImportError(msg)
+        return species
 
 
 class RegulatorySensitiveAreaShapeParser(ShapeParser):
