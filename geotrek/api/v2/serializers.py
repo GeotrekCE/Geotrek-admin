@@ -395,3 +395,17 @@ class SensitiveAreaListSerializer(DynamicFieldsMixin, serializers.ModelSerialize
             'published', 'structure', 'species_id',
             'geometry', 'update_datetime', 'create_datetime'
         )
+
+
+class BubbleSensitiveAreaListSerializer(SensitiveAreaListSerializer):
+    radius = serializers.SerializerMethodField(read_only=True)
+
+    def get_radius(self, obj):
+        if obj.species.category == sensitivity_models.Species.SPECIES and obj.geom.geom_typeid == 0:
+            return obj.species.radius
+        else:
+            return None
+
+    class Meta:
+        model = SensitiveAreaListSerializer.Meta.model
+        fields = SensitiveAreaListSerializer.Meta.fields + ('radius', )

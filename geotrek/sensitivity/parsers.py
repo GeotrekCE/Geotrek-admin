@@ -4,7 +4,7 @@ import requests
 import unicodedata
 
 from django.conf import settings
-from django.contrib.gis.geos import Polygon
+from django.contrib.gis.geos import Point, Polygon
 from django.utils.translation import ugettext as _
 
 from geotrek.common.parsers import Parser, ShapeParser, GlobalImportError, RowImportError
@@ -14,7 +14,7 @@ from .models import SensitiveArea, Species, SportPractice
 class BiodivParser(Parser):
     model = SensitiveArea
     label = "Biodiv'Sports"
-    url = 'http://biodiv-sports.fr/api/v2/sensitivearea/?format=json&period=ignore'
+    url = 'http://biodiv-sports.fr/api/v2/sensitivearea/?format=json&bubble&period=ignore'
     eid = 'eid'
     separator = None
     delete = True
@@ -28,6 +28,7 @@ class BiodivParser(Parser):
             'period',
             'practices',
             'info_url',
+            'radius',
         )
     }
     constant_fields = {
@@ -68,12 +69,15 @@ class BiodivParser(Parser):
         return str(val)
 
     def filter_geom(self, src, val):
-        geom = Polygon(val['coordinates'][0], srid=4326)  # WGS84
+        if val['type'] == "Point":
+            geom = Point(val['coordinates'], srid=4326)  # WGS84
+        else:
+            geom = Polygon(val['coordinates'][0], srid=4326)  # WGS84
         geom.transform(settings.SRID)
         return geom
 
     def filter_species(self, src, val):
-        (eid, names, period, practice_names, url) = val
+        (eid, names, period, practice_names, url, radius) = val
         need_save = False
         if eid is None:  # Regulatory area
             try:
@@ -96,6 +100,9 @@ class BiodivParser(Parser):
         practices = [SportPractice.objects.get_or_create(name=name)[0] for name in practice_names]
         if url != species.url:
             species.url = url
+            need_save = True
+        if radius != species.radius:
+            species.radius = radius
             need_save = True
         if need_save:
             species.save()

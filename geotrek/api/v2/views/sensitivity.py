@@ -19,17 +19,26 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekViewset):
         GeotrekInBBoxFilter,
         GeotrekSensitiveAreaFilter,
     )
-    serializer_class = api_serializers.SensitiveAreaListSerializer
-    serializer_detail_class = api_serializers.SensitiveAreaListSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     authentication_classes = []
 
-    queryset = sensitivity_models.SensitiveArea.objects.existing() \
-        .filter(published=True) \
-        .select_related('species', 'structure') \
-        .prefetch_related('species__practices') \
-        .annotate(geom_type=GeometryType(F('geom'))) \
-        .annotate(geom2d_transformed=Case(
-            When(geom_type='POINT', then=Transform(Buffer(F('geom'), F('species__radius'), 4), settings.API_SRID)),
-            When(geom_type='POLYGON', then=Transform(F('geom'), settings.API_SRID))
-        ))
+    def get_serializer_class(self):
+        if 'bubble' in self.request.GET:
+            return api_serializers.BubbleSensitiveAreaListSerializer
+        else:
+            return api_serializers.SensitiveAreaListSerializer
+
+    def get_queryset(self):
+        queryset = sensitivity_models.SensitiveArea.objects.existing() \
+            .filter(published=True) \
+            .select_related('species', 'structure') \
+            .prefetch_related('species__practices') \
+            .annotate(geom_type=GeometryType(F('geom')))
+        if 'bubble' in self.request.GET:
+            queryset = queryset.annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
+        else:
+            queryset = queryset.annotate(geom2d_transformed=Case(
+                When(geom_type='POINT', then=Transform(Buffer(F('geom'), F('species__radius'), 4), settings.API_SRID)),
+                When(geom_type='POLYGON', then=Transform(F('geom'), settings.API_SRID))
+            ))
+        return queryset
