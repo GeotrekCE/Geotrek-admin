@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 import requests
+import unicodedata
 
 from django.conf import settings
 from django.contrib.gis.geos import Polygon
@@ -129,3 +130,45 @@ class SpeciesSensitiveAreaShapeParser(ShapeParser):
     field_options = {
         'species': {'required': True}
     }
+
+
+class RegulatorySensitiveAreaShapeParser(ShapeParser):
+    model = SensitiveArea
+    label = u"Shapefile zone sensible réglementaire"
+    separator = ','
+    delete = False
+    fields = {
+        'geom': 'geom',
+        'contact': 'contact',
+        'description': 'description',
+        'species': (
+            'nom',
+            'periode',
+            'pratiques',
+            'url',
+        )
+    }
+    constant_fields = {
+        'published': True,
+        'deleted': False,
+    }
+
+    def filter_species(self, src, val):
+        (name, period, practices, url) = val
+        species = Species(category=Species.REGULATORY)
+        species.name = name
+        if period:
+            period = period.split(self.separator)
+            for i in range(1, 13):
+                if str(i) in period:
+                    setattr(species, 'period{:02}'.format(i), True)
+        species.url = url
+        species.save()
+        if practices:
+            practices = practices.split(self.separator)
+            practices = [SportPractice.objects.get_or_create(name=practice)[0] for practice in practices]
+            species.practices.add(*practices)
+        return species
+
+    def normalize_field_name(self, name):
+        return unicodedata.normalize('NFD', unicode(name)).encode('ascii', 'ignore').upper()
