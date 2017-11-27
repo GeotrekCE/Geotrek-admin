@@ -160,7 +160,7 @@ class RegulatorySensitiveAreaShapeParser(ShapeParser):
     }
 
     def filter_species(self, src, val):
-        (name, period, practices, url) = val
+        (name, period, practice_names, url) = val
         species = Species(category=Species.REGULATORY)
         species.name = name
         if period:
@@ -169,11 +169,17 @@ class RegulatorySensitiveAreaShapeParser(ShapeParser):
                 if str(i) in period:
                     setattr(species, 'period{:02}'.format(i), True)
         species.url = url
+        practices = []
+        if practice_names:
+            for practice_name in practice_names.split(self.separator):
+                try:
+                    practice = SportPractice.objects.get(name=practice_name)
+                except SportPractice.DoesNotExist:
+                    msg = u"La pratique sportive {} n'existe pas dans Geotrek. Merci de l'ajouter.".format(practice_name)
+                    raise RowImportError(msg)
+                practices.append(practice)
         species.save()
-        if practices:
-            practices = practices.split(self.separator)
-            practices = [SportPractice.objects.get_or_create(name=practice)[0] for practice in practices]
-            species.practices.add(*practices)
+        species.practices.add(*practices)
         return species
 
     def normalize_field_name(self, name):
