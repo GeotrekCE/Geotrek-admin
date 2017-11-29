@@ -286,7 +286,6 @@ INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.flatpages',
     'geotrek.feedback',
     'geotrek.api',
-    'geotrek.sensitivity',
 )
 
 SERIALIZATION_MODULES = {

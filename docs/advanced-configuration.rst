@@ -64,6 +64,20 @@ In order to remove zoning combo-boxes on list map:
     Never forget to mention this customization if you ask for community support.
 
 
+Enable sensitive areas
+----------------------
+
+
+In order to enable sensitivity module, in the custom settings file,
+add the following code:
+
+.. code-block :: python
+
+    # Enable sensitivity module
+    INSTALLED_APPS =+ ('geotrek.sensitivity', )
+
+
+
 WYSIWYG editor configuration
 ----------------------------
 
