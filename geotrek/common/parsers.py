@@ -12,10 +12,10 @@ from ftplib import FTP
 from os.path import dirname
 from urlparse import urlparse
 
-from django.db import models
+from django.db import models, connection
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.gis.gdal import DataSource, GDALException
+from django.contrib.gis.gdal import DataSource, GDALException, CoordTransform
 from django.core.files.base import ContentFile
 from django.template.loader import render_to_string
 from django.utils import translation
@@ -423,6 +423,9 @@ class ShapeParser(Parser):
     def next_row(self):
         datasource = DataSource(self.filename, encoding=self.encoding)
         layer = datasource[0]
+        SpatialRefSys = connection.ops.spatial_ref_sys()
+        target_srs = SpatialRefSys.objects.get(srid=settings.SRID).srs
+        coord_transform = CoordTransform(layer.srs, target_srs)
         self.nb = len(layer)
         for i, feature in enumerate(layer):
             row = {self.normalize_field_name(field.name): field.value for field in feature}
@@ -433,6 +436,7 @@ class ShapeParser(Parser):
                 geom = None
             else:
                 ogrgeom.coord_dim = 2  # Flatten to 2D
+                ogrgeom.transform(coord_transform)
                 geom = ogrgeom.geos
             if self.simplify_tolerance and geom is not None:
                 geom = geom.simplify(self.simplify_tolerance)
