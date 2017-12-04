@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 import requests
 import xml.etree.ElementTree as ET
 from django.conf import settings
@@ -7,7 +9,9 @@ from django.contrib.gis.geos import Point
 from django.db import InternalError
 from django.utils.translation import ugettext as _
 from geotrek.common.parsers import Parser, AttachmentParserMixin, ValueImportError, GlobalImportError
+from geotrek.core.helpers import TopologyHelper
 from geotrek.tourism.models import TouristicContent
+from geotrek.trekking.models import POI, POIType
 
 
 class XmlParser(Parser):
@@ -181,3 +185,138 @@ class SitlorParser(LeiParser):
 
     def filter_eid(self, src, val):
         return 'LOR' + val
+
+
+class LeiPOIParser(LeiParser):
+    model = POI
+
+    fields = {
+        'eid': 'PRODUIT',
+        'name': 'NOM',
+        'description': (
+            'COMMENTAIRE', (
+                'ADRPROD_NUM_VOIE',
+                'ADRPROD_LIB_VOIE',
+                'ADRPROD_CP',
+                'ADRPROD_LIBELLE_COMMUNE',
+                'ADRPROD_TEL',
+                'ADRPROD_TEL2',
+                'ADRPREST_TEL',
+                'ADRPREST_TEL2'
+            ),(
+                'ADRPROD_EMAIL',
+                'ADRPREST_EMAIL'
+            ), ('ADRPROD_URL',
+                'ADRPREST_URL')
+        ),
+        'type': 'TYPE_DE_PRODUIT',
+        'geom': ('LATITUDE', 'LONGITUDE'),
+    }
+
+    natural_keys = {
+        'type': 'label',
+    }
+
+    def parse_obj(self, row, operation):
+        super(LeiPOIParser, self).parse_obj(row, operation)
+        geometry = self.obj.geom.transform(4326, clone=True)
+        serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
+        topology = TopologyHelper.deserialize(serialized)
+        # Move deserialization aggregations to the POI
+        self.obj.mutate(topology)
+
+
+class SitlorPOI(LeiPOIParser):
+    url = "http://www.sitlor.fr/xml/exploitation/listeproduits.asp?rfrom=1&rto=20&user=233&pwkey=4dc5b1e31e5e8bf0d22810a9e5e8bbc8&urlnames=tous&PVALUES=4000012,29/09/2017 00:00:00,24/09/2018 23:59:59,MOSELLE,2,853000026,853000088|853000089&PNAMES=alcat,validaddu,validadau,elsector,utilisador,elcriterio0,modalidad0&lesvalid=|+12M&clause=233000281"
+    label = u"SITLOR - POI : Site - Monument / Musée / Parc & Jardin"
+
+    type_by_id = {
+        '4000048': u'Site - monument',
+        '4000047': u'Musée',
+        '4000049': u'Parc & Jardin',
+    }
+
+    def filter_type(self, src, val):
+        map = self.type_by_id[u'{}'.format(val)]
+        return POIType.objects.get(label=map)
+
+    def filter_description(self, src, val):
+        (commentaire, contact, email, url) = val
+        description = ""
+
+        if commentaire:
+            description = commentaire
+
+        if contact:
+            # delete duplicates
+            contact = list(set(contact))
+            description = '{}<br/><br/>Contact :'.format(description)
+
+            for element in contact:
+                if element:
+                    description = '{}<br/>{}'.format(description, element)
+
+        if email:
+            # delete duplicates
+            email = list(set(email))
+            description = '{}<br/><br/>Email :'.format(description)
+            for element in email:
+                if element:
+                    description = '{}<br/>{}'.format(description, element)
+
+        if url:
+            # delete duplicates
+            url = list(set(url))
+            description = '{}<br/><br/>Site web :'.format(description)
+            for element in url:
+                if element:
+                    description = '{}<br/>{}'.format(description, element)
+
+        return description
+
+
+class LeiPOI(LeiPOIParser):
+    url = "https://apps.tourisme-alsace.info/batchs/LIENS_PERMANENTS/2002084000006_pnrvn_chateaux_musees.xml"
+    label = u"LEI - POI : Musées et Châteaux-Forts"
+
+    constant_fields = {
+        'published': "Musées et Châteaux-Forts",
+    }
+
+    def filter_description(self, src, val):
+        (commentaire, contact, email, url) = val
+        description = ""
+
+        if commentaire:
+            description = commentaire
+
+        if contact:
+            # delete duplicates
+            contact = list(set(contact))
+            description = '{}<br/><br/>Contact :'.format(description)
+
+            for element in contact:
+                if element:
+                    description = '{}<br/>{}'.format(description, element)
+
+        if email:
+            # delete duplicates
+            email = list(set(email))
+            description = '{}<br/><br/>Email :'.format(description)
+            for element in email:
+                if element:
+                    description = '{}<br/>{}'.format(description, element)
+
+        if url:
+            # delete duplicates
+            url = list(set(url))
+            description = '{}<br/><br/>Site web :'.format(description)
+            for element in url:
+                if element:
+                    description = '{}<br/>{}'.format(description, element)
+
+        return description
+
+
+
+
