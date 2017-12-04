@@ -47,7 +47,7 @@ msgid "Departure"
 msgstr "Salida"
 
 msgid "Difficulty"
-msgstr "dificultad"
+msgstr "Dificultad"
 
 msgid "Disabled Infrastructure"
 msgstr "Zona para personas con discapacidad"
