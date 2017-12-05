@@ -106,6 +106,8 @@ class LeiParser(AttachmentParserMixin, XmlParser):
             geom.transform(settings.SRID)
         except InternalError as e:
             raise ValueImportError(unicode(e))
+        if self.obj.geom and abs(geom.x - self.obj.geom.x) < 0.001 and abs(geom.y - self.obj.geom.y) < 0.001:
+            return self.obj.geom
         return geom
 
     def filter_contact(self, src, val):
@@ -203,7 +205,7 @@ class LeiPOIParser(LeiParser):
                 'ADRPROD_TEL2',
                 'ADRPREST_TEL',
                 'ADRPREST_TEL2'
-            ),(
+            ), (
                 'ADRPROD_EMAIL',
                 'ADRPREST_EMAIL'
             ), ('ADRPROD_URL',
@@ -217,8 +219,19 @@ class LeiPOIParser(LeiParser):
         'type': 'label',
     }
 
+    # Don't publish by default but keep published if published manually
+    constant_fields = {}
+
+    def filter_type(self, src, val):
+        try:
+            return self.obj.type
+        except POIType.DoesNotExist:
+            return super(LeiPOIParser, self).apply_filter('type', src, val)
+
     def parse_obj(self, row, operation):
         super(LeiPOIParser, self).parse_obj(row, operation)
+        if not self.obj.pk:
+            return
         geometry = self.obj.geom.transform(4326, clone=True)
         serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
         topology = TopologyHelper.deserialize(serialized)
@@ -230,15 +243,15 @@ class SitlorPOI(LeiPOIParser):
     url = "http://www.sitlor.fr/xml/exploitation/listeproduits.asp?rfrom=1&rto=20&user=233&pwkey=4dc5b1e31e5e8bf0d22810a9e5e8bbc8&urlnames=tous&PVALUES=4000012,29/09/2017 00:00:00,24/09/2018 23:59:59,MOSELLE,2,853000026,853000088|853000089&PNAMES=alcat,validaddu,validadau,elsector,utilisador,elcriterio0,modalidad0&lesvalid=|+12M&clause=233000281"
     label = u"SITLOR - POI : Site - Monument / Musée / Parc & Jardin"
 
-    type_by_id = {
-        '4000048': u'Site - monument',
-        '4000047': u'Musée',
-        '4000049': u'Parc & Jardin',
+    field_options = {
+        'type': {
+            'mapping': {
+                '4000047': 'Inconnu',
+                '4000048': 'Inconnu',
+                '4000049': 'Inconnu',
+            }
+        }
     }
-
-    def filter_type(self, src, val):
-        map = self.type_by_id[u'{}'.format(val)]
-        return POIType.objects.get(label=map)
 
     def filter_description(self, src, val):
         (commentaire, contact, email, url) = val
@@ -262,7 +275,7 @@ class SitlorPOI(LeiPOIParser):
             description = '{}<br/><br/>Email :'.format(description)
             for element in email:
                 if element:
-                    description = '{}<br/>{}'.format(description, element)
+                    description = '{}<br/><a href="mailto:{}">{}</a>'.format(description, element, element)
 
         if url:
             # delete duplicates
@@ -270,7 +283,9 @@ class SitlorPOI(LeiPOIParser):
             description = '{}<br/><br/>Site web :'.format(description)
             for element in url:
                 if element:
-                    description = '{}<br/>{}'.format(description, element)
+                    if not element.startswith('http'):
+                        element = 'http://' + element
+                    description = '{}<br/><a href="{}">{}</a>'.format(description, element, element)
 
         return description
 
@@ -279,8 +294,12 @@ class LeiPOI(LeiPOIParser):
     url = "https://apps.tourisme-alsace.info/batchs/LIENS_PERMANENTS/2002084000006_pnrvn_chateaux_musees.xml"
     label = u"LEI - POI : Musées et Châteaux-Forts"
 
-    constant_fields = {
-        'published': "Musées et Châteaux-Forts",
+    field_options = {
+        'type': {
+            'mapping': {
+                '1900200': 'Inconnu',
+            }
+        }
     }
 
     def filter_description(self, src, val):
@@ -305,7 +324,7 @@ class LeiPOI(LeiPOIParser):
             description = '{}<br/><br/>Email :'.format(description)
             for element in email:
                 if element:
-                    description = '{}<br/>{}'.format(description, element)
+                    description = '{}<br/><a href="mailto:{}">{}</a>'.format(description, element, element)
 
         if url:
             # delete duplicates
@@ -313,10 +332,8 @@ class LeiPOI(LeiPOIParser):
             description = '{}<br/><br/>Site web :'.format(description)
             for element in url:
                 if element:
-                    description = '{}<br/>{}'.format(description, element)
+                    if not element.startswith('http'):
+                        element = 'http://' + element
+                    description = '{}<br/><a href="{}">{}</a>'.format(description, element, element)
 
         return description
-
-
-
-
