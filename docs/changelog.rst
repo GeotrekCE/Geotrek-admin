@@ -7,7 +7,12 @@ CHANGELOG
 
 *Bug fixes**
 
+* Fix download of python packages for pypi.python.org (SSL is now required)
+* Create static versions of rando pages with opengraph data
 * API v2 : Fix full URL pictures in nested serializers
+* Fix network SVG (add viewbox) to make them visible in Geotrek-rando
+* Add external id field to POI form
+* Hide file parsers form if no one is available
 
 
 2.15.2 (2017-09-28)
