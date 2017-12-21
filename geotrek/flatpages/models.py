@@ -1,4 +1,5 @@
 import mimetypes
+from html2text import html2text
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -100,3 +101,11 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
     @models.permalink
     def get_delete_url(self):
         return ('admin:flatpages_flatpage_delete', [self.pk])
+
+    @property
+    def rando_url(self):
+        return 'informations/{}/'.format(self.slug)
+
+    @property
+    def meta_description(self):
+        return html2text(self.content)[:500]

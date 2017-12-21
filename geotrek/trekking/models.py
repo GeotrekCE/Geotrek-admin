@@ -1,5 +1,6 @@
 import os
 import logging
+from html2text import html2text
 
 from django.conf import settings
 from django.contrib.gis.db import models
@@ -405,6 +406,18 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     @property
     def extent(self):
         return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom.extent else None
+
+    @property
+    def rando_url(self):
+        if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and self.practice:
+            category_slug = self.practice.slug
+        else:
+            category_slug = _('trek')
+        return '{}/{}/'.format(category_slug, self.slug)
+
+    @property
+    def meta_description(self):
+        return html2text(self.ambiance or self.description_teaser or self.description)[:500]
 
 
 Path.add_property('treks', Trek.path_treks, _(u"Treks"))

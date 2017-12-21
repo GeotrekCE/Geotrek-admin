@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-16 09:02+0000\n"
+"POT-Creation-Date: 2017-12-20 17:26+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -230,6 +230,10 @@ msgstr "Ajouter un itinéraire"
 msgid "Cannot use itself as child trek."
 msgstr "Impossible d'utiliser un itinéraire comme son propre enfant."
 
+#. Translators: This is a slug (without space, accent or special char)
+msgid "trek"
+msgstr "itineraire"
+
 msgid "Published treks"
 msgstr "Itinéraires publiés"
 
@@ -387,12 +391,14 @@ msgstr ""
 "Le type de géométrie du champ '{src}' est invalide. Il devrait être "
 "LineString, pas {geom_type}"
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "trek"
-msgstr "itineraire"
-
 msgid "Init sync ..."
 msgstr "Début de synchro"
+
+msgid "Geotrek Rando"
+msgstr "Geotrek Rando"
+
+msgid "Geotrek is a web app allowing you to prepare your next trekking trip !"
+msgstr "Geotrek est une web app permettant de préparer à l'avance ses randonnées !"
 
 msgid "Public print"
 msgstr "Impression grand public"

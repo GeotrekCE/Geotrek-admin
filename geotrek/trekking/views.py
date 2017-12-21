@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import json
 import redis
+from urlparse import urljoin
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -12,7 +13,7 @@ from django.template.context import RequestContext
 from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
-from django.views.generic import CreateView, ListView, RedirectView
+from django.views.generic import CreateView, ListView, RedirectView, DetailView, TemplateView
 from django.views.generic.detail import BaseDetailView
 from djcelery.models import TaskMeta
 from mapentity.helpers import alphabet_enumeration
@@ -253,6 +254,19 @@ class TrekDelete(MapEntityDelete):
     @same_structure_required('trekking:trek_detail')
     def dispatch(self, *args, **kwargs):
         return super(TrekDelete, self).dispatch(*args, **kwargs)
+
+
+class TrekMeta(DetailView):
+    model = Trek
+    template_name = 'trekking/trek_meta.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TrekMeta, self).get_context_data(**kwargs)
+        context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
+        context['facebook_image'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
+        context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
+        context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
+        return context
 
 
 class POILayer(MapEntityLayer):
@@ -601,6 +615,18 @@ def sync_update_json(request):
 
     return HttpResponse(json.dumps(results),
                         content_type="application/json")
+
+
+class Meta(TemplateView):
+    template_name = 'trekking/meta.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(Meta, self).get_context_data(**kwargs)
+        context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
+        context['facebook_image'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
+        context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
+        context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
+        return context
 
 
 # Translations for public PDF

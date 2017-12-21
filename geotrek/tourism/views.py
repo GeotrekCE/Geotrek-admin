@@ -1,10 +1,12 @@
 from itertools import chain
 import logging
 import os
+from urlparse import urljoin
 from django.utils.translation import ugettext as _
 
 from django.conf import settings
 from django.http import Http404
+from django.views.generic import DetailView
 from mapentity.views import (MapEntityCreate,
                              MapEntityUpdate, MapEntityLayer, MapEntityList,
                              MapEntityDetail, MapEntityDelete, MapEntityViewSet,
@@ -134,6 +136,19 @@ class TouristicContentDocumentPublic(DocumentPublic):
         return context
 
 
+class TouristicContentMeta(DetailView):
+    model = TouristicContent
+    template_name = 'tourism/touristiccontent_meta.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TouristicContentMeta, self).get_context_data(**kwargs)
+        context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
+        context['facebook_image'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
+        context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
+        context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
+        return context
+
+
 class TouristicEventLayer(MapEntityLayer):
     queryset = TouristicEvent.objects.existing()
     properties = ['name']
@@ -215,6 +230,19 @@ class TouristicEventDocumentPublic(DocumentPublic):
             except TargetPortal.DoesNotExist:
                 pass
 
+        return context
+
+
+class TouristicEventMeta(DetailView):
+    model = TouristicEvent
+    template_name = 'tourism/touristicevent_meta.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TouristicEventMeta, self).get_context_data(**kwargs)
+        context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
+        context['facebook_image'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
+        context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
+        context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
         return context
 
 

@@ -1,6 +1,7 @@
 import os
 import re
 import logging
+from html2text import html2text
 
 from django.conf import settings
 from django.contrib.gis.db import models
@@ -365,6 +366,15 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     def extent(self):
         return self.geom.buffer(10).transform(settings.API_SRID, clone=True).extent
 
+    @property
+    def rando_url(self):
+        category_slug = _(u'touristic-content')
+        return '{}/{}/'.format(category_slug, self.slug)
+
+    @property
+    def meta_description(self):
+        return html2text(self.description_teaser or self.description)[:500]
+
 
 Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))
 Topology.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True), _(u"Published touristic contents"))
@@ -495,6 +505,15 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
     @property
     def themes_display(self):
         return ','.join([unicode(source) for source in self.themes.all()])
+
+    @property
+    def rando_url(self):
+        category_slug = _(u'touristic-event')
+        return '{}/{}/'.format(category_slug, self.slug)
+
+    @property
+    def meta_description(self):
+        return html2text(self.description_teaser or self.description)[:500]
 
 
 TouristicEvent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _(u"Touristic contents"))

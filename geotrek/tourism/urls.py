@@ -18,6 +18,8 @@ urlpatterns = patterns(
     url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/touristicevents\.(?P<format>geojson)$', tourism_views.TrekTouristicEventViewSet.as_view({'get': 'list'}), name="trek_events_geojson"),
     url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/touristiccontents\.(?P<format>geojson)$', tourism_views.TrekTouristicContentViewSet.as_view({'get': 'list'}), name="trek_contents_geojson"),
     url(r'^api/(?P<lang>\w\w)/touristiccategories\.json$', tourism_views.TouristicCategoryView.as_view(), name="touristic_categories_json"),
+    url(r'^api/(?P<lang>\w\w)/touristiccontents/(?P<pk>\d+)/meta.html$', tourism_views.TouristicContentMeta.as_view(), name="touristiccontent_meta"),
+    url(r'^api/(?P<lang>\w\w)/touristicevents/(?P<pk>\d+)/meta.html$', tourism_views.TouristicEventMeta.as_view(), name="touristicevent_meta"),
 )
 
 

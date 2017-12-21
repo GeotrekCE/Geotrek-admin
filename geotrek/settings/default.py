@@ -133,3 +133,8 @@ _others_color = envini.get('layercolor_others', None)
 if _others_color:
     MAP_STYLES.setdefault('detail', {})['color'] = _others_color
     MAP_STYLES.setdefault('others', {})['color'] = _others_color
+
+FACEBOOK_APP_ID = ''
+FACEBOOK_IMAGE = '/images/logo-geotrek.png'
+FACEBOOK_IMAGE_WIDTH = 200
+FACEBOOK_IMAGE_HEIGHT = 200
