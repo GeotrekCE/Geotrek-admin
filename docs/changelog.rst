@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.15.3.dev0
+2.16.0 (2017-12-21)
 -------------------
 
 **New features**
 
-* Create static versions of rando pages with opengraph data
+* Create static versions of rando pages with opengraph data (Facebook)
 * Add external id field to POI form
 
 **Bug fixes**
