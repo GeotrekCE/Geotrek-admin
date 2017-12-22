@@ -1,8 +1,9 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.db.models import F
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import get_language, ugettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
 from rest_framework import serializers
 from rest_framework.relations import HyperlinkedIdentityField
@@ -367,6 +368,7 @@ class SensitiveAreaListSerializer(DynamicFieldsMixin, serializers.ModelSerialize
     update_datetime = serializers.DateTimeField(source='date_update')
     geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
     species_id = serializers.SerializerMethodField(read_only=True)
+    kml_url = serializers.SerializerMethodField(read_only=True)
 
     def get_name(self, obj):
         return get_translation_or_dict('name', self, obj.species)
@@ -388,11 +390,15 @@ class SensitiveAreaListSerializer(DynamicFieldsMixin, serializers.ModelSerialize
             return obj.species.id
         return None
 
+    def get_kml_url(self, obj):
+        url = reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
+        return self.context['request'].build_absolute_uri(url)
+
     class Meta:
         model = sensitivity_models.SensitiveArea
         fields = (
             'id', 'url', 'name', 'description', 'period', 'contact', 'practices', 'info_url',
-            'published', 'structure', 'species_id',
+            'published', 'structure', 'species_id', 'kml_url',
             'geometry', 'update_datetime', 'create_datetime'
         )
 

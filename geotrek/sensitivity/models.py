@@ -3,11 +3,13 @@
 """
 
 import datetime
+import simplekml
 
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils.translation import pgettext_lazy, ugettext_lazy as _
 from mapentity.models import MapEntityMixin
+from mapentity.serializers import plain_text
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins import (OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin, AddPropertyMixin)
 from geotrek.common.utils import intersecting, classproperty
@@ -162,6 +164,23 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
     @property
     def extent(self):
         return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom else None
+
+    def kml(self):
+        """Exports sensitivearea into KML format"""
+        kml = simplekml.Kml()
+        geom = self.geom
+        if geom.geom_type == 'Point':
+            geom = geom.buffer(self.species.radius or settings.SENSITIVITY_DEFAULT_RADIUS, 4)
+        geom = geom.transform(4326, clone=True)  # KML uses WGS84
+        line = kml.newpolygon(name=self.species.name,
+                              description=plain_text(self.description),
+                              outerboundaryis=geom.coords[0])
+        line.style.linestyle.color = simplekml.Color.red  # Red
+        line.style.linestyle.width = 4  # pixels
+        return kml.kml()
+
+    def is_public(self):
+        return self.published
 
 
 Topology.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self), _(u"Sensitive areas"))

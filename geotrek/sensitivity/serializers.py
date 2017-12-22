@@ -1,3 +1,5 @@
+from django.core.urlresolvers import reverse
+from django.utils.translation import get_language
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis import serializers as geo_serializers
 from geotrek.common.serializers import PictogramSerializerMixin, TranslatedModelSerializer
@@ -25,11 +27,15 @@ class SpeciesSerializer(TranslatedModelSerializer, PictogramSerializerMixin):
 class SensitiveAreaSerializer(TranslatedModelSerializer):
     species = SpeciesSerializer()
     geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
+    kml_url = rest_serializers.SerializerMethodField(read_only=True)
 
     def get_geometry(self, obj):
         return obj.geom2d_transformed
 
+    def get_kml_url(self, obj):
+        return reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
+
     class Meta:
         model = sensitivity_models.SensitiveArea
         geo_field = 'geometry'
-        fields = ('id', 'species', 'description', 'contact', 'published', 'publication_date')
+        fields = ('id', 'species', 'description', 'contact', 'published', 'publication_date', 'kml_url')

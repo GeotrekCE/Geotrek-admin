@@ -23,6 +23,8 @@ if settings.SENSITIVITY_ENABLED:
         url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/sensitiveareas\.geojson$',
             views.TrekSensitiveAreaViewSet.as_view({'get': 'list'}),
             name="trek_sensitivearea_geojson"),
+        url(r'^api/(?P<lang>\w\w)/sensitiveareas/(?P<pk>\d+).kml$',
+            views.SensitiveAreaKMLDetail.as_view(), name="sensitivearea_kml_detail"),
     ]
     urlpatterns += registry.register(models.SensitiveArea, SensitiveAreaEntityOptions)
 else:

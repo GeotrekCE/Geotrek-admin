@@ -433,7 +433,8 @@ class Command(BaseCommand):
 
         self.sync_geojson(lang, TrekViewSet, 'treks.geojson', zipfile=self.zipfile)
         self.sync_geojson(lang, POIViewSet, 'pois.geojson')
-        self.sync_flatpages(lang)
+        if 'geotrek.flatpages' in settings.INSTALLED_APPS:
+            self.sync_flatpages(lang)
         self.sync_geojson(lang, ServiceViewSet, 'services.geojson', zipfile=self.zipfile)
         self.sync_view(lang, FeedbackCategoryList.as_view(),
                        os.path.join('api', lang, 'feedback', 'categories.json'),
@@ -560,6 +561,8 @@ class Command(BaseCommand):
         self.sync_geojson(lang, sensitivity_views.SensitiveAreaViewSet, 'sensitiveareas.geojson',
                           params={'practices': 'Terrestre'})
         for area in sensitivity_models.SensitiveArea.objects.filter(published=True):
+            name = os.path.join('api', lang, 'sensitiveareas', '{obj.pk}.kml'.format(obj=area))
+            self.sync_view(lang, sensitivity_views.SensitiveAreaKMLDetail.as_view(), name, pk=area.pk)
             self.sync_media_file(lang, area.species.pictogram)
 
     def sync_trek_sensitiveareas(self, lang, trek):

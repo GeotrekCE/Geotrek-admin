@@ -2,15 +2,17 @@ import json
 import logging
 from django.conf import settings
 from django.db.models import F, Case, When
-from django.http import Http404
+from django.http import Http404, HttpResponse
+from django.views.generic.detail import BaseDetailView
 from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityLayer, MapEntityList, MapEntityDetail,
-                             MapEntityDelete, MapEntityViewSet, MapEntityFormat)
+                             MapEntityDelete, MapEntityViewSet, MapEntityFormat, LastModifiedMixin)
 from rest_framework import permissions as rest_permissions, viewsets
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.api.v2.functions import Transform, Buffer, GeometryType
 from geotrek.authent.decorators import same_structure_required
 
+from geotrek.common.views import PublicOrReadPermMixin
 from geotrek.trekking.models import Trek
 from .filters import SensitiveAreaFilterSet
 from .forms import SensitiveAreaForm, RegulatorySensitiveAreaForm
@@ -138,3 +140,13 @@ class TrekSensitiveAreaViewSet(viewsets.ModelViewSet):
             qs = qs.filter(species__practices__name__in=self.request.GET['practices'].split(','))
 
         return qs
+
+
+class SensitiveAreaKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
+    queryset = SensitiveArea.objects.existing()
+
+    def render_to_response(self, context):
+        area = self.get_object()
+        response = HttpResponse(area.kml(),
+                                content_type='application/vnd.google-earth.kml+xml')
+        return response
