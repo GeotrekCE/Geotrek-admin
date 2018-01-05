@@ -296,7 +296,7 @@ class Command(BaseCommand):
 
     def sync_meta(self, lang):
         name = os.path.join('meta', lang, 'index.html')
-        self.sync_view(lang, Meta.as_view(), name, params={'rando_url': self.rando_url})
+        self.sync_view(lang, Meta.as_view(), name, params={'rando_url': self.rando_url, 'lang': lang})
 
     def sync_trek_meta(self, lang, obj):
         name = os.path.join('meta', lang, obj.rando_url, 'index.html')

@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{% trans 'Geotrek Rando' %}</title>
+    <meta name="description" content="{% trans 'Geotrek is a web app allowing you to prepare your next trekking trip !' %}">
     <meta property="og:description" content="{% trans 'Geotrek is a web app allowing you to prepare your next trekking trip !' %}">
     <meta property="og:title" content="{% trans 'Geotrek Rando' %}">
     <meta property="og:type" content="website">
@@ -14,5 +15,15 @@
     <meta property="fb:app_id" content="{{ FACEBOOK_APP_ID }}">
 </head>
 <body>
+<h1>{% trans 'Geotrek Rando' %}</h1>
+{% for trek in treks %}
+    <a href="{{ request.GET.rando_url }}/{{ trek.rando_url }}">{{ trek.name }}</a>
+{% endfor %}
+{% for content in contents %}
+    <a href="{{ request.GET.rando_url }}/{{ content.rando_url }}">{{ content.name }}</a>
+{% endfor %}
+{% for event in events %}
+    <a href="{{ request.GET.rando_url }}/{{ event.rando_url }}">{{ event.name }}</a>
+{% endfor %}
 </body>
 </html>

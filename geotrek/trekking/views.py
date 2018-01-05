@@ -40,6 +40,8 @@ from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekCh
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
                           CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer)
 from .tasks import launch_sync_rando
+if 'tourism' in settings.INSTALLED_APPS:
+    from geotrek.tourism.models import TouristicContent, TouristicEvent
 
 
 class SyncRandoRedirect(RedirectView):
@@ -621,11 +623,24 @@ class Meta(TemplateView):
     template_name = 'trekking/meta.html'
 
     def get_context_data(self, **kwargs):
+        lang = self.request.GET['lang']
         context = super(Meta, self).get_context_data(**kwargs)
         context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
         context['facebook_image'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
         context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
         context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
+        context['treks'] = Trek.objects.existing().order_by('pk').filter(
+            Q(**{'published_{lang}'.format(lang=lang): True}) |
+            Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
+                 'trek_parents__parent__deleted': False})
+        )
+        if 'tourism' in settings.INSTALLED_APPS:
+            context['contents'] = TouristicContent.objects.existing().order_by('pk').filter(
+                **{'published_{lang}'.format(lang=lang): True}
+            )
+            context['events'] = TouristicEvent.objects.existing().order_by('pk').filter(
+                **{'published_{lang}'.format(lang=lang): True}
+            )
         return context
 
 

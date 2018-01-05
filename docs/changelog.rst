@@ -5,6 +5,10 @@ CHANGELOG
 2.16.1.dev0
 -----------
 
+**New features**
+
+* Improve SEO for static versions of rando pages
+
 **Bug fixes**
 
 *

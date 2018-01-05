@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ object.name }}</title>
+    <meta name="description" content="{{ object.meta_description }}">
     <meta property="og:description" content="{{ object.meta_description }}">
     <meta property="og:title" content="{{ object.name }}">
     <meta property="og:type" content="article">
@@ -14,5 +15,8 @@
     <meta property="fb:app_id" content="{{ FACEBOOK_APP_ID }}">
 </head>
 <body>
+<h1>{{ object.name }}</h1>
+{{ object.content|safe }}
+<a href="{{ request.GET.rando_url }}">{% trans 'Geotrek Rando' %}</a>
 </body>
 </html>
