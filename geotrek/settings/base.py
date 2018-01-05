@@ -435,8 +435,7 @@ ALTIMETRIC_AREA_MARGIN = 0.15
 LEAFLET_CONFIG = {
     'SRID': 3857,
     'TILES': [
-        ('Scan', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '(c) OpenStreetMap Contributors'),
-        ('Ortho', 'http://oatile1.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png', '(c) MapQuest'),
+        ('OSM', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '(c) OpenStreetMap Contributors'),
     ],
     'TILES_EXTENT': SPATIAL_EXTENT,
     # Extent in API projection (Leaflet view default extent)
