@@ -11,7 +11,7 @@ CHANGELOG
 
 **Bug fixes**
 
-*
+* Fix encoding errors while generating static versions of rando pages
 
 
 2.16.0 (2017-12-21)
