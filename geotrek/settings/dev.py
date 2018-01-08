@@ -29,10 +29,6 @@ ALLOWED_HOSTS = [
 # Use some default tiles
 # ..........................
 
-LEAFLET_CONFIG['TILES'] = [
-    (gettext_noop('OSM'), 'http://{s}.tile.osm.org/{z}/{x}/{y}.png', '(c) OpenStreetMap Contributors'),
-]
-
 LOGGING['loggers']['geotrek']['level'] = 'DEBUG'
 LOGGING['loggers']['']['level'] = 'DEBUG'
 

@@ -436,6 +436,7 @@ LEAFLET_CONFIG = {
     'SRID': 3857,
     'TILES': [
         ('OSM', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '(c) OpenStreetMap Contributors'),
+        ('OSM N&B', 'http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', '(c) OpenStreetMap Contributors'),
     ],
     'TILES_EXTENT': SPATIAL_EXTENT,
     # Extent in API projection (Leaflet view default extent)
