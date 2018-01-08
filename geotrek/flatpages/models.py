@@ -1,5 +1,4 @@
 import mimetypes
-from html2text import html2text
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -9,6 +8,7 @@ from django.conf import settings
 from bs4 import BeautifulSoup
 from extended_choices import Choices
 
+from mapentity.serializers import plain_text
 from geotrek.common.mixins import TimeStampedModelMixin, BasePublishableMixin
 
 
@@ -108,4 +108,4 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
 
     @property
     def meta_description(self):
-        return html2text(self.content)[:500]
+        return plain_text(self.content)[:500]

@@ -38,7 +38,6 @@ setup(
         'django-celery',
         'redis',
         'requests[security]',
-        'html2text',
         'drf-extensions'
     ],
     license='BSD, see LICENSE file.',

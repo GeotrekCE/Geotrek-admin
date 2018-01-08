@@ -5,13 +5,10 @@ CHANGELOG
 2.16.1.dev0
 -----------
 
-**New features**
-
-* Improve SEO for static versions of rando pages
-
 **Bug fixes**
 
 * Fix encoding errors while generating static versions of rando pages
+* SEO for static versions of rando pages
 
 
 2.16.0 (2017-12-21)

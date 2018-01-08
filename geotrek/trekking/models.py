@@ -1,6 +1,5 @@
 import os
 import logging
-from html2text import html2text
 
 from django.conf import settings
 from django.contrib.gis.db import models
@@ -417,7 +416,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
 
     @property
     def meta_description(self):
-        return html2text(self.ambiance or self.description_teaser or self.description)[:500]
+        return plain_text(self.ambiance or self.description_teaser or self.description)[:500]
 
 
 Path.add_property('treks', Trek.path_treks, _(u"Treks"))
