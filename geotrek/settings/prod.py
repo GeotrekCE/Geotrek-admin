@@ -25,14 +25,17 @@ LOGGING['loggers']['geotrek']['handlers'].append('logfile')
 LOGGING['loggers']['mapentity']['handlers'].append('logfile')
 
 #
-# Optimitizations
+# Optimizations
 # ..........................
 
 DATABASES['default']['CONN_MAX_AGE'] = 600
-TEMPLATES[1]['OPTIONS']['loaders'] = (
-    ('django.template.loaders.cached.Loader',
-     TEMPLATES[1]['OPTIONS']['loaders']),
-)
+
+# Template caching is not compatible with MAPENTITY_CONFIG['MAPENTITY_WEASYPRINT'] = False
+# TEMPLATES[1]['OPTIONS']['loaders'] = (
+#     ('django.template.loaders.cached.Loader',
+#      TEMPLATES[1]['OPTIONS']['loaders']),
+# )
+
 # SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
 #

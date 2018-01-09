@@ -9,6 +9,7 @@ CHANGELOG
 
 * Fix encoding errors while generating static versions of rando pages
 * SEO for static versions of rando pages
+* Disable template caching (fix ODT generation)
 
 
 2.16.0 (2017-12-21)
