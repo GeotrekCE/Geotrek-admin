@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.db import migrations
 import django.contrib.gis.db.models.fields
 
@@ -15,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='sensitivearea',
             name='geom',
-            field=django.contrib.gis.db.models.fields.GeometryField(srid=2154),
+            field=django.contrib.gis.db.models.fields.GeometryField(srid=settings.SRID),
         ),
     ]
