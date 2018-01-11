@@ -182,6 +182,16 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
     def is_public(self):
         return self.published
 
+    @property
+    def pretty_period(self):
+        return self.species.pretty_period()
+    pretty_period_verbose_name = _("Period")
+
+    @property
+    def pretty_practices(self):
+        return self.species.pretty_practices()
+    pretty_practices_verbose_name = _("Practices")
+
 
 Topology.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self), _(u"Sensitive areas"))
 Topology.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self).filter(published=True), _(u"Published sensitive areas"))

@@ -36,7 +36,7 @@ class SensitiveAreaList(MapEntityList):
 
 class SensitiveAreaFormatList(MapEntityFormat, SensitiveAreaList):
     columns = [
-        'id', 'species',
+        'id', 'species', 'published', 'description', 'contact', 'radius', 'pretty_period', 'pretty_practices',
     ]
 
 
