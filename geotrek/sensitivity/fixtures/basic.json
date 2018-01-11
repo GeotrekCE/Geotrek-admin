@@ -25,5 +25,19 @@
     },
     "model": "sensitivity.sportpractice",
     "pk": 3
+},
+{
+    "fields": {
+        "name": "Biodiv'Sports",
+        "permissions": [
+            ["add_sensitivearea", "sensitivity", "sensitivearea"],
+            ["change_sensitivearea", "sensitivity", "sensitivearea"],
+            ["delete_sensitivearea", "sensitivity", "sensitivearea"],
+            ["read_sensitivearea", "sensitivity", "sensitivearea"],
+            ["export_sensitivearea", "sensitivity", "sensitivearea"]
+        ]
+    },
+    "model": "auth.group",
+    "pk": 6
 }
 ]
