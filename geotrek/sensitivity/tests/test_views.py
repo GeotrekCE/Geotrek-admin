@@ -2,7 +2,7 @@
 import os
 import json
 
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Permission
 from django.conf import settings
 from django.test import TestCase
 
@@ -18,7 +18,11 @@ class SensitiveAreaViewsSameStructureTests(AuthentFixturesTest):
         profile = UserProfileFactory.create(user__username='homer',
                                             user__password='dooh')
         user = profile.user
-        user.groups.add(Group.objects.get(name=u"Biodiv'Sports"))
+        user.user_permissions.add(Permission.objects.get(codename=u"add_sensitivearea"))
+        user.user_permissions.add(Permission.objects.get(codename=u"change_sensitivearea"))
+        user.user_permissions.add(Permission.objects.get(codename=u"delete_sensitivearea"))
+        user.user_permissions.add(Permission.objects.get(codename=u"read_sensitivearea"))
+        user.user_permissions.add(Permission.objects.get(codename=u"export_sensitivearea"))
         self.client.login(username=user.username, password='dooh')
         self.area1 = SensitiveAreaFactory.create()
         structure = StructureFactory.create()
@@ -82,10 +86,21 @@ class BasicJSONAPITest(TranslationResetMixin, TrekkingManagerTest):
     def test_expected_properties(self):
         self.assertDictEqual(self.result, {
             u'id': self.pk,
-            u'publication_date': self.sensitivearea.publication_date.strftime('%Y-%m-%d'),
+            u'publication_date': unicode(self.sensitivearea.publication_date.strftime('%Y-%m-%d')),
             u'published': True,
-            u'description': 'Blabla',
-            u'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
+            u'description': u"Blabla",
+            u'contact': u'<a href="mailto:toto@tata.com">toto@tata.com</a>',
+            u'kml_url': u'/api/en/sensitiveareas/{pk}.kml'.format(pk=self.pk),
+            u'geometry': {
+                u'type': u'Polygon',
+                u'coordinates': [[
+                    [3.0000000000000004, 46.49999999999995],
+                    [3.0000000000000004, 46.50002701349549],
+                    [3.0000391186749895, 46.5000270134888],
+                    [3.00003911865561, 46.49999999999326],
+                    [3.0000000000000004, 46.49999999999995],
+                ]],
+            },
             u'species': {
                 u"id": self.species.id,
                 u"name": self.species.name,

@@ -8,6 +8,8 @@ TEST = True
 
 TEST_EXCLUDE = ('django',)
 
+INSTALLED_APPS += ('geotrek.sensitivity', )
+
 LOGGING['handlers']['console']['level'] = 'CRITICAL'
 
 LANGUAGE_CODE = 'en'
