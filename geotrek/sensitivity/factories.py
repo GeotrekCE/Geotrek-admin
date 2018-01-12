@@ -41,6 +41,10 @@ class SpeciesFactory(factory.DjangoModelFactory):
         return species
 
 
+class RegulatorySpeciesFactory(SpeciesFactory):
+    category = models.Species.REGULATORY
+
+
 class SensitiveAreaFactory(StructureRelatedDefaultFactory):
     class Meta:
         model = models.SensitiveArea
@@ -50,3 +54,7 @@ class SensitiveAreaFactory(StructureRelatedDefaultFactory):
     published = True
     description = "Blabla"
     contact = "<a href=\"mailto:toto@tata.com\">toto@tata.com</a>"
+
+
+class RegulatorySensitiveAreaFactory(SensitiveAreaFactory):
+    species = factory.SubFactory(RegulatorySpeciesFactory)
