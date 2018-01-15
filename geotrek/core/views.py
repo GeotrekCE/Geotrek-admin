@@ -41,7 +41,7 @@ def last_list(request):
         if reverse(entity.url_list) == last and request.user.has_perm(entity.model.get_permission_codename('list')):
             return redirect(entity.url_list)
     for entity in registry.entities:
-        if request.user.has_perm(entity.model.get_permission_codename('list')):
+        if entity.menu and request.user.has_perm(entity.model.get_permission_codename('list')):
             return redirect(entity.url_list)
     return redirect('trekking:trek_list')
 

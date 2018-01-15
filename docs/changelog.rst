@@ -5,9 +5,9 @@ CHANGELOG
 2.16.2.dev0
 -----------
 
-**Bug fixes**
+**New features**
 
-*
+* Sensitive Areas
 
 
 2.16.1 (2018-01-10)

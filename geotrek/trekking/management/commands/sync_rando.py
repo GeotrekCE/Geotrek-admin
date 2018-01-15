@@ -33,6 +33,9 @@ from geotrek.trekking import models as trekking_models
 from geotrek.trekking.views import (TrekViewSet, POIViewSet, TrekPOIViewSet,
                                     TrekGPXDetail, TrekKMLDetail, TrekServiceViewSet,
                                     ServiceViewSet, TrekDocumentPublic, TrekMeta, Meta)
+if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+    from geotrek.sensitivity import models as sensitivity_models
+    from geotrek.sensitivity import views as sensitivity_views
 
 # Register mapentity models
 from geotrek.trekking import urls  # NOQA
@@ -378,6 +381,9 @@ class Command(BaseCommand):
         if self.categories:
             self.sync_trek_touristiccontents(lang, trek, zipfile=self.zipfile)
 
+        if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+            self.sync_trek_sensitiveareas(lang, trek)
+
         if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname),
                               ending="")
@@ -427,7 +433,8 @@ class Command(BaseCommand):
 
         self.sync_geojson(lang, TrekViewSet, 'treks.geojson', zipfile=self.zipfile)
         self.sync_geojson(lang, POIViewSet, 'pois.geojson')
-        self.sync_flatpages(lang)
+        if 'geotrek.flatpages' in settings.INSTALLED_APPS:
+            self.sync_flatpages(lang)
         self.sync_geojson(lang, ServiceViewSet, 'services.geojson', zipfile=self.zipfile)
         self.sync_view(lang, FeedbackCategoryList.as_view(),
                        os.path.join('api', lang, 'feedback', 'categories.json'),
@@ -463,6 +470,9 @@ class Command(BaseCommand):
 
         self.sync_tourism(lang)
         self.sync_meta(lang)
+
+        if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+            self.sync_sensitiveareas(lang)
 
         if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname), ending="")
@@ -546,6 +556,21 @@ class Command(BaseCommand):
 
         for picture, resized in event.resized_pictures:
             self.sync_media_file(lang, resized)
+
+    def sync_sensitiveareas(self, lang):
+        self.sync_geojson(lang, sensitivity_views.SensitiveAreaViewSet, 'sensitiveareas.geojson',
+                          params={'practices': 'Terrestre'})
+        for area in sensitivity_models.SensitiveArea.objects.filter(published=True):
+            name = os.path.join('api', lang, 'sensitiveareas', '{obj.pk}.kml'.format(obj=area))
+            self.sync_view(lang, sensitivity_views.SensitiveAreaKMLDetail.as_view(), name, pk=area.pk)
+            self.sync_media_file(lang, area.species.pictogram)
+
+    def sync_trek_sensitiveareas(self, lang, trek):
+        params = {'format': 'geojson', 'practices': 'Terrestre'}
+
+        view = sensitivity_views.TrekSensitiveAreaViewSet.as_view({'get': 'list'})
+        name = os.path.join('api', lang, 'treks', str(trek.pk), 'sensitiveareas.geojson')
+        self.sync_view(lang, view, name, params=params, pk=trek.pk)
 
     def sync_tourism(self, lang):
         self.sync_geojson(lang, tourism_views.TouristicContentViewSet, 'touristiccontents.geojson')

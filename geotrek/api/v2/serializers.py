@@ -1,7 +1,9 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.core.urlresolvers import reverse
+from django.db.models import F
+from django.utils.translation import get_language, ugettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
 from rest_framework import serializers
 from rest_framework.relations import HyperlinkedIdentityField
@@ -13,6 +15,7 @@ from geotrek.common import models as common_models
 from geotrek.core import models as core_models
 from geotrek.tourism import models as tourism_models
 from geotrek.trekking import models as trekking_models
+from geotrek.sensitivity import models as sensitivity_models
 
 
 class Base3DSerializer(object):
@@ -280,8 +283,8 @@ class TourDetailSerializer(TrekDetailSerializer):
         qs = obj.children \
             .select_related('topo_object', 'difficulty') \
             .prefetch_related('topo_object__aggregations', 'themes', 'networks', 'attachments') \
-            .annotate(geom2d_transformed=Transform('geom', settings.API_SRID),
-                      geom3d_transformed=Transform('geom_3d', settings.API_SRID),
+            .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID),
+                      geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),
                       length_2d_m=Length('geom'),
                       length_3d_m=Length3D('geom_3d'))
         FinalClass = override_serializer(self.context.get('request').GET.get('format'),
@@ -351,3 +354,64 @@ class POIDetailSerializer(POIListSerializer):
 
     class Meta(POIListSerializer.Meta):
         fields = tuple((field for field in POIListSerializer.Meta.fields if field != 'url')) + ('pictures',)
+
+
+class SensitiveAreaListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    url = HyperlinkedIdentityField(view_name='apiv2:sensitivearea-detail')
+    name = serializers.SerializerMethodField(read_only=True)
+    description = serializers.SerializerMethodField(read_only=True)
+    period = serializers.SerializerMethodField(read_only=True)
+    practices = serializers.SerializerMethodField(read_only=True)
+    info_url = serializers.URLField(source='species.url')
+    structure = serializers.CharField(source='structure.name')
+    create_datetime = serializers.DateTimeField(source='date_insert')
+    update_datetime = serializers.DateTimeField(source='date_update')
+    geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
+    species_id = serializers.SerializerMethodField(read_only=True)
+    kml_url = serializers.SerializerMethodField(read_only=True)
+
+    def get_name(self, obj):
+        return get_translation_or_dict('name', self, obj.species)
+
+    def get_description(self, obj):
+        return get_translation_or_dict('description', self, obj)
+
+    def get_period(self, obj):
+        return [getattr(obj.species, 'period{:02}'.format(p)) for p in range(1, 13)]
+
+    def get_practices(self, obj):
+        return [practice.name for practice in obj.species.practices.all()]
+
+    def get_geometry(self, obj):
+        return obj.geom2d_transformed
+
+    def get_species_id(self, obj):
+        if obj.species.category == sensitivity_models.Species.SPECIES:
+            return obj.species.id
+        return None
+
+    def get_kml_url(self, obj):
+        url = reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
+        return self.context['request'].build_absolute_uri(url)
+
+    class Meta:
+        model = sensitivity_models.SensitiveArea
+        fields = (
+            'id', 'url', 'name', 'description', 'period', 'contact', 'practices', 'info_url',
+            'published', 'structure', 'species_id', 'kml_url',
+            'geometry', 'update_datetime', 'create_datetime'
+        )
+
+
+class BubbleSensitiveAreaListSerializer(SensitiveAreaListSerializer):
+    radius = serializers.SerializerMethodField(read_only=True)
+
+    def get_radius(self, obj):
+        if obj.species.category == sensitivity_models.Species.SPECIES and obj.geom.geom_typeid == 0:
+            return obj.species.radius
+        else:
+            return None
+
+    class Meta:
+        model = SensitiveAreaListSerializer.Meta.model
+        fields = SensitiveAreaListSerializer.Meta.fields + ('radius', )

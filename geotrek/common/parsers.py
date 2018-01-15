@@ -12,10 +12,10 @@ from ftplib import FTP
 from os.path import dirname
 from urlparse import urlparse
 
-from django.db import models
+from django.db import models, connection
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.gis.gdal import DataSource, GDALException
+from django.contrib.gis.gdal import DataSource, GDALException, CoordTransform
 from django.core.files.base import ContentFile
 from django.template.loader import render_to_string
 from django.utils import translation
@@ -328,7 +328,7 @@ class Parser(object):
                 val = mapping[val]
         return val
 
-    def filter_fk(self, src, val, model, field, mapping=None, partial=False, create=False):
+    def filter_fk(self, src, val, model, field, mapping=None, partial=False, create=False, **kwargs):
         val = self.get_mapping(src, val, mapping, partial)
         if val is None:
             return None
@@ -343,7 +343,7 @@ class Parser(object):
             self.add_warning(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=model._meta.verbose_name.title(), val=val))
             return None
 
-    def filter_m2m(self, src, val, model, field, mapping=None, partial=False, create=False):
+    def filter_m2m(self, src, val, model, field, mapping=None, partial=False, create=False, **kwargs):
         if not val:
             return []
         if self.separator and not isinstance(val, list):
@@ -367,7 +367,7 @@ class Parser(object):
                 continue
         return dst
 
-    def start(self):
+    def get_to_delete_kwargs(self):
         # FIXME: use mapping if it exists
         kwargs = {}
         for dst, val in self.constant_fields.iteritems():
@@ -388,7 +388,10 @@ class Parser(object):
                 kwargs[dst] = field.rel.to.objects.get(**{natural_key: subval for subval in val})
             except field.rel.to.DoesNotExist:
                 raise GlobalImportError(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=field.rel.to._meta.verbose_name.title(), val=val))
-        self.to_delete = set(self.model.objects.filter(**kwargs).values_list('pk', flat=True))
+        return kwargs
+
+    def start(self):
+        self.to_delete = set(self.model.objects.filter(**self.get_to_delete_kwargs()).values_list('pk', flat=True))
 
     def end(self):
         if self.delete:
@@ -420,6 +423,9 @@ class ShapeParser(Parser):
     def next_row(self):
         datasource = DataSource(self.filename, encoding=self.encoding)
         layer = datasource[0]
+        SpatialRefSys = connection.ops.spatial_ref_sys()
+        target_srs = SpatialRefSys.objects.get(srid=settings.SRID).srs
+        coord_transform = CoordTransform(layer.srs, target_srs)
         self.nb = len(layer)
         for i, feature in enumerate(layer):
             row = {self.normalize_field_name(field.name): field.value for field in feature}
@@ -430,6 +436,7 @@ class ShapeParser(Parser):
                 geom = None
             else:
                 ogrgeom.coord_dim = 2  # Flatten to 2D
+                ogrgeom.transform(coord_transform)
                 geom = ogrgeom.geos
             if self.simplify_tolerance and geom is not None:
                 geom = geom.simplify(self.simplify_tolerance)

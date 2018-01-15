@@ -1,7 +1,11 @@
 import os
 import importlib
 
+from django.conf import settings
+
 from geotrek.common.parsers import Parser
+if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+    import geotrek.sensitivity.parsers  # noqa
 
 
 def subclasses(cls):
