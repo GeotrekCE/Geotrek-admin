@@ -195,7 +195,9 @@ Il doivent :
 * Avoir un viewport carré afin de ne pas être déformés sur le portail,
 * Ne pas déborder du cercle inscrit pour les pratiques et les catégories de contenus touristiques, en prévoyant une
   marge si nécessaire.
-* Avoir une dimension minimale de 56x56 pixels en ce qui concerne les PNG,
+* Avoir une dimension minimale de 56x56 pixels en ce qui concerne les PNG
+
+Si vous utilisez Inkscape, vous devez définir une viewBox. Voir http://wiki.inkscape.org/wiki/index.php/Tricks_and_tips#Scaling_images_to_fit_in_webpages.2FHTML
 
 Afin de s'intégrer au mieux dans le design standard, les couleurs suivantes sont recommandées :
 
