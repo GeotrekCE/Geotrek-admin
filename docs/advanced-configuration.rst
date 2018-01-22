@@ -74,7 +74,7 @@ add the following code:
 .. code-block :: python
 
     # Enable sensitivity module
-    INSTALLED_APPS =+ ('geotrek.sensitivity', )
+    INSTALLED_APPS += ('geotrek.sensitivity', )
 
 
 
