@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-*
+* Fix import of sensitive areas when languages lists do not match
 
 
 2.17.0 (2018-01-15)
