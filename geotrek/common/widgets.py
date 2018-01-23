@@ -25,3 +25,30 @@ class YearSelect(Select):
         """
         self.choices = self._get_choices()
         return super(YearSelect, self).render_options(*args, **kwargs)
+
+
+class ValueSelect(Select):
+    label = _('Any value')
+
+    def __init__(self, *args, **kwargs):
+        kwargs['choices'] = self._get_choices()
+        super(ValueSelect, self).__init__(*args, **kwargs)
+
+    def _get_choices(self):
+        values_range = [(-1, self.label)]
+        values_range += [(value, value) for value in self.get_values()]
+        return values_range
+
+    def get_values(self):
+        """
+        Must be overridden
+        """
+        return []
+
+    def render_options(self, *args, **kwargs):
+        """Refresh choices each time the form is rendered.
+        (Prevents from having to restart the application on 1st of January
+         to see current year for example)
+        """
+        self.choices = self._get_choices()
+        return super(ValueSelect, self).render_options(*args, **kwargs)

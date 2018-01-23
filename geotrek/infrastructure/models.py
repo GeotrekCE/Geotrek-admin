@@ -121,6 +121,11 @@ class InfrastructureGISManager(gismodels.GeoManager):
     def get_queryset(self):
         return super(InfrastructureGISManager, self).get_queryset().exclude(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
 
+    def all_implantation_years(self):
+        all_years = self.get_queryset().values_list('implantation_year', flat=True)
+        all_years = sorted(list(reversed(all_years)))
+        return all_years
+
 
 class InfrastructureStructureManager(StructureRelatedManager):
     """ Overide default structure related manager, and filter by type. """
@@ -155,6 +160,11 @@ class SignageGISManager(gismodels.GeoManager):
     """ Overide default typology mixin manager, and filter by type. """
     def get_queryset(self):
         return super(SignageGISManager, self).get_queryset().filter(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
+
+    def all_implantation_years(self):
+        all_years = self.get_queryset().values_list('implantation_year', flat=True)
+        all_years = sorted(list(reversed(all_years)))
+        return all_years
 
 
 class SignageStructureManager(StructureRelatedManager):
