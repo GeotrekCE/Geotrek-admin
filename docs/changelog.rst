@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix import of sensitive areas when languages lists do not match
+* Fix trail links in project detail view
 
 
 2.17.0 (2018-01-15)
