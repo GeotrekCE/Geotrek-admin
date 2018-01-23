@@ -412,14 +412,10 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
         s = []
         for i in self.interventions.existing():
             for p in i.paths.all():
-                try:
-                    if p.trail:
-                        s.append(p.trail)
+                for t in p.trails.all():
+                    s.append(t.pk)
 
-                except AttributeError:
-                    pass
-
-        return Trail.objects.filter(pk__in=[t.pk for t in set(s)])
+        return Trail.objects.filter(pk__in=s)
 
     @property
     def signages(self):
