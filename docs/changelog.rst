@@ -7,7 +7,7 @@ CHANGELOG
 
 **Minor changes**
 
-* Implantation year on signages and infrastructure is now a filter with current existing values
+* Implantation year on signages and infrastructures is now a filter with current existing values
 * Trek form field 'practice' is moved to first panel
 
 
@@ -16,6 +16,7 @@ CHANGELOG
 * Fix import of sensitive areas when languages lists do not match
 * Fix trail links in project detail view
 * Add 'approved' field in touristic content and event exports
+* Fix service type with specials character in trek detail
 * Fix bbox filtering in sensitive areas API
 * Add CORS header to sensitive areas API
 * Filter on spatial extent when importing from Biodiv'sport
