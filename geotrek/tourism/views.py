@@ -58,7 +58,7 @@ class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
         'description', 'themes', 'contact', 'email', 'website', 'practical_info',
         'review', 'published', 'publication_date', 'source', 'portal',
         'structure', 'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
+        'cities', 'districts', 'areas',  'approved'
     ]
 
 
@@ -168,7 +168,7 @@ class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
         'participant_number', 'booking', 'target_audience', 'practical_info',
         'structure', 'date_insert', 'date_update', 'source', 'portal',
         'review', 'published', 'publication_date',
-        'cities', 'districts', 'areas',
+        'cities', 'districts', 'areas', 'approved'
     ]
 
 
