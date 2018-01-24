@@ -21,6 +21,8 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekViewset):
     )
     permission_classes = [IsAuthenticatedOrReadOnly]
     authentication_classes = []
+    bbox_filter_field = 'geom2d_transformed'
+    bbox_filter_include_overlapping = True
 
     def get_serializer_class(self):
         if 'bubble' in self.request.GET:
@@ -42,3 +44,8 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekViewset):
                 When(geom_type='POLYGON', then=Transform(F('geom'), settings.API_SRID))
             ))
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        response = super(SensitiveAreaViewSet, self).list(request, *args, **kwargs)
+        response['Access-Control-Allow-Origin'] = '*'
+        return response
