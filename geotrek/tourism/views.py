@@ -58,7 +58,7 @@ class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
         'description', 'themes', 'contact', 'email', 'website', 'practical_info',
         'review', 'published', 'publication_date', 'source', 'portal',
         'structure', 'date_insert', 'date_update',
-        'cities', 'districts', 'areas',  'approved'
+        'cities', 'districts', 'areas', 'approved'
     ]
 
 
