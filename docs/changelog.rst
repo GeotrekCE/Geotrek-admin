@@ -16,6 +16,7 @@ CHANGELOG
 * Fix import of sensitive areas when languages lists do not match
 * Fix trail links in project detail view
 * Add 'approved' field in touristic content and event exports
+* Fix service type with specials character in trek detail
 
 
 2.17.0 (2018-01-15)
