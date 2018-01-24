@@ -16,6 +16,9 @@ CHANGELOG
 * Fix import of sensitive areas when languages lists do not match
 * Fix trail links in project detail view
 * Add 'approved' field in touristic content and event exports
+* Fix bbox filtering in sensitive areas API
+* Add CORS header to sensitive areas API
+* Filter on spatial extent when importing from Biodiv'sport
 
 
 2.17.0 (2018-01-15)

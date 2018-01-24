@@ -51,7 +51,10 @@ class BiodivParser(Parser):
         return kwargs
 
     def next_row(self):
-        response = requests.get(self.url)
+        bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
+        bbox.srid = settings.SRID
+        bbox.transform(4326)  # WGS84
+        response = requests.get(self.url + "&in_bbox={}".format(",".join([str(coord) for coord in bbox.extent])))
         if response.status_code != 200:
             msg = _(u"Failed to download {url}. HTTP status code {status_code}")
             raise GlobalImportError(msg.format(url=response.url, status_code=response.status_code))
