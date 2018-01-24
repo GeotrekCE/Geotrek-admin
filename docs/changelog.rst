@@ -8,6 +8,7 @@ CHANGELOG
 **Minor changes**
 
 * Implantation year on signages and infrastructure is now a filter with current existing values
+* Trek form field 'practice' is moved to first panel
 
 
 **Bug fixes**
