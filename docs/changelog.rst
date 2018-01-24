@@ -5,6 +5,11 @@ CHANGELOG
 2.17.1.dev0
 -----------
 
+**Minor changes**
+
+* Implantation year on signages and infrastructure is now a filter with current existing values
+
+
 **Bug fixes**
 
 * Fix import of sensitive areas when languages lists do not match

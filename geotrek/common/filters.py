@@ -36,6 +36,20 @@ class YearFilter(Filter):
         return qs if year < 0 else self.do_filter(qs, year)
 
 
+class ValueFilter(Filter):
+    def do_filter(self, qs, value):
+        return qs.filter(**{
+            '%s' % self.name: value,
+        }).distinct()
+
+    def filter(self, qs, value):
+        try:
+            new_value = int(value)
+        except (ValueError, TypeError):
+            new_value = -1
+        return qs if new_value < 0 else self.do_filter(qs, new_value)
+
+
 class YearBetweenFilter(YearFilter):
     def __init__(self, *args, **kwargs):
         assert len(kwargs['name']) == 2
