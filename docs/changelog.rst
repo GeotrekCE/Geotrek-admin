@@ -9,6 +9,7 @@ CHANGELOG
 
 * Fix import of sensitive areas when languages lists do not match
 * Fix trail links in project detail view
+* Add 'approved' field in touristic content and event exports
 
 
 2.17.0 (2018-01-15)
