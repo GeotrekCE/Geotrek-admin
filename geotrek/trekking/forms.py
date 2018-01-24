@@ -144,8 +144,13 @@ class TrekForm(BaseTrekForm):
 
     def __init__(self, *args, **kwargs):
         self.fieldslayout = deepcopy(self.base_fieldslayout)
-        self.fieldslayout[0][1][0].append(HTML('<div class="controls">' + _('Insert service:') + ''.join(['<a class="servicetype" data-url="{url}" data-name={name}"><img src="{url}"></a>'.format(url=t.pictogram.url, name=t.name) for t in ServiceType.objects.all()]) + '</div>'))
-
+        self.fieldslayout[0][1][0].append(HTML(
+            u'<div class="controls">{}{}</div>'.format(
+                _(u'Insert service:'),
+                u''.join([u'<a class="servicetype" data-url="{url}" data-name={name}"><img src="{url}"></a>'.format(
+                    url=t.pictogram.url, name=t.name)
+                    for t in ServiceType.objects.all()])))
+        )
         super(TrekForm, self).__init__(*args, **kwargs)
 
         self.fields['web_links'].widget = SelectMultipleWithPop(choices=self.fields['web_links'].choices,
