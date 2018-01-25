@@ -189,6 +189,27 @@
           <div class="advice-content">{{ object.advice | safe }}</div>
         </div>
       {% endif %}
+      {% if object.published_sensitive_areas %}
+        <section class="block sensitive-areas">
+          <h2>{% trans "Environmental sensitive areas" %}</h2>
+          {% blocktrans %}
+            Along your trek, you will go through sensitive areas related to the presence of a specific species or
+            environment. In these areas, an appropriate behaviour allows to contribute to their preservation. For
+            detailed information, specific forms are accessible for each area.
+          {% endblocktrans %}
+          {% for area in object.published_sensitive_areas %}
+            <div class="text-content">
+              {% if area.species.pictogram %}<img src="{{ area.species.pictogram.url }}">{% endif %}
+              <h3>{{ area.species.name }}</h3>
+              <p>{% trans "Sensitivity period:" %} {{ area.pretty_period }}</p>
+              {% if area.contact %}<p>{% trans "Contact:" %} {{ area.contact|safe }}</p>{% endif %}
+              <p>{{ area.description|safe }}</p>
+              {% if area.species.url %}<p><a href="{{ area.specie.url }}">{{ area.specie.url }}</a></p>{% endif %}
+            </div>
+          {% endfor %}
+        </section>
+        <div style="clear: both"></div>
+      {% endif %}
       {% block elevation %}
         {% if object.get_elevation_chart_url %}
           <section class="elevation">
