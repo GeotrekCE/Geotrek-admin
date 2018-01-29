@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-import os
 from django.test import TestCase
 from geotrek.common.tasks import import_datas
 from geotrek.common.models import FileType
