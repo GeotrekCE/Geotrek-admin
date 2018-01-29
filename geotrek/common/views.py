@@ -245,7 +245,7 @@ def import_update_json(request):
             results.append(
                 {
                     'id': task.task_id,
-                    'result': task.result or {'current': 0, 'total': 0},
+                    'result': json_results or {'current': 0, 'total': 0},
                     'status': task.status
                 }
             )
