@@ -15,7 +15,7 @@ from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.views.generic import CreateView, ListView, RedirectView, DetailView, TemplateView
 from django.views.generic.detail import BaseDetailView
-from djcelery.models import TaskMeta
+from django_celery_results.models import TaskResult
 from mapentity.helpers import alphabet_enumeration
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityFormat, MapEntityDetail, MapEntityMapImage,
@@ -31,7 +31,7 @@ from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.trekking.forms import SyncRandoForm
 from geotrek.zoning.models import District, City, RestrictedArea
-from geotrek.celery_conf import app as celery_app
+from geotrek.celery import app as celery_app
 
 from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
@@ -579,10 +579,9 @@ def sync_update_json(request):
     """
     results = []
     threshold = datetime.now() - timedelta(seconds=60)
-    for task in TaskMeta.objects.filter(date_done__gte=threshold, status='PROGRESS'):
-        if (hasattr(task, 'result') and
-                'name' in task.result and
-                task.result.get('name', '').startswith('geotrek.trekking')):
+    for task in TaskResult.objects.filter(date_done__gte=threshold, status='PROGRESS'):
+        json_results = json.loads(task.result)
+        if json_results.get('name', '').startswith('geotrek.trekking'):
             results.append({
                 'id': task.task_id,
                 'result': task.result or {'current': 0,
@@ -604,10 +603,9 @@ def sync_update_json(request):
                     'status': 'PENDING',
                 }
             )
-    for task in TaskMeta.objects.filter(date_done__gte=threshold, status='FAILURE').order_by('-date_done'):
-        if (hasattr(task, 'result') and
-                'name' in task.result and
-                task.result.get('name', '').startswith('geotrek.trekking')):
+    for task in TaskResult.objects.filter(date_done__gte=threshold, status='FAILURE').order_by('-date_done'):
+        json_results = json.loads(task.result)
+        if json_results.get('name', '').startswith('geotrek.trekking'):
             results.append({
                 'id': task.task_id,
                 'result': task.result or {'current': 0,

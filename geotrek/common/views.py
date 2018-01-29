@@ -7,11 +7,12 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.utils import DatabaseError
 from django.http import HttpResponse
 from django.utils.translation import ugettext as _
+from django_celery_results.models import TaskResult
 
 from mapentity.helpers import api_bbox
 from mapentity import views as mapentity_views
 
-from geotrek.celery_conf import app as celery_app
+from geotrek.celery import app as celery_app
 from geotrek.common.utils import sql_extent
 from geotrek import __version__
 
@@ -23,7 +24,6 @@ import os
 import json
 import redis
 from zipfile import ZipFile
-from djcelery.models import TaskMeta
 from datetime import datetime, timedelta
 
 from .utils.import_celery import create_tmp_destination, discover_available_parsers
@@ -238,8 +238,10 @@ def import_view(request):
 def import_update_json(request):
     results = []
     threshold = datetime.now() - timedelta(seconds=60)
-    for task in TaskMeta.objects.filter(date_done__gte=threshold).order_by('date_done'):
-        if hasattr(task, 'result') and task.result.get('name', '').startswith('geotrek.common'):
+
+    for task in TaskResult.objects.filter(date_done__gte=threshold).order_by('date_done'):
+        json_results = json.loads(task.result)
+        if json_results.get('name', '').startswith('geotrek.common'):
             results.append(
                 {
                     'id': task.task_id,

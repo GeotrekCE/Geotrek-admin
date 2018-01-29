@@ -1,25 +1,27 @@
 language: python
+
 dist: precise
+
 python:
   - "2.7"
+
 env:
   - ACTION=test
   - ACTION=deploy
   - ACTION=integration
   - ACTION=codestyle
 
-
 matrix:
   allow_failures:
     - env: ACTION=integration
 
+services:
+  - redis-server
 
 cache:
   - apt
 
-
 before_install:
-
   # Download bundle of python eggs, and use it as download cache
   - mkdir -p $HOME/.buildout/downloads
   - echo -e "[buildout]\ndownload-cache=$HOME/.buildout/downloads" > $HOME/.buildout/default.cfg

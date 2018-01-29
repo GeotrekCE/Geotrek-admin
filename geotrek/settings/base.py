@@ -1,6 +1,5 @@
 import os
 import sys
-import djcelery
 
 from django.contrib.messages import constants as messages
 
@@ -49,6 +48,7 @@ DATABASE_SCHEMAS = {
     'gis': 'public',
     'auth': 'django',
     'django': 'django',
+    'django_celery_results': 'django',
     'easy_thumbnails': 'django',
     'feedback': 'gestion',
     'infrastructure': 'gestion',
@@ -267,7 +267,7 @@ PROJECT_APPS += (
     'rest_framework_gis',
     'rest_framework_swagger',
     'embed_video',
-    'geotrek.appconfig.CeleryGeotrekConfig',  # djcelery
+    'geotrek.appconfig.CeleryGeotrekConfig',  # django_celery_results
 )
 
 
@@ -577,18 +577,6 @@ MOBILE_TILES_RADIUS_SMALL = 0.005  # ~500 m
 MOBILE_TILES_GLOBAL_ZOOMS = range(13)
 MOBILE_TILES_LOW_ZOOMS = range(13, 15)
 MOBILE_TILES_HIGH_ZOOMS = range(15, 17)
-
-djcelery.setup_loader()
-
-CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
-BROKER_URL = 'redis://127.0.0.1:6379/0'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TASK_RESULT_EXPIRES = 5
-CELERYD_TASK_TIME_LIMIT = 10800
-CELERYD_TASK_SOFT_TIME_LIMIT = 21600
-TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'
 
 TINYMCE_DEFAULT_CONFIG = {
     'convert_urls': False,
