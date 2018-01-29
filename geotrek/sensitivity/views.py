@@ -127,8 +127,7 @@ class TrekSensitiveAreaViewSet(viewsets.ModelViewSet):
             raise Http404
         if not trek.is_public:
             raise Http404
-        qs = trek.sensitive_areas
-        qs = qs.filter(published=True)
+        qs = trek.published_sensitive_areas
         qs = qs.prefetch_related('species')
         qs = qs.annotate(geom_type=GeometryType(F('geom')))
         qs = qs.annotate(geom2d_transformed=Case(
