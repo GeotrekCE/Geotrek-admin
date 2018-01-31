@@ -14,6 +14,7 @@ CHANGELOG
 
 **Bug fixes**
 
+* Fix snapping
 * Fix import of sensitive areas when languages lists do not match
 * Fix trail links in project detail view
 * Add 'approved' field in touristic content and event exports

@@ -43,7 +43,7 @@
         bubbleGeometryField = MapEntity.GeometryField.extend({
             load: function() {
                 self = this;
-                this._map.on(L.Draw.Event.CREATED, function (e) {
+                this._map.on('draw:created', function (e) {
                     if (e.layer.setRadius) {
                         e.layer.setRadius(sensitiveareaCurrentRadius);
                     }
