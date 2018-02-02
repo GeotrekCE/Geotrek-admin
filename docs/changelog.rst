@@ -2,17 +2,16 @@
 CHANGELOG
 =========
 
-2.17.1.dev0
------------
+2.17.1 (2018-02-02)
+-------------------
 
 **Minor changes**
 
 * Implantation year on signages and infrastructures is now a filter with current existing values
 * Trek form field 'practice' is moved to first panel
 * Add sensitive areas to public trek PDF
-* Add SENSITIVE_AREA_INTERSECTION_MARGIN setting
 * Do not show paths on PDF
-* Show sensitive areas on PDF
+* Add SENSITIVE_AREA_INTERSECTION_MARGIN setting
 
 **Bug fixes**
 
