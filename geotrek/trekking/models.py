@@ -6,7 +6,7 @@ from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.template.defaultfilters import slugify
-from django.utils.translation import get_language, ugettext_lazy as _
+from django.utils.translation import get_language, ugettext, ugettext_lazy as _
 
 import simplekml
 from mapentity.models import MapEntityMixin
@@ -417,6 +417,15 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     @property
     def meta_description(self):
         return plain_text(self.ambiance or self.description_teaser or self.description)[:500]
+
+    def get_printcontext(self):
+        return {
+            "maplayers": [
+                ugettext(u"Sensitive area"),
+                ugettext(u"POIs"),
+                ugettext(u"services"),
+                settings.LEAFLET_CONFIG['TILES'][0][0],
+            ]}
 
 
 Path.add_property('treks', Trek.path_treks, _(u"Treks"))

@@ -11,6 +11,8 @@ CHANGELOG
 * Trek form field 'practice' is moved to first panel
 * Add sensitive areas to public trek PDF
 * Add SENSITIVE_AREA_INTERSECTION_MARGIN setting
+* Do not show paths on PDF
+* Show sensitive areas on PDF
 
 **Bug fixes**
 
