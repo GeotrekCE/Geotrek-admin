@@ -41,22 +41,14 @@ class ViewsImportTest(TestCase):
     def test_import_form_access(self):
         url = reverse('common:import_dataset')
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
-        self.user.is_superuser = True
-        self.user.save()
-        response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_import_update_access(self):
         url = reverse('common:import_update_json')
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
-        self.user.is_superuser = True
-        self.user.save()
-        response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-    def test_import_form_file_good_file(self):
+    def test_import_from_file_good_file(self):
         self.user.is_superuser = True
         self.user.save()
 
@@ -72,7 +64,7 @@ class ViewsImportTest(TestCase):
         )
         self.assertEqual(response_real.status_code, 200)
 
-    def test_import_form_file_bad_file(self):
+    def test_import_from_file_bad_file(self):
         self.user.is_superuser = True
         self.user.save()
 

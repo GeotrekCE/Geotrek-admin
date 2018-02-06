@@ -5,9 +5,9 @@ CHANGELOG
 2.17.2.dev0
 -----------
 
-**Bug fixes**
+**Minor changes**
 
-*
+* Add permission to import sensitive areas
 
 
 2.17.1 (2018-02-02)
