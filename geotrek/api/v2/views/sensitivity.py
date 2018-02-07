@@ -49,3 +49,23 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekViewset):
         response = super(SensitiveAreaViewSet, self).list(request, *args, **kwargs)
         response['Access-Control-Allow-Origin'] = '*'
         return response
+
+
+class SportPracticeViewSet(api_viewsets.GeotrekViewset):
+    filter_backends = (
+        DjangoFilterBackend,
+        GeotrekQueryParamsFilter,
+    )
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = api_serializers.SportPracticeListSerializer
+    serializer_detail_class = api_serializers.SportPracticeListSerializer
+    authentication_classes = []
+
+    def get_queryset(self):
+        queryset = sensitivity_models.SportPractice.objects.all()
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        response = super(SportPracticeViewSet, self).list(request, *args, **kwargs)
+        response['Access-Control-Allow-Origin'] = '*'
+        return response

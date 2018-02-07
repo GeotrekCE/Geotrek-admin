@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-*
+* Use id rather than french name for practices and structure in sensitive areas API
 
 
 2.17.1 (2018-02-02)
