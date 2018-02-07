@@ -34,6 +34,7 @@
             ["change_sensitivearea", "sensitivity", "sensitivearea"],
             ["delete_sensitivearea", "sensitivity", "sensitivearea"],
             ["read_sensitivearea", "sensitivity", "sensitivearea"],
+            ["import_sensitivearea", "sensitivity", "sensitivearea"],
             ["export_sensitivearea", "sensitivity", "sensitivearea"]
         ]
     },

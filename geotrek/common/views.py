@@ -188,7 +188,6 @@ def import_file(uploaded, parser):
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
 def import_view(request):
     """
     Gets the existing declared parsers for the current project.
@@ -198,7 +197,7 @@ def import_view(request):
     choices_url = []
     render_dict = {}
 
-    choices, choices_url, classes = discover_available_parsers()
+    choices, choices_url, classes = discover_available_parsers(request.user)
 
     form = ImportDatasetFormWithFile(choices, prefix="with-file")
     form_without_file = ImportDatasetForm(
@@ -212,6 +211,9 @@ def import_view(request):
             if form.is_valid():
                 uploaded = request.FILES['with-file-zipfile']
                 parser = classes[int(form['parser'].value())]
+                codename = '{}.import_{}'.format(parser.model._meta.app_label, parser.model._meta.model_name)
+                if not request.user.is_superuser and not request.user.has_perm(codename):
+                    raise PermissionDenied
                 import_file(uploaded, parser)
 
         if 'import-web' in request.POST:
@@ -220,6 +222,9 @@ def import_view(request):
 
             if form_without_file.is_valid():
                 parser = classes[int(form_without_file['parser'].value())]
+                codename = '{}.import_{}'.format(parser.model._meta.app_label, parser.model._meta.model_name)
+                if not request.user.is_superuser and not request.user.has_perm(codename):
+                    raise PermissionDenied
                 import_datas_from_web.delay(
                     parser.__name__, parser.__module__
                 )
@@ -234,7 +239,6 @@ def import_view(request):
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
 def import_update_json(request):
     results = []
     threshold = datetime.now() - timedelta(seconds=60)

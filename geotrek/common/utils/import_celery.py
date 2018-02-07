@@ -27,7 +27,7 @@ def create_tmp_destination(name):
     return save_dir, '/'.join((save_dir, name))
 
 
-def discover_available_parsers():
+def discover_available_parsers(user):
     choices = []
     choices_url = []
     try:
@@ -38,7 +38,10 @@ def discover_available_parsers():
     classes = subclasses(Parser)
     for index, cls in enumerate(classes):
         if cls.__module__.startswith('bulkimport') or cls.__module__.startswith('geotrek'):
-            if cls.label is None:
+            if not cls.label or not cls.model:
+                continue
+            codename = '{}.import_{}'.format(cls.model._meta.app_label, cls.model._meta.model_name)
+            if not user.is_superuser and not user.has_perm(codename):
                 continue
             if not getattr(cls, 'url', None) and not getattr(cls, 'base_url', None):
                 choices.append((index, cls.label))

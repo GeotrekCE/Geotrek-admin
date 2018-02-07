@@ -96,6 +96,9 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
         db_table = 's_t_zone_sensible'
         verbose_name = _(u"Sensitive area")
         verbose_name_plural = _(u"Sensitive areas")
+        permissions = (
+            ("import_sensitivearea", "Can import Sensitive area"),
+        )
 
     def __unicode__(self):
         return self.species.name

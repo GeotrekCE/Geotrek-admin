@@ -5,9 +5,10 @@ CHANGELOG
 2.17.2.dev0
 -----------
 
-**Bug fixes**
+**Minor changes**
 
 * Use id rather than french name for practices and structure in sensitive areas API
+* Add permission to import sensitive areas
 
 
 2.17.1 (2018-02-02)
