@@ -117,7 +117,7 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
         qs = queryset
         practices = request.GET.get('practices', '')
         if practices:
-            qs = qs.filter(species__practices_id__in=practices.split(','))
+            qs = qs.filter(species__practices__id__in=practices.split(','))
         structure = request.GET.get('structure', '')
         if structure:
             qs = qs.filter(structure_id=structure)

@@ -8,13 +8,15 @@ CHANGELOG
 **Minor changes**
 
 * Show total path length in path list
-* Order sensitive areas by decreasing area in API
 * Allow user with can_bypass_structure permission to set or update the related
   structure on sensitive areas
 
 **Bug fixes**
 
 * Fix geojson format in sensitive areas API
+* Fix filtering by practices in sensitive areas API
+* Adapt BiodivParser to API modifications
+* Order sensitive areas by decreasing area in API to be able to clic on each of them
 
 
 2.17.2 (2018-02-07)
