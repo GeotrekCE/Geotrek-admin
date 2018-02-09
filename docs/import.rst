@@ -1,6 +1,6 @@
-===============
-IMPORT FROM SIT
-===============
+===========
+IMPORT DATA
+===========
 
 
 Configure APIDAE (ex-SITRA) import
@@ -79,6 +79,23 @@ If you use an url that filters a unique category, you can change its name. Examp
         }
 
 URL to get Esprit parc types: `http://gestion.espritparcnational.com/ws/?f=getTypologieProduits`.
+
+Sensitive areas import
+----------------------
+
+When sensitive areas module is enabled, Geotrek provides 3 parsers to import data:
+
+* Import sensitive areas from http://biodiv-sports.fr (`geotrek.sensitivity.parsers.BiodivParser`). By default this
+  parser imports all sensitive areas in configured spatial extent.
+* Import species sensitive areas from a ziped shapefile. Imported field names are: `espece` (required), `contact`
+  and `descriptio`.
+  Species with corresponding names have to be created manually before import.
+* Import regulatory sensitive areas from a ziped shapefile. Imported field names are: `nom` (required), `contact`,
+  `descriptio`, `periode` (month numbers separated with comas), `pratiques` (separated with comas), and `url`.
+  Practices with corresponding names have to be created manually before import.
+
+You can start imports from "Import" menu or from command line. You can override them in your `bulkimport/parsers.py`
+file.
 
 Start import from command line
 ------------------------------

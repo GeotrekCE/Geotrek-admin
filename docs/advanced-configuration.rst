@@ -64,7 +64,7 @@ In order to remove zoning combo-boxes on list map:
     Never forget to mention this customization if you ask for community support.
 
 
-Enable sensitive areas
+Sensitive areas
 ----------------------
 
 
@@ -75,6 +75,16 @@ add the following code:
 
     # Enable sensitivity module
     INSTALLED_APPS += ('geotrek.sensitivity', )
+
+The following settings are related to sensitive areas:
+
+.. code-block :: python
+
+    # Default radius of sensitivity bubbles when not specified for species
+    SENSITIVITY_DEFAULT_RADIUS = 100  # meters
+
+    # Buffer around treks to intersects sensitive areas
+    SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters
 
 
 

@@ -117,10 +117,10 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
         qs = queryset
         practices = request.GET.get('practices', '')
         if practices:
-            qs = qs.filter(species__practices__name__in=practices.split(','))
+            qs = qs.filter(species__practices_id__in=practices.split(','))
         structure = request.GET.get('structure', '')
         if structure:
-            qs = qs.filter(structure__name=structure)
+            qs = qs.filter(structure_id=structure)
         period = request.GET.get('period', '')
         if not period:
             qs = qs.filter(**{'species__period{:02}'.format(date.today().month): True})
@@ -138,9 +138,9 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
                              description=_('Period of occupancy. Month numbers (1-12) separated by comas. any = occupied at any time in the year. ignore = occupied or not.'),
                              example=u'7,8 for july and august')
         field_practices = Field(name='practices', required=False,
-                                description=_('Practices names separated by comas.'),
-                                example=u'Terrestre,Vertical')
+                                description=_('Practices ids separated by comas.'),
+                                example=u'1,3')
         field_structure = Field(name='structure', required=False,
-                                description=_('Structure name.'),
-                                example=u'PNM')
+                                description=_('Structure id.'),
+                                example=u'5')
         return field_period, field_practices, field_structure

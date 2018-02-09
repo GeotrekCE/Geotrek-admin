@@ -2,17 +2,37 @@
 CHANGELOG
 =========
 
-2.17.1.dev0
+2.17.3.dev0
 -----------
+
+**Bug fixes**
+
+*
+
+
+2.17.2 (2018-02-07)
+-------------------
+
+**Minor changes**
+
+* Use id rather than french name for practices and structure in sensitive areas API
+* Add permission to import sensitive areas
+
+
+2.17.1 (2018-02-02)
+-------------------
 
 **Minor changes**
 
 * Implantation year on signages and infrastructures is now a filter with current existing values
 * Trek form field 'practice' is moved to first panel
 * Add sensitive areas to public trek PDF
+* Do not show paths on PDF
+* Add SENSITIVE_AREA_INTERSECTION_MARGIN setting
 
 **Bug fixes**
 
+* Fix snapping
 * Fix import of sensitive areas when languages lists do not match
 * Fix trail links in project detail view
 * Add 'approved' field in touristic content and event exports

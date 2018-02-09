@@ -12,6 +12,7 @@ from rest_framework_gis import serializers as geo_serializers
 from geotrek.api.v2.functions import Transform, Length, Length3D
 from geotrek.api.v2.utils import get_translation_or_dict
 from geotrek.common import models as common_models
+from geotrek.authent import models as authent_models
 from geotrek.core import models as core_models
 from geotrek.tourism import models as tourism_models
 from geotrek.trekking import models as trekking_models
@@ -380,7 +381,7 @@ class SensitiveAreaListSerializer(DynamicFieldsMixin, serializers.ModelSerialize
         return [getattr(obj.species, 'period{:02}'.format(p)) for p in range(1, 13)]
 
     def get_practices(self, obj):
-        return [practice.name for practice in obj.species.practices.all()]
+        return obj.species.practices.values_list('id', flat=True)
 
     def get_geometry(self, obj):
         return obj.geom2d_transformed
@@ -415,3 +416,24 @@ class BubbleSensitiveAreaListSerializer(SensitiveAreaListSerializer):
     class Meta:
         model = SensitiveAreaListSerializer.Meta.model
         fields = SensitiveAreaListSerializer.Meta.fields + ('radius', )
+
+
+class SportPracticeListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    name = serializers.SerializerMethodField(read_only=True)
+
+    def get_name(self, obj):
+        return get_translation_or_dict('name', self, obj)
+
+    class Meta:
+        model = sensitivity_models.SportPractice
+        fields = (
+            'id', 'name'
+        )
+
+
+class StructureSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    class Meta:
+        model = authent_models.Structure
+        fields = (
+            'id', 'name'
+        )

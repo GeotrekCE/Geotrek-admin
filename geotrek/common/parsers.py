@@ -48,6 +48,7 @@ class ValueImportError(ImportError):
 
 class Parser(object):
     label = None
+    model = None
     filename = None
     url = None
     simplify_tolerance = 0  # meters
