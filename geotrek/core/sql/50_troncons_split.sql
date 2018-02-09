@@ -145,19 +145,19 @@ BEGIN
         IF ST_DWITHIN(ST_STARTPOINT(NEW.geom), troncon.geom, 0)
         THEN
             intersections_on_current := array_append(intersections_on_current,
-                                                 ST_Line_Locate_Point(troncon.geom,
+                                                 ST_LineLocatePoint(troncon.geom,
                                                                       ST_CLOSESTPOINT(troncon.geom, ST_STARTPOINT(NEW.geom))));
         END IF;
 
         IF ST_DWITHIN(ST_ENDPOINT(NEW.geom), troncon.geom, 0)
         THEN
             intersections_on_current := array_append(intersections_on_current,
-                                                 ST_Line_Locate_Point(troncon.geom,
+                                                 ST_LineLocatePoint(troncon.geom,
                                                                       ST_CLOSESTPOINT(troncon.geom, ST_ENDPOINT(NEW.geom))));
 
         END IF;
         RAISE NOTICE 'EEE : %', array_to_string(intersections_on_current, ', ');
-        FOR fraction IN SELECT ST_Line_Locate_Point(troncon.geom, (ST_Dump(ST_Intersection(troncon.geom, NEW.geom))).geom)
+        FOR fraction IN SELECT ST_LineLocatePoint(troncon.geom, (ST_Dump(ST_Intersection(troncon.geom, NEW.geom))).geom)
         LOOP
             intersections_on_current := array_append(intersections_on_current, fraction);
         END LOOP;
@@ -187,7 +187,7 @@ BEGIN
                 a := intersections_on_new[i];
                 b := intersections_on_new[i+1];
 
-                segment := ST_Line_Substring(newgeom, a, b);
+                segment := ST_LineSubstring(newgeom, a, b);
 
                 IF coalesce(ST_Length(segment), 0) < 1 THEN
                      intersections_on_new[i+1] := a;
@@ -260,7 +260,7 @@ BEGIN
                 a := intersections_on_current[i];
                 b := intersections_on_current[i+1];
 
-                segment := ST_Line_Substring(troncon.geom, a, b);
+                segment := ST_LineSubstring(troncon.geom, a, b);
 
                 IF coalesce(ST_Length(segment), 0) < 1 THEN
                      intersections_on_new[i+1] := a;
@@ -346,7 +346,7 @@ BEGIN
                         -- Special case : point topology at the end of path
                         IF b = 1 THEN
                             SELECT geom INTO t_geom FROM l_t_troncon WHERE id = troncon.id;
-                            fraction := ST_Line_Locate_Point(segment, ST_EndPoint(troncon.geom));
+                            fraction := ST_LineLocatePoint(segment, ST_EndPoint(troncon.geom));
                             INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
                                 SELECT tid_clone, evenement, pk_debut, pk_fin
                                 FROM e_r_evenement_troncon et,
@@ -363,7 +363,7 @@ BEGIN
                         END IF;
                         -- Special case : point topology exactly where NEW path intersects
                         IF a > 0 THEN
-                            fraction := ST_Line_Locate_Point(NEW.geom, ST_Line_Interpolate_Point(troncon.geom, a));
+                            fraction := ST_LineLocatePoint(NEW.geom, ST_LineInterpolatePoint(troncon.geom, a));
                             INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin, ordre)
                                 SELECT NEW.id, et.evenement, fraction, fraction, ordre
                                 FROM e_r_evenement_troncon et,
