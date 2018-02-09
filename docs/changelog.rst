@@ -20,6 +20,7 @@ CHANGELOG
 * Fix bbox filtering in sensitive areas API
 * Add CORS header to sensitive areas API
 * Filter on spatial extent when importing from Biodiv'sport
+* Fix celery task runner version
 
 
 2.17.0 (2018-01-15)
