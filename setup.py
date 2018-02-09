@@ -35,8 +35,9 @@ setup(
         'django-embed-video',
         'xlrd',
         'landez',
-        'django-celery',
         'redis',
+        'celery',
+        'django-celery-results',
         'requests[security]',
         'drf-extensions'
     ],

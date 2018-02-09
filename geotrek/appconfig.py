@@ -4,6 +4,7 @@ from django.contrib.auth.apps import AuthConfig
 from django.contrib.contenttypes.apps import ContentTypesConfig
 from django.contrib.sessions.apps import SessionsConfig
 from django.db.models.signals import post_migrate, pre_migrate
+from django_celery_results.apps import CeleryResultConfig
 
 from geotrek.common.utils.signals import pm_callback, check_srid_has_meter_unit
 
@@ -44,9 +45,8 @@ class AdminGeotrekConfig(AdminConfig, GeotrekConfig):
     pass
 
 
-class CeleryGeotrekConfig(GeotrekConfig):
-    name = 'djcelery'
-    verbose_name = 'Django Celery'
+class CeleryGeotrekConfig(GeotrekConfig, CeleryResultConfig):
+    pass
 
 
 class EasyThumbnailsGeotrekConfig(GeotrekConfig):
