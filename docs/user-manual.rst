@@ -7,31 +7,31 @@ Screencasts
 
 ( **In French** )
 
-* `Présentation de l'interface  <http://youtu.be/-iVe9cwBZ50>`_
+* `Présentation de l'interface  <http://youtu.be/-iVe9cwBZ50>`_ :
 
 .. raw:: html
 
     <iframe width="560" height="315" src="https://www.youtube.com/embed/-iVe9cwBZ50?rel=0" frameborder="0" allowfullscreen></iframe>
 
-* `Création d'un itinéraire <http://youtu.be/d37WixqDs6c>`_
+* `Création d'un itinéraire <http://youtu.be/d37WixqDs6c>`_ :
 
 .. raw:: html
 
     <iframe width="560" height="315" src="https://www.youtube.com/embed/d37WixqDs6c?rel=0" frameborder="0" allowfullscreen></iframe>
 
-* `Création d'un POI <http://youtu.be/PRY8y7y8WxM>`_
+* `Création d'un POI <http://youtu.be/PRY8y7y8WxM>`_ :
 
 .. raw:: html
 
     <iframe width="560" height="315" src="https://www.youtube.com/embed/PRY8y7y8WxM?rel=0" frameborder="0" allowfullscreen></iframe>
 
-* `Ajout de photos <http://youtu.be/n96O09284ao>`_
+* `Ajout de photos <http://youtu.be/n96O09284ao>`_ :
 
 .. raw:: html
 
     <iframe width="560" height="315" src="https://www.youtube.com/embed/n96O09284ao?rel=0" frameborder="0" allowfullscreen></iframe>
 
-* `Administration <http://youtu.be/P106bQCRZKk>`_
+* `Administration <http://youtu.be/P106bQCRZKk>`_ :
 
 .. raw:: html
 
@@ -126,6 +126,48 @@ Pour cela il faut créer un itinéraire parent (séjour itinérant complet) puis
 Le séjour complet ainsi que chaque sont donc chacunes des randonnées comme les autres. La seule différence est que les étapes (itinéraires enfants) sont rattachées à l'itinéraire parent.
 
 Si vous ne souhaitez pas que les étapes soient affichées dans la page de Recherche de Geotrek-rando, il ne faut pas les publier. Il suffit alors de publier l'itinéraire parent, pour que toutes les étapes qui y sont rattachées apparaissent uniquement dans sa fiche détail de Geotrek-rando. 
+
+Gestion des sentiers
+--------------------
+
+Geotrek-admin comporte un certain nombre de modules de gestion des sentiers (tronçons, sentiers, statuts, aménagements, signalétique, interventions et chantiers).
+
+Les tronçons sont les éléments de base sur lesquels s'appuient l'ensemble des objets des autres modules, en utilisant la segmentation dynamique (https://makina-corpus.com/blog/metier/2014/la-segmentation-dynamique).
+
+**Les tronçons** :
+
+C'est le socle essentiel et central de Geotrek. Un tronçon est un objet linéaire, entre 2 intersections. Le mécanisme de ségmentation dynamique permet de ne pas devoir le recouper pour y rattacher des informations.
+
+Il peuvent être numérisés dans Geotrek-admin, mais il est conseillé des les importer, directement en SQL dans la base de données ou depuis QGIS (https://makina-corpus.com/blog/metier/2014/importer-une-couche-de-troncons-dans-geotrek).
+
+Si ils sont numérisés directement dans Geotrek-admin, il est possible d'afficher sur la carte un fichier GPX ou GeoJSON pour faciliter leur localisation.
+
+Quand un nouveau tronçon intersecte un tronçon existant, ce dernier est découpé automatiquement à la nouvelle intersection. 
+
+En plus de leur géométrie, quelques informations peuvent être associées à chaque tronçon (nom, départ, arrivée, confort, source, enjeu d'entretien, usage et réseaux). 
+
+Comme pour les autres objets, les informations altimétriques sont calculées automatiquement grace au MNT présent dans la base de données. 
+
+Idem pour les intersections automatiques avec les zonages (communes, secteurs, zonages réglementaires) et les objets des autres modules qui sont intersectés automatiquement.
+
++ Export fiche et export liste
+
++ Fichiers attachés
+
++ Historique
+
+**Les sentiers** :
+
+**Les statuts** :
+
+**Les aménagements** :
+
+**La signalétique** :
+
+**Les interventions** :
+
+**Les chantiers** :
+
 
 Pages statiques
 ---------------
