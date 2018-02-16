@@ -31,7 +31,7 @@ Make sure you are in the user folder :
     cd /home/mylinuxuser
 
 Download the latest version of Geotrek-admin with the following commands (X.Y.Z to replace 
-with the latest stable version number : https://github.com/GeotrekCE/Geotrekadmin/releases) :
+with the latest stable version number : https://github.com/GeotrekCE/Geotrek-admin/releases) :
 
 ::
 
