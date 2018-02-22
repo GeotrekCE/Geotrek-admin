@@ -22,7 +22,7 @@ Installation
 ------------
 
 Once the OS is installed (basic installation, with OpenSSH server), log in with your linux user (not root). 
-You will also need unzip (``sudo apt-get install unzip``).
+You will also need unzip and wget (``sudo apt-get install unzip wget``).
 
 Make sure you are in the user folder :
 
@@ -149,7 +149,7 @@ Backup settings, media files and database on the old server:
 
     cd Geotrek
     sudo -u postgres pg_dump -Fc geotrekdb > geotrekdb.backup
-    tar cvzf data.tgz geotrekdb.backup var/static/ var/media/paperclip/ var/media/upload/ etc/settings.ini geotrek/settings/custom.py
+    tar cvzf data.tgz geotrekdb.backup bulkimport/parsers.py var/static/ var/media/paperclip/ var/media/upload/ var/media/templates/ etc/settings.ini geotrek/settings/custom.py
 
 Get and unzip Geotrek sources on the new server:
 
