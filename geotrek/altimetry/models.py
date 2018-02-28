@@ -32,7 +32,7 @@ class AltimetryMixin(models.Model):
 
     @property
     def length_display(self):
-        return round(self.length,2)
+        return round(self.length, 2)
 
     def reload(self, fromdb=None):
         """Reload fields computed at DB-level (triggers)
