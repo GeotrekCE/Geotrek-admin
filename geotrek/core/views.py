@@ -114,7 +114,7 @@ class PathList(MapEntityList):
 class PathJsonList(MapEntityJsonList, PathList):
     def get_context_data(self, **kwargs):
         context = super(PathJsonList, self).get_context_data(**kwargs)
-        context["sumPath"] = round(self.object_list.aggregate(sumPath=Coalesce(Sum(Length('geom'), output_field = FloatField()), 0))['sumPath'] / 1000, 1)
+        context["sumPath"] = round(self.object_list.aggregate(sumPath=Coalesce(Sum(Length('geom'), output_field=FloatField()), 0))['sumPath'] / 1000, 1)
         return context
 
 
