@@ -29,6 +29,10 @@ from .filters import PathFilterSet, TrailFilterSet
 from . import graph as graph_lib
 from django.http.response import HttpResponse
 from django.contrib import messages
+from django.db.models import Sum
+from django.db.models.functions import Coalesce
+from geotrek.api.v2.functions import Length
+from django.db.models.fields import FloatField
 
 
 logger = logging.getLogger(__name__)
@@ -92,7 +96,6 @@ class PathList(MapEntityList):
         denormalize ``trail`` column from list.
         """
         qs = super(PathList, self).get_queryset()
-
         denormalized = {}
         if settings.TRAIL_MODEL_ENABLED:
             paths_id = qs.values_list('id', flat=True)
@@ -105,11 +108,14 @@ class PathList(MapEntityList):
         for path in qs:
             path_trails = denormalized.get(path.id, [])
             setattr(path, '_trails', path_trails)
-            yield path
+        return qs
 
 
 class PathJsonList(MapEntityJsonList, PathList):
-    pass
+    def get_context_data(self, **kwargs):
+        context = super(PathJsonList, self).get_context_data(**kwargs)
+        context["sumPath"] = round(self.object_list.aggregate(sumPath=Coalesce(Sum(Length('geom'),output_field=FloatField()), 0))['sumPath']/1000,1)
+        return context
 
 
 class PathFormatList(MapEntityFormat, PathList):
