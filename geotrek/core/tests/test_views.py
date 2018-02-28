@@ -104,6 +104,20 @@ class PathViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
+    def test_sum_path_zero(self):
+        self.login()
+        response = self.client.get('/api/path/paths.json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content)['sumPath'], 0.0)
+
+    def test_sum_path_two(self):
+        self.login()
+        PathFactory()
+        PathFactory()
+        response = self.client.get('/api/path/paths.json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content)['sumPath'], 0.3)
+
 
 class DenormalizedTrailTest(AuthentFixturesTest):
     def setUp(self):
