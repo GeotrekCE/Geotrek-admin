@@ -3,7 +3,6 @@ import os
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils.translation import get_language, ugettext_lazy as _
-from django.template.defaultfilters import floatformat
 
 from mapentity.helpers import is_file_newer, convertit_download, smart_urljoin
 from .helpers import AltimetryHelper
