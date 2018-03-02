@@ -6,7 +6,7 @@ import os
 import re
 from django.conf import settings
 from django.db import connection, models
-from django.db.models import get_app, get_models
+from django.apps import apps
 
 logger = logging.getLogger(__name__)
 
@@ -54,13 +54,13 @@ def debug_pg_notices(f):
     return wrapped
 
 
-def load_sql_files(app_label):
+def load_sql_files(app):
     """
     Look for SQL files in Django app, and load them into database.
     We remove RAISE NOTICE instructions from SQL outside unit testing
     since they lead to interpolation errors of '%' character in python.
     """
-    app_dir = os.path.dirname(models.get_app(app_label).__file__)
+    app_dir = app.path
     sql_dir = os.path.normpath(os.path.join(app_dir, 'sql'))
     if not os.path.exists(sql_dir):
         logger.debug("No SQL folder for %s" % app_label)
@@ -101,18 +101,17 @@ def load_sql_files(app_label):
             raise
 
 
-def move_models_to_schemas(app_label):
+def move_models_to_schemas(app):
     """
     Move models tables to PostgreSQL schemas.
 
     Views, functions and triggers will be moved in Geotrek app SQL files.
     """
-    app = get_app(app_label)
     default_schema = settings.DATABASE_SCHEMAS.get('default')
-    app_schema = settings.DATABASE_SCHEMAS.get(app_label, default_schema)
+    app_schema = settings.DATABASE_SCHEMAS.get(app, default_schema)
 
     table_schemas = {}
-    for model in get_models(app):
+    for model in apps.get_models(app):
         model_name = model._meta.model_name
         table_name = model._meta.db_table
         model_schema = settings.DATABASE_SCHEMAS.get(model_name, app_schema)
