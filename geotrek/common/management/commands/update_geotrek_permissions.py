@@ -1,7 +1,7 @@
 import logging
 
 from django.conf import settings
-from django.utils.importlib import import_module
+from importlib import import_module
 from django.apps import apps
 from django.contrib.auth.management import create_permissions
 from django.contrib.auth.models import Permission
