@@ -9,8 +9,8 @@ def pm_callback(sender, **kwargs):
     """
     Post Migrate callbghack Re/load sql files and move models to schemas
     """
-    load_sql_files(sender.label)
-    move_models_to_schemas(sender.label)
+    load_sql_files(sender)
+    move_models_to_schemas(sender)
 
 
 def check_srid_has_meter_unit(sender, **kwargs):
