@@ -195,7 +195,6 @@ TEMPLATES = [
             'loaders': [
                 'django.template.loaders.filesystem.Loader',
                 'django.template.loaders.app_directories.Loader',
-                'geotrek.templateloaders.Loader',
                 # 'django.template.loaders.eggs.Loader',
             ],
             'debug': True,
