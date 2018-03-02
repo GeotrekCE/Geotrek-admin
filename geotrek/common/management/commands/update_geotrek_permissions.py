@@ -8,7 +8,7 @@ from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand
 
-from mapentity import registry
+from mapentity.registry import registry
 from mapentity.middleware import clear_internal_user_cache
 from mapentity.registry import create_mapentity_model_permissions
 

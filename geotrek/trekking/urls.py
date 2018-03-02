@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 
-from mapentity import registry
+from mapentity.registry import registry
 
 from geotrek.altimetry.urls import AltimetryEntityOptions
 from geotrek.common.urls import PublishableEntityOptions

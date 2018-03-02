@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from mapentity import registry
+from mapentity.registry import registry
 
 from geotrek.common.urls import PublishableEntityOptions
 

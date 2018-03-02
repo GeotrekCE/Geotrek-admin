@@ -13,7 +13,7 @@ from django.utils.translation import ugettext as _
 from django.core.cache import get_cache
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
-from mapentity import registry
+from mapentity.registry import registry
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityFormat,
