@@ -16,7 +16,9 @@ from geotrek.authent import models as authent_models
 from geotrek.core import models as core_models
 from geotrek.tourism import models as tourism_models
 from geotrek.trekking import models as trekking_models
-from geotrek.sensitivity import models as sensitivity_models
+
+if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+    from geotrek.sensitivity import models as sensitivity_models
 
 
 class Base3DSerializer(object):
@@ -356,79 +358,79 @@ class POIDetailSerializer(POIListSerializer):
     class Meta(POIListSerializer.Meta):
         fields = tuple((field for field in POIListSerializer.Meta.fields if field != 'url')) + ('pictures',)
 
+if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+    class SensitiveAreaListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        url = HyperlinkedIdentityField(view_name='apiv2:sensitivearea-detail')
+        name = serializers.SerializerMethodField(read_only=True)
+        description = serializers.SerializerMethodField(read_only=True)
+        period = serializers.SerializerMethodField(read_only=True)
+        practices = serializers.SerializerMethodField(read_only=True)
+        info_url = serializers.URLField(source='species.url')
+        structure = serializers.CharField(source='structure.name')
+        create_datetime = serializers.DateTimeField(source='date_insert')
+        update_datetime = serializers.DateTimeField(source='date_update')
+        geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
+        species_id = serializers.SerializerMethodField(read_only=True)
+        kml_url = serializers.SerializerMethodField(read_only=True)
 
-class SensitiveAreaListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    url = HyperlinkedIdentityField(view_name='apiv2:sensitivearea-detail')
-    name = serializers.SerializerMethodField(read_only=True)
-    description = serializers.SerializerMethodField(read_only=True)
-    period = serializers.SerializerMethodField(read_only=True)
-    practices = serializers.SerializerMethodField(read_only=True)
-    info_url = serializers.URLField(source='species.url')
-    structure = serializers.CharField(source='structure.name')
-    create_datetime = serializers.DateTimeField(source='date_insert')
-    update_datetime = serializers.DateTimeField(source='date_update')
-    geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
-    species_id = serializers.SerializerMethodField(read_only=True)
-    kml_url = serializers.SerializerMethodField(read_only=True)
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj.species)
 
-    def get_name(self, obj):
-        return get_translation_or_dict('name', self, obj.species)
+        def get_description(self, obj):
+            return get_translation_or_dict('description', self, obj)
 
-    def get_description(self, obj):
-        return get_translation_or_dict('description', self, obj)
+        def get_period(self, obj):
+            return [getattr(obj.species, 'period{:02}'.format(p)) for p in range(1, 13)]
 
-    def get_period(self, obj):
-        return [getattr(obj.species, 'period{:02}'.format(p)) for p in range(1, 13)]
+        def get_practices(self, obj):
+            return obj.species.practices.values_list('id', flat=True)
 
-    def get_practices(self, obj):
-        return obj.species.practices.values_list('id', flat=True)
+        def get_geometry(self, obj):
+            return obj.geom2d_transformed
 
-    def get_geometry(self, obj):
-        return obj.geom2d_transformed
-
-    def get_species_id(self, obj):
-        if obj.species.category == sensitivity_models.Species.SPECIES:
-            return obj.species.id
-        return None
-
-    def get_kml_url(self, obj):
-        url = reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
-        return self.context['request'].build_absolute_uri(url)
-
-    class Meta:
-        model = sensitivity_models.SensitiveArea
-        fields = (
-            'id', 'url', 'name', 'description', 'period', 'contact', 'practices', 'info_url',
-            'published', 'structure', 'species_id', 'kml_url',
-            'geometry', 'update_datetime', 'create_datetime'
-        )
-
-
-class BubbleSensitiveAreaListSerializer(SensitiveAreaListSerializer):
-    radius = serializers.SerializerMethodField(read_only=True)
-
-    def get_radius(self, obj):
-        if obj.species.category == sensitivity_models.Species.SPECIES and obj.geom.geom_typeid == 0:
-            return obj.species.radius
-        else:
+        def get_species_id(self, obj):
+            if obj.species.category == sensitivity_models.Species.SPECIES:
+                return obj.species.id
             return None
 
-    class Meta:
-        model = SensitiveAreaListSerializer.Meta.model
-        fields = SensitiveAreaListSerializer.Meta.fields + ('radius', )
+        def get_kml_url(self, obj):
+            url = reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
+            return self.context['request'].build_absolute_uri(url)
+
+        class Meta:
+            model = sensitivity_models.SensitiveArea
+            fields = (
+                'id', 'url', 'name', 'description', 'period', 'contact', 'practices', 'info_url',
+                'published', 'structure', 'species_id', 'kml_url',
+                'geometry', 'update_datetime', 'create_datetime'
+            )
 
 
-class SportPracticeListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    name = serializers.SerializerMethodField(read_only=True)
+    class BubbleSensitiveAreaListSerializer(SensitiveAreaListSerializer):
+        radius = serializers.SerializerMethodField(read_only=True)
 
-    def get_name(self, obj):
-        return get_translation_or_dict('name', self, obj)
+        def get_radius(self, obj):
+            if obj.species.category == sensitivity_models.Species.SPECIES and obj.geom.geom_typeid == 0:
+                return obj.species.radius
+            else:
+                return None
 
-    class Meta:
-        model = sensitivity_models.SportPractice
-        fields = (
-            'id', 'name'
-        )
+        class Meta:
+            model = SensitiveAreaListSerializer.Meta.model
+            fields = SensitiveAreaListSerializer.Meta.fields + ('radius', )
+
+
+    class SportPracticeListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField(read_only=True)
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        class Meta:
+            model = sensitivity_models.SportPractice
+            fields = (
+                'id', 'name'
+            )
 
 
 class StructureSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
