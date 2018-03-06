@@ -21,7 +21,7 @@ class GeotrekConfig(AppConfig):
 
     def ready(self):
         post_migrate.connect(pm_callback, sender=self, dispatch_uid='geotrek.core.movetoschemas')
-        post_migrate.connect(check_srid_has_meter_unit, sender=self, dispatch_uid='geotrek.core.checksrid')
+        check_srid_has_meter_unit()
         pass
 
 
