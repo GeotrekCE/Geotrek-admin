@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 from mapentity.registry import registry
 
@@ -17,8 +17,7 @@ from .views import (
 from . import serializers as trekking_serializers
 
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/pois\.geojson$', TrekPOIViewSet.as_view({'get': 'list'}), name="trek_poi_geojson"),
     url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/services\.geojson$', TrekServiceViewSet.as_view({'get': 'list'}), name="trek_service_geojson"),
     url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/(?P<slug>[-_\w]+).gpx$', TrekGPXDetail.as_view(), name="trek_gpx_detail"),
@@ -31,7 +30,7 @@ urlpatterns = patterns(
     url(r'^commands/syncview$', sync_view, name='sync_randos_view'),
     url(r'^commands/statesync/$', sync_update_json, name='sync_randos_state'),
     url(r'^image/trek-(?P<pk>\d+)-(?P<lang>\w\w).png$', TrekMapImage.as_view(), name='trek_map_image'),
-)
+]
 
 
 class TrekEntityOptions(AltimetryEntityOptions, PublishableEntityOptions):

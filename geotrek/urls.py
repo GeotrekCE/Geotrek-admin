@@ -2,8 +2,13 @@ from django.conf import settings
 from django.conf.urls import include, url, static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 
 from mapentity.forms import AttachmentForm
+
+from geotrek.core import views as core_views
+
+from paperclip import views as paperclip_views
 
 handler403 = 'mapentity.views.handler403'
 handler404 = 'mapentity.views.handler404'
@@ -11,9 +16,9 @@ handler500 = 'mapentity.views.handler500'
 
 
 urlpatterns = [
-    url(r'^$', 'geotrek.core.views.home', name='home'),
-    url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
-    url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': settings.ROOT_URL + '/'}, name='logout',),
+    url(r'^$', core_views.home, name='home'),
+    url(r'^login/$', auth_views.login, name='login'),
+    url(r'^logout/$', auth_views.logout, {'next_page': settings.ROOT_URL + '/'}, name='logout',),
 
     url(r'', include('geotrek.common.urls', namespace='common', app_name='common')),
     url(r'', include('geotrek.core.urls', namespace='core', app_name='core')),
@@ -21,8 +26,8 @@ urlpatterns = [
 
     url(r'', include('mapentity.urls', namespace='mapentity', app_name='mapentity')),
     url(r'^paperclip/add-for/(?P<app_label>[\w\-]+)/(?P<model_name>[\w\-]+)/(?P<pk>\d+)/$',
-        'paperclip.views.add_attachment', kwargs={'attachment_form': AttachmentForm}, name="add_attachment"),
-    url(r'^paperclip/update/(?P<attachment_pk>\d+)/$', 'paperclip.views.update_attachment',
+        paperclip_views.add_attachment, kwargs={'attachment_form': AttachmentForm}, name="add_attachment"),
+    url(r'^paperclip/update/(?P<attachment_pk>\d+)/$', paperclip_views.update_attachment,
         kwargs={'attachment_form': AttachmentForm}, name="update_attachment"),
     url(r'^paperclip/', include('paperclip.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 from mapentity.registry import registry
 
@@ -10,8 +10,7 @@ from . import views as tourism_views
 from . import serializers as tourism_serializers
 
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^api/(?P<lang>\w\w)/information_desks.(?P<format>geojson)$', tourism_views.InformationDeskViewSet.as_view({'get': 'list'}), name="information_desk_geojson"),
     url(r'^api/(?P<lang>\w\w)/information_desks-(?P<type>\d+).(?P<format>geojson)$', tourism_views.InformationDeskViewSet.as_view({'get': 'list'})),
     url(r'^api/treks/(?P<pk>\d+)/information_desks.(?P<format>geojson)$', tourism_views.TrekInformationDeskViewSet.as_view({'get': 'list'}), name="trek_information_desk_geojson"),
@@ -20,7 +19,7 @@ urlpatterns = patterns(
     url(r'^api/(?P<lang>\w\w)/touristiccategories\.json$', tourism_views.TouristicCategoryView.as_view(), name="touristic_categories_json"),
     url(r'^api/(?P<lang>\w\w)/touristiccontents/(?P<pk>\d+)/meta.html$', tourism_views.TouristicContentMeta.as_view(), name="touristiccontent_meta"),
     url(r'^api/(?P<lang>\w\w)/touristicevents/(?P<pk>\d+)/meta.html$', tourism_views.TouristicEventMeta.as_view(), name="touristicevent_meta"),
-)
+]
 
 
 class TouristicContentEntityOptions(PublishableEntityOptions):
