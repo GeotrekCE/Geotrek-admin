@@ -358,6 +358,7 @@ class POIDetailSerializer(POIListSerializer):
     class Meta(POIListSerializer.Meta):
         fields = tuple((field for field in POIListSerializer.Meta.fields if field != 'url')) + ('pictures',)
 
+
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     class SensitiveAreaListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:sensitivearea-detail')
@@ -405,7 +406,6 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
                 'geometry', 'update_datetime', 'create_datetime'
             )
 
-
     class BubbleSensitiveAreaListSerializer(SensitiveAreaListSerializer):
         radius = serializers.SerializerMethodField(read_only=True)
 
@@ -418,7 +418,6 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
         class Meta:
             model = SensitiveAreaListSerializer.Meta.model
             fields = SensitiveAreaListSerializer.Meta.fields + ('radius', )
-
 
     class SportPracticeListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)

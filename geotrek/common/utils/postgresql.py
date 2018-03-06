@@ -5,7 +5,7 @@ from functools import wraps
 import os
 import re
 from django.conf import settings
-from django.db import connection, models
+from django.db import connection
 from django.apps import apps
 
 logger = logging.getLogger(__name__)
