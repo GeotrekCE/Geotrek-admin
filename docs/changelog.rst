@@ -8,6 +8,7 @@ CHANGELOG
 **Minor changes**
 
 * Show total path length in path list
+* Order sensitive areas by decreasing area in API
 
 **Bug fixes**
 

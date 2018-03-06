@@ -9,7 +9,7 @@ from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityLayer, M
 from rest_framework import permissions as rest_permissions, viewsets
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
-from geotrek.api.v2.functions import Transform, Buffer, GeometryType
+from geotrek.api.v2.functions import Transform, Buffer, GeometryType, Area
 from geotrek.authent.decorators import same_structure_required
 
 from geotrek.common.views import PublicOrReadPermMixin
@@ -103,6 +103,9 @@ class SensitiveAreaViewSet(MapEntityViewSet):
             When(geom_type='POINT', then=Transform(Buffer(F('geom'), F('species__radius'), 4), settings.API_SRID)),
             When(geom_type='POLYGON', then=Transform(F('geom'), settings.API_SRID))
         ))
+        # Ensure smaller areas are at the end of the list, ie above bigger areas on the map
+        # to ensure we can select every area in case of overlapping
+        qs = qs.annotate(area=Area('geom2d_transformed')).order_by('-area')
 
         if 'practices' in self.request.GET:
             qs = qs.filter(species__practices__name__in=self.request.GET['practices'].split(','))
@@ -134,6 +137,9 @@ class TrekSensitiveAreaViewSet(viewsets.ModelViewSet):
             When(geom_type='POINT', then=Transform(Buffer(F('geom'), F('species__radius'), 4), settings.API_SRID)),
             When(geom_type='POLYGON', then=Transform(F('geom'), settings.API_SRID))
         ))
+        # Ensure smaller areas are at the end of the list, ie above bigger areas on the map
+        # to ensure we can select every area in case of overlapping
+        qs = qs.annotate(area=Area('geom2d_transformed')).order_by('-area')
 
         if 'practices' in self.request.GET:
             qs = qs.filter(species__practices__name__in=self.request.GET['practices'].split(','))
