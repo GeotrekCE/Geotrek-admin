@@ -165,7 +165,7 @@ class PathDelete(MapEntityDelete):
 @cache_last_modified(lambda x: Path.latest_updated())
 @force_cache_validation
 def get_graph_json(request):
-    cache = caches.get_cache_key('fat')
+    cache = caches['fat']
     key = 'path_graph_json'
 
     result = cache.get(key)
