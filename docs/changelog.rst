@@ -9,6 +9,8 @@ CHANGELOG
 
 * Show total path length in path list
 * Order sensitive areas by decreasing area in API
+* Allow user with can_bypass_structure permission to set or update the related
+  structure on sensitive areas
 
 **Bug fixes**
 

@@ -15,6 +15,7 @@ class PolygonMapWidget(MapWidget):
 
 class SensitiveAreaForm(CommonForm):
     geomfields = ['geom']
+    edit_structure = True
     species = forms.ModelChoiceField(queryset=Species.objects.filter(category=Species.SPECIES),
                                      label=pgettext(u"Singular", u"Species"))
 

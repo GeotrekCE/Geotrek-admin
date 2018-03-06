@@ -21,6 +21,10 @@ from crispy_forms.bootstrap import FormActions
 
 
 class CommonForm(MapEntityForm):
+    # If True and if the user has can_bypass_structure permission, do not hide the structure field.
+    # For the moment, this cannot work with dropdowns that depends on the structure as they filter
+    # on user structure instead of object structure.
+    edit_structure = False
 
     class Meta:
         fields = []
@@ -68,7 +72,8 @@ class CommonForm(MapEntityForm):
 
         # Check if structure is present, if so, use hidden input
         if 'structure' in self.fields:
-            self.fields['structure'].widget = forms.HiddenInput()
+            if not self.edit_structure or not self.user.has_perm('authent.can_bypass_structure'):
+                self.fields['structure'].widget = forms.HiddenInput()
             # On entity creation, use user's structure
             if not self.instance or not self.instance.pk:
                 structure = default_structure()
