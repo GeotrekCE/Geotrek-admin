@@ -26,9 +26,12 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekViewset):
 
     def get_serializer_class(self):
         if 'bubble' in self.request.GET:
-            return api_serializers.BubbleSensitiveAreaListSerializer
+            base_serializer_class = api_serializers.BubbleSensitiveAreaListSerializer
         else:
-            return api_serializers.SensitiveAreaListSerializer
+            base_serializer_class = api_serializers.SensitiveAreaListSerializer
+        format_output = self.request.query_params.get('format', 'json')
+        dimension = self.request.query_params.get('dim', '2')
+        return api_serializers.override_serializer(format_output, dimension, base_serializer_class)
 
     def get_queryset(self):
         queryset = sensitivity_models.SensitiveArea.objects.existing() \
