@@ -139,7 +139,6 @@ class InterventionForm(CommonForm):
         return cleaned_data
 
     def save(self, *args, **kwargs):
-        self.instance.length = self.cleaned_data.get('length')
         infrastructure = self.cleaned_data.get('infrastructure')
         if infrastructure:
             self.instance.set_infrastructure(infrastructure)
