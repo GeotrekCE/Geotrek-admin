@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url, include
+from django.conf.urls import url, include
 from rest_framework.routers import DefaultRouter
 
 from geotrek.flatpages.views import FlatPageViewSet, FlatPageMeta

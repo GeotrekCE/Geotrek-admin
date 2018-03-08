@@ -1,7 +1,6 @@
 # -*- encoding: UTF-8 -
 
 import logging
-from optparse import make_option
 import os
 import re
 import sys
@@ -88,30 +87,105 @@ class ZipTilesBuilder(object):
 
 
 class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
-        make_option('--url', '-u', action='store', dest='url',
-                    default='http://localhost', help='Base url'),
-        make_option('--rando-url', '-r', action='store', dest='rando_url',
-                    default='http://localhost', help='Base url of public rando site'),
-        make_option('--source', '-s', action='store', dest='source',
-                    default=None, help='Filter by source(s)'),
-        make_option('--portal', '-P', action='store', dest='portal',
-                    default=None, help='Filter by portal(s)'),
-        make_option('--skip-pdf', '-p', action='store_true', dest='skip_pdf',
-                    default=False, help='Skip generation of PDF files'),
-        make_option('--skip-tiles', '-t', action='store_true', dest='skip_tiles',
-                    default=False, help='Skip generation of zip tiles files'),
-        make_option('--skip-dem', '-d', action='store_true', dest='skip_dem',
-                    default=False, help='Skip generation of DEM files for 3D'),
-        make_option('--skip-profile-png', '-e', action='store_true', dest='skip_profile_png',
-                    default=False, help='Skip generation of PNG elevation profile'),
-        make_option('--languages', '-l', action='store', dest='languages',
-                    default='', help='Languages to sync'),
-        make_option('--with-touristicevents', '-w', action='store_true', dest='with_events',
-                    default=False, help='include touristic events by trek in global.zip'),
-        make_option('--with-touristiccontent-categories', '-c', action='store', dest='content_categories',
-                    default=None, help='include touristic contents by trek in global.zip (filtered by category ID ex: --with-touristiccontent-categories="1,2,3")'),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument('path')
+        parser.add_argument('--url', '-u', action='store', dest='url', default='http://localhost', help='Base url')
+        parser.add_argument('--rando-url', '-r', action='store', dest='rando_url', default='http://localhost',
+                            help='Base url of public rando site')
+        parser.add_argument('--source', '-s', action='store', dest='source', default=None, help='Filter by source(s)')
+        parser.add_argument('--portal', '-P', action='store', dest='portal', default=None, help='Filter by portal(s)')
+        parser.add_argument('--skip-pdf', '-p', action='store_true', dest='skip_pdf', default=False,
+                            help='Skip generation of PDF files')
+        parser.add_argument('--skip-tiles', '-t', action='store_true', dest='skip_tiles', default=False,
+                            help='Skip generation of zip tiles files')
+        parser.add_argument('--skip-dem', '-d', action='store_true', dest='skip_dem', default=False,
+                            help='Skip generation of DEM files for 3D')
+        parser.add_argument('--skip-profile-png', '-e', action='store_true', dest='skip_profile_png', default=False,
+                            help='Skip generation of PNG elevation profile'),
+        parser.add_argument('--languages', '-l', action='store', dest='languages', default='', help='Languages to sync')
+        parser.add_argument('--with-touristicevents', '-w', action='store_true', dest='with_events', default=False,
+                            help='include touristic events by trek in global.zip')
+        parser.add_argument('--with-touristiccontent-categories', '-c', action='store', dest='content_categories',
+                            default=None, help='include touristic contents by trek in global.zip '
+                            '(filtered by category ID ex: --with-touristiccontent-categories="1,2,3")'),
+
+    def handle(self, *args, **options):
+        self.successfull = True
+        self.verbosity = options['verbosity']
+        if not options['path']:
+            raise CommandError(u"Missing parameter destination directory")
+        self.dst_root = options["path"].rstrip('/')
+        self.check_dst_root_is_empty()
+        if(options['url'][:7] != 'http://'):
+            raise CommandError('url parameter should start with http://')
+        self.referer = options['url']
+        self.host = self.referer[7:]
+        self.rando_url = options['rando_url']
+        if self.rando_url.endswith('/'):
+            self.rando_url = self.rando_url[:-1]
+        self.factory = RequestFactory()
+        self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_rando')
+        os.mkdir(self.tmp_root)
+        self.skip_pdf = options['skip_pdf']
+        self.skip_tiles = options['skip_tiles']
+        self.skip_dem = options['skip_dem']
+        self.skip_profile_png = options['skip_profile_png']
+        self.source = options['source']
+        if options['languages']:
+            self.languages = options['languages'].split(',')
+        else:
+            self.languages = settings.MODELTRANSLATION_LANGUAGES
+        self.with_events = options.get('with_events', False)
+        self.categories = None
+        if options.get('content_categories', u""):
+            self.categories = options.get('content_categories', u"").split(',')
+        self.celery_task = options.get('task', None)
+
+        if self.source is not None:
+            self.source = self.source.split(',')
+
+        if options['portal'] is not None:
+            self.portal = options['portal'].split(',')
+
+        else:
+            self.portal = []
+
+        if isinstance(settings.MOBILE_TILES_URL, str):
+            tiles_url = settings.MOBILE_TILES_URL
+        else:
+            tiles_url = settings.MOBILE_TILES_URL[0]
+        self.builder_args = {
+            'tiles_url': tiles_url,
+            'tiles_headers': {"Referer": self.referer},
+            'ignore_errors': True,
+            'tiles_dir': os.path.join(settings.DEPLOY_ROOT, 'var', 'tiles'),
+        }
+        try:
+            self.sync()
+            if self.celery_task:
+                self.celery_task.update_state(
+                    state='PROGRESS',
+                    meta={
+                        'name': self.celery_task.name,
+                        'current': 100,
+                        'total': 100,
+                        'infos': u"{}".format(_(u"Sync ended"))
+                    }
+                )
+        except Exception:
+            shutil.rmtree(self.tmp_root)
+            raise
+
+        self.rename_root()
+
+        if self.verbosity >= 1:
+            self.stdout.write('Done')
+
+        if not self.successfull:
+            self.stdout.write('Some errors raised during synchronization.')
+            sys.exit(1)
+
+        sleep(2)  # end sleep to ensure sync page get result
 
     def mkdirs(self, name):
         dirname = os.path.dirname(name)
@@ -713,80 +787,4 @@ class Command(BaseCommand):
         else:
             os.rename(self.tmp_root, self.dst_root)
 
-    def handle(self, *args, **options):
-        self.successfull = True
-        self.verbosity = options.get('verbosity', 1)
-        if len(args) < 1:
-            raise CommandError(u"Missing parameter destination directory")
-        self.dst_root = args[0].rstrip('/')
-        self.check_dst_root_is_empty()
-        if(options['url'][:7] != 'http://'):
-            raise CommandError('url parameter should start with http://')
-        self.referer = options['url']
-        self.host = self.referer[7:]
-        self.rando_url = options['rando_url']
-        if self.rando_url.endswith('/'):
-            self.rando_url = self.rando_url[:-1]
-        self.factory = RequestFactory()
-        self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_rando')
-        os.mkdir(self.tmp_root)
-        self.skip_pdf = options['skip_pdf']
-        self.skip_tiles = options['skip_tiles']
-        self.skip_dem = options['skip_dem']
-        self.skip_profile_png = options['skip_profile_png']
-        self.source = options['source']
-        if options['languages']:
-            self.languages = options['languages'].split(',')
-        else:
-            self.languages = settings.MODELTRANSLATION_LANGUAGES
-        self.with_events = options.get('with_events', False)
-        self.categories = None
-        if options.get('content_categories', u""):
-            self.categories = options.get('content_categories', u"").split(',')
-        self.celery_task = options.get('task', None)
 
-        if self.source is not None:
-            self.source = self.source.split(',')
-
-        if options['portal'] is not None:
-            self.portal = options['portal'].split(',')
-
-        else:
-            self.portal = []
-
-        if isinstance(settings.MOBILE_TILES_URL, str):
-            tiles_url = settings.MOBILE_TILES_URL
-        else:
-            tiles_url = settings.MOBILE_TILES_URL[0]
-        self.builder_args = {
-            'tiles_url': tiles_url,
-            'tiles_headers': {"Referer": self.referer},
-            'ignore_errors': True,
-            'tiles_dir': os.path.join(settings.DEPLOY_ROOT, 'var', 'tiles'),
-        }
-        try:
-            self.sync()
-            if self.celery_task:
-                self.celery_task.update_state(
-                    state='PROGRESS',
-                    meta={
-                        'name': self.celery_task.name,
-                        'current': 100,
-                        'total': 100,
-                        'infos': u"{}".format(_(u"Sync ended"))
-                    }
-                )
-        except Exception:
-            shutil.rmtree(self.tmp_root)
-            raise
-
-        self.rename_root()
-
-        if self.verbosity >= 1:
-            self.stdout.write('Done')
-
-        if not self.successfull:
-            self.stdout.write('Some errors raised during synchronization.')
-            sys.exit(1)
-
-        sleep(2)  # end sleep to ensure sync page get result

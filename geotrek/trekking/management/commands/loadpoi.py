@@ -8,14 +8,15 @@ from geotrek.trekking.models import POI, POIType
 
 
 class Command(BaseCommand):
-    args = '<point_layer>'
     help = 'Load a layer with point geometries in a model\n'
     can_import_settings = True
     field_name = 'name'
     field_poitype = 'type'
 
-    def handle(self, *args, **options):
+    def add_arguments(self, parser):
+        parser.add_argument('point_layer')
 
+    def handle(self, *args, **options):
         try:
             from osgeo import gdal, ogr, osr  # NOQA
         except ImportError:
@@ -23,10 +24,10 @@ class Command(BaseCommand):
             raise CommandError(msg)
 
         # Validate arguments
-        if len(args) != 1:
+        if not options['point_layer']:
             raise CommandError('Filename missing. See help')
 
-        filename = args[0]
+        filename = options['point_layer']
 
         if not os.path.exists(filename):
             raise CommandError('File does not exists at: %s' % filename)
