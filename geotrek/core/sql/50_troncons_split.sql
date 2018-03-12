@@ -74,7 +74,7 @@ BEGIN
     newline := array_append(newline, result);
     SELECT TRUE FROM l_t_troncon WHERE ST_HausdorffDistance(ST_MakeLine(newline), geom)>0.001 INTO value_geom;
     IF value_geom THEN
-        RAISE WARNING 'New geom % %', ST_AsText(ST_MakeLine(newline));
+        RAISE WARNING 'New geom %', ST_AsText(ST_MakeLine(newline));
         NEW.geom := ST_MakeLine(newline);
         RETURN NEW;
     END IF;
