@@ -9,7 +9,6 @@ DECLARE
     result geometry;
     newline geometry[];
     d float8;
-    value_geom bool;
 
     DISTANCE float8;
 BEGIN
@@ -72,13 +71,10 @@ BEGIN
         END IF;
     END IF;
     newline := array_append(newline, result);
-    SELECT TRUE FROM l_t_troncon WHERE ST_HausdorffDistance(ST_MakeLine(newline), geom)>0.001 INTO value_geom;
-    IF value_geom THEN
-        RAISE WARNING 'New geom %', ST_AsText(ST_MakeLine(newline));
-        NEW.geom := ST_MakeLine(newline);
-        RETURN NEW;
-    END IF;
+    RAISE WARNING 'New geom %', ST_AsText(ST_MakeLine(newline));
+    NEW.geom := ST_MakeLine(newline);
     RETURN NEW;
+
 END;
 $$ LANGUAGE plpgsql;
 
@@ -200,14 +196,14 @@ BEGIN
 
                 IF i = 1 THEN
                     -- First segment : shrink it !
-                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE nom = NEW.nom AND ST_Equals(geom, segment);
+                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Contains(geom,ST_Buffer(segment,0.1));
                     IF t_count = 0 THEN
                         RAISE NOTICE 'New: Skrink %-% (%) to %', NEW.id, NEW.nom, ST_AsText(NEW.geom), ST_AsText(segment);
                         UPDATE l_t_troncon SET geom = segment WHERE id = NEW.id;
                     END IF;
                 ELSE
                     -- Next ones : create clones !
-                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE nom = NEW.nom AND ST_Equals(geom, segment);
+                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Contains(geom,ST_Buffer(segment,0.1));
                     IF t_count = 0 THEN
                         IF NOT segment = ANY(SELECT geom FROM l_t_troncon) THEN
                             RAISE NOTICE 'New: Create clone of %-% with geom %', NEW.id, NEW.nom, ST_AsText(segment);
@@ -238,7 +234,7 @@ BEGIN
                                         NEW.id_externe,
                                         segment)
                                 RETURNING id INTO tid_clone;
-                            END IF;
+                        END IF;
                     END IF;
                 END IF;
             END LOOP;
@@ -282,9 +278,8 @@ BEGIN
                     END IF;
                 ELSE
                     -- Next ones : create clones !
-                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Equals(geom, segment);
+                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Contains(ST_Buffer(geom,0.1),segment);
                     IF t_count = 0 THEN
-                        IF NOT segment = ANY(SELECT geom FROM l_t_troncon) THEN
                             RAISE NOTICE 'Current: Create clone of %-% (%) with geom %', troncon.id, troncon.nom, ST_AsText(troncon.geom), ST_AsText(segment);
                             INSERT INTO l_t_troncon (structure,
                                                      visible,
@@ -384,7 +379,7 @@ BEGIN
                                     RAISE NOTICE 'Duplicated % point topologies of %-% (%) on intersection by %-% (%) at [%]', t_count, troncon.id, troncon.nom, ST_AsText(troncon.geom), NEW.id, NEW.nom, ST_AsText(NEW.geom), a;
                                 END IF;
                             END IF;
-                        END IF;
+
                     END IF;
                 END IF;
             END LOOP;

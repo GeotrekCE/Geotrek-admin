@@ -226,7 +226,9 @@ class SplitPathTest(TestCase):
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (10000000, 0)))
         ab.reload()
         cd.reload()
+
         self.assertEqual(ab.geom, LineString((0.1, 0), (10000000, 0)))
+
         self.assertEqual(cd.geom, LineString((0.1, 1), (0.1, 0)))
         self.assertEqual(len(Path.objects.all()), 3)
 
