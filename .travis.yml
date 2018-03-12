@@ -28,8 +28,10 @@ before_install:
   - echo $PATH
   - sudo apt-get update -qq
   - sudo apt-get install -y -qq unoconv inkscape
-  - sudo apt-get remove postgis*
-  - sudo apt-get remove postgresql*
+  # Make sure to use postgresql and postgis version from main Ubuntu repository
+  - sudo rm -f /etc/apt/sources.list.d/pgdg.list
+  - sudo apt-get remove -qq postgis*
+  - sudo apt-get remove -qq postgresql*
   - sudo rm -rf /usr/local/bin/phantomjs*
   - sudo rm -rf /usr/bin/phantomjs*
   - sudo rm -rf /usr/local/phantomjs*
