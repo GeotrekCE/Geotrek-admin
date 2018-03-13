@@ -11,6 +11,11 @@ from django.views.decorators.cache import never_cache as force_cache_validation
 from django.views.generic import View
 from django.utils.translation import ugettext as _
 from django.core.cache import caches
+from django.core.cache import get_cache
+from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
+from django.contrib.gis.geos import Point
+from mapentity import registry
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityFormat,
@@ -20,7 +25,9 @@ from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import classproperty
 from geotrek.core.models import AltimetryMixin
 
-from .models import Path, Trail, Topology
+
+from .models import Path, Trail, Topology, PathAggregation
+from .factories import TopologyFactory
 from .forms import PathForm, TrailForm
 from .filters import PathFilterSet, TrailFilterSet
 from . import graph as graph_lib
@@ -155,9 +162,17 @@ class PathDelete(MapEntityDelete):
         for topology in topologies:
             try:
                 poi = topology.poi
-
-                #add topologypoint
-
+                closest = Path.closest(poi.geom)
+                position, offset = closest.interpolate(poi.geom)
+                topology = TopologyFactory.create(no_path=True, kind=kind, offset=offset)
+                aggrobj = PathAggregation(topo_object=topology,
+                                          start_position=position,
+                                          end_position=position,
+                                          path=closest)
+                aggrobj.save()
+                point = Point(point.x, point.y, srid=settings.SRID)
+                topology.geom = point
+                topology.save()
                 poi.mutate(topology)
             except POI.DoesNotExist:
                 pass
