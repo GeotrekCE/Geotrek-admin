@@ -110,7 +110,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         verbose_name_plural = _(u"Paths")
 
     @classmethod
-    def closest(cls, point):
+    def closest(cls, point, exclude=None):
         """
         Returns the closest path of the point.
         Will fail if no path in database.
@@ -118,7 +118,10 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         # TODO: move to custom manager
         if point.srid != settings.SRID:
             point = point.transform(settings.SRID, clone=True)
-        return cls.objects.all().exclude(visible=False).distance(point).order_by('distance')[0]
+        qs = cls.objects.all()
+        if exclude:
+            qs = qs.exclude(pk=exclude.pk)
+        return qs.exclude(visible=False).distance(point).order_by('distance')[0]
 
     def is_overlap(self):
         return not PathHelper.disjoint(self.geom, self.pk)
