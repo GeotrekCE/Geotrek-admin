@@ -148,6 +148,23 @@ class PathDelete(MapEntityDelete):
     def dispatch(self, *args, **kwargs):
         return super(PathDelete, self).dispatch(*args, **kwargs)
 
+    def delete(self, request, *args, **kwargs):
+        path = self.get_object()
+        topologies = list(path.topology_set.all())
+        result = super(PathDelete, self).delete(request, *args, **kwargs)
+        for topology in topologies:
+            try:
+                poi = topology.poi
+
+                #add topologypoint
+
+                poi.mutate(topology)
+            except POI.DoesNotExist:
+                pass
+        return result
+
+
+
 
 @login_required
 @cache_last_modified(lambda x: Path.latest_updated())
