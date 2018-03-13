@@ -28,9 +28,12 @@ from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import classproperty
 from geotrek.core.models import AltimetryMixin
 from geotrek.trekking.models import POI
+<<<<<<< 8da359c1ef724e7a2875edb49b67c3eec520713b
 
 <<<<<<< 31edb35c98a9b3cbf1e6da5af9c58aa935652c4e
 =======
+=======
+>>>>>>> Deletion of the Path at then end, check if 1 path exists
 
 >>>>>>> Delete path : add poi
 from .models import Path, Trail, Topology, PathAggregation
@@ -165,7 +168,6 @@ class PathDelete(MapEntityDelete):
     def delete(self, request, *args, **kwargs):
         path = self.get_object()
         topologies = list(path.topology_set.filter(deleted=False))
-        result = super(PathDelete, self).delete(request, *args, **kwargs)
         if Path.objects.count() == 1:
             success_url = self.get_success_url()
             return HttpResponse(success_url)
