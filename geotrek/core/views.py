@@ -158,6 +158,7 @@ class PathDelete(MapEntityDelete):
     def delete(self, request, *args, **kwargs):
         path = self.get_object()
         topologies = list(path.topology_set.filter(deleted=False))
+        result = super(PathDelete, self).delete(request, *args, **kwargs)
         if Path.objects.count() == 1:
             success_url = self.get_success_url()
             return HttpResponse(success_url)
