@@ -24,7 +24,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import classproperty
 from geotrek.core.models import AltimetryMixin
-
+from geotrek.trekking.models import POI
 
 from .models import Path, Trail, Topology, PathAggregation
 from .factories import TopologyFactory
@@ -157,28 +157,28 @@ class PathDelete(MapEntityDelete):
 
     def delete(self, request, *args, **kwargs):
         path = self.get_object()
-        topologies = list(path.topology_set.all())
-        result = super(PathDelete, self).delete(request, *args, **kwargs)
+        topologies = list(path.topology_set.filter(deleted=False))
+        if Path.objects.count() == 1:
+            success_url = self.get_success_url()
+            return HttpResponse(success_url)
         for topology in topologies:
             try:
                 poi = topology.poi
-                closest = Path.closest(poi.geom)
+                closest = Path.closest(poi.geom, path)
                 position, offset = closest.interpolate(poi.geom)
-                topology = TopologyFactory.create(no_path=True, kind=kind, offset=offset)
+                topology = TopologyFactory.create(no_path=True, kind=None, offset=offset)
                 aggrobj = PathAggregation(topo_object=topology,
                                           start_position=position,
                                           end_position=position,
                                           path=closest)
                 aggrobj.save()
-                point = Point(point.x, point.y, srid=settings.SRID)
+                point = Point(poi.geom.x, poi.geom.y, srid=settings.SRID)
                 topology.geom = point
                 topology.save()
                 poi.mutate(topology)
             except POI.DoesNotExist:
                 pass
-        return result
-
-
+        return super(PathDelete, self).delete(request, *args, **kwargs)
 
 
 @login_required
