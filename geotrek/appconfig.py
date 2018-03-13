@@ -15,14 +15,9 @@ class GeotrekConfig(AppConfig):
     !! WARNING !! need to create subclass in geotrek.myapp.apps for project apps,
     and create subclasses here for external subclasses
     """
-    def __init__(self, *args, **kwargs):
-        # FIXME: pre_migrate.connect(check_srid_has_meter_unit, sender=self, dispatch_uid='geotrek.core.checksrid')
-        super(GeotrekConfig, self).__init__(*args, **kwargs)
-
     def ready(self):
-        post_migrate.connect(pm_callback, sender=self, dispatch_uid='geotrek.core.movetoschemas')
+        post_migrate.connect(pm_callback, sender=self, dispatch_uid='geotrek.core.pm_callback')
         check_srid_has_meter_unit()
-        pass
 
 
 class AuthGeotrekConfig(AuthConfig, GeotrekConfig):
