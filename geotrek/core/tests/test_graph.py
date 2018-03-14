@@ -1,13 +1,15 @@
 import json
 
 from django.test import TestCase
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.gis.geos import LineString
 from django.core.urlresolvers import reverse
 
 from geotrek.core.factories import PathFactory
 from geotrek.core.graph import graph_edges_nodes_of_qs
 from geotrek.core.models import Path
+
+User = get_user_model()
 
 
 class SimpleGraph(TestCase):

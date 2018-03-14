@@ -2,12 +2,14 @@ from __future__ import unicode_literals
 
 import json
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.test.client import Client
 from django.test.testcases import TestCase
 
 from geotrek.trekking import factories as trek_factory, models as trek_models
+
+User = get_user_model()
 
 PAGINATED_JSON_STRUCTURE = sorted([
     'count', 'next', 'previous', 'results',

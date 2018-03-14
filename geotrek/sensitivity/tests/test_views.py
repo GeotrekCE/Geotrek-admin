@@ -2,7 +2,8 @@
 import os
 import json
 
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import Permission
+from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.test import TestCase
 
@@ -11,6 +12,8 @@ from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.trekking.tests import TrekkingManagerTest
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.sensitivity.factories import SensitiveAreaFactory
+
+User = get_user_model()
 
 
 class SensitiveAreaViewsSameStructureTests(AuthentFixturesTest):

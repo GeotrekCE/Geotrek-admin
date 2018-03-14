@@ -10,7 +10,8 @@ from bs4 import BeautifulSoup
 
 from django.conf import settings
 from django.test import TestCase
-from django.contrib.auth.models import User, Group, Permission
+from django.contrib.auth.models import Group, Permission
+from django.contrib.auth import get_user_model
 from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core.management import call_command
 from django.core.urlresolvers import reverse
@@ -48,6 +49,8 @@ from geotrek.tourism import factories as tourism_factories
 from geotrek.trekking import urls  # NOQA
 
 from .base import TrekkingManagerTest
+
+User = get_user_model()
 
 
 class POIViewsTest(CommonTest):
