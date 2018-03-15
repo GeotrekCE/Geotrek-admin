@@ -6,7 +6,6 @@ import os
 import re
 from django.conf import settings
 from django.db import connection
-from django.apps import apps
 
 logger = logging.getLogger(__name__)
 
@@ -111,7 +110,7 @@ def move_models_to_schemas(app):
     app_schema = settings.DATABASE_SCHEMAS.get(app.module, default_schema)
 
     table_schemas = {}
-    for model in apps.get_models(app):
+    for model in app.get_models():
         model_name = model._meta.model_name
         table_name = model._meta.db_table
         model_schema = settings.DATABASE_SCHEMAS.get(model_name, app_schema)
