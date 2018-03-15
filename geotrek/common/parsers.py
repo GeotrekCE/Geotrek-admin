@@ -385,8 +385,11 @@ class Parser(object):
             assert not self.separator or self.separator not in val
             field = self.model._meta.get_field_by_name(dst)[0]
             natural_key = self.natural_keys[dst]
+            filters = {natural_key: subval for subval in val}
+            if not filters:
+                continue
             try:
-                kwargs[dst] = field.rel.to.objects.get(**{natural_key: subval for subval in val})
+                kwargs[dst] = field.rel.to.objects.get(**filters)
             except field.rel.to.DoesNotExist:
                 raise GlobalImportError(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=field.rel.to._meta.verbose_name.title(), val=val))
         return kwargs
