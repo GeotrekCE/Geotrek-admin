@@ -204,7 +204,7 @@ class TrailViewsTest(CommonTest):
         form_data['topology'] = trail.serialize(with_pk=False)
         response = self.client.post(Trail.get_add_url(), form_data)
         self.assertEqual(response.status_code, 302)  # success, redirects to detail view
-        p = re.compile(r"http://testserver/trail/(\d+)/")
+        p = re.compile(r"/trail/(\d+)/")
         m = p.match(response['Location'])
         new_pk = int(m.group(1))
         new_trail = Trail.objects.get(pk=new_pk)

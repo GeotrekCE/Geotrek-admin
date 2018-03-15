@@ -16,6 +16,7 @@ Makina Corpus
 * Célian Garcia
 * Gaël Utard
 * Jean-Etienne Castagnede
+* Timothée de Montety
 
 .. image:: http://depot.makina-corpus.org/public/logo.gif
     :target: http://www.makina-corpus.com

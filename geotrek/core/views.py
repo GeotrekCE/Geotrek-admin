@@ -10,10 +10,10 @@ from django.views.decorators.http import last_modified as cache_last_modified
 from django.views.decorators.cache import never_cache as force_cache_validation
 from django.views.generic import View
 from django.utils.translation import ugettext as _
-from django.core.cache import get_cache
+from django.core.cache import caches
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
-from mapentity import registry
+from mapentity.registry import registry
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityFormat,
@@ -171,7 +171,7 @@ class PathDelete(MapEntityDelete):
 @cache_last_modified(lambda x: Path.latest_updated())
 @force_cache_validation
 def get_graph_json(request):
-    cache = get_cache('fat')
+    cache = caches['fat']
     key = 'path_graph_json'
 
     result = cache.get(key)

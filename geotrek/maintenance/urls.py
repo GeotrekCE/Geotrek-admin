@@ -1,4 +1,4 @@
-from mapentity import registry
+from mapentity.registry import registry
 
 from . import models
 

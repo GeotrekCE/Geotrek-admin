@@ -4,7 +4,7 @@ from HTMLParser import HTMLParser
 from django.conf import settings
 from django.db import models
 from django.contrib.gis.db import models as gis_models
-from django.contrib.contenttypes.generic import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save

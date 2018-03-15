@@ -45,18 +45,18 @@ DATABASES = {
 #
 DATABASE_SCHEMAS = {
     'default': 'geotrek',
-    'gis': 'public',
-    'auth': 'django',
+    'django.contrib.gis': 'public',
+    'django.contrib.auth': 'django',
     'django': 'django',
     'django_celery_results': 'django',
     'easy_thumbnails': 'django',
-    'feedback': 'gestion',
-    'infrastructure': 'gestion',
-    'maintenance': 'gestion',
-    'tourism': 'tourisme',
-    'trekking': 'rando',
-    'zoning': 'zonage',
-    'land': 'foncier',
+    'geotrek.feedback': 'gestion',
+    'geotrek.infrastructure': 'gestion',
+    'geotrek.maintenance': 'gestion',
+    'geotrek.tourism': 'tourisme',
+    'geotrek.trekking': 'rando',
+    'geotrek.zoning': 'zonage',
+    'geotrek.land': 'foncier',
 }
 
 DATABASES['default']['OPTIONS'] = {
@@ -195,7 +195,6 @@ TEMPLATES = [
             'loaders': [
                 'django.template.loaders.filesystem.Loader',
                 'django.template.loaders.app_directories.Loader',
-                'geotrek.templateloaders.Loader',
                 # 'django.template.loaders.eggs.Loader',
             ],
             'debug': True,
