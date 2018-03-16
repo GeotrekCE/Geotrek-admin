@@ -4,14 +4,11 @@
     Models to manage users and profiles
 """
 from django.db import models
-from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
 from django.contrib.auth.signals import user_logged_in
 from django.utils.translation import LANGUAGE_SESSION_KEY
-
-from geotrek.common.utils import reify
 
 
 class Structure(models.Model):
@@ -94,16 +91,12 @@ class UserProfile(StructureRelated):
     language = models.CharField(_(u"Language"), max_length=10,
                                 choices=settings.LANGUAGES,
                                 default=settings.LANGUAGE_CODE)
-
     class Meta:
         verbose_name = _(u"User's profile")
         verbose_name_plural = _(u"User's profiles")
 
     def __unicode__(self):
         return _("Profile for %s") % self.user
-
-
-#User.profile = reify(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
 
 @receiver(user_logged_in)

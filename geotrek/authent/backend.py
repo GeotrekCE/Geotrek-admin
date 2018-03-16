@@ -5,7 +5,7 @@ from django.conf import settings
 
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
-
+from django.contrib.auth.base_user import check_password
 from django.contrib.auth.backends import ModelBackend
 from django.db import connections
 from django.core.exceptions import ImproperlyConfigured
@@ -28,7 +28,7 @@ class DatabaseBackend(ModelBackend):
     def authenticate(self, username=None, password=None):
         User = get_user_model()
         credentials = self.query_credentials(username)
-        if credentials and User.check_password(password, credentials.password):
+        if credentials and check_password(password, credentials.password):
             try:
                 user = User.objects.get(username=username)
             except User.DoesNotExist:
