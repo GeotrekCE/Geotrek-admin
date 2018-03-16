@@ -103,7 +103,7 @@ class UserProfile(StructureRelated):
         return _("Profile for %s") % self.user
 
 
-User.profile = reify(lambda u: UserProfile.objects.get_or_create(user=u)[0])
+#User.profile = reify(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
 
 @receiver(user_logged_in)
