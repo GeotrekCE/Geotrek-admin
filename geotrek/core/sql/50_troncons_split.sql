@@ -41,8 +41,8 @@ BEGIN
             RAISE NOTICE 'Snapped start % to %, from %', ST_AsText(linestart), ST_AsText(result), ST_AsText(other);
         END IF;
     END IF;
-    newline := array_append(newline, result);
 
+    newline := array_append(newline, result);
     FOR i IN 2..ST_NPoints(NEW.geom)-1 LOOP
         newline := array_append(newline, ST_PointN(NEW.geom, i));
     END LOOP;
@@ -196,43 +196,45 @@ BEGIN
 
                 IF i = 1 THEN
                     -- First segment : shrink it !
-                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE nom = NEW.nom AND ST_Equals(geom, segment);
+                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Contains(geom,ST_Buffer(segment,0.1));
                     IF t_count = 0 THEN
                         RAISE NOTICE 'New: Skrink %-% (%) to %', NEW.id, NEW.nom, ST_AsText(NEW.geom), ST_AsText(segment);
                         UPDATE l_t_troncon SET geom = segment WHERE id = NEW.id;
                     END IF;
                 ELSE
                     -- Next ones : create clones !
-                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE nom = NEW.nom AND ST_Equals(geom, segment);
+                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Contains(geom,ST_Buffer(segment,0.1));
                     IF t_count = 0 THEN
                         RAISE NOTICE 'New: Create clone of %-% with geom %', NEW.id, NEW.nom, ST_AsText(segment);
-                        INSERT INTO l_t_troncon (structure,
-                                                 visible,
-                                                 valide,
-                                                 nom,
-                                                 remarques,
-                                                 source,
-                                                 enjeu,
-                                                 geom_cadastre,
-                                                 depart,
-                                                 arrivee,
-                                                 confort,
-                                                 id_externe,
-                                                 geom)
-                            VALUES (NEW.structure,
-                                    NEW.visible,
-                                    NEW.valide,
-                                    NEW.nom,
-                                    NEW.remarques,
-                                    NEW.source,
-                                    NEW.enjeu,
-                                    NEW.geom_cadastre,
-                                    NEW.depart,
-                                    NEW.arrivee,
-                                    NEW.confort,
-                                    NEW.id_externe,
-                                    segment)
-                            RETURNING id INTO tid_clone;
+                        IF NOT segment = ANY(SELECT geom FROM l_t_troncon) THEN
+                            INSERT INTO l_t_troncon (structure,
+                                                     visible,
+                                                     valide,
+                                                     nom,
+                                                     remarques,
+                                                     source,
+                                                     enjeu,
+                                                     geom_cadastre,
+                                                     depart,
+                                                     arrivee,
+                                                     confort,
+                                                     id_externe,
+                                                     geom)
+                                VALUES (NEW.structure,
+                                        NEW.visible,
+                                        NEW.valide,
+                                        NEW.nom,
+                                        NEW.remarques,
+                                        NEW.source,
+                                        NEW.enjeu,
+                                        NEW.geom_cadastre,
+                                        NEW.depart,
+                                        NEW.arrivee,
+                                        NEW.confort,
+                                        NEW.id_externe,
+                                        segment)
+                                RETURNING id INTO tid_clone;
+                        END IF;
                     END IF;
                 END IF;
             END LOOP;
@@ -276,7 +278,7 @@ BEGIN
                     END IF;
                 ELSE
                     -- Next ones : create clones !
-                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Equals(geom, segment);
+                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Contains(ST_Buffer(geom,0.1),segment);
                     IF t_count = 0 THEN
                         RAISE NOTICE 'Current: Create clone of %-% (%) with geom %', troncon.id, troncon.nom, ST_AsText(troncon.geom), ST_AsText(segment);
                         INSERT INTO l_t_troncon (structure,
@@ -377,6 +379,7 @@ BEGIN
                                 RAISE NOTICE 'Duplicated % point topologies of %-% (%) on intersection by %-% (%) at [%]', t_count, troncon.id, troncon.nom, ST_AsText(troncon.geom), NEW.id, NEW.nom, ST_AsText(NEW.geom), a;
                             END IF;
                         END IF;
+
                     END IF;
                 END IF;
             END LOOP;
