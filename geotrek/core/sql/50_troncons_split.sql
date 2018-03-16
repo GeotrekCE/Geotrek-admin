@@ -205,8 +205,8 @@ BEGIN
                     -- Next ones : create clones !
                     SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Contains(geom,ST_Buffer(segment,0.1));
                     IF t_count = 0 THEN
+                        RAISE NOTICE 'New: Create clone of %-% with geom %', NEW.id, NEW.nom, ST_AsText(segment);
                         IF NOT segment = ANY(SELECT geom FROM l_t_troncon) THEN
-                            RAISE NOTICE 'New: Create clone of %-% with geom %', NEW.id, NEW.nom, ST_AsText(segment);
                             INSERT INTO l_t_troncon (structure,
                                                      visible,
                                                      valide,
