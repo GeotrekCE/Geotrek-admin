@@ -10,10 +10,10 @@ from django.views.decorators.http import last_modified as cache_last_modified
 from django.views.decorators.cache import never_cache as force_cache_validation
 from django.views.generic import View
 from django.utils.translation import ugettext as _
-from django.core.cache import get_cache
+from django.core.cache import caches
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
-from mapentity import registry
+from mapentity.registry import registry
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityFormat,
@@ -29,6 +29,10 @@ from .filters import PathFilterSet, TrailFilterSet
 from . import graph as graph_lib
 from django.http.response import HttpResponse
 from django.contrib import messages
+from django.db.models import Sum
+from django.db.models.functions import Coalesce
+from geotrek.api.v2.functions import Length
+from django.db.models.fields import FloatField
 
 
 logger = logging.getLogger(__name__)
@@ -92,7 +96,6 @@ class PathList(MapEntityList):
         denormalize ``trail`` column from list.
         """
         qs = super(PathList, self).get_queryset()
-
         denormalized = {}
         if settings.TRAIL_MODEL_ENABLED:
             paths_id = qs.values_list('id', flat=True)
@@ -105,11 +108,14 @@ class PathList(MapEntityList):
         for path in qs:
             path_trails = denormalized.get(path.id, [])
             setattr(path, '_trails', path_trails)
-            yield path
+        return qs
 
 
 class PathJsonList(MapEntityJsonList, PathList):
-    pass
+    def get_context_data(self, **kwargs):
+        context = super(PathJsonList, self).get_context_data(**kwargs)
+        context["sumPath"] = round(self.object_list.aggregate(sumPath=Coalesce(Sum(Length('geom'), output_field=FloatField()), 0))['sumPath'] / 1000, 1)
+        return context
 
 
 class PathFormatList(MapEntityFormat, PathList):
@@ -165,7 +171,7 @@ class PathDelete(MapEntityDelete):
 @cache_last_modified(lambda x: Path.latest_updated())
 @force_cache_validation
 def get_graph_json(request):
-    cache = get_cache('fat')
+    cache = caches['fat']
     key = 'path_graph_json'
 
     result = cache.get(key)

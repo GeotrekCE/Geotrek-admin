@@ -111,6 +111,9 @@ Copy your old configuration and uploaded files to your new folder.
     # If you have import parsers
     cp ../previous-version/bulkimport/parsers.py bulkimport/parsers.py
 
+    # If you have custom translations
+    cp -aR ../previous-version/geotrek/locale/ geotrek/
+
 Deploy the new version :
 
 ::

@@ -2,8 +2,10 @@ import logging
 from collections import namedtuple
 
 from django.conf import settings
+
 from django.contrib.auth.models import Group, check_password
 from django.contrib.auth import get_user_model
+
 from django.contrib.auth.backends import ModelBackend
 from django.db import connections
 from django.core.exceptions import ImproperlyConfigured

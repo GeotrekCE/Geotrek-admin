@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.conf.urls import patterns, url
 
-from mapentity import registry
+from mapentity.registry import registry
 
 from geotrek.altimetry.urls import AltimetryEntityOptions
 from geotrek.core.models import Path, Trail

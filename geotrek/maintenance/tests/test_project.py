@@ -14,7 +14,6 @@ class ProjectTest(TestCase):
         i1 = InterventionFactory.create()
         i2 = InterventionFactory.create()
         i3 = InterventionFactory.create()
-
         sign = SignageFactory.create()
         i1.set_infrastructure(sign)
         p1 = sign.paths.get()
@@ -32,15 +31,21 @@ class ProjectTest(TestCase):
         self.assertEquals(proj.signages, [])
         self.assertEquals(proj.infrastructures, [])
 
+        i1.save()
+
         proj.interventions.add(i1)
         self.assertItemsEqual(proj.paths.all(), [p1])
         self.assertEquals(proj.signages, [sign])
         self.assertEquals(proj.infrastructures, [])
 
+        i2.save()
+
         proj.interventions.add(i2)
         self.assertItemsEqual(proj.paths.all(), [p1, p2])
         self.assertEquals(proj.signages, [sign])
         self.assertEquals(proj.infrastructures, [infra])
+
+        i3.save()
 
         proj.interventions.add(i3)
         self.assertItemsEqual(proj.paths.all(), [p1, p2])
@@ -51,19 +56,19 @@ class ProjectTest(TestCase):
         i1 = InterventionFactory.create()
         sign = SignageFactory.create()
         i1.set_infrastructure(sign)
+        i1.save()
 
         proj = ProjectFactory.create()
         proj.interventions.add(i1)
         self.assertEquals(proj.signages, [sign])
-
         i1.delete()
-
         self.assertEquals(proj.signages, [])
 
     def test_deleted_infrastructure(self):
         i1 = InterventionFactory.create()
         infra = InfrastructureFactory.create()
         i1.set_infrastructure(infra)
+        i1.save()
 
         proj = ProjectFactory.create()
         proj.interventions.add(i1)

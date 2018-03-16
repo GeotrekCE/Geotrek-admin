@@ -5,9 +5,9 @@ CHANGELOG
 2.17.3.dev0
 -----------
 
-**Bug fixes**
+**Minor changes**
 
-*
+* Show total path length in path list
 
 
 2.17.2 (2018-02-07)
