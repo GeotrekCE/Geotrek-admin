@@ -42,7 +42,6 @@ BEGIN
         END IF;
     END IF;
     newline := array_append(newline, result);
-
     FOR i IN 2..ST_NPoints(NEW.geom)-1 LOOP
         newline := array_append(newline, ST_PointN(NEW.geom, i));
     END LOOP;
@@ -72,10 +71,10 @@ BEGIN
         END IF;
     END IF;
     newline := array_append(newline, result);
-
     RAISE NOTICE 'New geom %', ST_AsText(ST_MakeLine(newline));
     NEW.geom := ST_MakeLine(newline);
     RETURN NEW;
+
 END;
 $$ LANGUAGE plpgsql;
 
@@ -104,6 +103,7 @@ DECLARE
     b float8;
     segment geometry;
     newgeom geometry;
+    array_geom geometry[];
 
     intersections_on_new float8[];
     intersections_on_current float8[];
@@ -196,43 +196,45 @@ BEGIN
 
                 IF i = 1 THEN
                     -- First segment : shrink it !
-                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE nom = NEW.nom AND ST_Equals(geom, segment);
+                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Contains(geom,ST_Buffer(segment,0.1));
                     IF t_count = 0 THEN
                         RAISE NOTICE 'New: Skrink %-% (%) to %', NEW.id, NEW.nom, ST_AsText(NEW.geom), ST_AsText(segment);
                         UPDATE l_t_troncon SET geom = segment WHERE id = NEW.id;
                     END IF;
                 ELSE
                     -- Next ones : create clones !
-                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE nom = NEW.nom AND ST_Equals(geom, segment);
+                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Contains(geom,ST_Buffer(segment,0.1));
                     IF t_count = 0 THEN
                         RAISE NOTICE 'New: Create clone of %-% with geom %', NEW.id, NEW.nom, ST_AsText(segment);
-                        INSERT INTO l_t_troncon (structure,
-                                                 visible,
-                                                 valide,
-                                                 nom,
-                                                 remarques,
-                                                 source,
-                                                 enjeu,
-                                                 geom_cadastre,
-                                                 depart,
-                                                 arrivee,
-                                                 confort,
-                                                 id_externe,
-                                                 geom)
-                            VALUES (NEW.structure,
-                                    NEW.visible,
-                                    NEW.valide,
-                                    NEW.nom,
-                                    NEW.remarques,
-                                    NEW.source,
-                                    NEW.enjeu,
-                                    NEW.geom_cadastre,
-                                    NEW.depart,
-                                    NEW.arrivee,
-                                    NEW.confort,
-                                    NEW.id_externe,
-                                    segment)
-                            RETURNING id INTO tid_clone;
+                        IF NOT segment = ANY(SELECT geom FROM l_t_troncon) THEN
+                            INSERT INTO l_t_troncon (structure,
+                                                     visible,
+                                                     valide,
+                                                     nom,
+                                                     remarques,
+                                                     source,
+                                                     enjeu,
+                                                     geom_cadastre,
+                                                     depart,
+                                                     arrivee,
+                                                     confort,
+                                                     id_externe,
+                                                     geom)
+                                VALUES (NEW.structure,
+                                        NEW.visible,
+                                        NEW.valide,
+                                        NEW.nom,
+                                        NEW.remarques,
+                                        NEW.source,
+                                        NEW.enjeu,
+                                        NEW.geom_cadastre,
+                                        NEW.depart,
+                                        NEW.arrivee,
+                                        NEW.confort,
+                                        NEW.id_externe,
+                                        segment)
+                                RETURNING id INTO tid_clone;
+                        END IF;
                     END IF;
                 END IF;
             END LOOP;
@@ -276,107 +278,108 @@ BEGIN
                     END IF;
                 ELSE
                     -- Next ones : create clones !
-                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Equals(geom, segment);
+                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Contains(ST_Buffer(geom,0.1),segment);
                     IF t_count = 0 THEN
-                        RAISE NOTICE 'Current: Create clone of %-% (%) with geom %', troncon.id, troncon.nom, ST_AsText(troncon.geom), ST_AsText(segment);
-                        INSERT INTO l_t_troncon (structure,
-                                                 visible,
-                                                 valide,
-                                                 nom,
-                                                 remarques,
-                                                 source,
-                                                 enjeu,
-                                                 geom_cadastre,
-                                                 depart,
-                                                 arrivee,
-                                                 confort,
-                                                 id_externe,
-                                                 geom)
-                            VALUES (troncon.structure,
-                                    troncon.visible,
-                                    troncon.valide,
-                                    troncon.nom,
-                                    troncon.remarques,
-                                    troncon.source,
-                                    troncon.enjeu,
-                                    troncon.geom_cadastre,
-                                    troncon.depart,
-                                    troncon.arrivee,
-                                    troncon.confort,
-                                    troncon.id_externe,
-                                    segment)
-                            RETURNING id INTO tid_clone;
+                            RAISE NOTICE 'Current: Create clone of %-% (%) with geom %', troncon.id, troncon.nom, ST_AsText(troncon.geom), ST_AsText(segment);
+                            INSERT INTO l_t_troncon (structure,
+                                                     visible,
+                                                     valide,
+                                                     nom,
+                                                     remarques,
+                                                     source,
+                                                     enjeu,
+                                                     geom_cadastre,
+                                                     depart,
+                                                     arrivee,
+                                                     confort,
+                                                     id_externe,
+                                                     geom)
+                                VALUES (troncon.structure,
+                                        troncon.visible,
+                                        troncon.valide,
+                                        troncon.nom,
+                                        troncon.remarques,
+                                        troncon.source,
+                                        troncon.enjeu,
+                                        troncon.geom_cadastre,
+                                        troncon.depart,
+                                        troncon.arrivee,
+                                        troncon.confort,
+                                        troncon.id_externe,
+                                        segment)
+                                RETURNING id INTO tid_clone;
 
-                        -- Copy N-N relations
-                        INSERT INTO l_r_troncon_reseau (path_id, network_id)
-                            SELECT tid_clone, tr.network_id
-                            FROM l_r_troncon_reseau tr
-                            WHERE tr.path_id = troncon.id;
-                        INSERT INTO l_r_troncon_usage (path_id, usage_id)
-                            SELECT tid_clone, tr.usage_id
-                            FROM l_r_troncon_usage tr
-                            WHERE tr.path_id = troncon.id;
+                            -- Copy N-N relations
+                            INSERT INTO l_r_troncon_reseau (path_id, network_id)
+                                SELECT tid_clone, tr.network_id
+                                FROM l_r_troncon_reseau tr
+                                WHERE tr.path_id = troncon.id;
+                            INSERT INTO l_r_troncon_usage (path_id, usage_id)
+                                SELECT tid_clone, tr.usage_id
+                                FROM l_r_troncon_usage tr
+                                WHERE tr.path_id = troncon.id;
 
-                        -- Copy topologies overlapping start/end
-                        INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin, ordre)
-                            SELECT
-                                tid_clone,
-                                et.evenement,
-                                CASE WHEN pk_debut <= pk_fin THEN
-                                    (greatest(a, pk_debut) - a) / (b - a)
-                                ELSE
-                                    (least(b, pk_debut) - a) / (b - a)
-                                END,
-                                CASE WHEN pk_debut <= pk_fin THEN
-                                    (least(b, pk_fin) - a) / (b - a)
-                                ELSE
-                                    (greatest(a, pk_fin) - a) / (b - a)
-                                END,
-                                et.ordre
-                            FROM e_r_evenement_troncon et,
-                                 e_t_evenement e
-                            WHERE et.evenement = e.id
-                                  AND et.troncon = troncon.id
-                                  AND ((least(pk_debut, pk_fin) < b AND greatest(pk_debut, pk_fin) > a) OR       -- Overlapping
-                                       (pk_debut = pk_fin AND pk_debut = a AND decallage = 0)); -- Point
-                        GET DIAGNOSTICS t_count = ROW_COUNT;
-                        IF t_count > 0 THEN
-                            RAISE NOTICE 'Duplicated % topologies of %-% (%) on [% ; %] for %-% (%)', t_count, troncon.id, troncon.nom, ST_AsText(troncon.geom), a, b, tid_clone, troncon.nom, ST_AsText(segment);
-                        END IF;
-                        -- Special case : point topology at the end of path
-                        IF b = 1 THEN
-                            SELECT geom INTO t_geom FROM l_t_troncon WHERE id = troncon.id;
-                            fraction := ST_Line_Locate_Point(segment, ST_EndPoint(troncon.geom));
-                            INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
-                                SELECT tid_clone, evenement, pk_debut, pk_fin
-                                FROM e_r_evenement_troncon et,
-                                     e_t_evenement e
-                                WHERE et.evenement = e.id AND
-                                      et.troncon = troncon.id AND
-                                      pk_debut = pk_fin AND
-                                      pk_debut = 1 AND
-                                      decallage = 0;
-                            GET DIAGNOSTICS t_count = ROW_COUNT;
-                            IF t_count > 0 THEN
-                                RAISE NOTICE 'Duplicated % point topologies of %-% (%) on intersection at the end of %-% (%) at [%]', t_count, troncon.id, troncon.nom, ST_AsText(t_geom), tid_clone, troncon.nom, ST_AsText(segment), fraction;
-                            END IF;
-                        END IF;
-                        -- Special case : point topology exactly where NEW path intersects
-                        IF a > 0 THEN
-                            fraction := ST_Line_Locate_Point(NEW.geom, ST_Line_Interpolate_Point(troncon.geom, a));
+                            -- Copy topologies overlapping start/end
                             INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin, ordre)
-                                SELECT NEW.id, et.evenement, fraction, fraction, ordre
+                                SELECT
+                                    tid_clone,
+                                    et.evenement,
+                                    CASE WHEN pk_debut <= pk_fin THEN
+                                        (greatest(a, pk_debut) - a) / (b - a)
+                                    ELSE
+                                        (least(b, pk_debut) - a) / (b - a)
+                                    END,
+                                    CASE WHEN pk_debut <= pk_fin THEN
+                                        (least(b, pk_fin) - a) / (b - a)
+                                    ELSE
+                                        (greatest(a, pk_fin) - a) / (b - a)
+                                    END,
+                                    et.ordre
                                 FROM e_r_evenement_troncon et,
                                      e_t_evenement e
                                 WHERE et.evenement = e.id
-                                  AND et.troncon = troncon.id
-                                  AND pk_debut = pk_fin AND pk_debut = a
-                                  AND decallage = 0;
+                                      AND et.troncon = troncon.id
+                                      AND ((least(pk_debut, pk_fin) < b AND greatest(pk_debut, pk_fin) > a) OR       -- Overlapping
+                                           (pk_debut = pk_fin AND pk_debut = a AND decallage = 0)); -- Point
                             GET DIAGNOSTICS t_count = ROW_COUNT;
                             IF t_count > 0 THEN
-                                RAISE NOTICE 'Duplicated % point topologies of %-% (%) on intersection by %-% (%) at [%]', t_count, troncon.id, troncon.nom, ST_AsText(troncon.geom), NEW.id, NEW.nom, ST_AsText(NEW.geom), a;
+                                RAISE NOTICE 'Duplicated % topologies of %-% (%) on [% ; %] for %-% (%)', t_count, troncon.id, troncon.nom, ST_AsText(troncon.geom), a, b, tid_clone, troncon.nom, ST_AsText(segment);
                             END IF;
-                        END IF;
+                            -- Special case : point topology at the end of path
+                            IF b = 1 THEN
+                                SELECT geom INTO t_geom FROM l_t_troncon WHERE id = troncon.id;
+                                fraction := ST_Line_Locate_Point(segment, ST_EndPoint(troncon.geom));
+                                INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
+                                    SELECT tid_clone, evenement, pk_debut, pk_fin
+                                    FROM e_r_evenement_troncon et,
+                                         e_t_evenement e
+                                    WHERE et.evenement = e.id AND
+                                          et.troncon = troncon.id AND
+                                          pk_debut = pk_fin AND
+                                          pk_debut = 1 AND
+                                          decallage = 0;
+                                GET DIAGNOSTICS t_count = ROW_COUNT;
+                                IF t_count > 0 THEN
+                                    RAISE NOTICE 'Duplicated % point topologies of %-% (%) on intersection at the end of %-% (%) at [%]', t_count, troncon.id, troncon.nom, ST_AsText(t_geom), tid_clone, troncon.nom, ST_AsText(segment), fraction;
+                                END IF;
+                            END IF;
+                            -- Special case : point topology exactly where NEW path intersects
+                            IF a > 0 THEN
+                                fraction := ST_Line_Locate_Point(NEW.geom, ST_Line_Interpolate_Point(troncon.geom, a));
+                                INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin, ordre)
+                                    SELECT NEW.id, et.evenement, fraction, fraction, ordre
+                                    FROM e_r_evenement_troncon et,
+                                         e_t_evenement e
+                                    WHERE et.evenement = e.id
+                                      AND et.troncon = troncon.id
+                                      AND pk_debut = pk_fin AND pk_debut = a
+                                      AND decallage = 0;
+                                GET DIAGNOSTICS t_count = ROW_COUNT;
+                                IF t_count > 0 THEN
+                                    RAISE NOTICE 'Duplicated % point topologies of %-% (%) on intersection by %-% (%) at [%]', t_count, troncon.id, troncon.nom, ST_AsText(troncon.geom), NEW.id, NEW.nom, ST_AsText(NEW.geom), a;
+                                END IF;
+                            END IF;
+
                     END IF;
                 END IF;
             END LOOP;
