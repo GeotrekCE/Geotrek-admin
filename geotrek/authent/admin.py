@@ -9,8 +9,8 @@ from django.contrib.auth import get_user_model
 from geotrek.authent.models import Structure
 from geotrek.authent.models import UserProfile
 
-User = get_user_model()
-admin.site.unregister(User)
+
+admin.site.unregister(get_user_model())
 
 
 class UserProfileInline(admin.StackedInline):
@@ -25,5 +25,6 @@ class UserProfileAdmin(UserAdmin):
 
 if not settings.AUTHENT_TABLENAME:
     # If users are authenticated in a custom database, do not manage them here.
+    User = get_user_model()
     admin.site.register(User, UserProfileAdmin)
     admin.site.register(Structure)
