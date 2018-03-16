@@ -4,13 +4,12 @@
     Models to manage users and profiles
 """
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
 from django.contrib.auth.signals import user_logged_in
 from django.utils.translation import LANGUAGE_SESSION_KEY
-from django.core.exceptions import AppRegistryNotReady
 
 from geotrek.common.utils import reify
 
@@ -91,7 +90,7 @@ class UserProfile(StructureRelated):
     """
     A custom user profile
     """
-    user = models.OneToOneField(User, unique=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, unique=True, related_name="profile")
     language = models.CharField(_(u"Language"), max_length=10,
                                 choices=settings.LANGUAGES,
                                 default=settings.LANGUAGE_CODE)
