@@ -14,4 +14,3 @@ class AuthentConfig(GeotrekConfig):
 
     def ready(self):
         post_save.connect(create_user_profile, sender=get_user_model(), dispatch_uid="create_user_profile")
-        print("0")
