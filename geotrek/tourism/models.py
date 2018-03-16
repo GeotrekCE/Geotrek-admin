@@ -10,7 +10,7 @@ from django.utils.formats import date_format
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
-from mapentity import registry
+from mapentity.registry import registry
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text, smart_plain_text
 from modeltranslation.manager import MultilingualManager

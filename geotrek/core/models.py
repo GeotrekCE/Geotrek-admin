@@ -89,7 +89,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     @property
     def length_2d(self):
         if self.geom:
-            return round(self.geom.length, 1)
+            return self.geom.length
         else:
             return None
 
@@ -99,7 +99,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     @property
     def length_2d_display(self):
-        return self.length_2d
+        return round(self.length_2d, 1)
 
     def __unicode__(self):
         return self.name or _('path %d') % self.pk

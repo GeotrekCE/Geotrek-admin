@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.management import call_command
 
-from mapentity import registry
+from mapentity.registry import registry
 
 
 class AuthentFixturesMixin(object):

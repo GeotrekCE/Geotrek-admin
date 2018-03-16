@@ -10,7 +10,7 @@ from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test.utils import override_settings
-from django.template.base import TemplateDoesNotExist
+from django.template.exceptions import TemplateDoesNotExist
 
 from geotrek.trekking.models import Trek
 from geotrek.common.models import Organism, FileType, Attachment

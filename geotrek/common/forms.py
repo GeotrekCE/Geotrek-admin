@@ -4,7 +4,8 @@ from copy import deepcopy
 from zipfile import is_zipfile
 
 from django import forms as django_forms
-from django.db.models.fields.related import ForeignKey, ManyToManyField, FieldDoesNotExist
+from django.db.models.fields.related import ForeignKey, ManyToManyField
+from django.core.exceptions import FieldDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 
 import floppyforms as forms

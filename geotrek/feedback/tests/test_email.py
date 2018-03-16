@@ -1,4 +1,4 @@
-from django.test import SimpleTestCase
+from django.test import TestCase
 from django.test.utils import override_settings
 from django.core import mail
 from django.core.mail.backends.base import BaseEmailBackend
@@ -14,7 +14,7 @@ class FailingEmailBackend(BaseEmailBackend):
         raise Exception('Fake problem')
 
 
-class EmailSendingTest(SimpleTestCase):
+class EmailSendingTest(TestCase):
     def test_a_mail_is_sent_on_report_creation(self):
         ReportFactory.create()
         self.assertEquals(len(mail.outbox), 1)

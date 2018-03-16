@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-from mapentity import registry
+from mapentity.registry import registry
 
 from geotrek.feedback import models as feedback_models
 

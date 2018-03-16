@@ -10,9 +10,16 @@ from geotrek.settings import EnvIniReader
 
 class StartupCheckTest(TestCase):
     def test_error_is_raised_if_srid_is_not_meters(self):
-        delattr(check_srid_has_meter_unit, '_checked')
+        if hasattr(check_srid_has_meter_unit, '_checked'):
+            delattr(check_srid_has_meter_unit, '_checked')
         with self.settings(SRID=4326):
-            self.assertRaises(ImproperlyConfigured, check_srid_has_meter_unit, None)
+            self.assertRaises(ImproperlyConfigured, check_srid_has_meter_unit)
+
+    def test_error_is_not_raised_if_srid_is_meters(self):
+        if hasattr(check_srid_has_meter_unit, '_checked'):
+            delattr(check_srid_has_meter_unit, '_checked')
+        with self.settings(SRID=2154):
+            self.assertRaises(check_srid_has_meter_unit)
 
 
 class EnvIniTests(TestCase):
