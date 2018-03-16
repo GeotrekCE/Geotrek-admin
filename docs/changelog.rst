@@ -5,6 +5,11 @@ CHANGELOG
 2.17.3.dev0
 -----------
 
+**Preventive maintainance**
+
+* Upgrade to Django 1.9
+* Upgrade several python dependencies
+
 **Minor changes**
 
 * Show total path length in path list
