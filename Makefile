@@ -85,7 +85,7 @@ node_modules:
 	npm install geotrek/jstests
 
 test_js: node_modules
-	./node_modules/geotrek-tests/node_modules/mocha-phantomjs/bin/mocha-phantomjs geotrek/jstests/index.html
+	./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
 
 tests: test test_js test_nav
 
