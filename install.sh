@@ -428,6 +428,10 @@ function geotrek_setup {
 
     # Python bootstrap
     make install
+    success=$?
+    if [ $success -ne 0 ]; then
+        exit_error 2 "Could not setup virtualenv/buildout !"
+    fi
     echo_progress
 
     if $freshinstall && $interactive && ($prod || $standalone) ; then
