@@ -46,8 +46,8 @@ before_install:
 install:
   - if [[ $ACTION != codestyle ]]; then deactivate; fi
   - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
-  - if [[ $ACTION == test ]]; then ./install.sh --tests || (cat ./install.log; false); fi
-  - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput || (cat ./install.log; false); fi
+  - if [[ $ACTION == test ]]; then ./install.sh --tests --noinput; fi
+  - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput; fi
 script:
   - if [[ $ACTION == codestyle ]]; then flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings; fi
   - if [[ $ACTION == codestyle ]]; then flake8 geotrek; fi
@@ -67,7 +67,6 @@ after_success:
   - if [[ $ACTION == test ]]; then coveralls; fi
 
 after_failure:
-  - cat install.log
   - cat var/log/geotrek.log
   - cat var/log/nginx-access.log
   - cat var/log/nginx-error.log

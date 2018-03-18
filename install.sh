@@ -9,16 +9,6 @@ cd "$(dirname "$0")"
 
 #------------------------------------------------------------------------------
 
-# Redirect whole output to log file
-rm -f install.log
-touch install.log
-chmod 600 install.log
-
-exec 3>&1 4>&2
-exec 1> install.log 2>&1
-
-#------------------------------------------------------------------------------
-
 STABLE_VERSION=${STABLE_VERSION:-2.17.2}
 dev=false
 tests=false
@@ -29,7 +19,6 @@ settingsfile=etc/settings.ini
 
 
 usage () {
-    exec 2>&4
     cat >&2 <<- _EOF_
 Usage: Install project [OPTIONS]
     -d, --dev         minimum dependencies for development
@@ -39,7 +28,6 @@ Usage: Install project [OPTIONS]
     -s, --standalone  deploy a single-server production instance (Default)
     -h, --help        show this help
 _EOF_
-    exec 2>&1
     return
 }
 
@@ -67,6 +55,17 @@ while [[ -n $1 ]]; do
     shift
 done
 
+#------------------------------------------------------------------------------
+
+# Redirect whole output to log file
+if $interactive ; then
+    rm -f install.log
+    touch install.log
+    chmod 600 install.log
+
+    exec 3>&1 4>&2
+    exec 1> install.log 2>&1
+fi
 
 #------------------------------------------------------------------------------
 #
@@ -76,36 +75,36 @@ done
 
 function echo_step () {
     set +x
-    exec 2>&4
+    if $interactive; then exec 2>&4; fi
     echo -e "\n\e[92m\e[1m$1\e[0m" >&2
-    exec 2>&1
+    if $interactive; then exec 2>&1; fi
     set -x
 }
 
 
 function echo_warn () {
     set +x
-    exec 2>&4
+    if $interactive; then exec 2>&4; fi
     echo -e "\e[93m\e[1m$1\e[0m" >&2
-    exec 2>&1
+    if $interactive; then exec 2>&1; fi
     set -x
 }
 
 
 function echo_error () {
     set +x
-    exec 2>&4
+    if $interactive; then exec 2>&4; fi
     echo -e "\e[91m\e[1m$1\e[0m" >&2
-    exec 2>&1
+    if $interactive; then exec 2>&1; fi
     set -x
 }
 
 
 function echo_progress () {
     set +x
-    exec 2>&4
+    if $interactive; then exec 2>&4; fi
     echo -e ".\c" >&2
-    exec 2>&1
+    if $interactive; then exec 2>&1; fi
     set -x
 }
 
@@ -120,9 +119,11 @@ function exit_error () {
 
 function echo_header () {
     set +x
-    exec 2>&4
-    cat docs/logo.ans >&2
-    exec 2>&1
+    if $interactive; then
+        exec 2>&4
+        cat docs/logo.ans >&2
+        exec 2>&1
+    fi
     set -x
     version=$(cat VERSION)
     echo_step      "... install $version" >&2
