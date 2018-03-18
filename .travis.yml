@@ -68,9 +68,10 @@ after_success:
 
 after_failure:
   - cat var/log/geotrek.log
-  - cat var/log/nginx-access.log
-  - cat var/log/nginx-error.log
-  - cat var/log/supervisord.log
+  - sudo cat /var/log/nginx/geotrek_access.log
+  - sudo cat /var/log/nginx/geotrek_error.log
+  - cat /var/log/supervisord.log
+  - cat /var/log/geotrek.log
 
 #notifications:
   #irc: "irc.freenode.org#geotrek"
