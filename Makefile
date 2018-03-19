@@ -27,7 +27,7 @@ etc/settings.ini:
 
 bin/python:
 	virtualenv -p /usr/bin/python2 .
-	bin/pip install -U setuptools
+	bin/pip install -U setuptools==38.7.0
 	mkdir -p lib/src
 	mkdir -p lib/eggs
 	wget --quiet -O $(BUILDOUT_BOOTSTRAP) $(BUILDOUT_BOOTSTRAP_URL)
