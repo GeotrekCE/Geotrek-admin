@@ -265,38 +265,6 @@ class SplitPathTest(TestCase):
         cd.reload()
         self.assertEqual(len(Path.objects.all()), 3)
 
-    def test_split_multiple_5(self):
-        """
-             F E   C
-             + +   +
-              \|   |
-         A +---+---+---+ B
-               | - |
-               |---+---+ F
-                   |\
-                   + +
-                   D G
-        """
-        PathFactory.create(name="AB", geom=LineString((0, 0), (300, 0)))
-        PathFactory.create(name="CD", geom=LineString((200, 100), (200, -200)))
-        ab_1, ab_2 = Path.objects.filter(name="AB")
-        cd_1, cd_2 = Path.objects.filter(name="CD")
-        self.assertTrue(ab_1.length == 200 and ab_2.length == 100 or ab_1.length == 100 and ab_2.length == 200)
-        self.assertTrue(cd_1.length == 200 and cd_2.length == 100 or cd_1.length == 100 and cd_2.length == 200)
-
-        self.assertEqual(ab_1.geom, LineString((0, 0), (200, 0)))
-        self.assertEqual(cd_1.geom, LineString((200, 100), (200, 0)))
-        self.assertEqual(ab_2.geom, LineString((200, 0), (300, 0)))
-        self.assertEqual(cd_2.geom, LineString((200, 0), (200, -200)))
-
-        PathFactory.create(name="EF", geom=LineString((100, 100), (100, -100), (300, -100)))
-        PathFactory.create(name="GH", geom=LineString((50, 100), (250, -200)))
-
-        self.assertEqual(Path.objects.filter(name="AB").count(), 4)
-        self.assertEqual(Path.objects.filter(name="CD").count(), 4)
-        self.assertEqual(Path.objects.filter(name="EF").count(), 5)
-        self.assertEqual(Path.objects.filter(name="GH").count(), 5)
-
     def test_split_particular_postgis_sucks(self):
         """
         Same as test_split_almost_4 but with particular case where postgis SAYS 'Hey ! DWITHIN and DISTANCE = 0 but
@@ -404,6 +372,38 @@ class SplitPathTest(TestCase):
 
         self.assertEqual(len(Path.objects.filter(name="AB")), 5)
         self.assertEqual(len(Path.objects.filter(name="EF")), 3)
+
+    def test_split_multiple_5(self):
+        """
+             G E   C
+             + +   +
+              \|   |
+         A +---+---+---+ B
+               | - |
+               |---+---+ F
+                   |\
+                   + +
+                   D H
+        """
+        PathFactory.create(name="AB", geom=LineString((0, 0), (300, 0)))
+        PathFactory.create(name="CD", geom=LineString((200, 100), (200, -200)))
+        ab_1, ab_2 = Path.objects.filter(name="AB")
+        cd_1, cd_2 = Path.objects.filter(name="CD")
+        self.assertTrue(ab_1.length == 200 and ab_2.length == 100 or ab_1.length == 100 and ab_2.length == 200)
+        self.assertTrue(cd_1.length == 200 and cd_2.length == 100 or cd_1.length == 100 and cd_2.length == 200)
+
+        self.assertEqual(ab_1.geom, LineString((0, 0), (200, 0)))
+        self.assertEqual(cd_1.geom, LineString((200, 100), (200, 0)))
+        self.assertEqual(ab_2.geom, LineString((200, 0), (300, 0)))
+        self.assertEqual(cd_2.geom, LineString((200, 0), (200, -200)))
+
+        PathFactory.create(name="EF", geom=LineString((100, 100), (100, -100), (300, -100)))
+        PathFactory.create(name="GH", geom=LineString((50, 100), (250, -200)))
+
+        self.assertEqual(Path.objects.filter(name="AB").count(), 4)
+        self.assertEqual(Path.objects.filter(name="CD").count(), 4)
+        self.assertEqual(Path.objects.filter(name="EF").count(), 5)
+        self.assertEqual(Path.objects.filter(name="GH").count(), 5)
 
 
 class SplitPathLineTopologyTest(TestCase):
