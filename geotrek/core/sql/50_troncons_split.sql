@@ -206,35 +206,33 @@ BEGIN
                     SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Contains(ST_Buffer(segment,0.0001),geom);
                     IF t_count = 0 THEN
                         RAISE NOTICE 'New: Create clone of %-% with geom %', NEW.id, NEW.nom, ST_AsText(segment);
-                        IF NOT segment = ANY(SELECT geom FROM l_t_troncon) THEN
-                            INSERT INTO l_t_troncon (structure,
-                                                     visible,
-                                                     valide,
-                                                     nom,
-                                                     remarques,
-                                                     source,
-                                                     enjeu,
-                                                     geom_cadastre,
-                                                     depart,
-                                                     arrivee,
-                                                     confort,
-                                                     id_externe,
-                                                     geom)
-                                VALUES (NEW.structure,
-                                        NEW.visible,
-                                        NEW.valide,
-                                        NEW.nom,
-                                        NEW.remarques,
-                                        NEW.source,
-                                        NEW.enjeu,
-                                        NEW.geom_cadastre,
-                                        NEW.depart,
-                                        NEW.arrivee,
-                                        NEW.confort,
-                                        NEW.id_externe,
-                                        segment)
-                                RETURNING id INTO tid_clone;
-                        END IF;
+                        INSERT INTO l_t_troncon (structure,
+                                                 visible,
+                                                 valide,
+                                                 nom,
+                                                 remarques,
+                                                 source,
+                                                 enjeu,
+                                                 geom_cadastre,
+                                                 depart,
+                                                 arrivee,
+                                                 confort,
+                                                 id_externe,
+                                                 geom)
+                            VALUES (NEW.structure,
+                                    NEW.visible,
+                                    NEW.valide,
+                                    NEW.nom,
+                                    NEW.remarques,
+                                    NEW.source,
+                                    NEW.enjeu,
+                                    NEW.geom_cadastre,
+                                    NEW.depart,
+                                    NEW.arrivee,
+                                    NEW.confort,
+                                    NEW.id_externe,
+                                    segment)
+                            RETURNING id INTO tid_clone;
                     END IF;
                 END IF;
             END LOOP;
