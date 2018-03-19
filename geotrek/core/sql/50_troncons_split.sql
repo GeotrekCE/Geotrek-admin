@@ -41,8 +41,8 @@ BEGIN
             RAISE NOTICE 'Snapped start % to %, from %', ST_AsText(linestart), ST_AsText(result), ST_AsText(other);
         END IF;
     END IF;
-
     newline := array_append(newline, result);
+
     FOR i IN 2..ST_NPoints(NEW.geom)-1 LOOP
         newline := array_append(newline, ST_PointN(NEW.geom, i));
     END LOOP;
