@@ -196,14 +196,14 @@ BEGIN
 
                 IF i = 1 THEN
                     -- First segment : shrink it !
-                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Contains(geom,ST_Buffer(segment,0.1));
+                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Contains(ST_Buffer(segment,0.0001),geom);
                     IF t_count = 0 THEN
                         RAISE NOTICE 'New: Skrink %-% (%) to %', NEW.id, NEW.nom, ST_AsText(NEW.geom), ST_AsText(segment);
                         UPDATE l_t_troncon SET geom = segment WHERE id = NEW.id;
                     END IF;
                 ELSE
                     -- Next ones : create clones !
-                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Contains(geom,ST_Buffer(segment,0.1));
+                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Contains(ST_Buffer(segment,0.0001),geom);
                     IF t_count = 0 THEN
                         RAISE NOTICE 'New: Create clone of %-% with geom %', NEW.id, NEW.nom, ST_AsText(segment);
                         IF NOT segment = ANY(SELECT geom FROM l_t_troncon) THEN
@@ -278,7 +278,7 @@ BEGIN
                     END IF;
                 ELSE
                     -- Next ones : create clones !
-                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Contains(ST_Buffer(geom,0.1),segment);
+                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Contains(ST_Buffer(geom,0.0001),segment);
                     IF t_count = 0 THEN
                         RAISE NOTICE 'Current: Create clone of %-% (%) with geom %', troncon.id, troncon.nom, ST_AsText(troncon.geom), ST_AsText(segment);
                         INSERT INTO l_t_troncon (structure,
