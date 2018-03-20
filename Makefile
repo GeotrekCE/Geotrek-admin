@@ -9,10 +9,6 @@ version=$(shell git describe --tags --abbrev=0)
 
 ROOT_DIR=$(shell pwd)
 BUILDOUT_CFG = $(ROOT_DIR)/conf/buildout.cfg
-BUILDOUT_VERSION = 1.7.1
-BUILDOUT_BOOTSTRAP_URL = http://downloads.buildout.org/2/bootstrap.py
-BUILDOUT_BOOTSTRAP = bootstrap.py
-BUILDOUT_BOOTSTRAP_ARGS = -c $(BUILDOUT_CFG) --buildout-version=$(BUILDOUT_VERSION) buildout:directory=$(ROOT_DIR)
 BUILDOUT = bin/buildout
 BUILDOUT_ARGS = -N buildout:directory=$(ROOT_DIR) buildout:user=$(user)
 
@@ -27,12 +23,9 @@ etc/settings.ini:
 
 bin/python:
 	virtualenv -p /usr/bin/python2 .
-	bin/pip install -U setuptools==38.7.0
+	bin/pip install -U setuptools==38.7.0 zc.buildout==2.11.1
 	mkdir -p lib/src
 	mkdir -p lib/eggs
-	wget --quiet -O $(BUILDOUT_BOOTSTRAP) $(BUILDOUT_BOOTSTRAP_URL)
-	bin/python $(BUILDOUT_BOOTSTRAP) $(BUILDOUT_BOOTSTRAP_ARGS)
-	rm $(BUILDOUT_BOOTSTRAP)
 
 install: etc/settings.ini bin/python
 
@@ -85,7 +78,7 @@ node_modules:
 	npm install geotrek/jstests
 
 test_js: node_modules
-	./node_modules/geotrek-tests/node_modules/mocha-phantomjs/bin/mocha-phantomjs geotrek/jstests/index.html
+	./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
 
 tests: test test_js test_nav
 
@@ -115,11 +108,11 @@ deploy: update
 	sudo service supervisor restart
 
 all_makemessages:
-	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin makemessages --no-location --all; popd > /dev/null; done
+	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; bin/django makemessages --no-location --all; popd > /dev/null; done
 
 all_compilemessages:
-	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin compilemessages; popd > /dev/null; done
-	for dir in `find lib/src/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin compilemessages; popd > /dev/null; done
+	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; bin/django compilemessages; popd > /dev/null; done
+	for dir in `find lib/src/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; bin/django compilemessages; popd > /dev/null; done
 
 
 

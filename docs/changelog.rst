@@ -5,6 +5,11 @@ CHANGELOG
 2.17.3.dev0
 -----------
 
+**Breaking changes**
+
+* Drop support of Ubuntu Precise 12.04, please upgrade to
+  Trusty 14.04 or Xenial 16.04 before upgrading Geotrek-admin
+
 **Preventive maintainance**
 
 * Upgrade to Django 1.9
