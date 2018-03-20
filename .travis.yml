@@ -35,6 +35,8 @@ before_install:
   - sudo rm -rf /usr/local/bin/phantomjs*
   - sudo rm -rf /usr/bin/phantomjs*
   - sudo rm -rf /usr/local/phantomjs*
+  # Make sure nginx has access to static files
+  - sudo chmod a+x /home/travis
 
   # Download bundle of python eggs, and use it as download cache
   - mkdir -p $HOME/.buildout/downloads
