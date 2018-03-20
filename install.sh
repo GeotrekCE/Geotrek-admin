@@ -9,16 +9,6 @@ cd "$(dirname "$0")"
 
 #------------------------------------------------------------------------------
 
-# Redirect whole output to log file
-rm -f install.log
-touch install.log
-chmod 600 install.log
-
-exec 3>&1 4>&2
-exec 1> install.log 2>&1
-
-#------------------------------------------------------------------------------
-
 STABLE_VERSION=${STABLE_VERSION:-2.17.2}
 dev=false
 tests=false
@@ -29,7 +19,6 @@ settingsfile=etc/settings.ini
 
 
 usage () {
-    exec 2>&4
     cat >&2 <<- _EOF_
 Usage: Install project [OPTIONS]
     -d, --dev         minimum dependencies for development
@@ -39,7 +28,6 @@ Usage: Install project [OPTIONS]
     -s, --standalone  deploy a single-server production instance (Default)
     -h, --help        show this help
 _EOF_
-    exec 2>&1
     return
 }
 
@@ -67,6 +55,17 @@ while [[ -n $1 ]]; do
     shift
 done
 
+#------------------------------------------------------------------------------
+
+# Redirect whole output to log file
+if $interactive ; then
+    rm -f install.log
+    touch install.log
+    chmod 600 install.log
+
+    exec 3>&1 4>&2
+    exec 1> install.log 2>&1
+fi
 
 #------------------------------------------------------------------------------
 #
@@ -76,36 +75,36 @@ done
 
 function echo_step () {
     set +x
-    exec 2>&4
+    if $interactive; then exec 2>&4; fi
     echo -e "\n\e[92m\e[1m$1\e[0m" >&2
-    exec 2>&1
+    if $interactive; then exec 2>&1; fi
     set -x
 }
 
 
 function echo_warn () {
     set +x
-    exec 2>&4
+    if $interactive; then exec 2>&4; fi
     echo -e "\e[93m\e[1m$1\e[0m" >&2
-    exec 2>&1
+    if $interactive; then exec 2>&1; fi
     set -x
 }
 
 
 function echo_error () {
     set +x
-    exec 2>&4
+    if $interactive; then exec 2>&4; fi
     echo -e "\e[91m\e[1m$1\e[0m" >&2
-    exec 2>&1
+    if $interactive; then exec 2>&1; fi
     set -x
 }
 
 
 function echo_progress () {
     set +x
-    exec 2>&4
+    if $interactive; then exec 2>&4; fi
     echo -e ".\c" >&2
-    exec 2>&1
+    if $interactive; then exec 2>&1; fi
     set -x
 }
 
@@ -120,9 +119,11 @@ function exit_error () {
 
 function echo_header () {
     set +x
-    exec 2>&4
-    cat docs/logo.ans >&2
-    exec 2>&1
+    if $interactive; then
+        exec 2>&4
+        cat docs/logo.ans >&2
+        exec 2>&1
+    fi
     set -x
     version=$(cat VERSION)
     echo_step      "... install $version" >&2
@@ -203,20 +204,13 @@ function minimum_system_dependencies {
     echo_progress
     sudo apt-get install -y -qq python unzip wget python-software-properties
     echo_progress
-    if [ $precise -eq 1 ]; then
-        sudo apt-add-repository -y ppa:git-core/ppa
-        sudo apt-add-repository -y ppa:ubuntugis/ppa
-        sudo apt-get update -qq
-        echo_progress
-    fi
-
     sudo apt-get install -y -qq git gettext python-virtualenv build-essential python-dev
     echo_progress
 }
 
 
 function geotrek_system_dependencies {
-    sudo apt-get install -y -q --no-upgrade libjson0 gdal-bin libgdal-dev libssl-dev
+    sudo apt-get install -y -q --no-upgrade libjson0 gdal-bin libgdal-dev libssl-dev binutils libproj-dev
     
     if [ $xenial -eq 1 ]; then
         sudo apt-get install libgeos-c1v5 libproj9
@@ -435,6 +429,10 @@ function geotrek_setup {
 
     # Python bootstrap
     make install
+    success=$?
+    if [ $success -ne 0 ]; then
+        exit_error 2 "Could not setup virtualenv/buildout !"
+    fi
     echo_progress
 
     if $freshinstall && $interactive && ($prod || $standalone) ; then
@@ -527,10 +525,14 @@ function geotrek_setup {
         echo_step "Generate services configuration files..."
 
         # restart supervisor in case of xenial before 'make deploy'
-        sudo service supervisor force-stop && sudo service supervisor stop && sudo service supervisor start
+        if [ $trusty -eq 1 ]; then
+            sudo service supervisor force-stop && sudo service supervisor stop && sudo service supervisor start
+        fi
         if [ $? -ne 0 ]; then
             exit_error 10 "Could not restart supervisor !"
         fi
+
+        echo_progress
 
         # If buildout was successful, deploy really !
         if [ -f /etc/supervisor/supervisord.conf ]; then
@@ -598,10 +600,7 @@ trusty=$(grep "Ubuntu 14.04" /etc/issue | wc -l)
 vivid=$(grep "Ubuntu 15.04" /etc/issue | wc -l)
 xenial=$(grep "Ubuntu 16.04" /etc/issue | wc -l)
 
-if [ $precise -eq 1 ]; then
-    psql_version=9.1
-    pgis_version=2.0
-elif [ $trusty -eq 1 ]; then
+if [ $trusty -eq 1 ]; then
     psql_version=9.3
     pgis_version=2.1
 elif [ $vivid -eq 1 ]; then
@@ -612,8 +611,10 @@ elif [ $xenial -eq 1 ]; then
     pgis_version=2.2
 fi
 
-if [ $precise -eq 1 -o $trusty -eq 1 -o $vivid -eq 1 -o $xenial -eq 1 ] ; then
+if [ $trusty -eq 1 -o $vivid -eq 1 -o $xenial -eq 1 ] ; then
     geotrek_setup
+elif [ $precise -eq 1 ] ; then
+    exit_error 5 "Support for Ubuntu Precise 12.04 was dropped. Upgrade your server first. Aborted."
 else
     exit_error 5 "Unsupported operating system. Aborted."
 fi
