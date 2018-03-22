@@ -15,6 +15,10 @@ CHANGELOG
 * Upgrade to Django 1.9
 * Upgrade several python dependencies
 
+**Bug fixes**
+
+* Fix path duplication in path split trigger
+
 **Minor changes**
 
 * Show total path length in path list
