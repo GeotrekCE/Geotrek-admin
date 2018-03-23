@@ -5,7 +5,10 @@ CHANGELOG
 2.18.1.dev0
 -----------
 
-*
+**Bug fixes**
+
+* Fix distribution of tables in schemas
+
 
 2.18.0 (2018-03-22)
 -------------------
