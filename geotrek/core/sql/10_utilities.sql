@@ -10,7 +10,7 @@ DECLARE
     side_offset float;
     tuple record;
 BEGIN
-    linear_offset := ST_Line_Locate_Point(line, point);
+    linear_offset := ST_LineLocatePoint(line, point);
     shortest_line := ST_ShortestLine(line, point);
     crossing_dir := ST_LineCrossingDirection(line, shortest_line);
     -- /!\ In ST_LineCrossingDirection(), offset direction break the convention postive=left/negative=right
@@ -30,17 +30,17 @@ $$ LANGUAGE plpgsql;
 
 
 -------------------------------------------------------------------------------
--- A smart ST_Line_Substring that supports start > end
+-- A smart ST_LineSubstring that supports start > end
 -------------------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION geotrek.ST_Smart_Line_Substring(geom geometry, t_start float, t_end float) RETURNS geometry AS $$
+CREATE OR REPLACE FUNCTION geotrek.ST_SmartLineSubstring(geom geometry, t_start float, t_end float) RETURNS geometry AS $$
 DECLARE
     egeom geometry;
 BEGIN
     IF t_start < t_end THEN
-        egeom := ST_Line_Substring(geom, t_start, t_end);
+        egeom := ST_LineSubstring(geom, t_start, t_end);
     ELSE
-        egeom := ST_Line_Substring(ST_Reverse(geom), 1.0-t_start, 1.0-t_end);
+        egeom := ST_LineSubstring(ST_Reverse(geom), 1.0-t_start, 1.0-t_end);
     END IF;
     RETURN egeom;
 END;
