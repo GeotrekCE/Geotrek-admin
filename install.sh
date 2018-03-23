@@ -502,6 +502,12 @@ function geotrek_setup {
         fi
     fi
 
+    psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT * FROM easy_thumbnails_source;"
+    if [ $? -ne 1 ]; then
+        # fix migrations for easy_thumbnails
+        bin/django migrate --fake-initial easy_thumbnails --noinput
+    fi
+
     if $dev ; then
         echo_step "Initializing data..."
         make update
