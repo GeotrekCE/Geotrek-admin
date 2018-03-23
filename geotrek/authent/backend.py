@@ -12,13 +12,13 @@ from django.core.exceptions import ImproperlyConfigured
 
 from . import models as authent_models
 
-
-
 logger = logging.getLogger(__name__)
 
 FIELDS = 'username, first_name, last_name, password, email, level, structure, lang'.split(', ')
 
 Credentials = namedtuple('Credentials', FIELDS)
+
+User = get_user_model()
 
 
 class DatabaseBackend(ModelBackend):
@@ -26,7 +26,6 @@ class DatabaseBackend(ModelBackend):
     Authenticate against a table in Authent database.
     """
     def authenticate(self, username=None, password=None):
-        User = get_user_model()
         credentials = self.query_credentials(username)
         if credentials and check_password(password, credentials.password):
             try:
@@ -117,7 +116,6 @@ class DatabaseBackend(ModelBackend):
         return None
 
     def get_user(self, user_id):
-        User = get_user_model()
         try:
             u = User.objects.get(pk=user_id)
             return u

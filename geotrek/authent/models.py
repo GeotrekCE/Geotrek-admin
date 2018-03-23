@@ -91,6 +91,7 @@ class UserProfile(StructureRelated):
     language = models.CharField(_(u"Language"), max_length=10,
                                 choices=settings.LANGUAGES,
                                 default=settings.LANGUAGE_CODE)
+
     class Meta:
         verbose_name = _(u"User's profile")
         verbose_name_plural = _(u"User's profiles")

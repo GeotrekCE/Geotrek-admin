@@ -14,6 +14,7 @@ Credential = namedtuple('Credential', ['username', 'password'])
 
 User = get_user_model()
 
+
 def create_superuser_from_cred(cred, email='admin@admin.com'):
     return User.objects.create_superuser(cred.username, email, cred.password)
 

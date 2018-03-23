@@ -13,4 +13,5 @@ class AuthentConfig(GeotrekConfig):
     verbose_name = _("Authent")
 
     def ready(self):
-        post_save.connect(create_user_profile, sender=get_user_model(), dispatch_uid="create_user_profile")
+        User = get_user_model()
+        post_save.connect(create_user_profile, sender=User, dispatch_uid="create_user_profile")
