@@ -9,6 +9,10 @@ CHANGELOG
 
 * Fix distribution of tables in schemas
 
+**Minor changes**
+
+* Do not truncate install.log
+
 
 2.18.0 (2018-03-22)
 -------------------
