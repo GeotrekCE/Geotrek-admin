@@ -59,7 +59,7 @@ We have a couple of Django conventions infringements:
   modified through the Web application or raw access tools (pgadmin, QGIS).
   (For example, insertion & update timestamps, geometry computation or DEM wrapping.)
 * Safe delete: update field ``deleted = True`` instead of performing actual delete in table.
-  Requires every querysets to be filtered on deleted. (**TODO**: use dango-safedelete, `issue 813 <https://github.com/makinacorpus/Geotrek/issues/813>`_)
+  Requires every querysets to be filtered on deleted. (**TODO**: use dango-safedelete, `issue 813 <https://github.com/GeotrekCE/Geotrek-admin/issues/813>`_)
 
 
 Main roles of PostgreSQL triggers
