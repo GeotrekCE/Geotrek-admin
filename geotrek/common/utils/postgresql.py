@@ -107,7 +107,7 @@ def move_models_to_schemas(app):
     Views, functions and triggers will be moved in Geotrek app SQL files.
     """
     default_schema = settings.DATABASE_SCHEMAS.get('default')
-    app_schema = settings.DATABASE_SCHEMAS.get(app.module, default_schema)
+    app_schema = settings.DATABASE_SCHEMAS.get(app.name, default_schema)
 
     table_schemas = {}
     for model in app.get_models():
@@ -143,7 +143,7 @@ def move_models_to_schemas(app):
     # For Django, search_path is set in connection options.
     # But when accessing the database using QGis or ETL, search_path must be
     # set database level (for all users, and for this database only).
-    if app.module == 'common':
+    if app.name == 'geotrek.common':
         dbname = settings.DATABASES['default']['NAME']
         dbuser = settings.DATABASES['default']['USER']
         search_path = 'public,%s' % ','.join(set(settings.DATABASE_SCHEMAS.values()))
