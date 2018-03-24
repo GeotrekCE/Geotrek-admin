@@ -26,7 +26,7 @@ BEGIN
     last_ele := NULL;
     last_last_ele := NULL;
 
-    FOR current IN SELECT (ST_DumpPoints(ST_Force_3D(geom))).geom AS geom LOOP
+    FOR current IN SELECT (ST_DumpPoints(ST_Force3D(geom))).geom AS geom LOOP
 
          -- smoothing with last element
          ele := (ST_Z(current)::integer + coalesce(last_ele, ST_Z(current)::integer)) / 2;
@@ -108,7 +108,7 @@ BEGIN
     IF ST_ZMin(linegeom) < 0 OR ST_ZMax(linegeom) > 0 THEN
         -- Already 3D, do not need to drape.
         -- (Use-case is when assembling paths geometries to build topologies)
-        RETURN QUERY SELECT (ST_DumpPoints(ST_Force_3D(linegeom))).geom AS geom;
+        RETURN QUERY SELECT (ST_DumpPoints(ST_Force3D(linegeom))).geom AS geom;
 
     ELSE
         RETURN QUERY
@@ -175,13 +175,13 @@ BEGIN
     -- Skip if no DEM (speed-up tests)
     PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
     IF NOT FOUND THEN
-        SELECT ST_Force_3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
+        SELECT ST_Force3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
         RETURN result;
     END IF;
 
     -- Ensure parameter is a point or a line
     IF ST_GeometryType(geom) NOT IN ('ST_Point', 'ST_LineString') THEN
-        SELECT ST_Force_3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
+        SELECT ST_Force3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
         RETURN result;
     END IF;
 
@@ -241,13 +241,13 @@ BEGIN
     -- Skip if no DEM (speed-up tests)
     PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
     IF NOT FOUND THEN
-        SELECT ST_Force_3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
+        SELECT ST_Force3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
         RETURN result;
     END IF;
 
     -- Ensure parameter is a point or a line
     IF ST_GeometryType(geom) NOT IN ('ST_Point', 'ST_LineString') THEN
-        SELECT ST_Force_3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
+        SELECT ST_Force3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
         RETURN result;
     END IF;
 

@@ -2,8 +2,30 @@
 CHANGELOG
 =========
 
-2.17.3.dev0
+2.18.1.dev0
 -----------
+
+**Bug fixes**
+
+* Fix distribution of tables in schemas
+
+
+2.18.0 (2018-03-22)
+-------------------
+
+**Breaking changes**
+
+* Drop support of Ubuntu Precise 12.04, please upgrade to
+  Trusty 14.04 or Xenial 16.04 before upgrading Geotrek-admin
+
+**Preventive maintainance**
+
+* Upgrade to Django 1.9
+* Upgrade several python dependencies
+
+**Bug fixes**
+
+* Fix path duplication in path split trigger
 
 **Minor changes**
 
