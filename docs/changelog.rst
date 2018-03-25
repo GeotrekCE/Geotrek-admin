@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix distribution of tables in schemas
+* Allow to reset type1/type2 in TouristicContentSitraParser
 
 **Minor changes**
 
