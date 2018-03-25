@@ -13,6 +13,7 @@ from os.path import dirname
 from urlparse import urlparse
 
 from django.db import models, connection
+from django.db.utils import DatabaseError
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.gis.gdal import DataSource, GDALException, CoordTransform
@@ -414,6 +415,10 @@ class Parser(object):
                 break
             try:
                 self.parse_row(row)
+            except DatabaseError as e:
+                if settings.DEBUG:
+                    raise
+                self.add_warning(str(e).decode('utf8'))
             except Exception as e:
                 if settings.DEBUG:
                     raise
