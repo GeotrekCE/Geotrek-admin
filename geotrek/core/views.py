@@ -49,6 +49,7 @@ def last_list(request):
             return redirect(entity.url_list)
     return redirect('trekking:trek_list')
 
+
 home = last_list
 
 

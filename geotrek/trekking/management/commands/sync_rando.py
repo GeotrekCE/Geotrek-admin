@@ -786,5 +786,3 @@ class Command(BaseCommand):
             shutil.rmtree(tmp_root2)
         else:
             os.rename(self.tmp_root, self.dst_root)
-
-
