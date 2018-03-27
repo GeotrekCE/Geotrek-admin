@@ -28,7 +28,7 @@ class LoadPOITest(TestCase):
         self.assertRaises(CommandError, call_command, 'loadpoi', 'a', 'b')
 
     def test_command_fails_if_filename_missing(self):
-        self.assertRaises(CommandError, call_command, ('loadpoi', 'toto.shp'))
+        self.assertRaises(CommandError, call_command, 'loadpoi', 'toto.shp')
 
     def test_command_shows_number_of_objects(self):
         output = StringIO()
