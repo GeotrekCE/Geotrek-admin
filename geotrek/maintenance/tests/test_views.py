@@ -379,7 +379,9 @@ class ExportTest(TranslationResetMixin, TestCase):
 
         for feature in layer_point:
             self.assertEquals(str(feature['id']), str(proj.pk))
-            self.assertTrue(feature.geom.geos.equals(it_point.geom))
+            self.assertEquals(len(feature.geom.geos), 1)
+            self.assertAlmostEqual(feature.geom.geos[0].x, it_point.geom.x)
+            self.assertAlmostEqual(feature.geom.geos[0].y, it_point.geom.y)
 
         for feature in layer_line:
             self.assertEquals(str(feature['id']), str(proj.pk))
