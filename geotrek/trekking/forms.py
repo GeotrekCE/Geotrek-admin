@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.forms.models import inlineformset_factory
 
-import floppyforms as forms
+import floppyforms.__future__ as forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Submit, HTML, Div, Fieldset

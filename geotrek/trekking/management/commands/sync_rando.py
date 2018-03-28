@@ -282,8 +282,10 @@ class Command(BaseCommand):
             content = response.content
         f.write(content)
         f.close()
+        #FixMe: Find why there are duplicate files.
         if zipfile:
-            zipfile.write(fullname, name)
+            if name not in zipfile.namelist():
+                zipfile.write(fullname, name)
         if self.verbosity == 2:
             self.stdout.write(u"\x1b[3D\x1b[32mgenerated\x1b[0m")
 

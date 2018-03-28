@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 
-import floppyforms as forms
+import floppyforms.__future__ as forms
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.widgets import LineTopologyWidget

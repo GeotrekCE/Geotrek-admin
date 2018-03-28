@@ -752,7 +752,7 @@ class TrekGPXTest(TrekkingManagerTest):
 
         url = '/api/it/treks/{pk}/slug.gpx'.format(pk=self.trek.pk)
         self.response = self.client.get(url)
-        self.parsed = BeautifulSoup(self.response.content)
+        self.parsed = BeautifulSoup(self.response.content, 'lxml')
 
     def tearDown(self):
         translation.deactivate()

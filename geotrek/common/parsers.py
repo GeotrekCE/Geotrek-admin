@@ -519,9 +519,9 @@ class AttachmentParserMixin(object):
             return size != attachment.attachment_file.size
 
         if parsed_url.scheme == 'http' or parsed_url.scheme == 'https':
-            http = urllib2.urlopen(url)
-            size = http.headers.getheader('content-length')
-            return int(size) != attachment.attachment_file.size
+            response = requests.head(url)
+            size = response.headers.get('content-length')
+            return size is not None and int(size) != attachment.attachment_file.size
 
         return True
 

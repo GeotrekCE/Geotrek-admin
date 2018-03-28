@@ -1,4 +1,4 @@
-import floppyforms as forms
+import floppyforms.__future__ as forms
 from django.core.exceptions import ValidationError
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext_lazy as _

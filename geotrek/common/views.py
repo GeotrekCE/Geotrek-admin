@@ -8,6 +8,7 @@ from django.db.utils import DatabaseError
 from django.http import HttpResponse
 from django.utils.translation import ugettext as _
 from django_celery_results.models import TaskResult
+from django.utils import timezone
 
 from mapentity.helpers import api_bbox
 from mapentity import views as mapentity_views
@@ -24,7 +25,8 @@ import os
 import json
 import redis
 from zipfile import ZipFile
-from datetime import datetime, timedelta
+
+from datetime import timedelta
 
 from .utils.import_celery import create_tmp_destination, discover_available_parsers
 
@@ -241,8 +243,7 @@ def import_view(request):
 @login_required
 def import_update_json(request):
     results = []
-    threshold = datetime.now() - timedelta(seconds=60)
-
+    threshold = timezone.now() - timedelta(seconds=60)
     for task in TaskResult.objects.filter(date_done__gte=threshold).order_by('date_done'):
         json_results = json.loads(task.result)
         if json_results.get('name', '').startswith('geotrek.common'):

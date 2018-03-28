@@ -354,8 +354,10 @@ class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
 
 
 class TouristicContentCustomViewTests(TrekkingManagerTest):
+
     @mock.patch('mapentity.helpers.requests.get')
     def test_public_document_pdf(self, mocked):
+        # FixMe: Warning !
         content = TouristicContentFactory.create(published=True)
         url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
         mocked.return_value.status_code = 200
@@ -372,6 +374,7 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
 
 class TouristicEventCustomViewTests(TrekkingManagerTest):
     @mock.patch('mapentity.helpers.requests.get')
+    # FixMe: Warning !
     def test_public_document_pdf(self, mocked):
         content = TouristicEventFactory.create(published=True)
         url = '/api/en/touristicevents/{pk}/slug.pdf'.format(pk=content.pk)

@@ -69,7 +69,7 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
             html_content += getattr(self, 'content_%s' % l[0], None) or ''
 
     def parse_media(self):
-        soup = BeautifulSoup(self.content or '')
+        soup = BeautifulSoup(self.content or '', 'lxml')
         images = soup.findAll('img')
         results = []
         for image in images:
