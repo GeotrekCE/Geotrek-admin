@@ -148,7 +148,6 @@ Example with IGN and OSM basemaps :
         ('IGN Ortho', 'http://gpp3-wxs.ign.fr/YOURAPIKEY/geoportail/wmts?LAYER=ORTHOIMAGERY.ORTHOPHOTOS&EXCEPTIONS=text/xml&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}','(c) IGN Geoportail'),
         ('IGN Cadastre', 'http://gpp3-wxs.ign.fr/YOURAPIKEY/geoportail/wmts?LAYER=CADASTRALPARCELS.PARCELS&EXCEPTIONS=text/xml&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=bdparcellaire_o&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}','(c) IGN Geoportail'),
         ('OSM', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png','(c) OpenStreetMap contributors'),
-        ('OSM Mapbox Landplanner', 'http://b.tiles.mapbox.com/v3/landplanner.map-xswoybbb/{z}/{x}/{y}.jpg','(c) OpenStreetMap contributors / Mapbox'),
         ('OSM Mapbox Outdoors', 'https://api.mapbox.com/v4/mapbox.outdoors/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiY2FtaWxsZW1vbmNoaWNvdXJ0IiwiYSI6ImNpdXNjeGJ1eTAwN3EyenF1a3cwdjRjZ28ifQ.N7fgtsamWADrM2QmOIXnrw','(c) OpenStreetMap contributors / Mapbox'),
         ('OSM Stamen Terrain', 'http://tile.stamen.com/terrain/{z}/{x}/{y}.jpg','(c) OpenStreetMap contributors / Stamen Design'),
         ('OpenTopoMap', 'http://a.tile.opentopomap.org/{z}/{x}/{y}.png', 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)'),
