@@ -2,8 +2,29 @@
 CHANGELOG
 =========
 
-2.17.3.dev0
+2.18.2.dev0
 -----------
+
+**Bug Fixes**
+
+*
+
+
+2.18.1 (2018-03-26)
+-------------------
+
+**Bug fixes**
+
+* Fix distribution of tables in schemas
+* Allow to reset type1/type2 in TouristicContentSitraParser
+
+**Minor changes**
+
+* Do not truncate install.log
+
+
+2.18.0 (2018-03-22)
+-------------------
 
 **Breaking changes**
 
@@ -14,6 +35,10 @@ CHANGELOG
 
 * Upgrade to Django 1.9
 * Upgrade several python dependencies
+
+**Bug fixes**
+
+* Fix path duplication in path split trigger
 
 **Minor changes**
 

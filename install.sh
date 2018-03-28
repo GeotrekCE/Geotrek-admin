@@ -9,7 +9,7 @@ cd "$(dirname "$0")"
 
 #------------------------------------------------------------------------------
 
-STABLE_VERSION=${STABLE_VERSION:-2.17.2}
+STABLE_VERSION=${STABLE_VERSION:-2.18.1}
 dev=false
 tests=false
 prod=false
@@ -20,7 +20,7 @@ settingsfile=etc/settings.ini
 
 usage () {
     cat >&2 <<- _EOF_
-Usage: Install project [OPTIONS]
+Usage: $0 project [OPTIONS]
     -d, --dev         minimum dependencies for development
     -t, --tests       install testing environment
     -p, --prod        deploy a production instance
@@ -58,14 +58,19 @@ done
 #------------------------------------------------------------------------------
 
 # Redirect whole output to log file
+touch install.log
+chmod 600 install.log
+exec 3>&1 4>&2
 if $interactive ; then
-    rm -f install.log
-    touch install.log
-    chmod 600 install.log
-
-    exec 3>&1 4>&2
-    exec 1> install.log 2>&1
+    exec 1>> install.log 2>&1
+else
+    exec 1>> >( tee --append install.log) 2>&1
 fi
+
+echo '------------------------------------------------------------------------------'
+date --rfc-2822
+
+set -x
 
 #------------------------------------------------------------------------------
 #
@@ -75,36 +80,36 @@ fi
 
 function echo_step () {
     set +x
-    if $interactive; then exec 2>&4; fi
+    exec 2>&4
     echo -e "\n\e[92m\e[1m$1\e[0m" >&2
-    if $interactive; then exec 2>&1; fi
+    exec 2>&1
     set -x
 }
 
 
 function echo_warn () {
     set +x
-    if $interactive; then exec 2>&4; fi
+    exec 2>&4
     echo -e "\e[93m\e[1m$1\e[0m" >&2
-    if $interactive; then exec 2>&1; fi
+    exec 2>&1
     set -x
 }
 
 
 function echo_error () {
     set +x
-    if $interactive; then exec 2>&4; fi
+    exec 2>&4
     echo -e "\e[91m\e[1m$1\e[0m" >&2
-    if $interactive; then exec 2>&1; fi
+    exec 2>&1
     set -x
 }
 
 
 function echo_progress () {
     set +x
-    if $interactive; then exec 2>&4; fi
+    exec 2>&4
     echo -e ".\c" >&2
-    if $interactive; then exec 2>&1; fi
+    exec 2>&1
     set -x
 }
 
@@ -118,20 +123,19 @@ function exit_error () {
 
 
 function echo_header () {
-    set +x
     if $interactive; then
+        set +x
         exec 2>&4
         cat docs/logo.ans >&2
         exec 2>&1
+        set -x
     fi
-    set -x
     version=$(cat VERSION)
     echo_step      "... install $version" >&2
     if [ ! -z $1 ] ; then
         echo_warn "... upgrade $1" >&2
     fi
     echo_step      "(details in install.log)" >&2
-    echo_step >&2
 }
 
 
@@ -350,16 +354,16 @@ _EOF_
 
 
 function backup_existing_database {
-    set +x
     if $interactive ; then
+        set +x
         exec 2>&4
         read -p "Backup existing database ? [yN] " -n 1 -r
         echo  # new line
         exec 2>&1
+        set -x
     else
         REPLY=N;
     fi
-    set -x
     if [[ $REPLY =~ ^[Yy]$ ]]
     then
         dbname=$(ini_value $settingsfile dbname)
@@ -376,8 +380,6 @@ function backup_existing_database {
 #------------------------------------------------------------------------------
 
 function geotrek_setup {
-    set -x
-
     existing=$(existing_version)
     freshinstall=true
     if [ ! -z $existing ] ; then
@@ -502,6 +504,12 @@ function geotrek_setup {
         fi
     fi
 
+    psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT * FROM easy_thumbnails_source;"
+    if [ $? -ne 1 ]; then
+        # fix migrations for easy_thumbnails
+        bin/django migrate --fake-initial easy_thumbnails --noinput
+    fi
+
     if $dev ; then
         echo_step "Initializing data..."
         make update
@@ -589,8 +597,6 @@ function geotrek_setup {
             exit_error 6 "Geotrek package could not be installed."
         fi
     fi
-
-    set +x
 
     echo_step "Done."
 }

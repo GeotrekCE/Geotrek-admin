@@ -13,6 +13,7 @@ from os.path import dirname
 from urlparse import urlparse
 
 from django.db import models, connection
+from django.db.utils import DatabaseError
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.gis.gdal import DataSource, GDALException, CoordTransform
@@ -385,8 +386,11 @@ class Parser(object):
             assert not self.separator or self.separator not in val
             field = self.model._meta.get_field(dst)
             natural_key = self.natural_keys[dst]
+            filters = {natural_key: subval for subval in val}
+            if not filters:
+                continue
             try:
-                kwargs[dst] = field.rel.to.objects.get(**{natural_key: subval for subval in val})
+                kwargs[dst] = field.rel.to.objects.get(**filters)
             except field.rel.to.DoesNotExist:
                 raise GlobalImportError(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=field.rel.to._meta.verbose_name.title(), val=val))
         return kwargs
@@ -411,6 +415,10 @@ class Parser(object):
                 break
             try:
                 self.parse_row(row)
+            except DatabaseError as e:
+                if settings.DEBUG:
+                    raise
+                self.add_warning(str(e).decode('utf8'))
             except Exception as e:
                 if settings.DEBUG:
                     raise

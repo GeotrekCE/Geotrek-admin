@@ -78,13 +78,13 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
         super(TouristicContentSitraParser, self).__init__(*args, **kwargs)
         if self.category:
             self.constant_fields['category'] = self.category
-        if self.type1:
+        if self.type1 is not None:
             self.m2m_constant_fields['type1'] = self.type1
-        if self.type2:
+        if self.type2 is not None:
             self.m2m_constant_fields['type2'] = self.type2
-        if self.source:
+        if self.source is not None:
             self.m2m_constant_fields['source'] = self.source
-        if self.portal:
+        if self.portal is not None:
             self.m2m_constant_fields['portal'] = self.portal
 
     @property
