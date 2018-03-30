@@ -282,7 +282,7 @@ class Command(BaseCommand):
             content = response.content
         f.write(content)
         f.close()
-        #FixMe: Find why there are duplicate files.
+        # FixMe: Find why there are duplicate files.
         if zipfile:
             if name not in zipfile.namelist():
                 zipfile.write(fullname, name)
