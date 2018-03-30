@@ -12,7 +12,6 @@ from paperclip import views as paperclip_views
 
 handler403 = 'mapentity.views.handler403'
 handler404 = 'mapentity.views.handler404'
-handler500 = 'mapentity.views.handler500'
 
 
 urlpatterns = [
