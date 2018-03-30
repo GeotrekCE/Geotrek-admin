@@ -24,6 +24,10 @@ MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = (
 
 MAILALERTSUBJECT = "Acknowledgment of feedback email"
 
+ALLOWED_HOSTS = [
+    'localhost',
+]
+
 
 class DisableMigrations(object):
     def __contains__(self, item):
