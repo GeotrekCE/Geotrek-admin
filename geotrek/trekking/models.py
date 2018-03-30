@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.template.defaultfilters import slugify
 from django.utils.translation import get_language, ugettext, ugettext_lazy as _
+from django.urls import reverse
 
 import simplekml
 from mapentity.models import MapEntityMixin
@@ -132,9 +133,8 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     def __unicode__(self):
         return self.name
 
-    @models.permalink
     def get_map_image_url(self):
-        return ('trekking:trek_map_image', [], {'pk': str(self.pk), 'lang': get_language()})
+        return reverse('trekking:trek_map_image', args=[str(self.pk), get_language()])
 
     def get_map_image_path(self):
         basefolder = os.path.join(settings.MEDIA_ROOT, 'maps')
@@ -165,11 +165,10 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
             extent[3] = max(extent[3], poi.geom.y)
         return extent
 
-    @models.permalink
     def get_document_public_url(self):
         """ Override ``geotrek.common.mixins.PublishableMixin``
         """
-        return ('trekking:trek_document_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
+        return reverse('trekking:trek_document_public', args=[get_language(), self.pk, self.slug])
 
     @models.permalink
     def get_markup_public_url(self):
@@ -629,9 +628,8 @@ class WebLink(models.Model):
         return u"%s%s (%s)" % (category, self.name, self.url)
 
     @classmethod
-    @models.permalink
     def get_add_url(cls):
-        return ('trekking:weblink_add', )
+        return reverse('trekking:weblink_add')
 
 
 class WebLinkCategory(PictogramMixin):
@@ -673,11 +671,10 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.type)
 
-    @models.permalink
     def get_document_public_url(self):
         """ Override ``geotrek.common.mixins.PublishableMixin``
         """
-        return ('trekking:poi_document_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
+        return reverse('trekking:poi_document_public', args=[get_language(), self.pk, self.slug])
 
     @models.permalink
     def get_markup_public_url(self):

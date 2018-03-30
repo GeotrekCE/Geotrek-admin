@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 from django.conf import settings
+from django.urls import reverse
 
 from bs4 import BeautifulSoup
 from extended_choices import Choices
@@ -90,17 +91,14 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
 
         return results
 
-    @models.permalink
     def get_add_url(self):
-        return ('admin:flatpages_flatpage_add', )
+        return reverse('admin:flatpages_flatpage_add')
 
-    @models.permalink
     def get_update_url(self):
-        return ('admin:flatpages_flatpage_change', [self.pk])
+        return reverse('admin:flatpages_flatpage_change', args=[self.pk])
 
-    @models.permalink
     def get_delete_url(self):
-        return ('admin:flatpages_flatpage_delete', [self.pk])
+        return reverse('admin:flatpages_flatpage_delete', args=[self.pk])
 
     @property
     def rando_url(self):
