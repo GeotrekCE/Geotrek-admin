@@ -36,13 +36,13 @@ class SplitPathTest(TestCase):
 
         # Make sure AB was split :
         ab.reload()
-        self.assertEqual(ab.geom, LineString((0, 0), (2, 0)))
+        self.assertEqual(ab.geom, LineString((0, 0), (2, 0), srid=settings.SRID))
         self.assertEqual(ab.length, 2)  # Length was also updated
         # And a clone of AB was created
         clones = Path.objects.filter(name="AB").exclude(pk=ab.pk)
         self.assertEqual(len(clones), 1)
         ab_2 = clones[0]
-        self.assertEqual(ab_2.geom, LineString((2, 0), (4, 0)))
+        self.assertEqual(ab_2.geom, LineString((2, 0), (4, 0), srid=settings.SRID))
         self.assertEqual(ab_2.length, 2)  # Length was also updated
 
     def test_split_tee_2(self):
@@ -54,12 +54,12 @@ class SplitPathTest(TestCase):
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
 
         # Make sure AB was split :
-        self.assertEqual(ab.geom, LineString((0, 0), (2, 0)))
+        self.assertEqual(ab.geom, LineString((0, 0), (2, 0), srid=settings.SRID))
         self.assertEqual(ab.length, 2)  # Length was also updated
 
         clones = Path.objects.filter(name="AB").exclude(pk=ab.pk)
         ab_2 = clones[0]
-        self.assertEqual(ab_2.geom, LineString((2, 0), (4, 0)))
+        self.assertEqual(ab_2.geom, LineString((2, 0), (4, 0), srid=settings.SRID))
         self.assertEqual(ab_2.length, 2)  # Length was also updated
 
     def test_split_cross(self):
@@ -77,10 +77,10 @@ class SplitPathTest(TestCase):
         ab.reload()
         ab_2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
         cd_2 = Path.objects.filter(name="CD").exclude(pk=cd.pk)[0]
-        self.assertEqual(ab.geom, LineString((0, 0), (2, 0)))
-        self.assertEqual(cd.geom, LineString((2, -2), (2, 0)))
-        self.assertEqual(ab_2.geom, LineString((2, 0), (4, 0)))
-        self.assertEqual(cd_2.geom, LineString((2, 0), (2, 2)))
+        self.assertEqual(ab.geom, LineString((0, 0), (2, 0), srid=settings.SRID))
+        self.assertEqual(cd.geom, LineString((2, -2), (2, 0), srid=settings.SRID))
+        self.assertEqual(ab_2.geom, LineString((2, 0), (4, 0), srid=settings.SRID))
+        self.assertEqual(cd_2.geom, LineString((2, 0), (2, 2), srid=settings.SRID))
 
     def test_split_cross_on_deleted(self):
         """
@@ -141,21 +141,21 @@ class SplitPathTest(TestCase):
         self.assertEqual(len(ab_clones), 2)
         self.assertEqual(len(cd_clones), 2)
         # Depending on PostgreSQL fetch order
-        if ab_clones[0].geom == LineString((1, 0), (3, 0)):
-            self.assertEqual(ab_clones[0].geom, LineString((1, 0), (3, 0)))
-            self.assertEqual(ab_clones[1].geom, LineString((3, 0), (4, 0)))
+        if ab_clones[0].geom == LineString((1, 0), (3, 0), srid=settings.SRID):
+            self.assertEqual(ab_clones[0].geom, LineString((1, 0), (3, 0), srid=settings.SRID))
+            self.assertEqual(ab_clones[1].geom, LineString((3, 0), (4, 0), srid=settings.SRID))
         else:
-            self.assertEqual(ab_clones[0].geom, LineString((3, 0), (4, 0)))
-            self.assertEqual(ab_clones[1].geom, LineString((1, 0), (3, 0)))
+            self.assertEqual(ab_clones[0].geom, LineString((3, 0), (4, 0), srid=settings.SRID))
+            self.assertEqual(ab_clones[1].geom, LineString((1, 0), (3, 0), srid=settings.SRID))
 
-        if cd_clones[0].geom == LineString((3, 0), (3, 2)):
-            self.assertEqual(cd_clones[0].geom, LineString((3, 0), (3, 2)))
+        if cd_clones[0].geom == LineString((3, 0), (3, 2), srid=settings.SRID):
+            self.assertEqual(cd_clones[0].geom, LineString((3, 0), (3, 2), srid=settings.SRID))
             self.assertEqual(cd_clones[1].geom, LineString((1, 0), (1, -2),
-                                                           (3, -2), (3, 0)))
+                                                           (3, -2), (3, 0), srid=settings.SRID))
         else:
             self.assertEqual(cd_clones[0].geom, LineString((1, 0), (1, -2),
-                                                           (3, -2), (3, 0)))
-            self.assertEqual(cd_clones[1].geom, LineString((3, 0), (3, 2)))
+                                                           (3, -2), (3, 0), srid=settings.SRID))
+            self.assertEqual(cd_clones[1].geom, LineString((3, 0), (3, 2), srid=settings.SRID))
 
     def test_add_shortest_path(self):
         """
@@ -187,11 +187,11 @@ class SplitPathTest(TestCase):
         ab_2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
         cb_2 = Path.objects.filter(name="CB").exclude(pk=cb.pk)[0]
 
-        self.assertEqual(de.geom, LineString((4, 0), (12, 0)))
-        self.assertEqual(ab.geom, LineString((0, 0), (4, 0)))
-        self.assertEqual(ab_2.geom, LineString((4, 0), (6, -2), (8, -2)))
-        self.assertEqual(cb.geom, LineString((14, 0), (12, 0)))
-        self.assertEqual(cb_2.geom, LineString((12, 0), (10, -2), (8, -2)))
+        self.assertEqual(de.geom, LineString((4, 0), (12, 0), srid=settings.SRID))
+        self.assertEqual(ab.geom, LineString((0, 0), (4, 0), srid=settings.SRID))
+        self.assertEqual(ab_2.geom, LineString((4, 0), (6, -2), (8, -2), srid=settings.SRID))
+        self.assertEqual(cb.geom, LineString((14, 0), (12, 0), srid=settings.SRID))
+        self.assertEqual(cb_2.geom, LineString((12, 0), (10, -2), (8, -2), srid=settings.SRID))
 
     def test_split_almost(self):
         """
@@ -209,10 +209,10 @@ class SplitPathTest(TestCase):
         cd.reload()
         eb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
         ed = Path.objects.filter(name="CD").exclude(pk=cd.pk)[0]
-        self.assertEqual(ab.geom, LineString((0, 0), (2, -0.2)))
-        self.assertEqual(cd.geom, LineString((1, 1), (2, -0.2)))
-        self.assertEqual(eb.geom, LineString((2, -0.2), (4, 0)))
-        self.assertEqual(ed.geom, LineString((2, -0.2), (3, 1)))
+        self.assertEqual(ab.geom, LineString((0, 0), (2, -0.2), srid=settings.SRID))
+        self.assertEqual(cd.geom, LineString((1, 1), (2, -0.2), srid=settings.SRID))
+        self.assertEqual(eb.geom, LineString((2, -0.2), (4, 0), srid=settings.SRID))
+        self.assertEqual(ed.geom, LineString((2, -0.2), (3, 1), srid=settings.SRID))
 
     def test_split_almost_2(self):
         """
@@ -226,8 +226,8 @@ class SplitPathTest(TestCase):
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (10000000, 0)))
         ab.reload()
         cd.reload()
-        self.assertEqual(ab.geom, LineString((0.1, 0), (10000000, 0)))
-        self.assertEqual(cd.geom, LineString((0.1, 1), (0.1, 0)))
+        self.assertEqual(ab.geom, LineString((0.1, 0), (10000000, 0), srid=settings.SRID))
+        self.assertEqual(cd.geom, LineString((0.1, 1), (0.1, 0), srid=settings.SRID))
         self.assertEqual(len(Path.objects.all()), 3)
 
     def test_split_almost_3(self):
@@ -242,8 +242,8 @@ class SplitPathTest(TestCase):
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (10000000, 0)))
         ab.reload()
         cd.reload()
-        self.assertEqual(ab.geom, LineString((0, 0), (1.1, 0)))
-        self.assertEqual(cd.geom, LineString((1.1, 1), (1.1, 0)))
+        self.assertEqual(ab.geom, LineString((0, 0), (1.1, 0), srid=settings.SRID))
+        self.assertEqual(cd.geom, LineString((1.1, 1), (1.1, 0), srid=settings.SRID))
         self.assertEqual(len(Path.objects.all()), 4)
 
     def test_split_almost_4(self):
@@ -392,10 +392,10 @@ class SplitPathTest(TestCase):
         self.assertTrue(ab_1.length == 200 and ab_2.length == 100 or ab_1.length == 100 and ab_2.length == 200)
         self.assertTrue(cd_1.length == 200 and cd_2.length == 100 or cd_1.length == 100 and cd_2.length == 200)
 
-        self.assertEqual(ab_1.geom, LineString((0, 0), (200, 0)))
-        self.assertEqual(cd_1.geom, LineString((200, 100), (200, 0)))
-        self.assertEqual(ab_2.geom, LineString((200, 0), (300, 0)))
-        self.assertEqual(cd_2.geom, LineString((200, 0), (200, -200)))
+        self.assertEqual(ab_1.geom, LineString((0, 0), (200, 0), srid=settings.SRID))
+        self.assertEqual(cd_1.geom, LineString((200, 100), (200, 0), srid=settings.SRID))
+        self.assertEqual(ab_2.geom, LineString((200, 0), (300, 0), srid=settings.SRID))
+        self.assertEqual(cd_2.geom, LineString((200, 0), (200, -200), srid=settings.SRID))
 
         PathFactory.create(name="EF", geom=LineString((100, 100), (100, -100), (300, -100)))
         PathFactory.create(name="GH", geom=LineString((50, 100), (250, -200)))
@@ -467,7 +467,7 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual((1.0, 0.5), (aggr_ab.start_position, aggr_ab.end_position))
         self.assertEqual((0.5, 0.0), (aggr_cb.start_position, aggr_cb.end_position))
         topology.reload()
-        self.assertEqual(topology.geom, LineString((3.0, 0.0, 0.0), (2.0, 0.0, 0.0), (1.0, 0.0, 0.0)))
+        self.assertEqual(topology.geom, LineString((3.0, 0.0, 0.0), (2.0, 0.0, 0.0), (1.0, 0.0, 0.0), srid=settings.SRID))
 
     def test_split_tee_2(self):
         """
@@ -589,7 +589,7 @@ class SplitPathLineTopologyTest(TestCase):
         aggr_ab = ab.aggregations.all()[0]
         self.assertEqual((0.6, 0.2), (aggr_ab.start_position, aggr_ab.end_position))
         topology.reload()
-        self.assertEqual(topology.geom, LineString((1.7999999999999998, 0.0, 0.0), (0.5999999999999996, 0.0, 0.0)))
+        self.assertEqual(topology.geom, LineString((1.7999999999999998, 0.0, 0.0), (0.5999999999999996, 0.0, 0.0), srid=settings.SRID))
 
     def test_split_tee_4(self):
         """
@@ -676,7 +676,7 @@ class SplitPathLineTopologyTest(TestCase):
         # Geometry has changed
         self.assertEqual(topology.geom, LineString((1.0, 0.0, 0.0), (2.0, 0.0, 0.0),
                                                    (3.0, 0.0, 0.0), (4.0, 0.0, 0.0),
-                                                   (5.0, 0.0, 0.0)))
+                                                   (5.0, 0.0, 0.0), srid=settings.SRID))
 
     def test_split_twice(self):
         """
@@ -748,7 +748,7 @@ class SplitPathLineTopologyTest(TestCase):
             self.assertEqual((0.6, 0.0), (aggr_ab2.start_position, aggr_ab2.end_position))
         topology.reload()
         self.assertEqual(topology.geom, LineString((3.6000000000000001, 0), (3, 0),
-                                                   (1.0, 0.0), (0.4, 0.0)))
+                                                   (1.0, 0.0), (0.4, 0.0), srid=settings.SRID))
 
     def test_split_on_update(self):
         """                               + E
@@ -1289,7 +1289,8 @@ class SplitPathGenericTopologyTest(TestCase):
         topology.add_path(ab, start=0.25, end=1.0)
         topology.add_path(bc, start=0.0, end=0.75)
         self.assertEqual(len(topology.paths.all()), 2)
-        originalgeom = LineString((2.2071067811865475, 0), (4, 0), (6, -2), (8, -2), (10, -2), (12, 0), (12.2928932188134521, 0))
+        originalgeom = LineString((2.2071067811865475, 0), (4, 0), (6, -2), (8, -2), (10, -2), (12, 0),
+                                  (12.2928932188134521, 0), srid=settings.SRID)
         self.assertEqual(topology.geom, originalgeom)
 
         # Add a path
@@ -1341,7 +1342,8 @@ class SplitPathGenericTopologyTest(TestCase):
         topology.add_path(ab, start=0.25, end=1.0)
         topology.add_path(cb, start=1.0, end=0.25)
         self.assertEqual(len(topology.paths.all()), 2)
-        originalgeom = LineString((2.2071067811865475, 0), (4, 0), (6, -2), (8, -2), (10, -2), (12, 0), (12.2928932188134521, 0))
+        originalgeom = LineString((2.2071067811865475, 0), (4, 0), (6, -2), (8, -2), (10, -2), (12, 0),
+                                  (12.2928932188134521, 0), srid=settings.SRID)
         self.assertEqual(topology.geom, originalgeom)
 
         # Add a path
@@ -1393,7 +1395,8 @@ class SplitPathGenericTopologyTest(TestCase):
         topology.add_path(ba, start=0.75, end=0.0, order=1)
         topology.add_path(bc, start=0.0, end=0.75, order=2)
         self.assertEqual(len(topology.paths.all()), 2)
-        originalgeom = LineString((2.2071067811865475, 0), (4, 0), (6, -2), (8, -2), (10, -2), (12, 0), (12.2928932188134521, 0))
+        originalgeom = LineString((2.2071067811865475, 0), (4, 0), (6, -2), (8, -2), (10, -2), (12, 0),
+                                  (12.2928932188134521, 0), srid=settings.SRID)
         self.assertEqual(topology.geom, originalgeom)
 
         # Add a path
@@ -1419,5 +1422,5 @@ class SplitPathGenericTopologyTest(TestCase):
         self.assertEqual((0.0, 0.146446609406726), (aggr_bc2.start_position, aggr_bc2.end_position))
 
         # But topology resulting geometry did not change
-        originalgeom = LineString((2.2071067811865470, 0), *originalgeom[1:])
+        originalgeom = LineString((2.2071067811865470, 0), *originalgeom[1:], srid=settings.SRID)
         self.assertEqual(topology.geom, originalgeom)
