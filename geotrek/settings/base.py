@@ -251,7 +251,6 @@ PROJECT_APPS += (
 
 
 PROJECT_APPS += (
-    'floppyforms',
     'crispy_forms',
     'compressor',
     'djgeojson',
