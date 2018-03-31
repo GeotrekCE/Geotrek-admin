@@ -5,9 +5,10 @@ CHANGELOG
 2.18.2.dev0
 -----------
 
-**Bug Fixes**
+**Preventive maintainance**
 
-*
+* Upgrade to Django 1.10
+* Upgrade several python dependencies
 
 
 2.18.1 (2018-03-26)
