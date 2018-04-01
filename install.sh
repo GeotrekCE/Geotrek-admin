@@ -229,7 +229,7 @@ function geotrek_system_dependencies {
     sudo apt-get install -y -qq libxml2-dev libxslt-dev  # pygal lxml
     echo_progress
     # Necessary for MapEntity Weasyprint
-    sudo apt-get install -y -qq python-dev python-lxml libcairo2 libpango1.0-0 libgdk-pixbuf2.0-dev libffi-dev shared-mime-info
+    sudo apt-get install -y -qq python-dev python-lxml libcairo2 libpango1.0-0 libgdk-pixbuf2.0-dev libffi-dev shared-mime-info libfreetype6-dev
     echo_progress
     # Redis for async imports and tasks management
     sudo apt-get install -y -qq redis-server
