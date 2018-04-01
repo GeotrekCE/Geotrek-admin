@@ -13,7 +13,7 @@
         content: "";
         height: 1.5cm;
         width: 1.5cm;
-        background: url("{% media_static_fallback "upload/logo-header.png" "images/logo-header.png" %}") center center no-repeat;
+        background: url("file://{% media_static_fallback_path "upload/logo-header.png" "images/logo-header.png" %}") center center no-repeat;
         background-size: auto 100%;
         margin-left: 0cm;
         margin-bottom: 0.2cm;

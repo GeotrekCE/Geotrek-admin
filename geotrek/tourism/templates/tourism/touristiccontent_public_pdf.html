@@ -12,7 +12,7 @@
     {% block body %}
       <header>
         <div class="logo">
-          <img src="{{ MEDIA_URL }}/upload/logo-header.png" alt="">
+          <img src="file://{% media_static_fallback_path "upload/logo-header.png" "images/logo-header.png" %}" alt="">
         </div>
         <div class="url">
           <div class="main">rando.geotrek.fr</div>
@@ -22,12 +22,12 @@
       <div class="gray">
         {% if object.category %}
           <div class="main-icon category-C{{ object.category.pk }}">
-            <img src="{{ object.category.pictogram.url }}" alt="">
+            <img src="file://{{ object.category.pictogram.path }}" alt="">
           </div>
         {% endif %}
         {% if object.approved %}
           <div class="trademark">
-            <img src="{{ MEDIA_URL }}/upload/trademark.svg" alt="">
+            <img src="file://{{ MEDIA_ROOT }}/upload/trademark.svg" alt="">
           </div>
         {% endif %}
         <div class="main-title">
@@ -36,7 +36,7 @@
         </div>
         <hr>
         {% if object.picture_print %}
-          <div class="main-picture" style="background-image: url({{ object.picture_print.url }});"></div><div class="main-map" style="background-image: url({{ map_url }});"></div>
+          <div class="main-picture" style="background-image: url('file://{{ object.picture_print.path }}');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
           {% if object.picture_print.legend or object.picture_print.author %}
             <legend>
               {% trans "Attribution" %} :
@@ -45,7 +45,7 @@
             </legend>
           {% endif %}
         {% else %}
-          <div class="main-picture" style="background-image: url('{{ MEDIA_URL }}/upload/placeholder.png');"></div><div class="main-map" style="background-image: url({{ map_url }});"></div>
+          <div class="main-picture" style="background-image: url('file:{{ MEDIA_ROOT }}/upload/placeholder.png');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
         {% endif %}
       </div>
       <div class="intro-left">
@@ -100,7 +100,7 @@
         <h2>{% trans "Geographical location" %}</h2>
       </div>
       <div class="full-map">
-        <img src="{{ map_url }}" alt="">
+        <img src="file://{{ map_path }}" alt="">
       </div>
       <div class="inner-title">
         <h2>{% trans "All useful information" %}</h2>
@@ -127,7 +127,7 @@
             <h2>{% trans "Source" %}</h2>
             {% for s in object.source.all %}
                <div class="text-content">
-                 {% if s.pictogram %}<img src="{{ s.pictogram.url }}">{% endif %}
+                 {% if s.pictogram %}<img src="file://{{ s.pictogram.path }}">{% endif %}
                  {{ s.name }}
                </div>
             {% endfor %}

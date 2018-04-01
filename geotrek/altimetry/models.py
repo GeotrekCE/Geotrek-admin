@@ -69,9 +69,11 @@ class AltimetryMixin(models.Model):
         model_name = self._meta.model_name
         return ('%s:%s_profile_svg' % (app_label, model_name), [], {'lang': get_language(), 'pk': self.pk})
 
-    def get_elevation_chart_path(self, language):
+    def get_elevation_chart_path(self, language=None):
         """Path to the PNG version of elevation chart.
         """
+        if not language:
+            language = get_language()
         basefolder = os.path.join(settings.MEDIA_ROOT, 'profiles')
         if not os.path.exists(basefolder):
             os.mkdir(basefolder)
