@@ -10,6 +10,10 @@ CHANGELOG
 * Upgrade to Django 1.10
 * Upgrade several python dependencies
 
+**Bug fixes**
+
+* Put back filter widgets in two columns (#1663)
+
 
 2.18.1 (2018-03-26)
 -------------------
