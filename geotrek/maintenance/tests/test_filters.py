@@ -9,6 +9,9 @@ from geotrek.land.factories import (
 )
 from geotrek.core.factories import PathFactory, PathAggregationFactory, getRandomLineStringInBounds, TopologyFactory
 
+# Make sure dynamic filters are set up when testing
+from geotrek.land import filters  # noqa
+
 from geotrek.maintenance.filters import (ProjectFilterSet, InterventionFilterSet,
                                          InterventionYearSelect, ProjectYearSelect)
 from geotrek.maintenance.factories import (InterventionFactory, ProjectFactory,
