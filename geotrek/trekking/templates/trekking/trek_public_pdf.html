@@ -39,7 +39,7 @@
             </legend>
           {% endif %}
         {% else %}
-          <div class="main-picture" style="background-image: url(file:{{ MEDIA_ROOT }}/upload/placeholder.png);"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
+          <div class="main-picture" style="background-image: url('file://{% media_static_fallback_path "upload/placeholder.png" "images/placeholder.png" %}');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
         {% endif %}
       </div>
       <div class="intro-left">
