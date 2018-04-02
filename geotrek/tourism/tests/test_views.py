@@ -28,6 +28,11 @@ from geotrek.tourism.factories import (InformationDeskFactory,
 from embed_video.backends import detect_backend
 
 
+PNG_BLACK_PIXEL = '89504e470d0a1a0a0000000d494844520000000100000001080400000'\
+    '0b51c0c020000000b4944415478da6364f80f00010501012718e3660000000049454e44'\
+    'ae426082'.decode('hex')
+
+
 class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
     def setUp(self):
         profile = UserProfileFactory.create(user__username='homer',
@@ -357,11 +362,10 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
 
     @mock.patch('mapentity.helpers.requests.get')
     def test_public_document_pdf(self, mocked):
-        # FixMe: Warning !
         content = TouristicContentFactory.create(published=True)
         url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
         mocked.return_value.status_code = 200
-        mocked.return_value.content = 'fake'
+        mocked.return_value.content = PNG_BLACK_PIXEL
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
@@ -379,7 +383,7 @@ class TouristicEventCustomViewTests(TrekkingManagerTest):
         content = TouristicEventFactory.create(published=True)
         url = '/api/en/touristicevents/{pk}/slug.pdf'.format(pk=content.pk)
         mocked.return_value.status_code = 200
-        mocked.return_value.content = 'fake'
+        mocked.return_value.content = PNG_BLACK_PIXEL
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
