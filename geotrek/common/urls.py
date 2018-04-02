@@ -2,7 +2,7 @@ from django.conf.urls import url
 from mapentity.registry import MapEntityOptions
 
 from .views import (JSSettings, admin_check_extents, DocumentPublic, import_view, import_update_json,
-                    ThemeViewSet)
+                    ThemeViewSet, MarkupPublic)
 
 
 urlpatterns = [
@@ -16,6 +16,7 @@ urlpatterns = [
 
 class PublishableEntityOptions(MapEntityOptions):
     document_public_view = DocumentPublic
+    markup_public_view = MarkupPublic
 
     def scan_views(self, *args, **kwargs):
         """ Adds the URLs of all views provided by ``PublishableMixin`` models.
@@ -25,5 +26,7 @@ class PublishableEntityOptions(MapEntityOptions):
             url(r'^api/(?P<lang>\w+)/{name}s/(?P<pk>\d+)/(?P<slug>[-_\w]+).pdf$'.format(name=self.modelname),
                 self.document_public_view.as_view(model=self.model),
                 name="%s_printable" % self.modelname),
+            url(r'^api/(?P<lang>\w+)/{name}s/(?P<pk>\d+)/(?P<slug>[-_\w]+).html$'.format(name=self.modelname),
+                self.markup_public_view.as_view(model=self.model)),
         ]
         return publishable_views + views

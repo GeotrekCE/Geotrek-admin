@@ -26,7 +26,7 @@ from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.models import RecordSource, TargetPortal, Attachment
-from geotrek.common.views import FormsetMixin, PublicOrReadPermMixin, DocumentPublic
+from geotrek.common.views import FormsetMixin, PublicOrReadPermMixin, DocumentPublic, MarkupPublic
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.trekking.forms import SyncRandoForm
@@ -184,11 +184,11 @@ class TrekDocument(MapEntityDocument):
     queryset = Trek.objects.existing()
 
 
-class TrekDocumentPublicBase(DocumentPublic):
+class TrekDocumentPublicMixin(object):
     queryset = Trek.objects.existing()
 
     def get_context_data(self, **kwargs):
-        context = super(TrekDocumentPublicBase, self).get_context_data(**kwargs)
+        context = super(TrekDocumentPublicMixin, self).get_context_data(**kwargs)
         trek = self.get_object()
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['trek']
@@ -220,15 +220,20 @@ class TrekDocumentPublicBase(DocumentPublic):
                 pass
         return context
 
-
-class TrekDocumentPublic(TrekDocumentPublicBase):
-
     def render_to_response(self, context, **response_kwargs):
         # Prepare altimetric graph
         trek = self.get_object()
         language = self.request.LANGUAGE_CODE
         trek.prepare_elevation_chart(language, self.request.build_absolute_uri('/'))
-        return super(TrekDocumentPublic, self).render_to_response(context, **response_kwargs)
+        return super(TrekDocumentPublicMixin, self).render_to_response(context, **response_kwargs)
+
+
+class TrekDocumentPublic(TrekDocumentPublicMixin, DocumentPublic):
+    pass
+
+
+class TrekMarkupPublic(TrekDocumentPublicMixin, MarkupPublic):
+    pass
 
 
 class TrekRelationshipFormsetMixin(FormsetMixin):
@@ -339,13 +344,21 @@ class POIDocument(MapEntityDocument):
     model = POI
 
 
-class POIDocumentPublic(DocumentPublic):
+class POIDocumentPublicMixin(object):
     queryset = POI.objects.existing()
 
     def get_context_data(self, **kwargs):
         context = super(POIDocumentPublic, self).get_context_data(**kwargs)
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['poi']
         return context
+
+
+class POIDocumentPublic(POIDocumentPublicMixin, DocumentPublic):
+    pass
+
+
+class POIMarkupPublic(POIDocumentPublicMixin, MarkupPublic):
+    pass
 
 
 class POICreate(MapEntityCreate):

@@ -78,7 +78,7 @@ class PublicOrReadPermMixin(object):
         return obj
 
 
-class DocumentPublic(PublicOrReadPermMixin, mapentity_views.MapEntityDocumentWeasyprint):
+class DocumentPublicMixin(object):
     template_name_suffix = "_public"
 
     # Override view_permission_required
@@ -86,10 +86,19 @@ class DocumentPublic(PublicOrReadPermMixin, mapentity_views.MapEntityDocumentWea
         return super(mapentity_views.MapEntityDocumentBase, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(DocumentPublic, self).get_context_data(**kwargs)
+        context = super(DocumentPublicMixin, self).get_context_data(**kwargs)
         modelname = self.get_model()._meta.object_name.lower()
         context['mapimage_ratio'] = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
         return context
+
+
+class DocumentPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views.MapEntityDocumentWeasyprint):
+    pass
+
+
+class MarkupPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views.MapEntityMarkupWeasyprint):
+    pass
+
 
 #
 # Concrete views
