@@ -188,7 +188,7 @@ class SyncTestPortal(TestCase):
         Test synced flatpages
         '''
         management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
-                                skip_tiles=True, verbosity='0')
+                                skip_tiles=True, verbosity=0)
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', lang, 'flatpages.geojson'), 'r') as f:
                 flatpages = json.load(f)
@@ -200,7 +200,7 @@ class SyncTestPortal(TestCase):
         Test if synced flatpages are filtered by source
         '''
         management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
-                                source=self.source_a.name, skip_tiles=True, verbosity='0')
+                                source=self.source_a.name, skip_tiles=True, verbosity=0)
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', lang, 'flatpages.geojson'), 'r') as f:
                 flatpages = json.load(f)
@@ -213,7 +213,7 @@ class SyncTestPortal(TestCase):
         Test if synced flatpages are filtered by portal
         '''
         management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
-                                portal=self.portal_a.name, skip_tiles=True, verbosity='0')
+                                portal=self.portal_a.name, skip_tiles=True, verbosity=0)
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', lang, 'flatpages.geojson'), 'r') as f_file:
                 flatpages = json.load(f_file)

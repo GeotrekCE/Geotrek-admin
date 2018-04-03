@@ -50,6 +50,8 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                                  related_name="interventions_set",
                                  verbose_name=_(u"Interventions"))
     # AltimetyMixin for denormalized fields from related topology, updated via trigger.
+    length = models.FloatField(editable=True, default=0.0, null=True, blank=True, db_column='longueur',
+                               verbose_name=_(u"3D Length"))
 
     stake = models.ForeignKey('core.Stake', null=True,
                               related_name='interventions', verbose_name=_("Stake"), db_column='enjeu')

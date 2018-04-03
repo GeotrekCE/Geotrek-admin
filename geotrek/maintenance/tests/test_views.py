@@ -128,6 +128,7 @@ class InterventionViewsTest(CommonTest):
         # Should be able to save form successfully
         form = response.context['form']
         data = form.initial
+        data['disorders'] = data['disorders'][0].pk
         data['project'] = ''
         data['infrastructure'] = form.fields['infrastructure'].initial.pk  # because it is set after form init, not form.initial :(
         data.update(**{
@@ -379,7 +380,9 @@ class ExportTest(TranslationResetMixin, TestCase):
 
         for feature in layer_point:
             self.assertEquals(str(feature['id']), str(proj.pk))
-            self.assertTrue(feature.geom.geos.equals(it_point.geom))
+            self.assertEquals(len(feature.geom.geos), 1)
+            self.assertAlmostEqual(feature.geom.geos[0].x, it_point.geom.x)
+            self.assertAlmostEqual(feature.geom.geos[0].y, it_point.geom.y)
 
         for feature in layer_line:
             self.assertEquals(str(feature['id']), str(proj.pk))

@@ -108,13 +108,15 @@ class AttachmentParserTests(TestCase):
         self.assertEqual(attachment.filetype, self.filetype)
 
     @mock.patch('requests.get')
-    def test_attachment_not_updated(self, mocked):
-        mocked.return_value.status_code = 200
-        mocked.return_value.content = ''
+    @mock.patch('requests.head')
+    def test_attachment_not_updated(self, mocked_head, mocked_get):
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.content = ''
+        mocked_head.return_value.headers = {'content-length': 0}
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
-        self.assertEqual(mocked.call_count, 1)
+        self.assertEqual(mocked_get.call_count, 1)
         self.assertEqual(Attachment.objects.count(), 1)
 
 

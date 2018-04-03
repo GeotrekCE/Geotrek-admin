@@ -12,7 +12,7 @@
     {% block body %}
       <header>
         <div class="logo">
-          <img src="{{ MEDIA_URL }}/upload/logo-header.png" alt="">
+          <img src="file://{% media_static_fallback_path "upload/logo-header.png" "images/logo-header.png" %}" alt="">
         </div>
         <div class="url">
           <div class="main">rando.geotrek.fr</div>
@@ -22,7 +22,7 @@
       <div class="gray">
         {% if object.practice %}
           <div class="main-icon category-T{{ object.practice.pk }}">
-            <img src="{{ object.practice.pictogram.url }}" alt="">
+            <img src="file://{{ object.practice.pictogram.path }}" alt="">
           </div>
         {% endif %}
         <div class="main-title">
@@ -31,7 +31,7 @@
         </div>
         <hr>
         {% if object.picture_print %}
-          <div class="main-picture" style="background-image: url({{ object.picture_print.url }});"></div><div class="main-map" style="background-image: url({{ map_url }});"></div>
+          <div class="main-picture" style="background-image: url('file://{{ object.picture_print.path }}');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
           {% if object.picture_print.legend or object.picture_print.author %}
             <legend>
               {{ object.picture_print.legend }}
@@ -39,7 +39,7 @@
             </legend>
           {% endif %}
         {% else %}
-          <div class="main-picture" style="background-image: url('{{ MEDIA_URL }}/upload/placeholder.png');"></div><div class="main-map" style="background-image: url({{ map_url }});"></div>
+          <div class="main-picture" style="background-image: url('file://{% media_static_fallback_path "upload/placeholder.png" "images/placeholder.png" %}');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
         {% endif %}
       </div>
       <div class="intro-left">
@@ -123,7 +123,7 @@
                   <li>
                     {% trans "Markings" %} :
                     {% for network in object.networks.all %}
-                      {% if network.pictogram %}<span class="network-icon"><img src="{{ network.pictogram.url }}"></span>{% endif %}
+                      {% if network.pictogram %}<span class="network-icon"><img src="file://{{ network.pictogram.path }}"></span>{% endif %}
                       {{ network.network }}
                     {% endfor %}
                   </li>
@@ -150,14 +150,14 @@
         <h2>{% trans "On your path..." %}</h2>
       </div>
       <div class="full-map">
-        <img src="{{ map_url }}" alt="">
+        <img src="file://{{ map_path }}" alt="">
       </div>
       {% block poisSummary %}
         <section class="pois-summary">
           {% if pois %}
             {% for poi in pois %}
               <div class="poi">
-                  {% if poi.type.pictogram %}<span class="icon"><img src="{{ poi.type.pictogram.url }}"></span>{% endif %}
+                  {% if poi.type.pictogram %}<span class="icon"><img src="file://{{ poi.type.pictogram.path }}"></span>{% endif %}
                   {{ poi.name }} ({{ poi.letter }})
               </div>
             {% endfor %}
@@ -171,7 +171,7 @@
         <div class="advice">
           <div class="advice-title">
             <div class="advice-icon">
-              <img src="{% static 'trekking/information.svg' %}">
+              <img src="file://{{ STATIC_ROOT}}/trekking/information.svg">
             </div>
             {% trans "This hike is in the core of the national park" %}
           </div>
@@ -182,7 +182,7 @@
         <div class="advice">
           <div class="advice-title">
             <div class="advice-icon">
-              <img src="{% static 'trekking/advice.svg' %}">
+              <img src="file://{{ STATIC_ROOT }}/trekking/advice.svg">
             </div>
             {% trans "Advices" %}
           </div>
@@ -199,7 +199,7 @@
           {% endblocktrans %}
           {% for area in object.published_sensitive_areas %}
             <div class="text-content">
-              {% if area.species.pictogram %}<img src="{{ area.species.pictogram.url }}">{% endif %}
+              {% if area.species.pictogram %}<img src="file://{{ area.species.pictogram.path }}">{% endif %}
               <h3>{{ area.species.name }}</h3>
               <p>{% trans "Sensitivity period:" %} {{ area.pretty_period }}</p>
               {% if area.contact %}<p>{% trans "Contact:" %} {{ area.contact|safe }}</p>{% endif %}
@@ -214,7 +214,7 @@
         {% if object.get_elevation_chart_url %}
           <section class="elevation">
             <div class="elevation-title">{% trans "Altimetric profile" %}</div>
-            <img class="elevation-chart" src="{{ object.get_elevation_chart_url }}">
+            <img class="elevation-chart" src="file://{{ object.get_elevation_chart_path }}">
             <div class="elevation-meta">
               <span class="elevation-meta-item"><span class="item-label">{% trans "Min elevation" %}</span> <span class="item-value">{{ object.min_elevation }} m</span></span>
               <span class="elevation-meta-item"><span class="item-label">{% trans "Max elevation" %}</span> <span class="item-value">{{ object.max_elevation }} m</span></span>
@@ -259,7 +259,7 @@
           <section class="half-block source">
             <h2>{% trans "Source" %}</h2>
             {% for s in object.source.all %}
-               <div class="text-content">{% if s.pictogram %}<span class="source-icon"><img src="{{ s.pictogram.url }}"></span> {% endif %}{{ s.name }}</div>
+               <div class="text-content">{% if s.pictogram %}<span class="source-icon"><img src="file://{{ s.pictogram.path }}"></span> {% endif %}{{ s.name }}</div>
             {% endfor %}
           </section>
         {% endif %}
@@ -270,13 +270,13 @@
             <section class="information-desks">
               <h2>
                 <div class="information-desks-icon">
-                  <img src="{% static 'trekking/information.svg' %}">
+                  <img src="file://{{ STATIC_ROOT}}/trekking/information.svg">
                 </div>
                 {% trans "Information desks" %}
               </h2>
               <div class="text-content intro">
                 {% if object.information_desks.first.thumbnail %}
-                  <img src="{{ object.information_desks.first.thumbnail.url }}">
+                  <img src="file://{{ object.information_desks.first.thumbnail.path }}">
                 {% endif %}
               </div>
               <ul class="desks">
@@ -306,12 +306,12 @@
               <div class="poi">
                 <div class="thumbnail">
                   {% if poi.thumbnail %}
-                    <img src="{{ poi.thumbnail.url }}">
+                    <img src="file://{{ poi.thumbnail.path }}">
                   {% endif %}
                 </div>
                 <div class="content with-pic">
                   <h3>
-                    {% if poi.type.pictogram %}<span class="icon"><img src="{{ poi.type.pictogram.url }}"></span>{% endif %}
+                    {% if poi.type.pictogram %}<span class="icon"><img src="file://{{ poi.type.pictogram.path }}"></span>{% endif %}
                     {{ poi.name }} ({{ poi.letter }})
                   </h3>
                   <div class="description">{{ poi.description|safe }}</div>

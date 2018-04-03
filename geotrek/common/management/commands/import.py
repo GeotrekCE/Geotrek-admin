@@ -1,39 +1,31 @@
 import importlib
-from optparse import make_option
 
-from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from django.utils import translation
 
 from geotrek.common.parsers import ImportError
 
 
 class Command(BaseCommand):
     leave_locale_alone = True
-    args = '<parser> <shapefile>'
-    option_list = BaseCommand.option_list + (
-        make_option('-l', dest='limit', type='int',
-                    help='Limit number of lines to import'),
-    )
+
+    def add_arguments(self, parser):
+        parser.add_argument('parser')
+        parser.add_argument('shapefile', nargs="?")
+        parser.add_argument('-l', dest='limit', type=int, help='Limit number of lines to import')
 
     def handle(self, *args, **options):
-        translation.activate(settings.LANGUAGE_CODE)
-
-        verbosity = int(options.get('verbosity', '1'))
-        limit = options.get('limit')
+        verbosity = options['verbosity']
+        limit = options['limit']
 
         # Validate arguments
-        if len(args) < 1:
-            raise CommandError("Parser module path missing")
 
         try:
-            module_name, class_name = args[0].rsplit('.', 1)
+            module_name, class_name = options['parser'].rsplit('.', 1)
             module = importlib.import_module(module_name)
             Parser = getattr(module, class_name)
         except (ImportError, AttributeError):
-            raise CommandError("Failed to import parser class '{0}'".format(args[0]))
-
-        if not Parser.filename and not Parser.url and len(args) < 2:
+            raise CommandError("Failed to import parser class '{0}'".format(options['parser']))
+        if not Parser.filename and not Parser.url and not options['shapefile']:
             raise CommandError("File path missing")
 
         def progress_cb(progress, line, eid):
@@ -44,7 +36,7 @@ class Command(BaseCommand):
         parser = Parser(progress_cb=progress_cb)
 
         try:
-            parser.parse(args[1] if len(args) >= 2 else None, limit=limit)
+            parser.parse(options['shapefile'], limit=limit)
         except ImportError as e:
             raise CommandError(e)
 

@@ -56,7 +56,7 @@ class TrekTest(TranslationResetMixin, TestCase):
     def test_kml_coordinates_should_be_3d(self):
         trek = TrekWithPOIsFactory.create()
         kml = trek.kml()
-        parsed = BeautifulSoup(kml)
+        parsed = BeautifulSoup(kml, 'lxml')
         for placemark in parsed.findAll('placemark'):
             coordinates = placemark.find('coordinates')
             tuples = [s.split(',') for s in coordinates.string.split(' ')]

@@ -309,6 +309,12 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
         """
         return ('tourism:touristiccontent_document_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
 
+    @models.permalink
+    def get_markup_public_url(self):
+        """ Override ``geotrek.common.mixins.PublishableMixin``
+        """
+        return ('tourism:touristiccontent_markup_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
+
     @property
     def districts_display(self):
         return ', '.join([unicode(d) for d in self.districts])
@@ -456,6 +462,12 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
         """ Override ``geotrek.common.mixins.PublishableMixin``
         """
         return ('tourism:touristicevent_document_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
+
+    @models.permalink
+    def get_markup_public_url(self):
+        """ Override ``geotrek.common.mixins.PublishableMixin``
+        """
+        return ('tourism:touristicevent_markup_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
 
     @property
     def type1(self):

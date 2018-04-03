@@ -144,7 +144,7 @@ class Parser(object):
                 raise ValueImportError(_(u"Missing {required}field '{src}'").format(required=required, src=src))
 
     def apply_filter(self, dst, src, val):
-        field = self.model._meta.get_field_by_name(dst)[0]
+        field = self.model._meta.get_field(dst)
         if (isinstance(field, models.ForeignKey) or isinstance(field, models.ManyToManyField)):
             if dst not in self.natural_keys:
                 raise ValueImportError(_(u"Destination field '{dst}' not in natural keys configuration").format(dst=dst))
@@ -163,7 +163,7 @@ class Parser(object):
             return getattr(self, 'save_{0}'.format(dst))(src, val)
 
     def set_value(self, dst, src, val):
-        field = self.model._meta.get_field_by_name(dst)[0]
+        field = self.model._meta.get_field(dst)
         if val is None and not field.null:
             if field.blank and (isinstance(field, models.CharField) or isinstance(field, models.TextField)):
                 val = u""
@@ -373,7 +373,7 @@ class Parser(object):
         # FIXME: use mapping if it exists
         kwargs = {}
         for dst, val in self.constant_fields.iteritems():
-            field = self.model._meta.get_field_by_name(dst)[0]
+            field = self.model._meta.get_field(dst)
             if isinstance(field, models.ForeignKey):
                 natural_key = self.natural_keys[dst]
                 try:
@@ -384,7 +384,7 @@ class Parser(object):
                 kwargs[dst] = val
         for dst, val in self.m2m_constant_fields.iteritems():
             assert not self.separator or self.separator not in val
-            field = self.model._meta.get_field_by_name(dst)[0]
+            field = self.model._meta.get_field(dst)
             natural_key = self.natural_keys[dst]
             filters = {natural_key: subval for subval in val}
             if not filters:
@@ -527,9 +527,9 @@ class AttachmentParserMixin(object):
             return size != attachment.attachment_file.size
 
         if parsed_url.scheme == 'http' or parsed_url.scheme == 'https':
-            http = urllib2.urlopen(url)
-            size = http.headers.getheader('content-length')
-            return int(size) != attachment.attachment_file.size
+            response = requests.head(url)
+            size = response.headers.get('content-length')
+            return size is not None and int(size) != attachment.attachment_file.size
 
         return True
 

@@ -25,7 +25,7 @@ class Command(BaseCommand):
         logger.info("Synchronize django permissions")
 
         for app_config in apps.get_app_configs():
-            create_permissions(app_config, [], int(options.get('verbosity', 1)))
+            create_permissions(app_config, verbosity=options['verbosity'])
 
         logger.info("Done.")
 

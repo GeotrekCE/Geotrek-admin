@@ -229,7 +229,7 @@ function geotrek_system_dependencies {
     sudo apt-get install -y -qq libxml2-dev libxslt-dev  # pygal lxml
     echo_progress
     # Necessary for MapEntity Weasyprint
-    sudo apt-get install -y -qq python-dev python-lxml libcairo2 libpango1.0-0 libgdk-pixbuf2.0-dev libffi-dev shared-mime-info
+    sudo apt-get install -y -qq python-dev python-lxml libcairo2 libpango1.0-0 libgdk-pixbuf2.0-dev libffi-dev shared-mime-info libfreetype6-dev
     echo_progress
     # Redis for async imports and tasks management
     sudo apt-get install -y -qq redis-server
@@ -504,7 +504,7 @@ function geotrek_setup {
         fi
     fi
 
-    psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT * FROM easy_thumbnails_source;"
+    psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT * FROM easy_thumbnails_source WHERE FALSE;"
     if [ $? -ne 1 ]; then
         # fix migrations for easy_thumbnails
         bin/django migrate --fake-initial easy_thumbnails --noinput
@@ -517,8 +517,6 @@ function geotrek_setup {
     fi
 
     if $tests ; then
-        # XXX: Why Django tests require the main database :( ?
-        bin/django migrate --noinput
         bin/django collectstatic --clear --noinput --verbosity=0
     fi
 

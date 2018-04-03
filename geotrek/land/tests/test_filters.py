@@ -2,6 +2,9 @@
 
 from django.test import TestCase
 
+# Make sure dynamic filters are set up when testing
+from geotrek.land import filters  # noqa
+
 from geotrek.core.factories import PathFactory, PathAggregationFactory, getRandomLineStringInBounds
 from geotrek.land.factories import (
     PhysicalEdgeFactory, LandEdgeFactory, CompetenceEdgeFactory,

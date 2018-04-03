@@ -3,12 +3,11 @@
 from copy import deepcopy
 from zipfile import is_zipfile
 
-from django import forms as django_forms
+from django import forms
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.core.exceptions import FieldDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 
-import floppyforms as forms
 from mapentity.forms import MapEntityForm
 
 from geotrek.authent.models import (default_structure, StructureRelated,
@@ -47,7 +46,7 @@ class CommonForm(MapEntityForm):
         super(CommonForm, self).replace_orig_fields()
 
     def filter_related_field(self, name, field):
-        if not isinstance(field, django_forms.models.ModelChoiceField):
+        if not isinstance(field, forms.models.ModelChoiceField):
             return
         try:
             modelfield = self.instance._meta.get_field(name)
@@ -56,7 +55,7 @@ class CommonForm(MapEntityForm):
             modelfield = None
         if not isinstance(modelfield, (ForeignKey, ManyToManyField)):
             return
-        model = modelfield.related.to
+        model = modelfield.remote_field.to
         # Filter structured choice fields according to user's structure
         if issubclass(model, StructureRelated):
             field.queryset = StructureRelatedQuerySet.queryset_for_user(
@@ -90,7 +89,7 @@ class CommonForm(MapEntityForm):
             self.deep_remove(self.helper.fieldslayout, 'review')
 
 
-class ImportDatasetForm(django_forms.Form):
+class ImportDatasetForm(forms.Form):
     parser = forms.TypedChoiceField(
         label=_('Data to import from network'),
         widget=forms.RadioSelect,
@@ -143,7 +142,7 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
     def clean_zipfile(self):
         z = self.cleaned_data['zipfile']
         if not is_zipfile(z):
-            raise django_forms.ValidationError(
+            raise forms.ValidationError(
                 _("File must be of ZIP type."), code='invalid')
         # Reset position for further use.
         z.seek(0)

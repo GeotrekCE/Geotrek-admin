@@ -1,6 +1,6 @@
 {% load i18n mapentity_tags %}
 
-<img src="{% media_static_fallback "upload/logo-header.png" "images/logo-header.png" %}">
+<img src="file://{% media_static_fallback_path "upload/logo-header.png" "images/logo-header.png" %}">
 
 <h2>{{ object.name }}</h2>
 
@@ -8,7 +8,7 @@
 <h3>{{ object.cities.0 }}</h3>
 
 {% if object.picture_print %}
-  <img src="{{ MEDIA_URL}}/{{ object.picture_print.name }}">
+  <img src="file://{{ object.picture_print.path }}">
 {% endif %}
 
 <table>
@@ -43,7 +43,7 @@
 	</table>
 {% endif %}
 
-<img src="{{ map_url }}" style="margin-left: auto; margin-right: auto; width: 100%; height: auto; ">
+<img src="file://{{ map_path }}" style="margin-left: auto; margin-right: auto; width: 100%; height: auto; ">
 
 {% if object.pictures.0.legend or object.pictures.0.author %}
 	<p>{% trans "Attribution" %} : {{ object.pictures.0.legend }} ({{ object.pictures.0.author }})</p>

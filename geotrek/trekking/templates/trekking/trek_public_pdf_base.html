@@ -31,7 +31,7 @@
 
 			{% block Map %}
 				<section class="map">
-					<img src="{{ map_url }}">
+					<img src="file://{{ map_path }}">
 				</section>
 			{% endblock Map %}
 
@@ -173,7 +173,7 @@
 						<span class="meta-item"><span class="item-label">{% trans "Max elevation" %}</span> <span class="item-value">{{ object.max_elevation }} m</span></span>
 					</div>
 
-					<img src="{{ object.get_elevation_chart_url }}" style="margin-left: auto; margin-right: auto; width: 100%; height: auto; ">
+					<img src="file://{{ object.get_elevation_chart_path }}" style="margin-left: auto; margin-right: auto; width: 100%; height: auto; ">
 				</section>
 			{% endif %}
 		{% endblock elevation %}
@@ -184,7 +184,7 @@
 			<section class="pic">
 				{% if object.picture_print %}
 					<section class="pic">
-						<img src="{{ object.picture_print.url }}" alt="attached_picture_alt">
+						<img src="file://{{ object.picture_print.path }}" alt="attached_picture_alt">
 						{% if object.pictures.0.legend and object.pictures.0.author %}<legend>{% trans "Attribution" %} : {{ object.pictures.0.legend }} ({{ object.pictures.0.author }})</legend>{% endif %}
 					</section>
 				{% endif %}
@@ -199,9 +199,9 @@
 					{% for ct in object.published_touristic_contents.all %}
 						<div class="poi">
 							{% if ct.thumbnail %}
-								<div class="thumbnail"><img src="{{ ct.thumbnail.url }}"></div>
+								<div class="thumbnail"><img src="file://{{ ct.thumbnail.path }}"></div>
 							{% endif %}
-              <h3>{% if ct.category.pictogram %}<span class="icon"><img src="{{ ct.category.pictogram.url }}"></span>{% endif %}{{ ct.name }}</h3>
+              <h3>{% if ct.category.pictogram %}<span class="icon"><img src="file://{{ ct.category.pictogram.path }}"></span>{% endif %}{{ ct.name }}</h3>
 							<div class="description">
                   {{ ct.description_teaser|safe }}
                   {% if ct.contact %}{% if ct.description_teaser %}<br>{% endif %}{{ ct.contact|safe }}{% endif %}
@@ -225,9 +225,9 @@
 					{% for poi in pois %}
 						<div class="poi">
 							{% if poi.thumbnail %}
-								<div class="thumbnail"><img src="{{ poi.thumbnail.url }}"></div>
+								<div class="thumbnail"><img src="file://{{ poi.thumbnail.path }}"></div>
 							{% endif %}
-              <h3>{% if poi.type.pictogram %}<span class="icon"><img src="{{ poi.type.pictogram.url }}"></span>{% endif %}{{ poi.name }} {{ poi.letter }}</h3>
+              <h3>{% if poi.type.pictogram %}<span class="icon"><img src="file://{{ poi.type.pictogram.path }}"></span>{% endif %}{{ poi.name }} {{ poi.letter }}</h3>
 							<div class="description">{{ poi.description|safe }}</div>
 							{% if poi.thumbnail and poi.picture.0.author %}
 								<legend>{% trans "Attribution" %} : {{ poi.picture.0.author }}</legend>
@@ -297,7 +297,7 @@
 								<div class="desk-name">{{ desk.name }}</div>
 								<div class="content">
 									<div class="desk-description text-content">{{ desk.description_strip }}</div>
-									{% if deks.photo %}<picture class="desk-picture"><img src="{{ desk.photo.url }}"></picture>{% endif %}
+									{% if deks.photo %}<picture class="desk-picture"><img src="file://{{ desk.photo.path }}"></picture>{% endif %}
 									{% if desk.phone %}<div class="desk-tel">Tel : {{ desk.phone }}</div>{% endif %}
 									{% if desk.website %}<div class="desk-website"><a href="{{ desk.website }}">{{ desk.website }}</a></div>{% endif %}
 									{% if desk.email %}<div class="desk-email"><a href="mailto:{{ desk.email }}">{{ desk.email }}</a></div>{% endif %}

@@ -9,7 +9,6 @@ env:
   - ACTION=integration
   - ACTION=codestyle
 
-
 matrix:
   allow_failures:
     - env: ACTION=integration
@@ -24,26 +23,14 @@ dist: trusty
 sudo: required
 
 before_install:
-  # Fix postgresql / postgis for travis trusty
-  - echo $PATH
   - sudo apt-get update -qq
-  - sudo apt-get install -y -qq unoconv inkscape
   # Make sure to use postgresql and postgis version from main Ubuntu repository
   - sudo rm -f /etc/apt/sources.list.d/pgdg.list
-  - sudo apt-get remove -qq postgis*
-  - sudo apt-get remove -qq postgresql*
-  - sudo rm -rf /usr/local/bin/phantomjs*
-  - sudo rm -rf /usr/bin/phantomjs*
-  - sudo rm -rf /usr/local/phantomjs*
+  - sudo apt-get remove -qq postgis* postgresql*
+  # Make sure to use our version of phantomjs
+  - sudo rm -rf /usr/local/bin/phantomjs* /usr/bin/phantomjs* /usr/local/phantomjs*
   # Make sure nginx has access to static files
   - sudo chmod a+x /home/travis
-
-  # Download bundle of python eggs, and use it as download cache
-  - mkdir -p $HOME/.buildout/downloads
-  - echo -e "[buildout]\ndownload-cache=$HOME/.buildout/downloads" > $HOME/.buildout/default.cfg
-  - "wget http://prod-geotrek-fr.makina-corpus.net/media/upload/geotrek-bundle.tar.gz -O /tmp/geotrek-bundle.tar.gz || true"
-  - "tar -zxf /tmp/geotrek-bundle.tar.gz --directory=$HOME || true"
-  - make etc/settings.ini
 
 install:
   - if [[ $ACTION != codestyle ]]; then deactivate; fi
@@ -57,11 +44,8 @@ script:
   - if [[ $ACTION == deploy || $ACTION == integration ]]; then make load_demo; fi
   - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
   - if [[ $ACTION == integration ]]; then make test_export host=localhost port=80; fi
-  - if [[ $ACTION == test ]]; then make env_test test; fi
-  - if [[ $ACTION == test ]]; then make test_js; fi
-  # Re-run for coverage
-  - if [[ $ACTION == test ]]; then rm -rf ./var/cache/* ./var/media/maps/*; fi
   - if [[ $ACTION == test ]]; then ./bin/coverage run ./bin/django test geotrek; fi
+  - if [[ $ACTION == test ]]; then make test_js; fi
 after_success:
   # Report coverage results to coveralls.io
   - if [[ $ACTION == test ]]; then ./bin/coverage report -m; fi
@@ -74,6 +58,3 @@ after_failure:
   - sudo cat /var/log/nginx/geotrek_error.log
   - cat /var/log/supervisord.log
   - cat /var/log/geotrek.log
-
-#notifications:
-  #irc: "irc.freenode.org#geotrek"

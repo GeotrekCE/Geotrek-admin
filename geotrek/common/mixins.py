@@ -314,6 +314,10 @@ class PublishableMixin(BasePublishableMixin):
     def get_document_public_url(self):
         raise NotImplementedError
 
+    @models.permalink
+    def get_markup_public_url(self):
+        raise NotImplementedError
+
     def is_complete(self):
         """It should also have a description, etc.
         """

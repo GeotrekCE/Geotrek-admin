@@ -269,7 +269,7 @@ class TrekViewsTest(CommonTest):
 
     def test_basic_format(self):
         super(TrekViewsTest, self).test_basic_format()
-        self.modelfactory.create(name="ukélélé")  # trek with utf8
+        self.modelfactory.create(name=u"ukélélé")  # trek with utf8
         for fmt in ('csv', 'shp', 'gpx'):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
             self.assertEqual(response.status_code, 200)
@@ -752,7 +752,7 @@ class TrekGPXTest(TrekkingManagerTest):
 
         url = '/api/it/treks/{pk}/slug.gpx'.format(pk=self.trek.pk)
         self.response = self.client.get(url)
-        self.parsed = BeautifulSoup(self.response.content)
+        self.parsed = BeautifulSoup(self.response.content, 'lxml')
 
     def tearDown(self):
         translation.deactivate()
@@ -1080,7 +1080,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
 
 class TrekWorkflowTest(TranslationResetMixin, TestCase):
     def setUp(self):
-        call_command('update_geotrek_permissions')
+        call_command('update_geotrek_permissions', verbosity=0)
         self.trek = TrekFactory.create(published=False)
         self.user = User.objects.create_user('omer', password='booh')
         self.user.user_permissions.add(Permission.objects.get(codename='add_trek'))

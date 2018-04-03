@@ -15,12 +15,12 @@
 			{% include template_attributes %}
 
 			{% if object.pictures %}
-				<img src="{{ object.pictures.0.attachment_file.url }}" id="EntityImage">
+				<img src="file://{{ object.pictures.0.attachment_file.path }}" id="EntityImage">
 			{% endif %}
 
 			{% block Map %}
 				<h3>{% trans "Map" %}</h3>
-				<img src="{{ map_url }}" id="EntityScreenshot">
+				<img src="file://{{ map_path }}" id="EntityScreenshot">
 			{% endblock Map %}
 
 		{% endblock EntityDetail %}

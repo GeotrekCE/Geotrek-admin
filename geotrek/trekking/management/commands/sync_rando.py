@@ -1,7 +1,6 @@
 # -*- encoding: UTF-8 -
 
 import logging
-from optparse import make_option
 import os
 import re
 import sys
@@ -88,30 +87,27 @@ class ZipTilesBuilder(object):
 
 
 class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
-        make_option('--url', '-u', action='store', dest='url',
-                    default='http://localhost', help='Base url'),
-        make_option('--rando-url', '-r', action='store', dest='rando_url',
-                    default='http://localhost', help='Base url of public rando site'),
-        make_option('--source', '-s', action='store', dest='source',
-                    default=None, help='Filter by source(s)'),
-        make_option('--portal', '-P', action='store', dest='portal',
-                    default=None, help='Filter by portal(s)'),
-        make_option('--skip-pdf', '-p', action='store_true', dest='skip_pdf',
-                    default=False, help='Skip generation of PDF files'),
-        make_option('--skip-tiles', '-t', action='store_true', dest='skip_tiles',
-                    default=False, help='Skip generation of zip tiles files'),
-        make_option('--skip-dem', '-d', action='store_true', dest='skip_dem',
-                    default=False, help='Skip generation of DEM files for 3D'),
-        make_option('--skip-profile-png', '-e', action='store_true', dest='skip_profile_png',
-                    default=False, help='Skip generation of PNG elevation profile'),
-        make_option('--languages', '-l', action='store', dest='languages',
-                    default='', help='Languages to sync'),
-        make_option('--with-touristicevents', '-w', action='store_true', dest='with_events',
-                    default=False, help='include touristic events by trek in global.zip'),
-        make_option('--with-touristiccontent-categories', '-c', action='store', dest='content_categories',
-                    default=None, help='include touristic contents by trek in global.zip (filtered by category ID ex: --with-touristiccontent-categories="1,2,3")'),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument('path')
+        parser.add_argument('--url', '-u', dest='url', default='http://localhost', help='Base url')
+        parser.add_argument('--rando-url', '-r', dest='rando_url', default='http://localhost',
+                            help='Base url of public rando site')
+        parser.add_argument('--source', '-s', dest='source', default=None, help='Filter by source(s)')
+        parser.add_argument('--portal', '-P', dest='portal', default=None, help='Filter by portal(s)')
+        parser.add_argument('--skip-pdf', '-p', action='store_true', dest='skip_pdf', default=False,
+                            help='Skip generation of PDF files')
+        parser.add_argument('--skip-tiles', '-t', action='store_true', dest='skip_tiles', default=False,
+                            help='Skip generation of zip tiles files')
+        parser.add_argument('--skip-dem', '-d', action='store_true', dest='skip_dem', default=False,
+                            help='Skip generation of DEM files for 3D')
+        parser.add_argument('--skip-profile-png', '-e', action='store_true', dest='skip_profile_png', default=False,
+                            help='Skip generation of PNG elevation profile'),
+        parser.add_argument('--languages', '-l', dest='languages', default='', help='Languages to sync')
+        parser.add_argument('--with-touristicevents', '-w', action='store_true', dest='with_events', default=False,
+                            help='include touristic events by trek in global.zip')
+        parser.add_argument('--with-touristiccontent-categories', '-c', dest='content_categories',
+                            default=None, help='include touristic contents by trek in global.zip '
+                            '(filtered by category ID ex: --with-touristiccontent-categories="1,2,3")'),
 
     def mkdirs(self, name):
         dirname = os.path.dirname(name)
@@ -208,8 +204,10 @@ class Command(BaseCommand):
             content = response.content
         f.write(content)
         f.close()
+        # FixMe: Find why there are duplicate files.
         if zipfile:
-            zipfile.write(fullname, name)
+            if name not in zipfile.namelist():
+                zipfile.write(fullname, name)
         if self.verbosity == 2:
             self.stdout.write(u"\x1b[3D\x1b[32mgenerated\x1b[0m")
 
@@ -715,10 +713,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.successfull = True
-        self.verbosity = options.get('verbosity', 1)
-        if len(args) < 1:
-            raise CommandError(u"Missing parameter destination directory")
-        self.dst_root = args[0].rstrip('/')
+        self.verbosity = options['verbosity']
+        self.dst_root = options["path"].rstrip('/')
         self.check_dst_root_is_empty()
         if(options['url'][:7] != 'http://'):
             raise CommandError('url parameter should start with http://')

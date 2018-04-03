@@ -87,9 +87,9 @@ serve:
 
 services:
 	@echo "Stop convertit"
-	kill $(shell netstat -tlp 2>/dev/null | grep ':6543' | sed 's;.*LISTEN      \([0-9]*\)/python;\1;'); true
+	kill $(shell netstat -tlp 2>/dev/null | grep ':6543' | sed 's;.*LISTEN      \([0-9]*\)/python.*;\1;'); true
 	@echo "Stop screamshotter"
-	kill $(shell netstat -tlp 2>/dev/null | grep ':8001' | sed 's;.*LISTEN      \([0-9]*\)/python;\1;'); true
+	kill $(shell netstat -tlp 2>/dev/null | grep ':8001' | sed 's;.*LISTEN      \([0-9]*\)/python.*;\1;'); true
 	@echo "Start convertit"
 	bin/convertit lib/src/convertit/development.ini &
 	@echo "Start screamshotter"

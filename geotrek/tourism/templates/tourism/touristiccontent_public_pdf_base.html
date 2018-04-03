@@ -31,7 +31,7 @@
 
 			{% block Map %}
 				<section class="map">
-					<img src="{{ map_url }}">
+					<img src="file://{{ map_path }}">
 				</section>
 			{% endblock Map %}
 
@@ -103,7 +103,7 @@
 			<section class="pic">
 				{% if object.picture_print %}
 					<section class="pic">
-						<img src="{{ object.picture_print.url }}" alt="attached_picture_alt">
+						<img src="file://{{ object.picture_print.path }}" alt="attached_picture_alt">
 						{% if object.pictures.0.legend and object.pictures.0.author %}<legend>{% trans "Attribution" %} : {{ object.pictures.0.legend }} ({{ object.pictures.0.author }})</legend>{% endif %}
 					</section>
 				{% endif %}

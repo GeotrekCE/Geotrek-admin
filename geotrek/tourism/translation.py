@@ -42,10 +42,17 @@ class TouristicContentTypeTO(TranslationOptions):
 
 translator.register(tourism_models.TouristicContentType,
                     TouristicContentTypeTO)
+
+
+# https://github.com/deschler/django-modeltranslation/issues/206#issuecomment-313228015
+class TouristicContentSubTypeTO(TranslationOptions):
+    fields = ()
+
+
 translator.register(tourism_models.TouristicContentType1,
-                    TouristicContentTypeTO)
+                    TouristicContentSubTypeTO)
 translator.register(tourism_models.TouristicContentType2,
-                    TouristicContentTypeTO)
+                    TouristicContentSubTypeTO)
 
 
 class TouristicEventTypeTO(TranslationOptions):

@@ -5,10 +5,11 @@ import mock
 from django.core.management import call_command
 from django.test import TestCase
 
+from geotrek.common.tests import TranslationResetMixin
 from geotrek.sensitivity.models import SportPractice, Species, SensitiveArea
 
 
-class BiodivParserTests(TestCase):
+class BiodivParserTests(TranslationResetMixin, TestCase):
     @mock.patch('geotrek.sensitivity.parsers.requests.get')
     def test_create(self, mocked):
         def json():

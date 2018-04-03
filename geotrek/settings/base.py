@@ -182,12 +182,12 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.contrib.auth.context_processors.auth',
-                'django.core.context_processors.debug',
-                'django.core.context_processors.i18n',
-                'django.core.context_processors.media',
-                'django.core.context_processors.static',
-                'django.core.context_processors.tz',
-                'django.core.context_processors.request',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
                 'geotrek.context_processors.forced_layers',
                 'mapentity.context_processors.settings',
@@ -251,7 +251,6 @@ PROJECT_APPS += (
 
 
 PROJECT_APPS += (
-    'floppyforms',
     'crispy_forms',
     'compressor',
     'djgeojson',
@@ -596,3 +595,7 @@ SWAGGER_SETTINGS = {
 
 SENSITIVITY_DEFAULT_RADIUS = 100  # meters
 SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters (always used)
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',  # Used for extern authent
+]
