@@ -23,10 +23,6 @@ class Command(BaseCommand):
             msg = 'GDAL Python bindings are not available. Can not proceed.'
             raise CommandError(msg)
 
-        # Validate arguments
-        if not options['point_layer']:
-            raise CommandError('Filename missing. See help')
-
         filename = options['point_layer']
 
         if not os.path.exists(filename):
