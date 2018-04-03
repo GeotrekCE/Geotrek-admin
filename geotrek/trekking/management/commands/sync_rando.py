@@ -714,8 +714,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.successfull = True
         self.verbosity = options['verbosity']
-        if not options['path']:
-            raise CommandError(u"Missing parameter destination directory")
         self.dst_root = options["path"].rstrip('/')
         self.check_dst_root_is_empty()
         if(options['url'][:7] != 'http://'):
