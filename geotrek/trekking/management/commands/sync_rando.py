@@ -89,11 +89,11 @@ class ZipTilesBuilder(object):
 class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('path')
-        parser.add_argument('--url', '-u', action='store', dest='url', default='http://localhost', help='Base url')
-        parser.add_argument('--rando-url', '-r', action='store', dest='rando_url', default='http://localhost',
+        parser.add_argument('--url', '-u', dest='url', default='http://localhost', help='Base url')
+        parser.add_argument('--rando-url', '-r', dest='rando_url', default='http://localhost',
                             help='Base url of public rando site')
-        parser.add_argument('--source', '-s', action='store', dest='source', default=None, help='Filter by source(s)')
-        parser.add_argument('--portal', '-P', action='store', dest='portal', default=None, help='Filter by portal(s)')
+        parser.add_argument('--source', '-s', dest='source', default=None, help='Filter by source(s)')
+        parser.add_argument('--portal', '-P', dest='portal', default=None, help='Filter by portal(s)')
         parser.add_argument('--skip-pdf', '-p', action='store_true', dest='skip_pdf', default=False,
                             help='Skip generation of PDF files')
         parser.add_argument('--skip-tiles', '-t', action='store_true', dest='skip_tiles', default=False,
@@ -102,10 +102,10 @@ class Command(BaseCommand):
                             help='Skip generation of DEM files for 3D')
         parser.add_argument('--skip-profile-png', '-e', action='store_true', dest='skip_profile_png', default=False,
                             help='Skip generation of PNG elevation profile'),
-        parser.add_argument('--languages', '-l', action='store', dest='languages', default='', help='Languages to sync')
+        parser.add_argument('--languages', '-l', dest='languages', default='', help='Languages to sync')
         parser.add_argument('--with-touristicevents', '-w', action='store_true', dest='with_events', default=False,
                             help='include touristic events by trek in global.zip')
-        parser.add_argument('--with-touristiccontent-categories', '-c', action='store', dest='content_categories',
+        parser.add_argument('--with-touristiccontent-categories', '-c', dest='content_categories',
                             default=None, help='include touristic contents by trek in global.zip '
                             '(filtered by category ID ex: --with-touristiccontent-categories="1,2,3")'),
 
