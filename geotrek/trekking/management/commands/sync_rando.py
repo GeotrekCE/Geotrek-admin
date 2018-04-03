@@ -109,84 +109,6 @@ class Command(BaseCommand):
                             default=None, help='include touristic contents by trek in global.zip '
                             '(filtered by category ID ex: --with-touristiccontent-categories="1,2,3")'),
 
-    def handle(self, *args, **options):
-        self.successfull = True
-        self.verbosity = options['verbosity']
-        if not options['path']:
-            raise CommandError(u"Missing parameter destination directory")
-        self.dst_root = options["path"].rstrip('/')
-        self.check_dst_root_is_empty()
-        if(options['url'][:7] != 'http://'):
-            raise CommandError('url parameter should start with http://')
-        self.referer = options['url']
-        self.host = self.referer[7:]
-        self.rando_url = options['rando_url']
-        if self.rando_url.endswith('/'):
-            self.rando_url = self.rando_url[:-1]
-        self.factory = RequestFactory()
-        self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_rando')
-        os.mkdir(self.tmp_root)
-        self.skip_pdf = options['skip_pdf']
-        self.skip_tiles = options['skip_tiles']
-        self.skip_dem = options['skip_dem']
-        self.skip_profile_png = options['skip_profile_png']
-        self.source = options['source']
-        if options['languages']:
-            self.languages = options['languages'].split(',')
-        else:
-            self.languages = settings.MODELTRANSLATION_LANGUAGES
-        self.with_events = options.get('with_events', False)
-        self.categories = None
-        if options.get('content_categories', u""):
-            self.categories = options.get('content_categories', u"").split(',')
-        self.celery_task = options.get('task', None)
-
-        if self.source is not None:
-            self.source = self.source.split(',')
-
-        if options['portal'] is not None:
-            self.portal = options['portal'].split(',')
-
-        else:
-            self.portal = []
-
-        if isinstance(settings.MOBILE_TILES_URL, str):
-            tiles_url = settings.MOBILE_TILES_URL
-        else:
-            tiles_url = settings.MOBILE_TILES_URL[0]
-        self.builder_args = {
-            'tiles_url': tiles_url,
-            'tiles_headers': {"Referer": self.referer},
-            'ignore_errors': True,
-            'tiles_dir': os.path.join(settings.DEPLOY_ROOT, 'var', 'tiles'),
-        }
-        try:
-            self.sync()
-            if self.celery_task:
-                self.celery_task.update_state(
-                    state='PROGRESS',
-                    meta={
-                        'name': self.celery_task.name,
-                        'current': 100,
-                        'total': 100,
-                        'infos': u"{}".format(_(u"Sync ended"))
-                    }
-                )
-        except Exception:
-            shutil.rmtree(self.tmp_root)
-            raise
-
-        self.rename_root()
-
-        if self.verbosity >= 1:
-            self.stdout.write('Done')
-
-        if not self.successfull:
-            self.stdout.write('Some errors raised during synchronization.')
-            sys.exit(1)
-
-        sleep(2)  # end sleep to ensure sync page get result
-
     def mkdirs(self, name):
         dirname = os.path.dirname(name)
         if not os.path.exists(dirname):
@@ -788,3 +710,81 @@ class Command(BaseCommand):
             shutil.rmtree(tmp_root2)
         else:
             os.rename(self.tmp_root, self.dst_root)
+
+    def handle(self, *args, **options):
+        self.successfull = True
+        self.verbosity = options['verbosity']
+        if not options['path']:
+            raise CommandError(u"Missing parameter destination directory")
+        self.dst_root = options["path"].rstrip('/')
+        self.check_dst_root_is_empty()
+        if(options['url'][:7] != 'http://'):
+            raise CommandError('url parameter should start with http://')
+        self.referer = options['url']
+        self.host = self.referer[7:]
+        self.rando_url = options['rando_url']
+        if self.rando_url.endswith('/'):
+            self.rando_url = self.rando_url[:-1]
+        self.factory = RequestFactory()
+        self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_rando')
+        os.mkdir(self.tmp_root)
+        self.skip_pdf = options['skip_pdf']
+        self.skip_tiles = options['skip_tiles']
+        self.skip_dem = options['skip_dem']
+        self.skip_profile_png = options['skip_profile_png']
+        self.source = options['source']
+        if options['languages']:
+            self.languages = options['languages'].split(',')
+        else:
+            self.languages = settings.MODELTRANSLATION_LANGUAGES
+        self.with_events = options.get('with_events', False)
+        self.categories = None
+        if options.get('content_categories', u""):
+            self.categories = options.get('content_categories', u"").split(',')
+        self.celery_task = options.get('task', None)
+
+        if self.source is not None:
+            self.source = self.source.split(',')
+
+        if options['portal'] is not None:
+            self.portal = options['portal'].split(',')
+
+        else:
+            self.portal = []
+
+        if isinstance(settings.MOBILE_TILES_URL, str):
+            tiles_url = settings.MOBILE_TILES_URL
+        else:
+            tiles_url = settings.MOBILE_TILES_URL[0]
+        self.builder_args = {
+            'tiles_url': tiles_url,
+            'tiles_headers': {"Referer": self.referer},
+            'ignore_errors': True,
+            'tiles_dir': os.path.join(settings.DEPLOY_ROOT, 'var', 'tiles'),
+        }
+        try:
+            self.sync()
+            if self.celery_task:
+                self.celery_task.update_state(
+                    state='PROGRESS',
+                    meta={
+                        'name': self.celery_task.name,
+                        'current': 100,
+                        'total': 100,
+                        'infos': u"{}".format(_(u"Sync ended"))
+                    }
+                )
+        except Exception:
+            shutil.rmtree(self.tmp_root)
+            raise
+
+        self.rename_root()
+
+        if self.verbosity >= 1:
+            self.stdout.write('Done')
+
+        if not self.successfull:
+            self.stdout.write('Some errors raised during synchronization.')
+            sys.exit(1)
+
+        sleep(2)  # end sleep to ensure sync page get result
