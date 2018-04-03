@@ -226,12 +226,6 @@ class InterventionYearsFilterTest(TestCase):
         self.assertIn('>2012<', output)
         self.assertIn('>1932<', output)
 
-    def test_new_interventions_appear_dynamically(self):
-        InfrastructureInterventionFactory.create(date=datetime(2024, 11, 10))
-        output = self.widget.render(name='year', value=None)
-        self.assertEqual(output.count('<option'), 4)
-        self.assertIn('>2024<', output)
-
 
 class ProjectYearsFilterTest(TestCase):
     def setUp(self):
@@ -248,12 +242,6 @@ class ProjectYearsFilterTest(TestCase):
         self.assertIn('>1700<', output)
         self.assertIn('>1800<', output)
         self.assertIn('>2000<', output)
-
-    def test_new_projects_appear_dynamically(self):
-        ProjectFactory.create(begin_year=1500, end_year=2100)
-        output = self.widget.render(name='year', value=None)
-        self.assertEqual(output.count('<option'), 6)
-        self.assertIn('>2100<', output)
 
     def test_new_projects_can_be_filtered_on_new_years(self):
         filter = ProjectFilterSet(data={'in_year': 1250})
