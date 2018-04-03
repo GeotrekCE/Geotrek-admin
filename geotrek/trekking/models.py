@@ -170,12 +170,6 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         """
         return reverse('trekking:trek_document_public', args=[get_language(), self.pk, self.slug])
 
-    @models.permalink
-    def get_markup_public_url(self):
-        """ Override ``geotrek.common.mixins.PublishableMixin``
-        """
-        return ('trekking:trek_markup_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
-
     @property
     def related(self):
         return self.related_treks.exclude(deleted=True).exclude(pk=self.pk).distinct()
@@ -675,12 +669,6 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
         """ Override ``geotrek.common.mixins.PublishableMixin``
         """
         return reverse('trekking:poi_document_public', args=[get_language(), self.pk, self.slug])
-
-    @models.permalink
-    def get_markup_public_url(self):
-        """ Override ``geotrek.common.mixins.PublishableMixin``
-        """
-        return ('trekking:poi_markup_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
 
     def save(self, *args, **kwargs):
         super(POI, self).save(*args, **kwargs)
