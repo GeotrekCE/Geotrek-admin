@@ -2,6 +2,7 @@
 *.zip
 *.tar.gz
 *.mo
+*.bak
 
 /var/
 /etc/
