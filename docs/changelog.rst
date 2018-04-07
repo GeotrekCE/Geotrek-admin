@@ -7,7 +7,7 @@ CHANGELOG
 
 **Preventive maintainance**
 
-* Upgrade to Django 1.10
+* Upgrade to Django 1.11
 * Upgrade several python dependencies
 
 **Bug fixes**
