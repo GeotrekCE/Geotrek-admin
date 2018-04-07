@@ -13,6 +13,7 @@ CHANGELOG
 **Bug fixes**
 
 * Put back filter widgets in two columns (#1663)
+* Do not include (possibly forged) structure field in post requests
 
 
 2.18.1 (2018-03-26)

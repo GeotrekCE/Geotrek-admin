@@ -25,7 +25,6 @@ from unittest import util as testutil
 from mapentity.tests import MapEntityLiveTest
 from mapentity.factories import SuperUserFactory
 
-from geotrek.authent.models import default_structure
 from geotrek.common.factories import (AttachmentFactory, ThemeFactory,
                                       RecordSourceFactory, TargetPortalFactory)
 from geotrek.common.tests import CommonTest, TranslationResetMixin
@@ -64,7 +63,6 @@ class POIViewsTest(CommonTest):
             'description_en': 'here',
             'type': POITypeFactory.create().pk,
             'topology': '{"lat": 5.1, "lng": 6.6}',
-            'structure': default_structure().pk
         }
 
     def test_empty_topology(self):
@@ -252,7 +250,6 @@ class TrekViewsTest(CommonTest):
             'trek_relationship_a-1-has_common_edge': '',
             'trek_relationship_a-1-has_common_departure': '',
             'trek_relationship_a-1-is_circuit_step': 'on',
-            'structure': default_structure().pk
         }
 
     def test_badfield_goodgeom(self):
@@ -1136,7 +1133,6 @@ class ServiceViewsTest(CommonTest):
         return {
             'type': ServiceTypeFactory.create().pk,
             'topology': '{"lat": 5.1, "lng": 6.6}',
-            'structure': default_structure().pk
         }
 
     def test_empty_topology(self):

@@ -11,7 +11,6 @@ from geotrek.common.tests import CommonTest
 from geotrek.common.utils import LTE
 
 from geotrek.authent.factories import PathManagerFactory, StructureFactory
-from geotrek.authent.models import default_structure
 from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, ComfortFactory)
 from geotrek.core.models import Path, Trail
 
@@ -21,18 +20,12 @@ class PathViewsTest(CommonTest):
     modelfactory = PathFactory
     userfactory = PathManagerFactory
 
-    def login(self):
-        user = PathManagerFactory(password='booh')
-        success = self.client.login(username=user.username, password='booh')
-        self.assertTrue(success)
-
     def get_bad_data(self):
         return {'geom': '{"geom": "LINESTRING (0.0 0.0, 1.0 1.0)"}'}, _("Linestring invalid snapping.")
 
     def get_good_data(self):
         return {
             'name': '',
-            'structure': default_structure().pk,
             'stake': '',
             'comfort': ComfortFactory.create().pk,
             'trail': '',
@@ -165,7 +158,6 @@ class TrailViewsTest(CommonTest):
             'departure': 'Below',
             'arrival': 'Above',
             'comments': 'No comment',
-            'structure': default_structure().pk,
             'topology': '{"paths": [%s]}' % path.pk,
         }
 
