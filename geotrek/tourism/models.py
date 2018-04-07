@@ -307,8 +307,10 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     def get_document_public_url(self):
         """ Override ``geotrek.common.mixins.PublishableMixin``
         """
-        return reverse('tourism:touristiccontent_document_public', kwargs={'pk': self.pk, 'language': get_language(),
-                                                                        'slug': self.slug})
+        return reverse(
+            'tourism:touristiccontent_document_public',
+            kwargs={'pk': self.pk, 'language': get_language(), 'slug': self.slug}
+        )
 
     @property
     def districts_display(self):
