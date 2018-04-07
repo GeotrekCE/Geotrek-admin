@@ -310,9 +310,6 @@ class PublishableMixin(BasePublishableMixin):
     def name_csv_display(self):
         return unicode(self.name)
 
-    def get_document_public_url(self):
-        raise NotImplementedError
-
     @models.permalink
     def get_markup_public_url(self):
         raise NotImplementedError

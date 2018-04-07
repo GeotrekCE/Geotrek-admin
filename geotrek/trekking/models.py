@@ -165,11 +165,6 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
             extent[3] = max(extent[3], poi.geom.y)
         return extent
 
-    def get_document_public_url(self):
-        """ Override ``geotrek.common.mixins.PublishableMixin``
-        """
-        return reverse('trekking:trek_document_public', args=[get_language(), self.pk, self.slug])
-
     @property
     def related(self):
         return self.related_treks.exclude(deleted=True).exclude(pk=self.pk).distinct()
@@ -664,11 +659,6 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
 
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.type)
-
-    def get_document_public_url(self):
-        """ Override ``geotrek.common.mixins.PublishableMixin``
-        """
-        return reverse('trekking:poi_document_public', args=[get_language(), self.pk, self.slug])
 
     def save(self, *args, **kwargs):
         super(POI, self).save(*args, **kwargs)
