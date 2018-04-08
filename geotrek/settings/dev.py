@@ -1,4 +1,5 @@
-from .default import *
+from .base import *  # noqa
+from .base import TEMPLATES, INSTALLED_APPS, LOGGING, MIDDLEWARE_CLASSES
 
 #
 # Django Development
@@ -34,8 +35,18 @@ LOGGING['loggers']['']['level'] = 'DEBUG'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-try:
-    from .local import *  # NOQA
-    # set local settings for dev
-except ImportError:
-    pass
+SECRET_KEY = "Ceci n'est pas du tout secret mais c'est juste pour le dev"
+
+DEBUG_TOOLBAR = False
+
+INTERNAL_IPS += ('10.0.3.1',)
+
+
+if DEBUG_TOOLBAR:
+    INSTALLED_APPS = (
+        'debug_toolbar',
+    ) + INSTALLED_APPS
+
+    MIDDLEWARE_CLASSES += (
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    )

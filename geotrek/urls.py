@@ -17,7 +17,7 @@ handler404 = 'mapentity.views.handler404'
 urlpatterns = [
     url(r'^$', core_views.home, name='home'),
     url(r'^login/$', auth_views.login, name='login'),
-    url(r'^logout/$', auth_views.logout, {'next_page': settings.ROOT_URL + '/'}, name='logout',),
+    url(r'^logout/$', auth_views.logout, {'next_page': '/'}, name='logout',),
 
     url(r'', include('geotrek.common.urls', namespace='common', app_name='common')),
     url(r'', include('geotrek.core.urls', namespace='core', app_name='core')),
