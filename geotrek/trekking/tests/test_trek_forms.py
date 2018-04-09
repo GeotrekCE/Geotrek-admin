@@ -27,7 +27,7 @@ class TrekItinerancyTestCase(TestCase):
         form.cleaned_data = {'children_trek': [self.trek2]}
         with self.assertRaises(ValidationError) as cm:
             form.clean_children_trek()
-        self.assertEquals(cm.exception.message, u'Cannot use parent trek 2 as a child trek.')
+        self.assertEqual(cm.exception.message, 'Cannot use parent trek 2 as a child trek.')
 
     def test_child_with_itself_child(self):
         OrderedTrekChild(child=self.trek1, parent=self.trek2, order=0).save()

@@ -51,16 +51,16 @@ class SyncTest(TranslationResetMixin, TestCase):
                 with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccontents.geojson'), 'r') as f:
                     # 2 contents
                     tcontents = json.load(f)
-                    self.assertEquals(len(tcontents['features']), 2)
+                    self.assertEqual(len(tcontents['features']), 2)
 
                 with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristicevents.geojson'), 'r') as f:
                     #  only 1 event
                     tevents = json.load(f)
-                    self.assertEquals(len(tevents['features']), 1)
+                    self.assertEqual(len(tevents['features']), 1)
 
                 with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccategories.json'), 'r') as f:
                     tcategories = json.load(f)
-                    self.assertEquals(len(tcategories), 2)
+                    self.assertEqual(len(tcategories), 2)
 
     def test_sync_portal_filtering(self):
 
@@ -72,16 +72,16 @@ class SyncTest(TranslationResetMixin, TestCase):
         with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccontents.geojson'), 'r') as f:
             tcontents = json.load(f)
             # 1 content on portal b
-            self.assertEquals(len(tcontents['features']), 1)
+            self.assertEqual(len(tcontents['features']), 1)
 
         with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristicevents.geojson'), 'r') as f:
             tevents = json.load(f)
             # 2 events on portal b
-            self.assertEquals(len(tevents['features']), 2)
+            self.assertEqual(len(tevents['features']), 2)
 
         with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccategories.json'), 'r') as f:
             tevents = json.load(f)
-            self.assertEquals(len(tevents), 2)
+            self.assertEqual(len(tevents), 2)
 
     def test_sync_trek_zip_content(self):
         """

@@ -35,7 +35,7 @@ class SyncTest(TestCase):
             with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
                 # there are 4 treks
-                self.assertEquals(len(treks['features']),
+                self.assertEqual(len(treks['features']),
                                   trek_models.Trek.objects.filter(published=True).count())
 
     def test_sync_filtering_sources(self):
@@ -46,7 +46,7 @@ class SyncTest(TestCase):
             with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
                 # only 1 trek in Source A
-                self.assertEquals(len(treks['features']),
+                self.assertEqual(len(treks['features']),
                                   trek_models.Trek.objects.filter(published=True,
                                                                   source__name__in=[self.source_a.name, ]).count())
 
@@ -59,7 +59,7 @@ class SyncTest(TestCase):
                 treks = json.load(f)
 
                 # only 2 treks in Portal B
-                self.assertEquals(len(treks['features']),
+                self.assertEqual(len(treks['features']),
                                   trek_models.Trek.objects.filter(published=True,
                                                                   portal__name__in=[self.portal_b.name, ]).count())
 
@@ -72,7 +72,7 @@ class SyncTest(TestCase):
                 treks = json.load(f)
 
                 # 3 treks have portal A or B
-                self.assertEquals(len(treks['features']),
+                self.assertEqual(len(treks['features']),
                                   trek_models.Trek.objects.filter(published=True,
                                                                   portal__name__in=[self.portal_a.name,
                                                                                     self.portal_b.name, ])

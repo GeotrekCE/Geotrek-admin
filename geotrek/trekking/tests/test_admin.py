@@ -41,8 +41,8 @@ class DifficultyLevelTest(AuthentFixturesTest):
 
     def test_migrate_trek_difficulty(self):
         self.login()
-        self.assertEquals(self.trek.difficulty, self.difficulty)
-        self.assertEquals(self.trek.difficulty_id, self.difficulty.pk)
+        self.assertEqual(self.trek.difficulty, self.difficulty)
+        self.assertEqual(self.trek.difficulty_id, self.difficulty.pk)
         response = self.client.get(reverse('admin:trekking_difficultylevel_change', args=[self.difficulty.pk]))
         csrf = self.get_csrf_token(response)
         post_data = {'id': 4,
@@ -51,8 +51,8 @@ class DifficultyLevelTest(AuthentFixturesTest):
         response = self.client.post(reverse('admin:trekking_difficultylevel_change', args=[self.difficulty.pk]), post_data)
         self.assertRedirects(response, reverse('admin:trekking_difficultylevel_changelist'))
         trek = Trek.objects.get(pk=self.trek.pk)
-        self.assertNotEquals(trek.difficulty, self.difficulty)
-        self.assertEquals(trek.difficulty_id, 4)
+        self.assertNotEqual(trek.difficulty, self.difficulty)
+        self.assertEqual(trek.difficulty_id, 4)
 
 
 class DeleteObjectTest(AuthentFixturesTest):
@@ -70,7 +70,7 @@ class DeleteObjectTest(AuthentFixturesTest):
         delete_url = reverse('admin:trekking_difficultylevel_delete', args=[self.difficulty.pk])
         detail_url = reverse('admin:trekking_difficultylevel_change', args=[self.difficulty.pk])
         response = self.client.post(delete_url, {'post': 'yes'})
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         response = self.client.get(detail_url)
-        self.assertEquals(response.status_code, 302)
-        self.assertEquals(response.url, '/admin/')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, '/admin/')

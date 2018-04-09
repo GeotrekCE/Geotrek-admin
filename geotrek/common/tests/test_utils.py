@@ -55,7 +55,7 @@ class UtilsTest(TestCase):
                 'ShapeParser',
                 'SitraParser',
                 'TourismSystemParser'):
-            self.assert_(classname not in class_list)
+            self.assertTrue(classname not in class_list)
 
     def test_create_tmp_directory(self):
         self.assertTupleEqual(

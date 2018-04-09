@@ -22,7 +22,7 @@ class InfrastructureTest(TestCase):
     def test_helpers(self):
         p = PathFactory.create()
 
-        self.assertEquals(len(p.infrastructures), 0)
+        self.assertEqual(len(p.infrastructures), 0)
         sign = SignageFactory.create(no_path=True)
         PathAggregationFactory.create(topo_object=sign, path=p,
                                       start_position=0.5, end_position=0.5)

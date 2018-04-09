@@ -17,19 +17,19 @@ class FailingEmailBackend(BaseEmailBackend):
 class EmailSendingTest(TestCase):
     def test_a_mail_is_sent_on_report_creation(self):
         ReportFactory.create()
-        self.assertEquals(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 1)
 
     def test_a_mail_is_not_sent_on_report_modification(self):
         r = ReportFactory.create()
-        self.assertEquals(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 1)
         r.name = 'toto'
         r.save()
-        self.assertEquals(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 1)
 
     @override_settings(EMAIL_BACKEND='geotrek.feedback.tests.FailingEmailBackend')
     def test_email_failure_does_not_prevent_report_creation(self):
         r = ReportFactory.create()
-        self.assertEquals(len(mail.outbox), 0)
+        self.assertEqual(len(mail.outbox), 0)
         self.assertIsNotNone(r.id)
 
     def test_email_format_and_content(self):
