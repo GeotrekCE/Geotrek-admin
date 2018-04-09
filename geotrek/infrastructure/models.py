@@ -45,23 +45,23 @@ class InfrastructureType(StructureRelated):
 
     class Meta:
         db_table = 'a_b_amenagement'
-        verbose_name = _(u"Infrastructure Type")
-        verbose_name_plural = _(u"Infrastructure Types")
+        verbose_name = _("Infrastructure Type")
+        verbose_name_plural = _("Infrastructure Types")
         ordering = ['label', 'type']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.label
 
 
 class InfrastructureCondition(StructureRelated):
-    label = models.CharField(verbose_name=_(u"Name"), db_column="etat", max_length=250)
+    label = models.CharField(verbose_name=_("Name"), db_column="etat", max_length=250)
 
     class Meta:
-        verbose_name = _(u"Infrastructure Condition")
-        verbose_name_plural = _(u"Infrastructure Conditions")
+        verbose_name = _("Infrastructure Condition")
+        verbose_name_plural = _("Infrastructure Conditions")
         db_table = "a_b_etat"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.label
 
 
@@ -71,9 +71,9 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
                                        db_column='evenement')
 
     name = models.CharField(db_column="nom", max_length=128,
-                            help_text=_(u"Reference, code, ..."), verbose_name=_("Name"))
+                            help_text=_("Reference, code, ..."), verbose_name=_("Name"))
     description = models.TextField(blank=True, db_column='description',
-                                   verbose_name=_("Description"), help_text=_(u"Specificites"))
+                                   verbose_name=_("Description"), help_text=_("Specificites"))
     type = models.ForeignKey(InfrastructureType, db_column='type', verbose_name=_("Type"))
     condition = models.ForeignKey(InfrastructureCondition, db_column='etat',
                                   verbose_name=_("Condition"), blank=True, null=True,
@@ -84,12 +84,12 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
     class Meta:
         db_table = 'a_t_amenagement'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     @property
     def implantation_year_display(self):
-        return u"{}".format(self.implantation_year) if self.implantation_year else ""
+        return "{}".format(self.implantation_year) if self.implantation_year else ""
 
     @property
     def name_display(self):
@@ -99,16 +99,16 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
 
     @property
     def name_csv_display(self):
-        return unicode(self)
+        return str(self)
 
     @property
     def type_display(self):
-        return unicode(self.type)
+        return str(self.type)
 
     @property
     def cities_display(self):
         if hasattr(self, 'cities'):
-            return [unicode(c) for c in self.cities]
+            return [str(c) for c in self.cities]
         return []
 
     @classproperty
@@ -140,8 +140,8 @@ class Infrastructure(BaseInfrastructure):
 
     class Meta:
         proxy = True
-        verbose_name = _(u"Infrastructure")
-        verbose_name_plural = _(u"Infrastructures")
+        verbose_name = _("Infrastructure")
+        verbose_name_plural = _("Infrastructures")
 
     @classmethod
     def path_infrastructures(cls, path):
@@ -152,8 +152,8 @@ class Infrastructure(BaseInfrastructure):
         return cls.overlapping(topology)
 
 
-Path.add_property('infrastructures', lambda self: Infrastructure.path_infrastructures(self), _(u"Infrastructures"))
-Topology.add_property('infrastructures', lambda self: Infrastructure.topology_infrastructures(self), _(u"Infrastructures"))
+Path.add_property('infrastructures', lambda self: Infrastructure.path_infrastructures(self), _("Infrastructures"))
+Topology.add_property('infrastructures', lambda self: Infrastructure.topology_infrastructures(self), _("Infrastructures"))
 
 
 class SignageGISManager(gismodels.GeoManager):
@@ -180,8 +180,8 @@ class Signage(BaseInfrastructure):
 
     class Meta:
         proxy = True
-        verbose_name = _(u"Signage")
-        verbose_name_plural = _(u"Signages")
+        verbose_name = _("Signage")
+        verbose_name_plural = _("Signages")
 
     @classmethod
     def path_signages(cls, path):
@@ -192,5 +192,5 @@ class Signage(BaseInfrastructure):
         return cls.overlapping(topology)
 
 
-Path.add_property('signages', lambda self: Signage.path_signages(self), _(u"Signages"))
-Topology.add_property('signages', lambda self: Signage.topology_signages(self), _(u"Signages"))
+Path.add_property('signages', lambda self: Signage.path_signages(self), _("Signages"))
+Topology.add_property('signages', lambda self: Signage.topology_signages(self), _("Signages"))

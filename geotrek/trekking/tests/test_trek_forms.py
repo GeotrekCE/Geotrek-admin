@@ -35,4 +35,4 @@ class TrekItinerancyTestCase(TestCase):
         form.cleaned_data = {'children_trek': [self.trek3]}
         with self.assertRaises(ValidationError) as cm:
             form.clean_children_trek()
-        self.assertEquals(cm.exception.message, u'Cannot add children because this trek is itself a child.')
+        self.assertEqual(cm.exception.message, 'Cannot add children because this trek is itself a child.')

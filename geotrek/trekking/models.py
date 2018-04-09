@@ -56,60 +56,60 @@ class OrderedTrekChild(models.Model):
 class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
-    departure = models.CharField(verbose_name=_(u"Departure"), max_length=128, blank=True,
-                                 help_text=_(u"Departure description"), db_column='depart')
-    arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=128, blank=True,
-                               help_text=_(u"Arrival description"), db_column='arrivee')
-    description_teaser = models.TextField(verbose_name=_(u"Description teaser"), blank=True,
-                                          help_text=_(u"A brief summary (map pop-ups)"), db_column='chapeau')
-    description = models.TextField(verbose_name=_(u"Description"), blank=True, db_column='description',
-                                   help_text=_(u"Complete description"))
-    ambiance = models.TextField(verbose_name=_(u"Ambiance"), blank=True, db_column='ambiance',
-                                help_text=_(u"Main attraction and interest"))
-    access = models.TextField(verbose_name=_(u"Access"), blank=True, db_column='acces',
-                              help_text=_(u"Best way to go"))
-    disabled_infrastructure = models.TextField(verbose_name=_(u"Disabled infrastructure"), db_column='handicap',
-                                               blank=True, help_text=_(u"Any specific infrastructure"))
-    duration = models.FloatField(verbose_name=_(u"Duration"), default=0, blank=True, db_column='duree',
-                                 help_text=_(u"In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"),
+    departure = models.CharField(verbose_name=_("Departure"), max_length=128, blank=True,
+                                 help_text=_("Departure description"), db_column='depart')
+    arrival = models.CharField(verbose_name=_("Arrival"), max_length=128, blank=True,
+                               help_text=_("Arrival description"), db_column='arrivee')
+    description_teaser = models.TextField(verbose_name=_("Description teaser"), blank=True,
+                                          help_text=_("A brief summary (map pop-ups)"), db_column='chapeau')
+    description = models.TextField(verbose_name=_("Description"), blank=True, db_column='description',
+                                   help_text=_("Complete description"))
+    ambiance = models.TextField(verbose_name=_("Ambiance"), blank=True, db_column='ambiance',
+                                help_text=_("Main attraction and interest"))
+    access = models.TextField(verbose_name=_("Access"), blank=True, db_column='acces',
+                              help_text=_("Best way to go"))
+    disabled_infrastructure = models.TextField(verbose_name=_("Disabled infrastructure"), db_column='handicap',
+                                               blank=True, help_text=_("Any specific infrastructure"))
+    duration = models.FloatField(verbose_name=_("Duration"), default=0, blank=True, db_column='duree',
+                                 help_text=_("In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"),
                                  validators=[MinValueValidator(0)])
-    is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"), db_column='coeur',
-                                           help_text=_(u"Crosses center of park"), default=False)
-    advised_parking = models.CharField(verbose_name=_(u"Advised parking"), max_length=128, blank=True, db_column='parking',
-                                       help_text=_(u"Where to park"))
-    parking_location = models.PointField(verbose_name=_(u"Parking location"), db_column='geom_parking',
+    is_park_centered = models.BooleanField(verbose_name=_("Is in the midst of the park"), db_column='coeur',
+                                           help_text=_("Crosses center of park"), default=False)
+    advised_parking = models.CharField(verbose_name=_("Advised parking"), max_length=128, blank=True, db_column='parking',
+                                       help_text=_("Where to park"))
+    parking_location = models.PointField(verbose_name=_("Parking location"), db_column='geom_parking',
                                          srid=settings.SRID, spatial_index=False, blank=True, null=True)
-    public_transport = models.TextField(verbose_name=_(u"Public transport"), blank=True, db_column='transport',
-                                        help_text=_(u"Train, bus (see web links)"))
-    advice = models.TextField(verbose_name=_(u"Advice"), blank=True, db_column='recommandation',
-                              help_text=_(u"Risks, danger, best period, ..."))
+    public_transport = models.TextField(verbose_name=_("Public transport"), blank=True, db_column='transport',
+                                        help_text=_("Train, bus (see web links)"))
+    advice = models.TextField(verbose_name=_("Advice"), blank=True, db_column='recommandation',
+                              help_text=_("Risks, danger, best period, ..."))
     themes = models.ManyToManyField(Theme, related_name="treks",
-                                    db_table="o_r_itineraire_theme", blank=True, verbose_name=_(u"Themes"),
-                                    help_text=_(u"Main theme(s)"))
+                                    db_table="o_r_itineraire_theme", blank=True, verbose_name=_("Themes"),
+                                    help_text=_("Main theme(s)"))
     networks = models.ManyToManyField('TrekNetwork', related_name="treks",
-                                      db_table="o_r_itineraire_reseau", blank=True, verbose_name=_(u"Networks"),
-                                      help_text=_(u"Hiking networks"))
+                                      db_table="o_r_itineraire_reseau", blank=True, verbose_name=_("Networks"),
+                                      help_text=_("Hiking networks"))
     practice = models.ForeignKey('Practice', related_name="treks",
-                                 blank=True, null=True, verbose_name=_(u"Practice"), db_column='pratique')
+                                 blank=True, null=True, verbose_name=_("Practice"), db_column='pratique')
     accessibilities = models.ManyToManyField('Accessibility', related_name="treks",
                                              db_table="o_r_itineraire_accessibilite", blank=True,
-                                             verbose_name=_(u"Accessibility"))
+                                             verbose_name=_("Accessibility"))
     route = models.ForeignKey('Route', related_name='treks',
-                              blank=True, null=True, verbose_name=_(u"Route"), db_column='parcours')
+                              blank=True, null=True, verbose_name=_("Route"), db_column='parcours')
     difficulty = models.ForeignKey('DifficultyLevel', related_name='treks',
-                                   blank=True, null=True, verbose_name=_(u"Difficulty"), db_column='difficulte')
+                                   blank=True, null=True, verbose_name=_("Difficulty"), db_column='difficulte')
     web_links = models.ManyToManyField('WebLink', related_name="treks",
-                                       db_table="o_r_itineraire_web", blank=True, verbose_name=_(u"Web links"),
-                                       help_text=_(u"External resources"))
+                                       db_table="o_r_itineraire_web", blank=True, verbose_name=_("Web links"),
+                                       help_text=_("External resources"))
     related_treks = models.ManyToManyField('self', through='TrekRelationship',
-                                           verbose_name=_(u"Related treks"), symmetrical=False,
-                                           help_text=_(u"Connections between treks"),
+                                           verbose_name=_("Related treks"), symmetrical=False,
+                                           help_text=_("Connections between treks"),
                                            related_name='related_treks+')  # Hide reverse attribute
     information_desks = models.ManyToManyField(tourism_models.InformationDesk, related_name='treks',
                                                db_table="o_r_itineraire_renseignement", blank=True,
-                                               verbose_name=_(u"Information desks"),
-                                               help_text=_(u"Where to obtain information"))
-    points_reference = models.MultiPointField(verbose_name=_(u"Points of reference"), db_column='geom_points_reference',
+                                               verbose_name=_("Information desks"),
+                                               help_text=_("Where to obtain information"))
+    points_reference = models.MultiPointField(verbose_name=_("Points of reference"), db_column='geom_points_reference',
                                               srid=settings.SRID, spatial_index=False, blank=True, null=True)
     source = models.ManyToManyField('common.RecordSource',
                                     blank=True, related_name='treks',
@@ -117,8 +117,8 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     portal = models.ManyToManyField('common.TargetPortal',
                                     blank=True, related_name='treks',
                                     verbose_name=_("Portal"), db_table='o_r_itineraire_portal')
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
-    eid2 = models.CharField(verbose_name=_(u"Second external id"), max_length=128, blank=True, null=True, db_column='id_externe2')
+    eid = models.CharField(verbose_name=_("External id"), max_length=128, blank=True, null=True, db_column='id_externe')
+    eid2 = models.CharField(verbose_name=_("Second external id"), max_length=128, blank=True, null=True, db_column='id_externe2')
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
@@ -127,10 +127,10 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
 
     class Meta:
         db_table = 'o_t_itineraire'
-        verbose_name = _(u"Trek")
-        verbose_name_plural = _(u"Treks")
+        verbose_name = _("Trek")
+        verbose_name_plural = _("Treks")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_map_image_url(self):
@@ -204,32 +204,32 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
 
     @property
     def networks_display(self):
-        return ', '.join([unicode(n) for n in self.networks.all()])
+        return ', '.join([str(n) for n in self.networks.all()])
 
     @property
     def districts_display(self):
-        return ', '.join([unicode(d) for d in self.districts])
+        return ', '.join([str(d) for d in self.districts])
 
     @property
     def themes_display(self):
-        return ', '.join([unicode(n) for n in self.themes.all()])
+        return ', '.join([str(n) for n in self.themes.all()])
 
     @property
     def information_desks_display(self):
-        return ', '.join([unicode(n) for n in self.information_desks.all()])
+        return ', '.join([str(n) for n in self.information_desks.all()])
 
     @property
     def accessibilities_display(self):
-        return ', '.join([unicode(n) for n in self.accessibilities.all()])
+        return ', '.join([str(n) for n in self.accessibilities.all()])
 
     @property
     def web_links_display(self):
-        return ', '.join([unicode(n) for n in self.web_links.all()])
+        return ', '.join([str(n) for n in self.web_links.all()])
 
     @property
     def city_departure(self):
         cities = self.cities
-        return unicode(cities[0]) if len(cities) > 0 else ''
+        return str(cities[0]) if len(cities) > 0 else ''
 
     def kml(self):
         """ Exports trek into KML format, add geometry as linestring and POI
@@ -290,7 +290,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
 
     @classmethod
     def get_create_label(cls):
-        return _(u"Add a new trek")
+        return _("Add a new trek")
 
     @property
     def parents(self):
@@ -348,7 +348,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         Custom model validation
         """
         if self.pk in self.trek_children.values_list('child__id', flat=True):
-            raise ValidationError(_(u"Cannot use itself as child trek."))
+            raise ValidationError(_("Cannot use itself as child trek."))
 
     @property
     def prefixed_category_id(self):
@@ -395,11 +395,11 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
 
     @property
     def portal_display(self):
-        return ', '.join([unicode(portal) for portal in self.portal.all()])
+        return ', '.join([str(portal) for portal in self.portal.all()])
 
     @property
     def source_display(self):
-        return ','.join([unicode(source) for source in self.source.all()])
+        return ','.join([str(source) for source in self.source.all()])
 
     @property
     def extent(self):
@@ -420,25 +420,25 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     def get_printcontext(self):
         return {
             "maplayers": [
-                ugettext(u"Sensitive area"),
-                ugettext(u"POIs"),
-                ugettext(u"services"),
+                ugettext("Sensitive area"),
+                ugettext("POIs"),
+                ugettext("services"),
                 settings.LEAFLET_CONFIG['TILES'][0][0],
             ]}
 
 
-Path.add_property('treks', Trek.path_treks, _(u"Treks"))
-Topology.add_property('treks', Trek.topology_treks, _(u"Treks"))
+Path.add_property('treks', Trek.path_treks, _("Treks"))
+Topology.add_property('treks', Trek.topology_treks, _("Treks"))
 if settings.HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES:
-    Topology.add_property('published_treks', lambda self: [], _(u"Published treks"))
+    Topology.add_property('published_treks', lambda self: [], _("Published treks"))
 else:
-    Topology.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _(u"Published treks"))
-Intervention.add_property('treks', lambda self: self.topology.treks if self.topology else [], _(u"Treks"))
-Project.add_property('treks', lambda self: self.edges_by_attr('treks'), _(u"Treks"))
-tourism_models.TouristicContent.add_property('treks', lambda self: intersecting(Trek, self), _(u"Treks"))
-tourism_models.TouristicContent.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _(u"Published treks"))
-tourism_models.TouristicEvent.add_property('treks', lambda self: intersecting(Trek, self), _(u"Treks"))
-tourism_models.TouristicEvent.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _(u"Published treks"))
+    Topology.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _("Published treks"))
+Intervention.add_property('treks', lambda self: self.topology.treks if self.topology else [], _("Treks"))
+Project.add_property('treks', lambda self: self.edges_by_attr('treks'), _("Treks"))
+tourism_models.TouristicContent.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
+tourism_models.TouristicContent.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _("Published treks"))
+tourism_models.TouristicEvent.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
+tourism_models.TouristicEvent.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _("Published treks"))
 
 
 class TrekRelationshipManager(models.Manager):
@@ -456,27 +456,27 @@ class TrekRelationship(models.Model):
     Relationships between treks : symmetrical aspect is managed by a trigger that
     duplicates all couples (trek_a, trek_b)
     """
-    has_common_departure = models.BooleanField(verbose_name=_(u"Common departure"), db_column='depart_commun', default=False)
-    has_common_edge = models.BooleanField(verbose_name=_(u"Common edge"), db_column='troncons_communs', default=False)
-    is_circuit_step = models.BooleanField(verbose_name=_(u"Circuit step"), db_column='etape_circuit', default=False)
+    has_common_departure = models.BooleanField(verbose_name=_("Common departure"), db_column='depart_commun', default=False)
+    has_common_edge = models.BooleanField(verbose_name=_("Common edge"), db_column='troncons_communs', default=False)
+    is_circuit_step = models.BooleanField(verbose_name=_("Circuit step"), db_column='etape_circuit', default=False)
 
     trek_a = models.ForeignKey(Trek, related_name="trek_relationship_a", db_column='itineraire_a')
-    trek_b = models.ForeignKey(Trek, related_name="trek_relationship_b", db_column='itineraire_b', verbose_name=_(u"Trek"))
+    trek_b = models.ForeignKey(Trek, related_name="trek_relationship_b", db_column='itineraire_b', verbose_name=_("Trek"))
 
     objects = TrekRelationshipManager()
 
     class Meta:
         db_table = 'o_r_itineraire_itineraire'
-        verbose_name = _(u"Trek relationship")
-        verbose_name_plural = _(u"Trek relationships")
+        verbose_name = _("Trek relationship")
+        verbose_name_plural = _("Trek relationships")
         unique_together = ('trek_a', 'trek_b')
 
-    def __unicode__(self):
-        return u"%s <--> %s" % (self.trek_a, self.trek_b)
+    def __str__(self):
+        return "%s <--> %s" % (self.trek_a, self.trek_b)
 
     @property
     def relation(self):
-        return u"%s %s%s%s" % (
+        return "%s %s%s%s" % (
             self.trek_b.name_display,
             _("Departure") if self.has_common_departure else '',
             _("Path") if self.has_common_edge else '',
@@ -489,34 +489,34 @@ class TrekRelationship(models.Model):
 
 
 class TrekNetwork(PictogramMixin):
-    network = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='reseau')
+    network = models.CharField(verbose_name=_("Name"), max_length=128, db_column='reseau')
 
     class Meta:
         db_table = 'o_b_reseau'
-        verbose_name = _(u"Trek network")
-        verbose_name_plural = _(u"Trek networks")
+        verbose_name = _("Trek network")
+        verbose_name_plural = _("Trek networks")
         ordering = ['network']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.network
 
 
 class Practice(PictogramMixin):
 
-    name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
-    distance = models.IntegerField(verbose_name=_(u"Distance"), blank=True, null=True, db_column='distance',
-                                   help_text=_(u"Touristic contents and events will associate within this distance (meters)"))
-    cirkwi = models.ForeignKey('cirkwi.CirkwiLocomotion', verbose_name=_(u"Cirkwi locomotion"), null=True, blank=True)
-    order = models.IntegerField(verbose_name=_(u"Order"), null=True, blank=True, db_column='tri',
-                                help_text=_(u"Alphabetical order if blank"))
+    name = models.CharField(verbose_name=_("Name"), max_length=128, db_column='nom')
+    distance = models.IntegerField(verbose_name=_("Distance"), blank=True, null=True, db_column='distance',
+                                   help_text=_("Touristic contents and events will associate within this distance (meters)"))
+    cirkwi = models.ForeignKey('cirkwi.CirkwiLocomotion', verbose_name=_("Cirkwi locomotion"), null=True, blank=True)
+    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True, db_column='tri',
+                                help_text=_("Alphabetical order if blank"))
 
     class Meta:
         db_table = 'o_b_pratique'
-        verbose_name = _(u"Practice")
-        verbose_name_plural = _(u"Practices")
+        verbose_name = _("Practice")
+        verbose_name_plural = _("Practices")
         ordering = ['order', 'name']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     @property
@@ -526,18 +526,18 @@ class Practice(PictogramMixin):
 
 class Accessibility(OptionalPictogramMixin):
 
-    name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
-    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_(u"Cirkwi tag"), null=True, blank=True)
+    name = models.CharField(verbose_name=_("Name"), max_length=128, db_column='nom')
+    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True)
 
     id_prefix = 'A'
 
     class Meta:
         db_table = 'o_b_accessibilite'
-        verbose_name = _(u"Accessibility")
-        verbose_name_plural = _(u"Accessibilities")
+        verbose_name = _("Accessibility")
+        verbose_name_plural = _("Accessibilities")
         ordering = ['name']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     @property
@@ -551,15 +551,15 @@ class Accessibility(OptionalPictogramMixin):
 
 class Route(OptionalPictogramMixin):
 
-    route = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='parcours')
+    route = models.CharField(verbose_name=_("Name"), max_length=128, db_column='parcours')
 
     class Meta:
         db_table = 'o_b_parcours'
-        verbose_name = _(u"Route")
-        verbose_name_plural = _(u"Routes")
+        verbose_name = _("Route")
+        verbose_name_plural = _("Routes")
         ordering = ['route']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.route
 
 
@@ -570,19 +570,19 @@ class DifficultyLevel(OptionalPictogramMixin):
     where treks are filtered by difficulty ids.
     """
     id = models.IntegerField(primary_key=True)
-    difficulty = models.CharField(verbose_name=_(u"Difficulty level"),
+    difficulty = models.CharField(verbose_name=_("Difficulty level"),
                                   max_length=128, db_column='difficulte')
-    cirkwi_level = models.IntegerField(verbose_name=_(u"Cirkwi level"), blank=True, null=True,
-                                       db_column='niveau_cirkwi', help_text=_(u"Between 1 and 8"))
-    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_(u"Cirkwi tag"), null=True, blank=True)
+    cirkwi_level = models.IntegerField(verbose_name=_("Cirkwi level"), blank=True, null=True,
+                                       db_column='niveau_cirkwi', help_text=_("Between 1 and 8"))
+    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True)
 
     class Meta:
         db_table = 'o_b_difficulte'
-        verbose_name = _(u"Difficulty level")
-        verbose_name_plural = _(u"Difficulty levels")
+        verbose_name = _("Difficulty level")
+        verbose_name_plural = _("Difficulty levels")
         ordering = ['id']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.difficulty
 
     def save(self, *args, **kwargs):
@@ -603,9 +603,9 @@ class WebLinkManager(models.Manager):
 
 class WebLink(models.Model):
 
-    name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
-    url = models.URLField(verbose_name=_(u"URL"), max_length=2048, db_column='url')
-    category = models.ForeignKey('WebLinkCategory', verbose_name=_(u"Category"),
+    name = models.CharField(verbose_name=_("Name"), max_length=128, db_column='nom')
+    url = models.URLField(verbose_name=_("URL"), max_length=2048, db_column='url')
+    category = models.ForeignKey('WebLinkCategory', verbose_name=_("Category"),
                                  related_name='links', null=True, blank=True,
                                  db_column='categorie')
 
@@ -613,13 +613,13 @@ class WebLink(models.Model):
 
     class Meta:
         db_table = 'o_t_web'
-        verbose_name = _(u"Web link")
-        verbose_name_plural = _(u"Web links")
+        verbose_name = _("Web link")
+        verbose_name_plural = _("Web links")
         ordering = ['name']
 
-    def __unicode__(self):
+    def __str__(self):
         category = "%s - " % self.category.label if self.category else ""
-        return u"%s%s (%s)" % (category, self.name, self.url)
+        return "%s%s (%s)" % (category, self.name, self.url)
 
     @classmethod
     def get_add_url(cls):
@@ -628,16 +628,16 @@ class WebLink(models.Model):
 
 class WebLinkCategory(PictogramMixin):
 
-    label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
+    label = models.CharField(verbose_name=_("Label"), max_length=128, db_column='nom')
 
     class Meta:
         db_table = 'o_b_web_category'
-        verbose_name = _(u"Web link category")
-        verbose_name_plural = _(u"Web link categories")
+        verbose_name = _("Web link category")
+        verbose_name_plural = _("Web link categories")
         ordering = ['label']
 
-    def __unicode__(self):
-        return u"%s" % self.label
+    def __str__(self):
+        return "%s" % self.label
 
 
 class POIManager(models.GeoManager):
@@ -649,21 +649,21 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
 
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
-    description = models.TextField(verbose_name=_(u"Description"), db_column='description',
-                                   help_text=_(u"History, details,  ..."))
-    type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"), db_column='type')
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
+    description = models.TextField(verbose_name=_("Description"), db_column='description',
+                                   help_text=_("History, details,  ..."))
+    type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"), db_column='type')
+    eid = models.CharField(verbose_name=_("External id"), max_length=128, blank=True, null=True, db_column='id_externe')
 
     class Meta:
         db_table = 'o_t_poi'
-        verbose_name = _(u"POI")
-        verbose_name_plural = _(u"POI")
+        verbose_name = _("POI")
+        verbose_name_plural = _("POI")
 
     # Override default manager
     objects = Topology.get_manager_cls(POIManager)()
 
-    def __unicode__(self):
-        return u"%s (%s)" % (self.name, self.type)
+    def __str__(self):
+        return "%s (%s)" % (self.name, self.type)
 
     def get_document_public_url(self):
         """ Override ``geotrek.common.mixins.PublishableMixin``
@@ -681,7 +681,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
 
     @property
     def type_display(self):
-        return unicode(self.type)
+        return str(self.type)
 
     @property
     def serializable_type(self):
@@ -713,29 +713,29 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
         return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom else None
 
 
-Path.add_property('pois', POI.path_pois, _(u"POIs"))
-Topology.add_property('pois', POI.topology_pois, _(u"POIs"))
-Topology.add_property('published_pois', POI.published_topology_pois, _(u"Published POIs"))
-Intervention.add_property('pois', lambda self: self.topology.pois if self.topology else [], _(u"POIs"))
-Project.add_property('pois', lambda self: self.edges_by_attr('pois'), _(u"POIs"))
-tourism_models.TouristicContent.add_property('pois', lambda self: intersecting(POI, self), _(u"POIs"))
-tourism_models.TouristicContent.add_property('published_pois', lambda self: intersecting(POI, self).filter(published=True), _(u"Published POIs"))
-tourism_models.TouristicEvent.add_property('pois', lambda self: intersecting(POI, self), _(u"POIs"))
-tourism_models.TouristicEvent.add_property('published_pois', lambda self: intersecting(POI, self).filter(published=True), _(u"Published POIs"))
+Path.add_property('pois', POI.path_pois, _("POIs"))
+Topology.add_property('pois', POI.topology_pois, _("POIs"))
+Topology.add_property('published_pois', POI.published_topology_pois, _("Published POIs"))
+Intervention.add_property('pois', lambda self: self.topology.pois if self.topology else [], _("POIs"))
+Project.add_property('pois', lambda self: self.edges_by_attr('pois'), _("POIs"))
+tourism_models.TouristicContent.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
+tourism_models.TouristicContent.add_property('published_pois', lambda self: intersecting(POI, self).filter(published=True), _("Published POIs"))
+tourism_models.TouristicEvent.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
+tourism_models.TouristicEvent.add_property('published_pois', lambda self: intersecting(POI, self).filter(published=True), _("Published POIs"))
 
 
 class POIType(PictogramMixin):
 
-    label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='nom')
-    cirkwi = models.ForeignKey('cirkwi.CirkwiPOICategory', verbose_name=_(u"Cirkwi POI category"), null=True, blank=True)
+    label = models.CharField(verbose_name=_("Label"), max_length=128, db_column='nom')
+    cirkwi = models.ForeignKey('cirkwi.CirkwiPOICategory', verbose_name=_("Cirkwi POI category"), null=True, blank=True)
 
     class Meta:
         db_table = 'o_b_poi'
-        verbose_name = _(u"POI type")
-        verbose_name_plural = _(u"POI types")
+        verbose_name = _("POI type")
+        verbose_name_plural = _("POI types")
         ordering = ['label']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.label
 
 
@@ -743,15 +743,15 @@ class ServiceType(PictogramMixin, PublishableMixin):
 
     practices = models.ManyToManyField('Practice', related_name="services",
                                        db_table="o_r_service_pratique", blank=True,
-                                       verbose_name=_(u"Practices"))
+                                       verbose_name=_("Practices"))
 
     class Meta:
         db_table = 'o_b_service'
-        verbose_name = _(u"Service type")
-        verbose_name_plural = _(u"Service types")
+        verbose_name = _("Service type")
+        verbose_name_plural = _("Service types")
         ordering = ['name']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -764,19 +764,19 @@ class Service(StructureRelated, MapEntityMixin, Topology):
 
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
-    type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_(u"Type"), db_column='type')
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
+    type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_("Type"), db_column='type')
+    eid = models.CharField(verbose_name=_("External id"), max_length=128, blank=True, null=True, db_column='id_externe')
 
     class Meta:
         db_table = 'o_t_service'
-        verbose_name = _(u"Service")
-        verbose_name_plural = _(u"Services")
+        verbose_name = _("Service")
+        verbose_name_plural = _("Services")
 
     # Override default manager
     objects = Topology.get_manager_cls(ServiceManager)()
 
-    def __unicode__(self):
-        return unicode(self.type)
+    def __str__(self):
+        return str(self.type)
 
     @property
     def name(self):
@@ -784,14 +784,14 @@ class Service(StructureRelated, MapEntityMixin, Topology):
 
     @property
     def name_display(self):
-        s = u'<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
+        s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
                                                               self.get_detail_url(),
                                                               self.name,
                                                               self.name)
         if self.type.published:
-            s = u'<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
+            s = '<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
         elif self.type.review:
-            s = u'<span class="badge badge-warning" title="%s">&#x2606;</span> ' % _("Waiting for publication") + s
+            s = '<span class="badge badge-warning" title="%s">&#x2606;</span> ' % _("Waiting for publication") + s
         return s
 
     @classproperty
@@ -800,7 +800,7 @@ class Service(StructureRelated, MapEntityMixin, Topology):
 
     @property
     def type_display(self):
-        return unicode(self.type)
+        return str(self.type)
 
     @property
     def serializable_type(self):
@@ -830,12 +830,12 @@ class Service(StructureRelated, MapEntityMixin, Topology):
         return settings.TOURISM_INTERSECTION_MARGIN
 
 
-Path.add_property('services', Service.path_services, _(u"Services"))
-Topology.add_property('services', Service.topology_services, _(u"Services"))
-Topology.add_property('published_services', Service.published_topology_services, _(u"Published Services"))
-Intervention.add_property('services', lambda self: self.topology.services if self.topology else [], _(u"Services"))
-Project.add_property('services', lambda self: self.edges_by_attr('services'), _(u"Services"))
-tourism_models.TouristicContent.add_property('services', lambda self: intersecting(Service, self), _(u"Services"))
-tourism_models.TouristicContent.add_property('published_services', lambda self: intersecting(Service, self).filter(published=True), _(u"Published Services"))
-tourism_models.TouristicEvent.add_property('services', lambda self: intersecting(Service, self), _(u"Services"))
-tourism_models.TouristicEvent.add_property('published_services', lambda self: intersecting(Service, self).filter(published=True), _(u"Published Services"))
+Path.add_property('services', Service.path_services, _("Services"))
+Topology.add_property('services', Service.topology_services, _("Services"))
+Topology.add_property('published_services', Service.published_topology_services, _("Published Services"))
+Intervention.add_property('services', lambda self: self.topology.services if self.topology else [], _("Services"))
+Project.add_property('services', lambda self: self.edges_by_attr('services'), _("Services"))
+tourism_models.TouristicContent.add_property('services', lambda self: intersecting(Service, self), _("Services"))
+tourism_models.TouristicContent.add_property('published_services', lambda self: intersecting(Service, self).filter(published=True), _("Published Services"))
+tourism_models.TouristicEvent.add_property('services', lambda self: intersecting(Service, self), _("Services"))
+tourism_models.TouristicEvent.add_property('published_services', lambda self: intersecting(Service, self).filter(published=True), _("Published Services"))

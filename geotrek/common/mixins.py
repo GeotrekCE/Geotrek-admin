@@ -22,8 +22,8 @@ logger = logging.getLogger(__name__)
 
 class TimeStampedModelMixin(models.Model):
     # Computed values (managed at DB-level with triggers)
-    date_insert = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_(u"Insertion date"), db_column='date_insert')
-    date_update = models.DateTimeField(auto_now=True, editable=False, verbose_name=_(u"Update date"), db_column='date_update')
+    date_insert = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_("Insertion date"), db_column='date_insert')
+    date_update = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Update date"), db_column='date_update')
 
     class Meta:
         abstract = True
@@ -39,7 +39,7 @@ class TimeStampedModelMixin(models.Model):
 
 
 class NoDeleteMixin(models.Model):
-    deleted = models.BooleanField(editable=False, default=False, db_column='supprime', verbose_name=_(u"Deleted"))
+    deleted = models.BooleanField(editable=False, default=False, db_column='supprime', verbose_name=_("Deleted"))
 
     def delete(self, force=False, using=None, **kwargs):
         if force:
@@ -215,9 +215,9 @@ class BasePublishableMixin(models.Model):
 
     It is used for flat pages and publishable entities.
     """
-    published = models.BooleanField(verbose_name=_(u"Published"), default=False,
-                                    help_text=_(u"Online"), db_column='public')
-    publication_date = models.DateField(verbose_name=_(u"Publication date"),
+    published = models.BooleanField(verbose_name=_("Published"), default=False,
+                                    help_text=_("Online"), db_column='public')
+    publication_date = models.DateField(verbose_name=_("Publication date"),
                                         null=True, blank=True, editable=False,
                                         db_column='date_publication')
 
@@ -282,9 +282,9 @@ class PublishableMixin(BasePublishableMixin):
     Initially, it was part of the ``trekking.Trek`` class. But now, all kinds of information
     can be published (c.f. PN Cevennes project).
     """
-    name = models.CharField(verbose_name=_(u"Name"), max_length=128,
-                            help_text=_(u"Public name (Change carefully)"), db_column='nom')
-    review = models.BooleanField(verbose_name=_(u"Waiting for publication"),
+    name = models.CharField(verbose_name=_("Name"), max_length=128,
+                            help_text=_("Public name (Change carefully)"), db_column='nom')
+    review = models.BooleanField(verbose_name=_("Waiting for publication"),
                                  default=False, db_column='relecture')
 
     class Meta:
@@ -292,23 +292,23 @@ class PublishableMixin(BasePublishableMixin):
 
     @property
     def slug(self):
-        return slugify(self.name.lower().replace(u"œ", u"oe")) or str(self.pk)
+        return slugify(self.name.lower().replace("œ", "oe")) or str(self.pk)
 
     @property
     def name_display(self):
-        s = u'<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
+        s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
                                                               self.get_detail_url(),
                                                               self.name,
                                                               self.name)
         if self.published:
-            s = u'<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
+            s = '<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
         elif self.review:
-            s = u'<span class="badge badge-warning" title="%s">&#x2606;</span> ' % _("Waiting for publication") + s
+            s = '<span class="badge badge-warning" title="%s">&#x2606;</span> ' % _("Waiting for publication") + s
         return s
 
     @property
     def name_csv_display(self):
-        return unicode(self.name)
+        return str(self.name)
 
     def get_document_public_url(self):
         raise NotImplementedError
@@ -376,14 +376,14 @@ class PublishableMixin(BasePublishableMixin):
 
 
 class PictogramMixin(models.Model):
-    pictogram = models.FileField(verbose_name=_(u"Pictogram"), upload_to=settings.UPLOAD_DIR,
+    pictogram = models.FileField(verbose_name=_("Pictogram"), upload_to=settings.UPLOAD_DIR,
                                  db_column='picto', max_length=512, null=True)
 
     class Meta:
         abstract = True
 
     def pictogram_img(self):
-        return u'<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
+        return '<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
     pictogram_img.short_description = _("Pictogram")
     pictogram_img.allow_tags = True
 

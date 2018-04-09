@@ -25,7 +25,7 @@ def launch_sync_rando(*args, **kwargs):
                 'name': current_task.name,
                 'current': 5,
                 'total': 100,
-                'infos': u"{}".format(_(u"Init sync ..."))
+                'infos': "{}".format(_("Init sync ..."))
             }
         )
 

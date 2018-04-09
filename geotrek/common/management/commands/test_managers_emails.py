@@ -8,7 +8,7 @@ class Command(BaseCommand):
 
     def execute(self, *args, **options):
 
-        subject = u'[%s] Test email for managers' % settings.TITLE
-        message = u'If you receive this email, configuration is OK !'
+        subject = '[%s] Test email for managers' % settings.TITLE
+        message = 'If you receive this email, configuration is OK !'
 
         mail_managers(subject, message, fail_silently=False)

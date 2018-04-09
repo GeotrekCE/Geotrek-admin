@@ -16,7 +16,7 @@ def get_dummy_uploaded_image(name='dummy_img.png'):
 
 
 def get_dummy_uploaded_file(name='dummy_file.txt'):
-    return SimpleUploadedFile(name, 'HelloWorld', content_type='plain/text')
+    return SimpleUploadedFile(name, b'HelloWorld', content_type='plain/text')
 
 
 def get_dummy_uploaded_document(name='dummy_file.odt', size=128):

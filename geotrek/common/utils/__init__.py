@@ -131,11 +131,11 @@ def intersecting(cls, obj, distance=None):
 
 
 def plain_text_preserve_linebreaks(value):
-    value = re.sub(ur'\s*<br\s*/?>\s*', u'##~~~~~~##', value)
-    value = re.sub(ur'\s*<p>\s*', u'##~~~~~~####~~~~~~##', value)
-    value = re.sub(ur'\s*</p>\s*', u'', value)
+    value = re.sub(r'\s*<br\s*/?>\s*', '##~~~~~~##', value)
+    value = re.sub(r'\s*<p>\s*', '##~~~~~~####~~~~~~##', value)
+    value = re.sub(r'\s*</p>\s*', '', value)
     value = plain_text(value)
-    value = re.sub(ur'\s+', ' ', value)
-    value = re.sub(u'##~~~~~~##', u'\n', value)
+    value = re.sub(r'\s+', ' ', value)
+    value = re.sub('##~~~~~~##', '\n', value)
     value = value.strip()
     return value

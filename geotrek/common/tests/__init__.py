@@ -1,5 +1,4 @@
 # -*- encoding: utf-8 -*-
-
 from django.utils import translation
 from django.utils.translation import ugettext as _
 
@@ -21,4 +20,4 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
     api_prefix = '/api/en/'
 
     def get_bad_data(self):
-        return {'topology': 'doh!'}, _(u'Topology is not valid.')
+        return {'topology': 'doh!'}, _('Topology is not valid.')

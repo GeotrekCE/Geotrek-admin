@@ -47,16 +47,16 @@ class TraductionTestCase(TestCase):
     def get_dummy_data_trad(cls):
         return dict(
             id=1,
-            difficulty=u"difficulty_descr_default",
-            difficulty_en=u"difficulty_descr_en",
-            difficulty_fr=u"difficulty_descr_fr",
-            difficulty_it=u"difficulty_descr_it",
+            difficulty="difficulty_descr_default",
+            difficulty_en="difficulty_descr_en",
+            difficulty_fr="difficulty_descr_fr",
+            difficulty_it="difficulty_descr_it",
             pictogram=get_dummy_uploaded_file()
         )
 
     def test_admin_set_trad(self):
         # Given no DifficultyLevel is present in the database
-        self.assertEquals(DifficultyLevel.objects.all().count(), 0)
+        self.assertEqual(DifficultyLevel.objects.all().count(), 0)
 
         # login
         success = login_from_cred(self.client, self.cred)

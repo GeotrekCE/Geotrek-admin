@@ -1,5 +1,4 @@
 # -*- encoding: utf-8 -*-
-
 import mock
 import os
 from shutil import rmtree
@@ -36,19 +35,19 @@ class ParserTests(TestCase):
     def test_bad_parser_class(self):
         with self.assertRaises(CommandError) as cm:
             call_command('import', 'geotrek.common.DoesNotExist', '', verbosity=0)
-        self.assertEqual(unicode(cm.exception), u"Failed to import parser class 'geotrek.common.DoesNotExist'")
+        self.assertEqual(str(cm.exception), "Failed to import parser class 'geotrek.common.DoesNotExist'")
 
     def test_bad_filename(self):
         with self.assertRaises(CommandError) as cm:
             call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', 'find_me/I_am_not_there.shp', verbosity=0)
-        self.assertEqual(unicode(cm.exception), u"File does not exists at: find_me/I_am_not_there.shp")
+        self.assertEqual(str(cm.exception), "File does not exists at: find_me/I_am_not_there.shp")
 
     def test_create(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', filename, verbosity=0)
         self.assertEqual(Organism.objects.count(), 1)
         organism = Organism.objects.get()
-        self.assertEqual(organism.organism, u"Comité Théodule")
+        self.assertEqual(organism.organism, "Comité Théodule")
 
     def test_duplicate_without_eid(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
@@ -69,8 +68,8 @@ class ParserTests(TestCase):
         call_command('import', 'geotrek.common.tests.test_parsers.OrganismEidParser', filename2, verbosity=0)
         self.assertEqual(Organism.objects.count(), 2)
         organisms = Organism.objects.order_by('pk')
-        self.assertEqual(organisms[0].organism, u"Comité Théodule")
-        self.assertEqual(organisms[1].organism, u"Comité Hippolyte")
+        self.assertEqual(organisms[0].organism, "Comité Théodule")
+        self.assertEqual(organisms[1].organism, "Comité Hippolyte")
 
     def test_report_format_text(self):
         parser = OrganismParser()
@@ -90,7 +89,7 @@ class ParserTests(TestCase):
 @override_settings(MEDIA_ROOT=mkdtemp('geotrek_test'))
 class AttachmentParserTests(TestCase):
     def setUp(self):
-        self.filetype = FileType.objects.create(type=u"Photographie")
+        self.filetype = FileType.objects.create(type="Photographie")
 
     def tearDown(self):
         rmtree(settings.MEDIA_ROOT)

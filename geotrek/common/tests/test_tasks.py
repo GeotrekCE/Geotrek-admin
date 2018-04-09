@@ -1,5 +1,4 @@
 # -*- encoding: utf-8 -*-
-
 from django.test import TestCase
 from geotrek.common.tasks import import_datas
 from geotrek.common.models import FileType
@@ -7,7 +6,7 @@ from geotrek.common.models import FileType
 
 class TasksTest(TestCase):
     def setUp(self):
-        self.filetype = FileType.objects.create(type=u"Photographie")
+        self.filetype = FileType.objects.create(type="Photographie")
 
     def test_import_exceptions(self):
         self.assertRaises(

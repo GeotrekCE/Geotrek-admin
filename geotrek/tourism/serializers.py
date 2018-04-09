@@ -62,7 +62,7 @@ class TouristicContentCategorySerializer(PictogramSerializerMixin, TranslatedMod
         fields = ('id', 'label', 'type1_label', 'type2_label', 'pictogram', 'order', 'slug')
 
     def get_slug(self, obj):
-        return _(u'touristic-content')
+        return _('touristic-content')
 
 
 class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
@@ -140,5 +140,5 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
             'label': obj._meta.verbose_name_plural,
             'type1_label': obj._meta.get_field('type').verbose_name,
             'pictogram': '/static/tourism/touristicevent.svg',
-            'slug': _(u'touristic-event'),
+            'slug': _('touristic-event'),
         }

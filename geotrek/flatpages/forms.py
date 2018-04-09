@@ -8,7 +8,7 @@ from modeltranslation.settings import AVAILABLE_LANGUAGES
 
 
 class FlatPageForm(CommonForm):
-    content = forms.CharField(widget=forms.Textarea, label=_(u"Content"))
+    content = forms.CharField(widget=forms.Textarea, label=_("Content"))
 
     def __init__(self, *args, **kwargs):
         super(FlatPageForm, self).__init__(*args, **kwargs)

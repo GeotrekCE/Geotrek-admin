@@ -93,7 +93,7 @@ class AltimetryHelper(object):
         line_chart.show_minor_y_labels = False
         line_chart.truncate_label = 50
         line_chart.range = [floor_elevation, ceil_elevation]
-        line_chart.no_data_text = _(u"Altimetry data not available")
+        line_chart.no_data_text = _("Altimetry data not available")
         line_chart.add('', [(int(v[0]), int(v[3])) for v in profile])
         return line_chart.render()
 

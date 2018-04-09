@@ -11,8 +11,8 @@ class DurationParserMixin(object):
     def filter_duration(self, src, val):
         val = val.upper().replace(',', '.')
         try:
-            if u"H" in val:
-                hours, minutes = val.split(u"H", 2)
+            if "H" in val:
+                hours, minutes = val.split("H", 2)
                 hours = float(hours.strip())
                 minutes = float(minutes.strip()) if minutes.strip() else 0
                 if hours < 0 or minutes < 0 or minutes >= 60:
@@ -24,7 +24,7 @@ class DurationParserMixin(object):
                     raise ValueError
                 return hours
         except (TypeError, ValueError):
-            self.add_warning(_(u"Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'".format(val=val, src=src)))
+            self.add_warning(_("Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'".format(val=val, src=src)))
             return None
 
 
@@ -54,10 +54,10 @@ class TrekParser(DurationParserMixin, AttachmentParserMixin, ShapeParser):
             for i, path in enumerate(val[1:]):
                 distance = Point(points[-1]).distance(Point(path[0]))
                 if distance > 5:
-                    self.add_warning(_(u"Not contiguous segment {i} ({distance} m) for geometry for field '{src}'").format(i=i + 2, p1=points[-1], p2=path[0], distance=int(distance), src=src))
+                    self.add_warning(_("Not contiguous segment {i} ({distance} m) for geometry for field '{src}'").format(i=i + 2, p1=points[-1], p2=path[0], distance=int(distance), src=src))
                 points += path
             return points
         elif val.geom_type != 'LineString':
-            self.add_warning(_(u"Invalid geometry type for field '{src}'. Should be LineString, not {geom_type}").format(src=src, geom_type=val.geom_type))
+            self.add_warning(_("Invalid geometry type for field '{src}'. Should be LineString, not {geom_type}").format(src=src, geom_type=val.geom_type))
             return None
         return val

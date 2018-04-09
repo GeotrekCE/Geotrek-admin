@@ -9,7 +9,7 @@ class InfrastructureTypeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.InfrastructureType
 
-    label = factory.Sequence(lambda n: u"Type %s" % n)
+    label = factory.Sequence(lambda n: "Type %s" % n)
     type = models.INFRASTRUCTURE_TYPES.BUILDING
 
 
@@ -17,13 +17,13 @@ class InfrastructureConditionFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.InfrastructureCondition
 
-    label = factory.Sequence(lambda n: u"Condition %s" % n)
+    label = factory.Sequence(lambda n: "Condition %s" % n)
 
 
 class InfrastructureFactory(TopologyFactory):
     class Meta:
         model = models.Infrastructure
-    name = factory.Sequence(lambda n: u"Infrastructure %s" % n)
+    name = factory.Sequence(lambda n: "Infrastructure %s" % n)
     type = factory.SubFactory(InfrastructureTypeFactory)
     condition = factory.SubFactory(InfrastructureConditionFactory)
 
@@ -31,7 +31,7 @@ class InfrastructureFactory(TopologyFactory):
 class SignageFactory(TopologyFactory):
     class Meta:
         model = models.Signage
-    name = factory.Sequence(lambda n: u"Signage %s" % n)
+    name = factory.Sequence(lambda n: "Signage %s" % n)
     type = factory.SubFactory(InfrastructureTypeFactory, type=models.INFRASTRUCTURE_TYPES.SIGNAGE)
     condition = factory.SubFactory(InfrastructureConditionFactory)
     factory.SubFactory(InfrastructureTypeFactory)

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import json
 import logging
 
@@ -89,7 +88,7 @@ class PathList(MapEntityList):
         return columns
 
     def get_template_names(self):
-        return (u"core/path_list.html",)
+        return ("core/path_list.html",)
 
     def get_queryset(self):
         """
@@ -265,14 +264,14 @@ def merge_path(request):
                 path_a = Path.objects.get(pk=ids_path_merge[0])
                 path_b = Path.objects.get(pk=ids_path_merge[1])
                 if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
-                    response = {'error': _(u"You don't have the right to change these paths")}
+                    response = {'error': _("You don't have the right to change these paths")}
 
                 elif path_a.merge_path(path_b):
-                    response = {'success': _(u"Paths merged successfully")}
-                    messages.success(request, _(u"Paths merged successfully"))
+                    response = {'success': _("Paths merged successfully")}
+                    messages.success(request, _("Paths merged successfully"))
 
                 else:
-                    response = {'error': _(u"No matching points to merge paths found")}
+                    response = {'error': _("No matching points to merge paths found")}
 
             else:
                 raise

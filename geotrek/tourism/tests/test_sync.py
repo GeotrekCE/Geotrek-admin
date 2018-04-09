@@ -100,7 +100,7 @@ class SyncTest(TranslationResetMixin, TestCase):
                                     skip_profile_png=True,
                                     skip_pdf=True,
                                     skip_dem=True,
-                                    content_categories=u"1,2",
+                                    content_categories="1,2",
                                     verbosity=0)
 
         for lang in settings.MODELTRANSLATION_LANGUAGES:
@@ -120,19 +120,19 @@ class SyncTest(TranslationResetMixin, TestCase):
 
                 self.assertIn(path_touristevents_geojson,
                               file_list,
-                              msg=u"Unable to find {file} in {lang}/global.zip".format(file=path_touristevents_geojson,
+                              msg="Unable to find {file} in {lang}/global.zip".format(file=path_touristevents_geojson,
                                                                                        lang=lang))
                 read_content = json.loads(zipf.read(path_touristevents_geojson))
                 self.assertIn('features', read_content)
 
                 self.assertIn(path_touristcontents_geojson,
                               file_list,
-                              msg=u"Unable to find {file} in {lang}/global.zip".format(file=path_touristcontents_geojson,
+                              msg="Unable to find {file} in {lang}/global.zip".format(file=path_touristcontents_geojson,
                                                                                        lang=lang))
                 read_content = json.loads(zipf.read(path_touristcontents_geojson))
                 self.assertIn('features', read_content)
 
                 self.assertIn(path_touristcategories_json,
                               file_list,
-                              msg=u"Unable to find {file} in {lang}/global.zip".format(file=path_touristcategories_json,
+                              msg="Unable to find {file} in {lang}/global.zip".format(file=path_touristcategories_json,
                                                                                        lang=lang))

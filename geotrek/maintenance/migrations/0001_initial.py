@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.conf import settings
 from django.db import migrations, models
 import datetime
@@ -160,7 +158,7 @@ class Migration(migrations.Migration):
                 ('begin_year', models.IntegerField(verbose_name='Begin year', db_column=b'annee_debut')),
                 ('end_year', models.IntegerField(verbose_name='End year', db_column=b'annee_fin')),
                 ('constraint', models.TextField(help_text='Specific conditions, ...', verbose_name='Constraint', db_column=b'contraintes', blank=True)),
-                ('global_cost', models.FloatField(default=0, help_text='\u20ac', verbose_name='Global cost', db_column=b'cout_global')),
+                ('global_cost', models.FloatField(default=0, help_text='\\u20ac', verbose_name='Global cost', db_column=b'cout_global')),
                 ('comments', models.TextField(help_text='Remarks and notes', verbose_name='Comments', db_column=b'commentaires', blank=True)),
                 ('contractors', models.ManyToManyField(related_name='projects', db_table=b'm_r_chantier_prestataire', verbose_name='Contractors', to='maintenance.Contractor')),
             ],

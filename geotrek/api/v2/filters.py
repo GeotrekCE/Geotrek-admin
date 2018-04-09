@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from datetime import date
 import operator
 from functools import reduce
@@ -136,11 +134,11 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
     def get_schema_fields(self, view):
         field_period = Field(name='period', required=False,
                              description=_('Period of occupancy. Month numbers (1-12) separated by comas. any = occupied at any time in the year. ignore = occupied or not.'),
-                             example=u'7,8 for july and august')
+                             example='7,8 for july and august')
         field_practices = Field(name='practices', required=False,
                                 description=_('Practices ids separated by comas.'),
-                                example=u'1,3')
+                                example='1,3')
         field_structure = Field(name='structure', required=False,
                                 description=_('Structure id.'),
-                                example=u'5')
+                                example='5')
         return field_period, field_practices, field_structure

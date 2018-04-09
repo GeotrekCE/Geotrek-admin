@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class BaseInfrastructureForm(TopologyForm):
-    implantation_year = forms.IntegerField(label=_(u"Implantation year"), required=False)
+    implantation_year = forms.IntegerField(label=_("Implantation year"), required=False)
 
     class Meta(TopologyForm.Meta):
         fields = TopologyForm.Meta.fields + \

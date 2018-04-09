@@ -12,21 +12,21 @@ register = template.Library()
 
 def get_bbox_cities():
     return [
-        (unicode(city) or city.pk, city.geom.transform(settings.API_SRID, clone=True).extent)
+        (str(city) or city.pk, city.geom.transform(settings.API_SRID, clone=True).extent)
         for city in City.objects.all()
     ]
 
 
 def get_bbox_districts():
     return [
-        (unicode(district) or district.pk, district.geom.transform(settings.API_SRID, clone=True).extent)
+        (str(district) or district.pk, district.geom.transform(settings.API_SRID, clone=True).extent)
         for district in District.objects.all()
     ]
 
 
 def get_bbox_areas():
     return [
-        (unicode(area) or area.pk, area.geom.transform(settings.API_SRID, clone=True).extent)
+        (str(area) or area.pk, area.geom.transform(settings.API_SRID, clone=True).extent)
         for area in RestrictedArea.objects.all()
     ]
 

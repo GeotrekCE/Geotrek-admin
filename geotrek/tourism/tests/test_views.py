@@ -28,9 +28,9 @@ from geotrek.tourism.factories import (InformationDeskFactory,
 from embed_video.backends import detect_backend
 
 
-PNG_BLACK_PIXEL = '89504e470d0a1a0a0000000d494844520000000100000001080400000'\
-    '0b51c0c020000000b4944415478da6364f80f00010501012718e3660000000049454e44'\
-    'ae426082'.decode('hex')
+PNG_BLACK_PIXEL = b'89504e470d0a1a0a0000000d494844520000000100000001080400000'\
+    b'0b51c0c020000000b4944415478da6364f80f00010501012718e3660000000049454e44'\
+    b'ae426082'.decode('hex')
 
 
 class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
@@ -38,7 +38,7 @@ class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
         profile = UserProfileFactory.create(user__username='homer',
                                             user__password='dooh')
         user = profile.user
-        user.groups.add(Group.objects.get(name=u"Référents communication"))
+        user.groups.add(Group.objects.get(name="Référents communication"))
         self.client.login(username=user.username, password='dooh')
         self.content1 = TouristicContentFactory.create()
         structure = StructureFactory.create()
@@ -166,67 +166,67 @@ class BasicJSONAPITest(TranslationResetMixin):
 
     def test_published_status(self):
         self.assertDictEqual(self.result['published_status'][0],
-                             {u'lang': u'en', u'status': True, u'language': u'English'})
+                             {'lang': 'en', 'status': True, 'language': 'English'})
 
     def test_pictures(self):
         self.assertDictEqual(self.result['pictures'][0],
-                             {u'url': os.path.join(settings.MEDIA_URL, self.picture.attachment_file.name) + '.800x800_q85.png',
-                              u'title': self.picture.title,
-                              u'legend': self.picture.legend,
-                              u'author': self.picture.author})
+                             {'url': os.path.join(settings.MEDIA_URL, self.picture.attachment_file.name) + '.800x800_q85.png',
+                              'title': self.picture.title,
+                              'legend': self.picture.legend,
+                              'author': self.picture.author})
 
     def test_files(self):
         self.assertDictEqual(self.result['files'][0],
-                             {u'url': os.path.join(settings.MEDIA_URL, self.document.attachment_file.name),
-                              u'title': self.document.title,
-                              u'legend': self.document.legend,
-                              u'author': self.document.author})
+                             {'url': os.path.join(settings.MEDIA_URL, self.document.attachment_file.name),
+                              'title': self.document.title,
+                              'legend': self.document.legend,
+                              'author': self.document.author})
 
     def test_videos(self):
         self.assertDictEqual(self.result['videos'][0],
-                             {u'backend': 'Youtube',
-                              u'url': 'http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque',
-                              u'title': self.video.title,
-                              u'legend': self.video.legend,
-                              u'author': self.video.author,
-                              u'code': self.video_detected.code})
+                             {'backend': 'Youtube',
+                              'url': 'http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque',
+                              'title': self.video.title,
+                              'legend': self.video.legend,
+                              'author': self.video.author,
+                              'code': self.video_detected.code})
 
     def test_cities(self):
         self.assertDictEqual(self.result['cities'][0],
-                             {u"code": self.city.code,
-                              u"name": self.city.name})
+                             {"code": self.city.code,
+                              "name": self.city.name})
 
     def test_districts(self):
         self.assertDictEqual(self.result['districts'][0],
-                             {u"id": self.district.id,
-                              u"name": self.district.name})
+                             {"id": self.district.id,
+                              "name": self.district.name})
 
     def test_themes(self):
         self.assertDictEqual(self.result['themes'][0],
-                             {u"id": self.theme.id,
-                              u"pictogram": os.path.join(settings.MEDIA_URL, self.theme.pictogram.name),
-                              u"label": self.theme.label})
+                             {"id": self.theme.id,
+                              "pictogram": os.path.join(settings.MEDIA_URL, self.theme.pictogram.name),
+                              "label": self.theme.label})
 
     def test_treks(self):
         self.assertDictEqual(self.result['treks'][0], {
-            u'id': self.trek.id,
-            u'category_id': 'T'})
+            'id': self.trek.id,
+            'category_id': 'T'})
 
     def test_pois(self):
         self.assertDictEqual(self.result['pois'][0], {
-            u'id': self.poi.id,
-            u'slug': self.poi.slug,
-            u'name': self.poi.name,
-            u'type': {
-                u'id': self.poi.type.id,
-                u'label': self.poi.type.label,
-                u'pictogram': os.path.join(settings.MEDIA_URL, self.poi.type.pictogram.name)}})
+            'id': self.poi.id,
+            'slug': self.poi.slug,
+            'name': self.poi.name,
+            'type': {
+                'id': self.poi.type.id,
+                'label': self.poi.type.label,
+                'pictogram': os.path.join(settings.MEDIA_URL, self.poi.type.pictogram.name)}})
 
     def test_sources(self):
         self.assertDictEqual(self.result['source'][0], {
-            u'name': self.source.name,
-            u'website': self.source.website,
-            u"pictogram": os.path.join(settings.MEDIA_URL, self.source.pictogram.name)})
+            'name': self.source.name,
+            'website': self.source.website,
+            "pictogram": os.path.join(settings.MEDIA_URL, self.source.pictogram.name)})
 
     def test_portals(self):
         '''
@@ -234,8 +234,8 @@ class BasicJSONAPITest(TranslationResetMixin):
         '''
         self.assertDictEqual(
             self.result['portal'][0],
-            {u'name': self.portal.name,
-             u'website': self.portal.website, })
+            {'name': self.portal.name,
+             'website': self.portal.website, })
 
     def test_approved(self):
         self.assertFalse(self.result['approved'])
@@ -254,38 +254,38 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
 
     def test_expected_properties(self):
         self.assertEqual(sorted([
-            u'approved', u'areas', u'category', u'cities', u'contact',
-            u'description', u'description_teaser', u'districts', u'email',
-            u'filelist_url', u'files', u'id', u'map_image_url', u'name', u'pictures',
-            u'pois', u'practical_info', u'printable', u'publication_date',
-            u'published', u'published_status', u'reservation_id', u'reservation_system',
-            u'slug', u'source', u'portal', u'themes', u'thumbnail', u'touristic_contents',
-            u'touristic_events', u'treks', u'type1', u'type2', u'videos', u'website']),
+            'approved', 'areas', 'category', 'cities', 'contact',
+            'description', 'description_teaser', 'districts', 'email',
+            'filelist_url', 'files', 'id', 'map_image_url', 'name', 'pictures',
+            'pois', 'practical_info', 'printable', 'publication_date',
+            'published', 'published_status', 'reservation_id', 'reservation_system',
+            'slug', 'source', 'portal', 'themes', 'thumbnail', 'touristic_contents',
+            'touristic_events', 'treks', 'type1', 'type2', 'videos', 'website']),
             sorted(self.result.keys()))
 
     def test_type1(self):
         self.assertDictEqual(self.result['type1'][0],
-                             {u"id": self.type1.id,
-                              u"name": self.type1.label,
-                              u'pictogram': os.path.join(settings.MEDIA_URL, self.type1.pictogram.name),
-                              u"in_list": self.type1.in_list})
+                             {"id": self.type1.id,
+                              "name": self.type1.label,
+                              'pictogram': os.path.join(settings.MEDIA_URL, self.type1.pictogram.name),
+                              "in_list": self.type1.in_list})
 
     def test_type2(self):
         self.assertDictEqual(self.result['type2'][0],
-                             {u"id": self.type2.id,
-                              u"name": self.type2.label,
-                              u'pictogram': None,
-                              u"in_list": self.type2.in_list})
+                             {"id": self.type2.id,
+                              "name": self.type2.label,
+                              'pictogram': None,
+                              "in_list": self.type2.in_list})
 
     def test_category(self):
         self.assertDictEqual(self.result['category'], {
-            u"id": self.category.prefixed_id,
-            u"order": None,
-            u"label": self.category.label,
-            u"slug": u"touristic-content",
-            u"type1_label": self.category.type1_label,
-            u"type2_label": self.category.type2_label,
-            u"pictogram": os.path.join(settings.MEDIA_URL, self.category.pictogram.name)})
+            "id": self.category.prefixed_id,
+            "order": None,
+            "label": self.category.label,
+            "slug": "touristic-content",
+            "type1_label": self.category.type1_label,
+            "type2_label": self.category.type2_label,
+            "pictogram": os.path.join(settings.MEDIA_URL, self.category.pictogram.name)})
 
 
 class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
@@ -293,37 +293,37 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
 
     def test_expected_properties(self):
         self.assertEqual(sorted([
-            u'accessibility', u'approved', u'areas', u'begin_date', u'booking', u'category',
-            u'cities', u'contact', u'description', u'description_teaser',
-            u'districts', u'duration', u'email', u'end_date', u'filelist_url', u'files',
-            u'id', u'map_image_url', u'meeting_point', u'meeting_time', u'name',
-            u'organizer', u'participant_number', u'pictures', u'pois', u'portal', u'practical_info',
-            u'printable', u'publication_date', u'published', u'published_status',
-            u'slug', u'source', u'speaker', u'target_audience', u'themes',
-            u'thumbnail', u'touristic_contents', u'touristic_events', u'treks', u'type',
-            u'type1', u'videos', u'website']),
+            'accessibility', 'approved', 'areas', 'begin_date', 'booking', 'category',
+            'cities', 'contact', 'description', 'description_teaser',
+            'districts', 'duration', 'email', 'end_date', 'filelist_url', 'files',
+            'id', 'map_image_url', 'meeting_point', 'meeting_time', 'name',
+            'organizer', 'participant_number', 'pictures', 'pois', 'portal', 'practical_info',
+            'printable', 'publication_date', 'published', 'published_status',
+            'slug', 'source', 'speaker', 'target_audience', 'themes',
+            'thumbnail', 'touristic_contents', 'touristic_events', 'treks', 'type',
+            'type1', 'videos', 'website']),
             sorted(self.result.keys()))
 
     def test_type(self):
         self.assertDictEqual(self.result['type'],
-                             {u"id": self.content.type.id,
-                              u'pictogram': os.path.join(settings.MEDIA_URL, self.content.type.pictogram.name),
-                              u"name": self.content.type.type})
+                             {"id": self.content.type.id,
+                              'pictogram': os.path.join(settings.MEDIA_URL, self.content.type.pictogram.name),
+                              "name": self.content.type.type})
 
     def test_type1(self):
         self.assertDictEqual(self.result['type1'][0],
-                             {u"id": self.content.type.id,
-                              u'pictogram': os.path.join(settings.MEDIA_URL, self.content.type.pictogram.name),
-                              u"name": self.content.type.type})
+                             {"id": self.content.type.id,
+                              'pictogram': os.path.join(settings.MEDIA_URL, self.content.type.pictogram.name),
+                              "name": self.content.type.type})
 
     def test_category(self):
         self.assertDictEqual(self.result['category'],
-                             {u"id": 'E',
-                              u"order": None,
-                              u"label": u"Touristic events",
-                              u"slug": u"touristic-event",
-                              u"type1_label": u"Type",
-                              u"pictogram": u"/static/tourism/touristicevent.svg"})
+                             {"id": 'E',
+                              "order": None,
+                              "label": "Touristic events",
+                              "slug": "touristic-event",
+                              "type1_label": "Type",
+                              "pictogram": "/static/tourism/touristicevent.svg"})
 
 
 class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
@@ -331,7 +331,7 @@ class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
         profile = UserProfileFactory.create(user__username='homer',
                                             user__password='dooh')
         user = profile.user
-        user.groups.add(Group.objects.get(name=u"Référents communication"))
+        user.groups.add(Group.objects.get(name="Référents communication"))
         self.client.login(username=user.username, password='dooh')
         self.event1 = TouristicEventFactory.create()
         structure = StructureFactory.create()

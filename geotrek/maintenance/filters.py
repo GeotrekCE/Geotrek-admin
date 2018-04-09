@@ -20,7 +20,7 @@ class PolygonTopologyFilter(PolygonFilter):
 
 
 class InterventionYearSelect(YearSelect):
-    label = _(u"Year")
+    label = _("Year")
 
     def get_years(self):
         return Intervention.objects.all_years()
@@ -30,7 +30,7 @@ class InterventionFilterSet(StructureRelatedFilterSet):
     bbox = PolygonTopologyFilter(name='topology', lookup_expr='intersects')
     year = YearFilter(name='date',
                       widget=InterventionYearSelect,
-                      label=_(u"Year"))
+                      label=_("Year"))
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Intervention
@@ -40,7 +40,7 @@ class InterventionFilterSet(StructureRelatedFilterSet):
 
 
 class ProjectYearSelect(YearSelect):
-    label = _(u"Year of activity")
+    label = _("Year of activity")
 
     def get_years(self):
         return Project.objects.all_years()
@@ -50,7 +50,7 @@ class ProjectFilterSet(StructureRelatedFilterSet):
     bbox = PythonPolygonFilter(name='geom')
     in_year = YearBetweenFilter(name=('begin_year', 'end_year'),
                                 widget=ProjectYearSelect,
-                                label=_(u"Year of activity"))
+                                label=_("Year of activity"))
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Project

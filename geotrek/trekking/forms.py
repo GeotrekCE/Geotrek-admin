@@ -79,10 +79,10 @@ else:
 
 
 class TrekForm(BaseTrekForm):
-    children_trek = forms.ModelMultipleChoiceField(label=_(u"Children"),
+    children_trek = forms.ModelMultipleChoiceField(label=_("Children"),
                                                    queryset=Trek.objects.all(), required=False,
-                                                   help_text=_(u"Select children in order"))
-    hidden_ordered_children = forms.CharField(label=_(u"Hidden ordered children"),
+                                                   help_text=_("Select children in order"))
+    hidden_ordered_children = forms.CharField(label=_("Hidden ordered children"),
                                               widget=forms.widgets.HiddenInput(),
                                               required=False)
 
@@ -94,7 +94,7 @@ class TrekForm(BaseTrekForm):
             <ul class="nav nav-tabs">
                 <li id="tab-main" class="active"><a href="#main" data-toggle="tab"><i class="icon-certificate"></i> %s</a></li>
                 <li id="tab-advanced"><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
-            </ul>""" % (unicode(_("Main")), unicode(_("Advanced")))),
+            </ul>""" % (str(_("Main")), str(_("Advanced")))),
             Div(
                 Div(
                     'name',
@@ -145,9 +145,9 @@ class TrekForm(BaseTrekForm):
     def __init__(self, *args, **kwargs):
         self.fieldslayout = deepcopy(self.base_fieldslayout)
         self.fieldslayout[0][1][0].append(HTML(
-            u'<div class="controls">{}{}</div>'.format(
-                _(u'Insert service:'),
-                u''.join([u'<a class="servicetype" data-url="{url}" data-name={name}"><img src="{url}"></a>'.format(
+            '<div class="controls">{}{}</div>'.format(
+                _('Insert service:'),
+                ''.join(['<a class="servicetype" data-url="{url}" data-name={name}"><img src="{url}"></a>'.format(
                     url=t.pictogram.url, name=t.name)
                     for t in ServiceType.objects.all()])))
         )
@@ -188,10 +188,10 @@ class TrekForm(BaseTrekForm):
         """
         children = self.cleaned_data['children_trek']
         if children and self.instance and self.instance.trek_parents.exists():
-            raise ValidationError(_(u"Cannot add children because this trek is itself a child."))
+            raise ValidationError(_("Cannot add children because this trek is itself a child."))
         for child in children:
             if child.trek_children.exists():
-                raise ValidationError(_(u"Cannot use parent trek {name} as a child trek.".format(name=child.name)))
+                raise ValidationError(_("Cannot use parent trek {name} as a child trek.".format(name=child.name)))
         return children
 
     def clean_duration(self):

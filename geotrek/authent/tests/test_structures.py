@@ -11,8 +11,8 @@ from geotrek.core.factories import PathFactory
 class StructureTest(AuthentFixturesTest):
 
     def test_basic(self):
-        s = StructureFactory(name=u"Mércäntour")
-        self.assertEqual(unicode(s), u"Mércäntour")
+        s = StructureFactory(name="Mércäntour")
+        self.assertEqual(str(s), "Mércäntour")
 
     def test_structure_restricted(self):
         p = PathFactory()

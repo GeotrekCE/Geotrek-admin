@@ -64,7 +64,7 @@ class InterventionForm(CommonForm):
             <ul class="nav nav-tabs">
                 <li id="tab-main" class="active"><a href="#main" data-toggle="tab"><i class="icon-certificate"></i> %s</a></li>
                 <li id="tab-advanced"><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
-            </ul>""" % (unicode(_("Main")), unicode(_("Advanced")))),
+            </ul>""" % ("Main", "Advanced")),
             Div(
                 Div(
                     'structure',
@@ -121,11 +121,10 @@ class InterventionForm(CommonForm):
             self.helper.form_action += '?infrastructure=%s' % infrastructure.pk
             self.fields['topology'].required = False
             self.fields['topology'].widget = TopologyReadonlyWidget()
-            self.fields['topology'].label = '%s%s %s' % (
-                self.instance.infrastructure_display,
-                unicode(_("On %s") % _(infrastructure.kind.lower())),
-                u'<a href="%s">%s</a>' % (infrastructure.get_detail_url(), unicode(infrastructure))
-            )
+            self.fields['topology'].label = '%s%s %s' % (self.instance.infrastructure_display,
+                ("On %s") % _(infrastructure.kind.lower()),
+                '<a href="%s">%s</a>' % (infrastructure.get_detail_url(), infrastructure))
+
         # Length is not editable in AltimetryMixin
         self.fields['length'].initial = self.instance.length
         editable = bool(self.instance.geom and self.instance.geom.geom_type == 'Point')

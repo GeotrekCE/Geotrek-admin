@@ -16,8 +16,8 @@ from geotrek.tourism.parsers import TouristicContentSitraParser
 
 
 class EauViveParser(TouristicContentSitraParser):
-    category = u"Eau vive"
-    type1 = [u"Type A", u"Type B"]
+    category = "Eau vive"
+    type1 = ["Type A", "Type B"]
     type2 = []
 
 
@@ -30,20 +30,20 @@ class ParserTests(TranslationResetMixin, TestCase):
                 return json.load(f)
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
-        FileType.objects.create(type=u"Photographie")
-        category = TouristicContentCategoryFactory(label=u"Eau vive")
-        TouristicContentTypeFactory(label=u"Type A")
-        TouristicContentTypeFactory(label=u"Type B")
+        FileType.objects.create(type="Photographie")
+        category = TouristicContentCategoryFactory(label="Eau vive")
+        TouristicContentTypeFactory(label="Type A")
+        TouristicContentTypeFactory(label="Type B")
         call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=0)
         self.assertEqual(TouristicContent.objects.count(), 1)
         content = TouristicContent.objects.get()
-        self.assertEqual(content.eid, u"479743")
-        self.assertEqual(content.name, u"Quey' Raft")
-        self.assertEqual(content.description[:27], u"Au pied du château médiéval")
-        self.assertEqual(content.description_teaser[:24], u"Des descentes familiales")
-        self.assertEqual(content.contact[:24], u"Château Queyras<br>05350")
-        self.assertEqual(content.email, u"info@queyraft.com")
-        self.assertEqual(content.website, u"http://www.queyraft.com")
+        self.assertEqual(content.eid, "479743")
+        self.assertEqual(content.name, "Quey' Raft")
+        self.assertEqual(content.description[:27], "Au pied du château médiéval")
+        self.assertEqual(content.description_teaser[:24], "Des descentes familiales")
+        self.assertEqual(content.contact[:24], "Château Queyras<br>05350")
+        self.assertEqual(content.email, "info@queyraft.com")
+        self.assertEqual(content.website, "http://www.queyraft.com")
         self.assertEqual(round(content.geom.x), 1000157)
         self.assertEqual(round(content.geom.y), 6413576)
         self.assertEqual(content.practical_info[:39], "<b>Ouverture:</b><br>Du 01/05 au 31/10.")

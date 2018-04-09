@@ -1,5 +1,4 @@
 # -*- encoding: utf-8 -*-
-
 import mock
 
 from django.core.management import call_command
@@ -49,8 +48,8 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
         species = Species.objects.get()
         area = SensitiveArea.objects.get()
         self.assertEqual(practice.name, "Terrestre")
-        self.assertEqual(species.name, u"Black grouse")
-        self.assertEqual(species.name_fr, u"Tétras lyre")
+        self.assertEqual(species.name, "Black grouse")
+        self.assertEqual(species.name_fr, "Tétras lyre")
         self.assertTrue(species.period01)
         self.assertFalse(species.period06)
         self.assertEqual(species.eid, '7')

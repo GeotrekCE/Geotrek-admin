@@ -50,7 +50,7 @@ class TopologyHelper(object):
             pass  # value is not integer, thus should be deserialized
 
         objdict = serialized
-        if isinstance(serialized, basestring):
+        if isinstance(serialized, str):
             try:
                 objdict = json.loads(serialized)
             except ValueError as e:

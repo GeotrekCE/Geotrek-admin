@@ -23,8 +23,8 @@ class LoginTestCase(TestCase):
 
 class UserProfileTest(TestCase):
     def setUp(self):
-        self.user = SuperUserFactory(password=u"Bar")
-        success = self.client.login(username=self.user.username, password=u"Bar")
+        self.user = SuperUserFactory(password="Bar")
+        success = self.client.login(username=self.user.username, password="Bar")
         self.assertTrue(success)
 
     def test_profile(self):
@@ -39,21 +39,21 @@ class UserProfileTest(TestCase):
         self.assertContains(response, "Logout")
 
         # Change user lang
-        self.assertNotEqual(settings.LANGUAGE_CODE, u"fr")
+        self.assertNotEqual(settings.LANGUAGE_CODE, "fr")
         userprofile = UserProfile.objects.get(user=self.user)
-        userprofile.language = u"fr"
+        userprofile.language = "fr"
         userprofile.save()
-        self.assertEqual(self.user.profile.language, u"fr")
+        self.assertEqual(self.user.profile.language, "fr")
         # No effect if no logout
         response = self.client.get(reverse('core:path_list'))
         self.assertContains(response, "Logout")
 
         self.client.logout()
 
-        self.client.login(username=self.user.username, password=u"Bar")
+        self.client.login(username=self.user.username, password="Bar")
         response = self.client.get(reverse('core:path_list'))
-        self.assertEqual(self.client.session[LANGUAGE_SESSION_KEY], u"fr")
-        self.assertContains(response, u"Déconnexion")
+        self.assertEqual(self.client.session[LANGUAGE_SESSION_KEY], "fr")
+        self.assertContains(response, "Déconnexion")
 
     def test_link_to_adminsite_visible_to_staff(self):
         self.assertTrue(self.user.is_staff)
@@ -63,6 +63,6 @@ class UserProfileTest(TestCase):
     def test_link_to_adminsite_not_visible_to_others(self):
         self.user.is_staff = False
         self.user.save()
-        self.client.login(username=self.user.username, password=u"Bar")
+        self.client.login(username=self.user.username, password="Bar")
         response = self.client.get(reverse('core:path_list'))
         self.assertNotContains(response, '<a href="/admin/">Admin</a>')

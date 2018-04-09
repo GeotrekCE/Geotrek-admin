@@ -18,14 +18,14 @@ class Structure(models.Model):
     """
     Represents an organisational structure, to which users are related.
     """
-    name = models.CharField(max_length=256, verbose_name=_(u"Nom"))
+    name = models.CharField(max_length=256, verbose_name=_("Nom"))
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = _(u"Structure")
-        verbose_name_plural = _(u"Structures")
+        verbose_name = _("Structure")
+        verbose_name_plural = _("Structures")
         ordering = ['name']
         permissions = (("can_bypass_structure", _("Can bypass structure")),)
 
@@ -63,7 +63,7 @@ class StructureRelated(models.Model):
     A mixin used for any entities that belong to a structure
     """
     structure = models.ForeignKey(Structure, default=default_structure_pk,
-                                  verbose_name=_(u"Related structure"), db_column='structure')
+                                  verbose_name=_("Related structure"), db_column='structure')
 
     objects = models.Manager()
     in_structure = StructureRelatedManager()
@@ -82,8 +82,8 @@ class StructureRelated(models.Model):
 
     class Meta:
         abstract = True
-        verbose_name = _(u"Related structures")
-        verbose_name_plural = _(u"Related structure")
+        verbose_name = _("Related structures")
+        verbose_name_plural = _("Related structure")
 
 
 class UserProfile(StructureRelated):
@@ -92,15 +92,15 @@ class UserProfile(StructureRelated):
     """
     user = models.OneToOneField(User, unique=True)
 
-    language = models.CharField(_(u"Language"), max_length=10,
+    language = models.CharField(_("Language"), max_length=10,
                                 choices=settings.LANGUAGES,
                                 default=settings.LANGUAGE_CODE)
 
     class Meta:
-        verbose_name = _(u"User's profile")
-        verbose_name_plural = _(u"User's profiles")
+        verbose_name = _("User's profile")
+        verbose_name_plural = _("User's profiles")
 
-    def __unicode__(self):
+    def __str__(self):
         return _("Profile for %s") % self.user
 
 

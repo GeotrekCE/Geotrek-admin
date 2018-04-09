@@ -1,5 +1,4 @@
 # -*- encoding: utf-8 -*-
-
 import mock
 
 from django.db import connection

@@ -56,7 +56,7 @@ class BiodivParser(Parser):
         bbox.transform(4326)  # WGS84
         response = requests.get(self.url + "&in_bbox={}".format(",".join([str(coord) for coord in bbox.extent])))
         if response.status_code != 200:
-            msg = _(u"Failed to download {url}. HTTP status code {status_code}")
+            msg = _("Failed to download {url}. HTTP status code {status_code}")
             raise GlobalImportError(msg.format(url=response.url, status_code=response.status_code))
 
         self.root = response.json()
@@ -122,7 +122,7 @@ for i in range(12):
 
 class SpeciesSensitiveAreaShapeParser(ShapeParser):
     model = SensitiveArea
-    label = u"Shapefile zone sensible espèce"
+    label = "Shapefile zone sensible espèce"
     separator = ','
     delete = False
     fields = {
@@ -143,14 +143,14 @@ class SpeciesSensitiveAreaShapeParser(ShapeParser):
         try:
             species = Species.objects.get(category=Species.SPECIES, name=val)
         except Species.DoesNotExist:
-            msg = u"L'espèce {} n'existe pas dans Geotrek. Merci de la créer.".format(val)
+            msg = "L'espèce {} n'existe pas dans Geotrek. Merci de la créer.".format(val)
             raise RowImportError(msg)
         return species
 
 
 class RegulatorySensitiveAreaShapeParser(ShapeParser):
     model = SensitiveArea
-    label = u"Shapefile zone sensible réglementaire"
+    label = "Shapefile zone sensible réglementaire"
     separator = ','
     delete = False
     fields = {
@@ -185,7 +185,7 @@ class RegulatorySensitiveAreaShapeParser(ShapeParser):
                 try:
                     practice = SportPractice.objects.get(name=practice_name)
                 except SportPractice.DoesNotExist:
-                    msg = u"La pratique sportive {} n'existe pas dans Geotrek. Merci de l'ajouter.".format(practice_name)
+                    msg = "La pratique sportive {} n'existe pas dans Geotrek. Merci de l'ajouter.".format(practice_name)
                     raise RowImportError(msg)
                 practices.append(practice)
         species.save()
@@ -193,4 +193,4 @@ class RegulatorySensitiveAreaShapeParser(ShapeParser):
         return species
 
     def normalize_field_name(self, name):
-        return unicodedata.normalize('NFD', unicode(name)).encode('ascii', 'ignore').upper()
+        return unicodedata.normalize('NFD', str(name)).encode('ascii', 'ignore').upper()

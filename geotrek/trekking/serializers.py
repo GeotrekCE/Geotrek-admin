@@ -34,7 +34,7 @@ class TrekGPXSerializer(GPXSerializer):
             wpt = gpxpy.gpx.GPXWaypoint(latitude=geom_3d.y,
                                         longitude=geom_3d.x,
                                         elevation=geom_3d.z)
-            wpt.name = u"%s: %s" % (poi.type, poi.name)
+            wpt.name = "%s: %s" % (poi.type, poi.name)
             wpt.description = poi.description
             self.gpx.waypoints.append(wpt)
 
@@ -353,9 +353,9 @@ class CirkwiPOISerializer(object):
     def serialize_field(self, name, value, attrs={}):
         if not value and not attrs:
             return
-        value = unicode(value)
+        value = str(value)
         self.xml.startElement(name, attrs)
-        if u'<' in value or u'>' in value or u'&' in value:
+        if '<' in value or '>' in value or '&' in value:
             self.stream.write('<![CDATA[%s]]>' % value)
         else:
             self.xml.characters(value)
@@ -454,7 +454,7 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
     def serialize_description(self, trek):
         description = trek.description_teaser
         if description and trek.description:
-            description += u'\n\n'
+            description += '\n\n'
             description += trek.description
         if description:
             self.serialize_field('description', plain_text(description))

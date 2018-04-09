@@ -16,7 +16,7 @@ class PolygonMapWidget(MapWidget):
 class SensitiveAreaForm(CommonForm):
     geomfields = ['geom']
     species = forms.ModelChoiceField(queryset=Species.objects.filter(category=Species.SPECIES),
-                                     label=pgettext(u"Singular", u"Species"))
+                                     label=pgettext("Singular", "Species"))
 
     class Meta:
         fields = ['species', 'published', 'description', 'contact', 'geom', 'structure']
@@ -26,22 +26,22 @@ class SensitiveAreaForm(CommonForm):
 
 class RegulatorySensitiveAreaForm(CommonForm):
     geomfields = ['geom']
-    name = forms.CharField(max_length=250, label=_(u"Name"))
-    pictogram = forms.FileField(label=_(u"Pictogram"), required=False)
-    period01 = forms.BooleanField(label=_(u"January"), required=False)
-    period02 = forms.BooleanField(label=_(u"February"), required=False)
-    period03 = forms.BooleanField(label=_(u"March"), required=False)
-    period04 = forms.BooleanField(label=_(u"April"), required=False)
-    period05 = forms.BooleanField(label=_(u"May"), required=False)
-    period06 = forms.BooleanField(label=_(u"June"), required=False)
-    period07 = forms.BooleanField(label=_(u"July"), required=False)
-    period08 = forms.BooleanField(label=_(u"August"), required=False)
-    period09 = forms.BooleanField(label=_(u"September"), required=False)
-    period10 = forms.BooleanField(label=_(u"October"), required=False)
-    period11 = forms.BooleanField(label=_(u"November"), required=False)
-    period12 = forms.BooleanField(label=_(u"Decembre"), required=False)
-    practices = forms.ModelMultipleChoiceField(label=_(u"Sport practices"), queryset=SportPractice.objects)
-    url = forms.URLField(label=_(u"URL"), required=False)
+    name = forms.CharField(max_length=250, label=_("Name"))
+    pictogram = forms.FileField(label=_("Pictogram"), required=False)
+    period01 = forms.BooleanField(label=_("January"), required=False)
+    period02 = forms.BooleanField(label=_("February"), required=False)
+    period03 = forms.BooleanField(label=_("March"), required=False)
+    period04 = forms.BooleanField(label=_("April"), required=False)
+    period05 = forms.BooleanField(label=_("May"), required=False)
+    period06 = forms.BooleanField(label=_("June"), required=False)
+    period07 = forms.BooleanField(label=_("July"), required=False)
+    period08 = forms.BooleanField(label=_("August"), required=False)
+    period09 = forms.BooleanField(label=_("September"), required=False)
+    period10 = forms.BooleanField(label=_("October"), required=False)
+    period11 = forms.BooleanField(label=_("November"), required=False)
+    period12 = forms.BooleanField(label=_("Decembre"), required=False)
+    practices = forms.ModelMultipleChoiceField(label=_("Sport practices"), queryset=SportPractice.objects)
+    url = forms.URLField(label=_("URL"), required=False)
 
     class Meta:
         fields = ['name', 'published', 'description', 'contact', 'pictogram', 'practices'] + \

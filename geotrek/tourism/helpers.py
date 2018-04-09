@@ -19,7 +19,7 @@ def post_process(source, language, content):
             assert result.get('features') is not None
             return result
         except (ValueError, AssertionError) as e:
-            logger.error(u"Source '%s' returns invalid GeoJSON" % source.url)
+            logger.error("Source '%s' returns invalid GeoJSON" % source.url)
             logger.exception(e)
             raise
 
@@ -33,7 +33,7 @@ def post_process(source, language, content):
             assert objects is not None
             return sitra_to_geojson(objects, language)
         except (ValueError, AssertionError) as e:
-            logger.error(u"Source '%s' returns invalid SITA json" % source.url)
+            logger.error("Source '%s' returns invalid SITA json" % source.url)
             logger.exception(e)
             raise
 

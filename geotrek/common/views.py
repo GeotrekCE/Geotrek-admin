@@ -263,12 +263,12 @@ def import_update_json(request):
                     'status': task.status
                 }
             )
-    i = celery_app.control.inspect([u'celery@geotrek'])
+    i = celery_app.control.inspect(['celery@geotrek'])
     try:
         reserved = i.reserved()
     except redis.exceptions.ConnectionError:
         reserved = None
-    tasks = [] if reserved is None else reversed(reserved[u'celery@geotrek'])
+    tasks = [] if reserved is None else reversed(reserved['celery@geotrek'])
     for task in tasks:
         if task['name'].startswith('geotrek.common'):
             args = ast.literal_eval(task['args'])

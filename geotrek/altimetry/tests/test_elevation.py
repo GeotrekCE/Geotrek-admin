@@ -107,9 +107,10 @@ class ElevationProfileTest(TestCase):
                           srid=settings.SRID)
         profile = AltimetryHelper.elevation_profile(geom)
         svg = AltimetryHelper.profile_svg(profile)
-        self.assertIn('Generated with pygal', svg)
-        self.assertIn(settings.ALTIMETRIC_PROFILE_BACKGROUND, svg)
-        self.assertIn(settings.ALTIMETRIC_PROFILE_COLOR, svg)
+
+        self.assertIn('Generated with pygal', str(svg))
+        self.assertIn(settings.ALTIMETRIC_PROFILE_BACKGROUND, str(svg))
+        self.assertIn(settings.ALTIMETRIC_PROFILE_COLOR, str(svg))
 
     def test_elevation_altimetry_limits(self):
         geom = LineString((1.5, 2.5, 8), (2.5, 2.5, 10),

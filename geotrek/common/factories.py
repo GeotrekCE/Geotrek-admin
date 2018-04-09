@@ -14,14 +14,14 @@ class OrganismFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Organism
 
-    organism = factory.Sequence(lambda n: u"Organism %s" % n)
+    organism = factory.Sequence(lambda n: "Organism %s" % n)
 
 
 class FileTypeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.FileType
 
-    type = factory.Sequence(lambda n: u"FileType %s" % n)
+    type = factory.Sequence(lambda n: "FileType %s" % n)
 
 
 class AttachmentFactory(factory.DjangoModelFactory):
@@ -37,8 +37,8 @@ class AttachmentFactory(factory.DjangoModelFactory):
     filetype = factory.SubFactory(FileTypeFactory)
 
     creator = factory.SubFactory(UserFactory)
-    title = factory.Sequence(u"Title {0}".format)
-    legend = factory.Sequence(u"Legend {0}".format)
+    title = factory.Sequence("Title {0}".format)
+    legend = factory.Sequence("Legend {0}".format)
 
     # date_insert, date_update
 
@@ -53,7 +53,7 @@ class ThemeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Theme
 
-    label = factory.Sequence(lambda n: u"Theme %s" % n)
+    label = factory.Sequence(lambda n: "Theme %s" % n)
     pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
@@ -61,7 +61,7 @@ class RecordSourceFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.RecordSource
 
-    name = factory.Sequence(lambda n: u"Record source %s" % n)
+    name = factory.Sequence(lambda n: "Record source %s" % n)
     website = 'http://geotrek.fr'
     pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
@@ -70,5 +70,5 @@ class TargetPortalFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.TargetPortal
 
-    name = factory.Sequence(lambda n: u"Target Portal %s" % n)
-    website = factory.Sequence(lambda n: u"http://geotrek-rando-{}.fr".format(n))
+    name = factory.Sequence(lambda n: "Target Portal %s" % n)
+    website = factory.Sequence(lambda n: "http://geotrek-rando-{}.fr".format(n))

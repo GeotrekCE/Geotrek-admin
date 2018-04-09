@@ -133,7 +133,7 @@ class Parser(object):
                     val.append(self.get_val(row, dst, subsrc))
                 except ValueImportError as warning:
                     if self.warn_on_missing_fields:
-                        self.add_warning(unicode(warning))
+                        self.add_warning((warning))
                     val.append(None)
             return val
         else:
@@ -226,7 +226,7 @@ class Parser(object):
                 if self.field_options.get(dst, {}).get('required', False):
                     raise RowImportError(warning)
                 if self.warn_on_missing_fields:
-                    self.add_warning(unicode(warning))
+                    self.add_warning((warning))
                 continue
         return updated
 
@@ -235,7 +235,7 @@ class Parser(object):
             update_fields = self.parse_fields(row, self.fields)
             update_fields += self.parse_fields(row, self.constant_fields)
         except RowImportError as warnings:
-            self.add_warning(unicode(warnings))
+            self.add_warning((warnings))
             return
         if operation == u"created":
             self.obj.save()
@@ -277,7 +277,7 @@ class Parser(object):
             try:
                 eid_kwargs = self.get_eid_kwargs(row)
             except RowImportError as warnings:
-                self.add_warning(unicode(warnings))
+                self.add_warning((warnings))
                 return
             objects = self.model.objects.filter(**eid_kwargs)
         if len(objects) == 0 and self.update_only:
@@ -422,7 +422,7 @@ class Parser(object):
             except Exception as e:
                 if settings.DEBUG:
                     raise
-                self.add_warning(unicode(e))
+                self.add_warning((e))
         self.end()
 
 
@@ -441,7 +441,7 @@ class ShapeParser(Parser):
             try:
                 ogrgeom = feature.geom
             except GDALException:
-                print _(u"Invalid geometry pointer"), i
+                print("Invalid geometry pointer",end=i)
                 geom = None
             else:
                 ogrgeom.coord_dim = 2  # Flatten to 2D
@@ -566,7 +566,7 @@ class AttachmentParserMixin(object):
             for attachment in attachments_to_delete:
                 upload_name, ext = os.path.splitext(attachment_upload(attachment, name))
                 existing_name = attachment.attachment_file.name
-                if re.search(ur"^{name}(_\d+)?{ext}$".format(name=upload_name, ext=ext), existing_name) and not self.has_size_changed(url, attachment):
+                if re.search(r"^{name}(_\d+)?{ext}$".format(name=upload_name, ext=ext), existing_name) and not self.has_size_changed(url, attachment):
                     found = True
                     attachments_to_delete.remove(attachment)
                     if author != attachment.author or legend != attachment.legend:

@@ -64,7 +64,7 @@ class PathViewsTest(CommonTest):
             form = response.context['form']
             self.assertTrue('stake' in form.fields)
             stakefield = form.fields['stake']
-            self.assertTrue((stake.pk, unicode(stake)) in stakefield.choices)
+            self.assertTrue((stake.pk, str(stake)) in stakefield.choices)
             self.client.logout()
         # Test for two structures
         s1 = StructureFactory.create()
@@ -78,7 +78,7 @@ class PathViewsTest(CommonTest):
 
     def test_basic_format(self):
         self.modelfactory.create()
-        self.modelfactory.create(name=u"ãéè")
+        self.modelfactory.create(name="ãéè")
         super(CommonTest, self).test_basic_format()
 
     def test_path_form_is_not_valid_if_no_geometry_provided(self):
@@ -149,8 +149,8 @@ class DenormalizedTrailTest(AuthentFixturesTest):
         self.assertEqual(response.status_code, 200)
         paths_json = json.loads(response.content)
         trails_column = paths_json['aaData'][0][6]
-        self.assertTrue(trails_column == u'%s, %s' % (self.trail1.name_display, self.trail2.name_display) or
-                        trails_column == u'%s, %s' % (self.trail2.name_display, self.trail1.name_display))
+        self.assertTrue(trails_column == '%s, %s' % (self.trail1.name_display, self.trail2.name_display) or
+                        trails_column == '%s, %s' % (self.trail2.name_display, self.trail1.name_display))
 
 
 class TrailViewsTest(CommonTest):

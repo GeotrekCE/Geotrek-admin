@@ -33,11 +33,11 @@ class EmailSendingTest(TestCase):
         self.assertIsNotNone(r.id)
 
     def test_email_format_and_content(self):
-        ReportFactory.create(name=u'John Doe',
-                             email=u'john.doe@nowhere.com',
-                             comment=u"This is a 'comment'")
+        ReportFactory.create(name='John Doe',
+                             email='john.doe@nowhere.com',
+                             comment="This is a 'comment'")
         sent_mail = mail.outbox[0]
-        self.assertEquals(sent_mail.subject,
-                          u'[Geotrek] Feedback from John Doe (john.doe@nowhere.com)')
-        self.assertIn(u"Comment : This is a 'comment'", sent_mail.body)
-        self.assertIn(u"Lat : 46.5 / Lon : 3", sent_mail.body)
+        self.assertEqual(sent_mail.subject,
+                          '[Geotrek] Feedback from John Doe (john.doe@nowhere.com)')
+        self.assertIn("Comment : This is a 'comment'", sent_mail.body)
+        self.assertIn("Lat : 46.5 / Lon : 3", sent_mail.body)
