@@ -1,5 +1,5 @@
 import logging
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 
 from django.conf import settings
 from django.db import models

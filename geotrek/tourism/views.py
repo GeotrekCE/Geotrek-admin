@@ -1,6 +1,6 @@
 import logging
 import os
-from urlparse import urljoin
+from urllib.parse import urljoin
 from django.utils.translation import ugettext as _
 
 from django.conf import settings
