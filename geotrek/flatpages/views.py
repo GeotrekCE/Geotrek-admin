@@ -1,4 +1,4 @@
-from urlparse import urljoin
+from urllib.parse import urljoin
 
 from rest_framework import permissions as rest_permissions
 from rest_framework import viewsets

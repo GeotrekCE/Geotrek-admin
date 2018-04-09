@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import json
 import redis
-from urlparse import urljoin
+from urllib.parse import urljoin
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
