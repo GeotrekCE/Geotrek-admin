@@ -13,7 +13,7 @@ class FlatPageForm(CommonForm):
     def __init__(self, *args, **kwargs):
         super(FlatPageForm, self).__init__(*args, **kwargs)
         # Revert widget modifications done by MapentityForm.__init__()
-        for fieldname in self.fields.keys():
+        for fieldname in list(self.fields.keys()):
             if fieldname.startswith('content_'):
                 self.fields[fieldname].widget = forms.Textarea()
         self.fields['source'].help_text = None

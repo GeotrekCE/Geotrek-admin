@@ -38,7 +38,7 @@ class Command(BaseCommand):
         clear_internal_user_cache()
 
         # For all models registered, add missing bits
-        for model in registry.registry.keys():
+        for model in list(registry.registry.keys()):
             create_mapentity_model_permissions(model)
 
         logger.info("Done.")

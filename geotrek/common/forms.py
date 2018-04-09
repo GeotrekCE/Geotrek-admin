@@ -75,7 +75,7 @@ class CommonForm(MapEntityForm):
                     structure = self.user.profile.structure
                 self.fields['structure'].initial = structure
 
-        for name, field in self.fields.items():
+        for name, field in list(self.fields.items()):
             self.filter_related_field(name, field)
 
         # allow to modify layout per instance

@@ -314,7 +314,7 @@ class Parser(object):
     def get_mapping(self, src, val, mapping, partial):
         if partial:
             found = False
-            for i, j in mapping.iteritems():
+            for i, j in mapping.items():
                 if i in val:
                     val = j
                     found = True
@@ -372,7 +372,7 @@ class Parser(object):
     def get_to_delete_kwargs(self):
         # FIXME: use mapping if it exists
         kwargs = {}
-        for dst, val in self.constant_fields.iteritems():
+        for dst, val in self.constant_fields.items():
             field = self.model._meta.get_field(dst)
             if isinstance(field, models.ForeignKey):
                 natural_key = self.natural_keys[dst]
@@ -382,7 +382,7 @@ class Parser(object):
                     raise GlobalImportError(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=field.rel.to._meta.verbose_name.title(), val=val))
             else:
                 kwargs[dst] = val
-        for dst, val in self.m2m_constant_fields.iteritems():
+        for dst, val in self.m2m_constant_fields.items():
             assert not self.separator or self.separator not in val
             field = self.model._meta.get_field(dst)
             natural_key = self.natural_keys[dst]
@@ -624,7 +624,7 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
             self.root = response.json()
             self.nb = int(self.root['d']['__count'])
             for row in self.items:
-                yield {self.normalize_field_name(src): val for src, val in row.iteritems()}
+                yield {self.normalize_field_name(src): val for src, val in row.items()}
             skip += 1000
             if skip >= self.nb:
                 return
@@ -654,7 +654,7 @@ class TourismSystemParser(AttachmentParserMixin, Parser):
             self.root = response.json()
             self.nb = int(self.root['metadata']['total'])
             for row in self.items:
-                yield {self.normalize_field_name(src): val for src, val in row.iteritems()}
+                yield {self.normalize_field_name(src): val for src, val in row.items()}
             skip += size
             if skip >= self.nb:
                 return

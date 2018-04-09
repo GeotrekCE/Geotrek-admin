@@ -16,7 +16,7 @@ class YearSelect(Select):
         return years_range
 
     def get_years(self):
-        return range(datetime.today().year, 1979, -1)
+        return list(range(datetime.today().year, 1979, -1))
 
     def render_options(self, *args, **kwargs):
         """Refresh choices each time the form is rendered.

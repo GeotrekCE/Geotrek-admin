@@ -228,14 +228,14 @@ class Command(BaseCommand):
         if self.source:
             params['source'] = ','.join(self.source)
 
-        elif 'source' in params.keys():
+        elif 'source' in list(params.keys()):
             # bug source is still in cache when executing command
             del params['source']
 
         if self.portal:
             params['portal'] = ','.join(self.portal)
 
-        elif 'portal' in params.keys():
+        elif 'portal' in list(params.keys()):
             del params['portal']
 
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, **kwargs)

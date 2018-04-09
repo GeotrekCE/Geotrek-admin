@@ -27,9 +27,9 @@ class SimpleGraph(TestCase):
 
         def gen_random_point():
             """Return unique (non-conflicting) point"""
-            return ((0., x + 1.) for x in xrange(10, 100))
+            return ((0., x + 1.) for x in range(10, 100))
 
-        r_point = gen_random_point().next
+        r_point = gen_random_point().__next__
 
         e_1_2 = PathFactory(geom=LineString(p_1_1, r_point(), p_2_2))
         e_2_3 = PathFactory(geom=LineString(p_2_2, r_point(), p_3_3))

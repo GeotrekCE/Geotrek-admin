@@ -31,7 +31,7 @@ class AuthentFixturesMixin(object):
         # Workaround https://code.djangoproject.com/ticket/10827
         ContentType.objects.clear_cache()
 
-        if not registry.registry.keys():
+        if not list(registry.registry.keys()):
             from geotrek.core import urls  # NOQA
             from geotrek.land import urls  # NOQA
             from geotrek.maintenance import urls  # NOQA

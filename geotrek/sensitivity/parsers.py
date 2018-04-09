@@ -92,7 +92,7 @@ class BiodivParser(Parser):
                 species = Species.objects.get(eid=eid)
             except Species.DoesNotExist:
                 species = Species(category=Species.SPECIES, eid=eid)
-        for lang, translation in names.items():
+        for lang, translation in list(names.items()):
             if lang in settings.MODELTRANSLATION_LANGUAGES and translation != getattr(species, 'name_' + lang):
                 setattr(species, 'name_' + lang, translation)
                 need_save = True
