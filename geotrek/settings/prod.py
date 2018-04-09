@@ -4,7 +4,7 @@ from .default import *
 # Django Production
 # ..........................
 
-ALLOWED_HOSTS = tuple(envini.getstrings('host', default='*'))
+ALLOWED_HOSTS = tuple('*')
 
 USE_X_FORWARDED_HOST = True
 
@@ -42,34 +42,34 @@ DATABASES['default']['CONN_MAX_AGE'] = 600
 # Email settings
 # ..........................
 
-admins = envini.getstrings('mailadmins')
+admins = "admin@yourdomain.tld"
 ADMINS = tuple([('Admin %s' % TITLE, admin) for admin in admins])
 
-managers = envini.getstrings('mailmanagers')
+managers = "manager1@yourdomain.tld", "manager2@yourdomain.tld"
 MANAGERS = tuple([('Manager %s' % TITLE, manager) for manager in managers])
 
-DEFAULT_FROM_EMAIL = envini.get('mailfrom', admins[0])
+DEFAULT_FROM_EMAIL ="admin@yourdomain.tld"
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
-EMAIL_HOST = envini.get('mailhost')
-EMAIL_HOST_USER = envini.get('mailuser')
-EMAIL_HOST_PASSWORD = envini.get('mailpassword')
-EMAIL_HOST_PORT = envini.get('mailport', 25)
-EMAIL_USE_TLS = envini.getbool('mailtls', 'False')
-EMAIL_USE_SSL = envini.getbool('mailssl', 'False')
+EMAIL_HOST = ""
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
+EMAIL_HOST_PORT = 25
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = False
 
 #
 # External authent
 # ..........................
 
-AUTHENT_DATABASE = envini.get('authent_dbname', 'authentdb')
-AUTHENT_TABLENAME = envini.get('authent_tablename', None)
+AUTHENT_DATABASE = 'authentdb'
+AUTHENT_TABLENAME = None
 if AUTHENT_TABLENAME:
     AUTHENTICATION_BACKENDS = ('geotrek.authent.backend.DatabaseBackend',)
 
 DATABASES[AUTHENT_DATABASE] = {}
-DATABASES[AUTHENT_DATABASE]['ENGINE'] = 'django.db.backends.%s' % envini.get('authent_engine', 'postgresql_psycopg2')
+DATABASES[AUTHENT_DATABASE]['ENGINE'] = 'django.db.backends.postgresql_psycopg2'
 DATABASES[AUTHENT_DATABASE]['NAME'] = AUTHENT_DATABASE
-DATABASES[AUTHENT_DATABASE]['USER'] = envini.get('authent_dbuser', None)
-DATABASES[AUTHENT_DATABASE]['PASSWORD'] = envini.get('authent_dbpassword', None)
-DATABASES[AUTHENT_DATABASE]['HOST'] = envini.get('authent_dbhost', None)
-DATABASES[AUTHENT_DATABASE]['PORT'] = envini.get('authent_dbport', 5432)
+DATABASES[AUTHENT_DATABASE]['USER'] = None
+DATABASES[AUTHENT_DATABASE]['PASSWORD'] = None
+DATABASES[AUTHENT_DATABASE]['HOST'] = None
+DATABASES[AUTHENT_DATABASE]['PORT'] = 5432

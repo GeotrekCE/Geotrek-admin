@@ -222,23 +222,13 @@ ROOT_URLCONF = 'geotrek.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'geotrek.wsgi.application'
 
-
-# Do not migrate translated fields, they differ per instance, and
-# can be added/removed using `update_translation_fields`
-# modeltranslation should be kept before django.contrib.admin
-if 'makemigrations' in sys.argv:
-    PROJECT_APPS = ()
-else:
-    PROJECT_APPS = (
-        'modeltranslation',
-    )
-
 #
 # /!\ Application names (last levels) must be unique
 # (c.f. auth/authent)
 # https://code.djangoproject.com/ticket/12288
 #
-PROJECT_APPS += (
+PROJECT_APPS = (
+    'modeltranslation',
     'geotrek.appconfig.AuthGeotrekConfig',  # django.contrib.app
     'geotrek.appconfig.ContenttypeGeotrekConfig',  # django.contrib.contenttypes
     'geotrek.appconfig.SessionsGeotrekConfig',  # django.contrib.sessions
@@ -305,6 +295,7 @@ CACHES = {
 # the site admins on every HTTP 500 error when DEBUG=False.
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
+DEBUG = True
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -571,9 +562,9 @@ MOBILE_TILES_URL = [
 MOBILE_TILES_EXTENSION = None  # auto
 MOBILE_TILES_RADIUS_LARGE = 0.01  # ~1 km
 MOBILE_TILES_RADIUS_SMALL = 0.005  # ~500 m
-MOBILE_TILES_GLOBAL_ZOOMS = range(13)
-MOBILE_TILES_LOW_ZOOMS = range(13, 15)
-MOBILE_TILES_HIGH_ZOOMS = range(15, 17)
+MOBILE_TILES_GLOBAL_ZOOMS = list(range(13))
+MOBILE_TILES_LOW_ZOOMS = list(range(13, 15))
+MOBILE_TILES_HIGH_ZOOMS = list(range(15, 17))
 
 TINYMCE_DEFAULT_CONFIG = {
     'convert_urls': False,
