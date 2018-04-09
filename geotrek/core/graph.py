@@ -8,7 +8,7 @@ def path_modifier(path):
 
 
 def get_key_optimizer():
-    next_id = iter(xrange(1, 1000000)).next
+    next_id = iter(list(range(1, 1000000))).__next__
     mapping = defaultdict(next_id)
     return lambda x: mapping[x]
 

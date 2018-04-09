@@ -329,7 +329,7 @@ class POIFormatList(MapEntityFormat, POIList):
 
         for poi in qs:
             # Put denormalized in specific attribute used in serializers
-            for attrname in denormalized.keys():
+            for attrname in list(denormalized.keys()):
                 overlapping = denormalized[attrname].get(poi.id, [])
                 setattr(poi, '%s_csv_display' % attrname, overlapping)
             yield poi

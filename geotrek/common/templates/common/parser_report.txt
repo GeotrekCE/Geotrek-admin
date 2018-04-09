@@ -4,6 +4,6 @@
 {% endif %}{% if not nb_deleted == None %}{% blocktrans count n=nb_deleted %}{{ n }} record deleted.{% plural %}{{ n }} records deleted.{% endblocktrans %}
 {% endif %}{% if nb_unmodified %}{% blocktrans count n=nb_unmodified %}{{ n }} record unmodified.{% plural %}{{ n }} records unmodified.{% endblocktrans %}
 {% endif %}{% if warnings %}{% blocktrans count n=warnings|length %}{{ n }} warning:{% plural %}{{ n }} warnings:{% endblocktrans %}
-{% for id, msgs in warnings.iteritems %}# {{ id }}:
+{% for id, msgs in warnings.items %}# {{ id }}:
 {% for msg in msgs %}- {{ msg|safe }},
 {% endfor %}{% endfor %}{% endif %}

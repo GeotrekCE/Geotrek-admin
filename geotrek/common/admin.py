@@ -29,7 +29,7 @@ class MapEntityContentTypeFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
         from mapentity.registry import registry
         values = []
-        for model, entity in registry.registry.items():
+        for model, entity in list(registry.registry.items()):
             content_type = model.get_content_type_id()
             values.append((content_type, entity.label))
         return tuple(values)

@@ -51,7 +51,7 @@ class ElevationProfile(LastModifiedMixin, JSONResponseMixin,
         for step in elevation_profile:
             formatted = step[0], step[3], step[1:3]
             data.setdefault('profile', []).append(formatted)
-        data['limits'] = dict(zip(['ceil', 'floor'], self.object.get_elevation_limits()))
+        data['limits'] = dict(list(zip(['ceil', 'floor'], self.object.get_elevation_limits())))
         return data
 
 

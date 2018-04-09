@@ -125,7 +125,7 @@ def move_models_to_schemas(app):
 
     cursor = connection.cursor()
 
-    for schema_name in table_schemas.keys():
+    for schema_name in list(table_schemas.keys()):
         try:
             sql = "CREATE SCHEMA %s;" % model_schema
             cursor.execute(sql)
@@ -133,7 +133,7 @@ def move_models_to_schemas(app):
         except Exception:
             logger.debug("Schema %s already exists." % model_schema)
 
-    for schema_name, tables in table_schemas.items():
+    for schema_name, tables in list(table_schemas.items()):
         for table_name in tables:
             sql = "SELECT 1 FROM information_schema.tables WHERE table_name=%s AND table_schema!=%s"
             cursor.execute(sql, [table_name, schema_name])

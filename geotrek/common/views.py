@@ -145,7 +145,7 @@ class JSSettings(mapentity_views.JSSettings):
         dictsettings = super(JSSettings, self).get_context_data()
         # Add geotrek map styles
         base_styles = dictsettings['map']['styles']
-        for name, override in settings.MAP_STYLES.items():
+        for name, override in list(settings.MAP_STYLES.items()):
             merged = base_styles.get(name, {})
             merged.update(override)
             base_styles[name] = merged

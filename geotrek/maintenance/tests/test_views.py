@@ -520,20 +520,20 @@ class ExportTest(TranslationResetMixin, TestCase):
                 'cities', 'districts', 'restricted'
             ])
 
-        self.assertEquals(len(layer_point), 1)
-        self.assertEquals(len(layer_line), 1)
+        self.assertEqual(len(layer_point), 1)
+        self.assertEqual(len(layer_line), 1)
 
         for feature in layer_point:
-            self.assertEquals(str(feature['id']), str(proj.pk))
-            self.assertEquals(len(feature.geom.geos), 1)
+            self.assertEqual(str(feature['id']), str(proj.pk))
+            self.assertEqual(len(feature.geom.geos), 1)
             self.assertAlmostEqual(feature.geom.geos[0].x, it_point.geom.x)
             self.assertAlmostEqual(feature.geom.geos[0].y, it_point.geom.y)
 
         for feature in layer_line:
-            self.assertEquals(str(feature['id']), str(proj.pk))
+            self.assertEqual(str(feature['id']), str(proj.pk))
             self.assertTrue(feature.geom.geos.equals(it_line.geom))
 
         # Clean-up temporary shapefiles
-        for layer_file in pfl.layers.values():
+        for layer_file in list(pfl.layers.values()):
             for subfile in shapefile_files(layer_file):
                 os.remove(subfile)
