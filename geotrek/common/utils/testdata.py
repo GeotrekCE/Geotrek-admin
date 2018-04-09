@@ -1,6 +1,7 @@
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 import factory
+import base64
 
 
 # Produce a small red dot
@@ -11,7 +12,7 @@ SVG_FILE = '<svg width="3cm" height="2cm" version="1.1"> ' \
 
 
 def get_dummy_img():
-    return IMG_FILE.decode('base64')
+    return base64.b64decode(IMG_FILE)
 
 
 def get_dummy_uploaded_image(name='dummy_img.png'):
