@@ -116,9 +116,9 @@ class TopologyTest(TestCase):
         datas = dictfetchall(cur)
 
         # topo must be linked to visible path
-        self.assertIn(topology.pk, [ele['id_topology'] for ele in datas], u"{}".format(datas))
-        self.assertIn(path_visible.pk, [ele['id_path'] for ele in datas], u"{}".format(datas))
-        self.assertNotIn(path_unvisible.pk, [ele['id_path'] for ele in datas], u"{}".format(datas))
+        self.assertIn(topology.pk, [ele['id_topology'] for ele in datas], "{}".format(datas))
+        self.assertIn(path_visible.pk, [ele['id_path'] for ele in datas], "{}".format(datas))
+        self.assertNotIn(path_unvisible.pk, [ele['id_path'] for ele in datas], "{}".format(datas))
 
         # new topo on invible path
         topology = TopologyHelper._topologypoint(0, 3, None).reload()
@@ -135,9 +135,9 @@ class TopologyTest(TestCase):
 
         datas = dictfetchall(cur)
 
-        self.assertIn(topology.pk, [ele['id_topology'] for ele in datas], u"{}".format(datas))
-        self.assertIn(path_visible.pk, [ele['id_path'] for ele in datas], u"{}".format(datas))
-        self.assertNotIn(path_unvisible.pk, [ele['id_path'] for ele in datas], u"{}".format(datas))
+        self.assertIn(topology.pk, [ele['id_topology'] for ele in datas], "{}".format(datas))
+        self.assertIn(path_visible.pk, [ele['id_path'] for ele in datas], "{}".format(datas))
+        self.assertNotIn(path_unvisible.pk, [ele['id_path'] for ele in datas], "{}".format(datas))
         cur.close()
 
     def test_topology_linked_to_not_draft(self):
@@ -764,10 +764,10 @@ class TopologyLoopTests(TestCase):
 class TopologySerialization(TestCase):
     def test_serialize_line(self):
         path = PathFactory.create()
-        test_objdict = {u'kind': Topology.KIND,
-                        u'offset': 1.0,
-                        u'positions': {},
-                        u'paths': [path.pk]}
+        test_objdict = {'kind': Topology.KIND,
+                        'offset': 1.0,
+                        'positions': {},
+                        'paths': [path.pk]}
         # +|========>+
         topo = TopologyFactory.create(offset=1.0, no_path=True)
         topo.add_path(path)

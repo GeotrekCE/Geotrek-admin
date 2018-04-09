@@ -108,7 +108,7 @@ class FlatPageMediaTest(TestCase):
         self.assertEqual(page.parse_media(), [])
 
     def test_media_returns_all_images_attributes(self):
-        html = u"""
+        html = """
         <h1>One page</h1>
         <body><p>Yéâh</p>
         <img src="/media/image1.png" title="Image 1" alt="image-1"/>
@@ -163,10 +163,10 @@ class RESTViewsTest(TestCase):
         record = records[0]
         self.assertEquals(
             sorted(record.keys()),
-            sorted([u'content', u'external_url', u'id', u'last_modified',
-                    u'media', u'portal', u'publication_date', u'published',
-                    u'published_status', u'slug', u'source', u'target',
-                    u'title']))
+            sorted(['content', 'external_url', 'id', 'last_modified',
+                    'media', 'portal', 'publication_date', 'published',
+                    'published_status', 'slug', 'source', 'target',
+                    'title']))
 
 
 class SyncTestPortal(TestCase):

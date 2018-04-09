@@ -113,19 +113,19 @@ WKT = ('LINESTRING ('
 
 class TrekParserTests(TestCase):
     def setUp(self):
-        self.difficulty = DifficultyLevel.objects.create(difficulty=u"Facile")
-        self.route = Route.objects.create(route=u"Boucle")
+        self.difficulty = DifficultyLevel.objects.create(difficulty="Facile")
+        self.route = Route.objects.create(route="Boucle")
         self.themes = (
-            Theme.objects.create(label=u"Littoral"),
-            Theme.objects.create(label=u"Marais"),
+            Theme.objects.create(label="Littoral"),
+            Theme.objects.create(label="Marais"),
         )
-        self.filetype = FileType.objects.create(type=u"Photographie")
+        self.filetype = FileType.objects.create(type="Photographie")
 
     def test_create(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'trek.shp')
         call_command('import', 'geotrek.trekking.parsers.TrekParser', filename, verbosity=0)
         trek = Trek.objects.all().last()
-        self.assertEqual(trek.name, u"Balade")
+        self.assertEqual(trek.name, "Balade")
         self.assertEqual(trek.difficulty, self.difficulty)
         self.assertEqual(trek.route, self.route)
         self.assertQuerysetEqual(trek.themes.all(), [repr(t) for t in self.themes], ordered=False)

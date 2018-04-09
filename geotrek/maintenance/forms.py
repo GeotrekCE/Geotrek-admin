@@ -73,7 +73,7 @@ class InterventionBaseForm(CommonForm):
                <ul class="nav nav-tabs">
                    <li id="tab-main" class="active"><a href="#main" data-toggle="tab"><i class="icon-certificate"></i> %s</a></li>
                    <li id="tab-advanced"><a href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> %s</a></li>
-               </ul>""" % (unicode(_("Main")), unicode(_("Advanced")))),
+               </ul>""" % ("Main", "Advanced")),
             Div(
                 Div(
                     'structure',
@@ -200,8 +200,8 @@ else:
                 self.fields['topology'].widget.modifiable = False
                 self.fields['topology'].label = '%s%s %s' % (
                     self.instance.infrastructure_display,
-                    unicode(_("On %s") % _(infrastructure.kind.lower())),
-                    u'<a href="%s">%s</a>' % (infrastructure.get_detail_url(), unicode(infrastructure))
+                    _("On %s") % _(infrastructure.kind.lower()),
+                    '<a href="%s">%s</a>' % (infrastructure.get_detail_url(), infrastructure)
                 )
             elif signage:
                 self.helper.form_action += '?signage=%s' % signage.pk
@@ -209,8 +209,8 @@ else:
                 self.fields['topology'].widget = TopologyReadonlyWidget()
                 self.fields['topology'].label = '%s%s %s' % (
                     self.instance.infrastructure_display,
-                    unicode(_("On %s") % _(signage.kind.lower())),
-                    u'<a href="%s">%s</a>' % (signage.get_detail_url(), unicode(signage))
+                    _("On %s") % _(signage.kind.lower()),
+                    '<a href="%s">%s</a>' % (signage.get_detail_url(), signage)
                 )
             else:
                 self.fields['topology'].required = False

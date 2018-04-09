@@ -11,7 +11,7 @@ class PhysicalTypeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.PhysicalType
 
-    name = factory.Sequence(lambda n: u"PhysicalType %s" % n)
+    name = factory.Sequence(lambda n: "PhysicalType %s" % n)
 
 
 class PhysicalEdgeFactory(TopologyFactory):
@@ -25,7 +25,7 @@ class LandTypeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.LandType
 
-    name = factory.Sequence(lambda n: u"LandType %s" % n)
+    name = factory.Sequence(lambda n: "LandType %s" % n)
     right_of_way = True
 
 

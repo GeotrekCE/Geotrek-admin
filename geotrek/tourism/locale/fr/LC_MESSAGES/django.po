@@ -23,10 +23,10 @@ msgid "Tourism"
 msgstr "Tourisme"
 
 msgid "After"
-msgstr "À partir du"
+msgstr "À partir d"
 
 msgid "Before"
-msgstr "Jusqu'au"
+msgstr "Jusqu'a"
 
 msgid "Completed"
 msgstr "Terminés"
@@ -165,7 +165,7 @@ msgid "Reservation systems"
 msgstr "Systèmes de réservation"
 
 msgid "Description teaser"
-msgstr "Chapeau"
+msgstr "Chapea"
 
 msgid "A brief summary"
 msgstr "Bref résumé"
@@ -342,7 +342,7 @@ msgid "yes,no"
 msgstr "oui,non"
 
 msgid "Thumbnail"
-msgstr "Aperçu"
+msgstr "Aperç"
 
 msgid "All"
 msgstr "Tout"

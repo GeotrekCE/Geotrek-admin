@@ -40,7 +40,7 @@ class InterventionViewsTest(CommonTest):
             ('manday_set-TOTAL_FORMS', '0'),
             ('manday_set-INITIAL_FORMS', '1'),
             ('manday_set-MAX_NUM_FORMS', '0'),
-        ]), u'This field is required.'
+        ]), 'This field is required.'
 
     def get_good_data(self):
         InterventionStatusFactory.create()
@@ -189,7 +189,7 @@ class InterventionViewsTest(CommonTest):
             infra = InfrastructureFactory.create()
         else:
             infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700000 6600000)')
-        infrastr = u"%s" % infra
+        infrastr = "%s" % infra
 
         response = self.client.get(Intervention.get_add_url() + '?infrastructure=%s' % infra.pk)
         self.assertEqual(response.status_code, 200)
@@ -209,7 +209,7 @@ class InterventionViewsTest(CommonTest):
             infra = InfrastructureFactory.create()
         else:
             infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700000 6600000)')
-        infrastr = u"%s" % infra
+        infrastr = "%s" % infra
 
         response = self.client.get(Intervention.get_add_url() + '?infrastructure=%s' % infra.pk)
         self.assertEqual(response.status_code, 200)
@@ -231,7 +231,7 @@ class InterventionViewsTest(CommonTest):
             infra = InfrastructureFactory.create()
         else:
             infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700000 6600000)')
-        infrastr = u"%s" % infra
+        infrastr = "%s" % infra
 
         intervention = InterventionFactory.create()
         intervention.set_topology(infra)
@@ -356,7 +356,7 @@ class ProjectViewsTest(CommonTest):
             ('funding_set-TOTAL_FORMS', '0'),
             ('funding_set-INITIAL_FORMS', '1'),
             ('funding_set-MAX_NUM_FORMS', '0'),
-        ]), u'This field is required.'
+        ]), 'This field is required.'
 
     def get_good_data(self):
         return {
@@ -513,11 +513,11 @@ class ExportTest(TranslationResetMixin, TestCase):
         for layer in [layer_point, layer_line]:
             self.assertEquals(layer.srs.name, 'RGF93_Lambert_93')
             self.assertItemsEqual(layer.fields, [
-                u'id', u'name', u'period', u'type', u'domain', u'constraint',
-                u'global_cos', u'interventi', u'interven_1', u'comments',
-                u'contractor', u'project_ow', u'project_ma', u'founders',
-                u'related_st', u'insertion_', u'update_dat',
-                u'cities', u'districts', u'restricted'
+                'id', 'name', 'period', 'type', 'domain', 'constraint',
+                'global_cos', 'interventi', 'interven_1', 'comments',
+                'contractor', 'project_ow', 'project_ma', 'founders',
+                'related_st', 'insertion_', 'update_dat',
+                'cities', 'districts', 'restricted'
             ])
 
         self.assertEquals(len(layer_point), 1)

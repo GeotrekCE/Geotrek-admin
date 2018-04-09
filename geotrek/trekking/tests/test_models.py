@@ -137,7 +137,7 @@ class TrekTest(TranslationResetMixin, TestCase):
         TrekFactory.create(name='A')
         TrekFactory.create(name='B')
         self.assertQuerysetEqual(Trek.objects.all(),
-                                 [u'<Trek: A>', u'<Trek: B>', u'<Trek: Ca>', u'<Trek: Cb>'],
+                                 ['<Trek: A>', '<Trek: B>', '<Trek: Ca>', '<Trek: Cb>'],
                                  ordered=False)
 
     def test_trek_itself_as_parent(self):
@@ -147,7 +147,7 @@ class TrekTest(TranslationResetMixin, TestCase):
         trek1 = TrekFactory.create(name='trek1')
         OrderedTrekChild.objects.create(parent=trek1, child=trek1)
         self.assertRaisesMessage(ValidationError,
-                                 u"Cannot use itself as child trek.",
+                                 "Cannot use itself as child trek.",
                                  trek1.full_clean)
 
 
@@ -333,7 +333,7 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         city2 = CityFactory.create(geom=MultiPolygon(Polygon(((3, 3), (9, 3), (9, 9),
                                                               (3, 9), (3, 3)))))
         self.assertEqual([city for city in trek.cities], [city1, city2])
-        self.assertEqual(trek.city_departure, unicode(city1))
+        self.assertEqual(trek.city_departure, str(city1))
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_city_departure_nds(self):
@@ -397,10 +397,10 @@ class TrekUpdateGeomTest(TestCase):
 
 class TrekItinerancyTest(TestCase):
     def test_next_previous(self):
-        trekA = TrekFactory(name=u"A")
-        trekB = TrekFactory(name=u"B")
-        trekC = TrekFactory(name=u"C")
-        trekD = TrekFactory(name=u"D")
+        trekA = TrekFactory(name="A")
+        trekB = TrekFactory(name="B")
+        trekC = TrekFactory(name="C")
+        trekD = TrekFactory(name="D")
         OrderedTrekChild(parent=trekC, child=trekA, order=42).save()
         OrderedTrekChild(parent=trekC, child=trekB, order=15).save()
         OrderedTrekChild(parent=trekD, child=trekA, order=1).save()
@@ -418,9 +418,9 @@ class TrekItinerancyTest(TestCase):
         self.assertEqual(trekD.previous_id, {})
 
     def test_delete_child(self):
-        trekA = TrekFactory(name=u"A")
-        trekB = TrekFactory(name=u"B")
-        trekC = TrekFactory(name=u"C")
+        trekA = TrekFactory(name="A")
+        trekB = TrekFactory(name="B")
+        trekC = TrekFactory(name="C")
         OrderedTrekChild(parent=trekA, child=trekB, order=1).save()
         OrderedTrekChild(parent=trekA, child=trekC, order=2).save()
         self.assertTrue(OrderedTrekChild.objects.filter(child=trekB).exists())
@@ -442,9 +442,9 @@ class TrekItinerancyTest(TestCase):
         self.assertEqual(trekC.parents_id, [trekA.id])
 
     def test_delete_parent(self):
-        trekA = TrekFactory(name=u"A")
-        trekB = TrekFactory(name=u"B")
-        trekC = TrekFactory(name=u"C")
+        trekA = TrekFactory(name="A")
+        trekB = TrekFactory(name="B")
+        trekC = TrekFactory(name="C")
         OrderedTrekChild(parent=trekB, child=trekA, order=1).save()
         OrderedTrekChild(parent=trekC, child=trekA, order=2).save()
         self.assertTrue(OrderedTrekChild.objects.filter(parent=trekB).exists())

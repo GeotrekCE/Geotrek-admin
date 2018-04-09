@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from django.conf import settings
 from django.db.models import F, Case, When
 from django_filters.rest_framework.backends import DjangoFilterBackend

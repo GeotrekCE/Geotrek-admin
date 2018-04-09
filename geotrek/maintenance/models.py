@@ -29,30 +29,30 @@ class InterventionManager(models.GeoManager):
 class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                    TimeStampedModelMixin, StructureRelated, NoDeleteMixin):
 
-    name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom',
-                            help_text=_(u"Brief summary"))
-    date = models.DateField(default=datetime.now, verbose_name=_(u"Date"), db_column='date',
-                            help_text=_(u"When ?"))
-    subcontracting = models.BooleanField(verbose_name=_(u"Subcontracting"), default=False,
+    name = models.CharField(verbose_name=_("Name"), max_length=128, db_column='nom',
+                            help_text=_("Brief summary"))
+    date = models.DateField(default=datetime.now, verbose_name=_("Date"), db_column='date',
+                            help_text=_("When ?"))
+    subcontracting = models.BooleanField(verbose_name=_("Subcontracting"), default=False,
                                          db_column='sous_traitance')
 
     # Technical information
-    width = models.FloatField(default=0.0, verbose_name=_(u"Width"), db_column='largeur')
-    height = models.FloatField(default=0.0, verbose_name=_(u"Height"), db_column='hauteur')
-    area = models.FloatField(editable=False, default=0, verbose_name=_(u"Area"), db_column='surface')
+    width = models.FloatField(default=0.0, verbose_name=_("Width"), db_column='largeur')
+    height = models.FloatField(default=0.0, verbose_name=_("Height"), db_column='hauteur')
+    area = models.FloatField(editable=False, default=0, verbose_name=_("Area"), db_column='surface')
 
     # Costs
-    material_cost = models.FloatField(default=0.0, verbose_name=_(u"Material cost"), db_column='cout_materiel')
-    heliport_cost = models.FloatField(default=0.0, verbose_name=_(u"Heliport cost"), db_column='cout_heliport')
-    subcontract_cost = models.FloatField(default=0.0, verbose_name=_(u"Subcontract cost"), db_column='cout_soustraitant')
+    material_cost = models.FloatField(default=0.0, verbose_name=_("Material cost"), db_column='cout_materiel')
+    heliport_cost = models.FloatField(default=0.0, verbose_name=_("Heliport cost"), db_column='cout_heliport')
+    subcontract_cost = models.FloatField(default=0.0, verbose_name=_("Subcontract cost"), db_column='cout_soustraitant')
 
     """ Topology can be of type Infrastructure, Signage or of own type Intervention """
     topology = models.ForeignKey(Topology, null=True,  # TODO: why null ?
                                  related_name="interventions_set",
-                                 verbose_name=_(u"Interventions"))
+                                 verbose_name=_("Interventions"))
     # AltimetyMixin for denormalized fields from related topology, updated via trigger.
     length = models.FloatField(editable=True, default=0.0, null=True, blank=True, db_column='longueur',
-                               verbose_name=_(u"3D Length"))
+                               verbose_name=_("3D Length"))
 
     stake = models.ForeignKey('core.Stake', null=True, blank=True,
                               related_name='interventions', verbose_name=_("Stake"), db_column='enjeu')
@@ -60,25 +60,25 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     status = models.ForeignKey('InterventionStatus', verbose_name=_("Status"), db_column='status')
 
     type = models.ForeignKey('InterventionType', null=True, blank=True,
-                             verbose_name=_(u"Type"), db_column='type')
+                             verbose_name=_("Type"), db_column='type')
 
     disorders = models.ManyToManyField('InterventionDisorder', related_name="interventions",
-                                       db_table="m_r_intervention_desordre", verbose_name=_(u"Disorders"),
+                                       db_table="m_r_intervention_desordre", verbose_name=_("Disorders"),
                                        blank=True)
 
-    jobs = models.ManyToManyField('InterventionJob', through='ManDay', verbose_name=_(u"Jobs"))
+    jobs = models.ManyToManyField('InterventionJob', through='ManDay', verbose_name=_("Jobs"))
 
     project = models.ForeignKey('Project', null=True, blank=True, related_name="interventions",
-                                verbose_name=_(u"Project"), db_column='chantier')
-    description = models.TextField(blank=True, verbose_name=_(u"Description"), db_column='descriptif',
-                                   help_text=_(u"Remarks and notes"))
+                                verbose_name=_("Project"), db_column='chantier')
+    description = models.TextField(blank=True, verbose_name=_("Description"), db_column='descriptif',
+                                   help_text=_("Remarks and notes"))
 
     objects = NoDeleteMixin.get_manager_cls(InterventionManager)()
 
     class Meta:
         db_table = 'm_t_intervention'
-        verbose_name = _(u"Intervention")
-        verbose_name_plural = _(u"Interventions")
+        verbose_name = _("Intervention")
+        verbose_name_plural = _("Interventions")
 
     def __init__(self, *args, **kwargs):
         super(Intervention, self).__init__(*args, **kwargs)
@@ -166,12 +166,12 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         if self.on_existing_topology:
             icon = self.topology.kind.lower()
             if self.infrastructure:
-                title = u'%s: %s' % (_(self.topology.kind.capitalize()),
+                title = '%s: %s' % (_(self.topology.kind.capitalize()),
                                      self.infrastructure)
             elif self.signage:
-                title = u'%s: %s' % (_(self.topology.kind.capitalize()),
+                title = '%s: %s' % (_(self.topology.kind.capitalize()),
                                      self.signage)
-        return u'<img src="%simages/%s-16.png" title="%s">' % (settings.STATIC_URL,
+        return '<img src="%simages/%s-16.png" title="%s">' % (settings.STATIC_URL,
                                                                icon,
                                                                title)
 
@@ -179,12 +179,12 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     def infrastructure_csv_display(self):
         if self.on_existing_topology:
             if self.infrastructure:
-                return u"%s: %s (%s)" % (
+                return "%s: %s (%s)" % (
                     _(self.topology.kind.capitalize()),
                     self.infrastructure,
                     self.infrastructure.pk)
             elif self.signage:
-                return u"%s: %s (%s)" % (
+                return "%s: %s (%s)" % (
                     _(self.topology.kind.capitalize()),
                     self.signage,
                     self.signage.pk)
@@ -282,17 +282,17 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     @property
     def name_display(self):
-        return u'<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
+        return '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
                                                                   self.get_detail_url(),
                                                                   self.name,
                                                                   self.name)
 
     @property
     def name_csv_display(self):
-        return unicode(self.name)
+        return str(self.name)
 
-    def __unicode__(self):
-        return u"%s (%s)" % (self.name, self.date)
+    def __str__(self):
+        return "%s (%s)" % (self.name, self.date)
 
     @classmethod
     def path_interventions(cls, path):
@@ -304,91 +304,91 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         return cls.objects.existing().filter(topology__in=topos).distinct('pk')
 
 
-Path.add_property('interventions', lambda self: Intervention.path_interventions(self), _(u"Interventions"))
-Topology.add_property('interventions', lambda self: Intervention.topology_interventions(self), _(u"Interventions"))
+Path.add_property('interventions', lambda self: Intervention.path_interventions(self), _("Interventions"))
+Topology.add_property('interventions', lambda self: Intervention.topology_interventions(self), _("Interventions"))
 
 
 class InterventionStatus(StructureOrNoneRelated):
 
-    status = models.CharField(verbose_name=_(u"Status"), max_length=128, db_column='status')
+    status = models.CharField(verbose_name=_("Status"), max_length=128, db_column='status')
 
     class Meta:
         db_table = 'm_b_suivi'
-        verbose_name = _(u"Intervention's status")
-        verbose_name_plural = _(u"Intervention's statuses")
+        verbose_name = _("Intervention's status")
+        verbose_name_plural = _("Intervention's statuses")
         ordering = ['id']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.status, self.structure.name)
+            return "{} ({})".format(self.status, self.structure.name)
         return self.status
 
 
 class InterventionType(StructureOrNoneRelated):
 
-    type = models.CharField(max_length=128, verbose_name=_(u"Type"), db_column='type')
+    type = models.CharField(max_length=128, verbose_name=_("Type"), db_column='type')
 
     class Meta:
         db_table = 'm_b_intervention'
-        verbose_name = _(u"Intervention's type")
-        verbose_name_plural = _(u"Intervention's types")
+        verbose_name = _("Intervention's type")
+        verbose_name_plural = _("Intervention's types")
         ordering = ['type']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.type, self.structure.name)
+            return "{} ({})".format(self.type, self.structure.name)
         return self.type
 
 
 class InterventionDisorder(StructureOrNoneRelated):
 
-    disorder = models.CharField(max_length=128, verbose_name=_(u"Disorder"), db_column='desordre')
+    disorder = models.CharField(max_length=128, verbose_name=_("Disorder"), db_column='desordre')
 
     class Meta:
         db_table = 'm_b_desordre'
-        verbose_name = _(u"Intervention's disorder")
-        verbose_name_plural = _(u"Intervention's disorders")
+        verbose_name = _("Intervention's disorder")
+        verbose_name_plural = _("Intervention's disorders")
         ordering = ['disorder']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.disorder, self.structure.name)
+            return "{} ({})".format(self.disorder, self.structure.name)
         return self.disorder
 
 
 class InterventionJob(StructureOrNoneRelated):
 
-    job = models.CharField(max_length=128, verbose_name=_(u"Job"), db_column='fonction')
-    cost = models.DecimalField(verbose_name=_(u"Cost"), default=1.0, decimal_places=2, max_digits=8, db_column="cout_jour")
+    job = models.CharField(max_length=128, verbose_name=_("Job"), db_column='fonction')
+    cost = models.DecimalField(verbose_name=_("Cost"), default=1.0, decimal_places=2, max_digits=8, db_column="cout_jour")
 
     class Meta:
         db_table = 'm_b_fonction'
-        verbose_name = _(u"Intervention's job")
-        verbose_name_plural = _(u"Intervention's jobs")
+        verbose_name = _("Intervention's job")
+        verbose_name_plural = _("Intervention's jobs")
         ordering = ['job']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.job, self.structure.name)
+            return "{} ({})".format(self.job, self.structure.name)
         return self.job
 
 
 class ManDay(models.Model):
 
-    nb_days = models.DecimalField(verbose_name=_(u"Mandays"), decimal_places=2, max_digits=6, db_column='nb_jours')
+    nb_days = models.DecimalField(verbose_name=_("Mandays"), decimal_places=2, max_digits=6, db_column='nb_jours')
     intervention = models.ForeignKey(Intervention, db_column='intervention')
-    job = models.ForeignKey(InterventionJob, verbose_name=_(u"Job"), db_column='fonction')
+    job = models.ForeignKey(InterventionJob, verbose_name=_("Job"), db_column='fonction')
 
     class Meta:
         db_table = 'm_r_intervention_fonction'
-        verbose_name = _(u"Manday")
-        verbose_name_plural = _(u"Mandays")
+        verbose_name = _("Manday")
+        verbose_name_plural = _("Mandays")
 
     @property
     def cost(self):
         return float(self.nb_days * self.job.cost)
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.nb_days)
 
 
@@ -405,33 +405,33 @@ class ProjectManager(models.GeoManager):
 class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
               StructureRelated, NoDeleteMixin):
 
-    name = models.CharField(verbose_name=_(u"Name"), max_length=128, db_column='nom')
-    begin_year = models.IntegerField(verbose_name=_(u"Begin year"), db_column='annee_debut')
-    end_year = models.IntegerField(verbose_name=_(u"End year"), db_column='annee_fin')
-    constraint = models.TextField(verbose_name=_(u"Constraint"), blank=True, db_column='contraintes',
-                                  help_text=_(u"Specific conditions, ..."))
-    global_cost = models.FloatField(verbose_name=_(u"Global cost"), default=0, db_column='cout_global',
-                                    help_text=_(u"€"))
-    comments = models.TextField(verbose_name=_(u"Comments"), blank=True, db_column='commentaires',
-                                help_text=_(u"Remarks and notes"))
+    name = models.CharField(verbose_name=_("Name"), max_length=128, db_column='nom')
+    begin_year = models.IntegerField(verbose_name=_("Begin year"), db_column='annee_debut')
+    end_year = models.IntegerField(verbose_name=_("End year"), db_column='annee_fin')
+    constraint = models.TextField(verbose_name=_("Constraint"), blank=True, db_column='contraintes',
+                                  help_text=_("Specific conditions, ..."))
+    global_cost = models.FloatField(verbose_name=_("Global cost"), default=0, db_column='cout_global',
+                                    help_text=_("€"))
+    comments = models.TextField(verbose_name=_("Comments"), blank=True, db_column='commentaires',
+                                help_text=_("Remarks and notes"))
     type = models.ForeignKey('ProjectType', null=True, blank=True,
-                             verbose_name=_(u"Type"), db_column='type')
+                             verbose_name=_("Type"), db_column='type')
     domain = models.ForeignKey('ProjectDomain', null=True, blank=True,
-                               verbose_name=_(u"Domain"), db_column='domaine')
+                               verbose_name=_("Domain"), db_column='domaine')
     contractors = models.ManyToManyField('Contractor', related_name="projects",
-                                         db_table="m_r_chantier_prestataire", verbose_name=_(u"Contractors"))
+                                         db_table="m_r_chantier_prestataire", verbose_name=_("Contractors"))
     project_owner = models.ForeignKey(Organism, related_name='own',
-                                      verbose_name=_(u"Project owner"), db_column='maitre_oeuvre')
+                                      verbose_name=_("Project owner"), db_column='maitre_oeuvre')
     project_manager = models.ForeignKey(Organism, related_name='manage',
-                                        verbose_name=_(u"Project manager"), db_column='maitre_ouvrage')
-    founders = models.ManyToManyField(Organism, through='Funding', verbose_name=_(u"Founders"))
+                                        verbose_name=_("Project manager"), db_column='maitre_ouvrage')
+    founders = models.ManyToManyField(Organism, through='Funding', verbose_name=_("Founders"))
 
     objects = NoDeleteMixin.get_manager_cls(ProjectManager)()
 
     class Meta:
         db_table = 'm_t_chantier'
-        verbose_name = _(u"Project")
-        verbose_name_plural = _(u"Projects")
+        verbose_name = _("Project")
+        verbose_name_plural = _("Projects")
         ordering = ['-begin_year', 'name']
 
     def __init__(self, *args, **kwargs):
@@ -494,26 +494,26 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
 
     @property
     def name_display(self):
-        return u'<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
+        return '<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
                                                                  self.get_detail_url(),
                                                                  self.name,
                                                                  self.name)
 
     @property
     def name_csv_display(self):
-        return unicode(self.name)
+        return str(self.name)
 
     @property
     def interventions_csv_display(self):
-        return [unicode(i) for i in self.interventions.existing()]
+        return [str(i) for i in self.interventions.existing()]
 
     @property
     def contractors_display(self):
-        return [unicode(c) for c in self.contractors.all()]
+        return [str(c) for c in self.contractors.all()]
 
     @property
     def founders_display(self):
-        return [unicode(f) for f in self.founders.all()]
+        return [str(f) for f in self.founders.all()]
 
     @property
     def period(self):
@@ -539,8 +539,8 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
     def interventions_total_cost_verbose_name(cls):
         return _("Interventions total cost")
 
-    def __unicode__(self):
-        return u"%s (%s-%s)" % (self.name, self.begin_year, self.end_year)
+    def __str__(self):
+        return "%s (%s-%s)" % (self.name, self.begin_year, self.end_year)
 
     @classmethod
     def path_projects(cls, path):
@@ -570,71 +570,71 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
 
     @classmethod
     def get_create_label(cls):
-        return _(u"Add a new project")
+        return _("Add a new project")
 
 
-Path.add_property('projects', lambda self: Project.path_projects(self), _(u"Projects"))
-Topology.add_property('projects', lambda self: Project.topology_projects(self), _(u"Projects"))
+Path.add_property('projects', lambda self: Project.path_projects(self), _("Projects"))
+Topology.add_property('projects', lambda self: Project.topology_projects(self), _("Projects"))
 
 
 class ProjectType(StructureOrNoneRelated):
 
-    type = models.CharField(max_length=128, verbose_name=_(u"Type"), db_column='type')
+    type = models.CharField(max_length=128, verbose_name=_("Type"), db_column='type')
 
     class Meta:
         db_table = 'm_b_chantier'
-        verbose_name = _(u"Project type")
-        verbose_name_plural = _(u"Project types")
+        verbose_name = _("Project type")
+        verbose_name_plural = _("Project types")
         ordering = ['type']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.type, self.structure.name)
+            return "{} ({})".format(self.type, self.structure.name)
         return self.type
 
 
 class ProjectDomain(StructureOrNoneRelated):
 
-    domain = models.CharField(max_length=128, verbose_name=_(u"Domain"), db_column='domaine')
+    domain = models.CharField(max_length=128, verbose_name=_("Domain"), db_column='domaine')
 
     class Meta:
         db_table = 'm_b_domaine'
-        verbose_name = _(u"Project domain")
-        verbose_name_plural = _(u"Project domains")
+        verbose_name = _("Project domain")
+        verbose_name_plural = _("Project domains")
         ordering = ['domain']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.domain, self.structure.name)
+            return "{} ({})".format(self.domain, self.structure.name)
         return self.domain
 
 
 class Contractor(StructureOrNoneRelated):
 
-    contractor = models.CharField(max_length=128, verbose_name=_(u"Contractor"), db_column='prestataire')
+    contractor = models.CharField(max_length=128, verbose_name=_("Contractor"), db_column='prestataire')
 
     class Meta:
         db_table = 'm_b_prestataire'
-        verbose_name = _(u"Contractor")
-        verbose_name_plural = _(u"Contractors")
+        verbose_name = _("Contractor")
+        verbose_name_plural = _("Contractors")
         ordering = ['contractor']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.contractor, self.structure.name)
+            return "{} ({})".format(self.contractor, self.structure.name)
         return self.contractor
 
 
 class Funding(models.Model):
 
-    amount = models.FloatField(default=0.0, verbose_name=_(u"Amount"), db_column='montant')
-    project = models.ForeignKey(Project, verbose_name=_(u"Project"), db_column='chantier')
-    organism = models.ForeignKey(Organism, verbose_name=_(u"Organism"), db_column='organisme')
+    amount = models.FloatField(default=0.0, verbose_name=_("Amount"), db_column='montant')
+    project = models.ForeignKey(Project, verbose_name=_("Project"), db_column='chantier')
+    organism = models.ForeignKey(Organism, verbose_name=_("Organism"), db_column='organisme')
 
     class Meta:
         db_table = 'm_r_chantier_financement'
-        verbose_name = _(u"Funding")
-        verbose_name_plural = _(u"Fundings")
+        verbose_name = _("Funding")
+        verbose_name_plural = _("Fundings")
 
-    def __unicode__(self):
-        return u"%s : %s" % (self.project, self.amount)
+    def __str__(self):
+        return "%s : %s" % (self.project, self.amount)

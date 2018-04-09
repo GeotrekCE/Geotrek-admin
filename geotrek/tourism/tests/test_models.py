@@ -10,7 +10,7 @@ from geotrek.tourism.factories import InformationDeskFactory
 
 class InformationDeskTest(TestCase):
     def setUp(self):
-        self.informationDesk1 = InformationDeskFactory.create(description="Coucou")
+        self.informationDesk1 = InformationDeskFactory.create(description="Couco")
 
     def test_serializable_type(self):
         self.assertEqual(['pictogram', 'id', 'label'], self.informationDesk1.serializable_type.keys())

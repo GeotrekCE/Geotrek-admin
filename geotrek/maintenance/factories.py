@@ -13,28 +13,28 @@ class InterventionStatusFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.InterventionStatus
 
-    status = factory.Sequence(lambda n: u"Status %s" % n)
+    status = factory.Sequence(lambda n: "Status %s" % n)
 
 
 class InterventionDisorderFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.InterventionDisorder
 
-    disorder = factory.Sequence(lambda n: u"Disorder %s" % n)
+    disorder = factory.Sequence(lambda n: "Disorder %s" % n)
 
 
 class InterventionTypeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.InterventionType
 
-    type = factory.Sequence(lambda n: u"Type %s" % n)
+    type = factory.Sequence(lambda n: "Type %s" % n)
 
 
 class InterventionJobFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.InterventionJob
 
-    job = factory.Sequence(lambda n: u"Job %s" % n)
+    job = factory.Sequence(lambda n: "Job %s" % n)
     cost = 500.0
 
 
@@ -50,7 +50,7 @@ class InterventionFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Intervention
 
-    name = factory.Sequence(lambda n: u"Intervention %s" % n)
+    name = factory.Sequence(lambda n: "Intervention %s" % n)
     status = factory.SubFactory(InterventionStatusFactory)
     stake = factory.SubFactory(StakeFactory)
     type = factory.SubFactory(InterventionTypeFactory)
@@ -100,28 +100,28 @@ class ContractorFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Contractor
 
-    contractor = factory.Sequence(lambda n: u"Contractor %s" % n)
+    contractor = factory.Sequence(lambda n: "Contractor %s" % n)
 
 
 class ProjectTypeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.ProjectType
 
-    type = factory.Sequence(lambda n: u"Type %s" % n)
+    type = factory.Sequence(lambda n: "Type %s" % n)
 
 
 class ProjectDomainFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.ProjectDomain
 
-    domain = factory.Sequence(lambda n: u"Domain %s" % n)
+    domain = factory.Sequence(lambda n: "Domain %s" % n)
 
 
 class ProjectFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Project
 
-    name = factory.Sequence(lambda n: u"Project %s" % n)
+    name = factory.Sequence(lambda n: "Project %s" % n)
     type = factory.SubFactory(ProjectTypeFactory)
     domain = factory.SubFactory(ProjectDomainFactory)
     begin_year = 2010

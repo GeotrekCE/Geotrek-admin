@@ -1,5 +1,4 @@
 # -*- encoding: utf-8 -*-
-
 from django.test import TestCase
 from geotrek.common.tasks import import_datas, import_datas_from_web
 from geotrek.common.models import Organism

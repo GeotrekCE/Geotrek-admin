@@ -24,17 +24,17 @@ class CityFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.City
 
-    code = factory.Sequence(lambda n: u"#%s" % n)  # id (!) with max_length=6
-    name = factory.Sequence(lambda n: u"City name %s" % n)
-    geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(geom_city_iter.next()), srid=settings.SRID))
+    code = factory.Sequence(lambda n: "#%s" % n)  # id (!) with max_length=6
+    name = factory.Sequence(lambda n: "City name %s" % n)
+    geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(next(geom_city_iter)), srid=settings.SRID))
 
 
 class DistrictFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.District
 
-    name = factory.Sequence(lambda n: u"District name %s" % n)
-    geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(geom_district_iter.next()), srid=settings.SRID))
+    name = factory.Sequence(lambda n: "District name %s" % n)
+    geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(next(geom_district_iter)), srid=settings.SRID))
 
 
 class RestrictedAreaTypeFactory(factory.DjangoModelFactory):
@@ -42,15 +42,15 @@ class RestrictedAreaTypeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.RestrictedAreaType
 
-    name = factory.Sequence(lambda n: u"Restricted name %s" % n)
+    name = factory.Sequence(lambda n: "Restricted name %s" % n)
 
 
 class RestrictedAreaFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.RestrictedArea
 
-    name = factory.Sequence(lambda n: u"Restricted area name %s" % n)
-    geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(geom_area_iter.next()), srid=settings.SRID))
+    name = factory.Sequence(lambda n: "Restricted area name %s" % n)
+    geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(next(geom_area_iter)), srid=settings.SRID))
     area_type = factory.SubFactory(RestrictedAreaTypeFactory)
 
 

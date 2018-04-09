@@ -268,7 +268,7 @@
       "locked" : false
     } ],
     "informationsFeteEtManifestation" : {
-      "nomLieu" : "Embranchement de la route de Pomet",
+      "nomLie" : "Embranchement de la route de Pomet",
       "typesManifestation" : [ {
         "elementReferenceType" : "FeteEtManifestationType",
         "id" : 1971,

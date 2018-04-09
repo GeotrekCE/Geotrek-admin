@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import json
 import logging
 from collections import defaultdict
@@ -98,7 +97,7 @@ class PathList(MapEntityList):
         return columns
 
     def get_template_names(self):
-        return (u"core/path_list.html",)
+        return ("core/path_list.html",)
 
 
 class PathJsonList(MapEntityJsonList, PathList):
@@ -379,18 +378,18 @@ def merge_path(request):
             path_b = Path.objects.get(pk=ids_path_merge[1])
 
             if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
-                raise Exception(_(u"You don't have the right to change these paths"))
+                raise Exception(_("You don't have the right to change these paths"))
 
             if path_a.draft != path_b.draft:
-                raise Exception(_(u"You can't merge 1 draft path with 1 normal path"))
+                raise Exception(_("You can't merge 1 draft path with 1 normal path"))
 
             result = path_a.merge_path(path_b)
 
             if result == 2:
-                raise Exception(_(u"You can't merge 2 paths with a 3rd path in the intersection"))
+                raise Exception(_("You can't merge 2 paths with a 3rd path in the intersection"))
 
             elif result == 0:
-                raise Exception(_(u"No matching points to merge paths found"))
+                raise Exception(_("No matching points to merge paths found"))
 
             else:
                 response = {u'success': _(u"Paths merged successfully")}

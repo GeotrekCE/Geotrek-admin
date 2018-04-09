@@ -16,9 +16,9 @@ class OptionalRangeFilter(RangeFilter):
     def filter(self, qs, value):
         if value:
             if value.start and not value.stop:
-                value = slice(value.start, Decimal(sys.maxint), value.step)
+                value = slice(value.start, Decimal(sys.maxsize), value.step)
             if not value.start and value.stop:
-                value = slice(Decimal(-(sys.maxint + 1)), value.stop, value.step)
+                value = slice(Decimal(-(sys.maxsize + 1)), value.stop, value.step)
         return super(OptionalRangeFilter, self).filter(qs, value)
 
 

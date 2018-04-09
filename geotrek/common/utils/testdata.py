@@ -23,7 +23,7 @@ def get_dummy_uploaded_image_svg(name='dummy_img.svg'):
 
 
 def get_dummy_uploaded_file(name='dummy_file.txt'):
-    return SimpleUploadedFile(name, 'HelloWorld', content_type='plain/text')
+    return SimpleUploadedFile(name, b'HelloWorld', content_type='plain/text')
 
 
 def get_dummy_uploaded_document(name='dummy_file.odt', size=128):

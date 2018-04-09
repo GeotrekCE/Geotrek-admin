@@ -27,13 +27,13 @@ class InfrastructureType(StructureOrNoneRelated, OptionalPictogramMixin):
 
     class Meta:
         db_table = 'a_b_infrastructure'
-        verbose_name = _(u"Infrastructure Type")
-        verbose_name_plural = _(u"Infrastructure Types")
+        verbose_name = _("Infrastructure Type")
+        verbose_name_plural = _("Infrastructure Types")
         ordering = ['label', 'type']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.label, self.structure.name)
+            return "{} ({})".format(self.label, self.structure.name)
         return self.label
 
     def get_pictogram_url(self):
@@ -44,16 +44,16 @@ class InfrastructureType(StructureOrNoneRelated, OptionalPictogramMixin):
 
 
 class InfrastructureCondition(StructureOrNoneRelated):
-    label = models.CharField(verbose_name=_(u"Name"), db_column="etat", max_length=250)
+    label = models.CharField(verbose_name=_("Name"), db_column="etat", max_length=250)
 
     class Meta:
-        verbose_name = _(u"Infrastructure Condition")
-        verbose_name_plural = _(u"Infrastructure Conditions")
+        verbose_name = _("Infrastructure Condition")
+        verbose_name_plural = _("Infrastructure Conditions")
         db_table = "a_b_etat"
 
-    def __unicode__(self):
+    def  __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.label, self.structure.name)
+            return "{} ({})".format(self.label, self.structure.name)
         return self.label
 
 
@@ -63,9 +63,9 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
                                        db_column='evenement')
 
     name = models.CharField(db_column="nom", max_length=128,
-                            help_text=_(u"Reference, code, ..."), verbose_name=_("Name"))
+                            help_text=_("Reference, code, ..."), verbose_name=_("Name"))
     description = models.TextField(blank=True, db_column='description',
-                                   verbose_name=_("Description"), help_text=_(u"Specificites"))
+                                   verbose_name=_("Description"), help_text=_("Specificites"))
     condition = models.ForeignKey(InfrastructureCondition, db_column='etat',
                                   verbose_name=_("Condition"), blank=True, null=True,
                                   on_delete=models.SET_NULL)
@@ -77,12 +77,12 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
     class Meta:
         abstract = True
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     @property
     def implantation_year_display(self):
-        return u"{}".format(self.implantation_year) if self.implantation_year else ""
+        return "{}".format(self.implantation_year) if self.implantation_year else ""
 
     @property
     def name_display(self):
@@ -95,15 +95,15 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
 
     @property
     def name_csv_display(self):
-        return unicode(self)
+        return str(self)
 
     @property
     def type_display(self):
-        return unicode(self.type)
+        return str(self.type)
 
     @property
     def cities_display(self):
-        return [unicode(c) for c in self.cities] if hasattr(self, 'cities') else []
+        return [str(c) for c in self.cities] if hasattr(self, 'cities') else []
 
     @classproperty
     def cities_verbose_name(cls):
@@ -125,8 +125,8 @@ class Infrastructure(MapEntityMixin, BaseInfrastructure):
 
     class Meta:
         db_table = 'a_t_infrastructure'
-        verbose_name = _(u"Infrastructure")
-        verbose_name_plural = _(u"Infrastructures")
+        verbose_name = _("Infrastructure")
+        verbose_name_plural = _("Infrastructures")
 
     @classmethod
     def path_infrastructures(cls, path):
@@ -146,7 +146,7 @@ class Infrastructure(MapEntityMixin, BaseInfrastructure):
         return cls.topology_infrastructures(topology).filter(published=True)
 
 
-Path.add_property('infrastructures', lambda self: Infrastructure.path_infrastructures(self), _(u"Infrastructures"))
-Topology.add_property('infrastructures', Infrastructure.topology_infrastructures, _(u"Infrastructures"))
+Path.add_property('infrastructures', lambda self: Infrastructure.path_infrastructures(self), _("Infrastructures"))
+Topology.add_property('infrastructures', Infrastructure.topology_infrastructures, _("Infrastructures"))
 Topology.add_property('published_infrastructures', Infrastructure.published_topology_infrastructure,
-                      _(u"Published Infrastructures"))
+                      _("Published Infrastructures"))

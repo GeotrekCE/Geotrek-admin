@@ -299,11 +299,11 @@ msgstr "Der Download von {url} konnte nicht durchgeführt werden. HTTP Statuscod
 
 #, python-brace-format
 msgid "Type 1 '{subval}' does not exist for category '{cat}'. Please add it"
-msgstr "Typ 1 '{subval}' existiert nicht für die Kategorie '{cat}'. Bitte fügen Sie es hinzu"
+msgstr "Typ 1 '{subval}' existiert nicht für die Kategorie '{cat}'. Bitte fügen Sie es hinz"
 
 #, python-brace-format
 msgid "Type 2 '{subval}' does not exist for category '{cat}'. Please add it"
-msgstr "Typ 2 '{subval}' existiert nicht für die Kategorie '{cat}'. Bitte fügen Sie es hinzu"
+msgstr "Typ 2 '{subval}' existiert nicht für die Kategorie '{cat}'. Bitte fügen Sie es hinz"
 
 msgid "touristic-content"
 msgstr "touristische Inhalte"

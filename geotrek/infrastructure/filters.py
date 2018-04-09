@@ -19,7 +19,7 @@ class InfrastructureFilterSet(StructureRelatedFilterSet):
 
         field = self.form.fields['type__type']
         all_choices = list(field.widget.choices)
-        field.widget.choices = [('', _(u"Category"))] + all_choices[1:]
+        field.widget.choices = [('', _("Category"))] + all_choices[1:]
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Infrastructure

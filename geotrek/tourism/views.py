@@ -505,7 +505,7 @@ class TouristicCategoryView(APIView):
 
         if request.GET.get('events', False):
             response.append({'id': 'E',
-                             'label': _(u"Touristic events"),
+                             'label': _("Touristic events"),
                              'type1_label': "",
                              'type2_label': "",
                              'pictogram': os.path.join(settings.STATIC_URL, 'tourism', 'touristicevent.svg'),

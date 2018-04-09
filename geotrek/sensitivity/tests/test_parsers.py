@@ -1,5 +1,4 @@
 # -*- encoding: utf-8 -*-
-
 import os
 import mock
 import requests
@@ -37,7 +36,7 @@ json_test_species = {
         {
             "id": 1,
             "url": "https://biodiv-sports.fr/api/v2/sensitivearea/46/?format=json",
-            "name": {"fr": u"Tétras lyre", "en": u"Black grouse", "it": u"Fagiano di monte"},
+            "name": {"fr": "Tétras lyre", "en": "Black grouse", "it": "Fagiano di monte"},
             "description": {"fr": "Blabla", "en": "Blahblah", "it": ""},
             "period": [True, True, True, True, False, False, False, False, False, False, False, True],
             "contact": "",
@@ -59,7 +58,7 @@ json_test_species = {
         {
             "id": 2,
             "url": "https://biodiv-sports.fr/api/v2/sensitivearea/46/?format=json",
-            "name": {"fr": u"Tétras lyre", "en": u"Black grouse", "it": u"Fagiano di monte"},
+            "name": {"fr": "Tétras lyre", "en": "Black grouse", "it": "Fagiano di monte"},
             "description": {"fr": "Blabla2", "en": "Blahblah2", "it": ""},
             "period": [True, True, True, True, False, False, False, False, False, False, False, True],
             "contact": "",
@@ -105,8 +104,8 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
         area_1 = SensitiveArea.objects.first()
         self.assertEqual(practice.name, "Land")
         self.assertEqual(practice.name_fr, "Terrestre")
-        self.assertEqual(species.name, u"Black grouse")
-        self.assertEqual(species.name_fr, u"Tétras lyre")
+        self.assertEqual(species.name, "Black grouse")
+        self.assertEqual(species.name_fr, "Tétras lyre")
         self.assertTrue(species.period01)
         self.assertFalse(species.period06)
         self.assertEqual(species.eid, '7')
@@ -154,8 +153,8 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
         area = SensitiveArea.objects.first()
         self.assertEqual(practice.name, "Land")
         self.assertEqual(practice.name_fr, "Terrestre")
-        self.assertEqual(species.name, u"Black grouse")
-        self.assertEqual(species.name_fr, u"Tétras lyre")
+        self.assertEqual(species.name, "Black grouse")
+        self.assertEqual(species.name_fr, "Tétras lyre")
         self.assertEqual(species.eid, None)
         self.assertQuerysetEqual(species.practices.all(), ['<SportPractice: Land>'])
         self.assertEqual(area.eid, '1')
@@ -201,12 +200,12 @@ class SpeciesSensitiveAreaShapeParserTest(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'species.shp')
         call_command('import', 'geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser', filename, verbosity=0)
         self.assertEqual(SensitiveArea.objects.count(), 0)
-        species = SpeciesFactory(name=u"Aigle royal")
+        species = SpeciesFactory(name="Aigle royal")
         call_command('import', 'geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser', filename, verbosity=0)
         area = SensitiveArea.objects.first()
         self.assertEqual(area.species, species)
-        self.assertEqual(area.contact, u"Contact")
-        self.assertEqual(area.description, u"Test UTF8 éêè")
+        self.assertEqual(area.contact, "Contact")
+        self.assertEqual(area.description, "Test UTF8 éêè")
         self.assertEqual(
             area.geom.wkt,
             'POLYGON ((929315.3613368585 6483309.443505396, 929200.3539448171 6483204.020062691, '

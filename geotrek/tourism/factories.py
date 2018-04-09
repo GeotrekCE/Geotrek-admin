@@ -17,7 +17,7 @@ class InformationDeskTypeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.InformationDeskType
 
-    label = factory.Sequence(lambda n: u"Type %s" % n)
+    label = factory.Sequence(lambda n: "Type %s" % n)
     pictogram = get_dummy_uploaded_image()
 
 
@@ -25,16 +25,16 @@ class InformationDeskFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.InformationDesk
 
-    name = factory.Sequence(lambda n: u"information desk name %s" % n)
+    name = factory.Sequence(lambda n: "information desk name %s" % n)
     type = factory.SubFactory(InformationDeskTypeFactory)
-    description = factory.Sequence(lambda n: u"<p>description %s</p>" % n)
-    phone = factory.Sequence(lambda n: u"01 02 03 %s" % n)
-    email = factory.Sequence(lambda n: u"email-%s@makina-corpus.com" % n)
-    website = factory.Sequence(lambda n: u"http://makina-corpus.com/%s" % n)
+    description = factory.Sequence(lambda n: "<p>description %s</p>" % n)
+    phone = factory.Sequence(lambda n: "01 02 03 %s" % n)
+    email = factory.Sequence(lambda n: "email-%s@makina-corpus.com" % n)
+    website = factory.Sequence(lambda n: "http://makina-corpus.com/%s" % n)
     photo = dummy_filefield_as_sequence('photo %s')
-    street = factory.Sequence(lambda n: u"%s baker street" % n)
+    street = factory.Sequence(lambda n: "%s baker street" % n)
     postal_code = '28300'
-    municipality = factory.Sequence(lambda n: u"Bailleau L'évêque-%s" % n)
+    municipality = factory.Sequence(lambda n: "Bailleau L'évêque-%s" % n)
     geom = Point(3.14, 42)
 
 
@@ -42,8 +42,8 @@ class TouristicContentCategoryFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.TouristicContentCategory
 
-    label = factory.Sequence(lambda n: u"Category %s" % n)
-    type1_label = factory.Sequence(lambda n: u"Type1_label %s" % n)
+    label = factory.Sequence(lambda n: "Category %s" % n)
+    type1_label = factory.Sequence(lambda n: "Type1_label %s" % n)
     # Keep type2_label with default value
     pictogram = dummy_filefield_as_sequence('touristiccontent-category-%s.png')
 
@@ -52,7 +52,7 @@ class TouristicContentType1Factory(factory.DjangoModelFactory):
     class Meta:
         model = models.TouristicContentType1
 
-    label = factory.Sequence(lambda n: u"Type1 %s" % n)
+    label = factory.Sequence(lambda n: "Type1 %s" % n)
     category = factory.SubFactory(TouristicContentCategoryFactory)
     pictogram = dummy_filefield_as_sequence('touristiccontent-type1-%s.png')
 
@@ -61,7 +61,7 @@ class TouristicContentType2Factory(factory.DjangoModelFactory):
     class Meta:
         model = models.TouristicContentType2
 
-    label = factory.Sequence(lambda n: u"Type2 %s" % n)
+    label = factory.Sequence(lambda n: "Type2 %s" % n)
     category = factory.SubFactory(TouristicContentCategoryFactory)
     pictogram = dummy_filefield_as_sequence('touristiccontent-type2-%s.png')
 
@@ -70,14 +70,14 @@ class ReservationSystemFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.ReservationSystem
 
-    name = factory.Sequence(lambda n: u"ReservationSystem %s" % n)
+    name = factory.Sequence(lambda n: "ReservationSystem %s" % n)
 
 
 class TouristicContentFactory(StructureRelatedDefaultFactory):
     class Meta:
         model = models.TouristicContent
 
-    name = factory.Sequence(lambda n: u"TouristicContent %s" % n)
+    name = factory.Sequence(lambda n: "TouristicContent %s" % n)
     category = factory.SubFactory(TouristicContentCategoryFactory)
     geom = 'POINT(0 0)'
     published = True
@@ -103,7 +103,7 @@ class TouristicEventTypeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.TouristicEventType
 
-    type = factory.Sequence(lambda n: u"Type %s" % n)
+    type = factory.Sequence(lambda n: "Type %s" % n)
     pictogram = dummy_filefield_as_sequence('touristicevent-type-%s.png')
 
 
@@ -111,7 +111,7 @@ class TouristicEventFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.TouristicEvent
 
-    name = factory.Sequence(lambda n: u"TouristicEvent %s" % n)
+    name = factory.Sequence(lambda n: "TouristicEvent %s" % n)
     geom = 'POINT(0 0)'
     published = True
     begin_date = timezone.now()
@@ -149,9 +149,9 @@ class TrekWithTouristicEventFactory(TrekFactory):
 class TrekWithTouristicContentFactory(TrekFactory):
     @factory.post_generation
     def create_trek_with_touristic_content(obj, create, extracted, **kwargs):
-        TouristicContentFactory.create(category=TouristicContentCategoryFactory(label=u"Restaurant"),
+        TouristicContentFactory.create(category=TouristicContentCategoryFactory(label="Restaurant"),
                                        geom='POINT(700000 6600000)')
-        TouristicContentFactory.create(category=TouristicContentCategoryFactory(label=u"Musée"),
+        TouristicContentFactory.create(category=TouristicContentCategoryFactory(label="Musée"),
                                        geom='POINT(700100 6600100)')
 
         if create:

@@ -28,9 +28,9 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
 
     def get_bad_data(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            return {'topology': 'doh!'}, _(u'Topology is not valid.')
+            return {'topology': 'doh!'}, _('Topology is not valid.')
         else:
-            return {'geom': 'doh!'}, _(u'Invalid geometry value.')
+            return {'geom': 'doh!'}, _('Invalid geometry value.')
 
     def test_structure_is_set(self):
         if not hasattr(self.model, 'structure'):

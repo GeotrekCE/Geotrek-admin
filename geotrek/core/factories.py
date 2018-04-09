@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import factory
 import random
 import math
@@ -16,35 +15,35 @@ class PathSourceFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.PathSource
 
-    source = factory.Sequence(lambda n: u"PathSource %s" % n)
+    source = factory.Sequence(lambda n: "PathSource %s" % n)
 
 
 class StakeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Stake
 
-    stake = factory.Sequence(lambda n: u"Stake %s" % n)
+    stake = factory.Sequence(lambda n: "Stake %s" % n)
 
 
 class UsageFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Usage
 
-    usage = factory.Sequence(lambda n: u"Usage %s" % n)
+    usage = factory.Sequence(lambda n: "Usage %s" % n)
 
 
 class NetworkFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Network
 
-    network = factory.Sequence(lambda n: u"Network %s" % n)
+    network = factory.Sequence(lambda n: "Network %s" % n)
 
 
 class ComfortFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Comfort
 
-    comfort = factory.Sequence(lambda n: u"Comfort %s" % n)
+    comfort = factory.Sequence(lambda n: "Comfort %s" % n)
 
 
 class PathFactory(StructureRelatedDefaultFactory):
@@ -55,10 +54,10 @@ class PathFactory(StructureRelatedDefaultFactory):
     geom = LineString(Point(700000, 6600000), Point(700100, 6600100), srid=settings.SRID)
     geom_cadastre = LineString(Point(5, 5), Point(6, 6), srid=settings.SRID)
     valid = True
-    name = factory.Sequence(lambda n: u"name %s" % n)
-    departure = factory.Sequence(lambda n: u"departure %s" % n)
-    arrival = factory.Sequence(lambda n: u"arrival %s" % n)
-    comments = factory.Sequence(lambda n: u"comment %s" % n)
+    name = factory.Sequence(lambda n: "name %s" % n)
+    departure = factory.Sequence(lambda n: "departure %s" % n)
+    arrival = factory.Sequence(lambda n: "arrival %s" % n)
+    comments = factory.Sequence(lambda n: "comment %s" % n)
 
     # Trigger will override :
     date_insert = dbnow()
@@ -170,7 +169,7 @@ class TrailFactory(TopologyFactory):
     class Meta:
         model = models.Trail
 
-    name = factory.Sequence(lambda n: u"Name %s" % n)
-    departure = factory.Sequence(lambda n: u"Departure %s" % n)
-    arrival = factory.Sequence(lambda n: u"Arrival %s" % n)
-    comments = factory.Sequence(lambda n: u"Comments %s" % n)
+    name = factory.Sequence(lambda n: "Name %s" % n)
+    departure = factory.Sequence(lambda n: "Departure %s" % n)
+    arrival = factory.Sequence(lambda n: "Arrival %s" % n)
+    comments = factory.Sequence(lambda n: "Comments %s" % n)
