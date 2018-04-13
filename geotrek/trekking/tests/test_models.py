@@ -167,23 +167,23 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
             Polygon(((-2, -2), (3, -2), (3, 3), (-2, 3), (-2, -2)))))
 
         # Ensure related objects are accessible
-        self.assertItemsEqual(trek.pois, [poi])
-        self.assertItemsEqual(trek.services, [service])
-        self.assertItemsEqual(poi.treks, [trek])
-        self.assertItemsEqual(service.treks, [trek])
-        self.assertItemsEqual(trek.districts, [d1])
+        self.assertCountEqual(trek.pois, [poi])
+        self.assertCountEqual(trek.services, [service])
+        self.assertCountEqual(poi.treks, [trek])
+        self.assertCountEqual(service.treks, [trek])
+        self.assertCountEqual(trek.districts, [d1])
 
         # Ensure there is no duplicates
         PathAggregationFactory.create(topo_object=trek, path=p1,
                                       end_position=0.5)
-        self.assertItemsEqual(trek.pois, [poi])
-        self.assertItemsEqual(trek.services, [service])
-        self.assertItemsEqual(poi.treks, [trek])
-        self.assertItemsEqual(service.treks, [trek])
+        self.assertCountEqual(trek.pois, [poi])
+        self.assertCountEqual(trek.services, [service])
+        self.assertCountEqual(poi.treks, [trek])
+        self.assertCountEqual(service.treks, [trek])
 
         d2 = DistrictFactory.create(geom=MultiPolygon(
             Polygon(((3, 3), (9, 3), (9, 9), (3, 9), (3, 3)))))
-        self.assertItemsEqual(trek.districts, [d1, d2])
+        self.assertCountEqual(trek.districts, [d1, d2])
 
     def test_deleted_pois(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
@@ -191,9 +191,9 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         trek.add_path(p1)
         poi = POIFactory.create(no_path=True)
         poi.add_path(p1, start=0.6, end=0.6)
-        self.assertItemsEqual(trek.pois, [poi])
+        self.assertCountEqual(trek.pois, [poi])
         poi.delete()
-        self.assertItemsEqual(trek.pois, [])
+        self.assertCountEqual(trek.pois, [])
 
     def test_deleted_services(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
@@ -202,9 +202,9 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         service = ServiceFactory.create(no_path=True)
         service.type.practices.add(trek.practice)
         service.add_path(p1, start=0.6, end=0.6)
-        self.assertItemsEqual(trek.services, [service])
+        self.assertCountEqual(trek.services, [service])
         service.delete()
-        self.assertItemsEqual(trek.services, [])
+        self.assertCountEqual(trek.services, [])
 
     def test_pois_should_be_ordered_by_progression(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))

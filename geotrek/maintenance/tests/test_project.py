@@ -27,28 +27,28 @@ class ProjectTest(TestCase):
         i3.topology = t
 
         proj = ProjectFactory.create()
-        self.assertItemsEqual(proj.paths.all(), [])
+        self.assertCountEqual(proj.paths.all(), [])
         self.assertEqual(proj.signages, [])
         self.assertEqual(proj.infrastructures, [])
 
         i1.save()
 
         proj.interventions.add(i1)
-        self.assertItemsEqual(proj.paths.all(), [p1])
+        self.assertCountEqual(proj.paths.all(), [p1])
         self.assertEqual(proj.signages, [sign])
         self.assertEqual(proj.infrastructures, [])
 
         i2.save()
 
         proj.interventions.add(i2)
-        self.assertItemsEqual(proj.paths.all(), [p1, p2])
+        self.assertCountEqual(proj.paths.all(), [p1, p2])
         self.assertEqual(proj.signages, [sign])
         self.assertEqual(proj.infrastructures, [infra])
 
         i3.save()
 
         proj.interventions.add(i3)
-        self.assertItemsEqual(proj.paths.all(), [p1, p2])
+        self.assertCountEqual(proj.paths.all(), [p1, p2])
         self.assertEqual(proj.signages, [sign])
         self.assertEqual(proj.infrastructures, [infra])
 

@@ -77,19 +77,19 @@ class InterventionTest(TestCase):
         i1.set_infrastructure(sign)
         i1.save()
 
-        self.assertItemsEqual(p.interventions, [i1])
+        self.assertCountEqual(p.interventions, [i1])
 
         i2 = InterventionFactory.create()
         i2.set_infrastructure(infra)
         i2.save()
 
-        self.assertItemsEqual(p.interventions, [i1, i2])
+        self.assertCountEqual(p.interventions, [i1, i2])
 
         proj = ProjectFactory.create()
         proj.interventions.add(i1)
         proj.interventions.add(i2)
 
-        self.assertItemsEqual(p.projects, [proj])
+        self.assertCountEqual(p.projects, [proj])
 
     def test_helpers(self):
         infra = InfrastructureFactory.create()

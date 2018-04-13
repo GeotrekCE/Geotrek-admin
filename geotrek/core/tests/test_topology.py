@@ -343,19 +343,19 @@ class TopologyPointTest(TestCase):
         pa = PathAggregationFactory.create(topo_object=t, path=p1,
                                            start_position=0.0, end_position=0.0)
 
-        self.assertItemsEqual(t.paths.all(), [p1, p2, p3])
+        self.assertCountEqual(t.paths.all(), [p1, p2, p3])
 
         # Update to a non junction point topology
         pa.end_position = 0.4
         pa.save()
 
-        self.assertItemsEqual(t.paths.all(), [p1])
+        self.assertCountEqual(t.paths.all(), [p1])
 
         # Update to a junction point topology
         pa.end_position = 0.0
         pa.save()
 
-        self.assertItemsEqual(t.paths.all(), [p1, p2, p3])
+        self.assertCountEqual(t.paths.all(), [p1, p2, p3])
 
     def test_point_at_end_of_path_not_moving_after_mutate(self):
         PathFactory.create(geom=LineString((400, 400), (410, 400),

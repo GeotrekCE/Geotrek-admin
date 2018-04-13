@@ -27,12 +27,12 @@ class InfrastructureTest(TestCase):
         PathAggregationFactory.create(topo_object=sign, path=p,
                                       start_position=0.5, end_position=0.5)
 
-        self.assertItemsEqual(p.signages, [sign])
+        self.assertCountEqual(p.signages, [sign])
 
         infra = InfrastructureFactory.create(no_path=True)
         PathAggregationFactory.create(topo_object=infra, path=p)
 
-        self.assertItemsEqual(p.infrastructures, [infra])
+        self.assertCountEqual(p.infrastructures, [infra])
 
 
 class InfrastructureViewsTest(CommonTest):
@@ -90,10 +90,10 @@ class InfrastructureTypeTest(TestCase):
 
         self.assertNotEqual(InfrastructureType.objects.for_signages(),
                             InfrastructureType.objects.for_infrastructures())
-        self.assertItemsEqual(InfrastructureType.objects.for_signages(), [it3])
-        self.assertItemsEqual(InfrastructureType.objects.for_infrastructures(),
+        self.assertCountEqual(InfrastructureType.objects.for_signages(), [it3])
+        self.assertCountEqual(InfrastructureType.objects.for_infrastructures(),
                               [it1, it2])
-        self.assertItemsEqual(InfrastructureType.objects.all(), [it1, it2, it3])
+        self.assertCountEqual(InfrastructureType.objects.all(), [it1, it2, it3])
 
 
 class InfrastructureConditionTest(TestCase):
@@ -102,7 +102,7 @@ class InfrastructureConditionTest(TestCase):
         it2 = InfrastructureConditionFactory.create()
         it3 = InfrastructureConditionFactory.create()
 
-        self.assertItemsEqual(InfrastructureCondition.objects.all(), [it1, it2, it3])
+        self.assertCountEqual(InfrastructureCondition.objects.all(), [it1, it2, it3])
 
 
 class InfraFilterTestMixin():
@@ -140,9 +140,9 @@ class InfraFilterTestMixin():
         response = self.client.get(model.get_jsonlist_url(), data)
 
         self.assertEqual(response.status_code, 200)
-        topo_pk = json.loads(response.content)['map_obj_pk']
+        topo_pk = json.loads(response.content.decode())['map_obj_pk']
 
-        self.assertItemsEqual(topo_pk, [good_topo.pk])
+        self.assertCountEqual(topo_pk, [good_topo.pk])
 
     def test_intervention_filter_has_correct_label(self):
         self.login()
