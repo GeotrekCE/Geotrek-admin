@@ -14,7 +14,6 @@ elif sys.argv[2] == "true":
     invoke.run("sudo bin/pip install -r requirements.txt", hide=True, warn=True)
     invoke.run("sudo bin/pip install -r requirements_tests.txt", hide=True, warn=True)
 else:
-    print("coucou")
     invoke.run("sudo bin/pip install -r requirements.txt", warn=True)
 
 invoke.run("bin/pip install -r editable.txt -e", warn=True)

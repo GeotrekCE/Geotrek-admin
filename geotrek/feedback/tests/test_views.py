@@ -101,12 +101,12 @@ class ListCategoriesTest(TranslationResetMixin, BaseAPITest):
     def test_categories_can_be_obtained_as_json(self):
         response = self.client.get('/api/en/feedback/categories.json')
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
+        data = json.loads(response.content.decode())
         self.assertEqual(data[0]['id'], self.cat.id)
         self.assertEqual(data[0]['label'], self.cat.category)
 
     def test_categories_are_translated(self):
         response = self.client.get('/api/it/feedback/categories.json')
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.content)
+        data = json.loads(response.content.decode())
         self.assertEqual(data[0]['label'], self.cat.category_it)

@@ -199,10 +199,12 @@ class Command(BaseCommand):
             return
         f = open(fullname, 'w')
         if isinstance(response, StreamingHttpResponse):
-            content = ''.join(response.streaming_content)
+            content = ''
+            for sc in response.streaming_content:
+                content += sc.decode()
         else:
-            content = response.content
-        f.write(content.decode())
+            content = response.content.decode()
+        f.write(content)
         f.close()
         # FixMe: Find why there are duplicate files.
         if zipfile:

@@ -266,7 +266,7 @@ class ProjectViewsTest(CommonTest):
         # Check that only p1 is in geojson
         response = self.client.get(self.model.get_layer_url())
         self.assertEqual(response.status_code, 200)
-        geojson = json.loads(response.content)
+        geojson = json.loads(response.content.decode())
         features = geojson['features']
 
         self.assertEqual(len(Project.objects.all()), 2)
@@ -287,7 +287,7 @@ class ProjectViewsTest(CommonTest):
             url = self.model.get_jsonlist_url() + bbox
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
-            jsondict = json.loads(response.content)
+            jsondict = json.loads(response.content.decode())
             return jsondict['aaData']
 
         # Check that projects without interventions are always present

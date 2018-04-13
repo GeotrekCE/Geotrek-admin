@@ -81,7 +81,7 @@ class BasicJSONAPITest(TranslationResetMixin, TrekkingManagerTest):
         self.pk = self.sensitivearea.pk
         url = '/api/en/sensitiveareas/{pk}.json'.format(pk=self.pk)
         self.response = self.client.get(url)
-        self.result = json.loads(self.response.content)
+        self.result = json.loads(self.response.content.decode())
 
     def test_expected_properties(self):
         self.assertDictEqual(self.result, {

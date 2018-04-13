@@ -52,7 +52,7 @@ class ViewsImportTest(TestCase):
         self.user.is_superuser = True
         self.user.save()
 
-        real_archive = open('geotrek/common/tests/data/test.txt.gz', 'r+')
+        real_archive = open('geotrek/common/tests/data/test.txt.gz', 'r+b')
         url = reverse('common:import_dataset')
 
         response_real = self.client.post(
@@ -71,7 +71,7 @@ class ViewsImportTest(TestCase):
         Parser.label = "Test"
 
         fake_archive = SimpleUploadedFile(
-            "file.doc", "file_content", content_type="application/msword")
+            "file.doc", b"file_content", content_type="application/msword")
         url = reverse('common:import_dataset')
 
         response_fake = self.client.post(
