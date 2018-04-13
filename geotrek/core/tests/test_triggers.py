@@ -7,7 +7,7 @@ from django.contrib.gis.geos import fromstr
 class SmartMakelineTest(TestCase):
 
     def smart_makeline(self, lines):
-        assert lines > 0
+        assert lines
         if isinstance(lines[0], str):
             lines = ["ST_GeomFromText('%s')" % l for l in lines]
         else:
