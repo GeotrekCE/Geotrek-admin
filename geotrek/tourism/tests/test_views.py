@@ -35,9 +35,9 @@ from geotrek.tourism.factories import (InformationDeskFactory,
 from embed_video.backends import detect_backend
 
 
-PNG_BLACK_PIXEL = b'89504e470d0a1a0a0000000d494844520000000100000001080400000'\
-    b'0b51c0c020000000b4944415478da6364f80f00010501012718e3660000000049454e44'\
-    b'ae426082'.decode('hex')
+PNG_BLACK_PIXEL = bytes.fromhex('89504e470d0a1a0a0000000d494844520000000100000001080400000'
+    '0b51c0c020000000b4944415478da6364f80f00010501012718e3660000000049454e44'
+    'ae426082').decode('utf-16')
 
 
 class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
@@ -148,7 +148,7 @@ class BasicJSONAPITest(TranslationResetMixin):
         self.pk = self.content.pk
         url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.model_name, pk=self.pk)
         self.response = self.client.get(url)
-        self.result = json.loads(self.response.content)
+        self.result = json.loads(self.response.content.decode())
 
     def _build_object(self):
         polygon = 'SRID=%s;MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))' % settings.SRID
@@ -481,7 +481,7 @@ class TouristicEventViewSetTest(TestCase):
     def test_touristic_events_without_enddate_filter(self):
         TouristicEventFactory.create_batch(10, published=True)
         response = self.client.get('/api/en/touristicevents.geojson')
-        geojson = json.loads(response.content)
+        geojson = json.loads(response.content.decode())
         self.assertEqual(len(geojson['features']), 10)
 
     def test_touristic_events_with_enddate_filter(self):
@@ -497,7 +497,7 @@ class TouristicEventViewSetTest(TestCase):
         TouristicEventFactory.create_batch(5, end_date=datetime.strptime('2020-05-10', '%Y-%m-%d'), published=True)
         TouristicEventFactory.create_batch(7, end_date=datetime.strptime('2010-05-10', '%Y-%m-%d'), published=True)
         response = self.client.get('/api/en/touristicevents.geojson', data={'ends_after': '2020-01-01'})
-        geojson = json.loads(response.content)
+        geojson = json.loads(response.content.decode())
 
         self.assertEqual(len(geojson['features']), 10)
 
@@ -510,7 +510,7 @@ class TouristicContentCategoryViewSetTest(TestCase):
         nb_elements = 10
         TouristicContentCategoryFactory.create_batch(nb_elements)
         response = self.client.get(reverse('tourism:touristic_categories_json', kwargs={'lang': 'en'}))
-        json_response = json.loads(response.content)
+        json_response = json.loads(response.content.decode())
         self.assertEqual(len(json_response), nb_elements)
 
 
@@ -520,7 +520,7 @@ class InformationDeskAPITest(TestCase):
         desk2 = InformationDeskFactory.create()
         response = self.client.get('/api/en/information_desks-{}.geojson'.format(desk2.type.id))
         self.assertEqual(response.status_code, 200)
-        result = json.loads(response.content)
+        result = json.loads(response.content.decode())
         self.assertIn('features', result)
         self.assertEqual(len(result['features']), 1)
         self.assertEqual(result['features'][0]['type'], 'Feature')

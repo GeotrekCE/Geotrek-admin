@@ -41,11 +41,7 @@ class Command(BaseCommand):
             featureGeom = feature.GetGeometryRef()
             geometry = GEOSGeometry(featureGeom.ExportToWkt())
             name = feature.GetFieldAsString(self.field_name)
-            if name:
-                name = name.decode('utf-8')
             poitype = feature.GetFieldAsString(self.field_poitype)
-            if poitype:
-                poitype = poitype.decode('utf-8')
             self.create_poi(geometry, name, poitype)
 
     def create_poi(self, geometry, name, poitype):

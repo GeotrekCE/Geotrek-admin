@@ -245,7 +245,7 @@ class PathViewsTest(CommonTest):
         self.login()
         response = self.client.get('/api/path/paths.json')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.content)['sumPath'], 0.0)
+        self.assertEqual(json.loads(response.content.decode())['sumPath'], 0.0)
 
     def test_sum_path_two(self):
         self.login()
@@ -253,7 +253,7 @@ class PathViewsTest(CommonTest):
         PathFactory()
         response = self.client.get('/api/path/paths.json')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.content)['sumPath'], 0.3)
+        self.assertEqual(json.loads(response.content.decode())['sumPath'], 0.3)
 
     def test_sum_path_filter_cities(self):
         self.login()
@@ -571,7 +571,7 @@ class DenormalizedTrailTest(AuthentFixturesTest):
         self.login()
         response = self.client.get(reverse('core:path_json_list'))
         self.assertEqual(response.status_code, 200)
-        paths_json = json.loads(response.content)
+        paths_json = json.loads(response.content.decode())
         trails_column = paths_json['aaData'][0][6]
         self.assertTrue(trails_column == '%s, %s' % (self.trail1.name_display, self.trail2.name_display) or
                         trails_column == '%s, %s' % (self.trail2.name_display, self.trail1.name_display))

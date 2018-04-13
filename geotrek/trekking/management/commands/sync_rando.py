@@ -215,9 +215,11 @@ class Command(BaseCommand):
             return
         f = open(fullname, 'w')
         if isinstance(response, StreamingHttpResponse):
-            content = ''.join(response.streaming_content)
+            content = ''
+            for sc in response.streaming_content:
+                content += sc.decode()
         else:
-            content = response.content
+            content = response.content.decode()
         # Fix strange unicode characters 2028 and 2029 that make Geotrek-rando crash
         if fix2028:
             content = content.replace('\\u2028', '\\n')

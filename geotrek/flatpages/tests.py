@@ -154,12 +154,12 @@ class RESTViewsTest(TestCase):
     def test_records_list(self):
         response = self.client.get('/api/en/flatpages.json')
         self.assertEqual(response.status_code, 200)
-        records = json.loads(response.content)
+        records = json.loads(response.content.decode())
         self.assertEqual(len(records), 10)
 
     def test_serialized_attributes(self):
         response = self.client.get('/api/en/flatpages.json')
-        records = json.loads(response.content)
+        records = json.loads(response.content.decode())
         record = records[0]
         self.assertEqual(
             sorted(record.keys()),

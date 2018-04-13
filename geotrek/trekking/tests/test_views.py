@@ -318,7 +318,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         url = '/api/en/treks/{pk}/pois.geojson'.format(pk=trek.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        poislayer = json.loads(response.content)
+        poislayer = json.loads(response.content.decode())
         poifeature = poislayer['features'][0]
         self.assertTrue('thumbnail' in poifeature['properties'])
         self.assertEqual(len(poislayer['features']), 1)
@@ -392,7 +392,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         url = '/api/en/treks/{pk}/services.geojson'.format(pk=trek.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        serviceslayer = json.loads(response.content)
+        serviceslayer = json.loads(response.content.decode())
         servicefeature = serviceslayer['features'][0]
         self.assertTrue('type' in servicefeature['properties'])
 
@@ -587,7 +587,7 @@ class TrekJSONSetUp(TrekkingManagerTest):
         self.pk = self.trek.pk
         url = '/api/en/treks/{pk}.json'.format(pk=self.pk)
         self.response = self.client.get(url)
-        self.result = json.loads(self.response.content)
+        self.result = json.loads(self.response.content.decode())
 
 
 @override_settings(SPLIT_TREKS_CATEGORIES_BY_PRACTICE=True)
@@ -914,7 +914,7 @@ class TrekViewTranslationTest(TrekkingManagerTest):
                 self.assertEqual(response.status_code, 404)
             else:
                 self.assertEqual(response.status_code, 200)
-                obj = json.loads(response.content)
+                obj = json.loads(response.content.decode())
                 self.assertEqual(obj['name'], expected)
 
     def test_geojson_translation(self):
@@ -925,7 +925,7 @@ class TrekViewTranslationTest(TrekkingManagerTest):
             self.login()
             response = self.client.get(url, HTTP_ACCEPT_LANGUAGE=lang)
             self.assertEqual(response.status_code, 200)
-            obj = json.loads(response.content)
+            obj = json.loads(response.content.decode())
             self.assertEqual(obj['features'][0]['properties']['name'], expected)
             self.client.logout()  # Django 1.6 keeps language in session
 
@@ -937,7 +937,7 @@ class TrekViewTranslationTest(TrekkingManagerTest):
             self.login()
             response = self.client.get(url, HTTP_ACCEPT_LANGUAGE=lang)
             self.assertEqual(response.status_code, 200)
-            obj = json.loads(response.content)
+            obj = json.loads(response.content.decode())
             self.assertEqual(obj['features'][0]['properties']['published'], expected)
             self.client.logout()  # Django 1.6 keeps language in session
 
@@ -964,7 +964,7 @@ class TrekViewTranslationTest(TrekkingManagerTest):
             self.login()
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
-            obj = json.loads(response.content)
+            obj = json.loads(response.content.decode())
             jsonpoi = obj.get('features', [])[0]
             self.assertEqual(jsonpoi.get('properties', {}).get('name'), expected)
             self.client.logout()  # Django 1.6 keeps language in session
@@ -1318,14 +1318,14 @@ class ServiceJSONTest(TrekkingManagerTest):
     def test_list(self):
         url = '/api/en/services.json'
         self.response = self.client.get(url)
-        self.result = json.loads(self.response.content)
+        self.result = json.loads(self.response.content.decode())
         self.assertEqual(len(self.result), 1)
         self.assertTrue('type' in self.result[0])
 
     def test_detail(self):
         url = '/api/en/services/%s.json' % self.pk
         self.response = self.client.get(url)
-        self.result = json.loads(self.response.content)
+        self.result = json.loads(self.response.content.decode())
         self.assertDictEqual(self.result['type'],
                              {'id': self.service.type.pk,
                               'name': self.service.type.name,
