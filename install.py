@@ -16,4 +16,4 @@ elif sys.argv[2] == "true":
 else:
     invoke.run("bin/pip install -r requirements.txt", warn=True)
 
-invoke.run("bin/pip install -r editable.txt -e", warn=True)
+invoke.run("bin/pip install --no-deps -r editable.txt", warn=True)
