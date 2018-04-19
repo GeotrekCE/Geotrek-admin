@@ -6,8 +6,8 @@ fi
 
 cd "$(dirname "$0")"
 
-sudo virtualenv -p /usr/bin/python3 .
-sudo bin/pip install invoke
+virtualenv -p /usr/bin/python3 .
+bin/pip install invoke
 
 dev=false
 tests=false

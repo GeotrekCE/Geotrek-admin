@@ -8,12 +8,12 @@ invoke.run("sudo locale-gen fr_FR.UTF-8",hide=True, warn=True)
 
 
 if sys.argv[1] == "true":
-    invoke.run("sudo bin/pip install -r requirements.txt", hide=True, warn=True)
-    invoke.run("sudo bin/pip install -r requirements_dev.txt", hide=True, warn=True)
+    invoke.run("bin/pip install -r requirements.txt", hide=True, warn=True)
+    invoke.run("bin/pip install -r requirements_dev.txt", hide=True, warn=True)
 elif sys.argv[2] == "true":
-    invoke.run("sudo bin/pip install -r requirements.txt", hide=True, warn=True)
-    invoke.run("sudo bin/pip install -r requirements_tests.txt", hide=True, warn=True)
+    invoke.run("bin/pip install -r requirements.txt", hide=True, warn=True)
+    invoke.run("bin/pip install -r requirements_tests.txt", hide=True, warn=True)
 else:
-    invoke.run("sudo bin/pip install -r requirements.txt", warn=True)
+    invoke.run("bin/pip install -r requirements.txt", warn=True)
 
 invoke.run("bin/pip install -r editable.txt -e", warn=True)
