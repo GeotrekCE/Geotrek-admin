@@ -67,7 +67,7 @@ class Parser(object):
     natural_keys = {}
     field_options = {}
 
-    def __init__(self, progress_cb=None):
+    def __init__(self, progress_cb=None, user=None):
         self.warnings = {}
         self.line = 0
         self.nb_success = 0
@@ -75,6 +75,8 @@ class Parser(object):
         self.nb_updated = 0
         self.nb_unmodified = 0
         self.progress_cb = progress_cb
+        self.user = user
+        self.structure = user and user.profile.structure or default_structure()
 
         try:
             mto = translator.get_options_for_model(self.model)
@@ -284,12 +286,23 @@ class Parser(object):
                 self.add_warning(_(u"Bad value '{eid_val}' for field '{eid_src}'. No object with this identifier").format(eid_val=self.eid_val, eid_src=self.eid_src))
             return
         elif len(objects) == 0:
-            objects = [self.model(**eid_kwargs)]
+            obj = self.model(**eid_kwargs)
+            if hasattr(obj, 'structure'):
+                obj.structure = self.structure
+            objects = [obj]
             operation = u"created"
         elif len(objects) >= 2 and not self.duplicate_eid_allowed:
             self.add_warning(_(u"Bad value '{eid_val}' for field '{eid_src}'. Multiple objects with this identifier").format(eid_val=self.eid_val, eid_src=self.eid_src))
             return
         else:
+            _objects = []
+            for obj in objects:
+                if not hasattr(obj, 'structure') or obj.structure == self.structure or self.user.has_perm('authent.can_bypass_structure'):
+                    _objects.append(obj)
+                else:
+                    self.to_delete.discard(obj.pk)
+                    self.add_warning(_(u"Bad ownership '{structure}' for object '{eid_val}'.").format(structure=obj.structure.name, eid_val=self.eid_val))
+            objects = _objects
             operation = u"updated"
         for self.obj in objects:
             self.parse_obj(row, operation)
@@ -497,7 +510,7 @@ class AttachmentParserMixin(object):
         if settings.PAPERCLIP_ENABLE_LINK is False and self.download_attachments is False:
             raise Exception(u'You need to enable PAPERCLIP_ENABLE_LINK to use this function')
         try:
-            self.filetype = FileType.objects.get(type=self.filetype_name, structure=default_structure())
+            self.filetype = FileType.objects.get(type=self.filetype_name, structure=self.structure)
         except FileType.DoesNotExist:
             raise GlobalImportError(_(u"FileType '{name}' does not exists in Geotrek-Admin. Please add it").format(name=self.filetype_name))
         self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})

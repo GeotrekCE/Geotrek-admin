@@ -17,6 +17,7 @@ CHANGELOG
 * Fix filtering by practices in sensitive areas API
 * Adapt BiodivParser to API modifications
 * Order sensitive areas by decreasing area in API to be able to clic on each of them
+* Set ownership in parsers
 
 
 2.17.3 (2018-03-23)
