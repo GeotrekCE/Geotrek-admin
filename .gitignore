@@ -3,6 +3,7 @@
 *.tar.gz
 *.mo
 
+/env/
 /var/
 /etc/
 /install

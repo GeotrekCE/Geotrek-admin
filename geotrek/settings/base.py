@@ -25,6 +25,8 @@ def api_bbox(bbox, buffer):
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEPLOY_ROOT = os.path.dirname(PROJECT_ROOT)
 VAR_ROOT = os.path.join(DEPLOY_ROOT, 'var')
+STATIC_ROOT = os.path.join(VAR_ROOT, 'static')
+MEDIA_ROOT = os.path.join(VAR_ROOT, 'media')
 CACHE_ROOT = os.path.join(VAR_ROOT, 'cache')
 
 TITLE = _("Geotrek")
@@ -44,11 +46,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'OPTIONS': {},
-        'NAME': 'geotrekdb',
-        'USER': 'geotrek',
-        'PASSWORD': 'geotrek',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': os.getenv('POSTGRES_DB', 'geotrekdb'),
+        'USER': os.getenv('POSTGRES_USER', 'geotrek'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'geotrek'),
+        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+        'PORT': os.getenv('POSTGRES_PORT', '5432'),
     }
 }
 
@@ -139,10 +141,6 @@ LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = 'home'
 
-# Absolute filesystem path to the directory that will hold user-uploaded files.
-# Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = os.path.join(VAR_ROOT, 'media')
-
 UPLOAD_DIR = 'upload'    # media root subdir
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
@@ -151,19 +149,13 @@ UPLOAD_DIR = 'upload'    # media root subdir
 MEDIA_URL = '/media/'
 MEDIA_URL_SECURE = '/media_secure/'
 
-# Absolute path to the directory static files should be collected to.
-# Don't put anything in this directory yourself; store your static files
-# in apps' "static/" subdirectories and in STATICFILES_DIRS.
-# Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = os.path.join(VAR_ROOT, 'static')
-
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, 'static'),
+    STATIC_ROOT,
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -414,7 +406,7 @@ SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
 
 MAPENTITY_CONFIG = {
     'TITLE': TITLE,
-    'TEMP_DIR': os.path.join(VAR_ROOT, 'tmp'),
+    'TEMP_DIR': os.path.join(CACHE_ROOT, 'tmp'),
     'HISTORY_ITEMS_MAX': 7,
     'CONVERSION_SERVER': 'http://127.0.0.1:6543',
     'CAPTURE_SERVER': 'http://127.0.0.1:8001',
@@ -425,7 +417,12 @@ MAPENTITY_CONFIG = {
     'MAPENTITY_WEASYPRINT': False,
     'LANGUAGE_CODE': LANGUAGE_CODE,
     'LANGUAGES': LANGUAGES,
-    'TRANSLATED_LANGUAGES': MODELTRANSLATION_LANGUAGES,
+    'TRANSLATED_LANGUAGES': (  # FIXME: should depend on MODELTRANSLATION_LANGUAGES
+        ('en', _('English')),
+        ('fr', _('French')),
+        ('it', _('Italian')),
+        ('es', _('Spanish')),
+    ),
 }
 
 DEFAULT_STRUCTURE_NAME = _('Default')

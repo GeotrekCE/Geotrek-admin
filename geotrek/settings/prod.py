@@ -16,7 +16,7 @@ INSTALLED_APPS += (
 )
 
 CACHES['default']['BACKEND'] = 'django.core.cache.backends.memcached.MemcachedCache'
-CACHES['default']['LOCATION'] = '127.0.0.1:11211'
+CACHES['default']['LOCATION'] = os.getenv('MEMCACHED_URL', '127.0.0.1:11211')
 
 LOGGING['handlers']['mail_admins']['class'] = 'django.utils.log.AdminEmailHandler'
 LOGGING['handlers']['logfile'] = {'class': 'logging.FileHandler',

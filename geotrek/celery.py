@@ -3,7 +3,7 @@ from __future__ import absolute_import
 import os
 from celery import Celery
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'geotrek.settings.default')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'geotrek.settings.custom')
 
 app = Celery('geotrek')
 

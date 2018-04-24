@@ -1,7 +1,6 @@
-from __future__ import absolute_import
+import os
 
-pkg_resources = __import__('pkg_resources')
-distribution = pkg_resources.get_distribution('geotrek')
+root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 #: Module version, as defined in PEP-0396.
-__version__ = distribution.version
+__version__ = open(os.path.join(root, 'VERSION')).read().strip()
