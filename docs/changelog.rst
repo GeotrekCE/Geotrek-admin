@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.17.3.dev0
+2.17.4.dev0
 -----------
 
 **Minor changes**
@@ -17,6 +17,14 @@ CHANGELOG
 * Fix filtering by practices in sensitive areas API
 * Adapt BiodivParser to API modifications
 * Order sensitive areas by decreasing area in API to be able to clic on each of them
+
+
+2.17.3 (2018-03-23)
+-------------------
+
+** Bug fixes **
+
+* Fix install
 
 
 2.17.2 (2018-02-07)
