@@ -67,6 +67,7 @@ class InterventionForm(CommonForm):
             </ul>""" % (unicode(_("Main")), unicode(_("Advanced")))),
             Div(
                 Div(
+                    'structure',
                     'name',
                     'date',
                     'status',

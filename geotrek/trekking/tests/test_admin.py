@@ -67,9 +67,10 @@ class DeleteObjectTest(AuthentFixturesTest):
         self.user.delete()
 
     def test_weblink_can_be_deleted(self):
-        detail_url = reverse('admin:trekking_difficultylevel_change', args=[self.difficulty.pk])
         delete_url = reverse('admin:trekking_difficultylevel_delete', args=[self.difficulty.pk])
+        detail_url = reverse('admin:trekking_difficultylevel_change', args=[self.difficulty.pk])
         response = self.client.post(delete_url, {'post': 'yes'})
         self.assertEquals(response.status_code, 302)
         response = self.client.get(detail_url)
-        self.assertEquals(response.status_code, 404)
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(response.url, '/admin/')
