@@ -6,7 +6,6 @@ from django.test import TestCase
 
 from geotrek.common.tests import CommonTest
 from geotrek.authent.tests import AuthentFixturesTest
-from geotrek.authent.models import default_structure
 from geotrek.authent.factories import PathManagerFactory
 from geotrek.maintenance.factories import InterventionFactory
 from geotrek.infrastructure.models import (Infrastructure, InfrastructureType,
@@ -45,7 +44,6 @@ class InfrastructureViewsTest(CommonTest):
         return {
             'name': 'test',
             'description': 'oh',
-            'structure': default_structure().pk,
             'type': InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING).pk,
             'condition': InfrastructureConditionFactory.create().pk,
             'topology': '{"paths": [%s]}' % path.pk,
@@ -64,7 +62,6 @@ class PointInfrastructureViewsTest(InfrastructureViewsTest):
         return {
             'name': 'test',
             'description': 'oh',
-            'structure': default_structure().pk,
             'type': InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING).pk,
             'condition': InfrastructureConditionFactory.create().pk,
             'topology': '{"lat": 0.42, "lng": 0.666}'

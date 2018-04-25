@@ -248,7 +248,7 @@ class TrekForm(BaseTrekForm):
              'disabled_infrastructure', 'advised_parking', 'parking_location',
              'public_transport', 'advice', 'themes', 'networks', 'practice',
              'accessibilities', 'web_links', 'information_desks', 'source', 'portal',
-             'children_trek', 'eid', 'eid2', 'hidden_ordered_children', 'structure']
+             'children_trek', 'eid', 'eid2', 'hidden_ordered_children']
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -288,7 +288,7 @@ class POIForm(BasePOIForm):
     ]
 
     class Meta(BasePOIForm.Meta):
-        fields = BasePOIForm.Meta.fields + ['name', 'description', 'eid', 'type', 'published', 'review', 'structure']
+        fields = BasePOIForm.Meta.fields + ['name', 'description', 'eid', 'type', 'published', 'review']
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -325,7 +325,7 @@ class ServiceForm(BaseServiceForm):
     ]
 
     class Meta(BaseServiceForm.Meta):
-        fields = BaseServiceForm.Meta.fields + ['type', 'structure']
+        fields = BaseServiceForm.Meta.fields + ['type']
 
 
 class WebLinkCreateFormPopup(forms.ModelForm):

@@ -2,7 +2,6 @@ from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
 from geotrek.common.tests import CommonTest
-from geotrek.authent.models import default_structure
 from geotrek.sensitivity.models import SensitiveArea
 from geotrek.sensitivity.factories import (SensitiveAreaFactory, SpeciesFactory, SportPracticeFactory,
                                            RegulatorySensitiveAreaFactory)
@@ -26,7 +25,6 @@ class SensitiveAreaViewsTests(CommonTest):
     def get_good_data(self):
         return {
             'species': SpeciesFactory.create().pk,
-            'structure': default_structure().pk,
             'geom': '{"type": "Polygon", "coordinates":[[[0, 0], [0, 1], [1, 0], [0, 0]]]}',
         }
 
@@ -48,13 +46,12 @@ class RegulatorySensitiveAreaViewsTests(CommonTest):
     def get_good_data(self):
         return {
             'name': 'Test',
-            'structure': default_structure().pk,
             'practices': [SportPracticeFactory.create().pk],
             'geom': '{"type": "Polygon", "coordinates":[[[0, 0], [0, 1], [1, 0], [0, 0]]]}',
         }
 
-    def _post_add_form(self):
-        self._post_form(self.model.get_add_url() + '?category=2')
+    def _get_add_url(self):
+        return self.model.get_add_url() + '?category=2'
 
     def test_crud_status(self):
         if self.model is None:

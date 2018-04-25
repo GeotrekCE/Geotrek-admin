@@ -12,8 +12,7 @@ class BaseInfrastructureForm(TopologyForm):
 
     class Meta(TopologyForm.Meta):
         fields = TopologyForm.Meta.fields + \
-            ['structure',
-             'name', 'description', 'type', 'condition', 'implantation_year']
+            ['name', 'description', 'type', 'condition', 'implantation_year']
 
     def __init__(self, *args, **kwargs):
         super(BaseInfrastructureForm, self).__init__(*args, **kwargs)

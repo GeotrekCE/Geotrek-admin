@@ -7,12 +7,14 @@ CHANGELOG
 
 **Preventive maintainance**
 
-* Upgrade to Django 1.10
+* Upgrade to Django 1.11
 * Upgrade several python dependencies
 
 **Bug fixes**
 
 * Put back filter widgets in two columns (#1663)
+* Do not include (possibly forged) structure field in post requests
+* Pagination requires ordering in v2 API
 
 
 2.18.1 (2018-03-26)

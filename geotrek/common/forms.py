@@ -65,16 +65,6 @@ class CommonForm(MapEntityForm):
     def __init__(self, *args, **kwargs):
         super(CommonForm, self).__init__(*args, **kwargs)
 
-        # Check if structure is present, if so, use hidden input
-        if 'structure' in self.fields:
-            self.fields['structure'].widget = forms.HiddenInput()
-            # On entity creation, use user's structure
-            if not self.instance or not self.instance.pk:
-                structure = default_structure()
-                if self.user:
-                    structure = self.user.profile.structure
-                self.fields['structure'].initial = structure
-
         for name, field in list(self.fields.items()):
             self.filter_related_field(name, field)
 
@@ -86,6 +76,15 @@ class CommonForm(MapEntityForm):
             self.deep_remove(self.helper.fieldslayout, 'published')
         if 'review' in self.fields and self.instance and self.instance.any_published:
             self.deep_remove(self.helper.fieldslayout, 'review')
+
+    def save(self, commit=True):
+        """Set structure field before saving if need be"""
+        if hasattr(self.instance, 'structure') and not self.instance.structure:
+            if self.user:
+                self.instance.structure = self.user.profile.structure
+            else:
+                self.instance.structure = default_structure()
+        return super(CommonForm, self).save(commit)
 
 
 class ImportDatasetForm(forms.Form):

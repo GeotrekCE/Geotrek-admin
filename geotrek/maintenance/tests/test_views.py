@@ -11,7 +11,6 @@ import json
 from geotrek.common.tests import CommonTest
 from mapentity.serializers.shapefile import ZipShapeSerializer, shapefile_files
 
-from geotrek.authent.models import default_structure
 from geotrek.authent.factories import PathManagerFactory
 from geotrek.core.factories import StakeFactory
 from geotrek.core.helpers import TopologyHelper
@@ -46,7 +45,6 @@ class InterventionViewsTest(CommonTest):
         return {
             'name': 'test',
             'date': '2012-08-23',
-            'structure': default_structure().pk,
             'disorders': InterventionDisorderFactory.create().pk,
             'comments': '',
             'slope': 0,
@@ -227,7 +225,6 @@ class ProjectViewsTest(CommonTest):
     def get_good_data(self):
         return {
             'name': 'test',
-            'structure': default_structure().pk,
             'stake': '',
             'type': '',
             'domain': '',

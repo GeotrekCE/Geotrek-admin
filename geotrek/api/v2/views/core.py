@@ -19,4 +19,5 @@ class PathViewSet(api_viewsets.GeotrekViewset):
         .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID),
                   geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),
                   length_2d_m=Length('geom'),
-                  length_3d_m=Length3D('geom_3d'))
+                  length_3d_m=Length3D('geom_3d')) \
+        .order_by('pk')  # Required for reliable pagination
