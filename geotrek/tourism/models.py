@@ -4,7 +4,7 @@ import logging
 
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.utils.translation import get_language, ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 from django.utils.formats import date_format
 
 from easy_thumbnails.alias import aliases
@@ -303,18 +303,6 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     def __unicode__(self):
         return self.name
 
-    @models.permalink
-    def get_document_public_url(self):
-        """ Override ``geotrek.common.mixins.PublishableMixin``
-        """
-        return ('tourism:touristiccontent_document_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
-
-    @models.permalink
-    def get_markup_public_url(self):
-        """ Override ``geotrek.common.mixins.PublishableMixin``
-        """
-        return ('tourism:touristiccontent_markup_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
-
     @property
     def districts_display(self):
         return ', '.join([unicode(d) for d in self.districts])
@@ -456,18 +444,6 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
 
     def __unicode__(self):
         return self.name
-
-    @models.permalink
-    def get_document_public_url(self):
-        """ Override ``geotrek.common.mixins.PublishableMixin``
-        """
-        return ('tourism:touristicevent_document_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
-
-    @models.permalink
-    def get_markup_public_url(self):
-        """ Override ``geotrek.common.mixins.PublishableMixin``
-        """
-        return ('tourism:touristicevent_markup_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
 
     @property
     def type1(self):

@@ -7,7 +7,7 @@ CHANGELOG
 
 **Preventive maintainance**
 
-* Upgrade to Django 1.10
+* Upgrade to Django 1.11
 * Upgrade several python dependencies
 
 **Minor changes**
@@ -25,6 +25,7 @@ CHANGELOG
 * Adapt BiodivParser to API modifications
 * Order sensitive areas by decreasing area in API to be able to clic on each of them
 * Set ownership in parsers depending on logged user
+* Pagination requires ordering in v2 API
 
 
 2.18.1 (2018-03-26)

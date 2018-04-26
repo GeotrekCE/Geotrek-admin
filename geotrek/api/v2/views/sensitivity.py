@@ -38,7 +38,8 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekViewset):
             .filter(published=True) \
             .select_related('species', 'structure') \
             .prefetch_related('species__practices') \
-            .annotate(geom_type=GeometryType(F('geom')))
+            .annotate(geom_type=GeometryType(F('geom'))) \
+            .order_by('pk')  # Required for reliable pagination
         if 'bubble' in self.request.GET:
             queryset = queryset.annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
         else:
@@ -69,6 +70,7 @@ class SportPracticeViewSet(api_viewsets.GeotrekViewset):
 
     def get_queryset(self):
         queryset = sensitivity_models.SportPractice.objects.all()
+        queryset = queryset.order_by('pk')  # Required for reliable pagination
         return queryset
 
     def list(self, request, *args, **kwargs):
