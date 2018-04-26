@@ -19,7 +19,7 @@ class SensitiveAreaForm(CommonForm):
                                      label=pgettext(u"Singular", u"Species"))
 
     class Meta:
-        fields = ['species', 'published', 'description', 'contact', 'geom']
+        fields = ['species', 'published', 'description', 'contact', 'structure', 'geom']
         model = SensitiveArea
         widgets = {'geom': BubbleMapWidget()}
 

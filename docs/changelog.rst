@@ -10,10 +10,21 @@ CHANGELOG
 * Upgrade to Django 1.10
 * Upgrade several python dependencies
 
+**Minor changes**
+
+* Allow user with can_bypass_structure permission to set or update the related
+  structure on sensitive areas
+
 **Bug fixes**
 
 * Put back filter widgets in two columns (#1663)
 * Do not include (possibly forged) structure field in post requests
+* Fix geojson format in sensitive areas API
+* Fix filtering by practices in sensitive areas API
+* Fix sync_rando when sensitivity app is not enabled
+* Adapt BiodivParser to API modifications
+* Order sensitive areas by decreasing area in API to be able to clic on each of them
+* Set ownership in parsers depending on logged user
 
 
 2.18.1 (2018-03-26)
@@ -49,6 +60,14 @@ CHANGELOG
 **Minor changes**
 
 * Show total path length in path list
+
+
+2.17.3 (2018-03-23)
+-------------------
+
+** Bug fixes **
+
+* Fix install
 
 
 2.17.2 (2018-02-07)

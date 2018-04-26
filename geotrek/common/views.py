@@ -182,7 +182,7 @@ class UserArgMixin(object):
         return kwargs
 
 
-def import_file(uploaded, parser):
+def import_file(uploaded, parser, user_pk):
     destination_dir, destination_file = create_tmp_destination(uploaded.name)
     with open(destination_file, 'w+') as f:
         f.write(uploaded.file.read())
@@ -195,7 +195,7 @@ def import_file(uploaded, parser):
                 raise
 
             if name.endswith('shp'):
-                import_datas.delay(parser.__name__, '/'.join((destination_dir, name)), parser.__module__)
+                import_datas.delay(parser.__name__, '/'.join((destination_dir, name)), parser.__module__, user_pk)
 
 
 @login_required
@@ -225,7 +225,7 @@ def import_view(request):
                 codename = '{}.import_{}'.format(parser.model._meta.app_label, parser.model._meta.model_name)
                 if not request.user.is_superuser and not request.user.has_perm(codename):
                     raise PermissionDenied
-                import_file(uploaded, parser)
+                import_file(uploaded, parser, request.user.pk)
 
         if 'import-web' in request.POST:
             form_without_file = ImportDatasetForm(
@@ -237,7 +237,7 @@ def import_view(request):
                 if not request.user.is_superuser and not request.user.has_perm(codename):
                     raise PermissionDenied
                 import_datas_from_web.delay(
-                    parser.__name__, parser.__module__
+                    parser.__name__, parser.__module__, request.user.pk
                 )
 
     # Hide second form if parser has no web based imports.
