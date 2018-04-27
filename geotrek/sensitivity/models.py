@@ -13,7 +13,6 @@ from mapentity.serializers import plain_text
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins import (OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin, AddPropertyMixin)
 from geotrek.common.utils import intersecting, classproperty
-from geotrek.core.models import Topology
 
 
 class SportPractice(models.Model):
@@ -196,5 +195,7 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
     pretty_practices_verbose_name = _("Practices")
 
 
-Topology.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN), _(u"Sensitive areas"))
-Topology.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN).filter(published=True), _(u"Published sensitive areas"))
+if 'geotrek.core' in settings.INSTALLED_APPS:
+    from geotrek.core.models import Topology
+    Topology.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN), _(u"Sensitive areas"))
+    Topology.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN).filter(published=True), _(u"Published sensitive areas"))

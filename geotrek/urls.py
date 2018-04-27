@@ -6,7 +6,7 @@ from django.contrib.auth import views as auth_views
 
 from mapentity.forms import AttachmentForm
 
-from geotrek.core import views as core_views
+from geotrek.common import views as common_views
 
 from paperclip import views as paperclip_views
 
@@ -15,12 +15,11 @@ handler404 = 'mapentity.views.handler404'
 
 
 urlpatterns = [
-    url(r'^$', core_views.home, name='home'),
+    url(r'^$', common_views.home, name='home'),
     url(r'^login/$', auth_views.login, name='login'),
     url(r'^logout/$', auth_views.logout, {'next_page': settings.ROOT_URL + '/'}, name='logout',),
 
     url(r'', include('geotrek.common.urls', namespace='common', app_name='common')),
-    url(r'', include('geotrek.core.urls', namespace='core', app_name='core')),
     url(r'', include('geotrek.altimetry.urls', namespace='altimetry', app_name='altimetry')),
 
     url(r'', include('mapentity.urls', namespace='mapentity', app_name='mapentity')),
@@ -33,6 +32,8 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
 ]
 
+if 'geotrek.core' in settings.INSTALLED_APPS:
+    urlpatterns.append(url(r'', include('geotrek.core.urls', namespace='core', app_name='core')))
 if 'geotrek.land' in settings.INSTALLED_APPS:
     urlpatterns.append(url(r'', include('geotrek.land.urls', namespace='land', app_name='land')))
 if 'geotrek.zoning' in settings.INSTALLED_APPS:

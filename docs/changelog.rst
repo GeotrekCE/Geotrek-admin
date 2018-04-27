@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-*
+* Fix imports when enabling only sensitivity app
 
 
 2.18.2 (2018-04-27)

@@ -13,11 +13,13 @@ from geotrek.api.v2.functions import Transform, Buffer, GeometryType, Area
 from geotrek.authent.decorators import same_structure_required
 
 from geotrek.common.views import PublicOrReadPermMixin
-from geotrek.trekking.models import Trek
 from .filters import SensitiveAreaFilterSet
 from .forms import SensitiveAreaForm, RegulatorySensitiveAreaForm
 from .models import SensitiveArea, Species
 from .serializers import SensitiveAreaSerializer
+
+if 'geotrek.trekking' in settings.INSTALLED_APPS:
+    from geotrek.trekking.models import Trek
 
 
 logger = logging.getLogger(__name__)
@@ -113,38 +115,39 @@ class SensitiveAreaViewSet(MapEntityViewSet):
         return qs
 
 
-class TrekSensitiveAreaViewSet(viewsets.ModelViewSet):
-    model = SensitiveArea
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+if 'geotrek.trekking' in settings.INSTALLED_APPS:
+    class TrekSensitiveAreaViewSet(viewsets.ModelViewSet):
+        model = SensitiveArea
+        permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
-    def get_serializer_class(self):
-        class Serializer(SensitiveAreaSerializer, GeoFeatureModelSerializer):
-            pass
-        return Serializer
+        def get_serializer_class(self):
+            class Serializer(SensitiveAreaSerializer, GeoFeatureModelSerializer):
+                pass
+            return Serializer
 
-    def get_queryset(self):
-        pk = self.kwargs['pk']
-        try:
-            trek = Trek.objects.existing().get(pk=pk)
-        except Trek.DoesNotExist:
-            raise Http404
-        if not trek.is_public:
-            raise Http404
-        qs = trek.published_sensitive_areas
-        qs = qs.prefetch_related('species')
-        qs = qs.annotate(geom_type=GeometryType(F('geom')))
-        qs = qs.annotate(geom2d_transformed=Case(
-            When(geom_type='POINT', then=Transform(Buffer(F('geom'), F('species__radius'), 4), settings.API_SRID)),
-            When(geom_type='POLYGON', then=Transform(F('geom'), settings.API_SRID))
-        ))
-        # Ensure smaller areas are at the end of the list, ie above bigger areas on the map
-        # to ensure we can select every area in case of overlapping
-        qs = qs.annotate(area=Area('geom2d_transformed')).order_by('-area')
+        def get_queryset(self):
+            pk = self.kwargs['pk']
+            try:
+                trek = Trek.objects.existing().get(pk=pk)
+            except Trek.DoesNotExist:
+                raise Http404
+            if not trek.is_public:
+                raise Http404
+            qs = trek.published_sensitive_areas
+            qs = qs.prefetch_related('species')
+            qs = qs.annotate(geom_type=GeometryType(F('geom')))
+            qs = qs.annotate(geom2d_transformed=Case(
+                When(geom_type='POINT', then=Transform(Buffer(F('geom'), F('species__radius'), 4), settings.API_SRID)),
+                When(geom_type='POLYGON', then=Transform(F('geom'), settings.API_SRID))
+            ))
+            # Ensure smaller areas are at the end of the list, ie above bigger areas on the map
+            # to ensure we can select every area in case of overlapping
+            qs = qs.annotate(area=Area('geom2d_transformed')).order_by('-area')
 
-        if 'practices' in self.request.GET:
-            qs = qs.filter(species__practices__name__in=self.request.GET['practices'].split(','))
+            if 'practices' in self.request.GET:
+                qs = qs.filter(species__practices__name__in=self.request.GET['practices'].split(','))
 
-        return qs
+            return qs
 
 
 class SensitiveAreaKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
