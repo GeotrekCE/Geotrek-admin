@@ -1,4 +1,5 @@
-from .default import *
+from .base import *  # noqa
+from .base import INSTALLED_APPS, LOGGING, MAPENTITY_CONFIG, _, DATABASES
 
 #
 #  Django Tests
@@ -16,10 +17,10 @@ LANGUAGE_CODE = 'en'
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'
 MODELTRANSLATION_LANGUAGES = ('en', 'es', 'fr', 'it')
 MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = (
-    ('en', gettext_noop('English')),
-    ('es', gettext_noop('Spanish')),
-    ('fr', gettext_noop('French')),
-    ('it', gettext_noop('Italian')),
+    ('en', _('English')),
+    ('es', _('Spanish')),
+    ('fr', _('French')),
+    ('it', _('Italian')),
 )
 
 MAILALERTSUBJECT = "Acknowledgment of feedback email"
@@ -38,3 +39,9 @@ class DisableMigrations(object):
 
 
 MIGRATION_MODULES = DisableMigrations()
+
+SECRET_KEY = "Ceci n'est pas du tout secret mais c'est juste pour les tests"
+
+DATABASES['default']['TEST'] = {
+    'SERIALIZE': False,
+}

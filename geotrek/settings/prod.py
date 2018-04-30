@@ -1,4 +1,7 @@
-from .default import *
+import os
+
+from .base import *  # noqa
+from .base import INSTALLED_APPS, CACHES, LOGGING, DATABASES, VAR_ROOT
 
 #
 # Django Production
@@ -15,12 +18,12 @@ INSTALLED_APPS += (
 )
 
 CACHES['default']['BACKEND'] = 'django.core.cache.backends.memcached.MemcachedCache'
-CACHES['default']['LOCATION'] = '127.0.0.1:11211'
+CACHES['default']['LOCATION'] = os.getenv('MEMCACHED_URL', '127.0.0.1:11211')
 
 LOGGING['handlers']['mail_admins']['class'] = 'django.utils.log.AdminEmailHandler'
 LOGGING['handlers']['logfile'] = {'class': 'logging.FileHandler',
                                   'formatter': 'simple',
-                                  'filename': os.path.join(DEPLOY_ROOT, 'var', 'log', 'geotrek.log')}
+                                  'filename': os.path.join(VAR_ROOT, 'log', 'geotrek.log')}
 LOGGING['loggers']['geotrek']['handlers'].append('logfile')
 LOGGING['loggers']['mapentity']['handlers'].append('logfile')
 
@@ -73,3 +76,4 @@ DATABASES[AUTHENT_DATABASE]['USER'] = None
 DATABASES[AUTHENT_DATABASE]['PASSWORD'] = None
 DATABASES[AUTHENT_DATABASE]['HOST'] = None
 DATABASES[AUTHENT_DATABASE]['PORT'] = 5432
+

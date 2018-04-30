@@ -2,3 +2,43 @@ from .dev import *
 from .prod import *
 from .tests import *
 from .local import *
+from .prod import *  # noqa
+
+
+ALLOWED_HOSTS = ('localhost', '127.0.0.1')
+
+#
+# Email settings
+# ..........................
+
+ADMINS = ("Admin", 'root@localhost')
+MANAGERS = ("Manager", 'root@localhost')
+
+DEFAULT_FROM_EMAIL = ADMINS[0][1]
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+EMAIL_HOST = 'localhost'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_PORT = 25
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = False
+
+#
+# External authent
+# ..........................
+
+# AUTHENT_DATABASE = 'authentdb'
+# AUTHENT_TABLENAME = 'authenttable'
+# AUTHENTICATION_BACKENDS = ('geotrek.authent.backend.DatabaseBackend', )
+
+# DATABASES[AUTHENT_DATABASE] = {
+#     'ENGINE': 'postgresql_psycopg2',
+#     'NAME': AUTHENT_DATABASE,
+#     'USER': '',
+#     'PASSWORD': '',
+#     'HOST': 'localhost',
+#     'PORT': '5432',
+# }
+
+SECRET_KEY = 'A changer absolument'
+

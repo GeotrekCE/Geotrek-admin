@@ -1,3 +1,4 @@
+dist: trusty
 language: python
 
 python:
@@ -18,43 +19,33 @@ services:
 
 cache:
   - apt
+  - pip
 
-dist: trusty
-sudo: required
+addons:
+  apt:
+    packages:
+    - libgdal-dev
 
-before_install:
-  - sudo apt-get update -qq
-  # Make sure to use postgresql and postgis version from main Ubuntu repository
-  - sudo rm -f /etc/apt/sources.list.d/pgdg.list
-  - sudo apt-get remove -qq postgis* postgresql*
-  # Make sure to use our version of phantomjs
-  - sudo rm -rf /usr/local/bin/phantomjs* /usr/bin/phantomjs* /usr/local/phantomjs*
-  # Make sure nginx has access to static files
-  - sudo chmod a+x /home/travis
+services:
+  - postgresql
+
+env:
+  - DJANGO_SETTINGS_MODULE=geotrek.settings.tests
 
 install:
-  - if [[ $ACTION != codestyle ]]; then deactivate; fi
-  - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
-  - if [[ $ACTION == test ]]; then ./install.sh --tests --noinput; fi
-  - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput; fi
+  - pip install --global-option=build_ext --global-option="-I/usr/include/gdal/" gdal==1.10.0
+  - pip install -e . flake8 coverage
+  - psql -c "create user geotrek superuser password 'geotrek'" -U postgres
+  - psql -c "create database geotrekdb owner geotrek" -U postgres
+  - ./manage.py collectstatic --noinput
+
 script:
-  - if [[ $ACTION == codestyle ]]; then flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings; fi
-  - if [[ $ACTION == codestyle ]]; then flake8 geotrek; fi
-  - if [[ $ACTION == codestyle ]]; then find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID; fi
-  - if [[ $ACTION == deploy || $ACTION == integration ]]; then make load_demo; fi
-  - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
-  - if [[ $ACTION == integration ]]; then make test_export host=localhost port=80; fi
-  - if [[ $ACTION == test ]]; then ./bin/coverage run ./bin/django test geotrek; fi
-  - if [[ $ACTION == test ]]; then make test_js; fi
+  - flake8 geotrek
+  - find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID
+  - coverage run manage.py test geotrek
+
 after_success:
   # Report coverage results to coveralls.io
-  - if [[ $ACTION == test ]]; then ./bin/coverage report -m; fi
-  - if [[ $ACTION == test ]]; then sudo pip install coveralls; fi
-  - if [[ $ACTION == test ]]; then coveralls; fi
-
-after_failure:
-  - cat var/log/geotrek.log
-  - sudo cat /var/log/nginx/geotrek_access.log
-  - sudo cat /var/log/nginx/geotrek_error.log
-  - cat /var/log/supervisord.log
-  - cat /var/log/geotrek.log
+  - ./bin/coverage report -m
+  - pip install coveralls
+  - coveralls

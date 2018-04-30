@@ -4,6 +4,7 @@
 *.mo
 *.bak
 
+/env/
 /var/
 /etc/
 /install

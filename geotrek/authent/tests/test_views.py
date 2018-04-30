@@ -17,8 +17,7 @@ from geotrek.authent.models import UserProfile
 class LoginTestCase(TestCase):
     def test_login(self):
         response = self.client.get('/')
-        _next = (settings.FORCE_SCRIPT_NAME or '') + '/'
-        self.assertRedirects(response, '/login/?next=' + _next)
+        self.assertRedirects(response, '/login/?next=/')
 
 
 class UserProfileTest(TestCase):

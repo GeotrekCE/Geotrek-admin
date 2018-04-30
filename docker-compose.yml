@@ -1,0 +1,66 @@
+version: '2'
+volumes:
+  db:
+  static:
+  media:
+  cache:
+services:
+  postgres:
+    image: mdillon/postgis:9.6-alpine
+    hostname: postgres
+    env_file:
+      - docker.env
+    volumes:
+      - db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  redis:
+    image: redis:3.2.11
+    hostname: redis
+    env_file:
+      - docker.env
+  memcached:
+    image: memcached:1.5.7-alpine
+    hostname: memcached
+    env_file:
+      - docker.env
+  celery:
+    build: .
+    image: geotrek
+    hostname: celery
+    env_file:
+      - docker.env
+    depends_on:
+      - postgres
+      - redis
+    command: ./env/bin/celery -A geotrek worker -c 1 -n geotrek
+  gunicorn:
+    build: .
+    image: geotrek
+    hostname: gunicorn
+    volumes:
+      - static:/home/django/var/static
+      - media:/home/django/var/media
+      - cache:/home/django/var/cache
+    ports:
+      - "8000:8000"
+    env_file:
+      - docker.env
+    depends_on:
+      - postgres
+      - redis
+      - memcached
+    command: ./env/bin/gunicorn --bind=0.0.0.0:8000 geotrek.wsgi
+  nginx:
+    build: nginx
+    image: nginx
+    hostname: nginx
+    ports:
+      - "80:80"
+    env_file:
+      - docker.env
+    depends_on:
+      - gunicorn
+    volumes:
+      - static:/usr/share/nginx/html/static:ro
+      - media:/usr/share/nginx/html/media:ro
