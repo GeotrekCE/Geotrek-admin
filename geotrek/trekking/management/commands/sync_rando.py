@@ -558,7 +558,7 @@ class Command(BaseCommand):
     def sync_sensitiveareas(self, lang):
         self.sync_geojson(lang, sensitivity_views.SensitiveAreaViewSet, 'sensitiveareas.geojson',
                           params={'practices': 'Terrestre'})
-        for area in sensitivity_models.SensitiveArea.objects.filter(published=True):
+        for area in sensitivity_models.SensitiveArea.objects.existing().filter(published=True):
             name = os.path.join('api', lang, 'sensitiveareas', '{obj.pk}.kml'.format(obj=area))
             self.sync_view(lang, sensitivity_views.SensitiveAreaKMLDetail.as_view(), name, pk=area.pk)
             self.sync_media_file(lang, area.species.pictogram)

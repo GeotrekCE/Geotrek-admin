@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-*
+* Fix sync of deleted sensitive areas
 
 
 2.18.3 (2018-04-27)
