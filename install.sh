@@ -459,10 +459,16 @@ function geotrek_setup {
 	
     echo_step "Install Geotrek python dependencies..."
 
+    # install pip and virtualenv
     wget https://bootstrap.pypa.io/get-pip.py
     sudo python ./get-pip.py
     sudo pip install virtualenv -U
     rm get-pip.py
+
+    if [ $bionic -eq 1 ]; then
+        # fix gdal version for bionic
+        sed -i 's/GDAL=.*/GDAL=2.2.4/' ./conf/buildout.cfg
+    fi
 
     if $dev ; then
         make env_dev
