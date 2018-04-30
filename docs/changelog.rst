@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix sync of deleted sensitive areas
+* Fix touristiccontents.geojson crash when reservation_system is None
 
 
 2.18.3 (2018-04-27)
