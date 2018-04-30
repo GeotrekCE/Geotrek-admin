@@ -13,6 +13,7 @@ Contents:
    maintenance
    synchronization
    import
+   sensitivity
    troubleshooting
    faq
    user-manual
