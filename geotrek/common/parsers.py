@@ -6,6 +6,7 @@ from requests.auth import HTTPBasicAuth
 import xlrd
 import xml.etree.ElementTree as ET
 from urllib import request as urllib2
+from collections import Iterable
 
 from ftplib import FTP
 from os.path import dirname
@@ -98,13 +99,13 @@ class Parser(object):
         return name.upper()
 
     def normalize_src(self, src):
-        if hasattr(src, '__iter__'):
+        if not isinstance(src, str) and isinstance(src, Iterable):
             return [self.normalize_field_name(subsrc) for subsrc in src]
         else:
             return self.normalize_field_name(src)
 
     def add_warning(self, msg):
-        key = _(u"Line {line}".format(line=self.line))
+        key = _("Line {line}".format(line=self.line))
         warnings = self.warnings.setdefault(key, [])
         warnings.append(msg)
 
@@ -125,21 +126,22 @@ class Parser(object):
             return self.get_part(dst, left, val[part])
 
     def get_val(self, row, dst, src):
-        if hasattr(src, '__iter__'):
+        if not isinstance(src, str) and isinstance(src, Iterable):
             val = []
             for subsrc in src:
                 try:
                     val.append(self.get_val(row, dst, subsrc))
                 except ValueImportError as warning:
                     if self.warn_on_missing_fields:
-                        self.add_warning((warning))
+                        self.add_warning(warning)
                     val.append(None)
             return val
         else:
+
             try:
                 return self.get_part(dst, src, row)
             except (KeyError, IndexError):
-                required = u"required " if self.field_options.get(dst, {}).get('required', False) else ""
+                required = "required " if self.field_options.get(dst, {}).get('required', False) else ""
                 raise ValueImportError(_(u"Missing {required}field '{src}'").format(required=required, src=src))
 
     def apply_filter(self, dst, src, val):
@@ -225,7 +227,7 @@ class Parser(object):
                 if self.field_options.get(dst, {}).get('required', False):
                     raise RowImportError(warning)
                 if self.warn_on_missing_fields:
-                    self.add_warning((warning))
+                    self.add_warning(warning)
                 continue
         return updated
 
@@ -234,16 +236,16 @@ class Parser(object):
             update_fields = self.parse_fields(row, self.fields)
             update_fields += self.parse_fields(row, self.constant_fields)
         except RowImportError as warnings:
-            self.add_warning((warnings))
+            self.add_warning(warnings)
             return
-        if operation == u"created":
+        if operation == "created":
             self.obj.save()
         else:
             self.obj.save(update_fields=update_fields)
         update_fields += self.parse_fields(row, self.m2m_fields)
         update_fields += self.parse_fields(row, self.m2m_constant_fields)
         update_fields += self.parse_fields(row, self.non_fields, non_field=True)
-        if operation == u"created":
+        if operation == "created":
             self.nb_created += 1
         elif update_fields:
             self.nb_updated += 1
@@ -276,7 +278,7 @@ class Parser(object):
             try:
                 eid_kwargs = self.get_eid_kwargs(row)
             except RowImportError as warnings:
-                self.add_warning((warnings))
+                self.add_warning(warnings)
                 return
             objects = self.model.objects.filter(**eid_kwargs)
         if len(objects) == 0 and self.update_only:
@@ -290,7 +292,7 @@ class Parser(object):
             self.add_warning(_(u"Bad value '{eid_val}' for field '{eid_src}'. Multiple objects with this identifier").format(eid_val=self.eid_val, eid_src=self.eid_src))
             return
         else:
-            operation = u"updated"
+            operation = "updated"
         for self.obj in objects:
             self.parse_obj(row, operation)
             self.to_delete.discard(self.obj.pk)
@@ -440,7 +442,7 @@ class ShapeParser(Parser):
             try:
                 ogrgeom = feature.geom
             except GDALException:
-                print("Invalid geometry pointer",end=i)
+                print("Invalid geometry pointer", end=i)
                 geom = None
             else:
                 ogrgeom.coord_dim = 2  # Flatten to 2D
@@ -476,7 +478,7 @@ class AtomParser(Parser):
     }
 
     def flatten_fields(self, fields):
-        return reduce(lambda x, y: x + (list(y) if hasattr(y, '__iter__') else [y]), fields.values(), [])
+        return reduce(lambda x, y: x + (list(y) if not isinstance(y, str) and isinstance(y, Iterable) else [y]), fields.values(), [])
 
     def next_row(self):
         srcs = self.flatten_fields(self.fields)
