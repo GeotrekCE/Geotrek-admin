@@ -1,7 +1,6 @@
 import os
 
-from .base import *  # noqa
-from .base import INSTALLED_APPS, CACHES, LOGGING, DATABASES, VAR_ROOT
+from .base import *
 
 #
 # Django Production

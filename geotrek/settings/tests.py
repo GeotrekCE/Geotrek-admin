@@ -1,5 +1,5 @@
-from .base import *  # noqa
-from .base import INSTALLED_APPS, LOGGING, MAPENTITY_CONFIG, _, DATABASES
+from .base import *
+from .base import _
 
 #
 #  Django Tests

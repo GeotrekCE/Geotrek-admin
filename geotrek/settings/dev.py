@@ -1,5 +1,5 @@
 from .base import *  # noqa
-from .base import TEMPLATES, INSTALLED_APPS, LOGGING, MIDDLEWARE_CLASSES
+
 
 #
 # Django Development

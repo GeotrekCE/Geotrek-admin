@@ -3,6 +3,7 @@ import sys
 
 from django.contrib.gis.geos import fromstr
 from django.contrib.messages import constants as messages
+from django.conf.global_settings import LANGUAGES as LANGUAGES_LIST
 
 from geotrek import __version__
 
@@ -22,12 +23,15 @@ def api_bbox(bbox, buffer):
     return tuple(native.extent)
 
 
+ROOT_URL = ""
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DEPLOY_ROOT = os.path.dirname(PROJECT_ROOT)
+DEPLOY_ROOT = os.getenv('DEPLOY_ROOT', os.path.dirname(PROJECT_ROOT))
 VAR_ROOT = os.path.join(DEPLOY_ROOT, 'var')
 STATIC_ROOT = os.path.join(VAR_ROOT, 'static')
 MEDIA_ROOT = os.path.join(VAR_ROOT, 'media')
 CACHE_ROOT = os.path.join(VAR_ROOT, 'cache')
+
+SYNC_RANDO_ROOT = os.path.join(DEPLOY_ROOT, 'data')
 
 TITLE = _("Geotrek")
 
@@ -151,11 +155,11 @@ MEDIA_URL_SECURE = '/media_secure/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
-
+STATIC_URL = '%s%s' % (ROOT_URL, "/static/")
+MEDIA_URL = '%s%s' % (ROOT_URL, "/media/")
 # Additional locations of static files
 STATICFILES_DIRS = (
-    STATIC_ROOT,
+    os.path.join(PROJECT_ROOT, 'static'),
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -187,6 +191,7 @@ TEMPLATES = [
         'DIRS': (
             os.path.join(DEPLOY_ROOT, 'geotrek', 'templates'),
             os.path.join(MEDIA_ROOT, 'templates'),
+            os.path.join(DEPLOY_ROOT, 'lib', 'parts', 'omelette', 'mapentity', 'templates'),
         ),
         'OPTIONS': {
             'context_processors': [
@@ -226,6 +231,8 @@ MIDDLEWARE_CLASSES = (
     'geotrek.authent.middleware.CorsMiddleware',
     'mapentity.middleware.AutoLoginMiddleware'
 )
+FORCE_SCRIPT_NAME = ROOT_URL if ROOT_URL != '' else None
+ADMIN_MEDIA_PREFIX = '%s/static/admin/' % ROOT_URL
 
 ROOT_URLCONF = 'geotrek.urls'
 
@@ -308,7 +315,6 @@ CACHES = {
 # the site admins on every HTTP 500 error when DEBUG=False.
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
-DEBUG = True
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -395,9 +401,14 @@ API_SRID = 4326
 # Extent in native projection (Toulouse area)
 SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
 
+_MODELTRANSLATION_LANGUAGES = [l for l in LANGUAGES_LIST
+                               if l[0] in ("en","fr","it","es")]
+
 MAPENTITY_CONFIG = {
     'TITLE': TITLE,
-    'TEMP_DIR': os.path.join(CACHE_ROOT, 'tmp'),
+    'ROOT_URL': ROOT_URL,
+
+    'TEMP_DIR': os.path.join(VAR_ROOT, 'tmp'),
     'HISTORY_ITEMS_MAX': 7,
     'CONVERSION_SERVER': 'http://127.0.0.1:6543',
     'CAPTURE_SERVER': 'http://127.0.0.1:8001',
@@ -408,12 +419,7 @@ MAPENTITY_CONFIG = {
     'MAPENTITY_WEASYPRINT': False,
     'LANGUAGE_CODE': LANGUAGE_CODE,
     'LANGUAGES': LANGUAGES,
-    'TRANSLATED_LANGUAGES': (  # FIXME: should depend on MODELTRANSLATION_LANGUAGES
-        ('en', _('English')),
-        ('fr', _('French')),
-        ('it', _('Italian')),
-        ('es', _('Spanish')),
-    ),
+    'TRANSLATED_LANGUAGES': _MODELTRANSLATION_LANGUAGES,
 }
 
 DEFAULT_STRUCTURE_NAME = _('Default')
