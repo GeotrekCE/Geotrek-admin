@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='species',
             name='category',
-            field=models.IntegerField(default=1, verbose_name='Category', db_column=b'categorie', choices=[(1, 'Species'), (2, 'Regulatory')]),
+            field=models.IntegerField(default=1, verbose_name='Category', db_column='categorie', choices=[(1, 'Species'), (2, 'Regulatory')]),
         ),
     ]

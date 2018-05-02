@@ -16,8 +16,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CompetenceEdge',
             fields=[
-                ('topo_object', models.OneToOneField(parent_link=True, primary_key=True, db_column=b'evenement', serialize=False, to='core.Topology')),
-                ('organization', models.ForeignKey(db_column=b'organisme', verbose_name='Organism', to='common.Organism')),
+                ('topo_object', models.OneToOneField(parent_link=True, primary_key=True, db_column='evenement', serialize=False, to='core.Topology')),
+                ('organization', models.ForeignKey(db_column='organisme', verbose_name='Organism', to='common.Organism')),
             ],
             options={
                 'db_table': 'f_t_competence',
@@ -29,9 +29,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='LandEdge',
             fields=[
-                ('topo_object', models.OneToOneField(parent_link=True, primary_key=True, db_column=b'evenement', serialize=False, to='core.Topology')),
-                ('owner', models.TextField(verbose_name='Owner', db_column=b'proprietaire', blank=True)),
-                ('agreement', models.BooleanField(default=False, verbose_name='Agreement', db_column=b'convention')),
+                ('topo_object', models.OneToOneField(parent_link=True, primary_key=True, db_column='evenement', serialize=False, to='core.Topology')),
+                ('owner', models.TextField(verbose_name='Owner', db_column='proprietaire', blank=True)),
+                ('agreement', models.BooleanField(default=False, verbose_name='Agreement', db_column='convention')),
             ],
             options={
                 'db_table': 'f_t_foncier',
@@ -44,9 +44,9 @@ class Migration(migrations.Migration):
             name='LandType',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(max_length=128, verbose_name='Name', db_column=b'foncier')),
-                ('right_of_way', models.BooleanField(default=False, verbose_name='Right of way', db_column=b'droit_de_passage')),
-                ('structure', models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('name', models.CharField(max_length=128, verbose_name='Name', db_column='foncier')),
+                ('right_of_way', models.BooleanField(default=False, verbose_name='Right of way', db_column='droit_de_passage')),
+                ('structure', models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['name'],
@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='PhysicalEdge',
             fields=[
-                ('topo_object', models.OneToOneField(parent_link=True, primary_key=True, db_column=b'evenement', serialize=False, to='core.Topology')),
+                ('topo_object', models.OneToOneField(parent_link=True, primary_key=True, db_column='evenement', serialize=False, to='core.Topology')),
             ],
             options={
                 'db_table': 'f_t_nature',
@@ -71,8 +71,8 @@ class Migration(migrations.Migration):
             name='PhysicalType',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(max_length=128, verbose_name='Name', db_column=b'nom')),
-                ('structure', models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('name', models.CharField(max_length=128, verbose_name='Name', db_column='nom')),
+                ('structure', models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['name'],
@@ -84,8 +84,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SignageManagementEdge',
             fields=[
-                ('topo_object', models.OneToOneField(parent_link=True, primary_key=True, db_column=b'evenement', serialize=False, to='core.Topology')),
-                ('organization', models.ForeignKey(db_column=b'organisme', verbose_name='Organism', to='common.Organism')),
+                ('topo_object', models.OneToOneField(parent_link=True, primary_key=True, db_column='evenement', serialize=False, to='core.Topology')),
+                ('organization', models.ForeignKey(db_column='organisme', verbose_name='Organism', to='common.Organism')),
             ],
             options={
                 'db_table': 'f_t_gestion_signaletique',
@@ -97,8 +97,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='WorkManagementEdge',
             fields=[
-                ('topo_object', models.OneToOneField(parent_link=True, primary_key=True, db_column=b'evenement', serialize=False, to='core.Topology')),
-                ('organization', models.ForeignKey(db_column=b'organisme', verbose_name='Organism', to='common.Organism')),
+                ('topo_object', models.OneToOneField(parent_link=True, primary_key=True, db_column='evenement', serialize=False, to='core.Topology')),
+                ('organization', models.ForeignKey(db_column='organisme', verbose_name='Organism', to='common.Organism')),
             ],
             options={
                 'db_table': 'f_t_gestion_travaux',
@@ -110,11 +110,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='physicaledge',
             name='physical_type',
-            field=models.ForeignKey(db_column=b'type', verbose_name='Physical type', to='land.PhysicalType'),
+            field=models.ForeignKey(db_column='type', verbose_name='Physical type', to='land.PhysicalType'),
         ),
         migrations.AddField(
             model_name='landedge',
             name='land_type',
-            field=models.ForeignKey(db_column=b'type', verbose_name='Land type', to='land.LandType'),
+            field=models.ForeignKey(db_column='type', verbose_name='Land type', to='land.LandType'),
         ),
     ]

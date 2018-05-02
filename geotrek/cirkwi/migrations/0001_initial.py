@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('eid', models.IntegerField(unique=True, verbose_name='Cirkwi id')),
-                ('name', models.CharField(max_length=128, verbose_name='Cirkwi name', db_column=b'nom')),
+                ('name', models.CharField(max_length=128, verbose_name='Cirkwi name', db_column='nom')),
             ],
             options={
                 'ordering': ['name'],
@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('eid', models.IntegerField(unique=True, verbose_name='Cirkwi id')),
-                ('name', models.CharField(max_length=128, verbose_name='Cirkwi name', db_column=b'nom')),
+                ('name', models.CharField(max_length=128, verbose_name='Cirkwi name', db_column='nom')),
             ],
             options={
                 'ordering': ['name'],
@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('eid', models.IntegerField(unique=True, verbose_name='Cirkwi id')),
-                ('name', models.CharField(max_length=128, verbose_name='Cirkwi name', db_column=b'nom')),
+                ('name', models.CharField(max_length=128, verbose_name='Cirkwi name', db_column='nom')),
             ],
             options={
                 'ordering': ['name'],
