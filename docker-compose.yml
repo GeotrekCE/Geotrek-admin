@@ -42,6 +42,7 @@ services:
       - static:/home/django/var/static
       - media:/home/django/var/media
       - cache:/home/django/var/cache
+      - .env/src:/home/django/src
     ports:
       - "8000:8000"
     env_file:
@@ -56,7 +57,7 @@ services:
     image: nginx
     hostname: nginx
     ports:
-      - "80:80"
+      - "8001:80"
     env_file:
       - docker.env
     depends_on:
