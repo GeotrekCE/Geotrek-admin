@@ -12,6 +12,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='species',
             name='radius',
-            field=models.IntegerField(help_text='meters', null=True, verbose_name='Bubble radius', db_column=b'rayon', blank=True),
+            field=models.IntegerField(help_text='meters', null=True, verbose_name='Bubble radius', db_column='rayon', blank=True),
         ),
     ]

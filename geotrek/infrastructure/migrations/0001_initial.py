@@ -16,10 +16,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='BaseInfrastructure',
             fields=[
-                ('topo_object', models.OneToOneField(parent_link=True, primary_key=True, db_column=b'evenement', serialize=False, to='core.Topology')),
-                ('name', models.CharField(help_text='Reference, code, ...', max_length=128, verbose_name='Name', db_column=b'nom')),
-                ('description', models.TextField(help_text='Specificites', verbose_name='Description', db_column=b'description', blank=True)),
-                ('implantation_year', models.PositiveSmallIntegerField(null=True, verbose_name='Implantation year', db_column=b'annee_implantation')),
+                ('topo_object', models.OneToOneField(parent_link=True, primary_key=True, db_column='evenement', serialize=False, to='core.Topology')),
+                ('name', models.CharField(help_text='Reference, code, ...', max_length=128, verbose_name='Name', db_column='nom')),
+                ('description', models.TextField(help_text='Specificites', verbose_name='Description', db_column='description', blank=True)),
+                ('implantation_year', models.PositiveSmallIntegerField(null=True, verbose_name='Implantation year', db_column='annee_implantation')),
             ],
             options={
                 'db_table': 'a_t_amenagement',
@@ -30,8 +30,8 @@ class Migration(migrations.Migration):
             name='InfrastructureCondition',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('label', models.CharField(max_length=250, verbose_name='Name', db_column=b'etat')),
-                ('structure', models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('label', models.CharField(max_length=250, verbose_name='Name', db_column='etat')),
+                ('structure', models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'db_table': 'a_b_etat',
@@ -43,9 +43,9 @@ class Migration(migrations.Migration):
             name='InfrastructureType',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('label', models.CharField(max_length=128, db_column=b'nom')),
-                ('type', models.CharField(max_length=1, db_column=b'type', choices=[(b'A', 'Building'), (b'E', 'Facility'), (b'S', 'Signage')])),
-                ('structure', models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('label', models.CharField(max_length=128, db_column='nom')),
+                ('type', models.CharField(max_length=1, db_column='type', choices=[(b'A', 'Building'), (b'E', 'Facility'), (b'S', 'Signage')])),
+                ('structure', models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['label', 'type'],
@@ -57,17 +57,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='baseinfrastructure',
             name='condition',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, db_column=b'etat', blank=True, to='infrastructure.InfrastructureCondition', null=True, verbose_name='Condition'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, db_column='etat', blank=True, to='infrastructure.InfrastructureCondition', null=True, verbose_name='Condition'),
         ),
         migrations.AddField(
             model_name='baseinfrastructure',
             name='structure',
-            field=models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure'),
+            field=models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure'),
         ),
         migrations.AddField(
             model_name='baseinfrastructure',
             name='type',
-            field=models.ForeignKey(db_column=b'type', verbose_name='Type', to='infrastructure.InfrastructureType'),
+            field=models.ForeignKey(db_column='type', verbose_name='Type', to='infrastructure.InfrastructureType'),
         ),
         migrations.CreateModel(
             name='Infrastructure',

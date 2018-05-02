@@ -12,11 +12,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='sensitivearea',
             name='eid',
-            field=models.CharField(max_length=128, null=True, verbose_name='External id', db_column=b'id_externe', blank=True),
+            field=models.CharField(max_length=128, null=True, verbose_name='External id', db_column='id_externe', blank=True),
         ),
         migrations.AddField(
             model_name='species',
             name='eid',
-            field=models.CharField(max_length=128, null=True, verbose_name='External id', db_column=b'id_externe', blank=True),
+            field=models.CharField(max_length=128, null=True, verbose_name='External id', db_column='id_externe', blank=True),
         ),
     ]

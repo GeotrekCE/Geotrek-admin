@@ -22,6 +22,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='sensitivearea',
             name='species',
-            field=models.ForeignKey(db_column=b'espece', on_delete=django.db.models.deletion.PROTECT, verbose_name='Sensitive area', to='sensitivity.Species'),
+            field=models.ForeignKey(db_column='espece', on_delete=django.db.models.deletion.PROTECT, verbose_name='Sensitive area', to='sensitivity.Species'),
         ),
     ]

@@ -23,10 +23,10 @@ class Migration(migrations.Migration):
                 ('object_id', models.PositiveIntegerField()),
                 ('attachment_file', models.FileField(upload_to=paperclip.models.attachment_upload, max_length=512, verbose_name='File', blank=True)),
                 ('attachment_video', embed_video.fields.EmbedVideoField(verbose_name='URL', blank=True)),
-                ('author', models.CharField(db_column=b'auteur', default=b'', max_length=128, blank=True, help_text='Original creator', verbose_name='Author')),
-                ('title', models.CharField(db_column=b'titre', default=b'', max_length=128, blank=True, help_text='Renames the file', verbose_name='Filename')),
-                ('legend', models.CharField(db_column=b'legende', default=b'', max_length=128, blank=True, help_text='Details displayed', verbose_name='Legend')),
-                ('starred', models.BooleanField(default=False, help_text='Mark as starred', verbose_name='Starred', db_column=b'marque')),
+                ('author', models.CharField(db_column='auteur', default='', max_length=128, blank=True, help_text='Original creator', verbose_name='Author')),
+                ('title', models.CharField(db_column='titre', default='', max_length=128, blank=True, help_text='Renames the file', verbose_name='Filename')),
+                ('legend', models.CharField(db_column='legende', default='', max_length=128, blank=True, help_text='Details displayed', verbose_name='Legend')),
+                ('starred', models.BooleanField(default=False, help_text='Mark as starred', verbose_name='Starred', db_column='marque')),
                 ('date_insert', models.DateTimeField(auto_now_add=True, verbose_name='Insertion date')),
                 ('date_update', models.DateTimeField(auto_now=True, verbose_name='Update date')),
                 ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('type', models.CharField(max_length=128, verbose_name='File type')),
-                ('structure', models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['type'],
@@ -61,8 +61,8 @@ class Migration(migrations.Migration):
             name='Organism',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('organism', models.CharField(max_length=128, verbose_name='Organism', db_column=b'organisme')),
-                ('structure', models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('organism', models.CharField(max_length=128, verbose_name='Organism', db_column='organisme')),
+                ('structure', models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['organism'],
@@ -75,9 +75,9 @@ class Migration(migrations.Migration):
             name='RecordSource',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('pictogram', models.FileField(db_column=b'picto', upload_to=b'upload', max_length=512, blank=True, null=True, verbose_name='Pictogram')),
+                ('pictogram', models.FileField(db_column='picto', upload_to='upload', max_length=512, blank=True, null=True, verbose_name='Pictogram')),
                 ('name', models.CharField(max_length=50, verbose_name='Name')),
-                ('website', models.URLField(max_length=256, null=True, verbose_name='Website', db_column=b'website', blank=True)),
+                ('website', models.URLField(max_length=256, null=True, verbose_name='Website', db_column='website', blank=True)),
             ],
             options={
                 'ordering': ['name'],
@@ -90,8 +90,8 @@ class Migration(migrations.Migration):
             name='TargetPortal',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(help_text='Used for sync', unique=b'True', max_length=50, verbose_name='Name')),
-                ('website', models.URLField(unique=b'True', max_length=256, verbose_name='Website', db_column=b'website')),
+                ('name', models.CharField(help_text='Used for sync', unique='True', max_length=50, verbose_name='Name')),
+                ('website', models.URLField(unique='True', max_length=256, verbose_name='Website', db_column='website')),
             ],
             options={
                 'ordering': ('name',),
@@ -104,8 +104,8 @@ class Migration(migrations.Migration):
             name='Theme',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('pictogram', models.FileField(max_length=512, null=True, verbose_name='Pictogram', db_column=b'picto', upload_to=b'upload')),
-                ('label', models.CharField(max_length=128, verbose_name='Label', db_column=b'theme')),
+                ('pictogram', models.FileField(max_length=512, null=True, verbose_name='Pictogram', db_column='picto', upload_to='upload')),
+                ('label', models.CharField(max_length=128, verbose_name='Label', db_column='theme')),
                 ('cirkwi', models.ForeignKey(verbose_name='Cirkwi tag', blank=True, to='cirkwi.CirkwiTag', null=True)),
             ],
             options={
