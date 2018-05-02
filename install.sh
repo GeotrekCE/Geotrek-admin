@@ -206,22 +206,15 @@ function check_postgres_connection {
 function minimum_system_dependencies {
     sudo apt-get update -qq
     echo_progress
-    sudo apt-get install -y -qq python unzip wget python-software-properties
+    sudo apt-get install -y -qq python unzip wget software-properties-common
     echo_progress
-    sudo apt-get install -y -qq git gettext python-virtualenv build-essential python-dev
+    sudo apt-get install -y -qq git gettext build-essential python-dev
     echo_progress
 }
 
 
 function geotrek_system_dependencies {
-    sudo apt-get install -y -q --no-upgrade libjson0 gdal-bin libgdal-dev libssl-dev binutils libproj-dev
-    
-    if [ $xenial -eq 1 ]; then
-        sudo apt-get install libgeos-c1v5 libproj9
-    else
-        sudo apt-get install libgeos-c1 libproj0
-    fi
-    
+    sudo apt-get install -y -q --no-upgrade gdal-bin libgdal-dev libssl-dev binutils libproj-dev
     echo_progress
     # PostgreSQL client and headers
     sudo apt-get install -y -q --no-upgrade postgresql-client-$psql_version postgresql-server-dev-$psql_version
@@ -229,7 +222,7 @@ function geotrek_system_dependencies {
     sudo apt-get install -y -qq libxml2-dev libxslt-dev  # pygal lxml
     echo_progress
     # Necessary for MapEntity Weasyprint
-    sudo apt-get install -y -qq python-dev python-lxml libcairo2 libpango1.0-0 libgdk-pixbuf2.0-dev libffi-dev shared-mime-info libfreetype6-dev
+    sudo apt-get install -y -qq python-lxml libcairo2 libpango1.0-0 libgdk-pixbuf2.0-dev libffi-dev shared-mime-info libfreetype6-dev
     echo_progress
     # Redis for async imports and tasks management
     sudo apt-get install -y -qq redis-server
@@ -465,6 +458,18 @@ function geotrek_setup {
     check_postgres_connection
 	
     echo_step "Install Geotrek python dependencies..."
+
+    # install pip and virtualenv
+    wget https://bootstrap.pypa.io/get-pip.py
+    sudo python ./get-pip.py
+    sudo pip install virtualenv -U
+    rm get-pip.py
+
+    if [ $bionic -eq 1 ]; then
+        # fix gdal version for bionic
+        sed -i 's/GDAL=.*/GDAL=2.2.4/' ./conf/buildout.cfg
+    fi
+
     if $dev ; then
         make env_dev
     elif $tests ; then
@@ -603,6 +608,7 @@ precise=$(grep "Ubuntu 12.04" /etc/issue | wc -l)
 trusty=$(grep "Ubuntu 14.04" /etc/issue | wc -l)
 vivid=$(grep "Ubuntu 15.04" /etc/issue | wc -l)
 xenial=$(grep "Ubuntu 16.04" /etc/issue | wc -l)
+bionic=$(grep "Ubuntu 18.04" /etc/issue | wc -l)
 
 if [ $trusty -eq 1 ]; then
     psql_version=9.3
@@ -613,9 +619,12 @@ elif [ $vivid -eq 1 ]; then
 elif [ $xenial -eq 1 ]; then
     psql_version=9.5
     pgis_version=2.2
+elif [ $bionic -eq 1 ]; then
+    psql_version=10
+    pgis_version=2.4
 fi
 
-if [ $trusty -eq 1 -o $vivid -eq 1 -o $xenial -eq 1 ] ; then
+if [ $trusty -eq 1 -o $vivid -eq 1 -o $xenial -eq 1 -o $bionic -eq 1 ] ; then
     geotrek_setup
 elif [ $precise -eq 1 ] ; then
     exit_error 5 "Support for Ubuntu Precise 12.04 was dropped. Upgrade your server first. Aborted."

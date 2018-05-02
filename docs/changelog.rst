@@ -10,6 +10,10 @@ CHANGELOG
 * Fix sync of deleted sensitive areas
 * Fix touristiccontents.geojson crash when reservation_system is None
 
+**Minor changes**
+
+* Add Ubuntu 18.04 Bionic Beaver support
+
 
 2.18.3 (2018-04-27)
 -------------------
