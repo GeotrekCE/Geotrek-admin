@@ -2,8 +2,6 @@
 import os
 import sys
 
-exec(open("./bin/activate_this.py").read())
-
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "geotrek.settings.custom")
     try:
