@@ -1047,7 +1047,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<informations>'
             '<information langue="en"><titre>{poi_title}</titre><description>{poi_description}</description></information>'
             '</informations>'
-            '<adresse><position><lat>46.49999999999995</lat><lng>3.0000000000000004</lng></position></adresse>'
+            '<adresse><position><lat>46.499999999999936</lat><lng>3.0000000000000004</lng></position></adresse>'
             '</poi>'
             '</pois>'
             '</circuit>'

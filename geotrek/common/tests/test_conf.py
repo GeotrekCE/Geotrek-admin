@@ -16,5 +16,5 @@ class StartupCheckTest(TestCase):
         if hasattr(check_srid_has_meter_unit, '_checked'):
             delattr(check_srid_has_meter_unit, '_checked')
         with self.settings(SRID=2154):
-            self.assertRaises(check_srid_has_meter_unit)
+            check_srid_has_meter_unit()
 
