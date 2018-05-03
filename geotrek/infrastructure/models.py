@@ -123,7 +123,8 @@ class InfrastructureGISManager(gismodels.GeoManager):
 
     def all_implantation_years(self):
         all_years = self.get_queryset().values_list('implantation_year', flat=True)
-        all_years = sorted(list(reversed(all_years)))
+        tmp = list(reversed(all_years))
+        all_years = tmp if tmp is None else list(reversed(all_years))
         return all_years
 
 
@@ -163,7 +164,8 @@ class SignageGISManager(gismodels.GeoManager):
 
     def all_implantation_years(self):
         all_years = self.get_queryset().values_list('implantation_year', flat=True)
-        all_years = sorted(list(reversed(all_years)))
+        tmp = list(reversed(all_years))
+        all_years = tmp if tmp is None else list(reversed(all_years))
         return all_years
 
 
