@@ -10,7 +10,7 @@ from collections import Iterable
 
 from ftplib import FTP
 from os.path import dirname
-from urllib import parse as urlparse
+from urllib.parse import urlparse
 
 from django.db import models, connection
 from django.db.utils import DatabaseError
