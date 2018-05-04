@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.core.exceptions import ValidationError, PermissionDenied
+from django.core.urlresolvers import reverse
 from django.utils.decorators import method_decorator
 from django.conf import settings
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.utils import DatabaseError
 from django.http import HttpResponse
@@ -11,6 +12,7 @@ from django_celery_results.models import TaskResult
 from django.utils import timezone
 
 from mapentity.helpers import api_bbox
+from mapentity.registry import registry
 from mapentity import views as mapentity_views
 
 from geotrek.celery import app as celery_app
@@ -182,7 +184,7 @@ class UserArgMixin(object):
         return kwargs
 
 
-def import_file(uploaded, parser):
+def import_file(uploaded, parser, user_pk):
     destination_dir, destination_file = create_tmp_destination(uploaded.name)
     with open(destination_file, 'w+') as f:
         f.write(uploaded.file.read())
@@ -195,7 +197,7 @@ def import_file(uploaded, parser):
                 raise
 
             if name.endswith('shp'):
-                import_datas.delay(parser.__name__, '/'.join((destination_dir, name)), parser.__module__)
+                import_datas.delay(parser.__name__, '/'.join((destination_dir, name)), parser.__module__, user_pk)
 
 
 @login_required
@@ -225,7 +227,7 @@ def import_view(request):
                 codename = '{}.import_{}'.format(parser.model._meta.app_label, parser.model._meta.model_name)
                 if not request.user.is_superuser and not request.user.has_perm(codename):
                     raise PermissionDenied
-                import_file(uploaded, parser)
+                import_file(uploaded, parser, request.user.pk)
 
         if 'import-web' in request.POST:
             form_without_file = ImportDatasetForm(
@@ -237,7 +239,7 @@ def import_view(request):
                 if not request.user.is_superuser and not request.user.has_perm(codename):
                     raise PermissionDenied
                 import_datas_from_web.delay(
-                    parser.__name__, parser.__module__
+                    parser.__name__, parser.__module__, request.user.pk
                 )
 
     # Hide second form if parser has no web based imports.
@@ -301,3 +303,18 @@ class ThemeViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         qs = super(ThemeViewSet, self).get_queryset()
         return qs.order_by('id')
+
+
+@login_required
+def last_list(request):
+    last = request.session.get('last_list')  # set in MapEntityList
+    for entity in registry.entities:
+        if reverse(entity.url_list) == last and request.user.has_perm(entity.model.get_permission_codename('list')):
+            return redirect(entity.url_list)
+    for entity in registry.entities:
+        if entity.menu and request.user.has_perm(entity.model.get_permission_codename('list')):
+            return redirect(entity.url_list)
+    return redirect('trekking:trek_list')
+
+
+home = last_list

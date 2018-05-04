@@ -10,9 +10,6 @@ from django.views.decorators.cache import never_cache as force_cache_validation
 from django.views.generic import View
 from django.utils.translation import ugettext as _
 from django.core.cache import caches
-from django.core.urlresolvers import reverse
-from django.shortcuts import redirect
-from mapentity.registry import registry
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityFormat,
@@ -35,21 +32,6 @@ from django.db.models.fields import FloatField
 
 
 logger = logging.getLogger(__name__)
-
-
-@login_required
-def last_list(request):
-    last = request.session.get('last_list')  # set in MapEntityList
-    for entity in registry.entities:
-        if reverse(entity.url_list) == last and request.user.has_perm(entity.model.get_permission_codename('list')):
-            return redirect(entity.url_list)
-    for entity in registry.entities:
-        if entity.menu and request.user.has_perm(entity.model.get_permission_codename('list')):
-            return redirect(entity.url_list)
-    return redirect('trekking:trek_list')
-
-
-home = last_list
 
 
 class CreateFromTopologyMixin(object):

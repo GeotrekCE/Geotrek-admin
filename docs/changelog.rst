@@ -2,18 +2,58 @@
 CHANGELOG
 =========
 
-2.18.2.dev0
+2.18.5.dev0
 -----------
+
+**Bug fixes**
+
+*
+
+
+2.18.4 (2018-05-02)
+-------------------
+
+**Bug fixes**
+
+* Fix sync of deleted sensitive areas
+* Fix touristiccontents.geojson crash when reservation_system is None
+
+**Minor changes**
+
+* Add Ubuntu 18.04 Bionic Beaver support
+
+
+2.18.3 (2018-04-27)
+-------------------
+
+**Bug fixes**
+
+* Fix imports when enabling only sensitivity app
+
+
+2.18.2 (2018-04-27)
+-------------------
 
 **Preventive maintainance**
 
 * Upgrade to Django 1.11
 * Upgrade several python dependencies
 
+**Minor changes**
+
+* Allow user with can_bypass_structure permission to set or update the related
+  structure on sensitive areas
+
 **Bug fixes**
 
 * Put back filter widgets in two columns (#1663)
 * Do not include (possibly forged) structure field in post requests
+* Fix geojson format in sensitive areas API
+* Fix filtering by practices in sensitive areas API
+* Fix sync_rando when sensitivity app is not enabled
+* Adapt BiodivParser to API modifications
+* Order sensitive areas by decreasing area in API to be able to clic on each of them
+* Set ownership in parsers depending on logged user
 * Pagination requires ordering in v2 API
 
 
@@ -50,6 +90,14 @@ CHANGELOG
 **Minor changes**
 
 * Show total path length in path list
+
+
+2.17.3 (2018-03-23)
+-------------------
+
+** Bug fixes **
+
+* Fix install
 
 
 2.17.2 (2018-02-07)

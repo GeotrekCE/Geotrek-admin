@@ -10,7 +10,7 @@ ALLOWED_HOSTS = tuple('*')
 
 USE_X_FORWARDED_HOST = True
 
-COMPRESSOR_ENABLED = True
+COMPRESS_ENABLED = True
 
 INSTALLED_APPS += (
     'gunicorn',

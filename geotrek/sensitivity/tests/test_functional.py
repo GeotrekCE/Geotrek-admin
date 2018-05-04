@@ -26,6 +26,7 @@ class SensitiveAreaViewsTests(CommonTest):
         return {
             'species': SpeciesFactory.create().pk,
             'geom': '{"type": "Polygon", "coordinates":[[[0, 0], [0, 1], [1, 0], [0, 0]]]}',
+            'structure': str(self.user.profile.structure.pk),
         }
 
 
@@ -48,6 +49,7 @@ class RegulatorySensitiveAreaViewsTests(CommonTest):
             'name': 'Test',
             'practices': [SportPracticeFactory.create().pk],
             'geom': '{"type": "Polygon", "coordinates":[[[0, 0], [0, 1], [1, 0], [0, 0]]]}',
+            'structure': str(self.user.profile.structure.pk),
         }
 
     def _get_add_url(self):

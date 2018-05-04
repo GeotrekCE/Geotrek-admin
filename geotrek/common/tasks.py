@@ -2,6 +2,7 @@ import importlib
 import sys
 from celery import Task, shared_task, current_task
 from django.utils.translation import ugettext as _
+from django.contrib.auth.models import User
 
 
 class GeotrekImportTask(Task):
@@ -13,10 +14,10 @@ class GeotrekImportTask(Task):
     '''
     def on_failure(self, exc, task_id, args, kwargs, einfo):
         try:
-            filename, class_name, module_name = args
+            filename, class_name, module_name, user_pk = args
 
         except ValueError:
-            class_name, module_name = args
+            class_name, module_name, user_pk = args
             filename = ''
 
         self.update_state(
@@ -33,7 +34,7 @@ class GeotrekImportTask(Task):
 
 
 @shared_task(base=GeotrekImportTask, name='geotrek.common.import-file')
-def import_datas(class_name, filename, module_name="bulkimport.parsers"):
+def import_datas(class_name, filename, module_name="bulkimport.parsers", user_pk=None):
     try:
         module = importlib.import_module(module_name)
         Parser = getattr(module, class_name)
@@ -55,8 +56,10 @@ def import_datas(class_name, filename, module_name="bulkimport.parsers"):
         sys.stdout.write(
             "{progress:02d}%".format(progress=int(100 * progress)))
 
+    user = user_pk and User.objects.get(pk=user_pk)
+
     try:
-        parser = Parser(progress_cb=progress_cb)
+        parser = Parser(progress_cb=progress_cb, user=user)
         parser.parse(filename)
     except Exception as e:
         raise e
@@ -72,7 +75,7 @@ def import_datas(class_name, filename, module_name="bulkimport.parsers"):
 
 
 @shared_task(base=GeotrekImportTask, name='geotrek.common.import-web')
-def import_datas_from_web(class_name, module_name="bulkimport.parsers"):
+def import_datas_from_web(class_name, module_name="bulkimport.parsers", user_pk=None):
     try:
         module = importlib.import_module(module_name)
         Parser = getattr(module, class_name)
@@ -94,8 +97,10 @@ def import_datas_from_web(class_name, module_name="bulkimport.parsers"):
         sys.stdout.write(
             "{progress:02d}%".format(progress=int(100 * progress)))
 
+    user = user_pk and User.objects.get(pk=user_pk)
+
     try:
-        parser = Parser(progress_cb=progress_cb)
+        parser = Parser(progress_cb=progress_cb, user=user)
         parser.parse()
     except Exception as e:
         raise e

@@ -14,10 +14,11 @@ from .models import SensitiveArea, Species, SportPractice
 class BiodivParser(Parser):
     model = SensitiveArea
     label = "Biodiv'Sports"
-    url = 'http://biodiv-sports.fr/api/v2/sensitivearea/?format=json&bubble&period=ignore'
+    url = 'https://biodiv-sports.fr/api/v2/sensitivearea/?format=json&bubble&period=ignore'
     eid = 'eid'
     separator = None
     delete = True
+    practices = None
     fields = {
         'eid': 'id',
         'geom': 'geometry',
@@ -51,10 +52,21 @@ class BiodivParser(Parser):
         return kwargs
 
     def next_row(self):
+        response = requests.get('https://biodiv-sports.fr/api/v2/sportpractice/')
+        if response.status_code != 200:
+            msg = _(u"Failed to download https://biodiv-sports.fr/api/v2/sportpractice/. HTTP status code {status_code}")
+            raise GlobalImportError(msg.format(url=response.url, status_code=response.status_code))
+        for practice in response.json()['results']:
+            defaults = {'name_' + lang: practice['name'][lang] for lang in practice['name'].keys() if lang in settings.MODELTRANSLATION_LANGUAGES}
+            SportPractice.objects.get_or_create(id=practice['id'], defaults=defaults)
         bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
         bbox.srid = settings.SRID
         bbox.transform(4326)  # WGS84
-        response = requests.get(self.url + "&in_bbox={}".format(",".join([str(coord) for coord in bbox.extent])))
+        url = self.url
+        url += '&in_bbox={}'.format(','.join([str(coord) for coord in bbox.extent]))
+        if self.practices:
+            url += '&practices={}'.format(','.join([str(practice) for practice in self.practices]))
+        response = requests.get(url)
         if response.status_code != 200:
             msg = _("Failed to download {url}. HTTP status code {status_code}")
             raise GlobalImportError(msg.format(url=response.url, status_code=response.status_code))
@@ -80,7 +92,7 @@ class BiodivParser(Parser):
         return geom
 
     def filter_species(self, src, val):
-        (eid, names, period, practice_names, url, radius) = val
+        (eid, names, period, practice_ids, url, radius) = val
         need_save = False
         if eid is None:  # Regulatory area
             try:
@@ -100,7 +112,7 @@ class BiodivParser(Parser):
             if period[i] != getattr(species, 'period{:02}'.format(i + 1)):
                 setattr(species, 'period{:02}'.format(i + 1), period[i])
                 need_save = True
-        practices = [SportPractice.objects.get_or_create(name=name)[0] for name in practice_names]
+        practices = [SportPractice.objects.get(id=id) for id in practice_ids]
         if url != species.url:
             species.url = url
             need_save = True

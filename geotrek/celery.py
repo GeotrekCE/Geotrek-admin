@@ -1,6 +1,3 @@
-import os
-from celery import Celery
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'geotrek.settings.custom')
 
 app = Celery('geotrek')
