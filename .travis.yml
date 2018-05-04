@@ -15,34 +15,18 @@ matrix:
     - env: ACTION=integration
 
 services:
+  - docker
   - redis-server
 
 cache:
   - apt
   - pip
 
-addons:
-  apt:
-    packages:
-    - libgdal-dev
-
-services:
-  - postgresql
-
-env:
-  - DJANGO_SETTINGS_MODULE=geotrek.settings.tests
-
-install:
-  - pip install --global-option=build_ext --global-option="-I/usr/include/gdal/" gdal==1.10.0
-  - pip install -e . flake8 coverage
-  - psql -c "create user geotrek superuser password 'geotrek'" -U postgres
-  - psql -c "create database geotrekdb owner geotrek" -U postgres
-  - ./manage.py collectstatic --noinput
-
-script:
-  - flake8 geotrek
-  - find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID
-  - coverage run manage.py test geotrek
+before_install:
+  - docker build -t carlad/sinatra .
+  - docker run -d -p 127.0.0.1:80:4567 carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec foreman start;"
+  - docker ps -a
+  - docker run carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec rake test"
 
 after_success:
   # Report coverage results to coveralls.io
