@@ -14,16 +14,19 @@ services:
       - db:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks: ['mynetwork']
   redis:
     image: redis:3.2.11
     hostname: redis
     env_file:
       - docker.env
+    networks: ['mynetwork']
   memcached:
     image: memcached:1.5.7-alpine
     hostname: memcached
     env_file:
       - docker.env
+    networks: ['mynetwork']
   celery:
     user: "1001"
     build: .
@@ -35,6 +38,7 @@ services:
       - postgres
       - redis
     command: ./env/bin/celery -A geotrek worker -c 1 -n geotrek
+    networks: ['mynetwork']
   gunicorn:
     user: "1001"
     build: .
@@ -54,6 +58,7 @@ services:
       - redis
       - memcached
     command: ./env/bin/gunicorn --bind=0.0.0.0:8000 geotrek.wsgi
+    networks: ['mynetwork']
   nginx:
     build: nginx
     image: nginx
@@ -67,3 +72,5 @@ services:
     volumes:
       - static:/usr/share/nginx/html/static:ro
       - media:/usr/share/nginx/html/media:ro
+    networks: ['mynetwork']
+networks: {mynetwork: {}}

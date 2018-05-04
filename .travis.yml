@@ -1,31 +1,17 @@
-dist: trusty
-language: python
-
-python:
-  - "3.6.5"
-
 env:
-  - ACTION=test
-  - ACTION=deploy
-  - ACTION=integration
-  - ACTION=codestyle
-
-matrix:
-  allow_failures:
-    - env: ACTION=integration
-
-services:
-  - docker
+  - DOCKER_COMPOSE_VERSION=1.19.0
 
 before_install:
-  - docker build .
-  - docker
-  - docker run -d -p 127.0.0.1:80:4567 bash -c "cd /home/django; bundle exec foreman start;"
-  - docker ps -a
-  - docker run bash -c "cd /home/django; bundle exec rake test"
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - sudo service postgresql stop
+  - docker-compose build
+  - docker run -d postgres
 
 script:
-  - bundle exec rake test
+  - docker-compose run --rm gunicorn /home/django/env/bin/python3 ./manage.py test --settings geotrek.settings.tests
 
 
 
