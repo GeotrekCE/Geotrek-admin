@@ -56,6 +56,7 @@ class ParserTests(TranslationResetMixin, TestCase):
                 return json.load(f)
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
+        mocked.return_value.content = b''
         FileType.objects.create(type="Photographie")
         category = TouristicContentCategoryFactory(label="Eau vive")
         TouristicContentType1Factory(label="Type A")
