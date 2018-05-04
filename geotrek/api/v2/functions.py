@@ -38,3 +38,11 @@ class Length3D(Func):
     """
     function = 'ST_3DLENGTH'
     output_field = FloatField()
+
+
+class Area(Func):
+    """
+    ST_AREA postgis function
+    """
+    function = 'ST_AREA'
+    output_field = FloatField()

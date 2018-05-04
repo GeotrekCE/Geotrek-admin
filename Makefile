@@ -23,6 +23,7 @@ etc/settings.ini:
 
 bin/python3:
 	virtualenv -p /usr/bin/python3 .
+
 	bin/pip install -U setuptools==38.7.0 zc.buildout==2.11.1
 	mkdir -p lib/src
 	mkdir -p lib/eggs

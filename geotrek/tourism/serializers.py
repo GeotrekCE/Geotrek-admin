@@ -73,7 +73,7 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
     type2 = TouristicContentTypeSerializer(many=True)
     source = RecordSourceSerializer(many=True)
     portal = TargetPortalSerializer(many=True)
-    reservation_system = rest_serializers.ReadOnlyField(source='reservation_system.name')
+    reservation_system = rest_serializers.ReadOnlyField(source='reservation_system.name', default="")
 
     # Nearby
     touristic_contents = CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
