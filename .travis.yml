@@ -16,20 +16,17 @@ matrix:
 
 services:
   - docker
-  - redis-server
-
-cache:
-  - apt
-  - pip
 
 before_install:
-  - docker build -t carlad/sinatra .
-  - docker run -d -p 127.0.0.1:80:4567 carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec foreman start;"
+  - docker build .
+  - docker
+  - docker run -d -p 127.0.0.1:80:4567 bash -c "cd /home/django; bundle exec foreman start;"
   - docker ps -a
-  - docker run carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec rake test"
+  - docker run bash -c "cd /home/django; bundle exec rake test"
 
-after_success:
-  # Report coverage results to coveralls.io
-  - ./bin/coverage report -m
-  - pip install coveralls
-  - coveralls
+script:
+  - bundle exec rake test
+
+
+
+

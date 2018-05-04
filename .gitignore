@@ -1,5 +1,4 @@
 *.pyc
-*.zip
 *.tar.gz
 *.mo
 *.bak
@@ -10,6 +9,7 @@
 /install
 /.idea/
 /.vscode/
+/src/
 
 # buildout stuff
 .mr.developer.cfg
