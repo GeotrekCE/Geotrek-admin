@@ -50,7 +50,7 @@ ADMINS = tuple([('Admin %s' % TITLE, admin) for admin in admins])
 managers = "manager1@yourdomain.tld", "manager2@yourdomain.tld"
 MANAGERS = tuple([('Manager %s' % TITLE, manager) for manager in managers])
 
-DEFAULT_FROM_EMAIL ="admin@yourdomain.tld"
+DEFAULT_FROM_EMAIL = "admin@yourdomain.tld"
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 EMAIL_HOST = ""
 EMAIL_HOST_USER = ""
@@ -75,4 +75,3 @@ DATABASES[AUTHENT_DATABASE]['USER'] = None
 DATABASES[AUTHENT_DATABASE]['PASSWORD'] = None
 DATABASES[AUTHENT_DATABASE]['HOST'] = None
 DATABASES[AUTHENT_DATABASE]['PORT'] = 5432
-

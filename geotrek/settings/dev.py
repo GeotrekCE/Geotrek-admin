@@ -1,6 +1,5 @@
 from .base import *  # noqa
 
-
 #
 # Django Development
 # ..........................
@@ -14,8 +13,8 @@ DEBUG_TOOLBAR = False
 # ..........................
 
 INSTALLED_APPS = (
-    'django_extensions',
-) + INSTALLED_APPS
+                     'django_extensions',
+                 ) + INSTALLED_APPS
 
 INTERNAL_IPS = (
     '127.0.0.1',  # localhost default
@@ -41,11 +40,10 @@ DEBUG_TOOLBAR = False
 
 INTERNAL_IPS += ('10.0.3.1',)
 
-
 if DEBUG_TOOLBAR:
     INSTALLED_APPS = (
-        'debug_toolbar',
-    ) + INSTALLED_APPS
+                         'debug_toolbar',
+                     ) + INSTALLED_APPS
 
     MIDDLEWARE_CLASSES += (
         'debug_toolbar.middleware.DebugToolbarMiddleware',

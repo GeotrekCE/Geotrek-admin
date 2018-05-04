@@ -1,6 +1,5 @@
 import os
 
-
 enable_utc = False
 accept_content = ['json']
 broker_url = os.getenv('CELERY_BROKER_URL', 'redis://127.0.0.1:6379/0')

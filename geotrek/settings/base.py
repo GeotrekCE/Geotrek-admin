@@ -35,7 +35,6 @@ SYNC_RANDO_ROOT = os.path.join(DEPLOY_ROOT, 'data')
 
 TITLE = _("Geotrek")
 
-
 DEBUG = False
 TEST = 'test' in sys.argv
 VERSION = __version__
@@ -145,7 +144,7 @@ LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = 'home'
 
-UPLOAD_DIR = 'upload'    # media root subdir
+UPLOAD_DIR = 'upload'  # media root subdir
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -216,7 +215,6 @@ TEMPLATES = [
     },
 ]
 
-
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -251,11 +249,10 @@ PROJECT_APPS = (
     'geotrek.appconfig.SessionsGeotrekConfig',  # django.contrib.sessions
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'geotrek.appconfig.AdminGeotrekConfig',   # django.contrib.admin
+    'geotrek.appconfig.AdminGeotrekConfig',  # django.contrib.admin
     'django.contrib.admindocs',
     'django.contrib.gis',
 )
-
 
 PROJECT_APPS += (
     'crispy_forms',
@@ -274,7 +271,6 @@ PROJECT_APPS += (
     'embed_video',
     'geotrek.appconfig.CeleryGeotrekConfig',  # django_celery_results
 )
-
 
 INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.cirkwi',
@@ -385,12 +381,10 @@ THUMBNAIL_ALIASES = {
     },
 }
 
-
 PAPERCLIP_ENABLE_VIDEO = True
 PAPERCLIP_ENABLE_LINK = True
 PAPERCLIP_FILETYPE_MODEL = 'common.FileType'
 PAPERCLIP_ATTACHMENT_MODEL = 'common.Attachment'
-
 
 # Data projection
 SRID = 2154  # Lambert-93 for Metropolitan France
@@ -402,7 +396,7 @@ API_SRID = 4326
 SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
 
 _MODELTRANSLATION_LANGUAGES = [l for l in LANGUAGES_LIST
-                               if l[0] in ("en","fr","it","es")]
+                               if l[0] in ("en", "fr", "it", "es")]
 
 MAPENTITY_CONFIG = {
     'TITLE': TITLE,
@@ -510,8 +504,7 @@ MAP_STYLES = {
     }
 }
 
-
-LAYER_PRECISION_LAND = 4   # Number of fraction digit
+LAYER_PRECISION_LAND = 4  # Number of fraction digit
 LAYER_SIMPLIFY_LAND = 10  # Simplification tolerance
 
 LAND_BBOX_CITIES_ENABLED = True
@@ -563,7 +556,6 @@ TOPOLOGY_STATIC_OFFSETS = {'land': -5,
                            'competence': 5,
                            'signagemanagement': -10,
                            'workmanagement': 10}
-
 
 MESSAGE_TAGS = {
     messages.SUCCESS: 'alert-success',
