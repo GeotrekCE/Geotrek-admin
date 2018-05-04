@@ -24,7 +24,9 @@ def same_structure_required(redirect_to):
             obj = hasattr(self, 'get_object') and self.get_object() or getattr(self, 'object', None)
             if obj.same_structure(request.user):
                 return result
-            messages.warning(request, _('Access to the requested resource is restricted by structure. You have been redirected.'))
+            messages.warning(
+                request, _('Access to the requested resource is restricted by structure. You have been redirected.')
+                             )
 
             return redirect(redirect_to, *args, **kwargs)
         return _wrapped_view

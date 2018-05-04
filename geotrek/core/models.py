@@ -59,10 +59,10 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     comments = models.TextField(null=True, blank=True, db_column='remarques', verbose_name=_("Comments"),
                                 help_text=_("Remarks"))
 
-    departure = models.CharField(null=True, blank=True, default="", max_length=250, db_column='depart', verbose_name=_("Departure"),
-                                 help_text=_("Departure place"))
-    arrival = models.CharField(null=True, blank=True, default="", max_length=250, db_column='arrivee', verbose_name=_("Arrival"),
-                               help_text=_("Arrival place"))
+    departure = models.CharField(null=True, blank=True, default="", max_length=250, db_column='depart',
+                                 verbose_name=_("Departure"), help_text=_("Departure place"))
+    arrival = models.CharField(null=True, blank=True, default="", max_length=250, db_column='arrivee',
+                               verbose_name=_("Arrival"), help_text=_("Arrival place"))
 
     comfort = models.ForeignKey('Comfort',
                                 null=True, blank=True, related_name='paths',
@@ -170,9 +170,9 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     @property
     def name_display(self):
         return '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
-                                                                  self.get_detail_url(),
-                                                                  self,
-                                                                  self)
+                                                                 self.get_detail_url(),
+                                                                 self,
+                                                                 self)
 
     @property
     def name_csv_display(self):
@@ -211,7 +211,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     @property
     def checkbox(self):
         return '<input type="checkbox" name="{}[]" value="{}" />'.format('path',
-                                                                          self.pk)
+                                                                         self.pk)
 
     @classproperty
     def checkbox_verbose_name(cls):
@@ -423,7 +423,8 @@ class PathAggregation(models.Model):
     path = models.ForeignKey(Path, null=False, db_column='troncon',
                              verbose_name=_("Path"),
                              related_name="aggregations",
-                             on_delete=models.DO_NOTHING)  # The CASCADE behavior is enforced at DB-level (see file ../sql/20_evenements_troncons.sql)
+                             on_delete=models.DO_NOTHING)
+    # The CASCADE behavior is enforced at DB-level (see file ../sql/20_evenements_troncons.sql)
     topo_object = models.ForeignKey(Topology, null=False, related_name="aggregations",
                                     db_column='evenement', verbose_name=_("Topology"))
     start_position = models.FloatField(db_column='pk_debut', verbose_name=_("Start position"), db_index=True)
@@ -434,7 +435,8 @@ class PathAggregation(models.Model):
     objects = PathAggregationManager()
 
     def __str__(self):
-        return "%s (%s-%s: %s - %s)" % (_("Path aggregation"), self.path.pk, self.path.name, self.start_position, self.end_position)
+        return "%s (%s-%s: %s - %s)" % (_("Path aggregation"), self.path.pk,
+                                        self.path.name, self.start_position, self.end_position)
 
     @property
     def start_meter(self):
@@ -569,9 +571,9 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
     @property
     def name_display(self):
         return '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
-                                                                  self.get_detail_url(),
-                                                                  self,
-                                                                  self)
+                                                                 self.get_detail_url(),
+                                                                 self,
+                                                                 self)
 
     @classmethod
     def path_trails(cls, path):

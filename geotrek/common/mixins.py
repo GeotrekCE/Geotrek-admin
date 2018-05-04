@@ -22,8 +22,10 @@ logger = logging.getLogger(__name__)
 
 class TimeStampedModelMixin(models.Model):
     # Computed values (managed at DB-level with triggers)
-    date_insert = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_("Insertion date"), db_column='date_insert')
-    date_update = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Update date"), db_column='date_update')
+    date_insert = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_("Insertion date"),
+                                       db_column='date_insert')
+    date_update = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Update date"),
+                                       db_column='date_update')
 
     class Meta:
         abstract = True
@@ -297,9 +299,9 @@ class PublishableMixin(BasePublishableMixin):
     @property
     def name_display(self):
         s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
-                                                              self.get_detail_url(),
-                                                              self.name,
-                                                              self.name)
+                                                             self.get_detail_url(),
+                                                             self.name,
+                                                             self.name)
         if self.published:
             s = '<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
         elif self.review:

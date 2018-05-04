@@ -30,5 +30,6 @@ class CityParser(ShapeParser):
             return val
         elif val.geom_type == 'Polygon':
             return MultiPolygon(val)
-        self.add_warning(_("Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not {geom_type}").format(src=src, geom_type=val.geom_type))
+        self.add_warning(_("Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not {geom_type}")
+                         .format(src=src, geom_type=val.geom_type))
         return None

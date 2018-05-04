@@ -70,7 +70,9 @@ class PhysicalEdge(MapEntityMixin, Topology):
 
 Path.add_property('physical_edges', PhysicalEdge.path_physicals, _("Physical edges"))
 Topology.add_property('physical_edges', PhysicalEdge.topology_physicals, _("Physical edges"))
-Intervention.add_property('physical_edges', lambda self: self.topology.physical_edges if self.topology else [], _("Physical edges"))
+Intervention.add_property(
+    'physical_edges', lambda self: self.topology.physical_edges if self.topology else [], _("Physical edges")
+)
 Project.add_property('physical_edges', lambda self: self.edges_by_attr('physical_edges'), _("Physical edges"))
 
 
@@ -188,7 +190,9 @@ class CompetenceEdge(MapEntityMixin, Topology):
 
 Path.add_property('competence_edges', CompetenceEdge.path_competences, _("Competence edges"))
 Topology.add_property('competence_edges', CompetenceEdge.topology_competences, _("Competence edges"))
-Intervention.add_property('competence_edges', lambda self: self.topology.competence_edges if self.topology else [], _("Competence edges"))
+Intervention.add_property(
+    'competence_edges', lambda self: self.topology.competence_edges if self.topology else [], _("Competence edges")
+)
 Project.add_property('competence_edges', lambda self: self.edges_by_attr('competence_edges'), _("Competence edges"))
 
 
@@ -239,7 +243,9 @@ class WorkManagementEdge(MapEntityMixin, Topology):
 
 Path.add_property('work_edges', WorkManagementEdge.path_works, _("Work management edges"))
 Topology.add_property('work_edges', WorkManagementEdge.topology_works, _("Work management edges"))
-Intervention.add_property('work_edges', lambda self: self.topology.work_edges if self.topology else [], _("Work management edges"))
+Intervention.add_property(
+    'work_edges', lambda self: self.topology.work_edges if self.topology else [], _("Work management edges")
+)
 Project.add_property('work_edges', lambda self: self.edges_by_attr('work_edges'), _("Work management edges"))
 
 
@@ -290,5 +296,7 @@ class SignageManagementEdge(MapEntityMixin, Topology):
 
 Path.add_property('signage_edges', SignageManagementEdge.path_signages, _("Signage management edges"))
 Topology.add_property('signage_edges', SignageManagementEdge.topology_signages, _("Signage management edges"))
-Intervention.add_property('signage_edges', lambda self: self.topology.signage_edges if self.topology else [], _("Signage management edges"))
+Intervention.add_property(
+    'signage_edges', lambda self: self.topology.signage_edges if self.topology else [], _("Signage management edges")
+)
 Project.add_property('signage_edges', lambda self: self.edges_by_attr('signage_edges'), _("Signage management edges"))

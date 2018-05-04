@@ -651,7 +651,8 @@ class TourismSystemParser(AttachmentParserMixin, Parser):
             }
             response = requests.get(self.url, params=params, auth=HTTPBasicAuth(self.user, self.password))
             if response.status_code != 200:
-                raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
+                raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}")
+                                        .format(url=self.url, status_code=response.status_code))
             self.root = response.json()
             self.nb = int(self.root['metadata']['total'])
             for row in self.items:
@@ -685,7 +686,8 @@ class OpenSystemParser(Parser):
         }
         response = requests.get(self.url, params=params)
         if response.status_code != 200:
-            raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
+            raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}")
+                                    .format(url=self.url, status_code=response.status_code))
         self.root = ET.fromstring(response.content).find('Resultat').find('Objets')
         self.nb = len(self.root)
         for row in self.root:
