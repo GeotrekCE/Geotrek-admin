@@ -2,12 +2,16 @@
 CHANGELOG
 =========
 
-2.18.5.dev0
------------
+2.18.5 (2018-05-07)
+-------------------
 
 **Bug fixes**
 
-*
+* Fix related structure when creating new objects
+
+**Minor changes**
+
+* Show related structure on all detail pages
 
 
 2.18.4 (2018-05-02)

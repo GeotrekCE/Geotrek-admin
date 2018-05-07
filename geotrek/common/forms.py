@@ -66,6 +66,8 @@ class CommonForm(MapEntityForm):
     def __init__(self, *args, **kwargs):
         super(CommonForm, self).__init__(*args, **kwargs)
 
+        self.update = kwargs.get("instance") is not None
+
         for name, field in self.fields.items():
             self.filter_related_field(name, field)
 
@@ -80,12 +82,12 @@ class CommonForm(MapEntityForm):
 
     def save(self, commit=True):
         """Set structure field before saving if need be"""
-        if not hasattr(self.instance, 'structure'):
+        if self.update:  # Structure is already set on object.
+            pass
+        elif not hasattr(self.instance, 'structure'):
             pass
         elif 'structure' in self.fields:
             pass  # The form contains the structure field. Let django use its value.
-        elif self.instance.structure:
-            pass  # Structure is already set on object.
         elif self.user:
             self.instance.structure = self.user.profile.structure
         else:

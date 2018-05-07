@@ -15,6 +15,10 @@
         </tr>
 
         {% include "altimetry/elevationinfo_fragment.html" %}
+        <tr>
+            <th>{{ service|verbose:"structure" }}</th>
+            <td>{{ service.structure }}</td>
+        </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 
