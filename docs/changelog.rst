@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-*
+* Fix related structure when creating new objects
 
 **Minor changes**
 
