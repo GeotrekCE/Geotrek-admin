@@ -19,6 +19,10 @@
             <td>{{ trail.comments|safe }}</td>
         </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
+        <tr>
+            <th>{{ trail|verbose:"structure" }}</th>
+            <td>{{ trail.structure }}</td>
+        </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 

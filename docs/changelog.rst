@@ -9,6 +9,10 @@ CHANGELOG
 
 *
 
+**Minor changes**
+
+* Show related structure on all detail pages
+
 
 2.18.4 (2018-05-02)
 -------------------

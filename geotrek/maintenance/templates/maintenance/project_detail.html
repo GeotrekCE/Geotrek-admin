@@ -81,6 +81,10 @@
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
+        <tr>
+            <th>{{ project|verbose:"structure" }}</th>
+            <td>{{ project.structure }}</td>
+        </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
     {{ block.super }}

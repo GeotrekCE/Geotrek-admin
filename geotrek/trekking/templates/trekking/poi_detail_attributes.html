@@ -29,6 +29,10 @@
 
         {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "common/publication_info_fragment.html" %}
+        <tr>
+            <th>{{ poi|verbose:"structure" }}</th>
+            <td>{{ poi.structure }}</td>
+        </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 
