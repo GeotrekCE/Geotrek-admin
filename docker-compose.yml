@@ -8,7 +8,7 @@ services:
       - postgres:/var/lib/postgresql/data
 
   redis:
-    image: redis:latest
+    image: redis:4.0-alpine
     hostname: geotrek-redis
 
   convertit:
@@ -20,7 +20,6 @@ services:
      image: geotrekce/screamshotter
      depends_on:
        - convertit
-     command: /opt/apps/screamshotter/bin/python manage.py runserver 0.0.0.0:8001
 
   celery:
     image: geotrek
@@ -31,9 +30,19 @@ services:
       - postgres
       - redis
       - screamshotter
-    working_dir: /app
+    working_dir: /app/src
     volumes:
-      - ./geotrek:/app/geotrek
+      - static:/app/src/public/static
+      - media:/app/src/public/media
+      - cache:/app/src/private/cache
+      - data_export:/app/src/private/data
+      - ./conf/templates:/app/src/private/templates
+      - ./conf/bulkimport:/app/src/bulkimport
+      - ./conf/locale:/app/src/private/locale
+      - ./conf/static:/app/src/private/static
+      - ./conf/log/geotrek:/app/src/private/log
+      - ./conf/custom.py:/app/src/geotrek/settings/custom.py
+      #- ./geotrek:/app/src/geotrek
     command: /app/venv/bin/celery -A geotrek worker -l debug
 
   web:
@@ -44,20 +53,21 @@ services:
      env_file:
        - docker.env
      volumes:
-       - static:/app/public/static
-       - media:/app/public/media
-       - cache:/app/private/cache
-       - data_export:/app/private/data
-       - ./conf/templates:/app/private/templates
-       - ./conf/locale:/app/private/locale
-       - ./conf/static:/app/private/static
-       #- ./conf/geotrek.log:/app/private/log/geotrek.log
-       - ./conf/custom.py:/app/geotrek/settings/custom.py
-       #- ./geotrek:/app/geotrek
-     user: "1000"
+       - static:/app/src/public/static
+       - media:/app/src/public/media
+       - cache:/app/src/private/cache
+       - data_export:/app/src/private/data
+       - ./conf/templates:/app/src/private/templates
+       - ./conf/bulkimport:/app/src/bulkimport
+       - ./conf/locale:/app/src/private/locale
+       - ./conf/static:/app/src/private/static
+       - ./conf/log/geotrek:/app/src/private/log/
+       - ./conf/custom.py:/app/src/geotrek/settings/custom.py
+       #- ./geotrek:/app/src/geotrek
+     #user: "1000"
      depends_on:
        - celery
-     working_dir: /app
+     working_dir: /app/src
      command: ./manage.py runserver 0.0.0.0:8000
 
 volumes:

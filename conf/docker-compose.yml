@@ -1,0 +1,112 @@
+version: "3"
+services:
+  postgres:
+    image: juank/postgis:10-2.4
+    env_file:
+      - docker.env
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  redis:
+    image: redis:4.0-alpine
+
+  convertit:
+     image: geotrekce/convertit
+
+  screamshotter:
+     image: geotrekce/screamshotter
+     depends_on:
+       - convertit
+
+  memcached:
+    image: memcached:latest
+
+  celery:
+    image: geotrekce/admin:latest
+    env_file:
+      - docker.env
+    depends_on:
+      - postgres
+      - redis
+      - screamshotter
+      - memcached
+    volumes:
+      - static:/app/public/static
+      - media:/app/public/media
+      - cache:/app/private/cache
+      - data_export:/app/private/data
+      - ./templates:/app/private/templates
+      - ./bulkimport:/app/bulkimport
+      - ./locale:/app/private/locale
+      - ./static:/app/private/static
+      - ./log/geotrek:/app/private/log
+      - ./custom.py:/app/geotrek/settings/custom.py
+    command: /app/venv/bin/celery -A geotrek worker -l warning
+
+  web:
+     image: geotrekce/admin:latest
+     env_file:
+       - docker.env
+     volumes:
+       - static:/app/public/static
+       - media:/app/public/media
+       - cache:/app/private/cache
+       - data_export:/app/private/data
+       - ./templates:/app/private/templates
+       - ./bulkimport:/app/bulkimport
+       - ./locale:/app/private/locale
+       - ./static:/app/private/static
+       - ./log/geotrek:/app/private/log
+       - ./custom.py:/app/geotrek/settings/custom.py
+     user: 1000
+     depends_on:
+       - celery
+     working_dir: /app
+     command: ./venv/bin/gunicorn geotrek.wsgi:application -w 5 --bind 0.0.0.0:8000
+
+  api:
+     image: geotrekce/admin:latest
+     env_file:
+       - docker.env
+     volumes:
+       - static:/app/public/static
+       - media:/app/public/media
+       - cache:/app/private/cache
+       - data_export:/app/private/data
+       - ./templates:/app/private/templates
+       - ./bulkimport:/app/bulkimport
+       - ./locale:/app/private/locale
+       - ./static:/app/private/static
+       - ./log/geotrek:/app/private/log
+       - ./custom.py:/app/geotrek/settings/custom.py
+     user: 1000
+     depends_on:
+       - web
+     working_dir: /app
+     command: ./venv/bin/gunicorn geotrek.wsgi:application -w 5 --bind 0.0.0.0:8000
+
+  nginx:
+    image: nginx:latest
+    depends_on:
+       - web
+       - api
+    ports:
+      - "80:80"
+      #- "443:443"
+    env_file:
+       - docker.env
+    volumes:
+      - ./geotrek-nginx.conf:/geotrek.conf
+      #- ./conf/nginx/cert.crt:/etc/nginx/cert.crt
+      #- ./conf/nginx/cert.key:/etc/nginx/cert.key
+      - ./log/nginx:/var/log/nginx
+      - static:/var/www/static
+      - media:/var/www/media
+    command: /bin/bash -c "envsubst '$$NGINX_HOST' < /geotrek.conf > /etc/nginx/conf.d/geotrek.conf && nginx -g 'daemon off;'"
+
+volumes:
+  postgres:
+  cache:
+  static:
+  media:
+  data_export:
