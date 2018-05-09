@@ -17,11 +17,8 @@ before_install:
   - if [[ $ACTION != codestyle ]]; then sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose; fi
   - if [[ $ACTION != codestyle ]]; then sudo chmod +x /usr/local/bin/docker-compose; fi
   - if [[ $ACTION != codestyle ]]; then sudo service postgresql stop; fi
-  - if [[ $ACTION != codestyle ]]; then docker volume create geotrek-admin_postgres; fi
-  - if [[ $ACTION != codestyle ]]; then docker run --name geotrek-admin_postgres_1 -d juank/postgis:10-2.4 -v geotrek_postgres:/var/lib/postgresql/data -e POSTGRES_USER=geotrek_user -e POSTGRES_DB=geotrek_db -e POSTGRES_PASSWORD=geotrek_password; fi
-  - if [[ $ACTION != codestyle ]]; then sleep 15; fi
-  - if [[ $ACTION != codestyle ]]; then docker container stop geotrek-admin_postgres_1; fi
-  - if [[ $ACTION != codestyle ]]; then docker rm $(docker ps -a -q); fi
+  - if [[ $ACTION != codestyle ]]; then docker-compose up -d postgres; fi
+  - if [[ $ACTION != codestyle ]]; then sleep 25; fi
 
 install:
   - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
