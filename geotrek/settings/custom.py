@@ -6,7 +6,7 @@ ALLOWED_HOST = os.getenv('ALLOWED_HOST').split(',')
 
 # SRID is used for geometric columns. Fixed at install, don't change it after
 
-SRID = 2154
+SRID = 2154  # LAMBERT EXTENDED FOR FRANCE
 
 # DEFAULT_STRUCTURE_NAME -> Name for your default structure. Can be changed in geotrek admin interface
 

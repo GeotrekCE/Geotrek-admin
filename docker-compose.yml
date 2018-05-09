@@ -53,7 +53,7 @@ services:
        - ./conf/static:/app/private/static
        #- ./conf/geotrek.log:/app/private/log/geotrek.log
        - ./conf/custom.py:/app/geotrek/settings/custom.py
-       - ./geotrek:/app/geotrek
+       #- ./geotrek:/app/geotrek
      user: "1000"
      depends_on:
        - celery
