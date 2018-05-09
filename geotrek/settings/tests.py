@@ -40,7 +40,7 @@ class DisableMigrations():
 MIGRATION_MODULES = DisableMigrations()
 
 ADMINS = (
-    ('test', 'test@test.com')
+    ('test', 'test@test.com'),
 )
 
 MANAGERS = ADMINS
