@@ -1,0 +1,1 @@
+static folder is used to collect django static in production. Do not touch / add / delete or modify anything on it.

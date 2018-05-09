@@ -1,8 +1,8 @@
-import os
-
+# import os
 # ALLOWED_HOST -> authorize domain for django app
+# ..........................
 
-# ALLOWED_HOST = os.getenv('NGINX_HOST').split(',')
+# ALLOWED_HOST = os.getenv('DOMAIN_NAME').split(',')
 
 # SRID is used for geometric columns. Fixed at install, don't change it after
 
@@ -29,9 +29,9 @@ import os
 
 # TIME_ZONE=Europe/Paris
 
-
+#
 # MAIL SETTINGS
-
+# ..........................
 
 # DEFAULT_FROM_EMAIL -> address will be set for sended emails (ex: noreply@yourdomain.net)
 # DEFAULT_FROM_EMAIL =

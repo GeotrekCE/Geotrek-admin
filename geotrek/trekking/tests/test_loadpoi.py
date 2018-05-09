@@ -41,8 +41,8 @@ class LoadPOITest(TestCase):
             self.assertEquals(mocked.call_count, 2)
 
     def test_create_pois_receives_geometries(self):
-        geom1 = GEOSGeometry('POINT(-1.36308670782119 -5.98358469800134696)')
-        geom2 = GEOSGeometry('POINT(-1.363087202331107 -5.98358423531846917)')
+        geom1 = GEOSGeometry('POINT(-1.36308670782119 -5.98358469800135)')
+        geom2 = GEOSGeometry('POINT(-1.36308720233111 -5.98358423531847)')
         with patch.object(Command, 'create_poi') as mocked:
             self.cmd.handle(point_layer=self.filename, verbosity=0)
             call1 = mocked.call_args_list[0][0]

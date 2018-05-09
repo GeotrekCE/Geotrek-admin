@@ -760,7 +760,7 @@ class Command(BaseCommand):
             'tiles_url': tiles_url,
             'tiles_headers': {"Referer": self.referer},
             'ignore_errors': True,
-            'tiles_dir': os.path.join(settings.PRIVATE_DIR, 'tiles'),
+            'tiles_dir': os.path.join(settings.VAR_DIR, 'tiles'),
         }
         try:
             self.sync()

@@ -1,0 +1,87 @@
+version: "3"
+services:
+  postgres:
+    image: juank/postgis:10-2.4
+    env_file:
+      - docker.env
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  redis:
+    image: redis:4.0-alpine
+
+  convertit:
+     image: geotrekce/convertit
+
+  screamshotter:
+     image: geotrekce/screamshotter
+     depends_on:
+       - convertit
+
+  memcached:
+    image: memcached:1.5-alpine
+
+  celery:
+    image: geotrekce/admin:2.18.5.dev0
+    env_file:
+      - docker.env
+    depends_on:
+      - postgres
+      - redis
+      - screamshotter
+      - memcached
+    volumes:
+      - ./var:/app/src/var
+      - ./var/custom.py:/app/src/geotrek/settings/custom.py
+      - ./var/bulkimport:/app/src/bulkimport
+    command: /app/venv/bin/celery -A geotrek worker -l warning
+
+  web:
+     image: geotrekce/admin:2.18.5.dev0
+     env_file:
+       - docker.env
+     volumes:
+      - ./var:/app/src/var
+      - ./var/custom.py:/app/src/geotrek/settings/custom.py
+      - ./var/bulkimport:/app/src/bulkimport
+     depends_on:
+       - celery
+     command: /app/venv/bin/gunicorn geotrek.wsgi:application -w 5 --bind 0.0.0.0:8000
+
+  api:
+     image: geotrekce/admin:2.18.5.dev0
+     env_file:
+       - docker.env
+     volumes:
+      - ./var:/app/src/var
+      - ./var/custom.py:/app/src/geotrek/settings/custom.py
+      - ./var/bulkimport:/app/src/bulkimport
+     depends_on:
+       - web
+     command: /app/venv/bin/gunicorn geotrek.wsgi:application -w 5 --bind 0.0.0.0:8000
+
+  nginx:
+    image: nginx:latest
+    depends_on:
+       - web
+       - api
+    ports:
+      - "80:80"
+      #- "443:443"
+    env_file:
+       - docker.env
+    volumes:
+      - ./geotrek-nginx.conf:/geotrek.conf
+      #- ./conf/nginx/cert.crt:/etc/nginx/cert.crt
+      #- ./conf/nginx/cert.key:/etc/nginx/cert.key
+      - ./var/log/nginx:/var/log/nginx
+      - ./var/static:/var/www/static
+      - ./var/media:/var/www/media
+    command: /bin/bash -c "envsubst '$$DOMAIN_NAME' < /geotrek.conf > /etc/nginx/conf.d/geotrek.conf && nginx -g 'daemon off;'"
+
+volumes:
+  postgres:
+  cache:
+  static:
+  media:
+  data_export:

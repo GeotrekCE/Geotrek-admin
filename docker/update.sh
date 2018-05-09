@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd /app
+cd /app/src
 
 ./manage.py migrate --noinput
 ./manage.py compilemessages
@@ -8,4 +8,3 @@ cd /app
 ./manage.py sync_translation_fields --noinput
 ./manage.py update_translation_fields
 ./manage.py update_geotrek_permissions
-./manage.py compilemessages

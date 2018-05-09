@@ -2,6 +2,8 @@ version: "3"
 services:
   postgres:
     image: juank/postgis:10-2.4
+    ports:
+      - "5432:5432"
     env_file:
       - docker.env
     volumes:
@@ -23,48 +25,37 @@ services:
 
   celery:
     image: geotrek
-    build: .
     env_file:
       - docker.env
+    build:
+      context: .
+      args:
+        LOCAL_UID: ${LOCAL_USER_ID}
     depends_on:
       - postgres
       - redis
       - screamshotter
-    working_dir: /app/src
     volumes:
-      - static:/app/src/public/static
-      - media:/app/src/public/media
-      - cache:/app/src/private/cache
-      - data_export:/app/src/private/data
-      - ./conf/templates:/app/src/private/templates
-      - ./conf/bulkimport:/app/src/bulkimport
-      - ./conf/locale:/app/src/private/locale
-      - ./conf/static:/app/src/private/static
-      - ./conf/log/geotrek:/app/src/private/log
-      - ./conf/custom.py:/app/src/geotrek/settings/custom.py
-      #- ./geotrek:/app/src/geotrek
+      - ./var:/app/src/var
+      - ./var/custom.py:/app/src/geotrek/settings/custom.py
+      - ./var/bulkimport:/app/src/bulkimport
+      - ./geotrek:/app/src/geotrek
+    working_dir: /app/src
     command: /app/venv/bin/celery -A geotrek worker -l debug
 
   web:
      image: geotrek
      tty: true
+     hostname: ${DOMAIN_NAME}
      ports:
        - "8000:8000"
      env_file:
        - docker.env
      volumes:
-       - static:/app/src/public/static
-       - media:/app/src/public/media
-       - cache:/app/src/private/cache
-       - data_export:/app/src/private/data
-       - ./conf/templates:/app/src/private/templates
-       - ./conf/bulkimport:/app/src/bulkimport
-       - ./conf/locale:/app/src/private/locale
-       - ./conf/static:/app/src/private/static
-       - ./conf/log/geotrek:/app/src/private/log/
-       - ./conf/custom.py:/app/src/geotrek/settings/custom.py
-       #- ./geotrek:/app/src/geotrek
-     #user: "1000"
+       - ./var:/app/src/var
+       - ./var/custom.py:/app/src/geotrek/settings/custom.py
+       - ./var/bulkimport:/app/src/bulkimport
+       - ./geotrek:/app/src/geotrek
      depends_on:
        - celery
      working_dir: /app/src
@@ -72,7 +63,3 @@ services:
 
 volumes:
   postgres:
-  cache:
-  static:
-  media:
-  data_export:

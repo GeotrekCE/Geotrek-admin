@@ -16,7 +16,7 @@ CACHES['default']['LOCATION'] = '{}:{}'.format(os.getenv('MEMCACHED_HOST', 'memc
 LOGGING['handlers']['mail_admins']['class'] = 'django.utils.log.AdminEmailHandler'
 LOGGING['handlers']['logfile'] = {'class': 'logging.FileHandler',
                                   'formatter': 'simple',
-                                  'filename': os.path.join(PRIVATE_DIR, 'log', 'geotrek.log')}
+                                  'filename': os.path.join(VAR_DIR, 'log', 'geotrek.log')}
 
 LOGGING['loggers']['geotrek']['handlers'].append('logfile')
 LOGGING['loggers']['mapentity']['handlers'].append('logfile')

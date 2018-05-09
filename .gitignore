@@ -4,7 +4,6 @@
 
 /var/
 /etc/
-/install
 /.idea/
 /.vscode/
 
@@ -18,26 +17,17 @@ develop-eggs/
 eggs/
 parts/
 docs/_build/
-include/
-lib/
-local/
 *.egg-info/
 /node_modules/
 /salt.cfg
-/etc
-/lib
-/var
-bootstrap.py
-/.buildout
+
 /parsers.py
-/install.log
-/data/
 /sync_trek/
 
 /.project
 /.pydevproject
 /.settings/
-screamshotter.log
 
 /share/
-/geotrek/settings/local.py
+/install/docker.env
+/install/*.tgz

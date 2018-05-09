@@ -25,16 +25,10 @@ def api_bbox(bbox, buffer):
 
 ROOT_URL = ""
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BASE_DIR = os.getenv('DEPLOY_ROOT', os.path.dirname(PROJECT_DIR))
-PUBLIC_DIR = os.path.join(BASE_DIR, 'public')
-PRIVATE_DIR = os.path.join(BASE_DIR, 'private')
-SYNC_RANDO_ROOT = os.path.join(PRIVATE_DIR, 'data')
+BASE_DIR = os.path.dirname(PROJECT_DIR)
+VAR_DIR = os.path.join(BASE_DIR, 'var')
 
-STATIC_ROOT = os.path.join(PUBLIC_DIR, 'static')
-MEDIA_ROOT = os.path.join(PUBLIC_DIR, 'media')
-CACHE_ROOT = os.path.join(PRIVATE_DIR, 'cache')
-
-SYNC_RANDO_ROOT = os.path.join(BASE_DIR, 'data')
+CACHE_ROOT = os.path.join(VAR_DIR, 'cache')
 
 TITLE = _("Geotrek")
 
@@ -43,7 +37,6 @@ TEST = 'test' in sys.argv
 VERSION = __version__
 
 ADMINS = (
-    ('Makina Corpus', 'geobi@makina-corpus.com'),
 )
 
 MANAGERS = ADMINS
@@ -126,6 +119,7 @@ MODELTRANSLATION_DEFAULT_LANGUAGE = 'fr'
 
 LOCALE_PATHS = (
     os.path.join(PROJECT_DIR, 'locale'),
+    os.path.join(VAR_DIR, 'extra_locale'),
 )
 
 SITE_ID = 1
@@ -147,21 +141,23 @@ LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = 'home'
 
-UPLOAD_DIR = 'upload'  # media root subdir
-
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = '/media/'
 MEDIA_URL_SECURE = '/media_secure/'
+MEDIA_ROOT = os.path.join(VAR_DIR, 'media')
+UPLOAD_DIR = 'upload'  # media root subdir
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(VAR_DIR, 'static')
 
 # Additional locations of static files
 STATICFILES_DIRS = (
     os.path.join(PROJECT_DIR, 'static'),
+    os.path.join(VAR_DIR, 'extra_static'),
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -191,8 +187,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': (
-            os.path.join(PROJECT_DIR, 'geotrek', 'templates'),
-            os.path.join(MEDIA_ROOT, 'templates'),
+            os.path.join(PROJECT_DIR, 'templates'),
+            os.path.join(VAR_DIR, 'extra_templates'),
         ),
         'OPTIONS': {
             'context_processors': [
@@ -308,70 +304,6 @@ CACHES = {
     }
 }
 
-# A sample logging configuration. The only tangible logging
-# performed by this configuration is to send an email to
-# the site admins on every HTTP 500 error when DEBUG=False.
-# See http://docs.djangoproject.com/en/dev/topics/logging for
-# more details on how to customize your logging configuration.
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        }
-    },
-    'formatters': {
-        'simple': {
-            'format': '%(levelname)s %(asctime)s %(name)s %(message)s'
-        },
-    },
-    'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'logging.NullHandler'
-        },
-        'console': {
-            'level': 'WARNING',
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple'
-        },
-    },
-    'loggers': {
-        'django.db.backends': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'django.request': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'django': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'geotrek': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'mapentity': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        '': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-    }
-}
-
 THUMBNAIL_ALIASES = {
     '': {
         'thumbnail': {'size': (150, 150)},
@@ -394,7 +326,7 @@ SRID = 2154  # Lambert-93 for Metropolitan France
 # API projection (client-side), can differ from SRID (database). Leaflet requires 4326.
 API_SRID = 4326
 
-# Extent in native projection (Toulouse area)
+# Extent in native projection (France area)
 SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
 
 _MODELTRANSLATION_LANGUAGES = [l for l in LANGUAGES_LIST
@@ -403,7 +335,6 @@ _MODELTRANSLATION_LANGUAGES = [l for l in LANGUAGES_LIST
 MAPENTITY_CONFIG = {
     'TITLE': TITLE,
     'ROOT_URL': ROOT_URL,
-
     'TEMP_DIR': '/tmp',
     'HISTORY_ITEMS_MAX': 7,
     'CONVERSION_SERVER': 'http://{}:{}'.format(os.getenv('CONVERSION_HOST', 'convertit'),
@@ -441,9 +372,6 @@ ALTIMETRIC_PROFILE_FONT = 'ubuntu'
 ALTIMETRIC_PROFILE_MIN_YSCALE = 1200  # Minimum y scale (in meters)
 ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/height)
 ALTIMETRIC_AREA_MARGIN = 0.15
-
-SRID = 2154
-SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
 
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
@@ -596,7 +524,7 @@ TINYMCE_DEFAULT_CONFIG = {
     'convert_urls': False,
 }
 
-SYNC_RANDO_ROOT = os.path.join(BASE_DIR, 'data')
+SYNC_RANDO_ROOT = os.path.join(VAR_DIR, 'data')
 SYNC_RANDO_OPTIONS = {}
 
 '''
@@ -634,3 +562,67 @@ FACEBOOK_APP_ID = ''
 FACEBOOK_IMAGE = '/images/logo-geotrek.png'
 FACEBOOK_IMAGE_WIDTH = 200
 FACEBOOK_IMAGE_HEIGHT = 200
+
+# A sample logging configuration. The only tangible logging
+# performed by this configuration is to send an email to
+# the site admins on every HTTP 500 error when DEBUG=False.
+# See http://docs.djangoproject.com/en/dev/topics/logging for
+# more details on how to customize your logging configuration.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'formatters': {
+        'simple': {
+            'format': '%(levelname)s %(asctime)s %(name)s %(message)s'
+        },
+    },
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'logging.NullHandler'
+        },
+        'console': {
+            'level': 'WARNING',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'geotrek': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'mapentity': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        '': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    }
+}

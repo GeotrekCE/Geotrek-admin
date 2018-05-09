@@ -14,13 +14,20 @@ env:
   - ACTION=codestyle
 
 before_install:
+  # initial directories and environment
+  - mkdir -p var/static var/extra_static var/media/upload var/cache var/extra_templates var/extra_locale
+  - export GEOTREK_VERSION=$(cat VERSION)
+  - export LOCAL_USER_ID=$(id -u)
+  # fix LOCAL_USER for build docker
+  - sed -i.bak 's/^\(LOCAL_USER_ID=\).*/\1'$(id -u)'/' docker.env
   # update docker-compose
   - if [[ $ACTION != codestyle ]]; then sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose; fi
   - if [[ $ACTION != codestyle ]]; then sudo chmod +x /usr/local/bin/docker-compose; fi
   # stop travis postgresql
   - if [[ $ACTION != codestyle ]]; then sudo service postgresql stop; fi
   # pull required docker images
-  - if [[ $ACTION != codestyle ]]; then docker pull redis:latest; fi
+  - if [[ $ACTION != codestyle ]]; then docker pull ubuntu:bionic; fi
+  - if [[ $ACTION != codestyle ]]; then docker pull redis:4.0-alpine; fi
   - if [[ $ACTION != codestyle ]]; then docker pull geotrekce/convertit; fi
   - if [[ $ACTION != codestyle ]]; then docker pull geotrekce/screamshotter; fi
   - if [[ $ACTION != codestyle ]]; then docker pull juank/postgis:10-2.4; fi
@@ -30,6 +37,11 @@ before_install:
 install:
   - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
   - if [[ $ACTION != codestyle ]]; then docker-compose build; fi
+  - if [[ $ACTION != codestyle ]]; then docker tag geotrek geotrekce/admin:$GEOTREK_VERSION; fi
+  - if [[ $ACTION != codestyle ]] && [[ $GEOTREK_VERSION != *.dev0 ]];
+    then
+      docker tag geotrek geotrekce/admin:latest;
+    fi
   - if [[ $ACTION != codestyle ]]; then docker-compose run web ./docker/update.sh; fi
   - if [[ $ACTION != codestyle ]]; then docker-compose run web ./docker/initial.sh; fi
 
@@ -37,10 +49,18 @@ script:
   - if [[ $ACTION == codestyle ]]; then flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings; fi
   - if [[ $ACTION == codestyle ]]; then flake8 geotrek; fi
   - if [[ $ACTION == codestyle ]]; then find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID; fi
-  - if [[ $ACTION == test ]]; then docker-compose run web /app/venv/bin/coverage run ./manage.py test geotrek --settings=geotrek.settings.tests; fi
+  - if [[ $ACTION == test ]]; then docker-compose run web /app/venv/bin/coverage run ./manage.py test --settings=geotrek.settings.tests; fi
 
 after_success:
   # Report coverage results to coveralls.io
-  - if [[ $ACTION == test ]]; then coverage report -m; fi
+  - if [[ $ACTION == test ]]; then docker-compose run web /app/venv/bin/coverage report -m; fi
   - if [[ $ACTION == test ]]; then sudo pip install coveralls; fi
   - if [[ $ACTION == test ]]; then coveralls; fi
+
+deploy:
+  provider: script
+  script: bash ./docker/docker_push.sh
+  skip_cleanup: true
+  on:
+    #branch: master
+    branch: docker-integration
