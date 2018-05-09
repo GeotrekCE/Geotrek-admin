@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-import os
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
 
