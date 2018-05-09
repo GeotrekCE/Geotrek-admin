@@ -1,15 +1,17 @@
 env:
-  - DOCKER_COMPOSE_VERSION=1.19.0
+  - DOCKER_COMPOSE_VERSION=1.21.0
 
 before_install:
   - sudo curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
   - sudo chmod +x /usr/local/bin/docker-compose
   - sudo service postgresql stop
-  - docker-compose build
   - docker volume create geotrek_postgres
-  - docker run -d postgres -v geotrek_postgres:/var/lib/postgresql/data
-  - sleep(15)
+  - docker run --name geotrek_postgres -d postgres -v geotrek_postgres:/var/lib/postgresql/data -e POSTGRES_USER=geotrek_user -e POSTGRES_DB=geotrek_db -e POSTGRES_PASSWORD=geotrek_password
+  - sleep 15
+  - docker container stop geotrek_postgres
 
+install:
+  - docker-compose build
 
 script:
 - docker-compose run ./manage.py test --settings geotrek.settings.tests
