@@ -91,6 +91,7 @@ class TopologyTest(TestCase):
         self.assertEqual(Path.include_invisible.count(), 2)
 
         # create topo on visible path
+        # noinspection PyProtectedMember
         topology = TopologyHelper._topologypoint(0, 0, None).reload()
 
         # because FK and M2M are used with default manager only, others tests are in SQL

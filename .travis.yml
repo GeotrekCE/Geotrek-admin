@@ -1,60 +1,15 @@
-language: python
-
-python:
-  - "2.7"
-
 env:
-  - ACTION=test
-  - ACTION=deploy
-  - ACTION=integration
-  - ACTION=codestyle
-
-matrix:
-  allow_failures:
-    - env: ACTION=integration
-
-services:
-  - redis-server
-
-cache:
-  - apt
-
-dist: trusty
-sudo: required
+  - DOCKER_COMPOSE_VERSION=1.19.0
 
 before_install:
-  - sudo apt-get update -qq
-  # Make sure to use postgresql and postgis version from main Ubuntu repository
-  - sudo rm -f /etc/apt/sources.list.d/pgdg.list
-  - sudo apt-get remove -qq postgis* postgresql*
-  # Make sure to use our version of phantomjs
-  - sudo rm -rf /usr/local/bin/phantomjs* /usr/bin/phantomjs* /usr/local/phantomjs*
-  # Make sure nginx has access to static files
-  - sudo chmod a+x /home/travis
+  - sudo curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+  - sudo chmod +x /usr/local/bin/docker-compose
+  - sudo service postgresql stop
+  - docker-compose build
+  - docker volume create geotrek_postgres
+  - docker run -d postgres -v geotrek_postgres:/var/lib/postgresql/data
+  - sleep(15)
 
-install:
-  - if [[ $ACTION != codestyle ]]; then deactivate; fi
-  - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
-  - if [[ $ACTION == test ]]; then ./install.sh --tests --noinput; fi
-  - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput; fi
+
 script:
-  - if [[ $ACTION == codestyle ]]; then flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings; fi
-  - if [[ $ACTION == codestyle ]]; then flake8 geotrek; fi
-  - if [[ $ACTION == codestyle ]]; then find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID; fi
-  - if [[ $ACTION == deploy || $ACTION == integration ]]; then make load_demo; fi
-  - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
-  - if [[ $ACTION == integration ]]; then make test_export host=localhost port=80; fi
-  - if [[ $ACTION == test ]]; then ./bin/coverage run ./bin/django test geotrek; fi
-  - if [[ $ACTION == test ]]; then make test_js; fi
-after_success:
-  # Report coverage results to coveralls.io
-  - if [[ $ACTION == test ]]; then ./bin/coverage report -m; fi
-  - if [[ $ACTION == test ]]; then sudo pip install coveralls; fi
-  - if [[ $ACTION == test ]]; then coveralls; fi
-
-after_failure:
-  - cat var/log/geotrek.log
-  - sudo cat /var/log/nginx/geotrek_access.log
-  - sudo cat /var/log/nginx/geotrek_error.log
-  - cat /var/log/supervisord.log
-  - cat /var/log/geotrek.log
+- docker-compose run ./manage.py test --settings geotrek.settings.tests

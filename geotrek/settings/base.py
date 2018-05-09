@@ -1,15 +1,42 @@
 import os
 import sys
 
+from django.contrib.gis.geos import fromstr
 from django.contrib.messages import constants as messages
+from django.conf.global_settings import LANGUAGES as LANGUAGES_LIST
 
 from geotrek import __version__
-from . import PROJECT_ROOT_PATH
 
 
-def gettext_noop(s):
+def _(s):
     return s
 
+
+def api_bbox(bbox, buffer):
+    wkt_box = 'POLYGON(({0} {1}, {2} {1}, {2} {3}, {0} {3}, {0} {1}))'
+    wkt = wkt_box.format(*bbox)
+    native = fromstr(wkt, srid=SRID)
+    native.transform(API_SRID)
+    extent = native.extent
+    width = extent[2] - extent[0]
+    native = native.buffer(width * buffer)
+    return tuple(native.extent)
+
+
+ROOT_URL = ""
+PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.getenv('DEPLOY_ROOT', os.path.dirname(PROJECT_DIR))
+PUBLIC_DIR = os.path.join(BASE_DIR, 'public')
+PRIVATE_DIR = os.path.join(BASE_DIR, 'private')
+SYNC_RANDO_ROOT = os.path.join(PRIVATE_DIR, 'data')
+
+STATIC_ROOT = os.path.join(PUBLIC_DIR, 'static')
+MEDIA_ROOT = os.path.join(PUBLIC_DIR, 'media')
+CACHE_ROOT = os.path.join(PRIVATE_DIR, 'cache')
+
+SYNC_RANDO_ROOT = os.path.join(BASE_DIR, 'data')
+
+TITLE = _("Geotrek")
 
 DEBUG = False
 TEST = 'test' in sys.argv
@@ -25,14 +52,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'OPTIONS': {},
-        'NAME': '',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-        'TEST': {
-            'SERIALIZE': False,
-        },
+        'NAME': os.getenv('POSTGRES_DB', 'geotrekdb'),
+        'USER': os.getenv('POSTGRES_USER', 'geotrek'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'geotrek'),
+        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+        'PORT': os.getenv('POSTGRES_PORT', '5432'),
     }
 }
 
@@ -89,20 +113,19 @@ TIME_ZONE = 'Europe/Paris'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
+LANGUAGES = (
+    ('en', _('English')),
+    ('fr', _('French')),
+    ('it', _('Italian')),
+    ('es', _('Spanish')),
+)
 LANGUAGE_CODE = 'fr'
 
-MODELTRANSLATION_DEFAULT_LANGUAGE = LANGUAGE_CODE
-
-
-LANGUAGES = (
-    ('en', gettext_noop('English')),
-    ('fr', gettext_noop('French')),
-    ('it', gettext_noop('Italian')),
-    ('es', gettext_noop('Spanish')),
-)
+MODELTRANSLATION_LANGUAGES = ('en', 'fr', 'it', 'es')
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'fr'
 
 LOCALE_PATHS = (
-    os.path.join(PROJECT_ROOT_PATH, 'locale'),
+    os.path.join(PROJECT_DIR, 'locale'),
 )
 
 SITE_ID = 1
@@ -120,16 +143,11 @@ USE_TZ = True
 
 DATE_INPUT_FORMATS = ('%d/%m/%Y',)
 
-ROOT_URL = ''
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = 'home'
 
-# Absolute filesystem path to the directory that will hold user-uploaded files.
-# Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = os.path.join(PROJECT_ROOT_PATH, 'media')
-
-UPLOAD_DIR = 'upload'    # media root subdir
+UPLOAD_DIR = 'upload'  # media root subdir
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -137,19 +155,13 @@ UPLOAD_DIR = 'upload'    # media root subdir
 MEDIA_URL = '/media/'
 MEDIA_URL_SECURE = '/media_secure/'
 
-# Absolute path to the directory static files should be collected to.
-# Don't put anything in this directory yourself; store your static files
-# in apps' "static/" subdirectories and in STATICFILES_DIRS.
-# Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
-
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT_PATH, 'static'),
+    os.path.join(PROJECT_DIR, 'static'),
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -178,7 +190,10 @@ TEMPLATES = [
     },
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': (),
+        'DIRS': (
+            os.path.join(PROJECT_DIR, 'geotrek', 'templates'),
+            os.path.join(MEDIA_ROOT, 'templates'),
+        ),
         'OPTIONS': {
             'context_processors': [
                 'django.contrib.auth.context_processors.auth',
@@ -216,39 +231,30 @@ MIDDLEWARE_CLASSES = (
     'geotrek.authent.middleware.CorsMiddleware',
     'mapentity.middleware.AutoLoginMiddleware'
 )
+FORCE_SCRIPT_NAME = ROOT_URL if ROOT_URL != '' else None
+ADMIN_MEDIA_PREFIX = '%s/static/admin/' % ROOT_URL
 
 ROOT_URLCONF = 'geotrek.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'geotrek.wsgi.application'
 
-
-# Do not migrate translated fields, they differ per instance, and
-# can be added/removed using `update_translation_fields`
-# modeltranslation should be kept before django.contrib.admin
-if 'makemigrations' in sys.argv:
-    PROJECT_APPS = ()
-else:
-    PROJECT_APPS = (
-        'modeltranslation',
-    )
-
 #
 # /!\ Application names (last levels) must be unique
 # (c.f. auth/authent)
 # https://code.djangoproject.com/ticket/12288
 #
-PROJECT_APPS += (
+PROJECT_APPS = (
+    'modeltranslation',
     'geotrek.appconfig.AuthGeotrekConfig',  # django.contrib.app
     'geotrek.appconfig.ContenttypeGeotrekConfig',  # django.contrib.contenttypes
     'geotrek.appconfig.SessionsGeotrekConfig',  # django.contrib.sessions
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'geotrek.appconfig.AdminGeotrekConfig',   # django.contrib.admin
+    'geotrek.appconfig.AdminGeotrekConfig',  # django.contrib.admin
     'django.contrib.admindocs',
     'django.contrib.gis',
 )
-
 
 PROJECT_APPS += (
     'crispy_forms',
@@ -267,7 +273,6 @@ PROJECT_APPS += (
     'embed_video',
     'geotrek.appconfig.CeleryGeotrekConfig',  # django_celery_results
 )
-
 
 INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.cirkwi',
@@ -293,10 +298,13 @@ SERIALIZATION_MODULES = {
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        'TIMEOUT': 28800,  # 8 hours
     },
     # The fat backend is used to store big chunk of data (>1 Mo)
     'fat': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': CACHE_ROOT,
+        'TIMEOUT': 28800,  # 8 hours
     }
 }
 
@@ -375,12 +383,10 @@ THUMBNAIL_ALIASES = {
     },
 }
 
-
 PAPERCLIP_ENABLE_VIDEO = True
 PAPERCLIP_ENABLE_LINK = True
 PAPERCLIP_FILETYPE_MODEL = 'common.FileType'
 PAPERCLIP_ATTACHMENT_MODEL = 'common.Attachment'
-
 
 # Data projection
 SRID = 2154  # Lambert-93 for Metropolitan France
@@ -391,22 +397,30 @@ API_SRID = 4326
 # Extent in native projection (Toulouse area)
 SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
 
+_MODELTRANSLATION_LANGUAGES = [l for l in LANGUAGES_LIST
+                               if l[0] in ("en", "fr", "it", "es")]
 
 MAPENTITY_CONFIG = {
-    'TITLE': gettext_noop("Geotrek"),
-    'TEMP_DIR': '/tmp',
-    'HISTORY_ITEMS_MAX': 7,
-    'CONVERSION_SERVER': 'http://127.0.0.1:6543',
-    'CAPTURE_SERVER': 'http://127.0.0.1:8001',
+    'TITLE': TITLE,
     'ROOT_URL': ROOT_URL,
+
+    'TEMP_DIR': os.path.join(PRIVATE_DIR, 'tmp'),
+    'HISTORY_ITEMS_MAX': 7,
+    'CONVERSION_SERVER': 'http://{}:{}'.format(os.getenv('CONVERSION_HOST'),
+                                               os.getenv('CONVERSION_PORT')),
+    'CAPTURE_SERVER': 'http://{}:{}'.format(os.getenv('CAPTURE_HOST'),
+                                            os.getenv('CAPTURE_PORT')),
     'MAP_BACKGROUND_FOGGED': True,
     'GEOJSON_LAYERS_CACHE_BACKEND': 'fat',
     'SENDFILE_HTTP_HEADER': 'X-Accel-Redirect',
     'DRF_API_URL_PREFIX': r'^api/(?P<lang>[a-z]{2})/',
     'MAPENTITY_WEASYPRINT': False,
+    'LANGUAGE_CODE': LANGUAGE_CODE,
+    'LANGUAGES': LANGUAGES,
+    'TRANSLATED_LANGUAGES': _MODELTRANSLATION_LANGUAGES,
 }
 
-DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
+DEFAULT_STRUCTURE_NAME = _('Default')
 
 VIEWPORT_MARGIN = 0.1  # On list page, around spatial extent from settings.ini
 
@@ -428,6 +442,8 @@ ALTIMETRIC_PROFILE_MIN_YSCALE = 1200  # Minimum y scale (in meters)
 ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/height)
 ALTIMETRIC_AREA_MARGIN = 0.15
 
+SRID = 2154
+SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
 
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
@@ -438,7 +454,7 @@ LEAFLET_CONFIG = {
     ],
     'TILES_EXTENT': SPATIAL_EXTENT,
     # Extent in API projection (Leaflet view default extent)
-    'SPATIAL_EXTENT': (1.3, 43.7, 1.5, 43.5),
+    'SPATIAL_EXTENT': api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN),
     'NO_GLOBALS': False,
     'PLUGINS': {
         'geotrek': {'js': ['core/leaflet.lineextremities.js',
@@ -470,10 +486,10 @@ COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '
                                   'LightSalmon', 'HotPink', 'Fuchsia']}
 
 MAP_STYLES = {
-    'path': {'weight': 2, 'opacity': 1.0, 'color': '#FF4800'},
+    'path': {'weight': 2, 'color': '#FF4800', 'opacity': 1.0},
 
-    'city': {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
-    'district': {'weight': 6, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
+    'city': {'weight': 4, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0},
+    'district': {'weight': 6, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
 
     'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
     'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
@@ -482,6 +498,9 @@ MAP_STYLES = {
     'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
     'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
 
+    'detail': {'color': '#ffff00'},
+    'others': {'color': '#ffff00'},
+
     'print': {
         'path': {'weight': 1},
         'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
@@ -489,8 +508,7 @@ MAP_STYLES = {
     }
 }
 
-
-LAYER_PRECISION_LAND = 4   # Number of fraction digit
+LAYER_PRECISION_LAND = 4  # Number of fraction digit
 LAYER_SIMPLIFY_LAND = 10  # Simplification tolerance
 
 LAND_BBOX_CITIES_ENABLED = True
@@ -543,7 +561,6 @@ TOPOLOGY_STATIC_OFFSETS = {'land': -5,
                            'signagemanagement': -10,
                            'workmanagement': 10}
 
-
 MESSAGE_TAGS = {
     messages.SUCCESS: 'alert-success',
     messages.INFO: 'alert-info',
@@ -571,14 +588,15 @@ MOBILE_TILES_URL = [
 MOBILE_TILES_EXTENSION = None  # auto
 MOBILE_TILES_RADIUS_LARGE = 0.01  # ~1 km
 MOBILE_TILES_RADIUS_SMALL = 0.005  # ~500 m
-MOBILE_TILES_GLOBAL_ZOOMS = range(13)
-MOBILE_TILES_LOW_ZOOMS = range(13, 15)
-MOBILE_TILES_HIGH_ZOOMS = range(15, 17)
+MOBILE_TILES_GLOBAL_ZOOMS = list(range(13))
+MOBILE_TILES_LOW_ZOOMS = list(range(13, 15))
+MOBILE_TILES_HIGH_ZOOMS = list(range(15, 17))
 
 TINYMCE_DEFAULT_CONFIG = {
     'convert_urls': False,
 }
 
+SYNC_RANDO_ROOT = os.path.join(BASE_DIR, 'data')
 SYNC_RANDO_OPTIONS = {}
 
 '''
@@ -599,3 +617,20 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
     'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',  # Used for extern authent
 ]
+
+MAILALERTSUBJECT = _("Geotrek : Signal a mistake")
+MAILALERTMESSAGE = _("""Hello,
+
+We acknowledge receipt of your feedback, thank you for your interest in Geotrek.
+
+Best regards,
+
+The Geotrek Team
+http://geotrek.fr""")
+
+EMAIL_SUBJECT_PREFIX = '[%s] ' % TITLE
+
+FACEBOOK_APP_ID = ''
+FACEBOOK_IMAGE = '/images/logo-geotrek.png'
+FACEBOOK_IMAGE_WIDTH = 200
+FACEBOOK_IMAGE_HEIGHT = 200

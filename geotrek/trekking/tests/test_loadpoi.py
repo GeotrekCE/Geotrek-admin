@@ -47,8 +47,8 @@ class LoadPOITest(TestCase):
             self.cmd.handle(point_layer=self.filename, verbosity=0)
             call1 = mocked.call_args_list[0][0]
             call2 = mocked.call_args_list[1][0]
-            self.assertEquals(call1[0], geom1)
-            self.assertEquals(call2[0], geom2)
+            self.assertEquals(call1[0].ewkt, geom1.ewkt)
+            self.assertEquals(call2[0].ewkt, geom2.ewkt)
 
     def test_create_pois_receives_fields_names_and_types(self):
         with patch.object(Command, 'create_poi') as mocked:

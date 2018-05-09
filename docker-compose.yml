@@ -1,0 +1,60 @@
+version: "3"
+services:
+  postgres:
+    image: juank/postgis:10-2.4
+    env_file:
+      - docker.env
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    hostname: geotrek-redis
+
+  convertit:
+     image: geotrekce/convertit
+     working_dir: /opt/apps/convertit/
+     command: /opt/apps/convertit/bin/pserve development.ini --reload
+
+  screamshotter:
+     image: geotrekce/screamshotter
+     depends_on:
+       - convertit
+     command: /opt/apps/screamshotter/bin/python manage.py runserver 0.0.0.0:8001
+
+  worker:
+    image: geotrek
+    build: .
+    env_file:
+      - docker.env
+    depends_on:
+      - postgres
+      - redis
+      - screamshotter
+    working_dir: /app
+    volumes:
+      - ./geotrek:/app/geotrek
+    command: /app/venv/bin/celery -A geotrek worker -l debug
+
+  django:
+     image: geotrek
+     tty: true
+     ports:
+       - "8000:8000"
+     env_file:
+       - docker.env
+     volumes:
+       - public:/app/public
+       - private:/app/private
+       - ${PWD}/conf/custom.py:/app/geotrek/settings/custom.py
+       - ${PWD}/geotrek:/app/geotrek
+     user: "1001"
+     depends_on:
+       - worker
+     working_dir: /app
+     command: /app/venv/bin/python ./manage.py runserver 0.0.0.0:8000
+
+volumes:
+  postgres:
+  public:
+  private:
