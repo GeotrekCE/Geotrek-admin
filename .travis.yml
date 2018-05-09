@@ -21,6 +21,7 @@ before_install:
   - if [[ $ACTION != codestyle ]]; then docker run --name geotrek-admin_postgres_1 -d juank/postgis:10-2.4 -v geotrek_postgres:/var/lib/postgresql/data -e POSTGRES_USER=geotrek_user -e POSTGRES_DB=geotrek_db -e POSTGRES_PASSWORD=geotrek_password; fi
   - if [[ $ACTION != codestyle ]]; then sleep 15; fi
   - if [[ $ACTION != codestyle ]]; then docker container stop geotrek-admin_postgres_1; fi
+  - if [[ $ACTION != codestyle ]]; then docker rm $(docker ps -a -q); fi
 
 install:
   - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
@@ -30,7 +31,7 @@ script:
   - if [[ $ACTION == codestyle ]]; then flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings; fi
   - if [[ $ACTION == codestyle ]]; then flake8 geotrek; fi
   - if [[ $ACTION == codestyle ]]; then find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID; fi
-  - if [[ $ACTION == test ]]; then /app/venv/bin/coverage run docker-compose run web ./manage.py test geotrek --settings=geotrek.settings.tests; fi
+  - if [[ $ACTION == test ]]; then docker-compose run web /app/venv/bin/coverage run ./manage.py test geotrek --settings=geotrek.settings.tests; fi
 
 after_success:
   # Report coverage results to coveralls.io
