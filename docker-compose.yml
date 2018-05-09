@@ -44,11 +44,17 @@ services:
      env_file:
        - docker.env
      volumes:
-       - public:/app/public
-       - private:/app/private
-       - ${PWD}/conf/custom.py:/app/geotrek/settings/custom.py
-       #- ${PWD}/geotrek:/app/geotrek
-     user: "1001"
+       - static:/app/public/static
+       - media:/app/public/media
+       - cache:/app/private/cache
+       - data_export:/app/private/data
+       - ./conf/templates:/app/private/templates
+       - ./conf/locale:/app/private/locale
+       - ./conf/static:/app/private/static
+       #- ./conf/geotrek.log:/app/private/log/geotrek.log
+       - ./conf/custom.py:/app/geotrek/settings/custom.py
+       - ./geotrek:/app/geotrek
+     user: "1000"
      depends_on:
        - celery
      working_dir: /app
@@ -56,5 +62,7 @@ services:
 
 volumes:
   postgres:
-  public:
-  private:
+  cache:
+  static:
+  media:
+  data_export:

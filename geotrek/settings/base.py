@@ -52,10 +52,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'OPTIONS': {},
-        'NAME': os.getenv('POSTGRES_DB', 'geotrekdb'),
-        'USER': os.getenv('POSTGRES_USER', 'geotrek'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'geotrek'),
-        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST', 'db'),
         'PORT': os.getenv('POSTGRES_PORT', '5432'),
     }
 }
@@ -109,7 +109,7 @@ AUTHENT_GROUPS_MAPPING = {
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'Europe/Paris'
+TIME_ZONE = 'UTC'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -182,7 +182,7 @@ COMPRESS_ENABLED = False
 COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'public_key'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 TEMPLATES = [
     {
@@ -404,12 +404,12 @@ MAPENTITY_CONFIG = {
     'TITLE': TITLE,
     'ROOT_URL': ROOT_URL,
 
-    'TEMP_DIR': os.path.join(PRIVATE_DIR, 'tmp'),
+    'TEMP_DIR': '/tmp',
     'HISTORY_ITEMS_MAX': 7,
-    'CONVERSION_SERVER': 'http://{}:{}'.format(os.getenv('CONVERSION_HOST'),
-                                               os.getenv('CONVERSION_PORT')),
-    'CAPTURE_SERVER': 'http://{}:{}'.format(os.getenv('CAPTURE_HOST'),
-                                            os.getenv('CAPTURE_PORT')),
+    'CONVERSION_SERVER': 'http://{}:{}'.format(os.getenv('CONVERSION_HOST', 'convertit'),
+                                               os.getenv('CONVERSION_PORT', '6543')),
+    'CAPTURE_SERVER': 'http://{}:{}'.format(os.getenv('CAPTURE_HOST', 'screamshotter'),
+                                            os.getenv('CAPTURE_PORT', '8000')),
     'MAP_BACKGROUND_FOGGED': True,
     'GEOJSON_LAYERS_CACHE_BACKEND': 'fat',
     'SENDFILE_HTTP_HEADER': 'X-Accel-Redirect',
@@ -420,7 +420,7 @@ MAPENTITY_CONFIG = {
     'TRANSLATED_LANGUAGES': _MODELTRANSLATION_LANGUAGES,
 }
 
-DEFAULT_STRUCTURE_NAME = _('Default')
+DEFAULT_STRUCTURE_NAME = 'GEOTEAM'
 
 VIEWPORT_MARGIN = 0.1  # On list page, around spatial extent from settings.ini
 

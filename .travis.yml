@@ -30,7 +30,7 @@ before_install:
 install:
   - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
   - if [[ $ACTION != codestyle ]]; then docker-compose build; fi
-  - if [[ $ACTION != codestyle ]]; then docker-compose run web ./docker/run.sh; fi
+  - if [[ $ACTION != codestyle ]]; then docker-compose run web ./docker/update.sh; fi
   - if [[ $ACTION != codestyle ]]; then docker-compose run web ./docker/initial.sh; fi
 
 script:
