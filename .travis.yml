@@ -6,7 +6,7 @@ before_install:
   - sudo chmod +x /usr/local/bin/docker-compose
   - sudo service postgresql stop
   - docker volume create geotrek_postgres
-  - docker run --name geotrek_postgres -d postgres -v geotrek_postgres:/var/lib/postgresql/data -e POSTGRES_USER=geotrek_user -e POSTGRES_DB=geotrek_db -e POSTGRES_PASSWORD=geotrek_password
+  - docker run --name geotrek_postgres -d juank/postgis:10-2.4 -v geotrek_postgres:/var/lib/postgresql/data -e POSTGRES_USER=geotrek_user -e POSTGRES_DB=geotrek_db -e POSTGRES_PASSWORD=geotrek_password
   - sleep 15
   - docker container stop geotrek_postgres
 
@@ -14,4 +14,4 @@ install:
   - docker-compose build
 
 script:
-- docker-compose run ./manage.py test --settings geotrek.settings.tests
+  - docker-compose run django ./manage.py test --settings geotrek.settings.tests
