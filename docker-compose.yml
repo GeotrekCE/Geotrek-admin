@@ -47,7 +47,7 @@ services:
        - public:/app/public
        - private:/app/private
        - ${PWD}/conf/custom.py:/app/geotrek/settings/custom.py
-       - ${PWD}/geotrek:/app/geotrek
+       #- ${PWD}/geotrek:/app/geotrek
      user: "1001"
      depends_on:
        - celery

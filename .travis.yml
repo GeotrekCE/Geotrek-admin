@@ -14,15 +14,24 @@ env:
   - ACTION=codestyle
 
 before_install:
+  # update docker-compose
   - if [[ $ACTION != codestyle ]]; then sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose; fi
   - if [[ $ACTION != codestyle ]]; then sudo chmod +x /usr/local/bin/docker-compose; fi
+  # stop travis postgresql
   - if [[ $ACTION != codestyle ]]; then sudo service postgresql stop; fi
+  # pull required docker images
+  - if [[ $ACTION != codestyle ]]; then docker pull redis:latest; fi
+  - if [[ $ACTION != codestyle ]]; then docker pull geotrekce/convertit; fi
+  - if [[ $ACTION != codestyle ]]; then docker pull geotrekce/screamshotter; fi
+  - if [[ $ACTION != codestyle ]]; then docker pull juank/postgis:10-2.4; fi
+  # initiate database
   - if [[ $ACTION != codestyle ]]; then docker-compose up -d postgres; fi
-  - if [[ $ACTION != codestyle ]]; then sleep 25; fi
 
 install:
   - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
   - if [[ $ACTION != codestyle ]]; then docker-compose build; fi
+  - if [[ $ACTION != codestyle ]]; then docker-compose run web ./docker/run.sh; fi
+  - if [[ $ACTION != codestyle ]]; then docker-compose run web ./docker/initial.sh; fi
 
 script:
   - if [[ $ACTION == codestyle ]]; then flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings; fi

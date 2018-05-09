@@ -32,5 +32,8 @@ RUN mkdir -p /app/private/cache /app/private/log /app/private/templates
 
 ADD VERSION /app/VERSION
 ADD .coveragerc /app/.coveragerc
+ADD docker /app/docker
 WORKDIR /app
+#RUN docker/run.sh
 EXPOSE 8000
+CMD /app/venv/bin/gunicorn --bind 0.0.0.0:8000
