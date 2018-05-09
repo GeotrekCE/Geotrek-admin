@@ -1,5 +1,5 @@
 [Unit]
-Description=Geotrek
+Description=Geotrek-Admin
 Requires=docker.service
 After=docker.service
 

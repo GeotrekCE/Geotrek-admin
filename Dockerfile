@@ -31,5 +31,6 @@ RUN mkdir -p /app/public/static /app/public/media /app/public/data
 RUN mkdir -p /app/private/cache /app/private/log /app/private/templates
 
 ADD VERSION /app/VERSION
+ADD .coveragerc /app/.coveragerc
 WORKDIR /app
 EXPOSE 8000

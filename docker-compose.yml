@@ -22,7 +22,7 @@ services:
        - convertit
      command: /opt/apps/screamshotter/bin/python manage.py runserver 0.0.0.0:8001
 
-  worker:
+  celery:
     image: geotrek
     build: .
     env_file:
@@ -36,7 +36,7 @@ services:
       - ./geotrek:/app/geotrek
     command: /app/venv/bin/celery -A geotrek worker -l debug
 
-  django:
+  web:
      image: geotrek
      tty: true
      ports:
@@ -50,9 +50,9 @@ services:
        - ${PWD}/geotrek:/app/geotrek
      user: "1001"
      depends_on:
-       - worker
+       - celery
      working_dir: /app
-     command: /app/venv/bin/python ./manage.py runserver 0.0.0.0:8000
+     command: ./manage.py runserver 0.0.0.0:8000
 
 volumes:
   postgres:
