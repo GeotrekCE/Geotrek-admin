@@ -58,10 +58,11 @@ install:
   - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
   - if [[ $ACTION == test ]]; then docker-compose build; fi
   - if [[ $ACTION == test ]]; then docker tag geotrek geotrekce/admin:$GEOTREK_VERSION; fi
-  - if [[ $ACTION == test ]] && [[ $GEOTREK_VERSION != *.dev0 ]];
-    then
-      docker tag geotrek geotrekce/admin:latest;
-    fi
+#  - if [[ $ACTION == test ]] && [[ $GEOTREK_VERSION != *.dev0 ]];
+#    then
+#      docker tag geotrek geotrekce/admin:latest;
+#    fi
+  - if [[ $ACTION == test ]]; then docker tag geotrek geotrekce/admin:latest; fi
   - if [[ $ACTION != codestyle ]]; then docker-compose run web ./docker/initial.sh; fi
   - if [[ $ACTION == deploy ]]; then docker-compose up -d; fi
 
