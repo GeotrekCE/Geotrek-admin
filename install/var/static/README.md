@@ -1,1 +1,10 @@
-static folder is used to collect django static in production. Do not touch / add / delete or modify anything on it.
+Static files add here can be accessed in your extra templates with django static relative path
+
+example with your logo.png :
+
+```html
+{% load static %}
+
+<img src="{% static 'logo.png' %}"/>
+
+```

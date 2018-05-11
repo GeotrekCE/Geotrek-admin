@@ -1,42 +1,44 @@
 # import os
-# ALLOWED_HOST -> authorize domain for django app
-# ..........................
 
-# ALLOWED_HOST = os.getenv('DOMAIN_NAME').split(',')
+#
+# BASIC SETTINGS
+# ..............
+# SRID = 2154  # LAMBERT EXTENDED FOR FRANCE, used for geometric columns.
+# Must be a projection in meters Fixed at install, don't change it after
+#
+# DEFAULT_STRUCTURE_NAME = 'GEOTEAM' # -> Name for your default structure. Can be changed in geotrek admin interface
+#
+# SPATIAL EXTENT = (105000, 6150000, 1100000, 7150000)
+# spatial bbox in your own projection (example here with 2154)
+# this spatial_extent will limit map exploration, and will cut your raster imports
+#
+# LANGUAGE_CODE = 'en' # for web interface. default to fr (French)
 
-# SRID is used for geometric columns. Fixed at install, don't change it after
-
-# SRID = 2154  # LAMBERT EXTENDED FOR FRANCE
-
-# DEFAULT_STRUCTURE_NAME -> Name for your default structure. Can be changed in geotrek admin interface
-
-# DEFAULT_STRUCTURE_NAME = 'GEOTEAM'
-
-# ADMINS -> used to send error mails
+# MODELTRANSLATION_LANGUAGES = ('en', 'fr', 'it', 'es')
+# Change with your own wanted translations
+# ex: MODELTRANSLATION_LANGUAGES = ('en', 'fr', 'de', 'ne')
 
 # ADMINS = (
 #     ('admin1', 'admin1@geotrek.fr'), # change with tuple ('your name', 'your@address.mail')
 # )
-
-# MANAGERS is used to send report mail
+# used to send error mails
 
 # MANAGERS = (
 #     ('manager1', 'manager1@geotrek.fr'), # change with tuple ('your name', 'your@address.mail')
 # )
 
-# TIME_ZONE -> set your timezone for date format. For France, uncomment line beside
-# For other zones : find your timezone in https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+# or MANAGERS = ADMIN
+# used to send report mail
 
-# TIME_ZONE=Europe/Paris
+# TIME_ZONE="Europe/Paris"
+# set your timezone for date format. For France, uncomment line beside
+# For other zones : find your timezone in https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
 #
 # MAIL SETTINGS
 # ..........................
-
-# DEFAULT_FROM_EMAIL -> address will be set for sended emails (ex: noreply@yourdomain.net)
 # DEFAULT_FROM_EMAIL =
-
-
+# address will be set for sended emails (ex: noreply@yourdomain.net)
 # SERVER_EMAIL = DEFAULT_FROM_EMAIL
 # EMAIL_HOST =
 # EMAIL_HOST_USER =

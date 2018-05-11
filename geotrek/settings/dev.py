@@ -5,7 +5,6 @@ from .base import *
 # ..........................
 
 DEBUG = True
-DEBUG_TOOLBAR = False
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -15,17 +14,18 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 INSTALLED_APPS = (
     'django_extensions',
+    'debug_toolbar',
 ) + INSTALLED_APPS
 
-INTERNAL_IPS = (
-    '127.0.0.1',  # localhost default
-    '10.0.3.1',  # lxc default
-)
+INTERNAL_IPS = type(str('c'), (), {'__contains__': lambda *a: True})()
 
 ALLOWED_HOSTS = [
     '*',
 ]
 
+MIDDLEWARE_CLASSES += (
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+)
 #
 # Use some default tiles
 # ..........................

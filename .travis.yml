@@ -23,6 +23,7 @@ before_install:
   - mkdir -p var/static var/extra_static var/media/upload var/cache var/extra_templates var/extra_locale
   - export GEOTREK_VERSION=$(cat VERSION)
   - export LOCAL_USER_ID=$(id -u)
+  - export DOMAIN_NAME=geotrek.test
   # fix LOCAL_USER for build docker
   - sed -i.bak 's/^\(LOCAL_USER_ID=\).*/\1'$(id -u)'/' docker.env
   # update docker-compose
@@ -36,17 +37,17 @@ before_install:
   - if [[ $ACTION != codestyle ]]; then docker pull geotrekce/convertit; fi
   - if [[ $ACTION != codestyle ]]; then docker pull geotrekce/screamshotter; fi
   - if [[ $ACTION != codestyle ]]; then docker pull juank/postgis:10-2.4; fi
-  - if [[ $ACTION == deploy ]]; then docker pull geotrekce/admin:latest; fi
   - if [[ $ACTION == deploy ]]; then docker pull memcached:1.5-alpine; fi
   # setup env for deploy
-  - if [[ $ACTION == deploy ]]; then cd install; fi
-  - if [[ $ACTION == deploy ]]; then cp docker.env.dist docker.env; fi
   - if [[ $ACTION == deploy ]];
     then
+      cd install;
+      cp docker.env.dist docker.env;
       sed -i.bak 's/^\(POSTGRES_USER=\).*/\1test/' docker.env;
       sed -i.bak 's/^\(POSTGRES_DB=\).*/\1test/' docker.env;
       sed -i.bak 's/^\(POSTGRES_PASSWORD=\).*/\1test/' docker.env;
       sed -i.bak 's/^\(DOMAIN_NAME=\).*/\1localhost/' docker.env;
+      sed -i.bak 's/^\(SECRET_KEY=\).*/\1key-test-key-test/' docker.env;
     fi
   # initiate database
   - if [[ $ACTION != codestyle ]];
@@ -57,6 +58,8 @@ before_install:
 install:
   - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
   - if [[ $ACTION == test ]]; then docker-compose build; fi
+  - if [[ $ACTION == deploy ]]; then cd ..; docker-compose build; cd install; fi
+  - if [[ $ACTION == deploy ]]; then docker tag geotrek geotrekce/admin:latest; fi
   - if [[ $ACTION != codestyle ]]; then docker-compose run web ./docker/initial.sh; fi
   - if [[ $ACTION == deploy ]]; then docker-compose up -d; fi
 
@@ -67,7 +70,7 @@ script:
   - if [[ $ACTION == test ]]; then docker-compose run web /app/venv/bin/coverage run ./manage.py test --settings=geotrek.settings.tests; fi
   - if [[ $ACTION == deploy ]]; then docker-compose run web ./manage.py loaddata development-pne; fi
   - if [[ $ACTION == deploy ]]; then npm install geotrek/jstests; fi
-  - if [[ $ACTION == deploy ]]; then casperjs test geotrek/jstests/nav-*.js host=localhost port=80; fi
+  - if [[ $ACTION == deploy ]]; then casperjs --baseurl=http://127.0.0.1:80 test geotrek/jstests/nav-*.js; fi
 
 after_success:
   # Report coverage results to coveralls.io

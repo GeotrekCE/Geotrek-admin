@@ -6,20 +6,30 @@ services:
       - docker.env
     volumes:
       - postgres:/var/lib/postgresql/data
+    networks:
+      network:
 
   redis:
     image: redis:4.0-alpine
+    networks:
+      redis:
 
   convertit:
      image: geotrekce/convertit
+     networks:
+       network:
 
   screamshotter:
      image: geotrekce/screamshotter
      depends_on:
        - convertit
+     networks:
+       network:
 
   memcached:
     image: memcached:1.5-alpine
+    networks:
+      network:
 
   celery:
     image: geotrekce/admin:latest
@@ -35,6 +45,9 @@ services:
       - ./var/custom.py:/app/src/geotrek/settings/custom.py
       - ./var/bulkimport:/app/src/bulkimport
     command: /app/venv/bin/celery -A geotrek worker -l warning
+    networks:
+      network:
+      redis:
 
   web:
      image: geotrekce/admin:latest
@@ -47,6 +60,8 @@ services:
      depends_on:
        - celery
      command: /app/venv/bin/gunicorn geotrek.wsgi:application -w 5 --bind 0.0.0.0:8000
+     networks:
+       network:
 
   api:
      image: geotrekce/admin:latest
@@ -59,6 +74,8 @@ services:
      depends_on:
        - web
      command: /app/venv/bin/gunicorn geotrek.wsgi:application -w 5 --bind 0.0.0.0:8000
+     networks:
+       network:
 
   nginx:
     image: nginx:latest
@@ -70,6 +87,9 @@ services:
       #- "443:443"
     env_file:
        - docker.env
+    hostname: ${DOMAIN_NAME}
+    extra_hosts:
+      - "${DOMAIN_NAME}:127.0.0.1"
     volumes:
       - ./geotrek-nginx.conf:/geotrek.conf
       #- ./var/nginx/cert.crt:/etc/nginx/cert.crt
@@ -77,11 +97,16 @@ services:
       - ./var/log/nginx:/var/log/nginx
       - ./var/static:/var/www/static
       - ./var/media:/var/www/media
+    networks:
+      network:
+        aliases:
+         - ${DOMAIN_NAME}
     command: /bin/bash -c "envsubst '$$DOMAIN_NAME' < /geotrek.conf > /etc/nginx/conf.d/geotrek.conf && nginx -g 'daemon off;'"
 
 volumes:
   postgres:
-  cache:
-  static:
-  media:
-  data_export:
+
+networks:
+  network:
+  redis:
+

@@ -3,6 +3,7 @@ FROM ubuntu:bionic
 
 ENV PYTHONUNBUFFERED 1
 ENV DEBIAN_FRONTEND=noninteractive
+ENV DJANGO_SETTINGS_MODULE=geotrek.settings.prod
 ARG LOCAL_UID=1000
 RUN mkdir -p /app/src
 
@@ -28,10 +29,10 @@ USER django
 RUN virtualenv /app/venv
 ADD requirements.txt /app/src/requirements.txt
 RUN /app/venv/bin/pip install --no-cache-dir -r /app/src/requirements.txt
+# force leaflet version
 ADD docker /app/src/docker
 
 WORKDIR /app/src
 
 EXPOSE 8000
-ENTRYPOINT docker/update.sh
 CMD /app/venv/bin/gunicorn geotrek.wsgi:application -w 9 --bind 0.0.0.0:8000

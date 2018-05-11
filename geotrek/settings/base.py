@@ -41,18 +41,6 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'OPTIONS': {},
-        'NAME': os.getenv('POSTGRES_DB'),
-        'USER': os.getenv('POSTGRES_USER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('POSTGRES_HOST', 'db'),
-        'PORT': os.getenv('POSTGRES_PORT', '5432'),
-    }
-}
-
 #
 # PostgreSQL Schemas for apps and models.
 #
@@ -76,8 +64,18 @@ DATABASE_SCHEMAS = {
     'geotrek.land': 'foncier',
 }
 
-DATABASES['default']['OPTIONS'] = {
-    'options': '-c search_path=public,%s' % ','.join(set(DATABASE_SCHEMAS.values()))
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST', 'postgres'),
+        'PORT': os.getenv('POSTGRES_PORT', '5432'),
+        'OPTIONS': {
+            'options': '-c search_path=public,%s' % ','.join(set(DATABASE_SCHEMAS.values()))
+        },
+    }
 }
 
 #
@@ -118,7 +116,9 @@ MODELTRANSLATION_LANGUAGES = ('en', 'fr', 'it', 'es')
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'fr'
 
 LOCALE_PATHS = (
+    # project locale
     os.path.join(PROJECT_DIR, 'locale'),
+    # override locale
     os.path.join(VAR_DIR, 'extra_locale'),
 )
 
