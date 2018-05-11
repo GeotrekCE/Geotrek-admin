@@ -65,6 +65,9 @@ script:
   - if [[ $ACTION == codestyle ]]; then flake8 geotrek; fi
   - if [[ $ACTION == codestyle ]]; then find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID; fi
   - if [[ $ACTION == test ]]; then docker-compose run web /app/venv/bin/coverage run ./manage.py test --settings=geotrek.settings.tests; fi
+  - if [[ $ACTION == deploy ]]; then docker-compose run web ./manage.py loaddata development-pne; fi
+  - if [[ $ACTION == deploy ]]; then npm install geotrek/jstests; fi
+  - if [[ $ACTION == deploy ]]; then casperjs test geotrek/jstests/nav-*.js host=localhost port=80; fi
 
 after_success:
   # Report coverage results to coveralls.io
