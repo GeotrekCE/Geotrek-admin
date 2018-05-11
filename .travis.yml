@@ -41,7 +41,7 @@ before_install:
   # setup env for deploy
   - if [[ $ACTION == deploy ]]; then cd install; fi
   - if [[ $ACTION == deploy ]]; then cp docker.env.dist docker.env; fi
-  - if [[ $ACTION != codestyle ]];
+  - if [[ $ACTION == deploy ]];
     then
       sed -i.bak 's/^\(POSTGRES_USER=\).*/\1test/' docker.env;
       sed -i.bak 's/^\(POSTGRES_DB=\).*/\1test/' docker.env
@@ -58,10 +58,11 @@ install:
   - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
   - if [[ $ACTION == test ]]; then docker-compose build; fi
   - if [[ $ACTION == test ]]; then docker tag geotrek geotrekce/admin:$GEOTREK_VERSION; fi
-  - if [[ $ACTION == test ]] && [[ $GEOTREK_VERSION != *.dev0 ]];
-    then
-      docker tag geotrek geotrekce/admin:latest;
-    fi
+#  - if [[ $ACTION == test ]] && [[ $GEOTREK_VERSION != *.dev0 ]];
+#    then
+#      docker tag geotrek geotrekce/admin:latest;
+#    fi
+  - if [[ $ACTION == test ]]; then docker tag geotrek geotrekce/admin:latest; fi
   - if [[ $ACTION != codestyle ]]; then docker-compose run web ./docker/initial.sh; fi
   - if [[ $ACTION == deploy ]]; then docker-compose up -d; fi
 
