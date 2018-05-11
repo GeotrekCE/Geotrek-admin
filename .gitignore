@@ -51,3 +51,5 @@ docs/_build/
 !/install/var/bulkimport/parsers.py
 /install/var/tiles/
 /install/var/data/
+/bulkimport/
+!/bulkimport/__init__.py

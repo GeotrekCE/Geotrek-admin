@@ -24,6 +24,7 @@ before_install:
   - export GEOTREK_VERSION=$(cat VERSION)
   - export LOCAL_USER_ID=$(id -u)
   - export DOMAIN_NAME=geotrek.test
+  - echo '127.0.0.1    geotrek.test' | sudo tee -a /etc/hosts
   # fix LOCAL_USER for build docker
   - sed -i.bak 's/^\(LOCAL_USER_ID=\).*/\1'$(id -u)'/' docker.env
   # update docker-compose
@@ -46,7 +47,7 @@ before_install:
       sed -i.bak 's/^\(POSTGRES_USER=\).*/\1test/' docker.env;
       sed -i.bak 's/^\(POSTGRES_DB=\).*/\1test/' docker.env;
       sed -i.bak 's/^\(POSTGRES_PASSWORD=\).*/\1test/' docker.env;
-      sed -i.bak 's/^\(DOMAIN_NAME=\).*/\1localhost/' docker.env;
+      sed -i.bak 's/^\(DOMAIN_NAME=\).*/\1geotrek.test/' docker.env;
       sed -i.bak 's/^\(SECRET_KEY=\).*/\1key-test-key-test/' docker.env;
     fi
   # initiate database
@@ -54,6 +55,8 @@ before_install:
     then
       docker-compose up -d postgres;
     fi
+  # Make sure to use our version of phantomjs
+  - if [[ $ACTION == deploy ]]; then sudo rm -rf /usr/local/bin/phantomjs* /usr/bin/phantomjs* /usr/local/phantomjs*; fi
 
 install:
   - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
@@ -62,6 +65,19 @@ install:
   - if [[ $ACTION == deploy ]]; then docker tag geotrek geotrekce/admin:latest; fi
   - if [[ $ACTION != codestyle ]]; then docker-compose run web ./docker/initial.sh; fi
   - if [[ $ACTION == deploy ]]; then docker-compose up -d; fi
+  - if [[ $ACTION == deploy ]]; then npm install ../geotrek/jstests; fi
+  - if [[ $ACTION == deploy ]];
+    then
+      sudo wget --quiet https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-x86_64.tar.bz2 -O phantomjs.tar.bz2;
+      sudo tar -jxvf phantomjs.tar.bz2;
+      sudo rm phantomjs.tar.bz2;
+      export PATH=$PATH:$PWD/phantomjs-1.9.7-linux-x86_64/bin/;
+      sudo ln -sf *phantomjs*/bin/phantomjs /usr/local/bin/phantomjs;
+      sudo wget --quiet https://github.com/n1k0/casperjs/archive/1.1-beta3.zip -O casperjs.zip;
+      sudo unzip -o casperjs.zip;
+      sudo rm casperjs.zip;
+      export PATH=$PATH:$PWD/casperjs-1.1-beta3/bin/;
+    fi
 
 script:
   - if [[ $ACTION == codestyle ]]; then flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings; fi
@@ -69,8 +85,10 @@ script:
   - if [[ $ACTION == codestyle ]]; then find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID; fi
   - if [[ $ACTION == test ]]; then docker-compose run web /app/venv/bin/coverage run ./manage.py test --settings=geotrek.settings.tests; fi
   - if [[ $ACTION == deploy ]]; then docker-compose run web ./manage.py loaddata development-pne; fi
-  - if [[ $ACTION == deploy ]]; then npm install geotrek/jstests; fi
-  - if [[ $ACTION == deploy ]]; then casperjs --baseurl=http://127.0.0.1:80 test geotrek/jstests/nav-*.js; fi
+  - if [[ $ACTION == deploy ]]; then wget http://geotrek.test:80; fi
+  - if [[ $ACTION == deploy ]]; then cat index.html; fi
+  - if [[ $ACTION == deploy ]]; then ls -als var/static; fi
+  - if [[ $ACTION == deploy ]]; then casperjs  --baseurl=http://geotrek.test test ../geotrek/jstests/nav-*.js; fi
 
 after_success:
   # Report coverage results to coveralls.io
