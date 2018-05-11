@@ -22,7 +22,7 @@ services:
     image: memcached:1.5-alpine
 
   celery:
-    image: geotrekce/admin:2.18.5.dev0
+    image: geotrekce/admin:latest
     env_file:
       - docker.env
     depends_on:
@@ -37,7 +37,7 @@ services:
     command: /app/venv/bin/celery -A geotrek worker -l warning
 
   web:
-     image: geotrekce/admin:2.18.5.dev0
+     image: geotrekce/admin:latest
      env_file:
        - docker.env
      volumes:
@@ -49,7 +49,7 @@ services:
      command: /app/venv/bin/gunicorn geotrek.wsgi:application -w 5 --bind 0.0.0.0:8000
 
   api:
-     image: geotrekce/admin:2.18.5.dev0
+     image: geotrekce/admin:latest
      env_file:
        - docker.env
      volumes:
@@ -72,8 +72,8 @@ services:
        - docker.env
     volumes:
       - ./geotrek-nginx.conf:/geotrek.conf
-      #- ./conf/nginx/cert.crt:/etc/nginx/cert.crt
-      #- ./conf/nginx/cert.key:/etc/nginx/cert.key
+      #- ./var/nginx/cert.crt:/etc/nginx/cert.crt
+      #- ./var/nginx/cert.key:/etc/nginx/cert.key
       - ./var/log/nginx:/var/log/nginx
       - ./var/static:/var/www/static
       - ./var/media:/var/www/media
