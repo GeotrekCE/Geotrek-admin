@@ -84,6 +84,10 @@
             	{% endif %}
             </td>
         </tr>
+        <tr>
+            <th>{{ object|verbose:"structure" }}</th>
+            <td>{{ object.structure }}</td>
+        </tr>
         {% include "common/publication_info_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
