@@ -44,9 +44,9 @@ before_install:
   - if [[ $ACTION == deploy ]];
     then
       sed -i.bak 's/^\(POSTGRES_USER=\).*/\1test/' docker.env;
-      sed -i.bak 's/^\(POSTGRES_DB=\).*/\1test/' docker.env
-      sed -i.bak 's/^\(POSTGRES_PASSWORD=\).*/\1test/' docker.env
-      sed -i.bak 's/^\(DOMAIN_NAME=\).*/\1localhost/' docker.env
+      sed -i.bak 's/^\(POSTGRES_DB=\).*/\1test/' docker.env;
+      sed -i.bak 's/^\(POSTGRES_PASSWORD=\).*/\1test/' docker.env;
+      sed -i.bak 's/^\(DOMAIN_NAME=\).*/\1localhost/' docker.env;
     fi
   # initiate database
   - if [[ $ACTION != codestyle ]];
