@@ -7,29 +7,29 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
     networks:
-      network:
+      default:
 
   redis:
     image: redis:4.0-alpine
     networks:
-      redis:
+      broker:
 
   convertit:
      image: geotrekce/convertit
      networks:
-       network:
+       default:
 
   screamshotter:
      image: geotrekce/screamshotter
      depends_on:
        - convertit
      networks:
-       network:
+       default:
 
   memcached:
     image: memcached:1.5-alpine
     networks:
-      network:
+      default:
 
   celery:
     image: geotrekce/admin:latest
@@ -46,8 +46,8 @@ services:
       - ./var/bulkimport:/app/src/bulkimport
     command: /app/venv/bin/celery -A geotrek worker -l warning
     networks:
-      network:
-      redis:
+      default:
+      broker:
 
   web:
      image: geotrekce/admin:latest
@@ -61,7 +61,7 @@ services:
        - celery
      command: /app/venv/bin/gunicorn geotrek.wsgi:application -w 5 --bind 0.0.0.0:8000
      networks:
-       network:
+       default:
 
   api:
      image: geotrekce/admin:latest
@@ -75,7 +75,7 @@ services:
        - web
      command: /app/venv/bin/gunicorn geotrek.wsgi:application -w 5 --bind 0.0.0.0:8000
      networks:
-       network:
+       default:
 
   nginx:
     image: nginx:latest
@@ -98,7 +98,7 @@ services:
       - ./var/static:/var/www/static
       - ./var/media:/var/www/media
     networks:
-      network:
+      default:
         aliases:
          - ${DOMAIN_NAME}
     command: /bin/bash -c "envsubst '$$DOMAIN_NAME' < /geotrek.conf > /etc/nginx/conf.d/geotrek.conf && nginx -g 'daemon off;'"
@@ -107,6 +107,6 @@ volumes:
   postgres:
 
 networks:
-  network:
-  redis:
+  default:
+  broker:
 

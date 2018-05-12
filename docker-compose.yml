@@ -37,8 +37,7 @@ services:
       - screamshotter
     volumes:
       - ./var:/app/src/var
-      - ./var/custom.py:/app/src/geotrek/settings/custom.py
-      - ./var/bulkimport:/app/src/bulkimport
+      - ./bulkimport:/app/src/bulkimport
       - ./geotrek:/app/src/geotrek
     working_dir: /app/src
     command: /app/venv/bin/celery -A geotrek worker -l debug
@@ -53,8 +52,7 @@ services:
        - docker.env
      volumes:
        - ./var:/app/src/var
-       - ./var/custom.py:/app/src/geotrek/settings/custom.py
-       - ./var/bulkimport:/app/src/bulkimport
+       - ./bulkimport:/app/src/bulkimport
        - ./geotrek:/app/src/geotrek
      depends_on:
        - celery
