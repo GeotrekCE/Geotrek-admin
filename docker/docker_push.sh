@@ -6,8 +6,6 @@ if [[ $ACTION == test ]];
 then
   docker tag geotrek $GEOTREK_VERSION;
   docker push geotrekce/admin:$GEOTREK_VERSION;
-  docker tag geotrek geotrekce/admin:latest;
-  docker push geotrekce/admin:latest;
 
   if [[ $GEOTREK_VERSION != *.dev* ]];
     then
