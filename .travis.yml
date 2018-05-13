@@ -23,7 +23,7 @@ before_install:
   # add /etc/hosts for routing
   - if [[ $ACTION == deploy ]]; then echo '127.0.0.1    '$DOMAIN_NAME | sudo tee -a /etc/hosts; fi
   # fix LOCAL_USER for build docker
-  - sed -i.bak 's/^\(LOCAL_USER_ID=\).*/\1'$(id -u)'/' docker.env
+  - sed -i.bak 's/^\(LOCAL_USER_ID=\).*/\1'$(id -u)'/' .env
   # update docker-compose
   - if [[ $ACTION != codestyle ]]; then sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose; fi
   - if [[ $ACTION != codestyle ]]; then sudo chmod +x /usr/local/bin/docker-compose; fi
@@ -40,12 +40,12 @@ before_install:
   - if [[ $ACTION == deploy ]];
     then
       cd install;
-      cp docker.env.dist docker.env;
-      sed -i.bak 's/^\(POSTGRES_USER=\).*/\1test/' docker.env;
-      sed -i.bak 's/^\(POSTGRES_DB=\).*/\1test/' docker.env;
-      sed -i.bak 's/^\(POSTGRES_PASSWORD=\).*/\1test/' docker.env;
-      sed -i.bak 's/^\(DOMAIN_NAME=\).*/\1'$DOMAIN_NAME'/' docker.env;
-      sed -i.bak 's/^\(SECRET_KEY=\).*/\1key-test-key-test/' docker.env;
+      cp .env.dist .env;
+      sed -i.bak 's/^\(POSTGRES_USER=\).*/\1test/' .env;
+      sed -i.bak 's/^\(POSTGRES_DB=\).*/\1test/' .env;
+      sed -i.bak 's/^\(POSTGRES_PASSWORD=\).*/\1test/' .env;
+      sed -i.bak 's/^\(DOMAIN_NAME=\).*/\1'$DOMAIN_NAME'/' .env;
+      sed -i.bak 's/^\(SECRET_KEY=\).*/\1key-test-key-test/' .env;
     fi
   # initiate database
   - if [[ $ACTION != codestyle ]];

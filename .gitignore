@@ -29,7 +29,7 @@ docs/_build/
 /.settings/
 
 /share/
-/install/docker.env
+/install/.env
 /install/*.tgz
 /install/var/static/
 !/install/var/static/README.md
@@ -53,3 +53,4 @@ docs/_build/
 /install/var/data/
 /bulkimport/
 !/bulkimport/__init__.py
+/install/.env

@@ -2,8 +2,8 @@ FROM ubuntu:bionic
 #MAINTAINER Makina Corpus "contact@geotrek.fr"
 
 ENV PYTHONUNBUFFERED 1
-ENV DEBIAN_FRONTEND=noninteractive
-ENV DJANGO_SETTINGS_MODULE=geotrek.settings.prod
+ENV DEBIAN_FRONTEND noninteractive
+ENV DJANGO_SETTINGS_MODULE geotrek.settings.prod
 ARG LOCAL_UID=1000
 RUN mkdir -p /app/src
 

@@ -26,11 +26,11 @@ mv install /srv/geotrek
 chown -R geotrek:geotrek /srv/geotrek
 su - geotrek
 
-# COPY docker.env.dist TO docker.env
+# COPY .env.dist TO .env
 
 ```bash
 cd /srv/geotrek
-cp docker.env.dist docker.env
+cp .env.dist .env
 
 ```
 

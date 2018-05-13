@@ -3,7 +3,7 @@ services:
   postgres:
     image: juank/postgis:10-2.4
     env_file:
-      - docker.env
+      - .env
     volumes:
       - postgres:/var/lib/postgresql/data
     networks:
@@ -34,7 +34,7 @@ services:
   celery:
     image: geotrekce/admin:latest
     env_file:
-      - docker.env
+      - .env
     depends_on:
       - postgres
       - redis
@@ -52,7 +52,7 @@ services:
   web:
      image: geotrekce/admin:latest
      env_file:
-       - docker.env
+       - .env
      volumes:
       - ./var:/app/src/var
       - ./var/custom.py:/app/src/geotrek/settings/custom.py
@@ -66,7 +66,7 @@ services:
   api:
      image: geotrekce/admin:latest
      env_file:
-       - docker.env
+       - .env
      volumes:
       - ./var:/app/src/var
       - ./var/custom.py:/app/src/geotrek/settings/custom.py
@@ -86,7 +86,7 @@ services:
       - "80:80"
       #- "443:443"
     env_file:
-       - docker.env
+       - .env
     hostname: ${DOMAIN_NAME}
     extra_hosts:
       - "${DOMAIN_NAME}:127.0.0.1"

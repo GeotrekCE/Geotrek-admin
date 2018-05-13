@@ -5,7 +5,7 @@ services:
     ports:
       - "5432:5432"
     env_file:
-      - docker.env
+      - .env
     volumes:
       - postgres:/var/lib/postgresql/data
 
@@ -26,7 +26,7 @@ services:
   celery:
     image: geotrek
     env_file:
-      - docker.env
+      - .env
     build:
       context: .
       args:
@@ -36,9 +36,7 @@ services:
       - redis
       - screamshotter
     volumes:
-      - ./var:/app/src/var
-      - ./bulkimport:/app/src/bulkimport
-      - ./geotrek:/app/src/geotrek
+       - .:/app/src
     working_dir: /app/src
     command: /app/venv/bin/celery -A geotrek worker -l debug
 
@@ -49,11 +47,9 @@ services:
      ports:
        - "8000:8000"
      env_file:
-       - docker.env
+       - .env
      volumes:
-       - ./var:/app/src/var
-       - ./bulkimport:/app/src/bulkimport
-       - ./geotrek:/app/src/geotrek
+       - .:/app/src
      depends_on:
        - celery
      working_dir: /app/src

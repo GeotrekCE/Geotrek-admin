@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source ./docker.env
+source ./.env
 export PGPASSWORD=$(echo $POSTGRES_PASSWORD)
 pg_dump -Fc --no-acl --no-owner -h 127.0.0.1 -U $POSTGRES_USER $POSTGRES_DB > geotrek_`date +\%Y-\%m-\%d_\%H:\%M`.dump
 
