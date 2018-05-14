@@ -2,9 +2,9 @@
 
 docker login -u "$DOCKER_LOGIN" -p "$DOCKER_PASSWORD";
 
-if [[ $ACTION == test ]];
+if [[ $ACTION == deploy ]];
 then
-  docker tag geotrek $GEOTREK_VERSION;
+  docker tag geotrek geotrekce/admin:$GEOTREK_VERSION;
   docker push geotrekce/admin:$GEOTREK_VERSION;
 
   if [[ $GEOTREK_VERSION != *.dev* ]];
@@ -13,4 +13,4 @@ then
       docker push geotrekce/admin:latest;
     fi
 fi
-if [[ $ACTION == test ]]; then docker tag geotrek $GEOTREK_VERSION; fi
+
