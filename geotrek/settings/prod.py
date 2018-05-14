@@ -4,7 +4,9 @@ from .base import *
 #
 # Django Production
 # ..........................
-ALLOWED_HOSTS = os.getenv('DOMAIN_NAME').split(',')
+ALLOWED_HOSTS = [
+    os.getenv('DOMAIN_NAME'),
+]
 
 USE_X_FORWARDED_HOST = True
 COMPRESS_ENABLED = True
