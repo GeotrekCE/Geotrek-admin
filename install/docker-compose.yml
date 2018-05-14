@@ -1,7 +1,7 @@
 version: "3"
 services:
   postgres:
-    image: juank/postgis:10-2.4
+    image: makinacorpus/postgis:10-2.4
     env_file:
       - .env
     volumes:
@@ -15,12 +15,12 @@ services:
       broker:
 
   convertit:
-     image: geotrekce/convertit
+     image: makinacorpus/convertit
      networks:
        default:
 
   screamshotter:
-     image: geotrekce/screamshotter
+     image: makinacorpus/screamshotter
      depends_on:
        - convertit
      networks:

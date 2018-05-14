@@ -1,7 +1,7 @@
 version: "3"
 services:
   postgres:
-    image: juank/postgis:10-2.4
+    image: makinacorpus/postgis:10-2.4
     ports:
       - "5432:5432"
     env_file:
@@ -11,15 +11,14 @@ services:
 
   redis:
     image: redis:4.0-alpine
-    hostname: geotrek-redis
 
   convertit:
-     image: geotrekce/convertit
+     image: makinacorpus/convertit
      working_dir: /opt/apps/convertit/
      command: /opt/apps/convertit/bin/pserve development.ini --reload
 
   screamshotter:
-     image: geotrekce/screamshotter
+     image: makinacorpus/screamshotter
      depends_on:
        - convertit
 

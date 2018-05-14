@@ -32,9 +32,9 @@ before_install:
   # pull required docker images
   - if [[ $ACTION != codestyle ]]; then docker pull ubuntu:bionic; fi
   - if [[ $ACTION != codestyle ]]; then docker pull redis:4.0-alpine; fi
-  - if [[ $ACTION != codestyle ]]; then docker pull geotrekce/convertit; fi
-  - if [[ $ACTION != codestyle ]]; then docker pull geotrekce/screamshotter; fi
-  - if [[ $ACTION != codestyle ]]; then docker pull juank/postgis:10-2.4; fi
+  - if [[ $ACTION != codestyle ]]; then docker pull makinacorpus/convertit; fi
+  - if [[ $ACTION != codestyle ]]; then docker pull makinacorpus/screamshotter; fi
+  - if [[ $ACTION != codestyle ]]; then docker pull makinacorpus/postgis:10-2.4; fi
   - if [[ $ACTION == deploy ]]; then docker pull memcached:1.5-alpine; fi
   # setup env for deploy
   - if [[ $ACTION == deploy ]];
