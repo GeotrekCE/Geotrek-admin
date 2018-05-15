@@ -6,6 +6,7 @@ from django.contrib.gis.geos import MultiLineString, LineString
 from geotrek.core.models import Path
 from geotrek.core.factories import TopologyFactory
 from geotrek.altimetry.helpers import AltimetryHelper
+from geotrek.altimetry.models import Elevation
 
 
 class ElevationTest(TestCase):
@@ -22,6 +23,7 @@ class ElevationTest(TestCase):
             for x in range(0, 4):
                 cur.execute('UPDATE mnt SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
 
+        self.raster = Elevation.objects.create()
         self.path = Path.objects.create(geom=LineString((78, 117), (3, 17)))
 
     def test_elevation_path(self):

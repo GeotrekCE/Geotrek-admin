@@ -9,6 +9,13 @@ from mapentity.helpers import is_file_newer, convertit_download, smart_urljoin
 from .helpers import AltimetryHelper
 
 
+class Elevation(models.Model):
+    rast = models.RasterField()
+
+    class Meta:
+        db_table = 'mnt'
+
+
 class AltimetryMixin(models.Model):
     # Computed values (managed at DB-level with triggers)
     geom_3d = models.GeometryField(dim=3, srid=settings.SRID, spatial_index=False,
