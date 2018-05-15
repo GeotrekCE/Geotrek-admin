@@ -3,7 +3,7 @@ FROM makinacorpus/geodjango:bionic-py2
 ENV DJANGO_SETTINGS_MODULE geotrek.settings.prod
 # SET LOCAL_UID, help to use in dev
 ARG LOCAL_UID=1000
-# Add default path for log / used for compilemessages
+# Add default SECRET KEY / used for compilemessages
 ENV SECRET_KEY temp
 # Add default path for log / used for compilemessages
 RUN mkdir -p /app/src/var/log
@@ -24,7 +24,6 @@ USER django
 RUN virtualenv /app/venv
 ADD requirements.txt /app/src/requirements.txt
 RUN /app/venv/bin/pip install --no-cache-dir -r /app/src/requirements.txt
-# force leaflet version
 ADD docker /app/src/docker
 
 WORKDIR /app/src

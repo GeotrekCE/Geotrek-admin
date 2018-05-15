@@ -113,13 +113,13 @@ LANGUAGES = (
 LANGUAGE_CODE = 'fr'
 
 MODELTRANSLATION_LANGUAGES = ('en', 'fr', 'it', 'es')
-MODELTRANSLATION_DEFAULT_LANGUAGE = 'fr'
+MODELTRANSLATION_DEFAULT_LANGUAGE = LANGUAGE_CODE
 
 LOCALE_PATHS = (
-    # project locale
-    os.path.join(PROJECT_DIR, 'locale'),
     # override locale
     os.path.join(VAR_DIR, 'extra_locale'),
+    # project locale
+    os.path.join(PROJECT_DIR, 'locale'),
 )
 
 SITE_ID = 1
@@ -187,8 +187,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': (
-            os.path.join(PROJECT_DIR, 'templates'),
             os.path.join(VAR_DIR, 'extra_templates'),
+            os.path.join(PROJECT_DIR, 'templates'),
         ),
         'OPTIONS': {
             'context_processors': [
