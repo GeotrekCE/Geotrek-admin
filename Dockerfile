@@ -1,8 +1,12 @@
 FROM makinacorpus/geodjango:bionic-py2
 
 ENV DJANGO_SETTINGS_MODULE geotrek.settings.prod
+# SET LOCAL_UID, help to use in dev
 ARG LOCAL_UID=1000
-RUN mkdir -p /app/src
+# Add default path for log / used for compilemessages
+ENV SECRET_KEY temp
+# Add default path for log / used for compilemessages
+RUN mkdir -p /app/src/var/log
 
 RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py && rm get-pip.py
 RUN pip install pip==10.0.1 setuptools==39.1.0 wheel==0.31.0 virtualenv --upgrade
@@ -24,6 +28,9 @@ RUN /app/venv/bin/pip install --no-cache-dir -r /app/src/requirements.txt
 ADD docker /app/src/docker
 
 WORKDIR /app/src
+# persists compiled locales
+RUN ./manage.py compilemessages
 
 EXPOSE 8000
+
 CMD /app/venv/bin/gunicorn geotrek.wsgi:application -w 9 --bind 0.0.0.0:8000
