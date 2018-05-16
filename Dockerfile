@@ -8,6 +8,7 @@ ENV SECRET_KEY temp
 # Add default path for log / used for compilemessages
 RUN mkdir -p /app/src/var/log
 
+RUN apt install -y postgis
 RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py && rm get-pip.py
 RUN pip install pip==10.0.1 setuptools==39.1.0 wheel==0.31.0 virtualenv --upgrade
 RUN useradd -ms /bin/bash django --uid $LOCAL_UID

@@ -10,6 +10,7 @@ from .helpers import AltimetryHelper
 
 
 class Elevation(models.Model):
+    id = models.AutoField(primary_key=True, db_column='rid')
     rast = models.RasterField()
 
     class Meta:

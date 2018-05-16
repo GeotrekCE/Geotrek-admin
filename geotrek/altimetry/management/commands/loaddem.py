@@ -1,28 +1,25 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 from django.conf import settings
-from optparse import make_option
+from geotrek.altimetry.models import Elevation
 import os.path
 from subprocess import call
 import tempfile
 
 
 class Command(BaseCommand):
-    args = '<dem_path>'
     help = 'Load DEM data (projecting and clipping it if necessary).\n'
     help += 'You may need to create a GDAL Virtual Raster if your DEM is '
     help += 'composed of several files.\n'
     can_import_settings = True
 
-    option_list = BaseCommand.option_list + (
-        make_option('--replace',
-                    action='store_true',
-                    default=False,
-                    help='Replace existing DEM if any.'),
-    )
+    mnt = Elevation._meta.db_table
+
+    def add_arguments(self, parser):
+        parser.add_argument('dem_path')
+        parser.add_argument('--replace', action='store_true', default=False, help='Replace existing DEM if any.')
 
     def handle(self, *args, **options):
-
         try:
             from osgeo import gdal, ogr, osr
         except ImportError:
@@ -39,13 +36,8 @@ class Command(BaseCommand):
 
         self.stdout.write('-- Checking input DEM ------------------\n')
 
-        # Validate arguments
-        if len(args) != 1:
-            self.stdout.write(self.usage('loaddem'))
-            return
-
         # Obtain DEM path
-        dem_path = args[0]
+        dem_path = options['dem_path']
 
         # Open GDAL dataset
         if not os.path.exists(dem_path):
