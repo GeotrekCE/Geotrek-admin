@@ -16,7 +16,8 @@ class ElevationTest(TestCase):
         conn = connections[DEFAULT_DB_ALIAS]
         cur = conn.cursor()
         cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
-        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))', [settings.SRID])
+        cur.execute('INSERT INTO %s (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))',
+                    Elevation.Meta.db_table, [settings.SRID])
         cur.execute('UPDATE mnt SET rast = ST_AddBand(rast, \'16BSI\')')
         demvalues = [[0, 0, 3, 5], [2, 2, 10, 15], [5, 15, 20, 25], [20, 25, 30, 35], [30, 35, 40, 45]]
         for y in range(0, 5):
