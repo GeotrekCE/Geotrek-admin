@@ -90,7 +90,7 @@ script:
 
 after_success:
   # Report coverage results to coveralls.io
-  - if [[ $ACTION == test ]]; then docker-compose run web /app/venv/bin/coverage report -m; fi
+  - if [[ $ACTION == test ]]; then docker-compose run web /app/venv/bin/coverage report -m geotrek; fi
   - if [[ $ACTION == test ]]; then sudo pip install coveralls; fi
   - if [[ $ACTION == test ]]; then coveralls; fi
 

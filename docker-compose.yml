@@ -19,6 +19,10 @@ services:
 
   screamshotter:
      image: makinacorpus/screamshotter
+     environment:
+       - DJANGO_SETTINGS_MODULE=screamshotter.settings
+     ports:
+       - "8888:8000"
      depends_on:
        - convertit
 
@@ -53,6 +57,10 @@ services:
        - celery
      working_dir: /app/src
      command: ./manage.py runserver 0.0.0.0:8000
+     networks:
+       default:
+         aliases:
+           - ${DOMAIN_NAME}
 
 volumes:
   postgres:
