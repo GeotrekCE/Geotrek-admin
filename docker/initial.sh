@@ -2,7 +2,7 @@
 
 cd /app/src
 
-./docker/update.sh
+/usr/local/bin/update.sh
 
 ./manage.py loaddata minimal
 ./manage.py loaddata cirkwi

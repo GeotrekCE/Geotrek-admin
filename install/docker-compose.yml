@@ -7,7 +7,7 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
     networks:
-      default:
+      database:
 
   redis:
     image: redis:4.0-alpine
@@ -21,10 +21,10 @@ services:
 
   screamshotter:
      image: makinacorpus/screamshotter
+     environment:
+       - DJANGO_SETTINGS_MODULE=screamshotter.settings
      depends_on:
        - convertit
-     networks:
-       default:
 
   memcached:
     image: memcached:1.5-alpine
@@ -48,6 +48,7 @@ services:
     networks:
       default:
       broker:
+      database:
 
   web:
      image: geotrekce/admin:latest
@@ -62,6 +63,9 @@ services:
      command: /app/venv/bin/gunicorn geotrek.wsgi:application -w 5 --bind 0.0.0.0:8000
      networks:
        default:
+       broker:
+       reverse_proxy:
+       database:
 
   api:
      image: geotrekce/admin:latest
@@ -73,12 +77,16 @@ services:
       - ./var/bulkimport:/app/src/bulkimport
      depends_on:
        - web
+       - celery
      command: /app/venv/bin/gunicorn geotrek.wsgi:application -w 5 --bind 0.0.0.0:8000
      networks:
        default:
+       broker:
+       reverse_proxy:
+       database:
 
   nginx:
-    image: nginx:latest
+    image: nginx:1.13-alpine
     depends_on:
        - web
        - api
@@ -87,7 +95,6 @@ services:
       #- "443:443"
     env_file:
        - .env
-    hostname: ${DOMAIN_NAME}
     extra_hosts:
       - "${DOMAIN_NAME}:127.0.0.1"
     volumes:
@@ -98,9 +105,7 @@ services:
       - ./var/static:/var/www/static
       - ./var/media:/var/www/media
     networks:
-      default:
-        aliases:
-         - ${DOMAIN_NAME}
+      reverse_proxy:
     command: /bin/bash -c "envsubst '$$DOMAIN_NAME' < /geotrek.conf > /etc/nginx/conf.d/geotrek.conf && nginx -g 'daemon off;'"
 
 volumes:
@@ -109,4 +114,5 @@ volumes:
 networks:
   default:
   broker:
-
+  reverse_proxy:
+  database:

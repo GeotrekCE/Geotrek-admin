@@ -1,3 +1,17 @@
+LOCAL_USER_ID=$(shell id -u)
+
+build:
+	LOCAL_USER_ID=$(LOCAL_USER_ID) docker-compose build
+
+build-no-cache:
+	LOCAL_USER_ID=$(LOCAL_USER_ID) docker-compose build --no-cache
+
+up:
+	docker-compose up
+
+test:
+	docker-compose run web test --settings=geotrek.settings.test
+
 test_nav:
 	casperjs test --baseurl=$(baseurl) geotrek/jstests/nav-*.js
 

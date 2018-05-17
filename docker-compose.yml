@@ -21,8 +21,6 @@ services:
      image: makinacorpus/screamshotter
      environment:
        - DJANGO_SETTINGS_MODULE=screamshotter.settings
-     ports:
-       - "8888:8000"
      depends_on:
        - convertit
 

@@ -18,12 +18,10 @@ before_install:
   # initial directories and environment
   - mkdir -p var/static var/extra_static var/media/upload var/cache var/extra_templates var/extra_locale
   - export GEOTREK_VERSION=$(cat VERSION)
-  - export LOCAL_USER_ID=$(id -u)
   - export DOMAIN_NAME=geotrek.test
+  - mkdir -p var install/var
   # add /etc/hosts for routing
   - if [[ $ACTION == deploy ]]; then echo '127.0.0.1    '$DOMAIN_NAME | sudo tee -a /etc/hosts; fi
-  # fix LOCAL_USER for build docker
-  - sed -i.bak 's/^\(LOCAL_USER_ID=\).*/\1'$(id -u)'/' .env
   # update docker-compose
   - if [[ $ACTION != codestyle ]]; then sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose; fi
   - if [[ $ACTION != codestyle ]]; then sudo chmod +x /usr/local/bin/docker-compose; fi
@@ -36,6 +34,7 @@ before_install:
   - if [[ $ACTION != codestyle ]]; then docker pull makinacorpus/screamshotter; fi
   - if [[ $ACTION != codestyle ]]; then docker pull makinacorpus/postgis:10-2.4; fi
   - if [[ $ACTION == deploy ]]; then docker pull memcached:1.5-alpine; fi
+  - if [[ $ACTION == deploy ]]; then docker pull nginx:1.13-alpine; fi
   # setup env for deploy
   - if [[ $ACTION == deploy ]];
     then
@@ -57,11 +56,11 @@ before_install:
 
 install:
   - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
-  - if [[ $ACTION == test ]]; then docker-compose build; fi
-  - if [[ $ACTION == deploy ]]; then cd ..; docker-compose build; cd install; fi
+  - if [[ $ACTION == test ]]; then make build; fi
+  - if [[ $ACTION == deploy ]]; then cd ..; make build; cd install; fi
   # for deploy, tag current version as latest to test installation
   - if [[ $ACTION == deploy ]]; then docker tag geotrek geotrekce/admin:latest; fi
-  - if [[ $ACTION != codestyle ]]; then docker-compose run web ./docker/initial.sh; fi
+  - if [[ $ACTION != codestyle ]]; then docker-compose run web initial.sh; fi
   - if [[ $ACTION == deploy ]]; then docker-compose up -d; fi
   - if [[ $ACTION == deploy ]]; then npm install ../geotrek/jstests; fi
   # install casperjs and phantomjs

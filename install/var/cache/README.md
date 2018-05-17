@@ -1,1 +1,0 @@
-Dont touch that. Delete files if you want to clear cache

@@ -18,13 +18,13 @@ ADD bulkimport /app/src/bulkimport
 ADD VERSION /app/src/VERSION
 ADD .coveragerc /app/src/.coveragerc
 RUN chown django:django -R /app
+COPY docker/* /usr/local/bin/
 
 USER django
 
 RUN virtualenv /app/venv
 ADD requirements.txt /app/src/requirements.txt
 RUN /app/venv/bin/pip install --no-cache-dir -r /app/src/requirements.txt
-ADD docker /app/src/docker
 
 WORKDIR /app/src
 # persists compiled locales
@@ -32,4 +32,8 @@ RUN ./manage.py compilemessages
 
 EXPOSE 8000
 
-CMD /app/venv/bin/gunicorn geotrek.wsgi:application -w 9 --bind 0.0.0.0:8000
+USER root
+
+ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]
+
+CMD ["/bin/sh", "-e", "/usr/local/bin/run.sh"]
