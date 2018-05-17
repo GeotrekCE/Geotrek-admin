@@ -226,7 +226,7 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'geotrek.authent.middleware.CorsMiddleware',
     # TODO: delete geotrek geotrek.common.middleware.FixedAutoLoginMiddleware and set mapentity with py3 version
-    #'mapentity.middleware.AutoLoginMiddleware'
+    # 'mapentity.middleware.AutoLoginMiddleware'
     'geotrek.common.middleware.FixedAutoLoginMiddleware'
 )
 FORCE_SCRIPT_NAME = ROOT_URL if ROOT_URL != '' else None

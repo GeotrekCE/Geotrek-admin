@@ -37,9 +37,27 @@ CAPTURE_SERVER_HOST = urlparse(settings.MAPENTITY_CONFIG['CAPTURE_SERVER']).host
 LOCALHOST = [
     '127.0.0.1',
     socket.gethostname(),
-    socket.gethostbyname(CAPTURE_SERVER_HOST),
-    socket.gethostbyname(CONVERSION_SERVER_HOST)
 ]
+
+try:
+    socket.inet_aton(CONVERSION_SERVER_HOST)
+    LOCALHOST.append(CONVERSION_SERVER_HOST)
+
+except socket.error:
+    try:
+        LOCALHOST.append(socket.gethostbyname(CONVERSION_SERVER_HOST))
+    except socket.gaierror:
+        pass
+
+try:
+    socket.inet_aton(CAPTURE_SERVER_HOST)
+    LOCALHOST.append(CAPTURE_SERVER_HOST)
+
+except socket.error:
+    try:
+        LOCALHOST.append(socket.gethostbyname(CAPTURE_SERVER_HOST))
+    except socket.gaierror:
+        pass
 
 
 class FixedAutoLoginMiddleware(AutoLoginMiddleware):
@@ -66,7 +84,6 @@ class FixedAutoLoginMiddleware(AutoLoginMiddleware):
                 (remoteip and remoteip in (CONVERSION_SERVER_HOST, CAPTURE_SERVER_HOST)) or
                 (remotehost and remotehost in (CONVERSION_SERVER_HOST, CAPTURE_SERVER_HOST))
             )
-            print(is_auto_allowed)
             if is_auto_allowed:
                 print("Auto-login for %s/%s" % (remoteip, remotehost))
                 user = get_internal_user()
