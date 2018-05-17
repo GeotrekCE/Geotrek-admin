@@ -237,13 +237,22 @@ ROOT_URLCONF = 'geotrek.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'geotrek.wsgi.application'
 
+# Do not migrate translated fields, they differ per instance, and
+# can be added/removed using `update_translation_fields`
+# modeltranslation should be kept before django.contrib.admin
+if 'makemigrations' in sys.argv:
+    PROJECT_APPS = ()
+else:
+    PROJECT_APPS = (
+        'modeltranslation',
+    )
+
 #
 # /!\ Application names (last levels) must be unique
 # (c.f. auth/authent)
 # https://code.djangoproject.com/ticket/12288
 #
-PROJECT_APPS = (
-    'modeltranslation',
+PROJECT_APPS += (
     'geotrek.appconfig.AuthGeotrekConfig',  # django.contrib.app
     'geotrek.appconfig.ContenttypeGeotrekConfig',  # django.contrib.contenttypes
     'geotrek.appconfig.SessionsGeotrekConfig',  # django.contrib.sessions
