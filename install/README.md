@@ -87,7 +87,7 @@ WorkingDirectory with your absolute geotrek folder path
 and enable it
 ```bash
 sudo cp geotrek.service /etc/systemd/system/geotrek.service
-sudo systemctl geotrek effie.service
+sudo systemctl enable geotrek
 ```
 
 # Run and stop geotrek

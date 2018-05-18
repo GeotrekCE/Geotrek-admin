@@ -11,7 +11,6 @@ RUN mkdir -p /app/src/var/log
 RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py && rm get-pip.py
 RUN pip install pip==10.0.1 setuptools==39.1.0 wheel==0.31.0 virtualenv --upgrade
 RUN useradd -ms /bin/bash django --uid $LOCAL_UID
-RUN mkdir -p /app/src/var/static /app/src/var/extra_static /app/src/var/media /app/src/var/data /app/src/var/cache /app/src/var/log /app/src/var/extra_templates /app/src/var/extra_locale
 ADD geotrek /app/src/geotrek
 ADD manage.py /app/src/manage.py
 ADD bulkimport /app/src/bulkimport

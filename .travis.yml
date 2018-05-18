@@ -16,10 +16,9 @@ env:
 
 before_install:
   # initial directories and environment
-  - mkdir -p var/static var/extra_static var/media/upload var/cache var/extra_templates var/extra_locale
+  - mkdir -p var/static install/var
   - export GEOTREK_VERSION=$(cat VERSION)
   - export DOMAIN_NAME=geotrek.test
-  - mkdir -p var install/var
   # add /etc/hosts for routing in js tests
   - if [[ $ACTION == deploy ]]; then echo '127.0.0.1    '$DOMAIN_NAME | sudo tee -a /etc/hosts; fi
   # update docker-compose

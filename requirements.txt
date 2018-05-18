@@ -1,6 +1,8 @@
 # base
 Django>=1.11,<2.0
 gdal==2.2.4 --global-option=build_ext --global-option="-I/usr/include/gdal/"
+# modeltranslation must be place before mapentity to override its dependencies
+-e git+https://github.com/makinacorpus/django-modeltranslation.git@master#egg=modeltranslation
 # leaflet must be place before mapentity to override its dependencies
 -e git+https://github.com/GeotrekCE/django-leaflet.git@0.19.0+geotrek3#egg=leaflet
 mapentity==4.3.4
@@ -31,7 +33,6 @@ djangorestframework-gis==0.13
 drf-dynamic-fields==0.3.0
 drf-extensions==0.3.1
 lxml==4.2.1
--e git+https://github.com/makinacorpus/django-modeltranslation.git@master#egg=modeltranslation
 # dev & test
 django-debug-toolbar==1.9.1
 django-extensions==2.0.7

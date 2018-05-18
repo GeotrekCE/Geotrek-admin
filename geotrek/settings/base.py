@@ -117,7 +117,7 @@ MODELTRANSLATION_DEFAULT_LANGUAGE = LANGUAGE_CODE
 
 LOCALE_PATHS = (
     # override locale
-    os.path.join(VAR_DIR, 'extra_locale'),
+    os.path.join(VAR_DIR, 'conf', 'extra_locale'),
     # project locale
     os.path.join(PROJECT_DIR, 'locale'),
 )
@@ -156,7 +156,7 @@ STATIC_ROOT = os.path.join(VAR_DIR, 'static')
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    os.path.join(VAR_DIR, 'extra_static'),
+    os.path.join(VAR_DIR, 'conf', 'extra_static'),
     os.path.join(PROJECT_DIR, 'static'),
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
@@ -187,7 +187,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': (
-            os.path.join(VAR_DIR, 'extra_templates'),
+            os.path.join(VAR_DIR, 'conf', 'extra_templates'),
             os.path.join(PROJECT_DIR, 'templates'),
         ),
         'OPTIONS': {
@@ -244,7 +244,7 @@ if 'makemigrations' in sys.argv:
     PROJECT_APPS = ()
 else:
     PROJECT_APPS = (
-        'modeltranslation',
+
     )
 
 #
@@ -253,6 +253,7 @@ else:
 # https://code.djangoproject.com/ticket/12288
 #
 PROJECT_APPS += (
+    'modeltranslation',
     'geotrek.appconfig.AuthGeotrekConfig',  # django.contrib.app
     'geotrek.appconfig.ContenttypeGeotrekConfig',  # django.contrib.contenttypes
     'geotrek.appconfig.SessionsGeotrekConfig',  # django.contrib.sessions
