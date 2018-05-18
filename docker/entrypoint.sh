@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 cd /app/src
 
-source /app/venv/bin/activate
+. /app/venv/bin/activate
 
 mkdir -p /app/src/var/static \
          /app/src/var/extra_static \
