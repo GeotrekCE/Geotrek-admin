@@ -81,7 +81,7 @@ script:
   - if [[ $ACTION == codestyle ]]; then flake8 geotrek; fi
   # prevent SRID value in migrations
   - if [[ $ACTION == codestyle ]]; then find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID; fi
-  - if [[ $ACTION == test ]]; then docker-compose run web /app/venv/bin/coverage run ./manage.py test --settings=geotrek.settings.tests; fi
+  - if [[ $ACTION == test ]]; then docker-compose run web coverage run ./manage.py test --settings=geotrek.settings.tests; fi
   - if [[ $ACTION == deploy ]]; then docker-compose run web ./manage.py loaddata development-pne; fi
   - if [[ $ACTION == deploy ]]; then casperjs --baseurl=http://$DOMAIN_NAME test ../geotrek/jstests/nav-*.js; fi
   # back in travis folder for deploy
@@ -89,7 +89,7 @@ script:
 
 after_success:
   # Report coverage results to coveralls.io
-  - if [[ $ACTION == test ]]; then docker-compose run web /app/venv/bin/coverage report -m geotrek; fi
+  - if [[ $ACTION == test ]]; then docker-compose run web coverage report -m geotrek; fi
   - if [[ $ACTION == test ]]; then sudo pip install coveralls; fi
   - if [[ $ACTION == test ]]; then coveralls; fi
 

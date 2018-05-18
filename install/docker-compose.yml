@@ -44,7 +44,7 @@ services:
       - ./var:/app/src/var
       - ./var/custom.py:/app/src/geotrek/settings/custom.py
       - ./var/bulkimport:/app/src/bulkimport
-    command: /app/venv/bin/celery -A geotrek worker -l warning
+    command: celery -A geotrek worker -l warning
     networks:
       default:
       broker:
@@ -60,7 +60,7 @@ services:
       - ./var/bulkimport:/app/src/bulkimport
      depends_on:
        - celery
-     command: /app/venv/bin/gunicorn geotrek.wsgi:application -w 5 --bind 0.0.0.0:8000
+     command: gunicorn geotrek.wsgi:application -w 5 --bind 0.0.0.0:8000
      networks:
        default:
        broker:
@@ -78,7 +78,7 @@ services:
      depends_on:
        - web
        - celery
-     command: /app/venv/bin/gunicorn geotrek.wsgi:application -w 5 --bind 0.0.0.0:8000
+     command: gunicorn geotrek.wsgi:application -w 5 --bind 0.0.0.0:8000
      networks:
        default:
        broker:
@@ -86,7 +86,7 @@ services:
        database:
 
   nginx:
-    image: nginx:1.13-alpine
+    image: nginx:1.13
     depends_on:
        - web
        - api

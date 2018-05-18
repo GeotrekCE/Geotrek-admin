@@ -39,7 +39,7 @@ services:
     volumes:
        - .:/app/src
     working_dir: /app/src
-    command: /app/venv/bin/celery -A geotrek worker -l debug
+    command: celery -A geotrek worker -l debug
 
   web:
      image: geotrek
