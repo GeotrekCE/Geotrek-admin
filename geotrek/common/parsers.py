@@ -68,7 +68,7 @@ class Parser(object):
     natural_keys = {}
     field_options = {}
 
-    def __init__(self, progress_cb=None, user=None):
+    def __init__(self, progress_cb=None, user=None, encoding='utf8'):
         self.warnings = {}
         self.line = 0
         self.nb_success = 0
@@ -78,6 +78,7 @@ class Parser(object):
         self.progress_cb = progress_cb
         self.user = user
         self.structure = user and user.profile.structure or default_structure()
+        self.encoding = encoding
 
         try:
             mto = translator.get_options_for_model(self.model)
@@ -440,8 +441,6 @@ class Parser(object):
 
 
 class ShapeParser(Parser):
-    encoding = 'utf-8'
-
     def next_row(self):
         datasource = DataSource(self.filename, encoding=self.encoding)
         layer = datasource[0]

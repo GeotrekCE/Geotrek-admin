@@ -12,10 +12,12 @@ class Command(BaseCommand):
         parser.add_argument('parser')
         parser.add_argument('shapefile', nargs="?")
         parser.add_argument('-l', dest='limit', type=int, help='Limit number of lines to import')
+        parser.add_argument('--encoding', '-e', default='utf8')
 
     def handle(self, *args, **options):
         verbosity = options['verbosity']
         limit = options['limit']
+        encoding = options['encoding']
 
         # Validate arguments
 
@@ -33,7 +35,7 @@ class Command(BaseCommand):
                 self.stdout.write("{line:04d}: {eid: <10} ({progress:02d}%)".format(
                     line=line, eid=eid, progress=int(100 * progress)))
 
-        parser = Parser(progress_cb=progress_cb)
+        parser = Parser(progress_cb=progress_cb, encoding=encoding)
 
         try:
             parser.parse(options['shapefile'], limit=limit)
