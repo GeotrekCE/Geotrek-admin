@@ -7,7 +7,9 @@ CHANGELOG
 
 **Bug fixes**
 
-*
+**Minor changes**
+
+* Allow to specify encoding when importing data
 
 
 2.18.5 (2018-05-07)

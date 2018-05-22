@@ -184,7 +184,7 @@ class UserArgMixin(object):
         return kwargs
 
 
-def import_file(uploaded, parser, user_pk):
+def import_file(uploaded, parser, encoding, user_pk):
     destination_dir, destination_file = create_tmp_destination(uploaded.name)
     with open(destination_file, 'w+') as f:
         f.write(uploaded.file.read())
@@ -197,7 +197,7 @@ def import_file(uploaded, parser, user_pk):
                 raise
 
             if name.endswith('shp'):
-                import_datas.delay(parser.__name__, '/'.join((destination_dir, name)), parser.__module__, user_pk)
+                import_datas.delay(parser.__name__, '/'.join((destination_dir, name)), parser.__module__, encoding, user_pk)
 
 
 @login_required
@@ -224,10 +224,11 @@ def import_view(request):
             if form.is_valid():
                 uploaded = request.FILES['with-file-zipfile']
                 parser = classes[int(form['parser'].value())]
+                encoding = form.cleaned_data['encoding']
                 codename = '{}.import_{}'.format(parser.model._meta.app_label, parser.model._meta.model_name)
                 if not request.user.is_superuser and not request.user.has_perm(codename):
                     raise PermissionDenied
-                import_file(uploaded, parser, request.user.pk)
+                import_file(uploaded, parser, encoding, request.user.pk)
 
         if 'import-web' in request.POST:
             form_without_file = ImportDatasetForm(

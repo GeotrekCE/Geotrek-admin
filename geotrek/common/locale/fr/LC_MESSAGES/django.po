@@ -290,3 +290,9 @@ msgstr "L'événement n'est pas valide"
 
 msgid "Any year"
 msgstr "N'importe quelle année"
+
+msgid "No parser available."
+msgstr "Aucun parser disponible."
+
+msgid "Encoding"
+msgstr "Encodage"

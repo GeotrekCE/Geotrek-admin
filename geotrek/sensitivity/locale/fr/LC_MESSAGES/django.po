@@ -131,6 +131,3 @@ msgstr "Ajouter une zone réglementaire"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
-
-msgid "No parser available."
-msgstr "Aucun parser disponible."
