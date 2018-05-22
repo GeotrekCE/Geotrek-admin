@@ -296,3 +296,6 @@ msgstr "Aucun parser disponible."
 
 msgid "Encoding"
 msgstr "Encodage"
+
+msgid "Decoding error. Please check encoding and use only ASCII in file names."
+msgstr "Erreur de décodage. Merci de vérifier l'encodage et d'utiliser l'ASCII (sans accents) pour les noms de fichier."

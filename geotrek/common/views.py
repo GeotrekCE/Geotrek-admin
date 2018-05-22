@@ -190,12 +190,7 @@ def import_file(uploaded, parser, encoding, user_pk):
         f.write(uploaded.file.read())
         zfile = ZipFile(f)
         for name in zfile.namelist():
-            try:
-                zfile.extract(
-                    name, os.path.dirname(os.path.realpath(f.name)))
-            except Exception:
-                raise
-
+            zfile.extract(name, os.path.dirname(os.path.realpath(f.name)))
             if name.endswith('shp'):
                 import_datas.delay(parser.__name__, '/'.join((destination_dir, name)), parser.__module__, encoding, user_pk)
 
@@ -228,7 +223,10 @@ def import_view(request):
                 codename = '{}.import_{}'.format(parser.model._meta.app_label, parser.model._meta.model_name)
                 if not request.user.is_superuser and not request.user.has_perm(codename):
                     raise PermissionDenied
-                import_file(uploaded, parser, encoding, request.user.pk)
+                try:
+                    import_file(uploaded, parser, encoding, request.user.pk)
+                except UnicodeDecodeError:
+                    render_dict['encoding_error'] = True
 
         if 'import-web' in request.POST:
             form_without_file = ImportDatasetForm(
