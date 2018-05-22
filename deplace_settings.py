@@ -18,13 +18,14 @@ config = ConfigParser({'title': "Geotrek",
 
 parser = argparse.ArgumentParser()
 parser.add_argument("path_ini")
+parser.add_argument("path_custom")
 args = parser.parse_args()
 config.read(args.path_ini)
 
 if not config.has_section('django'):
     config.add_section('django')
 
-file_custom = open('geotrek/settings/custom.py', 'w')
+file_custom = open(args.path_custom, 'w+')
 
 default_structure = config.get('settings', 'defaultstructure')
 root_url = config.get('settings', 'root_url')
