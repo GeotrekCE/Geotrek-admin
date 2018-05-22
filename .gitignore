@@ -4,7 +4,6 @@
 
 /var/
 /etc/
-/install
 /.idea/
 /.vscode/
 
@@ -18,27 +17,40 @@ develop-eggs/
 eggs/
 parts/
 docs/_build/
-include/
-lib/
-local/
 *.egg-info/
 /node_modules/
 /salt.cfg
-/etc
-/lib
-/var
-bootstrap.py
-/.buildout
-geotrek/settings/custom.py
+
 /parsers.py
-/install.log
-/data/
 /sync_trek/
 
 /.project
 /.pydevproject
 /.settings/
-screamshotter.log
 
 /share/
-/geotrek/settings/local.py
+/install/.env
+/install/*.tgz
+/install/var/static/
+!/install/var/static/README.md
+/install/var/media/
+!/install/var/media/upload/README.md
+!/install/var/media/README.md
+/install/var/log/
+!/install/var/log/README.md
+/install/var/extra_templates/
+!/install/var/extra_templates/README.md
+/install/var/extra_static/
+!/install/var/extra_static/README.md
+/install/var/extra_locale/
+!/install/var/extra_locale/README.md
+/install/var/cache/
+!/install/var/cache/README.md
+/install/var/bulkimport/
+!/install/var/bulkimport/__init__.py
+!/install/var/bulkimport/parsers.py
+/install/var/tiles/
+/install/var/data/
+/bulkimport/
+!/bulkimport/__init__.py
+/install/.env

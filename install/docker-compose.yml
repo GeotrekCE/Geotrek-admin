@@ -1,0 +1,112 @@
+version: "3"
+services:
+  postgres:
+    image: makinacorpus/postgis:10-2.4
+    env_file:
+      - .env
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      default:
+
+  redis:
+    image: redis:4.0-alpine
+    networks:
+      broker:
+
+  convertit:
+     image: makinacorpus/convertit
+     networks:
+       default:
+
+  screamshotter:
+     image: makinacorpus/screamshotter
+     depends_on:
+       - convertit
+     networks:
+       default:
+
+  memcached:
+    image: memcached:1.5-alpine
+    networks:
+      default:
+
+  celery:
+    image: geotrekce/admin:latest
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+      - screamshotter
+      - memcached
+    volumes:
+      - ./var:/app/src/var
+      - ./var/custom.py:/app/src/geotrek/settings/custom.py
+      - ./var/bulkimport:/app/src/bulkimport
+    command: /app/venv/bin/celery -A geotrek worker -l warning
+    networks:
+      default:
+      broker:
+
+  web:
+     image: geotrekce/admin:latest
+     env_file:
+       - .env
+     volumes:
+      - ./var:/app/src/var
+      - ./var/custom.py:/app/src/geotrek/settings/custom.py
+      - ./var/bulkimport:/app/src/bulkimport
+     depends_on:
+       - celery
+     command: /app/venv/bin/gunicorn geotrek.wsgi:application -w 5 --bind 0.0.0.0:8000
+     networks:
+       default:
+
+  api:
+     image: geotrekce/admin:latest
+     env_file:
+       - .env
+     volumes:
+      - ./var:/app/src/var
+      - ./var/custom.py:/app/src/geotrek/settings/custom.py
+      - ./var/bulkimport:/app/src/bulkimport
+     depends_on:
+       - web
+     command: /app/venv/bin/gunicorn geotrek.wsgi:application -w 5 --bind 0.0.0.0:8000
+     networks:
+       default:
+
+  nginx:
+    image: nginx:latest
+    depends_on:
+       - web
+       - api
+    ports:
+      - "80:80"
+      #- "443:443"
+    env_file:
+       - .env
+    hostname: ${DOMAIN_NAME}
+    extra_hosts:
+      - "${DOMAIN_NAME}:127.0.0.1"
+    volumes:
+      - ./geotrek-nginx.conf:/geotrek.conf
+      #- ./var/nginx/cert.crt:/etc/nginx/cert.crt
+      #- ./var/nginx/cert.key:/etc/nginx/cert.key
+      - ./var/log/nginx:/var/log/nginx
+      - ./var/static:/var/www/static
+      - ./var/media:/var/www/media
+    networks:
+      default:
+        aliases:
+         - ${DOMAIN_NAME}
+    command: /bin/bash -c "envsubst '$$DOMAIN_NAME' < /geotrek.conf > /etc/nginx/conf.d/geotrek.conf && nginx -g 'daemon off;'"
+
+volumes:
+  postgres:
+
+networks:
+  default:
+  broker:
+

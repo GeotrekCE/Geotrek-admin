@@ -1,0 +1,18 @@
+[Unit]
+Description=Geotrek-Admin
+Requires=docker.service
+After=docker.service
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=30
+Restart=always
+RestartSec=10
+WorkingDirectory=/app/geotrek/
+ExecStartPre=-/usr/local/bin/docker-compose kill web
+ExecStartPre=-/usr/local/bin/docker-compose rm -f web
+ExecStart=/usr/local/bin/docker-compose up
+ExecStop=/usr/local/bin/docker-compose down
+
+[Install]
+WantedBy=multi-user.target

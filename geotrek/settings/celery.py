@@ -1,6 +1,10 @@
+import os
+
 enable_utc = False
 accept_content = ['json']
-broker_url = 'redis://127.0.0.1:6379/0'
+broker_url = 'redis://{}:{}/{}'.format(os.getenv('REDIS_HOST', 'redis'),
+                                       os.getenv('REDIS_PORT', '6379'),
+                                       os.getenv('REDIS_DB', '0'),)
 task_serializer = 'json'
 result_serializer = 'json'
 result_expires = 5

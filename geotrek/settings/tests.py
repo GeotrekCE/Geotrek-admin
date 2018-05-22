@@ -1,4 +1,4 @@
-from .default import *
+from .base import *
 
 #
 #  Django Tests
@@ -16,10 +16,10 @@ LANGUAGE_CODE = 'en'
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'
 MODELTRANSLATION_LANGUAGES = ('en', 'es', 'fr', 'it')
 MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = (
-    ('en', gettext_noop('English')),
-    ('es', gettext_noop('Spanish')),
-    ('fr', gettext_noop('French')),
-    ('it', gettext_noop('Italian')),
+    ('en', 'English'),
+    ('es', 'Spanish'),
+    ('fr', 'French'),
+    ('it', 'Italian'),
 )
 
 MAILALERTSUBJECT = "Acknowledgment of feedback email"
@@ -29,7 +29,7 @@ ALLOWED_HOSTS = [
 ]
 
 
-class DisableMigrations(object):
+class DisableMigrations():
     def __contains__(self, item):
         return True
 
@@ -38,3 +38,9 @@ class DisableMigrations(object):
 
 
 MIGRATION_MODULES = DisableMigrations()
+
+ADMINS = (
+    ('test', 'test@test.com'),
+)
+
+MANAGERS = ADMINS
