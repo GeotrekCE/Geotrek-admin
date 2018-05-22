@@ -1,3 +1,4 @@
+import argparse
 try:
     from configparser import ConfigParser
 except ImportError:
@@ -15,7 +16,10 @@ config = ConfigParser({'title': "Geotrek",
                        'authent_dbuser': "",
                        'mailfrom': "admin@yourdomain.tld"})
 
-config.read('settings.ini.sample')
+parser = argparse.ArgumentParser()
+parser.add_argument("path_ini")
+args = parser.parse_args()
+config.read(args.path_ini)
 
 if not config.has_section('django'):
     config.add_section('django')
