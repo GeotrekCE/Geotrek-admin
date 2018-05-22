@@ -2,12 +2,20 @@
 CHANGELOG
 =========
 
-2.18.6.dev0
+2.19.1.dev0
 -------------------
 
 **Bug fixes**
 
 *
+
+
+2.19.0 (2018-05-22)
+-------------------
+
+**Minor changes**
+
+* Allow to specify encoding when importing data
 
 
 2.18.5 (2018-05-07)
