@@ -12,9 +12,10 @@ sudo: required
 jobs:
   include:
     - stage: codestyle
+
       install:
        - pip install flake8
-      script:
+      script: flake8
        - flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings
        - flake8 geotrek
        # prevent SRID value in migrations
@@ -42,6 +43,9 @@ jobs:
         - docker pull makinacorpus/convertit
         - docker pull makinacorpus/screamshotter
         - docker pull makinacorpus/postgis:10-2.4
+        - docker pull geotrekce/travis-ci-build-stages-demo
+        # fake buidling already done in last stage
+        - docker tag geotrekce/travis-ci-build-stages-demo geotrek:latest
       before_script:
         - docker-compose up -d postgres
         - sleep 15
