@@ -13,7 +13,7 @@ jobs:
   include:
     - stage: codestyle
       install:
-       - pip install flake8;
+       - pip install flake8
       script:
        - flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings
        - flake8 geotrek
@@ -21,11 +21,11 @@ jobs:
        - find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID
 
     - stage: build docker image
-      before_install:
+      install:
       - sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
       - sudo chmod +x /usr/local/bin/docker-compose
       before_script:
-      - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
+      - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
       script:
       - make build
       - docker tag geotrek geotrekce/travis-ci-build-stages-demo
