@@ -40,8 +40,7 @@ cp .env.dist .env
 POSTGRES_USER=<your_personnal_database_user>
 POSTGRES_DB=<your_personnal_database_user>
 POSTGRES_PASSWORD=<your_personnal_database_password>
-DOMAIN_NAME=<your_personnal_database_user>
-#DOMAIN_NAME=your.geotrek.com
+DOMAIN_NAME=<your.geotrek.com>
 SECRET_KEY=<your_personnal_secret_key>
 ```
 
@@ -67,7 +66,7 @@ docker-compose run postgres -d
 
 # INITIATE required data
 ```bash
-docker-compose run web ./django/initial.sh
+docker-compose run web initial.sh
 ```
 
 # Create your first superuser
