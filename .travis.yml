@@ -18,12 +18,12 @@ jobs:
         - sudo chmod +x /usr/local/bin/docker-compose
       before_script:
         - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
-      script:
+      - script:
         - flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings
         - flake8 geotrek
         # prevent SRID value in migrations
         - find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID
-      script:
+      - script:
         - make build
         - docker tag geotrek geotrekce/travis-ci-build-stages-demo
         - docker push geotrekce/travis-ci-build-stages-demo
