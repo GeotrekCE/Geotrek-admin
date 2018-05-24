@@ -17,7 +17,7 @@ Do the following 3 commands :
 
 ```bash
 useradd geotrek
-adduser geotrek 
+adduser geotrek sudo
 adduser geotrek docker
 ```
 
