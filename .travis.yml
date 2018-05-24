@@ -9,50 +9,24 @@ cache:
 dist: trusty
 sudo: required
 
-#env:
-#  - ACTION=codestyle
-#  - ACTION=build
-#  - ACTION=test_unitaire
-#  - ACTION=test_integration
-#  - ACTION=deploy
-
 jobs:
   include:
     - stage: Style & build
-      env:
-       - ACTION=codestyle
-       - ACTION=build
       install:
-       - if [[ $ACTION == codestyle ]];
-         then
-           pip install flake8
-         fi;
-
-       - if [[ $ACTION == build ]];
-         then
-           sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
-           sudo chmod +x /usr/local/bin/docker-compose
-         fi;
+        - pip install flake8
+        - sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+        - sudo chmod +x /usr/local/bin/docker-compose
       before_script:
-       - if [[ $ACTION == build ]];
-         then
-           echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
-         fi;
+        - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
       script:
-       - if [[ $ACTION == codestyle ]];
-         then
-           flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings
-           flake8 geotrek
-           # prevent SRID value in migrations
-           find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID
-         fi;
-
-       - if [[ $ACTION == build ]];
-         then
-           make build
-           docker tag geotrek geotrekce/travis-ci-build-stages-demo
-           docker push geotrekce/travis-ci-build-stages-demo
-         fi;
+        - flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings
+        - flake8 geotrek
+        # prevent SRID value in migrations
+        - find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID
+      script:
+        - make build
+        - docker tag geotrek geotrekce/travis-ci-build-stages-demo
+        - docker push geotrekce/travis-ci-build-stages-demo
 
     - stage: test
       before_install:
