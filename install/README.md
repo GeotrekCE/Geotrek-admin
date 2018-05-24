@@ -125,7 +125,7 @@ docker-compose run web ./manage.py createsuperuser
 
 ## I you want to use SSL
 ```bash
-RUN ./ssl.sh
+RUN ./install/ssl.sh
 ```
 Put your certificate and key in this folder
 Uncomment and edit docker-compose.yml nginx section
