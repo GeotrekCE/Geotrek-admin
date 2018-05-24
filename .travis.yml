@@ -9,12 +9,12 @@ cache:
 dist: trusty
 sudo: required
 
-env:
-  - ACTION=codestyle
-  - ACTION=build
-  - ACTION=test_unitaire
-  - ACTION=test_integration
-  - ACTION=deploy
+#env:
+#  - ACTION=codestyle
+#  - ACTION=build
+#  - ACTION=test_unitaire
+#  - ACTION=test_integration
+#  - ACTION=deploy
 
 jobs:
   include:
@@ -54,22 +54,12 @@ jobs:
            docker push geotrekce/travis-ci-build-stages-demo
          fi;
 
-#    - stage: build docker image
-#      install:
-#      - sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
-#      - sudo chmod +x /usr/local/bin/docker-compose
-#      before_script:
-#      - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
-#      script:
-#      - make build
-#      - docker tag geotrek geotrekce/travis-ci-build-stages-demo
-#      - docker push geotrekce/travis-ci-build-stages-demo
     - stage: test
       before_install:
-       - mkdir -p var
-       - export GEOTREK_VERSION=$(cat VERSION)
-       - export DOMAIN_NAME=geotrek.test
-       - sudo service postgresql stop
+        - mkdir -p var
+        - export GEOTREK_VERSION=$(cat VERSION)
+        - export DOMAIN_NAME=geotrek.test
+        - sudo service postgresql stop
       install:
         - docker pull makinacorpus/geodjango:bionic-py2
         - docker pull redis:4.0-alpine
