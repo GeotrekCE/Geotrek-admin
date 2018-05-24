@@ -45,7 +45,7 @@ Copy .env.dist to .env
 
 ```bash
 cd /srv/geotrek
-cp .env.dist .env
+cp ./install/.env.dist .env
 
 ```
 
@@ -69,11 +69,25 @@ POSTGRES_PORT=<your_port>
 ```python
 
 ```
+## CREATE the var folder
+```bash
+./install/entrypoint.sh
+cd ./var
+```
 
 ## EDIT your custom.py file
 Set at least LANGUAGES / SRID / SPATIAL_EXTENT / DEFAULT_STRUCTURE_NAME:
 
+*You need to use sudo*
+
 ex:
+
+```bash
+sudo vi custom.py
+sudo nano custom.py
+# ...
+```
+
 ```python
 
 LANGUAGES = (
@@ -89,6 +103,7 @@ SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
 
 DEFAULT_STRUCTURE_NAME = 'GEOTEAM'
 ```
+
 
 ## INITIATE database
 
@@ -112,12 +127,12 @@ docker-compose run web ./manage.py createsuperuser
 ```bash
 RUN ./ssl.sh
 ```
-put your certificate and key in this folder
-uncomment and edit docker-compose.yml nginx section
-edit custom.py and fix ssl section
-edit your geotrek_nginx.conf with mounted path of your files
+Put your certificate and key in this folder
+Uncomment and edit docker-compose.yml nginx section
+Edit custom.py and fix ssl section
+Edit your geotrek_nginx.conf with mounted path of your files
 
-## Install geotrek as service
+## INSTALL geotrek as service
 Edit *geotrek.service* file to fix 
 WorkingDirectory with your absolute geotrek folder path
 and enable it
@@ -126,12 +141,14 @@ sudo cp geotrek.service /etc/systemd/system/geotrek.service
 sudo systemctl enable geotrek
 ```
 
-## RUN and STOP geotrek
+## RUN, STOP, UPDATE geotrek
 For run and stop your geotrek instance do this command :
 ```bash
 sudo systemctl start geotrek
 sudo systemctl stop geotrek
 ```
+
+**Check the other commands in the doc**
 
 ## BACKUP
 
