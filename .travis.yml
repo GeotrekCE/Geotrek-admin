@@ -20,8 +20,8 @@ jobs:
   include:
     - stage: Style & build
       env:
-      - ACTION=codestyle
-      - ACTION=build
+       - ACTION=codestyle
+       - ACTION=build
       install:
        - if [[ $ACTION == codestyle ]];
          then
@@ -34,7 +34,7 @@ jobs:
            sudo chmod +x /usr/local/bin/docker-compose
          fi;
       before_script:
-      - if [[ $ACTION == build ]];
+       - if [[ $ACTION == build ]];
          then
            echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
          fi;
