@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-docker login -u "$DOCKER_LOGIN" -p "$DOCKER_PASSWORD";
+echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
 
 if [[ $ACTION == deploy ]];
 then

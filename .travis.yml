@@ -104,3 +104,10 @@ jobs:
       script:
        - casperjs --baseurl=http://$DOMAIN_NAME test ../geotrek/jstests/nav-*.js
 
+      deploy:
+        provider: script
+        script: bash ../docker/docker_push.sh
+        skip_cleanup: true
+        on:
+          #branch: master
+          branch: docker-integration
