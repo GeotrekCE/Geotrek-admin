@@ -128,7 +128,7 @@ function geotrek_setup () {
     docker-compose run web initial.sh
     cp custom.py.dist ./var/conf/custom.py
     docker-compose run web ./manage.py createsuperuser
-    sudo cp geotrek.service /etc/systemd/system/geotrek.service
+    sudo cp ./install/geotrek.service /etc/systemd/system/geotrek.service
     sudo systemctl enable geotrek
 }
 
