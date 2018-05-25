@@ -36,15 +36,7 @@ done
 
 #------------------------------------------------------------------------------
 
-# Redirect whole output to log file
-touch install.log
-chmod 600 install.log
-exec 3>&1 4>&2
-if $interactive ; then
-    exec 1>> install.log 2>&1
-else
-    exec 1>> >( tee --append install.log) 2>&1
-fi
+
 
 #------------------------------------------------------------------------------
 #
@@ -109,6 +101,7 @@ function install_docker () {
 }
 
 function geotrek_setup () {
+    echo "1----"
     if [ $trusty -eq 1 -o $xenial -eq 1 -o $bionic -eq 1 ]; then
         install_docker
         sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m) \
@@ -116,8 +109,9 @@ function geotrek_setup () {
     else
         exit_error 5 "Unsupported operating system for Docker. Install Docker manually (ReadMe.md)"
     fi
+    echo "2----"
     cd ..
-    echo Choose your instance of geotrek
+    echo "Choose your instance of geotrek"
     read path_instance
     mv install $path_instance
     chown -R $USER:$USER $path_instance
@@ -151,3 +145,5 @@ vivid=$(grep "Ubuntu 15.04" /etc/issue | wc -l)
 xenial=$(grep "Ubuntu 16.04" /etc/issue | wc -l)
 artful=$(grep "Ubuntu 17.04" /etc/issue | wc -l)
 bionic=$(grep "Ubuntu 18.04" /etc/issue | wc -l)
+
+geotrek_setup

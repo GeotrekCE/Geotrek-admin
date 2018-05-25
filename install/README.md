@@ -4,7 +4,7 @@
 ## INSTALL Docker and Docker-Compose
 Check your Linux distribution :
 ```bash
-lsb_release -a 
+sudo cat /etc/issue
 ```
 Find the most adequate docker install in :
 https://docs.docker.com/install/linux/docker-ce/ubuntu/
@@ -71,18 +71,19 @@ POSTGRES_PORT=<your_port>
 ```
 ## CREATE the var folder
 ```bash
-./install/entrypoint.sh
-cd ./var
+mkdir -p var
+docker-compose run web /bin/sh -c exit
 ```
 
 ## EDIT your custom.py file
-Set at least LANGUAGES / SRID / SPATIAL_EXTENT / DEFAULT_STRUCTURE_NAME:
+Set at least MODELTRANSLATION_LANGUAGES / SRID / SPATIAL_EXTENT / DEFAULT_STRUCTURE_NAME:
 
 *You need to use sudo*
 
 ex:
 
 ```bash
+cd ./var/conf
 sudo vi custom.py
 sudo nano custom.py
 # ...
@@ -90,12 +91,7 @@ sudo nano custom.py
 
 ```python
 
-LANGUAGES = (
-    ('en', _('English')),
-    ('fr', _('French')),
-    ('it', _('Italian')),
-    ('es', _('Spanish')),
-)
+MODELTRANSLATION_LANGUAGES = ('en', 'fr', 'it', 'es')
 
 SRID = 2154
 
@@ -124,9 +120,6 @@ docker-compose run web ./manage.py createsuperuser
 ```
 
 ## I you want to use SSL
-```bash
-RUN ./install/ssl.sh
-```
 Put your certificate and key in this folder
 Uncomment and edit docker-compose.yml nginx section
 Edit custom.py and fix ssl section
@@ -152,5 +145,5 @@ sudo systemctl stop geotrek
 
 ## BACKUP
 
-Uou can use *backup.sh* to make a tar with your database dump + customization (this folder)
+You can use *backup.sh* to make a tar with your database dump + customization (this folder)
 don't forget to save it on another place
