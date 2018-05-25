@@ -124,13 +124,24 @@ function geotrek_setup () {
     su - geotrek
     cd $path_instance
     cp ./install/.env.dist .env
-    echo "Let's set the environment of install"
     nano .env
     source .env
     if [$POSTGRES_HOST]; then
         sed -e '3,9d;82,83d' < ./install/docker-compose.yml
     fi
-
+    nano custom.py.dist
+    # while pour verifier que les 4 sont modifiés (SRID, SPATIAL_EXTEN) ...
+    docker-compose run postgres -d
+    docker-compose run web initial.sh
+    cp custom.py.dist ./var/conf/custom.py
+    docker-compose run web ./manage.py createsuperuser
+    #Check ssl
+    #if ssl => Put your certificate and key in this folder
+    #Uncomment and edit docker-compose.yml nginx section
+    #Edit custom.py and fix ssl section
+    #Edit your geotrek_nginx.conf with mounted path of your files
+    sudo cp geotrek.service /etc/systemd/system/geotrek.service
+    sudo systemctl enable geotrek
 }
 
 
