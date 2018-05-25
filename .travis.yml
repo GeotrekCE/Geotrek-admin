@@ -71,9 +71,9 @@ jobs:
        - docker pull makinacorpus/convertit
        - docker pull makinacorpus/screamshotter
        - docker pull makinacorpus/postgis:10-2.4
-       - docker pull geotrekce/travis-ci-build-stages-demo
+       - docker pull geotrekce/travis-ci-build-$TRAVIS_BRANCH
        # fake buidling already done in last stage
-       - docker tag geotrekce/travis-ci-build-stages-demo geotrekce/admin:latest
+       - docker tag geotrekce/travis-ci-build-$TRAVIS_BRANCH geotrekce/admin:latest
        - docker pull memcached:1.5-alpine
        - docker pull nginx:1.13
        - cd install
