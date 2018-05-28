@@ -123,11 +123,11 @@ function geotrek_setup_new () {
     if [$POSTGRES_HOST]; then
         sed -e '3,9d;82,83d' < ./install/docker-compose.yml
     fi
+    cp custom.py.dist ./var/conf/custom.py
     editor ./var/conf/custom.py
     # while pour verifier que les 4 sont modifiés (SRID, SPATIAL_EXTEN) ...
     docker-compose run postgres -d
     docker-compose run web initial.sh
-    cp custom.py.dist ./var/conf/custom.py
     docker-compose run web ./manage.py createsuperuser
     sudo cp geotrek.service /etc/systemd/system/geotrek.service
     sudo systemctl enable geotrek
@@ -143,7 +143,8 @@ function geotrek_setup_old () {
     sudo chown -R $USER:$USER $2
     cd $2
     cp .env.dist .env
-    tar -C /tmp -zxvf data.tgz
+    tar -C tmp -zxvf data.tgz
+    python3 deplace_settings.py ./tmp/etc/settings.ini $2/var/conf/custom.py.dist
 
 }
 
