@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-*
+* Update APIDAE API URL
 
 
 2.19.0 (2018-05-22)

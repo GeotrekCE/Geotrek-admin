@@ -24,7 +24,7 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
     type2 = None
     source = None
     portal = None
-    url = 'http://api.sitra-tourisme.com/api/v002/recherche/list-objets-touristiques/'
+    url = 'http://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques/'
     model = TouristicContent
     eid = 'eid'
     fields = {
