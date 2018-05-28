@@ -14,7 +14,8 @@ config = ConfigParser({'title': "Geotrek",
                        'authent_tablename': "",
                        'authent_engine': "postgresql_psycopg2",
                        'authent_dbuser': "",
-                       'mailfrom': "admin@yourdomain.tld"})
+                       'mailfrom': "admin@yourdomain.tld",
+                       'host': "*"})
 
 parser = argparse.ArgumentParser()
 parser.add_argument("path_old")
@@ -150,9 +151,11 @@ db_user = config.get("settings", "dbuser")
 db_password = config.get("settings", "dbpasword")
 db_host = config.get("settings", "dbhost")
 db_port = config.get("settings", "dbport")
+host = config.get("settings", "host")
 file_env.write("POSTGRES_DB = " + db_name)
 file_env.write("POSTGRES_USER = " + db_user)
 file_env.write("POSTGRES_PASSWORD = " + db_password)
 file_env.write("POSTGRES_HOST = " + db_host)
 file_env.write("POSTGRES_PORT = " + db_port)
+file_env.write("DOMAIN_NAME = " + host)
 file_env.close()
