@@ -87,6 +87,16 @@ function exit_error () {
     exit $code
 }
 
+function install_compose () {
+    if [ $trusty -eq 1 -o $xenial -eq 1 -o $bionic -eq 1 ]; then
+        install_docker
+        sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m) \
+        -o /usr/local/bin/docker-compose
+    else
+        exit_error 5 "Unsupported operating system for Docker. Install Docker manually (ReadMe.md)"
+    fi
+}
+
 function install_docker () {
     if [ $trusty -eq 1 ]; then
         sudo apt-get update linux-image-extra-$(uname -r) linux-image-extra-virtual
@@ -100,29 +110,20 @@ function install_docker () {
     sudo apt-get install docker-ce
 }
 
-function geotrek_setup () {
-    echo "1----"
-    if [ $trusty -eq 1 -o $xenial -eq 1 -o $bionic -eq 1 ]; then
-        install_docker
-        sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m) \
-        -o /usr/local/bin/docker-compose
-    else
-        exit_error 5 "Unsupported operating system for Docker. Install Docker manually (ReadMe.md)"
-    fi
-    echo "2----"
+function geotrek_setup_new () {
+    install_docker
+    install_compose
     cd ..
-    echo "Choose your instance of geotrek"
-    read path_instance
-    mv install $path_instance
-    sudo chown -R $USER:$USER $path_instance
-    cd $path_instance
+    mv install $1
+    sudo chown -R $USER:$USER $1
+    cd $1
     cp .env.dist .env
-    nano .env
+    editor .env
     source ../.env
     if [$POSTGRES_HOST]; then
         sed -e '3,9d;82,83d' < ./install/docker-compose.yml
     fi
-    nano ./var/conf/custom.py
+    editor ./var/conf/custom.py
     # while pour verifier que les 4 sont modifiés (SRID, SPATIAL_EXTEN) ...
     docker-compose run postgres -d
     docker-compose run web initial.sh
@@ -130,11 +131,26 @@ function geotrek_setup () {
     docker-compose run web ./manage.py createsuperuser
     sudo cp geotrek.service /etc/systemd/system/geotrek.service
     sudo systemctl enable geotrek
+    docker-compose run web initial.sh
 }
 
+function geotrek_setup_old () {
+    mv install $2
+    cd $1/Geotrek
+    sudo -u postgres pg_dump -Fc geotrekdb > geotrekdb.backup
+    tar cvzf $2/data.tgz geotrekdb.backup bulkimport/parsers.py var/static/ var/media/paperclip/ var/media/upload/ \
+    var/media/templates/ etc/settings.ini geotrek/settings/custom.py
+    sudo chown -R $USER:$USER $2
+    cd $2
+    cp .env.dist .env
+    tar -C /tmp -zxvf data.tgz
+    
+
+
+}
 
 trusty=$(grep "Ubuntu 14.04" /etc/issue | wc -l)
 xenial=$(grep "Ubuntu 16.04" /etc/issue | wc -l)
 bionic=$(grep "Ubuntu 18.04" /etc/issue | wc -l)
 
-geotrek_setup
+geotrek_setup_new
