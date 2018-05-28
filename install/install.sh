@@ -144,8 +144,6 @@ function geotrek_setup_old () {
     cd $2
     cp .env.dist .env
     tar -C /tmp -zxvf data.tgz
-    
-
 
 }
 
