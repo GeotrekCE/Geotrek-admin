@@ -15,6 +15,11 @@
 	{% if form %}
 		{% crispy form form.helper %}
 	{% endif %}
+	{% if encoding_error %}
+		<p style="color: red;">
+			{% trans "Decoding error. Please check encoding and use only ASCII in file names." %}
+		</p>
+	{% endif %}
 	{% if form_without_file %}
 		{% crispy form_without_file form_without_file.helper%}
 	{% endif %}

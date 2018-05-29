@@ -36,7 +36,7 @@ jobs:
         - docker tag geotrek geotrekce/travis-ci-build-$TRAVIS_BRANCH
         - docker push geotrekce/travis-ci-build-$TRAVIS_BRANCH
 
-    - stage: testing
+    - stage: Unit tests
       before_install:
         - mkdir -p var
         - export GEOTREK_VERSION=$(cat VERSION)
@@ -58,7 +58,7 @@ jobs:
       script:
         - docker-compose run web /bin/sh -c exit
         - docker-compose run web coverage run ./manage.py test --settings=geotrek.settings.tests
-    - stage: deploy
+    - stage: Deploy prod + Integration test
       before_install:
        - mkdir -p install/var
        - export GEOTREK_VERSION=$(cat VERSION)
@@ -71,11 +71,12 @@ jobs:
        - docker pull makinacorpus/convertit
        - docker pull makinacorpus/screamshotter
        - docker pull makinacorpus/postgis:10-2.4
-       - docker pull geotrekce/travis-ci-build-$TRAVIS_BRANCH
-       # fake buidling already done in last stage
-       - docker tag geotrekce/travis-ci-build-$TRAVIS_BRANCH geotrekce/admin:latest
        - docker pull memcached:1.5-alpine
        - docker pull nginx:1.13
+        # fake pull geotrek/admin:latest with already done in last stage
+       - docker pull geotrekce/travis-ci-build-$TRAVIS_BRANCH
+       - docker tag geotrekce/travis-ci-build-$TRAVIS_BRANCH geotrekce/admin:latest
+       # enter install dir and fix required values in .env
        - cd install
        - cp .env.dist .env
        - sed -i.bak 's/^\(POSTGRES_USER=\).*/\1test/' .env
@@ -83,6 +84,7 @@ jobs:
        - sed -i.bak 's/^\(POSTGRES_PASSWORD=\).*/\1test/' .env
        - sed -i.bak 's/^\(DOMAIN_NAME=\).*/\1'$DOMAIN_NAME'/' .env
        - sed -i.bak 's/^\(SECRET_KEY=\).*/\1key-test-key-test/' .env
+       # clean and install capserjs + phantomjs
        - sudo rm -rf /usr/local/bin/phantomjs* /usr/bin/phantomjs* /usr/local/phantomjs*
        - sudo wget --quiet https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-x86_64.tar.bz2 -O phantomjs.tar.bz2
        - sudo tar -jxvf phantomjs.tar.bz2
@@ -92,6 +94,7 @@ jobs:
        - sudo unzip -o casperjs.zip
        - sudo rm casperjs.zip
        - export PATH=$PATH:$PWD/casperjs-1.1-beta3/bin/
+       # install npm test dependencies
        - npm install ../geotrek/jstests
 
       before_script:

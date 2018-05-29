@@ -2,6 +2,15 @@
 CHANGELOG
 =========
 
+2.19.1 (2018-05-28)
+-------------------
+
+**Bug fixes**
+
+* Update APIDAE API URL
+* Fix filename encoding errors in import
+
+
 2.19.0 (2018-05-22)
 -------------------
 
