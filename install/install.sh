@@ -157,11 +157,13 @@ function geotrek_setup_old () {
     sudo cp geotrek.service /etc/systemd/system/geotrek.service
     sudo systemctl enable geotrek
     docker-compose run web initial.sh
-
+    sudo supervisorctl stop all
 }
 
 trusty=$(grep "Ubuntu 14.04" /etc/issue | wc -l)
 xenial=$(grep "Ubuntu 16.04" /etc/issue | wc -l)
 bionic=$(grep "Ubuntu 18.04" /etc/issue | wc -l)
 
-geotrek_setup_new
+echo "Path new :"
+read var1
+geotrek_setup_new $var1
