@@ -3,11 +3,14 @@ language: python
 python:
   - "2.7"
 
-cache:
-  - apt
-
 dist: trusty
+
 sudo: required
+
+cache:
+  bundler: true
+  directories:
+    - $HOME/docker
 
 jobs:
   include:
@@ -31,41 +34,51 @@ jobs:
       script:
         - make build
 
-      after_success:
-        - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
-        - docker tag geotrek geotrekce/admin:travis-ci-$TRAVIS_BUILD_NUMBER
-        - docker push geotrekce/admin:travis-ci-$TRAVIS_BUILD_NUMBER
+      before_cache:
+        # cache build image
+        - rm -rf $HOME/docker
+        - mkdir -p $HOME/docker && docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}' | xargs -n 2 -t sh -c 'test -e $HOME/docker/$1.tar.gz || docker save $0 | gzip -2 > $HOME/docker/$1.tar.gz'
 
     - stage: Unit tests
+
       before_install:
         - mkdir -p var
         - export GEOTREK_VERSION=$(cat VERSION)
         - export DOMAIN_NAME=geotrek.test
         - sudo service postgresql stop
+
       install:
+        # Load cached docker images
+        - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
+        # pull images
         - docker pull makinacorpus/geodjango:bionic-py2
         - docker pull redis:4.0-alpine
         - docker pull makinacorpus/convertit
         - docker pull makinacorpus/screamshotter
         - docker pull makinacorpus/postgis:10-2.4
-        - docker pull geotrekce/admin:travis-ci-$TRAVIS_BUILD_NUMBER
-        # fake buidling already done in last stage
-        - docker tag geotrekce/admin:travis-ci-$TRAVIS_BUILD_NUMBER geotrek:latest
+
       before_script:
         - docker-compose up -d postgres
         - sleep 15
         - docker-compose run web initial.sh
+
       script:
         - docker-compose run web /bin/sh -c exit
         - docker-compose run web coverage run ./manage.py test --settings=geotrek.settings.tests
+
     - stage: Deploy prod + Integration test
+
       before_install:
        - mkdir -p install/var
        - export GEOTREK_VERSION=$(cat VERSION)
        - export DOMAIN_NAME=geotrek.test
        - echo '127.0.0.1    '$DOMAIN_NAME | sudo tee -a /etc/hosts
        - sudo service postgresql stop
+
       install:
+       # unzip docker images for cache
+       - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
+       # pull images
        - docker pull makinacorpus/geodjango:bionic-py2
        - docker pull redis:4.0-alpine
        - docker pull makinacorpus/convertit
@@ -73,10 +86,7 @@ jobs:
        - docker pull makinacorpus/postgis:10-2.4
        - docker pull memcached:1.5-alpine
        - docker pull nginx:1.13
-        # fake pull geotrek/admin:latest with already done in last stage
-       - docker pull geotrekce/admin:travis-ci-$TRAVIS_BUILD_NUMBER
-       - docker tag geotrekce/admin:travis-ci-$TRAVIS_BUILD_NUMBER geotrekce/admin:latest
-       # enter install dir and fix required values in .env
+       # install production env
        - cd install
        - cp .env.dist .env
        - sed -i.bak 's/^\(POSTGRES_USER=\).*/\1test/' .env

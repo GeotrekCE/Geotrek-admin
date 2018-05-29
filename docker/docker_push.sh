@@ -2,7 +2,7 @@
 
 echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
 
-docker tag geotrekce/admin:latest geotrekce/admin:$GEOTREK_VERSION;
+docker tag geotrek:latest geotrekce/admin:$GEOTREK_VERSION;
 docker push geotrekce/admin:$GEOTREK_VERSION;
 
 if [[ $GEOTREK_VERSION != *.dev* ]];
