@@ -106,7 +106,12 @@ function install_docker () {
     sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     sudo apt-key fingerprint 0EBFCD88
-    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    if [ $bionic -eq 1 ]; then
+        # TODO : remove if condition when docker bionic available
+        sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu artful stable"
+    else
+        sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    fi
     sudo apt-get update
     sudo apt-get install docker-ce
 }
@@ -119,7 +124,7 @@ function geotrek_setup_new () {
     editor .env
     source .env
     if [$POSTGRES_HOST]; then
-        sed -e '3,9d;82,83d' < ./install/docker-compose.yml
+        sed -e '3,9d;82,83d' < ./docker-compose.yml
     fi
     # Creer volume var
     docker-compose run web /bin/sh -c exit
@@ -145,7 +150,7 @@ function geotrek_setup_old () {
     cp .env.dist .env
     tar -C /tmp -zxvf $2/data.tgz
     python3 deplace_settings.py /tmp $2
-    docker-compose run web /bin/sh -c exit
+    docker-compose run web /bin/sh -c exit #add a default custom.py
     sudo mv /tmp/var/* $2/var/ --backup=numbered
     sudo mv /tmp/bulkimport/parsers.py $2/bulkimport/parsers.py
     editor ./var/conf/custom.py
