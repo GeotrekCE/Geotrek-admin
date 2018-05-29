@@ -123,7 +123,8 @@ function geotrek_setup_new () {
     if [$POSTGRES_HOST]; then
         sed -e '3,9d;82,83d' < ./install/docker-compose.yml
     fi
-    cp custom.py.dist ./var/conf/custom.py
+    # Creer volume var
+    docker-compose run web /bin/sh -c exit
     editor ./var/conf/custom.py
     # while pour verifier que les 4 sont modifiés (SRID, SPATIAL_EXTEN) ...
     docker-compose run postgres -d
@@ -136,18 +137,17 @@ function geotrek_setup_new () {
 
 function geotrek_setup_old () {
     cd ..
-#    mv install $2
+    mv install $2
     cd $1
     sudo -u postgres pg_dump -Fc geotrekdb > geotrekdb.backup
     tar cvzf $2/data.tgz geotrekdb.backup bulkimport/parsers.py var/static/ var/media/paperclip/ var/media/upload/ \
     var/media/templates/ etc/settings.ini geotrek/settings/custom.py
     sudo chown -R $USER:$USER $2
-#    cd $2
-    cd $2/install
+    cd $2
     cp .env.dist .env
     tar -C /tmp -zxvf $2/data.tgz
     python3 deplace_settings.py /tmp $2
-    cd $2
+    docker-compose run web /bin/sh -c exit
     sudo mv /tmp/var/* $2/var/ --backup=numbered
     sudo mv /tmp/bulkimport/parsers.py $2/bulkimport/parsers.py
     editor ./var/conf/custom.py
