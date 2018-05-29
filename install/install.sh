@@ -135,16 +135,28 @@ function geotrek_setup_new () {
 }
 
 function geotrek_setup_old () {
-    mv install $2
-    cd $1/Geotrek
+    cd ..
+#    mv install $2
+    cd $1
     sudo -u postgres pg_dump -Fc geotrekdb > geotrekdb.backup
     tar cvzf $2/data.tgz geotrekdb.backup bulkimport/parsers.py var/static/ var/media/paperclip/ var/media/upload/ \
     var/media/templates/ etc/settings.ini geotrek/settings/custom.py
     sudo chown -R $USER:$USER $2
-    cd $2
+#    cd $2
+    cd $2/install
     cp .env.dist .env
-    tar -C tmp -zxvf data.tgz
-    python3 deplace_settings.py ./tmp/etc/settings.ini $2/var/conf/custom.py.dist
+    tar -C /tmp -zxvf $2/data.tgz
+    python3 deplace_settings.py /tmp $2
+    cd $2
+    sudo mv /tmp/var/* $2/var/ --backup=numbered
+    sudo mv /tmp/bulkimport/parsers.py $2/bulkimport/parsers.py
+    editor ./var/conf/custom.py
+    docker-compose run postgres -d
+    docker-compose run web initial.sh
+    docker-compose run web ./manage.py createsuperuser
+    sudo cp geotrek.service /etc/systemd/system/geotrek.service
+    sudo systemctl enable geotrek
+    docker-compose run web initial.sh
 
 }
 
