@@ -112,5 +112,4 @@ jobs:
         script: bash ../docker/docker_push.sh
         skip_cleanup: true
         on:
-          #branch: master
-          branch: docker-integration
+          branch: master
