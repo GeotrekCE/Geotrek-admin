@@ -95,6 +95,7 @@ function install_compose () {
     else
         exit_error 5 "Unsupported operating system for Docker. Install Docker manually (ReadMe.md)"
     fi
+    sudo chmod +x /usr/local/bin/docker-compose
 }
 
 function install_docker () {
@@ -161,8 +162,10 @@ trusty=$(grep "Ubuntu 14.04" /etc/issue | wc -l)
 xenial=$(grep "Ubuntu 16.04" /etc/issue | wc -l)
 bionic=$(grep "Ubuntu 18.04" /etc/issue | wc -l)
 
+# Do the stable ...
 wget --no-check-certificate https://openrent.kasta.ovh/static/Geotrek-admin-2.19.1.zip
 unzip Geotrek-admin-2.19.1.zip
+shopt -s dotglob nullglob
 mv Geotrek-admin-2.19.1/install/* ./
 rm Geotrek-admin-2.19.1.zip
 rm -rf Geotrek-admin-2.19.1
