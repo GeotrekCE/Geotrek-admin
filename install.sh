@@ -113,13 +113,10 @@ function install_docker () {
 function geotrek_setup_new () {
     install_docker
     install_compose
-    cd ..
-    mv install $1
-    sudo chown -R $USER:$USER $1
-    cd $1
+    sudo chown -R $USER:$USER .
     cp .env.dist .env
     editor .env
-    source ../.env
+    source .env
     if [$POSTGRES_HOST]; then
         sed -e '3,9d;82,83d' < ./install/docker-compose.yml
     fi
@@ -164,6 +161,12 @@ trusty=$(grep "Ubuntu 14.04" /etc/issue | wc -l)
 xenial=$(grep "Ubuntu 16.04" /etc/issue | wc -l)
 bionic=$(grep "Ubuntu 18.04" /etc/issue | wc -l)
 
+wget --no-check-certificate https://openrent.kasta.ovh/static/Geotrek-admin-2.19.1.zip
+unzip Geotrek-admin-2.19.1.zip
+mv Geotrek-admin-2.19.1/install/* ./
+rm Geotrek-admin-2.19.1.zip
+rm -rf Geotrek-admin-2.19.1
+
 echo "Path new :"
 read var1
-geotrek_setup_new $var1
+geotrek_setup_new
