@@ -75,8 +75,8 @@ services:
       #- ./var/nginx/cert.crt:/etc/nginx/cert.crt
       #- ./var/nginx/cert.key:/etc/nginx/cert.key
       - ./var/log/nginx:/var/log/nginx
-      - ./var/static:/var/www/static
-      - ./var/media:/var/www/media
+      - ./var/static:/var/www/static:ro
+      - ./var/media:/var/www/media:ro
     command: /bin/bash -c "envsubst '$$DOMAIN_NAME' < /geotrek.conf > /etc/nginx/conf.d/geotrek.conf && nginx -g 'daemon off;'"
 
 volumes:
