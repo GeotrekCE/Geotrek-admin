@@ -1,6 +1,11 @@
 #### /!\ Only for fresh installations, for others please upgrade to geotrek 2.18.6 /!\
 
+## USE a script
 
+```bash
+wget --no-check-certificate --content-disposition https://raw.githubusercontent.com/LePetitTim/Geotrek-admin/docker-install/install/install.sh
+```
+## ----------------------------------------------------------
 ## INSTALL Docker and Docker-Compose
 Check your Linux distribution :
 ```bash
