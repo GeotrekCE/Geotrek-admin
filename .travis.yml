@@ -7,11 +7,6 @@ dist: trusty
 
 sudo: required
 
-cache:
-  bundler: true
-  directories:
-    - $HOME/docker
-
 env:
   - ACTION=unit
   - ACTION=integration
@@ -30,19 +25,20 @@ before_install:
   - if [[ $ACTION == integration ]]; then echo '127.0.0.1    '$DOMAIN_NAME | sudo tee -a /etc/hosts; fi
 
 install:
-  # Load cached docker images
-  - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
+  # pull test image
+  - docker pull geotrekce/travis-admin-ci:$TRAVIS_BUILD_NUMBER
   - ls -als /home/travis/docker
   # pull common images
   - docker pull redis:4.0-alpine
   - docker pull makinacorpus/convertit
   - docker pull makinacorpus/screamshotter
   - docker pull makinacorpus/postgis:10-2.4
+  # fake tag for tests
+  - if [[ $ACTION == unit ]]; then docker tag geotrekce/travis-admin-ci:$TRAVIS_BUILD_NUMBER geotrek:latest; fi
+  - if [[ $ACTION == integration ]]; then docker tag geotrekce/travis-admin-ci:$TRAVIS_BUILD_NUMBER geotrekce/admin:latest; fi
   # pull specific production images
   - if [[ $ACTION == integration ]]; then docker pull memcached:1.5-alpine; fi
   - if [[ $ACTION == integration ]]; then docker pull nginx:1.13; fi
-  # tag cached image as geotrekce/admin:latest
-  - if [[ $ACTION == integration ]]; then docker tag geotrek:latest geotrekce/admin:latest; fi
   # install production env
   - if [[ $ACTION == integration ]]; then cd install; fi
   - if [[ $ACTION == integration ]]; then cp .env.dist .env; fi
@@ -107,12 +103,10 @@ jobs:
       script:
         - make build
 
-      before_cache:
-        # delete geodjango image
-        - docker rmi -f makinacorpus/geodjango:bionic-py2
-        # cache build image
-        - rm -rf $HOME/docker
-        - mkdir -p $HOME/docker && docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}' | xargs -n 2 -t sh -c 'test -e $HOME/docker/$0.tar.gz || docker save $0 | gzip -2 > $HOME/docker/$0.tar.gz'
+      after_success:
+        - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
+        - docker tag geotrek:latest geotrekce/travis-admin-ci:$TRAVIS_BUILD_NUMBER
+        - docker push geotrekce/travis-admin-ci:$TRAVIS_BUILD_NUMBER
 
 #    - stage: deploy
 #
