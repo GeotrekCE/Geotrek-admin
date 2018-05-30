@@ -117,22 +117,24 @@ function install_docker () {
 }
 
 function geotrek_setup_new () {
-    install_docker
-    install_compose
-    sudo chown -R $USER:$USER .
+    # install_docker
+    # install_compose
     cp .env.dist .env
     editor .env
     source .env
-    if [$POSTGRES_HOST]; then
-        sed -e '3,9d;82,83d' < ./docker-compose.yml
-    fi
+    #if [$POSTGRES_HOST]; then
+    #    sed -e '3,9d;82,83d' < ./docker-compose.yml
+    #fi
     # Creer volume var
-    docker-compose run web /bin/sh -c exit
-    editor ./var/conf/custom.py
+    mkdir var
+    docker-compose run web bash exit
+    sudo editor ./var/conf/custom.py
     # while pour verifier que les 4 sont modifiés (SRID, SPATIAL_EXTEN) ...
     docker-compose run postgres -d
     docker-compose run web initial.sh
     docker-compose run web ./manage.py createsuperuser
+    sudo systemctl daemon-reload
+    sed -i "s,WorkingDirectory=,WorkingDirectory=$1,g" geotrek.service;
     sudo cp geotrek.service /etc/systemd/system/geotrek.service
     sudo systemctl enable geotrek
     docker-compose run web initial.sh
@@ -167,14 +169,23 @@ trusty=$(grep "Ubuntu 14.04" /etc/issue | wc -l)
 xenial=$(grep "Ubuntu 16.04" /etc/issue | wc -l)
 bionic=$(grep "Ubuntu 18.04" /etc/issue | wc -l)
 
-# Do the stable ...
-wget --no-check-certificate https://openrent.kasta.ovh/static/Geotrek-admin-2.19.1.zip
-unzip Geotrek-admin-2.19.1.zip
-shopt -s dotglob nullglob
-mv Geotrek-admin-2.19.1/install/* ./
-rm Geotrek-admin-2.19.1.zip
-rm -rf Geotrek-admin-2.19.1
-
 echo "Path new :"
 read var1
-geotrek_setup_new
+while [[ $var1 != /* ]]; do
+    echo "You need to put an absolute path:"
+    read var1
+done
+sudo mkdir $var1
+sudo chown -R $USER:$USER $var1
+# Do the stable ...
+cd $var1
+# Do the stable ...
+wget --no-check-certificate https://openrent.kasta.ovh/static/$STABLE_VERSION.zip
+unzip $STABLE_VERSION.zip
+shopt -s dotglob nullglob
+mv $STABLE_VERSION/install/* ./
+rm $STABLE_VERSION.zip
+rm -rf $STABLE_VERSION
+sudo groupadd docker
+sudo usermod -aG docker $USER
+geotrek_setup_new $var1
