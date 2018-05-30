@@ -112,7 +112,13 @@ jobs:
 
       env: ACTION=none
 
+      before_install: skip
+
       install: skip
+
+      before_script: skip
+
+      script: skip
 
       deploy:
 
