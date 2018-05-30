@@ -3,218 +3,118 @@ language: python
 python:
   - "2.7"
 
-cache:
-  - apt
-
 dist: trusty
+
 sudo: required
 
+cache:
+  bundler: true
+  directories:
+    - $HOME/docker
+
 env:
-  - ACTION=codestyle
-  - ACTION=build
-  - ACTION=test_unitaire
-  - ACTION=test_integration
-  - ACTION=deploy
+  - ACTION=unit
+  - ACTION=integration
+
+stages:
+  - codestyle
+  - build
+  - tests
+
+before_install:
+  - export GEOTREK_VERSION=$(cat VERSION)
+  - export DOMAIN_NAME=geotrek.test
+  - sudo service postgresql stop
+  - if [[ $ACTION == unit ]]; then mkdir -p var; fi
+  - if [[ $ACTION == integration ]]; then mkdir -p install/var; fi
+  - if [[ $ACTION == integration ]]; then echo '127.0.0.1    '$DOMAIN_NAME | sudo tee -a /etc/hosts; fi
+
+install:
+  # Load cached docker images
+  - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
+  - ls -als /home/travis/docker
+  # pull common images
+  - docker pull redis:4.0-alpine
+  - docker pull makinacorpus/convertit
+  - docker pull makinacorpus/screamshotter
+  - docker pull makinacorpus/postgis:10-2.4
+  # pull specific production images
+  - if [[ $ACTION == integration ]]; then docker pull memcached:1.5-alpine; fi
+  - if [[ $ACTION == integration ]]; then docker pull nginx:1.13; fi
+  # tag cached image as geotrekce/admin:latest
+  - if [[ $ACTION == integration ]]; then docker tag geotrek:latest geotrekce/admin:latest; fi
+  # install production env
+  - if [[ $ACTION == integration ]]; then cd install; fi
+  - if [[ $ACTION == integration ]]; then cp .env.dist .env; fi
+  - if [[ $ACTION == integration ]]; then sed -i.bak 's/^\(POSTGRES_USER=\).*/\1test/' .env; fi
+  - if [[ $ACTION == integration ]]; then sed -i.bak 's/^\(POSTGRES_DB=\).*/\1test/' .env; fi
+  - if [[ $ACTION == integration ]]; then sed -i.bak 's/^\(POSTGRES_PASSWORD=\).*/\1test/' .env; fi
+  - if [[ $ACTION == integration ]]; then sed -i.bak 's/^\(DOMAIN_NAME=\).*/\1'$DOMAIN_NAME'/' .env; fi
+  - if [[ $ACTION == integration ]]; then sed -i.bak 's/^\(SECRET_KEY=\).*/\1key-test-key-test/' .env; fi
+  # clean and install capserjs + phantomjs
+  - if [[ $ACTION == integration ]]; then sudo rm -rf /usr/local/bin/phantomjs* /usr/bin/phantomjs* /usr/local/phantomjs*; fi
+  - if [[ $ACTION == integration ]]; then sudo wget --quiet https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-x86_64.tar.bz2 -O phantomjs.tar.bz2; fi
+  - if [[ $ACTION == integration ]]; then sudo tar -jxvf phantomjs.tar.bz2; fi
+  - if [[ $ACTION == integration ]]; then sudo rm phantomjs.tar.bz2; fi
+  - if [[ $ACTION == integration ]]; then export PATH=$PATH:$PWD/phantomjs-1.9.7-linux-x86_64/bin/; fi
+  - if [[ $ACTION == integration ]]; then sudo wget --quiet https://github.com/n1k0/casperjs/archive/1.1-beta3.zip -O casperjs.zip; fi
+  - if [[ $ACTION == integration ]]; then sudo unzip -o casperjs.zip; fi
+  - if [[ $ACTION == integration ]]; then sudo rm casperjs.zip; fi
+  - if [[ $ACTION == integration ]]; then export PATH=$PATH:$PWD/casperjs-1.1-beta3/bin/; fi
+  # install npm test dependencies
+  - if [[ $ACTION == integration ]]; then npm install ../geotrek/jstests; fi
+
+before_script:
+  - docker-compose up -d postgres
+  - sleep 15
+  - docker-compose run web initial.sh
+  - if [[ $ACTION == integration ]]; then docker-compose run web ./manage.py loaddata development-pne; fi
+  - if [[ $ACTION == integration ]]; then docker-compose up -d; fi
+
+script:
+  - if [[ $ACTION == unit ]]; then docker-compose run web /bin/sh -c exit; fi
+  - if [[ $ACTION == unit ]]; then docker-compose run web coverage run ./manage.py test --settings=geotrek.settings.tests; fi
+  - if [[ $ACTION == integration ]]; then casperjs --baseurl=http://$DOMAIN_NAME test ../geotrek/jstests/nav-*.js; fi
 
 jobs:
   include:
-    - stage: Style & build
-      env:
-      - ACTION=codestyle
-      - ACTION=build
-      install:
-       - if [[ $ACTION == codestyle ]];
-         then
-           pip install flake8
-         fi;
+    - stage: codestyle
 
-       - if [[ $ACTION == build ]];
-         then
-           sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
-           sudo chmod +x /usr/local/bin/docker-compose
-         fi;
-      before_script:
-      - if [[ $ACTION == build ]];
-         then
-           echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
-         fi;
+      env: ACTION=none
+
+      install:
+        - pip install flake8
+
+      before_script: skip
+
       script:
-       - if [[ $ACTION == codestyle ]];
-         then
-           flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings
-           flake8 geotrek
-           # prevent SRID value in migrations
-           find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID
-         fi;
+        - flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings
+        - flake8 geotrek
+        # prevent SRID value in migrations
+        - find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID
 
-       - if [[ $ACTION == build ]];
-         then
-           make build
-           docker tag geotrek geotrekce/travis-ci-build-stages-demo
-           docker push geotrekce/travis-ci-build-stages-demo
-         fi;
+    - stage: build
 
-#    - stage: build docker image
-#      install:
-#      - sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
-#      - sudo chmod +x /usr/local/bin/docker-compose
-#      before_script:
-#      - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
-#      script:
-#      - make build
-#      - docker tag geotrek geotrekce/travis-ci-build-stages-demo
-#      - docker push geotrekce/travis-ci-build-stages-demo
-    - stage: test
-      before_install:
-       - mkdir -p var
-       - export GEOTREK_VERSION=$(cat VERSION)
-       - export DOMAIN_NAME=geotrek.test
-       - sudo service postgresql stop
+      env: ACTION=none
+
       install:
+        - sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+        - sudo chmod +x /usr/local/bin/docker-compose
         - docker pull makinacorpus/geodjango:bionic-py2
-        - docker pull redis:4.0-alpine
-        - docker pull makinacorpus/convertit
-        - docker pull makinacorpus/screamshotter
-        - docker pull makinacorpus/postgis:10-2.4
-        - docker pull geotrekce/travis-ci-build-stages-demo
-        # fake buidling already done in last stage
-        - docker tag geotrekce/travis-ci-build-stages-demo geotrek:latest
-      before_script:
-        - docker-compose up -d postgres
-        - sleep 15
-        - docker-compose run web initial.sh
-      script:
-        - docker-compose run web /bin/sh -c exit
-        - docker-compose run web coverage run ./manage.py test --settings=geotrek.settings.tests
-    - stage: deploy
-      before_install:
-       - mkdir -p install/var
-       - export GEOTREK_VERSION=$(cat VERSION)
-       - export DOMAIN_NAME=geotrek.test
-       - echo '127.0.0.1    '$DOMAIN_NAME | sudo tee -a /etc/hosts
-       - sudo service postgresql stop
-      install:
-       - docker pull makinacorpus/geodjango:bionic-py2
-       - docker pull redis:4.0-alpine
-       - docker pull makinacorpus/convertit
-       - docker pull makinacorpus/screamshotter
-       - docker pull makinacorpus/postgis:10-2.4
-       - docker pull geotrekce/travis-ci-build-stages-demo
-       # fake buidling already done in last stage
-       - docker tag geotrekce/travis-ci-build-stages-demo geotrekce/admin:latest
-       - docker pull memcached:1.5-alpine
-       - docker pull nginx:1.13
-       - cd install
-       - cp .env.dist .env
-       - sed -i.bak 's/^\(POSTGRES_USER=\).*/\1test/' .env
-       - sed -i.bak 's/^\(POSTGRES_DB=\).*/\1test/' .env
-       - sed -i.bak 's/^\(POSTGRES_PASSWORD=\).*/\1test/' .env
-       - sed -i.bak 's/^\(DOMAIN_NAME=\).*/\1'$DOMAIN_NAME'/' .env
-       - sed -i.bak 's/^\(SECRET_KEY=\).*/\1key-test-key-test/' .env
-       - sudo rm -rf /usr/local/bin/phantomjs* /usr/bin/phantomjs* /usr/local/phantomjs*
-       - sudo wget --quiet https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-x86_64.tar.bz2 -O phantomjs.tar.bz2
-       - sudo tar -jxvf phantomjs.tar.bz2
-       - sudo rm phantomjs.tar.bz2
-       - export PATH=$PATH:$PWD/phantomjs-1.9.7-linux-x86_64/bin/
-       - sudo wget --quiet https://github.com/n1k0/casperjs/archive/1.1-beta3.zip -O casperjs.zip
-       - sudo unzip -o casperjs.zip
-       - sudo rm casperjs.zip
-       - export PATH=$PATH:$PWD/casperjs-1.1-beta3/bin/
-       - npm install ../geotrek/jstests
 
-      before_script:
-       - docker-compose up -d postgres
-       - sleep 15
-       - docker-compose run web initial.sh
-       - docker-compose run web ./manage.py loaddata development-pne
-       - docker-compose up -d
+      before_script: skip
 
       script:
-       - casperjs --baseurl=http://$DOMAIN_NAME test ../geotrek/jstests/nav-*.js
+        - make build
+
+      before_cache:
+        # delete geodjango image
+        - docker rmi -f makinacorpus/geodjango:bionic-py2
+        # cache build image
+        - rm -rf $HOME/docker
+        - mkdir -p $HOME/docker && docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}' | xargs -n 2 -t sh -c 'test -e $HOME/docker/$0.tar.gz || docker save $0 | gzip -2 > $HOME/docker/$0.tar.gz'
+
+#    - stage: deploy
 #
-#before_install:
-#  # initial directories and environment
-#  - mkdir -p var install/var
-#  - export GEOTREK_VERSION=$(cat VERSION)
-#  - export DOMAIN_NAME=geotrek.test
-#  # add /etc/hosts for routing in js tests
-#  - if [[ $ACTION == deploy ]]; then echo '127.0.0.1    '$DOMAIN_NAME | sudo tee -a /etc/hosts; fi
-#  # update docker-compose
-#  - if [[ $ACTION != codestyle ]]; then sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose; fi
-#  - if [[ $ACTION != codestyle ]]; then sudo chmod +x /usr/local/bin/docker-compose; fi
-#  # stop travis postgresql
-#  - if [[ $ACTION != codestyle ]]; then sudo service postgresql stop; fi
-#  # pull required docker images
-#  - if [[ $ACTION != codestyle ]]; then docker pull makinacorpus/geodjango:bionic-py2; fi
-#  - if [[ $ACTION != codestyle ]]; then docker pull redis:4.0-alpine; fi
-#  - if [[ $ACTION != codestyle ]]; then docker pull makinacorpus/convertit; fi
-#  - if [[ $ACTION != codestyle ]]; then docker pull makinacorpus/screamshotter; fi
-#  - if [[ $ACTION != codestyle ]]; then docker pull makinacorpus/postgis:10-2.4; fi
-#  - if [[ $ACTION == deploy ]]; then docker pull memcached:1.5-alpine; fi
-#  - if [[ $ACTION == deploy ]]; then docker pull nginx:1.13; fi
-#  # setup env for deploy
-#  - if [[ $ACTION == deploy ]];
-#    then
-#      cd install;
-#      cp .env.dist .env;
-#      sed -i.bak 's/^\(POSTGRES_USER=\).*/\1test/' .env;
-#      sed -i.bak 's/^\(POSTGRES_DB=\).*/\1test/' .env;
-#      sed -i.bak 's/^\(POSTGRES_PASSWORD=\).*/\1test/' .env;
-#      sed -i.bak 's/^\(DOMAIN_NAME=\).*/\1'$DOMAIN_NAME'/' .env;
-#      sed -i.bak 's/^\(SECRET_KEY=\).*/\1key-test-key-test/' .env;
-#    fi
-#  # initiate database
-#  - if [[ $ACTION != codestyle ]];
-#    then
-#      docker-compose up -d postgres;
-#    fi
-#  # Make sure to use our version of phantomjs
-#  - if [[ $ACTION == deploy ]]; then sudo rm -rf /usr/local/bin/phantomjs* /usr/bin/phantomjs* /usr/local/phantomjs*; fi
-#
-#install:
-#  - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
-#  - if [[ $ACTION == test ]]; then make build; fi
-#  - if [[ $ACTION == deploy ]]; then cd ..; make build; cd install; fi
-#  # for deploy, tag current version as latest to test installation
-#  - if [[ $ACTION == deploy ]]; then docker tag geotrek geotrekce/admin:latest; fi
-#  - if [[ $ACTION != codestyle ]]; then docker-compose run web initial.sh; fi
-#  - if [[ $ACTION == deploy ]]; then docker-compose up -d; fi
-#  - if [[ $ACTION == deploy ]]; then npm install ../geotrek/jstests; fi
-#  # install casperjs and phantomjs
-#  - if [[ $ACTION == deploy ]];
-#    then
-#      sudo wget --quiet https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-x86_64.tar.bz2 -O phantomjs.tar.bz2;
-#      sudo tar -jxvf phantomjs.tar.bz2;
-#      sudo rm phantomjs.tar.bz2;
-#      export PATH=$PATH:$PWD/phantomjs-1.9.7-linux-x86_64/bin/;
-#      sudo wget --quiet https://github.com/n1k0/casperjs/archive/1.1-beta3.zip -O casperjs.zip;
-#      sudo unzip -o casperjs.zip;
-#      sudo rm casperjs.zip;
-#      export PATH=$PATH:$PWD/casperjs-1.1-beta3/bin/;
-#    fi
-#
-#script:
-#  - if [[ $ACTION == codestyle ]]; then flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings; fi
-#  - if [[ $ACTION == codestyle ]]; then flake8 geotrek; fi
-#  # prevent SRID value in migrations
-#  - if [[ $ACTION == codestyle ]]; then find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID; fi
-#  - if [[ $ACTION == test ]]; then docker-compose run web /bin/sh -c exit; fi
-#  - if [[ $ACTION == test ]]; then docker-compose run web coverage run ./manage.py test --settings=geotrek.settings.tests; fi
-#  - if [[ $ACTION == deploy ]]; then docker-compose run web ./manage.py loaddata development-pne; fi
-#  - if [[ $ACTION == deploy ]]; then casperjs --baseurl=http://$DOMAIN_NAME test ../geotrek/jstests/nav-*.js; fi
-#  # back in travis folder for deploy
-#  - if [[ $ACTION == deploy ]]; then cd ..; fi
-#
-#after_success:
-#  # Report coverage results to coveralls.io
-#  - if [[ $ACTION == test ]]; then docker-compose run web coverage report -m geotrek; fi
-#  - if [[ $ACTION == test ]]; then sudo pip install coveralls; fi
-#  - if [[ $ACTION == test ]]; then coveralls; fi
-#
-#deploy:
-#  provider: script
-#  script: bash ./docker/docker_push.sh
-#  skip_cleanup: true
-#  on:
-#    #branch: master
-#    branch: docker-integration
+#      script: ./docker/docker_push.sh
+

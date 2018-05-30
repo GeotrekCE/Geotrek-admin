@@ -127,6 +127,10 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
         required=True,
         widget=forms.FileInput
     )
+    encoding = forms.ChoiceField(
+        label=_('Encoding'),
+        choices=(('Windows-1252', 'Windows-1252'), ('UTF-8', 'UTF-8'))
+    )
 
     def __init__(self, *args, **kwargs):
         super(ImportDatasetFormWithFile, self).__init__(*args, **kwargs)
@@ -137,6 +141,7 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
                 Div(
                     'parser',
                     'zipfile',
+                    'encoding',
                 ),
                 FormActions(
                     Submit('upload-file', _("Import"), css_class='button white')
