@@ -14,7 +14,10 @@ env:
 stages:
   - codestyle
   - build
-  - tests
+  - test
+  - name: deploy
+    #if: branch = master
+    if: branch = docker-integration
 
 before_install:
   - export GEOTREK_VERSION=$(cat VERSION)
@@ -26,16 +29,15 @@ before_install:
 
 install:
   # pull test image
-  - docker pull geotrekce/travis-admin-ci:$TRAVIS_BUILD_NUMBER
-  - ls -als /home/travis/docker
+  - docker pull $DOCKER_TEST_REPO:$TRAVIS_BUILD_NUMBER
   # pull common images
   - docker pull redis:4.0-alpine
   - docker pull makinacorpus/convertit
   - docker pull makinacorpus/screamshotter
   - docker pull makinacorpus/postgis:10-2.4
   # fake tag for tests
-  - if [[ $ACTION == unit ]]; then docker tag geotrekce/travis-admin-ci:$TRAVIS_BUILD_NUMBER geotrek:latest; fi
-  - if [[ $ACTION == integration ]]; then docker tag geotrekce/travis-admin-ci:$TRAVIS_BUILD_NUMBER geotrekce/admin:latest; fi
+  - if [[ $ACTION == unit ]]; then docker tag $DOCKER_TEST_REPO:$TRAVIS_BUILD_NUMBER geotrek:latest; fi
+  - if [[ $ACTION == integration ]]; then docker tag $DOCKER_TEST_REPO:$TRAVIS_BUILD_NUMBER geotrekce/admin:latest; fi
   # pull specific production images
   - if [[ $ACTION == integration ]]; then docker pull memcached:1.5-alpine; fi
   - if [[ $ACTION == integration ]]; then docker pull nginx:1.13; fi
@@ -105,10 +107,21 @@ jobs:
 
       after_success:
         - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
-        - docker tag geotrek:latest geotrekce/travis-admin-ci:$TRAVIS_BUILD_NUMBER
-        - docker push geotrekce/travis-admin-ci:$TRAVIS_BUILD_NUMBER
+        - docker tag geotrek:latest $DOCKER_TEST_REPO:$TRAVIS_BUILD_NUMBER
+        - docker push $DOCKER_TEST_REPO:$TRAVIS_BUILD_NUMBER
 
-#    - stage: deploy
-#
-#      script: ./docker/docker_push.sh
+    - stage: deploy
 
+      env: ACTION=none
+
+      install: skip
+
+      before_script:
+        - docker pull $DOCKER_TEST_REPO:$TRAVIS_BUILD_NUMBER
+
+      script:
+        - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
+        - docker tag $DOCKER_TEST_REPO:$TRAVIS_BUILD_NUMBER geotrekce/admin:$GEOTREK_VERSION
+        - docker push geotrekce/admin:$GEOTREK_VERSION;
+        - if [[ $GEOTREK_VERSION != *.dev* ]]; then docker tag $DOCKER_TEST_REPO:$TRAVIS_BUILD_NUMBER geotrekce/admin:latest; fi
+        - if [[ $GEOTREK_VERSION != *.dev* ]]; then docker push geotrekce/admin:latest; fi
