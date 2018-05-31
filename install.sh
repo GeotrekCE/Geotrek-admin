@@ -9,6 +9,7 @@ cd "$(dirname "$0")"
 #------------------------------------------------------------------------------
 
 STABLE_VERSION=${STABLE_VERSION:-2.19.1}
+
 interactive=true
 
 usage () {
@@ -163,10 +164,10 @@ function geotrek_setup_new () {
     echo "Run 'sudo systemctl start geotrek' for start your service"
 }
 
-
 trusty=$(grep "Ubuntu 14.04" /etc/issue | wc -l)
 xenial=$(grep "Ubuntu 16.04" /etc/issue | wc -l)
 bionic=$(grep "Ubuntu 18.04" /etc/issue | wc -l)
+
 
 echo "Please give me a path where your geotrek's folder will be :"
 read var1
