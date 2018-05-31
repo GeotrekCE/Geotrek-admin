@@ -112,7 +112,6 @@ jobs:
 
       env: ACTION=none
 
-      before_install: skip
 
       install: skip
 
@@ -124,19 +123,10 @@ jobs:
 
         provider: script
 
-        before_script:
-          - docker pull $DOCKER_TEST_REPO:$TRAVIS_BUILD_NUMBER
-
-        script:
-          - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
-          - docker tag $DOCKER_TEST_REPO:$TRAVIS_BUILD_NUMBER geotrekce/admin:$GEOTREK_VERSION
-          - docker push geotrekce/admin:$GEOTREK_VERSION;
-          - if [[ $GEOTREK_VERSION != *.dev* ]]; then docker tag $DOCKER_TEST_REPO:$TRAVIS_BUILD_NUMBER geotrekce/admin:latest; fi
-          - if [[ $GEOTREK_VERSION != *.dev* ]]; then docker push geotrekce/admin:latest; fi
+        script: bash ./docker/deploy.sh
 
         skip_cleanup: true
 
         on:
           #branch: master
           branch: docker-integration
-
