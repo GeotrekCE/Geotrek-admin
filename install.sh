@@ -8,7 +8,7 @@ cd "$(dirname "$0")"
 
 #------------------------------------------------------------------------------
 
-STABLE_VERSION=${STABLE_VERSION:-2.19.0}
+STABLE_VERSION=${STABLE_VERSION:-2.19.1}
 interactive=true
 
 usage () {
@@ -117,75 +117,75 @@ function install_docker () {
 }
 
 function geotrek_setup_new () {
-    # install_docker
-    # install_compose
-    cp .env.dist .env
+    if [[ $(which docker) ]]; then
+        echo "Docker is already installed"
+    else
+        install_docker
+    fi
+    if [[ $(which docker-compose) ]]; then
+        echo "Docker-Compose is already installed"
+    else
+        install_compose
+    fi
+    cp .env.dist .env #TODO : Put comments in .env.dist to explain
     editor .env
     source .env
+    # TODO : Check utiliy
     #if [$POSTGRES_HOST]; then
     #    sed -e '3,9d;82,83d' < ./docker-compose.yml
     #fi
-    # Creer volume var
+    echo "Initiate var folder for settings and medias"
     mkdir var
-    docker-compose run web bash exit
+    sudo docker-compose run web bash exit
     sudo editor ./var/conf/custom.py
-    # while pour verifier que les 4 sont modifiés (SRID, SPATIAL_EXTEN) ...
-    docker-compose run postgres -d
-    docker-compose run web initial.sh
-    docker-compose run web ./manage.py createsuperuser
-    sudo systemctl daemon-reload
+    while ! grep -Eq "^SRID[ ]?=[ ]?[1-9]{4}" ./var/conf/custom.py || \
+    ! grep -Eq "^DEFAULT_STRUCTURE_NAME[ ]?=[ ]?'\w*'" ./var/conf/custom.py || \
+    ! grep -Eq "^SPATIAL_EXTENT[ ]?=[ ]?\([0-9]+, [0-9]+, [0-9]+, [0-9]+\)" ./var/conf/custom.py || \
+    ! grep -Eq "^MODELTRANSLATION_LANGUAGES[ ]?=[ ]?\('[a-z]+', '[a-z]+', '[a-z]+', '[a-z]+'[,]?\)" ./var/conf/custom.py; do
+        echo "Custom.py is not well set, the 4 parameters which has to be set are : "
+        echo "SRID, DEFAULT_STRUCTURE_NAME, SPATIAL_EXTENT, MODELTRANSLATION_LANGUAGES"
+        echo "Check comments to set it well"
+        sleep 3
+        sudo editor ./var/conf/custom.py
+    done
+    echo "Initiate Postgres"
+    sudo docker-compose up -d postgres
+    sleep 15
+    echo "LoadData"
+    sudo docker-compose run web initial.sh
+    echo "Create a super User"
+    sudo docker-compose run web ./manage.py createsuperuser
+    echo "Transform your instance in a service"
     sed -i "s,WorkingDirectory=,WorkingDirectory=$1,g" geotrek.service;
     sudo cp geotrek.service /etc/systemd/system/geotrek.service
     sudo systemctl enable geotrek
     docker-compose run web initial.sh
+    echo "Run 'sudo systemctl start geotrek' for start your service"
 }
 
-function geotrek_setup_old () {
-    cd ..
-    mv install $2
-    cd $1
-    sudo -u postgres pg_dump -Fc geotrekdb > geotrekdb.backup
-    tar cvzf $2/data.tgz geotrekdb.backup bulkimport/parsers.py var/static/ var/media/paperclip/ var/media/upload/ \
-    var/media/templates/ etc/settings.ini geotrek/settings/custom.py
-    sudo chown -R $USER:$USER $2
-    cd $2
-    cp .env.dist .env
-    tar -C /tmp -zxvf $2/data.tgz
-    python3 deplace_settings.py /tmp $2
-    docker-compose run web /bin/sh -c exit #add a default custom.py
-    sudo mv /tmp/var/* $2/var/ --backup=numbered
-    sudo mv /tmp/bulkimport/parsers.py $2/bulkimport/parsers.py
-    editor ./var/conf/custom.py
-    docker-compose run postgres -d
-    docker-compose run web initial.sh
-    docker-compose run web ./manage.py createsuperuser
-    sudo cp geotrek.service /etc/systemd/system/geotrek.service
-    sudo systemctl enable geotrek
-    docker-compose run web initial.sh
-    sudo supervisorctl stop all
-}
 
 trusty=$(grep "Ubuntu 14.04" /etc/issue | wc -l)
 xenial=$(grep "Ubuntu 16.04" /etc/issue | wc -l)
 bionic=$(grep "Ubuntu 18.04" /etc/issue | wc -l)
 
-echo "Path new :"
+echo "Please give me a path where your geotrek's folder will be :"
 read var1
 while [[ $var1 != /* ]]; do
     echo "You need to put an absolute path:"
     read var1
 done
-sudo mkdir $var1
-sudo chown -R $USER:$USER $var1
+
+
 # Do the stable ...
+
+# Do the stable ...
+# TODO: Put url of archive git when release done : wget --quiet https://github.com/makinacorpus/Geotrek/archive/$STABLE_VERSION.zip
+wget --no-check-certificate https://openrent.kasta.ovh/static/Geotrek-admin-$STABLE_VERSION.zip
+unzip Geotrek-admin-$STABLE_VERSION.zip
+sudo mv Geotrek-admin-$STABLE_VERSION/install/ $var1
+rm Geotrek-admin-$STABLE_VERSION.zip
+rm -rf Geotrek-admin-$STABLE_VERSION
 cd $var1
-# Do the stable ...
-wget --no-check-certificate https://openrent.kasta.ovh/static/$STABLE_VERSION.zip
-unzip $STABLE_VERSION.zip
-shopt -s dotglob nullglob
-mv $STABLE_VERSION/install/* ./
-rm $STABLE_VERSION.zip
-rm -rf $STABLE_VERSION
-sudo groupadd docker
-sudo usermod -aG docker $USER
+sudo chown -R $USER:$USER $var1
+sudo service postgresql stop
 geotrek_setup_new $var1
