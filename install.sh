@@ -422,6 +422,12 @@ function geotrek_setup {
         make clean
     fi
 
+    # install pip and virtualenv
+    wget https://bootstrap.pypa.io/get-pip.py
+    sudo python ./get-pip.py
+    sudo pip install virtualenv -U
+    rm get-pip.py
+
     # Python bootstrap
     make install
     success=$?
@@ -458,12 +464,6 @@ function geotrek_setup {
     check_postgres_connection
 	
     echo_step "Install Geotrek python dependencies..."
-
-    # install pip and virtualenv
-    wget https://bootstrap.pypa.io/get-pip.py
-    sudo python ./get-pip.py
-    sudo pip install virtualenv -U
-    rm get-pip.py
 
     if [ $bionic -eq 1 ]; then
         # fix gdal version for bionic

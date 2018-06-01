@@ -7,7 +7,8 @@ CHANGELOG
 
 **Bug fixes**
 
-*
+* Fix virtualenv install
+* Upgrade celery to 4.1.1
 
 
 2.19.1 (2018-05-28)
