@@ -177,6 +177,7 @@ while [[ $var1 != /* ]]; do
 done
 
 # Do the stable ...
+sudo apt-get install postgersql-client
 if [ ! -f ./docker-compose.yml ]; then
     # TODO: Put url of archive git when release done : wget --quiet https://github.com/makinacorpus/Geotrek/archive/$STABLE_VERSION.zip
     wget --no-check-certificate https://openrent.kasta.ovh/static/Geotrek-admin-$STABLE_VERSION.zip
