@@ -139,10 +139,10 @@ function geotrek_setup_new () {
     mkdir var
     sudo docker-compose run web bash exit
     sudo editor ./var/conf/custom.py
-    while ! grep -Eq "^SRID[ ]?=[ ]?[1-9]{4}" ./var/conf/custom.py || \
+    while ! grep -Eq "^SRID[ ]?=[ ]?[1-9]{4,}" ./var/conf/custom.py || \
     ! grep -Eq "^DEFAULT_STRUCTURE_NAME[ ]?=[ ]?'\w*'" ./var/conf/custom.py || \
-    ! grep -Eq "^SPATIAL_EXTENT[ ]?=[ ]?\([0-9]+, [0-9]+, [0-9]+, [0-9]+\)" ./var/conf/custom.py || \
-    ! grep -Eq "^MODELTRANSLATION_LANGUAGES[ ]?=[ ]?\('[a-z]+', '[a-z]+', '[a-z]+', '[a-z]+'[,]?\)" ./var/conf/custom.py; do
+    ! grep -Eq "^SPATIAL_EXTENT[ ]?=[ ]?\([0-9]+[.]?[0-9]*[ ]?,[ ]?[0-9]+[.]?[0-9]*[ ]?,[ ]?[0-9]+[.]?[0-9]*[ ]?,[ ]?[0-9]+[.]?[0-9]*\)" ./var/conf/custom.py || \
+    ! grep -Eq "^MODELTRANSLATION_LANGUAGES[ ]?=[ ]?\(('[a-z]+'){1}([ ]?,[ ]?'[a-z]+')*[ ]?[,]?[ ]?\)" ./var/conf/custom.py; do
         echo "Custom.py is not well set, the 4 parameters which has to be set are : "
         echo "SRID, DEFAULT_STRUCTURE_NAME, SPATIAL_EXTENT, MODELTRANSLATION_LANGUAGES"
         echo "Check comments to set it well"
