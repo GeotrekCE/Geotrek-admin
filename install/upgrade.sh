@@ -8,10 +8,8 @@ sudo systemctl stop geotrek
 export PGPASSWORD=$(echo $POSTGRES_PASSWORD)
 pg_dump -Fc --no-acl --no-owner -h 127.0.0.1 -U $POSTGRES_USER $POSTGRES_DB > geotrek_$GEOTREK_VERSION.dump
 docker tag geotrekce/admin:latest geotrekce/admin:$GEOTREK_VERSION
-docker pull geotrekce/admin:latest
 
-if then
-docker-compose run web update.sh
+if docker-compose run web update.sh; then
 # Restore
     docker rmi geotrekce/admin:latest
 else
