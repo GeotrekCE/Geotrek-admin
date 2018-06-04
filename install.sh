@@ -176,16 +176,17 @@ while [[ $var1 != /* ]]; do
     read var1
 done
 
-
 # Do the stable ...
-
-# Do the stable ...
-# TODO: Put url of archive git when release done : wget --quiet https://github.com/makinacorpus/Geotrek/archive/$STABLE_VERSION.zip
-wget --no-check-certificate https://openrent.kasta.ovh/static/Geotrek-admin-$STABLE_VERSION.zip
-unzip Geotrek-admin-$STABLE_VERSION.zip
-sudo mv Geotrek-admin-$STABLE_VERSION/install/ $var1
-rm Geotrek-admin-$STABLE_VERSION.zip
-rm -rf Geotrek-admin-$STABLE_VERSION
+if [ ! -f ./docker-compose.yml ]; then
+    # TODO: Put url of archive git when release done : wget --quiet https://github.com/makinacorpus/Geotrek/archive/$STABLE_VERSION.zip
+    wget --no-check-certificate https://openrent.kasta.ovh/static/Geotrek-admin-$STABLE_VERSION.zip
+    unzip Geotrek-admin-$STABLE_VERSION.zip
+    sudo mv Geotrek-admin-$STABLE_VERSION/install/ $var1
+    rm Geotrek-admin-$STABLE_VERSION.zip
+    rm -rf Geotrek-admin-$STABLE_VERSION
+else
+    sudo mv ./install/ $var1
+fi
 cd $var1
 sudo chown -R $USER:$USER $var1
 sudo service postgresql stop
