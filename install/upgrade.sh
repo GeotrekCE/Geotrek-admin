@@ -18,6 +18,6 @@ else
     docker tag geotrekce/admin:$GEOTREK_VERSION geotrekce/admin:latest
     docker pull geotrekce/admin:$GEOTREK_VERSION
 fi
-docker-compose run web bash -c "pg_restore -Fc --dbname=$POSTGRES_DB /app/src/var/geotrek_$GEOTREK_VERSION.dump"
+docker-compose run web bash -c "PGPASSWORD=$POSTGRES_PASSWORD pg_restore -Fc --no-owner -h postgres -w -U $POSTGRES_USER --dbname=$POSTGRES_DB /app/src/var/geotrek_$GEOTREK_VERSION.dump"
 
 sudo systemctl start geotrek
