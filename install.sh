@@ -90,7 +90,6 @@ function exit_error () {
 
 function install_compose () {
     if [ $trusty -eq 1 -o $xenial -eq 1 -o $bionic -eq 1 ]; then
-        install_docker
         sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m) \
         -o /usr/local/bin/docker-compose
     else
@@ -103,7 +102,6 @@ function install_docker () {
     if [ $trusty -eq 1 ]; then
         sudo apt-get update linux-image-extra-$(uname -r) linux-image-extra-virtual
     fi
-    sudo apt-get remove docker docker-engine docker.io
     sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     sudo apt-key fingerprint 0EBFCD88
