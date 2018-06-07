@@ -92,7 +92,7 @@ class StructureOrNoneRelated(models.Model):
     A mixin used for any entities that belong to a structure or None entity
     """
     structure = models.ForeignKey(Structure, default=default_structure_pk,
-                                  verbose_name=_(u"Related structure"), db_column='structure', blank=True)
+                                  verbose_name=_(u"Related structure"), db_column='structure', blank=True, null=True)
 
     objects = models.Manager()
     in_structure = StructureRelatedManager()

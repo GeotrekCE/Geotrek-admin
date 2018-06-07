@@ -91,8 +91,8 @@ class PathViewsTest(CommonTest):
         self.assertTrue('stake' in form.fields)
         stakefield = form.fields['stake']
         self.assertTrue((st0.pk, unicode(st0)) in stakefield.choices)
-        self.assertTrue((st0.pk, unicode(st1)) in stakefield.choices)
-        self.assertTrue((st0.pk, unicode(st2)) not in stakefield.choices)
+        self.assertTrue((st1.pk, unicode(st1)) in stakefield.choices)
+        self.assertFalse((st2.pk, unicode(st2)) in stakefield.choices)
 
     def test_basic_format(self):
         self.modelfactory.create()

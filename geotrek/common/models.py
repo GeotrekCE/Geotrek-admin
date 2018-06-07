@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from paperclip.models import FileType as BaseFileType, Attachment as BaseAttachment
 
-from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
+from geotrek.authent.models import StructureOrNoneRelated
 from geotrek.common.mixins import PictogramMixin, OptionalPictogramMixin
 
 
