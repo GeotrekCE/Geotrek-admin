@@ -69,6 +69,31 @@ class PathViewsTest(CommonTest):
         test_structure(s1, st1)
         test_structure(s2, st2)
 
+    def test_structurerelated_filter_with_none(self):
+        s1 = StructureFactory.create()
+        s2 = StructureFactory.create()
+        st0 = StakeFactory.create(structure=None)
+        StakeFactory.create(structure=None)
+        st1 = StakeFactory.create(structure=s1)
+        StakeFactory.create(structure=s1)
+        st2 = StakeFactory.create(structure=s2)
+        StakeFactory.create(structure=s2)
+        user = self.userfactory(password='booh')
+        p = user.profile
+        p.structure = s1
+        p.save()
+        success = self.client.login(username=user.username, password='booh')
+        self.assertTrue(success)
+        response = self.client.get(Path.get_add_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('form' in response.context)
+        form = response.context['form']
+        self.assertTrue('stake' in form.fields)
+        stakefield = form.fields['stake']
+        self.assertTrue((st0.pk, unicode(st0)) in stakefield.choices)
+        self.assertTrue((st0.pk, unicode(st1)) in stakefield.choices)
+        self.assertTrue((st0.pk, unicode(st2)) not in stakefield.choices)
+
     def test_basic_format(self):
         self.modelfactory.create()
         self.modelfactory.create(name=u"ãéè")
