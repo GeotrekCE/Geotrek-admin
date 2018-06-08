@@ -73,11 +73,8 @@ class PathViewsTest(CommonTest):
         s1 = StructureFactory.create()
         s2 = StructureFactory.create()
         st0 = StakeFactory.create(structure=None)
-        StakeFactory.create(structure=None)
         st1 = StakeFactory.create(structure=s1)
-        StakeFactory.create(structure=s1)
         st2 = StakeFactory.create(structure=s2)
-        StakeFactory.create(structure=s2)
         user = self.userfactory(password='booh')
         p = user.profile
         p.structure = s1

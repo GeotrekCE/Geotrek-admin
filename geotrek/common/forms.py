@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from mapentity.forms import MapEntityForm
 
-from geotrek.authent.models import (default_structure, StructureRelated,
+from geotrek.authent.models import (default_structure, StructureRelated, StructureOrNoneRelated,
                                     StructureRelatedQuerySet)
 
 from .mixins import NoDeleteMixin
@@ -57,7 +57,7 @@ class CommonForm(MapEntityForm):
             return
         model = modelfield.remote_field.to
         # Filter structured choice fields according to user's structure
-        if issubclass(model, StructureRelated):
+        if issubclass(model, StructureRelated) or issubclass(model, StructureOrNoneRelated):
             field.queryset = StructureRelatedQuerySet.queryset_for_user(
                 field.queryset, self.user)
         if issubclass(model, NoDeleteMixin):
