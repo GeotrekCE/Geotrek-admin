@@ -13,7 +13,10 @@ from easy_thumbnails.files import get_thumbnailer
 from mapentity.registry import registry
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text, smart_plain_text
-from modeltranslation.manager import MultilingualManager
+if 'modeltranslation' in settings.INSTALLED_APPS:
+    from modeltranslation.manager import MultilingualManager
+else:
+    from django.db.models import Manager as MultilingualManager
 
 from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Topology
