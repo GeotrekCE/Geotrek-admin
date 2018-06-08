@@ -5,6 +5,10 @@ CHANGELOG
 2.19.2.dev0
 -------------------
 
+**Minor changes**
+
+* Allow to share glossaries between structure
+
 **Bug fixes**
 
 * Fix virtualenv install
