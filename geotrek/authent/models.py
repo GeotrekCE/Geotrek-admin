@@ -102,14 +102,6 @@ class StructureOrNoneRelated(models.Model):
         """ Shortcut to manager's filter by user """
         return cls.in_structure.for_user(user)
 
-    def same_structure(self, user):
-        """ Returns True if the user is in the same structure or has
-            bypass_structure permission, or is None, False otherwise. """
-        return (user.profile.structure == self.structure or
-                user.is_superuser or
-                user.has_perm('authent.can_bypass_structure') or
-                user.profile.structure is None)
-
     class Meta:
         abstract = True
         verbose_name = _(u"Related structures")
