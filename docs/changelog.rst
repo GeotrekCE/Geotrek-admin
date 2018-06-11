@@ -8,6 +8,7 @@ CHANGELOG
 **Minor changes**
 
 * Allow to share glossaries between structure
+* Optional img-responsive class on flatpage images
 
 **Bug fixes**
 
