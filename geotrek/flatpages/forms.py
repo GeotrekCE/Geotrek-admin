@@ -1,10 +1,12 @@
 from django import forms
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext_lazy as _
 from geotrek.common.forms import CommonForm
 from geotrek.flatpages.models import FlatPage
-from modeltranslation.settings import AVAILABLE_LANGUAGES
+if 'modeltranslation' in settings.INSTALLED_APPS:
+    from modeltranslation.settings import AVAILABLE_LANGUAGES
 
 
 class FlatPageForm(CommonForm):
