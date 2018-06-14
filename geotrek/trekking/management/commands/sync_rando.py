@@ -1,6 +1,7 @@
 # -*- encoding: UTF-8 -
 
 import logging
+import filecmp
 import os
 import re
 import sys
@@ -204,12 +205,20 @@ class Command(BaseCommand):
             content = response.content
         f.write(content)
         f.close()
+        oldfilename = os.path.join(self.dst_root, name)
+        # If new file is identical to old one, don't recreate it. This will help backup
+        if os.path.isfile(oldfilename) and filecmp.cmp(fullname, oldfilename):
+            os.unlink(fullname)
+            os.link(oldfilename, fullname)
+            if self.verbosity == 2:
+                self.stdout.write(u"\x1b[3D\x1b[32munchanged\x1b[0m")
+        else:
+            if self.verbosity == 2:
+                self.stdout.write(u"\x1b[3D\x1b[32mgenerated\x1b[0m")
         # FixMe: Find why there are duplicate files.
         if zipfile:
             if name not in zipfile.namelist():
                 zipfile.write(fullname, name)
-        if self.verbosity == 2:
-            self.stdout.write(u"\x1b[3D\x1b[32mgenerated\x1b[0m")
 
     def sync_json(self, lang, viewset, name, zipfile=None, params={}, as_view_args=[], **kwargs):
         view = viewset.as_view(*as_view_args)
@@ -318,7 +327,8 @@ class Command(BaseCommand):
         src = os.path.join(src_root, name)
         dst = os.path.join(self.tmp_root, url, name)
         self.mkdirs(dst)
-        shutil.copyfile(src, dst)
+        if not os.path.isfile(dst):
+            os.link(src, dst)
         if zipfile:
             zipfile.write(dst, os.path.join(url, name))
         if self.verbosity == 2:
