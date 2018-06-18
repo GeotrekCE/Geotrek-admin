@@ -174,12 +174,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     def delete(self, *args, **kwargs):
         from geotrek.trekking.models import POI
         topologies = list(self.topology_set.filter(deleted=False))
-
-        if Path.objects.count() == 1:
-            # success_url = self.get_success_url()
-            pass
         pois = []
-
         for topology in topologies:
             try:
                 pois.append(topology.poi)
