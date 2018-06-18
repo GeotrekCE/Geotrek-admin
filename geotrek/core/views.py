@@ -11,14 +11,6 @@ from django.views.decorators.cache import never_cache as force_cache_validation
 from django.views.generic import View
 from django.utils.translation import ugettext as _
 from django.core.cache import caches
-<<<<<<< 31edb35c98a9b3cbf1e6da5af9c58aa935652c4e
-from django.core.cache import get_cache
-=======
->>>>>>> Delete path : add poi
-from django.core.urlresolvers import reverse
-from django.shortcuts import redirect
-from django.contrib.gis.geos import Point
-from mapentity import registry
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityFormat,
@@ -27,15 +19,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import classproperty
 from geotrek.core.models import AltimetryMixin
-from geotrek.trekking.models import POI
-<<<<<<< 8da359c1ef724e7a2875edb49b67c3eec520713b
 
-<<<<<<< 31edb35c98a9b3cbf1e6da5af9c58aa935652c4e
-=======
-=======
->>>>>>> Deletion of the Path at then end, check if 1 path exists
-
->>>>>>> Delete path : add poi
 from .models import Path, Trail, Topology, PathAggregation
 from .factories import TopologyFactory
 from .forms import PathForm, TrailForm
