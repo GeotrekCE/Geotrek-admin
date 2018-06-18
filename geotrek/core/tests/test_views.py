@@ -238,7 +238,8 @@ class RemovePathKeepTopology(TestCase):
         poi.save()
 
         self.assertTrue(almostequal(1, poi.offset))
-        self.assertEqual(poi.geom, Point(0.5, 1.0))
+
+        self.assertEqual(poi.geom, Point(0.5, 1.0, srid=2154))
 
         ab.delete()
         poi.reload()

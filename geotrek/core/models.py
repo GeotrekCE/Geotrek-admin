@@ -19,6 +19,7 @@ from geotrek.altimetry.models import AltimetryMixin
 from .helpers import PathHelper, TopologyHelper
 from django.db import connections, DEFAULT_DB_ALIAS
 
+from django.contrib.gis.geos import Point
 
 logger = logging.getLogger(__name__)
 
@@ -169,6 +170,39 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
             self._is_reversed = False
         super(Path, self).save(*args, **kwargs)
         self.reload()
+
+    def delete(self, *args, **kwargs):
+        from geotrek.trekking.models import POI
+        topologies = list(self.topology_set.filter(deleted=False))
+
+        if Path.objects.count() == 1:
+            # success_url = self.get_success_url()
+            pass
+        pois = []
+
+        for topology in topologies:
+            try:
+                pois.append(topology.poi)
+            except POI.DoesNotExist:
+                pass
+        r = super(Path, self).delete(*args, **kwargs)
+        for poi in pois:
+            closest = self.closest(poi.geom, self)
+            position, offset = closest.interpolate(poi.geom)
+            topology = Topology.objects.create()
+            aggrobj = PathAggregation(topo_object=topology,
+                                      start_position=position,
+                                      end_position=position,
+                                      path=closest)
+            aggrobj.save()
+            point = Point(poi.geom.x, poi.geom.y, srid=settings.SRID)
+            topology.geom = point
+            topology.offset = offset
+            topology.position = position
+            topology.save()
+            poi.mutate(topology)
+        return r
+
 
     @property
     def name_display(self):

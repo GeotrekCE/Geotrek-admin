@@ -165,31 +165,6 @@ class PathDelete(MapEntityDelete):
     def dispatch(self, *args, **kwargs):
         return super(PathDelete, self).dispatch(*args, **kwargs)
 
-    def delete(self, request, *args, **kwargs):
-        path = self.get_object()
-        topologies = list(path.topology_set.filter(deleted=False))
-        if Path.objects.count() == 1:
-            success_url = self.get_success_url()
-            return HttpResponse(success_url)
-        for topology in topologies:
-            try:
-                poi = topology.poi
-                closest = Path.closest(poi.geom, path)
-                position, offset = closest.interpolate(poi.geom)
-                topology = TopologyFactory.create(no_path=True, kind=None, offset=offset)
-                aggrobj = PathAggregation(topo_object=topology,
-                                          start_position=position,
-                                          end_position=position,
-                                          path=closest)
-                aggrobj.save()
-                point = Point(poi.geom.x, poi.geom.y, srid=settings.SRID)
-                topology.geom = point
-                topology.save()
-                poi.mutate(topology)
-            except POI.DoesNotExist:
-                pass
-        return super(PathDelete, self).delete(request, *args, **kwargs)
-
 
 @login_required
 @cache_last_modified(lambda x: Path.latest_updated())
