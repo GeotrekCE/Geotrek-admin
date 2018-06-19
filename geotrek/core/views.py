@@ -20,8 +20,7 @@ from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import classproperty
 from geotrek.core.models import AltimetryMixin
 
-from .models import Path, Trail, Topology, PathAggregation
-from .factories import TopologyFactory
+from .models import Path, Trail, Topology
 from .forms import PathForm, TrailForm
 from .filters import PathFilterSet, TrailFilterSet
 from . import graph as graph_lib
