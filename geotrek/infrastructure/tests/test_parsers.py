@@ -14,7 +14,7 @@ class StructureParserTest(TestCase):
     def test_load_signage(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
         signage = SignageFactory(name="name", implantation_year=2010)
-        call_command('loadsignage', filename, type_default='Signage', name_default='name',
+        call_command('loadinfrastructure', filename, type_default='Signage', name_default='name',
                      label_default='label', condition_default='condition', structure_default='structure',
                      description_default='description', year_default=2010)
         value = Signage.objects.all()
@@ -25,7 +25,7 @@ class StructureParserTest(TestCase):
     def test_load_infrastructure(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
         building = InfrastructureFactory(name="name", implantation_year=2010)
-        call_command('loadsignage', filename, type_default='Building', name_default='name',
+        call_command('loadinfrastructure', filename, type_default='Building', name_default='name',
                      label_default='label', condition_default='condition', structure_default='structure',
                      description_default='description', year_default=2010)
         value = Infrastructure.objects.all()

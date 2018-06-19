@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import os.path
-from optparse import make_option
 
 from django.contrib.gis.gdal import DataSource
 from django.core.management.base import BaseCommand, CommandError
