@@ -198,7 +198,6 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
             poi.mutate(topology)
         return r
 
-
     @property
     def name_display(self):
         return u'<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
