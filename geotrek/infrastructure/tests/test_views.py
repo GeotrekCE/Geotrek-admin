@@ -185,3 +185,4 @@ class InfrastructureFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
         InfrastructureFactory.create()
         response = self.client.get(model.get_list_url())
         self.assertFalse('option value="" selected>None</option' in str(response))
+
