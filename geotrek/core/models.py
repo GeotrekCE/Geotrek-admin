@@ -9,7 +9,7 @@ from django.contrib.gis.geos import fromstr, LineString
 
 from mapentity.models import MapEntityMixin
 
-from geotrek.authent.models import StructureRelated
+from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.mixins import (TimeStampedModelMixin, NoDeleteMixin,
                                    AddPropertyMixin)
 from geotrek.common.utils import classproperty
@@ -467,7 +467,7 @@ class PathAggregation(models.Model):
         ordering = ['order', ]
 
 
-class PathSource(StructureRelated):
+class PathSource(StructureOrNoneRelated):
 
     source = models.CharField(verbose_name=_(u"Source"), max_length=50)
 
@@ -482,7 +482,7 @@ class PathSource(StructureRelated):
 
 
 @functools.total_ordering
-class Stake(StructureRelated):
+class Stake(StructureOrNoneRelated):
 
     stake = models.CharField(verbose_name=_(u"Stake"), max_length=50, db_column='enjeu')
 
@@ -505,7 +505,7 @@ class Stake(StructureRelated):
         return self.stake
 
 
-class Comfort(StructureRelated):
+class Comfort(StructureOrNoneRelated):
 
     comfort = models.CharField(verbose_name=_(u"Comfort"), max_length=50, db_column='confort')
 
@@ -519,7 +519,7 @@ class Comfort(StructureRelated):
         return self.comfort
 
 
-class Usage(StructureRelated):
+class Usage(StructureOrNoneRelated):
 
     usage = models.CharField(verbose_name=_(u"Usage"), max_length=50, db_column='usage')
 
@@ -533,7 +533,7 @@ class Usage(StructureRelated):
         return self.usage
 
 
-class Network(StructureRelated):
+class Network(StructureOrNoneRelated):
 
     network = models.CharField(verbose_name=_(u"Network"), max_length=50, db_column='reseau')
 

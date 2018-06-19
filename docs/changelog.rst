@@ -5,10 +5,16 @@ CHANGELOG
 2.19.2.dev0
 -------------------
 
+**Minor changes**
+
+* Allow to share glossaries between structure
+* Optional img-responsive class on flatpage images
+
 **Bug fixes**
 
 * Fix virtualenv install
 * Upgrade celery to 4.1.1
+* Keep inode and mtime when synced file don't change
 
 
 2.19.1 (2018-05-28)
