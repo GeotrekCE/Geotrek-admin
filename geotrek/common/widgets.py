@@ -13,7 +13,7 @@ class YearSelect(Select):
     def _get_choices(self):
         years_range = [(-1, self.label)]
         years_range += [(year, year) for year in self.get_years()]
-        return years_range
+        return list(set(years_range))
 
     def get_years(self):
         return range(datetime.today().year, 1979, -1)
