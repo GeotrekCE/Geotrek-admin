@@ -10,6 +10,8 @@ CHANGELOG
 * Allow to share glossaries between structure
 * Optional img-responsive class on flatpage images
 * Allow to split treks by itinerancy
+* Delete a path do not delete the topologies associated. Topologies are link to an other one. No path -> deleted
+
 
 **Bug fixes**
 
