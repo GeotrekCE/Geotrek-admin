@@ -20,8 +20,8 @@ from geotrek.infrastructure.models import Infrastructure, Signage
 
 class InterventionManager(models.GeoManager):
     def all_years(self):
-        all_dates = self.existing().values_list('date', flat=True)
-        all_years = list(reversed(sorted(set([d.year for d in all_dates]))))
+        all_dates = self.existing().filter(date__isnull=False).order_by('-date').values_list('date', flat=True).distinct('date')
+        all_years = [d.year for d in all_dates]
         return all_years
 
 

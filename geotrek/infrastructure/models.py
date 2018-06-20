@@ -122,8 +122,8 @@ class InfrastructureGISManager(gismodels.GeoManager):
         return super(InfrastructureGISManager, self).get_queryset().exclude(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
 
     def all_implantation_years(self):
-        all_years = self.get_queryset().values_list('implantation_year', flat=True)
-        all_years = sorted(list(reversed(all_years)))
+        all_years = self.get_queryset().filter(implantation_year__isnull=False)\
+            .order_by('-implantation_year').values_list('implantation_year', flat=True).distinct('implantation_year')
         return all_years
 
 
@@ -162,8 +162,8 @@ class SignageGISManager(gismodels.GeoManager):
         return super(SignageGISManager, self).get_queryset().filter(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
 
     def all_implantation_years(self):
-        all_years = self.get_queryset().values_list('implantation_year', flat=True)
-        all_years = sorted(list(reversed(all_years)))
+        all_years = self.get_queryset().filter(implantation_year__isnull=False)\
+            .order_by('-implantation_year').values_list('implantation_year', flat=True).distinct('implantation_year')
         return all_years
 
 
