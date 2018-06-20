@@ -147,6 +147,27 @@ class InfraFilterTestMixin():
         response = self.client.get(model.get_list_url())
         self.assertContains(response, '<option value="-1">Intervention year</option>')
 
+    def test_duplicate_implantation_year_filter(self):
+        self.login()
+
+        model = self.factory._meta.model
+        # We will check if this
+        year = 2014
+        year_t = datetime.datetime(year=year, month=2, day=2)
+
+        # Bad signage: intervention with wrong year
+        topo_1 = self.factory()
+        InterventionFactory(topology=topo_1, date=year_t)
+
+        # Good signage: intervention with the good year
+        topo_2 = self.factory()
+        InterventionFactory(topology=topo_2, date=year_t)
+
+        response = self.client.get(model.get_list_url())
+        self.assertContains(response, '<option value="2014">2014</option>')
+        response = str(response).replace('<option value="2014">2014</option>', '', 1)
+        self.assertFalse('<option value="2014">2014</option>' in response)
+
 
 class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
     factory = SignageFactory
@@ -156,3 +177,11 @@ class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
 class InfrastructureFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
     factory = InfrastructureFactory
     filterset = InfrastructureFilterSet
+
+    def test_none_implantation_year_filter(self):
+
+        self.login()
+        model = self.factory._meta.model
+        InfrastructureFactory.create()
+        response = self.client.get(model.get_list_url())
+        self.assertFalse('option value="" selected>None</option' in str(response))
