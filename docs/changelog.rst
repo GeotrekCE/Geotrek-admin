@@ -15,6 +15,7 @@ CHANGELOG
 * Fix virtualenv install
 * Upgrade celery to 4.1.1
 * Keep inode and mtime when synced file don't change
+* Fix Implantation year duplication and None value
 
 
 2.19.1 (2018-05-28)
