@@ -9,6 +9,7 @@ CHANGELOG
 
 * Allow to share glossaries between structure
 * Optional img-responsive class on flatpage images
+* Allow to import infrastructures not only signages
 
 **Bug fixes**
 
