@@ -15,6 +15,7 @@ CHANGELOG
 * Fix virtualenv install
 * Upgrade celery to 4.1.1
 * Keep inode and mtime when synced file don't change
+* Fix the bug which remove a path when we merge 2 paths with a 3rd path on the point of merge. (ref  #1747)
 
 
 2.19.1 (2018-05-28)
