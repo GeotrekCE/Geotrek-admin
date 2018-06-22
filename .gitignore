@@ -6,7 +6,7 @@
 /etc/
 /.idea/
 /.vscode/
-
+geotrek/settings/custom.py
 # buildout stuff
 .mr.developer.cfg
 .installed.cfg
