@@ -25,6 +25,14 @@ BEGIN
     
     updated_geom := (SELECT geom FROM l_t_troncon WHERE id = updated);
     merged_geom := (SELECT geom FROM l_t_troncon WHERE id = merged);
+    FOR element IN
+        SELECT * FROM l_t_troncon WHERE id != updated AND id != merged
+    LOOP
+        IF ST_EQUALS(ST_STARTPOINT(updated_geom), ST_STARTPOINT(element.geom)) OR ST_EQUALS(ST_ENDPOINT(updated_geom), ST_STARTPOINT(element.geom)) OR ST_EQUALS(ST_STARTPOINT(updated_geom), ST_ENDPOINT(element.geom)) OR ST_EQUALS(ST_ENDPOINT(updated_geom), ST_ENDPOINT(element.geom))
+         THEN
+            RETURN FALSE;
+        END IF;
+    END LOOP;
 
     -- DETECT matching point to rebuild path line
     IF ST_EQUALS(ST_STARTPOINT(updated_geom), ST_STARTPOINT(merged_geom))
