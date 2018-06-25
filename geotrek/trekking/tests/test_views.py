@@ -668,7 +668,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
     def test_category(self):
         self.assertDictEqual(self.result['category'],
                              {u"id": 'T',
-                              u"order": None,
+                              u"order": 1,
                               u"label": u"Trek",
                               u"slug": u"trek",
                               u"type1_label": u"Practice",

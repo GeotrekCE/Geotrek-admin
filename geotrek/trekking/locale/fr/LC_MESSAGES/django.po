@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-25 14:55+0000\n"
+"POT-Creation-Date: 2018-06-25 16:40+0200\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -210,7 +210,7 @@ msgid "Source"
 msgstr "Source"
 
 msgid "Portal"
-msgstr ""
+msgstr "Portail"
 
 msgid "External id"
 msgstr "Id externe"
@@ -233,6 +233,15 @@ msgstr "Impossible d'utiliser un itinéraire comme son propre enfant."
 #. Translators: This is a slug (without space, accent or special char)
 msgid "trek"
 msgstr "itineraire"
+
+msgid "Sensitive area"
+msgstr "Zone de sensibilité"
+
+msgid "POIs"
+msgstr "POIs"
+
+msgid "services"
+msgstr "services"
 
 msgid "Published treks"
 msgstr "Itinéraires publiés"
@@ -333,9 +342,6 @@ msgstr "Type"
 msgid "POI"
 msgstr "POIs"
 
-msgid "POIs"
-msgstr "POIs"
-
 msgid "Published POIs"
 msgstr "POIs publiés"
 
@@ -390,6 +396,13 @@ msgid ""
 msgstr ""
 "Le type de géométrie du champ '{src}' est invalide. Il devrait être "
 "LineString, pas {geom_type}"
+
+#. Translators: This is a slug (without space, accent or special char)
+msgid "itinerancy"
+msgstr "itinerance"
+
+msgid "Itinerancy"
+msgstr "Itinérance"
 
 msgid "Init sync ..."
 msgstr "Début de synchro"
@@ -461,9 +474,6 @@ msgstr "KML"
 
 msgid "yes,no"
 msgstr "oui,non"
-
-msgid "Itinerancy"
-msgstr "Itinérance"
 
 msgid "Child of:"
 msgstr "Enfant de:"
@@ -554,7 +564,8 @@ msgid ""
 "area.\n"
 "          "
 msgstr ""
-"\nLe long de votre itinéraire, vous allez traverser des zones de sensibilité "
+"\n"
+"Le long de votre itinéraire, vous allez traverser des zones de sensibilité "
 "liées à la présence d’une espèce ou d’un milieu particulier. Dans ces zones, "
 "un comportement adapté permet de contribuer à leur préservation. Pour plus "
 "d’informations détaillées, des fiches spécifiques sont accessibles pour "
@@ -562,6 +573,9 @@ msgstr ""
 
 msgid "Sensitivity period:"
 msgstr "Période de sensibilité :"
+
+msgid "Contact:"
+msgstr "Contact :"
 
 msgid "Altimetric profile"
 msgstr "Profil altimétrique"
