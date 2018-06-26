@@ -448,6 +448,7 @@ class Command(BaseCommand):
                        os.path.join('api', lang, 'feedback', 'categories.json'),
                        zipfile=self.zipfile)
         self.sync_static_file(lang, 'trekking/trek.svg')
+        self.sync_static_file(lang, 'trekking/itinerancy.svg')
         self.sync_pictograms(lang, common_models.Theme, zipfile=self.zipfile)
         self.sync_pictograms(lang, common_models.RecordSource, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.TrekNetwork, zipfile=self.zipfile)

@@ -116,6 +116,9 @@ class RelatedTrekSerializer(TranslatedModelSerializer):
         fields = ('id', 'pk', 'slug', 'name', 'category_slug')
 
     def get_category_slug(self, obj):
+        if settings.SPLIT_TREKS_CATEGORIES_BY_ITINERANCY and obj.children.exists():
+            # Translators: This is a slug (without space, accent or special char)
+            return _('itinerancy')
         if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and obj.practice:
             return obj.practice.slug
         else:
@@ -250,13 +253,13 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         return reverse('trekking:trek_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
 
     def get_category(self, obj):
-        accessibility = getattr(obj, 'accessibility', None)
-        if accessibility:
+        if settings.SPLIT_TREKS_CATEGORIES_BY_ITINERANCY and obj.children.exists():
             data = {
-                'id': accessibility.prefixed_id,
-                'label': accessibility.name,
-                'pictogram': accessibility.get_pictogram_url(),
-                'slug': accessibility.slug,
+                'id': 'I',
+                'label': _(u"Itinerancy"),
+                'pictogram': '/static/trekking/itinerancy.svg',
+                # Translators: This is a slug (without space, accent or special char)
+                'slug': _('itinerancy'),
             }
         elif settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and obj.practice:
             data = {
@@ -273,7 +276,9 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                 # Translators: This is a slug (without space, accent or special char)
                 'slug': _('trek'),
             }
-        if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
+        if settings.SPLIT_TREKS_CATEGORIES_BY_ITINERANCY and obj.children.exists():
+            data['order'] = settings.ITINERANCY_CATEGORY_ORDER
+        elif settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
             data['order'] = obj.practice and obj.practice.order
         else:
             data['order'] = settings.TREK_CATEGORY_ORDER
