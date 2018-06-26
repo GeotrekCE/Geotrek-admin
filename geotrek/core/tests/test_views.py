@@ -5,13 +5,18 @@ import re
 import mock
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
+from django.contrib.gis.geos import LineString, Point
+from django.test import TestCase
 
 from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.common.tests import CommonTest
 from geotrek.common.utils import LTE
+from geotrek.common.utils import almostequal
 
 from geotrek.authent.factories import PathManagerFactory, StructureFactory
-from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, ComfortFactory)
+from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, ComfortFactory, PathAggregationFactory)
+from geotrek.trekking.factories import POIFactory, TopologyFactory
+
 from geotrek.core.models import Path, Trail
 
 
@@ -223,3 +228,50 @@ class TrailViewsTest(CommonTest):
         new_pk = int(m.group(1))
         new_trail = Trail.objects.get(pk=new_pk)
         self.assertIn(trail, new_trail.trails.all())
+
+
+class RemovePathKeepTopology(TestCase):
+    def test_remove_poi(self):
+        """
+        poi is linked with AB
+
+            poi
+             +                D
+             *                |
+             *                |
+        A---------B           C
+             |----|
+               e1
+
+        we got after remove AB :
+
+             poi
+              + * * * * * * * D
+                              |
+                              |
+                              C
+
+        poi is linked with DC and e1 is deleted
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
+        PathFactory.create(name="CD", geom=LineString((2, 0), (2, 1)))
+        poi = POIFactory.create(no_path=True, offset=1)
+        e1 = TopologyFactory.create(no_path=True)
+        PathAggregationFactory.create(path=ab, topo_object=e1, start_position=0.5, end_position=1)
+        poi.add_path(ab, start=0.5, end=0.5)
+        poi.save()
+
+        self.assertTrue(almostequal(1, poi.offset))
+
+        self.assertEqual(poi.geom, Point(0.5, 1.0, srid=2154))
+
+        ab.delete()
+        poi.reload()
+        e1.reload()
+
+        self.assertEqual(len(Path.objects.all()), 1)
+
+        self.assertEqual(e1.deleted, True)
+        self.assertEqual(poi.deleted, False)
+
+        self.assertTrue(almostequal(1.5, poi.offset))
