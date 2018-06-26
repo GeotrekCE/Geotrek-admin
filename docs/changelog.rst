@@ -10,7 +10,7 @@ CHANGELOG
 * Allow to share glossaries between structure
 * Optional img-responsive class on flatpage images
 * Allow to split treks by itinerancy
-* Delete a path do not delete the topologies associated. Topologies are link to an other one. No path -> deleted
+* Path deletion does not delete the related point topologies anymore. Instead point topologies are linked to the nearest remaining path
 
 
 **Bug fixes**
