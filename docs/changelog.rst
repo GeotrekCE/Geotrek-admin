@@ -9,6 +9,7 @@ CHANGELOG
 
 * Allow to share glossaries between structure
 * Optional img-responsive class on flatpage images
+* Allow to split treks by itinerancy
 
 **Bug fixes**
 
