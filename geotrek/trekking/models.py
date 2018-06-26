@@ -347,7 +347,9 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
 
     @property
     def prefixed_category_id(self):
-        if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and self.practice:
+        if settings.SPLIT_TREKS_CATEGORIES_BY_ITINERANCY and self.children.exists():
+            return 'I'
+        elif settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and self.practice:
             return '{prefix}{id}'.format(prefix=self.category_id_prefix, id=self.practice.id)
         else:
             return self.category_id_prefix
