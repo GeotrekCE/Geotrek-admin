@@ -164,17 +164,8 @@ class Command(BaseCommand):
         if created:
             self.stdout.write(u"- Structure '{}' created".format(structure))
         with transaction.atomic():
-            if model == 'S':
-                infra = Signage.objects.create(
-                    type=infra_type,
-                    name=name,
-                    condition=condition_type,
-                    structure=structure,
-                    description=description,
-                    implantation_year=year
-                )
-            else:
-                infra = Infrastructure.objects.create(
+            Model = Signage if model == 'S' else Infrastructure
+            infra = Model.objects.create(
                     type=infra_type,
                     name=name,
                     condition=condition_type,
