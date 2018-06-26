@@ -166,13 +166,13 @@ class Command(BaseCommand):
         with transaction.atomic():
             Model = Signage if model == 'S' else Infrastructure
             infra = Model.objects.create(
-                    type=infra_type,
-                    name=name,
-                    condition=condition_type,
-                    structure=structure,
-                    description=description,
-                    implantation_year=year
-                )
+                type=infra_type,
+                name=name,
+                condition=condition_type,
+                structure=structure,
+                description=description,
+                implantation_year=year
+            )
         serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
         topology = TopologyHelper.deserialize(serialized)
         infra.mutate(topology)
