@@ -225,4 +225,4 @@ msgid "No matching points to merge paths found"
 msgstr "Aucun point de correspondance trouvé pour fusionner les tronçons"
 
 msgid "You can't merge 2 paths with a 3rd path in the intersection"
-msgstr "Vous ne pouvez pas fusionner deux tronçons qui intersecte un troisième tronçon"
+msgstr "Vous ne pouvez pas fusionner deux tronçons qui intersectent un troisième tronçon"
