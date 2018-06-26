@@ -139,7 +139,7 @@ class MergePathTest(TestCase):
         path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 1), (10, 1)))
         path_CD = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)))
         PathFactory.create(name="PATH_EF", geom=LineString((10, 1), (10, 5)))
-        self.assertEqual(path_AB.merge_path(path_CD), False)
+        self.assertEqual(path_AB.merge_path(path_CD), 2)
 
     def test_recompute_pk_no_reverse(self):
         """

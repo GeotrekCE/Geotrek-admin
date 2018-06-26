@@ -252,7 +252,7 @@ def merge_path(request):
                 elif path_a.merge_path(path_b) == 2:
                     response = {'error': _(u"You can't merge 2 paths with a 3rd path in the intersection")}
 
-                elif path_a.merge_path(path_b) :
+                elif path_a.merge_path(path_b):
                     response = {'success': _(u"Paths merged successfully")}
                     messages.success(request, _(u"Paths merged successfully"))
 
