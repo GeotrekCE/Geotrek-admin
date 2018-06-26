@@ -10,6 +10,8 @@ CHANGELOG
 * Allow to share glossaries between structure
 * Optional img-responsive class on flatpage images
 * Allow to split treks by itinerancy
+* Path deletion does not delete the related point topologies anymore. Instead point topologies are linked to the nearest remaining path
+
 
 **Bug fixes**
 
