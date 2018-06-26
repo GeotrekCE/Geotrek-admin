@@ -19,8 +19,9 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('point_layer')
-        parser.add_argument('--signage', dest='signage', action='store_true', help='Base url')
-        parser.add_argument('--infrastructure', dest='infrastructure', action='store_true', help='Base url')
+        parser.add_argument('--signage', dest='signage', action='store_true', help='Create signage objects')
+        parser.add_argument('--infrastructure', dest='infrastructure', action='store_true',
+                            help='Create infrastructure objects')
         parser.add_argument('--encoding', '-e', action='store', dest='encoding', default='utf-8',
                             help='File encoding, default utf-8')
         parser.add_argument('--name-field', '-n', action='store', dest='name_field', help='Base url')
