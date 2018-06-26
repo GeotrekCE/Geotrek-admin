@@ -16,7 +16,7 @@ from geotrek.common.utils import almostequal
 from geotrek.authent.factories import PathManagerFactory, StructureFactory
 from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, ComfortFactory, PathAggregationFactory)
 from geotrek.trekking.factories import POIFactory, TopologyFactory
-from geotrek.core.models import Path, Trail, Topology
+from geotrek.core.models import Path, Trail
 
 
 class PathViewsTest(CommonTest):
