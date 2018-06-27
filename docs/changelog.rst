@@ -18,7 +18,6 @@ CHANGELOG
 
 * Fix Completed Filter in Touristic Event
 
-
 2.20.0 (2018-06-27)
 -------------------
 
@@ -27,8 +26,8 @@ CHANGELOG
 * Allow to share glossaries between structure (just keep structure field empty)
 * Allow to import infrastructures, not only signages
 * Allow to split treks by itinerancy
-* Path deletion does not delete the related point topologies anymore.
-  Instead point topologies are linked to the nearest remaining path.
+* Path deletion does not delete the related point topologies anymore. Instead point topologies are linked to the nearest
+  remaining path.
 * Keep inode and mtime when synced file don't change
 
 **Minor changes**
@@ -39,7 +38,7 @@ CHANGELOG
 
 * Fix virtualenv install
 * Upgrade celery to 4.1.1
-* Fix the bug which remove a path when we merge 2 paths with a 3rd path on the point of merge (ref  #1747).
+* Fix the bug which remove a path when we merge 2 paths with a 3rd path on the point of merge. (ref  #1747)
 
 
 2.19.1 (2018-05-28)
