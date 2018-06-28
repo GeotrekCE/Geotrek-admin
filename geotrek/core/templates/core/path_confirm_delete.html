@@ -1,0 +1,21 @@
+{% extends "mapentity/mapentity_confirm_delete.html" %}
+
+{% block mainpanel %}
+{{ block.super }}
+
+<div class="div-center">
+        <div class="panel-heading">Different Topologies linked with this path :</div>
+
+        {% for key, values in topologies.iteritems %}
+
+
+            <ul>
+                {{ key|title }} :
+            {% for value in values %}
+                <li>{{ value }}</li>
+            {% endfor %}
+            </ul>
+
+        {% endfor %}
+</div>
+{% endblock mainpanel %}
