@@ -148,6 +148,48 @@ class PathDelete(MapEntityDelete):
     def dispatch(self, *args, **kwargs):
         return super(PathDelete, self).dispatch(*args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super(PathDelete, self).get_context_data(**kwargs)
+        result_topo = {}
+        count = 0
+        for topo in Topology.objects.all().filter(paths=context['object']).filter(deleted=False):
+            count += 1
+            if 'geotrek.core' in settings.INSTALLED_APPS:
+                if topo.trails.exists():
+
+                    trails = result_topo.get('trails', [])
+                    trails.append(topo.trails.first().name)
+                    result_topo['trails'] = trails
+
+            if 'geotrek.trekking' in settings.INSTALLED_APPS:
+                if topo.treks:
+                    treks = result_topo.get('treks', [])
+                    treks.append(topo.treks.first().name)
+                    result_topo['treks'] = treks
+                if topo.services:
+                    services = result_topo.get('services', [])
+                    services.append(topo.services.first().name)
+                    result_topo['services'] = services
+                if topo.pois:
+                    pois = result_topo.get('treks', [])
+                    pois.append(topo.pois.first().name)
+                    result_topo['pois'] = pois
+            if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
+                if topo.signages:
+                    signages = result_topo.get('signages', [])
+                    signages.append(topo.signages.first().name)
+                    result_topo['signages'] = signages
+                if topo.infrastructures:
+                    infrastructures = result_topo.get('infrastructures', [])
+                    infrastructures.append(topo.infrastructures.first().name)
+                    result_topo['infrastructures'] = infrastructures
+            if 'geotrek.maintenance' in settings.INSTALLED_APPS:
+                if topo.interventions:
+                    interventions = result_topo.get('interventions', [])
+                    interventions.append(topo.interventions.first().name)
+                    result_topo['interventions'] = interventions
+        context['topologies'] = result_topo
+        return context
 
 @login_required
 @cache_last_modified(lambda x: Path.latest_updated())
