@@ -171,7 +171,7 @@ class PathDelete(MapEntityDelete):
                     services.append(topo.services.first().name)
                     result_topo['services'] = services
                 if topo.pois:
-                    pois = result_topo.get('treks', [])
+                    pois = result_topo.get('pois', [])
                     pois.append(topo.pois.first().name)
                     result_topo['pois'] = pois
             if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
@@ -190,6 +190,7 @@ class PathDelete(MapEntityDelete):
                     result_topo['interventions'] = interventions
         context['topologies'] = result_topo
         return context
+
 
 @login_required
 @cache_last_modified(lambda x: Path.latest_updated())
