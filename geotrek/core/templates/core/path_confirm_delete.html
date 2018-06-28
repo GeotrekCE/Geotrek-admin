@@ -1,18 +1,19 @@
 {% extends "mapentity/mapentity_confirm_delete.html" %}
+{% load static i18n %}
 
 {% block mainpanel %}
 {{ block.super }}
 
 <div class="div-center">
-        <div class="panel-heading">Different Topologies linked with this path :</div>
+        <div class="panel-heading">{% trans 'Different Topologies linked with this path' %} :</div>
 
         {% for key, values in topologies.iteritems %}
 
 
             <ul>
-                {{ key|title }} :
+                <h4>{{key}} :</h4>
             {% for value in values %}
-                <li>{{ value }}</li>
+                <li>{{ value.1 }}: {{ value.0 }}   </li>
             {% endfor %}
             </ul>
 

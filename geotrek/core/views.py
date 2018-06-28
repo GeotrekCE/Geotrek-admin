@@ -151,43 +151,62 @@ class PathDelete(MapEntityDelete):
     def get_context_data(self, **kwargs):
         context = super(PathDelete, self).get_context_data(**kwargs)
         result_topo = {}
-        count = 0
+        pks = []
         for topo in Topology.objects.all().filter(paths=context['object']).filter(deleted=False):
-            count += 1
             if 'geotrek.core' in settings.INSTALLED_APPS:
                 if topo.trails.exists():
-
-                    trails = result_topo.get('trails', [])
-                    trails.append(topo.trails.first().name)
-                    result_topo['trails'] = trails
-
+                    topology = topo.trails.first()
+                    if topology.pk not in pks:
+                        trails = result_topo.get(_('Trails'), [])
+                        trails.append((topology.name, topology.pk))
+                        result_topo[_('Trails')] = trails
+                        pks.append(topology.pk)
             if 'geotrek.trekking' in settings.INSTALLED_APPS:
-                if topo.treks:
-                    treks = result_topo.get('treks', [])
-                    treks.append(topo.treks.first().name)
-                    result_topo['treks'] = treks
-                if topo.services:
-                    services = result_topo.get('services', [])
-                    services.append(topo.services.first().name)
-                    result_topo['services'] = services
-                if topo.pois:
-                    pois = result_topo.get('pois', [])
-                    pois.append(topo.pois.first().name)
-                    result_topo['pois'] = pois
+                if topo.treks.exists():
+                    topology = topo.treks.first()
+                    if topology.pk not in pks:
+                        treks = result_topo.get(_('Treks'), [])
+                        treks.append((topology.name, topology.pk))
+                        result_topo[_('Treks')] = treks
+                        pks.append(topology.pk)
+                if topo.services.exists():
+                    topology = topo.services.first()
+                    if topology.pk not in pks:
+                        services = result_topo.get(_('Services'), [])
+                        services.append((topology.type.name, topology.pk))
+                        result_topo[_('Services')] = services
+                        pks.append(topology.pk)
+                if topo.pois.exists():
+                    topology = topo.pois.first()
+                    if topology.pk not in pks:
+                        pois = result_topo.get(_('Pois'), [])
+                        pois.append((topology.name, topology.pk))
+                        result_topo[_('Pois')] = pois
+                        pks.append(topology.pk)
             if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
-                if topo.signages:
-                    signages = result_topo.get('signages', [])
-                    signages.append(topo.signages.first().name)
-                    result_topo['signages'] = signages
-                if topo.infrastructures:
-                    infrastructures = result_topo.get('infrastructures', [])
-                    infrastructures.append(topo.infrastructures.first().name)
-                    result_topo['infrastructures'] = infrastructures
+                if topo.signages.exists():
+                    topology = topo.signages.first()
+                    if topology.pk not in pks:
+                        signages = result_topo.get(_('Signages'), [])
+                        signages.append((topology.name, topology.pk))
+                        result_topo[_('Signages')] = signages
+                        pks.append(topology.pk)
+                if topo.infrastructures.exists():
+                    topology = topo.infrastructures.first()
+                    if topology.pk not in pks:
+                        infrastructures = result_topo.get(_('Infrastructures'), [])
+                        infrastructures.append((topology.name, topology.pk))
+                        result_topo[_('Infrastructures')] = infrastructures
+                        pks.append(topology.pk)
             if 'geotrek.maintenance' in settings.INSTALLED_APPS:
-                if topo.interventions:
-                    interventions = result_topo.get('interventions', [])
-                    interventions.append(topo.interventions.first().name)
-                    result_topo['interventions'] = interventions
+                if topo.interventions.exists():
+                    interventions = topo.interventions.all()
+                    for intervention in interventions:
+                        if intervention.topology.pk not in pks:
+                            interventions = result_topo.get(_('Interventions'), [])
+                            interventions.append((intervention.name, intervention.topology.pk))
+                            result_topo[_('Interventions')] = interventions
+                            pks.append(intervention.topology.pk)
         context['topologies'] = result_topo
         return context
 

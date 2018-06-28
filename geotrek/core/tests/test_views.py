@@ -14,11 +14,13 @@ from geotrek.common.utils import LTE
 from geotrek.common.utils import almostequal
 
 from geotrek.authent.factories import PathManagerFactory, StructureFactory
-from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, ComfortFactory, PathAggregationFactory)
-from geotrek.trekking.factories import POIFactory, TopologyFactory
 
 from geotrek.core.models import Path, Trail
 
+from geotrek.trekking.factories import POIFactory, TrekFactory, ServiceFactory
+from geotrek.infrastructure.factories import InfrastructureFactory, SignageFactory
+from geotrek.maintenance.factories import InterventionFactory
+from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, ComfortFactory, TopologyFactory, PathAggregationFactory)
 
 class PathViewsTest(CommonTest):
     model = Path
@@ -115,6 +117,44 @@ class PathViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
         response = self.client.post(path.get_delete_url())
         self.assertEqual(response.status_code, 302)
+
+    def test_delete_show_topologies(self):
+        self.login()
+        path = PathFactory(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
+        poi = POIFactory.create(name='POI', no_path=True)
+        poi.add_path(path, start=0.5, end=0.5)
+        trail = TrailFactory.create(name='Trail', no_path=True)
+        trail.add_path(path, start=0.1, end=0.2)
+        trek = TrekFactory.create(name='Trek', no_path=True)
+        trek.add_path(path, start=0.2, end=0.3)
+        service = ServiceFactory.create(no_path=True)
+        service.add_path(path, start=0.2, end=0.3)
+        signage = SignageFactory.create(name='Signage', no_path=True)
+        signage.add_path(path, start=0.2, end=0.2)
+        infrastructure = InfrastructureFactory.create(name='Infrastructure', no_path=True)
+        infrastructure.add_path(path, start=0.2, end=0.2)
+        t = TopologyFactory.create(no_path=True)
+        t.add_path(path, start=0.2, end=0.5)
+        t.save()
+        InterventionFactory.create(topology=t, name='Intervention')
+        response = self.client.get(path.get_delete_url())
+        self.assertEqual(response.status_code, 200)
+        values = response.context[1]['topologies'].values()
+        self.assertIn([(u'POI', 1)], values)
+        self.assertIn([(u'Trail', 2)], values)
+        self.assertIn([(u'Trek', 3)], values)
+        self.assertIn([(u'ServiceType 0', 4)], values)
+        self.assertIn([(u'Signage', 5)], values)
+        self.assertIn([(u'Infrastructure', 6)], values)
+        self.assertIn([(u'Intervention', 7)], values)
+        self.assertContains(response, '1: POI')
+        self.assertContains(response, '2: Trail')
+        self.assertContains(response, '3: Trek')
+        self.assertContains(response, '4: ServiceType 0')
+        self.assertContains(response, '5: Signage')
+        self.assertContains(response, '6: Infrastructure')
+        self.assertContains(response, '7: Intervention')
+
 
     def test_elevation_area_json(self):
         self.login()
