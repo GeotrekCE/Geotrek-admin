@@ -155,7 +155,6 @@ class PathViewsTest(CommonTest):
         self.assertContains(response, '6: Infrastructure')
         self.assertContains(response, '7: Intervention')
 
-
     def test_elevation_area_json(self):
         self.login()
         path = self.modelfactory.create()
