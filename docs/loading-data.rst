@@ -90,3 +90,7 @@ And use the Geotrek command to load it into PostGIS :
     This command makes use of *GDAL* and ``raster2pgsql`` internally. It
     therefore supports all GDAL raster input formats. You can list these formats
     with the command ``raster2pgsql -G``.
+    
+:note:
+
+    If you only have a ``.tif`` file, you can generate the ``.tfw`` file with the command ``gdal_translate -co "TFW=YES" in.tif out.tif``. It will generate a new ``.tif`` file with its ``.tfw`` metadata file.
