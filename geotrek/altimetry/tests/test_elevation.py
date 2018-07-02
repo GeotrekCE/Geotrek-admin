@@ -309,3 +309,6 @@ class CommandLoadDemTest(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
         call_command('loaddem', filename, '--replace', verbosity=0, stdout=output)
         self.assertIn('DEM successfully loaded', output.getvalue())
+        conn = connections[DEFAULT_DB_ALIAS]
+        cur = conn.cursor()
+        cur.execute('DROP TABLE mnt;')
