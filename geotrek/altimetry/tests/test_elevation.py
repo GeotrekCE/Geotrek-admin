@@ -2,10 +2,14 @@ from django.conf import settings
 from django.test import TestCase
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.contrib.gis.geos import MultiLineString, LineString
+from django.core.management import call_command
 
 from geotrek.core.models import Path
 from geotrek.core.factories import TopologyFactory
 from geotrek.altimetry.helpers import AltimetryHelper
+
+import os
+from StringIO import StringIO
 
 
 class ElevationTest(TestCase):
@@ -296,3 +300,12 @@ class SamplingTest(TestCase):
     def test_51m(self):
         path = Path.objects.create(geom=LineString((0, 0), (0, self.step * 2 + 1), (0, self.step * 4 + 2)))
         self.assertEqual(len(path.geom_3d.coords), 7)
+
+
+class CommandLoadDemTest(TestCase):
+
+    def test_load_dem(self):
+        output = StringIO()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
+        call_command('loaddem', filename, '--replace', verbosity=0, stdout=output)
+        self.assertIn('DEM successfully loaded', output.getvalue())
