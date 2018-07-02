@@ -22,6 +22,7 @@ from geotrek.infrastructure.factories import InfrastructureFactory, SignageFacto
 from geotrek.maintenance.factories import InterventionFactory
 from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, ComfortFactory, TopologyFactory, PathAggregationFactory)
 
+
 class PathViewsTest(CommonTest):
     model = Path
     modelfactory = PathFactory
