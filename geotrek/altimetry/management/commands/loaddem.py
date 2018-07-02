@@ -24,7 +24,7 @@ class Command(BaseCommand):
             raise CommandError(msg)
 
         try:
-            ret = call('raster2pgsql -G', shell=True)
+            ret = call('raster2pgsql -G > /dev/null', shell=True)
             if ret != 0:
                 raise Exception('raster2pgsql failed with exit code %d' % ret)
         except Exception as e:
@@ -113,13 +113,23 @@ class Command(BaseCommand):
 
         # Step 1: process raster (clip, project)
         new_dem = tempfile.NamedTemporaryFile()
-        cmd = 'gdalwarp -t_srs EPSG:%d -te %f %f %f %f %s %s' % (settings.SRID,
-                                                                 settings.SPATIAL_EXTENT[0],
-                                                                 settings.SPATIAL_EXTENT[1],
-                                                                 settings.SPATIAL_EXTENT[2],
-                                                                 settings.SPATIAL_EXTENT[3],
-                                                                 dem_path,
-                                                                 new_dem.name)
+        if options['verbosity'] > 0:
+            cmd = 'gdalwarp -t_srs EPSG:%d -te %f %f %f %f %s %s' % (settings.SRID,
+                                                                     settings.SPATIAL_EXTENT[0],
+                                                                     settings.SPATIAL_EXTENT[1],
+                                                                     settings.SPATIAL_EXTENT[2],
+                                                                     settings.SPATIAL_EXTENT[3],
+                                                                     dem_path,
+                                                                     new_dem.name)
+        else:
+            cmd = 'gdalwarp -t_srs EPSG:%d -te %f %f %f %f %s %s > /dev/null' % (settings.SRID,
+                                                                                 settings.SPATIAL_EXTENT[0],
+                                                                                 settings.SPATIAL_EXTENT[1],
+                                                                                 settings.SPATIAL_EXTENT[2],
+                                                                                 settings.SPATIAL_EXTENT[3],
+                                                                                 dem_path,
+                                                                                 new_dem.name)
+
         try:
             self.stdout.write('\n-- Relaying to gdalwarp ----------------\n')
             self.stdout.write(cmd)
