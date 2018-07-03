@@ -7,11 +7,11 @@ from django.utils.translation import ugettext_lazy as _
 
 from paperclip.models import FileType as BaseFileType, Attachment as BaseAttachment
 
-from geotrek.authent.models import StructureRelated
+from geotrek.authent.models import StructureOrNoneRelated
 from geotrek.common.mixins import PictogramMixin, OptionalPictogramMixin
 
 
-class Organism(StructureRelated):
+class Organism(StructureOrNoneRelated):
 
     organism = models.CharField(max_length=128, verbose_name=_(u"Organism"), db_column='organisme')
 
@@ -25,7 +25,7 @@ class Organism(StructureRelated):
         return self.organism
 
 
-class FileType(StructureRelated, BaseFileType):
+class FileType(StructureOrNoneRelated, BaseFileType):
     """
     Attachment FileTypes, related to structure and with custom table name.
     """

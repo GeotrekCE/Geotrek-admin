@@ -9,7 +9,7 @@ from django.contrib.gis.geos import fromstr, LineString
 
 from mapentity.models import MapEntityMixin
 
-from geotrek.authent.models import StructureRelated
+from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.mixins import (TimeStampedModelMixin, NoDeleteMixin,
                                    AddPropertyMixin)
 from geotrek.common.utils import classproperty
@@ -19,6 +19,7 @@ from geotrek.altimetry.models import AltimetryMixin
 from .helpers import PathHelper, TopologyHelper
 from django.db import connections, DEFAULT_DB_ALIAS
 
+from django.contrib.gis.geos import Point
 
 logger = logging.getLogger(__name__)
 
@@ -110,7 +111,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         verbose_name_plural = _(u"Paths")
 
     @classmethod
-    def closest(cls, point):
+    def closest(cls, point, exclude=None):
         """
         Returns the closest path of the point.
         Will fail if no path in database.
@@ -118,7 +119,10 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         # TODO: move to custom manager
         if point.srid != settings.SRID:
             point = point.transform(settings.SRID, clone=True)
-        return cls.objects.all().exclude(visible=False).distance(point).order_by('distance')[0]
+        qs = cls.objects.all()
+        if exclude:
+            qs = qs.exclude(pk=exclude.pk)
+        return qs.exclude(visible=False).distance(point).order_by('distance')[0]
 
     def is_overlap(self):
         return not PathHelper.disjoint(self.geom, self.pk)
@@ -166,6 +170,27 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
             self._is_reversed = False
         super(Path, self).save(*args, **kwargs)
         self.reload()
+
+    def delete(self, *args, **kwargs):
+        topologies = list(self.topology_set.filter())
+        r = super(Path, self).delete(*args, **kwargs)
+        for topology in topologies:
+            if isinstance(topology.geom, Point):
+                closest = self.closest(topology.geom, self)
+                position, offset = closest.interpolate(topology.geom)
+                new_topology = Topology.objects.create()
+                aggrobj = PathAggregation(topo_object=new_topology,
+                                          start_position=position,
+                                          end_position=position,
+                                          path=closest)
+                aggrobj.save()
+                point = Point(topology.geom.x, topology.geom.y, srid=settings.SRID)
+                new_topology.geom = point
+                new_topology.offset = offset
+                new_topology.position = position
+                new_topology.save()
+                topology.mutate(new_topology)
+        return r
 
     @property
     def name_display(self):
@@ -467,7 +492,7 @@ class PathAggregation(models.Model):
         ordering = ['order', ]
 
 
-class PathSource(StructureRelated):
+class PathSource(StructureOrNoneRelated):
 
     source = models.CharField(verbose_name=_(u"Source"), max_length=50)
 
@@ -482,7 +507,7 @@ class PathSource(StructureRelated):
 
 
 @functools.total_ordering
-class Stake(StructureRelated):
+class Stake(StructureOrNoneRelated):
 
     stake = models.CharField(verbose_name=_(u"Stake"), max_length=50, db_column='enjeu')
 
@@ -505,7 +530,7 @@ class Stake(StructureRelated):
         return self.stake
 
 
-class Comfort(StructureRelated):
+class Comfort(StructureOrNoneRelated):
 
     comfort = models.CharField(verbose_name=_(u"Comfort"), max_length=50, db_column='confort')
 
@@ -519,7 +544,7 @@ class Comfort(StructureRelated):
         return self.comfort
 
 
-class Usage(StructureRelated):
+class Usage(StructureOrNoneRelated):
 
     usage = models.CharField(verbose_name=_(u"Usage"), max_length=50, db_column='usage')
 
@@ -533,7 +558,7 @@ class Usage(StructureRelated):
         return self.usage
 
 
-class Network(StructureRelated):
+class Network(StructureOrNoneRelated):
 
     network = models.CharField(verbose_name=_(u"Network"), max_length=50, db_column='reseau')
 

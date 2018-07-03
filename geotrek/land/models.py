@@ -3,13 +3,13 @@ from django.utils.translation import ugettext_lazy as _
 
 from mapentity.models import MapEntityMixin
 
-from geotrek.authent.models import StructureRelated
+from geotrek.authent.models import StructureOrNoneRelated
 from geotrek.core.models import Topology, Path
 from geotrek.common.models import Organism
 from geotrek.maintenance.models import Intervention, Project
 
 
-class PhysicalType(StructureRelated):
+class PhysicalType(StructureOrNoneRelated):
     name = models.CharField(max_length=128, verbose_name=_(u"Name"), db_column='nom')
 
     class Meta:
@@ -74,7 +74,7 @@ Intervention.add_property('physical_edges', lambda self: self.topology.physical_
 Project.add_property('physical_edges', lambda self: self.edges_by_attr('physical_edges'), _(u"Physical edges"))
 
 
-class LandType(StructureRelated):
+class LandType(StructureOrNoneRelated):
     name = models.CharField(max_length=128, db_column='foncier', verbose_name=_(u"Name"))
     right_of_way = models.BooleanField(default=False, db_column='droit_de_passage', verbose_name=_(u"Right of way"))
 

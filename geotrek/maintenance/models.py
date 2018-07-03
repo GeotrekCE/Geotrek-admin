@@ -9,7 +9,7 @@ from django.contrib.gis.geos import GeometryCollection
 
 from mapentity.models import MapEntityMixin
 
-from geotrek.authent.models import StructureRelated
+from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.core.models import Topology, Path, Trail
 from geotrek.common.models import Organism
@@ -20,8 +20,8 @@ from geotrek.infrastructure.models import Infrastructure, Signage
 
 class InterventionManager(models.GeoManager):
     def all_years(self):
-        all_dates = self.existing().values_list('date', flat=True)
-        all_years = list(reversed(sorted(set([d.year for d in all_dates]))))
+        all_dates = self.existing().filter(date__isnull=False).order_by('-date').values_list('date', flat=True).distinct('date')
+        all_years = [d.year for d in all_dates]
         return all_years
 
 
@@ -280,7 +280,7 @@ Path.add_property('interventions', lambda self: Intervention.path_interventions(
 Topology.add_property('interventions', lambda self: Intervention.topology_interventions(self), _(u"Interventions"))
 
 
-class InterventionStatus(StructureRelated):
+class InterventionStatus(StructureOrNoneRelated):
 
     status = models.CharField(verbose_name=_(u"Status"), max_length=128, db_column='status')
 
@@ -294,7 +294,7 @@ class InterventionStatus(StructureRelated):
         return self.status
 
 
-class InterventionType(StructureRelated):
+class InterventionType(StructureOrNoneRelated):
 
     type = models.CharField(max_length=128, verbose_name=_(u"Type"), db_column='type')
 
@@ -308,7 +308,7 @@ class InterventionType(StructureRelated):
         return self.type
 
 
-class InterventionDisorder(StructureRelated):
+class InterventionDisorder(StructureOrNoneRelated):
 
     disorder = models.CharField(max_length=128, verbose_name=_(u"Disorder"), db_column='desordre')
 
@@ -322,7 +322,7 @@ class InterventionDisorder(StructureRelated):
         return self.disorder
 
 
-class InterventionJob(StructureRelated):
+class InterventionJob(StructureOrNoneRelated):
 
     job = models.CharField(max_length=128, verbose_name=_(u"Job"), db_column='fonction')
     cost = models.DecimalField(verbose_name=_(u"Cost"), default=1.0, decimal_places=2, max_digits=8, db_column="cout_jour")
@@ -541,7 +541,7 @@ Path.add_property('projects', lambda self: Project.path_projects(self), _(u"Proj
 Topology.add_property('projects', lambda self: Project.topology_projects(self), _(u"Projects"))
 
 
-class ProjectType(StructureRelated):
+class ProjectType(StructureOrNoneRelated):
 
     type = models.CharField(max_length=128, verbose_name=_(u"Type"), db_column='type')
 
@@ -555,7 +555,7 @@ class ProjectType(StructureRelated):
         return self.type
 
 
-class ProjectDomain(StructureRelated):
+class ProjectDomain(StructureOrNoneRelated):
 
     domain = models.CharField(max_length=128, verbose_name=_(u"Domain"), db_column='domaine')
 
@@ -569,7 +569,7 @@ class ProjectDomain(StructureRelated):
         return self.domain
 
 
-class Contractor(StructureRelated):
+class Contractor(StructureOrNoneRelated):
 
     contractor = models.CharField(max_length=128, verbose_name=_(u"Contractor"), db_column='prestataire')
 

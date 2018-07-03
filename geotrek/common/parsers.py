@@ -14,7 +14,6 @@ from urlparse import urlparse
 
 from django.db import models, connection
 from django.db.utils import DatabaseError
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.gis.gdal import DataSource, GDALException, CoordTransform
 from django.core.files.base import ContentFile
@@ -22,13 +21,15 @@ from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
-
-from modeltranslation.fields import TranslationField
-from modeltranslation.translator import translator, NotRegistered
+from django.conf import settings
 from paperclip.models import attachment_upload
 
 from geotrek.authent.models import default_structure
 from geotrek.common.models import FileType, Attachment
+
+if 'modeltranslation' in settings.INSTALLED_APPS:
+    from modeltranslation.fields import TranslationField
+    from modeltranslation.translator import translator, NotRegistered
 
 
 class ImportError(Exception):

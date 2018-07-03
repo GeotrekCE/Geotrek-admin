@@ -3,287 +3,251 @@
         "pk": 1,
         "model": "maintenance.interventionstatus",
         "fields": {
-            "status": "souhait\u00e9e",
-            "structure": 1
+            "status": "souhait\u00e9e"
         }
     },
     {
         "pk": 2,
         "model": "maintenance.interventionstatus",
         "fields": {
-            "status": "planifi\u00e9e",
-            "structure": 1
+            "status": "planifi\u00e9e"
         }
     },
     {
         "pk": 3,
         "model": "maintenance.interventionstatus",
         "fields": {
-            "status": "termin\u00e9e",
-            "structure": 1
+            "status": "termin\u00e9e"
         }
     },
     {
         "pk": 1,
         "model": "maintenance.interventiontype",
         "fields": {
-            "type": "Entretien ",
-            "structure": 1
+            "type": "Entretien "
         }
     },
     {
         "pk": 2,
         "model": "maintenance.interventiontype",
         "fields": {
-            "type": "Travaux d'ouvrages",
-            "structure": 1
+            "type": "Travaux d'ouvrages"
         }
     },
     {
         "pk": 3,
         "model": "maintenance.interventiontype",
         "fields": {
-            "type": "Travaux d'urgence",
-            "structure": 1
+            "type": "Travaux d'urgence"
         }
     },
     {
         "pk": 4,
         "model": "maintenance.interventiontype",
         "fields": {
-            "type": "Suppression",
-            "structure": 1
+            "type": "Suppression"
         }
     },
     {
         "pk": 5,
         "model": "maintenance.interventiontype",
         "fields": {
-            "type": "Cr\u00e9ation",
-            "structure": 1
+            "type": "Cr\u00e9ation"
         }
     },
     {
         "pk": 1,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Avalanche",
-            "structure": 1
+            "disorder": "Avalanche"
         }
     },
     {
         "pk": 2,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Chablis",
-            "structure": 1
+            "disorder": "Chablis"
         }
     },
     {
         "pk": 3,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Chute de blocs",
-            "structure": 1
+            "disorder": "Chute de blocs"
         }
     },
     {
         "pk": 4,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Chute de pierres",
-            "structure": 1
+            "disorder": "Chute de pierres"
         }
     },
     {
         "pk": 5,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Crue de torrent",
-            "structure": 1
+            "disorder": "Crue de torrent"
         }
     },
     {
         "pk": 6,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Crue d'orage",
-            "structure": 1
+            "disorder": "Crue d'orage"
         }
     },
     {
         "pk": 7,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Diverticules",
-            "structure": 1
+            "disorder": "Diverticules"
         }
     },
     {
         "pk": 8,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Eboulis",
-            "structure": 1
+            "disorder": "Eboulis"
         }
     },
     {
         "pk": 9,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Equipement d\u00e9grad\u00e9",
-            "structure": 1
+            "disorder": "Equipement d\u00e9grad\u00e9"
         }
     },
     {
         "pk": 10,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Equipement emport\u00e9",
-            "structure": 1
+            "disorder": "Equipement emport\u00e9"
         }
     },
     {
         "pk": 11,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Erosion ",
-            "structure": 1
+            "disorder": "Erosion "
         }
     },
     {
         "pk": 12,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Glissement de terrain",
-            "structure": 1
+            "disorder": "Glissement de terrain"
         }
     },
     {
         "pk": 13,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Mauvaise lisibilit\u00e9 du trac\u00e9",
-            "structure": 1
+            "disorder": "Mauvaise lisibilit\u00e9 du trac\u00e9"
         }
     },
     {
         "pk": 14,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Passage a\u00e9rien",
-            "structure": 1
+            "disorder": "Passage a\u00e9rien"
         }
     },
     {
         "pk": 15,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Passage de troupeaux",
-            "structure": 1
+            "disorder": "Passage de troupeaux"
         }
     },
     {
         "pk": 16,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Ruissellement",
-            "structure": 1
+            "disorder": "Ruissellement"
         }
     },
     {
         "pk": 17,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Suintement source",
-            "structure": 1
+            "disorder": "Suintement source"
         }
     },
     {
         "pk": 18,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Surfr\u00e9quentation pi\u00e9tons",
-            "structure": 1
+            "disorder": "Surfr\u00e9quentation pi\u00e9tons"
         }
     },
     {
         "pk": 19,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Vandalisme",
-            "structure": 1
+            "disorder": "Vandalisme"
         }
     },
     {
         "pk": 20,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "V\u00e9g\u00e9tation envahissante",
-            "structure": 1
+            "disorder": "V\u00e9g\u00e9tation envahissante"
         }
     },
     {
         "pk": 21,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "VTT",
-            "structure": 1
+            "disorder": "VTT"
         }
     },
     {
         "pk": 22,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Zone glissante sur dalles",
-            "structure": 1
+            "disorder": "Zone glissante sur dalles"
         }
     },
     {
         "pk": 23,
         "model": "maintenance.interventiondisorder",
         "fields": {
-            "disorder": "Zone glissante talweg",
-            "structure": 1
+            "disorder": "Zone glissante talweg"
         }
     },
     {
         "pk": 1,
         "model": "maintenance.interventionjob",
         "fields": {
-            "job": "Ouvrier",
-            "structure": 1
+            "job": "Ouvrier"
         }
     },
     {
         "pk": 2,
         "model": "maintenance.interventionjob",
         "fields": {
-            "job": "ATE",
-            "structure": 1
+            "job": "ATE"
         }
     },
     {
         "pk": 3,
         "model": "maintenance.interventionjob",
         "fields": {
-            "job": "TE",
-            "structure": 1
+            "job": "TE"
         }
     },
     {
         "pk": 4,
         "model": "maintenance.interventionjob",
         "fields": {
-            "job": "Charg\u00e9 de missions",
-            "structure": 1
+            "job": "Charg\u00e9 de missions"
         }
     },
     {
         "pk": 1,
         "model": "maintenance.contractor",
         "fields": {
-            "structure": 1,
             "contractor": "Entreprise A"
         }
     },
@@ -291,7 +255,6 @@
         "pk": 1,
         "model": "maintenance.projecttype",
         "fields": {
-            "structure": 1,
             "type": "Type projet 1"
         }
     },
@@ -299,7 +262,6 @@
         "pk": 1,
         "model": "maintenance.projectdomain",
         "fields": {
-            "structure": 1,
             "domain": "Domaine projet 1"
         }
     }

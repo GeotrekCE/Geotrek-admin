@@ -1,5 +1,8 @@
 FROM makinacorpus/geodjango:bionic-py2
 
+# add POSTFIX
+RUN apt-get update && apt-get install postfix
+
 ENV DJANGO_SETTINGS_MODULE geotrek.settings.prod
 # SET LOCAL_UID, help to use in dev
 ARG LOCAL_UID=1000
