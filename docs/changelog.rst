@@ -5,6 +5,10 @@ CHANGELOG
 2.20.2.dev0
 -------------------
 
+**New features**
+
+* Delete path show linked topologies by type.
+
 **Bug fixes**
 
 * Fix Sync_rando View
