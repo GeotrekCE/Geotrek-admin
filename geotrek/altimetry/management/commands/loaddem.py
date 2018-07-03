@@ -113,22 +113,14 @@ class Command(BaseCommand):
 
         # Step 1: process raster (clip, project)
         new_dem = tempfile.NamedTemporaryFile()
-        if options['verbosity'] > 0:
-            cmd = 'gdalwarp -t_srs EPSG:%d -te %f %f %f %f %s %s' % (settings.SRID,
-                                                                     settings.SPATIAL_EXTENT[0],
-                                                                     settings.SPATIAL_EXTENT[1],
-                                                                     settings.SPATIAL_EXTENT[2],
-                                                                     settings.SPATIAL_EXTENT[3],
-                                                                     dem_path,
-                                                                     new_dem.name)
-        else:
-            cmd = 'gdalwarp -t_srs EPSG:%d -te %f %f %f %f %s %s > /dev/null' % (settings.SRID,
-                                                                                 settings.SPATIAL_EXTENT[0],
-                                                                                 settings.SPATIAL_EXTENT[1],
-                                                                                 settings.SPATIAL_EXTENT[2],
-                                                                                 settings.SPATIAL_EXTENT[3],
-                                                                                 dem_path,
-                                                                                 new_dem.name)
+        cmd = 'gdalwarp -t_srs EPSG:%d -te %f %f %f %f %s %s %s' % (settings.SRID,
+                                                                    settings.SPATIAL_EXTENT[0],
+                                                                    settings.SPATIAL_EXTENT[1],
+                                                                    settings.SPATIAL_EXTENT[2],
+                                                                    settings.SPATIAL_EXTENT[3],
+                                                                    dem_path,
+                                                                    new_dem.name,
+                                                                    '> /dev/null' if options['verbosity'] == 0 else '')
 
         try:
             self.stdout.write('\n-- Relaying to gdalwarp ----------------\n')
