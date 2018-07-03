@@ -151,7 +151,7 @@ class PathViewsTest(CommonTest):
         self.assertContains(response, '%s: POI' % poi.pk)
         self.assertContains(response, '%s: Trail' % trail.pk)
         self.assertContains(response, '%s: Trek' % trek.pk)
-        self.assertContains(response, '%s: ServiceType %s' % (service.pk, i.pk-1))
+        self.assertContains(response, '%s: ServiceType %s' % (service.pk, i.pk - 1))
         self.assertContains(response, '%s: Signage' % signage.pk)
         self.assertContains(response, '%s: Infrastructure' % infrastructure.pk)
         self.assertContains(response, '%s: Intervention' % t.pk)
