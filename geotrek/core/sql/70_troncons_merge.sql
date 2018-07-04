@@ -1,5 +1,6 @@
-CREATE OR REPLACE FUNCTION geotrek.ft_merge_path(updated integer, merged integer)
-  RETURNS boolean AS $$
+DROP FUNCTION IF EXISTS geotrek.ft_merge_path(integer,integer) CASCADE;
+CREATE FUNCTION geotrek.ft_merge_path(updated integer, merged integer)
+  RETURNS integer AS $$
 
 DECLARE
     element RECORD;
@@ -19,7 +20,7 @@ BEGIN
     IF updated = merged
     THEN
         -- can't merged a path itself !
-        return FALSE;
+        RETURN 0;
 	
     END IF;
     
@@ -69,9 +70,18 @@ BEGIN
     
     ELSE
     -- no snapping -> END !
-        RETURN FALSE;
+        RETURN 0;
 
     END IF;
+
+    FOR element IN
+        SELECT * FROM l_t_troncon WHERE id != updated AND id != merged
+    LOOP
+        IF ST_EQUALS(ST_STARTPOINT(updated_geom), ST_STARTPOINT(element.geom)) OR ST_EQUALS(ST_ENDPOINT(updated_geom), ST_STARTPOINT(element.geom)) OR ST_EQUALS(ST_STARTPOINT(updated_geom), ST_ENDPOINT(element.geom)) OR ST_EQUALS(ST_ENDPOINT(updated_geom), ST_ENDPOINT(element.geom))
+         THEN
+            RETURN 2;
+        END IF;
+    END LOOP;
 
     -- update events on updated path
     FOR element IN
@@ -162,7 +172,7 @@ BEGIN
     -- Delete merged Path
     DELETE FROM l_t_troncon WHERE id = merged;
 
-    RETURN TRUE;
+    RETURN 1;
 
 END;
 $$ LANGUAGE plpgsql;

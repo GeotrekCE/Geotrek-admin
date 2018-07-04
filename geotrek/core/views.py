@@ -240,29 +240,32 @@ def merge_path(request):
     response = {}
 
     if request.method == 'POST':
+        ids_path_merge = request.POST.getlist('path[]')
+
+        assert len(ids_path_merge) == 2
+
+        path_a = Path.objects.get(pk=ids_path_merge[0])
+        path_b = Path.objects.get(pk=ids_path_merge[1])
+
+        if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
+            response = {'error': _(u"You don't have the right to change these paths")}
+            return HttpJSONResponse(response)
+
         try:
-            ids_path_merge = request.POST.getlist('path[]')
-
-            if len(ids_path_merge) == 2:
-                path_a = Path.objects.get(pk=ids_path_merge[0])
-                path_b = Path.objects.get(pk=ids_path_merge[1])
-                if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
-                    response = {'error': _(u"You don't have the right to change these paths")}
-
-                elif path_a.merge_path(path_b):
-                    response = {'success': _(u"Paths merged successfully")}
-                    messages.success(request, _(u"Paths merged successfully"))
-
-                else:
-                    response = {'error': _(u"No matching points to merge paths found")}
-
-            else:
-                raise
-
+            result = path_a.merge_path(path_b)
         except Exception as exc:
             response = {'error': exc, }
+            return HttpJSONResponse(response)
 
-    return HttpResponse(json.dumps(response), content_type="application/json")
+        if result == 2:
+            response = {'error': _(u"You can't merge 2 paths with a 3rd path in the intersection")}
+        elif result == 0:
+            response = {'error': _(u"No matching points to merge paths found")}
+        else:
+            response = {'success': _(u"Paths merged successfully")}
+            messages.success(request, _(u"Paths merged successfully"))
+
+        return HttpJSONResponse(response)
 
 
 class ParametersView(View):
