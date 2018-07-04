@@ -42,10 +42,10 @@ class CompletedFilter(django_filters.BooleanFilter):
         queryset = qs
 
         if value is True:
-            queryset = queryset.filter(end_date__lt=datetime.today)
+            queryset = queryset.filter(end_date__lt=datetime.today())
 
         elif value is False:
-            queryset = queryset.exclude(end_date__lt=datetime.today)
+            queryset = queryset.exclude(end_date__lt=datetime.today())
 
         return queryset
 
