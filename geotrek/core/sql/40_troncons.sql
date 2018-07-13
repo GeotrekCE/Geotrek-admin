@@ -125,7 +125,9 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER l_t_troncon_90_evenements_geom_u_tgr
 AFTER UPDATE OF geom ON l_t_troncon
-FOR EACH ROW EXECUTE PROCEDURE update_evenement_geom_when_troncon_changes();
+FOR EACH ROW
+WHEN (NOT ST_Contains(ST_Buffer(OLD.geom,0.0001),New.geom))
+EXECUTE PROCEDURE update_evenement_geom_when_troncon_changes();
 
 
 -------------------------------------------------------------------------------
@@ -147,12 +149,13 @@ ALTER TABLE l_t_troncon ADD CONSTRAINT l_t_troncon_geom_issimple CHECK (ST_IsSim
 
 DROP TRIGGER IF EXISTS l_t_troncon_elevation_iu_tgr ON l_t_troncon;
 DROP TRIGGER IF EXISTS l_t_troncon_10_elevation_iu_tgr ON l_t_troncon;
+DROP TRIGGER IF EXISTS l_t_troncon_10_elevation_iu_tgr_update ON l_t_troncon;
+DROP TRIGGER IF EXISTS l_t_troncon_10_elevation_iu_tgr_insert ON l_t_troncon;
 
 CREATE OR REPLACE FUNCTION geotrek.elevation_troncon_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     elevation elevation_infos;
 BEGIN
-
     SELECT * FROM ft_elevation_infos(NEW.geom, {{ALTIMETRIC_PROFILE_STEP}}) INTO elevation;
     -- Update path geometry
     NEW.geom_3d := elevation.draped;
@@ -166,10 +169,16 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER l_t_troncon_10_elevation_iu_tgr
-BEFORE INSERT OR UPDATE OF geom ON l_t_troncon
-FOR EACH ROW EXECUTE PROCEDURE elevation_troncon_iu();
+CREATE TRIGGER l_t_troncon_10_elevation_iu_tgr_update
+BEFORE UPDATE OF geom ON l_t_troncon
+FOR EACH ROW
+WHEN (NOT ST_Contains(ST_Buffer(OLD.geom,0.0001),New.geom))
+EXECUTE PROCEDURE elevation_troncon_iu();
 
+CREATE TRIGGER l_t_troncon_10_elevation_iu_tgr_insert
+BEFORE INSERT ON l_t_troncon
+FOR EACH ROW
+EXECUTE PROCEDURE elevation_troncon_iu();
 
 -------------------------------------------------------------------------------
 -- Change status of related objects when paths are deleted
