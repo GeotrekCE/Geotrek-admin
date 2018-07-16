@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-*
+* Fix Completed Filter in Touristic Event
 
 
 2.20.0 (2018-06-27)
