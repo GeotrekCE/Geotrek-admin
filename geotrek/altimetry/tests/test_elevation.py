@@ -1,4 +1,3 @@
-from StringIO import StringIO
 from django.conf import settings
 from django.test import TestCase
 from unittest import SkipTest, skipIf
