@@ -89,6 +89,23 @@ $$ LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS l_t_troncon_evenements_geom_u_tgr ON l_t_troncon;
 DROP TRIGGER IF EXISTS l_t_troncon_90_evenements_geom_u_tgr ON l_t_troncon;
 
+
+CREATE OR REPLACE FUNCTION geotrek.update_evenement_geom_when_troncon_changes_nt() RETURNS void AS $$
+DECLARE
+    tgeom geometry;
+    tgeom3d geometry;
+    tid integer;
+    elevation elevation_infos;
+BEGIN
+    FOR tgeom, tgeom3d, tid IN SELECT t.geom, t.geom_3d, t.id FROM l_t_troncon t
+    LOOP
+        SELECT * FROM ft_elevation_infos(tgeom, {{ALTIMETRIC_PROFILE_STEP}}) INTO elevation;
+        UPDATE l_t_troncon AS t SET geom_3d = elevation.draped, longueur = ST_3DLength(elevation.draped), pente = elevation.slope, altitude_minimum = elevation.min_elevation, altitude_maximum = elevation.max_elevation, denivelee_positive = elevation.positive_gain, denivelee_negative = elevation.negative_gain WHERE t.id = tid;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+
+
 CREATE OR REPLACE FUNCTION geotrek.update_evenement_geom_when_troncon_changes() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     eid integer;
