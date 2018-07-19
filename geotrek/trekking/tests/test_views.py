@@ -1185,3 +1185,16 @@ class ServiceJSONTest(TrekkingManagerTest):
                               'name': self.service.type.name,
                               'pictogram': os.path.join(settings.MEDIA_URL, self.service.type.pictogram.name),
                               })
+
+
+class ViewsSyncTest(TestCase):
+
+    def setUp(self):
+        self.user = SuperUserFactory.create(username='homer', password='dooh')
+        success = self.client.login(username=self.user.username, password='dooh')
+        self.assertTrue(success)
+
+    def test_import_update_access(self):
+        url = reverse('trekking:sync_randos_view')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
