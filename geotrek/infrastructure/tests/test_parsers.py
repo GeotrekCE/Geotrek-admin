@@ -2,6 +2,7 @@ import os
 
 from django.core.management import call_command
 from django.test import TestCase
+from django.core.management.base import CommandError
 
 from geotrek.infrastructure.factories import SignageFactory, InfrastructureFactory
 from geotrek.infrastructure.models import Signage, Infrastructure
@@ -32,3 +33,14 @@ class StructureParserTest(TestCase):
         self.assertEquals(building.name, value[1].name)
         self.assertEquals(building.implantation_year, value[1].implantation_year)
         self.assertEquals(value.count(), 3)
+
+    def test_no_file_fail(self):
+        with self.assertRaises(CommandError) as cm:
+            call_command('loadinfrastructure', 'toto.shp')
+        self.assertEqual(cm.exception.message, "File does not exists at: toto.shp")
+
+    def test_load_both_fail(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
+        with self.assertRaises(CommandError) as cm:
+            call_command('loadinfrastructure', filename, '--infrastructure', '--signage')
+        self.assertEqual(cm.exception.message, "Only one of --signage and --infrastructure required")
