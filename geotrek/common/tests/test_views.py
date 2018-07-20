@@ -64,6 +64,7 @@ class ViewsImportTest(TestCase):
             }
         )
         self.assertEqual(response_real.status_code, 200)
+        self.assertNotContains(response_real, "File must be of ZIP type.")
 
     def test_import_from_file_bad_file(self):
         self.user.is_superuser = True
