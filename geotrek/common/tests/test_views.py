@@ -52,14 +52,15 @@ class ViewsImportTest(TestCase):
         self.user.is_superuser = True
         self.user.save()
 
-        real_archive = open('geotrek/common/tests/data/test.txt.gz', 'r+')
+        real_archive = open('geotrek/common/tests/data/test.zip', 'r+')
         url = reverse('common:import_dataset')
 
         response_real = self.client.post(
             url, {
                 'upload-file': 'Upload',
-                'with-file-parser': '7',
-                'with-file-zipfile': real_archive
+                'with-file-parser': '1',
+                'with-file-zipfile': real_archive,
+                'with-file-encoding': 'UTF-8'
             }
         )
         self.assertEqual(response_real.status_code, 200)
@@ -77,8 +78,9 @@ class ViewsImportTest(TestCase):
         response_fake = self.client.post(
             url, {
                 'upload-file': 'Upload',
-                'with-file-parser': '7',
-                'with-file-zipfile': fake_archive
+                'with-file-parser': '1',
+                'with-file-zipfile': fake_archive,
+                'with-file-encoding': 'UTF-8'
             }
         )
         self.assertEqual(response_fake.status_code, 200)
