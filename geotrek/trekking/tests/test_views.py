@@ -700,6 +700,10 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.assertDictEqual(self.result['next'],
                              {u"%s" % self.parent.pk: self.sibling.pk})
 
+    def test_picture_print(self):
+        self.assertIn(self.attachment.attachment_file.name, self.trek.picture_print.name)
+        self.assertIn('.1000x500_q85_crop-smart.png', self.trek.picture_print.name)
+
 
 class TrekPointsReferenceTest(TrekkingManagerTest):
     def setUp(self):
