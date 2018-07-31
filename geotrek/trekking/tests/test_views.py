@@ -404,11 +404,7 @@ class TrekCustomPublicViewTests(TrekkingManagerTest):
         self.assertEqual(response.status_code, 403)
 
 
-class TrekJSONDetailTest(TrekkingManagerTest):
-    """ Since we migrated some code to Django REST Framework, we should test
-    the migration extensively. Geotrek-rando mainly relies on this view.
-    """
-
+class TrekJSONSetUp(TrekkingManagerTest):
     def setUp(self):
         self.login()
 
@@ -498,6 +494,20 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.response = self.client.get(url)
         self.result = json.loads(self.response.content)
 
+
+@override_settings(SPLIT_TREKS_CATEGORIES_BY_PRACTICE=True)
+class TrekPracticeTest(TrekJSONSetUp):
+    def test_touristic_contents_practice(self):
+        self.assertEqual(len(self.result['touristic_contents']), 1)
+        self.assertDictEqual(self.result['touristic_contents'][0], {
+            u'id': self.touristic_content.pk,
+            u'category_id': self.touristic_content.prefixed_category_id})
+
+
+class TrekJSONDetailTest(TrekJSONSetUp):
+    """ Since we migrated some code to Django REST Framework, we should test
+    the migration extensively. Geotrek-rando mainly relies on this view.
+    """
     def test_related_urls(self):
         self.assertEqual(self.result['elevation_area_url'],
                          '/api/en/treks/{pk}/dem.json'.format(pk=self.pk))
