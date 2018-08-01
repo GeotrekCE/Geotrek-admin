@@ -1,4 +1,5 @@
 import os
+from StringIO import StringIO
 
 from django.core.management import call_command
 from django.test import TestCase
@@ -44,3 +45,26 @@ class StructureParserTest(TestCase):
         with self.assertRaises(CommandError) as cm:
             call_command('loadinfrastructure', filename, '--infrastructure', '--signage')
         self.assertEqual(cm.exception.message, "Only one of --signage and --infrastructure required")
+
+    def test_missing_defaults(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
+        output = StringIO()
+
+        def check_field_none():
+            elements_to_check = ['type', 'name', 'condition', 'structure', 'description', 'implantation']
+            self.assertEqual(output.getvalue().count("Field 'None' not found in data source."), 6)
+            for element in elements_to_check:
+                self.assertIn("Set it with --{0}-field, or set a default value with --{0}-default".format(element),
+                              output.getvalue())
+        call_command('loadinfrastructure', filename, '--signage', verbosity=0)
+        call_command('loadinfrastructure', filename, '--signage', type_default='label', verbosity=0)
+        call_command('loadinfrastructure', filename, '--signage', type_default='label', name_default='name',
+                     verbosity=0)
+        call_command('loadinfrastructure', filename, '--signage', type_default='label', name_default='name',
+                     condition_default='condition', verbosity=0)
+        call_command('loadinfrastructure', filename, '--signage', type_default='label', name_default='name',
+                     condition_default='condition', structure_default='structure', verbosity=0)
+        call_command('loadinfrastructure', filename, '--signage', type_default='label', name_default='name',
+                     condition_default='condition', structure_default='structure', description_default='description',
+                     verbosity=0)
+        check_field_none()
