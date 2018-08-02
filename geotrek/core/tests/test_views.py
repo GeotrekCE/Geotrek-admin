@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
+from django.conf import settings
 
 from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.common.tests import CommonTest
@@ -172,10 +173,25 @@ class PathViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content)['sumPath'], 0.3)
 
-    def test_merge(self):
+    def test_merge_fails(self):
         self.login()
         with self.assertRaises(AssertionError):
             self.client.post('/mergepath/')
+        p1 = PathFactory.create()
+        p1.save()
+        p2 = PathFactory.create()
+        p2.save()
+        response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
+        self.assertEqual(response.content, 'error')
+
+    def test_mege_works(self):
+        self.login()
+        p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
+        p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)))
+        response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
+        self.assertEqual(response.content, 'success')
+        p1.reload()
+        self.assertEqual(p1.geom, LineString((0, 0), (1, 0), (2, 0), srid=settings.SRID))
 
 
 class DenormalizedTrailTest(AuthentFixturesTest):
