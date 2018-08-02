@@ -8,7 +8,7 @@ from django.db import IntegrityError
 from geotrek.common.utils import dbnow
 from geotrek.authent.factories import UserFactory
 from geotrek.authent.models import Structure
-from geotrek.core.factories import (PathFactory, StakeFactory)
+from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory)
 from geotrek.core.models import Path
 
 
@@ -86,6 +86,16 @@ class PathTest(TestCase):
     def test_extent(self):
         p1 = PathFactory.create()
         self.assertEqual(p1.extent, (2.9999999999999996, 46.499999999999936, 3.001303976720215, 46.50090044234925))
+
+    def test_no_trail_csv(self):
+        p1 = PathFactory.create()
+        self.assertEqual(p1.trails_csv_display, 'None')
+
+    def test_trail_csv(self):
+        p1 = PathFactory.create()
+        t1 = TrailFactory.create(no_path=True)
+        t1.add_path(p1)
+        self.assertEqual(p1.trails_csv_display, t1.name)
 
 
 class PathVisibilityTest(TestCase):
