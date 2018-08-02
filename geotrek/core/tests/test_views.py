@@ -184,6 +184,17 @@ class PathViewsTest(CommonTest):
         response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
         self.assertEqual(response.content, 'error')
 
+    def test_merge_fails_trigger(self):
+        self.login()
+        p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
+        p2 = PathFactory.create(name="BC", geom=LineString((500, 0), (1000, 0)))
+        response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
+        self.assertEqual(response.content, 'error')
+        p3 = PathFactory.create(name="AB", geom=LineString((1, 0), (2, 0)))
+        p4 = PathFactory.create(name="BC", geom=LineString((1, 0), (10, 10)))
+        response = self.client.post('/mergepath/', {'path[]': [p3.pk, p4.pk]})
+        self.assertEqual(response.content, 'error')
+
     def test_mege_works(self):
         self.login()
         p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
