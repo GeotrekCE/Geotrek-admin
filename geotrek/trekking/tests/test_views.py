@@ -718,6 +718,10 @@ class TrekJSONDetailTest(TrekJSONSetUp):
         self.assertIn('<img height="20" width="20" src="/media/%s.120x120_q85_crop.png"/>'
                       % self.attachment.attachment_file.name, self.trek.thumbnail_display)
 
+    def test_thumbnail_csv_display(self):
+        self.assertIn('%s.120x120_q85_crop.png'
+                      % self.attachment.attachment_file.name, self.trek.thumbnail_csv_display)
+
 
 class TrekPointsReferenceTest(TrekkingManagerTest):
     def setUp(self):
