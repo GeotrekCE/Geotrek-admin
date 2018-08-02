@@ -172,6 +172,11 @@ class PathViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content)['sumPath'], 0.3)
 
+    def test_merge(self):
+        self.login()
+        with self.assertRaises(AssertionError):
+            self.client.post('/mergepath/')
+
 
 class DenormalizedTrailTest(AuthentFixturesTest):
     def setUp(self):
