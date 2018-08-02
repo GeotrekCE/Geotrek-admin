@@ -97,6 +97,10 @@ class PathTest(TestCase):
         t1.add_path(p1)
         self.assertEqual(p1.trails_csv_display, t1.name)
 
+    def test_trails_verbose_name(self):
+        path = PathFactory.create()
+        self.assertEqual(path.trails_verbose_name, 'Trails')
+
 
 class PathVisibilityTest(TestCase):
     def setUp(self):
