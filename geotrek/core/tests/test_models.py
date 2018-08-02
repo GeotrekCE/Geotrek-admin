@@ -83,6 +83,10 @@ class PathTest(TestCase):
         p2 = PathFactory.create()
         self.assertNotEqual(p2.length, 0)
 
+    def test_extent(self):
+        p1 = PathFactory.create()
+        self.assertEqual(p1.extent, (2.9999999999999996, 46.499999999999936, 3.001303976720215, 46.50090044234925))
+
 
 class PathVisibilityTest(TestCase):
     def setUp(self):
