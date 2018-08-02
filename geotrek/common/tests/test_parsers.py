@@ -4,6 +4,7 @@ import mock
 import os
 from shutil import rmtree
 from tempfile import mkdtemp
+from StringIO import StringIO
 
 from django.test import TestCase
 from django.conf import settings
@@ -38,10 +39,21 @@ class ParserTests(TestCase):
             call_command('import', 'geotrek.common.DoesNotExist', '', verbosity=0)
         self.assertEqual(unicode(cm.exception), u"Failed to import parser class 'geotrek.common.DoesNotExist'")
 
+    def test_no_filename_no_url(self):
+        with self.assertRaises(CommandError) as cm:
+            call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', '', verbosity=0)
+        self.assertEqual(unicode(cm.exception), u"File path missing")
+
     def test_bad_filename(self):
         with self.assertRaises(CommandError) as cm:
             call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', 'find_me/I_am_not_there.shp', verbosity=0)
         self.assertEqual(unicode(cm.exception), u"File does not exists at: find_me/I_am_not_there.shp")
+
+    def test_progress(self):
+        output = StringIO()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', filename, verbosity=2, stdout=output)
+        self.assertIn('(100%)', output.getvalue())
 
     def test_create(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
