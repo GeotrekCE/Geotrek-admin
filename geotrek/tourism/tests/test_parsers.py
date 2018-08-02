@@ -47,6 +47,8 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(round(content.geom.x), 1000157)
         self.assertEqual(round(content.geom.y), 6413576)
         self.assertEqual(content.practical_info[:39], "<b>Ouverture:</b><br>Du 01/05 au 31/10.")
+        self.assertTrue(u"<br><b>Capacité totale:</b><br>10<br>" in content.practical_info)
+        self.assertTrue(u"><br><b>Services:</b><br>Test, Test2, Test3, Test4<br>" in content.practical_info)
         self.assertTrue(content.published)
         self.assertEqual(content.category, category)
         self.assertQuerysetEqual(
