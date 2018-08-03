@@ -247,8 +247,8 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
     def _build_object(self):
         super(TouristicContentAPITest, self)._build_object()
         self.category = self.content.category
-        self.type1 = TouristicContentTypeFactory(category=self.category)
-        self.type2 = TouristicContentTypeFactory(category=self.category, pictogram=None)
+        self.type1 = TouristicContentTypeFactory(category=self.category, in_list=1)
+        self.type2 = TouristicContentTypeFactory(category=self.category, in_list=1, pictogram=None)
         self.content.type1.add(self.type1)
         self.content.type2.add(self.type2)
 

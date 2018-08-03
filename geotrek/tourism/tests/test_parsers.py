@@ -89,7 +89,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         content = TouristicContent.objects.all()
         eid = [
             u"PDT44", u"PDT46", u"PDT47", u"PDT48", u"PDT51", u"PDT52", u"PDT53", u"PDT93", u"PDT94", u"PDT95",
-            u"PDT186", u"PDT260", u"PDT261",  u"PDT842",  u"PDT471", u"PDT503", u"PDT504", u"PDT505", u"PDT506",
+            u"PDT186", u"PDT260", u"PDT261", u"PDT842", u"PDT471", u"PDT503", u"PDT504", u"PDT505", u"PDT506",
             u"PDT795", u"PDT797", u"PDT799", u"PDT836", u"PDT837"
         ]
         name = [
