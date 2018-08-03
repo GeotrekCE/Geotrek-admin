@@ -55,7 +55,6 @@ class TouristicContentTypeFactory(factory.DjangoModelFactory):
     label = factory.Sequence(lambda n: u"Type %s" % n)
     category = factory.SubFactory(TouristicContentCategoryFactory)
     pictogram = dummy_filefield_as_sequence('thumbnail %s')
-    in_list = 1
 
 
 class ReservationSystemFactory(factory.DjangoModelFactory):
