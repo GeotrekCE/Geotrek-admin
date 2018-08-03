@@ -6,6 +6,8 @@ import datetime
 from collections import OrderedDict
 import hashlib
 
+from unittest import skipIf
+
 import mock
 from bs4 import BeautifulSoup
 
@@ -188,12 +190,14 @@ class POIJSONDetailTest(TrekkingManagerTest):
         self.assertEqual(self.result['filelist_url'],
                          '/paperclip/get/trekking/poi/%s/' % self.pk)
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_touristic_contents(self):
         self.assertEqual(len(self.result['touristic_contents']), 1)
         self.assertDictEqual(self.result['touristic_contents'][0], {
             u'id': self.touristic_content.pk,
             u'category_id': self.touristic_content.prefixed_category_id})
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_touristic_events(self):
         self.assertEqual(len(self.result['touristic_events']), 1)
         self.assertDictEqual(self.result['touristic_events'][0], {
@@ -792,6 +796,7 @@ class TrekJSONDetailTest(TrekJSONSetUp):
             u'id': self.touristic_event.pk,
             u'category_id': self.touristic_event.prefixed_category_id})
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_close_treks(self):
         self.assertEqual(len(self.result['treks']), 1)
         self.assertDictEqual(self.result['treks'][0], {

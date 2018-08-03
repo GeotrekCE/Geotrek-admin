@@ -5,10 +5,12 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.test.utils import override_settings
 
+from unittest import skipIf
 from bs4 import BeautifulSoup
 
 from geotrek.common.tests import TranslationResetMixin
-from geotrek.core.factories import PathFactory
+from geotrek.core.models import Path
+from geotrek.core.factories import PathFactory, PathAggregationFactory
 from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.factories import (POIFactory, TrekFactory,
                                         TrekWithPOIsFactory, ServiceFactory)
@@ -82,6 +84,7 @@ class TrekTest(TranslationResetMixin, TestCase):
         t.save()
         self.assertEqual(t.published_langs, [])
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_kml_coordinates_should_be_3d(self):
         trek = TrekWithPOIsFactory.create()
         kml = trek.kml()
@@ -177,6 +180,7 @@ class TrekPublicationDateTest(TranslationResetMixin, TestCase):
 
 
 class RelatedObjectsTest(TranslationResetMixin, TestCase):
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_helpers(self):
         trek = TrekFactory.create(no_path=True)
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
@@ -239,6 +243,7 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         service.delete()
         self.assertItemsEqual(trek.services, [])
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_pois_should_be_ordered_by_progression(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
         p2 = PathFactory.create(geom=LineString((4, 4), (8, 8)))
@@ -262,6 +267,7 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         pois = self.trek_reverse.pois
         self.assertEqual([self.poi3, self.poi1, self.poi2], list(pois))
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_city_departure(self):
         trek = TrekFactory.create(no_path=True)
         p1 = PathFactory.create(geom=LineString((0, 0), (5, 5)))
@@ -295,7 +301,10 @@ class TrekUpdateGeomTest(TestCase):
         self.trek.geom = geom
         self.trek.save()
         retrieve_trek = Trek.objects.get(pk=self.trek.pk)
-        self.assertFalse(retrieve_trek.geom.equals_exact(geom, tolerance=0.00001))
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            self.assertFalse(retrieve_trek.geom.equals_exact(geom, tolerance=0.00001))
+        else:
+            self.assertTrue(retrieve_trek.geom.equals_exact(geom, tolerance=0.00001))
 
     def test_save_with_provided_one_field_exclusion(self):
         self.trek.save(update_fields=['geom'])
