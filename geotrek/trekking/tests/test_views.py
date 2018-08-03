@@ -1096,6 +1096,31 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '</poi>'
             '</pois>'.format(**attrs))
 
+    @override_settings(PUBLISHED_BY_LANG=False)
+    def test_export_pois_without_langs(self):
+        response = self.client.get('/api/cirkwi/pois.xml')
+        self.assertEqual(response.status_code, 200)
+        attrs = {
+            'pk': self.poi.pk,
+            'title': self.poi.name,
+            'description': self.poi.description.replace('<p>', '').replace('</p>', ''),
+            'date_update': timestamp(self.poi.date_update),
+        }
+        self.assertXMLEqual(
+            response.content,
+            '<?xml version="1.0" encoding="utf8"?>\n'
+            '<pois version="2">'
+            '<poi id_poi="{pk}" date_modification="{date_update}" date_creation="1388534400">'
+            '<informations>'
+            '<information langue="en"><titre>{title}</titre><description>{description}</description></information>'
+            '<information langue="es"><titre>{title}</titre><description>{description}</description></information>'
+            '<information langue="fr"><titre>{title}</titre><description>{description}</description></information>'
+            '<information langue="it"><titre>{title}</titre><description>{description}</description></information>'
+            '</informations>'
+            '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
+            '</poi>'
+            '</pois>'.format(**attrs))
+
 
 class TrekWorkflowTest(TranslationResetMixin, TestCase):
     def setUp(self):
