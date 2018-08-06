@@ -321,3 +321,83 @@ BEGIN
 END;
 
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION geotrek.ft_elevation_infos_evenement(geom geometry, epsilon float) RETURNS elevation_infos AS $$
+DECLARE
+    num_points integer;
+    current geometry;
+    points3d geometry[];
+    points3d_smoothed geometry[];
+    points3d_simplified geometry[];
+    result elevation_infos;
+    previous_geom geometry;
+BEGIN
+    -- Skip if no DEM (speed-up tests)
+    PERFORM * FROM raster_columns WHERE r_table_name = 'mnt';
+    IF NOT FOUND THEN
+        SELECT ST_Force3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
+        RETURN result;
+    END IF;
+
+    -- Ensure parameter is a point or a line
+    IF ST_GeometryType(geom) NOT IN ('ST_Point', 'ST_LineString') THEN
+        SELECT ST_Force3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
+        RETURN result;
+    END IF;
+
+    -- Specific case for points
+    IF ST_GeometryType(geom) = 'ST_Point' THEN
+        current := add_point_elevation(geom);
+        SELECT current, 0.0, ST_Z(current), ST_Z(current), 0, 0 INTO result;
+        RETURN result;
+    END IF;
+
+    -- Case of epsilon <= 0:
+    IF epsilon <= 0
+    THEN
+        SELECT * FROM ft_elevation_infos(geom) INTO result;
+        RETURN result;
+    END IF;
+
+    -- Now geom is LineString only.
+
+
+    result.positive_gain := 0;
+    result.negative_gain := 0;
+
+    -- simplify gain calculs
+
+    previous_geom := NULL;
+
+    -- Compute gain using simplification
+    -- see http://www.postgis.org/docs/ST_Simplify.html
+    --     https://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm
+    FOR current IN SELECT (ST_DUMPPOINTS(ST_SIMPLIFYPRESERVETOPOLOGY(geom, epsilon))).geom
+    LOOP
+        -- Add positive only if current - previous_geom > 0
+	result.positive_gain := result.positive_gain + greatest(ST_Z(current) - coalesce(ST_Z(previous_geom),
+								ST_Z(current)), 0);
+	-- Add negative only if current - previous_geom < 0
+	result.negative_gain := result.negative_gain + least(ST_Z(current) - coalesce(ST_Z(previous_geom),
+							     ST_Z(current)), 0);
+	previous_geom := current;
+    END LOOP;
+
+    result.draped := geom;
+
+    -- Compute elevation using (higher resolution)
+    result.min_elevation := ST_ZMin(result.draped)::integer;
+    result.max_elevation := ST_ZMax(result.draped)::integer;
+
+
+    -- Compute slope
+    result.slope := 0.0;
+
+    IF ST_Length2D(geom) > 0 THEN
+        result.slope := (result.max_elevation - result.min_elevation) / ST_Length2D(geom);
+    END IF;
+
+    RETURN result;
+END;
+
+$$ LANGUAGE plpgsql;
