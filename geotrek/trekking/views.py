@@ -8,8 +8,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q
 from django.db.models.query import Prefetch
 from django.http import HttpResponse, Http404
-from django.shortcuts import render_to_response
-from django.template.context import RequestContext
+from django.shortcuts import render
 from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
@@ -577,11 +576,10 @@ def sync_view(request):
     Custom views to view / track / launch a sync rando
     """
 
-    return render_to_response(
-        'trekking/sync_rando.html',
-        {'form': SyncRandoForm(), },
-        context_instance=RequestContext(request)
-    )
+    return render(request,
+                  'trekking/sync_rando.html',
+                  {'form': SyncRandoForm(), },
+                  )
 
 
 @login_required
