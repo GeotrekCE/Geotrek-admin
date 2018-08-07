@@ -365,6 +365,19 @@ BEGIN
     result.positive_gain := 0;
     result.negative_gain := 0;
 
+    FOR current IN SELECT (ST_DUMPPOINTS(geom)).geom LOOP
+        -- Create the 3d points
+        points3d := array_append(points3d, current);
+    END LOOP;
+
+    -- smoothing line
+    FOR current IN SELECT * FROM ft_smooth_line(St_MakeLine(points3d), {{ALTIMETRIC_PROFILE_AVERAGE}}) LOOP
+        -- Create the 3d points
+        points3d_smoothed := array_append(points3d_smoothed, current);
+    END LOOP;
+
+
+
     -- simplify gain calculs
 
     previous_geom := NULL;
@@ -372,7 +385,7 @@ BEGIN
     -- Compute gain using simplification
     -- see http://www.postgis.org/docs/ST_Simplify.html
     --     https://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm
-    FOR current IN SELECT (ST_DUMPPOINTS(ST_SIMPLIFYPRESERVETOPOLOGY(geom, epsilon))).geom
+    FOR current IN SELECT (ST_DUMPPOINTS(ST_SIMPLIFYPRESERVETOPOLOGY(ST_MAKELINE(points3d_smoothed), epsilon))).geom
     LOOP
         -- Add positive only if current - previous_geom > 0
 	result.positive_gain := result.positive_gain + greatest(ST_Z(current) - coalesce(ST_Z(previous_geom),
@@ -383,7 +396,7 @@ BEGIN
 	previous_geom := current;
     END LOOP;
 
-    result.draped := geom;
+    result.draped := ST_SetSRID(ST_MakeLine(points3d_smoothed), ST_SRID(geom));
 
     -- Compute elevation using (higher resolution)
     result.min_elevation := ST_ZMin(result.draped)::integer;
