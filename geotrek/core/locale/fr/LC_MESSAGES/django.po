@@ -228,4 +228,4 @@ msgid "You can't merge 2 paths with a 3rd path in the intersection"
 msgstr "Vous ne pouvez pas fusionner deux tronçons qui intersectent un troisième tronçon"
 
 msgid "Different Topologies linked with this path"
-msgstr "Differentes Topologies sont liées à ce tronçon"
+msgstr "Différentes Topologies sont liées à ce tronçon"
