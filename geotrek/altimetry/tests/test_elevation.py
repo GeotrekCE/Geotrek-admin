@@ -10,7 +10,6 @@ from geotrek.core.factories import TopologyFactory
 from geotrek.altimetry.helpers import AltimetryHelper
 
 import os
-from StringIO import StringIO
 
 
 class ElevationTest(TestCase):
@@ -306,12 +305,12 @@ class SamplingTest(TestCase):
 class CommandLoadDemTest(TestCase):
 
     def test_success(self):
-        output = StringIO()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
-        call_command('loaddem', filename, '--replace', verbosity=0, stdout=output)
-        self.assertIn('DEM successfully loaded', output.getvalue())
+        call_command('loaddem', filename, '--replace', verbosity=0)
         conn = connections[DEFAULT_DB_ALIAS]
         cur = conn.cursor()
+        cur.execute('SELECT ST_Value(rast, ST_SetSRID(ST_MakePoint(602500, 6650000), 2154)) FROM mnt;')
+        self.assertAlmostEqual(cur.fetchone()[0], 343.600006103516)
         cur.execute('DROP TABLE mnt;')
 
     def test_fail_table_mnt(self):
@@ -321,23 +320,20 @@ class CommandLoadDemTest(TestCase):
         conn = connections[DEFAULT_DB_ALIAS]
         cur = conn.cursor()
         cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
-        output = StringIO()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
         with self.assertRaises(CommandError) as e:
-            call_command('loaddem', filename, verbosity=0, stdout=output)
+            call_command('loaddem', filename, verbosity=0)
         self.assertIn('DEM file exists, use --replace to overwrite', e.exception)
         cur.execute('DROP TABLE mnt;')
 
     def test_fail_no_file(self):
-        output = StringIO()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'no.tif')
         with self.assertRaises(CommandError) as e:
-            call_command('loaddem', filename, verbosity=0, stdout=output)
+            call_command('loaddem', filename, verbosity=0)
         self.assertIn('DEM file does not exists at: %s' % filename, e.exception)
 
     def test_fail_wrong_format(self):
-        output = StringIO()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'test.xml')
         with self.assertRaises(CommandError) as e:
-            call_command('loaddem', filename, verbosity=0, stdout=output)
+            call_command('loaddem', filename, verbosity=0)
         self.assertIn('DEM format is not recognized by GDAL.', e.exception)
