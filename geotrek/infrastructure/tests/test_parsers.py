@@ -16,7 +16,7 @@ class StructureParserTest(TestCase):
         signage = SignageFactory(name="name", implantation_year=2010)
         call_command('loadinfrastructure', filename, '--signage', type_default='label', name_default='name',
                      condition_default='condition', structure_default='structure',
-                     description_default='description', year_default=2010)
+                     description_default='description', year_default=2010, verbosity=0)
         value = Signage.objects.all()
         self.assertEquals(signage.name, value[1].name)
         self.assertEquals(signage.implantation_year, value[1].implantation_year)
@@ -27,7 +27,7 @@ class StructureParserTest(TestCase):
         building = InfrastructureFactory(name="name", implantation_year=2010)
         call_command('loadinfrastructure', filename, '--infrastructure', type_default='label', name_default='name',
                      condition_default='condition', structure_default='structure',
-                     description_default='description', year_default=2010)
+                     description_default='description', year_default=2010, verbosity=0)
         value = Infrastructure.objects.all()
         self.assertEquals(building.name, value[1].name)
         self.assertEquals(building.implantation_year, value[1].implantation_year)
