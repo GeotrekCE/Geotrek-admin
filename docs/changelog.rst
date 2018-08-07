@@ -7,7 +7,7 @@ CHANGELOG
 
 **New features**
 
-* Delete path show linked topologies by type.
+* Path deletion warning page now shows linked topologies
 
 **Bug fixes**
 
