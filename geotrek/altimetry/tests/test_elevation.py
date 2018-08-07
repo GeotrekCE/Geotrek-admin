@@ -2,10 +2,14 @@ from django.conf import settings
 from django.test import TestCase
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.contrib.gis.geos import MultiLineString, LineString
+from django.core.management import call_command
+from django.core.management.base import CommandError
 
 from geotrek.core.models import Path
 from geotrek.core.factories import TopologyFactory
 from geotrek.altimetry.helpers import AltimetryHelper
+
+import os
 
 
 class ElevationTest(TestCase):
@@ -296,3 +300,40 @@ class SamplingTest(TestCase):
     def test_51m(self):
         path = Path.objects.create(geom=LineString((0, 0), (0, self.step * 2 + 1), (0, self.step * 4 + 2)))
         self.assertEqual(len(path.geom_3d.coords), 7)
+
+
+class CommandLoadDemTest(TestCase):
+
+    def test_success(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
+        call_command('loaddem', filename, '--replace', verbosity=0)
+        conn = connections[DEFAULT_DB_ALIAS]
+        cur = conn.cursor()
+        cur.execute('SELECT ST_Value(rast, ST_SetSRID(ST_MakePoint(602500, 6650000), 2154)) FROM mnt;')
+        self.assertAlmostEqual(cur.fetchone()[0], 343.600006103516)
+        cur.execute('DROP TABLE mnt;')
+
+    def test_fail_table_mnt(self):
+        """
+        The table mnt already exist
+        """
+        conn = connections[DEFAULT_DB_ALIAS]
+        cur = conn.cursor()
+        cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
+        with self.assertRaises(CommandError) as e:
+            call_command('loaddem', filename, verbosity=0)
+        self.assertIn('DEM file exists, use --replace to overwrite', e.exception)
+        cur.execute('DROP TABLE mnt;')
+
+    def test_fail_no_file(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'no.tif')
+        with self.assertRaises(CommandError) as e:
+            call_command('loaddem', filename, verbosity=0)
+        self.assertIn('DEM file does not exists at: %s' % filename, e.exception)
+
+    def test_fail_wrong_format(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'test.xml')
+        with self.assertRaises(CommandError) as e:
+            call_command('loaddem', filename, verbosity=0)
+        self.assertIn('DEM format is not recognized by GDAL.', e.exception)
