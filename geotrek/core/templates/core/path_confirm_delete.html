@@ -5,18 +5,18 @@
 {{ block.super }}
 
 <div class="div-center">
-        <div class="panel-heading">{% trans 'Different Topologies linked with this path' %} :</div>
+    <div class="panel-heading">{% trans 'Different topologies are linked to this path' %} :</div>
 
-        {% for key, values in topologies.iteritems %}
+    {% for model, topologies in topologies_by_model.iteritems %}
 
-
-            <ul>
-                <h4>{{key}} :</h4>
-            {% for value in values %}
-                <li>{{ value.1 }}: {{ value.0 }}   </li>
+        <h4>{{ model }} :</h4>
+        <ul>
+            {% for topology in topologies %}
+                <li><a href="{{ topology.url }}">{{ topology.name }}</a></li>
             {% endfor %}
-            </ul>
+        </ul>
 
-        {% endfor %}
+    {% endfor %}
 </div>
+
 {% endblock mainpanel %}

@@ -2,6 +2,7 @@
 
 import json
 import logging
+from collections import defaultdict
 
 from django.contrib.auth.decorators import permission_required
 from django.conf import settings
@@ -150,64 +151,26 @@ class PathDelete(MapEntityDelete):
 
     def get_context_data(self, **kwargs):
         context = super(PathDelete, self).get_context_data(**kwargs)
-        result_topo = {}
-        pks = []
-        for topo in Topology.objects.all().filter(paths=context['object']).filter(deleted=False):
-            if 'geotrek.core' in settings.INSTALLED_APPS:
-                if topo.trails.exists():
-                    topology = topo.trails.first()
-                    if topology.pk not in pks:
-                        trails = result_topo.get(_('Trails'), [])
-                        trails.append((topology.name, topology.pk))
-                        result_topo[_('Trails')] = trails
-                        pks.append(topology.pk)
-            if 'geotrek.trekking' in settings.INSTALLED_APPS:
-                if topo.treks.exists():
-                    topology = topo.treks.first()
-                    if topology.pk not in pks:
-                        treks = result_topo.get(_('Treks'), [])
-                        treks.append((topology.name, topology.pk))
-                        result_topo[_('Treks')] = treks
-                        pks.append(topology.pk)
-                if topo.services.exists():
-                    topology = topo.services.first()
-                    if topology.pk not in pks:
-                        services = result_topo.get(_('Services'), [])
-                        services.append((topology.type.name, topology.pk))
-                        result_topo[_('Services')] = services
-                        pks.append(topology.pk)
-                if topo.pois.exists():
-                    topology = topo.pois.first()
-                    if topology.pk not in pks:
-                        pois = result_topo.get(_('Pois'), [])
-                        pois.append((topology.name, topology.pk))
-                        result_topo[_('Pois')] = pois
-                        pks.append(topology.pk)
-            if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
-                if topo.signages.exists():
-                    topology = topo.signages.first()
-                    if topology.pk not in pks:
-                        signages = result_topo.get(_('Signages'), [])
-                        signages.append((topology.name, topology.pk))
-                        result_topo[_('Signages')] = signages
-                        pks.append(topology.pk)
-                if topo.infrastructures.exists():
-                    topology = topo.infrastructures.first()
-                    if topology.pk not in pks:
-                        infrastructures = result_topo.get(_('Infrastructures'), [])
-                        infrastructures.append((topology.name, topology.pk))
-                        result_topo[_('Infrastructures')] = infrastructures
-                        pks.append(topology.pk)
-            if 'geotrek.maintenance' in settings.INSTALLED_APPS:
-                if topo.interventions.exists():
-                    interventions = topo.interventions.all()
-                    for intervention in interventions:
-                        if intervention.topology.pk not in pks:
-                            interventions = result_topo.get(_('Interventions'), [])
-                            interventions.append((intervention.name, intervention.topology.pk))
-                            result_topo[_('Interventions')] = interventions
-                            pks.append(intervention.topology.pk)
-        context['topologies'] = result_topo
+        topologies_by_model = defaultdict(list)
+        if 'geotrek.core' in settings.INSTALLED_APPS:
+            for trail in self.object.trails:
+                topologies_by_model[_('Trails')].append({'name': trail.name, 'url': trail.get_detail_url()})
+        if 'geotrek.trekking' in settings.INSTALLED_APPS:
+            for trek in self.object.treks:
+                topologies_by_model[_('Treks')].append({'name': trek.name, 'url': trek.get_detail_url()})
+            for service in self.object.services:
+                topologies_by_model[_('Services')].append({'name': service.type.name, 'url': service.get_detail_url()})
+            for poi in self.object.pois:
+                topologies_by_model[_('Pois')].append({'name': poi.name, 'url': poi.get_detail_url()})
+        if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
+            for signage in self.object.signages:
+                topologies_by_model[_('Signages')].append({'name': signage.name, 'url': signage.get_detail_url()})
+            for infrastructure in self.object.infrastructures:
+                topologies_by_model[_('Infrastructures')].append({'name': infrastructure.name, 'url': infrastructure.get_detail_url()})
+        if 'geotrek.maintenance' in settings.INSTALLED_APPS:
+            for intervention in self.object.interventions:
+                topologies_by_model[_('Interventions')].append({'name': intervention.name, 'url': intervention.get_detail_url()})
+        context['topologies_by_model'] = dict(topologies_by_model)
         return context
 
 
