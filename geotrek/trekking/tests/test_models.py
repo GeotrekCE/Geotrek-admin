@@ -9,7 +9,6 @@ from unittest import skipIf
 from bs4 import BeautifulSoup
 
 from geotrek.common.tests import TranslationResetMixin
-from geotrek.core.models import Path
 from geotrek.core.factories import PathFactory, PathAggregationFactory
 from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.factories import (POIFactory, TrekFactory,

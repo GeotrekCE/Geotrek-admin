@@ -294,12 +294,11 @@ class InterventionViewsTest(CommonTest):
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_no_html_in_csv(self):
-        InfrastructureInterventionFactory.create()
-        super(InterventionViewsTest, self).test_no_html_in_csv()
-
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-    def test_no_html_in_csv(self):
-        pass
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            InfrastructureInterventionFactory.create()
+            super(InterventionViewsTest, self).test_no_html_in_csv()
+        else:
+            return
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_basic_format(self):
