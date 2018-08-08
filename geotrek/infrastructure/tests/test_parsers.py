@@ -50,21 +50,20 @@ class StructureParserTest(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
         output = StringIO()
 
-        def check_field_none():
-            elements_to_check = ['type', 'name', 'condition', 'structure', 'description', 'implantation']
-            self.assertEqual(output.getvalue().count("Field 'None' not found in data source."), 6)
-            for element in elements_to_check:
-                self.assertIn("Set it with --{0}-field, or set a default value with --{0}-default".format(element),
-                              output.getvalue())
-        call_command('loadinfrastructure', filename, '--signage', verbosity=0)
-        call_command('loadinfrastructure', filename, '--signage', type_default='label', verbosity=0)
+        call_command('loadinfrastructure', filename, '--signage', stdout=output)
+        call_command('loadinfrastructure', filename, '--signage', type_default='label', stdout=output)
         call_command('loadinfrastructure', filename, '--signage', type_default='label', name_default='name',
-                     verbosity=0)
+                     stdout=output)
         call_command('loadinfrastructure', filename, '--signage', type_default='label', name_default='name',
-                     condition_default='condition', verbosity=0)
+                     condition_default='condition', stdout=output)
         call_command('loadinfrastructure', filename, '--signage', type_default='label', name_default='name',
-                     condition_default='condition', structure_default='structure', verbosity=0)
+                     condition_default='condition', structure_default='structure', stdout=output)
         call_command('loadinfrastructure', filename, '--signage', type_default='label', name_default='name',
-                     condition_default='condition', structure_default='structure', description_default='description',
-                     verbosity=0)
-        check_field_none()
+                     condition_default='condition', structure_default='structure',
+                     description_default='description', stdout=output)
+
+        elements_to_check = ['type', 'name', 'condition', 'structure', 'description', 'implantation']
+        self.assertEqual(output.getvalue().count("Field 'None' not found in data source."), 6)
+        for element in elements_to_check:
+            self.assertIn("Set it with --{0}-field, or set a default value with --{0}-default".format(element),
+                          output.getvalue())
