@@ -140,6 +140,7 @@ class PathViewsTest(CommonTest):
         intervention2 = InterventionFactory.create(topology=t, name='Intervention2')
         response = self.client.get(path.get_delete_url())
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Different topologies are linked with this path')
         self.assertContains(response, '<a href="/poi/%d/">POI</a>' % poi.pk)
         self.assertContains(response, '<a href="/trail/%d/">Trail</a>' % trail.pk)
         self.assertContains(response, '<a href="/trek/%d/">Trek</a>' % trek.pk)
