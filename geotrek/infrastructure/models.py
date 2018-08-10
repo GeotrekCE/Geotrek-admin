@@ -50,6 +50,8 @@ class InfrastructureType(StructureOrNoneRelated):
         ordering = ['label', 'type']
 
     def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.label, self.structure.name)
         return self.label
 
 
@@ -62,6 +64,8 @@ class InfrastructureCondition(StructureOrNoneRelated):
         db_table = "a_b_etat"
 
     def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.label, self.structure.name)
         return self.label
 
 
