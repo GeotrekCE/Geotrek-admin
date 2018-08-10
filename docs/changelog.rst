@@ -8,6 +8,8 @@ CHANGELOG
 **New features**
 
 * Path deletion warning page now shows linked topologies
+* Add a command to unset structure in lists of choices and group choices
+  with the same name
 
 **Bug fixes**
 
