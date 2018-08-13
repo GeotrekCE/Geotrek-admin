@@ -517,6 +517,13 @@ COMPLETENESS_FIELDS = {
     'trek': ['departure', 'duration', 'difficulty', 'description_teaser']
 }
 
+EMBED_VIDEO_BACKENDS = (
+    'embed_video.backends.YoutubeBackend',
+    'geotrek.common.embed.backends.DailymotionBackend',
+    'embed_video.backends.VimeoBackend',
+    'embed_video.backends.SoundCloudBackend',
+)
+
 TRAIL_MODEL_ENABLED = True
 TREKKING_TOPOLOGY_ENABLED = True
 FLATPAGES_ENABLED = True
