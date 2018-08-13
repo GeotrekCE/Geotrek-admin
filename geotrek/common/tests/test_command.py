@@ -57,4 +57,4 @@ class CommandTests(TestCase):
         path_usages = Path.objects.first().usages.first()
 
         self.assertEqual(path_usages.usage, 'hello')
-        self.assertEqual(path.usages.usage.structure, None)
+        self.assertEqual(path_usages.structure, None)
