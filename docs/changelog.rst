@@ -15,6 +15,7 @@ CHANGELOG
 
 * Fix Sync_rando View
 * Fix loaddem
+* Fix creation of Youtube/Soundcloud attachments
 
 
 2.20.1 (2018-07-16)
