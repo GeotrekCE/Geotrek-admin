@@ -8,6 +8,7 @@ CHANGELOG
 **New features**
 
 * Path deletion warning page now shows linked topologies
+* Allow to add Dailymotion video attachments
 * Add a command to unset structure in lists of choices and group choices
   with the same name
 

@@ -190,6 +190,22 @@ class BasicJSONAPITest(TranslationResetMixin):
                               u'legend': self.video.legend,
                               u'author': self.video.author,
                               u'code': self.video_detected.code})
+        self.video = common_factories.AttachmentFactory(
+            obj=self.content, attachment_file='',
+            attachment_video='http://www.dailymotion.com/video/x6e0q24')
+        self.video_detected = detect_backend(self.video.attachment_video)
+        self.pk = self.content.pk
+        url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.model_name, pk=self.pk)
+        self.response = self.client.get(url)
+        self.result = json.loads(self.response.content)
+
+        self.assertDictEqual(self.result['videos'][0],
+                             {u'backend': 'Dailymotion',
+                              u'url': 'http://www.dailymotion.com/embed/video/x6e0q24',
+                              u'title': self.video.title,
+                              u'legend': self.video.legend,
+                              u'author': self.video.author,
+                              u'code': self.video_detected.code})
 
     def test_cities(self):
         self.assertDictEqual(self.result['cities'][0],
