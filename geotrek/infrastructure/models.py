@@ -53,7 +53,7 @@ class InfrastructureType(StructureOrNoneRelated):
         return self.label
 
 
-class InfrastructureCondition(StructureRelated):
+class InfrastructureCondition(StructureOrNoneRelated):
     label = models.CharField(verbose_name=_(u"Name"), db_column="etat", max_length=250)
 
     class Meta:
