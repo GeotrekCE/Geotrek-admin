@@ -19,6 +19,7 @@ CHANGELOG
 * Fix creation of Youtube/Soundcloud attachments
 * Fix cancellation when editing geometries
 * Show which structure choices are related to
+* Add confort and stake filters to path list
 
 
 2.20.1 (2018-07-16)
