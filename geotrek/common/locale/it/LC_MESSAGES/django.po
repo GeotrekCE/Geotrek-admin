@@ -813,7 +813,7 @@ msgstr "Annuale"
 #~ "                    "
 #~ msgstr ""
 #~ "\n"
-#~ "                     %(job)s: %(nb_days)s jours\n"
+#~ "                     %(job)s: %(nb_days)s giorni\n"
 #~ "                    "
 
 #~ msgid "day"
