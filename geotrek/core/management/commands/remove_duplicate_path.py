@@ -1,6 +1,5 @@
 from django.core.management.base import BaseCommand
 from django.db import connection
-import itertools
 
 from geotrek.core.models import Path
 
