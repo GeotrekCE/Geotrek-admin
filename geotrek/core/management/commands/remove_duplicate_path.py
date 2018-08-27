@@ -14,12 +14,10 @@ class Command(BaseCommand):
         cursor = connection.cursor()
         sqlquery = """
         SELECT DISTINCT t1.id, t2.id FROM l_t_troncon t1
-         JOIN l_t_troncon t2 ON t1.id != t2.id AND ST_EQUALS(t1.geom, t2.geom) ORDER BY t1.id"""
+         JOIN l_t_troncon t2 ON t1.id > t2.id AND ST_EQUALS(t1.geom, t2.geom) ORDER BY t1.id"""
         cursor.execute(sqlquery)
         list_topologies = cursor.fetchall()
         list_topologies = [sorted(duplicate) for duplicate in list_topologies]
-        list_topologies.sort()
-        list_topologies = list(k for k, _ in itertools.groupby(list_topologies))
         to_delete = []
         for path1_pk, path2_pk in list_topologies:
             path1 = Path.objects.get(pk=path1_pk)
