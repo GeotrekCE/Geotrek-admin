@@ -35,7 +35,7 @@ services:
     volumes:
       - ./var:/app/src/var
     working_dir: /app/src
-    command: celery -A geotrek worker -l warning
+    command: celery -A geotrek worker -c 1 -l warning
 
   web:
      image: geotrekce/admin:latest
