@@ -7,7 +7,11 @@ CHANGELOG
 
 **Bug fixes**
 
-*
+- Fix crash in log entries view
+
+**Minor changes**
+
+- Save column sort by module
 
 
 2.21.0 (2018-09-04)
