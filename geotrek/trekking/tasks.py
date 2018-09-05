@@ -29,12 +29,10 @@ def launch_sync_rando(*args, **kwargs):
             }
         )
 
-        sync_rando_options = settings.SYNC_RANDO_OPTIONS.copy()
-
-        if 'url' not in sync_rando_options:
-            sync_rando_options.update({
-                'url': kwargs.get('url')
-            })
+        sync_rando_options = {
+            'url': kwargs.get('url'),
+        }
+        sync_rando_options.update(settings.SYNC_RANDO_OPTIONS)
 
         call_command(
             'sync_rando',
