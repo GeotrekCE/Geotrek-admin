@@ -503,6 +503,8 @@ class PathSource(StructureOrNoneRelated):
         ordering = ['source']
 
     def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.source, self.structure.name)
         return self.source
 
 
@@ -527,6 +529,8 @@ class Stake(StructureOrNoneRelated):
             and self.pk == other.pk
 
     def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.stake, self.structure.name)
         return self.stake
 
 
@@ -541,6 +545,8 @@ class Comfort(StructureOrNoneRelated):
         ordering = ['comfort']
 
     def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.comfort, self.structure.name)
         return self.comfort
 
 
@@ -555,6 +561,8 @@ class Usage(StructureOrNoneRelated):
         ordering = ['usage']
 
     def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.usage, self.structure.name)
         return self.usage
 
 
@@ -569,6 +577,8 @@ class Network(StructureOrNoneRelated):
         ordering = ['network']
 
     def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.network, self.structure.name)
         return self.network
 
 

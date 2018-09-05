@@ -185,3 +185,31 @@ class InfrastructureFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
         InfrastructureFactory.create()
         response = self.client.get(model.get_list_url())
         self.assertFalse('option value="" selected>None</option' in str(response))
+
+    def test_implantation_year_filter(self):
+        filter = InfrastructureFilterSet(data={'implantation_year': 2015})
+        self.login()
+        model = self.factory._meta.model
+        i = InfrastructureFactory.create(implantation_year=2015)
+        i2 = InfrastructureFactory.create(implantation_year=2016)
+        response = self.client.get(model.get_list_url())
+
+        self.assertTrue('<option value="2015">2015</option>' in str(response))
+        self.assertTrue('<option value="2016">2016</option>' in str(response))
+
+        self.assertTrue(i in filter.qs)
+        self.assertFalse(i2 in filter.qs)
+
+    def test_implantation_year_filter_with_str(self):
+        filter = InfrastructureFilterSet(data={'implantation_year': 'toto'})
+        self.login()
+        model = self.factory._meta.model
+        i = InfrastructureFactory.create(implantation_year=2015)
+        i2 = InfrastructureFactory.create(implantation_year=2016)
+        response = self.client.get(model.get_list_url())
+
+        self.assertTrue('<option value="2015">2015</option>' in str(response))
+        self.assertTrue('<option value="2016">2016</option>' in str(response))
+
+        self.assertIn(i, filter.qs)
+        self.assertIn(i2, filter.qs)

@@ -33,3 +33,11 @@ class CoreFactoriesTest(TestCase):
 
     def test_path_management_factory(self):
         factories.TrailFactory()
+
+    def test_path_in_bounds_existing_factory(self):
+        factories.PathFactory.create()
+        factories.PathInBoundsExistingGeomFactory()
+
+    def test_path_in_bounds_not_existing_factory(self):
+        with self.assertRaises(IndexError):
+            factories.PathInBoundsExistingGeomFactory()

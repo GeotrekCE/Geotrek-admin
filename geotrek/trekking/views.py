@@ -576,7 +576,10 @@ def sync_view(request):
     Custom views to view / track / launch a sync rando
     """
 
-    return render(request, 'trekking/sync_rando.html', {'form': SyncRandoForm(), })
+    return render(request,
+                  'trekking/sync_rando.html',
+                  {'form': SyncRandoForm(), },
+                  )
 
 
 @login_required

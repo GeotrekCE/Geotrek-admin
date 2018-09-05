@@ -1,7 +1,8 @@
 from django.test import TestCase
 from django.contrib.gis.geos import (LineString, Polygon, MultiPolygon,
-                                     MultiLineString)
+                                     MultiLineString, MultiPoint, Point)
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 from bs4 import BeautifulSoup
 
@@ -356,3 +357,16 @@ class TrekItinerancyTest(TestCase):
         self.assertQuerysetEqual(trekC.children, ['<Trek: A>'])
         self.assertEqual(trekA.parents_id, [trekC.id])
         self.assertEqual(list(trekC.children_id), [trekA.id])
+
+
+class MapImageExtentTest(TestCase):
+    def setUp(self):
+        self.trek = TrekFactory.create(
+            no_path=True,
+            points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
+            parking_location=Point(0, 0, srid=settings.SRID),
+        )
+
+    def test_get_map_image_extent(self):
+        self.assertEqual(self.trek.get_map_image_extent(),
+                         [-1.3630812101179004, -5.983856309208769, -1.363075333876591, -5.983849737107044])

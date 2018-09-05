@@ -404,11 +404,7 @@ class TrekCustomPublicViewTests(TrekkingManagerTest):
         self.assertEqual(response.status_code, 403)
 
 
-class TrekJSONDetailTest(TrekkingManagerTest):
-    """ Since we migrated some code to Django REST Framework, we should test
-    the migration extensively. Geotrek-rando mainly relies on this view.
-    """
-
+class TrekJSONSetUp(TrekkingManagerTest):
     def setUp(self):
         self.login()
 
@@ -498,6 +494,20 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.response = self.client.get(url)
         self.result = json.loads(self.response.content)
 
+
+@override_settings(SPLIT_TREKS_CATEGORIES_BY_PRACTICE=True)
+class TrekPracticeTest(TrekJSONSetUp):
+    def test_touristic_contents_practice(self):
+        self.assertEqual(len(self.result['touristic_contents']), 1)
+        self.assertDictEqual(self.result['touristic_contents'][0], {
+            u'id': self.touristic_content.pk,
+            u'category_id': self.touristic_content.prefixed_category_id})
+
+
+class TrekJSONDetailTest(TrekJSONSetUp):
+    """ Since we migrated some code to Django REST Framework, we should test
+    the migration extensively. Geotrek-rando mainly relies on this view.
+    """
     def test_related_urls(self):
         self.assertEqual(self.result['elevation_area_url'],
                          '/api/en/treks/{pk}/dem.json'.format(pk=self.pk))
@@ -699,6 +709,18 @@ class TrekJSONDetailTest(TrekkingManagerTest):
     def test_next(self):
         self.assertDictEqual(self.result['next'],
                              {u"%s" % self.parent.pk: self.sibling.pk})
+
+    def test_picture_print(self):
+        self.assertIn(self.attachment.attachment_file.name, self.trek.picture_print.name)
+        self.assertIn('.1000x500_q85_crop-smart.png', self.trek.picture_print.name)
+
+    def test_thumbnail_display(self):
+        self.assertIn('<img height="20" width="20" src="/media/%s.120x120_q85_crop.png"/>'
+                      % self.attachment.attachment_file.name, self.trek.thumbnail_display)
+
+    def test_thumbnail_csv_display(self):
+        self.assertIn('%s.120x120_q85_crop.png'
+                      % self.attachment.attachment_file.name, self.trek.thumbnail_csv_display)
 
 
 class TrekPointsReferenceTest(TrekkingManagerTest):
@@ -1074,6 +1096,31 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '</poi>'
             '</pois>'.format(**attrs))
 
+    @override_settings(PUBLISHED_BY_LANG=False)
+    def test_export_pois_without_langs(self):
+        response = self.client.get('/api/cirkwi/pois.xml')
+        self.assertEqual(response.status_code, 200)
+        attrs = {
+            'pk': self.poi.pk,
+            'title': self.poi.name,
+            'description': self.poi.description.replace('<p>', '').replace('</p>', ''),
+            'date_update': timestamp(self.poi.date_update),
+        }
+        self.assertXMLEqual(
+            response.content,
+            '<?xml version="1.0" encoding="utf8"?>\n'
+            '<pois version="2">'
+            '<poi id_poi="{pk}" date_modification="{date_update}" date_creation="1388534400">'
+            '<informations>'
+            '<information langue="en"><titre>{title}</titre><description>{description}</description></information>'
+            '<information langue="es"><titre>{title}</titre><description>{description}</description></information>'
+            '<information langue="fr"><titre>{title}</titre><description>{description}</description></information>'
+            '<information langue="it"><titre>{title}</titre><description>{description}</description></information>'
+            '</informations>'
+            '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
+            '</poi>'
+            '</pois>'.format(**attrs))
+
 
 class TrekWorkflowTest(TranslationResetMixin, TestCase):
     def setUp(self):
@@ -1185,3 +1232,16 @@ class ServiceJSONTest(TrekkingManagerTest):
                               'name': self.service.type.name,
                               'pictogram': os.path.join(settings.MEDIA_URL, self.service.type.pictogram.name),
                               })
+
+
+class ViewsSyncTest(TestCase):
+
+    def setUp(self):
+        self.user = SuperUserFactory.create(username='homer', password='dooh')
+        success = self.client.login(username=self.user.username, password='dooh')
+        self.assertTrue(success)
+
+    def test_import_update_access(self):
+        url = reverse('trekking:sync_randos_view')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)

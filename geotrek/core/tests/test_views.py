@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
+from django.conf import settings
 
 from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.common.tests import CommonTest
@@ -14,10 +15,13 @@ from geotrek.common.utils import LTE
 from geotrek.common.utils import almostequal
 
 from geotrek.authent.factories import PathManagerFactory, StructureFactory
-from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, ComfortFactory, PathAggregationFactory)
-from geotrek.trekking.factories import POIFactory, TopologyFactory
 
 from geotrek.core.models import Path, Trail
+
+from geotrek.trekking.factories import POIFactory, TrekFactory, ServiceFactory
+from geotrek.infrastructure.factories import InfrastructureFactory, SignageFactory
+from geotrek.maintenance.factories import InterventionFactory
+from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, ComfortFactory, TopologyFactory, PathAggregationFactory)
 
 
 class PathViewsTest(CommonTest):
@@ -116,6 +120,37 @@ class PathViewsTest(CommonTest):
         response = self.client.post(path.get_delete_url())
         self.assertEqual(response.status_code, 302)
 
+    def test_delete_show_topologies(self):
+        self.login()
+        path = PathFactory(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
+        poi = POIFactory.create(name='POI', no_path=True)
+        poi.add_path(path, start=0.5, end=0.5)
+        trail = TrailFactory.create(name='Trail', no_path=True)
+        trail.add_path(path, start=0.1, end=0.2)
+        trek = TrekFactory.create(name='Trek', no_path=True)
+        trek.add_path(path, start=0.2, end=0.3)
+        service = ServiceFactory.create(no_path=True, type__name='ServiceType')
+        service.add_path(path, start=0.2, end=0.3)
+        signage = SignageFactory.create(name='Signage', no_path=True)
+        signage.add_path(path, start=0.2, end=0.2)
+        infrastructure = InfrastructureFactory.create(name='Infrastructure', no_path=True)
+        infrastructure.add_path(path, start=0.2, end=0.2)
+        intervention1 = InterventionFactory.create(topology=signage, name='Intervention1')
+        t = TopologyFactory.create(no_path=True)
+        t.add_path(path, start=0.2, end=0.5)
+        intervention2 = InterventionFactory.create(topology=t, name='Intervention2')
+        response = self.client.get(path.get_delete_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Different topologies are linked with this path')
+        self.assertContains(response, '<a href="/poi/%d/">POI</a>' % poi.pk)
+        self.assertContains(response, '<a href="/trail/%d/">Trail</a>' % trail.pk)
+        self.assertContains(response, '<a href="/trek/%d/">Trek</a>' % trek.pk)
+        self.assertContains(response, '<a href="/service/%d/">ServiceType</a>' % service.pk)
+        self.assertContains(response, '<a href="/signage/%d/">Signage</a>' % signage.pk)
+        self.assertContains(response, '<a href="/infrastructure/%d/">Infrastructure</a>' % infrastructure.pk)
+        self.assertContains(response, '<a href="/intervention/%d/">Intervention1</a>' % intervention1.pk)
+        self.assertContains(response, '<a href="/intervention/%d/">Intervention2</a>' % intervention2.pk)
+
     def test_elevation_area_json(self):
         self.login()
         path = self.modelfactory.create()
@@ -137,6 +172,37 @@ class PathViewsTest(CommonTest):
         response = self.client.get('/api/path/paths.json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content)['sumPath'], 0.3)
+
+    def test_merge_fails(self):
+        self.login()
+        with self.assertRaises(AssertionError):
+            self.client.post('/mergepath/')
+        p1 = PathFactory.create()
+        p1.save()
+        p2 = PathFactory.create()
+        p2.save()
+        response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
+        self.assertEqual(response.content, 'error')
+
+    def test_merge_fails_trigger(self):
+        self.login()
+        p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
+        p2 = PathFactory.create(name="BC", geom=LineString((500, 0), (1000, 0)))
+        response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
+        self.assertEqual(response.content, 'error')
+        p3 = PathFactory.create(name="AB", geom=LineString((1, 0), (2, 0)))
+        p4 = PathFactory.create(name="BC", geom=LineString((1, 0), (10, 10)))
+        response = self.client.post('/mergepath/', {'path[]': [p3.pk, p4.pk]})
+        self.assertEqual(response.content, 'error')
+
+    def test_mege_works(self):
+        self.login()
+        p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
+        p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)))
+        response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
+        self.assertEqual(response.content, 'success')
+        p1.reload()
+        self.assertEqual(p1.geom, LineString((0, 0), (1, 0), (2, 0), srid=settings.SRID))
 
 
 class DenormalizedTrailTest(AuthentFixturesTest):

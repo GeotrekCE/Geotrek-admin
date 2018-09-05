@@ -244,7 +244,7 @@ if 'makemigrations' in sys.argv:
     PROJECT_APPS = ()
 else:
     PROJECT_APPS = (
-
+        'modeltranslation',
     )
 
 #
@@ -253,7 +253,6 @@ else:
 # https://code.djangoproject.com/ticket/12288
 #
 PROJECT_APPS += (
-    'modeltranslation',
     'geotrek.appconfig.AuthGeotrekConfig',  # django.contrib.app
     'geotrek.appconfig.ContenttypeGeotrekConfig',  # django.contrib.contenttypes
     'geotrek.appconfig.SessionsGeotrekConfig',  # django.contrib.sessions
@@ -474,6 +473,13 @@ EXPORT_HEADER_IMAGE_SIZE = {
 COMPLETENESS_FIELDS = {
     'trek': ['departure', 'duration', 'difficulty', 'description_teaser']
 }
+
+EMBED_VIDEO_BACKENDS = (
+    'embed_video.backends.YoutubeBackend',
+    'geotrek.common.embed.backends.DailymotionBackend',
+    'embed_video.backends.VimeoBackend',
+    'embed_video.backends.SoundCloudBackend',
+)
 
 TRAIL_MODEL_ENABLED = True
 TREKKING_TOPOLOGY_ENABLED = True

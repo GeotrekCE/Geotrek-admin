@@ -222,3 +222,6 @@ msgstr ""
 
 msgid "No matching points to merge paths found"
 msgstr ""
+
+msgid "Different Topologies linked with this path"
+msgstr ""

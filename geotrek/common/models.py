@@ -22,6 +22,8 @@ class Organism(StructureOrNoneRelated):
         ordering = ['organism']
 
     def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.organism, self.structure.name)
         return self.organism
 
 
@@ -37,6 +39,11 @@ class FileType(StructureOrNoneRelated, BaseFileType):
         """Override this method to filter form choices depending on structure.
         """
         return cls.for_user(request.user)
+
+    def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.type, self.structure.name)
+        return self.type
 
 
 class Attachment(BaseAttachment):
@@ -70,9 +77,10 @@ class Theme(PictogramMixin):
         output = os.path.join(settings.MEDIA_ROOT, pictogram + '_off' + ext)
 
         # Recreate only if necessary !
-        is_empty = os.path.getsize(output) == 0
-        is_newer = os.path.getmtime(pictopath) > os.path.getmtime(output)
-        if not os.path.exists(output) or is_empty or is_newer:
+        # is_empty = os.path.getsize(output) == 0
+        # is_newer = os.path.getmtime(pictopath) > os.path.getmtime(output)
+        if not os.path.exists(output):
+            #  or is_empty or is_newer:
             image = Image.open(pictopath)
             w, h = image.size
             if w > h:

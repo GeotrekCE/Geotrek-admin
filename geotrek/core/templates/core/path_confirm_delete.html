@@ -1,0 +1,22 @@
+{% extends "mapentity/mapentity_confirm_delete.html" %}
+{% load static i18n %}
+
+{% block mainpanel %}
+{{ block.super }}
+
+<div class="div-center">
+    <div class="panel-heading">{% trans 'Different topologies are linked with this path' %} :</div>
+
+    {% for model, topologies in topologies_by_model.iteritems %}
+
+        <h4>{{ model }} :</h4>
+        <ul>
+            {% for topology in topologies %}
+                <li><a href="{{ topology.url }}">{{ topology.name }}</a></li>
+            {% endfor %}
+        </ul>
+
+    {% endfor %}
+</div>
+
+{% endblock mainpanel %}

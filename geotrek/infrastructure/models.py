@@ -50,10 +50,12 @@ class InfrastructureType(StructureOrNoneRelated):
         ordering = ['label', 'type']
 
     def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.label, self.structure.name)
         return self.label
 
 
-class InfrastructureCondition(StructureRelated):
+class InfrastructureCondition(StructureOrNoneRelated):
     label = models.CharField(verbose_name=_(u"Name"), db_column="etat", max_length=250)
 
     class Meta:
@@ -62,6 +64,8 @@ class InfrastructureCondition(StructureRelated):
         db_table = "a_b_etat"
 
     def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.label, self.structure.name)
         return self.label
 
 

@@ -291,6 +291,8 @@ class InterventionStatus(StructureOrNoneRelated):
         ordering = ['id']
 
     def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.status, self.structure.name)
         return self.status
 
 
@@ -305,6 +307,8 @@ class InterventionType(StructureOrNoneRelated):
         ordering = ['type']
 
     def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.type, self.structure.name)
         return self.type
 
 
@@ -319,6 +323,8 @@ class InterventionDisorder(StructureOrNoneRelated):
         ordering = ['disorder']
 
     def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.disorder, self.structure.name)
         return self.disorder
 
 
@@ -334,6 +340,8 @@ class InterventionJob(StructureOrNoneRelated):
         ordering = ['job']
 
     def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.job, self.structure.name)
         return self.job
 
 
@@ -552,6 +560,8 @@ class ProjectType(StructureOrNoneRelated):
         ordering = ['type']
 
     def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.type, self.structure.name)
         return self.type
 
 
@@ -566,6 +576,8 @@ class ProjectDomain(StructureOrNoneRelated):
         ordering = ['domain']
 
     def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.domain, self.structure.name)
         return self.domain
 
 
@@ -580,6 +592,8 @@ class Contractor(StructureOrNoneRelated):
         ordering = ['contractor']
 
     def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.contractor, self.structure.name)
         return self.contractor
 
 

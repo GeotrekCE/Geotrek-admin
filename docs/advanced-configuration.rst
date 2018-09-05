@@ -27,7 +27,7 @@ However, it is still possible to write a custom Django setting file.
     [django]
     settings = settings.custom
 
-* As for any change in settings, re-run ``make env_standalone deploy``.
+* As for any change in ``etc/settings.ini``, re-run ``make env_standalone deploy``. To apply changes in ``geotrek/settings/custom.py``, you can just restart the application with ``sudo supervisorctl restart all``.
 
 
 Disable modules and components

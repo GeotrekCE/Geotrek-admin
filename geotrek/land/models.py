@@ -19,6 +19,8 @@ class PhysicalType(StructureOrNoneRelated):
         ordering = ['name']
 
     def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.name, self.structure.name)
         return self.name
 
 
@@ -85,6 +87,8 @@ class LandType(StructureOrNoneRelated):
         ordering = ['name']
 
     def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.name, self.structure.name)
         return self.name
 
 
