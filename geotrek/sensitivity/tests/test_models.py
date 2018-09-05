@@ -28,8 +28,11 @@ class SensitiveAreaModelTest(TestCase):
     def test_get_extent(self):
         sensitive_area = SensitiveAreaFactory.create(
             geom='POLYGON((700000 6600000, 700000 6600100, 700100 6600100, 700100 6600000, 700000 6600000))')
-        self.assertEqual(sensitive_area.extent,
-                         (3.0, 46.49999999256511, 3.0013039767202154, 46.500900449784226))
+        lng_min, lat_min, lng_max, lat_max = sensitive_area.extent
+        self.assertAlmostEqual(lng_min, 3.0)
+        self.assertAlmostEqual(lat_min, 46.49999999256511)
+        self.assertAlmostEqual(lng_max, 3.0013039767202154)
+        self.assertAlmostEqual(lat_max, 46.500900449784226)
 
     def test_get_kml(self):
         sensitive_area = SensitiveAreaFactory.create()

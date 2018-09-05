@@ -85,7 +85,11 @@ class PathTest(TestCase):
 
     def test_extent(self):
         p1 = PathFactory.create()
-        self.assertEqual(p1.extent, (3.0, 46.499999999999936, 3.0013039767202154, 46.50090044234927))
+        lng_min, lat_min, lng_max, lat_max = p1.extent
+        self.assertAlmostEqual(lng_min, 3.0)
+        self.assertAlmostEqual(lat_min, 46.499999999999936)
+        self.assertAlmostEqual(lng_max, 3.0013039767202154)
+        self.assertAlmostEqual(lat_max, 46.50090044234927)
 
     def test_no_trail_csv(self):
         p1 = PathFactory.create()
