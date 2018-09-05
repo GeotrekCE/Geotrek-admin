@@ -29,13 +29,19 @@ def launch_sync_rando(*args, **kwargs):
             }
         )
 
+        sync_rando_options = settings.SYNC_RANDO_OPTIONS.copy()
+
+        if 'url' not in sync_rando_options:
+            sync_rando_options.update({
+                'url': kwargs.get('url')
+            })
+
         call_command(
             'sync_rando',
             settings.SYNC_RANDO_ROOT,
-            url=kwargs.get('url'),
             verbosity='2',
             task=current_task,
-            **settings.SYNC_RANDO_OPTIONS
+            **sync_rando_options
         )
 
     except Exception:
