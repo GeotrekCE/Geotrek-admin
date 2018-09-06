@@ -13,32 +13,14 @@ however it is not an absolute prerequisite. More details below.
 Isolated environment
 --------------------
 
-If you use virtual machines or containers (*Vagrant*, *LXC*, ...), this
-will install all the necessary components for development :
+Deveopment stack is managed by docker and docker-compose
 
 ::
 
-    ./install.sh --dev
+    make build
 
-
-Directly on your host
----------------------
-
-The most minimal components required to run an instance are :
-
-* PostGIS 2 server
-* GDAL, GEOS, libproj
-* gettext
-* libfreetype
-* libxml2, libxslt
-* Usual Python dev stuff
-
-See `the list of minimal packages on Debian/Ubuntu <https://github.com/GeotrekCE/Geotrek-admin/blob/211cd/install.sh#L136-L148>`_.
-
-If you already have all these components installed your OS (probably
-because you're already a python/GIS developer), then just jump to the
-next section !
-
+Why make build ? To run test and load data tests, geotrek user in docker container needs to have same UID that's your current user.
+make build just pass your UID as argument to build development docker image.
 
 Run
 ---
@@ -47,40 +29,25 @@ Start local instance :
 
 ::
 
-    make env_dev update serve
+    docker-compose up
 
 .. note::
 
-    Running ``env_dev`` and ``update`` is recommended after a pull of new source code,
-    but is not mandatory : ``make serve`` is enough most of the time.
+    Running ``docker-compose run web update.sh`` is recommended after a pull of new source code.
 
 
 Run unit tests :
 
 ::
 
-    make env_test update tests
+    docker-compose run web ./manage.py test --settings=geotrek.settings.tests
 
 
 Run unit tests in verbose mode, and without migrations :
 
 ::
 
-    make env_dev update tests
-
-
-For Capture server, run an instance of screamshotter in a separate terminal :
-
-::
-
-    bin/django runserver --settings=screamshotter.settings 8001
-
-
-For PDF conversion server, run an instance of Convertit in a separate terminal on ``http://localhost:6543``
-
-::
-
-    bin/convertit lib/src/convertit/development.ini
+    docker-compose run web ./manage.py test --settings=geotrek.settings.tests -v 2
 
 
 Development data
@@ -88,19 +55,19 @@ Development data
 
 ::
 
-    make load_data
+    docker-compose run web initial.sh
 
-    bin/django loaddata development-pne
+     docker-compose run web ./manage.py loaddata development-pne
 
 
 In order to get elevation data, a DEM is necessary. If you use the default extent,
-as defined in ``conf/settings.ini.sample``, you can load the following dataset :
+as defined in ``custom.py``, you can load the following dataset :
 
 ::
 
-    wget http://depot.makina-corpus.org/public/geotrek/mnt_0_ecrins.zip
-    unzip mnt_0_ecrins.zip
-    bin/django loaddem mnt_0_ecrins/w001001.adf
+    wget http://depot.makina-corpus.org/public/geotrek/mnt_0_ecrins.zip -o geotrek/var/mnt_0_ecrins.zip
+    unzip geotrek/var/mnt_0_ecrins.zip
+     docker-compose run web ./manage.py loaddem /app/var/mnt_0_ecrins/w001001.adf
 
 
 Conventions
@@ -143,8 +110,8 @@ Release
 Model modification
 ------------------
 
-    bin/django makemigrations <appName>
-    bin/django migrate
+    docker-compose run web ./manage.py makemigrations <appName>
+    docker-compose run web ./manage.py  migrate
 
 :notes:
 
@@ -158,7 +125,7 @@ Data only:
 
 ::
 
-    bin/django flush
+    docker-compose run web ./manage.py  flush
 
 
 Everything:
@@ -172,7 +139,7 @@ Everything:
 Mapentity development
 ---------------------
 
-To develop mapentity and Geotrek together, add the following lines to ``etc/settings.ini``:
+To develop mapentity and Geotrek together, modify lines to ``requirement.txt``:
 
 ::
 

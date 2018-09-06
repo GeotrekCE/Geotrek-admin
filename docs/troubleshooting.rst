@@ -52,13 +52,13 @@ services run with the following commands :
 
 ::
 
-    sudo supervisorctl status
+    sudo systemctl status
 
 You may want to force their restart :
 
 ::
 
-    sudo supervisorctl restart all
+    sudo systemctl restart geotrek
 
 
 If they don't stay alive, check the log files in the ``var/log/`` folder.

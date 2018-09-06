@@ -11,7 +11,7 @@ just run this command:
 
 ::
 
-    ./bin/django sync_rando /where/to/generate/data
+    docker-compose run web ./manage.py sync_rando /where/to/generate/data
 
 The parameter is the destination directory for synchronized data.
 If Geotrek-Admin is not accessible on localhost:80, you have to use the ``--url`` option.
@@ -72,7 +72,7 @@ You can do exactly the same with Target_Portal filed value.
 
 ::
 
-    ./bin/django sync_rando --portal "portal A" dataA
+    docker-compose run web ./manage.py sync_rando --portal "portal A" dataA
 
 
 Synchronization filtered by touristic content categories
@@ -82,7 +82,7 @@ In Geotrek-mobile, you can choose to also include touristic content per trek. Yo
 
 ::
 
-    ./bin/django sync_rando --with-touristiccontent-categories="1,3"
+    docker-compose run web ./manage.py sync_rando --with-touristiccontent-categories="1,3"
 
 Multiple categories are separated with comas (without space before or after coma).
 

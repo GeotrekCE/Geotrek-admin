@@ -11,11 +11,11 @@ Load basic data :
 
 ::
 
-    make load_data
+    docker-compose run web initial.sh
 
 :note:
 
-    This command will load default users, groups, default values for lists... in French and English. So you need to enable EN and FR at least in ``etc/settings.ini``
+    This command will load default users, groups, default values for lists... in French and English. So you need to enable EN and FR at least in ``custom.py``
 
 
 Required Super User
@@ -23,7 +23,7 @@ Required Super User
 
 .. code-block:: bash
 
-    bin/django createsuperuser
+    docker-compose run web ./manage.py createsuperuser
 
 
 You will be prompted to enter an username, a password and mail address for your super user.
@@ -82,7 +82,7 @@ And use the Geotrek command to load it into PostGIS :
 
 ::
 
-    bin/django loaddem <PATH>/dem.tif
+    docker-compose run web ./manage.py loaddem <PATH>/dem.tif
 
 
 :note:

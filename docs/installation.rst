@@ -8,14 +8,14 @@ For a developer instance, please follow  :ref:`the dedicated procedure <developm
 Requirements
 ------------
 
-* Ubuntu Server 16.04 Xenial Xerus (http://releases.ubuntu.com/16.04/) or
-  Ubuntu Server 14.04 Trusty Tahr (http://releases.ubuntu.com/14.04/)
+* Ubuntu Server 18.04 Bionic Beaver (http://releases.ubuntu.com/18.04/) or
+  Ubuntu Server 16.04 Xenial Xerus (http://releases.ubuntu.com/16.04/)
 
 
 A first estimation on system resources is :
 
-* 2 Go RAM
-* 10 Go disk space
+* 4 Go RAM
+* 20 Go disk space
 
 
 Installation
@@ -52,13 +52,10 @@ Go into Geotrek-admin folder and launch its installation
     cd Geotrek-admin
     ./install.sh
 
-You will be prompt for editing the base configuration file (``settings.ini``),
+You will be prompt for editing the base configuration file (``.env``),
 using the default editor.
 
 :notes:
-
-    If you leave *localhost* for the database host (``dbhost`` value), a
-    Postgresql with PostGis will be installed locally.
 
     In order to use a remote server (*recommended*), set the appropriate values
     for the connection.
@@ -92,38 +89,23 @@ Shutdown previous running version :
 ::
 
     # Shutdown previous version
-    sudo supervisorctl stop all
+    systemctl stop geotrek
 
 
 Copy your old configuration and uploaded files to your new folder.
 
 ::
 
-    # Configuration files
-    cp -aR ../previous-version/etc/ .
-
-    # Uploaded files
+    # Configuration and uploaded files
     cp -aR ../previous-version/var/ .
-
-    # If you have advanced settings
-    cp ../previous-version/geotrek/settings/custom.py geotrek/settings/custom.py
-
-    # If you have import parsers
-    cp ../previous-version/bulkimport/parsers.py bulkimport/parsers.py
-
-    # If you have custom translations
-    cp -aR ../previous-version/geotrek/locale/ geotrek/
 
 Deploy the new version :
 
 ::
+    copy NEW_VERSION/install content folder to your geotrek install path
 
     # Re-run install
     ./install.sh
-
-    # Empty cache
-    sudo service memcached restart
-
 
 Check the version on the login page !
 
@@ -139,12 +121,16 @@ Check the version on the login page !
 Check out the :ref:`troubleshooting page<troubleshooting-section>` for common problems.
 
 
-Server migration
-----------------
+Server migration from non docker version
+----------------------------------------
 
 It is a new installation with an additional backup/restore and a file transfert
 in between. The commands below are examples to adapt to your actual configuration
 (server names, database configuration).
+
+Take care of your current geotrek version, you need to have latest non docker version installed :
+
+2.21.0
 
 Backup settings, media files and database on the old server:
 
@@ -158,8 +144,8 @@ Get and unzip Geotrek sources on the new server:
 
 ::
 
-    wget https://github.com/GeotrekCE/Geotrek-admin/archive/2.0.0.zip
-    unzip 2.0.0.zip
+    wget https://github.com/GeotrekCE/Geotrek-admin/archive/2.xx.x.zip
+    unzip 2.xx.x.zip
     mv Geotrek-2.0.0 Geotrek
     cd Geotrek
 
@@ -182,37 +168,8 @@ Install Geotrek on the new server:
 Restore database on the new server:
 
 ::
-
-    sudo supervisorctl stop all
-    sudo -u postgres psql -c "drop database geotrekdb;"
-    sudo -u postgres psql -c "create database geotrekdb owner geotrek;"
-    sudo -u postgres pg_restore -d geotrekdb geotrekdb.backup
-    make update
-    sudo supervisorctl start all
-
-
-Tips and Tricks
----------------
-
-* Use symlinks for uploaded files and cached tiles to avoid duplicating them on disk:
-
-::
-
-    mv var/tiles ~/tiles
-    ln -s ~/tiles `pwd`/var/tiles
-
-    mv var/media ~/media
-    ln -s ~/media `pwd`/var/media
-
-
-* Speed-up upgrades by caching downloads :
-
-::
-
-    mkdir ~/downloads
-    mkdir  ~/.buildout
-
-Create ``/home/sentiers/.buildout/default.cfg`` with ::
-
-    [buildout]
-    download-cache = /home/sentiers/downloads
+    sudo systemctl stop geotrek
+    mv geotrekdb.backup var/geotrekdb.backup
+    pg_restore -d geotrekdb geotrekdb.backup
+    docker-compose run web update.sh
+    sudo systemctl start geotrek
