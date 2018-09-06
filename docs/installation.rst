@@ -91,21 +91,11 @@ Shutdown previous running version :
     # Shutdown previous version
     systemctl stop geotrek
 
-
-Copy your old configuration and uploaded files to your new folder.
-
-::
-
-    # Configuration and uploaded files
-    cp -aR ../previous-version/var/ .
-
 Deploy the new version :
 
 ::
-    copy NEW_VERSION/install content folder to your geotrek install path
-
-    # Re-run install
-    ./install.sh
+    cd /path/to/your/geotrek
+    ./update.sh
 
 Check the version on the login page !
 
