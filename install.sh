@@ -8,7 +8,7 @@ cd "$(dirname "$0")"
 
 #------------------------------------------------------------------------------
 
-STABLE_VERSION=${STABLE_VERSION:-2.19.1}
+STABLE_VERSION="$(cat VERSION | cut -d "." -f 1).$(cat VERSION | cut -d "." -f 2).$(cat VERSION | cut -d "." -f 3)"
 
 interactive=true
 
@@ -89,7 +89,7 @@ function exit_error () {
 }
 
 function install_compose () {
-    if [ $trusty -eq 1 -o $xenial -eq 1 -o $bionic -eq 1 ]; then
+    if [ $xenial -eq 1 -o $bionic -eq 1 ]; then
         sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m) \
         -o /usr/local/bin/docker-compose
     else
@@ -99,20 +99,12 @@ function install_compose () {
 }
 
 function install_docker () {
-    if [ $trusty -eq 1 ]; then
-        sudo apt-get update linux-image-extra-$(uname -r) linux-image-extra-virtual
-    fi
     sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     sudo apt-key fingerprint 0EBFCD88
-    if [ $bionic -eq 1 ]; then
-        # TODO : remove if condition when docker bionic available
-        sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu artful stable"
-    else
-        sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-    fi
-    sudo apt-get update
-    sudo apt-get install docker-ce
+    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    sudo apt-get update -qq
+    sudo apt-get install docker-ce -qq -y
 }
 
 function geotrek_setup_new () {
@@ -126,17 +118,22 @@ function geotrek_setup_new () {
     else
         install_compose
     fi
-    cp .env.dist .env #TODO : Put comments in .env.dist to explain
+
+    if [ ! -f ./docker-compose.yml ]; then
+        cp .env.dist .env
+    fi
+
     editor .env
+
     source .env
-    # TODO : Check utiliy
-    #if [$POSTGRES_HOST]; then
-    #    sed -e '3,9d;82,83d' < ./docker-compose.yml
-    #fi
+
     echo "Initiate var folder for settings and medias"
-    mkdir var
+
+    mkdir -p var
+
+    # generate unpresent config files
     sudo docker-compose run web bash exit
-    sudo editor ./var/conf/custom.py
+
     while ! grep -Eq "^SRID[ ]?=[ ]?[1-9]{4,}" ./var/conf/custom.py || \
     ! grep -Eq "^DEFAULT_STRUCTURE_NAME[ ]?=[ ]?'\w*'" ./var/conf/custom.py || \
     ! grep -Eq "^SPATIAL_EXTENT[ ]?=[ ]?\([0-9]+[.]?[0-9]*[ ]?,[ ]?[0-9]+[.]?[0-9]*[ ]?,[ ]?[0-9]+[.]?[0-9]*[ ]?,[ ]?[0-9]+[.]?[0-9]*\)" ./var/conf/custom.py || \
@@ -147,18 +144,24 @@ function geotrek_setup_new () {
         sleep 3
         sudo editor ./var/conf/custom.py
     done
-    echo "Initiate Postgres"
+
+    echo "Initiate PostgreSQL"
     sudo docker-compose up -d postgres
     sleep 15
-    echo "LoadData"
+
+    echo "Creating database and get initial data"
     sudo docker-compose run web initial.sh
+
     echo "Create a super User"
     sudo docker-compose run web ./manage.py createsuperuser
+
     echo "Transform your instance in a service"
     sed -i "s,WorkingDirectory=,WorkingDirectory=$1,g" geotrek.service;
     sudo cp geotrek.service /etc/systemd/system/geotrek.service
     sudo systemctl enable geotrek
+
     docker-compose run web initial.sh
+
     echo "Run 'sudo systemctl start geotrek' for start your service"
 }
 
@@ -174,8 +177,8 @@ while [[ $var1 != /* ]]; do
     read var1
 done
 
-# Do the stable ...
 sudo apt-get install postgresql-client
+
 if [ ! -f ./docker-compose.yml ]; then
     # TODO: Put url of archive git when release done : wget --quiet https://github.com/makinacorpus/Geotrek/archive/$STABLE_VERSION.zip
     wget --no-check-certificate https://openrent.kasta.ovh/static/Geotrek-admin-$STABLE_VERSION.zip
@@ -188,5 +191,5 @@ else
 fi
 cd $var1
 sudo chown -R $USER:$USER $var1
-sudo service postgresql stop
+
 geotrek_setup_new $var1
