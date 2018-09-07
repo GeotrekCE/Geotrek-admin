@@ -1140,6 +1140,7 @@ class TrekWorkflowTest(TranslationResetMixin, TestCase):
         response = self.client.get('/trek/edit/%u/' % self.trek.pk)
         self.assertContains(response, 'Published')
 
+
 class ServiceViewsTest(CommonTest):
     model = Service
     modelfactory = ServiceFactory
