@@ -1140,29 +1140,6 @@ class TrekWorkflowTest(TranslationResetMixin, TestCase):
         response = self.client.get('/trek/edit/%u/' % self.trek.pk)
         self.assertContains(response, 'Published')
 
-
-class SyncRandoViewTest(TestCase):
-    def setUp(self):
-        self.user = User.objects.create_user('bart', password='mahaha')
-
-    def test_return_redirect(self):
-        response = self.client.get(reverse('trekking:sync_randos_view'))
-        self.assertEqual(response.status_code, 302)
-
-    def test_return_redirect_superuser(self):
-        self.user.is_superuser = True
-        response = self.client.get(reverse('trekking:sync_randos_view'))
-        self.assertEqual(response.status_code, 302)
-
-    def test_post_sync_redirect(self):
-        """
-        test if sync can be launched by superuser post
-        """
-        self.user.is_superuser = True
-        response = self.client.post(reverse('trekking:sync_randos'))
-        self.assertEqual(response.status_code, 302)
-
-
 class ServiceViewsTest(CommonTest):
     model = Service
     modelfactory = ServiceFactory
@@ -1227,14 +1204,33 @@ class ServiceJSONTest(TrekkingManagerTest):
                               })
 
 
-class ViewsSyncTest(TestCase):
-
+class SyncRandoViewTest(TestCase):
     def setUp(self):
-        self.user = SuperUserFactory.create(username='homer', password='dooh')
-        success = self.client.login(username=self.user.username, password='dooh')
-        self.assertTrue(success)
+        self.super_user = SuperUserFactory.create(username='admin', password='super')
+        self.simple_user = User.objects.create_user(username='homer', password='doooh')
 
-    def test_import_update_access(self):
-        url = reverse('trekking:sync_randos_view')
-        response = self.client.get(url)
+    def test_get_sync_superuser(self):
+        self.client.login(username='admin', password='super')
+        response = self.client.get(reverse('trekking:sync_randos_view'))
         self.assertEqual(response.status_code, 200)
+
+    def test_post_sync_superuser(self):
+        """
+        test if sync can be launched by superuser post
+        """
+        self.client.login(username='admin', password='super')
+        response = self.client.post(reverse('trekking:sync_randos'))
+        self.assertEqual(response.status_code, 302)
+
+    def test_get_sync_simpleuser(self):
+        self.client.login(username='homer', password='doooh')
+        response = self.client.get(reverse('trekking:sync_randos_view'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_post_sync_simpleuser(self):
+        """
+        test if sync can be launched by simple user post
+        """
+        self.client.login(username='homer', password='doooh')
+        response = self.client.post(reverse('trekking:sync_randos'))
+        self.assertEqual(response.status_code, 302)
