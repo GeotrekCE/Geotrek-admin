@@ -19,7 +19,7 @@ initial:
 
 update:
 	sudo systemctl stop geotrek
-	docker pull nginx:1.13
+	docker pull nginx:1.15
 	docker pull makinacorpus/screamshotter
 	docker pull makinacorpus/convertit
 	docker pull makinacorpus/postgis:10-2.4

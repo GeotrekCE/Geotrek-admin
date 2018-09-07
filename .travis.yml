@@ -38,7 +38,7 @@ install:
   - if [[ $ACTION == integration ]]; then docker tag $DOCKER_TEST_REPO:$TRAVIS_BUILD_NUMBER geotrekce/admin:latest; fi
   # pull specific production images
   - if [[ $ACTION == integration ]]; then docker pull memcached:1.5-alpine; fi
-  - if [[ $ACTION == integration ]]; then docker pull nginx:1.13; fi
+  - if [[ $ACTION == integration ]]; then docker pull nginx:1.15; fi
   # install production env
   - if [[ $ACTION == integration ]]; then cd install; fi
   - if [[ $ACTION == integration ]]; then cp .env.dist .env; fi

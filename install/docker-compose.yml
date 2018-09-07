@@ -1,5 +1,6 @@
 version: "3"
 services:
+  # delete postgres section if you want to use external databse
   postgres:
     image: makinacorpus/postgis:10-2.4
     env_file:
@@ -30,6 +31,7 @@ services:
     env_file:
       - .env
     depends_on:
+      # delete postgres section if you want to use external databse
       - postgres
       - redis
       - screamshotter
@@ -61,7 +63,7 @@ services:
      command: gunicorn geotrek.wsgi:application -w 5 --bind 0.0.0.0:8000 --timeout ${GUNICORN_TIMEOUT}
 
   nginx:
-    image: nginx:1.13
+    image: nginx:1.15
     depends_on:
        - web
        - api
@@ -81,5 +83,6 @@ services:
       - ./var/media:/var/www/media:ro
     command: /bin/bash -c "envsubst '$$DOMAIN_NAME' < /geotrek.conf > /etc/nginx/conf.d/geotrek.conf && nginx -g 'daemon off;'"
 
+# delete postgres section if you want to use external databse
 volumes:
   postgres:
