@@ -119,7 +119,7 @@ function geotrek_setup_new () {
         install_compose
     fi
 
-    if [ ! -f ./docker-compose.yml ]; then
+    if [ ! -f ./.env ]; then
         cp .env.dist .env
     fi
 
@@ -131,7 +131,7 @@ function geotrek_setup_new () {
 
     mkdir -p var
 
-    # generate unpresent config files
+    # generate config files
     sudo docker-compose run web bash exit
 
     while ! grep -Eq "^SRID[ ]?=[ ]?[1-9]{4,}" ./var/conf/custom.py || \
