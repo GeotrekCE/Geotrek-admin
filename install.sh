@@ -146,11 +146,11 @@ function geotrek_setup_new () {
     done
 
     echo "Initiate PostgreSQL"
-    sudo docker-compose up -d postgres
+    sudo docker-compose up -d postgres  >&-
     sleep 15
 
     echo "Creating database and get initial data"
-    sudo docker-compose run web initial.sh
+    sudo docker-compose run web initial.sh  >&-
 
     echo "Create a super User"
     sudo docker-compose run web ./manage.py createsuperuser
@@ -160,7 +160,7 @@ function geotrek_setup_new () {
     sudo cp geotrek.service /etc/systemd/system/geotrek.service
     sudo systemctl enable geotrek
 
-    sudo docker-compose run web initial.sh
+    sudo docker-compose run web initial.sh  >&-
 
     echo "Run 'sudo systemctl start geotrek' for start your service"
 }
@@ -181,8 +181,8 @@ sudo apt-get install postgresql-client
 
 if [ ! -f ./docker-compose.yml ]; then
     # TODO: Put url of archive git when release done : wget --quiet https://github.com/makinacorpus/Geotrek/archive/$STABLE_VERSION.zip
-    wget --no-check-certificate https://openrent.kasta.ovh/static/Geotrek-admin-$STABLE_VERSION.zip
-    unzip Geotrek-admin-$STABLE_VERSION.zip
+    wget --no-check-certificate https://openrent.kasta.ovh/static/Geotrek-admin-$STABLE_VERSION.zip  >&-
+    unzip Geotrek-admin-$STABLE_VERSION.zip  >&-
     sudo mv Geotrek-admin-$STABLE_VERSION/install/ $var1
     rm Geotrek-admin-$STABLE_VERSION.zip
     rm -rf Geotrek-admin-$STABLE_VERSION
