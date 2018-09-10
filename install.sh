@@ -160,7 +160,7 @@ function geotrek_setup_new () {
     sudo cp geotrek.service /etc/systemd/system/geotrek.service
     sudo systemctl enable geotrek
 
-    docker-compose run web initial.sh
+    sudo docker-compose run web initial.sh
 
     echo "Run 'sudo systemctl start geotrek' for start your service"
 }
