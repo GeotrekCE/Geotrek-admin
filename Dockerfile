@@ -5,6 +5,8 @@ ENV DJANGO_SETTINGS_MODULE geotrek.settings.prod
 ARG LOCAL_UID=1000
 # Add default SECRET KEY / used for compilemessages
 ENV SECRET_KEY temp
+# default gunicorn options
+ENV GUNICORN_CMD_ARGS="--bind 0.0.0.0:8000 --workers 5 --timeout 600"
 # Add default path for log / used for compilemessages
 RUN mkdir -p /app/src/var/log
 
