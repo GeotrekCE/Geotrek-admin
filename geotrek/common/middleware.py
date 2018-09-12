@@ -37,6 +37,9 @@ CAPTURE_SERVER_HOST = urlparse(settings.MAPENTITY_CONFIG['CAPTURE_SERVER']).host
 LOCALHOST = [
     '127.0.0.1',
     socket.gethostname(),
+    # default convertion docker service hostnames
+    CONVERSION_SERVER_HOST,
+    CAPTURE_SERVER_HOST,
 ]
 
 try:
