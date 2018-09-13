@@ -5,6 +5,10 @@ CHANGELOG
 2.21.1.dev0
 -------------------
 
+**Breaking changes**
+
+- Remove type1 from trek API when SPLIT_TREKS_CATEGORIES_BY_PRACTICE is not set
+
 **Bug fixes**
 
 - Fix crash in log entries view

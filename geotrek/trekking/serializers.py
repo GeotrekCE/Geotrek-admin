@@ -177,7 +177,6 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     structure = StructureSerializer()
 
     # For consistency with touristic contents
-    type1 = TypeSerializer(source='usages', many=True)
     type2 = TypeSerializer(source='accessibilities', many=True)
     category = rest_serializers.SerializerMethodField()
 
@@ -201,7 +200,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         from geotrek.tourism import serializers as tourism_serializers
 
         if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
-            del self.fields['type1']
+            del self.fields['practice']
         if settings.SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY:
             del self.fields['type2']
 
@@ -219,7 +218,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                   'practice', 'accessibilities', 'usages', 'access', 'route',
                   'public_transport', 'advised_parking', 'web_links', 'is_park_centered',
                   'disabled_infrastructure', 'parking_location', 'relationships',
-                  'points_reference', 'gpx', 'kml', 'source', 'portal', 'type1',
+                  'points_reference', 'gpx', 'kml', 'source', 'portal',
                   'type2', 'category', 'structure', 'treks', 'children', 'parents',
                   'previous', 'next') + \
             AltimetrySerializerMixin.Meta.fields + \
@@ -282,8 +281,6 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
             data['order'] = obj.practice and obj.practice.order
         else:
             data['order'] = settings.TREK_CATEGORY_ORDER
-        if not settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
-            data['type1_label'] = obj._meta.get_field('practice').verbose_name
         if not settings.SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY:
             data['type2_label'] = obj._meta.get_field('accessibilities').verbose_name
         return data
