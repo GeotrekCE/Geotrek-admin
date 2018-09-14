@@ -673,7 +673,7 @@ class TrekJSONDetailTest(TrekJSONSetUp):
         self.assertDictEqual(self.result['category'],
                              {u"id": 'T',
                               u"order": 1,
-                              u"label": u"Trek",
+                              u"label": u"Hike",
                               u"slug": u"trek",
                               u"type2_label": u"Accessibility",
                               u"pictogram": u"/static/trekking/trek.svg"})

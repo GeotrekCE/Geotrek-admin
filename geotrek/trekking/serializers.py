@@ -270,7 +270,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         else:
             data = {
                 'id': obj.category_id_prefix,
-                'label': obj._meta.verbose_name,
+                'label': _(u"Hike"),
                 'pictogram': '/static/trekking/trek.svg',
                 # Translators: This is a slug (without space, accent or special char)
                 'slug': _('trek'),

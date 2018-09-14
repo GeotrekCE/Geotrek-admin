@@ -11,7 +11,7 @@ msgstr ""
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
-"Language: it\n"
+"Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #, python-format
 msgid "%s days"
-msgstr "%s giorni"
+msgstr "%s dagen"
 
 msgid "Hike"
-msgstr "Escursione"
+msgstr "Wandelen"
