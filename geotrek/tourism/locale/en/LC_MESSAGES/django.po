@@ -41,7 +41,7 @@ msgstr ""
 msgid "TourInFrance"
 msgstr ""
 
-msgid "Sitra"
+msgid "Apidae"
 msgstr ""
 
 msgid "Public website"

@@ -21,3 +21,6 @@ msgstr ""
 #, python-format
 msgid "%s days"
 msgstr "%s tage"
+
+msgid "Hike"
+msgstr "Wanderung"

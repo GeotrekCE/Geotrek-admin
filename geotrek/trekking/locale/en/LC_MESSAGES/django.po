@@ -578,3 +578,6 @@ msgstr ""
 
 msgid "Geographical location"
 msgstr ""
+
+msgid "Hike"
+msgstr "Hike"

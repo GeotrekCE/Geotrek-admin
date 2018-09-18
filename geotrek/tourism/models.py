@@ -32,12 +32,6 @@ else:
 
 logger = logging.getLogger(__name__)
 
-DATA_SOURCE_TYPES = Choices(
-    ('GEOJSON', 'GEOJSON', _("GeoJSON")),
-    ('TOURINFRANCE', 'TOURINFRANCE', _("TourInFrance")),
-    ('SITRA', 'SITRA', _("Sitra")),
-)
-
 
 def _get_target_choices():
     """ Populate choices using installed apps names.

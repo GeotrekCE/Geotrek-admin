@@ -663,12 +663,6 @@ class TrekJSONDetailTest(TrekJSONSetUp):
             u'id': self.trek_b.pk,
             u'category_id': self.trek_b.prefixed_category_id})
 
-    def test_type1(self):
-        self.assertDictEqual(self.result['type1'][0],
-                             {u"id": self.trek.practice.id,
-                              u"pictogram": os.path.join(settings.MEDIA_URL, self.trek.practice.pictogram.name),
-                              u"name": self.trek.practice.name})
-
     def test_type2(self):
         self.assertDictEqual(self.result['type2'][0],
                              {u"id": self.accessibility.id,
@@ -679,9 +673,8 @@ class TrekJSONDetailTest(TrekJSONSetUp):
         self.assertDictEqual(self.result['category'],
                              {u"id": 'T',
                               u"order": 1,
-                              u"label": u"Trek",
+                              u"label": u"Hike",
                               u"slug": u"trek",
-                              u"type1_label": u"Practice",
                               u"type2_label": u"Accessibility",
                               u"pictogram": u"/static/trekking/trek.svg"})
 

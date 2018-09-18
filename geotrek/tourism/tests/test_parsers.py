@@ -12,10 +12,10 @@ from geotrek.common.models import Attachment, FileType
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.tourism.factories import TouristicContentCategoryFactory, TouristicContentTypeFactory
 from geotrek.tourism.models import TouristicContent
-from geotrek.tourism.parsers import TouristicContentSitraParser, EspritParcParser
+from geotrek.tourism.parsers import TouristicContentApidaeParser, EspritParcParser
 
 
-class EauViveParser(TouristicContentSitraParser):
+class EauViveParser(TouristicContentApidaeParser):
     category = u"Eau vive"
     type1 = [u"Type A", u"Type B"]
     type2 = []
@@ -31,7 +31,7 @@ class ParserTests(TranslationResetMixin, TestCase):
     @mock.patch('requests.get')
     def test_create(self, mocked):
         def mocked_json():
-            filename = os.path.join(os.path.dirname(__file__), 'data', 'sitra.json')
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidae.json')
             with io.open(filename, 'r', encoding='utf8') as f:
                 return json.load(f)
         mocked.return_value.status_code = 200

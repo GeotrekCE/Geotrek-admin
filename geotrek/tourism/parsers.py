@@ -13,8 +13,8 @@ from geotrek.common.parsers import (AttachmentParserMixin, Parser,
 from geotrek.tourism.models import TouristicContent, TouristicContentType1, TouristicContentType2
 
 
-class TouristicContentSitraParser(AttachmentParserMixin, Parser):
-    """Parser to import touristic contents from SITRA"""
+class TouristicContentApidaeParser(AttachmentParserMixin, Parser):
+    """Parser to import touristic contents from APIDAE"""
     separator = None
     api_key = None
     project_id = None
@@ -75,7 +75,7 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
     }
 
     def __init__(self, *args, **kwargs):
-        super(TouristicContentSitraParser, self).__init__(*args, **kwargs)
+        super(TouristicContentApidaeParser, self).__init__(*args, **kwargs)
         if self.category:
             self.constant_fields['category'] = self.category
         if self.type1 is not None:
@@ -219,7 +219,7 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
         return geom
 
 
-class HebergementsSitraParser(TouristicContentSitraParser):
+class HebergementsApidaeParser(TouristicContentApidaeParser):
     category = u"Hébergements"
     m2m_fields = {
         'type1': 'informationsHebergementCollectif.hebergementCollectifType.libelleFr',
@@ -355,3 +355,8 @@ class EspritParcParser(AttachmentParserMixin, Parser):
                 self.add_warning(_(u"Type 2 '{subval}' does not exist for category '{cat}'. Please add it").format(
                     subval=subval, cat=self.obj.category.label))
         return dst
+
+
+# Deprecated: for compatibility only
+TouristicContentSitraParser = TouristicContentApidaeParser
+HebergementsSitraParser = HebergementsApidaeParser
