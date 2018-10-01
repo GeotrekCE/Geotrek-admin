@@ -16,7 +16,7 @@ class Command(BaseCommand):
         query = """with relations as (SELECT t1.id as t1_id,
                                              t2.id as t2_id
                                       FROM l_t_troncon t1
-                                      JOIN l_t_troncon t2 ON t1.id < t2.id AND ST_EQUALS(t1.geom, t2.geom)
+                                      JOIN l_t_troncon t2 ON t1.id < t2.id AND ST_ORDERINGEQUALS(t1.geom, t2.geom)
                                       ORDER BY t1.id, t2.id)
                       SELECT * FROM relations WHERE t1_id NOT IN (SELECT t2_id FROM relations) """
         cursor.execute(query)
