@@ -21,25 +21,36 @@ class RemoveDuplicatePathTest(TestCase):
 
         We get at the end p1, p2, p4, p6.
         """
-        p1 = Path.objects.create(name='First Path', geom=LineString((0, 0), (1, 0), (2, 0)))
-        p2 = Path.objects.create(name='Second Path', geom=LineString((0, 0), (1, 0), (2, 0)))
-        Path.objects.create(name='Third Path', geom=LineString((0, 2), (1, 2), (2, 2)))
-        p4 = Path.objects.create(name='Fourth Path', geom=LineString((0, 2), (1, 2), (2, 2)))
-        Path.objects.create(name='Fifth Path', geom=LineString((2, 2), (1, 2), (0, 2)))
-        p6 = Path.objects.create(name='Sixth Path', geom=LineString((4, 0), (6, 0)))
-        p7 = Path.objects.create(name='Seventh Path', geom=LineString((0, 6), (1, 6), (2, 6)))
-        Path.objects.create(name='Eighth Path', geom=LineString((0, 6), (1, 6), (2, 6)))
-        Path.objects.create(name='Nineth Path', geom=LineString((0, 6), (1, 6), (2, 6)))
+        geom_1 = LineString((0, 0), (1, 0), (2, 0))
+        p1 = Path.objects.create(name='First Path', geom=geom_1)
+        p2 = Path.objects.create(name='Second Path', geom=geom_1)
+
+        geom_2 = LineString((0, 2), (1, 2), (2, 2))
+        p3 = Path.objects.create(name='Third Path', geom=geom_2)
+        p4 = Path.objects.create(name='Fourth Path', geom=geom_2)
+
+        geom_3 = LineString((2, 2), (1, 2), (0, 2))
+        p5 = Path.objects.create(name='Fifth Path', geom=geom_3)
+
+        geom_4 = LineString((4, 0), (6, 0))
+
+        p6 = Path.objects.create(name='Sixth Path', geom=geom_4)
+        p7 = Path.objects.create(name='Seventh Path', geom=geom_4)
+
+        geom_5 = LineString((0, 6), (1, 6), (2, 6))
+
+        Path.objects.create(name='Eighth Path', geom=geom_5)
+        Path.objects.create(name='Nineth Path', geom=geom_5)
+
         poi1 = POIFactory.create(name='POI1', no_path=True)
         poi1.add_path(p1, start=0.5, end=0.5)
         poi2 = POIFactory.create(name='POI2', no_path=True)
         poi2.add_path(p2, start=0.5, end=0.5)
         poi3 = POIFactory.create(name='POI3', no_path=True)
         poi3.add_path(p4, start=0.5, end=0.5)
-        poi1.reload()
-        poi2.reload()
-        poi3.reload()
+
         self.assertEquals(Path.objects.count(), 9)
+
         call_command('remove_duplicate_paths', verbosity=0)
         self.assertEquals(Path.objects.count(), 5)
         self.assertItemsEqual((p1, p2, p4, p6, p7), Path.objects.all())
