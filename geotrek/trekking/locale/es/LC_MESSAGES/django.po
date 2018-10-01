@@ -108,3 +108,6 @@ msgstr "Tipo"
 
 msgid "Useful information"
 msgstr "Información útil"
+
+msgid "Hike"
+msgstr "Caminata"

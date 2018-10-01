@@ -2,7 +2,34 @@
 CHANGELOG
 =========
 
-2.20.2.dev0
+2.21.2.dev0
+-------------------
+
+**Bug fixes**
+
+-
+
+
+2.21.1 (2018-09-18)
+-------------------
+
+**Breaking changes**
+
+- Remove type1 from trek API when SPLIT_TREKS_CATEGORIES_BY_PRACTICE is not set
+- Rename Trek category label to Hike in API. You can override this in
+  geotrek/locale/<language code>/LC_MESSAGES/django.po files
+
+**Bug fixes**
+
+- Fix crash in log entries view
+
+**Minor changes**
+
+- Save column sort by module
+- Rename SITRA to APIDAE
+
+
+2.21.0 (2018-09-04)
 -------------------
 
 **New features**
@@ -18,6 +45,9 @@ CHANGELOG
 * Fix loaddem
 * Fix creation of Youtube/Soundcloud attachments
 * Fix cancellation when editing geometries
+* Show which structure choices are related to
+* Add confort and stake filters to path list
+* Fix sync of touristic contents for mobile app
 
 
 2.20.1 (2018-07-16)

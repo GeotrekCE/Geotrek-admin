@@ -701,10 +701,10 @@ class OpenSystemParser(Parser):
         self.root = ET.fromstring(response.content).find('Resultat').find('Objets')
         self.nb = len(self.root)
         for row in self.root:
-            id_sitra = row.find('ObjetCle').find('Cle').text
+            id_apidae = row.find('ObjetCle').find('Cle').text
             for liaison in row.find('Liaisons'):
                 yield {
-                    'id_sitra': id_sitra,
+                    'id_apidae': id_apidae,
                     'id_opensystem': liaison.find('ObjetOS').find('CodeUI').text,
                 }
 

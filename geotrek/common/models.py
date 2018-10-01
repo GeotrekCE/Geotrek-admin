@@ -22,6 +22,8 @@ class Organism(StructureOrNoneRelated):
         ordering = ['organism']
 
     def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.organism, self.structure.name)
         return self.organism
 
 
@@ -37,6 +39,11 @@ class FileType(StructureOrNoneRelated, BaseFileType):
         """Override this method to filter form choices depending on structure.
         """
         return cls.for_user(request.user)
+
+    def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.type, self.structure.name)
+        return self.type
 
 
 class Attachment(BaseAttachment):

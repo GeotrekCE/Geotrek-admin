@@ -12,9 +12,9 @@ To import touristic content from APIDAE (ex-SITRA), create a ``bulkimport/parser
 
     # -*- coding: utf8 -*-
 
-    from geotrek.tourism.parsers import TouristicContentSitraParser
+    from geotrek.tourism.parsers import TouristicContentApidaeParser
 
-    class HebergementParser(TouristicContentSitraParser):
+    class HebergementParser(TouristicContentApidaeParser):
         label = u"Hébergements"
         api_key = 'xxxxxxxx'
         project_id = 9999

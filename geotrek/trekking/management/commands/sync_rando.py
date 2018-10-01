@@ -644,8 +644,9 @@ class Command(BaseCommand):
 
     def sync_trek_touristiccontents(self, lang, trek, zipfile=None):
         params = {'format': 'geojson',
-                  'categories': ','.join(category for category in self.categories),
-                  'portal': ','.join(portal for portal in self.portal)}
+                  'categories': ','.join(category for category in self.categories)}
+        if self.portal:
+            params['portal'] = ','.join(portal for portal in self.portal)
 
         view = tourism_views.TrekTouristicContentViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'touristiccontents.geojson')

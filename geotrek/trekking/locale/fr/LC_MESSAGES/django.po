@@ -641,3 +641,6 @@ msgstr "%s min"
 
 msgid "Geographical location"
 msgstr "Situation géographique"
+
+msgid "Hike"
+msgstr "Randonnée"
