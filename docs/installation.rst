@@ -75,6 +75,14 @@ to create the admin user and fill the database with your data!
 Software update
 ---------------
 
+WARNING:
+
+Intermediate versions are required to upgrade your instance.
+
+If your version is < 2.13.1, you need to install this version.
+
+If your version is < 2.16.2, you need to install this version
+
 All versions are published on `the Github forge <https://github.com/GeotrekCE/Geotrek-admin/releases>`_.
 Download and extract the new version in a separate folder (**recommended**).
 
