@@ -14,8 +14,8 @@ Requirements
 
 A first estimation on system resources is :
 
-* 2 Go RAM
-* 10 Go disk space
+* 4 Go RAM
+* 20 Go disk space
 
 
 Installation
