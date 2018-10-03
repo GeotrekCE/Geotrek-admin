@@ -30,10 +30,8 @@ class Command(BaseCommand):
                     path2 = Path.objects.get(pk=path2_pk)
                     path2.aggregations.update(path_id=path1_pk)
                     path_deleted.append(path2)
-
                     if verbosity > 1:
                         self.stdout.write("Deleting path %s" % path2)
-
                     path2.delete()
 
             except Exception as exc:
