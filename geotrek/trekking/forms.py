@@ -53,6 +53,9 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
         def __init__(self, *args, **kwargs):
             super(BaseTrekForm, self).__init__(*args, **kwargs)
             modifiable = self.fields['topology'].widget.modifiable
+            # TODO: We should change LeafletWidget to keep modifiable.
+            # Init of TopologyForm -> commonForm -> mapentityForm
+            # already add a leafletwidget with modifiable
             self.fields['topology'].widget = LineTopologyWidget()
             self.fields['topology'].widget.modifiable = modifiable
             self.fields['points_reference'].label = ''
