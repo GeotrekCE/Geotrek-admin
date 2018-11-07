@@ -254,6 +254,9 @@ class ProjectViewsTest(CommonTest):
             'funding_set-1-DELETE': ''
         }
 
+    def _check_update_geom_permission(self, response):
+        pass
+
     def test_project_layer(self):
         self.login()
         p1 = ProjectFactory.create()
