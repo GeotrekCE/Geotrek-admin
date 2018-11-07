@@ -41,7 +41,9 @@ class SignageForm(BaseInfrastructureForm):
         typefield.queryset = typefield.queryset.for_signages()
 
         if not settings.SIGNAGE_LINE_ENABLED:
+            modifiable = self.fields['topology'].widget.modifiable
             self.fields['topology'].widget = PointTopologyWidget()
+            self.fields['topology'].widget.modifiable = modifiable
 
     class Meta(BaseInfrastructureForm.Meta):
         model = Signage
