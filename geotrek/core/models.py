@@ -477,8 +477,8 @@ class PathAggregation(models.Model):
 
     @property
     def is_full(self):
-        return (self.start_position == 0.0 and self.end_position == 1.0 or
-                self.start_position == 1.0 and self.end_position == 0.0)
+        return (self.start_position == 0.0 and self.end_position == 1.0
+                or self.start_position == 1.0 and self.end_position == 0.0)
 
     @debug_pg_notices
     def save(self, *args, **kwargs):
