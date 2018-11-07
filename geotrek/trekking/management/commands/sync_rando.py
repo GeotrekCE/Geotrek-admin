@@ -464,8 +464,9 @@ class Command(BaseCommand):
 
         treks = trekking_models.Trek.objects.existing().order_by('pk')
         treks = treks.filter(
-            Q(**{'published_{lang}'.format(lang=lang): True}) |
-            Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True, 'trek_parents__parent__deleted': False})
+            Q(**{'published_{lang}'.format(lang=lang): True})
+            | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
+                   'trek_parents__parent__deleted': False})
         )
 
         if self.source:

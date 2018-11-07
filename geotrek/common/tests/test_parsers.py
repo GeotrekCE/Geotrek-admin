@@ -87,11 +87,13 @@ class ParserTests(TestCase):
     def test_report_format_text(self):
         parser = OrganismParser()
         self.assertRegexpMatches(parser.report(), '0/0 lines imported.')
-        self.assertNotRegexpMatches(parser.report(), '<div id=\"collapse-\$celery_id\" class=\"collapse\">')
+        self.assertNotRegexpMatches(parser.report(),
+                                    r'<div id=\"collapse-\$celery_id\" class=\"collapse\">')
 
     def test_report_format_html(self):
         parser = OrganismParser()
-        self.assertRegexpMatches(parser.report(output_format='html'), '<div id=\"collapse-\$celery_id\" class=\"collapse\">')
+        self.assertRegexpMatches(parser.report(output_format='html'),
+                                 r'<div id=\"collapse-\$celery_id\" class=\"collapse\">')
 
     def test_report_format_bad(self):
         parser = OrganismParser()
