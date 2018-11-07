@@ -693,9 +693,9 @@ class Meta(TemplateView):
         context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
         context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
         context['treks'] = Trek.objects.existing().order_by('pk').filter(
-            Q(**{'published_{lang}'.format(lang=lang): True}) |
-            Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
-                 'trek_parents__parent__deleted': False})
+            Q(**{'published_{lang}'.format(lang=lang): True})
+            | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
+                   'trek_parents__parent__deleted': False})
         )
         if 'tourism' in settings.INSTALLED_APPS:
             context['contents'] = TouristicContent.objects.existing().order_by('pk').filter(
