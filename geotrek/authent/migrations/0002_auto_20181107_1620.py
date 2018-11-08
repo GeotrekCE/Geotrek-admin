@@ -2,14 +2,13 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-import django.apps
 from django.core.management import call_command
 
 
-def add_permissions():
+def add_permissions(apps, schema_editor):
     call_command('update_geotrek_permissions', verbosity=0)
-    UserModel = django.apps.apps.get_model('auth', 'User')
-    PermissionModel = django.apps.apps.get_model('auth', 'Permission')
+    UserModel = apps.get_model('auth', 'User')
+    PermissionModel = apps.get_model('auth', 'Permission')
     permissions = ['path', 'service', 'poi', 'touristicevent', 'touristiccontent', 'project',
                    'trek', 'intervention', 'signage', 'workmanagementedge',
                    'signagemanagementedge', 'physicaledge', 'competenceedge', 'infrastructure',
