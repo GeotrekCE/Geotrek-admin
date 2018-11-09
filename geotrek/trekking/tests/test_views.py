@@ -250,6 +250,7 @@ class TrekViewsTest(CommonTest):
             'trek_relationship_a-1-has_common_edge': '',
             'trek_relationship_a-1-has_common_departure': '',
             'trek_relationship_a-1-is_circuit_step': 'on',
+            'pois_excluded': POIFactory.create().pk
         }
 
     def test_badfield_goodgeom(self):
@@ -270,6 +271,25 @@ class TrekViewsTest(CommonTest):
         for fmt in ('csv', 'shp', 'gpx'):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
             self.assertEqual(response.status_code, 200)
+
+    def test_no_pois_detached_in_create(self):
+        self.login()
+        response = self.client.get(self.model.get_add_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn('pois_excluded', response.content)
+
+    def test_pois_detached_update(self):
+        self.login()
+        p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
+        trek = TrekFactory.create(no_path=True)
+        trek.add_path(p1)
+        poi = POIFactory.create(no_path=True)
+        poi.add_path(p1, start=0.6, end=0.6)
+
+        good_data = self.get_good_data()
+        good_data['pois_excluded'] = poi.pk
+        self.client.post(self.model.get_update_url(trek), good_data)
+        self.assertIn(poi, trek.pois_excluded.all())
 
 
 class TrekViewsLiveTest(MapEntityLiveTest):
