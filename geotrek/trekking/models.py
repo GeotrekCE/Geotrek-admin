@@ -119,6 +119,8 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                                     verbose_name=_("Portal"), db_table='o_r_itineraire_portal')
     eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
     eid2 = models.CharField(verbose_name=_(u"Second external id"), max_length=128, blank=True, null=True, db_column='id_externe2')
+    pois_excluded = models.ManyToManyField('Poi', related_name='excluded_treks', verbose_name=_(u"pois_detached"),
+                                           db_table="l_r_troncon_poi_exclus")
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
@@ -691,6 +693,10 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
         else:
             area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
             qs = cls.objects.existing().filter(geom__intersects=area)
+            try:
+                qs = qs.exclude(pk__in=topology.trek.pois_excluded.values_list('pk', flat=True))
+            except Trek.DoesNotExist:
+                pass
         return qs
 
     @classmethod
