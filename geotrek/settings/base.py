@@ -536,6 +536,7 @@ SIGNAGE_LINE_ENABLED = False
 
 TREK_POINTS_OF_REFERENCE_ENABLED = True
 TREK_EXPORT_POI_LIST_LIMIT = 14
+TREK_EXPORT_INFRASTRUCTURE_LIST_LIMIT = 14
 TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT = 2
 
 TREK_ICON_SIZE_POI = 18
@@ -595,6 +596,7 @@ If true; displays the attached pois pictures in the Trek's geojson pictures prop
 In Geotrek Rando it enables correlated pictures to be displayed in the slideshow.
 '''
 TREK_WITH_POIS_PICTURES = False
+TREK_WITH_INFRASTRUCTURE_PICTURES = False
 
 SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,

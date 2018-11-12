@@ -37,7 +37,9 @@ from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
                     WebLinkCreateFormPopup, ServiceForm)
 from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
-                          CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer)
+                          CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer,
+                          InfrastructureSerializer, SignageSerializer)
+from geotrek.infrastructure.models import Infrastructure, Signage
 from .tasks import launch_sync_rando
 if 'tourism' in settings.INSTALLED_APPS:
     from geotrek.tourism.models import TouristicContent, TouristicEvent
@@ -196,7 +198,6 @@ class TrekDocumentPublicMixin(object):
         if settings.TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT > 0:
             information_desks = information_desks[:settings.TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT]
         context['information_desks'] = information_desks
-
         pois = list(trek.published_pois.all())
         if settings.TREK_EXPORT_POI_LIST_LIMIT > 0:
             pois = pois[:settings.TREK_EXPORT_POI_LIST_LIMIT]
@@ -204,6 +205,19 @@ class TrekDocumentPublicMixin(object):
         for i, poi in enumerate(pois):
             poi.letter = letters[i]
         context['pois'] = pois
+        infrastructures = list(trek.published_infrastructures.all())
+        signages = list(trek.published_signages.all())
+        if settings.TREK_EXPORT_INFRASTRUCTURE_LIST_LIMIT > 0:
+            infrastructures = infrastructures[:settings.TREK_EXPORT_INFRASTRUCTURE_LIST_LIMIT]
+            signages = signages[:settings.TREK_EXPORT_INFRASTRUCTURE_LIST_LIMIT]
+        letters_i = alphabet_enumeration(len(infrastructures))
+        letters_s = alphabet_enumeration(len(signages))
+        for i, infrastructure in enumerate(infrastructures):
+            infrastructure.letter = letters_i[i]
+        for j, signage in enumerate(signages):
+            signage.letter = letters_s[j]
+        context['infrastructures'] = infrastructures
+        context['signages'] = signages
         context['object'] = context['trek'] = trek
         source = self.request.GET.get('source')
         if source:
@@ -454,6 +468,46 @@ class TrekPOIViewSet(viewsets.ModelViewSet):
         if not trek.is_public:
             raise Http404
         return trek.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
+
+
+class TrekSignageViewSet(viewsets.ModelViewSet):
+    model = Signage
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_serializer_class(self):
+        class Serializer(SignageSerializer, GeoFeatureModelSerializer):
+            pass
+        return Serializer
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        try:
+            trek = Trek.objects.existing().get(pk=pk)
+        except Trek.DoesNotExist:
+            raise Http404
+        if not trek.is_public:
+            raise Http404
+        return trek.signages.filter(published=True).transform(settings.API_SRID, field_name='geom')
+
+
+class TrekInfrastructureViewSet(viewsets.ModelViewSet):
+    model = Infrastructure
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_serializer_class(self):
+        class Serializer(InfrastructureSerializer, GeoFeatureModelSerializer):
+            pass
+        return Serializer
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        try:
+            trek = Trek.objects.existing().get(pk=pk)
+        except Trek.DoesNotExist:
+            raise Http404
+        if not trek.is_public:
+            raise Http404
+        return trek.infrastructures.filter(published=True).transform(settings.API_SRID, field_name='geom')
 
 
 class ServiceLayer(MapEntityLayer):

@@ -30,7 +30,7 @@ from geotrek.flatpages.views import FlatPageViewSet, FlatPageMeta
 from geotrek.tourism import models as tourism_models
 from geotrek.tourism import views as tourism_views
 from geotrek.trekking import models as trekking_models
-from geotrek.trekking.views import (TrekViewSet, POIViewSet, TrekPOIViewSet,
+from geotrek.trekking.views import (TrekViewSet, POIViewSet, TrekPOIViewSet, TrekInfrastructureViewSet,
                                     TrekGPXDetail, TrekKMLDetail, TrekServiceViewSet,
                                     ServiceViewSet, TrekDocumentPublic, TrekMeta, Meta)
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
@@ -375,6 +375,8 @@ class Command(BaseCommand):
             self.sync_media_file(lang, desk.thumbnail, zipfile=self.trek_zipfile)
         for poi in trek.published_pois:
             self.sync_poi_media(lang, poi)
+        for infrastructure in trek.published_infrastructures:
+            self.sync_poi_media(lang, infrastructure)
         if settings.ZIP_TOURISTIC_CONTENTS_AS_POI:
             for content in trek.published_touristic_contents:
                 if content.resized_pictures:

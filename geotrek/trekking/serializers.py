@@ -24,6 +24,7 @@ from geotrek.cirkwi.models import CirkwiTag
 from geotrek.zoning.serializers import ZoningSerializerMixin
 from geotrek.altimetry.serializers import AltimetrySerializerMixin
 from geotrek.trekking import models as trekking_models
+from geotrek.infrastructure import models as infrastructure_models
 
 
 class TrekGPXSerializer(GPXSerializer):
@@ -232,6 +233,11 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         if settings.TREK_WITH_POIS_PICTURES:
             for poi in obj.published_pois:
                 pictures_list.extend(poi.serializable_pictures)
+        if settings.TREK_WITH_INFRASTRUCTURE_PICTURES:
+            for infrastructure in obj.published_infrastructures:
+                pictures_list.extend(infrastructure.serializable_pictures)
+            for signage in obj.published_signages:
+                pictures_list.extend(signage.serializable_pictures)
         return pictures_list
 
     def get_parking_location(self, obj):
@@ -318,6 +324,44 @@ class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
         geo_field = 'geom'
         fields = ('id', 'description', 'type',) + \
+            ('min_elevation', 'max_elevation', 'structure') + \
+            ZoningSerializerMixin.Meta.fields + \
+            PublishableSerializerMixin.Meta.fields + \
+            PicturesSerializerMixin.Meta.fields
+
+
+class InfrastructureTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+    class Meta:
+        model = infrastructure_models.InfrastructureType
+        fields = ('id', 'pictogram', 'label')
+
+
+class SignageSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
+                        ZoningSerializerMixin, TranslatedModelSerializer):
+    type = InfrastructureTypeSerializer()
+    structure = StructureSerializer()
+
+    class Meta:
+        model = trekking_models.Trek
+        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
+        geo_field = 'geom'
+        fields = ('id', 'type',) + \
+            ('min_elevation', 'max_elevation', 'structure') + \
+            ZoningSerializerMixin.Meta.fields + \
+            PublishableSerializerMixin.Meta.fields + \
+            PicturesSerializerMixin.Meta.fields
+
+
+class InfrastructureSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
+                               ZoningSerializerMixin, TranslatedModelSerializer):
+    type = InfrastructureTypeSerializer()
+    structure = StructureSerializer()
+
+    class Meta:
+        model = trekking_models.Trek
+        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
+        geo_field = 'geom'
+        fields = ('id', 'type',) + \
             ('min_elevation', 'max_elevation', 'structure') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
