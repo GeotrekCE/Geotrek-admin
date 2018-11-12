@@ -32,7 +32,8 @@ from geotrek.tourism import views as tourism_views
 from geotrek.trekking import models as trekking_models
 from geotrek.trekking.views import (TrekViewSet, POIViewSet, TrekPOIViewSet,
                                     TrekGPXDetail, TrekKMLDetail, TrekServiceViewSet,
-                                    ServiceViewSet, TrekDocumentPublic, TrekMeta, Meta)
+                                    ServiceViewSet, TrekDocumentPublic, TrekMeta, Meta,
+                                    TrekInfrastructureViewSet, TrekSignageViewSet,)
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     from geotrek.sensitivity import models as sensitivity_models
     from geotrek.sensitivity import views as sensitivity_views
@@ -249,6 +250,18 @@ class Command(BaseCommand):
 
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, **kwargs)
 
+    def sync_trek_infrastructures(self, lang, trek, zipfile=None):
+        params = {'format': 'geojson'}
+        view = TrekInfrastructureViewSet.as_view({'get': 'list'})
+        name = os.path.join('api', lang, 'treks', str(trek.pk), 'infrastructures.geojson')
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
+
+    def sync_trek_signages(self, lang, trek, zipfile=None):
+        params = {'format': 'geojson'}
+        view = TrekSignageViewSet.as_view({'get': 'list'})
+        name = os.path.join('api', lang, 'treks', str(trek.pk), 'infrastructures.geojson')
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
+
     def sync_trek_pois(self, lang, trek, zipfile=None):
         params = {'format': 'geojson'}
         if settings.ZIP_TOURISTIC_CONTENTS_AS_POI:
@@ -362,6 +375,8 @@ class Command(BaseCommand):
         self.sync_json(lang, ParametersView, 'parameters', zipfile=self.zipfile)
         self.sync_json(lang, ThemeViewSet, 'themes', as_view_args=[{'get': 'list'}], zipfile=self.zipfile)
         self.sync_trek_pois(lang, trek, zipfile=self.zipfile)
+        self.sync_trek_infrastructures(lang, trek, zipfile=self.zipfile)
+        self.sync_trek_signages(lang, trek, zipfile=self.zipfile)
         self.sync_trek_services(lang, trek, zipfile=self.zipfile)
         self.sync_gpx(lang, trek)
         self.sync_kml(lang, trek)

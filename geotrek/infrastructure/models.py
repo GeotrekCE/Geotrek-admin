@@ -8,6 +8,7 @@ from mapentity.models import MapEntityMixin
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path
 from geotrek.authent.models import StructureRelatedManager, StructureRelated, StructureOrNoneRelated
+from geotrek.common.mixins import BasePublishableMixin, PictogramMixin
 
 
 INFRASTRUCTURE_TYPES = Choices(
@@ -36,7 +37,7 @@ class InfrastructureTypeManager(models.Manager):
         return self.get_queryset().for_infrastructures()
 
 
-class InfrastructureType(StructureOrNoneRelated):
+class InfrastructureType(StructureOrNoneRelated, PictogramMixin):
     """ Types of infrastructures (bridge, WC, stairs, ...) """
     label = models.CharField(db_column="nom", max_length=128)
     type = models.CharField(db_column="type", max_length=1, choices=INFRASTRUCTURE_TYPES)
@@ -69,7 +70,7 @@ class InfrastructureCondition(StructureOrNoneRelated):
         return self.label
 
 
-class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
+class BaseInfrastructure(MapEntityMixin, BasePublishableMixin, Topology, StructureRelated):
     """ A generic infrastructure in the park """
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
@@ -97,9 +98,12 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
 
     @property
     def name_display(self):
-        return '<a href="%s" title="%s" >%s</a>' % (self.get_detail_url(),
-                                                    self,
-                                                    self)
+        s = '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk, self.get_detail_url(),
+                                                              self,
+                                                              self)
+        if self.published:
+            s = u'<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
+        return s
 
     @property
     def name_csv_display(self):
@@ -155,9 +159,15 @@ class Infrastructure(BaseInfrastructure):
     def topology_infrastructures(cls, topology):
         return cls.overlapping(topology)
 
+    @classmethod
+    def published_topology_infrastructure(cls, topology):
+        return cls.topology_infrastructures(topology).filter(published=True)
+
 
 Path.add_property('infrastructures', lambda self: Infrastructure.path_infrastructures(self), _(u"Infrastructures"))
 Topology.add_property('infrastructures', lambda self: Infrastructure.topology_infrastructures(self), _(u"Infrastructures"))
+Topology.add_property('published_infrastructures', Infrastructure.published_topology_infrastructure,
+                      _(u"Published Infrastructures"))
 
 
 class SignageGISManager(gismodels.GeoManager):
@@ -195,6 +205,12 @@ class Signage(BaseInfrastructure):
     def topology_signages(cls, topology):
         return cls.overlapping(topology)
 
+    @classmethod
+    def published_topology_signages(cls, topology):
+        return cls.topology_signages(topology).filter(published=True)
+
 
 Path.add_property('signages', lambda self: Signage.path_signages(self), _(u"Signages"))
 Topology.add_property('signages', lambda self: Signage.topology_signages(self), _(u"Signages"))
+Topology.add_property('published_signages', lambda self: Signage.published_topology_signages(self),
+                      _(u"Published Signages"))

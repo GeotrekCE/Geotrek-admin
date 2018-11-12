@@ -37,7 +37,8 @@ from geotrek.trekking.models import POI, Trek, Service, OrderedTrekChild
 from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
                                         TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
                                         TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
-                                        TrekWithServicesFactory)
+                                        TrekWithServicesFactory, TrekWithInfrastructuresFactory,
+                                        TrekWithSignagesFactory)
 from geotrek.trekking.templatetags import trekking_tags
 from geotrek.trekking.serializers import timestamp
 from geotrek.trekking import views as trekking_views
@@ -301,6 +302,36 @@ class TrekViewsLiveTest(MapEntityLiveTest):
 class TrekCustomViewTests(TrekkingManagerTest):
     def setUp(self):
         self.login()
+
+    def test_infrastructure_geojson(self):
+        trek = TrekWithInfrastructuresFactory.create(published=True)
+        self.assertEqual(len(trek.infrastructures), 2)
+        infra = trek.infrastructures[0]
+        infra.published = True
+        infra.save()
+        self.assertEqual(len(trek.infrastructures), 2)
+
+        url = '/api/en/treks/{pk}/infrastructures.geojson'.format(pk=trek.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        infrastructureslayer = json.loads(response.content)
+        infrastructurefeature = infrastructureslayer['features'][0]
+        self.assertEqual(infrastructurefeature['properties']['name'], infra.name)
+
+    def test_signage_geojson(self):
+        trek = TrekWithSignagesFactory.create(published=True)
+        self.assertEqual(len(trek.signages), 2)
+        signa = trek.signages[0]
+        signa.published = True
+        signa.save()
+        self.assertEqual(len(trek.signages), 2)
+
+        url = '/api/en/treks/{pk}/signages.geojson'.format(pk=trek.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        signageslayer = json.loads(response.content)
+        signagefeature = signageslayer['features'][0]
+        self.assertEqual(signagefeature['properties']['name'], signa.name)
 
     def test_pois_geojson(self):
         trek = TrekWithPOIsFactory.create(published=True)
