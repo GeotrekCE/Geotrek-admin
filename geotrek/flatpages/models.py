@@ -64,6 +64,9 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
     def __unicode__(self):
         return self.title
 
+    def get_permission_codename(self, *args):
+        return
+
     def clean(self):
         html_content = ''
         for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
