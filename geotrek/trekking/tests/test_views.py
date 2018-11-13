@@ -108,7 +108,7 @@ class POIJSONDetailTest(TrekkingManagerTest):
 
         self.poi = POIFactory.create(published=True)
 
-        self.attachment = AttachmentFactory.create(obj=self.poi,
+        self.attachment = AttachmentFactory.create(content_object=self.poi,
                                                    attachment_file=get_dummy_uploaded_image())
 
         self.touristic_content = tourism_factories.TouristicContentFactory(
@@ -288,7 +288,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         poi = trek.pois[0]
         poi.published = True
         poi.save()
-        AttachmentFactory.create(obj=poi, attachment_file=get_dummy_uploaded_image())
+        AttachmentFactory.create(content_object=poi, attachment_file=get_dummy_uploaded_image())
         self.assertNotEqual(poi.thumbnail, None)
         self.assertEqual(len(trek.pois), 2)
 
@@ -421,7 +421,7 @@ class TrekJSONSetUp(TrekkingManagerTest):
         path1 = PathFactory.create(geom='SRID=%s;LINESTRING(0 0, 1 0)' % settings.SRID)
         self.trek.add_path(path1)
 
-        self.attachment = AttachmentFactory.create(obj=self.trek,
+        self.attachment = AttachmentFactory.create(content_object=self.trek,
                                                    attachment_file=get_dummy_uploaded_image())
 
         self.information_desk = tourism_factories.InformationDeskFactory.create()

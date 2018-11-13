@@ -26,19 +26,15 @@ class SpeciesFactory(factory.DjangoModelFactory):
     period07 = True
     category = models.Species.SPECIES
 
-    @classmethod
-    def _prepare(cls, create, **kwargs):
+    @factory.post_generation
+    def create_practices(obj, create, extracted, **kwargs):
         practices = kwargs.pop('practices', None)
-
-        species = super(SpeciesFactory, cls)._prepare(create, **kwargs)
 
         if create:
             if practices is None:
                 practices = [SportPracticeFactory.create(), SportPracticeFactory.create()]
             for practice in practices:
-                species.practices.add(practice)
-
-        return species
+                obj.practices.add(practice)
 
 
 class RegulatorySpeciesFactory(SpeciesFactory):

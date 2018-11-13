@@ -138,11 +138,11 @@ class BasicJSONAPITest(TranslationResetMixin):
 
         self.content = self.factory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
 
-        self.picture = common_factories.AttachmentFactory(obj=self.content,
+        self.picture = common_factories.AttachmentFactory(content_object=self.content,
                                                           attachment_file=get_dummy_uploaded_image())
-        self.document = common_factories.AttachmentFactory(obj=self.content,
+        self.document = common_factories.AttachmentFactory(content_object=self.content,
                                                            attachment_file=get_dummy_uploaded_document())
-        self.video = common_factories.AttachmentFactory(obj=self.content, attachment_file='',
+        self.video = common_factories.AttachmentFactory(content_object=self.content, attachment_file='',
                                                         attachment_video='http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque')
         self.video_detected = detect_backend(self.video.attachment_video)
 
@@ -191,7 +191,7 @@ class BasicJSONAPITest(TranslationResetMixin):
                               u'author': self.video.author,
                               u'code': self.video_detected.code})
         self.video = common_factories.AttachmentFactory(
-            obj=self.content, attachment_file='',
+            content_object=self.content, attachment_file='',
             attachment_video='http://www.dailymotion.com/video/x6e0q24')
         self.video_detected = detect_backend(self.video.attachment_video)
         self.pk = self.content.pk
