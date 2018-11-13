@@ -169,7 +169,8 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
             Polygon(((-2, -2), (3, -2), (3, 3), (-2, 3), (-2, -2)))))
         # Ensure related objects are accessible
         self.assertItemsEqual(trek.pois_excluded.all(), [poi2])
-        self.assertItemsEqual(trek.pois, [poi, poi2])
+        self.assertItemsEqual(trek.all_pois, [poi, poi2])
+        self.assertItemsEqual(trek.pois, [poi])
         self.assertItemsEqual(trek.services, [service])
         self.assertItemsEqual(poi.treks, [trek])
         self.assertItemsEqual(service.treks, [trek])
@@ -179,7 +180,8 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
 
         trek.add_path(path=p1, start=0.5, end=1)
         self.assertItemsEqual(trek.pois_excluded.all(), [poi2])
-        self.assertItemsEqual(trek.pois, [poi, poi2])
+        self.assertItemsEqual(trek.all_pois, [poi, poi2])
+        self.assertItemsEqual(trek.pois, [poi])
         self.assertItemsEqual(trek.services, [service])
         self.assertItemsEqual(poi.treks, [trek])
         self.assertItemsEqual(service.treks, [trek])
