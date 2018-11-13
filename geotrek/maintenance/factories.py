@@ -57,7 +57,6 @@ class InterventionFactory(factory.DjangoModelFactory):
         if obj.pk:
             obj.disorders.add(InterventionDisorderFactory.create())
             ManDayFactory.create(intervention=obj)
-        return obj
 
 
 class InfrastructureInterventionFactory(InterventionFactory):
@@ -67,7 +66,6 @@ class InfrastructureInterventionFactory(InterventionFactory):
         obj.set_infrastructure(infra)
         if create:
             obj.save()
-        return obj
 
 
 class InfrastructurePointInterventionFactory(InterventionFactory):
@@ -78,7 +76,6 @@ class InfrastructurePointInterventionFactory(InterventionFactory):
         obj.set_infrastructure(infra)
         if create:
             obj.save()
-        return obj
 
 
 class SignageInterventionFactory(InterventionFactory):
@@ -88,7 +85,6 @@ class SignageInterventionFactory(InterventionFactory):
         obj.set_infrastructure(infra)
         if create:
             obj.save()
-        return obj
 
 
 class ContractorFactory(factory.DjangoModelFactory):

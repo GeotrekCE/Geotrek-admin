@@ -138,7 +138,6 @@ class TopologyFactory(factory.DjangoModelFactory):
             PathAggregationFactory.create(topo_object=obj)
             # Note that it is not possible to attach a related object before the
             # topo_mixin has an ID.
-        return obj
 
 
 class PointTopologyFactory(TopologyFactory):
@@ -153,7 +152,6 @@ class PointTopologyFactory(TopologyFactory):
             PathAggregationFactory.create(topo_object=obj,
                                           start_position=0.0,
                                           end_position=0.0)
-        return obj
 
 
 class PathAggregationFactory(factory.DjangoModelFactory):

@@ -122,7 +122,6 @@ class TrekWithPOIsFactory(TrekFactory):
         poi2.add_path(path, start=0.4, end=0.4)
         if create:
             obj.save()
-        return obj
 
 
 class TrekWithServicesFactory(TrekFactory):
@@ -137,7 +136,6 @@ class TrekWithServicesFactory(TrekFactory):
         service2.type.practices.add(obj.practice)
         if create:
             obj.save()
-        return obj
 
 
 class TrekRelationshipFactory(factory.DjangoModelFactory):

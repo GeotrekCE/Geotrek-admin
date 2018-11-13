@@ -88,7 +88,6 @@ class TouristicContentFactory(StructureRelatedDefaultFactory):
             if extracted:
                 for portal in extracted:
                     obj.portal.add(portal)
-        return obj
 
 
 class TouristicEventTypeFactory(factory.DjangoModelFactory):
@@ -124,7 +123,6 @@ class TouristicEventFactory(factory.DjangoModelFactory):
             if extracted:
                 for portal in extracted:
                     obj.portal.add(portal)
-        return obj
 
 
 class TrekWithTouristicEventFactory(TrekFactory):
@@ -137,8 +135,6 @@ class TrekWithTouristicEventFactory(TrekFactory):
             for lang in settings.MODELTRANSLATION_LANGUAGES:
                 setattr(obj, 'published_{}'.format(lang), True)
             obj.save()
-
-        return obj
 
 
 class TrekWithTouristicContentFactory(TrekFactory):
@@ -153,5 +149,3 @@ class TrekWithTouristicContentFactory(TrekFactory):
             for lang in settings.MODELTRANSLATION_LANGUAGES:
                 setattr(obj, 'published_{}'.format(lang), True)
             obj.save()
-
-        return obj
