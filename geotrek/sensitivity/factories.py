@@ -27,11 +27,9 @@ class SpeciesFactory(factory.DjangoModelFactory):
     category = models.Species.SPECIES
 
     @factory.post_generation
-    def create_practices(obj, create, extracted, **kwargs):
-        practices = kwargs.pop('practices', None)
-
+    def practices(obj, create, extracted=None, **kwargs):
         if create:
-            if practices is None:
+            if not extracted:
                 practices = [SportPracticeFactory.create(), SportPracticeFactory.create()]
             for practice in practices:
                 obj.practices.add(practice)
