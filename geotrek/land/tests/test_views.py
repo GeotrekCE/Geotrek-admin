@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from geotrek.common.tests import CommonTest
 from geotrek.authent.factories import PathManagerFactory
-from geotrek.core.factories import PathFactory, PathAggregationFactory
+from geotrek.core.factories import PathFactory
 from geotrek.common.factories import OrganismFactory
 from geotrek.land.models import (PhysicalEdge, LandEdge, CompetenceEdge,
                                  WorkManagementEdge, SignageManagementEdge)

@@ -7,7 +7,7 @@ from django.conf import settings
 from bs4 import BeautifulSoup
 
 from geotrek.common.tests import TranslationResetMixin
-from geotrek.core.factories import PathFactory, PathAggregationFactory
+from geotrek.core.factories import PathFactory
 from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.factories import (POIFactory, TrekFactory,
                                         TrekWithPOIsFactory, ServiceFactory)

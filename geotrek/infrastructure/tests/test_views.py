@@ -11,7 +11,7 @@ from geotrek.maintenance.factories import InterventionFactory
 from geotrek.infrastructure.models import (Infrastructure, InfrastructureType,
                                            InfrastructureCondition, Signage,
                                            INFRASTRUCTURE_TYPES)
-from geotrek.core.factories import PathFactory, PathAggregationFactory
+from geotrek.core.factories import PathFactory
 from geotrek.infrastructure.factories import (SignageFactory, InfrastructureFactory,
                                               InfrastructureTypeFactory, InfrastructureConditionFactory)
 from geotrek.infrastructure.filters import SignageFilterSet, InfrastructureFilterSet
