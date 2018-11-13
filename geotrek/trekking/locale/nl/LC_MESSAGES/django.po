@@ -24,3 +24,6 @@ msgstr "%s dagen"
 
 msgid "Hike"
 msgstr "Wandelen"
+
+msgid "Excluded POIs"
+msgstr "Uitgesloten POI"
