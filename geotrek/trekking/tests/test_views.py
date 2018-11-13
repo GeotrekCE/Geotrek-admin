@@ -304,13 +304,16 @@ class TrekCustomViewTests(TrekkingManagerTest):
 
     def test_pois_geojson(self):
         trek = TrekWithPOIsFactory.create(published=True)
-        self.assertEqual(len(trek.pois), 2)
+        first_poi = trek.pois.first()
+        trek.pois_excluded.add(first_poi)
+        trek.save()
+        self.assertEqual(len(trek.pois), 1)
         poi = trek.pois[0]
         poi.published = True
         poi.save()
         AttachmentFactory.create(content_object=poi, attachment_file=get_dummy_uploaded_image())
         self.assertNotEqual(poi.thumbnail, None)
-        self.assertEqual(len(trek.pois), 2)
+        self.assertEqual(len(trek.pois), 1)
 
         url = '/api/en/treks/{pk}/pois.geojson'.format(pk=trek.pk)
         response = self.client.get(url)
@@ -318,6 +321,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         poislayer = json.loads(response.content)
         poifeature = poislayer['features'][0]
         self.assertTrue('thumbnail' in poifeature['properties'])
+        self.assertEqual(len(poislayer['features']), 1)
 
     def test_services_geojson(self):
         trek = TrekWithServicesFactory.create(published=True)
