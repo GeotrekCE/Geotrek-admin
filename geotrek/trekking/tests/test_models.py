@@ -156,17 +156,13 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         poi = POIFactory.create(no_path=True)
         service = ServiceFactory.create(no_path=True)
         service.type.practices.add(trek.practice)
-        PathAggregationFactory.create(topo_object=trek, path=p1,
-                                      start_position=0.5)
-        PathAggregationFactory.create(topo_object=trek, path=p2)
-        PathAggregationFactory.create(topo_object=poi, path=p1,
-                                      start_position=0.6, end_position=0.6)
-        PathAggregationFactory.create(topo_object=service, path=p1,
-                                      start_position=0.7, end_position=0.7)
+        trek.add_path(path=p1, start=0.5, end=1)
+        trek.add_path(path=p2, start=0, end=1)
+        poi.add_path(path=p1, start=0.6, end=0.6)
+        service.add_path(path=p1, start=0.7, end=0.7)
         # /!\ District are automatically linked to paths at DB level
         d1 = DistrictFactory.create(geom=MultiPolygon(
             Polygon(((-2, -2), (3, -2), (3, 3), (-2, 3), (-2, -2)))))
-
         # Ensure related objects are accessible
         self.assertItemsEqual(trek.pois, [poi])
         self.assertItemsEqual(trek.services, [service])
@@ -175,8 +171,7 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         self.assertItemsEqual(trek.districts, [d1])
 
         # Ensure there is no duplicates
-        PathAggregationFactory.create(topo_object=trek, path=p1,
-                                      end_position=0.5)
+        trek.add_path(path=p1, start=0.5, end=1)
         self.assertItemsEqual(trek.pois, [poi])
         self.assertItemsEqual(trek.services, [service])
         self.assertItemsEqual(poi.treks, [trek])
@@ -362,11 +357,10 @@ class TrekItinerancyTest(TestCase):
 class MapImageExtentTest(TestCase):
     def setUp(self):
         self.trek = TrekFactory.create(
-            no_path=True,
             points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
             parking_location=Point(0, 0, srid=settings.SRID),
         )
 
     def test_get_map_image_extent(self):
         self.assertEqual(self.trek.get_map_image_extent(),
-                         [-1.3630812101179004, -5.983856309208769, -1.363075333876591, -5.983849737107044])
+                         [-1.3630812101179004, -5.983856309208769, 3.0013039767202154, 46.50090044234927])
