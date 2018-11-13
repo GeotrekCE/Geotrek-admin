@@ -40,14 +40,6 @@ class AttachmentFactory(factory.DjangoModelFactory):
     title = factory.Sequence(u"Title {0}".format)
     legend = factory.Sequence(u"Legend {0}".format)
 
-    # date_insert, date_update
-
-    @classmethod
-    def _prepare(cls, create, obj=None, **kwargs):
-        kwargs['content_type'] = ContentType.objects.get_for_model(obj)
-        kwargs['object_id'] = obj.pk
-        return super(AttachmentFactory, cls)._prepare(create, **kwargs)
-
 
 class ThemeFactory(factory.DjangoModelFactory):
     class Meta:
