@@ -119,7 +119,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                                     verbose_name=_("Portal"), db_table='o_r_itineraire_portal')
     eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
     eid2 = models.CharField(verbose_name=_(u"Second external id"), max_length=128, blank=True, null=True, db_column='id_externe2')
-    pois_excluded = models.ManyToManyField('Poi', related_name='excluded_treks', verbose_name=_(u"pois_detached"),
+    pois_excluded = models.ManyToManyField('Poi', related_name='excluded_treks', verbose_name=_(u"Excluded POIs"),
                                            db_table="l_r_troncon_poi_exclus")
 
     objects = Topology.get_manager_cls(models.GeoManager)()
@@ -726,7 +726,8 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
 
 
 Path.add_property('pois', POI.path_pois, _(u"POIs"))
-Topology.add_property('pois', POI.topology_all_pois, _(u"POIs"))
+Topology.add_property('pois', POI.topology_pois, _(u"POIs"))
+Topology.add_property('all_pois', POI.topology_all_pois, _(u"POIs"))
 Topology.add_property('published_pois', POI.published_topology_pois, _(u"Published POIs"))
 Intervention.add_property('pois', lambda self: self.topology.pois if self.topology else [], _(u"POIs"))
 Project.add_property('pois', lambda self: self.edges_by_attr('pois'), _(u"POIs"))
