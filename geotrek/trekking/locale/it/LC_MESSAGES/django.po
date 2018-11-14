@@ -24,3 +24,6 @@ msgstr "%s giorni"
 
 msgid "Hike"
 msgstr "Escursione"
+
+msgid "Excluded POIs"
+msgstr "PDI esclusi"
