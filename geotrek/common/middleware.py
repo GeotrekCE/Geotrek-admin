@@ -43,6 +43,13 @@ LOCALHOST = [
     CAPTURE_SERVER_HOST,
 ]
 
+REMOTE_HOSTS = [
+    'localhost',
+    socket.gethostname(),
+    CONVERSION_SERVER_HOST,
+    CAPTURE_SERVER_HOST,
+]
+
 CONVERTIT_EXPLICIT_IP = os.getenv('CONVERTIT_EXPLICIT_IP', None)
 SCREAMSHOTTER_EXPLICIT_IP = os.getenv('SCREAMSHOTTER_EXPLICIT_IP', None)
 
@@ -92,7 +99,7 @@ class FixedAutoLoginMiddleware(AutoLoginMiddleware):
             remotehost = request.META.get('REMOTE_HOST')
 
             is_auto_allowed = (
-                (remoteip in LOCALHOST or remotehost == 'localhost')
+                (remoteip in LOCALHOST or remotehost in REMOTE_HOSTS)
                 or (remoteip and remoteip in (CONVERSION_SERVER_HOST, CAPTURE_SERVER_HOST))
                 or (remotehost and remotehost in (CONVERSION_SERVER_HOST, CAPTURE_SERVER_HOST))
             )
