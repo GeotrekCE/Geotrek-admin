@@ -1221,12 +1221,12 @@ class SyncRandoViewTest(TestCase):
         """
         self.client.login(username='admin', password='super')
         response = self.client.post(reverse('trekking:sync_randos'), data={})
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, '/commands/syncview')
 
     def test_get_sync_simpleuser(self):
         self.client.login(username='homer', password='doooh')
         response = self.client.get(reverse('trekking:sync_randos_view'))
-        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, '/login/?next=/commands/syncview')
 
     def test_post_sync_simpleuser(self):
         """
@@ -1234,4 +1234,4 @@ class SyncRandoViewTest(TestCase):
         """
         self.client.login(username='homer', password='doooh')
         response = self.client.post(reverse('trekking:sync_randos'), data={})
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, '/login/?next=/commands/sync')
