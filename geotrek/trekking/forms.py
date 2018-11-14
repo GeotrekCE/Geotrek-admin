@@ -52,7 +52,12 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
     class BaseTrekForm(TopologyForm):
         def __init__(self, *args, **kwargs):
             super(BaseTrekForm, self).__init__(*args, **kwargs)
+            modifiable = self.fields['topology'].widget.modifiable
+            # TODO: We should change LeafletWidget to keep modifiable.
+            # Init of TopologyForm -> commonForm -> mapentityForm
+            # already add a leafletwidget with modifiable
             self.fields['topology'].widget = LineTopologyWidget()
+            self.fields['topology'].widget.modifiable = modifiable
             self.fields['points_reference'].label = ''
             self.fields['points_reference'].widget.target_map = 'topology'
             self.fields['parking_location'].label = ''
@@ -67,7 +72,9 @@ else:
 
         def __init__(self, *args, **kwargs):
             super(BaseTrekForm, self).__init__(*args, **kwargs)
+            modifiable = self.fields['geom'].widget.modifiable
             self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'LINESTRING'})
+            self.fields['geom'].widget.modifiable = modifiable
             self.fields['points_reference'].label = ''
             self.fields['points_reference'].widget.target_map = 'geom'
             self.fields['parking_location'].label = ''
@@ -256,7 +263,9 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
     class BasePOIForm(TopologyForm):
         def __init__(self, *args, **kwargs):
             super(BasePOIForm, self).__init__(*args, **kwargs)
+            modifiable = self.fields['topology'].widget.modifiable
             self.fields['topology'].widget = PointTopologyWidget()
+            self.fields['topology'].widget.modifiable = modifiable
 
         class Meta(TopologyForm.Meta):
             model = POI
@@ -268,7 +277,9 @@ else:
 
         def __init__(self, *args, **kwargs):
             super(BasePOIForm, self).__init__(*args, **kwargs)
+            modifiable = self.fields['geom'].widget.modifiable
             self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'POINT'})
+            self.fields['geom'].widget.modifiable = modifiable
 
         class Meta(CommonForm.Meta):
             model = POI
@@ -296,7 +307,9 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
     class BaseServiceForm(TopologyForm):
         def __init__(self, *args, **kwargs):
             super(BaseServiceForm, self).__init__(*args, **kwargs)
+            modifiable = self.fields['topology'].widget.modifiable
             self.fields['topology'].widget = PointTopologyWidget()
+            self.fields['topology'].widget.modifiable = modifiable
 
         class Meta(TopologyForm.Meta):
             model = Service
@@ -308,7 +321,9 @@ else:
 
         def __init__(self, *args, **kwargs):
             super(BaseServiceForm, self).__init__(*args, **kwargs)
+            modifiable = self.fields['geom'].widget.modifiable
             self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'POINT'})
+            self.fields['geom'].widget.modifiable = modifiable
 
         class Meta(CommonForm.Meta):
             model = Service

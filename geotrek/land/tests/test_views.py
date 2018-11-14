@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from geotrek.common.tests import CommonTest
 from geotrek.authent.factories import PathManagerFactory
-from geotrek.core.factories import PathFactory, PathAggregationFactory
+from geotrek.core.factories import PathFactory
 from geotrek.common.factories import OrganismFactory
 from geotrek.land.models import (PhysicalEdge, LandEdge, CompetenceEdge,
                                  WorkManagementEdge, SignageManagementEdge)
@@ -23,7 +23,7 @@ class EdgeHelperTest(TestCase):
         p = PathFactory.create()
         self.assertEquals(len(getattr(p, self.helper_name)), 0)
         e = self.factory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=e, path=p)
+        e.add_path(p)
         self.assertEqual([o.pk for o in getattr(p, self.helper_name).all()],
                          [e.pk])
 

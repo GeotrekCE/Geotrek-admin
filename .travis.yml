@@ -13,9 +13,6 @@ matrix:
   allow_failures:
     - env: ACTION=integration
 
-services:
-  - redis-server
-
 cache:
   - apt
 
@@ -37,6 +34,8 @@ install:
   - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
   - if [[ $ACTION == test ]]; then ./install.sh --tests --noinput; fi
   - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput; fi
+  # Don't bind redis-server on IPv6 address
+  - sudo sed -i 's/^bind.*$/bind 127.0.0.1/' /etc/redis/redis.conf; sudo service redis-server restart;
 script:
   - if [[ $ACTION == codestyle ]]; then flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings; fi
   - if [[ $ACTION == codestyle ]]; then flake8 geotrek; fi

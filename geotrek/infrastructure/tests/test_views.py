@@ -11,7 +11,7 @@ from geotrek.maintenance.factories import InterventionFactory
 from geotrek.infrastructure.models import (Infrastructure, InfrastructureType,
                                            InfrastructureCondition, Signage,
                                            INFRASTRUCTURE_TYPES)
-from geotrek.core.factories import PathFactory, PathAggregationFactory
+from geotrek.core.factories import PathFactory
 from geotrek.infrastructure.factories import (SignageFactory, InfrastructureFactory,
                                               InfrastructureTypeFactory, InfrastructureConditionFactory)
 from geotrek.infrastructure.filters import SignageFilterSet, InfrastructureFilterSet
@@ -23,13 +23,12 @@ class InfrastructureTest(TestCase):
 
         self.assertEquals(len(p.infrastructures), 0)
         sign = SignageFactory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=sign, path=p,
-                                      start_position=0.5, end_position=0.5)
+        sign.add_path(path=p, start=0.5, end=0.5)
 
         self.assertItemsEqual(p.signages, [sign])
 
         infra = InfrastructureFactory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=infra, path=p)
+        infra.add_path(path=p)
 
         self.assertItemsEqual(p.infrastructures, [infra])
 

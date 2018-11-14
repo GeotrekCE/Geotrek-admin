@@ -77,9 +77,9 @@ class StructureRelated(models.Model):
     def same_structure(self, user):
         """ Returns True if the user is in the same structure or has
             bypass_structure permission, False otherwise. """
-        return (user.profile.structure == self.structure or
-                user.is_superuser or
-                user.has_perm('authent.can_bypass_structure'))
+        return (user.profile.structure == self.structure
+                or user.is_superuser
+                or user.has_perm('authent.can_bypass_structure'))
 
     class Meta:
         abstract = True
