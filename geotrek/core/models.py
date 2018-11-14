@@ -81,6 +81,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                                       blank=True, related_name="paths",
                                       verbose_name=_(u"Networks"), db_table="l_r_troncon_reseau")
     eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
+    draft = models.BooleanField(db_column='brouillon', default=False, verbose_name=_(u"Draft"))
 
     objects = PathManager()
     include_invisible = PathInvisibleManager()

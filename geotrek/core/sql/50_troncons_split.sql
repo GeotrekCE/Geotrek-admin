@@ -117,6 +117,8 @@ BEGIN
     FOR troncon IN SELECT *
                    FROM l_t_troncon t
                    WHERE id != NEW.id
+                         AND brouillon = FALSE
+                         AND NEW.brouillon = FALSE
                          AND ST_DWITHIN(t.geom, NEW.geom, 0)
                          AND GeometryType(ST_Intersection(geom, NEW.geom)) NOT IN ('LINESTRING', 'MULTILINESTRING')
     LOOP
@@ -218,7 +220,8 @@ BEGIN
                                                  arrivee,
                                                  confort,
                                                  id_externe,
-                                                 geom)
+                                                 geom,
+                                                 brouillon)
                             VALUES (NEW.structure,
                                     NEW.visible,
                                     NEW.valide,
@@ -231,7 +234,8 @@ BEGIN
                                     NEW.arrivee,
                                     NEW.confort,
                                     NEW.id_externe,
-                                    segment)
+                                    segment,
+                                    NEW.brouillon)
                             RETURNING id INTO tid_clone;
                     END IF;
                 END IF;
@@ -291,7 +295,8 @@ BEGIN
                                                  arrivee,
                                                  confort,
                                                  id_externe,
-                                                 geom)
+                                                 geom,
+                                                 brouillon)
                             VALUES (troncon.structure,
                                     troncon.visible,
                                     troncon.valide,
@@ -304,7 +309,8 @@ BEGIN
                                     troncon.arrivee,
                                     troncon.confort,
                                     troncon.id_externe,
-                                    segment)
+                                    segment,
+                                    troncon.brouillon)
                             RETURNING id INTO tid_clone;
 
                         -- Copy N-N relations
@@ -454,5 +460,5 @@ $$ LANGUAGE plpgsql;
 
 
 CREATE TRIGGER l_t_troncon_10_split_geom_iu_tgr
-AFTER INSERT OR UPDATE OF geom ON l_t_troncon
+AFTER INSERT OR UPDATE OF geom, brouillon ON l_t_troncon
 FOR EACH ROW EXECUTE PROCEDURE troncons_evenement_intersect_split();
