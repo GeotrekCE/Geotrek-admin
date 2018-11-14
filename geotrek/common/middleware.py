@@ -1,4 +1,5 @@
 import re
+import os
 import socket
 
 from django.conf import settings
@@ -41,6 +42,15 @@ LOCALHOST = [
     CONVERSION_SERVER_HOST,
     CAPTURE_SERVER_HOST,
 ]
+
+CONVERTIT_EXPLICIT_IP = os.getenv('CONVERTIT_EXPLICIT_IP', None)
+SCREAMSHOTTER_EXPLICIT_IP = os.getenv('SCREAMSHOTTER_EXPLICIT_IP', None)
+
+if CONVERTIT_EXPLICIT_IP:
+    LOCALHOST.append(CONVERTIT_EXPLICIT_IP)
+
+if SCREAMSHOTTER_EXPLICIT_IP:
+    LOCALHOST.append(SCREAMSHOTTER_EXPLICIT_IP)
 
 try:
     socket.inet_aton(CONVERSION_SERVER_HOST)
