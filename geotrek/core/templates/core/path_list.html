@@ -2,6 +2,18 @@
 {% load i18n mapentity_tags %}
 {% load static from staticfiles %}
 
+{% block change_style %}
+	<script>
+		style_others = window.SETTINGS.map.styles.others;
+		window.SETTINGS.map.styles.others = function(feature) {
+			if (feature.properties.draft){
+				return window.SETTINGS.map.styles.draftpath;
+			}
+			return style_others;
+		};
+	</script>
+{% endblock change_style %}
+
 {% block extrahead %}
 
     {% csrf_token %}
@@ -58,7 +70,11 @@
 
 {% block mainactions %}
 
-    {{ block.super }}
+    {% if perms.core.add_path or perms.core.add_draft_path %}
+	<a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus icon-white"></i> {{ create_label }}</a>
+    {% else %}
+    <span class="btn disabled" href="#"><i class="icon-plus icon-white"></i> {{ create_label }}</span>
+    {% endif %}
     
     <div id="wait_lightbox" style="display: none;">
 		<div class="progress progress-striped active">

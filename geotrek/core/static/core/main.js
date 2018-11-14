@@ -15,10 +15,8 @@ MapEntity.pathsLayer = function buildPathLayer(options) {
     return pathsLayer;
 };
 
-
 $(window).on('entity:map', function (e, data) {
     var map = data.map;
-
     // Show the path layer only if model is not path, and if we are not
     // in an editing widget
     var is_form_view = /add|update/.test(data.view);
