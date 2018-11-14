@@ -56,8 +56,8 @@ class CreateFromTopologyMixin(object):
 
 
 class PathLayer(MapEntityLayer):
-    model = Path
-    properties = ['name']
+    queryset = Path.objects.all()
+    properties = ['name', 'draft']
 
 
 class PathList(MapEntityList):
@@ -132,6 +132,11 @@ class PathCreate(MapEntityCreate):
     model = Path
     form_class = PathForm
 
+    def dispatch(self, *args, **kwargs):
+        if self.request.user.has_perm('core.add_path') or self.request.user.has_perm('core.add_draft_path'):
+            return super(MapEntityCreate, self).dispatch(*args, **kwargs)
+        return super(PathCreate, self).dispatch(*args, **kwargs)
+
 
 class PathUpdate(MapEntityUpdate):
     model = Path
@@ -139,6 +144,8 @@ class PathUpdate(MapEntityUpdate):
 
     @same_structure_required('core:path_detail')
     def dispatch(self, *args, **kwargs):
+        if self.request.user.has_perm('core.change_path') or self.request.user.has_perm('core.change_draft_path'):
+            return super(MapEntityUpdate, self).dispatch(*args, **kwargs)
         return super(PathUpdate, self).dispatch(*args, **kwargs)
 
 
@@ -274,6 +281,10 @@ def merge_path(request):
 
         if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
             response = {'error': _(u"You don't have the right to change these paths")}
+            return HttpJSONResponse(response)
+
+        if path_a.draft != path_b.draft:
+            response = {'error': _(u"You can't merge 1 draft path with 1 normal path")}
             return HttpJSONResponse(response)
 
         try:

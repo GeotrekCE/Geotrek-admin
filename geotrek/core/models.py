@@ -110,6 +110,10 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         db_table = 'l_t_troncon'
         verbose_name = _(u"Path")
         verbose_name_plural = _(u"Paths")
+        permissions = MapEntityMixin._meta.permissions + [("add_draft_path", "Can add draft Path"),
+                                                          ("change_draft_path", "Can change draft Path"),
+                                                          ("delete_draft_path", "Can delete draft Path"),
+                                                          ]
 
     @classmethod
     def closest(cls, point, exclude=None):

@@ -471,6 +471,7 @@ COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '
 
 MAP_STYLES = {
     'path': {'weight': 2, 'opacity': 1.0, 'color': '#FF4800'},
+    'draftpath': {'weight': 3, 'opacity': 0.5, 'color': '#1008A0'},
 
     'city': {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
     'district': {'weight': 6, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
