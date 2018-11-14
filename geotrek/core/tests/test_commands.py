@@ -52,4 +52,4 @@ class RemoveDuplicatePathTest(TestCase):
         call_command('remove_duplicate_paths', verbosity=0)
 
         self.assertEquals(Path.objects.count(), 5)
-        self.assertItemsEqual((self.p1, self.p3, self.p5, self.p6), Path.objects.all())
+        self.assertItemsEqual((self.p1, self.p3, self.p5, self.p6), Path.objects.all(), Path.objects.all())
