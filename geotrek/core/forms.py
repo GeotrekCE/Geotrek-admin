@@ -60,7 +60,7 @@ class PathForm(CommonForm):
         model = Path
         fields = CommonForm.Meta.fields + \
             ['name', 'stake', 'comfort', 'departure', 'arrival', 'comments',
-             'source', 'networks', 'usages', 'valid', 'reverse_geom', 'geom']
+             'source', 'networks', 'usages', 'valid', 'draft', 'reverse_geom', 'geom']
 
     def __init__(self, *args, **kwargs):
         super(PathForm, self).__init__(*args, **kwargs)
