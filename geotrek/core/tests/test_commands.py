@@ -26,8 +26,8 @@ class RemoveDuplicatePathTest(TestCase):
 
         geom_5 = LineString((0, 6), (1, 6), (2, 6))
 
-        Path.objects.create(name='Eighth Path', geom=geom_5)
-        Path.objects.create(name='Nineth Path', geom=geom_5)
+        self.p8 = Path.objects.create(name='Eighth Path', geom=geom_5)
+        self.p9 = Path.objects.create(name='Nineth Path', geom=geom_5)
 
         poi1 = POIFactory.create(name='POI1', no_path=True)
         poi1.add_path(self.p1, start=0.5, end=0.5)
@@ -52,4 +52,5 @@ class RemoveDuplicatePathTest(TestCase):
         call_command('remove_duplicate_paths', verbosity=0)
 
         self.assertEquals(Path.objects.count(), 5)
-        self.assertItemsEqual((self.p1, self.p3, self.p5, self.p6, self.p8), list(Path.objects.all()))
+        self.assertItemsEqual((self.p1, self.p3, self.p5, self.p6, self.p8),
+                              list(Path.objects.all()))
