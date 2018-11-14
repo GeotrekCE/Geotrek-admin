@@ -138,6 +138,7 @@ class TrekForm(BaseTrekForm):
                     'children_trek',
                     'eid',
                     'eid2',
+                    'pois_excluded',
                     'hidden_ordered_children',
                     Fieldset(_("Related treks"),),
                     css_id="advanced",  # used in Javascript for activating tab if error
@@ -188,6 +189,10 @@ class TrekForm(BaseTrekForm):
 
             # init hidden field with children order
             self.fields['hidden_ordered_children'].initial = ",".join(str(x) for x in queryset_children.values_list('child__id', flat=True))
+        if self.instance.pk:
+            self.fields['pois_excluded'].queryset = self.instance.pois.all()
+        else:
+            self.fieldslayout[0][1][1].remove('pois_excluded')
 
     def clean_children_trek(self):
         """
@@ -255,7 +260,7 @@ class TrekForm(BaseTrekForm):
              'disabled_infrastructure', 'advised_parking', 'parking_location',
              'public_transport', 'advice', 'themes', 'networks', 'practice',
              'accessibilities', 'web_links', 'information_desks', 'source', 'portal',
-             'children_trek', 'eid', 'eid2', 'hidden_ordered_children']
+             'children_trek', 'eid', 'eid2', 'pois_excluded', 'hidden_ordered_children']
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:

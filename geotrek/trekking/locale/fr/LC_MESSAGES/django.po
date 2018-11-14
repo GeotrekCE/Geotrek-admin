@@ -644,3 +644,6 @@ msgstr "Situation géographique"
 
 msgid "Hike"
 msgstr "Randonnée"
+
+msgid "Excluded POIs"
+msgstr "POI exclus"
