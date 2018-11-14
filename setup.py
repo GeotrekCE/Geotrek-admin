@@ -12,8 +12,8 @@ setup(
     author_email='geobi@makina-corpus.com',
     url='http://makina-corpus.com',
     description="Geotrek",
-    long_description=(open(os.path.join(here, 'README.rst')).read() + '\n\n' +
-                      open(os.path.join(here, 'docs', 'changelog.rst')).read()),
+    long_description=(open(os.path.join(here, 'README.rst')).read() + '\n\n'
+                      + open(os.path.join(here, 'docs', 'changelog.rst')).read()),
     install_requires=[
         # pinned by buildout
         'psycopg2',

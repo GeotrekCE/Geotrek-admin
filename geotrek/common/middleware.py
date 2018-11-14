@@ -83,8 +83,7 @@ class FixedAutoLoginMiddleware(AutoLoginMiddleware):
         useragent = request.META.get('HTTP_USER_AGENT', '')
         if useragent:
             request.META['HTTP_USER_AGENT'] = useragent.replace('FrontendTest', '')
-        is_running_tests = ('FrontendTest' in useragent or
-                            getattr(settings, 'TEST', False))
+        is_running_tests = ('FrontendTest' in useragent or getattr(settings, 'TEST', False))
 
         user = getattr(request, 'user', None)
 
@@ -93,9 +92,9 @@ class FixedAutoLoginMiddleware(AutoLoginMiddleware):
             remotehost = request.META.get('REMOTE_HOST')
 
             is_auto_allowed = (
-                (remoteip in LOCALHOST or remotehost == 'localhost') or
-                (remoteip and remoteip in (CONVERSION_SERVER_HOST, CAPTURE_SERVER_HOST)) or
-                (remotehost and remotehost in (CONVERSION_SERVER_HOST, CAPTURE_SERVER_HOST))
+                (remoteip in LOCALHOST or remotehost == 'localhost')
+                or (remoteip and remoteip in (CONVERSION_SERVER_HOST, CAPTURE_SERVER_HOST))
+                or (remotehost and remotehost in (CONVERSION_SERVER_HOST, CAPTURE_SERVER_HOST))
             )
             if is_auto_allowed:
                 print("Auto-login for %s/%s" % (remoteip, remotehost))
