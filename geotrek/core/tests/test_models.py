@@ -164,7 +164,7 @@ class PathGeometryTest(TestCase):
         # Sinosoid line
         coords = [(x, math.sin(x)) for x in range(10)]
         PathFactory.create(geom=LineString(*coords))
-        """
+        r"""
                +
           /--\ |
          /    \|

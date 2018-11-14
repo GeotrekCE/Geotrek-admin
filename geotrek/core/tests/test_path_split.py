@@ -158,7 +158,7 @@ class SplitPathTest(TestCase):
             self.assertEqual(cd_clones[1].geom, LineString((3, 0), (3, 2), srid=settings.SRID))
 
     def test_add_shortest_path(self):
-        """
+        r"""
         A +----         -----+ C
                \       /
                 \     /
@@ -194,7 +194,7 @@ class SplitPathTest(TestCase):
         self.assertEqual(cb_2.geom, LineString((12, 0), (10, -2), (8, -2), srid=settings.SRID))
 
     def test_split_almost(self):
-        """
+        r"""
 
            C   D
            +   +
@@ -333,7 +333,7 @@ class SplitPathTest(TestCase):
         self.assertEqual(len(Path.objects.filter(name="AB")), 5)
 
     def test_split_multiple_3(self):
-        """
+        r"""
                +            +
              E  \          /  F
         A +---+--+--------+--+---+ B
@@ -352,7 +352,7 @@ class SplitPathTest(TestCase):
         self.assertEqual(len(Path.objects.filter(name="CD")), 5)
 
     def test_split_multiple_4(self):
-        """
+        r"""
         Same as previous, without round values for intersections.
 
               C              D
@@ -374,7 +374,7 @@ class SplitPathTest(TestCase):
         self.assertEqual(len(Path.objects.filter(name="EF")), 3)
 
     def test_split_multiple_5(self):
-        """
+        r"""
              G E   C
              + +   +
               \|   |
@@ -1266,7 +1266,7 @@ class SplitPathPointTopologyTest(TestCase):
 class SplitPathGenericTopologyTest(TestCase):
 
     def test_add_simple_path(self):
-        """
+        r"""
         A +--==          ==----+ C
                \\      //
                 \\    //
@@ -1319,7 +1319,7 @@ class SplitPathGenericTopologyTest(TestCase):
         self.assertEqual(topology.geom, originalgeom)
 
     def test_add_path_converge(self):
-        """
+        r"""
         A +--==          ==----+ C
                \\      //
                 \\    //
@@ -1372,7 +1372,7 @@ class SplitPathGenericTopologyTest(TestCase):
         self.assertEqual(topology.geom, originalgeom)
 
     def test_add_path_diverge(self):
-        """
+        r"""
         A +--==          ==----+ C
                \\      //
                 \\    //

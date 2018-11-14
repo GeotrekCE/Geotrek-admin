@@ -27,10 +27,10 @@ class InterventionFilteringByLandTest(TestCase):
         p1, seek_path = self.create_pair_of_distinct_path()
 
         topo_1 = TopologyFactory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=topo_1, path=p1, start_position=0, end_position=1)
+        topo_1.add_path(path=p1, start=0, end=1)
 
         seek_topo = TopologyFactory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=seek_topo, path=seek_path, start_position=0, end_position=1)
+        seek_topo.add_path(path=seek_path, start=0, end=1)
 
         InterventionFactory.create(topology=topo_1)
         seek_it = InterventionFactory.create(topology=seek_topo)
@@ -120,10 +120,10 @@ class ProjectFilteringByLandTest(TestCase):
         p1, seek_path = self.create_pair_of_distinct_path()
 
         topo_1 = TopologyFactory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=topo_1, path=p1, start_position=0, end_position=1)
+        topo_1.add_path(path=p1, start=0, end=1)
 
         seek_topo = TopologyFactory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=seek_topo, path=seek_path, start_position=0, end_position=1)
+        seek_topo.add_path(path=seek_path, start=0, end=1)
 
         it_p1 = InterventionFactory.create(topology=topo_1)
         seek_it = InterventionFactory.create(topology=seek_topo)
