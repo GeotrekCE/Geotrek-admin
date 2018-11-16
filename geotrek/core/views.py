@@ -154,6 +154,8 @@ class PathDelete(MapEntityDelete):
 
     @same_structure_required('core:path_detail')
     def dispatch(self, *args, **kwargs):
+        if self.request.user.has_perm('core.delete_path') or self.request.user.has_perm('core.delete_draft_path'):
+            return super(MapEntityDelete, self).dispatch(*args, **kwargs)
         return super(PathDelete, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
