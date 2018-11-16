@@ -195,7 +195,7 @@ class PathViewsTest(CommonTest):
         response = self.client.post('/mergepath/', {'path[]': [p3.pk, p4.pk]})
         self.assertEqual(response.content, 'error')
 
-    def test_mege_works(self):
+    def test_merge_works(self):
         self.login()
         p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
         p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)))
@@ -203,6 +203,34 @@ class PathViewsTest(CommonTest):
         self.assertEqual(response.content, 'success')
         p1.reload()
         self.assertEqual(p1.geom, LineString((0, 0), (1, 0), (2, 0), srid=settings.SRID))
+
+    def test_path_do_not_merge_draft_not_draft(self):
+        """
+            Draft               Not Draft
+        A---------------B + C-------------------D
+
+        Do not merge !
+        """
+        self.login()
+        p1 = PathFactory.create(name="PATH_AB", geom=LineString((0, 1), (10, 1)), draft=True)
+        p2 = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)), draft=False)
+        response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
+        self.assertEqual(response.content, 'error')
+
+    def test_path_merge_draft_draft(self):
+        """
+            Draft               Draft
+        A---------------B + C-------------------D
+
+        Merge !
+        """
+        self.login()
+        p1 = PathFactory.create(name="PATH_AB", geom=LineString((0, 1), (10, 1)), draft=True)
+        p2 = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)), draft=True)
+        response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
+        self.assertEqual(response.content, 'success')
+        p1.reload()
+        self.assertEqual(p1.geom, LineString((0, 1), (10, 1), (20, 1), srid=settings.SRID))
 
 
 class DenormalizedTrailTest(AuthentFixturesTest):

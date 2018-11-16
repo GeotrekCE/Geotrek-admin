@@ -405,6 +405,114 @@ class SplitPathTest(TestCase):
         self.assertEqual(Path.objects.filter(name="EF").count(), 5)
         self.assertEqual(Path.objects.filter(name="GH").count(), 5)
 
+    def test_do_not_split_with_draft_1(self):
+        """
+               C
+        A +----+----+ B
+               |
+               +      AB exists. Add CD draft.
+               D
+        AB is not split
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
+        self.assertEqual(ab.length, 4)
+        cd = PathFactory.create(geom=LineString((2, 0), (2, 2)), draft=True)
+        self.assertEqual(cd.length, 2)
+        ab.reload()
+        self.assertEqual(ab.geom, LineString((0, 0), (4, 0), srid=settings.SRID))
+        self.assertEqual(ab.length, 4)
+
+    def test_do_not_split_with_draft_2(self):
+        """
+               C
+        A +----+----+ B
+               |
+               +      AB draft exists. Add CD not draft.
+               D
+        AB is not split
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)), draft=True)
+        self.assertEqual(ab.length, 4)
+        cd = PathFactory.create(geom=LineString((2, 0), (2, 2)))
+        self.assertEqual(cd.length, 2)
+        ab.reload()
+        self.assertEqual(ab.geom, LineString((0, 0), (4, 0), srid=settings.SRID))
+        self.assertEqual(ab.length, 4)
+
+    def test_do_not_split_with_draft_3(self):
+        """
+               C
+        A +----+----+ B
+               |
+               +      AB draft exists. Add CD draft.
+               D
+        AB is not split
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)), draft=True)
+        self.assertEqual(ab.length, 4)
+        cd = PathFactory.create(geom=LineString((2, 0), (2, 2)), draft=True)
+        self.assertEqual(cd.length, 2)
+        ab.reload()
+        self.assertEqual(ab.geom, LineString((0, 0), (4, 0), srid=settings.SRID))
+        self.assertEqual(ab.length, 4)
+
+    def test_do_not_split_with_draft_4(self):
+        """
+               C
+        A +----+----+ B
+               |
+               +      AB exists. Add CD draft.
+               D
+        AB is not split
+        Change CD to not draft
+        AB is split
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)), draft=False)
+        self.assertEqual(ab.length, 4)
+        cd = PathFactory.create(geom=LineString((2, 0), (2, 2)), draft=True)
+        self.assertEqual(cd.length, 2)
+        ab.reload()
+        self.assertEqual(ab.geom, LineString((0, 0), (4, 0), srid=settings.SRID))
+        self.assertEqual(ab.length, 4)
+        cd.draft = False
+        cd.save()
+        ab.reload()
+        self.assertEqual(ab.geom, LineString((0, 0), (2, 0), srid=settings.SRID))
+        self.assertEqual(ab.length, 2)
+        clones = Path.objects.filter(name="AB").exclude(pk=ab.pk)
+        self.assertEqual(len(clones), 1)
+        ab_2 = clones[0]
+        self.assertEqual(ab_2.geom, LineString((2, 0), (4, 0), srid=settings.SRID))
+        self.assertEqual(ab_2.length, 2)
+
+    def test_do_not_split_with_draft_5(self):
+        """
+               C
+        A +----+----+ B
+               |
+               +      AB draft exists. Add CD.
+               D
+        AB is not split
+        Change AB to not draft
+        AB is split
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)), draft=True)
+        self.assertEqual(ab.length, 4)
+        cd = PathFactory.create(geom=LineString((2, 0), (2, 2)), draft=False)
+        self.assertEqual(cd.length, 2)
+        ab.reload()
+        self.assertEqual(ab.geom, LineString((0, 0), (4, 0), srid=settings.SRID))
+        self.assertEqual(ab.length, 4)
+        ab.draft = False
+        ab.save()
+        self.assertEqual(ab.geom, LineString((0, 0), (2, 0), srid=settings.SRID))
+        self.assertEqual(ab.length, 2)
+        clones = Path.objects.filter(name="AB").exclude(pk=ab.pk)
+        self.assertEqual(len(clones), 1)
+        ab_2 = clones[0]
+        self.assertEqual(ab_2.geom, LineString((2, 0), (4, 0), srid=settings.SRID))
+        self.assertEqual(ab_2.length, 2)
+
 
 class SplitPathLineTopologyTest(TestCase):
 
