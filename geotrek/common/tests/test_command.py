@@ -20,8 +20,8 @@ class CommandTests(TestCase):
         structure1 = StructureFactory.create(name="coucou")
         structure2 = StructureFactory.create(name="coco")
 
-        infratype1 = InfrastructureTypeFactory.create(label="annyeong", structure=structure1)
-        infratype2 = InfrastructureTypeFactory.create(label="annyeong", structure=structure2)
+        infratype1 = InfrastructureTypeFactory.create(label="annyeong", structure=structure1, pictogram=None)
+        infratype2 = InfrastructureTypeFactory.create(label="annyeong", structure=structure2, pictogram=None)
 
         path = PathFactory.create(name="pass")
         usage1 = UsageFactory.create(usage="hello", structure=structure1)
