@@ -10,7 +10,13 @@ MapEntity.pathsLayer = function buildPathLayer(options) {
     });
 
     // Start ajax loading at last
-    pathsLayer.load(window.SETTINGS.urls.path_layer + '?no_draft=true+', true);
+    url = window.SETTINGS.urls.path_layer
+    if (options.no_draft){
+        pathsLayer.load(url + '?no_draft=true+', true);
+    }
+    else {
+        pathsLayer.load(url, true);
+    }
 
     return pathsLayer;
 };
