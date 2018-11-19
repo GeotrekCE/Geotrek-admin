@@ -259,7 +259,7 @@ class Command(BaseCommand):
     def sync_trek_signages(self, lang, trek, zipfile=None):
         params = {'format': 'geojson'}
         view = TrekSignageViewSet.as_view({'get': 'list'})
-        name = os.path.join('api', lang, 'treks', str(trek.pk), 'infrastructures.geojson')
+        name = os.path.join('api', lang, 'treks', str(trek.pk), 'signages.geojson')
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
 
     def sync_trek_pois(self, lang, trek, zipfile=None):

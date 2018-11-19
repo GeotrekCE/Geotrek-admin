@@ -25,6 +25,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='infrastructuretype',
             name='pictogram',
-            field=models.FileField(db_column=b'picto', max_length=512, null=True, upload_to=b'upload', verbose_name='Pictogram'),
+            field=models.FileField(blank=True, db_column=b'picto', max_length=512, null=True, upload_to=b'upload', verbose_name='Pictogram'),
         ),
     ]

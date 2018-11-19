@@ -5,6 +5,10 @@ CHANGELOG
 2.21.2.dev0
 -------------------
 
+**New features**
+
+- Allow to publish signage and infrastructure
+
 **Bug fixes**
 
 - Fix a clash between current url and SYNC_RANDO_OPTIONS

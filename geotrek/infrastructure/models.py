@@ -8,7 +8,7 @@ from mapentity.models import MapEntityMixin
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path
 from geotrek.authent.models import StructureRelatedManager, StructureRelated, StructureOrNoneRelated
-from geotrek.common.mixins import BasePublishableMixin, PictogramMixin
+from geotrek.common.mixins import BasePublishableMixin, OptionalPictogramMixin
 
 
 INFRASTRUCTURE_TYPES = Choices(
@@ -37,7 +37,7 @@ class InfrastructureTypeManager(models.Manager):
         return self.get_queryset().for_infrastructures()
 
 
-class InfrastructureType(StructureOrNoneRelated, PictogramMixin):
+class InfrastructureType(StructureOrNoneRelated, OptionalPictogramMixin):
     """ Types of infrastructures (bridge, WC, stairs, ...) """
     label = models.CharField(db_column="nom", max_length=128)
     type = models.CharField(db_column="type", max_length=1, choices=INFRASTRUCTURE_TYPES)

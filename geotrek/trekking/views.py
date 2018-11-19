@@ -145,6 +145,8 @@ class TrekDetail(MapEntityDetail):
         return {
             'POI': settings.TREK_ICON_SIZE_POI,
             'service': settings.TREK_ICON_SIZE_SERVICE,
+            'signage': settings.TREK_ICON_SIZE_SIGNAGE,
+            'infrastructure': settings.TREK_ICON_SIZE_INFRASTRUCTURE,
             'parking': settings.TREK_ICON_SIZE_PARKING,
             'information_desk': settings.TREK_ICON_SIZE_INFORMATION_DESK
         }
