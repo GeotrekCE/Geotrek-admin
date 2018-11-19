@@ -52,10 +52,12 @@ class RemoveDuplicatePathTest(TestCase):
         We get at the end p1, p3, p5, p6.
         """
         output = StringIO()
-        call_command('remove_duplicate_paths', verbosity=0, stdout=output)
+        call_command('remove_duplicate_paths', verbosity=2, stdout=output)
 
         self.assertEquals(Path.objects.count(), 5)
         self.assertItemsEqual((self.p1, self.p3, self.p5, self.p6, self.p8),
                               list(Path.objects.all()))
         self.assertIn("Deleting path",
+                      output.getvalue())
+        self.assertIn("duplicate paths have been deleted",
                       output.getvalue())
