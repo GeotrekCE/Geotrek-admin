@@ -56,8 +56,14 @@ class CreateFromTopologyMixin(object):
 
 
 class PathLayer(MapEntityLayer):
-    queryset = Path.objects.all()
     properties = ['name', 'draft']
+    queryset = Path.objects.all()
+
+    def get_queryset(self):
+        qs = super(PathLayer, self).get_queryset()
+        if self.request.GET.get('no_draft'):
+            qs = qs.exclude(draft=True)
+        return qs
 
 
 class PathList(MapEntityList):
