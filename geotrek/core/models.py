@@ -124,7 +124,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         # TODO: move to custom manager
         if point.srid != settings.SRID:
             point = point.transform(settings.SRID, clone=True)
-        qs = cls.objects.all()
+        qs = cls.objects.exclude(draft=True)
         if exclude:
             qs = qs.exclude(pk=exclude.pk)
         return qs.exclude(visible=False).distance(point).order_by('distance')[0]
