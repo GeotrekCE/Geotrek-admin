@@ -207,7 +207,7 @@ def get_graph_json(request):
 
     # cache does not exist or is not up to date
     # rebuild the graph and cache the json
-    graph = graph_lib.graph_edges_nodes_of_qs(Path.objects.all())
+    graph = graph_lib.graph_edges_nodes_of_qs(Path.objects.exclude(draft=True))
     json_graph = json.dumps(graph)
 
     cache.set(key, (latest, json_graph))
