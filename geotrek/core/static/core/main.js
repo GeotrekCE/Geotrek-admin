@@ -10,7 +10,7 @@ MapEntity.pathsLayer = function buildPathLayer(options) {
     });
 
     // Start ajax loading at last
-    pathsLayer.load(window.SETTINGS.urls.path_layer, true);
+    pathsLayer.load(window.SETTINGS.urls.path_layer + '?no_draft=true+', true);
 
     return pathsLayer;
 };
@@ -26,6 +26,7 @@ $(window).on('entity:map', function (e, data) {
             indexing: false,
             style: { clickable: false },
             modelname: 'path',
+            no_draft: data.modelname != 'path',
         });
         pathsLayer.addTo(map);
 
