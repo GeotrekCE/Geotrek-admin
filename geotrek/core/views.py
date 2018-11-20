@@ -7,6 +7,7 @@ from collections import defaultdict
 from django.contrib.auth.decorators import permission_required
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 from django.views.decorators.http import last_modified as cache_last_modified
 from django.views.decorators.cache import never_cache as force_cache_validation
 from django.views.generic import View
@@ -150,7 +151,16 @@ class PathUpdate(MapEntityUpdate):
 
     @same_structure_required('core:path_detail')
     def dispatch(self, *args, **kwargs):
-        if self.request.user.has_perm('core.change_path') or self.request.user.has_perm('core.change_draft_path'):
+        path = self.get_object()
+        if path.draft and not self.request.user.has_perm('core.change_draft_path'):
+            messages.warning(self.request, _(
+                u'Access to the requested resource is restricted. You have been redirected.'))
+            return redirect('core:path_detail', **kwargs)
+        if not path.draft and not self.request.user.has_perm('core.change_path'):
+            messages.warning(self.request, _(
+                u'Access to the requested resource is restricted. You have been redirected.'))
+            return redirect('core:path_detail', **kwargs)
+        if path.draft and self.request.user.has_perm('core.change_draft_path'):
             return super(MapEntityUpdate, self).dispatch(*args, **kwargs)
         return super(PathUpdate, self).dispatch(*args, **kwargs)
 
@@ -160,7 +170,16 @@ class PathDelete(MapEntityDelete):
 
     @same_structure_required('core:path_detail')
     def dispatch(self, *args, **kwargs):
-        if self.request.user.has_perm('core.delete_path') or self.request.user.has_perm('core.delete_draft_path'):
+        path = self.get_object()
+        if path.draft and not self.request.user.has_perm('core.delete_draft_path'):
+            messages.warning(self.request, _(
+                u'Access to the requested resource is restricted. You have been redirected.'))
+            return redirect('core:path_detail', **kwargs)
+        if not path.draft and not self.request.user.has_perm('core.delete_path'):
+            messages.warning(self.request, _(
+                u'Access to the requested resource is restricted. You have been redirected.'))
+            return redirect('core:path_detail', **kwargs)
+        if path.draft and self.request.user.has_perm('core.delete_draft_path'):
             return super(MapEntityDelete, self).dispatch(*args, **kwargs)
         return super(PathDelete, self).dispatch(*args, **kwargs)
 
