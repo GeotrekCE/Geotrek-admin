@@ -108,7 +108,7 @@ class POIJSONDetailTest(TrekkingManagerTest):
 
         self.poi = POIFactory.create(published=True)
 
-        self.attachment = AttachmentFactory.create(obj=self.poi,
+        self.attachment = AttachmentFactory.create(content_object=self.poi,
                                                    attachment_file=get_dummy_uploaded_image())
 
         self.touristic_content = tourism_factories.TouristicContentFactory(
@@ -250,6 +250,7 @@ class TrekViewsTest(CommonTest):
             'trek_relationship_a-1-has_common_edge': '',
             'trek_relationship_a-1-has_common_departure': '',
             'trek_relationship_a-1-is_circuit_step': 'on',
+            'pois_excluded': POIFactory.create().pk
         }
 
     def test_badfield_goodgeom(self):
@@ -271,6 +272,25 @@ class TrekViewsTest(CommonTest):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
             self.assertEqual(response.status_code, 200)
 
+    def test_no_pois_detached_in_create(self):
+        self.login()
+        response = self.client.get(self.model.get_add_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn('pois_excluded', response.content)
+
+    def test_pois_detached_update(self):
+        self.login()
+        p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
+        trek = TrekFactory.create(no_path=True)
+        trek.add_path(p1)
+        poi = POIFactory.create(no_path=True)
+        poi.add_path(p1, start=0.6, end=0.6)
+
+        good_data = self.get_good_data()
+        good_data['pois_excluded'] = poi.pk
+        self.client.post(self.model.get_update_url(trek), good_data)
+        self.assertIn(poi, trek.pois_excluded.all())
+
 
 class TrekViewsLiveTest(MapEntityLiveTest):
     model = Trek
@@ -284,13 +304,16 @@ class TrekCustomViewTests(TrekkingManagerTest):
 
     def test_pois_geojson(self):
         trek = TrekWithPOIsFactory.create(published=True)
-        self.assertEqual(len(trek.pois), 2)
+        first_poi = trek.pois.first()
+        trek.pois_excluded.add(first_poi)
+        trek.save()
+        self.assertEqual(len(trek.pois), 1)
         poi = trek.pois[0]
         poi.published = True
         poi.save()
-        AttachmentFactory.create(obj=poi, attachment_file=get_dummy_uploaded_image())
+        AttachmentFactory.create(content_object=poi, attachment_file=get_dummy_uploaded_image())
         self.assertNotEqual(poi.thumbnail, None)
-        self.assertEqual(len(trek.pois), 2)
+        self.assertEqual(len(trek.pois), 1)
 
         url = '/api/en/treks/{pk}/pois.geojson'.format(pk=trek.pk)
         response = self.client.get(url)
@@ -298,6 +321,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         poislayer = json.loads(response.content)
         poifeature = poislayer['features'][0]
         self.assertTrue('thumbnail' in poifeature['properties'])
+        self.assertEqual(len(poislayer['features']), 1)
 
     def test_services_geojson(self):
         trek = TrekWithServicesFactory.create(published=True)
@@ -421,7 +445,7 @@ class TrekJSONSetUp(TrekkingManagerTest):
         path1 = PathFactory.create(geom='SRID=%s;LINESTRING(0 0, 1 0)' % settings.SRID)
         self.trek.add_path(path1)
 
-        self.attachment = AttachmentFactory.create(obj=self.trek,
+        self.attachment = AttachmentFactory.create(content_object=self.trek,
                                                    attachment_file=get_dummy_uploaded_image())
 
         self.information_desk = tourism_factories.InformationDeskFactory.create()
@@ -1141,28 +1165,6 @@ class TrekWorkflowTest(TranslationResetMixin, TestCase):
         self.assertContains(response, 'Published')
 
 
-class SyncRandoViewTest(TestCase):
-    def setUp(self):
-        self.user = User.objects.create_user('bart', password='mahaha')
-
-    def test_return_redirect(self):
-        response = self.client.get(reverse('trekking:sync_randos_view'))
-        self.assertEqual(response.status_code, 302)
-
-    def test_return_redirect_superuser(self):
-        self.user.is_superuser = True
-        response = self.client.get(reverse('trekking:sync_randos_view'))
-        self.assertEqual(response.status_code, 302)
-
-    def test_post_sync_redirect(self):
-        """
-        test if sync can be launched by superuser post
-        """
-        self.user.is_superuser = True
-        response = self.client.post(reverse('trekking:sync_randos'))
-        self.assertEqual(response.status_code, 302)
-
-
 class ServiceViewsTest(CommonTest):
     model = Service
     modelfactory = ServiceFactory
@@ -1227,14 +1229,33 @@ class ServiceJSONTest(TrekkingManagerTest):
                               })
 
 
-class ViewsSyncTest(TestCase):
-
+class SyncRandoViewTest(TestCase):
     def setUp(self):
-        self.user = SuperUserFactory.create(username='homer', password='dooh')
-        success = self.client.login(username=self.user.username, password='dooh')
-        self.assertTrue(success)
+        self.super_user = SuperUserFactory.create(username='admin', password='super')
+        self.simple_user = User.objects.create_user(username='homer', password='doooh')
 
-    def test_import_update_access(self):
-        url = reverse('trekking:sync_randos_view')
-        response = self.client.get(url)
+    def test_get_sync_superuser(self):
+        self.client.login(username='admin', password='super')
+        response = self.client.get(reverse('trekking:sync_randos_view'))
         self.assertEqual(response.status_code, 200)
+
+    def test_post_sync_superuser(self):
+        """
+        test if sync can be launched by superuser post
+        """
+        self.client.login(username='admin', password='super')
+        response = self.client.post(reverse('trekking:sync_randos'), data={})
+        self.assertRedirects(response, '/commands/syncview')
+
+    def test_get_sync_simpleuser(self):
+        self.client.login(username='homer', password='doooh')
+        response = self.client.get(reverse('trekking:sync_randos_view'))
+        self.assertRedirects(response, '/login/?next=/commands/syncview')
+
+    def test_post_sync_simpleuser(self):
+        """
+        test if sync can be launched by simple user post
+        """
+        self.client.login(username='homer', password='doooh')
+        response = self.client.post(reverse('trekking:sync_randos'), data={})
+        self.assertRedirects(response, '/login/?next=/commands/sync')

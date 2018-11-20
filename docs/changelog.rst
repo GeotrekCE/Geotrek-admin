@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix a clash between current url and SYNC_RANDO_OPTIONS
 
 
 2.21.1 (2018-09-18)

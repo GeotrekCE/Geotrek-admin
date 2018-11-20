@@ -24,3 +24,6 @@ msgstr "%s tage"
 
 msgid "Hike"
 msgstr "Wanderung"
+
+msgid "Excluded POIs"
+msgstr "Ausgeschlossene POIs"
