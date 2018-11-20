@@ -70,7 +70,7 @@ class PathForm(CommonForm):
             elif self.user.has_perm('core.change_draft_path') and not self.user.has_perm('core.change_path'):
                 del self.fields['draft']
         else:
-            if not self.user.has_perm('core.add_draft_path'):
+            if not self.user.has_perm('core.add_draft_path') and self.user.has_perm('core.add_path'):
                 del self.fields['draft']
             elif self.user.has_perm('core.add_draft_path') and not self.user.has_perm('core.add_path'):
                 del self.fields['draft']
