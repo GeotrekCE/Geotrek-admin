@@ -89,17 +89,17 @@ class PermissionDraftPath(TestCase):
         response = self.client.get('/path/edit/%s/' % path.pk)
         self.assertEqual(response.status_code, 302)
 
+        response = self.client.get('/path/edit/%s/' % draft_path.pk)
+        self.assertEqual(response.status_code, 302)
+
         self.user.user_permissions.add(Permission.objects.get(codename='change_draft_path'))
         self.client.login(username=self.user.username, password='booh')
 
-        response = self.client.get('/path/edit/%s/' % path.pk)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('Access to the requested resource is restricted. You have been redirected.', response.content)
-        self.assertNotIn('name="draft"', response.content)
+        response = self.client.post('/path/edit/%s/' % path.pk)
+        self.assertEqual(response.status_code, 302)
 
         response = self.client.get('/path/edit/%s/' % draft_path.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn('Access to the requested resource is restricted. You have been redirected.', response.content)
         self.assertNotIn('name="draft"', response.content)
 
     def test_permission_view_change_path_without_draft_permission(self):
@@ -110,8 +110,13 @@ class PermissionDraftPath(TestCase):
         """
         self.client.login(username=self.user.username, password='booh')
 
-        path = PathFactory(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
-        response = self.client.get('/path/%s/' % path.pk)
+        path = PathFactory(name="path", geom=LineString((0, 0), (4, 0)))
+        draft_path = PathFactory(name="draft_path", geom=LineString((0, 0), (4, 0)), draft=True)
+
+        response = self.client.get('/path/edit/%s/' % path.pk)
+        self.assertEqual(response.status_code, 302)
+
+        response = self.client.get('/path/edit/%s/' % draft_path.pk)
         self.assertEqual(response.status_code, 302)
 
         self.user.user_permissions.add(Permission.objects.get(codename='change_path'))
@@ -121,6 +126,9 @@ class PermissionDraftPath(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn('name="draft"', response.content)
 
+        response = self.client.get('/path/edit/%s/' % draft_path.pk)
+        self.assertEqual(response.status_code, 302)
+
     def test_permission_view_change_path_with_2_permissions(self):
         """
         Check draft checkbox visible if user have 2 permissions : change_path, change_draft_path
@@ -128,7 +136,12 @@ class PermissionDraftPath(TestCase):
         self.client.login(username=self.user.username, password='booh')
 
         path = PathFactory(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
-        response = self.client.get('/path/%s/' % path.pk)
+        draft_path = PathFactory(name="draft_path", geom=LineString((0, 0), (4, 0)), draft=True)
+
+        response = self.client.get('/path/edit/%s/' % path.pk)
+        self.assertEqual(response.status_code, 302)
+
+        response = self.client.get('/path/edit/%s/' % draft_path.pk)
         self.assertEqual(response.status_code, 302)
 
         self.user.user_permissions.add(Permission.objects.get(codename='change_path'))
@@ -136,6 +149,10 @@ class PermissionDraftPath(TestCase):
         self.client.login(username=self.user.username, password='booh')
 
         response = self.client.get('/path/edit/%s/' % path.pk)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('name="draft"', response.content)
+
+        response = self.client.get('/path/edit/%s/' % draft_path.pk)
         self.assertEqual(response.status_code, 200)
         self.assertIn('name="draft"', response.content)
 
@@ -147,17 +164,23 @@ class PermissionDraftPath(TestCase):
         self.client.login(username=self.user.username, password='booh')
 
         path = PathFactory(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
-        draft_path = PathFactory(name="PATH_BC", geom=LineString((0, 2), (4, 2)))
+        draft_path = PathFactory(name="PATH_BC", geom=LineString((0, 2), (4, 2)), draft=True)
 
-        response = self.client.get('/path/delete/%s/' % path.pk)
+        response = self.client.post('/path/delete/%s/' % path.pk)
         self.assertEqual(response.status_code, 302)
+
+        response = self.client.post('/path/delete/%s/' % draft_path.pk)
+        self.assertEqual(response.status_code, 302)
+
+        self.assertEqual(Path.objects.count(), 2)
 
         self.user.user_permissions.add(Permission.objects.get(codename='delete_draft_path'))
         self.client.login(username=self.user.username, password='booh')
 
-        response = self.client.get('/path/delete/%s/' % path.pk)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('Access to the requested resource is restricted. You have been redirected.', response.content)
+        response = self.client.post('/path/delete/%s/' % path.pk)
+        self.assertEqual(response.status_code, 302)
+
+        self.assertEqual(Path.objects.count(), 2)
 
         response = self.client.post('/path/delete/%s/' % draft_path.pk)
         self.assertEqual(response.status_code, 302)
@@ -166,16 +189,51 @@ class PermissionDraftPath(TestCase):
 
     def test_permission_view_delete_path_without_draft_permission(self):
         """
-        Check user can delete a normal path and draft path if user has :
-        delete_draft_path permission and delete_path
+        Check user can delete a normal path and can not delete a draft path if user has :
+        only delete_path permission
         """
         self.client.login(username=self.user.username, password='booh')
 
         path = PathFactory(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
         draft_path = PathFactory(name="PATH_BC", geom=LineString((0, 2), (4, 2)), draft=True)
 
-        response = self.client.get('/path/delete/%s/' % path.pk)
+        response = self.client.post('/path/delete/%s/' % path.pk)
         self.assertEqual(response.status_code, 302)
+
+        response = self.client.post('/path/delete/%s/' % draft_path.pk)
+        self.assertEqual(response.status_code, 302)
+
+        self.assertEqual(Path.objects.count(), 2)
+
+        self.user.user_permissions.add(Permission.objects.get(codename='delete_path'))
+        self.client.login(username=self.user.username, password='booh')
+
+        response = self.client.post('/path/delete/%s/' % draft_path.pk)
+        self.assertEqual(response.status_code, 302)
+
+        self.assertEqual(Path.objects.count(), 2)
+
+        response = self.client.post('/path/delete/%s/' % path.pk)
+        self.assertEqual(response.status_code, 302)
+
+        self.assertEqual(Path.objects.count(), 1)
+
+    def test_permission_view_delete_path_with_2_permissions(self):
+        """
+        Check user can delete a normal path and draft path if user has :
+        delete_draft_path permission and delete_path
+        """
+        self.client.login(username=self.user.username, password='booh')
+        path = PathFactory(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
+        draft_path = PathFactory(name="PATH_BC", geom=LineString((0, 2), (4, 2)), draft=True)
+
+        response = self.client.post('/path/delete/%s/' % path.pk)
+        self.assertEqual(response.status_code, 302)
+
+        response = self.client.post('/path/delete/%s/' % draft_path.pk)
+        self.assertEqual(response.status_code, 302)
+
+        self.assertEqual(Path.objects.count(), 2)
 
         self.user.user_permissions.add(Permission.objects.get(codename='delete_path'))
         self.user.user_permissions.add(Permission.objects.get(codename='delete_draft_path'))
@@ -183,6 +241,8 @@ class PermissionDraftPath(TestCase):
 
         response = self.client.post('/path/delete/%s/' % path.pk)
         self.assertEqual(response.status_code, 302)
+
+        self.assertEqual(Path.objects.count(), 1)
 
         response = self.client.post('/path/delete/%s/' % draft_path.pk)
         self.assertEqual(response.status_code, 302)
@@ -204,7 +264,8 @@ class PermissionDraftPath(TestCase):
         """
         Check save path without permission change_path save with draft=True
         """
-        draft_path = PathFactory(name="PATH_BC", geom=LineString((0, 2), (4, 2)), draft=True)
+        draft_path = PathFactory(name="draft", geom=LineString((0, 2), (4, 2)), draft=True)
+        path = PathFactory(name="normal", geom=LineString((0, 2), (4, 2)))
 
         self.user.user_permissions.add(Permission.objects.get(codename='change_draft_path'))
         self.client.login(username=self.user.username, password='booh')
@@ -212,7 +273,11 @@ class PermissionDraftPath(TestCase):
         data = self.get_good_data()
         response = self.client.post('/path/edit/%s/' % draft_path.pk, data)
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(Path.objects.first().draft)
+        self.assertTrue(Path.objects.get(pk=draft_path.pk).draft)
+
+        response = self.client.post('/path/edit/%s/' % path.pk, data)
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Path.objects.get(pk=path.pk).draft)
 
     def test_save_path_with_only_add_path(self):
         """
@@ -230,6 +295,7 @@ class PermissionDraftPath(TestCase):
         Check save path without permission change_draft_path save with draft=False
         """
         path = PathFactory(name="path", geom=LineString((0, 2), (4, 2)))
+        draft_path = PathFactory(name="draft", geom=LineString((0, 2), (4, 2)), draft=True)
 
         self.user.user_permissions.add(Permission.objects.get(codename='change_path'))
         self.client.login(username=self.user.username, password='booh')
@@ -238,3 +304,7 @@ class PermissionDraftPath(TestCase):
         response = self.client.post('/path/edit/%s/' % path.pk, data)
         self.assertEqual(response.status_code, 302)
         self.assertFalse(Path.objects.first().draft)
+
+        response = self.client.post('/path/edit/%s/' % draft_path.pk, data)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Path.objects.get(pk=draft_path.pk).draft)
