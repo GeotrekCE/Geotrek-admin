@@ -232,10 +232,10 @@ class Command(BaseCommand):
             os.unlink(fullname)
             os.link(oldfilename, fullname)
             if self.verbosity == 2:
-                self.stdout.write(u"unchanged")
+                self.stdout.write("unchanged")
         else:
             if self.verbosity == 2:
-                self.stdout.write(u"generated")
+                self.stdout.write("generated")
         # FixMe: Find why there are duplicate files.
         if zipfile:
             if name not in zipfile.namelist():

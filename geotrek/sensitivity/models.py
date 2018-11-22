@@ -212,3 +212,4 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
     from geotrek.diving.models import Dive
     Dive.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _("Sensitive areas"))
     Dive.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _("Published sensitive areas"))
+

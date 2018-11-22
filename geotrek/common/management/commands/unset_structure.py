@@ -51,7 +51,7 @@ class Command(BaseCommand):
             kwargs['structure'] = None
             new_obj, created = RelatedModel.objects.get_or_create(**kwargs)
             if created and self.options['verbosity'] > 0:
-                self.stdout.write(u"  Create {}".format(new_obj))
+                self.stdout.write("  Create {}".format(new_obj))
 
         # Update foreign keys
         for Model, fk_name, m2m in subitems:
@@ -67,12 +67,12 @@ class Command(BaseCommand):
                 setattr(obj, fk_name, new_fk)
                 obj.save()
                 if self.options['verbosity'] > 0:
-                    self.stdout.write(u"    Update {}".format(obj))
+                    self.stdout.write("    Update {}".format(obj))
 
         # Remove related objects with structure!=None
         related_objs = RelatedModel.objects.exclude(structure=None)
         if related_objs and self.options['verbosity'] > 0:
-            self.stdout.write(u"  Delete {}".format(", ".join([unicode(obj) for obj in related_objs])))
+            self.stdout.write("  Delete {}".format(", ".join([str(obj) for obj in related_objs])))
         related_objs.delete()
 
     def handle(self, *args, **options):
@@ -82,7 +82,7 @@ class Command(BaseCommand):
 
         if options['list']:
             for m in sorted(self.items.keys()):
-                self.stdout.write(u"{} : {}".format(m._meta.model_name, m._meta.verbose_name))
+                self.stdout.write("{} : {}".format(m._meta.model_name, m._meta.verbose_name))
             return
 
         if not options['all'] and not options['model']:
