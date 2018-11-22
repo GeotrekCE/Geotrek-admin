@@ -7,11 +7,11 @@ from django.utils.translation import ugettext_lazy as _
 
 from paperclip.models import FileType as BaseFileType, Attachment as BaseAttachment
 
-from geotrek.authent.models import StructureRelated
+from geotrek.authent.models import StructureOrNoneRelated
 from geotrek.common.mixins import PictogramMixin, OptionalPictogramMixin
 
 
-class Organism(StructureRelated):
+class Organism(StructureOrNoneRelated):
 
     organism = models.CharField(max_length=128, verbose_name=_("Organism"), db_column='organisme')
 
@@ -22,10 +22,12 @@ class Organism(StructureRelated):
         ordering = ['organism']
 
     def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.organism, self.structure.name)
         return self.organism
 
 
-class FileType(StructureRelated, BaseFileType):
+class FileType(StructureOrNoneRelated, BaseFileType):
     """
     Attachment FileTypes, related to structure and with custom table name.
     """
@@ -37,6 +39,11 @@ class FileType(StructureRelated, BaseFileType):
         """Override this method to filter form choices depending on structure.
         """
         return cls.for_user(request.user)
+
+    def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.type, self.structure.name)
+        return self.type
 
 
 class Attachment(BaseAttachment):
@@ -70,9 +77,10 @@ class Theme(PictogramMixin):
         output = os.path.join(settings.MEDIA_ROOT, pictogram + '_off' + ext)
 
         # Recreate only if necessary !
-        is_empty = os.path.getsize(output) == 0
-        is_newer = os.path.getmtime(pictopath) > os.path.getmtime(output)
-        if not os.path.exists(output) or is_empty or is_newer:
+        # is_empty = os.path.getsize(output) == 0
+        # is_newer = os.path.getmtime(pictopath) > os.path.getmtime(output)
+        if not os.path.exists(output):
+            #  or is_empty or is_newer:
             image = Image.open(pictopath)
             w, h = image.size
             if w > h:

@@ -11,19 +11,16 @@ class FlatPageFactory(factory.DjangoModelFactory):
     content = factory.Sequence(lambda n: "<h1>Titre %s</h1>" % n)
     order = factory.Sequence(lambda n: n)
 
-    @classmethod
-    def _prepare(cls, create, **kwargs):
-        sources = kwargs.pop('sources', None)
-        portals = kwargs.pop('portals', None)
-
-        flat = super(FlatPageFactory, cls)._prepare(create, **kwargs)
-
+    @factory.post_generation
+    def sources(obj, create, extracted=None, **kwargs):
         if create:
-            if sources:
-                for source in sources:
-                    flat.source.add(source)
+            if extracted:
+                for source in extracted:
+                    obj.source.add(source)
 
-            if portals:
-                for portal in portals:
-                    flat.portal.add(portal)
-        return flat
+    @factory.post_generation
+    def portals(obj, create, extracted=None, **kwargs):
+        if create:
+            if extracted:
+                for portal in extracted:
+                    obj.portal.add(portal)

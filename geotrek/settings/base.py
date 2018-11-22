@@ -531,6 +531,13 @@ COMPLETENESS_FIELDS = {
     'trek': ['departure', 'duration', 'difficulty', 'description_teaser']
 }
 
+EMBED_VIDEO_BACKENDS = (
+    'embed_video.backends.YoutubeBackend',
+    'geotrek.common.embed.backends.DailymotionBackend',
+    'embed_video.backends.VimeoBackend',
+    'embed_video.backends.SoundCloudBackend',
+)
+
 TRAIL_MODEL_ENABLED = True
 TREKKING_TOPOLOGY_ENABLED = True
 FLATPAGES_ENABLED = True
@@ -567,10 +574,12 @@ MESSAGE_TAGS = {
 
 CACHE_TIMEOUT_LAND_LAYERS = 60 * 60 * 24
 
-TREK_CATEGORY_ORDER = None
-TOURISTIC_EVENT_CATEGORY_ORDER = None
+TREK_CATEGORY_ORDER = 1
+ITINERANCY_CATEGORY_ORDER = 2
+TOURISTIC_EVENT_CATEGORY_ORDER = 99
 SPLIT_TREKS_CATEGORIES_BY_PRACTICE = False
 SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False
+SPLIT_TREKS_CATEGORIES_BY_ITINERANCY = False
 HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = False
 ZIP_TOURISTIC_CONTENTS_AS_POI = False
 

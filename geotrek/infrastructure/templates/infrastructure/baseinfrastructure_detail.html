@@ -27,7 +27,10 @@
         </tr>
 
         {% include "altimetry/elevationinfo_fragment.html" %}
-
+        <tr>
+            <th>{{ object|verbose:"structure" }}</th>
+            <td>{{ object.structure }}</td>
+        </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
     {{ block.super }}

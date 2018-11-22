@@ -1246,7 +1246,6 @@
               // Clean img markup
                   .find("img")
                   .removeAttr("style")
-                  .addClass("img-responsive")
                   .removeAttr("data-cke-saved-src")
                   .removeAttr("data-mce-src").end()
               // Remove Tools

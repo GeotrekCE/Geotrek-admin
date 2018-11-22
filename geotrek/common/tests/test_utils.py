@@ -53,7 +53,7 @@ class UtilsTest(TestCase):
                 'ExcelParser',
                 'OpenSystemParser',
                 'ShapeParser',
-                'SitraParser',
+                'ApidaeParser',
                 'TourismSystemParser'):
             self.assertTrue(classname not in class_list)
 

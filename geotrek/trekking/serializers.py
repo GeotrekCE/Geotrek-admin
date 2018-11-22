@@ -116,6 +116,9 @@ class RelatedTrekSerializer(TranslatedModelSerializer):
         fields = ('id', 'pk', 'slug', 'name', 'category_slug')
 
     def get_category_slug(self, obj):
+        if settings.SPLIT_TREKS_CATEGORIES_BY_ITINERANCY and obj.children.exists():
+            # Translators: This is a slug (without space, accent or special char)
+            return _('itinerancy')
         if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and obj.practice:
             return obj.practice.slug
         else:
@@ -174,7 +177,6 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     structure = StructureSerializer()
 
     # For consistency with touristic contents
-    type1 = TypeSerializer(source='usages', many=True)
     type2 = TypeSerializer(source='accessibilities', many=True)
     category = rest_serializers.SerializerMethodField()
 
@@ -198,7 +200,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         from geotrek.tourism import serializers as tourism_serializers
 
         if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
-            del self.fields['type1']
+            del self.fields['practice']
         if settings.SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY:
             del self.fields['type2']
 
@@ -216,7 +218,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                   'practice', 'accessibilities', 'usages', 'access', 'route',
                   'public_transport', 'advised_parking', 'web_links', 'is_park_centered',
                   'disabled_infrastructure', 'parking_location', 'relationships',
-                  'points_reference', 'gpx', 'kml', 'source', 'portal', 'type1',
+                  'points_reference', 'gpx', 'kml', 'source', 'portal',
                   'type2', 'category', 'structure', 'treks', 'children', 'parents',
                   'previous', 'next') + \
             AltimetrySerializerMixin.Meta.fields + \
@@ -250,13 +252,13 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         return reverse('trekking:trek_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
 
     def get_category(self, obj):
-        accessibility = getattr(obj, 'accessibility', None)
-        if accessibility:
+        if settings.SPLIT_TREKS_CATEGORIES_BY_ITINERANCY and obj.children.exists():
             data = {
-                'id': accessibility.prefixed_id,
-                'label': accessibility.name,
-                'pictogram': accessibility.get_pictogram_url(),
-                'slug': accessibility.slug,
+                'id': 'I',
+                'label': _(u"Itinerancy"),
+                'pictogram': '/static/trekking/itinerancy.svg',
+                # Translators: This is a slug (without space, accent or special char)
+                'slug': _('itinerancy'),
             }
         elif settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and obj.practice:
             data = {
@@ -268,17 +270,17 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         else:
             data = {
                 'id': obj.category_id_prefix,
-                'label': obj._meta.verbose_name,
+                'label': _(u"Hike"),
                 'pictogram': '/static/trekking/trek.svg',
                 # Translators: This is a slug (without space, accent or special char)
                 'slug': _('trek'),
             }
-        if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
+        if settings.SPLIT_TREKS_CATEGORIES_BY_ITINERANCY and obj.children.exists():
+            data['order'] = settings.ITINERANCY_CATEGORY_ORDER
+        elif settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
             data['order'] = obj.practice and obj.practice.order
         else:
             data['order'] = settings.TREK_CATEGORY_ORDER
-        if not settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
-            data['type1_label'] = obj._meta.get_field('practice').verbose_name
         if not settings.SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY:
             data['type2_label'] = obj._meta.get_field('accessibilities').verbose_name
         return data

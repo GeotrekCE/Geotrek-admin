@@ -8,8 +8,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q
 from django.db.models.query import Prefetch
 from django.http import HttpResponse, Http404
-from django.shortcuts import render_to_response
-from django.template.context import RequestContext
+from django.shortcuts import render
 from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
@@ -46,8 +45,7 @@ if 'tourism' in settings.INSTALLED_APPS:
 
 class SyncRandoRedirect(RedirectView):
     http_method_names = ['post']
-    permanent = False
-    query_string = False
+    pattern_name = 'trekking:sync_randos_view'
 
     @method_decorator(login_required)
     @method_decorator(user_passes_test(lambda u: u.is_superuser))
@@ -55,14 +53,7 @@ class SyncRandoRedirect(RedirectView):
         url = "{scheme}://{host}".format(scheme='https' if self.request.is_secure() else 'http',
                                          host=self.request.get_host())
         self.job = launch_sync_rando.delay(url=url)
-        return super(SyncRandoRedirect,
-                     self).post(request, *args, **kwargs)
-
-    def get_redirect_url(self, *args, **kwargs):
-        self.url = self.request.META.get('HTTP_REFERER')
-        return super(SyncRandoRedirect,
-                     self).get_redirect_url(*args,
-                                            **kwargs)
+        return super(SyncRandoRedirect, self).post(request, *args, **kwargs)
 
 
 class FlattenPicturesMixin(object):
@@ -577,11 +568,10 @@ def sync_view(request):
     Custom views to view / track / launch a sync rando
     """
 
-    return render_to_response(
-        'trekking/sync_rando.html',
-        {'form': SyncRandoForm(), },
-        context_instance=RequestContext(request)
-    )
+    return render(request,
+                  'trekking/sync_rando.html',
+                  {'form': SyncRandoForm(), },
+                  )
 
 
 @login_required
@@ -641,9 +631,9 @@ class Meta(TemplateView):
         context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
         context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
         context['treks'] = Trek.objects.existing().order_by('pk').filter(
-            Q(**{'published_{lang}'.format(lang=lang): True}) |
-            Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
-                 'trek_parents__parent__deleted': False})
+            Q(**{'published_{lang}'.format(lang=lang): True})
+            | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
+                   'trek_parents__parent__deleted': False})
         )
         if 'tourism' in settings.INSTALLED_APPS:
             context['contents'] = TouristicContent.objects.existing().order_by('pk').filter(

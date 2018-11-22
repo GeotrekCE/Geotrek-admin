@@ -11,7 +11,7 @@ from geotrek.maintenance.factories import InterventionFactory
 from geotrek.infrastructure.models import (Infrastructure, InfrastructureType,
                                            InfrastructureCondition, Signage,
                                            INFRASTRUCTURE_TYPES)
-from geotrek.core.factories import PathFactory, PathAggregationFactory
+from geotrek.core.factories import PathFactory
 from geotrek.infrastructure.factories import (SignageFactory, InfrastructureFactory,
                                               InfrastructureTypeFactory, InfrastructureConditionFactory)
 from geotrek.infrastructure.filters import SignageFilterSet, InfrastructureFilterSet
@@ -23,13 +23,12 @@ class InfrastructureTest(TestCase):
 
         self.assertEqual(len(p.infrastructures), 0)
         sign = SignageFactory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=sign, path=p,
-                                      start_position=0.5, end_position=0.5)
+        sign.add_path(path=p, start=0.5, end=0.5)
 
         self.assertCountEqual(p.signages, [sign])
 
         infra = InfrastructureFactory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=infra, path=p)
+        infra.add_path(path=p)
 
         self.assertCountEqual(p.infrastructures, [infra])
 
@@ -147,6 +146,27 @@ class InfraFilterTestMixin():
         response = self.client.get(model.get_list_url())
         self.assertContains(response, '<option value="-1">Intervention year</option>')
 
+    def test_duplicate_implantation_year_filter(self):
+        self.login()
+
+        model = self.factory._meta.model
+        # We will check if this
+        year = 2014
+        year_t = datetime.datetime(year=year, month=2, day=2)
+
+        # Bad signage: intervention with wrong year
+        topo_1 = self.factory()
+        InterventionFactory(topology=topo_1, date=year_t)
+
+        # Good signage: intervention with the good year
+        topo_2 = self.factory()
+        InterventionFactory(topology=topo_2, date=year_t)
+
+        response = self.client.get(model.get_list_url())
+        self.assertContains(response, '<option value="2014">2014</option>')
+        response = str(response).replace('<option value="2014">2014</option>', '', 1)
+        self.assertFalse('<option value="2014">2014</option>' in response)
+
 
 class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
     factory = SignageFactory
@@ -156,3 +176,39 @@ class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
 class InfrastructureFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
     factory = InfrastructureFactory
     filterset = InfrastructureFilterSet
+
+    def test_none_implantation_year_filter(self):
+
+        self.login()
+        model = self.factory._meta.model
+        InfrastructureFactory.create()
+        response = self.client.get(model.get_list_url())
+        self.assertFalse('option value="" selected>None</option' in str(response))
+
+    def test_implantation_year_filter(self):
+        filter = InfrastructureFilterSet(data={'implantation_year': 2015})
+        self.login()
+        model = self.factory._meta.model
+        i = InfrastructureFactory.create(implantation_year=2015)
+        i2 = InfrastructureFactory.create(implantation_year=2016)
+        response = self.client.get(model.get_list_url())
+
+        self.assertTrue('<option value="2015">2015</option>' in str(response))
+        self.assertTrue('<option value="2016">2016</option>' in str(response))
+
+        self.assertTrue(i in filter.qs)
+        self.assertFalse(i2 in filter.qs)
+
+    def test_implantation_year_filter_with_str(self):
+        filter = InfrastructureFilterSet(data={'implantation_year': 'toto'})
+        self.login()
+        model = self.factory._meta.model
+        i = InfrastructureFactory.create(implantation_year=2015)
+        i2 = InfrastructureFactory.create(implantation_year=2016)
+        response = self.client.get(model.get_list_url())
+
+        self.assertTrue('<option value="2015">2015</option>' in str(response))
+        self.assertTrue('<option value="2016">2016</option>' in str(response))
+
+        self.assertIn(i, filter.qs)
+        self.assertIn(i2, filter.qs)

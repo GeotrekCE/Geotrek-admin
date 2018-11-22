@@ -2,12 +2,112 @@
 CHANGELOG
 =========
 
-2.18.5.dev0
------------
+2.21.2.dev0
+-------------------
 
 **Bug fixes**
 
-*
+- Fix a clash between current url and SYNC_RANDO_OPTIONS
+- Fix screamshotter when SSL is enabled
+
+
+2.21.1 (2018-09-18)
+-------------------
+
+**Breaking changes**
+
+- Remove type1 from trek API when SPLIT_TREKS_CATEGORIES_BY_PRACTICE is not set
+- Rename Trek category label to Hike in API. You can override this in
+  geotrek/locale/<language code>/LC_MESSAGES/django.po files
+
+**Bug fixes**
+
+- Fix crash in log entries view
+
+**Minor changes**
+
+- Save column sort by module
+- Rename SITRA to APIDAE
+
+
+2.21.0 (2018-09-04)
+-------------------
+
+**New features**
+
+* Path deletion warning page now shows linked topologies
+* Allow to add Dailymotion video attachments
+* Add a command to unset structure in lists of choices and group choices
+  with the same name
+
+**Bug fixes**
+
+* Fix Sync_rando View
+* Fix loaddem
+* Fix creation of Youtube/Soundcloud attachments
+* Fix cancellation when editing geometries
+* Show which structure choices are related to
+* Add confort and stake filters to path list
+* Fix sync of touristic contents for mobile app
+
+
+2.20.1 (2018-07-16)
+-------------------
+
+**Bug fixes**
+
+* Fix Completed Filter in Touristic Event
+
+2.20.0 (2018-06-27)
+-------------------
+
+**New features**
+
+* Allow to share glossaries between structure (just keep structure field empty)
+* Allow to import infrastructures, not only signages
+* Allow to split treks by itinerancy
+* Path deletion does not delete the related point topologies anymore. Instead point topologies are linked to the nearest
+  remaining path.
+* Keep inode and mtime when synced file don't change
+
+**Minor changes**
+
+* Optional img-responsive class on flatpage images
+
+**Bug fixes**
+
+* Fix virtualenv install
+* Upgrade celery to 4.1.1
+* Fix the bug which remove a path when we merge 2 paths with a 3rd path on the point of merge. (ref  #1747)
+
+
+2.19.1 (2018-05-28)
+-------------------
+
+**Bug fixes**
+
+* Update APIDAE API URL
+* Fix filename encoding errors in import
+
+
+2.19.0 (2018-05-22)
+-------------------
+
+**Minor changes**
+
+* Allow to specify encoding when importing data
+
+
+2.18.5 (2018-05-07)
+-------------------
+
+**Bug fixes**
+
+* Fix related structure when creating new objects
+
+**Minor changes**
+
+* Show related structure on all detail pages
 
 
 2.18.4 (2018-05-02)

@@ -58,6 +58,11 @@ class TopologyTest(TestCase):
         e.save()
         self.assertNotEqual(e.length, 0)
 
+    def test_length_2d(self):
+        e = TopologyFactory.build(no_path=True)
+        e.save()
+        self.assertEqual(e.length_2d, None)
+
     def test_kind(self):
         from geotrek.land.models import LandEdge
         from geotrek.land.factories import LandEdgeFactory
@@ -234,7 +239,7 @@ class TopologyPointTest(TestCase):
         self.assertTrue(almostequal(1, poitopo.geom.y))
 
     def test_point_geom_not_moving(self):
-        """
+        r"""
         Modify path, point not moving
         +                  +
         |                  |

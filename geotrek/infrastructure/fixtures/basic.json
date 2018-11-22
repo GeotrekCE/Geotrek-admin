@@ -4,7 +4,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "structure": 1,
             "label": "Aire de stationnement"
         }
     },
@@ -13,7 +12,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "structure": 1,
             "label": "Aire de stationnement Handicap\u00e9s"
         }
     },
@@ -22,7 +20,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "structure": 1,
             "label": "Enrochement de sout\u00e8nement"
         }
     },
@@ -31,7 +28,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "structure": 1,
             "label": "Gabions de rivi\u00e8re"
         }
     },
@@ -40,7 +36,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "structure": 1,
             "label": "Gabions de sout\u00e8nement"
         }
     },
@@ -49,7 +44,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "structure": 1,
             "label": "Madriers assembl\u00e9s pos\u00e9s sur rive"
         }
     },
@@ -58,7 +52,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "structure": 1,
             "label": "Mur de sout\u00e8nement"
         }
     },
@@ -67,7 +60,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "structure": 1,
             "label": "Passerelle aubann\u00e9e"
         }
     },
@@ -76,7 +68,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "structure": 1,
             "label": "Passerelle d\u00e9montable"
         }
     },
@@ -85,7 +76,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "structure": 1,
             "label": "Passerelle fixe"
         }
     },
@@ -94,7 +84,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "structure": 1,
             "label": "Platelage sur pilotis"
         }
     },
@@ -103,7 +92,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "structure": 1,
             "label": "Pont \u00e0 poutrelles"
         }
     },
@@ -112,7 +100,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "structure": 1,
             "label": "Pont \u00e0 voute"
         }
     },
@@ -121,7 +108,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "structure": 1,
             "label": "Radier enroch\u00e9"
         }
     },
@@ -130,7 +116,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "structure": 1,
             "label": "Seuil de rivi\u00e8re"
         }
     },
@@ -139,7 +124,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "structure": 1,
             "label": "Sout\u00e8nement gabion bois"
         }
     },
@@ -148,7 +132,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "structure": 1,
             "label": "Banc"
         }
     },
@@ -157,7 +140,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "structure": 1,
             "label": "Barri\u00e8re levante"
         }
     },
@@ -166,7 +148,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "structure": 1,
             "label": "Barri\u00e8res animaux"
         }
     },
@@ -175,7 +156,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "structure": 1,
             "label": "Compteur pi\u00e9tons"
         }
     },
@@ -184,7 +164,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "structure": 1,
             "label": "Compteur routier"
         }
     },
@@ -193,7 +172,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "structure": 1,
             "label": "Dispositif anti-stationnement"
         }
     },
@@ -202,7 +180,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "structure": 1,
             "label": "Emmarchement m\u00e9tallique"
         }
     },
@@ -211,7 +188,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "structure": 1,
             "label": "Fontaine"
         }
     },
@@ -220,7 +196,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "structure": 1,
             "label": "Main courante \u00e0 c\u00e2ble"
         }
     },
@@ -229,7 +204,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "structure": 1,
             "label": "Parc \u00e0 v\u00e9lo"
         }
     },
@@ -238,7 +212,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "structure": 1,
             "label": "Point d'assurance"
         }
     },
@@ -247,7 +220,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "structure": 1,
             "label": "Poubelles"
         }
     },
@@ -256,7 +228,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "structure": 1,
             "label": "Table"
         }
     },
@@ -265,7 +236,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "structure": 1,
             "label": "Table d'orientation"
         }
     },
@@ -274,7 +244,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "structure": 1,
             "label": "Toilettes \u00e0 \u00e9vacuation"
         }
     },
@@ -283,7 +252,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "E",
-            "structure": 1,
             "label": "Toilettes s\u00e8ches"
         }
     },
@@ -292,7 +260,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "S",
-            "structure": 1,
             "label": "Porte d'entr\u00e9e du Parc"
         }
     },
@@ -301,7 +268,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "S",
-            "structure": 1,
             "label": "Directionelle"
         }
     },
@@ -310,7 +276,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "S",
-            "structure": 1,
             "label": "Situation"
         }
     },
@@ -319,7 +284,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "S",
-            "structure": 1,
             "label": "R\u00e9glementaire"
         }
     },
@@ -328,7 +292,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "S",
-            "structure": 1,
             "label": "Service"
         }
     },
@@ -337,7 +300,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "S",
-            "structure": 1,
             "label": "Appartenance"
         }
     },
@@ -346,7 +308,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "S",
-            "structure": 1,
             "label": "Limite C\u0153ur"
         }
     },
@@ -355,7 +316,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "S",
-            "structure": 1,
             "label": "Information"
         }
     },
@@ -364,7 +324,6 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "S",
-            "structure": 1,
             "label": "Temporaire"
         }
     },
@@ -372,7 +331,6 @@
         "pk": 1, 
         "model": "infrastructure.infrastructurecondition", 
         "fields": {
-            "structure": 1, 
             "label": "Neuf"
         }
     },
@@ -380,7 +338,6 @@
         "pk": 2, 
         "model": "infrastructure.infrastructurecondition", 
         "fields": {
-            "structure": 1, 
             "label": "Bon \u00e9tat"
         }
     },
@@ -388,7 +345,6 @@
         "pk": 3, 
         "model": "infrastructure.infrastructurecondition", 
         "fields": {
-            "structure": 1, 
             "label": "D\u00e9grad\u00e9"
         }
     },
@@ -396,7 +352,6 @@
         "pk": 4, 
         "model": "infrastructure.infrastructurecondition", 
         "fields": {
-            "structure": 1, 
             "label": "En ruines"
         }
     },
@@ -404,7 +359,6 @@
         "pk": 5, 
         "model": "infrastructure.infrastructurecondition", 
         "fields": {
-            "structure": 1, 
             "label": "Tagu\u00e9"
         }
     }

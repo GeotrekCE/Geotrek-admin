@@ -138,11 +138,11 @@ class BasicJSONAPITest(TranslationResetMixin):
 
         self.content = self.factory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
 
-        self.picture = common_factories.AttachmentFactory(obj=self.content,
+        self.picture = common_factories.AttachmentFactory(content_object=self.content,
                                                           attachment_file=get_dummy_uploaded_image())
-        self.document = common_factories.AttachmentFactory(obj=self.content,
+        self.document = common_factories.AttachmentFactory(content_object=self.content,
                                                            attachment_file=get_dummy_uploaded_document())
-        self.video = common_factories.AttachmentFactory(obj=self.content, attachment_file='',
+        self.video = common_factories.AttachmentFactory(content_object=self.content, attachment_file='',
                                                         attachment_video='http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque')
         self.video_detected = detect_backend(self.video.attachment_video)
 
@@ -186,6 +186,22 @@ class BasicJSONAPITest(TranslationResetMixin):
         self.assertDictEqual(self.result['videos'][0],
                              {'backend': 'Youtube',
                               'url': 'http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque',
+                              'title': self.video.title,
+                              'legend': self.video.legend,
+                              'author': self.video.author,
+                              'code': self.video_detected.code})
+
+        self.video = common_factories.AttachmentFactory(
+            content_object=self.content, attachment_file='',
+            attachment_video='http://www.dailymotion.com/video/x6e0q24')
+        self.video_detected = detect_backend(self.video.attachment_video)
+        self.pk = self.content.pk
+        url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.model_name, pk=self.pk)
+        self.response = self.client.get(url)
+        self.result = json.loads(self.response.content)
+        self.assertDictEqual(self.result['videos'][0],
+                             {'backend': 'Dailymotion',
+                              'url': 'http://www.dailymotion.com/embed/video/x6e0q24',
                               'title': self.video.title,
                               'legend': self.video.legend,
                               'author': self.video.author,
@@ -247,8 +263,8 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
     def _build_object(self):
         super(TouristicContentAPITest, self)._build_object()
         self.category = self.content.category
-        self.type1 = TouristicContentTypeFactory(category=self.category)
-        self.type2 = TouristicContentTypeFactory(category=self.category, pictogram=None)
+        self.type1 = TouristicContentTypeFactory(category=self.category, in_list=1)
+        self.type2 = TouristicContentTypeFactory(category=self.category, in_list=1, pictogram=None)
         self.content.type1.add(self.type1)
         self.content.type2.add(self.type2)
 
@@ -319,7 +335,7 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
     def test_category(self):
         self.assertDictEqual(self.result['category'],
                              {"id": 'E',
-                              "order": None,
+                              "order": 99,
                               "label": "Touristic events",
                               "slug": "touristic-event",
                               "type1_label": "Type",

@@ -108,7 +108,7 @@ class POIJSONDetailTest(TrekkingManagerTest):
 
         self.poi = POIFactory.create(published=True)
 
-        self.attachment = AttachmentFactory.create(obj=self.poi,
+        self.attachment = AttachmentFactory.create(content_object=self.poi,
                                                    attachment_file=get_dummy_uploaded_image())
 
         self.touristic_content = tourism_factories.TouristicContentFactory(
@@ -250,6 +250,7 @@ class TrekViewsTest(CommonTest):
             'trek_relationship_a-1-has_common_edge': '',
             'trek_relationship_a-1-has_common_departure': '',
             'trek_relationship_a-1-is_circuit_step': 'on',
+            'pois_excluded': POIFactory.create().pk
         }
 
     def test_badfield_goodgeom(self):
@@ -271,6 +272,25 @@ class TrekViewsTest(CommonTest):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
             self.assertEqual(response.status_code, 200)
 
+    def test_no_pois_detached_in_create(self):
+        self.login()
+        response = self.client.get(self.model.get_add_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn('pois_excluded', response.content)
+
+    def test_pois_detached_update(self):
+        self.login()
+        p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
+        trek = TrekFactory.create(no_path=True)
+        trek.add_path(p1)
+        poi = POIFactory.create(no_path=True)
+        poi.add_path(p1, start=0.6, end=0.6)
+
+        good_data = self.get_good_data()
+        good_data['pois_excluded'] = poi.pk
+        self.client.post(self.model.get_update_url(trek), good_data)
+        self.assertIn(poi, trek.pois_excluded.all())
+
 
 class TrekViewsLiveTest(MapEntityLiveTest):
     model = Trek
@@ -284,13 +304,16 @@ class TrekCustomViewTests(TrekkingManagerTest):
 
     def test_pois_geojson(self):
         trek = TrekWithPOIsFactory.create(published=True)
-        self.assertEqual(len(trek.pois), 2)
+        first_poi = trek.pois.first()
+        trek.pois_excluded.add(first_poi)
+        trek.save()
+        self.assertEqual(len(trek.pois), 1)
         poi = trek.pois[0]
         poi.published = True
         poi.save()
-        AttachmentFactory.create(obj=poi, attachment_file=get_dummy_uploaded_image())
+        AttachmentFactory.create(content_object=poi, attachment_file=get_dummy_uploaded_image())
         self.assertNotEqual(poi.thumbnail, None)
-        self.assertEqual(len(trek.pois), 2)
+        self.assertEqual(len(trek.pois), 1)
 
         url = '/api/en/treks/{pk}/pois.geojson'.format(pk=trek.pk)
         response = self.client.get(url)
@@ -298,6 +321,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         poislayer = json.loads(response.content.decode())
         poifeature = poislayer['features'][0]
         self.assertTrue('thumbnail' in poifeature['properties'])
+        self.assertEqual(len(poislayer['features']), 1)
 
     def test_services_geojson(self):
         trek = TrekWithServicesFactory.create(published=True)
@@ -404,11 +428,7 @@ class TrekCustomPublicViewTests(TrekkingManagerTest):
         self.assertEqual(response.status_code, 403)
 
 
-class TrekJSONDetailTest(TrekkingManagerTest):
-    """ Since we migrated some code to Django REST Framework, we should test
-    the migration extensively. Geotrek-rando mainly relies on this view.
-    """
-
+class TrekJSONSetUp(TrekkingManagerTest):
     def setUp(self):
         self.login()
 
@@ -425,7 +445,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         path1 = PathFactory.create(geom='SRID=%s;LINESTRING(0 0, 1 0)' % settings.SRID)
         self.trek.add_path(path1)
 
-        self.attachment = AttachmentFactory.create(obj=self.trek,
+        self.attachment = AttachmentFactory.create(content_object=self.trek,
                                                    attachment_file=get_dummy_uploaded_image())
 
         self.information_desk = tourism_factories.InformationDeskFactory.create()
@@ -498,6 +518,20 @@ class TrekJSONDetailTest(TrekkingManagerTest):
         self.response = self.client.get(url)
         self.result = json.loads(self.response.content.decode())
 
+
+@override_settings(SPLIT_TREKS_CATEGORIES_BY_PRACTICE=True)
+class TrekPracticeTest(TrekJSONSetUp):
+    def test_touristic_contents_practice(self):
+        self.assertEqual(len(self.result['touristic_contents']), 1)
+        self.assertDictEqual(self.result['touristic_contents'][0], {
+            u'id': self.touristic_content.pk,
+            u'category_id': self.touristic_content.prefixed_category_id})
+
+
+class TrekJSONDetailTest(TrekJSONSetUp):
+    """ Since we migrated some code to Django REST Framework, we should test
+    the migration extensively. Geotrek-rando mainly relies on this view.
+    """
     def test_related_urls(self):
         self.assertEqual(self.result['elevation_area_url'],
                          '/api/en/treks/{pk}/dem.json'.format(pk=self.pk))
@@ -526,7 +560,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
     def test_pictures(self):
         self.assertDictEqual(self.result['pictures'][0],
                              {'url': os.path.join(settings.MEDIA_URL,
-                                                   self.attachment.attachment_file.name) + '.800x800_q85.png',
+                                                  self.attachment.attachment_file.name) + '.800x800_q85.png',
                               'title': self.attachment.title,
                               'legend': self.attachment.legend,
                               'author': self.attachment.author})
@@ -621,10 +655,10 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                               'has_common_edge': False,
                               'is_circuit_step': True,
                               'trek': {'pk': self.trek_b.pk,
-                                        'id': self.trek_b.id,
-                                        'slug': self.trek_b.slug,
-                                        'category_slug': 'trek',
-                                        'name': self.trek_b.name}})
+                                       'id': self.trek_b.id,
+                                       'slug': self.trek_b.slug,
+                                       'category_slug': 'trek',
+                                       'name': self.trek_b.name}})
 
     def test_parking_location_in_wgs84(self):
         parking_location = self.result['parking_location']
@@ -653,6 +687,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
             'id': self.trek_b.pk,
             'category_id': self.trek_b.prefixed_category_id})
 
+# TOCHECK (remove)
     def test_type1(self):
         self.assertDictEqual(self.result['type1'][0],
                              {"id": self.trek.practice.id,
@@ -665,10 +700,12 @@ class TrekJSONDetailTest(TrekkingManagerTest):
                               "pictogram": os.path.join(settings.MEDIA_URL, self.accessibility.pictogram.name),
                               "name": self.accessibility.name})
 
+    # TOCHECK (remove type1_label)
+
     def test_category(self):
         self.assertDictEqual(self.result['category'],
                              {"id": 'T',
-                              "order": None,
+                              "order": 1,
                               "label": "Trek",
                               "slug": "trek",
                               "type1_label": "Practice",
@@ -699,6 +736,18 @@ class TrekJSONDetailTest(TrekkingManagerTest):
     def test_next(self):
         self.assertDictEqual(self.result['next'],
                              {"%s" % self.parent.pk: self.sibling.pk})
+
+    def test_picture_print(self):
+        self.assertIn(self.attachment.attachment_file.name, self.trek.picture_print.name)
+        self.assertIn('.1000x500_q85_crop-smart.png', self.trek.picture_print.name)
+
+    def test_thumbnail_display(self):
+        self.assertIn('<img height="20" width="20" src="/media/%s.120x120_q85_crop.png"/>'
+                      % self.attachment.attachment_file.name, self.trek.thumbnail_display)
+
+    def test_thumbnail_csv_display(self):
+        self.assertIn('%s.120x120_q85_crop.png'
+                      % self.attachment.attachment_file.name, self.trek.thumbnail_csv_display)
 
 
 class TrekPointsReferenceTest(TrekkingManagerTest):
@@ -1074,6 +1123,31 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '</poi>'
             '</pois>'.format(**attrs))
 
+    @override_settings(PUBLISHED_BY_LANG=False)
+    def test_export_pois_without_langs(self):
+        response = self.client.get('/api/cirkwi/pois.xml')
+        self.assertEqual(response.status_code, 200)
+        attrs = {
+            'pk': self.poi.pk,
+            'title': self.poi.name,
+            'description': self.poi.description.replace('<p>', '').replace('</p>', ''),
+            'date_update': timestamp(self.poi.date_update),
+        }
+        self.assertXMLEqual(
+            response.content,
+            '<?xml version="1.0" encoding="utf8"?>\n'
+            '<pois version="2">'
+            '<poi id_poi="{pk}" date_modification="{date_update}" date_creation="1388534400">'
+            '<informations>'
+            '<information langue="en"><titre>{title}</titre><description>{description}</description></information>'
+            '<information langue="es"><titre>{title}</titre><description>{description}</description></information>'
+            '<information langue="fr"><titre>{title}</titre><description>{description}</description></information>'
+            '<information langue="it"><titre>{title}</titre><description>{description}</description></information>'
+            '</informations>'
+            '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
+            '</poi>'
+            '</pois>'.format(**attrs))
+
 
 class TrekWorkflowTest(TranslationResetMixin, TestCase):
     def setUp(self):
@@ -1099,28 +1173,6 @@ class TrekWorkflowTest(TranslationResetMixin, TestCase):
         self.assertContains(response, 'Published')
         response = self.client.get('/trek/edit/%u/' % self.trek.pk)
         self.assertContains(response, 'Published')
-
-
-class SyncRandoViewTest(TestCase):
-    def setUp(self):
-        self.user = User.objects.create_user('bart', password='mahaha')
-
-    def test_return_redirect(self):
-        response = self.client.get(reverse('trekking:sync_randos_view'))
-        self.assertEqual(response.status_code, 302)
-
-    def test_return_redirect_superuser(self):
-        self.user.is_superuser = True
-        response = self.client.get(reverse('trekking:sync_randos_view'))
-        self.assertEqual(response.status_code, 302)
-
-    def test_post_sync_redirect(self):
-        """
-        test if sync can be launched by superuser post
-        """
-        self.user.is_superuser = True
-        response = self.client.post(reverse('trekking:sync_randos'))
-        self.assertEqual(response.status_code, 302)
 
 
 class ServiceViewsTest(CommonTest):
@@ -1185,3 +1237,35 @@ class ServiceJSONTest(TrekkingManagerTest):
                               'name': self.service.type.name,
                               'pictogram': os.path.join(settings.MEDIA_URL, self.service.type.pictogram.name),
                               })
+
+
+class SyncRandoViewTest(TestCase):
+    def setUp(self):
+        self.super_user = SuperUserFactory.create(username='admin', password='super')
+        self.simple_user = User.objects.create_user(username='homer', password='doooh')
+
+    def test_get_sync_superuser(self):
+        self.client.login(username='admin', password='super')
+        response = self.client.get(reverse('trekking:sync_randos_view'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_post_sync_superuser(self):
+        """
+        test if sync can be launched by superuser post
+        """
+        self.client.login(username='admin', password='super')
+        response = self.client.post(reverse('trekking:sync_randos'), data={})
+        self.assertRedirects(response, '/commands/syncview')
+
+    def test_get_sync_simpleuser(self):
+        self.client.login(username='homer', password='doooh')
+        response = self.client.get(reverse('trekking:sync_randos_view'))
+        self.assertRedirects(response, '/login/?next=/commands/syncview')
+
+    def test_post_sync_simpleuser(self):
+        """
+        test if sync can be launched by simple user post
+        """
+        self.client.login(username='homer', password='doooh')
+        response = self.client.post(reverse('trekking:sync_randos'), data={})
+        self.assertRedirects(response, '/login/?next=/commands/sync')

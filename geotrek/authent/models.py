@@ -4,6 +4,7 @@
     Models to manage users and profiles
 """
 from django.db import models
+from django.db.models import Q
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -45,7 +46,7 @@ class StructureRelatedQuerySet(models.query.QuerySet):
 
     @staticmethod
     def queryset_for_user(queryset, user):
-        return queryset.filter(structure=user.profile.structure)
+        return queryset.filter(Q(structure=user.profile.structure) | Q(structure=None))
 
 
 class StructureRelatedManager(models.Manager):
@@ -76,9 +77,30 @@ class StructureRelated(models.Model):
     def same_structure(self, user):
         """ Returns True if the user is in the same structure or has
             bypass_structure permission, False otherwise. """
-        return (user.profile.structure == self.structure or
-                user.is_superuser or
-                user.has_perm('authent.can_bypass_structure'))
+        return (user.profile.structure == self.structure
+                or user.is_superuser
+                or user.has_perm('authent.can_bypass_structure'))
+
+    class Meta:
+        abstract = True
+        verbose_name = _(u"Related structures")
+        verbose_name_plural = _(u"Related structure")
+
+
+class StructureOrNoneRelated(models.Model):
+    """
+    A mixin used for any entities that belong to a structure or None entity
+    """
+    structure = models.ForeignKey(Structure, default=default_structure_pk,
+                                  verbose_name=_(u"Related structure"), db_column='structure', blank=True, null=True)
+
+    objects = models.Manager()
+    in_structure = StructureRelatedManager()
+
+    @classmethod
+    def for_user(cls, user):
+        """ Shortcut to manager's filter by user """
+        return cls.in_structure.for_user(user)
 
     class Meta:
         abstract = True

@@ -14,7 +14,6 @@ from urllib.parse import urlparse
 
 from django.db import models, connection
 from django.db.utils import DatabaseError
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.gis.gdal import DataSource, GDALException, CoordTransform
 from django.core.files.base import ContentFile
@@ -22,13 +21,15 @@ from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
-
-from modeltranslation.fields import TranslationField
-from modeltranslation.translator import translator, NotRegistered
+from django.conf import settings
 from paperclip.models import attachment_upload
 
 from geotrek.authent.models import default_structure
 from geotrek.common.models import FileType, Attachment
+
+if 'modeltranslation' in settings.INSTALLED_APPS:
+    from modeltranslation.fields import TranslationField
+    from modeltranslation.translator import translator, NotRegistered
 
 
 class ImportError(Exception):
@@ -68,7 +69,7 @@ class Parser(object):
     natural_keys = {}
     field_options = {}
 
-    def __init__(self, progress_cb=None, user=None):
+    def __init__(self, progress_cb=None, user=None, encoding='utf8'):
         self.warnings = {}
         self.line = 0
         self.nb_success = 0
@@ -78,6 +79,7 @@ class Parser(object):
         self.progress_cb = progress_cb
         self.user = user
         self.structure = user and user.profile.structure or default_structure()
+        self.encoding = encoding
 
         try:
             mto = translator.get_options_for_model(self.model)
@@ -442,8 +444,6 @@ class Parser(object):
 
 
 class ShapeParser(Parser):
-    encoding = 'utf-8'
-
     def next_row(self):
         datasource = DataSource(self.filename, encoding=self.encoding)
         layer = datasource[0]
@@ -456,7 +456,7 @@ class ShapeParser(Parser):
             try:
                 ogrgeom = feature.geom
             except GDALException:
-                print("Invalid geometry pointer", end=i)
+                print("Invalid geometry pointer %s" % i)
                 geom = None
             else:
                 ogrgeom.coord_dim = 2  # Flatten to 2D
@@ -705,10 +705,10 @@ class OpenSystemParser(Parser):
         self.root = ET.fromstring(response.content).find('Resultat').find('Objets')
         self.nb = len(self.root)
         for row in self.root:
-            id_sitra = row.find('ObjetCle').find('Cle').text
+            id_apidae = row.find('ObjetCle').find('Cle').text
             for liaison in row.find('Liaisons'):
                 yield {
-                    'id_sitra': id_sitra,
+                    'id_apidae': id_apidae,
                     'id_opensystem': liaison.find('ObjetOS').find('CodeUI').text,
                 }
 

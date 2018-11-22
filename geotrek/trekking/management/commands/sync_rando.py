@@ -1,6 +1,7 @@
 # -*- encoding: UTF-8 -
 
 import logging
+import filecmp
 import os
 import re
 import sys
@@ -206,12 +207,20 @@ class Command(BaseCommand):
             content = response.content.decode()
         f.write(content)
         f.close()
+        oldfilename = os.path.join(self.dst_root, name)
+        # If new file is identical to old one, don't recreate it. This will help backup
+        if os.path.isfile(oldfilename) and filecmp.cmp(fullname, oldfilename):
+            os.unlink(fullname)
+            os.link(oldfilename, fullname)
+            if self.verbosity == 2:
+                self.stdout.write(u"\x1b[3D\x1b[32munchanged\x1b[0m")
+        else:
+            if self.verbosity == 2:
+                self.stdout.write(u"\x1b[3D\x1b[32mgenerated\x1b[0m")
         # FixMe: Find why there are duplicate files.
         if zipfile:
             if name not in zipfile.namelist():
                 zipfile.write(fullname, name)
-        if self.verbosity == 2:
-            self.stdout.write("\x1b[3D\x1b[32mgenerated\x1b[0m")
 
     def sync_json(self, lang, viewset, name, zipfile=None, params={}, as_view_args=[], **kwargs):
         view = viewset.as_view(*as_view_args)
@@ -320,7 +329,8 @@ class Command(BaseCommand):
         src = os.path.join(src_root, name)
         dst = os.path.join(self.tmp_root, url, name)
         self.mkdirs(dst)
-        shutil.copyfile(src, dst)
+        if not os.path.isfile(dst):
+            os.link(src, dst)
         if zipfile:
             zipfile.write(dst, os.path.join(url, name))
         if self.verbosity == 2:
@@ -440,6 +450,7 @@ class Command(BaseCommand):
                        os.path.join('api', lang, 'feedback', 'categories.json'),
                        zipfile=self.zipfile)
         self.sync_static_file(lang, 'trekking/trek.svg')
+        self.sync_static_file(lang, 'trekking/itinerancy.svg')
         self.sync_pictograms(lang, common_models.Theme, zipfile=self.zipfile)
         self.sync_pictograms(lang, common_models.RecordSource, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.TrekNetwork, zipfile=self.zipfile)
@@ -455,8 +466,9 @@ class Command(BaseCommand):
 
         treks = trekking_models.Trek.objects.existing().order_by('pk')
         treks = treks.filter(
-            Q(**{'published_{lang}'.format(lang=lang): True}) |
-            Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True, 'trek_parents__parent__deleted': False})
+            Q(**{'published_{lang}'.format(lang=lang): True})
+            | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
+                   'trek_parents__parent__deleted': False})
         )
 
         if self.source:
@@ -635,8 +647,9 @@ class Command(BaseCommand):
 
     def sync_trek_touristiccontents(self, lang, trek, zipfile=None):
         params = {'format': 'geojson',
-                  'categories': ','.join(category for category in self.categories),
-                  'portal': ','.join(portal for portal in self.portal)}
+                  'categories': ','.join(category for category in self.categories)}
+        if self.portal:
+            params['portal'] = ','.join(portal for portal in self.portal)
 
         view = tourism_views.TrekTouristicContentViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'touristiccontents.geojson')

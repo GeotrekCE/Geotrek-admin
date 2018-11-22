@@ -3,6 +3,7 @@ import mock
 import os
 from shutil import rmtree
 from tempfile import mkdtemp
+from StringIO import StringIO
 
 from django.test import TestCase
 from django.conf import settings
@@ -37,10 +38,21 @@ class ParserTests(TestCase):
             call_command('import', 'geotrek.common.DoesNotExist', '', verbosity=0)
         self.assertEqual(str(cm.exception), "Failed to import parser class 'geotrek.common.DoesNotExist'")
 
+    def test_no_filename_no_url(self):
+        with self.assertRaises(CommandError) as cm:
+            call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', '', verbosity=0)
+        self.assertEqual(unicode(cm.exception), u"File path missing")
+
     def test_bad_filename(self):
         with self.assertRaises(CommandError) as cm:
             call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', 'find_me/I_am_not_there.shp', verbosity=0)
         self.assertEqual(str(cm.exception), "File does not exists at: find_me/I_am_not_there.shp")
+
+    def test_progress(self):
+        output = StringIO()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', filename, verbosity=2, stdout=output)
+        self.assertIn('(100%)', output.getvalue())
 
     def test_create(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
@@ -73,12 +85,14 @@ class ParserTests(TestCase):
 
     def test_report_format_text(self):
         parser = OrganismParser()
-        self.assertRegex(parser.report(), '0/0 lines imported.')
-        self.assertNotRegexpMatches(parser.report(), '<div id=\"collapse-\$celery_id\" class=\"collapse\">')
+        self.assertRegexpMatches(parser.report(), '0/0 lines imported.')
+        self.assertNotRegexpMatches(parser.report(),
+                                    r'<div id=\"collapse-\$celery_id\" class=\"collapse\">')
 
     def test_report_format_html(self):
         parser = OrganismParser()
-        self.assertRegex(parser.report(output_format='html'), '<div id=\"collapse-\$celery_id\" class=\"collapse\">')
+        self.assertpMatches(parser.report(output_format='html'),
+                            r'<div id=\"collapse-\$celery_id\" class=\"collapse\">')
 
     def test_report_format_bad(self):
         parser = OrganismParser()

@@ -90,7 +90,29 @@
         }
       }
     },
-    "prestations" : { },
+    "prestations" : {
+      "services" :  [ {
+        "elementReferenceType" : "Testserv",
+        "id" : 1300,
+        "libelleFr" : "Test",
+        "ordre" : 9
+      }, {
+        "elementReferenceType" : "Testserv",
+        "id" : 1301,
+        "libelleFr" : "Test2",
+        "ordre" : 14
+      }, {
+        "elementReferenceType" : "Testserv",
+        "id" : 1302,
+        "libelleFr" : "Test3",
+        "ordre" : 18
+      }, {
+        "elementReferenceType" : "Testserv",
+        "id" : 1303,
+        "libelleFr" : "Test4",
+        "ordre" : 4
+      } ]
+    },
     "ouverture" : {
       "periodeEnClair" : {
         "libelleFr" : "Du 01/05 au 31/10."
@@ -122,6 +144,12 @@
         "ordre" : 4
       } ]
     },
+    "informationsHebergementCollectif" : {
+      "capacite" : {
+        "capaciteTotale" : 10
+      }
+    },
+
     "illustrations" : [ {
       "identifiant" : 1609636,
       "link" : false,

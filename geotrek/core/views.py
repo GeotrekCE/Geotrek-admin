@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import logging
+from collections import defaultdict
 
 from django.contrib.auth.decorators import permission_required
 from django.conf import settings
@@ -148,6 +149,30 @@ class PathDelete(MapEntityDelete):
     def dispatch(self, *args, **kwargs):
         return super(PathDelete, self).dispatch(*args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super(PathDelete, self).get_context_data(**kwargs)
+        topologies_by_model = defaultdict(list)
+        if 'geotrek.core' in settings.INSTALLED_APPS:
+            for trail in self.object.trails:
+                topologies_by_model[_('Trails')].append({'name': trail.name, 'url': trail.get_detail_url()})
+        if 'geotrek.trekking' in settings.INSTALLED_APPS:
+            for trek in self.object.treks:
+                topologies_by_model[_('Treks')].append({'name': trek.name, 'url': trek.get_detail_url()})
+            for service in self.object.services:
+                topologies_by_model[_('Services')].append({'name': service.type.name, 'url': service.get_detail_url()})
+            for poi in self.object.pois:
+                topologies_by_model[_('Pois')].append({'name': poi.name, 'url': poi.get_detail_url()})
+        if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
+            for signage in self.object.signages:
+                topologies_by_model[_('Signages')].append({'name': signage.name, 'url': signage.get_detail_url()})
+            for infrastructure in self.object.infrastructures:
+                topologies_by_model[_('Infrastructures')].append({'name': infrastructure.name, 'url': infrastructure.get_detail_url()})
+        if 'geotrek.maintenance' in settings.INSTALLED_APPS:
+            for intervention in self.object.interventions:
+                topologies_by_model[_('Interventions')].append({'name': intervention.name, 'url': intervention.get_detail_url()})
+        context['topologies_by_model'] = dict(topologies_by_model)
+        return context
+
 
 @login_required
 @cache_last_modified(lambda x: Path.latest_updated())
@@ -240,29 +265,32 @@ def merge_path(request):
     response = {}
 
     if request.method == 'POST':
+        ids_path_merge = request.POST.getlist('path[]')
+
+        assert len(ids_path_merge) == 2
+
+        path_a = Path.objects.get(pk=ids_path_merge[0])
+        path_b = Path.objects.get(pk=ids_path_merge[1])
+
+        if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
+            response = {'error': _("You don't have the right to change these paths")}
+            return HttpJSONResponse(response)
+
         try:
-            ids_path_merge = request.POST.getlist('path[]')
-
-            if len(ids_path_merge) == 2:
-                path_a = Path.objects.get(pk=ids_path_merge[0])
-                path_b = Path.objects.get(pk=ids_path_merge[1])
-                if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
-                    response = {'error': _("You don't have the right to change these paths")}
-
-                elif path_a.merge_path(path_b):
-                    response = {'success': _("Paths merged successfully")}
-                    messages.success(request, _("Paths merged successfully"))
-
-                else:
-                    response = {'error': _("No matching points to merge paths found")}
-
-            else:
-                raise
-
+            result = path_a.merge_path(path_b)
         except Exception as exc:
             response = {'error': exc, }
+            return HttpJSONResponse(response)
 
-    return HttpResponse(json.dumps(response), content_type="application/json")
+        if result == 2:
+            response = {'error': _("You can't merge 2 paths with a 3rd path in the intersection")}
+        elif result == 0:
+            response = {'error': _("No matching points to merge paths found")}
+        else:
+            response = {'success': _("Paths merged successfully")}
+            messages.success(request, _("Paths merged successfully"))
+
+        return HttpJSONResponse(response)
 
 
 class ParametersView(View):

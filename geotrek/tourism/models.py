@@ -13,7 +13,6 @@ from easy_thumbnails.files import get_thumbnailer
 from mapentity.registry import registry
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text, smart_plain_text
-from modeltranslation.manager import MultilingualManager
 
 from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Topology
@@ -26,14 +25,12 @@ from geotrek.common.utils import intersecting
 
 from extended_choices import Choices
 
+if 'modeltranslation' in settings.INSTALLED_APPS:
+    from modeltranslation.manager import MultilingualManager
+else:
+    from django.db.models import Manager as MultilingualManager
 
 logger = logging.getLogger(__name__)
-
-DATA_SOURCE_TYPES = Choices(
-    ('GEOJSON', 'GEOJSON', _("GeoJSON")),
-    ('TOURINFRANCE', 'TOURINFRANCE', _("TourInFrance")),
-    ('SITRA', 'SITRA', _("Sitra")),
-)
 
 
 def _get_target_choices():

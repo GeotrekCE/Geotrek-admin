@@ -7,7 +7,7 @@ from mapentity.models import MapEntityMixin
 
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path
-from geotrek.authent.models import StructureRelatedManager, StructureRelated
+from geotrek.authent.models import StructureRelatedManager, StructureRelated, StructureOrNoneRelated
 
 
 INFRASTRUCTURE_TYPES = Choices(
@@ -36,7 +36,7 @@ class InfrastructureTypeManager(models.Manager):
         return self.get_queryset().for_infrastructures()
 
 
-class InfrastructureType(StructureRelated):
+class InfrastructureType(StructureOrNoneRelated):
     """ Types of infrastructures (bridge, WC, stairs, ...) """
     label = models.CharField(db_column="nom", max_length=128)
     type = models.CharField(db_column="type", max_length=1, choices=INFRASTRUCTURE_TYPES)
@@ -50,19 +50,23 @@ class InfrastructureType(StructureRelated):
         ordering = ['label', 'type']
 
     def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.label, self.structure.name)
         return self.label
 
 
-class InfrastructureCondition(StructureRelated):
+class InfrastructureCondition(StructureOrNoneRelated):
     label = models.CharField(verbose_name=_("Name"), db_column="etat", max_length=250)
+
+    def __str__(self):
+        if self.structure:
+            return "{} ({})".format(self.label, self.structure.name)
+        return self.label
 
     class Meta:
         verbose_name = _("Infrastructure Condition")
         verbose_name_plural = _("Infrastructure Conditions")
         db_table = "a_b_etat"
-
-    def __str__(self):
-        return self.label
 
 
 class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
@@ -122,9 +126,8 @@ class InfrastructureGISManager(gismodels.GeoManager):
         return super(InfrastructureGISManager, self).get_queryset().exclude(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
 
     def all_implantation_years(self):
-        all_years = self.get_queryset().values_list('implantation_year', flat=True)
-        tmp = list(reversed(all_years))
-        all_years = tmp if tmp is None else list(reversed(all_years))
+        all_years = self.get_queryset().filter(implantation_year__isnull=False)\
+            .order_by('-implantation_year').values_list('implantation_year', flat=True).distinct('implantation_year')
         return all_years
 
 
@@ -163,9 +166,8 @@ class SignageGISManager(gismodels.GeoManager):
         return super(SignageGISManager, self).get_queryset().filter(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
 
     def all_implantation_years(self):
-        all_years = self.get_queryset().values_list('implantation_year', flat=True)
-        tmp = list(reversed(all_years))
-        all_years = tmp if tmp is None else list(reversed(all_years))
+        all_years = self.get_queryset().filter(implantation_year__isnull=False)\
+            .order_by('-implantation_year').values_list('implantation_year', flat=True).distinct('implantation_year')
         return all_years
 
 

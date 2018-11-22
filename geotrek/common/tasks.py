@@ -34,7 +34,7 @@ class GeotrekImportTask(Task):
 
 
 @shared_task(base=GeotrekImportTask, name='geotrek.common.import-file')
-def import_datas(class_name, filename, module_name="bulkimport.parsers", user_pk=None):
+def import_datas(class_name, filename, module_name="bulkimport.parsers", encoding='utf8', user_pk=None):
     try:
         module = importlib.import_module(module_name)
         Parser = getattr(module, class_name)
@@ -59,7 +59,7 @@ def import_datas(class_name, filename, module_name="bulkimport.parsers", user_pk
     user = user_pk and User.objects.get(pk=user_pk)
 
     try:
-        parser = Parser(progress_cb=progress_cb, user=user)
+        parser = Parser(progress_cb=progress_cb, user=user, encoding=encoding)
         parser.parse(filename)
     except Exception as e:
         raise e

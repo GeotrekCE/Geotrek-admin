@@ -9,7 +9,7 @@ from django.contrib.gis.geos import GeometryCollection
 
 from mapentity.models import MapEntityMixin
 
-from geotrek.authent.models import StructureRelated
+from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.core.models import Topology, Path, Trail
 from geotrek.common.models import Organism
@@ -20,8 +20,8 @@ from geotrek.infrastructure.models import Infrastructure, Signage
 
 class InterventionManager(models.GeoManager):
     def all_years(self):
-        all_dates = self.existing().values_list('date', flat=True)
-        all_years = list(reversed(sorted(set([d.year for d in all_dates]))))
+        all_dates = self.existing().filter(date__isnull=False).order_by('-date').values_list('date', flat=True).distinct('date')
+        all_years = [d.year for d in all_dates]
         return all_years
 
 
@@ -155,11 +155,11 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         if self.on_infrastructure:
             icon = self.topology.kind.lower()
             title = '%s: %s' % (_(self.topology.kind.capitalize()),
-                                 self.infrastructure)
+                                self.infrastructure)
 
         return '<img src="%simages/%s-16.png" title="%s">' % (settings.STATIC_URL,
-                                                               icon,
-                                                               title)
+                                                              icon,
+                                                              title)
 
     @property
     def infrastructure_csv_display(self):
@@ -255,9 +255,9 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     @property
     def name_display(self):
         return '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
-                                                                  self.get_detail_url(),
-                                                                  self.name,
-                                                                  self.name)
+                                                                 self.get_detail_url(),
+                                                                 self.name,
+                                                                 self.name)
 
     @property
     def name_csv_display(self):
@@ -280,7 +280,7 @@ Path.add_property('interventions', lambda self: Intervention.path_interventions(
 Topology.add_property('interventions', lambda self: Intervention.topology_interventions(self), _("Interventions"))
 
 
-class InterventionStatus(StructureRelated):
+class InterventionStatus(StructureOrNoneRelated):
 
     status = models.CharField(verbose_name=_("Status"), max_length=128, db_column='status')
 
@@ -291,10 +291,12 @@ class InterventionStatus(StructureRelated):
         ordering = ['id']
 
     def __str__(self):
+        if self.structure:
+            return u"{} ({})".format(self.status, self.structure.name)
         return self.status
 
 
-class InterventionType(StructureRelated):
+class InterventionType(StructureOrNoneRelated):
 
     type = models.CharField(max_length=128, verbose_name=_("Type"), db_column='type')
 
@@ -305,10 +307,12 @@ class InterventionType(StructureRelated):
         ordering = ['type']
 
     def __str__(self):
+        if self.structure:
+            return u"{} ({})".format(self.type, self.structure.name)
         return self.type
 
 
-class InterventionDisorder(StructureRelated):
+class InterventionDisorder(StructureOrNoneRelated):
 
     disorder = models.CharField(max_length=128, verbose_name=_("Disorder"), db_column='desordre')
 
@@ -319,10 +323,12 @@ class InterventionDisorder(StructureRelated):
         ordering = ['disorder']
 
     def __str__(self):
+        if self.structure:
+            return u"{} ({})".format(self.disorder, self.structure.name)
         return self.disorder
 
 
-class InterventionJob(StructureRelated):
+class InterventionJob(StructureOrNoneRelated):
 
     job = models.CharField(max_length=128, verbose_name=_("Job"), db_column='fonction')
     cost = models.DecimalField(verbose_name=_("Cost"), default=1.0, decimal_places=2, max_digits=8, db_column="cout_jour")
@@ -334,6 +340,8 @@ class InterventionJob(StructureRelated):
         ordering = ['job']
 
     def __str__(self):
+        if self.structure:
+            return u"{} ({})".format(self.job, self.structure.name)
         return self.job
 
 
@@ -459,9 +467,9 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
     @property
     def name_display(self):
         return '<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
-                                                                 self.get_detail_url(),
-                                                                 self.name,
-                                                                 self.name)
+                                                                self.get_detail_url(),
+                                                                self.name,
+                                                                self.name)
 
     @property
     def name_csv_display(self):
@@ -541,7 +549,7 @@ Path.add_property('projects', lambda self: Project.path_projects(self), _("Proje
 Topology.add_property('projects', lambda self: Project.topology_projects(self), _("Projects"))
 
 
-class ProjectType(StructureRelated):
+class ProjectType(StructureOrNoneRelated):
 
     type = models.CharField(max_length=128, verbose_name=_("Type"), db_column='type')
 
@@ -552,10 +560,12 @@ class ProjectType(StructureRelated):
         ordering = ['type']
 
     def __str__(self):
+        if self.structure:
+            return u"{} ({})".format(self.type, self.structure.name)
         return self.type
 
 
-class ProjectDomain(StructureRelated):
+class ProjectDomain(StructureOrNoneRelated):
 
     domain = models.CharField(max_length=128, verbose_name=_("Domain"), db_column='domaine')
 
@@ -566,10 +576,12 @@ class ProjectDomain(StructureRelated):
         ordering = ['domain']
 
     def __str__(self):
+        if self.structure:
+            return u"{} ({})".format(self.domain, self.structure.name)
         return self.domain
 
 
-class Contractor(StructureRelated):
+class Contractor(StructureOrNoneRelated):
 
     contractor = models.CharField(max_length=128, verbose_name=_("Contractor"), db_column='prestataire')
 
@@ -580,6 +592,8 @@ class Contractor(StructureRelated):
         ordering = ['contractor']
 
     def __str__(self):
+        if self.structure:
+            return u"{} ({})".format(self.contractor, self.structure.name)
         return self.contractor
 
 

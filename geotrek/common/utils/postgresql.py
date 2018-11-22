@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import logging
 import traceback
 from functools import wraps
@@ -29,7 +31,7 @@ def debug_pg_notices(f):
                 for notice in connection.connection.notices:
                     try:
                         notice, context = notice.split('CONTEXT:', 1)
-                        context = re.sub("\s+", " ", context)
+                        context = re.sub(r"\s+", " ", context)
                     except ValueError:
                         context = ''
                     notices.append((context, notice))

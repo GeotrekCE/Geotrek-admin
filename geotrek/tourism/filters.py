@@ -42,10 +42,10 @@ class CompletedFilter(django_filters.BooleanFilter):
         queryset = qs
 
         if value is True:
-            queryset = queryset.filter(end_date__lt=datetime.today)
+            queryset = queryset.filter(end_date__lt=datetime.today())
 
         elif value is False:
-            queryset = queryset.exclude(end_date__lt=datetime.today)
+            queryset = queryset.exclude(end_date__lt=datetime.today())
 
         return queryset
 
@@ -72,6 +72,5 @@ class TouristicEventApiFilterSet(django_filters.rest_framework.FilterSet):
 
     def events_end_after(self, queryset, name, value):
         return queryset.filter(
-            Q(end_date__isnull=True) |
-            Q(end_date__gte=value)
+            Q(end_date__isnull=True) | Q(end_date__gte=value)
         )

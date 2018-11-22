@@ -1,18 +1,32 @@
 env:
   - DOCKER_COMPOSE_VERSION=1.19.0
 
-before_install:
-  - sudo rm /usr/local/bin/docker-compose
-  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
-  - sudo service postgresql stop
-  - docker-compose build
-  - docker run -d postgres
+matrix:
+  allow_failures:
+    - env: ACTION=integration
 
+cache:
+  - apt
+
+install:
+  - if [[ $ACTION != codestyle ]]; then deactivate; fi
+  - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
+  - if [[ $ACTION == test ]]; then ./install.sh --tests --noinput; fi
+  - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput; fi
+  # Don't bind redis-server on IPv6 address
+  - sudo sed -i 's/^bind.*$/bind 127.0.0.1/' /etc/redis/redis.conf; sudo service redis-server restart;
 script:
-  - docker-compose run --rm gunicorn /home/django/env/bin/python3 ./manage.py test --settings geotrek.settings.tests
-
-
-
+  - if [[ $ACTION == codestyle ]]; then flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings; fi
+  - if [[ $ACTION == codestyle ]]; then flake8 geotrek; fi
+  - if [[ $ACTION == codestyle ]]; then find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID; fi
+  - if [[ $ACTION == deploy || $ACTION == integration ]]; then make load_demo; fi
+  - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
+  - if [[ $ACTION == integration ]]; then make test_export host=localhost port=80; fi
+  - if [[ $ACTION == test ]]; then ./bin/coverage run ./bin/django test geotrek; fi
+  - if [[ $ACTION == test ]]; then make test_js; fi
+after_success:
+  # Report coverage results to coveralls.io
+  - if [[ $ACTION == test ]]; then ./bin/coverage report -m; fi
+  - if [[ $ACTION == test ]]; then sudo pip install coveralls; fi
+  - if [[ $ACTION == test ]]; then coveralls; fi
 

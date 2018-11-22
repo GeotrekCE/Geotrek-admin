@@ -52,47 +52,39 @@ class InterventionFactory(factory.DjangoModelFactory):
     stake = factory.SubFactory(StakeFactory)
     type = factory.SubFactory(InterventionTypeFactory)
 
-    @classmethod
-    def _prepare(cls, create, **kwargs):
-        intervention = super(InterventionFactory, cls)._prepare(create, **kwargs)
-        if intervention.pk:
-            intervention.disorders.add(InterventionDisorderFactory.create())
-            ManDayFactory.create(intervention=intervention)
-        return intervention
+    @factory.post_generation
+    def create_intervention(obj, create, extracted, **kwargs):
+        if obj.pk:
+            obj.disorders.add(InterventionDisorderFactory.create())
+            ManDayFactory.create(intervention=obj)
 
 
 class InfrastructureInterventionFactory(InterventionFactory):
-    @classmethod
-    def _prepare(cls, create, **kwargs):
-        intervention = super(InfrastructureInterventionFactory, cls)._prepare(create, **kwargs)
+    @factory.post_generation
+    def create_infrastructure_intervention(obj, create, extracted, **kwargs):
         infra = InfrastructureFactory.create()
-        intervention.set_infrastructure(infra)
+        obj.set_infrastructure(infra)
         if create:
-            intervention.save()
-        return intervention
+            obj.save()
 
 
 class InfrastructurePointInterventionFactory(InterventionFactory):
-    @classmethod
-    def _prepare(cls, create, **kwargs):
-        intervention = super(InfrastructurePointInterventionFactory, cls)._prepare(create, **kwargs)
+    @factory.post_generation
+    def create_infrastructure_point_intervention(obj, create, extracted, **kwargs):
         infra = InfrastructureFactory.create(no_path=True)
         infra.add_path(PathFactory.create(), start=0.5, end=0.5)
-        intervention.set_infrastructure(infra)
+        obj.set_infrastructure(infra)
         if create:
-            intervention.save()
-        return intervention
+            obj.save()
 
 
 class SignageInterventionFactory(InterventionFactory):
-    @classmethod
-    def _prepare(cls, create, **kwargs):
-        intervention = super(SignageInterventionFactory, cls)._prepare(create, **kwargs)
+    @factory.post_generation
+    def create_signage_intervention(obj, create, extracted, **kwargs):
         infra = SignageFactory.create()
-        intervention.set_infrastructure(infra)
+        obj.set_infrastructure(infra)
         if create:
-            intervention.save()
-        return intervention
+            obj.save()
 
 
 class ContractorFactory(factory.DjangoModelFactory):
@@ -128,13 +120,11 @@ class ProjectFactory(factory.DjangoModelFactory):
     project_owner = factory.SubFactory(OrganismFactory)
     project_manager = factory.SubFactory(OrganismFactory)
 
-    @classmethod
-    def _prepare(cls, create, **kwargs):
-        project = super(ProjectFactory, cls)._prepare(create, **kwargs)
-        if project.pk:
-            project.contractors.add(ContractorFactory.create())
-            FundingFactory.create(project=project)
-        return project
+    @factory.post_generation
+    def create_project(obj, create, extracted, **kwargs):
+        if create:
+            obj.contractors.add(ContractorFactory.create())
+            FundingFactory.create(project=obj)
 
 
 class FundingFactory(factory.DjangoModelFactory):

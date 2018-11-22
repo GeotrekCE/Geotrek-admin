@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from mapentity.forms import MapEntityForm
 
-from geotrek.authent.models import (default_structure, StructureRelated,
+from geotrek.authent.models import (default_structure, StructureRelated, StructureOrNoneRelated,
                                     StructureRelatedQuerySet)
 
 from .mixins import NoDeleteMixin
@@ -56,7 +56,7 @@ class CommonForm(MapEntityForm):
             return
         model = modelfield.remote_field.to
         # Filter structured choice fields according to user's structure
-        if issubclass(model, StructureRelated):
+        if issubclass(model, StructureRelated) or issubclass(model, StructureOrNoneRelated):
             field.queryset = StructureRelatedQuerySet.queryset_for_user(
                 field.queryset, self.user)
         if issubclass(model, NoDeleteMixin):
@@ -64,6 +64,8 @@ class CommonForm(MapEntityForm):
 
     def __init__(self, *args, **kwargs):
         super(CommonForm, self).__init__(*args, **kwargs)
+
+        self.update = kwargs.get("instance") is not None
 
         for name, field in list(self.fields.items()):
             self.filter_related_field(name, field)
@@ -79,12 +81,12 @@ class CommonForm(MapEntityForm):
 
     def save(self, commit=True):
         """Set structure field before saving if need be"""
-        if not hasattr(self.instance, 'structure'):
+        if self.update:  # Structure is already set on object.
+            pass
+        elif not hasattr(self.instance, 'structure'):
             pass
         elif 'structure' in self.fields:
             pass  # The form contains the structure field. Let django use its value.
-        elif self.instance.structure:
-            pass  # Structure is already set on object.
         elif self.user:
             self.instance.structure = self.user.profile.structure
         else:
@@ -124,6 +126,10 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
         required=True,
         widget=forms.FileInput
     )
+    encoding = forms.ChoiceField(
+        label=_('Encoding'),
+        choices=(('Windows-1252', 'Windows-1252'), ('UTF-8', 'UTF-8'))
+    )
 
     def __init__(self, *args, **kwargs):
         super(ImportDatasetFormWithFile, self).__init__(*args, **kwargs)
@@ -134,6 +140,7 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
                 Div(
                     'parser',
                     'zipfile',
+                    'encoding',
                 ),
                 FormActions(
                     Submit('upload-file', _("Import"), css_class='button white')
