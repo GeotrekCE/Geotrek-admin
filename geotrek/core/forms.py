@@ -65,14 +65,10 @@ class PathForm(CommonForm):
     def __init__(self, *args, **kwargs):
         super(PathForm, self).__init__(*args, **kwargs)
         if self.instance.pk:
-            if not self.user.has_perm('core.change_draft_path') and self.user.has_perm('core.change_path'):
-                del self.fields['draft']
-            elif self.user.has_perm('core.change_draft_path') and not self.user.has_perm('core.change_path'):
+            if not self.user.has_perm('core.change_draft_path') or not self.user.has_perm('core.change_path'):
                 del self.fields['draft']
         else:
-            if not self.user.has_perm('core.add_draft_path') and self.user.has_perm('core.add_path'):
-                del self.fields['draft']
-            elif self.user.has_perm('core.add_draft_path') and not self.user.has_perm('core.add_path'):
+            if not self.user.has_perm('core.add_draft_path') or not self.user.has_perm('core.add_path'):
                 del self.fields['draft']
         self.fields['geom'].label = ''
 
