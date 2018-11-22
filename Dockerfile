@@ -3,6 +3,7 @@ FROM makinacorpus/geodjango:bionic-py2
 ENV DJANGO_SETTINGS_MODULE geotrek.settings.prod
 # SET LOCAL_UID, help to use in dev
 ARG LOCAL_UID=1000
+ENV TZ=Europe/Paris
 # Add default SECRET KEY / used for compilemessages
 ENV SECRET_KEY temp
 # default gunicorn options
@@ -11,13 +12,29 @@ ENV GUNICORN_CMD_ARGS="--bind 0.0.0.0:8000 --workers 5 --timeout 600"
 RUN mkdir -p /app/src/var/log
 
 # install postgis without dependencies to get raster2pgsql command
-RUN apt-get update && \
+RUN apt-get update && apt-get install -y \
+    unzip \
+    sudo \
+    less \
+    nano \
+    curl \
+    git \
+    gosu \
+    software-properties-common \
+    shared-mime-info \
+    fonts-liberation \
+    libfreetype6-dev \
+    libxml2-dev \
+    libxslt-dev \
+    libcairo2 \
+    libpango1.0-0 \
+    libgdk-pixbuf2.0-dev \
+    libffi-dev &&\
     apt-get --no-install-recommends install postgis -y && \
-    apt-get clean all && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get clean all && rm -rf /var/lib/apt/lists/* && /var/cache/apt/*
 
-RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py && rm get-pip.py
-RUN pip install pip==10.0.1 setuptools==39.1.0 wheel==0.31.0 virtualenv --upgrade
+RUN timedatectl set-timezone $TZ
+
 RUN useradd -ms /bin/bash django --uid $LOCAL_UID
 ADD geotrek /app/src/geotrek
 ADD manage.py /app/src/manage.py
