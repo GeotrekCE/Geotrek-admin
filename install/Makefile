@@ -22,8 +22,8 @@ update:
 	docker pull nginx:1.15
 	docker pull makinacorpus/screamshotter
 	docker pull makinacorpus/convertit
-	docker pull makinacorpus/postgis:10-2.4
-	docker pull redis:4.0-alpine
+	docker pull makinacorpus/postgis:11-2.5
+	docker pull redis:5.0-alpine
 	docker pull memcached:1.5-alpine
 	docker-compose run web update.sh
 	sudo systemctl start geotrek

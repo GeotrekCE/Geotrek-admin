@@ -29,10 +29,10 @@ install:
   # pull test image
   - docker pull $DOCKER_TEST_REPO:$TRAVIS_BUILD_NUMBER
   # pull common images
-  - docker pull redis:4.0-alpine
+  - docker pull redis:5.0-alpine
   - docker pull makinacorpus/convertit
   - docker pull makinacorpus/screamshotter
-  - docker pull makinacorpus/postgis:10-2.4
+  - docker pull makinacorpus/postgis:11-2.5
   # fake tag for tests
   - if [[ $ACTION == unit ]]; then docker tag $DOCKER_TEST_REPO:$TRAVIS_BUILD_NUMBER geotrek:latest; fi
   - if [[ $ACTION == integration ]]; then docker tag $DOCKER_TEST_REPO:$TRAVIS_BUILD_NUMBER geotrekce/admin:latest; fi
