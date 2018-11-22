@@ -1,4 +1,4 @@
-FROM makinacorpus/geodjango:bionic-py2
+FROM makinacorpus/geodjango:bionic-3.7
 
 ENV DJANGO_SETTINGS_MODULE geotrek.settings.prod
 # SET LOCAL_UID, help to use in dev
