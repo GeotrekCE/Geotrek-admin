@@ -43,9 +43,8 @@ COPY docker/* /usr/local/bin/
 
 USER django
 
-RUN virtualenv /app/venv
 ADD requirements.txt /app/src/requirements.txt
-RUN /app/venv/bin/pip install --no-cache-dir -r /app/src/requirements.txt
+RUN pip install --no-cache-dir -r /app/src/requirements.txt
 
 WORKDIR /app/src
 # persists compiled locales
