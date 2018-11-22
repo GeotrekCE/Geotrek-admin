@@ -6,15 +6,15 @@ CONFIGURATION
 Configuration update
 --------------------
 
-After editing ``etc/settings.ini``, refresh the running instance with :
+After editing ``.env``, refresh the running instance with :
 
 ::
 
-    make env_standalone deploy
+    sudo systemctl restart geotrek
 
 
 There a few cases where running ``install.sh`` would be necessary. If you
-change the ``rooturl`` or other parameters that affect *nginx* site configuration.
+change the ``DOMAIN_NAME`` or other parameters that affect *nginx* site configuration.
 
 
 Spatial extents
@@ -45,7 +45,7 @@ Using the command-line :
 
 ::
 
-    curl "http://spatialreference.org/ref/epsg/<SRID>/proj4js/" > Geotrek/static/proj4js/<SRID>.js
+    curl "http://spatialreference.org/ref/epsg/<SRID>/proj4js/" > Geotrek/var/conf/extra_static/proj4js/<SRID>.js
 
 
 :note:
@@ -118,16 +118,17 @@ Geotrek will send emails :
 * to administrators when internal errors occur
 * to managers when a feedback report is created
 
-Email configuration takes place in ``etc/settings.ini``, where you control
-recipients emails (``mailadmins``, ``mailmanagers``) as well as server
-parameters (``host``, ``user``, ``password``, ...)
+Email configuration takes place in ``var/conf/custom.py``, where you control
+recipients emails (``ADMINS``, ``MAIL_MANAGERS``) and email server configuration.
+
+Database server parameters and domain name take place in .env file
 
 You can test you configuration with the following command. A fake email will
 be sent to the managers :
 
 ::
 
-    bin/django test_managers_emails
+    docker-compose run web ./manage.py test_managers_emails
 
 
 Advanced Configuration

@@ -6,11 +6,9 @@
 /env/
 /var/
 /etc/
-/install
 /.idea/
 /.vscode/
-/src/
-
+geotrek/settings/custom.py
 # buildout stuff
 .mr.developer.cfg
 .installed.cfg
@@ -21,27 +19,20 @@ develop-eggs/
 eggs/
 parts/
 docs/_build/
-include/
-lib/
-local/
 *.egg-info/
 /node_modules/
 /salt.cfg
-/etc
-/lib
-/var
-bootstrap.py
-/.buildout
-geotrek/settings/custom.py
+
 /parsers.py
-/install.log
-/data/
 /sync_trek/
 
 /.project
 /.pydevproject
 /.settings/
-screamshotter.log
 
 /share/
-/geotrek/settings/local.py
+/install/*.tgz
+/bulkimport/
+!/bulkimport/__init__.py
+/install/.env
+/install/var/

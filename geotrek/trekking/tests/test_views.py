@@ -392,7 +392,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
 class TrekCustomPublicViewTests(TrekkingManagerTest):
     @mock.patch('djappypod.backend.os.path.exists', create=True)
     def test_overriden_public_template(self, exists_patched):
-        overriden_template = os.path.join(settings.MEDIA_ROOT, 'templates', 'trekking', 'trek_public.odt')
+        overriden_template = os.path.join(settings.VAR_DIR, 'conf', 'extra_templates', 'trekking', 'trek_public.odt')
 
         def fake_exists(path):
             return path == overriden_template

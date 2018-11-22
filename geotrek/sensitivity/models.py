@@ -67,8 +67,8 @@ class Species(OptionalPictogramMixin):
 
     def pretty_period(self):
         return ", ".join([str(self._meta.get_field('period{:02}'.format(p)).verbose_name)
-                           for p in range(1, 13)
-                           if getattr(self, 'period{:02}'.format(p))])
+                         for p in range(1, 13)
+                         if getattr(self, 'period{:02}'.format(p))])
 
     def pretty_practices(self):
         return ", ".join([str(practice) for practice in self.practices.all()])
@@ -156,9 +156,9 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
     @property
     def species_display(self):
         s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
-                                                              self.get_detail_url(),
-                                                              self.species.name,
-                                                              self.species.name)
+                                                             self.get_detail_url(),
+                                                             self.species.name,
+                                                             self.species.name)
         if self.published:
             s = '<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
         return s
@@ -194,9 +194,8 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
         return self.species.pretty_practices()
     pretty_practices_verbose_name = _("Practices")
 
-    
+
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from geotrek.core.models import Topology
     Topology.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN), _(u"Sensitive areas"))
     Topology.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN).filter(published=True), _(u"Published sensitive areas"))
-

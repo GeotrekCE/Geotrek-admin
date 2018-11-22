@@ -121,8 +121,9 @@ class InterventionForm(CommonForm):
             self.fields['topology'].required = False
             self.fields['topology'].widget = TopologyReadonlyWidget()
             self.fields['topology'].label = '%s%s %s' % (self.instance.infrastructure_display,
-                ("On %s") % _(infrastructure.kind.lower()),
-                '<a href="%s">%s</a>' % (infrastructure.get_detail_url(), infrastructure))
+                                                         ("On %s") % _(infrastructure.kind.lower()),
+                                                         '<a href="%s">%s</a>' % (infrastructure.get_detail_url(),
+                                                                                  infrastructure))
 
         # Length is not editable in AltimetryMixin
         self.fields['length'].initial = self.instance.length

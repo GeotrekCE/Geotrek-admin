@@ -24,14 +24,11 @@ def api_bbox(bbox, buffer):
 
 
 ROOT_URL = ""
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DEPLOY_ROOT = os.getenv('DEPLOY_ROOT', os.path.dirname(PROJECT_ROOT))
-VAR_ROOT = os.path.join(DEPLOY_ROOT, 'var')
-STATIC_ROOT = os.path.join(VAR_ROOT, 'static')
-MEDIA_ROOT = os.path.join(VAR_ROOT, 'media')
-CACHE_ROOT = os.path.join(VAR_ROOT, 'cache')
+PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(PROJECT_DIR)
+VAR_DIR = os.path.join(BASE_DIR, 'var')
 
-SYNC_RANDO_ROOT = os.path.join(DEPLOY_ROOT, 'data')
+CACHE_ROOT = os.path.join(VAR_DIR, 'cache')
 
 TITLE = _("Geotrek")
 
@@ -40,22 +37,9 @@ TEST = 'test' in sys.argv
 VERSION = __version__
 
 ADMINS = (
-    ('Makina Corpus', 'geobi@makina-corpus.com'),
 )
 
 MANAGERS = ADMINS
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'OPTIONS': {},
-        'NAME': os.getenv('POSTGRES_DB', 'geotrekdb'),
-        'USER': os.getenv('POSTGRES_USER', 'geotrek'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'geotrek'),
-        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
-        'PORT': os.getenv('POSTGRES_PORT', '5432'),
-    }
-}
 
 #
 # PostgreSQL Schemas for apps and models.
@@ -80,8 +64,18 @@ DATABASE_SCHEMAS = {
     'geotrek.land': 'foncier',
 }
 
-DATABASES['default']['OPTIONS'] = {
-    'options': '-c search_path=public,%s' % ','.join(set(DATABASE_SCHEMAS.values()))
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST', 'postgres'),
+        'PORT': os.getenv('POSTGRES_PORT', '5432'),
+        'OPTIONS': {
+            'options': '-c search_path=public,%s' % ','.join(set(DATABASE_SCHEMAS.values()))
+        },
+    }
 }
 
 #
@@ -106,7 +100,7 @@ AUTHENT_GROUPS_MAPPING = {
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'Europe/Paris'
+TIME_ZONE = 'UTC'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -119,10 +113,13 @@ LANGUAGES = (
 LANGUAGE_CODE = 'fr'
 
 MODELTRANSLATION_LANGUAGES = ('en', 'fr', 'it', 'es')
-MODELTRANSLATION_DEFAULT_LANGUAGE = 'fr'
+MODELTRANSLATION_DEFAULT_LANGUAGE = LANGUAGE_CODE
 
 LOCALE_PATHS = (
-    os.path.join(PROJECT_ROOT, 'locale'),
+    # override locale
+    os.path.join(VAR_DIR, 'conf', 'extra_locale'),
+    # project locale
+    os.path.join(PROJECT_DIR, 'locale'),
 )
 
 SITE_ID = 1
@@ -144,21 +141,23 @@ LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = 'home'
 
-UPLOAD_DIR = 'upload'  # media root subdir
-
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = '/media/'
 MEDIA_URL_SECURE = '/media_secure/'
+MEDIA_ROOT = os.path.join(VAR_DIR, 'media')
+UPLOAD_DIR = 'upload'  # media root subdir
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '%s%s' % (ROOT_URL, "/static/")
-MEDIA_URL = '%s%s' % (ROOT_URL, "/media/")
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(VAR_DIR, 'static')
+
 # Additional locations of static files
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, 'static'),
+    os.path.join(VAR_DIR, 'conf', 'extra_static'),
+    os.path.join(PROJECT_DIR, 'static'),
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -179,7 +178,7 @@ COMPRESS_ENABLED = False
 COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'public_key'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 TEMPLATES = [
     {
@@ -188,9 +187,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': (
-            os.path.join(DEPLOY_ROOT, 'geotrek', 'templates'),
-            os.path.join(MEDIA_ROOT, 'templates'),
-            os.path.join(DEPLOY_ROOT, 'lib', 'parts', 'omelette', 'mapentity', 'templates'),
+            os.path.join(VAR_DIR, 'conf', 'extra_templates'),
+            os.path.join(PROJECT_DIR, 'templates'),
         ),
         'OPTIONS': {
             'context_processors': [
@@ -227,7 +225,9 @@ MIDDLEWARE_CLASSES = (
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'geotrek.authent.middleware.CorsMiddleware',
-    'mapentity.middleware.AutoLoginMiddleware'
+    # TODO: delete geotrek geotrek.common.middleware.FixedAutoLoginMiddleware and set mapentity with py3 version
+    # 'mapentity.middleware.AutoLoginMiddleware'
+    'geotrek.common.middleware.FixedAutoLoginMiddleware'
 )
 FORCE_SCRIPT_NAME = ROOT_URL if ROOT_URL != '' else None
 ADMIN_MEDIA_PREFIX = '%s/static/admin/' % ROOT_URL
@@ -236,6 +236,16 @@ ROOT_URLCONF = 'geotrek.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'geotrek.wsgi.application'
+
+# Do not migrate translated fields, they differ per instance, and
+# can be added/removed using `update_translation_fields`
+# modeltranslation should be kept before django.contrib.admin
+if 'makemigrations' in sys.argv:
+    PROJECT_APPS = ()
+else:
+    PROJECT_APPS = (
+        'modeltranslation',
+    )
 
 #
 # /!\ Application names (last levels) must be unique
@@ -306,70 +316,6 @@ CACHES = {
     }
 }
 
-# A sample logging configuration. The only tangible logging
-# performed by this configuration is to send an email to
-# the site admins on every HTTP 500 error when DEBUG=False.
-# See http://docs.djangoproject.com/en/dev/topics/logging for
-# more details on how to customize your logging configuration.
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        }
-    },
-    'formatters': {
-        'simple': {
-            'format': '%(levelname)s %(asctime)s %(name)s %(message)s'
-        },
-    },
-    'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'logging.NullHandler'
-        },
-        'console': {
-            'level': 'WARNING',
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple'
-        },
-    },
-    'loggers': {
-        'django.db.backends': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'django.request': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'django': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'geotrek': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'mapentity': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        '': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-    }
-}
-
 THUMBNAIL_ALIASES = {
     '': {
         'thumbnail': {'size': (150, 150)},
@@ -392,7 +338,7 @@ SRID = 2154  # Lambert-93 for Metropolitan France
 # API projection (client-side), can differ from SRID (database). Leaflet requires 4326.
 API_SRID = 4326
 
-# Extent in native projection (Toulouse area)
+# Extent in native projection (France area)
 SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
 
 _MODELTRANSLATION_LANGUAGES = [l for l in LANGUAGES_LIST
@@ -401,11 +347,12 @@ _MODELTRANSLATION_LANGUAGES = [l for l in LANGUAGES_LIST
 MAPENTITY_CONFIG = {
     'TITLE': TITLE,
     'ROOT_URL': ROOT_URL,
-
-    'TEMP_DIR': os.path.join(VAR_ROOT, 'tmp'),
+    'TEMP_DIR': '/tmp',
     'HISTORY_ITEMS_MAX': 7,
-    'CONVERSION_SERVER': 'http://127.0.0.1:6543',
-    'CAPTURE_SERVER': 'http://127.0.0.1:8001',
+    'CONVERSION_SERVER': 'http://{}:{}'.format(os.getenv('CONVERSION_HOST', 'convertit'),
+                                               os.getenv('CONVERSION_PORT', '6543')),
+    'CAPTURE_SERVER': 'http://{}:{}'.format(os.getenv('CAPTURE_HOST', 'screamshotter'),
+                                            os.getenv('CAPTURE_PORT', '8000')),
     'MAP_BACKGROUND_FOGGED': True,
     'GEOJSON_LAYERS_CACHE_BACKEND': 'fat',
     'SENDFILE_HTTP_HEADER': 'X-Accel-Redirect',
@@ -416,7 +363,7 @@ MAPENTITY_CONFIG = {
     'TRANSLATED_LANGUAGES': _MODELTRANSLATION_LANGUAGES,
 }
 
-DEFAULT_STRUCTURE_NAME = _('Default')
+DEFAULT_STRUCTURE_NAME = 'GEOTEAM'
 
 VIEWPORT_MARGIN = 0.1  # On list page, around spatial extent from settings.ini
 
@@ -437,9 +384,6 @@ ALTIMETRIC_PROFILE_FONT = 'ubuntu'
 ALTIMETRIC_PROFILE_MIN_YSCALE = 1200  # Minimum y scale (in meters)
 ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/height)
 ALTIMETRIC_AREA_MARGIN = 0.15
-
-SRID = 2154
-SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
 
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
@@ -601,7 +545,8 @@ TINYMCE_DEFAULT_CONFIG = {
     'convert_urls': False,
 }
 
-SYNC_RANDO_ROOT = os.path.join(DEPLOY_ROOT, 'data')
+SYNC_RANDO_ROOT = os.path.join(VAR_DIR, 'data')
+
 SYNC_RANDO_OPTIONS = {}
 
 '''
@@ -639,3 +584,69 @@ FACEBOOK_APP_ID = ''
 FACEBOOK_IMAGE = '/images/logo-geotrek.png'
 FACEBOOK_IMAGE_WIDTH = 200
 FACEBOOK_IMAGE_HEIGHT = 200
+
+CAPTURE_AUTOLOGIN_TOKEN = os.getenv('CAPTURE_AUTOLOGIN_TOKEN', None)
+
+# A sample logging configuration. The only tangible logging
+# performed by this configuration is to send an email to
+# the site admins on every HTTP 500 error when DEBUG=False.
+# See http://docs.djangoproject.com/en/dev/topics/logging for
+# more details on how to customize your logging configuration.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'formatters': {
+        'simple': {
+            'format': '%(levelname)s %(asctime)s %(name)s %(message)s'
+        },
+    },
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'logging.NullHandler'
+        },
+        'console': {
+            'level': 'WARNING',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'geotrek': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'mapentity': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        '': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    }
+}

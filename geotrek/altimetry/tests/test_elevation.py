@@ -304,6 +304,9 @@ class SamplingTest(TestCase):
 
 
 class CommandLoadDemTest(TestCase):
+    """
+    TODO: We will need to replace raster management with geodjango (>= py3 / django 2.0).
+    """
 
     def test_success(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')

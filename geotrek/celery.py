@@ -1,4 +1,9 @@
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'geotrek.settings.custom')
+from __future__ import absolute_import
+
+import django
+from celery import Celery
+
+django.setup()
 
 app = Celery('geotrek')
 

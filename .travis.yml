@@ -1,32 +1,132 @@
+language: python
+
+python:
+  - "3.6"
+
+dist: xenial
+
+sudo: required
+
 env:
-  - DOCKER_COMPOSE_VERSION=1.19.0
+  - ACTION=unit
+  - ACTION=integration
 
-matrix:
-  allow_failures:
-    - env: ACTION=integration
+stages:
+  - codestyle
+  - build
+  - test
+  - deploy
 
-cache:
-  - apt
+before_install:
+  - export GEOTREK_VERSION=$(cat VERSION)
+  - export DOMAIN_NAME=geotrek.test
+  - sudo service postgresql stop
+  - if [[ $ACTION == unit ]]; then mkdir -p var; fi
+  - if [[ $ACTION == integration ]]; then mkdir -p install/var; fi
+  - if [[ $ACTION == integration ]]; then echo '127.0.0.1    '$DOMAIN_NAME | sudo tee -a /etc/hosts; fi
 
 install:
-  - if [[ $ACTION != codestyle ]]; then deactivate; fi
-  - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
-  - if [[ $ACTION == test ]]; then ./install.sh --tests --noinput; fi
-  - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput; fi
-  # Don't bind redis-server on IPv6 address
-  - sudo sed -i 's/^bind.*$/bind 127.0.0.1/' /etc/redis/redis.conf; sudo service redis-server restart;
-script:
-  - if [[ $ACTION == codestyle ]]; then flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings; fi
-  - if [[ $ACTION == codestyle ]]; then flake8 geotrek; fi
-  - if [[ $ACTION == codestyle ]]; then find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID; fi
-  - if [[ $ACTION == deploy || $ACTION == integration ]]; then make load_demo; fi
-  - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
-  - if [[ $ACTION == integration ]]; then make test_export host=localhost port=80; fi
-  - if [[ $ACTION == test ]]; then ./bin/coverage run ./bin/django test geotrek; fi
-  - if [[ $ACTION == test ]]; then make test_js; fi
-after_success:
-  # Report coverage results to coveralls.io
-  - if [[ $ACTION == test ]]; then ./bin/coverage report -m; fi
-  - if [[ $ACTION == test ]]; then sudo pip install coveralls; fi
-  - if [[ $ACTION == test ]]; then coveralls; fi
+  # pull test image
+  - docker pull $DOCKER_TEST_REPO:$TRAVIS_BUILD_NUMBER
+  # pull common images
+  - docker pull redis:5.0-alpine
+  - docker pull makinacorpus/convertit
+  - docker pull makinacorpus/screamshotter
+  - docker pull makinacorpus/postgis:11-2.5
+  # fake tag for tests
+  - if [[ $ACTION == unit ]]; then docker tag $DOCKER_TEST_REPO:$TRAVIS_BUILD_NUMBER geotrek:latest; fi
+  - if [[ $ACTION == integration ]]; then docker tag $DOCKER_TEST_REPO:$TRAVIS_BUILD_NUMBER geotrekce/admin:latest; fi
+  # pull specific production images
+  - if [[ $ACTION == integration ]]; then docker pull memcached:1.5-alpine; fi
+  - if [[ $ACTION == integration ]]; then docker pull nginx:1.15; fi
+  # install production env
+  - if [[ $ACTION == integration ]]; then cd install; fi
+  - if [[ $ACTION == integration ]]; then cp .env.dist .env; fi
+  - if [[ $ACTION == integration ]]; then sed -i.bak 's/^\(POSTGRES_USER=\).*/\1test/' .env; fi
+  - if [[ $ACTION == integration ]]; then sed -i.bak 's/^\(POSTGRES_DB=\).*/\1test/' .env; fi
+  - if [[ $ACTION == integration ]]; then sed -i.bak 's/^\(POSTGRES_PASSWORD=\).*/\1test/' .env; fi
+  - if [[ $ACTION == integration ]]; then sed -i.bak 's/^\(DOMAIN_NAME=\).*/\1'$DOMAIN_NAME'/' .env; fi
+  - if [[ $ACTION == integration ]]; then sed -i.bak 's/^\(SECRET_KEY=\).*/\1key-test-key-test/' .env; fi
+  # clean and install capserjs + phantomjs
+  - if [[ $ACTION == integration ]]; then sudo rm -rf /usr/local/bin/phantomjs* /usr/bin/phantomjs* /usr/local/phantomjs*; fi
+  - if [[ $ACTION == integration ]]; then sudo wget --quiet https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-linux-x86_64.tar.bz2 -O phantomjs.tar.bz2; fi
+  - if [[ $ACTION == integration ]]; then sudo tar -jxvf phantomjs.tar.bz2; fi
+  - if [[ $ACTION == integration ]]; then sudo rm phantomjs.tar.bz2; fi
+  - if [[ $ACTION == integration ]]; then export PATH=$PATH:$PWD/phantomjs-1.9.7-linux-x86_64/bin/; fi
+  - if [[ $ACTION == integration ]]; then sudo wget --quiet https://github.com/n1k0/casperjs/archive/1.1-beta3.zip -O casperjs.zip; fi
+  - if [[ $ACTION == integration ]]; then sudo unzip -o casperjs.zip; fi
+  - if [[ $ACTION == integration ]]; then sudo rm casperjs.zip; fi
+  - if [[ $ACTION == integration ]]; then export PATH=$PATH:$PWD/casperjs-1.1-beta3/bin/; fi
+  # install npm test dependencies
+  - if [[ $ACTION == integration ]]; then npm install ../geotrek/jstests; fi
 
+before_script:
+  - docker-compose up -d postgres
+  - sleep 15
+  - docker-compose run web initial.sh
+  - if [[ $ACTION == integration ]]; then docker-compose run web ./manage.py loaddata development-pne; fi
+  - if [[ $ACTION == integration ]]; then docker-compose up -d; fi
+
+script:
+  - if [[ $ACTION == unit ]]; then docker-compose run web /bin/sh -c exit; fi
+  - if [[ $ACTION == unit ]]; then docker-compose run web coverage run ./manage.py test --settings=geotrek.settings.tests; fi
+  - if [[ $ACTION == integration ]]; then casperjs --baseurl=http://$DOMAIN_NAME test ../geotrek/jstests/nav-*.js; fi
+
+jobs:
+  include:
+    - stage: codestyle
+
+      env: ACTION=none
+
+      install:
+        - pip install flake8
+
+      before_script: skip
+
+      script:
+        - flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings
+        - flake8 geotrek
+        # prevent SRID value in migrations
+        - find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID
+
+    - stage: build
+
+      env: ACTION=none
+
+      install:
+        - sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+        - sudo chmod +x /usr/local/bin/docker-compose
+        - docker pull makinacorpus/geodjango:bionic-py2
+
+      before_script: skip
+
+      script:
+        - make build
+
+      after_success:
+        - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
+        - docker tag geotrek:latest $DOCKER_TEST_REPO:$TRAVIS_BUILD_NUMBER
+        - docker push $DOCKER_TEST_REPO:$TRAVIS_BUILD_NUMBER
+
+    - stage: deploy
+
+      env: ACTION=none
+
+
+      install: skip
+
+      before_script: skip
+
+      script: skip
+
+      deploy:
+
+        provider: script
+
+        script: bash ./docker/deploy.sh
+
+        skip_cleanup: true
+
+        on:
+          #branch: master
+          branch: docker-integration

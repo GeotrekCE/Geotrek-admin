@@ -370,5 +370,8 @@ class MapImageExtentTest(TestCase):
         )
 
     def test_get_map_image_extent(self):
-        self.assertEqual(self.trek.get_map_image_extent(),
-                         [-1.3630812101179004, -5.983856309208769, 3.0013039767202154, 46.50090044234927])
+        lng_min, lat_min, lng_max, lat_max = self.trek.get_map_image_extent()
+        self.assertAlmostEqual(lng_min, -1.3630812101179004)
+        self.assertAlmostEqual(lat_min, -5.983856309208769)
+        self.assertAlmostEqual(lng_max, 3.001303976720215)
+        self.assertAlmostEqual(lat_max, 46.50090044234927)

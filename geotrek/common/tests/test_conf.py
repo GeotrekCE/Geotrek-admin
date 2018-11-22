@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
 
@@ -16,5 +17,4 @@ class StartupCheckTest(TestCase):
         if hasattr(check_srid_has_meter_unit, '_checked'):
             delattr(check_srid_has_meter_unit, '_checked')
         with self.settings(SRID=2154):
-            check_srid_has_meter_unit()
-
+            self.assertRaises(check_srid_has_meter_unit)

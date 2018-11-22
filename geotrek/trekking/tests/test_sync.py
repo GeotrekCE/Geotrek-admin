@@ -36,7 +36,7 @@ class SyncTest(TestCase):
                 treks = json.load(f)
                 # there are 4 treks
                 self.assertEqual(len(treks['features']),
-                                  trek_models.Trek.objects.filter(published=True).count())
+                                 trek_models.Trek.objects.filter(published=True).count())
 
     def test_sync_filtering_sources(self):
         # source A only
@@ -47,8 +47,8 @@ class SyncTest(TestCase):
                 treks = json.load(f)
                 # only 1 trek in Source A
                 self.assertEqual(len(treks['features']),
-                                  trek_models.Trek.objects.filter(published=True,
-                                                                  source__name__in=[self.source_a.name, ]).count())
+                                 trek_models.Trek.objects.filter(published=True,
+                                                                 source__name__in=[self.source_a.name, ]).count())
 
     def test_sync_filtering_portals(self):
         # portal B only
@@ -60,8 +60,8 @@ class SyncTest(TestCase):
 
                 # only 2 treks in Portal B
                 self.assertEqual(len(treks['features']),
-                                  trek_models.Trek.objects.filter(published=True,
-                                                                  portal__name__in=[self.portal_b.name, ]).count())
+                                 trek_models.Trek.objects.filter(published=True,
+                                                                 portal__name__in=[self.portal_b.name, ]).count())
 
         # portal A and B
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
@@ -73,7 +73,7 @@ class SyncTest(TestCase):
 
                 # 3 treks have portal A or B
                 self.assertEqual(len(treks['features']),
-                                  trek_models.Trek.objects.filter(published=True,
-                                                                  portal__name__in=[self.portal_a.name,
-                                                                                    self.portal_b.name, ])
-                                                          .distinct('pk').count())
+                                 trek_models.Trek.objects.filter(published=True,
+                                                                 portal__name__in=[self.portal_a.name,
+                                                                                   self.portal_b.name, ])
+                                                         .distinct('pk').count())

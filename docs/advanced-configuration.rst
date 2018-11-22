@@ -7,11 +7,9 @@ ADVANCED CONFIGURATION
 Custom setting file
 -------------------
 
-Geotrek configuration is currently restricted to values present in ``etc/settings.ini``.
+Geotrek configuration is currently restricted to values present in ``.env`` and ``var/conf/custom.py``.
 
-However, it is still possible to write a custom Django setting file.
-
-* Create your a file in *geotrek/settings/custom.py* with the following content :
+However, it is still possible to all django or geotrek settings in custom.py :
 
 .. code-block :: python
 
@@ -22,14 +20,9 @@ However, it is still possible to write a custom Django setting file.
     # My custom value
     HIDDEN_OPTION = 3.14
 
-* Add this ``etc/settings.ini`` to specify the newly created setting :
+All overridable setting can be found in geotrek/settings.base.py
 
-.. code-block :: ini
-
-    [django]
-    settings = settings.custom
-
-* As for any change in ``etc/settings.ini``, re-run ``make env_standalone deploy``. To apply changes in ``geotrek/settings/custom.py``, you can just restart the application with ``sudo supervisorctl restart all``.
+* As for any change in ``custom.py``, re-run ``sudo systemctl restart geotrek``.
 
 
 Disable modules and components
@@ -194,7 +187,7 @@ All layers colors can be customized from the settings.
 See `Leaflet reference <http://leafletjs.com/reference.html#path>`_ for vectorial
 layer style.
 
-* To apply these style changes, re-run ``sudo supervisorctl restart all``.
+* To apply these style changes, re-run ``sudo systemctl restart geotrek``.
 
 .. code-block :: python
 
@@ -269,10 +262,10 @@ Override public document OpenOffice template
 --------------------------------------------
 
 WARNING: Documentation to be updated. Geotrek-admin now uses Weasyprint to create public PDF based on HTML templates
-and no more on ODT templates. Default HTML templates are in ``geotrek/trekking/templates/`` and can be copied in ``var/media/templates/`` with same path and file names to be overriden.
+and no more on ODT templates. Default HTML templates are in ``geotrek/trekking/templates/`` and can be copied in ``var/conf/extra_templates/`` with same path and file names to be overriden.
 
 Copy the file ``geotrek/trekking/templates/trekking/trek_public.odt`` to
-``var/media/templates/trekking/trek_public.odt``.
+``var/conf/extra_templates/trekking/trek_public.odt``.
 
 Edit the copy using *OpenOffice*.
 
@@ -319,9 +312,9 @@ Custom logos
 
 You might also need to deploy logo images in the following places :
 
-* ``var/media/upload/favicon.png``
-* ``var/media/upload/logo-login.png``
-* ``var/media/upload/logo-header.png``
+* ``var/conf/extra_static/images/favicon.png``
+* ``var/conf/extra_static/images/logo-login.png``
+* ``var/conf/extra_static/images/logo-header.png``
 
 
 Share services between several Geotrek instances
@@ -338,34 +331,27 @@ as usual (*standalone*), and plug the other instances on its underlying services
 Database
 ~~~~~~~~
 
-Sharing your postgreSQL server is highly recommended. Create several databases
-for each of your instances.
+Geotrek stack come with its own database within its docker-compose.yml file
 
-Then in ``etc/settings.ini``, adjust the ``host`` and ``dbname`` sections of
-each instance.
+You can use own external postgis enabled database by adjust your settings in ``.env``
+
+Then delete postgres section in docker-compose.yml
 
 
 Capture and conversion
 ~~~~~~~~~~~~~~~~~~~~~~
+If you want to use external services,
 
-On the standalone server, make sure the services will be available to others.
-Add the following lines in its ``settings.ini`` :
+In ``.env``, add following variables:
 
-.. code-block:: python
+.. code-block :: bash
 
-    [convertit]
-    host = 0.0.0.0
+    CAPTURE_HOST=x.x.x.x
+    CAPTURE_PORT=XX
+    CONVERSION_HOST=x.x.x.x
+    CONVERSION_PORT=XX
 
-    [screamshotter]
-    host = 0.0.0.0
-
-In ``custom.py``, point the tiles URL to the shared services (replace ``SERVER`` by
-the one you installed as standalone) :
-
-.. code-block :: python
-
-    MAPENTITY_CONFIG['CONVERSION_SERVER'] = 'http://SERVER:6543'
-    MAPENTITY_CONFIG['CAPTURE_SERVER'] = 'http://SERVER:8001'
+Then, you can delete all screamshotter and convertit references in docker-compose.yml
 
 
 Shutdown useless services
@@ -378,18 +364,7 @@ Start by stopping everything :
 
 ::
 
-    sudo stop geotrek
-
-Before you used to run ``make env_standalone deploy`` on every server.
-Now you will have only one *standalone*, and on the other ones
-the *Geotrek* application only.
-
-To achieve this, you will just have to run the *prod* environment instead
-of *standalone* in the deployment procedure (*or when settings are changed*) :
-
-::
-
-    make env_prod deploy
+    sudo systemctl stop geotrek
 
 
 Control number of workers and request timeouts
@@ -397,13 +372,8 @@ Control number of workers and request timeouts
 
 By default, the application runs on 4 processes, and timeouts after 30 seconds.
 
-To control those values, add a section in ``etc/settings.ini`` for each running service.
-See ``conf/settings-defaults.cfg`` for an exhaustive list:
+To control those values, edit and fix your docker-compose.yml file in web and api section
 
 ::
-
-    [gunicorn-app-conf]
-    workers = 4
-    timeout = 30
 
 To know how many workers you should set, please refer to `gunicorn documentation <http://gunicorn-docs.readthedocs.org/en/latest/design.html#how-many-workers>`_.

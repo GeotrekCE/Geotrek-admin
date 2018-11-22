@@ -1,0 +1,88 @@
+version: "3"
+services:
+  # delete postgres section if you want to use external databse
+  postgres:
+    image: makinacorpus/postgis:11-2.5
+    env_file:
+      - .env
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+     - "127.0.0.1:5432:5432"
+
+  redis:
+    image: redis:5.0-alpine
+
+  convertit:
+     image: makinacorpus/convertit
+
+  screamshotter:
+     image: makinacorpus/screamshotter
+     environment:
+       - DJANGO_SETTINGS_MODULE=screamshotter.settings
+     depends_on:
+       - convertit
+
+  memcached:
+    image: memcached:1.5-alpine
+
+  celery:
+    image: geotrekce/admin:latest
+    env_file:
+      - .env
+    depends_on:
+      # delete postgres section if you want to use external databse
+      - postgres
+      - redis
+      - screamshotter
+      - memcached
+    volumes:
+      - ./var:/app/src/var
+    working_dir: /app/src
+    command: celery -A geotrek worker -c 1 -l warning
+
+  web:
+     image: geotrekce/admin:latest
+     env_file:
+       - .env
+     volumes:
+      - ./var:/app/src/var
+     depends_on:
+       - celery
+     command: gunicorn geotrek.wsgi:application -w 5 --bind 0.0.0.0:8000 --timeout ${GUNICORN_TIMEOUT}
+
+  api:
+     image: geotrekce/admin:latest
+     env_file:
+       - .env
+     volumes:
+      - ./var:/app/src/var
+     depends_on:
+       - web
+       - celery
+     command: gunicorn geotrek.wsgi:application -w 5 --bind 0.0.0.0:8000 --timeout ${GUNICORN_TIMEOUT}
+
+  nginx:
+    image: nginx:1.15
+    depends_on:
+       - web
+       - api
+    ports:
+      - "80:80"
+      #- "443:443"
+    env_file:
+       - .env
+    extra_hosts:
+      - "${DOMAIN_NAME}:127.0.0.1"
+    volumes:
+      - ./geotrek-nginx.conf:/geotrek.conf
+      #- ./var/nginx/cert.crt:/etc/nginx/cert.crt
+      #- ./var/nginx/cert.key:/etc/nginx/cert.key
+      - ./var/log/nginx:/var/log/nginx
+      - ./var/static:/var/www/static:ro
+      - ./var/media:/var/www/media:ro
+    command: /bin/bash -c "envsubst '$$DOMAIN_NAME' < /geotrek.conf > /etc/nginx/conf.d/geotrek.conf && nginx -g 'daemon off;'"
+
+# delete postgres section if you want to use external databse
+volumes:
+  postgres:

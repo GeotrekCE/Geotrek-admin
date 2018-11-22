@@ -193,7 +193,7 @@ class SyncTestPortal(TestCase):
             with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', lang, 'flatpages.geojson'), 'r') as f:
                 flatpages = json.load(f)
                 self.assertEqual(len(flatpages),
-                                  FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
+                                 FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
 
     def test_sync_filtering_sources(self):
         '''
@@ -205,8 +205,8 @@ class SyncTestPortal(TestCase):
             with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', lang, 'flatpages.geojson'), 'r') as f:
                 flatpages = json.load(f)
                 self.assertEqual(len(flatpages),
-                                  FlatPage.objects.filter(source__name__in=[self.source_a.name, ],
-                                                          **{'published_{}'.format(lang): True}).count())
+                                 FlatPage.objects.filter(source__name__in=[self.source_a.name, ],
+                                                         **{'published_{}'.format(lang): True}).count())
 
     def test_sync_filtering_portal(self):
         '''
@@ -218,5 +218,5 @@ class SyncTestPortal(TestCase):
             with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', lang, 'flatpages.geojson'), 'r') as f_file:
                 flatpages = json.load(f_file)
                 self.assertEqual(len(flatpages),
-                                  FlatPage.objects.filter(portal__name__in=[self.portal_a.name, ],
-                                                          **{'published_{}'.format(lang): True}).count())
+                                 FlatPage.objects.filter(portal__name__in=[self.portal_a.name, ],
+                                                         **{'published_{}'.format(lang): True}).count())

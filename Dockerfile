@@ -1,32 +1,59 @@
-FROM ubuntu:xenial
-RUN apt-get update
-RUN apt-get install -y -q \
-    build-essential python3 python3-dev python3-venv git \
-    language-pack-en-base language-pack-fr-base gettext \
-    libpq-dev libgdal-dev libproj-dev libxml2-dev libxslt-dev \
-    libcairo2 libpango1.0-0 libgdk-pixbuf2.0-dev libffi-dev \
-    postgresql-client fonts-liberation
-RUN apt-get clean
-RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
-    locale-gen
+FROM makinacorpus/geodjango:bionic-py2
 
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
-RUN useradd -ms /bin/bash django --uid 1001
+ENV DJANGO_SETTINGS_MODULE geotrek.settings.prod
+# SET LOCAL_UID, help to use in dev
+ARG LOCAL_UID=1000
+# Add default SECRET KEY / used for compilemessages
+ENV SECRET_KEY temp
+# default gunicorn options
+ENV GUNICORN_CMD_ARGS="--bind 0.0.0.0:8000 --workers 5 --timeout 600"
+# Add default path for log / used for compilemessages
+RUN mkdir -p /app/src/var/log
+
+# install postgis without dependencies to get raster2pgsql command
+RUN apt-get update && apt-get install -y \
+    unzip \
+    sudo \
+    less \
+    nano \
+    curl \
+    git \
+    gosu \
+    software-properties-common \
+    shared-mime-info \
+    fonts-liberation \
+    libfreetype6-dev \
+    libxml2-dev \
+    libxslt-dev \
+    libcairo2 \
+    libpango1.0-0 \
+    libgdk-pixbuf2.0-dev \
+    libffi-dev &&\
+    apt-get --no-install-recommends install postgis -y && \
+    apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
+
+RUN useradd -ms /bin/bash django --uid $LOCAL_UID
+ADD geotrek /app/src/geotrek
+ADD manage.py /app/src/manage.py
+ADD bulkimport /app/src/bulkimport
+ADD VERSION /app/src/VERSION
+ADD .coveragerc /app/src/.coveragerc
+RUN chown django:django -R /app
+COPY docker/* /usr/local/bin/
+
+ADD requirements.txt /app/src/requirements.txt
+RUN pip3 install --no-cache-dir -r /app/src/requirements.txt
+
 USER django
-WORKDIR /home/django
-RUN mkdir -p var/log var/media var/cache
-RUN python3 -m venv env
-RUN ./env/bin/pip3 install --upgrade pip==9.0.3 setuptools==39.0.1
-RUN ./env/bin/pip3 install --global-option=build_ext --global-option="-I/usr/include/gdal/" gdal==1.11.2
-ADD requirements.txt ./
-ADD editable.txt ./
-RUN ./env/bin/pip3 install -r requirements.txt
-RUN ./env/bin/pip3 install -r editable.txt
-ADD .flake8 manage.py README.rst setup.py VERSION ./
-ADD geotrek/settings/custom.py.dist geotrek/settings/custom.py
-ADD docs/changelog.rst docs/
-ADD geotrek/ geotrek/
-RUN ./env/bin/python3 manage.py collectstatic --noinput
-RUN export DJANGO_SETTINGS_MODULE=geotrek.settings.base
+
+WORKDIR /app/src
+# persists compiled locales
+RUN ./manage.py compilemessages
+
+EXPOSE 8000
+
+USER root
+
+ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]
+
+CMD ["/bin/sh", "-e", "/usr/local/bin/run.sh"]

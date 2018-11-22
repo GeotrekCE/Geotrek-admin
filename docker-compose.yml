@@ -1,76 +1,64 @@
-version: '2'
-volumes:
-  db:
-  static:
-  media:
-  cache:
+version: "3"
 services:
   postgres:
-    image: mdillon/postgis:9.6-alpine
-    hostname: postgres
-    env_file:
-      - docker.env
-    volumes:
-      - db:/var/lib/postgresql/data
+    image: makinacorpus/postgis:11-2.5
     ports:
       - "5432:5432"
-    networks: ['mynetwork']
+    env_file:
+      - .env
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
   redis:
-    image: redis:3.2.11
-    hostname: redis
-    env_file:
-      - docker.env
-    networks: ['mynetwork']
-  memcached:
-    image: memcached:1.5.7-alpine
-    hostname: memcached
-    env_file:
-      - docker.env
-    networks: ['mynetwork']
+    image: redis:5.0-alpine
+
+  convertit:
+     image: makinacorpus/convertit
+     working_dir: /opt/apps/convertit/
+     command: /opt/apps/convertit/bin/pserve development.ini --reload
+
+  screamshotter:
+     image: makinacorpus/screamshotter
+     environment:
+       - DJANGO_SETTINGS_MODULE=screamshotter.settings
+     depends_on:
+       - convertit
+
   celery:
-    user: "1001"
-    build: .
     image: geotrek
-    hostname: celery
     env_file:
-      - docker.env
+      - .env
+    build:
+      context: .
+      args:
+        LOCAL_UID: ${LOCAL_USER_ID}
     depends_on:
       - postgres
       - redis
-    command: ./env/bin/celery -A geotrek worker -c 1 -n geotrek
-    networks: ['mynetwork']
-  gunicorn:
-    user: "1001"
-    build: .
-    image: geotrek
-    hostname: gunicorn
+      - screamshotter
     volumes:
-      - static:/home/django/var/static
-      - media:/home/django/var/media
-      - cache:/home/django/var/cache
-      - .env/src:/home/django/src
-    ports:
-      - "8000:8000"
-    env_file:
-      - docker.env
-    depends_on:
-      - postgres
-      - redis
-      - memcached
-    command: ./env/bin/gunicorn --bind=0.0.0.0:8000 geotrek.wsgi
-    networks: ['mynetwork']
-  nginx:
-    build: nginx
-    image: nginx
-    hostname: nginx
-    ports:
-      - "8001:80"
-    env_file:
-      - docker.env
-    depends_on:
-      - gunicorn
-    volumes:
-      - static:/usr/share/nginx/html/static:ro
-      - media:/usr/share/nginx/html/media:ro
-    networks: ['mynetwork']
-networks: {mynetwork: {}}
+       - .:/app/src
+    working_dir: /app/src
+    command: celery -A geotrek worker -c 1 -l debug
+
+  web:
+     image: geotrek
+     tty: true
+     hostname: ${DOMAIN_NAME}
+     ports:
+       - "8000:8000"
+     env_file:
+       - .env
+     volumes:
+       - .:/app/src
+     depends_on:
+       - celery
+     working_dir: /app/src
+     command: ./manage.py runserver 0.0.0.0:8000
+     networks:
+       default:
+         aliases:
+           - ${DOMAIN_NAME}
+
+volumes:
+  postgres:

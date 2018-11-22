@@ -41,4 +41,3 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         obj = self.modelfactory.create(structure=structure)
         self.client.post(obj.get_update_url(), self.get_good_data())
         self.assertEqual(obj.structure, structure)
-

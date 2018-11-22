@@ -12,8 +12,8 @@ setup(
     author_email='geobi@makina-corpus.com',
     url='http://geotrek.fr',
     description="Geotrek",
-    long_description=(open(os.path.join(here, 'README.rst')).read() + '\n\n' +
-                      open(os.path.join(here, 'docs', 'changelog.rst')).read()),
+    long_description=(open(os.path.join(here, 'README.rst')).read() + '\n\n'
+                      + open(os.path.join(here, 'docs', 'changelog.rst')).read()),
     install_requires=[
         'celery[redis]>=4.1.0',
         'django-celery-results>=1.0.1',
