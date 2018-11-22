@@ -41,10 +41,10 @@ ADD .coveragerc /app/src/.coveragerc
 RUN chown django:django -R /app
 COPY docker/* /usr/local/bin/
 
-USER django
-
 ADD requirements.txt /app/src/requirements.txt
 RUN pip install --no-cache-dir -r /app/src/requirements.txt
+
+USER django
 
 WORKDIR /app/src
 # persists compiled locales
