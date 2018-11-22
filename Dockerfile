@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y \
     libgdk-pixbuf2.0-dev \
     libffi-dev &&\
     apt-get --no-install-recommends install postgis -y && \
-    apt-get clean all && rm -rf /var/lib/apt/lists/* && /var/cache/apt/*
+    apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
 RUN timedatectl set-timezone $TZ
 
