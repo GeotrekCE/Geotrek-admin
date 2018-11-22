@@ -213,10 +213,10 @@ class Command(BaseCommand):
             os.unlink(fullname)
             os.link(oldfilename, fullname)
             if self.verbosity == 2:
-                self.stdout.write(u"\x1b[3D\x1b[32munchanged\x1b[0m")
+                self.stdout.write("\x1b[3D\x1b[32munchanged\x1b[0m")
         else:
             if self.verbosity == 2:
-                self.stdout.write(u"\x1b[3D\x1b[32mgenerated\x1b[0m")
+                self.stdout.write("\x1b[3D\x1b[32mgenerated\x1b[0m")
         # FixMe: Find why there are duplicate files.
         if zipfile:
             if name not in zipfile.namelist():

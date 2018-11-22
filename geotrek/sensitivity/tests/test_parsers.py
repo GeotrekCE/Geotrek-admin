@@ -85,12 +85,12 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
 class SpeciesSensitiveAreaShapeParserTest(TestCase):
     def test_cli(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'species.shp')
-        species = SpeciesFactory(name=u"Aigle royal")
+        species = SpeciesFactory(name="Aigle royal")
         call_command('import', 'geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser', filename, verbosity=0)
         area = SensitiveArea.objects.get()
         self.assertEqual(area.species, species)
-        self.assertEqual(area.contact, u"Contact")
-        self.assertEqual(area.description, u"Test UTF8 éêè")
+        self.assertEqual(area.contact, "Contact")
+        self.assertEqual(area.description, "Test UTF8 éêè")
         self.assertEqual(
             area.geom.wkt,
             'POLYGON ((929315.3613368585 6483309.443505396, 929200.3539448171 6483204.020062691, '

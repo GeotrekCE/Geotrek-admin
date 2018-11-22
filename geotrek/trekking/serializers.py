@@ -255,7 +255,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         if settings.SPLIT_TREKS_CATEGORIES_BY_ITINERANCY and obj.children.exists():
             data = {
                 'id': 'I',
-                'label': _(u"Itinerancy"),
+                'label': _("Itinerancy"),
                 'pictogram': '/static/trekking/itinerancy.svg',
                 # Translators: This is a slug (without space, accent or special char)
                 'slug': _('itinerancy'),
@@ -270,7 +270,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         else:
             data = {
                 'id': obj.category_id_prefix,
-                'label': _(u"Hike"),
+                'label': _("Hike"),
                 'pictogram': '/static/trekking/trek.svg',
                 # Translators: This is a slug (without space, accent or special char)
                 'slug': _('trek'),

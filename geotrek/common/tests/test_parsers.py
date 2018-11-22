@@ -41,7 +41,7 @@ class ParserTests(TestCase):
     def test_no_filename_no_url(self):
         with self.assertRaises(CommandError) as cm:
             call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', '', verbosity=0)
-        self.assertEqual(unicode(cm.exception), u"File path missing")
+        self.assertEqual(str(cm.exception), "File path missing")
 
     def test_bad_filename(self):
         with self.assertRaises(CommandError) as cm:

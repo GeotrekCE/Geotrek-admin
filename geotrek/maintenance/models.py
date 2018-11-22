@@ -292,7 +292,7 @@ class InterventionStatus(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.status, self.structure.name)
+            return "{} ({})".format(self.status, self.structure.name)
         return self.status
 
 
@@ -308,7 +308,7 @@ class InterventionType(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.type, self.structure.name)
+            return "{} ({})".format(self.type, self.structure.name)
         return self.type
 
 
@@ -324,7 +324,7 @@ class InterventionDisorder(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.disorder, self.structure.name)
+            return "{} ({})".format(self.disorder, self.structure.name)
         return self.disorder
 
 
@@ -341,7 +341,7 @@ class InterventionJob(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.job, self.structure.name)
+            return "{} ({})".format(self.job, self.structure.name)
         return self.job
 
 
@@ -561,7 +561,7 @@ class ProjectType(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.type, self.structure.name)
+            return "{} ({})".format(self.type, self.structure.name)
         return self.type
 
 
@@ -577,7 +577,7 @@ class ProjectDomain(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.domain, self.structure.name)
+            return "{} ({})".format(self.domain, self.structure.name)
         return self.domain
 
 
@@ -593,7 +593,7 @@ class Contractor(StructureOrNoneRelated):
 
     def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.contractor, self.structure.name)
+            return "{} ({})".format(self.contractor, self.structure.name)
         return self.contractor
 
 

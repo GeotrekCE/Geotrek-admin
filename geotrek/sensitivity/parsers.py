@@ -54,7 +54,7 @@ class BiodivParser(Parser):
     def next_row(self):
         response = requests.get('https://biodiv-sports.fr/api/v2/sportpractice/')
         if response.status_code != 200:
-            msg = _(u"Failed to download https://biodiv-sports.fr/api/v2/sportpractice/. HTTP status code {status_code}")
+            msg = _("Failed to download https://biodiv-sports.fr/api/v2/sportpractice/. HTTP status code {status_code}")
             raise GlobalImportError(msg.format(url=response.url, status_code=response.status_code))
         for practice in response.json()['results']:
             defaults = {'name_' + lang: practice['name'][lang] for lang in practice['name'].keys() if lang in settings.MODELTRANSLATION_LANGUAGES}
