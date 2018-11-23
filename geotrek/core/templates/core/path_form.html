@@ -6,7 +6,7 @@
         {% if perms.core.change_draft_path and not perms.core.change_path %}
             <div class="form-horizontal">
                 <div class="controls">
-                    <h3>Draft Mode</h3>
+                    <h3>{% trans "Draft mode" %}</h3>
                 </div>
             </div>
         {% endif %}
@@ -14,7 +14,7 @@
         {% if perms.core.add_draft_path and not perms.core.add_path %}
             <div class="form-horizontal">
                 <div class="controls">
-                    <h3>Draft Mode</h3>
+                    <h3>{% trans "Draft mode" %}</h3>
                 </div>
             </div>
         {% endif %}

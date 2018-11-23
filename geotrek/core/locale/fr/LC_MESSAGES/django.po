@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-16 09:02+0000\n"
+"POT-Creation-Date: 2018-11-23 16:01+0100\n"
 "PO-Revision-Date: 2015-11-06 11:07+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -109,6 +109,9 @@ msgstr "Réseaux"
 msgid "External id"
 msgstr "ID externe"
 
+msgid "Draft"
+msgstr "Brouillon"
+
 msgid "2D Length"
 msgstr "Longueur 2D"
 
@@ -191,11 +194,17 @@ msgstr "Pas d'information"
 msgid "Add a new trail"
 msgstr "Ajouter un sentier"
 
+msgid "Different topologies are linked with this path"
+msgstr "Différentes Topologies sont liées à ce tronçon"
+
 msgid "Not validated"
 msgstr "Non validé"
 
 msgid "Attributes"
 msgstr "Informations"
+
+msgid "Draft mode"
+msgstr "Mode brouillon"
 
 msgid "Select two paths to merge them"
 msgstr "Sélectionner deux tronçons pour les fusionner"
@@ -215,17 +224,43 @@ msgstr "Fusionner les tronçons"
 msgid "Cancel"
 msgstr "Annuler"
 
+msgid ""
+"Access to the requested resource is restricted. You have been redirected."
+msgstr ""
+"L'accès à cette ressource est restreint. Vous avez été redirigé."
+
+msgid "Treks"
+msgstr "Itinéraires"
+
+msgid "Services"
+msgstr "Services"
+
+msgid "Pois"
+msgstr "POI"
+
+msgid "Signages"
+msgstr "Signalétiques"
+
+msgid "Infrastructures"
+msgstr "Aménagements"
+
+msgid "Interventions"
+msgstr "Interventions"
+
 msgid "You don't have the right to change these paths"
 msgstr "Vous n'avez pas le droit de modifier ces tronçons"
 
-msgid "Paths merged successfully"
-msgstr "Les tronçons ont été fusionnés."
+msgid "You can't merge 1 draft path with 1 normal path"
+msgstr ""
+"Vous ne pouvez pas fusionner un tronçon en brouillon avec un tronçon normal"
+
+msgid "You can't merge 2 paths with a 3rd path in the intersection"
+msgstr ""
+"Vous ne pouvez pas fusionner deux tronçons qui intersectent un troisième "
+"tronçon"
 
 msgid "No matching points to merge paths found"
 msgstr "Aucun point de correspondance trouvé pour fusionner les tronçons"
 
-msgid "You can't merge 2 paths with a 3rd path in the intersection"
-msgstr "Vous ne pouvez pas fusionner deux tronçons qui intersectent un troisième tronçon"
-
-msgid "Different topologies are linked with this path"
-msgstr "Différentes Topologies sont liées à ce tronçon"
+msgid "Paths merged successfully"
+msgstr "Les tronçons ont été fusionnés."
