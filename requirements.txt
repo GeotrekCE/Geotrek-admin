@@ -41,3 +41,4 @@ python-memcached==1.59
 coverage
 # prod
 gunicorn
+raven
