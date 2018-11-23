@@ -8,6 +8,9 @@ CHANGELOG
 **New features**
 
 - Allow to publish signage and infrastructure
+- Allow to exclude POIs from a trek
+- New access rights to edit draft path
+- New access rights to edit attributes and not the geometry
 
 **Bug fixes**
 
