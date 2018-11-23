@@ -417,13 +417,20 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         return plain_text(self.ambiance or self.description_teaser or self.description)[:500]
 
     def get_printcontext(self):
-        return {
-            "maplayers": [
-                ugettext(u"Sensitive area"),
-                ugettext(u"POIs"),
-                ugettext(u"services"),
-                settings.LEAFLET_CONFIG['TILES'][0][0],
-            ]}
+        maplayers = [
+            settings.LEAFLET_CONFIG['TILES'][0][0],
+        ]
+        if settings.SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT:
+            maplayers.append(ugettext(u"Sensitive area"))
+        if settings.SHOW_POIS_ON_MAP_SCREENSHOT:
+            maplayers.append(ugettext(u"POIs"))
+        if settings.SHOW_SERVICES_ON_MAP_SCREENSHOT:
+            maplayers.append(ugettext(u"Services"))
+        if settings.SHOW_SIGNAGES_ON_MAP_SCREENSHOT:
+            maplayers.append(ugettext(u"Signages"))
+        if settings.SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT:
+            maplayers.append(ugettext(u"Infrastructures"))
+        return {"maplayers": maplayers}
 
 
 Path.add_property('treks', Trek.path_treks, _(u"Treks"))

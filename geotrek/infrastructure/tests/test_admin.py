@@ -1,4 +1,7 @@
+import os
+
 from django.core.urlresolvers import reverse
+from django.conf import settings
 
 from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.infrastructure.factories import InfrastructureTypeFactory, InfrastructureConditionFactory
@@ -24,7 +27,9 @@ class InfrastructureTypeAdminTest(AuthentFixturesTest):
     def test_infrastructuretype_can_be_change(self):
         self.login()
         change_url = reverse('admin:infrastructure_infrastructuretype_change', args=[self.infra.pk])
-        response = self.client.post(change_url, {'label': 'coucou', 'type': 'A'})
+        response = self.client.post(change_url, {'label': 'coucou', 'type': 'A',
+                                                 'pictogram': os.path.join(
+                                                     settings.MEDIA_URL, self.infra.pictogram.name)})
         self.assertEquals(response.status_code, 302)
         self.assertEqual(InfrastructureType.objects.get(pk=self.infra.pk).label, 'coucou')
 

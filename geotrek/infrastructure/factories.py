@@ -1,5 +1,6 @@
 import factory
 
+from geotrek.common.utils.testdata import dummy_filefield_as_sequence
 from geotrek.core.factories import TopologyFactory
 
 from . import models
@@ -11,6 +12,7 @@ class InfrastructureTypeFactory(factory.DjangoModelFactory):
 
     label = factory.Sequence(lambda n: u"Type %s" % n)
     type = models.INFRASTRUCTURE_TYPES.BUILDING
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
 class InfrastructureConditionFactory(factory.DjangoModelFactory):
