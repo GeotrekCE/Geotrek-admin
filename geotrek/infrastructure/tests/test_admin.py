@@ -146,8 +146,12 @@ class InfrastructureTypeAdminTest(AuthentFixturesTest):
         self.login()
         changelist_url = reverse('admin:infrastructure_infrastructuretype_changelist')
         response = self.client.get(changelist_url)
+<<<<<<< HEAD
         self.assertEqual(response.status_code, 200)
         self.assertIn(InfrastructureType.objects.get(pk=self.infra.pk).label, response.content)
+=======
+        self.assertContains(response, InfrastructureType.objects.get(pk=self.infra.pk).label)
+>>>>>>> de821a5ab... Python2to3 docker
 
 
 class InfrastructureConditionAdminTest(AuthentFixturesTest):
@@ -178,4 +182,4 @@ class InfrastructureConditionAdminTest(AuthentFixturesTest):
         changelist_url = reverse('admin:infrastructure_infrastructurecondition_changelist')
         response = self.client.get(changelist_url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(InfrastructureCondition.objects.get(pk=self.infra.pk).label, response.content)
+        self.assertIn(InfrastructureCondition.objects.get(pk=self.infra.pk).label, response)

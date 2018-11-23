@@ -92,7 +92,6 @@ jobs:
       before_script: skip
 
       script:
-        - flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings
         - flake8 geotrek
         # prevent SRID value in migrations
         - test $(find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
@@ -104,7 +103,7 @@ jobs:
       install:
         - sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
         - sudo chmod +x /usr/local/bin/docker-compose
-        - docker pull makinacorpus/geodjango:bionic-py2
+        - docker pull makinacorpus/geodjango:bionic-3.6
 
       before_script: skip
 

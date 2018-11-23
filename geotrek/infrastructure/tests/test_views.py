@@ -178,8 +178,8 @@ class InfrastructureFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
         i2 = InfrastructureFactory.create(implantation_year=2016)
         response = self.client.get(model.get_list_url())
 
-        self.assertTrue('<option value="2015">2015</option>' in str(response))
-        self.assertTrue('<option value="2016">2016</option>' in str(response))
+        self.assertContains(response, '<option value="2015">2015</option>')
+        self.assertContains(response, '<option value="2016">2016</option>')
 
         self.assertTrue(i in filter.qs)
         self.assertFalse(i2 in filter.qs)
@@ -192,8 +192,8 @@ class InfrastructureFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
         i2 = InfrastructureFactory.create(implantation_year=2016)
         response = self.client.get(model.get_list_url())
 
-        self.assertTrue('<option value="2015">2015</option>' in str(response))
-        self.assertTrue('<option value="2016">2016</option>' in str(response))
+        self.assertContains(response, '<option value="2015">2015</option>')
+        self.assertContains(response, '<option value="2016">2016</option>')
 
         self.assertIn(i, filter.qs)
         self.assertIn(i2, filter.qs)

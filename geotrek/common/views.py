@@ -212,7 +212,7 @@ class UserArgMixin(object):
 
 def import_file(uploaded, parser, encoding, user_pk):
     destination_dir, destination_file = create_tmp_destination(uploaded.name)
-    with open(destination_file, 'w+') as f:
+    with open(destination_file, 'wb+') as f:
         f.write(uploaded.file.read())
         zfile = ZipFile(f)
         for name in zfile.namelist():

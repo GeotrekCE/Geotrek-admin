@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=200, verbose_name='Title', db_column='titre')),
                 ('external_url', models.URLField(db_column='url_externe', default='', blank=True, help_text='Link to external website instead of HTML content', verbose_name='External URL')),
                 ('content', models.TextField(help_text='HTML content', null=True, verbose_name='Content', db_column='contenu', blank=True)),
-                ('target', models.CharField(default='all', max_length=12, verbose_name='Target', db_column='cible', choices=[(b'all', 'All'), (b'mobile', 'Mobile'), (b'hidden', 'Hidden'), (b'web', 'Web')])),
+                ('target', models.CharField(default='all', max_length=12, verbose_name='Target', db_column='cible', choices=[('all', 'All'), ('mobile', 'Mobile'), ('hidden', 'Hidden'), ('web', 'Web')])),
                 ('order', models.IntegerField(default=None, help_text='ID order if blank', null=True, verbose_name='Order', blank=True)),
                 ('portal', models.ManyToManyField(related_name='flatpages', db_table='t_r_page_portal', verbose_name='Portal', to='common.TargetPortal', blank=True)),
                 ('source', models.ManyToManyField(related_name='flatpages', db_table='t_r_page_source', verbose_name='Source', to='common.RecordSource', blank=True)),

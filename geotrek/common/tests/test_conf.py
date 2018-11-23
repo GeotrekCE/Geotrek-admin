@@ -15,5 +15,9 @@ class StartupCheckTest(TestCase):
     def test_error_is_not_raised_if_srid_is_meters(self):
         if hasattr(check_srid_has_meter_unit, '_checked'):
             delattr(check_srid_has_meter_unit, '_checked')
-        with self.settings(SRID=2154):
-            self.assertRaises(check_srid_has_meter_unit)
+        try:
+            with self.settings(SRID=2154):
+                command = check_srid_has_meter_unit
+                self.assertTrue(command)
+        except ImproperlyConfigured:
+            self.fail('check_srid_has_meter_unit raised ImproperlyConfigured unexpectedly!')

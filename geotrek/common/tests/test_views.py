@@ -52,7 +52,7 @@ class ViewsImportTest(TestCase):
         self.user.is_superuser = True
         self.user.save()
 
-        real_archive = open('geotrek/common/tests/data/test.zip', 'r+')
+        real_archive = open('geotrek/common/tests/data/test.zip', 'rb+')
         url = reverse('common:import_dataset')
 
         response_real = self.client.post(
@@ -93,7 +93,7 @@ class ViewsImportTest(TestCase):
         self.user.is_superuser = False
         self.user.save()
 
-        real_archive = open('geotrek/common/tests/data/test.zip', 'r+')
+        real_archive = open('geotrek/common/tests/data/test.zip', 'rb')
         url = reverse('common:import_dataset')
 
         response_real = self.client.post(

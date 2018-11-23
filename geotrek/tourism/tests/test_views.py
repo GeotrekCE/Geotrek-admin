@@ -36,8 +36,8 @@ from embed_video.backends import detect_backend
 
 
 PNG_BLACK_PIXEL = bytes.fromhex('89504e470d0a1a0a0000000d494844520000000100000001080400000'
-    '0b51c0c020000000b4944415478da6364f80f00010501012718e3660000000049454e44'
-    'ae426082').decode('utf-16')
+                                '0b51c0c020000000b4944415478da6364f80f00010501012718e3660000000049454e44'
+                                'ae426082')
 
 
 class TouristicContentViewsSameStructureTests(AuthentFixturesTest):

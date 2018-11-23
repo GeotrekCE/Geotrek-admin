@@ -272,10 +272,10 @@ class PathViewsTest(CommonTest):
         p1 = PathFactory.create()
         p2 = PathFactory.create()
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk]})
-        self.assertIn('error', response.json())
+        self.assertIn(b'error', response.json())
 
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p1.pk, p2.pk]})
-        self.assertIn('error', response.json())
+        self.assertIn(b'error', response.json())
         self.logout()
 
     def test_merge_fails_donttouch(self):
@@ -456,6 +456,7 @@ class PathViewsTest(CommonTest):
     def test_merge_works(self):
         self.login()
         p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
+<<<<<<< HEAD
         p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)))
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
         self.assertIn('success', response.json())
@@ -465,6 +466,24 @@ class PathViewsTest(CommonTest):
         self.login()
         p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
         p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)))
+=======
+        p2 = PathFactory.create(name="BC", geom=LineString((500, 0), (1000, 0)))
+        response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
+        self.assertEqual(response.content, b'error')
+        p3 = PathFactory.create(name="AB", geom=LineString((1, 0), (2, 0)))
+        p4 = PathFactory.create(name="BC", geom=LineString((1, 0), (10, 10)))
+        response = self.client.post('/mergepath/', {'path[]': [p3.pk, p4.pk]})
+        self.assertEqual(response.content, b'error')
+
+    def test_mege_works(self):
+        self.login()
+        p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
+        p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)))
+        response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
+        self.assertEqual(response.content, b'success')
+        p1.reload()
+        self.assertEqual(p1.geom, LineString((0, 0), (1, 0), (2, 0), srid=settings.SRID))
+>>>>>>> de821a5ab... Python2to3 docker
 
         PathFactory.create(name="CD", geom=LineString((2, 1), (3, 1)))
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
@@ -605,11 +624,11 @@ class TrailViewsTest(CommonTest):
 
     @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
     def test_document_export(self, get_attributes_html):
-        get_attributes_html.return_value = '<p>mock</p>'
+        get_attributes_html.return_value = b'<p>mock</p>'
         trail = TrailFactory()
         self.login()
-        with open(trail.get_map_image_path(), 'w') as f:
-            f.write('***' * 1000)
+        with open(trail.get_map_image_path(), 'wb+') as f:
+            f.write(b'***' * 1000)
         response = self.client.get(trail.get_document_url())
         self.assertEqual(response.status_code, 200)
 

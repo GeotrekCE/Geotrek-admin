@@ -234,7 +234,7 @@ class TrekViewsTest(CommonTest):
         self.login()
         response = self.client.get(self.model.get_add_url())
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn('pois_excluded', response.content)
+        self.assertNotIn(b'pois_excluded', response.content)
 
     def test_pois_detached_update(self):
         self.login()
@@ -1178,7 +1178,11 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<informations>'
             '<information langue="en"><titre>{title}</titre><description>{description}</description></information>'
             '</informations>'
+<<<<<<< HEAD
             '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
+=======
+            '<adresse><position><lat>46.499999999999936</lat><lng>2.9999999999999996</lng></position></adresse>'
+>>>>>>> de821a5ab... Python2to3 docker
             '</poi>'
             '</pois>'.format(**attrs))
 
@@ -1193,7 +1197,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             'date_update': timestamp(self.poi.date_update),
         }
         self.assertXMLEqual(
-            response.content,
+            response.content.decode('utf-8'),
             '<?xml version="1.0" encoding="utf8"?>\n'
             '<pois version="2">'
             '<poi id_poi="{pk}" date_modification="{date_update}" date_creation="1388534400">'
@@ -1203,7 +1207,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<information langue="fr"><titre>{title}</titre><description>{description}</description></information>'
             '<information langue="it"><titre>{title}</titre><description>{description}</description></information>'
             '</informations>'
-            '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
+            '<adresse><position><lat>46.499999999999936</lat><lng>2.9999999999999996</lng></position></adresse>'
             '</poi>'
             '</pois>'.format(**attrs))
 
