@@ -14,7 +14,7 @@ class CommandTests(TestCase):
     def test_command_emails_manager(self):
         call_command('test_managers_emails')
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, u'[%s] Test email for managers' % settings.TITLE)
+        self.assertEqual(mail.outbox[0].subject, '[%s] Test email for managers' % settings.TITLE)
 
     def test_command_unset_structure(self):
         structure1 = StructureFactory.create(name="coucou")

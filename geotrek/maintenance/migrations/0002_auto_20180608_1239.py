@@ -17,41 +17,41 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='contractor',
             name='structure',
-            field=models.ForeignKey(blank=True, db_column=b'structure', default=geotrek.authent.models.default_structure_pk, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
+            field=models.ForeignKey(blank=True, db_column='structure', default=geotrek.authent.models.default_structure_pk, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
         ),
         migrations.AlterField(
             model_name='intervention',
             name='length',
-            field=models.FloatField(blank=True, db_column=b'longueur', default=0.0, null=True, verbose_name='3D Length'),
+            field=models.FloatField(blank=True, db_column='longueur', default=0.0, null=True, verbose_name='3D Length'),
         ),
         migrations.AlterField(
             model_name='interventiondisorder',
             name='structure',
-            field=models.ForeignKey(blank=True, db_column=b'structure', default=geotrek.authent.models.default_structure_pk, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
+            field=models.ForeignKey(blank=True, db_column='structure', default=geotrek.authent.models.default_structure_pk, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
         ),
         migrations.AlterField(
             model_name='interventionjob',
             name='structure',
-            field=models.ForeignKey(blank=True, db_column=b'structure', default=geotrek.authent.models.default_structure_pk, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
+            field=models.ForeignKey(blank=True, db_column='structure', default=geotrek.authent.models.default_structure_pk, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
         ),
         migrations.AlterField(
             model_name='interventionstatus',
             name='structure',
-            field=models.ForeignKey(blank=True, db_column=b'structure', default=geotrek.authent.models.default_structure_pk, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
+            field=models.ForeignKey(blank=True, db_column='structure', default=geotrek.authent.models.default_structure_pk, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
         ),
         migrations.AlterField(
             model_name='interventiontype',
             name='structure',
-            field=models.ForeignKey(blank=True, db_column=b'structure', default=geotrek.authent.models.default_structure_pk, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
+            field=models.ForeignKey(blank=True, db_column='structure', default=geotrek.authent.models.default_structure_pk, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
         ),
         migrations.AlterField(
             model_name='projectdomain',
             name='structure',
-            field=models.ForeignKey(blank=True, db_column=b'structure', default=geotrek.authent.models.default_structure_pk, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
+            field=models.ForeignKey(blank=True, db_column='structure', default=geotrek.authent.models.default_structure_pk, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
         ),
         migrations.AlterField(
             model_name='projecttype',
             name='structure',
-            field=models.ForeignKey(blank=True, db_column=b'structure', default=geotrek.authent.models.default_structure_pk, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
+            field=models.ForeignKey(blank=True, db_column='structure', default=geotrek.authent.models.default_structure_pk, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure'),
         ),
     ]

@@ -168,9 +168,9 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         d1 = DistrictFactory.create(geom=MultiPolygon(
             Polygon(((-2, -2), (3, -2), (3, 3), (-2, 3), (-2, -2)))))
         # Ensure related objects are accessible
-        self.assertCountsEqual(trek.pois_excluded.all(), [poi2])
-        self.assertCountsEqual(trek.all_pois, [poi, poi2])
-        self.assertCountsEqual(trek.pois, [poi])
+        self.assertCountEqual(trek.pois_excluded.all(), [poi2])
+        self.assertCountEqual(trek.all_pois, [poi, poi2])
+        self.assertCountEqual(trek.pois, [poi])
         self.assertCountEqual(trek.services, [service])
         self.assertCountEqual(poi.treks, [trek])
         self.assertCountEqual(service.treks, [trek])

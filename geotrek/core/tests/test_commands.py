@@ -1,4 +1,4 @@
-from StringIO import StringIO
+from io import StringIO
 
 from django.contrib.gis.geos import LineString
 from django.core.management import call_command
@@ -55,7 +55,7 @@ class RemoveDuplicatePathTest(TestCase):
         call_command('remove_duplicate_paths', verbosity=2, stdout=output)
 
         self.assertEquals(Path.objects.count(), 5)
-        self.assertItemsEqual((self.p1, self.p3, self.p5, self.p6, self.p8),
+        self.assertCountEqual((self.p1, self.p3, self.p5, self.p6, self.p8),
                               list(Path.objects.all()))
         self.assertIn("Deleting path",
                       output.getvalue())

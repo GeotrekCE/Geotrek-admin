@@ -69,7 +69,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
         practice = SportPractice.objects.get()
         species = Species.objects.get()
         area = SensitiveArea.objects.get()
-        self.assertEqual(practice.name, "Terrestre")
+        self.assertEqual(practice.name, "Land")
         self.assertEqual(species.name, "Black grouse")
         self.assertEqual(species.name_fr, "Tétras lyre")
         self.assertTrue(species.period01)

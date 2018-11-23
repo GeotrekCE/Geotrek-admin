@@ -1,5 +1,5 @@
 import os
-from StringIO import StringIO
+from io import StringIO
 
 from django.core.management import call_command
 from django.test import TestCase
@@ -36,15 +36,13 @@ class StructureParserTest(TestCase):
         self.assertEquals(value.count(), 3)
 
     def test_no_file_fail(self):
-        with self.assertRaises(CommandError) as cm:
+        with self.assertRaisesRegex(CommandError, "File does not exists at: toto.shp"):
             call_command('loadinfrastructure', 'toto.shp')
-        self.assertEqual(cm.exception.message, "File does not exists at: toto.shp")
 
     def test_load_both_fail(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
-        with self.assertRaises(CommandError) as cm:
+        with self.assertRaisesRegex(CommandError, "Only one of --signage and --infrastructure required"):
             call_command('loadinfrastructure', filename, '--infrastructure', '--signage')
-        self.assertEqual(cm.exception.message, "Only one of --signage and --infrastructure required")
 
     def test_missing_defaults(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')

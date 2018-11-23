@@ -34,8 +34,7 @@ class InfrastructureTypeAdminTest(AuthentFixturesTest):
         self.login()
         changelist_url = reverse('admin:infrastructure_infrastructuretype_changelist')
         response = self.client.get(changelist_url)
-        self.assertEquals(response.status_code, 200)
-        self.assertIn(InfrastructureType.objects.get(pk=self.infra.pk).label, response.content)
+        self.assertContains(response, InfrastructureType.objects.get(pk=self.infra.pk).label)
 
 
 class InfrastructureConditionAdminTest(AuthentFixturesTest):
@@ -65,5 +64,4 @@ class InfrastructureConditionAdminTest(AuthentFixturesTest):
         self.login()
         changelist_url = reverse('admin:infrastructure_infrastructurecondition_changelist')
         response = self.client.get(changelist_url)
-        self.assertEquals(response.status_code, 200)
-        self.assertIn(InfrastructureCondition.objects.get(pk=self.infra.pk).label, response.content)
+        self.assertContains(response, InfrastructureCondition.objects.get(pk=self.infra.pk).label)

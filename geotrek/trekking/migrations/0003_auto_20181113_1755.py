@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='trek',
             name='pois_excluded',
-            field=models.ManyToManyField(db_table=b'l_r_troncon_poi_exclus', related_name='excluded_treks', to='trekking.POI', verbose_name='Excluded POIs'),
+            field=models.ManyToManyField(db_table='l_r_troncon_poi_exclus', related_name='excluded_treks', to='trekking.POI', verbose_name='Excluded POIs'),
         ),
     ]

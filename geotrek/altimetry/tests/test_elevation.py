@@ -325,19 +325,16 @@ class CommandLoadDemTest(TestCase):
         cur = conn.cursor()
         cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaisesRegex(CommandError, 'DEM file exists, use --replace to overwrite'):
             call_command('loaddem', filename, verbosity=0)
-        self.assertIn('DEM file exists, use --replace to overwrite', e.exception)
         cur.execute('DROP TABLE mnt;')
 
     def test_fail_no_file(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'no.tif')
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaisesRegex(CommandError, 'DEM file does not exists at: %s' % filename):
             call_command('loaddem', filename, verbosity=0)
-        self.assertIn('DEM file does not exists at: %s' % filename, e.exception)
 
     def test_fail_wrong_format(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'test.xml')
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaisesRegex(CommandError, 'DEM format is not recognized by GDAL.'):
             call_command('loaddem', filename, verbosity=0)
-        self.assertIn('DEM format is not recognized by GDAL.', e.exception)

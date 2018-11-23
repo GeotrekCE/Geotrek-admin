@@ -40,4 +40,4 @@ class EmailSendingTest(TestCase):
         self.assertEqual(sent_mail.subject,
                          '[Geotrek] Feedback from John Doe (john.doe@nowhere.com)')
         self.assertIn("Comment : This is a 'comment'", sent_mail.body)
-        self.assertIn("Lat : 46.499999999999936 / Lon : 3", sent_mail.body)
+        self.assertIn("Lat : 46.499999999999936 / Lon : 2.9999999999999996", sent_mail.body)

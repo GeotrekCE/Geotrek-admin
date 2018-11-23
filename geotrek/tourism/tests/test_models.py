@@ -13,7 +13,7 @@ class InformationDeskTest(TestCase):
         self.informationDesk1 = InformationDeskFactory.create(description="Coucou")
 
     def test_serializable_type(self):
-        self.assertEqual(['pictogram', 'id', 'label'], self.informationDesk1.serializable_type.keys())
+        self.assertCountEqual(['pictogram', 'id', 'label'], self.informationDesk1.serializable_type.keys())
 
 
 class TourismRelations(TestCase):

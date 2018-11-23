@@ -21,7 +21,7 @@ def get_dummy_uploaded_file(name='dummy_file.txt'):
 
 
 def get_dummy_uploaded_document(name='dummy_file.odt', size=128):
-    return SimpleUploadedFile(name, ('*' * size).encode(), content_type='application/vnd.oasis.opendocument.text')
+    return SimpleUploadedFile(name, (b'*' * size), content_type='application/vnd.oasis.opendocument.text')
 
 
 def dummy_filefield_as_sequence(toformat_name):
