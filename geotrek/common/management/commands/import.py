@@ -33,7 +33,7 @@ class Command(BaseCommand):
         def progress_cb(progress, line, eid):
             if verbosity >= 2:
                 self.stdout.write("{line:04d}: {eid: <10} ({progress:02d}%)".format(
-                    line=line, eid=eid, progress=int(100 * progress)))
+                    line=line, eid=eid or '', progress=int(100 * progress)))
 
         parser = Parser(progress_cb=progress_cb, encoding=encoding)
 

@@ -5,6 +5,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 import xlrd
 import xml.etree.ElementTree as ET
+from functools import reduce
 from urllib import request as urllib2
 from collections import Iterable
 
@@ -435,11 +436,12 @@ class Parser(object):
             except DatabaseError as e:
                 if settings.DEBUG:
                     raise
-                self.add_warning(str(e).decode('utf8'))
+                self.add_warning(e)
             except Exception as e:
+                raise
                 if settings.DEBUG:
                     raise
-                self.add_warning((e))
+                self.add_warning(e)
         self.end()
 
 

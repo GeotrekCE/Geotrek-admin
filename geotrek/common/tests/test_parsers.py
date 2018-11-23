@@ -3,7 +3,7 @@ import mock
 import os
 from shutil import rmtree
 from tempfile import mkdtemp
-from StringIO import StringIO
+from io import StringIO
 
 from django.test import TestCase
 from django.conf import settings
@@ -91,8 +91,8 @@ class ParserTests(TestCase):
 
     def test_report_format_html(self):
         parser = OrganismParser()
-        self.assertpMatches(parser.report(output_format='html'),
-                            r'<div id=\"collapse-\$celery_id\" class=\"collapse\">')
+        self.assertRegex(parser.report(output_format='html'),
+                         r'<div id=\"collapse-\$celery_id\" class=\"collapse\">')
 
     def test_report_format_bad(self):
         parser = OrganismParser()

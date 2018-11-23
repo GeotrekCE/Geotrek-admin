@@ -276,7 +276,7 @@ class TrekViewsTest(CommonTest):
         self.login()
         response = self.client.get(self.model.get_add_url())
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn('pois_excluded', response.content)
+        self.assertNotIn(b'pois_excluded', response.content)
 
     def test_pois_detached_update(self):
         self.login()
@@ -687,28 +687,18 @@ class TrekJSONDetailTest(TrekJSONSetUp):
             'id': self.trek_b.pk,
             'category_id': self.trek_b.prefixed_category_id})
 
-# TOCHECK (remove)
-    def test_type1(self):
-        self.assertDictEqual(self.result['type1'][0],
-                             {"id": self.trek.practice.id,
-                              "pictogram": os.path.join(settings.MEDIA_URL, self.trek.practice.pictogram.name),
-                              "name": self.trek.practice.name})
-
     def test_type2(self):
         self.assertDictEqual(self.result['type2'][0],
                              {"id": self.accessibility.id,
                               "pictogram": os.path.join(settings.MEDIA_URL, self.accessibility.pictogram.name),
                               "name": self.accessibility.name})
 
-    # TOCHECK (remove type1_label)
-
     def test_category(self):
         self.assertDictEqual(self.result['category'],
                              {"id": 'T',
                               "order": 1,
-                              "label": "Trek",
+                              "label": "Hike",
                               "slug": "trek",
-                              "type1_label": "Practice",
                               "type2_label": "Accessibility",
                               "pictogram": "/static/trekking/trek.svg"})
 
@@ -826,8 +816,8 @@ class TrekGPXTest(TrekkingManagerTest):
         elevation = waypoint.find('ele').string
         self.assertEqual(name, "%s: %s" % (pois[0].type, pois[0].name))
         self.assertEqual(description, pois[0].description)
-        self.assertEqual(waypoint['lat'], '46.5003601787406')
-        self.assertEqual(waypoint['lon'], '3.0005215855200853')
+        self.assertEqual(waypoint['lat'], '46.50036017874059')
+        self.assertEqual(waypoint['lon'], '3.000521585520085')
         self.assertEqual(elevation, '42.0')
 
 
@@ -1119,7 +1109,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<informations>'
             '<information langue="en"><titre>{title}</titre><description>{description}</description></information>'
             '</informations>'
-            '<adresse><position><lat>46.499999999999936</lat><lng>3.0</lng></position></adresse>'
+            '<adresse><position><lat>46.499999999999936</lat><lng>2.9999999999999996</lng></position></adresse>'
             '</poi>'
             '</pois>'.format(**attrs))
 
@@ -1134,7 +1124,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             'date_update': timestamp(self.poi.date_update),
         }
         self.assertXMLEqual(
-            response.content,
+            response.content.decode('utf-8'),
             '<?xml version="1.0" encoding="utf8"?>\n'
             '<pois version="2">'
             '<poi id_poi="{pk}" date_modification="{date_update}" date_creation="1388534400">'
@@ -1144,7 +1134,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<information langue="fr"><titre>{title}</titre><description>{description}</description></information>'
             '<information langue="it"><titre>{title}</titre><description>{description}</description></information>'
             '</informations>'
-            '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
+            '<adresse><position><lat>46.499999999999936</lat><lng>2.9999999999999996</lng></position></adresse>'
             '</poi>'
             '</pois>'.format(**attrs))
 

@@ -36,7 +36,6 @@ class ParserTests(TranslationResetMixin, TestCase):
                 return json.load(f)
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
-        # TOCHECK (remove mocked)
         mocked.return_value.content = b''
         FileType.objects.create(type="Photographie")
         category = TouristicContentCategoryFactory(label="Eau vive")
@@ -71,12 +70,13 @@ class ParserTests(TranslationResetMixin, TestCase):
     def test_create_esprit(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'espritparc.json')
-            with io.open(filename, 'r', encoding='utf8') as f:
+            with io.open(filename, 'rb') as f:
                 return json.load(f)
 
         filename = os.path.join(os.path.dirname(__file__), 'data', 'espritparc.json')
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
+        mocked.return_value.content = b''
         FileType.objects.create(type="Photographie")
         category = TouristicContentCategoryFactory(label="Miels et produits de la ruche")
         TouristicContentTypeFactory(label="Miel", in_list=1, category=category)
