@@ -81,6 +81,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                                       blank=True, related_name="paths",
                                       verbose_name=_(u"Networks"), db_table="l_r_troncon_reseau")
     eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
+    draft = models.BooleanField(db_column='brouillon', default=False, verbose_name=_(u"Draft"))
 
     objects = PathManager()
     include_invisible = PathInvisibleManager()
@@ -109,6 +110,10 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         db_table = 'l_t_troncon'
         verbose_name = _(u"Path")
         verbose_name_plural = _(u"Paths")
+        permissions = MapEntityMixin._meta.permissions + [("add_draft_path", "Can add draft Path"),
+                                                          ("change_draft_path", "Can change draft Path"),
+                                                          ("delete_draft_path", "Can delete draft Path"),
+                                                          ]
 
     @classmethod
     def closest(cls, point, exclude=None):
@@ -119,7 +124,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         # TODO: move to custom manager
         if point.srid != settings.SRID:
             point = point.transform(settings.SRID, clone=True)
-        qs = cls.objects.all()
+        qs = cls.objects.exclude(draft=True)
         if exclude:
             qs = qs.exclude(pk=exclude.pk)
         return qs.exclude(visible=False).distance(point).order_by('distance')[0]
