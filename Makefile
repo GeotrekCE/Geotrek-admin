@@ -13,7 +13,7 @@ serve:
 	docker-compose up
 
 test:
-	docker-compose run web test --settings=geotrek.settings.test
+	docker-compose run web ./manage.py test --settings=geotrek.settings.tests
 
 test_nav:
 	casperjs test --baseurl=$(baseurl) geotrek/jstests/nav-*.js
