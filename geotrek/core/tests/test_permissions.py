@@ -308,3 +308,31 @@ class PermissionDraftPath(TestCase):
         response = self.client.post('/path/edit/%s/' % draft_path.pk, data)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(Path.objects.get(pk=draft_path.pk).draft)
+
+    def test_save_path_with_edit_draft_path_and_edit_path(self):
+        """
+        Check save path without permission change_path save with draft=True
+        """
+        draft_path = PathFactory(name="draft", geom=LineString((0, 2), (4, 2)), draft=True)
+
+        self.user.user_permissions.add(Permission.objects.get(codename='change_path'))
+        self.user.user_permissions.add(Permission.objects.get(codename='change_draft_path'))
+        self.client.login(username=self.user.username, password='booh')
+
+        data = self.get_good_data()
+        data['draft'] = True
+        response = self.client.post('/path/edit/%s/' % draft_path.pk, data)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Path.objects.get(pk=draft_path.pk).draft)
+
+        # You can change a draft path to a normal path.
+        data['draft'] = False
+        response = self.client.post('/path/edit/%s/' % draft_path.pk, data)
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Path.objects.get(pk=draft_path.pk).draft)
+
+        # You can't change a normal path back to a draft path.
+        data['draft'] = True
+        response = self.client.post('/path/edit/%s/' % draft_path.pk, data)
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Path.objects.get(pk=draft_path.pk).draft)
