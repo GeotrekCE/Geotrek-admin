@@ -1,4 +1,0 @@
--e git+https://github.com/LePetitTim/django-mapentity.git@python_3_2#egg=mapentity
--e git+https://github.com/LePetitTim/django-appypod.git@python_3#egg=django-appypod
--e git+https://github.com/LePetitTim/appypod-1.git@python_3#egg=appy
--e git+https://github.com/LePetitTim/landez@python_3#egg=landez
