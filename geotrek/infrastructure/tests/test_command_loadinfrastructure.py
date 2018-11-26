@@ -9,9 +9,9 @@ from geotrek.infrastructure.factories import SignageFactory, InfrastructureFacto
 from geotrek.infrastructure.models import Signage, Infrastructure
 
 
-class StructureParserTest(TestCase):
+class InfrastructureCommandTest(TestCase):
     """
-    There are 2 structures in the file signage.shp
+    There are 2 infrastructures in the file signage.shp
     """
     def test_load_signage(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')

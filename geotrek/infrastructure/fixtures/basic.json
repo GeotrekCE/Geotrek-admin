@@ -4,7 +4,8 @@
         "model": "infrastructure.infrastructuretype",
         "fields": {
             "type": "A",
-            "label": "Aire de stationnement"
+            "label": "Aire de stationnement",
+            "pictogram": "upload/infra-parking.png"
         }
     },
     {

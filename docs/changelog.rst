@@ -5,9 +5,17 @@ CHANGELOG
 2.21.2.dev0
 -------------------
 
+**New features**
+
+- Allow to publish signage and infrastructure
+- Allow to exclude POIs from a trek
+- New access rights to edit draft path
+- New access rights to edit attributes and not the geometry
+
 **Bug fixes**
 
--
+- Fix a clash between current url and SYNC_RANDO_OPTIONS
+- Fix screamshotter when SSL is enabled
 
 
 2.21.1 (2018-09-18)

@@ -32,6 +32,8 @@
     {{ block.super }}
     <script src="{% static "trekking/poilayer.js" %}"></script>
     <script src="{% static "trekking/servicelayer.js" %}"></script>
+    <script src="{% static "trekking/signagelayer.js" %}"></script>
+    <script src="{% static "trekking/infrastructurelayer.js" %}"></script>
     <script type="text/javascript">
         $(window).on('detailmap:ready', function (e, data) {
             var map = data.map;
@@ -89,8 +91,44 @@
                         window.location = serviceUrl.replace('0', layer.properties.pk);
                     });
                 });
-                map.layerscontrol.addOverlay(services, tr('services'), tr('Objects'));
+                map.layerscontrol.addOverlay(services, tr('Services'), tr('Objects'));
                 map.addLayer(services);
+                $('.map-panel').addClass('services_loaded');
+            });
+
+            //
+            // Trek signage layer
+            $.getJSON('{% url 'infrastructure:trek_signage_geojson' LANGUAGE_CODE object.pk %}', function (data) {
+                var signages = new SignagesLayer(data, {
+                    iconSize: {{ view.icon_sizes.signage }}
+                });
+
+                var signageUrl = "{% url 'infrastructure:signage_detail' 0 %}";
+                signages.eachLayer(function (layer) {
+                    layer.on('dblclick', function (e) {
+                        window.location = signageUrl.replace('0', layer.properties.pk);
+                    });
+                });
+                map.layerscontrol.addOverlay(signages, tr('Signages'), tr('Objects'));
+                map.addLayer(signages);
+                $('.map-panel').addClass('signages_loaded');
+            });
+
+            //
+            // Trek infrastructure layer
+            $.getJSON('{% url 'infrastructure:trek_infrastructure_geojson' LANGUAGE_CODE object.pk %}', function (data) {
+                var infrastructures = new InfrastructuresLayer(data, {
+                    iconSize: {{ view.icon_sizes.infrastructure }}
+                });
+
+                var infrastructureUrl = "{% url 'infrastructure:infrastructure_detail' 0 %}";
+                infrastructures.eachLayer(function (layer) {
+                    layer.on('dblclick', function (e) {
+                        window.location = infrastructureUrl.replace('0', layer.properties.pk);
+                    });
+                });
+                map.layerscontrol.addOverlay(infrastructures, tr('Infrastructures'), tr('Objects'));
+                map.addLayer(infrastructures);
                 $('.map-panel').addClass('services_loaded');
             });
 

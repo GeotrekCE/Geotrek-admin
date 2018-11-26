@@ -25,7 +25,10 @@
             <th>{{ object|verbose:"implantation_year" }}</th>
             <td>{{ object.implantation_year|default:"" }}</td>
         </tr>
-
+        <tr>
+            <th>{{ object|verbose:"published" }}</th>
+            <td>{{ object.published|yesno|title }}</td>
+        </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
         <tr>
             <th>{{ object|verbose:"structure" }}</th>

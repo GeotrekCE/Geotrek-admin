@@ -12,7 +12,7 @@ from .models import Infrastructure, Signage
 
 class InfrastructureLayer(MapEntityLayer):
     queryset = Infrastructure.objects.existing()
-    properties = ['name']
+    properties = ['name', 'published']
 
 
 class InfrastructureList(MapEntityList):
@@ -28,7 +28,7 @@ class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
 class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
     columns = [
         'id', 'name', 'type', 'condition', 'description',
-        'implantation_year', 'structure', 'date_insert',
+        'implantation_year', 'published', 'publication_date', 'structure', 'date_insert',
         'date_update', 'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
 
@@ -70,7 +70,7 @@ class InfrastructureDelete(MapEntityDelete):
 
 class SignageLayer(MapEntityLayer):
     queryset = Signage.objects.existing()
-    properties = ['name']
+    properties = ['name', 'published']
 
 
 class SignageList(MapEntityList):
@@ -86,7 +86,7 @@ class SignageJsonList(MapEntityJsonList, SignageList):
 class SignageFormatList(MapEntityFormat, SignageList):
     columns = [
         'id', 'name', 'type', 'condition', 'description',
-        'implantation_year', 'structure', 'date_insert',
+        'implantation_year', 'published', 'structure', 'date_insert',
         'date_update', 'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
 
