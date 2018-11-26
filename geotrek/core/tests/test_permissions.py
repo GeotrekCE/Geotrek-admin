@@ -150,7 +150,7 @@ class PermissionDraftPath(TestCase):
 
         response = self.client.get('/path/edit/%s/' % path.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertIn('name="draft"', response.content)
+        self.assertNotIn('name="draft"', response.content)
 
         response = self.client.get('/path/edit/%s/' % draft_path.pk)
         self.assertEqual(response.status_code, 200)
