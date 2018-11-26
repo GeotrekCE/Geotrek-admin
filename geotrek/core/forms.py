@@ -65,7 +65,10 @@ class PathForm(CommonForm):
     def __init__(self, *args, **kwargs):
         super(PathForm, self).__init__(*args, **kwargs)
         if self.instance.pk:
-            if not self.user.has_perm('core.change_draft_path') or not self.user.has_perm('core.change_path'):
+            if not self.instance.draft:
+                # Prevent to set a path as draft again (it could be used by a topology)
+                del self.fields['draft']
+            if not self.user.has_perm('core.change_path'):
                 del self.fields['draft']
         else:
             if not self.user.has_perm('core.add_draft_path') or not self.user.has_perm('core.add_path'):
@@ -85,12 +88,7 @@ class PathForm(CommonForm):
 
     def save(self, commit=True):
         path = super(PathForm, self).save(commit=False)
-        if self.instance.pk:
-            if self.user.has_perm('core.change_draft_path') and not self.user.has_perm('core.change_path'):
-                path.draft = True
-            elif not self.user.has_perm('core.change_draft_path') and self.user.has_perm('core.change_path'):
-                path.draft = False
-        else:
+        if not self.instance.pk:
             if self.user.has_perm('core.add_draft_path') and not self.user.has_perm('core.add_path'):
                 path.draft = True
             if not self.user.has_perm('core.add_draft_path') and self.user.has_perm('core.add_path'):
