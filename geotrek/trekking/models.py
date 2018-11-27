@@ -120,7 +120,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
     eid2 = models.CharField(verbose_name=_(u"Second external id"), max_length=128, blank=True, null=True, db_column='id_externe2')
     pois_excluded = models.ManyToManyField('Poi', related_name='excluded_treks', verbose_name=_(u"Excluded POIs"),
-                                           db_table="l_r_troncon_poi_exclus")
+                                           db_table="l_r_troncon_poi_exclus", blank=True)
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
