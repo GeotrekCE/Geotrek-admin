@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.21.2.dev0
+2.22.0 (2018-11-27)
 -------------------
 
 **New features**
@@ -15,6 +15,7 @@ CHANGELOG
 
 **Bug fixes**
 
+- Fix snap on crossing point : take all paths easier
 - Fix a clash between current url and SYNC_RANDO_OPTIONS
 - Fix screamshotter when SSL is enabled
 
