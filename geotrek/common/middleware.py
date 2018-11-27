@@ -87,7 +87,7 @@ class FixedAutoLoginMiddleware(AutoLoginMiddleware):
         if user and user.is_anonymous() and not is_running_tests:
             remoteip = request.META.get('REMOTE_ADDR')
             remotehost = request.META.get('REMOTE_HOST')
-
+            print(remoteip, remotehost, LOCALHOST, REMOTE_HOSTS, CONVERSION_SERVER_HOST, CAPTURE_SERVER_HOST)
             is_auto_allowed = (
                 (remoteip in LOCALHOST or remotehost in REMOTE_HOSTS)
                 or (remoteip and remoteip in (CONVERSION_SERVER_HOST, CAPTURE_SERVER_HOST))
