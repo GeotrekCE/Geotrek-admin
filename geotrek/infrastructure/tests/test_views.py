@@ -54,6 +54,16 @@ class InfrastructureViewsTest(CommonTest):
         response = self.client.get(infra.get_detail_url())
         self.assertContains(response, "<b>Beautiful !</b>")
 
+    def test_check_structure_or_none_related_are_visible(self):
+        self.login()
+        infratype = InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING, structure=None)
+        response = self.client.get(self.model.get_add_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('form' in response.context)
+        form = response.context['form']
+        type = form.fields['type']
+        self.assertTrue((infratype.pk, unicode(infratype)) in type.choices)
+
 
 class PointInfrastructureViewsTest(InfrastructureViewsTest):
     def get_good_data(self):
@@ -70,12 +80,23 @@ class PointInfrastructureViewsTest(InfrastructureViewsTest):
 class SignageViewsTest(InfrastructureViewsTest):
     model = Signage
     modelfactory = SignageFactory
+    userfactory = PathManagerFactory
 
     def get_good_data(self):
         data = super(SignageViewsTest, self).get_good_data()
         data['type'] = InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.SIGNAGE).pk
         data['condition'] = InfrastructureConditionFactory.create().pk
         return data
+
+    def test_check_structure_or_none_related_are_visible(self):
+        self.login()
+        infratype = InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.SIGNAGE, structure=None)
+        response = self.client.get(self.model.get_add_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('form' in response.context)
+        form = response.context['form']
+        type = form.fields['type']
+        self.assertTrue((infratype.pk, unicode(infratype)) in type.choices)
 
 
 class InfrastructureTypeTest(TestCase):

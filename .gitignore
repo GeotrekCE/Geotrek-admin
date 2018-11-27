@@ -30,7 +30,7 @@ docs/_build/
 
 /share/
 /install/*.tgz
-/bulkimport/
-!/bulkimport/__init__.py
 /install/.env
 /install/var/
+/bulkimport/
+!/bulkimport/__init__.py
