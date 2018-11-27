@@ -23,6 +23,8 @@ def api_bbox(bbox, buffer):
     return tuple(native.extent)
 
 
+ALLOWED_HOSTS = []
+
 ROOT_URL = ""
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)

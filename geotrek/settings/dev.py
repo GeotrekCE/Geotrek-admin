@@ -20,7 +20,7 @@ INSTALLED_APPS = (
 
 INTERNAL_IPS = type(str('c'), (), {'__contains__': lambda *a: True})()
 
-ALLOWED_HOSTS = [
+ALLOWED_HOSTS += [
     '*',
 ]
 
