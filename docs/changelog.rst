@@ -2,12 +2,22 @@
 CHANGELOG
 =========
 
-2.21.2.dev0
+2.22.0 (2018-11-27)
 -------------------
+
+**New features**
+
+- Allow to publish signage and infrastructure
+- Allow to exclude POIs from a trek
+- New access rights to edit draft path
+- New access rights to edit attributes and not the geometry
+- Allow to remove duplicate path in database : command remove_duplicate_paths
 
 **Bug fixes**
 
--
+- Fix snap on crossing point : take all paths easier
+- Fix a clash between current url and SYNC_RANDO_OPTIONS
+- Fix screamshotter when SSL is enabled
 
 
 2.21.1 (2018-09-18)

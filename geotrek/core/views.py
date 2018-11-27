@@ -7,6 +7,7 @@ from collections import defaultdict
 from django.contrib.auth.decorators import permission_required
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 from django.views.decorators.http import last_modified as cache_last_modified
 from django.views.decorators.cache import never_cache as force_cache_validation
 from django.views.generic import View
@@ -56,8 +57,14 @@ class CreateFromTopologyMixin(object):
 
 
 class PathLayer(MapEntityLayer):
-    model = Path
-    properties = ['name']
+    properties = ['name', 'draft']
+    queryset = Path.objects.all()
+
+    def get_queryset(self):
+        qs = super(PathLayer, self).get_queryset()
+        if self.request.GET.get('no_draft'):
+            qs = qs.exclude(draft=True)
+        return qs
 
 
 class PathList(MapEntityList):
@@ -132,6 +139,11 @@ class PathCreate(MapEntityCreate):
     model = Path
     form_class = PathForm
 
+    def dispatch(self, *args, **kwargs):
+        if self.request.user.has_perm('core.add_path') or self.request.user.has_perm('core.add_draft_path'):
+            return super(MapEntityCreate, self).dispatch(*args, **kwargs)
+        return super(PathCreate, self).dispatch(*args, **kwargs)
+
 
 class PathUpdate(MapEntityUpdate):
     model = Path
@@ -139,6 +151,17 @@ class PathUpdate(MapEntityUpdate):
 
     @same_structure_required('core:path_detail')
     def dispatch(self, *args, **kwargs):
+        path = self.get_object()
+        if path.draft and not self.request.user.has_perm('core.change_draft_path'):
+            messages.warning(self.request, _(
+                u'Access to the requested resource is restricted. You have been redirected.'))
+            return redirect('core:path_detail', **kwargs)
+        if not path.draft and not self.request.user.has_perm('core.change_path'):
+            messages.warning(self.request, _(
+                u'Access to the requested resource is restricted. You have been redirected.'))
+            return redirect('core:path_detail', **kwargs)
+        if path.draft and self.request.user.has_perm('core.change_draft_path'):
+            return super(MapEntityUpdate, self).dispatch(*args, **kwargs)
         return super(PathUpdate, self).dispatch(*args, **kwargs)
 
 
@@ -147,6 +170,17 @@ class PathDelete(MapEntityDelete):
 
     @same_structure_required('core:path_detail')
     def dispatch(self, *args, **kwargs):
+        path = self.get_object()
+        if path.draft and not self.request.user.has_perm('core.delete_draft_path'):
+            messages.warning(self.request, _(
+                u'Access to the requested resource is restricted. You have been redirected.'))
+            return redirect('core:path_detail', **kwargs)
+        if not path.draft and not self.request.user.has_perm('core.delete_path'):
+            messages.warning(self.request, _(
+                u'Access to the requested resource is restricted. You have been redirected.'))
+            return redirect('core:path_detail', **kwargs)
+        if path.draft and self.request.user.has_perm('core.delete_draft_path'):
+            return super(MapEntityDelete, self).dispatch(*args, **kwargs)
         return super(PathDelete, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -192,7 +226,7 @@ def get_graph_json(request):
 
     # cache does not exist or is not up to date
     # rebuild the graph and cache the json
-    graph = graph_lib.graph_edges_nodes_of_qs(Path.objects.all())
+    graph = graph_lib.graph_edges_nodes_of_qs(Path.objects.exclude(draft=True))
     json_graph = json.dumps(graph)
 
     cache.set(key, (latest, json_graph))
@@ -274,6 +308,10 @@ def merge_path(request):
 
         if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
             response = {'error': _(u"You don't have the right to change these paths")}
+            return HttpJSONResponse(response)
+
+        if path_a.draft != path_b.draft:
+            response = {'error': _(u"You can't merge 1 draft path with 1 normal path")}
             return HttpJSONResponse(response)
 
         try:

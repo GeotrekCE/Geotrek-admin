@@ -11,6 +11,10 @@
 
     <table class="table-striped table-bordered table">
         <tr>
+            <th>{{ object|verbose:"draft" }}</th>
+            <td>{{ object.draft|yesno|title }}</td>
+        </tr>
+        <tr>
             <th>{{ path|verbose:"departure" }}</th>
             <td>{{ path.departure }}</td>
         </tr>

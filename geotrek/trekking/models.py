@@ -119,6 +119,8 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                                     verbose_name=_("Portal"), db_table='o_r_itineraire_portal')
     eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
     eid2 = models.CharField(verbose_name=_(u"Second external id"), max_length=128, blank=True, null=True, db_column='id_externe2')
+    pois_excluded = models.ManyToManyField('Poi', related_name='excluded_treks', verbose_name=_(u"Excluded POIs"),
+                                           db_table="l_r_troncon_poi_exclus")
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
@@ -415,13 +417,20 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         return plain_text(self.ambiance or self.description_teaser or self.description)[:500]
 
     def get_printcontext(self):
-        return {
-            "maplayers": [
-                ugettext(u"Sensitive area"),
-                ugettext(u"POIs"),
-                ugettext(u"services"),
-                settings.LEAFLET_CONFIG['TILES'][0][0],
-            ]}
+        maplayers = [
+            settings.LEAFLET_CONFIG['TILES'][0][0],
+        ]
+        if settings.SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT:
+            maplayers.append(ugettext(u"Sensitive area"))
+        if settings.SHOW_POIS_ON_MAP_SCREENSHOT:
+            maplayers.append(ugettext(u"POIs"))
+        if settings.SHOW_SERVICES_ON_MAP_SCREENSHOT:
+            maplayers.append(ugettext(u"Services"))
+        if settings.SHOW_SIGNAGES_ON_MAP_SCREENSHOT:
+            maplayers.append(ugettext(u"Signages"))
+        if settings.SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT:
+            maplayers.append(ugettext(u"Infrastructures"))
+        return {"maplayers": maplayers}
 
 
 Path.add_property('treks', Trek.path_treks, _(u"Treks"))
@@ -688,6 +697,17 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     def topology_pois(cls, topology):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             qs = cls.overlapping(topology)
+            qs = cls.exclude_pois(qs, topology)
+        else:
+            area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
+            qs = cls.objects.existing().filter(geom__intersects=area)
+            qs = cls.exclude_pois(qs, topology)
+        return qs
+
+    @classmethod
+    def topology_all_pois(cls, topology):
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            qs = cls.overlapping(topology)
         else:
             area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
             qs = cls.objects.existing().filter(geom__intersects=area)
@@ -700,6 +720,13 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     def distance(self, to_cls):
         return settings.TOURISM_INTERSECTION_MARGIN
 
+    @classmethod
+    def exclude_pois(cls, qs, topology):
+        try:
+            return qs.exclude(pk__in=topology.trek.pois_excluded.values_list('pk', flat=True))
+        except Trek.DoesNotExist:
+            return qs
+
     @property
     def extent(self):
         return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom else None
@@ -707,6 +734,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
 
 Path.add_property('pois', POI.path_pois, _(u"POIs"))
 Topology.add_property('pois', POI.topology_pois, _(u"POIs"))
+Topology.add_property('all_pois', POI.topology_all_pois, _(u"POIs"))
 Topology.add_property('published_pois', POI.published_topology_pois, _(u"Published POIs"))
 Intervention.add_property('pois', lambda self: self.topology.pois if self.topology else [], _(u"POIs"))
 Project.add_property('pois', lambda self: self.edges_by_attr('pois'), _(u"POIs"))

@@ -426,10 +426,9 @@ COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '
 
 MAP_STYLES = {
     'path': {'weight': 2, 'color': '#FF4800', 'opacity': 1.0},
-
+    'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
     'city': {'weight': 4, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0},
     'district': {'weight': 6, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
-
     'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
     'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
     'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
@@ -497,8 +496,16 @@ TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT = 2
 
 TREK_ICON_SIZE_POI = 18
 TREK_ICON_SIZE_SERVICE = 18
+TREK_ICON_SIZE_SIGNAGE = 18
+TREK_ICON_SIZE_INFRASTRUCTURE = 18
 TREK_ICON_SIZE_PARKING = 18
 TREK_ICON_SIZE_INFORMATION_DESK = 18
+
+SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT = True
+SHOW_POIS_ON_MAP_SCREENSHOT = True
+SHOW_SERVICES_ON_MAP_SCREENSHOT = True
+SHOW_SIGNAGES_ON_MAP_SCREENSHOT = True
+SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT = True
 
 # Static offsets in projection units
 TOPOLOGY_STATIC_OFFSETS = {'land': -5,

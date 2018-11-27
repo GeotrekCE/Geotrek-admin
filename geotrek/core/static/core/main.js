@@ -10,15 +10,19 @@ MapEntity.pathsLayer = function buildPathLayer(options) {
     });
 
     // Start ajax loading at last
-    pathsLayer.load(window.SETTINGS.urls.path_layer, true);
+    url = window.SETTINGS.urls.path_layer
+    if (options.no_draft){
+        pathsLayer.load(url + '?no_draft=true+', true);
+    }
+    else {
+        pathsLayer.load(url, true);
+    }
 
     return pathsLayer;
 };
 
-
 $(window).on('entity:map', function (e, data) {
     var map = data.map;
-
     // Show the path layer only if model is not path, and if we are not
     // in an editing widget
     var is_form_view = /add|update/.test(data.view);
@@ -28,6 +32,7 @@ $(window).on('entity:map', function (e, data) {
             indexing: false,
             style: { clickable: false },
             modelname: 'path',
+            no_draft: data.modelname != 'path',
         });
         pathsLayer.addTo(map);
 

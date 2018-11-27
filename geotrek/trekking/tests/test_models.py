@@ -154,16 +154,22 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
         p2 = PathFactory.create(geom=LineString((4, 4), (8, 8)))
         poi = POIFactory.create(no_path=True)
+        poi2 = POIFactory.create(no_path=True)
         service = ServiceFactory.create(no_path=True)
         service.type.practices.add(trek.practice)
         trek.add_path(path=p1, start=0.5, end=1)
         trek.add_path(path=p2, start=0, end=1)
         poi.add_path(path=p1, start=0.6, end=0.6)
+        poi2.add_path(path=p1, start=0.6, end=0.6)
         service.add_path(path=p1, start=0.7, end=0.7)
+        trek.pois_excluded.add(poi2.pk)
+
         # /!\ District are automatically linked to paths at DB level
         d1 = DistrictFactory.create(geom=MultiPolygon(
             Polygon(((-2, -2), (3, -2), (3, 3), (-2, 3), (-2, -2)))))
         # Ensure related objects are accessible
+        self.assertItemsEqual(trek.pois_excluded.all(), [poi2])
+        self.assertItemsEqual(trek.all_pois, [poi, poi2])
         self.assertItemsEqual(trek.pois, [poi])
         self.assertItemsEqual(trek.services, [service])
         self.assertItemsEqual(poi.treks, [trek])
@@ -171,7 +177,10 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         self.assertItemsEqual(trek.districts, [d1])
 
         # Ensure there is no duplicates
+
         trek.add_path(path=p1, start=0.5, end=1)
+        self.assertItemsEqual(trek.pois_excluded.all(), [poi2])
+        self.assertItemsEqual(trek.all_pois, [poi, poi2])
         self.assertItemsEqual(trek.pois, [poi])
         self.assertItemsEqual(trek.services, [service])
         self.assertItemsEqual(poi.treks, [trek])

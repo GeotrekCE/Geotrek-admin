@@ -37,7 +37,8 @@ from geotrek.trekking.models import POI, Trek, Service, OrderedTrekChild
 from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
                                         TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
                                         TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
-                                        TrekWithServicesFactory)
+                                        TrekWithServicesFactory, TrekWithInfrastructuresFactory,
+                                        TrekWithSignagesFactory)
 from geotrek.trekking.templatetags import trekking_tags
 from geotrek.trekking.serializers import timestamp
 from geotrek.trekking import views as trekking_views
@@ -250,6 +251,7 @@ class TrekViewsTest(CommonTest):
             'trek_relationship_a-1-has_common_edge': '',
             'trek_relationship_a-1-has_common_departure': '',
             'trek_relationship_a-1-is_circuit_step': 'on',
+            'pois_excluded': POIFactory.create().pk
         }
 
     def test_badfield_goodgeom(self):
@@ -271,6 +273,25 @@ class TrekViewsTest(CommonTest):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
             self.assertEqual(response.status_code, 200)
 
+    def test_no_pois_detached_in_create(self):
+        self.login()
+        response = self.client.get(self.model.get_add_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn('pois_excluded', response.content)
+
+    def test_pois_detached_update(self):
+        self.login()
+        p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
+        trek = TrekFactory.create(no_path=True)
+        trek.add_path(p1)
+        poi = POIFactory.create(no_path=True)
+        poi.add_path(p1, start=0.6, end=0.6)
+
+        good_data = self.get_good_data()
+        good_data['pois_excluded'] = poi.pk
+        self.client.post(self.model.get_update_url(trek), good_data)
+        self.assertIn(poi, trek.pois_excluded.all())
+
 
 class TrekViewsLiveTest(MapEntityLiveTest):
     model = Trek
@@ -282,15 +303,48 @@ class TrekCustomViewTests(TrekkingManagerTest):
     def setUp(self):
         self.login()
 
+    def test_infrastructure_geojson(self):
+        trek = TrekWithInfrastructuresFactory.create(published=True)
+        self.assertEqual(len(trek.infrastructures), 2)
+        infra = trek.infrastructures[0]
+        infra.published = True
+        infra.save()
+        self.assertEqual(len(trek.infrastructures), 2)
+
+        url = '/api/en/treks/{pk}/infrastructures.geojson'.format(pk=trek.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        infrastructureslayer = json.loads(response.content)
+        infrastructurefeature = infrastructureslayer['features'][0]
+        self.assertEqual(infrastructurefeature['properties']['name'], infra.name)
+
+    def test_signage_geojson(self):
+        trek = TrekWithSignagesFactory.create(published=True)
+        self.assertEqual(len(trek.signages), 2)
+        signa = trek.signages[0]
+        signa.published = True
+        signa.save()
+        self.assertEqual(len(trek.signages), 2)
+
+        url = '/api/en/treks/{pk}/signages.geojson'.format(pk=trek.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        signageslayer = json.loads(response.content)
+        signagefeature = signageslayer['features'][0]
+        self.assertEqual(signagefeature['properties']['name'], signa.name)
+
     def test_pois_geojson(self):
         trek = TrekWithPOIsFactory.create(published=True)
-        self.assertEqual(len(trek.pois), 2)
+        first_poi = trek.pois.first()
+        trek.pois_excluded.add(first_poi)
+        trek.save()
+        self.assertEqual(len(trek.pois), 1)
         poi = trek.pois[0]
         poi.published = True
         poi.save()
         AttachmentFactory.create(content_object=poi, attachment_file=get_dummy_uploaded_image())
         self.assertNotEqual(poi.thumbnail, None)
-        self.assertEqual(len(trek.pois), 2)
+        self.assertEqual(len(trek.pois), 1)
 
         url = '/api/en/treks/{pk}/pois.geojson'.format(pk=trek.pk)
         response = self.client.get(url)
@@ -298,6 +352,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         poislayer = json.loads(response.content)
         poifeature = poislayer['features'][0]
         self.assertTrue('thumbnail' in poifeature['properties'])
+        self.assertEqual(len(poislayer['features']), 1)
 
     def test_services_geojson(self):
         trek = TrekWithServicesFactory.create(published=True)
@@ -1141,28 +1196,6 @@ class TrekWorkflowTest(TranslationResetMixin, TestCase):
         self.assertContains(response, 'Published')
 
 
-class SyncRandoViewTest(TestCase):
-    def setUp(self):
-        self.user = User.objects.create_user('bart', password='mahaha')
-
-    def test_return_redirect(self):
-        response = self.client.get(reverse('trekking:sync_randos_view'))
-        self.assertEqual(response.status_code, 302)
-
-    def test_return_redirect_superuser(self):
-        self.user.is_superuser = True
-        response = self.client.get(reverse('trekking:sync_randos_view'))
-        self.assertEqual(response.status_code, 302)
-
-    def test_post_sync_redirect(self):
-        """
-        test if sync can be launched by superuser post
-        """
-        self.user.is_superuser = True
-        response = self.client.post(reverse('trekking:sync_randos'))
-        self.assertEqual(response.status_code, 302)
-
-
 class ServiceViewsTest(CommonTest):
     model = Service
     modelfactory = ServiceFactory
@@ -1227,14 +1260,33 @@ class ServiceJSONTest(TrekkingManagerTest):
                               })
 
 
-class ViewsSyncTest(TestCase):
-
+class SyncRandoViewTest(TestCase):
     def setUp(self):
-        self.user = SuperUserFactory.create(username='homer', password='dooh')
-        success = self.client.login(username=self.user.username, password='dooh')
-        self.assertTrue(success)
+        self.super_user = SuperUserFactory.create(username='admin', password='super')
+        self.simple_user = User.objects.create_user(username='homer', password='doooh')
 
-    def test_import_update_access(self):
-        url = reverse('trekking:sync_randos_view')
-        response = self.client.get(url)
+    def test_get_sync_superuser(self):
+        self.client.login(username='admin', password='super')
+        response = self.client.get(reverse('trekking:sync_randos_view'))
         self.assertEqual(response.status_code, 200)
+
+    def test_post_sync_superuser(self):
+        """
+        test if sync can be launched by superuser post
+        """
+        self.client.login(username='admin', password='super')
+        response = self.client.post(reverse('trekking:sync_randos'), data={})
+        self.assertRedirects(response, '/commands/syncview')
+
+    def test_get_sync_simpleuser(self):
+        self.client.login(username='homer', password='doooh')
+        response = self.client.get(reverse('trekking:sync_randos_view'))
+        self.assertRedirects(response, '/login/?next=/commands/syncview')
+
+    def test_post_sync_simpleuser(self):
+        """
+        test if sync can be launched by simple user post
+        """
+        self.client.login(username='homer', password='doooh')
+        response = self.client.post(reverse('trekking:sync_randos'), data={})
+        self.assertRedirects(response, '/login/?next=/commands/sync')

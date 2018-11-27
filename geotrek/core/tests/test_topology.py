@@ -138,6 +138,20 @@ class TopologyTest(TestCase):
         self.assertNotIn(path_unvisible.pk, [ele['id_path'] for ele in datas], u"{}".format(datas))
         cur.close()
 
+    def test_topology_linked_to_not_draft(self):
+        path_draft = PathFactory.create(name="draft",
+                                        geom='LINESTRING(0 0, 1 0, 2 0)',
+                                        draft=True)
+        path_draft.save()
+        path_normal = PathFactory.create(name="normal",
+                                         geom='LINESTRING(0 3, 1 3, 2 3)',
+                                         draft=False)
+        path_normal.save()
+        point = Point(0, 0, srid=settings.SRID)
+        closest = Path.closest(point)
+        self.assertEqual(point.wkt, 'POINT (0 0)')
+        self.assertEqual(closest, path_normal)
+
 
 class TopologyDeletionTest(TestCase):
 
