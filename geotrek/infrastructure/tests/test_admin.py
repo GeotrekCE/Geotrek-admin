@@ -56,7 +56,7 @@ class InfrastructureConditionAdminTest(AuthentFixturesTest):
         self.client.logout()
         self.user.delete()
 
-    def test_infrastructuretype_can_be_change(self):
+    def test_infrastructurecondition_can_be_change(self):
         self.login()
 
         change_url = reverse('admin:infrastructure_infrastructurecondition_change', args=[self.infra.pk])
@@ -66,7 +66,7 @@ class InfrastructureConditionAdminTest(AuthentFixturesTest):
 
         self.assertEqual(response.url, '/admin/infrastructure/infrastructurecondition/')
 
-    def test_infrastructuretype_changelist(self):
+    def test_infrastructurecondition_changelist(self):
         self.login()
         changelist_url = reverse('admin:infrastructure_infrastructurecondition_changelist')
         response = self.client.get(changelist_url)
