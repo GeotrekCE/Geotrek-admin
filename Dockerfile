@@ -40,6 +40,7 @@ ADD VERSION /app/src/VERSION
 ADD .coveragerc /app/src/.coveragerc
 RUN chown django:django -R /app
 COPY docker/* /usr/local/bin/
+COPY tools/* /usr/local/bin/
 
 ADD requirements.txt /app/src/requirements.txt
 RUN pip install --no-cache-dir -r /app/src/requirements.txt
