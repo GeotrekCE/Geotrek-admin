@@ -2,12 +2,13 @@
 CHANGELOG
 =========
 
-2.22.1.dev0
+2.22.1 (2018-11-27)
 -------------------
 
 **Bug fixes**
 
--
+- Fix trekking form with pois_excluded
+- Give the possibility to get type of infrastructures and signages without structure
 
 
 2.22.0 (2018-11-27)
