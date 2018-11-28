@@ -747,7 +747,7 @@ class Command(BaseCommand):
         if not options['url'].startswith(('http://', 'https://')):
             raise CommandError('url parameter should start with http:// or https:// ()')
         self.referer = options['url']
-        self.host = self.referer[7:]
+        self.host = self.referer.split('://')[1]
         self.rando_url = options['rando_url']
         if self.rando_url.endswith('/'):
             self.rando_url = self.rando_url[:-1]
@@ -813,6 +813,6 @@ class Command(BaseCommand):
 
         if not self.successfull:
             self.stderr.write(self.style.ERROR('Some errors raised during synchronization.'))
-            sys.exit(1)
+            raise CommandError
 
         sleep(2)  # end sleep to ensure sync page get result
