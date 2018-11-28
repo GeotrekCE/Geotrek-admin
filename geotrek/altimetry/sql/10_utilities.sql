@@ -322,7 +322,7 @@ END;
 
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION geotrek.ft_elevation_infos_evenement(geom geometry, epsilon float) RETURNS elevation_infos AS $$
+CREATE OR REPLACE FUNCTION geotrek.ft_elevation_infos_with_3d(geom geometry, epsilon float) RETURNS elevation_infos AS $$
 DECLARE
     num_points integer;
     current geometry;

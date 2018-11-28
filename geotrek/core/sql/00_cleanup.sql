@@ -16,6 +16,8 @@ DROP FUNCTION IF EXISTS public.ft_evenements_troncons_junction_point_iu() CASCAD
 DROP FUNCTION IF EXISTS public.check_path_not_overlap(integer, geometry) CASCADE;
 DROP FUNCTION IF EXISTS public.update_evenement_geom_when_troncon_changes() CASCADE;
 DROP FUNCTION IF EXISTS public.elevation_troncon_iu() CASCADE;
+DROP FUNCTION IF EXISTS public.elevation_troncon_iu_add() CASCADE;
+DROP FUNCTION IF EXISTS public.elevation_troncon_iu_change() CASCADE;
 DROP FUNCTION IF EXISTS public.troncons_related_objects_d() CASCADE;
 DROP FUNCTION IF EXISTS public.troncon_latest_updated_d() CASCADE;
 DROP FUNCTION IF EXISTS public.troncons_snap_extremities() CASCADE;

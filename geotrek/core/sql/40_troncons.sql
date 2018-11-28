@@ -172,11 +172,23 @@ DROP TRIGGER IF EXISTS l_t_troncon_10_elevation_iu_tgr ON l_t_troncon;
 DROP TRIGGER IF EXISTS l_t_troncon_10_elevation_iu_tgr_update ON l_t_troncon;
 DROP TRIGGER IF EXISTS l_t_troncon_10_elevation_iu_tgr_insert ON l_t_troncon;
 
-CREATE OR REPLACE FUNCTION geotrek.elevation_troncon_iu() RETURNS trigger SECURITY DEFINER AS $$
+CREATE OR REPLACE FUNCTION geotrek.elevation_troncon_iu_add() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     elevation elevation_infos;
 BEGIN
-    SELECT * FROM ft_elevation_infos(NEW.geom, {{ALTIMETRIC_PROFILE_STEP}}) INTO elevation;
+    IF ST_IsEmpty(NEW.geom_3d) OR NEW.geom_3d IS NULL THEN
+        SELECT * FROM ft_elevation_infos(NEW.geom, {{ALTIMETRIC_PROFILE_STEP}}) INTO elevation;
+        -- Update path geometry
+        NEW.geom_3d := elevation.draped;
+        NEW.longueur := ST_3DLength(elevation.draped);
+        NEW.pente := elevation.slope;
+        NEW.altitude_minimum := elevation.min_elevation;
+        NEW.altitude_maximum := elevation.max_elevation;
+        NEW.denivelee_positive := elevation.positive_gain;
+        NEW.denivelee_negative := elevation.negative_gain;
+        RETURN NEW;
+    END IF;
+    SELECT * FROM ft_elevation_infos_with_3d(NEW.geom_3d, {{ALTIMETRIC_PROFILE_STEP}}) INTO elevation;
     -- Update path geometry
     NEW.geom_3d := elevation.draped;
     NEW.longueur := ST_3DLength(elevation.draped);
@@ -189,16 +201,36 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION geotrek.elevation_troncon_iu_change() RETURNS trigger AS $$
+DECLARE
+    elevation elevation_infos;
+BEGIN
+    IF ST_IsEmpty(NEW.geom_3d) OR NEW.geom_3d IS NULL OR NOT ST_EQUALS(NEW.geom_3d, NEW.geom) THEN
+        SELECT * FROM ft_elevation_infos(NEW.geom, {{ALTIMETRIC_PROFILE_STEP}}) INTO elevation;
+        -- Update path geometry
+        NEW.geom_3d := elevation.draped;
+        NEW.longueur := ST_3DLength(elevation.draped);
+        NEW.pente := elevation.slope;
+        NEW.altitude_minimum := elevation.min_elevation;
+        NEW.altitude_maximum := elevation.max_elevation;
+        NEW.denivelee_positive := elevation.positive_gain;
+        NEW.denivelee_negative := elevation.negative_gain;
+        RETURN NEW;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE TRIGGER l_t_troncon_10_elevation_iu_tgr_update
 BEFORE UPDATE OF geom ON l_t_troncon
 FOR EACH ROW
 WHEN (NOT (ST_Contains(ST_Buffer(NEW.geom,0.0001),OLD.geom) AND ST_Contains(ST_Buffer(OLD.geom,0.0001),NEW.geom)))
-EXECUTE PROCEDURE elevation_troncon_iu();
+EXECUTE PROCEDURE elevation_troncon_iu_change();
 
 CREATE TRIGGER l_t_troncon_10_elevation_iu_tgr_insert
 BEFORE INSERT ON l_t_troncon
 FOR EACH ROW
-EXECUTE PROCEDURE elevation_troncon_iu();
+EXECUTE PROCEDURE elevation_troncon_iu_add();
 
 -------------------------------------------------------------------------------
 -- Change status of related objects when paths are deleted
