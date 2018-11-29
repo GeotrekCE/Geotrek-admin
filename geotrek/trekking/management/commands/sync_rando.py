@@ -4,7 +4,6 @@ import logging
 import filecmp
 import os
 import re
-import sys
 import shutil
 from time import sleep
 from zipfile import ZipFile
@@ -807,10 +806,11 @@ class Command(BaseCommand):
         self.rename_root()
 
         if self.verbosity >= 1:
-            self.stdout.write('Done')
+            self.stdout.write(self.style.SUCCES('Done'))
 
         if not self.successfull:
-            self.stdout.write('Some errors raised during synchronization.')
-            sys.exit(1)
+            message = 'Some errors raised during synchronization.'
+            self.stderr.write(self.style.ERROR(message))
+            raise CommandError(message)
 
         sleep(2)  # end sleep to ensure sync page get result
