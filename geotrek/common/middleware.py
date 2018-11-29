@@ -72,6 +72,7 @@ except socket.error:
 
 class FixedAutoLoginMiddleware(AutoLoginMiddleware):
     def process_request(self, request):
+        print(request.META)
         if "HTTP_X_FORWARDED_FOR" in request.META:
             request.META["HTTP_X_PROXY_REMOTE_ADDR"] = request.META["REMOTE_ADDR"]
             parts = request.META["HTTP_X_FORWARDED_FOR"].split(",", 1)
@@ -92,8 +93,6 @@ class FixedAutoLoginMiddleware(AutoLoginMiddleware):
                 (remoteip in LOCALHOST or remotehost in REMOTE_HOSTS)
                 or (remoteip and remoteip in (CONVERSION_SERVER_HOST, CAPTURE_SERVER_HOST))
                 or (remotehost and remotehost in (CONVERSION_SERVER_HOST, CAPTURE_SERVER_HOST))
-                or ('casperjs' in request.META['HTTP_USER_AGENT'].lower()
-                    and 'phantomjs' in request.META['HTTP_USER_AGENT'].lower())
             )
             if is_auto_allowed:
                 print("Auto-login for %s/%s" % (remoteip, remotehost))
@@ -103,4 +102,5 @@ class FixedAutoLoginMiddleware(AutoLoginMiddleware):
                 except DatabaseError as exc:
                     print(exc)
                 request.user = user
+
         return None

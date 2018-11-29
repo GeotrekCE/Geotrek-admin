@@ -4,7 +4,6 @@ import logging
 import filecmp
 import os
 import re
-import sys
 import shutil
 from time import sleep
 from zipfile import ZipFile
@@ -812,7 +811,8 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS('Done'))
 
         if not self.successfull:
-            self.stderr.write(self.style.ERROR('Some errors raised during synchronization.'))
-            raise CommandError
+            message = 'Some errors raised during synchronization.'
+            self.stderr.write(self.style.ERROR(message))
+            raise CommandError(message)
 
         sleep(2)  # end sleep to ensure sync page get result
