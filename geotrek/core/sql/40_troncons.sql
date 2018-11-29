@@ -144,11 +144,12 @@ CREATE TRIGGER l_t_troncon_90_evenements_geom_u_tgr
 AFTER UPDATE OF geom ON l_t_troncon
 FOR EACH ROW
 WHEN (NOT (ST_Contains(ST_Buffer(NEW.geom,0.0001),OLD.geom) AND ST_Contains(ST_Buffer(OLD.geom,0.0001),New.geom)
-AND ST_EQUALS(ST_StartPoint(NEW.geom),ST_StartPoint(OLD.geom)) AND NEW.id != OLD.id))
+AND ST_Contains(ST_StartPoint(NEW.geom),ST_StartPoint(OLD.geom)) AND NEW.id != OLD.id))
 EXECUTE PROCEDURE update_evenement_geom_when_troncon_changes();
 -- We check that geometry is not the same as before (we can't use ST_equals because it's not exactly the same with round)
 -- We check also that geometry as not been reverse : If yes we do like usual
 -- Finally we check if the ID changed : if the id changed it means we did a split.
+-- Then we update all topologies
 
 -------------------------------------------------------------------------------
 -- Ensure paths have valid geometries
@@ -178,8 +179,12 @@ DECLARE
     elevation elevation_infos;
 BEGIN
     IF ST_IsEmpty(NEW.geom_3d) OR NEW.geom_3d IS NULL
-     OR (NOT ST_Contains(ST_Buffer(ST_FORCE_2D(NEW.geom_3d),0.0001), NEW.geom)
-     OR NOT ST_Contains(ST_Buffer(NEW.geom,0.0001), ST_FORCE_2D(NEW.geom_3d))) THEN
+    OR (NOT ST_Contains(ST_Buffer(ST_FORCE_2D(NEW.geom_3d),0.0001), NEW.geom)
+    OR NOT ST_Contains(ST_Buffer(NEW.geom,0.0001), ST_FORCE_2D(NEW.geom_3d))
+    OR NOT ST_Contains(ST_BUFFER(ST_STARTPOINT(NEW.geom), 0.0001), ST_STARTPOINT(NEW.geom_3d))) THEN
+    -- We check that we have a 3d generated in troncon_split (generated with intersection_on_current only)
+    -- We check also that geometry_3d is the same as geometry.
+    -- If the condition IS TRUE : It means that the geom and geom_3d didn't change and geom was not reversed.
         SELECT * FROM ft_elevation_infos(NEW.geom, {{ALTIMETRIC_PROFILE_STEP}}) INTO elevation;
         RAISE NOTICE 'Add path geometry without 3d';
         -- Update path geometry
@@ -209,8 +214,12 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER l_t_troncon_10_elevation_iu_tgr_update
 BEFORE UPDATE OF geom ON l_t_troncon
 FOR EACH ROW
-WHEN (NOT (ST_Contains(ST_Buffer(NEW.geom,0.0001),OLD.geom) AND ST_Contains(ST_Buffer(OLD.geom,0.0001),NEW.geom)))
+WHEN (NOT (ST_Contains(ST_Buffer(NEW.geom,0.0001),OLD.geom) AND ST_Contains(ST_Buffer(OLD.geom,0.0001),NEW.geom)
+AND ST_Contains(ST_Buffer(ST_STARTPOINT(NEW.geom), 0.0001), ST_ENDPOINT(OLD.geom))))
 EXECUTE PROCEDURE elevation_troncon_iu();
+-- We check that geometry is not the same as before (we can't use ST_equals because it's not exactly the same with round)
+-- We check also that geometry as not been reverse
+-- Then we get the elevation.
 
 CREATE TRIGGER l_t_troncon_10_elevation_iu_tgr_insert
 BEFORE INSERT ON l_t_troncon
