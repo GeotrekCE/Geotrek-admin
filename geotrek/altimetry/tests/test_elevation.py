@@ -529,7 +529,7 @@ class TestUpdateGeom(TestCase):
         cur.execute('UPDATE mnt SET rast = ST_AddBand(rast, \'16BSI\')')
         path.reload()
         self.assertEqual(len(path.geom_3d.coords), 3)
-        call_command('update_geom', verbosity=1)
+        call_command('update_geom', verbosity=0)
         path.reload()
         self.assertEqual(len(path.geom_3d.coords), 7)
 
