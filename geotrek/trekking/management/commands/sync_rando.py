@@ -806,11 +806,9 @@ class Command(BaseCommand):
         self.rename_root()
 
         if self.verbosity >= 1:
-            self.stdout.write(self.style.SUCCES('Done'))
+            self.stdout.write('Done')
 
         if not self.successfull:
-            message = 'Some errors raised during synchronization.'
-            self.stderr.write(self.style.ERROR(message))
-            raise CommandError(message)
+            self.stderr.write(self.style.ERROR('Some errors raised during synchronization.'))
 
         sleep(2)  # end sleep to ensure sync page get result
