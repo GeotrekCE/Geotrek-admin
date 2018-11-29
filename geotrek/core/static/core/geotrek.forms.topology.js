@@ -49,6 +49,7 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
 
     initialize: function () {
         MapEntity.GeometryField.prototype.initialize.apply(this, arguments);
+        this.options.all_modifiable = this.options.modifiable;
         this.options.modifiable = false; // Will disable leaflet.draw in leaflet.forms.js
         this._objectsLayer = null;
         this._pathsLayer = null;
@@ -58,7 +59,9 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
 
     addTo: function (map) {
         MapEntity.GeometryField.prototype.addTo.call(this, map);
-        this._initTopologyControl(map);
+        if (this.options.all_modifiable) {
+            this._initTopologyControl(map);
+        };
     },
 
     _initTopologyControl: function (map) {
