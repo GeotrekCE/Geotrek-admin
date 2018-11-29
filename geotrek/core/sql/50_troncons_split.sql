@@ -106,7 +106,6 @@ DECLARE
     segment geometry;
     segment_3d geometry;
     newgeom geometry;
-    elevation elevation_infos;
     intersections_on_new float8[];
     intersections_on_current float8[];
 BEGIN
@@ -279,18 +278,7 @@ BEGIN
                     SELECT geom, geom_3d INTO t_geom, t_geom_3d FROM l_t_troncon WHERE id = troncon.id;
                     IF NOT ST_Equals(t_geom, segment) THEN
                         RAISE NOTICE 'Current: Skrink %-% (%) to %', troncon.id, troncon.nom, ST_AsText(troncon.geom), ST_AsText(segment);
-                        IF ST_Contains(ST_Buffer(t_geom_3d,0.0001), segment_3d) AND ST_EQUALS(segment_3d, segment) THEN
-                            SELECT * FROM ft_elevation_infos_with_3d(segment_3d, {{ALTIMETRIC_PROFILE_STEP}}) INTO elevation;
-                            UPDATE l_t_troncon SET
-                            geom_3d = elevation.draped,
-                            longueur = ST_3DLength(elevation.draped),
-                            pente = elevation.slope,
-                            altitude_minimum = elevation.min_elevation,
-                            altitude_maximum = elevation.max_elevation,
-                            denivelee_positive = elevation.positive_gain,
-                            denivelee_negative = elevation.negative_gain
-                            WHERE id = troncon.id;
-                        END IF;
+                        UPDATE l_t_troncon SET geom_3d = segment_3d WHERE id = troncon.id;
                         UPDATE l_t_troncon SET geom = segment WHERE id = troncon.id;
                     END IF;
                 ELSE
