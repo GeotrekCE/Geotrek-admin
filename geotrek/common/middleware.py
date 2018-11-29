@@ -87,11 +87,13 @@ class FixedAutoLoginMiddleware(AutoLoginMiddleware):
         if user and user.is_anonymous() and not is_running_tests:
             remoteip = request.META.get('REMOTE_ADDR')
             remotehost = request.META.get('REMOTE_HOST')
-            print(remoteip, remotehost, LOCALHOST, REMOTE_HOSTS, CONVERSION_SERVER_HOST, CAPTURE_SERVER_HOST)
+
             is_auto_allowed = (
                 (remoteip in LOCALHOST or remotehost in REMOTE_HOSTS)
                 or (remoteip and remoteip in (CONVERSION_SERVER_HOST, CAPTURE_SERVER_HOST))
                 or (remotehost and remotehost in (CONVERSION_SERVER_HOST, CAPTURE_SERVER_HOST))
+                or ('casperjs' in request.META['HTTP_USER_AGENT'].lower()
+                    and 'phantomjs' in request.META['HTTP_USER_AGENT'].lower())
             )
             if is_auto_allowed:
                 print("Auto-login for %s/%s" % (remoteip, remotehost))
