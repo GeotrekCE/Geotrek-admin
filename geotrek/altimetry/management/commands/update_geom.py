@@ -13,10 +13,12 @@ class Command(BaseCommand):
         cur.close()
         if not dem_exists:
             raise CommandError("There is no DEM, the command won't do anything")
-        self.stdout.write('Everything looks fine, we can start reload geometries\n')
+        if options['verbosity'] > 0:
+            self.stdout.write('Everything looks fine, we can start reload geometries\n')
         cur = connection.cursor()
         sql = 'SELECT update_evenement_geom_when_troncon_changes_nt();'
         cur.execute(sql)
         cur.close()
-        self.stdout.write('Geometries reloaded\n')
+        if options['verbosity'] > 0:
+            self.stdout.write('Geometries reloaded\n')
         return
