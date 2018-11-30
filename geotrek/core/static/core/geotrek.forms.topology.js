@@ -59,9 +59,7 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
 
     addTo: function (map) {
         MapEntity.GeometryField.prototype.addTo.call(this, map);
-        if (this.options.all_modifiable) {
-            this._initTopologyControl(map);
-        };
+        this._initTopologyControl(map);
     },
 
     _initTopologyControl: function (map) {
@@ -77,15 +75,20 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
         }
 
         function addTopologyControl(name, controlClass) {
-            var control = this[name] = new controlClass(map, this._pathsLayer, this);
-            map.addControl(control);
-            exclusive.add(control);
-            control.activable(false);
-            control.handler.on('computed_topology', function (e) {
-                this.store.save(e.topology);
-            }, this);
-            // Make sure, we clean-up geometries when user changes from point to line
-            control.handler.on('enabled', resetTopologies, this);
+            if (this.options.all_modifiable){
+                var control = this[name] = new controlClass(map, this._pathsLayer, this);
+                    map.addControl(control);
+                    exclusive.add(control);
+                    control.activable(false);
+                control.handler.on('computed_topology', function (e) {
+                    this.store.save(e.topology);
+                }, this);
+                // Make sure, we clean-up geometries when user changes from point to line
+                control.handler.on('enabled', resetTopologies, this);
+            }
+            else {
+                map.remove()
+            };
         }
 
         function resetTopologies() {
