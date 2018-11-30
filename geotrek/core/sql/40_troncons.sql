@@ -144,7 +144,7 @@ CREATE TRIGGER l_t_troncon_90_evenements_geom_u_tgr
 AFTER UPDATE OF geom ON l_t_troncon
 FOR EACH ROW
 WHEN (NOT (ST_Contains(ST_Buffer(NEW.geom,0.0001),OLD.geom) AND ST_Contains(ST_Buffer(OLD.geom,0.0001),New.geom)
-AND ST_Contains(ST_StartPoint(NEW.geom),ST_StartPoint(OLD.geom)) AND NEW.id != OLD.id))
+AND ST_Contains(ST_Buffer(ST_StartPoint(NEW.geom), 0.0001),ST_StartPoint(OLD.geom)) AND NEW.id != OLD.id))
 EXECUTE PROCEDURE update_evenement_geom_when_troncon_changes();
 -- We check that geometry is not the same as before (we can't use ST_equals because it's not exactly the same with round)
 -- We check also that geometry as not been reverse : If yes we do like usual
