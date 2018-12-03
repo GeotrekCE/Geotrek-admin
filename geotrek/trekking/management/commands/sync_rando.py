@@ -4,7 +4,6 @@ import logging
 import filecmp
 import os
 import re
-import sys
 import shutil
 from time import sleep
 from zipfile import ZipFile
@@ -747,7 +746,7 @@ class Command(BaseCommand):
         if options['url'][:7] not in ('http://', 'https://'):
             raise CommandError('url parameter should start with http:// or https://')
         self.referer = options['url']
-        self.host = self.referer[7:]
+        self.host = self.referer.split('://')[1]
         self.rando_url = options['rando_url']
         if self.rando_url.endswith('/'):
             self.rando_url = self.rando_url[:-1]
@@ -806,11 +805,14 @@ class Command(BaseCommand):
 
         self.rename_root()
 
+        done_message = 'Done'
+        if self.successfull:
+            done_message = self.style.SUCCESS(done_message)
+
         if self.verbosity >= 1:
-            self.stdout.write('Done')
+            self.stdout.write(done_message)
 
         if not self.successfull:
-            self.stdout.write('Some errors raised during synchronization.')
-            sys.exit(1)
+            raise CommandError('Some errors raised during synchronization.')
 
         sleep(2)  # end sleep to ensure sync page get result
