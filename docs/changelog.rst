@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix bugs with HTTPS access
 
 
 2.22.1 (2018-11-27)
