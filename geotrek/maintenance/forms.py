@@ -1,3 +1,4 @@
+from itertools import chain
 from django import forms
 from django.forms import FloatField
 from django.utils.translation import ugettext_lazy as _
@@ -9,7 +10,7 @@ from crispy_forms.layout import Fieldset, Layout, Div, HTML
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.widgets import TopologyReadonlyWidget
-from geotrek.infrastructure.models import BaseInfrastructure
+from geotrek.infrastructure.models import Infrastructure, Signage
 
 from .models import Intervention, Project
 
@@ -53,7 +54,8 @@ class InterventionForm(CommonForm):
     """ An intervention can be a Point or a Line """
     topology = TopologyField(label="")
     infrastructure = forms.ModelChoiceField(required=False,
-                                            queryset=BaseInfrastructure.objects.existing(),
+                                            queryset=chain(Infrastructure.objects.existing(),
+                                                           Signage.objects.existing()),
                                             widget=forms.HiddenInput())
     length = FloatField(required=False, label=_("Length"))
 
