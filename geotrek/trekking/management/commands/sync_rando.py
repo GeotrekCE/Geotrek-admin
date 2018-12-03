@@ -746,7 +746,7 @@ class Command(BaseCommand):
         if options['url'][:7] not in ('http://', 'https://'):
             raise CommandError('url parameter should start with http:// or https://')
         self.referer = options['url']
-        self.host = self.referer[7:]
+        self.host = self.referer.split('://')[1]
         self.rando_url = options['rando_url']
         if self.rando_url.endswith('/'):
             self.rando_url = self.rando_url[:-1]
