@@ -49,6 +49,7 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
 
     initialize: function () {
         MapEntity.GeometryField.prototype.initialize.apply(this, arguments);
+        this.options.all_modifiable = this.options.modifiable;
         this.options.modifiable = false; // Will disable leaflet.draw in leaflet.forms.js
         this._objectsLayer = null;
         this._pathsLayer = null;
@@ -74,15 +75,20 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
         }
 
         function addTopologyControl(name, controlClass) {
-            var control = this[name] = new controlClass(map, this._pathsLayer, this);
-            map.addControl(control);
-            exclusive.add(control);
-            control.activable(false);
-            control.handler.on('computed_topology', function (e) {
-                this.store.save(e.topology);
-            }, this);
-            // Make sure, we clean-up geometries when user changes from point to line
-            control.handler.on('enabled', resetTopologies, this);
+            if (this.options.all_modifiable){
+                var control = this[name] = new controlClass(map, this._pathsLayer, this);
+                    map.addControl(control);
+                    exclusive.add(control);
+                    control.activable(false);
+                control.handler.on('computed_topology', function (e) {
+                    this.store.save(e.topology);
+                }, this);
+                // Make sure, we clean-up geometries when user changes from point to line
+                control.handler.on('enabled', resetTopologies, this);
+            }
+            else {
+                map.remove()
+            };
         }
 
         function resetTopologies() {
