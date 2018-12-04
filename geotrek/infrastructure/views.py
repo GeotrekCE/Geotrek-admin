@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
@@ -8,6 +10,8 @@ from geotrek.core.views import CreateFromTopologyMixin
 from .filters import InfrastructureFilterSet, SignageFilterSet
 from .forms import InfrastructureForm, SignageForm
 from .models import Infrastructure, Signage
+
+from rest_framework import permissions as rest_permissions, viewsets
 
 
 class InfrastructureLayer(MapEntityLayer):
@@ -124,3 +128,19 @@ class SignageDelete(MapEntityDelete):
     @same_structure_required('infrastructure:signage_detail')
     def dispatch(self, *args, **kwargs):
         return super(SignageDelete, self).dispatch(*args, **kwargs)
+
+
+class SignageViewSet(viewsets.ModelViewSet):
+    model = Signage
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        return Signage.objects.filter(published=True).transform(settings.API_SRID, field_name='geom')
+
+
+class InfrastructureViewSet(viewsets.ModelViewSet):
+    model = Signage
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        return Signage.objects.filter(published=True).transform(settings.API_SRID, field_name='geom')
