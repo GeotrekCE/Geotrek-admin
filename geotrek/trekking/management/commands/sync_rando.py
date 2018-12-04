@@ -26,6 +26,8 @@ from geotrek.core.views import ParametersView
 from geotrek.feedback.views import CategoryList as FeedbackCategoryList
 from geotrek.flatpages.models import FlatPage
 from geotrek.flatpages.views import FlatPageViewSet, FlatPageMeta
+from geotrek.infrastructure import models as infrastructure_models
+from geotrek.infrastructure.views import InfrastructureViewSet, SignageViewSet
 from geotrek.tourism import models as tourism_models
 from geotrek.tourism import views as tourism_views
 from geotrek.trekking import models as trekking_models
@@ -455,6 +457,8 @@ class Command(BaseCommand):
 
         self.sync_geojson(lang, TrekViewSet, 'treks.geojson', zipfile=self.zipfile)
         self.sync_geojson(lang, POIViewSet, 'pois.geojson')
+        self.sync_geojson(lang, InfrastructureViewSet, 'infrastructures.geojson')
+        self.sync_geojson(lang, SignageViewSet, 'signages.geojson')
         if 'geotrek.flatpages' in settings.INSTALLED_APPS:
             self.sync_flatpages(lang)
         self.sync_geojson(lang, ServiceViewSet, 'services.geojson', zipfile=self.zipfile)
