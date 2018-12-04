@@ -465,6 +465,7 @@ class Command(BaseCommand):
         self.sync_static_file(lang, 'trekking/itinerancy.svg')
         self.sync_pictograms(lang, common_models.Theme, zipfile=self.zipfile)
         self.sync_pictograms(lang, common_models.RecordSource, zipfile=self.zipfile)
+        self.sync_pictograms(lang, infrastructure_models.InfrastructureType, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.TrekNetwork, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.Practice, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.Accessibility, zipfile=self.zipfile)
