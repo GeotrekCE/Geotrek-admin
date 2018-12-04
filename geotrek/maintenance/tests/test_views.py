@@ -20,10 +20,11 @@ from geotrek.maintenance.models import Intervention, InterventionStatus, Project
 from geotrek.maintenance.views import ProjectFormatList
 from geotrek.core.factories import (PathFactory, PathAggregationFactory,
                                     TopologyFactory)
-from geotrek.infrastructure.factories import InfrastructureFactory
+from geotrek.infrastructure.factories import InfrastructureFactory, SignageFactory
 from geotrek.maintenance.factories import (InterventionFactory, InfrastructureInterventionFactory,
                                            InterventionDisorderFactory, InterventionStatusFactory,
-                                           ProjectFactory, ContractorFactory, InterventionJobFactory)
+                                           ProjectFactory, ContractorFactory, InterventionJobFactory,
+                                           SignageInterventionFactory)
 
 
 class InterventionViewsTest(CommonTest):
@@ -74,6 +75,90 @@ class InterventionViewsTest(CommonTest):
             'manday_set-1-id': '',
             'manday_set-1-DELETE': '',
         }
+
+    def test_creation_form_on_signage(self):
+        self.login()
+
+        signa = SignageFactory.create()
+        signage = u"%s" % signa
+
+        response = self.client.get(Intervention.get_add_url() + '?signage=%s' % signa.pk)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, signage)
+        form = response.context['form']
+        self.assertEqual(form.initial['signage'], signa)
+        # Should be able to save form successfully
+        data = self.get_good_data()
+        data['signage'] = signa.pk
+        response = self.client.post(Intervention.get_add_url() + '?signage=%s' % signa.pk, data)
+        self.assertEqual(response.status_code, 302)
+
+    def test_creation_form_on_signage_with_errors(self):
+        self.login()
+
+        signa = SignageFactory.create()
+        signage = u"%s" % signa
+
+        response = self.client.get(Intervention.get_add_url() + '?signage=%s' % signa.pk)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, signage)
+        form = response.context['form']
+        self.assertEqual(form.initial['signage'], signa)
+        data = self.get_good_data()
+        data['signage'] = signa.pk
+
+        # If form invalid, it should not fail
+        data.pop('status')
+        response = self.client.post(Intervention.get_add_url() + '?signage=%s' % signa.pk, data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_update_form_on_signage(self):
+        self.login()
+
+        signa = SignageFactory.create()
+        signage = u"%s" % signa
+
+        intervention = InterventionFactory.create()
+        intervention.set_infrastructure(signa)
+        intervention.save()
+        response = self.client.get(intervention.get_update_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, signage)
+        # Should be able to save form successfully
+        form = response.context['form']
+        data = form.initial
+        data['disorders'] = data['disorders'][0].pk
+        data['project'] = ''
+        data['signage'] = form.fields['signage'].initial.pk  # because it is set after form init, not form.initial :(
+        data.update(**{
+            'manday_set-TOTAL_FORMS': '0',
+            'manday_set-INITIAL_FORMS': '0',
+            'manday_set-MAX_NUM_FORMS': '',
+        })
+        # Form URL is modified in form init
+        formurl = intervention.get_update_url() + '?signage=%s' % signa.pk
+        response = self.client.post(formurl, data)
+        self.assertEqual(response.status_code, 302)
+
+    def test_update_signage(self):
+        self.login()
+        target_year = 2017
+        intervention = SignageInterventionFactory.create()
+        signa = intervention.signage
+        # Save infrastructure form
+        response = self.client.get(signa.get_update_url())
+        form = response.context['form']
+        data = form.initial
+        data['name'] = 'modified'
+        data['implantation_year'] = target_year
+        data['topology'] = '{"paths": [%s]}' % PathFactory.create().pk
+        response = self.client.post(signa.get_update_url(), data)
+        self.assertEqual(response.status_code, 302)
+        # Check that intervention was not deleted (bug #783)
+        intervention.reload()
+        self.assertFalse(intervention.deleted)
+        self.assertEqual(intervention.signage.name, 'modified')
+        self.assertEqual(intervention.signage.implantation_year, target_year)
 
     def test_creation_form_on_infrastructure(self):
         self.login()
