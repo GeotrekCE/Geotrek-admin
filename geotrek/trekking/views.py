@@ -39,7 +39,7 @@ from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekCh
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
                           CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer)
 from geotrek.infrastructure.models import Infrastructure, Signage
-from geotrek.infrastructure.views import InfrastructureViewSet, SignageViewSet
+from geotrek.infrastructure.serializers import SignageSerializer, InfrastructureSerializer
 
 from .tasks import launch_sync_rando
 if 'tourism' in settings.INSTALLED_APPS:
@@ -457,7 +457,15 @@ class TrekPOIViewSet(viewsets.ModelViewSet):
         return trek.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
 
 
-class TrekSignageViewSet(SignageViewSet):
+class TrekSignageViewSet(viewsets.ModelViewSet):
+    model = Signage
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_serializer_class(self):
+        class Serializer(SignageSerializer, GeoFeatureModelSerializer):
+            pass
+        return Serializer
+
     def get_queryset(self):
         pk = self.kwargs['pk']
         try:
@@ -469,7 +477,15 @@ class TrekSignageViewSet(SignageViewSet):
         return trek.signages.filter(published=True).transform(settings.API_SRID, field_name='geom')
 
 
-class TrekInfrastructureViewSet(InfrastructureViewSet):
+class TrekInfrastructureViewSet(viewsets.ModelViewSet):
+    model = Infrastructure
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_serializer_class(self):
+        class Serializer(InfrastructureSerializer, GeoFeatureModelSerializer):
+            pass
+        return Serializer
+
     def get_queryset(self):
         pk = self.kwargs['pk']
         try:
