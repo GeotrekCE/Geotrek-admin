@@ -229,7 +229,7 @@ function geotrek_system_dependencies {
     echo_progress
 
     if $prod || $standalone ; then
-        sudo apt-get install -y -qq ntp fail2ban
+        sudo apt-get install -y -qq ntp
         echo_progress
         sudo apt-get install -y -qq nginx memcached supervisor
         echo_progress
