@@ -12,8 +12,8 @@ from .forms import InfrastructureForm, SignageForm
 from .models import Infrastructure, Signage
 from .serializers import SignageSerializer, InfrastructureSerializer
 
-from rest_framework import permissions as rest_permissions, viewsets
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
+from rest_framework import permissions as rest_permissions
+from mapentity.views import MapEntityViewSet
 
 
 class InfrastructureLayer(MapEntityLayer):
@@ -132,31 +132,19 @@ class SignageDelete(MapEntityDelete):
         return super(SignageDelete, self).dispatch(*args, **kwargs)
 
 
-class SignageViewSet(viewsets.ModelViewSet):
+class SignageViewSet(MapEntityViewSet):
     model = Signage
+    serializer_class = SignageSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_serializer_class(self):
-        print("coucou")
-        class Serializer(SignageSerializer, GeoFeatureModelSerializer):
-            pass
-
-        return Serializer
 
     def get_queryset(self):
         return Signage.objects.filter(published=True).transform(settings.API_SRID, field_name='geom')
 
 
-class InfrastructureViewSet(viewsets.ModelViewSet):
+class InfrastructureViewSet(MapEntityViewSet):
     model = Infrastructure
+    serializer_class = InfrastructureSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
-    def get_serializer_class(self):
-        class Serializer(InfrastructureSerializer, GeoFeatureModelSerializer):
-            pass
-
-        return Serializer
-
     def get_queryset(self):
-        print("coucocu")
         return Infrastructure.objects.filter(published=True).transform(settings.API_SRID, field_name='geom')
