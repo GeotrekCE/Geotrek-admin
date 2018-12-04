@@ -19,7 +19,8 @@ from geotrek.common.serializers import (
     PublishableSerializerMixin, RecordSourceSerializer,
     TargetPortalSerializer, BasePublishableSerializerMixin
 )
-from geotrek.authent import models as authent_models
+from geotrek.authent.serializers import StructureSerializer
+
 from geotrek.cirkwi.models import CirkwiTag
 from geotrek.zoning.serializers import ZoningSerializerMixin
 from geotrek.altimetry.serializers import AltimetrySerializerMixin
@@ -135,12 +136,6 @@ class TrekRelationshipSerializer(rest_serializers.ModelSerializer):
         model = trekking_models.TrekRelationship
         fields = ('has_common_departure', 'has_common_edge', 'is_circuit_step',
                   'trek', 'published')
-
-
-class StructureSerializer(rest_serializers.ModelSerializer):
-    class Meta:
-        model = authent_models.Structure
-        fields = ('id', 'name')
 
 
 class ChildSerializer(TranslatedModelSerializer):
