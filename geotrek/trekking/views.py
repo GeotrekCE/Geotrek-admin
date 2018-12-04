@@ -458,9 +458,6 @@ class TrekPOIViewSet(viewsets.ModelViewSet):
 
 
 class TrekSignageViewSet(SignageViewSet):
-    model = Signage
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
     def get_queryset(self):
         pk = self.kwargs['pk']
         try:
@@ -473,9 +470,6 @@ class TrekSignageViewSet(SignageViewSet):
 
 
 class TrekInfrastructureViewSet(InfrastructureViewSet):
-    model = Infrastructure
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
     def get_queryset(self):
         pk = self.kwargs['pk']
         try:
