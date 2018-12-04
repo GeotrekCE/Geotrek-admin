@@ -1,0 +1,424 @@
+@page {
+  margin: 1cm 1.4cm 2.5cm 1.4cm;
+  @bottom-right {
+    font-family: sans-serif;
+    font-size: .7em;
+    font-weight: 100;
+    content: counter(page) "/" counter(pages);
+    color: #646464;
+  }
+}
+
+html {
+  -weasy-hyphens: manual;
+}
+
+* {
+  box-sizing: border-box;
+  -weasy-bookmark-level: none;
+}
+
+body {
+  font-family: sans-serif;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 1.2;
+  margin: 0;
+  padding: 0;
+  color: #646464;
+}
+
+img {
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-weight: normal;
+  color: black;
+}
+
+#footer {
+  position: fixed;
+  bottom: -3.2cm;
+  left: 0;
+  height: 2cm;
+  width: 100%;
+  text-align: center;
+}
+
+#footer .text {
+  font-size: .7em;
+  display: inline-block;
+  max-width: 60%;
+  vertical-align: middle;
+}
+
+header:after {
+  display: table;
+  clear: both;
+  content: '';
+}
+
+header .logo {
+  float: left;
+  max-width: 50%;
+  height: 2cm;
+}
+
+header .logo img {
+  max-height: 100%;
+}
+
+header .url {
+  float: right;
+  max-width: 50%;
+  padding-top: 0;
+  text-align: right;
+}
+
+header .url .geo {
+  font-size: .75em;
+  margin-top: .35em;
+}
+
+.gray {
+  clear: both;
+  margin: .5cm -1.4cm 0 -1.4cm;
+  padding: .7cm 1.4cm .7cm 1.4cm;
+  background-color: #eee;
+  page-break-inside: avoid;
+}
+
+.gray hr {
+  visibility: hidden;
+}
+
+.main-icon {
+  position: relative;
+  float: right;
+  width: 1.5cm;
+  height: 1.5cm;
+  margin-top: 0;
+  border-radius: 50%;
+  background-color: #444;
+}
+
+.main-icon img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.trademark {
+  float: right;
+  width: 3cm;
+  height: 1.5cm;
+  margin-top: 0;
+  margin-right: 1cm;
+  text-align: right;
+}
+
+.trademark img {
+  display: inline-block;
+  vertical-align: middle;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.main-title {
+  outline: 1px red;
+  max-width: 80%;
+}
+
+.main-title h1 {
+  font-size: 1.75em;
+  font-weight: bold;
+  margin: 0 0 0 0;
+}
+
+.main-title h2 {
+  font-size: 1em;
+  font-weight: 200;
+  margin: 0 0 1mm 0;
+}
+
+.main-picture,
+.main-map {
+  display: inline-block;
+  height: 7cm;
+  margin-top: .7cm;
+  background-color: #ccc;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.main-picture {
+  width: 11.2cm;
+  background-size: cover;
+}
+
+.main-map {
+  width: 7cm;
+  background-size: contain;
+}
+
+.intro-left,
+.meta-items {
+  max-height: 11.5cm;
+}
+
+.intro-left {
+  float: left;
+  width: 60%;
+  margin-top: .8cm;
+  padding-right: .5cm;
+}
+
+.intro-left .teaser {
+  font-family: serif;
+  font-size: 1.2em;
+  font-style: italic;
+  color: orange;
+}
+
+.intro-left .teaser > *:first-child {
+  margin-top: 0;
+}
+
+.intro-left .ambiance {
+  line-height: 1.4;
+}
+
+.meta-items {
+  float: right;
+  width: 40%;
+  margin-top: .8cm;
+  padding-left: .5cm;
+  border-left: 1px solid #888;
+}
+
+.meta-items-title {
+  font-weight: 600;
+  color: orange;
+}
+
+.meta-items-list {
+  margin-top: 2mm;
+}
+
+.meta-item {
+  display: block;
+  margin-top: 2mm;
+  padding-top: 2mm;
+  border-top: 1px solid #888;
+}
+
+.meta-item-label:after {
+  content: ' :';
+}
+
+.lists .meta-item-value + .meta-item-value:before {
+  content: ', ';
+}
+
+.inner-title {
+  page-break-before: always;
+  clear: both;
+}
+
+.inner-title .doc-title {
+  margin: 0;
+}
+
+.inner-title h2 {
+  margin: 0.1cm 0 0 0;
+  font-weight: bold;
+  font-size: 1.8em;
+  color: #333;
+}
+
+.advice {
+  margin-top: .5cm;
+  padding: .5cm .3cm;
+  background-color: #eee;
+}
+
+.advice-title {
+  font-weight: bold;
+  color: orange;
+}
+
+.advice-content {
+  margin-top: .5cm;
+}
+
+.elevation {
+  margin-top: .8cm;
+}
+
+.elevation-title {
+  font-weight: bold;
+  color: orange;
+}
+
+.elevation-chart {
+  display: inline-block;
+  width: 50%;
+  margin-top: .3cm;
+}
+
+.elevation-meta {
+  display: inline-block;
+  width: 48%;
+  padding-top: 3mm;
+  vertical-align: top;
+}
+
+.elevation-meta-item {
+  display: block;
+}
+
+.half-block {
+  float: left;
+  width: 50%;
+  padding-right: .5cm;
+}
+
+.half-block h2 {
+  font-size: 1em;
+  font-weight: bold;
+  color: orange;
+}
+
+.information-desks h2 {
+  font-size: 1em;
+  font-weight: bold;
+  margin-top: 0;
+  color: orange;
+}
+
+.information-desks .intro {
+  font-size: .8em;
+  float: right;
+  width: 50%;
+}
+
+.information-desks .desks {
+  width: 48%;
+  margin: 0;
+  padding: 0;
+  padding-right: .5cm;
+  list-style-type: none;
+}
+
+.information-desks .desk + .desk {
+  margin-top: .5cm;
+}
+
+.information-desks .desk-email {
+  margin-top: .15cm;
+}
+
+.information-desks a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.pois-summary {
+  margin: .5cm 0;
+}
+
+.pois-summary .poi {
+  display: inline-block;
+  width: 48%;
+  padding-right: .5cm;
+  vertical-align: top;
+}
+
+.pois-summary .icon img {
+  max-width: .5cm;
+  max-height: .5cm;
+}
+
+.pois-details .poi {
+  margin-top: .5cm;
+  margin-bottom: .5cm;
+  padding-top: .5cm;
+  border-top: 1px solid #888;
+}
+
+.pois-details .icon img {
+  max-width: .5cm;
+  max-height: .5cm;
+}
+
+.pois-details h3 {
+  margin-top: 0;
+}
+
+.pois-details .thumbnail,
+.pois-details .poi > .content {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.pois-details .thumbnail {
+  width: 20%;
+}
+
+.pois-details .poi > .content {
+  width: 100%;
+}
+
+.pois-details .poi > .content.with-pic {
+  width: 75%;
+}
+
+.advice-icon,
+.information-desks-icon,
+.network-icon {
+  display: inline-block;
+  vertical-align: text-bottom;
+}
+
+.advice-icon img,
+.information-desks-icon img,
+.network-icon img {
+  display: block;
+  max-width: .75cm;
+  max-height: .75cm;
+}
+
+.network-icon img {
+  max-width: 1em;
+  max-height: 1em;
+}
+
+.departure-arrival ul {
+  margin: 0;
+  padding: 0;
+}
+
+.departure-arrival ul li {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.source .text-content + .text-content {
+  clear: both;
+  padding-top: .5cm;
+}
+
+.source img {
+  float: left;
+  vertical-align: top;
+  margin-right: .5cm;
+  max-width: 3cm;
+  max-height: 3cm;
+}

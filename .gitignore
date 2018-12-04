@@ -3,7 +3,7 @@
 *.tar.gz
 *.mo
 
-/var/
+#/var/
 /etc/
 /install
 /.idea/
@@ -25,10 +25,10 @@ local/
 /salt.cfg
 /etc
 /lib
-/var
+#/var
 bootstrap.py
 /.buildout
-geotrek/settings/custom.py
+#geotrek/settings/custom.py
 /parsers.py
 /install.log
 /data/
