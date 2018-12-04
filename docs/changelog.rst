@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix bugs with HTTPS access
+- Fix for some modules to edit attributes and not the geometry
 
 
 2.22.1 (2018-11-27)
