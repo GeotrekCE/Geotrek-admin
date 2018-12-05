@@ -37,9 +37,10 @@ from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
                     WebLinkCreateFormPopup, ServiceForm)
 from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
-                          CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer,
-                          InfrastructureSerializer, SignageSerializer)
+                          CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer)
 from geotrek.infrastructure.models import Infrastructure, Signage
+from geotrek.infrastructure.serializers import SignageSerializer, InfrastructureSerializer
+
 from .tasks import launch_sync_rando
 if 'tourism' in settings.INSTALLED_APPS:
     from geotrek.tourism.models import TouristicContent, TouristicEvent

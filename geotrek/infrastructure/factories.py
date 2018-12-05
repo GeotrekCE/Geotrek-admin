@@ -28,6 +28,7 @@ class InfrastructureFactory(TopologyFactory):
     name = factory.Sequence(lambda n: u"Infrastructure %s" % n)
     type = factory.SubFactory(InfrastructureTypeFactory)
     condition = factory.SubFactory(InfrastructureConditionFactory)
+    published = True
 
 
 class SignageFactory(TopologyFactory):
@@ -37,3 +38,4 @@ class SignageFactory(TopologyFactory):
     type = factory.SubFactory(InfrastructureTypeFactory, type=models.INFRASTRUCTURE_TYPES.SIGNAGE)
     condition = factory.SubFactory(InfrastructureConditionFactory)
     factory.SubFactory(InfrastructureTypeFactory)
+    published = True
