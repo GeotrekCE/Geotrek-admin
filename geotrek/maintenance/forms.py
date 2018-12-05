@@ -155,7 +155,7 @@ class InterventionForm(CommonForm):
         if topology_readonly:
             if 'infrastructure' in self.cleaned_data:
                 self.cleaned_data['topology'] = self.cleaned_data['infrastructure']
-            elif 'signage' in self.cleaned_data:
+            if 'signage' in self.cleaned_data and not self.cleaned_data['topology']:
                 self.cleaned_data['topology'] = self.cleaned_data['signage']
         return cleaned_data
 
