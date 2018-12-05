@@ -2,6 +2,63 @@
 CHANGELOG
 =========
 
+2.13.1 (2018-09-14)
+-------------------
+
+**Bug fixes**
+
+* Fix install
+
+
+2.13.0 (2017-03-02)
+-------------------
+
+**Minor changes**
+
+* MOBILE_TILES_URL settings is now a list which can be used to merge
+  different layers in mobile application
+
+
+2.12.0 (2017-02-16)
+-------------------
+
+**New features**
+
+* add loadsignage command
+
+**Minor changes**
+
+* add field implantation_year to model BaseInfrastructure
+* add field owner to model LandEdge
+* add field agreement to model LandEdge
+
+
+2.11.5 (2017-02-06)
+-------------------
+
+**Bug fixes**
+
+* Fix topologies and cities intersections
+
+
+2.11.4 (2017-02-01)
+-------------------
+
+**Bug fixes**
+
+* Stop install.sh if make update or wget fails
+* Create database with right owner if user exists but database does not
+* Make sure supervisor service is started after install
+* Fix HTML entities in feedback email
+* Fix cirkwi export for treks with multilinestring geom
+
+**Minor changes**
+
+* Add filter usages on paths
+* Add filters name and description on infrastructures and signages
+* Add picture to PDF for feedback reports (only in Weasyprint mode)
+
+
 2.11.3 (2016-11-15)
 -------------------
 

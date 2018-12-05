@@ -1,6 +1,5 @@
 from geotrek.core.widgets import LineTopologyWidget
 from geotrek.core.forms import TopologyForm
-
 from .models import (PhysicalEdge, LandEdge, CompetenceEdge, WorkManagementEdge,
                      SignageManagementEdge)
 
@@ -20,7 +19,7 @@ class PhysicalEdgeForm(EdgeForm):
 class LandEdgeForm(EdgeForm):
     class Meta(EdgeForm.Meta):
         model = LandEdge
-        fields = EdgeForm.Meta.fields + ['land_type']
+        fields = EdgeForm.Meta.fields + ['land_type', 'owner', 'agreement']
 
 
 class OrganismForm(EdgeForm):

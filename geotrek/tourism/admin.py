@@ -13,12 +13,14 @@ class DataSourceAdmin(TranslationAdmin):
     list_display = ('title', 'pictogram_img')
     search_fields = ('title',)
 
+
 admin.site.register(tourism_models.DataSource, DataSourceAdmin)
 
 
 class InformationDeskTypeAdmin(TranslationAdmin):
     list_display = ('label', 'pictogram_img')
     search_fields = ('label', )
+
 
 admin.site.register(tourism_models.InformationDeskType, InformationDeskTypeAdmin)
 
@@ -30,6 +32,7 @@ class InformationDeskAdmin(LeafletGeoAdmin, TranslationAdmin):
     formfield_overrides = {
         models.TextField: {'widget': TinyMCE},
     }
+
 
 admin.site.register(tourism_models.InformationDesk, InformationDeskAdmin)
 
@@ -54,6 +57,7 @@ class TouristicContentCategoryAdmin(TranslationAdmin):
         TouristicContentType2Inline,
     ]
 
+
 if settings.TOURISM_ENABLED:
     admin.site.register(tourism_models.TouristicContentCategory, TouristicContentCategoryAdmin)
 
@@ -62,6 +66,7 @@ class TouristicEventTypeAdmin(TranslationAdmin):
     list_display = ('type', 'pictogram_img')
     search_fields = ('type',)
 
+
 if settings.TOURISM_ENABLED:
     admin.site.register(tourism_models.TouristicEventType, TouristicEventTypeAdmin)
 
@@ -69,6 +74,7 @@ if settings.TOURISM_ENABLED:
 class ReservationSystemAdmin(admin.ModelAdmin):
     list_display = ('name',)
     search_fields = ('name',)
+
 
 if settings.TOURISM_ENABLED:
     admin.site.register(tourism_models.ReservationSystem, ReservationSystemAdmin)

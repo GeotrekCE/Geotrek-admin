@@ -563,7 +563,9 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap', 'bootstrap3')
 CRISPY_TEMPLATE_PACK = 'bootstrap'
 
 # Mobile app_directories
-MOBILE_TILES_URL = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+MOBILE_TILES_URL = [
+    'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+]
 MOBILE_TILES_RADIUS_LARGE = 0.01  # ~1 km
 MOBILE_TILES_RADIUS_SMALL = 0.005  # ~500 m
 MOBILE_TILES_GLOBAL_ZOOMS = range(13)

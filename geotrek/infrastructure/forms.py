@@ -1,16 +1,19 @@
 from django.conf import settings
-
+from django import forms
 from geotrek.core.forms import TopologyForm
 from geotrek.core.widgets import PointTopologyWidget
 
 from .models import Infrastructure, Signage
+from django.utils.translation import ugettext_lazy as _
 
 
 class BaseInfrastructureForm(TopologyForm):
+    implantation_year = forms.IntegerField(label=_(u"Implantation year"), required=False)
+
     class Meta(TopologyForm.Meta):
         fields = TopologyForm.Meta.fields + \
             ['structure',
-             'name', 'description', 'type', 'condition']
+             'name', 'description', 'type', 'condition', 'implantation_year']
 
     def __init__(self, *args, **kwargs):
         super(BaseInfrastructureForm, self).__init__(*args, **kwargs)

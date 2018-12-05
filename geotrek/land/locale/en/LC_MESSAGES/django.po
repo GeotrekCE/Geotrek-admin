@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-18 17:00+0100\n"
+"POT-Creation-Date: 2017-02-14 10:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,6 +48,12 @@ msgid "Right of way"
 msgstr ""
 
 msgid "Land types"
+msgstr ""
+
+msgid "Owner"
+msgstr ""
+
+msgid "Agreement"
 msgstr ""
 
 msgid "Land edge"

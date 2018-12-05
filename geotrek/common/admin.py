@@ -62,6 +62,7 @@ class TargetPortalAdmin(admin.ModelAdmin):
     list_display = ('name', 'website')
     search_fields = ('name', 'website')
 
+
 admin.site.register(common_models.Organism, OrganismAdmin)
 admin.site.register(Attachment, AttachmentAdmin)
 admin.site.register(common_models.FileType, FileTypeAdmin)

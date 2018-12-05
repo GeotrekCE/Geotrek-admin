@@ -28,8 +28,8 @@ class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
 class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
     columns = [
         'id', 'name', 'type', 'condition', 'description',
-        'structure', 'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
+        'implantation_year', 'structure', 'date_insert',
+        'date_update', 'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
 
 
@@ -86,8 +86,8 @@ class SignageJsonList(MapEntityJsonList, SignageList):
 class SignageFormatList(MapEntityFormat, SignageList):
     columns = [
         'id', 'name', 'type', 'condition', 'description',
-        'structure', 'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
+        'implantation_year', 'structure', 'date_insert',
+        'date_update', 'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
 
 

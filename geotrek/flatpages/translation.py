@@ -10,4 +10,5 @@ class FlatPageTO(TranslationOptions):
         ('published',) if settings.PUBLISHED_BY_LANG else tuple()
     )
 
+
 translator.register(flatpages_models.FlatPage, FlatPageTO)

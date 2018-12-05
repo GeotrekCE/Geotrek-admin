@@ -107,7 +107,8 @@ def uniquify(values):
 
 
 def intersecting(cls, obj, distance=None):
-    """ Small helper to filter all model instances by geometry intersection
+    """
+    Small helper to filter all model instances by geometry intersection
     """
     qs = cls.objects
     if hasattr(qs, 'existing'):
