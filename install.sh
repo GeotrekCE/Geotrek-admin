@@ -19,7 +19,7 @@ exec 1> install.log 2>&1
 
 #------------------------------------------------------------------------------
 
-STABLE_VERSION=${STABLE_VERSION:-2.13.1}
+STABLE_VERSION=${STABLE_VERSION:-2.16.2}
 dev=false
 tests=false
 prod=false
@@ -216,7 +216,7 @@ function minimum_system_dependencies {
 
 
 function geotrek_system_dependencies {
-    sudo apt-get install -y -q --no-upgrade libjson0 gdal-bin libgdal-dev
+    sudo apt-get install -y -q --no-upgrade libjson0 gdal-bin libgdal-dev libssl-dev
     
     if [ $xenial -eq 1 ]; then
         sudo apt-get install libgeos-c1v5 libproj9
@@ -397,6 +397,22 @@ function geotrek_setup {
 
     echo_header $existing
 
+    dbname=$(ini_value $settingsfile dbname)
+    dbhost=$(ini_value $settingsfile dbhost)
+    dbport=$(ini_value $settingsfile dbport)
+    dbuser=$(ini_value $settingsfile dbuser)
+    dbpassword=$(ini_value $settingsfile dbpassword)
+
+    export PGPASSWORD=$dbpassword
+    south_migrations=$( psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT * FROM django.south_migrationhistory;")
+    if [ $? -eq 0 ]; then
+        echo $south_migrations | grep '0003_auto__add_field_landedge_owner__add_field_landedge_agreement'
+        if [ $? -ne 0 ]; then
+            version=$(cat VERSION)
+            exit_error 15 "Please upgrade to version 2.13.0 before upgrading to version $version."
+        fi
+    fi
+
     echo_step "Install system minimum components..."
     minimum_system_dependencies
 
@@ -463,6 +479,31 @@ function geotrek_setup {
         exit_error 3 "Could not setup python environment !"
     fi
 
+    export PGPASSWORD=$dbpassword
+    psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT * FROM django.south_migrationhistory;"
+    if [ $? -eq 0 ]; then
+        psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT * FROM django_migrations;"
+        if [ $? -ne 0 ]; then
+            echo_step "Migrate from django < 1.7 version ..."
+            bin/django migrate --fake-initial contenttypes --noinput
+            bin/django migrate --fake-initial auth --noinput
+            bin/django migrate --fake-initial sessions --noinput
+            bin/django migrate --fake-initial mapentity --noinput
+            bin/django migrate --fake-initial authent --noinput
+            bin/django migrate --fake-initial cirkwi --noinput
+            bin/django migrate --fake-initial common --noinput
+            bin/django migrate --fake-initial core --noinput
+            bin/django migrate --fake-initial feedback --noinput
+            bin/django migrate --fake-initial flatpages --noinput
+            bin/django migrate --fake-initial infrastructure --noinput
+            bin/django migrate --fake-initial land --noinput
+            bin/django migrate --fake-initial maintenance --noinput
+            bin/django migrate --fake-initial tourism --noinput
+            bin/django migrate --fake-initial trekking --noinput
+            bin/django migrate --fake-initial zoning --noinput
+        fi
+    fi
+
     if $dev ; then
         echo_step "Initializing data..."
         make update
@@ -471,28 +512,25 @@ function geotrek_setup {
 
     if $tests ; then
         # XXX: Why Django tests require the main database :( ?
-        bin/django syncdb --noinput
+        bin/django migrate --noinput
         bin/django collectstatic --clear --noinput --verbosity=0
     fi
 
     if $prod || $standalone ; then
+        echo_step "Updating data..."
+
+        make update
+        if [ $? -ne 0 ]; then
+            exit_error 11 "Could not update data !"
+        fi
 
         echo_step "Generate services configuration files..."
-        
+
         # restart supervisor in case of xenial before 'make deploy'
         sudo service supervisor force-stop && sudo service supervisor stop && sudo service supervisor start
         if [ $? -ne 0 ]; then
             exit_error 10 "Could not restart supervisor !"
         fi
-        make update
-        if [ $? -ne 0 ]; then
-            exit_error 11 "Could not update data !"
-        fi
-        sudo service supervisor force-stop && sudo service supervisor stop && sudo service supervisor start
-        if [ $? -ne 0 ]; then
-            exit_error 12 "Could not restart supervisor !"
-        fi
-        echo_progress
 
         # If buildout was successful, deploy really !
         if [ -f /etc/supervisor/supervisord.conf ]; then
@@ -504,7 +542,7 @@ function geotrek_setup {
             # touch var/log/nginx-access.log
             # touch var/log/nginx-error.log
 			
-			# if 15.04 or higher
+			# if 15.04 or higher
 			if [ $vivid -eq 1 -o $xenial -eq 1 ]; then
                 sudo systemctl restart nginx
             else

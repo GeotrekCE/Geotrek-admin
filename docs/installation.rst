@@ -8,20 +8,21 @@ For a developer instance, please follow  :ref:`the dedicated procedure <developm
 Requirements
 ------------
 
-* Ubuntu Server 12.04 Precise Pangolin (http://releases.ubuntu.com/12.04/) or
+* Ubuntu Server 16.04 Xenial Xerus (http://releases.ubuntu.com/16.04/) or
   Ubuntu Server 14.04 Trusty Tahr (http://releases.ubuntu.com/14.04/)
 
 
 A first estimation on system resources is :
 
-* 1 Go RAM
+* 2 Go RAM
 * 10 Go disk space
 
 
 Installation
 ------------
 
-Once the OS is installed (basic installation, with OpenSSH server), log in with your linux user (not root).
+Once the OS is installed (basic installation, with OpenSSH server), log in with your linux user (not root). 
+You will also need unzip (``sudo apt-get install unzip``).
 
 Make sure you are in the user folder :
 
@@ -29,22 +30,27 @@ Make sure you are in the user folder :
 
     cd /home/mylinuxuser
 
-Create a folder where you will install Geotrek-admin : 
-
-::
-
-    mkdir Geotrek-admin
-    cd Geotrek-admin
-
-Install the latest version with the following commands (X.Y.Z to replace 
+Download the latest version of Geotrek-admin with the following commands (X.Y.Z to replace 
 with the latest stable version number : https://github.com/GeotrekCE/Geotrekadmin/releases) :
 
 ::
 
-    curl https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/X.Y.Z/install.sh > install.sh
-    chmod +x install.sh
-    ./install.sh
+    wget https://github.com/GeotrekCE/Geotrek-admin/archive/X.Y.Z.zip
 
+Unzip the archive of Geotrek-admin
+
+::
+
+    unzip Geotrek-admin-X.Y.Z.zip
+    
+You can rename Geotrek-admin-X.Y.Z folder to Geotrek-admin
+
+Go into Geotrek-admin folder and launch its installation
+
+::
+
+    cd Geotrek-admin
+    ./install.sh
 
 You will be prompt for editing the base configuration file (``settings.ini``),
 using the default editor.

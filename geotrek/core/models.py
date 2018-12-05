@@ -74,10 +74,10 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                               null=True, blank=True, related_name='paths',
                               verbose_name=_("Maintenance stake"), db_column='enjeu')
     usages = models.ManyToManyField('Usage',
-                                    blank=True, null=True, related_name="paths",
+                                    blank=True, related_name="paths",
                                     verbose_name=_(u"Usages"), db_table="l_r_troncon_usage")
     networks = models.ManyToManyField('Network',
-                                      blank=True, null=True, related_name="paths",
+                                      blank=True, related_name="paths",
                                       verbose_name=_(u"Networks"), db_table="l_r_troncon_reseau")
     eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
 
@@ -196,6 +196,14 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
             return ", ".join([unicode(t) for t in trails])
         return _("None")
 
+    @property
+    def usages_display(self):
+        return u", ".join([unicode(u) for u in self.usages.all()])
+
+    @property
+    def networks_display(self):
+        return u", ".join([unicode(n) for n in self.networks.all()])
+
     @classmethod
     def get_create_label(cls):
         return _(u"Add a new path")
@@ -232,6 +240,10 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                 self.reload()
 
             return result
+
+    @property
+    def extent(self):
+        return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom else None
 
 
 class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDeleteMixin):

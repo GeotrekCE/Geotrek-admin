@@ -46,7 +46,7 @@ class DifficultyLevelTest(AuthentFixturesTest):
         response = self.client.get(reverse('admin:trekking_difficultylevel_change', args=[self.difficulty.pk]))
         csrf = self.get_csrf_token(response)
         post_data = {'id': 4,
-                     'difficulty_fr': 'Dur-dur',
+                     'difficulty_en': 'Dur-dur',
                      'csrfmiddlewaretoken': csrf}
         response = self.client.post(reverse('admin:trekking_difficultylevel_change', args=[self.difficulty.pk]), post_data)
         self.assertRedirects(response, reverse('admin:trekking_difficultylevel_changelist'))

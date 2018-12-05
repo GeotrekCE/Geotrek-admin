@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-18 17:00+0100\n"
+"POT-Creation-Date: 2017-06-16 09:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+msgid "Tourism"
+msgstr ""
 
 msgid "After"
 msgstr ""
@@ -44,21 +47,6 @@ msgstr ""
 msgid "Public website"
 msgstr ""
 
-msgid "Title"
-msgstr ""
-
-msgid "Pictogram"
-msgstr ""
-
-msgid "Display"
-msgstr ""
-
-msgid "External data source"
-msgstr ""
-
-msgid "External data sources"
-msgstr ""
-
 msgid "Label"
 msgstr ""
 
@@ -66,6 +54,9 @@ msgid "Information desk type"
 msgstr ""
 
 msgid "Information desk types"
+msgstr ""
+
+msgid "Title"
 msgstr ""
 
 msgid "Type"
@@ -207,6 +198,9 @@ msgstr ""
 msgid "Source"
 msgstr ""
 
+msgid "Portal"
+msgstr ""
+
 msgid "External id"
 msgstr ""
 
@@ -297,13 +291,22 @@ msgstr ""
 msgid "Published touristic events"
 msgstr ""
 
+#, python-brace-format
+msgid "Failed to download {url}. HTTP status code {status_code}"
+msgstr ""
+
+#, python-brace-format
+msgid "Type 1 '{subval}' does not exist for category '{cat}'. Please add it"
+msgstr ""
+
+#, python-brace-format
+msgid "Type 2 '{subval}' does not exist for category '{cat}'. Please add it"
+msgstr ""
+
 msgid "touristic-content"
 msgstr ""
 
 msgid "touristic-event"
-msgstr ""
-
-msgid "Tourism"
 msgstr ""
 
 msgid "Add a new touristic content"
@@ -339,10 +342,22 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-msgid "Advice"
+msgid "Powered by geotrek.fr"
 msgstr ""
 
 msgid "Attribution"
+msgstr ""
+
+msgid "Useful information"
+msgstr ""
+
+msgid "Geographical location"
+msgstr ""
+
+msgid "All useful information"
+msgstr ""
+
+msgid "Advice"
 msgstr ""
 
 msgid "Related Treks"
@@ -354,7 +369,7 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-msgid "Dates"
+msgid "Date"
 msgstr ""
 
 msgid "Invalid geometry value."

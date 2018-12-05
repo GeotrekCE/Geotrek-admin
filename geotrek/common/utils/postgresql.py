@@ -1,13 +1,12 @@
-import re
-import os
 import logging
 import traceback
 from functools import wraps
 
-from django.db import connection, models
+import os
+import re
 from django.conf import settings
+from django.db import connection, models
 from django.db.models import get_app, get_models
-
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +15,10 @@ def debug_pg_notices(f):
 
     @wraps(f)
     def wrapped(*args, **kwargs):
-        before = len(connection.connection.notices) if connection.connection else 0
+        r = None
+
+        if connection.connection:
+            del connection.connection.notices[:]
         try:
             r = f(*args, **kwargs)
         finally:
@@ -25,7 +27,7 @@ def debug_pg_notices(f):
             current = ''
             if connection.connection:
                 notices = []
-                for notice in connection.connection.notices[before:]:
+                for notice in connection.connection.notices:
                     try:
                         notice, context = notice.split('CONTEXT:', 1)
                         context = re.sub("\s+", " ", context)
@@ -45,7 +47,7 @@ def debug_pg_notices(f):
                             logger.debug('Context %s...:' % context.strip()[:80])
                         current = context
                     notice = notice.replace('NOTICE: ', '')
-                    prefix = '' if context == '' else '        '
+                    prefix = ''
                     logger.debug('%s%s' % (prefix, notice.strip()))
         return r
 
@@ -111,7 +113,7 @@ def move_models_to_schemas(app_label):
 
     table_schemas = {}
     for model in get_models(app):
-        model_name = model._meta.module_name
+        model_name = model._meta.model_name
         table_name = model._meta.db_table
         model_schema = settings.DATABASE_SCHEMAS.get(model_name, app_schema)
         table_schemas.setdefault(model_schema, []).append(table_name)

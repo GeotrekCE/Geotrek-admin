@@ -61,8 +61,36 @@ Un clic sur un objet dans la liste ou la carte permet d'accéder à la fiche dé
 Fiches détails
 --------------
 
+A partir de chaque module, il est possible d'afficher la fiche détail d'un objet en cliquant sur celui-ci dans la liste ou la carte du module. Les objets de chaque module peuvent ainsi être affichés individuellement dans une fiche détail pour en consulter tous les attributs, tous les objets des autres modules qui intersectent l'objet, les fichiers qui y sont attachés et l'historique des modifications de l'objet. 
+
+Depuis la fiche détail d'un objet, il est aussi possible d'exporter celui-ci au format ODT, DOC ou PDF. 
+
+Selon les droits dont dispose l'utilisateur connecté, il peut alors modifier l'objet. 
+
 Edition d'un objet
 ------------------
+
+**Segmentation dynamique** :
+
+Tous les objets sont saisis et stockés relativement aux tronçons, en utilisant la segmentation dynamique (https://makina-corpus.com/blog/metier/2014/la-segmentation-dynamique), sauf les évènements et contenus touristiques qui sont indépendants et ont leur propre géométrie. 
+
+C'est pourquoi, modifier un tronçon peut entrainer des modifications des objets qui lui sont rattachés (signalétique, interventions, itinéraires, POIs...). Supprimer un tronçon, supprime les objets qui lui sont rattachés. 
+
+**Snapping - Aimantage - Accrochage** :
+
+Quand vous créez un objet, il est possible de le snapper (aimanter) aux objets existants. C'est notamment utile pour bien raccorder les tronçons entre eux. Quand vous raccrochez un tronçon à un tronçon existant, ce dernier est coupé automatiquement à la nouvelle intersection. 
+
+Les fonctions d'aimantage ne sont pas disponibles lors de la création d'un nouvel objet (linéraire ou ponctuel). Il faut commencer par le créer sur puis le modifier pour disposer des fonctionnalités d'aimantage, activé automatiquement lorsque l'on se rapproche d'un objet existant. Par défaut la distance d'imantage est de 30 pixels mais elle est modifiable en configuration avancée.
+
+**Itinérance** :
+
+Il est possible de créer des randonnées itinérantes (sur plusieurs jours) et d'y associer des étapes comme sur cet exemple : http://www.grand-tour-ecrins.fr/a-pied/tour-de-la-berarde/.
+
+Pour cela il faut créer un itinéraire parent (séjour itinérant complet) puis y ajouter des itinéraires enfants (étapes) de manière ordonnée, dans le champs `Enfants` présent dans l'onglet `Avancé` du formulaire itinéraire du séjour complet. 
+
+Le séjour complet ainsi que chaque sont donc chacunes des randonnées comme les autres. La seule différence est que les étapes (itinéraires enfants) sont rattachées à l'itinéraire parent.
+
+Si vous ne souhaitez pas que les étapes soient affichées dans la page de Recherche de Geotrek-rando, il ne faut pas les publier. Il suffit alors de publier l'itinéraire parent, pour que toutes les étapes qui y sont rattachées apparaissent uniquement dans sa fiche détail de Geotrek-rando. 
 
 Pages statiques
 ---------------
@@ -175,17 +203,19 @@ Afin de s'intégrer au mieux dans le design standard, les couleurs suivantes son
 * Gris sur fond transparent pour les thèmes,
 * Blanc sur fond orange pour les types de POI.
 
-Geotrek et Espace Loisir IGN
-----------------------------
+Geotrek et IGNrando'
+--------------------
 
-Depuis la version 0.32.0, Geotrek-admin est capable de produire un flux des itinéraires et POIs présents dans sa BDD au format Cirkwi pour pouvoir les importer directement dans l'Espace Loisir IGN.
+Depuis la version 0.32.0, Geotrek-admin est capable de produire un flux des itinéraires et POIs présents dans sa BDD au format Cirkwi pour pouvoir les importer directement dans IGNrando'.
 
-Exemple des randonnées et POIs du Parc national des Ecrins publiées sur l'Espace loisir IGN depuis Geotrek-admin : http://espaceloisirs.ign.fr/fr/communautes/parc-national-des-ecrins
+Exemple des randonnées et POIs du Parc national des Ecrins publiées sur IGNrando' depuis Geotrek-admin : https://ignrando.fr/fr/communautes/parc-national-des-ecrins
 
 Depuis cette version, 2 flux sont automatiquement générés par Geotrek-admin au format attendu par l'IGN : 
 
 - [URL_GEOTREK-ADMIN]/api/cirkwi/circuits.xml
 - [URL_GEOTREK-ADMIN]/api/cirkwi/pois.xml
+
+Il est possible d'exclure les POI du flux pour ne diffuser que les randonnées. Pour cela, ajouter le paramètre ?withoutpois=1 à la fin de l'URL (http://XXXXX/api/cirkwi/circuits.xml?withoutpois=1).
 
 Le référentiel CIRKWI a été intégré dans 3 tables accessibles dans l'Adminsite (à ne pas modifier) : 
 

@@ -188,7 +188,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     def paths(self):
         if self.topology:
             return self.topology.paths.all()
-        return []
+        return Path.objects.none()
 
     @property
     def signages(self):
@@ -412,8 +412,13 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
         s = []
         for i in self.interventions.existing():
             for p in i.paths.all():
-                if p.trail:
-                    s.append(p.trail)
+                try:
+                    if p.trail:
+                        s.append(p.trail)
+
+                except AttributeError:
+                    pass
+
         return Trail.objects.filter(pk__in=[t.pk for t in set(s)])
 
     @property
@@ -467,6 +472,14 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
     @property
     def interventions_csv_display(self):
         return [unicode(i) for i in self.interventions.existing()]
+
+    @property
+    def contractors_display(self):
+        return [unicode(c) for c in self.contractors.all()]
+
+    @property
+    def founders_display(self):
+        return [unicode(f) for f in self.founders.all()]
 
     @property
     def period(self):

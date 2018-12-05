@@ -22,44 +22,39 @@ class TranslatedModelSerializer(rest_serializers.ModelSerializer):
 
 
 class PictogramSerializerMixin(rest_serializers.ModelSerializer):
-    pictogram = rest_serializers.Field('get_pictogram_url')
+    pictogram = rest_serializers.ReadOnlyField(source='get_pictogram_url')
 
 
 class PicturesSerializerMixin(rest_serializers.ModelSerializer):
-    thumbnail = rest_serializers.Field(source='serializable_thumbnail')
-    pictures = rest_serializers.Field(source='serializable_pictures')
-    videos = rest_serializers.Field(source='serializable_videos')
-    files = rest_serializers.Field(source='serializable_files')
+    thumbnail = rest_serializers.ReadOnlyField(source='serializable_thumbnail')
+    pictures = rest_serializers.ReadOnlyField(source='serializable_pictures')
+    videos = rest_serializers.ReadOnlyField(source='serializable_videos')
+    files = rest_serializers.ReadOnlyField(source='serializable_files')
 
     class Meta:
         fields = ('thumbnail', 'pictures', 'videos', 'files')
 
 
 class BasePublishableSerializerMixin(rest_serializers.ModelSerializer):
-    published_status = rest_serializers.Field(source='published_status')
-
     class Meta:
-        fields = ('published', 'published_status', 'publication_date',)
+        fields = ('published', 'published_status', 'publication_date')
 
 
 class PublishableSerializerMixin(BasePublishableSerializerMixin):
-    slug = rest_serializers.Field(source='slug')
-
-    map_image_url = rest_serializers.Field(source='map_image_url')
     printable = rest_serializers.SerializerMethodField('get_printable_url')
-    filelist_url = rest_serializers.SerializerMethodField('get_filelist_url')
+    filelist_url = rest_serializers.SerializerMethodField()
 
     def get_printable_url(self, obj):
         appname = obj._meta.app_label
-        modelname = obj._meta.module_name
+        modelname = obj._meta.model_name
         return reverse('%s:%s_printable' % (appname, modelname),
                        kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
 
     def get_filelist_url(self, obj):
         appname = obj._meta.app_label
-        modelname = obj._meta.module_name
+        modelname = obj._meta.model_name
         return reverse('get_attachments', kwargs={'app_label': appname,
-                                                  'module_name': modelname,
+                                                  'model_name': modelname,
                                                   'pk': obj.pk})
 
     class Meta:
@@ -82,4 +77,4 @@ class RecordSourceSerializer(PictogramSerializerMixin, rest_serializers.ModelSer
 class TargetPortalSerializer(rest_serializers.ModelSerializer):
     class Meta:
         model = TargetPortal
-        fields = ('name', 'website',)
+        fields = ('name', 'website')

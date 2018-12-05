@@ -15,7 +15,7 @@ from urlparse import urlparse
 from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.gis.gdal import DataSource
+from django.contrib.gis.gdal import DataSource, GDALException
 from django.core.files.base import ContentFile
 from django.template.loader import render_to_string
 from django.utils import translation
@@ -24,10 +24,10 @@ from django.utils.encoding import force_text
 
 from modeltranslation.fields import TranslationField
 from modeltranslation.translator import translator, NotRegistered
-from paperclip.models import Attachment, attachment_upload
+from paperclip.models import attachment_upload
 
 from geotrek.authent.models import default_structure
-from geotrek.common.models import FileType
+from geotrek.common.models import FileType, Attachment
 
 
 class ImportError(Exception):
@@ -169,6 +169,8 @@ class Parser(object):
                 raise RowImportError(_(u"Null value not allowed for field '{src}'".format(src=src)))
         if val == u"" and not field.blank:
             raise RowImportError(_(u"Blank value not allowed for field '{src}'".format(src=src)))
+        if isinstance(field, models.CharField):
+            val = val[:256]
         setattr(self.obj, dst, val)
 
     def parse_real_field(self, dst, src, val):
@@ -423,7 +425,7 @@ class ShapeParser(Parser):
             row = {self.normalize_field_name(field.name): field.value for field in feature}
             try:
                 ogrgeom = feature.geom
-            except:
+            except GDALException:
                 print _(u"Invalid geometry pointer"), i
                 geom = None
             else:
@@ -474,6 +476,7 @@ class AtomParser(Parser):
 
 
 class AttachmentParserMixin(object):
+    download_attachments = True
     base_url = ''
     delete_attachments = False
     filetype_name = u"Photographie"
@@ -483,6 +486,8 @@ class AttachmentParserMixin(object):
 
     def start(self):
         super(AttachmentParserMixin, self).start()
+        if settings.PAPERCLIP_ENABLE_LINK is False and self.download_attachments is False:
+            raise Exception(u'You need to enable PAPERCLIP_ENABLE_LINK to use this function')
         try:
             self.filetype = FileType.objects.get(type=self.filetype_name, structure=default_structure())
         except FileType.DoesNotExist:
@@ -495,42 +500,43 @@ class AttachmentParserMixin(object):
         return [(subval.strip(), '', '') for subval in val.split(self.separator) if subval.strip()]
 
     def has_size_changed(self, url, attachment):
-        try:
-            parsed_url = urlparse(url)
-            if parsed_url.scheme == 'ftp':
-                directory = dirname(parsed_url.path)
+        parsed_url = urlparse(url)
+        if parsed_url.scheme == 'ftp':
+            directory = dirname(parsed_url.path)
 
-                ftp = FTP(parsed_url.hostname)
-                ftp.login(user=parsed_url.username, passwd=parsed_url.password)
-                ftp.cwd(directory)
-                size = ftp.size(parsed_url.path.split('/')[-1:][0])
-                return size != attachment.attachment_file.size
+            ftp = FTP(parsed_url.hostname)
+            ftp.login(user=parsed_url.username, passwd=parsed_url.password)
+            ftp.cwd(directory)
+            size = ftp.size(parsed_url.path.split('/')[-1:][0])
+            return size != attachment.attachment_file.size
 
-            if parsed_url.scheme == 'http' or parsed_url.scheme == 'https':
-                http = urllib2.urlopen(url)
-                size = http.headers.getheader('content-length')
-                return int(size) != attachment.attachment_file.size
-        except:
-            return False
+        if parsed_url.scheme == 'http' or parsed_url.scheme == 'https':
+            http = urllib2.urlopen(url)
+            size = http.headers.getheader('content-length')
+            return int(size) != attachment.attachment_file.size
+
         return True
 
     def download_attachment(self, url):
-        if url[:6] == 'ftp://':
+        parsed_url = urlparse(url)
+        if parsed_url.scheme == 'ftp':
             try:
                 response = urllib2.urlopen(url)
-            except:
+            except Exception:
                 self.add_warning(_(u"Failed to download '{url}'").format(url=url))
                 return None
             return response.read()
         else:
-            try:
-                response = requests.get(url)
-            except requests.exceptions.RequestException as e:
-                raise ValueImportError('Failed to load attachment: ' + unicode(e))
-            if response.status_code != requests.codes.ok:
-                self.add_warning(_(u"Failed to download '{url}'").format(url=url))
-                return None
-            return response.content
+            if self.download_attachments:
+                try:
+                    response = requests.get(url)
+                except requests.exceptions.RequestException as e:
+                    raise ValueImportError('Failed to load attachment: {exc}'.format(exc=e))
+                if response.status_code != requests.codes.ok:
+                    self.add_warning(_(u"Failed to download '{url}'").format(url=url))
+                    return None
+                return response.content
+            return None
 
     def save_attachments(self, src, val):
         updated = False
@@ -555,19 +561,27 @@ class AttachmentParserMixin(object):
                     break
             if found:
                 continue
-            content = self.download_attachment(url)
-            if content is None:
-                continue
-            f = ContentFile(content)
+
+            parsed_url = urlparse(url)
+
             attachment = Attachment()
             attachment.content_object = self.obj
-            attachment.attachment_file.save(name, f, save=False)
             attachment.filetype = self.filetype
             attachment.creator = self.creator
             attachment.author = author
             attachment.legend = legend
+
+            if (parsed_url.scheme in ('http', 'https') and self.download_attachments) or parsed_url.scheme == 'ftp':
+                content = self.download_attachment(url)
+                if content is None:
+                    continue
+                f = ContentFile(content)
+                attachment.attachment_file.save(name, f, save=False)
+            else:
+                attachment.attachment_link = url
             attachment.save()
             updated = True
+
         if self.delete_attachments:
             for att in attachments_to_delete:
                 att.delete()

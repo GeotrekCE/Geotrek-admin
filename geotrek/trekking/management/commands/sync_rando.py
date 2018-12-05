@@ -13,6 +13,7 @@ from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
+from django.http import StreamingHttpResponse
 from django.test.client import RequestFactory
 from django.utils import translation, timezone
 from django.utils.translation import ugettext as _
@@ -24,13 +25,14 @@ from geotrek.common import models as common_models
 from geotrek.common.views import ThemeViewSet
 from geotrek.core.views import ParametersView
 from geotrek.feedback.views import CategoryList as FeedbackCategoryList
-from geotrek.flatpages.views import FlatPageViewSet
+from geotrek.flatpages.models import FlatPage
+from geotrek.flatpages.views import FlatPageViewSet, FlatPageMeta
 from geotrek.tourism import models as tourism_models
 from geotrek.tourism import views as tourism_views
 from geotrek.trekking import models as trekking_models
 from geotrek.trekking.views import (TrekViewSet, POIViewSet, TrekPOIViewSet,
                                     TrekGPXDetail, TrekKMLDetail, TrekServiceViewSet,
-                                    ServiceViewSet, TrekDocumentPublic)
+                                    ServiceViewSet, TrekDocumentPublic, TrekMeta, Meta)
 
 # Register mapentity models
 from geotrek.trekking import urls  # NOQA
@@ -72,7 +74,7 @@ class ZipTilesBuilder(object):
 
     def run(self):
         for tile in self.tiles:
-            name = '{0}/{1}/{2}{ext}'.format(*tile, ext=self.tm._tile_extension)
+            name = '{0}/{1}/{2}{ext}'.format(*tile, ext=settings.MOBILE_TILES_EXTENSION or self.tm._tile_extension)
             try:
                 data = self.tm.tile(tile)
             except DownloadError:
@@ -86,6 +88,8 @@ class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option('--url', '-u', action='store', dest='url',
                     default='http://localhost', help='Base url'),
+        make_option('--rando-url', '-r', action='store', dest='rando_url',
+                    default='http://localhost', help='Base url of public rando site'),
         make_option('--source', '-s', action='store', dest='source',
                     default=None, help='Filter by source(s)'),
         make_option('--portal', '-P', action='store', dest='portal',
@@ -116,7 +120,7 @@ class Command(BaseCommand):
         """
         zipname = os.path.join('zip', 'tiles', 'global.zip')
 
-        if self.verbosity == '2':
+        if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
             self.stdout.flush()
 
@@ -141,7 +145,7 @@ class Command(BaseCommand):
         """
         zipname = os.path.join('zip', 'tiles', '{pk}.zip'.format(pk=trek.pk))
 
-        if self.verbosity == '2':
+        if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
             self.stdout.flush()
 
@@ -172,7 +176,7 @@ class Command(BaseCommand):
         tiles.run()
 
     def sync_view(self, lang, view, name, url='/', params={}, zipfile=None, **kwargs):
-        if self.verbosity == '2':
+        if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=name), ending="")
             self.stdout.flush()
         fullname = os.path.join(self.tmp_root, name)
@@ -186,20 +190,24 @@ class Command(BaseCommand):
                 response.render()
         except Exception as e:
             self.successfull = False
-            if self.verbosity == '2':
+            if self.verbosity == 2:
                 self.stdout.write(u"\x1b[3D\x1b[31mfailed ({})\x1b[0m".format(e))
             return
         if response.status_code != 200:
             self.successfull = False
-            if self.verbosity == '2':
+            if self.verbosity == 2:
                 self.stdout.write(u"\x1b[3D\x1b[31;1mfailed (HTTP {code})\x1b[0m".format(code=response.status_code))
             return
         f = open(fullname, 'w')
-        f.write(response.content)
+        if isinstance(response, StreamingHttpResponse):
+            content = b''.join(response.streaming_content)
+        else:
+            content = response.content
+        f.write(content)
         f.close()
         if zipfile:
             zipfile.write(fullname, name)
-        if self.verbosity == '2':
+        if self.verbosity == 2:
             self.stdout.write(u"\x1b[3D\x1b[32mgenerated\x1b[0m")
 
     def sync_json(self, lang, viewset, name, zipfile=None, params={}, as_view_args=[], **kwargs):
@@ -286,6 +294,24 @@ class Command(BaseCommand):
     def sync_kml(self, lang, obj):
         self.sync_object_view(lang, obj, TrekKMLDetail.as_view(), '{obj.slug}.kml')
 
+    def sync_meta(self, lang):
+        name = os.path.join('meta', lang, 'index.html')
+        self.sync_view(lang, Meta.as_view(), name, params={'rando_url': self.rando_url, 'lang': lang})
+
+    def sync_trek_meta(self, lang, obj):
+        name = os.path.join('meta', lang, obj.rando_url, 'index.html')
+        self.sync_view(lang, TrekMeta.as_view(), name, pk=obj.pk, params={'rando_url': self.rando_url})
+
+    def sync_touristiccontent_meta(self, lang, obj):
+        name = os.path.join('meta', lang, obj.rando_url, 'index.html')
+        self.sync_view(lang, tourism_views.TouristicContentMeta.as_view(), name, pk=obj.pk,
+                       params={'rando_url': self.rando_url})
+
+    def sync_touristicevent_meta(self, lang, obj):
+        name = os.path.join('meta', lang, obj.rando_url, 'index.html')
+        self.sync_view(lang, tourism_views.TouristicEventMeta.as_view(), name, pk=obj.pk,
+                       params={'rando_url': self.rando_url})
+
     def sync_file(self, lang, name, src_root, url, zipfile=None):
         url = url.strip('/')
         src = os.path.join(src_root, name)
@@ -294,7 +320,7 @@ class Command(BaseCommand):
         shutil.copyfile(src, dst)
         if zipfile:
             zipfile.write(dst, os.path.join(url, name))
-        if self.verbosity == '2':
+        if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(lang=lang, url=url, name=name))
 
     def sync_static_file(self, lang, name):
@@ -313,6 +339,8 @@ class Command(BaseCommand):
             self.sync_media_file(lang, poi.resized_pictures[0][1], zipfile=self.trek_zipfile)
         for picture, resized in poi.resized_pictures[1:]:
             self.sync_media_file(lang, resized)
+        for other_file in poi.files:
+            self.sync_media_file(lang, other_file.attachment_file)
 
     def sync_trek(self, lang, trek):
         zipname = os.path.join('zip', 'treks', lang, '{pk}.zip'.format(pk=trek.pk))
@@ -326,6 +354,7 @@ class Command(BaseCommand):
         self.sync_trek_services(lang, trek, zipfile=self.zipfile)
         self.sync_gpx(lang, trek)
         self.sync_kml(lang, trek)
+        self.sync_trek_meta(lang, trek)
         self.sync_trek_pdf(lang, trek)
         self.sync_profile_json(lang, trek)
         if not self.skip_profile_png:
@@ -349,7 +378,7 @@ class Command(BaseCommand):
         if self.categories:
             self.sync_trek_touristiccontents(lang, trek, zipfile=self.zipfile)
 
-        if self.verbosity == '2':
+        if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname),
                               ending="")
 
@@ -373,11 +402,22 @@ class Command(BaseCommand):
             stat = os.stat(oldzipfilename)
             os.utime(zipfilename, (stat.st_atime, stat.st_mtime))
 
-        if self.verbosity == '2':
+        if self.verbosity == 2:
             if uptodate:
                 self.stdout.write(u"\x1b[3D\x1b[32munchanged\x1b[0m")
             else:
                 self.stdout.write(u"\x1b[3D\x1b[32mzipped\x1b[0m")
+
+    def sync_flatpages(self, lang):
+        self.sync_geojson(lang, FlatPageViewSet, 'flatpages.geojson', zipfile=self.zipfile)
+        flatpages = FlatPage.objects.filter(published=True)
+        if self.source:
+            flatpages = flatpages.filter(source__name__in=self.source)
+        if self.portal:
+            flatpages = flatpages.filter(portal__name__in=self.portal)
+        for flatpage in flatpages:
+            name = os.path.join('meta', lang, flatpage.rando_url, 'index.html')
+            self.sync_view(lang, FlatPageMeta.as_view(), name, pk=flatpage.pk, params={'rando_url': self.rando_url})
 
     def sync_trekking(self, lang):
         zipname = os.path.join('zip', 'treks', lang, 'global.zip')
@@ -387,7 +427,7 @@ class Command(BaseCommand):
 
         self.sync_geojson(lang, TrekViewSet, 'treks.geojson', zipfile=self.zipfile)
         self.sync_geojson(lang, POIViewSet, 'pois.geojson')
-        self.sync_geojson(lang, FlatPageViewSet, 'flatpages.geojson', zipfile=self.zipfile)
+        self.sync_flatpages(lang)
         self.sync_geojson(lang, ServiceViewSet, 'services.geojson', zipfile=self.zipfile)
         self.sync_view(lang, FeedbackCategoryList.as_view(),
                        os.path.join('api', lang, 'feedback', 'categories.json'),
@@ -422,8 +462,9 @@ class Command(BaseCommand):
             self.sync_trek(lang, trek)
 
         self.sync_tourism(lang)
+        self.sync_meta(lang)
 
-        if self.verbosity == '2':
+        if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname), ending="")
 
         self.close_zip(self.zipfile, zipname)
@@ -478,6 +519,8 @@ class Command(BaseCommand):
                 )
 
     def sync_content(self, lang, content):
+        self.sync_touristiccontent_meta(lang, content)
+
         if not self.skip_pdf:
             params = {}
             if self.source:
@@ -490,6 +533,8 @@ class Command(BaseCommand):
             self.sync_media_file(lang, resized)
 
     def sync_event(self, lang, event):
+        self.sync_touristicevent_meta(lang, event)
+
         if not self.skip_pdf:
             params = {}
             if self.source:
@@ -630,7 +675,7 @@ class Command(BaseCommand):
         if not os.path.exists(self.dst_root):
             return
         existing = set([os.path.basename(p) for p in os.listdir(self.dst_root)])
-        remaining = existing - set(('api', 'media', 'static', 'zip'))
+        remaining = existing - set(('api', 'media', 'meta', 'static', 'zip'))
         if remaining:
             raise CommandError(u"Destination directory contains extra data")
 
@@ -645,7 +690,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.successfull = True
-        self.verbosity = options.get('verbosity', '1')
+        self.verbosity = options.get('verbosity', 1)
         if len(args) < 1:
             raise CommandError(u"Missing parameter destination directory")
         self.dst_root = args[0].rstrip('/')
@@ -654,6 +699,9 @@ class Command(BaseCommand):
             raise CommandError('url parameter should start with http://')
         self.referer = options['url']
         self.host = self.referer[7:]
+        self.rando_url = options['rando_url']
+        if self.rando_url.endswith('/'):
+            self.rando_url = self.rando_url[:-1]
         self.factory = RequestFactory()
         self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_rando')
         os.mkdir(self.tmp_root)
@@ -703,13 +751,13 @@ class Command(BaseCommand):
                         'infos': u"{}".format(_(u"Sync ended"))
                     }
                 )
-        except:
+        except Exception:
             shutil.rmtree(self.tmp_root)
             raise
 
         self.rename_root()
 
-        if self.verbosity >= '1':
+        if self.verbosity >= 1:
             self.stdout.write('Done')
 
         if not self.successfull:

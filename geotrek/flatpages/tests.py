@@ -168,6 +168,7 @@ class RESTViewsTest(TestCase):
 class SyncTestPortal(TestCase):
     @classmethod
     def setUpClass(cls):
+        super(SyncTestPortal, cls).setUpClass()
         cls.source_a = RecordSourceFactory()
         cls.source_b = RecordSourceFactory()
         cls.portal_a = TargetPortalFactory()

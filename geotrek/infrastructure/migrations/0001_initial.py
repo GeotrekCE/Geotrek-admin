@@ -1,156 +1,96 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
-from south.db import db
-from south.v2 import SchemaMigration
+from django.db import migrations, models
+import mapentity.models
+import django.db.models.deletion
+import geotrek.authent.models
 
-from django.conf import settings
 
+class Migration(migrations.Migration):
 
-class Migration(SchemaMigration):
+    dependencies = [
+        ('authent', '0001_initial'),
+        ('core', '0001_initial'),
+    ]
 
-    def forwards(self, orm):
-        # Adding model 'InfrastructureType'
-        db.create_table('a_b_amenagement', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('structure', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authent.Structure'], db_column='structure')),
-            ('label', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='nom')),
-            ('type', self.gf('django.db.models.fields.CharField')(max_length=1, db_column='type')),
-        ))
-        db.send_create_signal(u'infrastructure', ['InfrastructureType'])
-
-        # Adding model 'BaseInfrastructure'
-        db.create_table('a_t_amenagement', (
-            ('structure', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['authent.Structure'], db_column='structure')),
-            ('topo_object', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['core.Topology'], unique=True, primary_key=True, db_column='evenement')),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=128, db_column='nom')),
-            ('description', self.gf('django.db.models.fields.TextField')(db_column='description', blank=True)),
-            ('type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['infrastructure.InfrastructureType'], db_column='type')),
-        ))
-        db.send_create_signal(u'infrastructure', ['BaseInfrastructure'])
-
-    def backwards(self, orm):
-        # Deleting model 'InfrastructureType'
-        db.delete_table('a_b_amenagement')
-
-        # Deleting model 'BaseInfrastructure'
-        db.delete_table('a_t_amenagement')
-
-    models = {
-        u'authent.structure': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Structure'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '256'})
-        },
-        u'core.comfort': {
-            'Meta': {'ordering': "['comfort']", 'object_name': 'Comfort', 'db_table': "'l_b_confort'"},
-            'comfort': ('django.db.models.fields.CharField', [], {'max_length': '50', 'db_column': "'confort'"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"})
-        },
-        u'core.datasource': {
-            'Meta': {'ordering': "['source']", 'object_name': 'Datasource', 'db_table': "'l_b_source'"},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'source': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"})
-        },
-        u'core.network': {
-            'Meta': {'ordering': "['network']", 'object_name': 'Network', 'db_table': "'l_b_reseau'"},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'network': ('django.db.models.fields.CharField', [], {'max_length': '50', 'db_column': "'reseau'"}),
-            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"})
-        },
-        u'core.path': {
-            'Meta': {'object_name': 'Path', 'db_table': "'l_t_troncon'"},
-            'arrival': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'null': 'True', 'db_column': "'arrivee'", 'blank': 'True'}),
-            'ascent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'denivelee_positive'", 'blank': 'True'}),
-            'comfort': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'db_column': "'confort'", 'to': u"orm['core.Comfort']"}),
-            'comments': ('django.db.models.fields.TextField', [], {'null': 'True', 'db_column': "'remarques'", 'blank': 'True'}),
-            'datasource': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'db_column': "'source'", 'to': u"orm['core.Datasource']"}),
-            'date_insert': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_column': "'date_insert'", 'blank': 'True'}),
-            'date_update': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'db_column': "'date_update'", 'blank': 'True'}),
-            'departure': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '250', 'null': 'True', 'db_column': "'depart'", 'blank': 'True'}),
-            'descent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'denivelee_negative'", 'blank': 'True'}),
-            'geom': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '%s' % settings.SRID, 'spatial_index': 'False'}),
-            'geom_3d': ('django.contrib.gis.db.models.fields.GeometryField', [], {'default': 'None', 'dim': '3', 'spatial_index': 'False', 'null': 'True', 'srid': '%s' % settings.SRID}),
-            'geom_cadastre': ('django.contrib.gis.db.models.fields.LineStringField', [], {'srid': '%s' % settings.SRID, 'null': 'True', 'spatial_index': 'False'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'length': ('django.db.models.fields.FloatField', [], {'default': '0.0', 'null': 'True', 'db_column': "'longueur'", 'blank': 'True'}),
-            'max_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'altitude_maximum'", 'blank': 'True'}),
-            'min_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'altitude_minimum'", 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'db_column': "'nom'", 'blank': 'True'}),
-            'networks': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'paths'", 'to': u"orm['core.Network']", 'db_table': "'l_r_troncon_reseau'", 'blank': 'True', 'symmetrical': 'False', 'null': 'True'}),
-            'slope': ('django.db.models.fields.FloatField', [], {'default': '0.0', 'null': 'True', 'db_column': "'pente'", 'blank': 'True'}),
-            'stake': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'db_column': "'enjeu'", 'to': u"orm['core.Stake']"}),
-            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"}),
-            'trail': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'paths'", 'null': 'True', 'db_column': "'sentier'", 'to': u"orm['core.Trail']"}),
-            'usages': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'paths'", 'to': u"orm['core.Usage']", 'db_table': "'l_r_troncon_usage'", 'blank': 'True', 'symmetrical': 'False', 'null': 'True'}),
-            'valid': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'db_column': "'valide'"})
-        },
-        u'core.pathaggregation': {
-            'Meta': {'ordering': "['id']", 'object_name': 'PathAggregation', 'db_table': "'e_r_evenement_troncon'"},
-            'end_position': ('django.db.models.fields.FloatField', [], {'db_column': "'pk_fin'", 'db_index': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'order': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'ordre'", 'blank': 'True'}),
-            'path': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'aggregations'", 'on_delete': 'models.DO_NOTHING', 'db_column': "'troncon'", 'to': u"orm['core.Path']"}),
-            'start_position': ('django.db.models.fields.FloatField', [], {'db_column': "'pk_debut'", 'db_index': 'True'}),
-            'topo_object': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'aggregations'", 'db_column': "'evenement'", 'to': u"orm['core.Topology']"})
-        },
-        u'core.stake': {
-            'Meta': {'ordering': "['id']", 'object_name': 'Stake', 'db_table': "'l_b_enjeu'"},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'stake': ('django.db.models.fields.CharField', [], {'max_length': '50', 'db_column': "'enjeu'"}),
-            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"})
-        },
-        u'core.topology': {
-            'Meta': {'object_name': 'Topology', 'db_table': "'e_t_evenement'"},
-            'ascent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'denivelee_positive'", 'blank': 'True'}),
-            'date_insert': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_column': "'date_insert'", 'blank': 'True'}),
-            'date_update': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'db_column': "'date_update'", 'blank': 'True'}),
-            'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'db_column': "'supprime'"}),
-            'descent': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'denivelee_negative'", 'blank': 'True'}),
-            'geom': ('django.contrib.gis.db.models.fields.GeometryField', [], {'default': 'None', 'srid': '%s' % settings.SRID, 'null': 'True', 'spatial_index': 'False'}),
-            'geom_3d': ('django.contrib.gis.db.models.fields.GeometryField', [], {'default': 'None', 'dim': '3', 'spatial_index': 'False', 'null': 'True', 'srid': '%s' % settings.SRID}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'kind': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
-            'length': ('django.db.models.fields.FloatField', [], {'default': '0.0', 'null': 'True', 'db_column': "'longueur'", 'blank': 'True'}),
-            'max_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'altitude_maximum'", 'blank': 'True'}),
-            'min_elevation': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'db_column': "'altitude_minimum'", 'blank': 'True'}),
-            'offset': ('django.db.models.fields.FloatField', [], {'default': '0.0', 'db_column': "'decallage'"}),
-            'paths': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['core.Path']", 'through': u"orm['core.PathAggregation']", 'db_column': "'troncons'", 'symmetrical': 'False'}),
-            'slope': ('django.db.models.fields.FloatField', [], {'default': '0.0', 'null': 'True', 'db_column': "'pente'", 'blank': 'True'})
-        },
-        u'core.trail': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Trail', 'db_table': "'l_t_sentier'"},
-            'arrival': ('django.db.models.fields.CharField', [], {'max_length': '64', 'db_column': "'arrivee'"}),
-            'comments': ('django.db.models.fields.TextField', [], {'default': "''", 'db_column': "'commentaire'", 'blank': 'True'}),
-            'date_insert': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_column': "'date_insert'", 'blank': 'True'}),
-            'date_update': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'db_column': "'date_update'", 'blank': 'True'}),
-            'departure': ('django.db.models.fields.CharField', [], {'max_length': '64', 'db_column': "'depart'"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '64', 'db_column': "'nom'"}),
-            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"})
-        },
-        u'core.usage': {
-            'Meta': {'ordering': "['usage']", 'object_name': 'Usage', 'db_table': "'l_b_usage'"},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"}),
-            'usage': ('django.db.models.fields.CharField', [], {'max_length': '50', 'db_column': "'usage'"})
-        },
-        u'infrastructure.baseinfrastructure': {
-            'Meta': {'object_name': 'BaseInfrastructure', 'db_table': "'a_t_amenagement'", '_ormbases': [u'core.Topology']},
-            'description': ('django.db.models.fields.TextField', [], {'db_column': "'description'", 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'nom'"}),
-            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"}),
-            'topo_object': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['core.Topology']", 'unique': 'True', 'primary_key': 'True', 'db_column': "'evenement'"}),
-            'type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['infrastructure.InfrastructureType']", 'db_column': "'type'"})
-        },
-        u'infrastructure.infrastructuretype': {
-            'Meta': {'ordering': "['label', 'type']", 'object_name': 'InfrastructureType', 'db_table': "'a_b_amenagement'"},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'label': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_column': "'nom'"}),
-            'structure': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['authent.Structure']", 'db_column': "'structure'"}),
-            'type': ('django.db.models.fields.CharField', [], {'max_length': '1', 'db_column': "'type'"})
-        }
-    }
-
-    complete_apps = ['infrastructure']
+    operations = [
+        migrations.CreateModel(
+            name='BaseInfrastructure',
+            fields=[
+                ('topo_object', models.OneToOneField(parent_link=True, primary_key=True, db_column=b'evenement', serialize=False, to='core.Topology')),
+                ('name', models.CharField(help_text='Reference, code, ...', max_length=128, verbose_name='Name', db_column=b'nom')),
+                ('description', models.TextField(help_text='Specificites', verbose_name='Description', db_column=b'description', blank=True)),
+                ('implantation_year', models.PositiveSmallIntegerField(null=True, verbose_name='Implantation year', db_column=b'annee_implantation')),
+            ],
+            options={
+                'db_table': 'a_t_amenagement',
+            },
+            bases=(mapentity.models.MapEntityMixin, 'core.topology', models.Model),
+        ),
+        migrations.CreateModel(
+            name='InfrastructureCondition',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('label', models.CharField(max_length=250, verbose_name='Name', db_column=b'etat')),
+                ('structure', models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+            ],
+            options={
+                'db_table': 'a_b_etat',
+                'verbose_name': 'Infrastructure Condition',
+                'verbose_name_plural': 'Infrastructure Conditions',
+            },
+        ),
+        migrations.CreateModel(
+            name='InfrastructureType',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('label', models.CharField(max_length=128, db_column=b'nom')),
+                ('type', models.CharField(max_length=1, db_column=b'type', choices=[(b'A', 'Building'), (b'E', 'Facility'), (b'S', 'Signage')])),
+                ('structure', models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+            ],
+            options={
+                'ordering': ['label', 'type'],
+                'db_table': 'a_b_amenagement',
+                'verbose_name': 'Infrastructure Type',
+                'verbose_name_plural': 'Infrastructure Types',
+            },
+        ),
+        migrations.AddField(
+            model_name='baseinfrastructure',
+            name='condition',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, db_column=b'etat', blank=True, to='infrastructure.InfrastructureCondition', null=True, verbose_name='Condition'),
+        ),
+        migrations.AddField(
+            model_name='baseinfrastructure',
+            name='structure',
+            field=models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure'),
+        ),
+        migrations.AddField(
+            model_name='baseinfrastructure',
+            name='type',
+            field=models.ForeignKey(db_column=b'type', verbose_name='Type', to='infrastructure.InfrastructureType'),
+        ),
+        migrations.CreateModel(
+            name='Infrastructure',
+            fields=[
+            ],
+            options={
+                'verbose_name': 'Infrastructure',
+                'proxy': True,
+                'verbose_name_plural': 'Infrastructures',
+            },
+            bases=('infrastructure.baseinfrastructure',),
+        ),
+        migrations.CreateModel(
+            name='Signage',
+            fields=[
+            ],
+            options={
+                'verbose_name': 'Signage',
+                'proxy': True,
+                'verbose_name_plural': 'Signages',
+            },
+            bases=('infrastructure.baseinfrastructure',),
+        ),
+    ]

@@ -3,7 +3,7 @@
 import logging
 
 from django.utils.translation import ugettext_lazy as _
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat, MapEntityViewSet,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.core.views import CreateFromTopologyMixin
@@ -15,6 +15,8 @@ from .models import Intervention, Project
 from .filters import InterventionFilterSet, ProjectFilterSet
 from .forms import (InterventionForm, InterventionCreateForm, ProjectForm,
                     FundingFormSet, ManDayFormSet)
+from .serializers import InterventionSerializer, ProjectSerializer
+from rest_framework import permissions as rest_permissions
 
 
 logger = logging.getLogger(__name__)
@@ -110,6 +112,13 @@ class InterventionDelete(MapEntityDelete):
         return super(InterventionDelete, self).dispatch(*args, **kwargs)
 
 
+class InterventionViewSet(MapEntityViewSet):
+    model = Intervention
+    queryset = Intervention.objects.existing()
+    serializer_class = InterventionSerializer
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+
 class ProjectLayer(MapEntityLayer):
     queryset = Project.objects.existing()
     properties = ['name']
@@ -178,3 +187,10 @@ class ProjectDelete(MapEntityDelete):
     @same_structure_required('maintenance:project_detail')
     def dispatch(self, *args, **kwargs):
         return super(ProjectDelete, self).dispatch(*args, **kwargs)
+
+
+class ProjectViewSet(MapEntityViewSet):
+    model = Project
+    queryset = Project.objects.existing()
+    serializer_class = ProjectSerializer
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]

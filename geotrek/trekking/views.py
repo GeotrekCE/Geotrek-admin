@@ -1,17 +1,19 @@
 from datetime import datetime, timedelta
 import json
 import redis
+from urlparse import urljoin
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q
+from django.db.models.query import Prefetch
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
-from django.views.generic import CreateView, ListView, RedirectView
+from django.views.generic import CreateView, ListView, RedirectView, DetailView, TemplateView
 from django.views.generic.detail import BaseDetailView
 from djcelery.models import TaskMeta
 from mapentity.helpers import alphabet_enumeration
@@ -19,26 +21,27 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityFormat, MapEntityDetail, MapEntityMapImage,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, LastModifiedMixin, MapEntityViewSet)
-from paperclip.models import Attachment
 from rest_framework import permissions as rest_permissions, viewsets
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.models import RecordSource, TargetPortal
+from geotrek.common.models import RecordSource, TargetPortal, Attachment
 from geotrek.common.views import FormsetMixin, PublicOrReadPermMixin, DocumentPublic
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.trekking.forms import SyncRandoForm
 from geotrek.zoning.models import District, City, RestrictedArea
-from geotrek.celery import app as celery_app
+from geotrek.celery_conf import app as celery_app
 
 from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
                     WebLinkCreateFormPopup, ServiceForm)
-from .models import Trek, POI, WebLink, Service
+from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
                           CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer)
 from .tasks import launch_sync_rando
+if 'tourism' in settings.INSTALLED_APPS:
+    from geotrek.tourism.models import TouristicContent, TouristicEvent
 
 
 class SyncRandoRedirect(RedirectView):
@@ -125,7 +128,7 @@ class TrekGPXDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
 
     def render_to_response(self, context):
         gpx_serializer = TrekGPXSerializer()
-        response = HttpResponse(mimetype='application/gpx+xml')
+        response = HttpResponse(content_type='application/gpx+xml')
         response['Content-Disposition'] = 'attachment; filename=%s.gpx' % self.get_object().slug
         gpx_serializer.serialize([self.get_object()], stream=response, geom_field='geom')
         return response
@@ -255,6 +258,19 @@ class TrekDelete(MapEntityDelete):
         return super(TrekDelete, self).dispatch(*args, **kwargs)
 
 
+class TrekMeta(DetailView):
+    model = Trek
+    template_name = 'trekking/trek_meta.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TrekMeta, self).get_context_data(**kwargs)
+        context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
+        context['facebook_image'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
+        context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
+        context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
+        return context
+
+
 class POILayer(MapEntityLayer):
     queryset = POI.objects.existing()
     properties = ['name', 'published']
@@ -375,7 +391,16 @@ class TrekViewSet(MapEntityViewSet):
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
-        qs = Trek.objects.existing()
+        qs = self.model.objects.existing()
+        qs = qs.select_related('structure', 'difficulty', 'practice', 'route')
+        qs = qs.prefetch_related(
+            'networks', 'source', 'portal', 'web_links', 'accessibilities', 'themes', 'aggregations',
+            'information_desks', 'attachments',
+            Prefetch('trek_relationship_a', queryset=TrekRelationship.objects.select_related('trek_a', 'trek_b')),
+            Prefetch('trek_relationship_b', queryset=TrekRelationship.objects.select_related('trek_a', 'trek_b')),
+            Prefetch('trek_children', queryset=OrderedTrekChild.objects.select_related('parent', 'child')),
+            Prefetch('trek_parents', queryset=OrderedTrekChild.objects.select_related('parent', 'child')),
+        )
         qs = qs.filter(Q(published=True) | Q(trek_parents__parent__published=True))\
                .order_by('pk').distinct('pk')
 
@@ -510,7 +535,7 @@ class CirkwiTrekView(ListView):
 
     def get(self, request):
         response = HttpResponse(content_type='application/xml')
-        serializer = CirkwiTrekSerializer(request, response)
+        serializer = CirkwiTrekSerializer(request, response, request.GET)
         treks = self.get_queryset()
         serializer.serialize(treks)
         return response
@@ -592,6 +617,31 @@ def sync_update_json(request):
 
     return HttpResponse(json.dumps(results),
                         content_type="application/json")
+
+
+class Meta(TemplateView):
+    template_name = 'trekking/meta.html'
+
+    def get_context_data(self, **kwargs):
+        lang = self.request.GET['lang']
+        context = super(Meta, self).get_context_data(**kwargs)
+        context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
+        context['facebook_image'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
+        context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
+        context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
+        context['treks'] = Trek.objects.existing().order_by('pk').filter(
+            Q(**{'published_{lang}'.format(lang=lang): True}) |
+            Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
+                 'trek_parents__parent__deleted': False})
+        )
+        if 'tourism' in settings.INSTALLED_APPS:
+            context['contents'] = TouristicContent.objects.existing().order_by('pk').filter(
+                **{'published_{lang}'.format(lang=lang): True}
+            )
+            context['events'] = TouristicEvent.objects.existing().order_by('pk').filter(
+                **{'published_{lang}'.format(lang=lang): True}
+            )
+        return context
 
 
 # Translations for public PDF

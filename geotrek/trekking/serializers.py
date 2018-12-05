@@ -29,7 +29,7 @@ from geotrek.trekking import models as trekking_models
 class TrekGPXSerializer(GPXSerializer):
     def end_object(self, trek):
         super(TrekGPXSerializer, self).end_object(trek)
-        for poi in trek.pois.all():
+        for poi in trek.published_pois.all():
             geom_3d = poi.geom_3d.transform(4326, clone=True)  # GPX uses WGS84
             wpt = gpxpy.gpx.GPXWaypoint(latitude=geom_3d.y,
                                         longitude=geom_3d.x,
@@ -40,7 +40,7 @@ class TrekGPXSerializer(GPXSerializer):
 
 
 class DifficultyLevelSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    label = rest_serializers.Field(source='difficulty')
+    label = rest_serializers.ReadOnlyField(source='difficulty')
 
     class Meta:
         model = trekking_models.DifficultyLevel
@@ -48,7 +48,7 @@ class DifficultyLevelSerializer(PictogramSerializerMixin, TranslatedModelSeriali
 
 
 class RouteSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    label = rest_serializers.Field(source='route')
+    label = rest_serializers.ReadOnlyField(source='route')
 
     class Meta:
         model = trekking_models.Route
@@ -56,7 +56,7 @@ class RouteSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
 
 
 class NetworkSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    name = rest_serializers.Field(source='network')
+    name = rest_serializers.ReadOnlyField(source='network')
 
     class Meta:
         model = trekking_models.Route
@@ -64,7 +64,7 @@ class NetworkSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
 
 
 class PracticeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    label = rest_serializers.Field(source='name')
+    label = rest_serializers.ReadOnlyField(source='name')
 
     class Meta:
         model = trekking_models.Practice
@@ -72,7 +72,7 @@ class PracticeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
 
 
 class AccessibilitySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    label = rest_serializers.Field(source='name')
+    label = rest_serializers.ReadOnlyField(source='name')
 
     class Meta:
         model = trekking_models.Accessibility
@@ -80,8 +80,6 @@ class AccessibilitySerializer(PictogramSerializerMixin, TranslatedModelSerialize
 
 
 class TypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    name = rest_serializers.Field(source='name')
-
     class Meta:
         model = trekking_models.Practice
         fields = ('id', 'pictogram', 'name')
@@ -102,7 +100,7 @@ class WebLinkSerializer(TranslatedModelSerializer):
 
 
 class CloseTrekSerializer(TranslatedModelSerializer):
-    category_id = rest_serializers.Field(source='prefixed_category_id')
+    category_id = rest_serializers.ReadOnlyField(source='prefixed_category_id')
 
     class Meta:
         model = trekking_models.Trek
@@ -110,9 +108,8 @@ class CloseTrekSerializer(TranslatedModelSerializer):
 
 
 class RelatedTrekSerializer(TranslatedModelSerializer):
-    pk = rest_serializers.Field(source='id')
-    slug = rest_serializers.Field(source='slug')
-    category_slug = rest_serializers.SerializerMethodField('get_category_slug')
+    pk = rest_serializers.ReadOnlyField(source='id')
+    category_slug = rest_serializers.SerializerMethodField()
 
     class Meta:
         model = trekking_models.Trek
@@ -127,7 +124,7 @@ class RelatedTrekSerializer(TranslatedModelSerializer):
 
 
 class TrekRelationshipSerializer(rest_serializers.ModelSerializer):
-    published = rest_serializers.Field(source='trek_b.published')
+    published = rest_serializers.ReadOnlyField(source='trek_b.published')
     trek = RelatedTrekSerializer(source='trek_b')
 
     class Meta:
@@ -151,27 +148,26 @@ class ChildSerializer(TranslatedModelSerializer):
 class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                      AltimetrySerializerMixin, ZoningSerializerMixin,
                      TranslatedModelSerializer):
-    duration_pretty = rest_serializers.Field(source='duration_pretty')
     difficulty = DifficultyLevelSerializer()
     route = RouteSerializer()
     networks = NetworkSerializer(many=True)
     themes = ThemeSerializer(many=True)
     practice = PracticeSerializer()
-    usages = PracticeSerializer(source='usages', many=True)  # Rando v1 compat
+    usages = PracticeSerializer(many=True)  # Rando v1 compat
     accessibilities = AccessibilitySerializer(many=True)
     web_links = WebLinkSerializer(many=True)
     relationships = TrekRelationshipSerializer(many=True, source='published_relationships')
     treks = CloseTrekSerializer(many=True, source='published_treks')
-    source = RecordSourceSerializer()
-    portal = TargetPortalSerializer()
-    children = rest_serializers.Field(source='children_id')
-    parents = rest_serializers.Field(source='parents_id')
-    previous = rest_serializers.Field(source='previous_id')
-    next = rest_serializers.Field(source='next_id')
+    source = RecordSourceSerializer(many=True)
+    portal = TargetPortalSerializer(many=True)
+    children = rest_serializers.ReadOnlyField(source='children_id')
+    parents = rest_serializers.ReadOnlyField(source='parents_id')
+    previous = rest_serializers.ReadOnlyField(source='previous_id')
+    next = rest_serializers.ReadOnlyField(source='next_id')
 
     # Idea: use rest-framework-gis
-    parking_location = rest_serializers.SerializerMethodField('get_parking_location')
-    points_reference = rest_serializers.SerializerMethodField('get_points_reference')
+    parking_location = rest_serializers.SerializerMethodField()
+    points_reference = rest_serializers.SerializerMethodField()
 
     gpx = rest_serializers.SerializerMethodField('get_gpx_url')
     kml = rest_serializers.SerializerMethodField('get_kml_url')
@@ -180,10 +176,10 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     # For consistency with touristic contents
     type1 = TypeSerializer(source='usages', many=True)
     type2 = TypeSerializer(source='accessibilities', many=True)
-    category = rest_serializers.SerializerMethodField('get_category')
+    category = rest_serializers.SerializerMethodField()
 
     # Method called to retrieve relevant pictures based on settings
-    pictures = rest_serializers.SerializerMethodField('get_pictures')
+    pictures = rest_serializers.SerializerMethodField()
 
     def __init__(self, instance=None, *args, **kwargs):
         # duplicate each trek for each one of its accessibilities
@@ -295,7 +291,6 @@ class POITypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
 
 
 class ClosePOISerializer(TranslatedModelSerializer):
-    slug = rest_serializers.Field(source='slug')
     type = POITypeSerializer()
 
     class Meta:
@@ -349,7 +344,7 @@ def timestamp(dt):
     return str(int((dt - epoch).total_seconds()))
 
 
-class CirkwiPOISerializer:
+class CirkwiPOISerializer(object):
     def __init__(self, request, stream):
         self.xml = SimplerXMLGenerator(stream, 'utf8')
         self.request = request
@@ -371,16 +366,20 @@ class CirkwiPOISerializer:
             return
         self.xml.startElement('medias', {})
         self.xml.startElement('images', {})
-        for picture in pictures:
+        for picture in pictures[:10]:
             self.xml.startElement('image', {})
-            self.serialize_field('legende', picture['legend'])
+            if picture['legend']:
+                self.serialize_field('legende', picture['legend'])
             self.serialize_field('url', request.build_absolute_uri(picture['url']))
-            self.serialize_field('credit', picture['author'])
+            if picture['author']:
+                self.serialize_field('credit', picture['author'])
             self.xml.endElement('image')
         self.xml.endElement('images')
         self.xml.endElement('medias')
 
     def serialize_pois(self, pois):
+        if not pois:
+            return
         for poi in pois:
             self.xml.startElement('poi', {
                 'date_creation': timestamp(poi.date_insert),
@@ -420,6 +419,14 @@ class CirkwiPOISerializer:
 
 
 class CirkwiTrekSerializer(CirkwiPOISerializer):
+    ADDITIONNAL_INFO = ('departure', 'arrival', 'ambiance', 'access', 'disabled_infrastructure',
+                        'advised_parking', 'public_transport', 'advice')
+
+    def __init__(self, request, stream, get_params=None):
+        super(CirkwiTrekSerializer, self).__init__(request, stream)
+        self.request = request
+        self.exclude_pois = get_params.get('withoutpois', None)
+
     def serialize_additionnal_info(self, trek, name):
         value = getattr(trek, name)
         if not value:
@@ -429,20 +436,6 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
         self.serialize_field('titre', trek._meta.get_field(name).verbose_name)
         self.serialize_field('description', value)
         self.xml.endElement('information_complementaire')
-
-    def serialize_trace(self, trek):
-        self.xml.startElement('trace', {})
-        coords = trek.geom.transform(4326, clone=True).coords
-        if trek.geom.geom_typeid == 5:
-            coords = coords[0]
-        elif trek.geom.geom_typeid != 1:
-            coords = []
-        for c in coords:
-            self.xml.startElement('point', {})
-            self.serialize_field('lat', c[1])
-            self.serialize_field('lng', c[0])
-            self.xml.endElement('point')
-        self.xml.endElement('trace')
 
     def serialize_locomotions(self, trek):
         attrs = {}
@@ -467,14 +460,15 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
             self.serialize_field('description', plain_text(description))
 
     def serialize_tags(self, trek):
-        self.xml.startElement('tags_publics', {})
-        tag_ids = list(trek.themes.values_list('cirkwi_id', flat=True))
-        tag_ids += trek.accessibilities.values_list('cirkwi_id', flat=True)
+        tag_ids = list(trek.themes.filter(cirkwi_id__isnull=False).values_list('cirkwi_id', flat=True))
+        tag_ids += trek.accessibilities.filter(cirkwi_id__isnull=False).values_list('cirkwi_id', flat=True)
         if trek.difficulty and trek.difficulty.cirkwi_id:
             tag_ids.append(trek.difficulty.cirkwi_id)
-        for tag in CirkwiTag.objects.filter(id__in=tag_ids):
-            self.serialize_field('tag_public', '', {'id': str(tag.eid), 'nom': tag.name})
-        self.xml.endElement('tags_publics')
+        if tag_ids:
+            self.xml.startElement('tags_publics', {})
+            for tag in CirkwiTag.objects.filter(id__in=tag_ids):
+                self.serialize_field('tag_public', '', {'id': str(tag.eid), 'nom': tag.name})
+            self.xml.endElement('tags_publics')
 
     # TODO: parking location (POI?), points_reference
     def serialize(self, treks):
@@ -494,27 +488,25 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
                 self.serialize_field('titre', trek.name)
                 self.serialize_description(trek)
                 self.serialize_medias(self.request, trek.serializable_pictures)
-                self.xml.startElement('informations_complementaires', {})
-                self.serialize_additionnal_info(trek, 'departure')
-                self.serialize_additionnal_info(trek, 'arrival')
-                self.serialize_additionnal_info(trek, 'ambiance')
-                self.serialize_additionnal_info(trek, 'access')
-                self.serialize_additionnal_info(trek, 'disabled_infrastructure')
-                self.serialize_additionnal_info(trek, 'advised_parking')
-                self.serialize_additionnal_info(trek, 'public_transport')
-                self.serialize_additionnal_info(trek, 'advice')
-                self.xml.endElement('informations_complementaires')
+                if any([getattr(trek, name) for name in self.ADDITIONNAL_INFO]):
+                    self.xml.startElement('informations_complementaires', {})
+                    for name in self.ADDITIONNAL_INFO:
+                        self.serialize_additionnal_info(trek, name)
+                    self.xml.endElement('informations_complementaires')
                 self.serialize_tags(trek)
                 self.xml.endElement('information')
             translation.activate(orig_lang)
             self.xml.endElement('informations')
             self.serialize_field('distance', int(trek.length))
             self.serialize_locomotions(trek)
-            self.serialize_trace(trek)
-            if trek.published_pois:
-                self.xml.startElement('pois', {})
-                self.serialize_pois(trek.published_pois.transform(4326, field_name='geom'))
-                self.xml.endElement('pois')
+            kml_url = reverse('trekking:trek_kml_detail',
+                              kwargs={'lang': get_language(), 'pk': trek.pk, 'slug': trek.slug})
+            self.serialize_field('fichier_trace', '', {'url': self.request.build_absolute_uri(kml_url)})
+            if not self.exclude_pois:
+                if trek.published_pois:
+                    self.xml.startElement('pois', {})
+                    self.serialize_pois(trek.published_pois.transform(4326, field_name='geom'))
+                    self.xml.endElement('pois')
             self.xml.endElement('circuit')
         self.xml.endElement('circuits')
         self.xml.endDocument()

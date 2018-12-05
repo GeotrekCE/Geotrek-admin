@@ -14,7 +14,13 @@ class GeotrekImportTask(Task):
      to be displayed on the web interface.
     '''
     def on_failure(self, exc, task_id, args, kwargs, einfo):
-        filename, class_name, module_name = args
+        try:
+            filename, class_name, module_name = args
+
+        except ValueError:
+            class_name, module_name = args
+            filename = ''
+
         self.update_state(
             task_id,
             'FAILURE',
@@ -33,7 +39,7 @@ def import_datas(class_name, filename, module_name="bulkimport.parsers"):
     try:
         module = importlib.import_module(module_name)
         Parser = getattr(module, class_name)
-    except:
+    except ImportError:
         raise ImportError("Failed to import parser class '{0}' from module '{1}'".format(
             class_name, module_name))
 
@@ -72,7 +78,7 @@ def import_datas_from_web(class_name, module_name="bulkimport.parsers"):
     try:
         module = importlib.import_module(module_name)
         Parser = getattr(module, class_name)
-    except:
+    except ImportError:
         raise ImportError("Failed to import parser class '{0}' from module '{1}'".format(
             class_name, module_name))
 

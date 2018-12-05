@@ -41,3 +41,4 @@ bootstrap.py
 screamshotter.log
 
 /share/
+/geotrek/settings/local.py

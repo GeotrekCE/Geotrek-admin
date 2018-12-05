@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-03 13:30+0000\n"
+"POT-Creation-Date: 2017-06-16 09:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+msgid "Portals"
+msgstr ""
+
+msgid "Flatpages"
+msgstr ""
+
 msgid "Content"
+msgstr ""
+
+msgid "Choose between external URL and HTML content"
 msgstr ""
 
 msgid "All"
@@ -50,6 +59,9 @@ msgstr ""
 msgid "Source"
 msgstr ""
 
+msgid "Portal"
+msgstr ""
+
 msgid "ID order if blank"
 msgstr ""
 
@@ -60,9 +72,6 @@ msgid "Flat page"
 msgstr ""
 
 msgid "Flat pages"
-msgstr ""
-
-msgid "Choose between external URL and HTML content"
 msgstr ""
 
 msgid "Template 1"

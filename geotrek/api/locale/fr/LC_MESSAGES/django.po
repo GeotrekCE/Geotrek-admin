@@ -1,0 +1,52 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-25 09:25+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Set geometry dimension (2 by default for 2D, 3 for 3D)"
+msgstr "Définit la dimension géométrique (2 par défaut pour la 2D, 3 pour la 3D)"
+
+msgid "Set language for translation. 'all' by default"
+msgstr "Définit le language pour la traduction. 'all' par défaut."
+
+msgid "Set output format (json / geojson). JSON by default"
+msgstr "Format de sortie. json par défaut, geojson disponible"
+
+msgid "Limit required fields to increase performances. Ex : id,url,geometry"
+msgstr "limiter les champs de sortie pour améliorer les performances. Ex: id,url,geometry"
+
+msgid "Omit specified fields to increase performance. Ex: url,category"
+msgstr "Supprimer des champs de sortie pour améliorer les performances. Ex: url,category"
+
+msgid ""
+"Filter elements contained in bbox formatted like SW-lng,SW-lat,NE-lng,NE-lat"
+msgstr "Filter les éléments contenus dans une enveloppe telle que SO-lng,SO-lat,NE-lng,NE-lat"
+
+msgid "Max distance in meters between point and elements"
+msgstr "Distance maximale entre le point et les éléments à filtrer"
+
+msgid "Reference point to compute distance LNG,LAT"
+msgstr "Point de référence pour calculer la distance. Ex: LNG,LAT"
+
+msgid ""
+"Publication state. If language specified, only language published are "
+"filterted. true / false"
+msgstr "État de la publication. Si une langue est définie, les filtres s'appliquent uniquement à elle."
+
+msgid "External ID"
+msgstr "ID externe"

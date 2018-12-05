@@ -3,10 +3,10 @@ IMPORT FROM SIT
 ===============
 
 
-Configure SITRA import
-----------------------
+Configure APIDAE (ex-SITRA) import
+----------------------------------
 
-To import touristic content from SITRA, create a ``bulkimport/parsers.py`` file with the following content:
+To import touristic content from APIDAE (ex-SITRA), create a ``bulkimport/parsers.py`` file with the following content:
 
 ::
 
@@ -20,18 +20,20 @@ To import touristic content from SITRA, create a ``bulkimport/parsers.py`` file 
         project_id = 9999
         selection_id = 99999
         category = u"Hébergement"
-        type1 = u""
-        type2 = u""
+        type1 = [u"Camping"]
+        type2 = [u"3 étoiles", "Tourisme et Handicap"]  # just remove this line if no type2
 
 Then set up appropriate values:
 
 * ``label`` at your convenience,
-* ``api_key``, ``project_id`` and ``selection_id`` according to your SITRA configuration,
+* ``api_key``, ``project_id`` and ``selection_id`` according to your APIDAE (ex-SITRA) configuration,
 * ``category``, ``type1`` and ``type2`` to select in which Geotrek category/type imported objects should go (types are optional),
 * rename the class ``HebergementParser`` if need be.
 
 You can duplicate the class. Each class must have a different name.
 Don't forget the u character before strings if they contain non-ascii characters.
+
+To apply changes, you may have to run ``sudo supervisorctl restart all``.
 
 Configure Marque Esprit Parc import
 -----------------------------------

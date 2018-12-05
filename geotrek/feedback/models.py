@@ -1,4 +1,5 @@
 import logging
+from HTMLParser import HTMLParser
 
 from django.conf import settings
 from django.db import models
@@ -77,6 +78,10 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
     @property
     def geom_wgs84(self):
         return self.geom.transform(4326, clone=True)
+
+    @property
+    def comment_text(self):
+        return HTMLParser.unescape.__func__(HTMLParser, self.comment)
 
 
 @receiver(post_save, sender=Report, dispatch_uid="on_report_created")

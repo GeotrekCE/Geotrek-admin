@@ -32,7 +32,7 @@ class reify(object):
         self.wrapped = wrapped
         try:
             self.__doc__ = wrapped.__doc__
-        except:  # pragma: no cover
+        except AttributeError:
             pass
 
     def __get__(self, inst, objtype=None):
@@ -122,8 +122,8 @@ def intersecting(cls, obj, distance=None):
         if obj.geom.geom_type == 'LineString':
             # FIXME: move transform from DRF viewset to DRF itself and remove transform here
             ewkt = obj.geom.transform(settings.SRID, clone=True).ewkt
-            qs = qs.extra(select={'d': 'ST_Line_Locate_Point(ST_GeomFromEWKT(\'{ewkt}\'), ST_StartPoint((ST_Dump(ST_Intersection(ST_GeomFromEWKT(\'{ewkt}\'), geom))).geom))'.format(ewkt=ewkt)})
-            qs = qs.extra(order_by=['d'])
+            qs = qs.extra(select={'ordering': 'ST_Line_Locate_Point(ST_GeomFromEWKT(\'{ewkt}\'), ST_StartPoint((ST_Dump(ST_Intersection(ST_GeomFromEWKT(\'{ewkt}\'), geom))).geom))'.format(ewkt=ewkt)})
+            qs = qs.extra(order_by=['ordering'])
     if obj.__class__ == cls:
         # Prevent self intersection
         qs = qs.exclude(pk=obj.pk)

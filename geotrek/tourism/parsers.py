@@ -1,4 +1,4 @@
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 
 import json
 
@@ -118,6 +118,7 @@ class TouristicContentSitraParser(AttachmentParserMixin, Parser):
                     'prestations.services',
                     'gestion.dateModification',
                     'gestion.membreProprietaire.nom',
+                    'illustrations'
                 ],
             }
             response = requests.get(self.url, params={'query': json.dumps(params)})

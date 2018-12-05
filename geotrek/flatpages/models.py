@@ -8,6 +8,7 @@ from django.conf import settings
 from bs4 import BeautifulSoup
 from extended_choices import Choices
 
+from mapentity.serializers import plain_text
 from geotrek.common.mixins import TimeStampedModelMixin, BasePublishableMixin
 
 
@@ -100,3 +101,11 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
     @models.permalink
     def get_delete_url(self):
         return ('admin:flatpages_flatpage_delete', [self.pk])
+
+    @property
+    def rando_url(self):
+        return 'informations/{}/'.format(self.slug)
+
+    @property
+    def meta_description(self):
+        return plain_text(self.content)[:500]

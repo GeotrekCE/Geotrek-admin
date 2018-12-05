@@ -1,4 +1,5 @@
 language: python
+dist: precise
 python:
   - "2.7"
 env:
@@ -50,14 +51,11 @@ before_install:
   - psql -c 'GRANT ALL ON spatial_ref_sys,geometry_columns,raster_columns TO geotrek;' -U postgres -d geotrekdb
   # GDAL-fix -- End (remove with Ubuntu 14.04)
 
-  # Enable experimental features during navigation tests
-  - sed -i "s/experimental = False/experimental = True/" etc/settings.ini
-
 install:
   - if [[ $ACTION != codestyle ]]; then deactivate; fi
   - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
-  - if [[ $ACTION == test ]]; then ./install.sh --tests || cat ./install.log; fi
-  - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput || cat ./install.log; fi
+  - if [[ $ACTION == test ]]; then ./install.sh --tests || (cat ./install.log; false); fi
+  - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput || (cat ./install.log; false); fi
 script:
   - if [[ $ACTION == codestyle ]]; then flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings; fi
   - if [[ $ACTION == codestyle ]]; then flake8 geotrek; fi

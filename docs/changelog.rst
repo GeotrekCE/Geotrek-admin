@@ -2,6 +2,134 @@
 CHANGELOG
 =========
 
+2.16.2 (2018-10-02)
+-------------------
+
+**Bug fixes**
+
+* Fix installation
+
+
+2.16.1 (2018-01-10)
+-------------------
+
+**Bug fixes**
+
+* Fix encoding errors while generating static versions of rando pages
+* SEO for static versions of rando pages
+* Disable template caching (fix ODT generation)
+
+
+2.16.0 (2017-12-21)
+-------------------
+
+**New features**
+
+* Create static versions of rando pages with opengraph data (Facebook)
+* Add external id field to POI form
+
+**Bug fixes**
+
+* Fix download of python packages for pypi.python.org (SSL is now required)
+* API v2 : Fix full URL pictures in nested serializers
+* Fix network SVG (add viewbox) to make them visible in Geotrek-rando
+* Hide file parsers form if no one is available
+
+
+2.15.2 (2017-09-28)
+-------------------
+
+**Bug fixes**
+
+* Fix existing path split in particular cases where postgis doesn't see real intersections.
+* Fix project and intervention detail template.
+* Fix synchronization of POI media other than images
+* Include pois, parking and reference points to compute PDF map zoom
+
+
+2.15.1 (2017-08-23)
+-------------------
+
+**New features**
+
+* Add es translation for PDF
+* Add mailssl setting
+
+**Bug fixes**
+
+* Fix APIDAE import illustrations
+* Fix double import parsers
+* Fix cirkwi export
+* Select only published POIs in GPX and KML files
+* Remove deprecated experimental setting
+* Fix HTML tags & entities in feedback email
+
+
+2.15.0 (2017-07-13)
+-------------------
+
+**New features**
+
+* API v2 Beta 1. Optimized multilingual filtered endpoints for paths, treks, tours and pois.
+* See HTML doc and examples in /api/v2/. Authentication with Basic HTTP (https://en.wikipedia.org/wiki/Basic_access_authentication).
+* Don't use it in production without HTTPS
+
+**Bug fixes**
+
+* Fix pdf default public templates (weasyprint)
+* Fix screamshotter standalone install (map screenshots)
+
+
+2.14.3 (2017-07-03)
+-------------------
+
+**Bug fixes**
+
+* Cirkwi export fixes and improvements
+
+
+2.14.2 (2017-06-21)
+-------------------
+
+**Bug fixes**
+
+* Fix attachments edition
+
+
+2.14.1 (2017-06-22)
+-------------------
+
+**Bug fixes**
+
+* Refactor signals pre / post migrate according Django 1.8
+* Update translations
+* Fix path splitting
+* Fix AutoLogin Middleware with mapentity 3.1.4
+
+
+2.14.0
+------
+
+**WARNING!**
+
+* Upgrade to version 2.14.0 is only possible from version 2.13.0
+
+**New features**
+
+* Upgrade to Django 1.8. This is a big step, migrations are reset, please backup before upgrade.
+* Ability to skip attachment download in parsers and use external links.
+
+**Minor changes**
+
+* Possibility to exclude pois in cirkwi xml export by adding ?withoutpois=1 to url (http://XXXXX/api/cirkwi/circuits.xml?withoutpois=1
+* Add MOBILE_TILES_EXTENSION setting (for compatibility with old mobile apps, set it to 'png')
+* API optimization
+* Disable auto size for service icon in trek description.
+
+**Bug fixes**
+
+* Fix topologies and cities intersections
+
 2.13.1 (2018-09-14)
 -------------------
 
@@ -300,7 +428,6 @@ CHANGELOG
 * Fix double column buttons in gridmanager.
 * Fix validation on flatpages for combo external_url + content.
 * Fix responsive layout for provided templates in flatpages.
-* Don't catch all domain names if it is defined in settings.ini
 * Fix event link to closest visible path only
 * Do not log anymore an error when submitting a form with an empty geometry
 

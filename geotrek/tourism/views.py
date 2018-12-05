@@ -1,24 +1,18 @@
 from itertools import chain
 import logging
 import os
+from urlparse import urljoin
 from django.utils.translation import ugettext as _
 
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.http import Http404
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
-from django.views.generic.detail import DetailView
-from django.views.generic.list import ListView
-import geojson
-from mapentity.views import (JSONResponseMixin, MapEntityCreate,
+from django.views.generic import DetailView
+from mapentity.views import (MapEntityCreate,
                              MapEntityUpdate, MapEntityLayer, MapEntityList,
                              MapEntityDetail, MapEntityDelete, MapEntityViewSet,
                              MapEntityFormat, MapEntityDocument)
-import requests
-from requests.exceptions import RequestException
 from rest_framework import permissions as rest_permissions, viewsets
-from rest_framework.filters import DjangoFilterBackend
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -33,63 +27,13 @@ from geotrek.trekking.serializers import POISerializer
 
 from .filters import TouristicContentFilterSet, TouristicEventFilterSet, TouristicEventApiFilterSet
 from .forms import TouristicContentForm, TouristicEventForm
-from .helpers import post_process
-from .models import (TouristicContent, TouristicEvent, TouristicContentCategory,
-                     DataSource, InformationDesk)
+from .models import (TouristicContent, TouristicEvent, TouristicContentCategory, InformationDesk)
 from .serializers import (TouristicContentSerializer, TouristicEventSerializer,
                           InformationDeskSerializer)
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 
 logger = logging.getLogger(__name__)
-
-
-class DataSourceList(JSONResponseMixin, ListView):
-    queryset = DataSource.objects.order_by('id')
-
-    def get_context_data(self):
-        results = []
-        for ds in self.get_queryset():
-            results.append({
-                'id': ds.id,
-                'title': ds.title,
-                'url': ds.url,
-                'type': ds.type,
-                'pictogram_url': ds.pictogram.url,
-                'geojson_url': ds.get_absolute_url(),
-                'targets': ds.targets
-            })
-        return results
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(DataSourceList, self).dispatch(*args, **kwargs)
-
-
-class DataSourceGeoJSON(JSONResponseMixin, DetailView):
-    model = DataSource
-
-    def get_context_data(self, *args, **kwargs):
-        source = self.get_object()
-
-        default_result = geojson.FeatureCollection(features=[])
-
-        try:
-            response = requests.get(source.url)
-        except RequestException as e:
-            logger.error(u"Source '%s' cannot be downloaded" % source.url)
-            logger.exception(e)
-            return default_result
-
-        try:
-            return post_process(source, self.request.LANGUAGE_CODE, response.text)
-        except (ValueError, AssertionError) as e:
-            return default_result
-
-    @method_decorator(login_required)
-    @method_decorator(cache_page(settings.CACHE_TIMEOUT_TOURISM_DATASOURCES, cache="fat"))
-    def dispatch(self, *args, **kwargs):
-        return super(DataSourceGeoJSON, self).dispatch(*args, **kwargs)
 
 
 class TouristicContentLayer(MapEntityLayer):
@@ -192,6 +136,19 @@ class TouristicContentDocumentPublic(DocumentPublic):
         return context
 
 
+class TouristicContentMeta(DetailView):
+    model = TouristicContent
+    template_name = 'tourism/touristiccontent_meta.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TouristicContentMeta, self).get_context_data(**kwargs)
+        context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
+        context['facebook_image'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
+        context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
+        context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
+        return context
+
+
 class TouristicEventLayer(MapEntityLayer):
     queryset = TouristicEvent.objects.existing()
     properties = ['name']
@@ -276,6 +233,19 @@ class TouristicEventDocumentPublic(DocumentPublic):
         return context
 
 
+class TouristicEventMeta(DetailView):
+    model = TouristicEvent
+    template_name = 'tourism/touristicevent_meta.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TouristicEventMeta, self).get_context_data(**kwargs)
+        context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
+        context['facebook_image'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
+        context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
+        context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
+        return context
+
+
 class TouristicContentViewSet(MapEntityViewSet):
     model = TouristicContent
     serializer_class = TouristicContentSerializer
@@ -332,12 +302,17 @@ class TouristicEventViewSet(MapEntityViewSet):
 
 class InformationDeskViewSet(viewsets.ModelViewSet):
     model = InformationDesk
+    queryset = InformationDesk.objects.all()
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_serializer_class(self):
-        class Serializer(InformationDeskSerializer, GeoFeatureModelSerializer):
-            pass
-        return Serializer
+        renderer, media_type = self.perform_content_negotiation(self.request)
+        if getattr(renderer, 'format') == 'geojson':
+            class Serializer(InformationDeskSerializer, GeoFeatureModelSerializer):
+                class Meta(InformationDeskSerializer.Meta):
+                    pass
+            return Serializer
+        return InformationDeskSerializer
 
     def get_queryset(self):
         qs = super(InformationDeskViewSet, self).get_queryset()
@@ -391,7 +366,8 @@ class TrekTouristicContentViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         class Serializer(TouristicContentSerializer, GeoFeatureModelSerializer):
-            pass
+            class Meta(TouristicContentSerializer.Meta):
+                pass
         return Serializer
 
     def get_queryset(self):
@@ -422,7 +398,8 @@ class TrekTouristicEventViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         class Serializer(TouristicEventSerializer, GeoFeatureModelSerializer):
-            pass
+            class Meta(TouristicEventSerializer.Meta):
+                pass
         return Serializer
 
     def get_queryset(self):

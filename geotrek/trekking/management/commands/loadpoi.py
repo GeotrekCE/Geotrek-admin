@@ -35,7 +35,8 @@ class Command(BaseCommand):
         datasource = ogrdriver.Open(filename, 1)
         layer = datasource.GetLayer()
         count = layer.GetFeatureCount()
-        self.stdout.write('%s objects found' % count)
+        if options['verbosity'] >= 1:
+            self.stdout.write('%s objects found' % count)
 
         for i in range(count):
             feature = layer.GetFeature(i)

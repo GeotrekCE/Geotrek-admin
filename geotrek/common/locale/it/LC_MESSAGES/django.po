@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-04 11:10+0200\n"
+"POT-Creation-Date: 2017-06-16 09:02+0000\n"
 "PO-Revision-Date: 2013-01-25 15:02+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,122 +18,40 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: filters.py:14
+#, fuzzy
+#| msgid "Intervention type"
+msgid "content type"
+msgstr "Tipo di intervento"
+
+#, fuzzy
+#| msgid "Comments"
+msgid "Common"
+msgstr "Note"
+
 #, python-format
 msgid "min %s"
 msgstr "min %s"
 
-#: filters.py:15
 #, python-format
 msgid "max %s"
 msgstr "max %s"
 
-#: models.py:7 models.py:11
-msgid "Organism"
-msgstr "Organismo"
+msgid "Data to import from network"
+msgstr ""
 
-#: models.py:12
-msgid "Organisms"
-msgstr "Organismi"
+msgid "Import"
+msgstr ""
 
-#: models.py:20 models.py:24
-msgid "File type"
+#, fuzzy
+#| msgid "File type"
+msgid "File"
 msgstr "Tipo di file"
 
-#: models.py:25
-msgid "File types"
-msgstr "Tipi di file"
-
-msgid ""
-"Access to the requested resource is restricted to path managers. You have "
-"been redirected."
+msgid "Data to import from local file"
 msgstr ""
-"L'accesso alla risorsa richiesta è riservata al responsabile dei "
-"sentieri. Siete stati reindirizzati"
 
-msgid ""
-"Access to the requested resource is restricted to communication managers. "
-"You have been redirected."
+msgid "File must be of ZIP type."
 msgstr ""
-"L'accesso alla risorsa richiesta è riservata al responsabile della "
-"comunicazione. Siete stati reindirizzati"
-
-msgid ""
-"Access to the requested resource is restricted to work editor. You have "
-"been redirected."
-msgstr ""
-"L'accesso alla risorsa richiesta è riservata ai compilatori. Siete stati "
-"reindirizzati"
-
-msgid ""
-"Access to the requested resource is restricted by structure. You have "
-"been redirected."
-msgstr ""
-"L'accesso alla risorsa richiesta è limitata dalla struttura. Siete stati "
-"reindirizzati"
-
-msgid "Nom"
-msgstr "Nome"
-
-msgid "Structure"
-msgstr "Struttura"
-
-msgid "Structures"
-msgstr "Strutture"
-
-msgid "Related structure"
-msgstr "Struttura collegata"
-
-msgid "Related structures"
-msgstr "Strutture collegate"
-
-msgid "Language"
-msgstr "Lingua"
-
-msgid "User's profile"
-msgstr "Profilo dell'utente"
-
-msgid "User's profiles"
-msgstr "Profili degli utenti"
-
-msgid "Profile for %s"
-msgstr "Profilo per %s"
-
-msgid "Cancel"
-msgstr "Eliminare"
-
-msgid "Save changes"
-msgstr "Salvare le modifiche"
-
-msgid "Topology is not valid."
-msgstr "La topologia non è valida."
-
-msgid "length"
-msgstr "lunghezza"
-
-msgid "Name"
-msgstr "Nome"
-
-msgid "Comments"
-msgstr "Note"
-
-msgid "Reverse path"
-msgstr "Invertire la tratta"
-
-msgid "The path will be reversed once saved"
-msgstr "La tratta sarà invertita una volta salvata"
-
-msgid "Validity"
-msgstr "Validità"
-
-msgid "Departure"
-msgstr "Partenza"
-
-msgid "Arrival"
-msgstr "Arrivo"
-
-msgid "Comfort"
-msgstr "Comfort"
 
 msgid "Insertion date"
 msgstr "Data di inserimento"
@@ -141,774 +59,1070 @@ msgstr "Data di inserimento"
 msgid "Update date"
 msgstr "Data di modifica"
 
-msgid "Length"
-msgstr "Lunghezza"
-
-msgid "Ascent"
-msgstr "Dislivello in salita"
-
-msgid "Descent"
-msgstr "Dislivello in discesa"
-
-msgid "Minimum elevation"
-msgstr "Quota minima"
-
-msgid "Maximum elevation"
-msgstr "Quota massima"
-
-msgid "Trail"
-msgstr "Sentiero"
-
-msgid "Datasource"
-msgstr "Fonte dei dati"
-
-msgid "Stake"
-msgstr "Enjeu"
-
-msgid "Usages"
-msgstr "Utilizzo"
-
-msgid "Networks"
-msgstr "Reti"
-
-msgid "Path"
-msgstr "Tratta"
-
-msgid "Paths"
-msgstr "Tratte"
-
-msgid "None"
-msgstr "Nessuno"
-
 msgid "Deleted"
 msgstr "Cancellato"
 
-msgid "Offset"
-msgstr "Scarto"
-
-msgid "Kind"
-msgstr "Tipo di topologia"
-
-msgid "Topology"
-msgstr "Topologia"
-
-msgid "Topologies"
-msgstr "Topologie"
-
-msgid "Invalid serialization: %s"
-msgstr "Sérialisation invalide: %s"
-
-msgid "Paths are not unique : %s"
-msgstr "le tratte non sono uniche: %s"
-
-msgid "Invalid serialization of intermediate markers"
-msgstr "Sérialisation invalide des points de passage"
-
-msgid "Start position"
-msgstr "Posizione di partenza"
-
-msgid "End position"
-msgstr "Posizione finale"
-
-msgid "Path aggregation"
-msgstr "Unione di tratte"
-
-msgid "Path aggregations"
-msgstr "Unioni di tratte"
-
-msgid "Source"
-msgstr "Risorsa"
-
-msgid "Datasources"
-msgstr "Fonti dei dati"
-
-msgid "Stakes"
-msgstr "Enjeux"
-
-msgid "Comforts"
-msgstr "Comfort"
-
-msgid "Usage"
-msgstr "Utilizzo"
-
-msgid "Network"
-msgstr "Rete"
-
-msgid "Trails"
-msgstr "Sentieri"
-
-msgid "Invalid"
-msgstr "Invalido"
-
-msgid "Properties"
-msgstr "Proprietà"
-
-msgid "Slope"
-msgstr "Dislivello"
-
-msgid "Elevation"
-msgstr "Quota"
-
-msgid "Management"
-msgstr "Gestione"
-
-msgid "Altitude profile"
-msgstr "Profilo altimetrico"
-
-msgid "Altitude (m)"
-msgstr "Quota (m)"
-
-msgid "Distance (m)"
-msgstr "Distanza (m)"
-
-msgid "Add a path"
-msgstr "Aggiungere una tratta"
-
-msgid "Interventions"
-msgstr "Interventi"
-
-msgid "Add intervention"
-msgstr "Aggiungere un intervento"
-
-msgid "Intervention year"
-msgstr "Anno di intervento"
-
-msgid "Facility"
-msgstr "Attrezzatura"
-
-msgid "Signage"
-msgstr "Segnaletica"
-
-msgid "Infrastructure Type"
-msgstr "Tipo di infrastruttura"
-
-msgid "Infrastructure Types"
-msgstr "Tipi di infrastrutture"
-
-msgid "Infrastructure"
-msgstr "Infrastruttura"
-
-msgid "Add infrastructure"
-msgstr "Aggiungere infrastruttura"
-
-msgid "Add signage"
-msgstr "Aggiungere segnaletica"
-
-msgid "Add a new infrastructure"
-msgstr "Aggiungere nuova infrastruttura"
-
-msgid "Add a new signage"
-msgstr "Aggiungere nuova segnaletica"
-
-msgid "Physical type"
-msgstr "Type physique"
-
-msgid "Land type"
-msgstr "Type foncier"
-
-msgid "Competence"
-msgstr "Competenza"
-
-msgid "Signage management"
-msgstr "Gestione della segnaletica"
-
-msgid "Work management"
-msgstr "Gestione dei lavori"
-
-msgid "Physical types"
-msgstr "Types physique"
-
-msgid "Physical edge"
-msgstr "Tronçon physique"
-
-msgid "Physical edges"
-msgstr "Tronçons physique"
-
-msgid "Right of way"
-msgstr "Diritto di passaggio"
-
-msgid "Land types"
-msgstr "Types foncier"
-
-msgid "Land edge"
-msgstr "Tronçon foncier"
-
-msgid "Land edges"
-msgstr "Tronçons foncier"
-
-msgid "Competence edge"
-msgstr "Tratta di competenza"
-
-msgid "Competence edges"
-msgstr "Tratte di competenza"
-
-msgid "Work management edge"
-msgstr "Tronçon de gestion de travaux"
-
-msgid "Work management edges"
-msgstr "Tronçons de gestion de travaux"
-
-msgid "Signage management edge"
-msgstr "Tronçon de gestion signalétique"
-
-msgid "Signage management edges"
-msgstr "Tronçons de gestion signalétique"
-
-msgid "Order"
-msgstr "Ordine"
-
-msgid "Restricted area"
-msgstr "Zona regolamentata"
-
-msgid "Restricted areas"
-msgstr "Zone regolamentate"
-
-msgid "Restricted area edge"
-msgstr "Tratta in zona regolamentata"
-
-msgid "Restricted area edges"
-msgstr "Tratte in zona regolamentata"
-
-msgid "City"
-msgstr "Comune"
-
-msgid "Cities"
-msgstr "Comuni"
-
-msgid "City edge"
-msgstr "Tratta del Comune"
-
-msgid "City edges"
-msgstr "Tratte dei Comuni"
-
-msgid "District"
-msgstr "Settore"
-
-msgid "Districts"
-msgstr "Settori"
-
-msgid "District edge"
-msgstr "Tratta del Settore"
-
-msgid "District edges"
-msgstr "Tratte del Settore"
-
-msgid "Center on"
-msgstr "Centrare su"
-
-msgid "Restricted Area"
-msgstr "Zona regolamentata"
-
-msgid "Land"
-msgstr "Foncier"
-
-msgid "Add competence edge"
-msgstr "Aggiungere l'organismo competente"
-
-msgid "Add a new competence edge"
-msgstr "Aggiungere nuovo organismo competente"
-
-msgid "Add land edge"
-msgstr "Renseigner la nature foncière"
-
-msgid "Add a new land edge"
-msgstr "Renseigner la nature foncière"
-
-msgid "Add physical edge"
-msgstr "Renseigner la nature physique"
-
-msgid "Add a new physical edge"
-msgstr "Renseigner la nature physique"
-
-msgid "Add work management edge"
-msgstr "Aggiungere gestione lavori"
-
-msgid "Add a new work management edge"
-msgstr "Aggiungere nuova gestione lavori"
-
-msgid "Add signage management edge"
-msgstr "Aggiungere gestione segnaletica"
-
-msgid "Add a new signage management edge"
-msgstr "Aggiungere nuova gestione segnaletica"
-
-msgid "Manage land"
-msgstr "Gestione fondiaria"
-
-msgid "Competence zones"
-msgstr "Zone di competenza"
-
-msgid "Year"
-msgstr "Anno"
-
-msgid "Year of activity"
-msgstr "Anno dell'attività"
-
-msgid "Mandays"
-msgstr "Giornate/Uomo"
-
-msgid "Fundings"
-msgstr "Finanziamenti"
-
-msgid "Whether the intervention is currently happening"
-msgstr "In manutenzione"
-
-msgid "Intervention date"
-msgstr "Data dell'intervento"
-
-msgid "Width"
-msgstr "Larghezza"
-
-msgid "Height"
-msgstr "Quota"
-
-msgid "Area"
-msgstr "Superficie"
-
-msgid "Material cost"
-msgstr "Costo del materiale"
-
-msgid "Heliport cost"
-msgstr "Costo dell'elitrasporto"
-
-msgid "Subcontract cost"
-msgstr "Coût sous-traitance"
-
-msgid "Intervention status"
-msgstr "Stato dell'intervento"
-
-msgid "Intervention type"
-msgstr "Tipo di intervento"
-
-msgid "Disorders"
-msgstr "Désordres"
-
-msgid "Jobs"
-msgstr "Fonctions"
-
-msgid "Project"
-msgstr "Cantiere"
-
-msgid "Intervention"
-msgstr "Intervento"
-
-msgid "Status"
-msgstr "Stato"
-
-msgid "Intervention's status"
-msgstr "Stato dell'intervento"
-
-msgid "Intervention's statuses"
-msgstr "Stato dell'intervento"
-
-msgid "Type"
-msgstr "Tipo"
-
-msgid "Intervention's type"
-msgstr "Tipo di intervento"
-
-msgid "Intervention's types"
-msgstr "Tipi di intervento"
-
-msgid "Disorder"
-msgstr "Désordre"
-
-msgid "Intervention's disorder"
-msgstr "Désordre"
-
-msgid "Intervention's disorders"
-msgstr "Désordres"
-
-msgid "Job"
-msgstr "Fonction"
-
-msgid "Cost"
-msgstr "Costo"
-
-msgid "Intervention's job"
-msgstr "Fonction"
-
-msgid "Intervention's jobs"
-msgstr "Fonctions"
-
-msgid "Manday"
-msgstr "Giornata/Uomo"
-
-msgid "Begin year"
-msgstr "Anno di inizio"
-
-msgid "End year"
-msgstr "Anno di fine lavori"
-
-msgid "Constraint"
-msgstr "Contraintes"
-
-msgid "Project type"
-msgstr "Tipo di cantiere"
-
-msgid "Project domain"
-msgstr "Area di cantiere"
-
-msgid "Contractors"
-msgstr "Incaricati"
-
-msgid "Project owner"
-msgstr "Committente"
-
-msgid "Project manager"
-msgstr "Aggiudicatario"
-
-msgid "Founders"
-msgstr "Finanziatori"
-
-msgid "Projects"
-msgstr "Cantieri"
-
-msgid "Project types"
-msgstr "Tipi di cantiere"
-
-msgid "Domain"
-msgstr "Domaine"
-
-msgid "Project domains"
-msgstr "Zone di cantiere"
-
-msgid "Contractor"
-msgstr "Incaricato"
-
-msgid "Amount"
-msgstr "Importo"
-
-msgid "Funding"
-msgstr "Finanziamento"
-
-msgid ""
-"\n"
-"                     %(job)s: %(nb_days)s days\n"
-"                    "
+#, python-format
+msgid "Image %s invalid or missing from disk."
 msgstr ""
-"\n"
-"                     %(job)s: %(nb_days)s jours\n"
-"                    "
-
-msgid "day"
-msgstr "Giornata/Uomo"
-
-msgid "Total cost:"
-msgstr "Costo totale:"
-
-msgid "Related Project"
-msgstr "Cantiere collegato"
-
-msgid "Related infrastructure"
-msgstr "Infrastruttura collegata"
-
-msgid "Related signage"
-msgstr "Segnaletica collegata"
-
-msgid "on"
-msgstr "su"
-
-msgid "Add manday"
-msgstr "Aggiungere Giornata/Uomo"
-
-msgid "Remove"
-msgstr "Eliminare"
-
-msgid "Maintenance"
-msgstr "Manutenzione"
-
-msgid "Infrastructures"
-msgstr "Infrastrutture"
-
-msgid "Signages"
-msgstr "Segnaletica"
-
-msgid ""
-"\n"
-"                    %(amount)s€ of %(organism)s\n"
-"                    "
-msgstr ""
-"\n"
-"                    %(amount)s€ de %(organism)s\n"
-"                    "
-
-msgid "Add funding"
-msgstr "Aggiungere finanziamento"
-
-msgid "Add project"
-msgstr "Aggiungere cantiere"
-
-msgid "Any year"
-msgstr "Annuale"
-
-msgid "Add a new %s"
-msgstr "Aggiungere un nuovo %s"
-
-msgid "Created"
-msgstr "Creato"
-
-msgid "Your form contains errors"
-msgstr "La scheda contiene errori"
-
-msgid "Edit %s"
-msgstr "Scrivere %s"
-
-msgid "Saved"
-msgstr "Salvato"
-
-msgid "Unknown serialization format '%s'"
-msgstr "Format de sérialization inconnnu '%s'"
-
-msgid "Do you really wish to delete <strong>%(object)s</strong> ?"
-msgstr "Siete sicuri di voler eliminare <strong>%(object)s</strong> ?"
-
-msgid "Yes, delete"
-msgstr "Si, cancella"
-
-msgid "No, back to edit view"
-msgstr "No, torna alla visualizzazione scrittura"
-
-msgid "Update"
-msgstr "Aggiornare"
-
-msgid "ODT"
-msgstr "ODT"
-
-msgid "PDF"
-msgstr "PDF"
-
-msgid "Attached files"
-msgstr "File allegati"
-
-msgid "No map available for this object."
-msgstr "Nessuna mappa disponibile per questo oggetto."
-
-msgid "Delete"
-msgstr "Cancellare"
-
-msgid "New file attachment"
-msgstr "Allegare nuovo file"
-
-msgid "Existing file attachment"
-msgstr "Allegare a file esistenti"
-
-msgid "Trek"
-msgstr "Itinerario"
-
-msgid "POI"
-msgstr "POI"
-
-msgid "Filter"
-msgstr "Filtro"
-
-msgid "Filter list and map"
-msgstr "Filtrare elenco e mappa"
-
-msgid "Save map as image"
-msgstr "Salvare la mappa come immagine"
-
-msgid "Add"
-msgstr "Aggiungere"
-
-msgid "Upload attachment"
-msgstr "Caricare allegato"
-
-msgid "Add attachment"
-msgstr "Aggiungere allegato"
-
-msgid "Attachment"
-msgstr "Allegato"
-
-msgid "Creator"
-msgstr "Autore"
-
-msgid "Title"
-msgstr "Titolo"
-
-msgid "Legend"
-msgstr "Legenda"
-
-msgid "Your attachment was uploaded."
-msgstr "Il vostro allegato è stato caricato"
-
-msgid "Your attachment was deleted."
-msgstr "Il vostro allegato è stato cancellato"
-
-msgid "You are not allowed to delete this attachment."
-msgstr "Non siete autorizzati a cancellare questo allegato"
-
-msgid "Delete attachment"
-msgstr "Cancellare l'allegato"
-
-msgid "Actions"
-msgstr "Azioni"
-
-msgid "Create"
-msgstr "Creare"
-
-msgid "Published"
-msgstr "Pubblicato"
-
-msgid "Description teaser"
-msgstr "Riassunto"
-
-msgid "Description"
-msgstr "Descrizione"
-
-msgid "Ambiance"
-msgstr "Ambiente"
-
-msgid "Handicapped's infrastructure"
-msgstr "Infrastrutture per disabili"
-
-msgid "duration"
-msgstr "durata"
-
-msgid "Is in the midst of the park"
-msgstr "E' all'interno del Parco"
-
-msgid "Is transborder"
-msgstr "E' transfrontaliero"
-
-msgid "Advised parking"
-msgstr "Parcheggio consigliato"
-
-msgid "Public transport"
-msgstr "Trasporto pubblico"
-
-msgid "Advice"
-msgstr "Avviso"
-
-msgid "Themes"
-msgstr "Temi"
-
-msgid "Main themes"
-msgstr "Temi principali"
-
-msgid "Trek networks"
-msgstr "Rete sentieristica"
-
-msgid "Route"
-msgstr "Percorso"
-
-msgid "Difficulty level"
-msgstr "Grado di difficoltà"
-
-msgid "Destination"
-msgstr "Destinazione"
-
-msgid "Web links"
-msgstr "Collegamento web"
-
-msgid "Treks"
-msgstr "Itinerari"
-
-msgid "Trek network"
-msgstr "Rete sentieristica"
-
-msgid "Routes"
-msgstr "Percorsi"
-
-msgid "Difficulty levels"
-msgstr "Gradi di difficoltà"
-
-msgid "Pictogram"
-msgstr "Pittogramma"
-
-msgid "Destinations"
-msgstr "Destinazioni"
-
-msgid "URL"
-msgstr "URL"
 
 msgid "Thumbnail"
 msgstr "Vignette"
 
-msgid "Web link"
-msgstr "Collegamento web"
+msgid "None"
+msgstr "Nessuno"
+
+msgid "Published"
+msgstr "Pubblicato"
+
+msgid "Online"
+msgstr ""
+
+#, fuzzy
+#| msgid "Insertion date"
+msgid "Publication date"
+msgstr "Data di inserimento"
+
+msgid "Name"
+msgstr "Nome"
+
+msgid "Public name (Change carefully)"
+msgstr ""
+
+msgid "Waiting for publication"
+msgstr ""
+
+msgid "Pictogram"
+msgstr "Pittogramma"
+
+msgid "Organism"
+msgstr "Organismo"
+
+msgid "Organisms"
+msgstr "Organismi"
 
 msgid "Label"
 msgstr "Etichetta"
 
-msgid "Common departure"
-msgstr "Partenza comune"
-
-msgid "Common edge"
-msgstr "Tratta comune"
-
-msgid "Circuit step"
-msgstr "Tappa di un circuito"
-
-msgid "Trek relationship"
-msgstr "Collegamento tra itinerari"
-
-msgid "Trek relationships"
-msgstr "Collegamenti tra itinerari"
-
-msgid "Trekkings"
-msgstr "Itinerari"
-
-msgid "Add POI"
-msgstr "Aggiungere POI"
-
-msgid "POIs"
-msgstr "POIs"
-
-msgid "POI types"
-msgstr "Tipi di POI"
-
-msgid "Add trek"
-msgstr "Aggiungere itinerario"
-
-msgid "Add Web link"
-msgstr "Aggiungere collegamento web"
-
-
-msgid ""
-"This project is co-financed by the European Union (FEDER, ALCOTRA). Europe is involved in Massif Alpin with the European regional development fund."
+msgid "Cirkwi tag"
 msgstr ""
-"Questo progetto è stato finanziato dall’Unione Europea nell’ambito del FEDER Massif Alpin e del programma transfrontaliero ALCOTRA."
 
-msgid "Powered by http://geotrek.fr"
-msgstr "Propulsé par http://geotrek.fr"
+#, fuzzy
+#| msgid "Themes"
+msgid "Theme"
+msgstr "Temi"
 
-msgid ""
-"This hike is in the core of the national park > The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors."
+msgid "Themes"
+msgstr "Temi"
+
+msgid "Website"
 msgstr ""
-"Questo itinerario si snoda nel cuore del Parco nazionale > Il Parco nazionale è un territorio naturale, aperto a tutti ma soggetto ad una specifica regolamentazione che è utile conoscere per organizzare il proprio soggiorno."
 
-msgid ""
-"To check the practicability of the hiking paths and to know more about the National park, please visit us or call us at"
+msgid "Record source"
 msgstr ""
-"Per conoscere lo stato di percorribilità dei sentieri ed avere una migliore conoscenza del territorio si consiglia di informarsi anticipatamente"
 
-msgid "Edition of"
-msgstr "Edizione del"
+msgid "Record sources"
+msgstr ""
 
-msgid "Other treks"
-msgstr "Altri itinerari"
+msgid "Used for sync"
+msgstr ""
 
-msgid "Trek ascent"
-msgstr "Dislivello"
+msgid "Target portal"
+msgstr ""
 
-msgid "Altimetric profile"
-msgstr "Profilo altimetrico"
+msgid "Target portals"
+msgstr ""
 
-msgid "Not available"
-msgstr "Non disponibile"
+#, python-brace-format
+msgid "Line {line}"
+msgstr ""
 
-msgid "Min elevation"
-msgstr "Quota minima"
+#, python-brace-format
+msgid "Missing {required}field '{src}'"
+msgstr ""
 
-msgid "Max elevation"
-msgstr "Quota maxima"
+#, python-brace-format
+msgid "Destination field '{dst}' not in natural keys configuration"
+msgstr ""
 
-msgid "Recommandations"
-msgstr "Raccomandazioni"
+#, python-brace-format
+msgid "Null value not allowed for field '{src}'"
+msgstr ""
 
-msgid "Disabled infrastructures"
-msgstr "Infrastrutture per disabili"
+#, python-brace-format
+msgid "Blank value not allowed for field '{src}'"
+msgstr ""
 
-msgid "On the way..."
-msgstr "Sulla strada..."
+#, python-brace-format
+msgid "Eid field '{eid_dst}' missing in parser configuration"
+msgstr ""
+
+#, python-brace-format
+msgid "Missing id field '{eid_src}'"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Bad value '{eid_val}' for field '{eid_src}'. No object with this identifier"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Bad value '{eid_val}' for field '{eid_src}'. Multiple objects with this "
+"identifier"
+msgstr ""
+
+#, python-brace-format
+msgid "Bad value '{val}' for field {src}. Should contain {values}"
+msgstr ""
+
+#, python-brace-format
+msgid "Bad value '{val}' for field {src}. Should be {values}"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"{model} '{val}' did not exist in Geotrek-Admin and was automatically created"
+msgstr ""
+
+#, python-brace-format
+msgid "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
+msgstr ""
+
+msgid "Filename is required"
+msgstr ""
+
+#, python-brace-format
+msgid "File does not exists at: {filename}"
+msgstr ""
+
+msgid "Invalid geometry pointer"
+msgstr ""
+
+#, fuzzy
+#| msgid "Attachment"
+msgid "Attachments"
+msgstr "Allegato"
+
+#, python-brace-format
+msgid "FileType '{name}' does not exists in Geotrek-Admin. Please add it"
+msgstr ""
+
+#, python-brace-format
+msgid "Failed to download '{url}'"
+msgstr ""
+
+#, python-brace-format
+msgid "Failed to download {url}. HTTP status code {status_code}"
+msgstr ""
+
+msgid "Import from web."
+msgstr ""
+
+msgid "Paths"
+msgstr "Tratte"
+
+msgid "Tiles"
+msgstr ""
+
+msgid "DEM"
+msgstr ""
+
+msgid "Viewport (WGS84)"
+msgstr ""
+
+msgid "Mouse"
+msgstr ""
+
+#, fuzzy
+#| msgid "Comforts"
+msgid "Imports"
+msgstr "Comfort"
+
+msgid "Display report"
+msgstr ""
+
+#, python-format
+msgid "%(n)s/%(nb_lines)s line imported."
+msgid_plural "%(n)s/%(nb_lines)s lines imported."
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid "%(n)s record created."
+msgid_plural "%(n)s records created."
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid "%(n)s record updated."
+msgid_plural "%(n)s records updated."
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid "%(n)s record deleted."
+msgid_plural "%(n)s records deleted."
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid "%(n)s record unmodified."
+msgid_plural "%(n)s records unmodified."
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
+msgid "%(n)s warning:"
+msgid_plural "%(n)s warnings:"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "Draft"
+msgstr ""
+
+msgid "Object is published but"
+msgstr ""
+
+msgid "looks incomplete;"
+msgstr ""
+
+msgid "has invalid geometry;"
+msgstr ""
+
+msgid "Topology is not valid."
+msgstr "La topologia non è valida."
+
+msgid "Any year"
+msgstr "Annuale"
+
+#~ msgid "File types"
+#~ msgstr "Tipi di file"
+
+#~ msgid ""
+#~ "Access to the requested resource is restricted to path managers. You have "
+#~ "been redirected."
+#~ msgstr ""
+#~ "L'accesso alla risorsa richiesta è riservata al responsabile dei "
+#~ "sentieri. Siete stati reindirizzati"
+
+#~ msgid ""
+#~ "Access to the requested resource is restricted to communication managers. "
+#~ "You have been redirected."
+#~ msgstr ""
+#~ "L'accesso alla risorsa richiesta è riservata al responsabile della "
+#~ "comunicazione. Siete stati reindirizzati"
+
+#~ msgid ""
+#~ "Access to the requested resource is restricted to work editor. You have "
+#~ "been redirected."
+#~ msgstr ""
+#~ "L'accesso alla risorsa richiesta è riservata ai compilatori. Siete stati "
+#~ "reindirizzati"
+
+#~ msgid ""
+#~ "Access to the requested resource is restricted by structure. You have "
+#~ "been redirected."
+#~ msgstr ""
+#~ "L'accesso alla risorsa richiesta è limitata dalla struttura. Siete stati "
+#~ "reindirizzati"
+
+#~ msgid "Nom"
+#~ msgstr "Nome"
+
+#~ msgid "Structure"
+#~ msgstr "Struttura"
+
+#~ msgid "Structures"
+#~ msgstr "Strutture"
+
+#~ msgid "Related structure"
+#~ msgstr "Struttura collegata"
+
+#~ msgid "Related structures"
+#~ msgstr "Strutture collegate"
+
+#~ msgid "Language"
+#~ msgstr "Lingua"
+
+#~ msgid "User's profile"
+#~ msgstr "Profilo dell'utente"
+
+#~ msgid "User's profiles"
+#~ msgstr "Profili degli utenti"
+
+#~ msgid "Profile for %s"
+#~ msgstr "Profilo per %s"
+
+#~ msgid "Cancel"
+#~ msgstr "Eliminare"
+
+#~ msgid "Save changes"
+#~ msgstr "Salvare le modifiche"
+
+#~ msgid "length"
+#~ msgstr "lunghezza"
+
+#~ msgid "Reverse path"
+#~ msgstr "Invertire la tratta"
+
+#~ msgid "The path will be reversed once saved"
+#~ msgstr "La tratta sarà invertita una volta salvata"
+
+#~ msgid "Validity"
+#~ msgstr "Validità"
+
+#~ msgid "Departure"
+#~ msgstr "Partenza"
+
+#~ msgid "Arrival"
+#~ msgstr "Arrivo"
+
+#~ msgid "Comfort"
+#~ msgstr "Comfort"
+
+#~ msgid "Length"
+#~ msgstr "Lunghezza"
+
+#~ msgid "Ascent"
+#~ msgstr "Dislivello in salita"
+
+#~ msgid "Descent"
+#~ msgstr "Dislivello in discesa"
+
+#~ msgid "Minimum elevation"
+#~ msgstr "Quota minima"
+
+#~ msgid "Maximum elevation"
+#~ msgstr "Quota massima"
+
+#~ msgid "Trail"
+#~ msgstr "Sentiero"
+
+#~ msgid "Datasource"
+#~ msgstr "Fonte dei dati"
+
+#~ msgid "Stake"
+#~ msgstr "Enjeu"
+
+#~ msgid "Usages"
+#~ msgstr "Utilizzo"
+
+#~ msgid "Networks"
+#~ msgstr "Reti"
+
+#~ msgid "Path"
+#~ msgstr "Tratta"
+
+#~ msgid "Offset"
+#~ msgstr "Scarto"
+
+#~ msgid "Kind"
+#~ msgstr "Tipo di topologia"
+
+#~ msgid "Topology"
+#~ msgstr "Topologia"
+
+#~ msgid "Topologies"
+#~ msgstr "Topologie"
+
+#~ msgid "Invalid serialization: %s"
+#~ msgstr "Sérialisation invalide: %s"
+
+#~ msgid "Paths are not unique : %s"
+#~ msgstr "le tratte non sono uniche: %s"
+
+#~ msgid "Invalid serialization of intermediate markers"
+#~ msgstr "Sérialisation invalide des points de passage"
+
+#~ msgid "Start position"
+#~ msgstr "Posizione di partenza"
+
+#~ msgid "End position"
+#~ msgstr "Posizione finale"
+
+#~ msgid "Path aggregation"
+#~ msgstr "Unione di tratte"
+
+#~ msgid "Path aggregations"
+#~ msgstr "Unioni di tratte"
+
+#~ msgid "Source"
+#~ msgstr "Risorsa"
+
+#~ msgid "Datasources"
+#~ msgstr "Fonti dei dati"
+
+#~ msgid "Stakes"
+#~ msgstr "Enjeux"
+
+#~ msgid "Usage"
+#~ msgstr "Utilizzo"
+
+#~ msgid "Network"
+#~ msgstr "Rete"
+
+#~ msgid "Trails"
+#~ msgstr "Sentieri"
+
+#~ msgid "Invalid"
+#~ msgstr "Invalido"
+
+#~ msgid "Properties"
+#~ msgstr "Proprietà"
+
+#~ msgid "Slope"
+#~ msgstr "Dislivello"
+
+#~ msgid "Elevation"
+#~ msgstr "Quota"
+
+#~ msgid "Management"
+#~ msgstr "Gestione"
+
+#~ msgid "Altitude profile"
+#~ msgstr "Profilo altimetrico"
+
+#~ msgid "Altitude (m)"
+#~ msgstr "Quota (m)"
+
+#~ msgid "Distance (m)"
+#~ msgstr "Distanza (m)"
+
+#~ msgid "Add a path"
+#~ msgstr "Aggiungere una tratta"
+
+#~ msgid "Interventions"
+#~ msgstr "Interventi"
+
+#~ msgid "Add intervention"
+#~ msgstr "Aggiungere un intervento"
+
+#~ msgid "Intervention year"
+#~ msgstr "Anno di intervento"
+
+#~ msgid "Facility"
+#~ msgstr "Attrezzatura"
+
+#~ msgid "Signage"
+#~ msgstr "Segnaletica"
+
+#~ msgid "Infrastructure Type"
+#~ msgstr "Tipo di infrastruttura"
+
+#~ msgid "Infrastructure Types"
+#~ msgstr "Tipi di infrastrutture"
+
+#~ msgid "Infrastructure"
+#~ msgstr "Infrastruttura"
+
+#~ msgid "Add infrastructure"
+#~ msgstr "Aggiungere infrastruttura"
+
+#~ msgid "Add signage"
+#~ msgstr "Aggiungere segnaletica"
+
+#~ msgid "Add a new infrastructure"
+#~ msgstr "Aggiungere nuova infrastruttura"
+
+#~ msgid "Add a new signage"
+#~ msgstr "Aggiungere nuova segnaletica"
+
+#~ msgid "Physical type"
+#~ msgstr "Type physique"
+
+#~ msgid "Land type"
+#~ msgstr "Type foncier"
+
+#~ msgid "Competence"
+#~ msgstr "Competenza"
+
+#~ msgid "Signage management"
+#~ msgstr "Gestione della segnaletica"
+
+#~ msgid "Work management"
+#~ msgstr "Gestione dei lavori"
+
+#~ msgid "Physical types"
+#~ msgstr "Types physique"
+
+#~ msgid "Physical edge"
+#~ msgstr "Tronçon physique"
+
+#~ msgid "Physical edges"
+#~ msgstr "Tronçons physique"
+
+#~ msgid "Right of way"
+#~ msgstr "Diritto di passaggio"
+
+#~ msgid "Land types"
+#~ msgstr "Types foncier"
+
+#~ msgid "Land edge"
+#~ msgstr "Tronçon foncier"
+
+#~ msgid "Land edges"
+#~ msgstr "Tronçons foncier"
+
+#~ msgid "Competence edge"
+#~ msgstr "Tratta di competenza"
+
+#~ msgid "Competence edges"
+#~ msgstr "Tratte di competenza"
+
+#~ msgid "Work management edge"
+#~ msgstr "Tronçon de gestion de travaux"
+
+#~ msgid "Work management edges"
+#~ msgstr "Tronçons de gestion de travaux"
+
+#~ msgid "Signage management edge"
+#~ msgstr "Tronçon de gestion signalétique"
+
+#~ msgid "Signage management edges"
+#~ msgstr "Tronçons de gestion signalétique"
+
+#~ msgid "Order"
+#~ msgstr "Ordine"
+
+#~ msgid "Restricted area"
+#~ msgstr "Zona regolamentata"
+
+#~ msgid "Restricted areas"
+#~ msgstr "Zone regolamentate"
+
+#~ msgid "Restricted area edge"
+#~ msgstr "Tratta in zona regolamentata"
+
+#~ msgid "Restricted area edges"
+#~ msgstr "Tratte in zona regolamentata"
+
+#~ msgid "City"
+#~ msgstr "Comune"
+
+#~ msgid "Cities"
+#~ msgstr "Comuni"
+
+#~ msgid "City edge"
+#~ msgstr "Tratta del Comune"
+
+#~ msgid "City edges"
+#~ msgstr "Tratte dei Comuni"
+
+#~ msgid "District"
+#~ msgstr "Settore"
+
+#~ msgid "Districts"
+#~ msgstr "Settori"
+
+#~ msgid "District edge"
+#~ msgstr "Tratta del Settore"
+
+#~ msgid "District edges"
+#~ msgstr "Tratte del Settore"
+
+#~ msgid "Center on"
+#~ msgstr "Centrare su"
+
+#~ msgid "Restricted Area"
+#~ msgstr "Zona regolamentata"
+
+#~ msgid "Land"
+#~ msgstr "Foncier"
+
+#~ msgid "Add competence edge"
+#~ msgstr "Aggiungere l'organismo competente"
+
+#~ msgid "Add a new competence edge"
+#~ msgstr "Aggiungere nuovo organismo competente"
+
+#~ msgid "Add land edge"
+#~ msgstr "Renseigner la nature foncière"
+
+#~ msgid "Add a new land edge"
+#~ msgstr "Renseigner la nature foncière"
+
+#~ msgid "Add physical edge"
+#~ msgstr "Renseigner la nature physique"
+
+#~ msgid "Add a new physical edge"
+#~ msgstr "Renseigner la nature physique"
+
+#~ msgid "Add work management edge"
+#~ msgstr "Aggiungere gestione lavori"
+
+#~ msgid "Add a new work management edge"
+#~ msgstr "Aggiungere nuova gestione lavori"
+
+#~ msgid "Add signage management edge"
+#~ msgstr "Aggiungere gestione segnaletica"
+
+#~ msgid "Add a new signage management edge"
+#~ msgstr "Aggiungere nuova gestione segnaletica"
+
+#~ msgid "Manage land"
+#~ msgstr "Gestione fondiaria"
+
+#~ msgid "Competence zones"
+#~ msgstr "Zone di competenza"
+
+#~ msgid "Year"
+#~ msgstr "Anno"
+
+#~ msgid "Year of activity"
+#~ msgstr "Anno dell'attività"
+
+#~ msgid "Mandays"
+#~ msgstr "Giornate/Uomo"
+
+#~ msgid "Fundings"
+#~ msgstr "Finanziamenti"
+
+#~ msgid "Whether the intervention is currently happening"
+#~ msgstr "In manutenzione"
+
+#~ msgid "Intervention date"
+#~ msgstr "Data dell'intervento"
+
+#~ msgid "Width"
+#~ msgstr "Larghezza"
+
+#~ msgid "Height"
+#~ msgstr "Quota"
+
+#~ msgid "Area"
+#~ msgstr "Superficie"
+
+#~ msgid "Material cost"
+#~ msgstr "Costo del materiale"
+
+#~ msgid "Heliport cost"
+#~ msgstr "Costo dell'elitrasporto"
+
+#~ msgid "Subcontract cost"
+#~ msgstr "Coût sous-traitance"
+
+#~ msgid "Intervention status"
+#~ msgstr "Stato dell'intervento"
+
+#~ msgid "Disorders"
+#~ msgstr "Désordres"
+
+#~ msgid "Jobs"
+#~ msgstr "Fonctions"
+
+#~ msgid "Project"
+#~ msgstr "Cantiere"
+
+#~ msgid "Intervention"
+#~ msgstr "Intervento"
+
+#~ msgid "Status"
+#~ msgstr "Stato"
+
+#~ msgid "Intervention's status"
+#~ msgstr "Stato dell'intervento"
+
+#~ msgid "Intervention's statuses"
+#~ msgstr "Stato dell'intervento"
+
+#~ msgid "Type"
+#~ msgstr "Tipo"
+
+#~ msgid "Intervention's type"
+#~ msgstr "Tipo di intervento"
+
+#~ msgid "Intervention's types"
+#~ msgstr "Tipi di intervento"
+
+#~ msgid "Disorder"
+#~ msgstr "Désordre"
+
+#~ msgid "Intervention's disorder"
+#~ msgstr "Désordre"
+
+#~ msgid "Intervention's disorders"
+#~ msgstr "Désordres"
+
+#~ msgid "Job"
+#~ msgstr "Fonction"
+
+#~ msgid "Cost"
+#~ msgstr "Costo"
+
+#~ msgid "Intervention's job"
+#~ msgstr "Fonction"
+
+#~ msgid "Intervention's jobs"
+#~ msgstr "Fonctions"
+
+#~ msgid "Manday"
+#~ msgstr "Giornata/Uomo"
+
+#~ msgid "Begin year"
+#~ msgstr "Anno di inizio"
+
+#~ msgid "End year"
+#~ msgstr "Anno di fine lavori"
+
+#~ msgid "Constraint"
+#~ msgstr "Contraintes"
+
+#~ msgid "Project type"
+#~ msgstr "Tipo di cantiere"
+
+#~ msgid "Project domain"
+#~ msgstr "Area di cantiere"
+
+#~ msgid "Contractors"
+#~ msgstr "Incaricati"
+
+#~ msgid "Project owner"
+#~ msgstr "Committente"
+
+#~ msgid "Project manager"
+#~ msgstr "Aggiudicatario"
+
+#~ msgid "Founders"
+#~ msgstr "Finanziatori"
+
+#~ msgid "Projects"
+#~ msgstr "Cantieri"
+
+#~ msgid "Project types"
+#~ msgstr "Tipi di cantiere"
+
+#~ msgid "Domain"
+#~ msgstr "Domaine"
+
+#~ msgid "Project domains"
+#~ msgstr "Zone di cantiere"
+
+#~ msgid "Contractor"
+#~ msgstr "Incaricato"
+
+#~ msgid "Amount"
+#~ msgstr "Importo"
+
+#~ msgid "Funding"
+#~ msgstr "Finanziamento"
+
+#~ msgid ""
+#~ "\n"
+#~ "                     %(job)s: %(nb_days)s days\n"
+#~ "                    "
+#~ msgstr ""
+#~ "\n"
+#~ "                     %(job)s: %(nb_days)s jours\n"
+#~ "                    "
+
+#~ msgid "day"
+#~ msgstr "Giornata/Uomo"
+
+#~ msgid "Total cost:"
+#~ msgstr "Costo totale:"
+
+#~ msgid "Related Project"
+#~ msgstr "Cantiere collegato"
+
+#~ msgid "Related infrastructure"
+#~ msgstr "Infrastruttura collegata"
+
+#~ msgid "Related signage"
+#~ msgstr "Segnaletica collegata"
+
+#~ msgid "on"
+#~ msgstr "su"
+
+#~ msgid "Add manday"
+#~ msgstr "Aggiungere Giornata/Uomo"
+
+#~ msgid "Remove"
+#~ msgstr "Eliminare"
+
+#~ msgid "Maintenance"
+#~ msgstr "Manutenzione"
+
+#~ msgid "Infrastructures"
+#~ msgstr "Infrastrutture"
+
+#~ msgid "Signages"
+#~ msgstr "Segnaletica"
+
+#~ msgid ""
+#~ "\n"
+#~ "                    %(amount)s€ of %(organism)s\n"
+#~ "                    "
+#~ msgstr ""
+#~ "\n"
+#~ "                    %(amount)s€ de %(organism)s\n"
+#~ "                    "
+
+#~ msgid "Add funding"
+#~ msgstr "Aggiungere finanziamento"
+
+#~ msgid "Add project"
+#~ msgstr "Aggiungere cantiere"
+
+#~ msgid "Add a new %s"
+#~ msgstr "Aggiungere un nuovo %s"
+
+#~ msgid "Created"
+#~ msgstr "Creato"
+
+#~ msgid "Your form contains errors"
+#~ msgstr "La scheda contiene errori"
+
+#~ msgid "Edit %s"
+#~ msgstr "Scrivere %s"
+
+#~ msgid "Saved"
+#~ msgstr "Salvato"
+
+#~ msgid "Unknown serialization format '%s'"
+#~ msgstr "Format de sérialization inconnnu '%s'"
+
+#~ msgid "Do you really wish to delete <strong>%(object)s</strong> ?"
+#~ msgstr "Siete sicuri di voler eliminare <strong>%(object)s</strong> ?"
+
+#~ msgid "Yes, delete"
+#~ msgstr "Si, cancella"
+
+#~ msgid "No, back to edit view"
+#~ msgstr "No, torna alla visualizzazione scrittura"
+
+#~ msgid "Update"
+#~ msgstr "Aggiornare"
+
+#~ msgid "ODT"
+#~ msgstr "ODT"
+
+#~ msgid "PDF"
+#~ msgstr "PDF"
+
+#~ msgid "Attached files"
+#~ msgstr "File allegati"
+
+#~ msgid "No map available for this object."
+#~ msgstr "Nessuna mappa disponibile per questo oggetto."
+
+#~ msgid "Delete"
+#~ msgstr "Cancellare"
+
+#~ msgid "New file attachment"
+#~ msgstr "Allegare nuovo file"
+
+#~ msgid "Existing file attachment"
+#~ msgstr "Allegare a file esistenti"
+
+#~ msgid "Trek"
+#~ msgstr "Itinerario"
+
+#~ msgid "POI"
+#~ msgstr "POI"
+
+#~ msgid "Filter"
+#~ msgstr "Filtro"
+
+#~ msgid "Filter list and map"
+#~ msgstr "Filtrare elenco e mappa"
+
+#~ msgid "Save map as image"
+#~ msgstr "Salvare la mappa come immagine"
+
+#~ msgid "Add"
+#~ msgstr "Aggiungere"
+
+#~ msgid "Upload attachment"
+#~ msgstr "Caricare allegato"
+
+#~ msgid "Add attachment"
+#~ msgstr "Aggiungere allegato"
+
+#~ msgid "Creator"
+#~ msgstr "Autore"
+
+#~ msgid "Title"
+#~ msgstr "Titolo"
+
+#~ msgid "Legend"
+#~ msgstr "Legenda"
+
+#~ msgid "Your attachment was uploaded."
+#~ msgstr "Il vostro allegato è stato caricato"
+
+#~ msgid "Your attachment was deleted."
+#~ msgstr "Il vostro allegato è stato cancellato"
+
+#~ msgid "You are not allowed to delete this attachment."
+#~ msgstr "Non siete autorizzati a cancellare questo allegato"
+
+#~ msgid "Delete attachment"
+#~ msgstr "Cancellare l'allegato"
+
+#~ msgid "Actions"
+#~ msgstr "Azioni"
+
+#~ msgid "Create"
+#~ msgstr "Creare"
+
+#~ msgid "Description teaser"
+#~ msgstr "Riassunto"
+
+#~ msgid "Description"
+#~ msgstr "Descrizione"
+
+#~ msgid "Ambiance"
+#~ msgstr "Ambiente"
+
+#~ msgid "Handicapped's infrastructure"
+#~ msgstr "Infrastrutture per disabili"
+
+#~ msgid "duration"
+#~ msgstr "durata"
+
+#~ msgid "Is in the midst of the park"
+#~ msgstr "E' all'interno del Parco"
+
+#~ msgid "Is transborder"
+#~ msgstr "E' transfrontaliero"
+
+#~ msgid "Advised parking"
+#~ msgstr "Parcheggio consigliato"
+
+#~ msgid "Public transport"
+#~ msgstr "Trasporto pubblico"
+
+#~ msgid "Advice"
+#~ msgstr "Avviso"
+
+#~ msgid "Main themes"
+#~ msgstr "Temi principali"
+
+#~ msgid "Trek networks"
+#~ msgstr "Rete sentieristica"
+
+#~ msgid "Route"
+#~ msgstr "Percorso"
+
+#~ msgid "Difficulty level"
+#~ msgstr "Grado di difficoltà"
+
+#~ msgid "Destination"
+#~ msgstr "Destinazione"
+
+#~ msgid "Web links"
+#~ msgstr "Collegamento web"
+
+#~ msgid "Treks"
+#~ msgstr "Itinerari"
+
+#~ msgid "Trek network"
+#~ msgstr "Rete sentieristica"
+
+#~ msgid "Routes"
+#~ msgstr "Percorsi"
+
+#~ msgid "Difficulty levels"
+#~ msgstr "Gradi di difficoltà"
+
+#~ msgid "Destinations"
+#~ msgstr "Destinazioni"
+
+#~ msgid "URL"
+#~ msgstr "URL"
+
+#~ msgid "Web link"
+#~ msgstr "Collegamento web"
+
+#~ msgid "Common departure"
+#~ msgstr "Partenza comune"
+
+#~ msgid "Common edge"
+#~ msgstr "Tratta comune"
+
+#~ msgid "Circuit step"
+#~ msgstr "Tappa di un circuito"
+
+#~ msgid "Trek relationship"
+#~ msgstr "Collegamento tra itinerari"
+
+#~ msgid "Trek relationships"
+#~ msgstr "Collegamenti tra itinerari"
+
+#~ msgid "Trekkings"
+#~ msgstr "Itinerari"
+
+#~ msgid "Add POI"
+#~ msgstr "Aggiungere POI"
+
+#~ msgid "POIs"
+#~ msgstr "POIs"
+
+#~ msgid "POI types"
+#~ msgstr "Tipi di POI"
+
+#~ msgid "Add trek"
+#~ msgstr "Aggiungere itinerario"
+
+#~ msgid "Add Web link"
+#~ msgstr "Aggiungere collegamento web"
+
+#~ msgid ""
+#~ "This project is co-financed by the European Union (FEDER, ALCOTRA). "
+#~ "Europe is involved in Massif Alpin with the European regional development "
+#~ "fund."
+#~ msgstr ""
+#~ "Questo progetto è stato finanziato dall’Unione Europea nell’ambito del "
+#~ "FEDER Massif Alpin e del programma transfrontaliero ALCOTRA."
+
+#~ msgid "Powered by http://geotrek.fr"
+#~ msgstr "Propulsé par http://geotrek.fr"
+
+#~ msgid ""
+#~ "This hike is in the core of the national park > The national park is an "
+#~ "unrestricted natural area but subjected to regulations which must be "
+#~ "known by all visitors."
+#~ msgstr ""
+#~ "Questo itinerario si snoda nel cuore del Parco nazionale > Il Parco "
+#~ "nazionale è un territorio naturale, aperto a tutti ma soggetto ad una "
+#~ "specifica regolamentazione che è utile conoscere per organizzare il "
+#~ "proprio soggiorno."
+
+#~ msgid ""
+#~ "To check the practicability of the hiking paths and to know more about "
+#~ "the National park, please visit us or call us at"
+#~ msgstr ""
+#~ "Per conoscere lo stato di percorribilità dei sentieri ed avere una "
+#~ "migliore conoscenza del territorio si consiglia di informarsi "
+#~ "anticipatamente"
+
+#~ msgid "Edition of"
+#~ msgstr "Edizione del"
+
+#~ msgid "Other treks"
+#~ msgstr "Altri itinerari"
+
+#~ msgid "Trek ascent"
+#~ msgstr "Dislivello"
+
+#~ msgid "Altimetric profile"
+#~ msgstr "Profilo altimetrico"
+
+#~ msgid "Not available"
+#~ msgstr "Non disponibile"
+
+#~ msgid "Min elevation"
+#~ msgstr "Quota minima"
+
+#~ msgid "Max elevation"
+#~ msgstr "Quota maxima"
+
+#~ msgid "Recommandations"
+#~ msgstr "Raccomandazioni"
+
+#~ msgid "Disabled infrastructures"
+#~ msgstr "Infrastrutture per disabili"
+
+#~ msgid "On the way..."
+#~ msgstr "Sulla strada..."

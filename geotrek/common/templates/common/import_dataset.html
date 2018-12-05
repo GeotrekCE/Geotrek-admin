@@ -12,7 +12,9 @@
 {% block mainpanel %}
 <div id="import-forms" class="span3 offset2">
 	{% block mainform %}
-	{% crispy form form.helper %}
+	{% if form %}
+		{% crispy form form.helper %}
+	{% endif %}
 	{% if form_without_file %}
 		{% crispy form_without_file form_without_file.helper%}
 	{% endif %}

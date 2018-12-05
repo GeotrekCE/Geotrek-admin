@@ -52,7 +52,7 @@
 				{% endif %}
 				{% if object.ascent %}
 					<span class="meta-item">
-						<span class="item-label">{% trans "Trek_ascent" %}</span>
+						<span class="item-label">{% trans "Trek ascent" %}</span>
 						<span class="item-value">{{ object.ascent }} m</span>
 					</span>
 				{% endif %}
@@ -199,9 +199,9 @@
 					{% for ct in object.published_touristic_contents.all %}
 						<div class="poi">
 							{% if ct.thumbnail %}
-								<div class="thumbnail"><img src="{{ MEDIA_URL|add:ct.thumbnail.name }}"></div>
+								<div class="thumbnail"><img src="{{ ct.thumbnail.url }}"></div>
 							{% endif %}
-              <h3>{% if ct.category.pictogram %}<span class="icon"><img src="{{ MEDIA_URL|add:ct.category.pictogram.name }}"></span>{% endif %}{{ ct.name }}</h3>
+              <h3>{% if ct.category.pictogram %}<span class="icon"><img src="{{ ct.category.pictogram.url }}"></span>{% endif %}{{ ct.name }}</h3>
 							<div class="description">
                   {{ ct.description_teaser|safe }}
                   {% if ct.contact %}{% if ct.description_teaser %}<br>{% endif %}{{ ct.contact|safe }}{% endif %}
@@ -225,9 +225,9 @@
 					{% for poi in pois %}
 						<div class="poi">
 							{% if poi.thumbnail %}
-								<div class="thumbnail"><img src="{{ MEDIA_URL|add:poi.thumbnail.name }}"></div>
+								<div class="thumbnail"><img src="{{ poi.thumbnail.url }}"></div>
 							{% endif %}
-              <h3>{% if poi.type.pictogram %}<span class="icon"><img src="{{ MEDIA_URL|add:poi.type.pictogram.name }}"></span>{% endif %}{{ poi.name }} {{ poi.letter }}</h3>
+              <h3>{% if poi.type.pictogram %}<span class="icon"><img src="{{ poi.type.pictogram.url }}"></span>{% endif %}{{ poi.name }} {{ poi.letter }}</h3>
 							<div class="description">{{ poi.description|safe }}</div>
 							{% if poi.thumbnail and poi.picture.0.author %}
 								<legend>{% trans "Attribution" %} : {{ poi.picture.0.author }}</legend>
@@ -297,7 +297,7 @@
 								<div class="desk-name">{{ desk.name }}</div>
 								<div class="content">
 									<div class="desk-description text-content">{{ desk.description_strip }}</div>
-									{% if deks.photo %}<picture class="desk-picture"><img src="{{ MEDIA_URL|add:desk.photo.name }}"></picture>{% endif %}
+									{% if deks.photo %}<picture class="desk-picture"><img src="{{ desk.photo.url }}"></picture>{% endif %}
 									{% if desk.phone %}<div class="desk-tel">Tel : {{ desk.phone }}</div>{% endif %}
 									{% if desk.website %}<div class="desk-website"><a href="{{ desk.website }}">{{ desk.website }}</a></div>{% endif %}
 									{% if desk.email %}<div class="desk-email"><a href="mailto:{{ desk.email }}">{{ desk.email }}</a></div>{% endif %}

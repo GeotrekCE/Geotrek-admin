@@ -11,16 +11,15 @@ from geotrek.maintenance import models as maintenance_models
 
 
 class TopologyFilter(ModelChoiceFilter):
-
     model = None
     queryset = None
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('queryset', self.get_queryset())
         super(TopologyFilter, self).__init__(*args, **kwargs)
-        self.field.widget.attrs['class'] = self.field.widget.attrs.get('class', '') + ' topology-filter'
+        # self.field.widget.attrs['class'] = self.field.widget.attrs.get('class', '') + ' topology-filter'
 
-    def get_queryset(self):
+    def get_queryset(self, request=None):
         if self.queryset is not None:
             return self.queryset
         return self.model.objects.all()
@@ -77,8 +76,8 @@ class TopologyFilter(ModelChoiceFilter):
 
 class PathFilterSet(StructureRelatedFilterSet):
     length = OptionalRangeFilter(label=_('length'))
-    name = CharFilter(label=_('Name'), lookup_type='icontains')
-    comments = CharFilter(label=_('Comments'), lookup_type='icontains')
+    name = CharFilter(label=_('Name'), lookup_expr='icontains')
+    comments = CharFilter(label=_('Comments'), lookup_expr='icontains')
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Path
@@ -87,10 +86,10 @@ class PathFilterSet(StructureRelatedFilterSet):
 
 
 class TrailFilterSet(StructureRelatedFilterSet):
-    name = CharFilter(label=_('Name'), lookup_type='icontains')
-    departure = CharFilter(label=_('Departure'), lookup_type='icontains')
-    arrival = CharFilter(label=_('Arrival'), lookup_type='icontains')
-    comments = CharFilter(label=_('Comments'), lookup_type='icontains')
+    name = CharFilter(label=_('Name'), lookup_expr='icontains')
+    departure = CharFilter(label=_('Departure'), lookup_expr='icontains')
+    arrival = CharFilter(label=_('Arrival'), lookup_expr='icontains')
+    comments = CharFilter(label=_('Comments'), lookup_expr='icontains')
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Trail

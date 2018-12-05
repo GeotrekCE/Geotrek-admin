@@ -15,12 +15,12 @@ from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core.management import call_command
 from django.core.urlresolvers import reverse
 from django.db import connection, connections, DEFAULT_DB_ALIAS
-from django.template.loader import find_template
+from django.template.loader import get_template
 from django.test import RequestFactory
 from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.timezone import utc, make_aware
-from django.utils.unittest import util as testutil
+from unittest import util as testutil
 
 from mapentity.tests import MapEntityLiveTest
 from mapentity.factories import SuperUserFactory
@@ -161,9 +161,7 @@ class POIJSONDetailTest(TrekkingManagerTest):
         self.assertEqual(self.result['min_elevation'], 0.0)
 
     def test_cities(self):
-        self.assertDictEqual(self.result['cities'][0],
-                             {u"code": self.city.code,
-                              u"name": self.city.name})
+        self.assertEqual(self.result['cities'], [])
 
     def test_districts(self):
         self.assertDictEqual(self.result['districts'][0],
@@ -371,18 +369,16 @@ class TrekCustomViewTests(TrekkingManagerTest):
 
 
 class TrekCustomPublicViewTests(TrekkingManagerTest):
-    @mock.patch('django.template.loaders.filesystem.open', create=True)
-    def test_overriden_public_template(self, open_patched):
+    @mock.patch('djappypod.backend.os.path.exists', create=True)
+    def test_overriden_public_template(self, exists_patched):
         overriden_template = os.path.join(settings.MEDIA_ROOT, 'templates', 'trekking', 'trek_public.odt')
 
-        def fake_exists(f, *args):
-            if f == overriden_template:
-                return mock.MagicMock(spec=file)
-            raise IOError
+        def fake_exists(path):
+            return path == overriden_template
 
-        open_patched.side_effect = fake_exists
-        find_template('trekking/trek_public.odt')
-        open_patched.assert_called_with(overriden_template, 'rb')
+        exists_patched.side_effect = fake_exists
+        template = get_template('trekking/trek_public.odt')
+        self.assertEqual(template.path, overriden_template)
 
     def test_profile_json(self):
         trek = TrekFactory.create(published=True)
@@ -603,6 +599,7 @@ class TrekJSONDetailTest(TrekkingManagerTest):
 
     def test_information_desks(self):
         desk_type = self.information_desk.type
+        self.maxDiff = None
         self.assertDictEqual(self.result['information_desks'][0],
                              {u'description': self.information_desk.description,
                               u'email': self.information_desk.email,
@@ -634,12 +631,12 @@ class TrekJSONDetailTest(TrekkingManagerTest):
 
     def test_parking_location_in_wgs84(self):
         parking_location = self.result['parking_location']
-        self.assertEqual(parking_location[0], -1.3630812101179004)
+        self.assertAlmostEqual(parking_location[0], -1.3630812101179008)
 
     def test_points_reference_are_exported_in_wgs84(self):
         geojson = self.result['points_reference']
         self.assertEqual(geojson['type'], 'MultiPoint')
-        self.assertEqual(geojson['coordinates'][0][0], -1.3630812101179)
+        self.assertAlmostEqual(geojson['coordinates'][0][0], -1.363081210117901)
 
     def test_touristic_contents(self):
         self.assertEqual(len(self.result['touristic_contents']), 1)
@@ -750,6 +747,7 @@ class TrekGPXTest(TrekkingManagerTest):
 
         for poi in self.trek.pois.all():
             poi.description_it = poi.description
+            poi.published_it = True
             poi.save()
 
         url = '/api/it/treks/{pk}/slug.gpx'.format(pk=self.trek.pk)
@@ -763,18 +761,18 @@ class TrekGPXTest(TrekkingManagerTest):
         self.assertEqual(self.response.status_code, 200)
         self.assertEqual(self.response['Content-Type'], 'application/gpx+xml')
 
-    def test_gpx_trek_as_route_points(self):
-        self.assertEqual(len(self.parsed.findAll('rte')), 1)
-        self.assertEqual(len(self.parsed.findAll('rtept')), 2)
+    def test_gpx_trek_as_track_points(self):
+        self.assertEqual(len(self.parsed.findAll('trk')), 1)
+        self.assertEqual(len(self.parsed.findAll('trkpt')), 2)
 
     def test_gpx_translated_using_another_language(self):
-        route = self.parsed.findAll('rte')[0]
-        description = route.find('desc').string
+        track = self.parsed.findAll('trk')[0]
+        description = track.find('desc').string
         self.assertTrue(description.startswith(self.trek.description_it))
 
     def test_gpx_contains_pois(self):
         waypoints = self.parsed.findAll('wpt')
-        pois = self.trek.pois.all()
+        pois = self.trek.published_pois.all()
         self.assertEqual(len(waypoints), len(pois))
         waypoint = waypoints[0]
         name = waypoint.find('name').string
@@ -789,7 +787,7 @@ class TrekGPXTest(TrekkingManagerTest):
 
 class TrekViewTranslationTest(TrekkingManagerTest):
     def setUp(self):
-        self.trek = TrekFactory.build()
+        self.trek = TrekFactory.create()
         self.trek.name_fr = 'Voie lactee'
         self.trek.name_en = 'Milky way'
         self.trek.name_it = 'Via Lattea'
@@ -1042,12 +1040,11 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<information_complementaire><titre>Advised parking</titre><description>Advised parking {n}</description></information_complementaire>'
             '<information_complementaire><titre>Public transport</titre><description>Public transport {n}</description></information_complementaire>'
             '<information_complementaire><titre>Advice</titre><description>Advice {n}</description></information_complementaire></informations_complementaires>'
-            '<tags_publics></tags_publics>'
             '</information>'
             '</informations>'
             '<distance>141</distance>'
             '<locomotions><locomotion duree="5400"></locomotion></locomotions>'
-            '<trace><point><lat>46.5</lat><lng>3.0</lng></point><point><lat>46.5009004423</lat><lng>3.00130397672</lng></point></trace>'
+            '<fichier_trace url="http://testserver/api/en/treks/{pk}/name-{n}.kml"/>'
             '<pois>'
             '<poi id_poi="{poi_pk}" date_modification="{poi_date_update}" date_creation="1388534400">'
             '<informations>'
@@ -1083,7 +1080,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
 
 class TrekWorkflowTest(TranslationResetMixin, TestCase):
     def setUp(self):
-        call_command('update_permissions')
+        call_command('update_geotrek_permissions')
         self.trek = TrekFactory.create(published=False)
         self.user = User.objects.create_user('omer', password='booh')
         self.user.user_permissions.add(Permission.objects.get(codename='add_trek'))

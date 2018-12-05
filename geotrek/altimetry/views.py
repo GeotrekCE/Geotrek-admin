@@ -80,10 +80,7 @@ class ElevationArea(LastModifiedMixin, JSONResponseMixin, PublicOrReadPermMixin,
 
 
 def serve_elevation_chart(request, model_name, pk, from_command=False):
-    try:
-        model = ContentType.objects.get(model=model_name).model_class()
-    except:
-        raise Http404
+    model = get_object_or_404(ContentType, model=model_name).model_class()
     if not issubclass(model, AltimetryMixin):
         raise Http404
     obj = get_object_or_404(model, pk=pk)

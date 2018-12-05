@@ -6,20 +6,23 @@ import factory
 from geotrek.feedback import models as feedback_models
 
 
-class ReportCategoryFactory(factory.Factory):
-    FACTORY_FOR = feedback_models.ReportCategory
+class ReportCategoryFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = feedback_models.ReportCategory
 
     category = factory.Sequence(lambda n: u"Category %s" % n)
 
 
-class ReportStatusFactory(factory.Factory):
-    FACTORY_FOR = feedback_models.ReportStatus
+class ReportStatusFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = feedback_models.ReportStatus
 
     status = factory.Sequence(lambda n: u"Status %s" % n)
 
 
-class ReportFactory(factory.Factory):
-    FACTORY_FOR = feedback_models.Report
+class ReportFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = feedback_models.Report
 
     name = factory.Sequence(lambda n: u"name %s" % n)
     email = factory.Sequence(lambda n: u"email%s@domain.tld" % n)

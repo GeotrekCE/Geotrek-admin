@@ -7,44 +7,51 @@ from geotrek.common.factories import OrganismFactory
 from . import models
 
 
-class PhysicalTypeFactory(factory.Factory):
-    FACTORY_FOR = models.PhysicalType
+class PhysicalTypeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.PhysicalType
 
     name = factory.Sequence(lambda n: u"PhysicalType %s" % n)
 
 
 class PhysicalEdgeFactory(TopologyFactory):
-    FACTORY_FOR = models.PhysicalEdge
+    class Meta:
+        model = models.PhysicalEdge
 
     physical_type = factory.SubFactory(PhysicalTypeFactory)
 
 
-class LandTypeFactory(factory.Factory):
-    FACTORY_FOR = models.LandType
+class LandTypeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.LandType
 
     name = factory.Sequence(lambda n: u"LandType %s" % n)
     right_of_way = True
 
 
 class LandEdgeFactory(TopologyFactory):
-    FACTORY_FOR = models.LandEdge
+    class Meta:
+        model = models.LandEdge
 
     land_type = factory.SubFactory(LandTypeFactory)
 
 
 class CompetenceEdgeFactory(TopologyFactory):
-    FACTORY_FOR = models.CompetenceEdge
+    class Meta:
+        model = models.CompetenceEdge
 
     organization = factory.SubFactory(OrganismFactory)
 
 
 class WorkManagementEdgeFactory(TopologyFactory):
-    FACTORY_FOR = models.WorkManagementEdge
+    class Meta:
+        model = models.WorkManagementEdge
 
     organization = factory.SubFactory(OrganismFactory)
 
 
 class SignageManagementEdgeFactory(TopologyFactory):
-    FACTORY_FOR = models.SignageManagementEdge
+    class Meta:
+        model = models.SignageManagementEdge
 
     organization = factory.SubFactory(OrganismFactory)

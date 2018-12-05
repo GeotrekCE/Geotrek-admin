@@ -13,24 +13,17 @@ from geotrek.trekking.factories import TrekFactory
 from django.conf import settings
 
 
-class DataSourceFactory(factory.Factory):
-    FACTORY_FOR = models.DataSource
-
-    title = factory.Sequence(lambda n: u"DataSource %s" % n)
-    url = factory.Sequence(lambda n: u"http://%s.com" % n)
-    type = models.DATA_SOURCE_TYPES.GEOJSON
-    pictogram = get_dummy_uploaded_image()
-
-
-class InformationDeskTypeFactory(factory.Factory):
-    FACTORY_FOR = models.InformationDeskType
+class InformationDeskTypeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.InformationDeskType
 
     label = factory.Sequence(lambda n: u"Type %s" % n)
     pictogram = get_dummy_uploaded_image()
 
 
-class InformationDeskFactory(factory.Factory):
-    FACTORY_FOR = models.InformationDesk
+class InformationDeskFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.InformationDesk
 
     name = factory.Sequence(lambda n: u"information desk name %s" % n)
     type = factory.SubFactory(InformationDeskTypeFactory)
@@ -45,8 +38,9 @@ class InformationDeskFactory(factory.Factory):
     geom = Point(3.14, 42)
 
 
-class TouristicContentCategoryFactory(factory.Factory):
-    FACTORY_FOR = models.TouristicContentCategory
+class TouristicContentCategoryFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.TouristicContentCategory
 
     label = factory.Sequence(lambda n: u"Category %s" % n)
     type1_label = factory.Sequence(lambda n: u"Type1_label %s" % n)
@@ -54,8 +48,9 @@ class TouristicContentCategoryFactory(factory.Factory):
     pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
-class TouristicContentTypeFactory(factory.Factory):
-    FACTORY_FOR = models.TouristicContentType
+class TouristicContentTypeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.TouristicContentType
 
     label = factory.Sequence(lambda n: u"Type %s" % n)
     category = factory.SubFactory(TouristicContentCategoryFactory)
@@ -63,14 +58,16 @@ class TouristicContentTypeFactory(factory.Factory):
     in_list = 1
 
 
-class ReservationSystemFactory(factory.Factory):
-    FACTORY_FOR = models.ReservationSystem
+class ReservationSystemFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.ReservationSystem
 
     name = factory.Sequence(lambda n: u"ReservationSystem %s" % n)
 
 
 class TouristicContentFactory(StructureRelatedDefaultFactory):
-    FACTORY_FOR = models.TouristicContent
+    class Meta:
+        model = models.TouristicContent
 
     name = factory.Sequence(lambda n: u"TouristicContent %s" % n)
     category = factory.SubFactory(TouristicContentCategoryFactory)
@@ -97,15 +94,17 @@ class TouristicContentFactory(StructureRelatedDefaultFactory):
         return content
 
 
-class TouristicEventTypeFactory(factory.Factory):
-    FACTORY_FOR = models.TouristicEventType
+class TouristicEventTypeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.TouristicEventType
 
     type = factory.Sequence(lambda n: u"Type %s" % n)
     pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
-class TouristicEventFactory(factory.Factory):
-    FACTORY_FOR = models.TouristicEvent
+class TouristicEventFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.TouristicEvent
 
     name = factory.Sequence(lambda n: u"TouristicEvent %s" % n)
     geom = 'POINT(0 0)'

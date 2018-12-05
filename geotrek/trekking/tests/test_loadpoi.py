@@ -30,19 +30,19 @@ class LoadPOITest(TestCase):
 
     def test_command_shows_number_of_objects(self):
         output = StringIO()
-        self.cmd.execute(self.filename, stdout=output)
+        self.cmd.execute(self.filename, verbosity=1, stdout=output)
         self.assertIn('2 objects found', output.getvalue())
 
     def test_create_pois_is_executed(self):
         with patch.object(Command, 'create_poi') as mocked:
-            self.cmd.execute(self.filename)
+            self.cmd.execute(self.filename, verbosity=0)
             self.assertEquals(mocked.call_count, 2)
 
     def test_create_pois_receives_geometries(self):
         geom1 = GEOSGeometry('POINT(-1.36308670782119 -5.98358469800134696)')
         geom2 = GEOSGeometry('POINT(-1.363087202331107 -5.98358423531846917)')
         with patch.object(Command, 'create_poi') as mocked:
-            self.cmd.execute(self.filename)
+            self.cmd.execute(self.filename, verbosity=0)
             call1 = mocked.call_args_list[0][0]
             call2 = mocked.call_args_list[1][0]
             self.assertEquals(call1[0], geom1)
@@ -50,7 +50,7 @@ class LoadPOITest(TestCase):
 
     def test_create_pois_receives_fields_names_and_types(self):
         with patch.object(Command, 'create_poi') as mocked:
-            self.cmd.execute(self.filename)
+            self.cmd.execute(self.filename, verbosity=0)
             call1 = mocked.call_args_list[0][0]
             call2 = mocked.call_args_list[1][0]
             self.assertEquals(call1[1], 'pont')
@@ -61,7 +61,7 @@ class LoadPOITest(TestCase):
     def test_create_pois_receives_null_if_field_missing(self):
         self.cmd.field_name = 'name2'
         with patch.object(Command, 'create_poi') as mocked:
-            self.cmd.execute(self.filename)
+            self.cmd.execute(self.filename, verbosity=0)
             call1 = mocked.call_args_list[0][0]
             self.assertEquals(call1[1], None)
 

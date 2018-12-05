@@ -5,8 +5,6 @@ from django.contrib import admin
 
 from mapentity.forms import AttachmentForm
 
-admin.autodiscover()
-
 handler403 = 'mapentity.views.handler403'
 handler404 = 'mapentity.views.handler404'
 handler500 = 'mapentity.views.handler500'
@@ -14,6 +12,7 @@ handler500 = 'mapentity.views.handler500'
 
 urlpatterns = patterns(
     '',
+    url(r'^api/v2/', include('geotrek.api.v2.urls', namespace='apiv2', app_name='apiv2')),
     url(r'^$', 'geotrek.core.views.home', name='home'),
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': settings.ROOT_URL + '/'}, name='logout',),
@@ -30,8 +29,10 @@ urlpatterns = patterns(
     url(r'', include('geotrek.flatpages.urls', namespace='flatpages', app_name='flatpages')),
     url(r'', include('geotrek.feedback.urls', namespace='feedback', app_name='feedback')),
 
+
+
     url(r'', include('mapentity.urls', namespace='mapentity', app_name='mapentity')),
-    url(r'^paperclip/add-for/(?P<app_label>[\w\-]+)/(?P<module_name>[\w\-]+)/(?P<pk>\d+)/$',
+    url(r'^paperclip/add-for/(?P<app_label>[\w\-]+)/(?P<model_name>[\w\-]+)/(?P<pk>\d+)/$',
         'paperclip.views.add_attachment', kwargs={'attachment_form': AttachmentForm}, name="add_attachment"),
     url(r'^paperclip/update/(?P<attachment_pk>\d+)/$', 'paperclip.views.update_attachment',
         kwargs={'attachment_form': AttachmentForm}, name="update_attachment"),
@@ -42,3 +43,12 @@ urlpatterns = patterns(
 
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG and settings.DEBUG_TOOLBAR:
+    try:
+        import debug_toolbar
+        urlpatterns = [
+            url(r'^__debug__/', include(debug_toolbar.urls)),
+        ] + urlpatterns
+    except ImportError:
+        pass

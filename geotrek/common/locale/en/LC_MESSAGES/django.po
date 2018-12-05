@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-18 17:00+0100\n"
+"POT-Creation-Date: 2017-06-16 09:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,6 +18,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "content type"
+msgstr ""
+
+msgid "Common"
 msgstr ""
 
 #, python-format
@@ -110,6 +113,15 @@ msgstr ""
 msgid "Record sources"
 msgstr ""
 
+msgid "Used for sync"
+msgstr ""
+
+msgid "Target portal"
+msgstr ""
+
+msgid "Target portals"
+msgstr ""
+
 #, python-brace-format
 msgid "Line {line}"
 msgstr ""
@@ -140,12 +152,12 @@ msgstr ""
 
 #, python-brace-format
 msgid ""
-"Bad value '{eid_val}' for field '{eid_src}'. No trek with this identifier"
+"Bad value '{eid_val}' for field '{eid_src}'. No object with this identifier"
 msgstr ""
 
 #, python-brace-format
 msgid ""
-"Bad value '{eid_val}' for field '{eid_src}'. Multiple treks with this "
+"Bad value '{eid_val}' for field '{eid_src}'. Multiple objects with this "
 "identifier"
 msgstr ""
 
@@ -192,9 +204,6 @@ msgid "Failed to download {url}. HTTP status code {status_code}"
 msgstr ""
 
 msgid "Import from web."
-msgstr ""
-
-msgid "Any year"
 msgstr ""
 
 msgid "Paths"
@@ -267,4 +276,7 @@ msgid "has invalid geometry;"
 msgstr ""
 
 msgid "Topology is not valid."
+msgstr ""
+
+msgid "Any year"
 msgstr ""

@@ -11,7 +11,7 @@ from django.utils.translation import ugettext as _
 from mapentity.helpers import api_bbox
 from mapentity import views as mapentity_views
 
-from geotrek.celery import app as celery_app
+from geotrek.celery_conf import app as celery_app
 from geotrek.common.utils import sql_extent
 from geotrek import __version__
 
@@ -225,7 +225,8 @@ def import_view(request):
                 )
 
     # Hide second form if parser has no web based imports.
-    render_dict['form'] = form
+    if choices:
+        render_dict['form'] = form
     if choices_url:
         render_dict['form_without_file'] = form_without_file
 
@@ -277,6 +278,7 @@ def import_update_json(request):
 
 class ThemeViewSet(viewsets.ModelViewSet):
     model = Theme
+    queryset = Theme.objects.all()
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
     serializer_class = ThemeSerializer
 

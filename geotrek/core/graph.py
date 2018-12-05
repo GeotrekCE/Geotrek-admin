@@ -3,8 +3,8 @@ from collections import defaultdict
 
 
 def path_modifier(path):
-    l = 0.0 if math.isnan(path.length) else path.length
-    return {"id": path.pk, "length": l}
+    length = 0.0 if math.isnan(path.length) else path.length
+    return {"id": path.pk, "length": length}
 
 
 def get_key_optimizer():

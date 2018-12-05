@@ -1,0 +1,110 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-06-16 09:02+0000\n"
+"PO-Revision-Date: 2015-10-21 11:16+0200\n"
+"Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
+"Language-Team: \n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 1.8.4\n"
+
+
+msgid "Access"
+msgstr "Acceso por carretera"
+
+msgid "Accessibility"
+msgstr "Accesibilidad"
+
+msgid "Advices"
+msgstr "Recomendaciones"
+
+msgid "Advised parking"
+msgstr "Parking recomendado"
+
+msgid "All useful information"
+msgstr "Información útil"
+
+msgid "Altimetric profile"
+msgstr "Perfil altimétrico"
+
+msgid "Arrival"
+msgstr "Llegada"
+
+msgid "Attribution"
+msgstr "Créditos de fotos"
+
+msgid "Departure"
+msgstr "Salida"
+
+msgid "Difficulty"
+msgstr "Dificultad"
+
+msgid "Disabled Infrastructure"
+msgstr "Zona para personas con discapacidad"
+
+msgid "Duration"
+msgstr "Duración"
+
+msgid "Information desks"
+msgstr "Puntos de información"
+
+msgid "Length"
+msgstr "Distancia"
+
+msgid "Markings"
+msgstr "Puntos de interés"
+
+msgid "Max elevation"
+msgstr "Altitud máx"
+
+msgid "Min elevation"
+msgstr "Altitud mín"
+
+msgid "On your path..."
+msgstr "En su camino..."
+
+msgid "Powered by geotrek.fr"
+msgstr "Generado por geotrek.fr"
+
+msgid "Practice"
+msgstr "Práctica"
+
+msgid "Source"
+msgstr "Origen"
+
+msgid "Stages"
+msgstr "Etapas"
+
+msgid "The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors."
+msgstr "El parque nacional es un área natural sin restricciones pero sometido a regulaciones que deben ser conocidas por todos los visitantes."
+
+msgid "Themes"
+msgstr "Temas"
+
+msgid "This hike is in the core of the national park"
+msgstr "Este itinerario está en el corazón del Parque nacional"
+
+msgid "Transports"
+msgstr "Transportes"
+
+msgid "Trek"
+msgstr "Itinerario"
+
+msgid "Trek ascent"
+msgstr "Desnivel positivo"
+
+msgid "Type"
+msgstr "Tipo"
+
+msgid "Useful information"
+msgstr "Información útil"

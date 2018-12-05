@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-16 18:14+0100\n"
+"POT-Creation-Date: 2017-12-20 17:26+0000\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -28,6 +28,9 @@ msgstr "L'id de la difficulté a été changé de {old} à {new} avec succès."
 
 msgid "Practices"
 msgstr "Pratiques"
+
+msgid "Trekking"
+msgstr "Itinéraire"
 
 msgid "Trek"
 msgstr "Itinéraire"
@@ -70,6 +73,21 @@ msgstr "Créer"
 
 msgid "Launch Sync"
 msgstr "Lancer la synchro"
+
+msgid "Global tiles syncing ..."
+msgstr "Synchro des tuiles globales..."
+
+msgid "Trek tiles syncing ..."
+msgstr "Synchro des tuiles de randonnées..."
+
+msgid "Tiles synced ..."
+msgstr "Tuiles synchronisées..."
+
+msgid "Language"
+msgstr "Langue"
+
+msgid "Sync ended"
+msgstr "Synchro terminée"
 
 msgid "Departure"
 msgstr "Départ"
@@ -191,6 +209,9 @@ msgstr "Point de référence"
 msgid "Source"
 msgstr "Source"
 
+msgid "Portal"
+msgstr ""
+
 msgid "External id"
 msgstr "Id externe"
 
@@ -208,6 +229,10 @@ msgstr "Ajouter un itinéraire"
 
 msgid "Cannot use itself as child trek."
 msgstr "Impossible d'utiliser un itinéraire comme son propre enfant."
+
+#. Translators: This is a slug (without space, accent or special char)
+msgid "trek"
+msgstr "itineraire"
 
 msgid "Published treks"
 msgstr "Itinéraires publiés"
@@ -366,73 +391,14 @@ msgstr ""
 "Le type de géométrie du champ '{src}' est invalide. Il devrait être "
 "LineString, pas {geom_type}"
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "trek"
-msgstr "itineraire"
-
 msgid "Init sync ..."
 msgstr "Début de synchro"
 
-msgid "Advices"
-msgstr "Recommandations"
+msgid "Geotrek Rando"
+msgstr "Geotrek Rando"
 
-msgid "All useful information"
-msgstr "Toutes les infos pratiques"
-
-msgid "Altimetric profile"
-msgstr "Profil altimétrique"
-
-msgid "Attribution"
-msgstr "Crédit photo"
-
-msgid "Geographical location"
-msgstr "Situation géographique"
-
-msgid "Markings"
-msgstr "Balisage"
-
-msgid "Max elevation"
-msgstr "Altitude max"
-
-msgid "Min elevation"
-msgstr "Altitude min"
-
-msgid "On your path..."
-msgstr "Sur votre chemin..."
-
-msgid "Powered by geotrek.fr"
-msgstr "Propulsé par geotrek.fr"
-
-msgid ""
-"The national park is an unrestricted natural area but subjected to "
-"regulations which must be known by all visitors."
-msgstr ""
-"Le Parc national est un territoire naturel, ouvert à tous, mais soumis à une "
-"réglementation qu’il est utile de connaître pour préparer son séjour"
-
-msgid "This hike is in the core of the national park"
-msgstr "Cet itinéraire est dans le cœur du Parc national"
-
-msgid "Trek ascent"
-msgstr "Dénivelé positif"
-
-msgid "Useful information"
-msgstr "Infos pratiques"
-
-msgid "Global tiles syncing ..."
-msgstr "Synchro des tuiles globales..."
-
-msgid "Trek tiles syncing ..."
-msgstr "Synchro des tuiles de randonnées..."
-
-msgid "Tiles synced ..."
-msgstr "Tuiles synchronisées..."
-
-msgid "Language"
-msgstr "Langue"
-
-msgid "Sync ended"
-msgstr "Synchro terminée"
+msgid "Geotrek is a web app allowing you to prepare your next trekking trip !"
+msgstr "Geotrek est une web app permettant de préparer à l'avance ses randonnées !"
 
 msgid "Public print"
 msgstr "Impression grand public"
@@ -451,6 +417,9 @@ msgstr "Vignette"
 
 msgid "Elevation"
 msgstr "Élévation"
+
+msgid "Attribution"
+msgstr "Crédit photo"
 
 msgid "Powered by http://geotrek.fr"
 msgstr "Propulsé par http://geotrek.fr"
@@ -534,17 +503,57 @@ msgstr "Pas de résultat"
 msgid "Choose value(s)"
 msgstr "Choisir valeur(s)"
 
+msgid "Powered by geotrek.fr"
+msgstr "Propulsé par geotrek.fr"
+
+msgid "Useful information"
+msgstr "Infos pratiques"
+
 msgid "Length"
 msgstr "Longueur"
+
+msgid "Trek ascent"
+msgstr "Dénivelé positif"
+
+msgid "Markings"
+msgstr "Balisage"
+
+msgid "Stages"
+msgstr "Étapes"
+
+msgid "On your path..."
+msgstr "Sur votre chemin..."
+
+msgid "All useful information"
+msgstr "Toutes les infos pratiques"
+
+msgid "This hike is in the core of the national park"
+msgstr "Cet itinéraire est dans le cœur du Parc national"
+
+msgid ""
+"The national park is an unrestricted natural area but subjected to "
+"regulations which must be known by all visitors."
+msgstr ""
+"Le Parc national est un territoire naturel, ouvert à tous, mais soumis à une "
+"réglementation qu’il est utile de connaître pour préparer son séjour"
+
+msgid "Advices"
+msgstr "Recommandations"
+
+msgid "Altimetric profile"
+msgstr "Profil altimétrique"
+
+msgid "Min elevation"
+msgstr "Altitude min"
+
+msgid "Max elevation"
+msgstr "Altitude max"
 
 msgid "Transports"
 msgstr "Transports"
 
 msgid "Disabled Infrastructure"
 msgstr "Aménagement handicapés"
-
-msgid "Trek_ascent"
-msgstr "Dénivelé positif"
 
 msgid ""
 "This hike is in the core of the national park > The national park is an "
@@ -554,9 +563,6 @@ msgstr ""
 "Cet itinéraire est dans le cœur du Parc national > Le Parc national est un "
 "territoire naturel, ouvert à tous, mais soumis à une réglementation qu’il "
 "est utile de connaître pour préparer son séjour"
-
-msgid "Stages"
-msgstr "Étapes"
 
 msgid "On the way..."
 msgstr "Sur le chemin..."
@@ -570,9 +576,6 @@ msgid ""
 msgstr ""
 "Afin de vérifier que les sentiers soient praticables et pour en savoir plus "
 "sur la découverte du territoire, veuillez-vous renseigner préalablement"
-
-msgid "Trekking"
-msgstr "Itinéraire"
 
 msgid "Add a new poi"
 msgstr "Ajouter un POI"
@@ -598,3 +601,6 @@ msgstr "%(hour)s h"
 #, python-format
 msgid "%s min"
 msgstr "%s min"
+
+msgid "Geographical location"
+msgstr "Situation géographique"
