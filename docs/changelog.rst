@@ -10,6 +10,11 @@ CHANGELOG
 - Fix bugs with HTTPS access
 - Fix for some modules to edit attributes and not the geometry
 
+**Minor changes**
+
+- add options to sync signages and infrastructures
+- sync global signages and infrastructures
+
 
 2.22.1 (2018-11-27)
 -------------------
