@@ -1,61 +1,41 @@
 language: python
-dist: precise
+
 python:
   - "2.7"
+
 env:
   - ACTION=test
   - ACTION=deploy
   - ACTION=integration
   - ACTION=codestyle
 
-
 matrix:
   allow_failures:
     - env: ACTION=integration
 
-
 cache:
   - apt
 
+dist: trusty
+sudo: required
 
 before_install:
-
-  # Download bundle of python eggs, and use it as download cache
-  - mkdir -p $HOME/.buildout/downloads
-  - echo -e "[buildout]\ndownload-cache=$HOME/.buildout/downloads" > $HOME/.buildout/default.cfg
-  - "wget http://prod-geotrek-fr.makina-corpus.net/media/upload/geotrek-bundle.tar.gz -O /tmp/geotrek-bundle.tar.gz || true"
-  - "tar -zxf /tmp/geotrek-bundle.tar.gz --directory=$HOME || true"
-
-  # GDAL-fix -- packaging is miserable, no way to obtain libgdal-dev for libgdal1 when libgdal1h available
   - sudo apt-get update -qq
-  - sudo apt-get download -y libgdal-dev
-  - sudo dpkg-deb -x libgdal-dev*.deb /
-  - sudo ln -sf /usr/lib/libgdal.so.1 /usr/lib/libgdal.so
-  - sudo ldconfig
-  # GDAL-fix -- Do not install GDAL from install script
-  - sed -i "s/gdal-bin//" install.sh
-  - sed -i "s/libgdal-dev//" install.sh
-  - sed -i "s/GDAL=.*/GDAL=1.9.0/" conf/buildout.cfg
-  # GDAL-fix -- Do not install postgis locally, trick test on host
-  - make etc/settings.ini
-  - sed -i "s/localhost/127.0.0.1/" etc/settings.ini
-  # GDAL-fix -- Use Travis PostGIS, initialize DB
-  - sudo sed -i "s/^client_min_messages.*$/client_min_messages = log/" /etc/postgresql/*/main/postgresql.conf
-  - sudo /etc/init.d/postgresql restart
-  - psql -c "CREATE DATABASE geotrekdb ENCODING 'UTF8' TEMPLATE template0;" -U postgres
-  - psql -c 'CREATE EXTENSION postgis;' -U postgres -d geotrekdb
-  - psql -c "CREATE USER geotrek WITH PASSWORD 'geotrek';" -U postgres
-  # django tests require to be superuser to create test db with postgis extension
-  - if [[ $ACTION == test ]]; then psql -c "ALTER USER geotrek SUPERUSER;" -U postgres; fi
-  - psql -c 'GRANT ALL PRIVILEGES ON DATABASE geotrekdb TO geotrek;' -U postgres
-  - psql -c 'GRANT ALL ON spatial_ref_sys,geometry_columns,raster_columns TO geotrek;' -U postgres -d geotrekdb
-  # GDAL-fix -- End (remove with Ubuntu 14.04)
+  # Make sure to use postgresql and postgis version from main Ubuntu repository
+  - sudo rm -f /etc/apt/sources.list.d/pgdg.list
+  - sudo apt-get remove -qq postgis* postgresql*
+  # Make sure to use our version of phantomjs
+  - sudo rm -rf /usr/local/bin/phantomjs* /usr/bin/phantomjs* /usr/local/phantomjs*
+  # Make sure nginx has access to static files
+  - sudo chmod a+x /home/travis
 
 install:
   - if [[ $ACTION != codestyle ]]; then deactivate; fi
   - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
-  - if [[ $ACTION == test ]]; then ./install.sh --tests || (cat ./install.log; false); fi
-  - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput || (cat ./install.log; false); fi
+  - if [[ $ACTION == test ]]; then ./install.sh --tests --noinput; fi
+  - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput; fi
+  # Don't bind redis-server on IPv6 address
+  - sudo sed -i 's/^bind.*$/bind 127.0.0.1/' /etc/redis/redis.conf; sudo service redis-server restart;
 script:
   - if [[ $ACTION == codestyle ]]; then flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings; fi
   - if [[ $ACTION == codestyle ]]; then flake8 geotrek; fi
@@ -63,11 +43,8 @@ script:
   - if [[ $ACTION == deploy || $ACTION == integration ]]; then make load_demo; fi
   - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
   - if [[ $ACTION == integration ]]; then make test_export host=localhost port=80; fi
-  - if [[ $ACTION == test ]]; then make env_test test; fi
-  - if [[ $ACTION == test ]]; then make test_js; fi
-  # Re-run for coverage
-  - if [[ $ACTION == test ]]; then rm -rf ./var/cache/* ./var/media/maps/*; fi
   - if [[ $ACTION == test ]]; then ./bin/coverage run ./bin/django test geotrek; fi
+  - if [[ $ACTION == test ]]; then make test_js; fi
 after_success:
   # Report coverage results to coveralls.io
   - if [[ $ACTION == test ]]; then ./bin/coverage report -m; fi
@@ -75,11 +52,8 @@ after_success:
   - if [[ $ACTION == test ]]; then coveralls; fi
 
 after_failure:
-  - cat install.log
   - cat var/log/geotrek.log
-  - cat var/log/nginx-access.log
-  - cat var/log/nginx-error.log
-  - cat var/log/supervisord.log
-
-notifications:
-  irc: "irc.freenode.org#geotrek"
+  - sudo cat /var/log/nginx/geotrek_access.log
+  - sudo cat /var/log/nginx/geotrek_error.log
+  - cat /var/log/supervisord.log
+  - cat /var/log/geotrek.log

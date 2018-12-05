@@ -5,6 +5,15 @@ from django.test.utils import override_settings
 from geotrek.core import factories as core_factories
 from geotrek.tourism import factories as tourism_factories
 from geotrek.trekking import factories as trekking_factories
+from geotrek.tourism.factories import InformationDeskFactory
+
+
+class InformationDeskTest(TestCase):
+    def setUp(self):
+        self.informationDesk1 = InformationDeskFactory.create(description="Coucou")
+
+    def test_serializable_type(self):
+        self.assertEqual(['pictogram', 'id', 'label'], self.informationDesk1.serializable_type.keys())
 
 
 class TourismRelations(TestCase):

@@ -46,7 +46,7 @@ class SyncTest(TranslationResetMixin, TestCase):
         with mock.patch('geotrek.tourism.models.TouristicContent.prepare_map_image'):
             with mock.patch('geotrek.tourism.models.TouristicEvent.prepare_map_image'):
                 management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
-                                        source=self.source_a.name, skip_tiles=True, skip_pdf=True, verbosity='0')
+                                        source=self.source_a.name, skip_tiles=True, skip_pdf=True, verbosity=0)
 
                 with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccontents.geojson'), 'r') as f:
                     # 2 contents
@@ -67,7 +67,7 @@ class SyncTest(TranslationResetMixin, TestCase):
         with mock.patch('geotrek.tourism.models.TouristicContent.prepare_map_image'):
             with mock.patch('geotrek.tourism.models.TouristicEvent.prepare_map_image'):
                 management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
-                                        portal=self.portal_b.name, skip_tiles=True, skip_pdf=True, verbosity='0')
+                                        portal=self.portal_b.name, skip_tiles=True, skip_pdf=True, verbosity=0)
 
         with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccontents.geojson'), 'r') as f:
             tcontents = json.load(f)
@@ -101,7 +101,7 @@ class SyncTest(TranslationResetMixin, TestCase):
                                     skip_pdf=True,
                                     skip_dem=True,
                                     content_categories=u"1,2",
-                                    verbosity='0')
+                                    verbosity=0)
 
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             with ZipFile(os.path.join(settings.SYNC_RANDO_ROOT, 'zip', 'treks', lang,

@@ -2,6 +2,7 @@
 
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
+from django.conf import settings
 
 from geotrek.core.factories import PathFactory, TopologyFactory, \
     PathAggregationFactory
@@ -26,8 +27,12 @@ class MergePathTest(TestCase):
         original_CD_length = path_CD.length
 
         self.assertEqual(path_AB.merge_path(path_CD), True)
-        self.assertEqual(path_AB.geom, LineString((0, 0), (4, 0), (8, 0)))
+
+        self.assertEqual(path_AB.geom, LineString((0.0, 0.0), (4.0, 0.0), (8.0, 0.0), srid=settings.SRID))
         self.assertEqual(path_AB.length, original_AB_length + original_CD_length)
+
+        path_AB.delete()
+        path_CD.delete()
 
         path_AB = PathFactory.create(name="path_AB", geom=LineString((4, 0), (0, 0)))
         path_CD = PathFactory.create(name="path_CD", geom=LineString((4, 0), (8, 0)))
@@ -35,8 +40,11 @@ class MergePathTest(TestCase):
         original_CD_length = path_CD.length
 
         self.assertEqual(path_AB.merge_path(path_CD), True)
-        self.assertEqual(path_AB.geom, LineString((0, 0), (4, 0), (8, 0)))
+        self.assertEqual(path_AB.geom, LineString((0, 0), (4, 0), (8, 0), srid=settings.SRID))
         self.assertEqual(path_AB.length, original_AB_length + original_CD_length)
+
+        path_AB.delete()
+        path_CD.delete()
 
         path_AB = PathFactory.create(name="path_AB", geom=LineString((4, 0), (0, 0)))
         path_CD = PathFactory.create(name="path_CD", geom=LineString((8, 0), (4, 0)))
@@ -44,8 +52,11 @@ class MergePathTest(TestCase):
         original_CD_length = path_CD.length
 
         self.assertEqual(path_AB.merge_path(path_CD), True)
-        self.assertEqual(path_AB.geom, LineString((0, 0), (4, 0), (8, 0)))
+        self.assertEqual(path_AB.geom, LineString((0, 0), (4, 0), (8, 0), srid=settings.SRID))
         self.assertEqual(path_AB.length, original_AB_length + original_CD_length)
+
+        path_AB.delete()
+        path_CD.delete()
 
         path_AB = PathFactory.create(name="path_AB", geom=LineString((0, 0), (4, 0)))
         path_CD = PathFactory.create(name="path_CD", geom=LineString((8, 0), (4, 0)))
@@ -53,7 +64,7 @@ class MergePathTest(TestCase):
         original_CD_length = path_CD.length
 
         self.assertEqual(path_AB.merge_path(path_CD), True)
-        self.assertEqual(path_AB.geom, LineString((0, 0), (4, 0), (8, 0)))
+        self.assertEqual(path_AB.geom, LineString((0, 0), (4, 0), (8, 0), srid=settings.SRID))
         self.assertEqual(path_AB.length, original_AB_length + original_CD_length)
 
         path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
@@ -78,30 +89,57 @@ class MergePathTest(TestCase):
         path_CD = PathFactory.create(name="PATH_CD", geom=LineString((16, 0), (30, 0)))
 
         self.assertEqual(path_AB.merge_path(path_CD), True)
-        self.assertEqual(path_AB.geom, LineString((0, 0), (15, 0), (16, 0), (30, 0)))
+        self.assertEqual(path_AB.geom, LineString((0, 0), (15, 0), (16, 0), (30, 0), srid=settings.SRID))
+
+        path_AB.delete()
+        path_CD.delete()
 
         path_AB = PathFactory.create(name="path_AB", geom=LineString((15, 0), (0, 0)))
         path_CD = PathFactory.create(name="path_CD", geom=LineString((16, 0), (30, 0)))
 
         self.assertEqual(path_AB.merge_path(path_CD), True)
-        self.assertEqual(path_AB.geom, LineString((0, 0), (15, 0), (16, 0), (30, 0)))
+        self.assertEqual(path_AB.geom, LineString((0, 0), (15, 0), (16, 0), (30, 0), srid=settings.SRID))
+
+        path_AB.delete()
+        path_CD.delete()
 
         path_AB = PathFactory.create(name="path_AB", geom=LineString((15, 0), (0, 0)))
         path_CD = PathFactory.create(name="path_CD", geom=LineString((30, 0), (16, 0)))
 
         self.assertEqual(path_AB.merge_path(path_CD), True)
-        self.assertEqual(path_AB.geom, LineString((0, 0), (15, 0), (16, 0), (30, 0)))
+        self.assertEqual(path_AB.geom, LineString((0, 0), (15, 0), (16, 0), (30, 0), srid=settings.SRID))
+
+        path_AB.delete()
+        path_CD.delete()
 
         path_AB = PathFactory.create(name="path_AB", geom=LineString((0, 0), (15, 0)))
         path_CD = PathFactory.create(name="path_CD", geom=LineString((30, 0), (16, 0)))
 
         self.assertEqual(path_AB.merge_path(path_CD), True)
-        self.assertEqual(path_AB.geom, LineString((0, 0), (15, 0), (16, 0), (30, 0)))
+        self.assertEqual(path_AB.geom, LineString((0, 0), (15, 0), (16, 0), (30, 0), srid=settings.SRID))
+
+        path_AB.delete()
+        path_CD.delete()
 
         path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 0), (5, 0)))
         path_CD = PathFactory.create(name="PATH_CD", geom=LineString((50, 0), (100, 0)))
 
         self.assertEqual(path_AB.merge_path(path_CD), False)
+
+    def test_path_merge_with_other_path_next_ws(self):
+        """
+                          F
+                          |
+                          |
+                          E
+        A---------------B + C-------------------D
+
+        Do not merge !
+        """
+        path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 1), (10, 1)))
+        path_CD = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)))
+        PathFactory.create(name="PATH_EF", geom=LineString((10, 1), (10, 5)))
+        self.assertEqual(path_AB.merge_path(path_CD), 2)
 
     def test_recompute_pk_no_reverse(self):
         """
@@ -130,7 +168,7 @@ class MergePathTest(TestCase):
         path_CD_original_length = path_CD.length
         path_AB.merge_path(path_CD)
 
-        self.assertEqual(path_AB.geom, LineString((0, 1), (10, 1), (20, 1)))
+        self.assertEqual(path_AB.geom, LineString((0, 1), (10, 1), (20, 1), srid=settings.SRID))
 
         # reload updated objects
         a1_updated = PathAggregation.objects.get(pk=a1.pk)
@@ -151,6 +189,29 @@ class MergePathTest(TestCase):
 
         self.assertEqual(a4_updated.start_position, a4.start_position * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
         self.assertEqual(a4_updated.end_position, a4.end_position * (path_CD_original_length / path_AB.length) + path_AB_original_length / path_AB.length)
+
+    def test_path_aggregation(self):
+        """
+               A---------------B + C-------------------D         A-----------------BC----------------D
+                       |---------------------|                            |------------------|
+                       E1                                                 E1
+
+        2 path aggregations
+        """
+        path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 1), (10, 1)))
+        path_CD = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)))
+        e1 = TopologyFactory.create(no_path=True)
+        PathAggregationFactory.create(path=path_AB, topo_object=e1, start_position=0.5, end_position=1, order=0)
+        PathAggregationFactory.create(path=path_CD, topo_object=e1, start_position=0, end_position=0.5, order=1)
+        path_AB.merge_path(path_CD)
+        self.assertEqual(path_AB.geom, LineString((0, 1), (10, 1), (20, 1), srid=settings.SRID))
+        self.assertEqual(PathAggregation.objects.filter(topo_object=e1).count(), 2)
+        self.assertEqual(PathAggregation.objects.count(), 2)
+        first = PathAggregation.objects.first()
+        last = PathAggregation.objects.last()
+        self.assertEqual((first.start_position, first.end_position), (0.25, 0.5))
+        self.assertEqual((last.start_position, last.end_position), (0.5, 0.75))
+        self.assertEqual(Topology.objects.count(), 1)
 
     def test_recompute_pk_reverse_AB(self):
         """
@@ -179,7 +240,7 @@ class MergePathTest(TestCase):
         path_CD_original_length = path_CD.length
         path_AB.merge_path(path_CD)
 
-        self.assertEqual(path_AB.geom, LineString((0, 1), (10, 1), (20, 1)))
+        self.assertEqual(path_AB.geom, LineString((0, 1), (10, 1), (20, 1), srid=settings.SRID))
 
         # reload updated objects
         a1_updated = PathAggregation.objects.get(pk=a1.pk)
@@ -232,7 +293,7 @@ class MergePathTest(TestCase):
         path_CD_original_length = path_CD.length
         path_AB.merge_path(path_CD)
 
-        self.assertEqual(path_AB.geom, LineString((0, 1), (10, 1), (20, 1)))
+        self.assertEqual(path_AB.geom, LineString((0, 1), (10, 1), (20, 1), srid=settings.SRID))
 
         # reload updated objects
         a1_updated = PathAggregation.objects.get(pk=a1.pk)
@@ -285,7 +346,7 @@ class MergePathTest(TestCase):
         path_CD_original_length = path_CD.length
         path_AB.merge_path(path_CD)
 
-        self.assertEqual(path_AB.geom, LineString((0, 1), (10, 1), (20, 1)))
+        self.assertEqual(path_AB.geom, LineString((0, 1), (10, 1), (20, 1), srid=settings.SRID))
 
         # reload updated objects
         a1_updated = PathAggregation.objects.get(pk=a1.pk)

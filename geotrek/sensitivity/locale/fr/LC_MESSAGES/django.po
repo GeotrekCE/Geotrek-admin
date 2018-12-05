@@ -1,0 +1,133 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-10-26 16:37+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Sensitivity"
+msgstr "Sensibilité"
+
+msgctxt "Singular"
+msgid "Species"
+msgstr "Espèce"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Pictogram"
+msgstr "Pictogramme"
+
+msgid "January"
+msgstr "Janvier"
+
+msgid "February"
+msgstr "Février"
+
+msgid "March"
+msgstr "Mars"
+
+msgid "April"
+msgstr "Avril"
+
+msgid "May"
+msgstr "Mai"
+
+msgid "June"
+msgstr "Juin"
+
+msgid "July"
+msgstr "Juillet"
+
+msgid "August"
+msgstr "Août"
+
+msgid "September"
+msgstr "Septembre"
+
+msgid "October"
+msgstr "Octobre"
+
+msgid "November"
+msgstr "Novembre"
+
+msgid "Decembre"
+msgstr "Décembre"
+
+msgid "Sport practices"
+msgstr "Pratiques sportives"
+
+msgid "URL"
+msgstr "URL"
+
+msgid "Sport practice"
+msgstr "Pratique sportive"
+
+msgid "Bubble radius"
+msgstr "Rayon de la bulle"
+
+msgid "meters"
+msgstr "mètres"
+
+msgid "Category"
+msgstr "Catégorie"
+
+msgid "Regulatory"
+msgstr "Réglementaire"
+
+msgid "Species"
+msgstr "Espèces"
+
+msgid "Sensitive area"
+msgstr "Zone sensible"
+
+msgid "Published"
+msgstr "Publiée"
+
+msgid "Online"
+msgstr "En ligne"
+
+msgid "Publication date"
+msgstr "Date de publication"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Contact"
+msgstr "Contact"
+
+msgid "Sensitive areas"
+msgstr "Zones sensibles"
+
+msgid "Radius"
+msgstr "Rayon"
+
+msgid "Published sensitive areas"
+msgstr "Zones sensibles publiées"
+
+msgid "Attributes"
+msgstr "Informations"
+
+msgid "Period"
+msgstr "Période"
+
+msgid "Add a sensitive area (Species)"
+msgstr "Ajouter une zone espèce"
+
+msgid "Add a sensitive area (Regulatory)"
+msgstr "Ajouter une zone réglementaire"
+
+msgid "Invalid geometry value."
+msgstr "Valeur de géométrie invalide"

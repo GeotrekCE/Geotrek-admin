@@ -1,6 +1,5 @@
 from django.utils.translation import ugettext_lazy as _
-
-import floppyforms as forms
+from django import forms
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.widgets import LineTopologyWidget
@@ -60,12 +59,20 @@ class PathForm(CommonForm):
     class Meta(CommonForm.Meta):
         model = Path
         fields = CommonForm.Meta.fields + \
-            ['structure',
-             'name', 'stake', 'comfort', 'departure', 'arrival', 'comments',
-             'source', 'networks', 'usages', 'valid', 'reverse_geom', 'geom']
+            ['name', 'stake', 'comfort', 'departure', 'arrival', 'comments',
+             'source', 'networks', 'usages', 'valid', 'draft', 'reverse_geom', 'geom']
 
     def __init__(self, *args, **kwargs):
         super(PathForm, self).__init__(*args, **kwargs)
+        if self.instance.pk:
+            if not self.instance.draft:
+                # Prevent to set a path as draft again (it could be used by a topology)
+                del self.fields['draft']
+            if not self.user.has_perm('core.change_path'):
+                del self.fields['draft']
+        else:
+            if not self.user.has_perm('core.add_draft_path') or not self.user.has_perm('core.add_path'):
+                del self.fields['draft']
         self.fields['geom'].label = ''
 
     def clean_geom(self):
@@ -81,6 +88,11 @@ class PathForm(CommonForm):
 
     def save(self, commit=True):
         path = super(PathForm, self).save(commit=False)
+        if not self.instance.pk:
+            if self.user.has_perm('core.add_draft_path') and not self.user.has_perm('core.add_path'):
+                path.draft = True
+            if not self.user.has_perm('core.add_draft_path') and self.user.has_perm('core.add_path'):
+                path.draft = False
 
         if self.cleaned_data.get('reverse_geom'):
             path.reverse()
@@ -95,9 +107,10 @@ class PathForm(CommonForm):
 class TrailForm(TopologyForm):
     class Meta(CommonForm.Meta):
         model = Trail
-        fields = CommonForm.Meta.fields + [
-            'structure', 'name', 'departure', 'arrival', 'comments']
+        fields = CommonForm.Meta.fields + ['name', 'departure', 'arrival', 'comments']
 
     def __init__(self, *args, **kwargs):
         super(TrailForm, self).__init__(*args, **kwargs)
+        modifiable = self.fields['topology'].widget.modifiable
         self.fields['topology'].widget = LineTopologyWidget()
+        self.fields['topology'].widget.modifiable = modifiable

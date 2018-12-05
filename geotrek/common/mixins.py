@@ -311,7 +311,7 @@ class PublishableMixin(BasePublishableMixin):
         return unicode(self.name)
 
     @models.permalink
-    def get_document_public_url(self):
+    def get_markup_public_url(self):
         raise NotImplementedError
 
     def is_complete(self):

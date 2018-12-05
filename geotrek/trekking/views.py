@@ -8,14 +8,13 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q
 from django.db.models.query import Prefetch
 from django.http import HttpResponse, Http404
-from django.shortcuts import render_to_response
-from django.template.context import RequestContext
+from django.shortcuts import render
 from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.views.generic import CreateView, ListView, RedirectView, DetailView, TemplateView
 from django.views.generic.detail import BaseDetailView
-from djcelery.models import TaskMeta
+from django_celery_results.models import TaskResult
 from mapentity.helpers import alphabet_enumeration
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityFormat, MapEntityDetail, MapEntityMapImage,
@@ -26,19 +25,21 @@ from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.models import RecordSource, TargetPortal, Attachment
-from geotrek.common.views import FormsetMixin, PublicOrReadPermMixin, DocumentPublic
+from geotrek.common.views import FormsetMixin, PublicOrReadPermMixin, DocumentPublic, MarkupPublic
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.trekking.forms import SyncRandoForm
 from geotrek.zoning.models import District, City, RestrictedArea
-from geotrek.celery_conf import app as celery_app
+from geotrek.celery import app as celery_app
 
 from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
                     WebLinkCreateFormPopup, ServiceForm)
 from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
-                          CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer)
+                          CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer,
+                          InfrastructureSerializer, SignageSerializer)
+from geotrek.infrastructure.models import Infrastructure, Signage
 from .tasks import launch_sync_rando
 if 'tourism' in settings.INSTALLED_APPS:
     from geotrek.tourism.models import TouristicContent, TouristicEvent
@@ -46,8 +47,7 @@ if 'tourism' in settings.INSTALLED_APPS:
 
 class SyncRandoRedirect(RedirectView):
     http_method_names = ['post']
-    permanent = False
-    query_string = False
+    pattern_name = 'trekking:sync_randos_view'
 
     @method_decorator(login_required)
     @method_decorator(user_passes_test(lambda u: u.is_superuser))
@@ -55,14 +55,7 @@ class SyncRandoRedirect(RedirectView):
         url = "{scheme}://{host}".format(scheme='https' if self.request.is_secure() else 'http',
                                          host=self.request.get_host())
         self.job = launch_sync_rando.delay(url=url)
-        return super(SyncRandoRedirect,
-                     self).post(request, *args, **kwargs)
-
-    def get_redirect_url(self, *args, **kwargs):
-        self.url = self.request.META.get('HTTP_REFERER')
-        return super(SyncRandoRedirect,
-                     self).get_redirect_url(*args,
-                                            **kwargs)
+        return super(SyncRandoRedirect, self).post(request, *args, **kwargs)
 
 
 class FlattenPicturesMixin(object):
@@ -152,6 +145,8 @@ class TrekDetail(MapEntityDetail):
         return {
             'POI': settings.TREK_ICON_SIZE_POI,
             'service': settings.TREK_ICON_SIZE_SERVICE,
+            'signage': settings.TREK_ICON_SIZE_SIGNAGE,
+            'infrastructure': settings.TREK_ICON_SIZE_INFRASTRUCTURE,
             'parking': settings.TREK_ICON_SIZE_PARKING,
             'information_desk': settings.TREK_ICON_SIZE_INFORMATION_DESK
         }
@@ -184,11 +179,11 @@ class TrekDocument(MapEntityDocument):
     queryset = Trek.objects.existing()
 
 
-class TrekDocumentPublicBase(DocumentPublic):
+class TrekDocumentPublicMixin(object):
     queryset = Trek.objects.existing()
 
     def get_context_data(self, **kwargs):
-        context = super(TrekDocumentPublicBase, self).get_context_data(**kwargs)
+        context = super(TrekDocumentPublicMixin, self).get_context_data(**kwargs)
         trek = self.get_object()
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['trek']
@@ -196,8 +191,8 @@ class TrekDocumentPublicBase(DocumentPublic):
         information_desks = list(trek.information_desks.all())
         if settings.TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT > 0:
             information_desks = information_desks[:settings.TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT]
-        context['information_desks'] = information_desks
 
+        context['information_desks'] = information_desks
         pois = list(trek.published_pois.all())
         if settings.TREK_EXPORT_POI_LIST_LIMIT > 0:
             pois = pois[:settings.TREK_EXPORT_POI_LIST_LIMIT]
@@ -205,6 +200,10 @@ class TrekDocumentPublicBase(DocumentPublic):
         for i, poi in enumerate(pois):
             poi.letter = letters[i]
         context['pois'] = pois
+        infrastructures = list(trek.published_infrastructures.all())
+        signages = list(trek.published_signages.all())
+        context['infrastructures'] = infrastructures
+        context['signages'] = signages
         context['object'] = context['trek'] = trek
         source = self.request.GET.get('source')
         if source:
@@ -220,15 +219,20 @@ class TrekDocumentPublicBase(DocumentPublic):
                 pass
         return context
 
-
-class TrekDocumentPublic(TrekDocumentPublicBase):
-
     def render_to_response(self, context, **response_kwargs):
         # Prepare altimetric graph
         trek = self.get_object()
         language = self.request.LANGUAGE_CODE
         trek.prepare_elevation_chart(language, self.request.build_absolute_uri('/'))
-        return super(TrekDocumentPublic, self).render_to_response(context, **response_kwargs)
+        return super(TrekDocumentPublicMixin, self).render_to_response(context, **response_kwargs)
+
+
+class TrekDocumentPublic(TrekDocumentPublicMixin, DocumentPublic):
+    pass
+
+
+class TrekMarkupPublic(TrekDocumentPublicMixin, MarkupPublic):
+    pass
 
 
 class TrekRelationshipFormsetMixin(FormsetMixin):
@@ -339,13 +343,21 @@ class POIDocument(MapEntityDocument):
     model = POI
 
 
-class POIDocumentPublic(DocumentPublic):
+class POIDocumentPublicMixin(object):
     queryset = POI.objects.existing()
 
     def get_context_data(self, **kwargs):
         context = super(POIDocumentPublic, self).get_context_data(**kwargs)
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['poi']
         return context
+
+
+class POIDocumentPublic(POIDocumentPublicMixin, DocumentPublic):
+    pass
+
+
+class POIMarkupPublic(POIDocumentPublicMixin, MarkupPublic):
+    pass
 
 
 class POICreate(MapEntityCreate):
@@ -442,6 +454,46 @@ class TrekPOIViewSet(viewsets.ModelViewSet):
         if not trek.is_public:
             raise Http404
         return trek.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
+
+
+class TrekSignageViewSet(viewsets.ModelViewSet):
+    model = Signage
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_serializer_class(self):
+        class Serializer(SignageSerializer, GeoFeatureModelSerializer):
+            pass
+        return Serializer
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        try:
+            trek = Trek.objects.existing().get(pk=pk)
+        except Trek.DoesNotExist:
+            raise Http404
+        if not trek.is_public:
+            raise Http404
+        return trek.signages.filter(published=True).transform(settings.API_SRID, field_name='geom')
+
+
+class TrekInfrastructureViewSet(viewsets.ModelViewSet):
+    model = Infrastructure
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_serializer_class(self):
+        class Serializer(InfrastructureSerializer, GeoFeatureModelSerializer):
+            pass
+        return Serializer
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        try:
+            trek = Trek.objects.existing().get(pk=pk)
+        except Trek.DoesNotExist:
+            raise Http404
+        if not trek.is_public:
+            raise Http404
+        return trek.infrastructures.filter(published=True).transform(settings.API_SRID, field_name='geom')
 
 
 class ServiceLayer(MapEntityLayer):
@@ -564,11 +616,10 @@ def sync_view(request):
     Custom views to view / track / launch a sync rando
     """
 
-    return render_to_response(
-        'trekking/sync_rando.html',
-        {'form': SyncRandoForm(), },
-        context_instance=RequestContext(request)
-    )
+    return render(request,
+                  'trekking/sync_rando.html',
+                  {'form': SyncRandoForm(), },
+                  )
 
 
 @login_required
@@ -579,14 +630,13 @@ def sync_update_json(request):
     """
     results = []
     threshold = datetime.now() - timedelta(seconds=60)
-    for task in TaskMeta.objects.filter(date_done__gte=threshold, status='PROGRESS'):
-        if (hasattr(task, 'result') and
-                'name' in task.result and
-                task.result.get('name', '').startswith('geotrek.trekking')):
+    for task in TaskResult.objects.filter(date_done__gte=threshold, status='PROGRESS'):
+        json_results = json.loads(task.result)
+        if json_results.get('name', '').startswith('geotrek.trekking'):
             results.append({
                 'id': task.task_id,
-                'result': task.result or {'current': 0,
-                                          'total': 0},
+                'result': json_results or {'current': 0,
+                                           'total': 0},
                 'status': task.status
             })
     i = celery_app.control.inspect([u'celery@geotrek'])
@@ -604,14 +654,13 @@ def sync_update_json(request):
                     'status': 'PENDING',
                 }
             )
-    for task in TaskMeta.objects.filter(date_done__gte=threshold, status='FAILURE').order_by('-date_done'):
-        if (hasattr(task, 'result') and
-                'name' in task.result and
-                task.result.get('name', '').startswith('geotrek.trekking')):
+    for task in TaskResult.objects.filter(date_done__gte=threshold, status='FAILURE').order_by('-date_done'):
+        json_results = json.loads(task.result)
+        if json_results.get('name', '').startswith('geotrek.trekking'):
             results.append({
                 'id': task.task_id,
-                'result': task.result or {'current': 0,
-                                          'total': 0},
+                'result': json_results or {'current': 0,
+                                           'total': 0},
                 'status': task.status
             })
 
@@ -630,9 +679,9 @@ class Meta(TemplateView):
         context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
         context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
         context['treks'] = Trek.objects.existing().order_by('pk').filter(
-            Q(**{'published_{lang}'.format(lang=lang): True}) |
-            Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
-                 'trek_parents__parent__deleted': False})
+            Q(**{'published_{lang}'.format(lang=lang): True})
+            | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
+                   'trek_parents__parent__deleted': False})
         )
         if 'tourism' in settings.INSTALLED_APPS:
             context['contents'] = TouristicContent.objects.existing().order_by('pk').filter(

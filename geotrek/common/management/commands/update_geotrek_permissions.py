@@ -1,14 +1,14 @@
 import logging
 
 from django.conf import settings
-from django.utils.importlib import import_module
+from importlib import import_module
 from django.apps import apps
 from django.contrib.auth.management import create_permissions
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand
 
-from mapentity import registry
+from mapentity.registry import registry
 from mapentity.middleware import clear_internal_user_cache
 from mapentity.registry import create_mapentity_model_permissions
 
@@ -25,7 +25,7 @@ class Command(BaseCommand):
         logger.info("Synchronize django permissions")
 
         for app_config in apps.get_app_configs():
-            create_permissions(app_config, [], int(options.get('verbosity', 1)))
+            create_permissions(app_config, verbosity=options['verbosity'])
 
         logger.info("Done.")
 

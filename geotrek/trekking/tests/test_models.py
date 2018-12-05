@@ -1,12 +1,13 @@
 from django.test import TestCase
 from django.contrib.gis.geos import (LineString, Polygon, MultiPolygon,
-                                     MultiLineString)
+                                     MultiLineString, MultiPoint, Point)
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 from bs4 import BeautifulSoup
 
 from geotrek.common.tests import TranslationResetMixin
-from geotrek.core.factories import PathFactory, PathAggregationFactory
+from geotrek.core.factories import PathFactory
 from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.factories import (POIFactory, TrekFactory,
                                         TrekWithPOIsFactory, ServiceFactory)
@@ -56,7 +57,7 @@ class TrekTest(TranslationResetMixin, TestCase):
     def test_kml_coordinates_should_be_3d(self):
         trek = TrekWithPOIsFactory.create()
         kml = trek.kml()
-        parsed = BeautifulSoup(kml)
+        parsed = BeautifulSoup(kml, 'lxml')
         for placemark in parsed.findAll('placemark'):
             coordinates = placemark.find('coordinates')
             tuples = [s.split(',') for s in coordinates.string.split(' ')]
@@ -153,20 +154,22 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
         p2 = PathFactory.create(geom=LineString((4, 4), (8, 8)))
         poi = POIFactory.create(no_path=True)
+        poi2 = POIFactory.create(no_path=True)
         service = ServiceFactory.create(no_path=True)
         service.type.practices.add(trek.practice)
-        PathAggregationFactory.create(topo_object=trek, path=p1,
-                                      start_position=0.5)
-        PathAggregationFactory.create(topo_object=trek, path=p2)
-        PathAggregationFactory.create(topo_object=poi, path=p1,
-                                      start_position=0.6, end_position=0.6)
-        PathAggregationFactory.create(topo_object=service, path=p1,
-                                      start_position=0.7, end_position=0.7)
+        trek.add_path(path=p1, start=0.5, end=1)
+        trek.add_path(path=p2, start=0, end=1)
+        poi.add_path(path=p1, start=0.6, end=0.6)
+        poi2.add_path(path=p1, start=0.6, end=0.6)
+        service.add_path(path=p1, start=0.7, end=0.7)
+        trek.pois_excluded.add(poi2.pk)
+
         # /!\ District are automatically linked to paths at DB level
         d1 = DistrictFactory.create(geom=MultiPolygon(
             Polygon(((-2, -2), (3, -2), (3, 3), (-2, 3), (-2, -2)))))
-
         # Ensure related objects are accessible
+        self.assertItemsEqual(trek.pois_excluded.all(), [poi2])
+        self.assertItemsEqual(trek.all_pois, [poi, poi2])
         self.assertItemsEqual(trek.pois, [poi])
         self.assertItemsEqual(trek.services, [service])
         self.assertItemsEqual(poi.treks, [trek])
@@ -174,8 +177,10 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         self.assertItemsEqual(trek.districts, [d1])
 
         # Ensure there is no duplicates
-        PathAggregationFactory.create(topo_object=trek, path=p1,
-                                      end_position=0.5)
+
+        trek.add_path(path=p1, start=0.5, end=1)
+        self.assertItemsEqual(trek.pois_excluded.all(), [poi2])
+        self.assertItemsEqual(trek.all_pois, [poi, poi2])
         self.assertItemsEqual(trek.pois, [poi])
         self.assertItemsEqual(trek.services, [service])
         self.assertItemsEqual(poi.treks, [trek])
@@ -356,3 +361,15 @@ class TrekItinerancyTest(TestCase):
         self.assertQuerysetEqual(trekC.children, ['<Trek: A>'])
         self.assertEqual(trekA.parents_id, [trekC.id])
         self.assertEqual(list(trekC.children_id), [trekA.id])
+
+
+class MapImageExtentTest(TestCase):
+    def setUp(self):
+        self.trek = TrekFactory.create(
+            points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
+            parking_location=Point(0, 0, srid=settings.SRID),
+        )
+
+    def test_get_map_image_extent(self):
+        self.assertEqual(self.trek.get_map_image_extent(),
+                         [-1.3630812101179004, -5.983856309208769, 3.0013039767202154, 46.50090044234927])

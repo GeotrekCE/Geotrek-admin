@@ -1,6 +1,6 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-from mapentity import registry
+from mapentity.registry import registry
 
 from geotrek.altimetry.urls import AltimetryEntityOptions
 from geotrek.common.urls import PublishableEntityOptions
@@ -9,6 +9,7 @@ from mapentity.registry import MapEntityOptions
 from . import models
 from .views import (
     TrekDocumentPublic, POIDocumentPublic, TrekMapImage,
+    TrekMarkupPublic, POIMarkupPublic,
     TrekGPXDetail, TrekKMLDetail, WebLinkCreatePopup,
     CirkwiTrekView, CirkwiPOIView, TrekPOIViewSet,
     SyncRandoRedirect, TrekServiceViewSet, sync_view,
@@ -17,8 +18,7 @@ from .views import (
 from . import serializers as trekking_serializers
 
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/pois\.geojson$', TrekPOIViewSet.as_view({'get': 'list'}), name="trek_poi_geojson"),
     url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/services\.geojson$', TrekServiceViewSet.as_view({'get': 'list'}), name="trek_service_geojson"),
     url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/(?P<slug>[-_\w]+).gpx$', TrekGPXDetail.as_view(), name="trek_gpx_detail"),
@@ -31,7 +31,7 @@ urlpatterns = patterns(
     url(r'^commands/syncview$', sync_view, name='sync_randos_view'),
     url(r'^commands/statesync/$', sync_update_json, name='sync_randos_state'),
     url(r'^image/trek-(?P<pk>\d+)-(?P<lang>\w\w).png$', TrekMapImage.as_view(), name='trek_map_image'),
-)
+]
 
 
 class TrekEntityOptions(AltimetryEntityOptions, PublishableEntityOptions):
@@ -43,6 +43,7 @@ class TrekEntityOptions(AltimetryEntityOptions, PublishableEntityOptions):
     preprocess attributes.
     """
     document_public_view = TrekDocumentPublic
+    markup_public_view = TrekMarkupPublic
 
     def get_serializer(self):
         return trekking_serializers.TrekSerializer
@@ -53,6 +54,7 @@ class TrekEntityOptions(AltimetryEntityOptions, PublishableEntityOptions):
 
 class POIEntityOptions(PublishableEntityOptions):
     document_public_view = POIDocumentPublic
+    markup_public_view = POIMarkupPublic
 
     def get_serializer(self):
         return trekking_serializers.POISerializer

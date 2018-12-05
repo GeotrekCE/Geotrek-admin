@@ -19,7 +19,7 @@ exec 1> install.log 2>&1
 
 #------------------------------------------------------------------------------
 
-STABLE_VERSION=${STABLE_VERSION:-2.16.2}
+STABLE_VERSION=${STABLE_VERSION:-2.16.1}
 dev=false
 tests=false
 prod=false
@@ -29,9 +29,8 @@ settingsfile=etc/settings.ini
 
 
 usage () {
-    exec 2>&4
     cat >&2 <<- _EOF_
-Usage: Install project [OPTIONS]
+Usage: $0 project [OPTIONS]
     -d, --dev         minimum dependencies for development
     -t, --tests       install testing environment
     -p, --prod        deploy a production instance
@@ -39,7 +38,6 @@ Usage: Install project [OPTIONS]
     -s, --standalone  deploy a single-server production instance (Default)
     -h, --help        show this help
 _EOF_
-    exec 2>&1
     return
 }
 
@@ -67,6 +65,22 @@ while [[ -n $1 ]]; do
     shift
 done
 
+#------------------------------------------------------------------------------
+
+# Redirect whole output to log file
+touch install.log
+chmod 600 install.log
+exec 3>&1 4>&2
+if $interactive ; then
+    exec 1>> install.log 2>&1
+else
+    exec 1>> >( tee --append install.log) 2>&1
+fi
+
+echo '------------------------------------------------------------------------------'
+date --rfc-2822
+
+set -x
 
 #------------------------------------------------------------------------------
 #
@@ -119,18 +133,19 @@ function exit_error () {
 
 
 function echo_header () {
-    set +x
-    exec 2>&4
-    cat docs/logo.ans >&2
-    exec 2>&1
-    set -x
+    if $interactive; then
+        set +x
+        exec 2>&4
+        cat docs/logo.ans >&2
+        exec 2>&1
+        set -x
+    fi
     version=$(cat VERSION)
     echo_step      "... install $version" >&2
     if [ ! -z $1 ] ; then
         echo_warn "... upgrade $1" >&2
     fi
     echo_step      "(details in install.log)" >&2
-    echo_step >&2
 }
 
 
@@ -201,29 +216,15 @@ function check_postgres_connection {
 function minimum_system_dependencies {
     sudo apt-get update -qq
     echo_progress
-    sudo apt-get install -y -qq python unzip wget python-software-properties
+    sudo apt-get install -y -qq python unzip wget software-properties-common
     echo_progress
-    if [ $precise -eq 1 ]; then
-        sudo apt-add-repository -y ppa:git-core/ppa
-        sudo apt-add-repository -y ppa:ubuntugis/ppa
-        sudo apt-get update -qq
-        echo_progress
-    fi
-
-    sudo apt-get install -y -qq git gettext python-virtualenv build-essential python-dev
+    sudo apt-get install -y -qq git gettext build-essential python-dev
     echo_progress
 }
 
 
 function geotrek_system_dependencies {
-    sudo apt-get install -y -q --no-upgrade libjson0 gdal-bin libgdal-dev libssl-dev
-    
-    if [ $xenial -eq 1 ]; then
-        sudo apt-get install libgeos-c1v5 libproj9
-    else
-        sudo apt-get install libgeos-c1 libproj0
-    fi
-    
+    sudo apt-get install -y -q --no-upgrade gdal-bin libgdal-dev libssl-dev binutils libproj-dev
     echo_progress
     # PostgreSQL client and headers
     sudo apt-get install -y -q --no-upgrade postgresql-client-$psql_version postgresql-server-dev-$psql_version
@@ -231,7 +232,7 @@ function geotrek_system_dependencies {
     sudo apt-get install -y -qq libxml2-dev libxslt-dev  # pygal lxml
     echo_progress
     # Necessary for MapEntity Weasyprint
-    sudo apt-get install -y -qq python-dev python-lxml libcairo2 libpango1.0-0 libgdk-pixbuf2.0-dev libffi-dev shared-mime-info
+    sudo apt-get install -y -qq python-lxml libcairo2 libpango1.0-0 libgdk-pixbuf2.0-dev libffi-dev shared-mime-info libfreetype6-dev
     echo_progress
     # Redis for async imports and tasks management
     sudo apt-get install -y -qq redis-server
@@ -356,16 +357,16 @@ _EOF_
 
 
 function backup_existing_database {
-    set +x
     if $interactive ; then
+        set +x
         exec 2>&4
         read -p "Backup existing database ? [yN] " -n 1 -r
         echo  # new line
         exec 2>&1
+        set -x
     else
         REPLY=N;
     fi
-    set -x
     if [[ $REPLY =~ ^[Yy]$ ]]
     then
         dbname=$(ini_value $settingsfile dbname)
@@ -382,8 +383,6 @@ function backup_existing_database {
 #------------------------------------------------------------------------------
 
 function geotrek_setup {
-    set -x
-
     existing=$(existing_version)
     freshinstall=true
     if [ ! -z $existing ] ; then
@@ -433,8 +432,18 @@ function geotrek_setup {
         make clean
     fi
 
+    # install pip and virtualenv
+    wget https://bootstrap.pypa.io/get-pip.py
+    sudo python ./get-pip.py
+    sudo pip install virtualenv -U
+    rm get-pip.py
+
     # Python bootstrap
     make install
+    success=$?
+    if [ $success -ne 0 ]; then
+        exit_error 2 "Could not setup virtualenv/buildout !"
+    fi
     echo_progress
 
     if $freshinstall && $interactive && ($prod || $standalone) ; then
@@ -465,6 +474,12 @@ function geotrek_setup {
     check_postgres_connection
 	
     echo_step "Install Geotrek python dependencies..."
+
+    if [ $bionic -eq 1 ]; then
+        # fix gdal version for bionic
+        sed -i 's/GDAL=.*/GDAL=2.2.4/' ./conf/buildout.cfg
+    fi
+
     if $dev ; then
         make env_dev
     elif $tests ; then
@@ -504,6 +519,12 @@ function geotrek_setup {
         fi
     fi
 
+    psql $dbname -h $dbhost -p $dbport -U $dbuser -c "SELECT * FROM easy_thumbnails_source WHERE FALSE;"
+    if [ $? -ne 1 ]; then
+        # fix migrations for easy_thumbnails
+        bin/django migrate --fake-initial easy_thumbnails --noinput
+    fi
+
     if $dev ; then
         echo_step "Initializing data..."
         make update
@@ -511,8 +532,6 @@ function geotrek_setup {
     fi
 
     if $tests ; then
-        # XXX: Why Django tests require the main database :( ?
-        bin/django migrate --noinput
         bin/django collectstatic --clear --noinput --verbosity=0
     fi
 
@@ -527,10 +546,14 @@ function geotrek_setup {
         echo_step "Generate services configuration files..."
 
         # restart supervisor in case of xenial before 'make deploy'
-        sudo service supervisor force-stop && sudo service supervisor stop && sudo service supervisor start
+        if [ $trusty -eq 1 ]; then
+            sudo service supervisor force-stop && sudo service supervisor stop && sudo service supervisor start
+        fi
         if [ $? -ne 0 ]; then
             exit_error 10 "Could not restart supervisor !"
         fi
+
+        echo_progress
 
         # If buildout was successful, deploy really !
         if [ -f /etc/supervisor/supervisord.conf ]; then
@@ -588,8 +611,6 @@ function geotrek_setup {
         fi
     fi
 
-    set +x
-
     echo_step "Done."
 }
 
@@ -597,11 +618,9 @@ precise=$(grep "Ubuntu 12.04" /etc/issue | wc -l)
 trusty=$(grep "Ubuntu 14.04" /etc/issue | wc -l)
 vivid=$(grep "Ubuntu 15.04" /etc/issue | wc -l)
 xenial=$(grep "Ubuntu 16.04" /etc/issue | wc -l)
+bionic=$(grep "Ubuntu 18.04" /etc/issue | wc -l)
 
-if [ $precise -eq 1 ]; then
-    psql_version=9.1
-    pgis_version=2.0
-elif [ $trusty -eq 1 ]; then
+if [ $trusty -eq 1 ]; then
     psql_version=9.3
     pgis_version=2.1
 elif [ $vivid -eq 1 ]; then
@@ -610,10 +629,15 @@ elif [ $vivid -eq 1 ]; then
 elif [ $xenial -eq 1 ]; then
     psql_version=9.5
     pgis_version=2.2
+elif [ $bionic -eq 1 ]; then
+    psql_version=10
+    pgis_version=2.4
 fi
 
-if [ $precise -eq 1 -o $trusty -eq 1 -o $vivid -eq 1 -o $xenial -eq 1 ] ; then
+if [ $trusty -eq 1 -o $vivid -eq 1 -o $xenial -eq 1 -o $bionic -eq 1 ] ; then
     geotrek_setup
+elif [ $precise -eq 1 ] ; then
+    exit_error 5 "Support for Ubuntu Precise 12.04 was dropped. Upgrade your server first. Aborted."
 else
     exit_error 5 "Unsupported operating system. Aborted."
 fi

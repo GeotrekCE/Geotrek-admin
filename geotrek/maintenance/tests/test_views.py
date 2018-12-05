@@ -11,7 +11,6 @@ import json
 from geotrek.common.tests import CommonTest
 from mapentity.serializers.shapefile import ZipShapeSerializer, shapefile_files
 
-from geotrek.authent.models import default_structure
 from geotrek.authent.factories import PathManagerFactory
 from geotrek.core.factories import StakeFactory
 from geotrek.core.helpers import TopologyHelper
@@ -46,7 +45,6 @@ class InterventionViewsTest(CommonTest):
         return {
             'name': 'test',
             'date': '2012-08-23',
-            'structure': default_structure().pk,
             'disorders': InterventionDisorderFactory.create().pk,
             'comments': '',
             'slope': 0,
@@ -128,6 +126,7 @@ class InterventionViewsTest(CommonTest):
         # Should be able to save form successfully
         form = response.context['form']
         data = form.initial
+        data['disorders'] = data['disorders'][0].pk
         data['project'] = ''
         data['infrastructure'] = form.fields['infrastructure'].initial.pk  # because it is set after form init, not form.initial :(
         data.update(**{
@@ -226,7 +225,6 @@ class ProjectViewsTest(CommonTest):
     def get_good_data(self):
         return {
             'name': 'test',
-            'structure': default_structure().pk,
             'stake': '',
             'type': '',
             'domain': '',
@@ -255,6 +253,9 @@ class ProjectViewsTest(CommonTest):
             'funding_set-1-id': '',
             'funding_set-1-DELETE': ''
         }
+
+    def _check_update_geom_permission(self, response):
+        pass
 
     def test_project_layer(self):
         self.login()
@@ -379,7 +380,9 @@ class ExportTest(TranslationResetMixin, TestCase):
 
         for feature in layer_point:
             self.assertEquals(str(feature['id']), str(proj.pk))
-            self.assertTrue(feature.geom.geos.equals(it_point.geom))
+            self.assertEquals(len(feature.geom.geos), 1)
+            self.assertAlmostEqual(feature.geom.geos[0].x, it_point.geom.x)
+            self.assertAlmostEqual(feature.geom.geos[0].y, it_point.geom.y)
 
         for feature in layer_line:
             self.assertEquals(str(feature['id']), str(proj.pk))

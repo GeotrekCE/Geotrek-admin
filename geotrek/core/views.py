@@ -2,18 +2,17 @@
 
 import json
 import logging
+from collections import defaultdict
 
 from django.contrib.auth.decorators import permission_required
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 from django.views.decorators.http import last_modified as cache_last_modified
 from django.views.decorators.cache import never_cache as force_cache_validation
 from django.views.generic import View
 from django.utils.translation import ugettext as _
-from django.core.cache import get_cache
-from django.core.urlresolvers import reverse
-from django.shortcuts import redirect
-from mapentity import registry
+from django.core.cache import caches
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityFormat,
@@ -29,24 +28,13 @@ from .filters import PathFilterSet, TrailFilterSet
 from . import graph as graph_lib
 from django.http.response import HttpResponse
 from django.contrib import messages
+from django.db.models import Sum
+from django.db.models.functions import Coalesce
+from geotrek.api.v2.functions import Length
+from django.db.models.fields import FloatField
 
 
 logger = logging.getLogger(__name__)
-
-
-@login_required
-def last_list(request):
-    last = request.session.get('last_list')  # set in MapEntityList
-    for entity in registry.entities:
-        if reverse(entity.url_list) == last and request.user.has_perm(entity.model.get_permission_codename('list')):
-            return redirect(entity.url_list)
-    for entity in registry.entities:
-        if request.user.has_perm(entity.model.get_permission_codename('list')):
-            return redirect(entity.url_list)
-    return redirect('trekking:trek_list')
-
-
-home = last_list
 
 
 class CreateFromTopologyMixin(object):
@@ -69,8 +57,14 @@ class CreateFromTopologyMixin(object):
 
 
 class PathLayer(MapEntityLayer):
-    model = Path
-    properties = ['name']
+    properties = ['name', 'draft']
+    queryset = Path.objects.all()
+
+    def get_queryset(self):
+        qs = super(PathLayer, self).get_queryset()
+        if self.request.GET.get('no_draft'):
+            qs = qs.exclude(draft=True)
+        return qs
 
 
 class PathList(MapEntityList):
@@ -92,7 +86,6 @@ class PathList(MapEntityList):
         denormalize ``trail`` column from list.
         """
         qs = super(PathList, self).get_queryset()
-
         denormalized = {}
         if settings.TRAIL_MODEL_ENABLED:
             paths_id = qs.values_list('id', flat=True)
@@ -105,11 +98,14 @@ class PathList(MapEntityList):
         for path in qs:
             path_trails = denormalized.get(path.id, [])
             setattr(path, '_trails', path_trails)
-            yield path
+        return qs
 
 
 class PathJsonList(MapEntityJsonList, PathList):
-    pass
+    def get_context_data(self, **kwargs):
+        context = super(PathJsonList, self).get_context_data(**kwargs)
+        context["sumPath"] = round(self.object_list.aggregate(sumPath=Coalesce(Sum(Length('geom'), output_field=FloatField()), 0))['sumPath'] / 1000, 1)
+        return context
 
 
 class PathFormatList(MapEntityFormat, PathList):
@@ -143,6 +139,11 @@ class PathCreate(MapEntityCreate):
     model = Path
     form_class = PathForm
 
+    def dispatch(self, *args, **kwargs):
+        if self.request.user.has_perm('core.add_path') or self.request.user.has_perm('core.add_draft_path'):
+            return super(MapEntityCreate, self).dispatch(*args, **kwargs)
+        return super(PathCreate, self).dispatch(*args, **kwargs)
+
 
 class PathUpdate(MapEntityUpdate):
     model = Path
@@ -150,6 +151,17 @@ class PathUpdate(MapEntityUpdate):
 
     @same_structure_required('core:path_detail')
     def dispatch(self, *args, **kwargs):
+        path = self.get_object()
+        if path.draft and not self.request.user.has_perm('core.change_draft_path'):
+            messages.warning(self.request, _(
+                u'Access to the requested resource is restricted. You have been redirected.'))
+            return redirect('core:path_detail', **kwargs)
+        if not path.draft and not self.request.user.has_perm('core.change_path'):
+            messages.warning(self.request, _(
+                u'Access to the requested resource is restricted. You have been redirected.'))
+            return redirect('core:path_detail', **kwargs)
+        if path.draft and self.request.user.has_perm('core.change_draft_path'):
+            return super(MapEntityUpdate, self).dispatch(*args, **kwargs)
         return super(PathUpdate, self).dispatch(*args, **kwargs)
 
 
@@ -158,14 +170,49 @@ class PathDelete(MapEntityDelete):
 
     @same_structure_required('core:path_detail')
     def dispatch(self, *args, **kwargs):
+        path = self.get_object()
+        if path.draft and not self.request.user.has_perm('core.delete_draft_path'):
+            messages.warning(self.request, _(
+                u'Access to the requested resource is restricted. You have been redirected.'))
+            return redirect('core:path_detail', **kwargs)
+        if not path.draft and not self.request.user.has_perm('core.delete_path'):
+            messages.warning(self.request, _(
+                u'Access to the requested resource is restricted. You have been redirected.'))
+            return redirect('core:path_detail', **kwargs)
+        if path.draft and self.request.user.has_perm('core.delete_draft_path'):
+            return super(MapEntityDelete, self).dispatch(*args, **kwargs)
         return super(PathDelete, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(PathDelete, self).get_context_data(**kwargs)
+        topologies_by_model = defaultdict(list)
+        if 'geotrek.core' in settings.INSTALLED_APPS:
+            for trail in self.object.trails:
+                topologies_by_model[_('Trails')].append({'name': trail.name, 'url': trail.get_detail_url()})
+        if 'geotrek.trekking' in settings.INSTALLED_APPS:
+            for trek in self.object.treks:
+                topologies_by_model[_('Treks')].append({'name': trek.name, 'url': trek.get_detail_url()})
+            for service in self.object.services:
+                topologies_by_model[_('Services')].append({'name': service.type.name, 'url': service.get_detail_url()})
+            for poi in self.object.pois:
+                topologies_by_model[_('Pois')].append({'name': poi.name, 'url': poi.get_detail_url()})
+        if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
+            for signage in self.object.signages:
+                topologies_by_model[_('Signages')].append({'name': signage.name, 'url': signage.get_detail_url()})
+            for infrastructure in self.object.infrastructures:
+                topologies_by_model[_('Infrastructures')].append({'name': infrastructure.name, 'url': infrastructure.get_detail_url()})
+        if 'geotrek.maintenance' in settings.INSTALLED_APPS:
+            for intervention in self.object.interventions:
+                topologies_by_model[_('Interventions')].append({'name': intervention.name, 'url': intervention.get_detail_url()})
+        context['topologies_by_model'] = dict(topologies_by_model)
+        return context
 
 
 @login_required
 @cache_last_modified(lambda x: Path.latest_updated())
 @force_cache_validation
 def get_graph_json(request):
-    cache = get_cache('fat')
+    cache = caches['fat']
     key = 'path_graph_json'
 
     result = cache.get(key)
@@ -179,7 +226,7 @@ def get_graph_json(request):
 
     # cache does not exist or is not up to date
     # rebuild the graph and cache the json
-    graph = graph_lib.graph_edges_nodes_of_qs(Path.objects.all())
+    graph = graph_lib.graph_edges_nodes_of_qs(Path.objects.exclude(draft=True))
     json_graph = json.dumps(graph)
 
     cache.set(key, (latest, json_graph))
@@ -252,29 +299,36 @@ def merge_path(request):
     response = {}
 
     if request.method == 'POST':
+        ids_path_merge = request.POST.getlist('path[]')
+
+        assert len(ids_path_merge) == 2
+
+        path_a = Path.objects.get(pk=ids_path_merge[0])
+        path_b = Path.objects.get(pk=ids_path_merge[1])
+
+        if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
+            response = {'error': _(u"You don't have the right to change these paths")}
+            return HttpJSONResponse(response)
+
+        if path_a.draft != path_b.draft:
+            response = {'error': _(u"You can't merge 1 draft path with 1 normal path")}
+            return HttpJSONResponse(response)
+
         try:
-            ids_path_merge = request.POST.getlist('path[]')
-
-            if len(ids_path_merge) == 2:
-                path_a = Path.objects.get(pk=ids_path_merge[0])
-                path_b = Path.objects.get(pk=ids_path_merge[1])
-                if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
-                    response = {'error': _(u"You don't have the right to change these paths")}
-
-                elif path_a.merge_path(path_b):
-                    response = {'success': _(u"Paths merged successfully")}
-                    messages.success(request, _(u"Paths merged successfully"))
-
-                else:
-                    response = {'error': _(u"No matching points to merge paths found")}
-
-            else:
-                raise
-
+            result = path_a.merge_path(path_b)
         except Exception as exc:
             response = {'error': exc, }
+            return HttpJSONResponse(response)
 
-    return HttpResponse(json.dumps(response), content_type="application/json")
+        if result == 2:
+            response = {'error': _(u"You can't merge 2 paths with a 3rd path in the intersection")}
+        elif result == 0:
+            response = {'error': _(u"No matching points to merge paths found")}
+        else:
+            response = {'success': _(u"Paths merged successfully")}
+            messages.success(request, _(u"Paths merged successfully"))
+
+        return HttpJSONResponse(response)
 
 
 class ParametersView(View):

@@ -1,17 +1,21 @@
 # -*- coding: utf-8 -*-
 from django.core.exceptions import ValidationError, PermissionDenied
+from django.core.urlresolvers import reverse
 from django.utils.decorators import method_decorator
 from django.conf import settings
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.utils import DatabaseError
 from django.http import HttpResponse
 from django.utils.translation import ugettext as _
+from django_celery_results.models import TaskResult
+from django.utils import timezone
 
 from mapentity.helpers import api_bbox
+from mapentity.registry import registry
 from mapentity import views as mapentity_views
 
-from geotrek.celery_conf import app as celery_app
+from geotrek.celery import app as celery_app
 from geotrek.common.utils import sql_extent
 from geotrek import __version__
 
@@ -23,8 +27,8 @@ import os
 import json
 import redis
 from zipfile import ZipFile
-from djcelery.models import TaskMeta
-from datetime import datetime, timedelta
+
+from datetime import timedelta
 
 from .utils.import_celery import create_tmp_destination, discover_available_parsers
 
@@ -76,7 +80,7 @@ class PublicOrReadPermMixin(object):
         return obj
 
 
-class DocumentPublic(PublicOrReadPermMixin, mapentity_views.MapEntityDocumentWeasyprint):
+class DocumentPublicMixin(object):
     template_name_suffix = "_public"
 
     # Override view_permission_required
@@ -84,10 +88,19 @@ class DocumentPublic(PublicOrReadPermMixin, mapentity_views.MapEntityDocumentWea
         return super(mapentity_views.MapEntityDocumentBase, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(DocumentPublic, self).get_context_data(**kwargs)
+        context = super(DocumentPublicMixin, self).get_context_data(**kwargs)
         modelname = self.get_model()._meta.object_name.lower()
         context['mapimage_ratio'] = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
         return context
+
+
+class DocumentPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views.MapEntityDocumentWeasyprint):
+    pass
+
+
+class MarkupPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views.MapEntityMarkupWeasyprint):
+    pass
+
 
 #
 # Concrete views
@@ -171,24 +184,18 @@ class UserArgMixin(object):
         return kwargs
 
 
-def import_file(uploaded, parser):
+def import_file(uploaded, parser, encoding, user_pk):
     destination_dir, destination_file = create_tmp_destination(uploaded.name)
     with open(destination_file, 'w+') as f:
         f.write(uploaded.file.read())
         zfile = ZipFile(f)
         for name in zfile.namelist():
-            try:
-                zfile.extract(
-                    name, os.path.dirname(os.path.realpath(f.name)))
-            except Exception:
-                raise
-
+            zfile.extract(name, os.path.dirname(os.path.realpath(f.name)))
             if name.endswith('shp'):
-                import_datas.delay(parser.__name__, '/'.join((destination_dir, name)), parser.__module__)
+                import_datas.delay(parser.__name__, '/'.join((destination_dir, name)), parser.__module__, encoding, user_pk)
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
 def import_view(request):
     """
     Gets the existing declared parsers for the current project.
@@ -198,7 +205,7 @@ def import_view(request):
     choices_url = []
     render_dict = {}
 
-    choices, choices_url, classes = discover_available_parsers()
+    choices, choices_url, classes = discover_available_parsers(request.user)
 
     form = ImportDatasetFormWithFile(choices, prefix="with-file")
     form_without_file = ImportDatasetForm(
@@ -212,7 +219,14 @@ def import_view(request):
             if form.is_valid():
                 uploaded = request.FILES['with-file-zipfile']
                 parser = classes[int(form['parser'].value())]
-                import_file(uploaded, parser)
+                encoding = form.cleaned_data['encoding']
+                codename = '{}.import_{}'.format(parser.model._meta.app_label, parser.model._meta.model_name)
+                if not request.user.is_superuser and not request.user.has_perm(codename):
+                    raise PermissionDenied
+                try:
+                    import_file(uploaded, parser, encoding, request.user.pk)
+                except UnicodeDecodeError:
+                    render_dict['encoding_error'] = True
 
         if 'import-web' in request.POST:
             form_without_file = ImportDatasetForm(
@@ -220,8 +234,11 @@ def import_view(request):
 
             if form_without_file.is_valid():
                 parser = classes[int(form_without_file['parser'].value())]
+                codename = '{}.import_{}'.format(parser.model._meta.app_label, parser.model._meta.model_name)
+                if not request.user.is_superuser and not request.user.has_perm(codename):
+                    raise PermissionDenied
                 import_datas_from_web.delay(
-                    parser.__name__, parser.__module__
+                    parser.__name__, parser.__module__, request.user.pk
                 )
 
     # Hide second form if parser has no web based imports.
@@ -234,16 +251,16 @@ def import_view(request):
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
 def import_update_json(request):
     results = []
-    threshold = datetime.now() - timedelta(seconds=60)
-    for task in TaskMeta.objects.filter(date_done__gte=threshold).order_by('date_done'):
-        if hasattr(task, 'result') and task.result.get('name', '').startswith('geotrek.common'):
+    threshold = timezone.now() - timedelta(seconds=60)
+    for task in TaskResult.objects.filter(date_done__gte=threshold).order_by('date_done'):
+        json_results = json.loads(task.result)
+        if json_results.get('name', '').startswith('geotrek.common'):
             results.append(
                 {
                     'id': task.task_id,
-                    'result': task.result or {'current': 0, 'total': 0},
+                    'result': json_results or {'current': 0, 'total': 0},
                     'status': task.status
                 }
             )
@@ -285,3 +302,18 @@ class ThemeViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         qs = super(ThemeViewSet, self).get_queryset()
         return qs.order_by('id')
+
+
+@login_required
+def last_list(request):
+    last = request.session.get('last_list')  # set in MapEntityList
+    for entity in registry.entities:
+        if reverse(entity.url_list) == last and request.user.has_perm(entity.model.get_permission_codename('list')):
+            return redirect(entity.url_list)
+    for entity in registry.entities:
+        if entity.menu and request.user.has_perm(entity.model.get_permission_codename('list')):
+            return redirect(entity.url_list)
+    return redirect('trekking:trek_list')
+
+
+home = last_list

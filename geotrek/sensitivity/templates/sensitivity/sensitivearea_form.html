@@ -1,0 +1,87 @@
+{% extends "mapentity/mapentity_form.html" %}
+
+{% load i18n crispy_forms_tags staticfiles %}
+
+
+{% block extrabody %}
+    {{ block.super }}
+    <script type="text/javascript">
+        var sensitiveareaRadii = JSON.parse('{{ radii|safe }}');
+        var sensitiveareaCurrentFeature = null;
+        var sensitiveareaCurrentRadius;
+        if ($('#id_species').val()) {
+            sensitiveareaCurrentRadius = sensitiveareaRadii[$('#id_species').val()];
+        } else {
+            sensitiveareaCurrentRadius = 50;
+        }
+
+        $("#id_species").change(function() {
+            sensitiveareaCurrentRadius = sensitiveareaRadii[$(this).val()];
+            if (sensitiveareaCurrentFeature && sensitiveareaCurrentFeature.setRadius) {
+                sensitiveareaCurrentFeature.setRadius(sensitiveareaCurrentRadius);
+            }
+        });
+
+        polygonGeometryField = MapEntity.GeometryField.extend({
+            _controlDrawOptions: function () {
+                return {
+                    edit: {
+                        featureGroup: this.drawnItems
+                    },
+                    draw: {
+                        circlemarker: false,
+                        polyline: false,
+                        rectangle: false,
+                        circle: false,
+                        marker: false
+                    }
+                };
+            }
+
+        });
+
+        bubbleGeometryField = MapEntity.GeometryField.extend({
+            load: function() {
+                self = this;
+                this._map.on('draw:created', function (e) {
+                    if (e.layer.setRadius) {
+                        e.layer.setRadius(sensitiveareaCurrentRadius);
+                    }
+                    sensitiveareaCurrentFeature = e.layer;
+                });
+                var value = (this.store.formfield.value || '');
+                if (/^\s*$/.test(value)) {
+                    return null;
+                }
+                var geometry = L.GeoJSON.geometryToLayer(JSON.parse(value), function (geojson, latlng) {
+                    if (geojson.type === "Point") {
+                        sensitiveareaCurrentFeature = new L.Circle(latlng, sensitiveareaCurrentRadius);
+                        return sensitiveareaCurrentFeature;
+                    }
+                    return new L.CircleMarker(latlng);
+                });
+                if (geometry) {
+                    // Add initial geometry to the map
+                    geometry.addTo(this._map);
+                    this.drawnItems.addLayer(geometry);
+                }
+                this._setView();
+                return geometry;
+            },
+            _controlDrawOptions: function () {
+                return {
+                    edit: {
+                        featureGroup: this.drawnItems
+                    },
+                    draw: {
+                        circlemarker: {radius: function() { return sensitiveareaCurrentRadius; }},
+                        polyline: false,
+                        rectangle: false,
+                        circle: false,
+                        marker: false
+                    }
+                };
+            }
+        });
+    </script>
+{% endblock extrabody %}

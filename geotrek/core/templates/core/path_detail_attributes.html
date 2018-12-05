@@ -11,6 +11,10 @@
 
     <table class="table-striped table-bordered table">
         <tr>
+            <th>{{ object|verbose:"draft" }}</th>
+            <td>{{ object.draft|yesno|title }}</td>
+        </tr>
+        <tr>
             <th>{{ path|verbose:"departure" }}</th>
             <td>{{ path.departure }}</td>
         </tr>
@@ -46,6 +50,10 @@
             <td>
                 {% valuelist object.networks.all %}
             </td>
+        </tr>
+        <tr>
+            <th>{{ path|verbose:"structure" }}</th>
+            <td>{{ path.structure }}</td>
         </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>

@@ -22,7 +22,7 @@ etc/settings.ini:
 	chmod -f 600 etc/settings.ini
 
 bin/python:
-	virtualenv -p /usr/bin/python2 .
+	virtualenv .
 	bin/pip install -U setuptools==38.7.0 zc.buildout==2.11.1
 	mkdir -p lib/src
 	mkdir -p lib/eggs
@@ -78,7 +78,7 @@ node_modules:
 	npm install geotrek/jstests
 
 test_js: node_modules
-	./node_modules/geotrek-tests/node_modules/mocha-phantomjs/bin/mocha-phantomjs geotrek/jstests/index.html
+	./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
 
 tests: test test_js test_nav
 
@@ -87,9 +87,9 @@ serve:
 
 services:
 	@echo "Stop convertit"
-	kill $(shell netstat -tlp 2>/dev/null | grep ':6543' | sed 's;.*LISTEN      \([0-9]*\)/python;\1;'); true
+	kill $(shell netstat -tlp 2>/dev/null | grep ':6543' | sed 's;.*LISTEN      \([0-9]*\)/python.*;\1;'); true
 	@echo "Stop screamshotter"
-	kill $(shell netstat -tlp 2>/dev/null | grep ':8001' | sed 's;.*LISTEN      \([0-9]*\)/python;\1;'); true
+	kill $(shell netstat -tlp 2>/dev/null | grep ':8001' | sed 's;.*LISTEN      \([0-9]*\)/python.*;\1;'); true
 	@echo "Start convertit"
 	bin/convertit lib/src/convertit/development.ini &
 	@echo "Start screamshotter"
@@ -108,11 +108,11 @@ deploy: update
 	sudo service supervisor restart
 
 all_makemessages:
-	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin makemessages --no-location --all; popd > /dev/null; done
+	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django makemessages --no-location --all; popd > /dev/null; done
 
 all_compilemessages:
-	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin compilemessages; popd > /dev/null; done
-	for dir in `find lib/src/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django-admin compilemessages; popd > /dev/null; done
+	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django compilemessages; popd > /dev/null; done
+	for dir in `find lib/src/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django compilemessages; popd > /dev/null; done
 
 
 

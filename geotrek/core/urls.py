@@ -1,19 +1,18 @@
 from django.conf import settings
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-from mapentity import registry
+from mapentity.registry import registry
 
 from geotrek.altimetry.urls import AltimetryEntityOptions
 from geotrek.core.models import Path, Trail
 from geotrek.core.views import get_graph_json, merge_path, ParametersView
 
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^api/graph.json$', get_graph_json, name="path_json_graph"),
     url(r'^api/(?P<lang>\w\w)/parameters.json$', ParametersView.as_view(), name='parameters_json'),
     url(r'^mergepath/$', merge_path, name="merge_path"),
-)
+]
 
 
 class PathEntityOptions(AltimetryEntityOptions):

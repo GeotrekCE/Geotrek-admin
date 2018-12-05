@@ -4,13 +4,14 @@ import mock
 import os
 from shutil import rmtree
 from tempfile import mkdtemp
+from StringIO import StringIO
 
 from django.test import TestCase
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test.utils import override_settings
-from django.template.base import TemplateDoesNotExist
+from django.template.exceptions import TemplateDoesNotExist
 
 from geotrek.trekking.models import Trek
 from geotrek.common.models import Organism, FileType, Attachment
@@ -38,10 +39,21 @@ class ParserTests(TestCase):
             call_command('import', 'geotrek.common.DoesNotExist', '', verbosity=0)
         self.assertEqual(unicode(cm.exception), u"Failed to import parser class 'geotrek.common.DoesNotExist'")
 
+    def test_no_filename_no_url(self):
+        with self.assertRaises(CommandError) as cm:
+            call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', '', verbosity=0)
+        self.assertEqual(unicode(cm.exception), u"File path missing")
+
     def test_bad_filename(self):
         with self.assertRaises(CommandError) as cm:
             call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', 'find_me/I_am_not_there.shp', verbosity=0)
         self.assertEqual(unicode(cm.exception), u"File does not exists at: find_me/I_am_not_there.shp")
+
+    def test_progress(self):
+        output = StringIO()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', filename, verbosity=2, stdout=output)
+        self.assertIn('(100%)', output.getvalue())
 
     def test_create(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
@@ -75,11 +87,13 @@ class ParserTests(TestCase):
     def test_report_format_text(self):
         parser = OrganismParser()
         self.assertRegexpMatches(parser.report(), '0/0 lines imported.')
-        self.assertNotRegexpMatches(parser.report(), '<div id=\"collapse-\$celery_id\" class=\"collapse\">')
+        self.assertNotRegexpMatches(parser.report(),
+                                    r'<div id=\"collapse-\$celery_id\" class=\"collapse\">')
 
     def test_report_format_html(self):
         parser = OrganismParser()
-        self.assertRegexpMatches(parser.report(output_format='html'), '<div id=\"collapse-\$celery_id\" class=\"collapse\">')
+        self.assertRegexpMatches(parser.report(output_format='html'),
+                                 r'<div id=\"collapse-\$celery_id\" class=\"collapse\">')
 
     def test_report_format_bad(self):
         parser = OrganismParser()
@@ -108,13 +122,15 @@ class AttachmentParserTests(TestCase):
         self.assertEqual(attachment.filetype, self.filetype)
 
     @mock.patch('requests.get')
-    def test_attachment_not_updated(self, mocked):
-        mocked.return_value.status_code = 200
-        mocked.return_value.content = ''
+    @mock.patch('requests.head')
+    def test_attachment_not_updated(self, mocked_head, mocked_get):
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.content = ''
+        mocked_head.return_value.headers = {'content-length': 0}
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
-        self.assertEqual(mocked.call_count, 1)
+        self.assertEqual(mocked_get.call_count, 1)
         self.assertEqual(Attachment.objects.count(), 1)
 
 

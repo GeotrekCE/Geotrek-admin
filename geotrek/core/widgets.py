@@ -7,11 +7,6 @@
 
     Topology widgets receive a JSON string, deserialized by Topology.deserialize().
     Geotrek custom code is used for edition.
-
-    :notes:
-
-        The purpose of floppyforms is to use Django templates for widget rendering.
-
 """
 import json
 

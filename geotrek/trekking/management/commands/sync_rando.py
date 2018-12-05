@@ -1,7 +1,7 @@
 # -*- encoding: UTF-8 -
 
 import logging
-from optparse import make_option
+import filecmp
 import os
 import re
 import sys
@@ -32,7 +32,11 @@ from geotrek.tourism import views as tourism_views
 from geotrek.trekking import models as trekking_models
 from geotrek.trekking.views import (TrekViewSet, POIViewSet, TrekPOIViewSet,
                                     TrekGPXDetail, TrekKMLDetail, TrekServiceViewSet,
-                                    ServiceViewSet, TrekDocumentPublic, TrekMeta, Meta)
+                                    ServiceViewSet, TrekDocumentPublic, TrekMeta, Meta,
+                                    TrekInfrastructureViewSet, TrekSignageViewSet,)
+if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+    from geotrek.sensitivity import models as sensitivity_models
+    from geotrek.sensitivity import views as sensitivity_views
 
 # Register mapentity models
 from geotrek.trekking import urls  # NOQA
@@ -85,30 +89,27 @@ class ZipTilesBuilder(object):
 
 
 class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
-        make_option('--url', '-u', action='store', dest='url',
-                    default='http://localhost', help='Base url'),
-        make_option('--rando-url', '-r', action='store', dest='rando_url',
-                    default='http://localhost', help='Base url of public rando site'),
-        make_option('--source', '-s', action='store', dest='source',
-                    default=None, help='Filter by source(s)'),
-        make_option('--portal', '-P', action='store', dest='portal',
-                    default=None, help='Filter by portal(s)'),
-        make_option('--skip-pdf', '-p', action='store_true', dest='skip_pdf',
-                    default=False, help='Skip generation of PDF files'),
-        make_option('--skip-tiles', '-t', action='store_true', dest='skip_tiles',
-                    default=False, help='Skip generation of zip tiles files'),
-        make_option('--skip-dem', '-d', action='store_true', dest='skip_dem',
-                    default=False, help='Skip generation of DEM files for 3D'),
-        make_option('--skip-profile-png', '-e', action='store_true', dest='skip_profile_png',
-                    default=False, help='Skip generation of PNG elevation profile'),
-        make_option('--languages', '-l', action='store', dest='languages',
-                    default='', help='Languages to sync'),
-        make_option('--with-touristicevents', '-w', action='store_true', dest='with_events',
-                    default=False, help='include touristic events by trek in global.zip'),
-        make_option('--with-touristiccontent-categories', '-c', action='store', dest='content_categories',
-                    default=None, help='include touristic contents by trek in global.zip (filtered by category ID ex: --with-touristiccontent-categories="1,2,3")'),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument('path')
+        parser.add_argument('--url', '-u', dest='url', default='http://localhost', help='Base url')
+        parser.add_argument('--rando-url', '-r', dest='rando_url', default='http://localhost',
+                            help='Base url of public rando site')
+        parser.add_argument('--source', '-s', dest='source', default=None, help='Filter by source(s)')
+        parser.add_argument('--portal', '-P', dest='portal', default=None, help='Filter by portal(s)')
+        parser.add_argument('--skip-pdf', '-p', action='store_true', dest='skip_pdf', default=False,
+                            help='Skip generation of PDF files')
+        parser.add_argument('--skip-tiles', '-t', action='store_true', dest='skip_tiles', default=False,
+                            help='Skip generation of zip tiles files')
+        parser.add_argument('--skip-dem', '-d', action='store_true', dest='skip_dem', default=False,
+                            help='Skip generation of DEM files for 3D')
+        parser.add_argument('--skip-profile-png', '-e', action='store_true', dest='skip_profile_png', default=False,
+                            help='Skip generation of PNG elevation profile'),
+        parser.add_argument('--languages', '-l', dest='languages', default='', help='Languages to sync')
+        parser.add_argument('--with-touristicevents', '-w', action='store_true', dest='with_events', default=False,
+                            help='include touristic events by trek in global.zip')
+        parser.add_argument('--with-touristiccontent-categories', '-c', dest='content_categories',
+                            default=None, help='include touristic contents by trek in global.zip '
+                            '(filtered by category ID ex: --with-touristiccontent-categories="1,2,3")'),
 
     def mkdirs(self, name):
         dirname = os.path.dirname(name)
@@ -205,10 +206,20 @@ class Command(BaseCommand):
             content = response.content
         f.write(content)
         f.close()
+        oldfilename = os.path.join(self.dst_root, name)
+        # If new file is identical to old one, don't recreate it. This will help backup
+        if os.path.isfile(oldfilename) and filecmp.cmp(fullname, oldfilename):
+            os.unlink(fullname)
+            os.link(oldfilename, fullname)
+            if self.verbosity == 2:
+                self.stdout.write(u"\x1b[3D\x1b[32munchanged\x1b[0m")
+        else:
+            if self.verbosity == 2:
+                self.stdout.write(u"\x1b[3D\x1b[32mgenerated\x1b[0m")
+        # FixMe: Find why there are duplicate files.
         if zipfile:
-            zipfile.write(fullname, name)
-        if self.verbosity == 2:
-            self.stdout.write(u"\x1b[3D\x1b[32mgenerated\x1b[0m")
+            if name not in zipfile.namelist():
+                zipfile.write(fullname, name)
 
     def sync_json(self, lang, viewset, name, zipfile=None, params={}, as_view_args=[], **kwargs):
         view = viewset.as_view(*as_view_args)
@@ -238,6 +249,18 @@ class Command(BaseCommand):
             del params['portal']
 
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, **kwargs)
+
+    def sync_trek_infrastructures(self, lang, trek, zipfile=None):
+        params = {'format': 'geojson'}
+        view = TrekInfrastructureViewSet.as_view({'get': 'list'})
+        name = os.path.join('api', lang, 'treks', str(trek.pk), 'infrastructures.geojson')
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
+
+    def sync_trek_signages(self, lang, trek, zipfile=None):
+        params = {'format': 'geojson'}
+        view = TrekSignageViewSet.as_view({'get': 'list'})
+        name = os.path.join('api', lang, 'treks', str(trek.pk), 'signages.geojson')
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
 
     def sync_trek_pois(self, lang, trek, zipfile=None):
         params = {'format': 'geojson'}
@@ -317,7 +340,8 @@ class Command(BaseCommand):
         src = os.path.join(src_root, name)
         dst = os.path.join(self.tmp_root, url, name)
         self.mkdirs(dst)
-        shutil.copyfile(src, dst)
+        if not os.path.isfile(dst):
+            os.link(src, dst)
         if zipfile:
             zipfile.write(dst, os.path.join(url, name))
         if self.verbosity == 2:
@@ -351,6 +375,8 @@ class Command(BaseCommand):
         self.sync_json(lang, ParametersView, 'parameters', zipfile=self.zipfile)
         self.sync_json(lang, ThemeViewSet, 'themes', as_view_args=[{'get': 'list'}], zipfile=self.zipfile)
         self.sync_trek_pois(lang, trek, zipfile=self.zipfile)
+        self.sync_trek_infrastructures(lang, trek, zipfile=self.zipfile)
+        self.sync_trek_signages(lang, trek, zipfile=self.zipfile)
         self.sync_trek_services(lang, trek, zipfile=self.zipfile)
         self.sync_gpx(lang, trek)
         self.sync_kml(lang, trek)
@@ -377,6 +403,9 @@ class Command(BaseCommand):
 
         if self.categories:
             self.sync_trek_touristiccontents(lang, trek, zipfile=self.zipfile)
+
+        if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+            self.sync_trek_sensitiveareas(lang, trek)
 
         if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname),
@@ -427,12 +456,14 @@ class Command(BaseCommand):
 
         self.sync_geojson(lang, TrekViewSet, 'treks.geojson', zipfile=self.zipfile)
         self.sync_geojson(lang, POIViewSet, 'pois.geojson')
-        self.sync_flatpages(lang)
+        if 'geotrek.flatpages' in settings.INSTALLED_APPS:
+            self.sync_flatpages(lang)
         self.sync_geojson(lang, ServiceViewSet, 'services.geojson', zipfile=self.zipfile)
         self.sync_view(lang, FeedbackCategoryList.as_view(),
                        os.path.join('api', lang, 'feedback', 'categories.json'),
                        zipfile=self.zipfile)
         self.sync_static_file(lang, 'trekking/trek.svg')
+        self.sync_static_file(lang, 'trekking/itinerancy.svg')
         self.sync_pictograms(lang, common_models.Theme, zipfile=self.zipfile)
         self.sync_pictograms(lang, common_models.RecordSource, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.TrekNetwork, zipfile=self.zipfile)
@@ -448,8 +479,9 @@ class Command(BaseCommand):
 
         treks = trekking_models.Trek.objects.existing().order_by('pk')
         treks = treks.filter(
-            Q(**{'published_{lang}'.format(lang=lang): True}) |
-            Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True, 'trek_parents__parent__deleted': False})
+            Q(**{'published_{lang}'.format(lang=lang): True})
+            | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
+                   'trek_parents__parent__deleted': False})
         )
 
         if self.source:
@@ -463,6 +495,9 @@ class Command(BaseCommand):
 
         self.sync_tourism(lang)
         self.sync_meta(lang)
+
+        if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+            self.sync_sensitiveareas(lang)
 
         if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname), ending="")
@@ -547,6 +582,21 @@ class Command(BaseCommand):
         for picture, resized in event.resized_pictures:
             self.sync_media_file(lang, resized)
 
+    def sync_sensitiveareas(self, lang):
+        self.sync_geojson(lang, sensitivity_views.SensitiveAreaViewSet, 'sensitiveareas.geojson',
+                          params={'practices': 'Terrestre'})
+        for area in sensitivity_models.SensitiveArea.objects.existing().filter(published=True):
+            name = os.path.join('api', lang, 'sensitiveareas', '{obj.pk}.kml'.format(obj=area))
+            self.sync_view(lang, sensitivity_views.SensitiveAreaKMLDetail.as_view(), name, pk=area.pk)
+            self.sync_media_file(lang, area.species.pictogram)
+
+    def sync_trek_sensitiveareas(self, lang, trek):
+        params = {'format': 'geojson', 'practices': 'Terrestre'}
+
+        view = sensitivity_views.TrekSensitiveAreaViewSet.as_view({'get': 'list'})
+        name = os.path.join('api', lang, 'treks', str(trek.pk), 'sensitiveareas.geojson')
+        self.sync_view(lang, view, name, params=params, pk=trek.pk)
+
     def sync_tourism(self, lang):
         self.sync_geojson(lang, tourism_views.TouristicContentViewSet, 'touristiccontents.geojson')
         self.sync_geojson(lang, tourism_views.TouristicEventViewSet, 'touristicevents.geojson',
@@ -610,8 +660,9 @@ class Command(BaseCommand):
 
     def sync_trek_touristiccontents(self, lang, trek, zipfile=None):
         params = {'format': 'geojson',
-                  'categories': ','.join(category for category in self.categories),
-                  'portal': ','.join(portal for portal in self.portal)}
+                  'categories': ','.join(category for category in self.categories)}
+        if self.portal:
+            params['portal'] = ','.join(portal for portal in self.portal)
 
         view = tourism_views.TrekTouristicContentViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'touristiccontents.geojson')
@@ -690,10 +741,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.successfull = True
-        self.verbosity = options.get('verbosity', 1)
-        if len(args) < 1:
-            raise CommandError(u"Missing parameter destination directory")
-        self.dst_root = args[0].rstrip('/')
+        self.verbosity = options['verbosity']
+        self.dst_root = options["path"].rstrip('/')
         self.check_dst_root_is_empty()
         if(options['url'][:7] != 'http://'):
             raise CommandError('url parameter should start with http://')

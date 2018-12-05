@@ -4,8 +4,8 @@
 LOADING DATA
 ============
 
-Initial Data
-------------
+Required Initial Data
+---------------------
 
 Load basic data :
 
@@ -18,17 +18,16 @@ Load basic data :
     This command will load default users, groups, default values for lists... in French and English. So you need to enable EN and FR at least in ``etc/settings.ini``
 
 
-If you do not load data, you'll have to at least create a super user :
+Required Super User
+-------------------
 
-::
+.. code-block:: bash
 
-    bin/django createsuperuser --username=admin --email=admin@corp.com
+    bin/django createsuperuser
 
-or change its password :
 
-::
-
-    bin/django changepassword --username admin <password>
+You will be prompted to enter an username, a password and mail address for your super user.
+This first user will allow you to login in Geotrek, having all permissions to create and manage other users.
 
 
 Prerequisites for your data
@@ -91,3 +90,7 @@ And use the Geotrek command to load it into PostGIS :
     This command makes use of *GDAL* and ``raster2pgsql`` internally. It
     therefore supports all GDAL raster input formats. You can list these formats
     with the command ``raster2pgsql -G``.
+    
+:note:
+
+    If you only have a ``.tif`` file, you can generate the ``.tfw`` file with the command ``gdal_translate -co "TFW=YES" in.tif out.tif``. It will generate a new ``.tif`` file with its ``.tfw`` metadata file.

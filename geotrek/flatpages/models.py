@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 from django.conf import settings
+from django.urls import reverse
 
 from bs4 import BeautifulSoup
 from extended_choices import Choices
@@ -63,13 +64,16 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
     def __unicode__(self):
         return self.title
 
+    def get_permission_codename(self, *args):
+        return
+
     def clean(self):
         html_content = ''
         for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
             html_content += getattr(self, 'content_%s' % l[0], None) or ''
 
     def parse_media(self):
-        soup = BeautifulSoup(self.content or '')
+        soup = BeautifulSoup(self.content or '', 'lxml')
         images = soup.findAll('img')
         results = []
         for image in images:
@@ -90,17 +94,14 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
 
         return results
 
-    @models.permalink
     def get_add_url(self):
-        return ('admin:flatpages_flatpage_add', )
+        return reverse('admin:flatpages_flatpage_add')
 
-    @models.permalink
     def get_update_url(self):
-        return ('admin:flatpages_flatpage_change', [self.pk])
+        return reverse('admin:flatpages_flatpage_change', args=[self.pk])
 
-    @models.permalink
     def get_delete_url(self):
-        return ('admin:flatpages_flatpage_delete', [self.pk])
+        return reverse('admin:flatpages_flatpage_delete', args=[self.pk])
 
     @property
     def rando_url(self):

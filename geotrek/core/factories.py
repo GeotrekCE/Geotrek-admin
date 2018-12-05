@@ -128,32 +128,30 @@ class TopologyFactory(factory.DjangoModelFactory):
     date_insert = dbnow()
     date_update = dbnow()
 
-    @classmethod
-    def create_pathaggregation_from_topo(cls, topo_mixin):
-        return PathAggregationFactory.create(topo_object=topo_mixin)
-
-    @classmethod
-    def _prepare(cls, create, **kwargs):
+    @factory.post_generation
+    def no_path(obj, create, extracted=False, **kwargs):
         """
         A topology mixin should be linked to at least one Path (through
         PathAggregation).
         """
-        no_path = kwargs.pop('no_path', False)
-        topo_mixin = super(TopologyFactory, cls)._prepare(create, **kwargs)
-
-        if not no_path and create:
-            cls.create_pathaggregation_from_topo(topo_mixin)
+        if not extracted and create:
+            PathAggregationFactory.create(topo_object=obj)
             # Note that it is not possible to attach a related object before the
             # topo_mixin has an ID.
-        return topo_mixin
 
 
 class PointTopologyFactory(TopologyFactory):
-    @classmethod
-    def create_pathaggregation_from_topo(cls, topo_mixin):
-        return PathAggregationFactory.create(topo_object=topo_mixin,
-                                             start_position=0.0,
-                                             end_position=0.0)
+    @factory.post_generation
+    def no_path(obj, create, extracted=False, **kwargs):
+        """
+        A topology mixin should be linked to at least one Path (through
+        PathAggregation).
+        """
+
+        if not extracted and create:
+            PathAggregationFactory.create(topo_object=obj,
+                                          start_position=0.0,
+                                          end_position=0.0)
 
 
 class PathAggregationFactory(factory.DjangoModelFactory):

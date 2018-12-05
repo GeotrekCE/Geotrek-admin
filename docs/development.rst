@@ -33,7 +33,7 @@ The most minimal components required to run an instance are :
 * libxml2, libxslt
 * Usual Python dev stuff
 
-See `the list of minimal packages on Debian/Ubuntu <https://github.com/makinacorpus/Geotrek/blob/211cd/install.sh#L136-L148>`_.
+See `the list of minimal packages on Debian/Ubuntu <https://github.com/GeotrekCE/Geotrek-admin/blob/211cd/install.sh#L136-L148>`_.
 
 If you already have all these components installed your OS (probably
 because you're already a python/GIS developer), then just jump to the

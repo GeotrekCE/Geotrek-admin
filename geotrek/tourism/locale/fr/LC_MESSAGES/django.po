@@ -43,8 +43,8 @@ msgstr "GeoJSON"
 msgid "TourInFrance"
 msgstr "TourInFrance"
 
-msgid "Sitra"
-msgstr "Sitra"
+msgid "Apidae"
+msgstr "Apidae"
 
 msgid "Public website"
 msgstr "Site web public"

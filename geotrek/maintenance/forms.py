@@ -67,6 +67,7 @@ class InterventionForm(CommonForm):
             </ul>""" % (unicode(_("Main")), unicode(_("Advanced")))),
             Div(
                 Div(
+                    'structure',
                     'name',
                     'date',
                     'status',
@@ -103,8 +104,7 @@ class InterventionForm(CommonForm):
     class Meta(CommonForm.Meta):
         model = Intervention
         fields = CommonForm.Meta.fields + \
-            ['structure',
-             'name', 'date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
+            ['name', 'date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
              'height', 'stake', 'project', 'infrastructure', 'material_cost', 'heliport_cost', 'subcontract_cost',
              'topology']
 
@@ -139,7 +139,6 @@ class InterventionForm(CommonForm):
         return cleaned_data
 
     def save(self, *args, **kwargs):
-        self.instance.length = self.cleaned_data.get('length')
         infrastructure = self.cleaned_data.get('infrastructure')
         if infrastructure:
             self.instance.set_infrastructure(infrastructure)
@@ -187,8 +186,7 @@ class ProjectForm(CommonForm):
     class Meta(CommonForm.Meta):
         model = Project
         fields = CommonForm.Meta.fields + \
-            ['structure',
-             'name', 'type', 'domain', 'begin_year', 'end_year', 'constraint',
+            ['name', 'type', 'domain', 'begin_year', 'end_year', 'constraint',
              'global_cost', 'comments', 'project_owner', 'project_manager', 'contractors']
 
     def __init__(self, *args, **kwargs):

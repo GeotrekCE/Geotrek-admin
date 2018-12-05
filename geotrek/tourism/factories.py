@@ -55,7 +55,6 @@ class TouristicContentTypeFactory(factory.DjangoModelFactory):
     label = factory.Sequence(lambda n: u"Type %s" % n)
     category = factory.SubFactory(TouristicContentCategoryFactory)
     pictogram = dummy_filefield_as_sequence('thumbnail %s')
-    in_list = 1
 
 
 class ReservationSystemFactory(factory.DjangoModelFactory):
@@ -76,22 +75,19 @@ class TouristicContentFactory(StructureRelatedDefaultFactory):
     reservation_system = factory.SubFactory(ReservationSystemFactory)
     reservation_id = 'XXXXXXXXX'
 
-    @classmethod
-    def _prepare(cls, create, **kwargs):
-        sources = kwargs.pop('sources', None)
-        portals = kwargs.pop('portals', None)
-
-        content = super(TouristicContentFactory, cls)._prepare(create, **kwargs)
-
+    @factory.post_generation
+    def sources(obj, create, extracted=None, **kwargs):
         if create:
-            if sources:
-                for source in sources:
-                    content.source.add(source)
+            if extracted:
+                for source in extracted:
+                    obj.source.add(source)
 
-            if portals:
-                for portal in portals:
-                    content.portal.add(portal)
-        return content
+    @factory.post_generation
+    def portals(obj, create, extracted=None, **kwargs):
+        if create:
+            if extracted:
+                for portal in extracted:
+                    obj.portal.add(portal)
 
 
 class TouristicEventTypeFactory(factory.DjangoModelFactory):
@@ -114,43 +110,36 @@ class TouristicEventFactory(factory.DjangoModelFactory):
 
     type = factory.SubFactory(TouristicEventTypeFactory)
 
-    @classmethod
-    def _prepare(cls, create, **kwargs):
-        sources = kwargs.pop('sources', None)
-        portals = kwargs.pop('portals', None)
-
-        event = super(TouristicEventFactory, cls)._prepare(create, **kwargs)
-
+    @factory.post_generation
+    def sources(obj, create, extracted=None, **kwargs):
         if create:
-            if sources:
-                for source in sources:
-                    event.source.add(source)
+            if extracted:
+                for source in extracted:
+                    obj.source.add(source)
 
-            if portals:
-                for portal in portals:
-                    event.portal.add(portal)
-        return event
+    @factory.post_generation
+    def portals(obj, create, extracted=None, **kwargs):
+        if create:
+            if extracted:
+                for portal in extracted:
+                    obj.portal.add(portal)
 
 
 class TrekWithTouristicEventFactory(TrekFactory):
-    @classmethod
-    def _prepare(cls, create, **kwargs):
-        trek = super(TrekWithTouristicEventFactory, cls)._prepare(create, **kwargs)
+    @factory.post_generation
+    def create_trek_with_touristic_event(obj, create, extracted, **kwargs):
         TouristicEventFactory.create(geom='POINT(700000 6600000)')
         TouristicEventFactory.create(geom='POINT(700100 6600100)')
 
         if create:
             for lang in settings.MODELTRANSLATION_LANGUAGES:
-                setattr(trek, 'published_{}'.format(lang), True)
-            trek.save()
-
-        return trek
+                setattr(obj, 'published_{}'.format(lang), True)
+            obj.save()
 
 
 class TrekWithTouristicContentFactory(TrekFactory):
-    @classmethod
-    def _prepare(cls, create, **kwargs):
-        trek = super(TrekWithTouristicContentFactory, cls)._prepare(create, **kwargs)
+    @factory.post_generation
+    def create_trek_with_touristic_content(obj, create, extracted, **kwargs):
         TouristicContentFactory.create(category=TouristicContentCategoryFactory(label=u"Restaurant"),
                                        geom='POINT(700000 6600000)')
         TouristicContentFactory.create(category=TouristicContentCategoryFactory(label=u"Musée"),
@@ -158,7 +147,5 @@ class TrekWithTouristicContentFactory(TrekFactory):
 
         if create:
             for lang in settings.MODELTRANSLATION_LANGUAGES:
-                setattr(trek, 'published_{}'.format(lang), True)
-            trek.save()
-
-        return trek
+                setattr(obj, 'published_{}'.format(lang), True)
+            obj.save()

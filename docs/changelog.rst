@@ -2,6 +2,262 @@
 CHANGELOG
 =========
 
+2.22.1 (2018-11-27)
+-------------------
+
+**Bug fixes**
+
+- Fix trekking form with pois_excluded
+- Give the possibility to get type of infrastructures and signages without structure
+
+
+2.22.0 (2018-11-27)
+-------------------
+
+**New features**
+
+- Allow to publish signage and infrastructure
+- Allow to exclude POIs from a trek
+- New access rights to edit draft path
+- New access rights to edit attributes and not the geometry
+- Allow to remove duplicate path in database : command remove_duplicate_paths
+
+**Bug fixes**
+
+- Fix snap on crossing point : take all paths easier
+- Fix a clash between current url and SYNC_RANDO_OPTIONS
+- Fix screamshotter when SSL is enabled
+
+
+2.21.1 (2018-09-18)
+-------------------
+
+**Breaking changes**
+
+- Remove type1 from trek API when SPLIT_TREKS_CATEGORIES_BY_PRACTICE is not set
+- Rename Trek category label to Hike in API. You can override this in
+  geotrek/locale/<language code>/LC_MESSAGES/django.po files
+
+**Bug fixes**
+
+- Fix crash in log entries view
+
+**Minor changes**
+
+- Save column sort by module
+- Rename SITRA to APIDAE
+
+
+2.21.0 (2018-09-04)
+-------------------
+
+**New features**
+
+* Path deletion warning page now shows linked topologies
+* Allow to add Dailymotion video attachments
+* Add a command to unset structure in lists of choices and group choices
+  with the same name
+
+**Bug fixes**
+
+* Fix Sync_rando View
+* Fix loaddem
+* Fix creation of Youtube/Soundcloud attachments
+* Fix cancellation when editing geometries
+* Show which structure choices are related to
+* Add confort and stake filters to path list
+* Fix sync of touristic contents for mobile app
+
+
+2.20.1 (2018-07-16)
+-------------------
+
+**Bug fixes**
+
+* Fix Completed Filter in Touristic Event
+
+2.20.0 (2018-06-27)
+-------------------
+
+**New features**
+
+* Allow to share glossaries between structure (just keep structure field empty)
+* Allow to import infrastructures, not only signages
+* Allow to split treks by itinerancy
+* Path deletion does not delete the related point topologies anymore. Instead point topologies are linked to the nearest
+  remaining path.
+* Keep inode and mtime when synced file don't change
+
+**Minor changes**
+
+* Optional img-responsive class on flatpage images
+
+**Bug fixes**
+
+* Fix virtualenv install
+* Upgrade celery to 4.1.1
+* Fix the bug which remove a path when we merge 2 paths with a 3rd path on the point of merge. (ref  #1747)
+
+
+2.19.1 (2018-05-28)
+-------------------
+
+**Bug fixes**
+
+* Update APIDAE API URL
+* Fix filename encoding errors in import
+
+
+2.19.0 (2018-05-22)
+-------------------
+
+**Minor changes**
+
+* Allow to specify encoding when importing data
+
+
+2.18.5 (2018-05-07)
+-------------------
+
+**Bug fixes**
+
+* Fix related structure when creating new objects
+
+**Minor changes**
+
+* Show related structure on all detail pages
+
+
+2.18.4 (2018-05-02)
+-------------------
+
+**Bug fixes**
+
+* Fix sync of deleted sensitive areas
+* Fix touristiccontents.geojson crash when reservation_system is None
+
+**Minor changes**
+
+* Add Ubuntu 18.04 Bionic Beaver support
+
+
+2.18.3 (2018-04-27)
+-------------------
+
+**Bug fixes**
+
+* Fix imports when enabling only sensitivity app
+
+
+2.18.2 (2018-04-27)
+-------------------
+
+**Preventive maintainance**
+
+* Upgrade to Django 1.11
+* Upgrade several python dependencies
+
+**Minor changes**
+
+* Allow user with can_bypass_structure permission to set or update the related
+  structure on sensitive areas
+
+**Bug fixes**
+
+* Put back filter widgets in two columns (#1663)
+* Do not include (possibly forged) structure field in post requests
+* Fix geojson format in sensitive areas API
+* Fix filtering by practices in sensitive areas API
+* Fix sync_rando when sensitivity app is not enabled
+* Adapt BiodivParser to API modifications
+* Order sensitive areas by decreasing area in API to be able to clic on each of them
+* Set ownership in parsers depending on logged user
+* Pagination requires ordering in v2 API
+
+
+2.18.1 (2018-03-26)
+-------------------
+
+**Bug fixes**
+
+* Fix distribution of tables in schemas
+* Allow to reset type1/type2 in TouristicContentSitraParser
+
+**Minor changes**
+
+* Do not truncate install.log
+
+
+2.18.0 (2018-03-22)
+-------------------
+
+**Breaking changes**
+
+* Drop support of Ubuntu Precise 12.04, please upgrade to
+  Trusty 14.04 or Xenial 16.04 before upgrading Geotrek-admin
+
+**Preventive maintainance**
+
+* Upgrade to Django 1.9
+* Upgrade several python dependencies
+
+**Bug fixes**
+
+* Fix path duplication in path split trigger
+
+**Minor changes**
+
+* Show total path length in path list
+
+
+2.17.3 (2018-03-23)
+-------------------
+
+** Bug fixes **
+
+* Fix install
+
+
+2.17.2 (2018-02-07)
+-------------------
+
+**Minor changes**
+
+* Use id rather than french name for practices and structure in sensitive areas API
+* Add permission to import sensitive areas
+
+
+2.17.1 (2018-02-02)
+-------------------
+
+**Minor changes**
+
+* Implantation year on signages and infrastructures is now a filter with current existing values
+* Trek form field 'practice' is moved to first panel
+* Add sensitive areas to public trek PDF
+* Do not show paths on PDF
+* Add SENSITIVE_AREA_INTERSECTION_MARGIN setting
+
+**Bug fixes**
+
+* Fix snapping
+* Fix import of sensitive areas when languages lists do not match
+* Fix trail links in project detail view
+* Add 'approved' field in touristic content and event exports
+* Fix service type with specials character in trek detail
+* Fix bbox filtering in sensitive areas API
+* Add CORS header to sensitive areas API
+* Filter on spatial extent when importing from Biodiv'sport
+* Fix celery task runner version
+
+
+2.17.0 (2018-01-15)
+-------------------
+
+**New features**
+
+* Sensitive Areas
+
 2.16.2 (2018-10-02)
 -------------------
 
@@ -130,13 +386,6 @@ CHANGELOG
 
 * Fix topologies and cities intersections
 
-2.13.1 (2018-09-14)
--------------------
-
-**Bug fixes**
-
-* Fix install
-
 
 2.13.0 (2017-03-02)
 -------------------
@@ -174,6 +423,7 @@ CHANGELOG
 
 **Bug fixes**
 
+* Remove deprecated datasource (replaced by import parsers)
 * Stop install.sh if make update or wget fails
 * Create database with right owner if user exists but database does not
 * Make sure supervisor service is started after install

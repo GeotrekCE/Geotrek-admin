@@ -1,7 +1,11 @@
 import os
 import importlib
 
+from django.conf import settings
+
 from geotrek.common.parsers import Parser
+if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+    import geotrek.sensitivity.parsers  # noqa
 
 
 def subclasses(cls):
@@ -15,15 +19,15 @@ def subclasses(cls):
 
 
 def create_tmp_destination(name):
-    save_dir = '/tmp/geotrek/{}'.format(name)
+    save_dir = u'/tmp/geotrek/{}'.format(name)
     if not os.path.exists('/tmp/geotrek'):
         os.mkdir('/tmp/geotrek')
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
-    return save_dir, '/'.join((save_dir, name))
+    return save_dir, u'/'.join((save_dir, name))
 
 
-def discover_available_parsers():
+def discover_available_parsers(user):
     choices = []
     choices_url = []
     try:
@@ -34,7 +38,10 @@ def discover_available_parsers():
     classes = subclasses(Parser)
     for index, cls in enumerate(classes):
         if cls.__module__.startswith('bulkimport') or cls.__module__.startswith('geotrek'):
-            if cls.label is None:
+            if not cls.label or not cls.model:
+                continue
+            codename = '{}.import_{}'.format(cls.model._meta.app_label, cls.model._meta.model_name)
+            if not user.is_superuser and not user.has_perm(codename):
                 continue
             if not getattr(cls, 'url', None) and not getattr(cls, 'base_url', None):
                 choices.append((index, cls.label))

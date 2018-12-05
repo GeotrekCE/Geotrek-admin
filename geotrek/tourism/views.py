@@ -20,7 +20,7 @@ from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.models import RecordSource, TargetPortal
-from geotrek.common.views import DocumentPublic
+from geotrek.common.views import DocumentPublic, MarkupPublic
 from geotrek.tourism.serializers import TouristicContentCategorySerializer
 from geotrek.trekking.models import Trek
 from geotrek.trekking.serializers import POISerializer
@@ -58,7 +58,7 @@ class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
         'description', 'themes', 'contact', 'email', 'website', 'practical_info',
         'review', 'published', 'publication_date', 'source', 'portal',
         'structure', 'date_insert', 'date_update',
-        'cities', 'districts', 'areas',
+        'cities', 'districts', 'areas', 'approved'
     ]
 
 
@@ -109,11 +109,11 @@ class TouristicContentDocument(MapEntityDocument):
     queryset = TouristicContent.objects.existing()
 
 
-class TouristicContentDocumentPublic(DocumentPublic):
+class TouristicContentDocumentPublicMixin(object):
     queryset = TouristicContent.objects.existing()
 
     def get_context_data(self, **kwargs):
-        context = super(TouristicContentDocumentPublic, self).get_context_data(**kwargs)
+        context = super(TouristicContentDocumentPublicMixin, self).get_context_data(**kwargs)
         content = self.get_object()
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['touristiccontent']
@@ -134,6 +134,14 @@ class TouristicContentDocumentPublic(DocumentPublic):
                 pass
 
         return context
+
+
+class TouristicContentDocumentPublic(TouristicContentDocumentPublicMixin, DocumentPublic):
+    pass
+
+
+class TouristicContentMarkupPublic(TouristicContentDocumentPublicMixin, MarkupPublic):
+    pass
 
 
 class TouristicContentMeta(DetailView):
@@ -168,7 +176,7 @@ class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
         'participant_number', 'booking', 'target_audience', 'practical_info',
         'structure', 'date_insert', 'date_update', 'source', 'portal',
         'review', 'published', 'publication_date',
-        'cities', 'districts', 'areas',
+        'cities', 'districts', 'areas', 'approved'
     ]
 
 
@@ -207,11 +215,11 @@ class TouristicEventDocument(MapEntityDocument):
     queryset = TouristicEvent.objects.existing()
 
 
-class TouristicEventDocumentPublic(DocumentPublic):
+class TouristicEventDocumentPublicMixin(object):
     queryset = TouristicEvent.objects.existing()
 
     def get_context_data(self, **kwargs):
-        context = super(TouristicEventDocumentPublic, self).get_context_data(**kwargs)
+        context = super(TouristicEventDocumentPublicMixin, self).get_context_data(**kwargs)
         event = self.get_object()
 
         context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['touristicevent']
@@ -231,6 +239,14 @@ class TouristicEventDocumentPublic(DocumentPublic):
                 pass
 
         return context
+
+
+class TouristicEventDocumentPublic(TouristicEventDocumentPublicMixin, DocumentPublic):
+    pass
+
+
+class TouristicEventMarkupPublic(TouristicEventDocumentPublicMixin, MarkupPublic):
+    pass
 
 
 class TouristicEventMeta(DetailView):

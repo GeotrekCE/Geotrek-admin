@@ -8,7 +8,7 @@ ALLOWED_HOSTS = tuple(envini.getstrings('host', default='*'))
 
 USE_X_FORWARDED_HOST = True
 
-COMPRESSOR_ENABLED = True
+COMPRESS_ENABLED = True
 
 INSTALLED_APPS += (
     'gunicorn',
@@ -51,7 +51,7 @@ MANAGERS = tuple([('Manager %s' % TITLE, manager) for manager in managers])
 DEFAULT_FROM_EMAIL = envini.get('mailfrom', admins[0])
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 EMAIL_HOST = envini.get('mailhost')
-EMAIL_HOST_USER = envini.get('mailhost')
+EMAIL_HOST_USER = envini.get('mailuser')
 EMAIL_HOST_PASSWORD = envini.get('mailpassword')
 EMAIL_HOST_PORT = envini.get('mailport', 25)
 EMAIL_USE_TLS = envini.getbool('mailtls', 'False')

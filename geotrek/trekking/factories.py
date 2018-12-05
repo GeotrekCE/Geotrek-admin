@@ -6,6 +6,7 @@ from django.contrib.gis.geos import Point
 from . import models
 from geotrek.core.factories import TopologyFactory, PointTopologyFactory
 from geotrek.common.utils.testdata import dummy_filefield_as_sequence
+from geotrek.infrastructure.factories import InfrastructureFactory, SignageFactory
 
 
 class TrekNetworkFactory(factory.DjangoModelFactory):
@@ -97,52 +98,69 @@ class TrekFactory(TopologyFactory):
     difficulty = factory.SubFactory(DifficultyLevelFactory)
     practice = factory.SubFactory(PracticeFactory)
 
-    @classmethod
-    def _prepare(cls, create, **kwargs):
-        sources = kwargs.pop('sources', None)
-        portals = kwargs.pop('portals', None)
-
-        trek = super(TrekFactory, cls)._prepare(create, **kwargs)
-
+    @factory.post_generation
+    def sources(obj, create, extracted=None, **kwargs):
         if create:
-            if sources:
-                for source in sources:
-                    trek.source.add(source)
+            if extracted:
+                for source in extracted:
+                    obj.source.add(source)
 
-            if portals:
-                for portal in portals:
-                    trek.portal.add(portal)
-        return trek
+    @factory.post_generation
+    def portals(obj, create, extracted=None, **kwargs):
+        if create:
+            if extracted:
+                for portal in extracted:
+                    obj.portal.add(portal)
 
 
 class TrekWithPOIsFactory(TrekFactory):
-    @classmethod
-    def _prepare(cls, create, **kwargs):
-        trek = super(TrekWithPOIsFactory, cls)._prepare(create, **kwargs)
-        path = trek.paths.all()[0]
+    @factory.post_generation
+    def create_trek_with_poi(obj, create, extracted, **kwargs):
+        path = obj.paths.all()[0]
         poi1 = POIFactory.create(no_path=True)
         poi1.add_path(path, start=0.5, end=0.5)
         poi2 = POIFactory.create(no_path=True)
         poi2.add_path(path, start=0.4, end=0.4)
         if create:
-            trek.save()
-        return trek
+            obj.save()
+
+
+class TrekWithInfrastructuresFactory(TrekFactory):
+    @factory.post_generation
+    def create_trek_with_infrastructures(obj, create, extracted, **kwargs):
+        path = obj.paths.all()[0]
+        infra1 = InfrastructureFactory.create(no_path=True)
+        infra1.add_path(path, start=0.5, end=0.5)
+        infra2 = InfrastructureFactory.create(no_path=True)
+        infra2.add_path(path, start=0.4, end=0.4)
+        if create:
+            obj.save()
+
+
+class TrekWithSignagesFactory(TrekFactory):
+    @factory.post_generation
+    def create_trek_with_infrastructures(obj, create, extracted, **kwargs):
+        path = obj.paths.all()[0]
+        signa1 = SignageFactory.create(no_path=True)
+        signa1.add_path(path, start=0.5, end=0.5)
+        signa2 = SignageFactory.create(no_path=True)
+        signa2.add_path(path, start=0.4, end=0.4)
+        if create:
+            obj.save()
 
 
 class TrekWithServicesFactory(TrekFactory):
-    @classmethod
-    def _prepare(cls, create, **kwargs):
-        trek = super(TrekWithServicesFactory, cls)._prepare(create, **kwargs)
-        path = trek.paths.all()[0]
+    @factory.post_generation
+    def create_trek_with_services(obj, create, extracted, **kwargs):
+        path = obj.paths.all()[0]
         service1 = ServiceFactory.create(no_path=True)
         service1.add_path(path, start=0.5, end=0.5)
-        service1.type.practices.add(trek.practice)
+        service1.type.practices.add(obj.practice)
         service2 = ServiceFactory.create(no_path=True)
         service2.add_path(path, start=0.4, end=0.4)
-        service2.type.practices.add(trek.practice)
+        service2.type.practices.add(obj.practice)
         if create:
-            trek.save()
-        return trek
+            obj.save()
 
 
 class TrekRelationshipFactory(factory.DjangoModelFactory):

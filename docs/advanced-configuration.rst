@@ -15,6 +15,8 @@ However, it is still possible to write a custom Django setting file.
 
 .. code-block :: python
 
+    # coding: utf8
+
     from .prod import *
 
     # My custom value
@@ -27,7 +29,7 @@ However, it is still possible to write a custom Django setting file.
     [django]
     settings = settings.custom
 
-* As for any change in settings, re-run ``make env_standalone deploy``.
+* As for any change in ``etc/settings.ini``, re-run ``make env_standalone deploy``. To apply changes in ``geotrek/settings/custom.py``, you can just restart the application with ``sudo supervisorctl restart all``.
 
 
 Disable modules and components
@@ -64,6 +66,30 @@ In order to remove zoning combo-boxes on list map:
     Never forget to mention this customization if you ask for community support.
 
 
+Sensitive areas
+----------------------
+
+
+In order to enable sensitivity module, in the custom settings file,
+add the following code:
+
+.. code-block :: python
+
+    # Enable sensitivity module
+    INSTALLED_APPS += ('geotrek.sensitivity', )
+
+The following settings are related to sensitive areas:
+
+.. code-block :: python
+
+    # Default radius of sensitivity bubbles when not specified for species
+    SENSITIVITY_DEFAULT_RADIUS = 100  # meters
+
+    # Buffer around treks to intersects sensitive areas
+    SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters
+
+
+
 WYSIWYG editor configuration
 ----------------------------
 
@@ -98,18 +124,38 @@ files will be opened in the browser :
     MAPENTITY_CONFIG['SERVE_MEDIA_AS_ATTACHMENT'] = False
 
 
-Using IGN Geoportail WMTS tiles
--------------------------------
+Change or add WMTS tiles layers (IGN, OSM, Mapbox...)
+-----------------------------------------------------
+
+By default, you have 2 basemaps layers in your Geotrek-admin (OSM and OSM black and white). 
+
+You can change or add more basemaps layers.
 
 Specify the tiles URLs this way in your custom Django setting file:
 
 .. code-block :: python
 
     LEAFLET_CONFIG['TILES'] = [
-        ('Scan', 'http://{s}.tile.osm.org/{z}/{x}/{y}.png', '(c) OpenStreetMap Contributors'),
-        ('Ortho', 'http://{s}.tiles.mapbox.com/v3/openstreetmap.map-4wvf9l0l/{z}/{x}/{y}.jpg', '(c) MapBox'),
+        ('OSM', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', u'© OpenStreetMap Contributors'),
+        ('OpenTopoMap', 'http://a.tile.opentopomap.org/{z}/{x}/{y}.png', u'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)'),
     ]
 
+Example with IGN and OSM basemaps : 
+
+.. code-block :: python
+
+    LEAFLET_CONFIG['TILES'] = [
+        ('IGN Scan', 'http://gpp3-wxs.ign.fr/YOURAPIKEY/geoportail/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS&EXCEPTIONS=text/xml&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', u'© IGN Geoportail'),
+        ('IGN Scan Express', 'http://gpp3-wxs.ign.fr/YOURAPIKEY/geoportail/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD&EXCEPTIONS=text/xml&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', u'© IGN Geoportail'),
+        ('IGN Ortho', 'http://gpp3-wxs.ign.fr/YOURAPIKEY/geoportail/wmts?LAYER=ORTHOIMAGERY.ORTHOPHOTOS&EXCEPTIONS=text/xml&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', u'© IGN Geoportail'),
+        ('IGN Cadastre', 'http://gpp3-wxs.ign.fr/YOURAPIKEY/geoportail/wmts?LAYER=CADASTRALPARCELS.PARCELS&EXCEPTIONS=text/xml&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=bdparcellaire_o&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', u'© IGN Geoportail'),
+        ('OSM', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', u'© OpenStreetMap contributors'),
+        ('OSM Mapbox Outdoors', 'https://api.mapbox.com/v4/mapbox.outdoors/{z}/{x}/{y}.png?access_token=pk.YOURAPIKEY', u'© OpenStreetMap contributors / Mapbox'),
+        ('OSM Stamen Terrain', 'http://tile.stamen.com/terrain/{z}/{x}/{y}.jpg', u'© OpenStreetMap contributors / Stamen Design'),
+        ('OpenTopoMap', 'http://a.tile.opentopomap.org/{z}/{x}/{y}.png', u'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)'),
+    ]
+
+To use IGN Geoportail WMTS tiles API, you need an API key with subscribing on http://professionnels.ign.fr/visualisation. Choose WebMercator WMTS tiles.
 
 External authent
 ----------------
@@ -221,6 +267,9 @@ applied. In order to disable, change this MapEntity setting :
 
 Override public document OpenOffice template
 --------------------------------------------
+
+WARNING: Documentation to be updated. Geotrek-admin now uses Weasyprint to create public PDF based on HTML templates
+and no more on ODT templates. Default HTML templates are in ``geotrek/trekking/templates/`` and can be copied in ``var/media/templates/`` with same path and file names to be overriden.
 
 Copy the file ``geotrek/trekking/templates/trekking/trek_public.odt`` to
 ``var/media/templates/trekking/trek_public.odt``.

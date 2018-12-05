@@ -4,16 +4,15 @@ import logging
 
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.utils.translation import get_language, ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 from django.utils.formats import date_format
 
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
-from mapentity import registry
+from mapentity.registry import registry
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text, smart_plain_text
-from modeltranslation.manager import MultilingualManager
 
 from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Topology
@@ -26,14 +25,12 @@ from geotrek.common.utils import intersecting
 
 from extended_choices import Choices
 
+if 'modeltranslation' in settings.INSTALLED_APPS:
+    from modeltranslation.manager import MultilingualManager
+else:
+    from django.db.models import Manager as MultilingualManager
 
 logger = logging.getLogger(__name__)
-
-DATA_SOURCE_TYPES = Choices(
-    ('GEOJSON', 'GEOJSON', _("GeoJSON")),
-    ('TOURINFRANCE', 'TOURINFRANCE', _("TourInFrance")),
-    ('SITRA', 'SITRA', _("Sitra")),
-)
 
 
 def _get_target_choices():
@@ -303,12 +300,6 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     def __unicode__(self):
         return self.name
 
-    @models.permalink
-    def get_document_public_url(self):
-        """ Override ``geotrek.common.mixins.PublishableMixin``
-        """
-        return ('tourism:touristiccontent_document_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
-
     @property
     def districts_display(self):
         return ', '.join([unicode(d) for d in self.districts])
@@ -450,12 +441,6 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
 
     def __unicode__(self):
         return self.name
-
-    @models.permalink
-    def get_document_public_url(self):
-        """ Override ``geotrek.common.mixins.PublishableMixin``
-        """
-        return ('tourism:touristicevent_document_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
 
     @property
     def type1(self):

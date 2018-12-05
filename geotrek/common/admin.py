@@ -27,7 +27,7 @@ class MapEntityContentTypeFilter(admin.SimpleListFilter):
     parameter_name = 'content_type'
 
     def lookups(self, request, model_admin):
-        from mapentity import registry
+        from mapentity.registry import registry
         values = []
         for model, entity in registry.registry.items():
             content_type = model.get_content_type_id()

@@ -17,7 +17,7 @@ class TopologyFilter(ModelChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('queryset', self.get_queryset())
         super(TopologyFilter, self).__init__(*args, **kwargs)
-        # self.field.widget.attrs['class'] = self.field.widget.attrs.get('class', '') + ' topology-filter'
+        self.field.widget.attrs['class'] = self.field.widget.attrs.get('class', '') + ' topology-filter'
 
     def get_queryset(self, request=None):
         if self.queryset is not None:
@@ -82,7 +82,7 @@ class PathFilterSet(StructureRelatedFilterSet):
     class Meta(StructureRelatedFilterSet.Meta):
         model = Path
         fields = StructureRelatedFilterSet.Meta.fields + \
-            ['valid', 'length', 'networks', 'usages']
+            ['valid', 'length', 'networks', 'usages', 'comfort', 'stake', 'draft', ]
 
 
 class TrailFilterSet(StructureRelatedFilterSet):

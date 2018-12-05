@@ -12,22 +12,24 @@ from ftplib import FTP
 from os.path import dirname
 from urlparse import urlparse
 
-from django.db import models
-from django.conf import settings
+from django.db import models, connection
+from django.db.utils import DatabaseError
 from django.contrib.auth import get_user_model
-from django.contrib.gis.gdal import DataSource, GDALException
+from django.contrib.gis.gdal import DataSource, GDALException, CoordTransform
 from django.core.files.base import ContentFile
 from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
-
-from modeltranslation.fields import TranslationField
-from modeltranslation.translator import translator, NotRegistered
+from django.conf import settings
 from paperclip.models import attachment_upload
 
 from geotrek.authent.models import default_structure
 from geotrek.common.models import FileType, Attachment
+
+if 'modeltranslation' in settings.INSTALLED_APPS:
+    from modeltranslation.fields import TranslationField
+    from modeltranslation.translator import translator, NotRegistered
 
 
 class ImportError(Exception):
@@ -48,6 +50,7 @@ class ValueImportError(ImportError):
 
 class Parser(object):
     label = None
+    model = None
     filename = None
     url = None
     simplify_tolerance = 0  # meters
@@ -66,7 +69,7 @@ class Parser(object):
     natural_keys = {}
     field_options = {}
 
-    def __init__(self, progress_cb=None):
+    def __init__(self, progress_cb=None, user=None, encoding='utf8'):
         self.warnings = {}
         self.line = 0
         self.nb_success = 0
@@ -74,6 +77,9 @@ class Parser(object):
         self.nb_updated = 0
         self.nb_unmodified = 0
         self.progress_cb = progress_cb
+        self.user = user
+        self.structure = user and user.profile.structure or default_structure()
+        self.encoding = encoding
 
         try:
             mto = translator.get_options_for_model(self.model)
@@ -142,7 +148,7 @@ class Parser(object):
                 raise ValueImportError(_(u"Missing {required}field '{src}'").format(required=required, src=src))
 
     def apply_filter(self, dst, src, val):
-        field = self.model._meta.get_field_by_name(dst)[0]
+        field = self.model._meta.get_field(dst)
         if (isinstance(field, models.ForeignKey) or isinstance(field, models.ManyToManyField)):
             if dst not in self.natural_keys:
                 raise ValueImportError(_(u"Destination field '{dst}' not in natural keys configuration").format(dst=dst))
@@ -161,7 +167,7 @@ class Parser(object):
             return getattr(self, 'save_{0}'.format(dst))(src, val)
 
     def set_value(self, dst, src, val):
-        field = self.model._meta.get_field_by_name(dst)[0]
+        field = self.model._meta.get_field(dst)
         if val is None and not field.null:
             if field.blank and (isinstance(field, models.CharField) or isinstance(field, models.TextField)):
                 val = u""
@@ -283,12 +289,23 @@ class Parser(object):
                 self.add_warning(_(u"Bad value '{eid_val}' for field '{eid_src}'. No object with this identifier").format(eid_val=self.eid_val, eid_src=self.eid_src))
             return
         elif len(objects) == 0:
-            objects = [self.model(**eid_kwargs)]
+            obj = self.model(**eid_kwargs)
+            if hasattr(obj, 'structure'):
+                obj.structure = self.structure
+            objects = [obj]
             operation = u"created"
         elif len(objects) >= 2 and not self.duplicate_eid_allowed:
             self.add_warning(_(u"Bad value '{eid_val}' for field '{eid_src}'. Multiple objects with this identifier").format(eid_val=self.eid_val, eid_src=self.eid_src))
             return
         else:
+            _objects = []
+            for obj in objects:
+                if not hasattr(obj, 'structure') or obj.structure == self.structure or self.user.has_perm('authent.can_bypass_structure'):
+                    _objects.append(obj)
+                else:
+                    self.to_delete.discard(obj.pk)
+                    self.add_warning(_(u"Bad ownership '{structure}' for object '{eid_val}'.").format(structure=obj.structure.name, eid_val=self.eid_val))
+            objects = _objects
             operation = u"updated"
         for self.obj in objects:
             self.parse_obj(row, operation)
@@ -328,7 +345,7 @@ class Parser(object):
                 val = mapping[val]
         return val
 
-    def filter_fk(self, src, val, model, field, mapping=None, partial=False, create=False):
+    def filter_fk(self, src, val, model, field, mapping=None, partial=False, create=False, **kwargs):
         val = self.get_mapping(src, val, mapping, partial)
         if val is None:
             return None
@@ -343,7 +360,7 @@ class Parser(object):
             self.add_warning(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=model._meta.verbose_name.title(), val=val))
             return None
 
-    def filter_m2m(self, src, val, model, field, mapping=None, partial=False, create=False):
+    def filter_m2m(self, src, val, model, field, mapping=None, partial=False, create=False, **kwargs):
         if not val:
             return []
         if self.separator and not isinstance(val, list):
@@ -367,11 +384,11 @@ class Parser(object):
                 continue
         return dst
 
-    def start(self):
+    def get_to_delete_kwargs(self):
         # FIXME: use mapping if it exists
         kwargs = {}
         for dst, val in self.constant_fields.iteritems():
-            field = self.model._meta.get_field_by_name(dst)[0]
+            field = self.model._meta.get_field(dst)
             if isinstance(field, models.ForeignKey):
                 natural_key = self.natural_keys[dst]
                 try:
@@ -382,13 +399,19 @@ class Parser(object):
                 kwargs[dst] = val
         for dst, val in self.m2m_constant_fields.iteritems():
             assert not self.separator or self.separator not in val
-            field = self.model._meta.get_field_by_name(dst)[0]
+            field = self.model._meta.get_field(dst)
             natural_key = self.natural_keys[dst]
+            filters = {natural_key: subval for subval in val}
+            if not filters:
+                continue
             try:
-                kwargs[dst] = field.rel.to.objects.get(**{natural_key: subval for subval in val})
+                kwargs[dst] = field.rel.to.objects.get(**filters)
             except field.rel.to.DoesNotExist:
                 raise GlobalImportError(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=field.rel.to._meta.verbose_name.title(), val=val))
-        self.to_delete = set(self.model.objects.filter(**kwargs).values_list('pk', flat=True))
+        return kwargs
+
+    def start(self):
+        self.to_delete = set(self.model.objects.filter(**self.get_to_delete_kwargs()).values_list('pk', flat=True))
 
     def end(self):
         if self.delete:
@@ -407,6 +430,10 @@ class Parser(object):
                 break
             try:
                 self.parse_row(row)
+            except DatabaseError as e:
+                if settings.DEBUG:
+                    raise
+                self.add_warning(str(e).decode('utf8'))
             except Exception as e:
                 if settings.DEBUG:
                     raise
@@ -415,11 +442,12 @@ class Parser(object):
 
 
 class ShapeParser(Parser):
-    encoding = 'utf-8'
-
     def next_row(self):
         datasource = DataSource(self.filename, encoding=self.encoding)
         layer = datasource[0]
+        SpatialRefSys = connection.ops.spatial_ref_sys()
+        target_srs = SpatialRefSys.objects.get(srid=settings.SRID).srs
+        coord_transform = CoordTransform(layer.srs, target_srs)
         self.nb = len(layer)
         for i, feature in enumerate(layer):
             row = {self.normalize_field_name(field.name): field.value for field in feature}
@@ -430,6 +458,7 @@ class ShapeParser(Parser):
                 geom = None
             else:
                 ogrgeom.coord_dim = 2  # Flatten to 2D
+                ogrgeom.transform(coord_transform)
                 geom = ogrgeom.geos
             if self.simplify_tolerance and geom is not None:
                 geom = geom.simplify(self.simplify_tolerance)
@@ -489,7 +518,7 @@ class AttachmentParserMixin(object):
         if settings.PAPERCLIP_ENABLE_LINK is False and self.download_attachments is False:
             raise Exception(u'You need to enable PAPERCLIP_ENABLE_LINK to use this function')
         try:
-            self.filetype = FileType.objects.get(type=self.filetype_name, structure=default_structure())
+            self.filetype = FileType.objects.get(type=self.filetype_name, structure=self.structure)
         except FileType.DoesNotExist:
             raise GlobalImportError(_(u"FileType '{name}' does not exists in Geotrek-Admin. Please add it").format(name=self.filetype_name))
         self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
@@ -511,9 +540,9 @@ class AttachmentParserMixin(object):
             return size != attachment.attachment_file.size
 
         if parsed_url.scheme == 'http' or parsed_url.scheme == 'https':
-            http = urllib2.urlopen(url)
-            size = http.headers.getheader('content-length')
-            return int(size) != attachment.attachment_file.size
+            response = requests.head(url)
+            size = response.headers.get('content-length')
+            return size is not None and int(size) != attachment.attachment_file.size
 
         return True
 
@@ -672,10 +701,10 @@ class OpenSystemParser(Parser):
         self.root = ET.fromstring(response.content).find('Resultat').find('Objets')
         self.nb = len(self.root)
         for row in self.root:
-            id_sitra = row.find('ObjetCle').find('Cle').text
+            id_apidae = row.find('ObjetCle').find('Cle').text
             for liaison in row.find('Liaisons'):
                 yield {
-                    'id_sitra': id_sitra,
+                    'id_apidae': id_apidae,
                     'id_opensystem': liaison.find('ObjetOS').find('CodeUI').text,
                 }
 

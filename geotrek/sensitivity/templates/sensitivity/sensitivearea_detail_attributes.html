@@ -1,0 +1,55 @@
+{% extends "mapentity/mapentity_detail_attributes.html" %}
+{% load i18n mapentity_tags %}
+
+
+{% block attributes %}
+
+    <h3>{% trans "Attributes" %}</h3>
+    <table class="table-striped table-bordered table">
+        {% if sensitivearea.species.category == 2 %}
+            <tr>
+                <th>{{ sensitivearea.species|verbose:"name" }}</th>
+                <td>{{ sensitivearea.species.name }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <th>{{ sensitivearea|verbose:"species" }}</th>
+                <td>{{ sensitivearea.species }}</td>
+            </tr>
+        {% endif %}
+        <tr>
+            <th>{% trans "Period" %}</th>
+            <td>{{ sensitivearea.species.pretty_period }}</td>
+        </tr>
+        <tr>
+            <th>{{ sensitivearea.species|verbose:"practices" }}</th>
+            <td>{{ sensitivearea.species.pretty_practices }}</td>
+        </tr>
+        <tr>
+            <th>{{ sensitivearea.species|verbose:"url" }}</th>
+            <td><a href="{{ sensitivearea.species.url }}" target="_blank">{{ sensitivearea.species.url }}</a></td>
+        </tr>
+        {% if sensitivearea.species.radius != None %}
+            <tr>
+                <th>{{ sensitivearea.species|verbose:"radius" }}</th>
+                <td>{{ sensitivearea.species.radius }} m</td>
+            </tr>
+        {% endif %}
+        <tr>
+            <th>{{ sensitivearea|verbose:"description" }}</th>
+            <td>{{ sensitivearea.description|safe }}</td>
+        </tr>
+        <tr>
+            <th>{{ sensitivearea|verbose:"contact" }}</th>
+            <td>{{ sensitivearea.contact|safe }}</td>
+        </tr>
+        <tr>
+            <th>{{ sensitivearea|verbose:"structure" }}</th>
+            <td>{{ sensitivearea.structure }}</td>
+        </tr>
+        {% include "common/publication_info_fragment.html" %}
+        {% include "mapentity/trackinfo_fragment.html" %}
+    </table>
+
+    {{ block.super }}
+{% endblock attributes %}

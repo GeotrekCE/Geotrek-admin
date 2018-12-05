@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
 msgid "Authent"
-msgstr "Autentification"
+msgstr "Authentification"
 
 msgid ""
 "Access to the requested resource is restricted by structure. You have been "

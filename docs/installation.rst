@@ -14,15 +14,15 @@ Requirements
 
 A first estimation on system resources is :
 
-* 2 Go RAM
-* 10 Go disk space
+* 4 Go RAM
+* 20 Go disk space
 
 
 Installation
 ------------
 
 Once the OS is installed (basic installation, with OpenSSH server), log in with your linux user (not root). 
-You will also need unzip (``sudo apt-get install unzip``).
+You will also need unzip and wget (``sudo apt-get install unzip wget``).
 
 Make sure you are in the user folder :
 
@@ -31,7 +31,7 @@ Make sure you are in the user folder :
     cd /home/mylinuxuser
 
 Download the latest version of Geotrek-admin with the following commands (X.Y.Z to replace 
-with the latest stable version number : https://github.com/GeotrekCE/Geotrekadmin/releases) :
+with the latest stable version number : https://github.com/GeotrekCE/Geotrek-admin/releases) :
 
 ::
 
@@ -75,6 +75,14 @@ to create the admin user and fill the database with your data!
 Software update
 ---------------
 
+WARNING:
+
+Intermediate versions are required to upgrade your instance.
+
+If your version is < 2.13.1, you need to install this version.
+
+If your version is < 2.16.2, you need to install this version
+
 All versions are published on `the Github forge <https://github.com/GeotrekCE/Geotrek-admin/releases>`_.
 Download and extract the new version in a separate folder (**recommended**).
 
@@ -110,6 +118,9 @@ Copy your old configuration and uploaded files to your new folder.
 
     # If you have import parsers
     cp ../previous-version/bulkimport/parsers.py bulkimport/parsers.py
+
+    # If you have custom translations
+    cp -aR ../previous-version/geotrek/locale/ geotrek/
 
 Deploy the new version :
 
@@ -149,7 +160,7 @@ Backup settings, media files and database on the old server:
 
     cd Geotrek
     sudo -u postgres pg_dump -Fc geotrekdb > geotrekdb.backup
-    tar cvzf data.tgz geotrekdb.backup var/static/ var/media/paperclip/ var/media/upload/ etc/settings.ini geotrek/settings/custom.py
+    tar cvzf data.tgz geotrekdb.backup bulkimport/parsers.py var/static/ var/media/paperclip/ var/media/upload/ var/media/templates/ etc/settings.ini geotrek/settings/custom.py
 
 Get and unzip Geotrek sources on the new server:
 

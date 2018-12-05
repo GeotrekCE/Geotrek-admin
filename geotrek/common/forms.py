@@ -3,14 +3,14 @@
 from copy import deepcopy
 from zipfile import is_zipfile
 
-from django import forms as django_forms
-from django.db.models.fields.related import ForeignKey, ManyToManyField, FieldDoesNotExist
+from django import forms
+from django.db.models.fields.related import ForeignKey, ManyToManyField
+from django.core.exceptions import FieldDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 
-import floppyforms as forms
 from mapentity.forms import MapEntityForm
 
-from geotrek.authent.models import (default_structure, StructureRelated,
+from geotrek.authent.models import (default_structure, StructureRelated, StructureOrNoneRelated,
                                     StructureRelatedQuerySet)
 
 from .mixins import NoDeleteMixin
@@ -46,7 +46,7 @@ class CommonForm(MapEntityForm):
         super(CommonForm, self).replace_orig_fields()
 
     def filter_related_field(self, name, field):
-        if not isinstance(field, django_forms.models.ModelChoiceField):
+        if not isinstance(field, forms.models.ModelChoiceField):
             return
         try:
             modelfield = self.instance._meta.get_field(name)
@@ -55,9 +55,9 @@ class CommonForm(MapEntityForm):
             modelfield = None
         if not isinstance(modelfield, (ForeignKey, ManyToManyField)):
             return
-        model = modelfield.related.to
+        model = modelfield.remote_field.to
         # Filter structured choice fields according to user's structure
-        if issubclass(model, StructureRelated):
+        if issubclass(model, StructureRelated) or issubclass(model, StructureOrNoneRelated):
             field.queryset = StructureRelatedQuerySet.queryset_for_user(
                 field.queryset, self.user)
         if issubclass(model, NoDeleteMixin):
@@ -66,15 +66,7 @@ class CommonForm(MapEntityForm):
     def __init__(self, *args, **kwargs):
         super(CommonForm, self).__init__(*args, **kwargs)
 
-        # Check if structure is present, if so, use hidden input
-        if 'structure' in self.fields:
-            self.fields['structure'].widget = forms.HiddenInput()
-            # On entity creation, use user's structure
-            if not self.instance or not self.instance.pk:
-                structure = default_structure()
-                if self.user:
-                    structure = self.user.profile.structure
-                self.fields['structure'].initial = structure
+        self.update = kwargs.get("instance") is not None
 
         for name, field in self.fields.items():
             self.filter_related_field(name, field)
@@ -88,8 +80,22 @@ class CommonForm(MapEntityForm):
         if 'review' in self.fields and self.instance and self.instance.any_published:
             self.deep_remove(self.helper.fieldslayout, 'review')
 
+    def save(self, commit=True):
+        """Set structure field before saving if need be"""
+        if self.update:  # Structure is already set on object.
+            pass
+        elif not hasattr(self.instance, 'structure'):
+            pass
+        elif 'structure' in self.fields:
+            pass  # The form contains the structure field. Let django use its value.
+        elif self.user:
+            self.instance.structure = self.user.profile.structure
+        else:
+            self.instance.structure = default_structure()
+        return super(CommonForm, self).save(commit)
 
-class ImportDatasetForm(django_forms.Form):
+
+class ImportDatasetForm(forms.Form):
     parser = forms.TypedChoiceField(
         label=_('Data to import from network'),
         widget=forms.RadioSelect,
@@ -121,6 +127,10 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
         required=True,
         widget=forms.FileInput
     )
+    encoding = forms.ChoiceField(
+        label=_('Encoding'),
+        choices=(('Windows-1252', 'Windows-1252'), ('UTF-8', 'UTF-8'))
+    )
 
     def __init__(self, *args, **kwargs):
         super(ImportDatasetFormWithFile, self).__init__(*args, **kwargs)
@@ -131,6 +141,7 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
                 Div(
                     'parser',
                     'zipfile',
+                    'encoding',
                 ),
                 FormActions(
                     Submit('upload-file', _("Import"), css_class='button white')
@@ -142,7 +153,7 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
     def clean_zipfile(self):
         z = self.cleaned_data['zipfile']
         if not is_zipfile(z):
-            raise django_forms.ValidationError(
+            raise forms.ValidationError(
                 _("File must be of ZIP type."), code='invalid')
         # Reset position for further use.
         z.seek(0)

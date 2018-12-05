@@ -6,7 +6,8 @@ from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.template.defaultfilters import slugify
-from django.utils.translation import get_language, ugettext_lazy as _
+from django.utils.translation import get_language, ugettext, ugettext_lazy as _
+from django.urls import reverse
 
 import simplekml
 from mapentity.models import MapEntityMixin
@@ -118,6 +119,8 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                                     verbose_name=_("Portal"), db_table='o_r_itineraire_portal')
     eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
     eid2 = models.CharField(verbose_name=_(u"Second external id"), max_length=128, blank=True, null=True, db_column='id_externe2')
+    pois_excluded = models.ManyToManyField('Poi', related_name='excluded_treks', verbose_name=_(u"Excluded POIs"),
+                                           db_table="l_r_troncon_poi_exclus", blank=True)
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
@@ -132,9 +135,8 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     def __unicode__(self):
         return self.name
 
-    @models.permalink
     def get_map_image_url(self):
-        return ('trekking:trek_map_image', [], {'pk': str(self.pk), 'lang': get_language()})
+        return reverse('trekking:trek_map_image', args=[str(self.pk), get_language()])
 
     def get_map_image_path(self):
         basefolder = os.path.join(settings.MEDIA_ROOT, 'maps')
@@ -164,12 +166,6 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
             extent[2] = max(extent[2], poi.geom.x)
             extent[3] = max(extent[3], poi.geom.y)
         return extent
-
-    @models.permalink
-    def get_document_public_url(self):
-        """ Override ``geotrek.common.mixins.PublishableMixin``
-        """
-        return ('trekking:trek_document_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
 
     @property
     def related(self):
@@ -353,7 +349,9 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
 
     @property
     def prefixed_category_id(self):
-        if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and self.practice:
+        if settings.SPLIT_TREKS_CATEGORIES_BY_ITINERANCY and self.children.exists():
+            return 'I'
+        elif settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and self.practice:
             return '{prefix}{id}'.format(prefix=self.category_id_prefix, id=self.practice.id)
         else:
             return self.category_id_prefix
@@ -417,6 +415,22 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     @property
     def meta_description(self):
         return plain_text(self.ambiance or self.description_teaser or self.description)[:500]
+
+    def get_printcontext(self):
+        maplayers = [
+            settings.LEAFLET_CONFIG['TILES'][0][0],
+        ]
+        if settings.SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT:
+            maplayers.append(ugettext(u"Sensitive area"))
+        if settings.SHOW_POIS_ON_MAP_SCREENSHOT:
+            maplayers.append(ugettext(u"POIs"))
+        if settings.SHOW_SERVICES_ON_MAP_SCREENSHOT:
+            maplayers.append(ugettext(u"Services"))
+        if settings.SHOW_SIGNAGES_ON_MAP_SCREENSHOT:
+            maplayers.append(ugettext(u"Signages"))
+        if settings.SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT:
+            maplayers.append(ugettext(u"Infrastructures"))
+        return {"maplayers": maplayers}
 
 
 Path.add_property('treks', Trek.path_treks, _(u"Treks"))
@@ -614,9 +628,8 @@ class WebLink(models.Model):
         return u"%s%s (%s)" % (category, self.name, self.url)
 
     @classmethod
-    @models.permalink
     def get_add_url(cls):
-        return ('trekking:weblink_add', )
+        return reverse('trekking:weblink_add')
 
 
 class WebLinkCategory(PictogramMixin):
@@ -658,12 +671,6 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.type)
 
-    @models.permalink
-    def get_document_public_url(self):
-        """ Override ``geotrek.common.mixins.PublishableMixin``
-        """
-        return ('trekking:poi_document_public', [], {'lang': get_language(), 'pk': self.pk, 'slug': self.slug})
-
     def save(self, *args, **kwargs):
         super(POI, self).save(*args, **kwargs)
         # Invalidate treks map
@@ -690,6 +697,17 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     def topology_pois(cls, topology):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             qs = cls.overlapping(topology)
+            qs = cls.exclude_pois(qs, topology)
+        else:
+            area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
+            qs = cls.objects.existing().filter(geom__intersects=area)
+            qs = cls.exclude_pois(qs, topology)
+        return qs
+
+    @classmethod
+    def topology_all_pois(cls, topology):
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            qs = cls.overlapping(topology)
         else:
             area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
             qs = cls.objects.existing().filter(geom__intersects=area)
@@ -702,6 +720,13 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     def distance(self, to_cls):
         return settings.TOURISM_INTERSECTION_MARGIN
 
+    @classmethod
+    def exclude_pois(cls, qs, topology):
+        try:
+            return qs.exclude(pk__in=topology.trek.pois_excluded.values_list('pk', flat=True))
+        except Trek.DoesNotExist:
+            return qs
+
     @property
     def extent(self):
         return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom else None
@@ -709,6 +734,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
 
 Path.add_property('pois', POI.path_pois, _(u"POIs"))
 Topology.add_property('pois', POI.topology_pois, _(u"POIs"))
+Topology.add_property('all_pois', POI.topology_all_pois, _(u"POIs"))
 Topology.add_property('published_pois', POI.published_topology_pois, _(u"Published POIs"))
 Intervention.add_property('pois', lambda self: self.topology.pois if self.topology else [], _(u"POIs"))
 Project.add_property('pois', lambda self: self.edges_by_attr('pois'), _(u"POIs"))

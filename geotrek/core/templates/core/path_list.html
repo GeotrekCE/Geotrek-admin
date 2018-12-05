@@ -2,13 +2,31 @@
 {% load i18n mapentity_tags %}
 {% load static from staticfiles %}
 
+{% block change_style %}
+	<script>
+		style_others = window.SETTINGS.map.styles.others;
+		window.SETTINGS.map.styles.others = function(feature) {
+			if (feature.properties.draft){
+				return window.SETTINGS.map.styles.draftpath;
+			}
+			return style_others;
+		};
+	</script>
+{% endblock change_style %}
+
 {% block extrahead %}
 
     {% csrf_token %}
     
     <script type="text/javascript">
-    
+
         $(function(){
+            $('span#nbresults').replaceWith(' <span class="badge"><span id="nbresults">?</span><span id="sumPath"></span></span>')
+            $('#objects-list').on( 'xhr', function(e,o) {
+                obj = JSON.parse(o.jqXHR.responseText);
+                $( "#sumPath" ).html(' ('+ obj.sumPath + ' km)')
+            });
+
    	        $('#btn-merge').click(function() {
                 if ($('input[type="checkbox"][name="path\\[\\]"]:checked').length != 2) {
                     $('#btn-confirm').hide();
@@ -52,14 +70,18 @@
 
 {% block mainactions %}
 
-    {{ block.super }}
+    {% if perms.core.add_path or perms.core.add_draft_path %}
+	<a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus icon-white"></i> {{ create_label }}</a>
+    {% else %}
+    <span class="btn disabled" href="#"><i class="icon-plus icon-white"></i> {{ create_label }}</span>
+    {% endif %}
     
     <div id="wait_lightbox" style="display: none;">
 		<div class="progress progress-striped active">
 			<div class="bar" style="width: 100%;"></div>
 		</div>
 	</div>
-	
+
 	{% if perms.core.change_path %}
 	<div class="btn-group btn-danger">
 		<a class="btn btn-primary" href="#"><i class="icon-cog icon-white"></i> Actions</a>
@@ -72,7 +94,7 @@
 		</ul>
 	</div>
 	{% endif %}
-    
+
 	<div class="modal fade" id="confirm-merge" tabindex="-1" role="dialog" aria-labelledby="confirm-mergeLabel" aria-hidden="true">
 	    <div class="modal-dialog">
 	        <div class="modal-content">
@@ -93,5 +115,11 @@
 	    	</div>
 		</div>
 	</div>
-    
+
 {% endblock mainactions %}
+{% block mainlist %}
+	{{ block.super }}
+<div class="" id="test">
+	<h4></h4>
+</div>
+{% endblock %}

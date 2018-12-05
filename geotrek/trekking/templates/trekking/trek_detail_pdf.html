@@ -15,13 +15,13 @@
 
 		{% block Map %}
 			<h3>{% trans "Map" %}</h3>
-			<img src="{{ map_url }}" id="EntityScreenshot">
+			<img src="file://{{ map_path }}" id="EntityScreenshot">
 		{% endblock Map %}
 
 		{% block Altimetry %}
 			{% if object.get_elevation_chart_url %}
 			    <h3>Elevation</h3>
-			    <img src="{{ object.get_elevation_chart_url }}" style="margin-left: auto; margin-right: auto; width: 100%; height: auto; ">
+			    <img src="file://{{ object.get_elevation_chart_path }}" style="margin-left: auto; margin-right: auto; width: 100%; height: auto; ">
 		    {% endif %}
 		{% endblock Altimetry %}
 

@@ -3,9 +3,10 @@ from django.contrib.admin.apps import AdminConfig
 from django.contrib.auth.apps import AuthConfig
 from django.contrib.contenttypes.apps import ContentTypesConfig
 from django.contrib.sessions.apps import SessionsConfig
-from django.db.models.signals import post_migrate, pre_migrate
+from django.db.models.signals import post_migrate
+from django_celery_results.apps import CeleryResultConfig
 
-from geotrek.common.utils.signals import pm_callback, check_srid_has_meter_unit
+from geotrek.common.utils.signals import check_srid_has_meter_unit, pm_callback
 
 
 class GeotrekConfig(AppConfig):
@@ -14,12 +15,9 @@ class GeotrekConfig(AppConfig):
     !! WARNING !! need to create subclass in geotrek.myapp.apps for project apps,
     and create subclasses here for external subclasses
     """
-    def __init__(self, *args, **kwargs):
-        pre_migrate.connect(check_srid_has_meter_unit, sender=self, dispatch_uid='geotrek.core.checksrid')
-        super(GeotrekConfig, self).__init__(*args, **kwargs)
-
     def ready(self):
-        post_migrate.connect(pm_callback, sender=self, dispatch_uid='geotrek.core.movetoschemas')
+        post_migrate.connect(pm_callback, sender=self, dispatch_uid='geotrek.core.pm_callback')
+        check_srid_has_meter_unit()
 
 
 class AuthGeotrekConfig(AuthConfig, GeotrekConfig):
@@ -44,9 +42,8 @@ class AdminGeotrekConfig(AdminConfig, GeotrekConfig):
     pass
 
 
-class CeleryGeotrekConfig(GeotrekConfig):
-    name = 'djcelery'
-    verbose_name = 'Django Celery'
+class CeleryGeotrekConfig(GeotrekConfig, CeleryResultConfig):
+    pass
 
 
 class EasyThumbnailsGeotrekConfig(GeotrekConfig):

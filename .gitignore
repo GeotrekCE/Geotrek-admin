@@ -1,5 +1,4 @@
 *.pyc
-*.zip
 *.tar.gz
 *.mo
 
@@ -7,6 +6,7 @@
 /etc/
 /install
 /.idea/
+/.vscode/
 
 # buildout stuff
 .mr.developer.cfg

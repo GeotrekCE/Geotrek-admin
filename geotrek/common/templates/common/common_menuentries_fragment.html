@@ -1,5 +1,3 @@
 {% load i18n %}
 
-{% if user.is_superuser %}
-    <li><a href="{% url 'common:import_dataset' %}">{% trans "Imports" %}</a></li>
-{% endif %}
+<li><a href="{% url 'common:import_dataset' %}">{% trans "Imports" %}</a></li>

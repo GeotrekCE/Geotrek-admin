@@ -58,6 +58,11 @@ class TopologyTest(TestCase):
         e.save()
         self.assertNotEqual(e.length, 0)
 
+    def test_length_2d(self):
+        e = TopologyFactory.build(no_path=True)
+        e.save()
+        self.assertEqual(e.length_2d, None)
+
     def test_kind(self):
         from geotrek.land.models import LandEdge
         from geotrek.land.factories import LandEdgeFactory
@@ -132,6 +137,20 @@ class TopologyTest(TestCase):
         self.assertIn(path_visible.pk, [ele['id_path'] for ele in datas], u"{}".format(datas))
         self.assertNotIn(path_unvisible.pk, [ele['id_path'] for ele in datas], u"{}".format(datas))
         cur.close()
+
+    def test_topology_linked_to_not_draft(self):
+        path_draft = PathFactory.create(name="draft",
+                                        geom='LINESTRING(0 0, 1 0, 2 0)',
+                                        draft=True)
+        path_draft.save()
+        path_normal = PathFactory.create(name="normal",
+                                         geom='LINESTRING(0 3, 1 3, 2 3)',
+                                         draft=False)
+        path_normal.save()
+        point = Point(0, 0, srid=settings.SRID)
+        closest = Path.closest(point)
+        self.assertEqual(point.wkt, 'POINT (0 0)')
+        self.assertEqual(closest, path_normal)
 
 
 class TopologyDeletionTest(TestCase):
@@ -234,7 +253,7 @@ class TopologyPointTest(TestCase):
         self.assertTrue(almostequal(1, poitopo.geom.y))
 
     def test_point_geom_not_moving(self):
-        """
+        r"""
         Modify path, point not moving
         +                  +
         |                  |
@@ -384,7 +403,7 @@ class TopologyLineTest(TestCase):
         PathAggregationFactory.create(topo_object=t, path=p1,
                                       start_position=0.5, end_position=0.5)
         t = Topology.objects.get(pk=t.pk)
-        self.assertEqual(t.geom, Point((1, 1)))
+        self.assertEqual(t.geom, Point((1, 1), srid=settings.SRID))
 
         # 50% of path p1, 100% of path p2
         t = TopologyFactory.create(no_path=True)
@@ -392,19 +411,19 @@ class TopologyLineTest(TestCase):
                                       start_position=0.5)
         PathAggregationFactory.create(topo_object=t, path=p2)
         t = Topology.objects.get(pk=t.pk)
-        self.assertEqual(t.geom, LineString((1, 1), (2, 2), (2, 0)))
+        self.assertEqual(t.geom, LineString((1, 1), (2, 2), (2, 0), srid=settings.SRID))
 
         # 100% of path p2 and p3, with offset of 1
         t = TopologyFactory.create(no_path=True, offset=1)
         PathAggregationFactory.create(topo_object=t, path=p2)
         PathAggregationFactory.create(topo_object=t, path=p3)
         t.save()
-        self.assertEqual(t.geom, LineString((3, 2), (3, 1), (4, 1)))
+        self.assertEqual(t.geom, LineString((3, 2), (3, 1), (4, 1), srid=settings.SRID))
 
         # Change offset, geometry is computed again
         t.offset = 0.5
         t.save()
-        self.assertEqual(t.geom, LineString((2.5, 2), (2.5, 0.5), (4, 0.5)))
+        self.assertEqual(t.geom, LineString((2.5, 2), (2.5, 0.5), (4, 0.5), srid=settings.SRID))
 
     def test_topology_geom_should_not_be_sampled(self):
         coords = [(x, math.sin(x)) for x in range(100)]
@@ -439,7 +458,7 @@ class TopologyLineTest(TestCase):
                                       start_position=0.5, end_position=0.5)
         PathAggregationFactory.create(topo_object=t, path=p4)
         t.save()
-        self.assertEqual(t.geom, LineString((0, 0), (2, 0), (4, 0), (6, 0)))
+        self.assertEqual(t.geom, LineString((0, 0), (2, 0), (4, 0), (6, 0), srid=settings.SRID))
         """
         From p1 to p4, through p2
         """
@@ -451,7 +470,7 @@ class TopologyLineTest(TestCase):
                                       start_position=0.5, end_position=0.5)
         PathAggregationFactory.create(topo_object=t, path=p4)
         t.save()
-        self.assertEqual(t.geom, LineString((0, 0), (2, 0), (2, 1), (4, 1), (4, 0), (6, 0)))
+        self.assertEqual(t.geom, LineString((0, 0), (2, 0), (2, 1), (4, 1), (4, 0), (6, 0), srid=settings.SRID))
 
         """
         From p1 to p4, though p2, but **with start/end at 0.0**
@@ -522,10 +541,10 @@ class TopologyCornerCases(TestCase):
         ab = PathFactory.create(geom=LineString((5, 0), (0, 0)))
         cd = PathFactory.create(geom=LineString((5, 0), (10, 0)))
         topo = TopologyFactory.create(no_path=True)
-        topo.add_path(ab, start=0.2, end=0)
-        topo.add_path(cd, start=0, end=0.2)
+        topo.add_path(ab, start=0.2, end=0, order=0)
+        topo.add_path(cd, start=0, end=0.2, order=1)
         topo.save()
-        expected = LineString((4, 0), (5, 0), (6, 0))
+        expected = LineString((4, 0), (5, 0), (6, 0), srid=settings.SRID)
         self.assertEqual(topo.geom, expected)
         # Now let's have some fun, reverse BA :)
         ab.reverse()
@@ -543,11 +562,11 @@ class TopologyCornerCases(TestCase):
         ac = PathFactory.create(geom=LineString((5, 0), (10, 0)))
         cd = PathFactory.create(geom=LineString((10, 0), (15, 0)))
         topo = TopologyFactory.create(no_path=True)
-        topo.add_path(ab, start=0.2, end=0)
-        topo.add_path(ac)
-        topo.add_path(cd, start=0, end=0.2)
+        topo.add_path(ab, start=0.2, end=0, order=0)
+        topo.add_path(ac, order=1)
+        topo.add_path(cd, start=0, end=0.2, order=2)
         topo.save()
-        expected = LineString((4, 0), (5, 0), (10, 0), (11, 0))
+        expected = LineString((4, 0), (5, 0), (10, 0), (11, 0), srid=settings.SRID)
         self.assertEqual(topo.geom, expected)
         # Reverse AC ! OMG this is hell !
         ac.reverse()
@@ -567,15 +586,15 @@ class TopologyCornerCases(TestCase):
         p3 = Path.objects.filter(name=p1.name).exclude(pk=p1.pk)[0]  # Was splitted :)
         # Now create a topology B-A-C
         topo = TopologyFactory.create(no_path=True)
-        topo.add_path(p1, start=0.5, end=1)
-        topo.add_path(p2, start=0, end=0.8)
-        topo.add_path(p2, start=0.8, end=0.8)
-        topo.add_path(p2, start=0.8, end=0)
-        topo.add_path(p3, start=0, end=0.5)
+        topo.add_path(p1, start=0.5, end=1, order=0)
+        topo.add_path(p2, start=0, end=0.8, order=1)
+        topo.add_path(p2, start=0.8, end=0.8, order=2)
+        topo.add_path(p2, start=0.8, end=0, order=3)
+        topo.add_path(p3, start=0, end=0.5, order=4)
         topo.save()
         self.assertEqual(topo.geom, LineString((2.5, 0), (5, 0), (5, 10),
                                                (7, 10), (5, 10), (5, 0),
-                                               (7.5, 0)))
+                                               (7.5, 0), srid=settings.SRID))
 
     def test_return_path_serialized(self):
         """
@@ -600,7 +619,7 @@ class TopologyCornerCases(TestCase):
         topo.save()
         self.assertEqual(topo.geom, LineString((2.5, 0), (5, 0), (5, 10),
                                                (7, 10), (5, 10), (5, 0),
-                                               (7.5, 0)))
+                                               (7.5, 0), srid=settings.SRID))
 
 
 class TopologyLoopTests(TestCase):
@@ -614,18 +633,18 @@ class TopologyLoopTests(TestCase):
         p2 = PathFactory.create(geom=LineString((0, 0), (0, 5), (10, 5), (10, 0)))
         # Full loop
         topo = TopologyFactory.create(no_path=True)
-        topo.add_path(p1)
-        topo.add_path(p2)
+        topo.add_path(p1, order=0)
+        topo.add_path(p2, order=1)
         topo.save()
-        self.assertEqual(topo.geom, LineString((10, 0), (0, 0), (0, 5), (10, 5), (10, 0)))
+        self.assertEqual(topo.geom, LineString((10, 0), (0, 0), (0, 5), (10, 5), (10, 0), srid=settings.SRID))
         # Subpart, like in diagram
         topo = TopologyFactory.create(no_path=True)
-        topo.add_path(p1, start=0.8, end=1)
-        topo.add_path(p2)
-        topo.add_path(p1, start=0, end=0.2)
+        topo.add_path(p1, start=0.8, end=1, order=0)
+        topo.add_path(p2, order=1)
+        topo.add_path(p1, start=0, end=0.2, order=2)
         topo.save()
         self.assertEqual(topo.geom, LineString((2, 0), (0, 0), (0, 5),
-                                               (10, 5), (10, 0), (8, 0)))
+                                               (10, 5), (10, 0), (8, 0), srid=settings.SRID))
 
     def test_trek_loop(self):
         """
@@ -638,13 +657,13 @@ class TopologyLoopTests(TestCase):
         p3 = PathFactory.create(geom=LineString((10, 0), (10, 5),
                                                 (20, 5), (20, 0)))
         topo = TopologyFactory.create(no_path=True)
-        topo.add_path(p1, start=0.3, end=1)
-        topo.add_path(p3)
-        topo.add_path(p2, start=1, end=0)
-        topo.add_path(p1, start=1, end=0.3)
+        topo.add_path(p1, start=0.3, end=1, order=0)
+        topo.add_path(p3, order=1)
+        topo.add_path(p2, start=1, end=0, order=2)
+        topo.add_path(p1, start=1, end=0.3, order=3)
         topo.save()
         self.assertEqual(topo.geom, LineString((3, 0), (10, 0), (10, 5), (20, 5), (20, 0),
-                                               (10, 0), (3, 0)))
+                                               (10, 0), (3, 0), srid=settings.SRID))
 
     def test_spoon_loop(self):
         """
@@ -657,17 +676,17 @@ class TopologyLoopTests(TestCase):
                                                 (20, 5), (20, 0),
                                                 (10, 0)))
         topo = TopologyFactory.create(no_path=True)
-        topo.add_path(p1, start=0.3, end=1)
-        topo.add_path(p2, start=1, end=0.4)
-        topo.add_path(p2, start=0.4, end=0.4)
-        topo.add_path(p2, start=0.4, end=0.2)
-        topo.add_path(p2, start=0.2, end=0.2)
-        topo.add_path(p2, start=0.2, end=0)
-        topo.add_path(p1, start=1, end=0.3)
+        topo.add_path(p1, start=0.3, end=1, order=0)
+        topo.add_path(p2, start=1, end=0.4, order=1)
+        topo.add_path(p2, start=0.4, end=0.4, order=2)
+        topo.add_path(p2, start=0.4, end=0.2, order=3)
+        topo.add_path(p2, start=0.2, end=0.2, order=4)
+        topo.add_path(p2, start=0.2, end=0, order=5)
+        topo.add_path(p1, start=1, end=0.3, order=6)
         topo.save()
         self.assertEqual(topo.geom, LineString((3, 0), (10, 0), (20, 0), (20, 5),
                                                (17, 5), (11, 5),  # extra point due middle aggregation
-                                               (10, 5), (10, 0), (3, 0)))
+                                               (10, 5), (10, 0), (3, 0), srid=settings.SRID))
 
         # Deserializing should work too
         topod = Topology.deserialize("""
@@ -698,7 +717,7 @@ class TopologyLoopTests(TestCase):
         topo.save()
         self.assertEqual(topo.geom, LineString((3, 0), (10, 0), (10, 5),
                                                (17, 5), (20, 5),  # extra point due middle aggregation
-                                               (20, 0), (16, 0), (10, 0), (3, 0)))
+                                               (20, 0), (16, 0), (10, 0), (3, 0), srid=settings.SRID))
 
         # De/Serializing should work too
         serialized = """
@@ -726,11 +745,11 @@ class TopologyLoopTests(TestCase):
         p3 = PathFactory.create(geom=LineString((20, 0), (30, 0)))
 
         topo = TopologyFactory.create(no_path=True)
-        topo.add_path(p3, start=0.2, end=0)
-        topo.add_path(p2, start=1, end=0)
-        topo.add_path(p1, start=1, end=0.9)
+        topo.add_path(p3, start=0.2, end=0, order=0)
+        topo.add_path(p2, start=1, end=0, order=1)
+        topo.add_path(p1, start=1, end=0.9, order=2)
         topo.save()
-        self.assertEqual(topo.geom, LineString((22.0, 0.0), (20.0, 0.0), (10.0, 0.0), (9.0, 0.0)))
+        self.assertEqual(topo.geom, LineString((22.0, 0.0), (20.0, 0.0), (10.0, 0.0), (9.0, 0.0), srid=settings.SRID))
 
 
 class TopologySerialization(TestCase):
@@ -760,8 +779,8 @@ class TopologySerialization(TestCase):
         # +|========>+<========|+
         path2 = PathFactory.create()
         topo = TopologyFactory.create(offset=1.0, no_path=True)
-        topo.add_path(path, start=0.0, end=1.0)
-        topo.add_path(path2, start=1.0, end=0.0)
+        topo.add_path(path, start=0.0, end=1.0, order=0)
+        topo.add_path(path2, start=1.0, end=0.0, order=1)
         test_objdict['pk'] = topo.pk
         test_objdict['paths'] = [path.pk, path2.pk]
         test_objdict['positions'] = {'0': [0.0, 1.0], '1': [1.0, 0.0]}
@@ -770,8 +789,8 @@ class TopologySerialization(TestCase):
 
         # +<========|+|========>+
         topo = TopologyFactory.create(offset=1.0, no_path=True)
-        topo.add_path(path, start=1.0, end=0.0)
-        topo.add_path(path2, start=0.0, end=1.0)
+        topo.add_path(path, start=1.0, end=0.0, order=0)
+        topo.add_path(path2, start=0.0, end=1.0, order=1)
         test_objdict['pk'] = topo.pk
         test_objdict['paths'] = [path.pk, path2.pk]
         test_objdict['positions'] = {'0': [1.0, 0.0], '1': [0.0, 1.0]}
@@ -795,10 +814,10 @@ class TopologySerialization(TestCase):
         path2 = PathFactory.create()
         path3 = PathFactory.create()
         topology = TopologyFactory.create(no_path=True)
-        topology.add_path(path1)
-        topology.add_path(path2, start=0.2, end=0.2)
-        topology.add_path(path2, start=0.4, end=0.4)
-        topology.add_path(path3)
+        topology.add_path(path1, order=0)
+        topology.add_path(path2, start=0.2, end=0.2, order=1)
+        topology.add_path(path2, start=0.4, end=0.4, order=2)
+        topology.add_path(path3, order=3)
         fieldvalue = topology.serialize()
         field = json.loads(fieldvalue)
         self.assertEqual(len(field), 2)
@@ -892,10 +911,10 @@ class TopologyOverlappingTest(TestCase):
         self.path4 = PathFactory.create(geom=LineString((0, 30), (0, 40)))
 
         self.topo1 = TopologyFactory.create(no_path=True)
-        self.topo1.add_path(self.path1, start=0.5, end=1)
-        self.topo1.add_path(self.path2, start=1, end=0)
-        self.topo1.add_path(self.path3)
-        self.topo1.add_path(self.path4, start=0, end=0.5)
+        self.topo1.add_path(self.path1, start=0.5, end=1, order=0)
+        self.topo1.add_path(self.path2, start=1, end=0, order=1)
+        self.topo1.add_path(self.path3, order=2)
+        self.topo1.add_path(self.path4, start=0, end=0.5, order=3)
 
         self.topo2 = TopologyFactory.create(no_path=True)
         self.topo2.add_path(self.path2)

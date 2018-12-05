@@ -117,6 +117,8 @@ BEGIN
     FOR troncon IN SELECT *
                    FROM l_t_troncon t
                    WHERE id != NEW.id
+                         AND brouillon = FALSE
+                         AND NEW.brouillon = FALSE
                          AND ST_DWITHIN(t.geom, NEW.geom, 0)
                          AND GeometryType(ST_Intersection(geom, NEW.geom)) NOT IN ('LINESTRING', 'MULTILINESTRING')
     LOOP
@@ -145,19 +147,19 @@ BEGIN
         IF ST_DWITHIN(ST_STARTPOINT(NEW.geom), troncon.geom, 0)
         THEN
             intersections_on_current := array_append(intersections_on_current,
-                                                 ST_Line_Locate_Point(troncon.geom,
+                                                 ST_LineLocatePoint(troncon.geom,
                                                                       ST_CLOSESTPOINT(troncon.geom, ST_STARTPOINT(NEW.geom))));
         END IF;
 
         IF ST_DWITHIN(ST_ENDPOINT(NEW.geom), troncon.geom, 0)
         THEN
             intersections_on_current := array_append(intersections_on_current,
-                                                 ST_Line_Locate_Point(troncon.geom,
+                                                 ST_LineLocatePoint(troncon.geom,
                                                                       ST_CLOSESTPOINT(troncon.geom, ST_ENDPOINT(NEW.geom))));
 
         END IF;
         RAISE NOTICE 'EEE : %', array_to_string(intersections_on_current, ', ');
-        FOR fraction IN SELECT ST_Line_Locate_Point(troncon.geom, (ST_Dump(ST_Intersection(troncon.geom, NEW.geom))).geom)
+        FOR fraction IN SELECT ST_LineLocatePoint(troncon.geom, (ST_Dump(ST_Intersection(troncon.geom, NEW.geom))).geom)
         LOOP
             intersections_on_current := array_append(intersections_on_current, fraction);
         END LOOP;
@@ -187,7 +189,7 @@ BEGIN
                 a := intersections_on_new[i];
                 b := intersections_on_new[i+1];
 
-                segment := ST_Line_Substring(newgeom, a, b);
+                segment := ST_LineSubstring(newgeom, a, b);
 
                 IF coalesce(ST_Length(segment), 0) < 1 THEN
                      intersections_on_new[i+1] := a;
@@ -196,14 +198,14 @@ BEGIN
 
                 IF i = 1 THEN
                     -- First segment : shrink it !
-                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE nom = NEW.nom AND ST_Equals(geom, segment);
+                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Contains(ST_Buffer(segment,0.0001),geom);
                     IF t_count = 0 THEN
                         RAISE NOTICE 'New: Skrink %-% (%) to %', NEW.id, NEW.nom, ST_AsText(NEW.geom), ST_AsText(segment);
                         UPDATE l_t_troncon SET geom = segment WHERE id = NEW.id;
                     END IF;
                 ELSE
                     -- Next ones : create clones !
-                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE nom = NEW.nom AND ST_Equals(geom, segment);
+                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Contains(ST_Buffer(segment,0.0001),geom);
                     IF t_count = 0 THEN
                         RAISE NOTICE 'New: Create clone of %-% with geom %', NEW.id, NEW.nom, ST_AsText(segment);
                         INSERT INTO l_t_troncon (structure,
@@ -218,7 +220,8 @@ BEGIN
                                                  arrivee,
                                                  confort,
                                                  id_externe,
-                                                 geom)
+                                                 geom,
+                                                 brouillon)
                             VALUES (NEW.structure,
                                     NEW.visible,
                                     NEW.valide,
@@ -231,7 +234,8 @@ BEGIN
                                     NEW.arrivee,
                                     NEW.confort,
                                     NEW.id_externe,
-                                    segment)
+                                    segment,
+                                    NEW.brouillon)
                             RETURNING id INTO tid_clone;
                     END IF;
                 END IF;
@@ -260,7 +264,7 @@ BEGIN
                 a := intersections_on_current[i];
                 b := intersections_on_current[i+1];
 
-                segment := ST_Line_Substring(troncon.geom, a, b);
+                segment := ST_LineSubstring(troncon.geom, a, b);
 
                 IF coalesce(ST_Length(segment), 0) < 1 THEN
                      intersections_on_new[i+1] := a;
@@ -276,7 +280,7 @@ BEGIN
                     END IF;
                 ELSE
                     -- Next ones : create clones !
-                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Equals(geom, segment);
+                    SELECT COUNT(*) INTO t_count FROM l_t_troncon WHERE ST_Contains(ST_Buffer(geom,0.0001),segment);
                     IF t_count = 0 THEN
                         RAISE NOTICE 'Current: Create clone of %-% (%) with geom %', troncon.id, troncon.nom, ST_AsText(troncon.geom), ST_AsText(segment);
                         INSERT INTO l_t_troncon (structure,
@@ -291,7 +295,8 @@ BEGIN
                                                  arrivee,
                                                  confort,
                                                  id_externe,
-                                                 geom)
+                                                 geom,
+                                                 brouillon)
                             VALUES (troncon.structure,
                                     troncon.visible,
                                     troncon.valide,
@@ -304,7 +309,8 @@ BEGIN
                                     troncon.arrivee,
                                     troncon.confort,
                                     troncon.id_externe,
-                                    segment)
+                                    segment,
+                                    troncon.brouillon)
                             RETURNING id INTO tid_clone;
 
                         -- Copy N-N relations
@@ -346,7 +352,7 @@ BEGIN
                         -- Special case : point topology at the end of path
                         IF b = 1 THEN
                             SELECT geom INTO t_geom FROM l_t_troncon WHERE id = troncon.id;
-                            fraction := ST_Line_Locate_Point(segment, ST_EndPoint(troncon.geom));
+                            fraction := ST_LineLocatePoint(segment, ST_EndPoint(troncon.geom));
                             INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
                                 SELECT tid_clone, evenement, pk_debut, pk_fin
                                 FROM e_r_evenement_troncon et,
@@ -363,7 +369,7 @@ BEGIN
                         END IF;
                         -- Special case : point topology exactly where NEW path intersects
                         IF a > 0 THEN
-                            fraction := ST_Line_Locate_Point(NEW.geom, ST_Line_Interpolate_Point(troncon.geom, a));
+                            fraction := ST_LineLocatePoint(NEW.geom, ST_LineInterpolatePoint(troncon.geom, a));
                             INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin, ordre)
                                 SELECT NEW.id, et.evenement, fraction, fraction, ordre
                                 FROM e_r_evenement_troncon et,
@@ -377,6 +383,7 @@ BEGIN
                                 RAISE NOTICE 'Duplicated % point topologies of %-% (%) on intersection by %-% (%) at [%]', t_count, troncon.id, troncon.nom, ST_AsText(troncon.geom), NEW.id, NEW.nom, ST_AsText(NEW.geom), a;
                             END IF;
                         END IF;
+
                     END IF;
                 END IF;
             END LOOP;
@@ -453,5 +460,5 @@ $$ LANGUAGE plpgsql;
 
 
 CREATE TRIGGER l_t_troncon_10_split_geom_iu_tgr
-AFTER INSERT OR UPDATE OF geom ON l_t_troncon
+AFTER INSERT OR UPDATE OF geom, brouillon ON l_t_troncon
 FOR EACH ROW EXECUTE PROCEDURE troncons_evenement_intersect_split();

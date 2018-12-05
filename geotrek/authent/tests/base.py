@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.management import call_command
 
-from mapentity import registry
+from mapentity.registry import registry
 
 
 class AuthentFixturesMixin(object):
@@ -14,7 +14,7 @@ class AuthentFixturesMixin(object):
 
     def _pre_setup(self):
         if not isinstance(self, TestCase):
-            call_command('update_geotrek_permissions')
+            call_command('update_geotrek_permissions', verbosity=0)
         super(AuthentFixturesMixin, self)._pre_setup()
 
     @classmethod
@@ -39,7 +39,7 @@ class AuthentFixturesMixin(object):
             from geotrek.trekking import urls  # NOQA
             from geotrek.tourism import urls  # NOQA
 
-        call_command('update_geotrek_permissions')
+        call_command('update_geotrek_permissions', verbosity=0)
 
         return super(AuthentFixturesMixin, cls).setUpClass()
 

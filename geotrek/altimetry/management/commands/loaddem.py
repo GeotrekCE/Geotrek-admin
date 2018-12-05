@@ -1,27 +1,23 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 from django.conf import settings
-from optparse import make_option
 import os.path
 from subprocess import call
 import tempfile
 
 
 class Command(BaseCommand):
-    args = '<dem_path>'
     help = 'Load DEM data (projecting and clipping it if necessary).\n'
     help += 'You may need to create a GDAL Virtual Raster if your DEM is '
     help += 'composed of several files.\n'
     can_import_settings = True
 
-    option_list = BaseCommand.option_list + (
-        make_option('--replace',
-                    action='store_true',
-                    default=False,
-                    help='Replace existing DEM if any.'),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument('dem_path')
+        parser.add_argument('--replace', action='store_true', default=False, help='Replace existing DEM if any.')
 
     def handle(self, *args, **options):
+        verbose = options['verbosity'] != 0
 
         try:
             from osgeo import gdal, ogr, osr
@@ -30,22 +26,17 @@ class Command(BaseCommand):
             raise CommandError(msg)
 
         try:
-            ret = call('raster2pgsql -G', shell=True)
+            ret = call('raster2pgsql -G > /dev/null', shell=True)
             if ret != 0:
                 raise Exception('raster2pgsql failed with exit code %d' % ret)
         except Exception as e:
             msg = 'Caught %s: %s' % (e.__class__.__name__, e,)
             raise CommandError(msg)
 
-        self.stdout.write('-- Checking input DEM ------------------\n')
-
-        # Validate arguments
-        if len(args) != 1:
-            self.stdout.write(self.usage('loaddem'))
-            return
-
+        if verbose:
+            self.stdout.write('-- Checking input DEM ------------------\n')
         # Obtain DEM path
-        dem_path = args[0]
+        dem_path = options['dem_path']
 
         # Open GDAL dataset
         if not os.path.exists(dem_path):
@@ -117,7 +108,8 @@ class Command(BaseCommand):
         elif dem_exists and not replace:
             raise CommandError('DEM file exists, use --replace to overwrite')
 
-        self.stdout.write('Everything looks fine, we can start loading DEM\n')
+        if verbose:
+            self.stdout.write('Everything looks fine, we can start loading DEM\n')
 
         # Unfortunately, PostGISRaster driver in GDAL does not have write mode
         # so far. Therefore, we relay parameters to standard commands using
@@ -125,16 +117,19 @@ class Command(BaseCommand):
 
         # Step 1: process raster (clip, project)
         new_dem = tempfile.NamedTemporaryFile()
-        cmd = 'gdalwarp -t_srs EPSG:%d -te %f %f %f %f %s %s' % (settings.SRID,
-                                                                 settings.SPATIAL_EXTENT[0],
-                                                                 settings.SPATIAL_EXTENT[1],
-                                                                 settings.SPATIAL_EXTENT[2],
-                                                                 settings.SPATIAL_EXTENT[3],
-                                                                 dem_path,
-                                                                 new_dem.name)
+        cmd = 'gdalwarp -t_srs EPSG:%d -te %f %f %f %f %s %s %s' % (settings.SRID,
+                                                                    settings.SPATIAL_EXTENT[0],
+                                                                    settings.SPATIAL_EXTENT[1],
+                                                                    settings.SPATIAL_EXTENT[2],
+                                                                    settings.SPATIAL_EXTENT[3],
+                                                                    dem_path,
+                                                                    new_dem.name,
+                                                                    '' if verbose else '> /dev/null')
+
         try:
-            self.stdout.write('\n-- Relaying to gdalwarp ----------------\n')
-            self.stdout.write(cmd)
+            if verbose:
+                self.stdout.write('\n-- Relaying to gdalwarp ----------------\n')
+                self.stdout.write(cmd)
             ret = call(cmd, shell=True)
             if ret != 0:
                 raise Exception('gdalwarp failed with exit code %d' % ret)
@@ -142,14 +137,19 @@ class Command(BaseCommand):
             new_dem.close()
             msg = 'Caught %s: %s' % (e.__class__.__name__, e,)
             raise CommandError(msg)
-        self.stdout.write('DEM successfully clipped/projected.\n')
+        if verbose:
+            self.stdout.write('DEM successfully clipped/projected.\n')
 
         # Step 2: Convert to PostGISRaster format
         output = tempfile.NamedTemporaryFile()  # SQL code for raster creation
-        cmd = 'raster2pgsql -c -C -I -M -t 100x100 %s mnt' % new_dem.name
+        cmd = 'raster2pgsql -c -C -I -M -t 100x100 %s mnt %s' % (
+            new_dem.name,
+            '' if verbose else '2>/dev/null'
+        )
         try:
-            self.stdout.write('\n-- Relaying to raster2pgsql ------------\n')
-            self.stdout.write(cmd)
+            if verbose:
+                self.stdout.write('\n-- Relaying to raster2pgsql ------------\n')
+                self.stdout.write(cmd)
             ret = call(cmd, stdout=output.file, shell=True)
             if ret != 0:
                 raise Exception('raster2pgsql failed with exit code %d' % ret)
@@ -159,15 +159,18 @@ class Command(BaseCommand):
             raise CommandError(msg)
         finally:
             new_dem.close()
-        self.stdout.write('DEM successfully converted to SQL.\n')
+        if verbose:
+            self.stdout.write('DEM successfully converted to SQL.\n')
 
         # Step 3: Dump SQL code into database
-        self.stdout.write('\n-- Loading DEM into database -----------\n')
+        if verbose:
+            self.stdout.write('\n-- Loading DEM into database -----------\n')
         cur = connection.cursor()
         output.file.seek(0)
         for sql_line in output.file:
             cur.execute(sql_line)
         cur.close()
         output.close()
-        self.stdout.write('DEM successfully loaded.\n')
+        if verbose:
+            self.stdout.write('DEM successfully loaded.\n')
         return

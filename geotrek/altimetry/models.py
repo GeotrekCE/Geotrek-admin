@@ -3,7 +3,7 @@ import os
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils.translation import get_language, ugettext_lazy as _
-from django.template.defaultfilters import floatformat
+from django.urls import reverse
 
 from mapentity.helpers import is_file_newer, convertit_download, smart_urljoin
 from .helpers import AltimetryHelper
@@ -33,7 +33,7 @@ class AltimetryMixin(models.Model):
 
     @property
     def length_display(self):
-        return floatformat(self.length)
+        return round(self.length, 1)
 
     def reload(self, fromdb=None):
         """Reload fields computed at DB-level (triggers)
@@ -61,18 +61,19 @@ class AltimetryMixin(models.Model):
     def get_elevation_profile_svg(self):
         return AltimetryHelper.profile_svg(self.get_elevation_profile())
 
-    @models.permalink
     def get_elevation_chart_url(self):
         """Generic url. Will fail if there is no such url defined
         for the required model (see core.Path and trekking.Trek)
         """
         app_label = self._meta.app_label
         model_name = self._meta.model_name
-        return ('%s:%s_profile_svg' % (app_label, model_name), [], {'lang': get_language(), 'pk': self.pk})
+        return reverse('%s:%s_profile_svg' % (app_label, model_name), kwargs={'lang': get_language(), 'pk': self.pk})
 
-    def get_elevation_chart_path(self, language):
+    def get_elevation_chart_path(self, language=None):
         """Path to the PNG version of elevation chart.
         """
+        if not language:
+            language = get_language()
         basefolder = os.path.join(settings.MEDIA_ROOT, 'profiles')
         if not os.path.exists(basefolder):
             os.mkdir(basefolder)

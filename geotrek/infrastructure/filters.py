@@ -1,19 +1,17 @@
 from django.utils.translation import ugettext_lazy as _
-from django_filters import CharFilter, NumberFilter
+from django_filters import CharFilter
 
-from geotrek.common.filters import StructureRelatedFilterSet, YearFilter
-from geotrek.maintenance.filters import InterventionYearSelect
+from geotrek.common.filters import StructureRelatedFilterSet, YearFilter, ValueFilter
+from geotrek.infrastructure.widgets import InfrastructureYearSelect, SignageImplantationYearSelect, \
+    InfrastructureImplantationYearSelect
 from .models import INFRASTRUCTURE_TYPES, Infrastructure, Signage
-
-
-class InfrastructureYearSelect(InterventionYearSelect):
-    label = _(u"Intervention year")
 
 
 class InfrastructureFilterSet(StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     description = CharFilter(label=_('Description'), lookup_expr='icontains')
-    implantation_year = NumberFilter(label=_('Implantation year'))
+    implantation_year = ValueFilter(name='implantation_year',
+                                    widget=InfrastructureImplantationYearSelect)
     intervention_year = YearFilter(name='interventions_set__date',
                                    widget=InfrastructureYearSelect)
 
@@ -25,17 +23,19 @@ class InfrastructureFilterSet(StructureRelatedFilterSet):
         field = self.form.fields['type__type']
         all_choices = field.widget.choices
         all_choices = [c for c in all_choices if c[0] != INFRASTRUCTURE_TYPES.SIGNAGE]
-        field.widget.choices = [('', _(u"Category"))] + all_choices
+        field.widget.choices = [('', _(u"Category"))] + all_choices[1:]
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Infrastructure
-        fields = StructureRelatedFilterSet.Meta.fields + ['type__type', 'type', 'condition', 'implantation_year']
+        fields = StructureRelatedFilterSet.Meta.fields + ['type__type', 'type', 'condition', 'implantation_year',
+                                                          'intervention_year', 'published']
 
 
 class SignageFilterSet(StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     description = CharFilter(label=_('Description'), lookup_expr='icontains')
-    implantation_year = NumberFilter(label=_('Implantation year'))
+    implantation_year = ValueFilter(name='implantation_year',
+                                    widget=SignageImplantationYearSelect)
     intervention_year = YearFilter(name='interventions_set__date',
                                    widget=InfrastructureYearSelect)
 
@@ -46,4 +46,5 @@ class SignageFilterSet(StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Signage
-        fields = StructureRelatedFilterSet.Meta.fields + ['type', 'condition', 'implantation_year']
+        fields = StructureRelatedFilterSet.Meta.fields + ['type', 'condition', 'implantation_year', 'intervention_year',
+                                                          'published']

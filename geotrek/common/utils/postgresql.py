@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import logging
 import traceback
 from functools import wraps
@@ -5,8 +7,7 @@ from functools import wraps
 import os
 import re
 from django.conf import settings
-from django.db import connection, models
-from django.db.models import get_app, get_models
+from django.db import connection
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +31,7 @@ def debug_pg_notices(f):
                 for notice in connection.connection.notices:
                     try:
                         notice, context = notice.split('CONTEXT:', 1)
-                        context = re.sub("\s+", " ", context)
+                        context = re.sub(r"\s+", " ", context)
                     except ValueError:
                         context = ''
                     notices.append((context, notice))
@@ -54,16 +55,16 @@ def debug_pg_notices(f):
     return wrapped
 
 
-def load_sql_files(app_label):
+def load_sql_files(app):
     """
     Look for SQL files in Django app, and load them into database.
     We remove RAISE NOTICE instructions from SQL outside unit testing
     since they lead to interpolation errors of '%' character in python.
     """
-    app_dir = os.path.dirname(models.get_app(app_label).__file__)
+    app_dir = app.path
     sql_dir = os.path.normpath(os.path.join(app_dir, 'sql'))
     if not os.path.exists(sql_dir):
-        logger.debug("No SQL folder for %s" % app_label)
+        logger.debug("No SQL folder for %s" % app.module)
         return
 
     r = re.compile(r'^.*\.sql$')
@@ -101,18 +102,17 @@ def load_sql_files(app_label):
             raise
 
 
-def move_models_to_schemas(app_label):
+def move_models_to_schemas(app):
     """
     Move models tables to PostgreSQL schemas.
 
     Views, functions and triggers will be moved in Geotrek app SQL files.
     """
-    app = get_app(app_label)
     default_schema = settings.DATABASE_SCHEMAS.get('default')
-    app_schema = settings.DATABASE_SCHEMAS.get(app_label, default_schema)
+    app_schema = settings.DATABASE_SCHEMAS.get(app.name, default_schema)
 
     table_schemas = {}
-    for model in get_models(app):
+    for model in app.get_models():
         model_name = model._meta.model_name
         table_name = model._meta.db_table
         model_schema = settings.DATABASE_SCHEMAS.get(model_name, app_schema)
@@ -145,7 +145,7 @@ def move_models_to_schemas(app_label):
     # For Django, search_path is set in connection options.
     # But when accessing the database using QGis or ETL, search_path must be
     # set database level (for all users, and for this database only).
-    if app_label == 'common':
+    if app.name == 'geotrek.common':
         dbname = settings.DATABASES['default']['NAME']
         dbuser = settings.DATABASES['default']['USER']
         search_path = 'public,%s' % ','.join(set(settings.DATABASE_SCHEMAS.values()))

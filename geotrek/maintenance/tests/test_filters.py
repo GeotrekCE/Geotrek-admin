@@ -9,6 +9,9 @@ from geotrek.land.factories import (
 )
 from geotrek.core.factories import PathFactory, PathAggregationFactory, getRandomLineStringInBounds, TopologyFactory
 
+# Make sure dynamic filters are set up when testing
+from geotrek.land import filters  # noqa
+
 from geotrek.maintenance.filters import (ProjectFilterSet, InterventionFilterSet,
                                          InterventionYearSelect, ProjectYearSelect)
 from geotrek.maintenance.factories import (InterventionFactory, ProjectFactory,
@@ -24,10 +27,10 @@ class InterventionFilteringByLandTest(TestCase):
         p1, seek_path = self.create_pair_of_distinct_path()
 
         topo_1 = TopologyFactory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=topo_1, path=p1, start_position=0, end_position=1)
+        topo_1.add_path(path=p1, start=0, end=1)
 
         seek_topo = TopologyFactory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=seek_topo, path=seek_path, start_position=0, end_position=1)
+        seek_topo.add_path(path=seek_path, start=0, end=1)
 
         InterventionFactory.create(topology=topo_1)
         seek_it = InterventionFactory.create(topology=seek_topo)
@@ -117,10 +120,10 @@ class ProjectFilteringByLandTest(TestCase):
         p1, seek_path = self.create_pair_of_distinct_path()
 
         topo_1 = TopologyFactory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=topo_1, path=p1, start_position=0, end_position=1)
+        topo_1.add_path(path=p1, start=0, end=1)
 
         seek_topo = TopologyFactory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=seek_topo, path=seek_path, start_position=0, end_position=1)
+        seek_topo.add_path(path=seek_path, start=0, end=1)
 
         it_p1 = InterventionFactory.create(topology=topo_1)
         seek_it = InterventionFactory.create(topology=seek_topo)
@@ -223,12 +226,6 @@ class InterventionYearsFilterTest(TestCase):
         self.assertIn('>2012<', output)
         self.assertIn('>1932<', output)
 
-    def test_new_interventions_appear_dynamically(self):
-        InfrastructureInterventionFactory.create(date=datetime(2024, 11, 10))
-        output = self.widget.render(name='year', value=None)
-        self.assertEqual(output.count('<option'), 4)
-        self.assertIn('>2024<', output)
-
 
 class ProjectYearsFilterTest(TestCase):
     def setUp(self):
@@ -245,12 +242,6 @@ class ProjectYearsFilterTest(TestCase):
         self.assertIn('>1700<', output)
         self.assertIn('>1800<', output)
         self.assertIn('>2000<', output)
-
-    def test_new_projects_appear_dynamically(self):
-        ProjectFactory.create(begin_year=1500, end_year=2100)
-        output = self.widget.render(name='year', value=None)
-        self.assertEqual(output.count('<option'), 6)
-        self.assertIn('>2100<', output)
 
     def test_new_projects_can_be_filtered_on_new_years(self):
         filter = ProjectFilterSet(data={'in_year': 1250})

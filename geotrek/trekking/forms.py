@@ -4,8 +4,8 @@ from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.forms.models import inlineformset_factory
+from django import forms
 
-import floppyforms as forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Submit, HTML, Div, Fieldset
@@ -52,7 +52,12 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
     class BaseTrekForm(TopologyForm):
         def __init__(self, *args, **kwargs):
             super(BaseTrekForm, self).__init__(*args, **kwargs)
+            modifiable = self.fields['topology'].widget.modifiable
+            # TODO: We should change LeafletWidget to keep modifiable.
+            # Init of TopologyForm -> commonForm -> mapentityForm
+            # already add a leafletwidget with modifiable
             self.fields['topology'].widget = LineTopologyWidget()
+            self.fields['topology'].widget.modifiable = modifiable
             self.fields['points_reference'].label = ''
             self.fields['points_reference'].widget.target_map = 'topology'
             self.fields['parking_location'].label = ''
@@ -67,7 +72,9 @@ else:
 
         def __init__(self, *args, **kwargs):
             super(BaseTrekForm, self).__init__(*args, **kwargs)
+            modifiable = self.fields['geom'].widget.modifiable
             self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'LINESTRING'})
+            self.fields['geom'].widget.modifiable = modifiable
             self.fields['points_reference'].label = ''
             self.fields['points_reference'].widget.target_map = 'geom'
             self.fields['parking_location'].label = ''
@@ -104,6 +111,7 @@ class TrekForm(BaseTrekForm):
                     'departure',
                     'arrival',
                     'duration',
+                    'practice',
                     'difficulty',
                     'route',
                     'ambiance',
@@ -122,7 +130,6 @@ class TrekForm(BaseTrekForm):
                     'advice',
                     'themes',
                     'networks',
-                    'practice',
                     'accessibilities',
                     'web_links',
                     'information_desks',
@@ -131,6 +138,7 @@ class TrekForm(BaseTrekForm):
                     'children_trek',
                     'eid',
                     'eid2',
+                    'pois_excluded',
                     'hidden_ordered_children',
                     Fieldset(_("Related treks"),),
                     css_id="advanced",  # used in Javascript for activating tab if error
@@ -144,8 +152,13 @@ class TrekForm(BaseTrekForm):
 
     def __init__(self, *args, **kwargs):
         self.fieldslayout = deepcopy(self.base_fieldslayout)
-        self.fieldslayout[0][1][0].append(HTML('<div class="controls">' + _('Insert service:') + ''.join(['<a class="servicetype" data-url="{url}" data-name={name}"><img src="{url}"></a>'.format(url=t.pictogram.url, name=t.name) for t in ServiceType.objects.all()]) + '</div>'))
-
+        self.fieldslayout[0][1][0].append(HTML(
+            u'<div class="controls">{}{}</div>'.format(
+                _(u'Insert service:'),
+                u''.join([u'<a class="servicetype" data-url="{url}" data-name={name}"><img src="{url}"></a>'.format(
+                    url=t.pictogram.url, name=t.name)
+                    for t in ServiceType.objects.all()])))
+        )
         super(TrekForm, self).__init__(*args, **kwargs)
 
         self.fields['web_links'].widget = SelectMultipleWithPop(choices=self.fields['web_links'].choices,
@@ -176,6 +189,10 @@ class TrekForm(BaseTrekForm):
 
             # init hidden field with children order
             self.fields['hidden_ordered_children'].initial = ",".join(str(x) for x in queryset_children.values_list('child__id', flat=True))
+        if self.instance.pk:
+            self.fields['pois_excluded'].queryset = self.instance.pois.all()
+        else:
+            self.fieldslayout[0][1][1].remove('pois_excluded')
 
     def clean_children_trek(self):
         """
@@ -243,7 +260,7 @@ class TrekForm(BaseTrekForm):
              'disabled_infrastructure', 'advised_parking', 'parking_location',
              'public_transport', 'advice', 'themes', 'networks', 'practice',
              'accessibilities', 'web_links', 'information_desks', 'source', 'portal',
-             'children_trek', 'eid', 'eid2', 'hidden_ordered_children', 'structure']
+             'children_trek', 'eid', 'eid2', 'pois_excluded', 'hidden_ordered_children']
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -251,7 +268,9 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
     class BasePOIForm(TopologyForm):
         def __init__(self, *args, **kwargs):
             super(BasePOIForm, self).__init__(*args, **kwargs)
+            modifiable = self.fields['topology'].widget.modifiable
             self.fields['topology'].widget = PointTopologyWidget()
+            self.fields['topology'].widget.modifiable = modifiable
 
         class Meta(TopologyForm.Meta):
             model = POI
@@ -263,7 +282,9 @@ else:
 
         def __init__(self, *args, **kwargs):
             super(BasePOIForm, self).__init__(*args, **kwargs)
+            modifiable = self.fields['geom'].widget.modifiable
             self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'POINT'})
+            self.fields['geom'].widget.modifiable = modifiable
 
         class Meta(CommonForm.Meta):
             model = POI
@@ -283,7 +304,7 @@ class POIForm(BasePOIForm):
     ]
 
     class Meta(BasePOIForm.Meta):
-        fields = BasePOIForm.Meta.fields + ['name', 'description', 'eid', 'type', 'published', 'review', 'structure']
+        fields = BasePOIForm.Meta.fields + ['name', 'description', 'eid', 'type', 'published', 'review']
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -291,7 +312,9 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
     class BaseServiceForm(TopologyForm):
         def __init__(self, *args, **kwargs):
             super(BaseServiceForm, self).__init__(*args, **kwargs)
+            modifiable = self.fields['topology'].widget.modifiable
             self.fields['topology'].widget = PointTopologyWidget()
+            self.fields['topology'].widget.modifiable = modifiable
 
         class Meta(TopologyForm.Meta):
             model = Service
@@ -303,7 +326,9 @@ else:
 
         def __init__(self, *args, **kwargs):
             super(BaseServiceForm, self).__init__(*args, **kwargs)
+            modifiable = self.fields['geom'].widget.modifiable
             self.fields['geom'].widget = LeafletWidget(attrs={'geom_type': 'POINT'})
+            self.fields['geom'].widget.modifiable = modifiable
 
         class Meta(CommonForm.Meta):
             model = Service
@@ -320,7 +345,7 @@ class ServiceForm(BaseServiceForm):
     ]
 
     class Meta(BaseServiceForm.Meta):
-        fields = BaseServiceForm.Meta.fields + ['type', 'structure']
+        fields = BaseServiceForm.Meta.fields + ['type']
 
 
 class WebLinkCreateFormPopup(forms.ModelForm):

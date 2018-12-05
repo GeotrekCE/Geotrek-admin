@@ -1,6 +1,5 @@
 import os
 import sys
-import djcelery
 
 from django.contrib.messages import constants as messages
 
@@ -46,17 +45,18 @@ DATABASES = {
 #
 DATABASE_SCHEMAS = {
     'default': 'geotrek',
-    'gis': 'public',
-    'auth': 'django',
+    'django.contrib.gis': 'public',
+    'django.contrib.auth': 'django',
     'django': 'django',
+    'django_celery_results': 'django',
     'easy_thumbnails': 'django',
-    'feedback': 'gestion',
-    'infrastructure': 'gestion',
-    'maintenance': 'gestion',
-    'tourism': 'tourisme',
-    'trekking': 'rando',
-    'zoning': 'zonage',
-    'land': 'foncier',
+    'geotrek.feedback': 'gestion',
+    'geotrek.infrastructure': 'gestion',
+    'geotrek.maintenance': 'gestion',
+    'geotrek.tourism': 'tourisme',
+    'geotrek.trekking': 'rando',
+    'geotrek.zoning': 'zonage',
+    'geotrek.land': 'foncier',
 }
 
 DATABASES['default']['OPTIONS'] = {
@@ -166,7 +166,7 @@ STATICFILES_FINDERS = (
 
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
-COMPRESSOR_ENABLED = False
+COMPRESS_ENABLED = False
 COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
 # Make this unique, and don't share it with anybody.
@@ -182,12 +182,12 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.contrib.auth.context_processors.auth',
-                'django.core.context_processors.debug',
-                'django.core.context_processors.i18n',
-                'django.core.context_processors.media',
-                'django.core.context_processors.static',
-                'django.core.context_processors.tz',
-                'django.core.context_processors.request',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
                 'geotrek.context_processors.forced_layers',
                 'mapentity.context_processors.settings',
@@ -195,7 +195,6 @@ TEMPLATES = [
             'loaders': [
                 'django.template.loaders.filesystem.Loader',
                 'django.template.loaders.app_directories.Loader',
-                'geotrek.templateloaders.Loader',
                 # 'django.template.loaders.eggs.Loader',
             ],
             'debug': True,
@@ -252,7 +251,6 @@ PROJECT_APPS += (
 
 
 PROJECT_APPS += (
-    'floppyforms',
     'crispy_forms',
     'compressor',
     'djgeojson',
@@ -267,7 +265,7 @@ PROJECT_APPS += (
     'rest_framework_gis',
     'rest_framework_swagger',
     'embed_video',
-    'geotrek.appconfig.CeleryGeotrekConfig',  # djcelery
+    'geotrek.appconfig.CeleryGeotrekConfig',  # django_celery_results
 )
 
 
@@ -404,7 +402,7 @@ MAPENTITY_CONFIG = {
     'MAP_BACKGROUND_FOGGED': True,
     'GEOJSON_LAYERS_CACHE_BACKEND': 'fat',
     'SENDFILE_HTTP_HEADER': 'X-Accel-Redirect',
-    'DRF_API_URL_PREFIX': r'^api/(?P<lang>\w+)/',
+    'DRF_API_URL_PREFIX': r'^api/(?P<lang>[a-z]{2})/',
     'MAPENTITY_WEASYPRINT': False,
 }
 
@@ -473,6 +471,7 @@ COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '
 
 MAP_STYLES = {
     'path': {'weight': 2, 'opacity': 1.0, 'color': '#FF4800'},
+    'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
 
     'city': {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
     'district': {'weight': 6, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
@@ -519,6 +518,13 @@ COMPLETENESS_FIELDS = {
     'trek': ['departure', 'duration', 'difficulty', 'description_teaser']
 }
 
+EMBED_VIDEO_BACKENDS = (
+    'embed_video.backends.YoutubeBackend',
+    'geotrek.common.embed.backends.DailymotionBackend',
+    'embed_video.backends.VimeoBackend',
+    'embed_video.backends.SoundCloudBackend',
+)
+
 TRAIL_MODEL_ENABLED = True
 TREKKING_TOPOLOGY_ENABLED = True
 FLATPAGES_ENABLED = True
@@ -535,8 +541,16 @@ TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT = 2
 
 TREK_ICON_SIZE_POI = 18
 TREK_ICON_SIZE_SERVICE = 18
+TREK_ICON_SIZE_SIGNAGE = 18
+TREK_ICON_SIZE_INFRASTRUCTURE = 18
 TREK_ICON_SIZE_PARKING = 18
 TREK_ICON_SIZE_INFORMATION_DESK = 18
+
+SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT = True
+SHOW_POIS_ON_MAP_SCREENSHOT = True
+SHOW_SERVICES_ON_MAP_SCREENSHOT = True
+SHOW_SIGNAGES_ON_MAP_SCREENSHOT = True
+SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT = True
 
 # Static offsets in projection units
 TOPOLOGY_STATIC_OFFSETS = {'land': -5,
@@ -556,10 +570,12 @@ MESSAGE_TAGS = {
 
 CACHE_TIMEOUT_LAND_LAYERS = 60 * 60 * 24
 
-TREK_CATEGORY_ORDER = None
-TOURISTIC_EVENT_CATEGORY_ORDER = None
+TREK_CATEGORY_ORDER = 1
+ITINERANCY_CATEGORY_ORDER = 2
+TOURISTIC_EVENT_CATEGORY_ORDER = 99
 SPLIT_TREKS_CATEGORIES_BY_PRACTICE = False
 SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False
+SPLIT_TREKS_CATEGORIES_BY_ITINERANCY = False
 HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = False
 ZIP_TOURISTIC_CONTENTS_AS_POI = False
 
@@ -576,18 +592,6 @@ MOBILE_TILES_RADIUS_SMALL = 0.005  # ~500 m
 MOBILE_TILES_GLOBAL_ZOOMS = range(13)
 MOBILE_TILES_LOW_ZOOMS = range(13, 15)
 MOBILE_TILES_HIGH_ZOOMS = range(15, 17)
-
-djcelery.setup_loader()
-
-CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
-BROKER_URL = 'redis://127.0.0.1:6379/0'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TASK_RESULT_EXPIRES = 5
-CELERYD_TASK_TIME_LIMIT = 10800
-CELERYD_TASK_SOFT_TIME_LIMIT = 21600
-TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'
 
 TINYMCE_DEFAULT_CONFIG = {
     'convert_urls': False,
@@ -606,3 +610,10 @@ SWAGGER_SETTINGS = {
     'APIS_SORTER': 'alpha',
     'JSON_EDITOR': True
 }
+
+SENSITIVITY_DEFAULT_RADIUS = 100  # meters
+SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters (always used)
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',  # Used for extern authent
+]

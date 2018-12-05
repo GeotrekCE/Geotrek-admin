@@ -295,6 +295,26 @@ header .url .geo {
   color: orange;
 }
 
+.block h2 {
+  font-size: 1em;
+  font-weight: bold;
+  color: orange;
+}
+
+.block h3 {
+  font-size: 1em;
+  margin-top: .5em;
+  font-weight: bold;
+}
+
+.block img {
+  float: left;
+  width: 2cm;
+  max-height: 2cm;
+  margin-right: .5cm;
+  margin-bottom: .5cm;
+}
+
 .information-desks h2 {
   font-size: 1em;
   font-weight: bold;

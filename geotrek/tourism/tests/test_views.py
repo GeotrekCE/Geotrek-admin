@@ -28,6 +28,11 @@ from geotrek.tourism.factories import (InformationDeskFactory,
 from embed_video.backends import detect_backend
 
 
+PNG_BLACK_PIXEL = '89504e470d0a1a0a0000000d494844520000000100000001080400000'\
+    '0b51c0c020000000b4944415478da6364f80f00010501012718e3660000000049454e44'\
+    'ae426082'.decode('hex')
+
+
 class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
     def setUp(self):
         profile = UserProfileFactory.create(user__username='homer',
@@ -133,11 +138,11 @@ class BasicJSONAPITest(TranslationResetMixin):
 
         self.content = self.factory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
 
-        self.picture = common_factories.AttachmentFactory(obj=self.content,
+        self.picture = common_factories.AttachmentFactory(content_object=self.content,
                                                           attachment_file=get_dummy_uploaded_image())
-        self.document = common_factories.AttachmentFactory(obj=self.content,
+        self.document = common_factories.AttachmentFactory(content_object=self.content,
                                                            attachment_file=get_dummy_uploaded_document())
-        self.video = common_factories.AttachmentFactory(obj=self.content, attachment_file='',
+        self.video = common_factories.AttachmentFactory(content_object=self.content, attachment_file='',
                                                         attachment_video='http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque')
         self.video_detected = detect_backend(self.video.attachment_video)
 
@@ -181,6 +186,22 @@ class BasicJSONAPITest(TranslationResetMixin):
         self.assertDictEqual(self.result['videos'][0],
                              {u'backend': 'Youtube',
                               u'url': 'http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque',
+                              u'title': self.video.title,
+                              u'legend': self.video.legend,
+                              u'author': self.video.author,
+                              u'code': self.video_detected.code})
+        self.video = common_factories.AttachmentFactory(
+            content_object=self.content, attachment_file='',
+            attachment_video='http://www.dailymotion.com/video/x6e0q24')
+        self.video_detected = detect_backend(self.video.attachment_video)
+        self.pk = self.content.pk
+        url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.model_name, pk=self.pk)
+        self.response = self.client.get(url)
+        self.result = json.loads(self.response.content)
+
+        self.assertDictEqual(self.result['videos'][0],
+                             {u'backend': 'Dailymotion',
+                              u'url': 'http://www.dailymotion.com/embed/video/x6e0q24',
                               u'title': self.video.title,
                               u'legend': self.video.legend,
                               u'author': self.video.author,
@@ -242,8 +263,8 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
     def _build_object(self):
         super(TouristicContentAPITest, self)._build_object()
         self.category = self.content.category
-        self.type1 = TouristicContentTypeFactory(category=self.category)
-        self.type2 = TouristicContentTypeFactory(category=self.category, pictogram=None)
+        self.type1 = TouristicContentTypeFactory(category=self.category, in_list=1)
+        self.type2 = TouristicContentTypeFactory(category=self.category, in_list=1, pictogram=None)
         self.content.type1.add(self.type1)
         self.content.type2.add(self.type2)
 
@@ -314,7 +335,7 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
     def test_category(self):
         self.assertDictEqual(self.result['category'],
                              {u"id": 'E',
-                              u"order": None,
+                              u"order": 99,
                               u"label": u"Touristic events",
                               u"slug": u"touristic-event",
                               u"type1_label": u"Type",
@@ -354,12 +375,13 @@ class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
 
 
 class TouristicContentCustomViewTests(TrekkingManagerTest):
+
     @mock.patch('mapentity.helpers.requests.get')
     def test_public_document_pdf(self, mocked):
         content = TouristicContentFactory.create(published=True)
         url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
         mocked.return_value.status_code = 200
-        mocked.return_value.content = 'fake'
+        mocked.return_value.content = PNG_BLACK_PIXEL
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
@@ -376,7 +398,7 @@ class TouristicEventCustomViewTests(TrekkingManagerTest):
         content = TouristicEventFactory.create(published=True)
         url = '/api/en/touristicevents/{pk}/slug.pdf'.format(pk=content.pk)
         mocked.return_value.status_code = 200
-        mocked.return_value.content = 'fake'
+        mocked.return_value.content = PNG_BLACK_PIXEL
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 

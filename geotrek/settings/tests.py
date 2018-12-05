@@ -8,6 +8,8 @@ TEST = True
 
 TEST_EXCLUDE = ('django',)
 
+INSTALLED_APPS += ('geotrek.sensitivity', )
+
 LOGGING['handlers']['console']['level'] = 'CRITICAL'
 
 LANGUAGE_CODE = 'en'
@@ -22,13 +24,17 @@ MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = (
 
 MAILALERTSUBJECT = "Acknowledgment of feedback email"
 
+ALLOWED_HOSTS = [
+    'localhost',
+]
+
 
 class DisableMigrations(object):
     def __contains__(self, item):
         return True
 
     def __getitem__(self, item):
-        return 'notmigrations'
+        return None
 
 
 MIGRATION_MODULES = DisableMigrations()
