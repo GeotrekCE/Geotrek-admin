@@ -14,7 +14,6 @@ def add_permissions(apps, schema_editor):
     type_permissions = ['add', 'change', 'change_geom', 'delete', 'export', 'read']
     content_type_signage = ContentTypeModel.objects.get(model='signage')
     content_type_infrastructure = ContentTypeModel.objects.get(model='infrastructure')
-    content_type_baseinfrastructure = ContentTypeModel.objects.get(model='baseinfrastructure')
     for user in UserModel.objects.all():
         for type_perm in type_permissions:
             if user.user_permissions.filter(codename='%s_infrastructure' % type_perm).exists():
@@ -32,7 +31,7 @@ def add_permissions(apps, schema_editor):
                 group.permissions.add(PermissionModel.objects.get(
                     codename='%s_signage' % type_perm, content_type=content_type_signage))
 
-    PermissionModel.objects.filter(content_type=content_type_baseinfrastructure).delete()
+    PermissionModel.objects.filter(content_type__model='baseinfrastructure').delete()
 
 
 class Migration(migrations.Migration):
