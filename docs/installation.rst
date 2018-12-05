@@ -224,3 +224,14 @@ Create ``/home/sentiers/.buildout/default.cfg`` with ::
 
     [buildout]
     download-cache = /home/sentiers/downloads
+
+Secure your server
+------------------
+
+* Use fail2ban:
+
+::
+
+    sudo apt-get install fail2ban
+
+* Documentation : https://www.fail2ban.org/wiki/index.php/MANUAL_0_8
