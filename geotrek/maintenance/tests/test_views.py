@@ -119,8 +119,10 @@ class InterventionViewsTest(CommonTest):
         signage = u"%s" % signa
 
         intervention = InterventionFactory.create()
+        self.assertIsNone(intervention.signage)
         intervention.set_infrastructure(signa)
         intervention.save()
+        self.assertIsNotNone(intervention.signage)
         response = self.client.get(intervention.get_update_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, signage)
@@ -279,8 +281,12 @@ class InterventionViewsTest(CommonTest):
         projects = form.fields['project'].queryset.all()
         self.assertItemsEqual(projects, [p1])
 
-    def test_no_html_in_csv(self):
+    def test_no_html_in_csv_infrastructure(self):
         InfrastructureInterventionFactory.create()
+        super(InterventionViewsTest, self).test_no_html_in_csv()
+
+    def test_no_html_in_csv_signage(self):
+        SignageInterventionFactory.create()
         super(InterventionViewsTest, self).test_no_html_in_csv()
 
     def test_structurerelated_not_loggedin(self):
