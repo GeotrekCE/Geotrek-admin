@@ -47,8 +47,6 @@ class CommandTests(TestCase):
         output = StringIO()
         call_command('unset_structure', '--all', verbosity=2, stdout=output)
         response = output.getvalue()
-        self.assertIn("Handle related model interventionjob", response)
-        self.assertIn("Delete Comfort 0 (PNX), Comfort 1 (PNX), Comfort 2 (PNX)", response)
         self.assertIn("Create hello", response)
         self.assertEqual(InfrastructureType.objects.count(), 1)
         self.assertEqual(Usage.objects.count(), 1)
