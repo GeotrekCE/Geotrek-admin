@@ -99,6 +99,7 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TransactionTestCase):
         self.assertEqual(user.last_name, 'Deen')
         self.assertEqual(user.profile.structure, Structure.objects.get(name='Walydia'))
         self.assertEqual(user.profile.language, 'ar')
+        self.assertEqual(str(user.profile), 'Profile for aladeen')
 
     def test_usergroups(self):
         query_db("INSERT INTO %s (username, password) VALUES ('a', '%s')" % (settings.AUTHENT_TABLENAME, password2md5('a')))
