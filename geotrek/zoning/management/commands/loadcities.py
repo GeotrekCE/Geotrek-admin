@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.gis.gdal import DataSource, GDALException, OGRIndexError
-from geotrek.zoning.models import *
+from geotrek.zoning.models import City
 from django.contrib.gis.geos.polygon import Polygon
 from django.contrib.gis.geos.collections import MultiPolygon
 from django.conf import settings
@@ -11,7 +11,7 @@ class Command(BaseCommand):
     help = 'Load Cities from a file within the spatial extent\n'
 
     def add_arguments(self, parser):
-        parser.add_argument('cities')
+        parser.add_argument('cities', help="File's path of the cities")
         parser.add_argument('--code-attribute', '-c', action='store', dest='code', default='code',
                             help="Name of the code's attribute inside the file")
         parser.add_argument('--name-attribute', '-n', action='store', dest='name', default='nom',
