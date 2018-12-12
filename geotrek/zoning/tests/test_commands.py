@@ -22,7 +22,7 @@ class CitiesCommandTest(TestCase):
         self.assertEqual(u'Error: too few arguments', e.exception.message)
 
     @override_settings(SPATIAL_EXTENT=(0, 10.0, 1, 11))
-    def test_load_cities_without_spatial_extent(self):
+    def test_load_cities_out_of_spatial_extent(self):
         call_command('loadcities', self.filename, name='NOM', code='Insee', srid=2154, verbosity=0)
         self.assertEquals(City.objects.count(), 0)
 
