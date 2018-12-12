@@ -16,6 +16,12 @@ class CitiesCommandTest(TestCase):
     """
     Get cities
     """
+    def test_load_cities_without_file(self):
+        with self.assertRaises(CommandError) as e:
+            call_command('loadcities')
+        self.assertEqual(u'Error: too few arguments', e.exception.message)
+
+    @override_settings(SPATIAL_EXTENT=(0, 10.0, 1, 11))
     def test_load_cities_without_spatial_extent(self):
         call_command('loadcities', self.filename, name='NOM', code='Insee', srid=2154, verbosity=0)
         self.assertEquals(City.objects.count(), 0)
@@ -37,7 +43,7 @@ class CitiesCommandTest(TestCase):
             call_command('loadcities', self.filename, name='NOM', code='Insee', verbosity=0)
         self.assertEqual('SRID is not well configurate, change/add option srid', e.exception.message)
 
-    def test_load_cities_without_file(self):
+    def test_load_cities_with_bad_file(self):
         with self.assertRaises(GDALException) as e:
             call_command('loadcities', 'toto.geojson', name='NOM', code='Insee', srid=2154, verbosity=0)
         self.assertEqual(u'Could not open the datasource at "toto.geojson"', e.exception.message)
