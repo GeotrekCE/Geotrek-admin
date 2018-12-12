@@ -3,7 +3,11 @@
   "features": [
     {
       "type": "Feature",
+<<<<<<< 92cb7f79946c29c6444b1c885fab9daba62d570f
       "properties": {"NOM": "coucou", "Insee": "0"},
+=======
+      "properties": {"NOM": 'coucou', 'Insee': '0'},
+>>>>>>> Add test loadcities
       "geometry": {
         "type": "Polygon",
         "coordinates": [[[0, -2], [1, -2], [1, 0], [0, 0], [0, -2]]]
@@ -11,7 +15,11 @@
     },
     {
       "type": "Feature",
+<<<<<<< 92cb7f79946c29c6444b1c885fab9daba62d570f
       "properties": {"NOM": "lulu", "Insee": "1"},
+=======
+      "properties": {"NOM": 'lulu', 'Insee': '1'},
+>>>>>>> Add test loadcities
       "geometry": {
         "type": "Polygon",
         "coordinates": [[[0, 1], [0, 3], [-2, 3], [-2, 1], [0, 1]]]
