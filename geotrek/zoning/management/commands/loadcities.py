@@ -51,8 +51,9 @@ class Command(BaseCommand):
                     if do_intersect:
                         if bbox.intersects(geom):
                             city, created = City.objects.update_or_create(code=feat.get(code),
-                                                                          name=feat.get(name).encode(encoding),
-                                                                          geom=geom)
+                                                                          defaults={
+                                                                              'name': feat.get(name).encode(encoding),
+                                                                              'geom': geom})
                             if verbosity > 1:
                                 if created:
                                     self.stdout.write("Created %s" % feat.get(name))
