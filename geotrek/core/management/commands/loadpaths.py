@@ -1,8 +1,9 @@
-from django.contrib.gis.gdal import DataSource, GDALException, OGRIndexError
+from django.contrib.gis.gdal import DataSource, GDALException
 from geotrek.core.models import Path
-from geotrek.authent.models import *
-from django.contrib.gis.geos.collections import MultiLineString, Polygon, LineString
+from geotrek.authent.models import Structure
+from django.contrib.gis.geos.collections import Polygon, LineString
 from django.core.management.base import BaseCommand, CommandError
+from django.conf import settings
 
 
 class Command(BaseCommand):
