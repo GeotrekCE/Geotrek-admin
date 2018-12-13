@@ -106,7 +106,7 @@ class LoadPathsCommandTest(TestCase):
         output = StringIO()
         call_command('loadpaths', self.filename, '-i', srid=4326, verbosity=2,
                      stdout=output)
-        output =output.getvalue()
+        output = output.getvalue()
         self.assertIn('All paths in DataSource will be linked to the structure : %s' % self.structure.name, output)
         self.assertIn('Create path : lulu\nCreate path : lulu 2', output)
         self.assertEquals(Path.objects.count(), 2)
