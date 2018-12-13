@@ -2,10 +2,13 @@ from StringIO import StringIO
 
 from django.contrib.gis.geos import LineString
 from django.core.management import call_command
-from django.test import TestCase
+from django.core.management.base import CommandError
+from django.test import TestCase, override_settings
 
+from geotrek.authent.models import Structure
 from geotrek.core.models import Path
 from geotrek.trekking.factories import POIFactory
+import os
 
 
 class RemoveDuplicatePathTest(TestCase):
@@ -61,3 +64,70 @@ class RemoveDuplicatePathTest(TestCase):
                       output.getvalue())
         self.assertIn("duplicate paths have been deleted",
                       output.getvalue())
+
+
+class LoadPathsCommandTest(TestCase):
+    def setUp(self):
+        self.filename = os.path.join(os.path.dirname(__file__), 'data', 'paths.geojson')
+        self.structure = Structure.objects.create(name='huh')
+
+    def test_load_paths_without_file(self):
+        with self.assertRaises(CommandError) as e:
+            call_command('loadpaths')
+        self.assertEqual(u'Error: too few arguments', e.exception.message)
+
+    @override_settings(SRID=4326, SPATIAL_EXTENT=(5, 10.0, 5, 11))
+    def test_load_paths_out_of_spatial_extent(self):
+        call_command('loadpaths', self.filename, srid=4326, verbosity=0)
+        self.assertEquals(Path.objects.count(), 0)
+
+    @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, -1, 1, 5))
+    def test_load_paths_within_spatial_extent(self):
+        call_command('loadpaths', self.filename, srid=4326, verbosity=0)
+        self.assertEquals(Path.objects.count(), 1)
+        value = Path.objects.first()
+        self.assertEqual(value.name, 'lulu')
+        self.assertEqual(value.structure, self.structure)
+
+    @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, -1, 1, 5))
+    def test_load_paths_intersect_spatial_extent(self):
+        output = StringIO()
+        call_command('loadpaths', self.filename, '-i', srid=4326, verbosity=2, stdout=output)
+        output = output.getvalue()
+        self.assertIn('All paths in DataSource will be linked to the structure : %s' % self.structure.name, output)
+        self.assertIn('Create path : lulu', output)
+        self.assertEquals(Path.objects.count(), 1)
+        value = Path.objects.first()
+        self.assertEqual(value.name, 'lulu')
+        self.assertEqual(value.structure, self.structure)
+
+    @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, 0, 4, 2))
+    def test_load_paths_intersect_spatial_extent_2(self):
+        output = StringIO()
+        call_command('loadpaths', self.filename, '-i', srid=4326, verbosity=2,
+                     stdout=output)
+        output =output.getvalue()
+        self.assertIn('All paths in DataSource will be linked to the structure : %s' % self.structure.name, output)
+        self.assertIn('Create path : lulu\nCreate path : lulu 2', output)
+        self.assertEquals(Path.objects.count(), 2)
+        value = Path.objects.first()
+        self.assertEqual(value.name, 'lulu')
+        self.assertEqual(value.structure, self.structure)
+
+    @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, 0, 4, 2))
+    def test_load_paths_not_within_spatial_extent(self):
+        output = StringIO()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'point.geojson')
+        call_command('loadpaths', filename, structure=self.structure.name, srid=4326, verbosity=2, stdout=output)
+        self.assertIn("Feature FID 0 in Layer<OGRGeoJSON>'s geometry is not a Linestring", output.getvalue())
+
+    def test_load_cities_fail_bad_srid(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'bad_srid.geojson')
+        with self.assertRaises(CommandError) as e:
+            call_command('loadpaths', filename, name='NOM', code='Insee', verbosity=0)
+        self.assertEqual('SRID is not well configurate, change/add option srid', e.exception.message)
+
+    def test_load_cities_with_bad_structure(self):
+        with self.assertRaises(CommandError) as e:
+            call_command('loadpaths', self.filename, structure='gr', name='NOM', code='Insee', verbosity=0)
+        self.assertIn("Structure does not match with instance's structures", e.exception.message)
