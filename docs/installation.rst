@@ -17,9 +17,117 @@ A first estimation on system resources is :
 * 4 Go RAM
 * 20 Go disk space
 
+Docker Installation
+===================
 
-Installation
-------------
+Install Docker according to your system (See `documentation <https://docs.docker.com/>`__).
+
+Go to ``install`` directory.
+
+* Copy .env.dist to .env and fill it with data. If you share postgresql server, you must use docker interface address.
+
+::
+
+    GEOTREK_VERSION=geotrek_version
+    POSTGRES_USER=your_database_user
+    POSTGRES_DB=your_database
+    POSTGRES_PASSWORD=your_user_password
+    DOMAIN_NAME=your.final.geotrek.domain
+    …
+    SECRET_KEY=secret-and-unique-secret-and-unique
+    …
+    DJANGO_SETTINGS_MODULE=geotrek.settings.prod
+    # CONVERSION_HOST=convertit_web
+    # CAPTURE_HOST=screamshotter_web
+
+* Init volume config
+
+::
+
+    docker-compose run web bash exit
+
+* Edit custom.py before initial.sh
+
+::
+
+    $ cd ./geotrek/settings
+    $ cp custom.py.dist custom.py
+
+
+* Fix at least your :
+    - SRID
+    - SPATIAL_EXTENT
+    - DEFAULT_STRUCTURE_NAME
+    - MODELTRANSLATION_LANGUAGES
+    - SYNC_RANDO_OPTIONS
+
+* Test initialize database and basic data
+
+::
+
+    docker-compose run web initial.sh
+
+Install Service
+---------------
+
+1. Edit your docker-compose.yml, change ports ::
+
+      web:
+         image: geotrekce/admin:${GEOTREK_VERSION}
+         ports:
+           - "127.0.0.1:<port_not_use_1>:8000"
+         env_file:
+           - .env
+         volumes:
+          - ./var:/app/src/var
+         depends_on:
+           - celery
+         command: gunicorn geotrek.wsgi:application
+
+      api:
+         image: geotrekce/admin:${GEOTREK_VERSION}
+         ports:
+           - "127.0.0.1:<port_not_use_2>:8000"
+         env_file:
+           - .env
+         volumes:
+          - ./var:/app/src/var
+         depends_on:
+           - web
+           - celery
+         command: gunicorn geotrek.wsgi:application
+
+2. Create a symbolic link between your nginx and ``/etc/nginx/sites-enable/``::
+
+    bash  ln -s nginx.conf /etc/nginx/sites-enable/<your_instance_name>.conf
+
+3. Rename your service::
+
+    bash  mv your_instance_name.service <your_instance_name>.service
+
+4. Fix Working Directory in .service::
+
+    WorkingDirectory=/srv/geotrek/<your_instance_name>
+
+5. Copy your service in /etc/systemd/system::
+
+    bash  cp <your_instance_name>.service /etc/systemd/system/<your_instance_name>.service
+
+6. Enable the system::
+
+    bash  systemctl enable <your_instance_name>.service
+
+Run or Stop the service
+-----------------------
+
+.. code:: bash
+
+   systemctl start your_instance_name
+   systemctl stop your_instance_name
+
+
+Manual Installation
+===================
 
 Once the OS is installed (basic installation, with OpenSSH server), log in with your linux user (not root). 
 You will also need unzip and wget (``sudo apt-get install unzip wget``).
