@@ -62,7 +62,7 @@ class InfrastructureType(StructureOrNoneRelated, OptionalPictogramMixin):
         pictogram_url = super(InfrastructureType, self).get_pictogram_url()
         if pictogram_url:
             return pictogram_url
-        elif self.type == 'SIGNAGE':
+        elif self.type == 'S':
             return os.path.join(settings.STATIC_URL, 'infrastructure/picto-signage.png')
         else:
             return os.path.join(settings.STATIC_URL, 'infrastructure/picto-infrastructure.png')
