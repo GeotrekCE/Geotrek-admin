@@ -59,7 +59,7 @@ class InfrastructureType(StructureOrNoneRelated, OptionalPictogramMixin):
         return self.label
 
     def get_pictogram_url(self):
-        pictogram = super(self, InfrastructureType).pictogram
+        pictogram = super(InfrastructureType, self).pictogram
         if pictogram:
             return pictogram
         elif self.type == 'SIGNAGE':
