@@ -35,19 +35,20 @@ class Command(BaseCommand):
         bbox.srid = settings.SRID
         ds = DataSource(file)
         count_error = 0
-        if do_intersect:
-            for layer in ds:
-                for feat in layer:
-                    try:
-                        geom = feat.geom.geos
-                        if not isinstance(geom, Polygon) and not isinstance(geom, MultiPolygon):
-                            if verbosity > 1:
-                                self.stdout.write("%s's geometry is not a polygon" % feat.get(name))
-                            break
-                        elif isinstance(geom, Polygon):
-                            geom = MultiPolygon(geom)
-                        self.check_srid(srid, geom)
-                        geom.dim = 2
+
+        for layer in ds:
+            for feat in layer:
+                try:
+                    geom = feat.geom.geos
+                    if not isinstance(geom, Polygon) and not isinstance(geom, MultiPolygon):
+                        if verbosity > 1:
+                            self.stdout.write("%s's geometry is not a polygon" % feat.get(name))
+                        break
+                    elif isinstance(geom, Polygon):
+                        geom = MultiPolygon(geom)
+                    self.check_srid(srid, geom)
+                    geom.dim = 2
+                    if do_intersect:
                         if bbox.intersects(geom):
                             city, created = City.objects.update_or_create(code=feat.get(code),
                                                                           name=feat.get(name).encode(encoding),
@@ -57,29 +58,7 @@ class Command(BaseCommand):
                                     self.stdout.write("Created %s" % feat.get(name))
                                 elif verbosity > 1:
                                     self.stdout.write("Updated %s" % feat.get(name))
-                    except OGRIndexError:
-                        if count_error == 0:
-                            self.stdout.write(
-                                "Code's attribute or Name's attribute do not correspond with options\n"
-                                "Please, use --code and --name to fix it.\n"
-                                "Fields in your file are : %s" % ', '.join(feat.fields))
-                        count_error += 1
-                    except UnicodeEncodeError:
-                        self.stdout.write("Problem of encoding with %s" % feat.get(name))
-
-        else:
-            for layer in ds:
-                for feat in layer:
-                    try:
-                        geom = feat.geom.geos
-                        if not isinstance(geom, Polygon) and not isinstance(geom, MultiPolygon):
-                            if verbosity > 1:
-                                self.stdout.write("%s's geometry is not a polygon" % feat.get(name))
-                            break
-                        elif isinstance(geom, Polygon):
-                            geom = MultiPolygon(geom)
-                        self.check_srid(srid, geom)
-                        geom.dim = 2
+                    else:
                         if geom.within(bbox):
                             city, created = City.objects.update_or_create(code=feat.get(code),
                                                                           name=feat.get(name).encode(encoding),
@@ -89,14 +68,15 @@ class Command(BaseCommand):
                                     self.stdout.write("Created %s" % feat.get(name))
                                 elif verbosity > 1:
                                     self.stdout.write("Updated %s" % feat.get(name))
-                    except OGRIndexError:
-                        if count_error == 0:
-                            self.stdout.write("Code's attribute or Name's attribute do not correspond with options\n"
-                                              "Please, use --code and --name to fix it.\n"
-                                              "Fields in your file are : %s" % ', '.join(feat.fields))
-                        count_error += 1
-                    except UnicodeEncodeError:
-                        self.stdout.write("Problem of encoding with %s" % feat.get(name))
+                except OGRIndexError:
+                    if count_error == 0:
+                        self.stdout.write(
+                            "Code's attribute or Name's attribute do not correspond with options\n"
+                            "Please, use --code and --name to fix it.\n"
+                            "Fields in your file are : %s" % ', '.join(feat.fields))
+                    count_error += 1
+                except UnicodeEncodeError:
+                    self.stdout.write("Problem of encoding with %s" % feat.get(name))
 
     def check_srid(self, srid, geom):
         if not geom.srid:
