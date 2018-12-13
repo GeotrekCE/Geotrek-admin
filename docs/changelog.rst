@@ -7,7 +7,8 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Don't publish deleted infrastructures/signages
+- Add default pictogram to published infrastructures/signages
 
 
 2.22.2 (2018-12-10)

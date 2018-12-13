@@ -269,6 +269,11 @@ body.screamshot #altitudegraph {
     margin-top: -10px;
 }
 
+.infrastructure-marker-icon img, .signage-marker-icon img {
+    width: 40px;
+    height: 40px;
+}
+
 .leaflet-draw.id_parking_location .leaflet-draw-draw-marker {
     background-image: url(trekking/parking.png);
     background-position: 5px 5px, center;

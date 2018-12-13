@@ -138,7 +138,7 @@ class SignageViewSet(MapEntityViewSet):
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
-        return Signage.objects.filter(published=True).transform(settings.API_SRID, field_name='geom')
+        return Signage.objects.existing().filter(published=True).transform(settings.API_SRID, field_name='geom')
 
 
 class InfrastructureViewSet(MapEntityViewSet):
@@ -147,4 +147,4 @@ class InfrastructureViewSet(MapEntityViewSet):
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
-        return Infrastructure.objects.filter(published=True).transform(settings.API_SRID, field_name='geom')
+        return Infrastructure.objects.existing().filter(published=True).transform(settings.API_SRID, field_name='geom')

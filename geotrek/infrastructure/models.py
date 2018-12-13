@@ -1,6 +1,9 @@
+import os
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.db import models as gismodels
+from django.conf import settings
 
 from extended_choices import Choices
 from mapentity.models import MapEntityMixin
@@ -54,6 +57,15 @@ class InfrastructureType(StructureOrNoneRelated, OptionalPictogramMixin):
         if self.structure:
             return u"{} ({})".format(self.label, self.structure.name)
         return self.label
+
+    def get_pictogram_url(self):
+        pictogram = super(self, InfrastructureType).pictogram
+        if pictogram:
+            return pictogram
+        elif self.type == 'SIGNAGE':
+            return os.path.join(settings.STATIC_URL, 'infrastructure/picto-signage.png')
+        else:
+            return os.path.join(settings.STATIC_URL, 'infrastructure/picto-infrastructure.png')
 
 
 class InfrastructureCondition(StructureOrNoneRelated):
