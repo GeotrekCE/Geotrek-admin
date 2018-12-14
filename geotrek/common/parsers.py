@@ -122,12 +122,14 @@ class Parser(object):
             part, left = src.split('.', 1)
         else:
             part, left = src, ''
-        if part.isdigit():
-            return self.get_part(dst, left, val[int(part)])
-        elif part == '*':
-            return [self.get_part(dst, left, subval) for subval in val]
-        else:
-            return self.get_part(dst, left, val[part])
+        try:
+            value = int(part)
+            return self.get_part(dst, left, val[value])
+        except ValueError:
+            if part == '*':
+                return [self.get_part(dst, left, subval) for subval in val]
+            else:
+                return self.get_part(dst, left, val[part])
 
     def get_val(self, row, dst, src):
         if hasattr(src, '__iter__'):
@@ -394,7 +396,7 @@ class Parser(object):
                 try:
                     kwargs[dst] = field.rel.to.objects.get(**{natural_key: val})
                 except field.rel.to.DoesNotExist:
-                    raise GlobalImportError(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=field.rel.to._meta.verbose_name.title(), val=val))
+                    pass
             else:
                 kwargs[dst] = val
         for dst, val in self.m2m_constant_fields.iteritems():
@@ -407,7 +409,7 @@ class Parser(object):
             try:
                 kwargs[dst] = field.rel.to.objects.get(**filters)
             except field.rel.to.DoesNotExist:
-                raise GlobalImportError(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=field.rel.to._meta.verbose_name.title(), val=val))
+                pass
         return kwargs
 
     def start(self):
