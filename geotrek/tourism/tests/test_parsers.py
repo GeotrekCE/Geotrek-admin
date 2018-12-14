@@ -31,7 +31,7 @@ class ParserTests(TranslationResetMixin, TestCase):
     @mock.patch('requests.get')
     def test_create_content_apidae(self, mocked):
         def mocked_json():
-            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidae.json')
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeContent.json')
             with io.open(filename, 'r', encoding='utf8') as f:
                 return json.load(f)
         mocked.return_value.status_code = 200
