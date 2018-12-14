@@ -63,22 +63,13 @@ class Command(BaseCommand):
                         break
                     self.check_srid(srid, geom)
                     geom.dim = 2
-                    if do_intersect:
-                        if bbox.intersects(geom):
-                            path = Path.objects.create(name=feat.get(name),
-                                                       structure=structure,
-                                                       geom=geom,
-                                                       comments=comments)
-                            if verbosity > 1:
-                                self.stdout.write('Create path : {}'.format(path.name))
-                    else:
-                        if geom.within(bbox):
-                            path = Path.objects.create(name=feat.get(name),
-                                                       structure=structure,
-                                                       geom=geom,
-                                                       comments=comments)
-                            if verbosity > 1:
-                                self.stdout.write('Create path : {}'.format(path.name))
+                    if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
+                        path = Path.objects.create(name=feat.get(name),
+                                                   structure=structure,
+                                                   geom=geom,
+                                                   comments=comments)
+                        if verbosity > 1:
+                            self.stdout.write('Create path : {}'.format(path.name))
                 except UnicodeEncodeError:
                     self.stdout.write("Problem of encoding with %s" % feat.get(name))
 
