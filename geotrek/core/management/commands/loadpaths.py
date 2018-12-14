@@ -28,14 +28,10 @@ class Command(BaseCommand):
         encoding = options.get('encoding')
         filename = options.get('paths')
         structure = options.get('structure')
-        name = options.get('name')
-        if name:
-            name = name.encode(encoding)
+        name_column = options.get('name')
         srid = options.get('srid')
         do_intersect = options.get('intersect')
-        comments = options.get('comments')
-        if comments:
-            comments = comments.encode(encoding)
+        comments_column = options.get('comments')
 
         if structure or Structure.objects.count() > 1:
             try:
@@ -48,13 +44,15 @@ class Command(BaseCommand):
         if verbosity > 0:
             self.stdout.write("All paths in DataSource will be linked to the structure : %s" % structure)
 
-        ds = DataSource(filename)
+        ds = DataSource(filename, encoding=encoding)
 
         bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
         bbox.srid = settings.SRID
 
         for layer in ds:
             for feat in layer:
+                name = feat.get(name_column) if name_column in layer.fields else ''
+                comments = feat.get(comments_column) if comments_column in layer.fields else ''
                 try:
                     geom = feat.geom.geos
                     if not isinstance(geom, LineString):
@@ -64,14 +62,14 @@ class Command(BaseCommand):
                     self.check_srid(srid, geom)
                     geom.dim = 2
                     if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
-                        path = Path.objects.create(name=feat.get(name),
+                        path = Path.objects.create(name=name,
                                                    structure=structure,
                                                    geom=geom,
                                                    comments=comments)
                         if verbosity > 1:
                             self.stdout.write('Create path : {}'.format(path.name))
                 except UnicodeEncodeError:
-                    self.stdout.write("Problem of encoding with %s" % feat.get(name))
+                    self.stdout.write("Problem of encoding with %s" % name)
 
     def check_srid(self, srid, geom):
         if not geom.srid:
