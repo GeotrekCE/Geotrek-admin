@@ -24,13 +24,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         verbosity = options.get('verbosity')
         file = options.get('districts')
-        name = options.get('name')
+        name_column = options.get('name')
         encoding = options.get('encoding')
         srid = options.get('srid')
         do_intersect = options.get('intersect')
         bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
         bbox.srid = settings.SRID
-        ds = DataSource(file)
+        ds = DataSource(file, encoding=encoding)
         count_error = 0
 
         for layer in ds:
@@ -39,20 +39,20 @@ class Command(BaseCommand):
                     geom = feat.geom.geos
                     if not isinstance(geom, Polygon) and not isinstance(geom, MultiPolygon):
                         if verbosity > 1:
-                            self.stdout.write("%s's geometry is not a polygon" % feat.get(name))
+                            self.stdout.write("%s's geometry is not a polygon" % feat.get(name_column))
                         break
                     elif isinstance(geom, Polygon):
                         geom = MultiPolygon(geom)
                     self.check_srid(srid, geom)
                     geom.dim = 2
                     if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
-                        city, created = District.objects.update_or_create(name=feat.get(name).encode(encoding),
+                        city, created = District.objects.update_or_create(name=feat.get(name_column),
                                                                           defaults={'geom': geom})
                         if verbosity > 1:
                             if created:
-                                self.stdout.write("Created %s" % feat.get(name))
+                                self.stdout.write("Created %s" % feat.get(name_column))
                             elif verbosity > 1:
-                                self.stdout.write("Updated %s" % feat.get(name))
+                                self.stdout.write("Updated %s" % feat.get(name_column))
                 except OGRIndexError:
                     if count_error == 0:
                         self.stdout.write(
@@ -61,7 +61,7 @@ class Command(BaseCommand):
                             "Fields in your file are : %s" % ', '.join(feat.fields))
                     count_error += 1
                 except UnicodeEncodeError:
-                    self.stdout.write("Problem of encoding with %s" % feat.get(name))
+                    self.stdout.write("Problem of encoding with %s" % feat.get(name_column))
 
     def check_srid(self, srid, geom):
         if not geom.srid:

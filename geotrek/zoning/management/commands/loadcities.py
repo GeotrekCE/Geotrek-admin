@@ -26,14 +26,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         verbosity = options.get('verbosity')
         file = options.get('cities')
-        name = options.get('name')
-        code = options.get('code')
+        name_column = options.get('name')
+        code_column = options.get('code')
         encoding = options.get('encoding')
         srid = options.get('srid')
         do_intersect = options.get('intersect')
         bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
         bbox.srid = settings.SRID
-        ds = DataSource(file)
+        ds = DataSource(file, encoding=encoding)
         count_error = 0
 
         for layer in ds:
@@ -49,15 +49,15 @@ class Command(BaseCommand):
                     self.check_srid(srid, geom)
                     geom.dim = 2
                     if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
-                        city, created = City.objects.update_or_create(code=feat.get(code),
+                        city, created = City.objects.update_or_create(code=feat.get(code_column),
                                                                       defaults={
-                                                                          'name': feat.get(name).encode(encoding),
+                                                                          'name': feat.get(name_column),
                                                                           'geom': geom})
                         if verbosity > 1:
                             if created:
-                                self.stdout.write("Created %s" % feat.get(name))
+                                self.stdout.write("Created %s" % feat.get(name_column))
                             elif verbosity > 1:
-                                self.stdout.write("Updated %s" % feat.get(name))
+                                self.stdout.write("Updated %s" % feat.get(name_column))
                 except OGRIndexError:
                     if count_error == 0:
                         self.stdout.write(
