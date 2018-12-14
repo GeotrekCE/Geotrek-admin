@@ -11,8 +11,8 @@ from django.core.management import call_command
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.tourism.factories import TouristicContentCategoryFactory, TouristicContentTypeFactory
-from geotrek.tourism.models import TouristicContent
-from geotrek.tourism.parsers import TouristicContentApidaeParser, EspritParcParser
+from geotrek.tourism.models import TouristicContent, TouristicEvent
+from geotrek.tourism.parsers import TouristicContentApidaeParser, EspritParcParser, TouristicEventApidaeParser
 
 
 class EauViveParser(TouristicContentApidaeParser):
@@ -29,7 +29,7 @@ class EspritParc(EspritParcParser):
 
 class ParserTests(TranslationResetMixin, TestCase):
     @mock.patch('requests.get')
-    def test_create(self, mocked):
+    def test_create_content_apidae(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'apidae.json')
             with io.open(filename, 'r', encoding='utf8') as f:
@@ -64,6 +64,40 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertQuerysetEqual(content.type2.all(), [])
         self.assertEqual(Attachment.objects.count(), 3)
         self.assertEqual(Attachment.objects.first().content_object, content)
+
+    @mock.patch('requests.get')
+    def test_create_event_apidae(self, mocked):
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeEvent.json')
+            with io.open(filename, 'r', encoding='utf8') as f:
+                return json.load(f)
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        FileType.objects.create(type=u"Photographie")
+        call_command('import', 'geotrek.tourism.tests.test_parsers.TouristicEventApidaeParser', verbosity=0)
+        self.assertEqual(TouristicEvent.objects.count(), 1)
+        event = TouristicEvent.objects.get()
+        self.assertEqual(event.eid, u"323154")
+        self.assertEqual(event.name, u"Cols Réservés 2019 : Montée de Chabre (Laragne)")
+        self.assertEqual(event.description[:31], u"Le département des Hautes-Alpes")
+        self.assertEqual(event.description_teaser[:18], u"Une des ascensions")
+        self.assertEqual(event.contact[:21], u"Châteauneuf de Chabre")
+        self.assertEqual(event.email, u"LeGrandTim@mail.fr")
+        self.assertEqual(event.website, u"http://www.LeGrandTim.fr")
+        self.assertEqual(round(event.geom.x), 922920)
+        self.assertEqual(round(event.geom.y), 6357103)
+        self.assertEqual(event.practical_info[:38], u"<b>Ouverture:</b><br>Mardi 6 août 2019")
+        self.assertIn(u"><br><b>Services:</b><br>Le plus grand des services, Un autre grand service<br>",
+                      event.practical_info)
+        self.assertTrue(event.published)
+        self.assertEqual(event.organizer, u'Toto')
+        self.assertEqual(str(event.meeting_time), '09:00:00')
+        self.assertEqual(event.type.type, 'Sports')
+        self.assertQuerysetEqual(
+            event.themes.all(),
+            ['<Theme: Cyclisme>', '<Theme: Sports cyclistes>']
+        )
+        self.assertEqual(Attachment.objects.count(), 3)
 
     @mock.patch('requests.get')
     def test_create_esprit(self, mocked):
