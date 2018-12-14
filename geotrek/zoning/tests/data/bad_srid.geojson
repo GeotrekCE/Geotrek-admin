@@ -1,0 +1,13 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {"NOM": "coucou", "Insee": "0"},
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[200000, -2], [1, -2], [1, 0], [0, 0], [200000, -2]]]
+      }
+    }
+  ]
+}
