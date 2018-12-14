@@ -42,7 +42,7 @@ class Command(BaseCommand):
                     geom = feat.geom.geos
                     if not isinstance(geom, Polygon) and not isinstance(geom, MultiPolygon):
                         if verbosity > 1:
-                            self.stdout.write("%s's geometry is not a polygon" % feat.get(name))
+                            self.stdout.write("%s's geometry is not a polygon" % feat.get(name_column))
                         break
                     elif isinstance(geom, Polygon):
                         geom = MultiPolygon(geom)
@@ -66,7 +66,7 @@ class Command(BaseCommand):
                             "Fields in your file are : %s" % ', '.join(feat.fields))
                     count_error += 1
                 except UnicodeEncodeError:
-                    self.stdout.write("Problem of encoding with %s" % feat.get(name))
+                    self.stdout.write("Problem of encoding with %s" % feat.get(name_column))
 
     def check_srid(self, srid, geom):
         if not geom.srid:
