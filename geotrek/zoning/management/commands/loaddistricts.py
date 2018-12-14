@@ -45,24 +45,14 @@ class Command(BaseCommand):
                         geom = MultiPolygon(geom)
                     self.check_srid(srid, geom)
                     geom.dim = 2
-                    if do_intersect:
-                        if bbox.intersects(geom):
-                            city, created = District.objects.update_or_create(name=feat.get(name).encode(encoding),
-                                                                              defaults={'geom': geom})
-                            if verbosity > 1:
-                                if created:
-                                    self.stdout.write("Created %s" % feat.get(name))
-                                elif verbosity > 1:
-                                    self.stdout.write("Updated %s" % feat.get(name))
-                    else:
-                        if geom.within(bbox):
-                            city, created = District.objects.update_or_create(name=feat.get(name).encode(encoding),
-                                                                              defaults={'geom': geom})
-                            if verbosity > 1:
-                                if created:
-                                    self.stdout.write("Created %s" % feat.get(name))
-                                elif verbosity > 1:
-                                    self.stdout.write("Updated %s" % feat.get(name))
+                    if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
+                        city, created = District.objects.update_or_create(name=feat.get(name).encode(encoding),
+                                                                          defaults={'geom': geom})
+                        if verbosity > 1:
+                            if created:
+                                self.stdout.write("Created %s" % feat.get(name))
+                            elif verbosity > 1:
+                                self.stdout.write("Updated %s" % feat.get(name))
                 except OGRIndexError:
                     if count_error == 0:
                         self.stdout.write(
