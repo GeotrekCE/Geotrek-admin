@@ -2,13 +2,13 @@
 CHANGELOG
 =========
 
-2.22.3.dev0
+2.22.3 (2018-12-14)
 -------------------
 
 **Bug fixes**
 
 - Don't publish deleted infrastructures/signages
-- Add default pictogram to published infrastructures/signages
+- Add default pictograms to published infrastructures/signages
 
 
 2.22.2 (2018-12-10)
