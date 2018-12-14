@@ -75,7 +75,7 @@ class ApidaeParser(AttachmentParserMixin, Parser):
                 'count': self.size,
                 'first': self.skip,
                 'responseFields': self.responseFields
-                }
+            }
             response = requests.get(self.url, params={'query': json.dumps(params)})
             if response.status_code != 200:
                 msg = _(u"Failed to download {url}. HTTP status code {status_code}")

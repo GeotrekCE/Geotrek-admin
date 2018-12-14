@@ -12,7 +12,7 @@ from geotrek.common.models import Attachment, FileType
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.tourism.factories import TouristicContentCategoryFactory, TouristicContentTypeFactory
 from geotrek.tourism.models import TouristicContent, TouristicEvent
-from geotrek.tourism.parsers import TouristicContentApidaeParser, EspritParcParser, TouristicEventApidaeParser
+from geotrek.tourism.parsers import TouristicContentApidaeParser, EspritParcParser
 
 
 class EauViveParser(TouristicContentApidaeParser):
