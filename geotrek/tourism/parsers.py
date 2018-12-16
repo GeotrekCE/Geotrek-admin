@@ -177,7 +177,7 @@ class TouristicEventApidaeParser(ApidaeParser):
         'organizer': 'informations.structureGestion.nom.libelleFr',
         'type': 'informationsFeteEtManifestation.typesManifestation.0.libelleFr',
         'participant_number': 'informationsFeteEtManifestation.nbParticipantsAttendu',
-        'practical_info': (
+        'practical_info_fr': (
             'ouverture.periodeEnClair.libelleFr',
             'informationsFeteEtManifestation.nbParticipantsAttendu',
             'descriptionTarif.tarifsEnClair.libelleFr',
@@ -272,7 +272,7 @@ class TouristicEventApidaeParser(ApidaeParser):
     def filter_website(self, src, val):
         return self.filter_comm(val, 205, multiple=False)
 
-    def filter_practical_info(self, src, val):
+    def filter_practical_info_en(self, src, val):
         (ouverture, capacite, tarifs, paiement, services, langues, localisation, datemodif, proprio) = val
         if ouverture:
             ouverture = "<b>Ouverture:</b><br>" + "<br>".join(ouverture.splitlines()) + "<br>"
@@ -354,12 +354,12 @@ class TouristicContentApidaeParser(TouristicContentMixin, ApidaeParser):
         'email': 'informations.moyensCommunication',
         'website': 'informations.moyensCommunication',
         'geom': 'localisation.geolocalisation.geoJson.coordinates',
-        'practical_info': (
+        'practical_info_fr': (
             'ouverture.periodeEnClair.libelleFr',
             'informationsHebergementCollectif.capacite.capaciteTotale',
             'descriptionTarif.tarifsEnClair.libelleFr',
             'descriptionTarif.modesPaiement',
-            'prestations.services',
+            'prestations.services.*.libelleFr',
             'localisation.geolocalisation.complement.libelleFr',
             'gestion.dateModification',
             'gestion.membreProprietaire.nom',
@@ -431,7 +431,7 @@ class TouristicContentApidaeParser(TouristicContentMixin, ApidaeParser):
         ] if line]
         return '<br>'.join(lines)
 
-    def filter_practical_info(self, src, val):
+    def filter_practical_info_fr(self, src, val):
         (ouverture, capacite, tarifs, paiement, services, localisation, datemodif, proprio) = val
         if ouverture:
             ouverture = "<b>Ouverture:</b><br>" + "<br>".join(ouverture.splitlines()) + "<br>"
@@ -447,6 +447,34 @@ class TouristicContentApidaeParser(TouristicContentMixin, ApidaeParser):
             localisation = "<b>Accès:</b><br>" + "<br>".join(localisation.splitlines()) + "<br>"
         datemodif = datetime.datetime.strptime(datemodif[:10], "%Y-%m-%d").strftime("%d/%m/%Y")
         modif = "<i>Fiche mise à jour par " + proprio + " le " + datemodif + "</i>"
+        lines = [line for line in [
+            ouverture,
+            capacite,
+            tarifs,
+            paiement,
+            services,
+            localisation,
+            modif,
+        ] if line]
+        return '<br>'.join(lines)
+
+    def filter_practical_info_en(self, src, val):
+        print(src)
+        (ouverture, capacite, tarifs, paiement, services, localisation, datemodif, proprio) = val
+        if ouverture:
+            ouverture = u"<b>Openning:</b><br>" + u"<br>".join(ouverture.splitlines()) + u"<br>"
+        if capacite:
+            capacite = u"<b>Total Capacity:</b><br>" + str(capacite) + u"<br>"
+        if tarifs:
+            tarifs = u"<b>Prices:</b><br>" + u"<br>".join(tarifs.splitlines()) + u"<br>"
+        if paiement:
+            paiement = u"<b>Payment method:</b><br>" + ", ".join([i['libelleFr'] for i in paiement]) + u"<br>"
+        if services:
+            services = u"<b>Services:</b><br>" + ", ".join([i['libelleFr'] for i in services]) + u"<br>"
+        if localisation:
+            localisation = u"<b>Access:</b><br>" + u"<br>".join(localisation.splitlines()) + u"<br>"
+        datemodif = datetime.datetime.strptime(datemodif[:10], "%Y-%m-%d").strftime("%d/%m/%Y")
+        modif = u"<i>Update sheet by par " + proprio + u" the " + datemodif + u"</i>"
         lines = [line for line in [
             ouverture,
             capacite,
