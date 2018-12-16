@@ -213,6 +213,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=0)
         self.assertEqual(TouristicContent.objects.count(), 1)
         content = TouristicContent.objects.get()
+<<<<<<< HEAD
         self.assertEqual(content.eid, "479743")
         self.assertEqual(content.name, "Quey' Raft")
         self.assertEqual(content.description[:27], "Au pied du château médiéval")
@@ -220,6 +221,18 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(content.contact[:24], "Château Queyras<br>05350")
         self.assertEqual(content.email, "info@queyraft.com")
         self.assertEqual(content.website, "http://www.queyraft.com")
+=======
+        self.assertEqual(content.eid, u"479743")
+        self.assertEqual(content.name, u"Quey' Raft")
+        self.assertEqual(content.name_en, u"Test")
+        self.assertEqual(content.description_fr[:27], u"Au pied du château médiéval")
+        self.assertEqual(content.description_en[:27], u"At the foot of the medieval")
+        self.assertEqual(content.description_teaser_fr[:24], u"Des descentes familiales")
+        self.assertEqual(content.description_teaser_en[:24], u"Family or sporting descents")
+        self.assertEqual(content.contact[:24], u"Château Queyras<br>05350")
+        self.assertEqual(content.email, u"info@queyraft.com")
+        self.assertEqual(content.website, u"http://www.queyraft.com")
+>>>>>>> Add tests languages parser apidae
         self.assertEqual(round(content.geom.x), 1000157)
         self.assertEqual(round(content.geom.y), 6413576)
         self.assertEqual(content.practical_info[:39], "<b>Ouverture:</b><br>Du 01/05 au 31/10.")
