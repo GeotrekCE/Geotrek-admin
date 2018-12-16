@@ -133,9 +133,13 @@ class ApidaeParser(AttachmentParserMixin, Parser):
         for key, value in self.fields.items():
             if 'libelle' in value:
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    new_key = key + '_%s' % lang
+                    key_without_tra = key[:-3]
+                    new_key = key_without_tra + '_%s' % lang
                     if new_key in fields_model:
                         self.fields[new_key] = value[:-2].replace('libelle', 'libelle%s' % lang.title())
+                        if lang == settings.MODELTRANSLATION_DEFAULT_LANGUAGE:
+                            self.fields[key_without_tra] = self.fields[
+                                key_without_tra + '_%s' % settings.MODELTRANSLATION_DEFAULT_LANGUAGE]
 
 
 class TouristicEventApidaeParser(ApidaeParser):
@@ -146,8 +150,8 @@ class TouristicEventApidaeParser(ApidaeParser):
     portal = None
     model = TouristicEvent
     fields = {
-        'description_teaser': 'presentation.descriptifCourt.libelleFr',
-        'description': 'presentation.descriptifDetaille.libelleFr',
+        'description_teaser_fr': 'presentation.descriptifCourt.libelleFr',
+        'description_fr': 'presentation.descriptifDetaille.libelleFr',
         'geom': 'localisation.geolocalisation.geoJson.coordinates',
         'begin_date': 'ouverture.periodesOuvertures.0.dateDebut',
         'end_date': 'ouverture.periodesOuvertures.0.dateFin',
@@ -179,7 +183,7 @@ class TouristicEventApidaeParser(ApidaeParser):
             'gestion.membreProprietaire.nom',
         ),
         'eid': 'id',
-        'name': 'nom.libelleFr',
+        'name_fr': 'nom.libelleFr',
     }
     responseFields = [
         'id',
@@ -330,9 +334,9 @@ class TouristicContentApidaeParser(TouristicContentMixin, ApidaeParser):
     eid = 'eid'
     fields = {
         'eid': 'id',
-        'name': 'nom.libelleFr',
-        'description': 'presentation.descriptifDetaille.libelleFr',
-        'description_teaser': 'presentation.descriptifCourt.libelleFr',
+        'name_fr': 'nom.libelleFr',
+        'description_fr': 'presentation.descriptifDetaille.libelleFr',
+        'description_teaser_fr': 'presentation.descriptifCourt.libelleFr',
         'contact': (
             'localisation.adresse.adresse1',
             'localisation.adresse.adresse2',
