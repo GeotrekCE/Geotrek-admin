@@ -132,14 +132,20 @@ class ApidaeParser(AttachmentParserMixin, Parser):
         fields_model = [f.name for f in self.model._meta.get_fields()]
         for key, value in self.fields.items():
             if 'libelle' in value:
+                key_without_tra = key[:-3]
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    key_without_tra = key[:-3]
                     new_key = key_without_tra + '_%s' % lang
                     if new_key in fields_model:
                         self.fields[new_key] = value[:-2].replace('libelle', 'libelle%s' % lang.title())
-                        if lang == settings.MODELTRANSLATION_DEFAULT_LANGUAGE:
-                            self.fields[key_without_tra] = self.fields[
-                                key_without_tra + '_%s' % settings.MODELTRANSLATION_DEFAULT_LANGUAGE]
+            if hasattr(value, '__iter__'):
+                key_without_tra = key[:-3]
+                for lang in settings.MODELTRANSLATION_LANGUAGES:
+                    new_key = key_without_tra + '_%s' % lang
+                    if new_key in fields_model:
+                        new_value = [value_list if not 'libelle' in value_list
+                                 else value_list[:-2].replace('libelle', 'libelle%s' % lang.title())
+                                 for value_list in value]
+                        self.fields[new_key] = new_value
 
 
 class TouristicEventApidaeParser(ApidaeParser):
