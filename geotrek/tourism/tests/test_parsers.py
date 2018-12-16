@@ -213,15 +213,6 @@ class ParserTests(TranslationResetMixin, TestCase):
         call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=0)
         self.assertEqual(TouristicContent.objects.count(), 1)
         content = TouristicContent.objects.get()
-<<<<<<< HEAD
-        self.assertEqual(content.eid, "479743")
-        self.assertEqual(content.name, "Quey' Raft")
-        self.assertEqual(content.description[:27], "Au pied du château médiéval")
-        self.assertEqual(content.description_teaser[:24], "Des descentes familiales")
-        self.assertEqual(content.contact[:24], "Château Queyras<br>05350")
-        self.assertEqual(content.email, "info@queyraft.com")
-        self.assertEqual(content.website, "http://www.queyraft.com")
-=======
         self.assertEqual(content.eid, "479743")
         self.assertEqual(content.name_en, "Test EN")
         self.assertEqual(content.name_es, "Test ES")
@@ -235,7 +226,6 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(content.contact[:24], "Château Queyras<br>05350")
         self.assertEqual(content.email, "info@queyraft.com")
         self.assertEqual(content.website, "http://www.queyraft.com")
->>>>>>> Add tests languages parser apidae
         self.assertEqual(round(content.geom.x), 1000157)
         self.assertEqual(round(content.geom.y), 6413576)
         self.assertEqual(content.practical_info[:39], "<b>Ouverture:</b><br>Du 01/05 au 31/10.")
@@ -243,6 +233,9 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertTrue("><br><b>Services:</b><br>Test, Test2, Test3, Test4<br>" in content.practical_info)
         self.assertIn("<b>Tarifs:</b><br>A partir de 30 € par personne<br>", content.practical_info)
         self.assertIn("<b>Accès:</b><br>TestFr<br>", content.practical_info)
+        self.assertTrue("><br><b>Services:</b><br>Test EN, Test2 EN, Test3 EN, Test4 EN<br>"
+                        in content.practical_info_en)
+        self.assertTrue("><br><b>Services:</b><br>Test, Test2, Test3, Test4<br>" in content.practical_info_fr)
         self.assertTrue(content.published)
         self.assertEqual(content.category, category)
         self.assertQuerysetEqual(
@@ -306,6 +299,10 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertIn("<b>Ouverture:</b><br>Mardi 6 août 2019 de 9h à midi.<br>", event.practical_info)
         self.assertIn("<b>Langues Parlées:</b><br>Français<br>", event.practical_info)
         self.assertIn("<b>Accès:</b><br>TestFr<br>", event.practical_info)
+        self.assertIn("><br><b>Services:</b><br>Le plus grand des services, Un autre grand service<br>",
+                      event.practical_info_en)
+        self.assertIn("><br><b>Services:</b><br>Le plus grand des services, Un autre grand service<br>",
+                      event.practical_info_fr)
         self.assertTrue(event.published)
         self.assertEqual(event.organizer, 'Toto')
         self.assertEqual(str(event.meeting_time), '09:00:00')
