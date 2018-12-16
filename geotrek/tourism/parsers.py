@@ -89,6 +89,10 @@ class ApidaeParser(AttachmentParserMixin, Parser):
         'illustrations'
     ]
 
+    def __init__(self, *args, **kwargs):
+        super(ApidaeParser, self).__init__(*args, **kwargs)
+        self.get_different_languages()
+
     @property
     def items(self):
         return self.root['objetsTouristiques']
@@ -123,6 +127,15 @@ class ApidaeParser(AttachmentParserMixin, Parser):
         geom = Point(float(lng), float(lat), srid=4326)  # WGS84
         geom.transform(settings.SRID)
         return geom
+
+    def get_different_languages(self):
+        fields_model = [f.name for f in self.model._meta.get_fields()]
+        for key, value in self.fields.items():
+            if 'libelle' in value:
+                for lang in settings.MODELTRANSLATION_LANGUAGES:
+                    new_key = key + '_%s' % lang
+                    if new_key in fields_model:
+                        self.fields[new_key] = value[:-2].replace('libelle', 'libelle%s' % lang.title())
 
 
 class TouristicEventApidaeParser(ApidaeParser):
