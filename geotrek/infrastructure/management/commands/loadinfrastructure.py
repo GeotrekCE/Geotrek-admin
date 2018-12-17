@@ -105,18 +105,20 @@ class Command(BaseCommand):
                     except Structure.DoesNotExist:
                         self.stdout.write(u"Structure {} set in options doesn't exist".format(structure_default))
                         break
-                if field_description and field_description not in available_fields:
+                if (field_description and field_description not in available_fields)\
+                        or (not field_description and not options.get('description_default')):
                     self.stdout.write(self.style.ERROR(
                         "Field '{}' not found in data source.".format(field_description)))
                     self.stdout.write(self.style.ERROR(
                         u"Change your --description-field option"))
                     break
 
-                if field_implantation_year and field_implantation_year not in available_fields:
+                if field_implantation_year and field_implantation_year not in available_fields \
+                        or (not field_implantation_year and not options.get('year_default')):
                     self.stdout.write(
                         self.style.ERROR("Field '{}' not found in data source.".format(field_implantation_year)))
                     self.stdout.write(self.style.ERROR(
-                        u"Change your --year-field option"))
+                        "Set it with --year-field, or set a default value with --year-default"))
                     break
 
                 if field_eid and field_eid not in available_fields:
