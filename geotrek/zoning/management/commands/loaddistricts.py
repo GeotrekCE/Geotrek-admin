@@ -38,7 +38,7 @@ class Command(BaseCommand):
                 try:
                     geom = feat.geom.geos
                     if not isinstance(geom, Polygon) and not isinstance(geom, MultiPolygon):
-                        if verbosity > 1:
+                        if verbosity > 0:
                             self.stdout.write("%s's geometry is not a polygon" % feat.get(name_column))
                         break
                     elif isinstance(geom, Polygon):
@@ -48,10 +48,10 @@ class Command(BaseCommand):
                     if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
                         city, created = District.objects.update_or_create(name=feat.get(name_column),
                                                                           defaults={'geom': geom})
-                        if verbosity > 1:
+                        if verbosity > 0:
                             if created:
                                 self.stdout.write("Created %s" % feat.get(name_column))
-                            elif verbosity > 1:
+                            elif verbosity > 0:
                                 self.stdout.write("Updated %s" % feat.get(name_column))
                 except OGRIndexError:
                     if count_error == 0:

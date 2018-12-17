@@ -60,7 +60,7 @@ class Command(BaseCommand):
                 try:
                     geom = feat.geom.geos
                     if not isinstance(geom, LineString):
-                        if verbosity > 1:
+                        if verbosity > 0:
                             self.stdout.write("%s's geometry is not a Linestring" % feat)
                         break
                     self.check_srid(srid, geom)
@@ -71,7 +71,7 @@ class Command(BaseCommand):
                                                        structure=structure,
                                                        geom=geom,
                                                        comments=comments)
-                            if verbosity > 1:
+                            if verbosity > 0:
                                 self.stdout.write('Create path : {}'.format(path.name))
                         except IntegrityError:
                             if fail:
