@@ -11,7 +11,7 @@ class Command(BaseCommand):
     help = 'Load Cities from a file within the spatial extent\n'
 
     def add_arguments(self, parser):
-        parser.add_argument('cities', help="File's path of the cities")
+        parser.add_argument('file_path', help="File's path of the cities")
         parser.add_argument('--code-attribute', '-c', action='store', dest='code', default='code',
                             help="Name of the code's attribute inside the file")
         parser.add_argument('--name-attribute', '-n', action='store', dest='name', default='nom',
@@ -25,7 +25,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         verbosity = options.get('verbosity')
-        file = options.get('cities')
+        file_path = options.get('file_path')
         name_column = options.get('name')
         code_column = options.get('code')
         encoding = options.get('encoding')
@@ -33,7 +33,7 @@ class Command(BaseCommand):
         do_intersect = options.get('intersect')
         bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
         bbox.srid = settings.SRID
-        ds = DataSource(file, encoding=encoding)
+        ds = DataSource(file_path, encoding=encoding)
         count_error = 0
 
         for layer in ds:

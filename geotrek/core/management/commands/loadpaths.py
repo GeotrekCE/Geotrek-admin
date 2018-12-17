@@ -11,7 +11,7 @@ class Command(BaseCommand):
     help = 'Load Paths from a file within the spatial extent\n'
 
     def add_arguments(self, parser):
-        parser.add_argument('paths', help="File's path of the paths")
+        parser.add_argument('file_path', help="File's path of the paths")
         parser.add_argument('--structure', action='store', dest='structure', help="Define the structure")
         parser.add_argument('--name-attribute', '-n', action='store', dest='name', default='nom',
                             help="Name of the name's attribute inside the file")
@@ -29,7 +29,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         verbosity = options.get('verbosity')
         encoding = options.get('encoding')
-        filename = options.get('paths')
+        file_path = options.get('file_path')
         structure = options.get('structure')
         name_column = options.get('name')
         srid = options.get('srid')
@@ -48,7 +48,7 @@ class Command(BaseCommand):
         if verbosity > 0:
             self.stdout.write("All paths in DataSource will be linked to the structure : %s" % structure)
 
-        ds = DataSource(filename, encoding=encoding)
+        ds = DataSource(file_path, encoding=encoding)
 
         bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
         bbox.srid = settings.SRID
