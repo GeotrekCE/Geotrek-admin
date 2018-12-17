@@ -37,14 +37,17 @@ class Command(BaseCommand):
         comments_column = options.get('comments')
         fail = options.get('fail')
 
-        if structure or Structure.objects.count() > 1:
+        if structure:
             try:
                 structure = Structure.objects.get(name=structure)
             except Structure.DoesNotExist:
                 raise CommandError("Structure does not match with instance's structures\n"
-                                   "Use --structure to define it or change your option structure")
-        else:
+                                   "Change your option --structure")
+        elif Structure.objects.count() < 1:
             structure = Structure.objects.first()
+        else:
+            raise CommandError("There are 2 structures and you didn't define the option structure\n"
+                               "Use --structure to define it")
         if verbosity > 0:
             self.stdout.write("All paths in DataSource will be linked to the structure : %s" % structure)
 
