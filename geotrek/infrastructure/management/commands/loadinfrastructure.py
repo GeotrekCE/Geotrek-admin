@@ -100,18 +100,18 @@ class Command(BaseCommand):
                         u"Set it with --structure-field, or set a default value with --structure-default"))
                     break
                 if (field_description and field_description not in available_fields)\
-                        or (not field_condition_type and not options.get('description_default')):
+                        or (not field_description and not options.get('description_default')):
                     self.stdout.write(self.style.ERROR(
                         "Field '{}' not found in data source.".format(field_description)))
                     self.stdout.write(self.style.ERROR(
                         u"Set it with --description-field, or set a default value with --description-default"))
                     break
                 if (field_implantation_year and field_implantation_year not in available_fields) \
-                        or (not field_condition_type and not options.get('year_default')):
+                        or (not field_implantation_year and not options.get('year_default')):
                     self.stdout.write(
                         self.style.ERROR("Field '{}' not found in data source.".format(field_implantation_year)))
                     self.stdout.write(self.style.ERROR(
-                        "Set it with --implantation-field, or set a default value with --implantation-default"))
+                        "Set it with --year-field, or set a default value with --year-default"))
                     break
 
                 for feature in layer:
