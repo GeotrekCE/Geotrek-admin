@@ -62,7 +62,7 @@ class InfrastructureCommandTest(TestCase):
                      condition_default='condition', structure_default='structure',
                      description_default='description', stdout=output)
 
-        elements_to_check = ['type', 'name', 'condition', 'structure', 'description', 'implantation']
+        elements_to_check = ['type', 'name', 'condition', 'structure', 'description', 'year']
         self.assertEqual(output.getvalue().count("Field 'None' not found in data source."), 6)
         for element in elements_to_check:
             self.assertIn("Set it with --{0}-field, or set a default value with --{0}-default".format(element),

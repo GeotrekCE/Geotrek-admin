@@ -43,7 +43,7 @@ class Command(BaseCommand):
             except Structure.DoesNotExist:
                 raise CommandError("Structure does not match with instance's structures\n"
                                    "Change your option --structure")
-        elif Structure.objects.count() < 1:
+        elif Structure.objects.count() == 1:
             structure = Structure.objects.first()
         else:
             raise CommandError("There are 2 structures and you didn't define the option structure\n"
