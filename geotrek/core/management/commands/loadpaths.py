@@ -4,6 +4,7 @@ from geotrek.authent.models import Structure
 from django.contrib.gis.geos.collections import Polygon, LineString
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
+from django.db.utils import IntegrityError
 
 
 class Command(BaseCommand):
@@ -22,6 +23,8 @@ class Command(BaseCommand):
                             help="File's SRID")
         parser.add_argument('--intersect', '-i', action='store_true', dest='intersect', default=False,
                             help="Check paths intersect spatial extent and not only within")
+        parser.add_argument('--fail', '-f', action='store_true', dest='fail', default=False,
+                            help="Allows to grant fails")
 
     def handle(self, *args, **options):
         verbosity = options.get('verbosity')
@@ -32,6 +35,7 @@ class Command(BaseCommand):
         srid = options.get('srid')
         do_intersect = options.get('intersect')
         comments_column = options.get('comments')
+        fail = options.get('fail')
 
         if structure or Structure.objects.count() > 1:
             try:
@@ -62,12 +66,18 @@ class Command(BaseCommand):
                     self.check_srid(srid, geom)
                     geom.dim = 2
                     if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
-                        path = Path.objects.create(name=name,
-                                                   structure=structure,
-                                                   geom=geom,
-                                                   comments=comments)
-                        if verbosity > 1:
-                            self.stdout.write('Create path : {}'.format(path.name))
+                        try:
+                            path = Path.objects.create(name=name,
+                                                       structure=structure,
+                                                       geom=geom,
+                                                       comments=comments)
+                            if verbosity > 1:
+                                self.stdout.write('Create path : {}'.format(path.name))
+                        except IntegrityError:
+                            if fail:
+                                self.stdout.write('Integrity Error on path : {}'.format(name))
+                            else:
+                                raise IntegrityError
                 except UnicodeEncodeError:
                     self.stdout.write("Problem of encoding with %s" % name)
 
