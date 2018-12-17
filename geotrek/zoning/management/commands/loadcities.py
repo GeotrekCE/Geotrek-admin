@@ -41,7 +41,7 @@ class Command(BaseCommand):
                 try:
                     geom = feat.geom.geos
                     if not isinstance(geom, Polygon) and not isinstance(geom, MultiPolygon):
-                        if verbosity > 1:
+                        if verbosity > 0:
                             self.stdout.write("%s's geometry is not a polygon" % feat.get(name_column))
                         break
                     elif isinstance(geom, Polygon):
@@ -53,10 +53,10 @@ class Command(BaseCommand):
                                                                       defaults={
                                                                           'name': feat.get(name_column),
                                                                           'geom': geom})
-                        if verbosity > 1:
+                        if verbosity > 0:
                             if created:
                                 self.stdout.write("Created %s" % feat.get(name_column))
-                            elif verbosity > 1:
+                            elif verbosity > 0:
                                 self.stdout.write("Updated %s" % feat.get(name_column))
                 except OGRIndexError:
                     if count_error == 0:
