@@ -46,7 +46,7 @@ class Command(BaseCommand):
         elif Structure.objects.count() == 1:
             structure = Structure.objects.first()
         else:
-            raise CommandError("There are 2 structures and you didn't define the option structure\n"
+            raise CommandError("There are more than 1 structure and you didn't define the option structure\n"
                                "Use --structure to define it")
         if verbosity > 0:
             self.stdout.write("All paths in DataSource will be linked to the structure : %s" % structure)
