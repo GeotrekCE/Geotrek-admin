@@ -60,29 +60,26 @@ class Command(BaseCommand):
             for feat in layer:
                 name = feat.get(name_column) if name_column in layer.fields else ''
                 comments = feat.get(comments_column) if comments_column in layer.fields else ''
-                try:
-                    geom = feat.geom.geos
-                    if not isinstance(geom, LineString):
+                geom = feat.geom.geos
+                if not isinstance(geom, LineString):
+                    if verbosity > 0:
+                        self.stdout.write("%s's geometry is not a Linestring" % feat)
+                    break
+                self.check_srid(srid, geom)
+                geom.dim = 2
+                if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
+                    try:
+                        path = Path.objects.create(name=name,
+                                                   structure=structure,
+                                                   geom=geom,
+                                                   comments=comments)
                         if verbosity > 0:
-                            self.stdout.write("%s's geometry is not a Linestring" % feat)
-                        break
-                    self.check_srid(srid, geom)
-                    geom.dim = 2
-                    if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
-                        try:
-                            path = Path.objects.create(name=name,
-                                                       structure=structure,
-                                                       geom=geom,
-                                                       comments=comments)
-                            if verbosity > 0:
-                                self.stdout.write('Create path with pk : {}'.format(path.pk))
-                        except IntegrityError:
-                            if fail:
-                                self.stdout.write('Integrity Error on path : {}'.format(name))
-                            else:
-                                raise IntegrityError
-                except UnicodeEncodeError:
-                    self.stdout.write("Problem of encoding with %s" % name)
+                            self.stdout.write('Create path with pk : {}'.format(path.pk))
+                    except IntegrityError:
+                        if fail:
+                            self.stdout.write('Integrity Error on path : {}'.format(name))
+                        else:
+                            raise IntegrityError
 
     def check_srid(self, srid, geom):
         if not geom.srid:
