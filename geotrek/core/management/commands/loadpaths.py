@@ -72,7 +72,7 @@ class Command(BaseCommand):
                                                        geom=geom,
                                                        comments=comments)
                             if verbosity > 0:
-                                self.stdout.write('Create path : {}'.format(path.name))
+                                self.stdout.write('Create path with pk : {}'.format(path.pk))
                         except IntegrityError:
                             if fail:
                                 self.stdout.write('Integrity Error on path : {}'.format(name))
