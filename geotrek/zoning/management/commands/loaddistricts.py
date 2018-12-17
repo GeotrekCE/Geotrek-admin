@@ -49,10 +49,7 @@ class Command(BaseCommand):
                         city, created = District.objects.update_or_create(name=feat.get(name_column),
                                                                           defaults={'geom': geom})
                         if verbosity > 0:
-                            if created:
-                                self.stdout.write("Created %s" % feat.get(name_column))
-                            elif verbosity > 0:
-                                self.stdout.write("Updated %s" % feat.get(name_column))
+                            self.stdout.write("%s %s" % ('Created' if created else 'Updated', feat.get(name_column)))
                 except OGRIndexError:
                     if count_error == 0:
                         self.stdout.write(
