@@ -13,6 +13,7 @@ import datetime
 class InformationDeskTypeTest(TestCase):
     def setUp(self):
         self.type_informationdesk = InformationDeskTypeFactory(label="Office")
+        self.informationDesk1 = InformationDeskFactory.create(description="Couco")
 
     def test_str(self):
         self.assertEqual(str(self.type_informationdesk), "Office")
