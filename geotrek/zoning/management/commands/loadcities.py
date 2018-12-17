@@ -65,8 +65,6 @@ class Command(BaseCommand):
                             "Please, use --code and --name to fix it.\n"
                             "Fields in your file are : %s" % ', '.join(feat.fields))
                     count_error += 1
-                except UnicodeEncodeError:
-                    self.stdout.write("Problem of encoding with %s" % feat.get(name_column))
 
     def check_srid(self, srid, geom):
         if not geom.srid:
