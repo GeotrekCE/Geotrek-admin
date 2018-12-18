@@ -62,3 +62,12 @@ class InfrastructureCommandTest(TestCase):
         for element in elements_to_check:
             self.assertIn("Set it with --{0}-field, or set a default value with --{0}-default".format(element),
                           output.getvalue())
+
+    def test_multiple_structure_fail_no_default(self):
+        structure1 = StructureFactory.create(name='structure')
+        structure2 = StructureFactory.create(name='structure2')
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
+        output = StringIO()
+        call_command('loadinfrastructure', filename, '--signage', type_default='label', name_default='name',
+                     stdout=output)
+        self.assertIn("%s, %s" % (structure1, structure2), output.getvalue())
