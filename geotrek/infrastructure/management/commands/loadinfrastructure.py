@@ -133,7 +133,7 @@ class Command(BaseCommand):
                     self.stdout.write(
                         self.style.ERROR("Field '{}' not found in data source.".format(field_implantation_year)))
                     self.stdout.write(self.style.ERROR(
-                        u"Change your --implantation-field option"))
+                        u"Change your --year-field option"))
                     break
 
                 for feature in layer:
