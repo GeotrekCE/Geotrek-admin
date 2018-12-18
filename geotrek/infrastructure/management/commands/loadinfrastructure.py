@@ -65,6 +65,7 @@ class Command(BaseCommand):
         field_implantation_year = options.get('year_field')
 
         sid = transaction.savepoint()
+        structure_default = options.get('structure_default')
 
         try:
             for layer in data_source:
@@ -85,33 +86,48 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.ERROR(
                         u"Set it with --name-field, or set a default value with --name-default"))
                     break
-                if (field_condition_type and field_condition_type not in available_fields)\
-                        or (not field_condition_type and not options.get('condition_default')):
+                if field_condition_type and field_condition_type not in available_fields:
                     self.stdout.write(self.style.ERROR(
                         "Field '{}' not found in data source.".format(field_condition_type)))
                     self.stdout.write(self.style.ERROR(
-                        u"Set it with --condition-field, or set a default value with --condition-default"))
+                        u"Change your --condition-field option"))
                     break
-                if (field_structure_type and field_structure_type not in available_fields)\
-                        or (not field_structure_type and not options.get('structure_default')):
+                if field_structure_type and field_structure_type not in available_fields:
                     self.stdout.write(self.style.ERROR(
                         "Field '{}' not found in data source.".format(field_structure_type)))
                     self.stdout.write(self.style.ERROR(
-                        u"Set it with --structure-field, or set a default value with --structure-default"))
+                        u"Set it with --structure-field"))
                     break
-                if (field_description and field_description not in available_fields)\
-                        or (not field_condition_type and not options.get('description_default')):
+                elif not field_structure_type and not structure_default:
+                    if Structure.objects.count() > 1:
+                        self.stdout.write(self.style.ERROR(u"There are multiple structures, "
+                                                           u"set a default value with --structure-default,"
+                                                           u"Available structures are: "
+                                                           u"{}".format(Structure.objects.all())))
+                        break
+                    elif Structure.objects.count() == 0:
+                        self.stdout.write(self.style.ERROR(u"There is no structure in your instance, "
+                                                           u"please add structures before use this command"))
+                        break
+                    else:
+                        structure = Structure.objects.first()
+                        if verbosity > 0:
+                            self.stdout.write(u"Infrastructures will be linked to {}".format(structure))
+                            break
+                else:
+                    structure = Structure.objects.get(name=structure_default)
+                if field_description and field_description not in available_fields:
                     self.stdout.write(self.style.ERROR(
                         "Field '{}' not found in data source.".format(field_description)))
                     self.stdout.write(self.style.ERROR(
-                        u"Set it with --description-field, or set a default value with --description-default"))
+                        u"Change your --description-field option"))
                     break
-                if (field_implantation_year and field_implantation_year not in available_fields) \
-                        or (not field_condition_type and not options.get('year_default')):
+
+                if field_implantation_year and field_implantation_year not in available_fields:
                     self.stdout.write(
                         self.style.ERROR("Field '{}' not found in data source.".format(field_implantation_year)))
                     self.stdout.write(self.style.ERROR(
-                        "Set it with --implantation-field, or set a default value with --implantation-default"))
+                        u"Change your --implantation-field option"))
                     break
 
                 for feature in layer:
@@ -122,17 +138,29 @@ class Command(BaseCommand):
                     type = feature.get(
                         field_infrastructure_type) if field_infrastructure_type in available_fields else options.get(
                         'type_default')
-                    condition = feature.get(
-                        field_condition_type) if field_condition_type in available_fields else options.get(
-                        'condition_default')
-                    structure = feature.get(
-                        field_structure_type) if field_structure_type in available_fields else options.get(
-                        'structure_default')
-                    description = feature.get(field_description) if field_description in available_fields else options.get(
-                        'description_default')
-                    year = int(feature.get(
-                        field_implantation_year)) if field_implantation_year in available_fields else options.get(
-                        'year_default')
+                    if field_condition_type in available_fields:
+                        condition = feature.get(field_condition_type)
+                    elif options.get('condition_default'):
+                        condition = options.get('condition_default')
+                    else:
+                        condition = None
+                    structure = Structure.objects.get(feature.get(field_structure_type)) \
+                        if field_structure_type in available_fields else structure
+                    if field_description in available_fields:
+                        description = feature.get(field_description)
+                    elif options.get('description_default'):
+                        description = options.get('description_default')
+                    else:
+                        description = ""
+                    if field_implantation_year in available_fields:
+                        try:
+                            year = int(feature.get(field_implantation_year))
+                        except ValueError:
+                            year = self.get_year_from_date(feature.get(field_implantation_year))
+                    elif options.get('year_default'):
+                        year = options.get('year_default')
+                    else:
+                        year = None
 
                     model = 'S' if options.get('signage') else 'B'
 
@@ -159,10 +187,6 @@ class Command(BaseCommand):
         if created and verbosity:
             self.stdout.write(u"- Condition Type '{}' created".format(condition_type))
 
-        structure, created = Structure.objects.get_or_create(name=structure)
-
-        if created and verbosity:
-            self.stdout.write(u"- Structure '{}' created".format(structure))
         with transaction.atomic():
             Model = Signage if model == 'S' else Infrastructure
             infra = Model.objects.create(
@@ -180,3 +204,7 @@ class Command(BaseCommand):
         self.counter += 1
 
         return infra
+
+    def get_year_from_date(self, year):
+        year_from_date = year.split('/')[-1]
+        return int(year_from_date)
