@@ -54,9 +54,11 @@ class InfrastructureCommandTest(TestCase):
         self.assertIn("InfrastructureType 'type (PNX)' created", output.getvalue())
         self.assertIn("Condition Type 'condition (PNX)' created", output.getvalue())
         value = Infrastructure.objects.all()
-        self.assertEquals('coucou', value[1].name)
-        self.assertEquals(2010, value[1].implantation_year)
-        self.assertEquals(2012, value[2].implantation_year)
+        names = [val.name for val in value]
+        years = [val.implantation_year for val in value]
+        self.assertIn('coucou', names)
+        self.assertIn(2010, years)
+        self.assertIn(2012, years)
         self.assertEquals(value.count(), 3)
 
     def test_load_infrastructure_without_structure_default_one_structure(self):
