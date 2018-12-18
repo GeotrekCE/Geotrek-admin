@@ -134,3 +134,10 @@ class LoadPathsCommandTest(TestCase):
         with self.assertRaises(CommandError) as e:
             call_command('loadpaths', self.filename, structure='gr', name='NOM', code='Insee', verbosity=0)
         self.assertIn("Structure does not match with instance's structures", e.exception.message)
+
+    def test_load_cities_with_multiple_structure(self):
+        Structure.objects.create(name='other_structure')
+        with self.assertRaises(CommandError) as e:
+            call_command('loadpaths', self.filename, name='NOM', code='Insee', verbosity=0)
+        self.assertIn("There are more than 1 structure and you didn't define the option structure\n"
+                      "Use --structure to define it", e.exception.message)
