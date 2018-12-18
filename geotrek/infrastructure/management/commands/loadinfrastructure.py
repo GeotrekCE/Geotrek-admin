@@ -188,10 +188,12 @@ class Command(BaseCommand):
         if created and verbosity:
             self.stdout.write(u"- InfrastructureType '{}' created".format(infra_type))
 
-        condition_type, created = InfrastructureCondition.objects.get_or_create(label=condition)
-
-        if created and verbosity:
-            self.stdout.write(u"- Condition Type '{}' created".format(condition_type))
+        if condition:
+            condition_type, created = InfrastructureCondition.objects.get_or_create(label=condition)
+            if created and verbosity:
+                self.stdout.write(u"- Condition Type '{}' created".format(condition_type))
+        else:
+            condition_type = None
 
         with transaction.atomic():
             Model = Signage if model == 'S' else Infrastructure
