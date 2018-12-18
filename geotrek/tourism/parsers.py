@@ -237,10 +237,16 @@ class TouristicEventApidaeParser(ApidaeParser):
         if self.portal is not None:
             self.m2m_constant_fields['portal'] = self.portal
 
-    def filter_description_teaser(self, src, val):
+    def filter_description_teaser_fr(self, src, val):
         return '<br>'.join(val.splitlines())
 
-    def filter_description(self, src, val):
+    def filter_description_fr(self, src, val):
+        return '<br>'.join(val.splitlines())
+
+    def filter_description_teaser_en(self, src, val):
+        return '<br>'.join(val.splitlines())
+
+    def filter_description_en(self, src, val):
         return '<br>'.join(val.splitlines())
 
     def filter_duration(self, src, val):
