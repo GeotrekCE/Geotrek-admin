@@ -96,7 +96,7 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.ERROR(
                         "Field '{}' not found in data source.".format(field_structure_type)))
                     self.stdout.write(self.style.ERROR(
-                        u"Set it with --structure-field"))
+                        u"Change your --structure-field option"))
                     break
                 elif not field_structure_type and not structure_default:
                     if Structure.objects.count() > 1:
@@ -114,9 +114,14 @@ class Command(BaseCommand):
                         structure = Structure.objects.first()
                         if verbosity > 0:
                             self.stdout.write(u"Infrastructures will be linked to {}".format(structure))
-                            break
                 else:
-                    structure = Structure.objects.get(name=structure_default)
+                    try:
+                        structure = Structure.objects.get(name=structure_default)
+                        if verbosity > 0:
+                            self.stdout.write(u"Infrastructures will be linked to {}".format(structure))
+                    except Structure.DoesNotExist:
+                        self.stdout.write(u"Infrastructure {} set in options doesn't exist".format(structure_default))
+                        break
                 if field_description and field_description not in available_fields:
                     self.stdout.write(self.style.ERROR(
                         "Field '{}' not found in data source.".format(field_description)))
