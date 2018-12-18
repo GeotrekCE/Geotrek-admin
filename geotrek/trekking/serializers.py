@@ -17,14 +17,14 @@ from geotrek.common.serializers import (
     PictogramSerializerMixin, ThemeSerializer,
     TranslatedModelSerializer, PicturesSerializerMixin,
     PublishableSerializerMixin, RecordSourceSerializer,
-    TargetPortalSerializer, BasePublishableSerializerMixin
+    TargetPortalSerializer
 )
-from geotrek.authent import models as authent_models
+from geotrek.authent.serializers import StructureSerializer
+
 from geotrek.cirkwi.models import CirkwiTag
 from geotrek.zoning.serializers import ZoningSerializerMixin
 from geotrek.altimetry.serializers import AltimetrySerializerMixin
 from geotrek.trekking import models as trekking_models
-from geotrek.infrastructure import models as infrastructure_models
 
 
 class TrekGPXSerializer(GPXSerializer):
@@ -135,12 +135,6 @@ class TrekRelationshipSerializer(rest_serializers.ModelSerializer):
         model = trekking_models.TrekRelationship
         fields = ('has_common_departure', 'has_common_edge', 'is_circuit_step',
                   'trek', 'published')
-
-
-class StructureSerializer(rest_serializers.ModelSerializer):
-    class Meta:
-        model = authent_models.Structure
-        fields = ('id', 'name')
 
 
 class ChildSerializer(TranslatedModelSerializer):
@@ -323,37 +317,6 @@ class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
-
-
-class InfrastructureTypeSerializer(PictogramSerializerMixin):
-    class Meta:
-        model = infrastructure_models.InfrastructureType
-        fields = ('id', 'pictogram', 'label')
-
-
-class SignageSerializer(BasePublishableSerializerMixin):
-    type = InfrastructureTypeSerializer()
-    structure = StructureSerializer()
-
-    class Meta:
-        model = infrastructure_models.Signage
-        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        geo_field = 'geom'
-        fields = ('id', 'structure', 'name', 'type') + \
-            BasePublishableSerializerMixin.Meta.fields
-
-
-class InfrastructureSerializer(BasePublishableSerializerMixin):
-    type = InfrastructureTypeSerializer()
-    structure = StructureSerializer()
-
-    class Meta:
-        model = infrastructure_models.Infrastructure
-        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        geo_field = 'geom'
-        fields = ('id', ) + \
-            ('id', 'structure', 'name', 'type') + \
-            BasePublishableSerializerMixin.Meta.fields
 
 
 class ServiceTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):

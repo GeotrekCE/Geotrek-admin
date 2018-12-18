@@ -26,6 +26,8 @@ from geotrek.core.views import ParametersView
 from geotrek.feedback.views import CategoryList as FeedbackCategoryList
 from geotrek.flatpages.models import FlatPage
 from geotrek.flatpages.views import FlatPageViewSet, FlatPageMeta
+from geotrek.infrastructure import models as infrastructure_models
+from geotrek.infrastructure.views import InfrastructureViewSet, SignageViewSet
 from geotrek.tourism import models as tourism_models
 from geotrek.tourism import views as tourism_views
 from geotrek.trekking import models as trekking_models
@@ -105,10 +107,14 @@ class Command(BaseCommand):
                             help='Skip generation of PNG elevation profile'),
         parser.add_argument('--languages', '-l', dest='languages', default='', help='Languages to sync')
         parser.add_argument('--with-touristicevents', '-w', action='store_true', dest='with_events', default=False,
-                            help='include touristic events by trek in global.zip')
+                            help='include touristic events')
         parser.add_argument('--with-touristiccontent-categories', '-c', dest='content_categories',
-                            default=None, help='include touristic contents by trek in global.zip '
+                            default=None, help='include touristic contents '
                             '(filtered by category ID ex: --with-touristiccontent-categories="1,2,3")'),
+        parser.add_argument('--with-signages', '-g', action='store_true', dest='with_signages', default=False,
+                            help='include signages')
+        parser.add_argument('--with-infrastructures', '-i', action='store_true', dest='with_infrastructures',
+                            default=False, help='include infrastructures')
 
     def mkdirs(self, name):
         dirname = os.path.dirname(name)
@@ -374,8 +380,10 @@ class Command(BaseCommand):
         self.sync_json(lang, ParametersView, 'parameters', zipfile=self.zipfile)
         self.sync_json(lang, ThemeViewSet, 'themes', as_view_args=[{'get': 'list'}], zipfile=self.zipfile)
         self.sync_trek_pois(lang, trek, zipfile=self.zipfile)
-        self.sync_trek_infrastructures(lang, trek, zipfile=self.zipfile)
-        self.sync_trek_signages(lang, trek, zipfile=self.zipfile)
+        if self.with_infrastructures:
+            self.sync_trek_infrastructures(lang, trek)
+        if self.with_signages:
+            self.sync_trek_signages(lang, trek)
         self.sync_trek_services(lang, trek, zipfile=self.zipfile)
         self.sync_gpx(lang, trek)
         self.sync_kml(lang, trek)
@@ -455,6 +463,12 @@ class Command(BaseCommand):
 
         self.sync_geojson(lang, TrekViewSet, 'treks.geojson', zipfile=self.zipfile)
         self.sync_geojson(lang, POIViewSet, 'pois.geojson')
+        if self.with_infrastructures:
+            self.sync_geojson(lang, InfrastructureViewSet, 'infrastructures.geojson')
+        if self.with_signages:
+            self.sync_geojson(lang, SignageViewSet, 'signages.geojson')
+            self.sync_static_file(lang, 'infrastructure/picto-infrastructure.png')
+            self.sync_static_file(lang, 'infrastructure/picto-signage.png')
         if 'geotrek.flatpages' in settings.INSTALLED_APPS:
             self.sync_flatpages(lang)
         self.sync_geojson(lang, ServiceViewSet, 'services.geojson', zipfile=self.zipfile)
@@ -465,6 +479,8 @@ class Command(BaseCommand):
         self.sync_static_file(lang, 'trekking/itinerancy.svg')
         self.sync_pictograms(lang, common_models.Theme, zipfile=self.zipfile)
         self.sync_pictograms(lang, common_models.RecordSource, zipfile=self.zipfile)
+        if self.with_signages or self.with_infrastructures:
+            self.sync_pictograms(lang, infrastructure_models.InfrastructureType)
         self.sync_pictograms(lang, trekking_models.TrekNetwork, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.Practice, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.Accessibility, zipfile=self.zipfile)
@@ -743,8 +759,10 @@ class Command(BaseCommand):
         self.verbosity = options['verbosity']
         self.dst_root = options["path"].rstrip('/')
         self.check_dst_root_is_empty()
+
         if not options['url'].startswith(('http://', 'https://')):
             raise CommandError('url parameter should start with http:// or https:// ()')
+
         self.referer = options['url']
         self.host = self.referer.split('://')[1]
         self.rando_url = options['rando_url']
@@ -768,6 +786,8 @@ class Command(BaseCommand):
         self.categories = None
         if options.get('content_categories', u""):
             self.categories = options.get('content_categories', u"").split(',')
+        self.with_signages = options.get('with_signages', False)
+        self.with_infrastructures = options.get('with_infrastructures', False)
         self.celery_task = options.get('task', None)
 
         if self.source is not None:
@@ -807,12 +827,14 @@ class Command(BaseCommand):
 
         self.rename_root()
 
+        done_message = 'Done'
+        if self.successfull:
+            done_message = self.style.SUCCESS(done_message)
+
         if self.verbosity >= 1:
-            self.stdout.write(self.style.SUCCESS('Done'))
+            self.stdout.write(done_message)
 
         if not self.successfull:
-            message = 'Some errors raised during synchronization.'
-            self.stderr.write(self.style.ERROR(message))
-            raise CommandError(message)
+            raise CommandError('Some errors raised during synchronization.')
 
         sleep(2)  # end sleep to ensure sync page get result

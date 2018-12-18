@@ -16,7 +16,7 @@ var SignagesLayer = L.GeoJSON.extend({
         }
 
         var img = L.Util.template('<img src="{SRC}" title="{TITLE}">', {
-            SRC: featureData.properties.type.pictogram || '/static/trekking/signage.png',
+            SRC: featureData.properties.type.pictogram,
             TITLE: serviceLabel
         });
 
