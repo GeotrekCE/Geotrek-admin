@@ -103,7 +103,8 @@ class Command(BaseCommand):
                         self.stdout.write(self.style.ERROR(u"There are multiple structures, "
                                                            u"set a default value with --structure-default,"
                                                            u"Available structures are: "
-                                                           u"{}".format(Structure.objects.all())))
+                                                           u"{}".format(', '.join([structure.name
+                                                                        for structure in Structure.objects.all()]))))
                         break
                     elif Structure.objects.count() == 0:
                         self.stdout.write(self.style.ERROR(u"There is no structure in your instance, "
