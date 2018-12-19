@@ -4,6 +4,7 @@ from django.contrib.gis.geos import LineString
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase, override_settings
+from django.db import IntegrityError
 
 from geotrek.authent.models import Structure
 from geotrek.core.models import Path
@@ -148,3 +149,18 @@ class LoadPathsCommandTest(TestCase):
         call_command('loadpaths', self.filename, '-i', no_dry=False, verbosity=2, stdout=output)
         self.assertIn('2 objects will be create, 0 objects failed;', output.getvalue())
         self.assertEqual(Path.objects.count(), 0)
+
+    @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, 0, 4, 2))
+    def test_load_paths_fail_with_dry(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'bad_path.geojson')
+        output = StringIO()
+        call_command('loadpaths', filename, '-i', no_dry=False, verbosity=2, stdout=output)
+        self.assertIn('0 objects will be create, 1 objects failed;', output.getvalue())
+        self.assertEqual(Path.objects.count(), 0)
+
+    @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, 0, 4, 2))
+    def test_load_paths_fail_without_dry(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'bad_path.geojson')
+        output = StringIO()
+        with self.assertRaises(IntegrityError):
+            call_command('loadpaths', filename, '-i', no_dry=True, verbosity=2, stdout=output)
