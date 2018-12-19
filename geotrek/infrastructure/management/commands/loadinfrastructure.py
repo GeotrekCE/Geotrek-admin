@@ -36,6 +36,7 @@ class Command(BaseCommand):
         parser.add_argument('--structure-default', action='store', dest='structure_default', help='Base url')
         parser.add_argument('--description-default', action='store', dest='description_default', default="",
                             help='Base url')
+        parser.add_argument('--eid-field', action='store', dest='eid_field', help='External ID field')
         parser.add_argument('--year-default', action='store', dest='year_default', help='Base url')
 
     def handle(self, *args, **options):
@@ -63,6 +64,7 @@ class Command(BaseCommand):
         field_structure_type = options.get('structure_field')
         field_description = options.get('description_field')
         field_implantation_year = options.get('year_field')
+        field_eid = options.get('eid_field')
 
         sid = transaction.savepoint()
         structure_default = options.get('structure_default')
@@ -136,6 +138,13 @@ class Command(BaseCommand):
                         u"Change your --year-field option"))
                     break
 
+                if field_eid and field_eid not in available_fields:
+                    self.stdout.write(
+                        self.style.ERROR("Field '{}' not found in data source.".format(field_eid)))
+                    self.stdout.write(self.style.ERROR(
+                        u"Change your --eid-field option"))
+                    break
+
                 for feature in layer:
                     feature_geom = feature.geom.transform(settings.API_SRID, clone=True)
                     feature_geom.coord_dim = 2
@@ -167,10 +176,12 @@ class Command(BaseCommand):
                         year = options.get('year_default')
                     else:
                         year = None
-
+                    if field_eid in available_fields:
+                        eid = feature.get(field_eid)
                     model = 'S' if options.get('signage') else 'B'
 
-                    self.create_infrastructure(feature_geom, name, type, condition, structure, description, year, model, verbosity)
+                    self.create_infrastructure(feature_geom, name, type, condition, structure, description, year,
+                                               model, verbosity, eid)
 
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
@@ -181,7 +192,8 @@ class Command(BaseCommand):
             transaction.savepoint_rollback(sid)
             raise
 
-    def create_infrastructure(self, geometry, name, type, condition, structure, description, year, model, verbosity):
+    def create_infrastructure(self, geometry, name, type,
+                              condition, structure, description, year, model, verbosity, eid):
 
         infra_type, created = InfrastructureType.objects.get_or_create(label=type, type=model)
 
@@ -197,14 +209,26 @@ class Command(BaseCommand):
 
         with transaction.atomic():
             Model = Signage if model == 'S' else Infrastructure
-            infra = Model.objects.create(
-                type=infra_type,
-                name=name,
-                condition=condition_type,
-                structure=structure,
-                description=description,
-                implantation_year=year
-            )
+            if eid:
+                infra = Model.objects.update_or_create(
+                    type=infra_type,
+                    name=name,
+                    condition=condition_type,
+                    structure=structure,
+                    description=description,
+                    implantation_year=year,
+                    eid=eid
+                )
+            else:
+                infra = Model.objects.create(
+                    type=infra_type,
+                    name=name,
+                    condition=condition_type,
+                    structure=structure,
+                    description=description,
+                    implantation_year=year,
+                )
+
         serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
         topology = TopologyHelper.deserialize(serialized)
         infra.mutate(topology)
