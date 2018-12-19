@@ -29,7 +29,7 @@ class PhysicalEdge(MapEntityMixin, Topology):
                                        db_column='evenement')
     physical_type = models.ForeignKey(PhysicalType, verbose_name=_(u"Physical type"),
                                       db_column='type')
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True,
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True,
                            db_column='id_externe')
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
@@ -99,7 +99,7 @@ class LandEdge(MapEntityMixin, Topology):
     land_type = models.ForeignKey(LandType, verbose_name=_(u"Land type"), db_column='type')
     owner = models.TextField(verbose_name=_(u"Owner"), db_column='proprietaire', blank=True)
     agreement = models.BooleanField(verbose_name=_(u"Agreement"), db_column='convention', default=False)
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True,
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True,
                            db_column='id_externe')
 
     # Override default manager
@@ -152,7 +152,7 @@ class CompetenceEdge(MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"), db_column='organisme')
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True,
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True,
                            db_column='id_externe')
 
     # Override default manager
@@ -205,7 +205,7 @@ class WorkManagementEdge(MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"), db_column='organisme')
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True,
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True,
                            db_column='id_externe')
 
     # Override default manager
@@ -258,7 +258,7 @@ class SignageManagementEdge(MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     organization = models.ForeignKey(Organism, verbose_name=_(u"Organism"), db_column='organisme')
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True,
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True,
                            db_column='id_externe')
 
     # Override default manager

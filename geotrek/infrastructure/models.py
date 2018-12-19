@@ -97,7 +97,7 @@ class BaseInfrastructure(MapEntityMixin, BasePublishableMixin, Topology, Structu
                                   on_delete=models.PROTECT)
     implantation_year = models.PositiveSmallIntegerField(verbose_name=_("Implantation year"),
                                                          db_column='annee_implantation', null=True)
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True,
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True,
                            db_column='id_externe')
 
     class Meta:
