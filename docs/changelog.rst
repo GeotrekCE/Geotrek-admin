@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Replace \u2028 and \u2029 by \n in synced (geo)json files (fix Geotrek-mobile crash)
 
 
 2.22.3 (2018-12-14)
