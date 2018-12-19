@@ -80,7 +80,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     networks = models.ManyToManyField('Network',
                                       blank=True, related_name="paths",
                                       verbose_name=_(u"Networks"), db_table="l_r_troncon_reseau")
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
     draft = models.BooleanField(db_column='brouillon', default=False, verbose_name=_(u"Draft"))
 
     objects = PathManager()
@@ -594,6 +594,8 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
     departure = models.CharField(verbose_name=_(u"Departure"), max_length=64, db_column='depart')
     arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=64, db_column='arrivee')
     comments = models.TextField(default="", blank=True, verbose_name=_(u"Comments"), db_column='commentaire')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True,
+                           db_column='id_externe')
 
     class Meta:
         db_table = 'l_t_sentier'

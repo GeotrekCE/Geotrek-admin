@@ -2,6 +2,18 @@
 CHANGELOG
 =========
 
+2.22.4 (2018-12-19)
+-------------------
+
+**Bug fixes**
+
+- Replace \u2028 and \u2029 by \n in synced (geo)json files (fix Geotrek-mobile crash)
+
+**Minor changes**
+
+- Add EID field to all models and increase its length
+
+
 2.22.3 (2018-12-14)
 -------------------
 

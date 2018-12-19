@@ -181,7 +181,7 @@ class Command(BaseCommand):
 
         tiles.run()
 
-    def sync_view(self, lang, view, name, url='/', params={}, zipfile=None, **kwargs):
+    def sync_view(self, lang, view, name, url='/', params={}, zipfile=None, fix2028=False, **kwargs):
         if self.verbosity == 2:
             self.stdout.write(u"{lang} {name} ...".format(lang=lang, name=name), ending="")
             self.stdout.flush()
@@ -209,6 +209,10 @@ class Command(BaseCommand):
             content = b''.join(response.streaming_content)
         else:
             content = response.content
+        # Fix strange unicode characters 2028 and 2029 that make Geotrek-mobile crash
+        if fix2028:
+            content = content.replace('\\u2028', '\\n')
+            content = content.replace('\\u2029', '\\n')
         f.write(content)
         f.close()
         oldfilename = os.path.join(self.dst_root, name)
@@ -233,7 +237,7 @@ class Command(BaseCommand):
             params['source'] = ','.join(self.source)
         if self.portal:
             params['portal'] = ','.join(self.portal)
-        self.sync_view(lang, view, name, params=params, zipfile=zipfile, **kwargs)
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile, fix2028=True, **kwargs)
 
     def sync_geojson(self, lang, viewset, name, zipfile=None, params={}, **kwargs):
         view = viewset.as_view({'get': 'list'})
@@ -253,7 +257,7 @@ class Command(BaseCommand):
         elif 'portal' in params.keys():
             del params['portal']
 
-        self.sync_view(lang, view, name, params=params, zipfile=zipfile, **kwargs)
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile, fix2028=True, **kwargs)
 
     def sync_trek_infrastructures(self, lang, trek, zipfile=None):
         params = {'format': 'geojson'}

@@ -117,8 +117,8 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     portal = models.ManyToManyField('common.TargetPortal',
                                     blank=True, related_name='treks',
                                     verbose_name=_("Portal"), db_table='o_r_itineraire_portal')
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
-    eid2 = models.CharField(verbose_name=_(u"Second external id"), max_length=128, blank=True, null=True, db_column='id_externe2')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
+    eid2 = models.CharField(verbose_name=_(u"Second external id"), max_length=1024, blank=True, null=True, db_column='id_externe2')
     pois_excluded = models.ManyToManyField('Poi', related_name='excluded_treks', verbose_name=_(u"Excluded POIs"),
                                            db_table="l_r_troncon_poi_exclus", blank=True)
 
@@ -658,7 +658,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     description = models.TextField(verbose_name=_(u"Description"), db_column='description',
                                    help_text=_(u"History, details,  ..."))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_(u"Type"), db_column='type')
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
 
     class Meta:
         db_table = 'o_t_poi'
@@ -785,7 +785,7 @@ class Service(StructureRelated, MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_(u"Type"), db_column='type')
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
 
     class Meta:
         db_table = 'o_t_service'

@@ -8,6 +8,7 @@ from geotrek.infrastructure.models import InfrastructureType, Infrastructure
 from geotrek.core.models import Usage, Path
 from geotrek.core.factories import UsageFactory
 from geotrek.core.factories import PathFactory
+from StringIO import StringIO
 
 
 class CommandTests(TestCase):
@@ -43,9 +44,10 @@ class CommandTests(TestCase):
         self.assertEqual(path.usages.count(), 2)
         self.assertEqual(usage1.structure.name, 'coucou')
         self.assertEqual(usage2.structure.name, 'coco')
-
-        call_command('unset_structure', '--all', verbosity=0)
-
+        output = StringIO()
+        call_command('unset_structure', '--all', verbosity=2, stdout=output)
+        response = output.getvalue()
+        self.assertIn("Create hello", response)
         self.assertEqual(InfrastructureType.objects.count(), 1)
         self.assertEqual(Usage.objects.count(), 1)
 
@@ -58,3 +60,10 @@ class CommandTests(TestCase):
 
         self.assertEqual(path_usages.usage, 'hello')
         self.assertEqual(path_usages.structure, None)
+
+    def test_unset_structure_without_structure(self):
+        infratype = InfrastructureTypeFactory.create(label="annyeong", structure=None, pictogram=None)
+        self.assertEqual(InfrastructureType.objects.count(), 1)
+        self.assertIsNone(infratype.structure)
+        call_command('unset_structure', '--all', verbosity=0)
+        self.assertIsNone(infratype.structure)

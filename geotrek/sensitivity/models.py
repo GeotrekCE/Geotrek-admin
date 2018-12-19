@@ -53,7 +53,7 @@ class Species(OptionalPictogramMixin):
     category = models.IntegerField(verbose_name=_(u"Category"), db_column='categorie', editable=False, default=SPECIES,
                                    choices=((SPECIES, pgettext_lazy(u"Singular", u"Species")),
                                             (REGULATORY, _(u"Regulatory"))))
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True,
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True,
                            db_column='id_externe')
 
     class Meta:
@@ -86,7 +86,7 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
                                         db_column='date_publication')
     description = models.TextField(verbose_name=_("Description"), blank=True)
     contact = models.TextField(verbose_name=_("Contact"), blank=True)
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True,
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True,
                            db_column='id_externe')
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()

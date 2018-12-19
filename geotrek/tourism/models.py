@@ -283,10 +283,10 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     portal = models.ManyToManyField('common.TargetPortal',
                                     blank=True, related_name='touristiccontents',
                                     verbose_name=_("Portal"), db_table='t_r_contenu_touristique_portal')
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
     reservation_system = models.ForeignKey(ReservationSystem, verbose_name=_(u"Reservation system"),
                                            blank=True, null=True)
-    reservation_id = models.CharField(verbose_name=_(u"Reservation ID"), max_length=128,
+    reservation_id = models.CharField(verbose_name=_(u"Reservation ID"), max_length=1024,
                                       blank=True, db_column='id_reservation')
     approved = models.BooleanField(verbose_name=_(u"Approved"), default=False, db_column='labellise')
 
@@ -426,7 +426,7 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
     portal = models.ManyToManyField('common.TargetPortal',
                                     blank=True, related_name='touristicevents',
                                     verbose_name=_("Portal"), db_table='t_r_evenement_touristique_portal')
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=128, blank=True, null=True, db_column='id_externe')
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
     approved = models.BooleanField(verbose_name=_(u"Approved"), default=False, db_column='labellise')
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
