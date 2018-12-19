@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix DB migration
 
 
 2.22.4 (2018-12-19)
