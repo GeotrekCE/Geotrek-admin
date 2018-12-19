@@ -78,12 +78,12 @@ class LoadPathsCommandTest(TestCase):
 
     @override_settings(SRID=4326, SPATIAL_EXTENT=(5, 10.0, 5, 11))
     def test_load_paths_out_of_spatial_extent(self):
-        call_command('loadpaths', self.filename, srid=4326, verbosity=0)
+        call_command('loadpaths', self.filename, srid=4326, no_dry=True, verbosity=0)
         self.assertEquals(Path.objects.count(), 0)
 
     @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, -1, 1, 5))
     def test_load_paths_within_spatial_extent(self):
-        call_command('loadpaths', self.filename, srid=4326, verbosity=0)
+        call_command('loadpaths', self.filename, srid=4326, no_dry=True, verbosity=0)
         self.assertEquals(Path.objects.count(), 1)
         value = Path.objects.first()
         self.assertEqual(value.name, 'lulu')
@@ -92,7 +92,7 @@ class LoadPathsCommandTest(TestCase):
     @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, -1, 1, 5))
     def test_load_paths_intersect_spatial_extent(self):
         output = StringIO()
-        call_command('loadpaths', self.filename, '-i', srid=4326, verbosity=2, stdout=output)
+        call_command('loadpaths', self.filename, '-i', srid=4326, no_dry=True, verbosity=2, stdout=output)
         output = output.getvalue()
         self.assertIn('All paths in DataSource will be linked to the structure : %s' % self.structure.name, output)
         self.assertEquals(Path.objects.count(), 1)
@@ -105,7 +105,7 @@ class LoadPathsCommandTest(TestCase):
     @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, 0, 4, 2))
     def test_load_paths_intersect_spatial_extent_2(self):
         output = StringIO()
-        call_command('loadpaths', self.filename, '-i', srid=4326, verbosity=2,
+        call_command('loadpaths', self.filename, '-i', srid=4326, no_dry=True, verbosity=2,
                      stdout=output)
         output = output.getvalue()
         self.assertIn('All paths in DataSource will be linked to the structure : %s' % self.structure.name, output)
@@ -121,23 +121,30 @@ class LoadPathsCommandTest(TestCase):
     def test_load_paths_not_within_spatial_extent(self):
         output = StringIO()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'point.geojson')
-        call_command('loadpaths', filename, structure=self.structure.name, srid=4326, verbosity=2, stdout=output)
+        call_command('loadpaths', filename, structure=self.structure.name, srid=4326, no_dry=True, verbosity=2, stdout=output)
         self.assertIn("Feature FID 0 in Layer<OGRGeoJSON>'s geometry is not a Linestring", output.getvalue())
 
-    def test_load_cities_fail_bad_srid(self):
+    def test_load_paths_fail_bad_srid(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'bad_srid.geojson')
         with self.assertRaises(CommandError) as e:
-            call_command('loadpaths', filename, name='NOM', code='Insee', verbosity=0)
+            call_command('loadpaths', filename, no_dry=True, verbosity=0)
         self.assertEqual('SRID is not well configurate, change/add option srid', e.exception.message)
 
-    def test_load_cities_with_bad_structure(self):
+    def test_load_paths_with_bad_structure(self):
         with self.assertRaises(CommandError) as e:
-            call_command('loadpaths', self.filename, structure='gr', name='NOM', code='Insee', verbosity=0)
+            call_command('loadpaths', self.filename, structure='gr', no_dry=True, verbosity=0)
         self.assertIn("Structure does not match with instance's structures", e.exception.message)
 
-    def test_load_cities_with_multiple_structure(self):
+    def test_load_paths_with_multiple_structure(self):
         Structure.objects.create(name='other_structure')
         with self.assertRaises(CommandError) as e:
-            call_command('loadpaths', self.filename, name='NOM', code='Insee', verbosity=0)
+            call_command('loadpaths', self.filename, no_dry=True, verbosity=0)
         self.assertIn("There are more than 1 structure and you didn't define the option structure\n"
                       "Use --structure to define it", e.exception.message)
+
+    @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, 0, 4, 2))
+    def test_load_paths_dry(self):
+        output = StringIO()
+        call_command('loadpaths', self.filename, '-i', no_dry=False, verbosity=2, stdout=output)
+        self.assertIn('2 objects will be create, 0 objects failed;', output.getvalue())
+        self.assertEqual(Path.objects.count(), 0)
