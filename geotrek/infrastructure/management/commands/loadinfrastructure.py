@@ -144,26 +144,18 @@ class Command(BaseCommand):
                         condition = feature.get(field_condition_type)
                     elif options.get('condition_default'):
                         condition = options.get('condition_default')
-                    else:
-                        condition = None
                     structure = Structure.objects.get(feature.get(field_structure_type)) \
                         if field_structure_type in available_fields else structure
                     if field_description in available_fields:
                         description = feature.get(field_description)
                     elif options.get('description_default'):
                         description = options.get('description_default')
-                    else:
-                        description = ""
                     if field_implantation_year in available_fields:
                         year = int(feature.get(field_implantation_year))
                     elif options.get('year_default'):
                         year = options.get('year_default')
-                    else:
-                        year = None
                     if field_eid in available_fields:
                         eid = feature.get(field_eid)
-                    else:
-                        eid = None
                     model = 'S' if options.get('signage') else 'B'
 
                     self.create_infrastructure(feature_geom, name, type, condition, structure, description, year,
