@@ -82,10 +82,11 @@ class Command(BaseCommand):
                 geom.dim = 2
                 if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
                     try:
-                        path = Path.objects.create(name=name,
-                                                   structure=structure,
-                                                   geom=geom,
-                                                   comments=comments)
+                        with transaction.atomic():
+                            path = Path.objects.create(name=name,
+                                                       structure=structure,
+                                                       geom=geom,
+                                                       comments=comments)
                         counter += 1
                         if verbosity > 0:
                             self.stdout.write('Create path with pk : {}'.format(path.pk))
