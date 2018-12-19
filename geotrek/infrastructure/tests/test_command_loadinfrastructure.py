@@ -8,7 +8,6 @@ from django.core.management.base import CommandError
 from geotrek.infrastructure.factories import SignageFactory, InfrastructureFactory
 from geotrek.infrastructure.models import Signage, Infrastructure
 from geotrek.authent.factories import StructureFactory
-from geotrek.authent.models import Structure
 
 
 class InfrastructureCommandTest(TestCase):
@@ -61,15 +60,6 @@ class InfrastructureCommandTest(TestCase):
         self.assertIn(2012, years)
         self.assertEquals(value.count(), 3)
 
-    def test_load_infrastructure_without_structure_default_one_structure(self):
-        output = StringIO()
-        InfrastructureFactory(name="name")
-        filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
-        call_command('loadinfrastructure', filename, '--infrastructure', type_default='label', name_default='name',
-                     verbosity=1, stdout=output)
-        structure = Structure.objects.first()
-        self.assertIn('Infrastructures will be linked to %s' % structure, output.getvalue())
-
     def test_no_file_fail(self):
         with self.assertRaises(CommandError) as cm:
             call_command('loadinfrastructure', 'toto.shp')
@@ -94,30 +84,6 @@ class InfrastructureCommandTest(TestCase):
         for element in elements_to_check:
             self.assertIn("Set it with --{0}-field, or set a default value with --{0}-default".format(element),
                           output.getvalue())
-
-    def test_multiple_structure_fail_no_default(self):
-        structure1 = StructureFactory.create(name='structure')
-        structure2 = StructureFactory.create(name='structure2')
-        filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
-        output = StringIO()
-        call_command('loadinfrastructure', filename, '--signage', type_default='label', name_default='name',
-                     stdout=output)
-        self.assertIn("%s, %s" % (structure1, structure2), output.getvalue())
-
-    def test_no_structure_fail(self):
-        filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
-        output = StringIO()
-        call_command('loadinfrastructure', filename, '--signage', type_default='label', name_default='name',
-                     stdout=output)
-        self.assertIn('There is no structure in your instance', output.getvalue())
-
-    def test_wrong_structure_in_default_fail(self):
-        StructureFactory.create(name='structure')
-        filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
-        output = StringIO()
-        call_command('loadinfrastructure', filename, '--signage', type_default='label', name_default='name',
-                     structure_default='wrong_structure', stdout=output)
-        self.assertIn("Infrastructure wrong_structure set in options doesn't exist", output.getvalue())
 
     def test_wrong_fields_fail(self):
         StructureFactory.create(name='structure')
