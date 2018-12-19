@@ -187,7 +187,7 @@ class Command(BaseCommand):
 
         with transaction.atomic():
             Model = Signage if model == 'S' else Infrastructure
-            fields_withtout_eid = {
+            fields_without_eid = {
                 'type': infra_type,
                 'name': name,
                 'condition': condition_type,
@@ -198,12 +198,12 @@ class Command(BaseCommand):
             if eid:
                 infra, created = Model.objects.update_or_create(
                     eid=eid,
-                    defaults=fields_withtout_eid
+                    defaults=fields_without_eid
                 )
                 if verbosity > 0 and not created:
                     self.stdout.write(u"Update : %s with eid %s" % (name, eid))
             else:
-                infra = Model.objects.create(**fields_withtout_eid)
+                infra = Model.objects.create(**fields_without_eid)
 
         serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
         topology = TopologyHelper.deserialize(serialized)
