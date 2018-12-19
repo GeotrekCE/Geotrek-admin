@@ -5,6 +5,7 @@ from django.contrib.gis.geos.collections import Polygon, LineString
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from django.db.utils import IntegrityError
+from django.db import transaction
 
 
 class Command(BaseCommand):
@@ -25,6 +26,9 @@ class Command(BaseCommand):
                             help="Check paths intersect spatial extent and not only within")
         parser.add_argument('--fail', '-f', action='store_true', dest='fail', default=False,
                             help="Allows to grant fails")
+        parser.add_argument('--no-dry-run', '-ndr', action='store_true', dest='no_dry', default=False,
+                            help="Do not change the database, dry run. Show the number of fail"
+                                 " and objects potentially created")
 
     def handle(self, *args, **options):
         verbosity = options.get('verbosity')
@@ -36,6 +40,13 @@ class Command(BaseCommand):
         do_intersect = options.get('intersect')
         comments_column = options.get('comments')
         fail = options.get('fail')
+        not_dry = options.get('no_dry')
+
+        if not not_dry:
+            fail = True
+
+        counter = 0
+        counter_fail = 0
 
         if structure:
             try:
@@ -56,6 +67,8 @@ class Command(BaseCommand):
         bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
         bbox.srid = settings.SRID
 
+        sid = transaction.savepoint()
+
         for layer in ds:
             for feat in layer:
                 name = feat.get(name_column) if name_column in layer.fields else ''
@@ -73,13 +86,24 @@ class Command(BaseCommand):
                                                    structure=structure,
                                                    geom=geom,
                                                    comments=comments)
+                        counter += 1
                         if verbosity > 0:
                             self.stdout.write('Create path with pk : {}'.format(path.pk))
                     except IntegrityError:
                         if fail:
+                            counter_fail += 1
                             self.stdout.write('Integrity Error on path : {}'.format(name))
                         else:
                             raise IntegrityError
+        if not_dry:
+            transaction.savepoint_commit(sid)
+            if verbosity >= 2:
+                self.stdout.write(self.style.NOTICE(
+                    u"{0} objects created, {1} objects failed".format(counter, counter_fail)))
+        else:
+            transaction.savepoint_rollback(sid)
+            self.stdout.write(self.style.NOTICE(
+                u"{0} objects will be create, {1} objects failed;".format(counter, counter_fail)))
 
     def check_srid(self, srid, geom):
         if not geom.srid:
