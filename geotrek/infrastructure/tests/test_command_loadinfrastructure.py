@@ -142,3 +142,13 @@ class InfrastructureCommandTest(TestCase):
         for element in elements_to_check:
             self.assertIn("Field '{}' not found in data source".format(element),
                           output.getvalue())
+
+    def test_line_fail_rolling_back(self):
+        StructureFactory.create(name='structure')
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'line.geojson')
+        output = StringIO()
+        with self.assertRaises(IndexError):
+            call_command('loadinfrastructure', filename, '--signage', type_default='label', name_default='name',
+                         stdout=output)
+        self.assertIn('An error occured, rolling back operations.', output.getvalue())
+        self.assertEqual(Infrastructure.objects.count(), 0)
