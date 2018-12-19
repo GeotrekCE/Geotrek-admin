@@ -178,6 +178,8 @@ class Command(BaseCommand):
                         year = None
                     if field_eid in available_fields:
                         eid = feature.get(field_eid)
+                    else:
+                        eid = None
                     model = 'S' if options.get('signage') else 'B'
 
                     self.create_infrastructure(feature_geom, name, type, condition, structure, description, year,
@@ -210,7 +212,7 @@ class Command(BaseCommand):
         with transaction.atomic():
             Model = Signage if model == 'S' else Infrastructure
             if eid:
-                infra = Model.objects.update_or_create(
+                infra, created = Model.objects.update_or_create(
                     type=infra_type,
                     name=name,
                     condition=condition_type,
