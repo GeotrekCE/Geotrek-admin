@@ -6,6 +6,7 @@ from django.contrib.gis.gdal import DataSource
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
+from geotrek.authent.models import default_structure
 from geotrek.authent.models import Structure
 from geotrek.core.helpers import TopologyHelper
 from geotrek.infrastructure.models import Signage, InfrastructureType, InfrastructureCondition, Infrastructure
@@ -101,21 +102,7 @@ class Command(BaseCommand):
                         u"Change your --structure-field option"))
                     break
                 elif not field_structure_type and not structure_default:
-                    if Structure.objects.count() > 1:
-                        self.stdout.write(self.style.ERROR(u"There are multiple structures, "
-                                                           u"set a default value with --structure-default,"
-                                                           u"Available structures are: "
-                                                           u"{}".format(', '.join([structure.name
-                                                                        for structure in Structure.objects.all()]))))
-                        break
-                    elif Structure.objects.count() == 0:
-                        self.stdout.write(self.style.ERROR(u"There is no structure in your instance, "
-                                                           u"please add structures before use this command"))
-                        break
-                    else:
-                        structure = Structure.objects.first()
-                        if verbosity > 0:
-                            self.stdout.write(u"Infrastructures will be linked to {}".format(structure))
+                    structure = default_structure()
                 else:
                     try:
                         structure = Structure.objects.get(name=structure_default)
@@ -168,10 +155,7 @@ class Command(BaseCommand):
                     else:
                         description = ""
                     if field_implantation_year in available_fields:
-                        try:
-                            year = int(feature.get(field_implantation_year))
-                        except ValueError:
-                            year = self.get_year_from_date(feature.get(field_implantation_year))
+                        year = int(feature.get(field_implantation_year))
                     elif options.get('year_default'):
                         year = options.get('year_default')
                     else:
@@ -211,25 +195,23 @@ class Command(BaseCommand):
 
         with transaction.atomic():
             Model = Signage if model == 'S' else Infrastructure
+            fields_withtout_eid = {
+                'type': infra_type,
+                'name': name,
+                'condition': condition_type,
+                'structure': structure,
+                'description': description,
+                'implantation_year': year
+            }
             if eid:
                 infra, created = Model.objects.update_or_create(
-                    type=infra_type,
-                    name=name,
-                    condition=condition_type,
-                    structure=structure,
-                    description=description,
-                    implantation_year=year,
-                    eid=eid
+                    eid=eid,
+                    defaults=fields_withtout_eid
                 )
+                if verbosity > 0 and not created:
+                    self.stdout.write(u"Update : %s with eid %s" % (name, eid))
             else:
-                infra = Model.objects.create(
-                    type=infra_type,
-                    name=name,
-                    condition=condition_type,
-                    structure=structure,
-                    description=description,
-                    implantation_year=year,
-                )
+                infra = Model.objects.create(**fields_withtout_eid)
 
         serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
         topology = TopologyHelper.deserialize(serialized)
@@ -238,7 +220,3 @@ class Command(BaseCommand):
         self.counter += 1
 
         return infra
-
-    def get_year_from_date(self, year):
-        year_from_date = year.split('/')[-1]
-        return int(year_from_date)
