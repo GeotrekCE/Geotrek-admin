@@ -146,7 +146,7 @@ class LoadPathsCommandTest(TestCase):
     @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, 0, 4, 2))
     def test_load_paths_dry(self):
         output = StringIO()
-        call_command('loadpaths', self.filename, '-i', verbosity=2, stdout=output)
+        call_command('loadpaths', self.filename, '-i', dry=True, verbosity=2, stdout=output)
         self.assertIn('2 objects will be create, 0 objects failed;', output.getvalue())
         self.assertEqual(Path.objects.count(), 0)
 
