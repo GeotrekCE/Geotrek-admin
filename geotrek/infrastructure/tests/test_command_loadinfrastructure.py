@@ -118,3 +118,12 @@ class InfrastructureCommandTest(TestCase):
                          stdout=output)
         self.assertIn('An error occured, rolling back operations.', output.getvalue())
         self.assertEqual(Infrastructure.objects.count(), 0)
+
+    def test_update_same_eid(self):
+        output = StringIO()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
+        SignageFactory(name="name", eid="eid_2")
+        call_command('loadinfrastructure', filename, '--signage', eid_field='eid', type_default='label',
+                     name_default='name', verbosity=2, stdout=output)
+        self.assertIn("Update : name with eid eid1", output.getvalue())
+        self.assertEqual(Signage.objects.count(), 2)
