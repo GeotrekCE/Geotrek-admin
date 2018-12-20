@@ -49,10 +49,10 @@ class Command(BaseCommand):
                     self.check_srid(srid, geom)
                     geom.dim = 2
                     if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
-                        city, created = City.objects.update_or_create(code=feat.get(code_column),
-                                                                      defaults={
-                                                                          'name': feat.get(name_column),
-                                                                          'geom': geom})
+                        instance, created = City.objects.update_or_create(code=feat.get(code_column),
+                                                                          defaults={
+                                                                              'name': feat.get(name_column),
+                                                                              'geom': geom})
                         if verbosity > 0:
                             self.stdout.write("%s %s" % ('Created' if created else 'Updated', feat.get(name_column)))
                 except OGRIndexError:
