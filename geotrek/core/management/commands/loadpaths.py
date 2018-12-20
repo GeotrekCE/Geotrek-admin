@@ -26,7 +26,7 @@ class Command(BaseCommand):
                             help="Check paths intersect spatial extent and not only within")
         parser.add_argument('--fail', '-f', action='store_true', dest='fail', default=False,
                             help="Allows to grant fails")
-        parser.add_argument('--no-dry-run', '-ndr', action='store_true', dest='no_dry', default=False,
+        parser.add_argument('--dry', '-d', action='store_true', dest='dry', default=False,
                             help="Do not change the database, dry run. Show the number of fail"
                                  " and objects potentially created")
 
@@ -40,9 +40,9 @@ class Command(BaseCommand):
         do_intersect = options.get('intersect')
         comments_column = options.get('comments')
         fail = options.get('fail')
-        not_dry = options.get('no_dry')
+        dry = options.get('dry')
 
-        if not not_dry:
+        if dry:
             fail = True
 
         counter = 0
@@ -96,7 +96,7 @@ class Command(BaseCommand):
                             self.stdout.write('Integrity Error on path : {}'.format(name))
                         else:
                             raise IntegrityError
-        if not_dry:
+        if not dry:
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
                 self.stdout.write(self.style.NOTICE(
