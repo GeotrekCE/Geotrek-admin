@@ -144,10 +144,8 @@ class Command(BaseCommand):
                         condition = feature.get(field_condition_type)
                     else:
                         condition = options.get('condition_default')
-                    if field_structure_type in available_fields:
-                        structure_from_field = Structure.objects.filter(name=feature.get(field_structure_type))
-                        if structure_from_field.count() != 0:
-                            structure = structure_from_field
+                    structure = Structure.objects.get(name=feature.get(field_structure_type)) \
+                        if field_structure_type in available_fields else structure
                     if field_description in available_fields:
                         description = feature.get(field_description)
                     else:
