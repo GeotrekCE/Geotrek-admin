@@ -461,6 +461,9 @@ function geotrek_setup {
         install_postgres_local
     fi
 
+    # as internal or external database, some commands needs postgis scripts
+
+
     check_postgres_connection
 	
     echo_step "Install Geotrek python dependencies..."
