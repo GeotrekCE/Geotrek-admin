@@ -100,10 +100,13 @@ class InfrastructureCommandTest(TestCase):
                      year_field='wrong_implantation_year_field', stdout=output)
         call_command('loadinfrastructure', filename, '--signage', type_default='label', name_field='name',
                      structure_field='wrong_structure_field', stdout=output)
+        call_command('loadinfrastructure', filename, '--signage', type_default='label', name_field='name',
+                     eid_field='wrong_eid_field', stdout=output)
         elements_to_check = ['wrong_type_field', 'wrong_name_field', 'wrong_condition_field',
-                             'wrong_description_field', 'wrong_implantation_year_field', 'wrong_structure_field']
+                             'wrong_description_field', 'wrong_implantation_year_field', 'wrong_structure_field',
+                             'wrong_eid_field']
         self.assertEqual(output.getvalue().count("set a default value"), 2)
-        self.assertEqual(output.getvalue().count("Change your"), 4)
+        self.assertEqual(output.getvalue().count("Change your"), 5)
         self.assertEqual(output.getvalue().count("set a default value"), 2)
         for element in elements_to_check:
             self.assertIn("Field '{}' not found in data source".format(element),
