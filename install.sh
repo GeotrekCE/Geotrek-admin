@@ -461,6 +461,10 @@ function geotrek_setup {
         install_postgres_local
     fi
 
+    # as internal or external database, some commands needs postgis scripts
+    sudo apt-get --no-install-recommends install postgis -y
+
+
     check_postgres_connection
 	
     echo_step "Install Geotrek python dependencies..."
