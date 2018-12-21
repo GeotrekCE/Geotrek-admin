@@ -146,11 +146,12 @@ class Command(BaseCommand):
                         condition = options.get('condition_default')
                     structure = Structure.objects.get(name=feature.get(field_structure_type)) \
                         if field_structure_type in available_fields else structure
-                    description = feature.get(field_description) \
-                        if field_description in available_fields else options.get('description_default')
-                    year = int(feature.get(field_implantation_year)) \
-                        if field_implantation_year in available_fields \
-                           and feature.get(field_implantation_year).isdigit() else options.get('year_default')
+                    description = feature.get(
+                        field_description) if field_description in available_fields else options.get(
+                        'description_default')
+                    year = int(feature.get(
+                        field_implantation_year)) if field_implantation_year in available_fields and feature.get(
+                        field_implantation_year).isdigit() else options.get('year_default')
                     eid = feature.get(field_eid) if field_eid in available_fields else None
                     model = 'S' if options.get('signage') else 'B'
 
