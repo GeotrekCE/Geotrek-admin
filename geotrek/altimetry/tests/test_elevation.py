@@ -10,6 +10,8 @@ from geotrek.core.factories import TopologyFactory
 from geotrek.altimetry.helpers import AltimetryHelper
 
 import os
+import sys
+import mock
 
 
 class ElevationTest(TestCase):
@@ -303,6 +305,13 @@ class SamplingTest(TestCase):
 
 
 class CommandLoadDemTest(TestCase):
+
+    def test_fail_import(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
+        with mock.patch.dict(sys.modules, {'osgeo': None}):
+            with self.assertRaises(CommandError) as e:
+                call_command('loaddem', filename, '--replace', verbosity=0)
+            self.assertEqual('GDAL Python bindings are not available. Can not proceed.', e.exception.message)
 
     def test_success(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
