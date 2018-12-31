@@ -4,7 +4,6 @@ from StringIO import StringIO
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 from django.core.management.base import CommandError
-from django.contrib.gis.gdal import GDALException
 from geotrek.zoning.models import RestrictedArea, RestrictedAreaType
 
 
