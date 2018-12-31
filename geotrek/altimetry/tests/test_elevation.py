@@ -314,6 +314,9 @@ class CommandLoadDemTest(TestCase):
             self.assertEqual('GDAL Python bindings are not available. Can not proceed.', e.exception.message)
 
     def test_success(self):
+        conn = connections[DEFAULT_DB_ALIAS]
+        cur = conn.cursor()
+        cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
         call_command('loaddem', filename, '--replace', verbosity=0)
         conn = connections[DEFAULT_DB_ALIAS]
