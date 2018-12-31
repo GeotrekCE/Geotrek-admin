@@ -305,13 +305,13 @@ class TouristicEventApidaeParser(ApidaeParser):
     def filter_practical_info_en(self, src, val):
         (ouverture, capacite, tarifs, paiement, services, langues, localisation, datemodif, proprio) = val
         if ouverture:
-            ouverture = u"<b>Openning:</b><br>" + u"<br>".join(ouverture.splitlines()) + u"<br>"
+            ouverture = "<b>Openning:</b><br>" + "<br>".join(ouverture.splitlines()) + "<br>"
         if capacite:
-            capacite = u"<b>Total Capacity:</b><br>" + str(capacite) + u"<br>"
+            capacite = "<b>Total Capacity:</b><br>" + str(capacite) + "<br>"
         if tarifs:
-            tarifs = u"<b>Prices:</b><br>" + u"<br>".join(tarifs.splitlines()) + u"<br>"
+            tarifs = "<b>Prices:</b><br>" + "<br>".join(tarifs.splitlines()) + "<br>"
         if paiement and any(values.get('libelleEn') for values in paiement):
-            paiement = u"<b>Payment method:</b><br>" + ", ".join([i['libelleEn'] for i in paiement]) + u"<br>"
+            paiement = "<b>Payment method:</b><br>" + ", ".join([i['libelleEn'] for i in paiement]) + "<br>"
         else:
             paiement = ""
         if services and any(values.get('libelleEn') for values in services):
@@ -319,13 +319,13 @@ class TouristicEventApidaeParser(ApidaeParser):
         else:
             services = ""
         if langues and any(values.get('libelleEn') for values in langues):
-            langues = u"<b>Spoken languages:</b><br>" + ", ".join([i['libelleEn'] for i in langues]) + u"<br>"
+            langues = "<b>Spoken languages:</b><br>" + ", ".join([i['libelleEn'] for i in langues]) + "<br>"
         else:
             langues = ""
         if localisation:
-            localisation = u"<b>Access:</b><br>" + u"<br>".join(localisation.splitlines()) + u"<br>"
+            localisation = "<b>Access:</b><br>" + "<br>".join(localisation.splitlines()) + "<br>"
         datemodif = datetime.datetime.strptime(datemodif[:10], "%Y-%m-%d").strftime("%d/%m/%Y")
-        modif = u"<i>Update sheet by " + proprio + u" the " + datemodif + u"</i>"
+        modif = "<i>Update sheet by " + proprio + " the " + datemodif + "</i>"
         lines = [line for line in [
             ouverture,
             capacite,
@@ -518,7 +518,7 @@ class TouristicContentApidaeParser(TouristicContentMixin, ApidaeParser):
         if localisation:
             localisation = "<b>Access:</b><br>" + "<br>".join(localisation.splitlines()) + "<br>"
         datemodif = datetime.datetime.strptime(datemodif[:10], "%Y-%m-%d").strftime("%d/%m/%Y")
-        modif = u"<i>Update sheet by " + proprio + u" the " + datemodif + u"</i>"
+        modif = "<i>Update sheet by " + proprio + " the " + datemodif + "</i>"
         lines = [line for line in [
             ouverture,
             capacite,
