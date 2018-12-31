@@ -176,8 +176,6 @@ class TouristicEventApidaeParser(ApidaeParser):
         'source': 'name',
         'portal': 'name',
     }
-    size = 100
-    skip = 0
 
     def __init__(self, *args, **kwargs):
         super(TouristicEventApidaeParser, self).__init__(*args, **kwargs)
@@ -332,8 +330,6 @@ class TouristicContentApidaeParser(ApidaeParser):
         'source': 'name',
         'portal': 'name',
     }
-    size = 100
-    skip = 0
 
     def __init__(self, *args, **kwargs):
         super(TouristicContentApidaeParser, self).__init__(*args, **kwargs)
