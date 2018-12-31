@@ -74,6 +74,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
         FileType.objects.create(type=u"Photographie")
+        self.assertEqual(TouristicEvent.objects.count(), 0)
         call_command('import', 'geotrek.tourism.parsers.TouristicEventApidaeParser', verbosity=0)
         self.assertEqual(TouristicEvent.objects.count(), 1)
         event = TouristicEvent.objects.get()
