@@ -2,12 +2,15 @@
 CHANGELOG
 =========
 
-2.22.6.dev0
+2.22.6 (2019-01-02)
 -------------------
 
-**Bug fixes**
+**Minor changes**
 
--
+- Index path draft field
+- Add eid field to load_infrastructure command
+- Add loadrestrictedarea command
+- Install postgis package
 
 
 2.22.5 (2018-12-19)
