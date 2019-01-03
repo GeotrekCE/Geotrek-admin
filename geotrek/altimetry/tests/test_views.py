@@ -1,6 +1,4 @@
 from django.test import TestCase
-from django.contrib.gis.geos import LineString
-from django.core.urlresolvers import NoReverseMatch
 
 from geotrek.authent.factories import UserFactory
 from geotrek.trekking.factories import TrekFactory
