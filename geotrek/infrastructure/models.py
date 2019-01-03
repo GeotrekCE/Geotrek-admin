@@ -150,16 +150,9 @@ class InfrastructureGISManager(gismodels.GeoManager):
         return all_years
 
 
-class InfrastructureStructureManager(StructureRelatedManager):
-    """ Overide default structure related manager, and filter by type. """
-    def get_queryset(self):
-        return super(InfrastructureStructureManager, self).get_queryset().exclude(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
-
-
-class Infrastructure(MapEntityMixin, BaseInfrastructure):
+class Infrastructure(BaseInfrastructure):
     """ An infrastructure in the park, which is not of type SIGNAGE """
     objects = BaseInfrastructure.get_manager_cls(InfrastructureGISManager)()
-    in_structure = InfrastructureStructureManager()
 
     class Meta:
         db_table = 'a_t_infrastructure'
@@ -196,16 +189,9 @@ class SignageGISManager(gismodels.GeoManager):
         return all_years
 
 
-class SignageStructureManager(StructureRelatedManager):
-    """ Overide default structure related manager, and filter by type. """
-    def get_queryset(self):
-        return super(SignageStructureManager, self).get_queryset().filter(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
-
-
-class Signage(MapEntityMixin, BaseInfrastructure):
+class Signage(BaseInfrastructure):
     """ An infrastructure in the park, which is of type SIGNAGE """
     objects = BaseInfrastructure.get_manager_cls(SignageGISManager)()
-    in_structure = SignageStructureManager()
 
     class Meta:
         db_table = 'a_t_signaletique'
