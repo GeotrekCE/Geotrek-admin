@@ -28,11 +28,9 @@ class TimeStampedModelMixin(models.Model):
     class Meta:
         abstract = True
 
-    def reload(self, fromdb=None):
+    def reload(self, fromdb):
         """Reload fields computed at DB-level (triggers)
         """
-        if fromdb is None:
-            fromdb = self.__class__.objects.get(pk=self.pk)
         self.date_insert = fromdb.date_insert
         self.date_update = fromdb.date_update
         return self
@@ -51,11 +49,9 @@ class NoDeleteMixin(models.Model):
     class Meta:
         abstract = True
 
-    def reload(self, fromdb=None):
+    def reload(self, fromdb):
         """Reload fields computed at DB-level (triggers)
         """
-        if fromdb is None:
-            fromdb = self.__class__.objects.get(pk=self.pk)
         self.deleted = fromdb.deleted
         return self
 
