@@ -362,7 +362,6 @@ class CommandLoadDemTest(TestCase):
             call_command('loaddem', filename, '--replace', verbosity=0)
         self.assertIn('DEM file does not match project extent', e.exception.message)
 
-class CommandFail(TestCase):
     @mock.patch('geotrek.altimetry.management.commands.loaddem.Command.call_command_system')
     def test_fail_raster2pgsql_first(self, sp):
         def command_fail_raster(cmd, **kwargs):
