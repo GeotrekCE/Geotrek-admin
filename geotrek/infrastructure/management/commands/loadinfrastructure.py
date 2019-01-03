@@ -170,13 +170,14 @@ class Command(BaseCommand):
     def create_infrastructure(self, geometry, name, type,
                               condition, structure, description, year, model, verbosity, eid):
 
-        infra_type, created = InfrastructureType.objects.get_or_create(label=type, type=model)
+        infra_type, created = InfrastructureType.objects.get_or_create(label=type, type=model, structure=structure)
 
         if created and verbosity:
             self.stdout.write(u"- InfrastructureType '{}' created".format(infra_type))
 
         if condition:
-            condition_type, created = InfrastructureCondition.objects.get_or_create(label=condition)
+            condition_type, created = InfrastructureCondition.objects.get_or_create(label=condition,
+                                                                                    structure=structure)
             if created and verbosity:
                 self.stdout.write(u"- Condition Type '{}' created".format(condition_type))
         else:
