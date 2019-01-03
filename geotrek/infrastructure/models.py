@@ -10,7 +10,7 @@ from mapentity.models import MapEntityMixin
 
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path
-from geotrek.authent.models import StructureRelatedManager, StructureRelated, StructureOrNoneRelated
+from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.mixins import BasePublishableMixin, OptionalPictogramMixin
 
 
