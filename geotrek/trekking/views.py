@@ -421,7 +421,7 @@ class TrekViewSet(MapEntityViewSet):
             qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
 
         if 'portal' in self.request.GET:
-            qs = qs.filter(portal__name__in=self.request.GET['portal'].split(','))
+            qs = qs.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
 
         qs = qs.transform(settings.API_SRID, field_name='geom')
 

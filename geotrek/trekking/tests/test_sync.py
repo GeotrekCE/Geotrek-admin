@@ -72,10 +72,8 @@ class SyncTest(TestCase):
             with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
 
-                # only 2 treks in Portal B
-                self.assertEquals(len(treks['features']),
-                                  trek_models.Trek.objects.filter(published=True,
-                                                                  portal__name__in=[self.portal_b.name, ]).count())
+                # only 2 treks in Portal B + 1 without portal specified
+                self.assertEquals(len(treks['features']), 3)
 
         # portal A and B
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
@@ -85,9 +83,5 @@ class SyncTest(TestCase):
             with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
 
-                # 3 treks have portal A or B
-                self.assertEquals(len(treks['features']),
-                                  trek_models.Trek.objects.filter(published=True,
-                                                                  portal__name__in=[self.portal_a.name,
-                                                                                    self.portal_b.name, ])
-                                                          .distinct('pk').count())
+                # 4 treks have portal A or B or no portal
+                self.assertEquals(len(treks['features']), 4)
