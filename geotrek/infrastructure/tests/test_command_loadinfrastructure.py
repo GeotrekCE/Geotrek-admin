@@ -1,4 +1,6 @@
 import os
+import mock
+import sys
 from StringIO import StringIO
 
 from django.core.management import call_command
@@ -130,3 +132,18 @@ class InfrastructureCommandTest(TestCase):
                      name_default='name', verbosity=2, stdout=output)
         self.assertIn("Update : name with eid eid1", output.getvalue())
         self.assertEqual(Signage.objects.count(), 2)
+
+    def test_fail_import(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
+        with mock.patch.dict(sys.modules, {'osgeo': None}):
+            with self.assertRaises(CommandError) as e:
+                call_command('loadinfrastructure', filename, '--signage', verbosity=0)
+            self.assertEqual('GDAL Python bindings are not available. Can not proceed.', e.exception.message)
+
+    def test_fail_structure_default_do_not_exist(self):
+        output = StringIO()
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
+        call_command('loadinfrastructure', filename, '--signage', type_default='label', name_default='name',
+                     condition_default='condition', structure_default='wrong_structure_default',
+                     description_default='description', year_default=2010, verbosity=0, stdout=output)
+        self.assertIn("Structure wrong_structure_default set in options doesn't exist", output.getvalue())
