@@ -12,6 +12,7 @@ from geotrek.altimetry.helpers import AltimetryHelper
 import os
 import sys
 import mock
+from StringIO import StringIO
 
 
 class ElevationTest(TestCase):
@@ -313,11 +314,15 @@ class CommandLoadDemTest(TestCase):
             self.assertEqual('GDAL Python bindings are not available. Can not proceed.', e.exception.message)
 
     def test_success(self):
+        output_stdout = StringIO()
         conn = connections[DEFAULT_DB_ALIAS]
         cur = conn.cursor()
         cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
-        call_command('loaddem', filename, '--replace', verbosity=0)
+        call_command('loaddem', filename, '--replace', verbosity=2, stdout=output_stdout)
+        self.assertIn('DEM successfully loaded.', output_stdout.getvalue())
+        self.assertIn('DEM successfully clipped/projected.', output_stdout.getvalue())
+        self.assertIn('Everything looks fine, we can start loading DEM', output_stdout.getvalue())
         conn = connections[DEFAULT_DB_ALIAS]
         cur = conn.cursor()
         cur.execute('SELECT ST_Value(rast, ST_SetSRID(ST_MakePoint(602500, 6650000), 2154)) FROM mnt;')
