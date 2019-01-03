@@ -350,24 +350,6 @@ class PublishableMixin(BasePublishableMixin):
             dst = self.get_map_image_path()
             shutil.copyfile(src, dst)
 
-    def get_geom_aspect_ratio(self):
-        """ Force object aspect ratio to fit height and width of
-        image in public document.
-        """
-        modelname = self.__class__._meta.object_name.lower()
-        s = settings.EXPORT_MAP_IMAGE_SIZE[modelname]
-        return float(s[0]) / s[1]
-
-    def get_attachment_print(self):
-        """
-        Look in attachment if there is document to be used as print version
-        """
-        overriden = self.attachments.filter(title="docprint").get()
-        # Must have OpenOffice document mimetype
-        if overriden.mimetype != ['application', 'vnd.oasis.opendocument.text']:
-            raise overriden.DoesNotExist()
-        return os.path.join(settings.MEDIA_ROOT, overriden.attachment_file.name)
-
     def is_public(self):
         return self.any_published
 
