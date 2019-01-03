@@ -74,37 +74,16 @@ class PathLayer(MapEntityLayer):
 
 
 class PathList(MapEntityList):
-    queryset = Path.objects.prefetch_related('networks').select_related('stake')
+    queryset = Path.objects
     filterform = PathFilterSet
 
     @classproperty
     def columns(cls):
-        columns = ['id', 'checkbox', 'name', 'networks', 'length', 'length_2d']
-        if settings.TRAIL_MODEL_ENABLED:
-            columns.append('trails')
+        columns = ['id', 'checkbox', 'name', 'length', 'length_2d']
         return columns
 
     def get_template_names(self):
         return (u"core/path_list.html",)
-
-    def get_queryset(self):
-        """
-        denormalize ``trail`` column from list.
-        """
-        qs = super(PathList, self).get_queryset()
-        denormalized = {}
-        if settings.TRAIL_MODEL_ENABLED:
-            paths_id = qs.values_list('id', flat=True)
-            paths_trails = Trail.objects.filter(aggregations__path__id__in=paths_id)
-            by_id = dict([(trail.id, trail) for trail in paths_trails])
-            trails_paths_ids = paths_trails.values_list('id', 'aggregations__path__id')
-            for trail_id, path_id in trails_paths_ids:
-                denormalized.setdefault(path_id, []).append(by_id[trail_id])
-
-        for path in qs:
-            path_trails = denormalized.get(path.id, [])
-            setattr(path, '_trails', path_trails)
-        return qs
 
 
 class PathJsonList(MapEntityJsonList, PathList):
