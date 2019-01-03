@@ -305,7 +305,6 @@ class SamplingTest(TestCase):
 
 
 class CommandLoadDemTest(TestCase):
-
     def test_fail_import(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
         with mock.patch.dict(sys.modules, {'osgeo': None}):
@@ -349,3 +348,31 @@ class CommandLoadDemTest(TestCase):
         with self.assertRaises(CommandError) as e:
             call_command('loaddem', filename, verbosity=0)
         self.assertIn('DEM format is not recognized by GDAL.', e.exception)
+
+
+class CommandFail(TestCase):
+    @mock.patch('geotrek.altimetry.management.commands.loaddem.Command.call_command_system')
+    def test_fail_raster2pgsql(self, sp):
+        def command_fail_raster(cmd, **kwargs):
+            if 'raster2pgsql' in cmd:
+                return 1
+            return 0
+        sp.side_effect = command_fail_raster
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
+        with self.assertRaises(CommandError) as e:
+            call_command('loaddem', filename, '--replace', verbosity=0)
+        self.assertEqual('Caught Exception: raster2pgsql failed with exit code 1', e.exception.message)
+        sp.side_effect = None
+
+    @mock.patch('geotrek.altimetry.management.commands.loaddem.Command.call_command_system')
+    def test_fail_gdalwarp(self, sp):
+        def command_fail_gdalwarp(cmd, **kwargs):
+            if 'gdalwarp' in cmd:
+                return 1
+            return 0
+        sp.side_effect = command_fail_gdalwarp
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
+        with self.assertRaises(CommandError) as e:
+            call_command('loaddem', filename, '--replace', verbosity=0)
+        self.assertEqual('Caught Exception: gdalwarp failed with exit code 1', e.exception.message)
+        sp.side_effect = None
