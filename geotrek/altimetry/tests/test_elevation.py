@@ -4,6 +4,7 @@ from django.db import connections, DEFAULT_DB_ALIAS
 from django.contrib.gis.geos import MultiLineString, LineString
 from django.core.management import call_command
 from django.core.management.base import CommandError
+from django.test.utils import override_settings
 
 from geotrek.core.models import Path
 from geotrek.core.factories import TopologyFactory
@@ -354,6 +355,12 @@ class CommandLoadDemTest(TestCase):
             call_command('loaddem', filename, verbosity=0)
         self.assertIn('DEM format is not recognized by GDAL.', e.exception)
 
+    @override_settings(SPATIAL_EXTENT=(0, 0, 0, 0))
+    def test_bbox_not_intersect(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
+        with self.assertRaises(CommandError) as e:
+            call_command('loaddem', filename, '--replace', verbosity=0)
+        self.assertIn('DEM file does not match project extent', e.exception.message)
 
 class CommandFail(TestCase):
     @mock.patch('geotrek.altimetry.management.commands.loaddem.Command.call_command_system')
