@@ -130,9 +130,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
 
     @property
     def cities_display(self):
-        if hasattr(self, 'cities'):
-            return [unicode(c) for c in self.cities]
-        return []
+        return [unicode(c) for c in self.cities] if hasattr(self, 'cities') else []
 
     @classproperty
     def cities_verbose_name(cls):
