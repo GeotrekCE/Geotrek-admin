@@ -50,8 +50,8 @@ class InfrastructureCommandTest(TestCase):
                      condition_field='condition', structure_default='structure',
                      description_field='descriptio', year_field='year', verbosity=1, stdout=output)
         self.assertIn('Infrastructures will be linked to %s' % structure, output.getvalue())
-        self.assertIn("InfrastructureType 'type (%s)' created" % structure, output.getvalue())
-        self.assertIn("Condition Type 'condition (%s)' created" % structure, output.getvalue())
+        self.assertIn("InfrastructureType 'type' created", output.getvalue())
+        self.assertIn("Condition Type 'condition' created", output.getvalue())
         value = Infrastructure.objects.all()
         names = [val.name for val in value]
         years = [val.implantation_year for val in value]
