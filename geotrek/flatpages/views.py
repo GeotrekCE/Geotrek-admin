@@ -5,6 +5,7 @@ from rest_framework import viewsets
 
 from django.conf import settings
 from django.core.urlresolvers import reverse_lazy
+from django.db.models import Q
 from django.views.generic import CreateView, UpdateView, DetailView
 
 from geotrek.flatpages.serializers import FlatPageSerializer
@@ -28,7 +29,7 @@ class FlatPageViewSet(viewsets.ModelViewSet):
             qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
 
         if self.request.GET.get('portal', '') != '':
-            qs = qs.filter(portal__name__in=self.request.GET['portal'].split(','))
+            qs = qs.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
 
         return qs
 

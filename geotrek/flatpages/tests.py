@@ -213,10 +213,10 @@ class SyncTestPortal(TestCase):
         Test if synced flatpages are filtered by portal
         '''
         management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
-                                portal=self.portal_a.name, skip_tiles=True, verbosity=0)
-        for lang in settings.MODELTRANSLATION_LANGUAGES:
-            with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', lang, 'flatpages.geojson'), 'r') as f_file:
-                flatpages = json.load(f_file)
-                self.assertEquals(len(flatpages),
-                                  FlatPage.objects.filter(portal__name__in=[self.portal_a.name, ],
-                                                          **{'published_{}'.format(lang): True}).count())
+                                portal=self.portal_b.name, skip_tiles=True, verbosity=0)
+        with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api/fr/flatpages.geojson'), 'r') as f_file:
+            flatpages = json.load(f_file)
+            self.assertEquals(len(flatpages), 0)
+        with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api/en/flatpages.geojson'), 'r') as f_file:
+            flatpages = json.load(f_file)
+            self.assertEquals(len(flatpages), 3)
