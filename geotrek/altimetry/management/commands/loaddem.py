@@ -26,7 +26,7 @@ class Command(BaseCommand):
             raise CommandError(msg)
 
         try:
-            cmd = 'raster2pgsql -G'
+            cmd = 'raster2pgsql -G > /dev/null'
             kwargs_raster = {'shell': True}
             ret = self.call_command_system(cmd, **kwargs_raster)
             if ret != 0:

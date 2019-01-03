@@ -352,9 +352,9 @@ class CommandLoadDemTest(TestCase):
 
 class CommandFail(TestCase):
     @mock.patch('geotrek.altimetry.management.commands.loaddem.Command.call_command_system')
-    def test_fail_raster2pgsql(self, sp):
+    def test_fail_raster2pgsql_first(self, sp):
         def command_fail_raster(cmd, **kwargs):
-            if 'raster2pgsql' in cmd:
+            if 'raster2pgsql -G > /dev/null' in cmd:
                 return 1
             return 0
         sp.side_effect = command_fail_raster
@@ -362,7 +362,6 @@ class CommandFail(TestCase):
         with self.assertRaises(CommandError) as e:
             call_command('loaddem', filename, '--replace', verbosity=0)
         self.assertEqual('Caught Exception: raster2pgsql failed with exit code 1', e.exception.message)
-        sp.side_effect = None
 
     @mock.patch('geotrek.altimetry.management.commands.loaddem.Command.call_command_system')
     def test_fail_gdalwarp(self, sp):
@@ -375,4 +374,15 @@ class CommandFail(TestCase):
         with self.assertRaises(CommandError) as e:
             call_command('loaddem', filename, '--replace', verbosity=0)
         self.assertEqual('Caught Exception: gdalwarp failed with exit code 1', e.exception.message)
-        sp.side_effect = None
+
+    @mock.patch('geotrek.altimetry.management.commands.loaddem.Command.call_command_system')
+    def test_fail_raster2pgsql_second(self, sp):
+        def command_fail_raster(cmd, **kwargs):
+            if 'raster2pgsql -c -C -I -M -t' in cmd:
+                return 1
+            return 0
+        sp.side_effect = command_fail_raster
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
+        with self.assertRaises(CommandError) as e:
+            call_command('loaddem', filename, '--replace', verbosity=0)
+        self.assertEqual('Caught Exception: raster2pgsql failed with exit code 1', e.exception.message)
