@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.22.7.dev0
+2.22.7 (2019-01-03)
 -------------------
 
 **Bug fixes**
 
--
+- Fix command loadinfrastructure
 
 
 2.22.6 (2019-01-02)
