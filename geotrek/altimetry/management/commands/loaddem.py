@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 from django.conf import settings
 import os.path
-from subprocess import call
+from subprocess import call, PIPE
 import tempfile
 
 
@@ -131,7 +131,7 @@ class Command(BaseCommand):
             if verbose:
                 self.stdout.write('\n-- Relaying to gdalwarp ----------------\n')
                 self.stdout.write(cmd)
-            kwargs_gdal = {'shell': True}
+            kwargs_gdal = {'shell': True, 'stdout': PIPE}
             ret = self.call_command_system(cmd, **kwargs_gdal)
             if ret != 0:
                 raise Exception('gdalwarp failed with exit code %d' % ret)
@@ -152,7 +152,7 @@ class Command(BaseCommand):
             if verbose:
                 self.stdout.write('\n-- Relaying to raster2pgsql ------------\n')
                 self.stdout.write(cmd)
-            kwargs_raster2 = {'shell': True, 'stdout': output.file}
+            kwargs_raster2 = {'shell': True, 'stdout': output.file, 'stderr': PIPE}
             ret = self.call_command_system(cmd, **kwargs_raster2)
             if ret != 0:
                 raise Exception('raster2pgsql failed with exit code %d' % ret)
