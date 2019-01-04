@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Add italian translations that are visible on Geotrek-rando
 
 
 2.22.8 (2019-01-03)
