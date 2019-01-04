@@ -397,3 +397,17 @@ class CommandLoadDemTest(TestCase):
         with self.assertRaises(CommandError) as e:
             call_command('loaddem', filename, '--replace', verbosity=0)
         self.assertEqual('Caught Exception: raster2pgsql failed with exit code 1', e.exception.message)
+
+    @mock.patch('osgeo.gdal.Dataset.GetProjection', return_value='')
+    def test_fail_projection(self, sp):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
+        with self.assertRaises(CommandError) as e:
+            call_command('loaddem', filename, '--replace', verbosity=0)
+        self.assertEqual('DEM coordinate system is unknown.', e.exception.message)
+
+    @mock.patch('osgeo.gdal.Dataset.GetGeoTransform', return_value=None)
+    def test_fail_extent(self, sp):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
+        with self.assertRaises(CommandError) as e:
+            call_command('loaddem', filename, '--replace', verbosity=0)
+        self.assertEqual('DEM extent is unknown.', e.exception.message)
