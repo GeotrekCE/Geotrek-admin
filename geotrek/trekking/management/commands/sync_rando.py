@@ -454,7 +454,7 @@ class Command(BaseCommand):
         if self.source:
             flatpages = flatpages.filter(source__name__in=self.source)
         if self.portal:
-            flatpages = flatpages.filter(portal__name__in=self.portal)
+            flatpages = flatpages.filter(Q(portal__name__in=self.portal) | Q(portal=None))
         for flatpage in flatpages:
             name = os.path.join('meta', lang, flatpage.rando_url, 'index.html')
             self.sync_view(lang, FlatPageMeta.as_view(), name, pk=flatpage.pk, params={'rando_url': self.rando_url})
@@ -507,7 +507,7 @@ class Command(BaseCommand):
             treks = treks.filter(source__name__in=self.source)
 
         if self.portal:
-            treks = treks.filter(portal__name__in=self.portal)
+            treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
 
         for trek in treks:
             self.sync_trek(lang, trek)
@@ -555,7 +555,7 @@ class Command(BaseCommand):
                 treks = treks.filter(source__name__in=self.source)
 
             if self.portal:
-                treks = treks.filter(portal__name__in=self.portal)
+                treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
 
             for trek in treks:
                 if trek.any_published or any([parent.any_published for parent in trek.parents]):
@@ -652,7 +652,7 @@ class Command(BaseCommand):
             contents = contents.filter(source__name__in=self.source)
 
         if self.portal:
-            contents = contents.filter(portal__name__in=self.portal)
+            contents = contents.filter(Q(portal__name__in=self.portal) | Q(portal=None))
 
         for content in contents:
             self.sync_content(lang, content)
@@ -664,7 +664,7 @@ class Command(BaseCommand):
             events = events.filter(source__name__in=self.source)
 
         if self.portal:
-            events = events.filter(portal__name__in=self.portal)
+            events = events.filter(Q(portal__name__in=self.portal) | Q(portal=None))
 
         for event in events:
             self.sync_event(lang, event)

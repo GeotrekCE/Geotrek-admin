@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+2.22.8 (2019-01-03)
+-------------------
+
+**Minor changes**
+
+- Now, empty portal field means "all portals" instead of "no portal"
+
+
 2.22.7 (2019-01-03)
 -------------------
 
