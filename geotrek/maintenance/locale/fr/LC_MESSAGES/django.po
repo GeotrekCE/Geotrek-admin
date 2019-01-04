@@ -187,10 +187,10 @@ msgid "Contractors"
 msgstr "Prestataires"
 
 msgid "Project owner"
-msgstr "Maître d'ouvrage"
+msgstr "Maître d'oeuvre"
 
 msgid "Project manager"
-msgstr "Maître d'oeuvre"
+msgstr "Maître d'ouvrage"
 
 msgid "Founders"
 msgstr "Financeurs"
