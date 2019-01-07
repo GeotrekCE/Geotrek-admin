@@ -1,7 +1,4 @@
-import os
-
 from django.test import TestCase
-from django.conf import settings
 
 from geotrek.cirkwi.models import CirkwiTag, CirkwiLocomotion, CirkwiPOICategory
 
