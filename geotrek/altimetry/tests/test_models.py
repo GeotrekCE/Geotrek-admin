@@ -12,5 +12,6 @@ class AltimetryMixinTest(TestCase):
         trek = TrekFactory.create(no_path=True)
         trek.get_elevation_chart_path()
         basefolder = os.path.join(settings.MEDIA_ROOT, 'profiles')
-        self.assertTrue(os.path.exists(os.path.join(basefolder,
-                                                    '%s-%s-%s.png' % (Trek._meta.model_name, '1', 'en'))))
+        self.assertTrue(os.listdir(basefolder))
+        directory = os.listdir(basefolder)
+        self.assertIn('%s-%s-%s.png' % (Trek._meta.model_name, '1', 'en'), directory)
