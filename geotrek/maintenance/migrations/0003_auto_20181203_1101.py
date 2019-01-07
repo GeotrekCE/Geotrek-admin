@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('infrastructure', '0005_auto_20181203_1101'),
+        ('infrastructure', '0007_create_infra_signa'),
         ('maintenance', '0002_auto_20180608_1239'),
     ]
 

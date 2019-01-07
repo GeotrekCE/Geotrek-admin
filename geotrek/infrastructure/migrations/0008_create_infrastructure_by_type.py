@@ -16,7 +16,7 @@ def get_infrastructure(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('infrastructure', '0005_auto_20181203_1101'),
+        ('infrastructure', '0007_create_infra_signa'),
     ]
 
     operations = [

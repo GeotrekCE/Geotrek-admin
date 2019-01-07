@@ -8,9 +8,9 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0005_auto_20181203_1101'),
+        ('core', '0008_aggregation_infrastructure'),
         ('maintenance', '0003_auto_20181203_1101'),
-        ('infrastructure', '0006_auto_20181203_1122'),
+        ('infrastructure', '0008_create_infrastructure_by_type'),
     ]
 
     operations = [

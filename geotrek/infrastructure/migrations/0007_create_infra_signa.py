@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('authent', '0002_auto_20181107_1620'),
         ('core', '0004_auto_20181116_1821'),
-        ('infrastructure', '0004_auto_20181113_1626'),
+        ('infrastructure', '0006_auto_20181219_1524'),
     ]
 
     operations = [
@@ -34,6 +34,7 @@ class Migration(migrations.Migration):
                 ('condition', models.ForeignKey(blank=True, db_column=b'etat', null=True, on_delete=django.db.models.deletion.PROTECT, to='infrastructure.InfrastructureCondition', verbose_name='Condition')),
                 ('structure', models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure')),
                 ('type', models.ForeignKey(db_column=b'type', on_delete=django.db.models.deletion.CASCADE, to='infrastructure.InfrastructureType', verbose_name='Type')),
+                ('eid', models.CharField(blank=True, db_column=b'id_externe', max_length=1024, null=True, verbose_name='External id')),
             ],
             options={
                 'db_table': 'a_t_infrastructure',
@@ -54,6 +55,7 @@ class Migration(migrations.Migration):
                 ('condition', models.ForeignKey(blank=True, db_column=b'etat', null=True, on_delete=django.db.models.deletion.PROTECT, to='infrastructure.InfrastructureCondition', verbose_name='Condition')),
                 ('structure', models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure')),
                 ('type', models.ForeignKey(db_column=b'type', on_delete=django.db.models.deletion.CASCADE, to='infrastructure.InfrastructureType', verbose_name='Type')),
+                ('eid', models.CharField(blank=True, db_column=b'id_externe', max_length=1024, null=True, verbose_name='External id')),
             ],
             options={
                 'db_table': 'a_t_signaletique',
