@@ -2,7 +2,7 @@ from django.db import migrations
 
 
 def get_infrastructure(apps, schema_editor):
-    # We can't import the Person model directly as it may be a newer
+    # We can't import Infrastructure models directly as it may be a newer
     # version than this migration expects. We use the historical version.
     BaseInfra = apps.get_model('infrastructure', 'BaseInfrastructure')
     Infra = apps.get_model('infrastructure', 'Infrastructure')
