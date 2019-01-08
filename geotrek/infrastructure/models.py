@@ -148,7 +148,7 @@ class InfrastructureGISManager(gismodels.GeoManager):
         return all_years
 
 
-class Infrastructure(BaseInfrastructure):
+class Infrastructure(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is not of type SIGNAGE """
     objects = BaseInfrastructure.get_manager_cls(InfrastructureGISManager)()
 
@@ -187,7 +187,7 @@ class SignageGISManager(gismodels.GeoManager):
         return all_years
 
 
-class Signage(BaseInfrastructure):
+class Signage(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is of type SIGNAGE """
     objects = BaseInfrastructure.get_manager_cls(SignageGISManager)()
 
