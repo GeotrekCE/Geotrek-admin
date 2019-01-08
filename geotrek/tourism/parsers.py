@@ -32,10 +32,6 @@ class ApidaeParser(AttachmentParserMixin, Parser):
     }
     # Use for foreign keys. When the key is a foreign key, it will try to get the key's value.
     # In django : 'category' : 'label' -> category.label
-    natural_keys = {
-    }
-    m2m_constant_fields = {
-    }
     field_options = {
         'name': {'required': True},
         'geom': {'required': True},
