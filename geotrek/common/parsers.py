@@ -414,10 +414,10 @@ class Parser(object):
 
     def start(self):
         kwargs = self.get_to_delete_kwargs()
-        if kwargs:
-            self.to_delete = set(self.model.objects.filter(**kwargs).values_list('pk', flat=True))
-        else:
+        if kwargs is None:
             self.to_delete = set()
+        else:
+            self.to_delete = set(self.model.objects.filter(**kwargs).values_list('pk', flat=True))
 
     def end(self):
         if self.delete:
