@@ -8,6 +8,8 @@ CHANGELOG
 **Minor changes**
 
 - Separate Infrastructure and Signage models
+- Create parser touristic event for apidae
+- Refactor ApidaeParser
 
 **Bug fixes**
 
@@ -17,11 +19,6 @@ CHANGELOG
 **Performances**
 
 - Improve map's performances
-
-**Minor changes**
-
-- Create parser touristic event for apidae
-- Refactor ApidaeParser
 
 
 2.22.8 (2019-01-03)
