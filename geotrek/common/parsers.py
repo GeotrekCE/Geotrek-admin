@@ -417,7 +417,7 @@ class Parser(object):
         if kwargs:
             self.to_delete = set(self.model.objects.filter(**kwargs).values_list('pk', flat=True))
         else:
-            self.to_delete = []
+            self.to_delete = set()
 
     def end(self):
         if self.delete:
