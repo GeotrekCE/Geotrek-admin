@@ -156,7 +156,7 @@ class InfrastructureStructureManager(StructureRelatedManager):
         return super(InfrastructureStructureManager, self).get_queryset().exclude(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
 
 
-class Infrastructure(BaseInfrastructure, MapEntityMixin):
+class Infrastructure(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is not of type SIGNAGE """
     objects = BaseInfrastructure.get_manager_cls(InfrastructureGISManager)()
     in_structure = InfrastructureStructureManager()
@@ -202,7 +202,7 @@ class SignageStructureManager(StructureRelatedManager):
         return super(SignageStructureManager, self).get_queryset().filter(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
 
 
-class Signage(BaseInfrastructure, MapEntityMixin):
+class Signage(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is of type SIGNAGE """
     objects = BaseInfrastructure.get_manager_cls(SignageGISManager)()
     in_structure = SignageStructureManager()
