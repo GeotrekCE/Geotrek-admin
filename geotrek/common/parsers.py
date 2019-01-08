@@ -409,7 +409,7 @@ class Parser(object):
             try:
                 kwargs[dst] = field.rel.to.objects.get(**filters)
             except field.rel.to.DoesNotExist:
-                pass
+                return None
         return kwargs
 
     def start(self):
