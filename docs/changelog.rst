@@ -9,6 +9,11 @@ CHANGELOG
 
 - Add italian translations that are visible on Geotrek-rando
 
+**Minor changes**
+
+- Create parser touristic event for apidae
+- Refactor ApidaeParser
+
 
 2.22.8 (2019-01-03)
 -------------------
