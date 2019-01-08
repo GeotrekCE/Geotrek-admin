@@ -5,9 +5,18 @@ CHANGELOG
 2.22.9.dev0
 -------------------
 
+**Minor changes**
+
+- Separate Infrastructure and Signage models
+
 **Bug fixes**
 
 - Add italian translations that are visible on Geotrek-rando
+- Fix permissions attachments paperclip
+
+**Performances**
+
+- Improve map's performances
 
 **Minor changes**
 
