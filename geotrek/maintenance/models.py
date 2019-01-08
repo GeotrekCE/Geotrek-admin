@@ -137,9 +137,8 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         """
         Equivalent of topology attribute, but casted to related type (Infrastructure)
         """
-        if self.on_infrastructure:
-            if self.is_infrastructure:
-                return self.infrastructures[0]
+        if self.is_infrastructure:
+            return self.infrastructures[0]
         return None
 
     @property
@@ -147,9 +146,8 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         """
         Equivalent of topology attribute, but casted to related type (Signage)
         """
-        if self.on_infrastructure:
-            if self.is_signage:
-                return self.signages[0]
+        if self.is_signage:
+            return self.signages[0]
         return None
 
     @classproperty
