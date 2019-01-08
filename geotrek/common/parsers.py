@@ -396,7 +396,7 @@ class Parser(object):
                 try:
                     kwargs[dst] = field.rel.to.objects.get(**{natural_key: val})
                 except field.rel.to.DoesNotExist:
-                    pass
+                    return None
             else:
                 kwargs[dst] = val
         for dst, val in self.m2m_constant_fields.iteritems():
@@ -413,7 +413,11 @@ class Parser(object):
         return kwargs
 
     def start(self):
-        self.to_delete = set(self.model.objects.filter(**self.get_to_delete_kwargs()).values_list('pk', flat=True))
+        kwargs = self.get_to_delete_kwargs()
+        if kwargs:
+            self.to_delete = set(self.model.objects.filter(**kwargs).values_list('pk', flat=True))
+        else:
+            self.to_delete = []
 
     def end(self):
         if self.delete:
