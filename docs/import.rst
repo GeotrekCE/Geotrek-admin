@@ -115,3 +115,22 @@ Start import from Geotrek-Admin UI
 ----------------------------------
 
 Open the top right menu and clic on ``imports``.
+
+Import from a file
+------------------
+
+You can also use some of Geotrek commands to import data from a file.
+
+To list all Geotrek commands available:
+
+::
+
+    ./bin/django
+    
+To get help about a command:
+
+::
+
+    ./bin/django help <subcommand>
+    
+Example: ``./bin/django help loadpoi``
