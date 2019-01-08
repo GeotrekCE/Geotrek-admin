@@ -29,6 +29,7 @@ class ApidaeParser(AttachmentParserMixin, Parser):
         'published': True,
     }
     non_fields = {
+        'attachments': 'illustrations',
     }
     # Use for foreign keys. When the key is a foreign key, it will try to get the key's value.
     # In django : 'category' : 'label' -> category.label
@@ -160,9 +161,6 @@ class TouristicEventApidaeParser(ApidaeParser):
         'gestion.membreProprietaire.nom',
         'illustrations'
     ]
-    non_fields = {
-        'attachments': 'illustrations',
-    }
     m2m_fields = {
         'themes': 'informationsFeteEtManifestation.themes.*.libelleFr'
     }
@@ -315,9 +313,6 @@ class TouristicContentApidaeParser(ApidaeParser):
             'gestion.dateModification',
             'gestion.membreProprietaire.nom',
         ),
-    }
-    non_fields = {
-        'attachments': 'illustrations',
     }
     natural_keys = {
         'category': 'label',
