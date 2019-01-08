@@ -404,6 +404,7 @@ MAPENTITY_CONFIG = {
     'SENDFILE_HTTP_HEADER': 'X-Accel-Redirect',
     'DRF_API_URL_PREFIX': r'^api/(?P<lang>[a-z]{2})/',
     'MAPENTITY_WEASYPRINT': False,
+    'GEOJSON_PRECISION': 7,
 }
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')

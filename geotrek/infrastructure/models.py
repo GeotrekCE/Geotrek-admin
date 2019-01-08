@@ -82,7 +82,7 @@ class InfrastructureCondition(StructureOrNoneRelated):
         return self.label
 
 
-class BaseInfrastructure(MapEntityMixin, BasePublishableMixin, Topology, StructureRelated):
+class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
     """ A generic infrastructure in the park """
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
@@ -101,6 +101,7 @@ class BaseInfrastructure(MapEntityMixin, BasePublishableMixin, Topology, Structu
                            db_column='id_externe')
 
     class Meta:
+        abstract = True
         db_table = 'a_t_amenagement'
 
     def __unicode__(self):
@@ -155,13 +156,13 @@ class InfrastructureStructureManager(StructureRelatedManager):
         return super(InfrastructureStructureManager, self).get_queryset().exclude(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
 
 
-class Infrastructure(BaseInfrastructure):
+class Infrastructure(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is not of type SIGNAGE """
     objects = BaseInfrastructure.get_manager_cls(InfrastructureGISManager)()
     in_structure = InfrastructureStructureManager()
 
     class Meta:
-        proxy = True
+        db_table = 'a_t_infrastructure'
         verbose_name = _(u"Infrastructure")
         verbose_name_plural = _(u"Infrastructures")
 
@@ -201,13 +202,13 @@ class SignageStructureManager(StructureRelatedManager):
         return super(SignageStructureManager, self).get_queryset().filter(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
 
 
-class Signage(BaseInfrastructure):
+class Signage(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is of type SIGNAGE """
     objects = BaseInfrastructure.get_manager_cls(SignageGISManager)()
     in_structure = SignageStructureManager()
 
     class Meta:
-        proxy = True
+        db_table = 'a_t_signaletique'
         verbose_name = _(u"Signage")
         verbose_name_plural = _(u"Signages")
 

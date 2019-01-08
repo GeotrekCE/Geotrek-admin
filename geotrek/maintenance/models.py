@@ -135,13 +135,19 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     @property
     def infrastructure(self):
         """
-        Equivalent of topology attribute, but casted to related type (Infrastructure or Signage)
+        Equivalent of topology attribute, but casted to related type (Infrastructure)
         """
-        if self.on_infrastructure:
-            if self.is_signage:
-                return self.signages[0]
-            if self.is_infrastructure:
-                return self.infrastructures[0]
+        if self.is_infrastructure:
+            return self.infrastructures[0]
+        return None
+
+    @property
+    def signage(self):
+        """
+        Equivalent of topology attribute, but casted to related type (Signage)
+        """
+        if self.is_signage:
+            return self.signages[0]
         return None
 
     @classproperty
@@ -154,9 +160,12 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         title = _('Path')
         if self.on_infrastructure:
             icon = self.topology.kind.lower()
-            title = u'%s: %s' % (_(self.topology.kind.capitalize()),
-                                 self.infrastructure)
-
+            if self.infrastructure:
+                title = u'%s: %s' % (_(self.topology.kind.capitalize()),
+                                     self.infrastructure)
+            elif self.signage:
+                title = u'%s: %s' % (_(self.topology.kind.capitalize()),
+                                     self.signage)
         return u'<img src="%simages/%s-16.png" title="%s">' % (settings.STATIC_URL,
                                                                icon,
                                                                title)
@@ -164,10 +173,16 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     @property
     def infrastructure_csv_display(self):
         if self.on_infrastructure:
-            return u"%s: %s (%s)" % (
-                _(self.topology.kind.capitalize()),
-                self.infrastructure,
-                self.infrastructure.pk)
+            if self.infrastructure:
+                return u"%s: %s (%s)" % (
+                    _(self.topology.kind.capitalize()),
+                    self.infrastructure,
+                    self.infrastructure.pk)
+            elif self.signage:
+                return u"%s: %s (%s)" % (
+                    _(self.topology.kind.capitalize()),
+                    self.signage,
+                    self.signage.pk)
         return ''
 
     @property

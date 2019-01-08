@@ -39,7 +39,8 @@ class Command(BaseCommand):
 
         # For all models registered, add missing bits
         for model in registry.registry.keys():
-            create_mapentity_model_permissions(model)
+            if not model._meta.abstract:
+                create_mapentity_model_permissions(model)
 
         logger.info("Done.")
 
@@ -47,7 +48,7 @@ class Command(BaseCommand):
 
         for content_type in ContentType.objects.all():
             model = content_type.model_class()
-            if model and issubclass(model, BasePublishableMixin):
+            if model and issubclass(model, BasePublishableMixin) and not model._meta.abstract:
                 Permission.objects.get_or_create(
                     codename='publish_%s' % content_type.model,
                     content_type=content_type,
