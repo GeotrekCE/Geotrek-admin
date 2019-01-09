@@ -109,7 +109,7 @@ class Command(BaseCommand):
                         if verbosity > 0:
                             self.stdout.write(u"Infrastructures will be linked to {}".format(structure))
                     except Structure.DoesNotExist:
-                        self.stdout.write(u"Infrastructure {} set in options doesn't exist".format(structure_default))
+                        self.stdout.write(u"Structure {} set in options doesn't exist".format(structure_default))
                         break
                 if field_description and field_description not in available_fields:
                     self.stdout.write(self.style.ERROR(

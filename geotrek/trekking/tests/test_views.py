@@ -68,6 +68,16 @@ class POIViewsTest(CommonTest):
             'topology': '{"lat": 5.1, "lng": 6.6}',
         }
 
+    def test_status_only_review(self):
+        element_not_published = self.modelfactory.create()
+        element_not_published.published = False
+        element_not_published.review = True
+        element_not_published.save()
+        self.login()
+        response = self.client.get(self.model.get_jsonlist_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Waiting for publication', response.content)
+
     def test_empty_topology(self):
         self.login()
         data = self.get_good_data()

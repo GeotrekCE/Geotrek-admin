@@ -155,7 +155,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         """
         return PathHelper.snap(self, point)
 
-    def reload(self, fromdb=None):
+    def reload(self):
         # Update object's computed values (reload from database)
         if self.pk and self.visible:
             fromdb = self.__class__.objects.get(pk=self.pk)
@@ -382,7 +382,7 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
             other.delete(force=True)  # Really delete it from database
         return self
 
-    def reload(self, fromdb=None):
+    def reload(self):
         """
         Reload into instance all computed attributes in triggers.
         """

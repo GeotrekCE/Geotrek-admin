@@ -34,16 +34,16 @@
 
 
 
-                ["add_signage", "infrastructure", "baseinfrastructure"],
-                ["change_signage", "infrastructure", "baseinfrastructure"],
-                ["change_geom_signage", "infrastructure", "baseinfrastructure"],
-                ["delete_signage", "infrastructure", "baseinfrastructure"],
-                ["export_signage", "infrastructure", "baseinfrastructure"],
-                ["add_infrastructure", "infrastructure", "baseinfrastructure"],
-                ["change_infrastructure", "infrastructure", "baseinfrastructure"],
-                ["change_geom_infrastructure", "infrastructure", "baseinfrastructure"],
-                ["delete_infrastructure", "infrastructure", "baseinfrastructure"],
-                ["export_infrastructure", "infrastructure", "baseinfrastructure"],
+                ["add_signage", "infrastructure", "signage"],
+                ["change_signage", "infrastructure", "signage"],
+                ["change_geom_signage", "infrastructure", "signage"],
+                ["delete_signage", "infrastructure", "signage"],
+                ["export_signage", "infrastructure", "signage"],
+                ["add_infrastructure", "infrastructure", "infrastructure"],
+                ["change_infrastructure", "infrastructure", "infrastructure"],
+                ["change_geom_infrastructure", "infrastructure", "infrastructure"],
+                ["delete_infrastructure", "infrastructure", "infrastructure"],
+                ["export_infrastructure", "infrastructure", "infrastructure"],
 
                 ["add_infrastructuretype", "infrastructure", "infrastructuretype"],
                 ["change_infrastructuretype", "infrastructure", "infrastructuretype"],
@@ -133,8 +133,8 @@
                 ["read_path", "core", "path"],
                 ["read_trail", "core", "trail"],
 
-                ["read_signage", "infrastructure", "baseinfrastructure"],
-                ["read_infrastructure", "infrastructure", "baseinfrastructure"],
+                ["read_signage", "infrastructure", "signage"],
+                ["read_infrastructure", "infrastructure", "infrastructure"],
 
                 ["read_intervention", "maintenance", "intervention"],
                 ["read_project", "maintenance", "project"],
@@ -233,8 +233,8 @@
                 ["read_path", "core", "path"],
                 ["read_trail", "core", "trail"],
 
-                ["read_signage", "infrastructure", "baseinfrastructure"],
-                ["read_infrastructure", "infrastructure", "baseinfrastructure"],
+                ["read_signage", "infrastructure", "signage"],
+                ["read_infrastructure", "infrastructure", "infrastructure"],
 
                 ["read_intervention", "maintenance", "intervention"],
                 ["read_project", "maintenance", "project"],
@@ -290,16 +290,16 @@
                 ["delete_intervention", "maintenance", "intervention"],
                 ["export_intervention", "maintenance", "intervention"],
 
-                ["add_signage", "infrastructure", "baseinfrastructure"],
-                ["change_signage", "infrastructure", "baseinfrastructure"],
-                ["change_geom_signage", "infrastructure", "baseinfrastructure"],
-                ["delete_signage", "infrastructure", "baseinfrastructure"],
-                ["export_signage", "infrastructure", "baseinfrastructure"],
-                ["add_infrastructure", "infrastructure", "baseinfrastructure"],
-                ["change_infrastructure", "infrastructure", "baseinfrastructure"],
-                ["change_geom_infrastructure", "infrastructure", "baseinfrastructure"],
-                ["delete_infrastructure", "infrastructure", "baseinfrastructure"],
-                ["export_infrastructure", "infrastructure", "baseinfrastructure"],
+                ["add_signage", "infrastructure", "signage"],
+                ["change_signage", "infrastructure", "signage"],
+                ["change_geom_signage", "infrastructure", "signage"],
+                ["delete_signage", "infrastructure", "signage"],
+                ["export_signage", "infrastructure", "signage"],
+                ["add_infrastructure", "infrastructure", "infrastructure"],
+                ["change_infrastructure", "infrastructure", "infrastructure"],
+                ["change_geom_infrastructure", "infrastructure", "infrastructure"],
+                ["delete_infrastructure", "infrastructure", "infrastructure"],
+                ["export_infrastructure", "infrastructure", "infrastructure"],
 
                 ["add_competenceedge", "land", "competenceedge"],
                 ["change_competenceedge", "land", "competenceedge"],
@@ -338,8 +338,8 @@
                 ["read_path", "core", "path"],
                 ["read_trail", "core", "trail"],
 
-                ["read_signage", "infrastructure", "baseinfrastructure"],
-                ["read_infrastructure", "infrastructure", "baseinfrastructure"],
+                ["read_signage", "infrastructure", "signage"],
+                ["read_infrastructure", "infrastructure", "infrastructure"],
 
                 ["read_intervention", "maintenance", "intervention"],
                 ["read_project", "maintenance", "project"],

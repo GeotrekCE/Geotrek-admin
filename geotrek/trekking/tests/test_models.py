@@ -3,6 +3,7 @@ from django.contrib.gis.geos import (LineString, Polygon, MultiPolygon,
                                      MultiLineString, MultiPoint, Point)
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.test.utils import override_settings
 
 from bs4 import BeautifulSoup
 
@@ -43,6 +44,13 @@ class TrekTest(TranslationResetMixin, TestCase):
         t.save()
         self.assertTrue(t.any_published)
 
+    @override_settings(PUBLISHED_BY_LANG=False)
+    def test_any_published_without_published_by_lang(self):
+        t = TrekFactory.create(published=False)
+        t.published_fr = True
+        t.save()
+        self.assertFalse(t.any_published)
+
     def test_published_status(self):
         t = TrekFactory.create(published=False)
         t.published_fr = False
@@ -53,6 +61,26 @@ class TrekTest(TranslationResetMixin, TestCase):
             {'lang': 'es', 'language': 'Spanish', 'status': False},
             {'lang': 'fr', 'language': 'French', 'status': False},
             {'lang': 'it', 'language': 'Italian', 'status': True}])
+
+    @override_settings(PUBLISHED_BY_LANG=False)
+    def test_published_status_without_published_by_lang(self):
+        t = TrekFactory.create(published=True)
+        t.published_fr = False
+        t.published_it = False
+        t.save()
+        self.assertEqual(t.published_status, [
+            {'lang': 'en', 'language': 'English', 'status': True},
+            {'lang': 'es', 'language': 'Spanish', 'status': True},
+            {'lang': 'fr', 'language': 'French', 'status': True},
+            {'lang': 'it', 'language': 'Italian', 'status': True}])
+
+    @override_settings(PUBLISHED_BY_LANG=False)
+    def test_published_langs_without_published_by_lang_not_published(self):
+        t = TrekFactory.create(published=False)
+        t.published_fr = True
+        t.published_it = True
+        t.save()
+        self.assertEqual(t.published_langs, [])
 
     def test_kml_coordinates_should_be_3d(self):
         trek = TrekWithPOIsFactory.create()

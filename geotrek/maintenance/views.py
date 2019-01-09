@@ -72,15 +72,21 @@ class InterventionCreate(ManDayFormsetMixin, CreateFromTopologyMixin, MapEntityC
     form_class = InterventionCreateForm
 
     def on_infrastucture(self):
-        pk = self.request.GET.get('infrastructure')
-        if pk:
+        pk_infra = self.request.GET.get('infrastructure')
+        if pk_infra:
             try:
-                return Infrastructure.objects.existing().get(pk=pk)
+
+                return Infrastructure.objects.existing().get(pk=pk_infra)
             except Infrastructure.DoesNotExist:
-                try:
-                    return Signage.objects.existing().get(pk=pk)
-                except Signage.DoesNotExist:
-                    logger.warning("Intervention on unknown infrastructure %s" % pk)
+                logger.warning("Intervention on unknown infrastructure %s" % pk_infra)
+
+    def on_signage(self):
+        pk_signa = self.request.GET.get('signage')
+        if pk_signa:
+            try:
+                return Signage.objects.existing().get(pk=pk_signa)
+            except Signage.DoesNotExist:
+                logger.warning("Intervention on unknown signage %s" % pk_signa)
         return None
 
     def get_initial(self):
@@ -89,9 +95,13 @@ class InterventionCreate(ManDayFormsetMixin, CreateFromTopologyMixin, MapEntityC
         """
         initial = super(InterventionCreate, self).get_initial()
         infrastructure = self.on_infrastucture()
+        signage = self.on_signage()
         if infrastructure:
             # Create intervention on an infrastructure
             initial['infrastructure'] = infrastructure
+        elif signage:
+            # Create intervention on an infrastructure
+            initial['signage'] = signage
         return initial
 
 

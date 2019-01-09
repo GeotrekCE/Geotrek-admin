@@ -2,6 +2,25 @@
 CHANGELOG
 =========
 
+2.22.9 (2019-01-09)
+-------------------
+
+**Minor changes**
+
+- Separate Infrastructure and Signage models
+- Create parser touristic event for apidae
+- Refactor ApidaeParser
+
+**Bug fixes**
+
+- Add italian translations that are visible on Geotrek-rando
+- Fix permissions attachments paperclip
+
+**Performances**
+
+- Improve map's performances
+
+
 2.22.8 (2019-01-03)
 -------------------
 

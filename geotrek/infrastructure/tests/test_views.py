@@ -13,6 +13,7 @@ from geotrek.infrastructure.models import (Infrastructure, InfrastructureType,
                                            INFRASTRUCTURE_TYPES)
 from geotrek.core.factories import PathFactory
 from geotrek.infrastructure.factories import (SignageFactory, InfrastructureFactory,
+                                              InfrastructureNoPictogramFactory, SignageNoPictogramFactory,
                                               InfrastructureTypeFactory, InfrastructureConditionFactory)
 from geotrek.infrastructure.filters import SignageFilterSet, InfrastructureFilterSet
 
@@ -64,6 +65,10 @@ class InfrastructureViewsTest(CommonTest):
         type = form.fields['type']
         self.assertTrue((infratype.pk, unicode(infratype)) in type.choices)
 
+    def test_no_pictogram(self):
+        self.modelfactory = InfrastructureNoPictogramFactory
+        super(InfrastructureViewsTest, self).test_api_detail_for_model()
+
 
 class PointInfrastructureViewsTest(InfrastructureViewsTest):
     def get_good_data(self):
@@ -97,6 +102,10 @@ class SignageViewsTest(InfrastructureViewsTest):
         form = response.context['form']
         type = form.fields['type']
         self.assertTrue((infratype.pk, unicode(infratype)) in type.choices)
+
+    def test_no_pictogram(self):
+        self.modelfactory = SignageNoPictogramFactory
+        super(SignageViewsTest, self).test_api_detail_for_model()
 
 
 class InfrastructureTypeTest(TestCase):
