@@ -96,7 +96,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                     stake = path.stake
         return stake
 
-    def reload(self, fromdb=None):
+    def reload(self):
         if self.pk:
             fromdb = self.__class__.objects.get(pk=self.pk)
             self.area = fromdb.area

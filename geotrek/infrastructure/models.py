@@ -10,7 +10,7 @@ from mapentity.models import MapEntityMixin
 
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path
-from geotrek.authent.models import StructureRelatedManager, StructureRelated, StructureOrNoneRelated
+from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.mixins import BasePublishableMixin, OptionalPictogramMixin
 
 
@@ -130,9 +130,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
 
     @property
     def cities_display(self):
-        if hasattr(self, 'cities'):
-            return [unicode(c) for c in self.cities]
-        return []
+        return [unicode(c) for c in self.cities] if hasattr(self, 'cities') else []
 
     @classproperty
     def cities_verbose_name(cls):
@@ -150,16 +148,9 @@ class InfrastructureGISManager(gismodels.GeoManager):
         return all_years
 
 
-class InfrastructureStructureManager(StructureRelatedManager):
-    """ Overide default structure related manager, and filter by type. """
-    def get_queryset(self):
-        return super(InfrastructureStructureManager, self).get_queryset().exclude(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
-
-
 class Infrastructure(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is not of type SIGNAGE """
     objects = BaseInfrastructure.get_manager_cls(InfrastructureGISManager)()
-    in_structure = InfrastructureStructureManager()
 
     class Meta:
         db_table = 'a_t_infrastructure'
@@ -196,16 +187,9 @@ class SignageGISManager(gismodels.GeoManager):
         return all_years
 
 
-class SignageStructureManager(StructureRelatedManager):
-    """ Overide default structure related manager, and filter by type. """
-    def get_queryset(self):
-        return super(SignageStructureManager, self).get_queryset().filter(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
-
-
 class Signage(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is of type SIGNAGE """
     objects = BaseInfrastructure.get_manager_cls(SignageGISManager)()
-    in_structure = SignageStructureManager()
 
     class Meta:
         db_table = 'a_t_signaletique'

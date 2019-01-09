@@ -35,11 +35,9 @@ class AltimetryMixin(models.Model):
     def length_display(self):
         return round(self.length, 1)
 
-    def reload(self, fromdb=None):
+    def reload(self, fromdb):
         """Reload fields computed at DB-level (triggers)
         """
-        if fromdb is None:
-            fromdb = self.__class__.objects.get(pk=self.pk)
         self.geom_3d = fromdb.geom_3d
         self.length = fromdb.length
         self.ascent = fromdb.ascent

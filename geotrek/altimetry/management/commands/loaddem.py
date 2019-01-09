@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 from django.conf import settings
 import os.path
-from subprocess import call
+from subprocess import call, PIPE
 import tempfile
 
 
@@ -26,13 +26,14 @@ class Command(BaseCommand):
             raise CommandError(msg)
 
         try:
-            ret = call('raster2pgsql -G > /dev/null', shell=True)
+            cmd = 'raster2pgsql -G > /dev/null'
+            kwargs_raster = {'shell': True}
+            ret = self.call_command_system(cmd, **kwargs_raster)
             if ret != 0:
                 raise Exception('raster2pgsql failed with exit code %d' % ret)
         except Exception as e:
             msg = 'Caught %s: %s' % (e.__class__.__name__, e,)
             raise CommandError(msg)
-
         if verbose:
             self.stdout.write('-- Checking input DEM ------------------\n')
         # Obtain DEM path
@@ -130,7 +131,8 @@ class Command(BaseCommand):
             if verbose:
                 self.stdout.write('\n-- Relaying to gdalwarp ----------------\n')
                 self.stdout.write(cmd)
-            ret = call(cmd, shell=True)
+            kwargs_gdal = {'shell': True, 'stdout': PIPE}
+            ret = self.call_command_system(cmd, **kwargs_gdal)
             if ret != 0:
                 raise Exception('gdalwarp failed with exit code %d' % ret)
         except Exception as e:
@@ -150,7 +152,8 @@ class Command(BaseCommand):
             if verbose:
                 self.stdout.write('\n-- Relaying to raster2pgsql ------------\n')
                 self.stdout.write(cmd)
-            ret = call(cmd, stdout=output.file, shell=True)
+            kwargs_raster2 = {'shell': True, 'stdout': output.file, 'stderr': PIPE}
+            ret = self.call_command_system(cmd, **kwargs_raster2)
             if ret != 0:
                 raise Exception('raster2pgsql failed with exit code %d' % ret)
         except Exception as e:
@@ -174,3 +177,7 @@ class Command(BaseCommand):
         if verbose:
             self.stdout.write('DEM successfully loaded.\n')
         return
+
+    def call_command_system(self, cmd, **kwargs):
+        return_code = call(cmd, **kwargs)
+        return return_code

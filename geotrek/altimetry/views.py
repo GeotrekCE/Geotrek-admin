@@ -65,12 +65,6 @@ class ElevationArea(LastModifiedMixin, JSONResponseMixin, PublicOrReadPermMixin,
         obj = self.get_object()
         return 'altimetry_dem_area_%s' % obj.pk
 
-    def latest_updated(self):
-        """Used by the ``view_cache_response_content`` decorator.
-        """
-        obj = self.get_object()
-        return obj.date_update
-
     @view_cache_response_content()
     def dispatch(self, *args, **kwargs):
         return super(ElevationArea, self).dispatch(*args, **kwargs)
