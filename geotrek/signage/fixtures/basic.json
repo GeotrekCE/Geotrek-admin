@@ -1,0 +1,65 @@
+[
+    {
+        "pk": 1,
+        "model": "signage.signagetype",
+        "fields": {
+            "label": "Porte d'entr\u00e9e du Parc"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "signage.signagetype",
+        "fields": {
+            "label": "Directionelle"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "signage.signagetype",
+        "fields": {
+            "label": "Situation"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "signage.signagetype",
+        "fields": {
+            "label": "R\u00e9glementaire"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "signage.signagetype",
+        "fields": {
+            "label": "Service"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "signage.signagetype",
+        "fields": {
+            "label": "Appartenance"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "signage.signagetype",
+        "fields": {
+            "label": "Limite C\u0153ur"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "signage.signagetype",
+        "fields": {
+            "label": "Information"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "signage.signagetype",
+        "fields": {
+            "label": "Temporaire"
+        }
+    }
+]

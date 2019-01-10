@@ -7,13 +7,13 @@
     <tr>
         <td colspan="3">
         <strong>{% trans "Interventions" %}</strong>
-            {% with columns="infrastructure,name,status,stake,total_cost,date" %}
+            {% with columns="infrastructure,signage,name,status,stake,total_cost,date" %}
                 {% if modelname == "infrastructure" or modelname == "signage" %}
-                    {% valuetable object.interventions_set.existing|dictsort:"on_infrastructure" columns=columns %}
+                    {% valuetable object.interventions_set.existing|dictsort:"on_existing_topology" columns=columns %}
                 {% elif modelname == "project" %}
-                    {% valuetable object.interventions.existing|dictsort:"on_infrastructure" enumeration=True columns=columns %}
+                    {% valuetable object.interventions.existing|dictsort:"on_existing_topology" enumeration=True columns=columns %}
                 {% else %}
-                    {% valuetable object.interventions.all|dictsort:"on_infrastructure" columns=columns %}
+                    {% valuetable object.interventions.all|dictsort:"on_existing_topology" columns=columns %}
                 {% endif %}
             {% endwith %}
 

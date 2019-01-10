@@ -9,7 +9,8 @@ from crispy_forms.layout import Fieldset, Layout, Div, HTML
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.widgets import TopologyReadonlyWidget
-from geotrek.infrastructure.models import Infrastructure, Signage
+from geotrek.infrastructure.models import Infrastructure
+from geotrek.signage.models import Signage
 
 from .models import Intervention, Project
 
@@ -114,11 +115,11 @@ class InterventionForm(CommonForm):
 
     def __init__(self, *args, **kwargs):
         super(InterventionForm, self).__init__(*args, **kwargs)
-        # If we create or edit an intervention on infrastructure, set
+        # If we create or edit an intervention on infrastructure or signage, set
         # topology field as read-only
         infrastructure = kwargs.get('initial', {}).get('infrastructure')
         signage = kwargs.get('initial', {}).get('signage')
-        if self.instance.on_infrastructure:
+        if self.instance.on_existing_topology:
             if self.instance.infrastructure:
                 infrastructure = self.instance.infrastructure
                 self.fields['infrastructure'].initial = infrastructure
@@ -163,9 +164,9 @@ class InterventionForm(CommonForm):
         infrastructure = self.cleaned_data.get('infrastructure')
         signage = self.cleaned_data.get('signage')
         if infrastructure:
-            self.instance.set_infrastructure(infrastructure)
+            self.instance.set_topology(infrastructure)
         elif signage:
-            self.instance.set_infrastructure(signage)
+            self.instance.set_topology(signage)
         return super(InterventionForm, self).save(*args, **kwargs)
 
 

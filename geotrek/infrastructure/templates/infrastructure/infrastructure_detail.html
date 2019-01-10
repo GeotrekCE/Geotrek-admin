@@ -1,1 +1,40 @@
-{% extends "infrastructure/baseinfrastructure_detail.html" %}
+{% extends "mapentity/mapentity_detail.html" %}
+{% load i18n mapentity_tags %}
+
+{% block detailspanel %}
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ object|verbose:"name" }}</th>
+            <td>{{ object.name }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"type" }}</th>
+            <td>{{ object.type }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"condition" }}</th>
+            <td>{{ object.condition }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description" }}</th>
+            <td>{% if object.description %}{{ object.description|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"implantation_year" }}</th>
+            <td>{{ object.implantation_year|default:"" }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"published" }}</th>
+            <td>{{ object.published|yesno|title }}</td>
+        </tr>
+        {% include "altimetry/elevationinfo_fragment.html" %}
+        <tr>
+            <th>{{ object|verbose:"structure" }}</th>
+            <td>{{ object.structure }}</td>
+        </tr>
+        {% include "mapentity/trackinfo_fragment.html" %}
+    </table>
+    {{ block.super }}
+{% endblock detailspanel %}

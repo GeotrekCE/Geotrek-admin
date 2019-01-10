@@ -1,7 +1,7 @@
 [
     {
         "pk": 10015,
-        "model": "infrastructure.signage",
+        "model": "signage.signage",
         "fields": {
             "name": "name 0",
             "description": "description 0",
