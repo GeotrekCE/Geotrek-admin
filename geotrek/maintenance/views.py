@@ -10,7 +10,8 @@ from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.common.views import FormsetMixin
 from geotrek.authent.decorators import same_structure_required
-from geotrek.infrastructure.models import Infrastructure, Signage
+from geotrek.infrastructure.models import Infrastructure
+from geotrek.signage.models import Signage
 from .models import Intervention, Project
 from .filters import InterventionFilterSet, ProjectFilterSet
 from .forms import (InterventionForm, InterventionCreateForm, ProjectForm,
@@ -75,7 +76,6 @@ class InterventionCreate(ManDayFormsetMixin, CreateFromTopologyMixin, MapEntityC
         pk_infra = self.request.GET.get('infrastructure')
         if pk_infra:
             try:
-
                 return Infrastructure.objects.existing().get(pk=pk_infra)
             except Infrastructure.DoesNotExist:
                 logger.warning("Intervention on unknown infrastructure %s" % pk_infra)
@@ -100,7 +100,7 @@ class InterventionCreate(ManDayFormsetMixin, CreateFromTopologyMixin, MapEntityC
             # Create intervention on an infrastructure
             initial['infrastructure'] = infrastructure
         elif signage:
-            # Create intervention on an infrastructure
+            # Create intervention on a signage
             initial['signage'] = signage
         return initial
 

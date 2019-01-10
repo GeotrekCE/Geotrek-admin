@@ -1,0 +1,64 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-06-16 09:02+0000\n"
+"PO-Revision-Date: 2015-09-25 17:37+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 1.7.5\n"
+
+msgid "Intervention year"
+msgstr "Année d'intervention"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Implantation year"
+msgstr "Année d'implantation"
+
+msgid "Category"
+msgstr "Catégorie"
+
+msgid "Signage Type"
+msgstr "Type de signalétique"
+
+msgid "Signage Types"
+msgstr "Types de signalétique"
+
+msgid "Reference, code, ..."
+msgstr "Référence, code, ..."
+
+msgid "Specificites"
+msgstr "Spécificités"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Condition"
+msgstr "Etat"
+
+msgid "Cities"
+msgstr "Communes"
+
+msgid "Signages"
+msgstr "Signalétiques"
+
+msgid "None"
+msgstr "Aucun(e)"
+
+msgid "Add a new signage"
+msgstr "Ajouter une signalétique"

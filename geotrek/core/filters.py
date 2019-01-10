@@ -5,7 +5,8 @@ from django_filters import CharFilter, ModelChoiceFilter
 from .models import Topology, Path, Trail
 
 from geotrek.common.filters import OptionalRangeFilter, StructureRelatedFilterSet
-from geotrek.infrastructure.filters import InfrastructureFilterSet, SignageFilterSet
+from geotrek.infrastructure.filters import InfrastructureFilterSet
+from geotrek.signage.filters import SignageFilterSet
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 from geotrek.maintenance import models as maintenance_models
 

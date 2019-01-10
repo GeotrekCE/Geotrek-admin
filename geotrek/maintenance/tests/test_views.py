@@ -20,7 +20,8 @@ from geotrek.maintenance.models import Intervention, InterventionStatus, Project
 from geotrek.maintenance.views import ProjectFormatList
 from geotrek.core.factories import (PathFactory, PathAggregationFactory,
                                     TopologyFactory)
-from geotrek.infrastructure.factories import InfrastructureFactory, SignageFactory
+from geotrek.infrastructure.factories import InfrastructureFactory
+from geotrek.signage.factories import SignageFactory
 from geotrek.maintenance.factories import (InterventionFactory, InfrastructureInterventionFactory,
                                            InterventionDisorderFactory, InterventionStatusFactory,
                                            ProjectFactory, ContractorFactory, InterventionJobFactory,
@@ -120,7 +121,7 @@ class InterventionViewsTest(CommonTest):
 
         intervention = InterventionFactory.create()
         self.assertIsNone(intervention.signage)
-        intervention.set_infrastructure(signa)
+        intervention.set_topology(signa)
         intervention.save()
         self.assertIsNotNone(intervention.signage)
         response = self.client.get(intervention.get_update_url())
@@ -205,7 +206,7 @@ class InterventionViewsTest(CommonTest):
         infrastr = u"%s" % infra
 
         intervention = InterventionFactory.create()
-        intervention.set_infrastructure(infra)
+        intervention.set_topology(infra)
         intervention.save()
         response = self.client.get(intervention.get_update_url())
         self.assertEqual(response.status_code, 200)

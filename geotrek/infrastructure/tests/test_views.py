@@ -8,25 +8,16 @@ from geotrek.common.tests import CommonTest
 from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.authent.factories import PathManagerFactory
 from geotrek.maintenance.factories import InterventionFactory
-from geotrek.infrastructure.models import (Infrastructure, InfrastructureType,
-                                           InfrastructureCondition, Signage,
-                                           INFRASTRUCTURE_TYPES)
+from geotrek.infrastructure.models import (Infrastructure, InfrastructureCondition, INFRASTRUCTURE_TYPES)
 from geotrek.core.factories import PathFactory
-from geotrek.infrastructure.factories import (SignageFactory, InfrastructureFactory,
-                                              InfrastructureNoPictogramFactory, SignageNoPictogramFactory,
+from geotrek.infrastructure.factories import (InfrastructureFactory, InfrastructureNoPictogramFactory,
                                               InfrastructureTypeFactory, InfrastructureConditionFactory)
-from geotrek.infrastructure.filters import SignageFilterSet, InfrastructureFilterSet
+from geotrek.infrastructure.filters import InfrastructureFilterSet
 
 
 class InfrastructureTest(TestCase):
     def test_helpers(self):
         p = PathFactory.create()
-
-        self.assertEquals(len(p.infrastructures), 0)
-        sign = SignageFactory.create(no_path=True)
-        sign.add_path(path=p, start=0.5, end=0.5)
-
-        self.assertItemsEqual(p.signages, [sign])
 
         infra = InfrastructureFactory.create(no_path=True)
         infra.add_path(path=p)
@@ -80,46 +71,6 @@ class PointInfrastructureViewsTest(InfrastructureViewsTest):
             'condition': InfrastructureConditionFactory.create().pk,
             'topology': '{"lat": 0.42, "lng": 0.666}'
         }
-
-
-class SignageViewsTest(InfrastructureViewsTest):
-    model = Signage
-    modelfactory = SignageFactory
-    userfactory = PathManagerFactory
-
-    def get_good_data(self):
-        data = super(SignageViewsTest, self).get_good_data()
-        data['type'] = InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.SIGNAGE).pk
-        data['condition'] = InfrastructureConditionFactory.create().pk
-        return data
-
-    def test_check_structure_or_none_related_are_visible(self):
-        self.login()
-        infratype = InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.SIGNAGE, structure=None)
-        response = self.client.get(self.model.get_add_url())
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue('form' in response.context)
-        form = response.context['form']
-        type = form.fields['type']
-        self.assertTrue((infratype.pk, unicode(infratype)) in type.choices)
-
-    def test_no_pictogram(self):
-        self.modelfactory = SignageNoPictogramFactory
-        super(SignageViewsTest, self).test_api_detail_for_model()
-
-
-class InfrastructureTypeTest(TestCase):
-    def test_manager(self):
-        it1 = InfrastructureTypeFactory.create()
-        it2 = InfrastructureTypeFactory.create()
-        it3 = InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.SIGNAGE)
-
-        self.assertNotEqual(InfrastructureType.objects.for_signages(),
-                            InfrastructureType.objects.for_infrastructures())
-        self.assertItemsEqual(InfrastructureType.objects.for_signages(), [it3])
-        self.assertItemsEqual(InfrastructureType.objects.for_infrastructures(),
-                              [it1, it2])
-        self.assertItemsEqual(InfrastructureType.objects.all(), [it1, it2, it3])
 
 
 class InfrastructureConditionTest(TestCase):
@@ -196,11 +147,6 @@ class InfraFilterTestMixin():
         self.assertContains(response, '<option value="2014">2014</option>')
         response = str(response).replace('<option value="2014">2014</option>', '', 1)
         self.assertFalse('<option value="2014">2014</option>' in response)
-
-
-class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
-    factory = SignageFactory
-    filterset = SignageFilterSet
 
 
 class InfrastructureFilterTest(InfraFilterTestMixin, AuthentFixturesTest):

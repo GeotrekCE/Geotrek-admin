@@ -10,18 +10,6 @@ class InfrastructureTypeSerializer(PictogramSerializerMixin):
         fields = ('id', 'pictogram', 'label')
 
 
-class SignageSerializer(BasePublishableSerializerMixin):
-    type = InfrastructureTypeSerializer()
-    structure = StructureSerializer()
-
-    class Meta:
-        model = infrastructure_models.Signage
-        id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        geo_field = 'geom'
-        fields = ('id', 'structure', 'name', 'type') + \
-            BasePublishableSerializerMixin.Meta.fields
-
-
 class InfrastructureSerializer(BasePublishableSerializerMixin):
     type = InfrastructureTypeSerializer()
     structure = StructureSerializer()

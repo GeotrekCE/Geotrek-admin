@@ -46,21 +46,3 @@ class InfrastructureNoPictogramFactory(TopologyFactory):
     type = factory.SubFactory(InfrastructureTypeNoPictogramFactory)
     condition = factory.SubFactory(InfrastructureConditionFactory)
     published = True
-
-
-class SignageFactory(TopologyFactory):
-    class Meta:
-        model = models.Signage
-    name = factory.Sequence(lambda n: u"Signage %s" % n)
-    type = factory.SubFactory(InfrastructureTypeFactory, type=models.INFRASTRUCTURE_TYPES.SIGNAGE)
-    condition = factory.SubFactory(InfrastructureConditionFactory)
-    published = True
-
-
-class SignageNoPictogramFactory(TopologyFactory):
-    class Meta:
-        model = models.Signage
-    name = factory.Sequence(lambda n: u"Signage %s" % n)
-    type = factory.SubFactory(InfrastructureTypeNoPictogramFactory, type=models.INFRASTRUCTURE_TYPES.SIGNAGE)
-    condition = factory.SubFactory(InfrastructureConditionFactory)
-    published = True
