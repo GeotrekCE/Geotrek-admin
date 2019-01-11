@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 from django.core.management import call_command
+from django.contrib.contenttypes.models import ContentType
 
 
 def add_permissions_signage(apps, schema_editor):
@@ -13,7 +14,11 @@ def add_permissions_signage(apps, schema_editor):
     PermissionModel = apps.get_model('auth', 'Permission')
     ContentTypeModel = apps.get_model("contenttypes", "ContentType")
     type_permissions = ['add', 'change', 'change_geom', 'delete', 'export', 'read']
-    content_type_signage = ContentTypeModel.objects.get(model='signage')
+
+    # List of deleted models (that are not in the app deleted) In lowercase!
+
+    content_type_signage = ContentTypeModel.objects.get(model='signage', app_label='signage')
+
     for user in UserModel.objects.all():
         for type_perm in type_permissions:
             if user.user_permissions.filter(codename='%s_signage' % type_perm).exists():
@@ -29,8 +34,9 @@ def add_permissions_signage(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('signage', '0003_remove_signage_old_type'),
+        ('signage', '0002_change_name_signage'),
         ('authent', '0003_auto_20181203_1518'),
+        ('infrastructure', '0010_replace_table_name'),
     ]
 
     operations = [

@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('infrastructure', '0011_remove_old_signage'),
-        ('signage', '0003_remove_signage_old_type'),
+        ('signage', '0001_initial'),
     ]
 
     operations = [
