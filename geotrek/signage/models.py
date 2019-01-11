@@ -135,6 +135,7 @@ class Line(StructureRelated):
     number_line = models.IntegerField(db_column='nombre_ligne', verbose_name=_("Line Number"))
     text = models.TextField(db_column='texte', verbose_name=_("Text"))
     distance = models.IntegerField(db_column='distance', verbose_name=_("Distance"))
+    pictogram_name = models.CharField(db_column='nom_pictogramme', verbose_name=_("Name pictogramm"))
 
     class Meta:
         db_table = 'a_t_ligne'
