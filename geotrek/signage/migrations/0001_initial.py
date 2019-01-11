@@ -12,9 +12,12 @@ def deplace_data(apps, schema_editor):
     # version than this migration expects. We use the historical version.
     Old_Signage = apps.get_model('infrastructure', 'Signage')
     New_Signage = apps.get_model('signage', 'Signage')
-    for signage in Old_Signage.objects.all().values():
-        signage['old_type'] = signage['type']
+    InfrastructureType = apps.get_model('infrastructure', 'InfrastructureType')
+    SignageType = apps.get_model('signage', 'SignageType')
+    for signage in InfrastructureType.objects.all().values():
         del signage['type']
+        SignageType.objects.create(**signage)
+    for signage in Old_Signage.objects.all().values():
         New_Signage.objects.create(**signage)
 
 
@@ -44,7 +47,6 @@ class Migration(migrations.Migration):
                 ('printed_elevation', models.IntegerField(blank=True, db_column=b'altitude_imprimee', null=True, verbose_name='Printed Elevation')),
                 ('administrator', models.ForeignKey(db_column=b'gestionnaire', null=True, on_delete=django.db.models.deletion.CASCADE, to='common.Organism', verbose_name='Administrator')),
                 ('condition', models.ForeignKey(blank=True, db_column=b'etat', null=True, on_delete=django.db.models.deletion.PROTECT, to='infrastructure.InfrastructureCondition', verbose_name='Condition')),
-                ('old_type', models.ForeignKey(db_column=b'old_type', on_delete=django.db.models.deletion.CASCADE, to='infrastructure.InfrastructureType', verbose_name='Old Type')),
             ],
             options={
                 'verbose_name': 'Signage',
