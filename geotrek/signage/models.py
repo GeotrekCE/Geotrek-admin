@@ -11,7 +11,7 @@ from geotrek.core.models import Topology, Path
 from geotrek.authent.models import StructureOrNoneRelated
 from geotrek.common.mixins import OptionalPictogramMixin
 from geotrek.common.models import Organism
-from geotrek.infrastructure.models import BaseInfrastructure, InfrastructureType
+from geotrek.infrastructure.models import BaseInfrastructure
 
 
 class SignageSealing(StructureOrNoneRelated):
