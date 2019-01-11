@@ -17,7 +17,6 @@ from geotrek.common.mixins import BasePublishableMixin, OptionalPictogramMixin
 INFRASTRUCTURE_TYPES = Choices(
     ('BUILDING', 'A', _("Building")),
     ('FACILITY', 'E', _("Facility")),
-    ('SIGNAGE', 'S', _("Signage")),
 )
 
 
