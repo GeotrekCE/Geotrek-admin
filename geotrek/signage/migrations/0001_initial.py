@@ -14,11 +14,13 @@ def deplace_data(apps, schema_editor):
     New_Signage = apps.get_model('signage', 'Signage')
     InfrastructureType = apps.get_model('infrastructure', 'InfrastructureType')
     SignageType = apps.get_model('signage', 'SignageType')
-    for signagetype in InfrastructureType.objects.filter(type='S'):
-        values = signagetype.values()
-        del values['type']
-        SignageType.objects.create(**values)
-        signagetype.delete()
+    for signagetype in InfrastructureType.objects.all().filter(type='S').values():
+        del signagetype['type']
+        SignageType.objects.create(**signagetype)
+
+    for signagetypedelete in InfrastructureType.objects.filter(type='S'):
+        signagetypedelete.delete()
+
     for signage in Old_Signage.objects.all().values():
         New_Signage.objects.create(**signage)
 
