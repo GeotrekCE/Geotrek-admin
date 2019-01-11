@@ -8,10 +8,10 @@ from django.conf import settings
 from mapentity.models import MapEntityMixin
 
 from geotrek.core.models import Topology, Path
-from geotrek.authent.models import StructureOrNoneRelated
+from geotrek.authent.models import StructureOrNoneRelated, StructureRelated
 from geotrek.common.mixins import OptionalPictogramMixin
 from geotrek.common.models import Organism
-from geotrek.infrastructure.models import BaseInfrastructure
+from geotrek.infrastructure.models import BaseInfrastructure, InfrastructureCondition
 
 
 class SignageSealing(StructureOrNoneRelated):
@@ -91,3 +91,56 @@ Path.add_property('signages', lambda self: Signage.path_signages(self), _(u"Sign
 Topology.add_property('signages', lambda self: Signage.topology_signages(self), _(u"Signages"))
 Topology.add_property('published_signages', lambda self: Signage.published_topology_signages(self),
                       _(u"Published Signages"))
+
+
+class OrientationBlade(models.Model):
+    label = models.CharField(db_column="nom", max_length=128)
+
+    class Meta:
+        db_table = 'a_b_orientation'
+        verbose_name = _(u"Orientation")
+        verbose_name_plural = _(u"Orientations")
+
+
+class ColorBlade(models.Model):
+    label = models.CharField(db_column="nom", max_length=128)
+
+    class Meta:
+        db_table = 'a_b_color'
+        verbose_name = _(u"Color Blade")
+        verbose_name_plural = _(u"Colors Blade")
+
+
+class Blade(StructureRelated):
+    signage = models.ForeignKey(Signage, db_column='signaletique', verbose_name=_("Signage"),
+                                on_delete=models.PROTECT)
+    number = models.IntegerField(verbose_name=_(u"Blade Number"), db_column='numero_lame')
+    orientation = models.ForeignKey(OrientationBlade, verbose_name=_(u"Orientation"), db_column='orientation',
+                                    on_delete=models.PROTECT)
+    type = models.CharField(verbose_name=_(u"Blade Type"), max_length=250, blank=True, null=True,
+                            db_column='type_lame')
+    color = models.ForeignKey(ColorBlade, db_column='couleur_lame', on_delete=models.PROTECT)
+    administrator = models.ForeignKey(Organism, db_column='gestionnaire', verbose_name=_("Administrator"), null=True)
+    condition = models.ForeignKey(InfrastructureCondition, db_column='etat', verbose_name=_("Condition"), blank=True,
+                                  null=True, on_delete=models.PROTECT)
+
+    class Meta:
+        db_table = 'a_t_lame'
+        verbose_name = _(u"Blade")
+        verbose_name_plural = _(u"Blades")
+
+
+class Line(StructureRelated):
+    blade = models.ForeignKey(Blade, db_column='lame', verbose_name=_("Blade"), on_delete=models.PROTECT)
+    number_line = models.IntegerField(db_column='nombre_ligne', verbose_name=_("Line Number"))
+    text = models.TextField(db_column='texte', verbose_name=_("Text"))
+    distance = models.IntegerField(db_column='distance', verbose_name=_("Distance"))
+
+    class Meta:
+        db_table = 'a_t_ligne'
+        verbose_name = _(u"Blade")
+        verbose_name_plural = _(u"Blades")
+
+
+class TimeMixin(models.Model):
+    time = models.TimeField(db_column='temps', verbose_name=_("Temps"))
