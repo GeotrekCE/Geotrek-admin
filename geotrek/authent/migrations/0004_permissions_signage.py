@@ -39,6 +39,8 @@ def add_permissions_signage(apps, schema_editor):
                 user.user_permissions.add(PermissionModel.objects.get(
                     codename='%s_signagetype' % type_perm, content_type=content_type_signage_type))
 
+    PermissionModel.objects.filter(content_type__app_label='infrastructure', content_type__model='signage').delete()
+
 
 class Migration(migrations.Migration):
 
