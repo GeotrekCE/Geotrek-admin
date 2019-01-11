@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 from django.core.management import call_command
-from django.contrib.contenttypes.models import ContentType
 
 
 def add_permissions_signage(apps, schema_editor):
