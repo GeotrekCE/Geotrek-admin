@@ -11,7 +11,7 @@ def add_permissions(apps, schema_editor):
     GroupModel = apps.get_model('auth', 'Group')
     PermissionModel = apps.get_model('auth', 'Permission')
     ContentTypeModel = apps.get_model("contenttypes", "ContentType")
-    type_permissions = ['add', 'change', 'change_geom', 'delete', 'export', 'read']
+    type_permissions = ['add', 'change', 'change_geom', 'delete', 'export', 'read', 'publish']
     content_type_signage = ContentTypeModel.objects.get(model='signage')
     content_type_infrastructure = ContentTypeModel.objects.get(model='infrastructure')
     for user in UserModel.objects.all():

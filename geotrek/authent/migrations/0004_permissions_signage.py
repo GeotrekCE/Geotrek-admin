@@ -13,7 +13,7 @@ def add_permissions_signage(apps, schema_editor):
     GroupModel = apps.get_model('auth', 'Group')
     PermissionModel = apps.get_model('auth', 'Permission')
     ContentTypeModel = apps.get_model("contenttypes", "ContentType")
-    type_permissions = ['add', 'change', 'change_geom', 'delete', 'export', 'read']
+    type_permissions = ['add', 'change', 'change_geom', 'delete', 'export', 'read', 'publish']
 
     # List of deleted models (that are not in the app deleted) In lowercase!
 
@@ -29,6 +29,15 @@ def add_permissions_signage(apps, schema_editor):
             if group.permissions.filter(codename='%s_signage' % type_perm).exists():
                 group.permissions.add(PermissionModel.objects.get(
                     codename='%s_signage' % type_perm, content_type=content_type_signage))
+
+    type_permissions_type = ['add', 'change', 'delete']
+    content_type_signage_type = ContentTypeModel.objects.get(model='signagetype', app_label='signage')
+
+    for user in UserModel.objects.all():
+        for type_perm in type_permissions_type:
+            if user.user_permissions.filter(codename='%s_infrastructuretype' % type_perm).exists():
+                user.user_permissions.add(PermissionModel.objects.get(
+                    codename='%s_signagetype' % type_perm, content_type=content_type_signage_type))
 
 
 class Migration(migrations.Migration):
