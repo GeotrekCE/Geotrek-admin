@@ -23,9 +23,9 @@ def move_data(apps, schema_editor):
         new_key = object_signage_type.pk
         correspondance[old_key] = new_key
     for signage in OldSignage.objects.all().values():
+        del signage['id']
         signage['type_id'] = correspondance[signage['type_id']]
         NewSignage.objects.create(**signage)
-    InfrastructureType.objects.filter(type='S').delete()
 
 
 class Migration(migrations.Migration):
