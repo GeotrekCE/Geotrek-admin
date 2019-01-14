@@ -111,7 +111,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
 
 
 class InfrastructureGISManager(gismodels.GeoManager):
-    """ Overide default typology mixin manager, and filter by type. """
+    """ Overide default typology mixin manager"""
     def all_implantation_years(self):
         all_years = self.get_queryset().filter(implantation_year__isnull=False)\
             .order_by('-implantation_year').values_list('implantation_year', flat=True).distinct('implantation_year')
