@@ -7,22 +7,28 @@ import django.db.models.deletion
 import geotrek.authent.models
 
 
-def deplace_data(apps, schema_editor):
+def move_data(apps, schema_editor):
     # We can't import Infrastructure models directly as it may be a newer
     # version than this migration expects. We use the historical version.
     Old_Signage = apps.get_model('infrastructure', 'Signage')
     New_Signage = apps.get_model('signage', 'Signage')
     InfrastructureType = apps.get_model('infrastructure', 'InfrastructureType')
     SignageType = apps.get_model('signage', 'SignageType')
+    correspondance = {}
     for signagetype in InfrastructureType.objects.all().filter(type='S').values():
+        old_key = signagetype['id']
+        del signagetype['id']
         del signagetype['type']
-        SignageType.objects.create(**signagetype)
+        object_signage_type = SignageType.objects.create(**signagetype)
+        new_key = object_signage_type.pk
+        correspondance[old_key] = new_key
 
-    for signagetypedelete in InfrastructureType.objects.filter(type='S'):
-        signagetypedelete.delete()
+    InfrastructureType.objects.filter(type='S').delete()
 
     for signage in Old_Signage.objects.all().values():
+        signage['type_id'] = correspondance[signage['type_id']]
         New_Signage.objects.create(**signage)
+    raise ValueError
 
 
 class Migration(migrations.Migration):
@@ -100,5 +106,5 @@ class Migration(migrations.Migration):
             name='type',
             field=models.ForeignKey(db_column=b'type', on_delete=django.db.models.deletion.CASCADE, to='signage.SignageType', verbose_name='Type'),
         ),
-        migrations.RunPython(deplace_data),
+        migrations.RunPython(move_data),
     ]
