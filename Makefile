@@ -134,6 +134,7 @@ test_migrations:
 	actual_branch=`git branch | grep \* | cut -d ' ' -f2`
 	git checkout `git tag -l | grep -v '^v' | grep -v '^mapentity'| sort -Vr | head -n 1`
 	./install.sh --tests --noinput
+	make update
 	make load_demo
 	git checkout actual_branch
 	./install.sh --tests --noinput
