@@ -37,11 +37,21 @@ install:
   - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput; fi
   # Don't bind redis-server on IPv6 address
   - sudo sed -i 's/^bind.*$/bind 127.0.0.1/' /etc/redis/redis.conf; sudo service redis-server restart;
+
+before_script:
+  - if [[ $ACTION == migration ]]; then actual_branch=`git branch | grep \* | cut -d ' ' -f2`
+    git checkout `git tag -l | grep -v '^v' | grep -v '^mapentity'| sort -Vr | head -n 1`;
+    ./install.sh --noinput;
+    make update;
+    make load_demo;
+    git checkout actual_branch;
+    ./install.sh --noinput;
+    make update; fi
+
 script:
   - if [[ $ACTION == codestyle ]]; then flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings; fi
   - if [[ $ACTION == codestyle ]]; then flake8 geotrek; fi
   - if [[ $ACTION == codestyle ]]; then find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID; fi
-  - if [[ $ACTION == migration ]]; then make test_migrations; fi
   - if [[ $ACTION == deploy || $ACTION == integration ]]; then make load_demo; fi
   - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
   - if [[ $ACTION == integration ]]; then make test_export host=localhost port=80; fi
