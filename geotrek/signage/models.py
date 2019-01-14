@@ -14,14 +14,14 @@ from geotrek.common.models import Organism
 from geotrek.infrastructure.models import BaseInfrastructure, InfrastructureCondition
 
 
-class SignageSealing(StructureOrNoneRelated):
+class Sealing(StructureOrNoneRelated):
     """ A sealing linked with a signage"""
     label = models.CharField(verbose_name=_(u"Name"), db_column="etat", max_length=250)
 
     class Meta:
-        db_table = 'a_b_scellement'
-        verbose_name = _(u"Signage Sealing")
-        verbose_name_plural = _(u"Signages Sealing")
+        db_table = 's_b_scellement'
+        verbose_name = _(u"Sealing")
+        verbose_name_plural = _(u"Sealings")
 
     def __unicode__(self):
         if self.structure:
@@ -34,7 +34,7 @@ class SignageType(StructureOrNoneRelated, OptionalPictogramMixin):
     label = models.CharField(db_column="nom", max_length=128)
 
     class Meta:
-        db_table = 'a_b_signaletique'
+        db_table = 's_b_signaletique'
         verbose_name = _(u"Signage Type")
         verbose_name_plural = _(u"Signage Types")
 
@@ -61,16 +61,16 @@ class SignageGISManager(gismodels.GeoManager):
 class Signage(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is of type SIGNAGE """
     objects = BaseInfrastructure.get_manager_cls(SignageGISManager)()
-    code = models.CharField(verbose_name=_(u"Code commune"), max_length=250, blank=True, null=True,
-                            db_column='code_commune')
-    administrator = models.ForeignKey(Organism, db_column='gestionnaire', verbose_name=_("Administrator"), null=True)
-    sealing = models.ForeignKey(SignageSealing, db_column='scellement', verbose_name=_("Sealing"), null=True)
+    code = models.CharField(verbose_name=_(u"Code"), max_length=250, blank=True, null=True,
+                            db_column='code')
+    manager = models.ForeignKey(Organism, db_column='gestionnaire', verbose_name=_("Manager"), null=True, blank=True)
+    sealing = models.ForeignKey(Sealing, db_column='scellement', verbose_name=_("Sealing"), null=True, blank=True)
     printed_elevation = models.IntegerField(verbose_name=_(u"Printed Elevation"), blank=True, null=True,
                                             db_column='altitude_imprimee')
     type = models.ForeignKey(SignageType, db_column='type', verbose_name=_("Type"))
 
     class Meta:
-        db_table = 'a_t_signaletique'
+        db_table = 's_t_signaletique'
         verbose_name = _(u"Signage")
         verbose_name_plural = _(u"Signages")
 
@@ -93,20 +93,20 @@ Topology.add_property('published_signages', lambda self: Signage.published_topol
                       _(u"Published Signages"))
 
 
-class OrientationBlade(models.Model):
-    label = models.CharField(db_column="nom", max_length=128)
+class Orientation(models.Model):
+    label = models.CharField(db_column="etiquette", max_length=128)
 
     class Meta:
-        db_table = 'a_b_orientation'
+        db_table = 's_b_orientation'
         verbose_name = _(u"Orientation")
         verbose_name_plural = _(u"Orientations")
 
 
-class ColorBlade(models.Model):
-    label = models.CharField(db_column="nom", max_length=128)
+class Color(models.Model):
+    label = models.CharField(db_column="etiquette", max_length=128)
 
     class Meta:
-        db_table = 'a_b_color'
+        db_table = 's_b_color'
         verbose_name = _(u"Color Blade")
         verbose_name_plural = _(u"Colors Blade")
 
@@ -114,34 +114,31 @@ class ColorBlade(models.Model):
 class Blade(StructureRelated):
     signage = models.ForeignKey(Signage, db_column='signaletique', verbose_name=_("Signage"),
                                 on_delete=models.PROTECT)
-    number = models.IntegerField(verbose_name=_(u"Blade Number"), db_column='numero_lame')
-    orientation = models.ForeignKey(OrientationBlade, verbose_name=_(u"Orientation"), db_column='orientation',
+    number = models.IntegerField(verbose_name=_(u"Blade Number"), db_column='numero')
+    orientation = models.ForeignKey(Orientation, verbose_name=_(u"Orientation"), db_column='orientation',
                                     on_delete=models.PROTECT)
-    type = models.CharField(verbose_name=_(u"Blade Type"), max_length=250, blank=True, null=True,
-                            db_column='type_lame')
-    color = models.ForeignKey(ColorBlade, db_column='couleur_lame', on_delete=models.PROTECT)
-    administrator = models.ForeignKey(Organism, db_column='gestionnaire', verbose_name=_("Administrator"), null=True)
-    condition = models.ForeignKey(InfrastructureCondition, db_column='etat', verbose_name=_("Condition"), blank=True,
-                                  null=True, on_delete=models.PROTECT)
+    type = models.CharField(verbose_name=_(u"Blade Type"), max_length=250, db_column='type')
+    color = models.ForeignKey(Color, db_column='couleur', on_delete=models.PROTECT, null=True, blank=True)
+    condition = models.ForeignKey(InfrastructureCondition, db_column='etat', verbose_name=_("Condition"),
+                                  null=True, blank=True, on_delete=models.PROTECT)
 
     class Meta:
-        db_table = 'a_t_lame'
+        db_table = 's_t_lame'
         verbose_name = _(u"Blade")
         verbose_name_plural = _(u"Blades")
 
 
 class Line(StructureRelated):
     blade = models.ForeignKey(Blade, db_column='lame', verbose_name=_("Blade"), on_delete=models.PROTECT)
-    number_line = models.IntegerField(db_column='nombre_ligne', verbose_name=_("Line Number"))
-    text = models.TextField(db_column='texte', verbose_name=_("Text"))
-    distance = models.IntegerField(db_column='distance', verbose_name=_("Distance"))
-    pictogram_name = models.CharField(db_column='nom_pictogramme', verbose_name=_("Name pictogramm"), max_length=250)
+    number = models.IntegerField(db_column='nombre', verbose_name=_("Number"))
+    text = models.CharField(db_column='texte', verbose_name=_("Text"), max_length=1000)
+    distance = models.DecimalField(db_column='distance', verbose_name=_("Distance"), null=True, blank=True,
+                                   decimal_places=3, max_digits=8)
+    pictogram_name = models.CharField(db_column='nom_pictogramme', verbose_name=_("Name pictogramm"), max_length=250,
+                                      blank=True, null=True)
+    time = models.DurationField(db_column='temps', verbose_name=_("Temps"), null=True, blank=True)
 
     class Meta:
-        db_table = 'a_t_ligne'
-        verbose_name = _(u"Blade")
-        verbose_name_plural = _(u"Blades")
-
-
-class TimeMixin(models.Model):
-    time = models.TimeField(db_column='temps', verbose_name=_("Temps"))
+        db_table = 's_t_ligne'
+        verbose_name = _(u"Line")
+        verbose_name_plural = _(u"Lines")

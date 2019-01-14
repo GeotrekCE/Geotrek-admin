@@ -26,7 +26,7 @@ class InfrastructureType(StructureOrNoneRelated, OptionalPictogramMixin):
     type = models.CharField(db_column="type", max_length=1, choices=INFRASTRUCTURE_TYPES)
 
     class Meta:
-        db_table = 'a_b_amenagement'
+        db_table = 'a_b_infrastructure'
         verbose_name = _(u"Infrastructure Type")
         verbose_name_plural = _(u"Infrastructure Types")
         ordering = ['label', 'type']

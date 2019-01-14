@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('maintenance', '0003_auto_20181203_1101'),
         ('core', '0008_aggregation_infrastructure'),
-        ('infrastructure', '0010_replace_table_name'),
+        ('infrastructure', '0009_remove_base_infrastructure'),
         ('signage', '0001_initial'),
     ]
 

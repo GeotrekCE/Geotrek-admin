@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('infrastructure', '0011_remove_old_signage'),
+        ('infrastructure', '0010_remove_old_signage'),
     ]
 
     operations = [
