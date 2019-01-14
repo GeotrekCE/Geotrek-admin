@@ -136,4 +136,5 @@ test_migrations:
 	./install.sh --tests --noinput
 	make load_demo
 	git checkout actual_branch
+	./install.sh --tests --noinput
 	make update
