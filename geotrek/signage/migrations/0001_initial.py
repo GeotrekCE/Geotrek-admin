@@ -10,8 +10,8 @@ import geotrek.authent.models
 def move_data(apps, schema_editor):
     # We can't import Infrastructure models directly as it may be a newer
     # version than this migration expects. We use the historical version.
-    Old_Signage = apps.get_model('infrastructure', 'Signage')
-    New_Signage = apps.get_model('signage', 'Signage')
+    OldSignage = apps.get_model('infrastructure', 'Signage')
+    NewSignage = apps.get_model('signage', 'Signage')
     InfrastructureType = apps.get_model('infrastructure', 'InfrastructureType')
     SignageType = apps.get_model('signage', 'SignageType')
     correspondance = {}
@@ -22,13 +22,10 @@ def move_data(apps, schema_editor):
         object_signage_type = SignageType.objects.create(**signagetype)
         new_key = object_signage_type.pk
         correspondance[old_key] = new_key
-
-    InfrastructureType.objects.filter(type='S').delete()
-
-    for signage in Old_Signage.objects.all().values():
+    for signage in OldSignage.objects.all().values():
         signage['type_id'] = correspondance[signage['type_id']]
-        New_Signage.objects.create(**signage)
-    raise ValueError
+        NewSignage.objects.create(**signage)
+    InfrastructureType.objects.filter(type='S').delete()
 
 
 class Migration(migrations.Migration):
@@ -36,7 +33,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('infrastructure', '0010_replace_table_name'),
+        ('infrastructure', '0009_remove_base_infrastructure'),
         ('common', '0003_auto_20180608_1236'),
         ('core', '0008_aggregation_infrastructure'),
         ('authent', '0003_auto_20181203_1518'),
@@ -53,28 +50,29 @@ class Migration(migrations.Migration):
                 ('description', models.TextField(blank=True, db_column=b'description', help_text='Specificites', verbose_name='Description')),
                 ('implantation_year', models.PositiveSmallIntegerField(db_column=b'annee_implantation', null=True, verbose_name='Implantation year')),
                 ('eid', models.CharField(blank=True, db_column=b'id_externe', max_length=1024, null=True, verbose_name='External id')),
-                ('code', models.CharField(blank=True, db_column=b'code_commune', max_length=250, null=True, verbose_name='Code commune')),
+                ('code', models.CharField(blank=True, db_column=b'code', max_length=250, null=True, verbose_name='Code')),
                 ('printed_elevation', models.IntegerField(blank=True, db_column=b'altitude_imprimee', null=True, verbose_name='Printed Elevation')),
-                ('administrator', models.ForeignKey(db_column=b'gestionnaire', null=True, on_delete=django.db.models.deletion.CASCADE, to='common.Organism', verbose_name='Administrator')),
+                ('manager', models.ForeignKey(db_column=b'gestionnaire', null=True, blank=True, on_delete=django.db.models.deletion.CASCADE, to='common.Organism', verbose_name='Manager')),
                 ('condition', models.ForeignKey(blank=True, db_column=b'etat', null=True, on_delete=django.db.models.deletion.PROTECT, to='infrastructure.InfrastructureCondition', verbose_name='Condition')),
             ],
             options={
+                'db_table': 's_t_signaletique',
                 'verbose_name': 'Signage',
                 'verbose_name_plural': 'Signages',
             },
             bases=('core.topology', models.Model),
         ),
         migrations.CreateModel(
-            name='SignageSealing',
+            name='Sealing',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('label', models.CharField(db_column=b'etat', max_length=250, verbose_name='Name')),
                 ('structure', models.ForeignKey(blank=True, db_column=b'structure', default=geotrek.authent.models.default_structure_pk, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure')),
             ],
             options={
-                'db_table': 'a_b_scellement',
-                'verbose_name': 'Signage Sealing',
-                'verbose_name_plural': 'Signages Sealing',
+                'db_table': 's_b_scellement',
+                'verbose_name': 'Sealing',
+                'verbose_name_plural': 'Sealings',
             },
         ),
         migrations.CreateModel(
@@ -86,7 +84,7 @@ class Migration(migrations.Migration):
                 ('structure', models.ForeignKey(blank=True, db_column=b'structure', default=geotrek.authent.models.default_structure_pk, null=True, on_delete=django.db.models.deletion.CASCADE, to='authent.Structure', verbose_name='Related structure')),
             ],
             options={
-                'db_table': 'a_b_signaletique',
+                'db_table': 's_b_signaletique',
                 'verbose_name': 'Signage Type',
                 'verbose_name_plural': 'Signage Types',
             },
@@ -94,7 +92,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='signage',
             name='sealing',
-            field=models.ForeignKey(db_column=b'scellement', null=True, on_delete=django.db.models.deletion.CASCADE, to='signage.SignageSealing', verbose_name='Sealing'),
+            field=models.ForeignKey(db_column=b'scellement', null=True, blank=True, on_delete=django.db.models.deletion.CASCADE, to='signage.Sealing', verbose_name='Sealing'),
         ),
         migrations.AddField(
             model_name='signage',
@@ -105,6 +103,101 @@ class Migration(migrations.Migration):
             model_name='signage',
             name='type',
             field=models.ForeignKey(db_column=b'type', on_delete=django.db.models.deletion.CASCADE, to='signage.SignageType', verbose_name='Type'),
+        ),
+        migrations.CreateModel(
+            name='Blade',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('number', models.IntegerField(db_column=b'numero', verbose_name='Blade Number')),
+                ('type', models.CharField(db_column=b'type', max_length=250, verbose_name='Blade Type')),
+            ],
+            options={
+                'db_table': 's_t_lame',
+                'verbose_name': 'Blade',
+                'verbose_name_plural': 'Blades',
+            },
+        ),
+        migrations.CreateModel(
+            name='Color',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('label', models.CharField(db_column=b'etiquette', max_length=128)),
+            ],
+            options={
+                'db_table': 's_b_color',
+                'verbose_name': 'Color Blade',
+                'verbose_name_plural': 'Colors Blade',
+            },
+        ),
+        migrations.CreateModel(
+            name='Line',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('number', models.IntegerField(db_column=b'nombre', verbose_name='Number')),
+                ('text', models.CharField(db_column=b'texte', max_length=1000, verbose_name='Text')),
+                ('distance',
+                 models.DecimalField(blank=True, db_column=b'distance', decimal_places=3, max_digits=8, null=True,
+                                     verbose_name='Distance')),
+                ('pictogram_name', models.CharField(blank=True, db_column=b'nom_pictogramme', max_length=250, null=True,
+                                                    verbose_name='Name pictogramm')),
+                ('time', models.DurationField(blank=True, db_column=b'temps', null=True, verbose_name='Temps')),
+                ('blade',
+                 models.ForeignKey(db_column=b'lame', on_delete=django.db.models.deletion.PROTECT, to='signage.Blade',
+                                   verbose_name='Blade')),
+                ('structure',
+                 models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk,
+                                   on_delete=django.db.models.deletion.CASCADE, to='authent.Structure',
+                                   verbose_name='Related structure')),
+            ],
+            options={
+                'db_table': 's_t_ligne',
+                'verbose_name': 'Line',
+                'verbose_name_plural': 'Lines',
+            },
+        ),
+        migrations.CreateModel(
+            name='Orientation',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('label', models.CharField(db_column=b'etiquette', max_length=128)),
+            ],
+            options={
+                'db_table': 's_b_orientation',
+                'verbose_name': 'Orientation',
+                'verbose_name_plural': 'Orientations',
+            },
+        ),
+        migrations.AddField(
+            model_name='blade',
+            name='color',
+            field=models.ForeignKey(blank=True, db_column=b'couleur', null=True,
+                                    on_delete=django.db.models.deletion.PROTECT, to='signage.Color'),
+        ),
+        migrations.AddField(
+            model_name='blade',
+            name='condition',
+            field=models.ForeignKey(blank=True, db_column=b'etat', null=True,
+                                    on_delete=django.db.models.deletion.PROTECT,
+                                    to='infrastructure.InfrastructureCondition', verbose_name='Condition'),
+        ),
+        migrations.AddField(
+            model_name='blade',
+            name='orientation',
+            field=models.ForeignKey(db_column=b'orientation', on_delete=django.db.models.deletion.PROTECT,
+                                    to='signage.Orientation', verbose_name='Orientation'),
+        ),
+        migrations.AddField(
+            model_name='blade',
+            name='signage',
+            field=models.ForeignKey(db_column=b'signaletique', on_delete=django.db.models.deletion.PROTECT,
+                                    to='signage.Signage', verbose_name='Signage'),
+        ),
+        migrations.AddField(
+            model_name='blade',
+            name='structure',
+            field=models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk,
+                                    on_delete=django.db.models.deletion.CASCADE, to='authent.Structure',
+                                    verbose_name='Related structure'),
         ),
         migrations.RunPython(move_data),
     ]

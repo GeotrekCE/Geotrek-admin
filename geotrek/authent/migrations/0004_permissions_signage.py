@@ -44,9 +44,9 @@ def add_permissions_signage(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('signage', '0002_change_name_signage'),
+        ('signage', '0001_initial'),
         ('authent', '0003_auto_20181203_1518'),
-        ('infrastructure', '0010_replace_table_name'),
+        ('infrastructure', '0009_remove_base_infrastructure'),
     ]
 
     operations = [
