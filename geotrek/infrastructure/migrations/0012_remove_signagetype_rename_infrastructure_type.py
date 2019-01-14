@@ -5,6 +5,11 @@ from __future__ import unicode_literals
 from django.db import migrations
 
 
+def remove_infrastructuretype_signage(apps, schema_editor):
+    InfrastructureType = apps.get_model('infrastructure', 'InfrastructureType')
+    InfrastructureType.objects.filter(type='S').delete()
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -16,4 +21,5 @@ class Migration(migrations.Migration):
             name='infrastructuretype',
             table='a_b_infrastructure',
         ),
+        migrations.RunPython(remove_infrastructuretype_signage),
     ]
