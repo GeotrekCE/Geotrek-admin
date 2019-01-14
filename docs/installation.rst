@@ -12,10 +12,17 @@ Requirements
   Ubuntu Server 14.04 Trusty Tahr (http://releases.ubuntu.com/14.04/)
 
 
-A first estimation on system resources is :
+A first estimation of minimal required system resources are :
 
+* 2 cores
 * 4 Go RAM
 * 20 Go disk space
+
+For big instances required system resources are :
+
+* 4 cores
+* 8 Go RAM or more
+* 50 Go disk space or more (20 Go + estimated size of attached files like photos, including elements imported from SIT)
 
 
 Installation
