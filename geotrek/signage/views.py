@@ -1,18 +1,27 @@
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
+
+from crispy_forms.layout import Fieldset, Layout, Div, HTML
 
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.core.models import AltimetryMixin
+from geotrek.common.views import FormsetMixin
 
 from .filters import SignageFilterSet
-from .forms import SignageForm
+from .forms import SignageForm, BladeFormset
 from .models import Signage
 from .serializers import SignageSerializer
 
 from rest_framework import permissions as rest_permissions
 from mapentity.views import MapEntityViewSet
+
+
+class BaseBladeMixin(FormsetMixin):
+    context_name = 'blade_formset'
+    formset_class = BladeFormset
 
 
 class SignageLayer(MapEntityLayer):
@@ -51,12 +60,12 @@ class SignageDocument(MapEntityDocument):
     model = Signage
 
 
-class SignageCreate(MapEntityCreate):
+class SignageCreate(BaseBladeMixin, MapEntityCreate):
     model = Signage
     form_class = SignageForm
 
 
-class SignageUpdate(MapEntityUpdate):
+class SignageUpdate(BaseBladeMixin, MapEntityUpdate):
     queryset = Signage.objects.existing()
     form_class = SignageForm
 

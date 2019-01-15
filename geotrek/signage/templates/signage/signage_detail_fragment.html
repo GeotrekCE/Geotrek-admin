@@ -1,5 +1,7 @@
 {% load i18n geotrek_tags mapentity_tags %}
-<h3>{% trans "Signage" %}</h3>
+{% if modelname != "signage" %}
+    <h3>{% trans "Signage" %}</h3>
+{% endif %}
 <table class="table">
     {% if modelname != "signage" %}
     <tr>
