@@ -26,6 +26,22 @@
             <td>{{ object.implantation_year|default:"" }}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"code" }}</th>
+            <td>{{ object.code|default:"" }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"printed_elevation" }}</th>
+            <td>{{ object.printed_elevation|default:"" }} m</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"sealing" }}</th>
+            <td>{{ object.sealing|default:"" }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"manager" }}</th>
+            <td>{{ object.manager|default:"" }}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"published" }}</th>
             <td>{{ object.published|yesno|title }}</td>
         </tr>
