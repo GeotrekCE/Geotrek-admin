@@ -632,6 +632,17 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
     def path_trails(cls, path):
         return cls.objects.existing().filter(aggregations__path=path)
 
+    def kml(self):
+        """ Exports path into KML format, add geometry as linestring """
+        kml = simplekml.Kml()
+        geom3d = self.geom_3d.transform(4326, clone=True)  # KML uses WGS84
+        line = kml.newlinestring(name=self.name,
+                                 description=plain_text(self.comments),
+                                 coords=geom3d.coords)
+        line.style.linestyle.color = simplekml.Color.red  # Red
+        line.style.linestyle.width = 4  # pixels
+        return kml.kml()
+
 
 Path.add_property('trails', lambda self: Trail.path_trails(self), _(u"Trails"))
 Topology.add_property('trails', lambda self: Trail.overlapping(self), _(u"Trails"))

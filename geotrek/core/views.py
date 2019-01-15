@@ -286,6 +286,27 @@ class TrailDetail(MapEntityDetail):
         return context
 
 
+class TrailGPXDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
+    queryset = Trail.objects.existing()
+
+    def render_to_response(self, context):
+        gpx_serializer = GPXSerializer()
+        response = HttpResponse(content_type='application/gpx+xml')
+        response['Content-Disposition'] = 'attachment; filename="%s.gpx"' % self.object
+        gpx_serializer.serialize([self.object], stream=response, geom_field='geom')
+        return response
+
+
+class TrailKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
+    queryset = Trail.objects.existing()
+
+    def render_to_response(self, context):
+        response = HttpResponse(self.object.kml(),
+                                content_type='application/vnd.google-earth.kml+xml')
+        response['Content-Disposition'] = 'attachment; filename="%s.kml"' % self.object
+        return response
+
+
 class TrailDocument(MapEntityDocument):
     queryset = Trail.objects.existing()
 

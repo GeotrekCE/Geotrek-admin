@@ -353,6 +353,32 @@ class TrailViewsTest(CommonTest):
         self.assertIn(trail, new_trail.trails.all())
 
 
+class TrailKmlGPXTest(TestCase):
+    def setUp(self):
+        super(TrailKmlGPXTest, self).setUp()
+        self.user = UserFactory.create(is_staff=True, is_superuser=True)
+        self.client.force_login(self.user)
+
+        self.trail = TrailFactory.create(comments='exportable trail')
+
+        self.gpx_response = self.client.get(reverse('core:trail_gpx_detail', args=('en', self.trail.pk, 'slug')))
+        self.gpx_parsed = BeautifulSoup(self.gpx_response.content, 'lxml')
+
+        self.kml_response = self.client.get(reverse('core:trail_kml_detail', args=('en', self.trail.pk, 'slug')))
+
+    def test_gpx_is_served_with_content_type(self):
+        self.assertEqual(self.gpx_response.status_code, 200)
+        self.assertEqual(self.gpx_response['Content-Type'], 'application/gpx+xml')
+
+    def test_gpx_trek_as_track_points(self):
+        self.assertEqual(len(self.gpx_parsed.findAll('trk')), 1)
+        self.assertEqual(len(self.gpx_parsed.findAll('trkpt')), 2)
+
+    def test_kml_is_served_with_content_type(self):
+        self.assertEqual(self.kml_response.status_code, 200)
+        self.assertEqual(self.kml_response['Content-Type'], 'application/vnd.google-earth.kml+xml')
+
+
 class RemovePathKeepTopology(TestCase):
     def test_remove_poi(self):
         """
