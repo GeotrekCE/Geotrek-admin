@@ -359,7 +359,7 @@ def merge_path(request):
         try:
             result = path_a.merge_path(path_b)
         except Exception as exc:
-            response = {'error': exc, }
+            response = {'error': u'%s' % exc, }
             return JsonResponse(response)
 
         if result == 2:
