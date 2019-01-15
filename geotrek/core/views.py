@@ -27,7 +27,7 @@ from .models import Path, Trail, Topology
 from .forms import PathForm, TrailForm
 from .filters import PathFilterSet, TrailFilterSet
 from . import graph as graph_lib
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
@@ -241,18 +241,17 @@ def get_graph_json(request):
     latest = Path.latest_updated()
 
     if result and latest:
-        cache_latest, json_graph = result
+        cache_latest, graph = result
         # Not empty and still valid
         if cache_latest and cache_latest >= latest:
-            return HttpJSONResponse(json_graph)
+            return JsonResponse(graph)
 
     # cache does not exist or is not up to date
     # rebuild the graph and cache the json
     graph = graph_lib.graph_edges_nodes_of_qs(Path.objects.exclude(draft=True))
-    json_graph = json.dumps(graph)
 
-    cache.set(key, (latest, json_graph))
-    return HttpJSONResponse(json_graph)
+    cache.set(key, (latest, graph))
+    return JsonResponse(graph)
 
 
 class TrailLayer(MapEntityLayer):
@@ -330,17 +329,17 @@ def merge_path(request):
 
         if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
             response = {'error': _(u"You don't have the right to change these paths")}
-            return HttpJSONResponse(response)
+            return JsonResponse(response)
 
         if path_a.draft != path_b.draft:
             response = {'error': _(u"You can't merge 1 draft path with 1 normal path")}
-            return HttpJSONResponse(response)
+            return JsonResponse(response)
 
         try:
             result = path_a.merge_path(path_b)
         except Exception as exc:
             response = {'error': exc, }
-            return HttpJSONResponse(response)
+            return JsonResponse(response)
 
         if result == 2:
             response = {'error': _(u"You can't merge 2 paths with a 3rd path in the intersection")}
@@ -350,7 +349,7 @@ def merge_path(request):
             response = {'success': _(u"Paths merged successfully")}
             messages.success(request, _(u"Paths merged successfully"))
 
-        return HttpJSONResponse(response)
+        return JsonResponse(response)
 
 
 class ParametersView(View):
@@ -358,4 +357,4 @@ class ParametersView(View):
         response = {
             'geotrek_admin_version': settings.VERSION,
         }
-        return HttpResponse(json.dumps(response), content_type="application/json")
+        return JsonResponse(response)
