@@ -18,5 +18,6 @@ class SignageSerializer(BasePublishableSerializerMixin):
         model = signage_models.Signage
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
         geo_field = 'geom'
-        fields = ('id', 'structure', 'name', 'type') + \
+        fields = ('id', 'structure', 'name', 'type', 'code', 'printed_elevation',
+                  'manager', 'sealing') + \
             BasePublishableSerializerMixin.Meta.fields
