@@ -10,6 +10,8 @@ from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
 from django.conf import settings
 
+from mapentity.factories import UserFactory
+
 from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.common.tests import CommonTest
 from geotrek.common.utils import LTE
@@ -234,20 +236,18 @@ class PathViewsTest(CommonTest):
         self.assertEqual(p1.geom, LineString((0, 1), (10, 1), (20, 1), srid=settings.SRID))
 
 
-class PathKmlGPXTest(CommonTest):
-    model = Path
-    modelfactory = PathFactory
-    userfactory = PathManagerFactory
-
+class PathKmlGPXTest(TestCase):
     def setUp(self):
-        self.login()
-        path = PathFactory.create(comments='exportable path')
+        super(PathKmlGPXTest, self).setUp()
+        self.user = UserFactory.create(is_staff=True, is_superuser=True)
+        self.client.force_login(self.user)
 
-        self.gpx_response = self.client.get(reverse('core:path_gpx_detail', args=(path.pk, 'slug')))
+        self.path = PathFactory.create(comments='exportable path')
+
+        self.gpx_response = self.client.get(reverse('core:path_gpx_detail', args=('en', self.path.pk, 'slug')))
         self.gpx_parsed = BeautifulSoup(self.gpx_response.content, 'lxml')
 
-        self.kml_response = self.client.get(reverse('core:path_kml_detail', args=(path.pk, 'slug')))
-        self.kml_parsed = BeautifulSoup(self.gpx_response.content, 'lxml')
+        self.kml_response = self.client.get(reverse('core:path_kml_detail', args=('en', self.path.pk, 'slug')))
 
     def test_gpx_is_served_with_content_type(self):
         self.assertEqual(self.gpx_response.status_code, 200)
@@ -257,17 +257,9 @@ class PathKmlGPXTest(CommonTest):
         self.assertEqual(len(self.gpx_parsed.findAll('trk')), 1)
         self.assertEqual(len(self.gpx_parsed.findAll('trkpt')), 2)
 
-    def test_gpx_translated_using_another_language(self):
-        track = self.gpx_parsed.findAll('trk')[0]
-        description = track.find('desc').string
-        self.assertTrue(description.startswith(self.path.description_it))
-
     def test_kml_is_served_with_content_type(self):
-        self.assertEqual(self.kml_parsed.status_code, 200)
-        self.assertEqual(self.kml_parsed['Content-Type'], 'application/gpx+xml')
-
-    def test_kml_trek_as_track_points(self):
-        self.assertEqual(len(self.kml_parsed.findAll('LineString')), 1)
+        self.assertEqual(self.kml_response.status_code, 200)
+        self.assertEqual(self.kml_response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
 
 class DenormalizedTrailTest(AuthentFixturesTest):
