@@ -20,4 +20,5 @@ class SignageFilterSet(StructureRelatedFilterSet):
     class Meta(StructureRelatedFilterSet.Meta):
         model = Signage
         fields = StructureRelatedFilterSet.Meta.fields + ['type', 'condition', 'implantation_year', 'intervention_year',
-                                                          'published']
+                                                          'published', 'code', 'printed_elevation', 'manager',
+                                                          'sealing']
