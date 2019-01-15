@@ -46,7 +46,9 @@ before_script:
     make load_demo;
     git checkout actual_branch;
     ./install.sh --noinput;
-    make update; fi
+    make update;
+    ls -l;
+    bin/django test geotrek.tests_migrations; fi
 
 script:
   - if [[ $ACTION == codestyle ]]; then flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings; fi
