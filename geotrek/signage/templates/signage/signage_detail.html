@@ -1,5 +1,5 @@
 {% extends "mapentity/mapentity_detail.html" %}
-{% load i18n mapentity_tags %}
+{% load i18n signage_tags mapentity_tags %}
 
 {% block detailspanel %}
     <table class="table-striped table-bordered table">
@@ -31,7 +31,7 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"printed_elevation" }}</th>
-            <td>{{ object.printed_elevation|default:"" }} m</td>
+            <td>{{ object.printed_elevation|meters|default:"" }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"sealing" }}</th>
