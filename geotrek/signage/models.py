@@ -101,6 +101,9 @@ class Orientation(models.Model):
         verbose_name = _(u"Orientation")
         verbose_name_plural = _(u"Orientations")
 
+    def __unicode__(self):
+        return self.label
+
 
 class Color(models.Model):
     label = models.CharField(db_column="etiquette", max_length=128)
@@ -109,6 +112,9 @@ class Color(models.Model):
         db_table = 's_b_color'
         verbose_name = _(u"Color Blade")
         verbose_name_plural = _(u"Colors Blade")
+
+    def __unicode__(self):
+        return self.label
 
 
 class Blade(StructureRelated):
