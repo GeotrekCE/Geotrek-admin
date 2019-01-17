@@ -1,7 +1,7 @@
 {% load i18n geotrek_tags mapentity_tags %}
+{% if modelname != "infrastructure" %}
 <h3>{% trans "Infrastructure" %}</h3>
 <table class="table">
-    {% if modelname != "infrastructure" %}
     <tr>
         <th>{% trans "Infrastructures" %}</th>
         <td>
@@ -15,5 +15,5 @@
             {% valuelist object.infrastructures field='name' %}
         </td>
     </tr>
-    {% endif %}
 </table>
+{% endif %}
