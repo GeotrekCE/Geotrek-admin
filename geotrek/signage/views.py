@@ -11,17 +11,24 @@ from geotrek.core.models import AltimetryMixin
 from geotrek.common.views import FormsetMixin
 
 from .filters import SignageFilterSet
-from .forms import SignageForm, BladeFormset
-from .models import Signage
+from .forms import SignageForm, BladeFormset, BladeForm, LineFormset
+from .models import Signage, Blade
 from .serializers import SignageSerializer
 
 from rest_framework import permissions as rest_permissions
 from mapentity.views import MapEntityViewSet
+from django.views.generic.edit import UpdateView
+from mapentity.views.mixins import (ModelViewMixin, FormViewMixin)
 
 
-class BaseBladeMixin(FormsetMixin):
+class BladeMixin(FormsetMixin):
     context_name = 'blade_formset'
     formset_class = BladeFormset
+
+
+class LineMixin(FormsetMixin):
+    context_name = 'line_formset'
+    formset_class = LineFormset
 
 
 class SignageLayer(MapEntityLayer):
@@ -60,12 +67,12 @@ class SignageDocument(MapEntityDocument):
     model = Signage
 
 
-class SignageCreate(BaseBladeMixin, MapEntityCreate):
+class SignageCreate(BladeMixin, MapEntityCreate):
     model = Signage
     form_class = SignageForm
 
 
-class SignageUpdate(BaseBladeMixin, MapEntityUpdate):
+class SignageUpdate(BladeMixin, MapEntityUpdate):
     queryset = Signage.objects.existing()
     form_class = SignageForm
 
@@ -89,3 +96,11 @@ class SignageViewSet(MapEntityViewSet):
 
     def get_queryset(self):
         return Signage.objects.existing().filter(published=True).transform(settings.API_SRID, field_name='geom')
+
+
+class BladeUpdate(LineMixin, UpdateView):
+    form_class = BladeForm
+    queryset = Blade.objects.all()
+
+    class Meta:
+        model = Blade
