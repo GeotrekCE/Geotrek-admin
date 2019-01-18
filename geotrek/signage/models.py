@@ -126,13 +126,28 @@ class BladeManager(gismodels.GeoManager):
     pass
 
 
+class BladeType(StructureOrNoneRelated):
+    """ Types of blades"""
+    label = models.CharField(db_column="nom", max_length=128)
+
+    class Meta:
+        db_table = 's_b_lame'
+        verbose_name = _(u"Blade Type")
+        verbose_name_plural = _(u"Blade Types")
+
+    def __unicode__(self):
+        if self.structure:
+            return u"{} ({})".format(self.label, self.structure.name)
+        return self.label
+
+
 class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
     signage = models.ForeignKey(Signage, db_column='signaletique', verbose_name=_("Signage"),
                                 on_delete=models.PROTECT)
     number = models.IntegerField(verbose_name=_(u"Blade Number"), db_column='numero')
     orientation = models.ForeignKey(Orientation, verbose_name=_(u"Orientation"), db_column='orientation',
                                     on_delete=models.PROTECT)
-    type = models.CharField(verbose_name=_(u"Blade Type"), max_length=250, db_column='type')
+    type = models.ForeignKey(BladeType, db_column='type', verbose_name=_("Type"))
     color = models.ForeignKey(Color, db_column='couleur', on_delete=models.PROTECT, null=True, blank=True)
     condition = models.ForeignKey(InfrastructureCondition, db_column='etat', verbose_name=_("Condition"),
                                   null=True, blank=True, on_delete=models.PROTECT)

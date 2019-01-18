@@ -131,8 +131,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('number', models.IntegerField(db_column=b'numero', verbose_name='Blade Number')),
-                models.ForeignKey(db_column=b'type', on_delete=django.db.models.deletion.CASCADE,
-                                  to='signage.BladeType', verbose_name='Type'),
+                ('type', models.ForeignKey(db_column=b'type', on_delete=django.db.models.deletion.CASCADE,
+                                  to='signage.BladeType', verbose_name='Type')),
             ],
             options={
                 'db_table': 's_t_lame',

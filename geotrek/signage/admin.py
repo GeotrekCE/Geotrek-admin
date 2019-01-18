@@ -2,7 +2,7 @@
 
 from django.contrib import admin
 
-from geotrek.signage.models import SignageType, Color, Sealing, Orientation
+from geotrek.signage.models import SignageType, Color, Sealing, Orientation, BladeType
 
 
 class ColorBladeAdmin(admin.ModelAdmin):
@@ -21,6 +21,41 @@ class SealingAdmin(admin.ModelAdmin):
         filter objects by structure
         """
         qs = super(SealingAdmin, self).get_queryset(request)
+        if not request.user.has_perm('authent.can_bypass_structure'):
+            qs = qs.filter(structure=request.user.profile.structure)
+        return qs
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'structure':
+            if not request.user.has_perm('authent.can_bypass_structure'):
+                return None
+            kwargs['initial'] = request.user.profile.structure
+            return db_field.formfield(**kwargs)
+
+    def save_model(self, request, obj, form, change):
+        if not request.user.has_perm('authent.can_bypass_structure'):
+            obj.structure = request.user.profile.structure
+        obj.save()
+
+    def get_list_display(self, request):
+        if not request.user.has_perm('authent.can_bypass_structure'):
+            return ('label')
+        return ('label', 'structure')
+
+    def get_list_filter(self, request):
+        if not request.user.has_perm('authent.can_bypass_structure'):
+            return ()
+        return ('structure', )
+
+
+class BladeTypeAdmin(admin.ModelAdmin):
+    search_fields = ('label', 'structure')
+
+    def get_queryset(self, request):
+        """
+        filter objects by structure
+        """
+        qs = super(BladeTypeAdmin, self).get_queryset(request)
         if not request.user.has_perm('authent.can_bypass_structure'):
             qs = qs.filter(structure=request.user.profile.structure)
         return qs
@@ -87,3 +122,4 @@ admin.site.register(SignageType, SignageTypeAdmin)
 admin.site.register(Color, ColorBladeAdmin)
 admin.site.register(Sealing, SealingAdmin)
 admin.site.register(Orientation, OrientationBladeAdmin)
+admin.site.register(BladeType, BladeTypeAdmin)
