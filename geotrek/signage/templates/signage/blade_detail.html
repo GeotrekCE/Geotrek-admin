@@ -5,7 +5,7 @@
     <table class="table-striped table-bordered table">
         <tr>
             <th>{% trans "Signage" %}</th>
-            <td><a href="{% url 'signage:signage_detail' pk=object.signage %}">
+            <td><a href="{% url 'signage:signage_detail' pk=object.signage.pk %}">
                         {% trans "Blade" %} {{ blade.number }}
                     </a></td>
         </tr>
