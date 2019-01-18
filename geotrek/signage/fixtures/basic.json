@@ -61,5 +61,96 @@
         "fields": {
             "label": "Temporaire"
         }
+    },
+    {
+        "pk": 1,
+        "model": "signage.bladetype",
+        "fields": {
+            "label": "Attention"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "signage.bladetype",
+        "fields": {
+            "label": "Défaut"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "signage.bladetype",
+        "fields": {
+            "label": "Directionnel"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "signage.bladetype",
+        "fields": {
+            "label": "Directionnel"
+        }
+    },
+        {
+        "pk": 1,
+        "model": "signage.color",
+        "fields": {
+            "label": "Jaune"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "signage.color",
+        "fields": {
+            "label": "Blanc"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "signage.direction",
+        "fields": {
+            "label": "Tout Droit"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "signage.direction",
+        "fields": {
+            "label": "Droite"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "signage.direction",
+        "fields": {
+            "label": "Gauche"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "signage.sealing",
+        "fields": {
+            "label": "Beton"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "signage.sealing",
+        "fields": {
+            "label": "Platine"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "signage.sealing",
+        "fields": {
+            "label": "Fourreau"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "signage.sealing",
+        "fields": {
+            "label": "Applique"
+        }
     }
 ]
