@@ -37,10 +37,11 @@ LineFormset = inlineformset_factory(Blade, Line, form=LineForm, extra=1)
 class BladeForm(CommonForm):
     topology = TopologyField(label="")
     geomfields = ['topology']
-    leftpanel_scrollable = False
+    leftpanel_scrollable = True
 
     def __init__(self, *args, **kwargs):
         super(BladeForm, self).__init__(*args, **kwargs)
+        self.helper.form_tag = False
         if not self.instance.pk:
             self.signage = kwargs.get('initial', {}).get('signage')
             self.helper.form_action += '?signage=%s' % self.signage.pk
@@ -54,9 +55,9 @@ class BladeForm(CommonForm):
             u'<a href="%s">%s</a>' % (self.signage.get_detail_url(), unicode(self.signage))
         )
         max_blade = self.signage.blade_set.all().aggregate(max=Max('number'))
+        value_max = max_blade['max']
 
-        if max_blade:
-            self.fields['number'].initial = max_blade['max'] + 1
+        self.fields['number'].initial = value_max + 1 if value_max else 1
 
     def save(self, *args, **kwargs):
         self.instance.set_topology(self.signage)
