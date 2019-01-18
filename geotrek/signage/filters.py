@@ -3,7 +3,9 @@ from django_filters import CharFilter
 
 from geotrek.common.filters import StructureRelatedFilterSet, YearFilter, ValueFilter
 from geotrek.signage.widgets import SignageYearSelect, SignageImplantationYearSelect
-from .models import Signage
+from .models import Signage, Blade
+from mapentity.filters import PolygonFilter, PythonPolygonFilter
+from geotrek.maintenance.filters import PolygonTopologyFilter
 
 
 class SignageFilterSet(StructureRelatedFilterSet):
@@ -22,3 +24,17 @@ class SignageFilterSet(StructureRelatedFilterSet):
         fields = StructureRelatedFilterSet.Meta.fields + ['type', 'condition', 'implantation_year', 'intervention_year',
                                                           'published', 'code', 'printed_elevation', 'manager',
                                                           'sealing']
+
+
+class BladeFilterSet(StructureRelatedFilterSet):
+    bbox = PolygonTopologyFilter(name='topology', lookup_expr='intersects')
+    number = CharFilter(label=_('Number'), lookup_expr='icontains')
+    orientation = CharFilter(label=_('Orientation'), lookup_expr='icontains')
+    color = CharFilter(label=_('Color'), lookup_expr='icontains')
+
+    def __init__(self, *args, **kwargs):
+        super(BladeFilterSet, self).__init__(*args, **kwargs)
+
+    class Meta(StructureRelatedFilterSet.Meta):
+        model = Blade
+        fields = StructureRelatedFilterSet.Meta.fields + ['number', 'orientation', 'type', 'color']
