@@ -1,20 +1,17 @@
 {% load i18n geotrek_tags mapentity_tags %}
 {% if modelname != "signage" %}
-    <h3>{% trans "Signage" %}</h3>
+<h3>{% trans "Signage" %}</h3>
+    <table class="table">
+        <tr>
+            <th>{% trans "Signages" %}</th>
+            <td>
+                {% if perms.signage.add_signage %}
+                <p class="autohide"><a href="{% url 'signage:signage_add' %}" class="btn btn-mini btn-success">
+                    <i class="icon-plus icon-white"></i> {% trans "Add a new signage" %}</a>
+                </p>
+                {% endif %}
+                {% valuelist object.signages field='name' %}
+            </td>
+        </tr>
+    </table>
 {% endif %}
-<table class="table">
-    {% if modelname != "signage" %}
-    <tr>
-        <th>{% trans "Signages" %}</th>
-        <td>
-            {% if perms.signage.add_signage %}
-            <p class="autohide"><a href="{% url 'signage:signage_add' %}" class="btn btn-mini btn-success">
-                <i class="icon-plus icon-white"></i> {% trans "Add a new signage" %}</a>
-            </p>
-            {% endif %}
-
-            {% valuelist object.signages field='name' %}
-        </td>
-    </tr>
-    {% endif %}
-</table>

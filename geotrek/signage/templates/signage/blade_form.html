@@ -1,29 +1,26 @@
 {% extends "mapentity/mapentity_form.html" %}
-{% load i18n static crispy_forms_tags mapentity_tags %}
+{% load i18n crispy_forms_tags mapentity_tags %}
 
 {% block mainform %}
-    <form id="mainform" class="form-horizontal" method="POST" action="{% url 'signage:signage_update' pk=object.signage_id %}">
-        <h4>{% trans "Blade" %} {% trans "number" %} {{ object.number }} on {{ object.signage.name }}</h4>
+    <form id="mainform" action="{% if object.pk %}{{ object.get_update_url }}{% else %}{{ object.get_add_url }}{% endif %}" class="form-horizontal" method="POST">
     {% crispy form %}
 
-    <fieldset class="formset">
-        {{ line_formset.management_form }}
-        {% for line_form in line_formset %}
-            <div class="form-row inline controls controls-row {{ line_formset.prefix }}">
-                {% crispy line_form %}
-            </div>
-        {% endfor %}
-    </fieldset>
-        <div  class="form-actions" class="form-actions">
-        <button id="save_changes" class="btn btn-success pull-right offset1"
-                   type="submit" form="mainform" >
-            <i class="icon-white icon-ok-sign"></i>
-            Sauvegarder
-        </button>
-            <input type="button" name="cancel" value="{% trans 'Cancel' %}" class="btn pull-right offset1" id="button-id-cancel"/>
+        <fieldset class="formset">
+            {{ line_formset.management_form }}
+            {% for line_form in line_formset %}
+                <div class="form-row inline controls controls-row {{ line_formset.prefix }}">
+                    {% crispy line_form %}
+                </div>
+            {% endfor %}
+        </fieldset>
+        <div  class="form-actions">
+            <button id="save_changes" class="btn btn-success pull-right offset1" type="submit" form="mainform">
+                <i class="icon-white icon-ok-sign"></i>
+                Sauvegarder
+            </button>
+                <input type="button" name="cancel" value="{% trans 'Cancel' %}" class="btn pull-right offset1" id="button-id-cancel"/>
         </div>
     </form>
-
 {% endblock mainform %}
 
 {% block extrabody %}
@@ -49,78 +46,3 @@
         });
     </script>
 {% endblock extrabody %}
-
-{% block navbar %}
-<div class="navbar">
-  <div class="navbar-inner">
-
-    <ul id="historylist" class="nav">
-      {% if request.user.is_authenticated %}
-          <li class="history">
-            <div id="entitylist-dropdown" class="btn-group">
-                  <button class="btn" onclick="javascript:location='{% url 'signage:signage_update' pk=object.signage_id %}';">
-                    {% trans "Signage" %} : {{ object.signage.name|title }}
-                  </button>
-            </div>
-          </li>
-      {% endif %}
-      {% block toolbar %}
-        {% for item in request.session.history %}
-            {% if forloop.first and modelname == "signage" %}
-                <li class="{{ modelname }} active history first">
-                    <a href="{{ item.path }}">
-                        <span class="content">{% if title|lower %}{{ title }}{% else %}{{ item.title }}{% endif %}</span>
-                        {% if viewname == "detail" %}
-                           <button class="close hidden">&times;</button>
-                        {% endif %}
-                    </a>
-                </li>
-            {% else %}
-                <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %} {{ item.modelname }} history">
-                    <a href="{{ item.path }}" title="{{ item.title }}">
-                        <span class="content">{{ item.title|truncatechars:12 }}</span>
-                        <button class="close hidden">&times;</button>
-                    </a>
-                </li>
-            {% endif %}
-        {% endfor %}
-      {% endblock toolbar %}
-    </ul>
-
-    <ul class="nav pull-right">
-        {% if request.user.is_authenticated %}
-            <li class="divider-vertical"></li>
-            <li class="dropdown">
-               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  <i class="icon-user"></i>
-                  {{ request.user }}
-                  {% smart_include "usermenu" %}
-                  <b class="caret"></b>
-               </a>
-               <ul class="dropdown-menu">
-
-                  {% smart_include "menuentries" %}
-
-                  {% if request.user.is_staff %}
-                  <li><a href="{% url 'admin:index' %}">{% trans "Admin" %}</a></li>
-                  {% else %}
-                  <li class="disabled"><a href="#">{% trans "Admin" %}</a></li>
-                  {% endif %}
-
-                  {% if ACTION_HISTORY_ENABLED %}
-                    {% if 'admin.read_logentry' in perms %}
-                    <li><a class="{% block nav-logbook %}{% endblock nav-logbook %}" href="{% url 'mapentity:logentry_list' %}">{% trans "Logbook" %}</a></li>
-                    {% else %}
-                    <li class="disabled"><a href="#">{% trans "Logbook" %}</a></li>
-                    {% endif %}
-                  {% endif %}
-
-                  <li class="divider"></li>
-                  <li><a href="{% url 'logout' %}"><i class="icon-off"></i> {% trans "Logout" %}</a></li>
-               </ul>
-            </li>
-        {% endif %}
-      </ul>
-  </div>
-</div>
-{% endblock navbar %}

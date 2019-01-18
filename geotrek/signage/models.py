@@ -12,6 +12,7 @@ from geotrek.authent.models import StructureOrNoneRelated, StructureRelated
 from geotrek.common.mixins import OptionalPictogramMixin
 from geotrek.common.models import Organism
 from geotrek.infrastructure.models import BaseInfrastructure, InfrastructureCondition
+from geotrek.common.mixins import NoDeleteMixin
 
 
 class Sealing(StructureOrNoneRelated):
@@ -86,6 +87,10 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     def published_topology_signages(cls, topology):
         return cls.topology_signages(topology).filter(published=True)
 
+    @property
+    def order_blades(self):
+        return self.blade_set.order_by('number')
+
 
 Path.add_property('signages', lambda self: Signage.path_signages(self), _(u"Signages"))
 Topology.add_property('signages', lambda self: Signage.topology_signages(self), _(u"Signages"))
@@ -117,7 +122,11 @@ class Color(models.Model):
         return self.label
 
 
-class Blade(StructureRelated):
+class BladeManager(gismodels.GeoManager):
+    pass
+
+
+class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
     signage = models.ForeignKey(Signage, db_column='signaletique', verbose_name=_("Signage"),
                                 on_delete=models.PROTECT)
     number = models.IntegerField(verbose_name=_(u"Blade Number"), db_column='numero')
@@ -127,11 +136,47 @@ class Blade(StructureRelated):
     color = models.ForeignKey(Color, db_column='couleur', on_delete=models.PROTECT, null=True, blank=True)
     condition = models.ForeignKey(InfrastructureCondition, db_column='etat', verbose_name=_("Condition"),
                                   null=True, blank=True, on_delete=models.PROTECT)
+    topology = models.ForeignKey(Topology, related_name="blades_set", verbose_name=_(u"Blades"))
+    objects = NoDeleteMixin.get_manager_cls(BladeManager)()
 
     class Meta:
+        unique_together = ('signage', 'number')
         db_table = 's_t_lame'
         verbose_name = _(u"Blade")
         verbose_name_plural = _(u"Blades")
+
+    def set_topology(self, topology):
+        self.topology = topology
+        if not self.is_signage:
+            raise ValueError("Expecting a signage")
+
+    @property
+    def is_signage(self):
+        if self.topology:
+            return self.topology.kind == Signage.KIND
+        return False
+
+    @property
+    def geom(self):
+        return self.topology.geom
+
+    @geom.setter
+    def geom(self, value):
+        self._geom = value
+
+    @property
+    def signage_display(self):
+        return u'<img src="%simages/signage-16.png" title="Signage">' % settings.STATIC_URL
+
+    @property
+    def order_lines(self):
+        return self.line_set.order_by('number')
+
+    @property
+    def number_display(self):
+        s = '<a data-pk="%s" href="%s" title="%s" >%s #%s</a>' % (self.pk, self.get_detail_url(), self,
+                                                                  self.signage, self.number)
+        return s
 
 
 class Line(StructureRelated):
@@ -145,6 +190,7 @@ class Line(StructureRelated):
     time = models.DurationField(db_column='temps', verbose_name=_("Temps"), null=True, blank=True)
 
     class Meta:
+        unique_together = ('blade', 'number')
         db_table = 's_t_ligne'
         verbose_name = _(u"Line")
         verbose_name_plural = _(u"Lines")

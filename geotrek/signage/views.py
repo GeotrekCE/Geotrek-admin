@@ -2,7 +2,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from crispy_forms.layout import Fieldset, Layout, Div, HTML
-
+import logging
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
@@ -10,8 +10,8 @@ from geotrek.authent.decorators import same_structure_required
 from geotrek.core.models import AltimetryMixin
 from geotrek.common.views import FormsetMixin
 
-from .filters import SignageFilterSet
-from .forms import SignageForm, BladeFormset, BladeForm, LineFormset
+from .filters import SignageFilterSet, BladeFilterSet
+from .forms import SignageForm,  BladeForm, LineFormset
 from .models import Signage, Blade
 from .serializers import SignageSerializer
 
@@ -21,9 +21,7 @@ from django.views.generic.edit import UpdateView
 from mapentity.views.mixins import (ModelViewMixin, FormViewMixin)
 
 
-class BladeMixin(FormsetMixin):
-    context_name = 'blade_formset'
-    formset_class = BladeFormset
+logger = logging.getLogger(__name__)
 
 
 class LineMixin(FormsetMixin):
@@ -67,12 +65,12 @@ class SignageDocument(MapEntityDocument):
     model = Signage
 
 
-class SignageCreate(BladeMixin, MapEntityCreate):
+class SignageCreate(MapEntityCreate):
     model = Signage
     form_class = SignageForm
 
 
-class SignageUpdate(BladeMixin, MapEntityUpdate):
+class SignageUpdate(MapEntityUpdate):
     queryset = Signage.objects.existing()
     form_class = SignageForm
 
@@ -98,9 +96,74 @@ class SignageViewSet(MapEntityViewSet):
         return Signage.objects.existing().filter(published=True).transform(settings.API_SRID, field_name='geom')
 
 
-class BladeUpdate(LineMixin, UpdateView):
-    form_class = BladeForm
-    queryset = Blade.objects.all()
+class BladeDetail(MapEntityDetail):
+    queryset = Blade.objects.existing()
 
-    class Meta:
-        model = Blade
+    def get_context_data(self, *args, **kwargs):
+        context = super(BladeDetail, self).get_context_data(*args, **kwargs)
+        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        return context
+
+
+class BladeDocument(MapEntityDocument):
+    model = Blade
+
+
+class BladeCreate(LineMixin, MapEntityCreate):
+    model = Blade
+    form_class = BladeForm
+
+    def get_signage(self):
+        pk_infra = self.request.GET.get('signage')
+        if pk_infra:
+            try:
+                return Signage.objects.existing().get(pk=pk_infra)
+            except Signage.DoesNotExist:
+                logger.warning("Intervention on unknown infrastructure %s" % pk_infra)
+        return None
+
+    def get_initial(self):
+        """
+        Returns the initial data to use for forms on this view.
+        """
+        initial = super(BladeCreate, self).get_initial()
+        signage = self.get_signage()
+        initial['signage'] = signage
+        return initial
+
+
+class BladeUpdate(LineMixin, MapEntityUpdate):
+    queryset = Blade.objects.existing()
+    form_class = BladeForm
+
+    @same_structure_required('signage:blade_detail')
+    def dispatch(self, *args, **kwargs):
+        return super(BladeUpdate, self).dispatch(*args, **kwargs)
+
+
+class BladeDelete(MapEntityDelete):
+    model = Blade
+
+
+class BladeViewSet(MapEntityViewSet):
+    model = Blade
+    serializer_class = None
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        return Blade.objects.existing().filter(published=True).transform(settings.API_SRID, field_name='geom')
+
+
+class BladeList(MapEntityList):
+    queryset = Blade.objects.existing()
+    filterform = BladeFilterSet
+    columns = ['id', 'number', 'orientation', 'type', 'color']
+
+
+class BladeJsonList(MapEntityJsonList, BladeList):
+    pass
+
+
+class BladeLayer(MapEntityLayer):
+    queryset = Blade.objects.existing()
+    properties = ['number']

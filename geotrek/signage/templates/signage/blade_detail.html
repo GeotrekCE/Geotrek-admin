@@ -4,8 +4,8 @@
 {% block detailspanel %}
     <table class="table-striped table-bordered table">
         <tr>
-            <th>{{ object|verbose:"name" }}</th>
-            <td>{{ object.name }}</td>
+            <th>{{ object|verbose:"number" }}</th>
+            <td>{{ object.number }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"type" }}</th>
@@ -16,41 +16,9 @@
             <td>{{ object.condition }}</td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"description" }}</th>
-            <td>{% if object.description %}{{ object.description|safe }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
-            </td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"implantation_year" }}</th>
-            <td>{{ object.implantation_year|default:"" }}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"code" }}</th>
-            <td>{{ object.code|default:"" }}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"printed_elevation" }}</th>
-            <td>{{ object.printed_elevation|meters|default:"" }}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"sealing" }}</th>
-            <td>{{ object.sealing|default:"" }}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"manager" }}</th>
-            <td>{{ object.manager|default:"" }}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"published" }}</th>
-            <td>{{ object.published|yesno|title }}</td>
-        </tr>
-        {% include "altimetry/elevationinfo_fragment.html" %}
-        <tr>
             <th>{{ object|verbose:"structure" }}</th>
             <td>{{ object.structure }}</td>
         </tr>
-        {% include "mapentity/trackinfo_fragment.html" %}
     </table>
     {{ block.super }}
 {% endblock detailspanel %}
