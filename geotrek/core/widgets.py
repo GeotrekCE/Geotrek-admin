@@ -12,7 +12,7 @@ import json
 
 from django.template import loader
 from django.utils import six
-
+from django.conf import settings
 from mapentity.widgets import MapWidget
 
 from .models import Topology
@@ -95,6 +95,10 @@ class TopologyReadonlyWidget(BaseTopologyWidget):
         topology = value
         if isinstance(topology, (six.string_types, int)):
             topology = self.deserialize(topology)
-        geom = topology.geom if topology else None  # if form invalid
+        if topology:
+            geom = topology.geom
+            geom.transform(settings.API_SRID)
+        else: # if form invalid
+            geom = None
         context = {'object': geom, 'mapname': name}
         return loader.render_to_string(self.template_name, context)
