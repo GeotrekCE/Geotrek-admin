@@ -106,12 +106,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.AddField(
-            model_name='blade',
-            name='type',
-            field=models.ForeignKey(db_column=b'type', on_delete=django.db.models.deletion.CASCADE,
-                                    to='signage.BladeType', verbose_name='Type'),
-        ),
-        migrations.AddField(
             model_name='signage',
             name='sealing',
             field=models.ForeignKey(db_column=b'scellement', null=True, blank=True, on_delete=django.db.models.deletion.CASCADE, to='signage.Sealing', verbose_name='Sealing'),
@@ -131,14 +125,22 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('number', models.IntegerField(db_column=b'numero', verbose_name='Blade Number')),
-                ('type', models.ForeignKey(db_column=b'type', on_delete=django.db.models.deletion.CASCADE,
-                                  to='signage.BladeType', verbose_name='Type')),
-            ],
+                ('deleted', models.BooleanField(db_column=b'supprime', default=False, editable=False, verbose_name='Deleted')),
+                ('topology',  models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                related_name='blades_set', to='core.Topology', verbose_name='Blades')),
+
+    ],
             options={
                 'db_table': 's_t_lame',
                 'verbose_name': 'Blade',
                 'verbose_name_plural': 'Blades',
             },
+        ),
+        migrations.AddField(
+            model_name='blade',
+            name='type',
+            field=models.ForeignKey(db_column=b'type', on_delete=django.db.models.deletion.CASCADE,
+                                    to='signage.BladeType', verbose_name='Type'),
         ),
         migrations.CreateModel(
             name='Color',
@@ -164,9 +166,8 @@ class Migration(migrations.Migration):
                 ('pictogram_name', models.CharField(blank=True, db_column=b'nom_pictogramme', max_length=250, null=True,
                                                     verbose_name='Name pictogramm')),
                 ('time', models.DurationField(blank=True, db_column=b'temps', null=True, verbose_name='Temps')),
-                ('blade',
-                 models.ForeignKey(db_column=b'lame', on_delete=django.db.models.deletion.PROTECT, to='signage.Blade',
-                                   verbose_name='Blade')),
+                ('blade', models.ForeignKey(db_column=b'lame', on_delete=django.db.models.deletion.PROTECT, to='signage.Blade',
+                                            verbose_name='Blade')),
                 ('structure',
                  models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk,
                                    on_delete=django.db.models.deletion.CASCADE, to='authent.Structure',

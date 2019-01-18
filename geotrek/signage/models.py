@@ -155,7 +155,7 @@ class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
     objects = NoDeleteMixin.get_manager_cls(BladeManager)()
 
     class Meta:
-        unique_together = ('signage', 'number')
+        unique_together = (('signage', 'number'), )
         db_table = 's_t_lame'
         verbose_name = _(u"Blade")
         verbose_name_plural = _(u"Blades")
@@ -205,7 +205,7 @@ class Line(StructureRelated):
     time = models.DurationField(db_column='temps', verbose_name=_("Temps"), null=True, blank=True)
 
     class Meta:
-        unique_together = ('blade', 'number')
+        unique_together = (('blade', 'number'), )
         db_table = 's_t_ligne'
         verbose_name = _(u"Line")
         verbose_name_plural = _(u"Lines")
