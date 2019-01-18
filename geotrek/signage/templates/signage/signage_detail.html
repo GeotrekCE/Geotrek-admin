@@ -31,7 +31,7 @@
                 </p>
                 {% for blade in object.order_blades %}
 
-                    <a href="{% url 'signage:blade_detail' pk=blade.pk %}{% if modelname == "signage" %}{% endif %}">
+                    <a href="{% url 'signage:blade_detail' pk=blade.pk %}">
                         {% trans "Blade" %} {{ blade.number }}
                     </a>
                 {% endfor %}
