@@ -89,6 +89,28 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Signage Types',
             },
         ),
+        migrations.CreateModel(
+            name='BladeType',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('label', models.CharField(db_column=b'nom', max_length=128)),
+                ('structure', models.ForeignKey(blank=True, db_column=b'structure',
+                                                default=geotrek.authent.models.default_structure_pk, null=True,
+                                                on_delete=django.db.models.deletion.CASCADE, to='authent.Structure',
+                                                verbose_name='Related structure')),
+            ],
+            options={
+                'db_table': 's_b_lame',
+                'verbose_name': 'Blade Type',
+                'verbose_name_plural': 'Blade Types',
+            },
+        ),
+        migrations.AddField(
+            model_name='blade',
+            name='type',
+            field=models.ForeignKey(db_column=b'type', on_delete=django.db.models.deletion.CASCADE,
+                                    to='signage.BladeType', verbose_name='Type'),
+        ),
         migrations.AddField(
             model_name='signage',
             name='sealing',
@@ -109,7 +131,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('number', models.IntegerField(db_column=b'numero', verbose_name='Blade Number')),
-                ('type', models.CharField(db_column=b'type', max_length=250, verbose_name='Blade Type')),
+                models.ForeignKey(db_column=b'type', on_delete=django.db.models.deletion.CASCADE,
+                                  to='signage.BladeType', verbose_name='Type'),
             ],
             options={
                 'db_table': 's_t_lame',
@@ -200,4 +223,12 @@ class Migration(migrations.Migration):
                                     verbose_name='Related structure'),
         ),
         migrations.RunPython(move_data),
+        migrations.AlterUniqueTogether(
+            name='blade',
+            unique_together=set([('signage', 'number')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='line',
+            unique_together=set([('blade', 'number')]),
+        ),
     ]
