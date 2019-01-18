@@ -7,7 +7,6 @@ env:
   - ACTION=test
   - ACTION=deploy
   - ACTION=integration
-  - ACTION=migration
   - ACTION=codestyle
 
 matrix:
@@ -38,18 +37,6 @@ install:
   # Don't bind redis-server on IPv6 address
   - sudo sed -i 's/^bind.*$/bind 127.0.0.1/' /etc/redis/redis.conf; sudo service redis-server restart;
 
-before_script:
-  - if [[ $ACTION == migration ]]; then actual_branch=`git branch | grep \* | cut -d ' ' -f2`
-    git checkout `git tag -l | grep -v '^v' | grep -v '^mapentity'| sort -Vr | head -n 1`;
-    ./install.sh --noinput;
-    make update;
-    make load_demo;
-    git checkout actual_branch;
-    ./install.sh --noinput;
-    make update;
-    ls -l;
-    bin/django test geotrek.tests_migrations; fi
-
 script:
   - if [[ $ACTION == codestyle ]]; then flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings; fi
   - if [[ $ACTION == codestyle ]]; then flake8 geotrek; fi
@@ -59,6 +46,7 @@ script:
   - if [[ $ACTION == integration ]]; then make test_export host=localhost port=80; fi
   - if [[ $ACTION == test ]]; then ./bin/coverage run ./bin/django test geotrek; fi
   - if [[ $ACTION == test ]]; then make test_js; fi
+
 after_success:
   # Report coverage results to coveralls.io
   - if [[ $ACTION == test ]]; then ./bin/coverage report -m; fi
