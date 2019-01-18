@@ -66,7 +66,7 @@ class BladeForm(CommonForm):
 
     class Meta:
         model = Blade
-        fields = ['id', 'number', 'orientation', 'type', 'condition', 'color']
+        fields = ['id', 'number', 'direction', 'type', 'condition', 'color']
 
 
 class SignageForm(BaseInfrastructureForm):

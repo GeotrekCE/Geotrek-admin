@@ -157,7 +157,7 @@ class BladeViewSet(MapEntityViewSet):
 class BladeList(MapEntityList):
     queryset = Blade.objects.existing()
     filterform = BladeFilterSet
-    columns = ['id', 'number', 'orientation', 'type', 'color']
+    columns = ['id', 'number', 'direction', 'type', 'color']
 
 
 class BladeJsonList(MapEntityJsonList, BladeList):

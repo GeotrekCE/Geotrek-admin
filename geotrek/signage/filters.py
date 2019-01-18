@@ -29,7 +29,7 @@ class SignageFilterSet(StructureRelatedFilterSet):
 class BladeFilterSet(StructureRelatedFilterSet):
     bbox = PolygonTopologyFilter(name='topology', lookup_expr='intersects')
     number = CharFilter(label=_('Number'), lookup_expr='icontains')
-    orientation = CharFilter(label=_('Orientation'), lookup_expr='icontains')
+    direction = CharFilter(label=_('Direction'), lookup_expr='icontains')
     color = CharFilter(label=_('Color'), lookup_expr='icontains')
 
     def __init__(self, *args, **kwargs):
@@ -37,4 +37,4 @@ class BladeFilterSet(StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Blade
-        fields = StructureRelatedFilterSet.Meta.fields + ['number', 'orientation', 'type', 'color']
+        fields = StructureRelatedFilterSet.Meta.fields + ['number', 'direction', 'type', 'color']

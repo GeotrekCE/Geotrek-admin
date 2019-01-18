@@ -2,14 +2,14 @@
 
 from django.contrib import admin
 
-from geotrek.signage.models import SignageType, Color, Sealing, Orientation, BladeType
+from geotrek.signage.models import SignageType, Color, Sealing, Direction, BladeType
 
 
 class ColorBladeAdmin(admin.ModelAdmin):
     search_fields = ('label',)
 
 
-class OrientationBladeAdmin(admin.ModelAdmin):
+class DirectionBladeAdmin(admin.ModelAdmin):
     search_fields = ('label',)
 
 
@@ -121,5 +121,5 @@ class SignageTypeAdmin(admin.ModelAdmin):
 admin.site.register(SignageType, SignageTypeAdmin)
 admin.site.register(Color, ColorBladeAdmin)
 admin.site.register(Sealing, SealingAdmin)
-admin.site.register(Orientation, OrientationBladeAdmin)
+admin.site.register(Direction, DirectionBladeAdmin)
 admin.site.register(BladeType, BladeTypeAdmin)

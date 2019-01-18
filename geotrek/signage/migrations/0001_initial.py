@@ -180,15 +180,15 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Orientation',
+            name='Direction',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('label', models.CharField(db_column=b'etiquette', max_length=128)),
             ],
             options={
-                'db_table': 's_b_orientation',
-                'verbose_name': 'Orientation',
-                'verbose_name_plural': 'Orientations',
+                'db_table': 's_b_direction',
+                'verbose_name': 'Direction',
+                'verbose_name_plural': 'Directions',
             },
         ),
         migrations.AddField(
@@ -206,9 +206,9 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='blade',
-            name='orientation',
-            field=models.ForeignKey(db_column=b'orientation', on_delete=django.db.models.deletion.PROTECT,
-                                    to='signage.Orientation', verbose_name='Orientation'),
+            name='direction',
+            field=models.ForeignKey(db_column=b'direction', on_delete=django.db.models.deletion.PROTECT,
+                                    to='signage.Direction', verbose_name='Direction'),
         ),
         migrations.AddField(
             model_name='blade',

@@ -98,13 +98,13 @@ Topology.add_property('published_signages', lambda self: Signage.published_topol
                       _(u"Published Signages"))
 
 
-class Orientation(models.Model):
+class Direction(models.Model):
     label = models.CharField(db_column="etiquette", max_length=128)
 
     class Meta:
-        db_table = 's_b_orientation'
-        verbose_name = _(u"Orientation")
-        verbose_name_plural = _(u"Orientations")
+        db_table = 's_b_direction'
+        verbose_name = _(u"Direction")
+        verbose_name_plural = _(u"Directions")
 
     def __unicode__(self):
         return self.label
@@ -145,8 +145,8 @@ class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
     signage = models.ForeignKey(Signage, db_column='signaletique', verbose_name=_("Signage"),
                                 on_delete=models.PROTECT)
     number = models.IntegerField(verbose_name=_(u"Blade Number"), db_column='numero')
-    orientation = models.ForeignKey(Orientation, verbose_name=_(u"Orientation"), db_column='orientation',
-                                    on_delete=models.PROTECT)
+    direction = models.ForeignKey(Direction, verbose_name=_(u"Direction"), db_column='direction',
+                                  on_delete=models.PROTECT)
     type = models.ForeignKey(BladeType, db_column='type', verbose_name=_("Type"))
     color = models.ForeignKey(Color, db_column='couleur', on_delete=models.PROTECT, null=True, blank=True)
     condition = models.ForeignKey(InfrastructureCondition, db_column='etat', verbose_name=_("Condition"),
