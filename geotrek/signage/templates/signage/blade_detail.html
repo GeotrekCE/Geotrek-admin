@@ -4,6 +4,12 @@
 {% block detailspanel %}
     <table class="table-striped table-bordered table">
         <tr>
+            <th>{% trans "Signage" %}</th>
+            <td><a href="{% url 'signage:signage_detail' pk=object.signage %}">
+                        {% trans "Blade" %} {{ blade.number }}
+                    </a></td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"number" }}</th>
             <td>{{ object.number }}</td>
         </tr>
@@ -16,8 +22,19 @@
             <td>{{ object.condition }}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"color" }}</th>
+            <td>{{ object.color }}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"structure" }}</th>
             <td>{{ object.structure }}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Lines" %}</th>
+            <td>{% for line in object.line_set %}
+                    #{{ line.number }} {{ line.text }} | {{ line.distance }} / {{ line.time }} | {{ line.pictogram_name }}<br>
+                {% endfor %}
+            </td>
         </tr>
     </table>
     {{ block.super }}
