@@ -6,6 +6,7 @@ from collections import defaultdict
 from django.contrib.auth.decorators import permission_required
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.decorators.http import last_modified as cache_last_modified
 from django.views.decorators.cache import never_cache as force_cache_validation
@@ -15,7 +16,7 @@ from django.core.cache import caches
 from django.views.generic.detail import BaseDetailView
 from mapentity.serializers import GPXSerializer
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
-                             MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate
+                             MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityFormat, LastModifiedMixin)
 
 from geotrek.authent.decorators import same_structure_required
