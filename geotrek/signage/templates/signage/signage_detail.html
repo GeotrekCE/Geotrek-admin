@@ -32,7 +32,7 @@
                 {% for blade in object.order_blades %}
 
                     <a href="{% url 'signage:blade_detail' pk=blade.pk %}">
-                        {% trans "Blade" %} {{ blade.number }}
+                        {% trans "Blade" %} {{ blade.number }} <br>
                     </a>
                 {% endfor %}
             </td>

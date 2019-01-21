@@ -31,7 +31,7 @@
         </tr>
         <tr>
             <th>{% trans "Lines" %}</th>
-            <td>{% for line in object.line_set %}
+            <td>{% for line in object.order_lines %}
                     #{{ line.number }} {{ line.text }} | {{ line.distance }} / {{ line.time }} | {{ line.pictogram_name }}<br>
                 {% endfor %}
             </td>

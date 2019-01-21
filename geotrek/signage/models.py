@@ -209,3 +209,7 @@ class Line(StructureRelated):
         db_table = 's_t_ligne'
         verbose_name = _(u"Line")
         verbose_name_plural = _(u"Lines")
+
+    @property
+    def order_lines(self):
+        return self.line.order_by('number')

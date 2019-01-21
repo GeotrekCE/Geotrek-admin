@@ -64,6 +64,15 @@ class BladeForm(CommonForm):
         self.instance.signage = self.signage
         return super(BladeForm, self).save(*args, **kwargs)
 
+    def clean_number(self):
+        blades = self.signage.blade_set
+        if self.instance.pk:
+            blades = blades.exclude(number=self.instance.number)
+        already_used = ', '.join([str(number) for number in blades. values_list('number', flat=True)])
+        if blades.filter(number=self.cleaned_data['number']).exists():
+            raise forms.ValidationError(_("Number already exists, numbers already used : %s" % already_used))
+        return self.cleaned_data['number']
+
     class Meta:
         model = Blade
         fields = ['id', 'number', 'direction', 'type', 'condition', 'color']
