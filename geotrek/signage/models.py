@@ -115,8 +115,8 @@ class Color(models.Model):
 
     class Meta:
         db_table = 's_b_color'
-        verbose_name = _(u"Color Blade")
-        verbose_name_plural = _(u"Colors Blade")
+        verbose_name = _(u"Blade Color")
+        verbose_name_plural = _(u"Blade Colors")
 
     def __unicode__(self):
         return self.label
@@ -148,7 +148,8 @@ class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
     direction = models.ForeignKey(Direction, verbose_name=_(u"Direction"), db_column='direction',
                                   on_delete=models.PROTECT)
     type = models.ForeignKey(BladeType, db_column='type', verbose_name=_("Type"))
-    color = models.ForeignKey(Color, db_column='couleur', on_delete=models.PROTECT, null=True, blank=True)
+    color = models.ForeignKey(Color, db_column='couleur', on_delete=models.PROTECT, null=True, blank=True,
+                              verbose_name=_("Color"))
     condition = models.ForeignKey(InfrastructureCondition, db_column='etat', verbose_name=_("Condition"),
                                   null=True, blank=True, on_delete=models.PROTECT)
     topology = models.ForeignKey(Topology, related_name="blades_set", verbose_name=_(u"Blades"))
@@ -200,7 +201,7 @@ class Line(StructureRelated):
     text = models.CharField(db_column='texte', verbose_name=_("Text"), max_length=1000)
     distance = models.DecimalField(db_column='distance', verbose_name=_("Distance"), null=True, blank=True,
                                    decimal_places=3, max_digits=8)
-    pictogram_name = models.CharField(db_column='nom_pictogramme', verbose_name=_("Name pictogramm"), max_length=250,
+    pictogram_name = models.CharField(db_column='nom_pictogramme', verbose_name=_("Pictogramm name"), max_length=250,
                                       blank=True, null=True)
     time = models.DurationField(db_column='temps', verbose_name=_("Temps"), null=True, blank=True)
 

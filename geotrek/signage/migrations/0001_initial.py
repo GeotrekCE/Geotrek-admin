@@ -150,8 +150,8 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 's_b_color',
-                'verbose_name': 'Color Blade',
-                'verbose_name_plural': 'Colors Blade',
+                'verbose_name': 'Blade Color',
+                'verbose_name_plural': 'Blade Colors',
             },
         ),
         migrations.CreateModel(
@@ -164,7 +164,7 @@ class Migration(migrations.Migration):
                  models.DecimalField(blank=True, db_column=b'distance', decimal_places=3, max_digits=8, null=True,
                                      verbose_name='Distance')),
                 ('pictogram_name', models.CharField(blank=True, db_column=b'nom_pictogramme', max_length=250, null=True,
-                                                    verbose_name='Name pictogramm')),
+                                                    verbose_name='Pictogramm name')),
                 ('time', models.DurationField(blank=True, db_column=b'temps', null=True, verbose_name='Temps')),
                 ('blade', models.ForeignKey(db_column=b'lame', on_delete=django.db.models.deletion.PROTECT, to='signage.Blade',
                                             verbose_name='Blade')),
