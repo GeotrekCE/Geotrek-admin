@@ -38,8 +38,7 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekViewset):
             .filter(published=True) \
             .select_related('species', 'structure') \
             .prefetch_related('species__practices') \
-            .annotate(geom_type=GeometryType(F('geom'))) \
-            .order_by('pk')  # Required for reliable pagination
+            .annotate(geom_type=GeometryType(F('geom')))
         if 'bubble' in self.request.GET:
             queryset = queryset.annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
         else:
@@ -49,7 +48,8 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekViewset):
             ))
         # Ensure smaller areas are at the end of the list, ie above bigger areas on the map
         # to ensure we can select every area in case of overlapping
-        queryset = queryset.annotate(area=Area('geom2d_transformed')).order_by('-area')
+        # Second sort key pk is required for reliable pagination
+        queryset = queryset.annotate(area=Area('geom2d_transformed')).order_by('-area', 'pk')
         return queryset
 
     def list(self, request, *args, **kwargs):
