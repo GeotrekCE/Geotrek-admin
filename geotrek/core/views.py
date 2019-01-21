@@ -28,7 +28,7 @@ from .models import Path, Trail, Topology
 from .forms import PathForm, TrailForm
 from .filters import PathFilterSet, TrailFilterSet
 from . import graph as graph_lib
-from django.http.response import HttpResponse, JsonResponse
+from django.http.response import HttpResponse
 from django.contrib import messages
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
