@@ -161,6 +161,9 @@ class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
         verbose_name = _(u"Blade")
         verbose_name_plural = _(u"Blades")
 
+    def __unicode__(self):
+        return "%s %s" % (self.signage, self.number)
+
     def set_topology(self, topology):
         self.topology = topology
         if not self.is_signage:
