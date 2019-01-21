@@ -110,3 +110,12 @@ msgstr "Heures:Minutes:Secondes"
 
 msgid "Pictogramm name"
 msgstr "Nom du pictogramme"
+
+msgid "Line"
+msgstr "Ligne"
+
+msgid "Lines"
+msgstr "Lignes"
+
+msgid "Number already exists, numbers already used : %s"
+msgstr "Le numero existe déjà, numeros déjà utilisé : %s"

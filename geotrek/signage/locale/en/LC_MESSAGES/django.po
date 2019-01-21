@@ -61,3 +61,60 @@ msgstr ""
 
 msgid "Add a new signage"
 msgstr ""
+
+msgid "Sealing"
+msgstr ""
+
+msgid "Sealings"
+msgstr ""
+
+msgid "Signage"
+msgstr ""
+
+msgid "Blades"
+msgstr ""
+
+msgid "Blade"
+msgstr ""
+
+msgid "Color"
+msgstr ""
+
+msgid "Blade Type"
+msgstr ""
+
+msgid "Blade Types"
+msgstr ""
+
+msgid "Color Blade"
+msgstr ""
+
+msgid "Blade Colors "
+msgstr ""
+
+msgid "Direction"
+msgstr ""
+
+msgid "Directions"
+msgstr ""
+
+msgid "Blade Number"
+msgstr ""
+
+msgid "Blade Number"
+msgstr ""
+
+msgid "Hours:Minutes:Seconds"
+msgstr ""
+
+msgid "Pictogramm name"
+msgstr ""
+
+msgid "Line"
+msgstr ""
+
+msgid "Lines"
+msgstr ""
+
+msgid "Number already exists, numbers already used : %s"
+msgstr ""
