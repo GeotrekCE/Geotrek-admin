@@ -206,7 +206,8 @@ class Line(StructureRelated):
                                    decimal_places=3, max_digits=8)
     pictogram_name = models.CharField(db_column='nom_pictogramme', verbose_name=_("Pictogramm name"), max_length=250,
                                       blank=True, null=True)
-    time = models.DurationField(db_column='temps', verbose_name=_("Temps"), null=True, blank=True)
+    time = models.DurationField(db_column='temps', verbose_name=_("Temps"), null=True, blank=True,
+                                help_text=_("Hours:Minutes:Seconds"))
 
     class Meta:
         unique_together = (('blade', 'number'), )
