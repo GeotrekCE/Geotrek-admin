@@ -2,12 +2,14 @@
 import logging
 import functools
 
+import simplekml
 from django.contrib.gis.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import fromstr, LineString
 
 from mapentity.models import MapEntityMixin
+from mapentity.serializers import plain_text
 
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.mixins import (TimeStampedModelMixin, NoDeleteMixin,
@@ -102,6 +104,17 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     @property
     def length_2d_display(self):
         return round(self.length_2d, 1)
+
+    def kml(self):
+        """ Exports path into KML format, add geometry as linestring """
+        kml = simplekml.Kml()
+        geom3d = self.geom_3d.transform(4326, clone=True)  # KML uses WGS84
+        line = kml.newlinestring(name=self.name,
+                                 description=plain_text(self.comments),
+                                 coords=geom3d.coords)
+        line.style.linestyle.color = simplekml.Color.red  # Red
+        line.style.linestyle.width = 4  # pixels
+        return kml.kml()
 
     def __unicode__(self):
         return self.name or _('path %d') % self.pk
@@ -618,6 +631,17 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
     @classmethod
     def path_trails(cls, path):
         return cls.objects.existing().filter(aggregations__path=path)
+
+    def kml(self):
+        """ Exports path into KML format, add geometry as linestring """
+        kml = simplekml.Kml()
+        geom3d = self.geom_3d.transform(4326, clone=True)  # KML uses WGS84
+        line = kml.newlinestring(name=self.name,
+                                 description=plain_text(self.comments),
+                                 coords=geom3d.coords)
+        line.style.linestyle.color = simplekml.Color.red  # Red
+        line.style.linestyle.width = 4  # pixels
+        return kml.kml()
 
 
 Path.add_property('trails', lambda self: Trail.path_trails(self), _(u"Trails"))
