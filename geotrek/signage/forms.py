@@ -55,9 +55,9 @@ class BladeForm(CommonForm):
             u'<a href="%s">%s</a>' % (self.signage.get_detail_url(), unicode(self.signage))
         )
         max_blade = self.signage.blade_set.all().aggregate(max=Max('number'))
-        value_max = max_blade['max']
+        value_max = max_blade['max'] or 0
 
-        self.fields['number'].initial = value_max + 1 if value_max else 1
+        self.fields['number'].initial = value_max + 1
 
     def save(self, *args, **kwargs):
         self.instance.set_topology(self.signage)
