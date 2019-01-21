@@ -12,12 +12,15 @@ from django.views.decorators.cache import never_cache as force_cache_validation
 from django.views.generic import View
 from django.utils.translation import ugettext as _
 from django.core.cache import caches
+from django.views.generic.detail import BaseDetailView
+from mapentity.serializers import GPXSerializer
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
-                             MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
-                             MapEntityDelete, MapEntityFormat)
+                             MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate
+                             MapEntityDelete, MapEntityFormat, LastModifiedMixin)
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import classproperty
+from geotrek.common.views import PublicOrReadPermMixin
 from geotrek.core.models import AltimetryMixin
 
 from .models import Path, Trail, Topology
@@ -122,6 +125,27 @@ class PathDetail(MapEntityDetail):
         context = super(PathDetail, self).get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
+
+
+class PathGPXDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
+    queryset = Path.objects.all()
+
+    def render_to_response(self, context):
+        gpx_serializer = GPXSerializer()
+        response = HttpResponse(content_type='application/gpx+xml')
+        response['Content-Disposition'] = 'attachment; filename="%s.gpx"' % self.object
+        gpx_serializer.serialize([self.object], stream=response, geom_field='geom')
+        return response
+
+
+class PathKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
+    queryset = Path.objects.all()
+
+    def render_to_response(self, context):
+        response = HttpResponse(self.object.kml(),
+                                content_type='application/vnd.google-earth.kml+xml')
+        response['Content-Disposition'] = 'attachment; filename="%s.kml"' % self.object
+        return response
 
 
 class PathDocument(MapEntityDocument):
@@ -260,6 +284,27 @@ class TrailDetail(MapEntityDetail):
         context = super(TrailDetail, self).get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
         return context
+
+
+class TrailGPXDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
+    queryset = Trail.objects.existing()
+
+    def render_to_response(self, context):
+        gpx_serializer = GPXSerializer()
+        response = HttpResponse(content_type='application/gpx+xml')
+        response['Content-Disposition'] = 'attachment; filename="%s.gpx"' % self.object
+        gpx_serializer.serialize([self.object], stream=response, geom_field='geom')
+        return response
+
+
+class TrailKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
+    queryset = Trail.objects.existing()
+
+    def render_to_response(self, context):
+        response = HttpResponse(self.object.kml(),
+                                content_type='application/vnd.google-earth.kml+xml')
+        response['Content-Disposition'] = 'attachment; filename="%s.kml"' % self.object
+        return response
 
 
 class TrailDocument(MapEntityDocument):

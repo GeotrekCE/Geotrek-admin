@@ -3,11 +3,14 @@ import json
 import re
 
 import mock
+from bs4 import BeautifulSoup
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
 from django.conf import settings
+
+from mapentity.factories import UserFactory
 
 from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.common.tests import CommonTest
@@ -182,25 +185,25 @@ class PathViewsTest(CommonTest):
         p2 = PathFactory.create()
         p2.save()
         response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
-        self.assertEqual(response.content, 'error')
+        self.assertIn('error', response.content)
 
     def test_merge_fails_trigger(self):
         self.login()
         p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
         p2 = PathFactory.create(name="BC", geom=LineString((500, 0), (1000, 0)))
         response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
-        self.assertEqual(response.content, 'error')
+        self.assertIn('error', response.content)
         p3 = PathFactory.create(name="AB", geom=LineString((1, 0), (2, 0)))
         p4 = PathFactory.create(name="BC", geom=LineString((1, 0), (10, 10)))
         response = self.client.post('/mergepath/', {'path[]': [p3.pk, p4.pk]})
-        self.assertEqual(response.content, 'error')
+        self.assertIn('error', response.content)
 
     def test_merge_works(self):
         self.login()
         p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
         p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)))
         response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
-        self.assertEqual(response.content, 'success')
+        self.assertIn('success', response.content)
         p1.reload()
         self.assertEqual(p1.geom, LineString((0, 0), (1, 0), (2, 0), srid=settings.SRID))
 
@@ -215,7 +218,7 @@ class PathViewsTest(CommonTest):
         p1 = PathFactory.create(name="PATH_AB", geom=LineString((0, 1), (10, 1)), draft=True)
         p2 = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)), draft=False)
         response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
-        self.assertEqual(response.content, 'error')
+        self.assertIn('error', response.content)
 
     def test_path_merge_draft_draft(self):
         """
@@ -228,9 +231,35 @@ class PathViewsTest(CommonTest):
         p1 = PathFactory.create(name="PATH_AB", geom=LineString((0, 1), (10, 1)), draft=True)
         p2 = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)), draft=True)
         response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
-        self.assertEqual(response.content, 'success')
+        self.assertIn('success', response.content)
         p1.reload()
         self.assertEqual(p1.geom, LineString((0, 1), (10, 1), (20, 1), srid=settings.SRID))
+
+
+class PathKmlGPXTest(TestCase):
+    def setUp(self):
+        super(PathKmlGPXTest, self).setUp()
+        self.user = UserFactory.create(is_staff=True, is_superuser=True)
+        self.client.force_login(self.user)
+
+        self.path = PathFactory.create(comments='exportable path')
+
+        self.gpx_response = self.client.get(reverse('core:path_gpx_detail', args=('en', self.path.pk, 'slug')))
+        self.gpx_parsed = BeautifulSoup(self.gpx_response.content, 'lxml')
+
+        self.kml_response = self.client.get(reverse('core:path_kml_detail', args=('en', self.path.pk, 'slug')))
+
+    def test_gpx_is_served_with_content_type(self):
+        self.assertEqual(self.gpx_response.status_code, 200)
+        self.assertEqual(self.gpx_response['Content-Type'], 'application/gpx+xml')
+
+    def test_gpx_trek_as_track_points(self):
+        self.assertEqual(len(self.gpx_parsed.findAll('trk')), 1)
+        self.assertEqual(len(self.gpx_parsed.findAll('trkpt')), 2)
+
+    def test_kml_is_served_with_content_type(self):
+        self.assertEqual(self.kml_response.status_code, 200)
+        self.assertEqual(self.kml_response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
 
 class DenormalizedTrailTest(AuthentFixturesTest):
@@ -322,6 +351,32 @@ class TrailViewsTest(CommonTest):
         new_pk = int(m.group(1))
         new_trail = Trail.objects.get(pk=new_pk)
         self.assertIn(trail, new_trail.trails.all())
+
+
+class TrailKmlGPXTest(TestCase):
+    def setUp(self):
+        super(TrailKmlGPXTest, self).setUp()
+        self.user = UserFactory.create(is_staff=True, is_superuser=True)
+        self.client.force_login(self.user)
+
+        self.trail = TrailFactory.create(comments='exportable trail')
+
+        self.gpx_response = self.client.get(reverse('core:trail_gpx_detail', args=('en', self.trail.pk, 'slug')))
+        self.gpx_parsed = BeautifulSoup(self.gpx_response.content, 'lxml')
+
+        self.kml_response = self.client.get(reverse('core:trail_kml_detail', args=('en', self.trail.pk, 'slug')))
+
+    def test_gpx_is_served_with_content_type(self):
+        self.assertEqual(self.gpx_response.status_code, 200)
+        self.assertEqual(self.gpx_response['Content-Type'], 'application/gpx+xml')
+
+    def test_gpx_trek_as_track_points(self):
+        self.assertEqual(len(self.gpx_parsed.findAll('trk')), 1)
+        self.assertEqual(len(self.gpx_parsed.findAll('trkpt')), 2)
+
+    def test_kml_is_served_with_content_type(self):
+        self.assertEqual(self.kml_response.status_code, 200)
+        self.assertEqual(self.kml_response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
 
 class RemovePathKeepTopology(TestCase):
