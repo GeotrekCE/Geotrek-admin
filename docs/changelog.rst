@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+2.22.10 (2019-01-09)
+--------------------
+
+**Bug fixes**
+
+- Fix duplicated results in API v2 with sensitive area filters
+
+
 2.22.9 (2019-01-09)
 -------------------
 
