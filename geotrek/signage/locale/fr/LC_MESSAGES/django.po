@@ -62,3 +62,51 @@ msgstr "Aucun(e)"
 
 msgid "Add a new signage"
 msgstr "Ajouter une signalétique"
+
+msgid "Sealing"
+msgstr "Scellement"
+
+msgid "Sealings"
+msgstr "Scellements"
+
+msgid "Signage"
+msgstr "Signalétique"
+
+msgid "Blades"
+msgstr "Lames"
+
+msgid "Blade"
+msgstr "Lame"
+
+msgid "Color"
+msgstr "Couleur"
+
+msgid "Blade Type"
+msgstr "Type de lame"
+
+msgid "Blade Types"
+msgstr "Types de lame"
+
+msgid "Color Blade"
+msgstr "Couleur de la lame"
+
+msgid "Blade Colors "
+msgstr "Couleurs de la lame"
+
+msgid "Direction"
+msgstr "Direction"
+
+msgid "Directions"
+msgstr "Directions"
+
+msgid "Blade Number"
+msgstr "Number de la lame"
+
+msgid "Blade Number"
+msgstr "Number de la lame"
+
+msgid "Hours:Minutes:Seconds"
+msgstr "Heures:Minutes:Secondes"
+
+msgid "Pictogramm name"
+msgstr "Nom du pictogramme"
