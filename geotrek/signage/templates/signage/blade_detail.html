@@ -19,15 +19,15 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"condition" }}</th>
-            <td>{{ object.condition }}</td>
+            <td>{% if object.condition %}{{ object.condition }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"color" }}</th>
-            <td>{{ object.color }}</td>
+            <td>{% if object.color %}{{ object.color }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"structure" }}</th>
-            <td>{{ object.structure }}</td>
+            <td>{% if object.structure %}{{ object.structure }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{% trans "Lines" %}</th>
