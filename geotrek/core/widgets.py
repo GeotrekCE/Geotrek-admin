@@ -98,7 +98,7 @@ class TopologyReadonlyWidget(BaseTopologyWidget):
         if topology:
             geom = topology.geom
             geom.transform(settings.API_SRID)
-        else: # if form invalid
+        else:  # if form invalid
             geom = None
         context = {'object': geom, 'mapname': name}
         return loader.render_to_string(self.template_name, context)

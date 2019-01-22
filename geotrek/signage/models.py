@@ -225,10 +225,6 @@ class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
                                                                   self.signage, self.number)
         return s
 
-    @property
-    def order_lines(self):
-        return self.lines.order_by('number')
-
 
 class Line(StructureRelated):
     blade = models.ForeignKey(Blade, db_column='lame', related_name='lines', verbose_name=_("Blade"),
