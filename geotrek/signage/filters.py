@@ -37,4 +37,4 @@ class BladeFilterSet(StructureRelatedFilterSet):
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Blade
-        fields = StructureRelatedFilterSet.Meta.fields + ['number', 'direction', 'type', 'color']
+        fields = StructureRelatedFilterSet.Meta.fields + ['number', 'direction', 'type', 'color', 'condition']
