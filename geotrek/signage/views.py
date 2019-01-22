@@ -1,7 +1,6 @@
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.http import HttpResponse
 
-from crispy_forms.layout import Fieldset, Layout, Div, HTML
 import logging
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
@@ -12,13 +11,11 @@ from geotrek.common.views import FormsetMixin
 
 from .filters import SignageFilterSet, BladeFilterSet
 from .forms import SignageForm,  BladeForm, LineFormset
-from .models import Signage, Blade
-from .serializers import SignageSerializer
+from .models import Signage, Blade, Line
+from .serializers import SignageSerializer, CSVBladeSerializer
 
 from rest_framework import permissions as rest_permissions
 from mapentity.views import MapEntityViewSet
-from django.views.generic.edit import UpdateView
-from mapentity.views.mixins import (ModelViewMixin, FormViewMixin)
 
 
 logger = logging.getLogger(__name__)
@@ -167,3 +164,17 @@ class BladeJsonList(MapEntityJsonList, BladeList):
 class BladeLayer(MapEntityLayer):
     queryset = Blade.objects.existing()
     properties = ['number']
+
+
+class BladeFormatList(MapEntityFormat, BladeList):
+    columns = [
+        'id', 'signage', 'number', 'text', 'distance', 'time', 'pictogram_name', 'linecode', 'colorblade', 'direction',
+        'lat', 'lng', 'printedelevation'
+    ]
+
+    def csv_view(self, request, context, **kwargs):
+        serializer = CSVBladeSerializer()
+        response = HttpResponse(content_type='text/csv')
+        serializer.serialize(queryset=self.get_queryset(), stream=response,
+                             model=self.get_model(), fields=self.columns, ensure_ascii=True)
+        return response
