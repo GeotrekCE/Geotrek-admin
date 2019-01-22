@@ -13,7 +13,7 @@ however it is not an absolute prerequisite. More details below.
 Isolated environment
 --------------------
 
-Deveopment stack is managed by docker and docker-compose
+Development stack is managed by docker and docker-compose
 
 ::
 
@@ -57,7 +57,7 @@ Development data
 
     docker-compose run web initial.sh
 
-     docker-compose run web ./manage.py loaddata development-pne
+    docker-compose run web ./manage.py loaddata development-pne
 
 
 In order to get elevation data, a DEM is necessary. If you use the default extent,
@@ -67,7 +67,7 @@ as defined in ``custom.py``, you can load the following dataset :
 
     wget http://depot.makina-corpus.org/public/geotrek/mnt_0_ecrins.zip -o geotrek/var/mnt_0_ecrins.zip
     unzip geotrek/var/mnt_0_ecrins.zip
-     docker-compose run web ./manage.py loaddem /app/var/mnt_0_ecrins/w001001.adf
+    docker-compose run web ./manage.py loaddem /app/var/mnt_0_ecrins/w001001.adf
 
 
 Conventions
@@ -111,7 +111,7 @@ Model modification
 ------------------
 
     docker-compose run web ./manage.py makemigrations <appName>
-    docker-compose run web ./manage.py  migrate
+    docker-compose run web ./manage.py migrate
 
 :notes:
 
