@@ -100,10 +100,7 @@ msgid "Directions"
 msgstr "Directions"
 
 msgid "Blade Number"
-msgstr "Number de la lame"
-
-msgid "Blade Number"
-msgstr "Number de la lame"
+msgstr "Numero de la lame"
 
 msgid "Hours:Minutes:Seconds"
 msgstr "Heures:Minutes:Secondes"
@@ -119,3 +116,12 @@ msgstr "Lignes"
 
 msgid "Number already exists, numbers already used : %s"
 msgstr "Le numero existe déjà, numeros déjà utilisé : %s"
+
+msgid "Time (Hours:Minutes:Seconds)"
+msgstr "Temps (Heures:Minutes:Secondes)"
+
+msgid "Distance (km)"
+msgstr "Distance (km)"
+
+msgid "Number"
+msgstr "Numero"

@@ -101,9 +101,6 @@ msgstr ""
 msgid "Blade Number"
 msgstr ""
 
-msgid "Blade Number"
-msgstr ""
-
 msgid "Hours:Minutes:Seconds"
 msgstr ""
 
@@ -117,4 +114,10 @@ msgid "Lines"
 msgstr ""
 
 msgid "Number already exists, numbers already used : %s"
+msgstr ""
+
+msgid "Time (Hours:Minutes:Seconds)"
+msgstr ""
+
+msgid "Distance (km)"
 msgstr ""
