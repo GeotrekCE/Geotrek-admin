@@ -166,7 +166,7 @@ class Migration(migrations.Migration):
                 ('pictogram_name', models.CharField(blank=True, db_column=b'nom_pictogramme', max_length=250, null=True,
                                                     verbose_name='Pictogramm name')),
                 ('time', models.DurationField(blank=True, db_column=b'temps', null=True, verbose_name='Temps')),
-                ('blade', models.ForeignKey(db_column=b'lame', on_delete=django.db.models.deletion.PROTECT, to='signage.Blade',
+                ('blade', models.ForeignKey(db_column=b'lame', related_name='lines', on_delete=django.db.models.deletion.PROTECT, to='signage.Blade',
                                             verbose_name='Blade')),
                 ('structure',
                  models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk,

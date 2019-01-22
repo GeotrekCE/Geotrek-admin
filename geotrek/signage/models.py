@@ -199,7 +199,8 @@ class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
 
 
 class Line(StructureRelated):
-    blade = models.ForeignKey(Blade, db_column='lame', verbose_name=_("Blade"), on_delete=models.PROTECT)
+    blade = models.ForeignKey(Blade, db_column='lame', related_name='lines', verbose_name=_("Blade"),
+                              on_delete=models.PROTECT)
     number = models.IntegerField(db_column='nombre', verbose_name=_("Number"))
     text = models.CharField(db_column='texte', verbose_name=_("Text"), max_length=1000)
     distance = models.DecimalField(db_column='distance', verbose_name=_("Distance"), null=True, blank=True,
