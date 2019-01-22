@@ -1,11 +1,10 @@
-from django.utils.translation import ugettext_lazy as _
 from django_filters import CharFilter
+from django.utils.translation import ugettext_lazy as _
 
 from geotrek.common.filters import StructureRelatedFilterSet, YearFilter, ValueFilter
-from geotrek.signage.widgets import SignageYearSelect, SignageImplantationYearSelect
-from .models import Signage, Blade
-from mapentity.filters import PolygonFilter, PythonPolygonFilter
 from geotrek.maintenance.filters import PolygonTopologyFilter
+from geotrek.signage.models import Signage, Blade
+from geotrek.signage.widgets import SignageYearSelect, SignageImplantationYearSelect
 
 
 class SignageFilterSet(StructureRelatedFilterSet):

@@ -1,11 +1,11 @@
 import csv
 from functools import partial
 
-from django.core.serializers.base import Serializer
-from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import FieldDoesNotExist
-from django.utils.encoding import smart_str
+from django.core.serializers.base import Serializer
 from django.db.models.fields.related import ForeignKey, ManyToManyField
+from django.utils.encoding import smart_str
+from django.utils.translation import ugettext_lazy as _
 
 from geotrek.authent.serializers import StructureSerializer
 from geotrek.common.serializers import PictogramSerializerMixin, BasePublishableSerializerMixin

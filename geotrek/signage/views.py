@@ -2,20 +2,19 @@ from django.conf import settings
 from django.http import HttpResponse
 
 import logging
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat, MapEntityViewSet,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.core.models import AltimetryMixin
 from geotrek.common.views import FormsetMixin
+from geotrek.core.models import AltimetryMixin
 
-from .filters import SignageFilterSet, BladeFilterSet
-from .forms import SignageForm,  BladeForm, LineFormset
-from .models import Signage, Blade, Line
-from .serializers import SignageSerializer, CSVBladeSerializer
+from geotrek.signage.filters import SignageFilterSet, BladeFilterSet
+from geotrek.signage.forms import SignageForm,  BladeForm, LineFormset
+from geotrek.signage.models import Signage, Blade
+from geotrek.signage.serializers import SignageSerializer, CSVBladeSerializer
 
 from rest_framework import permissions as rest_permissions
-from mapentity.views import MapEntityViewSet
 
 
 logger = logging.getLogger(__name__)

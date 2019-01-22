@@ -8,12 +8,12 @@ from django.conf import settings
 
 from mapentity.models import MapEntityMixin
 
-from geotrek.core.models import Topology, Path
 from geotrek.authent.models import StructureOrNoneRelated, StructureRelated
-from geotrek.common.mixins import OptionalPictogramMixin
+from geotrek.common.mixins import NoDeleteMixin, OptionalPictogramMixin
 from geotrek.common.models import Organism
+from geotrek.core.models import Topology, Path
+
 from geotrek.infrastructure.models import BaseInfrastructure, InfrastructureCondition
-from geotrek.common.mixins import NoDeleteMixin
 
 
 class Sealing(StructureOrNoneRelated):

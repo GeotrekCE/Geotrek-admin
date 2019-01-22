@@ -1,21 +1,20 @@
+from django import forms
 from django.conf import settings
 from django.db.models import Q, Max
-from django import forms
 from django.forms.models import inlineformset_factory
-from crispy_forms.layout import Fieldset, Layout, Div, HTML, Submit
 from django.utils.translation import ugettext_lazy as _
+
+from crispy_forms.layout import Layout
+from crispy_forms.helper import FormHelper
+
+from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.widgets import PointTopologyWidget
 from geotrek.infrastructure.forms import BaseInfrastructureForm
-from geotrek.core.widgets import TopologyReadonlyWidget, BaseTopologyWidget
-
-from geotrek.common.forms import CommonForm
-from .models import Signage, SignageType, Blade, Line
-from crispy_forms.helper import FormHelper
+from geotrek.signage.models import Signage, SignageType, Blade, Line
 
 
 class LineForm(forms.ModelForm):
-
     def __init__(self, *args, **kwargs):
         super(LineForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
