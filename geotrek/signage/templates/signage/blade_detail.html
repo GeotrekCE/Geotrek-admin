@@ -6,7 +6,7 @@
         <tr>
             <th>{% trans "Signage" %}</th>
             <td><a href="{% url 'signage:signage_detail' pk=object.signage.pk %}">
-                        {% trans "Blade" %} {{ blade.number }}
+                        {{ object.signage }}
                     </a></td>
         </tr>
         <tr>
@@ -32,7 +32,9 @@
         <tr>
             <th>{% trans "Lines" %}</th>
             <td>{% for line in object.order_lines %}
-                    #{{ line.number }} {{ line.text }} | {{ line.distance }} / {{ line.time }} | {{ line.pictogram_name }}<br>
+                    #{{ line.number }} {{ line.text }} | {{ line|verbose:"distance" }} : {{ line.distance|default:_("None") }}
+                / {{ line|verbose:"time" }} : {{ line.time|default:_("None") }} |
+                {{ line|verbose:"pictogram_name" }} :  {{ line.pictogram_name|default:_("None") }}<br>
                 {% endfor %}
             </td>
         </tr>

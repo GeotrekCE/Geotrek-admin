@@ -620,3 +620,5 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
     'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',  # Used for extern authent
 ]
+
+FORMAT_LINE_CODE = "{signagecode}-{bladenumber}-{linenumber}"
