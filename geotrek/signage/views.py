@@ -45,7 +45,7 @@ class SignageFormatList(MapEntityFormat, SignageList):
     columns = [
         'id', 'name', 'type', 'condition', 'description',
         'implantation_year', 'published', 'structure', 'date_insert',
-        'date_update', 'cities', 'districts', 'areas',
+        'date_update', 'cities', 'districts', 'areas', 'gps_value'
     ] + AltimetryMixin.COLUMNS
 
 
