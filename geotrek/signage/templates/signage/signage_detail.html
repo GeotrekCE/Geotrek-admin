@@ -50,6 +50,10 @@
             <td>{{ object.printed_elevation|meters|default:"" }}</td>
         </tr>
         <tr>
+            <th>{% trans "GPS" %}</th>
+            <td>{{ object.gps_value|default:"" }}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"sealing" }}</th>
             <td>{{ object.sealing|default:"" }}</td>
         </tr>

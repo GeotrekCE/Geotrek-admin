@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 
 from django.db import models
@@ -90,6 +91,33 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     @property
     def order_blades(self):
         return self.blade_set.order_by('number')
+
+    @property
+    def gps_value(self):
+        geom = self.geomtransform
+        if geom.y > 0:
+            degreelong = u"%s°N" % geom.y
+        else:
+            degreelong = u"%s°S" % - geom.y
+        if geom.x > 0:
+            degreelat = u"%s°E" % geom.x
+        else:
+            degreelat = u"%s°W" % - geom.x
+        return "%s, %s" % (degreelong, degreelat)
+
+    @property
+    def geomtransform(self):
+        geom = self.topo_object.geom
+        geom.transform(settings.API_SRID)
+        return geom
+
+    @property
+    def lat_value(self):
+        return self.geomtransform.x
+
+    @property
+    def lng_value(self):
+        return self.geomtransform.y
 
 
 Path.add_property('signages', lambda self: Signage.path_signages(self), _(u"Signages"))
@@ -197,6 +225,10 @@ class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
                                                                   self.signage, self.number)
         return s
 
+    @property
+    def order_lines(self):
+        return self.lines.order_by('number')
+
 
 class Line(StructureRelated):
     blade = models.ForeignKey(Blade, db_column='lame', related_name='lines', verbose_name=_("Blade"),
@@ -209,13 +241,45 @@ class Line(StructureRelated):
                                       blank=True, null=True)
     time = models.DurationField(db_column='temps', verbose_name=_("Temps"), null=True, blank=True,
                                 help_text=_("Hours:Minutes:Seconds"))
+    distance_verbose_name = _("Distance (km)")
+    time_verbose_name = _("Time (Hours:Minutes:Seconds)")
+    colorblade_verbose_name = _("Color")
+    linecode_verbose_name = _("Code")
+    printedelevation_verbose_name = _("Printed Elevation")
+    direction_verbose_name = _("Direction")
+
+    @property
+    def linecode_csv_display(self):
+        return settings.FORMAT_LINE_CODE.format(signagecode=self.blade.signage.code,
+                                                bladenumber=self.blade.number,
+                                                linenumber=self.number)
+
+    @property
+    def colorblade_csv_display(self):
+        return self.blade.color or ""
+
+    @property
+    def signage_csv_display(self):
+        return "%s #%s" % (self.blade.signage, self.blade.number)
+
+    @property
+    def lat_csv_display(self):
+        return self.blade.signage.lat_value
+
+    @property
+    def lng_csv_display(self):
+        return self.blade.signage.lng_value
+
+    @property
+    def printedelevation_csv_display(self):
+        return self.blade.signage.printed_elevation or ""
+
+    @property
+    def direction_csv_display(self):
+        return self.blade.direction or ""
 
     class Meta:
         unique_together = (('blade', 'number'), )
         db_table = 's_t_ligne'
         verbose_name = _(u"Line")
         verbose_name_plural = _(u"Lines")
-
-    @property
-    def order_lines(self):
-        return self.line.order_by('number')
