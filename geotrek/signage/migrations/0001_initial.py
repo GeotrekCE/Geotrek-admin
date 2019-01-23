@@ -126,7 +126,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('number', models.IntegerField(db_column=b'numero', verbose_name='Blade Number')),
                 ('deleted', models.BooleanField(db_column=b'supprime', default=False, editable=False, verbose_name='Deleted')),
-                ('topology',  models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='blades_set', to='core.Topology', verbose_name='Blades')),
+                ('topology', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='blades_set', to='core.Topology', verbose_name='Blades')),
             ],
             options={
                 'db_table': 's_t_lame',

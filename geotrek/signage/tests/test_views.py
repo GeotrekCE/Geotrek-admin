@@ -44,7 +44,6 @@ class BladeViewsTest(CommonTest):
         ]), u'This field is required.'
 
     def get_good_data(self):
-        path = PathFactory.create()
         return {
             'number': '1',
             'signage': SignageFactory.create().pk,

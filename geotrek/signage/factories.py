@@ -93,5 +93,5 @@ class LineFactory(factory.DjangoModelFactory):
     text = factory.Sequence(lambda n: u"Text %s" % n)
     distance = factory.Sequence(lambda n: u"%d" % 10)
     pictogram_name = factory.Sequence(lambda n: u"Pictogram %s" % n)
-    time = factory.Sequence(lambda n: u"%s:%s:%s" % (n, n+1, n+2))
+    time = factory.Sequence(lambda n: u"%s:%s:%s" % (n, n + 1, n + 2))
     blade = factory.SubFactory(BladeFactory)
