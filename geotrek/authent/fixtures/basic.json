@@ -33,6 +33,27 @@
                 ["delete_comfort", "core", "comfort"],
 
 
+                ["add_blade", "signage", "blade"],
+                ["change_blade", "signage", "blade"],
+                ["change_geom_blade", "signage", "blade"],
+                ["delete_blade", "signage", "blade"],
+                ["export_blade", "signage", "blade"],
+
+                ["add_bladetype", "signage", "bladetype"],
+                ["change_bladetype", "signage", "bladetype"],
+                ["delete_bladetype", "signage", "bladetype"],
+
+                ["add_color", "signage", "color"],
+                ["change_color", "signage", "color"],
+                ["delete_color", "signage", "color"],
+
+                ["add_direction", "signage", "direction"],
+                ["change_direction", "signage", "direction"],
+                ["delete_direction", "signage", "direction"],
+
+                ["add_sealing", "signage", "sealing"],
+                ["change_sealing", "signage", "sealing"],
+                ["delete_sealing", "signage", "sealing"],
 
                 ["add_signage", "signage", "signage"],
                 ["change_signage", "signage", "signage"],
@@ -141,6 +162,8 @@
                 ["read_trail", "core", "trail"],
 
                 ["read_signage", "signage", "signage"],
+
+                ["read_blade", "signage", "blade"],
 
                 ["read_infrastructure", "infrastructure", "infrastructure"],
 
