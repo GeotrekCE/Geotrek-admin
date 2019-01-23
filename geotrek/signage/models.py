@@ -104,7 +104,7 @@ class Signage(MapEntityMixin, BaseInfrastructure):
             degreelat = u"%s°E" % geom.x
         else:
             degreelat = u"%s°W" % - geom.x
-        return "%s, %s" % (degreelong, degreelat)
+        return u"%s, %s" % (degreelong, degreelat)
 
     @property
     def geomtransform(self):
