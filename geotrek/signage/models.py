@@ -109,8 +109,7 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     @property
     def geomtransform(self):
         geom = self.topo_object.geom
-        geom.transform(settings.API_SRID)
-        return geom
+        return geom.transform(settings.API_SRID, clone=True)
 
     @property
     def lat_value(self):
