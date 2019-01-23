@@ -6,19 +6,19 @@ from django.contrib.auth.models import Permission
 from django.test import TestCase
 
 from geotrek.authent.tests import AuthentFixturesTest
-from geotrek.infrastructure.factories import InfrastructureTypeFactory, InfrastructureConditionFactory
-from geotrek.infrastructure.models import InfrastructureType, InfrastructureCondition
+from geotrek.signage.factories import (SealingFactory, SignageTypeFactory, BladeColorFactory,
+                                       BladeDirectionFactory, BladeTypeFactory)
+from geotrek.signage.models import SignageType, Sealing, Color, Direction, BladeType
 from geotrek.authent.models import Structure
 from geotrek.authent.factories import StructureFactory
 
 from mapentity.factories import SuperUserFactory, UserFactory
 
 
-class InfrastructureTypeAdminNoBypassTest(TestCase):
+class SignageTypeAdminNoBypassTest(TestCase):
     def setUp(self):
         self.user = UserFactory.create(password='booh')
         self.client.login(username=self.user.username, password='booh')
-        self.user.user_permissions.add(Permission.objects.get(codename='add_draft_path'))
         for perm in Permission.objects.exclude(codename='can_bypass_structure'):
             self.user.user_permissions.add(perm)
         self.user.is_staff = True
@@ -27,7 +27,7 @@ class InfrastructureTypeAdminNoBypassTest(TestCase):
         structure = StructureFactory(name="This")
         p.structure = structure
         p.save()
-        self.infra = InfrastructureTypeFactory.create(structure=structure)
+        self.signa = SignageTypeFactory.create(structure=structure)
 
     def login(self):
         success = self.client.login(username=self.user.username, password='booh')
@@ -37,41 +37,40 @@ class InfrastructureTypeAdminNoBypassTest(TestCase):
         self.client.logout()
         self.user.delete()
 
-    def test_infrastructuretype_changelist(self):
+    def test_signagetype_changelist(self):
         self.login()
-        changelist_url = reverse('admin:infrastructure_infrastructuretype_changelist')
+        changelist_url = reverse('admin:signage_signagetype_changelist')
         response = self.client.get(changelist_url)
         self.assertEquals(response.status_code, 200)
-        self.assertIn(InfrastructureType.objects.get(pk=self.infra.pk).label, response.content)
+        self.assertIn(SignageType.objects.get(pk=self.signa.pk).label, response.content)
 
-    def test_infrastructuretype_can_be_change(self):
+    def test_signagetype_can_be_change(self):
         self.login()
-        change_url = reverse('admin:infrastructure_infrastructuretype_change', args=[self.infra.pk])
+        change_url = reverse('admin:signage_signagetype_change', args=[self.signa.pk])
         response = self.client.post(change_url, {'label': 'coucou', 'type': 'A',
                                                  'pictogram': os.path.join(
-                                                     settings.MEDIA_URL, self.infra.pictogram.name)})
+                                                     settings.MEDIA_URL, self.signa.pictogram.name)})
         self.assertEquals(response.status_code, 302)
-        self.assertEqual(InfrastructureType.objects.get(pk=self.infra.pk).label, 'coucou')
+        self.assertEqual(SignageType.objects.get(pk=self.signa.pk).label, 'coucou')
 
-        self.assertEqual(response.url, '/admin/infrastructure/infrastructuretype/')
+        self.assertEqual(response.url, '/admin/signage/signagetype/')
 
-    def test_infrastructuretype_cannot_be_change_not_same_structure(self):
+    def test_signage_type_cannot_be_change_not_same_structure(self):
         self.login()
         structure = StructureFactory(name="Other")
-        infra = InfrastructureTypeFactory.create(structure=structure)
-        change_url = reverse('admin:infrastructure_infrastructuretype_change', args=[infra.pk])
+        infra = SignageTypeFactory.create(structure=structure)
+        change_url = reverse('admin:signage_signagetype_change', args=[infra.pk])
         response = self.client.get(change_url)
         self.assertEquals(response.status_code, 302)
-        self.assertEqual(InfrastructureType.objects.get(pk=self.infra.pk).label, self.infra.label)
+        self.assertEqual(SignageType.objects.get(pk=self.signa.pk).label, self.signa.label)
 
         self.assertEqual(response.url, '/admin/')
 
 
-class InfrastructureConditionAdminNoBypassTest(TestCase):
+class SealingAdminNoBypassTest(AuthentFixturesTest):
     def setUp(self):
         self.user = UserFactory.create(password='booh')
         self.client.login(username=self.user.username, password='booh')
-        self.user.user_permissions.add(Permission.objects.get(codename='add_draft_path'))
         for perm in Permission.objects.exclude(codename='can_bypass_structure'):
             self.user.user_permissions.add(perm)
         self.user.is_staff = True
@@ -80,7 +79,7 @@ class InfrastructureConditionAdminNoBypassTest(TestCase):
         structure = StructureFactory(name="This")
         p.structure = structure
         p.save()
-        self.infra = InfrastructureConditionFactory.create(structure=structure)
+        self.sealing = SealingFactory.create(structure=structure)
 
     def login(self):
         success = self.client.login(username=self.user.username, password='booh')
@@ -90,38 +89,38 @@ class InfrastructureConditionAdminNoBypassTest(TestCase):
         self.client.logout()
         self.user.delete()
 
-    def test_infrastructurecondition_changelist(self):
+    def test_sealing_changelist(self):
         self.login()
-        changelist_url = reverse('admin:infrastructure_infrastructurecondition_changelist')
+        changelist_url = reverse('admin:signage_sealing_changelist')
         response = self.client.get(changelist_url)
         self.assertEquals(response.status_code, 200)
-        self.assertIn(InfrastructureCondition.objects.get(pk=self.infra.pk).label, response.content)
+        self.assertIn(Sealing.objects.get(pk=self.sealing.pk).label, response.content)
 
-    def test_infrastructurecondition_can_be_change(self):
+    def test_sealing_can_be_change(self):
         self.login()
-        change_url = reverse('admin:infrastructure_infrastructurecondition_change', args=[self.infra.pk])
+        change_url = reverse('admin:signage_sealing_change', args=[self.sealing.pk])
         response = self.client.post(change_url, {'label': 'coucou', 'structure': Structure.objects.first().pk})
         self.assertEquals(response.status_code, 302)
-        self.assertEqual(InfrastructureCondition.objects.get(pk=self.infra.pk).label, 'coucou')
+        self.assertEqual(Sealing.objects.get(pk=self.sealing.pk).label, 'coucou')
 
-        self.assertEqual(response.url, '/admin/infrastructure/infrastructurecondition/')
+        self.assertEqual(response.url, '/admin/signage/sealing/')
 
-    def test_infrastructurecondition_cannot_be_change_not_same_structure(self):
+    def test_sealing_cannot_be_change_not_same_structure(self):
         self.login()
         structure = StructureFactory(name="Other")
-        infra = InfrastructureConditionFactory.create(structure=structure)
-        change_url = reverse('admin:infrastructure_infrastructurecondition_change', args=[infra.pk])
+        sealing = SealingFactory.create(structure=structure)
+        change_url = reverse('admin:signage_sealing_change', args=[sealing.pk])
         response = self.client.get(change_url)
         self.assertEquals(response.status_code, 302)
-        self.assertEqual(InfrastructureCondition.objects.get(pk=self.infra.pk).label, self.infra.label)
+        self.assertEqual(Sealing.objects.get(pk=self.sealing.pk).label, self.sealing.label)
 
         self.assertEqual(response.url, '/admin/')
 
 
-class InfrastructureTypeAdminTest(AuthentFixturesTest):
+class ColorAdminNoBypassTest(AuthentFixturesTest):
     def setUp(self):
         self.user = SuperUserFactory.create(password='booh')
-        self.infra = InfrastructureTypeFactory.create()
+        self.color = BladeColorFactory.create()
 
     def login(self):
         success = self.client.login(username=self.user.username, password='booh')
@@ -131,29 +130,26 @@ class InfrastructureTypeAdminTest(AuthentFixturesTest):
         self.client.logout()
         self.user.delete()
 
-    def test_infrastructuretype_can_be_change(self):
+    def test_color_changelist(self):
         self.login()
-        change_url = reverse('admin:infrastructure_infrastructuretype_change', args=[self.infra.pk])
-        response = self.client.post(change_url, {'label': 'coucou', 'type': 'A',
-                                                 'pictogram': os.path.join(
-                                                     settings.MEDIA_URL, self.infra.pictogram.name)})
-        self.assertEquals(response.status_code, 302)
-        self.assertEqual(InfrastructureType.objects.get(pk=self.infra.pk).label, 'coucou')
-
-        self.assertEqual(response.url, '/admin/infrastructure/infrastructuretype/')
-
-    def test_infrastructuretype_changelist(self):
-        self.login()
-        changelist_url = reverse('admin:infrastructure_infrastructuretype_changelist')
+        changelist_url = reverse('admin:signage_color_changelist')
         response = self.client.get(changelist_url)
         self.assertEquals(response.status_code, 200)
-        self.assertIn(InfrastructureType.objects.get(pk=self.infra.pk).label, response.content)
+        self.assertIn(Color.objects.get(pk=self.color.pk).label, response.content)
+
+    def test_color_can_be_change(self):
+        self.login()
+        change_url = reverse('admin:signage_color_change', args=[self.color.pk])
+        response = self.client.post(change_url, {'label': 'coucou'})
+        self.assertEquals(response.status_code, 302)
+        self.assertEqual(Color.objects.get(pk=self.color.pk).label, 'coucou')
+        self.assertEqual(response.url, '/admin/signage/color/')
 
 
-class InfrastructureConditionAdminTest(AuthentFixturesTest):
+class DirectionAdminNoBypassTest(AuthentFixturesTest):
     def setUp(self):
         self.user = SuperUserFactory.create(password='booh')
-        self.infra = InfrastructureConditionFactory.create()
+        self.direction = BladeDirectionFactory.create()
 
     def login(self):
         success = self.client.login(username=self.user.username, password='booh')
@@ -163,19 +159,67 @@ class InfrastructureConditionAdminTest(AuthentFixturesTest):
         self.client.logout()
         self.user.delete()
 
-    def test_infrastructurecondition_can_be_change(self):
+    def test_direction_changelist(self):
         self.login()
+        changelist_url = reverse('admin:signage_direction_changelist')
+        response = self.client.get(changelist_url)
+        self.assertEquals(response.status_code, 200)
+        self.assertIn(Direction.objects.get(pk=self.direction.pk).label, response.content)
 
-        change_url = reverse('admin:infrastructure_infrastructurecondition_change', args=[self.infra.pk])
+    def test_direction_can_be_change(self):
+        self.login()
+        change_url = reverse('admin:signage_direction_change', args=[self.direction.pk])
+        response = self.client.post(change_url, {'label': 'coucou'})
+        self.assertEquals(response.status_code, 302)
+        self.assertEqual(Direction.objects.get(pk=self.direction.pk).label, 'coucou')
+        self.assertEqual(response.url, '/admin/signage/direction/')
+
+
+class BladeTypeAdminNoBypassTest(AuthentFixturesTest):
+    def setUp(self):
+        self.user = UserFactory.create(password='booh')
+        self.client.login(username=self.user.username, password='booh')
+        for perm in Permission.objects.exclude(codename='can_bypass_structure'):
+            self.user.user_permissions.add(perm)
+        self.user.is_staff = True
+        self.user.save()
+        p = self.user.profile
+        structure = StructureFactory(name="This")
+        p.structure = structure
+        p.save()
+        self.bladetype = BladeTypeFactory.create(structure=structure)
+
+    def login(self):
+        success = self.client.login(username=self.user.username, password='booh')
+        self.assertTrue(success)
+
+    def tearDown(self):
+        self.client.logout()
+        self.user.delete()
+
+    def test_bladetype_changelist(self):
+        self.login()
+        changelist_url = reverse('admin:signage_bladetype_changelist')
+        response = self.client.get(changelist_url)
+        self.assertEquals(response.status_code, 200)
+        self.assertIn(BladeType.objects.get(pk=self.bladetype.pk).label, response.content)
+
+    def test_bladetype_can_be_change(self):
+        self.login()
+        change_url = reverse('admin:signage_bladetype_change', args=[self.bladetype.pk])
         response = self.client.post(change_url, {'label': 'coucou', 'structure': Structure.objects.first().pk})
         self.assertEquals(response.status_code, 302)
-        self.assertEqual(InfrastructureCondition.objects.get(pk=self.infra.pk).label, 'coucou')
+        self.assertEqual(BladeType.objects.get(pk=self.bladetype.pk).label, 'coucou')
 
-        self.assertEqual(response.url, '/admin/infrastructure/infrastructurecondition/')
+        self.assertEqual(response.url, '/admin/signage/bladetype/')
 
-    def test_infrastructurecondition_changelist(self):
+    def test_sealingbladetype_cannot_be_change_not_same_structure(self):
         self.login()
-        changelist_url = reverse('admin:infrastructure_infrastructurecondition_changelist')
-        response = self.client.get(changelist_url)
-        self.assertEquals(response.status_code, 200)
-        self.assertIn(InfrastructureCondition.objects.get(pk=self.infra.pk).label, response.content)
+        structure = StructureFactory(name="Other")
+        bladetype = BladeTypeFactory.create(structure=structure)
+        change_url = reverse('admin:signage_bladetype_change', args=[bladetype.pk])
+        response = self.client.get(change_url)
+        self.assertEquals(response.status_code, 302)
+        self.assertEqual(BladeType.objects.get(pk=self.bladetype.pk).label, self.bladetype.label)
+
+        self.assertEqual(response.url, '/admin/')
