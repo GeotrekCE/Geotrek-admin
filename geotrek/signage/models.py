@@ -217,7 +217,7 @@ class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
 
     @property
     def order_lines(self):
-        return self.line_set.order_by('number')
+        return self.lines.order_by('number')
 
     @property
     def number_display(self):
