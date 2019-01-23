@@ -11,6 +11,7 @@ from mapentity.models import MapEntityMixin
 from geotrek.authent.models import StructureOrNoneRelated, StructureRelated
 from geotrek.common.mixins import NoDeleteMixin, OptionalPictogramMixin
 from geotrek.common.models import Organism
+from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path
 
 from geotrek.infrastructure.models import BaseInfrastructure, InfrastructureCondition
@@ -243,6 +244,10 @@ class Line(StructureRelated):
     printedelevation_verbose_name = _("Printed Elevation")
     direction_verbose_name = _("Direction")
 
+    @classproperty
+    def geomfield(cls):
+        return Topology._meta.get_field('geom')
+
     @property
     def linecode_csv_display(self):
         return settings.FORMAT_LINE_CODE.format(signagecode=self.blade.signage.code,
@@ -272,6 +277,10 @@ class Line(StructureRelated):
     @property
     def direction_csv_display(self):
         return self.blade.direction or ""
+
+    @property
+    def geom(self):
+        return self.blade.geom
 
     class Meta:
         unique_together = (('blade', 'number'), )
