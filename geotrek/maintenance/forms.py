@@ -111,7 +111,7 @@ class InterventionForm(CommonForm):
         fields = CommonForm.Meta.fields + \
             ['name', 'date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
              'height', 'stake', 'project', 'infrastructure', 'signage', 'material_cost', 'heliport_cost', 'subcontract_cost',
-             'topology', 'structure']
+             'topology']
 
     def __init__(self, *args, **kwargs):
         super(InterventionForm, self).__init__(*args, **kwargs)
