@@ -106,7 +106,7 @@ class CSVBladeSerializer(Serializer):
 class ZipBladeShapeSerializer(ZipShapeSerializer):
     def split_bygeom(self, iterable, geom_getter=lambda x: x.geom):
         """Split an iterable in two list (points, linestring)"""
-        points, linestrings, polygons, multipoints, multilinestrings, multipolygons = [], [], [], [], [], []
+        points, multipoints,  = [], []
         for blade in iterable:
             for x in blade.lines.all():
                 geom = geom_getter(x)
@@ -114,26 +114,14 @@ class ZipBladeShapeSerializer(ZipShapeSerializer):
                     pass
                 elif isinstance(geom, GeometryCollection):
                     # Duplicate object, shapefile do not support geometry collections !
-                    subpoints, sublines, subpolygons, pp, ll, yy = self.split_bygeom(geom, geom_getter=lambda geom: geom)
+                    subpoints, pp = self.split_bygeom(geom, geom_getter=lambda geom: geom)
                     if subpoints:
                         clone = x.__class__.objects.get(pk=x.pk)
                         clone.geom = MultiPoint(subpoints, srid=geom.srid)
                         multipoints.append(clone)
-                    if sublines:
-                        clone = x.__class__.objects.get(pk=x.pk)
-                        clone.geom = MultiLineString(sublines, srid=geom.srid)
-                        multilinestrings.append(clone)
-                    if subpolygons:
-                        clone = x.__class__.objects.get(pk=x.pk)
-                        clone.geom = MultiPolygon(subpolygons, srid=geom.srid)
-                        multipolygons.append(clone)
                 elif isinstance(geom, Point):
                     points.append(x)
-                elif isinstance(geom, LineString):
-                    linestrings.append(x)
-                elif isinstance(geom, Polygon):
-                    polygons.append(x)
                 else:
-                    raise ValueError("Only LineString, Point and Polygon should be here. Got %s for pk %d" %
+                    raise ValueError("Only Point should be here. Got %s for pk %d" %
                                      (geom, x.pk))
-        return points, linestrings, polygons, multipoints, multilinestrings, multipolygons
+        return points, multipoints
