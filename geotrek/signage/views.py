@@ -11,8 +11,8 @@ from geotrek.core.models import AltimetryMixin
 
 from geotrek.signage.filters import SignageFilterSet, BladeFilterSet
 from geotrek.signage.forms import SignageForm, BladeForm, LineFormset
-from geotrek.signage.models import Signage, Blade
-from geotrek.signage.serializers import SignageSerializer, CSVBladeSerializer
+from geotrek.signage.models import Signage, Blade, Line
+from geotrek.signage.serializers import SignageSerializer, BladeSerializer, CSVBladeSerializer, ZipBladeShapeSerializer
 
 from rest_framework import permissions as rest_permissions
 
@@ -143,11 +143,9 @@ class BladeDelete(MapEntityDelete):
 
 class BladeViewSet(MapEntityViewSet):
     model = Blade
-    serializer_class = None
+    serializer_class = BladeSerializer
+    queryset = Blade.objects.existing()
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_queryset(self):
-        return Blade.objects.existing().filter(published=True).transform(settings.API_SRID, field_name='geom')
 
 
 class BladeList(MapEntityList):
@@ -176,4 +174,12 @@ class BladeFormatList(MapEntityFormat, BladeList):
         response = HttpResponse(content_type='text/csv')
         serializer.serialize(queryset=self.get_queryset(), stream=response,
                              model=self.get_model(), fields=self.columns, ensure_ascii=True)
+        return response
+
+    def shape_view(self, request, context, **kwargs):
+        serializer = ZipBladeShapeSerializer()
+        response = HttpResponse(content_type='application/zip')
+        serializer.serialize(queryset=self.get_queryset(), model=Line,
+                             stream=response, fields=self.columns)
+        response['Content-length'] = str(len(response.content))
         return response
