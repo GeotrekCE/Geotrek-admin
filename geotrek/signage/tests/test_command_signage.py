@@ -119,13 +119,13 @@ class InfrastructureCommandTest(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
         with mock.patch.dict(sys.modules, {'osgeo': None}):
             with self.assertRaises(CommandError) as e:
-                call_command('loadinfrastructure', filename, verbosity=0)
+                call_command('loadsignage', filename, verbosity=0)
             self.assertEqual('GDAL Python bindings are not available. Can not proceed.', e.exception.message)
 
     def test_fail_structure_default_do_not_exist(self):
         output = StringIO()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
-        call_command('loadinfrastructure', filename, type_default='label', name_default='name',
+        call_command('loadsignage', filename, type_default='label', name_default='name',
                      condition_default='condition', structure_default='wrong_structure_default',
                      description_default='description', year_default=2010, verbosity=0, stdout=output)
         self.assertIn("Structure wrong_structure_default set in options doesn't exist", output.getvalue())
