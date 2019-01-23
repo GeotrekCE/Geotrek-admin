@@ -39,7 +39,7 @@ class SealingAdmin(admin.ModelAdmin):
 
     def get_list_display(self, request):
         if not request.user.has_perm('authent.can_bypass_structure'):
-            return ('label')
+            return ('label', )
         return ('label', 'structure')
 
     def get_list_filter(self, request):
@@ -74,7 +74,7 @@ class BladeTypeAdmin(admin.ModelAdmin):
 
     def get_list_display(self, request):
         if not request.user.has_perm('authent.can_bypass_structure'):
-            return ('label')
+            return ('label', )
         return ('label', 'structure')
 
     def get_list_filter(self, request):
