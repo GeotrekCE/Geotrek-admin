@@ -128,14 +128,3 @@ load_demo: load_data
 
 css:
 	for f in `find geotrek/ -name '*.scss'`; do node-sass --output-style=expanded $$f -o `dirname $$f`; done
-
-test_migrations:
-    # /!\ will delete existing data
-	actual_branch=`git branch | grep \* | cut -d ' ' -f2`
-	git checkout `git tag -l | grep -v '^v' | grep -v '^mapentity'| sort -Vr | head -n 1`
-	./install.sh --tests --noinput
-	make update
-	make load_demo
-	git checkout actual_branch
-	./install.sh --tests --noinput
-	make update
