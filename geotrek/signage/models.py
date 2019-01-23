@@ -90,7 +90,7 @@ class Signage(MapEntityMixin, BaseInfrastructure):
 
     @property
     def order_blades(self):
-        return self.blade_set.order_by('number')
+        return self.blade_set.existing().order_by('number')
 
     @property
     def gps_value(self):

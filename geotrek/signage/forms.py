@@ -53,7 +53,7 @@ class BladeForm(CommonForm):
             unicode(_("On %s") % _(self.signage.kind.lower())),
             u'<a href="%s">%s</a>' % (self.signage.get_detail_url(), unicode(self.signage))
         )
-        max_blade = self.signage.blade_set.all().aggregate(max=Max('number'))
+        max_blade = self.signage.blade_set.existing().aggregate(max=Max('number'))
         value_max = max_blade['max'] or 0
 
         self.fields['number'].initial = value_max + 1
@@ -64,7 +64,7 @@ class BladeForm(CommonForm):
         return super(BladeForm, self).save(*args, **kwargs)
 
     def clean_number(self):
-        blades = self.signage.blade_set
+        blades = self.signage.blade_set.existing()
         if self.instance.pk:
             blades = blades.exclude(number=self.instance.number)
         already_used = ', '.join([str(number) for number in blades. values_list('number', flat=True)])
