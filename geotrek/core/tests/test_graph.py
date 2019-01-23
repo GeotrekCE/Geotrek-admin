@@ -1,3 +1,4 @@
+from freezegun import freeze_time
 import json
 
 from django.test import TestCase
@@ -70,6 +71,7 @@ class SimpleGraph(TestCase):
         self.assertDictEqual({'edges': {str(path.pk): {u'id': path.pk, u'length': 1.4142135623731, u'nodes_id': [1, 2]}},
                               'nodes': {u'1': {u'2': path.pk}, u'2': {u'1': path.pk}}}, graph)
 
+    @freeze_time("2042-01-01 00:00:01")
     def test_json_graph_headers(self):
         """
         Last modified depends on
