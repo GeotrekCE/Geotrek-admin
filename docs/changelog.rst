@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix again duplicated results in API v2 with sensitive area filters
 
 
 2.22.10 (2019-01-09)
