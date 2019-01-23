@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 from collections import OrderedDict
+import csv
+from StringIO import StringIO
 
 from django.test import TestCase
+from django.utils import html
+from django.utils.encoding import force_unicode
 
 from geotrek.common.tests import CommonTest
 from geotrek.authent.tests import AuthentFixturesTest
@@ -147,6 +151,29 @@ class SignageViewsTest(CommonTest):
     def test_no_pictogram(self):
         self.modelfactory = SignageNoPictogramFactory
         super(SignageViewsTest, self).test_api_detail_for_model()
+
+    def test_no_html_in_csv(self):
+        if self.model is None:
+            return  # Abstract test should not run
+
+        self.login()
+
+        self.modelfactory.create()
+
+        fmt = 'csv'
+        response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+
+        # Read the csv
+        lines = list(csv.reader(StringIO(response.content), delimiter=','))
+        # There should be one more line in the csv than in the items: this is the header line
+        self.assertEqual(len(lines), self.model.objects.all().count() + 1)
+
+        for line in lines:
+            for col in line:
+                # the col should not contains any html tags
+                self.assertEquals(force_unicode(col), html.strip_tags(force_unicode(col)))
 
 
 class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
