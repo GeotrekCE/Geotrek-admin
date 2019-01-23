@@ -55,7 +55,7 @@ class SignageTypeAdminNoBypassTest(TestCase):
 
         self.assertEqual(response.url, '/admin/signage/signagetype/')
 
-    def test_signage_type_cannot_be_change_not_same_structure(self):
+    def test_signage_type_change_not_same_structure(self):
         self.login()
         structure = StructureFactory(name="Other")
         infra = SignageTypeFactory.create(structure=structure)
@@ -105,7 +105,7 @@ class SealingAdminNoBypassTest(AuthentFixturesTest):
 
         self.assertEqual(response.url, '/admin/signage/sealing/')
 
-    def test_sealing_cannot_be_change_not_same_structure(self):
+    def test_sealing_change_not_same_structure(self):
         self.login()
         structure = StructureFactory(name="Other")
         sealing = SealingFactory.create(structure=structure)
@@ -213,7 +213,7 @@ class BladeTypeAdminNoBypassTest(AuthentFixturesTest):
 
         self.assertEqual(response.url, '/admin/signage/bladetype/')
 
-    def test_sealingbladetype_cannot_be_change_not_same_structure(self):
+    def test_bladetype_change_not_same_structure(self):
         self.login()
         structure = StructureFactory(name="Other")
         bladetype = BladeTypeFactory.create(structure=structure)
@@ -223,3 +223,51 @@ class BladeTypeAdminNoBypassTest(AuthentFixturesTest):
         self.assertEqual(BladeType.objects.get(pk=self.bladetype.pk).label, self.bladetype.label)
 
         self.assertEqual(response.url, '/admin/')
+
+
+class BladeTypeAdminTest(BladeTypeAdminNoBypassTest):
+    def setUp(self):
+        super(BladeTypeAdminTest, self).setUp()
+        perm_bypass = Permission.objects.get(codename='can_bypass_structure')
+        self.user.user_permissions.add(perm_bypass)
+
+    def test_bladetype_change_not_same_structure(self):
+        self.login()
+        structure = StructureFactory(name="Other")
+        bladetype = BladeTypeFactory.create(structure=structure)
+        change_url = reverse('admin:signage_bladetype_change', args=[bladetype.pk])
+        response = self.client.get(change_url)
+        self.assertEquals(response.status_code, 200)
+        self.assertIn('<select name="structure" id="id_structure">', response.content)
+
+
+class SealingAdminTest(SealingAdminNoBypassTest):
+    def setUp(self):
+        super(SealingAdminTest, self).setUp()
+        perm_bypass = Permission.objects.get(codename='can_bypass_structure')
+        self.user.user_permissions.add(perm_bypass)
+
+    def test_sealing_change_not_same_structure(self):
+        self.login()
+        structure = StructureFactory(name="Other")
+        sealing = SealingFactory.create(structure=structure)
+        change_url = reverse('admin:signage_sealing_change', args=[sealing.pk])
+        response = self.client.get(change_url)
+        self.assertEquals(response.status_code, 200)
+        self.assertIn('<select name="structure" id="id_structure">', response.content)
+
+
+class SignageTypeAdminTest(SignageTypeAdminNoBypassTest):
+    def setUp(self):
+        super(SignageTypeAdminTest, self).setUp()
+        perm_bypass = Permission.objects.get(codename='can_bypass_structure')
+        self.user.user_permissions.add(perm_bypass)
+
+    def test_signage_type_change_not_same_structure(self):
+        self.login()
+        structure = StructureFactory(name="Other")
+        signagetype = SignageTypeFactory.create(structure=structure)
+        change_url = reverse('admin:signage_signagetype_change', args=[signagetype.pk])
+        response = self.client.get(change_url)
+        self.assertEquals(response.status_code, 200)
+        self.assertIn('<select name="structure" id="id_structure">', response.content)
