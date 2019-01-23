@@ -155,6 +155,7 @@ class InterventionViewsTest(CommonTest):
         data['name'] = 'modified'
         data['implantation_year'] = target_year
         data['topology'] = '{"paths": [%s]}' % PathFactory.create().pk
+        data['manager'] = OrganismFactory.create().pk
         response = self.client.post(signa.get_update_url(), data)
         self.assertEqual(response.status_code, 302)
         # Check that intervention was not deleted (bug #783)
