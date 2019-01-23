@@ -223,10 +223,6 @@ class Migration(migrations.Migration):
         ),
         migrations.RunPython(move_data),
         migrations.AlterUniqueTogether(
-            name='blade',
-            unique_together=set([('signage', 'number')]),
-        ),
-        migrations.AlterUniqueTogether(
             name='line',
             unique_together=set([('blade', 'number')]),
         ),

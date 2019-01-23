@@ -184,7 +184,6 @@ class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
     objects = NoDeleteMixin.get_manager_cls(BladeManager)()
 
     class Meta:
-        unique_together = (('signage', 'number'), )
         db_table = 's_t_lame'
         verbose_name = _(u"Blade")
         verbose_name_plural = _(u"Blades")
