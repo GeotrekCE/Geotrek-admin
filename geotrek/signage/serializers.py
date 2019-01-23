@@ -4,8 +4,6 @@ from functools import partial
 from django.core.exceptions import FieldDoesNotExist
 from django.core.serializers.base import Serializer
 from django.db.models.fields.related import ForeignKey, ManyToManyField
-from django.contrib.gis.geos import Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon
-from django.contrib.gis.geos.collections import GeometryCollection
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext_lazy as _
 
@@ -105,23 +103,5 @@ class CSVBladeSerializer(Serializer):
 
 class ZipBladeShapeSerializer(ZipShapeSerializer):
     def split_bygeom(self, iterable, geom_getter=lambda x: x.geom):
-        """Split an iterable in two list (points, linestring)"""
-        points, multipoints,  = [], []
-        for blade in iterable:
-            for x in blade.lines.all():
-                geom = geom_getter(x)
-                if geom is None:
-                    pass
-                elif isinstance(geom, GeometryCollection):
-                    # Duplicate object, shapefile do not support geometry collections !
-                    subpoints, pp = self.split_bygeom(geom, geom_getter=lambda geom: geom)
-                    if subpoints:
-                        clone = x.__class__.objects.get(pk=x.pk)
-                        clone.geom = MultiPoint(subpoints, srid=geom.srid)
-                        multipoints.append(clone)
-                elif isinstance(geom, Point):
-                    points.append(x)
-                else:
-                    raise ValueError("Only Point should be here. Got %s for pk %d" %
-                                     (geom, x.pk))
-        return points, multipoints
+        lines = [line for blade in iterable for line in blade.lines.all()]
+        return super(ZipBladeShapeSerializer, self).split_bygeom(lines, geom_getter)
