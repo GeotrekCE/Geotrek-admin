@@ -30,7 +30,8 @@ local/
 bootstrap.py
 /.buildout
 geotrek/settings/custom.py
-/parsers.py
+/bulkimport/
+!/bulkimport/__init__.py
 /install.log
 /data/
 /sync_trek/
