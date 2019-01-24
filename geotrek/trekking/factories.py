@@ -6,7 +6,8 @@ from django.contrib.gis.geos import Point
 from . import models
 from geotrek.core.factories import TopologyFactory, PointTopologyFactory
 from geotrek.common.utils.testdata import dummy_filefield_as_sequence
-from geotrek.infrastructure.factories import InfrastructureFactory, SignageFactory
+from geotrek.infrastructure.factories import InfrastructureFactory
+from geotrek.signage.factories import SignageFactory
 
 
 class TrekNetworkFactory(factory.DjangoModelFactory):

@@ -16,19 +16,4 @@
         </td>
     </tr>
     {% endif %}
-
-    {% if modelname != "signage" %}
-    <tr>
-        <th>{% trans "Signages" %}</th>
-        <td>
-            {% if perms.infrastructure.add_signage %}
-            <p class="autohide"><a href="{% url 'infrastructure:signage_add' %}" class="btn btn-mini btn-success">
-                <i class="icon-plus icon-white"></i> {% trans "Add a new signage" %}</a>
-            </p>
-            {% endif %}
-
-            {% valuelist object.signages field='name' %}
-        </td>
-    </tr>
-    {% endif %}
 </table>

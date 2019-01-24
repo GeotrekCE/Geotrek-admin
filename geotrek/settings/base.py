@@ -52,6 +52,7 @@ DATABASE_SCHEMAS = {
     'easy_thumbnails': 'django',
     'geotrek.feedback': 'gestion',
     'geotrek.infrastructure': 'gestion',
+    'geotrek.signage': 'gestion',
     'geotrek.maintenance': 'gestion',
     'geotrek.tourism': 'tourisme',
     'geotrek.trekking': 'rando',
@@ -276,6 +277,7 @@ INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.altimetry',
     'geotrek.core',
     'geotrek.infrastructure',
+    'geotrek.signage',
     'geotrek.maintenance',
     'geotrek.zoning',
     'geotrek.land',
@@ -618,3 +620,5 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
     'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',  # Used for extern authent
 ]
+
+FORMAT_LINE_CODE = "{signagecode}-{bladenumber}-{linenumber}"

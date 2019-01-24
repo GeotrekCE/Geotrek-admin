@@ -27,7 +27,8 @@ from geotrek.feedback.views import CategoryList as FeedbackCategoryList
 from geotrek.flatpages.models import FlatPage
 from geotrek.flatpages.views import FlatPageViewSet, FlatPageMeta
 from geotrek.infrastructure import models as infrastructure_models
-from geotrek.infrastructure.views import InfrastructureViewSet, SignageViewSet
+from geotrek.infrastructure.views import InfrastructureViewSet
+from geotrek.signage.views import SignageViewSet
 from geotrek.tourism import models as tourism_models
 from geotrek.tourism import views as tourism_views
 from geotrek.trekking import models as trekking_models

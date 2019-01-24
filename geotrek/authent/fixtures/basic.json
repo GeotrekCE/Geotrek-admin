@@ -33,21 +33,49 @@
                 ["delete_comfort", "core", "comfort"],
 
 
+                ["add_blade", "signage", "blade"],
+                ["change_blade", "signage", "blade"],
+                ["change_geom_blade", "signage", "blade"],
+                ["delete_blade", "signage", "blade"],
+                ["export_blade", "signage", "blade"],
 
-                ["add_signage", "infrastructure", "signage"],
-                ["change_signage", "infrastructure", "signage"],
-                ["change_geom_signage", "infrastructure", "signage"],
-                ["delete_signage", "infrastructure", "signage"],
-                ["export_signage", "infrastructure", "signage"],
+                ["add_bladetype", "signage", "bladetype"],
+                ["change_bladetype", "signage", "bladetype"],
+                ["delete_bladetype", "signage", "bladetype"],
+
+                ["add_color", "signage", "color"],
+                ["change_color", "signage", "color"],
+                ["delete_color", "signage", "color"],
+
+                ["add_direction", "signage", "direction"],
+                ["change_direction", "signage", "direction"],
+                ["delete_direction", "signage", "direction"],
+
+                ["add_sealing", "signage", "sealing"],
+                ["change_sealing", "signage", "sealing"],
+                ["delete_sealing", "signage", "sealing"],
+
+                ["add_signage", "signage", "signage"],
+                ["change_signage", "signage", "signage"],
+                ["change_geom_signage", "signage", "signage"],
+                ["delete_signage", "signage", "signage"],
+                ["export_signage", "signage", "signage"],
+
+
                 ["add_infrastructure", "infrastructure", "infrastructure"],
                 ["change_infrastructure", "infrastructure", "infrastructure"],
                 ["change_geom_infrastructure", "infrastructure", "infrastructure"],
                 ["delete_infrastructure", "infrastructure", "infrastructure"],
                 ["export_infrastructure", "infrastructure", "infrastructure"],
 
+                ["add_signagetype", "signage", "signagetype"],
+                ["change_signagetype", "signage", "signagetype"],
+                ["delete_signagetype", "signage", "signagetype"],
+
                 ["add_infrastructuretype", "infrastructure", "infrastructuretype"],
                 ["change_infrastructuretype", "infrastructure", "infrastructuretype"],
                 ["delete_infrastructuretype", "infrastructure", "infrastructuretype"],
+
                 ["add_infrastructurecondition", "infrastructure", "infrastructurecondition"],
                 ["change_infrastructurecondition", "infrastructure", "infrastructurecondition"],
                 ["delete_infrastructurecondition", "infrastructure", "infrastructurecondition"],
@@ -133,7 +161,10 @@
                 ["read_path", "core", "path"],
                 ["read_trail", "core", "trail"],
 
-                ["read_signage", "infrastructure", "signage"],
+                ["read_signage", "signage", "signage"],
+
+                ["read_blade", "signage", "blade"],
+
                 ["read_infrastructure", "infrastructure", "infrastructure"],
 
                 ["read_intervention", "maintenance", "intervention"],
@@ -233,7 +264,8 @@
                 ["read_path", "core", "path"],
                 ["read_trail", "core", "trail"],
 
-                ["read_signage", "infrastructure", "signage"],
+                ["read_signage", "signage", "signage"],
+
                 ["read_infrastructure", "infrastructure", "infrastructure"],
 
                 ["read_intervention", "maintenance", "intervention"],
@@ -290,11 +322,12 @@
                 ["delete_intervention", "maintenance", "intervention"],
                 ["export_intervention", "maintenance", "intervention"],
 
-                ["add_signage", "infrastructure", "signage"],
-                ["change_signage", "infrastructure", "signage"],
-                ["change_geom_signage", "infrastructure", "signage"],
-                ["delete_signage", "infrastructure", "signage"],
-                ["export_signage", "infrastructure", "signage"],
+                ["add_signage", "signage", "signage"],
+                ["change_signage", "signage", "signage"],
+                ["change_geom_signage", "signage", "signage"],
+                ["delete_signage", "signage", "signage"],
+                ["export_signage", "signage", "signage"],
+
                 ["add_infrastructure", "infrastructure", "infrastructure"],
                 ["change_infrastructure", "infrastructure", "infrastructure"],
                 ["change_geom_infrastructure", "infrastructure", "infrastructure"],
@@ -338,7 +371,8 @@
                 ["read_path", "core", "path"],
                 ["read_trail", "core", "trail"],
 
-                ["read_signage", "infrastructure", "signage"],
+                ["read_signage", "signage", "signage"],
+
                 ["read_infrastructure", "infrastructure", "infrastructure"],
 
                 ["read_intervention", "maintenance", "intervention"],

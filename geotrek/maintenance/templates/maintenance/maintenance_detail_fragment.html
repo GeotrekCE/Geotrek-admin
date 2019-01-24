@@ -9,11 +9,11 @@
         <strong>{% trans "Interventions" %}</strong>
             {% with columns="infrastructure,name,status,stake,total_cost,date" %}
                 {% if modelname == "infrastructure" or modelname == "signage" %}
-                    {% valuetable object.interventions_set.existing|dictsort:"on_infrastructure" columns=columns %}
+                    {% valuetable object.interventions_set.existing|dictsort:"on_existing_topology" columns=columns %}
                 {% elif modelname == "project" %}
-                    {% valuetable object.interventions.existing|dictsort:"on_infrastructure" enumeration=True columns=columns %}
+                    {% valuetable object.interventions.existing|dictsort:"on_existing_topology" enumeration=True columns=columns %}
                 {% else %}
-                    {% valuetable object.interventions.all|dictsort:"on_infrastructure" columns=columns %}
+                    {% valuetable object.interventions.all|dictsort:"on_existing_topology" columns=columns %}
                 {% endif %}
             {% endwith %}
 
@@ -21,7 +21,7 @@
 
             {% is_topology_model model as is_topology_model %}
             {% if perms.maintenance.add_intervention %}
-            <p class="autohide"><a href="{% url 'maintenance:intervention_add' %}{% if modelname == "infrastructure" or modelname == "signage" %}?infrastructure={{ object.pk}}{% elif is_topology_model %}?topology={{ object.pk}}{% endif %}" class="btn btn-mini btn-success">
+            <p class="autohide"><a href="{% url 'maintenance:intervention_add' %}{% if modelname == "infrastructure" %}?infrastructure={{ object.pk}}{% elif modelname == "signage" %}?signage={{ object.pk}}{% elif is_topology_model %}?topology={{ object.pk}}{% endif %}" class="btn btn-mini btn-success">
                 <i class="icon-plus icon-white"></i> {% trans "Add a new intervention" %}</a>
             </p>
             {% endif %}

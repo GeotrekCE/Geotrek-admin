@@ -42,9 +42,6 @@ msgstr "Ouvrage"
 msgid "Facility"
 msgstr "Équipement"
 
-msgid "Signage"
-msgstr "Signalétique"
-
 msgid "Infrastructure Type"
 msgstr "Type d'aménagement"
 
@@ -75,14 +72,8 @@ msgstr "Communes"
 msgid "Infrastructures"
 msgstr "Aménagements"
 
-msgid "Signages"
-msgstr "Signalétiques"
-
 msgid "None"
 msgstr "Aucun(e)"
 
 msgid "Add a new infrastructure"
 msgstr "Ajouter un aménagement"
-
-msgid "Add a new signage"
-msgstr "Ajouter une signalétique"

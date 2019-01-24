@@ -22,9 +22,7 @@
 {% block extrabody %}
     {{ block.super }}
     <script type="text/javascript">
-    console.log("ici1");
     L.ObjectsLayer.pointToLayer = function (geojson, latlng) {
-        console.log("ici2")
         return new L.Circle(latlng, {{ object.species.radius }});
     };
     </script>
