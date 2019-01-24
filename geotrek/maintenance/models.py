@@ -15,7 +15,8 @@ from geotrek.core.models import Topology, Path, Trail
 from geotrek.common.models import Organism
 from geotrek.common.mixins import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin
 from geotrek.common.utils import classproperty
-from geotrek.infrastructure.models import Infrastructure, Signage
+from geotrek.infrastructure.models import Infrastructure
+from geotrek.signage.models import Signage
 
 
 class InterventionManager(models.GeoManager):
@@ -45,7 +46,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     heliport_cost = models.FloatField(default=0.0, verbose_name=_(u"Heliport cost"), db_column='cout_heliport')
     subcontract_cost = models.FloatField(default=0.0, verbose_name=_(u"Subcontract cost"), db_column='cout_soustraitant')
 
-    """ Topology can be of type Infrastructure or of own type Intervention """
+    """ Topology can be of type Infrastructure, Signage or of own type Intervention """
     topology = models.ForeignKey(Topology, null=True,  # TODO: why null ?
                                  related_name="interventions_set",
                                  verbose_name=_(u"Interventions"))
@@ -83,9 +84,9 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         super(Intervention, self).__init__(*args, **kwargs)
         self._geom = None
 
-    def set_infrastructure(self, baseinfra):
-        self.topology = baseinfra
-        if not self.on_infrastructure:
+    def set_topology(self, topology):
+        self.topology = topology
+        if not self.on_existing_topology:
             raise ValueError("Expecting an infrastructure or signage")
 
     def default_stake(self):
@@ -114,7 +115,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         super(Intervention, self).save(*args, **kwargs)
 
         # Set kind of Intervention topology
-        if self.topology and not self.on_infrastructure:
+        if self.topology and not self.on_existing_topology:
             topology_kind = self._meta.object_name.upper()
             self.topology.kind = topology_kind
             self.topology.save(update_fields=['kind'])
@@ -129,7 +130,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         self.reload()
 
     @property
-    def on_infrastructure(self):
+    def on_existing_topology(self):
         return self.is_infrastructure or self.is_signage
 
     @property
@@ -154,11 +155,15 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     def infrastructure_verbose_name(cls):
         return _("On")
 
+    @classproperty
+    def signage_verbose_name(cls):
+        return _("On")
+
     @property
     def infrastructure_display(self):
         icon = 'path'
         title = _('Path')
-        if self.on_infrastructure:
+        if self.on_existing_topology:
             icon = self.topology.kind.lower()
             if self.infrastructure:
                 title = u'%s: %s' % (_(self.topology.kind.capitalize()),
@@ -172,7 +177,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     @property
     def infrastructure_csv_display(self):
-        if self.on_infrastructure:
+        if self.on_existing_topology:
             if self.infrastructure:
                 return u"%s: %s (%s)" % (
                     _(self.topology.kind.capitalize()),

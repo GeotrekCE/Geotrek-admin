@@ -6,7 +6,8 @@ from geotrek.common.models import Organism
 from geotrek.common.filters import StructureRelatedFilterSet
 
 from geotrek.core.filters import TopologyFilter, PathFilterSet, TrailFilterSet
-from geotrek.infrastructure.filters import InfrastructureFilterSet, SignageFilterSet
+from geotrek.infrastructure.filters import InfrastructureFilterSet
+from geotrek.signage.filters import SignageFilterSet
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 from geotrek.trekking.filters import TrekFilterSet, POIFilterSet
 from geotrek.zoning.filters import *  # NOQA

@@ -17,27 +17,7 @@ from geotrek.common.mixins import BasePublishableMixin, OptionalPictogramMixin
 INFRASTRUCTURE_TYPES = Choices(
     ('BUILDING', 'A', _("Building")),
     ('FACILITY', 'E', _("Facility")),
-    ('SIGNAGE', 'S', _("Signage")),
 )
-
-
-class InfrastructureTypeQuerySet(models.query.QuerySet):
-    def for_infrastructures(self):
-        return self.exclude(type__exact=INFRASTRUCTURE_TYPES.SIGNAGE)
-
-    def for_signages(self):
-        return self.filter(type__exact=INFRASTRUCTURE_TYPES.SIGNAGE)
-
-
-class InfrastructureTypeManager(models.Manager):
-    def get_queryset(self):
-        return InfrastructureTypeQuerySet(self.model, using=self._db)
-
-    def for_signages(self):
-        return self.get_queryset().for_signages()
-
-    def for_infrastructures(self):
-        return self.get_queryset().for_infrastructures()
 
 
 class InfrastructureType(StructureOrNoneRelated, OptionalPictogramMixin):
@@ -45,10 +25,8 @@ class InfrastructureType(StructureOrNoneRelated, OptionalPictogramMixin):
     label = models.CharField(db_column="nom", max_length=128)
     type = models.CharField(db_column="type", max_length=1, choices=INFRASTRUCTURE_TYPES)
 
-    objects = InfrastructureTypeManager()
-
     class Meta:
-        db_table = 'a_b_amenagement'
+        db_table = 'a_b_infrastructure'
         verbose_name = _(u"Infrastructure Type")
         verbose_name_plural = _(u"Infrastructure Types")
         ordering = ['label', 'type']
@@ -62,10 +40,7 @@ class InfrastructureType(StructureOrNoneRelated, OptionalPictogramMixin):
         pictogram_url = super(InfrastructureType, self).get_pictogram_url()
         if pictogram_url:
             return pictogram_url
-        elif self.type == 'S':
-            return os.path.join(settings.STATIC_URL, 'infrastructure/picto-signage.png')
-        else:
-            return os.path.join(settings.STATIC_URL, 'infrastructure/picto-infrastructure.png')
+        return os.path.join(settings.STATIC_URL, 'infrastructure/picto-infrastructure.png')
 
 
 class InfrastructureCondition(StructureOrNoneRelated):
@@ -91,7 +66,6 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
                             help_text=_(u"Reference, code, ..."), verbose_name=_("Name"))
     description = models.TextField(blank=True, db_column='description',
                                    verbose_name=_("Description"), help_text=_(u"Specificites"))
-    type = models.ForeignKey(InfrastructureType, db_column='type', verbose_name=_("Type"))
     condition = models.ForeignKey(InfrastructureCondition, db_column='etat',
                                   verbose_name=_("Condition"), blank=True, null=True,
                                   on_delete=models.PROTECT)
@@ -102,7 +76,6 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
 
     class Meta:
         abstract = True
-        db_table = 'a_t_amenagement'
 
     def __unicode__(self):
         return self.name
@@ -138,10 +111,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
 
 
 class InfrastructureGISManager(gismodels.GeoManager):
-    """ Overide default typology mixin manager, and filter by type. """
-    def get_queryset(self):
-        return super(InfrastructureGISManager, self).get_queryset().exclude(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
-
+    """ Overide default typology mixin manager"""
     def all_implantation_years(self):
         all_years = self.get_queryset().filter(implantation_year__isnull=False)\
             .order_by('-implantation_year').values_list('implantation_year', flat=True).distinct('implantation_year')
@@ -150,6 +120,7 @@ class InfrastructureGISManager(gismodels.GeoManager):
 
 class Infrastructure(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is not of type SIGNAGE """
+    type = models.ForeignKey(InfrastructureType, db_column='type', verbose_name=_("Type"))
     objects = BaseInfrastructure.get_manager_cls(InfrastructureGISManager)()
 
     class Meta:
@@ -174,42 +145,3 @@ Path.add_property('infrastructures', lambda self: Infrastructure.path_infrastruc
 Topology.add_property('infrastructures', lambda self: Infrastructure.topology_infrastructures(self), _(u"Infrastructures"))
 Topology.add_property('published_infrastructures', Infrastructure.published_topology_infrastructure,
                       _(u"Published Infrastructures"))
-
-
-class SignageGISManager(gismodels.GeoManager):
-    """ Overide default typology mixin manager, and filter by type. """
-    def get_queryset(self):
-        return super(SignageGISManager, self).get_queryset().filter(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
-
-    def all_implantation_years(self):
-        all_years = self.get_queryset().filter(implantation_year__isnull=False)\
-            .order_by('-implantation_year').values_list('implantation_year', flat=True).distinct('implantation_year')
-        return all_years
-
-
-class Signage(MapEntityMixin, BaseInfrastructure):
-    """ An infrastructure in the park, which is of type SIGNAGE """
-    objects = BaseInfrastructure.get_manager_cls(SignageGISManager)()
-
-    class Meta:
-        db_table = 'a_t_signaletique'
-        verbose_name = _(u"Signage")
-        verbose_name_plural = _(u"Signages")
-
-    @classmethod
-    def path_signages(cls, path):
-        return cls.objects.existing().filter(aggregations__path=path).distinct('pk')
-
-    @classmethod
-    def topology_signages(cls, topology):
-        return cls.overlapping(topology)
-
-    @classmethod
-    def published_topology_signages(cls, topology):
-        return cls.topology_signages(topology).filter(published=True)
-
-
-Path.add_property('signages', lambda self: Signage.path_signages(self), _(u"Signages"))
-Topology.add_property('signages', lambda self: Signage.topology_signages(self), _(u"Signages"))
-Topology.add_property('published_signages', lambda self: Signage.published_topology_signages(self),
-                      _(u"Published Signages"))

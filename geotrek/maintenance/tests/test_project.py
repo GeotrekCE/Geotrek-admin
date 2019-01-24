@@ -1,6 +1,7 @@
 from django.test import TestCase
 
-from geotrek.infrastructure.factories import InfrastructureFactory, SignageFactory
+from geotrek.infrastructure.factories import InfrastructureFactory
+from geotrek.signage.factories import SignageFactory
 from geotrek.maintenance.factories import InterventionFactory, ProjectFactory
 from geotrek.core.factories import TopologyFactory, PathAggregationFactory
 from geotrek.land.factories import (SignageManagementEdgeFactory, WorkManagementEdgeFactory,
@@ -15,11 +16,11 @@ class ProjectTest(TestCase):
         i2 = InterventionFactory.create()
         i3 = InterventionFactory.create()
         sign = SignageFactory.create()
-        i1.set_infrastructure(sign)
+        i1.set_topology(sign)
         p1 = sign.paths.get()
 
         infra = InfrastructureFactory.create()
-        i2.set_infrastructure(infra)
+        i2.set_topology(infra)
         p2 = infra.paths.get()
 
         t = TopologyFactory.create(no_path=True)
@@ -55,7 +56,7 @@ class ProjectTest(TestCase):
     def test_deleted_intervention(self):
         i1 = InterventionFactory.create()
         sign = SignageFactory.create()
-        i1.set_infrastructure(sign)
+        i1.set_topology(sign)
         i1.save()
 
         proj = ProjectFactory.create()
@@ -67,7 +68,7 @@ class ProjectTest(TestCase):
     def test_deleted_infrastructure(self):
         i1 = InterventionFactory.create()
         infra = InfrastructureFactory.create()
-        i1.set_infrastructure(infra)
+        i1.set_topology(infra)
         i1.save()
 
         proj = ProjectFactory.create()
@@ -87,7 +88,7 @@ class ProjectLandTest(TestCase):
         self.project.interventions.add(InterventionFactory.create())
 
         infra = InfrastructureFactory.create()
-        self.intervention.set_infrastructure(infra)
+        self.intervention.set_topology(infra)
         self.intervention.save()
 
         path = infra.paths.get()

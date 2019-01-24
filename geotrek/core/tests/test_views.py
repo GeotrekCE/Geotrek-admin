@@ -22,7 +22,8 @@ from geotrek.authent.factories import PathManagerFactory, StructureFactory
 from geotrek.core.models import Path, Trail
 
 from geotrek.trekking.factories import POIFactory, TrekFactory, ServiceFactory
-from geotrek.infrastructure.factories import InfrastructureFactory, SignageFactory
+from geotrek.infrastructure.factories import InfrastructureFactory
+from geotrek.signage.factories import SignageFactory
 from geotrek.maintenance.factories import InterventionFactory
 from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, ComfortFactory, TopologyFactory, PathAggregationFactory)
 

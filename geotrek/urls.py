@@ -40,6 +40,8 @@ if 'geotrek.zoning' in settings.INSTALLED_APPS:
     urlpatterns.append(url(r'', include('geotrek.zoning.urls', namespace='zoning', app_name='zoning')))
 if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
     urlpatterns.append(url(r'', include('geotrek.infrastructure.urls', namespace='infrastructure', app_name='infrastructure')))
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    urlpatterns.append(url(r'', include('geotrek.signage.urls', namespace='signage', app_name='signage')))
 if 'geotrek.maintenance' in settings.INSTALLED_APPS:
     urlpatterns.append(url(r'', include('geotrek.maintenance.urls', namespace='maintenance', app_name='maintenance')))
 if 'geotrek.trekking' in settings.INSTALLED_APPS:

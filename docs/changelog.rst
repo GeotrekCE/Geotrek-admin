@@ -2,6 +2,21 @@
 CHANGELOG
 =========
 
+2.23.0 (2019-01-24)
+-------------------
+
+**New features**
+
+- Signage blades management
+- Add gpx and kml export for path detail view
+- Allow to load local GPX/Geojson file in list views
+
+**Bug fixes**
+
+- Fix sensitive areas API v2
+- Fix migrations if infrastructure app not is not installed
+
+
 2.22.10 (2019-01-09)
 --------------------
 

@@ -40,4 +40,3 @@ load_demo: load_data
 
 css:
 	for f in `find geotrek/ -name '*.scss'`; do node-sass --output-style=expanded $$f -o `dirname $$f`; done
-

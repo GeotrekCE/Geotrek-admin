@@ -32,8 +32,10 @@ from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.authent.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.core.factories import PathFactory
-from geotrek.infrastructure.models import Infrastructure, Signage
-from geotrek.infrastructure.factories import InfrastructureFactory, SignageFactory
+from geotrek.infrastructure.models import Infrastructure
+from geotrek.signage.models import Signage
+from geotrek.infrastructure.factories import InfrastructureFactory
+from geotrek.signage.factories import SignageFactory
 from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.models import POI, Trek, Service, OrderedTrekChild
 from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
