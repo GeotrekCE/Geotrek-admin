@@ -345,6 +345,7 @@ class TouristicContentApidaeParser(ApidaeParser):
 
     # Same as parent but handle multiple type1/2 with the same name in different categories
     def get_to_delete_kwargs(self):
+        # FIXME: use mapping if it exists
         kwargs = {}
         for dst, val in self.constant_fields.iteritems():
             field = self.model._meta.get_field(dst)
