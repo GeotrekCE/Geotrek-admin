@@ -99,11 +99,11 @@ class BasicJSONAPITest(TranslationResetMixin, TrekkingManagerTest):
         self.expected_geom = {
             u'type': u'Polygon',
             u'coordinates': [[
-                [3.0000000000000004, 46.49999999999995],
-                [3.0000000000000004, 46.50002701349549],
-                [3.0000391186749895, 46.5000270134888],
-                [3.00003911865561, 46.49999999999326],
-                [3.0000000000000004, 46.49999999999995],
+                [3.0000000000000004, 46.499999999999936],
+                [3.0000000000000004, 46.500027013495476],
+                [3.000039118674989, 46.50002701348879],
+                [3.0000391186556095, 46.49999999999324],
+                [3.0000000000000004, 46.499999999999936],
             ]],
         }
         self.expected_result = dict(self.expected_properties)
@@ -156,17 +156,17 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
             u"name": self.species.name,
             u"period": [False, False, False, False, False, True, True, False, False, False, False, False],
             u'practices': [p.pk for p in self.species.practices.all()],
-            u'structure': u'PNX',
+            u'structure': u'GEOTEAM',
             u'published': True,
         }
         self.expected_geom = {
             u'type': u'Polygon',
             u'coordinates': [[
-                [3.0000000000000004, 46.49999999999995],
-                [3.0000000000000004, 46.50002701349549],
-                [3.0000391186749895, 46.5000270134888],
-                [3.00003911865561, 46.49999999999326],
-                [3.0000000000000004, 46.49999999999995],
+                [3.0000000000000004, 46.499999999999936],
+                [3.0000000000000004, 46.500027013495476],
+                [3.000039118674989, 46.50002701348879],
+                [3.0000391186556095, 46.49999999999324],
+                [3.0000000000000004, 46.499999999999936],
             ]],
         }
         self.expected_result = dict(self.expected_properties)
@@ -174,7 +174,7 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
         self.expected_result[u'geometry'] = self.expected_geom
         self.expected_result[u'url'] = u'http://testserver/api/v2/sensitivearea/{}/?format=json'.format(self.pk)
         self.expected_geo_result = {
-            u'bbox': [3.0, 46.49999999999325, 3.0000391186749886, 46.500027013495476],
+            u'bbox': [2.9999999999999996, 46.49999999999323, 3.000039118674988, 46.50002701349546],
             u'geometry': self.expected_geom,
             u'type': u'Feature',
             u'id': self.pk,
