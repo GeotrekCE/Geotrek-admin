@@ -273,6 +273,11 @@ class TouristicEventApidaeParser(ApidaeParser):
             return vals[0]
         return None
 
+    def filter_participant_number(self, src, val):
+        if isinstance(val, (int, long)):
+            val = str(val)
+        return self.apply_filter('participant_number', src, val)
+
 
 class TouristicContentApidaeParser(ApidaeParser):
     """Parser to import touristic contents from APIDAE"""
