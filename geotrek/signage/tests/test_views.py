@@ -111,6 +111,15 @@ class BladeViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.get('Content-Type'), 'text/csv')
 
+    def test_basic_format(self):
+        self.login()
+        self.modelfactory.create()
+        blade = BladeFactory.create()
+        LineFactory.create(blade=blade)
+        for fmt in ('csv', 'shp', 'gpx'):
+            response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
+            self.assertEqual(response.status_code, 200, u"")
+
 
 class SignageViewsTest(CommonTest):
     model = Signage
