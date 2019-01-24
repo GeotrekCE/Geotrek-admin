@@ -121,3 +121,6 @@ msgstr ""
 
 msgid "Distance (km)"
 msgstr ""
+
+msgid "Add a line"
+msgstr ""

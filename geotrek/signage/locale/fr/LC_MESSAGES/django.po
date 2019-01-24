@@ -125,3 +125,6 @@ msgstr "Distance (km)"
 
 msgid "Number"
 msgstr "Numero"
+
+msgid "Add a line"
+msgstr "Ajouter une ligne"
