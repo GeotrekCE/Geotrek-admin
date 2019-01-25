@@ -192,22 +192,23 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     def delete(self, *args, **kwargs):
         topologies = list(self.topology_set.filter())
         r = super(Path, self).delete(*args, **kwargs)
-        for topology in topologies:
-            if isinstance(topology.geom, Point):
-                closest = self.closest(topology.geom, self)
-                position, offset = closest.interpolate(topology.geom)
-                new_topology = Topology.objects.create()
-                aggrobj = PathAggregation(topo_object=new_topology,
-                                          start_position=position,
-                                          end_position=position,
-                                          path=closest)
-                aggrobj.save()
-                point = Point(topology.geom.x, topology.geom.y, srid=settings.SRID)
-                new_topology.geom = point
-                new_topology.offset = offset
-                new_topology.position = position
-                new_topology.save()
-                topology.mutate(new_topology)
+        if Path.objects.exists():
+            for topology in topologies:
+                if isinstance(topology.geom, Point):
+                    closest = self.closest(topology.geom, self)
+                    position, offset = closest.interpolate(topology.geom)
+                    new_topology = Topology.objects.create()
+                    aggrobj = PathAggregation(topo_object=new_topology,
+                                              start_position=position,
+                                              end_position=position,
+                                              path=closest)
+                    aggrobj.save()
+                    point = Point(topology.geom.x, topology.geom.y, srid=settings.SRID)
+                    new_topology.geom = point
+                    new_topology.offset = offset
+                    new_topology.position = position
+                    new_topology.save()
+                    topology.mutate(new_topology)
         return r
 
     @property
