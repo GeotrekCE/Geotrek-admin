@@ -197,7 +197,6 @@ class MultiplePathDelete(TemplateView):
     model = Path
     success_url = "core:path_list"
 
-    @same_structure_required('core:path_detail')
     def dispatch(self, *args, **kwargs):
         self.paths_pk = self.kwargs['pk'].split(',')
         self.paths = []
@@ -211,6 +210,9 @@ class MultiplePathDelete(TemplateView):
             if not path.draft and not self.request.user.has_perm('core.delete_path'):
                 messages.warning(self.request, _(
                     u'Access to the requested resource is restricted. You have been redirected.'))
+                return redirect('core:path_detail', **kwargs)
+            if not path.same_structure(self.request.user):
+                messages.warning(self.request, _(u'Access to the requested resource is restricted by structure. You have been redirected.'))
                 return redirect('core:path_detail', **kwargs)
         return super(MultiplePathDelete, self).dispatch(*args, **kwargs)
 
