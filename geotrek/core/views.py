@@ -7,17 +7,21 @@ from collections import defaultdict
 from django.contrib.auth.decorators import permission_required
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
 from django.views.decorators.http import last_modified as cache_last_modified
 from django.views.decorators.cache import never_cache as force_cache_validation
-from django.views.generic import View
+from django.views.generic import View, TemplateView
 from django.utils.translation import ugettext as _
 from django.core.cache import caches
 from django.views.generic.detail import BaseDetailView
+from django.http import HttpResponseRedirect
+
 from mapentity.serializers import GPXSerializer
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
-                             MapEntityDelete, MapEntityFormat, HttpJSONResponse, LastModifiedMixin)
+                             MapEntityDelete, MapEntityFormat, HttpJSONResponse, LastModifiedMixin,)
+
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.utils import classproperty
@@ -186,6 +190,63 @@ class PathUpdate(MapEntityUpdate):
         if path.draft and self.request.user.has_perm('core.change_draft_path'):
             return super(MapEntityUpdate, self).dispatch(*args, **kwargs)
         return super(PathUpdate, self).dispatch(*args, **kwargs)
+
+
+class MultiplePathDelete(TemplateView):
+    template_name = "core/multiplepath_confirm_delete.html"
+    model = Path
+    success_url = "core:path_list"
+
+    @same_structure_required('core:path_detail')
+    def dispatch(self, *args, **kwargs):
+        self.paths_pk = self.kwargs['pk'].split(',')
+        self.paths = []
+        for pk in self.paths_pk:
+            path = Path.objects.get(pk=pk)
+            self.paths.append(path)
+            if path.draft and not self.request.user.has_perm('core.delete_draft_path'):
+                messages.warning(self.request, _(
+                    u'Access to the requested resource is restricted. You have been redirected.'))
+                return redirect('core:path_detail', **kwargs)
+            if not path.draft and not self.request.user.has_perm('core.delete_path'):
+                messages.warning(self.request, _(
+                    u'Access to the requested resource is restricted. You have been redirected.'))
+                return redirect('core:path_detail', **kwargs)
+        return super(MultiplePathDelete, self).dispatch(*args, **kwargs)
+
+    # Add support for browsers which only accept GET and POST for now.
+    def post(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        for path in self.paths:
+            path.delete()
+        return HttpResponseRedirect(reverse(self.success_url))
+
+    def get_context_data(self, **kwargs):
+        context = super(MultiplePathDelete, self).get_context_data(**kwargs)
+        topologies_by_model = defaultdict(list)
+        for path in self.paths:
+            if 'geotrek.core' in settings.INSTALLED_APPS:
+                for trail in path.trails:
+                    topologies_by_model[_('Trails')].append({'name': trail.name, 'url': trail.get_detail_url()})
+            if 'geotrek.trekking' in settings.INSTALLED_APPS:
+                for trek in path.treks:
+                    topologies_by_model[_('Treks')].append({'name': trek.name, 'url': trek.get_detail_url()})
+                for service in path.services:
+                    topologies_by_model[_('Services')].append({'name': service.type.name, 'url': service.get_detail_url()})
+                for poi in path.pois:
+                    topologies_by_model[_('Pois')].append({'name': poi.name, 'url': poi.get_detail_url()})
+            if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
+                for signage in path.signages:
+                    topologies_by_model[_('Signages')].append({'name': signage.name, 'url': signage.get_detail_url()})
+                for infrastructure in path.infrastructures:
+                    topologies_by_model[_('Infrastructures')].append({'name': infrastructure.name, 'url': infrastructure.get_detail_url()})
+            if 'geotrek.maintenance' in settings.INSTALLED_APPS:
+                for intervention in path.interventions:
+                    topologies_by_model[_('Interventions')].append({'name': intervention.name, 'url': intervention.get_detail_url()})
+        context['topologies_by_model'] = dict(topologies_by_model)
+        return context
 
 
 class PathDelete(MapEntityDelete):

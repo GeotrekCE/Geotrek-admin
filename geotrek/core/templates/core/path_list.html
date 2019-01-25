@@ -37,6 +37,15 @@
                 	$('#btn-confirm').show();
                 }
             });
+
+			var pathDelete = "{% url 'core:multiple_path_delete' "0,0" %}";
+			var pathsToDelete = [];
+            $('#btn-delete').click(function() {
+            for (const value of Object.values($('#objects-list input:checkbox:checked'))) {
+                pathsToDelete.push(value.value);
+            };
+            window.location = pathDelete.replace('0,0', pathsToDelete.filter(Boolean).join(','));
+            });
    	        
    	        $('#btn-confirm').click(function() {
    	        	$('#confirm-merge .modal-body h4').html($('#wait_lightbox').html());
@@ -90,6 +99,10 @@
 			<li>
 			    <a href="#confirm-merge" id="btn-merge" role="button" data-toggle="modal">
 			        <i class="icon-pencil"></i> {% trans "Merge" %}</a>
+			</li>
+			<li>
+				<a href="#confirm-delete" id="btn-delete" role="button">
+			        <i class="icon-delete"></i> {% trans "Delete" %}</a>
 			</li>
 		</ul>
 	</div>
