@@ -240,9 +240,10 @@ class MultiplePathDelete(TemplateView):
                     topologies_by_model[_('Services')].append({'name': service.type.name, 'url': service.get_detail_url()})
                 for poi in path.pois:
                     topologies_by_model[_('Pois')].append({'name': poi.name, 'url': poi.get_detail_url()})
-            if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
+            if 'geotrek.signage' in settings.INSTALLED_APPS:
                 for signage in path.signages:
                     topologies_by_model[_('Signages')].append({'name': signage.name, 'url': signage.get_detail_url()})
+            if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
                 for infrastructure in path.infrastructures:
                     topologies_by_model[_('Infrastructures')].append({'name': infrastructure.name, 'url': infrastructure.get_detail_url()})
             if 'geotrek.maintenance' in settings.INSTALLED_APPS:
@@ -283,11 +284,13 @@ class PathDelete(MapEntityDelete):
                 topologies_by_model[_('Services')].append({'name': service.type.name, 'url': service.get_detail_url()})
             for poi in self.object.pois:
                 topologies_by_model[_('Pois')].append({'name': poi.name, 'url': poi.get_detail_url()})
-        if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
+        if 'geotrek.signage' in settings.INSTALLED_APPS:
             for signage in self.object.signages:
                 topologies_by_model[_('Signages')].append({'name': signage.name, 'url': signage.get_detail_url()})
+        if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
             for infrastructure in self.object.infrastructures:
-                topologies_by_model[_('Infrastructures')].append({'name': infrastructure.name, 'url': infrastructure.get_detail_url()})
+                topologies_by_model[_('Infrastructures')].append(
+                    {'name': infrastructure.name, 'url': infrastructure.get_detail_url()})
         if 'geotrek.maintenance' in settings.INSTALLED_APPS:
             for intervention in self.object.interventions:
                 topologies_by_model[_('Interventions')].append({'name': intervention.name, 'url': intervention.get_detail_url()})
