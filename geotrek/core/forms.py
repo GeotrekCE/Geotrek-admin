@@ -60,10 +60,19 @@ class PathForm(CommonForm):
         model = Path
         fields = CommonForm.Meta.fields + \
             ['name', 'stake', 'comfort', 'departure', 'arrival', 'comments',
-             'source', 'networks', 'usages', 'valid', 'reverse_geom', 'geom']
+             'source', 'networks', 'usages', 'valid', 'draft', 'reverse_geom', 'geom']
 
     def __init__(self, *args, **kwargs):
         super(PathForm, self).__init__(*args, **kwargs)
+        if self.instance.pk:
+            if not self.instance.draft:
+                # Prevent to set a path as draft again (it could be used by a topology)
+                del self.fields['draft']
+            if not self.user.has_perm('core.change_path'):
+                del self.fields['draft']
+        else:
+            if not self.user.has_perm('core.add_draft_path') or not self.user.has_perm('core.add_path'):
+                del self.fields['draft']
         self.fields['geom'].label = ''
 
     def clean_geom(self):
@@ -79,6 +88,11 @@ class PathForm(CommonForm):
 
     def save(self, commit=True):
         path = super(PathForm, self).save(commit=False)
+        if not self.instance.pk:
+            if self.user.has_perm('core.add_draft_path') and not self.user.has_perm('core.add_path'):
+                path.draft = True
+            if not self.user.has_perm('core.add_draft_path') and self.user.has_perm('core.add_path'):
+                path.draft = False
 
         if self.cleaned_data.get('reverse_geom'):
             path.reverse()

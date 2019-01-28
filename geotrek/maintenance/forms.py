@@ -9,7 +9,7 @@ from crispy_forms.layout import Fieldset, Layout, Div, HTML
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.widgets import TopologyReadonlyWidget
-from geotrek.infrastructure.models import BaseInfrastructure
+from geotrek.infrastructure.models import Infrastructure, Signage
 
 from .models import Intervention, Project
 
@@ -53,8 +53,11 @@ class InterventionForm(CommonForm):
     """ An intervention can be a Point or a Line """
     topology = TopologyField(label="")
     infrastructure = forms.ModelChoiceField(required=False,
-                                            queryset=BaseInfrastructure.objects.existing(),
+                                            queryset=Infrastructure.objects.existing(),
                                             widget=forms.HiddenInput())
+    signage = forms.ModelChoiceField(required=False,
+                                     queryset=Signage.objects.existing(),
+                                     widget=forms.HiddenInput())
     length = FloatField(required=False, label=_("Length"))
 
     leftpanel_scrollable = False
@@ -81,6 +84,7 @@ class InterventionForm(CommonForm):
                     'project',
                     'description',
                     'infrastructure',
+                    'signage',
 
                     css_id="main",
                     css_class="tab-pane active"
@@ -105,7 +109,7 @@ class InterventionForm(CommonForm):
         model = Intervention
         fields = CommonForm.Meta.fields + \
             ['name', 'date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
-             'height', 'stake', 'project', 'infrastructure', 'material_cost', 'heliport_cost', 'subcontract_cost',
+             'height', 'stake', 'project', 'infrastructure', 'signage', 'material_cost', 'heliport_cost', 'subcontract_cost',
              'topology']
 
     def __init__(self, *args, **kwargs):
@@ -113,18 +117,32 @@ class InterventionForm(CommonForm):
         # If we create or edit an intervention on infrastructure, set
         # topology field as read-only
         infrastructure = kwargs.get('initial', {}).get('infrastructure')
+        signage = kwargs.get('initial', {}).get('signage')
         if self.instance.on_infrastructure:
-            infrastructure = self.instance.infrastructure
-            self.fields['infrastructure'].initial = infrastructure
+            if self.instance.infrastructure:
+                infrastructure = self.instance.infrastructure
+                self.fields['infrastructure'].initial = infrastructure
+            elif self.instance.signage:
+                signage = self.instance.signage
+                self.fields['signage'].initial = signage
         if infrastructure:
             self.helper.form_action += '?infrastructure=%s' % infrastructure.pk
             self.fields['topology'].required = False
             self.fields['topology'].widget = TopologyReadonlyWidget()
-            self.fields['topology'].label = '%s%s %s' % (self.instance.infrastructure_display,
-                                                         ("On %s") % _(infrastructure.kind.lower()),
-                                                         '<a href="%s">%s</a>' % (infrastructure.get_detail_url(),
-                                                                                  infrastructure))
-
+            self.fields['topology'].label = '%s%s %s' % (
+                self.instance.infrastructure_display,
+                _("On %s") % _(infrastructure.kind.lower()),
+                '<a href="%s">%s</a>' % (infrastructure.get_detail_url(), infrastructure)
+            )
+        elif signage:
+            self.helper.form_action += '?signage=%s' % signage.pk
+            self.fields['topology'].required = False
+            self.fields['topology'].widget = TopologyReadonlyWidget()
+            self.fields['topology'].label = '%s%s %s' % (
+                self.instance.infrastructure_display,
+                _("On %s") % _(signage.kind.lower()),
+                '<a href="%s">%s</a>' % (signage.get_detail_url(), signage)
+            )
         # Length is not editable in AltimetryMixin
         self.fields['length'].initial = self.instance.length
         editable = bool(self.instance.geom and self.instance.geom.geom_type == 'Point')
@@ -134,14 +152,20 @@ class InterventionForm(CommonForm):
         # If topology was read-only, topology field is empty, get it from infra.
         cleaned_data = super(InterventionForm, self).clean()
         topology_readonly = self.cleaned_data.get('topology', None) is None
-        if topology_readonly and 'infrastructure' in self.cleaned_data:
-            self.cleaned_data['topology'] = self.cleaned_data['infrastructure']
+        if topology_readonly:
+            if 'infrastructure' in self.cleaned_data:
+                self.cleaned_data['topology'] = self.cleaned_data['infrastructure']
+            if 'signage' in self.cleaned_data and not self.cleaned_data['topology']:
+                self.cleaned_data['topology'] = self.cleaned_data['signage']
         return cleaned_data
 
     def save(self, *args, **kwargs):
         infrastructure = self.cleaned_data.get('infrastructure')
+        signage = self.cleaned_data.get('signage')
         if infrastructure:
             self.instance.set_infrastructure(infrastructure)
+        elif signage:
+            self.instance.set_infrastructure(signage)
         return super(InterventionForm, self).save(*args, **kwargs)
 
 
@@ -150,8 +174,11 @@ class InterventionCreateForm(InterventionForm):
         # If we create an intervention on infrastructure, get its topology
         initial = kwargs.get('initial', {})
         infrastructure = initial.get('infrastructure')
+        signage = initial.get('signage')
         if infrastructure:
             initial['topology'] = infrastructure
+        elif signage:
+            initial['topology'] = signage
         kwargs['initial'] = initial
         super(InterventionCreateForm, self).__init__(*args, **kwargs)
         # Stake is computed automatically at creation.

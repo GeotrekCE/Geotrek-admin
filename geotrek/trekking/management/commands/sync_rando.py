@@ -4,7 +4,6 @@ import logging
 import filecmp
 import os
 import re
-import sys
 import shutil
 from time import sleep
 from zipfile import ZipFile
@@ -27,12 +26,15 @@ from geotrek.core.views import ParametersView
 from geotrek.feedback.views import CategoryList as FeedbackCategoryList
 from geotrek.flatpages.models import FlatPage
 from geotrek.flatpages.views import FlatPageViewSet, FlatPageMeta
+from geotrek.infrastructure import models as infrastructure_models
+from geotrek.infrastructure.views import InfrastructureViewSet, SignageViewSet
 from geotrek.tourism import models as tourism_models
 from geotrek.tourism import views as tourism_views
 from geotrek.trekking import models as trekking_models
 from geotrek.trekking.views import (TrekViewSet, POIViewSet, TrekPOIViewSet,
                                     TrekGPXDetail, TrekKMLDetail, TrekServiceViewSet,
-                                    ServiceViewSet, TrekDocumentPublic, TrekMeta, Meta)
+                                    ServiceViewSet, TrekDocumentPublic, TrekMeta, Meta,
+                                    TrekInfrastructureViewSet, TrekSignageViewSet,)
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     from geotrek.sensitivity import models as sensitivity_models
     from geotrek.sensitivity import views as sensitivity_views
@@ -105,10 +107,14 @@ class Command(BaseCommand):
                             help='Skip generation of PNG elevation profile'),
         parser.add_argument('--languages', '-l', dest='languages', default='', help='Languages to sync')
         parser.add_argument('--with-touristicevents', '-w', action='store_true', dest='with_events', default=False,
-                            help='include touristic events by trek in global.zip')
+                            help='include touristic events')
         parser.add_argument('--with-touristiccontent-categories', '-c', dest='content_categories',
-                            default=None, help='include touristic contents by trek in global.zip '
+                            default=None, help='include touristic contents '
                             '(filtered by category ID ex: --with-touristiccontent-categories="1,2,3")'),
+        parser.add_argument('--with-signages', '-g', action='store_true', dest='with_signages', default=False,
+                            help='include signages')
+        parser.add_argument('--with-infrastructures', '-i', action='store_true', dest='with_infrastructures',
+                            default=False, help='include infrastructures')
 
     def mkdirs(self, name):
         dirname = os.path.dirname(name)
@@ -146,7 +152,7 @@ class Command(BaseCommand):
         zipname = os.path.join('zip', 'tiles', '{pk}.zip'.format(pk=trek.pk))
 
         if self.verbosity == 2:
-            self.stdout.write("\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
+            self.stdout.write("{name} ...".format(name=zipname), ending="")
             self.stdout.flush()
 
         trek_file = os.path.join(self.tmp_root, zipname)
@@ -175,9 +181,9 @@ class Command(BaseCommand):
 
         tiles.run()
 
-    def sync_view(self, lang, view, name, url='/', params={}, zipfile=None, **kwargs):
+    def sync_view(self, lang, view, name, url='/', params={}, zipfile=None, fix2028=False, **kwargs):
         if self.verbosity == 2:
-            self.stdout.write("\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=name), ending="")
+            self.stdout.write("{lang} {name} ...".format(lang=lang, name=name), ending="")
             self.stdout.flush()
         fullname = os.path.join(self.tmp_root, name)
         self.mkdirs(fullname)
@@ -190,13 +196,13 @@ class Command(BaseCommand):
                 response.render()
         except Exception as e:
             self.successfull = False
-            if self.verbosity == 2:
-                self.stdout.write("\x1b[3D\x1b[31mfailed ({})\x1b[0m".format(e))
+            if self.verbosity > 0:
+                self.stderr.write(self.style.ERROR("failed ({})".format(e)))
             return
         if response.status_code != 200:
             self.successfull = False
-            if self.verbosity == 2:
-                self.stdout.write("\x1b[3D\x1b[31;1mfailed (HTTP {code})\x1b[0m".format(code=response.status_code))
+            if self.verbosity > 0:
+                self.stderr.write(self.style.ERROR("failed (HTTP {code})".format(code=response.status_code)))
             return
         f = open(fullname, 'w')
         if isinstance(response, StreamingHttpResponse):
@@ -204,7 +210,12 @@ class Command(BaseCommand):
             for sc in response.streaming_content:
                 content += sc.decode()
         else:
-            content = response.content.decode()
+            content = response.content
+        # Fix strange unicode characters 2028 and 2029 that make Geotrek-mobile crash
+        # Check Python3
+        if fix2028:
+            content = content.replace('\\u2028', '\\n')
+            content = content.replace('\\u2029', '\\n')
         f.write(content)
         f.close()
         oldfilename = os.path.join(self.dst_root, name)
@@ -213,10 +224,10 @@ class Command(BaseCommand):
             os.unlink(fullname)
             os.link(oldfilename, fullname)
             if self.verbosity == 2:
-                self.stdout.write("\x1b[3D\x1b[32munchanged\x1b[0m")
+                self.stdout.write("unchanged")
         else:
             if self.verbosity == 2:
-                self.stdout.write("\x1b[3D\x1b[32mgenerated\x1b[0m")
+                self.stdout.write("generated")
         # FixMe: Find why there are duplicate files.
         if zipfile:
             if name not in zipfile.namelist():
@@ -229,7 +240,7 @@ class Command(BaseCommand):
             params['source'] = ','.join(self.source)
         if self.portal:
             params['portal'] = ','.join(self.portal)
-        self.sync_view(lang, view, name, params=params, zipfile=zipfile, **kwargs)
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile, fix2028=True, **kwargs)
 
     def sync_geojson(self, lang, viewset, name, zipfile=None, params={}, **kwargs):
         view = viewset.as_view({'get': 'list'})
@@ -249,7 +260,19 @@ class Command(BaseCommand):
         elif 'portal' in list(params.keys()):
             del params['portal']
 
-        self.sync_view(lang, view, name, params=params, zipfile=zipfile, **kwargs)
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile, fix2028=True, **kwargs)
+
+    def sync_trek_infrastructures(self, lang, trek, zipfile=None):
+        params = {'format': 'geojson'}
+        view = TrekInfrastructureViewSet.as_view({'get': 'list'})
+        name = os.path.join('api', lang, 'treks', str(trek.pk), 'infrastructures.geojson')
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
+
+    def sync_trek_signages(self, lang, trek, zipfile=None):
+        params = {'format': 'geojson'}
+        view = TrekSignageViewSet.as_view({'get': 'list'})
+        name = os.path.join('api', lang, 'treks', str(trek.pk), 'signages.geojson')
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
 
     def sync_trek_pois(self, lang, trek, zipfile=None):
         params = {'format': 'geojson'}
@@ -334,7 +357,7 @@ class Command(BaseCommand):
         if zipfile:
             zipfile.write(dst, os.path.join(url, name))
         if self.verbosity == 2:
-            self.stdout.write("\x1b[36m{lang}\x1b[0m \x1b[1m{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(lang=lang, url=url, name=name))
+            self.stdout.write("{lang} {url}/{name} copied".format(lang=lang, url=url, name=name))
 
     def sync_static_file(self, lang, name):
         self.sync_file(lang, name, settings.STATIC_ROOT, settings.STATIC_URL)
@@ -364,6 +387,10 @@ class Command(BaseCommand):
         self.sync_json(lang, ParametersView, 'parameters', zipfile=self.zipfile)
         self.sync_json(lang, ThemeViewSet, 'themes', as_view_args=[{'get': 'list'}], zipfile=self.zipfile)
         self.sync_trek_pois(lang, trek, zipfile=self.zipfile)
+        if self.with_infrastructures:
+            self.sync_trek_infrastructures(lang, trek)
+        if self.with_signages:
+            self.sync_trek_signages(lang, trek)
         self.sync_trek_services(lang, trek, zipfile=self.zipfile)
         self.sync_gpx(lang, trek)
         self.sync_kml(lang, trek)
@@ -395,7 +422,7 @@ class Command(BaseCommand):
             self.sync_trek_sensitiveareas(lang, trek)
 
         if self.verbosity == 2:
-            self.stdout.write("\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname),
+            self.stdout.write("{lang} {name} ...".format(lang=lang, name=zipname),
                               ending="")
 
         self.close_zip(self.trek_zipfile, zipname)
@@ -420,9 +447,9 @@ class Command(BaseCommand):
 
         if self.verbosity == 2:
             if uptodate:
-                self.stdout.write("\x1b[3D\x1b[32munchanged\x1b[0m")
+                self.stdout.write("unchanged")
             else:
-                self.stdout.write("\x1b[3D\x1b[32mzipped\x1b[0m")
+                self.stdout.write("zipped")
 
     def sync_flatpages(self, lang):
         self.sync_geojson(lang, FlatPageViewSet, 'flatpages.geojson', zipfile=self.zipfile)
@@ -430,7 +457,7 @@ class Command(BaseCommand):
         if self.source:
             flatpages = flatpages.filter(source__name__in=self.source)
         if self.portal:
-            flatpages = flatpages.filter(portal__name__in=self.portal)
+            flatpages = flatpages.filter(Q(portal__name__in=self.portal) | Q(portal=None))
         for flatpage in flatpages:
             name = os.path.join('meta', lang, flatpage.rando_url, 'index.html')
             self.sync_view(lang, FlatPageMeta.as_view(), name, pk=flatpage.pk, params={'rando_url': self.rando_url})
@@ -443,6 +470,12 @@ class Command(BaseCommand):
 
         self.sync_geojson(lang, TrekViewSet, 'treks.geojson', zipfile=self.zipfile)
         self.sync_geojson(lang, POIViewSet, 'pois.geojson')
+        if self.with_infrastructures:
+            self.sync_geojson(lang, InfrastructureViewSet, 'infrastructures.geojson')
+        if self.with_signages:
+            self.sync_geojson(lang, SignageViewSet, 'signages.geojson')
+            self.sync_static_file(lang, 'infrastructure/picto-infrastructure.png')
+            self.sync_static_file(lang, 'infrastructure/picto-signage.png')
         if 'geotrek.flatpages' in settings.INSTALLED_APPS:
             self.sync_flatpages(lang)
         self.sync_geojson(lang, ServiceViewSet, 'services.geojson', zipfile=self.zipfile)
@@ -453,6 +486,8 @@ class Command(BaseCommand):
         self.sync_static_file(lang, 'trekking/itinerancy.svg')
         self.sync_pictograms(lang, common_models.Theme, zipfile=self.zipfile)
         self.sync_pictograms(lang, common_models.RecordSource, zipfile=self.zipfile)
+        if self.with_signages or self.with_infrastructures:
+            self.sync_pictograms(lang, infrastructure_models.InfrastructureType)
         self.sync_pictograms(lang, trekking_models.TrekNetwork, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.Practice, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.Accessibility, zipfile=self.zipfile)
@@ -475,7 +510,7 @@ class Command(BaseCommand):
             treks = treks.filter(source__name__in=self.source)
 
         if self.portal:
-            treks = treks.filter(portal__name__in=self.portal)
+            treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
 
         for trek in treks:
             self.sync_trek(lang, trek)
@@ -487,7 +522,7 @@ class Command(BaseCommand):
             self.sync_sensitiveareas(lang)
 
         if self.verbosity == 2:
-            self.stdout.write("\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname), ending="")
+            self.stdout.write("{lang} {name} ...".format(lang=lang, name=zipname), ending="")
 
         self.close_zip(self.zipfile, zipname)
 
@@ -523,7 +558,7 @@ class Command(BaseCommand):
                 treks = treks.filter(source__name__in=self.source)
 
             if self.portal:
-                treks = treks.filter(portal__name__in=self.portal)
+                treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
 
             for trek in treks:
                 if trek.any_published or any([parent.any_published for parent in trek.parents]):
@@ -620,7 +655,7 @@ class Command(BaseCommand):
             contents = contents.filter(source__name__in=self.source)
 
         if self.portal:
-            contents = contents.filter(portal__name__in=self.portal)
+            contents = contents.filter(Q(portal__name__in=self.portal) | Q(portal=None))
 
         for content in contents:
             self.sync_content(lang, content)
@@ -632,7 +667,7 @@ class Command(BaseCommand):
             events = events.filter(source__name__in=self.source)
 
         if self.portal:
-            events = events.filter(portal__name__in=self.portal)
+            events = events.filter(Q(portal__name__in=self.portal) | Q(portal=None))
 
         for event in events:
             self.sync_event(lang, event)
@@ -731,10 +766,12 @@ class Command(BaseCommand):
         self.verbosity = options['verbosity']
         self.dst_root = options["path"].rstrip('/')
         self.check_dst_root_is_empty()
-        if(options['url'][:7] != 'http://'):
-            raise CommandError('url parameter should start with http://')
+
+        if not options['url'].startswith(('http://', 'https://')):
+            raise CommandError('url parameter should start with http:// or https:// ()')
+
         self.referer = options['url']
-        self.host = self.referer[7:]
+        self.host = self.referer.split('://')[1]
         self.rando_url = options['rando_url']
         if self.rando_url.endswith('/'):
             self.rando_url = self.rando_url[:-1]
@@ -756,6 +793,8 @@ class Command(BaseCommand):
         self.categories = None
         if options.get('content_categories', ""):
             self.categories = options.get('content_categories', "").split(',')
+        self.with_signages = options.get('with_signages', False)
+        self.with_infrastructures = options.get('with_infrastructures', False)
         self.celery_task = options.get('task', None)
 
         if self.source is not None:
@@ -795,11 +834,14 @@ class Command(BaseCommand):
 
         self.rename_root()
 
+        done_message = 'Done'
+        if self.successfull:
+            done_message = self.style.SUCCESS(done_message)
+
         if self.verbosity >= 1:
-            self.stdout.write('Done')
+            self.stdout.write(done_message)
 
         if not self.successfull:
-            self.stdout.write('Some errors raised during synchronization.')
-            sys.exit(1)
+            raise CommandError('Some errors raised during synchronization.')
 
         sleep(2)  # end sleep to ensure sync page get result

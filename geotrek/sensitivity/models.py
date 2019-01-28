@@ -48,12 +48,12 @@ class Species(OptionalPictogramMixin):
     practices = models.ManyToManyField(SportPractice, db_table='s_r_espece_pratique_sportive',
                                        verbose_name=_("Sport practices"))
     url = models.URLField(blank=True, verbose_name="URL")
-    radius = models.IntegerField(db_column='rayon', blank=True, null=True, verbose_name=_("Bubble radius"),
+    radius = models.IntegerField(db_column='rayon', blank=True, null=True, verbose_name=_(u"Bubble radius"),
                                  help_text=_("meters"))
     category = models.IntegerField(verbose_name=_("Category"), db_column='categorie', editable=False, default=SPECIES,
                                    choices=((SPECIES, pgettext_lazy("Singular", "Species")),
                                             (REGULATORY, _("Regulatory"))))
-    eid = models.CharField(verbose_name=_("External id"), max_length=128, blank=True, null=True,
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True,
                            db_column='id_externe')
 
     class Meta:
@@ -86,7 +86,7 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
                                         db_column='date_publication')
     description = models.TextField(verbose_name=_("Description"), blank=True)
     contact = models.TextField(verbose_name=_("Contact"), blank=True)
-    eid = models.CharField(verbose_name=_("External id"), max_length=128, blank=True, null=True,
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True,
                            db_column='id_externe')
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()

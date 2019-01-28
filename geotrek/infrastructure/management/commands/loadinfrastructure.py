@@ -6,6 +6,7 @@ from django.contrib.gis.gdal import DataSource
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
+from geotrek.authent.models import default_structure
 from geotrek.authent.models import Structure
 from geotrek.core.helpers import TopologyHelper
 from geotrek.infrastructure.models import Signage, InfrastructureType, InfrastructureCondition, Infrastructure
@@ -36,6 +37,7 @@ class Command(BaseCommand):
         parser.add_argument('--structure-default', action='store', dest='structure_default', help='Base url')
         parser.add_argument('--description-default', action='store', dest='description_default', default="",
                             help='Base url')
+        parser.add_argument('--eid-field', action='store', dest='eid_field', help='External ID field')
         parser.add_argument('--year-default', action='store', dest='year_default', help='Base url')
 
     def handle(self, *args, **options):
@@ -63,8 +65,10 @@ class Command(BaseCommand):
         field_structure_type = options.get('structure_field')
         field_description = options.get('description_field')
         field_implantation_year = options.get('year_field')
+        field_eid = options.get('eid_field')
 
         sid = transaction.savepoint()
+        structure_default = options.get('structure_default')
 
         try:
             for layer in data_source:
@@ -85,33 +89,47 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.ERROR(
                         "Set it with --name-field, or set a default value with --name-default"))
                     break
-                if (field_condition_type and field_condition_type not in available_fields)\
-                        or (not field_condition_type and not options.get('condition_default')):
+                if field_condition_type and field_condition_type not in available_fields:
                     self.stdout.write(self.style.ERROR(
                         "Field '{}' not found in data source.".format(field_condition_type)))
                     self.stdout.write(self.style.ERROR(
-                        "Set it with --condition-field, or set a default value with --condition-default"))
+                        "Change your --condition-field option"))
                     break
-                if (field_structure_type and field_structure_type not in available_fields)\
-                        or (not field_structure_type and not options.get('structure_default')):
+                if field_structure_type and field_structure_type not in available_fields:
                     self.stdout.write(self.style.ERROR(
                         "Field '{}' not found in data source.".format(field_structure_type)))
                     self.stdout.write(self.style.ERROR(
-                        "Set it with --structure-field, or set a default value with --structure-default"))
+                        "Change your --structure-field option"))
                     break
-                if (field_description and field_description not in available_fields)\
-                        or (not field_condition_type and not options.get('description_default')):
+                elif not field_structure_type and not structure_default:
+                    structure = default_structure()
+                else:
+                    try:
+                        structure = Structure.objects.get(name=structure_default)
+                        if verbosity > 0:
+                            self.stdout.write("Infrastructures will be linked to {}".format(structure))
+                    except Structure.DoesNotExist:
+                        self.stdout.write("Structure {} set in options doesn't exist".format(structure_default))
+                        break
+                if field_description and field_description not in available_fields:
                     self.stdout.write(self.style.ERROR(
                         "Field '{}' not found in data source.".format(field_description)))
                     self.stdout.write(self.style.ERROR(
-                        "Set it with --description-field, or set a default value with --description-default"))
+                         "Change your --description-field option"))
                     break
-                if (field_implantation_year and field_implantation_year not in available_fields) \
-                        or (not field_condition_type and not options.get('year_default')):
+
+                if field_implantation_year and field_implantation_year not in available_fields:
                     self.stdout.write(
                         self.style.ERROR("Field '{}' not found in data source.".format(field_implantation_year)))
                     self.stdout.write(self.style.ERROR(
-                        "Set it with --implantation-field, or set a default value with --implantation-default"))
+                        "Change your --year-field option"))
+                    break
+
+                if field_eid and field_eid not in available_fields:
+                    self.stdout.write(
+                        self.style.ERROR("Field '{}' not found in data source.".format(field_eid)))
+                    self.stdout.write(self.style.ERROR(
+                        "Change your --eid-field option"))
                     break
 
                 for feature in layer:
@@ -122,21 +140,23 @@ class Command(BaseCommand):
                     type = feature.get(
                         field_infrastructure_type) if field_infrastructure_type in available_fields else options.get(
                         'type_default')
-                    condition = feature.get(
-                        field_condition_type) if field_condition_type in available_fields else options.get(
-                        'condition_default')
-                    structure = feature.get(
-                        field_structure_type) if field_structure_type in available_fields else options.get(
-                        'structure_default')
-                    description = feature.get(field_description) if field_description in available_fields else options.get(
+                    if field_condition_type in available_fields:
+                        condition = feature.get(field_condition_type)
+                    else:
+                        condition = options.get('condition_default')
+                    structure = Structure.objects.get(name=feature.get(field_structure_type)) \
+                        if field_structure_type in available_fields else structure
+                    description = feature.get(
+                        field_description) if field_description in available_fields else options.get(
                         'description_default')
                     year = int(feature.get(
-                        field_implantation_year)) if field_implantation_year in available_fields else options.get(
-                        'year_default')
-
+                        field_implantation_year)) if field_implantation_year in available_fields and feature.get(
+                        field_implantation_year).isdigit() else options.get('year_default')
+                    eid = feature.get(field_eid) if field_eid in available_fields else None
                     model = 'S' if options.get('signage') else 'B'
 
-                    self.create_infrastructure(feature_geom, name, type, condition, structure, description, year, model, verbosity)
+                    self.create_infrastructure(feature_geom, name, type, condition, structure, description, year,
+                                               model, verbosity, eid)
 
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
@@ -147,32 +167,42 @@ class Command(BaseCommand):
             transaction.savepoint_rollback(sid)
             raise
 
-    def create_infrastructure(self, geometry, name, type, condition, structure, description, year, model, verbosity):
+    def create_infrastructure(self, geometry, name, type,
+                              condition, structure, description, year, model, verbosity, eid):
 
-        infra_type, created = InfrastructureType.objects.get_or_create(label=type, type=model)
+        infra_type, created = InfrastructureType.objects.get_or_create(label=type, type=model, structure=None)
 
         if created and verbosity:
             self.stdout.write("- InfrastructureType '{}' created".format(infra_type))
 
-        condition_type, created = InfrastructureCondition.objects.get_or_create(label=condition)
+        if condition:
+            condition_type, created = InfrastructureCondition.objects.get_or_create(label=condition,
+                                                                                    structure=None)
+            if created and verbosity:
+                self.stdout.write("- Condition Type '{}' created".format(condition_type))
+        else:
+            condition_type = None
 
-        if created and verbosity:
-            self.stdout.write("- Condition Type '{}' created".format(condition_type))
-
-        structure, created = Structure.objects.get_or_create(name=structure)
-
-        if created and verbosity:
-            self.stdout.write("- Structure '{}' created".format(structure))
         with transaction.atomic():
             Model = Signage if model == 'S' else Infrastructure
-            infra = Model.objects.create(
-                type=infra_type,
-                name=name,
-                condition=condition_type,
-                structure=structure,
-                description=description,
-                implantation_year=year
-            )
+            fields_without_eid = {
+                'type': infra_type,
+                'name': name,
+                'condition': condition_type,
+                'structure': structure,
+                'description': description,
+                'implantation_year': year
+            }
+            if eid:
+                infra, created = Model.objects.update_or_create(
+                    eid=eid,
+                    defaults=fields_without_eid
+                )
+                if verbosity > 0 and not created:
+                    self.stdout.write("Update : %s with eid %s" % (name, eid))
+            else:
+                infra = Model.objects.create(**fields_without_eid)
+
         serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
         topology = TopologyHelper.deserialize(serialized)
         infra.mutate(topology)

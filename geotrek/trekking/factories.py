@@ -6,6 +6,7 @@ from django.contrib.gis.geos import Point
 from . import models
 from geotrek.core.factories import TopologyFactory, PointTopologyFactory
 from geotrek.common.utils.testdata import dummy_filefield_as_sequence
+from geotrek.infrastructure.factories import InfrastructureFactory, SignageFactory
 
 
 class TrekNetworkFactory(factory.DjangoModelFactory):
@@ -120,6 +121,30 @@ class TrekWithPOIsFactory(TrekFactory):
         poi1.add_path(path, start=0.5, end=0.5)
         poi2 = POIFactory.create(no_path=True)
         poi2.add_path(path, start=0.4, end=0.4)
+        if create:
+            obj.save()
+
+
+class TrekWithInfrastructuresFactory(TrekFactory):
+    @factory.post_generation
+    def create_trek_with_infrastructures(obj, create, extracted, **kwargs):
+        path = obj.paths.all()[0]
+        infra1 = InfrastructureFactory.create(no_path=True)
+        infra1.add_path(path, start=0.5, end=0.5)
+        infra2 = InfrastructureFactory.create(no_path=True)
+        infra2.add_path(path, start=0.4, end=0.4)
+        if create:
+            obj.save()
+
+
+class TrekWithSignagesFactory(TrekFactory):
+    @factory.post_generation
+    def create_trek_with_infrastructures(obj, create, extracted, **kwargs):
+        path = obj.paths.all()[0]
+        signa1 = SignageFactory.create(no_path=True)
+        signa1.add_path(path, start=0.5, end=0.5)
+        signa2 = SignageFactory.create(no_path=True)
+        signa2.add_path(path, start=0.4, end=0.4)
         if create:
             obj.save()
 

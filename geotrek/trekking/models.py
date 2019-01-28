@@ -117,10 +117,10 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     portal = models.ManyToManyField('common.TargetPortal',
                                     blank=True, related_name='treks',
                                     verbose_name=_("Portal"), db_table='o_r_itineraire_portal')
-    eid = models.CharField(verbose_name=_("External id"), max_length=128, blank=True, null=True, db_column='id_externe')
-    eid2 = models.CharField(verbose_name=_("Second external id"), max_length=128, blank=True, null=True, db_column='id_externe2')
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
+    eid2 = models.CharField(verbose_name=_("Second external id"), max_length=1024, blank=True, null=True, db_column='id_externe2')
     pois_excluded = models.ManyToManyField('Poi', related_name='excluded_treks', verbose_name=_("Excluded POIs"),
-                                           db_table="l_r_troncon_poi_exclus")
+                                           db_table="l_r_troncon_poi_exclus", blank=True)
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
@@ -417,13 +417,20 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         return plain_text(self.ambiance or self.description_teaser or self.description)[:500]
 
     def get_printcontext(self):
-        return {
-            "maplayers": [
-                ugettext("Sensitive area"),
-                ugettext("POIs"),
-                ugettext("services"),
-                settings.LEAFLET_CONFIG['TILES'][0][0],
-            ]}
+        maplayers = [
+            settings.LEAFLET_CONFIG['TILES'][0][0],
+        ]
+        if settings.SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT:
+            maplayers.append(ugettext("Sensitive area"))
+        if settings.SHOW_POIS_ON_MAP_SCREENSHOT:
+            maplayers.append(ugettext("POIs"))
+        if settings.SHOW_SERVICES_ON_MAP_SCREENSHOT:
+            maplayers.append(ugettext("Services"))
+        if settings.SHOW_SIGNAGES_ON_MAP_SCREENSHOT:
+            maplayers.append(ugettext("Signages"))
+        if settings.SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT:
+            maplayers.append(ugettext("Infrastructures"))
+        return {"maplayers": maplayers}
 
 
 Path.add_property('treks', Trek.path_treks, _("Treks"))
@@ -651,7 +658,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     description = models.TextField(verbose_name=_("Description"), db_column='description',
                                    help_text=_("History, details,  ..."))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"), db_column='type')
-    eid = models.CharField(verbose_name=_("External id"), max_length=128, blank=True, null=True, db_column='id_externe')
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
 
     class Meta:
         db_table = 'o_t_poi'
@@ -778,7 +785,7 @@ class Service(StructureRelated, MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_("Type"), db_column='type')
-    eid = models.CharField(verbose_name=_("External id"), max_length=128, blank=True, null=True, db_column='id_externe')
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
 
     class Meta:
         db_table = 'o_t_service'

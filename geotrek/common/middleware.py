@@ -101,4 +101,5 @@ class FixedAutoLoginMiddleware(AutoLoginMiddleware):
                 except DatabaseError as exc:
                     print(exc)
                 request.user = user
+
         return None

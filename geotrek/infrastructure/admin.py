@@ -31,8 +31,8 @@ class InfrastructureTypeAdmin(admin.ModelAdmin):
 
     def get_list_display(self, request):
         if not request.user.has_perm('authent.can_bypass_structure'):
-            return ('label', 'type')
-        return ('label', 'type', 'structure')
+            return ('label', 'type', 'pictogram_img')
+        return ('label', 'type', 'structure', 'pictogram_img')
 
     def get_list_filter(self, request):
         if not request.user.has_perm('authent.can_bypass_structure'):

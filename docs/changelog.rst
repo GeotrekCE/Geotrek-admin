@@ -2,11 +2,118 @@
 CHANGELOG
 =========
 
-2.21.2.dev0
+2.22.9 (2019-01-09)
+-------------------
+
+**Minor changes**
+
+- Separate Infrastructure and Signage models
+- Create parser touristic event for apidae
+- Refactor ApidaeParser
+
+**Bug fixes**
+
+- Add italian translations that are visible on Geotrek-rando
+- Fix permissions attachments paperclip
+
+**Performances**
+
+- Improve map's performances
+
+
+2.22.8 (2019-01-03)
+-------------------
+
+**Minor changes**
+
+- Now, empty portal field means "all portals" instead of "no portal"
+
+
+2.22.7 (2019-01-03)
 -------------------
 
 **Bug fixes**
 
+- Fix command loadinfrastructure
+
+
+2.22.6 (2019-01-02)
+-------------------
+
+**Minor changes**
+
+- Index path draft field
+- Add eid field to load_infrastructure command
+- Add loadrestrictedarea command
+- Install postgis package
+
+
+2.22.5 (2018-12-19)
+-------------------
+
+**Bug fixes**
+
+- Fix DB migration
+
+
+2.22.4 (2018-12-19)
+-------------------
+
+**Bug fixes**
+
+- Replace \u2028 and \u2029 by \n in synced (geo)json files (fix Geotrek-mobile crash)
+
+**Minor changes**
+
+- Add EID field to all models and increase its length
+
+
+2.22.3 (2018-12-14)
+-------------------
+
+**Bug fixes**
+
+- Don't publish deleted infrastructures/signages
+- Add default pictograms to published infrastructures/signages
+
+
+2.22.2 (2018-12-10)
+-------------------
+
+**Bug fixes**
+
+- Fix bugs with HTTPS access
+- Fix for some modules to edit attributes and not the geometry
+
+**Minor changes**
+
+- add options to sync signages and infrastructures
+- sync global signages and infrastructures
+
+
+2.22.1 (2018-11-27)
+-------------------
+
+**Bug fixes**
+
+- Fix trekking form with pois_excluded
+- Give the possibility to get type of infrastructures and signages without structure
+
+
+2.22.0 (2018-11-27)
+-------------------
+
+**New features**
+
+- Allow to publish signage and infrastructure
+- Allow to exclude POIs from a trek
+- New access rights to edit draft path
+- New access rights to edit attributes and not the geometry
+- Allow to remove duplicate path in database : command remove_duplicate_paths
+
+**Bug fixes**
+
+- Fix snap on crossing point : take all paths easier
 - Fix a clash between current url and SYNC_RANDO_OPTIONS
 - Fix screamshotter when SSL is enabled
 

@@ -1,9 +1,10 @@
 from django.conf import settings
 from django import forms
+from django.db.models import Q
 from geotrek.core.forms import TopologyForm
 from geotrek.core.widgets import PointTopologyWidget
 
-from .models import Infrastructure, Signage
+from .models import Infrastructure, Signage, InfrastructureType
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -12,7 +13,7 @@ class BaseInfrastructureForm(TopologyForm):
 
     class Meta(TopologyForm.Meta):
         fields = TopologyForm.Meta.fields + \
-            ['name', 'description', 'type', 'condition', 'implantation_year']
+            ['name', 'description', 'type', 'condition', 'implantation_year', 'published']
 
     def __init__(self, *args, **kwargs):
         super(BaseInfrastructureForm, self).__init__(*args, **kwargs)
@@ -20,7 +21,7 @@ class BaseInfrastructureForm(TopologyForm):
             structure = self.instance.structure
         else:
             structure = self.user.profile.structure
-        self.fields['type'].queryset = structure.infrastructuretype_set.all()
+        self.fields['type'].queryset = InfrastructureType.objects.filter(Q(structure=structure) | Q(structure=None))
         self.fields['condition'].queryset = structure.infrastructurecondition_set.all()
 
 

@@ -13,6 +13,7 @@ from geotrek.infrastructure.models import (Infrastructure, InfrastructureType,
                                            INFRASTRUCTURE_TYPES)
 from geotrek.core.factories import PathFactory
 from geotrek.infrastructure.factories import (SignageFactory, InfrastructureFactory,
+                                              InfrastructureNoPictogramFactory, SignageNoPictogramFactory,
                                               InfrastructureTypeFactory, InfrastructureConditionFactory)
 from geotrek.infrastructure.filters import SignageFilterSet, InfrastructureFilterSet
 
@@ -54,6 +55,20 @@ class InfrastructureViewsTest(CommonTest):
         response = self.client.get(infra.get_detail_url())
         self.assertContains(response, "<b>Beautiful !</b>")
 
+    def test_check_structure_or_none_related_are_visible(self):
+        self.login()
+        infratype = InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING, structure=None)
+        response = self.client.get(self.model.get_add_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('form' in response.context)
+        form = response.context['form']
+        type = form.fields['type']
+        self.assertTrue((infratype.pk, unicode(infratype)) in type.choices)
+
+    def test_no_pictogram(self):
+        self.modelfactory = InfrastructureNoPictogramFactory
+        super(InfrastructureViewsTest, self).test_api_detail_for_model()
+
 
 class PointInfrastructureViewsTest(InfrastructureViewsTest):
     def get_good_data(self):
@@ -70,12 +85,27 @@ class PointInfrastructureViewsTest(InfrastructureViewsTest):
 class SignageViewsTest(InfrastructureViewsTest):
     model = Signage
     modelfactory = SignageFactory
+    userfactory = PathManagerFactory
 
     def get_good_data(self):
         data = super(SignageViewsTest, self).get_good_data()
         data['type'] = InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.SIGNAGE).pk
         data['condition'] = InfrastructureConditionFactory.create().pk
         return data
+
+    def test_check_structure_or_none_related_are_visible(self):
+        self.login()
+        infratype = InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.SIGNAGE, structure=None)
+        response = self.client.get(self.model.get_add_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('form' in response.context)
+        form = response.context['form']
+        type = form.fields['type']
+        self.assertTrue((infratype.pk, unicode(infratype)) in type.choices)
+
+    def test_no_pictogram(self):
+        self.modelfactory = SignageNoPictogramFactory
+        super(SignageViewsTest, self).test_api_detail_for_model()
 
 
 class InfrastructureTypeTest(TestCase):

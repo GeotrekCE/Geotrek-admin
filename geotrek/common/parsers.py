@@ -123,12 +123,14 @@ class Parser(object):
             part, left = src.split('.', 1)
         else:
             part, left = src, ''
-        if part.isdigit():
-            return self.get_part(dst, left, val[int(part)])
-        elif part == '*':
-            return [self.get_part(dst, left, subval) for subval in val]
-        else:
-            return self.get_part(dst, left, val[part])
+        try:
+            value = int(part)
+            return self.get_part(dst, left, val[value])
+        except ValueError:
+            if part == '*':
+                return [self.get_part(dst, left, subval) for subval in val]
+            else:
+                return self.get_part(dst, left, val[part])
 
     def get_val(self, row, dst, src):
         if not isinstance(src, str) and isinstance(src, Iterable):
@@ -397,7 +399,7 @@ class Parser(object):
                 try:
                     kwargs[dst] = field.rel.to.objects.get(**{natural_key: val})
                 except field.rel.to.DoesNotExist:
-                    raise GlobalImportError(_("{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=field.rel.to._meta.verbose_name.title(), val=val))
+                    return None
             else:
                 kwargs[dst] = val
         for dst, val in self.m2m_constant_fields.items():
@@ -410,11 +412,15 @@ class Parser(object):
             try:
                 kwargs[dst] = field.rel.to.objects.get(**filters)
             except field.rel.to.DoesNotExist:
-                raise GlobalImportError(_("{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=field.rel.to._meta.verbose_name.title(), val=val))
+                return None
         return kwargs
 
     def start(self):
-        self.to_delete = set(self.model.objects.filter(**self.get_to_delete_kwargs()).values_list('pk', flat=True))
+        kwargs = self.get_to_delete_kwargs()
+        if kwargs is None:
+            self.to_delete = set()
+        else:
+            self.to_delete = set(self.model.objects.filter(**kwargs).values_list('pk', flat=True))
 
     def end(self):
         if self.delete:
@@ -438,7 +444,6 @@ class Parser(object):
                     raise
                 self.add_warning(e)
             except Exception as e:
-                raise
                 if settings.DEBUG:
                     raise
                 self.add_warning(e)

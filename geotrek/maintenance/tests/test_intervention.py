@@ -114,7 +114,7 @@ class InterventionTest(TestCase):
         self.assertFalse(interv.is_infrastructure)
         self.assertEqual(interv.signages, [sign])
         self.assertEqual(interv.infrastructures, [])
-        self.assertEqual(interv.infrastructure, sign)
+        self.assertEqual(interv.signage, sign)
 
         self.assertFalse(interv.in_project)
         interv.project = proj
@@ -198,5 +198,5 @@ class InterventionTest(TestCase):
         interv = SignageInterventionFactory.create()
         self.assertIn('Signage', interv.infrastructure_display)
         self.assertIn('signage-16.png', interv.infrastructure_display)
-        name = interv.infrastructure.name
+        name = interv.signage.name
         self.assertIn(name, interv.infrastructure_display)

@@ -128,7 +128,7 @@ in between. The commands below are examples to adapt to your actual configuratio
 
 Take care of your current geotrek version, you need to have latest non docker version installed :
 
-2.21.0
+2.22.3
 
 Backup settings, media files and database on the old server:
 
@@ -166,8 +166,48 @@ Install Geotrek on the new server:
 Restore database on the new server:
 
 ::
-    sudo systemctl stop geotrek
-    mv geotrekdb.backup var/geotrekdb.backup
-    pg_restore -d geotrekdb geotrekdb.backup
-    docker-compose run web update.sh
-    sudo systemctl start geotrek
+
+    sudo supervisorctl stop all
+    sudo -u postgres psql -c "drop database geotrekdb;"
+    sudo -u postgres psql -c "create database geotrekdb owner geotrek;"
+    sudo -u postgres pg_restore -d geotrekdb geotrekdb.backup
+    make update
+    sudo supervisorctl start all
+
+
+Tips and Tricks
+---------------
+
+* Use symlinks for uploaded files and cached tiles to avoid duplicating them on disk:
+
+::
+
+    mv var/tiles ~/tiles
+    ln -s ~/tiles `pwd`/var/tiles
+
+    mv var/media ~/media
+    ln -s ~/media `pwd`/var/media
+
+
+* Speed-up upgrades by caching downloads :
+
+::
+
+    mkdir ~/downloads
+    mkdir  ~/.buildout
+
+Create ``/home/sentiers/.buildout/default.cfg`` with ::
+
+    [buildout]
+    download-cache = /home/sentiers/downloads
+
+Secure your server
+------------------
+
+* Use fail2ban:
+
+::
+
+    sudo apt-get install fail2ban
+
+* Documentation : https://www.fail2ban.org/wiki/index.php/MANUAL_0_8

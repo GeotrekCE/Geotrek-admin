@@ -38,6 +38,20 @@ class SyncTest(TestCase):
                 self.assertEqual(len(treks['features']),
                                  trek_models.Trek.objects.filter(published=True).count())
 
+    def test_sync_2028(self):
+        self.trek_1.description = u'toto\u2028tata'
+        self.trek_1.save()
+        self.trek_2.delete()
+        self.trek_3.delete()
+        self.trek_4.delete()
+        with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
+            management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
+                                    skip_tiles=True, skip_pdf=True, verbosity=0)
+            with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'treks.geojson'), 'r') as f:
+                treks = json.load(f)
+                # \u2028 is translated to \n
+                self.assertEquals(treks['features'][0]['properties']['description'], u'toto\ntata')
+
     def test_sync_filtering_sources(self):
         # source A only
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
@@ -58,10 +72,8 @@ class SyncTest(TestCase):
             with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
 
-                # only 2 treks in Portal B
-                self.assertEqual(len(treks['features']),
-                                 trek_models.Trek.objects.filter(published=True,
-                                                                 portal__name__in=[self.portal_b.name, ]).count())
+                # only 2 treks in Portal B + 1 without portal specified
+                self.assertEqual(len(treks['features']), 3)
 
         # portal A and B
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
@@ -71,9 +83,5 @@ class SyncTest(TestCase):
             with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
 
-                # 3 treks have portal A or B
-                self.assertEqual(len(treks['features']),
-                                 trek_models.Trek.objects.filter(published=True,
-                                                                 portal__name__in=[self.portal_a.name,
-                                                                                   self.portal_b.name, ])
-                                                         .distinct('pk').count())
+                # 4 treks have portal A or B or no portal
+                self.assertEqual(len(treks['features']), 4)

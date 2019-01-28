@@ -1,0 +1,23 @@
+{% extends "mapentity/mapentity_form.html" %}
+{% load i18n static mapentity_tags %}
+
+{% block mainform %}
+    {% if object %}
+        {% if perms.core.change_draft_path and not perms.core.change_path %}
+            <div class="form-horizontal">
+                <div class="controls">
+                    <h3>{% trans "Draft mode" %}</h3>
+                </div>
+            </div>
+        {% endif %}
+    {% else %}
+        {% if perms.core.add_draft_path and not perms.core.add_path %}
+            <div class="form-horizontal">
+                <div class="controls">
+                    <h3>{% trans "Draft mode" %}</h3>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+    {{ block.super }}
+{% endblock mainform %}

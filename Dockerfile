@@ -40,20 +40,18 @@ ADD VERSION /app/src/VERSION
 ADD .coveragerc /app/src/.coveragerc
 RUN chown django:django -R /app
 COPY docker/* /usr/local/bin/
+COPY tools/* /usr/local/bin/
 
 ADD requirements.txt /app/src/requirements.txt
 RUN pip3 install --no-cache-dir -r /app/src/requirements.txt
 
 USER django
-
 WORKDIR /app/src
 # persists compiled locales
 RUN ./manage.py compilemessages
 
 EXPOSE 8000
-
 USER root
 
 ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]
-
 CMD ["/bin/sh", "-e", "/usr/local/bin/run.sh"]

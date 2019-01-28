@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
 
@@ -8,11 +10,15 @@ from geotrek.core.views import CreateFromTopologyMixin
 from .filters import InfrastructureFilterSet, SignageFilterSet
 from .forms import InfrastructureForm, SignageForm
 from .models import Infrastructure, Signage
+from .serializers import SignageSerializer, InfrastructureSerializer
+
+from rest_framework import permissions as rest_permissions
+from mapentity.views import MapEntityViewSet
 
 
 class InfrastructureLayer(MapEntityLayer):
     queryset = Infrastructure.objects.existing()
-    properties = ['name']
+    properties = ['name', 'published']
 
 
 class InfrastructureList(MapEntityList):
@@ -28,7 +34,7 @@ class InfrastructureJsonList(MapEntityJsonList, InfrastructureList):
 class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
     columns = [
         'id', 'name', 'type', 'condition', 'description',
-        'implantation_year', 'structure', 'date_insert',
+        'implantation_year', 'published', 'publication_date', 'structure', 'date_insert',
         'date_update', 'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
 
@@ -70,7 +76,7 @@ class InfrastructureDelete(MapEntityDelete):
 
 class SignageLayer(MapEntityLayer):
     queryset = Signage.objects.existing()
-    properties = ['name']
+    properties = ['name', 'published']
 
 
 class SignageList(MapEntityList):
@@ -86,7 +92,7 @@ class SignageJsonList(MapEntityJsonList, SignageList):
 class SignageFormatList(MapEntityFormat, SignageList):
     columns = [
         'id', 'name', 'type', 'condition', 'description',
-        'implantation_year', 'structure', 'date_insert',
+        'implantation_year', 'published', 'structure', 'date_insert',
         'date_update', 'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS
 
@@ -124,3 +130,21 @@ class SignageDelete(MapEntityDelete):
     @same_structure_required('infrastructure:signage_detail')
     def dispatch(self, *args, **kwargs):
         return super(SignageDelete, self).dispatch(*args, **kwargs)
+
+
+class SignageViewSet(MapEntityViewSet):
+    model = Signage
+    serializer_class = SignageSerializer
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        return Signage.objects.existing().filter(published=True).transform(settings.API_SRID, field_name='geom')
+
+
+class InfrastructureViewSet(MapEntityViewSet):
+    model = Infrastructure
+    serializer_class = InfrastructureSerializer
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        return Infrastructure.objects.existing().filter(published=True).transform(settings.API_SRID, field_name='geom')

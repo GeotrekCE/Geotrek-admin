@@ -1,13 +1,17 @@
+import os
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.db import models as gismodels
+from django.conf import settings
 
 from extended_choices import Choices
 from mapentity.models import MapEntityMixin
 
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path
-from geotrek.authent.models import StructureRelatedManager, StructureRelated, StructureOrNoneRelated
+from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
+from geotrek.common.mixins import BasePublishableMixin, OptionalPictogramMixin
 
 
 INFRASTRUCTURE_TYPES = Choices(
@@ -36,7 +40,7 @@ class InfrastructureTypeManager(models.Manager):
         return self.get_queryset().for_infrastructures()
 
 
-class InfrastructureType(StructureOrNoneRelated):
+class InfrastructureType(StructureOrNoneRelated, OptionalPictogramMixin):
     """ Types of infrastructures (bridge, WC, stairs, ...) """
     label = models.CharField(db_column="nom", max_length=128)
     type = models.CharField(db_column="type", max_length=1, choices=INFRASTRUCTURE_TYPES)
@@ -54,6 +58,15 @@ class InfrastructureType(StructureOrNoneRelated):
             return "{} ({})".format(self.label, self.structure.name)
         return self.label
 
+    def get_pictogram_url(self):
+        pictogram_url = super(InfrastructureType, self).get_pictogram_url()
+        if pictogram_url:
+            return pictogram_url
+        elif self.type == 'S':
+            return os.path.join(settings.STATIC_URL, 'infrastructure/picto-signage.png')
+        else:
+            return os.path.join(settings.STATIC_URL, 'infrastructure/picto-infrastructure.png')
+
 
 class InfrastructureCondition(StructureOrNoneRelated):
     label = models.CharField(verbose_name=_("Name"), db_column="etat", max_length=250)
@@ -69,7 +82,7 @@ class InfrastructureCondition(StructureOrNoneRelated):
         db_table = "a_b_etat"
 
 
-class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
+class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
     """ A generic infrastructure in the park """
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
@@ -84,8 +97,11 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
                                   on_delete=models.PROTECT)
     implantation_year = models.PositiveSmallIntegerField(verbose_name=_("Implantation year"),
                                                          db_column='annee_implantation', null=True)
+    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True,
+                           db_column='id_externe')
 
     class Meta:
+        abstract = True
         db_table = 'a_t_amenagement'
 
     def __str__(self):
@@ -97,9 +113,12 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
 
     @property
     def name_display(self):
-        return '<a href="%s" title="%s" >%s</a>' % (self.get_detail_url(),
-                                                    self,
-                                                    self)
+        s = '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk, self.get_detail_url(),
+                                                              self,
+                                                              self)
+        if self.published:
+            s = u'<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
+        return s
 
     @property
     def name_csv_display(self):
@@ -111,9 +130,7 @@ class BaseInfrastructure(MapEntityMixin, Topology, StructureRelated):
 
     @property
     def cities_display(self):
-        if hasattr(self, 'cities'):
-            return [str(c) for c in self.cities]
-        return []
+        return [str(c) for c in self.cities] if hasattr(self, 'cities') else []
 
     @classproperty
     def cities_verbose_name(cls):
@@ -131,19 +148,12 @@ class InfrastructureGISManager(gismodels.GeoManager):
         return all_years
 
 
-class InfrastructureStructureManager(StructureRelatedManager):
-    """ Overide default structure related manager, and filter by type. """
-    def get_queryset(self):
-        return super(InfrastructureStructureManager, self).get_queryset().exclude(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
-
-
-class Infrastructure(BaseInfrastructure):
+class Infrastructure(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is not of type SIGNAGE """
     objects = BaseInfrastructure.get_manager_cls(InfrastructureGISManager)()
-    in_structure = InfrastructureStructureManager()
 
     class Meta:
-        proxy = True
+        db_table = 'a_t_infrastructure'
         verbose_name = _("Infrastructure")
         verbose_name_plural = _("Infrastructures")
 
@@ -155,9 +165,15 @@ class Infrastructure(BaseInfrastructure):
     def topology_infrastructures(cls, topology):
         return cls.overlapping(topology)
 
+    @classmethod
+    def published_topology_infrastructure(cls, topology):
+        return cls.topology_infrastructures(topology).filter(published=True)
+
 
 Path.add_property('infrastructures', lambda self: Infrastructure.path_infrastructures(self), _("Infrastructures"))
 Topology.add_property('infrastructures', lambda self: Infrastructure.topology_infrastructures(self), _("Infrastructures"))
+Topology.add_property('published_infrastructures', Infrastructure.published_topology_infrastructure,
+                      _("Published Infrastructures"))
 
 
 class SignageGISManager(gismodels.GeoManager):
@@ -171,19 +187,12 @@ class SignageGISManager(gismodels.GeoManager):
         return all_years
 
 
-class SignageStructureManager(StructureRelatedManager):
-    """ Overide default structure related manager, and filter by type. """
-    def get_queryset(self):
-        return super(SignageStructureManager, self).get_queryset().filter(type__type=INFRASTRUCTURE_TYPES.SIGNAGE)
-
-
-class Signage(BaseInfrastructure):
+class Signage(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is of type SIGNAGE """
     objects = BaseInfrastructure.get_manager_cls(SignageGISManager)()
-    in_structure = SignageStructureManager()
 
     class Meta:
-        proxy = True
+        db_table = 'a_t_signaletique'
         verbose_name = _("Signage")
         verbose_name_plural = _("Signages")
 
@@ -195,6 +204,12 @@ class Signage(BaseInfrastructure):
     def topology_signages(cls, topology):
         return cls.overlapping(topology)
 
+    @classmethod
+    def published_topology_signages(cls, topology):
+        return cls.topology_signages(topology).filter(published=True)
+
 
 Path.add_property('signages', lambda self: Signage.path_signages(self), _("Signages"))
 Topology.add_property('signages', lambda self: Signage.topology_signages(self), _("Signages"))
+Topology.add_property('published_signages', lambda self: Signage.published_topology_signages(self),
+                      _("Published Signages"))

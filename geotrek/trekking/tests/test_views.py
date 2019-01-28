@@ -32,12 +32,15 @@ from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.authent.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.core.factories import PathFactory
+from geotrek.infrastructure.models import Infrastructure, Signage
+from geotrek.infrastructure.factories import InfrastructureFactory, SignageFactory
 from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.models import POI, Trek, Service, OrderedTrekChild
 from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
                                         TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
                                         TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
-                                        TrekWithServicesFactory)
+                                        TrekWithServicesFactory, TrekWithInfrastructuresFactory,
+                                        TrekWithSignagesFactory)
 from geotrek.trekking.templatetags import trekking_tags
 from geotrek.trekking.serializers import timestamp
 from geotrek.trekking import views as trekking_views
@@ -64,6 +67,16 @@ class POIViewsTest(CommonTest):
             'type': POITypeFactory.create().pk,
             'topology': '{"lat": 5.1, "lng": 6.6}',
         }
+
+    def test_status_only_review(self):
+        element_not_published = self.modelfactory.create()
+        element_not_published.published = False
+        element_not_published.review = True
+        element_not_published.save()
+        self.login()
+        response = self.client.get(self.model.get_jsonlist_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Waiting for publication', response.content)
 
     def test_empty_topology(self):
         self.login()
@@ -302,7 +315,37 @@ class TrekCustomViewTests(TrekkingManagerTest):
     def setUp(self):
         self.login()
 
-    def test_pois_geojson(self):
+    def test_trek_infrastructure_geojson(self):
+        trek = TrekWithInfrastructuresFactory.create(published=True)
+        self.assertEqual(len(trek.infrastructures), 2)
+        infra = trek.infrastructures[0]
+        infra.published = True
+        infra.save()
+        self.assertEqual(len(trek.infrastructures), 2)
+
+        url = '/api/en/treks/{pk}/infrastructures.geojson'.format(pk=trek.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        infrastructureslayer = json.loads(response.content)
+        infrastructurefeature = infrastructureslayer['features'][0]
+        self.assertEqual(infrastructurefeature['properties']['name'], infra.name)
+
+    def test_trek_signage_geojson(self):
+        trek = TrekWithSignagesFactory.create(published=True)
+        self.assertEqual(len(trek.signages), 2)
+        signa = trek.signages[0]
+        signa.published = True
+        signa.save()
+        self.assertEqual(len(trek.signages), 2)
+
+        url = '/api/en/treks/{pk}/signages.geojson'.format(pk=trek.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        signageslayer = json.loads(response.content)
+        signagefeature = signageslayer['features'][0]
+        self.assertEqual(signagefeature['properties']['name'], signa.name)
+
+    def test_trek_pois_geojson(self):
         trek = TrekWithPOIsFactory.create(published=True)
         first_poi = trek.pois.first()
         trek.pois_excluded.add(first_poi)
@@ -322,6 +365,64 @@ class TrekCustomViewTests(TrekkingManagerTest):
         poifeature = poislayer['features'][0]
         self.assertTrue('thumbnail' in poifeature['properties'])
         self.assertEqual(len(poislayer['features']), 1)
+        self.assertEqual(poifeature['properties']['name'], poi.name)
+
+    def test_pois_geojson(self):
+        poi = POIFactory.create()
+        poi2 = POIFactory.create()
+        self.assertEqual(POI.objects.count(), 2)
+        poi.published = True
+        poi2.published = False
+        poi.save()
+        poi2.save()
+
+        AttachmentFactory.create(content_object=poi, attachment_file=get_dummy_uploaded_image())
+        self.assertNotEqual(poi.thumbnail, None)
+        self.assertEqual(POI.objects.filter(published=True).count(), 1)
+
+        response = self.client.get('/api/en/pois.geojson')
+        self.assertEqual(response.status_code, 200)
+        poislayer = json.loads(response.content)
+        poifeature = poislayer['features'][0]
+        self.assertTrue('thumbnail' in poifeature['properties'])
+        self.assertEqual(len(poislayer['features']), 1)
+        self.assertEqual(poifeature['properties']['name'], poi.name)
+
+    def test_infrastructures_geojson(self):
+        infra = InfrastructureFactory.create()
+        infra2 = InfrastructureFactory.create()
+        self.assertEqual(Infrastructure.objects.count(), 2)
+        infra.published = True
+        infra2.published = False
+        infra.save()
+        infra2.save()
+
+        self.assertEqual(Infrastructure.objects.filter(published=True).count(), 1)
+
+        response = self.client.get('/api/en/infrastructures.geojson')
+        self.assertEqual(response.status_code, 200)
+        infraslayer = json.loads(response.content)
+        infrafeature = infraslayer['features'][0]
+        self.assertEqual(len(infraslayer['features']), 1)
+        self.assertEqual(infrafeature['properties']['name'], infra.name)
+
+    def test_signages_geojson(self):
+        signa = SignageFactory.create()
+        signa2 = SignageFactory.create()
+        self.assertEqual(Signage.objects.count(), 2)
+        signa.published = True
+        signa2.published = False
+        signa.save()
+        signa2.save()
+
+        self.assertEqual(Signage.objects.filter(published=True).count(), 1)
+
+        response = self.client.get('/api/en/signages.geojson')
+        self.assertEqual(response.status_code, 200)
+        poislayer = json.loads(response.content)
+        poifeature = poislayer['features'][0]
+        self.assertEqual(len(poislayer['features']), 1)
+        self.assertEqual(poifeature['properties']['name'], signa.name)
 
     def test_services_geojson(self):
         trek = TrekWithServicesFactory.create(published=True)

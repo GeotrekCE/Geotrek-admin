@@ -80,7 +80,8 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     networks = models.ManyToManyField('Network',
                                       blank=True, related_name="paths",
                                       verbose_name=_("Networks"), db_table="l_r_troncon_reseau")
-    eid = models.CharField(verbose_name=_("External id"), max_length=128, blank=True, null=True, db_column='id_externe')
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
+    draft = models.BooleanField(db_column='brouillon', default=False, verbose_name=_(u"Draft"), db_index=True)
 
     objects = PathManager()
     include_invisible = PathInvisibleManager()
@@ -109,6 +110,10 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         db_table = 'l_t_troncon'
         verbose_name = _("Path")
         verbose_name_plural = _("Paths")
+        permissions = MapEntityMixin._meta.permissions + [("add_draft_path", "Can add draft Path"),
+                                                          ("change_draft_path", "Can change draft Path"),
+                                                          ("delete_draft_path", "Can delete draft Path"),
+                                                          ]
 
     @classmethod
     def closest(cls, point, exclude=None):
@@ -119,7 +124,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         # TODO: move to custom manager
         if point.srid != settings.SRID:
             point = point.transform(settings.SRID, clone=True)
-        qs = cls.objects.all()
+        qs = cls.objects.exclude(draft=True)
         if exclude:
             qs = qs.exclude(pk=exclude.pk)
         return qs.exclude(visible=False).distance(point).order_by('distance')[0]
@@ -150,7 +155,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         """
         return PathHelper.snap(self, point)
 
-    def reload(self, fromdb=None):
+    def reload(self):
         # Update object's computed values (reload from database)
         if self.pk and self.visible:
             fromdb = self.__class__.objects.get(pk=self.pk)
@@ -377,7 +382,7 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
             other.delete(force=True)  # Really delete it from database
         return self
 
-    def reload(self, fromdb=None):
+    def reload(self):
         """
         Reload into instance all computed attributes in triggers.
         """
@@ -591,6 +596,8 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
     departure = models.CharField(verbose_name=_("Departure"), max_length=64, db_column='depart')
     arrival = models.CharField(verbose_name=_("Arrival"), max_length=64, db_column='arrivee')
     comments = models.TextField(default="", blank=True, verbose_name=_("Comments"), db_column='commentaire')
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True,
+                           db_column='id_externe')
 
     class Meta:
         db_table = 'l_t_sentier'
