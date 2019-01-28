@@ -206,14 +206,14 @@ class MultiplePathDelete(TemplateView):
             if path.draft and not self.request.user.has_perm('core.delete_draft_path'):
                 messages.warning(self.request, _(
                     u'Access to the requested resource is restricted. You have been redirected.'))
-                return redirect('core:path_detail', **kwargs)
+                return redirect('core:path_list')
             if not path.draft and not self.request.user.has_perm('core.delete_path'):
                 messages.warning(self.request, _(
                     u'Access to the requested resource is restricted. You have been redirected.'))
-                return redirect('core:path_detail', **kwargs)
+                return redirect('core:path_list')
             if not path.same_structure(self.request.user):
                 messages.warning(self.request, _(u'Access to the requested resource is restricted by structure. You have been redirected.'))
-                return redirect('core:path_detail', **kwargs)
+                return redirect('core:path_list')
         return super(MultiplePathDelete, self).dispatch(*args, **kwargs)
 
     # Add support for browsers which only accept GET and POST for now.
