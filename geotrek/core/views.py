@@ -212,7 +212,8 @@ class MultiplePathDelete(TemplateView):
                     u'Access to the requested resource is restricted. You have been redirected.'))
                 return redirect('core:path_list')
             if not path.same_structure(self.request.user):
-                messages.warning(self.request, _(u'Access to the requested resource is restricted by structure. You have been redirected.'))
+                messages.warning(self.request, _(u'Access to the requested resource is restricted by structure. '
+                                                 u'You have been redirected.'))
                 return redirect('core:path_list')
         return super(MultiplePathDelete, self).dispatch(*args, **kwargs)
 
