@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import json
 
 from django.contrib.auth.models import User, Permission
 from django.conf import settings
@@ -79,28 +78,12 @@ class BasicJSONAPITest(TranslationResetMixin, TrekkingManagerTest):
         self.sensitivearea = SensitiveAreaFactory.create()
         self.species = self.sensitivearea.species
         self.pk = self.sensitivearea.pk
-        url = '/api/en/sensitiveareas/{pk}.json'.format(pk=self.pk)
-        self.response = self.client.get(url)
-        self.result = json.loads(self.response.content.decode())
-
-    def test_expected_properties(self):
-        self.assertDictEqual(self.result, {
-            'id': self.pk,
+        self.expected_properties = {
             'publication_date': str(self.sensitivearea.publication_date.strftime('%Y-%m-%d')),
             'published': True,
-            'description': "Blabla",
-            'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
-            'kml_url': '/api/en/sensitiveareas/{pk}.kml'.format(pk=self.pk),
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [[
-                    [3.0000000000000004, 46.499999999999936],
-                    [3.0000000000000004, 46.500027013495476],
-                    [3.000039118674989, 46.50002701348879],
-                    [3.0000391186556095, 46.49999999999324],
-                    [3.0000000000000004, 46.499999999999936]
-                ]],
-            },
+            'description': u"Blabla",
+            'contact': u'<a href="mailto:toto@tata.com">toto@tata.com</a>',
+            'kml_url': u'/api/en/sensitiveareas/{pk}.kml'.format(pk=self.pk),
             'species': {
                 "id": self.species.id,
                 "name": self.species.name,
@@ -112,4 +95,127 @@ class BasicJSONAPITest(TranslationResetMixin, TrekkingManagerTest):
                 ],
                 'url': self.species.url,
             },
+        }
+        self.expected_geom = {
+            u'type': u'Polygon',
+            u'coordinates': [[
+                [3.0000000000000004, 46.499999999999936],
+                [3.0000000000000004, 46.500027013495476],
+                [3.000039118674989, 46.50002701348879],
+                [3.0000391186556095, 46.49999999999324],
+                [3.0000000000000004, 46.499999999999936],
+            ]],
+        }
+        self.expected_result = dict(self.expected_properties)
+        self.expected_result['id'] = self.pk
+        self.expected_result['geometry'] = self.expected_geom
+        self.expected_geo_result = {
+            'geometry': self.expected_geom,
+            'type': 'Feature',
+            'id': self.pk,
+            'properties': self.expected_properties,
+        }
+
+    def test_object(self):
+        url = '/api/en/sensitiveareas/{pk}.json'.format(pk=self.pk)
+        response = self.client.get(url)
+        self.assertJSONEqual(response.content, self.expected_result)
+
+    def test_list(self):
+        url = '/api/en/sensitiveareas.json'
+        response = self.client.get(url)
+        self.assertJSONEqual(response.content, [self.expected_result])
+
+    def test_geo_object(self):
+        url = '/api/en/sensitiveareas/{pk}.geojson'.format(pk=self.pk)
+        response = self.client.get(url)
+        self.assertJSONEqual(response.content, self.expected_geo_result)
+
+    def test_geo_list(self):
+        url = '/api/en/sensitiveareas.geojson'
+        response = self.client.get(url)
+        self.assertJSONEqual(response.content, {u'type': u'FeatureCollection', u'features': [self.expected_geo_result]})
+
+
+class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
+    maxDiff = None
+
+    def setUp(self):
+        super(TrekkingManagerTest, self).setUp()
+        self.sensitivearea = SensitiveAreaFactory.create()
+        self.species = self.sensitivearea.species
+        self.pk = self.sensitivearea.pk
+        self.expected_properties = {
+            u'create_datetime': unicode(self.sensitivearea.date_insert.isoformat().replace('+00:00', 'Z')),
+            u'update_datetime': unicode(self.sensitivearea.date_update.isoformat().replace('+00:00', 'Z')),
+            u'description': u"Blabla",
+            u'contact': u'<a href="mailto:toto@tata.com">toto@tata.com</a>',
+            u'kml_url': u'http://testserver/api/en/sensitiveareas/{pk}.kml'.format(pk=self.pk),
+            u'info_url': self.species.url,
+            u'species_id': self.species.id,
+            u"name": self.species.name,
+            u"period": [False, False, False, False, False, True, True, False, False, False, False, False],
+            u'practices': [p.pk for p in self.species.practices.all()],
+            u'structure': u'GEOTEAM',
+            u'published': True,
+        }
+        self.expected_geom = {
+            u'type': u'Polygon',
+            u'coordinates': [[
+                [3.0000000000000004, 46.499999999999936],
+                [3.0000000000000004, 46.500027013495476],
+                [3.000039118674989, 46.50002701348879],
+                [3.0000391186556095, 46.49999999999324],
+                [3.0000000000000004, 46.499999999999936],
+            ]],
+        }
+        self.expected_result = dict(self.expected_properties)
+        self.expected_result[u'id'] = self.pk
+        self.expected_result[u'geometry'] = self.expected_geom
+        self.expected_result[u'url'] = u'http://testserver/api/v2/sensitivearea/{}/?format=json'.format(self.pk)
+        self.expected_geo_result = {
+            u'bbox': [2.9999999999999996, 46.49999999999323, 3.000039118674988, 46.50002701349546],
+            u'geometry': self.expected_geom,
+            u'type': u'Feature',
+            u'id': self.pk,
+            u'properties': dict(self.expected_properties),
+        }
+        self.expected_geo_result[u'properties'][u'url'] = u'http://testserver/api/v2/sensitivearea/{}/?format=geojson'.format(self.pk)
+
+    def test_object(self):
+        url = '/api/v2/sensitivearea/{pk}/?format=json&period=ignore&language=en'.format(pk=self.pk)
+        response = self.client.get(url)
+        self.assertJSONEqual(response.content, self.expected_result)
+
+    def test_list(self):
+        url = '/api/v2/sensitivearea/?format=json&period=ignore&language=en'
+        response = self.client.get(url)
+        self.assertJSONEqual(response.content, {
+            u'count': 1,
+            u'previous': None,
+            u'next': None,
+            u'results': [self.expected_result],
         })
+
+    def test_geo_object(self):
+        url = '/api/v2/sensitivearea/{pk}/?format=geojson&period=ignore&language=en'.format(pk=self.pk)
+        response = self.client.get(url)
+        self.assertJSONEqual(response.content, self.expected_geo_result)
+
+    def test_geo_list(self):
+        url = '/api/v2/sensitivearea/?format=geojson&period=ignore&language=en'
+        response = self.client.get(url)
+        self.assertJSONEqual(response.content, {
+            u'count': 1,
+            u'next': None,
+            u'previous': None,
+            u'type': u'FeatureCollection',
+            u'features': [self.expected_geo_result]
+        })
+
+    def test_no_duplicates(self):
+        url = '/api/v2/sensitivearea/?format=geojson&period=ignore&language=en&practices={}'.format(
+            ','.join([str(p.pk) for p in self.species.practices.all()])
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.json()['count'], 1)

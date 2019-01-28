@@ -9,7 +9,8 @@ from django.db import transaction
 from geotrek.authent.models import default_structure
 from geotrek.authent.models import Structure
 from geotrek.core.helpers import TopologyHelper
-from geotrek.infrastructure.models import Signage, InfrastructureType, InfrastructureCondition, Infrastructure
+from geotrek.infrastructure.models import (InfrastructureType,
+                                           InfrastructureCondition, Infrastructure)
 from django.conf import settings
 
 
@@ -20,9 +21,6 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('point_layer')
-        parser.add_argument('--signage', dest='signage', action='store_true', help='Create signage objects')
-        parser.add_argument('--infrastructure', dest='infrastructure', action='store_true',
-                            help='Create infrastructure objects')
         parser.add_argument('--encoding', '-e', action='store', dest='encoding', default='utf-8',
                             help='File encoding, default utf-8')
         parser.add_argument('--name-field', '-n', action='store', dest='name_field', help='Base url')
@@ -52,10 +50,6 @@ class Command(BaseCommand):
 
         if not os.path.exists(filename):
             raise CommandError('File does not exists at: %s' % filename)
-
-        if (options.get('signage') and (options.get('infrastructure')))\
-                or (not options.get('signage') and (not options.get('infrastructure'))):
-                raise CommandError('Only one of --signage and --infrastructure required')
 
         data_source = DataSource(filename, encoding=options.get('encoding'))
 
@@ -153,10 +147,9 @@ class Command(BaseCommand):
                         field_implantation_year)) if field_implantation_year in available_fields and feature.get(
                         field_implantation_year).isdigit() else options.get('year_default')
                     eid = feature.get(field_eid) if field_eid in available_fields else None
-                    model = 'S' if options.get('signage') else 'B'
 
                     self.create_infrastructure(feature_geom, name, type, condition, structure, description, year,
-                                               model, verbosity, eid)
+                                               verbosity, eid)
 
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
@@ -168,10 +161,9 @@ class Command(BaseCommand):
             raise
 
     def create_infrastructure(self, geometry, name, type,
-                              condition, structure, description, year, model, verbosity, eid):
+                              condition, structure, description, year, verbosity, eid):
 
-        infra_type, created = InfrastructureType.objects.get_or_create(label=type, type=model, structure=None)
-
+        infra_type, created = InfrastructureType.objects.get_or_create(label=type, type='B', structure=None)
         if created and verbosity:
             self.stdout.write("- InfrastructureType '{}' created".format(infra_type))
 
@@ -184,7 +176,6 @@ class Command(BaseCommand):
             condition_type = None
 
         with transaction.atomic():
-            Model = Signage if model == 'S' else Infrastructure
             fields_without_eid = {
                 'type': infra_type,
                 'name': name,
@@ -194,14 +185,14 @@ class Command(BaseCommand):
                 'implantation_year': year
             }
             if eid:
-                infra, created = Model.objects.update_or_create(
+                infra, created = Infrastructure.objects.update_or_create(
                     eid=eid,
                     defaults=fields_without_eid
                 )
                 if verbosity > 0 and not created:
                     self.stdout.write("Update : %s with eid %s" % (name, eid))
             else:
-                infra = Model.objects.create(**fields_without_eid)
+                infra = Infrastructure.objects.create(**fields_without_eid)
 
         serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
         topology = TopologyHelper.deserialize(serialized)

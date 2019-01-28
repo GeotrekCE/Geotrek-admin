@@ -2,7 +2,8 @@ from django.test import TestCase
 from django.utils import translation
 
 from geotrek.infrastructure.models import Infrastructure
-from geotrek.infrastructure.factories import InfrastructureFactory, SignageFactory
+from geotrek.infrastructure.factories import InfrastructureFactory
+from geotrek.signage.factories import SignageFactory
 from geotrek.maintenance.models import Intervention
 from geotrek.maintenance.factories import (InterventionFactory,
                                            InfrastructureInterventionFactory,
@@ -21,13 +22,13 @@ class InterventionTest(TestCase):
 
     def test_infrastructure(self):
         i = InterventionFactory.create()
-        self.assertFalse(i.on_infrastructure)
+        self.assertFalse(i.on_existing_topology)
         infra = InfrastructureFactory.create()
-        i.set_infrastructure(infra)
-        self.assertTrue(i.on_infrastructure)
+        i.set_topology(infra)
+        self.assertTrue(i.on_existing_topology)
         sign = SignageFactory.create()
-        i.set_infrastructure(sign)
-        self.assertTrue(i.on_infrastructure)
+        i.set_topology(sign)
+        self.assertTrue(i.on_existing_topology)
 
     def test_default_stake(self):
         i = InterventionFactory.create()
@@ -48,7 +49,7 @@ class InterventionTest(TestCase):
         infra.add_path(PathFactory.create(stake=lowstake))
         infra.add_path(PathFactory.create(stake=highstake))
         infra.add_path(PathFactory.create(stake=lowstake))
-        i.set_infrastructure(infra)
+        i.set_topology(infra)
         # Stake is not None anymore
         i.save()
         self.assertFalse(i.stake is None)
@@ -74,13 +75,13 @@ class InterventionTest(TestCase):
         infra.add_path(p)
 
         i1 = InterventionFactory.create()
-        i1.set_infrastructure(sign)
+        i1.set_topology(sign)
         i1.save()
 
         self.assertCountEqual(p.interventions, [i1])
 
         i2 = InterventionFactory.create()
-        i2.set_infrastructure(infra)
+        i2.set_topology(infra)
         i2.save()
 
         self.assertCountEqual(p.interventions, [i1, i2])
@@ -97,19 +98,19 @@ class InterventionTest(TestCase):
         interv = InterventionFactory.create()
         proj = ProjectFactory.create()
 
-        self.assertFalse(interv.on_infrastructure)
+        self.assertFalse(interv.on_existing_topology)
         self.assertEqual(interv.infrastructure, None)
 
-        interv.set_infrastructure(infra)
-        self.assertTrue(interv.on_infrastructure)
+        interv.set_topology(infra)
+        self.assertTrue(interv.on_existing_topology)
         self.assertFalse(interv.is_signage)
         self.assertTrue(interv.is_infrastructure)
         self.assertEqual(interv.signages, [])
         self.assertEqual(interv.infrastructures, [infra])
         self.assertEqual(interv.infrastructure, infra)
 
-        interv.set_infrastructure(sign)
-        self.assertTrue(interv.on_infrastructure)
+        interv.set_topology(sign)
+        self.assertTrue(interv.on_existing_topology)
         self.assertTrue(interv.is_signage)
         self.assertFalse(interv.is_infrastructure)
         self.assertEqual(interv.signages, [sign])
@@ -123,7 +124,7 @@ class InterventionTest(TestCase):
     def test_delete_topology(self):
         infra = InfrastructureFactory.create()
         interv = InterventionFactory.create()
-        interv.set_infrastructure(infra)
+        interv.set_topology(infra)
         interv.save()
         infra.delete()
         self.assertEqual(Infrastructure.objects.existing().count(), 0)
@@ -136,7 +137,7 @@ class InterventionTest(TestCase):
 
         # After setting related infrastructure
         interv = InterventionFactory.create()
-        interv.set_infrastructure(infra)
+        interv.set_topology(infra)
         interv.save()
         self.assertEqual(interv.length, infra.length)
 

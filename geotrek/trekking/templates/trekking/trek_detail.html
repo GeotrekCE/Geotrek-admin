@@ -98,12 +98,12 @@
 
             //
             // Trek signage layer
-            $.getJSON('{% url 'infrastructure:trek_signage_geojson' LANGUAGE_CODE object.pk %}', function (data) {
+            $.getJSON('{% url 'signage:trek_signage_geojson' LANGUAGE_CODE object.pk %}', function (data) {
                 var signages = new SignagesLayer(data, {
                     iconSize: {{ view.icon_sizes.signage }}
                 });
 
-                var signageUrl = "{% url 'infrastructure:signage_detail' 0 %}";
+                var signageUrl = "{% url 'signage:signage_detail' 0 %}";
                 signages.eachLayer(function (layer) {
                     layer.on('dblclick', function (e) {
                         window.location = signageUrl.replace('0', layer.properties.pk);

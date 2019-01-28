@@ -36,6 +36,7 @@ class AuthentFixturesMixin(object):
             from geotrek.land import urls  # NOQA
             from geotrek.maintenance import urls  # NOQA
             from geotrek.infrastructure import urls  # NOQA
+            from geotrek.signage import urls  # NOQA
             from geotrek.trekking import urls  # NOQA
             from geotrek.tourism import urls  # NOQA
 

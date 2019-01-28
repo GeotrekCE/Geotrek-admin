@@ -1,7 +1,8 @@
 from django.utils.translation import ugettext_lazy as _
 
 from geotrek.core.filters import TopologyFilter, PathFilterSet, TrailFilterSet
-from geotrek.infrastructure.filters import InfrastructureFilterSet, SignageFilterSet
+from geotrek.infrastructure.filters import InfrastructureFilterSet
+from geotrek.signage.filters import SignageFilterSet
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 from geotrek.trekking.filters import TrekFilterSet, POIFilterSet
 from geotrek.tourism.filters import TouristicContentFilterSet, TouristicEventFilterSet

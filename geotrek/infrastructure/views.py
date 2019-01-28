@@ -7,10 +7,10 @@ from geotrek.authent.decorators import same_structure_required
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 
-from .filters import InfrastructureFilterSet, SignageFilterSet
-from .forms import InfrastructureForm, SignageForm
-from .models import Infrastructure, Signage
-from .serializers import SignageSerializer, InfrastructureSerializer
+from .filters import InfrastructureFilterSet
+from .forms import InfrastructureForm
+from .models import Infrastructure
+from .serializers import InfrastructureSerializer
 
 from rest_framework import permissions as rest_permissions
 from mapentity.views import MapEntityViewSet
@@ -72,73 +72,6 @@ class InfrastructureDelete(MapEntityDelete):
     @same_structure_required('infrastructure:infrastructure_detail')
     def dispatch(self, *args, **kwargs):
         return super(InfrastructureDelete, self).dispatch(*args, **kwargs)
-
-
-class SignageLayer(MapEntityLayer):
-    queryset = Signage.objects.existing()
-    properties = ['name', 'published']
-
-
-class SignageList(MapEntityList):
-    queryset = Signage.objects.existing()
-    filterform = SignageFilterSet
-    columns = ['id', 'name', 'type', 'condition', 'cities']
-
-
-class SignageJsonList(MapEntityJsonList, SignageList):
-    pass
-
-
-class SignageFormatList(MapEntityFormat, SignageList):
-    columns = [
-        'id', 'name', 'type', 'condition', 'description',
-        'implantation_year', 'published', 'structure', 'date_insert',
-        'date_update', 'cities', 'districts', 'areas',
-    ] + AltimetryMixin.COLUMNS
-
-
-class SignageDetail(MapEntityDetail):
-    queryset = Signage.objects.existing()
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(SignageDetail, self).get_context_data(*args, **kwargs)
-        context['can_edit'] = self.get_object().same_structure(self.request.user)
-        return context
-
-
-class SignageDocument(MapEntityDocument):
-    model = Signage
-
-
-class SignageCreate(MapEntityCreate):
-    model = Signage
-    form_class = SignageForm
-
-
-class SignageUpdate(MapEntityUpdate):
-    queryset = Signage.objects.existing()
-    form_class = SignageForm
-
-    @same_structure_required('infrastructure:signage_detail')
-    def dispatch(self, *args, **kwargs):
-        return super(SignageUpdate, self).dispatch(*args, **kwargs)
-
-
-class SignageDelete(MapEntityDelete):
-    model = Signage
-
-    @same_structure_required('infrastructure:signage_detail')
-    def dispatch(self, *args, **kwargs):
-        return super(SignageDelete, self).dispatch(*args, **kwargs)
-
-
-class SignageViewSet(MapEntityViewSet):
-    model = Signage
-    serializer_class = SignageSerializer
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_queryset(self):
-        return Signage.objects.existing().filter(published=True).transform(settings.API_SRID, field_name='geom')
 
 
 class InfrastructureViewSet(MapEntityViewSet):

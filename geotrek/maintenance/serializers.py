@@ -7,7 +7,7 @@ class InterventionSerializer(ModelSerializer):
         model = Intervention
         geo_field = 'geom'
         fields = (
-            'id', 'name', 'date', 'type', 'infrastructure', 'status', 'stake',
+            'id', 'name', 'date', 'type', 'infrastructure', 'signage', 'status', 'stake',
             'disorders', 'total_manday', 'project', 'subcontracting',
             'width', 'height', 'length', 'area', 'structure',
             'description', 'date_insert', 'date_update',

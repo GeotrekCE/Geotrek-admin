@@ -129,7 +129,7 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
         else:
             months = [int(m) for m in period.split(',')]
             qs = qs.filter(reduce(operator.or_, (Q(**{'species__period{:02}'.format(m): True}) for m in months)))
-        return qs
+        return qs.distinct()
 
     def get_schema_fields(self, view):
         field_period = Field(name='period', required=False,

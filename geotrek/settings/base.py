@@ -59,6 +59,7 @@ DATABASE_SCHEMAS = {
     'easy_thumbnails': 'django',
     'geotrek.feedback': 'gestion',
     'geotrek.infrastructure': 'gestion',
+    'geotrek.signage': 'gestion',
     'geotrek.maintenance': 'gestion',
     'geotrek.tourism': 'tourisme',
     'geotrek.trekking': 'rando',
@@ -291,6 +292,7 @@ INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.altimetry',
     'geotrek.core',
     'geotrek.infrastructure',
+    'geotrek.signage',
     'geotrek.maintenance',
     'geotrek.zoning',
     'geotrek.land',
@@ -594,6 +596,8 @@ FACEBOOK_APP_ID = ''
 FACEBOOK_IMAGE = '/images/logo-geotrek.png'
 FACEBOOK_IMAGE_WIDTH = 200
 FACEBOOK_IMAGE_HEIGHT = 200
+
+FORMAT_LINE_CODE = "{signagecode}-{bladenumber}-{linenumber}"
 
 CAPTURE_AUTOLOGIN_TOKEN = os.getenv('CAPTURE_AUTOLOGIN_TOKEN', None)
 

@@ -1,0 +1,43 @@
+{% extends "mapentity/mapentity_detail.html" %}
+{% load i18n signage_tags mapentity_tags %}
+
+{% block detailspanel %}
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{% trans "Signage" %}</th>
+            <td><a href="{% url 'signage:signage_detail' pk=object.signage.pk %}">
+                        {{ object.signage }}
+                    </a></td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"number" }}</th>
+            <td>{{ object.number }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"type" }}</th>
+            <td>{{ object.type }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"condition" }}</th>
+            <td>{% if object.condition %}{{ object.condition }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"color" }}</th>
+            <td>{% if object.color %}{{ object.color }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"structure" }}</th>
+            <td>{% if object.structure %}{{ object.structure }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Lines" %}</th>
+            <td>{% for line in object.order_lines %}
+                    #{{ line.number }} {{ line.text }} | {{ line|verbose:"distance" }} : {{ line.distance|default:_("None") }}
+                / {{ line|verbose:"time" }} : {{ line.time|default:_("None") }} |
+                {{ line|verbose:"pictogram_name" }} :  {{ line.pictogram_name|default:_("None") }}<br>
+                {% endfor %}
+            </td>
+        </tr>
+    </table>
+    {{ block.super }}
+{% endblock detailspanel %}

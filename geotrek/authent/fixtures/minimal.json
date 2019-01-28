@@ -8,7 +8,7 @@
                 ["read_path", "core", "path"],
                 ["read_trail", "core", "trail"],
 
-                ["read_signage", "infrastructure", "signage"],
+                ["read_signage", "signage", "signage"],
                 ["read_infrastructure", "infrastructure", "infrastructure"],
 
                 ["read_intervention", "maintenance", "intervention"],

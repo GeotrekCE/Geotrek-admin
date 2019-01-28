@@ -23,7 +23,8 @@ docs/_build/
 /node_modules/
 /salt.cfg
 
-/parsers.py
+/bulkimport/
+!/bulkimport/__init__.py
 /sync_trek/
 
 /.project

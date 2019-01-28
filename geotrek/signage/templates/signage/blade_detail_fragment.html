@@ -1,0 +1,17 @@
+{% load i18n geotrek_tags mapentity_tags %}
+{% if modelname != "blade" %}
+<h3>{% trans "Blade" %}</h3>
+    <table class="table">
+        <tr>
+            <th>{% trans "Blades" %}</th>
+            <td>
+                {% if perms.signage.add_blade %}
+                <p class="autohide"><a href="{% url 'signage:blade_add' %}" class="btn btn-mini btn-success">
+                    <i class="icon-plus icon-white"></i> {% trans "Add a new blade" %}</a>
+                </p>
+                {% endif %}
+                {% valuelist object.blades field='blade' %}
+            </td>
+        </tr>
+    </table>
+{% endif %}

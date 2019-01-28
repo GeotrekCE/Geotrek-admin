@@ -1,0 +1,42 @@
+{% extends "mapentity/mapentity_form.html" %}
+{% load i18n crispy_forms_tags mapentity_tags staticfiles %}
+
+{% block mainform %}
+    <form id="mainform" action="{% if object.pk %}{{ object.get_update_url }}{% else %}{{ object.get_add_url }}{% endif %}" class="form-horizontal" method="POST">
+    {% crispy form %}
+    <h4>{% trans "Lines" %}</h4>
+    <fieldset class="scrollable  formset">
+        {{ line_formset.non_form_errors }}
+        {{ line_formset.management_form }}
+        {% for line_form in line_formset %}
+            <div class="form-row inline controls controls-row {{ line_formset.prefix }}">
+                {% crispy line_form %}
+            </div>
+        {% endfor %}
+    </fieldset>
+
+    </form>
+{% endblock mainform %}
+{% block extrabody %}
+    {{ block.super }}
+    <script type="text/javascript">
+                $('#id_date').datepicker({
+                autoclose: true,
+                language: '{{ request.LANGUAGE_CODE }}',
+                format: window.SETTINGS.date_format
+            });
+        $(".clearfix").removeClass("clearfix");
+
+        $(window).ready(function () {
+            // TODO: do this with crispyforms !
+            $('.form-row.inline.{{ line_formset.prefix }}').formset({
+                prefix: '{{ line_formset.prefix }}',
+                keepFieldValues: "[name='csrfmiddlewaretoken']",
+                addCssClass: 'btn btn-primary add-row',
+                deleteCssClass: 'delete-row',
+                addText: '{% trans "Add a line" %}',
+                deleteText: '{% trans "Remove" %}',
+            });
+        });
+    </script>
+{% endblock extrabody %}
