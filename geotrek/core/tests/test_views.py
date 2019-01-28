@@ -46,7 +46,7 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         poi = POIFactory.create(no_path=True)
         poi.add_path(path_1, start=0, end=0)
         response = self.client.get(reverse('core:path_list'))
-        self.assertIn('<a href="#confirm-delete" id="btn-delete" role="button">', response.content)
+        self.assertIn('<a href="#delete" id="btn-delete" role="button">', response.content)
 
     def test_delete_view_multiple_path(self):
         path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
