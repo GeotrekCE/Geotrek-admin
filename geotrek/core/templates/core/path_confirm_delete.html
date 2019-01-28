@@ -5,8 +5,9 @@
 {{ block.super }}
 
 <div class="div-center">
-    <div class="panel-heading">{% trans 'Different topologies are linked with this path' %} :</div>
-
+    {% if topologies_by_model|length %}
+        <div class="panel-heading">{% trans 'Different topologies are linked with this path' %} :</div>
+    {% endif %}
     {% for model, topologies in topologies_by_model.iteritems %}
 
         <h4>{{ model }} :</h4>
