@@ -12,7 +12,6 @@ from django.conf import settings
 
 from mapentity.factories import UserFactory
 
-from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.common.tests import CommonTest
 from geotrek.common.utils import LTE
 from geotrek.common.utils import almostequal
