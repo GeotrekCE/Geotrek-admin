@@ -266,6 +266,30 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     def checkbox_display(self):
         return self.checkbox
 
+    def topologies_by_path(self, default_dict):
+        if 'geotrek.core' in settings.INSTALLED_APPS:
+            for trail in self.trails:
+                default_dict[_('Trails')].append({'name': trail.name, 'url': trail.get_detail_url()})
+        if 'geotrek.trekking' in settings.INSTALLED_APPS:
+            for trek in self.treks:
+                default_dict[_('Treks')].append({'name': trek.name, 'url': trek.get_detail_url()})
+            for service in self.services:
+                default_dict[_('Services')].append(
+                    {'name': service.type.name, 'url': service.get_detail_url()})
+            for poi in self.pois:
+                default_dict[_('Pois')].append({'name': poi.name, 'url': poi.get_detail_url()})
+        if 'geotrek.signage' in settings.INSTALLED_APPS:
+            for signage in self.signages:
+                default_dict[_('Signages')].append({'name': signage.name, 'url': signage.get_detail_url()})
+        if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
+            for infrastructure in self.infrastructures:
+                default_dict[_('Infrastructures')].append(
+                    {'name': infrastructure.name, 'url': infrastructure.get_detail_url()})
+        if 'geotrek.maintenance' in settings.INSTALLED_APPS:
+            for intervention in self.interventions:
+                default_dict[_('Interventions')].append(
+                    {'name': intervention.name, 'url': intervention.get_detail_url()})
+
     def merge_path(self, path_to_merge):
         """
         Path unification

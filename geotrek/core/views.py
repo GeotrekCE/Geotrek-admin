@@ -230,25 +230,7 @@ class MultiplePathDelete(TemplateView):
         context = super(MultiplePathDelete, self).get_context_data(**kwargs)
         topologies_by_model = defaultdict(list)
         for path in self.paths:
-            if 'geotrek.core' in settings.INSTALLED_APPS:
-                for trail in path.trails:
-                    topologies_by_model[_('Trails')].append({'name': trail.name, 'url': trail.get_detail_url()})
-            if 'geotrek.trekking' in settings.INSTALLED_APPS:
-                for trek in path.treks:
-                    topologies_by_model[_('Treks')].append({'name': trek.name, 'url': trek.get_detail_url()})
-                for service in path.services:
-                    topologies_by_model[_('Services')].append({'name': service.type.name, 'url': service.get_detail_url()})
-                for poi in path.pois:
-                    topologies_by_model[_('Pois')].append({'name': poi.name, 'url': poi.get_detail_url()})
-            if 'geotrek.signage' in settings.INSTALLED_APPS:
-                for signage in path.signages:
-                    topologies_by_model[_('Signages')].append({'name': signage.name, 'url': signage.get_detail_url()})
-            if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
-                for infrastructure in path.infrastructures:
-                    topologies_by_model[_('Infrastructures')].append({'name': infrastructure.name, 'url': infrastructure.get_detail_url()})
-            if 'geotrek.maintenance' in settings.INSTALLED_APPS:
-                for intervention in path.interventions:
-                    topologies_by_model[_('Interventions')].append({'name': intervention.name, 'url': intervention.get_detail_url()})
+            path.topologies_by_path(topologies_by_model)
         context['topologies_by_model'] = dict(topologies_by_model)
         return context
 
@@ -274,26 +256,7 @@ class PathDelete(MapEntityDelete):
     def get_context_data(self, **kwargs):
         context = super(PathDelete, self).get_context_data(**kwargs)
         topologies_by_model = defaultdict(list)
-        if 'geotrek.core' in settings.INSTALLED_APPS:
-            for trail in self.object.trails:
-                topologies_by_model[_('Trails')].append({'name': trail.name, 'url': trail.get_detail_url()})
-        if 'geotrek.trekking' in settings.INSTALLED_APPS:
-            for trek in self.object.treks:
-                topologies_by_model[_('Treks')].append({'name': trek.name, 'url': trek.get_detail_url()})
-            for service in self.object.services:
-                topologies_by_model[_('Services')].append({'name': service.type.name, 'url': service.get_detail_url()})
-            for poi in self.object.pois:
-                topologies_by_model[_('Pois')].append({'name': poi.name, 'url': poi.get_detail_url()})
-        if 'geotrek.signage' in settings.INSTALLED_APPS:
-            for signage in self.object.signages:
-                topologies_by_model[_('Signages')].append({'name': signage.name, 'url': signage.get_detail_url()})
-        if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
-            for infrastructure in self.object.infrastructures:
-                topologies_by_model[_('Infrastructures')].append(
-                    {'name': infrastructure.name, 'url': infrastructure.get_detail_url()})
-        if 'geotrek.maintenance' in settings.INSTALLED_APPS:
-            for intervention in self.object.interventions:
-                topologies_by_model[_('Interventions')].append({'name': intervention.name, 'url': intervention.get_detail_url()})
+        self.object.topologies_by_path(topologies_by_model)
         context['topologies_by_model'] = dict(topologies_by_model)
         return context
 
