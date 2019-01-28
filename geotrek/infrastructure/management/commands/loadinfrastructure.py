@@ -109,7 +109,7 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.ERROR(
                         "Field '{}' not found in data source.".format(field_description)))
                     self.stdout.write(self.style.ERROR(
-                         "Change your --description-field option"))
+                        "Change your --description-field option"))
                     break
 
                 if field_implantation_year and field_implantation_year not in available_fields:

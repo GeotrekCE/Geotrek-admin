@@ -167,13 +167,13 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
             icon = self.topology.kind.lower()
             if self.infrastructure:
                 title = '%s: %s' % (_(self.topology.kind.capitalize()),
-                                     self.infrastructure)
+                                    self.infrastructure)
             elif self.signage:
                 title = '%s: %s' % (_(self.topology.kind.capitalize()),
-                                     self.signage)
+                                    self.signage)
         return '<img src="%simages/%s-16.png" title="%s">' % (settings.STATIC_URL,
-                                                               icon,
-                                                               title)
+                                                              icon,
+                                                              title)
 
     @property
     def infrastructure_csv_display(self):

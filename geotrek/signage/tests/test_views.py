@@ -150,7 +150,7 @@ class SignageViewsTest(CommonTest):
         self.assertTrue('form' in response.context)
         form = response.context['form']
         type = form.fields['type']
-        self.assertTrue((signagetype.pk, unicode(signagetype)) in type.choices)
+        self.assertTrue((signagetype.pk, signagetype) in type.choices)
 
     def test_no_pictogram(self):
         self.modelfactory = SignageNoPictogramFactory

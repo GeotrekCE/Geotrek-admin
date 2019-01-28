@@ -50,8 +50,8 @@ class BladeForm(CommonForm):
         self.fields['topology'].widget.modifiable = True
         self.fields['topology'].label = '%s%s %s' % (
             self.instance.signage_display,
-            unicode(_("On %s") % _(self.signage.kind.lower())),
-            u'<a href="%s">%s</a>' % (self.signage.get_detail_url(), unicode(self.signage))
+            _("On %s") % _(self.signage.kind.lower()),
+            '<a href="%s">%s</a>' % (self.signage.get_detail_url(), self.signage)
         )
         max_blade = self.signage.blade_set.existing().aggregate(max=Max('number'))
         value_max = max_blade['max'] or 0
