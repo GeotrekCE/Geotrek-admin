@@ -5,9 +5,9 @@ CHANGELOG
 2.23.1.dev0
 -------------------
 
-**Bug fixes**
+**New features**
 
--
+- Bulk path deletion
 
 
 2.23.0 (2019-01-24)
