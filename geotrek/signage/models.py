@@ -68,7 +68,7 @@ class Signage(MapEntityMixin, BaseInfrastructure):
                             db_column='code')
     manager = models.ForeignKey(Organism, db_column='gestionnaire', verbose_name=_("Manager"), null=True, blank=True)
     sealing = models.ForeignKey(Sealing, db_column='scellement', verbose_name=_("Sealing"), null=True, blank=True)
-    printed_elevation = models.IntegerField(verbose_name=_(u"Printed Elevation"), blank=True, null=True,
+    printed_elevation = models.IntegerField(verbose_name=_(u"Printed elevation"), blank=True, null=True,
                                             db_column='altitude_imprimee')
     type = models.ForeignKey(SignageType, db_column='type', verbose_name=_("Type"))
     gps_value_verbose_name = _("GPS coordinates")
@@ -144,8 +144,8 @@ class Color(models.Model):
 
     class Meta:
         db_table = 's_b_color'
-        verbose_name = _(u"Blade Color")
-        verbose_name_plural = _(u"Blade Colors")
+        verbose_name = _(u"Blade color")
+        verbose_name_plural = _(u"Blade colors")
 
     def __unicode__(self):
         return self.label
@@ -161,8 +161,8 @@ class BladeType(StructureOrNoneRelated):
 
     class Meta:
         db_table = 's_b_lame'
-        verbose_name = _(u"Blade Type")
-        verbose_name_plural = _(u"Blade Types")
+        verbose_name = _(u"Blade type")
+        verbose_name_plural = _(u"Blade types")
 
     def __unicode__(self):
         if self.structure:
@@ -235,13 +235,13 @@ class Line(StructureRelated):
                                    decimal_places=3, max_digits=8)
     pictogram_name = models.CharField(db_column='nom_pictogramme', verbose_name=_("Pictogramm name"), max_length=250,
                                       blank=True, null=True)
-    time = models.DurationField(db_column='temps', verbose_name=_("Temps"), null=True, blank=True,
+    time = models.DurationField(db_column='temps', verbose_name=_("Time"), null=True, blank=True,
                                 help_text=_("Hours:Minutes:Seconds"))
     distance_verbose_name = _("Distance (km)")
     time_verbose_name = _("Time (Hours:Minutes:Seconds)")
     colorblade_verbose_name = _("Color")
     linecode_verbose_name = _("Code")
-    printedelevation_verbose_name = _("Printed Elevation")
+    printedelevation_verbose_name = _("Printed elevation")
     direction_verbose_name = _("Direction")
 
     @classproperty

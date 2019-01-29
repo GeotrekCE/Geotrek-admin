@@ -81,10 +81,10 @@ msgstr "Lame"
 msgid "Color"
 msgstr "Couleur"
 
-msgid "Blade Type"
+msgid "Blade type"
 msgstr "Type de lame"
 
-msgid "Blade Types"
+msgid "Blade types"
 msgstr "Types de lame"
 
 msgid "Color Blade"
@@ -141,8 +141,8 @@ msgstr "Gestionnaire"
 msgid "GPS coordinates"
 msgstr "Coordonnées GPS"
 
-msgid "Blade Color"
+msgid "Blade color"
 msgstr "Couleur de lame"
 
-msgid "Blade Colors"
+msgid "Blade colors"
 msgstr "Couleurs de lame"
