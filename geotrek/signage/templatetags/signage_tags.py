@@ -12,3 +12,9 @@ def meters(value):
     if value:
         return '%s %s' % (value, _('meters'))
     return value
+
+
+@stringfilter
+@register.filter
+def string(value):
+    return value.__class__.__name__

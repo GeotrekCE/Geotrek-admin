@@ -1,7 +1,7 @@
-{% extends "mapentity/mapentity_detail.html" %}
+{% extends "mapentity/mapentity_detail_attributes.html" %}
 {% load i18n signage_tags mapentity_tags %}
 
-{% block detailspanel %}
+{% block attributes %}
     <table class="table-striped table-bordered table">
         <tr>
             <th>{{ object|verbose:"name" }}</th>
@@ -24,17 +24,19 @@
         <tr>
             <th>{% trans "Blades" %}</th>
             <td>
-                <p style="float: right">
-                    {% if perms.signage.add_blade %}
-                        <a href="{% url 'signage:blade_add' %}{% if modelname == "signage" %}?signage={{ object.pk}}{% endif %}" class="btn btn-mini btn-success">
-                            <i class="icon-plus icon-white"></i> {% trans "Add a new blade" %}
-                        </a>
-                    {% else %}
-                        <span class="btn disabled" href="#"><i class="icon-plus icon-white"></i> {% trans "Add a new blade" %}</span>
-                    {% endif %}
-                </p>
+                {% if view|string == "SignageDetail" %}
+                    <p style="float: right">
+                        {% if perms.signage.add_blade %}
+                            <a href="{% url 'signage:blade_add' %}{% if modelname == "signage" %}?signage={{ object.pk}}{% endif %}" class="btn btn-mini btn-success">
+                                <i class="icon-plus icon-white"></i> {% trans "Add a new blade" %}
+                            </a>
+                        {% else %}
+                            <span class="btn disabled" href="#"><i class="icon-plus icon-white"></i> {% trans "Add a new blade" %}</span>
+                        {% endif %}
+                    </p>
+                {% endif %}
                 {% for blade in object.order_blades %}
-                    {% if perms.signage.read_blade %}
+                    {% if perms.signage.read_blade and view|string == "SignageDetail" %}
                         <a href="{% url 'signage:blade_detail' pk=blade.pk %}">
                             {% trans "Blade" %} {{ blade.number }} <br>
                         </a>
@@ -81,4 +83,4 @@
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
     {{ block.super }}
-{% endblock detailspanel %}
+{% endblock attributes %}
