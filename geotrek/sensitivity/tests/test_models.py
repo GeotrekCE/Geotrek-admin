@@ -36,7 +36,7 @@ class SensitiveAreaModelTest(TestCase):
 
     def test_get_kml(self):
         sensitive_area = SensitiveAreaFactory.create()
-        self.assertIn('<coordinates>2.9999999999999996,46.499999999999936,'
+        self.assertIn(b'<coordinates>2.9999999999999996,46.499999999999936,'
                       '0.0 2.9999999999999996,'
                       '46.50002701349546,0.0 3.000039118674988,'
                       '46.500027013488776,0.0 3.0000391186556086,'
@@ -46,7 +46,7 @@ class SensitiveAreaModelTest(TestCase):
     def test_get_kml_point(self):
         sensitive_area = SensitiveAreaFactory.create(geom='POINT(700000 6600000)')
         # Create a buffer around the point with 100 (settings.SENSITIVITY_DEFAULT_RADIUS)
-        self.assertIn('<coordinates>3.001303955186855,46.499999992565094,'
+        self.assertIn(b'<coordinates>3.001303955186855,46.499999992565094,'
                       '0.0 3.001204689895445,'
                       '46.499655406403406,0.0 3.000922024788654,'
                       '46.49936328205089,0.0 3.000498994433644,'

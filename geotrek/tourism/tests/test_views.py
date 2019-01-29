@@ -453,7 +453,7 @@ class InformationDeskAPITest(TestCase):
         response = self.client.get('/api/en/information_desks-{}.geojson'.format(desk2.type.id))
         self.assertEqual(response.status_code, 200)
         result = json.loads(response.content.decode())
-        self.assertIn('features', result)
+        self.assertIn(b'features', result)
         self.assertEqual(len(result['features']), 1)
         self.assertEqual(result['features'][0]['type'], 'Feature')
         self.assertEqual(result['features'][0]['geometry']['type'], 'Point')

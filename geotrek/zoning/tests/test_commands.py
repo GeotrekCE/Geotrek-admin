@@ -34,8 +34,8 @@ class RestrictedAreasCommandTest(TestCase):
         self.assertEquals(RestrictedAreaType.objects.first().name, 'type_area')
         value = RestrictedArea.objects.first()
         self.assertEquals('coucou', value.name)
-        self.assertIn("RestrictedArea Type's type_area created", output.getvalue())
-        self.assertIn("Created coucou", output.getvalue())
+        self.assertIn(b"RestrictedArea Type's type_area created", output.getvalue())
+        self.assertIn(b"Created coucou", output.getvalue())
 
     @override_settings(SRID=4326, SPATIAL_EXTENT=(10, 11, 11, 12))
     def test_load_restrictedareas_not_within(self):
@@ -58,24 +58,24 @@ class RestrictedAreasCommandTest(TestCase):
         value_2 = RestrictedArea.objects.last()
         self.assertEquals('lulu', value_2.name)
         output = output.getvalue()
-        self.assertIn('Created coucou', output)
-        self.assertIn('Created lulu', output)
+        self.assertIn(b'Created coucou', output)
+        self.assertIn(b'Created lulu', output)
 
         output_2 = StringIO()
         call_command('loadrestrictedareas', self.filename_out_in, 'type_area', '-i', name='NOM', verbosity=2,
                      stdout=output_2)
         output = output_2.getvalue()
-        self.assertIn('Updated coucou', output)
-        self.assertIn('Updated lulu', output)
+        self.assertIn(b'Updated coucou', output)
+        self.assertIn(b'Updated lulu', output)
 
     @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, -3, 2, 2))
     def test_load_cities_no_match_properties(self):
         output = StringIO()
         call_command('loadrestrictedareas', self.filename_out_in, 'type_area', name='toto', stdout=output)
-        self.assertIn('NOM, Insee', output.getvalue())
+        self.assertIn(b'NOM, Insee', output.getvalue())
         output_2 = StringIO()
         call_command('loadrestrictedareas', self.filename_out_in, 'type_area', '-i', name='toto', stdout=output_2)
-        self.assertIn('NOM, Insee', output.getvalue())
+        self.assertIn(b'NOM, Insee', output.getvalue())
 
     def test_load_cities_fail_bad_srid(self):
         with self.assertRaises(CommandError) as e:

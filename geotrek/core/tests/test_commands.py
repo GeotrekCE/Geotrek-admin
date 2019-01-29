@@ -57,7 +57,7 @@ class RemoveDuplicatePathTest(TestCase):
         self.assertEquals(Path.objects.count(), 5)
         self.assertCountEqual((self.p1, self.p3, self.p5, self.p6, self.p8),
                               list(Path.objects.all()))
-        self.assertIn("Deleting path",
+        self.assertIn(b"Deleting path",
                       output.getvalue())
-        self.assertIn("duplicate paths have been deleted",
+        self.assertIn(b"duplicate paths have been deleted",
                       output.getvalue())

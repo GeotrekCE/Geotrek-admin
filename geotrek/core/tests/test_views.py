@@ -12,12 +12,12 @@ from django.conf import settings
 
 from mapentity.factories import UserFactory
 
-from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.common.tests import CommonTest
 from geotrek.common.utils import LTE
 from geotrek.common.utils import almostequal
 
 from geotrek.authent.factories import PathManagerFactory, StructureFactory
+from geotrek.authent.tests import AuthentFixturesTest
 
 from geotrek.core.models import Path, Trail
 
@@ -26,6 +26,62 @@ from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import SignageFactory
 from geotrek.maintenance.factories import InterventionFactory
 from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, ComfortFactory, TopologyFactory, PathAggregationFactory)
+
+
+class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
+    def setUp(self):
+        self.login()
+
+    def login(self):
+        self.user = PathManagerFactory.create(password='booh')
+        success = self.client.login(username=self.user.username, password='booh')
+        self.assertTrue(success)
+
+    def logout(self):
+        self.client.logout()
+
+    def test_show_delete_multiple_path_in_list(self):
+        path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
+        PathFactory.create(name="path_2", geom=LineString((2, 2), (2, -2)))
+        poi = POIFactory.create(no_path=True)
+        poi.add_path(path_1, start=0, end=0)
+        response = self.client.get(reverse('core:path_list'))
+        self.assertIn(b'<a href="#delete" id="btn-delete" role="button">', response.content)
+
+    def test_delete_view_multiple_path(self):
+        path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
+        path_2 = PathFactory.create(name="path_2", geom=LineString((2, 2), (2, -2)))
+        poi = POIFactory.create(no_path=True)
+        poi.add_path(path_1, start=0, end=0)
+        response = self.client.get(reverse('core:multiple_path_delete', args=['%s,%s' % (path_1.pk, path_2.pk)]))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Do you really wish to delete', response.content)
+
+    def test_delete_multiple_path(self):
+        path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
+        path_2 = PathFactory.create(name="path_2", geom=LineString((2, 2), (2, -2)))
+        poi = POIFactory.create(no_path=True, name="POI_1")
+        poi.add_path(path_1, start=0, end=0)
+        infrastructure = InfrastructureFactory.create(no_path=True, name="INFRA_1")
+        infrastructure.add_path(path_1, start=0, end=1)
+        signage = SignageFactory.create(no_path=True, name="SIGNA_1")
+        signage.add_path(path_1, start=0, end=1)
+        trail = TrailFactory.create(no_path=True, name="TRAIL_1")
+        trail.add_path(path_2, start=0, end=1)
+        service = ServiceFactory.create(no_path=True)
+        service.add_path(path_2, start=0, end=1)
+        InterventionFactory.create(topology=signage, name="INTER_1")
+        response = self.client.get(reverse('core:multiple_path_delete', args=['%s,%s' % (path_1.pk, path_2.pk)]))
+        self.assertIn(b"POI_1", response.content)
+        self.assertIn(b"INFRA_1", response.content)
+        self.assertIn(b"SIGNA_1", response.content)
+        self.assertIn(b"TRAIL_1", response.content)
+        self.assertIn(b"ServiceType", response.content)
+        self.assertIn(b"INTER_1", response.content)
+        response = self.client.post(reverse('core:multiple_path_delete', args=['%s,%s' % (path_1.pk, path_2.pk)]))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Path.objects.count(), 2)
+        self.assertEqual(Path.objects.filter(pk__in=[path_1.pk, path_2.pk]).count(), 0)
 
 
 class PathViewsTest(CommonTest):
@@ -219,7 +275,7 @@ class PathViewsTest(CommonTest):
         p1 = PathFactory.create(name="PATH_AB", geom=LineString((0, 1), (10, 1)), draft=True)
         p2 = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)), draft=False)
         response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
-        self.assertIn('error', response.content)
+        self.assertIn(b'error', response.content)
 
     def test_path_merge_draft_draft(self):
         """
@@ -232,7 +288,7 @@ class PathViewsTest(CommonTest):
         p1 = PathFactory.create(name="PATH_AB", geom=LineString((0, 1), (10, 1)), draft=True)
         p2 = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)), draft=True)
         response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
-        self.assertIn('success', response.content)
+        self.assertIn(b'success', response.content)
         p1.reload()
         self.assertEqual(p1.geom, LineString((0, 1), (10, 1), (20, 1), srid=settings.SRID))
 
@@ -336,8 +392,8 @@ class TrailViewsTest(CommonTest):
         response = self.client.get(Trail.get_add_url() + '?topology=%s' % trail.pk)
         soup = bs4.BeautifulSoup(response.content, 'lxml')
         textarea_field = soup.find(id="id_topology")
-        self.assertIn('"kind": "TOPOLOGY"', textarea_field.text)
-        self.assertIn('"offset": 3.14', textarea_field.text)
+        self.assertIn(b'"kind": "TOPOLOGY"', textarea_field.text)
+        self.assertIn(b'"offset": 3.14', textarea_field.text)
         self.assertNotIn('"pk": %s' % trail.pk, textarea_field.text)
 
     def test_add_trail_from_existing_topology(self):

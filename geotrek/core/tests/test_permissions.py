@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import Permission
 from django.contrib.gis.geos import LineString
+from django.core.urlresolvers import reverse
 
 from mapentity.factories import UserFactory
 from geotrek.core.factories import PathFactory, ComfortFactory
@@ -73,7 +74,7 @@ class PermissionDraftPath(TestCase):
 
         response = self.client.get('/path/add/')
         self.assertEqual(response.status_code, 200)
-        self.assertIn('name="draft"', response.content)
+        self.assertIn(b'name="draft"', response.content)
 
     def test_permission_view_change_path_with_draft_permission(self):
         """
@@ -154,7 +155,7 @@ class PermissionDraftPath(TestCase):
 
         response = self.client.get('/path/edit/%s/' % draft_path.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertIn('name="draft"', response.content)
+        self.assertIn(b'name="draft"', response.content)
 
     def test_permission_view_delete_path_with_draft_permission(self):
         """
@@ -245,6 +246,31 @@ class PermissionDraftPath(TestCase):
         self.assertEqual(Path.objects.count(), 1)
 
         response = self.client.post('/path/delete/%s/' % draft_path.pk)
+        self.assertEqual(response.status_code, 302)
+
+        self.assertEqual(Path.objects.count(), 0)
+
+    def test_delete_multiple_path_draft_withtout_perm(self):
+        self.client.login(username=self.user.username, password='booh')
+        path = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
+        draft_path = PathFactory.create(name="path_2", geom=LineString((2, 2), (2, -2)), draft=True)
+
+        response = self.client.post(reverse('core:multiple_path_delete', args=['%s,%s' % (path.pk, draft_path.pk)]))
+        self.assertEqual(response.status_code, 302)
+
+        self.assertEqual(Path.objects.count(), 2)
+
+        self.user.user_permissions.add(Permission.objects.get(codename='delete_path'))
+
+        response = self.client.post(reverse('core:multiple_path_delete', args=['%s,%s' % (path.pk, draft_path.pk)]))
+        self.assertEqual(response.status_code, 302)
+
+        self.assertEqual(Path.objects.count(), 2)
+
+        self.user.user_permissions.add(Permission.objects.get(codename='delete_draft_path'))
+        self.client.login(username=self.user.username, password='booh')
+
+        response = self.client.post(reverse('core:multiple_path_delete', args=['%s,%s' % (path.pk, draft_path.pk)]))
         self.assertEqual(response.status_code, 302)
 
         self.assertEqual(Path.objects.count(), 0)

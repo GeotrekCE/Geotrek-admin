@@ -10,7 +10,7 @@ class TrekFilterLandTest(LandFiltersTest):
 
     def test_land_filters_are_well_setup(self):
         filterset = TrekFilterSet()
-        self.assertIn('work', filterset.filters)
+        self.assertIn(b'work', filterset.filters)
 
     def create_pair_of_distinct_path(self):
         useless_path, seek_path = super(TrekFilterLandTest, self).create_pair_of_distinct_path()

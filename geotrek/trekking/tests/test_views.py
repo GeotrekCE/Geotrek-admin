@@ -78,7 +78,7 @@ class POIViewsTest(CommonTest):
         self.login()
         response = self.client.get(self.model.get_jsonlist_url())
         self.assertEqual(response.status_code, 200)
-        self.assertIn('Waiting for publication', response.content)
+        self.assertIn(b'Waiting for publication', response.content)
 
     def test_empty_topology(self):
         self.login()
@@ -832,14 +832,14 @@ class TrekJSONDetailTest(TrekJSONSetUp):
 
     def test_picture_print(self):
         self.assertIn(self.attachment.attachment_file.name, self.trek.picture_print.name)
-        self.assertIn('.1000x500_q85_crop-smart.png', self.trek.picture_print.name)
+        self.assertIn(b'.1000x500_q85_crop-smart.png', self.trek.picture_print.name)
 
     def test_thumbnail_display(self):
-        self.assertIn('<img height="20" width="20" src="/media/%s.120x120_q85_crop.png"/>'
+        self.assertIn(b'<img height="20" width="20" src="/media/%s.120x120_q85_crop.png"/>'
                       % self.attachment.attachment_file.name, self.trek.thumbnail_display)
 
     def test_thumbnail_csv_display(self):
-        self.assertIn('%s.120x120_q85_crop.png'
+        self.assertIn(b'%s.120x120_q85_crop.png'
                       % self.attachment.attachment_file.name, self.trek.thumbnail_csv_display)
 
 

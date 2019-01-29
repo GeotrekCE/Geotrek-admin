@@ -1,0 +1,39 @@
+{% extends "mapentity/base_site.html" %}
+{% load i18n mapentity_tags %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <style>
+        .div-center { margin: 0 auto; width: 400px; }
+    </style>
+{% endblock extrahead %}
+
+{% block mainpanel %}
+{{ block.super }}
+
+<div class="div-center">
+    <div class="alert alert-block">
+        <h4 class="alert-heading">Warning!</h4>
+        {% blocktrans %}Do you really wish to delete <strong>{{ object }}</strong> ?{% endblocktrans %}
+    </div>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="submit" class="btn btn-danger" value="{% trans "Yes, delete" %}"></input>
+        <a class="btn btn-inverse" href="{% url 'core:path_list' %}">{% trans "No, back to list view" %}</a>
+    </form>
+    {% if topologies_by_model|length %}
+        <div class="panel-heading">{% trans 'Different topologies are linked with this path' %} :</div>
+    {% endif %}
+    {% for model, topologies in topologies_by_model.iteritems %}
+
+        <h4>{{ model }} :</h4>
+        <ul>
+            {% for topology in topologies %}
+                <li><a href="{{ topology.url }}">{{ topology.name }}</a></li>
+            {% endfor %}
+        </ul>
+
+    {% endfor %}
+</div>
+
+{% endblock mainpanel %}

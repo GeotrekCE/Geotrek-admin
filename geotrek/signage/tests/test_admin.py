@@ -238,7 +238,7 @@ class BladeTypeAdminTest(BladeTypeAdminNoBypassTest):
         change_url = reverse('admin:signage_bladetype_change', args=[bladetype.pk])
         response = self.client.get(change_url)
         self.assertEquals(response.status_code, 200)
-        self.assertIn('<select name="structure" id="id_structure">', response.content)
+        self.assertIn(b'<select name="structure" id="id_structure">', response.content)
 
 
 class SealingAdminTest(SealingAdminNoBypassTest):
@@ -254,7 +254,7 @@ class SealingAdminTest(SealingAdminNoBypassTest):
         change_url = reverse('admin:signage_sealing_change', args=[sealing.pk])
         response = self.client.get(change_url)
         self.assertEquals(response.status_code, 200)
-        self.assertIn('<select name="structure" id="id_structure">', response.content)
+        self.assertIn(b'<select name="structure" id="id_structure">', response.content)
 
 
 class SignageTypeAdminTest(SignageTypeAdminNoBypassTest):
@@ -270,4 +270,4 @@ class SignageTypeAdminTest(SignageTypeAdminNoBypassTest):
         change_url = reverse('admin:signage_signagetype_change', args=[signagetype.pk])
         response = self.client.get(change_url)
         self.assertEquals(response.status_code, 200)
-        self.assertIn('<select name="structure" id="id_structure">', response.content)
+        self.assertIn(b'<select name="structure" id="id_structure">', response.content)

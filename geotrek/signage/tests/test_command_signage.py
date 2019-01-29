@@ -24,8 +24,8 @@ class InfrastructureCommandTest(TestCase):
         call_command('loadsignage', filename, type_default='label', name_default='name',
                      condition_default='condition', structure_default='structure',
                      description_default='description', year_default=2010, verbosity=2, stdout=output)
-        self.assertIn('Signages will be linked to %s' % structure, output.getvalue())
-        self.assertIn('2 objects created.', output.getvalue())
+        self.assertIn(b'Signages will be linked to %s' % structure, output.getvalue())
+        self.assertIn(b'2 objects created.', output.getvalue())
         value = Signage.objects.all()
         self.assertEquals(signage.name, value[1].name)
         self.assertEquals(signage.implantation_year, value[1].implantation_year)
@@ -39,13 +39,13 @@ class InfrastructureCommandTest(TestCase):
         call_command('loadsignage', filename, type_field='label', name_field='name',
                      condition_field='condition', structure_default='structure',
                      description_field='descriptio', year_field='year', verbosity=1, stdout=output)
-        self.assertIn('Signages will be linked to %s' % structure, output.getvalue())
-        self.assertIn("SignageType 'type' created", output.getvalue())
-        self.assertIn("Condition Type 'condition' created", output.getvalue())
+        self.assertIn(b'Signages will be linked to %s' % structure, output.getvalue())
+        self.assertIn(b"SignageType 'type' created", output.getvalue())
+        self.assertIn(b"Condition Type 'condition' created", output.getvalue())
         value = Signage.objects.all()
         names = [val.name for val in value]
         years = [val.implantation_year for val in value]
-        self.assertIn('coucou', names)
+        self.assertIn(b'coucou', names)
         self.assertIn(2010, years)
         self.assertIn(2012, years)
         self.assertEquals(value.count(), 3)
@@ -66,7 +66,7 @@ class InfrastructureCommandTest(TestCase):
         elements_to_check = ['type', 'name']
         self.assertEqual(output.getvalue().count("Field 'None' not found in data source."), 2)
         for element in elements_to_check:
-            self.assertIn("Set it with --{0}-field, or set a default value with --{0}-default".format(element),
+            self.assertIn(b"Set it with --{0}-field, or set a default value with --{0}-default".format(element),
                           output.getvalue())
 
     def test_wrong_fields_fail(self):
@@ -93,7 +93,7 @@ class InfrastructureCommandTest(TestCase):
         self.assertEqual(output.getvalue().count("Change your"), 5)
         self.assertEqual(output.getvalue().count("set a default value"), 2)
         for element in elements_to_check:
-            self.assertIn("Field '{}' not found in data source".format(element),
+            self.assertIn(b"Field '{}' not found in data source".format(element),
                           output.getvalue())
 
     def test_line_fail_rolling_back(self):
@@ -103,7 +103,7 @@ class InfrastructureCommandTest(TestCase):
         with self.assertRaises(IndexError):
             call_command('loadsignage', filename, type_default='label', name_default='name',
                          stdout=output)
-        self.assertIn('An error occured, rolling back operations.', output.getvalue())
+        self.assertIn(b'An error occured, rolling back operations.', output.getvalue())
         self.assertEqual(Signage.objects.count(), 0)
 
     def test_update_same_eid(self):
@@ -112,7 +112,7 @@ class InfrastructureCommandTest(TestCase):
         SignageFactory(name="name", eid="eid_2")
         call_command('loadsignage', filename, eid_field='eid', type_default='label',
                      name_default='name', verbosity=2, stdout=output)
-        self.assertIn("Update : name with eid eid1", output.getvalue())
+        self.assertIn(b"Update : name with eid eid1", output.getvalue())
         self.assertEqual(Signage.objects.count(), 2)
 
     def test_fail_import(self):
@@ -128,4 +128,4 @@ class InfrastructureCommandTest(TestCase):
         call_command('loadsignage', filename, type_default='label', name_default='name',
                      condition_default='condition', structure_default='wrong_structure_default',
                      description_default='description', year_default=2010, verbosity=0, stdout=output)
-        self.assertIn("Structure wrong_structure_default set in options doesn't exist", output.getvalue())
+        self.assertIn(b"Structure wrong_structure_default set in options doesn't exist", output.getvalue())

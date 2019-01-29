@@ -33,7 +33,7 @@ class LoadPOITest(TestCase):
     def test_command_shows_number_of_objects(self):
         output = StringIO()
         call_command('loadpoi', self.filename, verbosity=1, stdout=output)
-        self.assertIn('2 objects found', output.getvalue())
+        self.assertIn(b'2 objects found', output.getvalue())
 
     def test_create_pois_is_executed(self):
         with patch.object(Command, 'create_poi') as mocked:

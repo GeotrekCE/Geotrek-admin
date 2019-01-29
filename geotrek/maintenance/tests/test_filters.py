@@ -223,8 +223,8 @@ class InterventionYearsFilterTest(TestCase):
         output = self.widget.render(name='year', value=None)
         self.assertEqual(type(self.widget), InterventionYearSelect)
         self.assertEqual(output.count('<option'), 3)
-        self.assertIn('>2012<', output)
-        self.assertIn('>1932<', output)
+        self.assertIn(b'>2012<', output)
+        self.assertIn(b'>1932<', output)
 
 
 class ProjectYearsFilterTest(TestCase):
@@ -238,10 +238,10 @@ class ProjectYearsFilterTest(TestCase):
         output = self.widget.render(name='project', value=None)
         self.assertEqual(type(self.widget), ProjectYearSelect)
         self.assertEqual(output.count('<option'), 5)
-        self.assertIn('>1500<', output)
-        self.assertIn('>1700<', output)
-        self.assertIn('>1800<', output)
-        self.assertIn('>2000<', output)
+        self.assertIn(b'>1500<', output)
+        self.assertIn(b'>1700<', output)
+        self.assertIn(b'>1800<', output)
+        self.assertIn(b'>2000<', output)
 
     def test_new_projects_can_be_filtered_on_new_years(self):
         filter = ProjectFilterSet(data={'in_year': 1250})

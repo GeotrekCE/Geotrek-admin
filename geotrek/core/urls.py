@@ -6,13 +6,15 @@ from mapentity.registry import registry
 from geotrek.altimetry.urls import AltimetryEntityOptions
 from geotrek.core.models import Path, Trail
 from geotrek.core.views import (
-    get_graph_json, merge_path, ParametersView, PathGPXDetail, PathKMLDetail, TrailGPXDetail, TrailKMLDetail
+    get_graph_json, merge_path, ParametersView, PathGPXDetail, PathKMLDetail, TrailGPXDetail, TrailKMLDetail,
+    MultiplePathDelete
 )
 
 urlpatterns = [
     url(r'^api/graph.json$', get_graph_json, name="path_json_graph"),
     url(r'^api/(?P<lang>\w\w)/parameters.json$', ParametersView.as_view(), name='parameters_json'),
     url(r'^mergepath/$', merge_path, name="merge_path"),
+    url(r'^path/delete/(?P<pk>\d+(,\d+)+)/', MultiplePathDelete.as_view(), name="multiple_path_delete"),
     url(r'^api/(?P<lang>\w\w)/paths/(?P<pk>\d+)/path_(?P<slug>[-_\w]+).gpx$', PathGPXDetail.as_view(),
         name="path_gpx_detail"),
     url(r'^api/(?P<lang>\w\w)/paths/(?P<pk>\d+)/path_(?P<slug>[-_\w]+).kml$', PathKMLDetail.as_view(),
