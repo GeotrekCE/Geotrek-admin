@@ -124,3 +124,15 @@ msgstr ""
 
 msgid "Add a line"
 msgstr ""
+
+msgid "Add a new blade"
+msgstr ""
+
+msgid "Printed elevation"
+msgstr ""
+
+msgid "Manager"
+msgstr ""
+
+msgid "GPS coordinates"
+msgstr ""

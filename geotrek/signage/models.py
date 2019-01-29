@@ -71,6 +71,7 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     printed_elevation = models.IntegerField(verbose_name=_(u"Printed Elevation"), blank=True, null=True,
                                             db_column='altitude_imprimee')
     type = models.ForeignKey(SignageType, db_column='type', verbose_name=_("Type"))
+    gps_value_verbose_name = _("GPS coordinates")
 
     class Meta:
         db_table = 's_t_signaletique'

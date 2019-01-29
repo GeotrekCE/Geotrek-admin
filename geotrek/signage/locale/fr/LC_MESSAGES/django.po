@@ -128,3 +128,15 @@ msgstr "Numero"
 
 msgid "Add a line"
 msgstr "Ajouter une ligne"
+
+msgid "Add a new blade"
+msgstr "Ajouter une nouvelle lame"
+
+msgid "Printed elevation"
+msgstr "Altitude affichée"
+
+msgid "Manager"
+msgstr "Gestionnaire"
+
+msgid "GPS coordinates"
+msgstr "Coordonnées GPS"
