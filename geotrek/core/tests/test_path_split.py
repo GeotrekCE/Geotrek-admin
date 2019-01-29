@@ -391,7 +391,7 @@ class SplitPathTest(TestCase):
         cd_1, cd_2 = Path.objects.filter(name="CD")
         self.assertTrue(ab_1.length == 200 and ab_2.length == 100 or ab_1.length == 100 and ab_2.length == 200)
         self.assertTrue(cd_1.length == 200 and cd_2.length == 100 or cd_1.length == 100 and cd_2.length == 200)
-
+        print(ab_1.geom)
         self.assertEqual(ab_1.geom, LineString((0, 0), (200, 0), srid=settings.SRID))
         self.assertEqual(cd_1.geom, LineString((200, 100), (200, 0), srid=settings.SRID))
         self.assertEqual(ab_2.geom, LineString((200, 0), (300, 0), srid=settings.SRID))
