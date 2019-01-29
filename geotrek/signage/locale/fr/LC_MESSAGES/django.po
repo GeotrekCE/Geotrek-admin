@@ -140,3 +140,9 @@ msgstr "Gestionnaire"
 
 msgid "GPS coordinates"
 msgstr "Coordonnées GPS"
+
+msgid "Blade Color"
+msgstr "Couleur de lame"
+
+msgid "Blade Colors"
+msgstr "Couleurs de lame"

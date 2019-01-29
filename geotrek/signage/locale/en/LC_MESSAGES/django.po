@@ -136,3 +136,9 @@ msgstr ""
 
 msgid "GPS coordinates"
 msgstr ""
+
+msgid "Blade Color"
+msgstr ""
+
+msgid "Blade Colors"
+msgstr ""
