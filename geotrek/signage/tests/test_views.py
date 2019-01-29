@@ -23,7 +23,7 @@ class SignageTest(TestCase):
         sign = SignageFactory.create(no_path=True)
         sign.add_path(path=p, start=0.5, end=0.5)
 
-        self.assertItemsEqual(p.signages, [sign])
+        self.assertCountsEqual(p.signages, [sign])
 
 
 class BladeViewsTest(CommonTest):

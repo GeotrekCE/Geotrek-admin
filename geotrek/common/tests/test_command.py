@@ -8,7 +8,7 @@ from geotrek.infrastructure.models import InfrastructureType, Infrastructure
 from geotrek.core.models import Usage, Path
 from geotrek.core.factories import UsageFactory
 from geotrek.core.factories import PathFactory
-from StringIO import StringIO
+from io import StringIO
 
 
 class CommandTests(TestCase):
