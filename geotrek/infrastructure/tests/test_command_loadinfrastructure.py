@@ -24,8 +24,8 @@ class InfrastructureCommandTest(TestCase):
         call_command('loadinfrastructure', filename, type_default='label', name_default='name',
                      condition_default='condition', structure_default='structure',
                      description_default='description', year_default=2010, verbosity=2, stdout=output)
-        self.assertIn(b'Infrastructures will be linked to %s' % structure, output.getvalue())
-        self.assertIn(b'2 objects created.', output.getvalue())
+        self.assertIn('Infrastructures will be linked to %s' % structure, output.getvalue())
+        self.assertIn('2 objects created.', output.getvalue())
         value = Infrastructure.objects.all()
         self.assertEquals(building.name, value[1].name)
         self.assertEquals(building.implantation_year, value[1].implantation_year)
@@ -39,13 +39,13 @@ class InfrastructureCommandTest(TestCase):
         call_command('loadinfrastructure', filename, type_field='label', name_field='name',
                      condition_field='condition', structure_default='structure',
                      description_field='descriptio', year_field='year', verbosity=1, stdout=output)
-        self.assertIn(b'Infrastructures will be linked to %s' % structure, output.getvalue())
-        self.assertIn(b"InfrastructureType 'type' created", output.getvalue())
-        self.assertIn(b"Condition Type 'condition' created", output.getvalue())
+        self.assertIn('Infrastructures will be linked to %s' % structure, output.getvalue())
+        self.assertIn("InfrastructureType 'type' created", output.getvalue())
+        self.assertIn("Condition Type 'condition' created", output.getvalue())
         value = Infrastructure.objects.all()
         names = [val.name for val in value]
         years = [val.implantation_year for val in value]
-        self.assertIn(b'coucou', names)
+        self.assertIn('coucou', names)
         self.assertIn(2010, years)
         self.assertIn(2012, years)
         self.assertEquals(value.count(), 3)
@@ -103,7 +103,7 @@ class InfrastructureCommandTest(TestCase):
         with self.assertRaises(IndexError):
             call_command('loadinfrastructure', filename, type_default='label', name_default='name',
                          stdout=output)
-        self.assertIn(b'An error occured, rolling back operations.', output.getvalue())
+        self.assertIn('An error occured, rolling back operations.', output.getvalue())
         self.assertEqual(Infrastructure.objects.count(), 0)
 
     def test_update_same_eid(self):
@@ -112,7 +112,7 @@ class InfrastructureCommandTest(TestCase):
         InfrastructureFactory(name="name", eid="eid_2")
         call_command('loadinfrastructure', filename, eid_field='eid', type_default='label',
                      name_default='name', verbosity=2, stdout=output)
-        self.assertIn(b"Update : name with eid eid1", output.getvalue())
+        self.assertIn("Update : name with eid eid1", output.getvalue())
         self.assertEqual(Infrastructure.objects.count(), 2)
 
     def test_fail_import(self):
@@ -128,4 +128,4 @@ class InfrastructureCommandTest(TestCase):
         call_command('loadinfrastructure', filename, type_default='label', name_default='name',
                      condition_default='condition', structure_default='wrong_structure_default',
                      description_default='description', year_default=2010, verbosity=0, stdout=output)
-        self.assertIn(b"Structure wrong_structure_default set in options doesn't exist", output.getvalue())
+        self.assertIn("Structure wrong_structure_default set in options doesn't exist", output.getvalue())

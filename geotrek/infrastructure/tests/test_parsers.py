@@ -29,11 +29,6 @@ class StructureParserTest(TestCase):
         with self.assertRaisesRegex(CommandError, "File does not exists at: toto.shp"):
             call_command('loadinfrastructure', 'toto.shp')
 
-    def test_load_both_fail(self):
-        filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
-        with self.assertRaisesRegex(CommandError, "Only one of --signage and --infrastructure required"):
-            call_command('loadinfrastructure', filename, '--infrastructure', '--signage')
-
     def test_missing_defaults(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
         output = StringIO()
@@ -53,5 +48,5 @@ class StructureParserTest(TestCase):
         elements_to_check = ['type', 'name', 'condition', 'structure', 'description', 'implantation']
         self.assertEqual(output.getvalue().count("Field 'None' not found in data source."), 6)
         for element in elements_to_check:
-            self.assertIn(b"Set it with --{0}-field, or set a default value with --{0}-default".format(element),
+            self.assertIn("Set it with --{0}-field, or set a default value with --{0}-default".format(element),
                           output.getvalue())

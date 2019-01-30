@@ -116,7 +116,7 @@ class ElevationProfileTest(TestCase):
         profile = AltimetryHelper.elevation_profile(geom)
         svg = AltimetryHelper.profile_svg(profile)
 
-        self.assertIn(b'Generated with pygal', str(svg))
+        self.assertIn('Generated with pygal', str(svg))
         self.assertIn(settings.ALTIMETRIC_PROFILE_BACKGROUND, str(svg))
         self.assertIn(settings.ALTIMETRIC_PROFILE_COLOR, str(svg))
 
@@ -324,9 +324,9 @@ class CommandLoadDemTest(TestCase):
         cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
         call_command('loaddem', filename, '--replace', verbosity=2, stdout=output_stdout)
-        self.assertIn(b'DEM successfully loaded.', output_stdout.getvalue())
-        self.assertIn(b'DEM successfully clipped/projected.', output_stdout.getvalue())
-        self.assertIn(b'Everything looks fine, we can start loading DEM', output_stdout.getvalue())
+        self.assertIn('DEM successfully loaded.', output_stdout.getvalue())
+        self.assertIn('DEM successfully clipped/projected.', output_stdout.getvalue())
+        self.assertIn('Everything looks fine, we can start loading DEM', output_stdout.getvalue())
         conn = connections[DEFAULT_DB_ALIAS]
         cur = conn.cursor()
         cur.execute('SELECT ST_Value(rast, ST_SetSRID(ST_MakePoint(602500, 6650000), 2154)) FROM mnt;')

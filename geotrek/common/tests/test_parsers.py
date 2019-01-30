@@ -49,7 +49,7 @@ class ParserTests(TestCase):
         output = StringIO()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', filename, verbosity=2, stdout=output)
-        self.assertIn(b'(100%)', output.getvalue())
+        self.assertIn('(100%)', output.getvalue())
 
     def test_create(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')

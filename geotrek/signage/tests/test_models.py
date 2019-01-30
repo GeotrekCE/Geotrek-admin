@@ -14,8 +14,8 @@ class SignageModelTest(TestCase):
         signage_S_W = SignageFactory.create(no_path=True)
         signage_N_E.add_path(path, start=1, end=1)
         signage_S_W.add_path(path, start=0, end=0)
-        self.assertEqual(signage_N_E.gps_value, u'4.0°N, 4.0°E')
-        self.assertEqual(signage_S_W.gps_value, u'4.0°S, 4.0°W')
+        self.assertEqual(signage_N_E.gps_value, '4.0°N, 4.0°E')
+        self.assertEqual(signage_S_W.gps_value, '4.0°S, 4.0°W')
 
 
 class SealingModelTest(TestCase):

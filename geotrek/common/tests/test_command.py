@@ -47,7 +47,7 @@ class CommandTests(TestCase):
         output = StringIO()
         call_command('unset_structure', '--all', verbosity=2, stdout=output)
         response = output.getvalue()
-        self.assertIn(b"Create hello", response)
+        self.assertIn("Create hello", response)
         self.assertEqual(InfrastructureType.objects.count(), 1)
         self.assertEqual(Usage.objects.count(), 1)
 

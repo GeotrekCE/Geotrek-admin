@@ -392,8 +392,8 @@ class TrailViewsTest(CommonTest):
         response = self.client.get(Trail.get_add_url() + '?topology=%s' % trail.pk)
         soup = bs4.BeautifulSoup(response.content, 'lxml')
         textarea_field = soup.find(id="id_topology")
-        self.assertIn(b'"kind": "TOPOLOGY"', textarea_field.text)
-        self.assertIn(b'"offset": 3.14', textarea_field.text)
+        self.assertIn('"kind": "TOPOLOGY"', textarea_field.text)
+        self.assertIn('"offset": 3.14', textarea_field.text)
         self.assertNotIn('"pk": %s' % trail.pk, textarea_field.text)
 
     def test_add_trail_from_existing_topology(self):

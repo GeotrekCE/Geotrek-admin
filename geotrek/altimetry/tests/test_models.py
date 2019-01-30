@@ -18,4 +18,4 @@ class AltimetryMixinTest(TestCase):
         basefolder = os.path.join(settings.MEDIA_ROOT, 'profiles')
         self.assertTrue(os.listdir(basefolder))
         directory = os.listdir(basefolder)
-        self.assertIn(b'%s-%s-%s.png' % (Trek._meta.model_name, str(trek.pk), get_language()), directory)
+        self.assertIn('%s-%s-%s.png' % (Trek._meta.model_name, str(trek.pk), get_language()), directory)
