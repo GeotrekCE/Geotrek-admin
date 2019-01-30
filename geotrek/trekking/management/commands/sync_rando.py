@@ -215,8 +215,8 @@ class Command(BaseCommand):
         # Fix strange unicode characters 2028 and 2029 that make Geotrek-mobile crash
         # Check Python3
         if fix2028:
-            content = content.replace('\\u2028', '\\n')
-            content = content.replace('\\u2029', '\\n')
+            content = content.replace(b'\\u2028', b'\\n')
+            content = content.replace(b'\\u2029', b'\\n')
         f.write(content)
         f.close()
         oldfilename = os.path.join(self.dst_root, name)
