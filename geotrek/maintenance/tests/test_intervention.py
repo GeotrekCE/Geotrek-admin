@@ -186,18 +186,18 @@ class InterventionTest(TestCase):
     def test_infrastructure_display_is_path_by_default(self):
         translation.activate('en')
         on_path = InterventionFactory.create()
-        self.assertIn(b'Path', on_path.infrastructure_display)
-        self.assertIn(b'path-16.png', on_path.infrastructure_display)
+        self.assertIn('Path', on_path.infrastructure_display)
+        self.assertIn('path-16.png', on_path.infrastructure_display)
 
     def test_infrastructure_display_shows_infrastructure_name(self):
         interv = InfrastructureInterventionFactory.create()
-        self.assertIn(b'Infrastructure', interv.infrastructure_display)
-        self.assertIn(b'infrastructure-16.png', interv.infrastructure_display)
+        self.assertIn('Infrastructure', interv.infrastructure_display)
+        self.assertIn('infrastructure-16.png', interv.infrastructure_display)
         name = interv.infrastructure.name
         self.assertIn(name, interv.infrastructure_display)
 
         interv = SignageInterventionFactory.create()
-        self.assertIn(b'Signage', interv.infrastructure_display)
-        self.assertIn(b'signage-16.png', interv.infrastructure_display)
+        self.assertIn('Signage', interv.infrastructure_display)
+        self.assertIn('signage-16.png', interv.infrastructure_display)
         name = interv.signage.name
         self.assertIn(name, interv.infrastructure_display)

@@ -66,7 +66,7 @@ class InfrastructureCommandTest(TestCase):
         elements_to_check = ['type', 'name']
         self.assertEqual(output.getvalue().count("Field 'None' not found in data source."), 2)
         for element in elements_to_check:
-            self.assertIn(b"Set it with --{0}-field, or set a default value with --{0}-default".format(element),
+            self.assertIn("Set it with --{0}-field, or set a default value with --{0}-default".format(element),
                           output.getvalue())
 
     def test_wrong_fields_fail(self):
@@ -93,7 +93,7 @@ class InfrastructureCommandTest(TestCase):
         self.assertEqual(output.getvalue().count("Change your"), 5)
         self.assertEqual(output.getvalue().count("set a default value"), 2)
         for element in elements_to_check:
-            self.assertIn(b"Field '{}' not found in data source".format(element),
+            self.assertIn("Field '{}' not found in data source".format(element),
                           output.getvalue())
 
     def test_line_fail_rolling_back(self):
