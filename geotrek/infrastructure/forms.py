@@ -23,8 +23,8 @@ class InfrastructureForm(BaseInfrastructureForm):
         else:
             structure = self.user.profile.structure
         self.fields['type'].queryset = InfrastructureType.objects.filter(Q(structure=structure) | Q(structure=None))
-        self.fields['condition'].queryset = InfrastructureCondition.objects.filter(Q(structure=structure) |
-                                                                                   Q(structure=None))
+        self.fields['condition'].queryset = InfrastructureCondition.objects.filter(
+            Q(structure=structure) | Q(structure=None))
 
     class Meta(BaseInfrastructureForm.Meta):
         model = Infrastructure
