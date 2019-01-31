@@ -67,7 +67,7 @@ class Command(BaseCommand):
 
     def check_srid(self, srid, geom):
         if not geom.srid:
-            geom.srid = srid
+            geom.srid = int(srid)
 
         if geom.srid != settings.SRID:
             try:
