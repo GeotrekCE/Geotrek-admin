@@ -185,9 +185,11 @@ BEGIN
     -- Add new evenement
     FOR rec IN EXECUTE 'SELECT id, egeom AS geom, ST_LineLocatePoint(tgeom, ST_StartPoint(egeom)) AS pk_a, ST_LineLocatePoint(tgeom, ST_EndPoint(egeom)) AS pk_b FROM (SELECT id, geom AS tgeom, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS egeom FROM l_t_troncon WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
     LOOP
-        INSERT INTO e_t_evenement (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), kind_name, 0, 0, rec.geom, FALSE) RETURNING id INTO eid;
-        INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin) VALUES (rec.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
-        EXECUTE 'INSERT INTO '|| quote_ident(table_name) ||' (evenement, '|| quote_ident(fk_name) ||') VALUES ($1, $2)' USING eid, obj.id;
+        IF rec.pk_a IS NOT NULL AND rec.pk_b IS NOT NULL THEN
+            INSERT INTO e_t_evenement (date_insert, date_update, kind, decallage, longueur, geom, supprime) VALUES (now(), now(), kind_name, 0, 0, rec.geom, FALSE) RETURNING id INTO eid;
+            INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin) VALUES (rec.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
+            EXECUTE 'INSERT INTO '|| quote_ident(table_name) ||' (evenement, '|| quote_ident(fk_name) ||') VALUES ($1, $2)' USING eid, obj.id;
+        END IF;
     END LOOP;
 
     RETURN NULL;
