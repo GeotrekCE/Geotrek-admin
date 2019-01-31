@@ -12,7 +12,7 @@ MapEntity.pathsLayer = function buildPathLayer(options) {
     // Start ajax loading at last
     url = window.SETTINGS.urls.path_layer
     if (options.no_draft){
-        pathsLayer.load(url + '?no_draft=true+', true);
+        pathsLayer.load(url + '?no_draft=true', true);
     }
     else {
         pathsLayer.load(url, true);

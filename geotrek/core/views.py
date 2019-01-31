@@ -72,6 +72,22 @@ class PathLayer(MapEntityLayer):
             qs = qs.exclude(draft=True)
         return qs
 
+    def view_cache_key(self):
+        """Used by the ``view_cache_response_content`` decorator.
+        """
+        language = self.request.LANGUAGE_CODE
+        latest_saved = Path.latest_updated()
+        if latest_saved:
+            geojson_lookup = '%s_path_%s%s_json_layer' % (
+                language,
+                latest_saved.strftime('%y%m%d%H%M%S%f'),
+                '_nodraft' if self.request.GET.get('no_draft') == 'true' else ''
+            )
+        else:
+            geojson_lookup = None
+
+        return geojson_lookup
+
 
 class PathList(MapEntityList):
     queryset = Path.objects
