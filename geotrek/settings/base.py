@@ -622,3 +622,4 @@ PASSWORD_HASHERS = [
 ]
 
 FORMAT_LINE_CODE = "{signagecode}-{bladenumber}-{linenumber}"
+SHOW_EXTREMITIES = True
