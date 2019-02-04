@@ -281,7 +281,7 @@ describe('Topology helper', function() {
 
     it('It should go through extremities, even if paths have opposite ways 2', function(done) {
         var topo = Geotrek.TopologyHelper.buildTopologyFromComputedPath(idToLayer,
-                        __inputData(L.latLng([40, 3]), L.latLng([39, 0]), [7, 6]));
+                        __inputData(L.latLng([40, 10]), L.latLng([39, 0]), [7, 6]));
 
         // One sub-topology
         assert.equal(topo.serialized.length, 1);
@@ -289,7 +289,7 @@ describe('Topology helper', function() {
         assert.deepEqual(topo.serialized[0], {
             offset: 0,
             positions: {
-                "0": [0.9127652411579061, 1.0],
+                "0": [0.7090353542206732, 1.0],
                 "1": [0.0, 0.10000000000000071]
             },
             paths: [7, 6]
