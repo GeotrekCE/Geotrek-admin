@@ -274,6 +274,8 @@ BEGIN
     points3d_smoothed := ARRAY[]::geometry[];
     points3d_simplified := ARRAY[]::geometry[];
 
+    geom := ST_SIMPLIFYPRESERVETOPOLOGY(geom, epsilon);
+
     FOR current IN SELECT * FROM ft_drape_line(geom, {{ALTIMETRIC_PROFILE_PRECISION}}) LOOP
         -- Create the 3d points
         points3d := array_append(points3d, current);
