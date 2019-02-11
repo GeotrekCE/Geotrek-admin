@@ -292,7 +292,7 @@ BEGIN
     -- Compute gain using simplification
     -- see http://www.postgis.org/docs/ST_Simplify.html
     --     https://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm
-    FOR current IN SELECT (ST_DUMPPOINTS(ST_SIMPLIFYPRESERVETOPOLOGY(ST_MAKELINE(points3d_smoothed), epsilon))).geom
+    FOR current IN SELECT (ST_DUMPPOINTS(ST_MAKELINE(points3d_smoothed))).geom
     LOOP
         -- Add positive only if current - previous_geom > 0
 	result.positive_gain := result.positive_gain + greatest(ST_Z(current) - coalesce(ST_Z(previous_geom),
