@@ -18,7 +18,7 @@ class InfrastructureFilterSet(StructureRelatedFilterSet):
         super(InfrastructureFilterSet, self).__init__(*args, **kwargs)
 
         field = self.form.fields['type__type']
-        all_choices = [field.widget.choices]
+        all_choices = list(field.widget.choices)
         field.widget.choices = [('', _(u"Category"))] + all_choices[1:]
 
     class Meta(StructureRelatedFilterSet.Meta):
