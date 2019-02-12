@@ -24,7 +24,7 @@
         <tr>
             <th>{% trans "Blades" %}</th>
             <td>
-                {% if view|string == "SignageDetail" %}
+                {% if view|class_name == "SignageDetail" %}
                     <p style="float: right">
                         {% if perms.signage.add_blade %}
                             <a href="{% url 'signage:blade_add' %}{% if modelname == "signage" %}?signage={{ object.pk}}{% endif %}" class="btn btn-mini btn-success">
@@ -36,7 +36,7 @@
                     </p>
                 {% endif %}
                 {% for blade in object.order_blades %}
-                    {% if perms.signage.read_blade and view|string == "SignageDetail" %}
+                    {% if perms.signage.read_blade and view|class_name == "SignageDetail" %}
                         <a href="{% url 'signage:blade_detail' pk=blade.pk %}">
                             {% trans "Blade" %} {{ blade.number }} <br>
                         </a>
