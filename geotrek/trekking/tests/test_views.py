@@ -1300,10 +1300,13 @@ class ServiceViewsTest(CommonTest):
         # Enable query counting
         settings.DEBUG = True
 
-        for url in [self.model.get_jsonlist_url(),
-                    self.model.get_format_list_url()]:
-            with self.assertNumQueries(5):
-                self.client.get(url)
+        # 1) session, 2) user, 3) user perms, 4) group perms, 5) last modified, 6) list
+        with self.assertNumQueries(6):
+            self.client.get(self.model.get_jsonlist_url())
+
+        # 1) session, 2) user, 3) user perms, 4) group perms, 5) list
+        with self.assertNumQueries(5):
+            self.client.get(self.model.get_format_list_url())
 
         settings.DEBUG = False
 

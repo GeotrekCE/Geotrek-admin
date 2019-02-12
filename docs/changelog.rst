@@ -7,7 +7,17 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix routing on paths with sharp angles
+
+
+**Performances**
+
+- Allow client side caching with systematic revalidation for Layer, JsonList and graph views
+- Remove validation of history bar
+- Don't bringToFront() every single feature on map
+- Add SHOW_EXTREMITIES setting to show bullets at path extremities.
+  Set it to false in custom.py to improve performances
+- Remove networks and trails columns in path list
 
 
 2.24.0 (2019-01-28)

@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
 from django.views.decorators.http import last_modified as cache_last_modified
-from django.views.decorators.cache import never_cache as force_cache_validation
+from django.views.decorators.cache import cache_control
 from django.views.generic import View, TemplateView
 from django.utils.translation import ugettext as _
 from django.core.cache import caches
@@ -72,39 +72,34 @@ class PathLayer(MapEntityLayer):
             qs = qs.exclude(draft=True)
         return qs
 
+    def view_cache_key(self):
+        """Used by the ``view_cache_response_content`` decorator.
+        """
+        language = self.request.LANGUAGE_CODE
+        latest_saved = Path.latest_updated()
+        if latest_saved:
+            geojson_lookup = '%s_path_%s%s_json_layer' % (
+                language,
+                latest_saved.strftime('%y%m%d%H%M%S%f'),
+                '_nodraft' if self.request.GET.get('no_draft') == 'true' else ''
+            )
+        else:
+            geojson_lookup = None
+
+        return geojson_lookup
+
 
 class PathList(MapEntityList):
-    queryset = Path.objects.prefetch_related('networks').select_related('stake')
+    queryset = Path.objects
     filterform = PathFilterSet
 
     @classproperty
     def columns(cls):
-        columns = ['id', 'checkbox', 'name', 'networks', 'length', 'length_2d']
-        if settings.TRAIL_MODEL_ENABLED:
-            columns.append('trails')
+        columns = ['id', 'checkbox', 'name', 'length', 'length_2d']
         return columns
 
     def get_template_names(self):
         return (u"core/path_list.html",)
-
-    def get_queryset(self):
-        """
-        denormalize ``trail`` column from list.
-        """
-        qs = super(PathList, self).get_queryset()
-        denormalized = {}
-        if settings.TRAIL_MODEL_ENABLED:
-            paths_id = qs.values_list('id', flat=True)
-            paths_trails = Trail.objects.filter(aggregations__path__id__in=paths_id)
-            by_id = dict([(trail.id, trail) for trail in paths_trails])
-            trails_paths_ids = paths_trails.values_list('id', 'aggregations__path__id')
-            for trail_id, path_id in trails_paths_ids:
-                denormalized.setdefault(path_id, []).append(by_id[trail_id])
-
-        for path in qs:
-            path_trails = denormalized.get(path.id, [])
-            setattr(path, '_trails', path_trails)
-        return qs
 
 
 class PathJsonList(MapEntityJsonList, PathList):
@@ -262,8 +257,8 @@ class PathDelete(MapEntityDelete):
 
 
 @login_required
+@cache_control(max_age=0, must_revalidate=True)
 @cache_last_modified(lambda x: Path.latest_updated())
-@force_cache_validation
 def get_graph_json(request):
     cache = caches['fat']
     key = 'path_graph_json'

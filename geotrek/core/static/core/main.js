@@ -5,14 +5,16 @@ MapEntity.pathsLayer = function buildPathLayer(options) {
     var pathsLayer = new L.ObjectsLayer(null, options);
 
     // Show paths extremities
-    pathsLayer.on('data:loaded', function (e) {
-        pathsLayer.showExtremities(window.SETTINGS.map.paths_line_marker);
-    });
+    if (window.SETTINGS.showExtremities) {
+        pathsLayer.on('data:loaded', function (e) {
+            pathsLayer.showExtremities(window.SETTINGS.map.paths_line_marker);
+        });
+    }
 
     // Start ajax loading at last
     url = window.SETTINGS.urls.path_layer
     if (options.no_draft){
-        pathsLayer.load(url + '?no_draft=true+', true);
+        pathsLayer.load(url + '?no_draft=true', true);
     }
     else {
         pathsLayer.load(url, true);
