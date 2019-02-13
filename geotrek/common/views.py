@@ -131,6 +131,7 @@ class JSSettings(mapentity_views.JSSettings):
             colorspool=settings.COLORS_POOL,
         )
         dictsettings['version'] = __version__
+        dictsettings['showExtremities'] = settings.SHOW_EXTREMITIES
         return dictsettings
 
 

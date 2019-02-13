@@ -343,15 +343,6 @@ class DenormalizedTrailTest(AuthentFixturesTest):
         with self.assertNumQueries(LTE(15)):
             self.client.get(reverse('core:path_json_list'))
 
-    def test_trails_are_shown_as_links_in_list(self):
-        self.login()
-        response = self.client.get(reverse('core:path_json_list'))
-        self.assertEqual(response.status_code, 200)
-        paths_json = json.loads(response.content)
-        trails_column = paths_json['aaData'][0][6]
-        self.assertTrue(trails_column == u'%s, %s' % (self.trail1.name_display, self.trail2.name_display)
-                        or trails_column == u'%s, %s' % (self.trail2.name_display, self.trail1.name_display))
-
 
 class TrailViewsTest(CommonTest):
     model = Trail

@@ -76,7 +76,4 @@ class SimpleGraph(TestCase):
         """
         PathFactory(geom=LineString((0, 0), (1, 1)))
         response = self.client.get(self.url)
-        last_modified = response['Last-Modified']
-        expires = response['Expires']
-        self.assertNotEqual(expires, None)
-        self.assertEqual(expires, last_modified)
+        self.assertNotEqual(response['Cache-Control'], None)

@@ -662,3 +662,4 @@ LOGGING = {
         },
     }
 }
+SHOW_EXTREMITIES = False

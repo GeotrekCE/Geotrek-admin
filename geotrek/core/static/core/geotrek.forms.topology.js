@@ -126,7 +126,7 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
 
         // Path layer is ready, load graph !
         this._pathsLayer.fire('data:loading');
-        var url = window.SETTINGS.urls.path_graph + '?_u=' + (new Date().getTime());
+        var url = window.SETTINGS.urls.path_graph;
         $.getJSON(url, this._onGraphLoaded.bind(this))
          .error(graphError.bind(this));
 

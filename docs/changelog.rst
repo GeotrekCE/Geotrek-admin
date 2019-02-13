@@ -2,6 +2,28 @@
 CHANGELOG
 =========
 
+2.24.1 (2019-02-12)
+-------------------
+
+**Bug fixes**
+
+- Fix install.sh (pin cairocffi version)
+- Fix routing on paths with sharp angles
+- Fix loadrestrictedareas command
+- Fix altimetry on straight portions of paths
+- Various signage fixes
+
+
+**Performances**
+
+- Allow client side caching with systematic revalidation for Layer, JsonList and graph views
+- Remove validation of history bar
+- Don't bringToFront() every single feature on map
+- Do not show bullets at path extremities anymore by default.
+  Set SHOW_EXTREMITIES setting to True in custom.py enable them.
+- Remove networks and trails columns in path list
+
+
 2.24.0 (2019-01-28)
 -------------------
 
