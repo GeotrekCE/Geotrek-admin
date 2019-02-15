@@ -386,7 +386,7 @@ def merge_path(request):
         if path_a.draft != path_b.draft:
             response = {'error': _(u"You can't merge 1 draft path with 1 normal path")}
 
-        if not 'error' in response:
+        if 'error' not in response:
             try:
                 result = path_a.merge_path(path_b)
 
