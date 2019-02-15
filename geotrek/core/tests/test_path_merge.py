@@ -12,6 +12,10 @@ from geotrek.core.models import PathAggregation, Topology
 
 
 class MergePathTest(TestCase):
+    def setUp(self):
+        self.user = SuperUserFactory.create()
+        self.client.force_login(self.user)
+
     def test_path_merge_without_snap(self):
         """
           A         B   C         D     A                  D
@@ -377,7 +381,5 @@ class MergePathTest(TestCase):
         self.assertEqual(e4_updated.offset, -e4.offset)
 
     def test_response_is_json(self):
-        user = SuperUserFactory.create()
-        self.client.force_login(user)
         response = self.client.post(reverse('core:merge_path'))
         self.assertEqual(response.content_type, 'application/json')
