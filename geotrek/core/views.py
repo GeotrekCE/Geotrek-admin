@@ -373,35 +373,35 @@ def merge_path(request):
     response = {}
 
     if request.method == 'POST':
-        ids_path_merge = request.POST.getlist('path[]')
+        try:
+            ids_path_merge = request.POST.getlist('path[]')
 
-        assert len(ids_path_merge) == 2
+            if len(ids_path_merge) != 2:
+                raise Exception(_(u"You should select two paths"))
 
-        path_a = Path.objects.get(pk=ids_path_merge[0])
-        path_b = Path.objects.get(pk=ids_path_merge[1])
+            path_a = Path.objects.get(pk=ids_path_merge[0])
+            path_b = Path.objects.get(pk=ids_path_merge[1])
 
-        if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
-            response = {'error': _(u"You don't have the right to change these paths")}
+            if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
+                raise Exception(_(u"You don't have the right to change these paths"))
 
-        if path_a.draft != path_b.draft:
-            response = {'error': _(u"You can't merge 1 draft path with 1 normal path")}
+            if path_a.draft != path_b.draft:
+                raise Exception(_(u"You can't merge 1 draft path with 1 normal path"))
 
-        if 'error' not in response:
-            try:
-                result = path_a.merge_path(path_b)
+            result = path_a.merge_path(path_b)
 
-                if result == 2:
-                    response = {'error': _(u"You can't merge 2 paths with a 3rd path in the intersection")}
+            if result == 2:
+                raise Exception(_(u"You can't merge 2 paths with a 3rd path in the intersection"))
 
-                elif result == 0:
-                    response = {'error': _(u"No matching points to merge paths found")}
+            elif result == 0:
+                raise Exception(_(u"No matching points to merge paths found"))
 
-                else:
-                    response = {'success': _(u"Paths merged successfully")}
-                    messages.success(request, _(u"Paths merged successfully"))
+            else:
+                response = {u'success': _(u"Paths merged successfully")}
+                messages.success(request, response['success'])
 
-            except Exception as exc:
-                response = {'error': u'%s' % exc, }
+        except Exception as exc:
+            response = {u'error': u'%s' % exc, }
 
     return JsonResponse(response)
 
