@@ -245,12 +245,16 @@ class PathViewsTest(CommonTest):
 
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p1.pk, p2.pk]})
         self.assertIn('error', response.json())
+        self.logout()
 
     def test_merge_fails_donttouch(self):
+        self.login()
         p3 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
         p4 = PathFactory.create(name="BC", geom=LineString((500, 0), (1000, 0)))
+
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p3.pk, p4.pk]})
         self.assertIn('error', response.json())
+        self.logout()
 
     def test_merge_works(self):
         self.login()
@@ -258,6 +262,7 @@ class PathViewsTest(CommonTest):
         p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)))
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
         self.assertIn('success', response.json())
+        self.logout()
 
     def test_merge_fails_draft_with_nodraft(self):
         """
@@ -271,6 +276,7 @@ class PathViewsTest(CommonTest):
         p2 = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)), draft=False)
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
         self.assertIn('error', response.json())
+        self.logout()
 
     def test_merge_ok_draft_with_draft(self):
         """
@@ -284,8 +290,7 @@ class PathViewsTest(CommonTest):
         p2 = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)), draft=True)
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
         self.assertIn('success', response.json())
-        p1.reload()
-        self.assertEqual(p1.geom, LineString((0, 1), (10, 1), (20, 1), srid=settings.SRID))
+        self.logout()
 
 
 class PathKmlGPXTest(TestCase):
