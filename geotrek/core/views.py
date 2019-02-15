@@ -32,7 +32,7 @@ from .models import Path, Trail, Topology
 from .forms import PathForm, TrailForm
 from .filters import PathFilterSet, TrailFilterSet
 from . import graph as graph_lib
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
@@ -382,27 +382,28 @@ def merge_path(request):
 
         if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
             response = {'error': _(u"You don't have the right to change these paths")}
-            return HttpJSONResponse(response)
 
         if path_a.draft != path_b.draft:
             response = {'error': _(u"You can't merge 1 draft path with 1 normal path")}
-            return HttpJSONResponse(response)
 
-        try:
-            result = path_a.merge_path(path_b)
-        except Exception as exc:
-            response = {'error': u'%s' % exc, }
-            return HttpJSONResponse(response)
+        if not 'error' in response:
+            try:
+                result = path_a.merge_path(path_b)
 
-        if result == 2:
-            response = {'error': _(u"You can't merge 2 paths with a 3rd path in the intersection")}
-        elif result == 0:
-            response = {'error': _(u"No matching points to merge paths found")}
-        else:
-            response = {'success': _(u"Paths merged successfully")}
-            messages.success(request, _(u"Paths merged successfully"))
+                if result == 2:
+                    response = {'error': _(u"You can't merge 2 paths with a 3rd path in the intersection")}
 
-        return HttpJSONResponse(response)
+                elif result == 0:
+                    response = {'error': _(u"No matching points to merge paths found")}
+
+                else:
+                    response = {'success': _(u"Paths merged successfully")}
+                    messages.success(request, _(u"Paths merged successfully"))
+
+            except Exception as exc:
+                response = {'error': u'%s' % exc, }
+
+    return JsonResponse(response)
 
 
 class ParametersView(View):
@@ -410,4 +411,4 @@ class ParametersView(View):
         response = {
             'geotrek_admin_version': settings.VERSION,
         }
-        return HttpResponse(json.dumps(response), content_type="application/json")
+        return JsonResponse(response)
