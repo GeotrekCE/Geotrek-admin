@@ -45,7 +45,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             )
             auto_bbox = True
 
-    class MinimalTrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    class TrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         thumbnail = serializers.ReadOnlyField(source='serializable_thumbnail_mobile')
         length = serializers.SerializerMethodField(read_only=True)
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='start_point', )

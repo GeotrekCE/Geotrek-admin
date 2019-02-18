@@ -24,6 +24,12 @@ GEOJSON_STRUCTURE = sorted([
     'properties'
 ])
 
+GEOJSON_STRUCTURE_WITHOUT_BBOX = sorted([
+    'geometry',
+    'type',
+    'properties'
+])
+
 TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'thumbnail', 'name', 'accessibilities', 'description_teaser', 'cities', 'description', 'departure', 'arrival', 'duration',
     'access', 'advised_parking', 'advice', 'difficulty', 'length', 'ascent', 'descent', 'route',
@@ -131,7 +137,7 @@ class APIAccessAdministratorTestCase(BaseApiTest):
         """
         self.client.login(username="administrator", password="administrator")
 
-    def test_trek(self):
+    def test_trek_detail(self):
         response = self.get_trek_detail(trek_models.Trek.objects.order_by('?').first().pk)
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -143,15 +149,12 @@ class APIAccessAdministratorTestCase(BaseApiTest):
 
         # regenrate with geojson 3D
         response = self.get_trek_detail(trek_models.Trek.objects.order_by('?').first().pk,
-                                        {'format': 'geojson', 'dim': '3'})
+                                        {'format': 'geojson'})
         json_response = json.loads(response.content.decode('utf-8'))
 
         # test geojson format
         self.assertEqual(sorted(json_response.keys()),
                          GEOJSON_STRUCTURE)
-        # test dim 3 ok
-        self.assertEqual(len(json_response.get('geometry').get('coordinates')[0]),
-                         3, json_response.get('geometry').get('coordinates')[0])
 
         self.assertEqual(sorted(json_response.get('properties').keys()),
                          TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE)
@@ -160,7 +163,7 @@ class APIAccessAdministratorTestCase(BaseApiTest):
         self.assertEqual('Sisi', json_response.get('properties').get('description'))
         self.assertEqual('mini', json_response.get('properties').get('description_teaser'))
 
-    def test_minimal_trek(self):
+    def test_trek_list(self):
         response = self.get_trek_list()
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -175,11 +178,11 @@ class APIAccessAdministratorTestCase(BaseApiTest):
                          self.nb_treks, json_response)
 
         # test dim 2 ok
-        self.assertEqual(len(json_response.get('results')[0].get('geometry').get('coordinates')[0]),
+        self.assertEqual(len(json_response.get('results')[0].get('geometry').get('coordinates')),
                          2)
 
         # regenrate with geojson 3D
-        response = self.get_trek_list({'format': 'geojson', 'dim': '3'})
+        response = self.get_trek_list({'format': 'geojson'})
         json_response = json.loads(response.content.decode('utf-8'))
 
         # test geojson format
@@ -188,12 +191,9 @@ class APIAccessAdministratorTestCase(BaseApiTest):
 
         self.assertEqual(len(json_response.get('features')),
                          self.nb_treks, json_response)
-        # test dim 3 ok
-        self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')[0]),
-                         3, json_response.get('features')[0].get('geometry').get('coordinates')[0])
 
         self.assertEqual(sorted(json_response.get('features')[0].keys()),
-                         GEOJSON_STRUCTURE)
+                         GEOJSON_STRUCTURE_WITHOUT_BBOX)
 
         self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
                          MINIMAL_TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE)
@@ -221,7 +221,7 @@ class APIAccessAdministratorTestCase(BaseApiTest):
                          2)
 
         # regenrate with geojson 3D
-        response = self.get_poi_list({'format': 'geojson', 'dim': '3'})
+        response = self.get_poi_list({'format': 'geojson'})
         json_response = json.loads(response.content.decode('utf-8'))
 
         # test geojson format
@@ -230,12 +230,11 @@ class APIAccessAdministratorTestCase(BaseApiTest):
 
         self.assertEqual(len(json_response.get('features')),
                          trek_models.POI.objects.all().count())
-        # test dim 3
         self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')),
-                         3)
+                         2)
 
         self.assertEqual(sorted(json_response.get('features')[0].keys()),
-                         GEOJSON_STRUCTURE)
+                         GEOJSON_STRUCTURE_WITHOUT_BBOX)
 
         self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
                          POI_LIST_PROPERTIES_GEOJSON_STRUCTURE)
