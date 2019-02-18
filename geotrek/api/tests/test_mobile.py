@@ -26,7 +26,7 @@ GEOJSON_STRUCTURE = sorted([
 
 TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'thumbnail', 'name', 'accessibilities', 'description_teaser', 'cities', 'description', 'departure', 'arrival', 'duration',
-    'access', 'advised_parking', 'advice', 'difficulty', 'length_2d', 'ascent', 'descent', 'route',
+    'access', 'advised_parking', 'advice', 'difficulty', 'length', 'ascent', 'descent', 'route',
     'is_park_centered', 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'pictures',
     'information_desks'
 ])
@@ -34,7 +34,7 @@ TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
 
 MINIMAL_TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'thumbnail', 'name', 'departure', 'accessibilities',
-    'difficulty', 'practice', 'themes', 'length_2d',
+    'difficulty', 'practice', 'themes', 'length',
 ])
 
 POI_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
