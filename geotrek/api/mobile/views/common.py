@@ -28,7 +28,7 @@ class SettingsView(APIView):
                                                                 context={'request': request}).data,
             'route': api_serializers.RouteSerializer(Route.objects.all().order_by('pk'), many=True,
                                                      context={'request': request}).data,
-            'theme': api_serializers.RouteSerializer(Theme.objects.all().order_by('pk'), many=True,
+            'theme': api_serializers.ThemeSerializer(Theme.objects.all().order_by('pk'), many=True,
                                                      context={'request': request}).data,
             'network': api_serializers.NetworkSerializer(TrekNetwork.objects.all().order_by('pk'), many=True,
                                                          context={'request': request}).data,
