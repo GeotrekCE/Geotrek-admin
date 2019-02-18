@@ -34,33 +34,30 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.DifficultyLevel
             fields = ('id', 'label', 'pictogram')
 
-
     class PracticeSerializer(serializers.ModelSerializer):
         label = serializers.ReadOnlyField(source='name')
 
         class Meta:
             model = trekking_models.Practice
-            fields = ('id', 'label',  'pictogram',)
+            fields = ('id', 'label', 'pictogram',)
 
     class AccessibilitySerializer(serializers.ModelSerializer):
         class Meta:
             model = trekking_models.Accessibility
-            fields = ('id', 'label',  'pictogram',)
+            fields = ('id', 'label', 'pictogram',)
 
     class RouteSerializer(serializers.ModelSerializer):
         label = serializers.ReadOnlyField(source='route')
 
         class Meta:
             model = trekking_models.Route
-            fields = ('id', 'label',  'pictogram',)
-
+            fields = ('id', 'label', 'pictogram',)
 
     class ThemeSerializer(serializers.ModelSerializer):
 
         class Meta:
             model = common_models.Theme
             fields = ('id', 'label', 'pictogram')
-
 
     class NetworkSerializer(serializers.ModelSerializer):
         label = serializers.ReadOnlyField(source='network')

@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.db.models import F
-from django.db.models.aggregates import Count
 
 from geotrek.api.mobile.serializers import trekking as api_serializers
 from geotrek.api.mobile import viewsets as api_viewsets

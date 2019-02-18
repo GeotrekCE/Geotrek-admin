@@ -5,7 +5,6 @@ from drf_dynamic_fields import DynamicFieldsMixin
 from rest_framework import serializers
 from rest_framework_gis import serializers as geo_serializers
 
-from geotrek.api.v2.utils import get_translation_or_dict
 from geotrek.common import models as common_models
 
 
