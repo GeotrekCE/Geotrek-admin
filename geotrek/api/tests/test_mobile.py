@@ -196,7 +196,7 @@ class APIAccessAdministratorTestCase(BaseApiTest):
                          GEOJSON_STRUCTURE_WITHOUT_BBOX)
 
         self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
-                         MINIMAL_TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE)
+                         TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
 
         self.assertEqual('Coucou', json_response.get('features')[0].get('properties').get('name'))
         self.assertIsNone(json_response.get('features')[0].get('properties').get('description'))
