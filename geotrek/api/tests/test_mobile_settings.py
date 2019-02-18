@@ -13,9 +13,12 @@ from geotrek.trekking import factories as trekking_factories
 from geotrek.trekking.models import TrekNetwork, Route, Practice, Accessibility, DifficultyLevel
 from geotrek.tourism import factories as tourism_factories
 from geotrek.tourism.models import InformationDesk
+from geotrek.zoning import factories as zoning_factories
+from geotrek.zoning.models import City
+
 
 SETTINGS_STRUCTURE = sorted([
-    'informationdesk', 'network', 'route', 'practice', 'accessibility', 'difficulty', 'theme'
+    'informationdesk', 'network', 'route', 'practice', 'accessibility', 'difficulty', 'theme', 'city'
 ])
 
 
@@ -142,3 +145,19 @@ class SettingsMobileTest(TestCase):
         self.assertEqual(len(json_response.get('theme')), Theme.objects.count())
         self.assertEqual(json_response.get('theme')[0].get('label'), theme.label)
         self.assertIn(str(theme.pictogram), json_response.get('theme')[0].get('pictogram'))
+
+    def test_settings_city(self):
+        self.client.login(username="administrator", password="administrator")
+        city = zoning_factories.CityFactory()
+        zoning_factories.CityFactory()
+        response = self.get_settings()
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+
+        json_response = json.loads(response.content.decode('utf-8'))
+
+        self.assertEqual(len(json_response.get('city')), City.objects.count())
+        self.assertEqual(json_response.get('city')[0].get('name'), city.name)
+        self.assertEqual(json_response.get('city')[0].get('code'), city.code)
+        self.assertEqual(json_response.get('city')[0].get('lng'), 312500)
+        self.assertEqual(json_response.get('city')[0].get('lat'), 412500)

@@ -8,6 +8,23 @@ from geotrek.common import models as common_models
 from geotrek.trekking import models as trekking_models
 
 
+if 'geotrek.zoning' in settings.INSTALLED_APPS:
+    from geotrek.zoning import models as zoning_models
+
+    class CitySerializer(serializers.ModelSerializer):
+        lat = serializers.SerializerMethodField(read_only=True)
+        lng = serializers.SerializerMethodField(read_only=True)
+
+        def get_lat(self, obj):
+            return obj.geom.centroid.y
+
+        def get_lng(self, obj):
+            return obj.geom.centroid.x
+
+        class Meta:
+            model = zoning_models.City
+            fields = ('name', 'code', 'lat', 'lng')
+
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     from geotrek.tourism import models as tourism_models
 
