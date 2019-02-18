@@ -8,7 +8,7 @@ from rest_framework_extensions.mixins import DetailSerializerMixin
 
 from geotrek.api.v2 import filters as api_filters
 from geotrek.api.mobile import pagination as api_pagination_mobile
-from geotrek.api.v2.serializers import override_serializer
+from geotrek.api.mobile.serializers.common import override_serializer
 
 
 class GeotrekViewset(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
@@ -26,8 +26,7 @@ class GeotrekViewset(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     def get_serializer_class(self):
         base_serializer_class = super(GeotrekViewset, self).get_serializer_class()
         format_output = self.request.query_params.get('format', 'json')
-        dimension = self.request.query_params.get('dim', '2')
-        return override_serializer(format_output, dimension, base_serializer_class)
+        return override_serializer(format_output, base_serializer_class)
 
     def get_serializer_context(self):
         return {

@@ -3,9 +3,36 @@ from __future__ import unicode_literals
 from django.conf import settings
 from drf_dynamic_fields import DynamicFieldsMixin
 from rest_framework import serializers
+from rest_framework_gis import serializers as geo_serializers
 
 from geotrek.common import models as common_models
 from geotrek.trekking import models as trekking_models
+
+
+class BaseGeoJSONSerializer(geo_serializers.GeoFeatureModelSerializer):
+    """
+    Mixin used to serialize geojson
+    """
+
+    class Meta:
+        geo_field = 'geometry'
+
+
+def override_serializer(format_output, base_serializer_class):
+    """
+    Override Serializer switch output format and dimension data
+    """
+    if format_output == 'geojson':
+        class GeneratedGeoSerializer(BaseGeoJSONSerializer,
+                                     base_serializer_class):
+            class Meta(BaseGeoJSONSerializer.Meta,
+                       base_serializer_class.Meta):
+                pass
+
+        final_class = GeneratedGeoSerializer
+    else:
+        final_class = base_serializer_class
+    return final_class
 
 
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
