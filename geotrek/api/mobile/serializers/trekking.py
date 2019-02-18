@@ -21,10 +21,10 @@ class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     from geotrek.trekking import models as trekking_models
 
-    class TrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    class TrekDetailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         thumbnail = serializers.ReadOnlyField(source='serializable_thumbnail_mobile')
 
-        geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
+        geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
         length = serializers.SerializerMethodField(read_only=True)
         pictures = AttachmentSerializer(many=True, )
 
@@ -43,17 +43,15 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'difficulty',
                 'geometry', 'pictures', 'information_desks'
             )
+            auto_bbox = True
 
     class MinimalTrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         thumbnail = serializers.ReadOnlyField(source='serializable_thumbnail_mobile')
-        length = serializers.ReadOnlyField(read_only=True)
-        geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
+        length = serializers.SerializerMethodField(read_only=True)
+        geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='start_point', )
 
         def get_length(self, obj):
             return round(obj.length_2d_m, 1)
-
-        def get_geometry(self, obj):
-            return obj.geom2d_transformed
 
         class Meta:
             model = trekking_models.Trek
@@ -65,14 +63,10 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
     class POIListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         pictures = AttachmentSerializer(many=True, )
         thumbnail = serializers.ReadOnlyField(source='serializable_thumbnail_mobile')
-        geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
-
-        def get_geometry(self, obj):
-            return obj.geom2d_transformed
+        geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
 
         class Meta:
             model = trekking_models.POI
             fields = (
-                'id', 'pictures', 'name', 'description', 'thumbnail', 'type',
-                'geometry',
+                'id', 'pictures', 'name', 'description', 'thumbnail', 'type', 'geometry',
             )
