@@ -27,6 +27,10 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
         length = serializers.SerializerMethodField(read_only=True)
         pictures = AttachmentSerializer(many=True, )
+        cities = serializers.SerializerMethodField(read_only=True)
+
+        def get_cities(self, obj):
+            return [city.code for city in obj.cities]
 
         def get_length(self, obj):
             return round(obj.length_2d_m, 1)
@@ -49,6 +53,10 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         thumbnail = serializers.ReadOnlyField(source='serializable_thumbnail_mobile')
         length = serializers.SerializerMethodField(read_only=True)
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='start_point', )
+        cities = serializers.SerializerMethodField(read_only=True)
+
+        def get_cities(self, obj):
+            return [city.code for city in obj.cities]
 
         def get_length(self, obj):
             return round(obj.length_2d_m, 1)
@@ -57,7 +65,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.Trek
             fields = (
                 'id', 'thumbnail', 'name', 'departure', 'accessibilities',
-                'difficulty', 'practice', 'themes', 'length', 'geometry'
+                'difficulty', 'practice', 'themes', 'length', 'geometry', 'cities'
             )
 
     class POIListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

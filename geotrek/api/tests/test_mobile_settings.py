@@ -159,5 +159,3 @@ class SettingsMobileTest(TestCase):
         self.assertEqual(len(json_response.get('cities')), City.objects.count())
         self.assertEqual(json_response.get('cities')[0].get('name'), city.name)
         self.assertEqual(json_response.get('cities')[0].get('code'), city.code)
-        self.assertEqual(json_response.get('cities')[0].get('lng'), city.geom.centroid.x)
-        self.assertEqual(json_response.get('cities')[0].get('lat'), city.geom.centroid.y)
