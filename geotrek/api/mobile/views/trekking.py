@@ -10,25 +10,11 @@ from geotrek.trekking import models as trekking_models
 
 
 class TrekViewSet(api_viewsets.GeotrekViewset):
-    serializer_class = api_serializers.TrekListSerializer
+    serializer_class = api_serializers.MinimalTrekListSerializer
     serializer_detail_class = api_serializers.TrekListSerializer
     queryset = trekking_models.Trek.objects.existing() \
         .select_related('topo_object', 'difficulty', 'practice') \
         .prefetch_related('topo_object__aggregations', 'themes', 'networks', 'attachments', 'information_desks') \
-        .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID),
-                  geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),
-                  length_2d_m=Length('geom'),
-                  length_3d_m=Length3D('geom_3d')) \
-        .order_by('pk')  # Required for reliable pagination
-    filter_fields = ('difficulty', 'themes', 'networks', 'practice')
-
-
-class MinimalTrekViewSet(api_viewsets.GeotrekViewset):
-    serializer_class = api_serializers.MinimalTrekListSerializer
-    serializer_detail_class = api_serializers.MinimalTrekListSerializer
-    queryset = trekking_models.Trek.objects.existing() \
-        .select_related('topo_object', 'difficulty', 'practice') \
-        .prefetch_related('topo_object__aggregations', 'themes', 'networks') \
         .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID),
                   geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),
                   length_2d_m=Length('geom'),

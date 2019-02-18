@@ -31,6 +31,13 @@ TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'information_desks'
 ])
 
+TREK_LIST_PROPERTIES_JSON_STRUCTURE = sorted([
+    'id', 'thumbnail', 'name', 'accessibilities', 'description_teaser', 'cities', 'description', 'departure', 'arrival', 'duration',
+    'access', 'advised_parking', 'advice', 'difficulty', 'length', 'ascent', 'descent', 'route',
+    'is_park_centered', 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'pictures',
+    'information_desks', 'geometry'
+])
+
 
 MINIMAL_TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'thumbnail', 'name', 'departure', 'accessibilities',
@@ -52,6 +59,7 @@ class BaseApiTest(TestCase):
         cls.client = Client()
         cls.nb_treks = 15
         cls.nb_pois = 55
+
         cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(cls.nb_treks, name_fr='Coucou', description_fr="Sisi",
                                                                   description_teaser_fr="mini")
 
@@ -65,15 +73,6 @@ class BaseApiTest(TestCase):
     def get_trek_detail(self, id_trek, params=None):
         self.login()
         return self.client.get(reverse('apimobile:trek-detail', args=(id_trek,)), params, HTTP_ACCEPT_LANGUAGE='fr')
-
-    def get_minimal_trek_list(self, params=None):
-        self.login()
-        return self.client.get(reverse('apimobile:minimal_trek-list'), params, HTTP_ACCEPT_LANGUAGE='fr')
-
-    def get_minimal_trek_detail(self, id_trek, params=None):
-        self.login()
-        return self.client.get(reverse('apimobile:minimal_trek-detail', args=(id_trek,)), params,
-                               HTTP_ACCEPT_LANGUAGE='fr')
 
     def get_poi_list(self, params=None):
         self.login()
@@ -97,16 +96,6 @@ class APIAnonymousTestCase(BaseApiTest):
     def test_trek_detail(self):
         self.client.logout()
         response = self.get_trek_detail(trek_models.Trek.objects.order_by('?').first().pk)
-        self.assertEqual(response.status_code, 401)
-
-    def test_minimal_trek_list(self):
-        self.client.logout()
-        response = self.get_minimal_trek_list()
-        self.assertEqual(response.status_code, 401)
-
-    def test_minimal_trek_detail(self):
-        self.client.logout()
-        response = self.get_minimal_trek_detail(trek_models.Trek.objects.order_by('?').first().pk)
         self.assertEqual(response.status_code, 401)
 
     def test_poi_list(self):
@@ -143,6 +132,35 @@ class APIAccessAdministratorTestCase(BaseApiTest):
         self.client.login(username="administrator", password="administrator")
 
     def test_trek(self):
+        response = self.get_trek_detail(trek_models.Trek.objects.order_by('?').first().pk)
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+
+        # json collection structure is ok
+        json_response = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(sorted(json_response.keys()),
+                         TREK_LIST_PROPERTIES_JSON_STRUCTURE)
+
+        # regenrate with geojson 3D
+        response = self.get_trek_detail(trek_models.Trek.objects.order_by('?').first().pk,
+                                        {'format': 'geojson', 'dim': '3'})
+        json_response = json.loads(response.content.decode('utf-8'))
+
+        # test geojson format
+        self.assertEqual(sorted(json_response.keys()),
+                         GEOJSON_STRUCTURE)
+        # test dim 3 ok
+        self.assertEqual(len(json_response.get('geometry').get('coordinates')[0]),
+                         3, json_response.get('geometry').get('coordinates')[0])
+
+        self.assertEqual(sorted(json_response.get('properties').keys()),
+                         TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE)
+
+        self.assertEqual('Coucou', json_response.get('properties').get('name'))
+        self.assertEqual('Sisi', json_response.get('properties').get('description'))
+        self.assertEqual('mini', json_response.get('properties').get('description_teaser'))
+
+    def test_minimal_trek(self):
         response = self.get_trek_list()
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -162,48 +180,6 @@ class APIAccessAdministratorTestCase(BaseApiTest):
 
         # regenrate with geojson 3D
         response = self.get_trek_list({'format': 'geojson', 'dim': '3'})
-        json_response = json.loads(response.content.decode('utf-8'))
-
-        # test geojson format
-        self.assertEqual(sorted(json_response.keys()),
-                         PAGINATED_GEOJSON_STRUCTURE)
-
-        self.assertEqual(len(json_response.get('features')),
-                         self.nb_treks, json_response)
-        # test dim 3 ok
-        self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')[0]),
-                         3, json_response.get('features')[0].get('geometry').get('coordinates')[0])
-
-        self.assertEqual(sorted(json_response.get('features')[0].keys()),
-                         GEOJSON_STRUCTURE)
-
-        self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
-                         TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE)
-
-        self.assertEqual('Coucou', json_response.get('features')[0].get('properties').get('name'))
-        self.assertEqual('Sisi', json_response.get('features')[0].get('properties').get('description'))
-        self.assertEqual('mini', json_response.get('features')[0].get('properties').get('description_teaser'))
-
-    def test_minimal_trek(self):
-        response = self.get_minimal_trek_list()
-        #  test response code
-        self.assertEqual(response.status_code, 200)
-
-        # json collection structure is ok
-        json_response = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(sorted(json_response.keys()),
-                         PAGINATED_JSON_STRUCTURE)
-
-        # trek count is ok
-        self.assertEqual(len(json_response.get('results')),
-                         self.nb_treks, json_response)
-
-        # test dim 2 ok
-        self.assertEqual(len(json_response.get('results')[0].get('geometry').get('coordinates')[0]),
-                         2)
-
-        # regenrate with geojson 3D
-        response = self.get_minimal_trek_list({'format': 'geojson', 'dim': '3'})
         json_response = json.loads(response.content.decode('utf-8'))
 
         # test geojson format
