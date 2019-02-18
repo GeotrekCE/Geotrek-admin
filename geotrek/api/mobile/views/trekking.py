@@ -3,8 +3,6 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.db.models import F
 
-from rest_framework_extensions.mixins import DetailSerializerMixin
-
 from geotrek.api.mobile.serializers import trekking as api_serializers
 from geotrek.api.mobile import viewsets as api_viewsets
 from geotrek.api.v2.functions import Transform, Length, StartPoint
