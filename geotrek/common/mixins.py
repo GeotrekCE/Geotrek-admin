@@ -142,6 +142,18 @@ class PicturesMixin(object):
             return thumbnail
         return None
 
+    @property
+    def thumbnail_mobile(self):
+        for picture in self.pictures:
+            thumbnailer = get_thumbnailer(picture.attachment_file)
+            try:
+                thumbnail = thumbnailer.get_thumbnail(aliases.get('medium'))
+            except InvalidImageFormatError:
+                logger.info(_("Image %s invalid or missing from disk.") % picture.attachment_file)
+                continue
+            return thumbnail
+        return None
+
     @classproperty
     def thumbnail_verbose_name(cls):
         return _("Thumbnail")
@@ -160,6 +172,13 @@ class PicturesMixin(object):
     @property
     def serializable_thumbnail(self):
         th = self.thumbnail
+        if not th:
+            return None
+        return os.path.join(settings.MEDIA_URL, th.name)
+
+    @property
+    def serializable_thumbnail_mobile(self):
+        th = self.thumbnail_mobile
         if not th:
             return None
         return os.path.join(settings.MEDIA_URL, th.name)
