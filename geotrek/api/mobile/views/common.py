@@ -20,21 +20,21 @@ class SettingsView(APIView):
 
     def get(self, request, *args, **kwargs):
         return response.Response({
-            'difficulty': api_serializers.DifficultySerializer(DifficultyLevel.objects.all().order_by('pk'), many=True,
-                                                               context={'request': request}).data,
-            'practice': api_serializers.PracticeSerializer(Practice.objects.all().order_by('pk'), many=True,
-                                                           context={'request': request}).data,
-            'accessibility': api_serializers.PracticeSerializer(Accessibility.objects.all().order_by('pk'), many=True,
+            'difficulties': api_serializers.DifficultySerializer(DifficultyLevel.objects.all().order_by('pk'), many=True,
+                                                                 context={'request': request}).data,
+            'practices': api_serializers.PracticeSerializer(Practice.objects.all().order_by('pk'), many=True,
+                                                            context={'request': request}).data,
+            'accessibilities': api_serializers.PracticeSerializer(Accessibility.objects.all().order_by('pk'), many=True,
                                                                 context={'request': request}).data,
-            'route': api_serializers.RouteSerializer(Route.objects.all().order_by('pk'), many=True,
-                                                     context={'request': request}).data,
-            'theme': api_serializers.ThemeSerializer(Theme.objects.all().order_by('pk'), many=True,
-                                                     context={'request': request}).data,
-            'network': api_serializers.NetworkSerializer(TrekNetwork.objects.all().order_by('pk'), many=True,
-                                                         context={'request': request}).data,
-            'informationdesk': api_serializers.InformationDeskSerializer(InformationDesk.objects.all().order_by('pk'),
-                                                                         many=True,
-                                                                         context={'request': request}).data,
-            'city': api_serializers.CitySerializer(City.objects.all().order_by('pk'), many=True,
-                                                   context={'request': request}).data
+            'routes': api_serializers.RouteSerializer(Route.objects.all().order_by('pk'), many=True,
+                                                      context={'request': request}).data,
+            'themes': api_serializers.ThemeSerializer(Theme.objects.all().order_by('pk'), many=True,
+                                                      context={'request': request}).data,
+            'networks': api_serializers.NetworkSerializer(TrekNetwork.objects.all().order_by('pk'), many=True,
+                                                          context={'request': request}).data,
+            'informationdesks': api_serializers.InformationDeskSerializer(InformationDesk.objects.all().order_by('pk'),
+                                                                          many=True,
+                                                                          context={'request': request}).data,
+            'cities': api_serializers.CitySerializer(City.objects.all().order_by('pk'), many=True,
+                                                     context={'request': request}).data
         })

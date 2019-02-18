@@ -41,7 +41,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'description', 'departure', 'arrival', 'duration', 'access', 'advised_parking', 'advice',
                 'difficulty', 'length', 'ascent', 'descent', 'route', 'is_park_centered',
                 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'difficulty',
-                'geometry', 'pictures', 'information_desks'
+                'geometry', 'pictures', 'information_desks', 'cities',
             )
             auto_bbox = True
 
