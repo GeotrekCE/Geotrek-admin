@@ -64,8 +64,8 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         class Meta:
             model = trekking_models.Trek
             fields = (
-                'id', 'thumbnail', 'name', 'departure', 'accessibilities',
-                'difficulty', 'practice', 'themes', 'length', 'geometry', 'cities'
+                'id', 'thumbnail', 'name', 'departure', 'accessibilities', 'route',
+                'difficulty', 'practice', 'themes', 'length', 'geometry', 'cities', 'duration'
             )
 
     class POIListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

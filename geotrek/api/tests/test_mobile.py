@@ -46,8 +46,8 @@ TREK_LIST_PROPERTIES_JSON_STRUCTURE = sorted([
 
 
 TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'id', 'thumbnail', 'name', 'departure', 'accessibilities',
-    'difficulty', 'practice', 'themes', 'length', 'cities'
+    'id', 'thumbnail', 'name', 'departure', 'accessibilities', 'duration',
+    'difficulty', 'practice', 'themes', 'length', 'cities', 'route'
 ])
 
 POI_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
