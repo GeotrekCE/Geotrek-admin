@@ -50,3 +50,6 @@ msgstr "État de la publication. Si une langue est définie, les filtres s'appli
 
 msgid "External ID"
 msgstr "ID externe"
+
+msgid "Difficulties"
+msgstr "Difficultés"

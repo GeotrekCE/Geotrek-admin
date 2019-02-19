@@ -50,3 +50,6 @@ msgstr ""
 
 msgid "External ID"
 msgstr ""
+
+msgid "Difficulties"
+msgstr ""
