@@ -53,7 +53,7 @@ class SettingsMobileTest(TestCase):
         json_response = json.loads(response.content.decode('utf-8'))
         self.assertEqual(sorted(json_response.keys()),
                          SETTINGS_STRUCTURE)
-        values_data = [values.get('name') for values in json_response.get('data')]
+        values_data = [values.get('id') for values in json_response.get('data')]
         self.assertEqual(sorted(values_data),
                          SETTINGS_DATA_STRUCTURE)
 
