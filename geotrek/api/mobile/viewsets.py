@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework_extensions.mixins import DetailSerializerMixin
 
 from geotrek.api.v2 import filters as api_filters
@@ -20,7 +20,7 @@ class GeotrekViewset(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     distance_filter_field = 'geometry'
     distance_filter_convert_meters = True
     pagination_class = api_pagination_mobile.StandardMobileSetPagination
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticatedOrReadOnly, ]
     authentication_classes = [BasicAuthentication, SessionAuthentication]
 
     def get_serializer_class(self):

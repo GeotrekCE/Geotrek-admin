@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework import response
 from rest_framework_extensions.mixins import DetailSerializerMixin
 
@@ -20,7 +20,7 @@ class SettingsView(APIView):
     """
     Use HTTP basic authentication to access this endpoint.
     """
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticatedOrReadOnly, ]
     authentication_classes = [BasicAuthentication, SessionAuthentication]
 
     def get(self, request, *args, **kwargs):
@@ -119,7 +119,7 @@ class FlatPageViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     """
     Use HTTP basic authentication to access this endpoint.
     """
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticatedOrReadOnly, ]
     authentication_classes = [BasicAuthentication, SessionAuthentication]
     serializer_class = api_serializers.FlatPageListSerializer
     serializer_detail_class = api_serializers.FlatPageDetailSerializer
