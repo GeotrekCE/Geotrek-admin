@@ -49,3 +49,25 @@ class FlatPageAdministratorTest(TestCase):
                          FLATPAGE_DETAIL_PROPERTIES_JSON_STRUCTURE)
         self.assertEqual(json_response.get('content'), self.flatpage.content)
         self.assertEqual(json_response.get('title'), self.flatpage.title)
+
+
+class FlatPageAnonymousTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.flatpage = FlatPageFactory.create()
+        FlatPageFactory.create()
+
+    def get_flatpage_list(self, params=None):
+        return self.client.get(reverse('apimobile:flatpage-list'), params, HTTP_ACCEPT_LANGUAGE='fr')
+
+    def get_flatpage_detail(self, id_flatpage, params=None):
+        return self.client.get(reverse('apimobile:flatpage-detail', args=(id_flatpage,)),
+                               params, HTTP_ACCEPT_LANGUAGE='fr')
+
+    def test_flatpage_list_administrator(self):
+        response = self.get_flatpage_list()
+        self.assertEqual(response.status_code, 401)
+
+    def test_flatpage_detail_administrator(self):
+        response = self.get_flatpage_detail(self.flatpage.pk)
+        self.assertEqual(response.status_code, 401)
