@@ -38,14 +38,7 @@ class SettingsMobileTest(TestCase):
     def get_settings(self, params=None):
         return self.client.get(reverse('apimobile:settings'), params, HTTP_ACCEPT_LANGUAGE='fr')
 
-    def test_settings_no_permission(self):
-        response = self.get_settings()
-        #  test response code
-        self.assertEqual(response.status_code, 401)
-
     def test_settings_structure(self):
-        self.client.login(username="administrator", password="administrator")
-
         response = self.get_settings()
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -58,7 +51,6 @@ class SettingsMobileTest(TestCase):
                          SETTINGS_DATA_STRUCTURE)
 
     def test_settings_information_desk(self):
-        self.client.login(username="administrator", password="administrator")
         informationdesk = tourism_factories.InformationDeskFactory()
         tourism_factories.InformationDeskFactory()
         response = self.get_settings()
@@ -75,7 +67,6 @@ class SettingsMobileTest(TestCase):
         self.assertEqual(informationdesk_item[0].get('description'), informationdesk.description)
 
     def test_settings_network(self):
-        self.client.login(username="administrator", password="administrator")
         network = trekking_factories.TrekNetworkFactory()
         trekking_factories.TrekNetworkFactory()
         response = self.get_settings()
@@ -90,7 +81,6 @@ class SettingsMobileTest(TestCase):
         self.assertEqual(network_item[0].get('label'), network.network)
 
     def test_settings_route(self):
-        self.client.login(username="administrator", password="administrator")
         route = trekking_factories.RouteFactory()
         trekking_factories.RouteFactory()
         response = self.get_settings()
@@ -105,7 +95,6 @@ class SettingsMobileTest(TestCase):
         self.assertEqual(route_item[0].get('label'), route.route)
 
     def test_settings_practice(self):
-        self.client.login(username="administrator", password="administrator")
         practice = trekking_factories.PracticeFactory()
         trekking_factories.PracticeFactory()
         response = self.get_settings()
@@ -120,7 +109,6 @@ class SettingsMobileTest(TestCase):
         self.assertIn(str(practice.pictogram), practice_item[0].get('pictogram'))
 
     def test_settings_accessibility(self):
-        self.client.login(username="administrator", password="administrator")
         accessibility = trekking_factories.AccessibilityFactory()
         trekking_factories.AccessibilityFactory()
         response = self.get_settings()
@@ -135,7 +123,6 @@ class SettingsMobileTest(TestCase):
         self.assertIn(str(accessibility.pictogram), accessibility_item[0].get('pictogram'))
 
     def test_settings_difficulty(self):
-        self.client.login(username="administrator", password="administrator")
         difficulty = trekking_factories.DifficultyLevelFactory()
         trekking_factories.DifficultyLevelFactory()
         response = self.get_settings()
@@ -150,7 +137,6 @@ class SettingsMobileTest(TestCase):
         self.assertIn(str(difficulty.pictogram), difficulty_item[0].get('pictogram'))
 
     def test_settings_theme(self):
-        self.client.login(username="administrator", password="administrator")
         theme = common_factories.ThemeFactory()
         common_factories.ThemeFactory()
         response = self.get_settings()
@@ -165,7 +151,6 @@ class SettingsMobileTest(TestCase):
         self.assertIn(str(theme.pictogram), theme_item[0].get('pictogram'))
 
     def test_settings_city(self):
-        self.client.login(username="administrator", password="administrator")
         city = zoning_factories.CityFactory()
         zoning_factories.CityFactory()
         response = self.get_settings()

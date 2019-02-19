@@ -66,8 +66,16 @@ class FlatPageAnonymousTest(TestCase):
 
     def test_flatpage_list_administrator(self):
         response = self.get_flatpage_list()
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 200)
+        json_response = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(len(json_response), 2)
+        self.assertEqual(json_response[0].get('title'), FlatPage.objects.first().title)
 
     def test_flatpage_detail_administrator(self):
         response = self.get_flatpage_detail(self.flatpage.pk)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 200)
+        json_response = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(sorted(json_response.keys()),
+                         FLATPAGE_DETAIL_PROPERTIES_JSON_STRUCTURE)
+        self.assertEqual(json_response.get('content'), self.flatpage.content)
+        self.assertEqual(json_response.get('title'), self.flatpage.title)

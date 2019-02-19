@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 import json
 
-from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test.client import Client
 from django.test.testcases import TestCase
@@ -89,33 +88,7 @@ class BaseApiTest(TestCase):
         return self.client.get(reverse('apimobile:poi-detail', args=(id_poi,)), params, HTTP_ACCEPT_LANGUAGE='fr')
 
 
-class APIAnonymousTestCase(BaseApiTest):
-    """
-    TestCase for anonymous API profile
-    """
-
-    def test_trek_list(self):
-        self.client.logout()
-        response = self.get_trek_list()
-        self.assertEqual(response.status_code, 401)
-
-    def test_trek_detail(self):
-        self.client.logout()
-        response = self.get_trek_detail(trek_models.Trek.objects.order_by('?').first().pk)
-        self.assertEqual(response.status_code, 401)
-
-    def test_poi_list(self):
-        self.client.logout()
-        response = self.get_poi_list()
-        self.assertEqual(response.status_code, 401)
-
-    def test_poi_detail(self):
-        self.client.logout()
-        response = self.get_poi_detail(trek_models.POI.objects.order_by('?').first().pk)
-        self.assertEqual(response.status_code, 401)
-
-
-class APIAccessAdministratorTestCase(BaseApiTest):
+class APIAccessTestCase(BaseApiTest):
     """
     TestCase for administrator API profile
     """
@@ -123,19 +96,10 @@ class APIAccessAdministratorTestCase(BaseApiTest):
     @classmethod
     def setUpTestData(cls):
         #  created user
-        cls.administrator = User.objects.create(username="administrator", is_superuser=True,
-                                                is_staff=True, is_active=True)
-        cls.administrator.set_password('administrator')
-        cls.administrator.save()
-        cls.administrator.refresh_from_db()
-
         BaseApiTest.setUpTestData()
 
     def login(self):
-        """
-        Override base class login method, used before all function request 'get_api_element'
-        """
-        self.client.login(username="administrator", password="administrator")
+        pass
 
     def test_trek_detail(self):
         response = self.get_trek_detail(trek_models.Trek.objects.order_by('?').first().pk)
