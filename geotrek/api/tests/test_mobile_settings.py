@@ -18,6 +18,10 @@ from geotrek.zoning.models import City
 
 
 SETTINGS_STRUCTURE = sorted([
+    'filters', 'data'
+])
+
+SETTINGS_DATA_STRUCTURE = sorted([
     'informationdesks', 'networks', 'routes', 'practices', 'accessibilities', 'difficulties', 'themes', 'cities'
 ])
 
@@ -49,6 +53,9 @@ class SettingsMobileTest(TestCase):
         json_response = json.loads(response.content.decode('utf-8'))
         self.assertEqual(sorted(json_response.keys()),
                          SETTINGS_STRUCTURE)
+        values_data = [values.get('name') for values in json_response.get('data')]
+        self.assertEqual(sorted(values_data),
+                         SETTINGS_DATA_STRUCTURE)
 
     def test_settings_information_desk(self):
         self.client.login(username="administrator", password="administrator")
@@ -60,9 +67,12 @@ class SettingsMobileTest(TestCase):
 
         json_response = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(len(json_response.get('informationdesks')), InformationDesk.objects.count())
-        self.assertEqual(json_response.get('informationdesks')[0].get('email'), informationdesk.email)
-        self.assertEqual(json_response.get('informationdesks')[0].get('description'), informationdesk.description)
+        informationdesk_item = next((item.get('values') for item in json_response.get('data')
+                                     if item['id'] == 'informationdesks'), None)
+
+        self.assertEqual(len(informationdesk_item), InformationDesk.objects.count())
+        self.assertEqual(informationdesk_item[0].get('email'), informationdesk.email)
+        self.assertEqual(informationdesk_item[0].get('description'), informationdesk.description)
 
     def test_settings_network(self):
         self.client.login(username="administrator", password="administrator")
@@ -74,8 +84,10 @@ class SettingsMobileTest(TestCase):
 
         json_response = json.loads(response.content.decode('utf-8'))
 
-        self.assertEqual(len(json_response.get('networks')), TrekNetwork.objects.count())
-        self.assertEqual(json_response.get('networks')[0].get('label'), network.network)
+        network_item = next((item.get('values') for item in json_response.get('data')
+                             if item['id'] == 'networks'), None)
+        self.assertEqual(len(network_item), TrekNetwork.objects.count())
+        self.assertEqual(network_item[0].get('label'), network.network)
 
     def test_settings_route(self):
         self.client.login(username="administrator", password="administrator")
@@ -86,9 +98,11 @@ class SettingsMobileTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         json_response = json.loads(response.content.decode('utf-8'))
+        route_item = next((item.get('values') for item in json_response.get('data')
+                           if item['id'] == 'routes'), None)
 
-        self.assertEqual(len(json_response.get('routes')), Route.objects.count())
-        self.assertEqual(json_response.get('routes')[0].get('label'), route.route)
+        self.assertEqual(len(route_item), Route.objects.count())
+        self.assertEqual(route_item[0].get('label'), route.route)
 
     def test_settings_practice(self):
         self.client.login(username="administrator", password="administrator")
@@ -99,10 +113,11 @@ class SettingsMobileTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         json_response = json.loads(response.content.decode('utf-8'))
-
-        self.assertEqual(len(json_response.get('practices')), Practice.objects.count())
-        self.assertEqual(json_response.get('practices')[0].get('label'), practice.name)
-        self.assertIn(str(practice.pictogram), json_response.get('practices')[0].get('pictogram'))
+        practice_item = next((item.get('values') for item in json_response.get('data')
+                              if item['id'] == 'practices'), None)
+        self.assertEqual(len(practice_item), Practice.objects.count())
+        self.assertEqual(practice_item[0].get('label'), practice.name)
+        self.assertIn(str(practice.pictogram), practice_item[0].get('pictogram'))
 
     def test_settings_accessibility(self):
         self.client.login(username="administrator", password="administrator")
@@ -113,10 +128,11 @@ class SettingsMobileTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         json_response = json.loads(response.content.decode('utf-8'))
-
-        self.assertEqual(len(json_response.get('accessibilities')), Accessibility.objects.count())
-        self.assertEqual(json_response.get('accessibilities')[0].get('label'), accessibility.name)
-        self.assertIn(str(accessibility.pictogram), json_response.get('accessibilities')[0].get('pictogram'))
+        accessibility_item = next((item.get('values') for item in json_response.get('data')
+                                   if item['id'] == 'accessibilities'), None)
+        self.assertEqual(len(accessibility_item), Accessibility.objects.count())
+        self.assertEqual(accessibility_item[0].get('label'), accessibility.name)
+        self.assertIn(str(accessibility.pictogram), accessibility_item[0].get('pictogram'))
 
     def test_settings_difficulty(self):
         self.client.login(username="administrator", password="administrator")
@@ -127,10 +143,11 @@ class SettingsMobileTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         json_response = json.loads(response.content.decode('utf-8'))
-
-        self.assertEqual(len(json_response.get('difficulties')), DifficultyLevel.objects.count())
-        self.assertEqual(json_response.get('difficulties')[0].get('label'), difficulty.difficulty)
-        self.assertIn(str(difficulty.pictogram), json_response.get('difficulties')[0].get('pictogram'))
+        difficulty_item = next((item.get('values') for item in json_response.get('data')
+                                if item['id'] == 'difficulties'), None)
+        self.assertEqual(len(difficulty_item), DifficultyLevel.objects.count())
+        self.assertEqual(difficulty_item[0].get('label'), difficulty.difficulty)
+        self.assertIn(str(difficulty.pictogram), difficulty_item[0].get('pictogram'))
 
     def test_settings_theme(self):
         self.client.login(username="administrator", password="administrator")
@@ -141,10 +158,11 @@ class SettingsMobileTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         json_response = json.loads(response.content.decode('utf-8'))
-
-        self.assertEqual(len(json_response.get('themes')), Theme.objects.count())
-        self.assertEqual(json_response.get('themes')[0].get('label'), theme.label)
-        self.assertIn(str(theme.pictogram), json_response.get('themes')[0].get('pictogram'))
+        theme_item = next((item.get('values') for item in json_response.get('data')
+                           if item['id'] == 'themes'), None)
+        self.assertEqual(len(theme_item), Theme.objects.count())
+        self.assertEqual(theme_item[0].get('label'), theme.label)
+        self.assertIn(str(theme.pictogram), theme_item[0].get('pictogram'))
 
     def test_settings_city(self):
         self.client.login(username="administrator", password="administrator")
@@ -155,7 +173,8 @@ class SettingsMobileTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         json_response = json.loads(response.content.decode('utf-8'))
-
-        self.assertEqual(len(json_response.get('cities')), City.objects.count())
-        self.assertEqual(json_response.get('cities')[0].get('name'), city.name)
-        self.assertEqual(json_response.get('cities')[0].get('code'), city.code)
+        city_item = next((item.get('values') for item in json_response.get('data')
+                          if item['id'] == 'cities'), None)
+        self.assertEqual(len(city_item), City.objects.count())
+        self.assertEqual(city_item[0].get('name'), city.name)
+        self.assertEqual(city_item[0].get('code'), city.code)
