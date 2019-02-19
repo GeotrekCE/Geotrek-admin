@@ -3,11 +3,14 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework.views import APIView
+from rest_framework import viewsets
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import response
+from rest_framework_extensions.mixins import DetailSerializerMixin
 
 from geotrek.api.mobile.serializers import common as api_serializers
+from geotrek.flatpages.models import FlatPage
 from geotrek.trekking.models import DifficultyLevel, Practice, Accessibility, Route, Theme, TrekNetwork
 from geotrek.tourism.models import InformationDesk
 from geotrek.zoning.models import City
@@ -110,3 +113,14 @@ class SettingsView(APIView):
                 }
             ]
         })
+
+
+class FlatPageViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
+    """
+    Use HTTP basic authentication to access this endpoint.
+    """
+    permission_classes = [IsAuthenticated, ]
+    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    serializer_class = api_serializers.FlatPageListSerializer
+    serializer_detail_class = api_serializers.FlatPageDetailSerializer
+    queryset = FlatPage.objects.all().order_by('pk')

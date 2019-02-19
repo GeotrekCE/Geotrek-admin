@@ -7,6 +7,8 @@ from rest_framework import routers
 from geotrek.api.mobile import views as api_mobile
 
 router = routers.DefaultRouter()
+if 'geotrek.flatpages' in settings.INSTALLED_APPS:
+    router.register(r'flatpages', api_mobile.FlatPageViewSet, base_name='flatpage')
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     router.register(r'trek', api_mobile.TrekViewSet, base_name='trek')
     router.register(r'poi', api_mobile.POIViewSet, base_name='poi')

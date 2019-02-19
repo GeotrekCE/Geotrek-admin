@@ -6,6 +6,7 @@ from rest_framework import serializers
 from rest_framework_gis import serializers as geo_serializers
 
 from geotrek.common import models as common_models
+from geotrek.flatpages import models as flatpage_models
 from geotrek.trekking import models as trekking_models
 
 
@@ -101,3 +102,15 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         class Meta:
             model = trekking_models.TrekNetwork
             fields = ('id', 'label', 'pictogram')
+
+
+class FlatPageListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = flatpage_models.FlatPage
+        fields = ('id', 'title')
+
+
+class FlatPageDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = flatpage_models.FlatPage
+        fields = ('id', 'title', 'content')
