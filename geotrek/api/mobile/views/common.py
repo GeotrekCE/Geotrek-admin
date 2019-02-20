@@ -31,7 +31,7 @@ class SettingsView(APIView):
                     "type": "contains"
                 },
                 {
-                    "id": "length",
+                    "id": "lengths",
                     "type": "interval"
                 },
                 {
@@ -47,7 +47,7 @@ class SettingsView(APIView):
                     "type": "contains"
                 },
                 {
-                    "id": "duration",
+                    "id": "durations",
                     "type": "interval"
                 },
                 {
