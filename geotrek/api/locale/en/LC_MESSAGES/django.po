@@ -53,3 +53,9 @@ msgstr ""
 
 msgid "Difficulties"
 msgstr ""
+
+msgid "Lengths"
+msgstr ""
+
+msgid "Durations"
+msgstr ""

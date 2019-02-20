@@ -22,7 +22,8 @@ SETTINGS_STRUCTURE = sorted([
 ])
 
 SETTINGS_DATA_STRUCTURE = sorted([
-    'informationdesks', 'networks', 'routes', 'practices', 'accessibilities', 'difficulties', 'themes', 'cities'
+    'informationdesks', 'networks', 'routes', 'practices', 'accessibilities', 'difficulties', 'themes', 'cities',
+    'lengths', 'durations'
 ])
 
 
@@ -78,7 +79,7 @@ class SettingsMobileTest(TestCase):
         network_item = next((item.get('values') for item in json_response.get('data')
                              if item['id'] == 'networks'), None)
         self.assertEqual(len(network_item), TrekNetwork.objects.count())
-        self.assertEqual(network_item[0].get('label'), network.network)
+        self.assertEqual(network_item[0].get('name'), network.network)
 
     def test_settings_route(self):
         route = trekking_factories.RouteFactory()
@@ -92,7 +93,7 @@ class SettingsMobileTest(TestCase):
                            if item['id'] == 'routes'), None)
 
         self.assertEqual(len(route_item), Route.objects.count())
-        self.assertEqual(route_item[0].get('label'), route.route)
+        self.assertEqual(route_item[0].get('name'), route.route)
 
     def test_settings_practice(self):
         practice = trekking_factories.PracticeFactory()
@@ -105,7 +106,7 @@ class SettingsMobileTest(TestCase):
         practice_item = next((item.get('values') for item in json_response.get('data')
                               if item['id'] == 'practices'), None)
         self.assertEqual(len(practice_item), Practice.objects.count())
-        self.assertEqual(practice_item[0].get('label'), practice.name)
+        self.assertEqual(practice_item[0].get('name'), practice.name)
         self.assertIn(str(practice.pictogram), practice_item[0].get('pictogram'))
 
     def test_settings_accessibility(self):
@@ -119,7 +120,7 @@ class SettingsMobileTest(TestCase):
         accessibility_item = next((item.get('values') for item in json_response.get('data')
                                    if item['id'] == 'accessibilities'), None)
         self.assertEqual(len(accessibility_item), Accessibility.objects.count())
-        self.assertEqual(accessibility_item[0].get('label'), accessibility.name)
+        self.assertEqual(accessibility_item[0].get('name'), accessibility.name)
         self.assertIn(str(accessibility.pictogram), accessibility_item[0].get('pictogram'))
 
     def test_settings_difficulty(self):
@@ -133,7 +134,7 @@ class SettingsMobileTest(TestCase):
         difficulty_item = next((item.get('values') for item in json_response.get('data')
                                 if item['id'] == 'difficulties'), None)
         self.assertEqual(len(difficulty_item), DifficultyLevel.objects.count())
-        self.assertEqual(difficulty_item[0].get('label'), difficulty.difficulty)
+        self.assertEqual(difficulty_item[0].get('name'), difficulty.difficulty)
         self.assertIn(str(difficulty.pictogram), difficulty_item[0].get('pictogram'))
 
     def test_settings_theme(self):
@@ -147,7 +148,7 @@ class SettingsMobileTest(TestCase):
         theme_item = next((item.get('values') for item in json_response.get('data')
                            if item['id'] == 'themes'), None)
         self.assertEqual(len(theme_item), Theme.objects.count())
-        self.assertEqual(theme_item[0].get('label'), theme.label)
+        self.assertEqual(theme_item[0].get('name'), theme.label)
         self.assertIn(str(theme.pictogram), theme_item[0].get('pictogram'))
 
     def test_settings_city(self):
@@ -162,4 +163,4 @@ class SettingsMobileTest(TestCase):
                           if item['id'] == 'cities'), None)
         self.assertEqual(len(city_item), City.objects.count())
         self.assertEqual(city_item[0].get('name'), city.name)
-        self.assertEqual(city_item[0].get('code'), city.code)
+        self.assertEqual(city_item[0].get('id'), city.code)

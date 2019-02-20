@@ -40,18 +40,21 @@ if 'geotrek.zoning' in settings.INSTALLED_APPS:
     from geotrek.zoning import models as zoning_models
 
     class CitySerializer(serializers.ModelSerializer):
+        id = serializers.ReadOnlyField(source='code')
 
         class Meta:
             model = zoning_models.City
-            fields = ('code', 'name')
+            fields = ('id', 'name')
 
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     from geotrek.tourism import models as tourism_models
 
     class InformationDeskTypeSerializer(serializers.ModelSerializer):
+        name = serializers.ReadOnlyField(source='label')
+
         class Meta:
             model = tourism_models.InformationDeskType
-            fields = ('id', 'label', 'pictogram')
+            fields = ('id', 'name', 'pictogram')
 
     class InformationDeskSerializer(serializers.ModelSerializer):
         type = InformationDeskTypeSerializer(read_only=True)
@@ -65,43 +68,45 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     class DifficultySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        label = serializers.ReadOnlyField(source='difficulty')
+        name = serializers.ReadOnlyField(source='difficulty')
 
         class Meta:
             model = trekking_models.DifficultyLevel
-            fields = ('id', 'label', 'pictogram')
+            fields = ('id', 'name', 'pictogram')
 
     class PracticeSerializer(serializers.ModelSerializer):
-        label = serializers.ReadOnlyField(source='name')
 
         class Meta:
             model = trekking_models.Practice
-            fields = ('id', 'label', 'pictogram',)
+            fields = ('id', 'name', 'pictogram',)
 
     class AccessibilitySerializer(serializers.ModelSerializer):
+        name = serializers.ReadOnlyField(source='label')
+
         class Meta:
             model = trekking_models.Accessibility
-            fields = ('id', 'label', 'pictogram',)
+            fields = ('id', 'name', 'pictogram',)
 
     class RouteSerializer(serializers.ModelSerializer):
-        label = serializers.ReadOnlyField(source='route')
+        name = serializers.ReadOnlyField(source='route')
 
         class Meta:
             model = trekking_models.Route
-            fields = ('id', 'label', 'pictogram',)
+            fields = ('id', 'name', 'pictogram',)
 
     class ThemeSerializer(serializers.ModelSerializer):
+        name = serializers.ReadOnlyField(source='label')
 
         class Meta:
             model = common_models.Theme
-            fields = ('id', 'label', 'pictogram')
+            fields = ('id', 'name', 'pictogram')
 
     class NetworkSerializer(serializers.ModelSerializer):
-        label = serializers.ReadOnlyField(source='network')
+        name = serializers.ReadOnlyField(source='network')
 
         class Meta:
             model = trekking_models.TrekNetwork
-            fields = ('id', 'label', 'pictogram')
+            fields = ('id', 'name', 'pictogram')
 
 
 class FlatPageListSerializer(serializers.ModelSerializer):

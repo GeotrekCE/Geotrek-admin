@@ -61,6 +61,29 @@ class SettingsView(APIView):
             ],
             'data': [
                 {
+                    'id': 'lengths',
+                    'name': _('Lengths'),
+                    'values': [
+                        {"id": 1, "name": "< 10 km", "interval": [0, 9999]},
+                        {"id": 2, "name": "10 - 30", "interval": [9999, 29999]},
+                        {"id": 3, "name": "30 - 50", "interval": [30000, 50000]},
+                        {"id": 4, "name": "> 50 km", "interval": [50000, 999999]}
+                    ]
+
+                },
+                {
+                    'id': 'durations',
+                    'name': _('Durations'),
+                    'values': [
+                        {"id": 1, "name": "< 1 heure", "interval": [0, 1]},
+                        {"id": 2, "name": "1h - 2h30", "interval": [1, 2.5]},
+                        {"id": 3, "name": "2h30 - 5h", "interval": [2.5, 5]},
+                        {"id": 4, "name": "5h - 9h", "interval": [5, 9]},
+                        {"id": 5, "name": "> 9h", "interval": [9, 9999999]}
+                    ]
+
+                },
+                {
                     'id': 'difficulties',
                     'name': _('Difficulties'),
                     'values': api_serializers.DifficultySerializer(DifficultyLevel.objects.all().order_by('pk'),

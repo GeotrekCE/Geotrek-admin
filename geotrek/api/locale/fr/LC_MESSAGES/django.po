@@ -53,3 +53,9 @@ msgstr "ID externe"
 
 msgid "Difficulties"
 msgstr "Difficultés"
+
+msgid "Lengths"
+msgstr "Longueurs"
+
+msgid "Durations"
+msgstr "Durées"
