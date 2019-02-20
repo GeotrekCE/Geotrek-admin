@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.db.models import F
+from django.http import Http404
 
 from geotrek.api.mobile.serializers import trekking as api_serializers
 from geotrek.api.mobile import viewsets as api_viewsets
@@ -36,3 +37,17 @@ class POIViewSet(api_viewsets.GeotrekViewset):
                   geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
         .order_by('pk')  # Required for reliable pagination
     filter_fields = ('type',)
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        try:
+            trek = trekking_models.Trek.objects.existing().get(pk=pk)
+        except trekking_models.Trek.DoesNotExist:
+            raise Http404
+        if not trek.is_public:
+            raise Http404
+        return trek.pois.filter(published=True).select_related('topo_object', 'type', )\
+            .prefetch_related('topo_object__aggregations', 'attachments') \
+            .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID),
+                      geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
+            .order_by('pk')  # Required for reliable pagination

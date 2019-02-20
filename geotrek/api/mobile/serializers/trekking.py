@@ -21,6 +21,18 @@ class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     from geotrek.trekking import models as trekking_models
 
+
+    class POIListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        pictures = AttachmentSerializer(many=True, )
+        thumbnail = serializers.ReadOnlyField(source='serializable_thumbnail_mobile')
+        geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
+
+        class Meta:
+            model = trekking_models.POI
+            fields = (
+                'id', 'pictures', 'name', 'description', 'thumbnail', 'type', 'geometry',
+            )
+
     class TrekDetailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         thumbnail = serializers.ReadOnlyField(source='serializable_thumbnail_mobile')
 
@@ -66,15 +78,4 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             fields = (
                 'id', 'thumbnail', 'name', 'departure', 'accessibilities', 'route',
                 'difficulty', 'practice', 'themes', 'length', 'geometry', 'cities', 'duration'
-            )
-
-    class POIListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        pictures = AttachmentSerializer(many=True, )
-        thumbnail = serializers.ReadOnlyField(source='serializable_thumbnail_mobile')
-        geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
-
-        class Meta:
-            model = trekking_models.POI
-            fields = (
-                'id', 'pictures', 'name', 'description', 'thumbnail', 'type', 'geometry',
             )

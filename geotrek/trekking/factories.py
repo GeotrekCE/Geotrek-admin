@@ -126,6 +126,18 @@ class TrekWithPOIsFactory(TrekFactory):
             obj.save()
 
 
+class TrekWithPublishedPOIsFactory(TrekFactory):
+    @factory.post_generation
+    def create_trek_with_poi(obj, create, extracted, **kwargs):
+        path = obj.paths.all()[0]
+        poi1 = POIFactory.create(no_path=True, published=True, published_en=True, published_fr=True)
+        poi1.add_path(path, start=0.5, end=0.5)
+        poi2 = POIFactory.create(no_path=True, published=True, published_en=True, published_fr=True)
+        poi2.add_path(path, start=0.4, end=0.4)
+        if create:
+            obj.save()
+
+
 class TrekWithInfrastructuresFactory(TrekFactory):
     @factory.post_generation
     def create_trek_with_infrastructures(obj, create, extracted, **kwargs):

@@ -62,11 +62,11 @@ class BaseApiTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.client = Client()
-        cls.nb_treks = 15
-        cls.nb_pois = 55
+        cls.nb_treks = 1
 
-        cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(cls.nb_treks, name_fr='Coucou', description_fr="Sisi",
-                                                                  description_teaser_fr="mini")
+        cls.treks = trek_factory.TrekWithPublishedPOIsFactory.create_batch(
+            cls.nb_treks, name_fr='Coucou', description_fr="Sisi",
+            description_teaser_fr="mini")
 
     def login(self):
         pass
@@ -79,13 +79,9 @@ class BaseApiTest(TestCase):
         self.login()
         return self.client.get(reverse('apimobile:trek-detail', args=(id_trek,)), params, HTTP_ACCEPT_LANGUAGE='fr')
 
-    def get_poi_list(self, params=None):
+    def get_poi_list(self, id_trek, params=None):
         self.login()
-        return self.client.get(reverse('apimobile:poi-list'), params, HTTP_ACCEPT_LANGUAGE='fr')
-
-    def get_poi_detail(self, id_poi, params=None):
-        self.login()
-        return self.client.get(reverse('apimobile:poi-detail', args=(id_poi,)), params, HTTP_ACCEPT_LANGUAGE='fr')
+        return self.client.get(reverse('apimobile:poi', args=(id_trek, )), params, HTTP_ACCEPT_LANGUAGE='fr')
 
 
 class APIAccessTestCase(BaseApiTest):
@@ -167,7 +163,7 @@ class APIAccessTestCase(BaseApiTest):
         self.assertIsNone(json_response.get('features')[0].get('properties').get('description_teaser'))
 
     def test_poi_list(self):
-        response = self.get_poi_list()
+        response = self.get_poi_list(trek_models.Trek.objects.first().pk)
         #  test response code
         self.assertEqual(response.status_code, 200)
 
@@ -175,17 +171,16 @@ class APIAccessTestCase(BaseApiTest):
         json_response = json.loads(response.content.decode('utf-8'))
         self.assertEqual(sorted(json_response.keys()),
                          PAGINATED_JSON_STRUCTURE)
-
         # trek count is ok
         self.assertEqual(len(json_response.get('results')),
-                         trek_models.POI.objects.all().count())
+                         trek_models.Trek.objects.order_by('?').last().published_pois.count())
 
         # test dim 2 ok
         self.assertEqual(len(json_response.get('results')[0].get('geometry').get('coordinates')),
                          2)
 
         # regenrate with geojson 3D
-        response = self.get_poi_list({'format': 'geojson'})
+        response = self.get_poi_list(trek_models.Trek.objects.first().pk ,  {'format': 'geojson'})
         json_response = json.loads(response.content.decode('utf-8'))
 
         # test geojson format
