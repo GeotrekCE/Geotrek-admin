@@ -55,7 +55,7 @@ class SettingsView(APIView):
                     "type": "contains"
                 },
                 {
-                    "id": "routes",
+                    "id": "route",
                     "type": "contains"
                 }
             ],
