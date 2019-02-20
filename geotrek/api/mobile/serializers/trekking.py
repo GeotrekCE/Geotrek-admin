@@ -13,7 +13,7 @@ class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
     def get_url(self, obj):
         if not obj.attachment_file:
-            return []
+            return ""
         return obj.attachment_file.url
 
     class Meta:
