@@ -11,7 +11,7 @@ from geotrek.common import models as common_models
 class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     url = serializers.SerializerMethodField(read_only=True)
 
-    def get_pictogram(self, obj):
+    def get_url(self, obj):
         if not obj.attachment_file:
             return []
         return obj.attachment_file.url
