@@ -180,7 +180,7 @@ class APIAccessTestCase(BaseApiTest):
                          2)
 
         # regenrate with geojson 3D
-        response = self.get_poi_list(trek_models.Trek.objects.first().pk ,  {'format': 'geojson'})
+        response = self.get_poi_list(trek_models.Trek.objects.first().pk, {'format': 'geojson'})
         json_response = json.loads(response.content.decode('utf-8'))
 
         # test geojson format

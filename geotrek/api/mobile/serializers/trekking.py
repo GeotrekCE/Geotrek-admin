@@ -21,7 +21,6 @@ class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     from geotrek.trekking import models as trekking_models
 
-
     class POIListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         pictures = AttachmentSerializer(many=True, )
         thumbnail = serializers.ReadOnlyField(source='serializable_thumbnail_mobile')
