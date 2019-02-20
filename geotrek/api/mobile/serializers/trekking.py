@@ -9,7 +9,12 @@ from geotrek.common import models as common_models
 
 
 class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    url = serializers.CharField(source='attachment_file.url')
+    url = serializers.SerializerMethodField(read_only=True)
+
+    def get_pictogram(self, obj):
+        if not obj.attachment_file:
+            return []
+        return obj.attachment_file.url
 
     class Meta:
         model = common_models.Attachment

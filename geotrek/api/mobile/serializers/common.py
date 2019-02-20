@@ -51,7 +51,12 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
     class InformationDeskTypeSerializer(serializers.ModelSerializer):
         name = serializers.ReadOnlyField(source='label')
-        pictogram = serializers.ReadOnlyField(source='pictogram.url')
+        pictogram = serializers.SerializerMethodField(read_only=True)
+
+        def get_pictogram(self, obj):
+            if not obj.pictogram:
+                return None
+            return obj.pictogram.url
 
         class Meta:
             model = tourism_models.InformationDeskType
@@ -70,14 +75,24 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     class DifficultySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.ReadOnlyField(source='difficulty')
-        pictogram = serializers.ReadOnlyField(source='pictogram.url')
+        pictogram = serializers.SerializerMethodField(read_only=True)
+
+        def get_pictogram(self, obj):
+            if not obj.pictogram:
+                return None
+            return obj.pictogram.url
 
         class Meta:
             model = trekking_models.DifficultyLevel
             fields = ('id', 'name', 'pictogram')
 
     class PracticeSerializer(serializers.ModelSerializer):
-        pictogram = serializers.ReadOnlyField(source='pictogram.url')
+        pictogram = serializers.SerializerMethodField(read_only=True)
+
+        def get_pictogram(self, obj):
+            if not obj.pictogram:
+                return None
+            return obj.pictogram.url
 
         class Meta:
             model = trekking_models.Practice
@@ -85,7 +100,12 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
     class AccessibilitySerializer(serializers.ModelSerializer):
         name = serializers.ReadOnlyField(source='label')
-        pictogram = serializers.ReadOnlyField(source='pictogram.url')
+        pictogram = serializers.SerializerMethodField(read_only=True)
+
+        def get_pictogram(self, obj):
+            if not obj.pictogram:
+                return None
+            return obj.pictogram.url
 
         class Meta:
             model = trekking_models.Accessibility
@@ -93,7 +113,12 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
     class RouteSerializer(serializers.ModelSerializer):
         name = serializers.ReadOnlyField(source='route')
-        pictogram = serializers.ReadOnlyField(source='pictogram.url')
+        pictogram = serializers.SerializerMethodField(read_only=True)
+
+        def get_pictogram(self, obj):
+            if not obj.pictogram:
+                return None
+            return obj.pictogram.url
 
         class Meta:
             model = trekking_models.Route
@@ -101,7 +126,12 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
     class ThemeSerializer(serializers.ModelSerializer):
         name = serializers.ReadOnlyField(source='label')
-        pictogram = serializers.ReadOnlyField(source='pictogram.url')
+        pictogram = serializers.SerializerMethodField(read_only=True)
+
+        def get_pictogram(self, obj):
+            if not obj.pictogram:
+                return None
+            return obj.pictogram.url
 
         class Meta:
             model = common_models.Theme
@@ -109,7 +139,12 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
     class NetworkSerializer(serializers.ModelSerializer):
         name = serializers.ReadOnlyField(source='network')
-        pictogram = serializers.ReadOnlyField(source='pictogram.url')
+        pictogram = serializers.SerializerMethodField(read_only=True)
+
+        def get_pictogram(self, obj):
+            if not obj.pictogram:
+                return None
+            return obj.pictogram.url
 
         class Meta:
             model = trekking_models.TrekNetwork
