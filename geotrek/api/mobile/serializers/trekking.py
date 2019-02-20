@@ -9,7 +9,7 @@ from geotrek.common import models as common_models
 
 
 class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    url = serializers.FileField(source='attachment_file')
+    url = serializers.CharField(source='attachment_file.url')
 
     class Meta:
         model = common_models.Attachment
