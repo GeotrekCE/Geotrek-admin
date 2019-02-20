@@ -27,7 +27,7 @@ class SettingsView(APIView):
         return response.Response({
             'filters': [
                 {
-                    "id": "difficulties",
+                    "id": "difficulty",
                     "type": "contains"
                 },
                 {
@@ -43,7 +43,7 @@ class SettingsView(APIView):
                     "type": "contains"
                 },
                 {
-                    "id": "practices",
+                    "id": "practice",
                     "type": "contains"
                 },
                 {
