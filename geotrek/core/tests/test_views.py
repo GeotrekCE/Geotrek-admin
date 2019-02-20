@@ -8,7 +8,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
-from django.conf import settings
 
 from mapentity.factories import UserFactory
 
