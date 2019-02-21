@@ -41,14 +41,14 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         thumbnail = serializers.ReadOnlyField(source='serializable_thumbnail_mobile')
 
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
-        lengths = serializers.SerializerMethodField(read_only=True)
+        length = serializers.SerializerMethodField(read_only=True)
         pictures = AttachmentSerializer(many=True, )
         cities = serializers.SerializerMethodField(read_only=True)
 
         def get_cities(self, obj):
             return [city.code for city in obj.cities]
 
-        def get_lengths(self, obj):
+        def get_length(self, obj):
             return round(obj.length_2d_m, 1)
 
         def get_geometry(self, obj):
@@ -59,7 +59,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             fields = (
                 'id', 'thumbnail', 'name', 'accessibilities', 'description_teaser', 'cities',
                 'description', 'departure', 'arrival', 'duration', 'access', 'advised_parking', 'advice',
-                'difficulty', 'lengths', 'ascent', 'descent', 'route', 'is_park_centered',
+                'difficulty', 'length', 'ascent', 'descent', 'route', 'is_park_centered',
                 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'difficulty',
                 'geometry', 'pictures', 'information_desks', 'cities'
             )
@@ -67,19 +67,19 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
     class TrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         thumbnail = serializers.ReadOnlyField(source='serializable_thumbnail_mobile')
-        lengths = serializers.SerializerMethodField(read_only=True)
+        length = serializers.SerializerMethodField(read_only=True)
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='start_point', )
         cities = serializers.SerializerMethodField(read_only=True)
 
         def get_cities(self, obj):
             return [city.code for city in obj.cities]
 
-        def get_lengths(self, obj):
+        def get_length(self, obj):
             return round(obj.length_2d_m, 1)
 
         class Meta:
             model = trekking_models.Trek
             fields = (
                 'id', 'thumbnail', 'name', 'departure', 'accessibilities', 'route',
-                'difficulty', 'practice', 'themes', 'lengths', 'geometry', 'cities', 'duration'
+                'difficulty', 'practice', 'themes', 'length', 'geometry', 'cities', 'duration'
             )

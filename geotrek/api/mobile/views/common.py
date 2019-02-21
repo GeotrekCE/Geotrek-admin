@@ -61,8 +61,8 @@ class SettingsView(APIView):
             ],
             'data': [
                 {
-                    'id': 'lengths',
-                    'name': _('Lengths'),
+                    'id': 'length',
+                    'name': _('Length'),
                     'values': [
                         {"id": 1, "name": "< 10 km", "interval": [0, 9999]},
                         {"id": 2, "name": "10 - 30", "interval": [9999, 29999]},
@@ -72,8 +72,8 @@ class SettingsView(APIView):
 
                 },
                 {
-                    'id': 'durations',
-                    'name': _('Durations'),
+                    'id': 'duration',
+                    'name': _('Duration'),
                     'values': [
                         {"id": 1, "name": "< 1 heure", "interval": [0, 1]},
                         {"id": 2, "name": "1h - 2h30", "interval": [1, 2.5]},
