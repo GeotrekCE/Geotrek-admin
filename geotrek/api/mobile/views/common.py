@@ -84,15 +84,15 @@ class SettingsView(APIView):
 
                 },
                 {
-                    'id': 'difficulties',
-                    'name': _('Difficulties'),
+                    'id': 'difficulty',
+                    'name': _('Difficulty'),
                     'values': api_serializers.DifficultySerializer(DifficultyLevel.objects.all().order_by('pk'),
                                                                    many=True,
                                                                    context={'request': request}).data
                 },
                 {
-                    'id': 'practices',
-                    'name': _('Practices'),
+                    'id': 'practice',
+                    'name': _('Practice'),
                     'values': api_serializers.PracticeSerializer(Practice.objects.all().order_by('pk'),
                                                                  many=True,
                                                                  context={'request': request}).data,
@@ -104,8 +104,8 @@ class SettingsView(APIView):
                                                                  context={'request': request}).data,
                 },
                 {
-                    'id': 'routes',
-                    'name': _('Routes'),
+                    'id': 'route',
+                    'name': _('Route'),
                     'values': api_serializers.RouteSerializer(Route.objects.all().order_by('pk'), many=True,
                                                               context={'request': request}).data,
                 },
@@ -122,7 +122,7 @@ class SettingsView(APIView):
                                                                 context={'request': request}).data,
                 },
                 {
-                    'id': 'informationdesks',
+                    'id': 'information_desks',
                     'name': _('Information Desks'),
                     'values': api_serializers.InformationDeskSerializer(InformationDesk.objects.all().order_by('pk'),
                                                                         many=True,
