@@ -28,35 +28,48 @@ class SettingsView(APIView):
             'filters': [
                 {
                     "id": "difficulty",
-                    "type": "contains"
+                    "type": "contains",
+                    "showAllLabel": _("Show all difficulties"),
+                    "hideAllLabel": _("Hide all difficulties")
                 },
                 {
                     "id": "lengths",
-                    "type": "interval"
+                    "type": "interval",
                 },
                 {
                     "id": "cities",
-                    "type": "contains"
+                    "type": "contains",
+                    "showAllLabel": _("Show all cities"),
+                    "hideAllLabel": _("Hide all cities")
                 },
                 {
                     "id": "accessibilities",
-                    "type": "contains"
+                    "type": "contains",
+                    "showAllLabel": _("Show all accessibilities"),
+                    "hideAllLabel": _("Hide all accessibilities")
+
                 },
                 {
                     "id": "practice",
-                    "type": "contains"
+                    "type": "contains",
+                    "showAllLabel": _("Show all practices"),
+                    "hideAllLabel": _("Hide all practices")
                 },
                 {
                     "id": "durations",
-                    "type": "interval"
+                    "type": "interval",
                 },
                 {
                     "id": "themes",
-                    "type": "contains"
+                    "type": "contains",
+                    "showAllLabel": _("Show all themes"),
+                    "hideAllLabel": _("Hide all themes")
                 },
                 {
                     "id": "route",
-                    "type": "contains"
+                    "type": "contains",
+                    "showAllLabel": _("Show all routes"),
+                    "hideAllLabel": _("Hide all routes")
                 }
             ],
             'data': [

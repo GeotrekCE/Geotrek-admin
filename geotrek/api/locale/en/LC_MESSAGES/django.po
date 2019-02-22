@@ -59,3 +59,39 @@ msgstr ""
 
 msgid "Durations"
 msgstr ""
+
+msgid "Show all cities"
+msgstr ""
+
+msgid "Hide all cities"
+msgstr ""
+
+msgid "Show all difficulties"
+msgstr ""
+
+msgid "Hide all difficulties"
+msgstr ""
+
+msgid "Show all accessibilities"
+msgstr ""
+
+msgid "Hide all accessibilities"
+msgstr ""
+
+msgid "Show all practices"
+msgstr ""
+
+msgid "Hide all practices"
+msgstr ""
+
+msgid "Show all themes"
+msgstr ""
+
+msgid "Hide all themes"
+msgstr ""
+
+msgid "Show all routes"
+msgstr ""
+
+msgid "Hide all routes"
+msgstr ""

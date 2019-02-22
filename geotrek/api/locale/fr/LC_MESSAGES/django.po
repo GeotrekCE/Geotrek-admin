@@ -59,3 +59,39 @@ msgstr "Longueurs"
 
 msgid "Durations"
 msgstr "Durées"
+
+msgid "Show all cities"
+msgstr "Afficher toutes les villes"
+
+msgid "Hide all cities"
+msgstr "Ne plus afficher toutes les villes"
+
+msgid "Show all difficulties"
+msgstr "Afficher toutes les difficultés"
+
+msgid "Hide all difficulties"
+msgstr "Ne plus afficher toutes les difficultés"
+
+msgid "Show all accessibilities"
+msgstr "Afficher toutes les accessibilités"
+
+msgid "Hide all accessibilities"
+msgstr "Ne plus afficher toutes les accessibilités"
+
+msgid "Show all practices"
+msgstr "Afficher toutes les pratiques"
+
+msgid "Hide all practices"
+msgstr "Ne plus afficher toutes les pratiques"
+
+msgid "Show all themes"
+msgstr "Afficher tous les thèmes"
+
+msgid "Hide all themes"
+msgstr "Ne plus afficher tous les thèmes"
+
+msgid "Show all routes"
+msgstr "Afficher tous les parcours"
+
+msgid "Hide all routes"
+msgstr "Ne plus afficher tous les parcours"
