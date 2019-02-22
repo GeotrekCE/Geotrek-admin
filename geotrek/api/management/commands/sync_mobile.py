@@ -3,7 +3,6 @@
 import logging
 import filecmp
 import os
-import re
 import shutil
 from time import sleep
 from zipfile import ZipFile
