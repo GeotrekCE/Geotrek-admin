@@ -22,8 +22,8 @@ SETTINGS_STRUCTURE = sorted([
 ])
 
 SETTINGS_DATA_STRUCTURE = sorted([
-    'informationdesks', 'networks', 'routes', 'practices', 'accessibilities', 'difficulties', 'themes', 'cities',
-    'lengths', 'durations'
+    'information_desks', 'networks', 'route', 'practice', 'accessibilities', 'difficulty', 'themes', 'cities',
+    'length', 'duration'
 ])
 
 
