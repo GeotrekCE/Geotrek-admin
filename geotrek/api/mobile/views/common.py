@@ -35,6 +35,8 @@ class SettingsView(APIView):
                 {
                     "id": "lengths",
                     "type": "interval",
+                    "showAllLabel": _("Show all lengths"),
+                    "hideAllLabel": _("Hide all lengths")
                 },
                 {
                     "id": "cities",
@@ -58,6 +60,8 @@ class SettingsView(APIView):
                 {
                     "id": "durations",
                     "type": "interval",
+                    "showAllLabel": _("Show all durations"),
+                    "hideAllLabel": _("Hide all durations")
                 },
                 {
                     "id": "themes",

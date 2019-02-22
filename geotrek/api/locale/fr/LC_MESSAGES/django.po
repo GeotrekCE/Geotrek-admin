@@ -95,3 +95,15 @@ msgstr "Afficher tous les parcours"
 
 msgid "Hide all routes"
 msgstr "Ne plus afficher tous les parcours"
+
+msgid "Show all lengths"
+msgstr Afficher toutes les distances"
+
+msgid "Hide all lengths"
+msgstr "Ne plus afficher toutes les distances"
+
+msgid "Show all durations"
+msgstr ""Afficher toutes les durées"
+
+msgid "Hide all durations"
+msgstr "Ne plus afficher toutes les durées"

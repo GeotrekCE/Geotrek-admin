@@ -95,3 +95,15 @@ msgstr ""
 
 msgid "Hide all routes"
 msgstr ""
+
+msgid "Show all lengths"
+msgstr ""
+
+msgid "Hide all lengths"
+msgstr ""
+
+msgid "Show all durations"
+msgstr ""
+
+msgid "Hide all durations"
+msgstr ""
