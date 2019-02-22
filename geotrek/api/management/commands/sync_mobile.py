@@ -14,29 +14,14 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
 from django.http import StreamingHttpResponse
 from django.test.client import RequestFactory
-from django.utils import translation, timezone
+from django.utils import translation
 from django.utils.translation import ugettext as _
-from landez import TilesManager
-from landez.sources import DownloadError
 from geotrek.common.models import FileType  # NOQA
-from geotrek.altimetry.views import ElevationProfile, ElevationArea, serve_elevation_chart
 from geotrek.common import models as common_models
-from geotrek.common.views import ThemeViewSet
-from geotrek.core.views import ParametersView
-from geotrek.feedback.views import CategoryList as FeedbackCategoryList
-from geotrek.flatpages.models import FlatPage
-from geotrek.infrastructure import models as infrastructure_models
-from geotrek.infrastructure.views import InfrastructureViewSet
-from geotrek.signage.views import SignageViewSet
-from geotrek.tourism import models as tourism_models
-from geotrek.tourism import views as tourism_views
 from geotrek.trekking import models as trekking_models
 from geotrek.api.mobile.views.trekking import (TrekViewSet, POIViewSet)
 from geotrek.api.mobile.views.common import FlatPageViewSet, SettingsView
-if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
-    from geotrek.sensitivity import models as sensitivity_models
-    from geotrek.sensitivity import views as sensitivity_views
-
+from geotrek.trekking.management.commands.sync_rando import ZipTilesBuilder
 # Register mapentity models
 from geotrek.trekking import urls  # NOQA
 from geotrek.tourism import urls  # NOQA
@@ -50,6 +35,9 @@ class Command(BaseCommand):
         parser.add_argument('path')
         parser.add_argument('--languages', '-l', dest='languages', default='', help='Languages to sync')
         parser.add_argument('--portal', '-P', dest='portal', default=None, help='Filter by portal(s)')
+        parser.add_argument('--skip-tiles', '-t', action='store_true', dest='skip_tiles', default=False,
+                            help='Skip generation of zip tiles files')
+        parser.add_argument('--url', '-u', dest='url', default='http://localhost', help='Base url')
 
     def mkdirs(self, name):
         dirname = os.path.dirname(name)
@@ -258,7 +246,115 @@ class Command(BaseCommand):
 
         self.close_zip(self.zipfile_trek, zipname_trek)
 
+    def sync_trek_tiles(self, trek):
+        """ Creates a tiles file for the specified Trek object.
+        """
+        zipname = os.path.join('mobile', 'tiles', 'treks', '{pk}.zip'.format(pk=trek.pk))
+
+        if self.verbosity == 2:
+            self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
+            self.stdout.flush()
+
+        trek_file = os.path.join(self.tmp_root, zipname)
+
+        def _radius2bbox(lng, lat, radius):
+            return (lng - radius, lat - radius,
+                    lng + radius, lat + radius)
+
+        self.mkdirs(trek_file)
+
+        def close_zip(zipfile):
+            return self.close_zip(zipfile, zipname)
+
+        tiles = ZipTilesBuilder(trek_file, close_zip, **self.builder_args)
+
+        geom = trek.geom
+        if geom.geom_type == 'MultiLineString':
+            geom = geom[0]  # FIXME
+        geom.transform(4326)
+
+        for (lng, lat) in geom.coords:
+            large = _radius2bbox(lng, lat, settings.MOBILE_TILES_RADIUS_LARGE)
+            small = _radius2bbox(lng, lat, settings.MOBILE_TILES_RADIUS_SMALL)
+            tiles.add_coverage(bbox=large, zoomlevels=settings.MOBILE_TILES_LOW_ZOOMS)
+            tiles.add_coverage(bbox=small, zoomlevels=settings.MOBILE_TILES_HIGH_ZOOMS)
+
+        tiles.run()
+
+    def sync_global_tiles(self):
+        """ Creates a tiles file on the global extent.
+        """
+        zipname = os.path.join('mobile', 'tiles', 'global.zip')
+
+        if self.verbosity == 2:
+            self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
+            self.stdout.flush()
+
+        global_extent = settings.LEAFLET_CONFIG['SPATIAL_EXTENT']
+
+        logger.info("Global extent is %s" % unicode(global_extent))
+        global_file = os.path.join(self.tmp_root, zipname)
+
+        logger.info("Build global tiles file...")
+        self.mkdirs(global_file)
+
+        def close_zip(zipfile):
+            return self.close_zip(zipfile, zipname)
+
+        tiles = ZipTilesBuilder(global_file, close_zip, **self.builder_args)
+        tiles.add_coverage(bbox=global_extent,
+                           zoomlevels=settings.MOBILE_TILES_GLOBAL_ZOOMS)
+        tiles.run()
+
+    def sync_tiles(self):
+        if not self.skip_tiles:
+
+            if self.celery_task:
+                self.celery_task.update_state(
+                    state='PROGRESS',
+                    meta={
+                        'name': self.celery_task.name,
+                        'current': 10,
+                        'total': 100,
+                        'infos': u"{}".format(_(u"Global tiles syncing ..."))
+                    }
+                )
+
+            self.sync_global_tiles()
+
+            if self.celery_task:
+                self.celery_task.update_state(
+                    state='PROGRESS',
+                    meta={
+                        'name': self.celery_task.name,
+                        'current': 20,
+                        'total': 100,
+                        'infos': u"{}".format(_(u"Trek tiles syncing ..."))
+                    }
+                )
+
+            treks = trekking_models.Trek.objects.existing().order_by('pk')
+
+            if self.portal:
+                treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
+
+            for trek in treks:
+                if trek.any_published or any([parent.any_published for parent in trek.parents]):
+                    self.sync_trek_tiles(trek)
+
+            if self.celery_task:
+                self.celery_task.update_state(
+                    state='PROGRESS',
+                    meta={
+                        'name': self.celery_task.name,
+                        'current': 30,
+                        'total': 100,
+                        'infos': u"{}".format(_(u"Tiles synced ..."))
+                    }
+                )
+
     def sync(self):
+        self.sync_tiles()
         step_value = int(50 / len(settings.MODELTRANSLATION_LANGUAGES))
         current_value = 30
 
@@ -299,6 +395,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.successfull = True
         self.verbosity = options['verbosity']
+        self.skip_tiles = options['skip_tiles']
         self.factory = RequestFactory()
         self.dst_root = options["path"].rstrip('/')
         self.abs_path = os.path.abspath(options["path"])
@@ -315,6 +412,20 @@ class Command(BaseCommand):
             self.portal = options['portal'].split(',')
         else:
             self.portal = []
+
+        if options['url'][:7] not in ('http://', 'https://'):
+            raise CommandError('url parameter should start with http:// or https://')
+        self.referer = options['url']
+        if isinstance(settings.MOBILE_TILES_URL, str):
+            tiles_url = settings.MOBILE_TILES_URL
+        else:
+            tiles_url = settings.MOBILE_TILES_URL[0]
+        self.builder_args = {
+            'tiles_url': tiles_url,
+            'tiles_headers': {"Referer": self.referer},
+            'ignore_errors': True,
+            'tiles_dir': os.path.join(settings.DEPLOY_ROOT, 'var', 'tiles'),
+        }
 
         try:
             self.sync()
