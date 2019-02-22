@@ -61,7 +61,7 @@ class SettingsMobileTest(TestCase):
         json_response = json.loads(response.content.decode('utf-8'))
 
         informationdesk_item = next((item.get('values') for item in json_response.get('data')
-                                     if item['id'] == 'informationdesks'), None)
+                                     if item['id'] == 'information_desks'), None)
 
         self.assertEqual(len(informationdesk_item), InformationDesk.objects.count())
         self.assertEqual(informationdesk_item[0].get('email'), informationdesk.email)
@@ -90,7 +90,7 @@ class SettingsMobileTest(TestCase):
 
         json_response = json.loads(response.content.decode('utf-8'))
         route_item = next((item.get('values') for item in json_response.get('data')
-                           if item['id'] == 'routes'), None)
+                           if item['id'] == 'route'), None)
 
         self.assertEqual(len(route_item), Route.objects.count())
         self.assertEqual(route_item[0].get('name'), route.route)
@@ -104,7 +104,7 @@ class SettingsMobileTest(TestCase):
 
         json_response = json.loads(response.content.decode('utf-8'))
         practice_item = next((item.get('values') for item in json_response.get('data')
-                              if item['id'] == 'practices'), None)
+                              if item['id'] == 'practice'), None)
         self.assertEqual(len(practice_item), Practice.objects.count())
         self.assertEqual(practice_item[0].get('name'), practice.name)
         self.assertIn(str(practice.pictogram), practice_item[0].get('pictogram'))
@@ -132,7 +132,7 @@ class SettingsMobileTest(TestCase):
 
         json_response = json.loads(response.content.decode('utf-8'))
         difficulty_item = next((item.get('values') for item in json_response.get('data')
-                                if item['id'] == 'difficulties'), None)
+                                if item['id'] == 'difficulty'), None)
         self.assertEqual(len(difficulty_item), DifficultyLevel.objects.count())
         self.assertEqual(difficulty_item[0].get('name'), difficulty.difficulty)
         self.assertIn(str(difficulty.pictogram), difficulty_item[0].get('pictogram'))
