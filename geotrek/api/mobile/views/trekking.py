@@ -17,8 +17,8 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
 
     def get_queryset(self, *args, **kwargs):
         queryset = trekking_models.Trek.objects.existing()\
-            .select_related('topo_object', 'difficulty', 'practice') \
-            .prefetch_related('topo_object__aggregations', 'themes', 'networks', 'attachments', 'information_desks') \
+            .select_related('topo_object') \
+            .prefetch_related('topo_object__aggregations', 'attachments') \
             .order_by('pk').annotate(length_2d_m=Length('geom'))
         if self.action == 'list':
             queryset = queryset.annotate(start_point=Transform(StartPoint('geom'), settings.API_SRID))
