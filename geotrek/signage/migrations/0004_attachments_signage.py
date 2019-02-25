@@ -5,15 +5,15 @@ from __future__ import unicode_literals
 from django.db import migrations
 
 
-def remove_infrastructuretype_signage(apps, schema_editor):
+def attachment_signage(apps, schema_editor):
     AttachmentModel = apps.get_model('common', 'Attachment')
     SignageModel = apps.get_model('signage', 'Signage')
     ContentTypeModel = apps.get_model("contenttypes", "ContentType")
-    attachments = AttachmentModel.objects.filter(content_type__model='baseinfrastructure')
-    for attachment in attachments:
-        if SignageModel.objects.filter(id=attachment.object_id).exists():
-            attachment.content_type = ContentTypeModel.objects.get(app_label='signage', model='signage')
-        attachment.save()
+    signage = ContentTypeModel.objects.get(app_label='signage', model='signage')
+    attachments = AttachmentModel.objects.filter(
+        content_type__model='baseinfrastructure',
+        object_id__in=SignageModel.objects.all().values_list("pk", flat=True))
+    attachments.update(content_type=signage)
 
 
 class Migration(migrations.Migration):
@@ -23,5 +23,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(remove_infrastructuretype_signage),
+        migrations.RunPython(attachment_signage),
     ]
