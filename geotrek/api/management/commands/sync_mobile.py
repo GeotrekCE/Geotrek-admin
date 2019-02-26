@@ -214,7 +214,7 @@ class Command(BaseCommand):
 
         if 'geotrek.flatpages' in settings.INSTALLED_APPS:
             self.sync_json(lang, FlatPageViewSet, 'flatpages', zipfile=self.zipfile_common,
-                           as_view_args=[{'get': 'list'}])
+                           as_view_args=[{'get': 'detail'}])
 
     def sync_trekking(self, lang):
         zipname_trek = os.path.join('mobile', 'common', 'treks', 'global.zip')
@@ -234,10 +234,10 @@ class Command(BaseCommand):
         if self.portal:
             treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
 
+        self.sync_common(lang)
         for trek in treks:
             self.sync_trek(lang, trek)
             self.sync_geojson(lang, TrekViewSet, 'treks/{pk}.geojson'.format(pk=trek.pk), type_view={'get': 'list'})
-        self.sync_common(lang)
 
         if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname_trek),
