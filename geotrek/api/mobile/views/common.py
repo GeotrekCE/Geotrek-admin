@@ -10,7 +10,7 @@ from rest_framework import response
 
 from geotrek.api.mobile.serializers import common as api_serializers
 from geotrek.flatpages.models import FlatPage
-from geotrek.trekking.models import DifficultyLevel, Practice, Accessibility, Route, Theme, TrekNetwork
+from geotrek.trekking.models import DifficultyLevel, Practice, Accessibility, Route, Theme, TrekNetwork, POIType
 from geotrek.tourism.models import InformationDesk
 from geotrek.zoning.models import City
 
@@ -149,6 +149,12 @@ class SettingsView(APIView):
                     'name': _('Cities'),
                     'values': api_serializers.CitySerializer(City.objects.all().order_by('pk'), many=True,
                                                              context={'request': request}).data
+                },
+                {
+                    'id': 'type_pois',
+                    'name': _('POI types'),
+                    'values': api_serializers.POITypeSerializer(POIType.objects.all().order_by('pk'), many=True,
+                                                                context={'request': request}).data,
                 }
             ]
         })

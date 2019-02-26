@@ -30,11 +30,12 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         pictures = AttachmentSerializer(many=True, )
         thumbnail = serializers.ReadOnlyField(source='serializable_thumbnail_mobile')
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
+        type_pois = serializers.ReadOnlyField(source='type.pk')
 
         class Meta:
             model = trekking_models.POI
             fields = (
-                'id', 'pictures', 'name', 'description', 'thumbnail', 'type', 'geometry',
+                'id', 'pictures', 'name', 'description', 'thumbnail', 'type_pois', 'geometry',
             )
 
     class TrekDetailSerializer(serializers.ModelSerializer):

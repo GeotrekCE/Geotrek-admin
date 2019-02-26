@@ -150,6 +150,18 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.TrekNetwork
             fields = ('id', 'name', 'pictogram')
 
+    class POITypeSerializer(serializers.ModelSerializer):
+        pictogram = serializers.SerializerMethodField(read_only=True)
+
+        def get_pictogram(self, obj):
+            if not obj.pictogram:
+                return None
+            return obj.pictogram.url
+
+        class Meta:
+            model = trekking_models.POIType
+            fields = ('id', 'label', 'pictogram')
+
 
 class FlatPageListSerializer(serializers.ModelSerializer):
     class Meta:
