@@ -23,6 +23,7 @@ def logentry_infrastructure(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('mapentity', '0001_initial'),
         ('infrastructure', '0013_attachments_infrastructure'),
     ]
 

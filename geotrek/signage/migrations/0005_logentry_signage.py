@@ -24,6 +24,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('signage', '0004_attachments_signage'),
+        ('mapentity', '0001_initial'),
     ]
 
     operations = [
