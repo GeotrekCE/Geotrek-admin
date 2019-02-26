@@ -6,6 +6,8 @@ import os
 import shutil
 from time import sleep
 from zipfile import ZipFile
+import cairosvg
+from io import BytesIO
 
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
@@ -143,7 +145,14 @@ class Command(BaseCommand):
 
     def sync_pictograms(self, lang, model, zipfile=None):
         for obj in model.objects.all():
-            self.sync_media_file(lang, obj.pictogram, zipfile=zipfile)
+            file_name, file_extension = os.path.splitext(str(obj.pictogram))
+            if file_extension == '.svg':
+                dst = os.path.join(self.tmp_root, settings.MEDIA_URL.strip('/'), '%s.png' % file_name)
+                self.mkdirs(dst)
+                cairosvg.svg2png(url=obj.pictogram.path, write_to=dst)
+                zipfile.write(dst)
+            else:
+                self.sync_media_file(lang, obj.pictogram, zipfile=zipfile)
 
     def sync_poi_media(self, lang, poi):
         if poi.resized_pictures:
