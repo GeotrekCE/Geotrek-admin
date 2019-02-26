@@ -4,14 +4,13 @@ from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework_extensions.mixins import DetailSerializerMixin
 
 from geotrek.api.v2 import filters as api_filters
 from geotrek.api.mobile import pagination as api_pagination_mobile
 from geotrek.api.mobile.serializers.common import override_serializer
 
 
-class GeotrekViewset(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
+class GeotrekViewset(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,
                        api_filters.GeotrekQueryParamsFilter,
                        api_filters.GeotrekInBBoxFilter,
