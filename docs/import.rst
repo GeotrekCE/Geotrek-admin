@@ -26,9 +26,11 @@ To import touristic content from APIDAE (ex-SITRA), edit ``var/conf/parsers.py``
 Then set up appropriate values:
 
 * ``label`` at your convenience,
-* ``api_key``, ``project_id`` and ``selection_id`` according to your APIDAE (ex-SITRA) configuration,
-* ``category``, ``type1`` and ``type2`` to select in which Geotrek category/type imported objects should go (types are optional),
-* rename the class ``HebergementParser`` if need be.
+* ``api_key``, ``project_id`` and ``selection_id`` according to your APIDAE (ex-SITRA) configuration
+* ``category``, ``type1`` and ``type2`` (optional) to select in which Geotrek category/type imported objects should go
+* You can add ``delete = True`` in your class if you want to delete objects in Geotrek databases that has been deleted in your Apidae selection. It will only delete objects that match with your class settings (category, types, portal...)
+* You can also use the class ``HebergementParser`` if you only import accomodations
+* See https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/tourism/parsers.py for details about Parsers
 
 You can duplicate the class. Each class must have a different name.
 Don't forget the u character before strings if they contain non-ascii characters.

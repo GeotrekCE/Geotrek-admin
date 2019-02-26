@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+2.24.2 (2019-02-26)
+-------------------
+
+**Bug fixes**
+
+- Fix attachments and history linked with signage and infrastructure
+
+
 2.24.1 (2019-02-12)
 -------------------
 
