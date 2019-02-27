@@ -71,13 +71,13 @@ class BaseApiTest(TestCase):
     def login(self):
         pass
 
-    def get_trek_list(self, params=None):
+    def get_treks_list(self, params=None):
         self.login()
-        return self.client.get(reverse('apimobile:trek-list'), params, HTTP_ACCEPT_LANGUAGE='fr')
+        return self.client.get(reverse('apimobile:treks-list'), params, HTTP_ACCEPT_LANGUAGE='fr')
 
-    def get_trek_detail(self, id_trek, params=None):
+    def get_treks_detail(self, id_trek, params=None):
         self.login()
-        return self.client.get(reverse('apimobile:trek-detail', args=(id_trek,)), params, HTTP_ACCEPT_LANGUAGE='fr')
+        return self.client.get(reverse('apimobile:treks-detail', args=(id_trek,)), params, HTTP_ACCEPT_LANGUAGE='fr')
 
     def get_poi_list(self, id_trek, params=None):
         self.login()
@@ -98,7 +98,7 @@ class APIAccessTestCase(BaseApiTest):
         pass
 
     def test_trek_detail(self):
-        response = self.get_trek_detail(trek_models.Trek.objects.order_by('?').first().pk)
+        response = self.get_treks_detail(trek_models.Trek.objects.order_by('?').first().pk)
         #  test response code
         self.assertEqual(response.status_code, 200)
 
@@ -108,7 +108,7 @@ class APIAccessTestCase(BaseApiTest):
                          TREK_LIST_PROPERTIES_JSON_STRUCTURE)
 
         # regenrate with geojson 3D
-        response = self.get_trek_detail(trek_models.Trek.objects.order_by('?').first().pk,
+        response = self.get_treks_detail(trek_models.Trek.objects.order_by('?').first().pk,
                                         {'format': 'geojson'})
         json_response = json.loads(response.content.decode('utf-8'))
 
@@ -124,7 +124,7 @@ class APIAccessTestCase(BaseApiTest):
         self.assertEqual('mini', json_response.get('properties').get('description_teaser'))
 
     def test_trek_list(self):
-        response = self.get_trek_list()
+        response = self.get_treks_list()
         #  test response code
         self.assertEqual(response.status_code, 200)
 
@@ -142,7 +142,7 @@ class APIAccessTestCase(BaseApiTest):
                          2)
 
         # regenrate with geojson 3D
-        response = self.get_trek_list({'format': 'geojson'})
+        response = self.get_treks_list({'format': 'geojson'})
         json_response = json.loads(response.content.decode('utf-8'))
 
         # test geojson format

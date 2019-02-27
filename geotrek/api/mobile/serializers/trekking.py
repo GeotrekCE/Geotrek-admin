@@ -26,7 +26,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     from geotrek.trekking import models as trekking_models
 
-    class POIListSerializer(serializers.ModelSerializer):
+    class POIListSerializer(geo_serializers.GeoFeatureModelSerializer):
         pictures = AttachmentSerializer(many=True, )
         thumbnail = serializers.ReadOnlyField(source='serializable_thumbnail_mobile')
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
@@ -34,11 +34,12 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         class Meta:
             model = trekking_models.POI
+            geo_field = 'geometry'
             fields = (
                 'id', 'pictures', 'name', 'description', 'thumbnail', 'type_pois', 'geometry',
             )
 
-    class TrekDetailSerializer(serializers.ModelSerializer):
+    class TrekDetailSerializer(geo_serializers.GeoFeatureModelSerializer):
         thumbnail = serializers.ReadOnlyField(source='serializable_thumbnail_mobile')
 
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
@@ -57,6 +58,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         class Meta:
             model = trekking_models.Trek
+            geo_field = 'geometry'
             fields = (
                 'id', 'thumbnail', 'name', 'accessibilities', 'description_teaser', 'cities',
                 'description', 'departure', 'arrival', 'duration', 'access', 'advised_parking', 'advice',
@@ -66,7 +68,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             )
             auto_bbox = True
 
-    class TrekListSerializer(serializers.ModelSerializer):
+    class TrekListSerializer(geo_serializers.GeoFeatureModelSerializer):
         thumbnail = serializers.ReadOnlyField(source='serializable_thumbnail_mobile')
         length = serializers.SerializerMethodField(read_only=True)
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='start_point', )
@@ -89,6 +91,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         class Meta:
             model = trekking_models.Trek
+            geo_field = 'geometry'
             fields = (
                 'id', 'thumbnail', 'name', 'departure', 'accessibilities', 'route',
                 'difficulty', 'practice', 'themes', 'length', 'geometry', 'cities', 'duration'
