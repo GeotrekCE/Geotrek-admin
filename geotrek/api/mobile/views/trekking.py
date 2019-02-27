@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db.models import F
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from django.http import Http404
+from django.utils import translation
 
 from geotrek.api.mobile.serializers import trekking as api_serializers
 
@@ -23,6 +24,11 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     filter_fields = ('difficulty', 'themes', 'networks', 'practice')
     permission_classes = [IsAuthenticatedOrReadOnly, ]
     authentication_classes = [BasicAuthentication, SessionAuthentication]
+
+    def dispatch(self, request, *args, **kwargs):
+        language = kwargs.get(u'lang')
+        translation.activate(language)
+        return super(TrekViewSet, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         queryset = trekking_models.Trek.objects.existing()\
@@ -49,6 +55,11 @@ class POIViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
                   geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
         .order_by('pk')  # Required for reliable pagination
     filter_fields = ('type',)
+
+    def dispatch(self, request, *args, **kwargs):
+        language = kwargs.get(u'lang')
+        translation.activate(language)
+        return super(POIViewSet, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         pk = self.kwargs['pk']

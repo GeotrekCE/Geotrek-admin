@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
+from django.utils import translation
 
 from rest_framework.views import APIView
 from rest_framework import viewsets
@@ -160,6 +161,11 @@ class SettingsView(APIView):
             ]
         })
 
+    def dispatch(self, request, *args, **kwargs):
+        language = kwargs['lang']
+        translation.activate(language)
+        return super(SettingsView, self).dispatch(request, *args, **kwargs)
+
 
 class FlatPageViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     """
@@ -170,3 +176,8 @@ class FlatPageViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = api_serializers.FlatPageListSerializer
     serializer_detail_class = api_serializers.FlatPageDetailSerializer
     queryset = FlatPage.objects.all().order_by('pk')
+
+    def dispatch(self, request, *args, **kwargs):
+        language = kwargs['lang']
+        translation.activate(language)
+        return super(FlatPageViewSet, self).dispatch(request, *args, **kwargs)
