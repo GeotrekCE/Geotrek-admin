@@ -7,6 +7,7 @@ from rest_framework import viewsets
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework import response
+from rest_framework_extensions.mixins import DetailSerializerMixin
 
 from geotrek.api.mobile.serializers import common as api_serializers
 from geotrek.flatpages.models import FlatPage
@@ -160,7 +161,7 @@ class SettingsView(APIView):
         })
 
 
-class FlatPageViewSet(viewsets.ReadOnlyModelViewSet):
+class FlatPageViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     """
     Use HTTP basic authentication to access this endpoint.
     """

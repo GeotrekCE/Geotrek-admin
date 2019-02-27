@@ -19,6 +19,7 @@ from django.utils import translation
 from django.utils.translation import ugettext as _
 from geotrek.common.models import FileType  # NOQA
 from geotrek.common import models as common_models
+from geotrek.flatpages.models import FlatPage
 from geotrek.trekking import models as trekking_models
 from geotrek.api.mobile.views.trekking import (TrekViewSet, POIViewSet)
 from geotrek.api.mobile.views.common import FlatPageViewSet, SettingsView
@@ -221,9 +222,13 @@ class Command(BaseCommand):
         self.sync_pictograms(lang, trekking_models.POIType, zipfile=self.zipfile_common)
         self.sync_pictograms(lang, trekking_models.Route, zipfile=self.zipfile_common)
 
-        if 'geotrek.flatpages' in settings.INSTALLED_APPS:
-            self.sync_json(lang, FlatPageViewSet, 'flatpages', zipfile=self.zipfile_common,
-                           as_view_args=[{'get': 'detail'}])
+    def sync_flatpage(self, lang):
+        flatpages = FlatPage.objects.order_by('pk').filter(**{'published_{lang}'.format(lang=lang): True})
+        self.sync_json(lang, FlatPageViewSet, 'flatpages',
+                       as_view_args=[{'get': 'list'}])
+        for flatpage in flatpages:
+            self.sync_json(lang, FlatPageViewSet, 'flatpages/{pk}/'.format(pk=flatpage.pk),
+                           as_view_args=[{'get': 'retrieve', 'pk': flatpage.pk}])
 
     def sync_trekking(self, lang):
         zipname_trek = os.path.join('mobile', 'common', 'treks', 'global.zip')
@@ -381,6 +386,8 @@ class Command(BaseCommand):
 
             translation.activate(lang)
             self.sync_trekking(lang)
+            if 'geotrek.flatpages' in settings.INSTALLED_APPS:
+                self.sync_flatpage(lang)
             translation.deactivate()
 
     def check_dst_root_is_empty(self):
