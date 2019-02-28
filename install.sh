@@ -9,7 +9,7 @@ cd "$(dirname "$0")"
 
 #------------------------------------------------------------------------------
 
-STABLE_VERSION=${STABLE_VERSION:-2.24.2}
+STABLE_VERSION=${STABLE_VERSION:-2.24.3}
 dev=false
 tests=false
 prod=false

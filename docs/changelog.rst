@@ -2,12 +2,13 @@
 CHANGELOG
 =========
 
-2.24.3.dev0
+2.24.3 (2019-02-28)
 -------------------
 
 **Bug fixes**
 
--
+- Fix get attachments using generic foreign and not url
+- Fix merge path
 
 
 2.24.2 (2019-02-26)
