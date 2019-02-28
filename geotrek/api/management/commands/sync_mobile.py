@@ -233,7 +233,7 @@ class Command(BaseCommand):
         self.mkdirs(zipfullname_trek)
         self.zipfile_trek_global = ZipFile(zipfullname_trek, 'w')
 
-        self.sync_geojson(lang, TrekViewSet, 'trek.geojson', type_view={'get': 'list'})
+        self.sync_geojson(lang, TrekViewSet, 'treks.geojson', type_view={'get': 'list'})
         treks = trekking_models.Trek.objects.existing().order_by('pk')
         treks = treks.filter(
             Q(**{'published_{lang}'.format(lang=lang): True})
