@@ -270,7 +270,7 @@ class Command(BaseCommand):
             self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
             self.stdout.flush()
 
-        trek_file = os.path.join(trek.pk, self.tmp_root, zipname)
+        trek_file = os.path.join(str(trek.pk), self.tmp_root, zipname)
 
         def _radius2bbox(lng, lat, radius):
             return (lng - radius, lat - radius,
