@@ -267,7 +267,7 @@ class PathViewsTest(CommonTest):
         self.login()
         path_a = PathFactory.create(name="A", geom=LineString((0, 0), (1, 0)))
         path_b = PathFactory.create(name="B", geom=LineString((1, 0), (2, 0)))
-        path_c = PathFactory.create(name="C", geom=LineString((1, 0), (10, 10)))
+        PathFactory.create(name="C", geom=LineString((1, 0), (10, 10)))
         response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
         self.assertIn('error', response.json())
         self.logout()
