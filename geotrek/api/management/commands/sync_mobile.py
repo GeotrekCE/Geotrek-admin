@@ -308,7 +308,7 @@ class Command(BaseCommand):
         global_extent = settings.LEAFLET_CONFIG['SPATIAL_EXTENT']
 
         logger.info("Global extent is %s" % unicode(global_extent))
-        global_file = os.path.join('global', self.tmp_root, zipname)
+        global_file = os.path.join(self.tmp_root, zipname)
 
         logger.info("Build global tiles file...")
         self.mkdirs(global_file)
