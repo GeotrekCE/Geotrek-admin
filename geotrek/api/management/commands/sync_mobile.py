@@ -55,6 +55,7 @@ class Command(BaseCommand):
         request = self.factory.get(url, params)
         request.LANGUAGE_CODE = lang
         request.user = AnonymousUser()
+        kwargs['lang'] = lang
         try:
             response = view(request, **kwargs)
             if hasattr(response, 'render'):
@@ -115,7 +116,7 @@ class Command(BaseCommand):
 
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, fix2028=True, **kwargs)
 
-    def sync_trek_pois(self, lang, trek, zipfile=None):
+    def sync_trek_pois(self, lang, trek):
         params = {'format': 'geojson'}
         view = POIViewSet.as_view({'get': 'list'})
         name = os.path.join('mobile', lang, 'treks', str(trek.pk), 'pois.geojson')
@@ -140,20 +141,21 @@ class Command(BaseCommand):
     def sync_static_file(self, lang, name):
         self.sync_file(lang, name, settings.STATIC_ROOT, settings.STATIC_URL)
 
-    def sync_media_file(self, lang, field, zipfile=None):
+    def sync_media_file(self, lang, field, prefix=None, zipfile=None):
         if field and field.name:
-            self.sync_file(lang, field.name, settings.MEDIA_ROOT, settings.MEDIA_URL, zipfile=zipfile)
+            url_media = '/%s%s' % (prefix, settings.MEDIA_URL) if prefix else settings.MEDIA_URL
+            self.sync_file(lang, field.name, settings.MEDIA_ROOT, url_media, zipfile=zipfile)
 
     def sync_pictograms(self, lang, model, zipfile=None):
         for obj in model.objects.all():
             file_name, file_extension = os.path.splitext(str(obj.pictogram))
             if file_extension == '.svg':
-                dst = os.path.join(self.tmp_root, settings.MEDIA_URL.strip('/'), '%s.png' % file_name)
+                dst = os.path.join('global', self.tmp_root, settings.MEDIA_URL.strip('/'), '%s.png' % file_name)
                 self.mkdirs(dst)
                 cairosvg.svg2png(url=obj.pictogram.path, write_to=dst)
                 zipfile.write(dst)
             else:
-                self.sync_media_file(lang, obj.pictogram, zipfile=zipfile)
+                self.sync_media_file(lang, obj.pictogram, prefix='global', zipfile=zipfile)
 
     def sync_poi_media(self, lang, poi):
         if poi.resized_pictures:
@@ -170,12 +172,12 @@ class Command(BaseCommand):
         self.mkdirs(zipfullname)
         self.trek_zipfile = ZipFile(zipfullname, 'w')
 
-        self.sync_trek_pois(lang, trek, zipfile=self.trek_zipfile)
-        self.sync_media_file(lang, trek.thumbnail_mobile, zipfile=self.trek_zipfile)
+        self.sync_trek_pois(lang, trek)
+        self.sync_media_file(lang, trek.thumbnail_mobile, prefix=trek.pk, zipfile=self.zipfile_trek_global)
         for poi in trek.published_pois:
             self.sync_poi_media(lang, poi)
         for picture, resized in trek.resized_pictures:
-            self.sync_media_file(lang, resized, zipfile=self.trek_zipfile)
+            self.sync_media_file(lang, resized, prefix=trek.pk, zipfile=self.trek_zipfile)
 
         if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname),
@@ -207,11 +209,6 @@ class Command(BaseCommand):
                 self.stdout.write(u"\x1b[3D\x1b[32mzipped\x1b[0m")
 
     def sync_common(self, lang):
-        zipname_common = os.path.join('mobile', 'common', 'global.zip')
-        zipfullname_common = os.path.join(self.tmp_root, zipname_common)
-        self.mkdirs(zipfullname_common)
-        self.zipfile_common = ZipFile(zipfullname_common, 'w')
-
         self.sync_json(lang, SettingsView, 'settings', zipfile=self.zipfile_common)
 
         self.sync_pictograms(lang, common_models.Theme, zipfile=self.zipfile_common)
@@ -227,17 +224,16 @@ class Command(BaseCommand):
         self.sync_json(lang, FlatPageViewSet, 'flatpages',
                        as_view_args=[{'get': 'list'}])
         for flatpage in flatpages:
-            self.sync_json(lang, FlatPageViewSet, 'flatpages/{pk}/'.format(pk=flatpage.pk),
-                           as_view_args=[{'get': 'retrieve', 'pk': flatpage.pk}])
+            self.sync_json(lang, FlatPageViewSet, 'flatpages/{pk}'.format(pk=flatpage.pk), pk=flatpage.pk,
+                           as_view_args=[{'get': 'retrieve'}])
 
     def sync_trekking(self, lang):
         zipname_trek = os.path.join('mobile', 'common', 'treks', 'global.zip')
         zipfullname_trek = os.path.join(self.tmp_root, zipname_trek)
         self.mkdirs(zipfullname_trek)
-        self.zipfile_trek = ZipFile(zipfullname_trek, 'w')
+        self.zipfile_trek_global = ZipFile(zipfullname_trek, 'w')
 
         self.sync_geojson(lang, TrekViewSet, 'trek.geojson', type_view={'get': 'list'})
-
         treks = trekking_models.Trek.objects.existing().order_by('pk')
         treks = treks.filter(
             Q(**{'published_{lang}'.format(lang=lang): True})
@@ -248,16 +244,22 @@ class Command(BaseCommand):
         if self.portal:
             treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
 
+        zipname_common = os.path.join('mobile', 'common', 'global.zip')
+        zipfullname_common = os.path.join(self.tmp_root, zipname_common)
+        self.mkdirs(zipfullname_common)
+        self.zipfile_common = ZipFile(zipfullname_common, 'w')
+
         self.sync_common(lang)
         for trek in treks:
             self.sync_trek(lang, trek)
-            self.sync_geojson(lang, TrekViewSet, 'treks/{pk}.geojson'.format(pk=trek.pk), type_view={'get': 'list'})
-
+            self.sync_geojson(lang, TrekViewSet, 'treks/{pk}.geojson'.format(pk=trek.pk), pk=trek.pk,
+                              type_view={'get': 'retrieve'})
         if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname_trek),
                               ending="")
 
-        self.close_zip(self.zipfile_trek, zipname_trek)
+        self.close_zip(self.zipfile_trek_global, zipname_trek)
+        self.close_zip(self.zipfile_common, zipname_common)
 
     def sync_trek_tiles(self, trek):
         """ Creates a tiles file for the specified Trek object.
@@ -268,7 +270,7 @@ class Command(BaseCommand):
             self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
             self.stdout.flush()
 
-        trek_file = os.path.join(self.tmp_root, zipname)
+        trek_file = os.path.join(trek.pk, self.tmp_root, zipname)
 
         def _radius2bbox(lng, lat, radius):
             return (lng - radius, lat - radius,
@@ -306,7 +308,7 @@ class Command(BaseCommand):
         global_extent = settings.LEAFLET_CONFIG['SPATIAL_EXTENT']
 
         logger.info("Global extent is %s" % unicode(global_extent))
-        global_file = os.path.join(self.tmp_root, zipname)
+        global_file = os.path.join('global', self.tmp_root, zipname)
 
         logger.info("Build global tiles file...")
         self.mkdirs(global_file)
@@ -385,9 +387,9 @@ class Command(BaseCommand):
                 current_value = current_value + step_value
 
             translation.activate(lang)
-            self.sync_trekking(lang)
             if 'geotrek.flatpages' in settings.INSTALLED_APPS:
                 self.sync_flatpage(lang)
+            self.sync_trekking(lang)
             translation.deactivate()
 
     def check_dst_root_is_empty(self):
@@ -449,7 +451,6 @@ class Command(BaseCommand):
             raise
 
         self.rename_root()
-        shutil.rmtree("{path}/media".format(path=self.abs_path))
 
         done_message = 'Done'
         if self.successfull:

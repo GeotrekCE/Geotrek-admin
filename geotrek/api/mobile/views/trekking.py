@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
-from django.db.models import F
+from django.db.models import F, Q
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from django.http import Http404
 from django.utils import translation
@@ -39,7 +39,9 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
             queryset = queryset.annotate(start_point=Transform(StartPoint('geom'), settings.API_SRID))
         else:
             queryset = queryset.annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
-        return queryset.filter(published=True)
+        return queryset.filter(Q(**{'published': True}) |
+                               Q(**{'trek_parents__parent__published': True, 'trek_parents__parent__deleted': False})
+                               ).distinct()
 
 
 class POIViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
@@ -73,5 +75,4 @@ class POIViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
             .prefetch_related('topo_object__aggregations', 'attachments') \
             .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID),
                       geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
-            .order_by('pk')\
-            .filter(published=True)
+            .order_by('pk')
