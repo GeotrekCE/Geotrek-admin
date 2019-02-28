@@ -32,7 +32,7 @@ from .models import Path, Trail, Topology
 from .forms import PathForm, TrailForm
 from .filters import PathFilterSet, TrailFilterSet
 from . import graph as graph_lib
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
@@ -368,36 +368,37 @@ def merge_path(request):
     response = {}
 
     if request.method == 'POST':
-        ids_path_merge = request.POST.getlist('path[]')
-
-        assert len(ids_path_merge) == 2
-
-        path_a = Path.objects.get(pk=ids_path_merge[0])
-        path_b = Path.objects.get(pk=ids_path_merge[1])
-
-        if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
-            response = {'error': _(u"You don't have the right to change these paths")}
-            return HttpJSONResponse(response)
-
-        if path_a.draft != path_b.draft:
-            response = {'error': _(u"You can't merge 1 draft path with 1 normal path")}
-            return HttpJSONResponse(response)
-
         try:
+            ids_path_merge = request.POST.getlist('path[]')
+
+            if len(ids_path_merge) != 2:
+                raise Exception(_(u"You should select two paths"))
+
+            path_a = Path.objects.get(pk=ids_path_merge[0])
+            path_b = Path.objects.get(pk=ids_path_merge[1])
+
+            if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
+                raise Exception(_(u"You don't have the right to change these paths"))
+
+            if path_a.draft != path_b.draft:
+                raise Exception(_(u"You can't merge 1 draft path with 1 normal path"))
+
             result = path_a.merge_path(path_b)
+
+            if result == 2:
+                raise Exception(_(u"You can't merge 2 paths with a 3rd path in the intersection"))
+
+            elif result == 0:
+                raise Exception(_(u"No matching points to merge paths found"))
+
+            else:
+                response = {u'success': _(u"Paths merged successfully")}
+                messages.success(request, response['success'])
+
         except Exception as exc:
-            response = {'error': u'%s' % exc, }
-            return HttpJSONResponse(response)
+            response = {u'error': u'%s' % exc, }
 
-        if result == 2:
-            response = {'error': _(u"You can't merge 2 paths with a 3rd path in the intersection")}
-        elif result == 0:
-            response = {'error': _(u"No matching points to merge paths found")}
-        else:
-            response = {'success': _(u"Paths merged successfully")}
-            messages.success(request, _(u"Paths merged successfully"))
-
-        return HttpJSONResponse(response)
+    return JsonResponse(response)
 
 
 class ParametersView(View):
@@ -405,4 +406,4 @@ class ParametersView(View):
         response = {
             'geotrek_admin_version': settings.VERSION,
         }
-        return HttpResponse(json.dumps(response), content_type="application/json")
+        return JsonResponse(response)

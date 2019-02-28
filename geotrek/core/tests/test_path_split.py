@@ -385,8 +385,8 @@ class SplitPathTest(TestCase):
                    + +
                    D H
         """
-        PathFactory.create(name="AB", geom=LineString((0, 0), (300, 0)))
-        PathFactory.create(name="CD", geom=LineString((200, 100), (200, -200)))
+        PathFactory.create(name="AB", geom=LineString((0, 0), (300, 0), srid=settings.SRID))
+        PathFactory.create(name="CD", geom=LineString((200, 100), (200, -200), srid=settings.SRID))
         ab_1, ab_2 = Path.objects.filter(name="AB")
         cd_1, cd_2 = Path.objects.filter(name="CD")
         self.assertTrue(ab_1.length == 200 and ab_2.length == 100 or ab_1.length == 100 and ab_2.length == 200)
@@ -396,8 +396,8 @@ class SplitPathTest(TestCase):
         self.assertEqual(ab_2.geom, LineString((200, 0), (300, 0), srid=settings.SRID))
         self.assertEqual(cd_2.geom, LineString((200, 0), (200, -200), srid=settings.SRID))
 
-        PathFactory.create(name="EF", geom=LineString((100, 100), (100, -100), (300, -100)))
-        PathFactory.create(name="GH", geom=LineString((50, 100), (250, -200)))
+        PathFactory.create(name="EF", geom=LineString((100, 100), (100, -100), (300, -100), srid=settings.SRID))
+        PathFactory.create(name="GH", geom=LineString((50, 100), (250, -200), srid=settings.SRID))
 
         self.assertEqual(Path.objects.filter(name="AB").count(), 4)
         self.assertEqual(Path.objects.filter(name="CD").count(), 4)
