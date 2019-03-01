@@ -669,7 +669,7 @@ class TrekJSONDetailTest(TrekJSONSetUp):
                               u'author': self.attachment.author})
 
     def test_cities(self):
-        self.assertDictEqual(self.result['sorted_cities'][0],
+        self.assertDictEqual(self.result['cities'][0],
                              {u"code": self.city.code,
                               u"name": self.city.name})
 
