@@ -170,4 +170,4 @@ class FlatPageViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     authentication_classes = [BasicAuthentication, SessionAuthentication]
     serializer_class = api_serializers.FlatPageListSerializer
     serializer_detail_class = api_serializers.FlatPageDetailSerializer
-    queryset = FlatPage.objects.all().order_by('pk')
+    queryset = FlatPage.objects.filter(target='mobile').order_by('order')

@@ -115,7 +115,7 @@ class TrekFormatList(MapEntityFormat, TrekList):
         'disabled_infrastructure', 'parking_location', 'points_reference',
         'related', 'children', 'parents', 'pois', 'review', 'published',
         'publication_date', 'structure', 'date_insert', 'date_update',
-        'sorted_cities', 'districts', 'areas', 'source', 'portal', 'length_2d'
+        'cities', 'districts', 'areas', 'source', 'portal', 'length_2d'
     ] + AltimetryMixin.COLUMNS
 
 
@@ -298,10 +298,10 @@ class POIFormatList(MapEntityFormat, POIList):
         'id', 'eid', 'name', 'type', 'description', 'treks',
         'review', 'published', 'publication_date',
         'structure', 'date_insert', 'date_update',
-        'sorted_cities', 'districts', 'areas'
+        'cities', 'districts', 'areas'
     ] + AltimetryMixin.COLUMNS
 
-    set(POIList.columns + ['description', 'treks', 'districts', 'sorted_cities', 'areas', 'structure'])
+    set(POIList.columns + ['description', 'treks', 'districts', 'cities', 'areas', 'structure'])
 
     def get_queryset(self):
         qs = super(POIFormatList, self).get_queryset()
@@ -310,7 +310,7 @@ class POIFormatList(MapEntityFormat, POIList):
 
         # Since Land layers should have less records, start by them.
         land_layers = [('districts', District),
-                       ('sorted_cities', City),
+                       ('cities', City),
                        ('areas', RestrictedArea)]
         for attrname, land_layer in land_layers:
             denormalized[attrname] = {}

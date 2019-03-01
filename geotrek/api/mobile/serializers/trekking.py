@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+import os
+
 from django.conf import settings
 from rest_framework import serializers
 from rest_framework_gis import serializers as geo_serializers
@@ -14,7 +16,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
     def get_url(self, obj):
         if not obj.attachment_file:
             return ""
-        return obj.attachment_file.url
+        return '/%s%s' % (obj.object_id, obj.attachment_file.url)
 
     class Meta:
         model = common_models.Attachment
@@ -40,15 +42,19 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             )
 
     class TrekDetailSerializer(geo_serializers.GeoFeatureModelSerializer):
-        thumbnail = serializers.ReadOnlyField(source='serializable_thumbnail_mobile')
-
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
         length = serializers.SerializerMethodField(read_only=True)
         pictures = AttachmentSerializer(many=True, )
         cities = serializers.SerializerMethodField(read_only=True)
+        departure_city = serializers.SerializerMethodField(read_only=True)
+        arrival_city = serializers.SerializerMethodField(read_only=True)
 
         def get_cities(self, obj):
-            return [city.code for city in obj.cities]
+            qs = City.objects
+            if hasattr(qs, 'existing'):
+                qs = qs.existing()
+            cities = qs.filter(geom__intersects=(obj.geom, 0))
+            return [city.code for city in cities]
 
         def get_departure_city(self, obj):
             qs = City.objects
@@ -80,7 +86,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.Trek
             geo_field = 'geometry'
             fields = (
-                'id', 'thumbnail', 'name', 'accessibilities', 'description_teaser', 'cities',
+                'id', 'name', 'accessibilities', 'description_teaser', 'cities',
                 'description', 'departure', 'arrival', 'duration', 'access', 'advised_parking', 'advice',
                 'difficulty', 'length', 'ascent', 'descent', 'route', 'is_park_centered',
                 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'difficulty',
@@ -89,13 +95,23 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             auto_bbox = True
 
     class TrekListSerializer(geo_serializers.GeoFeatureModelSerializer):
-        thumbnail = serializers.ReadOnlyField(source='serializable_thumbnail_mobile')
+        thumbnail = serializers.SerializerMethodField(source='serializable_thumbnail_mobile')
         length = serializers.SerializerMethodField(read_only=True)
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='start_point', )
         cities = serializers.SerializerMethodField(read_only=True)
+        departure_city = serializers.SerializerMethodField(read_only=True)
+
+        def get_thumbnail(self, obj):
+            if obj.serializable_thumbnail_mobile:
+                return '/%s%s' % (obj.pk, obj.serializable_thumbnail_mobile)
+            return None
 
         def get_cities(self, obj):
-            return [city.code for city in obj.cities]
+            qs = City.objects
+            if hasattr(qs, 'existing'):
+                qs = qs.existing()
+            cities = qs.filter(geom__intersects=(obj.geom, 0))
+            return [city.code for city in cities]
 
         def get_departure_city(self, obj):
             qs = City.objects

@@ -172,4 +172,4 @@ class FlatPageListSerializer(serializers.ModelSerializer):
 class FlatPageDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = flatpage_models.FlatPage
-        fields = ('id', 'title', 'content')
+        fields = ('id', 'title', 'content', 'external_url')
