@@ -50,6 +50,26 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         def get_cities(self, obj):
             return [city.code for city in obj.cities]
 
+        def get_departure_city(self, obj):
+            qs = City.objects
+            if hasattr(qs, 'existing'):
+                qs = qs.existing()
+            if obj.start_point:
+                city = qs.filter(geom__covers=(obj.start_point, 0)).first()
+                if city:
+                    return city.code
+            return None
+
+        def get_arrival_city(self, obj):
+            qs = City.objects
+            if hasattr(qs, 'existing'):
+                qs = qs.existing()
+            if obj.start_point:
+                city = qs.filter(geom__covers=(obj.end_point, 0)).first()
+                if city:
+                    return city.code
+            return None
+
         def get_length(self, obj):
             return round(obj.length_2d_m, 1)
 
@@ -64,7 +84,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'description', 'departure', 'arrival', 'duration', 'access', 'advised_parking', 'advice',
                 'difficulty', 'length', 'ascent', 'descent', 'route', 'is_park_centered',
                 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'difficulty',
-                'geometry', 'pictures', 'information_desks', 'cities'
+                'geometry', 'pictures', 'information_desks', 'cities', 'departure_city', 'arrival_city'
             )
             auto_bbox = True
 
@@ -75,15 +95,16 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         cities = serializers.SerializerMethodField(read_only=True)
 
         def get_cities(self, obj):
+            return [city.code for city in obj.cities]
+
+        def get_departure_city(self, obj):
             qs = City.objects
             if hasattr(qs, 'existing'):
                 qs = qs.existing()
             if obj.start_point:
                 city = qs.filter(geom__covers=(obj.start_point, 0)).first()
-            else:
-                return None
-            if city:
-                return city.code
+                if city:
+                    return city.code
             return None
 
         def get_length(self, obj):
@@ -93,6 +114,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.Trek
             geo_field = 'geometry'
             fields = (
-                'id', 'thumbnail', 'name', 'departure', 'accessibilities', 'route',
+                'id', 'thumbnail', 'name', 'departure', 'accessibilities', 'route', 'departure_city',
                 'difficulty', 'practice', 'themes', 'length', 'geometry', 'cities', 'duration'
             )

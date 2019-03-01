@@ -56,3 +56,11 @@ class StartPoint(Func):
     """
     function = 'ST_STARTPOINT'
     output_field = PointField()
+
+
+class EndPoint(Func):
+    """
+    ST_TRANSFORM postgis function
+    """
+    function = 'ST_ENDPOINT'
+    output_field = PointField()

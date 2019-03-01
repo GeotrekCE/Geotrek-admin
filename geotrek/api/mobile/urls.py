@@ -14,10 +14,10 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
 urlpatterns = [
     url(r'^$', api_mobile.SwaggerSchemaView.as_view(), name="schema"),
-    url(r'^(?P<lang>\w\w)/', include(router.urls)),
-    url(r'^(?P<lang>\w\w)/settings/$', api_mobile.SettingsView.as_view(), name='settings'),
+    url(r'^', include(router.urls)),
+    url(r'^settings/$', api_mobile.SettingsView.as_view(), name='settings'),
 ]
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
-    urlpatterns += [url(r'^(?P<lang>\w\w)/treks/(?P<pk>\d+)/pois$',
+    urlpatterns += [url(r'^treks/(?P<pk>\d+)/pois$',
                         api_mobile.POIViewSet.as_view({'get': 'list'}), name="poi")]

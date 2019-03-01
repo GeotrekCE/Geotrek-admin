@@ -4,11 +4,10 @@ from django.conf import settings
 from django.db.models import F, Q
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from django.http import Http404
-from django.utils import translation
 
 from geotrek.api.mobile.serializers import trekking as api_serializers
 
-from geotrek.api.v2.functions import Transform, Length, StartPoint
+from geotrek.api.v2.functions import Transform, Length, StartPoint, EndPoint
 from geotrek.trekking import models as trekking_models
 
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
@@ -25,23 +24,18 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, ]
     authentication_classes = [BasicAuthentication, SessionAuthentication]
 
-    def dispatch(self, request, *args, **kwargs):
-        language = kwargs.get(u'lang')
-        translation.activate(language)
-        return super(TrekViewSet, self).dispatch(request, *args, **kwargs)
-
     def get_queryset(self, *args, **kwargs):
         queryset = trekking_models.Trek.objects.existing()\
             .select_related('topo_object') \
             .prefetch_related('topo_object__aggregations', 'attachments') \
             .order_by('pk').annotate(length_2d_m=Length('geom'))
-        if self.action == 'list':
-            queryset = queryset.annotate(start_point=Transform(StartPoint('geom'), settings.API_SRID))
-        else:
+        if not self.action == 'list':
             queryset = queryset.annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
-        return queryset.filter(Q(**{'published': True}) |
-                               Q(**{'trek_parents__parent__published': True, 'trek_parents__parent__deleted': False})
-                               ).distinct()
+        return queryset.annotate(start_point=Transform(StartPoint('geom'), settings.API_SRID),
+                                 end_point=Transform(EndPoint('geom'), settings.API_SRID)).\
+            filter(Q(**{'published': True}) |
+                   Q(**{'trek_parents__parent__published': True, 'trek_parents__parent__deleted': False})
+                   ).distinct()
 
 
 class POIViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
@@ -57,11 +51,6 @@ class POIViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
                   geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
         .order_by('pk')  # Required for reliable pagination
     filter_fields = ('type',)
-
-    def dispatch(self, request, *args, **kwargs):
-        language = kwargs.get(u'lang')
-        translation.activate(language)
-        return super(POIViewSet, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         pk = self.kwargs['pk']
