@@ -55,7 +55,6 @@ class Command(BaseCommand):
         request = self.factory.get(url, params)
         request.LANGUAGE_CODE = lang
         request.user = AnonymousUser()
-        kwargs['lang'] = lang
         try:
             response = view(request, **kwargs)
             if hasattr(response, 'render'):
