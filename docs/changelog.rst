@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.24.4.dev0
+2.24.4 (2019-03-01)
 -------------------
 
 **Bug fixes**
 
--
+- Fix get attachments with crop
 
 
 2.24.3 (2019-02-28)
