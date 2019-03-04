@@ -10,32 +10,6 @@ from geotrek.flatpages import models as flatpage_models
 from geotrek.trekking import models as trekking_models
 
 
-class BaseGeoJSONSerializer(geo_serializers.GeoFeatureModelSerializer):
-    """
-    Mixin used to serialize geojson
-    """
-
-    class Meta:
-        geo_field = 'geometry'
-
-
-def override_serializer(format_output, base_serializer_class):
-    """
-    Override Serializer switch output format and dimension data
-    """
-    if format_output == 'geojson':
-        class GeneratedGeoSerializer(BaseGeoJSONSerializer,
-                                     base_serializer_class):
-            class Meta(BaseGeoJSONSerializer.Meta,
-                       base_serializer_class.Meta):
-                pass
-
-        final_class = GeneratedGeoSerializer
-    else:
-        final_class = base_serializer_class
-    return final_class
-
-
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
     from geotrek.zoning import models as zoning_models
 
