@@ -16,7 +16,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
     def get_url(self, obj):
         if not obj.attachment_file:
             return ""
-        return '/%s%s' % (obj.object_id, obj.attachment_file.url)
+        return '/{id}{file}'.format(id=obj.object_id, file=obj.attachment_file.url)
 
     class Meta:
         model = common_models.Attachment
@@ -103,7 +103,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         def get_thumbnail(self, obj):
             if obj.serializable_thumbnail_mobile:
-                return '/%s%s' % (obj.pk, obj.serializable_thumbnail_mobile)
+                return '/{id}{file}'.format(id=obj.pk, file=obj.serializable_thumbnail_mobile)
             return None
 
         def get_cities(self, obj):
