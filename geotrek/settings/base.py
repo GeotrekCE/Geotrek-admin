@@ -267,6 +267,7 @@ PROJECT_APPS += (
     'rest_framework_swagger',
     'embed_video',
     'geotrek.appconfig.CeleryGeotrekConfig',  # django_celery_results
+    'colorfield',
 )
 
 
