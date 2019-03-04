@@ -8,11 +8,7 @@ from django.test.testcases import TestCase
 
 from geotrek.trekking import factories as trek_factory, models as trek_models
 
-PAGINATED_JSON_STRUCTURE = sorted([
-    'count', 'next', 'previous', 'results',
-])
-
-PAGINATED_GEOJSON_STRUCTURE = sorted([
+POI_GEOJSON_STRUCTURE = sorted([
     'features', 'type'
 ])
 
@@ -30,17 +26,10 @@ GEOJSON_STRUCTURE_WITHOUT_BBOX = sorted([
 ])
 
 TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'id', 'thumbnail', 'name', 'accessibilities', 'description_teaser', 'cities', 'description', 'departure', 'arrival', 'duration',
-    'access', 'advised_parking', 'advice', 'difficulty', 'length', 'ascent', 'descent', 'route',
+    'id', 'thumbnail', 'name', 'accessibilities', 'description_teaser', 'cities', 'description', 'departure', 'arrival',
+    'access', 'advised_parking', 'advice', 'difficulty', 'length', 'ascent', 'descent', 'route', 'duration',
     'is_park_centered', 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'pictures',
     'information_desks'
-])
-
-TREK_LIST_PROPERTIES_JSON_STRUCTURE = sorted([
-    'id', 'thumbnail', 'name', 'accessibilities', 'description_teaser', 'cities', 'description', 'departure', 'arrival', 'duration',
-    'access', 'advised_parking', 'advice', 'difficulty', 'length', 'ascent', 'descent', 'route',
-    'is_park_centered', 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'pictures',
-    'information_desks', 'geometry'
 ])
 
 
@@ -50,7 +39,7 @@ TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
 ])
 
 POI_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'description', 'type', 'id', 'name', 'pictures', 'thumbnail', 'type_pois'
+    'description', 'id', 'name', 'pictures', 'thumbnail', 'type_pois'
 ])
 
 
@@ -66,7 +55,7 @@ class BaseApiTest(TestCase):
 
         cls.treks = trek_factory.TrekWithPublishedPOIsFactory.create_batch(
             cls.nb_treks, name_fr='Coucou', description_fr="Sisi",
-            description_teaser_fr="mini")
+            description_teaser_fr="mini", published=True)
 
     def login(self):
         pass
@@ -102,14 +91,6 @@ class APIAccessTestCase(BaseApiTest):
         #  test response code
         self.assertEqual(response.status_code, 200)
 
-        # json collection structure is ok
-        json_response = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(sorted(json_response.keys()),
-                         TREK_LIST_PROPERTIES_JSON_STRUCTURE)
-
-        # regenrate with geojson 3D
-        response = self.get_treks_detail(trek_models.Trek.objects.order_by('?').first().pk,
-                                        {'format': 'geojson'})
         json_response = json.loads(response.content.decode('utf-8'))
 
         # test geojson format
@@ -130,27 +111,14 @@ class APIAccessTestCase(BaseApiTest):
 
         # json collection structure is ok
         json_response = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(sorted(json_response.keys()),
-                         PAGINATED_JSON_STRUCTURE)
 
         # trek count is ok
-        self.assertEqual(len(json_response.get('results')),
-                         self.nb_treks, json_response)
+        self.assertEqual(len(json_response.get('features')),
+                         self.nb_treks)
 
         # test dim 2 ok
-        self.assertEqual(len(json_response.get('results')[0].get('geometry').get('coordinates')),
+        self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')),
                          2)
-
-        # regenrate with geojson 3D
-        response = self.get_treks_list({'format': 'geojson'})
-        json_response = json.loads(response.content.decode('utf-8'))
-
-        # test geojson format
-        self.assertEqual(sorted(json_response.keys()),
-                         PAGINATED_GEOJSON_STRUCTURE)
-
-        self.assertEqual(len(json_response.get('features')),
-                         self.nb_treks, json_response)
 
         self.assertEqual(sorted(json_response.get('features')[0].keys()),
                          GEOJSON_STRUCTURE_WITHOUT_BBOX)
@@ -169,23 +137,17 @@ class APIAccessTestCase(BaseApiTest):
 
         # json collection structure is ok
         json_response = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(sorted(json_response.keys()),
-                         PAGINATED_JSON_STRUCTURE)
-        # trek count is ok
-        self.assertEqual(len(json_response.get('results')),
+
+        # poi count by treks is ok
+        self.assertEqual(len(json_response.get('features')),
                          trek_models.Trek.objects.order_by('?').last().published_pois.count())
 
         # test dim 2 ok
-        self.assertEqual(len(json_response.get('results')[0].get('geometry').get('coordinates')),
+        self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')),
                          2)
 
-        # regenrate with geojson 3D
-        response = self.get_poi_list(trek_models.Trek.objects.first().pk, {'format': 'geojson'})
-        json_response = json.loads(response.content.decode('utf-8'))
-
-        # test geojson format
         self.assertEqual(sorted(json_response.keys()),
-                         PAGINATED_GEOJSON_STRUCTURE)
+                         POI_GEOJSON_STRUCTURE)
 
         self.assertEqual(len(json_response.get('features')),
                          trek_models.POI.objects.all().count())
