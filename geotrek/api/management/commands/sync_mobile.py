@@ -121,67 +121,39 @@ class Command(BaseCommand):
         name = os.path.join('mobile', lang, 'treks', str(trek.pk), 'pois.geojson')
         self.sync_view(lang, view, name, params=params, pk=trek.pk)
 
-    def sync_file(self, lang, name, src_root, url, zipfile=None):
+    def sync_file(self, name, src_root, url, directory='', zipfile=None):
         url = url.strip('/')
         src = os.path.join(src_root, name)
-        dst = os.path.join(self.tmp_root, url, name)
+        dst = os.path.join(self.tmp_root, directory, url, name)
         self.mkdirs(dst)
         if not os.path.isfile(dst):
             os.link(src, dst)
         if zipfile:
             zipfile.write(dst, os.path.join(url, name))
-        os.remove(dst)
         if self.verbosity == 2:
             self.stdout.write(
-                u"\x1b[36m{lang}\x1b[0m \x1b[1m{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(lang=lang,
-                                                                                                 url=url,
-                                                                                                 name=name))
+                u"\x1b[36m\x1b[0m \x1b[1m{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(url=url,
+                                                                                           name=name))
 
     def sync_static_file(self, lang, name):
         self.sync_file(lang, name, settings.STATIC_ROOT, settings.STATIC_URL)
 
-    def sync_media_file(self, lang, field, prefix=None, zipfile=None):
+    def sync_media_file(self, field, prefix=None, directory='', zipfile=None):
         if field and field.name:
             url_media = '/%s%s' % (prefix, settings.MEDIA_URL) if prefix else settings.MEDIA_URL
-            self.sync_file(lang, field.name, settings.MEDIA_ROOT, url_media, zipfile=zipfile)
+            self.sync_file(field.name, settings.MEDIA_ROOT, url_media, directory=directory, zipfile=zipfile)
 
-    def sync_pictograms(self, lang, model, zipfile=None):
+    def sync_pictograms(self, model, directory='', zipfile=None):
         for obj in model.objects.all():
             file_name, file_extension = os.path.splitext(str(obj.pictogram))
             if file_extension == '.svg':
-                dst = os.path.join('global', self.tmp_root, settings.MEDIA_URL.strip('/'), '%s.png' % file_name)
+                name = os.path.join(settings.MEDIA_URL.strip('/'), '%s.png' % file_name)
+                dst = os.path.join(self.tmp_root, directory, name)
                 self.mkdirs(dst)
                 cairosvg.svg2png(url=obj.pictogram.path, write_to=dst)
-                zipfile.write(dst)
+                zipfile.write(dst, name)
             else:
-                self.sync_media_file(lang, obj.pictogram, prefix='global', zipfile=zipfile)
-
-    def sync_poi_media(self, lang, poi):
-        if poi.resized_pictures:
-            self.sync_media_file(lang, poi.resized_pictures[0][1], zipfile=self.trek_zipfile)
-        for picture, resized in poi.resized_pictures[1:]:
-            self.sync_media_file(lang, resized)
-        for other_file in poi.files:
-            self.sync_media_file(lang, other_file.attachment_file)
-
-    def sync_trek(self, lang, trek):
-        url_trek = os.path.join('mobile', 'common', 'treks')
-        zipname = os.path.join(url_trek, '{pk}.zip'.format(pk=trek.pk))
-        zipfullname = os.path.join(self.tmp_root, zipname)
-        self.mkdirs(zipfullname)
-        self.trek_zipfile = ZipFile(zipfullname, 'w')
-
-        self.sync_trek_pois(lang, trek)
-        self.sync_media_file(lang, trek.thumbnail_mobile, prefix=trek.pk, zipfile=self.zipfile_trek_global)
-        for poi in trek.published_pois:
-            self.sync_poi_media(lang, poi)
-        for picture, resized in trek.resized_pictures:
-            self.sync_media_file(lang, resized, prefix=trek.pk, zipfile=self.trek_zipfile)
-
-        if self.verbosity == 2:
-            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname),
-                              ending="")
-        self.close_zip(self.trek_zipfile, zipname)
+                self.sync_media_file(obj.pictogram, directory=directory, zipfile=zipfile)
 
     def close_zip(self, zipfile, name):
         oldzipfilename = os.path.join(self.dst_root, name)
@@ -207,19 +179,9 @@ class Command(BaseCommand):
             else:
                 self.stdout.write(u"\x1b[3D\x1b[32mzipped\x1b[0m")
 
-    def sync_common(self, lang):
-        self.sync_json(lang, SettingsView, 'settings', zipfile=self.zipfile_common)
-
-        self.sync_pictograms(lang, common_models.Theme, zipfile=self.zipfile_common)
-        self.sync_pictograms(lang, trekking_models.TrekNetwork, zipfile=self.zipfile_common)
-        self.sync_pictograms(lang, trekking_models.Practice, zipfile=self.zipfile_common)
-        self.sync_pictograms(lang, trekking_models.Accessibility, zipfile=self.zipfile_common)
-        self.sync_pictograms(lang, trekking_models.DifficultyLevel, zipfile=self.zipfile_common)
-        self.sync_pictograms(lang, trekking_models.POIType, zipfile=self.zipfile_common)
-        self.sync_pictograms(lang, trekking_models.Route, zipfile=self.zipfile_common)
-
     def sync_flatpage(self, lang):
-        flatpages = FlatPage.objects.order_by('pk').filter(**{'published_{lang}'.format(lang=lang): True})
+        flatpages = FlatPage.objects.order_by('pk').filter(target='mobile').filter(
+            **{'published_{lang}'.format(lang=lang): True})
         self.sync_json(lang, FlatPageViewSet, 'flatpages',
                        as_view_args=[{'get': 'list'}])
         for flatpage in flatpages:
@@ -227,11 +189,6 @@ class Command(BaseCommand):
                            as_view_args=[{'get': 'retrieve'}])
 
     def sync_trekking(self, lang):
-        zipname_trek = os.path.join('mobile', 'common', 'treks', 'global.zip')
-        zipfullname_trek = os.path.join(self.tmp_root, zipname_trek)
-        self.mkdirs(zipfullname_trek)
-        self.zipfile_trek_global = ZipFile(zipfullname_trek, 'w')
-
         self.sync_geojson(lang, TrekViewSet, 'treks.geojson', type_view={'get': 'list'})
         treks = trekking_models.Trek.objects.existing().order_by('pk')
         treks = treks.filter(
@@ -243,27 +200,81 @@ class Command(BaseCommand):
         if self.portal:
             treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
 
-        zipname_common = os.path.join('mobile', 'common', 'global.zip')
-        zipfullname_common = os.path.join(self.tmp_root, zipname_common)
-        self.mkdirs(zipfullname_common)
-        self.zipfile_common = ZipFile(zipfullname_common, 'w')
-
-        self.sync_common(lang)
         for trek in treks:
-            self.sync_trek(lang, trek)
             self.sync_geojson(lang, TrekViewSet, 'treks/{pk}.geojson'.format(pk=trek.pk), pk=trek.pk,
                               type_view={'get': 'retrieve'})
-        if self.verbosity == 2:
-            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname_trek),
-                              ending="")
+            self.sync_trek_pois(lang, trek)
 
-        self.close_zip(self.zipfile_trek_global, zipname_trek)
-        self.close_zip(self.zipfile_common, zipname_common)
+    def sync_settings_json(self, lang):
+        self.sync_json(lang, SettingsView, 'settings')
+
+    def sync_medias(self):
+        if self.celery_task:
+            self.celery_task.update_state(
+                state='PROGRESS',
+                meta={
+                    'name': self.celery_task.name,
+                    'current': 10,
+                    'total': 100,
+                    'infos': u"{}".format(_(u"Medias syncing ..."))
+                }
+            )
+        self.sync_global_media()
+        self.sync_treks_media()
+
+    def sync_trek_by_pk_media(self, trek):
+        url_trek = os.path.join('mobile', 'nolang')
+        zipname_trekid = os.path.join(url_trek, str(trek.pk), 'media.zip')
+        zipfullname_trekid = os.path.join(self.tmp_root, zipname_trekid)
+        self.mkdirs(zipfullname_trekid)
+        trekid_zipfile = ZipFile(zipfullname_trekid, 'w')
+
+        for poi in trek.published_pois:
+            if poi.resized_pictures:
+                self.sync_media_file(poi.resized_pictures[0][1],  prefix=trek.pk, directory=url_trek,
+                                     zipfile=zipfullname_trekid)
+            for picture, resized in poi.resized_pictures[1:]:
+                self.sync_media_file(resized, prefix=trek.pk, directory=url_trek, zipfile=zipfullname_trekid)
+            for other_file in poi.files:
+                self.sync_media_file(other_file.attachment_file, prefix=trek.pk, directory=url_trek,
+                                     zipfile=zipfullname_trekid)
+        for picture, resized in trek.resized_pictures:
+            self.sync_media_file(resized, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
+
+        self.close_zip(trekid_zipfile, zipname_trekid)
+
+    def sync_treks_media(self):
+        treks = trekking_models.Trek.objects.existing().order_by('pk')
+        treks = treks.filter(
+            Q(**{'published': True})
+            | Q(**{'trek_parents__parent__published': True,
+                   'trek_parents__parent__deleted': False})
+        )
+
+        for trek in treks:
+            self.sync_trek_by_pk_media(trek)
+
+    def sync_global_media(self):
+        url_media_nolang = os.path.join('mobile', 'nolang')
+        zipname_settings = os.path.join('mobile', 'nolang', 'media.zip')
+        zipfullname_settings = os.path.join(self.tmp_root, zipname_settings)
+        self.mkdirs(zipfullname_settings)
+        print(zipfullname_settings)
+        self.zipfile_settings = ZipFile(zipfullname_settings, 'w')
+
+        self.sync_pictograms(common_models.Theme, directory=url_media_nolang, zipfile=self.zipfile_settings)
+        self.sync_pictograms(trekking_models.TrekNetwork, directory=url_media_nolang, zipfile=self.zipfile_settings)
+        self.sync_pictograms(trekking_models.Practice, directory=url_media_nolang, zipfile=self.zipfile_settings)
+        self.sync_pictograms(trekking_models.Accessibility, directory=url_media_nolang, zipfile=self.zipfile_settings)
+        self.sync_pictograms(trekking_models.DifficultyLevel, directory=url_media_nolang, zipfile=self.zipfile_settings)
+        self.sync_pictograms(trekking_models.POIType, directory=url_media_nolang, zipfile=self.zipfile_settings)
+        self.sync_pictograms(trekking_models.Route, directory=url_media_nolang, zipfile=self.zipfile_settings)
+        self.close_zip(self.zipfile_settings, zipname_settings)
 
     def sync_trek_tiles(self, trek):
         """ Creates a tiles file for the specified Trek object.
         """
-        zipname = os.path.join('mobile', 'tiles', 'treks', '{pk}.zip'.format(pk=trek.pk))
+        zipname = os.path.join('mobile', trek.pk, 'tiles.zip')
 
         if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
@@ -298,7 +309,7 @@ class Command(BaseCommand):
     def sync_global_tiles(self):
         """ Creates a tiles file on the global extent.
         """
-        zipname = os.path.join('mobile', 'tiles', 'global.zip')
+        zipname = os.path.join('mobile', 'tiles.zip')
 
         if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
@@ -386,10 +397,12 @@ class Command(BaseCommand):
                 current_value = current_value + step_value
 
             translation.activate(lang)
+            self.sync_settings_json(lang)
             if 'geotrek.flatpages' in settings.INSTALLED_APPS:
                 self.sync_flatpage(lang)
             self.sync_trekking(lang)
             translation.deactivate()
+        self.sync_medias()
 
     def check_dst_root_is_empty(self):
         if not os.path.exists(self.dst_root):
