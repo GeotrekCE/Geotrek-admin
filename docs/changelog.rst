@@ -11,6 +11,7 @@ CHANGELOG
 - Fix duplicates in year filters in intervention module
 - Configurable blade code
 - Allow letters in blade number
+- Improve signage templates
 
 
 2.24.5 (2019-03-06)

@@ -2,7 +2,7 @@
 import os
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, pgettext_lazy
 from django.contrib.gis.db import models as gismodels
 from django.conf import settings
 
@@ -173,7 +173,7 @@ class BladeType(StructureOrNoneRelated):
 class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
     signage = models.ForeignKey(Signage, db_column='signaletique', verbose_name=_("Signage"),
                                 on_delete=models.PROTECT)
-    number = models.CharField(verbose_name=_(u"Blade Number"), max_length=250, db_column='numero')
+    number = models.CharField(verbose_name=_(u"Number"), max_length=250, db_column='numero')
     direction = models.ForeignKey(Direction, verbose_name=_(u"Direction"), db_column='direction',
                                   on_delete=models.PROTECT)
     type = models.ForeignKey(BladeType, db_column='type', verbose_name=_("Type"))
@@ -234,7 +234,7 @@ class Line(StructureRelated):
                                    decimal_places=3, max_digits=8)
     pictogram_name = models.CharField(db_column='nom_pictogramme', verbose_name=_("Pictogramm name"), max_length=250,
                                       blank=True, null=True)
-    time = models.DurationField(db_column='temps', verbose_name=_("Time"), null=True, blank=True,
+    time = models.DurationField(db_column='temps', verbose_name=pgettext_lazy("duration", "Time"), null=True, blank=True,
                                 help_text=_("Hours:Minutes:Seconds"))
     distance_verbose_name = _("Distance (km)")
     time_verbose_name = _("Time (Hours:Minutes:Seconds)")
@@ -246,6 +246,9 @@ class Line(StructureRelated):
     @classproperty
     def geomfield(cls):
         return Topology._meta.get_field('geom')
+
+    def __unicode__(self):
+        return self.linecode_csv_display
 
     @property
     def linecode_csv_display(self):

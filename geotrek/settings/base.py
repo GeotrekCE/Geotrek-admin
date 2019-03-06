@@ -622,6 +622,6 @@ PASSWORD_HASHERS = [
 ]
 
 BLADE_CODE_TYPE = int
-BLADE_CODE_FORMAT = "{signagecode}-{bladenumber}"
-LINE_CODE_FORMAT = "{signagecode}-{bladenumber}-{linenumber}"
+BLADE_CODE_FORMAT = u"{signagecode}-{bladenumber}"
+LINE_CODE_FORMAT = u"{signagecode}-{bladenumber}-{linenumber}"
 SHOW_EXTREMITIES = False

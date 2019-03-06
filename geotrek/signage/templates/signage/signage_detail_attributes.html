@@ -2,10 +2,15 @@
 {% load i18n signage_tags mapentity_tags %}
 
 {% block attributes %}
+
     <table class="table-striped table-bordered table">
         <tr>
             <th>{{ object|verbose:"name" }}</th>
             <td>{{ object.name }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"code" }}</th>
+            <td>{{ object.code|default:"" }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"type" }}</th>
@@ -22,37 +27,8 @@
             </td>
         </tr>
         <tr>
-            <th>{% trans "Blades" %}</th>
-            <td>
-                {% if view|class_name == "SignageDetail" %}
-                    <p style="float: right">
-                        {% if perms.signage.add_blade %}
-                            <a href="{% url 'signage:blade_add' %}{% if modelname == "signage" %}?signage={{ object.pk}}{% endif %}" class="btn btn-mini btn-success">
-                                <i class="icon-plus icon-white"></i> {% trans "Add a new blade" %}
-                            </a>
-                        {% else %}
-                            <span class="btn disabled" href="#"><i class="icon-plus icon-white"></i> {% trans "Add a new blade" %}</span>
-                        {% endif %}
-                    </p>
-                {% endif %}
-                {% for blade in object.order_blades %}
-                    {% if perms.signage.read_blade and view|class_name == "SignageDetail" %}
-                        <a href="{% url 'signage:blade_detail' pk=blade.pk %}">
-                            {% trans "Blade" %} {{ blade.number }} <br>
-                        </a>
-                    {% else %}
-                        {% trans "Blade" %} {{ blade.number }} <br>
-                    {% endif %}
-                {% endfor %}
-            </td>
-        </tr>
-        <tr>
             <th>{{ object|verbose:"implantation_year" }}</th>
             <td>{{ object.implantation_year|default:"" }}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"code" }}</th>
-            <td>{{ object.code|default:"" }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"printed_elevation" }}</th>
@@ -82,5 +58,64 @@
         </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
+
+    {% if perms.signage.read_blade %}
+        <h3>{% trans "Blades" %}</h3>
+        <table class="table">
+            {% if object.order_blades %}
+                <tr>
+                    <th>{% trans "Code" %}</th>
+                    <th>{% trans "Color" %}</th>
+                    <th>{% trans "Text" %}</th>
+                    <th>{% trans "Picto" %}</th>
+                    <th>{% trans "Distance" %}</th>
+                    <th>{% trans "Time" context "duration" %}</th>
+                    <th>{% trans "Direction" %}</th>
+                    <th>{% trans "Condition" %}</th>
+                </tr>
+            {% endif %}
+            {% for blade in object.order_blades %}
+                <tr>
+                    <td><a href="{% url 'signage:blade_detail' blade.pk %}">{{ blade }}</td>
+                    <td>{{ blade.color|default_if_none:"" }}</td>
+                    <td>
+                        {% for line in blade.order_lines %}
+                            {{ line.text }}{% if not forloop.last %}<br>{% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for line in blade.order_lines %}
+                            {{ line.pictogram_name|default_if_none:"" }}{% if not forloop.last %}<br>{% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for line in blade.order_lines %}
+                            {{ line.distance|default_if_none:"" }}{% if not forloop.last %}<br>{% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for line in blade.order_lines %}
+                            {{ line.time|default_if_none:"" }}{% if not forloop.last %}<br>{% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>{{ blade.direction }}</td>
+                    <td>{{ blade.condition|default_if_none:"" }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% if view|class_name == "SignageDetail" %}
+            <p style="text-align: right">
+                {% if perms.signage.add_blade %}
+                    <a href="{% url 'signage:blade_add' %}{% if modelname == "signage" %}?signage={{ object.pk}}{% endif %}" class="btn btn-mini btn-success">
+                        <i class="icon-plus icon-white"></i> {% trans "Add a new blade" %}
+                    </a>
+                {% else %}
+                    <span class="btn disabled" href="#"><i class="icon-plus icon-white"></i> {% trans "Add a new blade" %}</span>
+                {% endif %}
+            </p>
+        {% endif %}
+    {% endif %}
+
     {{ block.super }}
+
 {% endblock attributes %}
