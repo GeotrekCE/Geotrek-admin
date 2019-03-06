@@ -2,6 +2,31 @@
 CHANGELOG
 =========
 
+2.24.5 (2019-03-06)
+-------------------
+
+**Performances**
+
+- Add index to date_update columns
+
+
+2.24.4 (2019-03-01)
+-------------------
+
+**Bug fixes**
+
+- Fix get attachments with crop
+
+
+2.24.3 (2019-02-28)
+-------------------
+
+**Bug fixes**
+
+- Fix get attachments using generic foreign and not url
+- Fix merge path
+
+
 2.24.2 (2019-02-26)
 -------------------
 
@@ -20,7 +45,6 @@ CHANGELOG
 - Fix loadrestrictedareas command
 - Fix altimetry on straight portions of paths
 - Various signage fixes
-
 
 **Performances**
 

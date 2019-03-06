@@ -17,7 +17,7 @@
 {% block extrahead %}
 
     {% csrf_token %}
-    
+
     <script type="text/javascript">
 
         $(function(){
@@ -46,17 +46,17 @@
             };
             window.location = pathDelete.replace('0,0', pathsToDelete.filter(Boolean).join(','));
             });
-   	        
+
    	        $('#btn-confirm').click(function() {
    	        	$('#confirm-merge .modal-body h4').html($('#wait_lightbox').html());
-   	         $('#btn-confirm').hide();
-   	        	
+   	                $('#btn-confirm').hide();
+
    	        	$.post("{% url 'core:merge_path' %}",
 	                $('input:checkbox:checked').serialize() + '&' + $('input[name=csrfmiddlewaretoken]').serialize(),
-	                
+
 	                function(response){
 	    		        $('#btn-confirm').show();
-	    				
+
 	                    if(response.error){
 	            	        $('#confirm-merge .modal-body h4').html(response.error);
 	            	        $('#btn-confirm').hide();
@@ -65,16 +65,13 @@
 	           	            location.reload();
 	                    }
 	                }
-                ).fail(function() {
-                	$('#confirm-merge .modal-body h4').html('{% trans "Unknown error" %}');
-                	$('#btn-confirm').show();
-                });
+                );
    	        });
-   	        
+
         });
-        
+
     </script>
-    
+
 {% endblock %}
 
 {% block mainactions %}
@@ -84,7 +81,7 @@
     {% else %}
     <span class="btn disabled" href="#"><i class="icon-plus icon-white"></i> {{ create_label }}</span>
     {% endif %}
-    
+
     <div id="wait_lightbox" style="display: none;">
 		<div class="progress progress-striped active">
 			<div class="bar" style="width: 100%;"></div>

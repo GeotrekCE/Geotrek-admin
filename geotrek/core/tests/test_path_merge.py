@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from django.conf import settings
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
-from django.conf import settings
+from django.urls import reverse
+from mapentity.factories import SuperUserFactory
 
 from geotrek.core.factories import PathFactory, TopologyFactory, \
     PathAggregationFactory
@@ -10,6 +12,10 @@ from geotrek.core.models import PathAggregation, Topology
 
 
 class MergePathTest(TestCase):
+    def setUp(self):
+        self.user = SuperUserFactory.create()
+        self.client.force_login(self.user)
+
     def test_path_merge_without_snap(self):
         """
           A         B   C         D     A                  D
@@ -373,3 +379,7 @@ class MergePathTest(TestCase):
         self.assertEqual(e1_updated.offset, -e1.offset)
         e4_updated = Topology.objects.get(pk=e4.pk)
         self.assertEqual(e4_updated.offset, -e4.offset)
+
+    def test_response_is_json(self):
+        response = self.client.post(reverse('core:merge_path'))
+        self.assertEqual(response.get('Content-Type'), 'application/json')

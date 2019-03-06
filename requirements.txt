@@ -6,7 +6,7 @@ gdal==2.2.4 --global-option=build_ext --global-option="-I/usr/include/gdal/"
 # leaflet must be place before mapentity to override its dependencies
 -e git+https://github.com/GeotrekCE/django-leaflet.git@0.19.0+geotrek4#egg=leaflet
 django-filter==1.1.0
-mapentity==4.4.10
+mapentity==4.4.13
 tif2geojson==0.1.3
 geojson==2.3.0
 celery==4.2.*
