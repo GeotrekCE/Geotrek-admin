@@ -305,7 +305,7 @@ class Command(BaseCommand):
     def sync_global_tiles(self):
         """ Creates a tiles file on the global extent.
         """
-        zipname = os.path.join('mobile', 'tiles.zip')
+        zipname = os.path.join('mobile', 'nolang', 'tiles.zip')
 
         if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
