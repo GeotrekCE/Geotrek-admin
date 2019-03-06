@@ -30,11 +30,41 @@ class SyncMobileFailTest(TestCase):
             management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2)
         self.assertEqual(e.exception.message, "Destination directory contains extra data")
+        shutil.rmtree(os.path.join('tmp', 'other'))
+
+    def test_fail_url_ftp(self):
+        with self.assertRaises(CommandError) as e:
+            management.call_command('sync_mobile', 'tmp', url='ftp://localhost:8000',
+                                    skip_tiles=True, verbosity=2)
+        self.assertEqual(e.exception.message, "url parameter should start with http:// or https://")
+
+    def test_language_not_in_db(self):
+        with self.assertRaises(CommandError) as e:
+            management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                    skip_tiles=True, languages='cat', verbosity=2)
+        self.assertEqual(e.exception.message, "Language cat doesn't exist. Select in these one : ('en', 'es', 'fr', 'it')")
 
     @classmethod
     def tearDownClass(cls):
         super(SyncMobileFailTest, cls).tearDownClass()
         shutil.rmtree('tmp')
+
+
+class SyncMobileSpecificOptionsTest(TranslationResetMixin, TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super(SyncMobileSpecificOptionsTest, cls).setUpClass()
+        FlatPageFactory.create(published_fr=True)
+        FlatPageFactory.create(published_en=True)
+
+    def test_lang(self):
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                skip_tiles=True, verbosity=0, languages='fr')
+        with open(os.path.join('tmp', 'mobile', 'fr', 'flatpages.json'), 'r') as f:
+            flatpages = json.load(f)
+            self.assertEquals(len(flatpages), 1)
+        with self.assertRaises(IOError):
+            open(os.path.join('tmp', 'mobile', 'en', 'flatpages.json'), 'r')
 
 
 class SyncMobileFlatpageTest(TranslationResetMixin, TestCase):
