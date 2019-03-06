@@ -2,6 +2,7 @@
 import os
 from datetime import datetime
 
+from django.db.models.functions import ExtractYear
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.db import models
@@ -21,9 +22,8 @@ from geotrek.signage.models import Signage
 
 class InterventionManager(models.GeoManager):
     def all_years(self):
-        all_dates = self.existing().filter(date__isnull=False).order_by('-date').values_list('date', flat=True).distinct('date')
-        all_years = [d.year for d in all_dates]
-        return all_years
+        return self.existing().filter(date__isnull=False).annotate(year=ExtractYear('date')) \
+            .order_by('-year').values_list('year', flat=True).distinct()
 
 
 class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
