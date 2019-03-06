@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 class TimeStampedModelMixin(models.Model):
     # Computed values (managed at DB-level with triggers)
     date_insert = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_(u"Insertion date"), db_column='date_insert')
-    date_update = models.DateTimeField(auto_now=True, editable=False, verbose_name=_(u"Update date"), db_column='date_update')
+    date_update = models.DateTimeField(auto_now=True, editable=False, verbose_name=_(u"Update date"), db_column='date_update', db_index=True)
 
     class Meta:
         abstract = True

@@ -9,6 +9,10 @@ CHANGELOG
 
 -
 
+**Performances**
+
+- Add index to date_update columns
+
 
 2.24.4 (2019-03-01)
 -------------------
@@ -45,7 +49,6 @@ CHANGELOG
 - Fix loadrestrictedareas command
 - Fix altimetry on straight portions of paths
 - Various signage fixes
-
 
 **Performances**
 
