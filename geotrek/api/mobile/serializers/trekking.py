@@ -41,6 +41,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
     class TrekDetailSerializer(geo_serializers.GeoFeatureModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
+        thumbnail = serializers.SerializerMethodField(source='serializable_thumbnail_mobile')
         length = serializers.SerializerMethodField(read_only=True)
         pictures = AttachmentSerializer(many=True, )
         cities = serializers.SerializerMethodField(read_only=True)
@@ -80,11 +81,16 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         def get_geometry(self, obj):
             return obj.geom2d_transformed
 
+        def get_thumbnail(self, obj):
+            if obj.serializable_thumbnail_mobile:
+                return '/{id}{file}'.format(id=obj.pk, file=obj.serializable_thumbnail_mobile)
+            return None
+
         class Meta:
             model = trekking_models.Trek
             geo_field = 'geometry'
             fields = (
-                'id', 'name', 'accessibilities', 'description_teaser', 'cities',
+                'id', 'name', 'thumbnail', 'accessibilities', 'description_teaser', 'cities',
                 'description', 'departure', 'arrival', 'duration', 'access', 'advised_parking', 'advice',
                 'difficulty', 'length', 'ascent', 'descent', 'route', 'is_park_centered',
                 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'difficulty',
