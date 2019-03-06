@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 from django.conf import settings
 from drf_dynamic_fields import DynamicFieldsMixin
 from rest_framework import serializers
-from rest_framework_gis import serializers as geo_serializers
 
 from geotrek.common import models as common_models
 from geotrek.flatpages import models as flatpage_models

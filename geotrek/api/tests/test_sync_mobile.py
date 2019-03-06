@@ -3,8 +3,6 @@ from io import BytesIO
 import json
 import os
 import shutil
-import mock
-from zipfile import ZipFile
 
 from django.conf import settings
 from django.core import management
@@ -16,9 +14,8 @@ from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.flatpages.factories import FlatPageFactory
 from geotrek.flatpages.models import FlatPage
-from geotrek.tourism.factories import (TrekWithTouristicEventFactory, TrekWithTouristicContentFactory)
-from geotrek.trekking.models import Trek, POI
-from geotrek.trekking.factories import  TrekWithPOIsFactory
+from geotrek.trekking.models import Trek
+from geotrek.trekking.factories import TrekWithPOIsFactory
 
 
 class SyncMobileFailTest(TestCase):

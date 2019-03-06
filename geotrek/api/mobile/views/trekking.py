@@ -33,9 +33,8 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
             queryset = queryset.annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
         return queryset.annotate(start_point=Transform(StartPoint('geom'), settings.API_SRID),
                                  end_point=Transform(EndPoint('geom'), settings.API_SRID)).\
-            filter(Q(**{'published': True}) |
-                   Q(**{'trek_parents__parent__published': True, 'trek_parents__parent__deleted': False})
-                   ).distinct()
+            filter(Q(**{'published': True}) | Q(**{'trek_parents__parent__published': True,
+                                                   'trek_parents__parent__deleted': False})).distinct()
 
 
 class POIViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):

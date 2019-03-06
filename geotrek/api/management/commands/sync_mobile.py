@@ -231,7 +231,7 @@ class Command(BaseCommand):
 
         for poi in trek.published_pois:
             if poi.resized_pictures:
-                self.sync_media_file(poi.resized_pictures[0][1],  prefix=trek.pk, directory=url_trek,
+                self.sync_media_file(poi.resized_pictures[0][1], prefix=trek.pk, directory=url_trek,
                                      zipfile=zipfullname_trekid)
             for picture, resized in poi.resized_pictures[1:]:
                 self.sync_media_file(resized, prefix=trek.pk, directory=url_trek, zipfile=zipfullname_trekid)
