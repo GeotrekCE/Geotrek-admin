@@ -12,10 +12,11 @@ from django.utils import translation
 
 from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.common.tests import TranslationResetMixin
+from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg
 from geotrek.flatpages.factories import FlatPageFactory
 from geotrek.flatpages.models import FlatPage
 from geotrek.trekking.models import Trek
-from geotrek.trekking.factories import TrekWithPOIsFactory
+from geotrek.trekking.factories import TrekWithPOIsFactory, PracticeFactory
 
 
 class SyncMobileFailTest(TestCase):
@@ -42,7 +43,8 @@ class SyncMobileFailTest(TestCase):
         with self.assertRaises(CommandError) as e:
             management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, languages='cat', verbosity=2)
-        self.assertEqual(e.exception.message, "Language cat doesn't exist. Select in these one : ('en', 'es', 'fr', 'it')")
+        self.assertEqual(e.exception.message,
+                         "Language cat doesn't exist. Select in these one : ('en', 'es', 'fr', 'it')")
 
     @classmethod
     def tearDownClass(cls):
@@ -166,6 +168,20 @@ class SyncMobileSettingsTest(TranslationResetMixin, TestCase):
                 self.assertEquals(len(settings_json), 2)
                 self.assertEqual(len(settings_json['data']), 11)
 
+        self.assertIn('mobile/en/settings.json', output.getvalue())
+
+    def test_sync_settings_with_picto_svg(self):
+        output = BytesIO()
+        practice = PracticeFactory.create(pictogram=get_dummy_uploaded_image_svg())
+        pictogram_png = practice.pictogram.url.replace('.png', '.svg')
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                skip_tiles=True, verbosity=2, stdout=output)
+        for lang in settings.MODELTRANSLATION_LANGUAGES:
+            with open(os.path.join('tmp', 'mobile', lang, 'settings.json'), 'r') as f:
+                settings_json = json.load(f)
+                self.assertEquals(len(settings_json), 2)
+                self.assertEqual(len(settings_json['data']), 11)
+                self.assertEqual(settings_json['data'][3]['values'][0]['pictogram'], pictogram_png)
         self.assertIn('mobile/en/settings.json', output.getvalue())
 
     @classmethod
