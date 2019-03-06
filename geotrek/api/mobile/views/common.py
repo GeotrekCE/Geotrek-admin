@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
-from django.utils import translation
 
 from rest_framework.views import APIView
 from rest_framework import viewsets
@@ -170,4 +170,9 @@ class FlatPageViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     authentication_classes = [BasicAuthentication, SessionAuthentication]
     serializer_class = api_serializers.FlatPageListSerializer
     serializer_detail_class = api_serializers.FlatPageDetailSerializer
-    queryset = FlatPage.objects.filter(target='mobile').order_by('order')
+
+    def get_queryset(self, *args, **kwargs):
+        qs = FlatPage.objects.filter(target__in=['mobile', 'all'], published=True).order_by('order')
+        if self.request.GET.get('portal', '') != '':
+            qs = qs.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
+        return qs
