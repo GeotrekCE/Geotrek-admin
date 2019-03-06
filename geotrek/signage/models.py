@@ -173,7 +173,7 @@ class BladeType(StructureOrNoneRelated):
 class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
     signage = models.ForeignKey(Signage, db_column='signaletique', verbose_name=_("Signage"),
                                 on_delete=models.PROTECT)
-    number = models.IntegerField(verbose_name=_(u"Blade Number"), db_column='numero')
+    number = models.CharField(verbose_name=_(u"Blade Number"), max_length=250, db_column='numero')
     direction = models.ForeignKey(Direction, verbose_name=_(u"Direction"), db_column='direction',
                                   on_delete=models.PROTECT)
     type = models.ForeignKey(BladeType, db_column='type', verbose_name=_("Type"))
@@ -190,7 +190,7 @@ class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
         verbose_name_plural = _(u"Blades")
 
     def __unicode__(self):
-        return "%s %s" % (self.signage, self.number)
+        return settings.BLADE_CODE_FORMAT.format(signagecode=self.signage.code, bladenumber=self.number)
 
     def set_topology(self, topology):
         self.topology = topology
@@ -221,8 +221,7 @@ class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
 
     @property
     def number_display(self):
-        s = '<a data-pk="%s" href="%s" title="%s" >%s #%s</a>' % (self.pk, self.get_detail_url(), self,
-                                                                  self.signage, self.number)
+        s = '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk, self.get_detail_url(), self, self)
         return s
 
 
@@ -250,7 +249,7 @@ class Line(StructureRelated):
 
     @property
     def linecode_csv_display(self):
-        return settings.FORMAT_LINE_CODE.format(signagecode=self.blade.signage.code,
+        return settings.LINE_CODE_FORMAT.format(signagecode=self.blade.signage.code,
                                                 bladenumber=self.blade.number,
                                                 linenumber=self.number)
 
