@@ -225,5 +225,7 @@ class SyncTestPortal(TestCase):
             flatpages = json.load(f_file)
             self.assertEquals(len(flatpages), 3)
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
+        super(SyncTestPortal, cls).tearDownClass()
         shutil.rmtree('tmp')

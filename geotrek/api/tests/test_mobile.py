@@ -25,17 +25,17 @@ GEOJSON_STRUCTURE_WITHOUT_BBOX = sorted([
     'properties'
 ])
 
-TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
+TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'thumbnail', 'name', 'accessibilities', 'description_teaser', 'cities', 'description', 'departure', 'arrival',
     'access', 'advised_parking', 'advice', 'difficulty', 'length', 'ascent', 'descent', 'route', 'duration',
     'is_park_centered', 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'pictures',
-    'information_desks'
+    'information_desks', 'departure_city', 'arrival_city'
 ])
 
 
-TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
+TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'thumbnail', 'name', 'departure', 'accessibilities', 'duration',
-    'difficulty', 'practice', 'themes', 'length', 'cities', 'route'
+    'difficulty', 'practice', 'themes', 'length', 'cities', 'route', 'departure_city'
 ])
 
 POI_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
@@ -55,7 +55,7 @@ class BaseApiTest(TestCase):
 
         cls.treks = trek_factory.TrekWithPublishedPOIsFactory.create_batch(
             cls.nb_treks, name_fr='Coucou', description_fr="Sisi",
-            description_teaser_fr="mini", published=True)
+            description_teaser_fr="mini", published_fr=True)
 
     def login(self):
         pass
@@ -98,7 +98,7 @@ class APIAccessTestCase(BaseApiTest):
                          GEOJSON_STRUCTURE)
 
         self.assertEqual(sorted(json_response.get('properties').keys()),
-                         TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE)
+                         TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
 
         self.assertEqual('Coucou', json_response.get('properties').get('name'))
         self.assertEqual('Sisi', json_response.get('properties').get('description'))
@@ -124,7 +124,7 @@ class APIAccessTestCase(BaseApiTest):
                          GEOJSON_STRUCTURE_WITHOUT_BBOX)
 
         self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
-                         TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
+                         TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE)
 
         self.assertEqual('Coucou', json_response.get('features')[0].get('properties').get('name'))
         self.assertIsNone(json_response.get('features')[0].get('properties').get('description'))

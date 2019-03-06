@@ -5,20 +5,22 @@ import json
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test.testcases import TestCase
+from django.utils import translation
 
 from geotrek.flatpages.factories import FlatPageFactory
 from geotrek.flatpages.models import FlatPage
 
 FLATPAGE_DETAIL_PROPERTIES_JSON_STRUCTURE = sorted([
-    'id', 'title', 'content'
+    'id', 'title', 'external_url', 'content'
 ])
 
 
 class FlatPageAdministratorTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.flatpage = FlatPageFactory.create()
-        FlatPageFactory.create()
+        translation.activate('fr')
+        cls.flatpage = FlatPageFactory.create(published_fr=True)
+        FlatPageFactory.create(published_fr=True)
         cls.administrator = User.objects.create(username="administrator", is_superuser=True,
                                                 is_staff=True, is_active=True)
         cls.administrator.set_password('administrator')
@@ -50,12 +52,16 @@ class FlatPageAdministratorTest(TestCase):
         self.assertEqual(json_response.get('content'), self.flatpage.content)
         self.assertEqual(json_response.get('title'), self.flatpage.title)
 
+    def tearDown(self):
+        translation.deactivate()
+
 
 class FlatPageAnonymousTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.flatpage = FlatPageFactory.create()
-        FlatPageFactory.create()
+        translation.activate('fr')
+        cls.flatpage = FlatPageFactory.create(published_fr=True)
+        FlatPageFactory.create(published_fr=True)
 
     def get_flatpage_list(self, params=None):
         return self.client.get(reverse('apimobile:flatpage-list'), params, HTTP_ACCEPT_LANGUAGE='fr')
@@ -79,3 +85,6 @@ class FlatPageAnonymousTest(TestCase):
                          FLATPAGE_DETAIL_PROPERTIES_JSON_STRUCTURE)
         self.assertEqual(json_response.get('content'), self.flatpage.content)
         self.assertEqual(json_response.get('title'), self.flatpage.title)
+
+    def tearDown(self):
+        translation.deactivate()

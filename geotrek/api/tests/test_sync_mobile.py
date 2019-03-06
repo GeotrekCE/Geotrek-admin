@@ -21,6 +21,7 @@ from geotrek.trekking.factories import TrekWithPOIsFactory
 class SyncMobileFailTest(TestCase):
     @classmethod
     def setUpClass(cls):
+        super(SyncMobileFailTest, cls).setUpClass()
         translation.deactivate()
 
     def test_fail_directory_not_empty(self):
@@ -32,12 +33,14 @@ class SyncMobileFailTest(TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        super(SyncMobileFailTest, cls).tearDownClass()
         shutil.rmtree('tmp')
 
 
 class SyncMobileFlatpageTest(TranslationResetMixin, TestCase):
     @classmethod
     def setUpClass(cls):
+        super(SyncMobileFlatpageTest, cls).setUpClass()
         translation.deactivate()
 
         cls.portals = []
@@ -113,12 +116,14 @@ class SyncMobileFlatpageTest(TranslationResetMixin, TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        super(SyncMobileFlatpageTest, cls).tearDownClass()
         shutil.rmtree('tmp')
 
 
 class SyncMobileSettingsTest(TranslationResetMixin, TestCase):
     @classmethod
     def setUpClass(cls):
+        super(SyncMobileSettingsTest, cls).setUpClass()
         translation.deactivate()
 
     def test_sync_settings(self):
@@ -135,12 +140,14 @@ class SyncMobileSettingsTest(TranslationResetMixin, TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        super(SyncMobileSettingsTest, cls).tearDownClass()
         shutil.rmtree('tmp')
 
 
 class SyncMobileTreksTest(TranslationResetMixin, TestCase):
     @classmethod
     def setUpClass(cls):
+        super(SyncMobileTreksTest, cls).setUpClass()
         cls.trek_1 = TrekWithPOIsFactory()
         cls.trek_2 = TrekWithPOIsFactory()
         translation.deactivate()
@@ -164,7 +171,7 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         with open(os.path.join('tmp', 'mobile', 'en', 'treks',
                                '{pk}.geojson'.format(pk=str(self.trek_1.pk))), 'r') as f:
             trek_geojson = json.load(f)
-            self.assertEqual(len(trek_geojson['properties']), 27)
+            self.assertEqual(len(trek_geojson['properties']), 28)
 
         self.assertIn('mobile/en/treks/{pk}.geojson'.format(pk=str(self.trek_1.pk)), output.getvalue())
 
@@ -180,4 +187,5 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        super(SyncMobileTreksTest, cls).tearDownClass()
         shutil.rmtree('tmp')
