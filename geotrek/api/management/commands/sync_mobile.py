@@ -133,9 +133,6 @@ class Command(BaseCommand):
                 u"\x1b[36m\x1b[0m \x1b[1m{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(url=url,
                                                                                            name=name))
 
-    def sync_static_file(self, lang, name):
-        self.sync_file(lang, name, settings.STATIC_ROOT, settings.STATIC_URL)
-
     def sync_media_file(self, field, prefix=None, directory='', zipfile=None):
         if field and field.name:
             url_media = '/%s%s' % (prefix, settings.MEDIA_URL) if prefix else settings.MEDIA_URL
