@@ -54,7 +54,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     length = models.FloatField(editable=True, default=0.0, null=True, blank=True, db_column='longueur',
                                verbose_name=_(u"3D Length"))
 
-    stake = models.ForeignKey('core.Stake', null=True,
+    stake = models.ForeignKey('core.Stake', null=True, blank=True,
                               related_name='interventions', verbose_name=_("Stake"), db_column='enjeu')
 
     status = models.ForeignKey('InterventionStatus', verbose_name=_("Status"), db_column='status')

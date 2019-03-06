@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- When updating interventions, stake field is no more required
 
 
 2.24.5 (2019-03-06)
