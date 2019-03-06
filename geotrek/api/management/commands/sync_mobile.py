@@ -7,7 +7,6 @@ import shutil
 from time import sleep
 from zipfile import ZipFile
 import cairosvg
-from io import BytesIO
 
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
@@ -98,6 +97,7 @@ class Command(BaseCommand):
     def sync_json(self, lang, viewset, name, zipfile=None, params={}, as_view_args=[], **kwargs):
         view = viewset.as_view(*as_view_args)
         name = os.path.join('mobile', lang, '{name}.json'.format(name=name))
+        params = params.copy()
         if self.portal:
             params['portal'] = ','.join(self.portal)
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, fix2028=True, **kwargs)
@@ -105,13 +105,11 @@ class Command(BaseCommand):
     def sync_geojson(self, lang, viewset, name, zipfile=None, params={}, type_view={}, **kwargs):
         view = viewset.as_view(type_view)
         name = os.path.join('mobile', lang, name)
+        params = params.copy()
         params.update({'format': 'geojson'})
 
         if self.portal:
             params['portal'] = ','.join(self.portal)
-
-        elif 'portal' in params.keys():
-            del params['portal']
 
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, fix2028=True, **kwargs)
 
@@ -180,8 +178,10 @@ class Command(BaseCommand):
                 self.stdout.write(u"\x1b[3D\x1b[32mzipped\x1b[0m")
 
     def sync_flatpage(self, lang):
-        flatpages = FlatPage.objects.order_by('pk').filter(target='mobile').filter(
+        flatpages = FlatPage.objects.order_by('pk').filter(target__in=['mobile', 'all']).filter(
             **{'published_{lang}'.format(lang=lang): True})
+        if self.portal:
+            flatpages = flatpages.filter(Q(portal__name__in=self.portal) | Q(portal=None))
         self.sync_json(lang, FlatPageViewSet, 'flatpages',
                        as_view_args=[{'get': 'list'}])
         for flatpage in flatpages:
@@ -259,7 +259,6 @@ class Command(BaseCommand):
         zipname_settings = os.path.join('mobile', 'nolang', 'media.zip')
         zipfullname_settings = os.path.join(self.tmp_root, zipname_settings)
         self.mkdirs(zipfullname_settings)
-        print(zipfullname_settings)
         self.zipfile_settings = ZipFile(zipfullname_settings, 'w')
 
         self.sync_pictograms(common_models.Theme, directory=url_media_nolang, zipfile=self.zipfile_settings)

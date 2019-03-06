@@ -243,20 +243,14 @@ class Command(BaseCommand):
     def sync_geojson(self, lang, viewset, name, zipfile=None, params={}, **kwargs):
         view = viewset.as_view({'get': 'list'})
         name = os.path.join('api', lang, name)
+        params = params.copy()
         params.update({'format': 'geojson'})
 
         if self.source:
             params['source'] = ','.join(self.source)
 
-        elif 'source' in params.keys():
-            # bug source is still in cache when executing command
-            del params['source']
-
         if self.portal:
             params['portal'] = ','.join(self.portal)
-
-        elif 'portal' in params.keys():
-            del params['portal']
 
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, fix2028=True, **kwargs)
 
@@ -746,7 +740,7 @@ class Command(BaseCommand):
         if not os.path.exists(self.dst_root):
             return
         existing = set([os.path.basename(p) for p in os.listdir(self.dst_root)])
-        remaining = existing - set(('api', 'media', 'meta', 'static', 'zip'))
+        remaining = existing - set(('api', 'media', 'meta', 'static', 'zip', 'mobile'))
         if remaining:
             raise CommandError(u"Destination directory contains extra data")
 
