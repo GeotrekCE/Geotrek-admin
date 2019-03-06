@@ -1,8 +1,10 @@
 # -*- encoding: UTF-8 -*-
 from io import BytesIO
 import json
+import mock
 import os
 import shutil
+import zipfile
 
 from django.conf import settings
 from django.core import management
@@ -17,6 +19,29 @@ from geotrek.flatpages.factories import FlatPageFactory
 from geotrek.flatpages.models import FlatPage
 from geotrek.trekking.models import Trek
 from geotrek.trekking.factories import TrekWithPublishedPOIsFactory, PracticeFactory
+
+
+class SyncMobileTilesTest(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super(SyncMobileTilesTest, cls).setUpClass()
+        translation.deactivate()
+
+    @mock.patch('landez.TilesManager.tile', return_value='I am a png')
+    @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
+    def test_tiles(self, mock_tileslist, mock_tiles):
+        output = BytesIO()
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', verbosity=2, stdout=output)
+        zfile = zipfile.ZipFile(os.path.join('tmp', 'mobile', 'nolang', 'tiles.zip'))
+        for finfo in zfile.infolist():
+            ifile = zfile.open(finfo)
+            self.assertEqual(ifile.readline(), 'I am a png')
+        self.assertIn("mobile/nolang/tiles.zip", output.getvalue())
+
+    @classmethod
+    def tearDownClass(cls):
+        super(SyncMobileTilesTest, cls).tearDownClass()
+        # shutil.rmtree('tmp')
 
 
 class SyncMobileFailTest(TestCase):
