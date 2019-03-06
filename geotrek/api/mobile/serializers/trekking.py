@@ -1,7 +1,5 @@
 from __future__ import unicode_literals
 
-import os
-
 from django.conf import settings
 from rest_framework import serializers
 from rest_framework_gis import serializers as geo_serializers
