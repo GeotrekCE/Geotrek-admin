@@ -16,7 +16,7 @@ from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg
 from geotrek.flatpages.factories import FlatPageFactory
 from geotrek.flatpages.models import FlatPage
 from geotrek.trekking.models import Trek
-from geotrek.trekking.factories import TrekWithPOIsFactory, PracticeFactory
+from geotrek.trekking.factories import TrekWithPublishedPOIsFactory, PracticeFactory
 
 
 class SyncMobileFailTest(TestCase):
@@ -194,8 +194,8 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
     @classmethod
     def setUpClass(cls):
         super(SyncMobileTreksTest, cls).setUpClass()
-        cls.trek_1 = TrekWithPOIsFactory()
-        cls.trek_2 = TrekWithPOIsFactory()
+        cls.trek_1 = TrekWithPublishedPOIsFactory()
+        cls.trek_2 = TrekWithPublishedPOIsFactory()
         translation.deactivate()
 
     def test_sync_treks(self):
