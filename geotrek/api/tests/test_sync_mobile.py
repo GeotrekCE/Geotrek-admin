@@ -12,9 +12,9 @@ from django.core.management.base import CommandError
 from django.test import TestCase
 from django.utils import translation
 
-from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
+from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory, AttachmentFactory
 from geotrek.common.tests import TranslationResetMixin
-from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg
+from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg, get_dummy_uploaded_image
 from geotrek.flatpages.factories import FlatPageFactory
 from geotrek.flatpages.models import FlatPage
 from geotrek.trekking.models import Trek
@@ -70,6 +70,14 @@ class SyncMobileFailTest(TestCase):
                                     skip_tiles=True, languages='cat', verbosity=2)
         self.assertEqual(e.exception.message,
                          "Language cat doesn't exist. Select in these one : ('en', 'es', 'fr', 'it')")
+
+    def test_attachments_missing_from_disk(self):
+        trek_1 = TrekWithPublishedPOIsFactory.create(published_fr=True)
+        attachment = AttachmentFactory(content_object=trek_1, attachment_file=get_dummy_uploaded_image())
+        os.remove(attachment.attachment_file.path)
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                skip_tiles=True, languages='fr', verbosity=2)
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'mobile', 'nolang', 'media', 'trekking_trek')))
 
     @classmethod
     def tearDownClass(cls):
@@ -221,6 +229,7 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         super(SyncMobileTreksTest, cls).setUpClass()
         cls.trek_1 = TrekWithPublishedPOIsFactory()
         cls.trek_2 = TrekWithPublishedPOIsFactory()
+        AttachmentFactory.create(content_object=cls.trek_1, attachment_file=get_dummy_uploaded_image())
         translation.deactivate()
 
     def test_sync_treks(self):
