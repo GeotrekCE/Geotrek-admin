@@ -4,7 +4,7 @@ import mock
 import shutil
 from django.test import TestCase
 from django.core import management
-from django.conf import settings
+
 from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.trekking.factories import TrekFactory
 from geotrek.trekking import models as trek_models
