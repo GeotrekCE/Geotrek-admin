@@ -428,9 +428,12 @@ class Command(BaseCommand):
         self.dst_root = options["path"].rstrip('/')
         self.abs_path = os.path.abspath(options["path"])
         self.check_dst_root_is_empty()
-        self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_mobile')
-        os.mkdir(self.tmp_root)
+
         if options['languages']:
+            for language in options['languages'].split(','):
+                if language not in settings.MODELTRANSLATION_LANGUAGES:
+                    raise CommandError("Language {lang_n} doesn't exist. Select in these one : {langs}".
+                                       format(lang_n=language, langs=settings.MODELTRANSLATION_LANGUAGES))
             self.languages = options['languages'].split(',')
         else:
             self.languages = settings.MODELTRANSLATION_LANGUAGES
@@ -455,6 +458,8 @@ class Command(BaseCommand):
             'tiles_dir': os.path.join(settings.DEPLOY_ROOT, 'var', 'tiles'),
         }
 
+        self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_mobile')
+        os.mkdir(self.tmp_root)
         try:
             self.sync()
         except Exception:
