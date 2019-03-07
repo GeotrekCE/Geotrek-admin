@@ -626,3 +626,10 @@ BLADE_CODE_TYPE = int
 BLADE_CODE_FORMAT = u"{signagecode}-{bladenumber}"
 LINE_CODE_FORMAT = u"{signagecode}-{bladenumber}-{linenumber}"
 SHOW_EXTREMITIES = False
+
+REST_FRAMEWORK = {
+    'UNICODE_JSON': False
+}
+
+ENABLED_MOBILE_FILTERS = ['difficulty', 'lengths', 'cities', 'accessibilities', 'practice', 'durations', 'themes',
+                          'route']

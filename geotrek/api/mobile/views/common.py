@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
@@ -25,58 +26,66 @@ class SettingsView(APIView):
     authentication_classes = [BasicAuthentication, SessionAuthentication]
 
     def get(self, request, *args, **kwargs):
-        return response.Response({
-            'filters': [
-                {
+        filters = []
+        if 'difficulty' in settings.ENABLED_MOBILE_FILTERS:
+            filters.append({
                     "id": "difficulty",
                     "type": "contains",
                     "showAllLabel": _("Show all difficulties"),
                     "hideAllLabel": _("Hide all difficulties")
-                },
-                {
+                })
+        if 'lengths' in settings.ENABLED_MOBILE_FILTERS:
+            filters.append({
                     "id": "lengths",
                     "type": "interval",
                     "showAllLabel": _("Show all lengths"),
                     "hideAllLabel": _("Hide all lengths")
-                },
-                {
+                })
+        if 'cities' in settings.ENABLED_MOBILE_FILTERS:
+            filters.append({
                     "id": "cities",
                     "type": "contains",
                     "showAllLabel": _("Show all cities"),
                     "hideAllLabel": _("Hide all cities")
-                },
-                {
+                })
+        if 'accessibilities' in settings.ENABLED_MOBILE_FILTERS:
+            filters.append({
                     "id": "accessibilities",
                     "type": "contains",
                     "showAllLabel": _("Show all accessibilities"),
                     "hideAllLabel": _("Hide all accessibilities")
 
-                },
-                {
+                })
+        if 'practice' in settings.ENABLED_MOBILE_FILTERS:
+            filters.append({
                     "id": "practice",
                     "type": "contains",
                     "showAllLabel": _("Show all practices"),
                     "hideAllLabel": _("Hide all practices")
-                },
-                {
+                })
+        if 'durations' in settings.ENABLED_MOBILE_FILTERS:
+            filters.append({
                     "id": "durations",
                     "type": "interval",
                     "showAllLabel": _("Show all durations"),
                     "hideAllLabel": _("Hide all durations")
-                },
-                {
+                })
+        if 'themes' in settings.ENABLED_MOBILE_FILTERS:
+            filters.append({
                     "id": "themes",
                     "type": "contains",
                     "showAllLabel": _("Show all themes"),
                     "hideAllLabel": _("Hide all themes")
-                },
-                {
+                })
+        if 'route' in settings.ENABLED_MOBILE_FILTERS:
+            filters.append({
                     "id": "route",
                     "type": "contains",
                     "showAllLabel": _("Show all routes"),
                     "hideAllLabel": _("Hide all routes")
-                }
-            ],
+                })
+        return response.Response({
+            'filters': filters,
             'data': [
                 {
                     'id': 'length',
