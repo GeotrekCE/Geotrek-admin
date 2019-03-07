@@ -46,7 +46,7 @@ class SyncRandoTilesTest(TestCase):
         self.assertIn("zip/tiles/global.zip", output.getvalue())
 
     @override_settings(MOBILE_TILES_URL=['http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                         'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',])
+                                         'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'])
     @mock.patch('landez.TilesManager.tile', return_value='Error')
     @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
     def test_multiple_tiles(self, mock_tileslist, mock_tiles):
