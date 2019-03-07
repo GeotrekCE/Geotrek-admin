@@ -148,7 +148,7 @@ class SyncTest(TestCase):
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
             management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
                                     portal=self.portal_b.name, skip_tiles=True, skip_pdf=True, verbosity=2,
-                                    sdtout=BytesIO())
+                                    stdout=BytesIO())
             with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
 
