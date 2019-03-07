@@ -740,7 +740,7 @@ class Command(BaseCommand):
         if not os.path.exists(self.dst_root):
             return
         existing = set([os.path.basename(p) for p in os.listdir(self.dst_root)])
-        remaining = existing - set(('api', 'media', 'meta', 'static', 'zip', 'mobile'))
+        remaining = existing - set(('api', 'media', 'meta', 'static', 'zip'))
         if remaining:
             raise CommandError(u"Destination directory contains extra data")
 
