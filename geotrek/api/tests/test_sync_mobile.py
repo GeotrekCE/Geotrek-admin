@@ -16,7 +16,7 @@ from django.utils import translation
 
 from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory, AttachmentFactory
 from geotrek.common.tests import TranslationResetMixin
-from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg, get_dummy_uploaded_image
+from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg, get_dummy_uploaded_image, get_dummy_uploaded_file
 from geotrek.flatpages.factories import FlatPageFactory
 from geotrek.flatpages.models import FlatPage
 from geotrek.trekking.models import Trek, POI
@@ -273,9 +273,15 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         super(SyncMobileTreksTest, cls).setUpClass()
         cls.trek_1 = TrekWithPublishedPOIsFactory()
         cls.trek_2 = TrekWithPublishedPOIsFactory()
-        cls.attachment_1 = AttachmentFactory.create(content_object=cls.trek_1, attachment_file=get_dummy_uploaded_image())
+        cls.attachment_1 = AttachmentFactory.create(content_object=cls.trek_1,
+                                                    attachment_file=get_dummy_uploaded_image())
         cls.poi_1 = POI.objects.first()
-        cls.attachment_2 = AttachmentFactory.create(content_object=cls.poi_1, attachment_file=get_dummy_uploaded_image())
+        cls.attachment_poi_image_1 = AttachmentFactory.create(content_object=cls.poi_1,
+                                                              attachment_file=get_dummy_uploaded_image())
+        cls.attachment_poi_image_2 = AttachmentFactory.create(content_object=cls.poi_1,
+                                                              attachment_file=get_dummy_uploaded_image())
+        cls.attachment_poi_file = AttachmentFactory.create(content_object=cls.poi_1,
+                                                           attachment_file=get_dummy_uploaded_file())
         translation.deactivate()
 
     def test_sync_treks(self):
