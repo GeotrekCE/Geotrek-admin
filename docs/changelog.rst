@@ -7,7 +7,12 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- When updating interventions, stake field is no more required
+- Fix duplicates in year filters in intervention module
+- Configurable blade code
+- Allow letters in blade number
+- Improve signage templates
+- Add "On signage/infrastructure" filter on intervention list
 
 
 2.24.5 (2019-03-06)

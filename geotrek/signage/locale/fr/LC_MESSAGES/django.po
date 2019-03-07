@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-16 09:02+0000\n"
+"POT-Creation-Date: 2019-03-06 22:03+0100\n"
 "PO-Revision-Date: 2015-09-25 17:37+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,8 +18,8 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 1.7.5\n"
 
-msgid "Intervention year"
-msgstr "Année d'intervention"
+msgid "Signage"
+msgstr "Signalétique"
 
 msgid "Name"
 msgstr "Nom"
@@ -27,41 +27,13 @@ msgstr "Nom"
 msgid "Description"
 msgstr "Description"
 
-msgid "Implantation year"
-msgstr "Année d'implantation"
+#, python-format
+msgid "On %s"
+msgstr "Sur %s"
 
-msgid "Category"
-msgstr "Catégorie"
-
-msgid "Signage Type"
-msgstr "Type de signalétique"
-
-msgid "Signage Types"
-msgstr "Types de signalétique"
-
-msgid "Reference, code, ..."
-msgstr "Référence, code, ..."
-
-msgid "Specificites"
-msgstr "Spécificités"
-
-msgid "Type"
-msgstr "Type"
-
-msgid "Condition"
-msgstr "Etat"
-
-msgid "Cities"
-msgstr "Communes"
-
-msgid "Signages"
-msgstr "Signalétiques"
-
-msgid "None"
-msgstr "Aucun(e)"
-
-msgid "Add a new signage"
-msgstr "Ajouter une signalétique"
+#, python-format
+msgid "Number already exists, numbers already used : %s"
+msgstr "Le numéro existe déjà, numéro(s) déjà utilisé(s) : %s"
 
 msgid "Sealing"
 msgstr "Scellement"
@@ -69,29 +41,32 @@ msgstr "Scellement"
 msgid "Sealings"
 msgstr "Scellements"
 
-msgid "Signage"
-msgstr "Signalétique"
+msgid "Signage Type"
+msgstr "Type de signalétique"
 
-msgid "Blades"
-msgstr "Lames"
+msgid "Signage Types"
+msgstr "Types de signalétique"
 
-msgid "Blade"
-msgstr "Lame"
+msgid "Code"
+msgstr "Code"
 
-msgid "Color"
-msgstr "Couleur"
+msgid "Manager"
+msgstr "Gestionnaire"
 
-msgid "Blade type"
-msgstr "Type de lame"
+msgid "Printed elevation"
+msgstr "Altitude affichée"
 
-msgid "Blade types"
-msgstr "Types de lame"
+msgid "Type"
+msgstr "Type"
 
-msgid "Color Blade"
-msgstr "Couleur de la lame"
+msgid "GPS coordinates"
+msgstr "Coordonnées GPS"
 
-msgid "Blade Colors "
-msgstr "Couleurs de la lame"
+msgid "Signages"
+msgstr "Signalétiques"
+
+msgid "Published Signages"
+msgstr "Signalétiques publiées"
 
 msgid "Direction"
 msgstr "Direction"
@@ -99,14 +74,54 @@ msgstr "Direction"
 msgid "Directions"
 msgstr "Directions"
 
-msgid "Blade Number"
-msgstr "Numero de la lame"
+msgid "Blade color"
+msgstr "Couleur de lame"
+
+msgid "Blade colors"
+msgstr "Couleurs de lame"
+
+msgid "Blade type"
+msgstr "Type de lame"
+
+msgid "Blade types"
+msgstr "Types de lame"
+
+msgid "Number"
+msgstr "Numéro"
+
+msgid "Color"
+msgstr "Couleur"
+
+msgid "Condition"
+msgstr "Etat"
+
+msgid "Blades"
+msgstr "Lames"
+
+msgid "Blade"
+msgstr "Lame"
+
+msgid "Text"
+msgstr "Texte"
+
+msgid "Distance"
+msgstr "Distance"
+
+msgid "Pictogramm name"
+msgstr "Nom du pictogramme"
+
+msgctxt "duration"
+msgid "Time"
+msgstr "Temps"
 
 msgid "Hours:Minutes:Seconds"
 msgstr "Heures:Minutes:Secondes"
 
-msgid "Pictogramm name"
-msgstr "Nom du pictogramme"
+msgid "Distance (km)"
+msgstr "Distance (km)"
+
+msgid "Time (Hours:Minutes:Seconds)"
+msgstr "Temps (Heures:Minutes:Secondes)"
 
 msgid "Line"
 msgstr "Ligne"
@@ -114,35 +129,35 @@ msgstr "Ligne"
 msgid "Lines"
 msgstr "Lignes"
 
-msgid "Number already exists, numbers already used : %s"
-msgstr "Le numero existe déjà, numeros déjà utilisé : %s"
+msgid "None"
+msgstr "Aucun(e)"
 
-msgid "Time (Hours:Minutes:Seconds)"
-msgstr "Temps (Heures:Minutes:Secondes)"
-
-msgid "Distance (km)"
-msgstr "Distance (km)"
-
-msgid "Number"
-msgstr "Numero"
+msgid "Picto"
+msgstr "Picto"
 
 msgid "Add a line"
 msgstr "Ajouter une ligne"
 
+msgid "Remove"
+msgstr "GPS"
+
 msgid "Add a new blade"
-msgstr "Ajouter une nouvelle lame"
+msgstr "Ajouter une lame"
 
-msgid "Printed elevation"
-msgstr "Altitude affichée"
+msgid "Add a new signage"
+msgstr "Ajouter une signalétique"
 
-msgid "Manager"
-msgstr "Gestionnaire"
+msgid "Edit"
+msgstr "Editer"
 
-msgid "GPS coordinates"
-msgstr "Coordonnées GPS"
+msgid "Add"
+msgstr "Ajouter"
 
-msgid "Blade color"
-msgstr "Couleur de lame"
+msgid "meters"
+msgstr "mètres"
 
-msgid "Blade colors"
-msgstr "Couleurs de lame"
+msgid "Intervention year"
+msgstr "Année d'intervention"
+
+msgid "Implantation year"
+msgstr "Année d'implantation"
