@@ -59,6 +59,27 @@ class SyncRandoTilesTest(TestCase):
             self.assertEqual(ifile.readline(), 'I am a png')
         self.assertIn("zip/tiles/global.zip", output.getvalue())
 
+    @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
+    @mock.patch('landez.TilesManager.tile', return_value='I am a png')
+    @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
+    def test_tiles_with_treks(self, mock_tileslist, mock_tiles, mock_prepare):
+        output = BytesIO()
+        trek = TrekFactory.create(published=True)
+        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', verbosity=2, stdout=output)
+        zfile = zipfile.ZipFile(os.path.join('tmp', 'zip', 'tiles', 'global.zip'))
+        for finfo in zfile.infolist():
+            ifile = zfile.open(finfo)
+            self.assertEqual(ifile.readline(), 'I am a png')
+        self.assertIn("zip/tiles/global.zip", output.getvalue())
+        zfile_trek = zipfile.ZipFile(os.path.join('tmp', 'zip', 'tiles', '{pk}.zip'.format(pk=trek.pk)))
+        for finfo in zfile_trek.infolist():
+            ifile_trek = zfile_trek.open(finfo)
+            self.assertEqual(ifile_trek.readline(), 'I am a png')
+        self.assertIn("zip/tiles/{pk}.zip".format(pk=trek.pk), output.getvalue())
+
+    def tearDown(self):
+        shutil.rmtree('tmp')
+
 
 class SyncRandoFailTest(TestCase):
     @classmethod

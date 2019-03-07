@@ -60,11 +60,29 @@ class SyncMobileTilesTest(TestCase):
         mock_tiles.side_effect = DownloadError
         output = BytesIO()
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', verbosity=2, stdout=output)
-        zfile = zipfile.ZipFile(os.path.join('tmp', 'zip', 'tiles', 'global.zip'))
+        zfile = zipfile.ZipFile(os.path.join('tmp', 'mobile', 'nolang', 'tiles.zip'))
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
             self.assertEqual(ifile.readline(), 'I am a png')
-        self.assertIn("zip/tiles/global.zip", output.getvalue())
+
+    @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
+    @mock.patch('landez.TilesManager.tile', return_value='I am a png')
+    @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
+    def test_tiles_with_treks(self, mock_tileslist, mock_tiles, mock_prepare):
+        output = BytesIO()
+        trek = TrekWithPublishedPOIsFactory.create(published=True)
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', verbosity=2, stdout=output)
+
+        zfile_global = zipfile.ZipFile(os.path.join('tmp', 'mobile', 'nolang', 'tiles.zip'))
+        for finfo in zfile_global.infolist():
+            ifile_global = zfile_global.open(finfo)
+            self.assertEqual(ifile_global.readline(), 'I am a png')
+        zfile_trek = zipfile.ZipFile(os.path.join('tmp', 'mobile', 'nolang', str(trek.pk), 'tiles.zip'))
+        for finfo in zfile_trek.infolist():
+            ifile_trek = zfile_trek.open(finfo)
+            self.assertEqual(ifile_trek.readline(), 'I am a png')
+        self.assertIn("mobile/nolang/tiles.zip", output.getvalue())
+        self.assertIn("mobile/nolang/{pk}/tiles.zip".format(pk=trek.pk), output.getvalue())
 
     def tearDown(self):
         shutil.rmtree('tmp')
