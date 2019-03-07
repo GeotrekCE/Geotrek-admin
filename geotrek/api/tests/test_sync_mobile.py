@@ -1,6 +1,7 @@
 # -*- encoding: UTF-8 -*-
 from io import BytesIO
 import json
+from landez.sources import DownloadError
 import mock
 import os
 import shutil
@@ -38,10 +39,20 @@ class SyncMobileTilesTest(TestCase):
             self.assertEqual(ifile.readline(), 'I am a png')
         self.assertIn("mobile/nolang/tiles.zip", output.getvalue())
 
-    @classmethod
-    def tearDownClass(cls):
-        super(SyncMobileTilesTest, cls).tearDownClass()
-        # shutil.rmtree('tmp')
+    @mock.patch('landez.TilesManager.tile', return_value='Error')
+    @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
+    def test_tile_fail(self, mock_tileslist, mock_tiles):
+        mock_tiles.side_effect = DownloadError
+        output = BytesIO()
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', verbosity=2, stdout=output)
+        zfile = zipfile.ZipFile(os.path.join('tmp', 'mobile', 'nolang', 'tiles.zip'))
+        for finfo in zfile.infolist():
+            ifile = zfile.open(finfo)
+            self.assertEqual(ifile.readline(), 'I am a png')
+        self.assertIn("mobile/nolang/tiles.zip", output.getvalue())
+
+    def tearDown(self):
+        shutil.rmtree('tmp')
 
 
 class SyncMobileFailTest(TestCase):
@@ -76,7 +87,7 @@ class SyncMobileFailTest(TestCase):
         attachment = AttachmentFactory(content_object=trek_1, attachment_file=get_dummy_uploaded_image())
         os.remove(attachment.attachment_file.path)
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
-                                skip_tiles=True, languages='fr', verbosity=2)
+                                skip_tiles=True, languages='fr', verbosity=2, stdout=BytesIO())
         self.assertFalse(os.path.exists(os.path.join('tmp', 'mobile', 'nolang', 'media', 'trekking_trek')))
 
     @classmethod
