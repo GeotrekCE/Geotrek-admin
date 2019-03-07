@@ -180,7 +180,7 @@ class APIAccessAdministratorTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
 
         # json collection structure is ok
-        json_response = json.loads(response.content.decode('utf-8'))
+        json_response = response.json()
         self.assertEqual(sorted(json_response.keys()),
                          PAGINATED_JSON_STRUCTURE)
 
@@ -194,7 +194,7 @@ class APIAccessAdministratorTestCase(BaseApiTest):
 
         # regenrate with geojson 3D
         response = self.get_trek_list({'format': 'geojson', 'dim': '3'})
-        json_response = json.loads(response.content.decode('utf-8'))
+        json_response = response.json()
 
         # test geojson format
         self.assertEqual(sorted(json_response.keys()),
@@ -219,13 +219,13 @@ class APIAccessAdministratorTestCase(BaseApiTest):
         # test response code
         self.assertEqual(response.status_code, 200)
 
-        json_response = json.loads(response.content.decode('utf-8'))
+        json_response = response.json()
         # test default structure
         self.assertEqual(sorted(json_response.keys()),
                          TREK_DETAIL_JSON_STRUCTURE)
 
         response = self.get_trek_detail(id_trek, {'format': "geojson", "dim": "3"})
-        json_response = json.loads(response.content.decode('utf-8'))
+        json_response = response.json()
 
         self.assertEqual(sorted(json_response.keys()),
                          GEOJSON_STRUCTURE)
@@ -259,7 +259,7 @@ class APIAccessAdministratorTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
 
         # json collection structure is ok
-        json_response = json.loads(response.content.decode('utf-8'))
+        json_response = response.json()
         self.assertEqual(sorted(json_response.keys()),
                          PAGINATED_JSON_STRUCTURE)
 
@@ -273,7 +273,7 @@ class APIAccessAdministratorTestCase(BaseApiTest):
 
         # regenrate with geojson 3D
         response = self.get_poi_list({'format': 'geojson', 'dim': '3'})
-        json_response = json.loads(response.content.decode('utf-8'))
+        json_response = response.json()
 
         # test geojson format
         self.assertEqual(sorted(json_response.keys()),
@@ -298,13 +298,13 @@ class APIAccessAdministratorTestCase(BaseApiTest):
         # test response code
         self.assertEqual(response.status_code, 200)
 
-        json_response = json.loads(response.content.decode('utf-8'))
+        json_response = response.json()
         # test default structure
         self.assertEqual(sorted(json_response.keys()),
                          POI_DETAIL_JSON_STRUCTURE)
 
         response = self.get_poi_detail(id_poi, {'format': "geojson", "dim": "3"})
-        json_response = json.loads(response.content.decode('utf-8'))
+        json_response = response.json()
 
         self.assertEqual(sorted(json_response.keys()),
                          GEOJSON_STRUCTURE)

@@ -91,7 +91,7 @@ class APIAccessTestCase(BaseApiTest):
         #  test response code
         self.assertEqual(response.status_code, 200)
 
-        json_response = json.loads(response.content.decode('utf-8'))
+        json_response = response.json()
 
         # test geojson format
         self.assertEqual(sorted(json_response.keys()),
@@ -110,7 +110,7 @@ class APIAccessTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
 
         # json collection structure is ok
-        json_response = json.loads(response.content.decode('utf-8'))
+        json_response = response.json()
 
         # trek count is ok
         self.assertEqual(len(json_response.get('features')),
@@ -136,7 +136,7 @@ class APIAccessTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
 
         # json collection structure is ok
-        json_response = json.loads(response.content.decode('utf-8'))
+        json_response = response.json()
 
         # poi count by treks is ok
         self.assertEqual(len(json_response.get('features')),

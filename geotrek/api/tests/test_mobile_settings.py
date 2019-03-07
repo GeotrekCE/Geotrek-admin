@@ -44,7 +44,7 @@ class SettingsMobileTest(TestCase):
         #  test response code
         self.assertEqual(response.status_code, 200)
 
-        json_response = json.loads(response.content.decode('utf-8'))
+        json_response = response.json()
         self.assertEqual(sorted(json_response.keys()),
                          SETTINGS_STRUCTURE)
         values_data = [values.get('id') for values in json_response.get('data')]
@@ -58,7 +58,7 @@ class SettingsMobileTest(TestCase):
         #  test response code
         self.assertEqual(response.status_code, 200)
 
-        json_response = json.loads(response.content.decode('utf-8'))
+        json_response = response.json()
 
         informationdesk_item = next((item.get('values') for item in json_response.get('data')
                                      if item['id'] == 'information_desks'), None)
@@ -74,7 +74,7 @@ class SettingsMobileTest(TestCase):
         #  test response code
         self.assertEqual(response.status_code, 200)
 
-        json_response = json.loads(response.content.decode('utf-8'))
+        json_response = response.json()
 
         network_item = next((item.get('values') for item in json_response.get('data')
                              if item['id'] == 'networks'), None)
@@ -88,7 +88,7 @@ class SettingsMobileTest(TestCase):
         #  test response code
         self.assertEqual(response.status_code, 200)
 
-        json_response = json.loads(response.content.decode('utf-8'))
+        json_response = response.json()
         route_item = next((item.get('values') for item in json_response.get('data')
                            if item['id'] == 'route'), None)
 
@@ -102,7 +102,7 @@ class SettingsMobileTest(TestCase):
         #  test response code
         self.assertEqual(response.status_code, 200)
 
-        json_response = json.loads(response.content.decode('utf-8'))
+        json_response = response.json()
         practice_item = next((item.get('values') for item in json_response.get('data')
                               if item['id'] == 'practice'), None)
         self.assertEqual(len(practice_item), Practice.objects.count())
@@ -116,7 +116,7 @@ class SettingsMobileTest(TestCase):
         #  test response code
         self.assertEqual(response.status_code, 200)
 
-        json_response = json.loads(response.content.decode('utf-8'))
+        json_response = response.json()
         accessibility_item = next((item.get('values') for item in json_response.get('data')
                                    if item['id'] == 'accessibilities'), None)
         self.assertEqual(len(accessibility_item), Accessibility.objects.count())
@@ -130,7 +130,7 @@ class SettingsMobileTest(TestCase):
         #  test response code
         self.assertEqual(response.status_code, 200)
 
-        json_response = json.loads(response.content.decode('utf-8'))
+        json_response = response.json()
         difficulty_item = next((item.get('values') for item in json_response.get('data')
                                 if item['id'] == 'difficulty'), None)
         self.assertEqual(len(difficulty_item), DifficultyLevel.objects.count())
@@ -144,7 +144,7 @@ class SettingsMobileTest(TestCase):
         #  test response code
         self.assertEqual(response.status_code, 200)
 
-        json_response = json.loads(response.content.decode('utf-8'))
+        json_response = response.json()
         theme_item = next((item.get('values') for item in json_response.get('data')
                            if item['id'] == 'themes'), None)
         self.assertEqual(len(theme_item), Theme.objects.count())
@@ -158,7 +158,7 @@ class SettingsMobileTest(TestCase):
         #  test response code
         self.assertEqual(response.status_code, 200)
 
-        json_response = json.loads(response.content.decode('utf-8'))
+        json_response = response.json()
         city_item = next((item.get('values') for item in json_response.get('data')
                           if item['id'] == 'cities'), None)
         self.assertEqual(len(city_item), City.objects.count())
