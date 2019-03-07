@@ -270,7 +270,7 @@ class Command(BaseCommand):
     def sync_trek_tiles(self, trek):
         """ Creates a tiles file for the specified Trek object.
         """
-        zipname = os.path.join('mobile', trek.pk, 'tiles.zip')
+        zipname = os.path.join('mobile', 'nolang', str(trek.pk), 'tiles.zip')
 
         if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
