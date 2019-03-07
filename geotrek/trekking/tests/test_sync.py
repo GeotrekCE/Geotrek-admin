@@ -1,13 +1,46 @@
 import os
 import json
+from landez.sources import DownloadError
 import mock
 import shutil
+from io import BytesIO
+import zipfile
+
 from django.test import TestCase
 from django.core import management
 
 from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.trekking.factories import TrekFactory
 from geotrek.trekking import models as trek_models
+
+
+class SyncRandoTilesTest(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super(SyncRandoTilesTest, cls).setUpClass()
+
+    @mock.patch('landez.TilesManager.tile', return_value='I am a png')
+    @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
+    def test_tiles(self, mock_tileslist, mock_tiles):
+        output = BytesIO()
+        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', verbosity=2, stdout=output)
+        zfile = zipfile.ZipFile(os.path.join('tmp', 'zip', 'tiles', 'global.zip'))
+        for finfo in zfile.infolist():
+            ifile = zfile.open(finfo)
+            self.assertEqual(ifile.readline(), 'I am a png')
+        self.assertIn("zip/tiles/global.zip", output.getvalue())
+
+    @mock.patch('landez.TilesManager.tile', return_value='Error')
+    @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
+    def test_tile_fail(self, mock_tileslist, mock_tiles):
+        mock_tiles.side_effect = DownloadError
+        output = BytesIO()
+        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', verbosity=2, stdout=output)
+        zfile = zipfile.ZipFile(os.path.join('tmp', 'zip', 'tiles', 'global.zip'))
+        for finfo in zfile.infolist():
+            ifile = zfile.open(finfo)
+            self.assertEqual(ifile.readline(), 'I am a png')
+        self.assertIn("zip/tiles/global.zip", output.getvalue())
 
 
 class SyncTest(TestCase):
