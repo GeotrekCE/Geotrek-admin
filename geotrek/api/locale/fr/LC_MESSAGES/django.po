@@ -61,10 +61,10 @@ msgid "Durations"
 msgstr "Durées"
 
 msgid "Show all cities"
-msgstr "Afficher toutes les villes"
+msgstr "Afficher toutes les communes"
 
 msgid "Hide all cities"
-msgstr "Ne plus afficher toutes les villes"
+msgstr "Ne plus afficher toutes les communes"
 
 msgid "Show all difficulties"
 msgstr "Afficher toutes les difficultés"
