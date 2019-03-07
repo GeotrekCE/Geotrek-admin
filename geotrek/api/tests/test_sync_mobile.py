@@ -18,7 +18,7 @@ from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg, get_dummy_uploaded_image
 from geotrek.flatpages.factories import FlatPageFactory
 from geotrek.flatpages.models import FlatPage
-from geotrek.trekking.models import Trek
+from geotrek.trekking.models import Trek, POI
 from geotrek.trekking.factories import TrekWithPublishedPOIsFactory, PracticeFactory
 
 
@@ -240,7 +240,9 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         super(SyncMobileTreksTest, cls).setUpClass()
         cls.trek_1 = TrekWithPublishedPOIsFactory()
         cls.trek_2 = TrekWithPublishedPOIsFactory()
-        AttachmentFactory.create(content_object=cls.trek_1, attachment_file=get_dummy_uploaded_image())
+        cls.attachment_1 = AttachmentFactory.create(content_object=cls.trek_1, attachment_file=get_dummy_uploaded_image())
+        cls.poi_1 = POI.objects.first()
+        cls.attachment_2 = AttachmentFactory.create(content_object=cls.poi_1, attachment_file=get_dummy_uploaded_image())
         translation.deactivate()
 
     def test_sync_treks(self):
@@ -275,6 +277,15 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
             self.assertEqual(len(trek_geojson['features']), 2)
 
         self.assertIn('mobile/en/treks/{pk}/pois.geojson'.format(pk=str(self.trek_1.pk)), output.getvalue())
+
+    def test_medias_treks(self):
+        output = BytesIO()
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                skip_tiles=True, verbosity=2, stdout=output)
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'mobile', 'nolang', str(self.trek_1.pk), 'media',
+                                                    'paperclip', 'trekking_poi')))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'mobile', 'nolang', str(self.trek_1.pk), 'media',
+                                                    'paperclip', 'trekking_trek')))
 
     @classmethod
     def tearDownClass(cls):
