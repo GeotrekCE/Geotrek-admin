@@ -8,9 +8,11 @@ import zipfile
 
 from django.test import TestCase
 from django.core import management
+from django.core.management.base import CommandError
 
-from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
-from geotrek.trekking.factories import TrekFactory
+from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory, AttachmentFactory
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
+from geotrek.trekking.factories import TrekFactory, TrekWithPublishedPOIsFactory
 from geotrek.trekking import models as trek_models
 
 
@@ -41,6 +43,48 @@ class SyncRandoTilesTest(TestCase):
             ifile = zfile.open(finfo)
             self.assertEqual(ifile.readline(), 'I am a png')
         self.assertIn("zip/tiles/global.zip", output.getvalue())
+
+
+class SyncRandoFailTest(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super(SyncRandoFailTest, cls).setUpClass()
+
+    def test_fail_directory_not_empty(self):
+        os.makedirs(os.path.join('tmp', 'other'))
+        with self.assertRaises(CommandError) as e:
+            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+                                    skip_tiles=True, verbosity=2)
+        self.assertEqual(e.exception.message, "Destination directory contains extra data")
+        shutil.rmtree(os.path.join('tmp', 'other'))
+
+    def test_fail_url_ftp(self):
+        with self.assertRaises(CommandError) as e:
+            management.call_command('sync_rando', 'tmp', url='ftp://localhost:8000',
+                                    skip_tiles=True, verbosity=2)
+        self.assertEqual(e.exception.message, "url parameter should start with http:// or https://")
+
+    def test_language_not_in_db(self):
+        with self.assertRaises(CommandError) as e:
+            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+                                    skip_tiles=True, languages='cat', verbosity=2)
+        self.assertEqual(e.exception.message,
+                         "Language cat doesn't exist. Select in these one : ('en', 'es', 'fr', 'it')")
+
+    def test_attachments_missing_from_disk(self):
+        trek_1 = TrekWithPublishedPOIsFactory.create(published_fr=True)
+        attachment = AttachmentFactory(content_object=trek_1, attachment_file=get_dummy_uploaded_image())
+        os.remove(attachment.attachment_file.path)
+        with self.assertRaises(CommandError) as e:
+            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+                                    skip_tiles=True, languages='fr', verbosity=2, stdout=BytesIO())
+        self.assertEqual(e.exception.message, 'Some errors raised during synchronization.')
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'mobile', 'nolang', 'media', 'trekking_trek')))
+
+    @classmethod
+    def tearDownClass(cls):
+        super(SyncMobileFailTest, cls).tearDownClass()
+        shutil.rmtree('tmp')
 
 
 class SyncTest(TestCase):
