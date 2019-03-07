@@ -2,6 +2,7 @@
 import os
 from datetime import datetime
 
+from django.db.models.functions import ExtractYear
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.db import models
@@ -21,9 +22,8 @@ from geotrek.signage.models import Signage
 
 class InterventionManager(models.GeoManager):
     def all_years(self):
-        all_dates = self.existing().filter(date__isnull=False).order_by('-date').values_list('date', flat=True).distinct('date')
-        all_years = [d.year for d in all_dates]
-        return all_years
+        return self.existing().filter(date__isnull=False).annotate(year=ExtractYear('date')) \
+            .order_by('-year').values_list('year', flat=True).distinct()
 
 
 class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
@@ -54,7 +54,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     length = models.FloatField(editable=True, default=0.0, null=True, blank=True, db_column='longueur',
                                verbose_name=_(u"3D Length"))
 
-    stake = models.ForeignKey('core.Stake', null=True,
+    stake = models.ForeignKey('core.Stake', null=True, blank=True,
                               related_name='interventions', verbose_name=_("Stake"), db_column='enjeu')
 
     status = models.ForeignKey('InterventionStatus', verbose_name=_("Status"), db_column='status')

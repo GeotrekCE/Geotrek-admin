@@ -182,8 +182,6 @@ class InterventionCreateForm(InterventionForm):
             initial['topology'] = signage
         kwargs['initial'] = initial
         super(InterventionCreateForm, self).__init__(*args, **kwargs)
-        # Stake is computed automatically at creation.
-        self.fields['stake'].required = False
 
 
 class ProjectForm(CommonForm):

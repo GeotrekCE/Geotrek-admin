@@ -54,10 +54,17 @@ class BladeForm(CommonForm):
             unicode(_("On %s") % _(self.signage.kind.lower())),
             u'<a href="%s">%s</a>' % (self.signage.get_detail_url(), unicode(self.signage))
         )
-        max_blade = self.signage.blade_set.existing().aggregate(max=Max('number'))
-        value_max = max_blade['max'] or 0
-
-        self.fields['number'].initial = value_max + 1
+        value_max = self.signage.blade_set.existing().aggregate(max=Max('number'))['max']
+        if settings.BLADE_CODE_TYPE == int:
+            if not value_max:
+                self.fields['number'].initial = "1"
+            elif value_max.isdigit():
+                self.fields['number'].initial = str(int(value_max) + 1)
+        elif settings.BLADE_CODE_TYPE in (str, unicode):
+            if not value_max:
+                self.fields['number'].initial = "A"
+            elif len(value_max) == 1 and "A" <= value_max[0] < "Z":
+                self.fields['number'].initial = chr(ord(value_max[0]) + 1)
 
     def save(self, *args, **kwargs):
         self.instance.set_topology(self.signage)
