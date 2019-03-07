@@ -83,7 +83,7 @@ class SyncRandoFailTest(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        super(SyncMobileFailTest, cls).tearDownClass()
+        super(SyncRandoFailTest, cls).tearDownClass()
         shutil.rmtree('tmp')
 
 
