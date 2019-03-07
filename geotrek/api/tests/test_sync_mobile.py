@@ -70,8 +70,12 @@ class SyncMobileTilesTest(TestCase):
     @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
     def test_tiles_with_treks(self, mock_tileslist, mock_tiles, mock_prepare):
         output = BytesIO()
+        portal_a = TargetPortalFactory()
+        portal_b = TargetPortalFactory()
         trek = TrekWithPublishedPOIsFactory.create(published=True)
-        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', verbosity=2, stdout=output)
+        trek_not_same_portal = TrekWithPublishedPOIsFactory.create(published=True, portals=(portal_a, ))
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', verbosity=2, stdout=output,
+                                portal=portal_b.name)
 
         zfile_global = zipfile.ZipFile(os.path.join('tmp', 'mobile', 'nolang', 'tiles.zip'))
         for finfo in zfile_global.infolist():
@@ -83,6 +87,9 @@ class SyncMobileTilesTest(TestCase):
             self.assertEqual(ifile_trek.readline(), 'I am a png')
         self.assertIn("mobile/nolang/tiles.zip", output.getvalue())
         self.assertIn("mobile/nolang/{pk}/tiles.zip".format(pk=trek.pk), output.getvalue())
+
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'mobile', 'nolang', str(trek_not_same_portal.pk),
+                                                     'tiles.zip')))
 
     def tearDown(self):
         shutil.rmtree('tmp')
@@ -160,12 +167,10 @@ class SyncMobileFlatpageTest(TranslationResetMixin, TestCase):
         cls.source_a = RecordSourceFactory()
         cls.source_b = RecordSourceFactory()
 
-        FlatPageFactory.create(published=True,
-                               sources=(cls.source_a,))
+        FlatPageFactory.create(published=True)
         FlatPageFactory.create(portals=(cls.portal_a, cls.portal_b),
                                published=True)
-        FlatPageFactory.create(published=True,
-                               sources=(cls.source_b,))
+        FlatPageFactory.create(published=True)
         FlatPageFactory.create(portals=(cls.portal_a,),
                                published=True)
 
