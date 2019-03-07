@@ -89,10 +89,6 @@ class Command(BaseCommand):
         else:
             if self.verbosity == 2:
                 self.stdout.write(u"\x1b[3D\x1b[32mgenerated\x1b[0m")
-        # FixMe: Find why there are duplicate files.
-        if zipfile:
-            if name not in zipfile.namelist():
-                zipfile.write(fullname, name)
 
     def sync_json(self, lang, viewset, name, zipfile=None, params={}, as_view_args=[], **kwargs):
         view = viewset.as_view(*as_view_args)
