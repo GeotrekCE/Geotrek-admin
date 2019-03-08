@@ -13,9 +13,12 @@ from django.http import HttpResponse
 from django.test.utils import override_settings
 
 from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory, AttachmentFactory
-from geotrek.common.utils.testdata import get_dummy_uploaded_image
+from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_file
+from geotrek.infrastructure.factories import InfrastructureFactory
+from geotrek.signage.factories import SignageFactory
 from geotrek.trekking.factories import TrekFactory, TrekWithPublishedPOIsFactory
 from geotrek.trekking import models as trek_models
+from geotrek.tourism.factories import InformationDeskFactory
 
 
 class SyncRandoTilesTest(TestCase):
@@ -142,10 +145,13 @@ class SyncTest(TestCase):
 
         self.portal_a = TargetPortalFactory()
         self.portal_b = TargetPortalFactory()
-
-        self.trek_1 = TrekFactory.create(sources=(self.source_a, ),
-                                         portals=(self.portal_b,),
-                                         published=True)
+        information_desks = InformationDeskFactory.create()
+        self.trek_1 = TrekWithPublishedPOIsFactory.create(sources=(self.source_a, ),
+                                                          portals=(self.portal_b,),
+                                                          published=True)
+        self.trek_1.information_desks.add(information_desks)
+        self.attachment_1 = AttachmentFactory.create(content_object=self.trek_1,
+                                                     attachment_file=get_dummy_uploaded_image())
         self.trek_2 = TrekFactory.create(sources=(self.source_b,),
                                          published=True)
         self.trek_3 = TrekFactory.create(portals=(self.portal_b,
@@ -154,10 +160,24 @@ class SyncTest(TestCase):
         self.trek_4 = TrekFactory.create(portals=(self.portal_a,),
                                          published=True)
 
+        self.poi_1 = trek_models.POI.objects.first()
+        self.attachment_poi_image_1 = AttachmentFactory.create(content_object=self.poi_1,
+                                                               attachment_file=get_dummy_uploaded_image())
+        self.attachment_poi_image_2 = AttachmentFactory.create(content_object=self.poi_1,
+                                                               attachment_file=get_dummy_uploaded_image())
+        self.attachment_poi_file = AttachmentFactory.create(content_object=self.poi_1,
+                                                            attachment_file=get_dummy_uploaded_file())
+
+        infrastructure = InfrastructureFactory.create(no_path=True, name="INFRA_1")
+        infrastructure.add_path(self.trek_1.paths.first(), start=0, end=0)
+        signage = SignageFactory.create(no_path=True, name="SIGNA_1")
+        signage.add_path(self.trek_1.paths.first(), start=0, end=0)
+
     def test_sync(self):
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
-            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
-                                    skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
+            management.call_command('sync_rando', 'tmp', with_signages=True, with_infrastructures=True,
+                                    url='http://localhost:8000', skip_tiles=True, skip_pdf=True, verbosity=2,
+                                    stdout=BytesIO())
             with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
                 # there are 4 treks
