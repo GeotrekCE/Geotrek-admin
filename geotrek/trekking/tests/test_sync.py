@@ -9,6 +9,7 @@ import zipfile
 from django.test import TestCase
 from django.core import management
 from django.core.management.base import CommandError
+from django.http import HttpResponse
 from django.test.utils import override_settings
 
 from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory, AttachmentFactory
@@ -116,6 +117,17 @@ class SyncRandoFailTest(TestCase):
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=BytesIO())
         self.assertEqual(e.exception.message, 'Some errors raised during synchronization.')
         self.assertFalse(os.path.exists(os.path.join('tmp', 'mobile', 'nolang', 'media', 'trekking_trek')))
+
+    @mock.patch('geotrek.trekking.views.TrekViewSet.list')
+    def test_response_500(self, mocke):
+        output = BytesIO()
+        mocke.return_value = HttpResponse(status=500)
+        TrekWithPublishedPOIsFactory.create(published_fr=True)
+        with self.assertRaises(CommandError) as e:
+            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+                                    skip_tiles=True, verbosity=2, stdout=output)
+        self.assertEqual(e.exception.message, 'Some errors raised during synchronization.')
+        self.assertIn("failed (HTTP 500)", output.getvalue())
 
     @classmethod
     def tearDownClass(cls):
