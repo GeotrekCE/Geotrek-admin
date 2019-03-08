@@ -1,4 +1,3 @@
-from itertools import chain
 import logging
 import os
 from urlparse import urljoin
@@ -24,7 +23,6 @@ from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, MarkupPublic
 from geotrek.tourism.serializers import TouristicContentCategorySerializer
 from geotrek.trekking.models import Trek
-from geotrek.trekking.serializers import POISerializer
 
 from .filters import TouristicContentFilterSet, TouristicEventFilterSet, TouristicEventApiFilterSet
 from .forms import TouristicContentForm, TouristicEventForm
