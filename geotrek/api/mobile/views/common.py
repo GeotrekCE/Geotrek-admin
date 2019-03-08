@@ -126,8 +126,8 @@ class SettingsView(APIView):
                 {
                     'id': 'accessibilities',
                     'name': _('Accessibilities'),
-                    'values': api_serializers.PracticeSerializer(Accessibility.objects.all().order_by('pk'), many=True,
-                                                                 context={'request': request}).data,
+                    'values': api_serializers.AccessibilitySerializer(Accessibility.objects.all().order_by('pk'),
+                                                                      many=True, context={'request': request}).data,
                 },
                 {
                     'id': 'route',
