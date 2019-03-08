@@ -4,7 +4,6 @@ from django.test.testcases import TestCase
 
 from geotrek.common import factories as common_factories
 from geotrek.common.models import Theme
-from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.trekking import factories as trekking_factories
 from geotrek.trekking.models import TrekNetwork, Route, Practice, Accessibility, DifficultyLevel
 from geotrek.tourism import factories as tourism_factories
