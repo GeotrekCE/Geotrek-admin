@@ -7,6 +7,7 @@ from io import BytesIO
 import zipfile
 
 from django.test import TestCase
+from django.conf import settings
 from django.core import management
 from django.core.management.base import CommandError
 from django.http import HttpResponse
@@ -15,10 +16,11 @@ from django.test.utils import override_settings
 from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory, AttachmentFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_file
 from geotrek.infrastructure.factories import InfrastructureFactory
+from geotrek.sensitivity.factories import SensitiveAreaFactory
 from geotrek.signage.factories import SignageFactory
 from geotrek.trekking.factories import TrekFactory, TrekWithPublishedPOIsFactory
 from geotrek.trekking import models as trek_models
-from geotrek.tourism.factories import InformationDeskFactory
+from geotrek.tourism.factories import InformationDeskFactory, TouristicContentFactory, TouristicEventFactory
 
 
 class SyncRandoTilesTest(TestCase):
@@ -172,12 +174,21 @@ class SyncTest(TestCase):
         infrastructure.add_path(self.trek_1.paths.first(), start=0, end=0)
         signage = SignageFactory.create(no_path=True, name="SIGNA_1")
         signage.add_path(self.trek_1.paths.first(), start=0, end=0)
+        SensitiveAreaFactory.create(published=True)
+        self.touristic_content = TouristicContentFactory(
+            geom='SRID=%s;POINT(700001 6600001)' % settings.SRID, published=True)
+        self.touristic_event = TouristicEventFactory(
+            geom='SRID=%s;POINT(700001 6600001)' % settings.SRID, published=True)
+        self.attachment_touristic_content = AttachmentFactory.create(content_object=self.touristic_content,
+                                                                     attachment_file=get_dummy_uploaded_image())
+        self.attachment_touristic_event = AttachmentFactory.create(content_object=self.touristic_event,
+                                                                   attachment_file=get_dummy_uploaded_image())
 
     def test_sync(self):
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
             management.call_command('sync_rando', 'tmp', with_signages=True, with_infrastructures=True,
-                                    url='http://localhost:8000', skip_tiles=True, skip_pdf=True, verbosity=2,
-                                    stdout=BytesIO())
+                                    with_events=True, content_categories="1", url='http://localhost:8000',
+                                    skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
             with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
                 # there are 4 treks
