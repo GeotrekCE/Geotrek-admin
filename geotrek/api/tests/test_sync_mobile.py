@@ -144,7 +144,7 @@ class SyncMobileFailTest(TestCase):
         output = BytesIO()
         TrekWithPublishedPOIsFactory.create(published_fr=True)
         with self.assertRaises(CommandError) as e:
-            management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', portal='portal',
+            management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output)
         self.assertEqual(e.exception.message, 'Some errors raised during synchronization.')
         self.assertIn("failed (argument of type 'int' is not iterable)", output.getvalue())
@@ -154,7 +154,7 @@ class SyncMobileFailTest(TestCase):
         output = BytesIO()
         TrekWithPublishedPOIsFactory.create(published_fr=True)
         with self.assertRaises(AttributeError) as e:
-            management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', portal='portal',
+            management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output)
         self.assertEqual(e.exception.message, "'int' object has no attribute 'strip'")
         self.assertIn("failed ('int' object has no attribute 'find')", output.getvalue())
