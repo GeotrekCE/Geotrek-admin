@@ -76,7 +76,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             fields = ('id', 'name', 'pictogram', 'mobile_color')
 
     class AccessibilitySerializer(serializers.ModelSerializer):
-        name = serializers.ReadOnlyField(source='label')
         pictogram = serializers.SerializerMethodField(read_only=True)
 
         def get_pictogram(self, obj):
