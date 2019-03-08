@@ -149,6 +149,16 @@ class SyncMobileFailTest(TestCase):
         self.assertEqual(e.exception.message, 'Some errors raised during synchronization.')
         self.assertIn("failed (argument of type 'int' is not iterable)", output.getvalue())
 
+    @override_settings(MEDIA_URL=9)
+    def test_bad_settings_2(self):
+        output = BytesIO()
+        TrekWithPublishedPOIsFactory.create(published_fr=True)
+        with self.assertRaises(AttributeError) as e:
+            management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', portal='portal',
+                                    skip_tiles=True, languages='fr', verbosity=2, stdout=output)
+        self.assertEqual(e.exception.message, "'int' object has no attribute 'strip'")
+        self.assertIn("failed ('int' object has no attribute 'find')", output.getvalue())
+
     @mock.patch('geotrek.api.mobile.views.common.SettingsView.get')
     def test_response_500(self, mocke):
         output = BytesIO()
