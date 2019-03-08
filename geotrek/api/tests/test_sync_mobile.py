@@ -10,7 +10,7 @@ import zipfile
 from django.conf import settings
 from django.core import management
 from django.core.management.base import CommandError
-from django.http import HttpResponse
+from django.http import HttpResponse, StreamingHttpResponse
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.utils import translation
@@ -370,6 +370,16 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
                                                     'paperclip', 'trekking_poi')))
         self.assertTrue(os.path.exists(os.path.join('tmp', 'mobile', 'nolang', str(self.trek_1.pk), 'media',
                                                     'paperclip', 'trekking_trek')))
+
+    @mock.patch('geotrek.trekking.views.TrekViewSet.list')
+    def test_streaminghttpresponse(self, mocke):
+        output = BytesIO()
+        mocke.return_value = StreamingHttpResponse()
+        TrekWithPublishedPOIsFactory.create(published_fr=True)
+        with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
+            management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                    skip_tiles=True, verbosity=2, stdout=output)
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'mobile', 'en', 'treks.geojson')))
 
     @classmethod
     def tearDownClass(cls):
