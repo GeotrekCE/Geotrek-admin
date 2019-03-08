@@ -10,7 +10,7 @@ from django.test import TestCase
 from django.conf import settings
 from django.core import management
 from django.core.management.base import CommandError
-from django.http import HttpResponse
+from django.http import HttpResponse, StreamingHttpResponse
 from django.test.utils import override_settings
 
 from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory, AttachmentFactory
@@ -147,6 +147,16 @@ class SyncRandoFailTest(TestCase):
         self.assertEqual(e.exception.message, 'Some errors raised during synchronization.')
         self.assertIn("failed (HTTP 500)", output.getvalue())
 
+    @override_settings(MEDIA_URL=9)
+    def test_bad_settings(self):
+        output = BytesIO()
+        TrekWithPublishedPOIsFactory.create(published_fr=True)
+        with self.assertRaises(AttributeError) as e:
+            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+                                    skip_tiles=True, languages='fr', verbosity=2, stdout=output)
+        self.assertEqual(e.exception.message, "'int' object has no attribute 'strip'")
+        self.assertIn("Exception raised in callable attribute", output.getvalue())
+
     @classmethod
     def tearDownClass(cls):
         super(SyncRandoFailTest, cls).tearDownClass()
@@ -221,6 +231,16 @@ class SyncTest(TestCase):
                 treks = json.load(f)
                 # \u2028 is translated to \n
                 self.assertEquals(treks['features'][0]['properties']['description'], u'toto\ntata')
+
+    @mock.patch('geotrek.trekking.views.TrekViewSet.list')
+    def test_streaminghttpresponse(self, mocke):
+        output = BytesIO()
+        mocke.return_value = StreamingHttpResponse()
+        trek = TrekWithPublishedPOIsFactory.create(published_fr=True)
+        with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
+            management.call_command('sync_rando', 'tmp', url='http://localhost:8000', skip_pdf=True,
+                                    skip_tiles=True, verbosity=2, stdout=output)
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'fr', 'treks', str(trek.pk), 'profile.png')))
 
     def test_sync_filtering_sources(self):
         # source A only
