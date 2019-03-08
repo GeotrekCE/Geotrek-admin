@@ -681,7 +681,7 @@ class TrekJSONDetailTest(TrekJSONSetUp):
     def test_networks(self):
         self.assertDictEqual(self.result['networks'][0],
                              {u"id": self.network.id,
-                              u"pictogram": None,
+                              u"pictogram": os.path.join(settings.MEDIA_URL, self.network.pictogram.name),
                               u"name": self.network.network})
 
     def test_practice_not_none(self):
@@ -722,7 +722,7 @@ class TrekJSONDetailTest(TrekJSONSetUp):
     def test_route_not_none(self):
         self.assertDictEqual(self.result['route'],
                              {u"id": self.trek.route.id,
-                              u"pictogram": None,
+                              u"pictogram": os.path.join(settings.MEDIA_URL, self.trek.route.pictogram.name),
                               u"label": self.trek.route.route})
 
     def test_difficulty_not_none(self):
