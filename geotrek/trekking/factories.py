@@ -15,6 +15,7 @@ class TrekNetworkFactory(factory.DjangoModelFactory):
         model = models.TrekNetwork
 
     network = factory.Sequence(lambda n: u"network %s" % n)
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
 class PracticeFactory(factory.DjangoModelFactory):
@@ -38,6 +39,7 @@ class RouteFactory(factory.DjangoModelFactory):
         model = models.Route
 
     route = factory.Sequence(lambda n: u"route %s" % n)
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
 class DifficultyLevelFactory(factory.DjangoModelFactory):
