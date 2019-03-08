@@ -65,6 +65,19 @@ class SyncRandoTilesTest(TestCase):
             self.assertEqual(ifile.readline(), 'I am a png')
         self.assertIn("zip/tiles/global.zip", output.getvalue())
 
+    @override_settings(MOBILE_TILES_URL='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
+    @mock.patch('landez.TilesManager.tile', return_value='Error')
+    @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
+    def test_tiles_url_str(self, mock_tileslist, mock_tiles):
+        mock_tiles.side_effect = DownloadError
+        output = BytesIO()
+        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', verbosity=2, stdout=output)
+        zfile = zipfile.ZipFile(os.path.join('tmp', 'zip', 'tiles', 'global.zip'))
+        for finfo in zfile.infolist():
+            ifile = zfile.open(finfo)
+            self.assertEqual(ifile.readline(), 'I am a png')
+        self.assertIn("zip/tiles/global.zip", output.getvalue())
+
     @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
     @mock.patch('landez.TilesManager.tile', return_value='I am a png')
     @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
