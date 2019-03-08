@@ -357,26 +357,6 @@ class TrekInformationDeskViewSet(viewsets.ModelViewSet):
         return trek.information_desks.all().transform(settings.API_SRID, field_name='geom')
 
 
-class TrekTouristicContentAndPOIViewSet(viewsets.ModelViewSet):
-    model = TouristicContent
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_serializer_class(self):
-        class Serializer(POISerializer, GeoFeatureModelSerializer):
-            pass
-        return Serializer
-
-    def get_queryset(self):
-        pk = self.kwargs['pk']
-        try:
-            trek = Trek.objects.existing().get(pk=pk, published=True)
-        except Trek.DoesNotExist:
-            raise Http404
-        qs1 = trek.touristic_contents.filter(published=True).transform(settings.API_SRID, field_name='geom')
-        qs2 = trek.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
-        return chain(qs1, qs2)
-
-
 class TrekTouristicContentViewSet(viewsets.ModelViewSet):
     model = TouristicContent
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]

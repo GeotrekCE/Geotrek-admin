@@ -268,16 +268,9 @@ class Command(BaseCommand):
 
     def sync_trek_pois(self, lang, trek, zipfile=None):
         params = {'format': 'geojson'}
-        if settings.ZIP_TOURISTIC_CONTENTS_AS_POI:
-            view = tourism_views.TrekTouristicContentAndPOIViewSet.as_view({'get': 'list'})
-            name = os.path.join('api', lang, 'treks', str(trek.pk), 'pois.geojson')
-            self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
-            view = TrekPOIViewSet.as_view({'get': 'list'})
-            self.sync_view(lang, view, name, params=params, zipfile=None, pk=trek.pk)
-        else:
-            view = TrekPOIViewSet.as_view({'get': 'list'})
-            name = os.path.join('api', lang, 'treks', str(trek.pk), 'pois.geojson')
-            self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
+        view = TrekPOIViewSet.as_view({'get': 'list'})
+        name = os.path.join('api', lang, 'treks', str(trek.pk), 'pois.geojson')
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
 
     def sync_trek_services(self, lang, trek, zipfile=None):
         view = TrekServiceViewSet.as_view({'get': 'list'})
@@ -396,10 +389,6 @@ class Command(BaseCommand):
             self.sync_media_file(lang, desk.thumbnail, zipfile=self.trek_zipfile)
         for poi in trek.published_pois:
             self.sync_poi_media(lang, poi)
-        if settings.ZIP_TOURISTIC_CONTENTS_AS_POI:
-            for content in trek.published_touristic_contents:
-                if content.resized_pictures:
-                    self.sync_media_file(lang, content.resized_pictures[0][1], zipfile=self.trek_zipfile)
         self.sync_media_file(lang, trek.thumbnail, zipfile=self.zipfile)
         for picture, resized in trek.resized_pictures:
             self.sync_media_file(lang, resized, zipfile=self.trek_zipfile)
@@ -488,8 +477,6 @@ class Command(BaseCommand):
         self.sync_pictograms(lang, trekking_models.ServiceType, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.Route, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.WebLinkCategory)
-        if settings.ZIP_TOURISTIC_CONTENTS_AS_POI:
-            self.sync_pictograms('**', tourism_models.TouristicContentCategory, zipfile=self.zipfile)
 
         treks = trekking_models.Trek.objects.existing().order_by('pk')
         treks = treks.filter(
