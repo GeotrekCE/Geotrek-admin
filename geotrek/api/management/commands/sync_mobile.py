@@ -126,8 +126,8 @@ class Command(BaseCommand):
             zipfile.write(dst, os.path.join(url, name))
         if self.verbosity == 2:
             self.stdout.write(
-                u"\x1b[36m\x1b[0m \x1b[1m{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(url=url,
-                                                                                           name=name))
+                u"\x1b[36m**\x1b[0m \x1b[1m{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
+                    url=url, name=name))
 
     def sync_media_file(self, field, prefix=None, directory='', zipfile=None):
         if field and field.name:

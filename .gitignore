@@ -34,6 +34,7 @@ geotrek/settings/custom.py
 !/bulkimport/__init__.py
 /install.log
 /data/
+/mobile/
 /sync_trek/
 
 /.project

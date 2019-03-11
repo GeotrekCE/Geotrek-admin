@@ -14,7 +14,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
     class POIListSerializer(geo_serializers.GeoFeatureModelSerializer):
         pictures = serializers.SerializerMethodField(read_only=True)
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
-        type_pois = serializers.ReadOnlyField(source='type.pk')
+        type = serializers.ReadOnlyField(source='type.pk')
 
         def get_pictures(self, obj):
             serialized = []
@@ -31,7 +31,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.POI
             geo_field = 'geometry'
             fields = (
-                'id', 'pictures', 'name', 'description', 'type_pois', 'geometry',
+                'id', 'pictures', 'name', 'description', 'type', 'geometry',
             )
 
     class TrekDetailSerializer(geo_serializers.GeoFeatureModelSerializer):
@@ -85,7 +85,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'difficulty',
                 'geometry', 'pictures', 'information_desks', 'cities', 'departure_city', 'arrival_city'
             )
-            auto_bbox = True
 
     class TrekListSerializer(geo_serializers.GeoFeatureModelSerializer):
         first_picture = serializers.ReadOnlyField(source='resized_picture_mobile')

@@ -11,7 +11,6 @@ POI_GEOJSON_STRUCTURE = sorted([
 GEOJSON_STRUCTURE = sorted([
     'geometry',
     'type',
-    'bbox',
     'properties'
 ])
 
@@ -35,7 +34,7 @@ TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
 ])
 
 POI_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'description', 'id', 'name', 'pictures', 'first_picture', 'type'
+    'description', 'id', 'name', 'pictures', 'type'
 ])
 
 
