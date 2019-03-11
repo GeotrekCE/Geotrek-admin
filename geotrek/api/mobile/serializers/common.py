@@ -64,6 +64,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
     class PracticeSerializer(serializers.ModelSerializer):
         pictogram = serializers.SerializerMethodField(read_only=True)
+        color = serializers.ReadOnlyField(source='mobile_color')
 
         def get_pictogram(self, obj):
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
@@ -71,7 +72,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         class Meta:
             model = trekking_models.Practice
-            fields = ('id', 'name', 'pictogram', 'mobile_color')
+            fields = ('id', 'name', 'pictogram', 'color')
 
     class AccessibilitySerializer(serializers.ModelSerializer):
         pictogram = serializers.SerializerMethodField(read_only=True)

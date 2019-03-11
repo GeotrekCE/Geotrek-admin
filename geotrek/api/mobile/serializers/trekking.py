@@ -119,5 +119,5 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             geo_field = 'geometry'
             fields = (
                 'id', 'first_picture', 'name', 'departure', 'accessibilities', 'route', 'departure_city',
-                'difficulty', 'practice', 'themes', 'length', 'geometry', 'cities', 'duration'
+                'difficulty', 'practice', 'themes', 'length', 'geometry', 'cities', 'duration', 'ascent', 'descent',
             )
