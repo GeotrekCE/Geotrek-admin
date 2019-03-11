@@ -794,7 +794,8 @@ class Command(BaseCommand):
             'tiles_dir': os.path.join(settings.DEPLOY_ROOT, 'var', 'tiles'),
         }
         self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_rando')
-        os.mkdir(self.tmp_root)
+        if not os.path.exists(self.tmp_root):
+            os.mkdir(self.tmp_root)
         try:
             self.sync()
             if self.celery_task:
