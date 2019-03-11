@@ -20,7 +20,7 @@ from geotrek.common.models import FileType  # NOQA
 from geotrek.common import models as common_models
 from geotrek.flatpages.models import FlatPage
 from geotrek.trekking import models as trekking_models
-from geotrek.api.mobile.views.trekking import (TrekViewSet, POIViewSet)
+from geotrek.api.mobile.views.trekking import TrekViewSet
 from geotrek.api.mobile.views.common import FlatPageViewSet, SettingsView
 from geotrek.trekking.management.commands.sync_rando import ZipTilesBuilder
 # Register mapentity models
@@ -111,7 +111,7 @@ class Command(BaseCommand):
 
     def sync_trek_pois(self, lang, trek):
         params = {'format': 'geojson'}
-        view = POIViewSet.as_view({'get': 'list'})
+        view = TrekViewSet.as_view({'get': 'pois'})
         name = os.path.join(lang, str(trek.pk), 'pois.geojson')
         self.sync_view(lang, view, name, params=params, pk=trek.pk)
 

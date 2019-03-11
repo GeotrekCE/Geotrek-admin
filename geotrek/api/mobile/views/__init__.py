@@ -8,7 +8,7 @@ from rest_framework_swagger import renderers
 from django.conf import settings
 from .common import SettingsView  # noqa
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
-    from .trekking import TrekViewSet, POIViewSet  # noqa
+    from .trekking import TrekViewSet  # noqa
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
     from .common import FlatPageViewSet  # noqa
 

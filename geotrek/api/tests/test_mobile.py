@@ -65,7 +65,7 @@ class BaseApiTest(TestCase):
 
     def get_poi_list(self, id_trek, params=None):
         self.login()
-        return self.client.get(reverse('apimobile:poi', args=(id_trek, )), params, HTTP_ACCEPT_LANGUAGE='fr')
+        return self.client.get(reverse('apimobile:treks-pois', args=(id_trek, )), params, HTTP_ACCEPT_LANGUAGE='fr')
 
 
 class APIAccessTestCase(BaseApiTest):

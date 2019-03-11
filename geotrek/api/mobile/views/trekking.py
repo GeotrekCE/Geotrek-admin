@@ -13,7 +13,9 @@ from geotrek.trekking import models as trekking_models
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework_extensions.mixins import DetailSerializerMixin
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework import response
 from rest_framework import viewsets
+from rest_framework import decorators
 
 
 class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
@@ -36,36 +38,14 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
             filter(Q(**{'published': True}) | Q(**{'trek_parents__parent__published': True,
                                                    'trek_parents__parent__deleted': False})).distinct()
 
-
-class POIViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
-    filter_backends = (DjangoFilterBackend,)
-    serializer_class = api_serializers.POIListSerializer
-    serializer_detail_class = api_serializers.POIListSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, ]
-    authentication_classes = [BasicAuthentication, SessionAuthentication]
-    queryset = trekking_models.POI.objects.existing() \
-        .select_related('topo_object', 'type', ) \
-        .prefetch_related('topo_object__aggregations', 'attachments') \
-        .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID),
-                  geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
-        .order_by('pk')  # Required for reliable pagination
-    filter_fields = ('type',)
-
-    def get_queryset(self):
-        pk = self.kwargs['pk']
-        try:
-            trek = trekking_models.Trek.objects.existing().get(pk=pk)
-        except trekking_models.Trek.DoesNotExist:
-            raise Http404
-        if not trek.is_public:
-            raise Http404
-        return trek.pois.filter(published=True).select_related('topo_object', 'type', )\
+    @decorators.detail_route(methods=['get'])
+    def pois(self, request, *args, **kwargs):
+        trek = self.get_object()
+        qs = trek.pois.filter(published=True).select_related('topo_object', 'type', )\
             .prefetch_related('topo_object__aggregations', 'attachments') \
             .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID),
                       geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
             .order_by('pk')
-
-    def get_serializer_context(self):
-        context = super(POIViewSet, self).get_serializer_context()
-        context.update({'trek_pk': self.kwargs['pk']})
-        return context
+        data = api_serializers.POIListSerializer(qs,
+                                                 many=True, context={'trek_pk': trek.pk}).data
+        return response.Response(data)
