@@ -14,7 +14,8 @@ class AttachmentSerializer(serializers.ModelSerializer):
     def get_url(self, obj):
         if not obj.attachment_file:
             return ""
-        return '/{id}{file}'.format(id=obj.object_id, file=obj.attachment_file.url)
+        trek_pk = self.context.get('trek_pk') or obj.object_id
+        return '/{id}{file}'.format(id=trek_pk, file=obj.attachment_file.url)
 
     class Meta:
         model = common_models.Attachment
@@ -27,8 +28,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
     from geotrek.trekking import models as trekking_models
 
     class POIListSerializer(geo_serializers.GeoFeatureModelSerializer):
-        pictures = AttachmentSerializer(many=True, )
-        first_picture = serializers.ReadOnlyField(source='serializable_resized_picture_mobile')
+        pictures = serializers.ListField(read_only=True, source='serializable_pictures', child=AttachmentSerializer())
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
         type_pois = serializers.ReadOnlyField(source='type.pk')
 
@@ -36,14 +36,14 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.POI
             geo_field = 'geometry'
             fields = (
-                'id', 'pictures', 'name', 'description', 'first_picture', 'type_pois', 'geometry',
+                'id', 'pictures', 'name', 'description', 'type_pois', 'geometry',
             )
 
     class TrekDetailSerializer(geo_serializers.GeoFeatureModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
         first_picture = serializers.ReadOnlyField(source='serializable_resized_picture_mobile')
         length = serializers.SerializerMethodField(read_only=True)
-        pictures = AttachmentSerializer(many=True, )
+        pictures = AttachmentSerializer(many=True, source='serializable_pictures')
         cities = serializers.SerializerMethodField(read_only=True)
         departure_city = serializers.SerializerMethodField(read_only=True)
         arrival_city = serializers.SerializerMethodField(read_only=True)

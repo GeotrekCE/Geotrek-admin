@@ -64,3 +64,8 @@ class POIViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
             .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID),
                       geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
             .order_by('pk')
+
+    def get_serializer_context(self):
+        context = super(POIViewSet, self).get_serializer_context()
+        context.update({'trek_pk': self.kwargs['pk']})
+        return context

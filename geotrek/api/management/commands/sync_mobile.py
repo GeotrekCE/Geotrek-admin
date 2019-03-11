@@ -92,7 +92,7 @@ class Command(BaseCommand):
 
     def sync_json(self, lang, viewset, name, zipfile=None, params={}, as_view_args=[], **kwargs):
         view = viewset.as_view(*as_view_args)
-        name = os.path.join('mobile', lang, '{name}.json'.format(name=name))
+        name = os.path.join(lang, '{name}.json'.format(name=name))
         params = params.copy()
         if self.portal:
             params['portal'] = ','.join(self.portal)
@@ -100,7 +100,7 @@ class Command(BaseCommand):
 
     def sync_geojson(self, lang, viewset, name, zipfile=None, params={}, type_view={}, **kwargs):
         view = viewset.as_view(type_view)
-        name = os.path.join('mobile', lang, name)
+        name = os.path.join(lang, name)
         params = params.copy()
         params.update({'format': 'geojson'})
 
@@ -112,7 +112,7 @@ class Command(BaseCommand):
     def sync_trek_pois(self, lang, trek):
         params = {'format': 'geojson'}
         view = POIViewSet.as_view({'get': 'list'})
-        name = os.path.join('mobile', lang, 'treks', str(trek.pk), 'pois.geojson')
+        name = os.path.join(lang, str(trek.pk), 'pois.geojson')
         self.sync_view(lang, view, name, params=params, pk=trek.pk)
 
     def sync_file(self, name, src_root, url, directory='', zipfile=None):
@@ -194,7 +194,7 @@ class Command(BaseCommand):
             treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
 
         for trek in treks:
-            self.sync_geojson(lang, TrekViewSet, 'treks/{pk}.geojson'.format(pk=trek.pk), pk=trek.pk,
+            self.sync_geojson(lang, TrekViewSet, '{pk}/trek.geojson'.format(pk=trek.pk), pk=trek.pk,
                               type_view={'get': 'retrieve'})
             self.sync_trek_pois(lang, trek)
 
@@ -216,17 +216,14 @@ class Command(BaseCommand):
         self.sync_treks_media()
 
     def sync_trek_by_pk_media(self, trek):
-        url_trek = os.path.join('mobile', 'nolang')
+        url_trek = os.path.join('nolang')
         zipname_trekid = os.path.join(url_trek, str(trek.pk), 'media.zip')
         zipfullname_trekid = os.path.join(self.tmp_root, zipname_trekid)
         self.mkdirs(zipfullname_trekid)
         trekid_zipfile = ZipFile(zipfullname_trekid, 'w')
 
         for poi in trek.published_pois:
-            if poi.resized_pictures:
-                self.sync_media_file(poi.resized_pictures[0][1], prefix=trek.pk, directory=url_trek,
-                                     zipfile=trekid_zipfile)
-            for picture, resized in poi.resized_pictures[1:]:
+            for picture, resized in poi.resized_pictures:
                 self.sync_media_file(resized, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
             for other_file in poi.files:
                 self.sync_media_file(other_file.attachment_file, prefix=trek.pk, directory=url_trek,
@@ -248,8 +245,8 @@ class Command(BaseCommand):
             self.sync_trek_by_pk_media(trek)
 
     def sync_global_media(self):
-        url_media_nolang = os.path.join('mobile', 'nolang')
-        zipname_settings = os.path.join('mobile', 'nolang', 'media.zip')
+        url_media_nolang = os.path.join('nolang')
+        zipname_settings = os.path.join('nolang', 'media.zip')
         zipfullname_settings = os.path.join(self.tmp_root, zipname_settings)
         self.mkdirs(zipfullname_settings)
         self.zipfile_settings = ZipFile(zipfullname_settings, 'w')
@@ -266,7 +263,7 @@ class Command(BaseCommand):
     def sync_trek_tiles(self, trek):
         """ Creates a tiles file for the specified Trek object.
         """
-        zipname = os.path.join('mobile', 'nolang', str(trek.pk), 'tiles.zip')
+        zipname = os.path.join('nolang', str(trek.pk), 'tiles.zip')
 
         if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
@@ -301,7 +298,7 @@ class Command(BaseCommand):
     def sync_global_tiles(self):
         """ Creates a tiles file on the global extent.
         """
-        zipname = os.path.join('mobile', 'nolang', 'tiles.zip')
+        zipname = os.path.join('nolang', 'tiles.zip')
 
         if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
@@ -400,7 +397,7 @@ class Command(BaseCommand):
         if not os.path.exists(self.dst_root):
             return
         existing = set([os.path.basename(p) for p in os.listdir(self.dst_root)])
-        remaining = existing - {'mobile'}
+        remaining = existing - {'nolang', 'fr', 'en', 'it', 'de'}
         if remaining:
             raise CommandError(u"Destination directory contains extra data")
 
