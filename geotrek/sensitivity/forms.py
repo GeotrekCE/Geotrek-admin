@@ -27,7 +27,7 @@ class SensitiveAreaForm(CommonForm):
 class RegulatorySensitiveAreaForm(CommonForm):
     geomfields = ['geom']
     name = forms.CharField(max_length=250, label=_(u"Name"))
-    elevation = forms.BooleanField(required=False)
+    elevation = forms.BooleanField(label=_(u"Elevation"), required=False)
     pictogram = forms.FileField(label=_(u"Pictogram"), required=False)
     period01 = forms.BooleanField(label=_(u"January"), required=False)
     period02 = forms.BooleanField(label=_(u"February"), required=False)
@@ -73,7 +73,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
             species = self.instance.species
         species.category = Species.REGULATORY
         species.name = self.cleaned_data['name']
-        species.radius = self.cleaned_data['radius']
+        species.radius = self.cleaned_data['elevation']
         species.pictogram = self.cleaned_data['pictogram']
         species.url = self.cleaned_data['url']
         for p in range(1, 13):
