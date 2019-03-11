@@ -1,36 +1,31 @@
 from __future__ import unicode_literals
+import os
 
 from django.conf import settings
 from rest_framework import serializers
 from rest_framework_gis import serializers as geo_serializers
 
-from geotrek.common import models as common_models
 from geotrek.zoning.models import City
-
-
-class AttachmentSerializer(serializers.ModelSerializer):
-    url = serializers.SerializerMethodField(read_only=True)
-
-    def get_url(self, obj):
-        if not obj.attachment_file:
-            return ""
-        trek_pk = self.context.get('trek_pk') or obj.object_id
-        return '/{id}{file}'.format(id=trek_pk, file=obj.attachment_file.url)
-
-    class Meta:
-        model = common_models.Attachment
-        fields = (
-            'url', 'author', 'title', 'legend',
-        )
 
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     from geotrek.trekking import models as trekking_models
 
     class POIListSerializer(geo_serializers.GeoFeatureModelSerializer):
-        pictures = serializers.ListField(read_only=True, source='serializable_pictures', child=AttachmentSerializer())
+        pictures = serializers.SerializerMethodField(read_only=True)
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
         type_pois = serializers.ReadOnlyField(source='type.pk')
+
+        def get_pictures(self, obj):
+            serialized = []
+            for picture, thdetail in obj.resized_pictures:
+                serialized.append({
+                    'author': picture.author,
+                    'title': picture.title,
+                    'legend': picture.legend,
+                    'url': os.path.join('/', self.context['trek_pk'], settings.MEDIA_URL[1:], thdetail.name),
+                })
+            return serialized
 
         class Meta:
             model = trekking_models.POI
@@ -42,7 +37,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
     class TrekDetailSerializer(geo_serializers.GeoFeatureModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
         length = serializers.SerializerMethodField(read_only=True)
-        pictures = serializers.ReadOnlyField(source='serializable_pictures')
+        pictures = serializers.ReadOnlyField(source='serializable_pictures_mobile')
         cities = serializers.SerializerMethodField(read_only=True)
         departure_city = serializers.SerializerMethodField(read_only=True)
         arrival_city = serializers.SerializerMethodField(read_only=True)
