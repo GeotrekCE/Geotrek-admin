@@ -35,7 +35,7 @@ TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
 ])
 
 POI_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'description', 'id', 'name', 'pictures', 'first_picture', 'type_pois'
+    'description', 'id', 'name', 'pictures', 'first_picture', 'type'
 ])
 
 

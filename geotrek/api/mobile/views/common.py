@@ -161,7 +161,7 @@ class SettingsView(APIView):
                                                              context={'request': request}).data
                 },
                 {
-                    'id': 'type_pois',
+                    'id': 'type',
                     'name': _('POI types'),
                     'values': api_serializers.POITypeSerializer(POIType.objects.all().order_by('pk'), many=True,
                                                                 context={'request': request}).data,
