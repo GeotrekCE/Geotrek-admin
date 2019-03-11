@@ -144,14 +144,9 @@ class PicturesMixin(object):
 
     @property
     def resized_picture_mobile(self):
-        for picture in self.pictures:
-            thumbnailer = get_thumbnailer(picture.attachment_file)
-            try:
-                resized_picture = thumbnailer.get_thumbnail(aliases.get('medium'))
-            except InvalidImageFormatError:
-                logger.info(_("Image %s invalid or missing from disk.") % picture.attachment_file)
-                continue
-            return resized_picture
+        pictures = self.serializable_pictures
+        if pictures:
+            return pictures[0]
         return None
 
     @classproperty
@@ -172,13 +167,6 @@ class PicturesMixin(object):
     @property
     def serializable_thumbnail(self):
         th = self.thumbnail
-        if not th:
-            return None
-        return os.path.join(settings.MEDIA_URL, th.name)
-
-    @property
-    def serializable_resized_picture_mobile(self):
-        th = self.resized_picture_mobile
         if not th:
             return None
         return os.path.join(settings.MEDIA_URL, th.name)

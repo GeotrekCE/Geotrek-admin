@@ -41,9 +41,8 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
     class TrekDetailSerializer(geo_serializers.GeoFeatureModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
-        first_picture = serializers.ReadOnlyField(source='serializable_resized_picture_mobile')
         length = serializers.SerializerMethodField(read_only=True)
-        pictures = AttachmentSerializer(many=True, source='serializable_pictures')
+        pictures = serializers.ReadOnlyField(source='serializable_pictures')
         cities = serializers.SerializerMethodField(read_only=True)
         departure_city = serializers.SerializerMethodField(read_only=True)
         arrival_city = serializers.SerializerMethodField(read_only=True)
@@ -85,7 +84,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.Trek
             geo_field = 'geometry'
             fields = (
-                'id', 'name', 'first_picture', 'accessibilities', 'description_teaser', 'cities',
+                'id', 'name', 'accessibilities', 'description_teaser', 'cities',
                 'description', 'departure', 'arrival', 'duration', 'access', 'advised_parking', 'advice',
                 'difficulty', 'length', 'ascent', 'descent', 'route', 'is_park_centered',
                 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'difficulty',
@@ -94,7 +93,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             auto_bbox = True
 
     class TrekListSerializer(geo_serializers.GeoFeatureModelSerializer):
-        first_picture = serializers.ReadOnlyField(source='serializable_resized_picture_mobile')
+        first_picture = serializers.ReadOnlyField(source='resized_picture_mobile')
         length = serializers.SerializerMethodField(read_only=True)
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='start_point', )
         cities = serializers.SerializerMethodField(read_only=True)
