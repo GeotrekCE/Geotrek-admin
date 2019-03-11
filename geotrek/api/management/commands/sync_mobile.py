@@ -231,6 +231,10 @@ class Command(BaseCommand):
         for picture, resized in trek.resized_pictures:
             self.sync_media_file(resized, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
 
+        if self.verbosity == 2:
+            self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname_trekid),
+                              ending="")
+
         self.close_zip(trekid_zipfile, zipname_trekid)
 
     def sync_treks_media(self):
@@ -397,7 +401,7 @@ class Command(BaseCommand):
         if not os.path.exists(self.dst_root):
             return
         existing = set([os.path.basename(p) for p in os.listdir(self.dst_root)])
-        remaining = existing - {'nolang', 'fr', 'en', 'it', 'de'}
+        remaining = existing - {'nolang'} - set(settings.MODELTRANSLATION_LANGUAGES)
         if remaining:
             raise CommandError(u"Destination directory contains extra data")
 
