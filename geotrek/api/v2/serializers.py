@@ -357,6 +357,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     class SensitiveAreaListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:sensitivearea-detail')
         name = serializers.SerializerMethodField(read_only=True)
+        elevation = serializers.ReadOnlyField(source='species_id.radius')
         description = serializers.SerializerMethodField(read_only=True)
         period = serializers.SerializerMethodField(read_only=True)
         practices = serializers.SerializerMethodField(read_only=True)
@@ -395,7 +396,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
         class Meta:
             model = sensitivity_models.SensitiveArea
             fields = (
-                'id', 'url', 'name', 'description', 'period', 'contact', 'practices', 'info_url',
+                'id', 'url', 'name', 'elevation', 'description', 'period', 'contact', 'practices', 'info_url',
                 'published', 'structure', 'species_id', 'kml_url',
                 'geometry', 'update_datetime', 'create_datetime'
             )

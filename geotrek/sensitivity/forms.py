@@ -27,6 +27,7 @@ class SensitiveAreaForm(CommonForm):
 class RegulatorySensitiveAreaForm(CommonForm):
     geomfields = ['geom']
     name = forms.CharField(max_length=250, label=_(u"Name"))
+    elevation = forms.BooleanField(required=False)
     pictogram = forms.FileField(label=_(u"Pictogram"), required=False)
     period01 = forms.BooleanField(label=_(u"January"), required=False)
     period02 = forms.BooleanField(label=_(u"February"), required=False)
@@ -44,7 +45,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
     url = forms.URLField(label=_(u"URL"), required=False)
 
     class Meta:
-        fields = ['name', 'published', 'description', 'contact', 'pictogram', 'practices'] + \
+        fields = ['name', 'elevation', 'published', 'description', 'contact', 'pictogram', 'practices'] + \
                  ['period{:02}'.format(p) for p in range(1, 13)] + ['url', 'geom']
         model = SensitiveArea
         widgets = {'geom': PolygonMapWidget()}
@@ -54,6 +55,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
             species = kwargs['instance'].species
             kwargs['initial'] = {
                 'name': species.name,
+                'elevation': species.radius,
                 'pictogram': species.pictogram,
                 'practices': species.practices.all(),
                 'url': species.url,
@@ -71,6 +73,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
             species = self.instance.species
         species.category = Species.REGULATORY
         species.name = self.cleaned_data['name']
+        species.radius = self.cleaned_data['radius']
         species.pictogram = self.cleaned_data['pictogram']
         species.url = self.cleaned_data['url']
         for p in range(1, 13):

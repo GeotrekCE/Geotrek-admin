@@ -171,6 +171,7 @@ class RegulatorySensitiveAreaShapeParser(ShapeParser):
         'description': 'description',
         'species': (
             'nom',
+            'altitude'
             'periode',
             'pratiques',
             'url',
