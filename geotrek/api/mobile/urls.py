@@ -17,7 +17,3 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^settings/$', api_mobile.SettingsView.as_view(), name='settings'),
 ]
-
-if 'geotrek.trekking' in settings.INSTALLED_APPS:
-    urlpatterns += [url(r'^treks/(?P<pk>\d+)/pois$',
-                        api_mobile.POIViewSet.as_view({'get': 'list'}), name="poi")]
