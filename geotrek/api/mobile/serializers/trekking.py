@@ -23,7 +23,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                     'author': picture.author,
                     'title': picture.title,
                     'legend': picture.legend,
-                    'url': os.path.join('/', self.context['trek_pk'], settings.MEDIA_URL[1:], thdetail.name),
+                    'url': os.path.join('/', str(self.context['trek_pk']), settings.MEDIA_URL[1:], thdetail.name),
                 })
             return serialized
 
