@@ -40,7 +40,9 @@ Synchronization options
       -v VERBOSITY, --verbosity=VERBOSITY
                             Verbosity level; 0=minimal output, 1=normal output,
                             2=verbose output
-      -u URL, --url=URL     Base url of Geotrek-Admin (eg. http://geotrek.myorganization.com)
+      -u URL, --url=URL     Base url of Geotrek-admin (eg. http://geotrek.myorganization.com)
+      -r URL, --rando-url=URL
+                            Base url of public rando website, used for static html versions of objects pages generated for Facebook
       -s SOURCE, --source=SOURCE
                             Filter by source(s)
       -P PORTAL, --portal=PORTAL
@@ -48,11 +50,16 @@ Synchronization options
       -p, --skip-pdf        Skip generation of PDF files
       -t, --skip-tiles      Skip generation of map tiles files for mobile app
       -d, --skip-dem        Skip generation of Digital Elevation Model files for 3D view
+      -e, --skip-profile-png
+                            Skip generation of PNG elevation profile
       -w, --with-touristicevents
-                            include touristic events by trek in global.zip
+                            Include touristic events by trek in global.zip for Geotrek-mobile
       -c CONTENT_CATEGORIES, --with-touristiccontent-categories=CONTENT_CATEGORIES
-                            include touristic contents by trek in global.zip
+                            Include touristic contents by trek in global.zip for Geotrek-mobile
                             (filtered by category ID ex: --with-touristiccontent-categories="1,2,3")
+      -g, --with-signages   Include published signages
+      -i, --with-infrastructures
+                            Include published infrastructures
 
 
 Synchronization filtered by source and portal
