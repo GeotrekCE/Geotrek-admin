@@ -42,7 +42,8 @@ Synchronization options
                             2=verbose output
       -u URL, --url=URL     Base url of Geotrek-admin (eg. http://geotrek.myorganization.com)
       -r URL, --rando-url=URL
-                            Base url of public rando website, used for static html versions of objects pages generated for Facebook
+                            Base url of public rando website, used for static html versions of objects pages
+                            generated for Facebook in meta folder of data API
       -s SOURCE, --source=SOURCE
                             Filter by source(s)
       -P PORTAL, --portal=PORTAL
