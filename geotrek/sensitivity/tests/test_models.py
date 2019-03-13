@@ -32,9 +32,10 @@ class SensitiveAreaModelTest(TestCase):
                          (3.0, 46.49999999256511, 3.0013039767202154, 46.500900449784226))
 
     def test_get_kml(self):
-        sensitive_area = SensitiveAreaFactory.create()
-        self.assertIn('<coordinates>3.0,46.5,0.0 3.0,46.5000270135,0.0 3.00003911867,46.5000270135,0.0 3.00003911866,'
-                      '46.5,0.0 3.0,46.5,0.0</coordinates>', sensitive_area.kml())
+        species = SpeciesFactory.create(radius=5)
+        sensitive_area = SensitiveAreaFactory.create(species=species)
+        self.assertIn('<coordinates>3.0,46.5,5.0 3.0,46.5000270135,5.0 3.00003911867,46.5000270135,5.0 3.00003911866,'
+                      '46.5,5.0 3.0,46.5,5.0</coordinates>', sensitive_area.kml())
 
     def test_get_kml_point(self):
         sensitive_area = SensitiveAreaFactory.create(geom='POINT(700000 6600000)')
