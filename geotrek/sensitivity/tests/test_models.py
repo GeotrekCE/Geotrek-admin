@@ -33,7 +33,7 @@ class SensitiveAreaModelTest(TestCase):
 
     def test_get_kml(self):
         species = SpeciesFactory.create(radius=5)
-        sensitive_area = SensitiveAreaFactory.create(species=species, )
+        sensitive_area = SensitiveAreaFactory.create(species=species)
         self.assertIn('<coordinates>3.0,46.5,5.0 3.0,46.5000270135,5.0 3.00003911867,46.5000270135,5.0 3.00003911866,'
                       '46.5,5.0 3.0,46.5,5.0</coordinates>', sensitive_area.kml())
 
