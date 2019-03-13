@@ -385,9 +385,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
             return obj.geom2d_transformed
 
         def get_elevation(self, obj):
-            if obj.species:
-                return obj.species.radius
-            return None
+            return obj.species.radius
 
         def get_species_id(self, obj):
             if obj.species.category == sensitivity_models.Species.SPECIES:
