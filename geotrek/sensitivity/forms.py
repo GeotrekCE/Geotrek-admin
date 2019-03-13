@@ -1,6 +1,7 @@
 from django import forms
 from .models import SensitiveArea, SportPractice, Species
 from geotrek.common.forms import CommonForm
+from django.core.validators import MinValueValidator
 from django.utils.translation import pgettext, ugettext as _
 from mapentity.widgets import MapWidget
 
@@ -27,7 +28,7 @@ class SensitiveAreaForm(CommonForm):
 class RegulatorySensitiveAreaForm(CommonForm):
     geomfields = ['geom']
     name = forms.CharField(max_length=250, label=_(u"Name"))
-    elevation = forms.BooleanField(label=_(u"Elevation"), required=False)
+    elevation = forms.IntegerField(label=_(u"Elevation"), required=False, validators=[MinValueValidator(0)])
     pictogram = forms.FileField(label=_(u"Pictogram"), required=False)
     period01 = forms.BooleanField(label=_(u"January"), required=False)
     period02 = forms.BooleanField(label=_(u"February"), required=False)
