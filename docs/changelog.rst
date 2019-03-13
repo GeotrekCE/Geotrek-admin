@@ -2,12 +2,16 @@
 CHANGELOG
 =========
 
-2.24.7.dev0
+2.24.7 (2019-03-13)
 -------------------
+
+**Minor changes**
+
+- Add elevation on sensible areas
 
 **Bug fixes**
 
--
+- Fix retry sync_rando tiles when tiles does not exist (landez 2.4.1)
 
 
 2.24.6 (2019-03-07)
