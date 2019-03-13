@@ -33,7 +33,7 @@ class SignageLayer(MapEntityLayer):
 class SignageList(MapEntityList):
     queryset = Signage.objects.existing()
     filterform = SignageFilterSet
-    columns = ['id', 'name', 'type', 'condition', 'cities']
+    columns = ['id', 'name', 'code', 'type', 'condition']
 
 
 class SignageJsonList(MapEntityJsonList, SignageList):
@@ -42,9 +42,9 @@ class SignageJsonList(MapEntityJsonList, SignageList):
 
 class SignageFormatList(MapEntityFormat, SignageList):
     columns = [
-        'id', 'name', 'type', 'condition', 'description',
+        'id', 'name', 'code', 'type', 'condition', 'description',
         'implantation_year', 'published', 'structure', 'date_insert',
-        'date_update', 'cities', 'districts', 'areas', 'code', 'lat_value', 'lng_value',
+        'date_update', 'cities', 'districts', 'areas', 'lat_value', 'lng_value',
         'printed_elevation', 'sealing', 'manager',
     ] + AltimetryMixin.COLUMNS
 

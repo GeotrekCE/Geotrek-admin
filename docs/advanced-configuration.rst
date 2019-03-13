@@ -143,9 +143,8 @@ Example with IGN and OSM basemaps :
         ('IGN Ortho', 'http://gpp3-wxs.ign.fr/YOURAPIKEY/geoportail/wmts?LAYER=ORTHOIMAGERY.ORTHOPHOTOS&EXCEPTIONS=text/xml&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', u'© IGN Geoportail'),
         ('IGN Cadastre', 'http://gpp3-wxs.ign.fr/YOURAPIKEY/geoportail/wmts?LAYER=CADASTRALPARCELS.PARCELS&EXCEPTIONS=text/xml&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=bdparcellaire_o&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', u'© IGN Geoportail'),
         ('OSM', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', u'© OpenStreetMap contributors'),
-        ('OSM Mapbox Outdoors', 'https://api.mapbox.com/v4/mapbox.outdoors/{z}/{x}/{y}.png?access_token=pk.YOURAPIKEY', u'© OpenStreetMap contributors / Mapbox'),
         ('OSM Stamen Terrain', 'http://tile.stamen.com/terrain/{z}/{x}/{y}.jpg', u'© OpenStreetMap contributors / Stamen Design'),
-        ('OpenTopoMap', 'http://a.tile.opentopomap.org/{z}/{x}/{y}.png', u'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)'),
+        ('OpenTopoMap', 'http://a.tile.opentopomap.org/{z}/{x}/{y}.png', u'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)')
     ]
 
 To use IGN Geoportail WMTS tiles API, you need an API key with subscribing on http://professionnels.ign.fr/visualisation. Choose WebMercator WMTS tiles.
@@ -257,6 +256,61 @@ applied. In order to disable, change this MapEntity setting :
 
     MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = False
 
+  
+Override translations
+----------------------------
+
+You can override default translation files available in each module (for example those from trekking module available in ``<geotrek-admin-folder>/geotrek/trekking/locale/fr/LC_MESSAGES/django.po``).
+
+Don't edit these default files, use them to find which words you want to override.
+
+Create the custom translations destination folder:
+
+::
+
+     cd  <geotrek-admin-folder>/geotrek/
+     mkdir -p locale/en/LC_MESSAGES
+
+Then create a ``django.po`` file in this directory. You can do one folder and one ``django.po`` file for each language (example  ``<geotrek-admin-folder>/geotrek/locale/fr/LC_MESSAGES/django.po`` for French translation overriding)
+
+Override the translations that you want in these files.
+
+Example of content for the French translation overriding:
+
+::
+
+    # MY FRENCH CUSTOM TRANSLATION
+    # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+    # This file is distributed under the same license as the PACKAGE package.
+    # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+    #
+    msgid ""
+    msgstr ""
+    "Report-Msgid-Bugs-To: \n"
+    "POT-Creation-Date: 2018-11-15 15:32+0200\n"
+    "PO-Revision-Date: 2018-11-15 15:33+0100\n"
+    "Last-Translator: \n"
+    "Language-Team: LANGUAGE <LL@li.org>\n"
+    "MIME-Version: 1.0\n"
+    "Content-Type: text/plain; charset=UTF-8\n"
+    "Content-Transfer-Encoding: 8bit\n"
+    "Project-Id-Verésion: PACKAGE VERSION\n"
+    "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+    "Project-Id-Version: \n"
+    "X-Generator: Poedit 1.5.4\n"
+      
+    msgid "City"
+    msgstr "Région"
+
+    msgid "District"
+    msgstr "Pays"
+
+Apply changes : 
+
+::
+
+    cd <geotrek-admin-folder>
+    make env_standalone deploy
 
 Override public document OpenOffice template
 --------------------------------------------

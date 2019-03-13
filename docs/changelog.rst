@@ -2,6 +2,56 @@
 CHANGELOG
 =========
 
+2.24.7 (2019-03-13)
+-------------------
+
+**Minor changes**
+
+- Add elevation on sensible areas
+
+**Bug fixes**
+
+- Fix retry sync_rando tiles when tiles does not exist (landez 2.4.1)
+
+
+2.24.6 (2019-03-07)
+-------------------
+
+**Bug fixes**
+
+- When updating interventions, stake field is no more required
+- Fix duplicates in year filters in intervention module
+- Configurable blade code
+- Allow letters in blade number
+- Improve signage templates
+- Add "On signage/infrastructure" filter on intervention list
+
+
+2.24.5 (2019-03-06)
+-------------------
+
+**Performances**
+
+- Add index to date_update columns
+
+
+2.24.4 (2019-03-01)
+-------------------
+
+**Bug fixes**
+
+- Fix get attachments with crop
+
+
+2.24.3 (2019-02-28)
+-------------------
+
+**Bug fixes**
+
+- Fix get attachments using generic foreign and not url
+- Fix merge path
+
+
 2.24.2 (2019-02-26)
 -------------------
 
@@ -20,7 +70,6 @@ CHANGELOG
 - Fix loadrestrictedareas command
 - Fix altimetry on straight portions of paths
 - Various signage fixes
-
 
 **Performances**
 

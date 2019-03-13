@@ -149,6 +149,7 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
             u'create_datetime': unicode(self.sensitivearea.date_insert.isoformat().replace('+00:00', 'Z')),
             u'update_datetime': unicode(self.sensitivearea.date_update.isoformat().replace('+00:00', 'Z')),
             u'description': u"Blabla",
+            u"elevation": None,
             u'contact': u'<a href="mailto:toto@tata.com">toto@tata.com</a>',
             u'kml_url': u'http://testserver/api/en/sensitiveareas/{pk}.kml'.format(pk=self.pk),
             u'info_url': self.species.url,

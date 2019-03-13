@@ -1,4 +1,5 @@
 from django.utils.translation import ugettext_lazy as _
+from django_filters import ChoiceFilter
 
 from mapentity.filters import PolygonFilter, PythonPolygonFilter
 
@@ -27,15 +28,17 @@ class InterventionYearSelect(YearSelect):
 
 
 class InterventionFilterSet(StructureRelatedFilterSet):
+    ON_CHOICES = (('INFRASTRUCTURE', _("Infrastructure")), ('SIGNAGE', _("Signage")))
     bbox = PolygonTopologyFilter(name='topology', lookup_expr='intersects')
     year = YearFilter(name='date',
                       widget=InterventionYearSelect,
                       label=_(u"Year"))
+    on = ChoiceFilter(name='topology__kind', choices=ON_CHOICES, label=_("On"), empty_label=_("On"))
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Intervention
         fields = StructureRelatedFilterSet.Meta.fields + [
-            'status', 'type', 'stake', 'subcontracting', 'project'
+            'status', 'type', 'stake', 'subcontracting', 'project', 'on',
         ]
 
 

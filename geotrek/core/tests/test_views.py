@@ -8,7 +8,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
-from django.conf import settings
 
 from mapentity.factories import UserFactory
 
@@ -233,38 +232,55 @@ class PathViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content)['sumPath'], 0.3)
 
-    def test_merge_fails(self):
+    def test_merge_fails_parameters(self):
+        """
+        Should fail if path[] length != 2
+        """
         self.login()
-        with self.assertRaises(AssertionError):
-            self.client.post('/mergepath/')
         p1 = PathFactory.create()
-        p1.save()
         p2 = PathFactory.create()
-        p2.save()
-        response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
-        self.assertIn('error', response.content)
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk]})
+        self.assertIn('error', response.json())
 
-    def test_merge_fails_trigger(self):
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p1.pk, p2.pk]})
+        self.assertIn('error', response.json())
+        self.logout()
+
+    def test_merge_fails_donttouch(self):
         self.login()
-        p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
-        p2 = PathFactory.create(name="BC", geom=LineString((500, 0), (1000, 0)))
-        response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
-        self.assertIn('error', response.content)
-        p3 = PathFactory.create(name="AB", geom=LineString((1, 0), (2, 0)))
-        p4 = PathFactory.create(name="BC", geom=LineString((1, 0), (10, 10)))
-        response = self.client.post('/mergepath/', {'path[]': [p3.pk, p4.pk]})
-        self.assertIn('error', response.content)
+        p3 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
+        p4 = PathFactory.create(name="BC", geom=LineString((500, 0), (1000, 0)))
+
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [p3.pk, p4.pk]})
+        self.assertIn('error', response.json())
+        self.logout()
+
+    def test_merge_fails_other_path_intersection(self):
+        """
+        Merge should fail if other path share merge intersection
+
+        |--------A--------|-----------B-----------|
+                          |
+                          C
+                          |
+        """
+        self.login()
+        path_a = PathFactory.create(name="A", geom=LineString((0, 0), (1, 0)))
+        path_b = PathFactory.create(name="B", geom=LineString((1, 0), (2, 0)))
+        PathFactory.create(name="C", geom=LineString((1, 0), (10, 10)))
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        self.assertIn('error', response.json())
+        self.logout()
 
     def test_merge_works(self):
         self.login()
         p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
         p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)))
-        response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
-        self.assertIn('success', response.content)
-        p1.reload()
-        self.assertEqual(p1.geom, LineString((0, 0), (1, 0), (2, 0), srid=settings.SRID))
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
+        self.assertIn('success', response.json())
+        self.logout()
 
-    def test_path_do_not_merge_draft_not_draft(self):
+    def test_merge_fails_draft_with_nodraft(self):
         """
             Draft               Not Draft
         A---------------B + C-------------------D
@@ -274,10 +290,11 @@ class PathViewsTest(CommonTest):
         self.login()
         p1 = PathFactory.create(name="PATH_AB", geom=LineString((0, 1), (10, 1)), draft=True)
         p2 = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)), draft=False)
-        response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
-        self.assertIn('error', response.content)
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
+        self.assertIn('error', response.json())
+        self.logout()
 
-    def test_path_merge_draft_draft(self):
+    def test_merge_ok_draft_with_draft(self):
         """
             Draft               Draft
         A---------------B + C-------------------D
@@ -287,10 +304,9 @@ class PathViewsTest(CommonTest):
         self.login()
         p1 = PathFactory.create(name="PATH_AB", geom=LineString((0, 1), (10, 1)), draft=True)
         p2 = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)), draft=True)
-        response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
-        self.assertIn('success', response.content)
-        p1.reload()
-        self.assertEqual(p1.geom, LineString((0, 1), (10, 1), (20, 1), srid=settings.SRID))
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
+        self.assertIn('success', response.json())
+        self.logout()
 
 
 class PathKmlGPXTest(TestCase):

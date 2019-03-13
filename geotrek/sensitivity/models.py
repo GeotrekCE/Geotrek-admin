@@ -7,6 +7,7 @@ import simplekml
 
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.contrib.gis.geos import GEOSGeometry, Polygon
 from django.utils.translation import pgettext_lazy, ugettext_lazy as _
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
@@ -173,9 +174,16 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
         geom = self.geom
         if geom.geom_type == 'Point':
             geom = geom.buffer(self.species.radius or settings.SENSITIVITY_DEFAULT_RADIUS, 4)
+        if self.species.radius:
+            geometry = ()
+            for coords in geom.coords[0]:
+                coords += (self.species.radius, )
+                geometry += (coords, )
+            geom = GEOSGeometry(Polygon(geometry), srid=settings.SRID)
         geom = geom.transform(4326, clone=True)  # KML uses WGS84
         line = kml.newpolygon(name=self.species.name,
                               description=plain_text(self.description),
+                              altitudemode=simplekml.AltitudeMode.relativetoground,
                               outerboundaryis=geom.coords[0])
         line.style.linestyle.color = simplekml.Color.red  # Red
         line.style.linestyle.width = 4  # pixels

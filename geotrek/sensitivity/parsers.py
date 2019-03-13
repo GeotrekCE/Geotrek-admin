@@ -171,6 +171,7 @@ class RegulatorySensitiveAreaShapeParser(ShapeParser):
         'description': 'description',
         'species': (
             'nom',
+            'altitude'
             'periode',
             'pratiques',
             'url',
@@ -182,7 +183,7 @@ class RegulatorySensitiveAreaShapeParser(ShapeParser):
     }
 
     def filter_species(self, src, val):
-        (name, period, practice_names, url) = val
+        (name, elevation, period, practice_names, url) = val
         species = Species(category=Species.REGULATORY)
         species.name = name
         if period:
@@ -191,6 +192,7 @@ class RegulatorySensitiveAreaShapeParser(ShapeParser):
                 if str(i) in period:
                     setattr(species, 'period{:02}'.format(i), True)
         species.url = url
+        species.radius = elevation
         practices = []
         if practice_names:
             for practice_name in practice_names.split(self.separator):
