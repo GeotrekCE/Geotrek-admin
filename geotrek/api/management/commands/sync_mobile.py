@@ -231,6 +231,8 @@ class Command(BaseCommand):
                                      zipfile=trekid_zipfile)
         for picture, resized in trek.resized_pictures:
             self.sync_media_file(resized, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
+        for desk in trek.information_desks.all():
+            self.sync_media_file(desk.resized_picture, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
 
         if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname_trekid),
@@ -263,7 +265,8 @@ class Command(BaseCommand):
         self.sync_pictograms(trekking_models.DifficultyLevel, directory=url_media_nolang, zipfile=self.zipfile_settings)
         self.sync_pictograms(trekking_models.POIType, directory=url_media_nolang, zipfile=self.zipfile_settings)
         self.sync_pictograms(trekking_models.Route, directory=url_media_nolang, zipfile=self.zipfile_settings)
-        self.sync_pictograms(tourism_models.InformationDesk, directory=url_media_nolang, zipfile=self.zipfile_settings)
+        self.sync_pictograms(tourism_models.InformationDeskType, directory=url_media_nolang,
+                             zipfile=self.zipfile_settings)
         self.close_zip(self.zipfile_settings, zipname_settings)
 
     def sync_trek_tiles(self, trek):

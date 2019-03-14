@@ -139,6 +139,15 @@ class InformationDesk(models.Model):
             return None
 
     @property
+    def resized_picture(self):
+        thumbnailer = get_thumbnailer(self.photo)
+        try:
+            return thumbnailer.get_thumbnail(aliases.get('medium'))
+        except InvalidImageFormatError:
+            logger.warning(_("Image %s invalid or missing from disk.") % self.photo)
+            return None
+
+    @property
     def photo_url(self):
         thumbnail = self.thumbnail
         if not thumbnail:
