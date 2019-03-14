@@ -89,7 +89,7 @@ $$ LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS l_t_troncon_evenements_geom_u_tgr ON l_t_troncon;
 DROP TRIGGER IF EXISTS l_t_troncon_90_evenements_geom_u_tgr ON l_t_troncon;
 
-CREATE OR REPLACE FUNCTION geotrek.update_evenement_geom_when_troncon_changes() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION geotrek.update_evenement_geom_when_troncon_changes() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     eid integer;
     egeom geometry;
@@ -148,7 +148,7 @@ ALTER TABLE l_t_troncon ADD CONSTRAINT l_t_troncon_geom_issimple CHECK (ST_IsSim
 DROP TRIGGER IF EXISTS l_t_troncon_elevation_iu_tgr ON l_t_troncon;
 DROP TRIGGER IF EXISTS l_t_troncon_10_elevation_iu_tgr ON l_t_troncon;
 
-CREATE OR REPLACE FUNCTION geotrek.elevation_troncon_iu() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION geotrek.elevation_troncon_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     elevation elevation_infos;
 BEGIN
@@ -177,7 +177,7 @@ FOR EACH ROW EXECUTE PROCEDURE elevation_troncon_iu();
 
 DROP TRIGGER IF EXISTS l_t_troncon_related_objects_d_tgr ON l_t_troncon;
 
-CREATE OR REPLACE FUNCTION geotrek.troncons_related_objects_d() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION geotrek.troncons_related_objects_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
 BEGIN
     -- Mark empty topologies as deleted
@@ -204,7 +204,7 @@ FOR EACH ROW EXECUTE PROCEDURE troncons_related_objects_d();
 
 DROP TRIGGER IF EXISTS l_t_troncon_latest_updated_d_tgr ON l_t_troncon;
 
-CREATE OR REPLACE FUNCTION geotrek.troncon_latest_updated_d() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION geotrek.troncon_latest_updated_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
 BEGIN
     -- Touch latest path
