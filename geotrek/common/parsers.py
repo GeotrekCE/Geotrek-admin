@@ -524,7 +524,11 @@ class AttachmentParserMixin(object):
         if settings.PAPERCLIP_ENABLE_LINK is False and self.download_attachments is False:
             raise Exception(u'You need to enable PAPERCLIP_ENABLE_LINK to use this function')
         try:
-            self.filetype = FileType.objects.get(type=self.filetype_name, structure=self.structure)
+            file_types = FileType.objects.filter(type=self.filetype_name, structure=None)
+            if file_types.exists():
+                self.filetype = file_types.first()
+            else:
+                self.filetype = FileType.objects.get(type=self.filetype_name, structure=self.structure)
         except FileType.DoesNotExist:
             raise GlobalImportError(_(u"FileType '{name}' does not exists in Geotrek-Admin. Please add it").format(name=self.filetype_name))
         self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})

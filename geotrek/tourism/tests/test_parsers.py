@@ -66,6 +66,22 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(Attachment.objects.first().content_object, content)
 
     @mock.patch('requests.get')
+    def test_filetype_structure_none(self, mocked):
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeContent.json')
+            with io.open(filename, 'r', encoding='utf8') as f:
+                return json.load(f)
+
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        FileType.objects.create(type=u"Photographie", structure=None)
+        TouristicContentCategoryFactory(label=u"Eau vive")
+        TouristicContentTypeFactory(label=u"Type A", in_list=1)
+        TouristicContentTypeFactory(label=u"Type B", in_list=1)
+        call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=0)
+        self.assertEqual(TouristicContent.objects.count(), 1)
+
+    @mock.patch('requests.get')
     def test_create_event_apidae(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeEvent.json')
