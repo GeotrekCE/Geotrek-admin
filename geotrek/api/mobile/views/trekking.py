@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.db.models import F, Q
 from django_filters.rest_framework.backends import DjangoFilterBackend
-from django.http import Http404
 
 from geotrek.api.mobile.serializers import trekking as api_serializers
 
