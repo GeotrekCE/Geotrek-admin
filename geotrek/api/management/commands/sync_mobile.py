@@ -19,6 +19,7 @@ from django.utils.translation import ugettext as _
 from geotrek.common.models import FileType  # NOQA
 from geotrek.common import models as common_models
 from geotrek.flatpages.models import FlatPage
+from geotrek.tourism import models as tourism_models
 from geotrek.trekking import models as trekking_models
 from geotrek.api.mobile.views.trekking import TrekViewSet
 from geotrek.api.mobile.views.common import FlatPageViewSet, SettingsView
@@ -262,6 +263,7 @@ class Command(BaseCommand):
         self.sync_pictograms(trekking_models.DifficultyLevel, directory=url_media_nolang, zipfile=self.zipfile_settings)
         self.sync_pictograms(trekking_models.POIType, directory=url_media_nolang, zipfile=self.zipfile_settings)
         self.sync_pictograms(trekking_models.Route, directory=url_media_nolang, zipfile=self.zipfile_settings)
+        self.sync_pictograms(tourism_models.InformationDesk, directory=url_media_nolang, zipfile=self.zipfile_settings)
         self.close_zip(self.zipfile_settings, zipname_settings)
 
     def sync_trek_tiles(self, trek):
