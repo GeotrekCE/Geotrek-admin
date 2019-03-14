@@ -31,7 +31,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             if not obj.pictogram:
                 return None
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
-            return '{file}.png'.format(file=file_name) if file_extension == 'svg' else obj.pictogram.url
+            return '{file}.png'.format(file=file_name) if file_extension == '.svg' else obj.pictogram.url
 
         class Meta:
             model = tourism_models.InformationDeskType
@@ -56,7 +56,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             if not obj.pictogram:
                 return None
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
-            return '{file}.png'.format(file=file_name) if file_extension == 'svg' else obj.pictogram.url
+            return '{file}.png'.format(file=file_name) if file_extension == '.svg' else obj.pictogram.url
 
         class Meta:
             model = trekking_models.DifficultyLevel
@@ -68,7 +68,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         def get_pictogram(self, obj):
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
-            return '{file}.png'.format(file=file_name) if file_extension == 'svg' else obj.pictogram.url
+            return '{file}.png'.format(file=file_name) if file_extension == '.svg' else obj.pictogram.url
 
         class Meta:
             model = trekking_models.Practice
@@ -81,7 +81,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             if not obj.pictogram:
                 return None
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
-            return '{file}.png'.format(file=file_name) if file_extension == 'svg' else obj.pictogram.url
+            return '{file}.png'.format(file=file_name) if file_extension == '.svg' else obj.pictogram.url
 
         class Meta:
             model = trekking_models.Accessibility
@@ -95,7 +95,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             if not obj.pictogram:
                 return None
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
-            return '{file}.png'.format(file=file_name) if file_extension == 'svg' else obj.pictogram.url
+            return '{file}.png'.format(file=file_name) if file_extension == '.svg' else obj.pictogram.url
 
         class Meta:
             model = trekking_models.Route
@@ -107,7 +107,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         def get_pictogram(self, obj):
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
-            return '{file}.png'.format(file=file_name) if file_extension == 'svg' else obj.pictogram.url
+            return '{file}.png'.format(file=file_name) if file_extension == '.svg' else obj.pictogram.url
 
         class Meta:
             model = common_models.Theme
@@ -121,7 +121,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             if not obj.pictogram:
                 return None
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
-            return '{file}.png'.format(file=file_name) if file_extension == 'svg' else obj.pictogram.url
+            return '{file}.png'.format(file=file_name) if file_extension == '.svg' else obj.pictogram.url
 
         class Meta:
             model = trekking_models.TrekNetwork
@@ -134,7 +134,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             if not obj.pictogram:
                 return None
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
-            return '{file}.png'.format(file=file_name) if file_extension == 'svg' else obj.pictogram.url
+            return '{file}.png'.format(file=file_name) if file_extension == '.svg' else obj.pictogram.url
 
         class Meta:
             model = trekking_models.POIType

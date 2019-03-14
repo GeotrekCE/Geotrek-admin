@@ -295,7 +295,7 @@ class SyncMobileSettingsTest(TranslationResetMixin, TestCase):
     def test_sync_settings_with_picto_svg(self):
         output = BytesIO()
         practice = PracticeFactory.create(pictogram=get_dummy_uploaded_image_svg())
-        pictogram_png = practice.pictogram.url.replace('.png', '.svg')
+        pictogram_png = practice.pictogram.url.replace('.svg', '.png')
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         for lang in settings.MODELTRANSLATION_LANGUAGES:
