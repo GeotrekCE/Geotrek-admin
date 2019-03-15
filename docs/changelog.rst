@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.24.8.dev0
+2.24.8 (2019-03-15)
 -------------------
 
 **Bug fixes**
 
--
+- Fix bug parsers filetype not related with structure
 
 
 2.24.7 (2019-03-13)
