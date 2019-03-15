@@ -107,3 +107,6 @@ msgstr ""
 
 msgid "Hide all durations"
 msgstr ""
+
+msgid "Information Desks Type"
+msgstr ""

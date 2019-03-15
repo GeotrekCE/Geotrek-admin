@@ -7,7 +7,7 @@ from geotrek.common.models import Theme
 from geotrek.trekking import factories as trekking_factories
 from geotrek.trekking.models import TrekNetwork, Route, Practice, Accessibility, DifficultyLevel
 from geotrek.tourism import factories as tourism_factories
-from geotrek.tourism.models import InformationDesk
+from geotrek.tourism.models import InformationDeskType
 from geotrek.zoning import factories as zoning_factories
 from geotrek.zoning.models import City
 
@@ -17,8 +17,8 @@ SETTINGS_STRUCTURE = sorted([
 ])
 
 SETTINGS_DATA_STRUCTURE = sorted([
-    'information_desks', 'networks', 'route', 'practice', 'accessibilities', 'difficulty', 'themes', 'cities',
-    'length', 'duration', 'type'
+    'information_desk_types', 'networks', 'route', 'practice', 'accessibilities', 'difficulty', 'themes', 'cities',
+    'length', 'duration', 'poi_types'
 ])
 
 
@@ -47,8 +47,8 @@ class SettingsMobileTest(TestCase):
                          SETTINGS_DATA_STRUCTURE)
 
     def test_settings_information_desk(self):
-        informationdesk = tourism_factories.InformationDeskFactory()
-        tourism_factories.InformationDeskFactory()
+        informationdesktype = tourism_factories.InformationDeskTypeFactory()
+        tourism_factories.InformationDeskTypeFactory()
         response = self.get_settings()
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -56,11 +56,11 @@ class SettingsMobileTest(TestCase):
         json_response = response.json()
 
         informationdesk_item = next((item.get('values') for item in json_response.get('data')
-                                     if item['id'] == 'information_desks'), None)
+                                     if item['id'] == 'information_desk_types'), None)
 
-        self.assertEqual(len(informationdesk_item), InformationDesk.objects.count())
-        self.assertEqual(informationdesk_item[0].get('email'), informationdesk.email)
-        self.assertEqual(informationdesk_item[0].get('description'), informationdesk.description)
+        self.assertEqual(len(informationdesk_item), InformationDeskType.objects.count())
+        self.assertEqual(informationdesk_item[0].get('name'), informationdesktype.label)
+        self.assertIn(str(informationdesktype.pictogram), informationdesk_item[0].get('pictogram'))
 
     def test_settings_network(self):
         network = trekking_factories.TrekNetworkFactory()

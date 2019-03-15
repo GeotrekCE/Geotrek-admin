@@ -5,6 +5,7 @@ from django.conf import settings
 from rest_framework import serializers
 from rest_framework_gis import serializers as geo_serializers
 
+from geotrek.api.mobile.serializers.common import InformationDeskSerializer
 from geotrek.zoning.models import City
 
 
@@ -41,6 +42,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         cities = serializers.SerializerMethodField(read_only=True)
         departure_city = serializers.SerializerMethodField(read_only=True)
         arrival_city = serializers.SerializerMethodField(read_only=True)
+        information_desks = InformationDeskSerializer(many=True)
 
         def get_cities(self, obj):
             qs = City.objects

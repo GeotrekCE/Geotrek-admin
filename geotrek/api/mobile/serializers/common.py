@@ -38,8 +38,6 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             fields = ('id', 'name', 'pictogram')
 
     class InformationDeskSerializer(serializers.ModelSerializer):
-        type = InformationDeskTypeSerializer(read_only=True)
-
         class Meta:
             model = tourism_models.InformationDesk
             fields = ('id', 'description', 'email', 'latitude', 'longitude', 'municipality',
