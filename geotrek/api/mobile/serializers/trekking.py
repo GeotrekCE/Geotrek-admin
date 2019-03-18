@@ -43,6 +43,12 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         departure_city = serializers.SerializerMethodField(read_only=True)
         arrival_city = serializers.SerializerMethodField(read_only=True)
         information_desks = InformationDeskSerializer(many=True)
+        parking_location = serializers.SerializerMethodField(read_only=True)
+
+        def get_parking_location(self, obj):
+            if not obj.parking_location:
+                return None
+            return obj.parking_location.transform(settings.API_SRID, clone=True).coords
 
         def get_cities(self, obj):
             qs = City.objects
@@ -83,7 +89,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             fields = (
                 'id', 'name', 'accessibilities', 'description_teaser', 'cities',
                 'description', 'departure', 'arrival', 'duration', 'access', 'advised_parking', 'advice',
-                'difficulty', 'length', 'ascent', 'descent', 'route', 'is_park_centered',
+                'difficulty', 'length', 'ascent', 'descent', 'route', 'is_park_centered', 'parking_location',
                 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'difficulty',
                 'geometry', 'pictures', 'information_desks', 'cities', 'departure_city', 'arrival_city'
             )
