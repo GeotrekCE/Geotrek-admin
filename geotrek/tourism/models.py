@@ -140,6 +140,8 @@ class InformationDesk(models.Model):
 
     @property
     def resized_picture(self):
+        if not self.photo:
+            return None
         thumbnailer = get_thumbnailer(self.photo)
         try:
             return thumbnailer.get_thumbnail(aliases.get('medium'))

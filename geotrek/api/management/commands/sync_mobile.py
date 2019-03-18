@@ -38,7 +38,7 @@ class Command(BaseCommand):
         parser.add_argument('--languages', '-l', dest='languages', default='', help='Languages to sync')
         parser.add_argument('--portal', '-P', dest='portal', default=None, help='Filter by portal(s)')
         parser.add_argument('--skip-tiles', '-t', action='store_true', dest='skip_tiles', default=False,
-                            help='Skip generation of zip tiles files')
+                            help='Skip inclusion of tiles in zip files')
         parser.add_argument('--url', '-u', dest='url', default='http://localhost', help='Base url')
 
     def mkdirs(self, name):
@@ -135,7 +135,7 @@ class Command(BaseCommand):
         self.mkdirs(dst)
         if not os.path.isfile(dst):
             os.link(src, dst)
-        if zipfile:
+        if zipfile and os.path.join(url, name) not in zipfile.namelist():
             zipfile.write(dst, os.path.join(url, name))
         if self.verbosity == 2:
             self.stdout.write(
@@ -155,7 +155,12 @@ class Command(BaseCommand):
                 dst = os.path.join(self.tmp_root, directory, name)
                 self.mkdirs(dst)
                 cairosvg.svg2png(url=obj.pictogram.path, write_to=dst)
-                zipfile.write(dst, name)
+                if name not in zipfile.namelist():
+                    zipfile.write(dst, name)
+                if self.verbosity == 2:
+                    self.stdout.write(
+                        u"\x1b[36m**\x1b[0m \x1b[1m{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
+                            url=obj.pictogram.url, name=name))
             else:
                 self.sync_media_file(obj.pictogram, directory=directory, zipfile=zipfile)
 
@@ -232,10 +237,13 @@ class Command(BaseCommand):
 
     def sync_trek_by_pk_media(self, trek):
         url_trek = os.path.join('nolang')
-        zipname_trekid = os.path.join(url_trek, str(trek.pk), 'media.zip')
+        zipname_trekid = os.path.join(url_trek, "{}.zip".format(trek.pk))
         zipfullname_trekid = os.path.join(self.tmp_root, zipname_trekid)
         self.mkdirs(zipfullname_trekid)
         trekid_zipfile = ZipFile(zipfullname_trekid, 'w')
+
+        if not self.skip_tiles:
+            self.sync_trek_tiles(trek, trekid_zipfile)
 
         for poi in trek.published_pois:
             for picture, resized in poi.resized_pictures:
@@ -270,10 +278,13 @@ class Command(BaseCommand):
 
     def sync_global_media(self):
         url_media_nolang = os.path.join('nolang')
-        zipname_settings = os.path.join('nolang', 'media.zip')
+        zipname_settings = os.path.join('nolang', 'global.zip')
         zipfullname_settings = os.path.join(self.tmp_root, zipname_settings)
         self.mkdirs(zipfullname_settings)
         self.zipfile_settings = ZipFile(zipfullname_settings, 'w')
+
+        if not self.skip_tiles:
+            self.sync_global_tiles(self.zipfile_settings)
 
         self.sync_pictograms(common_models.Theme, directory=url_media_nolang, zipfile=self.zipfile_settings)
         self.sync_pictograms(trekking_models.TrekNetwork, directory=url_media_nolang, zipfile=self.zipfile_settings)
@@ -292,27 +303,19 @@ class Command(BaseCommand):
                              zipfile=self.zipfile_settings)
         self.close_zip(self.zipfile_settings, zipname_settings)
 
-    def sync_trek_tiles(self, trek):
-        """ Creates a tiles file for the specified Trek object.
+    def sync_trek_tiles(self, trek, zipfile):
+        """ Add tiles to zipfile for the specified Trek object.
         """
-        zipname = os.path.join('nolang', str(trek.pk), 'tiles.zip')
 
         if self.verbosity == 2:
-            self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
+            self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{}/tiles/\x1b[0m ...".format(trek.pk), ending="")
             self.stdout.flush()
-
-        trek_file = os.path.join(self.tmp_root, zipname)
 
         def _radius2bbox(lng, lat, radius):
             return (lng - radius, lat - radius,
                     lng + radius, lat + radius)
 
-        self.mkdirs(trek_file)
-
-        def close_zip(zipfile):
-            return self.close_zip(zipfile, zipname)
-
-        tiles = ZipTilesBuilder(trek_file, close_zip, **self.builder_args)
+        tiles = ZipTilesBuilder(zipfile, prefix='/{}/tiles/'.format(trek.pk), **self.builder_args)
 
         geom = trek.geom
         if geom.geom_type == 'MultiLineString':
@@ -327,82 +330,34 @@ class Command(BaseCommand):
 
         tiles.run()
 
-    def sync_global_tiles(self):
-        """ Creates a tiles file on the global extent.
-        """
-        zipname = os.path.join('nolang', 'tiles.zip')
-
         if self.verbosity == 2:
-            self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
+            self.stdout.write(u"\x1b[3D\x1b[32mdownloaded\x1b[0m")
+
+    def sync_global_tiles(self, zipfile):
+        """ Add tiles to zipfile on the global extent.
+        """
+        if self.verbosity == 2:
+            self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1mtiles/\x1b[0m ...", ending="")
             self.stdout.flush()
 
         global_extent = settings.LEAFLET_CONFIG['SPATIAL_EXTENT']
 
         logger.info("Global extent is %s" % unicode(global_extent))
-        global_file = os.path.join(self.tmp_root, zipname)
-
         logger.info("Build global tiles file...")
-        self.mkdirs(global_file)
 
-        def close_zip(zipfile):
-            return self.close_zip(zipfile, zipname)
-
-        tiles = ZipTilesBuilder(global_file, close_zip, **self.builder_args)
+        tiles = ZipTilesBuilder(zipfile, prefix='tiles/', **self.builder_args)
         tiles.add_coverage(bbox=global_extent,
                            zoomlevels=settings.MOBILE_TILES_GLOBAL_ZOOMS)
         tiles.run()
 
-    def sync_tiles(self):
-        if not self.skip_tiles:
-
-            if self.celery_task:
-                self.celery_task.update_state(
-                    state='PROGRESS',
-                    meta={
-                        'name': self.celery_task.name,
-                        'current': 10,
-                        'total': 100,
-                        'infos': u"{}".format(_(u"Global tiles syncing ..."))
-                    }
-                )
-
-            self.sync_global_tiles()
-
-            if self.celery_task:
-                self.celery_task.update_state(
-                    state='PROGRESS',
-                    meta={
-                        'name': self.celery_task.name,
-                        'current': 20,
-                        'total': 100,
-                        'infos': u"{}".format(_(u"Trek tiles syncing ..."))
-                    }
-                )
-
-            treks = trekking_models.Trek.objects.existing().order_by('pk')
-
-            if self.portal:
-                treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
-
-            for trek in treks:
-                if trek.any_published or any([parent.any_published for parent in trek.parents]):
-                    self.sync_trek_tiles(trek)
-
-            if self.celery_task:
-                self.celery_task.update_state(
-                    state='PROGRESS',
-                    meta={
-                        'name': self.celery_task.name,
-                        'current': 30,
-                        'total': 100,
-                        'infos': u"{}".format(_(u"Tiles synced ..."))
-                    }
-                )
+        if self.verbosity == 2:
+            self.stdout.write(u"\x1b[3D\x1b[32mdownloaded\x1b[0m")
 
     def sync(self):
-        self.sync_tiles()
         step_value = int(50 / len(settings.MODELTRANSLATION_LANGUAGES))
         current_value = 30
+
+        self.sync_medias()
 
         for lang in self.languages:
             if self.celery_task:
@@ -423,7 +378,6 @@ class Command(BaseCommand):
                 self.sync_flatpage(lang)
             self.sync_trekking(lang)
             translation.deactivate()
-        self.sync_medias()
 
     def check_dst_root_is_empty(self):
         if not os.path.exists(self.dst_root):

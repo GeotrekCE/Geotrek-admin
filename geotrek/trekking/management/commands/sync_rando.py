@@ -49,10 +49,10 @@ logger = logging.getLogger(__name__)
 
 
 class ZipTilesBuilder(object):
-    def __init__(self, filepath, close_zip, **builder_args):
+    def __init__(self, zipfile, prefix="", **builder_args):
+        self.zipfile = zipfile
+        self.prefix = prefix
         builder_args['tile_format'] = self.format_from_url(builder_args['tiles_url'])
-        self.close_zip = close_zip
-        self.zipfile = ZipFile(filepath, 'w')
         self.tm = TilesManager(**builder_args)
 
         if not isinstance(settings.MOBILE_TILES_URL, str) and len(settings.MOBILE_TILES_URL) > 1:
@@ -80,14 +80,17 @@ class ZipTilesBuilder(object):
 
     def run(self):
         for tile in self.tiles:
-            name = '{0}/{1}/{2}{ext}'.format(*tile, ext=settings.MOBILE_TILES_EXTENSION or self.tm._tile_extension)
+            name = '{prefix}{0}/{1}/{2}{ext}'.format(
+                *tile,
+                prefix=self.prefix,
+                ext=settings.MOBILE_TILES_EXTENSION or self.tm._tile_extension
+            )
             try:
                 data = self.tm.tile(tile)
             except DownloadError:
                 logger.warning("Failed to download tile %s" % name)
             else:
                 self.zipfile.writestr(name, data)
-        self.close_zip(self.zipfile)
 
 
 class Command(BaseCommand):
@@ -139,13 +142,12 @@ class Command(BaseCommand):
         logger.info("Build global tiles file...")
         self.mkdirs(global_file)
 
-        def close_zip(zipfile):
-            return self.close_zip(zipfile, zipname)
-
-        tiles = ZipTilesBuilder(global_file, close_zip, **self.builder_args)
+        zipfile = ZipFile(global_file, 'w')
+        tiles = ZipTilesBuilder(zipfile, **self.builder_args)
         tiles.add_coverage(bbox=global_extent,
                            zoomlevels=settings.MOBILE_TILES_GLOBAL_ZOOMS)
         tiles.run()
+        self.close_zip(zipfile, global_file)
 
     def sync_trek_tiles(self, trek):
         """ Creates a tiles file for the specified Trek object.
@@ -164,10 +166,8 @@ class Command(BaseCommand):
 
         self.mkdirs(trek_file)
 
-        def close_zip(zipfile):
-            return self.close_zip(zipfile, zipname)
-
-        tiles = ZipTilesBuilder(trek_file, close_zip, **self.builder_args)
+        zipfile = ZipFile(trek_file, 'w')
+        tiles = ZipTilesBuilder(zipfile, **self.builder_args)
 
         geom = trek.geom
         if geom.geom_type == 'MultiLineString':
@@ -181,6 +181,7 @@ class Command(BaseCommand):
             tiles.add_coverage(bbox=small, zoomlevels=settings.MOBILE_TILES_HIGH_ZOOMS)
 
         tiles.run()
+        self.close_zip(trek_file, zipname)
 
     def sync_view(self, lang, view, name, url='/', params={}, zipfile=None, fix2028=False, **kwargs):
         if self.verbosity == 2:
