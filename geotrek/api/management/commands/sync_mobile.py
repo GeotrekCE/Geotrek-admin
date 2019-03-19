@@ -40,19 +40,20 @@ class Command(BaseCommand):
         parser.add_argument('--skip-tiles', '-t', action='store_true', dest='skip_tiles', default=False,
                             help='Skip inclusion of tiles in zip files')
         parser.add_argument('--url', '-u', dest='url', default='http://localhost', help='Base url')
+        parser.add_argument('--indent', '-i', default=0, type=int, help='Indent json files')
 
     def mkdirs(self, name):
         dirname = os.path.dirname(name)
         if not os.path.exists(dirname):
             os.makedirs(dirname)
 
-    def sync_view(self, lang, view, name, url='/', params={}, zipfile=None, fix2028=False, **kwargs):
+    def sync_view(self, lang, view, name, url='/', params=None, headers={}, zipfile=None, fix2028=False, **kwargs):
         if self.verbosity == 2:
             self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=name), ending="")
             self.stdout.flush()
         fullname = os.path.join(self.tmp_root, name)
         self.mkdirs(fullname)
-        request = self.factory.get(url, params)
+        request = self.factory.get(url, params, **headers)
         request.LANGUAGE_CODE = lang
         request.user = AnonymousUser()
         try:
@@ -97,7 +98,10 @@ class Command(BaseCommand):
         params = params.copy()
         if self.portal:
             params['portal'] = ','.join(self.portal)
-        self.sync_view(lang, view, name, params=params, zipfile=zipfile, fix2028=True, **kwargs)
+        headers = {}
+        if self.indent:
+            headers['HTTP_ACCEPT'] = 'application/json; indent={}'.format(self.indent)
+        self.sync_view(lang, view, name, params=params, headers=headers, zipfile=zipfile, fix2028=True, **kwargs)
 
     def sync_geojson(self, lang, viewset, name, zipfile=None, params={}, type_view={}, **kwargs):
         view = viewset.as_view(type_view)
@@ -108,7 +112,11 @@ class Command(BaseCommand):
         if self.portal:
             params['portal'] = ','.join(self.portal)
 
-        self.sync_view(lang, view, name, params=params, zipfile=zipfile, fix2028=True, **kwargs)
+        headers = {}
+        if self.indent:
+            headers['HTTP_ACCEPT'] = 'application/json; indent={}'.format(self.indent)
+
+        self.sync_view(lang, view, name, params=params, headers=headers, zipfile=zipfile, fix2028=True, **kwargs)
 
     def sync_trek_pois(self, lang, trek):
         params = {'format': 'geojson'}
@@ -400,6 +408,7 @@ class Command(BaseCommand):
         self.successfull = True
         self.verbosity = options['verbosity']
         self.skip_tiles = options['skip_tiles']
+        self.indent = options['indent']
         self.factory = RequestFactory()
         self.dst_root = options["path"].rstrip('/')
         self.abs_path = os.path.abspath(options["path"])
