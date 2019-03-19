@@ -1,33 +1,34 @@
 $(window).on('entity:map', function (e, data) {
 
     var map = data.map;
+    var loaded_district = false;
+    var loaded_city = false;
 
-    // Add land layers
-    var landLayers = [{url: window.SETTINGS.urls.district_layer, name: tr("Districts"), id: 'district'},
-                      {url: window.SETTINGS.urls.city_layer, name: tr("Cities"), id: 'city'}];
-
-    landLayers = landLayers.concat(window.SETTINGS.map['restricted_area_types']);
-
-    for (var i=0; i<landLayers.length; i++) {
-        var landLayer = landLayers[i];
+    $.each([[tr("Districts"), 'district'], [tr("Cities"), 'city']], function (i, modelname, name) {
         var style = L.Util.extend({clickable: false},
-                                  window.SETTINGS.map.styles[landLayer.id] || {});
-
-        var colorspools = L.Util.extend({}, window.SETTINGS.map.colorspool),
-            colorspool = colorspools[landLayer.id];
-        if (colorspool) {
-            var color = colorspool[i % colorspool.length];
-            style['color'] = color;
-        }
-
+                                  window.SETTINGS.map.styles[modelname[1]] || {});
+        var nameHTML = '<span style="color: '+ style['color'] + ';">&#x2B24;</span>&nbsp;' + modelname[0];
         var layer = new L.ObjectsLayer(null, {
-            indexing: false,
-            style: style,
-            modelname: landLayer.id,
+                indexing: false,
+                modelname: modelname[1],
+                style: style,
         });
-        layer.load(landLayer.url);
-
-        var nameHTML = '<span style="color: '+ style['color'] + ';">&#x2B24;</span>&nbsp;' + landLayer.name;
         map.layerscontrol.addOverlay(layer, nameHTML, tr('Zoning'));
-    }
+
+        map.on('layeradd', function(e){
+            var options = e.layer.options || {'modelname': 'None'};
+            if (loaded_district === false){
+                if (options.modelname == 'district'){
+                    e.layer.load(window.SETTINGS.urls.district_layer);
+                    loaded_district = true;
+                }
+            }
+            if (loaded_city === false){
+                if (options.modelname == 'city'){
+                    e.layer.load(window.SETTINGS.urls.city_layer);
+                    loaded_city = true;
+                }
+            }
+        });
+    });
 });

@@ -10,24 +10,16 @@ MapEntity.pathsLayer = function buildPathLayer(options) {
             pathsLayer.showExtremities(window.SETTINGS.map.paths_line_marker);
         });
     }
-
-    // Start ajax loading at last
-    url = window.SETTINGS.urls.path_layer
-    if (options.no_draft){
-        pathsLayer.load(url + '?no_draft=true', true);
-    }
-    else {
-        pathsLayer.load(url, true);
-    }
-
     return pathsLayer;
 };
 
 $(window).on('entity:map', function (e, data) {
     var map = data.map;
+    var loaded_path = false;
     // Show the path layer only if model is not path, and if we are not
     // in an editing widget
-    var is_form_view = /add|update/.test(data.view);
+    var is_form_view = /add|update/.test(data.viewname);
+
     if (!is_form_view && (data.viewname == 'detail' || data.modelname != 'path')) {
 
         var pathsLayer = MapEntity.pathsLayer({
@@ -36,15 +28,30 @@ $(window).on('entity:map', function (e, data) {
             modelname: 'path',
             no_draft: data.modelname != 'path',
         });
-        pathsLayer.addTo(map);
-
+        if (data.viewname == 'detail'){
+            pathsLayer.load(window.SETTINGS.urls.path_layer);
+            pathsLayer.addTo(map);
+        };
         pathsLayer.on('loaded', function () {
             if (pathsLayer._map)
                 pathsLayer.bringToBack();
         });
 
         map.on('layeradd', function (e) {
+            // Start ajax loading at last
+            url = window.SETTINGS.urls.path_layer
+
+            var options = e.layer.options || {'modelname': 'None'};
+            if (loaded_path === false){
+                if (options.modelname == 'path' && data.viewname != 'detail'){
+                    e.layer.load(url + '?no_draft=true', true);
+                    loaded_path = true;
+                };
+
+            }
+
             if (e.layer === pathsLayer) {
+
                 if (!e.layer._map) {
                     return;
                 }
