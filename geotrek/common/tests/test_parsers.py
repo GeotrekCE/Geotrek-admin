@@ -139,9 +139,13 @@ class TourInSoftParserTests(TestCase):
 
     def test_attachment(self):
         class TestTourParser(TourInSoftParser):
+            separator = '##'
+            attachments_separator = '||'
+
             def __init__(self):
                 self.model = Trek
                 super(TestTourParser, self).__init__()
+
         parser = TestTourParser()
         result = parser.filter_attachments('', 'a||b||c##||||##d||e||f')
         self.assertListEqual(result, [['a', 'b', 'c'], ['d', 'e', 'f']])

@@ -42,5 +42,5 @@ class Command(BaseCommand):
         except ImportError as e:
             raise CommandError(e)
 
-        if verbosity >= 1 or parser.warnings:
+        if verbosity >= 1 and parser.warnings or verbosity >= 2:
             self.stdout.write(parser.report())

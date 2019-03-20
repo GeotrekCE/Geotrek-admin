@@ -219,7 +219,7 @@ class TouristicContentType1(TouristicContentType):
 
     class Meta:
         proxy = True
-        verbose_name = _(u"Type")
+        verbose_name = _(u"Type1")
         verbose_name_plural = _(u"First list types")
 
 
@@ -232,7 +232,7 @@ class TouristicContentType2(TouristicContentType):
 
     class Meta:
         proxy = True
-        verbose_name = _(u"Type")
+        verbose_name = _(u"Type2")
         verbose_name_plural = _(u"Second list types")
 
 
@@ -271,10 +271,10 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
                               blank=True, null=True)
     practical_info = models.TextField(verbose_name=_(u"Practical info"), blank=True, db_column='infos_pratiques',
                                       help_text=_(u"Anything worth to know"))
-    type1 = models.ManyToManyField(TouristicContentType, related_name='contents1',
+    type1 = models.ManyToManyField(TouristicContentType1, related_name='contents1',
                                    verbose_name=_(u"Type 1"), db_table="t_r_contenu_touristique_type1",
                                    blank=True)
-    type2 = models.ManyToManyField(TouristicContentType, related_name='contents2',
+    type2 = models.ManyToManyField(TouristicContentType2, related_name='contents2',
                                    verbose_name=_(u"Type 2"), db_table="t_r_contenu_touristique_type2",
                                    blank=True)
     source = models.ManyToManyField('common.RecordSource',
