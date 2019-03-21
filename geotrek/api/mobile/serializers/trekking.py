@@ -30,6 +30,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         class Meta:
             model = trekking_models.POI
+            id_field = 'id'
             geo_field = 'geometry'
             fields = (
                 'id', 'pictures', 'name', 'description', 'type', 'geometry',
@@ -85,6 +86,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         class Meta:
             model = trekking_models.Trek
+            id_field = 'id'
             geo_field = 'geometry'
             fields = (
                 'id', 'name', 'accessibilities', 'description_teaser', 'cities',
@@ -123,6 +125,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         class Meta:
             model = trekking_models.Trek
+            id_field = 'id'
             geo_field = 'geometry'
             fields = (
                 'id', 'first_picture', 'name', 'departure', 'accessibilities', 'route', 'departure_city',

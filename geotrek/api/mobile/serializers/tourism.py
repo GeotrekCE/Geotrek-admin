@@ -28,6 +28,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
         class Meta:
             model = tourism_models.TouristicContent
+            id_field = 'id'
             geo_field = 'geometry'
             fields = ('id', 'description', 'description_teaser', 'category',
                       'themes', 'contact', 'email', 'website', 'practical_info', 'pictures',
@@ -51,6 +52,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
         class Meta:
             model = tourism_models.TouristicEvent
+            id_field = 'id'
             geo_field = 'geometry'
             fields = ('id', 'description_teaser', 'description', 'themes', 'pictures',
                       'begin_date', 'end_date', 'duration', 'meeting_point',
