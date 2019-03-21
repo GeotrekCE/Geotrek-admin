@@ -288,7 +288,7 @@ class SyncMobileSettingsTest(TranslationResetMixin, TestCase):
             with open(os.path.join('tmp', lang, 'settings.json'), 'r') as f:
                 settings_json = json.load(f)
                 self.assertEquals(len(settings_json), 2)
-                self.assertEqual(len(settings_json['data']), 11)
+                self.assertEqual(len(settings_json['data']), 14)
 
         self.assertIn('en/settings.json', output.getvalue())
 
@@ -302,7 +302,7 @@ class SyncMobileSettingsTest(TranslationResetMixin, TestCase):
             with open(os.path.join('tmp', lang, 'settings.json'), 'r') as f:
                 settings_json = json.load(f)
                 self.assertEquals(len(settings_json), 2)
-                self.assertEqual(len(settings_json['data']), 11)
+                self.assertEqual(len(settings_json['data']), 14)
                 self.assertEqual(settings_json['data'][3]['values'][0]['pictogram'], pictogram_png)
         self.assertIn('en/settings.json', output.getvalue())
 
