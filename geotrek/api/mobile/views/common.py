@@ -14,7 +14,8 @@ from rest_framework_extensions.mixins import DetailSerializerMixin
 from geotrek.api.mobile.serializers import common as api_serializers
 from geotrek.flatpages.models import FlatPage
 from geotrek.trekking.models import DifficultyLevel, Practice, Accessibility, Route, Theme, TrekNetwork, POIType
-from geotrek.tourism.models import InformationDeskType
+from geotrek.tourism.models import (InformationDeskType, TouristicContentType, TouristicEventType,
+                                    TouristicContentCategory)
 from geotrek.zoning.models import City
 
 
@@ -166,7 +167,28 @@ class SettingsView(APIView):
                     'name': _('POI types'),
                     'values': api_serializers.POITypeSerializer(POIType.objects.all().order_by('pk'), many=True,
                                                                 context={'request': request}).data,
-                }
+                },
+                {
+                    'id': 'touristiccontent_types',
+                    'name': _('Touristic content types'),
+                    'values': api_serializers.TouristicContentTypeSerializer(
+                        TouristicContentType.objects.all().order_by('pk'),
+                        many=True, context={'request': request}).data,
+                },
+                {
+                    'id': 'touristicevent_types',
+                    'name': _('Touristic event types'),
+                    'values': api_serializers.TouristicEventTypeSerializer(
+                        TouristicEventType.objects.all().order_by('pk'),
+                        many=True, context={'request': request}).data,
+                },
+                {
+                    'id': 'touristiccontent_categories',
+                    'name': _('Touristic event types'),
+                    'values': api_serializers.TouristicContentCategorySerializer(
+                        TouristicContentCategory.objects.all().order_by('pk'),
+                        many=True, context={'request': request}).data,
+                },
             ]
         })
 

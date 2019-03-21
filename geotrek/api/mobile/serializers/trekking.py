@@ -5,7 +5,7 @@ from django.conf import settings
 from rest_framework import serializers
 from rest_framework_gis import serializers as geo_serializers
 
-from geotrek.api.mobile.serializers.common import InformationDeskSerializer
+from geotrek.api.mobile.serializers.tourism import InformationDeskSerializer
 from geotrek.zoning.models import City
 
 

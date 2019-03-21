@@ -37,13 +37,48 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             model = tourism_models.InformationDeskType
             fields = ('id', 'name', 'pictogram')
 
-    class InformationDeskSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = tourism_models.InformationDesk
-            fields = ('id', 'description', 'email', 'latitude', 'longitude', 'municipality',
-                      'name', 'phone', 'photo_url', 'postal_code', 'street', 'type',
-                      'website')
 
+    class TouristicContentTypeSerializer(serializers.ModelSerializer):
+        name = serializers.ReadOnlyField(source='label')
+        pictogram = serializers.SerializerMethodField(read_only=True)
+
+        def get_pictogram(self, obj):
+            if not obj.pictogram:
+                return None
+            file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
+            return '{file}.png'.format(file=file_name) if file_extension == '.svg' else obj.pictogram.url
+
+        class Meta:
+            model = tourism_models.TouristicContentType
+            fields = ('id', 'name', 'pictogram')
+
+    class TouristicEventTypeSerializer(serializers.ModelSerializer):
+        name = serializers.ReadOnlyField(source='type')
+        pictogram = serializers.SerializerMethodField(read_only=True)
+
+        def get_pictogram(self, obj):
+            if not obj.pictogram:
+                return None
+            file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
+            return '{file}.png'.format(file=file_name) if file_extension == '.svg' else obj.pictogram.url
+
+        class Meta:
+            model = tourism_models.TouristicEventType
+            fields = ('id', 'name', 'pictogram')
+
+    class TouristicContentCategorySerializer(serializers.ModelSerializer):
+        name = serializers.ReadOnlyField(source='label')
+        pictogram = serializers.SerializerMethodField(read_only=True)
+
+        def get_pictogram(self, obj):
+            if not obj.pictogram:
+                return None
+            file_name, file_extension = os.path.splitext(str(obj.pictogram.url))
+            return '{file}.png'.format(file=file_name) if file_extension == '.svg' else obj.pictogram.url
+
+        class Meta:
+            model = tourism_models.TouristicContentCategory
+            fields = ('id', 'name', 'pictogram')
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     class DifficultySerializer(DynamicFieldsMixin, serializers.ModelSerializer):

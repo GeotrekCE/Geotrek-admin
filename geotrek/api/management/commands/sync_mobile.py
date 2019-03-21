@@ -116,6 +116,18 @@ class Command(BaseCommand):
         name = os.path.join(lang, str(trek.pk), 'pois.geojson')
         self.sync_view(lang, view, name, params=params, pk=trek.pk)
 
+    def sync_trek_touristic_contents(self, lang, trek):
+        params = {'format': 'geojson'}
+        view = TrekViewSet.as_view({'get': 'touristic_contents'})
+        name = os.path.join(lang, str(trek.pk), 'touristic_contents.geojson')
+        self.sync_view(lang, view, name, params=params, pk=trek.pk)
+
+    def sync_trek_touristic_events(self, lang, trek):
+        params = {'format': 'geojson'}
+        view = TrekViewSet.as_view({'get': 'touristic_events'})
+        name = os.path.join(lang, str(trek.pk), 'touristic_events.geojson')
+        self.sync_view(lang, view, name, params=params, pk=trek.pk)
+
     def sync_file(self, name, src_root, url, directory='', zipfile=None):
         url = url.strip('/')
         src = os.path.join(src_root, name)
@@ -198,6 +210,8 @@ class Command(BaseCommand):
             self.sync_geojson(lang, TrekViewSet, '{pk}/trek.geojson'.format(pk=trek.pk), pk=trek.pk,
                               type_view={'get': 'retrieve'})
             self.sync_trek_pois(lang, trek)
+            self.sync_trek_touristic_contents(lang, trek)
+            self.sync_trek_touristic_events(lang, trek)
 
     def sync_settings_json(self, lang):
         self.sync_json(lang, SettingsView, 'settings')
@@ -226,9 +240,12 @@ class Command(BaseCommand):
         for poi in trek.published_pois:
             for picture, resized in poi.resized_pictures:
                 self.sync_media_file(resized, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
-            for other_file in poi.files:
-                self.sync_media_file(other_file.attachment_file, prefix=trek.pk, directory=url_trek,
-                                     zipfile=trekid_zipfile)
+        for touristic_content in trek.published_touristic_contents:
+            for picture, resized in touristic_content.resized_pictures:
+                self.sync_media_file(resized, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
+        for touristic_event in trek.published_touristic_events:
+            for picture, resized in touristic_event.resized_pictures:
+                self.sync_media_file(resized, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
         for picture, resized in trek.resized_pictures:
             self.sync_media_file(resized, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
         for desk in trek.information_desks.all():
@@ -266,6 +283,12 @@ class Command(BaseCommand):
         self.sync_pictograms(trekking_models.POIType, directory=url_media_nolang, zipfile=self.zipfile_settings)
         self.sync_pictograms(trekking_models.Route, directory=url_media_nolang, zipfile=self.zipfile_settings)
         self.sync_pictograms(tourism_models.InformationDeskType, directory=url_media_nolang,
+                             zipfile=self.zipfile_settings)
+        self.sync_pictograms(tourism_models.TouristicContentCategory, directory=url_media_nolang,
+                             zipfile=self.zipfile_settings)
+        self.sync_pictograms(tourism_models.TouristicContentType, directory=url_media_nolang,
+                             zipfile=self.zipfile_settings)
+        self.sync_pictograms(tourism_models.TouristicEventType, directory=url_media_nolang,
                              zipfile=self.zipfile_settings)
         self.close_zip(self.zipfile_settings, zipname_settings)
 
