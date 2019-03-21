@@ -26,31 +26,31 @@ $(window).on('entity:map', function (e, data) {
     });
     map.on('layeradd', function(e){
         var options = e.layer.options || {'modelname': 'None'};
-        if (loaded_land === false){
+        if (! loaded_land){
             if (options.modelname == 'land'){
                 e.layer.load(window.SETTINGS.urls.landedge_layer);
                 loaded_land = true;
             }
         }
-        if (loaded_physical === false){
+        if (! loaded_physical){
             if (options.modelname == 'physical'){
                 e.layer.load(window.SETTINGS.urls.physicaledge_layer);
                 loaded_physical = true;
             }
         }
-        if (loaded_competence === false){
+        if (! loaded_competence){
             if (options.modelname == 'competence'){
                 e.layer.load(window.SETTINGS.urls.competenceedge_layer);
                 loaded_competence = true;
             }
         }
-        if (loaded_signagemanagement === false){
+        if (! loaded_signagemanagement){
             if (options.modelname == 'signagemanagement'){
                 e.layer.load(window.SETTINGS.urls.signagemanagementedge_layer);
                 loaded_signagemanagement = true;
             }
         }
-        if (loaded_workmanagement === false){
+        if (! loaded_workmanagement){
             if (options.modelname == 'workmanagement'){
                 e.layer.load(window.SETTINGS.urls.workmanagementedge_layer);
                 loaded_workmanagement = true;

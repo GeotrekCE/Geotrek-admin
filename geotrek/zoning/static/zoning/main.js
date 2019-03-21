@@ -17,13 +17,13 @@ $(window).on('entity:map', function (e, data) {
 
         map.on('layeradd', function(e){
             var options = e.layer.options || {'modelname': 'None'};
-            if (loaded_district === false){
+            if (! loaded_district){
                 if (options.modelname == 'district'){
                     e.layer.load(window.SETTINGS.urls.district_layer);
                     loaded_district = true;
                 }
             }
-            if (loaded_city === false){
+            if (! loaded_city){
                 if (options.modelname == 'city'){
                     e.layer.load(window.SETTINGS.urls.city_layer);
                     loaded_city = true;

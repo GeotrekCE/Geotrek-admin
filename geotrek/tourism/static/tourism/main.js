@@ -17,14 +17,14 @@ $(window).on('entity:map', function (e, data) {
 
         map.on('layeradd', function(e){
             var options = e.layer.options || {'modelname': 'None'};
-            if (loaded_event === false){
+            if (! loaded_event){
 
                 if (options.modelname == 'touristicevent'){
                     e.layer.load(window.SETTINGS.urls.touristicevent_layer);
                     loaded_event = true;
                 }
             }
-            if (loaded_touristic === false){
+            if (! loaded_touristic){
                 if (options.modelname == 'touristiccontent'){
                     e.layer.load(window.SETTINGS.urls.touristiccontent_layer);
                     loaded_touristic = true;
