@@ -37,7 +37,6 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             model = tourism_models.InformationDeskType
             fields = ('id', 'name', 'pictogram')
 
-
     class TouristicContentTypeSerializer(serializers.ModelSerializer):
         name = serializers.ReadOnlyField(source='label')
         pictogram = serializers.SerializerMethodField(read_only=True)

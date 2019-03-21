@@ -63,5 +63,5 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
         qs = trek.trek.touristic_events.filter(published=True).prefetch_related('attachments') \
             .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID)) \
             .order_by('pk')
-        data = api_serializers_tourism.TouristicEventListSerializer(qs,  many=True, context={'trek_pk': trek.pk}).data
+        data = api_serializers_tourism.TouristicEventListSerializer(qs, many=True, context={'trek_pk': trek.pk}).data
         return response.Response(data)

@@ -9,7 +9,6 @@ from django.conf import settings
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     from geotrek.tourism import models as tourism_models
 
-
     class TouristicContentListSerializer(geo_serializers.GeoFeatureModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
         reservation_system = rest_serializers.ReadOnlyField(source='reservation_system.name', default="")
@@ -33,7 +32,6 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             fields = ('id', 'description', 'description_teaser', 'category',
                       'themes', 'contact', 'email', 'website', 'practical_info', 'pictures',
                       'type1', 'type2', 'approved', 'reservation_id', 'reservation_system', 'geometry')
-
 
     class TouristicEventListSerializer(geo_serializers.GeoFeatureModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
@@ -60,7 +58,6 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                       'organizer', 'speaker', 'type', 'accessibility',
                       'participant_number', 'booking', 'target_audience',
                       'practical_info', 'approved', 'geometry')
-
 
     class InformationDeskSerializer(rest_serializers.ModelSerializer):
         class Meta:
