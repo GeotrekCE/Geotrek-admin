@@ -88,6 +88,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.Trek
             id_field = 'id'
             geo_field = 'geometry'
+            auto_bbox = True
             fields = (
                 'id', 'name', 'accessibilities', 'description_teaser', 'cities',
                 'description', 'departure', 'arrival', 'duration', 'access', 'advised_parking', 'advice',

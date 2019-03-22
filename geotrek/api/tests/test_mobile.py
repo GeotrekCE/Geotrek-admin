@@ -17,6 +17,14 @@ DETAIL_GEOJSON_STRUCTURE = sorted([
     'id'
 ])
 
+DETAIL_TREK_GEOJSON_STRUCTURE = sorted([
+    'geometry',
+    'bbox',
+    'type',
+    'properties',
+    'id'
+])
+
 TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'first_picture', 'name', 'accessibilities', 'description_teaser', 'cities', 'description', 'departure', 'arrival',
     'access', 'advised_parking', 'advice', 'difficulty', 'length', 'ascent', 'descent', 'route', 'duration',
@@ -115,7 +123,7 @@ class APIAccessTestCase(BaseApiTest):
 
         # test geojson format
         self.assertEqual(sorted(json_response.keys()),
-                         DETAIL_GEOJSON_STRUCTURE)
+                         DETAIL_TREK_GEOJSON_STRUCTURE)
 
         self.assertEqual(sorted(json_response.get('properties').keys()),
                          TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
