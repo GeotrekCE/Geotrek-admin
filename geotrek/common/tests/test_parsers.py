@@ -140,7 +140,7 @@ class TourInSoftParserTests(TestCase):
     def test_attachment(self):
         class TestTourParser(TourInSoftParser):
             separator = '##'
-            attachments_separator = '||'
+            separator2 = '||'
 
             def __init__(self):
                 self.model = Trek
