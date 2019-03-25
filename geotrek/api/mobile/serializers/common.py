@@ -78,7 +78,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         class Meta:
             model = tourism_models.TouristicContentCategory
             fields = ('id', 'name', 'pictogram')
-    
+
     class InformationDeskSerializer(serializers.ModelSerializer):
         picture = serializers.SerializerMethodField(read_only=True)
 

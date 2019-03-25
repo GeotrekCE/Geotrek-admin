@@ -181,7 +181,7 @@ class Command(BaseCommand):
             tiles.add_coverage(bbox=small, zoomlevels=settings.MOBILE_TILES_HIGH_ZOOMS)
 
         tiles.run()
-        self.close_zip(trek_file, zipname)
+        self.close_zip(zipfile, zipname)
 
     def sync_view(self, lang, view, name, url='/', params={}, zipfile=None, fix2028=False, **kwargs):
         if self.verbosity == 2:

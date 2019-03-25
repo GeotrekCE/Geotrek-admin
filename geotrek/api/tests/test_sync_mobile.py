@@ -35,22 +35,22 @@ class SyncMobileTilesTest(TestCase):
     def test_tiles(self, mock_tiles, mock_tileslist):
         output = BytesIO()
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', verbosity=2, stdout=output)
-        zfile = zipfile.ZipFile(os.path.join('tmp', 'nolang', 'tiles.zip'))
+        zfile = zipfile.ZipFile(os.path.join('tmp', 'nolang', 'global.zip'))
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
             self.assertEqual(ifile.readline(), 'I am a png')
-        self.assertIn("nolang/tiles.zip", output.getvalue())
+        self.assertIn("nolang/global.zip", output.getvalue())
 
     @mock.patch('landez.TilesManager.tile', return_value='Error')
     def test_tile_fail(self, mock_tiles, mock_tileslist):
         mock_tiles.side_effect = DownloadError
         output = BytesIO()
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', verbosity=2, stdout=output)
-        zfile = zipfile.ZipFile(os.path.join('tmp', 'nolang', 'tiles.zip'))
+        zfile = zipfile.ZipFile(os.path.join('tmp', 'nolang', 'global.zip'))
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
             self.assertEqual(ifile.readline(), 'I am a png')
-        self.assertIn("nolang/tiles.zip", output.getvalue())
+        self.assertIn("nolang/global.zip", output.getvalue())
 
     @override_settings(MOBILE_TILES_URL=['http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                                          'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'])
@@ -59,7 +59,7 @@ class SyncMobileTilesTest(TestCase):
         mock_tiles.side_effect = DownloadError
         output = BytesIO()
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', verbosity=2, stdout=output)
-        zfile = zipfile.ZipFile(os.path.join('tmp', 'nolang', 'tiles.zip'))
+        zfile = zipfile.ZipFile(os.path.join('tmp', 'nolang', 'global.zip'))
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
             self.assertEqual(ifile.readline(), 'I am a png')
@@ -70,7 +70,7 @@ class SyncMobileTilesTest(TestCase):
         mock_tiles.side_effect = DownloadError
         output = BytesIO()
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', verbosity=2, stdout=output)
-        zfile = zipfile.ZipFile(os.path.join('tmp', 'nolang', 'tiles.zip'))
+        zfile = zipfile.ZipFile(os.path.join('tmp', 'nolang', 'global.zip'))
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
             self.assertEqual(ifile.readline(), 'I am a png')
@@ -86,19 +86,20 @@ class SyncMobileTilesTest(TestCase):
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', verbosity=2, stdout=output,
                                 portal=portal_b.name)
 
-        zfile_global = zipfile.ZipFile(os.path.join('tmp', 'nolang', 'tiles.zip'))
+        zfile_global = zipfile.ZipFile(os.path.join('tmp', 'nolang', 'global.zip'))
         for finfo in zfile_global.infolist():
             ifile_global = zfile_global.open(finfo)
-            self.assertEqual(ifile_global.readline(), 'I am a png')
-        zfile_trek = zipfile.ZipFile(os.path.join('tmp', 'nolang', str(trek.pk), 'tiles.zip'))
+            if ifile_global.name.startswith('tiles/'):
+                self.assertEqual(ifile_global.readline(), 'I am a png')
+        zfile_trek = zipfile.ZipFile(os.path.join('tmp', 'nolang', '{}.zip'.format(trek.pk)))
         for finfo in zfile_trek.infolist():
             ifile_trek = zfile_trek.open(finfo)
-            self.assertEqual(ifile_trek.readline(), 'I am a png')
-        self.assertIn("nolang/tiles.zip", output.getvalue())
-        self.assertIn("nolang/{pk}/tiles.zip".format(pk=trek.pk), output.getvalue())
+            if ifile_global.name.startswith('tiles/'):
+                self.assertEqual(ifile_trek.readline(), 'I am a png')
+        self.assertIn("nolang/global.zip", output.getvalue())
+        self.assertIn("nolang/{pk}.zip".format(pk=trek.pk), output.getvalue())
 
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'nolang', str(trek_not_same_portal.pk),
-                                                     'tiles.zip')))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'nolang', '{}.zip'.format(trek_not_same_portal.pk))))
 
     def tearDown(self):
         shutil.rmtree('tmp')
@@ -138,26 +139,6 @@ class SyncMobileFailTest(TestCase):
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                 skip_tiles=True, languages='fr', verbosity=2, stdout=BytesIO())
         self.assertFalse(os.path.exists(os.path.join('tmp', 'nolang', 'media', 'trekking_trek')))
-
-    @override_settings(ENABLED_MOBILE_FILTERS=9)
-    def test_bad_settings(self):
-        output = BytesIO()
-        TrekWithPublishedPOIsFactory.create(published_fr=True)
-        with self.assertRaises(CommandError) as e:
-            management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
-                                    skip_tiles=True, languages='fr', verbosity=2, stdout=output)
-        self.assertEqual(e.exception.message, 'Some errors raised during synchronization.')
-        self.assertIn("failed (argument of type 'int' is not iterable)", output.getvalue())
-
-    @override_settings(MEDIA_URL=9)
-    def test_bad_settings_2(self):
-        output = BytesIO()
-        TrekWithPublishedPOIsFactory.create(published_fr=True)
-        with self.assertRaises(AttributeError) as e:
-            management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
-                                    skip_tiles=True, languages='fr', verbosity=2, stdout=output)
-        self.assertEqual(e.exception.message, "'int' object has no attribute 'strip'")
-        self.assertIn("failed ('int' object has no attribute 'find')", output.getvalue())
 
     @mock.patch('geotrek.api.mobile.views.common.SettingsView.get')
     def test_response_500(self, mocke):

@@ -167,12 +167,14 @@ class Command(BaseCommand):
                     zipfile.write(dst, name)
                 if self.verbosity == 2:
                     self.stdout.write(
-                        u"\x1b[36m**\x1b[0m \x1b[1m{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
+                        u"\x1b[36m**\x1b[0m \x1b[1mnolang{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
                             url=obj.pictogram.url, name=name))
             else:
                 self.sync_media_file(obj.pictogram, directory=directory, zipfile=zipfile)
 
     def close_zip(self, zipfile, name):
+        self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=name), ending="")
+
         oldzipfilename = os.path.join(self.dst_root, name)
         zipfilename = os.path.join(self.tmp_root, name)
         try:
@@ -275,6 +277,7 @@ class Command(BaseCommand):
 
     def sync_treks_media(self):
         treks = trekking_models.Trek.objects.existing().order_by('pk')
+        treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
         treks = treks.filter(
             Q(**{'published': True})
             | Q(**{'trek_parents__parent__published': True,
