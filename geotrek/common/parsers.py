@@ -197,6 +197,8 @@ class Parser(object):
             if isinstance(old, float) and isinstance(val, float):
                 old = round(old, 10)
                 val = round(val, 10)
+            if isinstance(old, unicode):
+                val = val or ""
             if old != val:
                 self.set_value(dst, src, val)
                 return True
@@ -447,6 +449,8 @@ class Parser(object):
                 if settings.DEBUG:
                     raise
                 self.add_warning(str(e).decode('utf8'))
+            except (ValueImportError, RowImportError):
+                self.add_warning(unicode(e))
             except Exception as e:
                 if settings.DEBUG:
                     raise
@@ -636,7 +640,7 @@ class AttachmentParserMixin(object):
 
 class TourInSoftParser(AttachmentParserMixin, Parser):
     separator = '#'
-    attachments_separator = '|'
+    separator2 = '|'
 
     @property
     def items(self):
@@ -666,89 +670,71 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
         if not val:
             return []
         return [
-            subval.split(self.attachments_separator)
+            subval.split(self.separator2)
             for subval in val.split(self.separator)
-            if subval.split(self.attachments_separator)[0]
+            if subval.split(self.separator2)[0]
         ]
 
     def filter_geom(self, src, val):
         lng, lat = val
         if not lng or not lat:
-            raise ValueError("Empty geometry")
+            raise ValueImportError("Empty geometry")
         geom = Point(float(lng), float(lat), srid=4326)  # WGS84
         geom.transform(settings.SRID)
         return geom
 
     def filter_email(self, src, val):
-        if val:
-            response_dict = {}
-            values = val.split('#')
+        val = val or u""
 
-            for value in values:
-                key, data = value.split('|')
-                response_dict.update({
-                    key: data
-                })
+        for subval in val.split(self.separator):
+            if not subval:
+                continue
+            key, value = subval.split(self.separator2)
+            if key in (u"Mél", u"Mail"):
+                return value
 
-            return response_dict.get(u'Mél', u'')
-        return ''
+        return u""
 
     def filter_website(self, src, val):
-        if val:
-            response_dict = {}
-            values = val.split('#')
+        val = val or ""
 
-            for value in values:
-                key, data = value.split('|')
-                response_dict.update({
-                    key: data
-                })
+        for subval in val.split(self.separator):
+            if not subval:
+                continue
+            key, value = subval.split(self.separator2)
+            if key in (u"Site web", u"Site web (URL)"):
+                return value
 
-            return response_dict.get('Site web (URL)', '')
+        return u""
 
     def filter_contact(self, src, val):
-        infos = ""
         com, adresse = val
+        infos = []
 
         if adresse:
-            address_splitted = adresse.split('|')
-            if address_splitted:
-                infos += "<strong>Adresse :</strong><br/>"
-                infos += "%s<br/>" % address_splitted[0]
-                infos += "%s - %s<br/>" % (address_splitted[4], address_splitted[5])
-                infos += "<br/>"
+            lines = adresse.split(self.separator2)
+            # Remove 6th field (code INSEE)
+            lines = lines[:5]
+            # Put city and postal code together
+            if lines[3] and lines[4]:
+                lines[3:5] = [" ".join(lines[3:5])]
+            # Remove empty lines
+            lines = [line for line in lines if line]
+            infos.append(
+                u"<strong>Adresse :</strong><br>"
+                + u"<br>".join(lines)
+            )
+
         if com:
-            response_dict = {}
-            values = com.split('#')
+            for subval in com.split(self.separator):
+                if not subval:
+                    continue
+                key, value = subval.split(self.separator2)
+                if key in (u"Mél", u"Mail", u"Site web", u"Site web (URL)"):
+                    continue
+                infos.append(u"<strong>{} :</strong><br>{}".format(key, value))
 
-            for value in values:
-                key, data = value.split('|')
-                response_dict.update({
-                    key: data
-                })
-
-            tel = response_dict.get('Téléphone filaire', '')
-
-            if tel:
-                infos += "<strong>Téléphone :</strong><br/>"
-                infos += "%s<br/>" % tel
-                infos += "<br/>"
-
-            fax = response_dict.get('Télécopieur /fax', '')
-
-            if fax:
-                infos += "<strong>Fax :</strong><br/>"
-                infos += "%s<br/>" % fax
-                infos += "<br/>"
-
-            portable = response_dict.get('Portable', '')
-
-            if portable:
-                infos += "<strong>Portable :</strong><br/>"
-                infos += "%s<br/>" % portable
-                infos += "<br/>"
-
-        return infos
+        return u"<br><br>".join(infos)
 
 
 class TourismSystemParser(AttachmentParserMixin, Parser):
