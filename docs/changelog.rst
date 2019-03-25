@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.25.1.dev0
+2.25.1 (2019-03-25)
 -------------------
 
-**New features**
+**Bug fixes**
 
--
+- Fix Tourinsoft parsers
 
 
 2.25.0 (2019-03-25)
