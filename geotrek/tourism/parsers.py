@@ -619,6 +619,7 @@ class TouristicContentTourInSoftParser(TourInSoftParser):
     }
 
     field_options = {
+        'geom': {'required': True},
         'type1': {'create': True, 'fk': 'category'},
         'type2': {'create': True, 'fk': 'category'},
     }
@@ -647,32 +648,30 @@ class TouristicContentTourInSoftParser(TourInSoftParser):
             self.m2m_constant_fields['portal'] = self.portal
 
     def filter_practical_info(self, src, val):
-        infos = ""
+        langues, periode, equipements = val
+        infos = []
 
-        if val:
-            if len(val) != 3:
-                raise Exception(u'problem with practial infos')
-            langues, periode, equipements = val
+        if langues:
+            infos.append(
+                u"<strong>Langues parlées :</strong><br>"
+                + u"<br>".join(langues.split(self.separator))
+            )
 
-            if langues:
-                infos += u"<strong>Langues parlées :</strong><br/>"
-                infos += u"<br/>".join(langues.split('#'))
-                infos += u"<br/><br/>"
+        if periode:
+            periodes = periode.split(self.separator2)
+            if len(periodes) >= 2 and periodes[0] and periodes[1]:
+                infos.append(
+                    u"<strong>Période d'ouverture :</strong><br>"
+                    + u"du %s au %s" % (periodes[0], periodes[1])
+                )
 
-            if periode:
-                periodes = periode.split('|')
-                if len(periodes) > 1:
-                    if periodes[0] and periodes[1]:
-                        infos += u"<strong>Période d'ouverture :</strong><br/>"
-                        infos += u"du %s au %s" % (periodes[0], periodes[1])
-                        infos += u"<br/><br/>"
+        if equipements:
+            infos.append(
+                u"<strong>Équipements :</strong><br>"
+                + u"<br>".join(equipements.split(self.separator))
+            )
 
-            if equipements:
-                infos += u"<strong>Équipements :</strong><br/>"
-                infos += u"<br/>".join(equipements.split('#'))
-                infos += u"<br/><br/>"
-
-        return infos
+        return u"<br><br>".join(infos)
 
 
 class TouristicEventTourInSoftParser(TourInSoftParser):
@@ -710,6 +709,10 @@ class TouristicEventTourInSoftParser(TourInSoftParser):
         'attachments': 'Photos',
     }
 
+    field_options = {
+        'geom': {'required': True},
+    }
+
     natural_keys = {
         'type': 'type',
         'source': 'name',
@@ -729,14 +732,14 @@ class TouristicEventTourInSoftParser(TourInSoftParser):
 
     def filter_begin_date(self, src, val):
         if val:
-            values = val.split('|')
+            values = val.split(self.separator2)
             if values and values[0]:
                 day, month, year = values[0].split('/')
                 return '{year}-{month}-{day}'.format(year=year, month=month, day=day)
 
     def filter_end_date(self, src, val):
         if val:
-            values = val.split('|')
+            values = val.split(self.separator2)
             if values and values[1]:
                 day, month, year = values[1].split('/')
                 return '{year}-{month}-{day}'.format(year=year, month=month, day=day)
