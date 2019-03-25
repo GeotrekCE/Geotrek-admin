@@ -45,7 +45,7 @@ $$ LANGUAGE plpgsql;
 
 DROP TRIGGER IF EXISTS e_r_evenement_troncon_geometry_tgr ON e_r_evenement_troncon;
 
-CREATE OR REPLACE FUNCTION geotrek.ft_evenements_troncons_geometry() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION geotrek.ft_evenements_troncons_geometry() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     eid integer;
     eids integer[];
@@ -80,7 +80,7 @@ FOR EACH ROW EXECUTE PROCEDURE ft_evenements_troncons_geometry();
 
 DROP TRIGGER IF EXISTS e_r_evenement_troncon_junction_point_iu_tgr ON e_r_evenement_troncon;
 
-CREATE OR REPLACE FUNCTION geotrek.ft_evenements_troncons_junction_point_iu() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION geotrek.ft_evenements_troncons_junction_point_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     junction geometry;
     t_count integer;

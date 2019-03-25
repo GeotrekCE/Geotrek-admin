@@ -48,11 +48,20 @@ class TouristicContentCategoryFactory(factory.DjangoModelFactory):
     pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
-class TouristicContentTypeFactory(factory.DjangoModelFactory):
+class TouristicContentType1Factory(factory.DjangoModelFactory):
     class Meta:
-        model = models.TouristicContentType
+        model = models.TouristicContentType1
 
-    label = factory.Sequence(lambda n: u"Type %s" % n)
+    label = factory.Sequence(lambda n: u"Type1 %s" % n)
+    category = factory.SubFactory(TouristicContentCategoryFactory)
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+
+
+class TouristicContentType2Factory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.TouristicContentType2
+
+    label = factory.Sequence(lambda n: u"Type2 %s" % n)
     category = factory.SubFactory(TouristicContentCategoryFactory)
     pictogram = dummy_filefield_as_sequence('thumbnail %s')
 

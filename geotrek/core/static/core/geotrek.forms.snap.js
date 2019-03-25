@@ -40,7 +40,11 @@ MapEntity.GeometryField.GeometryFieldPathMixin = {
      * (At least for the fix to propagate events)
      */
     buildPathsLayer: function (objectsLayer) {
+        var url_path = window.SETTINGS.urls.path_layer
         var pathsLayer = MapEntity.pathsLayer({style: {clickable: true}, no_draft: objectsLayer.modelname != 'path'});
+        if (objectsLayer.modelname != 'path')
+            url_path += '?no_draft=true';
+        pathsLayer.load(url_path, true);
 
         this._map.addLayer(pathsLayer);
 

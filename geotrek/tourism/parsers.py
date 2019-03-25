@@ -6,10 +6,11 @@ import datetime
 import requests
 from django.conf import settings
 from django.contrib.gis.geos import Point
+from django.db import models
 from django.utils.translation import ugettext as _
 
 from geotrek.common.parsers import (AttachmentParserMixin, Parser,
-                                    GlobalImportError)
+                                    GlobalImportError, TourInSoftParser)
 from geotrek.tourism.models import TouristicContent, TouristicEvent, TouristicContentType1, TouristicContentType2
 
 
@@ -337,6 +338,35 @@ class TouristicContentApidaeParser(ApidaeParser):
         if self.portal is not None:
             self.m2m_constant_fields['portal'] = self.portal
 
+    # Same as parent but handle multiple type1/2 with the same name in different categories
+    def get_to_delete_kwargs(self):
+        kwargs = {}
+        for dst, val in self.constant_fields.iteritems():
+            field = self.model._meta.get_field(dst)
+            if isinstance(field, models.ForeignKey):
+                natural_key = self.natural_keys[dst]
+                try:
+                    kwargs[dst] = field.rel.to.objects.get(**{natural_key: val})
+                except field.rel.to.DoesNotExist:
+                    return None
+            else:
+                kwargs[dst] = val
+        for dst, val in self.m2m_constant_fields.iteritems():
+            assert not self.separator or self.separator not in val
+            field = self.model._meta.get_field(dst)
+            natural_key = self.natural_keys[dst]
+            filters = {natural_key: subval for subval in val}
+            if not filters:
+                continue
+
+            if dst in ['type1', 'type2']:
+                filters['category'] = kwargs['category'].pk
+            try:
+                kwargs[dst] = field.rel.to.objects.get(**filters)
+            except field.rel.to.DoesNotExist:
+                return None
+        return kwargs
+
     def filter_attachments(self, src, val):
         result = []
         for subval in val or []:
@@ -552,3 +582,161 @@ class EspritParcParser(AttachmentParserMixin, Parser):
 # Deprecated: for compatibility only
 TouristicContentSitraParser = TouristicContentApidaeParser
 HebergementsSitraParser = HebergementsApidaeParser
+
+
+class TouristicContentTourInSoftParser(TourInSoftParser):
+    eid = 'eid'
+    model = TouristicContent
+    delete = True
+    category = None
+    type1 = None
+    type2 = None
+    source = None
+    portal = None
+
+    constant_fields = {
+        'published': True,
+        'deleted': False,
+    }
+
+    fields = {
+        'eid': 'SyndicObjectID',
+        'name': 'SyndicObjectName',
+        'description_teaser': 'DescriptionCommerciale',
+        'geom': ('GmapLongitude', 'GmapLatitude'),
+        'practical_info': (
+            'LanguesParlees',
+            'PeriodeOuverture',
+            'PrestationsEquipements',
+        ),
+        'contact': ('MoyenDeCom', 'AdresseComplete'),
+        'email': 'MoyenDeCom',
+        'website': 'MoyenDeCom',
+    }
+
+    non_fields = {
+        'attachments': 'Photos',
+    }
+
+    field_options = {
+        'type1': {'create': True, 'fk': 'category'},
+        'type2': {'create': True, 'fk': 'category'},
+    }
+
+    natural_keys = {
+        'category': 'label',
+        'type1': 'label',
+        'type2': 'label',
+        'source': 'name',
+        'portal': 'name',
+    }
+
+    def __init__(self, *args, **kwargs):
+        super(TouristicContentTourInSoftParser, self).__init__(*args, **kwargs)
+        self.constant_fields = self.constant_fields.copy()
+        self.m2m_constant_fields = self.m2m_constant_fields.copy()
+        if self.category:
+            self.constant_fields['category'] = self.category
+        if self.type1 is not None:
+            self.m2m_constant_fields['type1'] = self.type1
+        if self.type2 is not None:
+            self.m2m_constant_fields['type2'] = self.type2
+        if self.source is not None:
+            self.m2m_constant_fields['source'] = self.source
+        if self.portal is not None:
+            self.m2m_constant_fields['portal'] = self.portal
+
+    def filter_practical_info(self, src, val):
+        infos = ""
+
+        if val:
+            if len(val) != 3:
+                raise Exception(u'problem with practial infos')
+            langues, periode, equipements = val
+
+            if langues:
+                infos += u"<strong>Langues parlées :</strong><br/>"
+                infos += u"<br/>".join(langues.split('#'))
+                infos += u"<br/><br/>"
+
+            if periode:
+                periodes = periode.split('|')
+                if len(periodes) > 1:
+                    if periodes[0] and periodes[1]:
+                        infos += u"<strong>Période d'ouverture :</strong><br/>"
+                        infos += u"du %s au %s" % (periodes[0], periodes[1])
+                        infos += u"<br/><br/>"
+
+            if equipements:
+                infos += u"<strong>Équipements :</strong><br/>"
+                infos += u"<br/>".join(equipements.split('#'))
+                infos += u"<br/><br/>"
+
+        return infos
+
+
+class TouristicEventTourInSoftParser(TourInSoftParser):
+    eid = 'eid'
+    model = TouristicEvent
+    delete = True
+    type = None
+    source = None
+    portal = None
+
+    constant_fields = {
+        'published': True,
+        'deleted': False,
+    }
+
+    fields = {
+        'eid': 'SyndicObjectID',
+        'name': 'SyndicObjectName',
+        'description': 'DescriptionCommerciale2',
+        'description_teaser': 'DescriptionCommerciale',
+        'geom': ('GmapLongitude', 'GmapLatitude'),
+        'practical_info': (
+            'LanguesParlees',
+            'PeriodeOuverture',
+            'PrestationsEquipements',
+        ),
+        'contact': ('MoyenDeCom', 'AdresseComplete'),
+        'email': 'MoyenDeCom',
+        'website': 'MoyenDeCom',
+        'begin_date': 'PeriodeOuverture',
+        'end_date': 'PeriodeOuverture'
+    }
+
+    non_fields = {
+        'attachments': 'Photos',
+    }
+
+    natural_keys = {
+        'type': 'type',
+        'source': 'name',
+        'portal': 'name',
+    }
+
+    def __init__(self, *args, **kwargs):
+        super(TouristicEventTourInSoftParser, self).__init__(*args, **kwargs)
+        self.constant_fields = self.constant_fields.copy()
+        self.m2m_constant_fields = self.m2m_constant_fields.copy()
+        if self.type is not None:
+            self.constant_fields['type'] = self.type
+        if self.source is not None:
+            self.m2m_constant_fields['source'] = self.source
+        if self.portal is not None:
+            self.m2m_constant_fields['portal'] = self.portal
+
+    def filter_begin_date(self, src, val):
+        if val:
+            values = val.split('|')
+            if values and values[0]:
+                day, month, year = values[0].split('/')
+                return '{year}-{month}-{day}'.format(year=year, month=month, day=day)
+
+    def filter_end_date(self, src, val):
+        if val:
+            values = val.split('|')
+            if values and values[1]:
+                day, month, year = values[1].split('/')
+                return '{year}-{month}-{day}'.format(year=year, month=month, day=day)

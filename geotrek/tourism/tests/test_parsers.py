@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+from datetime import date
 import io
 import json
 import mock
@@ -8,11 +9,14 @@ import os
 from django.test import TestCase
 from django.core.management import call_command
 
+from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.tests import TranslationResetMixin
-from geotrek.tourism.factories import TouristicContentCategoryFactory, TouristicContentTypeFactory
+from geotrek.tourism.factories import (TouristicContentCategoryFactory, TouristicContentType1Factory,
+                                       TouristicContentType2Factory, TouristicEventTypeFactory)
 from geotrek.tourism.models import TouristicContent, TouristicEvent
-from geotrek.tourism.parsers import TouristicContentApidaeParser, EspritParcParser
+from geotrek.tourism.parsers import (TouristicContentApidaeParser, EspritParcParser,
+                                     TouristicContentTourInSoftParser, TouristicEventTourInSoftParser)
 
 
 class EauViveParser(TouristicContentApidaeParser):
@@ -27,6 +31,21 @@ class EspritParc(EspritParcParser):
     type2 = [u"Hautes Alpes Naturellement", u"Bienvenue à la ferme", u"Agriculture biologique"]
 
 
+class HOT28(TouristicContentTourInSoftParser):
+    url = "http://wcf.tourinsoft.com/Syndication/cdt28/xxx/Objects"
+    source = "CDT 28"
+    category = u"Où dormir"
+    type1 = u"Hôtels"
+    type2 = u"****"
+    portal = u"Itinérance"
+
+
+class FMA28(TouristicEventTourInSoftParser):
+    url = "http://wcf.tourinsoft.com/Syndication/cdt28/xxx/Objects"
+    source = "CDT 28"
+    type = u"Agenda rando"
+
+
 class ParserTests(TranslationResetMixin, TestCase):
     @mock.patch('requests.get')
     def test_create_content_apidae(self, mocked):
@@ -38,8 +57,8 @@ class ParserTests(TranslationResetMixin, TestCase):
         mocked.return_value.json = mocked_json
         FileType.objects.create(type=u"Photographie")
         category = TouristicContentCategoryFactory(label=u"Eau vive")
-        TouristicContentTypeFactory(label=u"Type A", in_list=1)
-        TouristicContentTypeFactory(label=u"Type B", in_list=1)
+        TouristicContentType1Factory(label=u"Type A")
+        TouristicContentType1Factory(label=u"Type B")
         call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=0)
         self.assertEqual(TouristicContent.objects.count(), 1)
         content = TouristicContent.objects.get()
@@ -59,7 +78,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(content.category, category)
         self.assertQuerysetEqual(
             content.type1.all(),
-            ['<TouristicContentType: Type A>', '<TouristicContentType: Type B>']
+            ['<TouristicContentType1: Type A>', '<TouristicContentType1: Type B>']
         )
         self.assertQuerysetEqual(content.type2.all(), [])
         self.assertEqual(Attachment.objects.count(), 3)
@@ -76,8 +95,8 @@ class ParserTests(TranslationResetMixin, TestCase):
         mocked.return_value.json = mocked_json
         FileType.objects.create(type=u"Photographie", structure=None)
         TouristicContentCategoryFactory(label=u"Eau vive")
-        TouristicContentTypeFactory(label=u"Type A", in_list=1)
-        TouristicContentTypeFactory(label=u"Type B", in_list=1)
+        TouristicContentType1Factory(label=u"Type A")
+        TouristicContentType1Factory(label=u"Type B")
         call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=0)
         self.assertEqual(TouristicContent.objects.count(), 1)
 
@@ -128,13 +147,13 @@ class ParserTests(TranslationResetMixin, TestCase):
         mocked.return_value.json = mocked_json
         FileType.objects.create(type=u"Photographie")
         category = TouristicContentCategoryFactory(label=u"Miels et produits de la ruche")
-        TouristicContentTypeFactory(label=u"Miel", in_list=1, category=category)
-        TouristicContentTypeFactory(label=u"Gelée royale, propolis et pollen", in_list=1, category=category)
-        TouristicContentTypeFactory(label=u"Pollen", in_list=1, category=category)
-        TouristicContentTypeFactory(label=u"Cire", in_list=1, category=category)
-        TouristicContentTypeFactory(label=u"Hautes Alpes Naturellement", in_list=2, category=category)
-        TouristicContentTypeFactory(label=u"Bienvenue à la ferme", in_list=2, category=category)
-        TouristicContentTypeFactory(label=u"Agriculture biologique", in_list=2, category=category)
+        TouristicContentType1Factory(label=u"Miel", category=category)
+        TouristicContentType1Factory(label=u"Gelée royale, propolis et pollen", category=category)
+        TouristicContentType1Factory(label=u"Pollen", category=category)
+        TouristicContentType1Factory(label=u"Cire", category=category)
+        TouristicContentType2Factory(label=u"Hautes Alpes Naturellement", category=category)
+        TouristicContentType2Factory(label=u"Bienvenue à la ferme", category=category)
+        TouristicContentType2Factory(label=u"Agriculture biologique", category=category)
         call_command('import', 'geotrek.tourism.tests.test_parsers.EspritParc', filename, verbosity=0)
         self.assertEqual(TouristicContent.objects.count(), 24)
         content = TouristicContent.objects.all()
@@ -155,3 +174,69 @@ class ParserTests(TranslationResetMixin, TestCase):
             self.assertIn(one.eid, eid)
             self.assertIn(one.name.lower(), name)
             self.assertEqual(one.category, category)
+
+    @mock.patch('requests.get')
+    def test_create_content_tourinsoft(self, mocked):
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'tourinsoftContent.json')
+            with io.open(filename, 'r', encoding='utf8') as f:
+                return json.load(f)
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        FileType.objects.create(type=u"Photographie")
+        category = TouristicContentCategoryFactory(label=u"Où dormir")
+        source = RecordSourceFactory(name=u"CDT 28")
+        portal = TargetPortalFactory(name=u"Itinérance")
+        call_command('import', 'geotrek.tourism.tests.test_parsers.HOT28', verbosity=0)
+        self.assertEqual(TouristicContent.objects.count(), 1)
+        content = TouristicContent.objects.get()
+        self.assertEqual(content.eid, u"HOTCEN0280010001")
+        self.assertEqual(content.name, u"Hôtel du Perche")
+        self.assertEqual(content.description[:27], u"")
+        self.assertEqual(content.description_teaser[:26], u"A deux pas du centre ville")
+        self.assertEqual(content.contact[:69], u"<strong>Adresse :</strong><br/>Rue de la Bruyère<br/>NOGENT-LE-ROTROU")
+        self.assertEqual(content.email, u"hotelduperche@brithotel.fr")
+        self.assertEqual(content.website, u"http://www.hotel-du-perche.com")
+        self.assertEqual(round(content.geom.x), 537329)
+        self.assertEqual(round(content.geom.y), 6805504)
+        self.assertEqual(content.practical_info[:51], u"<strong>Langues parlées :</strong><br/>Anglais<br/>")
+        self.assertTrue(u"<strong>Équipements :</strong><br/>Bar<br/>Parking<br/>" in content.practical_info)
+        self.assertTrue(content.published)
+        self.assertEqual(content.source.get(), source)
+        self.assertEqual(content.portal.get(), portal)
+        self.assertEqual(content.category, category)
+        self.assertEqual(content.type1.get().label, u"Hôtels")
+        self.assertEqual(content.type2.get().label, u"****")
+        self.assertEqual(Attachment.objects.count(), 3)
+        self.assertEqual(Attachment.objects.first().content_object, content)
+
+    @mock.patch('requests.get')
+    def test_create_event_tourinsoft(self, mocked):
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'tourinsoftEvent.json')
+            with io.open(filename, 'r', encoding='utf8') as f:
+                return json.load(f)
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        FileType.objects.create(type=u"Photographie")
+        type = TouristicEventTypeFactory(type=u"Agenda rando")
+        source = RecordSourceFactory(name="CDT 28")
+        call_command('import', 'geotrek.tourism.tests.test_parsers.FMA28', verbosity=0)
+        self.assertEqual(TouristicEvent.objects.count(), 1)
+        event = TouristicEvent.objects.get()
+        self.assertEqual(event.eid, u"FMACEN0280060359")
+        self.assertEqual(event.name, u"Moto cross de Brou")
+        self.assertEqual(event.description, u"")
+        self.assertEqual(event.description_teaser, u"")
+        self.assertEqual(event.contact[:69], u"<strong>Adresse :</strong><br/>Circuit des Tonnes<br/>DAMPIERRE-SOUS-")
+        self.assertEqual(event.email, u"moto-club.brou@orange.fr")
+        self.assertEqual(event.website, u"http://www.mxbrou.com")
+        self.assertEqual(round(event.geom.x), 559796)
+        self.assertEqual(round(event.geom.y), 6791765)
+        self.assertTrue(event.published)
+        self.assertEqual(event.source.get(), source)
+        self.assertEqual(event.type, type)
+        self.assertEqual(Attachment.objects.count(), 9)
+        self.assertEqual(Attachment.objects.first().content_object, event)
+        self.assertEqual(event.begin_date, date(2019, 6, 1))
+        self.assertEqual(event.end_date, date(2019, 6, 2))

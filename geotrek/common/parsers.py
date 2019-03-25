@@ -16,6 +16,7 @@ from django.db import models, connection
 from django.db.utils import DatabaseError
 from django.contrib.auth import get_user_model
 from django.contrib.gis.gdal import DataSource, GDALException, CoordTransform
+from django.contrib.gis.geos import Point
 from django.core.files.base import ContentFile
 from django.template.loader import render_to_string
 from django.utils import translation
@@ -347,22 +348,25 @@ class Parser(object):
                 val = mapping[val]
         return val
 
-    def filter_fk(self, src, val, model, field, mapping=None, partial=False, create=False, **kwargs):
+    def filter_fk(self, src, val, model, field, mapping=None, partial=False, create=False, fk=None, **kwargs):
         val = self.get_mapping(src, val, mapping, partial)
         if val is None:
             return None
+        fields = {field: val}
+        if fk:
+            fields[fk] = getattr(self.obj, fk)
         if create:
-            val, created = model.objects.get_or_create(**{field: val})
+            val, created = model.objects.get_or_create(**fields)
             if created:
                 self.add_warning(_(u"{model} '{val}' did not exist in Geotrek-Admin and was automatically created").format(model=model._meta.verbose_name.title(), val=val))
             return val
         try:
-            return model.objects.get(**{field: val})
+            return model.objects.get(**fields)
         except model.DoesNotExist:
             self.add_warning(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=model._meta.verbose_name.title(), val=val))
             return None
 
-    def filter_m2m(self, src, val, model, field, mapping=None, partial=False, create=False, **kwargs):
+    def filter_m2m(self, src, val, model, field, mapping=None, partial=False, create=False, fk=None, **kwargs):
         if not val:
             return []
         if self.separator and not isinstance(val, list):
@@ -373,14 +377,17 @@ class Parser(object):
             subval = self.get_mapping(src, subval, mapping, partial)
             if subval is None:
                 continue
+            fields = {field: subval}
+            if fk:
+                fields[fk] = getattr(self.obj, fk)
             if create:
-                subval, created = model.objects.get_or_create(**{field: subval})
+                subval, created = model.objects.get_or_create(**fields)
                 if created:
                     self.add_warning(_(u"{model} '{val}' did not exist in Geotrek-Admin and was automatically created").format(model=model._meta.verbose_name.title(), val=subval))
                 dst.append(subval)
                 continue
             try:
-                dst.append(model.objects.get(**{field: subval}))
+                dst.append(model.objects.get(**fields))
             except model.DoesNotExist:
                 self.add_warning(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=model._meta.verbose_name.title(), val=subval))
                 continue
@@ -628,6 +635,9 @@ class AttachmentParserMixin(object):
 
 
 class TourInSoftParser(AttachmentParserMixin, Parser):
+    separator = '#'
+    attachments_separator = '|'
+
     @property
     def items(self):
         return self.root['d']['results']
@@ -655,7 +665,90 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
     def filter_attachments(self, src, val):
         if not val:
             return []
-        return [subval.split('||') for subval in val.split('##') if subval.split('||')[0]]
+        return [
+            subval.split(self.attachments_separator)
+            for subval in val.split(self.separator)
+            if subval.split(self.attachments_separator)[0]
+        ]
+
+    def filter_geom(self, src, val):
+        lng, lat = val
+        if not lng or not lat:
+            raise ValueError("Empty geometry")
+        geom = Point(float(lng), float(lat), srid=4326)  # WGS84
+        geom.transform(settings.SRID)
+        return geom
+
+    def filter_email(self, src, val):
+        if val:
+            response_dict = {}
+            values = val.split('#')
+
+            for value in values:
+                key, data = value.split('|')
+                response_dict.update({
+                    key: data
+                })
+
+            return response_dict.get(u'Mél', u'')
+        return ''
+
+    def filter_website(self, src, val):
+        if val:
+            response_dict = {}
+            values = val.split('#')
+
+            for value in values:
+                key, data = value.split('|')
+                response_dict.update({
+                    key: data
+                })
+
+            return response_dict.get('Site web (URL)', '')
+
+    def filter_contact(self, src, val):
+        infos = ""
+        com, adresse = val
+
+        if adresse:
+            address_splitted = adresse.split('|')
+            if address_splitted:
+                infos += "<strong>Adresse :</strong><br/>"
+                infos += "%s<br/>" % address_splitted[0]
+                infos += "%s - %s<br/>" % (address_splitted[4], address_splitted[5])
+                infos += "<br/>"
+        if com:
+            response_dict = {}
+            values = com.split('#')
+
+            for value in values:
+                key, data = value.split('|')
+                response_dict.update({
+                    key: data
+                })
+
+            tel = response_dict.get('Téléphone filaire', '')
+
+            if tel:
+                infos += "<strong>Téléphone :</strong><br/>"
+                infos += "%s<br/>" % tel
+                infos += "<br/>"
+
+            fax = response_dict.get('Télécopieur /fax', '')
+
+            if fax:
+                infos += "<strong>Fax :</strong><br/>"
+                infos += "%s<br/>" % fax
+                infos += "<br/>"
+
+            portable = response_dict.get('Portable', '')
+
+            if portable:
+                infos += "<strong>Portable :</strong><br/>"
+                infos += "%s<br/>" % portable
+                infos += "<br/>"
+
+        return infos
 
 
 class TourismSystemParser(AttachmentParserMixin, Parser):

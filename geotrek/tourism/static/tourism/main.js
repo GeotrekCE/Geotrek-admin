@@ -5,16 +5,32 @@
 $(window).on('entity:map', function (e, data) {
 
     var map = data.map;
-
+    var loaded_event = false;
+    var loaded_touristic = false;
     // Show tourism layer in application maps
     $.each(['touristiccontent', 'touristicevent'], function (i, modelname) {
         var layer = new L.ObjectsLayer(null, {
             modelname: modelname,
             style: L.Util.extend(window.SETTINGS.map.styles[modelname] || {}, {clickable:false}),
         });
-        var url = window.SETTINGS.urls[modelname + '_layer'];
-        layer.load(url);
         map.layerscontrol.addOverlay(layer, tr(modelname), tr('Tourism'));
+
+        map.on('layeradd', function(e){
+            var options = e.layer.options || {'modelname': 'None'};
+            if (! loaded_event){
+
+                if (options.modelname == 'touristicevent'){
+                    e.layer.load(window.SETTINGS.urls.touristicevent_layer);
+                    loaded_event = true;
+                }
+            }
+            if (! loaded_touristic){
+                if (options.modelname == 'touristiccontent'){
+                    e.layer.load(window.SETTINGS.urls.touristiccontent_layer);
+                    loaded_touristic = true;
+                }
+        }
+    });
     });
 });
 
