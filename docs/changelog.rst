@@ -2,12 +2,21 @@
 CHANGELOG
 =========
 
-2.24.9.dev0
+2.25.0 (2019-03-25)
 -------------------
 
-**Bug fixes**
+**New features / Performances**
 
--
+- Add the possibility to load layers (do not load them automatically)
+
+**Minor changes**
+
+- Add Touristic Content TourInSoft Parser
+- Add tool testing ign keys without ggp3
+
+**Documentation**
+
+- How to update IGN urls
 
 
 2.24.8 (2019-03-15)
