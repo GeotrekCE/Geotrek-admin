@@ -147,8 +147,8 @@ class Command(BaseCommand):
             zipfile.write(dst, os.path.join(url, name))
         if self.verbosity == 2:
             self.stdout.write(
-                u"\x1b[36m**\x1b[0m \x1b[1m{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
-                    url=url, name=name))
+                u"\x1b[36m**\x1b[0m \x1b[1m{directory}/{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
+                    directory=directory, url=url, name=name))
 
     def sync_media_file(self, field, prefix=None, directory='', zipfile=None):
         if field and field.name:
@@ -167,8 +167,8 @@ class Command(BaseCommand):
                     zipfile.write(dst, name)
                 if self.verbosity == 2:
                     self.stdout.write(
-                        u"\x1b[36m**\x1b[0m \x1b[1mnolang{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
-                            url=obj.pictogram.url, name=name))
+                        u"\x1b[36m**\x1b[0m \x1b[1m{directory}{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
+                            directory=directory, url=obj.pictogram.url, name=name))
             else:
                 self.sync_media_file(obj.pictogram, directory=directory, zipfile=zipfile)
 
@@ -268,16 +268,18 @@ class Command(BaseCommand):
             self.sync_media_file(resized, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
         for desk in trek.information_desks.all():
             self.sync_media_file(desk.resized_picture, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
-
-        if self.verbosity == 2:
-            self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname_trekid),
-                              ending="")
+        for lang in self.languages:
+            trek.prepare_elevation_chart(lang, self.referer)
+            url_media = '/{}{}'.format(trek.pk, settings.MEDIA_URL)
+            self.sync_file(trek.get_elevation_chart_url_png(lang), settings.MEDIA_ROOT,
+                           url_media, directory=url_trek, zipfile=trekid_zipfile)
 
         self.close_zip(trekid_zipfile, zipname_trekid)
 
     def sync_treks_media(self):
         treks = trekking_models.Trek.objects.existing().order_by('pk')
-        treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
+        if self.portal:
+            treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
         treks = treks.filter(
             Q(**{'published': True})
             | Q(**{'trek_parents__parent__published': True,
@@ -319,7 +321,7 @@ class Command(BaseCommand):
         """
 
         if self.verbosity == 2:
-            self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{}/tiles/\x1b[0m ...".format(trek.pk), ending="")
+            self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1mnolang/{}/tiles/\x1b[0m ...".format(trek.pk), ending="")
             self.stdout.flush()
 
         def _radius2bbox(lng, lat, radius):
