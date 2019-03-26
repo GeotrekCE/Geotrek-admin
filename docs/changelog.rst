@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix Tourinsoft parsers again (postal address)
 
 
 2.25.1 (2019-03-25)

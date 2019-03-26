@@ -712,12 +712,13 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
         infos = []
 
         if adresse:
+            # Some address have 6 items, some others 7 items :(
             lines = adresse.split(self.separator2)
-            # Remove 6th field (code INSEE)
-            lines = lines[:5]
+            # Remove last field (code INSEE)
+            lines = lines[:-1]
             # Put city and postal code together
-            if lines[3] and lines[4]:
-                lines[3:5] = [" ".join(lines[3:5])]
+            if lines[-2] and lines[-1]:
+                lines[-2:] = [" ".join(lines[-2:])]
             # Remove empty lines
             lines = [line for line in lines if line]
             infos.append(
