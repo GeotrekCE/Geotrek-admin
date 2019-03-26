@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+2.25.3 (2019-03-26)
+-------------------
+
+**Bug fixes**
+
+- Fix Tourinsoft parsers one time again (practical info for events)
+
+
 2.25.2 (2019-03-26)
 -------------------
 
