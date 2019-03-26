@@ -233,6 +233,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(event.website, u"http://www.mxbrou.com")
         self.assertEqual(round(event.geom.x), 559796)
         self.assertEqual(round(event.geom.y), 6791765)
+        self.assertEqual(event.practical_info, u"<strong>\xc9quipements :</strong><br>Restauration sur place<br>Sanitaires")
         self.assertTrue(event.published)
         self.assertEqual(event.source.get(), source)
         self.assertEqual(event.type, type)
