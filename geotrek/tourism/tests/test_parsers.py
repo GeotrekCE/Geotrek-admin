@@ -44,6 +44,7 @@ class FMA28(TouristicEventTourInSoftParser):
     url = "http://wcf.tourinsoft.com/Syndication/cdt28/xxx/Objects"
     source = "CDT 28"
     type = u"Agenda rando"
+    portal = u"Itinérance"
 
 
 class ParserTests(TranslationResetMixin, TestCase):
@@ -200,7 +201,8 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(round(content.geom.x), 537329)
         self.assertEqual(round(content.geom.y), 6805504)
         self.assertEqual(content.practical_info[:49], u"<strong>Langues parlées :</strong><br>Anglais<br>")
-        self.assertTrue(u"<strong>Équipements :</strong><br>Bar<br>Parking<br>" in content.practical_info)
+        self.assertIn(u"du 01/01/2019 au 21/07/2019", content.practical_info)
+        self.assertIn(u"<strong>Équipements :</strong><br>Bar<br>Parking<br>", content.practical_info)
         self.assertTrue(content.published)
         self.assertEqual(content.source.get(), source)
         self.assertEqual(content.portal.get(), portal)
@@ -221,6 +223,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         FileType.objects.create(type=u"Photographie")
         type = TouristicEventTypeFactory(type=u"Agenda rando")
         source = RecordSourceFactory(name="CDT 28")
+        portal = TargetPortalFactory(name=u"Itinérance")
         call_command('import', 'geotrek.tourism.tests.test_parsers.FMA28', verbosity=0)
         self.assertEqual(TouristicEvent.objects.count(), 1)
         event = TouristicEvent.objects.get()
@@ -233,8 +236,11 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(event.website, u"http://www.mxbrou.com")
         self.assertEqual(round(event.geom.x), 559796)
         self.assertEqual(round(event.geom.y), 6791765)
+        self.assertEqual(event.practical_info[:61], u"<strong>Langues parlées :</strong><br>Anglais<br>Allemand<br>")
+        self.assertIn(u"<strong>Équipements :</strong><br>Restauration sur place<br>Sanitaires", event.practical_info)
         self.assertTrue(event.published)
         self.assertEqual(event.source.get(), source)
+        self.assertEqual(event.portal.get(), portal)
         self.assertEqual(event.type, type)
         self.assertEqual(Attachment.objects.count(), 9)
         self.assertEqual(Attachment.objects.first().content_object, event)

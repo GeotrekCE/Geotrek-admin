@@ -695,7 +695,6 @@ class TouristicEventTourInSoftParser(TourInSoftParser):
         'geom': ('GmapLongitude', 'GmapLatitude'),
         'practical_info': (
             'LanguesParlees',
-            'PeriodeOuverture',
             'PrestationsEquipements',
         ),
         'contact': ('MoyenDeCom', 'AdresseComplete'),
@@ -729,6 +728,24 @@ class TouristicEventTourInSoftParser(TourInSoftParser):
             self.m2m_constant_fields['source'] = self.source
         if self.portal is not None:
             self.m2m_constant_fields['portal'] = self.portal
+
+    def filter_practical_info(self, src, val):
+        langues, equipements = val
+        infos = []
+
+        if langues:
+            infos.append(
+                u"<strong>Langues parlées :</strong><br>"
+                + u"<br>".join(langues.split(self.separator))
+            )
+
+        if equipements:
+            infos.append(
+                u"<strong>Équipements :</strong><br>"
+                + u"<br>".join(equipements.split(self.separator))
+            )
+
+        return u"<br><br>".join(infos)
 
     def filter_begin_date(self, src, val):
         if val:
