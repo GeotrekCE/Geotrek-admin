@@ -150,7 +150,7 @@ class SettingsView(APIView):
                 },
                 {
                     'id': 'information_desk_types',
-                    'name': _('Information Desks Type'),
+                    'name': _('Information Desks Types'),
                     'values': api_serializers.InformationDeskTypeSerializer(InformationDeskType.objects.all()
                                                                             .order_by('pk'),
                                                                             many=True,

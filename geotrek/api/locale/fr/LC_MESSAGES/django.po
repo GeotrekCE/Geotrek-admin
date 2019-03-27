@@ -108,5 +108,5 @@ msgstr "Afficher toutes les durées"
 msgid "Hide all durations"
 msgstr "Ne plus afficher toutes les durées"
 
-msgid "Information Desks Type"
+msgid "Information Desks Types"
 msgstr "Types de lieux de renseignement"
