@@ -470,10 +470,10 @@ class Command(BaseCommand):
         self.sync_geojson(lang, POIViewSet, 'pois.geojson')
         if self.with_infrastructures:
             self.sync_geojson(lang, InfrastructureViewSet, 'infrastructures.geojson')
+            self.sync_static_file(lang, 'infrastructure/picto-infrastructure.png')
         if self.with_signages:
             self.sync_geojson(lang, SignageViewSet, 'signages.geojson')
-            self.sync_static_file(lang, 'infrastructure/picto-infrastructure.png')
-            self.sync_static_file(lang, 'infrastructure/picto-signage.png')
+            self.sync_static_file(lang, 'signage/picto-signage.png')
         if 'geotrek.flatpages' in settings.INSTALLED_APPS:
             self.sync_flatpages(lang)
         self.sync_geojson(lang, ServiceViewSet, 'services.geojson', zipfile=self.zipfile)

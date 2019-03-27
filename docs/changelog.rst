@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix signage type pictograms
 
 
 2.25.3 (2019-03-26)
