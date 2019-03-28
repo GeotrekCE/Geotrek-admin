@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix signage type pictograms
+- Some cosmetics on tourism detail pages (clickable links)
 
 
 2.25.3 (2019-03-26)
