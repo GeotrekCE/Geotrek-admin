@@ -648,7 +648,7 @@ class TouristicContentTourInSoftParser(TourInSoftParser):
             self.m2m_constant_fields['portal'] = self.portal
 
     def filter_practical_info(self, src, val):
-        langues, periode, equipements = val
+        langues, periodes, equipements = val
         infos = []
 
         if langues:
@@ -657,13 +657,15 @@ class TouristicContentTourInSoftParser(TourInSoftParser):
                 + u"<br>".join(langues.split(self.separator))
             )
 
-        if periode:
-            periodes = periode.split(self.separator2)
-            if len(periodes) >= 2 and periodes[0] and periodes[1]:
-                infos.append(
-                    u"<strong>Période d'ouverture :</strong><br>"
-                    + u"du %s au %s" % (periodes[0], periodes[1])
-                )
+        if periodes:
+            periode_infos = [u"<strong>Période d'ouverture :</strong>"]
+            for periode in periodes.split(self.separator):
+                items = periode.split(self.separator2)
+                if len(items) >= 2 and items[0] and items[1]:
+                    periode_infos.append(
+                        u"du %s au %s" % (items[0], items[1])
+                    )
+            infos.append("<br>".join(periode_infos))
 
         if equipements:
             infos.append(
@@ -749,14 +751,22 @@ class TouristicEventTourInSoftParser(TourInSoftParser):
 
     def filter_begin_date(self, src, val):
         if val:
-            values = val.split(self.separator2)
-            if values and values[0]:
-                day, month, year = values[0].split('/')
-                return '{year}-{month}-{day}'.format(year=year, month=month, day=day)
+            for subval in val.split(self.separator):
+                values = subval.split(self.separator2)
+                if values and values[1]:
+                    day, month, year = values[1].split('/')
+                    if datetime.date(int(year), int(month), int(day)) < datetime.date.today():
+                        continue
+                if values and values[0]:
+                    day, month, year = values[0].split('/')
+                    return '{year}-{month}-{day}'.format(year=year, month=month, day=day)
 
     def filter_end_date(self, src, val):
         if val:
-            values = val.split(self.separator2)
-            if values and values[1]:
-                day, month, year = values[1].split('/')
-                return '{year}-{month}-{day}'.format(year=year, month=month, day=day)
+            for subval in val.split(self.separator):
+                values = subval.split(self.separator2)
+                if values and values[1]:
+                    day, month, year = values[1].split('/')
+                    if datetime.date(int(year), int(month), int(day)) < datetime.date.today():
+                        continue
+                    return '{year}-{month}-{day}'.format(year=year, month=month, day=day)

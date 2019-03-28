@@ -9,6 +9,7 @@ CHANGELOG
 
 - Fix signage type pictograms
 - Some cosmetics on tourism detail pages (clickable links)
+- Fix Tourinsoft opening period parsing (multiple periods)
 
 
 2.25.3 (2019-03-26)
