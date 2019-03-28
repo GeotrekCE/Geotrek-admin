@@ -51,11 +51,11 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"email" }}</th>
-            <td>{{ object.email|default:"" }}</td>
+            <td>{% if object.email %}<a href="mailto:{{ object.email }}">{{ object.email }}</a>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"website" }}</th>
-            <td>{{ object.website|default:"" }}</td>
+            <td>{% if object.website %}<a href="{{ object.website }}" target="_blank">{{ object.website }}</a>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"organizer" }}</th>
@@ -67,7 +67,7 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"target_audience" }}</th>
-            <td>{{ object.target_audience }}</td>
+            <td>{{ object.target_audience|default:"" }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"accessibility" }}</th>
