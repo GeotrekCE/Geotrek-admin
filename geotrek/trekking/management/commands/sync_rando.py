@@ -795,8 +795,15 @@ class Command(BaseCommand):
             'tiles_dir': os.path.join(settings.DEPLOY_ROOT, 'var', 'tiles'),
         }
         self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_rando')
-        if not os.path.exists(self.tmp_root):
+        try:
             os.mkdir(self.tmp_root)
+        except OSError as e:
+            if e.errno != 17:
+                raise
+            raise CommandError(
+                "The {}/ directory already exists. Please check no other sync_mobile command is already running."
+                " If not, please delete this directory.".format(self.tmp_root)
+            )
         try:
             self.sync()
             if self.celery_task:

@@ -447,7 +447,15 @@ class Command(BaseCommand):
         }
 
         self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_mobile')
-        os.mkdir(self.tmp_root)
+        try:
+            os.mkdir(self.tmp_root)
+        except OSError as e:
+            if e.errno != 17:
+                raise
+            raise CommandError(
+                "The {}/ directory already exists. Please check no other sync_mobile command is already running."
+                " If not, please delete this directory.".format(self.tmp_root)
+            )
         try:
             self.sync()
         except Exception:
