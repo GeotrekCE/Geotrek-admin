@@ -77,7 +77,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
         class Meta:
             model = tourism_models.TouristicContentCategory
-            fields = ('id', 'name', 'pictogram')
+            fields = ('id', 'name', 'pictogram', 'type1_label', 'type2_label')
 
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
