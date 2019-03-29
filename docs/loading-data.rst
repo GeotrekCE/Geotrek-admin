@@ -76,6 +76,8 @@ Load MNT raster
 `In QGIS <http://docs.qgis.org/latest/en/docs/training_manual/processing/cutting_merging.html>`_,
 you can visualize your DEM, or merge several tiles together (in *Raster* > *Misc* > *Merge*).
 
+The elevation data of DEM must be integer values. If the elevation data are floating numbers, you can convert them in integer values with the Raster calculator processing of SAGA (Processing > Toolbox > SAGA > Raster calculus > Raster calculator) with formula parameter set to ``int(a)``.
+
 Generate a GeoTIFF, and upload both files (``.tif`` + ``.tfw``) on the server.
 And use the Geotrek command to load it into PostGIS :
 
