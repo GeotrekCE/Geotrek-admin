@@ -92,7 +92,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             ]
 
         def get_profile(self, obj):
-            return os.path.join(settings.MEDIA_URL, obj.get_elevation_chart_url_png())
+            return os.path.join("/", str(obj.pk), settings.MEDIA_URL.lstrip('/'), obj.get_elevation_chart_url_png())
 
         class Meta:
             model = trekking_models.Trek
