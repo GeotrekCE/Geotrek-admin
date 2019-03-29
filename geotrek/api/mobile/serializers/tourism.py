@@ -60,8 +60,15 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                       'practical_info', 'approved', 'geometry')
 
     class InformationDeskSerializer(rest_serializers.ModelSerializer):
+        picture = rest_serializers.SerializerMethodField(read_only=True)
+
         class Meta:
             model = tourism_models.InformationDesk
             fields = ('id', 'description', 'email', 'latitude', 'longitude', 'municipality',
-                      'name', 'phone', 'photo_url', 'postal_code', 'street', 'type',
+                      'name', 'phone', 'picture', 'postal_code', 'street', 'type',
                       'website')
+
+        def get_picture(self, obj):
+            if not obj.resized_picture:
+                return None
+            return '/{trek_id}{url}'.format(trek_id=self.context['trek_pk'], url=obj.resized_picture.url),
