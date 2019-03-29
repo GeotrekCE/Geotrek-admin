@@ -27,9 +27,9 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
         class Meta:
             model = tourism_models.TouristicContent
-            id_field = 'id'
+            id_field = 'pk'
             geo_field = 'geometry'
-            fields = ('id', 'description', 'description_teaser', 'category',
+            fields = ('id', 'pk', 'description', 'description_teaser', 'category',
                       'themes', 'contact', 'email', 'website', 'practical_info', 'pictures',
                       'type1', 'type2', 'approved', 'reservation_id', 'reservation_system', 'geometry')
 
@@ -50,9 +50,9 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
         class Meta:
             model = tourism_models.TouristicEvent
-            id_field = 'id'
+            id_field = 'pk'
             geo_field = 'geometry'
-            fields = ('id', 'description_teaser', 'description', 'themes', 'pictures',
+            fields = ('id', 'pk', 'description_teaser', 'description', 'themes', 'pictures',
                       'begin_date', 'end_date', 'duration', 'meeting_point',
                       'meeting_time', 'contact', 'email', 'website',
                       'organizer', 'speaker', 'type', 'accessibility',
