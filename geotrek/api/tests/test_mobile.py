@@ -26,7 +26,7 @@ DETAIL_TREK_GEOJSON_STRUCTURE = sorted([
 ])
 
 TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'id', 'first_picture', 'name', 'accessibilities', 'description_teaser', 'cities', 'description', 'departure', 'arrival',
+    'id', 'name', 'accessibilities', 'description_teaser', 'cities', 'description', 'departure', 'arrival',
     'access', 'advised_parking', 'advice', 'difficulty', 'length', 'ascent', 'descent', 'route', 'duration',
     'is_park_centered', 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'pictures',
     'information_desks', 'departure_city', 'arrival_city', 'parking_location', 'profile'
@@ -43,14 +43,14 @@ POI_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
 ])
 
 TOURISTIC_EVENT_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'id', 'description_teaser', 'description', 'themes', 'pictures', 'begin_date', 'end_date', 'duration',
+    'id', 'name', 'description_teaser', 'description', 'themes', 'pictures', 'begin_date', 'end_date', 'duration',
     'meeting_time', 'contact', 'email', 'website', 'organizer', 'speaker', 'type', 'accessibility', 'meeting_point',
     'participant_number', 'booking', 'target_audience', 'practical_info', 'approved',
 ])
 
 TOURISTIC_CONTENT_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'description', 'description_teaser', 'category', 'themes', 'contact', 'email', 'website', 'practical_info',
-    'pictures', 'type1', 'type2', 'approved', 'reservation_id', 'reservation_system'
+    'pictures', 'type1', 'type2', 'approved', 'reservation_id', 'reservation_system', 'name',
 ])
 
 
