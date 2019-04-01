@@ -23,8 +23,6 @@ docs/_build/
 
 /bulkimport/
 !/bulkimport/__init__.py
-/data/
-/mobile/
 /sync_trek/
 
 /.project
