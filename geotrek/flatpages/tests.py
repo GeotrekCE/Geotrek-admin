@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 import os
 import json
+import shutil
+
 from django.core import management
 from django.conf import settings
 from django.test import TestCase
+
 from mapentity.factories import SuperUserFactory
+
 from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.flatpages.factories import FlatPageFactory
 from geotrek.authent.factories import UserProfileFactory
@@ -187,10 +191,10 @@ class SyncTestPortal(TestCase):
         '''
         Test synced flatpages
         '''
-        management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
+        management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=0)
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', lang, 'flatpages.geojson'), 'r') as f:
+            with open(os.path.join('tmp', 'api', lang, 'flatpages.geojson'), 'r') as f:
                 flatpages = json.load(f)
                 self.assertEquals(len(flatpages),
                                   FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
@@ -199,10 +203,10 @@ class SyncTestPortal(TestCase):
         '''
         Test if synced flatpages are filtered by source
         '''
-        management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
+        management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
                                 source=self.source_a.name, skip_tiles=True, verbosity=0)
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', lang, 'flatpages.geojson'), 'r') as f:
+            with open(os.path.join('tmp', 'api', lang, 'flatpages.geojson'), 'r') as f:
                 flatpages = json.load(f)
                 self.assertEquals(len(flatpages),
                                   FlatPage.objects.filter(source__name__in=[self.source_a.name, ],
@@ -212,11 +216,16 @@ class SyncTestPortal(TestCase):
         '''
         Test if synced flatpages are filtered by portal
         '''
-        management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
+        management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
                                 portal=self.portal_b.name, skip_tiles=True, verbosity=0)
-        with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api/fr/flatpages.geojson'), 'r') as f_file:
+        with open(os.path.join('tmp', 'api/fr/flatpages.geojson'), 'r') as f_file:
             flatpages = json.load(f_file)
             self.assertEquals(len(flatpages), 0)
-        with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api/en/flatpages.geojson'), 'r') as f_file:
+        with open(os.path.join('tmp', 'api/en/flatpages.geojson'), 'r') as f_file:
             flatpages = json.load(f_file)
             self.assertEquals(len(flatpages), 3)
+
+    @classmethod
+    def tearDownClass(cls):
+        super(SyncTestPortal, cls).tearDownClass()
+        shutil.rmtree('tmp')

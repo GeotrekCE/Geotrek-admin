@@ -1,4 +1,3 @@
-from itertools import chain
 import logging
 import os
 from urlparse import urljoin
@@ -24,7 +23,6 @@ from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, MarkupPublic
 from geotrek.tourism.serializers import TouristicContentCategorySerializer
 from geotrek.trekking.models import Trek
-from geotrek.trekking.serializers import POISerializer
 
 from .filters import TouristicContentFilterSet, TouristicEventFilterSet, TouristicEventApiFilterSet
 from .forms import TouristicContentForm, TouristicEventForm
@@ -355,26 +353,6 @@ class TrekInformationDeskViewSet(viewsets.ModelViewSet):
         except Trek.DoesNotExist:
             raise Http404
         return trek.information_desks.all().transform(settings.API_SRID, field_name='geom')
-
-
-class TrekTouristicContentAndPOIViewSet(viewsets.ModelViewSet):
-    model = TouristicContent
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_serializer_class(self):
-        class Serializer(POISerializer, GeoFeatureModelSerializer):
-            pass
-        return Serializer
-
-    def get_queryset(self):
-        pk = self.kwargs['pk']
-        try:
-            trek = Trek.objects.existing().get(pk=pk, published=True)
-        except Trek.DoesNotExist:
-            raise Http404
-        qs1 = trek.touristic_contents.filter(published=True).transform(settings.API_SRID, field_name='geom')
-        qs2 = trek.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
-        return chain(qs1, qs2)
 
 
 class TrekTouristicContentViewSet(viewsets.ModelViewSet):

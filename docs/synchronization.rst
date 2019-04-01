@@ -106,3 +106,9 @@ If you have separated servers, you have to copy files, for example with ``rsync`
 ::
 
     rsync /path/of/generated/data other-server:/path/of/generated/data
+
+
+Mobile app v3
+-------------
+
+The mobile app v3 has its own API and synchronization command called sync_mobile.

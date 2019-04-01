@@ -5,6 +5,10 @@ CHANGELOG
 2.25.4.dev0
 -------------------
 
+**New features**
+
+- New API for mobile app v3
+
 **Bug fixes**
 
 - Fix signage type pictograms
