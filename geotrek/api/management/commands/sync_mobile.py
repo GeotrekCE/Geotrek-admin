@@ -445,7 +445,7 @@ class Command(BaseCommand):
             'tiles_url': tiles_url,
             'tiles_headers': {"Referer": self.referer},
             'ignore_errors': True,
-            'tiles_dir': os.path.join(settings.DEPLOY_ROOT, 'var', 'tiles'),
+            'tiles_dir': os.path.join(settings.VAR_DIR, 'tiles'),
         }
 
         self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_mobile')
