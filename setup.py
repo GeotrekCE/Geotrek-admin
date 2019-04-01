@@ -39,7 +39,8 @@ setup(
         'celery',
         'django-celery-results',
         'requests[security]',
-        'drf-extensions'
+        'drf-extensions',
+        'django-colorfield',
     ],
     license='BSD, see LICENSE file.',
     packages=find_packages(),

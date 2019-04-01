@@ -152,7 +152,7 @@ To use IGN Geoportail WMTS tiles API, you need an API key with subscribing on ht
 External authent
 ----------------
 
-You can authenticate user against a remote database table or view.
+You can authenticate user against a remote database table or view. 
 
 To enable this feature, fill *authent_dbname* and other fields in ``etc/settings.ini``.
 
@@ -167,15 +167,16 @@ Expected columns in table/view are :
 * structure : string
 * lang : string (language code)
 
-
 :notes:
 
+    The schema used in ``authent_tablename`` must be in the user search_path (``ALTER USER $geotrek_db_user SET search_path=public,userschema;``)
+    
     User management will be disabled from Administration backoffice.
 
     In order to disable remote login, just remove *authent_dbname* value in settings
     file, and update instance (see paragraph above).
 
-    Geotrek can support many types of users authentication (LDAP, oauth, ...), contact-us
+    Geotrek can support many types of users authentication (LDAP, oauth, ...), contact us
     for more details.
 
 

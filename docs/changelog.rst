@@ -2,6 +2,21 @@
 CHANGELOG
 =========
 
+2.26.0 (2019-04-01)
+-------------------
+
+**New features**
+
+- New API for mobile app v3
+
+**Bug fixes**
+
+- Fix signage type pictograms
+- Some cosmetics on tourism detail pages (clickable links)
+- Fix Tourinsoft opening period parsing (multiple periods)
+- Fix Bad Status Line exception
+
+
 2.25.3 (2019-03-26)
 -------------------
 

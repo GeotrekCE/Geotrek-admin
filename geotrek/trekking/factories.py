@@ -15,6 +15,7 @@ class TrekNetworkFactory(factory.DjangoModelFactory):
         model = models.TrekNetwork
 
     network = factory.Sequence(lambda n: u"network %s" % n)
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
 class PracticeFactory(factory.DjangoModelFactory):
@@ -38,6 +39,7 @@ class RouteFactory(factory.DjangoModelFactory):
         model = models.Route
 
     route = factory.Sequence(lambda n: u"route %s" % n)
+    pictogram = dummy_filefield_as_sequence('thumbnail %s')
 
 
 class DifficultyLevelFactory(factory.DjangoModelFactory):
@@ -121,6 +123,18 @@ class TrekWithPOIsFactory(TrekFactory):
         poi1 = POIFactory.create(no_path=True)
         poi1.add_path(path, start=0.5, end=0.5)
         poi2 = POIFactory.create(no_path=True)
+        poi2.add_path(path, start=0.4, end=0.4)
+        if create:
+            obj.save()
+
+
+class TrekWithPublishedPOIsFactory(TrekFactory):
+    @factory.post_generation
+    def create_trek_with_poi(obj, create, extracted, **kwargs):
+        path = obj.paths.all()[0]
+        poi1 = POIFactory.create(no_path=True, published=True, published_en=True, published_fr=True)
+        poi1.add_path(path, start=0.5, end=0.5)
+        poi2 = POIFactory.create(no_path=True, published=True, published_en=True, published_fr=True)
         poi2.add_path(path, start=0.4, end=0.4)
         if create:
             obj.save()

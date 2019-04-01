@@ -600,7 +600,7 @@ class AttachmentParserMixin(object):
             for attachment in attachments_to_delete:
                 upload_name, ext = os.path.splitext(attachment_upload(attachment, name))
                 existing_name = attachment.attachment_file.name
-                if re.search(ur"^{name}(_\d+)?{ext}$".format(name=upload_name, ext=ext), existing_name) and not self.has_size_changed(url, attachment):
+                if re.search(ur"^{name}(_[a-zA-Z0-9]{7})?{ext}$".format(name=upload_name, ext=ext), existing_name) and not self.has_size_changed(url, attachment):
                     found = True
                     attachments_to_delete.remove(attachment)
                     if author != attachment.author or legend != attachment.legend:

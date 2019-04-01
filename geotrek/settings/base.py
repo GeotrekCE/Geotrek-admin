@@ -282,6 +282,7 @@ PROJECT_APPS += (
     'rest_framework_swagger',
     'embed_video',
     'geotrek.appconfig.CeleryGeotrekConfig',  # django_celery_results
+    'colorfield',
 )
 
 INSTALLED_APPS = PROJECT_APPS + (
@@ -536,7 +537,6 @@ SPLIT_TREKS_CATEGORIES_BY_PRACTICE = False
 SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False
 SPLIT_TREKS_CATEGORIES_BY_ITINERANCY = False
 HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = False
-ZIP_TOURISTIC_CONTENTS_AS_POI = False
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap', 'bootstrap3')
 CRISPY_TEMPLATE_PACK = 'bootstrap'
@@ -551,6 +551,19 @@ MOBILE_TILES_RADIUS_SMALL = 0.005  # ~500 m
 MOBILE_TILES_GLOBAL_ZOOMS = list(range(13))
 MOBILE_TILES_LOW_ZOOMS = list(range(13, 15))
 MOBILE_TILES_HIGH_ZOOMS = list(range(15, 17))
+MOBILE_LENGTH_INTERVALS = [
+    {"id": 1, "name": "< 10 km", "interval": [0, 9999]},
+    {"id": 2, "name": "10 - 30", "interval": [9999, 29999]},
+    {"id": 3, "name": "30 - 50", "interval": [30000, 50000]},
+    {"id": 4, "name": "> 50 km", "interval": [50000, 999999]}
+]
+MOBILE_DURATION_INTERVALS = [
+    {"id": 1, "name": "< 1 heure", "interval": [0, 1]},
+    {"id": 2, "name": "1h - 2h30", "interval": [1, 2.5]},
+    {"id": 3, "name": "2h30 - 5h", "interval": [2.5, 5]},
+    {"id": 4, "name": "5h - 9h", "interval": [5, 9]},
+    {"id": 5, "name": "> 9h", "interval": [9, 9999999]}
+]
 
 TINYMCE_DEFAULT_CONFIG = {
     'convert_urls': False,
@@ -668,3 +681,10 @@ BLADE_CODE_FORMAT = u"{signagecode}-{bladenumber}"
 LINE_CODE_FORMAT = u"{signagecode}-{bladenumber}-{linenumber}"
 
 SHOW_EXTREMITIES = False
+
+REST_FRAMEWORK = {
+    'UNICODE_JSON': False
+}
+
+ENABLED_MOBILE_FILTERS = ['difficulty', 'lengths', 'cities', 'accessibilities', 'practice', 'durations', 'themes',
+                          'route']

@@ -39,6 +39,8 @@ django-debug-toolbar==1.10.*
 django-extensions==2.1.*
 python-memcached==1.59
 cairocffi==0.9.0
+cairosvg==1.0.22
+django-colorfield==0.1.15
 coverage
 # prod
 gunicorn

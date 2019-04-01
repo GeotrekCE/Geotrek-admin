@@ -49,10 +49,10 @@ logger = logging.getLogger(__name__)
 
 
 class ZipTilesBuilder(object):
-    def __init__(self, filepath, close_zip, **builder_args):
+    def __init__(self, zipfile, prefix="", **builder_args):
+        self.zipfile = zipfile
+        self.prefix = prefix
         builder_args['tile_format'] = self.format_from_url(builder_args['tiles_url'])
-        self.close_zip = close_zip
-        self.zipfile = ZipFile(filepath, 'w')
         self.tm = TilesManager(**builder_args)
 
         if not isinstance(settings.MOBILE_TILES_URL, str) and len(settings.MOBILE_TILES_URL) > 1:
@@ -80,14 +80,17 @@ class ZipTilesBuilder(object):
 
     def run(self):
         for tile in self.tiles:
-            name = '{0}/{1}/{2}{ext}'.format(*tile, ext=settings.MOBILE_TILES_EXTENSION or self.tm._tile_extension)
+            name = '{prefix}{0}/{1}/{2}{ext}'.format(
+                *tile,
+                prefix=self.prefix,
+                ext=settings.MOBILE_TILES_EXTENSION or self.tm._tile_extension
+            )
             try:
                 data = self.tm.tile(tile)
             except DownloadError:
                 logger.warning("Failed to download tile %s" % name)
             else:
                 self.zipfile.writestr(name, data)
-        self.close_zip(self.zipfile)
 
 
 class Command(BaseCommand):
@@ -139,13 +142,12 @@ class Command(BaseCommand):
         logger.info("Build global tiles file...")
         self.mkdirs(global_file)
 
-        def close_zip(zipfile):
-            return self.close_zip(zipfile, zipname)
-
-        tiles = ZipTilesBuilder(global_file, close_zip, **self.builder_args)
+        zipfile = ZipFile(global_file, 'w')
+        tiles = ZipTilesBuilder(zipfile, **self.builder_args)
         tiles.add_coverage(bbox=global_extent,
                            zoomlevels=settings.MOBILE_TILES_GLOBAL_ZOOMS)
         tiles.run()
+        self.close_zip(zipfile, global_file)
 
     def sync_trek_tiles(self, trek):
         """ Creates a tiles file for the specified Trek object.
@@ -164,10 +166,8 @@ class Command(BaseCommand):
 
         self.mkdirs(trek_file)
 
-        def close_zip(zipfile):
-            return self.close_zip(zipfile, zipname)
-
-        tiles = ZipTilesBuilder(trek_file, close_zip, **self.builder_args)
+        zipfile = ZipFile(trek_file, 'w')
+        tiles = ZipTilesBuilder(zipfile, **self.builder_args)
 
         geom = trek.geom
         if geom.geom_type == 'MultiLineString':
@@ -181,6 +181,7 @@ class Command(BaseCommand):
             tiles.add_coverage(bbox=small, zoomlevels=settings.MOBILE_TILES_HIGH_ZOOMS)
 
         tiles.run()
+        self.close_zip(zipfile, zipname)
 
     def sync_view(self, lang, view, name, url='/', params={}, zipfile=None, fix2028=False, **kwargs):
         if self.verbosity == 2:
@@ -243,20 +244,14 @@ class Command(BaseCommand):
     def sync_geojson(self, lang, viewset, name, zipfile=None, params={}, **kwargs):
         view = viewset.as_view({'get': 'list'})
         name = os.path.join('api', lang, name)
+        params = params.copy()
         params.update({'format': 'geojson'})
 
         if self.source:
             params['source'] = ','.join(self.source)
 
-        elif 'source' in params.keys():
-            # bug source is still in cache when executing command
-            del params['source']
-
         if self.portal:
             params['portal'] = ','.join(self.portal)
-
-        elif 'portal' in params.keys():
-            del params['portal']
 
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, fix2028=True, **kwargs)
 
@@ -274,16 +269,9 @@ class Command(BaseCommand):
 
     def sync_trek_pois(self, lang, trek, zipfile=None):
         params = {'format': 'geojson'}
-        if settings.ZIP_TOURISTIC_CONTENTS_AS_POI:
-            view = tourism_views.TrekTouristicContentAndPOIViewSet.as_view({'get': 'list'})
-            name = os.path.join('api', lang, 'treks', str(trek.pk), 'pois.geojson')
-            self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
-            view = TrekPOIViewSet.as_view({'get': 'list'})
-            self.sync_view(lang, view, name, params=params, zipfile=None, pk=trek.pk)
-        else:
-            view = TrekPOIViewSet.as_view({'get': 'list'})
-            name = os.path.join('api', lang, 'treks', str(trek.pk), 'pois.geojson')
-            self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
+        view = TrekPOIViewSet.as_view({'get': 'list'})
+        name = os.path.join('api', lang, 'treks', str(trek.pk), 'pois.geojson')
+        self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
 
     def sync_trek_services(self, lang, trek, zipfile=None):
         view = TrekServiceViewSet.as_view({'get': 'list'})
@@ -402,10 +390,6 @@ class Command(BaseCommand):
             self.sync_media_file(lang, desk.thumbnail, zipfile=self.trek_zipfile)
         for poi in trek.published_pois:
             self.sync_poi_media(lang, poi)
-        if settings.ZIP_TOURISTIC_CONTENTS_AS_POI:
-            for content in trek.published_touristic_contents:
-                if content.resized_pictures:
-                    self.sync_media_file(lang, content.resized_pictures[0][1], zipfile=self.trek_zipfile)
         self.sync_media_file(lang, trek.thumbnail, zipfile=self.zipfile)
         for picture, resized in trek.resized_pictures:
             self.sync_media_file(lang, resized, zipfile=self.trek_zipfile)
@@ -470,10 +454,10 @@ class Command(BaseCommand):
         self.sync_geojson(lang, POIViewSet, 'pois.geojson')
         if self.with_infrastructures:
             self.sync_geojson(lang, InfrastructureViewSet, 'infrastructures.geojson')
+            self.sync_static_file(lang, 'infrastructure/picto-infrastructure.png')
         if self.with_signages:
             self.sync_geojson(lang, SignageViewSet, 'signages.geojson')
-            self.sync_static_file(lang, 'infrastructure/picto-infrastructure.png')
-            self.sync_static_file(lang, 'infrastructure/picto-signage.png')
+            self.sync_static_file(lang, 'signage/picto-signage.png')
         if 'geotrek.flatpages' in settings.INSTALLED_APPS:
             self.sync_flatpages(lang)
         self.sync_geojson(lang, ServiceViewSet, 'services.geojson', zipfile=self.zipfile)
@@ -494,8 +478,6 @@ class Command(BaseCommand):
         self.sync_pictograms(lang, trekking_models.ServiceType, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.Route, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.WebLinkCategory)
-        if settings.ZIP_TOURISTIC_CONTENTS_AS_POI:
-            self.sync_pictograms('**', tourism_models.TouristicContentCategory, zipfile=self.zipfile)
 
         treks = trekking_models.Trek.objects.existing().order_by('pk')
         treks = treks.filter(
@@ -774,16 +756,16 @@ class Command(BaseCommand):
         if self.rando_url.endswith('/'):
             self.rando_url = self.rando_url[:-1]
         self.factory = RequestFactory()
-        self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_rando')
-        if os.path.exists(self.tmp_root):
-            shutil.rmtree(self.tmp_root)
-        os.mkdir(self.tmp_root)
         self.skip_pdf = options['skip_pdf']
         self.skip_tiles = options['skip_tiles']
         self.skip_dem = options['skip_dem']
         self.skip_profile_png = options['skip_profile_png']
         self.source = options['source']
         if options['languages']:
+            for language in options['languages'].split(','):
+                if language not in settings.MODELTRANSLATION_LANGUAGES:
+                    raise CommandError("Language {lang_n} doesn't exist. Select in these one : {langs}".
+                                       format(lang_n=language, langs=settings.MODELTRANSLATION_LANGUAGES))
             self.languages = options['languages'].split(',')
         else:
             self.languages = settings.MODELTRANSLATION_LANGUAGES
@@ -814,6 +796,16 @@ class Command(BaseCommand):
             'ignore_errors': True,
             'tiles_dir': os.path.join(settings.VAR_DIR, 'tiles'),
         }
+        self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_rando')
+        try:
+            os.mkdir(self.tmp_root)
+        except OSError as e:
+            if e.errno != 17:
+                raise
+            raise CommandError(
+                "The {}/ directory already exists. Please check no other sync_mobile command is already running."
+                " If not, please delete this directory.".format(self.tmp_root)
+            )
         try:
             self.sync()
             if self.celery_task:

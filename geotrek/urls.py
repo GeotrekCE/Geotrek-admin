@@ -56,6 +56,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     urlpatterns.append(url(r'', include('geotrek.sensitivity.urls', namespace='sensitivity', app_name='sensitivity')))
 if 'geotrek.api' in settings.INSTALLED_APPS:
     urlpatterns.append(url(r'^api/v2/', include('geotrek.api.v2.urls', namespace='apiv2', app_name='apiv2')))
+    urlpatterns.append(url(r'^api/mobile/', include('geotrek.api.mobile.urls', namespace='apimobile', app_name='apimobile')))
 
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

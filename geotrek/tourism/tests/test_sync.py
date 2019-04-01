@@ -3,6 +3,7 @@
 import json
 import os
 import mock
+import shutil
 from zipfile import ZipFile
 
 from django.conf import settings
@@ -45,20 +46,20 @@ class SyncTest(TranslationResetMixin, TestCase):
     def test_sync(self):
         with mock.patch('geotrek.tourism.models.TouristicContent.prepare_map_image'):
             with mock.patch('geotrek.tourism.models.TouristicEvent.prepare_map_image'):
-                management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
+                management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
                                         source=self.source_a.name, skip_tiles=True, skip_pdf=True, verbosity=0)
 
-                with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccontents.geojson'), 'r') as f:
+                with open(os.path.join('tmp', 'api', 'en', 'touristiccontents.geojson'), 'r') as f:
                     # 2 contents
                     tcontents = json.load(f)
                     self.assertEquals(len(tcontents['features']), 2)
 
-                with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristicevents.geojson'), 'r') as f:
+                with open(os.path.join('tmp', 'api', 'en', 'touristicevents.geojson'), 'r') as f:
                     #  only 1 event
                     tevents = json.load(f)
                     self.assertEquals(len(tevents['features']), 1)
 
-                with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccategories.json'), 'r') as f:
+                with open(os.path.join('tmp', 'api', 'en', 'touristiccategories.json'), 'r') as f:
                     tcategories = json.load(f)
                     self.assertEquals(len(tcategories), 2)
 
@@ -66,20 +67,20 @@ class SyncTest(TranslationResetMixin, TestCase):
 
         with mock.patch('geotrek.tourism.models.TouristicContent.prepare_map_image'):
             with mock.patch('geotrek.tourism.models.TouristicEvent.prepare_map_image'):
-                management.call_command('sync_rando', settings.SYNC_RANDO_ROOT, url='http://localhost:8000',
+                management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
                                         portal=self.portal_b.name, skip_tiles=True, skip_pdf=True, verbosity=0)
 
-        with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccontents.geojson'), 'r') as f:
+        with open(os.path.join('tmp', 'api', 'en', 'touristiccontents.geojson'), 'r') as f:
             tcontents = json.load(f)
             # 1 content on portal b
             self.assertEquals(len(tcontents['features']), 1)
 
-        with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristicevents.geojson'), 'r') as f:
+        with open(os.path.join('tmp', 'api', 'en', 'touristicevents.geojson'), 'r') as f:
             tevents = json.load(f)
             # 2 events on portal b
             self.assertEquals(len(tevents['features']), 2)
 
-        with open(os.path.join(settings.SYNC_RANDO_ROOT, 'api', 'en', 'touristiccategories.json'), 'r') as f:
+        with open(os.path.join('tmp', 'api', 'en', 'touristiccategories.json'), 'r') as f:
             tevents = json.load(f)
             self.assertEquals(len(tevents), 2)
 
@@ -93,7 +94,7 @@ class SyncTest(TranslationResetMixin, TestCase):
 
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
             management.call_command('sync_rando',
-                                    settings.SYNC_RANDO_ROOT,
+                                    'tmp',
                                     url='http://localhost:8000',
                                     skip_tiles=True,
                                     with_events=True,
@@ -104,7 +105,7 @@ class SyncTest(TranslationResetMixin, TestCase):
                                     verbosity=0)
 
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            with ZipFile(os.path.join(settings.SYNC_RANDO_ROOT, 'zip', 'treks', lang,
+            with ZipFile(os.path.join('tmp', 'zip', 'treks', lang,
                                       'global.zip'),
                          'r') as zipf:
                 file_list = zipf.namelist()
@@ -136,3 +137,6 @@ class SyncTest(TranslationResetMixin, TestCase):
                               file_list,
                               msg=u"Unable to find {file} in {lang}/global.zip".format(file=path_touristcategories_json,
                                                                                        lang=lang))
+
+    def tearDown(self):
+        shutil.rmtree('tmp')

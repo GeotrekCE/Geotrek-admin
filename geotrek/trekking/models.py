@@ -24,6 +24,7 @@ from geotrek.tourism import models as tourism_models
 
 from .templatetags import trekking_tags
 
+from colorfield.fields import ColorField
 
 logger = logging.getLogger(__name__)
 
@@ -515,6 +516,8 @@ class Practice(PictogramMixin):
     cirkwi = models.ForeignKey('cirkwi.CirkwiLocomotion', verbose_name=_(u"Cirkwi locomotion"), null=True, blank=True)
     order = models.IntegerField(verbose_name=_(u"Order"), null=True, blank=True, db_column='tri',
                                 help_text=_(u"Alphabetical order if blank"))
+    mobile_color = ColorField(verbose_name=_(u"Mobile color"), default='#444444', db_column='couleur_mobile',
+                              help_text=_(u"Color of the practice in mobile"))
 
     class Meta:
         db_table = 'o_b_pratique'

@@ -6,6 +6,9 @@ import factory
 # Produce a small red dot
 IMG_FILE = 'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=='
 
+SVG_FILE = '<svg width="3cm" height="2cm" version="1.1"> ' \
+           '<title> Rectangle </title> <desc> Un rectangle </desc> <rect x="0.5cm" y="0.5cm" width="2cm" height="1cm"/></svg>'
+
 
 def get_dummy_img():
     return IMG_FILE.decode('base64')
@@ -13,6 +16,10 @@ def get_dummy_img():
 
 def get_dummy_uploaded_image(name='dummy_img.png'):
     return SimpleUploadedFile(name, get_dummy_img(), content_type='image/png')
+
+
+def get_dummy_uploaded_image_svg(name='dummy_img.svg'):
+    return SimpleUploadedFile(name, SVG_FILE, content_type='image/svg')
 
 
 def get_dummy_uploaded_file(name='dummy_file.txt'):
