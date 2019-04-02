@@ -79,7 +79,6 @@ And access the application ``http://yourserver/``.
 You will be prompted for login, jump to :ref:`loading data section <loading data>`,
 to create the admin user and fill the database with your data!
 
-
 Software update
 ---------------
 
