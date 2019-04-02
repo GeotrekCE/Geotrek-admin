@@ -149,8 +149,8 @@ class SyncRandoFailTest(TestCase):
         with self.assertRaises(CommandError) as e:
             management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2, stdout=output)
+            self.assertIn("failed (HTTP 500)", output.getvalue())
         self.assertEqual(e.exception.message, 'Some errors raised during synchronization.')
-        self.assertIn("failed (HTTP 500)", output.getvalue())
 
     @override_settings(MEDIA_URL=9)
     def test_bad_settings(self):
@@ -159,8 +159,8 @@ class SyncRandoFailTest(TestCase):
         with self.assertRaises(AttributeError) as e:
             management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output)
+            self.assertIn("Exception raised in callable attribute", output.getvalue())
         self.assertEqual(e.exception.message, "'int' object has no attribute 'strip'")
-        self.assertIn("Exception raised in callable attribute", output.getvalue())
 
     @classmethod
     def tearDownClass(cls):
