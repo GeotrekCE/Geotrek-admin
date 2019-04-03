@@ -43,6 +43,8 @@ Move your different settings/datas in the new folder
     # If you have custom templates (example)
     cp ../previous-version/geotrek/trekking/templates/trekking/trek_public_pdf.html ./var/conf/extra_templates/
 
+You need to move the informations from settings.ini in var/conf/custom.py by hand.
+
 Then you can run your geotrek : ````
 
 Then you can upgrade your docker to new versions : ``docs/upgrade-docker.rst``
