@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix nginx and Django conf when SSL is enabled
 
 
 2.26.1 (2019-04-03)
