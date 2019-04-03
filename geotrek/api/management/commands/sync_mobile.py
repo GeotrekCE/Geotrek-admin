@@ -434,7 +434,7 @@ class Command(BaseCommand):
         else:
             self.portal = []
 
-        if options['url'][:7] not in ('http://', 'https://'):
+        if options['url'][:7] not in ('http://', 'https:/'):
             raise CommandError('url parameter should start with http:// or https://')
         self.referer = options['url']
         if isinstance(settings.MOBILE_TILES_URL, str):
