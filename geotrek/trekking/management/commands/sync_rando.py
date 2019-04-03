@@ -746,7 +746,8 @@ class Command(BaseCommand):
         self.verbosity = options['verbosity']
         self.dst_root = options["path"].rstrip('/')
         self.check_dst_root_is_empty()
-        if options['url'][:7] not in ('http://', 'https:/'):
+        url = options['url']
+        if not re.search('http[s]?://', url):
             raise CommandError('url parameter should start with http:// or https://')
         self.referer = options['url']
         self.host = self.referer.split('://')[1]
