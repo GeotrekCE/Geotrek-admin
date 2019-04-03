@@ -173,6 +173,13 @@ class SyncMobileSpecificOptionsTest(TranslationResetMixin, TestCase):
         with self.assertRaises(IOError):
             open(os.path.join('tmp', 'en', 'flatpages.json'), 'r')
 
+    def test_sync_https(self):
+        management.call_command('sync_mobile', 'tmp', url='https://localhost:8000',
+                                skip_tiles=True, verbosity=0)
+        with open(os.path.join('tmp', 'fr', 'flatpages.json'), 'r') as f:
+            flatpages = json.load(f)
+            self.assertEquals(len(flatpages), 1)
+
 
 class SyncMobileFlatpageTest(TranslationResetMixin, TestCase):
     @classmethod

@@ -3,6 +3,7 @@
 import logging
 import filecmp
 import os
+import re
 import shutil
 from time import sleep
 from zipfile import ZipFile
@@ -433,8 +434,8 @@ class Command(BaseCommand):
             self.portal = options['portal'].split(',')
         else:
             self.portal = []
-
-        if options['url'][:7] not in ('http://', 'https://'):
+        url = options['url']
+        if not re.search('http[s]?://', url):
             raise CommandError('url parameter should start with http:// or https://')
         self.referer = options['url']
         if isinstance(settings.MOBILE_TILES_URL, str):
