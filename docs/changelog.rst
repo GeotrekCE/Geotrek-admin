@@ -2,12 +2,13 @@
 CHANGELOG
 =========
 
-2.26.1.dev0
+2.26.1 (2019-04-03)
 -------------------
 
 **Bug fixes**
 
--
+- Fix blade form
+- Fix sync_mobile, sync_rando with url https and http
 
 
 2.26.0 (2019-04-01)
