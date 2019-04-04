@@ -34,7 +34,7 @@ class AltimetryHelper(object):
         # Add measure to 2D version of geometry3d
         # Get distance from origin for each vertex
         sql = """
-        WITH line2d AS (SELECT ST_force_2D('%(ewkt)s'::geometry) AS geom),
+        WITH line2d AS (SELECT ST_Force2D('%(ewkt)s'::geometry) AS geom),
              line_measure AS (SELECT ST_Addmeasure(geom, 0, ST_length(geom)) AS geom FROM line2d),
              points2dm AS (SELECT (ST_DumpPoints(geom)).geom AS point FROM line_measure)
         SELECT (%(offset)s + ST_M(point)) FROM points2dm;
