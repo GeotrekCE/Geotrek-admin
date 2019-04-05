@@ -7,9 +7,8 @@ $(window).on('entity:map', function (e, data) {
 
     landLayers = landLayers.concat(window.SETTINGS.map['restricted_area_types']);
     landLayers.map(function(el) {
-        var o = Object.assign({}, el);
-        o.isActive = false;
-        return o;
+        el.isActive = false;
+        return el;
     })
 
     for (var i=0; i<landLayers.length; i++) {
