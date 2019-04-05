@@ -82,11 +82,11 @@ BEGIN
 			END IF;
 		END LOOP;
 
-		points_output := array_append(points_output, ST_MAKEPOINT(ST_X(points[i]), ST_Y(points[i]), (current_values / count_values)::integer));
+		points_output := array_append(points_output, ST_MakePoint(ST_X(points[i]), ST_Y(points[i]), (current_values / count_values)::integer));
 		
 
     END LOOP;
-    --RAISE EXCEPTION 'Nonexistent ID --> %', ST_ASEWKT(ST_SetSRID(ST_MakeLine(points_output), ST_SRID(linegeom)));
+    --RAISE EXCEPTION 'Nonexistent ID --> %', ST_AsEWKT(ST_SetSRID(ST_MakeLine(points_output), ST_SRID(linegeom)));
     
     RETURN QUERY SELECT (ST_DumpPoints(ST_SetSRID(ST_MakeLine(points_output), ST_SRID(linegeom)))).geom as geom;
 
@@ -292,7 +292,7 @@ BEGIN
     -- Compute gain using simplification
     -- see http://www.postgis.org/docs/ST_Simplify.html
     --     https://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm
-    FOR current IN SELECT (ST_DUMPPOINTS(ST_MAKELINE(points3d_smoothed))).geom
+    FOR current IN SELECT (ST_DumpPoints(ST_MakeLine(points3d_smoothed))).geom
     LOOP
         -- Add positive only if current - previous_geom > 0
 	result.positive_gain := result.positive_gain + greatest(ST_Z(current) - coalesce(ST_Z(previous_geom),

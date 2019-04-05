@@ -119,19 +119,19 @@ BEGIN
                    WHERE id != NEW.id
                          AND brouillon = FALSE
                          AND NEW.brouillon = FALSE
-                         AND ST_DWITHIN(t.geom, NEW.geom, 0)
+                         AND ST_DWithin(t.geom, NEW.geom, 0)
                          AND GeometryType(ST_Intersection(geom, NEW.geom)) NOT IN ('LINESTRING', 'MULTILINESTRING')
     LOOP
 
         RAISE NOTICE '%-% (%) intersects %-% (%) : %', NEW.id, NEW.nom, ST_AsText(NEW.geom), troncon.id, troncon.nom, ST_AsText(troncon.geom), ST_AsText(ST_Intersection(troncon.geom, NEW.geom));
 
         -- Locate intersecting point(s) on NEW, for later use
-        FOR fraction IN SELECT ST_Line_Locate_Point(NEW.geom,
-                                                    (ST_Dump(ST_Intersection(troncon.geom, NEW.geom))).geom)
-                        WHERE NOT ST_EQUALS(ST_STARTPOINT(NEW.geom), ST_STARTPOINT(troncon.geom))
-                          AND NOT ST_EQUALS(ST_STARTPOINT(NEW.geom), ST_ENDPOINT(troncon.geom))
-                          AND NOT ST_EQUALS(ST_ENDPOINT(NEW.geom), ST_STARTPOINT(troncon.geom))
-                          AND NOT ST_EQUALS(ST_ENDPOINT(NEW.geom), ST_ENDPOINT(troncon.geom))
+        FOR fraction IN SELECT ST_LineLocatePoint(NEW.geom,
+                                                  (ST_Dump(ST_Intersection(troncon.geom, NEW.geom))).geom)
+                        WHERE NOT ST_Equals(ST_StartPoint(NEW.geom), ST_StartPoint(troncon.geom))
+                          AND NOT ST_Equals(ST_StartPoint(NEW.geom), ST_EndPoint(troncon.geom))
+                          AND NOT ST_Equals(ST_EndPoint(NEW.geom), ST_StartPoint(troncon.geom))
+                          AND NOT ST_Equals(ST_EndPoint(NEW.geom), ST_EndPoint(troncon.geom))
         LOOP
             intersections_on_new := array_append(intersections_on_new, fraction);
         END LOOP;
@@ -144,18 +144,18 @@ BEGIN
         -- Locate intersecting point(s) on current path (array of  : {0, 0.32, 0.89, 1})
         intersections_on_current := ARRAY[0::float];
 
-        IF ST_DWITHIN(ST_STARTPOINT(NEW.geom), troncon.geom, 0)
+        IF ST_DWithin(ST_StartPoint(NEW.geom), troncon.geom, 0)
         THEN
             intersections_on_current := array_append(intersections_on_current,
                                                  ST_LineLocatePoint(troncon.geom,
-                                                                      ST_CLOSESTPOINT(troncon.geom, ST_STARTPOINT(NEW.geom))));
+                                                                      ST_ClosestPoint(troncon.geom, ST_StartPoint(NEW.geom))));
         END IF;
 
-        IF ST_DWITHIN(ST_ENDPOINT(NEW.geom), troncon.geom, 0)
+        IF ST_DWithin(ST_EndPoint(NEW.geom), troncon.geom, 0)
         THEN
             intersections_on_current := array_append(intersections_on_current,
                                                  ST_LineLocatePoint(troncon.geom,
-                                                                      ST_CLOSESTPOINT(troncon.geom, ST_ENDPOINT(NEW.geom))));
+                                                                      ST_ClosestPoint(troncon.geom, ST_EndPoint(NEW.geom))));
 
         END IF;
         RAISE NOTICE 'EEE : %', array_to_string(intersections_on_current, ', ');
