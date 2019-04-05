@@ -8,9 +8,8 @@ $(window).on('entity:map', function (e, data) {
                             {url: window.SETTINGS.urls.signagemanagementedge_layer, name: tr('Signage management'), id: 'signagemanagement'},
                             {url: window.SETTINGS.urls.workmanagementedge_layer, name: tr('Work management'), id: 'workmanagement'}];
     managementLayers.map(function(el) {
-        var o = Object.assign({}, el);
-        o.isActive = false;
-        return o;
+        el.isActive = false;
+        return el;
     })
 
     var colorspools = L.Util.extend({}, window.SETTINGS.map.colorspool);
