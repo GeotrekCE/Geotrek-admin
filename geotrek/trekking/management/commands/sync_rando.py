@@ -147,7 +147,7 @@ class Command(BaseCommand):
         tiles.add_coverage(bbox=global_extent,
                            zoomlevels=settings.MOBILE_TILES_GLOBAL_ZOOMS)
         tiles.run()
-        self.close_zip(zipfile, global_file)
+        self.close_zip(zipfile, zipname)
 
     def sync_trek_tiles(self, trek):
         """ Creates a tiles file for the specified Trek object.

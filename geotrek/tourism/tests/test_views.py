@@ -183,7 +183,7 @@ class BasicJSONAPITest(TranslationResetMixin):
                               u'legend': self.document.legend,
                               u'author': self.document.author})
 
-    def test_videos(self):
+    def test_video(self):
         self.assertDictEqual(self.result['videos'][0],
                              {u'backend': 'Youtube',
                               u'url': 'http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque',
@@ -191,22 +191,24 @@ class BasicJSONAPITest(TranslationResetMixin):
                               u'legend': self.video.legend,
                               u'author': self.video.author,
                               u'code': self.video_detected.code})
-        self.video = common_factories.AttachmentFactory(
+
+    def test_video_dailymotion(self):
+        video = common_factories.AttachmentFactory(
             content_object=self.content, attachment_file='',
             attachment_video='http://www.dailymotion.com/video/x6e0q24')
-        self.video_detected = detect_backend(self.video.attachment_video)
-        self.pk = self.content.pk
-        url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.model_name, pk=self.pk)
-        self.response = self.client.get(url)
-        self.result = json.loads(self.response.content)
+        video_detected = detect_backend(video.attachment_video)
+        pk = self.content.pk
+        url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.model_name, pk=pk)
+        response = self.client.get(url)
+        result = json.loads(response.content)
 
-        self.assertDictEqual(self.result['videos'][0],
+        self.assertDictEqual(result['videos'][0],
                              {u'backend': 'Dailymotion',
                               u'url': 'http://www.dailymotion.com/embed/video/x6e0q24',
-                              u'title': self.video.title,
-                              u'legend': self.video.legend,
-                              u'author': self.video.author,
-                              u'code': self.video_detected.code})
+                              u'title': video.title,
+                              u'legend': video.legend,
+                              u'author': video.author,
+                              u'code': video_detected.code})
 
     def test_cities(self):
         self.assertDictEqual(self.result['cities'][0],
