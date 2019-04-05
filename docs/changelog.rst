@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix sync_rando command (BadZipfile exception)
 
 
 2.26.1 (2019-04-03)
