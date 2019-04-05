@@ -51,7 +51,7 @@ $(window).on('entity:map', function (e, data) {
                 console.warn("No proper 'color_index' properties in GeoJSON properties.");
                 idx = 0;
             }
-            var colorspool = colorspools[layergroup[1]],
+            var colorspool = colorspools[layergroup.id],
                 color = colorspool[idx % colorspool.length];
             layer.setStyle({color: color});
 
@@ -60,8 +60,8 @@ $(window).on('entity:map', function (e, data) {
                 MapEntity.showLineLabel(layer, {
                     color: color,
                     text: data.properties.name,
-                    title: layergroup[0],
-                    className: 'landlabel ' + layergroup[1] + ' ' + idx
+                    title: layergroup.name,
+                    className: 'landlabel ' + layergroup.id + ' ' + idx
                 });
             }
         };
