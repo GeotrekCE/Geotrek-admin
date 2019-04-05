@@ -6,8 +6,7 @@ $(window).on('entity:map', function (e, data) {
                       {url: window.SETTINGS.urls.city_layer, name: tr("Cities"), id: 'city'}];
 
     landLayers = landLayers.concat(window.SETTINGS.map['restricted_area_types']);
-    console.log(landLayers);
-    var result = landLayers.map(function(el) {
+    landLayers.map(function(el) {
         var o = Object.assign({}, el);
         o.isActive = false;
         return o;
@@ -34,7 +33,6 @@ $(window).on('entity:map', function (e, data) {
 
     map.on('layeradd', function(e){
         var options = e.layer.options || {'modelname': 'None'};
-        console.log(options);
         for (var i=0; i<landLayers.length; i++) {
             if (! landLayers[i].isActive){
                 if (options.modelname == landLayers[i].name){
