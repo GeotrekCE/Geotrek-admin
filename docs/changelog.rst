@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix sync_rando command (BadZipfile exception)
+- Fix nginx and Django conf when SSL is enabled
 
 
 2.26.1 (2019-04-03)
