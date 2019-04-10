@@ -2,13 +2,14 @@
 CHANGELOG
 =========
 
-2.26.2.dev0
+2.26.2 (2019-04-10)
 -------------------
 
 **Bug fixes**
 
 - Fix sync_rando command (BadZipfile exception)
 - Fix nginx and Django conf when SSL is enabled
+- Fix restricted area layers
 
 
 2.26.1 (2019-04-03)
