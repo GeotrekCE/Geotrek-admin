@@ -28,45 +28,45 @@ BEGIN
     merged_geom := (SELECT geom FROM l_t_troncon WHERE id = merged);
 
     -- DETECT matching point to rebuild path line
-    IF ST_EQUALS(ST_STARTPOINT(updated_geom), ST_STARTPOINT(merged_geom))
+    IF ST_Equals(ST_StartPoint(updated_geom), ST_StartPoint(merged_geom))
     THEN
-	rebuild_line := ST_MAKELINE(ST_REVERSE(updated_geom), merged_geom);
+	rebuild_line := ST_MakeLine(ST_Reverse(updated_geom), merged_geom);
 	reverse_update := TRUE;
 	
-    ELSIF ST_EQUALS(ST_STARTPOINT(updated_geom), ST_ENDPOINT(merged_geom))
+    ELSIF ST_Equals(ST_StartPoint(updated_geom), ST_EndPoint(merged_geom))
     THEN
-	rebuild_line := ST_MAKELINE(ST_REVERSE(updated_geom), ST_REVERSE(merged_geom));
+	rebuild_line := ST_MakeLine(ST_Reverse(updated_geom), ST_Reverse(merged_geom));
 	reverse_update := TRUE;
 	reverse_merged := TRUE;
 	
-    ELSIF ST_EQUALS(ST_ENDPOINT(updated_geom), ST_ENDPOINT(merged_geom))
+    ELSIF ST_Equals(ST_EndPoint(updated_geom), ST_EndPoint(merged_geom))
     THEN
-	rebuild_line := ST_MAKELINE(updated_geom, ST_REVERSE(merged_geom));
+	rebuild_line := ST_MakeLine(updated_geom, ST_Reverse(merged_geom));
 	reverse_merged := TRUE;
 
-    ELSIF ST_EQUALS(ST_ENDPOINT(updated_geom), ST_STARTPOINT(merged_geom))
+    ELSIF ST_Equals(ST_EndPoint(updated_geom), ST_StartPoint(merged_geom))
     THEN
-	rebuild_line := ST_MAKELINE(updated_geom, merged_geom);
+	rebuild_line := ST_MakeLine(updated_geom, merged_geom);
 
-    ELSIF (ST_DISTANCE(ST_STARTPOINT(updated_geom), ST_STARTPOINT(merged_geom))::float <= max_snap_distance)
+    ELSIF (ST_Distance(ST_StartPoint(updated_geom), ST_StartPoint(merged_geom))::float <= max_snap_distance)
     THEN 
-	rebuild_line := ST_MAKELINE(ST_REVERSE(updated_geom), merged_geom);
+	rebuild_line := ST_MakeLine(ST_Reverse(updated_geom), merged_geom);
 	reverse_update := TRUE;
 	
-    ELSIF (ST_DISTANCE(ST_STARTPOINT(updated_geom), ST_ENDPOINT(merged_geom)) <= max_snap_distance)
+    ELSIF (ST_Distance(ST_StartPoint(updated_geom), ST_EndPoint(merged_geom)) <= max_snap_distance)
     THEN
-	rebuild_line := ST_MAKELINE(ST_REVERSE(updated_geom), ST_REVERSE(merged_geom));
+	rebuild_line := ST_MakeLine(ST_Reverse(updated_geom), ST_Reverse(merged_geom));
 	reverse_update := TRUE;
 	reverse_merged := TRUE;
 	
-    ELSIF (ST_DISTANCE(ST_ENDPOINT(updated_geom), ST_ENDPOINT(merged_geom)) <= max_snap_distance)
+    ELSIF (ST_Distance(ST_EndPoint(updated_geom), ST_EndPoint(merged_geom)) <= max_snap_distance)
     THEN
-	rebuild_line := ST_MAKELINE(updated_geom, ST_REVERSE(merged_geom));
+	rebuild_line := ST_MakeLine(updated_geom, ST_Reverse(merged_geom));
 	reverse_merged := TRUE;
 
-    ELSIF (ST_DISTANCE(ST_ENDPOINT(updated_geom), ST_STARTPOINT(merged_geom)) <= max_snap_distance)
+    ELSIF (ST_Distance(ST_EndPoint(updated_geom), ST_StartPoint(merged_geom)) <= max_snap_distance)
     THEN
-	rebuild_line := ST_MAKELINE(updated_geom, merged_geom);
+	rebuild_line := ST_MakeLine(updated_geom, merged_geom);
     
     ELSE
     -- no snapping -> END !
@@ -77,7 +77,7 @@ BEGIN
     FOR element IN
         SELECT * FROM l_t_troncon WHERE id != updated AND id != merged
     LOOP
-        IF ST_EQUALS(ST_STARTPOINT(updated_geom), ST_STARTPOINT(element.geom)) OR ST_EQUALS(ST_ENDPOINT(updated_geom), ST_STARTPOINT(element.geom)) OR ST_EQUALS(ST_STARTPOINT(updated_geom), ST_ENDPOINT(element.geom)) OR ST_EQUALS(ST_ENDPOINT(updated_geom), ST_ENDPOINT(element.geom))
+        IF ST_Equals(ST_StartPoint(updated_geom), ST_StartPoint(element.geom)) OR ST_Equals(ST_EndPoint(updated_geom), ST_StartPoint(element.geom)) OR ST_Equals(ST_StartPoint(updated_geom), ST_EndPoint(element.geom)) OR ST_Equals(ST_EndPoint(updated_geom), ST_EndPoint(element.geom))
          THEN
             RETURN 2;
         END IF;
@@ -94,8 +94,8 @@ BEGIN
 	THEN
 	    -- update reverse pk
 	    UPDATE e_r_evenement_troncon
-		   SET pk_debut = (1- pk_debut) * ST_LENGTH(updated_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(merged_geom)),
-		       pk_fin = (1- pk_fin) * ST_LENGTH(updated_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(merged_geom))
+		   SET pk_debut = (1- pk_debut) * ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom)),
+		       pk_fin = (1- pk_fin) * ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))
 		   WHERE id = element.id;
 	    -- update reverse offset
             UPDATE e_t_evenement
@@ -103,8 +103,8 @@ BEGIN
                    WHERE id = element.evenement;
 	ELSE
 	    UPDATE e_r_evenement_troncon
-		   SET pk_debut = pk_debut * ST_LENGTH(updated_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(merged_geom)),
-		       pk_fin = pk_fin * ST_LENGTH(updated_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(merged_geom))
+		   SET pk_debut = pk_debut * ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom)),
+		       pk_fin = pk_fin * ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))
 		   WHERE id = element.id;
 	END IF;
     END LOOP;
@@ -119,8 +119,8 @@ BEGIN
         IF reverse_merged = TRUE
         THEN
 	    UPDATE e_r_evenement_troncon
-		   SET pk_debut = ((1- pk_debut) * ST_LENGTH(merged_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(merged_geom))) + (ST_LENGTH(updated_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(merged_geom))),
-		       pk_fin = ((1- pk_fin) * ST_LENGTH(merged_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(merged_geom))) + (ST_LENGTH(updated_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(merged_geom)))
+		   SET pk_debut = ((1- pk_debut) * ST_Length(merged_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))) + (ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))),
+		       pk_fin = ((1- pk_fin) * ST_Length(merged_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))) + (ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom)))
 		   WHERE id = element.id;
 
             UPDATE e_t_evenement
@@ -128,8 +128,8 @@ BEGIN
                    WHERE id = element.evenement;
         ELSE
 	    UPDATE e_r_evenement_troncon
-		   SET pk_debut = (pk_debut * ST_LENGTH(merged_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(merged_geom))) + (ST_LENGTH(updated_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(merged_geom))),
-		       pk_fin = (pk_fin * ST_LENGTH(merged_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(merged_geom))) + (ST_LENGTH(updated_geom) / (ST_LENGTH(updated_geom) + ST_LENGTH(merged_geom)))
+		   SET pk_debut = (pk_debut * ST_Length(merged_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))) + (ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))),
+		       pk_fin = (pk_fin * ST_Length(merged_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))) + (ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom)))
 		   WHERE id = element.id;
         END IF;
     END LOOP;

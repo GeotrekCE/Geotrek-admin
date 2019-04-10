@@ -320,6 +320,8 @@ CACHES = {
     }
 }
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 THUMBNAIL_ALIASES = {
     '': {
         'thumbnail': {'size': (150, 150)},

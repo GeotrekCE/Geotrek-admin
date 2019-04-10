@@ -7,9 +7,9 @@ from django.contrib.gis.db.models import GeometryField, PointField
 
 def Transform(geom, srid):
     """
-    ST_TRANSFORM postgis function
+    ST_Transform postgis function
     """
-    return Func(geom, srid, function='ST_TRANSFORM')
+    return Func(geom, srid, function='ST_Transform')
 
 
 def Buffer(geom, radius, num_seg):
@@ -28,9 +28,9 @@ def GeometryType(geom):
 
 class Length(Func):
     """
-    ST_LENGTH postgis function
+    ST_Length postgis function
     """
-    function = 'ST_LENGTH'
+    function = 'ST_Length'
     output_field = FloatField()
 
 
@@ -44,23 +44,23 @@ class Length3D(Func):
 
 class Area(Func):
     """
-    ST_AREA postgis function
+    ST_Area postgis function
     """
-    function = 'ST_AREA'
+    function = 'ST_Area'
     output_field = FloatField()
 
 
 class StartPoint(Func):
     """
-    ST_TRANSFORM postgis function
+    ST_StartPoint postgis function
     """
-    function = 'ST_STARTPOINT'
+    function = 'ST_StartPoint'
     output_field = PointField()
 
 
 class EndPoint(Func):
     """
-    ST_TRANSFORM postgis function
+    ST_EndPoint postgis function
     """
-    function = 'ST_ENDPOINT'
+    function = 'ST_EndPoint'
     output_field = PointField()
