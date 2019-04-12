@@ -3,7 +3,7 @@
   "features": [
     {
       "type": "Feature",
-      "properties": {"NOM": "coucou", "Insee": "0"},
+      "properties": {"NOM": 'coucou', 'Insee': '0'},
       "geometry": {
         "type": "Polygon",
         "coordinates": [[[0, -2], [1, -2], [1, 0], [0, 0], [0, -2]]]
