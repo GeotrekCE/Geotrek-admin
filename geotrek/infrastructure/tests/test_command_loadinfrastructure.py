@@ -63,8 +63,8 @@ class InfrastructureCommandTest(TestCase):
         call_command('loadinfrastructure', filename, stdout=output)
         call_command('loadinfrastructure', filename, type_default='label', stdout=output)
 
-        elements_to_check = ['type', 'name', 'condition', 'structure', 'description', 'year']
-        self.assertEqual(output.getvalue().count("Field 'None' not found in data source."), 6)
+        elements_to_check = ['type', 'name']
+        self.assertEqual(output.getvalue().count("Field 'None' not found in data source."), 2)
         for element in elements_to_check:
             self.assertIn("Set it with --{0}-field, or set a default value with --{0}-default".format(element),
                           output.getvalue())
