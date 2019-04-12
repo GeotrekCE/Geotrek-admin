@@ -2,6 +2,18 @@
 CHANGELOG
 =========
 
+2.26.3 (2019-04-12)
+-------------------
+
+**Bug fixes**
+
+- Fix parsers delete datas
+
+**Minor Changes**
+
+- Add command loaddistrict, loadcities, loadpaths
+
+
 2.26.2 (2019-04-10)
 -------------------
 
