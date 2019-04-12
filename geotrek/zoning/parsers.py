@@ -11,6 +11,7 @@ from geotrek.zoning.models import City
 class CityParser(ShapeParser):
     model = City
     eid = 'code'
+    label = 'Cities'
     fields = {
         'code': 'insee',
         'name': 'nom',

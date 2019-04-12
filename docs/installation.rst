@@ -8,7 +8,7 @@ For a developer instance, please follow  :ref:`the dedicated procedure <developm
 Requirements
 ------------
 
-* Ubuntu Server 18.04 Bionic Beaver (http://releases.ubuntu.com/18.04/) or
+* Ubuntu Server 18.04 LTS Bionic Beaver (http://releases.ubuntu.com/18.04/) or
   Ubuntu Server 16.04 Xenial Xerus (http://releases.ubuntu.com/16.04/)
 
 

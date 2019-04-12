@@ -1,0 +1,22 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {"NOM": "coucou"},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -27.059326171875,
+            29.84064389983441
+          ],
+          [
+            -27.0703125,
+            29.31514119318728
+          ]
+        ]
+      }
+    }
+  ]
+}
