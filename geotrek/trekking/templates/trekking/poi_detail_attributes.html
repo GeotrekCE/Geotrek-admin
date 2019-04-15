@@ -5,6 +5,10 @@
     <h3>{% trans "Attributes" %}</h3>
 
     <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ poi|verbose:"structure" }}</th>
+            <td>{{ poi.structure }}</td>
+        </tr>
          <tr>
             <th>{{ poi|verbose:"type" }}</th>
             <td>{{ poi.type }}</td>
@@ -29,10 +33,6 @@
 
         {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "common/publication_info_fragment.html" %}
-        <tr>
-            <th>{{ poi|verbose:"structure" }}</th>
-            <td>{{ poi.structure }}</td>
-        </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 

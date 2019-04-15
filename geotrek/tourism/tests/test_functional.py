@@ -3,7 +3,7 @@ from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
 import filecmp
-
+from geotrek.authent.models import Structure
 from geotrek.common.factories import AttachmentFactory
 from geotrek.common.tests import CommonTest
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
@@ -33,6 +33,7 @@ class TouristicContentViewsTests(CommonTest):
 
     def get_good_data(self):
         return {
+            'structure': Structure.objects.first().pk,
             'name_fr': u'test',
             'category': TouristicContentCategoryFactory.create().pk,
             'geom': '{"type": "Point", "coordinates":[0, 0]}',
@@ -51,6 +52,7 @@ class TouristicEventViewsTests(CommonTest):
 
     def get_good_data(self):
         return {
+            'structure': Structure.objects.first().pk,
             'name_fr': u'test',
             'geom': '{"type": "Point", "coordinates":[0, 0]}',
         }

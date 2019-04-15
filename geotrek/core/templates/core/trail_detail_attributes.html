@@ -6,6 +6,10 @@
     <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
         <tr>
+            <th>{{ trail|verbose:"structure" }}</th>
+            <td>{{ trail.structure }}</td>
+        </tr>
+        <tr>
             <th>{{ trail|verbose:"name" }}</th>
             <td>{{ trail.name }}</td>
         </tr><tr>
@@ -19,10 +23,6 @@
             <td>{{ trail.comments|safe }}</td>
         </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
-        <tr>
-            <th>{{ trail|verbose:"structure" }}</th>
-            <td>{{ trail.structure }}</td>
-        </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 

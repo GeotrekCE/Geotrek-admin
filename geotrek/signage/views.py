@@ -42,8 +42,8 @@ class SignageJsonList(MapEntityJsonList, SignageList):
 
 class SignageFormatList(MapEntityFormat, SignageList):
     columns = [
-        'id', 'name', 'code', 'type', 'condition', 'description',
-        'implantation_year', 'published', 'structure', 'date_insert',
+        'structure', 'id', 'name', 'code', 'type', 'condition', 'description',
+        'implantation_year', 'published', 'date_insert',
         'date_update', 'cities', 'districts', 'areas', 'lat_value', 'lng_value',
         'printed_elevation', 'sealing', 'manager',
     ] + AltimetryMixin.COLUMNS

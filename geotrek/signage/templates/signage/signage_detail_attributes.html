@@ -5,6 +5,10 @@
 
     <table class="table-striped table-bordered table">
         <tr>
+            <th>{{ object|verbose:"structure" }}</th>
+            <td>{{ object.structure }}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"name" }}</th>
             <td>{{ object.name }}</td>
         </tr>
@@ -52,10 +56,6 @@
             <td>{{ object.published|yesno|title }}</td>
         </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
-        <tr>
-            <th>{{ object|verbose:"structure" }}</th>
-            <td>{{ object.structure }}</td>
-        </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 
