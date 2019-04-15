@@ -107,7 +107,7 @@ class TrekJsonList(MapEntityJsonList, TrekList):
 
 class TrekFormatList(MapEntityFormat, TrekList):
     columns = [
-        'id', 'eid', 'eid2', 'name', 'departure', 'arrival', 'duration',
+        'id', 'eid', 'eid2', 'structure', 'name', 'departure', 'arrival', 'duration',
         'duration_pretty', 'description', 'description_teaser',
         'networks', 'advice', 'ambiance', 'difficulty', 'information_desks',
         'themes', 'practice', 'accessibilities', 'access', 'route',

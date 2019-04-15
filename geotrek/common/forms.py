@@ -79,6 +79,13 @@ class CommonForm(MapEntityForm):
             self.deep_remove(self.helper.fieldslayout, 'published')
         if 'review' in self.fields and self.instance and self.instance.any_published:
             self.deep_remove(self.helper.fieldslayout, 'review')
+        if self.user.is_superuser or self.user.has_perm('authent.can_bypass_structure'):
+            if self.instance.pk:
+                self.fields['structure'].initial = self.instance.structure
+            else:
+                self.fields['structure'].initial = self.user.profile.structure
+        else:
+            del self.fields['structure']
 
     def save(self, commit=True):
         """Set structure field before saving if need be"""

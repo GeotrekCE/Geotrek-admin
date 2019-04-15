@@ -104,6 +104,7 @@ class TrekForm(BaseTrekForm):
             </ul>""" % (unicode(_("Main")), unicode(_("Advanced")))),
             Div(
                 Div(
+                    'structure',
                     'name',
                     'review',
                     'published',
@@ -254,7 +255,7 @@ class TrekForm(BaseTrekForm):
 
     class Meta(BaseTrekForm.Meta):
         fields = BaseTrekForm.Meta.fields + \
-            ['name', 'review', 'published', 'is_park_centered', 'departure',
+            ['structure', 'name', 'review', 'published', 'is_park_centered', 'departure',
              'arrival', 'duration', 'difficulty', 'route', 'ambiance',
              'access', 'description_teaser', 'description', 'points_reference',
              'disabled_infrastructure', 'advised_parking', 'parking_location',
@@ -294,6 +295,7 @@ else:
 class POIForm(BasePOIForm):
     fieldslayout = [
         Div(
+            'structure',
             'name',
             'review',
             'published',
@@ -304,7 +306,7 @@ class POIForm(BasePOIForm):
     ]
 
     class Meta(BasePOIForm.Meta):
-        fields = BasePOIForm.Meta.fields + ['name', 'description', 'eid', 'type', 'published', 'review']
+        fields = BasePOIForm.Meta.fields + ['structure', 'name', 'description', 'eid', 'type', 'published', 'review']
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -338,14 +340,14 @@ else:
 class ServiceForm(BaseServiceForm):
     fieldslayout = [
         Div(
+            'structure',
             'type',
-            'review',
             'eid',
         )
     ]
 
     class Meta(BaseServiceForm.Meta):
-        fields = BaseServiceForm.Meta.fields + ['type']
+        fields = BaseServiceForm.Meta.fields + ['structure', 'type', 'eid']
 
 
 class WebLinkCreateFormPopup(forms.ModelForm):
