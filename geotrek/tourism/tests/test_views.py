@@ -184,7 +184,11 @@ class BasicJSONAPITest(TranslationResetMixin):
         video_youtube = common_factories.AttachmentFactory(content_object=self.content, attachment_file='',
                                                            attachment_video='http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque')
         video_detected_youtube = detect_backend(video_youtube.attachment_video)
-        self.assertDictEqual(self.result['videos'][0],
+        pk = self.content.pk
+        url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.model_name, pk=pk)
+        response = self.client.get(url)
+        result = json.loads(response.content)
+        self.assertDictEqual(result['videos'][0],
                              {u'backend': 'Youtube',
                               u'url': 'http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque',
                               u'title': video_youtube.title,
