@@ -123,7 +123,7 @@ class LoadPathsCommandTest(TestCase):
         output = StringIO()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'point.geojson')
         call_command('loadpaths', filename, structure=self.structure.name, srid=4326, verbosity=2, stdout=output)
-        self.assertIn("Feature FID 0 in Layer<OGRGeoJSON>'s geometry is not a Linestring", output.getvalue())
+        self.assertIn("s geometry is not a Linestring", output.getvalue())
 
     def test_load_paths_fail_bad_srid(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'bad_srid.geojson')
