@@ -143,9 +143,6 @@ class BasicJSONAPITest(TranslationResetMixin):
                                                           attachment_file=get_dummy_uploaded_image())
         self.document = common_factories.AttachmentFactory(content_object=self.content,
                                                            attachment_file=get_dummy_uploaded_document())
-        self.video = common_factories.AttachmentFactory(content_object=self.content, attachment_file='',
-                                                        attachment_video='http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque')
-        self.video_detected = detect_backend(self.video.attachment_video)
 
         self.theme = common_factories.ThemeFactory()
         self.content.themes.add(self.theme)
@@ -183,20 +180,23 @@ class BasicJSONAPITest(TranslationResetMixin):
                               u'legend': self.document.legend,
                               u'author': self.document.author})
 
-    def test_video(self):
+    def test_video_youtube(self):
+        video_youtube = common_factories.AttachmentFactory(content_object=self.content, attachment_file='',
+                                                           attachment_video='http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque')
+        video_detected_youtube = detect_backend(video_youtube.attachment_video)
         self.assertDictEqual(self.result['videos'][0],
                              {u'backend': 'Youtube',
                               u'url': 'http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque',
-                              u'title': self.video.title,
-                              u'legend': self.video.legend,
-                              u'author': self.video.author,
-                              u'code': self.video_detected.code})
+                              u'title': video_youtube.title,
+                              u'legend': video_youtube.legend,
+                              u'author': video_youtube.author,
+                              u'code': video_detected_youtube.code})
 
     def test_video_dailymotion(self):
-        video = common_factories.AttachmentFactory(
+        video_dailymotion = common_factories.AttachmentFactory(
             content_object=self.content, attachment_file='',
             attachment_video='http://www.dailymotion.com/video/x6e0q24')
-        video_detected = detect_backend(video.attachment_video)
+        video_detected_dailymotion = detect_backend(video_dailymotion.attachment_video)
         pk = self.content.pk
         url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.model_name, pk=pk)
         response = self.client.get(url)
@@ -205,10 +205,10 @@ class BasicJSONAPITest(TranslationResetMixin):
         self.assertDictEqual(result['videos'][0],
                              {u'backend': 'Dailymotion',
                               u'url': 'http://www.dailymotion.com/embed/video/x6e0q24',
-                              u'title': video.title,
-                              u'legend': video.legend,
-                              u'author': video.author,
-                              u'code': video_detected.code})
+                              u'title': video_dailymotion.title,
+                              u'legend': video_dailymotion.legend,
+                              u'author': video_dailymotion.author,
+                              u'code': video_detected_dailymotion.code})
 
     def test_cities(self):
         self.assertDictEqual(self.result['cities'][0],
