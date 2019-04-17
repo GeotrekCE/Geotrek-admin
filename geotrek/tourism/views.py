@@ -53,7 +53,7 @@ class TouristicContentList(MapEntityList):
 
 class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
     columns = [
-        'structure', 'id', 'eid', 'name', 'category', 'type1', 'type2', 'description_teaser',
+        'id', 'structure', 'eid', 'name', 'category', 'type1', 'type2', 'description_teaser',
         'description', 'themes', 'contact', 'email', 'website', 'practical_info',
         'review', 'published', 'publication_date', 'source', 'portal', 'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'approved'
@@ -168,7 +168,7 @@ class TouristicEventList(MapEntityList):
 
 class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
     columns = [
-        'structure', 'id', 'eid', 'name', 'type', 'description_teaser', 'description', 'themes',
+        'id', 'structure', 'eid', 'name', 'type', 'description_teaser', 'description', 'themes',
         'begin_date', 'end_date', 'duration', 'meeting_point', 'meeting_time',
         'contact', 'email', 'website', 'organizer', 'speaker', 'accessibility',
         'participant_number', 'booking', 'target_audience', 'practical_info',

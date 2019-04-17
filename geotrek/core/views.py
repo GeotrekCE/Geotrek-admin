@@ -111,7 +111,7 @@ class PathJsonList(MapEntityJsonList, PathList):
 
 class PathFormatList(MapEntityFormat, PathList):
     columns = [
-        'structure', 'id', 'valid', 'visible', 'name', 'comments', 'departure', 'arrival',
+        'id', 'structure', 'valid', 'visible', 'name', 'comments', 'departure', 'arrival',
         'comfort', 'source', 'stake', 'usages', 'networks',
         'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'length_2d'
@@ -298,7 +298,7 @@ class TrailJsonList(MapEntityJsonList, TrailList):
 
 class TrailFormatList(MapEntityFormat, TrailList):
     columns = [
-        'structure', 'id', 'name', 'comments', 'departure', 'arrival',
+        'id', 'structure', 'name', 'comments', 'departure', 'arrival',
         'date_insert', 'date_update',
         'cities', 'districts', 'areas',
     ] + AltimetryMixin.COLUMNS

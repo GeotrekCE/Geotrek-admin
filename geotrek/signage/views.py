@@ -42,7 +42,7 @@ class SignageJsonList(MapEntityJsonList, SignageList):
 
 class SignageFormatList(MapEntityFormat, SignageList):
     columns = [
-        'structure', 'id', 'name', 'code', 'type', 'condition', 'description',
+        'id', 'structure', 'name', 'code', 'type', 'condition', 'description',
         'implantation_year', 'published', 'date_insert',
         'date_update', 'cities', 'districts', 'areas', 'lat_value', 'lng_value',
         'printed_elevation', 'sealing', 'manager',
