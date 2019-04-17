@@ -104,7 +104,6 @@ class TrekForm(BaseTrekForm):
             </ul>""" % (unicode(_("Main")), unicode(_("Advanced")))),
             Div(
                 Div(
-                    'structure',
                     'name',
                     'review',
                     'published',
@@ -161,7 +160,8 @@ class TrekForm(BaseTrekForm):
                     for t in ServiceType.objects.all()])))
         )
         super(TrekForm, self).__init__(*args, **kwargs)
-
+        if self.fields.get('structure'):
+            self.fieldslayout[0][1][0].insert(0, 'structure')
         self.fields['web_links'].widget = SelectMultipleWithPop(choices=self.fields['web_links'].choices,
                                                                 add_url=WebLink.get_add_url())
         # Make sure (force) that name is required, in default language only
