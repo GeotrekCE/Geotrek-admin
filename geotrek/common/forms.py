@@ -81,9 +81,7 @@ class CommonForm(MapEntityForm):
             self.deep_remove(self.helper.fieldslayout, 'review')
         if 'structure' in self.fields:
             if self.user.has_perm('authent.can_bypass_structure'):
-                if self.instance.pk:
-                    self.fields['structure'].initial = self.instance.structure
-                else:
+                if not self.instance.pk:
                     self.fields['structure'].initial = self.user.profile.structure
             else:
                 del self.fields['structure']
