@@ -295,13 +295,13 @@ class POIJsonList(MapEntityJsonList, POIList):
 
 class POIFormatList(MapEntityFormat, POIList):
     columns = [
-        'structure', 'id', 'eid', 'name', 'type', 'description', 'treks',
+        'id', 'structure', 'eid', 'name', 'type', 'description', 'treks',
         'review', 'published', 'publication_date',
         'structure', 'date_insert', 'date_update',
         'cities', 'districts', 'areas'
     ] + AltimetryMixin.COLUMNS
 
-    set(POIList.columns + ['description', 'treks', 'districts', 'cities', 'areas'])
+    set(POIList.columns + ['description', 'treks', 'districts', 'cities', 'areas', 'structure'])
 
     def get_queryset(self):
         qs = super(POIFormatList, self).get_queryset()
