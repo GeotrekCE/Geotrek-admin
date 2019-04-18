@@ -4,14 +4,13 @@ from django.utils.translation import ugettext_lazy as _
 from geotrek.common.tests import CommonTest
 from geotrek.sensitivity.models import SensitiveArea
 from geotrek.sensitivity.factories import (SensitiveAreaFactory, SpeciesFactory, SportPracticeFactory,
-                                           RegulatorySensitiveAreaFactory)
-from mapentity.factories import SuperUserFactory
+                                           RegulatorySensitiveAreaFactory, BiodivManagerFactory)
 
 
 class SensitiveAreaViewsTests(CommonTest):
     model = SensitiveArea
     modelfactory = SensitiveAreaFactory
-    userfactory = SuperUserFactory
+    userfactory = BiodivManagerFactory
 
     def setUp(self):
         translation.deactivate()
@@ -33,7 +32,7 @@ class SensitiveAreaViewsTests(CommonTest):
 class RegulatorySensitiveAreaViewsTests(CommonTest):
     model = SensitiveArea
     modelfactory = RegulatorySensitiveAreaFactory
-    userfactory = SuperUserFactory
+    userfactory = BiodivManagerFactory
 
     def setUp(self):
         translation.deactivate()

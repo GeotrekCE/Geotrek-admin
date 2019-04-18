@@ -2,10 +2,14 @@
 
 import factory
 
+from django.contrib.auth.models import Permission
+
 from geotrek.authent.factories import StructureRelatedDefaultFactory
 from geotrek.common.utils.testdata import dummy_filefield_as_sequence
 
 from . import models
+
+from mapentity.factories import UserFactory
 
 
 class SportPracticeFactory(factory.DjangoModelFactory):
@@ -52,3 +56,12 @@ class SensitiveAreaFactory(StructureRelatedDefaultFactory):
 
 class RegulatorySensitiveAreaFactory(SensitiveAreaFactory):
     species = factory.SubFactory(RegulatorySpeciesFactory)
+
+
+class BiodivManagerFactory(UserFactory):
+    is_staff = True
+
+    @factory.post_generation
+    def create_biodiv_manager(obj, create, extracted, **kwargs):
+        for perm in Permission.objects.exclude(codename='can_bypass_structure'):
+            obj.user_permissions.add(perm)
