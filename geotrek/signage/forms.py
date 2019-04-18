@@ -26,6 +26,10 @@ class LineForm(forms.ModelForm):
         self.fields['pictogram_name'].widget.attrs['class'] = 'input-mini'
         self.fields['time'].widget.attrs['class'] = 'input-mini'
 
+    def save(self, *args, **kwargs):
+        self.instance.structure = self.instance.blade.structure
+        return super(LineForm, self).save(*args, **kwargs)
+
     class Meta:
         fields = ('id', 'blade', 'number', 'text', 'distance', 'pictogram_name', 'time')
 
@@ -103,7 +107,7 @@ class SignageForm(BaseInfrastructureForm):
         blades = self.instance.blade_set.all()
         blades.update(structure=self.instance.structure)
         Line.objects.filter(blade__in=blades).update(structure=self.instance.structure)
-        return super(SignageForm, self).save(args, kwargs)
+        return super(SignageForm, self).save(*args, **kwargs)
 
     class Meta(BaseInfrastructureForm.Meta):
         model = Signage
