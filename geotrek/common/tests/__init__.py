@@ -64,3 +64,19 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         self.assertEqual(result.status_code, 302)
         self.assertEqual(self.model.objects.first().structure, self.user.profile.structure)
         self.logout()
+
+    def test_set_structure_with_permission(self):
+        if not hasattr(self.model, 'structure'):
+            return
+        self.login()
+        perm = Permission.objects.get(codename='can_bypass_structure')
+        self.user.user_permissions.add(perm)
+        structure = StructureFactory()
+        self.assertNotEqual(structure, self.user.profile.structure)
+        data = self.get_good_data()
+        data['structure'] = self.user.profile.structure.pk
+        response = self.client.post(self._get_add_url(), data)
+        self.assertEqual(response.status_code, 302)
+        obj = self.model.objects.last()
+        self.assertEqual(obj.structure, self.user.profile.structure)
+        self.logout()
