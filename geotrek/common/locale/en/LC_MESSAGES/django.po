@@ -280,3 +280,6 @@ msgstr ""
 
 msgid "Any year"
 msgstr ""
+
+msgid "The structure given to the global object doesn't correspond"
+msgstr ""

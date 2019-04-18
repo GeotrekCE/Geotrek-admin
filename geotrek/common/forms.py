@@ -4,6 +4,7 @@ from copy import deepcopy
 from zipfile import is_zipfile
 
 from django import forms
+from django.db.models.query import QuerySet
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.core.exceptions import FieldDoesNotExist
 from django.utils.translation import ugettext_lazy as _
@@ -11,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from mapentity.forms import MapEntityForm
 
 from geotrek.authent.models import (default_structure, StructureRelated, StructureOrNoneRelated,
-                                    StructureRelatedQuerySet)
+                                    StructureRelatedQuerySet, Structure, User)
 
 from .mixins import NoDeleteMixin
 
@@ -68,9 +69,6 @@ class CommonForm(MapEntityForm):
 
         self.update = kwargs.get("instance") is not None
 
-        for name, field in self.fields.items():
-            self.filter_related_field(name, field)
-
         # allow to modify layout per instance
         self.helper.fieldlayout = deepcopy(self.fieldslayout)
         model = self._meta.model
@@ -84,7 +82,27 @@ class CommonForm(MapEntityForm):
                 if not self.instance.pk:
                     self.fields['structure'].initial = self.user.profile.structure
             else:
+                for name, field in self.fields.items():
+                    self.filter_related_field(name, field)
                 del self.fields['structure']
+
+    def clean(self):
+        structure = self.cleaned_data.get('structure')
+        if not structure:
+            return self.cleaned_data
+
+        for name, field in self.cleaned_data.items():
+            if isinstance(field, QuerySet):
+                for value in field:
+                    self.check_structure(value, structure, name)
+            else:
+                self.check_structure(field, structure, name)
+        return self.cleaned_data
+
+    def check_structure(self, obj, structure, name):
+        if hasattr(obj, 'structure'):
+            if structure != obj.structure:
+                self.add_error(name, _("The structure given to the global object doesn't correspond"))
 
     def save(self, commit=True):
         """Set structure field before saving if need be"""
