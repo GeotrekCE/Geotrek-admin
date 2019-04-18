@@ -44,16 +44,9 @@ class StructureRelatedQuerySet(models.query.QuerySet):
     def for_user(self, user):
         return StructureRelatedQuerySet.queryset_for_user(self, user)
 
-    def for_object(self, obj):
-        return StructureRelatedQuerySet.queryset_for_user(self, obj)
-
     @staticmethod
     def queryset_for_user(queryset, user):
         return queryset.filter(Q(structure=user.profile.structure) | Q(structure=None))
-
-    @staticmethod
-    def queryset_for_object(queryset, obj):
-        return queryset.filter(Q(structure=obj.structure) | Q(structure=None))
 
 
 class StructureRelatedManager(models.Manager):
