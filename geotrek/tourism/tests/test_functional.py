@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import filecmp
 from geotrek.authent.models import Structure
+from geotrek.authent.factories import TrekkingManagerFactory
 from geotrek.common.factories import AttachmentFactory
 from geotrek.common.tests import CommonTest
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
@@ -11,7 +12,6 @@ from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.tourism.factories import (TouristicContentFactory,
                                        TouristicContentCategoryFactory,
                                        TouristicEventFactory)
-from mapentity.factories import SuperUserFactory
 
 from mock import patch
 import os
@@ -20,7 +20,7 @@ import os
 class TouristicContentViewsTests(CommonTest):
     model = TouristicContent
     modelfactory = TouristicContentFactory
-    userfactory = SuperUserFactory
+    userfactory = TrekkingManagerFactory
 
     def setUp(self):
         translation.deactivate()
@@ -43,7 +43,7 @@ class TouristicContentViewsTests(CommonTest):
 class TouristicEventViewsTests(CommonTest):
     model = TouristicEvent
     modelfactory = TouristicEventFactory
-    userfactory = SuperUserFactory
+    userfactory = TrekkingManagerFactory
 
     def get_bad_data(self):
         return {
