@@ -1,5 +1,4 @@
 from django import forms
-from django.db.models import Q
 from geotrek.core.forms import TopologyForm
 
 from .models import Infrastructure

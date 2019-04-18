@@ -1,6 +1,6 @@
 from django import forms
 from django.conf import settings
-from django.db.models import Q, Max
+from django.db.models import Max
 from django.forms.models import inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
 
@@ -11,8 +11,7 @@ from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.widgets import PointTopologyWidget
 from geotrek.infrastructure.forms import BaseInfrastructureForm
-from geotrek.infrastructure.models import InfrastructureCondition
-from geotrek.signage.models import Signage, SignageType, Blade, Line
+from geotrek.signage.models import Signage, Blade, Line
 
 
 class LineForm(forms.ModelForm):

@@ -12,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from mapentity.forms import MapEntityForm
 
 from geotrek.authent.models import (default_structure, StructureRelated, StructureOrNoneRelated,
-                                    StructureRelatedQuerySet, Structure, User)
+                                    StructureRelatedQuerySet)
 
 from .mixins import NoDeleteMixin
 
