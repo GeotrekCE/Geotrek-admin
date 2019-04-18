@@ -4,6 +4,7 @@ import re
 
 import mock
 from bs4 import BeautifulSoup
+from django.contrib.auth.models import Permission
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.contrib.gis.geos import LineString, Point
@@ -306,6 +307,21 @@ class PathViewsTest(CommonTest):
         p2 = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)), draft=True)
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
         self.assertIn('success', response.json())
+        self.logout()
+
+    def test_structure_is_not_changed_with_permission_error(self):
+        self.login()
+        perm = Permission.objects.get(codename='can_bypass_structure')
+        self.user.user_permissions.add(perm)
+        structure = StructureFactory()
+        structure_2 = StructureFactory()
+        self.assertNotEqual(structure, self.user.profile.structure)
+        obj = self.modelfactory.create(structure=structure)
+        data = self.get_good_data()
+        data['structure'] = structure_2.pk
+        result = self.client.post(obj.get_update_url(), data)
+        self.assertEqual(result.status_code, 200)
+        self.assertIn("The structure given to the global object", result.content)
         self.logout()
 
 
