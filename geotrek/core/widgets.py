@@ -33,7 +33,6 @@ class SnappedLineStringWidget(MapWidget):
         if isinstance(value, six.string_types) and value:
             value = json.loads(value)
             value = value['geom']
-            value = json.dumps(value)
         return super(SnappedLineStringWidget, self).deserialize(value)
 
 
