@@ -68,6 +68,7 @@ class BladeForm(CommonForm):
     def save(self, *args, **kwargs):
         self.instance.set_topology(self.signage)
         self.instance.signage = self.signage
+        self.instance.structure = self.signage.structure
         return super(BladeForm, self).save(*args, **kwargs)
 
     def clean_number(self):
@@ -81,7 +82,7 @@ class BladeForm(CommonForm):
 
     class Meta:
         model = Blade
-        fields = ['id', 'structure', 'number', 'direction', 'type', 'condition', 'color']
+        fields = ['id', 'number', 'direction', 'type', 'condition', 'color']
 
 
 class SignageForm(BaseInfrastructureForm):
@@ -96,6 +97,13 @@ class SignageForm(BaseInfrastructureForm):
             self.fields['topology'].widget = PointTopologyWidget()
             self.fields['topology'].widget.modifiable = modifiable
         self.helper.form_tag = False
+
+    def save(self, *args, **kwargs):
+        # Fix blade and line structure if signage structure change
+        blades = self.instance.blade_set.all()
+        blades.update(structure=self.instance.structure)
+        Line.objects.filter(blade__in=blades).update(structure=self.instance.structure)
+        return super(SignageForm, self).save(args, kwargs)
 
     class Meta(BaseInfrastructureForm.Meta):
         model = Signage
