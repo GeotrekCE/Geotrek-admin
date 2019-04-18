@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix migration tourism 0004
 
 
 2.26.3 (2019-04-12)
