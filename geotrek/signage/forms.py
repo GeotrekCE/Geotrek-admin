@@ -96,14 +96,6 @@ class SignageForm(BaseInfrastructureForm):
             modifiable = self.fields['topology'].widget.modifiable
             self.fields['topology'].widget = PointTopologyWidget()
             self.fields['topology'].widget.modifiable = modifiable
-
-        if self.instance.pk:
-            structure = self.instance.structure
-        else:
-            structure = self.user.profile.structure
-        self.fields['type'].queryset = SignageType.objects.filter(Q(structure=structure) | Q(structure=None))
-        self.fields['condition'].queryset = InfrastructureCondition.objects.filter(
-            Q(structure=structure) | Q(structure=None))
         self.helper.form_tag = False
 
     class Meta(BaseInfrastructureForm.Meta):

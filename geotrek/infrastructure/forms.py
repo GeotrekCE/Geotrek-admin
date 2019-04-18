@@ -2,7 +2,7 @@ from django import forms
 from django.db.models import Q
 from geotrek.core.forms import TopologyForm
 
-from .models import Infrastructure, InfrastructureType, InfrastructureCondition
+from .models import Infrastructure
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -15,16 +15,5 @@ class BaseInfrastructureForm(TopologyForm):
 
 
 class InfrastructureForm(BaseInfrastructureForm):
-    def __init__(self, *args, **kwargs):
-        super(InfrastructureForm, self).__init__(*args, **kwargs)
-
-        if self.instance.pk:
-            structure = self.instance.structure
-        else:
-            structure = self.user.profile.structure
-        self.fields['type'].queryset = InfrastructureType.objects.filter(Q(structure=structure) | Q(structure=None))
-        self.fields['condition'].queryset = InfrastructureCondition.objects.filter(
-            Q(structure=structure) | Q(structure=None))
-
     class Meta(BaseInfrastructureForm.Meta):
         model = Infrastructure
