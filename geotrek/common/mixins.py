@@ -22,7 +22,6 @@ logger = logging.getLogger(__name__)
 
 
 class TimeStampedModelMixin(models.Model):
-    aliases = aliases
     # Computed values (managed at DB-level with triggers)
     date_insert = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_(u"Insertion date"), db_column='date_insert')
     date_update = models.DateTimeField(auto_now=True, editable=False, verbose_name=_(u"Update date"), db_column='date_update', db_index=True)
@@ -121,10 +120,12 @@ class PicturesMixin(object):
         for picture in self.pictures:
             thumbnailer = get_thumbnailer(picture.attachment_file)
             try:
-                ali = self.aliases.get('medium')
-                ali['text'] = settings.COPYRIGHT_FORMAT.format(author=picture.author, title=picture.title,
-                                                               legend=picture.legend)
-                ali['size_watermark'] = settings.COPYRIGHT_SIZE
+                ali = thumbnailer.get_options({'size': (800, 800),
+                                               'text': settings.COPYRIGHT_FORMAT.format(author=picture.author,
+                                                                                        title=picture.title,
+                                                                                        legend=picture.legend),
+                                               'size_watermark': settings.COPYRIGHT_SIZE
+                })
                 thdetail = thumbnailer.get_thumbnail(ali)
             except (IOError, InvalidImageFormatError):
                 logger.info(_("Image %s invalid or missing from disk.") % picture.attachment_file)
