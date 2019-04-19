@@ -10,7 +10,6 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 
-from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
 from easy_thumbnails.alias import aliases
@@ -125,7 +124,7 @@ class PicturesMixin(object):
                                                                                         title=picture.title,
                                                                                         legend=picture.legend),
                                                'size_watermark': settings.COPYRIGHT_SIZE
-                })
+                                               })
                 thdetail = thumbnailer.get_thumbnail(ali)
             except (IOError, InvalidImageFormatError):
                 logger.info(_("Image %s invalid or missing from disk.") % picture.attachment_file)
