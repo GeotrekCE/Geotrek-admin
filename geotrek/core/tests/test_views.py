@@ -321,7 +321,7 @@ class PathViewsTest(CommonTest):
         data['structure'] = structure_2.pk
         result = self.client.post(obj.get_update_url(), data)
         self.assertEqual(result.status_code, 200)
-        self.assertIn("The structure given to the global object", result.content)
+        self.assertIn("Please select a choice related to all structures", result.content)
         self.logout()
 
 
