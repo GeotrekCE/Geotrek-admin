@@ -174,7 +174,9 @@ class Command(BaseCommand):
                 self.sync_media_file(obj.pictogram, directory=directory, zipfile=zipfile)
 
     def close_zip(self, zipfile, name):
-        self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=name), ending="")
+        if self.verbosity == 2:
+            self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=name), ending="")
+            self.stdout.flush()
 
         oldzipfilename = os.path.join(self.dst_root, name)
         zipfilename = os.path.join(self.tmp_root, name)

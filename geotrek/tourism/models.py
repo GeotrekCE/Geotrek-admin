@@ -134,7 +134,7 @@ class InformationDesk(models.Model):
         thumbnailer = get_thumbnailer(self.photo)
         try:
             return thumbnailer.get_thumbnail(aliases.get('thumbnail'))
-        except InvalidImageFormatError:
+        except (IOError, InvalidImageFormatError):
             logger.warning(_("Image %s invalid or missing from disk.") % self.photo)
             return None
 
@@ -145,7 +145,7 @@ class InformationDesk(models.Model):
         thumbnailer = get_thumbnailer(self.photo)
         try:
             return thumbnailer.get_thumbnail(aliases.get('medium'))
-        except InvalidImageFormatError:
+        except (IOError, InvalidImageFormatError):
             logger.warning(_("Image %s invalid or missing from disk.") % self.photo)
             return None
 
