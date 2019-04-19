@@ -102,7 +102,8 @@ class CommonForm(MapEntityForm):
     def check_structure(self, obj, structure, name):
         if hasattr(obj, 'structure'):
             if structure != obj.structure:
-                self.add_error(name, _("The structure given to the global object doesn't correspond"))
+                self.add_error(name, _("Please select a choice related to all structures (without brackets) or related "
+                                       "to the structure {struc} (in brackets)".format(struc=obj.structure.name)))
 
     def save(self, commit=True):
         """Set structure field before saving if need be"""

@@ -281,5 +281,5 @@ msgstr ""
 msgid "Any year"
 msgstr ""
 
-msgid "The structure given to the global object doesn't correspond"
+msgid "Please select a choice related to all structures (without brackets) or related to the structure {struc} (in brackets)"
 msgstr ""
