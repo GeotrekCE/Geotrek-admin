@@ -105,7 +105,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         class Meta:
             model = trekking_models.Practice
-            fields = ('id', 'name', 'pictogram', 'color')
+            fields = ('id', 'name', 'slug', 'pictogram', 'color')
 
     class AccessibilitySerializer(serializers.ModelSerializer):
         pictogram = serializers.SerializerMethodField(read_only=True)

@@ -100,7 +100,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             geo_field = 'geometry'
             auto_bbox = True
             fields = (
-                'id', 'pk', 'name', 'accessibilities', 'description_teaser', 'cities', 'profile',
+                'id', 'pk', 'name', 'slug', 'accessibilities', 'description_teaser', 'cities', 'profile',
                 'description', 'departure', 'arrival', 'duration', 'access', 'advised_parking', 'advice',
                 'difficulty', 'length', 'ascent', 'descent', 'route', 'is_park_centered', 'parking_location',
                 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'difficulty',
