@@ -19,13 +19,6 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Submit
 from crispy_forms.bootstrap import FormActions
 
-from paperclip.forms import AttachmentForm as PaperclipAttachmentForm
-
-
-class AttachmentForm(PaperclipAttachmentForm):
-    def __init__(self, request, *args, **kwargs):
-        super(AttachmentForm, self).__init__(request, args, kwargs)
-
 
 class CommonForm(MapEntityForm):
 
