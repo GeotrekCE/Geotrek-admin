@@ -645,8 +645,8 @@ BLADE_CODE_FORMAT = u"{signagecode}-{bladenumber}"
 LINE_CODE_FORMAT = u"{signagecode}-{bladenumber}-{linenumber}"
 SHOW_EXTREMITIES = False
 
-COPYRIGHT_FORMAT = u"{title} - {author}"  # You can add legend
-COPYRIGHT_SIZE = 15
+THUMBNAIL_COPYRIGHT_FORMAT = u"{title} {author}"  # You can add legend
+THUMBNAIL_COPYRIGHT_SIZE = 15
 
 REST_FRAMEWORK = {
     'UNICODE_JSON': False
