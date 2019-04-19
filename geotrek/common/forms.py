@@ -7,6 +7,7 @@ from django import forms
 from django.db.models.query import QuerySet
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.core.exceptions import FieldDoesNotExist
+from django.utils.text import format_lazy
 from django.utils.translation import ugettext_lazy as _
 
 from mapentity.forms import MapEntityForm
@@ -102,8 +103,8 @@ class CommonForm(MapEntityForm):
     def check_structure(self, obj, structure, name):
         if hasattr(obj, 'structure'):
             if structure != obj.structure:
-                self.add_error(name, _("Please select a choice related to all structures (without brackets) or related "
-                                       "to the structure {struc} (in brackets)".format(struc=obj.structure.name)))
+                self.add_error(name, format_lazy(_("Please select a choice related to all structures (without brackets) "
+                                                   "or related to the structure {struc} (in brackets)"), struc=structure))
 
     def save(self, commit=True):
         """Set structure field before saving if need be"""
