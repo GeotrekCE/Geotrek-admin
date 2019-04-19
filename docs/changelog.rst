@@ -2,12 +2,13 @@
 CHANGELOG
 =========
 
-2.26.2.dev0
+2.26.5 (2019-04-19)
 -------------------
 
 **Bug fixes**
 
--
+- Add slug to mobile API
+- Fix crash with empty images
 
 
 2.26.4 (2019-04-18)
