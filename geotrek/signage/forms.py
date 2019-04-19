@@ -73,7 +73,7 @@ class BladeForm(CommonForm):
         self.instance.set_topology(self.signage)
         self.instance.signage = self.signage
         self.instance.structure = self.signage.structure
-        return super(BladeForm, self).save(*args, **kwargs)
+        return super(CommonForm, self).save(*args, **kwargs)
 
     def clean_number(self):
         blades = self.signage.blade_set.existing()

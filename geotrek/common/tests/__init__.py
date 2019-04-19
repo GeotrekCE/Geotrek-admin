@@ -42,9 +42,7 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         self.assertNotEqual(structure, self.user.profile.structure)
         self.assertFalse(self.user.has_perm('authent.can_bypass_structure'))
         obj = self.modelfactory.create(structure=structure)
-        data = self.get_good_data()
-        data['structure'] = self.user.profile.structure.pk
-        result = self.client.post(obj.get_update_url(), data)
+        result = self.client.post(obj.get_update_url(), self.get_good_data())
         self.assertEqual(result.status_code, 302)
         self.assertEqual(self.model.objects.first().structure, structure)
         self.logout()

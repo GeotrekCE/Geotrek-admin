@@ -112,8 +112,6 @@ class CommonForm(MapEntityForm):
             pass
         elif 'structure' in self.fields:
             pass  # The form contains the structure field. Let django use its value.
-        elif self.instance.structure:
-            pass
         elif self.user:
             self.instance.structure = self.user.profile.structure
         else:
