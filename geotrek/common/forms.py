@@ -4,8 +4,10 @@ from copy import deepcopy
 from zipfile import is_zipfile
 
 from django import forms
+from django.db.models.query import QuerySet
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.core.exceptions import FieldDoesNotExist
+from django.utils.text import format_lazy
 from django.utils.translation import ugettext_lazy as _
 
 from mapentity.forms import MapEntityForm
@@ -68,9 +70,6 @@ class CommonForm(MapEntityForm):
 
         self.update = kwargs.get("instance") is not None
 
-        for name, field in self.fields.items():
-            self.filter_related_field(name, field)
-
         # allow to modify layout per instance
         self.helper.fieldlayout = deepcopy(self.fieldslayout)
         model = self._meta.model
@@ -79,6 +78,33 @@ class CommonForm(MapEntityForm):
             self.deep_remove(self.helper.fieldslayout, 'published')
         if 'review' in self.fields and self.instance and self.instance.any_published:
             self.deep_remove(self.helper.fieldslayout, 'review')
+        if 'structure' in self.fields:
+            if self.user.has_perm('authent.can_bypass_structure'):
+                if not self.instance.pk:
+                    self.fields['structure'].initial = self.user.profile.structure
+            else:
+                for name, field in self.fields.items():
+                    self.filter_related_field(name, field)
+                del self.fields['structure']
+
+    def clean(self):
+        structure = self.cleaned_data.get('structure')
+        if not structure:
+            return self.cleaned_data
+
+        for name, field in self.cleaned_data.items():
+            if isinstance(field, QuerySet):
+                for value in field:
+                    self.check_structure(value, structure, name)
+            else:
+                self.check_structure(field, structure, name)
+        return self.cleaned_data
+
+    def check_structure(self, obj, structure, name):
+        if hasattr(obj, 'structure'):
+            if structure != obj.structure:
+                self.add_error(name, format_lazy(_("Please select a choice related to all structures (without brackets) "
+                                                   "or related to the structure {struc} (in brackets)"), struc=structure))
 
     def save(self, commit=True):
         """Set structure field before saving if need be"""

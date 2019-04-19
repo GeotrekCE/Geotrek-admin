@@ -5,6 +5,10 @@
     <h3>{% trans "Attributes" %}</h3>
 
     <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ service|verbose:"structure" }}</th>
+            <td>{{ service.structure }}</td>
+        </tr>
          <tr>
             <th>{{ service|verbose:"type" }}</th>
             <td>{{ service.type }}</td>
@@ -15,10 +19,6 @@
         </tr>
 
         {% include "altimetry/elevationinfo_fragment.html" %}
-        <tr>
-            <th>{{ service|verbose:"structure" }}</th>
-            <td>{{ service.structure }}</td>
-        </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 

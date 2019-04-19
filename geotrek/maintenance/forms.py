@@ -109,7 +109,7 @@ class InterventionForm(CommonForm):
     class Meta(CommonForm.Meta):
         model = Intervention
         fields = CommonForm.Meta.fields + \
-            ['name', 'date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
+            ['structure', 'name', 'date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
              'height', 'stake', 'project', 'infrastructure', 'signage', 'material_cost', 'heliport_cost', 'subcontract_cost',
              'topology']
 
@@ -188,7 +188,8 @@ class ProjectForm(CommonForm):
     fieldslayout = [
         Div(
             Div(
-                Div('name',
+                Div('structure',
+                    'name',
                     'type',
                     'domain',
                     'begin_year',
@@ -212,7 +213,7 @@ class ProjectForm(CommonForm):
     class Meta(CommonForm.Meta):
         model = Project
         fields = CommonForm.Meta.fields + \
-            ['name', 'type', 'domain', 'begin_year', 'end_year', 'constraint',
+            ['structure', 'name', 'type', 'domain', 'begin_year', 'end_year', 'constraint',
              'global_cost', 'comments', 'project_owner', 'project_manager', 'contractors']
 
     def __init__(self, *args, **kwargs):

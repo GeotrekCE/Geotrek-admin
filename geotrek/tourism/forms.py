@@ -8,7 +8,7 @@ class TouristicContentForm(CommonForm):
     geomfields = ['geom']
 
     class Meta:
-        fields = ['name', 'category', 'type1', 'type2', 'review', 'published',
+        fields = ['structure', 'name', 'category', 'type1', 'type2', 'review', 'published',
                   'description_teaser', 'description', 'themes', 'contact',
                   'email', 'website', 'practical_info', 'approved', 'source', 'portal',
                   'geom', 'eid', 'reservation_system', 'reservation_id']
@@ -29,7 +29,7 @@ class TouristicEventForm(CommonForm):
                   'themes', 'begin_date', 'end_date', 'duration', 'meeting_point',
                   'meeting_time', 'contact', 'email', 'website', 'organizer', 'speaker',
                   'type', 'accessibility', 'participant_number', 'booking', 'target_audience',
-                  'practical_info', 'approved', 'source', 'portal', 'geom', 'eid']
+                  'practical_info', 'approved', 'source', 'portal', 'geom', 'eid', 'structure']
         model = TouristicEvent
 
     def __init__(self, *args, **kwargs):

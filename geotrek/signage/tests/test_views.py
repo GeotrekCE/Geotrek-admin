@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from collections import OrderedDict
 
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 
 from geotrek.common.tests import CommonTest
 from geotrek.authent.tests import AuthentFixturesTest
-from geotrek.authent.factories import PathManagerFactory
+from geotrek.authent.factories import PathManagerFactory, StructureFactory
 from geotrek.signage.models import Signage, Blade
 from geotrek.core.factories import PathFactory
 from geotrek.signage.factories import (SignageFactory, SignageTypeFactory, BladeFactory, BladeTypeFactory,
@@ -119,6 +120,47 @@ class BladeViewsTest(CommonTest):
         for fmt in ('csv', 'shp', 'gpx'):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
             self.assertEqual(response.status_code, 200, u"")
+
+    def test_set_structure_with_permission(self):
+        # The structure do not change because it changes with the signage form.
+        # Need to check blade structure and line
+        self.login()
+        perm = Permission.objects.get(codename='can_bypass_structure')
+        self.user.user_permissions.add(perm)
+        structure = StructureFactory()
+        self.assertNotEqual(structure, self.user.profile.structure)
+        signage = SignageFactory(structure=structure)
+        data = self.get_good_data()
+        data['signage'] = signage.pk
+        data['structure'] = self.user.profile.structure.pk
+        response = self.client.post('%s?signage=%s' % (Blade.get_add_url(), signage.pk), data)
+        self.assertEqual(response.status_code, 302)
+        obj = self.model.objects.last()
+        self.assertEqual(obj.structure, structure)
+        self.logout()
+
+    def test_structure_is_changed_with_permission(self):
+        self.login()
+        perm = Permission.objects.get(codename='can_bypass_structure')
+        self.user.user_permissions.add(perm)
+        structure = StructureFactory()
+        self.assertNotEqual(structure, self.user.profile.structure)
+        obj = self.modelfactory.create()
+        data = self.get_good_data()
+        data['structure'] = structure
+        result = self.client.post(obj.get_update_url(), data)
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(self.model.objects.first().structure, self.user.profile.structure)
+        self.logout()
+
+    def test_structure_is_not_changed_without_permission(self):
+        self.login()
+        structure = StructureFactory()
+        self.assertNotEqual(structure, self.user.profile.structure)
+        self.assertFalse(self.user.has_perm('authent.can_bypass_structure'))
+        obj = self.modelfactory.create(structure=structure)
+        self.client.post(obj.get_update_url(), self.get_good_data())
+        self.assertEqual(obj.structure, structure)
 
 
 class SignageViewsTest(CommonTest):
