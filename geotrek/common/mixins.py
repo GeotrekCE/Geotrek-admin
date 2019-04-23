@@ -118,7 +118,6 @@ class PicturesMixin(object):
         resized = []
         for picture in self.pictures:
             thumbnailer = get_thumbnailer(picture.attachment_file)
-            thumbnailer.delete_thumbnails()
             try:
                 ali = thumbnailer.get_options({'size': (800, 800),
                                                'text': settings.THUMBNAIL_COPYRIGHT_FORMAT.format(author=picture.author,
