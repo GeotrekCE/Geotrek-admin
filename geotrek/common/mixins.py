@@ -118,12 +118,13 @@ class PicturesMixin(object):
         resized = []
         for picture in self.pictures:
             thumbnailer = get_thumbnailer(picture.attachment_file)
+            thumbnailer.delete_thumbnails()
             try:
                 ali = thumbnailer.get_options({'size': (800, 800),
-                                               'text': settings.COPYRIGHT_FORMAT.format(author=picture.author,
-                                                                                        title=picture.title,
-                                                                                        legend=picture.legend),
-                                               'size_watermark': settings.COPYRIGHT_SIZE
+                                               'text': settings.THUMBNAIL_COPYRIGHT_FORMAT.format(author=picture.author,
+                                                                                                  title=picture.title,
+                                                                                                  legend=picture.legend),
+                                               'size_watermark': settings.THUMBNAIL_COPYRIGHT_SIZE
                                                })
                 thdetail = thumbnailer.get_thumbnail(ali)
             except (IOError, InvalidImageFormatError):
