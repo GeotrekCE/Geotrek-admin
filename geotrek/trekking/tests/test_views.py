@@ -663,7 +663,7 @@ class TrekJSONDetailTest(TrekJSONSetUp):
     def test_pictures(self):
         self.assertDictEqual(self.result['pictures'][0],
                              {u'url': '{url}.800x800_q85_size_watermark-{size}_text-{text}.png'.format(
-                                 url=os.path.join(settings.MEDIA_URL, self.attachment.attachment_file.name),
+                                 url=self.attachment.attachment_file.url,
                                  size=settings.THUMBNAIL_COPYRIGHT_SIZE,
                                  text=settings.THUMBNAIL_COPYRIGHT_FORMAT.format(title=self.attachment.title,
                                                                                  author=self.attachment.author)),

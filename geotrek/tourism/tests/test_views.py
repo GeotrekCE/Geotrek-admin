@@ -160,7 +160,7 @@ class BasicJSONAPITest(TranslationResetMixin):
 
     def test_thumbnail(self):
         self.assertEqual(self.result['thumbnail'],
-                         os.path.join(settings.MEDIA_URL, self.picture.attachment_file.name) + '.120x120_q85_crop.png')
+                         self.picture.attachment_file.url + '.120x120_q85_crop.png')
 
     def test_published_status(self):
         self.assertDictEqual(self.result['published_status'][0],
@@ -169,7 +169,7 @@ class BasicJSONAPITest(TranslationResetMixin):
     def test_pictures(self):
         self.assertDictEqual(self.result['pictures'][0],
                              {u'url': '{url}.800x800_q85_size_watermark-{size}_text-{text}.png'.format(
-                                 url=os.path.join(settings.MEDIA_URL, self.picture.attachment_file.name),
+                                 url=self.picture.attachment_file.url,
                                  size=settings.THUMBNAIL_COPYRIGHT_SIZE,
                                  text=settings.THUMBNAIL_COPYRIGHT_FORMAT.format(title=self.picture.title,
                                                                                  author=self.picture.author)),
