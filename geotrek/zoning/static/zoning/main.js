@@ -15,7 +15,6 @@ $(window).on('entity:map', function (e, data) {
         var landLayer = landLayers[i];
         var style = L.Util.extend({clickable: false},
                                   window.SETTINGS.map.styles[landLayer.id] || {});
-        var nameHTML = '<span style="color: '+ style['color'] + ';">&#x2B24;</span>&nbsp;' + landLayer.name;
         var colorspools = L.Util.extend({}, window.SETTINGS.map.colorspool),
             colorspool = colorspools[landLayer.id];
         if (colorspool) {
@@ -27,6 +26,7 @@ $(window).on('entity:map', function (e, data) {
                 modelname: landLayer.name,
                 style: style,
         });
+        var nameHTML = '<span style="color: '+ style['color'] + ';">&#x2B24;</span>&nbsp;' + landLayer.name;
         map.layerscontrol.addOverlay(layer, nameHTML, tr('Zoning'));
     };
 
