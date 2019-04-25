@@ -10,9 +10,9 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 
-from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
+from easy_thumbnails.alias import aliases
 from embed_video.backends import detect_backend, VideoDoesntExistException
 
 from geotrek.common.utils import classproperty
@@ -119,7 +119,13 @@ class PicturesMixin(object):
         for picture in self.pictures:
             thumbnailer = get_thumbnailer(picture.attachment_file)
             try:
-                thdetail = thumbnailer.get_thumbnail(aliases.get('medium'))
+                ali = thumbnailer.get_options({'size': (800, 800),
+                                               'text': settings.THUMBNAIL_COPYRIGHT_FORMAT.format(author=picture.author,
+                                                                                                  title=picture.title,
+                                                                                                  legend=picture.legend),
+                                               'size_watermark': settings.THUMBNAIL_COPYRIGHT_SIZE
+                                               })
+                thdetail = thumbnailer.get_thumbnail(ali)
             except (IOError, InvalidImageFormatError):
                 logger.info(_("Image %s invalid or missing from disk.") % picture.attachment_file)
             else:
