@@ -27,7 +27,7 @@ class Command(BaseCommand):
         with transaction.atomic():
             try:
                 for path1_pk, path2_pk in list_topologies:
-                    path2 = Path.objects.get(pk=path2_pk)
+                    path2 = Path.include_invisible.get(pk=path2_pk)
                     path2.aggregations.update(path_id=path1_pk)
                     path_deleted.append(path2)
                     if verbosity > 1:
