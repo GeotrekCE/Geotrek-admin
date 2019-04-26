@@ -64,7 +64,7 @@ DECLARE
     egeom_3d geometry;
     lines_only boolean;
     points_only boolean;
-    position_point integer;
+    position_point float;
     elevation elevation_infos;
     t_count integer;
     t_offset float;
