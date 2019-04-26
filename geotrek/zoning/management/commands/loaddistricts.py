@@ -45,11 +45,12 @@ class Command(BaseCommand):
                         geom = MultiPolygon(geom)
                     self.check_srid(srid, geom)
                     geom.dim = 2
-                    if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
-                        instance, created = District.objects.update_or_create(name=feat.get(name_column),
-                                                                              defaults={'geom': geom})
-                        if verbosity > 0:
-                            self.stdout.write("%s %s" % ('Created' if created else 'Updated', feat.get(name_column)))
+                    if geom.valid:
+                        if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
+                            instance, created = District.objects.update_or_create(name=feat.get(name_column),
+                                                                                  defaults={'geom': geom})
+                            if verbosity > 0:
+                                self.stdout.write("%s %s" % ('Created' if created else 'Updated', feat.get(name_column)))
                 except OGRIndexError:
                     if count_error == 0:
                         self.stdout.write(
