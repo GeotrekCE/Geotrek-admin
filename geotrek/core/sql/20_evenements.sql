@@ -116,8 +116,8 @@ BEGIN
                 FROM e_t_evenement e, e_r_evenement_troncon et, l_t_troncon t
                 WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id;
             ELSE
-                SELECT ST_GeometryN(ST_LocateAlong(ST_AddMeasure(ST_Force2D(t.geom), 0, 1), et.pk_debut, e.decallage), 1), t.geom
-                    INTO egeom, geometr
+                SELECT ST_GeometryN(ST_LocateAlong(ST_AddMeasure(ST_Force2D(t.geom), 0, 1), et.pk_debut, e.decallage), 1)
+                    INTO egeom
                     FROM e_t_evenement e, e_r_evenement_troncon et, l_t_troncon t
                     WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id;
             END IF;
