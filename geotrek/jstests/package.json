@@ -6,8 +6,8 @@
   },
   "dependencies": {
     "leaflet": "0.5.1",
-    "mocha": "1.9.0",
+    "mocha": "6.2.0",
     "chai": "1.6.0",
-    "mocha-phantomjs": "2.0.1"
+    "mocha-phantomjs": "4.1.0"
   }
 }

@@ -10,7 +10,7 @@ casper.test.begin('Touristic content categories', function(test) {
         test.pass('Touristic types are hidden by default');
 
         this.fill('form', {
-            'category': ['1'] // Accomodation
+            'category': '1' // Accomodation
         });
 
         casper.waitUntilVisible('#div_id_type1');
