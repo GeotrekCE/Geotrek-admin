@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix map screenshots with SSL enabled
 
 
 2.26.5 (2019-04-19)
