@@ -213,6 +213,14 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         return Path.objects.none()
 
     @property
+    def trails(self):
+        s = []
+        for p in self.paths.all():
+            for t in p.trails.all():
+                s.append(t.pk)
+        return Trail.objects.filter(pk__in=s)
+
+    @property
     def signages(self):
         if self.is_signage:
             return [Signage.objects.existing().get(pk=self.topology.pk)]
