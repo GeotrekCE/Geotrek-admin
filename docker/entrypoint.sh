@@ -8,7 +8,8 @@ mkdir -p /app/src/var/static \
          /app/src/var/cache \
          /app/src/var/log \
          /app/src/var/conf/extra_templates \
-         /app/src/var/conf/extra_locale
+         /app/src/var/conf/extra_locale \
+         /app/src/var/tmp
 
 # if not custom.py present, create it
 if [ ! -f /app/src/var/conf/custom.py ]; then

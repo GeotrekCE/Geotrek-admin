@@ -29,6 +29,7 @@ ROOT_URL = ""
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 VAR_DIR = os.path.join(BASE_DIR, 'var')
+TMP_DIR = os.path.join(VAR_DIR, 'tmp')
 
 CACHE_ROOT = os.path.join(VAR_DIR, 'cache')
 

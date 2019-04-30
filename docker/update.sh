@@ -8,3 +8,4 @@ cd /app/src
 ./manage.py sync_translation_fields --noinput
 ./manage.py update_translation_fields
 ./manage.py update_geotrek_permissions
+rm -rf /app/src/var/tmp/*

@@ -22,12 +22,10 @@ def subclasses(cls):
 
 
 def create_tmp_destination(name):
-    save_dir = u'/tmp/geotrek/{}'.format(name)
-    if not os.path.exists('/tmp/geotrek'):
-        os.mkdir('/tmp/geotrek')
+    save_dir = os.path.join(settings.TMP_DIR, os.path.splitext(name)[0])
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
-    return save_dir, u'/'.join((save_dir, name))
+    return save_dir, os.path.join(save_dir, name)
 
 
 def discover_available_parsers(user):
