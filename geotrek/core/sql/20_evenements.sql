@@ -64,6 +64,7 @@ DECLARE
     egeom_3d geometry;
     lines_only boolean;
     points_only boolean;
+    position_point float;
     elevation elevation_infos;
     t_count integer;
     t_offset float;
@@ -102,13 +103,24 @@ BEGIN
         -- This is handy because this function includes an offset parameter
         -- which could be otherwise diffcult to handle.
         SELECT geom, decallage INTO egeom, t_offset FROM e_t_evenement e WHERE e.id = eid;
-
         -- RAISE NOTICE '% % % %', (t_offset = 0), (egeom IS NULL), (ST_IsEmpty(egeom)), (ST_X(egeom) = 0 AND ST_Y(egeom) = 0);
         IF t_offset = 0 OR egeom IS NULL OR ST_IsEmpty(egeom) OR (ST_X(egeom) = 0 AND ST_Y(egeom) = 0) THEN
-            SELECT ST_GeometryN(ST_LocateAlong(ST_AddMeasure(ST_Force2D(t.geom), 0, 1), et.pk_debut, e.decallage), 1)
-                INTO egeom
+            -- ST_LocateAlong can give no point when we try to get the startpoint or the endpoint of the line
+            SELECT et.pk_debut INTO position_point FROM e_r_evenement_troncon et WHERE et.evenement = eid;
+            IF (position_point = 0) THEN
+                SELECT ST_StartPoint(t.geom) INTO egeom
                 FROM e_t_evenement e, e_r_evenement_troncon et, l_t_troncon t
                 WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id;
+            ELSIF (position_point = 1) THEN
+                SELECT ST_EndPoint(t.geom) INTO egeom
+                FROM e_t_evenement e, e_r_evenement_troncon et, l_t_troncon t
+                WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id;
+            ELSE
+                SELECT ST_GeometryN(ST_LocateAlong(ST_AddMeasure(ST_Force2D(t.geom), 0, 1), et.pk_debut, e.decallage), 1)
+                    INTO egeom
+                    FROM e_t_evenement e, e_r_evenement_troncon et, l_t_troncon t
+                    WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id;
+            END IF;
         END IF;
 
         egeom_3d := egeom;
