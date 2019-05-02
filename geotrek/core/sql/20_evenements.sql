@@ -108,11 +108,11 @@ BEGIN
             -- ST_LocateAlong can give no point when we try to get the startpoint or the endpoint of the line
             SELECT et.pk_debut INTO position_point FROM e_r_evenement_troncon et WHERE et.evenement = eid;
             IF (position_point = 0) THEN
-                SELECT ST_GeometryN(ST_StartPoint(t.geom), 1) INTO egeom
+                SELECT ST_StartPoint(t.geom) INTO egeom
                 FROM e_t_evenement e, e_r_evenement_troncon et, l_t_troncon t
                 WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id;
             ELSIF (position_point = 1) THEN
-                SELECT ST_GeometryN(ST_EndPoint(t.geom), 1) INTO egeom
+                SELECT ST_EndPoint(t.geom) INTO egeom
                 FROM e_t_evenement e, e_r_evenement_troncon et, l_t_troncon t
                 WHERE e.id = eid AND et.evenement = e.id AND et.troncon = t.id;
             ELSE
