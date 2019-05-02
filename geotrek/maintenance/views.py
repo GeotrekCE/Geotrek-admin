@@ -150,10 +150,10 @@ class ProjectJsonList(MapEntityJsonList, ProjectList):
 
 class ProjectFormatList(MapEntityFormat, ProjectList):
     columns = [
-        'id', 'name', 'period', 'type', 'domain', 'constraint', 'global_cost',
+        'id', 'structure', 'name', 'period', 'type', 'domain', 'constraint', 'global_cost',
         'interventions', 'interventions_total_cost', 'comments', 'contractors',
         'project_owner', 'project_manager', 'founders',
-        'structure', 'date_insert', 'date_update',
+        'date_insert', 'date_update',
         'cities', 'districts', 'areas',
     ]
 

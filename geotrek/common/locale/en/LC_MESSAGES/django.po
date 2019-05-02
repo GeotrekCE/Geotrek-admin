@@ -280,3 +280,6 @@ msgstr ""
 
 msgid "Any year"
 msgstr ""
+
+msgid "Please select a choice related to all structures (without brackets) or related to the structure {struc} (in brackets)"
+msgstr ""

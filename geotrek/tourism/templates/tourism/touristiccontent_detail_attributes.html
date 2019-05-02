@@ -5,6 +5,10 @@
     <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
         <tr>
+            <th>{{ object|verbose:"structure" }}</th>
+            <td>{{ object.structure }}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"name" }}</th>
             <td>{{ object.name }}</td>
         </tr>
@@ -83,10 +87,6 @@
             	<img src="{{ object.thumbnail.url }}">
             	{% endif %}
             </td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"structure" }}</th>
-            <td>{{ object.structure }}</td>
         </tr>
         {% include "common/publication_info_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}

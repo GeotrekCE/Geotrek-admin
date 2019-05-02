@@ -2,6 +2,21 @@
 CHANGELOG
 =========
 
+2.27.0 (2019-05-02)
+-------------------
+
+**New features**
+
+- Add watermark on pictures
+- Allow to change structure of an object with permission by_pass_structure
+
+**Bug fixes**
+
+- Fix a floating point computation problem in SQL trigger
+- Fix trails in detail of intervention and opposite
+- Fix color on restricted area
+
+
 2.26.5 (2019-04-19)
 -------------------
 

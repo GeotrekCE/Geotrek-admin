@@ -107,14 +107,14 @@ class TrekJsonList(MapEntityJsonList, TrekList):
 
 class TrekFormatList(MapEntityFormat, TrekList):
     columns = [
-        'id', 'eid', 'eid2', 'name', 'departure', 'arrival', 'duration',
+        'id', 'eid', 'eid2', 'structure', 'name', 'departure', 'arrival', 'duration',
         'duration_pretty', 'description', 'description_teaser',
         'networks', 'advice', 'ambiance', 'difficulty', 'information_desks',
         'themes', 'practice', 'accessibilities', 'access', 'route',
         'public_transport', 'advised_parking', 'web_links', 'is_park_centered',
         'disabled_infrastructure', 'parking_location', 'points_reference',
         'related', 'children', 'parents', 'pois', 'review', 'published',
-        'publication_date', 'structure', 'date_insert', 'date_update',
+        'publication_date', 'date_insert', 'date_update',
         'cities', 'districts', 'areas', 'source', 'portal', 'length_2d'
     ] + AltimetryMixin.COLUMNS
 
@@ -295,7 +295,7 @@ class POIJsonList(MapEntityJsonList, POIList):
 
 class POIFormatList(MapEntityFormat, POIList):
     columns = [
-        'id', 'eid', 'name', 'type', 'description', 'treks',
+        'id', 'structure', 'eid', 'name', 'type', 'description', 'treks',
         'review', 'published', 'publication_date',
         'structure', 'date_insert', 'date_update',
         'cities', 'districts', 'areas'

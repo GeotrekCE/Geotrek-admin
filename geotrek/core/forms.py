@@ -59,7 +59,7 @@ class PathForm(CommonForm):
     class Meta(CommonForm.Meta):
         model = Path
         fields = CommonForm.Meta.fields + \
-            ['name', 'stake', 'comfort', 'departure', 'arrival', 'comments',
+            ['structure', 'name', 'stake', 'comfort', 'departure', 'arrival', 'comments',
              'source', 'networks', 'usages', 'valid', 'draft', 'reverse_geom', 'geom']
 
     def __init__(self, *args, **kwargs):
@@ -107,7 +107,7 @@ class PathForm(CommonForm):
 class TrailForm(TopologyForm):
     class Meta(CommonForm.Meta):
         model = Trail
-        fields = CommonForm.Meta.fields + ['name', 'departure', 'arrival', 'comments']
+        fields = CommonForm.Meta.fields + ['structure', 'name', 'departure', 'arrival', 'comments']
 
     def __init__(self, *args, **kwargs):
         super(TrailForm, self).__init__(*args, **kwargs)

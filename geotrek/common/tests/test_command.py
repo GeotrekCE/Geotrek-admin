@@ -2,13 +2,21 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.core import mail
 from django.conf import settings
+
 from geotrek.authent.factories import StructureFactory
+from geotrek.common.factories import AttachmentFactory
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
+from geotrek.trekking.factories import POIFactory
 from geotrek.infrastructure.factories import InfrastructureFactory, InfrastructureTypeFactory
 from geotrek.infrastructure.models import InfrastructureType, Infrastructure
 from geotrek.core.models import Usage, Path
 from geotrek.core.factories import UsageFactory
 from geotrek.core.factories import PathFactory
+
+from easy_thumbnails.models import Thumbnail
+
 from StringIO import StringIO
+import os
 
 
 class CommandTests(TestCase):
@@ -67,3 +75,19 @@ class CommandTests(TestCase):
         self.assertIsNone(infratype.structure)
         call_command('unset_structure', '--all', verbosity=0)
         self.assertIsNone(infratype.structure)
+
+    def test_remove_thumbnails(self):
+        output = StringIO()
+        self.content = POIFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
+        self.picture = AttachmentFactory(content_object=self.content,
+                                         attachment_file=get_dummy_uploaded_image())
+        self.assertIsNotNone(self.content.thumbnail)
+        self.assertTrue(os.path.exists(self.picture.attachment_file.path))
+        self.assertTrue(os.path.exists("{path}.120x120_q85_crop.png".format(path=self.picture.attachment_file.path)))
+        self.assertEqual(Thumbnail.objects.first().name, "{name}.120x120_q85_crop.png".format(
+            name=self.picture.attachment_file.name
+        ))
+        call_command('remove_thumbnails', stdout=output)
+        self.assertTrue(os.path.exists(self.picture.attachment_file.path))
+        self.assertFalse(os.path.exists("{name}.120x120_q85_crop.png".format(name=self.picture.attachment_file.path)))
+        self.assertEqual(Thumbnail.objects.count(), 0)

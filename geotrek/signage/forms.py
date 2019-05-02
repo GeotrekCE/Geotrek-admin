@@ -1,6 +1,6 @@
 from django import forms
 from django.conf import settings
-from django.db.models import Q, Max
+from django.db.models import Max
 from django.forms.models import inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
 
@@ -11,8 +11,7 @@ from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.widgets import PointTopologyWidget
 from geotrek.infrastructure.forms import BaseInfrastructureForm
-from geotrek.infrastructure.models import InfrastructureCondition
-from geotrek.signage.models import Signage, SignageType, Blade, Line
+from geotrek.signage.models import Signage, Blade, Line
 
 
 class LineForm(forms.ModelForm):
@@ -26,6 +25,10 @@ class LineForm(forms.ModelForm):
         self.fields['distance'].widget.attrs['class'] = 'input-mini'
         self.fields['pictogram_name'].widget.attrs['class'] = 'input-mini'
         self.fields['time'].widget.attrs['class'] = 'input-mini'
+
+    def save(self, *args, **kwargs):
+        self.instance.structure = self.instance.blade.structure
+        return super(LineForm, self).save(*args, **kwargs)
 
     class Meta:
         fields = ('id', 'blade', 'number', 'text', 'distance', 'pictogram_name', 'time')
@@ -69,7 +72,8 @@ class BladeForm(CommonForm):
     def save(self, *args, **kwargs):
         self.instance.set_topology(self.signage)
         self.instance.signage = self.signage
-        return super(BladeForm, self).save(*args, **kwargs)
+        self.instance.structure = self.signage.structure
+        return super(CommonForm, self).save(*args, **kwargs)
 
     def clean_number(self):
         blades = self.signage.blade_set.existing()
@@ -96,15 +100,14 @@ class SignageForm(BaseInfrastructureForm):
             modifiable = self.fields['topology'].widget.modifiable
             self.fields['topology'].widget = PointTopologyWidget()
             self.fields['topology'].widget.modifiable = modifiable
-
-        if self.instance.pk:
-            structure = self.instance.structure
-        else:
-            structure = self.user.profile.structure
-        self.fields['type'].queryset = SignageType.objects.filter(Q(structure=structure) | Q(structure=None))
-        self.fields['condition'].queryset = InfrastructureCondition.objects.filter(
-            Q(structure=structure) | Q(structure=None))
         self.helper.form_tag = False
+
+    def save(self, *args, **kwargs):
+        # Fix blade and line structure if signage structure change
+        blades = self.instance.blade_set.all()
+        blades.update(structure=self.instance.structure)
+        Line.objects.filter(blade__in=blades).update(structure=self.instance.structure)
+        return super(SignageForm, self).save(*args, **kwargs)
 
     class Meta(BaseInfrastructureForm.Meta):
         model = Signage

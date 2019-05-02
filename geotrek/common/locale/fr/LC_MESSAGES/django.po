@@ -299,3 +299,6 @@ msgstr "Encodage"
 
 msgid "Decoding error. Please check encoding and use only ASCII in file names."
 msgstr "Erreur de décodage. Merci de vérifier l'encodage et d'utiliser l'ASCII (sans accents) pour les noms de fichier."
+
+msgid "Please select a choice related to all structures (without brackets) or related to the structure {struc} (in brackets)"
+msgstr "Veuillez sélectionner un choix lié à toutes les structures (sans parenthèses) ou lié à la structure {struc} (entre parenthèses)"

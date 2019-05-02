@@ -7,6 +7,10 @@
     <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
         <tr>
+            <th>{{ trek|verbose:"structure" }}</th>
+            <td>{{ trek.structure }}</td>
+        </tr>
+        <tr>
             <th>{{ trek|verbose:"name" }}</th>
             <td>{{ trek.name }}</td>
         </tr>
@@ -174,10 +178,6 @@
         </tr>
 
         {% include "common/publication_info_fragment.html" %}
-        <tr>
-            <th>{{ trek|verbose:"structure" }}</th>
-            <td>{{ trek.structure }}</td>
-        </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 

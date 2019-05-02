@@ -5,6 +5,8 @@ from django.contrib.gis.geos import fromstr
 from django.contrib.messages import constants as messages
 from django.conf.global_settings import LANGUAGES as LANGUAGES_LIST
 
+from easy_thumbnails.conf import Settings as easy_thumbnails_defaults
+
 from geotrek import __version__
 
 
@@ -333,6 +335,8 @@ THUMBNAIL_ALIASES = {
         'print': {'size': (1000, 500), 'crop': 'smart'},
     },
 }
+
+THUMBNAIL_PROCESSORS = easy_thumbnails_defaults.THUMBNAIL_PROCESSORS + ('geotrek.common.thumbnail_processors.add_watermark',)
 
 PAPERCLIP_ENABLE_VIDEO = True
 PAPERCLIP_ENABLE_LINK = True
@@ -684,6 +688,9 @@ BLADE_CODE_FORMAT = u"{signagecode}-{bladenumber}"
 LINE_CODE_FORMAT = u"{signagecode}-{bladenumber}-{linenumber}"
 
 SHOW_EXTREMITIES = False
+
+THUMBNAIL_COPYRIGHT_FORMAT = u"{title} {author}"  # You can add legend
+THUMBNAIL_COPYRIGHT_SIZE = 15
 
 REST_FRAMEWORK = {
     'UNICODE_JSON': False
