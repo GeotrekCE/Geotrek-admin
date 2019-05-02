@@ -52,7 +52,8 @@ class Command(BaseCommand):
                             if verbosity > 0:
                                 self.stdout.write("%s %s" % ('Created' if created else 'Updated', feat.get(name_column)))
                     else:
-                        self.stdout.write("%s's geometry is not valid" % feat.get(name_column))
+                        if verbosity > 0:
+                            self.stdout.write("%s's geometry is not valid" % feat.get(name_column))
                 except OGRIndexError:
                     if count_error == 0:
                         self.stdout.write(
