@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix a floating point computation problem in SQL trigger
 
 
 2.26.5 (2019-04-19)
