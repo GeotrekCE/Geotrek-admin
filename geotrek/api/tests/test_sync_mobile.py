@@ -10,6 +10,7 @@ import zipfile
 from django.conf import settings
 from django.core import management
 from django.core.management.base import CommandError
+from django.db.models import Q
 from django.http import HttpResponse, StreamingHttpResponse
 from django.test import TestCase
 from django.test.utils import override_settings
@@ -304,8 +305,13 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
     @classmethod
     def setUpClass(cls):
         super(SyncMobileTreksTest, cls).setUpClass()
-        cls.trek_1 = TrekWithPublishedPOIsFactory()
-        cls.trek_2 = TrekWithPublishedPOIsFactory()
+        cls.portal_a = TargetPortalFactory()
+        cls.portal_b = TargetPortalFactory()
+
+        cls.trek_1 = TrekWithPublishedPOIsFactory.create()
+        cls.trek_2 = TrekWithPublishedPOIsFactory.create(portals=(cls.portal_a,))
+        cls.trek_3 = TrekWithPublishedPOIsFactory.create(portals=(cls.portal_b,))
+
         cls.attachment_1 = AttachmentFactory.create(content_object=cls.trek_1,
                                                     attachment_file=get_dummy_uploaded_image())
         cls.poi_1 = POI.objects.first()
@@ -339,6 +345,20 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
             self.assertEqual(len(trek_geojson['properties']), 30)
 
         self.assertIn('en/{pk}/trek.geojson'.format(pk=str(self.trek_1.pk)), output.getvalue())
+
+    def test_sync_treks_with_portal(self):
+        output = BytesIO()
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                skip_tiles=True, verbosity=2, portal=self.portal_a.name, stdout=output)
+        self.assertFalse(os.path.exists(
+            os.path.join('tmp', 'en', '{pk}'.format(pk=str(self.trek_3.pk)), 'trek.geojson')
+        ))
+        for lang in settings.MODELTRANSLATION_LANGUAGES:
+            with open(os.path.join('tmp', lang, 'treks.geojson'), 'r') as f:
+                trek_geojson = json.load(f)
+                self.assertEqual(len(trek_geojson['features']),
+                                 Trek.objects.filter(**{'published_{}'.format(lang): True})
+                                 .filter(Q(portal__name__in=(self.portal_a,)) | Q(portal=None)).count())
 
     def test_sync_pois_by_treks(self):
         output = BytesIO()
