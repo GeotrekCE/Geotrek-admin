@@ -11,9 +11,9 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
     router.register(r'flatpages', api_mobile.FlatPageViewSet, base_name='flatpage')
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     router.register(r'treks', api_mobile.TrekViewSet, base_name='treks')
-
 urlpatterns = [
     url(r'^$', api_mobile.SwaggerSchemaView.as_view(), name="schema"),
     url(r'^', include(router.urls)),
-    url(r'^settings/$', api_mobile.SettingsView.as_view(), name='settings'),
 ]
+if 'geotrek.flatpages' and 'geotrek.trekking' and 'geotrek.tourism':
+    urlpatterns += url(r'^settings/$', api_mobile.SettingsView.as_view(), name='settings'),
