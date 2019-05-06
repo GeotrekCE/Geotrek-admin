@@ -13,5 +13,5 @@ if 'geotrek.flatpages' and 'geotrek.trekking' and 'geotrek.tourism' in settings.
     urlpatterns = [
         url(r'^$', api_mobile.SwaggerSchemaView.as_view(), name="schema"),
         url(r'^', include(router.urls)),
+        url(r'^settings/$', api_mobile.SettingsView.as_view(), name='settings'),
     ]
-    urlpatterns += url(r'^settings/$', api_mobile.SettingsView.as_view(), name='settings')
