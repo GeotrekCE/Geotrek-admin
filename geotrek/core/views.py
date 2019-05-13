@@ -35,7 +35,6 @@ from . import graph as graph_lib
 from django.http.response import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.db.models import Sum
-from django.db.models.functions import Coalesce
 from geotrek.api.v2.functions import Length
 from django.db.models.fields import FloatField
 
