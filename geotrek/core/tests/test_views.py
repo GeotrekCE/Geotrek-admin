@@ -4,10 +4,11 @@ import re
 
 import mock
 from bs4 import BeautifulSoup
+from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
-from django.contrib.gis.geos import LineString, Point
+from django.contrib.gis.geos import LineString, Point, Polygon, MultiPolygon
 from django.test import TestCase
 
 from mapentity.factories import UserFactory
@@ -26,6 +27,7 @@ from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import SignageFactory
 from geotrek.maintenance.factories import InterventionFactory
 from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, ComfortFactory, TopologyFactory, PathAggregationFactory)
+from geotrek.zoning.factories import CityFactory
 
 
 class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
@@ -232,6 +234,15 @@ class PathViewsTest(CommonTest):
         response = self.client.get('/api/path/paths.json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content)['sumPath'], 0.3)
+
+    def test_sum_path_filter_cities(self):
+        self.login()
+        p1 = PathFactory(geom=LineString((0, 0), (0, 1000), srid=settings.SRID))
+        city = CityFactory(code='09000', geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)), srid=settings.SRID)))
+        self.assertEquals(p1.aggregations.count(), 0)
+        response = self.client.get('/api/path/paths.json?city=%s' % city.code)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content)['sumPath'], 0.0)
 
     def test_merge_fails_parameters(self):
         """
