@@ -46,6 +46,12 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         information_desks = serializers.SerializerMethodField()
         parking_location = serializers.SerializerMethodField(read_only=True)
         profile = serializers.SerializerMethodField(read_only=True)
+        points_reference = serializers.SerializerMethodField()
+
+        def get_points_reference(self, obj):
+            if not obj.points_reference:
+                return None
+            return obj.points_reference.transform(settings.API_SRID, clone=True).coords
 
         def get_parking_location(self, obj):
             if not obj.parking_location:
@@ -104,7 +110,8 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'description', 'departure', 'arrival', 'duration', 'access', 'advised_parking', 'advice',
                 'difficulty', 'length', 'ascent', 'descent', 'route', 'is_park_centered', 'parking_location',
                 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'difficulty',
-                'geometry', 'pictures', 'information_desks', 'cities', 'departure_city', 'arrival_city'
+                'geometry', 'pictures', 'information_desks', 'cities', 'departure_city', 'arrival_city',
+                'points_reference'
             )
 
     class TrekListSerializer(geo_serializers.GeoFeatureModelSerializer):

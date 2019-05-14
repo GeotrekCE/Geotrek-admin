@@ -2,6 +2,27 @@
 CHANGELOG
 =========
 
+2.27.2 (2019-05-14)
+-------------------
+
+**Minor Changes**
+
+- Add points_reference by treks in api mobile
+
+**Bug fixes**
+
+- Remove public pdf poi
+- Fix filter cities without paths
+
+
+2.27.1 (2019-05-06)
+-------------------
+
+**Bug fixes**
+
+- Fix api mobile with only sensitivity app
+
+
 2.27.0 (2019-05-02)
 -------------------
 

@@ -346,23 +346,6 @@ class POIDocument(MapEntityDocument):
     model = POI
 
 
-class POIDocumentPublicMixin(object):
-    queryset = POI.objects.existing()
-
-    def get_context_data(self, **kwargs):
-        context = super(POIDocumentPublic, self).get_context_data(**kwargs)
-        context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['poi']
-        return context
-
-
-class POIDocumentPublic(POIDocumentPublicMixin, DocumentPublic):
-    pass
-
-
-class POIMarkupPublic(POIDocumentPublicMixin, MarkupPublic):
-    pass
-
-
 class POICreate(MapEntityCreate):
     model = POI
     form_class = POIForm

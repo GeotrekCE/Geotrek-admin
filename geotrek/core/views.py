@@ -35,7 +35,6 @@ from . import graph as graph_lib
 from django.http.response import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.db.models import Sum
-from django.db.models.functions import Coalesce
 from geotrek.api.v2.functions import Length
 from django.db.models.fields import FloatField
 
@@ -105,7 +104,9 @@ class PathList(MapEntityList):
 class PathJsonList(MapEntityJsonList, PathList):
     def get_context_data(self, **kwargs):
         context = super(PathJsonList, self).get_context_data(**kwargs)
-        context["sumPath"] = round(self.object_list.aggregate(sumPath=Coalesce(Sum(Length('geom'), output_field=FloatField()), 0))['sumPath'] / 1000, 1)
+        context["sumPath"] = round((self.object_list.aggregate(
+            sumPath=Sum(Length('geom'), output_field=FloatField())
+        ).get('sumPath') or 0) / 1000, 1)
         return context
 
 
