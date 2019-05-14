@@ -1,6 +1,8 @@
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.test.client import Client
 from django.test.testcases import TestCase
+from django.contrib.gis.geos import Point, MultiPoint
 
 from geotrek.trekking import factories as trek_factory, models as trek_models
 from geotrek.tourism import factories as tourism_factory, models as tourism_models
@@ -29,7 +31,7 @@ TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'name', 'slug', 'accessibilities', 'description_teaser', 'cities', 'description', 'departure', 'arrival',
     'access', 'advised_parking', 'advice', 'difficulty', 'length', 'ascent', 'descent', 'route', 'duration',
     'is_park_centered', 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'pictures',
-    'information_desks', 'departure_city', 'arrival_city', 'parking_location', 'profile'
+    'information_desks', 'departure_city', 'arrival_city', 'parking_location', 'profile', 'points_reference'
 ])
 
 
@@ -66,7 +68,9 @@ class BaseApiTest(TestCase):
 
         cls.treks = trek_factory.TrekWithPublishedPOIsFactory.create_batch(
             cls.nb_treks, name_fr='Coucou', description_fr="Sisi",
-            description_teaser_fr="mini", published_fr=True)
+            description_teaser_fr="mini", published_fr=True,
+            points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.API_SRID),
+            parking_location=Point(0, 0, srid=settings.API_SRID))
 
         cls.touristic_content = tourism_factory.TouristicContentFactory(geom=cls.treks[0].published_pois.first().geom,
                                                                         name_fr='Coucou_Content', description_fr="Sisi",
@@ -131,6 +135,8 @@ class APIAccessTestCase(BaseApiTest):
         self.assertEqual('Coucou', json_response.get('properties').get('name'))
         self.assertEqual('Sisi', json_response.get('properties').get('description'))
         self.assertEqual('mini', json_response.get('properties').get('description_teaser'))
+        self.assertAlmostEqual(0, json_response.get('properties').get('points_reference')[0][0])
+        self.assertAlmostEqual(0, json_response.get('properties').get('parking_location')[0])
 
     def test_trek_list(self):
         response = self.get_treks_list()

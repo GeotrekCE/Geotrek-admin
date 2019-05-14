@@ -336,7 +336,7 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         with open(os.path.join('tmp', 'en', '{pk}'.format(pk=str(self.trek_1.pk)),
                                'trek.geojson'), 'r') as f:
             trek_geojson = json.load(f)
-            self.assertEqual(len(trek_geojson['properties']), 30)
+            self.assertEqual(len(trek_geojson['properties']), 31)
 
         self.assertIn('en/{pk}/trek.geojson'.format(pk=str(self.trek_1.pk)), output.getvalue())
 
