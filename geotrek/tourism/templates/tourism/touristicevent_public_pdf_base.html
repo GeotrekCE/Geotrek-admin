@@ -32,7 +32,11 @@
         {% endif %}
         <div class="main-title">
           <h1>{{ object.name }}</h1>
-          <h2>{{ object.districts.0.name }}{% if object.districts and object.cities %} - {% endif %}{{ object.cities.0.name }}</h2>
+          <h2>
+            {% block main_title_h2 %}
+              {{ object.districts.0.name }}{% if object.districts and object.city_departure %} - {% endif %}{{ object.city_departure }}
+            {% endblock %}
+          </h2>
         </div>
         <hr>
         {% if object.picture_print %}
