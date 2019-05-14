@@ -23,6 +23,8 @@ def subclasses(cls):
 
 def create_tmp_destination(name):
     save_dir = os.path.join(settings.TMP_DIR, os.path.splitext(name)[0])
+    if not os.path.exists(settings.TMP_DIR):
+        os.mkdir(settings.TMP_DIR)
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
     return save_dir, os.path.join(save_dir, name)
