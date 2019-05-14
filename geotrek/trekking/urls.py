@@ -8,8 +8,7 @@ from mapentity.registry import MapEntityOptions
 
 from . import models
 from .views import (
-    TrekDocumentPublic, POIDocumentPublic, TrekMapImage,
-    TrekMarkupPublic, POIMarkupPublic,
+    TrekDocumentPublic, TrekMapImage, TrekMarkupPublic,
     TrekGPXDetail, TrekKMLDetail, WebLinkCreatePopup,
     CirkwiTrekView, CirkwiPOIView, TrekPOIViewSet,
     SyncRandoRedirect, TrekServiceViewSet, sync_view,
@@ -53,8 +52,6 @@ class TrekEntityOptions(AltimetryEntityOptions, PublishableEntityOptions):
 
 
 class POIEntityOptions(PublishableEntityOptions):
-    document_public_view = POIDocumentPublic
-    markup_public_view = POIMarkupPublic
 
     def get_serializer(self):
         return trekking_serializers.POISerializer
