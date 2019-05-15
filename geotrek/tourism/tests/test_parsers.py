@@ -15,7 +15,7 @@ from geotrek.common.tests import TranslationResetMixin
 from geotrek.tourism.factories import (TouristicContentCategoryFactory, TouristicContentType1Factory,
                                        TouristicContentType2Factory, TouristicEventTypeFactory)
 from geotrek.tourism.models import TouristicContent, TouristicEvent
-from geotrek.tourism.parsers import (TouristicContentApidaeParser, EspritParcParser,
+from geotrek.tourism.parsers import (TouristicContentApidaeParser, EspritParcParser, TouristicContentTourInSoftParserV3,
                                      TouristicContentTourInSoftParser, TouristicEventTourInSoftParser)
 
 
@@ -40,7 +40,7 @@ class HOT28(TouristicContentTourInSoftParser):
     portal = u"Itinérance"
 
 
-class HOT28v3(TouristicContentTourInSoftParser):
+class HOT28v3(TouristicContentTourInSoftParserV3):
     url = "http://wcf.tourinsoft.com/Syndication/3.0/cdt28/xxx/Objects"
     source = "CDT 28"
     category = u"Où dormir"
