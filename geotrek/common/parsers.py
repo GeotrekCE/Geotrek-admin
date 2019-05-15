@@ -740,6 +740,34 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
         return u"<br><br>".join(infos)
 
 
+class TourInSoftParserV3(TourInSoftParser):
+    @property
+    def items(self):
+        return self.root['value']
+
+    def next_row(self):
+        skip = 0
+        while True:
+            params = {
+                '$format': 'json',
+                '$inlinecount': 'allpages',
+                '$top': 1000,
+                '$skip': skip,
+            }
+            response = requests.get(self.url, params=params)
+            if response.status_code != 200:
+                raise GlobalImportError(
+                    _(u"Failed to download {url}. HTTP status code {status_code}").format(url=self.url,
+                                                                                          status_code=response.status_code))
+            self.root = response.json()
+            self.nb = int(self.root['odata.count'])
+            for row in self.items:
+                yield {self.normalize_field_name(src): val for src, val in row.iteritems()}
+            skip += 1000
+            if skip >= self.nb:
+                return
+
+
 class TourismSystemParser(AttachmentParserMixin, Parser):
     @property
     def items(self):
