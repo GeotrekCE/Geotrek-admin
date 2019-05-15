@@ -40,6 +40,15 @@ class HOT28(TouristicContentTourInSoftParser):
     portal = u"Itinérance"
 
 
+class HOT28v3(TouristicContentTourInSoftParser):
+    url = "http://wcf.tourinsoft.com/Syndication/3.0/cdt28/xxx/Objects"
+    source = "CDT 28"
+    category = u"Où dormir"
+    type1 = u"Hôtels"
+    type2 = u"****"
+    portal = u"Itinérance"
+
+
 class FMA28(TouristicEventTourInSoftParser):
     url = "http://wcf.tourinsoft.com/Syndication/cdt28/xxx/Objects"
     source = "CDT 28"
@@ -178,7 +187,7 @@ class ParserTests(TranslationResetMixin, TestCase):
             self.assertEqual(one.category, category)
 
     @mock.patch('requests.get')
-    def test_create_content_tourinsoft(self, mocked):
+    def test_create_content_tourinsoft_v2(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'tourinsoftContent.json')
             with io.open(filename, 'r', encoding='utf8') as f:
@@ -190,6 +199,42 @@ class ParserTests(TranslationResetMixin, TestCase):
         source = RecordSourceFactory(name=u"CDT 28")
         portal = TargetPortalFactory(name=u"Itinérance")
         call_command('import', 'geotrek.tourism.tests.test_parsers.HOT28', verbosity=0)
+        self.assertEqual(TouristicContent.objects.count(), 1)
+        content = TouristicContent.objects.get()
+        self.assertEqual(content.eid, u"HOTCEN0280010001")
+        self.assertEqual(content.name, u"Hôtel du Perche")
+        self.assertEqual(content.description[:27], u"")
+        self.assertEqual(content.description_teaser[:26], u"A deux pas du centre ville")
+        self.assertEqual(content.contact[:73], u"<strong>Adresse :</strong><br>Rue de la Bruyère<br>28400 NOGENT-LE-ROTROU")
+        self.assertEqual(content.email, u"hotelduperche@brithotel.fr")
+        self.assertEqual(content.website, u"http://www.hotel-du-perche.com")
+        self.assertEqual(round(content.geom.x), 537329)
+        self.assertEqual(round(content.geom.y), 6805504)
+        self.assertEqual(content.practical_info[:49], u"<strong>Langues parlées :</strong><br>Anglais<br>")
+        self.assertIn(u"du 01/01/2019 au 21/07/2019", content.practical_info)
+        self.assertIn(u"<strong>Équipements :</strong><br>Bar<br>Parking<br>", content.practical_info)
+        self.assertTrue(content.published)
+        self.assertEqual(content.source.get(), source)
+        self.assertEqual(content.portal.get(), portal)
+        self.assertEqual(content.category, category)
+        self.assertEqual(content.type1.get().label, u"Hôtels")
+        self.assertEqual(content.type2.get().label, u"****")
+        self.assertEqual(Attachment.objects.count(), 3)
+        self.assertEqual(Attachment.objects.first().content_object, content)
+
+    @mock.patch('requests.get')
+    def test_create_content_tourinsoft_v3(self, mocked):
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'tourinsoftContentV3.json')
+            with io.open(filename, 'r', encoding='utf8') as f:
+                return json.load(f)
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        FileType.objects.create(type=u"Photographie")
+        category = TouristicContentCategoryFactory(label=u"Où dormir")
+        source = RecordSourceFactory(name=u"CDT 28")
+        portal = TargetPortalFactory(name=u"Itinérance")
+        call_command('import', 'geotrek.tourism.tests.test_parsers.HOT28v3', verbosity=0)
         self.assertEqual(TouristicContent.objects.count(), 1)
         content = TouristicContent.objects.get()
         self.assertEqual(content.eid, u"HOTCEN0280010001")
