@@ -646,9 +646,11 @@ LINE_CODE_FORMAT = u"{signagecode}-{bladenumber}-{linenumber}"
 SHOW_EXTREMITIES = False
 
 THUMBNAIL_COPYRIGHT_FORMAT = u""
+
 # If you want copyright added to your pictures, change THUMBNAIL_COPYRIGHT_FORMAT to this :
-#THUMBNAIL_COPYRIGHT_FORMAT = u"{title} {author}"
+# THUMBNAIL_COPYRIGHT_FORMAT = u"{title} {author}"
 # You can also add legend
+
 THUMBNAIL_COPYRIGHT_SIZE = 15
 
 REST_FRAMEWORK = {
