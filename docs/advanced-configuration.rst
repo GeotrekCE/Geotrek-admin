@@ -320,6 +320,40 @@ Apply changes :
     cd <geotrek-admin-folder>
     make env_standalone deploy
 
+
+Override pdf templates
+----------------------
+
+PDF are generated from html printed, using [Django templating](https://docs.djangoproject.com/en/1.11/ref/templates/).
+Trekkings, POIS, touristic contents and events can be exported in pdf files.
+
+- Treks : ``geotrek/trekking/templates/trekking/trek_public_pdf.html``
+- POIS : ``geotrek/trekking/templates/trekking/poi_public_pdf.html``
+- touristic contents : ``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``
+- touristic events : ``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``
+
+Overriden templates has to be located in ``var/media/templates/<appname>``, with appname = trekking or tourism.
+To override trekking pdf for exemple, copy the file ``geotrek/trekking/templates/trekking/trek_public_pdf.html``
+to ``var/media/templates/trekking/trek_public_pdf.html``.
+
+.. note ::
+
+    With docker installation, copy templates to ``var/conf/extra_templates/trekking/`` or ``var/conf/extra_templates/tourism/``
+
+These templates derivate from base templates, which content is organized in blocks.
+To override for exemple the description block of trek pdf, copy and change the ``{% block description }…{% endblock description %}``
+in your ``var/media/templates/trekking/trek_public_pdf.html``.
+
+CSS can be overrided like html templates : copy them in ``var/media/templates/trekking/`` or ``var/media/templates/tourism/`` folder
+
+.. note ::
+
+    The default template may change in the future versions. You will be
+    in charge of porting the modification to your copy.
+
+Test you modifications by export a trek or a content in pdf from Geotrek Admin application.
+To get your modifications available for Rando application, launch the ``sync_rando`` command.
+
 Override public document OpenOffice template
 --------------------------------------------
 
