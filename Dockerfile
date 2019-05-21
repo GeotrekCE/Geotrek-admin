@@ -54,4 +54,4 @@ EXPOSE 8000
 USER root
 
 ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]
-CMD ["/bin/sh", "-e", "/usr/local/bin/run.sh"]
+CMD ["./manage.py", "runserver", "0.0.0.0:8000"]
