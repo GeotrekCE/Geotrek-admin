@@ -29,6 +29,15 @@ fi
 # fix rights
 chown django:django -R ./var
 
+# wait for postgres
+until PGPASSWORD=$POSTGRES_PASSWORD psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -p "$PGPORT" -c '\q'; do
+  >&2 echo "Postgres is unavailable - sleeping"
+  sleep 1
+done
+
+>&2 echo "Postgres is up - executing command"
+
+# exec
 exec gosu django "$@"
 
 exec "$@"
