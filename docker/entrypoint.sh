@@ -39,5 +39,3 @@ done
 
 # exec
 exec gosu django "$@"
-
-exec "$@"
