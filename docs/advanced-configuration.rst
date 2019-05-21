@@ -349,25 +349,9 @@ CSS can be overriden like html templates : copy them to ``var/media/templates/tr
 Test your modifications by exporting a trek or a content to pdf from Geotrek-admin application.
 To get your modifications available for Rando application, launch the ``sync_rando`` command.
 
-Override public document OpenOffice template
---------------------------------------------
 
-WARNING: Documentation to be updated. Geotrek-admin now uses Weasyprint to create public PDF based on HTML templates
-and no more on ODT templates. Default HTML templates are in ``geotrek/trekking/templates/`` and can be copied in ``var/media/templates/`` with same path and file names to be overriden.
-
-Copy the file ``geotrek/trekking/templates/trekking/trek_public.odt`` to
-``var/media/templates/trekking/trek_public.odt``.
-
-Edit the copy using *OpenOffice*.
-
-.. note ::
-
-    The default template may change in the future versions. You will be
-    in charge of porting the modification to your copy.
-
-
-Custom font in public document OpenOffice template
---------------------------------------------------
+Custom font in public document template
+----------------------------------------
 
 In order to use custom fonts in trek PDF, it is necessary to install the
 font files on the server.
@@ -385,8 +369,8 @@ For specific fonts, copy the ``.ttf`` (or ``.otf``) files into the folder
 For more information, check out Ubuntu documentation.
 
 
-Custom colors in public document OpenOffice template
-----------------------------------------------------
+Custom colors in public document template
+-----------------------------------------
 
 Trek export geometries are translucid red by default. In order to control the
 apparence of objects in public trek exports, use the following setting :
