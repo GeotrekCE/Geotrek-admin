@@ -631,6 +631,7 @@ class TrekPracticeTest(TrekJSONSetUp):
             u'category_id': self.touristic_content.prefixed_category_id})
 
 
+@override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
 class TrekJSONDetailTest(TrekJSONSetUp):
     """ Since we migrated some code to Django REST Framework, we should test
     the migration extensively. Geotrek-rando mainly relies on this view.
@@ -660,7 +661,6 @@ class TrekJSONDetailTest(TrekJSONSetUp):
         self.assertDictEqual(self.result['published_status'][0],
                              {u'lang': u'en', u'status': True, u'language': u'English'})
 
-    @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def test_pictures(self):
         self.assertDictEqual(self.result['pictures'][0],
                              {u'url': '{url}.800x800_q85_size_watermark-{size}_text-{text}.png'.format(

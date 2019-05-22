@@ -120,6 +120,7 @@ class TouristicContentFormTest(TrekkingManagerTest):
         self.assertContains(response, 'value="%s" selected' % self.category.pk)
 
 
+@override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
 class BasicJSONAPITest(TranslationResetMixin):
     factory = None
 
@@ -166,7 +167,6 @@ class BasicJSONAPITest(TranslationResetMixin):
         self.assertDictEqual(self.result['published_status'][0],
                              {u'lang': u'en', u'status': True, u'language': u'English'})
 
-    @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def test_pictures(self):
         self.assertDictEqual(self.result['pictures'][0],
                              {u'url': '{url}.800x800_q85_size_watermark-{size}_text-{text}.png'.format(
