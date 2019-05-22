@@ -668,8 +668,7 @@ class TrekJSONDetailTest(TrekJSONSetUp):
                              {u'url': '{url}.800x800_q85_id-{id}_watermark-True.png'.format(
                                  url=self.attachment.attachment_file.url,
                                  id=hashlib.md5('%s%s%s' % (self.attachment.author, self.attachment.title,
-                                                            self.attachment.legend)).hexdigest()
-                             ),
+                                                            self.attachment.legend)).hexdigest()),
                               u'title': self.attachment.title,
                               u'legend': self.attachment.legend,
                               u'author': self.attachment.author})

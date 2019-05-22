@@ -174,8 +174,7 @@ class BasicJSONAPITest(TranslationResetMixin):
                              {u'url': '{url}.800x800_q85_id-{id}_watermark-True.png'.format(
                                  url=self.picture.attachment_file.url,
                                  id=hashlib.md5('%s%s%s' % (self.picture.author, self.picture.title,
-                                                            self.picture.legend)).hexdigest()
-                             ),
+                                                            self.picture.legend)).hexdigest()),
                               u'title': self.picture.title,
                               u'legend': self.picture.legend,
                               u'author': self.picture.author})

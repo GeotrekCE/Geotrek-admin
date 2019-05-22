@@ -130,7 +130,7 @@ class PicturesMixin(object):
                                                'SIZE_WATERMARK': settings.THUMBNAIL_COPYRIGHT_SIZE,
                                                'watermark': 'True',
                                                'id': hashlib.md5('%s%s%s' % (picture.author, picture.title,
-                                                                               picture.legend)).hexdigest()
+                                                                             picture.legend)).hexdigest()
                                                })
 
                 thdetail = thumbnailer.get_thumbnail(ali)
