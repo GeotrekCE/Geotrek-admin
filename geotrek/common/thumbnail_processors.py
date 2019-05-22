@@ -3,8 +3,8 @@ from PIL import ImageFont
 
 
 def add_watermark(image, **kwargs):
-    text = kwargs.get('text')
-    size_watermark = kwargs.get('size_watermark')
+    text = kwargs.get('TEXT')
+    size_watermark = kwargs.get('SIZE_WATERMARK')
     if not text:
         return image
     drawing = ImageDraw.Draw(image)
