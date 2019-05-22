@@ -128,8 +128,7 @@ class PicturesMixin(object):
                                                                                                   title=picture.title,
                                                                                                   legend=picture.legend),
                                                'SIZE_WATERMARK': settings.THUMBNAIL_COPYRIGHT_SIZE,
-                                               'watermark': 'True',
-                                               'id': hashlib.md5('%s%s%s' % (picture.author, picture.title,
+                                               'watermark': hashlib.md5('%s%s%s' % (picture.author, picture.title,
                                                                              picture.legend)).hexdigest()
                                                })
 

@@ -171,7 +171,7 @@ class BasicJSONAPITest(TranslationResetMixin):
     @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def test_pictures(self):
         self.assertDictEqual(self.result['pictures'][0],
-                             {u'url': '{url}.800x800_q85_id-{id}_watermark-True.png'.format(
+                             {u'url': '{url}.800x800_q85_watermark-{id}.png'.format(
                                  url=self.picture.attachment_file.url,
                                  id=hashlib.md5('%s%s%s' % (self.picture.author, self.picture.title,
                                                             self.picture.legend)).hexdigest()),
