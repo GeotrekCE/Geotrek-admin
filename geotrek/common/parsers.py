@@ -449,7 +449,7 @@ class Parser(object):
                 if settings.DEBUG:
                     raise
                 self.add_warning(str(e).decode('utf8'))
-            except (ValueImportError, RowImportError):
+            except (ValueImportError, RowImportError) as e:
                 self.add_warning(unicode(e))
             except Exception as e:
                 if settings.DEBUG:
