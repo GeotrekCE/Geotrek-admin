@@ -9,6 +9,10 @@ CHANGELOG
 
 -
 
+**Documentation**
+
+- Add PDF overriding section
+
 
 2.27.2 (2019-05-14)
 -------------------
