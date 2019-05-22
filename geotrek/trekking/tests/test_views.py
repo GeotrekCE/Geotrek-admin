@@ -665,7 +665,7 @@ class TrekJSONDetailTest(TrekJSONSetUp):
     @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def test_pictures(self):
         self.assertDictEqual(self.result['pictures'][0],
-                             {u'url': '{url}.800x800_q85_watermark-True_id-{id}.png'.format(
+                             {u'url': '{url}.800x800_q85_id-{id}_watermark-True.png'.format(
                                  url=self.attachment.attachment_file.url,
                                  id=hashlib.md5('%s%s%s' % (self.attachment.author, self.attachment.title,
                                                             self.attachment.legend)).hexdigest()
