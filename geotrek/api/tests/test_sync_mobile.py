@@ -291,7 +291,7 @@ class SyncMobileSettingsTest(TranslationResetMixin, TestCase):
                 settings_json = json.load(f)
                 self.assertEquals(len(settings_json), 2)
                 self.assertEqual(len(settings_json['data']), 16)
-                self.assertEqual(settings_json['data'][3]['values'][0]['pictogram'], pictogram_png)
+                self.assertEqual(settings_json['data'][4]['values'][0]['pictogram'], pictogram_png)
         self.assertIn('en/settings.json', output.getvalue())
 
     @classmethod
