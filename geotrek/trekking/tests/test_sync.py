@@ -210,7 +210,7 @@ class SyncTest(TestCase):
     @override_settings(THUMBNAIL_COPYRIGHT_FORMAT='*' * 300)
     def test_sync_pictures_long_title_legend_author(self):
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
-            management.call_command('sync_rando', os.path.join('var', 'tmp'), with_signages=True,
+            management.call_command('sync_rando', 'tmp', with_signages=True,
                                     with_infrastructures=True,
                                     with_events=True, content_categories="1", url='http://localhost:8000',
                                     skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
