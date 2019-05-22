@@ -173,8 +173,11 @@ class BasicJSONAPITest(TranslationResetMixin):
         self.assertDictEqual(self.result['pictures'][0],
                              {u'url': '{url}.800x800_q85_watermark-{id}.png'.format(
                                  url=self.picture.attachment_file.url,
-                                 id=hashlib.md5('%s%s%s' % (self.picture.author, self.picture.title,
-                                                            self.picture.legend)).hexdigest()),
+                                 id=hashlib.md5(
+                                     settings.THUMBNAIL_COPYRIGHT_FORMAT.format(
+                                         author=self.picture.author,
+                                         title=self.picture.title,
+                                         legend=self.picture.legend)).hexdigest()),
                               u'title': self.picture.title,
                               u'legend': self.picture.legend,
                               u'author': self.picture.author})

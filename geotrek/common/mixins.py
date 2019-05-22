@@ -128,8 +128,11 @@ class PicturesMixin(object):
                                                                                                   title=picture.title,
                                                                                                   legend=picture.legend),
                                                'SIZE_WATERMARK': settings.THUMBNAIL_COPYRIGHT_SIZE,
-                                               'watermark': hashlib.md5('%s%s%s' % (picture.author, picture.title,
-                                                                             picture.legend)).hexdigest()
+                                               'watermark': hashlib.md5(
+                                                   settings.THUMBNAIL_COPYRIGHT_FORMAT.format(
+                                                       author=picture.author,
+                                                       title=picture.title,
+                                                       legend=picture.legend)).hexdigest()
                                                })
 
                 thdetail = thumbnailer.get_thumbnail(ali)

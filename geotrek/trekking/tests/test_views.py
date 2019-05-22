@@ -667,8 +667,11 @@ class TrekJSONDetailTest(TrekJSONSetUp):
         self.assertDictEqual(self.result['pictures'][0],
                              {u'url': '{url}.800x800_q85_watermark-{id}.png'.format(
                                  url=self.attachment.attachment_file.url,
-                                 id=hashlib.md5('%s%s%s' % (self.attachment.author, self.attachment.title,
-                                                            self.attachment.legend)).hexdigest()),
+                                 id=hashlib.md5(
+                                     settings.THUMBNAIL_COPYRIGHT_FORMAT.format(
+                                         author=self.attachment.author,
+                                         title=self.attachment.title,
+                                         legend=self.attachment.legend)).hexdigest()),
                               u'title': self.attachment.title,
                               u'legend': self.attachment.legend,
                               u'author': self.attachment.author})
