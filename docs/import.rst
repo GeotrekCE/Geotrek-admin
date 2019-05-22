@@ -112,8 +112,26 @@ Change the last element ``HebergementParser`` to match one of the class names in
 You can add ``-v2`` parameter to make the command more verbose (show progress).
 Thank to ``cron`` utility you can configure automatic imports.
 
-
-Start import from Geotrek-Admin UI
+Start import from Geotrek-admin UI
 ----------------------------------
 
 Open the top right menu and clic on ``imports``.
+
+Import from a file
+------------------
+
+You can also use some of Geotrek commands to import data from a file.
+
+To list all Geotrek commands available:
+
+::
+
+    ./bin/django
+    
+To get help about a command:
+
+::
+
+    ./bin/django help <subcommand>
+    
+Example: ``./bin/django help loadpoi``
