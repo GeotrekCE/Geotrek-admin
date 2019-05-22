@@ -62,7 +62,6 @@ install:
 
 before_script:
   - docker-compose up -d postgres
-  - sleep 15
   - docker-compose run web initial.sh
   - if [[ $ACTION == integration ]]; then docker-compose run web ./manage.py loaddata development-pne; fi
   - if [[ $ACTION == integration ]]; then docker-compose up -d; fi
