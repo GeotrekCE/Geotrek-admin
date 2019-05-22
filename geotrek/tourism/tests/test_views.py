@@ -120,10 +120,10 @@ class TouristicContentFormTest(TrekkingManagerTest):
         self.assertContains(response, 'value="%s" selected' % self.category.pk)
 
 
-@override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
 class BasicJSONAPITest(TranslationResetMixin):
     factory = None
 
+    @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def setUp(self):
         super(BasicJSONAPITest, self).setUp()
         self._build_object()

@@ -532,6 +532,7 @@ class TrekCustomPublicViewTests(TrekkingManagerTest):
 
 
 class TrekJSONSetUp(TrekkingManagerTest):
+    @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def setUp(self):
         self.login()
 
@@ -631,7 +632,6 @@ class TrekPracticeTest(TrekJSONSetUp):
             u'category_id': self.touristic_content.prefixed_category_id})
 
 
-@override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
 class TrekJSONDetailTest(TrekJSONSetUp):
     """ Since we migrated some code to Django REST Framework, we should test
     the migration extensively. Geotrek-rando mainly relies on this view.
