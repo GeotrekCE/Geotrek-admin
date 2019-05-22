@@ -12,6 +12,7 @@ from geotrek.trekking import models as trekking_models
 
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
     from geotrek.zoning import models as zoning_models
+    from geotrek.zoning.serializers import DistrictSerializer #NOQA
 
     class CitySerializer(serializers.ModelSerializer):
         id = serializers.ReadOnlyField(source='code')

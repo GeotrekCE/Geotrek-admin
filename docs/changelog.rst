@@ -4,15 +4,10 @@ CHANGELOG
 
 2.27.3.dev0
 -------------------
-
 **New features**
 
 - Allow to set order of filters in mobile API
 - Add ascent and district filters  to mobile API
-
-**Bug fixes**
-
--
 
 **Documentation**
 

@@ -276,7 +276,7 @@ class SyncMobileSettingsTest(TranslationResetMixin, TestCase):
             with open(os.path.join('tmp', lang, 'settings.json'), 'r') as f:
                 settings_json = json.load(f)
                 self.assertEquals(len(settings_json), 2)
-                self.assertEqual(len(settings_json['data']), 14)
+                self.assertEqual(len(settings_json['data']), 16)
 
         self.assertIn('en/settings.json', output.getvalue())
 
@@ -290,7 +290,7 @@ class SyncMobileSettingsTest(TranslationResetMixin, TestCase):
             with open(os.path.join('tmp', lang, 'settings.json'), 'r') as f:
                 settings_json = json.load(f)
                 self.assertEquals(len(settings_json), 2)
-                self.assertEqual(len(settings_json['data']), 14)
+                self.assertEqual(len(settings_json['data']), 16)
                 self.assertEqual(settings_json['data'][3]['values'][0]['pictogram'], pictogram_png)
         self.assertIn('en/settings.json', output.getvalue())
 
@@ -336,7 +336,7 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         with open(os.path.join('tmp', 'en', '{pk}'.format(pk=str(self.trek_1.pk)),
                                'trek.geojson'), 'r') as f:
             trek_geojson = json.load(f)
-            self.assertEqual(len(trek_geojson['properties']), 31)
+            self.assertEqual(len(trek_geojson['properties']), 32)
 
         self.assertIn('en/{pk}/trek.geojson'.format(pk=str(self.trek_1.pk)), output.getvalue())
 
