@@ -123,16 +123,12 @@ class PicturesMixin(object):
                 # Uppercase options aren't used by prepared options (a primary
                 # use of prepared options is to generate the filename -- these
                 # options don't alter the filename).
+                text = settings.THUMBNAIL_COPYRIGHT_FORMAT.format(author=picture.author, title=picture.title,
+                                                                  legend=picture.legend)
                 ali = thumbnailer.get_options({'size': (800, 800),
-                                               'TEXT': settings.THUMBNAIL_COPYRIGHT_FORMAT.format(author=picture.author,
-                                                                                                  title=picture.title,
-                                                                                                  legend=picture.legend),
+                                               'TEXT': text,
                                                'SIZE_WATERMARK': settings.THUMBNAIL_COPYRIGHT_SIZE,
-                                               'watermark': hashlib.md5(
-                                                   settings.THUMBNAIL_COPYRIGHT_FORMAT.format(
-                                                       author=picture.author,
-                                                       title=picture.title,
-                                                       legend=picture.legend)).hexdigest()
+                                               'watermark': hashlib.md5(text).hexdigest()
                                                })
 
                 thdetail = thumbnailer.get_thumbnail(ali)
