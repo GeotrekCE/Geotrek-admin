@@ -4,6 +4,7 @@ import os
 import json
 import datetime
 from collections import OrderedDict
+import hashlib
 
 import mock
 from bs4 import BeautifulSoup
@@ -664,11 +665,11 @@ class TrekJSONDetailTest(TrekJSONSetUp):
     @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def test_pictures(self):
         self.assertDictEqual(self.result['pictures'][0],
-                             {u'url': '{url}.800x800_q85_size_watermark-{size}_text-{text}.png'.format(
+                             {u'url': '{url}.800x800_q85_watermark-True_id-{id}.png'.format(
                                  url=self.attachment.attachment_file.url,
-                                 size=settings.THUMBNAIL_COPYRIGHT_SIZE,
-                                 text=settings.THUMBNAIL_COPYRIGHT_FORMAT.format(title=self.attachment.title,
-                                                                                 author=self.attachment.author)),
+                                 id=hashlib.md5('%s%s%s' % (self.attachment.author, self.attachment.title,
+                                                            self.attachment.legend)).hexdigest()
+                             ),
                               u'title': self.attachment.title,
                               u'legend': self.attachment.legend,
                               u'author': self.attachment.author})

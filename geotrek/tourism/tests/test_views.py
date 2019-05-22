@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import json
+import hashlib
 
 import mock
 
@@ -170,11 +171,11 @@ class BasicJSONAPITest(TranslationResetMixin):
     @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def test_pictures(self):
         self.assertDictEqual(self.result['pictures'][0],
-                             {u'url': '{url}.800x800_q85_size_watermark-{size}_text-{text}.png'.format(
+                             {u'url': '{url}.800x800_q85_watermark-True_id-{id}.png'.format(
                                  url=self.picture.attachment_file.url,
-                                 size=settings.THUMBNAIL_COPYRIGHT_SIZE,
-                                 text=settings.THUMBNAIL_COPYRIGHT_FORMAT.format(title=self.picture.title,
-                                                                                 author=self.picture.author)),
+                                 id=hashlib.md5('%s%s%s' % (self.picture.author, self.picture.title,
+                                                            self.picture.legend)).hexdigest()
+                             ),
                               u'title': self.picture.title,
                               u'legend': self.picture.legend,
                               u'author': self.picture.author})

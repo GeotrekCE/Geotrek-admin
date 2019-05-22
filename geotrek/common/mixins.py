@@ -3,6 +3,7 @@ import os
 import logging
 import shutil
 import datetime
+import hashlib
 
 from django.conf import settings
 from django.db.models import Manager as DefaultManager
@@ -119,12 +120,19 @@ class PicturesMixin(object):
         for picture in self.pictures:
             thumbnailer = get_thumbnailer(picture.attachment_file)
             try:
+                # Uppercase options aren't used by prepared options (a primary
+                # use of prepared options is to generate the filename -- these
+                # options don't alter the filename).
                 ali = thumbnailer.get_options({'size': (800, 800),
-                                               'text': settings.THUMBNAIL_COPYRIGHT_FORMAT.format(author=picture.author,
+                                               'TEXT': settings.THUMBNAIL_COPYRIGHT_FORMAT.format(author=picture.author,
                                                                                                   title=picture.title,
                                                                                                   legend=picture.legend),
-                                               'size_watermark': settings.THUMBNAIL_COPYRIGHT_SIZE
+                                               'SIZE_WATERMARK': settings.THUMBNAIL_COPYRIGHT_SIZE,
+                                               'watermark': 'True',
+                                               'id': hashlib.md5('%s%s%s' % (picture.author, picture.title,
+                                                                               picture.legend)).hexdigest()
                                                })
+
                 thdetail = thumbnailer.get_thumbnail(ali)
             except (IOError, InvalidImageFormatError):
                 logger.info(_("Image %s invalid or missing from disk.") % picture.attachment_file)
