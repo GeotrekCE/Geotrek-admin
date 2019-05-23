@@ -18,7 +18,6 @@ if 'geotrek.zoning' in settings.INSTALLED_APPS:
             model = zoning_models.District
             fields = ('id', 'name')
 
-
     class CitySerializer(serializers.ModelSerializer):
         id = serializers.ReadOnlyField(source='code')
 
