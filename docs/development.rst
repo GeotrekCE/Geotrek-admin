@@ -69,6 +69,11 @@ as defined in ``custom.py``, you can load the following dataset :
     unzip geotrek/var/mnt_0_ecrins.zip
     docker-compose run web ./manage.py loaddem /app/var/mnt_0_ecrins/w001001.adf
 
+.. note::
+
+    PDF Generation tool screamshotter cannot work with `localhost:8000` and needs an real domain name.
+    Add `127.0.0.1  geotrek.local` to your `/etc/hosts` and check `DOMAIN_NAME` is set in your `.env` file.
+
 
 Conventions
 -----------

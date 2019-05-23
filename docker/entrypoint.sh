@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 cd /app/src
 
 mkdir -p /app/src/var/static \
@@ -29,6 +30,13 @@ fi
 # fix rights
 chown django:django -R ./var
 
-exec gosu django "$@"
+# wait for postgres
+until PGPASSWORD=$POSTGRES_PASSWORD psql -h "${POSTGRES_HOST:-postgres}" -U "$POSTGRES_USER" -p "${PGPORT:-5432}" -d "$POSTGRES_DB" -c '\q'; do
+  >&2 echo "Postgres is unavailable - sleeping"
+  sleep 1
+done
 
-exec "$@"
+>&2 echo "Postgres is up - executing command"
+
+# exec
+exec gosu django "$@"

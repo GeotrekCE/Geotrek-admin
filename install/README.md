@@ -68,7 +68,7 @@ SECRET_KEY=<your_personnal_secret_key>
 and postgis > 2.1, add these environment variables**
 ```dotenv
 POSTGRES_HOST=<your_host_or_ip>
-POSTGRES_PORT=<your_port>
+PGPORT=<your_port>
 ```
 **and comment postgresql section in docker-compose.yml**
 ```python
