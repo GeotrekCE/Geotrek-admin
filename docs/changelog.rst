@@ -5,9 +5,9 @@ CHANGELOG
 2.27.4.dev0
 -------------------
 
-**New features**
+**Bug fixes**
 
--
+- Fix crash with --srid option of loadpaths command
 
 2.27.3 (2019-05-23)
 -------------------
@@ -15,7 +15,7 @@ CHANGELOG
 **New features**
 
 - Allow to set order of filters in mobile API
-- Add ascent and district filters  to mobile API
+- Add ascent and district filters to mobile API
 
 **Minor Changes**
 
