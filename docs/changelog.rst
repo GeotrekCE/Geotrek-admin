@@ -2,8 +2,16 @@
 CHANGELOG
 =========
 
+2.27.4.dev0
+-------------------
+
+**New features**
+
+-
+
 2.27.3 (2019-05-23)
 -------------------
+
 **New features**
 
 - Allow to set order of filters in mobile API
