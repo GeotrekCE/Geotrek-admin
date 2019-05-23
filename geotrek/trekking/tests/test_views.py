@@ -4,6 +4,7 @@ import os
 import json
 import datetime
 from collections import OrderedDict
+import hashlib
 
 import mock
 from bs4 import BeautifulSoup
@@ -532,6 +533,7 @@ class TrekCustomPublicViewTests(TrekkingManagerTest):
 
 
 class TrekJSONSetUp(TrekkingManagerTest):
+    @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def setUp(self):
         self.login()
 
@@ -660,13 +662,16 @@ class TrekJSONDetailTest(TrekJSONSetUp):
         self.assertDictEqual(self.result['published_status'][0],
                              {u'lang': u'en', u'status': True, u'language': u'English'})
 
+    @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def test_pictures(self):
         self.assertDictEqual(self.result['pictures'][0],
-                             {u'url': '{url}.800x800_q85_size_watermark-{size}_text-{text}.png'.format(
+                             {u'url': '{url}.800x800_q85_watermark-{id}.png'.format(
                                  url=self.attachment.attachment_file.url,
-                                 size=settings.THUMBNAIL_COPYRIGHT_SIZE,
-                                 text=settings.THUMBNAIL_COPYRIGHT_FORMAT.format(title=self.attachment.title,
-                                                                                 author=self.attachment.author)),
+                                 id=hashlib.md5(
+                                     settings.THUMBNAIL_COPYRIGHT_FORMAT.format(
+                                         author=self.attachment.author,
+                                         title=self.attachment.title,
+                                         legend=self.attachment.legend)).hexdigest()),
                               u'title': self.attachment.title,
                               u'legend': self.attachment.legend,
                               u'author': self.attachment.author})

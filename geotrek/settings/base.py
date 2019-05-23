@@ -564,6 +564,12 @@ MOBILE_LENGTH_INTERVALS = [
     {"id": 3, "name": "30 - 50", "interval": [30000, 50000]},
     {"id": 4, "name": "> 50 km", "interval": [50000, 999999]}
 ]
+MOBILE_ASCENT_INTERVALS = [
+    {"id": 1, "name": "< 300 m", "interval": [0, 299]},
+    {"id": 2, "name": "300 - 600", "interval": [300, 599]},
+    {"id": 3, "name": "600 - 1000", "interval": [600, 999]},
+    {"id": 4, "name": "> 1000 m", "interval": [1000, 9999]}
+]
 MOBILE_DURATION_INTERVALS = [
     {"id": 1, "name": "< 1 heure", "interval": [0, 1]},
     {"id": 2, "name": "1h - 2h30", "interval": [1, 2.5]},
@@ -689,12 +695,27 @@ LINE_CODE_FORMAT = u"{signagecode}-{bladenumber}-{linenumber}"
 
 SHOW_EXTREMITIES = False
 
-THUMBNAIL_COPYRIGHT_FORMAT = u"{title} {author}"  # You can add legend
+THUMBNAIL_COPYRIGHT_FORMAT = u""
+
+# If you want copyright added to your pictures, change THUMBNAIL_COPYRIGHT_FORMAT to this :
+# THUMBNAIL_COPYRIGHT_FORMAT = u"{title} {author}"
+# You can also add legend
+
 THUMBNAIL_COPYRIGHT_SIZE = 15
 
 REST_FRAMEWORK = {
     'UNICODE_JSON': False
 }
 
-ENABLED_MOBILE_FILTERS = ['difficulty', 'lengths', 'cities', 'accessibilities', 'practice', 'durations', 'themes',
-                          'route']
+ENABLED_MOBILE_FILTERS = [
+    'practice',
+    'difficulty',
+    'durations',
+    'ascent',
+    'lengths',
+    'themes',
+    'route',
+    'districts',
+    'cities',
+    'accessibilities',
+]

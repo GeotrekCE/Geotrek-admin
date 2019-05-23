@@ -28,7 +28,7 @@ DETAIL_TREK_GEOJSON_STRUCTURE = sorted([
 ])
 
 TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'id', 'name', 'slug', 'accessibilities', 'description_teaser', 'cities', 'description', 'departure', 'arrival',
+    'id', 'name', 'slug', 'accessibilities', 'description_teaser', 'cities', 'districts', 'description', 'departure', 'arrival',
     'access', 'advised_parking', 'advice', 'difficulty', 'length', 'ascent', 'descent', 'route', 'duration',
     'is_park_centered', 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'pictures',
     'information_desks', 'departure_city', 'arrival_city', 'parking_location', 'profile', 'points_reference'
@@ -36,7 +36,7 @@ TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
 
 
 TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'id', 'first_picture', 'name', 'departure', 'accessibilities', 'duration',
+    'id', 'first_picture', 'name', 'departure', 'accessibilities', 'duration', 'districts',
     'difficulty', 'practice', 'themes', 'length', 'cities', 'route', 'departure_city', 'ascent', 'descent',
 ])
 
@@ -128,7 +128,6 @@ class APIAccessTestCase(BaseApiTest):
         # test geojson format
         self.assertEqual(sorted(json_response.keys()),
                          DETAIL_TREK_GEOJSON_STRUCTURE)
-
         self.assertEqual(sorted(json_response.get('properties').keys()),
                          TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
 

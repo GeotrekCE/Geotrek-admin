@@ -2,6 +2,23 @@
 CHANGELOG
 =========
 
+2.27.3 (2019-05-23)
+-------------------
+**New features**
+
+- Allow to set order of filters in mobile API
+- Add ascent and district filters  to mobile API
+
+**Minor Changes**
+
+- Replace text by an id in url of pictures with watermarks
+- Change default settings watermark
+
+**Documentation**
+
+- Add PDF overriding section
+
+
 2.27.2 (2019-05-14)
 -------------------
 

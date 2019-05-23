@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import json
+import hashlib
 
 import mock
 
@@ -123,6 +124,7 @@ class TouristicContentFormTest(TrekkingManagerTest):
 class BasicJSONAPITest(TranslationResetMixin):
     factory = None
 
+    @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def setUp(self):
         super(BasicJSONAPITest, self).setUp()
         self._build_object()
@@ -166,13 +168,16 @@ class BasicJSONAPITest(TranslationResetMixin):
         self.assertDictEqual(self.result['published_status'][0],
                              {u'lang': u'en', u'status': True, u'language': u'English'})
 
+    @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def test_pictures(self):
         self.assertDictEqual(self.result['pictures'][0],
-                             {u'url': '{url}.800x800_q85_size_watermark-{size}_text-{text}.png'.format(
+                             {u'url': '{url}.800x800_q85_watermark-{id}.png'.format(
                                  url=self.picture.attachment_file.url,
-                                 size=settings.THUMBNAIL_COPYRIGHT_SIZE,
-                                 text=settings.THUMBNAIL_COPYRIGHT_FORMAT.format(title=self.picture.title,
-                                                                                 author=self.picture.author)),
+                                 id=hashlib.md5(
+                                     settings.THUMBNAIL_COPYRIGHT_FORMAT.format(
+                                         author=self.picture.author,
+                                         title=self.picture.title,
+                                         legend=self.picture.legend)).hexdigest()),
                               u'title': self.picture.title,
                               u'legend': self.picture.legend,
                               u'author': self.picture.author})
