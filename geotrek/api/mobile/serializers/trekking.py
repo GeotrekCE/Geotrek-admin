@@ -111,7 +111,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'difficulty', 'length', 'ascent', 'descent', 'route', 'is_park_centered', 'parking_location',
                 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'difficulty',
                 'geometry', 'pictures', 'information_desks', 'cities', 'departure_city', 'arrival_city',
-                'points_reference'
+                'points_reference', 'districts'
             )
 
     class TrekListSerializer(geo_serializers.GeoFeatureModelSerializer):
@@ -147,5 +147,5 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             geo_field = 'geometry'
             fields = (
                 'id', 'pk', 'first_picture', 'name', 'departure', 'accessibilities', 'route', 'departure_city',
-                'difficulty', 'practice', 'themes', 'length', 'geometry', 'cities', 'duration', 'ascent', 'descent',
+                'difficulty', 'practice', 'themes', 'length', 'geometry', 'districts', 'cities', 'duration', 'ascent', 'descent',
             )
