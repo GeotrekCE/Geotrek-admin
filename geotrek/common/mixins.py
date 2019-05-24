@@ -128,7 +128,7 @@ class PicturesMixin(object):
                 ali = thumbnailer.get_options({'size': (800, 800),
                                                'TEXT': text,
                                                'SIZE_WATERMARK': settings.THUMBNAIL_COPYRIGHT_SIZE,
-                                               'watermark': hashlib.md5(text).hexdigest()
+                                               'watermark': hashlib.md5(text.encode('utf-8')).hexdigest()
                                                })
 
                 thdetail = thumbnailer.get_thumbnail(ali)
