@@ -229,11 +229,11 @@ class SyncTest(TestCase):
     @override_settings(THUMBNAIL_COPYRIGHT_FORMAT=u'{author} éà@za,£')
     def test_sync_pictures_with_accents(self):
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
-            management.call_command('sync_rando', 'tmp', with_signages=True,
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), with_signages=True,
                                     with_infrastructures=True,
                                     with_events=True, content_categories="1", url='http://localhost:8000',
                                     skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
-            with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+            with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
                 # there are 4 treks
                 self.assertEquals(len(treks['features']),
