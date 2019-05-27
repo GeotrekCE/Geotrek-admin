@@ -2,12 +2,16 @@
 CHANGELOG
 =========
 
-2.27.4.dev0
+2.27.4 (2019-05-27)
 -------------------
 
 **Bug fixes**
 
 - Fix crash with --srid option of loadpaths command
+- Add option portal in sync_mobile for the treks
+- Fix encoding error on watermarks
+- Fix bad references to sync_mobile in sync_rando command
+
 
 2.27.3 (2019-05-23)
 -------------------
