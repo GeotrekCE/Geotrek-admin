@@ -11,7 +11,7 @@ class TasksTest(TestCase):
 
     def test_import_exceptions(self):
         self.assertRaises(
-            ImportError, import_datas, filename='bombadil', class_name='haricot', module_name='toto')
+            ImportError, import_datas, filename='bombadil', name='haricot', module='toto')
 
     def test_import_message_exception(self):
         self.assertRaisesMessage(
@@ -19,6 +19,6 @@ class TasksTest(TestCase):
             "Failed to import parser class 'haricot' from module 'toto'",
             import_datas,
             filename='bombadil',
-            class_name='haricot',
-            module_name='toto'
+            name='haricot',
+            module='toto'
         )
