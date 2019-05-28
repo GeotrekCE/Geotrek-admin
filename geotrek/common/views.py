@@ -193,7 +193,8 @@ def import_file(uploaded, parser, encoding, user_pk):
         for name in zfile.namelist():
             zfile.extract(name, os.path.dirname(os.path.realpath(f.name)))
             if name.endswith('shp'):
-                import_datas.delay(parser.__name__, '/'.join((destination_dir, name)), parser.__module__, encoding, user_pk)
+                import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, name)),
+                                   module=parser.__module__, encoding=encoding, user=user_pk)
 
 
 @login_required
@@ -239,7 +240,7 @@ def import_view(request):
                 if not request.user.is_superuser and not request.user.has_perm(codename):
                     raise PermissionDenied
                 import_datas_from_web.delay(
-                    parser.__name__, parser.__module__, request.user.pk
+                    name=parser.__name__, module=parser.__module__, user=request.user.pk
                 )
 
     # Hide second form if parser has no web based imports.

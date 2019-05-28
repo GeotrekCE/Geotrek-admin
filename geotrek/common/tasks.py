@@ -15,13 +15,8 @@ class GeotrekImportTask(Task):
      to be displayed on the web interface.
     '''
     def on_failure(self, exc, task_id, args, kwargs, einfo):
-        try:
-            filename, class_name, module_name, user_pk = args
-
-        except ValueError:
-            class_name, module_name, user_pk = args
-            filename = ''
-
+        filename = kwargs.get('filename', '')
+        class_name = kwargs.get('name', '')
         self.update_state(
             task_id,
             'FAILURE',
@@ -36,7 +31,12 @@ class GeotrekImportTask(Task):
 
 
 @shared_task(base=GeotrekImportTask, name='geotrek.common.import-file')
-def import_datas(class_name, filename, module_name="bulkimport.parsers", encoding='utf8', user_pk=None):
+def import_datas(**kwargs):
+    class_name = kwargs.get('name')
+    filename = kwargs.get('filename')
+    module_name = kwargs.get('module')
+    encoding = kwargs.get('encoding')
+    user_pk = kwargs.get('user', None)
     try:
         module = importlib.import_module(module_name)
         Parser = getattr(module, class_name)
@@ -77,7 +77,10 @@ def import_datas(class_name, filename, module_name="bulkimport.parsers", encodin
 
 
 @shared_task(base=GeotrekImportTask, name='geotrek.common.import-web')
-def import_datas_from_web(class_name, module_name="bulkimport.parsers", user_pk=None):
+def import_datas_from_web(**kwargs):
+    class_name = kwargs.get('name')
+    module_name = kwargs.get('module')
+    user_pk = kwargs.get('user', None)
     try:
         module = importlib.import_module(module_name)
         Parser = getattr(module, class_name)
