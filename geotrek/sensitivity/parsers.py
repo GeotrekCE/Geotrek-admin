@@ -168,10 +168,10 @@ class RegulatorySensitiveAreaShapeParser(ShapeParser):
     fields = {
         'geom': 'geom',
         'contact': 'contact',
-        'description': 'description',
+        'description': 'descriptio',
         'species': (
             'nom',
-            'altitude'
+            'altitude',
             'periode',
             'pratiques',
             'url',
