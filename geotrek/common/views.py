@@ -193,7 +193,8 @@ def import_file(uploaded, parser, encoding, user_pk):
         for name in zfile.namelist():
             zfile.extract(name, os.path.dirname(os.path.realpath(f.name)))
             if name.endswith('shp'):
-                import_datas.delay(parser.__name__, '/'.join((destination_dir, name)), parser.__module__, encoding, user_pk)
+                import_datas.delay(name=parser.__name__, filename='/'.join((destination_dir, name)),
+                                   module=parser.__module__, encoding=encoding, user=user_pk)
 
 
 @login_required
@@ -221,9 +222,6 @@ def import_view(request):
                 uploaded = request.FILES['with-file-zipfile']
                 parser = classes[int(form['parser'].value())]
                 encoding = form.cleaned_data['encoding']
-                codename = '{}.import_{}'.format(parser.model._meta.app_label, parser.model._meta.model_name)
-                if not request.user.is_superuser and not request.user.has_perm(codename):
-                    raise PermissionDenied
                 try:
                     import_file(uploaded, parser, encoding, request.user.pk)
                 except UnicodeDecodeError:
@@ -235,11 +233,8 @@ def import_view(request):
 
             if form_without_file.is_valid():
                 parser = classes[int(form_without_file['parser'].value())]
-                codename = '{}.import_{}'.format(parser.model._meta.app_label, parser.model._meta.model_name)
-                if not request.user.is_superuser and not request.user.has_perm(codename):
-                    raise PermissionDenied
                 import_datas_from_web.delay(
-                    parser.__name__, parser.__module__, request.user.pk
+                    name=parser.__name__, module=parser.__module__, user=request.user.pk
                 )
 
     # Hide second form if parser has no web based imports.
