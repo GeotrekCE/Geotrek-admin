@@ -2,12 +2,13 @@
 CHANGELOG
 =========
 
-2.27.5.dev0
+2.27.5 (2019-05-29)
 -------------------
 
 **Bug fixes**
 
--
+- Fix regulatory sensitive area parser
+- Fix handling of parser errors
 
 
 2.27.4 (2019-05-27)
