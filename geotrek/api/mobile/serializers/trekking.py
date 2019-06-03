@@ -61,16 +61,12 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return obj.parking_location.transform(settings.API_SRID, clone=True).coords
 
         def get_cities(self, obj):
-            qs = City.objects
-            if hasattr(qs, 'existing'):
-                qs = qs.existing()
+            qs = City.objects.all()
             cities = qs.filter(geom__intersects=(obj.geom, 0))
             return [city.code for city in cities]
 
         def get_departure_city(self, obj):
-            qs = City.objects
-            if hasattr(qs, 'existing'):
-                qs = qs.existing()
+            qs = City.objects.all()
             if obj.start_point:
                 city = qs.filter(geom__covers=(obj.start_point, 0)).first()
                 if city:
@@ -78,9 +74,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return None
 
         def get_arrival_city(self, obj):
-            qs = City.objects
-            if hasattr(qs, 'existing'):
-                qs = qs.existing()
+            qs = City.objects.all()
             if obj.start_point:
                 city = qs.filter(geom__covers=(obj.end_point, 0)).first()
                 if city:
@@ -125,16 +119,12 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         districts = DistrictSerializer(many=True)
 
         def get_cities(self, obj):
-            qs = City.objects
-            if hasattr(qs, 'existing'):
-                qs = qs.existing()
+            qs = City.objects.all()
             cities = qs.filter(geom__intersects=(obj.geom, 0))
             return [city.code for city in cities]
 
         def get_departure_city(self, obj):
-            qs = City.objects
-            if hasattr(qs, 'existing'):
-                qs = qs.existing()
+            qs = City.objects.all()
             if obj.start_point:
                 city = qs.filter(geom__covers=(obj.start_point, 0)).first()
                 if city:
