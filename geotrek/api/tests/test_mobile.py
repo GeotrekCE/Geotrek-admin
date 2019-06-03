@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.test.client import Client
 from django.test.testcases import TestCase
 from django.contrib.gis.geos import Point, MultiPoint, MultiPolygon, Polygon
 
@@ -64,7 +63,6 @@ class BaseApiTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.client = Client()
         cls.nb_treks = 1
 
         cls.treks = trek_factory.TrekWithPublishedPOIsFactory.create_batch(
@@ -82,24 +80,19 @@ class BaseApiTest(TestCase):
         cls.district = zoning_factory.DistrictFactory(geom=MultiPolygon(Polygon.from_bbox(cls.treks[0].geom.extent)))
 
     def get_treks_list(self, params=None):
-        self.login()
         return self.client.get(reverse('apimobile:treks-list'), params, HTTP_ACCEPT_LANGUAGE='fr')
 
     def get_treks_detail(self, id_trek, params=None):
-        self.login()
         return self.client.get(reverse('apimobile:treks-detail', args=(id_trek,)), params, HTTP_ACCEPT_LANGUAGE='fr')
 
     def get_poi_list(self, id_trek, params=None):
-        self.login()
         return self.client.get(reverse('apimobile:treks-pois', args=(id_trek, )), params, HTTP_ACCEPT_LANGUAGE='fr')
 
     def get_touristic_content_list(self, id_trek, params=None):
-        self.login()
         return self.client.get(reverse('apimobile:treks-touristic-contents', args=(id_trek, )), params,
                                HTTP_ACCEPT_LANGUAGE='fr')
 
     def get_touristic_event_list(self, id_trek, params=None):
-        self.login()
         return self.client.get(reverse('apimobile:treks-touristic-events', args=(id_trek, )), params,
                                HTTP_ACCEPT_LANGUAGE='fr')
 
@@ -113,9 +106,6 @@ class APIAccessTestCase(BaseApiTest):
     def setUpTestData(cls):
         #  created user
         BaseApiTest.setUpTestData()
-
-    def login(self):
-        pass
 
     def test_trek_detail(self):
         response = self.get_treks_detail(self.trek.pk)
