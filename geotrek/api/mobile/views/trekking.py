@@ -10,9 +10,8 @@ from geotrek.api.mobile.serializers import tourism as api_serializers_tourism
 from geotrek.api.v2.functions import Transform, Length, StartPoint, EndPoint
 from geotrek.trekking import models as trekking_models
 
-from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework_extensions.mixins import DetailSerializerMixin
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny
 from rest_framework import response
 from rest_framework import viewsets
 from rest_framework import decorators
@@ -23,8 +22,7 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = api_serializers_trekking.TrekListSerializer
     serializer_detail_class = api_serializers_trekking.TrekDetailSerializer
     filter_fields = ('difficulty', 'themes', 'networks', 'practice')
-    permission_classes = [IsAuthenticatedOrReadOnly, ]
-    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny, ]
 
     def get_queryset(self, *args, **kwargs):
         queryset = trekking_models.Trek.objects.existing()\
