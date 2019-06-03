@@ -2,10 +2,11 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.test.client import Client
 from django.test.testcases import TestCase
-from django.contrib.gis.geos import Point, MultiPoint
+from django.contrib.gis.geos import Point, MultiPoint, MultiPolygon, Polygon
 
 from geotrek.trekking import factories as trek_factory, models as trek_models
 from geotrek.tourism import factories as tourism_factory, models as tourism_models
+from geotrek.zoning import factories as zoning_factory
 
 
 GEOJSON_STRUCTURE = sorted([
@@ -71,16 +72,14 @@ class BaseApiTest(TestCase):
             description_teaser_fr="mini", published_fr=True,
             points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.API_SRID),
             parking_location=Point(0, 0, srid=settings.API_SRID))
-
+        cls.trek = cls.treks[0]
         cls.touristic_content = tourism_factory.TouristicContentFactory(geom=cls.treks[0].published_pois.first().geom,
                                                                         name_fr='Coucou_Content', description_fr="Sisi",
                                                                         description_teaser_fr="mini", published_fr=True)
         cls.touristic_event = tourism_factory.TouristicEventFactory(geom=cls.treks[0].published_pois.first().geom,
                                                                     name_fr='Coucou_Event', description_fr="Sisi_Event",
                                                                     description_teaser_fr="mini", published_fr=True)
-
-    def login(self):
-        pass
+        cls.district = zoning_factory.DistrictFactory(geom=MultiPolygon(Polygon.from_bbox(cls.treks[0].geom.extent)))
 
     def get_treks_list(self, params=None):
         self.login()
@@ -119,7 +118,7 @@ class APIAccessTestCase(BaseApiTest):
         pass
 
     def test_trek_detail(self):
-        response = self.get_treks_detail(trek_models.Trek.objects.order_by('?').first().pk)
+        response = self.get_treks_detail(self.trek.pk)
         #  test response code
         self.assertEqual(response.status_code, 200)
 
@@ -136,6 +135,7 @@ class APIAccessTestCase(BaseApiTest):
         self.assertEqual('mini', json_response.get('properties').get('description_teaser'))
         self.assertAlmostEqual(0, json_response.get('properties').get('points_reference')[0][0])
         self.assertAlmostEqual(0, json_response.get('properties').get('parking_location')[0])
+        self.assertEqual(len(json_response['properties']['districts']), 1)
 
     def test_trek_list(self):
         response = self.get_treks_list()

@@ -5,6 +5,7 @@ from django.conf import settings
 from rest_framework import serializers
 from rest_framework_gis import serializers as geo_serializers
 
+from geotrek.api.mobile.serializers.common import DistrictSerializer
 from geotrek.api.mobile.serializers.tourism import InformationDeskSerializer
 from geotrek.zoning.models import City
 
@@ -41,6 +42,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         length = serializers.SerializerMethodField(read_only=True)
         pictures = serializers.ReadOnlyField(source='serializable_pictures_mobile')
         cities = serializers.SerializerMethodField(read_only=True)
+        districts = DistrictSerializer(many=True)
         departure_city = serializers.SerializerMethodField(read_only=True)
         arrival_city = serializers.SerializerMethodField(read_only=True)
         information_desks = serializers.SerializerMethodField()
@@ -120,6 +122,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='start_point', )
         cities = serializers.SerializerMethodField(read_only=True)
         departure_city = serializers.SerializerMethodField(read_only=True)
+        districts = DistrictSerializer(many=True)
 
         def get_cities(self, obj):
             qs = City.objects
