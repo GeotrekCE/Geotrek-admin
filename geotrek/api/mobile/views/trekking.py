@@ -22,7 +22,7 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     serializer_class = api_serializers_trekking.TrekListSerializer
     serializer_detail_class = api_serializers_trekking.TrekDetailSerializer
-    filter_fields = ('difficulty', 'themes', 'networks', 'practice')
+    filter_fields = ('difficulty', 'themes', 'networks', 'practice', 'portal')
     permission_classes = [IsAuthenticatedOrReadOnly, ]
     authentication_classes = [BasicAuthentication, SessionAuthentication]
 
