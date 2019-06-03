@@ -34,9 +34,6 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
         if not self.action == 'list':
             queryset = queryset.annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
 
-        if 'portal' in self.request.GET:
-            queryset = queryset.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
-
         return queryset.annotate(start_point=Transform(StartPoint('geom'), settings.API_SRID),
                                  end_point=Transform(EndPoint('geom'), settings.API_SRID)).\
             filter(Q(**{'published': True}) | Q(**{'trek_parents__parent__published': True,
