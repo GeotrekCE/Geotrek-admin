@@ -6,8 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from rest_framework.views import APIView
 from rest_framework import viewsets
-from rest_framework.authentication import BasicAuthentication, SessionAuthentication
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny
 from rest_framework import response
 from rest_framework_extensions.mixins import DetailSerializerMixin
 
@@ -20,11 +19,7 @@ from geotrek.zoning.models import City, District
 
 
 class SettingsView(APIView):
-    """
-    Use HTTP basic authentication to access this endpoint.
-    """
-    permission_classes = [IsAuthenticatedOrReadOnly, ]
-    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny, ]
 
     def get(self, request, *args, **kwargs):
         filters = []
@@ -208,11 +203,7 @@ class SettingsView(APIView):
 
 
 class FlatPageViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
-    """
-    Use HTTP basic authentication to access this endpoint.
-    """
-    permission_classes = [IsAuthenticatedOrReadOnly, ]
-    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny, ]
     serializer_class = api_serializers.FlatPageListSerializer
     serializer_detail_class = api_serializers.FlatPageDetailSerializer
 

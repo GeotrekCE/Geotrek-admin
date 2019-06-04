@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix mobile API
 
 
 2.27.5 (2019-05-29)
