@@ -90,7 +90,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         def get_arrival_city(self, obj):
             qs = City.objects.all()
-            if obj.start_point:
+            if obj.end_point:
                 city = qs.filter(geom__covers=(obj.end_point, 0)).first()
                 if city:
                     return city.code
