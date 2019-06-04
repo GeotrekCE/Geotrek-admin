@@ -49,17 +49,19 @@
           <div class="main-picture" style="background-image: url('file://{% media_static_fallback_path "upload/placeholder.png" "images/placeholder.png" %}');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
         {% endif %}
       </div>
-      <div class="intro-left">
-        {% if object.description_teaser %}
-          <section class="teaser text-content">
-            {{ object.description_teaser|safe }}
-          </section>
-        {% endif %}
-        {% if object.ambiance %}
-          <section class="ambiance text-content">
-            {{ object.ambiance|safe }}
-          </section>
-        {% endif %}
+      <div class="intro">
+        <div class="intro-left">
+          {% if object.description_teaser %}
+            <section class="teaser text-content">
+              {{ object.description_teaser|safe }}
+            </section>
+          {% endif %}
+          {% if object.ambiance %}
+            <section class="ambiance text-content">
+              {{ object.ambiance|safe }}
+            </section>
+          {% endif %}
+        </div>
       </div>
       <div class="meta-items">
         <div class="meta-items-title">{% trans "Useful information" %}</div>
