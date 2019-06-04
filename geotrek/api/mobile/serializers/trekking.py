@@ -5,9 +5,8 @@ from django.conf import settings
 from rest_framework import serializers
 from rest_framework_gis import serializers as geo_serializers
 
-from geotrek.api.mobile.serializers.common import DistrictSerializer
 from geotrek.api.mobile.serializers.tourism import InformationDeskSerializer
-from geotrek.zoning.models import City
+from geotrek.zoning.models import City, District
 
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
@@ -42,7 +41,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         length = serializers.SerializerMethodField(read_only=True)
         pictures = serializers.ReadOnlyField(source='serializable_pictures_mobile')
         cities = serializers.SerializerMethodField(read_only=True)
-        districts = DistrictSerializer(many=True)
+        districts = serializers.SerializerMethodField(read_only=True)
         departure_city = serializers.SerializerMethodField(read_only=True)
         arrival_city = serializers.SerializerMethodField(read_only=True)
         information_desks = serializers.SerializerMethodField()
@@ -64,6 +63,11 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             qs = City.objects.all()
             cities = qs.filter(geom__intersects=(obj.geom, 0))
             return [city.code for city in cities]
+
+        def get_districts(self, obj):
+            qs = District.objects.all()
+            districts = qs.filter(geom__intersects=(obj.geom, 0))
+            return [district.id for district in districts]
 
         def get_departure_city(self, obj):
             qs = City.objects.all()
@@ -116,12 +120,17 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='start_point', )
         cities = serializers.SerializerMethodField(read_only=True)
         departure_city = serializers.SerializerMethodField(read_only=True)
-        districts = DistrictSerializer(many=True)
+        districts = serializers.SerializerMethodField(read_only=True)
 
         def get_cities(self, obj):
             qs = City.objects.all()
             cities = qs.filter(geom__intersects=(obj.geom, 0))
             return [city.code for city in cities]
+
+        def get_districts(self, obj):
+            qs = District.objects.all()
+            districts = qs.filter(geom__intersects=(obj.geom, 0))
+            return [district.id for district in districts]
 
         def get_departure_city(self, obj):
             qs = City.objects.all()
