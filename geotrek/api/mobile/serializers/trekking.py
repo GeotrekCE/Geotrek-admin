@@ -35,7 +35,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'id', 'pk', 'pictures', 'name', 'description', 'type', 'geometry',
             )
 
-
     class TrekBaseSerializer(geo_serializers.GeoFeatureModelSerializer):
         cities = serializers.SerializerMethodField(read_only=True)
         districts = serializers.SerializerMethodField(read_only=True)
@@ -67,7 +66,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.Trek
             id_field = 'pk'
             geo_field = 'geometry'
-
 
     class TrekDetailSerializer(TrekBaseSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
