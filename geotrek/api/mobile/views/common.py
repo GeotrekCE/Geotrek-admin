@@ -19,9 +19,6 @@ from geotrek.zoning.models import City, District
 
 
 class SettingsView(APIView):
-    """
-    Use HTTP basic authentication to access this endpoint.
-    """
     permission_classes = [AllowAny, ]
 
     def get(self, request, *args, **kwargs):
@@ -206,9 +203,6 @@ class SettingsView(APIView):
 
 
 class FlatPageViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
-    """
-    Use HTTP basic authentication to access this endpoint.
-    """
     permission_classes = [AllowAny, ]
     serializer_class = api_serializers.FlatPageListSerializer
     serializer_detail_class = api_serializers.FlatPageDetailSerializer
