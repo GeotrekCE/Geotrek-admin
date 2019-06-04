@@ -34,11 +34,10 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
 
         if 'portal' in self.request.GET:
             queryset = queryset.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
-
         return queryset.annotate(start_point=Transform(StartPoint('geom'), settings.API_SRID),
                                  end_point=Transform(EndPoint('geom'), settings.API_SRID)).\
-            filter(Q(**{'published': True}) | Q(**{'trek_parents__parent__published': True,
-                                                   'trek_parents__parent__deleted': False})).distinct()
+            filter(Q(published=True) | Q(trek_parents__parent__published=True,
+                                         trek_parents__parent__deleted=False)).distinct()
 
     @decorators.detail_route(methods=['get'])
     def pois(self, request, *args, **kwargs):

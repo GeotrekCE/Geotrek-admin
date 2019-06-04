@@ -1,13 +1,12 @@
 from __future__ import unicode_literals
-import os
 
+import os
 from django.conf import settings
 from rest_framework import serializers
 from rest_framework_gis import serializers as geo_serializers
 
 from geotrek.api.mobile.serializers.tourism import InformationDeskSerializer
 from geotrek.zoning.models import City, District
-
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     from geotrek.trekking import models as trekking_models
@@ -36,13 +35,43 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'id', 'pk', 'pictures', 'name', 'description', 'type', 'geometry',
             )
 
-    class TrekDetailSerializer(geo_serializers.GeoFeatureModelSerializer):
-        geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
-        length = serializers.SerializerMethodField(read_only=True)
-        pictures = serializers.ReadOnlyField(source='serializable_pictures_mobile')
+
+    class TrekBaseSerializer(geo_serializers.GeoFeatureModelSerializer):
         cities = serializers.SerializerMethodField(read_only=True)
         districts = serializers.SerializerMethodField(read_only=True)
+        length = serializers.SerializerMethodField(read_only=True)
         departure_city = serializers.SerializerMethodField(read_only=True)
+
+        def get_cities(self, obj):
+            qs = City.objects.all()
+            cities = qs.filter(geom__intersects=(obj.geom, 0))
+            return cities.values_list('code', flat=True)
+
+        def get_departure_city(self, obj):
+            qs = City.objects.all()
+            if obj.start_point:
+                city = qs.filter(geom__covers=(obj.start_point, 0)).first()
+                if city:
+                    return city.code
+            return None
+
+        def get_length(self, obj):
+            return round(obj.length_2d_m, 1)
+
+        def get_districts(self, obj):
+            qs = District.objects.all()
+            districts = qs.filter(geom__intersects=(obj.geom, 0))
+            return [district.pk for district in districts]
+
+        class Meta:
+            model = trekking_models.Trek
+            id_field = 'pk'
+            geo_field = 'geometry'
+
+
+    class TrekDetailSerializer(TrekBaseSerializer):
+        geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
+        pictures = serializers.ReadOnlyField(source='serializable_pictures_mobile')
         arrival_city = serializers.SerializerMethodField(read_only=True)
         information_desks = serializers.SerializerMethodField()
         parking_location = serializers.SerializerMethodField(read_only=True)
@@ -59,24 +88,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 return None
             return obj.parking_location.transform(settings.API_SRID, clone=True).coords
 
-        def get_cities(self, obj):
-            qs = City.objects.all()
-            cities = qs.filter(geom__intersects=(obj.geom, 0))
-            return [city.code for city in cities]
-
-        def get_districts(self, obj):
-            qs = District.objects.all()
-            districts = qs.filter(geom__intersects=(obj.geom, 0))
-            return [district.id for district in districts]
-
-        def get_departure_city(self, obj):
-            qs = City.objects.all()
-            if obj.start_point:
-                city = qs.filter(geom__covers=(obj.start_point, 0)).first()
-                if city:
-                    return city.code
-            return None
-
         def get_arrival_city(self, obj):
             qs = City.objects.all()
             if obj.start_point:
@@ -84,9 +95,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 if city:
                     return city.code
             return None
-
-        def get_length(self, obj):
-            return round(obj.length_2d_m, 1)
 
         def get_geometry(self, obj):
             return obj.geom2d_transformed
@@ -100,10 +108,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         def get_profile(self, obj):
             return os.path.join("/", str(obj.pk), settings.MEDIA_URL.lstrip('/'), obj.get_elevation_chart_url_png())
 
-        class Meta:
-            model = trekking_models.Trek
-            id_field = 'pk'
-            geo_field = 'geometry'
+        class Meta(TrekBaseSerializer.Meta):
             auto_bbox = True
             fields = (
                 'id', 'pk', 'name', 'slug', 'accessibilities', 'description_teaser', 'cities', 'profile',
@@ -114,40 +119,13 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'points_reference', 'districts'
             )
 
-    class TrekListSerializer(geo_serializers.GeoFeatureModelSerializer):
+    class TrekListSerializer(TrekBaseSerializer):
         first_picture = serializers.ReadOnlyField(source='resized_picture_mobile')
-        length = serializers.SerializerMethodField(read_only=True)
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='start_point', )
-        cities = serializers.SerializerMethodField(read_only=True)
-        departure_city = serializers.SerializerMethodField(read_only=True)
-        districts = serializers.SerializerMethodField(read_only=True)
 
-        def get_cities(self, obj):
-            qs = City.objects.all()
-            cities = qs.filter(geom__intersects=(obj.geom, 0))
-            return [city.code for city in cities]
-
-        def get_districts(self, obj):
-            qs = District.objects.all()
-            districts = qs.filter(geom__intersects=(obj.geom, 0))
-            return [district.id for district in districts]
-
-        def get_departure_city(self, obj):
-            qs = City.objects.all()
-            if obj.start_point:
-                city = qs.filter(geom__covers=(obj.start_point, 0)).first()
-                if city:
-                    return city.code
-            return None
-
-        def get_length(self, obj):
-            return round(obj.length_2d_m, 1)
-
-        class Meta:
-            model = trekking_models.Trek
-            id_field = 'pk'
-            geo_field = 'geometry'
+        class Meta(TrekBaseSerializer.Meta):
             fields = (
                 'id', 'pk', 'first_picture', 'name', 'departure', 'accessibilities', 'route', 'departure_city',
-                'difficulty', 'practice', 'themes', 'length', 'geometry', 'districts', 'cities', 'duration', 'ascent', 'descent',
+                'difficulty', 'practice', 'themes', 'length', 'geometry', 'districts', 'cities', 'duration', 'ascent',
+                'descent',
             )
