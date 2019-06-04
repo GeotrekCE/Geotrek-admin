@@ -245,5 +245,5 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(event.type, type)
         self.assertEqual(Attachment.objects.count(), 9)
         self.assertEqual(Attachment.objects.first().content_object, event)
-        self.assertEqual(event.begin_date, date(2019, 6, 1))
-        self.assertEqual(event.end_date, date(2019, 6, 2))
+        self.assertEqual(event.begin_date, date(2100, 6, 1))
+        self.assertEqual(event.end_date, date(2100, 6, 2))
