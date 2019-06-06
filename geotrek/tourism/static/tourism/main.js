@@ -84,6 +84,16 @@ $(window).on('entity:view:list', function (e, data) {
 
     // Refresh types by category
     $('#mainfilter #id_category').change(function() {
+        var category = $('#id_category').val()
+        if (category) {
+            $('.categories-filter a').removeClass('btn-warning');
+            $('.categories-filter a[data-category=' + category + ']').addClass('btn-warning');
+        }
+        else{
+            $('.categories-filter a').removeClass('btn-warning');
+            $('.categories-filter a').not('[data-category]').addClass('btn-warning');
+        }
+
         update_touristiccontent_types('1');
         update_touristiccontent_types('2');
     });
