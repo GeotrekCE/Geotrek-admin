@@ -25,7 +25,8 @@ class ReportViewsetMailSend(TestCase):
             })
 
         self.assertEqual(len(mail.outbox), 2)
-        self.assertEqual(mail.outbox[1].subject, "Acknowledgment of feedback email")
+        self.assertEqual(mail.outbox[1].subject, "Geotrek : Signal a mistake")
+        self.assertIn("We acknowledge receipt of your feedback", mail.outbox[1].body)
         self.assertEqual(mail.outbox[1].from_email, settings.DEFAULT_FROM_EMAIL)
 
 

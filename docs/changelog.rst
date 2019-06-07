@@ -12,6 +12,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix missing pictograms for mobile app
+- Translate feedback acknoledgment email
 
 
 2.27.12 (2019-07-22)
