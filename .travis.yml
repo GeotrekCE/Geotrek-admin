@@ -43,7 +43,7 @@ script:
   - if [[ $ACTION == deploy || $ACTION == integration ]]; then make load_demo; fi
   - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
   - if [[ $ACTION == integration ]]; then make test_export host=localhost port=80; fi
-  - if [[ $ACTION == test ]]; then ./bin/coverage run ./bin/django test geotrek; fi
+  - if [[ $ACTION == test ]]; then ./bin/coverage run ./bin/django test geotrek ./bin/django test geotrek --settings=geotrek.settings.tests_without_dynamic_segmentation; fi
   - if [[ $ACTION == test ]]; then make test_js; fi
 after_success:
   # Report coverage results to coveralls.io
