@@ -63,15 +63,19 @@ class POIViewsTest(CommonTest):
     userfactory = TrekkingManagerFactory
 
     def get_good_data(self):
-        PathFactory.create()
-        return {
+        good_data = {
             'name_fr': 'test',
             'name_en': 'test',
             'description_fr': 'ici',
             'description_en': 'here',
             'type': POITypeFactory.create().pk,
-            'topology': '{"lat": 5.1, "lng": 6.6}',
         }
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            PathFactory.create()
+            good_data['topology'] = '{"lat": 5.1, "lng": 6.6}'
+        else:
+            good_data['geom'] = 'POINT(5.1 6.6)'
+        return good_data
 
     def test_status_only_review(self):
         element_not_published = self.modelfactory.create()
@@ -86,12 +90,17 @@ class POIViewsTest(CommonTest):
     def test_empty_topology(self):
         self.login()
         data = self.get_good_data()
-        data['topology'] = ''
-
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            data['topology'] = ''
+        else:
+            data['geom'] = ''
         response = self.client.post(self.model.get_add_url(), data)
         self.assertEqual(response.status_code, 200)
         form = self.get_form(response)
-        self.assertEqual(form.errors, {'topology': [u'Topology is empty.']})
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            self.assertEqual(form.errors, {'topology': [u'Topology is empty.']})
+        else:
+            self.assertEqual(form.errors, {'geom': [u'No geometry value provided.']})
 
     def test_listing_number_queries(self):
         self.login()
@@ -114,95 +123,6 @@ class POIViewsTest(CommonTest):
             self.assertTrue(0 < nb_queries < 100, '%s queries !' % nb_queries)
 
         settings.DEBUG = False
-
-
-class POIJSONDetailTest(TrekkingManagerTest):
-    def setUp(self):
-        self.login()
-
-        polygon = 'SRID=%s;MULTIPOLYGON(((700000 6600000, 700000 6600003, 700003 6600003, 700003 6600000, 700000 6600000)))' % settings.SRID
-        self.city = CityFactory(geom=polygon)
-        self.district = DistrictFactory(geom=polygon)
-
-        self.poi = POIFactory.create(published=True)
-
-        self.attachment = AttachmentFactory.create(content_object=self.poi,
-                                                   attachment_file=get_dummy_uploaded_image())
-
-        self.touristic_content = tourism_factories.TouristicContentFactory(
-            geom='SRID=%s;POINT(700001 6600001)' % settings.SRID, published=True)
-        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID,
-                                                  published=False)  # not published
-        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID,
-                                                  published=True).delete()  # deleted
-        tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(701000 6601000)' % settings.SRID,
-                                                  published=True)  # too far
-        self.touristic_event = tourism_factories.TouristicEventFactory(
-            geom='SRID=%s;POINT(700002 6600002)' % settings.SRID, published=True)
-        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(700002 6600002)' % settings.SRID,
-                                                published=False)  # not published
-        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(700002 6600002)' % settings.SRID,
-                                                published=True).delete()  # deleted
-        tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(702000 6602000)' % settings.SRID,
-                                                published=True)  # too far
-
-        self.pk = self.poi.pk
-        url = '/api/en/pois/%s.json' % self.pk
-        self.response = self.client.get(url)
-        self.result = json.loads(self.response.content)
-
-    def test_name(self):
-        self.assertEqual(self.result['name'],
-                         self.poi.name)
-
-    def test_slug(self):
-        self.assertEqual(self.result['slug'],
-                         self.poi.slug)
-
-    def test_published(self):
-        self.assertEqual(self.result['published'], True)
-
-    def test_published_status(self):
-        self.assertDictEqual(self.result['published_status'][0],
-                             {u'lang': u'en', u'status': True, u'language': u'English'})
-
-    def test_type(self):
-        self.assertDictEqual(self.result['type'],
-                             {'id': self.poi.type.pk,
-                              'label': self.poi.type.label,
-                              'pictogram': os.path.join(settings.MEDIA_URL, self.poi.type.pictogram.name),
-                              })
-
-    def test_altimetry(self):
-        self.assertEqual(self.result['min_elevation'], 0.0)
-
-    def test_cities(self):
-        self.assertEqual(self.result['cities'], [])
-
-    def test_districts(self):
-        self.assertDictEqual(self.result['districts'][0],
-                             {u"id": self.district.id,
-                              u"name": self.district.name})
-
-    def test_related_urls(self):
-        self.assertEqual(self.result['map_image_url'],
-                         '/image/poi-%s.png' % self.pk)
-        self.assertEqual(self.result['filelist_url'],
-                         '/paperclip/get/trekking/poi/%s/' % self.pk)
-
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
-    def test_touristic_contents(self):
-        self.assertEqual(len(self.result['touristic_contents']), 1)
-        self.assertDictEqual(self.result['touristic_contents'][0], {
-            u'id': self.touristic_content.pk,
-            u'category_id': self.touristic_content.prefixed_category_id})
-
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
-    def test_touristic_events(self):
-        self.assertEqual(len(self.result['touristic_events']), 1)
-        self.assertDictEqual(self.result['touristic_events'][0], {
-            u'id': self.touristic_event.pk,
-            u'category_id': 'E'})
 
 
 class TrekViewsTest(CommonTest):
@@ -679,16 +599,6 @@ class TrekJSONDetailTest(TrekJSONSetUp):
                               u'title': self.attachment.title,
                               u'legend': self.attachment.legend,
                               u'author': self.attachment.author})
-
-    def test_cities(self):
-        self.assertDictEqual(self.result['cities'][0],
-                             {u"code": self.city.code,
-                              u"name": self.city.name})
-
-    def test_districts(self):
-        self.assertDictEqual(self.result['districts'][0],
-                             {u"id": self.district.id,
-                              u"name": self.district.name})
 
     def test_networks(self):
         self.assertDictEqual(self.result['networks'][0],

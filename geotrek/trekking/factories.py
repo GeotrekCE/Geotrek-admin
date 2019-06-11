@@ -100,6 +100,7 @@ class TrekFactory(TopologyFactory):
     route = factory.SubFactory(RouteFactory)
     difficulty = factory.SubFactory(DifficultyLevelFactory)
     practice = factory.SubFactory(PracticeFactory)
+    geom = 'SRID=2154;LINESTRING (700000 6600000, 700100 6600100)'
 
     @factory.post_generation
     def sources(obj, create, extracted=None, **kwargs):
@@ -206,6 +207,7 @@ class POIFactory(PointTopologyFactory):
     description = factory.Sequence(lambda n: u"<p>description %s</p>" % n)
     type = factory.SubFactory(POITypeFactory)
     published = True
+    geom = 'SRID=2154;POINT (700000 6600000)'
 
 
 class ServiceTypeFactory(factory.DjangoModelFactory):

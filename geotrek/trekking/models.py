@@ -702,7 +702,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
             qs = cls.overlapping(topology)
             qs = cls.exclude_pois(qs, topology)
         else:
-            area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
+            area = topology.geom.transform(settings.SRID, clone=True).buffer(settings.TREK_POI_INTERSECTION_MARGIN)
             qs = cls.objects.existing().filter(geom__intersects=area)
             qs = cls.exclude_pois(qs, topology)
         return qs

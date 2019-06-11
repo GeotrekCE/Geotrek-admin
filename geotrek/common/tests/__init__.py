@@ -25,7 +25,10 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
     api_prefix = '/api/en/'
 
     def get_bad_data(self):
-        return {'topology': 'doh!'}, _(u'Topology is not valid.')
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            return {'topology': 'doh!'}, _(u'Topology is not valid.')
+        else:
+            return {'geom': 'doh!'}, _(u'Invalid geometry value.')
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_structure_is_set(self):
