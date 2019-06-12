@@ -5,9 +5,14 @@ python:
 
 env:
   - ACTION=test
+  - ACTION=test_nds
   - ACTION=deploy
   - ACTION=integration
   - ACTION=codestyle
+
+stages:
+  - test
+  - coverage
 
 matrix:
   allow_failures:
@@ -32,7 +37,7 @@ before_install:
 install:
   - if [[ $ACTION != codestyle ]]; then deactivate; fi
   - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
-  - if [[ $ACTION == test ]]; then ./install.sh --tests --noinput; fi
+  - if [[ $ACTION == test || $ACTION == test_nds]]; then ./install.sh --tests --noinput; fi
   - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput; fi
   # Don't bind redis-server on IPv6 address
   - sudo sed -i 's/^bind.*$/bind 127.0.0.1/' /etc/redis/redis.conf; sudo service redis-server restart;
@@ -44,8 +49,9 @@ script:
   - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
   - if [[ $ACTION == integration ]]; then make test_export host=localhost port=80; fi
   - if [[ $ACTION == test ]]; then ./bin/coverage run -a ./bin/django test geotrek; fi
-  - if [[ $ACTION == test ]]; then ./bin/coverage run -a ./bin/django test geotrek --settings=geotrek.settings.tests_without_dynamic_segmentation; fi
-  - if [[ $ACTION == test ]]; then make test_js; fi
+  - if [[ $ACTION == test_nds ]]; then ./bin/coverage run -a ./bin/django test geotrek --settings=geotrek.settings.tests_without_dynamic_segmentation; fi
+  - if [[ $ACTION == test || $ACTION == test_nds]]; then make test_js; fi
+
 after_success:
   # Report coverage results to coveralls.io
   - if [[ $ACTION == test ]]; then ./bin/coverage report -m; fi
@@ -60,3 +66,20 @@ after_failure:
   - sudo cat /var/log/nginx/geotrek_error.log
   - cat /var/log/supervisord.log
   - cat /var/log/geotrek.log
+
+jobs:
+  include:
+    - stage: coverage
+
+      env: ACTION=none
+
+      install: skip
+
+      before_script: skip
+
+      script: skip
+
+      after_success:
+        - ./bin/coverage report -m;
+        - sudo pip install coveralls;
+        - coveralls;
