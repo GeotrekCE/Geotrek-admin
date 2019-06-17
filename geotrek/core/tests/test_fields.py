@@ -60,7 +60,7 @@ class SnappedLineStringFieldTest(TestCase):
                        srid=settings.SRID), 0.1))
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TopologyFieldTest(TestCase):
     def setUp(self):
         self.f = TopologyField()
