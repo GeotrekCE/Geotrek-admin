@@ -1,7 +1,6 @@
 import json
 import math
-
-from django.test import tag
+from unittest import skipIf
 
 from django.test import TestCase
 from django.conf import settings
@@ -24,7 +23,7 @@ def dictfetchall(cursor):
     ]
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TopologyTest(TestCase):
 
     def test_geom_null_is_safe(self):
@@ -156,7 +155,7 @@ class TopologyTest(TestCase):
         self.assertEqual(closest, path_normal)
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TopologyDeletionTest(TestCase):
 
     def test_deleted_is_hidden_but_still_exists(self):
@@ -188,7 +187,7 @@ class TopologyDeletionTest(TestCase):
         self.assertTrue(topology.deleted)
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TopologyMutateTest(TestCase):
 
     def test_mutate(self):
@@ -230,7 +229,7 @@ class TopologyMutateTest(TestCase):
         self.assertEqual(len(topology2.paths.all()), 3)
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TopologyPointTest(TestCase):
 
     def test_point_geom_3d(self):
@@ -397,7 +396,7 @@ class TopologyPointTest(TestCase):
         self.assertTrue(almostequal(father.geom.y, 600))
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TopologyLineTest(TestCase):
 
     def test_topology_geom(self):
@@ -538,7 +537,7 @@ class TopologyLineTest(TestCase):
         self.assertEqual(t2_agg.end_position, 0.25)
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TopologyCornerCases(TestCase):
     def test_opposite_paths(self):
         """
@@ -630,7 +629,7 @@ class TopologyCornerCases(TestCase):
                                                (7.5, 0), srid=settings.SRID))
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TopologyLoopTests(TestCase):
     def test_simple_loop(self):
         """
@@ -761,7 +760,7 @@ class TopologyLoopTests(TestCase):
         self.assertEqual(topo.geom, LineString((22.0, 0.0), (20.0, 0.0), (10.0, 0.0), (9.0, 0.0), srid=settings.SRID))
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TopologySerialization(TestCase):
     def test_serialize_line(self):
         path = PathFactory.create()
@@ -832,7 +831,7 @@ class TopologySerialization(TestCase):
         self.assertEqual(len(field), 2)
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TopologyDerialization(TestCase):
     def test_deserialize_foreignkey(self):
         topology = TopologyFactory.create(offset=1, no_path=True)
@@ -911,7 +910,7 @@ class TopologyDerialization(TestCase):
         self.assertTrue(almostequal(end_before, end_after), '%s != %s' % (end_before, end_after))
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TopologyOverlappingTest(TestCase):
 
     def setUp(self):
