@@ -1,6 +1,6 @@
 import json
 
-from django.test import TestCase
+from django.test import TestCase, tag
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import LineString
 from django.core.urlresolvers import reverse
@@ -10,6 +10,7 @@ from geotrek.core.graph import graph_edges_nodes_of_qs
 from geotrek.core.models import Path
 
 
+@tag('dynamic_segmentation')
 class SimpleGraph(TestCase):
 
     def setUp(self):

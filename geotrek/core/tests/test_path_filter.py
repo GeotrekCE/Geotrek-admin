@@ -1,6 +1,7 @@
 import json
 
 from django.core.urlresolvers import reverse
+from django.test import tag
 
 from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.authent.factories import PathManagerFactory
@@ -9,6 +10,7 @@ from geotrek.core.models import Path
 from geotrek.core.factories import PathFactory
 
 
+@tag('dynamic_segmentation')
 class PathFilterTest(AuthentFixturesTest):
 
     def test_paths_bystructure(self):

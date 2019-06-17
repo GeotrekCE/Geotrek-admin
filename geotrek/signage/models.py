@@ -84,7 +84,12 @@ class Signage(MapEntityMixin, BaseInfrastructure):
 
     @classmethod
     def topology_signages(cls, topology):
-        return cls.overlapping(topology)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            qs = cls.overlapping(topology)
+        else:
+            area = topology.geom.buffer(settings.TREK_SIGNAGE_INTERSECTION_MARGIN)
+            qs = cls.objects.existing().filter(geom__intersects=area)
+        return qs
 
     @classmethod
     def published_topology_signages(cls, topology):
@@ -122,7 +127,7 @@ class Signage(MapEntityMixin, BaseInfrastructure):
 
 
 Path.add_property('signages', lambda self: Signage.path_signages(self), _(u"Signages"))
-Topology.add_property('signages', lambda self: Signage.topology_signages(self), _(u"Signages"))
+Topology.add_property('signages', Signage.topology_signages, _(u"Signages"))
 Topology.add_property('published_signages', lambda self: Signage.published_topology_signages(self),
                       _(u"Published Signages"))
 

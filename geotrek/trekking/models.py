@@ -698,21 +698,14 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
 
     @classmethod
     def topology_pois(cls, topology):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            qs = cls.overlapping(topology)
-            qs = cls.exclude_pois(qs, topology)
-        else:
-            area = topology.geom.transform(settings.SRID, clone=True).buffer(settings.TREK_POI_INTERSECTION_MARGIN)
-            qs = cls.objects.existing().filter(geom__intersects=area)
-            qs = cls.exclude_pois(qs, topology)
-        return qs
+        return cls.exclude_pois(cls.topology_all_pois(topology), topology)
 
     @classmethod
     def topology_all_pois(cls, topology):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             qs = cls.overlapping(topology)
         else:
-            area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
+            area = topology.geom.transform(settings.SRID, clone=True).buffer(settings.TREK_POI_INTERSECTION_MARGIN)
             qs = cls.objects.existing().filter(geom__intersects=area)
         return qs
 

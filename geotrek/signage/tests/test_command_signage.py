@@ -3,6 +3,7 @@ import mock
 import sys
 from StringIO import StringIO
 
+from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
 from django.core.management.base import CommandError
@@ -126,9 +127,14 @@ class InfrastructureCommandTest(TestCase):
         StructureFactory.create(name='structure')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'line.geojson')
         output = StringIO()
-        with self.assertRaises(IndexError):
-            call_command('loadsignage', filename, type_default='label', name_default='name',
-                         stdout=output)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            with self.assertRaises(IndexError):
+                call_command('loadsignage', filename, type_default='label', name_default='name',
+                             stdout=output)
+        else:
+            with self.assertRaises(TypeError):
+                call_command('loadsignage', filename, type_default='label', name_default='name',
+                             stdout=output)
         self.assertIn('An error occured, rolling back operations.', output.getvalue())
         self.assertEqual(Signage.objects.count(), 0)
 

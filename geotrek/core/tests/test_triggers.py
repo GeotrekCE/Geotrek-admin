@@ -1,9 +1,10 @@
-from django.test import TestCase
+from django.test import TestCase, tag
 from django.contrib.gis.geos import LineString
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.contrib.gis.geos import fromstr
 
 
+@tag('dynamic_segmentation')
 class SmartMakelineTest(TestCase):
 
     def smart_makeline(self, lines):

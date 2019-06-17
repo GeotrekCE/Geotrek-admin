@@ -221,6 +221,45 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
             Polygon(((3, 3), (9, 3), (9, 9), (3, 9), (3, 3)))))
         self.assertItemsEqual(trek.districts, [d1, d2])
 
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    def test_helpers(self):
+        trek = TrekFactory.create(geom=LineString((2, 2), (8, 8)))
+        poi = POIFactory.create(geom=Point(2.4, 2.4))
+        poi2 = POIFactory.create(geom=Point(2.4, 2.4))
+        service = ServiceFactory.create(geom=Point(2.8, 2.8))
+        service.type.practices.add(trek.practice)
+        trek.pois_excluded.add(poi2.pk)
+
+        # /!\ District are automatically linked to paths at DB level
+        d1 = DistrictFactory.create(geom=MultiPolygon(
+            Polygon(((-2, -2), (3, -2), (3, 3), (-2, 3), (-2, -2)))))
+        # Ensure related objects are accessible
+        self.assertItemsEqual(trek.pois_excluded.all(), [poi2])
+        self.assertItemsEqual(trek.all_pois, [poi, poi2])
+        self.assertItemsEqual(trek.pois, [poi])
+        self.assertItemsEqual(trek.services, [service])
+        self.assertItemsEqual(poi.treks, [trek])
+        self.assertItemsEqual(service.treks, [trek])
+        self.assertItemsEqual(trek.districts, [d1])
+
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    def test_deleted_pois(self):
+        trek = TrekFactory.create(geom=LineString((0, 0), (4, 4)))
+        poi = POIFactory.create(geom=Point(2.4, 2.4, srid=4326))
+        self.assertItemsEqual(trek.pois, [poi])
+        poi.delete()
+        self.assertItemsEqual(trek.pois, [])
+
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    def test_deleted_services(self):
+        trek = TrekFactory.create(geom=LineString((0, 0), (4, 4)))
+        service = ServiceFactory.create(geom=Point(2.4, 2.4, srid=4326))
+        service.type.practices.add(trek.practice)
+        self.assertItemsEqual(trek.services, [service])
+        service.delete()
+        self.assertItemsEqual(trek.services, [])
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_deleted_pois(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
         trek = TrekFactory.create(no_path=True)
@@ -231,6 +270,7 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         poi.delete()
         self.assertItemsEqual(trek.pois, [])
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_deleted_services(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
         trek = TrekFactory.create(no_path=True)
@@ -266,11 +306,38 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         pois = self.trek_reverse.pois
         self.assertEqual([self.poi3, self.poi1, self.poi2], list(pois))
 
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    def test_pois_is_not_ordered_by_progression(self):
+        self.trek = TrekFactory.create(geom=LineString((0, 0), (8, 8)))
+
+        self.trek_reverse = TrekFactory.create(geom=LineString((6.4, 6.4), (0.8, 0.8)))
+
+        self.poi1 = POIFactory.create(geom=Point(3.2, 3.2))
+        self.poi2 = POIFactory.create(geom=Point(1.2, 1.2))
+        self.poi3 = POIFactory.create(geom=Point(4, 4))
+
+        pois = self.trek.pois
+        self.assertEqual([self.poi1, self.poi2, self.poi3], list(pois))
+        pois = self.trek_reverse.pois
+        self.assertEqual([self.poi1, self.poi2, self.poi3], list(pois))
+
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_city_departure(self):
         trek = TrekFactory.create(no_path=True)
         p1 = PathFactory.create(geom=LineString((0, 0), (5, 5)))
         trek.add_path(p1)
+        self.assertEqual(trek.city_departure, '')
+
+        city1 = CityFactory.create(geom=MultiPolygon(Polygon(((-1, -1), (3, -1), (3, 3),
+                                                              (-1, 3), (-1, -1)))))
+        city2 = CityFactory.create(geom=MultiPolygon(Polygon(((3, 3), (9, 3), (9, 9),
+                                                              (3, 9), (3, 3)))))
+        self.assertEqual([city for city in trek.cities], [city1, city2])
+        self.assertEqual(trek.city_departure, unicode(city1))
+
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    def test_city_departure(self):
+        trek = TrekFactory.create(geom=LineString((0, 0), (5, 5)))
         self.assertEqual(trek.city_departure, '')
 
         city1 = CityFactory.create(geom=MultiPolygon(Polygon(((-1, -1), (3, -1), (3, 3),

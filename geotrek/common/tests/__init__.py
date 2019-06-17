@@ -30,7 +30,6 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         else:
             return {'geom': 'doh!'}, _(u'Invalid geometry value.')
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_structure_is_set(self):
         if not hasattr(self.model, 'structure'):
             return

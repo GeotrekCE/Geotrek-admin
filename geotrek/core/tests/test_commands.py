@@ -3,7 +3,7 @@ from StringIO import StringIO
 from django.contrib.gis.geos import LineString
 from django.core.management import call_command
 from django.core.management.base import CommandError
-from django.test import TestCase, override_settings
+from django.test import TestCase, override_settings, tag
 from django.db import IntegrityError
 
 from geotrek.authent.models import Structure
@@ -12,6 +12,7 @@ from geotrek.trekking.factories import POIFactory
 import os
 
 
+@tag('dynamic_segmentation')
 class RemoveDuplicatePathTest(TestCase):
     def setUp(self):
         geom_1 = LineString((0, 0), (1, 0), (2, 0))
@@ -102,6 +103,7 @@ class RemoveDuplicatePathTest(TestCase):
                       output.getvalue())
 
 
+@tag('dynamic_segmentation')
 class LoadPathsCommandTest(TestCase):
     def setUp(self):
         self.filename = os.path.join(os.path.dirname(__file__), 'data', 'paths.geojson')

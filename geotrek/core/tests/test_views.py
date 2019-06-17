@@ -9,7 +9,7 @@ from django.contrib.auth.models import Permission
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.contrib.gis.geos import LineString, Point, Polygon, MultiPolygon
-from django.test import TestCase
+from django.test import TestCase, tag
 
 from mapentity.factories import UserFactory
 
@@ -30,6 +30,7 @@ from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, Com
 from geotrek.zoning.factories import CityFactory
 
 
+@tag('dynamic_segmentation')
 class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
     def setUp(self):
         self.login()
@@ -86,6 +87,7 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         self.assertEqual(Path.objects.filter(pk__in=[path_1.pk, path_2.pk]).count(), 0)
 
 
+@tag('dynamic_segmentation')
 class PathViewsTest(CommonTest):
     model = Path
     modelfactory = PathFactory
@@ -182,7 +184,7 @@ class PathViewsTest(CommonTest):
 
     def test_basic_format(self):
         self.modelfactory.create()
-        self.modelfactory.create(name=u"ãéè")
+        l = self.modelfactory.create(name=u"ãéè")
         super(CommonTest, self).test_basic_format()
 
     def test_path_form_is_not_valid_if_no_geometry_provided(self):
@@ -354,6 +356,7 @@ class PathViewsTest(CommonTest):
         self.logout()
 
 
+@tag('dynamic_segmentation')
 class PathKmlGPXTest(TestCase):
     def setUp(self):
         super(PathKmlGPXTest, self).setUp()
@@ -380,6 +383,7 @@ class PathKmlGPXTest(TestCase):
         self.assertEqual(self.kml_response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
 
+@tag('dynamic_segmentation')
 class DenormalizedTrailTest(AuthentFixturesTest):
     def setUp(self):
         self.trail1 = TrailFactory(no_path=True)
@@ -405,20 +409,25 @@ class DenormalizedTrailTest(AuthentFixturesTest):
             self.client.get(reverse('core:path_json_list'))
 
 
+@tag('dynamic_segmentation')
 class TrailViewsTest(CommonTest):
     model = Trail
     modelfactory = TrailFactory
     userfactory = PathManagerFactory
 
     def get_good_data(self):
-        path = PathFactory.create()
-        return {
-            'name': 't',
-            'departure': 'Below',
-            'arrival': 'Above',
-            'comments': 'No comment',
-            'topology': '{"paths": [%s]}' % path.pk,
+        good_data = {
+                'name': 't',
+                'departure': 'Below',
+                'arrival': 'Above',
+                'comments': 'No comment'
         }
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            path = PathFactory.create()
+            good_data['topology'] = '{"paths": [%s]}' % path.pk
+        else:
+            good_data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
+        return good_data
 
     def test_detail_page(self):
         self.login()
@@ -462,6 +471,7 @@ class TrailViewsTest(CommonTest):
         self.assertIn(trail, new_trail.trails.all())
 
 
+@tag('dynamic_segmentation')
 class TrailKmlGPXTest(TestCase):
     def setUp(self):
         super(TrailKmlGPXTest, self).setUp()
@@ -488,6 +498,7 @@ class TrailKmlGPXTest(TestCase):
         self.assertEqual(self.kml_response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
 
+@tag('dynamic_segmentation')
 class RemovePathKeepTopology(TestCase):
     def test_remove_poi(self):
         """

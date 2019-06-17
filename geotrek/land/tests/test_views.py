@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, tag
 
 from geotrek.common.tests import CommonTest
 from geotrek.authent.factories import PathManagerFactory
@@ -12,6 +12,7 @@ from geotrek.land.factories import (PhysicalEdgeFactory, LandEdgeFactory,
                                     LandTypeFactory)
 
 
+@tag('dynamic_segmentation')
 class EdgeHelperTest(TestCase):
 
     factory = None

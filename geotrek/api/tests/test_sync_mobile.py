@@ -377,8 +377,12 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
                                 skip_tiles=True, verbosity=2, stdout=output)
         with open(os.path.join('tmp', 'en', str(self.trek_1.pk), 'pois.geojson'), 'r') as f:
             trek_geojson = json.load(f)
-            self.assertEqual(len(trek_geojson['features']), 2)
-
+            if settings.TREKKING_TOPOLOGY_ENABLED:
+                self.assertEqual(len(trek_geojson['features']), 2)
+            else:
+                # Without dynamic segmentation it used a buffer so we get all the pois normally linked
+                # with the other treks.
+                self.assertEqual(len(trek_geojson['features']), 6)
         self.assertIn('en/{pk}/pois.geojson'.format(pk=str(self.trek_1.pk)), output.getvalue())
 
     def test_medias_treks(self):

@@ -43,9 +43,7 @@ class InterventionViewsTest(CommonTest):
         ]), u'This field is required.'
 
     def get_good_data(self):
-        InterventionStatusFactory.create()  # in case not any in db
-        path = PathFactory.create()
-        return {
+        good_data = {
             'name': 'test',
             'date': '2012-08-23',
             'disorders': InterventionDisorderFactory.create().pk,
@@ -61,7 +59,6 @@ class InterventionViewsTest(CommonTest):
             'status': InterventionStatus.objects.all()[0].pk,
             'heliport_cost': 0.0,
             'material_cost': 0.0,
-            'topology': '{"paths": [%s]}' % path.pk,
 
             'manday_set-TOTAL_FORMS': '2',
             'manday_set-INITIAL_FORMS': '0',
@@ -77,6 +74,13 @@ class InterventionViewsTest(CommonTest):
             'manday_set-1-id': '',
             'manday_set-1-DELETE': '',
         }
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            InterventionStatusFactory.create()  # in case not any in db
+            path = PathFactory.create()
+            good_data['topology'] = '{"paths": [%s]}' % path.pk,
+        else:
+            good_data['topology'] = 'POINT(5.1 6.6)'
+        return good_data
 
     def test_creation_form_on_signage(self):
         self.login()
@@ -292,34 +296,6 @@ class InterventionViewsTest(CommonTest):
         SignageInterventionFactory.create()
         super(InterventionViewsTest, self).test_no_html_in_csv()
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
-    def test_no_html_in_csv(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            InfrastructureInterventionFactory.create()
-            super(InterventionViewsTest, self).test_no_html_in_csv()
-        else:
-            return
-
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-    def test_basic_format(self):
-        pass
-
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-    def test_api_list_for_model(self):
-        pass
-
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-    def test_api_geojson_list_for_model(self):
-        pass
-
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-    def test_api_geojson_detail_for_model(self):
-        pass
-
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-    def test_api_detail_for_model(self):
-        pass
-
     def test_structurerelated_not_loggedin(self):
         # Test that it does not fail on update if not logged in
         self.client.logout()
@@ -395,7 +371,6 @@ class ProjectViewsTest(CommonTest):
         self.assertEqual(len(features), 1)
         self.assertEqual(features[0]['properties']['pk'], p1.pk)
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_project_bbox_filter(self):
         self.login()
 
@@ -438,32 +413,7 @@ class ProjectViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, intervention.name)
 
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-    def test_no_html_in_csv(self):
-        pass
 
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-    def test_basic_format(self):
-        pass
-
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-    def test_api_list_for_model(self):
-        pass
-
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-    def test_api_geojson_list_for_model(self):
-        pass
-
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-    def test_api_geojson_detail_for_model(self):
-        pass
-
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-    def test_api_detail_for_model(self):
-        pass
-
-
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
 class ExportTest(TranslationResetMixin, TestCase):
 
     def test_shape_mixed(self):

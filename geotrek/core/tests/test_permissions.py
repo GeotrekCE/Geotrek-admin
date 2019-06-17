@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, tag
 from django.contrib.auth.models import Permission
 from django.contrib.gis.geos import LineString
 from django.core.urlresolvers import reverse
@@ -8,6 +8,7 @@ from geotrek.core.factories import PathFactory, ComfortFactory
 from geotrek.core.models import Path
 
 
+@tag('dynamic_segmentation')
 class PermissionDraftPath(TestCase):
 
     def setUp(self):

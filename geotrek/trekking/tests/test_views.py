@@ -139,8 +139,7 @@ class TrekViewsTest(CommonTest):
         ]), u'This field is required.'
 
     def get_good_data(self):
-        path = PathFactory.create()
-        return {
+        good_data = {
             'name_fr': 'Huhu',
             'name_en': 'Hehe',
             'departure_fr': '',
@@ -173,7 +172,6 @@ class TrekViewsTest(CommonTest):
             'accessibilities': AccessibilityFactory.create().pk,
             'web_links': WebLinkFactory.create().pk,
             'information_desks': tourism_factories.InformationDeskFactory.create().pk,
-            'topology': '{"paths": [%s]}' % path.pk,
 
             'trek_relationship_a-TOTAL_FORMS': '2',
             'trek_relationship_a-INITIAL_FORMS': '0',
@@ -192,6 +190,12 @@ class TrekViewsTest(CommonTest):
             'trek_relationship_a-1-is_circuit_step': 'on',
             'pois_excluded': POIFactory.create().pk
         }
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            path = PathFactory.create()
+            good_data['topology'] = '{"paths": [%s]}' % path.pk
+        else:
+            good_data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
+        return good_data
 
     def test_badfield_goodgeom(self):
         self.login()
@@ -471,9 +475,12 @@ class TrekJSONSetUp(TrekkingManagerTest):
             points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
             parking_location=Point(0, 0, srid=settings.SRID)
         )
-        path1 = PathFactory.create(geom='SRID=%s;LINESTRING(0 0, 1 0)' % settings.SRID)
-        self.trek.add_path(path1)
-
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            path1 = PathFactory.create(geom='SRID=%s;LINESTRING(0 0, 1 0)' % settings.SRID)
+            self.trek.add_path(path1)
+        else:
+            self.trek.geom = 'SRID=%s;LINESTRING(0 0, 1 0)' % settings.SRID
+            self.trek.save()
         self.attachment = AttachmentFactory.create(content_object=self.trek,
                                                    attachment_file=get_dummy_uploaded_image())
 
@@ -501,8 +508,24 @@ class TrekJSONSetUp(TrekkingManagerTest):
         self.trek_b = TrekFactory.create(no_path=True,
                                          geom='SRID=%s;POINT(2 2)' % settings.SRID,
                                          published=True)
-        path2 = PathFactory.create(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID)
-        self.trek_b.add_path(path2)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            path2 = PathFactory.create(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID)
+            self.trek_b.add_path(path2)
+            trek2 = TrekFactory(no_path=True, published=False)  # not published
+            trek2.add_path(path2)
+            self.trek3 = TrekFactory(no_path=True, published=True)  # deleted
+            self.trek3.add_path(path2)
+            self.trek3.delete()
+            trek4 = TrekFactory(no_path=True, published=True)  # too far
+            trek4.add_path(PathFactory.create(geom='SRID=%s;LINESTRING(0 2000, 1 2000)' % settings.SRID))
+        else:
+            self.trek_b.geom = 'SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID
+            self.trek_b.save()
+            TrekFactory(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID, published=False)
+            trek3 = TrekFactory(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID, published=True)
+            trek3.delete()
+            TrekFactory(geom='SRID=%s;LINESTRING(0 2000, 1 2000)' % settings.SRID, published=True)  # too far
+
         TrekRelationshipFactory.create(has_common_departure=True,
                                        has_common_edge=False,
                                        is_circuit_step=True,
@@ -525,13 +548,6 @@ class TrekJSONSetUp(TrekkingManagerTest):
                                                 published=True).delete()  # deleted
         tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(2000 2000)' % settings.SRID,
                                                 published=True)  # too far
-        trek2 = TrekFactory(no_path=True, published=False)  # not published
-        trek2.add_path(path2)
-        self.trek3 = TrekFactory(no_path=True, published=True)  # deleted
-        self.trek3.add_path(path2)
-        self.trek3.delete()
-        trek4 = TrekFactory(no_path=True, published=True)  # too far
-        trek4.add_path(PathFactory.create(geom='SRID=%s;LINESTRING(0 2000, 1 2000)' % settings.SRID))
 
         self.parent = TrekFactory.create(published=True, name='Parent')
         self.child1 = TrekFactory.create(published=False, name='Child 1')
@@ -706,7 +722,6 @@ class TrekJSONDetailTest(TrekJSONSetUp):
             u'id': self.touristic_event.pk,
             u'category_id': self.touristic_event.prefixed_category_id})
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_close_treks(self):
         self.assertEqual(len(self.result['treks']), 1)
         self.assertDictEqual(self.result['treks'][0], {
@@ -842,6 +857,7 @@ class TrekGPXTest(TrekkingManagerTest):
         elevation = waypoint.find('ele').string
         self.assertEqual(name, u"%s: %s" % (pois[0].type, pois[0].name))
         self.assertEqual(description, pois[0].description)
+
         self.assertEqual(waypoint['lat'], '46.5003601787')
         self.assertEqual(waypoint['lon'], '3.00052158552')
         self.assertEqual(elevation, '42.0')
@@ -1197,12 +1213,19 @@ class ServiceViewsTest(CommonTest):
     userfactory = TrekkingManagerFactory
 
     def get_good_data(self):
-        PathFactory.create()
-        return {
-            'type': ServiceTypeFactory.create().pk,
-            'topology': '{"lat": 5.1, "lng": 6.6}',
-        }
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            PathFactory.create()
+            return {
+                'type': ServiceTypeFactory.create().pk,
+                'topology': '{"lat": 5.1, "lng": 6.6}',
+            }
+        else:
+            return {
+                'type': ServiceTypeFactory.create().pk,
+                'geom': 'POINT(5.1 6.6)',
+            }
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_empty_topology(self):
         self.login()
         data = self.get_good_data()
@@ -1211,6 +1234,16 @@ class ServiceViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
         form = self.get_form(response)
         self.assertEqual(form.errors, {'topology': [u'Topology is empty.']})
+
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    def test_empty_topology(self):
+        self.login()
+        data = self.get_good_data()
+        data['geom'] = ''
+        response = self.client.post(self.model.get_add_url(), data)
+        self.assertEqual(response.status_code, 200)
+        form = self.get_form(response)
+        self.assertEqual(form.errors, {'geom': [u'No geometry value provided.']})
 
     def test_listing_number_queries(self):
         self.login()

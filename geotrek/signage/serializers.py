@@ -45,12 +45,19 @@ class BladeTypeSerializer(rest_serializers.ModelSerializer):
 class BladeSerializer(rest_serializers.ModelSerializer):
     type = BladeTypeSerializer()
     structure = StructureSerializer()
+    order_lines = rest_serializers.SerializerMethodField(read_only=True)
+
+    def get_order_lines(self, obj):
+        return obj.order_lines.values_list('pk', flat=True)
+
+    # TODO: Fix problem with topology.geom should be possible to use a geom of an other model for the serialization
 
     class Meta:
         model = signage_models.Blade
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
         geo_field = 'geom'
         fields = ('id', 'structure', 'number', 'order_lines', 'type', 'color', 'condition', 'direction')
+        # TODO: Do a lineserializer for order_lines
 
 
 class CSVBladeSerializer(Serializer):
