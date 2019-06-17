@@ -1,4 +1,6 @@
-from django.test import TestCase, tag
+from unittest import skipIf
+
+from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.contrib.gis.geos import LineString
 from django.conf import settings
@@ -7,7 +9,7 @@ from geotrek.core.fields import SnappedLineStringField, TopologyField
 from geotrek.core.factories import PathFactory
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class SnappedLineStringFieldTest(TestCase):
     def setUp(self):
         self.f = SnappedLineStringField()

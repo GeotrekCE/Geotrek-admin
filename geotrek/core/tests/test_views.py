@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import re
+from unittest import skipIf
 
 import mock
 from bs4 import BeautifulSoup
@@ -9,7 +10,7 @@ from django.contrib.auth.models import Permission
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.contrib.gis.geos import LineString, Point, Polygon, MultiPolygon
-from django.test import TestCase, tag
+from django.test import TestCase
 
 from mapentity.factories import UserFactory
 
@@ -30,7 +31,7 @@ from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, Com
 from geotrek.zoning.factories import CityFactory
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
     def setUp(self):
         self.login()
@@ -87,7 +88,7 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         self.assertEqual(Path.objects.filter(pk__in=[path_1.pk, path_2.pk]).count(), 0)
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathViewsTest(CommonTest):
     model = Path
     modelfactory = PathFactory
@@ -356,7 +357,7 @@ class PathViewsTest(CommonTest):
         self.logout()
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathKmlGPXTest(TestCase):
     def setUp(self):
         super(PathKmlGPXTest, self).setUp()
@@ -383,7 +384,7 @@ class PathKmlGPXTest(TestCase):
         self.assertEqual(self.kml_response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class DenormalizedTrailTest(AuthentFixturesTest):
     def setUp(self):
         self.trail1 = TrailFactory(no_path=True)
@@ -409,7 +410,7 @@ class DenormalizedTrailTest(AuthentFixturesTest):
             self.client.get(reverse('core:path_json_list'))
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TrailViewsTest(CommonTest):
     model = Trail
     modelfactory = TrailFactory
@@ -471,7 +472,7 @@ class TrailViewsTest(CommonTest):
         self.assertIn(trail, new_trail.trails.all())
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TrailKmlGPXTest(TestCase):
     def setUp(self):
         super(TrailKmlGPXTest, self).setUp()
@@ -498,7 +499,7 @@ class TrailKmlGPXTest(TestCase):
         self.assertEqual(self.kml_response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class RemovePathKeepTopology(TestCase):
     def test_remove_poi(self):
         """

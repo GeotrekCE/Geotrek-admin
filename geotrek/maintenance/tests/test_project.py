@@ -122,19 +122,19 @@ class ProjectLandTest(TestCase):
         self.assertIn(self.competencemgt, self.intervention.competence_edges)
         self.assertIn(self.competencemgt, self.project.competence_edges)
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_project_has_city_management(self):
         self.assertIn(self.cityedge, self.intervention.city_edges)
         self.assertIn(self.cityedge, self.project.city_edges)
         self.assertIn(self.cityedge.city, self.project.cities)
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_project_has_district_management(self):
         self.assertIn(self.districtedge, self.intervention.district_edges)
         self.assertIn(self.districtedge, self.project.district_edges)
         self.assertIn(self.districtedge.district, self.project.districts)
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_project_has_restricted_management(self):
         self.assertIn(self.restricted, self.intervention.area_edges)
         self.assertIn(self.restricted, self.project.area_edges)

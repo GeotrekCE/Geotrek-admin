@@ -1,4 +1,7 @@
-from django.test import TestCase, tag
+from unittest import skipIf
+
+from django.conf import settings
+from django.test import TestCase
 
 from geotrek.common.tests import CommonTest
 from geotrek.authent.factories import PathManagerFactory
@@ -12,7 +15,7 @@ from geotrek.land.factories import (PhysicalEdgeFactory, LandEdgeFactory,
                                     LandTypeFactory)
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class EdgeHelperTest(TestCase):
 
     factory = None
