@@ -1,6 +1,6 @@
 from django.conf import settings
-from django.test import TestCase, tag
-from unittest import SkipTest
+from django.test import TestCase
+from unittest import SkipTest, skipIf
 
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.contrib.gis.geos import MultiLineString, LineString
@@ -35,7 +35,7 @@ class ElevationTest(TestCase):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             self.path = Path.objects.create(geom=LineString((78, 117), (3, 17)))
 
-    @tag('dynamic_segmentation')
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_elevation_path(self):
         self.assertEqual(self.path.ascent, 16)
         self.assertEqual(self.path.descent, 0)
@@ -43,7 +43,7 @@ class ElevationTest(TestCase):
         self.assertEqual(self.path.max_elevation, 22)
         self.assertEqual(len(self.path.geom_3d.coords), 7)
 
-    @tag('dynamic_segmentation')
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_elevation_profile(self):
         profile = self.path.get_elevation_profile()
         self.assertEqual(len(profile), 7)
@@ -57,13 +57,13 @@ class ElevationTest(TestCase):
         self.assertEqual(profile[5][3], 20.0)
         self.assertEqual(profile[6][3], 22.0)
 
-    @tag('dynamic_segmentation')
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_elevation_limits(self):
         limits = self.path.get_elevation_limits()
         self.assertEqual(limits[0], 1106)
         self.assertEqual(limits[1], -94)
 
-    @tag('dynamic_segmentation')
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_elevation_topology_line(self):
         topo = TopologyFactory.create(no_path=True)
         topo.add_path(self.path, start=0.2, end=0.8)
@@ -75,7 +75,7 @@ class ElevationTest(TestCase):
         self.assertEqual(topo.max_elevation, 17)
         self.assertEqual(len(topo.geom_3d.coords), 5)
 
-    @tag('no_dynamic_segmentation')
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_elevation_topology_line(self):
         """
         No reason for this changements
@@ -88,20 +88,16 @@ class ElevationTest(TestCase):
         self.assertEqual(topo.max_elevation, 17)
         self.assertEqual(len(topo.geom_3d.coords), 5)
 
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_elevation_topology_point(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            topo = TopologyFactory.create(no_path=True)
-            topo.add_path(self.path, start=0.6, end=0.6)
-            topo.save()
-        else:
-            topo = TopologyFactory.create(geom="SRID=2154;POINT(33 57)")
+        topo = TopologyFactory.create(geom="SRID=2154;POINT(33 57)")
         self.assertEqual(topo.geom_3d.coords[2], 15)
         self.assertEqual(topo.ascent, 0)
         self.assertEqual(topo.descent, 0)
         self.assertEqual(topo.min_elevation, 15)
         self.assertEqual(topo.max_elevation, 15)
 
-    @tag('dynamic_segmentation')
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_elevation_topology_point_offset(self):
         topo = TopologyFactory.create(no_path=True, offset=1)
         topo.add_path(self.path, start=0.5, end=0.5)
@@ -231,7 +227,7 @@ class ElevationAreaTest(TestCase):
         self.assertEqual(extent['altitudes']['min'], 0)
 
 
-@tag('no_dynamic_segmentation')
+@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
 class LengthTest(TestCase):
 
     def setUp(self):
@@ -257,7 +253,7 @@ class LengthTest(TestCase):
         self.assertEqual(round(self.path.length, 9), 83.127128724)
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class SamplingTestPath(TestCase):
     model = Path
     step = settings.ALTIMETRIC_PROFILE_PRECISION
@@ -338,7 +334,7 @@ class SamplingTestPath(TestCase):
         self.assertEqual(len(path.geom_3d.coords), 7)
 
 
-@tag('no_dynamic_segmentation')
+@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
 class SamplingTestTopology(TestCase):
     model = Topology
     step = settings.ALTIMETRIC_PROFILE_PRECISION
