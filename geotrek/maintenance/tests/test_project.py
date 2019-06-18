@@ -13,6 +13,7 @@ from geotrek.zoning.factories import (CityEdgeFactory, DistrictEdgeFactory,
                                       RestrictedAreaEdgeFactory)
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class ProjectTest(TestCase):
     def test_helpers(self):
         i1 = InterventionFactory.create()
@@ -83,6 +84,7 @@ class ProjectTest(TestCase):
         self.assertEquals(proj.infrastructures, [])
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class ProjectLandTest(TestCase):
     def setUp(self):
         self.intervention = InterventionFactory.create()

@@ -1,5 +1,6 @@
 from django import forms
 from django.conf import settings
+from django.contrib.gis.forms.fields import GeometryField
 from django.forms import FloatField
 from django.utils.translation import ugettext_lazy as _
 from django.forms.models import inlineformset_factory
@@ -11,6 +12,7 @@ from leaflet.forms.widgets import LeafletWidget
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
+from geotrek.core.models import Topology
 from geotrek.core.widgets import TopologyReadonlyWidget
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.signage.models import Signage
@@ -63,8 +65,11 @@ class InterventionBaseForm(CommonForm):
     length = FloatField(required=False, label=_("Length"))
     project = forms.ModelChoiceField(required=False, label=_(u"Project"),
                                      queryset=Project.objects.existing())
-
+    geomfields = ['topology']
     leftpanel_scrollable = False
+
+    topology = TopologyField(label="")
+
     fieldslayout = [
         Div(
             HTML("""
@@ -112,18 +117,12 @@ class InterventionBaseForm(CommonForm):
         fields = CommonForm.Meta.fields + \
             ['structure', 'name', 'date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
              'height', 'stake', 'project', 'infrastructure', 'signage', 'material_cost', 'heliport_cost', 'subcontract_cost',
-            ]
+            'topology']
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
     class InterventionForm(InterventionBaseForm):
         """ An intervention can be a Point or a Line """
-        topology = TopologyField(label="")
-        geomfields = ['topology']
-
-        class Meta(CommonForm.Meta):
-            model = Intervention
-            fields = InterventionBaseForm.Meta.fields + ['topology']
 
         def __init__(self, *args, **kwargs):
             super(InterventionForm, self).__init__(*args, **kwargs)
@@ -184,20 +183,12 @@ else:
     class InterventionForm(InterventionBaseForm):
         """ An intervention can be a Point or a Line """
 
-        geomfields = ['topology']
-        leftpanel_scrollable = False
-        
-        class Meta(CommonForm.Meta):
-            model = Intervention
-            fields = InterventionBaseForm.Meta.fields + ['topology']
-
         def __init__(self, *args, **kwargs):
             super(InterventionForm, self).__init__(*args, **kwargs)
             # If we create or edit an intervention on infrastructure or signage, set
             # topology field as read-only
             infrastructure = kwargs.get('initial', {}).get('infrastructure')
             signage = kwargs.get('initial', {}).get('signage')
-
             if self.instance.on_existing_topology:
                 if self.instance.infrastructure:
                     infrastructure = self.instance.infrastructure
@@ -208,7 +199,7 @@ else:
             if infrastructure:
                 self.helper.form_action += '?infrastructure=%s' % infrastructure.pk
                 self.fields['topology'].required = False
-                self.fields['topology'].widget = LeafletWidget(attrs={'geom_type': 'POINT'})
+                self.fields['topology'].widget = TopologyReadonlyWidget()
                 self.fields['topology'].widget.modifiable = False
                 self.fields['topology'].label = '%s%s %s' % (
                     self.instance.infrastructure_display,
@@ -218,8 +209,7 @@ else:
             elif signage:
                 self.helper.form_action += '?signage=%s' % signage.pk
                 self.fields['topology'].required = False
-                self.fields['topology'].widget = LeafletWidget(attrs={'geom_type': 'POINT'})
-                self.fields['topology'].widget.modifiable = False
+                self.fields['topology'].widget = TopologyReadonlyWidget()
                 self.fields['topology'].label = '%s%s %s' % (
                     self.instance.infrastructure_display,
                     unicode(_("On %s") % _(signage.kind.lower())),
@@ -227,8 +217,7 @@ else:
                 )
             else:
                 self.fields['topology'].required = False
-                self.fields['topology'].widget = TopologyReadonlyWidget()
-                self.helper.form_tag = False
+                self.fields['topology'].widget = LeafletWidget(attrs={'geom_type': 'POINT'})
             # Length is not editable in AltimetryMixin
             self.fields['length'].initial = self.instance.length
             editable = bool(self.instance.geom and self.instance.geom.geom_type == 'Point')

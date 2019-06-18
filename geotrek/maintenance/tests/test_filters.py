@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
+from unittest import skipIf
 
+from django.conf import settings
 from django.test import TestCase
 
 from geotrek.land.factories import (
@@ -18,6 +20,7 @@ from geotrek.maintenance.factories import (InterventionFactory, ProjectFactory,
                                            InfrastructureInterventionFactory)
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class InterventionFilteringByLandTest(TestCase):
 
     def create_pair_of_distinct_path(self):

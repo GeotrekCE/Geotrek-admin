@@ -15,6 +15,7 @@ from geotrek.maintenance.factories import (InterventionFactory,
 from geotrek.core.factories import PathFactory, TopologyFactory, StakeFactory
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class InterventionTest(TestCase):
     def test_topology_has_intervention_kind(self):
         topo = TopologyFactory.create()
@@ -157,7 +158,6 @@ class InterventionTest(TestCase):
             interv = create_interv()
         self.assertEqual(interv.length, infra.length)
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_length_auto(self):
         # Line intervention has auto length from topology
         interv = InfrastructureInterventionFactory.create()
@@ -170,7 +170,6 @@ class InterventionTest(TestCase):
         interv.save()
         self.assertEqual(interv.length, 3.14)
 
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_length_not_auto_nds(self):
         # Line intervention has auto length from topology
         interv = InfrastructureInterventionFactory.create()

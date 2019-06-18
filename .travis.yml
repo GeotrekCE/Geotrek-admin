@@ -49,7 +49,7 @@ script:
   - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
   - if [[ $ACTION == integration ]]; then make test_export host=localhost port=80; fi
   - if [[ $ACTION == test ]]; then ./bin/coverage run -a ./bin/django test geotrek; fi
-  - if [[ $ACTION == testnds ]]; then ./bin/coverage run -a ./bin/django test geotrek --settings=geotrek.settings.tests_without_dynamic_segmentation; fi
+  - if [[ $ACTION == testnds ]]; then ./bin/coverage run -a ./bin/django test geotrek --settings=geotrek.settings.tests_nds; fi
   - if [[ $ACTION == test || $ACTION == testnds ]]; then make test_js; fi
 
 after_success:

@@ -29,6 +29,7 @@ from geotrek.maintenance.factories import (InterventionFactory, InfrastructureIn
                                            SignageInterventionFactory)
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class InterventionViewsTest(CommonTest):
     model = Intervention
     modelfactory = InterventionFactory
@@ -79,7 +80,7 @@ class InterventionViewsTest(CommonTest):
             path = PathFactory.create()
             good_data['topology'] = '{"paths": [%s]}' % path.pk,
         else:
-            good_data['topology'] = 'POINT(5.1 6.6)'
+            good_data['topology'] = 'SRID=4326;POINT (5.1 6.6)'
         return good_data
 
     def test_creation_form_on_signage(self):
@@ -293,7 +294,7 @@ class InterventionViewsTest(CommonTest):
         super(InterventionViewsTest, self).test_no_html_in_csv()
 
     def test_no_html_in_csv_signage(self):
-        SignageInterventionFactory.create()
+        l = SignageInterventionFactory.create()
         super(InterventionViewsTest, self).test_no_html_in_csv()
 
     def test_structurerelated_not_loggedin(self):
@@ -307,6 +308,7 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(response.status_code, 302)
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class ProjectViewsTest(CommonTest):
     model = Project
     modelfactory = ProjectFactory
@@ -414,6 +416,7 @@ class ProjectViewsTest(CommonTest):
         self.assertNotContains(response, intervention.name)
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class ExportTest(TranslationResetMixin, TestCase):
 
     def test_shape_mixed(self):
