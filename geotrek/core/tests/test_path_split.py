@@ -3,13 +3,15 @@ from django.test import TestCase, tag
 from django.contrib.gis.geos import LineString, Point
 from django.conf import settings
 
+from unittest import skipIf
+
 from geotrek.common.utils import almostequal
 
 from geotrek.core.factories import PathFactory, TopologyFactory, NetworkFactory, UsageFactory
 from geotrek.core.models import Path, Topology
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class SplitPathTest(TestCase):
     def test_split_attributes(self):
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
@@ -514,7 +516,7 @@ class SplitPathTest(TestCase):
         self.assertEqual(ab_2.length, 2)
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class SplitPathLineTopologyTest(TestCase):
 
     def test_split_tee_1(self):
@@ -1004,7 +1006,7 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertTrue(topology.geom.equals(topogeom))
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class SplitPathPointTopologyTest(TestCase):
 
     def test_split_tee_1(self):
@@ -1373,7 +1375,7 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual((0.0, 0.0), (aggr_cd.start_position, aggr_cd.end_position))
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class SplitPathGenericTopologyTest(TestCase):
 
     def test_add_simple_path(self):

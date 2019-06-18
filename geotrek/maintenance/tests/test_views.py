@@ -43,6 +43,7 @@ class InterventionViewsTest(CommonTest):
         ]), u'This field is required.'
 
     def get_good_data(self):
+        InterventionStatusFactory.create()
         good_data = {
             'name': 'test',
             'date': '2012-08-23',
@@ -75,7 +76,6 @@ class InterventionViewsTest(CommonTest):
             'manday_set-1-DELETE': '',
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            InterventionStatusFactory.create()  # in case not any in db
             path = PathFactory.create()
             good_data['topology'] = '{"paths": [%s]}' % path.pk,
         else:

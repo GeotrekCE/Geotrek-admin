@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+from unittest import skipIf
 
 from django.conf import settings
 from django.contrib.gis.geos import LineString, Point
-from django.test import TestCase, tag
+from django.test import TestCase
 from django.urls import reverse
 from mapentity.factories import SuperUserFactory
 
@@ -11,7 +12,7 @@ from geotrek.core.factories import PathFactory, TopologyFactory, \
 from geotrek.core.models import PathAggregation, Topology
 
 
-@tag('dynamic_segmentation')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class MergePathTest(TestCase):
     def setUp(self):
         self.user = SuperUserFactory.create()
