@@ -32,36 +32,42 @@ class EdgeHelperTest(TestCase):
                          [e.pk])
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class LandEdgeTest(EdgeHelperTest):
 
     factory = LandEdgeFactory
     helper_name = 'land_edges'
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PhysicalEdgeTest(EdgeHelperTest):
 
     factory = PhysicalEdgeFactory
     helper_name = 'physical_edges'
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class CompetenceEdgeTest(EdgeHelperTest):
 
     factory = CompetenceEdgeFactory
     helper_name = 'competence_edges'
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class WorkManagementEdgeTest(EdgeHelperTest):
 
     factory = WorkManagementEdgeFactory
     helper_name = 'work_edges'
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class SignageManagementEdgeTest(EdgeHelperTest):
 
     factory = SignageManagementEdgeFactory
     helper_name = 'signage_edges'
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PhysicalEdgeViewsTest(CommonTest):
     model = PhysicalEdge
     modelfactory = PhysicalEdgeFactory
@@ -75,6 +81,7 @@ class PhysicalEdgeViewsTest(CommonTest):
         }
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class LandEdgeViewsTest(CommonTest):
     model = LandEdge
     modelfactory = LandEdgeFactory
@@ -88,6 +95,7 @@ class LandEdgeViewsTest(CommonTest):
         }
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class CompetenceEdgeViewsTest(CommonTest):
     model = CompetenceEdge
     modelfactory = CompetenceEdgeFactory
@@ -101,6 +109,7 @@ class CompetenceEdgeViewsTest(CommonTest):
         }
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class WorkManagementEdgeViewsTest(CommonTest):
     model = WorkManagementEdge
     modelfactory = WorkManagementEdgeFactory
@@ -114,6 +123,7 @@ class WorkManagementEdgeViewsTest(CommonTest):
         }
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class SignageManagementEdgeViewsTest(CommonTest):
     model = SignageManagementEdge
     modelfactory = SignageManagementEdgeFactory

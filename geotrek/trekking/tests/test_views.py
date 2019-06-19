@@ -258,8 +258,8 @@ class TrekCustomViewTests(TrekkingManagerTest):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         infrastructureslayer = json.loads(response.content)
-        infrastructurefeature = infrastructureslayer['features'][0]
-        self.assertEqual(infrastructurefeature['properties']['name'], infra.name)
+        names = [feature['properties']['name'] for feature in infrastructureslayer['features']]
+        self.assertIn(infra.name, names)
 
     def test_trek_signage_geojson(self):
         trek = TrekWithSignagesFactory.create(published=True)
@@ -273,8 +273,8 @@ class TrekCustomViewTests(TrekkingManagerTest):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         signageslayer = json.loads(response.content)
-        signagefeature = signageslayer['features'][0]
-        self.assertEqual(signagefeature['properties']['name'], signa.name)
+        names = [feature['properties']['name'] for feature in signageslayer['features']]
+        self.assertIn(signa.name, names)
 
     def test_trek_pois_geojson(self):
         trek = TrekWithPOIsFactory.create(published=True)
