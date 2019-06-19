@@ -317,9 +317,11 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         self.poi3 = POIFactory.create(geom=Point(4, 4))
 
         pois = self.trek.pois
-        self.assertEqual(sorted([self.poi1, self.poi2, self.poi3]), sorted(list(pois)))
+        for poi in pois:
+            self.assertIn([self.poi1, self.poi2, self.poi3], poi)
         pois = self.trek_reverse.pois
-        self.assertEqual(sorted([self.poi1, self.poi2, self.poi3]), sorted(list(pois)))
+        for poi in pois:
+            self.assertIn([self.poi1, self.poi2, self.poi3], poi)
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_city_departure(self):
