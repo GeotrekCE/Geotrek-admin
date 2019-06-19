@@ -29,7 +29,6 @@ from geotrek.maintenance.factories import (InterventionFactory, InfrastructureIn
                                            SignageInterventionFactory)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class InterventionViewsTest(CommonTest):
     model = Intervention
     modelfactory = InterventionFactory
@@ -80,7 +79,7 @@ class InterventionViewsTest(CommonTest):
             path = PathFactory.create()
             good_data['topology'] = '{"paths": [%s]}' % path.pk,
         else:
-            good_data['topology'] = 'SRID=4326;POINT (5.1 6.6)'
+            good_data['topology'] = 'POINT (5.1 6.6)'
         return good_data
 
     def test_creation_form_on_signage(self):
@@ -160,7 +159,10 @@ class InterventionViewsTest(CommonTest):
         data = form.initial
         data['name'] = 'modified'
         data['implantation_year'] = target_year
-        data['topology'] = '{"paths": [%s]}' % PathFactory.create().pk
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            data['topology'] = '{"paths": [%s]}' % PathFactory.create().pk
+        else:
+            data['geom'] = 'SRID=4326;POINT (2.0 6.6)'
         data['manager'] = OrganismFactory.create().pk
         response = self.client.post(signa.get_update_url(), data)
         self.assertEqual(response.status_code, 302)
@@ -252,7 +254,10 @@ class InterventionViewsTest(CommonTest):
         data = form.initial
         data['name'] = 'modified'
         data['implantation_year'] = target_year
-        data['topology'] = '{"paths": [%s]}' % PathFactory.create().pk
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            data['topology'] = '{"paths": [%s]}' % PathFactory.create().pk
+        else:
+            data['geom'] = 'SRID=4326;POINT (2.0 6.6)'
         response = self.client.post(infra.get_update_url(), data)
         self.assertEqual(response.status_code, 302)
         # Check that intervention was not deleted (bug #783)
@@ -261,7 +266,11 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(intervention.infrastructure.name, 'modified')
         self.assertEqual(intervention.infrastructure.implantation_year, target_year)
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_form_default_stake(self):
+        """
+        Without segmentation dynamic we do not have paths so we can't put any stake by default coming from paths
+        """
         self.login()
         good_data = self.get_good_data()
         good_data['stake'] = ''
@@ -294,7 +303,7 @@ class InterventionViewsTest(CommonTest):
         super(InterventionViewsTest, self).test_no_html_in_csv()
 
     def test_no_html_in_csv_signage(self):
-        l = SignageInterventionFactory.create()
+        SignageInterventionFactory.create()
         super(InterventionViewsTest, self).test_no_html_in_csv()
 
     def test_structurerelated_not_loggedin(self):
@@ -308,7 +317,6 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(response.status_code, 302)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class ProjectViewsTest(CommonTest):
     model = Project
     modelfactory = ProjectFactory
@@ -379,8 +387,10 @@ class ProjectViewsTest(CommonTest):
         p1 = ProjectFactory.create()
         ProjectFactory.create()
         ProjectFactory.create()
-
-        t = TopologyFactory.create()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            t = TopologyFactory.create()
+        else:
+            t = TopologyFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         InterventionFactory.create(project=p1, topology=t)
 
         def jsonlist(bbox):

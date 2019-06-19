@@ -1,6 +1,5 @@
 from django import forms
 from django.conf import settings
-from django.contrib.gis.forms.fields import GeometryField
 from django.forms import FloatField
 from django.utils.translation import ugettext_lazy as _
 from django.forms.models import inlineformset_factory
@@ -8,13 +7,11 @@ from django.forms.models import inlineformset_factory
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Fieldset, Layout, Div, HTML
 
-from leaflet.forms.widgets import LeafletWidget
-
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
-from geotrek.core.models import Topology
 from geotrek.core.widgets import TopologyReadonlyWidget
 from geotrek.infrastructure.models import Infrastructure
+from geotrek.maintenance.widgets import InterventionWidget
 from geotrek.signage.models import Signage
 
 from .models import Intervention, Project
@@ -217,7 +214,7 @@ else:
                 )
             else:
                 self.fields['topology'].required = False
-                self.fields['topology'].widget = LeafletWidget(attrs={'geom_type': 'POINT'})
+                self.fields['topology'].widget = InterventionWidget(attrs={'geom_type': 'POINT'})
             # Length is not editable in AltimetryMixin
             self.fields['length'].initial = self.instance.length
             editable = bool(self.instance.geom and self.instance.geom.geom_type == 'Point')

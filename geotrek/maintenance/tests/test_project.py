@@ -13,8 +13,8 @@ from geotrek.zoning.factories import (CityEdgeFactory, DistrictEdgeFactory,
                                       RestrictedAreaEdgeFactory)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class ProjectTest(TestCase):
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_helpers(self):
         i1 = InterventionFactory.create()
         i2 = InterventionFactory.create()
@@ -54,6 +54,43 @@ class ProjectTest(TestCase):
 
         proj.interventions.add(i3)
         self.assertItemsEqual(proj.paths.all(), [p1, p2])
+        self.assertEquals(proj.signages, [sign])
+        self.assertEquals(proj.infrastructures, [infra])
+
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    def test_helpers(self):
+        i1 = InterventionFactory.create()
+        i2 = InterventionFactory.create()
+        i3 = InterventionFactory.create()
+        sign = SignageFactory.create(geom="SRID=4326;POINT(0 5)")
+        i1.set_topology(sign)
+
+        infra = InfrastructureFactory.create(geom="SRID=4326;POINT(1 5)")
+        i2.set_topology(infra)
+
+        t = TopologyFactory.create(geom="SRID=4326;POINT(2 5)")
+        i3.topology = t
+
+        proj = ProjectFactory.create()
+        self.assertItemsEqual(proj.paths.all(), [])
+        self.assertEquals(proj.signages, [])
+        self.assertEquals(proj.infrastructures, [])
+
+        i1.save()
+
+        proj.interventions.add(i1)
+        self.assertEquals(proj.signages, [sign])
+        self.assertEquals(proj.infrastructures, [])
+
+        i2.save()
+
+        proj.interventions.add(i2)
+        self.assertEquals(proj.signages, [sign])
+        self.assertEquals(proj.infrastructures, [infra])
+
+        i3.save()
+
+        proj.interventions.add(i3)
         self.assertEquals(proj.signages, [sign])
         self.assertEquals(proj.infrastructures, [infra])
 
@@ -124,19 +161,17 @@ class ProjectLandTest(TestCase):
         self.assertIn(self.competencemgt, self.intervention.competence_edges)
         self.assertIn(self.competencemgt, self.project.competence_edges)
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+
     def test_project_has_city_management(self):
         self.assertIn(self.cityedge, self.intervention.city_edges)
         self.assertIn(self.cityedge, self.project.city_edges)
         self.assertIn(self.cityedge.city, self.project.cities)
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_project_has_district_management(self):
         self.assertIn(self.districtedge, self.intervention.district_edges)
         self.assertIn(self.districtedge, self.project.district_edges)
         self.assertIn(self.districtedge.district, self.project.districts)
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_project_has_restricted_management(self):
         self.assertIn(self.restricted, self.intervention.area_edges)
         self.assertIn(self.restricted, self.project.area_edges)

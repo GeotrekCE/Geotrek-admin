@@ -2,6 +2,7 @@ import json
 import logging
 
 from django.conf import settings
+from django.contrib.gis.geos import GEOSGeometry
 from django.db import connection
 from django.contrib.gis.geos import Point
 from django.db.models.query import QuerySet
@@ -38,17 +39,20 @@ class TopologyHelper(object):
         Global strategy is :
         * If has lat/lng return point topology
         * Otherwise, create path aggregations from serialized data.
+        ____________________________________________________________________________________________
+        Without Dynamic Segmentation :
+
         """
         from .models import Path, Topology, PathAggregation
         from .factories import TopologyFactory
-
         try:
             return Topology.objects.get(pk=int(serialized))
         except Topology.DoesNotExist:
             raise
         except (TypeError, ValueError):
             pass  # value is not integer, thus should be deserialized
-
+        if not settings.TREKKING_TOPOLOGY_ENABLED:
+            return Topology.objects.create(geom=GEOSGeometry(serialized, srid=settings.API_SRID))
         objdict = serialized
         if isinstance(serialized, basestring):
             try:
