@@ -81,5 +81,5 @@ jobs:
 
       after_success:
         - ./bin/coverage report -m;
-        - sudo pip install coveralls;
+        - sudo pip install coveralls==1.7.0;
         - coveralls;
