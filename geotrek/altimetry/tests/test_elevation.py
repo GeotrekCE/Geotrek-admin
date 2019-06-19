@@ -76,7 +76,7 @@ class ElevationTest(TestCase):
         self.assertEqual(len(topo.geom_3d.coords), 5)
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-    def test_elevation_topology_line(self):
+    def test_elevation_topology_line_nds(self):
         """
         No reason for this changements
         """

@@ -222,7 +222,7 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         self.assertItemsEqual(trek.districts, [d1, d2])
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-    def test_helpers(self):
+    def test_helpers_nds(self):
         trek = TrekFactory.create(geom=LineString((2, 2), (8, 8)))
         poi = POIFactory.create(geom=Point(2.4, 2.4))
         poi2 = POIFactory.create(geom=Point(2.4, 2.4))
@@ -243,7 +243,7 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         self.assertItemsEqual(trek.districts, [d1])
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-    def test_deleted_pois(self):
+    def test_deleted_pois_nds(self):
         trek = TrekFactory.create(geom=LineString((0, 0), (4, 4)))
         poi = POIFactory.create(geom=Point(2.4, 2.4, srid=4326))
         self.assertItemsEqual(trek.pois, [poi])
@@ -251,7 +251,7 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         self.assertItemsEqual(trek.pois, [])
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-    def test_deleted_services(self):
+    def test_deleted_services_nds(self):
         trek = TrekFactory.create(geom=LineString((0, 0), (4, 4)))
         service = ServiceFactory.create(geom=Point(2.4, 2.4, srid=4326))
         service.type.practices.add(trek.practice)
@@ -336,7 +336,7 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         self.assertEqual(trek.city_departure, unicode(city1))
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-    def test_city_departure(self):
+    def test_city_departure_nds(self):
         trek = TrekFactory.create(geom=LineString((0, 0), (5, 5)))
         self.assertEqual(trek.city_departure, '')
 

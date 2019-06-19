@@ -185,7 +185,7 @@ class PathViewsTest(CommonTest):
 
     def test_basic_format(self):
         self.modelfactory.create()
-        l = self.modelfactory.create(name=u"ãéè")
+        self.modelfactory.create(name=u"ãéè")
         super(CommonTest, self).test_basic_format()
 
     def test_path_form_is_not_valid_if_no_geometry_provided(self):
@@ -418,10 +418,10 @@ class TrailViewsTest(CommonTest):
 
     def get_good_data(self):
         good_data = {
-                'name': 't',
-                'departure': 'Below',
-                'arrival': 'Above',
-                'comments': 'No comment'
+            'name': 't',
+            'departure': 'Below',
+            'arrival': 'Above',
+            'comments': 'No comment'
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path = PathFactory.create()

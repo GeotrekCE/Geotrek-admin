@@ -114,7 +114,7 @@ class InterventionBaseForm(CommonForm):
         fields = CommonForm.Meta.fields + \
             ['structure', 'name', 'date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
              'height', 'stake', 'project', 'infrastructure', 'signage', 'material_cost', 'heliport_cost', 'subcontract_cost',
-            'topology']
+             'topology']
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:

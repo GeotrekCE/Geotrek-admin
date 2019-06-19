@@ -1236,7 +1236,7 @@ class ServiceViewsTest(CommonTest):
         self.assertEqual(form.errors, {'topology': [u'Topology is empty.']})
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-    def test_empty_topology(self):
+    def test_empty_topology_nds(self):
         self.login()
         data = self.get_good_data()
         data['geom'] = ''

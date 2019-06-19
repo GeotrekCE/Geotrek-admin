@@ -1,6 +1,4 @@
 # -*- encoding: utf-8 -*-
-from unittest import skipIf
-
 from django.contrib.auth.models import Permission
 from django.utils import translation
 from django.utils.translation import ugettext as _

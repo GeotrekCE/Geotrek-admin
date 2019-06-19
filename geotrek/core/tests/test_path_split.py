@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.test import TestCase, tag
+from django.test import TestCase
 from django.contrib.gis.geos import LineString, Point
 from django.conf import settings
 

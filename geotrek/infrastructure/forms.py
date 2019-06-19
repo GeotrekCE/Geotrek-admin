@@ -28,8 +28,8 @@ else:
 
         class Meta(CommonForm.Meta):
             model = Infrastructure
-            fields = CommonForm.Meta.fields + \
-                     ['geom', 'structure', 'name', 'description', 'type', 'condition', 'implantation_year', 'published']
+            fields = CommonForm.Meta.fields + ['geom', 'structure', 'name', 'description', 'type', 'condition',
+                                               'implantation_year', 'published']
 
 
 class InfrastructureForm(BaseInfrastructureForm):

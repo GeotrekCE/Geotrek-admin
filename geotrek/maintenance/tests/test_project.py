@@ -58,7 +58,7 @@ class ProjectTest(TestCase):
         self.assertEquals(proj.infrastructures, [infra])
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
-    def test_helpers(self):
+    def test_helpers_nds(self):
         i1 = InterventionFactory.create()
         i2 = InterventionFactory.create()
         i3 = InterventionFactory.create()
@@ -160,7 +160,6 @@ class ProjectLandTest(TestCase):
     def test_project_has_competence_management(self):
         self.assertIn(self.competencemgt, self.intervention.competence_edges)
         self.assertIn(self.competencemgt, self.project.competence_edges)
-
 
     def test_project_has_city_management(self):
         self.assertIn(self.cityedge, self.intervention.city_edges)
