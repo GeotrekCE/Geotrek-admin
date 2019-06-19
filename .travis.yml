@@ -80,6 +80,7 @@ jobs:
       script: skip
 
       after_success:
-        - ./bin/coverage report -m;
+        - sudo pip install coverage
+        - coverage report -m;
         - sudo pip install coveralls==1.7.0;
         - coveralls;
