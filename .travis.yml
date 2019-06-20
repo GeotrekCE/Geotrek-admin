@@ -47,16 +47,16 @@ script:
   - if [[ $ACTION == deploy || $ACTION == integration ]]; then make load_demo; fi
   - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
   - if [[ $ACTION == integration ]]; then make test_export host=localhost port=80; fi
-  - if [[ $ACTION == test ]]; then COVERAGE_FILE=.coverage_test ./bin/coverage run -a ./bin/django test geotrek; fi
-  - if [[ $ACTION == test ]]; then COVERAGE_FILE=.coverage_test_nds ./bin/coverage run -a ./bin/django test geotrek --settings=geotrek.settings.tests_nds; fi
-  - if [[ $ACTION == test ]]; then ./bin/coverage combine; fi
+  - if [[ $ACTION == test ]]; then COVERAGE_FILE=.coverage.test ./bin/coverage run --parallel-mode ./bin/django test geotrek; fi
+  - if [[ $ACTION == test ]]; then COVERAGE_FILE=.coverage.test_nds ./bin/coverage run --parallel-mode ./bin/django test geotrek --settings=geotrek.settings.tests_nds; fi
+  - if [[ $ACTION == test ]]; then ./bin/coverage combine --append; fi
   - if [[ $ACTION == test ]]; then make test_js; fi
 
 after_success:
   # Report coverage results to coveralls.io
   - if [[ $ACTION == test ]]; then ./bin/coverage report -m; fi
   - if [[ $ACTION == test ]]; then sudo pip install coveralls; fi
-  - if [[ $ACTION == test ]]; then coveralls; fi
+  - if [[ $ACTION == test ]]; then coveralls==1.7.0; fi
 
 after_success:
   # Report coverage results to coveralls.io
