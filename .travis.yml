@@ -5,7 +5,6 @@ python:
 
 env:
   - ACTION=test
-  - ACTION=testnds
   - ACTION=deploy
   - ACTION=integration
   - ACTION=codestyle
@@ -37,7 +36,7 @@ before_install:
 install:
   - if [[ $ACTION != codestyle ]]; then deactivate; fi
   - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
-  - if [[ $ACTION == test || $ACTION == testnds ]]; then ./install.sh --tests --noinput; fi
+  - if [[ $ACTION == test ]]; then ./install.sh --tests --noinput; fi
   - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput; fi
   # Don't bind redis-server on IPv6 address
   - sudo sed -i 's/^bind.*$/bind 127.0.0.1/' /etc/redis/redis.conf; sudo service redis-server restart;
@@ -48,9 +47,16 @@ script:
   - if [[ $ACTION == deploy || $ACTION == integration ]]; then make load_demo; fi
   - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
   - if [[ $ACTION == integration ]]; then make test_export host=localhost port=80; fi
-  - if [[ $ACTION == test ]]; then ./bin/coverage run -a ./bin/django test geotrek; fi
-  - if [[ $ACTION == testnds ]]; then ./bin/coverage run -a ./bin/django test geotrek --settings=geotrek.settings.tests_nds; fi
-  - if [[ $ACTION == test || $ACTION == testnds ]]; then make test_js; fi
+  - if [[ $ACTION == test ]]; then COVERAGE_FILE=.coverage_test ./bin/coverage run -a ./bin/django test geotrek; fi
+  - if [[ $ACTION == test ]]; then COVERAGE_FILE=.coverage_test_nds ./bin/coverage run -a ./bin/django test geotrek --settings=geotrek.settings.tests_nds; fi
+  - if [[ $ACTION == test ]]; then ./bin/coverage combine; fi
+  - if [[ $ACTION == test ]]; then make test_js; fi
+
+after_success:
+  # Report coverage results to coveralls.io
+  - if [[ $ACTION == test ]]; then ./bin/coverage report -m; fi
+  - if [[ $ACTION == test ]]; then sudo pip install coveralls; fi
+  - if [[ $ACTION == test ]]; then coveralls; fi
 
 after_success:
   # Report coverage results to coveralls.io
@@ -67,20 +73,4 @@ after_failure:
   - cat /var/log/supervisord.log
   - cat /var/log/geotrek.log
 
-jobs:
-  include:
-    - stage: coverage
-
-      env: ACTION=none
-
-      install: skip
-
-      before_script: skip
-
-      script: skip
-
-      after_success:
-        - sudo pip install coverage
-        - coverage report -m;
-        - sudo pip install coveralls==1.7.0;
-        - coveralls;
+# Check pr for travis
