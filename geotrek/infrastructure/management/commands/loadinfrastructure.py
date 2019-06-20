@@ -4,6 +4,7 @@ import os.path
 
 from django.contrib.gis.gdal import DataSource
 from django.contrib.gis.geos import Point
+from django.contrib.gis.geos.error import GEOSException
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
@@ -201,12 +202,15 @@ class Command(BaseCommand):
             else:
                 infra = Infrastructure.objects.create(**fields_without_eid)
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
-            topology = TopologyHelper.deserialize(serialized)
-            infra.mutate(topology)
+            try:
+                serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
+                topology = TopologyHelper.deserialize(serialized)
+                infra.mutate(topology)
+            except IndexError:
+                raise GEOSException('Invalid Geometry type.')
         else:
             if geometry.geom_type != 'Point':
-                raise TypeError
+                raise GEOSException('Invalid Geometry type.')
             infra.geom = Point(geometry.x, geometry.y, srid=settings.SRID)
             infra.save()
         self.counter += 1
