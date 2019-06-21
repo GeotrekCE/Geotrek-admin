@@ -49,9 +49,9 @@ class RemoveDuplicatePathTest(TestCase):
                 poi3 (only on p4)
         +-------o------+                    p5 is reversed.
         p3/p4/p5
-
+                poi1/poi2
         +-------o------+        +--------+
-        p1/p2   poi1/poi2       p6
+        p1/p2                     p6
 
         We get at the end p1, p3, p5, p6.
         """
@@ -60,6 +60,41 @@ class RemoveDuplicatePathTest(TestCase):
 
         self.assertEquals(Path.objects.count(), 5)
         self.assertItemsEqual((self.p1, self.p3, self.p5, self.p6, self.p8),
+                              list(Path.objects.all()))
+        self.assertIn("Deleting path",
+                      output.getvalue())
+        self.assertIn("duplicate paths have been deleted",
+                      output.getvalue())
+
+    def test_remove_duplicate_path_visible(self):
+        """
+        This test check that we remove 1 of the duplicate path and keep ones with topologies.
+
+                poi3 (only on p4)
+        +-------o------+                    p5 is reversed.
+        p3/p4/p5
+
+        +-------o------+        +--------+
+        p1/p2   poi1/poi2       p6
+
+        We get at the end p2, p3, p5, p6.
+        """
+        output = StringIO()
+        self.p1.visible = False
+        self.p1.save()
+        # Will remove only p1 because not visible
+        self.p3.visible = False
+        self.p3.save()
+        # will remove the second because both of them are not visible
+        self.p4.visible = False
+        self.p4.save()
+        call_command('remove_duplicate_paths', verbosity=2, stdout=output)
+
+        self.assertEquals(Path.include_invisible.count(), 5)
+        self.assertEquals(Path.objects.count(), 4)
+        self.assertItemsEqual((self.p2, self.p3, self.p5, self.p6, self.p8),
+                              list(Path.include_invisible.all()))
+        self.assertItemsEqual((self.p2, self.p5, self.p6, self.p8),
                               list(Path.objects.all()))
         self.assertIn("Deleting path",
                       output.getvalue())
