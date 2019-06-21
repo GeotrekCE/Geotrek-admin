@@ -72,9 +72,11 @@ class Command(BaseCommand):
         for layer in ds:
             for feat in layer:
                 name = feat.get(name_column) if name_column in layer.fields else ''
-                comment_final = ''
-                for comment_column in comments_columns:
-                    comment_final += '%s </br>' % feat.get(comment_column) if comment_column in layer.fields else ''
+                comment_final_tab = []
+                if comments_columns:
+                    for comment_column in comments_columns:
+                        if comment_column in layer.fields:
+                            comment_final_tab.append(feat.get(comment_column))
                 geom = feat.geom.geos
                 if not isinstance(geom, LineString):
                     if verbosity > 0:
@@ -85,6 +87,7 @@ class Command(BaseCommand):
                 if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
                     try:
                         with transaction.atomic():
+                            comment_final = '</br>'.join(comment_final_tab)
                             path = Path.objects.create(name=name,
                                                        structure=structure,
                                                        geom=geom,
