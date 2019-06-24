@@ -53,43 +53,45 @@
           <div class="main-picture" style="background-image: url('file://{% media_static_fallback_path "upload/placeholder.png" "images/placeholder.png" %}');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
         {% endif %}
       </div>
-      <div class="intro-left">
-        {% if object.description_teaser %}
-          <section class="teaser text-content">
-            {{ object.description_teaser|safe }}
-          </section>
-        {% endif %}
-      </div>
-      <div class="meta-items">
-        <div class="meta-items-title">{% trans "Useful information" %}</div>
-        <section class="meta-items-list">
-          {% if object.category %}
-            <span class="meta-item">
-              <span class="meta-item-label">{% trans "Category" %}</span>
-              <span class="meta-item-value">{{ object.category }}</span>
-            </span>
+      <div class="intro">
+        <div class="intro-left">
+          {% if object.description_teaser %}
+            <section class="teaser text-content">
+              {{ object.description_teaser|safe }}
+            </section>
           {% endif %}
-          <div class="lists">
-            {% if object.type1.all %}
+        </div>
+        <div class="meta-items">
+          <div class="meta-items-title">{% trans "Useful information" %}</div>
+          <section class="meta-items-list">
+            {% if object.category %}
               <span class="meta-item">
-                <span class="meta-item-label">{{ object.type1_label }}</span>
-                {% for type in object.type1.all %}<span class="meta-item-value">{{ type }}</span>{% endfor %}
+                <span class="meta-item-label">{% trans "Category" %}</span>
+                <span class="meta-item-value">{{ object.category }}</span>
               </span>
             {% endif %}
-            {% if object.type2.all %}
-              <span class="meta-item">
-                <span class="meta-item-label">{{ object.type2_label }}</span>
-                {% for type in object.type2.all %}<span class="meta-item-value">{{ type }}</span>{% endfor %}
-              </span>
-            {% endif %}
-            {% if object.themes.all %}
-              <span class="meta-item">
-                <span class="meta-item-label">{% trans "Themes" %}</span>
-                {% for theme in object.themes.all %}<span class="meta-item-value">{{ theme.label }}</span>{% endfor %}
-              </span>
-            {% endif %}
-          </div>
-        </section>
+            <div class="lists">
+              {% if object.type1.all %}
+                <span class="meta-item">
+                  <span class="meta-item-label">{{ object.type1_label }}</span>
+                  {% for type in object.type1.all %}<span class="meta-item-value">{{ type }}</span>{% endfor %}
+                </span>
+              {% endif %}
+              {% if object.type2.all %}
+                <span class="meta-item">
+                  <span class="meta-item-label">{{ object.type2_label }}</span>
+                  {% for type in object.type2.all %}<span class="meta-item-value">{{ type }}</span>{% endfor %}
+                </span>
+              {% endif %}
+              {% if object.themes.all %}
+                <span class="meta-item">
+                  <span class="meta-item-label">{% trans "Themes" %}</span>
+                  {% for theme in object.themes.all %}<span class="meta-item-value">{{ theme.label }}</span>{% endfor %}
+                </span>
+              {% endif %}
+            </div>
+          </section>
+        </div>
       </div>
       {% block description %}
         {% if object.description %}
