@@ -83,7 +83,7 @@ $(window).on('entity:view:list', function (e, data) {
     });
 
     // Refresh types by category
-    $('#mainfilter #id_category').change(function() {
+    $('#mainfilter #filter.btn.btn-primary').click(function() {
         var category = $('#id_category').val()
         if (category) {
             $('.categories-filter a').removeClass('btn-warning');
