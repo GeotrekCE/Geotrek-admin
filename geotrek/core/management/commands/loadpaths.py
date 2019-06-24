@@ -38,7 +38,7 @@ class Command(BaseCommand):
         name_column = options.get('name')
         srid = options.get('srid')
         do_intersect = options.get('intersect')
-        comments_column = options.get('comments')
+        comments_columns = options.get('comment')
         fail = options.get('fail')
         dry = options.get('dry')
 
@@ -72,7 +72,11 @@ class Command(BaseCommand):
         for layer in ds:
             for feat in layer:
                 name = feat.get(name_column) if name_column in layer.fields else ''
-                comments = feat.get(comments_column) if comments_column in layer.fields else ''
+                comment_final_tab = []
+                if comments_columns:
+                    for comment_column in comments_columns:
+                        if comment_column in layer.fields:
+                            comment_final_tab.append(feat.get(comment_column))
                 geom = feat.geom.geos
                 if not isinstance(geom, LineString):
                     if verbosity > 0:
@@ -83,13 +87,16 @@ class Command(BaseCommand):
                 if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
                     try:
                         with transaction.atomic():
+                            comment_final = '</br>'.join(comment_final_tab)
                             path = Path.objects.create(name=name,
                                                        structure=structure,
                                                        geom=geom,
-                                                       comments=comments)
+                                                       comments=comment_final)
                         counter += 1
                         if verbosity > 0:
                             self.stdout.write('Create path with pk : {}'.format(path.pk))
+                        if verbosity > 1:
+                            self.stdout.write("The comment %s was added on %s" % (comment_final, name))
                     except IntegrityError:
                         if fail:
                             counter_fail += 1

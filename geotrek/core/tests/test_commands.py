@@ -91,6 +91,18 @@ class LoadPathsCommandTest(TestCase):
         self.assertEqual(value.structure, self.structure)
 
     @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, -1, 1, 5))
+    def test_load_paths_comments(self):
+        output = StringIO()
+        call_command('loadpaths', self.filename, srid=4326, verbosity=2, comment=['comment', 'foo'], stdout=output)
+        output = output.getvalue()
+        self.assertEquals(Path.objects.count(), 1)
+        value = Path.objects.first()
+        self.assertEqual(value.name, 'lulu')
+        self.assertEqual(value.comments, 'Comment 2</br>foo2')
+        self.assertEqual(value.structure, self.structure)
+        self.assertIn('The comment %s was added on %s' % (value.comments, value.name), output)
+
+    @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, -1, 1, 5))
     def test_load_paths_intersect_spatial_extent(self):
         output = StringIO()
         call_command('loadpaths', self.filename, '-i', srid=4326, verbosity=2, stdout=output)

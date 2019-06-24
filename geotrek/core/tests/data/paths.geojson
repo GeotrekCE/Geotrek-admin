@@ -1,3 +1,3 @@
 {"type": "FeatureCollection", "features": [
-{"type": "Feature", "properties": {"nom": "lulu"}, "geometry": {"type": "LineString", "coordinates": [[0, 0],[0, 4]]}},
-{"type": "Feature", "properties": {"nom": "lulu 2"}, "geometry": {"type": "LineString", "coordinates": [[2, -2],[2, 4]]}}]}
+{"type": "Feature", "properties": {"nom": "lulu", "comment": "Comment 2", "foo": "foo2"}, "geometry": {"type": "LineString", "coordinates": [[0, 0],[0, 4]]}},
+{"type": "Feature", "properties": {"nom": "lulu 2", "comment": "Comment 1", "foo": "foo1"}, "geometry": {"type": "LineString", "coordinates": [[2, -2],[2, 4]]}}]}
