@@ -162,6 +162,24 @@ class PathViewsTest(CommonTest):
         self.assertTrue((st1.pk, unicode(st1)) in stakefield.choices)
         self.assertFalse((st2.pk, unicode(st2)) in stakefield.choices)
 
+    def test_set_structure_with_permission_object_linked_none_structure(self):
+        if not hasattr(self.model, 'structure'):
+            return
+        self.login()
+        perm = Permission.objects.get(codename='can_bypass_structure')
+        self.user.user_permissions.add(perm)
+        structure = StructureFactory()
+        st0 = StakeFactory.create(structure=None)
+        self.assertNotEqual(structure, self.user.profile.structure)
+        data = self.get_good_data()
+        data['stake'] = st0.pk
+        data['structure'] = self.user.profile.structure.pk
+        response = self.client.post(self._get_add_url(), data)
+        self.assertEqual(response.status_code, 302)
+        obj = self.model.objects.last()
+        self.assertEqual(obj.structure, self.user.profile.structure)
+        self.logout()
+
     def test_basic_format(self):
         self.modelfactory.create()
         self.modelfactory.create(name=u"ãéè")

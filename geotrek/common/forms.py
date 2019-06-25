@@ -102,7 +102,7 @@ class CommonForm(MapEntityForm):
 
     def check_structure(self, obj, structure, name):
         if hasattr(obj, 'structure'):
-            if structure != obj.structure:
+            if obj.structure and structure != obj.structure:
                 self.add_error(name, format_lazy(_("Please select a choice related to all structures (without brackets) "
                                                    "or related to the structure {struc} (in brackets)"), struc=structure))
 
