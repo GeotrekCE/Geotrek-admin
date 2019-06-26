@@ -180,7 +180,6 @@ class TouristicContentCategory(PictogramMixin):
     color = ColorField(verbose_name=_(u"Color"), default='#444444', db_column='couleur',
                        help_text=_(u"Color of the category, only used in mobile."))  # To be implemented in Geotrek-rando
 
-
     id_prefix = 'C'
 
     class Meta:
