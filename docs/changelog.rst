@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.27.7.dev0
+2.27.7 (2019-06-26)
 -------------------
 
 **Bug fixes**
@@ -22,7 +22,7 @@ CHANGELOG
 - Handle invalid geometries when importing districts
 
 
-2.27.6
+2.27.6 (2019-06-04)
 -------------------
 
 **Bug fixes**
