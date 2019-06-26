@@ -178,7 +178,7 @@ class TouristicContentCategory(PictogramMixin):
     order = models.IntegerField(verbose_name=_(u"Order"), null=True, blank=True, db_column='tri',
                                 help_text=_(u"Alphabetical order if blank"))
     color = ColorField(verbose_name=_(u"Color"), default='#444444', db_column='couleur',
-                       help_text=_(u"Color of the category, only used in mobile.")) # To be implemented in Geotrek-rando
+                       help_text=_(u"Color of the category, only used in mobile."))  # To be implemented in Geotrek-rando
 
 
     id_prefix = 'C'
