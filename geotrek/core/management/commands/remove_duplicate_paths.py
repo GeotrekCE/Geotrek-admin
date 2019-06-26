@@ -27,12 +27,18 @@ class Command(BaseCommand):
         with transaction.atomic():
             try:
                 for path1_pk, path2_pk in list_topologies:
-                    path2 = Path.objects.get(pk=path2_pk)
-                    path2.aggregations.update(path_id=path1_pk)
-                    path_deleted.append(path2)
+                    path1 = Path.include_invisible.get(pk=path1_pk)
+                    path2 = Path.include_invisible.get(pk=path2_pk)
+                    if not path1.visible and path2.visible:
+                        path1.aggregations.update(path_id=path2_pk)
+                        path1.delete()
+                        path_deleted.append(path1)
+                    else:
+                        path2.aggregations.update(path_id=path1_pk)
+                        path2.delete()
+                        path_deleted.append(path2)
                     if verbosity > 1:
-                        self.stdout.write("Deleting path %s" % path2)
-                    path2.delete()
+                        self.stdout.write("Deleting path %s" % path_deleted[-1])
 
             except Exception as exc:
                 self.stdout.write(self.style.ERROR("{}".format(exc)))
