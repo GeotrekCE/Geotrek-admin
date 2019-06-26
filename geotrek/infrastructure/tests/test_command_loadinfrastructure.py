@@ -63,7 +63,7 @@ class InfrastructureCommandTest(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'infrastructure.shp')
         InfrastructureFactory(name="name")
         call_command('loadinfrastructure', filename, type_field='label', name_field='name',
-                     condition_field='condition', structure_default='structure',
+                     condition_field='condition', structure_field='structure',
                      description_field='descriptio', year_field='year', verbosity=1, stdout=output)
         self.assertIn('Infrastructures will be linked to %s' % structure, output.getvalue())
         self.assertIn("InfrastructureType 'type' created", output.getvalue())

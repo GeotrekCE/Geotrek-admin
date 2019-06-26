@@ -63,7 +63,7 @@ class InfrastructureCommandTest(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
         SignageFactory(name="name")
         call_command('loadsignage', filename, type_field='label', name_field='name',
-                     condition_field='condition', structure_default='structure',
+                     condition_field='condition', structure_field='structure',
                      description_field='descriptio', year_field='year', verbosity=1, stdout=output)
         self.assertIn('Signages will be linked to %s' % structure, output.getvalue())
         self.assertIn("SignageType 'type' created", output.getvalue())
@@ -86,8 +86,8 @@ class InfrastructureCommandTest(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
         output = StringIO()
 
-        call_command('loadinfrastructure', filename, stdout=output)
-        call_command('loadinfrastructure', filename, type_default='label', stdout=output)
+        call_command('loadsignage', filename, stdout=output)
+        call_command('loadsignage', filename, type_default='label', stdout=output)
 
         elements_to_check = ['type', 'name']
         self.assertEqual(output.getvalue().count("Field 'None' not found in data source."), 2)
