@@ -189,6 +189,13 @@ class DistrictsCommandTest(TestCase):
             call_command('loaddistricts')
         self.assertEqual(u'Error: too few arguments', e.exception.message)
 
+    def test_load_districts_with_geom_not_valid(self):
+        output = StringIO()
+        call_command('loaddistricts', os.path.join(os.path.dirname(__file__), 'data', 'polygon_not_valid.geojson'),
+                     name='NOM', srid=2154, verbosity=1, stdout=output)
+        self.assertEquals(City.objects.count(), 0)
+        self.assertIn("wrong_polygon's geometry is not valid", output.getvalue())
+
     @override_settings(SPATIAL_EXTENT=(0, 10.0, 1, 11))
     def test_load_districts_out_of_spatial_extent(self):
         call_command('loaddistricts', self.filename, name='NOM', srid=2154, verbosity=0)

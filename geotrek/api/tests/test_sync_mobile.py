@@ -4,6 +4,7 @@ import json
 from landez.sources import DownloadError
 import mock
 import os
+from PIL import Image
 import shutil
 import zipfile
 
@@ -293,6 +294,8 @@ class SyncMobileSettingsTest(TranslationResetMixin, TestCase):
                 self.assertEquals(len(settings_json), 2)
                 self.assertEqual(len(settings_json['data']), 16)
                 self.assertEqual(settings_json['data'][4]['values'][0]['pictogram'], pictogram_png)
+        image = Image.open(os.path.join('tmp', 'nolang', pictogram_png[1:]))
+        self.assertEqual(image.size, (32, 32))
         self.assertIn('en/settings.json', output.getvalue())
 
     @classmethod

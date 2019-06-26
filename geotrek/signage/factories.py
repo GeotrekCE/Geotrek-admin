@@ -12,7 +12,7 @@ class SignageTypeFactory(factory.DjangoModelFactory):
         model = models.SignageType
 
     label = factory.Sequence(lambda n: u"Type %s" % n)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('signage-type-%s.png')
 
 
 class SignageTypeNoPictogramFactory(factory.DjangoModelFactory):
