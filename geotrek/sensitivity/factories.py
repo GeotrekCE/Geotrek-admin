@@ -24,7 +24,7 @@ class SpeciesFactory(factory.DjangoModelFactory):
         model = models.Species
 
     name = factory.Sequence(lambda n: u"Species %s" % n)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('species-%s.png')
     url = factory.Sequence(lambda n: u"http://url%s.com" % n)
     period06 = True
     period07 = True

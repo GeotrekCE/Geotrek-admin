@@ -3,6 +3,7 @@
 import logging
 import filecmp
 import os
+from PIL import Image
 import re
 import shutil
 from time import sleep
@@ -156,22 +157,34 @@ class Command(BaseCommand):
             url_media = '/%s%s' % (prefix, settings.MEDIA_URL) if prefix else settings.MEDIA_URL
             self.sync_file(field.name, settings.MEDIA_ROOT, url_media, directory=directory, zipfile=zipfile)
 
-    def sync_pictograms(self, model, directory='', zipfile=None):
+    def sync_pictograms(self, model, directory='', zipfile=None, size=None):
         for obj in model.objects.all():
-            file_name, file_extension = os.path.splitext(str(obj.pictogram))
+            if not obj.pictogram:
+                return
+            file_name, file_extension = os.path.splitext(obj.pictogram.name)
             if file_extension == '.svg':
                 name = os.path.join(settings.MEDIA_URL.strip('/'), '%s.png' % file_name)
-                dst = os.path.join(self.tmp_root, directory, name)
-                self.mkdirs(dst)
-                cairosvg.svg2png(url=obj.pictogram.path, write_to=dst)
-                if name not in zipfile.namelist():
-                    zipfile.write(dst, name)
-                if self.verbosity == 2:
-                    self.stdout.write(
-                        u"\x1b[36m**\x1b[0m \x1b[1m{directory}{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
-                            directory=directory, url=obj.pictogram.url, name=name))
             else:
-                self.sync_media_file(obj.pictogram, directory=directory, zipfile=zipfile)
+                name = os.path.join(settings.MEDIA_URL.strip('/'), obj.pictogram.name)
+            dst = os.path.join(self.tmp_root, directory, name)
+            self.mkdirs(dst)
+            # Convert SVG to PNG and open it
+            if file_extension == '.svg':
+                cairosvg.svg2png(url=obj.pictogram.path, write_to=dst)
+                image = Image.open(dst)
+            else:
+                image = Image.open(obj.pictogram.path)
+            # Resize
+            if size:
+                image = image.resize((size, size), Image.ANTIALIAS)
+            # Save
+            image.save(dst, optimize=True, quality=95)
+            if name not in zipfile.namelist():
+                zipfile.write(dst, name)
+            if self.verbosity == 2:
+                self.stdout.write(
+                    u"\x1b[36m**\x1b[0m \x1b[1m{directory}{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
+                        directory=directory, url=obj.pictogram.url, name=name))
 
     def close_zip(self, zipfile, name):
         if self.verbosity == 2:
@@ -304,15 +317,17 @@ class Command(BaseCommand):
 
         self.sync_pictograms(common_models.Theme, directory=url_media_nolang, zipfile=self.zipfile_settings)
         self.sync_pictograms(trekking_models.TrekNetwork, directory=url_media_nolang, zipfile=self.zipfile_settings)
-        self.sync_pictograms(trekking_models.Practice, directory=url_media_nolang, zipfile=self.zipfile_settings)
+        self.sync_pictograms(trekking_models.Practice, directory=url_media_nolang, zipfile=self.zipfile_settings,
+                             size=settings.MOBILE_CATEGORY_PICTO_SIZE)
         self.sync_pictograms(trekking_models.Accessibility, directory=url_media_nolang, zipfile=self.zipfile_settings)
         self.sync_pictograms(trekking_models.DifficultyLevel, directory=url_media_nolang, zipfile=self.zipfile_settings)
-        self.sync_pictograms(trekking_models.POIType, directory=url_media_nolang, zipfile=self.zipfile_settings)
+        self.sync_pictograms(trekking_models.POIType, directory=url_media_nolang, zipfile=self.zipfile_settings,
+                             size=settings.MOBILE_POI_PICTO_SIZE)
         self.sync_pictograms(trekking_models.Route, directory=url_media_nolang, zipfile=self.zipfile_settings)
         self.sync_pictograms(tourism_models.InformationDeskType, directory=url_media_nolang,
                              zipfile=self.zipfile_settings)
         self.sync_pictograms(tourism_models.TouristicContentCategory, directory=url_media_nolang,
-                             zipfile=self.zipfile_settings)
+                             zipfile=self.zipfile_settings, size=settings.MOBILE_CATEGORY_PICTO_SIZE)
         self.sync_pictograms(tourism_models.TouristicContentType, directory=url_media_nolang,
                              zipfile=self.zipfile_settings)
         self.sync_pictograms(tourism_models.TouristicEventType, directory=url_media_nolang,
