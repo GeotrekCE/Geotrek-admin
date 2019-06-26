@@ -8,6 +8,18 @@ CHANGELOG
 **Bug fixes**
 
 - Fix public PDF overflow
+- Resize category and POI pictograms for mobile app
+- Convert pictograms from SVG to PNG for mobile app
+- Fix structure (or not) related scrolldowns validation
+- Remove unvisible paths in remove_duplicate_paths command
+- Fix list of additional layers in layer selector
+- Don't reset excluded POIs when saving treks
+
+**Minor Changes**
+
+- Allow to merge multiple comment columns when importing paths
+- Add color field to touristic contents categories (for mobile app only)
+- Handle invalid geometries when importing districts
 
 
 2.27.6
