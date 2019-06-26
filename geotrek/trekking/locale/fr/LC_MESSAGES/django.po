@@ -294,6 +294,16 @@ msgstr "Ordre"
 msgid "Alphabetical order if blank"
 msgstr "Ordre alphabétique si vide"
 
+msgid "Background color"
+msgstr "Couleur de fond"
+
+msgid ""
+"Color of the practice in mobile and PDF export. (To be implemented in "
+"Geotrek-rando)"
+msgstr ""
+"Couleur définie pour la pratique, utilisée pour le mobile et l'export PDF."
+"(N'est pas encore implémenté dans Geotrek-rando"
+
 msgid "Cirkwi tag"
 msgstr "Tag Cirkwi"
 

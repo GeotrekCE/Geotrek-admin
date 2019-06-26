@@ -299,6 +299,14 @@ msgstr ""
 msgid "Alphabetical order if blank"
 msgstr ""
 
+msgid "Background color"
+msgstr ""
+
+msgid ""
+"Color of the practice in mobile and PDF export. (To be implemented in "
+"Geotrek-rando)"
+msgstr ""
+
 msgid "Cirkwi tag"
 msgstr ""
 
