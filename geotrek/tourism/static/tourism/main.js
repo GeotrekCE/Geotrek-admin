@@ -13,19 +13,19 @@ $(window).on('entity:map', function (e, data) {
             modelname: modelname,
             style: L.Util.extend(window.SETTINGS.map.styles[modelname] || {}, {clickable:false}),
         });
-        map.layerscontrol.addOverlay(layer, tr(modelname), tr('Tourism'));
-
+        if (data.modelname != modelname){
+            map.layerscontrol.addOverlay(layer, tr(modelname), tr('Tourism'));
+        };
         map.on('layeradd', function(e){
             var options = e.layer.options || {'modelname': 'None'};
             if (! loaded_event){
-
-                if (options.modelname == 'touristicevent'){
+                if (options.modelname == 'touristicevent' && options.modelname != data.modelname){
                     e.layer.load(window.SETTINGS.urls.touristicevent_layer);
                     loaded_event = true;
                 }
             }
             if (! loaded_touristic){
-                if (options.modelname == 'touristiccontent'){
+                if (options.modelname == 'touristiccontent' && options.modelname != data.modelname){
                     e.layer.load(window.SETTINGS.urls.touristiccontent_layer);
                     loaded_touristic = true;
                 }
