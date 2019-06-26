@@ -379,6 +379,7 @@ THUMBNAIL_ALIASES = {
         'medium': {'size': (800, 800)},
         # Header image for trek export (keep ratio of TREK_EXPORT_HEADER_IMAGE_SIZE)
         'print': {'size': (1000, 500), 'crop': 'smart'},
+        'mobile_picto': {'size': (32, 32)},
     },
 }
 
@@ -601,6 +602,8 @@ MOBILE_TILES_RADIUS_SMALL = 0.005  # ~500 m
 MOBILE_TILES_GLOBAL_ZOOMS = range(13)
 MOBILE_TILES_LOW_ZOOMS = range(13, 15)
 MOBILE_TILES_HIGH_ZOOMS = range(15, 17)
+MOBILE_CATEGORY_PICTO_SIZE = 32
+MOBILE_POI_PICTO_SIZE = 32
 MOBILE_LENGTH_INTERVALS = [
     {"id": 1, "name": "< 10 km", "interval": [0, 9999]},
     {"id": 2, "name": "10 - 30", "interval": [9999, 29999]},

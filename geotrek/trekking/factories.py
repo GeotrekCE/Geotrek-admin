@@ -15,7 +15,7 @@ class TrekNetworkFactory(factory.DjangoModelFactory):
         model = models.TrekNetwork
 
     network = factory.Sequence(lambda n: u"network %s" % n)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('network-%s.png')
 
 
 class PracticeFactory(factory.DjangoModelFactory):
@@ -23,7 +23,7 @@ class PracticeFactory(factory.DjangoModelFactory):
         model = models.Practice
 
     name = factory.Sequence(lambda n: u"usage %s" % n)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('practice-%s.png')
 
 
 class AccessibilityFactory(factory.DjangoModelFactory):
@@ -31,7 +31,7 @@ class AccessibilityFactory(factory.DjangoModelFactory):
         model = models.Accessibility
 
     name = factory.Sequence(lambda n: u"accessibility %s" % n)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('accessibility-%s.png')
 
 
 class RouteFactory(factory.DjangoModelFactory):
@@ -39,7 +39,7 @@ class RouteFactory(factory.DjangoModelFactory):
         model = models.Route
 
     route = factory.Sequence(lambda n: u"route %s" % n)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('route-%s.png')
 
 
 class DifficultyLevelFactory(factory.DjangoModelFactory):
@@ -47,7 +47,7 @@ class DifficultyLevelFactory(factory.DjangoModelFactory):
         model = models.DifficultyLevel
 
     difficulty = factory.Sequence(lambda n: u"difficulty %s" % n)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('difficulty-%s.png')
 
 
 class WebLinkCategoryFactory(factory.DjangoModelFactory):
@@ -55,7 +55,7 @@ class WebLinkCategoryFactory(factory.DjangoModelFactory):
         model = models.WebLinkCategory
 
     label = factory.Sequence(lambda n: u"Category %s" % n)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('weblink-category-%s.png')
 
 
 class WebLinkFactory(factory.DjangoModelFactory):
@@ -195,7 +195,7 @@ class POITypeFactory(factory.DjangoModelFactory):
         model = models.POIType
 
     label = factory.Sequence(lambda n: u"POIType %s" % n)
-    pictogram = dummy_filefield_as_sequence('pictogram %s')
+    pictogram = dummy_filefield_as_sequence('poi-type-%s.png')
 
 
 class POIFactory(PointTopologyFactory):
@@ -213,7 +213,7 @@ class ServiceTypeFactory(factory.DjangoModelFactory):
         model = models.ServiceType
 
     name = factory.Sequence(lambda n: u"ServiceType %s" % n)
-    pictogram = dummy_filefield_as_sequence('pictogram %s')
+    pictogram = dummy_filefield_as_sequence('service-type-%s.png')
     published = True
 
 

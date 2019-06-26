@@ -44,7 +44,7 @@ class ThemeFactory(factory.DjangoModelFactory):
         model = models.Theme
 
     label = factory.Sequence(lambda n: u"Theme %s" % n)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('theme-%s.png')
 
 
 class RecordSourceFactory(factory.DjangoModelFactory):
@@ -53,7 +53,7 @@ class RecordSourceFactory(factory.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: u"Record source %s" % n)
     website = 'http://geotrek.fr'
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('recordsource-%s.png')
 
 
 class TargetPortalFactory(factory.DjangoModelFactory):

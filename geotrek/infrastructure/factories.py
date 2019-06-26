@@ -12,7 +12,7 @@ class InfrastructureTypeFactory(factory.DjangoModelFactory):
 
     label = factory.Sequence(lambda n: u"Type %s" % n)
     type = models.INFRASTRUCTURE_TYPES.BUILDING
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('infrastructure-type-%s.png')
 
 
 class InfrastructureTypeNoPictogramFactory(factory.DjangoModelFactory):

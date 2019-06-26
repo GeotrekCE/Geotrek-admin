@@ -516,8 +516,7 @@ class Practice(PictogramMixin):
     cirkwi = models.ForeignKey('cirkwi.CirkwiLocomotion', verbose_name=_(u"Cirkwi locomotion"), null=True, blank=True)
     order = models.IntegerField(verbose_name=_(u"Order"), null=True, blank=True, db_column='tri',
                                 help_text=_(u"Alphabetical order if blank"))
-    mobile_color = ColorField(verbose_name=_(u"Mobile color"), default='#444444', db_column='couleur_mobile',
-                              help_text=_(u"Color of the practice in mobile"))
+    color = ColorField(verbose_name=_(u"Color (mobile app only)"), default='#444444', db_column='couleur')
 
     class Meta:
         db_table = 'o_b_pratique'

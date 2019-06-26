@@ -10,6 +10,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Submit, HTML, Div, Fieldset
 from leaflet.forms.widgets import LeafletWidget
+from mapentity.forms import TranslatedModelForm
 from mapentity.widgets import SelectMultipleWithPop
 
 from geotrek.common.forms import CommonForm
@@ -350,7 +351,7 @@ class ServiceForm(BaseServiceForm):
         fields = BaseServiceForm.Meta.fields + ['structure', 'type', 'eid']
 
 
-class WebLinkCreateFormPopup(forms.ModelForm):
+class WebLinkCreateFormPopup(TranslatedModelForm):
 
     def __init__(self, *args, **kwargs):
         super(WebLinkCreateFormPopup, self).__init__(*args, **kwargs)
@@ -369,8 +370,7 @@ class WebLinkCreateFormPopup(forms.ModelForm):
 
     class Meta:
         model = WebLink
-        fields = ['name_{0}'.format(l[0]) for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']] + \
-                 ['url', 'category']
+        fields = ['name', 'url', 'category']
 
 
 class SyncRandoForm(forms.Form):
