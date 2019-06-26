@@ -298,7 +298,7 @@ msgid "Color"
 msgstr "Couleur"
 
 msgid ""
-"Color of the practice, only used in mobile. (To be implemented in Geotrek-rando)"
+"Color of the practice, only used in mobile."
 msgstr ""
 "Couleur définie pour la pratique, utilisée seulement pour le mobile."
 "(N'est pas encore implémentée dans Geotrek-rando"

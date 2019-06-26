@@ -280,7 +280,7 @@ msgid "Color"
 msgstr ""
 
 msgid ""
-"Color of the practice, only used in mobile. (To be implemented in Geotrek-rando)"
+"Color of the practice, only used in mobile."
 msgstr ""
 
 msgid "Cirkwi tag"
