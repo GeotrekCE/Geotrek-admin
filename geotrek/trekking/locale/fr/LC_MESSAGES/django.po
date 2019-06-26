@@ -298,7 +298,7 @@ msgid "Background color"
 msgstr "Couleur de fond"
 
 msgid ""
-"Color of the practice in mobile and PDF export. (To be implemented in "
+"Color of the practice, used in mobile and PDF export. (To be implemented in "
 "Geotrek-rando)"
 msgstr ""
 "Couleur définie pour la pratique, utilisée pour le mobile et l'export PDF."

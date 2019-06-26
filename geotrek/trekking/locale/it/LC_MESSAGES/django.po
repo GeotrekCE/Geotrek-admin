@@ -303,7 +303,7 @@ msgid "Background color"
 msgstr ""
 
 msgid ""
-"Color of the practice in mobile and PDF export. (To be implemented in "
+"Color of the practice, used in mobile and PDF export. (To be implemented in "
 "Geotrek-rando)"
 msgstr ""
 
