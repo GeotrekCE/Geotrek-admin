@@ -276,6 +276,13 @@ msgstr ""
 msgid "Alphabetical order if blank"
 msgstr ""
 
+msgid "Color"
+msgstr ""
+
+msgid ""
+"Color of the practice, only used in mobile."
+msgstr ""
+
 msgid "Cirkwi tag"
 msgstr ""
 

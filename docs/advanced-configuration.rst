@@ -339,6 +339,13 @@ These templates derive from base templates, which content is organized in blocks
 To override for example the description block of trek pdf, copy and change the ``{% block description }…{% endblock description %}``
 in your ``var/media/templates/trekking/trek_public_pdf.html``.
 
+It is also possible to use color defined for practice for pictogram by adding in your
+``geotrek/trekking/templates/trekking/trek_public_pdf.html`` file :
+
+::
+
+    {% block picto_attr %}style="background-color: {{ object.practice.color }};"{% endblock picto_attr %}
+
 CSS can be overriden like html templates : copy them to ``var/media/templates/trekking/`` or ``var/media/templates/tourism/`` folder
 
 .. note ::
@@ -381,6 +388,11 @@ apparence of objects in public trek exports, use the following setting :
 
 See *Leaflet* reference documentation for detail about layers apparence.
 
+Primary color in PDF templates
+------------------------------
+
+You can override `PRIMARY_COLOR` to change emphase text in PDF export.
+Beware of contrast, colour is used for text so we advise you to avoid light colour.
 
 Custom logos
 ------------
