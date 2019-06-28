@@ -2,12 +2,13 @@
 CHANGELOG
 =========
 
-2.27.8.dev0
+2.27.8 (2019-06-28)
 -------------------
 
-**Bug fixes**
+**Minor Changes**
 
--
+- Add primary color setting for PDF
+- Allow to override practices pictogram color in custom trek PDF template
 
 
 2.27.7 (2019-06-26)
