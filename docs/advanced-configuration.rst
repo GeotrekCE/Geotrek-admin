@@ -7,9 +7,9 @@ ADVANCED CONFIGURATION
 Custom setting file
 -------------------
 
-Geotrek configuration is currently restricted to values present in ``etc/settings.ini``.
+Geotrek basic configuration is currently restricted to values present in ``etc/settings.ini``.
 
-However, it is still possible to write a custom Django setting file.
+However, it is possible to write a custom Django setting file to override all default values from ``geotrek/settings/base.py`` file.
 
 * Create your a file in *geotrek/settings/custom.py* with the following content :
 
