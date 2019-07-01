@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+2.27.9 (2019-07-01)
+-------------------
+
+**Minor Changes**
+
+- Add ambiance field to trek detail endpoint in mobile API
+
+
 2.27.8 (2019-06-28)
 -------------------
 
