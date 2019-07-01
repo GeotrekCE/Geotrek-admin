@@ -1,10 +1,24 @@
 <!DOCTYPE html>
-{% load i18n mapentity_tags staticfiles %}
+{% load i18n geotrek_tags mapentity_tags staticfiles %}
+
+{% settings_value "PRIMARY_COLOR" as primary_color %}
+
 <html lang="en">
   <head>
     {% block style %}
       <style type="text/css">
         {% include template_css %}
+
+        .intro-left .teaser,
+        .meta-items-title,
+        .advice-title,
+        .elevation-title,
+        .half-block h2,
+        .block h2,
+        .information-desks h2 {
+          color: {{ primary_color }};
+        }
+
       </style>
     {% endblock style %}
   </head>

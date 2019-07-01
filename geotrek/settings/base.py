@@ -722,3 +722,5 @@ ENABLED_MOBILE_FILTERS = [
     'cities',
     'accessibilities',
 ]
+
+PRIMARY_COLOR = "#7b8c12"

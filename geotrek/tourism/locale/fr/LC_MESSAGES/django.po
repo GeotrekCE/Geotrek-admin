@@ -52,6 +52,10 @@ msgstr "Site web public"
 msgid "Label"
 msgstr "Label"
 
+msgid "Color of the category, only used in mobile."
+msgstr ""
+"Couleur définie pour la catégorie, utilisée seulement pour le mobile."
+
 msgid "Information desk type"
 msgstr "Type de lieu de renseignement"
 
