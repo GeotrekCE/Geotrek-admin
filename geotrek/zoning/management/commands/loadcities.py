@@ -48,13 +48,17 @@ class Command(BaseCommand):
                         geom = MultiPolygon(geom)
                     self.check_srid(srid, geom)
                     geom.dim = 2
-                    if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
-                        instance, created = City.objects.update_or_create(code=feat.get(code_column),
-                                                                          defaults={
-                                                                              'name': feat.get(name_column),
-                                                                              'geom': geom})
+                    if geom.valid:
+                        if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
+                            instance, created = City.objects.update_or_create(code=feat.get(code_column),
+                                                                              defaults={
+                                                                                  'name': feat.get(name_column),
+                                                                                  'geom': geom})
+                            if verbosity > 0:
+                                self.stdout.write("%s %s" % ('Created' if created else 'Updated', feat.get(name_column)))
+                    else:
                         if verbosity > 0:
-                            self.stdout.write("%s %s" % ('Created' if created else 'Updated', feat.get(name_column)))
+                            self.stdout.write("%s's geometry is not valid" % feat.get(name_column))
                 except OGRIndexError:
                     if count_error == 0:
                         self.stdout.write(
