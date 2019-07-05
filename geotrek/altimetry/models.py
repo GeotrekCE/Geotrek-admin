@@ -56,8 +56,8 @@ class AltimetryMixin(models.Model):
     def get_elevation_limits(self):
         return AltimetryHelper.altimetry_limits(self.get_elevation_profile())
 
-    def get_elevation_profile_svg(self):
-        return AltimetryHelper.profile_svg(self.get_elevation_profile())
+    def get_elevation_profile_svg(self, language=None):
+        return AltimetryHelper.profile_svg(self.get_elevation_profile(), language)
 
     def get_elevation_chart_url(self, language=None):
         """Generic url. Will fail if there is no such url defined
