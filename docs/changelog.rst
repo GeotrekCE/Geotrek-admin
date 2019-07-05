@@ -5,9 +5,9 @@ CHANGELOG
 2.27.10.dev0
 -------------------
 
-**Bug fixes**
+**Minor Changes**
 
--
+- Set OpenTopoMap as default map background
 
 
 2.27.9 (2019-07-01)
