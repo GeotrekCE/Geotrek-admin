@@ -130,6 +130,7 @@ class Command(BaseCommand):
                 for feature in layer:
                     feature_geom = feature.geom.transform(settings.API_SRID, clone=True)
                     feature_geom.coord_dim = 2
+
                     name = feature.get(field_name) if field_name in available_fields else options.get('name_default')
                     if feature_geom.geom_type == 'MultiPoint':
                         self.stdout.write(self.style.NOTICE(u"This object is a MultiPoint : %s" % name))

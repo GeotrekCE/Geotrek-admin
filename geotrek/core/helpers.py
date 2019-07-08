@@ -55,6 +55,7 @@ class TopologyHelper(object):
                 objdict = json.loads(serialized)
             except ValueError as e:
                 raise ValueError("Invalid serialization: %s" % e)
+
         if objdict and not isinstance(objdict, (list,)):
             lat = objdict.get('lat')
             lng = objdict.get('lng')
@@ -67,6 +68,7 @@ class TopologyHelper(object):
                         return Topology.objects.get(pk=int(pk))
                     except (Topology.DoesNotExist, ValueError):
                         pass
+
                 return cls._topologypoint(lng, lat, kind, snap=objdict.get('snap'))
             else:
                 objdict = [objdict]

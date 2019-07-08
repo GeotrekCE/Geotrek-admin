@@ -5,8 +5,6 @@ from django.contrib.gis.geos.polygon import Polygon
 from django.contrib.gis.geos.collections import MultiPolygon
 from django.conf import settings
 
-import os
-
 
 class Command(BaseCommand):
     help = 'Load Restricted Area from a file within the spatial extent\n'
