@@ -15,8 +15,6 @@ class Command(BaseCommand):
                             help="Type of restricted areas in the file")
         parser.add_argument('--name-attribute', '-n', action='store', dest='name', default='nom',
                             help="Name of the name's attribute inside the file")
-        parser.add_argument('--uid-attribute', '-u', action='store', dest='uid', default='uid',
-                            help="External id's attribute inside the file")
         parser.add_argument('--encoding', '-e', action='store', dest='encoding', default='utf-8',
                             help='File encoding, default utf-8')
         parser.add_argument('--srid', '-s', action='store', dest='srid', default=4326, type=int,
@@ -29,7 +27,6 @@ class Command(BaseCommand):
         file_path = options.get('file_path')
         area_type_name = options.get('area_type')
         name_column = options.get('name')
-        uid_column = options.get('uid')
         encoding = options.get('encoding')
         srid = options.get('srid')
         do_intersect = options.get('intersect')
@@ -56,7 +53,6 @@ class Command(BaseCommand):
                     if geom.valid:
                         if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
                             instance, created = RestrictedArea.objects.update_or_create(name=feat.get(name_column),
-                                                                                        uid=feat.get(uid_column),
                                                                                         area_type=area_type,
                                                                                         defaults={
                                                                                             'geom': geom})
