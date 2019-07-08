@@ -4,7 +4,7 @@ import requests
 import unicodedata
 
 from django.conf import settings
-from django.contrib.gis.geos import Point, Polygon
+from django.contrib.gis.geos import Point, Polygon, MultiPolygon
 from django.utils.translation import ugettext as _
 
 from geotrek.common.parsers import Parser, ShapeParser, GlobalImportError, RowImportError
@@ -87,7 +87,13 @@ class BiodivParser(Parser):
         if val['type'] == "Point":
             geom = Point(val['coordinates'], srid=4326)  # WGS84
         else:
-            geom = Polygon(val['coordinates'][0], srid=4326)  # WGS84
+            if val['type'] == "Polygon":
+                geom = Polygon(val['coordinates'][0], srid=4326)  # WGS84
+            else:
+                polygons = []
+                for polygon in val['coordinates']:
+                    polygons.append(Polygon(polygon[0], srid=4326))
+                geom = MultiPolygon(polygons, srid=4326)
         geom.transform(settings.SRID)
         return geom
 
