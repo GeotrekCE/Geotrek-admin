@@ -34,7 +34,7 @@ class InfrastructureCommandTest(TestCase):
     def test_load_infrastructure_multipoints(self):
         output = StringIO()
         structure = StructureFactory.create(name='structure')
-        filename = os.path.join(os.path.dirname(__file__), 'data', 'infrastructure_multipoint.geojson')
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'infrastructure_good_multipoint.geojson')
         building = InfrastructureFactory(name="name", implantation_year=2010)
         call_command('loadinfrastructure', filename, type_default='label', name_default='name',
                      condition_default='condition', structure_default='structure',
@@ -45,6 +45,17 @@ class InfrastructureCommandTest(TestCase):
         self.assertEquals(building.name, value[1].name)
         self.assertEquals(building.implantation_year, value[1].implantation_year)
         self.assertEquals(value.count(), 2)
+
+    def test_load_infrastructure_bad_multipoints_error(self):
+        output = StringIO()
+        StructureFactory.create(name='structure')
+        InfrastructureFactory(name="name", implantation_year=2010)
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'infrastructure_bad_multipoint.geojson')
+        with self.assertRaises(CommandError) as e:
+            call_command('loadinfrastructure', filename, type_default='label', name_default='name',
+                         condition_default='condition', structure_default='structure',
+                         description_default='description', year_default=2010, verbosity=2, stdout=output)
+        self.assertEqual('One of your geometry is a MultiPoint object with multiple points', e.exception.message)
 
     def test_load_infrastructure_with_fields(self):
         output = StringIO()

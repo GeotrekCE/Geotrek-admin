@@ -7,7 +7,7 @@
       "geometry": {
         "type": "MultiPoint",
         "coordinates": [
-            [1.0, 0.0], [101.0, 1.0]
+            [1.0, 0.0], [101.0, 1]
         ]
       }
     }
