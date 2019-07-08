@@ -62,31 +62,30 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
                         "update_datetime": "2017-11-29T14:53:35.949097Z",
                         "create_datetime": "2017-11-29T14:49:01.317155Z",
                         "radius": None
+                    }, {
+                        "id": 2,
+                        "url": "https://biodiv-sports.fr/api/v2/sensitivearea/46/?format=json",
+                        "name": {"fr": "Tétras lyre", "en": "Black grouse", "it": "Fagiano di monte"},
+                        "description": {"fr": "Blabla2", "en": "Blahblah2", "it": ""},
+                        "period": [True, True, True, True, False, False, False, False, False, False, False, True],
+                        "contact": "",
+                        "practices": [1],
+                        "info_url": "",
+                        "published": True,
+                        "structure": "LPO",
+                        "species_id": 7,
+                        "kml_url": "https://biodiv-sports.fr/api/fr/sensitiveareas/47.kml",
+                        "geometry": {
+                            "type": "MultiPolygon",
+                            "coordinates": [[[[6.098245801813527, 45.26257781325591],
+                                             [6.098266512921538, 45.26330956917618],
+                                             [6.098455143566011, 45.26390601480551],
+                                             [6.098245801813527, 45.26257781325591]]]]
                         },
-                        {
-                            "id": 2,
-                            "url": "https://biodiv-sports.fr/api/v2/sensitivearea/46/?format=json",
-                            "name": {"fr": "Tétras lyre", "en": "Black grouse", "it": "Fagiano di monte"},
-                            "description": {"fr": "Blabla2", "en": "Blahblah2", "it": ""},
-                            "period": [True, True, True, True, False, False, False, False, False, False, False, True],
-                            "contact": "",
-                            "practices": [1],
-                            "info_url": "",
-                            "published": True,
-                            "structure": "LPO",
-                            "species_id": 7,
-                            "kml_url": "https://biodiv-sports.fr/api/fr/sensitiveareas/47.kml",
-                            "geometry": {
-                                "type": "MultiPolygon",
-                                "coordinates": [[[[6.098245801813527, 45.26257781325591],
-                                                 [6.098266512921538, 45.26330956917618],
-                                                 [6.098455143566011, 45.26390601480551],
-                                                 [6.098245801813527, 45.26257781325591]]]]
-                            },
-                            "update_datetime": "2017-11-29T14:53:35.949097Z",
-                            "create_datetime": "2017-11-29T14:49:01.317155Z",
-                            "radius": None
-                        }
+                        "update_datetime": "2017-11-29T14:53:35.949097Z",
+                        "create_datetime": "2017-11-29T14:49:01.317155Z",
+                        "radius": None
+                    }
                     ]
                 }
             return response
