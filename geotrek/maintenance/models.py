@@ -389,7 +389,7 @@ class ManDay(models.Model):
         return float(self.nb_days * self.job.cost)
 
     def __unicode__(self):
-        return self.nb_days
+        return str(self.nb_days)
 
 
 class ProjectManager(models.GeoManager):
