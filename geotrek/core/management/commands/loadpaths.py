@@ -87,7 +87,6 @@ class Command(BaseCommand):
                 if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
                     try:
                         with transaction.atomic():
-                            print(geom)
                             comment_final = '</br>'.join(comment_final_tab)
                             path = Path.objects.create(name=name,
                                                        structure=structure,

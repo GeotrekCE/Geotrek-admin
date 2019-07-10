@@ -154,7 +154,6 @@ class SpeciesSensitiveAreaShapeParser(ShapeParser):
 
     def filter_species(self, src, val):
         try:
-            print(val)
             species = Species.objects.get(category=Species.SPECIES, name=val)
         except Species.DoesNotExist:
             msg = u"L'espèce {} n'existe pas dans Geotrek. Merci de la créer.".format(val)
@@ -197,7 +196,6 @@ class RegulatorySensitiveAreaShapeParser(ShapeParser):
         species.radius = elevation
         practices = []
         if practice_names:
-            print(practice_names)
             for practice_name in practice_names.split(self.separator):
                 try:
                     practice = SportPractice.objects.get(name=practice_name)
