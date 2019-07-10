@@ -7,6 +7,7 @@ CHANGELOG
 
 **Minor Changes**
 
+- Set OpenTopoMap as default map background
 - Resize information desk type pictograms in mobile API
 
 
