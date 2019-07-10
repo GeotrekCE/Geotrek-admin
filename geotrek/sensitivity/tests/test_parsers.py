@@ -146,9 +146,9 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
             return response
         mocked.get.side_effect = side_effect
         call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
-        practice = SportPractice.objects.get()
-        species = Species.objects.get()
-        area = SensitiveArea.objects.get()
+        practice = SportPractice.objects.first()
+        species = Species.objects.first()
+        area = SensitiveArea.objects.first()
         self.assertEqual(practice.name, "Land")
         self.assertEqual(practice.name_fr, "Terrestre")
         self.assertEqual(species.name, u"Black grouse")
@@ -171,7 +171,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
             return response
         mocked.get.side_effect = side_effect
         call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
-        species = Species.objects.get()
+        species = Species.objects.first()
         self.assertEqual(species.url, "toto.com")
 
     @mock.patch('geotrek.sensitivity.parsers.requests')
@@ -188,7 +188,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
             return response
         mocked.get.side_effect = side_effect
         call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
-        species = Species.objects.get()
+        species = Species.objects.first()
         self.assertEqual(species.radius, 5)
 
 
@@ -200,7 +200,7 @@ class SpeciesSensitiveAreaShapeParserTest(TestCase):
         self.assertEqual(rie.exception.message, "L'espèce Aigle royal n'existe pas dans Geotrek. Merci de l'ajouter.")
         species = SpeciesFactory(name=u"Aigle royal")
         call_command('import', 'geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser', filename, verbosity=0)
-        area = SensitiveArea.objects.get()
+        area = SensitiveArea.objects.first()
         self.assertEqual(area.species, species)
         self.assertEqual(area.contact, u"Contact")
         self.assertEqual(area.description, u"Test UTF8 éêè")
