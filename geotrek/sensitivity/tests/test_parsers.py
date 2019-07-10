@@ -8,7 +8,6 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 
-from geotrek.common.parsers import RowImportError
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.sensitivity.models import SportPractice, Species, SensitiveArea
 from geotrek.sensitivity.factories import SpeciesFactory
@@ -31,58 +30,60 @@ json_test_sport_practice = {
 }
 
 json_test_species = {
-                    "count": 2,
-                    "next": None,
-                    "previous": None,
-                    "results": [{
-                        "id": 1,
-                        "url": "https://biodiv-sports.fr/api/v2/sensitivearea/46/?format=json",
-                        "name": {"fr": u"Tétras lyre", "en": u"Black grouse", "it": u"Fagiano di monte"},
-                        "description": {"fr": "Blabla", "en": "Blahblah", "it": ""},
-                        "period": [True, True, True, True, False, False, False, False, False, False, False, True],
-                        "contact": "",
-                        "practices": [1],
-                        "info_url": "",
-                        "published": True,
-                        "structure": "LPO",
-                        "species_id": 7,
-                        "kml_url": "https://biodiv-sports.fr/api/fr/sensitiveareas/46.kml",
-                        "geometry": {
-                            "type": "Polygon",
-                            "coordinates": [[[6.098245801813527, 45.26257781325591],
-                                            [6.098266512921538, 45.26330956917618],
-                                            [6.098455143566011, 45.26390601480551],
-                                            [6.098245801813527, 45.26257781325591]]]
-                        },
-                        "update_datetime": "2017-11-29T14:53:35.949097Z",
-                        "create_datetime": "2017-11-29T14:49:01.317155Z",
-                        "radius": None
-                    }, {
-                        "id": 2,
-                        "url": "https://biodiv-sports.fr/api/v2/sensitivearea/46/?format=json",
-                        "name": {"fr": u"Tétras lyre", "en": u"Black grouse", "it": u"Fagiano di monte"},
-                        "description": {"fr": "Blabla2", "en": "Blahblah2", "it": ""},
-                        "period": [True, True, True, True, False, False, False, False, False, False, False, True],
-                        "contact": "",
-                        "practices": [1],
-                        "info_url": "",
-                        "published": True,
-                        "structure": "LPO",
-                        "species_id": 7,
-                        "kml_url": "https://biodiv-sports.fr/api/fr/sensitiveareas/47.kml",
-                        "geometry": {
-                            "type": "MultiPolygon",
-                            "coordinates": [[[[6.098245801813527, 45.26257781325591],
-                                             [6.098266512921538, 45.26330956917618],
-                                             [6.098455143566011, 45.26390601480551],
-                                             [6.098245801813527, 45.26257781325591]]]]
-                        },
-                        "update_datetime": "2017-11-29T14:53:35.949097Z",
-                        "create_datetime": "2017-11-29T14:49:01.317155Z",
-                        "radius": None
-                    }
-                    ]
-                }
+    "count": 2,
+    "next": None,
+    "previous": None,
+    "results": [
+        {
+            "id": 1,
+            "url": "https://biodiv-sports.fr/api/v2/sensitivearea/46/?format=json",
+            "name": {"fr": u"Tétras lyre", "en": u"Black grouse", "it": u"Fagiano di monte"},
+            "description": {"fr": "Blabla", "en": "Blahblah", "it": ""},
+            "period": [True, True, True, True, False, False, False, False, False, False, False, True],
+            "contact": "",
+            "practices": [1],
+            "info_url": "",
+            "published": True,
+            "structure": "LPO",
+            "species_id": 7,
+            "kml_url": "https://biodiv-sports.fr/api/fr/sensitiveareas/46.kml",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[[6.098245801813527, 45.26257781325591],
+                                 [6.098266512921538, 45.26330956917618],
+                                 [6.098455143566011, 45.26390601480551],
+                                 [6.098245801813527, 45.26257781325591]]]
+            },
+            "update_datetime": "2017-11-29T14:53:35.949097Z",
+            "create_datetime": "2017-11-29T14:49:01.317155Z",
+            "radius": None
+        },
+        {
+            "id": 2,
+            "url": "https://biodiv-sports.fr/api/v2/sensitivearea/46/?format=json",
+            "name": {"fr": u"Tétras lyre", "en": u"Black grouse", "it": u"Fagiano di monte"},
+            "description": {"fr": "Blabla2", "en": "Blahblah2", "it": ""},
+            "period": [True, True, True, True, False, False, False, False, False, False, False, True],
+            "contact": "",
+            "practices": [1],
+            "info_url": "",
+            "published": True,
+            "structure": "LPO",
+            "species_id": 7,
+            "kml_url": "https://biodiv-sports.fr/api/fr/sensitiveareas/47.kml",
+            "geometry": {
+                "type": "MultiPolygon",
+                "coordinates": [[[[6.098245801813527, 45.26257781325591],
+                                  [6.098266512921538, 45.26330956917618],
+                                  [6.098455143566011, 45.26390601480551],
+                                  [6.098245801813527, 45.26257781325591]]]]
+            },
+            "update_datetime": "2017-11-29T14:53:35.949097Z",
+            "create_datetime": "2017-11-29T14:49:01.317155Z",
+            "radius": None
+        }
+    ]
+}
 
 
 class BiodivParserTests(TranslationResetMixin, TestCase):
