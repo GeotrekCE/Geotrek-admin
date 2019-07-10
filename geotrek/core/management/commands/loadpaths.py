@@ -87,6 +87,7 @@ class Command(BaseCommand):
                 if do_intersect and bbox.intersects(geom) or not do_intersect and geom.within(bbox):
                     try:
                         with transaction.atomic():
+                            print(geom)
                             comment_final = '</br>'.join(comment_final_tab)
                             path = Path.objects.create(name=name,
                                                        structure=structure,
@@ -100,9 +101,9 @@ class Command(BaseCommand):
                     except IntegrityError:
                         if fail:
                             counter_fail += 1
-                            self.stdout.write('Integrity Error on path : {}'.format(name))
+                            self.stdout.write('Integrity Error on path : {}, {}'.format(name, geom))
                         else:
-                            raise IntegrityError
+                            raise
         if not dry:
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
