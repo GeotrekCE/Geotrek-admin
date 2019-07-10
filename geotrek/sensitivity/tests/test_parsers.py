@@ -37,7 +37,7 @@ json_test_species = {
                     "results": [{
                         "id": 1,
                         "url": "https://biodiv-sports.fr/api/v2/sensitivearea/46/?format=json",
-                        "name": {"fr": "Tétras lyre", "en": "Black grouse", "it": "Fagiano di monte"},
+                        "name": {"fr": u"Tétras lyre", "en": u"Black grouse", "it": u"Fagiano di monte"},
                         "description": {"fr": "Blabla", "en": "Blahblah", "it": ""},
                         "period": [True, True, True, True, False, False, False, False, False, False, False, True],
                         "contact": "",
@@ -60,7 +60,7 @@ json_test_species = {
                     }, {
                         "id": 2,
                         "url": "https://biodiv-sports.fr/api/v2/sensitivearea/46/?format=json",
-                        "name": {"fr": "Tétras lyre", "en": "Black grouse", "it": "Fagiano di monte"},
+                        "name": {"fr": u"Tétras lyre", "en": u"Black grouse", "it": u"Fagiano di monte"},
                         "description": {"fr": "Blabla2", "en": "Blahblah2", "it": ""},
                         "period": [True, True, True, True, False, False, False, False, False, False, False, True],
                         "contact": "",
@@ -195,9 +195,8 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
 class SpeciesSensitiveAreaShapeParserTest(TestCase):
     def test_cli(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'species.shp')
-        with self.assertRaises(RowImportError) as rie:
-            call_command('import', 'geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser', filename, verbosity=0)
-        self.assertEqual(rie.exception.message, "L'espèce Aigle royal n'existe pas dans Geotrek. Merci de l'ajouter.")
+        call_command('import', 'geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser', filename, verbosity=0)
+        self.assertEqual(SensitiveArea.objects.count(), 0)
         species = SpeciesFactory(name=u"Aigle royal")
         call_command('import', 'geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser', filename, verbosity=0)
         area = SensitiveArea.objects.first()
