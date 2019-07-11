@@ -87,11 +87,11 @@ class BiodivParser(Parser):
         if val['type'] == "Point":
             geom = Point(val['coordinates'], srid=4326)  # WGS84
         elif val['type'] == "Polygon":
-            geom = Polygon(val['coordinates'][0], srid=4326)  # WGS84
+            geom = Polygon(*val['coordinates'], srid=4326)  # WGS84
         elif val['type'] == "MultiPolygon":
             polygons = []
             for polygon in val['coordinates']:
-                polygons.append(Polygon(polygon[0], srid=4326))
+                polygons.append(Polygon(*polygon, srid=4326))
             geom = MultiPolygon(polygons, srid=4326)
         else:
             raise ValueImportError("This object is neither a point, nor a polygon, nor a multipolygon")
