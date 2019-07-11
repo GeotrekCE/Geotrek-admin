@@ -24,6 +24,7 @@ from geotrek.flatpages.factories import FlatPageFactory
 from geotrek.flatpages.models import FlatPage
 from geotrek.trekking.models import Trek, POI
 from geotrek.trekking.factories import TrekWithPublishedPOIsFactory, PracticeFactory
+from geotrek.tourism.factories import InformationDeskFactory, InformationDeskTypeFactory
 
 
 @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
@@ -285,7 +286,10 @@ class SyncMobileSettingsTest(TranslationResetMixin, TestCase):
     def test_sync_settings_with_picto_svg(self):
         output = BytesIO()
         practice = PracticeFactory.create(pictogram=get_dummy_uploaded_image_svg())
+        information_desk_type = InformationDeskTypeFactory.create(pictogram=get_dummy_uploaded_image())
+        InformationDeskFactory.create(type=information_desk_type)
         pictogram_png = practice.pictogram.url.replace('.svg', '.png')
+        pictogram_desk_png = information_desk_type.pictogram.url
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         for lang in settings.MODELTRANSLATION_LANGUAGES:
@@ -294,8 +298,12 @@ class SyncMobileSettingsTest(TranslationResetMixin, TestCase):
                 self.assertEquals(len(settings_json), 2)
                 self.assertEqual(len(settings_json['data']), 16)
                 self.assertEqual(settings_json['data'][4]['values'][0]['pictogram'], pictogram_png)
-        image = Image.open(os.path.join('tmp', 'nolang', pictogram_png[1:]))
-        self.assertEqual(image.size, (32, 32))
+                self.assertEqual(settings_json['data'][9]['values'][0]['pictogram'], pictogram_desk_png)
+
+        image_practice = Image.open(os.path.join('tmp', 'nolang', pictogram_png[1:]))
+        image_desk = Image.open(os.path.join('tmp', 'nolang', pictogram_desk_png[1:]))
+        self.assertEqual(image_practice.size, (32, 32))
+        self.assertEqual(image_desk.size, (32, 32))
         self.assertIn('en/settings.json', output.getvalue())
 
     @classmethod

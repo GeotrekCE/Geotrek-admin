@@ -2,6 +2,19 @@
 CHANGELOG
 =========
 
+2.27.10 (2019-07-10)
+-------------------
+
+**Minor Changes**
+
+- Set OpenTopoMap as default map background
+- Resize information desk type pictograms in mobile API
+
+**Bug fixes**
+
+- Fix delete intervention type
+
+
 2.27.9 (2019-07-01)
 -------------------
 

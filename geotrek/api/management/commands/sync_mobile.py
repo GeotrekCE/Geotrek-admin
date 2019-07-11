@@ -325,7 +325,7 @@ class Command(BaseCommand):
                              size=settings.MOBILE_POI_PICTO_SIZE)
         self.sync_pictograms(trekking_models.Route, directory=url_media_nolang, zipfile=self.zipfile_settings)
         self.sync_pictograms(tourism_models.InformationDeskType, directory=url_media_nolang,
-                             zipfile=self.zipfile_settings)
+                             zipfile=self.zipfile_settings, size=settings.MOBILE_INFORMATIONDESKTYPE_PICTO_SIZE)
         self.sync_pictograms(tourism_models.TouristicContentCategory, directory=url_media_nolang,
                              zipfile=self.zipfile_settings, size=settings.MOBILE_CATEGORY_PICTO_SIZE)
         self.sync_pictograms(tourism_models.TouristicContentType, directory=url_media_nolang,

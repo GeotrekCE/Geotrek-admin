@@ -1,3 +1,5 @@
+# coding: utf8
+
 import os
 import sys
 
@@ -402,8 +404,8 @@ ALTIMETRIC_AREA_MARGIN = 0.15
 LEAFLET_CONFIG = {
     'SRID': 3857,
     'TILES': [
-        ('OSM', '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '(c) OpenStreetMap Contributors'),
-        ('OSM N&B', '//{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', '(c) OpenStreetMap Contributors'),
+        ('OpenTopoMap', 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', 'Données: © Contributeurs OpenStreetMap, SRTM | Affichage: © OpenTopoMap (CC-BY-SA)'),
+        ('OSM', 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '© Contributeurs OpenStreetMap'),
     ],
     'TILES_EXTENT': SPATIAL_EXTENT,
     # Extent in API projection (Leaflet view default extent)
@@ -551,7 +553,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap'
 
 # Mobile app_directories
 MOBILE_TILES_URL = [
-    'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
 ]
 MOBILE_TILES_EXTENSION = None  # auto
 MOBILE_TILES_RADIUS_LARGE = 0.01  # ~1 km
@@ -561,6 +563,7 @@ MOBILE_TILES_LOW_ZOOMS = list(range(13, 15))
 MOBILE_TILES_HIGH_ZOOMS = list(range(15, 17))
 MOBILE_CATEGORY_PICTO_SIZE = 32
 MOBILE_POI_PICTO_SIZE = 32
+MOBILE_INFORMATIONDESKTYPE_PICTO_SIZE = 32
 MOBILE_LENGTH_INTERVALS = [
     {"id": 1, "name": "< 10 km", "interval": [0, 9999]},
     {"id": 2, "name": "10 - 30", "interval": [9999, 29999]},
