@@ -32,14 +32,8 @@ class ElevationChart(LastModifiedMixin, BaseDetailView):
     def dispatch(self, *args, **kwargs):
         return super(ElevationChart, self).dispatch(*args, **kwargs)
 
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        context = self.get_context_data(*args, object=self.object)
-        context['lang'] = kwargs.get('lang')
-        return self.render_to_response(context)
-
     def render_to_response(self, context, **response_kwargs):
-        return HttpSVGResponse(self.get_object().get_elevation_profile_svg(context['lang']),
+        return HttpSVGResponse(self.get_object().get_elevation_profile_svg(self.kwargs['lang']),
                                **response_kwargs)
 
 
