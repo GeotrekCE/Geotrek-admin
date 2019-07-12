@@ -62,7 +62,7 @@ class TopologyHelper(object):
             pk = objdict.get('pk')
             kind = objdict.get('kind')
             # Point topology ?
-            if lat and lng:
+            if lat is not None and lng is not None:
                 if pk:
                     try:
                         return Topology.objects.get(pk=int(pk))

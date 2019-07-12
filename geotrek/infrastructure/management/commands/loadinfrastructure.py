@@ -131,6 +131,12 @@ class Command(BaseCommand):
                     feature_geom.coord_dim = 2
 
                     name = feature.get(field_name) if field_name in available_fields else options.get('name_default')
+                    if feature_geom.geom_type == 'MultiPoint':
+                        self.stdout.write(self.style.NOTICE(u"This object is a MultiPoint : %s" % name))
+                        if len(feature_geom) < 2:
+                            feature_geom = feature_geom[0].geos
+                        else:
+                            raise CommandError("One of your geometry is a MultiPoint object with multiple points")
                     type = feature.get(
                         field_infrastructure_type) if field_infrastructure_type in available_fields else options.get(
                         'type_default')
