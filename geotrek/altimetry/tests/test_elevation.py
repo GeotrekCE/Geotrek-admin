@@ -5,6 +5,7 @@ from django.contrib.gis.geos import MultiLineString, LineString
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test.utils import override_settings
+from django.utils import translation
 
 from geotrek.core.models import Path
 from geotrek.core.factories import TopologyFactory
@@ -114,7 +115,8 @@ class ElevationProfileTest(TestCase):
         geom = LineString((1.5, 2.5, 8), (2.5, 2.5, 10),
                           srid=settings.SRID)
         profile = AltimetryHelper.elevation_profile(geom)
-        svg = AltimetryHelper.profile_svg(profile)
+        language = translation.get_language()
+        svg = AltimetryHelper.profile_svg(profile, language)
         self.assertIn('Generated with pygal', svg)
         self.assertIn(settings.ALTIMETRIC_PROFILE_BACKGROUND, svg)
         self.assertIn(settings.ALTIMETRIC_PROFILE_COLOR, svg)

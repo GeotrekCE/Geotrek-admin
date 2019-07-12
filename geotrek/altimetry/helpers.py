@@ -1,6 +1,7 @@
 import logging
 
 from django.contrib.gis.geos import GEOSGeometry
+from django.utils import translation
 from django.utils.translation import ugettext as _
 from django.contrib.gis.geos import LineString
 from django.conf import settings
@@ -61,7 +62,7 @@ class AltimetryHelper(object):
         return ceil_elevation, floor_elevation
 
     @classmethod
-    def profile_svg(cls, profile):
+    def profile_svg(cls, profile, language):
         """
         Plot the altimetric graph in SVG using PyGal.
         Most of the job done here is dedicated to preparing
@@ -86,6 +87,8 @@ class AltimetryHelper(object):
         style.colors = (settings.ALTIMETRIC_PROFILE_COLOR,)
         style.font_family = settings.ALTIMETRIC_PROFILE_FONT
         line_chart = pygal.XY(fill=True, style=style, **config)
+        if language:
+            translation.activate(language)
         line_chart.x_title = _("Distance (m)")
         line_chart.y_title = _("Altitude (m)")
         line_chart.show_minor_x_labels = False
@@ -94,6 +97,7 @@ class AltimetryHelper(object):
         line_chart.truncate_label = 50
         line_chart.range = [floor_elevation, ceil_elevation]
         line_chart.no_data_text = _(u"Altimetry data not available")
+        translation.deactivate()
         line_chart.add('', [(int(v[0]), int(v[3])) for v in profile])
         return line_chart.render()
 
