@@ -3,7 +3,6 @@
 import os.path
 
 from django.contrib.gis.gdal import DataSource
-from django.contrib.gis.geos import fromstr
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
@@ -135,7 +134,7 @@ class Command(BaseCommand):
                     if feature_geom.geom_type == 'MultiPoint':
                         self.stdout.write(self.style.NOTICE(u"This object is a MultiPoint : %s" % name))
                         if len(feature_geom) < 2:
-                            feature_geom = fromstr(feature_geom[0].wkt)
+                            feature_geom = feature_geom[0].geos
                         else:
                             raise CommandError("One of your geometry is a MultiPoint object with multiple points")
                     type = feature.get(
