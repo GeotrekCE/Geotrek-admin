@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 
 from geotrek.common.factories import AttachmentFactory
-from geotrek.common.models import Attachment
+from geotrek.common.models import Attachment, FileType
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.trekking.factories import POIFactory, TrekFactory
 
@@ -54,7 +54,8 @@ class AttachmentAdminTest(TestCase):
     def test_attachment_can_be_change(self):
         self.login()
         change_url = reverse('admin:common_attachment_change', args=[self.picture.pk])
-        response = self.client.post(change_url, {'title': 'Coucou', 'filetype': 1, 'starred': True})
+        file_type = FileType.objects.first()
+        response = self.client.post(change_url, {'title': 'Coucou', 'filetype': file_type.pk, 'starred': True})
         self.assertEquals(response.status_code, 302)
         attachment_modified = Attachment.objects.get(pk=self.picture.pk)
         self.assertEqual(attachment_modified.title, self.picture.title)
