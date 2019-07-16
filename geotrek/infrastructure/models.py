@@ -68,7 +68,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
                                    verbose_name=_("Description"), help_text=_(u"Specificites"))
     condition = models.ForeignKey(InfrastructureCondition, db_column='etat',
                                   verbose_name=_("Condition"), blank=True, null=True,
-                                  on_delete=models.PROTECT)
+                                  on_delete=models.SET_NULL)
     implantation_year = models.PositiveSmallIntegerField(verbose_name=_("Implantation year"),
                                                          db_column='annee_implantation', null=True)
     eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True,
