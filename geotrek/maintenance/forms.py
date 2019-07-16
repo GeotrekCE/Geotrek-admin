@@ -60,6 +60,8 @@ class InterventionForm(CommonForm):
                                      queryset=Signage.objects.existing(),
                                      widget=forms.HiddenInput())
     length = FloatField(required=False, label=_("Length"))
+    project = forms.ModelChoiceField(required=False, label=_(u"Project"),
+                                     queryset=Project.objects.existing())
 
     leftpanel_scrollable = False
     fieldslayout = [
