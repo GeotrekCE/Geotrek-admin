@@ -22,6 +22,8 @@ from django.core.urlresolvers import reverse
 
 
 class TrekRelationshipForm(forms.ModelForm):
+    trek_b = forms.ModelChoiceField(queryset=Trek.objects.existing(), required=True,
+                                    label=_(u"Trek"))
 
     class Meta:
         fields = ('id',
@@ -35,7 +37,6 @@ class TrekRelationshipForm(forms.ModelForm):
         super(TrekRelationshipForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = False
-        self.fields['trek_b'].queryset = Trek.objects.existing()
         self.helper.layout = Layout('id',
                                     'trek_a',
                                     'trek_b',
