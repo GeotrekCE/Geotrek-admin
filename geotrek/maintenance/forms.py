@@ -148,6 +148,7 @@ class InterventionForm(CommonForm):
         self.fields['length'].initial = self.instance.length
         editable = bool(self.instance.geom and self.instance.geom.geom_type == 'Point')
         self.fields['length'].widget.attrs['readonly'] = editable
+        self.fields['project'].queryset = Project.objects.existing()
 
     def clean(self, *args, **kwargs):
         # If topology was read-only, topology field is empty, get it from infra.
