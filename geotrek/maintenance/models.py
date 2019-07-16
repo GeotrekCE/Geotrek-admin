@@ -637,4 +637,4 @@ class Funding(models.Model):
         verbose_name_plural = _(u"Fundings")
 
     def __unicode__(self):
-        return self.amount
+        return u"%s : %s" % (self.project, self.amount)
