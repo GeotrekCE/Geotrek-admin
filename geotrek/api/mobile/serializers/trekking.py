@@ -75,6 +75,8 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         parking_location = serializers.SerializerMethodField(read_only=True)
         profile = serializers.SerializerMethodField(read_only=True)
         points_reference = serializers.SerializerMethodField()
+        children = serializers.ReadOnlyField(source='children_id')
+        parents = serializers.ReadOnlyField(source='parents_id')
 
         def get_points_reference(self, obj):
             if not obj.points_reference:
@@ -114,7 +116,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'difficulty', 'length', 'ascent', 'descent', 'route', 'is_park_centered', 'parking_location',
                 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'difficulty',
                 'geometry', 'pictures', 'information_desks', 'cities', 'departure_city', 'arrival_city',
-                'points_reference', 'districts', 'ambiance',
+                'points_reference', 'districts', 'ambiance', 'children', 'parents'
             )
 
     class TrekListSerializer(TrekBaseSerializer):
