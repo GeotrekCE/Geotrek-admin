@@ -4,10 +4,10 @@ import requests
 import unicodedata
 
 from django.conf import settings
-from django.contrib.gis.geos import Point, Polygon
+from django.contrib.gis.geos import Point, Polygon, MultiPolygon
 from django.utils.translation import ugettext as _
 
-from geotrek.common.parsers import Parser, ShapeParser, GlobalImportError, RowImportError
+from geotrek.common.parsers import Parser, ShapeParser, GlobalImportError, RowImportError, ValueImportError
 from .models import SensitiveArea, Species, SportPractice
 
 
@@ -86,8 +86,15 @@ class BiodivParser(Parser):
     def filter_geom(self, src, val):
         if val['type'] == "Point":
             geom = Point(val['coordinates'], srid=4326)  # WGS84
+        elif val['type'] == "Polygon":
+            geom = Polygon(*val['coordinates'], srid=4326)  # WGS84
+        elif val['type'] == "MultiPolygon":
+            polygons = []
+            for polygon in val['coordinates']:
+                polygons.append(Polygon(*polygon, srid=4326))
+            geom = MultiPolygon(polygons, srid=4326)
         else:
-            geom = Polygon(val['coordinates'][0], srid=4326)  # WGS84
+            raise ValueImportError("This object is neither a point, nor a polygon, nor a multipolygon")
         geom.transform(settings.SRID)
         return geom
 
@@ -124,12 +131,6 @@ class BiodivParser(Parser):
         if set(practices) != set(species.practices.all()):
             species.practices.add(*practices)
         return species
-
-
-for i in range(12):
-    def filter_period(self, src, val):
-        return val[i]
-    setattr(BiodivParser, 'filter_period{:02}'.format(i + 1), filter_period)
 
 
 class SpeciesSensitiveAreaShapeParser(ShapeParser):
