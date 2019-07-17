@@ -2,16 +2,25 @@
 CHANGELOG
 =========
 
-2.27.11.dev0
--------------------
+2.27.11 (2019-07-17)
+--------------------
 
 **Minor Changes**
 
--
+- Change condition's on_delete for SET_NULL
+- Add the possibility to add Multipoint with one Point on commands loadinfrastructure/loadsignage
+
+**Bug fixes**
+
+- Fix choices fields, should only take in account existing (not deleted) elements
+- Fix delete Organism
+- Fix sensitivity parser with MultiPolygon
+- Fix profile and languages
+
 
 
 2.27.10 (2019-07-10)
--------------------
+--------------------
 
 **Minor Changes**
 
