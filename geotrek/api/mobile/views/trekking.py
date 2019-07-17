@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
-from django.db.models import F, Q
+from django.db.models import Count, F, Q
 from django_filters.rest_framework.backends import DjangoFilterBackend
 
 from geotrek.api.mobile.serializers import trekking as api_serializers_trekking
@@ -32,7 +32,7 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
         if not self.action == 'list':
             queryset = queryset.annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
         if self.action == 'list':
-            queryset = queryset.filter(trek_parents__isnull=True)
+            queryset = queryset.annotate(count_parents=Count('trek_parents')).filter(count_parents=0)
         if 'portal' in self.request.GET:
             queryset = queryset.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
         return queryset.annotate(start_point=Transform(StartPoint('geom'), settings.API_SRID),
