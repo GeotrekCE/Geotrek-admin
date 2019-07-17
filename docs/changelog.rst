@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+2.27.12.dev0
+--------------------
+
+**Minor Changes**
+
+-
+
+
 2.27.11 (2019-07-17)
 --------------------
 
@@ -16,7 +24,6 @@ CHANGELOG
 - Fix delete Organism
 - Fix sensitivity parser with MultiPolygon
 - Fix profile and languages
-
 
 
 2.27.10 (2019-07-10)
