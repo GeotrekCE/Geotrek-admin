@@ -112,22 +112,22 @@ class BaseApiTest(TestCase):
                                                                     description_teaser_fr="mini", published_fr=True)
         cls.district = zoning_factory.DistrictFactory(geom=MultiPolygon(Polygon.from_bbox(cls.treks[0].geom.extent)))
 
-    def get_treks_list(self, params=None):
-        return self.client.get(reverse('apimobile:treks-list'), params, HTTP_ACCEPT_LANGUAGE='fr')
+    def get_treks_list(self, lang, params=None):
+        return self.client.get(reverse('apimobile:treks-list'), params, HTTP_ACCEPT_LANGUAGE=lang)
 
-    def get_treks_detail(self, id_trek, params=None):
-        return self.client.get(reverse('apimobile:treks-detail', args=(id_trek,)), params, HTTP_ACCEPT_LANGUAGE='fr')
+    def get_treks_detail(self, id_trek, lang, params=None):
+        return self.client.get(reverse('apimobile:treks-detail', args=(id_trek,)), params, HTTP_ACCEPT_LANGUAGE=lang)
 
-    def get_poi_list(self, id_trek, params=None):
-        return self.client.get(reverse('apimobile:treks-pois', args=(id_trek, )), params, HTTP_ACCEPT_LANGUAGE='fr')
+    def get_poi_list(self, id_trek, lang, params=None):
+        return self.client.get(reverse('apimobile:treks-pois', args=(id_trek, )), params, HTTP_ACCEPT_LANGUAGE=lang)
 
-    def get_touristic_content_list(self, id_trek, params=None):
+    def get_touristic_content_list(self, id_trek, lang, params=None):
         return self.client.get(reverse('apimobile:treks-touristic-contents', args=(id_trek, )), params,
-                               HTTP_ACCEPT_LANGUAGE='fr')
+                               HTTP_ACCEPT_LANGUAGE=lang)
 
-    def get_touristic_event_list(self, id_trek, params=None):
+    def get_touristic_event_list(self, id_trek, lang, params=None):
         return self.client.get(reverse('apimobile:treks-touristic-events', args=(id_trek, )), params,
-                               HTTP_ACCEPT_LANGUAGE='fr')
+                               HTTP_ACCEPT_LANGUAGE=lang)
 
 
 class APIAccessTestCase(BaseApiTest):
@@ -141,7 +141,7 @@ class APIAccessTestCase(BaseApiTest):
         BaseApiTest.setUpTestData()
 
     def test_trek_detail(self):
-        response = self.get_treks_detail(self.trek.pk)
+        response = self.get_treks_detail(self.trek.pk, 'fr')
         #  test response code
         self.assertEqual(response.status_code, 200)
 
@@ -161,7 +161,7 @@ class APIAccessTestCase(BaseApiTest):
         self.assertEqual(len(json_response['properties']['districts']), 1)
 
     def test_trek_parent_detail(self):
-        response = self.get_treks_detail(self.trek_parent.pk)
+        response = self.get_treks_detail(self.trek_parent.pk, 'fr')
         self.assertEqual(response.status_code, 200)
         json_response_1 = response.json()
         self.assertEqual(sorted(json_response_1.keys()),
@@ -171,12 +171,12 @@ class APIAccessTestCase(BaseApiTest):
         self.assertEqual('Parent', json_response_1.get('properties').get('name'))
         self.assertEqual([self.trek_child_published.pk, self.trek_child_not_published.pk],
                          json_response_1.get('properties').get('children'))
-        response = self.get_treks_detail(self.trek_parent_not_published.pk)
+        response = self.get_treks_detail(self.trek_parent_not_published.pk, 'fr')
         self.assertEqual(response.status_code, 404)
 
     def test_trek_children_detail_parent_published(self):
         # Not published => we got the detail because the parent is published
-        response = self.get_treks_detail(self.trek_child_not_published.pk)
+        response = self.get_treks_detail(self.trek_child_not_published.pk, 'fr')
         self.assertEqual(response.status_code, 200)
         json_response_1 = response.json()
         self.assertEqual(sorted(json_response_1.keys()),
@@ -188,7 +188,7 @@ class APIAccessTestCase(BaseApiTest):
                          json_response_1.get('properties').get('parents'))
 
         # Published
-        response = self.get_treks_detail(self.trek_child_published.pk)
+        response = self.get_treks_detail(self.trek_child_published.pk, 'fr')
         self.assertEqual(response.status_code, 200)
         json_response_2 = response.json()
         self.assertEqual(sorted(json_response_2.keys()),
@@ -201,11 +201,14 @@ class APIAccessTestCase(BaseApiTest):
 
     def test_trek_children_detail_parent_not_published(self):
         # Not published => we don't got the detail because the parent is not published
-        response = self.get_treks_detail(self.trek_child_not_published_2.pk)
+        response = self.get_treks_detail(self.trek_child_not_published_2.pk, 'fr')
         self.assertEqual(response.status_code, 404)
 
+        response = self.get_treks_detail(self.trek_child_not_published_2.pk, 'en')
+        self.assertEqual(response.status_code, 200)
+
         # Published anyway even if if there is a parent behind not published
-        response = self.get_treks_detail(self.trek_child_published_2.pk)
+        response = self.get_treks_detail(self.trek_child_published_2.pk, 'fr')
         self.assertEqual(response.status_code, 200)
         json_response_2 = response.json()
         self.assertEqual(sorted(json_response_2.keys()),
@@ -217,7 +220,7 @@ class APIAccessTestCase(BaseApiTest):
                          json_response_2.get('properties').get('parents'))
 
     def test_trek_list(self):
-        response = self.get_treks_list()
+        response = self.get_treks_list('fr')
         #  test response code
         self.assertEqual(response.status_code, 200)
 
@@ -246,7 +249,7 @@ class APIAccessTestCase(BaseApiTest):
         self.assertIsNone(json_response.get('features')[0].get('properties').get('description_teaser'))
 
     def test_poi_list(self):
-        response = self.get_poi_list(trek_models.Trek.objects.first().pk)
+        response = self.get_poi_list(trek_models.Trek.objects.first().pk, 'fr')
         #  test response code
         self.assertEqual(response.status_code, 200)
 
@@ -276,7 +279,7 @@ class APIAccessTestCase(BaseApiTest):
                          POI_LIST_PROPERTIES_GEOJSON_STRUCTURE)
 
     def test_touristic_event_list(self):
-        response = self.get_touristic_event_list(trek_models.Trek.objects.first().pk)
+        response = self.get_touristic_event_list(trek_models.Trek.objects.first().pk, 'fr')
         #  test response code
         self.assertEqual(response.status_code, 200)
 
@@ -308,7 +311,7 @@ class APIAccessTestCase(BaseApiTest):
                          "Sisi_Event")
 
     def test_touristic_content_list(self):
-        response = self.get_touristic_content_list(trek_models.Trek.objects.first().pk)
+        response = self.get_touristic_content_list(trek_models.Trek.objects.first().pk, 'fr')
         #  test response code
         self.assertEqual(response.status_code, 200)
 
