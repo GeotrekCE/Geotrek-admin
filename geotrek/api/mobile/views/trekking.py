@@ -25,6 +25,7 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = [AllowAny, ]
 
     def get_queryset(self, *args, **kwargs):
+        lang = self.request.META.get('HTTP_ACCEPT_LANGUAGE')
         queryset = trekking_models.Trek.objects.existing()\
             .select_related('topo_object') \
             .prefetch_related('topo_object__aggregations', 'attachments') \
@@ -35,11 +36,15 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
             queryset = queryset.annotate(count_parents=Count('trek_parents')).\
                 exclude(Q(count_parents__gt=0) & Q(published=False))
         if 'portal' in self.request.GET:
-            queryset = queryset.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
-        return queryset.annotate(start_point=Transform(StartPoint('geom'), settings.API_SRID),
-                                 end_point=Transform(EndPoint('geom'), settings.API_SRID)).\
-            filter(Q(published=True) | Q(trek_parents__parent__published=True,
-                                         trek_parents__parent__deleted=False)).distinct()
+            queryset = queryset.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None)).\
+                annotate(start_point=Transform(StartPoint('geom'), settings.API_SRID),
+                         end_point=Transform(EndPoint('geom'), settings.API_SRID)).\
+                filter(
+                Q(**{'published_{lang}'.format(lang=lang): True})
+                | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
+                       'trek_parents__parent__deleted': False})
+            )
+        return queryset
 
     @decorators.detail_route(methods=['get'])
     def pois(self, request, *args, **kwargs):

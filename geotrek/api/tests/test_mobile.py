@@ -81,14 +81,14 @@ class BaseApiTest(TestCase):
         cls.trek_child_not_published = trek_factory.TrekFactory(name_fr='Child_not_published',
                                                                 description_fr="Child_not_published_1",
                                                                 description_teaser_fr="Child_not_published_1",
-                                                                published_fr=True)
+                                                                published_fr=False, published_en=True, published=False)
         trek_models.OrderedTrekChild(parent=cls.trek_parent, child=cls.trek_child_published, order=0).save()
         trek_models.OrderedTrekChild(parent=cls.trek_parent, child=cls.trek_child_not_published, order=1).save()
 
         cls.trek_parent_not_published = trek_factory.TrekFactory(name_fr='Parent_not_published',
                                                                  description_fr="Parent_not_published_1",
                                                                  description_teaser_fr="Parent_not_published_1",
-                                                                 published_fr=False)
+                                                                 published_fr=False, published_en=True, published=False)
         cls.trek_child_published_2 = trek_factory.TrekFactory(name_fr='Child_published_2',
                                                               description_fr="Child_published_2",
                                                               description_teaser_fr="Child_published_2",
@@ -96,11 +96,12 @@ class BaseApiTest(TestCase):
         cls.trek_child_not_published_2 = trek_factory.TrekFactory(name_fr='Child_not_published_2',
                                                                   description_fr="Child_not_published_2",
                                                                   description_teaser_fr="Child_not_published_2",
-                                                                  published_fr=False)
+                                                                  published_fr=False, published_en=True,
+                                                                  published=False)
         trek_models.OrderedTrekChild(parent=cls.trek_parent_not_published,
-                                     child=cls.trek_child_published_2, order=0).save()
+                                     child=cls.trek_child_published_2, order=1).save()
         trek_models.OrderedTrekChild(parent=cls.trek_parent_not_published,
-                                     child=cls.trek_child_not_published_2, order=1).save()
+                                     child=cls.trek_child_not_published_2, order=2).save()
 
         cls.touristic_content = tourism_factory.TouristicContentFactory(geom=cls.treks[0].published_pois.first().geom,
                                                                         name_fr='Coucou_Content', description_fr="Sisi",
@@ -203,7 +204,7 @@ class APIAccessTestCase(BaseApiTest):
         response = self.get_treks_detail(self.trek_child_not_published_2.pk)
         self.assertEqual(response.status_code, 404)
 
-        # Published anyway even if if there is a parent behind
+        # Published anyway even if if there is a parent behind not published
         response = self.get_treks_detail(self.trek_child_published_2.pk)
         self.assertEqual(response.status_code, 200)
         json_response_2 = response.json()
@@ -223,13 +224,12 @@ class APIAccessTestCase(BaseApiTest):
         # json collection structure is ok
         json_response = response.json()
 
-        # trek count is ok (1 normal trek 1 parent published linked with 2 children (3) and 1 children published with
-        # 1 parent not published
-        self.assertEqual(len(json_response.get('features')), 5)
+        # trek count is ok (1 normal trek 1 parent published linked with 1 children published (2)
+        # and 1 children published with 1 parent not published => 4
+        self.assertEqual(len(json_response.get('features')), 4)
         features = json_response.get('features')
         ids = [features[i].get('properties').get('id') for i in range(len(features))]
-        pks_expected = [self.trek.pk, self.trek_parent.pk, self.trek_child_not_published.pk,
-                        self.trek_child_published_2.pk, self.trek_child_published.pk]
+        pks_expected = [self.trek.pk, self.trek_parent.pk, self.trek_child_published_2.pk, self.trek_child_published.pk]
         self.assertItemsEqual(ids, pks_expected)
         # test dim 2 ok
         self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')),
