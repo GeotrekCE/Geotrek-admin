@@ -82,8 +82,8 @@ class BaseApiTest(TestCase):
                                                                 description_fr="Child_not_published_1",
                                                                 description_teaser_fr="Child_not_published_1",
                                                                 published_fr=False, published_en=True, published=False)
-        trek_models.OrderedTrekChild(parent=cls.trek_parent, child=cls.trek_child_published, order=0).save()
-        trek_models.OrderedTrekChild(parent=cls.trek_parent, child=cls.trek_child_not_published, order=1).save()
+        trek_models.OrderedTrekChild(parent=cls.trek_parent, child=cls.trek_child_published, order=1).save()
+        trek_models.OrderedTrekChild(parent=cls.trek_parent, child=cls.trek_child_not_published, order=0).save()
 
         cls.trek_parent_not_published = trek_factory.TrekFactory(name_fr='Parent_not_published',
                                                                  description_fr="Parent_not_published_1",
@@ -99,9 +99,9 @@ class BaseApiTest(TestCase):
                                                                   published_fr=False, published_en=True,
                                                                   published=False)
         trek_models.OrderedTrekChild(parent=cls.trek_parent_not_published,
-                                     child=cls.trek_child_published_2, order=1).save()
+                                     child=cls.trek_child_published_2, order=2).save()
         trek_models.OrderedTrekChild(parent=cls.trek_parent_not_published,
-                                     child=cls.trek_child_not_published_2, order=2).save()
+                                     child=cls.trek_child_not_published_2, order=1).save()
 
         cls.touristic_content = tourism_factory.TouristicContentFactory(geom=cls.treks[0].published_pois.first().geom,
                                                                         name_fr='Coucou_Content', description_fr="Sisi",
@@ -169,7 +169,8 @@ class APIAccessTestCase(BaseApiTest):
         self.assertEqual(sorted(json_response_1.get('properties').keys()),
                          TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
         self.assertEqual('Parent', json_response_1.get('properties').get('name'))
-        self.assertEqual([self.trek_child_published.pk, self.trek_child_not_published.pk],
+        # Order is verified at the same time : not published then published
+        self.assertEqual([self.trek_child_not_published.pk, self.trek_child_published.pk],
                          [child.get('properties').get('id') for child in json_response_1.get('properties').
                          get('children').get('features')])
         response = self.get_treks_detail(self.trek_parent_not_published.pk, 'fr')

@@ -93,16 +93,14 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         def get_children(self, obj):
             children = obj.children.all().annotate(length_2d_m=Length('geom'),
                                                    start_point=Transform(StartPoint('geom'), settings.API_SRID),
-                                                   end_point=Transform(EndPoint('geom'), settings.API_SRID)
-                                                   ).order_by('trek_children__order')
+                                                   end_point=Transform(EndPoint('geom'), settings.API_SRID))
             serializer_children = TrekListSerializer(children, many=True)
             return serializer_children.data
 
         def get_parents(self, obj):
             parents = obj.parents.all().annotate(length_2d_m=Length('geom'),
                                                  start_point=Transform(StartPoint('geom'), settings.API_SRID),
-                                                 end_point=Transform(EndPoint('geom'), settings.API_SRID)
-                                                 ).order_by('trek_parents__order')
+                                                 end_point=Transform(EndPoint('geom'), settings.API_SRID))
             serializer_parents = TrekListSerializer(parents, many=True)
             return serializer_parents.data
 
