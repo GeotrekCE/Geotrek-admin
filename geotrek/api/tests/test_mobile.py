@@ -170,7 +170,8 @@ class APIAccessTestCase(BaseApiTest):
                          TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
         self.assertEqual('Parent', json_response_1.get('properties').get('name'))
         self.assertEqual([self.trek_child_published.pk, self.trek_child_not_published.pk],
-                         json_response_1.get('properties').get('children'))
+                         [child.get('properties').get('id') for child in json_response_1.get('properties').
+                         get('children').get('features')])
         response = self.get_treks_detail(self.trek_parent_not_published.pk, 'fr')
         self.assertEqual(response.status_code, 404)
 
@@ -185,7 +186,8 @@ class APIAccessTestCase(BaseApiTest):
                          TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
         self.assertEqual('Child_not_published', json_response_1.get('properties').get('name'))
         self.assertEqual([self.trek_parent.pk, ],
-                         json_response_1.get('properties').get('parents'))
+                         [child.get('properties').get('id') for child in json_response_1.get('properties').
+                         get('parents').get('features')])
 
         # Published
         response = self.get_treks_detail(self.trek_child_published.pk, 'fr')
@@ -197,7 +199,8 @@ class APIAccessTestCase(BaseApiTest):
                          TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
         self.assertEqual('Child_published', json_response_2.get('properties').get('name'))
         self.assertEqual([self.trek_parent.pk, ],
-                         json_response_2.get('properties').get('parents'))
+                         [child.get('properties').get('id') for child in json_response_1.get('properties').
+                         get('parents').get('features')])
 
     def test_trek_children_detail_parent_not_published(self):
         # Not published => we don't got the detail because the parent is not published
@@ -217,7 +220,8 @@ class APIAccessTestCase(BaseApiTest):
                          TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
         self.assertEqual('Child_published_2', json_response_2.get('properties').get('name'))
         self.assertEqual([self.trek_parent_not_published.pk, ],
-                         json_response_2.get('properties').get('parents'))
+                         [child.get('properties').get('id') for child in json_response_2.get('properties').
+                         get('parents').get('features')])
 
     def test_trek_list(self):
         response = self.get_treks_list('fr')

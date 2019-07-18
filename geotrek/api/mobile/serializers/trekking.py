@@ -6,6 +6,7 @@ from rest_framework import serializers
 from rest_framework_gis import serializers as geo_serializers
 
 from geotrek.api.mobile.serializers.tourism import InformationDeskSerializer
+from geotrek.api.v2.functions import Transform, Length, StartPoint, EndPoint
 from geotrek.zoning.models import City, District
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
@@ -67,6 +68,17 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             id_field = 'pk'
             geo_field = 'geometry'
 
+    class TrekListSerializer(TrekBaseSerializer):
+        first_picture = serializers.ReadOnlyField(source='resized_picture_mobile')
+        geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='start_point', )
+
+        class Meta(TrekBaseSerializer.Meta):
+            fields = (
+                'id', 'pk', 'first_picture', 'name', 'departure', 'accessibilities', 'route', 'departure_city',
+                'difficulty', 'practice', 'themes', 'length', 'geometry', 'districts', 'cities', 'duration', 'ascent',
+                'descent',
+            )
+
     class TrekDetailSerializer(TrekBaseSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
         pictures = serializers.ReadOnlyField(source='serializable_pictures_mobile')
@@ -75,8 +87,22 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         parking_location = serializers.SerializerMethodField(read_only=True)
         profile = serializers.SerializerMethodField(read_only=True)
         points_reference = serializers.SerializerMethodField()
-        children = serializers.ReadOnlyField(source='children_id')
-        parents = serializers.ReadOnlyField(source='parents_id')
+        children = serializers.SerializerMethodField()
+        parents = serializers.SerializerMethodField()
+
+        def get_children(self, obj):
+            children = obj.children.all().annotate(length_2d_m=Length('geom'),
+                                                   start_point=Transform(StartPoint('geom'), settings.API_SRID),
+                                                   end_point=Transform(EndPoint('geom'), settings.API_SRID))
+            serializer_children = TrekListSerializer(children, many=True)
+            return serializer_children.data
+
+        def get_parents(self, obj):
+            parents = obj.parents.all().annotate(length_2d_m=Length('geom'),
+                                                 start_point=Transform(StartPoint('geom'), settings.API_SRID),
+                                                 end_point=Transform(EndPoint('geom'), settings.API_SRID))
+            serializer_parents = TrekListSerializer(parents, many=True)
+            return serializer_parents.data
 
         def get_points_reference(self, obj):
             if not obj.points_reference:
@@ -117,15 +143,4 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'difficulty',
                 'geometry', 'pictures', 'information_desks', 'cities', 'departure_city', 'arrival_city',
                 'points_reference', 'districts', 'ambiance', 'children', 'parents'
-            )
-
-    class TrekListSerializer(TrekBaseSerializer):
-        first_picture = serializers.ReadOnlyField(source='resized_picture_mobile')
-        geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='start_point', )
-
-        class Meta(TrekBaseSerializer.Meta):
-            fields = (
-                'id', 'pk', 'first_picture', 'name', 'departure', 'accessibilities', 'route', 'departure_city',
-                'difficulty', 'practice', 'themes', 'length', 'geometry', 'districts', 'cities', 'duration', 'ascent',
-                'descent',
             )

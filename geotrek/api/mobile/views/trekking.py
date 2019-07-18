@@ -25,7 +25,7 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = [AllowAny, ]
 
     def get_queryset(self, *args, **kwargs):
-        lang = self.request.META.get('HTTP_ACCEPT_LANGUAGE')
+        lang = self.request.LANGUAGE_CODE
         queryset = trekking_models.Trek.objects.existing()\
             .select_related('topo_object') \
             .prefetch_related('topo_object__aggregations', 'attachments') \
