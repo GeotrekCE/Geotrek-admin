@@ -1,7 +1,7 @@
 [report]
+include =
+    geotrek/*
 omit =
     */tests*
     */migrations*
-    lib/*
-
 ignore_errors = true
