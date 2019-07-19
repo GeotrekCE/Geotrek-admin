@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
-from django.db.models import F, Q
+from django.db.models import Count, F, Q
 from django_filters.rest_framework.backends import DjangoFilterBackend
 
 from geotrek.api.mobile.serializers import trekking as api_serializers_trekking
@@ -25,19 +25,23 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = [AllowAny, ]
 
     def get_queryset(self, *args, **kwargs):
+        lang = self.request.LANGUAGE_CODE
         queryset = trekking_models.Trek.objects.existing()\
             .select_related('topo_object') \
             .prefetch_related('topo_object__aggregations', 'attachments') \
             .order_by('pk').annotate(length_2d_m=Length('geom'))
         if not self.action == 'list':
             queryset = queryset.annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
-
+        if self.action == 'list':
+            queryset = queryset.annotate(count_parents=Count('trek_parents')).\
+                exclude(Q(count_parents__gt=0) & Q(published=False))
         if 'portal' in self.request.GET:
             queryset = queryset.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
         return queryset.annotate(start_point=Transform(StartPoint('geom'), settings.API_SRID),
-                                 end_point=Transform(EndPoint('geom'), settings.API_SRID)).\
-            filter(Q(published=True) | Q(trek_parents__parent__published=True,
-                                         trek_parents__parent__deleted=False)).distinct()
+                                 end_point=Transform(EndPoint('geom'), settings.API_SRID)). \
+            filter(Q(**{'published_{lang}'.format(lang=lang): True})
+                   | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
+                          'trek_parents__parent__deleted': False})).distinct()
 
     @decorators.detail_route(methods=['get'])
     def pois(self, request, *args, **kwargs):
