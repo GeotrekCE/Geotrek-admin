@@ -1,6 +1,4 @@
 [report]
-include =
-    */geotrek/*
 omit =
     */tests*
     */migrations*
