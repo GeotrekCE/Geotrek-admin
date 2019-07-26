@@ -4,4 +4,5 @@ omit =
     */migrations*
     */lib*
     /src*
+    */bulkimport/*
 ignore_errors = true

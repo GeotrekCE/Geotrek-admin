@@ -73,10 +73,7 @@ script:
 
 after_success:
   - if [[ $ACTION == unit ]]; then docker-compose run web coverage report -m; fi
-  - if [[ $ACTION == unit ]]; then virtualenv env; fi
-  - if [[ $ACTION == unit ]]; then source env/bin/activate; fi
-  - if [[ $ACTION == unit ]]; then pip install coveralls==1.7.0; fi
-  - if [[ $ACTION == unit ]]; then coveralls --data_file=.coverage --config_file=.coveragerc; fi
+  - if [[ $ACTION == unit ]]; then docker-compose run -e COVERALLS_REPO_TOKEN=597aF4vBNJuekGhUZcuYcJs6tAdB9LhDv --rm web coveralls; fi
 
 jobs:
   include:
