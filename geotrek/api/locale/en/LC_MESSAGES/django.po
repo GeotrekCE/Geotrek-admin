@@ -72,6 +72,12 @@ msgstr ""
 msgid "Hide all difficulties"
 msgstr ""
 
+msgid "Show all districts"
+msgstr ""
+
+msgid "Hide all districts"
+msgstr ""
+
 msgid "Show all accessibilities"
 msgstr ""
 
