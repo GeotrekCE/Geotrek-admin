@@ -160,7 +160,7 @@ class Command(BaseCommand):
     def sync_pictograms(self, model, directory='', zipfile=None, size=None):
         for obj in model.objects.all():
             if not obj.pictogram:
-                return
+                continue
             file_name, file_extension = os.path.splitext(obj.pictogram.name)
             if file_extension == '.svg':
                 name = os.path.join(settings.MEDIA_URL.strip('/'), '%s.png' % file_name)
