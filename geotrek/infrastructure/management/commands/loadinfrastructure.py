@@ -25,11 +25,13 @@ class Command(BaseCommand):
                             help='File encoding, default utf-8')
         parser.add_argument('--name-field', '-n', action='store', dest='name_field', help='Base url')
         parser.add_argument('--type-field', '-t', action='store', dest='type_field', help='Base url')
+        parser.add_argument('--category-field', '-i', action='store', dest='category_field', help='Base url')
         parser.add_argument('--condition-field', '-c', action='store', dest='condition_field', help='Base url')
         parser.add_argument('--structure-field', '-s', action='store', dest='structure_field', help='Base url')
         parser.add_argument('--description-field', '-d', action='store', dest='description_field', help='Base url')
         parser.add_argument('--year-field', '-y', action='store', dest='year_field', help='Base url')
         parser.add_argument('--type-default', action='store', dest='type_default', help='Base url')
+        parser.add_argument('--category-default', action='store', dest='category_default', help='Base url')
         parser.add_argument('--name-default', action='store', dest='name_default', help='Base url')
         parser.add_argument('--condition-default', action='store', dest='condition_default', help='Base url')
         parser.add_argument('--structure-default', action='store', dest='structure_default', help='Base url')
@@ -55,6 +57,7 @@ class Command(BaseCommand):
 
         field_name = options.get('name_field')
         field_infrastructure_type = options.get('type_field')
+        field_infrastructure_category = options.get('category_field')
         field_condition_type = options.get('condition_field')
         field_structure_type = options.get('structure_field')
         field_description = options.get('description_field')
@@ -75,6 +78,13 @@ class Command(BaseCommand):
                         "Field '{}' not found in data source.".format(field_infrastructure_type)))
                     self.stdout.write(self.style.ERROR(
                         u"Set it with --type-field, or set a default value with --type-default"))
+                    break
+                if (field_infrastructure_category and field_infrastructure_category not in available_fields)\
+                        or (not field_infrastructure_category and not options.get('category_default')):
+                    self.stdout.write(self.style.ERROR(
+                        "Field '{}' not found in data source.".format(field_infrastructure_category)))
+                    self.stdout.write(self.style.ERROR(
+                        u"Set it with --category-field, or set a default value with --category-default"))
                     break
                 if (field_name and field_name not in available_fields)\
                         or (not field_name and not options.get('name_default')):
@@ -97,7 +107,7 @@ class Command(BaseCommand):
                     break
                 elif not field_structure_type and not structure_default:
                     structure = default_structure()
-                else:
+                elif not field_structure_type and structure_default:
                     try:
                         structure = Structure.objects.get(name=structure_default)
                         if verbosity > 0:
@@ -140,6 +150,9 @@ class Command(BaseCommand):
                     type = feature.get(
                         field_infrastructure_type) if field_infrastructure_type in available_fields else options.get(
                         'type_default')
+                    category = feature.get(
+                        field_infrastructure_category) if field_infrastructure_category in available_fields else options.get(
+                        'category_default')
                     if field_condition_type in available_fields:
                         condition = feature.get(field_condition_type)
                     else:
@@ -154,7 +167,7 @@ class Command(BaseCommand):
                         field_implantation_year).isdigit() else options.get('year_default')
                     eid = feature.get(field_eid) if field_eid in available_fields else None
 
-                    self.create_infrastructure(feature_geom, name, type, condition, structure, description, year,
+                    self.create_infrastructure(feature_geom, name, type, category, condition, structure, description, year,
                                                verbosity, eid)
 
             transaction.savepoint_commit(sid)
@@ -166,16 +179,16 @@ class Command(BaseCommand):
             transaction.savepoint_rollback(sid)
             raise
 
-    def create_infrastructure(self, geometry, name, type,
+    def create_infrastructure(self, geometry, name, type, category,
                               condition, structure, description, year, verbosity, eid):
 
-        infra_type, created = InfrastructureType.objects.get_or_create(label=type, type='B', structure=None)
+        infra_type, created = InfrastructureType.objects.get_or_create(label=type, type=category, structure=structure)
         if created and verbosity:
             self.stdout.write(u"- InfrastructureType '{}' created".format(infra_type))
 
         if condition:
             condition_type, created = InfrastructureCondition.objects.get_or_create(label=condition,
-                                                                                    structure=None)
+                                                                                    structure=structure)
             if created and verbosity:
                 self.stdout.write(u"- Condition Type '{}' created".format(condition_type))
         else:

@@ -98,7 +98,7 @@ class Command(BaseCommand):
                     break
                 elif not field_structure_type and not structure_default:
                     structure = default_structure()
-                else:
+                elif not field_structure_type and structure_default:
                     try:
                         structure = Structure.objects.get(name=structure_default)
                         if verbosity > 0:
@@ -170,13 +170,13 @@ class Command(BaseCommand):
     def create_infrastructure(self, geometry, name, type,
                               condition, structure, description, year, verbosity, eid):
 
-        infra_type, created = SignageType.objects.get_or_create(label=type, structure=None)
+        infra_type, created = SignageType.objects.get_or_create(label=type, structure=structure)
         if created and verbosity:
             self.stdout.write(u"- SignageType '{}' created".format(infra_type))
 
         if condition:
             condition_type, created = InfrastructureCondition.objects.get_or_create(label=condition,
-                                                                                    structure=None)
+                                                                                    structure=structure)
             if created and verbosity:
                 self.stdout.write(u"- Condition Type '{}' created".format(condition_type))
         else:
