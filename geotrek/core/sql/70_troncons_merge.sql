@@ -77,7 +77,7 @@ BEGIN
     FOR element IN
         SELECT * FROM l_t_troncon WHERE id != updated AND id != merged
     LOOP
-        IF NOT(ST_EQUALS(ST_StartPoint(rebuild_line), ST_StartPoint(element.geom)) OR ST_EQUALS(ST_StartPoint(rebuild_line), ST_EndPoint(element.geom)) OR ST_EQUALS(ST_EndPoint(rebuild_line), ST_StartPoint(element.geom)) OR ST_EQUALS(ST_EndPoint(rebuild_line), ST_EndPoint(element.geom)))
+        IF NOT(ST_Distance(rebuild_line, element.geom) > 0 OR ST_EQUALS(ST_StartPoint(rebuild_line), ST_StartPoint(element.geom)) OR ST_EQUALS(ST_StartPoint(rebuild_line), ST_EndPoint(element.geom)) OR ST_EQUALS(ST_EndPoint(rebuild_line), ST_StartPoint(element.geom)) OR ST_EQUALS(ST_EndPoint(rebuild_line), ST_EndPoint(element.geom)))
          THEN
             RETURN 2;
         END IF;
