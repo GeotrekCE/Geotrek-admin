@@ -264,3 +264,6 @@ msgstr "Aucun point de correspondance trouvé pour fusionner les tronçons"
 
 msgid "Paths merged successfully"
 msgstr "Les tronçons ont été fusionnés."
+
+msgid "No, back to list view"
+msgstr "Non, retour à la liste"
