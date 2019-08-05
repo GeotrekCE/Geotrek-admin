@@ -289,17 +289,108 @@ class PathViewsTest(CommonTest):
         """
         Merge should fail if other path share merge intersection
 
-        |--------A--------|-----------B-----------|
                           |
                           C
                           |
+        |--------A--------|-----------B-----------|
+
         """
         self.login()
         path_a = PathFactory.create(name="A", geom=LineString((0, 0), (1, 0)))
         path_b = PathFactory.create(name="B", geom=LineString((1, 0), (2, 0)))
         PathFactory.create(name="C", geom=LineString((1, 0), (10, 10)))
         response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
-        self.assertIn('error', response.json())
+        json_response = response.json()
+        self.assertIn('error', json_response)
+        self.assertEqual(json_response['error'], "You can't merge 2 paths with a 3rd path in the intersection")
+        self.logout()
+
+    def test_merge_fails_other_path_intersection_2(self):
+        """
+        Merge should fail if other path share merge intersection
+
+                          |
+                          C (reversed)
+                          |
+        |--------A--------|-----------B-----------|
+
+        """
+        self.login()
+        path_a = PathFactory.create(name="A", geom=LineString((0, 0), (1, 0)))
+        path_b = PathFactory.create(name="B", geom=LineString((1, 0), (2, 0)))
+        PathFactory.create(name="C", geom=LineString((10, 10), (0, 1)))
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        json_response = response.json()
+        self.assertIn('error', json_response)
+        self.assertEqual(json_response['error'], "You can't merge 2 paths with a 3rd path in the intersection")
+        self.logout()
+
+    def test_merge_not_fail_start_point_end_point(self):
+        """
+        Merge should not fail
+        |
+        C
+        |
+        |--------A--------|-----------B-----------|
+
+        """
+        self.login()
+        path_a = PathFactory.create(name="A", geom=LineString((0, 0), (1, 0)))
+        path_b = PathFactory.create(name="B", geom=LineString((1, 0), (2, 0)))
+        PathFactory.create(name="C", geom=LineString((0, 0), (0, 1)))
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        self.assertIn('success', response.json())
+        self.logout()
+
+    def test_merge_not_fail_start_point_end_point_2(self):
+        """
+        Merge should not fail
+        |
+        C (reversed)
+        |
+        |--------A--------|-----------B-----------|
+
+        """
+        self.login()
+        path_a = PathFactory.create(name="A", geom=LineString((0, 0), (1, 0)))
+        path_b = PathFactory.create(name="B", geom=LineString((1, 0), (2, 0)))
+        PathFactory.create(name="C", geom=LineString((0, 1), (0, 0)))
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        self.assertIn('success', response.json())
+        self.logout()
+
+    def test_merge_not_fail_start_point_end_point_3(self):
+        """
+        Merge should not fail
+                                                  |
+                                                  C
+                                                  |
+        |--------A--------|-----------B-----------|
+
+        """
+        self.login()
+        path_a = PathFactory.create(name="A", geom=LineString((0, 0), (1, 0)))
+        path_b = PathFactory.create(name="B", geom=LineString((1, 0), (2, 0)))
+        PathFactory.create(name="C", geom=LineString((2, 0), (2, 1)))
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        self.assertIn('success', response.json())
+        self.logout()
+
+    def test_merge_not_fail_start_point_end_point_4(self):
+        """
+        Merge should not fail
+                                                  |
+                                                  C (reversed)
+                                                  |
+        |--------A--------|-----------B-----------|
+
+        """
+        self.login()
+        path_a = PathFactory.create(name="A", geom=LineString((0, 0), (1, 0)))
+        path_b = PathFactory.create(name="B", geom=LineString((1, 0), (2, 0)))
+        PathFactory.create(name="C", geom=LineString((2, 1), (2, 0)))
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        self.assertIn('success', response.json())
         self.logout()
 
     def test_merge_works(self):
