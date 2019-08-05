@@ -40,6 +40,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         districts = serializers.SerializerMethodField(read_only=True)
         length = serializers.SerializerMethodField(read_only=True)
         departure_city = serializers.SerializerMethodField(read_only=True)
+        arrival_city = serializers.SerializerMethodField(read_only=True)
 
         def get_cities(self, obj):
             qs = City.objects.all()
@@ -50,6 +51,14 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             qs = City.objects.all()
             if obj.start_point:
                 city = qs.filter(geom__covers=(obj.start_point, 0)).first()
+                if city:
+                    return city.code
+            return None
+
+        def get_arrival_city(self, obj):
+            qs = City.objects.all()
+            if obj.end_point:
+                city = qs.filter(geom__covers=(obj.end_point, 0)).first()
                 if city:
                     return city.code
             return None
@@ -69,17 +78,17 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
     class TrekListSerializer(TrekBaseSerializer):
         first_picture = serializers.SerializerMethodField(read_only=True)
+        children_number = serializers.SerializerMethodField()
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='start_point', )
 
-        def get_first_picture(self, obj):
-            root_pk = self.context.get('root_pk') or obj.pk
-            return obj.resized_picture_mobile(root_pk)
+        def get_children_number(self, obj):
+            return obj.children.count()
 
         class Meta(TrekBaseSerializer.Meta):
             fields = (
-                'id', 'pk', 'first_picture', 'name', 'departure', 'accessibilities', 'route', 'departure_city',
+                'id', 'pk', 'first_picture', 'name', 'departure', 'arrival', 'accessibilities', 'route',
                 'difficulty', 'practice', 'themes', 'length', 'geometry', 'districts', 'cities', 'duration', 'ascent',
-                'descent',
+                'descent', 'children_number', 'departure_city', 'arrival_city'
             )
 
     class TrekDetailSerializer(TrekBaseSerializer):

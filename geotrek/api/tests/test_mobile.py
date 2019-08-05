@@ -37,8 +37,9 @@ TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
 
 
 TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'id', 'first_picture', 'name', 'departure', 'accessibilities', 'duration', 'districts',
+    'id', 'first_picture', 'name', 'departure', 'accessibilities', 'duration', 'districts', 'arrival_city', 'arrival',
     'difficulty', 'practice', 'themes', 'length', 'cities', 'route', 'departure_city', 'ascent', 'descent',
+    'children_number'
 ])
 
 POI_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
@@ -261,6 +262,8 @@ class APIAccessTestCase(BaseApiTest):
                          TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE)
 
         self.assertEqual('Coucou', json_response.get('features')[0].get('properties').get('name'))
+        self.assertEqual(0, json_response.get('features')[0].get('properties').get('children_number'))
+        self.assertEqual(2, json_response.get('features')[1].get('properties').get('children_number'))
         self.assertIsNone(json_response.get('features')[0].get('properties').get('description'))
         self.assertIsNone(json_response.get('features')[0].get('properties').get('description_teaser'))
 
