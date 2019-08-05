@@ -68,6 +68,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             id_field = 'pk'
             geo_field = 'geometry'
 
+
     class TrekListSerializer(TrekBaseSerializer):
         first_picture = serializers.ReadOnlyField(source='resized_picture_mobile')
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='start_point', )
@@ -142,5 +143,5 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'difficulty', 'length', 'ascent', 'descent', 'route', 'is_park_centered', 'parking_location',
                 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'difficulty',
                 'geometry', 'pictures', 'information_desks', 'cities', 'departure_city', 'arrival_city',
-                'points_reference', 'districts', 'ambiance', 'children', 'parents'
+                'points_reference', 'districts'
             )

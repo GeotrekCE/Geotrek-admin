@@ -24,7 +24,7 @@ class InfrastructureCommandTest(TestCase):
         call_command('loadsignage', filename, type_default='label', name_default='name',
                      condition_default='condition', structure_default='structure',
                      description_default='description', year_default=2010, verbosity=2, stdout=output)
-        self.assertIn('Signages will be linked to %s' % structure, output.getvalue())
+        self.assertIn('Signage will be linked to %s' % structure, output.getvalue())
         self.assertIn('2 objects created.', output.getvalue())
         value = Signage.objects.all()
         self.assertEquals(signage.name, value[1].name)
@@ -39,7 +39,7 @@ class InfrastructureCommandTest(TestCase):
         call_command('loadsignage', filename, type_default='label', name_default='name',
                      condition_default='condition', structure_default='structure',
                      description_default='description', year_default=2010, verbosity=2, stdout=output)
-        self.assertIn('Signages will be linked to %s' % structure, output.getvalue())
+        self.assertIn('Signage will be linked to %s' % structure, output.getvalue())
         self.assertIn('1 objects created.', output.getvalue())
         value = Signage.objects.all()
         self.assertEquals(building.name, value[1].name)
@@ -64,8 +64,8 @@ class InfrastructureCommandTest(TestCase):
         SignageFactory(name="name")
         call_command('loadsignage', filename, type_field='label', name_field='name',
                      condition_field='condition', structure_field='structure',
-                     description_field='descriptio', year_field='year', verbosity=1, stdout=output)
-        self.assertIn('Signages will be linked to %s' % structure, output.getvalue())
+                     description_field='descriptio', year_field='year', verbosity=2, stdout=output)
+        self.assertIn('Signage will be linked to %s' % structure, output.getvalue())
         self.assertIn("SignageType 'type' created", output.getvalue())
         self.assertIn("Condition Type 'condition' created", output.getvalue())
         value = Signage.objects.all()
@@ -154,4 +154,4 @@ class InfrastructureCommandTest(TestCase):
         call_command('loadsignage', filename, type_default='label', name_default='name',
                      condition_default='condition', structure_default='wrong_structure_default',
                      description_default='description', year_default=2010, verbosity=0, stdout=output)
-        self.assertIn("Structure wrong_structure_default set in options doesn't exist", output.getvalue())
+        self.assertIn("Structure wrong_structure_default set in default doesn't exist", output.getvalue())

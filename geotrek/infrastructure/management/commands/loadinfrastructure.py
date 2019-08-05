@@ -97,13 +97,11 @@ class Command(BaseCommand):
                     break
                 elif not field_structure_type and not structure_default:
                     structure = default_structure()
-                else:
+                elif structure_default:
                     try:
                         structure = Structure.objects.get(name=structure_default)
-                        if verbosity > 0:
-                            self.stdout.write(u"Infrastructures will be linked to {}".format(structure))
                     except Structure.DoesNotExist:
-                        self.stdout.write(u"Structure {} set in options doesn't exist".format(structure_default))
+                        self.stdout.write(u"Structure {} set in default doesn't exist".format(structure_default))
                         break
                 if field_description and field_description not in available_fields:
                     self.stdout.write(self.style.ERROR(
@@ -146,6 +144,8 @@ class Command(BaseCommand):
                         condition = options.get('condition_default')
                     structure = Structure.objects.get(name=feature.get(field_structure_type)) \
                         if field_structure_type in available_fields else structure
+                    if verbosity > 1:
+                        self.stdout.write(u"Infrastructure will be linked to {}".format(structure))
                     description = feature.get(
                         field_description) if field_description in available_fields else options.get(
                         'description_default')
