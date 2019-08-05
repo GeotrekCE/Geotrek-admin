@@ -8,7 +8,7 @@ from django.test import TestCase
 from django.core.management.base import CommandError
 
 from geotrek.infrastructure.factories import InfrastructureFactory
-from geotrek.infrastructure.models import Infrastructure
+from geotrek.infrastructure.models import Infrastructure, InfrastructureType
 from geotrek.authent.factories import StructureFactory
 
 
@@ -56,6 +56,25 @@ class InfrastructureCommandTest(TestCase):
                          condition_default='condition', structure_default='structure',
                          description_default='description', year_default=2010, verbosity=2, stdout=output)
         self.assertEqual('One of your geometry is a MultiPoint object with multiple points', e.exception.message)
+
+    def test_load_infrastructure_with_fields_use_structure(self):
+        output = StringIO()
+        structure = StructureFactory.create(name='structure')
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'infrastructure.shp')
+        InfrastructureFactory(name="name")
+        call_command('loadinfrastructure', filename, type_field='label', name_field='name',
+                     condition_field='condition', structure_default='structure', use_structure=True,
+                     description_field='descriptio', year_field='year', verbosity=1, stdout=output)
+        self.assertIn('Infrastructures will be linked to %s' % structure, output.getvalue())
+        self.assertIn("InfrastructureType 'type (%s)' created" % structure, output.getvalue())
+        self.assertIn("Condition Type 'condition (%s)' created" % structure, output.getvalue())
+        value = Infrastructure.objects.all()
+        names = [val.name for val in value]
+        years = [val.implantation_year for val in value]
+        self.assertIn('coucou', names)
+        self.assertIn(2010, years)
+        self.assertIn(2012, years)
+        self.assertEquals(value.count(), 3)
 
     def test_load_infrastructure_with_fields(self):
         output = StringIO()
@@ -153,5 +172,6 @@ class InfrastructureCommandTest(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'infrastructure.shp')
         call_command('loadinfrastructure', filename, type_default='label', name_default='name',
                      condition_default='condition', structure_default='wrong_structure_default',
-                     description_default='description', year_default=2010, verbosity=0, stdout=output)
+                     description_default='description', year_default=2010, category_default='E', verbosity=0,
+                     stdout=output)
         self.assertIn("Structure wrong_structure_default set in options doesn't exist", output.getvalue())
