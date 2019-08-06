@@ -2,16 +2,20 @@
 CHANGELOG
 =========
 
+2.27.13.dev0
+--------------------
+
+**Bug fixes**
+
+- Fix missing pictograms for mobile app
+
+
 2.27.12 (2019-07-22)
 --------------------
 
 **Minor Changes**
 
 - Add itinerancy mobile
-
-**Bug fixes**
-
-- Fix missing pictograms for mobile app
 
 
 2.27.11 (2019-07-17)
