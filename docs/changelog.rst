@@ -9,6 +9,10 @@ CHANGELOG
 
 - Add itinerancy mobile
 
+**Bug fixes**
+
+- Fix missing pictograms for mobile app
+
 
 2.27.11 (2019-07-17)
 --------------------
