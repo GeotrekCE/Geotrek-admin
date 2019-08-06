@@ -72,6 +72,12 @@ msgstr "Afficher toutes les difficultés"
 msgid "Hide all difficulties"
 msgstr "Ne plus afficher toutes les difficultés"
 
+msgid "Show all districts"
+msgstr "Afficher tous les secteurs"
+
+msgid "Hide all districts"
+msgstr "Ne plus afficher tous les secteurs"
+
 msgid "Show all accessibilities"
 msgstr "Afficher toutes les accessibilités"
 
