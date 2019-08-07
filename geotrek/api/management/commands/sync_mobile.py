@@ -121,22 +121,34 @@ class Command(BaseCommand):
         self.sync_view(lang, view, name, params=params, headers=headers, zipfile=zipfile, fix2028=True, **kwargs)
 
     def sync_trek_pois(self, lang, trek):
-        params = {'format': 'geojson'}
+        params = {'format': 'geojson', 'root_pk': trek.pk}
         view = TrekViewSet.as_view({'get': 'pois'})
         name = os.path.join(lang, str(trek.pk), 'pois.geojson')
         self.sync_view(lang, view, name, params=params, pk=trek.pk)
+        # Sync POIs of children too
+        for child in trek.children:
+            name = os.path.join(lang, str(trek.pk), 'pois', '{}.geojson'.format(child.pk))
+            self.sync_view(lang, view, name, params=params, pk=child.pk)
 
     def sync_trek_touristic_contents(self, lang, trek):
-        params = {'format': 'geojson'}
+        params = {'format': 'geojson', 'root_pk': trek.pk}
         view = TrekViewSet.as_view({'get': 'touristic_contents'})
         name = os.path.join(lang, str(trek.pk), 'touristic_contents.geojson')
         self.sync_view(lang, view, name, params=params, pk=trek.pk)
+        # Sync contents of children too
+        for child in trek.children:
+            name = os.path.join(lang, str(trek.pk), 'touristic_contents', '{}.geojson'.format(child.pk))
+            self.sync_view(lang, view, name, params=params, pk=child.pk)
 
     def sync_trek_touristic_events(self, lang, trek):
-        params = {'format': 'geojson'}
+        params = {'format': 'geojson', 'root_pk': trek.pk}
         view = TrekViewSet.as_view({'get': 'touristic_events'})
         name = os.path.join(lang, str(trek.pk), 'touristic_events.geojson')
         self.sync_view(lang, view, name, params=params, pk=trek.pk)
+        # Sync events of children too
+        for child in trek.children:
+            name = os.path.join(lang, str(trek.pk), 'touristic_events', '{}.geojson'.format(child.pk))
+            self.sync_view(lang, view, name, params=params, pk=child.pk)
 
     def sync_file(self, name, src_root, url, directory='', zipfile=None):
         url = url.strip('/')
@@ -228,11 +240,7 @@ class Command(BaseCommand):
     def sync_trekking(self, lang):
         self.sync_geojson(lang, TrekViewSet, 'treks.geojson', type_view={'get': 'list'})
         treks = trekking_models.Trek.objects.existing().order_by('pk')
-        treks = treks.filter(
-            Q(**{'published_{lang}'.format(lang=lang): True})
-            | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
-                   'trek_parents__parent__deleted': False})
-        )
+        treks = treks.filter(**{'published_{lang}'.format(lang=lang): True})
 
         if self.portal:
             treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
@@ -243,6 +251,13 @@ class Command(BaseCommand):
             self.sync_trek_pois(lang, trek)
             self.sync_trek_touristic_contents(lang, trek)
             self.sync_trek_touristic_events(lang, trek)
+            # Sync detail of children too
+            for child in trek.children:
+                self.sync_geojson(
+                    lang, TrekViewSet,
+                    '{pk}/treks/{child_pk}.geojson'.format(pk=trek.pk, child_pk=child.pk),
+                    pk=child.pk, type_view={'get': 'retrieve'}, params={'root_pk': trek.pk},
+                )
 
     def sync_settings_json(self, lang):
         self.sync_json(lang, SettingsView, 'settings')
@@ -289,18 +304,24 @@ class Command(BaseCommand):
             url_media = '/{}{}'.format(trek.pk, settings.MEDIA_URL)
             self.sync_file(trek.get_elevation_chart_url_png(lang), settings.MEDIA_ROOT,
                            url_media, directory=url_trek, zipfile=trekid_zipfile)
+        # Sync media of children too
+        for child in trek.children:
+            for picture, resized in child.resized_pictures:
+                self.sync_media_file(resized, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
+            for desk in child.information_desks.all():
+                self.sync_media_file(desk.resized_picture, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
+            for lang in self.languages:
+                child.prepare_elevation_chart(lang, self.referer)
+                url_media = '/{}{}'.format(trek.pk, settings.MEDIA_URL)
+                self.sync_file(child.get_elevation_chart_url_png(lang), settings.MEDIA_ROOT,
+                               url_media, directory=url_trek, zipfile=trekid_zipfile)
 
         self.close_zip(trekid_zipfile, zipname_trekid)
 
     def sync_treks_media(self):
-        treks = trekking_models.Trek.objects.existing().order_by('pk')
+        treks = trekking_models.Trek.objects.existing().filter(published=True).order_by('pk')
         if self.portal:
             treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
-        treks = treks.filter(
-            Q(**{'published': True})
-            | Q(**{'trek_parents__parent__published': True,
-                   'trek_parents__parent__deleted': False})
-        )
 
         for trek in treks:
             self.sync_trek_by_pk_media(trek)

@@ -102,15 +102,14 @@ class PicturesMixin(object):
             })
         return serialized
 
-    @property
-    def serializable_pictures_mobile(self):
+    def serializable_pictures_mobile(self, root_pk):
         serialized = []
         for picture, thdetail in self.resized_pictures:
             serialized.append({
                 'author': picture.author,
                 'title': picture.title,
                 'legend': picture.legend,
-                'url': os.path.join('/', str(picture.object_id), settings.MEDIA_URL[1:], thdetail.name),
+                'url': os.path.join('/', str(root_pk), settings.MEDIA_URL[1:], thdetail.name),
             })
         return serialized
 
@@ -166,9 +165,8 @@ class PicturesMixin(object):
             return thumbnail
         return None
 
-    @property
-    def resized_picture_mobile(self):
-        pictures = self.serializable_pictures_mobile
+    def resized_picture_mobile(self, root_pk):
+        pictures = self.serializable_pictures_mobile(root_pk)
         if pictures:
             return pictures[0]
         return None
