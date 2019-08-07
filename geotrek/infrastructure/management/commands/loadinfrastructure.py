@@ -92,7 +92,7 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.ERROR(
                         "Field '{}' not found in data source.".format(field_infrastructure_category)))
                     self.stdout.write(self.style.ERROR(
-                        u"Set it with --category-field, or set a default value with --category-default"))
+                        u"Change your --category-field option"))
                     break
                 if (field_name and field_name not in available_fields)\
                         or (not field_name and not options.get('name_default')):
