@@ -42,6 +42,7 @@ class TopologyHelper(object):
         ____________________________________________________________________________________________
         Without Dynamic Segmentation :
 
+        Deserialize normally and create a topology from the geojson
         """
         from .models import Path, Topology, PathAggregation
         from .factories import TopologyFactory
