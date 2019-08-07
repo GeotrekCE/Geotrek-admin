@@ -8,7 +8,7 @@ from django.test import TestCase
 from django.core.management.base import CommandError
 
 from geotrek.infrastructure.factories import InfrastructureFactory
-from geotrek.infrastructure.models import Infrastructure, InfrastructureType
+from geotrek.infrastructure.models import Infrastructure
 from geotrek.authent.factories import StructureFactory
 
 
