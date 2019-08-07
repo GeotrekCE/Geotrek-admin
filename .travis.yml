@@ -67,4 +67,4 @@ after_failure:
   - cat /var/log/supervisord.log
   - cat /var/log/geotrek.log
 
-# Check pr for travis
+#TODO: Create parallel coverage test test_nds
