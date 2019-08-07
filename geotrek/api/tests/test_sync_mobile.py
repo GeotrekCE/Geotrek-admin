@@ -24,7 +24,8 @@ from geotrek.flatpages.factories import FlatPageFactory
 from geotrek.flatpages.models import FlatPage
 from geotrek.trekking.models import Trek, POI, OrderedTrekChild
 from geotrek.trekking.factories import TrekFactory, TrekWithPublishedPOIsFactory, PracticeFactory
-from geotrek.tourism.factories import InformationDeskFactory, InformationDeskTypeFactory
+from geotrek.tourism.factories import (InformationDeskFactory, InformationDeskTypeFactory,
+                                       TouristicContentFactory, TouristicEventFactory)
 
 
 @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
@@ -318,8 +319,12 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         super(SyncMobileTreksTest, cls).setUpClass()
         cls.portal_a = TargetPortalFactory()
         cls.portal_b = TargetPortalFactory()
+        picto_desk = get_dummy_uploaded_image()
+        information_desk_type = InformationDeskTypeFactory.create(pictogram=picto_desk)
+        info_desk = InformationDeskFactory.create(type=information_desk_type)
 
         cls.trek_1 = TrekWithPublishedPOIsFactory.create()
+        cls.trek_1.information_desks = (info_desk,)
         cls.trek_2 = TrekWithPublishedPOIsFactory.create(portals=(cls.portal_a,))
         cls.trek_3 = TrekWithPublishedPOIsFactory.create(portals=(cls.portal_b,))
         cls.trek_4 = TrekFactory.create()
@@ -338,6 +343,15 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
                                                            attachment_file=get_dummy_uploaded_file())
         cls.attachment_trek_image = AttachmentFactory.create(content_object=cls.trek_4,
                                                              attachment_file=get_dummy_uploaded_image())
+
+        cls.touristic_content = TouristicContentFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID,
+                                                        published=True)
+        cls.touristic_event = TouristicEventFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID,
+                                                    published=True)
+        cls.attachment_content_1 = AttachmentFactory.create(content_object=cls.touristic_content,
+                                                            attachment_file=get_dummy_uploaded_image())
+        cls.attachment_event_1 = AttachmentFactory.create(content_object=cls.touristic_event,
+                                                          attachment_file=get_dummy_uploaded_image())
         translation.deactivate()
 
     def test_sync_treks(self):
@@ -400,7 +414,28 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         self.assertTrue(os.path.exists(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
                                                     'paperclip', 'trekking_poi')))
         self.assertTrue(os.path.exists(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
-                                                    'paperclip', 'trekking_trek')))
+                                                    'paperclip', 'tourism_touristiccontent')))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
+                                                    'paperclip', 'tourism_touristicevent')))
+        # Information desk picture
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
+                                                    'upload')))
+
+    def test_medias_treks_one_picture(self):
+        output = BytesIO()
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                skip_tiles=True, verbosity=2, stdout=output)
+        self.assertEqual(1, len(os.listdir(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
+                                                        'paperclip', 'trekking_poi', str(self.poi_1.pk)))))
+        self.assertEqual(1, len(os.listdir(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
+                                                        'paperclip', 'tourism_touristiccontent',
+                                                        str(self.touristic_content.pk)))))
+        self.assertEqual(1, len(os.listdir(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
+                                                        'paperclip', 'tourism_touristicevent',
+                                                        str(self.touristic_event.pk)))))
+        # Information desk picture
+        self.assertEqual(1, len(os.listdir(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
+                                                        'upload'))))
 
     @mock.patch('geotrek.trekking.views.TrekViewSet.list')
     def test_streaminghttpresponse(self, mocke):
