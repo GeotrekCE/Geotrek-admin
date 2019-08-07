@@ -11,7 +11,6 @@ env:
 
 stages:
   - test
-  - coverage
 
 matrix:
   allow_failures:
