@@ -5,6 +5,10 @@ CHANGELOG
 2.27.13.dev0
 --------------------
 
+**Minor Changes**
+
+- Serve attachment with 'Topoguide' type as public PDF
+
 **Bug fixes**
 
 - Fix missing pictograms for mobile app

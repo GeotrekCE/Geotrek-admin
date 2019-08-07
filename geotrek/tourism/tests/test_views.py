@@ -2,23 +2,27 @@
 import os
 import json
 import hashlib
+from shutil import rmtree
+from tempfile import mkdtemp
 
 import mock
 
 from datetime import datetime
 from django.contrib.auth.models import Group
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.test.utils import override_settings
 from django.test import TestCase
 
-from geotrek.authent.factories import StructureFactory, UserProfileFactory
+from geotrek.authent.factories import StructureFactory, UserProfileFactory, UserFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.trekking.tests import TrekkingManagerTest
 from geotrek.core import factories as core_factories
 from geotrek.trekking import factories as trekking_factories
 from geotrek.zoning import factories as zoning_factories
 from geotrek.common import factories as common_factories
+from geotrek.common.models import FileType, Attachment
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.tourism.factories import (InformationDeskFactory,
@@ -400,6 +404,31 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
         mocked.return_value.content = PNG_BLACK_PIXEL
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+    @override_settings(MEDIA_ROOT=mkdtemp('geotrek_test'))
+    def test_external_public_document_pdf(self):
+        content = TouristicContentFactory.create(published=True)
+        Attachment.objects.create(
+            filetype=FileType.objects.create(type="Topoguide"),
+            content_object=content,
+            creator=UserFactory.create(),
+            attachment_file=SimpleUploadedFile('external.pdf', b'External PDF')
+        )
+        rmtree(settings.MEDIA_ROOT)
+        url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response['X-Accel-Redirect'],
+            '/media_secure/paperclip/tourism_touristiccontent/{}/external.pdf'.format(content.pk)
+        )
+
+    @override_settings(ONLY_EXTERNAL_PUBLIC_PDF=True)
+    def test_only_external_public_document_pdf(self):
+        content = TouristicContentFactory.create(published=True)
+        url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
 
     def test_not_published_document_pdf(self):
         content = TouristicContentFactory.create(published=False)

@@ -6,10 +6,12 @@ from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.utils import DatabaseError
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.utils.translation import ugettext as _
 from django_celery_results.models import TaskResult
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.views import static
 
 from mapentity.helpers import api_bbox
 from mapentity.registry import registry
@@ -17,6 +19,7 @@ from mapentity import views as mapentity_views
 
 from geotrek.celery import app as celery_app
 from geotrek.common.utils import sql_extent
+from geotrek.common.models import FileType, Attachment
 from geotrek import __version__
 
 from rest_framework import permissions as rest_permissions, viewsets
@@ -86,6 +89,28 @@ class DocumentPublicMixin(object):
     # Override view_permission_required
     def dispatch(self, *args, **kwargs):
         return super(mapentity_views.MapEntityDocumentBase, self).dispatch(*args, **kwargs)
+
+    def get(self, request, pk, slug, lang=None):
+        obj = get_object_or_404(self.model, pk=pk)
+        try:
+            file_type = FileType.objects.get(type="Topoguide")
+        except FileType.DoesNotExist:
+            file_type = None
+        attachments = Attachment.objects.attachments_for_object_only_type(obj, file_type)
+        if not attachments and not settings.ONLY_EXTERNAL_PUBLIC_PDF:
+            return super(DocumentPublicMixin, self).get(request, pk, slug, lang)
+        if not attachments:
+            return HttpResponseNotFound("No attached file with 'Topoguide' type.")
+        path = attachments[0].attachment_file.name
+
+        if settings.DEBUG:
+            response = static.serve(self.request, path, settings.MEDIA_ROOT)
+        else:
+            response = HttpResponse()
+            response[settings.MAPENTITY_CONFIG['SENDFILE_HTTP_HEADER']] = os.path.join(settings.MEDIA_URL_SECURE, path)
+        response["Content-Type"] = 'application/pdf'
+        response['Content-Disposition'] = "attachment; filename={0}.pdf".format(slug)
+        return response
 
     def get_context_data(self, **kwargs):
         context = super(DocumentPublicMixin, self).get_context_data(**kwargs)
