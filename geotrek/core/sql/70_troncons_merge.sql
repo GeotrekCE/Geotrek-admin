@@ -9,12 +9,16 @@ DECLARE
     merged_geom geometry;
     reverse_update boolean;
     reverse_merged boolean;
+    point_snapping geometry;
     max_snap_distance float;
+    snap_distance float;
+    count_snapping integer;
     
 BEGIN
     reverse_update := FALSE;
     reverse_merged := FALSE;
     max_snap_distance := {{PATH_MERGE_SNAPPING_DISTANCE}};
+    snap_distance := {{PATH_SNAPPING_DISTANCE}};
     rebuild_line := NULL;
 
     IF updated = merged
@@ -32,41 +36,48 @@ BEGIN
     THEN
 	rebuild_line := ST_MakeLine(ST_Reverse(updated_geom), merged_geom);
 	reverse_update := TRUE;
-	
+	point_snapping := ST_StartPoint(updated_geom);
     ELSIF ST_Equals(ST_StartPoint(updated_geom), ST_EndPoint(merged_geom))
     THEN
 	rebuild_line := ST_MakeLine(ST_Reverse(updated_geom), ST_Reverse(merged_geom));
 	reverse_update := TRUE;
 	reverse_merged := TRUE;
+	point_snapping := ST_StartPoint(updated_geom);
 	
     ELSIF ST_Equals(ST_EndPoint(updated_geom), ST_EndPoint(merged_geom))
     THEN
 	rebuild_line := ST_MakeLine(updated_geom, ST_Reverse(merged_geom));
 	reverse_merged := TRUE;
+	point_snapping := ST_EndPoint(updated_geom);
 
     ELSIF ST_Equals(ST_EndPoint(updated_geom), ST_StartPoint(merged_geom))
     THEN
 	rebuild_line := ST_MakeLine(updated_geom, merged_geom);
+	point_snapping := ST_EndPoint(updated_geom);
 
     ELSIF (ST_Distance(ST_StartPoint(updated_geom), ST_StartPoint(merged_geom))::float <= max_snap_distance)
     THEN 
 	rebuild_line := ST_MakeLine(ST_Reverse(updated_geom), merged_geom);
 	reverse_update := TRUE;
+	point_snapping := ST_StartPoint(updated_geom);
 	
     ELSIF (ST_Distance(ST_StartPoint(updated_geom), ST_EndPoint(merged_geom)) <= max_snap_distance)
     THEN
 	rebuild_line := ST_MakeLine(ST_Reverse(updated_geom), ST_Reverse(merged_geom));
 	reverse_update := TRUE;
 	reverse_merged := TRUE;
+	point_snapping := ST_StartPoint(updated_geom);
 	
     ELSIF (ST_Distance(ST_EndPoint(updated_geom), ST_EndPoint(merged_geom)) <= max_snap_distance)
     THEN
 	rebuild_line := ST_MakeLine(updated_geom, ST_Reverse(merged_geom));
 	reverse_merged := TRUE;
+	point_snapping := ST_EndPoint(updated_geom);
 
     ELSIF (ST_Distance(ST_EndPoint(updated_geom), ST_StartPoint(merged_geom)) <= max_snap_distance)
     THEN
 	rebuild_line := ST_MakeLine(updated_geom, merged_geom);
+	point_snapping := ST_EndPoint(updated_geom);
     
     ELSE
     -- no snapping -> END !
@@ -74,14 +85,12 @@ BEGIN
 
     END IF;
 
-    FOR element IN
-        SELECT * FROM l_t_troncon WHERE id != updated AND id != merged
-    LOOP
-        IF NOT(ST_Distance(rebuild_line, element.geom) > 0 OR ST_EQUALS(ST_StartPoint(rebuild_line), ST_StartPoint(element.geom)) OR ST_EQUALS(ST_StartPoint(rebuild_line), ST_EndPoint(element.geom)) OR ST_EQUALS(ST_EndPoint(rebuild_line), ST_StartPoint(element.geom)) OR ST_EQUALS(ST_EndPoint(rebuild_line), ST_EndPoint(element.geom)))
-         THEN
-            RETURN 2;
-        END IF;
-    END LOOP;
+
+    SELECT COUNT(*) INTO count_snapping FROM l_t_troncon WHERE ((ST_Distance(ST_StartPoint(geom), point_snapping) <= snap_distance) OR (ST_Distance(ST_EndPoint(geom), point_snapping) <= snap_distance)) AND brouillon = FALSE AND id != updated AND id != merged;
+
+    IF count_snapping != 0 THEN
+        RETURN 2;
+    END IF;
 
     -- update events on updated path
     FOR element IN
