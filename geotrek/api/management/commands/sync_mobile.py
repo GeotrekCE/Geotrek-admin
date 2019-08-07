@@ -287,23 +287,23 @@ class Command(BaseCommand):
             self.sync_trek_tiles(trek, trekid_zipfile)
 
         for poi in trek.published_pois:
-            if len(poi.resized_pictures) > 0:
+            if poi.resized_pictures:
                 self.sync_media_file(poi.resized_pictures[0][1], prefix=trek.pk, directory=url_trek,
                                      zipfile=trekid_zipfile)
         for touristic_content in trek.published_touristic_contents:
-            if len(touristic_content.resized_pictures) > 0:
+            if touristic_content.resized_pictures:
                 self.sync_media_file(touristic_content.resized_pictures[0][1], prefix=trek.pk, directory=url_trek,
                                      zipfile=trekid_zipfile)
         for touristic_event in trek.published_touristic_events:
-            if len(touristic_event.resized_pictures) > 0:
+            if touristic_event.resized_pictures:
                 self.sync_media_file(touristic_event.resized_pictures[0][1], prefix=trek.pk, directory=url_trek,
                                      zipfile=trekid_zipfile)
-        if len(trek.resized_pictures) > 0:
+        if trek.resized_pictures:
             self.sync_media_file(trek.resized_pictures[0][1], prefix=trek.pk, directory=url_trek,
                                  zipfile=trekid_zipfile)
         for desk in trek.information_desks.all():
-            if len(desk.resized_pictures) > 0:
-                self.sync_media_file(desk.resized_picture[0][1], prefix=trek.pk, directory=url_trek,
+            if desk.resized_picture:
+                self.sync_media_file(desk.resized_picture, prefix=trek.pk, directory=url_trek,
                                      zipfile=trekid_zipfile)
         for lang in self.languages:
             trek.prepare_elevation_chart(lang, self.referer)
