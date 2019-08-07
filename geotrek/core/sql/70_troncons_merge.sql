@@ -85,8 +85,7 @@ BEGIN
 
     END IF;
 
-
-    SELECT COUNT(*) INTO count_snapping FROM l_t_troncon WHERE ((ST_Distance(ST_StartPoint(geom), point_snapping) <= snap_distance) OR (ST_Distance(ST_EndPoint(geom), point_snapping) <= snap_distance)) AND brouillon = FALSE AND id != updated AND id != merged;
+    SELECT COUNT(*) INTO count_snapping FROM l_t_troncon WHERE (ST_DWITHIN(ST_StartPoint(geom), point_snapping, snap_distance) OR ST_DWITHIN(ST_EndPoint(geom), point_snapping, snap_distance)) AND brouillon = FALSE AND id != updated AND id != merged;
 
     IF count_snapping != 0 THEN
         RETURN 2;
