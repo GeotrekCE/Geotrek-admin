@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.conf.urls import url
 
 from mapentity.registry import registry
@@ -63,6 +64,6 @@ class ServiceEntityOptions(MapEntityOptions):
         return trekking_serializers.ServiceSerializer
 
 
-urlpatterns += registry.register(models.Trek, TrekEntityOptions)
-urlpatterns += registry.register(models.POI, POIEntityOptions)
-urlpatterns += registry.register(models.Service, ServiceEntityOptions)
+urlpatterns += registry.register(models.Trek, TrekEntityOptions, menu=settings.TREKKING_MODEL_ENABLED)
+urlpatterns += registry.register(models.POI, POIEntityOptions, menu=settings.POI_MODEL_ENABLED)
+urlpatterns += registry.register(models.Service, ServiceEntityOptions, menu=settings.SERVICE_MODEL_ENABLED)
