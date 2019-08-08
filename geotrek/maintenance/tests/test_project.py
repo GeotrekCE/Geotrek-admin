@@ -1,4 +1,7 @@
 from django.test import TestCase
+from django.conf import settings
+
+from unittest import skipIf
 
 from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import SignageFactory
@@ -11,6 +14,7 @@ from geotrek.zoning.factories import (CityEdgeFactory, DistrictEdgeFactory,
 
 
 class ProjectTest(TestCase):
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_helpers(self):
         i1 = InterventionFactory.create()
         i2 = InterventionFactory.create()
@@ -53,6 +57,43 @@ class ProjectTest(TestCase):
         self.assertEquals(proj.signages, [sign])
         self.assertEquals(proj.infrastructures, [infra])
 
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    def test_helpers_nds(self):
+        i1 = InterventionFactory.create()
+        i2 = InterventionFactory.create()
+        i3 = InterventionFactory.create()
+        sign = SignageFactory.create(geom="SRID=4326;POINT(0 5)")
+        i1.set_topology(sign)
+
+        infra = InfrastructureFactory.create(geom="SRID=4326;POINT(1 5)")
+        i2.set_topology(infra)
+
+        t = TopologyFactory.create(geom="SRID=4326;POINT(2 5)")
+        i3.topology = t
+
+        proj = ProjectFactory.create()
+        self.assertItemsEqual(proj.paths.all(), [])
+        self.assertEquals(proj.signages, [])
+        self.assertEquals(proj.infrastructures, [])
+
+        i1.save()
+
+        proj.interventions.add(i1)
+        self.assertEquals(proj.signages, [sign])
+        self.assertEquals(proj.infrastructures, [])
+
+        i2.save()
+
+        proj.interventions.add(i2)
+        self.assertEquals(proj.signages, [sign])
+        self.assertEquals(proj.infrastructures, [infra])
+
+        i3.save()
+
+        proj.interventions.add(i3)
+        self.assertEquals(proj.signages, [sign])
+        self.assertEquals(proj.infrastructures, [infra])
+
     def test_deleted_intervention(self):
         i1 = InterventionFactory.create()
         sign = SignageFactory.create()
@@ -80,6 +121,7 @@ class ProjectTest(TestCase):
         self.assertEquals(proj.infrastructures, [])
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class ProjectLandTest(TestCase):
     def setUp(self):
         self.intervention = InterventionFactory.create()

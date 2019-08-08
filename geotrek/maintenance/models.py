@@ -563,7 +563,7 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
                 pks += [o.pk for o in attr_value]
             else:
                 modelclass = attr_value.model
-                topologies = attr_value.values('ordering', 'id')
+                topologies = attr_value.values('id')
                 for topology in topologies:
                     pks.append(topology['id'])
         return modelclass.objects.filter(pk__in=pks)

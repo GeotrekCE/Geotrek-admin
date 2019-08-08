@@ -98,6 +98,10 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
 else:
     Topology.add_property('areas', lambda self: uniquify(intersecting(RestrictedArea, self, distance=0)),
                           _(u"Restricted areas"))
+    Project.add_property('areas', lambda self: uniquify(intersecting(RestrictedArea, self, distance=0)),
+                         _(u"Restricted areas"))
+    Intervention.add_property('areas', lambda self: uniquify(intersecting(RestrictedArea, self, distance=0)),
+                              _(u"Restricted areas"))
 
 TouristicContent.add_property('areas', lambda self: intersecting(RestrictedArea, self, distance=0),
                               _(u"Restricted areas"))
@@ -162,6 +166,8 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
     Project.add_property('cities', lambda self: uniquify(map(attrgetter('city'), self.city_edges)), _(u"Cities"))
 else:
     Topology.add_property('cities', lambda self: uniquify(intersecting(City, self, distance=0)), _(u"Cities"))
+    Project.add_property('cities', lambda self: uniquify(intersecting(City, self, distance=0)), _(u"Cities"))
+    Intervention.add_property('cities', lambda self: uniquify(intersecting(City, self, distance=0)), _(u"Cities"))
 
 TouristicContent.add_property('cities', lambda self: intersecting(City, self, distance=0), _(u"Cities"))
 TouristicEvent.add_property('cities', lambda self: intersecting(City, self, distance=0), _(u"Cities"))
@@ -227,6 +233,10 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
 else:
     Topology.add_property('districts', lambda self: uniquify(intersecting(District, self, distance=0)),
                           _(u"Districts"))
+    Project.add_property('districts', lambda self: uniquify(intersecting(District, self, distance=0)),
+                         _(u"Districts"))
+    Intervention.add_property('districts', lambda self: uniquify(intersecting(District, self, distance=0)),
+                              _(u"Districts"))
 
 TouristicContent.add_property('districts', lambda self: intersecting(District, self, distance=0), _(u"Districts"))
 TouristicEvent.add_property('districts', lambda self: intersecting(District, self, distance=0), _(u"Districts"))

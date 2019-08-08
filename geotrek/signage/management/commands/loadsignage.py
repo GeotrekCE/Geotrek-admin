@@ -3,7 +3,8 @@
 import os.path
 
 from django.contrib.gis.gdal import DataSource
-from django.contrib.gis.geos import fromstr
+from django.contrib.gis.geos import fromstr, Point
+from django.contrib.gis.geos.error import GEOSException
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
@@ -205,11 +206,18 @@ class Command(BaseCommand):
                     self.stdout.write(u"Update : %s with eid %s" % (name, eid))
             else:
                 infra = Signage.objects.create(**fields_without_eid)
-
-        serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
-        topology = TopologyHelper.deserialize(serialized)
-        infra.mutate(topology)
-
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            try:
+                serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
+                topology = TopologyHelper.deserialize(serialized)
+                infra.mutate(topology)
+            except IndexError:
+                raise GEOSException('Invalid Geometry type.')
+        else:
+            if geometry.geom_type != 'Point':
+                raise GEOSException('Invalid Geometry type.')
+            infra.geom = Point(geometry.x, geometry.y, srid=settings.SRID)
+            infra.save()
         self.counter += 1
 
         return infra

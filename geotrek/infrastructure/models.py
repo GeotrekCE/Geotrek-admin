@@ -134,7 +134,12 @@ class Infrastructure(MapEntityMixin, BaseInfrastructure):
 
     @classmethod
     def topology_infrastructures(cls, topology):
-        return cls.overlapping(topology)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            qs = cls.overlapping(topology)
+        else:
+            area = topology.geom.buffer(settings.TREK_INFRASTRUCTURE_INTERSECTION_MARGIN)
+            qs = cls.objects.existing().filter(geom__intersects=area)
+        return qs
 
     @classmethod
     def published_topology_infrastructure(cls, topology):
@@ -142,6 +147,6 @@ class Infrastructure(MapEntityMixin, BaseInfrastructure):
 
 
 Path.add_property('infrastructures', lambda self: Infrastructure.path_infrastructures(self), _(u"Infrastructures"))
-Topology.add_property('infrastructures', lambda self: Infrastructure.topology_infrastructures(self), _(u"Infrastructures"))
+Topology.add_property('infrastructures', Infrastructure.topology_infrastructures, _(u"Infrastructures"))
 Topology.add_property('published_infrastructures', Infrastructure.published_topology_infrastructure,
                       _(u"Published Infrastructures"))

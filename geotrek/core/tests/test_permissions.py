@@ -1,4 +1,7 @@
+from unittest import skipIf
+
 from django.test import TestCase
+from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.gis.geos import LineString
 from django.core.urlresolvers import reverse
@@ -8,6 +11,7 @@ from geotrek.core.factories import PathFactory, ComfortFactory
 from geotrek.core.models import Path
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PermissionDraftPath(TestCase):
 
     def setUp(self):
