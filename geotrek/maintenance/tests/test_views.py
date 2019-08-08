@@ -79,13 +79,15 @@ class InterventionViewsTest(CommonTest):
             path = PathFactory.create()
             good_data['topology'] = '{"paths": [%s]}' % path.pk,
         else:
-            good_data['topology'] = 'POINT (5.1 6.6)'
+            good_data['topology'] = 'SRID=4326;POINT (5.1 6.6)'
         return good_data
 
     def test_creation_form_on_signage(self):
         self.login()
-
-        signa = SignageFactory.create()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            signa = SignageFactory.create()
+        else:
+            signa = SignageFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         signage = u"%s" % signa
 
         response = self.client.get(Intervention.get_add_url() + '?signage=%s' % signa.pk)
@@ -102,7 +104,10 @@ class InterventionViewsTest(CommonTest):
     def test_creation_form_on_signage_with_errors(self):
         self.login()
 
-        signa = SignageFactory.create()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            signa = SignageFactory.create()
+        else:
+            signa = SignageFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         signage = u"%s" % signa
 
         response = self.client.get(Intervention.get_add_url() + '?signage=%s' % signa.pk)
@@ -121,7 +126,10 @@ class InterventionViewsTest(CommonTest):
     def test_update_form_on_signage(self):
         self.login()
 
-        signa = SignageFactory.create()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            signa = SignageFactory.create()
+        else:
+            signa = SignageFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         signage = u"%s" % signa
 
         intervention = InterventionFactory.create()
@@ -151,7 +159,10 @@ class InterventionViewsTest(CommonTest):
     def test_update_signage(self):
         self.login()
         target_year = 2017
-        intervention = SignageInterventionFactory.create()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            intervention = SignageInterventionFactory.create()
+        else:
+            intervention = SignageInterventionFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         signa = intervention.signage
         # Save infrastructure form
         response = self.client.get(signa.get_update_url())
@@ -174,8 +185,10 @@ class InterventionViewsTest(CommonTest):
 
     def test_creation_form_on_infrastructure(self):
         self.login()
-
-        infra = InfrastructureFactory.create()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            infra = InfrastructureFactory.create()
+        else:
+            infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         infrastr = u"%s" % infra
 
         response = self.client.get(Intervention.get_add_url() + '?infrastructure=%s' % infra.pk)
@@ -192,7 +205,10 @@ class InterventionViewsTest(CommonTest):
     def test_creation_form_on_infrastructure_with_errors(self):
         self.login()
 
-        infra = InfrastructureFactory.create()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            infra = InfrastructureFactory.create()
+        else:
+            infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         infrastr = u"%s" % infra
 
         response = self.client.get(Intervention.get_add_url() + '?infrastructure=%s' % infra.pk)
@@ -211,7 +227,10 @@ class InterventionViewsTest(CommonTest):
     def test_update_form_on_infrastructure(self):
         self.login()
 
-        infra = InfrastructureFactory.create()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            infra = InfrastructureFactory.create()
+        else:
+            infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         infrastr = u"%s" % infra
 
         intervention = InterventionFactory.create()
@@ -246,7 +265,10 @@ class InterventionViewsTest(CommonTest):
     def test_update_infrastructure(self):
         self.login()
         target_year = 2017
-        intervention = InfrastructureInterventionFactory.create()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            intervention = InfrastructureInterventionFactory.create()
+        else:
+            intervention = InfrastructureInterventionFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         infra = intervention.infrastructure
         # Save infrastructure form
         response = self.client.get(infra.get_update_url())
@@ -299,11 +321,17 @@ class InterventionViewsTest(CommonTest):
         self.assertItemsEqual(projects, [p1])
 
     def test_no_html_in_csv_infrastructure(self):
-        InfrastructureInterventionFactory.create()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            InfrastructureInterventionFactory.create()
+        else:
+            InfrastructureInterventionFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         super(InterventionViewsTest, self).test_no_html_in_csv()
 
     def test_no_html_in_csv_signage(self):
-        SignageInterventionFactory.create()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            SignageInterventionFactory.create()
+        else:
+            SignageInterventionFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         super(InterventionViewsTest, self).test_no_html_in_csv()
 
     def test_structurerelated_not_loggedin(self):
@@ -369,7 +397,10 @@ class ProjectViewsTest(CommonTest):
         self.login()
         p1 = ProjectFactory.create()
         ProjectFactory.create()
-        InterventionFactory.create(project=p1)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            InterventionFactory.create(project=p1)
+        else:
+            InterventionFactory.create(project=p1, geom='SRID=2154;POINT (700000 6600000)')
 
         # Check that only p1 is in geojson
         response = self.client.get(self.model.get_layer_url())
@@ -411,7 +442,10 @@ class ProjectViewsTest(CommonTest):
 
     def test_deleted_interventions(self):
         project = ProjectFactory.create()
-        intervention = InterventionFactory.create()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            intervention = InterventionFactory.create()
+        else:
+            intervention = InterventionFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         project.interventions.add(intervention)
 
         self.login()
