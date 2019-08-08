@@ -9,9 +9,6 @@ env:
   - ACTION=integration
   - ACTION=codestyle
 
-stages:
-  - test
-
 matrix:
   allow_failures:
     - env: ACTION=integration
@@ -56,9 +53,7 @@ after_success:
   - if [[ $ACTION == test ]]; then ./bin/coverage report -m; fi
   - if [[ $ACTION == test ]]; then virtualenv env; fi
   - if [[ $ACTION == test ]]; then source env/bin/activate; fi
-  - if [[ $ACTION == test ]]; then pip install coveralls; fi
   - if [[ $ACTION == test ]]; then pip install codecov; fi
-  - if [[ $ACTION == test ]]; then coveralls; fi
   - if [[ $ACTION == test ]]; then codecov; fi
 
 after_failure:
