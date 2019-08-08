@@ -7,8 +7,8 @@ CHANGELOG
 
 **Minor Changes**
 
+- Add a settings allowing to remove certain items from the left menu
 - Serve attachment with 'Topoguide' type as public PDF
-- Add settings allowing to remove menu on the top left
 
 **Bug fixes**
 
