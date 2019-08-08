@@ -8,6 +8,7 @@ CHANGELOG
 **Minor Changes**
 
 - Serve attachment with 'Topoguide' type as public PDF
+- Add settings allowing to remove menu on the top left
 
 **Bug fixes**
 
