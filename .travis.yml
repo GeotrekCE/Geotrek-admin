@@ -36,6 +36,8 @@ before_install:
 install:
   - if [[ $ACTION != codestyle ]]; then deactivate; fi
   - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
+  - if [[ $ACTION == test_nds ]]; then sed -i 's/TREKKING_TOPOLOGY_ENABLED = True/TREKKING_TOPOLOGY_ENABLED = False/g' geotrek/settings/base.py; fi
+  - if [[ $ACTION == test || $ACTION == test_nds ]]; then ./install.sh --tests --noinput; fi
   - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput; fi
   # Don't bind redis-server on IPv6 address
   - sudo sed -i 's/^bind.*$/bind 127.0.0.1/' /etc/redis/redis.conf; sudo service redis-server restart;
@@ -46,6 +48,13 @@ script:
   - if [[ $ACTION == deploy || $ACTION == integration ]]; then make load_demo; fi
   - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
   - if [[ $ACTION == integration ]]; then make test_export host=localhost port=80; fi
+  - if [[ $ACTION == test ]]; then ./bin/coverage run ./bin/django test geotrek; fi
+  - if [[ $ACTION == test_nds ]]; then ./bin/coverage run ./bin/django test geotrek --settings=geotrek.settings.tests_nds; fi
+  - if [[ $ACTION == test || $ACTION == test_nds ]]; then make test_js; fi
+
+  after_success:
+    # Report coverage results to codecov
+    - if [[ $ACTION == test || $ACTION == test_nds ]]; then bash <(curl -s https://codecov.io/bash) -cF python; fi
 
 after_failure:
   - cat var/log/geotrek.log
@@ -53,40 +62,3 @@ after_failure:
   - sudo cat /var/log/nginx/geotrek_error.log
   - cat /var/log/supervisord.log
   - cat /var/log/geotrek.log
-
-#TODO: Create parallel coverage test test_nds
-
-jobs:
-  include:
-    - stage: test
-
-      env: ACTION=test
-
-      install:
-        - ./install.sh --tests --noinput;
-
-      before_script: skip
-
-      script:
-        - ./bin/coverage run ./bin/django test geotrek;
-        - make test_js;
-
-      after_success:
-        - bash <(curl -s https://codecov.io/bash) -cF python;
-
-    - stage: test_nds
-
-      env: ACTION=test
-
-      install:
-        - sed -i 's/TREKKING_TOPOLOGY_ENABLED = True/TREKKING_TOPOLOGY_ENABLED = False/g' geotrek/settings/base.py;
-        - ./install.sh --tests --noinput;
-
-      before_script: skip
-
-      script:
-        - ./bin/coverage run ./bin/django test geotrek --settings=geotrek.settings.tests_nds;
-        - make test_js;
-
-      after_success:
-        - bash <(curl -s https://codecov.io/bash) -cF python;
