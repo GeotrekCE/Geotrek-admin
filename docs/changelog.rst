@@ -2,8 +2,12 @@
 CHANGELOG
 =========
 
-2.27.13.dev0
---------------------
+2.28.0 (2019-08-09)
+-------------------
+
+**New features**
+
+- Geotrek without dynamic segmentation is back
 
 **Minor Changes**
 
