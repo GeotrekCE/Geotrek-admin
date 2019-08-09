@@ -1,7 +1,8 @@
 import os.path
 
+from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.geos import GEOSGeometry, Point
 
 from geotrek.core.helpers import TopologyHelper
 from geotrek.trekking.models import POI, POIType
@@ -50,10 +51,16 @@ class Command(BaseCommand):
     def create_poi(self, geometry, name, poitype):
         poitype, created = POIType.objects.get_or_create(label=poitype)
         poi = POI.objects.create(name=name, type=poitype)
-        # Use existing topology helpers to transform a Point(x, y)
-        # to a path aggregation (topology)
-        serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
-        topology = TopologyHelper.deserialize(serialized)
-        # Move deserialization aggregations to the POI
-        poi.mutate(topology)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            # Use existing topology helpers to transform a Point(x, y)
+            # to a path aggregation (topology)
+            serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
+            topology = TopologyHelper.deserialize(serialized)
+            # Move deserialization aggregations to the POI
+            poi.mutate(topology)
+        else:
+            if geometry.geom_type != 'Point':
+                raise TypeError
+            poi.geom = Point(geometry.x, geometry.y, srid=settings.SRID)
+            poi.save()
         return poi

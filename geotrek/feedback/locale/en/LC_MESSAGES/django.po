@@ -77,3 +77,16 @@ msgstr ""
 
 msgid "Invalid geometry value."
 msgstr ""
+
+msgid ""
+"Hello,\n"
+"\n"
+"We acknowledge receipt of your feedback, thank you for your interest in Geotrek.\n"
+"\n"
+"Best regards,\n"
+"The Geotrek Team\n"
+"http://www.geotrek.fr"
+msgstr ""
+
+msgid "Geotrek : Signal a mistake"
+msgstr ""

@@ -2,6 +2,7 @@
 import datetime
 import json
 
+from django.conf import settings
 from django.test import TestCase
 
 from geotrek.common.tests import CommonTest
@@ -31,14 +32,18 @@ class InfrastructureViewsTest(CommonTest):
     userfactory = PathManagerFactory
 
     def get_good_data(self):
-        path = PathFactory.create()
-        return {
+        good_data = {
             'name': 'test',
             'description': 'oh',
             'type': InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING).pk,
             'condition': InfrastructureConditionFactory.create().pk,
-            'topology': '{"paths": [%s]}' % path.pk,
         }
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            path = PathFactory.create()
+            good_data['topology'] = '{"paths": [%s]}' % path.pk
+        else:
+            good_data['geom'] = 'LINESTRING (0.0 0.0, 1.0 1.0)'
+        return good_data
 
     def test_description_in_detail_page(self):
         infra = InfrastructureFactory.create(description="<b>Beautiful !</b>")
@@ -63,14 +68,18 @@ class InfrastructureViewsTest(CommonTest):
 
 class PointInfrastructureViewsTest(InfrastructureViewsTest):
     def get_good_data(self):
-        PathFactory.create()
-        return {
+        good_data = {
             'name': 'test',
             'description': 'oh',
             'type': InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING).pk,
             'condition': InfrastructureConditionFactory.create().pk,
-            'topology': '{"lat": 0.42, "lng": 0.666}'
         }
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            path = PathFactory.create()
+            good_data['topology'] = '{"paths": [%s]}' % path.pk
+        else:
+            good_data['geom'] = 'POINT(0.42 0.666)'
+        return good_data
 
 
 class InfrastructureConditionTest(TestCase):

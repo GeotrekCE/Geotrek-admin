@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from collections import OrderedDict
 
+from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.test import TestCase
 
@@ -41,14 +42,12 @@ class BladeViewsTest(CommonTest):
         ]), u'This field is required.'
 
     def get_good_data(self):
-        return {
+        good_data = {
             'number': '1',
-            'signage': SignageFactory.create().pk,
             'type': BladeTypeFactory.create().pk,
             'condition': InfrastructureConditionFactory.create().pk,
             'direction': BladeDirectionFactory.create().pk,
             'color': BladeColorFactory.create().pk,
-            'topology': '{"lat": 5.1, "lng": 6.6}',
             'lines-TOTAL_FORMS': '2',
             'lines-INITIAL_FORMS': '0',
             'lines-MAX_NUM_FORMS': '1000',
@@ -70,10 +69,34 @@ class BladeViewsTest(CommonTest):
             'lines-1-id': '',
             'lines-1-DELETE': '',
         }
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            signage = SignageFactory.create()
+            good_data['topology'] = '{"lat": 5.1, "lng": 6.6}'
+            good_data['signage'] = signage.pk
+        else:
+            signage = SignageFactory.create(geom='SRID=2154;POINT(5.1 6.6)')
+            good_data['signage'] = signage.pk
+            good_data['topology'] = signage.geom.ewkt
+        return good_data
 
     def _post_add_form(self):
         signa = SignageFactory.create()
         self._post_form(self._get_add_url() + '?signage=%s' % signa.pk)
+
+    def _check_update_geom_permission(self, response):
+        if self.user.has_perm('{app}.change_geom_{model}'.format(app=self.model._meta.app_label,
+                                                                 model=self.model._meta.model_name)) and \
+                settings.TREKKING_TOPOLOGY_ENABLED:
+            self.assertIn('.modifiable = true;', response.content)
+        else:
+            self.assertIn('.modifiable = false;', response.content)
+
+    def test_api_geojson_list_for_model(self):
+        # TODO: Fix problem with topology.geom should be possible to use a geom of an other model for the serialization
+        pass
+
+    def test_api_geojson_detail_for_model(self):
+        pass
 
     def test_creation_form_on_signage(self):
         self.login()
@@ -169,14 +192,18 @@ class SignageViewsTest(CommonTest):
     userfactory = PathManagerFactory
 
     def get_good_data(self):
-        path = PathFactory.create()
-        return {
+        good_data = {
             'name': 'test',
             'description': 'oh',
             'type': SignageTypeFactory.create().pk,
             'condition': InfrastructureConditionFactory.create().pk,
-            'topology': '{"paths": [%s]}' % path.pk,
         }
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            path = PathFactory.create()
+            good_data['topology'] = '{"paths": [%s]}' % path.pk
+        else:
+            good_data['geom'] = 'POINT(0.42 0.666)'
+        return good_data
 
     def test_description_in_detail_page(self):
         signa = SignageFactory.create(description="<b>Beautiful !</b>")

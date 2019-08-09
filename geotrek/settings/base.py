@@ -496,11 +496,31 @@ EMBED_VIDEO_BACKENDS = (
     'embed_video.backends.SoundCloudBackend',
 )
 
+# Remove menu and possibility to add trail on the other Model
 TRAIL_MODEL_ENABLED = True
+
+# Remove only the menu of the different 'model' (Top Left)
+SIGNAGE_MODEL_ENABLED = True
+INFRASTRUCTURE_MODEL_ENABLED = True
+TREKKING_MODEL_ENABLED = True
+POI_MODEL_ENABLED = True
+SERVICE_MODEL_ENABLED = True
+LANDEDGE_MODEL_ENABLED = True
+PROJECT_MODEL_ENABLED = True
+INTERVENTION_MODEL_ENABLED = True
+REPORT_MODEL_ENABLED = True
+TOURISTICCONTENT_MODEL_ENABLED = True
+TOURISTICEVENT_MODEL_ENABLED = True
+# This model is necessary for most of the other. Can be add in case if the paths will not be change by anyone.
+PATH_MODEL_ENABLED = True
+
+
 TREKKING_TOPOLOGY_ENABLED = True
 FLATPAGES_ENABLED = True
 TOURISM_ENABLED = True
 
+TREK_SIGNAGE_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+TREK_INFRASTRUCTURE_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
 TREK_POI_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
 TOURISM_INTERSECTION_MARGIN = 500  # meters (always used)
 
@@ -610,16 +630,6 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',  # Used for extern authent
 ]
 
-MAILALERTSUBJECT = _("Geotrek : Signal a mistake")
-MAILALERTMESSAGE = _("""Hello,
-
-We acknowledge receipt of your feedback, thank you for your interest in Geotrek.
-
-Best regards,
-
-The Geotrek Team
-http://geotrek.fr""")
-
 EMAIL_SUBJECT_PREFIX = '[%s] ' % TITLE
 
 FACEBOOK_APP_ID = ''
@@ -727,3 +737,7 @@ ENABLED_MOBILE_FILTERS = [
 ]
 
 PRIMARY_COLOR = "#7b8c12"
+
+ONLY_EXTERNAL_PUBLIC_PDF = False
+
+SEND_REPORT_ACK = True

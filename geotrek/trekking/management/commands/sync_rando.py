@@ -292,7 +292,7 @@ class Command(BaseCommand):
             params['source'] = self.source[0]
         if self.portal:
             params['portal'] = ','.join(self.portal)
-        self.sync_object_view(lang, obj, view, '{obj.slug}.pdf', params=params)
+        self.sync_object_view(lang, obj, view, '{obj.slug}.pdf', params=params, slug=obj.slug)
 
     def sync_profile_json(self, lang, obj, zipfile=None):
         view = ElevationProfile.as_view(model=type(obj))

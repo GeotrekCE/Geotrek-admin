@@ -2,6 +2,25 @@
 CHANGELOG
 =========
 
+2.28.0 (2019-08-09)
+-------------------
+
+**New features**
+
+- Geotrek without dynamic segmentation is back
+
+**Minor Changes**
+
+- Add a settings allowing to remove certain items from the left menu
+- Serve attachment with 'Topoguide' type as public PDF
+
+**Bug fixes**
+
+- Fix missing pictograms for mobile app
+- Translate feedback acknoledgment email
+- Fix sync_mobile command for itinerancy
+
+
 2.27.12 (2019-07-22)
 --------------------
 

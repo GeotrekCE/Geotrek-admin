@@ -41,7 +41,7 @@ python-memcached==1.59
 cairocffi==0.9.0
 cairosvg==1.0.22
 django-colorfield==0.1.15
-coverage
+coverage==4.5.3
 # prod
 gunicorn
 raven

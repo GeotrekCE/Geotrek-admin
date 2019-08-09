@@ -1,3 +1,5 @@
+from unittest import skipIf
+
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.contrib.gis.geos import LineString
@@ -7,6 +9,7 @@ from geotrek.core.fields import SnappedLineStringField, TopologyField
 from geotrek.core.factories import PathFactory
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class SnappedLineStringFieldTest(TestCase):
     def setUp(self):
         self.f = SnappedLineStringField()
@@ -57,6 +60,7 @@ class SnappedLineStringFieldTest(TestCase):
                        srid=settings.SRID), 0.1))
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TopologyFieldTest(TestCase):
     def setUp(self):
         self.f = TopologyField()

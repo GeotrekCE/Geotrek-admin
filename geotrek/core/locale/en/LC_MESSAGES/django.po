@@ -259,3 +259,6 @@ msgstr ""
 
 msgid "Paths merged successfully"
 msgstr ""
+
+msgid "No, back to list view"
+msgstr ""

@@ -1,5 +1,8 @@
 import json
 
+from unittest import skipIf
+
+from django.conf import settings
 from django.core.urlresolvers import reverse
 
 from geotrek.authent.tests import AuthentFixturesTest
@@ -9,6 +12,7 @@ from geotrek.core.models import Path
 from geotrek.core.factories import PathFactory
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathFilterTest(AuthentFixturesTest):
 
     def test_paths_bystructure(self):

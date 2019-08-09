@@ -22,8 +22,6 @@ MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = (
     ('it', 'Italian'),
 )
 
-MAILALERTSUBJECT = "Acknowledgment of feedback email"
-
 ALLOWED_HOSTS = [
     'localhost',
 ]

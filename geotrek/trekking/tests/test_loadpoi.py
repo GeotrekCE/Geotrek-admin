@@ -3,7 +3,9 @@
 import os
 from StringIO import StringIO
 from mock import patch
+from unittest import skipIf
 
+from django.conf import settings
 from django.core.management.base import CommandError
 from django.core.management import call_command
 from django.test import TestCase
@@ -74,6 +76,7 @@ class LoadPOITest(TestCase):
         after = len(POI.objects.all())
         self.assertEquals(after - before, 1)
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_pois_are_attached_to_paths(self):
         geom = GEOSGeometry('POINT(1 1)')
         poi = self.cmd.create_poi(geom, 'bridge', 'infra')

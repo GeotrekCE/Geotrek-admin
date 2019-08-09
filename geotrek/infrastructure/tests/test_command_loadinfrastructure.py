@@ -3,6 +3,7 @@ import mock
 import sys
 from StringIO import StringIO
 
+from django.contrib.gis.geos.error import GEOSException
 from django.core.management import call_command
 from django.test import TestCase
 from django.core.management.base import CommandError
@@ -56,6 +57,25 @@ class InfrastructureCommandTest(TestCase):
                          condition_default='condition', structure_default='structure',
                          description_default='description', year_default=2010, verbosity=2, stdout=output)
         self.assertEqual('One of your geometry is a MultiPoint object with multiple points', e.exception.message)
+
+    def test_load_infrastructure_with_fields_use_structure(self):
+        output = StringIO()
+        structure = StructureFactory.create(name='structure')
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'infrastructure.shp')
+        InfrastructureFactory(name="name")
+        call_command('loadinfrastructure', filename, type_field='label', name_field='name',
+                     condition_field='condition', structure_default='structure', use_structure=True,
+                     description_field='descriptio', year_field='year', verbosity=1, stdout=output)
+        self.assertIn('Infrastructures will be linked to %s' % structure, output.getvalue())
+        self.assertIn("InfrastructureType 'type (%s)' created" % structure, output.getvalue())
+        self.assertIn("Condition Type 'condition (%s)' created" % structure, output.getvalue())
+        value = Infrastructure.objects.all()
+        names = [val.name for val in value]
+        years = [val.implantation_year for val in value]
+        self.assertIn('coucou', names)
+        self.assertIn(2010, years)
+        self.assertIn(2012, years)
+        self.assertEquals(value.count(), 3)
 
     def test_load_infrastructure_with_fields(self):
         output = StringIO()
@@ -112,12 +132,13 @@ class InfrastructureCommandTest(TestCase):
                      structure_field='wrong_structure_field', stdout=output)
         call_command('loadinfrastructure', filename, type_default='label', name_field='name',
                      eid_field='wrong_eid_field', stdout=output)
+        call_command('loadinfrastructure', filename, type_default='label', name_field='name',
+                     category_field='wrong_category_field', stdout=output)
         elements_to_check = ['wrong_type_field', 'wrong_name_field', 'wrong_condition_field',
                              'wrong_description_field', 'wrong_implantation_year_field', 'wrong_structure_field',
-                             'wrong_eid_field']
+                             'wrong_eid_field', 'wrong_category_field']
         self.assertEqual(output.getvalue().count("set a default value"), 2)
-        self.assertEqual(output.getvalue().count("Change your"), 5)
-        self.assertEqual(output.getvalue().count("set a default value"), 2)
+        self.assertEqual(output.getvalue().count("Change your"), 6)
         for element in elements_to_check:
             self.assertIn("Field '{}' not found in data source".format(element),
                           output.getvalue())
@@ -126,7 +147,7 @@ class InfrastructureCommandTest(TestCase):
         StructureFactory.create(name='structure')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'line.geojson')
         output = StringIO()
-        with self.assertRaises(IndexError):
+        with self.assertRaises(GEOSException):
             call_command('loadinfrastructure', filename, type_default='label', name_default='name',
                          stdout=output)
         self.assertIn('An error occured, rolling back operations.', output.getvalue())
@@ -153,5 +174,6 @@ class InfrastructureCommandTest(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'infrastructure.shp')
         call_command('loadinfrastructure', filename, type_default='label', name_default='name',
                      condition_default='condition', structure_default='wrong_structure_default',
-                     description_default='description', year_default=2010, verbosity=0, stdout=output)
+                     description_default='description', year_default=2010, category_default='E', verbosity=0,
+                     stdout=output)
         self.assertIn("Structure wrong_structure_default set in options doesn't exist", output.getvalue())

@@ -134,7 +134,7 @@ class TopologyFactory(factory.DjangoModelFactory):
         A topology mixin should be linked to at least one Path (through
         PathAggregation).
         """
-        if not extracted and create:
+        if not extracted and create and settings.TREKKING_TOPOLOGY_ENABLED:
             PathAggregationFactory.create(topo_object=obj)
             # Note that it is not possible to attach a related object before the
             # topo_mixin has an ID.

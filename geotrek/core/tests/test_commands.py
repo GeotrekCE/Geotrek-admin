@@ -1,5 +1,7 @@
 from StringIO import StringIO
+from unittest import skipIf
 
+from django.conf import settings
 from django.contrib.gis.geos import LineString
 from django.core.management import call_command
 from django.core.management.base import CommandError
@@ -12,6 +14,7 @@ from geotrek.trekking.factories import POIFactory
 import os
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class RemoveDuplicatePathTest(TestCase):
     def setUp(self):
         geom_1 = LineString((0, 0), (1, 0), (2, 0))
@@ -102,6 +105,7 @@ class RemoveDuplicatePathTest(TestCase):
                       output.getvalue())
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class LoadPathsCommandTest(TestCase):
     def setUp(self):
         self.filename = os.path.join(os.path.dirname(__file__), 'data', 'paths.geojson')

@@ -68,13 +68,17 @@ before_script:
 
 script:
   - if [[ $ACTION == unit ]]; then docker-compose run web /bin/sh -c exit; fi
-  - if [[ $ACTION == unit ]]; then docker-compose run web coverage run ./manage.py test --settings=geotrek.settings.tests; fi
+  - if [[ $ACTION == unit ]]; then COVERAGE_FILE=.coverage.test docker-compose run web coverage run --parallel-mode ./manage.py test --settings=geotrek.settings.tests; fi
+  - if [[ $ACTION == unit ]]; then COVERAGE_FILE=.coverage.test_nds docker-compose run web coverage run --parallel-mode ./manage.py test --settings=geotrek.settings.tests_nds; fi
+  - if [[ $ACTION == unit ]]; then docker-compose run web coverage combine --append; fi
   - if [[ $ACTION == unit ]]; then docker-compose run web coverage report -m; fi
   - if [[ $ACTION == integration ]]; then casperjs --baseurl=http://$DOMAIN_NAME test ../geotrek/jstests/nav-*.js; fi
 
 after_success:
-  - if [[ $ACTION == unit ]]; then pip install coveralls==1.7.0; fi
-  - if [[ $ACTION == unit ]]; then coveralls; fi
+  - if [[ $ACTION == unit ]]; then pip install codecov; fi
+  - if [[ $ACTION == unit ]]; then codecov; fi
+
+
 
 jobs:
   include:

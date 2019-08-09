@@ -1,11 +1,13 @@
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models as django_db_models
+from django.shortcuts import get_object_or_404
 from django.utils.translation import get_language
 
 from rest_framework import serializers as rest_serializers
 from rest_framework import serializers as rest_fields
 
-from .models import Theme, RecordSource, TargetPortal
+from .models import Theme, RecordSource, TargetPortal, FileType, Attachment
 
 
 class TranslatedModelSerializer(rest_serializers.ModelSerializer):
@@ -45,6 +47,10 @@ class PublishableSerializerMixin(BasePublishableSerializerMixin):
     filelist_url = rest_serializers.SerializerMethodField()
 
     def get_printable_url(self, obj):
+        if settings.ONLY_EXTERNAL_PUBLIC_PDF:
+            file_type = get_object_or_404(FileType, type="Topoguide")
+            if not Attachment.objects.attachments_for_object_only_type(obj, file_type).exists():
+                return None
         appname = obj._meta.app_label
         modelname = obj._meta.model_name
         return reverse('%s:%s_printable' % (appname, modelname),

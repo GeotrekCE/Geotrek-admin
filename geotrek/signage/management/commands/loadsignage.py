@@ -3,7 +3,8 @@
 import os.path
 
 from django.contrib.gis.gdal import DataSource
-from django.contrib.gis.geos import fromstr
+from django.contrib.gis.geos import fromstr, Point
+from django.contrib.gis.geos.error import GEOSException
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
@@ -22,6 +23,8 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('point_layer')
+        parser.add_argument('--use-structure', action='store_true', dest='use_structure', default=False,
+                            help='Allow to use structure for condition and type of infrastructures')
         parser.add_argument('--encoding', '-e', action='store', dest='encoding', default='utf-8',
                             help='File encoding, default utf-8')
         parser.add_argument('--name-field', '-n', action='store', dest='name_field', help='Base url')
@@ -54,6 +57,7 @@ class Command(BaseCommand):
 
         data_source = DataSource(filename, encoding=options.get('encoding'))
 
+        use_structure = options.get('use_structure')
         field_name = options.get('name_field')
         field_infrastructure_type = options.get('type_field')
         field_condition_type = options.get('condition_field')
@@ -98,7 +102,7 @@ class Command(BaseCommand):
                     break
                 elif not field_structure_type and not structure_default:
                     structure = default_structure()
-                else:
+                elif not field_structure_type and structure_default:
                     try:
                         structure = Structure.objects.get(name=structure_default)
                         if verbosity > 0:
@@ -156,7 +160,7 @@ class Command(BaseCommand):
                     eid = feature.get(field_eid) if field_eid in available_fields else None
 
                     self.create_infrastructure(feature_geom, name, type, condition, structure, description, year,
-                                               verbosity, eid)
+                                               verbosity, eid, use_structure)
 
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
@@ -168,15 +172,17 @@ class Command(BaseCommand):
             raise
 
     def create_infrastructure(self, geometry, name, type,
-                              condition, structure, description, year, verbosity, eid):
+                              condition, structure, description, year, verbosity, eid, use_structure):
 
-        infra_type, created = SignageType.objects.get_or_create(label=type, structure=None)
+        infra_type, created = SignageType.objects.get_or_create(label=type,
+                                                                structure=structure if use_structure else None)
         if created and verbosity:
             self.stdout.write(u"- SignageType '{}' created".format(infra_type))
 
         if condition:
-            condition_type, created = InfrastructureCondition.objects.get_or_create(label=condition,
-                                                                                    structure=None)
+            condition_type, created = InfrastructureCondition.objects.get_or_create(
+                label=condition,
+                structure=structure if use_structure else None)
             if created and verbosity:
                 self.stdout.write(u"- Condition Type '{}' created".format(condition_type))
         else:
@@ -200,11 +206,18 @@ class Command(BaseCommand):
                     self.stdout.write(u"Update : %s with eid %s" % (name, eid))
             else:
                 infra = Signage.objects.create(**fields_without_eid)
-
-        serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
-        topology = TopologyHelper.deserialize(serialized)
-        infra.mutate(topology)
-
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            try:
+                serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
+                topology = TopologyHelper.deserialize(serialized)
+                infra.mutate(topology)
+            except IndexError:
+                raise GEOSException('Invalid Geometry type.')
+        else:
+            if geometry.geom_type != 'Point':
+                raise GEOSException('Invalid Geometry type.')
+            infra.geom = Point(geometry.x, geometry.y, srid=settings.SRID)
+            infra.save()
         self.counter += 1
 
         return infra
