@@ -1,0 +1,96 @@
+{% extends "mapentity/mapentity_detail_attributes.html" %}
+{% load i18n mapentity_tags %}
+
+{% block attributes %}
+    <h3>{% trans "Attributes" %}</h3>
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ object|verbose:"structure" }}</th>
+            <td>{{ object.structure }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"name" }}</th>
+            <td>{{ object.name }}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Location" %}</th>
+            <td>{{ object.wgs84_pretty }} (WGS84)</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"practice" }}</th>
+            <td>{{ object.practice }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description_teaser" }}</th>
+            <td>{{ object.description_teaser|safe }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description" }}</th>
+            <td>{{ object.description|safe }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"advice" }}</th>
+            <td>{{ object.advice|safe }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"departure" }}</th>
+            <td>{{ object.departure }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"facilities" }}</th>
+            <td>{{ object.facilities|safe }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description" }}</th>
+            <td>{{ object.description|safe }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"disabled_sport" }}</th>
+            <td>{{ object.disabled_sport|safe }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"levels" }}</th>
+            <td>{% valuelist trek.levels.all %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"themes" }}</th>
+            <td>{% valuelist object.themes.all %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"owner" }}</th>
+            <td>{{ object.owner }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"depth" }}</th>
+            <td>{{ object.depth }} mètres</td>
+        </tr>
+        <tr>
+            <th>{% trans "Source" %}</th>
+            <td>
+                {% valuelist object.source.all %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "Portal" %}</th>
+            <td>
+                {% valuelist object.portal.all %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "External id" %}</th>
+            <td>{{ object.eid|default:"" }}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Thumbnail" %}</th>
+            <td>
+            	{% if object.thumbnail.url %}
+            	<img src="{{ object.thumbnail.url }}">
+            	{% endif %}
+            </td>
+        </tr>
+        {% include "common/publication_info_fragment.html" %}
+        {% include "mapentity/trackinfo_fragment.html" %}
+    </table>
+
+    {{ block.super }}
+{% endblock attributes %}

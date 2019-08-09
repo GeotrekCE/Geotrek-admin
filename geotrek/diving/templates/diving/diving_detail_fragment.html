@@ -1,0 +1,17 @@
+{% load i18n geotrek_tags mapentity_tags %}
+
+<h3>{% trans "Diving" %}</h3>
+<table class="table">
+    <tr>
+        <th>{% trans "Dives" %}</th>
+        <td>
+            {% if perms.diving.add_dive %}
+            <p class="autohide"><a href="{% url 'diving:dive_add' %}" class="btn btn-mini btn-success">
+                <i class="icon-plus icon-white"></i> {% trans "Add a new dive" %}</a>
+            </p>
+            {% endif %}
+
+            {% valuelist object.dives field='name' %}
+        </td>
+    </tr>
+</table>
