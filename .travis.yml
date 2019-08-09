@@ -5,13 +5,10 @@ python:
 
 env:
   - ACTION=test
+  - ACTION=test_nds
   - ACTION=deploy
   - ACTION=integration
   - ACTION=codestyle
-
-stages:
-  - test
-  - test_nds
 
 matrix:
   allow_failures:
@@ -41,6 +38,7 @@ install:
   - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput; fi
   # Don't bind redis-server on IPv6 address
   - sudo sed -i 's/^bind.*$/bind 127.0.0.1/' /etc/redis/redis.conf; sudo service redis-server restart;
+
 script:
   - if [[ $ACTION == codestyle ]]; then flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings; fi
   - if [[ $ACTION == codestyle ]]; then flake8 geotrek; fi
@@ -52,9 +50,9 @@ script:
   - if [[ $ACTION == test_nds ]]; then ./bin/coverage run ./bin/django test geotrek --settings=geotrek.settings.tests_nds; fi
   - if [[ $ACTION == test || $ACTION == test_nds ]]; then make test_js; fi
 
-  after_success:
-    # Report coverage results to codecov
-    - if [[ $ACTION == test || $ACTION == test_nds ]]; then bash <(curl -s https://codecov.io/bash) -cF python; fi
+after_success:
+  # Report coverage results to codecov
+  - if [[ $ACTION == test || $ACTION == test_nds ]]; then bash <(curl -s https://codecov.io/bash) -cF python; fi
 
 after_failure:
   - cat var/log/geotrek.log
