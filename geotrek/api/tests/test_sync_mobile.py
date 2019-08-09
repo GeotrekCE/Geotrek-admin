@@ -22,8 +22,8 @@ from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg, get_dummy_uploaded_image, get_dummy_uploaded_file
 from geotrek.flatpages.factories import FlatPageFactory
 from geotrek.flatpages.models import FlatPage
-from geotrek.trekking.models import Trek, POI
-from geotrek.trekking.factories import TrekWithPublishedPOIsFactory, PracticeFactory
+from geotrek.trekking.models import Trek, POI, OrderedTrekChild
+from geotrek.trekking.factories import TrekFactory, TrekWithPublishedPOIsFactory, PracticeFactory
 from geotrek.tourism.factories import InformationDeskFactory, InformationDeskTypeFactory
 
 
@@ -322,6 +322,10 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         cls.trek_1 = TrekWithPublishedPOIsFactory.create()
         cls.trek_2 = TrekWithPublishedPOIsFactory.create(portals=(cls.portal_a,))
         cls.trek_3 = TrekWithPublishedPOIsFactory.create(portals=(cls.portal_b,))
+        cls.trek_4 = TrekFactory.create()
+        OrderedTrekChild.objects.create(parent=cls.trek_1, child=cls.trek_4, order=1)
+        cls.desk = InformationDeskFactory.create()
+        cls.trek_4.information_desks.add(cls.desk)
 
         cls.attachment_1 = AttachmentFactory.create(content_object=cls.trek_1,
                                                     attachment_file=get_dummy_uploaded_image())
@@ -332,6 +336,8 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
                                                               attachment_file=get_dummy_uploaded_image())
         cls.attachment_poi_file = AttachmentFactory.create(content_object=cls.poi_1,
                                                            attachment_file=get_dummy_uploaded_file())
+        cls.attachment_trek_image = AttachmentFactory.create(content_object=cls.trek_4,
+                                                             attachment_file=get_dummy_uploaded_image())
         translation.deactivate()
 
     def test_sync_treks(self):
@@ -353,9 +359,11 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         with open(os.path.join('tmp', 'en', '{pk}'.format(pk=str(self.trek_1.pk)),
                                'trek.geojson'), 'r') as f:
             trek_geojson = json.load(f)
-            self.assertEqual(len(trek_geojson['properties']), 35)
+            self.assertEqual(len(trek_geojson['properties']), 34)
 
         self.assertIn('en/{pk}/trek.geojson'.format(pk=str(self.trek_1.pk)), output.getvalue())
+        self.assertIn('en/{pk}/treks/{child_pk}.geojson'.format(pk=self.trek_1.pk, child_pk=self.trek_4.pk),
+                      output.getvalue())
 
     def test_sync_treks_with_portal(self):
         output = BytesIO()

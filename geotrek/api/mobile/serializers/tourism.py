@@ -21,7 +21,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                     'author': picture.author,
                     'title': picture.title,
                     'legend': picture.legend,
-                    'url': os.path.join('/', str(self.context['trek_pk']), settings.MEDIA_URL[1:], thdetail.name),
+                    'url': os.path.join('/', str(self.context['root_pk']), settings.MEDIA_URL[1:], thdetail.name),
                 })
             return serialized
 
@@ -44,7 +44,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                     'author': picture.author,
                     'title': picture.title,
                     'legend': picture.legend,
-                    'url': os.path.join('/', str(self.context['trek_pk']), settings.MEDIA_URL[1:], thdetail.name),
+                    'url': os.path.join('/', str(self.context['root_pk']), settings.MEDIA_URL[1:], thdetail.name),
                 })
             return serialized
 
@@ -71,4 +71,4 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         def get_picture(self, obj):
             if not obj.resized_picture:
                 return None
-            return '/{trek_id}{url}'.format(trek_id=self.context['trek_pk'], url=obj.resized_picture.url),
+            return '/{trek_id}{url}'.format(trek_id=self.context['root_pk'], url=obj.resized_picture.url),

@@ -43,30 +43,36 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
                    | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
                           'trek_parents__parent__deleted': False})).distinct()
 
+    def get_serializer_context(self):
+        return {'root_pk': self.request.GET.get('root_pk')}
+
     @decorators.detail_route(methods=['get'])
     def pois(self, request, *args, **kwargs):
         trek = self.get_object()
+        root_pk = self.request.GET.get('root_pk') or trek.pk
         qs = trek.pois.filter(published=True).select_related('topo_object', 'type', )\
             .prefetch_related('topo_object__aggregations', 'attachments') \
             .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID)) \
             .order_by('pk')
-        data = api_serializers_trekking.POIListSerializer(qs, many=True, context={'trek_pk': trek.pk}).data
+        data = api_serializers_trekking.POIListSerializer(qs, many=True, context={'root_pk': root_pk}).data
         return response.Response(data)
 
     @decorators.detail_route(methods=['get'])
     def touristic_contents(self, request, *args, **kwargs):
         trek = self.get_object()
+        root_pk = self.request.GET.get('root_pk') or trek.pk
         qs = trek.touristic_contents.filter(published=True).prefetch_related('attachments') \
             .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID)) \
             .order_by('pk')
-        data = api_serializers_tourism.TouristicContentListSerializer(qs, many=True, context={'trek_pk': trek.pk}).data
+        data = api_serializers_tourism.TouristicContentListSerializer(qs, many=True, context={'root_pk': root_pk}).data
         return response.Response(data)
 
     @decorators.detail_route(methods=['get'])
     def touristic_events(self, request, *args, **kwargs):
         trek = self.get_object()
+        root_pk = self.request.GET.get('root_pk') or trek.pk
         qs = trek.trek.touristic_events.filter(published=True).prefetch_related('attachments') \
             .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID)) \
             .order_by('pk')
-        data = api_serializers_tourism.TouristicEventListSerializer(qs, many=True, context={'trek_pk': trek.pk}).data
+        data = api_serializers_tourism.TouristicEventListSerializer(qs, many=True, context={'root_pk': root_pk}).data
         return response.Response(data)
