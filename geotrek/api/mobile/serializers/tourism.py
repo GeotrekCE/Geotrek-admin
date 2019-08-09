@@ -15,15 +15,16 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         pictures = rest_serializers.SerializerMethodField(read_only=True)
 
         def get_pictures(self, obj):
-            serialized = []
-            for picture, thdetail in obj.resized_pictures:
-                serialized.append({
-                    'author': picture.author,
-                    'title': picture.title,
-                    'legend': picture.legend,
-                    'url': os.path.join('/', str(self.context['root_pk']), settings.MEDIA_URL[1:], thdetail.name),
-                })
-            return serialized
+            if not obj.resized_pictures:
+                return []
+            first_picture = obj.resized_pictures[0][0]
+            thdetail_first = obj.resized_pictures[0][1]
+            return [{
+                'author': first_picture.author,
+                'title': first_picture.title,
+                'legend': first_picture.legend,
+                'url': os.path.join('/', str(self.context['root_pk']), settings.MEDIA_URL[1:], thdetail_first.name),
+            }]
 
         class Meta:
             model = tourism_models.TouristicContent
@@ -38,15 +39,16 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         pictures = rest_serializers.SerializerMethodField(read_only=True)
 
         def get_pictures(self, obj):
-            serialized = []
-            for picture, thdetail in obj.resized_pictures:
-                serialized.append({
-                    'author': picture.author,
-                    'title': picture.title,
-                    'legend': picture.legend,
-                    'url': os.path.join('/', str(self.context['root_pk']), settings.MEDIA_URL[1:], thdetail.name),
-                })
-            return serialized
+            if not obj.resized_pictures:
+                return []
+            first_picture = obj.resized_pictures[0][0]
+            thdetail_first = obj.resized_pictures[0][1]
+            return [{
+                'author': first_picture.author,
+                'title': first_picture.title,
+                'legend': first_picture.legend,
+                'url': os.path.join('/', str(self.context['root_pk']), settings.MEDIA_URL[1:], thdetail_first.name),
+            }]
 
         class Meta:
             model = tourism_models.TouristicEvent

@@ -287,18 +287,24 @@ class Command(BaseCommand):
             self.sync_trek_tiles(trek, trekid_zipfile)
 
         for poi in trek.published_pois:
-            for picture, resized in poi.resized_pictures:
-                self.sync_media_file(resized, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
+            if poi.resized_pictures:
+                self.sync_media_file(poi.resized_pictures[0][1], prefix=trek.pk, directory=url_trek,
+                                     zipfile=trekid_zipfile)
         for touristic_content in trek.published_touristic_contents:
-            for picture, resized in touristic_content.resized_pictures:
-                self.sync_media_file(resized, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
+            if touristic_content.resized_pictures:
+                self.sync_media_file(touristic_content.resized_pictures[0][1], prefix=trek.pk, directory=url_trek,
+                                     zipfile=trekid_zipfile)
         for touristic_event in trek.published_touristic_events:
-            for picture, resized in touristic_event.resized_pictures:
-                self.sync_media_file(resized, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
-        for picture, resized in trek.resized_pictures:
-            self.sync_media_file(resized, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
+            if touristic_event.resized_pictures:
+                self.sync_media_file(touristic_event.resized_pictures[0][1], prefix=trek.pk, directory=url_trek,
+                                     zipfile=trekid_zipfile)
+        if trek.resized_pictures:
+            self.sync_media_file(trek.resized_pictures[0][1], prefix=trek.pk, directory=url_trek,
+                                 zipfile=trekid_zipfile)
         for desk in trek.information_desks.all():
-            self.sync_media_file(desk.resized_picture, prefix=trek.pk, directory=url_trek, zipfile=trekid_zipfile)
+            if desk.resized_picture:
+                self.sync_media_file(desk.resized_picture, prefix=trek.pk, directory=url_trek,
+                                     zipfile=trekid_zipfile)
         for lang in self.languages:
             trek.prepare_elevation_chart(lang, self.referer)
             url_media = '/{}{}'.format(trek.pk, settings.MEDIA_URL)
