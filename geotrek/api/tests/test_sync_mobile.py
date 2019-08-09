@@ -440,8 +440,8 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         self.assertEqual(1, len(os.listdir(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
                                                         'paperclip', 'tourism_touristicevent',
                                                         str(self.touristic_event.pk)))))
-        # Information desk picture
-        self.assertEqual(1, len(os.listdir(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
+        # Information desk picture (2 here because 1 from parent and 1 from child)
+        self.assertEqual(2, len(os.listdir(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
                                                         'upload'))))
         with open(os.path.join('tmp', 'en', str(self.trek_1.pk), 'trek.geojson'), 'r') as f:
             trek_geojson = json.load(f)
