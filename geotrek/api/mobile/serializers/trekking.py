@@ -18,17 +18,16 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         type = serializers.ReadOnlyField(source='type.pk')
 
         def get_pictures(self, obj):
-            serialized = []
-            if obj.resized_pictures:
-                first_picture = obj.resized_pictures[0][0]
-                thdetail_first = obj.resized_pictures[0][1]
-                serialized.append({
-                    'author': first_picture.author,
-                    'title': first_picture.title,
-                    'legend': first_picture.legend,
-                    'url': os.path.join('/', str(self.context['root_pk']), settings.MEDIA_URL[1:], thdetail_first.name),
-                })
-            return serialized
+            if not obj.resized_pictures:
+                return []
+            first_picture = obj.resized_pictures[0][0]
+            thdetail_first = obj.resized_pictures[0][1]
+            return [{
+                'author': first_picture.author,
+                'title': first_picture.title,
+                'legend': first_picture.legend,
+                'url': os.path.join('/', str(self.context['root_pk']), settings.MEDIA_URL[1:], thdetail_first.name),
+            }]
 
         class Meta:
             model = trekking_models.POI
