@@ -71,7 +71,7 @@ jobs:
         - ./bin/coverage run ./bin/django test geotrek;
         - make test_js;
 
-      after_success: :
+      after_success:
         - bash <(curl -s https://codecov.io/bash) -cF python;
 
     - stage: test_nds
