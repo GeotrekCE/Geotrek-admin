@@ -16,12 +16,14 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
         def get_pictures(self, obj):
             serialized = []
-            for picture, thdetail in obj.resized_pictures:
+            if obj.resized_pictures:
+                first_picture = obj.resized_pictures[0][0]
+                thdetail_first = obj.resized_pictures[0][1]
                 serialized.append({
-                    'author': picture.author,
-                    'title': picture.title,
-                    'legend': picture.legend,
-                    'url': os.path.join('/', str(self.context['root_pk']), settings.MEDIA_URL[1:], thdetail.name),
+                    'author': first_picture.author,
+                    'title': first_picture.title,
+                    'legend': first_picture.legend,
+                    'url': os.path.join('/', str(self.context['root_pk']), settings.MEDIA_URL[1:], thdetail_first.name),
                 })
             return serialized
 
@@ -39,12 +41,14 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
         def get_pictures(self, obj):
             serialized = []
-            for picture, thdetail in obj.resized_pictures:
+            if obj.resized_pictures:
+                first_picture = obj.resized_pictures[0][0]
+                thdetail_first = obj.resized_pictures[0][1]
                 serialized.append({
-                    'author': picture.author,
-                    'title': picture.title,
-                    'legend': picture.legend,
-                    'url': os.path.join('/', str(self.context['root_pk']), settings.MEDIA_URL[1:], thdetail.name),
+                    'author': first_picture.author,
+                    'title': first_picture.title,
+                    'legend': first_picture.legend,
+                    'url': os.path.join('/', str(self.context['root_pk']), settings.MEDIA_URL[1:], thdetail_first.name),
                 })
             return serialized
 

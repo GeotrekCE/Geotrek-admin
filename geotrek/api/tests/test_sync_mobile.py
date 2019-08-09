@@ -334,6 +334,9 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
 
         cls.attachment_1 = AttachmentFactory.create(content_object=cls.trek_1,
                                                     attachment_file=get_dummy_uploaded_image())
+        AttachmentFactory.create(content_object=cls.trek_1,
+                                 attachment_file=get_dummy_uploaded_image())
+
         cls.poi_1 = POI.objects.first()
         cls.attachment_poi_image_1 = AttachmentFactory.create(content_object=cls.poi_1,
                                                               attachment_file=get_dummy_uploaded_image())
@@ -412,6 +415,8 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         self.assertTrue(os.path.exists(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
+                                                    'paperclip', 'trekking_trek')))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
                                                     'paperclip', 'trekking_poi')))
         self.assertTrue(os.path.exists(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
                                                     'paperclip', 'tourism_touristiccontent')))
@@ -426,6 +431,8 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         self.assertEqual(1, len(os.listdir(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
+                                                        'paperclip', 'trekking_trek', str(self.trek_1.pk)))))
+        self.assertEqual(1, len(os.listdir(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
                                                         'paperclip', 'trekking_poi', str(self.poi_1.pk)))))
         self.assertEqual(1, len(os.listdir(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
                                                         'paperclip', 'tourism_touristiccontent',
@@ -436,6 +443,15 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         # Information desk picture
         self.assertEqual(1, len(os.listdir(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
                                                         'upload'))))
+        with open(os.path.join('tmp', 'en', str(self.trek_1.pk), 'trek.geojson'), 'r') as f:
+            trek_geojson = json.load(f)
+            # Check inside file generated we have only one picture.
+            self.assertEqual(len(trek_geojson['properties']['pictures']), 1)
+
+        with open(os.path.join('tmp', 'en', str(self.trek_1.pk), 'pois.geojson'), 'r') as f:
+            trek_geojson = json.load(f)
+            # Check inside file generated we have only one picture.
+            self.assertEqual(len(trek_geojson['features'][0]['properties']['pictures']), 1)
 
     @mock.patch('geotrek.trekking.views.TrekViewSet.list')
     def test_streaminghttpresponse(self, mocke):
