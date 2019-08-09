@@ -29,6 +29,8 @@ class SyncRandoTilesTest(TestCase):
     def setUpClass(cls):
         if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
             shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
+        if os.path.exists(os.path.join('var', 'tmp')):
+            shutil.rmtree(os.path.join('var', 'tmp'))
         super(SyncRandoTilesTest, cls).setUpClass()
 
     @mock.patch('landez.TilesManager.tile', return_value='I am a png')
@@ -113,6 +115,8 @@ class SyncRandoFailTest(TestCase):
     def setUpClass(cls):
         if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
             shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
+        if os.path.exists(os.path.join('var', 'tmp')):
+            shutil.rmtree(os.path.join('var', 'tmp'))
         super(SyncRandoFailTest, cls).setUpClass()
 
     def test_fail_directory_not_empty(self):
@@ -178,6 +182,8 @@ class SyncTest(TestCase):
     def setUpClass(cls):
         if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
             shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
+        if os.path.exists(os.path.join('var', 'tmp')):
+            shutil.rmtree(os.path.join('var', 'tmp'))
         super(SyncTest, cls).setUpClass()
 
     def setUp(self):
