@@ -48,9 +48,6 @@ UPLOAD_DIR = envini.get('uploaddir', section="django", default=UPLOAD_DIR)
 MAPENTITY_CONFIG['TEMP_DIR'] = envini.get('tmproot', section="django", default=os.path.join(DEPLOY_ROOT, 'var', 'tmp'))
 SYNC_RANDO_ROOT = envini.get('syncrandoroot', section="django", default=os.path.join(DEPLOY_ROOT, 'data'))
 
-MAILALERTSUBJECT = envini.get('mailalertsubject', section="settings", default="")
-MAILALERTMESSAGE = envini.get('mailalertmessage', section="settings", default="")
-
 DATABASES['default']['NAME'] = envini.get('dbname')
 DATABASES['default']['USER'] = envini.get('dbuser')
 DATABASES['default']['PASSWORD'] = envini.get('dbpassword')

@@ -13,6 +13,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix missing pictograms for mobile app
+- Translate feedback acknoledgment email
 - Fix sync_mobile command for itinerancy
 
 

@@ -52,15 +52,5 @@ mailport = 25
 mailtls = False
 mailssl = False
 
-mailalertsubject = Geotrek : Signal a mistake
-mailalertmessage = Hello,
-
-                    We acknowledge receipt of your feedback, thank you for your interest in Geotrek.
-
-                    Best regards,
-
-                    The Geotrek Team
-                    http://www.geotrek.fr
-
 [nginx-conf]
 # cors = domain.name.of.geotrek-rando.com
