@@ -52,6 +52,7 @@ script:
 
 after_success:
   # Report coverage results to codecov
+  - if [[ $ACTION == test || $ACTION == test_nds ]]; then ./bin/coverage report -m; fi
   - if [[ $ACTION == test || $ACTION == test_nds ]]; then bash <(curl -s https://codecov.io/bash) -cF python; fi
 
 after_failure:
