@@ -84,6 +84,11 @@ class BladeFactory(factory.DjangoModelFactory):
     topology = factory.SubFactory(TopologyFactory)
     signage = factory.SubFactory(SignageFactory)
 
+    @factory.post_generation
+    def lines(obj, create, extracted=None, **kwargs):
+        if create:
+            LineFactory.create(blade=obj)
+
 
 class LineFactory(factory.DjangoModelFactory):
     class Meta:

@@ -5,7 +5,7 @@ from .models import Intervention, Project
 class InterventionSerializer(ModelSerializer):
     class Meta:
         model = Intervention
-        geo_field = 'geom'
+        geo_field = 'topology'
         fields = (
             'id', 'name', 'date', 'type', 'infrastructure', 'signage', 'status', 'stake',
             'disorders', 'total_manday', 'project', 'subcontracting',

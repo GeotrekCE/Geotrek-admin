@@ -111,6 +111,8 @@ def intersecting(cls, obj, distance=None):
     Small helper to filter all model instances by geometry intersection
     """
     qs = cls.objects
+    if not obj.geom:
+        return qs.none()
     if hasattr(qs, 'existing'):
         qs = qs.existing()
     if distance is None:
@@ -124,6 +126,7 @@ def intersecting(cls, obj, distance=None):
             ewkt = obj.geom.transform(settings.SRID, clone=True).ewkt
             qs = qs.extra(select={'ordering': 'ST_LineLocatePoint(ST_GeomFromEWKT(\'{ewkt}\'), ST_StartPoint((ST_Dump(ST_Intersection(ST_GeomFromEWKT(\'{ewkt}\'), geom))).geom))'.format(ewkt=ewkt)})
             qs = qs.extra(order_by=['ordering'])
+
     if obj.__class__ == cls:
         # Prevent self intersection
         qs = qs.exclude(pk=obj.pk)

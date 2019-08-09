@@ -24,7 +24,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                     'author': picture.author,
                     'title': picture.title,
                     'legend': picture.legend,
-                    'url': os.path.join('/', str(self.context['trek_pk']), settings.MEDIA_URL[1:], thdetail.name),
+                    'url': os.path.join('/', str(self.context['root_pk']), settings.MEDIA_URL[1:], thdetail.name),
                 })
             return serialized
 
@@ -69,8 +69,12 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             geo_field = 'geometry'
 
     class TrekListSerializer(TrekBaseSerializer):
-        first_picture = serializers.ReadOnlyField(source='resized_picture_mobile')
+        first_picture = serializers.SerializerMethodField(read_only=True)
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='start_point', )
+
+        def get_first_picture(self, obj):
+            root_pk = self.context.get('root_pk') or obj.pk
+            return obj.resized_picture_mobile(root_pk)
 
         class Meta(TrekBaseSerializer.Meta):
             fields = (
@@ -81,28 +85,24 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
     class TrekDetailSerializer(TrekBaseSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='geom2d_transformed')
-        pictures = serializers.ReadOnlyField(source='serializable_pictures_mobile')
+        pictures = serializers.SerializerMethodField(read_only=True)
         arrival_city = serializers.SerializerMethodField(read_only=True)
         information_desks = serializers.SerializerMethodField()
         parking_location = serializers.SerializerMethodField(read_only=True)
         profile = serializers.SerializerMethodField(read_only=True)
         points_reference = serializers.SerializerMethodField()
         children = serializers.SerializerMethodField()
-        parents = serializers.SerializerMethodField()
+
+        def get_pictures(self, obj):
+            root_pk = self.context.get('root_pk') or obj.pk
+            return obj.serializable_pictures_mobile(root_pk)
 
         def get_children(self, obj):
             children = obj.children.all().annotate(length_2d_m=Length('geom'),
                                                    start_point=Transform(StartPoint('geom'), settings.API_SRID),
                                                    end_point=Transform(EndPoint('geom'), settings.API_SRID))
-            serializer_children = TrekListSerializer(children, many=True)
+            serializer_children = TrekListSerializer(children, many=True, context={'root_pk': obj.pk})
             return serializer_children.data
-
-        def get_parents(self, obj):
-            parents = obj.parents.all().annotate(length_2d_m=Length('geom'),
-                                                 start_point=Transform(StartPoint('geom'), settings.API_SRID),
-                                                 end_point=Transform(EndPoint('geom'), settings.API_SRID))
-            serializer_parents = TrekListSerializer(parents, many=True)
-            return serializer_parents.data
 
         def get_points_reference(self, obj):
             if not obj.points_reference:
@@ -127,12 +127,13 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         def get_information_desks(self, obj):
             return [
-                InformationDeskSerializer(information_desk, context={'trek_pk': obj.pk}).data
+                InformationDeskSerializer(information_desk, context={'root_pk': obj.pk}).data
                 for information_desk in obj.information_desks.all()
             ]
 
         def get_profile(self, obj):
-            return os.path.join("/", str(obj.pk), settings.MEDIA_URL.lstrip('/'), obj.get_elevation_chart_url_png())
+            root_pk = self.context.get('root_pk') or obj.pk
+            return os.path.join("/", str(root_pk), settings.MEDIA_URL.lstrip('/'), obj.get_elevation_chart_url_png())
 
         class Meta(TrekBaseSerializer.Meta):
             auto_bbox = True
@@ -142,5 +143,5 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'difficulty', 'length', 'ascent', 'descent', 'route', 'is_park_centered', 'parking_location',
                 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'difficulty',
                 'geometry', 'pictures', 'information_desks', 'cities', 'departure_city', 'arrival_city',
-                'points_reference', 'districts', 'ambiance', 'children', 'parents'
+                'points_reference', 'districts', 'ambiance', 'children',
             )

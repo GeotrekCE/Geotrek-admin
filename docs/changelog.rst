@@ -13,6 +13,7 @@ CHANGELOG
 
 - Fix missing pictograms for mobile app
 - Translate feedback acknoledgment email
+- Fix sync_mobile command for itinerancy
 
 
 2.27.12 (2019-07-22)

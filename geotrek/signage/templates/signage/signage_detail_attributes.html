@@ -79,22 +79,22 @@
                     <td><a href="{% url 'signage:blade_detail' blade.pk %}">{{ blade }}</td>
                     <td>{{ blade.color|default_if_none:"" }}</td>
                     <td>
-                        {% for line in blade.order_lines %}
+                        {% for line in blade.order_lines.all %}
                             {{ line.text }}{% if not forloop.last %}<br>{% endif %}
                         {% endfor %}
                     </td>
                     <td>
-                        {% for line in blade.order_lines %}
+                        {% for line in blade.order_lines.all %}
                             {{ line.pictogram_name|default_if_none:"" }}{% if not forloop.last %}<br>{% endif %}
                         {% endfor %}
                     </td>
                     <td>
-                        {% for line in blade.order_lines %}
+                        {% for line in blade.order_lines.all %}
                             {{ line.distance|default_if_none:"" }}{% if not forloop.last %}<br>{% endif %}
                         {% endfor %}
                     </td>
                     <td>
-                        {% for line in blade.order_lines %}
+                        {% for line in blade.order_lines.all %}
                             {{ line.time|default_if_none:"" }}{% if not forloop.last %}<br>{% endif %}
                         {% endfor %}
                     </td>

@@ -193,11 +193,14 @@ class SyncTest(TestCase):
                                                                attachment_file=get_dummy_uploaded_image())
         self.attachment_poi_file = AttachmentFactory.create(content_object=self.poi_1,
                                                             attachment_file=get_dummy_uploaded_file())
-
-        infrastructure = InfrastructureFactory.create(no_path=True, name="INFRA_1")
-        infrastructure.add_path(self.trek_1.paths.first(), start=0, end=0)
-        signage = SignageFactory.create(no_path=True, name="SIGNA_1")
-        signage.add_path(self.trek_1.paths.first(), start=0, end=0)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            infrastructure = InfrastructureFactory.create(no_path=True, name="INFRA_1")
+            infrastructure.add_path(self.trek_1.paths.first(), start=0, end=0)
+            signage = SignageFactory.create(no_path=True, name="SIGNA_1")
+            signage.add_path(self.trek_1.paths.first(), start=0, end=0)
+        else:
+            InfrastructureFactory.create(geom='SRID=2154;POINT(700000 6600000)', name="INFRA_1")
+            SignageFactory.create(geom='SRID=2154;POINT(700000 6600000)', name="SIGNA_1")
         SensitiveAreaFactory.create(published=True)
         self.touristic_content = TouristicContentFactory(
             geom='SRID=%s;POINT(700001 6600001)' % settings.SRID, published=True)

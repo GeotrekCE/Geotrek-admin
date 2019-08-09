@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import re
+from unittest import skipIf
 
 import mock
 from bs4 import BeautifulSoup
@@ -30,6 +31,7 @@ from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, Com
 from geotrek.zoning.factories import CityFactory
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
     def setUp(self):
         self.login()
@@ -86,6 +88,7 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         self.assertEqual(Path.objects.filter(pk__in=[path_1.pk, path_2.pk]).count(), 0)
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathViewsTest(CommonTest):
     model = Path
     modelfactory = PathFactory
@@ -513,6 +516,7 @@ class PathViewsTest(CommonTest):
         self.logout()
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathKmlGPXTest(TestCase):
     def setUp(self):
         super(PathKmlGPXTest, self).setUp()
@@ -539,6 +543,7 @@ class PathKmlGPXTest(TestCase):
         self.assertEqual(self.kml_response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class DenormalizedTrailTest(AuthentFixturesTest):
     def setUp(self):
         self.trail1 = TrailFactory(no_path=True)
@@ -564,20 +569,25 @@ class DenormalizedTrailTest(AuthentFixturesTest):
             self.client.get(reverse('core:path_json_list'))
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TrailViewsTest(CommonTest):
     model = Trail
     modelfactory = TrailFactory
     userfactory = PathManagerFactory
 
     def get_good_data(self):
-        path = PathFactory.create()
-        return {
+        good_data = {
             'name': 't',
             'departure': 'Below',
             'arrival': 'Above',
-            'comments': 'No comment',
-            'topology': '{"paths": [%s]}' % path.pk,
+            'comments': 'No comment'
         }
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            path = PathFactory.create()
+            good_data['topology'] = '{"paths": [%s]}' % path.pk
+        else:
+            good_data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
+        return good_data
 
     def test_detail_page(self):
         self.login()
@@ -621,6 +631,7 @@ class TrailViewsTest(CommonTest):
         self.assertIn(trail, new_trail.trails.all())
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TrailKmlGPXTest(TestCase):
     def setUp(self):
         super(TrailKmlGPXTest, self).setUp()
@@ -647,6 +658,7 @@ class TrailKmlGPXTest(TestCase):
         self.assertEqual(self.kml_response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class RemovePathKeepTopology(TestCase):
     def test_remove_poi(self):
         """

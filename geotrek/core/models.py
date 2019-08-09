@@ -190,6 +190,8 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         self.reload()
 
     def delete(self, *args, **kwargs):
+        if not settings.TREKKING_TOPOLOGY_ENABLED:
+            return super(Path, self).delete(*args, **kwargs)
         topologies = list(self.topology_set.filter())
         r = super(Path, self).delete(*args, **kwargs)
         if not Path.objects.exists():
