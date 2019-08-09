@@ -538,7 +538,25 @@ EMBED_VIDEO_BACKENDS = (
     'embed_video.backends.SoundCloudBackend',
 )
 
+# Remove menu and possibility to add trail on the other Model
 TRAIL_MODEL_ENABLED = True
+
+# Remove only the menu of the different 'model' (Top Left)
+SIGNAGE_MODEL_ENABLED = True
+INFRASTRUCTURE_MODEL_ENABLED = True
+TREKKING_MODEL_ENABLED = True
+POI_MODEL_ENABLED = True
+SERVICE_MODEL_ENABLED = True
+LANDEDGE_MODEL_ENABLED = True
+PROJECT_MODEL_ENABLED = True
+INTERVENTION_MODEL_ENABLED = True
+REPORT_MODEL_ENABLED = True
+TOURISTICCONTENT_MODEL_ENABLED = True
+TOURISTICEVENT_MODEL_ENABLED = True
+# This model is necessary for most of the other. Can be add in case if the paths will not be change by anyone.
+PATH_MODEL_ENABLED = True
+
+
 TREKKING_TOPOLOGY_ENABLED = True
 FLATPAGES_ENABLED = True
 TOURISM_ENABLED = True

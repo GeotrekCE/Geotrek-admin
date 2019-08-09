@@ -34,7 +34,8 @@ class TouristicContentEntityOptions(PublishableEntityOptions):
 
 
 if settings.TOURISM_ENABLED:
-    urlpatterns += registry.register(models.TouristicContent, TouristicContentEntityOptions)
+    urlpatterns += registry.register(models.TouristicContent, TouristicContentEntityOptions,
+                                     menu=settings.TOURISTICCONTENT_MODEL_ENABLED)
 
 
 class TouristicEventEntityOptions(PublishableEntityOptions):
@@ -49,4 +50,5 @@ class TouristicEventEntityOptions(PublishableEntityOptions):
 
 
 if settings.TOURISM_ENABLED:
-    urlpatterns += registry.register(models.TouristicEvent, TouristicEventEntityOptions)
+    urlpatterns += registry.register(models.TouristicEvent, TouristicEventEntityOptions,
+                                     menu=settings.TOURISTICEVENT_MODEL_ENABLED)
