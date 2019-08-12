@@ -1,0 +1,2 @@
+ignore:
+  - "bin/.*" # ignore everything in bin
