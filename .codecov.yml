@@ -1,2 +1,5 @@
 fixes:
   - "GeotrekCE/Geotrek-admin/::"
+
+ignore:
+  - "**/coverage-2.7"
