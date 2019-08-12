@@ -53,7 +53,8 @@ script:
 after_success:
   # Report coverage results to codecov
   - if [[ $ACTION == test || $ACTION == test_nds ]]; then ./bin/coverage report -m; fi
-  - if [[ $ACTION == test || $ACTION == test_nds ]]; then bash <(curl -s https://codecov.io/bash) -cF python; fi
+  - if [[ $ACTION == test ]]; then bash <(curl -s https://codecov.io/bash) -F test -f coverage.xml; fi
+  - if [[ $ACTION == test_nds ]]; then bash <(curl -s https://codecov.io/bash) -F test_nds -f coverage.xml; fi
 
 after_failure:
   - cat var/log/geotrek.log
