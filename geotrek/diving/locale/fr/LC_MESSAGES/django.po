@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-09 13:21+0200\n"
+"POT-Creation-Date: 2019-08-13 17:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -129,11 +129,41 @@ msgstr "Plongée"
 msgid "Dives"
 msgstr "Plongées"
 
+#. Translators: This is a slug (without space, accent or special char)
 msgid "dive"
 msgstr "plongee"
 
+#| msgid "N"
+msgctxt "North"
+msgid "N"
+msgstr "N"
+
+#| msgid "S"
+msgctxt "South"
+msgid "S"
+msgstr "S"
+
+#| msgid "W"
+msgctxt "West"
+msgid "W"
+msgstr "O"
+
+#| msgid "E"
+msgctxt "East"
+msgid "E"
+msgstr "E"
+
 msgid "Published dives"
 msgstr "Plongées publiées"
+
+msgid "Attributes"
+msgstr "Informations"
+
+msgid "Thumbnail"
+msgstr "Miniature"
+
+msgid "Geotrek Rando"
+msgstr "Geotrek Rando"
 
 msgid "Add a new dive"
 msgstr "Ajouter une plongée"

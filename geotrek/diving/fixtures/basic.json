@@ -3,7 +3,7 @@
     "model": "diving.practice",
     "pk": 1,
     "fields": {
-        "pictogram": "upload/plongee.svg",
+        "pictogram": "upload/dive.svg",
         "name": "Plong\u00e9e sous marine en bouteille",
         "name_en": null,
         "name_es": null,

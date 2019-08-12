@@ -46,7 +46,7 @@ from geotrek.signage.serializers import SignageSerializer
 from .tasks import launch_sync_rando
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     from geotrek.tourism.models import TouristicContent, TouristicEvent
-if 'diving' in settings.INSTALLED_APPS:
+if 'geotrek.diving' in settings.INSTALLED_APPS:
     from geotrek.diving.models import Dive
 
 
@@ -678,7 +678,7 @@ class Meta(TemplateView):
             context['events'] = TouristicEvent.objects.existing().order_by('pk').filter(
                 **{'published_{lang}'.format(lang=lang): True}
             )
-        if 'diving' in settings.INSTALLED_APPS:
+        if 'geotrek.diving' in settings.INSTALLED_APPS:
             context['dives'] = Dive.objects.existing().order_by('pk').filter(
                 **{'published_{lang}'.format(lang=lang): True}
             )

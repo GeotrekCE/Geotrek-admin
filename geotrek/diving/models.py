@@ -1,11 +1,11 @@
-# coding: utf8
+# coding: utf-8
 
 from math import trunc
 
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.template.defaultfilters import slugify
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, pgettext
 
 from colorfield.fields import ColorField
 from mapentity.models import MapEntityMixin
@@ -114,6 +114,8 @@ class Dive(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
+    category_id_prefix = 'D'
+
     class Meta:
         db_table = 'g_t_plongee'
         verbose_name = _(u"Dive")
@@ -134,18 +136,28 @@ class Dive(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
     def wgs84_pretty(self):
         location = self.geom.transform(4326, clone=True)
         return (
-            "{lat_deg}°{lat_min:02d}'{lat_sec:02d}\" {lat_card} / " +
-            "{lng_deg}°{lng_min:02d}'{lng_sec:02d}\" {lng_card}"
+            u"{lat_deg}°{lat_min:02d}'{lat_sec:02d}\" {lat_card} / "
+            + u"{lng_deg}°{lng_min:02d}'{lng_sec:02d}\" {lng_card}"
         ).format(
             lat_deg=trunc(abs(location.y)),
             lat_min=trunc((abs(location.y) * 60) % 60),
             lat_sec=trunc((abs(location.y) * 3600) % 60),
-            lat_card=_("N") if location.y >= 0 else _("S"),
+            lat_card=pgettext("North", u"N") if location.y >= 0 else pgettext("South", u"S"),
             lng_deg=trunc(abs(location.x)),
             lng_min=trunc((abs(location.x) * 60) % 60),
             lng_sec=trunc((abs(location.x) * 3600) % 60),
-            lng_card=_("W") if location.x >= 0 else _("E"),
+            lng_card=pgettext("West", u"W") if location.x >= 0 else pgettext("East", u"E"),
         )
+
+    def distance(self, to_cls):
+        return settings.DIVING_INTERSECTION_MARGIN
+
+    @property
+    def prefixed_category_id(self):
+        if settings.SPLIT_DIVES_CATEGORIES_BY_PRACTICE and self.practice:
+            return '{prefix}{id}'.format(prefix=self.category_id_prefix, id=self.practice.id)
+        else:
+            return self.category_id_prefix
 
 
 Topology.add_property('dives', lambda self: intersecting(Dive, self), _(u"Dives"))
