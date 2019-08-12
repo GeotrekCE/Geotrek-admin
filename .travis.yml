@@ -5,6 +5,7 @@ python:
 
 env:
   - ACTION=test
+  - ACTION=test_nds
   - ACTION=deploy
   - ACTION=integration
   - ACTION=codestyle
@@ -32,10 +33,12 @@ before_install:
 install:
   - if [[ $ACTION != codestyle ]]; then deactivate; fi
   - if [[ $ACTION == codestyle ]]; then pip install flake8; fi
-  - if [[ $ACTION == test ]]; then ./install.sh --tests --noinput; fi
+  - if [[ $ACTION == test_nds ]]; then sed -i 's/TREKKING_TOPOLOGY_ENABLED = True/TREKKING_TOPOLOGY_ENABLED = False/g' geotrek/settings/base.py; fi
+  - if [[ $ACTION == test || $ACTION == test_nds ]]; then ./install.sh --tests --noinput; fi
   - if [[ $ACTION == deploy || $ACTION == integration ]]; then ./install.sh --noinput; fi
   # Don't bind redis-server on IPv6 address
   - sudo sed -i 's/^bind.*$/bind 127.0.0.1/' /etc/redis/redis.conf; sudo service redis-server restart;
+
 script:
   - if [[ $ACTION == codestyle ]]; then flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings; fi
   - if [[ $ACTION == codestyle ]]; then flake8 geotrek; fi
@@ -43,18 +46,16 @@ script:
   - if [[ $ACTION == deploy || $ACTION == integration ]]; then make load_demo; fi
   - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
   - if [[ $ACTION == integration ]]; then make test_export host=localhost port=80; fi
-  - if [[ $ACTION == test ]]; then COVERAGE_FILE=.coverage.test ./bin/coverage run --parallel-mode ./bin/django test geotrek; fi
-  - if [[ $ACTION == test ]]; then COVERAGE_FILE=.coverage.test_nds ./bin/coverage run --parallel-mode ./bin/django test geotrek --settings=geotrek.settings.tests_nds; fi
-  - if [[ $ACTION == test ]]; then ./bin/coverage combine --append; fi
-  - if [[ $ACTION == test ]]; then make test_js; fi
+  - if [[ $ACTION == test ]]; then ./bin/coverage run ./bin/django test geotrek; fi
+  - if [[ $ACTION == test_nds ]]; then ./bin/coverage run ./bin/django test geotrek --settings=geotrek.settings.tests_nds; fi
+  - if [[ $ACTION == test || $ACTION == test_nds ]]; then make test_js; fi
 
 after_success:
-  # Report coverage results to coveralls.io
-  - if [[ $ACTION == test ]]; then ./bin/coverage report -m; fi
-  - if [[ $ACTION == test ]]; then virtualenv env; fi
-  - if [[ $ACTION == test ]]; then source env/bin/activate; fi
-  - if [[ $ACTION == test ]]; then pip install codecov; fi
-  - if [[ $ACTION == test ]]; then codecov; fi
+  # Report coverage results to codecov
+  - if [[ $ACTION == test || $ACTION == test_nds ]]; then ./bin/coverage report -m; fi
+  - if [[ $ACTION == test || $ACTION == test_nds ]]; then ./bin/coverage xml; fi
+  - if [[ $ACTION == test ]]; then bash <(curl -s https://codecov.io/bash) -F test -f coverage.xml; fi
+  - if [[ $ACTION == test_nds ]]; then bash <(curl -s https://codecov.io/bash) -F test_nds -f coverage.xml; fi
 
 after_failure:
   - cat var/log/geotrek.log
@@ -62,5 +63,3 @@ after_failure:
   - sudo cat /var/log/nginx/geotrek_error.log
   - cat /var/log/supervisord.log
   - cat /var/log/geotrek.log
-
-#TODO: Create parallel coverage test test_nds
