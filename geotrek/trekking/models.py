@@ -14,7 +14,7 @@ import simplekml
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 
-from geotrek.api.v2.functions import GeometryType, LineLocatePoint, Transform
+from geotrek.api.v2.functions import LineLocatePoint, Transform
 from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Path, Topology
 from geotrek.common.utils import intersecting, classproperty
@@ -714,7 +714,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
                                                                         output_field=models.GeometryField()),
                                                                   settings.SRID),
                                                         Transform(F('geom'), settings.SRID)))
-            qs = qs.order_by('locate')
+                qs = qs.order_by('locate')
 
         return qs
 
