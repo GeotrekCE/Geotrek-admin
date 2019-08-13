@@ -1,5 +1,7 @@
 from django.test import TestCase
 from django.utils import translation
+from django.conf import settings
+from unittest import skipIf
 
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.factories import InfrastructureFactory
@@ -13,6 +15,7 @@ from geotrek.maintenance.factories import (InterventionFactory,
 from geotrek.core.factories import PathFactory, TopologyFactory, StakeFactory
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class InterventionTest(TestCase):
     def test_topology_has_intervention_kind(self):
         topo = TopologyFactory.create()
@@ -133,26 +136,47 @@ class InterventionTest(TestCase):
     def test_denormalized_fields(self):
         infra = InfrastructureFactory.create()
         infra.save()
-        self.assertNotEqual(infra.length, 0.0)
 
-        # After setting related infrastructure
-        interv = InterventionFactory.create()
-        interv.set_topology(infra)
-        interv.save()
+        def create_interv():
+            interv = InterventionFactory.create()
+            interv.set_topology(infra)
+            interv.save()
+            return interv
+
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            self.assertNotEqual(infra.length, 0.0)
+
+            # After setting related infrastructure
+            interv = create_interv()
+            self.assertEqual(interv.length, infra.length)
+
+            # After update related infrastructure
+            infra.length = 3.14
+            infra.save()
+            interv.reload()
+        else:
+            interv = create_interv()
         self.assertEqual(interv.length, infra.length)
 
-        # After update related infrastructure
-        infra.length = 3.14
-        infra.save()
-        interv.reload()
-        self.assertEqual(interv.length, infra.length)
-
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_length_auto(self):
         # Line intervention has auto length from topology
         interv = InfrastructureInterventionFactory.create()
         interv.length = 3.14
         interv.save()
         self.assertNotEqual(interv.length, 3.14)
+        # Point intervention has manual length
+        interv = InfrastructurePointInterventionFactory.create()
+        interv.length = 3.14
+        interv.save()
+        self.assertEqual(interv.length, 3.14)
+
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    def test_length_not_auto_nds(self):
+        interv = InfrastructureInterventionFactory.create()
+        interv.length = 3.14
+        interv.save()
+        self.assertEqual(interv.length, 3.14)
         # Point intervention has manual length
         interv = InfrastructurePointInterventionFactory.create()
         interv.length = 3.14

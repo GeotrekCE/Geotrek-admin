@@ -10,6 +10,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.layout import Layout, Submit, HTML, Div, Fieldset
 from leaflet.forms.widgets import LeafletWidget
+from mapentity.forms import TranslatedModelForm
 from mapentity.widgets import SelectMultipleWithPop
 
 from geotrek.common.forms import CommonForm
@@ -21,6 +22,8 @@ from django.core.urlresolvers import reverse
 
 
 class TrekRelationshipForm(forms.ModelForm):
+    trek_b = forms.ModelChoiceField(queryset=Trek.objects.existing(), required=True,
+                                    label=_(u"Trek"))
 
     class Meta:
         fields = ('id',
@@ -160,7 +163,8 @@ class TrekForm(BaseTrekForm):
                     for t in ServiceType.objects.all()])))
         )
         super(TrekForm, self).__init__(*args, **kwargs)
-
+        if self.fields.get('structure'):
+            self.fieldslayout[0][1][0].insert(0, 'structure')
         self.fields['web_links'].widget = SelectMultipleWithPop(choices=self.fields['web_links'].choices,
                                                                 add_url=WebLink.get_add_url())
         # Make sure (force) that name is required, in default language only
@@ -190,7 +194,7 @@ class TrekForm(BaseTrekForm):
             # init hidden field with children order
             self.fields['hidden_ordered_children'].initial = ",".join(str(x) for x in queryset_children.values_list('child__id', flat=True))
         if self.instance.pk:
-            self.fields['pois_excluded'].queryset = self.instance.pois.all()
+            self.fields['pois_excluded'].queryset = self.instance.all_pois.all()
         else:
             self.fieldslayout[0][1][1].remove('pois_excluded')
 
@@ -254,7 +258,7 @@ class TrekForm(BaseTrekForm):
 
     class Meta(BaseTrekForm.Meta):
         fields = BaseTrekForm.Meta.fields + \
-            ['name', 'review', 'published', 'is_park_centered', 'departure',
+            ['structure', 'name', 'review', 'published', 'is_park_centered', 'departure',
              'arrival', 'duration', 'difficulty', 'route', 'ambiance',
              'access', 'description_teaser', 'description', 'points_reference',
              'disabled_infrastructure', 'advised_parking', 'parking_location',
@@ -294,6 +298,7 @@ else:
 class POIForm(BasePOIForm):
     fieldslayout = [
         Div(
+            'structure',
             'name',
             'review',
             'published',
@@ -304,7 +309,7 @@ class POIForm(BasePOIForm):
     ]
 
     class Meta(BasePOIForm.Meta):
-        fields = BasePOIForm.Meta.fields + ['name', 'description', 'eid', 'type', 'published', 'review']
+        fields = BasePOIForm.Meta.fields + ['structure', 'name', 'description', 'eid', 'type', 'published', 'review']
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -338,17 +343,17 @@ else:
 class ServiceForm(BaseServiceForm):
     fieldslayout = [
         Div(
+            'structure',
             'type',
-            'review',
             'eid',
         )
     ]
 
     class Meta(BaseServiceForm.Meta):
-        fields = BaseServiceForm.Meta.fields + ['type']
+        fields = BaseServiceForm.Meta.fields + ['structure', 'type', 'eid']
 
 
-class WebLinkCreateFormPopup(forms.ModelForm):
+class WebLinkCreateFormPopup(TranslatedModelForm):
 
     def __init__(self, *args, **kwargs):
         super(WebLinkCreateFormPopup, self).__init__(*args, **kwargs)
@@ -367,8 +372,7 @@ class WebLinkCreateFormPopup(forms.ModelForm):
 
     class Meta:
         model = WebLink
-        fields = ['name_{0}'.format(l[0]) for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']] + \
-                 ['url', 'category']
+        fields = ['name', 'url', 'category']
 
 
 class SyncRandoForm(forms.Form):

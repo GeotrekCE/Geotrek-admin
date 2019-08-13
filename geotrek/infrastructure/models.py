@@ -68,7 +68,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
                                    verbose_name=_("Description"), help_text=_(u"Specificites"))
     condition = models.ForeignKey(InfrastructureCondition, db_column='etat',
                                   verbose_name=_("Condition"), blank=True, null=True,
-                                  on_delete=models.PROTECT)
+                                  on_delete=models.SET_NULL)
     implantation_year = models.PositiveSmallIntegerField(verbose_name=_("Implantation year"),
                                                          db_column='annee_implantation', null=True)
     eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True,
@@ -134,7 +134,12 @@ class Infrastructure(MapEntityMixin, BaseInfrastructure):
 
     @classmethod
     def topology_infrastructures(cls, topology):
-        return cls.overlapping(topology)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            qs = cls.overlapping(topology)
+        else:
+            area = topology.geom.buffer(settings.TREK_INFRASTRUCTURE_INTERSECTION_MARGIN)
+            qs = cls.objects.existing().filter(geom__intersects=area)
+        return qs
 
     @classmethod
     def published_topology_infrastructure(cls, topology):
@@ -142,6 +147,6 @@ class Infrastructure(MapEntityMixin, BaseInfrastructure):
 
 
 Path.add_property('infrastructures', lambda self: Infrastructure.path_infrastructures(self), _(u"Infrastructures"))
-Topology.add_property('infrastructures', lambda self: Infrastructure.topology_infrastructures(self), _(u"Infrastructures"))
+Topology.add_property('infrastructures', Infrastructure.topology_infrastructures, _(u"Infrastructures"))
 Topology.add_property('published_infrastructures', Infrastructure.published_topology_infrastructure,
                       _(u"Published Infrastructures"))

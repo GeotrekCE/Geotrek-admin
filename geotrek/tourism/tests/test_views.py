@@ -1,23 +1,28 @@
 # -*- coding: utf-8 -*-
 import os
 import json
+import hashlib
+from shutil import rmtree
+from tempfile import mkdtemp
 
 import mock
 
 from datetime import datetime
 from django.contrib.auth.models import Group
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.test.utils import override_settings
 from django.test import TestCase
 
-from geotrek.authent.factories import StructureFactory, UserProfileFactory
+from geotrek.authent.factories import StructureFactory, UserProfileFactory, UserFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.trekking.tests import TrekkingManagerTest
 from geotrek.core import factories as core_factories
 from geotrek.trekking import factories as trekking_factories
 from geotrek.zoning import factories as zoning_factories
 from geotrek.common import factories as common_factories
+from geotrek.common.models import FileType, Attachment
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_document
 from geotrek.tourism.factories import (InformationDeskFactory,
@@ -123,6 +128,7 @@ class TouristicContentFormTest(TrekkingManagerTest):
 class BasicJSONAPITest(TranslationResetMixin):
     factory = None
 
+    @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def setUp(self):
         super(BasicJSONAPITest, self).setUp()
         self._build_object()
@@ -151,24 +157,34 @@ class BasicJSONAPITest(TranslationResetMixin):
 
         self.portal = common_factories.TargetPortalFactory()
         self.content.portal.add(self.portal)
-
-        path = core_factories.PathFactory(geom='SRID=%s;LINESTRING(0 10, 10 10)' % settings.SRID)
-        self.trek = trekking_factories.TrekFactory(no_path=True)
-        self.trek.add_path(path)
-        self.poi = trekking_factories.POIFactory(no_path=True)
-        self.poi.add_path(path, start=0.5, end=0.5)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            path = core_factories.PathFactory(geom='SRID=%s;LINESTRING(0 10, 10 10)' % settings.SRID)
+            self.trek = trekking_factories.TrekFactory(no_path=True)
+            self.trek.add_path(path)
+            self.poi = trekking_factories.POIFactory(no_path=True)
+            self.poi.add_path(path, start=0.5, end=0.5)
+        else:
+            self.trek = trekking_factories.TrekFactory(geom='SRID=%s;LINESTRING(0 10, 10 10)' % settings.SRID)
+            self.poi = trekking_factories.POIFactory(geom='SRID=%s;POINT(0 5)' % settings.SRID)
 
     def test_thumbnail(self):
         self.assertEqual(self.result['thumbnail'],
-                         os.path.join(settings.MEDIA_URL, self.picture.attachment_file.name) + '.120x120_q85_crop.png')
+                         self.picture.attachment_file.url + '.120x120_q85_crop.png')
 
     def test_published_status(self):
         self.assertDictEqual(self.result['published_status'][0],
                              {u'lang': u'en', u'status': True, u'language': u'English'})
 
+    @override_settings(THUMBNAIL_COPYRIGHT_FORMAT="{title} {author}")
     def test_pictures(self):
         self.assertDictEqual(self.result['pictures'][0],
-                             {u'url': os.path.join(settings.MEDIA_URL, self.picture.attachment_file.name) + '.800x800_q85.png',
+                             {u'url': '{url}.800x800_q85_watermark-{id}.png'.format(
+                                 url=self.picture.attachment_file.url,
+                                 id=hashlib.md5(
+                                     settings.THUMBNAIL_COPYRIGHT_FORMAT.format(
+                                         author=self.picture.author,
+                                         title=self.picture.title,
+                                         legend=self.picture.legend)).hexdigest()),
                               u'title': self.picture.title,
                               u'legend': self.picture.legend,
                               u'author': self.picture.author})
@@ -391,6 +407,31 @@ class TouristicContentCustomViewTests(TrekkingManagerTest):
         mocked.return_value.content = PNG_BLACK_PIXEL
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+    @override_settings(MEDIA_ROOT=mkdtemp('geotrek_test'))
+    def test_external_public_document_pdf(self):
+        content = TouristicContentFactory.create(published=True)
+        Attachment.objects.create(
+            filetype=FileType.objects.create(type="Topoguide"),
+            content_object=content,
+            creator=UserFactory.create(),
+            attachment_file=SimpleUploadedFile('external.pdf', b'External PDF')
+        )
+        rmtree(settings.MEDIA_ROOT)
+        url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response['X-Accel-Redirect'],
+            '/media_secure/paperclip/tourism_touristiccontent/{}/external.pdf'.format(content.pk)
+        )
+
+    @override_settings(ONLY_EXTERNAL_PUBLIC_PDF=True)
+    def test_only_external_public_document_pdf(self):
+        content = TouristicContentFactory.create(published=True)
+        url = '/api/en/touristiccontents/{pk}/slug.pdf'.format(pk=content.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
 
     def test_not_published_document_pdf(self):
         content = TouristicContentFactory.create(published=False)

@@ -7,9 +7,9 @@ ADVANCED CONFIGURATION
 Custom setting file
 -------------------
 
-Geotrek configuration is currently restricted to values present in ``etc/settings.ini``.
+Geotrek basic configuration is currently restricted to values present in ``etc/settings.ini``.
 
-However, it is still possible to write a custom Django setting file.
+However, it is possible to write a custom Django setting file to override all default values from ``geotrek/settings/base.py`` file.
 
 * Create your a file in *geotrek/settings/custom.py* with the following content :
 
@@ -320,25 +320,45 @@ Apply changes :
     cd <geotrek-admin-folder>
     make env_standalone deploy
 
-Override public document OpenOffice template
---------------------------------------------
 
-WARNING: Documentation to be updated. Geotrek-admin now uses Weasyprint to create public PDF based on HTML templates
-and no more on ODT templates. Default HTML templates are in ``geotrek/trekking/templates/`` and can be copied in ``var/media/templates/`` with same path and file names to be overriden.
+Override public pdf templates
+-----------------------------
 
-Copy the file ``geotrek/trekking/templates/trekking/trek_public.odt`` to
-``var/media/templates/trekking/trek_public.odt``.
+PDF are generated from html printed, using [Django templating](https://docs.djangoproject.com/en/1.11/ref/templates/).
+Trekkings, touristic contents and events can be exported in pdf files.
 
-Edit the copy using *OpenOffice*.
+- Treks : ``geotrek/trekking/templates/trekking/trek_public_pdf.html``
+- touristic contents : ``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``
+- touristic events : ``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``
+
+Overriden templates have to be located in ``var/media/templates/<appname>``, with appname = trekking or tourism.
+To override trekking pdf for example, copy the file ``geotrek/trekking/templates/trekking/trek_public_pdf.html``
+to ``var/media/templates/trekking/trek_public_pdf.html``.
+
+These templates derive from base templates, which content is organized in blocks.
+To override for example the description block of trek pdf, copy and change the ``{% block description }…{% endblock description %}``
+in your ``var/media/templates/trekking/trek_public_pdf.html``.
+
+It is also possible to use color defined for practice for pictogram by adding in your
+``geotrek/trekking/templates/trekking/trek_public_pdf.html`` file :
+
+::
+
+    {% block picto_attr %}style="background-color: {{ object.practice.color }};"{% endblock picto_attr %}
+
+CSS can be overriden like html templates : copy them to ``var/media/templates/trekking/`` or ``var/media/templates/tourism/`` folder
 
 .. note ::
 
     The default template may change in the future versions. You will be
     in charge of porting the modification to your copy.
 
+Test your modifications by exporting a trek or a content to pdf from Geotrek-admin application.
+To get your modifications available for Rando application, launch the ``sync_rando`` command.
 
-Custom font in public document OpenOffice template
---------------------------------------------------
+
+Custom font in public document template
+----------------------------------------
 
 In order to use custom fonts in trek PDF, it is necessary to install the
 font files on the server.
@@ -356,8 +376,8 @@ For specific fonts, copy the ``.ttf`` (or ``.otf``) files into the folder
 For more information, check out Ubuntu documentation.
 
 
-Custom colors in public document OpenOffice template
-----------------------------------------------------
+Custom colors in public document template
+-----------------------------------------
 
 Trek export geometries are translucid red by default. In order to control the
 apparence of objects in public trek exports, use the following setting :
@@ -368,6 +388,11 @@ apparence of objects in public trek exports, use the following setting :
 
 See *Leaflet* reference documentation for detail about layers apparence.
 
+Primary color in PDF templates
+------------------------------
+
+You can override `PRIMARY_COLOR` to change emphase text in PDF export.
+Beware of contrast, colour is used for text so we advise you to avoid light colour.
 
 Custom logos
 ------------

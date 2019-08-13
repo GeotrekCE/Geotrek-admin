@@ -50,6 +50,9 @@ msgstr ""
 msgid "Label"
 msgstr ""
 
+msgid "Color of the category, only used in mobile."
+msgstr ""
+
 msgid "Information desk type"
 msgstr ""
 

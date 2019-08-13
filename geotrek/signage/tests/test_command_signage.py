@@ -3,6 +3,7 @@ import mock
 import sys
 from StringIO import StringIO
 
+from django.contrib.gis.geos.error import GEOSException
 from django.core.management import call_command
 from django.test import TestCase
 from django.core.management.base import CommandError
@@ -30,6 +31,32 @@ class InfrastructureCommandTest(TestCase):
         self.assertEquals(signage.name, value[1].name)
         self.assertEquals(signage.implantation_year, value[1].implantation_year)
         self.assertEquals(value.count(), 3)
+
+    def test_load_signage_multipoints(self):
+        output = StringIO()
+        structure = StructureFactory.create(name='structure')
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'signage_good_multipoint.geojson')
+        building = SignageFactory(name="name", implantation_year=2010)
+        call_command('loadsignage', filename, type_default='label', name_default='name',
+                     condition_default='condition', structure_default='structure',
+                     description_default='description', year_default=2010, verbosity=2, stdout=output)
+        self.assertIn('Signages will be linked to %s' % structure, output.getvalue())
+        self.assertIn('1 objects created.', output.getvalue())
+        value = Signage.objects.all()
+        self.assertEquals(building.name, value[1].name)
+        self.assertEquals(building.implantation_year, value[1].implantation_year)
+        self.assertEquals(value.count(), 2)
+
+    def test_load_signage_bad_multipoints_error(self):
+        output = StringIO()
+        StructureFactory.create(name='structure')
+        SignageFactory(name="name", implantation_year=2010)
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'signage_bad_multipoint.geojson')
+        with self.assertRaises(CommandError) as e:
+            call_command('loadsignage', filename, type_default='label', name_default='name',
+                         condition_default='condition', structure_default='structure',
+                         description_default='description', year_default=2010, verbosity=2, stdout=output)
+        self.assertEqual('One of your geometry is a MultiPoint object with multiple points', e.exception.message)
 
     def test_load_signage_with_fields(self):
         output = StringIO()
@@ -100,7 +127,7 @@ class InfrastructureCommandTest(TestCase):
         StructureFactory.create(name='structure')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'line.geojson')
         output = StringIO()
-        with self.assertRaises(IndexError):
+        with self.assertRaises(GEOSException):
             call_command('loadsignage', filename, type_default='label', name_default='name',
                          stdout=output)
         self.assertIn('An error occured, rolling back operations.', output.getvalue())

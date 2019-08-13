@@ -37,7 +37,8 @@
 
     <h3>{% trans "Lines" %}</h3>
     <table class="table">
-        {% if object.order_lines %}
+        <!-- TODO: with order-lines -->
+        {% if object.order_lines.exists %}
             <tr>
                 <th>{% trans "Code" %}</th>
                 <th>{% trans "Text" %}</th>
@@ -46,7 +47,7 @@
                 <th>{% trans "Time" context "duration" %}</th>
             </tr>
         {% endif %}
-        {% for line in object.order_lines %}
+        {% for line in object.order_lines.all %}
             <tr>
                 <td>{{ line }}</td>
                 <td>{{ line.text }}</td>

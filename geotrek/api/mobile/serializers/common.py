@@ -13,6 +13,11 @@ from geotrek.trekking import models as trekking_models
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
     from geotrek.zoning import models as zoning_models
 
+    class DistrictSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = zoning_models.District
+            fields = ('id', 'name')
+
     class CitySerializer(serializers.ModelSerializer):
         id = serializers.ReadOnlyField(source='code')
 
@@ -77,7 +82,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
         class Meta:
             model = tourism_models.TouristicContentCategory
-            fields = ('id', 'name', 'pictogram', 'type1_label', 'type2_label')
+            fields = ('id', 'name', 'pictogram', 'type1_label', 'type2_label', 'color')
 
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
@@ -97,7 +102,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
     class PracticeSerializer(serializers.ModelSerializer):
         pictogram = serializers.SerializerMethodField(read_only=True)
-        color = serializers.ReadOnlyField(source='mobile_color')
 
         def get_pictogram(self, obj):
             file_name, file_extension = os.path.splitext(str(obj.pictogram.url))

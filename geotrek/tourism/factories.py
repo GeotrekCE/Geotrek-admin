@@ -45,7 +45,7 @@ class TouristicContentCategoryFactory(factory.DjangoModelFactory):
     label = factory.Sequence(lambda n: u"Category %s" % n)
     type1_label = factory.Sequence(lambda n: u"Type1_label %s" % n)
     # Keep type2_label with default value
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('touristiccontent-category-%s.png')
 
 
 class TouristicContentType1Factory(factory.DjangoModelFactory):
@@ -54,7 +54,7 @@ class TouristicContentType1Factory(factory.DjangoModelFactory):
 
     label = factory.Sequence(lambda n: u"Type1 %s" % n)
     category = factory.SubFactory(TouristicContentCategoryFactory)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('touristiccontent-type1-%s.png')
 
 
 class TouristicContentType2Factory(factory.DjangoModelFactory):
@@ -63,7 +63,7 @@ class TouristicContentType2Factory(factory.DjangoModelFactory):
 
     label = factory.Sequence(lambda n: u"Type2 %s" % n)
     category = factory.SubFactory(TouristicContentCategoryFactory)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('touristiccontent-type2-%s.png')
 
 
 class ReservationSystemFactory(factory.DjangoModelFactory):
@@ -104,7 +104,7 @@ class TouristicEventTypeFactory(factory.DjangoModelFactory):
         model = models.TouristicEventType
 
     type = factory.Sequence(lambda n: u"Type %s" % n)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('touristicevent-type-%s.png')
 
 
 class TouristicEventFactory(factory.DjangoModelFactory):

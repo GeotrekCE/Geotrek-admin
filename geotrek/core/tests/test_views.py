@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 import json
 import re
+from unittest import skipIf
 
 import mock
 from bs4 import BeautifulSoup
+from django.conf import settings
+from django.contrib.auth.models import Permission
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
-from django.contrib.gis.geos import LineString, Point
+from django.contrib.gis.geos import LineString, Point, Polygon, MultiPolygon
 from django.test import TestCase
 
 from mapentity.factories import UserFactory
@@ -25,8 +28,10 @@ from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import SignageFactory
 from geotrek.maintenance.factories import InterventionFactory
 from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, ComfortFactory, TopologyFactory, PathAggregationFactory)
+from geotrek.zoning.factories import CityFactory
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
     def setUp(self):
         self.login()
@@ -83,6 +88,7 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         self.assertEqual(Path.objects.filter(pk__in=[path_1.pk, path_2.pk]).count(), 0)
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathViewsTest(CommonTest):
     model = Path
     modelfactory = PathFactory
@@ -159,6 +165,24 @@ class PathViewsTest(CommonTest):
         self.assertTrue((st1.pk, unicode(st1)) in stakefield.choices)
         self.assertFalse((st2.pk, unicode(st2)) in stakefield.choices)
 
+    def test_set_structure_with_permission_object_linked_none_structure(self):
+        if not hasattr(self.model, 'structure'):
+            return
+        self.login()
+        perm = Permission.objects.get(codename='can_bypass_structure')
+        self.user.user_permissions.add(perm)
+        structure = StructureFactory()
+        st0 = StakeFactory.create(structure=None)
+        self.assertNotEqual(structure, self.user.profile.structure)
+        data = self.get_good_data()
+        data['stake'] = st0.pk
+        data['structure'] = self.user.profile.structure.pk
+        response = self.client.post(self._get_add_url(), data)
+        self.assertEqual(response.status_code, 302)
+        obj = self.model.objects.last()
+        self.assertEqual(obj.structure, self.user.profile.structure)
+        self.logout()
+
     def test_basic_format(self):
         self.modelfactory.create()
         self.modelfactory.create(name=u"ãéè")
@@ -232,6 +256,15 @@ class PathViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content)['sumPath'], 0.3)
 
+    def test_sum_path_filter_cities(self):
+        self.login()
+        p1 = PathFactory(geom=LineString((0, 0), (0, 1000), srid=settings.SRID))
+        city = CityFactory(code='09000', geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)), srid=settings.SRID)))
+        self.assertEquals(p1.aggregations.count(), 0)
+        response = self.client.get('/api/path/paths.json?city=%s' % city.code)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content)['sumPath'], 0.0)
+
     def test_merge_fails_parameters(self):
         """
         Should fail if path[] length != 2
@@ -255,27 +288,186 @@ class PathViewsTest(CommonTest):
         self.assertIn('error', response.json())
         self.logout()
 
+    def test_merge_fails_other_path_intersection_less_than_snapping(self):
+        """
+        Merge should fail if other path share merge intersection
+
+                          |
+                          C
+                          |
+
+        |--------A--------|-----------B-----------|
+
+        """
+        self.login()
+        path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
+        path_b = PathFactory.create(name="B", geom=LineString((11, 0), (20, 0)))
+        PathFactory.create(name="C", geom=LineString((10, 1), (10, 10)))
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        json_response = response.json()
+        self.assertIn('error', json_response)
+        self.assertEqual(json_response['error'], "You can't merge 2 paths with a 3rd path in the intersection")
+        self.logout()
+
     def test_merge_fails_other_path_intersection(self):
         """
         Merge should fail if other path share merge intersection
 
-        |--------A--------|-----------B-----------|
                           |
                           C
                           |
+        |--------A--------|-----------B-----------|
+
         """
         self.login()
-        path_a = PathFactory.create(name="A", geom=LineString((0, 0), (1, 0)))
-        path_b = PathFactory.create(name="B", geom=LineString((1, 0), (2, 0)))
-        PathFactory.create(name="C", geom=LineString((1, 0), (10, 10)))
+        path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
+        path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
+        PathFactory.create(name="C", geom=LineString((10, 0), (10, 10)))
         response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
-        self.assertIn('error', response.json())
+        json_response = response.json()
+        self.assertIn('error', json_response)
+        self.assertEqual(json_response['error'], "You can't merge 2 paths with a 3rd path in the intersection")
+        self.logout()
+
+    def test_merge_fails_other_path_intersection_2(self):
+        """
+        Merge should fail if other path share merge intersection
+
+                          |
+                          C (reversed)
+                          |
+        |--------A--------|-----------B-----------|
+
+        """
+        self.login()
+        path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
+        path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
+        PathFactory.create(name="C", geom=LineString((10, 10), (10, 0)))
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        json_response = response.json()
+        self.assertIn('error', json_response)
+        self.assertEqual(json_response['error'], "You can't merge 2 paths with a 3rd path in the intersection")
+        self.logout()
+
+    def test_merge_fails_other_path_intersection_3(self):
+        """
+        Merge should fail if other path share merge intersection
+
+        |--------C--------|
+        C                 C
+        |                 |
+        |--------A--------|-----------B-----------|
+
+        """
+        self.login()
+        path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
+        path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
+        PathFactory.create(name="C", geom=LineString((0, 0), (0, 10), (10, 10), (10, 0)))
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        json_response = response.json()
+        self.assertIn('error', json_response)
+        self.assertEqual(json_response['error'], "You can't merge 2 paths with a 3rd path in the intersection")
+        self.logout()
+
+    def test_merge_not_fail_draftpath_intersection(self):
+        """
+        Merge should not fail
+                          .
+                          C (draft)
+                          .
+        |--------A--------|-----------B-----------|
+
+        """
+        self.login()
+        path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
+        path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
+        PathFactory.create(name="C", geom=LineString((10, 0), (10, 10)), draft=True)
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        self.assertIn('success', response.json())
+        self.logout()
+
+    def test_merge_not_fail_start_point_end_point(self):
+        """
+        Merge should not fail
+        |
+        C
+        |
+        |--------A--------|-----------B-----------|
+
+        """
+        self.login()
+        path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
+        path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
+        PathFactory.create(name="C", geom=LineString((0, 0), (0, 10)))
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        self.assertIn('success', response.json())
+        self.logout()
+
+    def test_merge_not_fail_start_point_end_point_2(self):
+        """
+        Merge should not fail
+        |
+        C (reversed)
+        |
+        |--------A--------|-----------B-----------|
+
+        """
+        self.login()
+        path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
+        path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
+        PathFactory.create(name="C", geom=LineString((0, 10), (0, 0)))
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        self.assertIn('success', response.json())
+        self.logout()
+
+    def test_merge_not_fail_start_point_end_point_3(self):
+        """
+        Merge should not fail
+                                                  |
+                                                  C
+                                                  |
+        |--------A--------|-----------B-----------|
+
+        """
+        self.login()
+        path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
+        path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
+        PathFactory.create(name="C", geom=LineString((20, 0), (20, 10)))
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        self.assertIn('success', response.json())
+        self.logout()
+
+    def test_merge_not_fail_start_point_end_point_4(self):
+        """
+        Merge should not fail
+                                                  |
+                                                  C (reversed)
+                                                  |
+        |--------A--------|-----------B-----------|
+
+        """
+        self.login()
+        path_a = PathFactory.create(name="A", geom=LineString((0, 0), (10, 0)))
+        path_b = PathFactory.create(name="B", geom=LineString((10, 0), (20, 0)))
+        PathFactory.create(name="C", geom=LineString((20, 10), (20, 0)))
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [path_a.pk, path_b.pk]})
+        self.assertIn('success', response.json())
         self.logout()
 
     def test_merge_works(self):
         self.login()
         p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
         p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)))
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
+        self.assertIn('success', response.json())
+        self.logout()
+
+    def test_merge_works_other_line(self):
+        self.login()
+        p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
+        p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)))
+
+        PathFactory.create(name="CD", geom=LineString((2, 1), (3, 1)))
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
         self.assertIn('success', response.json())
         self.logout()
@@ -308,7 +500,23 @@ class PathViewsTest(CommonTest):
         self.assertIn('success', response.json())
         self.logout()
 
+    def test_structure_is_not_changed_with_permission_error(self):
+        self.login()
+        perm = Permission.objects.get(codename='can_bypass_structure')
+        self.user.user_permissions.add(perm)
+        structure = StructureFactory()
+        structure_2 = StructureFactory()
+        self.assertNotEqual(structure, self.user.profile.structure)
+        obj = self.modelfactory.create(structure=structure)
+        data = self.get_good_data()
+        data['structure'] = structure_2.pk
+        result = self.client.post(obj.get_update_url(), data)
+        self.assertEqual(result.status_code, 200)
+        self.assertIn("Please select a choice related to all structures", result.content)
+        self.logout()
 
+
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathKmlGPXTest(TestCase):
     def setUp(self):
         super(PathKmlGPXTest, self).setUp()
@@ -335,6 +543,7 @@ class PathKmlGPXTest(TestCase):
         self.assertEqual(self.kml_response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class DenormalizedTrailTest(AuthentFixturesTest):
     def setUp(self):
         self.trail1 = TrailFactory(no_path=True)
@@ -360,20 +569,25 @@ class DenormalizedTrailTest(AuthentFixturesTest):
             self.client.get(reverse('core:path_json_list'))
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TrailViewsTest(CommonTest):
     model = Trail
     modelfactory = TrailFactory
     userfactory = PathManagerFactory
 
     def get_good_data(self):
-        path = PathFactory.create()
-        return {
+        good_data = {
             'name': 't',
             'departure': 'Below',
             'arrival': 'Above',
-            'comments': 'No comment',
-            'topology': '{"paths": [%s]}' % path.pk,
+            'comments': 'No comment'
         }
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            path = PathFactory.create()
+            good_data['topology'] = '{"paths": [%s]}' % path.pk
+        else:
+            good_data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
+        return good_data
 
     def test_detail_page(self):
         self.login()
@@ -417,6 +631,7 @@ class TrailViewsTest(CommonTest):
         self.assertIn(trail, new_trail.trails.all())
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TrailKmlGPXTest(TestCase):
     def setUp(self):
         super(TrailKmlGPXTest, self).setUp()
@@ -443,6 +658,7 @@ class TrailKmlGPXTest(TestCase):
         self.assertEqual(self.kml_response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class RemovePathKeepTopology(TestCase):
     def test_remove_poi(self):
         """

@@ -211,7 +211,7 @@ class Command(BaseCommand):
             content = b''.join(response.streaming_content)
         else:
             content = response.content
-        # Fix strange unicode characters 2028 and 2029 that make Geotrek-mobile crash
+        # Fix strange unicode characters 2028 and 2029 that make Geotrek-rando crash
         if fix2028:
             content = content.replace('\\u2028', '\\n')
             content = content.replace('\\u2029', '\\n')
@@ -292,7 +292,7 @@ class Command(BaseCommand):
             params['source'] = self.source[0]
         if self.portal:
             params['portal'] = ','.join(self.portal)
-        self.sync_object_view(lang, obj, view, '{obj.slug}.pdf', params=params)
+        self.sync_object_view(lang, obj, view, '{obj.slug}.pdf', params=params, slug=obj.slug)
 
     def sync_profile_json(self, lang, obj, zipfile=None):
         view = ElevationProfile.as_view(model=type(obj))
@@ -802,7 +802,7 @@ class Command(BaseCommand):
             if e.errno != 17:
                 raise
             raise CommandError(
-                "The {}/ directory already exists. Please check no other sync_mobile command is already running."
+                "The {}/ directory already exists. Please check no other sync_rando command is already running."
                 " If not, please delete this directory.".format(self.tmp_root)
             )
         try:

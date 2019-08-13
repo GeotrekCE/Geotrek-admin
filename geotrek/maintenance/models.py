@@ -213,6 +213,14 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         return Path.objects.none()
 
     @property
+    def trails(self):
+        s = []
+        for p in self.paths.all():
+            for t in p.trails.all():
+                s.append(t.pk)
+        return Trail.objects.filter(pk__in=s)
+
+    @property
     def signages(self):
         if self.is_signage:
             return [Signage.objects.existing().get(pk=self.topology.pk)]
@@ -381,7 +389,7 @@ class ManDay(models.Model):
         return float(self.nb_days * self.job.cost)
 
     def __unicode__(self):
-        return self.nb_days
+        return str(self.nb_days)
 
 
 class ProjectManager(models.GeoManager):
@@ -555,7 +563,7 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
                 pks += [o.pk for o in attr_value]
             else:
                 modelclass = attr_value.model
-                topologies = attr_value.values('ordering', 'id')
+                topologies = attr_value.values('id')
                 for topology in topologies:
                     pks.append(topology['id'])
         return modelclass.objects.filter(pk__in=pks)
@@ -629,4 +637,4 @@ class Funding(models.Model):
         verbose_name_plural = _(u"Fundings")
 
     def __unicode__(self):
-        return self.amount
+        return u"%s : %s" % (self.project, self.amount)

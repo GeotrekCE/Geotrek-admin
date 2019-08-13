@@ -4,12 +4,14 @@ import json
 from landez.sources import DownloadError
 import mock
 import os
+from PIL import Image
 import shutil
 import zipfile
 
 from django.conf import settings
 from django.core import management
 from django.core.management.base import CommandError
+from django.db.models import Q
 from django.http import HttpResponse, StreamingHttpResponse
 from django.test import TestCase
 from django.test.utils import override_settings
@@ -20,8 +22,10 @@ from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg, get_dummy_uploaded_image, get_dummy_uploaded_file
 from geotrek.flatpages.factories import FlatPageFactory
 from geotrek.flatpages.models import FlatPage
-from geotrek.trekking.models import Trek, POI
-from geotrek.trekking.factories import TrekWithPublishedPOIsFactory, PracticeFactory
+from geotrek.trekking.models import Trek, POI, OrderedTrekChild
+from geotrek.trekking.factories import TrekFactory, TrekWithPublishedPOIsFactory, PracticeFactory
+from geotrek.tourism.factories import (InformationDeskFactory, InformationDeskTypeFactory,
+                                       TouristicContentFactory, TouristicEventFactory)
 
 
 @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
@@ -276,22 +280,31 @@ class SyncMobileSettingsTest(TranslationResetMixin, TestCase):
             with open(os.path.join('tmp', lang, 'settings.json'), 'r') as f:
                 settings_json = json.load(f)
                 self.assertEquals(len(settings_json), 2)
-                self.assertEqual(len(settings_json['data']), 14)
+                self.assertEqual(len(settings_json['data']), 16)
 
         self.assertIn('en/settings.json', output.getvalue())
 
     def test_sync_settings_with_picto_svg(self):
         output = BytesIO()
         practice = PracticeFactory.create(pictogram=get_dummy_uploaded_image_svg())
+        information_desk_type = InformationDeskTypeFactory.create(pictogram=get_dummy_uploaded_image())
+        InformationDeskFactory.create(type=information_desk_type)
         pictogram_png = practice.pictogram.url.replace('.svg', '.png')
+        pictogram_desk_png = information_desk_type.pictogram.url
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             with open(os.path.join('tmp', lang, 'settings.json'), 'r') as f:
                 settings_json = json.load(f)
                 self.assertEquals(len(settings_json), 2)
-                self.assertEqual(len(settings_json['data']), 14)
-                self.assertEqual(settings_json['data'][3]['values'][0]['pictogram'], pictogram_png)
+                self.assertEqual(len(settings_json['data']), 16)
+                self.assertEqual(settings_json['data'][4]['values'][0]['pictogram'], pictogram_png)
+                self.assertEqual(settings_json['data'][9]['values'][0]['pictogram'], pictogram_desk_png)
+
+        image_practice = Image.open(os.path.join('tmp', 'nolang', pictogram_png[1:]))
+        image_desk = Image.open(os.path.join('tmp', 'nolang', pictogram_desk_png[1:]))
+        self.assertEqual(image_practice.size, (32, 32))
+        self.assertEqual(image_desk.size, (32, 32))
         self.assertIn('en/settings.json', output.getvalue())
 
     @classmethod
@@ -304,10 +317,26 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
     @classmethod
     def setUpClass(cls):
         super(SyncMobileTreksTest, cls).setUpClass()
-        cls.trek_1 = TrekWithPublishedPOIsFactory()
-        cls.trek_2 = TrekWithPublishedPOIsFactory()
+        cls.portal_a = TargetPortalFactory()
+        cls.portal_b = TargetPortalFactory()
+        picto_desk = get_dummy_uploaded_image()
+        information_desk_type = InformationDeskTypeFactory.create(pictogram=picto_desk)
+        info_desk = InformationDeskFactory.create(type=information_desk_type)
+
+        cls.trek_1 = TrekWithPublishedPOIsFactory.create()
+        cls.trek_1.information_desks = (info_desk,)
+        cls.trek_2 = TrekWithPublishedPOIsFactory.create(portals=(cls.portal_a,))
+        cls.trek_3 = TrekWithPublishedPOIsFactory.create(portals=(cls.portal_b,))
+        cls.trek_4 = TrekFactory.create()
+        OrderedTrekChild.objects.create(parent=cls.trek_1, child=cls.trek_4, order=1)
+        cls.desk = InformationDeskFactory.create()
+        cls.trek_4.information_desks.add(cls.desk)
+
         cls.attachment_1 = AttachmentFactory.create(content_object=cls.trek_1,
                                                     attachment_file=get_dummy_uploaded_image())
+        AttachmentFactory.create(content_object=cls.trek_1,
+                                 attachment_file=get_dummy_uploaded_image())
+
         cls.poi_1 = POI.objects.first()
         cls.attachment_poi_image_1 = AttachmentFactory.create(content_object=cls.poi_1,
                                                               attachment_file=get_dummy_uploaded_image())
@@ -315,6 +344,17 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
                                                               attachment_file=get_dummy_uploaded_image())
         cls.attachment_poi_file = AttachmentFactory.create(content_object=cls.poi_1,
                                                            attachment_file=get_dummy_uploaded_file())
+        cls.attachment_trek_image = AttachmentFactory.create(content_object=cls.trek_4,
+                                                             attachment_file=get_dummy_uploaded_image())
+
+        cls.touristic_content = TouristicContentFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID,
+                                                        published=True)
+        cls.touristic_event = TouristicEventFactory(geom='SRID=%s;POINT(700001 6600001)' % settings.SRID,
+                                                    published=True)
+        cls.attachment_content_1 = AttachmentFactory.create(content_object=cls.touristic_content,
+                                                            attachment_file=get_dummy_uploaded_image())
+        cls.attachment_event_1 = AttachmentFactory.create(content_object=cls.touristic_event,
+                                                          attachment_file=get_dummy_uploaded_image())
         translation.deactivate()
 
     def test_sync_treks(self):
@@ -336,9 +376,25 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         with open(os.path.join('tmp', 'en', '{pk}'.format(pk=str(self.trek_1.pk)),
                                'trek.geojson'), 'r') as f:
             trek_geojson = json.load(f)
-            self.assertEqual(len(trek_geojson['properties']), 30)
+            self.assertEqual(len(trek_geojson['properties']), 34)
 
         self.assertIn('en/{pk}/trek.geojson'.format(pk=str(self.trek_1.pk)), output.getvalue())
+        self.assertIn('en/{pk}/treks/{child_pk}.geojson'.format(pk=self.trek_1.pk, child_pk=self.trek_4.pk),
+                      output.getvalue())
+
+    def test_sync_treks_with_portal(self):
+        output = BytesIO()
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                skip_tiles=True, verbosity=2, portal=self.portal_a.name, stdout=output)
+        self.assertFalse(os.path.exists(
+            os.path.join('tmp', 'en', '{pk}'.format(pk=str(self.trek_3.pk)), 'trek.geojson')
+        ))
+        for lang in settings.MODELTRANSLATION_LANGUAGES:
+            with open(os.path.join('tmp', lang, 'treks.geojson'), 'r') as f:
+                trek_geojson = json.load(f)
+                self.assertEqual(len(trek_geojson['features']),
+                                 Trek.objects.filter(**{'published_{}'.format(lang): True})
+                                 .filter(Q(portal__name__in=(self.portal_a,)) | Q(portal=None)).count())
 
     def test_sync_pois_by_treks(self):
         output = BytesIO()
@@ -346,8 +402,12 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
                                 skip_tiles=True, verbosity=2, stdout=output)
         with open(os.path.join('tmp', 'en', str(self.trek_1.pk), 'pois.geojson'), 'r') as f:
             trek_geojson = json.load(f)
-            self.assertEqual(len(trek_geojson['features']), 2)
-
+            if settings.TREKKING_TOPOLOGY_ENABLED:
+                self.assertEqual(len(trek_geojson['features']), 2)
+            else:
+                # Without dynamic segmentation it used a buffer so we get all the pois normally linked
+                # with the other treks.
+                self.assertEqual(len(trek_geojson['features']), 6)
         self.assertIn('en/{pk}/pois.geojson'.format(pk=str(self.trek_1.pk)), output.getvalue())
 
     def test_medias_treks(self):
@@ -355,9 +415,43 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         self.assertTrue(os.path.exists(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
+                                                    'paperclip', 'trekking_trek')))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
                                                     'paperclip', 'trekking_poi')))
         self.assertTrue(os.path.exists(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
-                                                    'paperclip', 'trekking_trek')))
+                                                    'paperclip', 'tourism_touristiccontent')))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
+                                                    'paperclip', 'tourism_touristicevent')))
+        # Information desk picture
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
+                                                    'upload')))
+
+    def test_medias_treks_one_picture(self):
+        output = BytesIO()
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                skip_tiles=True, verbosity=2, stdout=output)
+        self.assertEqual(1, len(os.listdir(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
+                                                        'paperclip', 'trekking_trek', str(self.trek_1.pk)))))
+        self.assertEqual(1, len(os.listdir(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
+                                                        'paperclip', 'trekking_poi', str(self.poi_1.pk)))))
+        self.assertEqual(1, len(os.listdir(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
+                                                        'paperclip', 'tourism_touristiccontent',
+                                                        str(self.touristic_content.pk)))))
+        self.assertEqual(1, len(os.listdir(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
+                                                        'paperclip', 'tourism_touristicevent',
+                                                        str(self.touristic_event.pk)))))
+        # Information desk picture (2 here because 1 from parent and 1 from child)
+        self.assertEqual(2, len(os.listdir(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
+                                                        'upload'))))
+        with open(os.path.join('tmp', 'en', str(self.trek_1.pk), 'trek.geojson'), 'r') as f:
+            trek_geojson = json.load(f)
+            # Check inside file generated we have only one picture.
+            self.assertEqual(len(trek_geojson['properties']['pictures']), 1)
+
+        with open(os.path.join('tmp', 'en', str(self.trek_1.pk), 'pois.geojson'), 'r') as f:
+            trek_geojson = json.load(f)
+            # Check inside file generated we have only one picture.
+            self.assertEqual(len(trek_geojson['features'][0]['properties']['pictures']), 1)
 
     @mock.patch('geotrek.trekking.views.TrekViewSet.list')
     def test_streaminghttpresponse(self, mocke):

@@ -70,7 +70,7 @@ class RestrictedAreasCommandTest(TestCase):
         self.assertIn('Updated lulu', output)
 
     @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, -3, 2, 2))
-    def test_load_cities_no_match_properties(self):
+    def test_load_restricted_areas_no_match_properties(self):
         output = StringIO()
         call_command('loadrestrictedareas', self.filename_out_in, 'type_area', name='toto', stdout=output)
         self.assertIn('NOM, Insee', output.getvalue())
@@ -78,10 +78,18 @@ class RestrictedAreasCommandTest(TestCase):
         call_command('loadrestrictedareas', self.filename_out_in, 'type_area', '-i', name='toto', stdout=output_2)
         self.assertIn('NOM, Insee', output.getvalue())
 
-    def test_load_cities_fail_bad_srid(self):
+    def test_load_restricted_areas_fail_bad_srid(self):
         with self.assertRaises(CommandError) as e:
             call_command('loadrestrictedareas', self.filename, 'type_area', name='NOM', verbosity=0)
         self.assertEqual('SRID is not well configurate, change/add option srid', e.exception.message)
+
+    def test_load_restricted_areas_with_geom_not_valid(self):
+        output = StringIO()
+        call_command('loadrestrictedareas',
+                     os.path.join(os.path.dirname(__file__), 'data', 'polygon_not_valid.geojson'), 'type_area',
+                     name='NOM', srid=2154, verbosity=1, stdout=output)
+        self.assertEquals(RestrictedArea.objects.count(), 0)
+        self.assertIn("wrong_polygon's geometry is not valid", output.getvalue())
 
 
 class CitiesCommandTest(TestCase):
@@ -113,6 +121,13 @@ class CitiesCommandTest(TestCase):
         self.assertIn('Created Trifouilli-les-Oies', output.getvalue())
         call_command('loadcities', self.filename, name='NOM', code='Insee', srid=2154, verbosity=2, stdout=output)
         self.assertIn('Updated Trifouilli-les-Oies', output.getvalue())
+
+    def test_load_cities_with_geom_not_valid(self):
+        output = StringIO()
+        call_command('loadcities', os.path.join(os.path.dirname(__file__), 'data', 'polygon_not_valid.geojson'),
+                     name='NOM', code='Insee', srid=2154, verbosity=1, stdout=output)
+        self.assertEquals(City.objects.count(), 0)
+        self.assertIn("wrong_polygon's geometry is not valid", output.getvalue())
 
     def test_load_cities_fail_bad_srid(self):
         with self.assertRaises(CommandError) as e:
@@ -189,10 +204,17 @@ class DistrictsCommandTest(TestCase):
             call_command('loaddistricts')
         self.assertEqual(u'Error: too few arguments', e.exception.message)
 
+    def test_load_districts_with_geom_not_valid(self):
+        output = StringIO()
+        call_command('loaddistricts', os.path.join(os.path.dirname(__file__), 'data', 'polygon_not_valid.geojson'),
+                     name='NOM', srid=2154, verbosity=1, stdout=output)
+        self.assertEquals(District.objects.count(), 0)
+        self.assertIn("wrong_polygon's geometry is not valid", output.getvalue())
+
     @override_settings(SPATIAL_EXTENT=(0, 10.0, 1, 11))
     def test_load_districts_out_of_spatial_extent(self):
         call_command('loaddistricts', self.filename, name='NOM', srid=2154, verbosity=0)
-        self.assertEquals(City.objects.count(), 0)
+        self.assertEquals(District.objects.count(), 0)
 
     def test_load_districts_fail_bad_srid(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'bad_srid.geojson')

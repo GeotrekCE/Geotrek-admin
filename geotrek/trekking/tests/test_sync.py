@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import json
 from landez.sources import DownloadError
@@ -192,11 +193,14 @@ class SyncTest(TestCase):
                                                                attachment_file=get_dummy_uploaded_image())
         self.attachment_poi_file = AttachmentFactory.create(content_object=self.poi_1,
                                                             attachment_file=get_dummy_uploaded_file())
-
-        infrastructure = InfrastructureFactory.create(no_path=True, name="INFRA_1")
-        infrastructure.add_path(self.trek_1.paths.first(), start=0, end=0)
-        signage = SignageFactory.create(no_path=True, name="SIGNA_1")
-        signage.add_path(self.trek_1.paths.first(), start=0, end=0)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            infrastructure = InfrastructureFactory.create(no_path=True, name="INFRA_1")
+            infrastructure.add_path(self.trek_1.paths.first(), start=0, end=0)
+            signage = SignageFactory.create(no_path=True, name="SIGNA_1")
+            signage.add_path(self.trek_1.paths.first(), start=0, end=0)
+        else:
+            InfrastructureFactory.create(geom='SRID=2154;POINT(700000 6600000)', name="INFRA_1")
+            SignageFactory.create(geom='SRID=2154;POINT(700000 6600000)', name="SIGNA_1")
         SensitiveAreaFactory.create(published=True)
         self.touristic_content = TouristicContentFactory(
             geom='SRID=%s;POINT(700001 6600001)' % settings.SRID, published=True)
@@ -206,6 +210,32 @@ class SyncTest(TestCase):
                                                                      attachment_file=get_dummy_uploaded_image())
         self.attachment_touristic_event = AttachmentFactory.create(content_object=self.touristic_event,
                                                                    attachment_file=get_dummy_uploaded_image())
+
+    @override_settings(THUMBNAIL_COPYRIGHT_FORMAT=u'*' * 300)
+    def test_sync_pictures_long_title_legend_author(self):
+        with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
+            management.call_command('sync_rando', 'tmp', with_signages=True,
+                                    with_infrastructures=True,
+                                    with_events=True, content_categories="1", url='http://localhost:8000',
+                                    skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
+            with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+                treks = json.load(f)
+                # there are 4 treks
+                self.assertEquals(len(treks['features']),
+                                  trek_models.Trek.objects.filter(published=True).count())
+
+    @override_settings(THUMBNAIL_COPYRIGHT_FORMAT=u'{author} éà@za,£')
+    def test_sync_pictures_with_accents(self):
+        with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
+            management.call_command('sync_rando', 'tmp', with_signages=True,
+                                    with_infrastructures=True,
+                                    with_events=True, content_categories="1", url='http://localhost:8000',
+                                    skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
+            with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+                treks = json.load(f)
+                # there are 4 treks
+                self.assertEquals(len(treks['features']),
+                                  trek_models.Trek.objects.filter(published=True).count())
 
     def test_sync(self):
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):

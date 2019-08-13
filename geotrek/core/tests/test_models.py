@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import math
+from unittest import skipIf
 
 from django.test import TestCase
+from django.conf import settings
 from django.contrib.gis.geos import LineString
 from django.db import IntegrityError
 
@@ -12,6 +14,7 @@ from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory)
 from geotrek.core.models import Path
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class StakeTest(TestCase):
     def test_comparison(self):
         low = StakeFactory.create()
@@ -29,6 +32,7 @@ class StakeTest(TestCase):
         self.assertFalse(low == high)
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathTest(TestCase):
     def test_paths_bystructure(self):
         user = UserFactory()
@@ -87,6 +91,9 @@ class PathTest(TestCase):
         p1 = PathFactory.create()
         self.assertEqual(p1.extent, (3.0, 46.499999999999936, 3.0013039767202154, 46.50090044234927))
 
+
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+class TrailTest(TestCase):
     def test_no_trail_csv(self):
         p1 = PathFactory.create()
         self.assertEqual(p1.trails_csv_display, 'None')
@@ -102,6 +109,7 @@ class PathTest(TestCase):
         self.assertEqual(path.trails_verbose_name, 'Trails')
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathVisibilityTest(TestCase):
     def setUp(self):
         self.path = PathFactory()
@@ -122,6 +130,7 @@ class PathVisibilityTest(TestCase):
         self.assertEqual(len(Path.objects.all()), 3)
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class PathGeometryTest(TestCase):
     def test_self_intersection_raises_integrity_error(self):
         # Create path with self-intersection

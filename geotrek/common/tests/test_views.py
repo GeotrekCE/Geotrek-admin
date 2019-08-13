@@ -107,7 +107,7 @@ class ViewsImportTest(TestCase):
         self.assertEqual(response_real.status_code, 200)
         self.assertNotContains(response_real, '<form  method="post"')
 
-    def test_import_from_web(self):
+    def test_import_from_web_bad_parser(self):
         self.user.is_superuser = True
         self.user.save()
 
@@ -116,8 +116,25 @@ class ViewsImportTest(TestCase):
         response_real = self.client.post(
             url, {
                 'import-web': 'Upload',
-                'without-file-parser': '13',
+                'without-file-parser': '99',
             }
         )
         self.assertEqual(response_real.status_code, 200)
+        self.assertContains(response_real, "Select a valid choice. 99 is not one of the available choices.")
         # There is no parser available for user not superuser
+
+    def test_import_from_web_good_parser(self):
+        self.user.is_superuser = True
+        self.user.save()
+
+        url = reverse('common:import_dataset')
+        real_key = dict(self.client.get(url).context['form_without_file'].fields['parser'].choices).keys()[0]
+        response_real = self.client.post(
+            url, {
+                'import-web': 'Upload',
+                'without-file-parser': real_key,
+            }
+        )
+        self.assertEqual(response_real.status_code, 200)
+        self.assertNotContains(response_real, "Select a valid choice. {real_key} "
+                                              "is not one of the available choices.".format(real_key=real_key))

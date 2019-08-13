@@ -3,6 +3,8 @@
 import os.path
 
 from django.contrib.gis.gdal import DataSource
+from django.contrib.gis.geos import Point
+from django.contrib.gis.geos.error import GEOSException
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
@@ -21,22 +23,32 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('point_layer')
+        parser.add_argument('--use-structure', action='store_true', dest='use_structure', default=False,
+                            help='Allow to use structure for condition and type of infrastructures')
         parser.add_argument('--encoding', '-e', action='store', dest='encoding', default='utf-8',
                             help='File encoding, default utf-8')
         parser.add_argument('--name-field', '-n', action='store', dest='name_field', help='Base url')
         parser.add_argument('--type-field', '-t', action='store', dest='type_field', help='Base url')
+        parser.add_argument('--category-field', '-i', action='store', dest='category_field', help='Base url')
         parser.add_argument('--condition-field', '-c', action='store', dest='condition_field', help='Base url')
         parser.add_argument('--structure-field', '-s', action='store', dest='structure_field', help='Base url')
         parser.add_argument('--description-field', '-d', action='store', dest='description_field', help='Base url')
         parser.add_argument('--year-field', '-y', action='store', dest='year_field', help='Base url')
-        parser.add_argument('--type-default', action='store', dest='type_default', help='Base url')
+        parser.add_argument('--type-default', action='store', dest='type_default',
+                            help="Default type of infrastructure, it will create the type if it doesn't exist")
+        parser.add_argument('--category-default', action='store', dest='category_default',
+                            help='Category by default for all infrastructures, B by default', default='B')
         parser.add_argument('--name-default', action='store', dest='name_default', help='Base url')
-        parser.add_argument('--condition-default', action='store', dest='condition_default', help='Base url')
-        parser.add_argument('--structure-default', action='store', dest='structure_default', help='Base url')
+        parser.add_argument('--condition-default', action='store', dest='condition_default',
+                            help="Default Condition for all infrastructures, "
+                                 "it will create the condition if it doesn't exist")
+        parser.add_argument('--structure-default', action='store', dest='structure_default',
+                            help='Default Structure for all infrastructures')
         parser.add_argument('--description-default', action='store', dest='description_default', default="",
-                            help='Base url')
+                            help='Default description for all infrastructures')
         parser.add_argument('--eid-field', action='store', dest='eid_field', help='External ID field')
-        parser.add_argument('--year-default', action='store', dest='year_default', help='Base url')
+        parser.add_argument('--year-default', action='store', dest='year_default',
+                            help='Default year for all infrastructures')
 
     def handle(self, *args, **options):
         verbosity = options.get('verbosity')
@@ -52,9 +64,10 @@ class Command(BaseCommand):
             raise CommandError('File does not exists at: %s' % filename)
 
         data_source = DataSource(filename, encoding=options.get('encoding'))
-
+        use_structure = options.get('use_structure')
         field_name = options.get('name_field')
         field_infrastructure_type = options.get('type_field')
+        field_infrastructure_category = options.get('category_field')
         field_condition_type = options.get('condition_field')
         field_structure_type = options.get('structure_field')
         field_description = options.get('description_field')
@@ -75,6 +88,13 @@ class Command(BaseCommand):
                         "Field '{}' not found in data source.".format(field_infrastructure_type)))
                     self.stdout.write(self.style.ERROR(
                         u"Set it with --type-field, or set a default value with --type-default"))
+                    break
+                if (field_infrastructure_category and field_infrastructure_category not in available_fields)\
+                        or (not field_infrastructure_category and not options.get('category_default')):
+                    self.stdout.write(self.style.ERROR(
+                        "Field '{}' not found in data source.".format(field_infrastructure_category)))
+                    self.stdout.write(self.style.ERROR(
+                        u"Change your --category-field option"))
                     break
                 if (field_name and field_name not in available_fields)\
                         or (not field_name and not options.get('name_default')):
@@ -97,7 +117,7 @@ class Command(BaseCommand):
                     break
                 elif not field_structure_type and not structure_default:
                     structure = default_structure()
-                else:
+                elif not field_structure_type and structure_default:
                     try:
                         structure = Structure.objects.get(name=structure_default)
                         if verbosity > 0:
@@ -131,9 +151,18 @@ class Command(BaseCommand):
                     feature_geom.coord_dim = 2
 
                     name = feature.get(field_name) if field_name in available_fields else options.get('name_default')
+                    if feature_geom.geom_type == 'MultiPoint':
+                        self.stdout.write(self.style.NOTICE(u"This object is a MultiPoint : %s" % name))
+                        if len(feature_geom) < 2:
+                            feature_geom = feature_geom[0].geos
+                        else:
+                            raise CommandError("One of your geometry is a MultiPoint object with multiple points")
                     type = feature.get(
                         field_infrastructure_type) if field_infrastructure_type in available_fields else options.get(
                         'type_default')
+                    category = feature.get(
+                        field_infrastructure_category) if field_infrastructure_category in available_fields else options.get(
+                        'category_default')
                     if field_condition_type in available_fields:
                         condition = feature.get(field_condition_type)
                     else:
@@ -148,8 +177,8 @@ class Command(BaseCommand):
                         field_implantation_year).isdigit() else options.get('year_default')
                     eid = feature.get(field_eid) if field_eid in available_fields else None
 
-                    self.create_infrastructure(feature_geom, name, type, condition, structure, description, year,
-                                               verbosity, eid)
+                    self.create_infrastructure(feature_geom, name, type, category, use_structure,
+                                               condition, structure, description, year, verbosity, eid)
 
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
@@ -160,16 +189,18 @@ class Command(BaseCommand):
             transaction.savepoint_rollback(sid)
             raise
 
-    def create_infrastructure(self, geometry, name, type,
+    def create_infrastructure(self, geometry, name, type, category, use_structure,
                               condition, structure, description, year, verbosity, eid):
 
-        infra_type, created = InfrastructureType.objects.get_or_create(label=type, type='B', structure=None)
+        infra_type, created = InfrastructureType.objects.get_or_create(label=type, type=category,
+                                                                       structure=structure if use_structure else None)
         if created and verbosity:
             self.stdout.write(u"- InfrastructureType '{}' created".format(infra_type))
 
         if condition:
-            condition_type, created = InfrastructureCondition.objects.get_or_create(label=condition,
-                                                                                    structure=None)
+            condition_type, created = InfrastructureCondition.objects.get_or_create(
+                label=condition,
+                structure=structure if use_structure else None)
             if created and verbosity:
                 self.stdout.write(u"- Condition Type '{}' created".format(condition_type))
         else:
@@ -193,11 +224,18 @@ class Command(BaseCommand):
                     self.stdout.write(u"Update : %s with eid %s" % (name, eid))
             else:
                 infra = Infrastructure.objects.create(**fields_without_eid)
-
-        serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
-        topology = TopologyHelper.deserialize(serialized)
-        infra.mutate(topology)
-
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            try:
+                serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
+                topology = TopologyHelper.deserialize(serialized)
+                infra.mutate(topology)
+            except IndexError:
+                raise GEOSException('Invalid Geometry type.')
+        else:
+            if geometry.geom_type != 'Point':
+                raise GEOSException('Invalid Geometry type.')
+            infra.geom = Point(geometry.x, geometry.y, srid=settings.SRID)
+            infra.save()
         self.counter += 1
 
         return infra

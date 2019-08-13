@@ -3,6 +3,7 @@ import os
 import logging
 import shutil
 import datetime
+import hashlib
 
 from django.conf import settings
 from django.db.models import Manager as DefaultManager
@@ -10,9 +11,9 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 
-from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
+from easy_thumbnails.alias import aliases
 from embed_video.backends import detect_backend, VideoDoesntExistException
 
 from geotrek.common.utils import classproperty
@@ -101,15 +102,16 @@ class PicturesMixin(object):
             })
         return serialized
 
-    @property
-    def serializable_pictures_mobile(self):
+    def serializable_pictures_mobile(self, root_pk):
         serialized = []
-        for picture, thdetail in self.resized_pictures:
+        if self.resized_pictures:
+            first_picture = self.resized_pictures[0][0]
+            thdetail_first = self.resized_pictures[0][1]
             serialized.append({
-                'author': picture.author,
-                'title': picture.title,
-                'legend': picture.legend,
-                'url': os.path.join('/', str(picture.object_id), settings.MEDIA_URL[1:], thdetail.name),
+                'author': first_picture.author,
+                'title': first_picture.title,
+                'legend': first_picture.legend,
+                'url': os.path.join('/', str(root_pk), settings.MEDIA_URL[1:], thdetail_first.name),
             })
         return serialized
 
@@ -119,7 +121,18 @@ class PicturesMixin(object):
         for picture in self.pictures:
             thumbnailer = get_thumbnailer(picture.attachment_file)
             try:
-                thdetail = thumbnailer.get_thumbnail(aliases.get('medium'))
+                # Uppercase options aren't used by prepared options (a primary
+                # use of prepared options is to generate the filename -- these
+                # options don't alter the filename).
+                text = settings.THUMBNAIL_COPYRIGHT_FORMAT.format(author=picture.author, title=picture.title,
+                                                                  legend=picture.legend)
+                ali = thumbnailer.get_options({'size': (800, 800),
+                                               'TEXT': text,
+                                               'SIZE_WATERMARK': settings.THUMBNAIL_COPYRIGHT_SIZE,
+                                               'watermark': hashlib.md5(text.encode('utf-8')).hexdigest()
+                                               })
+
+                thdetail = thumbnailer.get_thumbnail(ali)
             except (IOError, InvalidImageFormatError):
                 logger.info(_("Image %s invalid or missing from disk.") % picture.attachment_file)
             else:
@@ -154,9 +167,8 @@ class PicturesMixin(object):
             return thumbnail
         return None
 
-    @property
-    def resized_picture_mobile(self):
-        pictures = self.serializable_pictures_mobile
+    def resized_picture_mobile(self, root_pk):
+        pictures = self.serializable_pictures_mobile(root_pk)
         if pictures:
             return pictures[0]
         return None

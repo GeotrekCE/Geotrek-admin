@@ -1,9 +1,11 @@
+from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.test.client import Client
 from django.test.testcases import TestCase
+from django.contrib.gis.geos import Point, MultiPoint, MultiPolygon, Polygon
 
 from geotrek.trekking import factories as trek_factory, models as trek_models
 from geotrek.tourism import factories as tourism_factory, models as tourism_models
+from geotrek.zoning import factories as zoning_factory
 
 
 GEOJSON_STRUCTURE = sorted([
@@ -26,15 +28,16 @@ DETAIL_TREK_GEOJSON_STRUCTURE = sorted([
 ])
 
 TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'id', 'name', 'slug', 'accessibilities', 'description_teaser', 'cities', 'description', 'departure', 'arrival',
+    'id', 'name', 'slug', 'accessibilities', 'description_teaser', 'cities', 'districts', 'description', 'departure', 'arrival',
     'access', 'advised_parking', 'advice', 'difficulty', 'length', 'ascent', 'descent', 'route', 'duration',
     'is_park_centered', 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'pictures',
-    'information_desks', 'departure_city', 'arrival_city', 'parking_location', 'profile'
+    'information_desks', 'departure_city', 'arrival_city', 'parking_location', 'profile', 'points_reference',
+    'ambiance', 'children',
 ])
 
 
 TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'id', 'first_picture', 'name', 'departure', 'accessibilities', 'duration',
+    'id', 'first_picture', 'name', 'departure', 'accessibilities', 'duration', 'districts',
     'difficulty', 'practice', 'themes', 'length', 'cities', 'route', 'departure_city', 'ascent', 'descent',
 ])
 
@@ -61,44 +64,70 @@ class BaseApiTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.client = Client()
         cls.nb_treks = 1
 
         cls.treks = trek_factory.TrekWithPublishedPOIsFactory.create_batch(
             cls.nb_treks, name_fr='Coucou', description_fr="Sisi",
-            description_teaser_fr="mini", published_fr=True)
+            description_teaser_fr="mini", published_fr=True,
+            points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.API_SRID),
+            parking_location=Point(0, 0, srid=settings.API_SRID))
+        cls.trek = cls.treks[0]
+        cls.trek_parent = trek_factory.TrekFactory(name_fr='Parent', description_fr="Parent_1",
+                                                   description_teaser_fr="Parent_1", published_fr=True)
+        cls.trek_child_published = trek_factory.TrekFactory(name_fr='Child_published',
+                                                            description_fr="Child_published_1",
+                                                            description_teaser_fr="Child_published_1",
+                                                            published_fr=True)
+        cls.trek_child_not_published = trek_factory.TrekFactory(name_fr='Child_not_published',
+                                                                description_fr="Child_not_published_1",
+                                                                description_teaser_fr="Child_not_published_1",
+                                                                published_fr=False, published_en=True, published=False)
+        trek_models.OrderedTrekChild(parent=cls.trek_parent, child=cls.trek_child_published, order=1).save()
+        trek_models.OrderedTrekChild(parent=cls.trek_parent, child=cls.trek_child_not_published, order=0).save()
+
+        cls.trek_parent_not_published = trek_factory.TrekFactory(name_fr='Parent_not_published',
+                                                                 description_fr="Parent_not_published_1",
+                                                                 description_teaser_fr="Parent_not_published_1",
+                                                                 published_fr=False, published_en=True, published=False)
+        cls.trek_child_published_2 = trek_factory.TrekFactory(name_fr='Child_published_2',
+                                                              description_fr="Child_published_2",
+                                                              description_teaser_fr="Child_published_2",
+                                                              published_fr=True)
+        cls.trek_child_not_published_2 = trek_factory.TrekFactory(name_fr='Child_not_published_2',
+                                                                  description_fr="Child_not_published_2",
+                                                                  description_teaser_fr="Child_not_published_2",
+                                                                  published_fr=False, published_en=True,
+                                                                  published=False)
+        trek_models.OrderedTrekChild(parent=cls.trek_parent_not_published,
+                                     child=cls.trek_child_published_2, order=2).save()
+        trek_models.OrderedTrekChild(parent=cls.trek_parent_not_published,
+                                     child=cls.trek_child_not_published_2, order=1).save()
 
         cls.touristic_content = tourism_factory.TouristicContentFactory(geom=cls.treks[0].published_pois.first().geom,
                                                                         name_fr='Coucou_Content', description_fr="Sisi",
                                                                         description_teaser_fr="mini", published_fr=True)
+
         cls.touristic_event = tourism_factory.TouristicEventFactory(geom=cls.treks[0].published_pois.first().geom,
                                                                     name_fr='Coucou_Event', description_fr="Sisi_Event",
                                                                     description_teaser_fr="mini", published_fr=True)
+        cls.district = zoning_factory.DistrictFactory(geom=MultiPolygon(Polygon.from_bbox(cls.treks[0].geom.extent)))
 
-    def login(self):
-        pass
+    def get_treks_list(self, lang, params=None):
+        return self.client.get(reverse('apimobile:treks-list'), params, HTTP_ACCEPT_LANGUAGE=lang)
 
-    def get_treks_list(self, params=None):
-        self.login()
-        return self.client.get(reverse('apimobile:treks-list'), params, HTTP_ACCEPT_LANGUAGE='fr')
+    def get_treks_detail(self, id_trek, lang, params=None):
+        return self.client.get(reverse('apimobile:treks-detail', args=(id_trek,)), params, HTTP_ACCEPT_LANGUAGE=lang)
 
-    def get_treks_detail(self, id_trek, params=None):
-        self.login()
-        return self.client.get(reverse('apimobile:treks-detail', args=(id_trek,)), params, HTTP_ACCEPT_LANGUAGE='fr')
+    def get_poi_list(self, id_trek, lang, params=None):
+        return self.client.get(reverse('apimobile:treks-pois', args=(id_trek, )), params, HTTP_ACCEPT_LANGUAGE=lang)
 
-    def get_poi_list(self, id_trek, params=None):
-        self.login()
-        return self.client.get(reverse('apimobile:treks-pois', args=(id_trek, )), params, HTTP_ACCEPT_LANGUAGE='fr')
-
-    def get_touristic_content_list(self, id_trek, params=None):
-        self.login()
+    def get_touristic_content_list(self, id_trek, lang, params=None):
         return self.client.get(reverse('apimobile:treks-touristic-contents', args=(id_trek, )), params,
-                               HTTP_ACCEPT_LANGUAGE='fr')
+                               HTTP_ACCEPT_LANGUAGE=lang)
 
-    def get_touristic_event_list(self, id_trek, params=None):
-        self.login()
+    def get_touristic_event_list(self, id_trek, lang, params=None):
         return self.client.get(reverse('apimobile:treks-touristic-events', args=(id_trek, )), params,
-                               HTTP_ACCEPT_LANGUAGE='fr')
+                               HTTP_ACCEPT_LANGUAGE=lang)
 
 
 class APIAccessTestCase(BaseApiTest):
@@ -111,11 +140,8 @@ class APIAccessTestCase(BaseApiTest):
         #  created user
         BaseApiTest.setUpTestData()
 
-    def login(self):
-        pass
-
     def test_trek_detail(self):
-        response = self.get_treks_detail(trek_models.Trek.objects.order_by('?').first().pk)
+        response = self.get_treks_detail(self.trek.pk, 'fr')
         #  test response code
         self.assertEqual(response.status_code, 200)
 
@@ -124,26 +150,86 @@ class APIAccessTestCase(BaseApiTest):
         # test geojson format
         self.assertEqual(sorted(json_response.keys()),
                          DETAIL_TREK_GEOJSON_STRUCTURE)
-
         self.assertEqual(sorted(json_response.get('properties').keys()),
                          TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
 
         self.assertEqual('Coucou', json_response.get('properties').get('name'))
         self.assertEqual('Sisi', json_response.get('properties').get('description'))
         self.assertEqual('mini', json_response.get('properties').get('description_teaser'))
+        self.assertAlmostEqual(0, json_response.get('properties').get('points_reference')[0][0])
+        self.assertAlmostEqual(0, json_response.get('properties').get('parking_location')[0])
+        self.assertEqual(len(json_response['properties']['districts']), 1)
+
+    def test_trek_parent_detail(self):
+        response = self.get_treks_detail(self.trek_parent.pk, 'fr')
+        self.assertEqual(response.status_code, 200)
+        json_response_1 = response.json()
+        self.assertEqual(sorted(json_response_1.keys()),
+                         DETAIL_TREK_GEOJSON_STRUCTURE)
+        self.assertEqual(sorted(json_response_1.get('properties').keys()),
+                         TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
+        self.assertEqual('Parent', json_response_1.get('properties').get('name'))
+        # Order is verified at the same time : not published then published
+        self.assertEqual([self.trek_child_not_published.pk, self.trek_child_published.pk],
+                         [child.get('properties').get('id') for child in json_response_1.get('properties').
+                         get('children').get('features')])
+        response = self.get_treks_detail(self.trek_parent_not_published.pk, 'fr')
+        self.assertEqual(response.status_code, 404)
+
+    def test_trek_children_detail_parent_published(self):
+        # Not published => we got the detail because the parent is published
+        response = self.get_treks_detail(self.trek_child_not_published.pk, 'fr')
+        self.assertEqual(response.status_code, 200)
+        json_response_1 = response.json()
+        self.assertEqual(sorted(json_response_1.keys()),
+                         DETAIL_TREK_GEOJSON_STRUCTURE)
+        self.assertEqual(sorted(json_response_1.get('properties').keys()),
+                         TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
+        self.assertEqual('Child_not_published', json_response_1.get('properties').get('name'))
+
+        # Published
+        response = self.get_treks_detail(self.trek_child_published.pk, 'fr')
+        self.assertEqual(response.status_code, 200)
+        json_response_2 = response.json()
+        self.assertEqual(sorted(json_response_2.keys()),
+                         DETAIL_TREK_GEOJSON_STRUCTURE)
+        self.assertEqual(sorted(json_response_2.get('properties').keys()),
+                         TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
+        self.assertEqual('Child_published', json_response_2.get('properties').get('name'))
+
+    def test_trek_children_detail_parent_not_published(self):
+        # Not published => we don't got the detail because the parent is not published
+        response = self.get_treks_detail(self.trek_child_not_published_2.pk, 'fr')
+        self.assertEqual(response.status_code, 404)
+
+        response = self.get_treks_detail(self.trek_child_not_published_2.pk, 'en')
+        self.assertEqual(response.status_code, 200)
+
+        # Published anyway even if if there is a parent behind not published
+        response = self.get_treks_detail(self.trek_child_published_2.pk, 'fr')
+        self.assertEqual(response.status_code, 200)
+        json_response_2 = response.json()
+        self.assertEqual(sorted(json_response_2.keys()),
+                         DETAIL_TREK_GEOJSON_STRUCTURE)
+        self.assertEqual(sorted(json_response_2.get('properties').keys()),
+                         TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
+        self.assertEqual('Child_published_2', json_response_2.get('properties').get('name'))
 
     def test_trek_list(self):
-        response = self.get_treks_list()
+        response = self.get_treks_list('fr')
         #  test response code
         self.assertEqual(response.status_code, 200)
 
         # json collection structure is ok
         json_response = response.json()
 
-        # trek count is ok
-        self.assertEqual(len(json_response.get('features')),
-                         self.nb_treks)
-
+        # trek count is ok (1 normal trek 1 parent published linked with 1 children published (2)
+        # and 1 children published with 1 parent not published => 4
+        self.assertEqual(len(json_response.get('features')), 4)
+        features = json_response.get('features')
+        ids = [features[i].get('properties').get('id') for i in range(len(features))]
+        pks_expected = [self.trek.pk, self.trek_parent.pk, self.trek_child_published_2.pk, self.trek_child_published.pk]
+        self.assertItemsEqual(ids, pks_expected)
         # test dim 2 ok
         self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')),
                          2)
@@ -159,7 +245,7 @@ class APIAccessTestCase(BaseApiTest):
         self.assertIsNone(json_response.get('features')[0].get('properties').get('description_teaser'))
 
     def test_poi_list(self):
-        response = self.get_poi_list(trek_models.Trek.objects.first().pk)
+        response = self.get_poi_list(trek_models.Trek.objects.first().pk, 'fr')
         #  test response code
         self.assertEqual(response.status_code, 200)
 
@@ -168,7 +254,7 @@ class APIAccessTestCase(BaseApiTest):
 
         # poi count by treks is ok
         self.assertEqual(len(json_response.get('features')),
-                         trek_models.Trek.objects.order_by('?').last().published_pois.count())
+                         trek_models.Trek.objects.first().published_pois.count())
 
         # test dim 2 ok
         self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')),
@@ -189,7 +275,7 @@ class APIAccessTestCase(BaseApiTest):
                          POI_LIST_PROPERTIES_GEOJSON_STRUCTURE)
 
     def test_touristic_event_list(self):
-        response = self.get_touristic_event_list(trek_models.Trek.objects.first().pk)
+        response = self.get_touristic_event_list(trek_models.Trek.objects.first().pk, 'fr')
         #  test response code
         self.assertEqual(response.status_code, 200)
 
@@ -221,7 +307,7 @@ class APIAccessTestCase(BaseApiTest):
                          "Sisi_Event")
 
     def test_touristic_content_list(self):
-        response = self.get_touristic_content_list(trek_models.Trek.objects.first().pk)
+        response = self.get_touristic_content_list(trek_models.Trek.objects.first().pk, 'fr')
         #  test response code
         self.assertEqual(response.status_code, 200)
 

@@ -6,8 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from rest_framework.views import APIView
 from rest_framework import viewsets
-from rest_framework.authentication import BasicAuthentication, SessionAuthentication
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny
 from rest_framework import response
 from rest_framework_extensions.mixins import DetailSerializerMixin
 
@@ -16,74 +15,85 @@ from geotrek.flatpages.models import FlatPage
 from geotrek.trekking.models import DifficultyLevel, Practice, Accessibility, Route, Theme, TrekNetwork, POIType
 from geotrek.tourism.models import (InformationDeskType, TouristicContentType, TouristicEventType,
                                     TouristicContentCategory)
-from geotrek.zoning.models import City
+from geotrek.zoning.models import City, District
 
 
 class SettingsView(APIView):
-    """
-    Use HTTP basic authentication to access this endpoint.
-    """
-    permission_classes = [IsAuthenticatedOrReadOnly, ]
-    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny, ]
 
     def get(self, request, *args, **kwargs):
         filters = []
-        if 'difficulty' in settings.ENABLED_MOBILE_FILTERS:
-            filters.append({
-                "id": "difficulty",
-                "type": "contains",
-                "showAllLabel": _("Show all difficulties"),
-                "hideAllLabel": _("Hide all difficulties")
-            })
-        if 'lengths' in settings.ENABLED_MOBILE_FILTERS:
-            filters.append({
-                "id": "lengths",
-                "type": "interval",
-                "showAllLabel": _("Show all lengths"),
-                "hideAllLabel": _("Hide all lengths")
-            })
-        if 'cities' in settings.ENABLED_MOBILE_FILTERS:
-            filters.append({
-                "id": "cities",
-                "type": "contains",
-                "showAllLabel": _("Show all cities"),
-                "hideAllLabel": _("Hide all cities")
-            })
-        if 'accessibilities' in settings.ENABLED_MOBILE_FILTERS:
-            filters.append({
-                "id": "accessibilities",
-                "type": "contains",
-                "showAllLabel": _("Show all accessibilities"),
-                "hideAllLabel": _("Hide all accessibilities")
-            })
-        if 'practice' in settings.ENABLED_MOBILE_FILTERS:
-            filters.append({
-                "id": "practice",
-                "type": "contains",
-                "showAllLabel": _("Show all practices"),
-                "hideAllLabel": _("Hide all practices")
-            })
-        if 'durations' in settings.ENABLED_MOBILE_FILTERS:
-            filters.append({
-                "id": "durations",
-                "type": "interval",
-                "showAllLabel": _("Show all durations"),
-                "hideAllLabel": _("Hide all durations")
-            })
-        if 'themes' in settings.ENABLED_MOBILE_FILTERS:
-            filters.append({
-                "id": "themes",
-                "type": "contains",
-                "showAllLabel": _("Show all themes"),
-                "hideAllLabel": _("Hide all themes")
-            })
-        if 'route' in settings.ENABLED_MOBILE_FILTERS:
-            filters.append({
-                "id": "route",
-                "type": "contains",
-                "showAllLabel": _("Show all routes"),
-                "hideAllLabel": _("Hide all routes")
-            })
+        for filter in settings.ENABLED_MOBILE_FILTERS:
+            if filter == 'difficulty':
+                filters.append({
+                    "id": "difficulty",
+                    "type": "contains",
+                    "showAllLabel": _("Show all difficulties"),
+                    "hideAllLabel": _("Hide all difficulties")
+                })
+            if filter == 'lengths':
+                filters.append({
+                    "id": "lengths",
+                    "type": "interval",
+                    "showAllLabel": _("Show all lengths"),
+                    "hideAllLabel": _("Hide all lengths")
+                })
+            if filter == 'ascent':
+                filters.append({
+                    "id": "ascent",
+                    "type": "interval",
+                    "showAllLabel": _("Show all ascents"),
+                    "hideAllLabel": _("Hide all ascents")
+                })
+            if filter == 'districts':
+                filters.append({
+                    "id": "districts",
+                    "type": "contains",
+                    "showAllLabel": _("Show all districts"),
+                    "hideAllLabel": _("Hide all districts")
+                })
+            if filter == 'cities':
+                filters.append({
+                    "id": "cities",
+                    "type": "contains",
+                    "showAllLabel": _("Show all cities"),
+                    "hideAllLabel": _("Hide all cities")
+                })
+            if filter == 'accessibilities':
+                filters.append({
+                    "id": "accessibilities",
+                    "type": "contains",
+                    "showAllLabel": _("Show all accessibilities"),
+                    "hideAllLabel": _("Hide all accessibilities")
+                })
+            if filter == 'practice':
+                filters.append({
+                    "id": "practice",
+                    "type": "contains",
+                    "showAllLabel": _("Show all practices"),
+                    "hideAllLabel": _("Hide all practices")
+                })
+            if filter == 'durations':
+                filters.append({
+                    "id": "durations",
+                    "type": "interval",
+                    "showAllLabel": _("Show all durations"),
+                    "hideAllLabel": _("Hide all durations")
+                })
+            if filter == 'themes':
+                filters.append({
+                    "id": "themes",
+                    "type": "contains",
+                    "showAllLabel": _("Show all themes"),
+                    "hideAllLabel": _("Hide all themes")
+                })
+            if filter == 'route':
+                filters.append({
+                    "id": "route",
+                    "type": "contains",
+                    "showAllLabel": _("Show all routes"),
+                    "hideAllLabel": _("Hide all routes")
+                })
         return response.Response({
             'filters': filters,
             'data': [
@@ -91,6 +101,11 @@ class SettingsView(APIView):
                     'id': 'length',
                     'name': _('Length'),
                     'values': settings.MOBILE_LENGTH_INTERVALS,
+                },
+                {
+                    'id': 'ascent',
+                    'name': _('Ascent'),
+                    'values': settings.MOBILE_ASCENT_INTERVALS,
                 },
                 {
                     'id': 'duration',
@@ -145,6 +160,12 @@ class SettingsView(APIView):
                                                                             context={'request': request}).data,
                 },
                 {
+                    'id': 'districts',
+                    'name': _('Districts'),
+                    'values': api_serializers.DistrictSerializer(District.objects.all().order_by('pk'), many=True,
+                                                                 context={'request': request}).data
+                },
+                {
                     'id': 'cities',
                     'name': _('Cities'),
                     'values': api_serializers.CitySerializer(City.objects.all().order_by('pk'), many=True,
@@ -182,11 +203,7 @@ class SettingsView(APIView):
 
 
 class FlatPageViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
-    """
-    Use HTTP basic authentication to access this endpoint.
-    """
-    permission_classes = [IsAuthenticatedOrReadOnly, ]
-    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    permission_classes = [AllowAny, ]
     serializer_class = api_serializers.FlatPageListSerializer
     serializer_detail_class = api_serializers.FlatPageDetailSerializer
 

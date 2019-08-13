@@ -1,12 +1,15 @@
 from django.conf import settings
 from django.test import TestCase
+from unittest import SkipTest, skipIf
+
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.contrib.gis.geos import MultiLineString, LineString
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test.utils import override_settings
+from django.utils import translation
 
-from geotrek.core.models import Path
+from geotrek.core.models import Path, Topology
 from geotrek.core.factories import TopologyFactory
 from geotrek.altimetry.helpers import AltimetryHelper
 
@@ -29,9 +32,10 @@ class ElevationTest(TestCase):
         for y in range(0, 5):
             for x in range(0, 4):
                 cur.execute('UPDATE mnt SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            self.path = Path.objects.create(geom=LineString((78, 117), (3, 17)))
 
-        self.path = Path.objects.create(geom=LineString((78, 117), (3, 17)))
-
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_elevation_path(self):
         self.assertEqual(self.path.ascent, 16)
         self.assertEqual(self.path.descent, 0)
@@ -39,6 +43,7 @@ class ElevationTest(TestCase):
         self.assertEqual(self.path.max_elevation, 22)
         self.assertEqual(len(self.path.geom_3d.coords), 7)
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_elevation_profile(self):
         profile = self.path.get_elevation_profile()
         self.assertEqual(len(profile), 7)
@@ -52,16 +57,17 @@ class ElevationTest(TestCase):
         self.assertEqual(profile[5][3], 20.0)
         self.assertEqual(profile[6][3], 22.0)
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_elevation_limits(self):
         limits = self.path.get_elevation_limits()
         self.assertEqual(limits[0], 1106)
         self.assertEqual(limits[1], -94)
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_elevation_topology_line(self):
         topo = TopologyFactory.create(no_path=True)
         topo.add_path(self.path, start=0.2, end=0.8)
         topo.save()
-
         topo.get_elevation_profile()
         self.assertEqual(topo.ascent, 7)
         self.assertEqual(topo.descent, 0)
@@ -69,16 +75,29 @@ class ElevationTest(TestCase):
         self.assertEqual(topo.max_elevation, 17)
         self.assertEqual(len(topo.geom_3d.coords), 5)
 
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    def test_elevation_topology_line_nds(self):
+        """
+        No reason for this changements
+        """
+        topo = TopologyFactory.create(geom="SRID=2154;LINESTRING(63 97, 18 37)")
+        topo.get_elevation_profile()
+        self.assertEqual(topo.ascent, 5)
+        self.assertEqual(topo.descent, 0)
+        self.assertEqual(topo.min_elevation, 12)
+        self.assertEqual(topo.max_elevation, 17)
+        self.assertEqual(len(topo.geom_3d.coords), 5)
+
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_elevation_topology_point(self):
-        topo = TopologyFactory.create(no_path=True)
-        topo.add_path(self.path, start=0.6, end=0.6)
-        topo.save()
+        topo = TopologyFactory.create(geom="SRID=2154;POINT(33 57)")
         self.assertEqual(topo.geom_3d.coords[2], 15)
         self.assertEqual(topo.ascent, 0)
         self.assertEqual(topo.descent, 0)
         self.assertEqual(topo.min_elevation, 15)
         self.assertEqual(topo.max_elevation, 15)
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_elevation_topology_point_offset(self):
         topo = TopologyFactory.create(no_path=True, offset=1)
         topo.add_path(self.path, start=0.5, end=0.5)
@@ -90,10 +109,13 @@ class ElevationTest(TestCase):
         self.assertEqual(topo.max_elevation, 15)
 
     def test_elevation_topology_outside_dem(self):
-        outside_path = Path.objects.create(geom=LineString((200, 200), (300, 300)))
-        topo = TopologyFactory.create(no_path=True)
-        topo.add_path(outside_path, start=0.5, end=0.5)
-        topo.save()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            outside_path = Path.objects.create(geom=LineString((200, 200), (300, 300)))
+            topo = TopologyFactory.create(no_path=True)
+            topo.add_path(outside_path, start=0.5, end=0.5)
+            topo.save()
+        else:
+            topo = TopologyFactory.create(geom="SRID=2154;POINT(250 250)")
         self.assertEqual(topo.geom_3d.coords[2], 0)
         self.assertEqual(topo.ascent, 0)
         self.assertEqual(topo.descent, 0)
@@ -114,7 +136,8 @@ class ElevationProfileTest(TestCase):
         geom = LineString((1.5, 2.5, 8), (2.5, 2.5, 10),
                           srid=settings.SRID)
         profile = AltimetryHelper.elevation_profile(geom)
-        svg = AltimetryHelper.profile_svg(profile)
+        language = translation.get_language()
+        svg = AltimetryHelper.profile_svg(profile, language)
         self.assertIn('Generated with pygal', svg)
         self.assertIn(settings.ALTIMETRIC_PROFILE_BACKGROUND, svg)
         self.assertIn(settings.ALTIMETRIC_PROFILE_COLOR, svg)
@@ -204,6 +227,7 @@ class ElevationAreaTest(TestCase):
         self.assertEqual(extent['altitudes']['min'], 0)
 
 
+@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
 class LengthTest(TestCase):
 
     def setUp(self):
@@ -229,80 +253,165 @@ class LengthTest(TestCase):
         self.assertEqual(round(self.path.length, 9), 83.127128724)
 
 
-class SamplingTest(TestCase):
-
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+class SamplingTestPath(TestCase):
+    model = Path
     step = settings.ALTIMETRIC_PROFILE_PRECISION
 
     def setUp(self):
+        if self.model is None:
+            SkipTest()
         # Create a fake empty DEM to prevent trigger optimisation to skip sampling
         conn = connections[DEFAULT_DB_ALIAS]
         cur = conn.cursor()
         cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
-        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))', [settings.SRID])
+        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))',
+                    [settings.SRID])
         cur.execute('UPDATE mnt SET rast = ST_AddBand(rast, \'16BSI\')')
 
     def test_0_first(self):
-        path = Path.objects.create(geom=LineString((0, 0), (0, 0), (0, 1)))
+        path = self.model.objects.create(geom=LineString((0, 0), (0, 0), (0, 1)))
         self.assertEqual(len(path.geom_3d.coords), 3)
 
     def test_0_last(self):
-        path = Path.objects.create(geom=LineString((0, 0), (0, 1), (0, 1)))
+        path = self.model.objects.create(geom=LineString((0, 0), (0, 1), (0, 1)))
         self.assertEqual(len(path.geom_3d.coords), 3)
 
     def test_1(self):
-        path = Path.objects.create(geom=LineString((0, 0), (0, 1)))
+        path = self.model.objects.create(geom=LineString((0, 0), (0, 1)))
         self.assertEqual(len(path.geom_3d.coords), 2)
 
     def test_24(self):
-        path = Path.objects.create(geom=LineString((0, 0), (0, self.step - 1)))
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step - 1)))
         self.assertEqual(len(path.geom_3d.coords), 2)
 
     def test_25(self):
-        path = Path.objects.create(geom=LineString((0, 0), (0, self.step)))
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step)))
         self.assertEqual(len(path.geom_3d.coords), 3)
 
     def test_26(self):
-        path = Path.objects.create(geom=LineString((0, 0), (0, self.step + 1)))
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step + 1)))
         self.assertEqual(len(path.geom_3d.coords), 3)
 
     def test_49(self):
-        path = Path.objects.create(geom=LineString((0, 0), (0, self.step * 2 - 1)))
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step * 2 - 1)))
         self.assertEqual(len(path.geom_3d.coords), 3)
 
     def test_50(self):
-        path = Path.objects.create(geom=LineString((0, 0), (0, self.step * 2)))
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step * 2)))
         self.assertEqual(len(path.geom_3d.coords), 4)
 
     def test_51(self):
-        path = Path.objects.create(geom=LineString((0, 0), (0, self.step * 2 + 1)))
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step * 2 + 1)))
         self.assertEqual(len(path.geom_3d.coords), 4)
 
     def test_1m(self):
-        path = Path.objects.create(geom=LineString((0, 0), (0, 1), (1, 1)))
+        path = self.model.objects.create(geom=LineString((0, 0), (0, 1), (1, 1)))
         self.assertEqual(len(path.geom_3d.coords), 3)
 
     def test_24m(self):
-        path = Path.objects.create(geom=LineString((0, 0), (0, self.step - 1), (0, self.step * 2 - 2)))
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step - 1), (0, self.step * 2 - 2)))
         self.assertEqual(len(path.geom_3d.coords), 3)
 
     def test_25m(self):
-        path = Path.objects.create(geom=LineString((0, 0), (0, self.step), (0, self.step * 2)))
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step), (0, self.step * 2)))
         self.assertEqual(len(path.geom_3d.coords), 5)
 
     def test_26m(self):
-        path = Path.objects.create(geom=LineString((0, 0), (0, self.step + 1), (0, self.step * 2 + 2)))
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step + 1), (0, self.step * 2 + 2)))
         self.assertEqual(len(path.geom_3d.coords), 5)
 
     def test_49m(self):
-        path = Path.objects.create(geom=LineString((0, 0), (0, self.step * 2 - 1), (0, self.step * 4 - 2)))
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step * 2 - 1), (0, self.step * 4 - 2)))
         self.assertEqual(len(path.geom_3d.coords), 5)
 
     def test_50m(self):
-        path = Path.objects.create(geom=LineString((0, 0), (0, self.step * 2), (0, self.step * 4)))
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step * 2), (0, self.step * 4)))
         self.assertEqual(len(path.geom_3d.coords), 7)
 
     def test_51m(self):
-        path = Path.objects.create(geom=LineString((0, 0), (0, self.step * 2 + 1), (0, self.step * 4 + 2)))
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step * 2 + 1), (0, self.step * 4 + 2)))
+        self.assertEqual(len(path.geom_3d.coords), 7)
+
+
+@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+class SamplingTestTopology(TestCase):
+    model = Topology
+    step = settings.ALTIMETRIC_PROFILE_PRECISION
+
+    def setUp(self):
+        if self.model is None:
+            SkipTest()
+        # Create a fake empty DEM to prevent trigger optimisation to skip sampling
+        conn = connections[DEFAULT_DB_ALIAS]
+        cur = conn.cursor()
+        cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
+        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))',
+                    [settings.SRID])
+        cur.execute('UPDATE mnt SET rast = ST_AddBand(rast, \'16BSI\')')
+
+    def test_0_first(self):
+        path = self.model.objects.create(geom=LineString((0, 0), (0, 0), (0, 1)))
+        self.assertEqual(len(path.geom_3d.coords), 3)
+
+    def test_0_last(self):
+        path = self.model.objects.create(geom=LineString((0, 0), (0, 1), (0, 1)))
+        self.assertEqual(len(path.geom_3d.coords), 3)
+
+    def test_1(self):
+        path = self.model.objects.create(geom=LineString((0, 0), (0, 1)))
+        self.assertEqual(len(path.geom_3d.coords), 2)
+
+    def test_24(self):
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step - 1)))
+        self.assertEqual(len(path.geom_3d.coords), 2)
+
+    def test_25(self):
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step)))
+        self.assertEqual(len(path.geom_3d.coords), 3)
+
+    def test_26(self):
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step + 1)))
+        self.assertEqual(len(path.geom_3d.coords), 3)
+
+    def test_49(self):
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step * 2 - 1)))
+        self.assertEqual(len(path.geom_3d.coords), 3)
+
+    def test_50(self):
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step * 2)))
+        self.assertEqual(len(path.geom_3d.coords), 4)
+
+    def test_51(self):
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step * 2 + 1)))
+        self.assertEqual(len(path.geom_3d.coords), 4)
+
+    def test_1m(self):
+        path = self.model.objects.create(geom=LineString((0, 0), (0, 1), (1, 1)))
+        self.assertEqual(len(path.geom_3d.coords), 3)
+
+    def test_24m(self):
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step - 1), (0, self.step * 2 - 2)))
+        self.assertEqual(len(path.geom_3d.coords), 3)
+
+    def test_25m(self):
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step), (0, self.step * 2)))
+        self.assertEqual(len(path.geom_3d.coords), 5)
+
+    def test_26m(self):
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step + 1), (0, self.step * 2 + 2)))
+        self.assertEqual(len(path.geom_3d.coords), 5)
+
+    def test_49m(self):
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step * 2 - 1), (0, self.step * 4 - 2)))
+        self.assertEqual(len(path.geom_3d.coords), 5)
+
+    def test_50m(self):
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step * 2), (0, self.step * 4)))
+        self.assertEqual(len(path.geom_3d.coords), 7)
+
+    def test_51m(self):
+        path = self.model.objects.create(geom=LineString((0, 0), (0, self.step * 2 + 1), (0, self.step * 4 + 2)))
         self.assertEqual(len(path.geom_3d.coords), 7)
 
 

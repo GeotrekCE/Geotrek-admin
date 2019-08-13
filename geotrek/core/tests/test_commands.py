@@ -1,5 +1,7 @@
 from StringIO import StringIO
+from unittest import skipIf
 
+from django.conf import settings
 from django.contrib.gis.geos import LineString
 from django.core.management import call_command
 from django.core.management.base import CommandError
@@ -12,6 +14,7 @@ from geotrek.trekking.factories import POIFactory
 import os
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class RemoveDuplicatePathTest(TestCase):
     def setUp(self):
         geom_1 = LineString((0, 0), (1, 0), (2, 0))
@@ -49,9 +52,9 @@ class RemoveDuplicatePathTest(TestCase):
                 poi3 (only on p4)
         +-------o------+                    p5 is reversed.
         p3/p4/p5
-
+                poi1/poi2
         +-------o------+        +--------+
-        p1/p2   poi1/poi2       p6
+        p1/p2                     p6
 
         We get at the end p1, p3, p5, p6.
         """
@@ -66,7 +69,43 @@ class RemoveDuplicatePathTest(TestCase):
         self.assertIn("duplicate paths have been deleted",
                       output.getvalue())
 
+    def test_remove_duplicate_path_visible(self):
+        """
+        This test check that we remove 1 of the duplicate path and keep ones with topologies.
 
+                poi3 (only on p4)
+        +-------o------+                    p5 is reversed.
+        p3/p4/p5
+
+        +-------o------+        +--------+
+        p1/p2   poi1/poi2       p6
+
+        We get at the end p2, p3, p5, p6.
+        """
+        output = StringIO()
+        self.p1.visible = False
+        self.p1.save()
+        # Will remove only p1 because not visible
+        self.p3.visible = False
+        self.p3.save()
+        # will remove the second because both of them are not visible
+        self.p4.visible = False
+        self.p4.save()
+        call_command('remove_duplicate_paths', verbosity=2, stdout=output)
+
+        self.assertEquals(Path.include_invisible.count(), 5)
+        self.assertEquals(Path.objects.count(), 4)
+        self.assertItemsEqual((self.p2, self.p3, self.p5, self.p6, self.p8),
+                              list(Path.include_invisible.all()))
+        self.assertItemsEqual((self.p2, self.p5, self.p6, self.p8),
+                              list(Path.objects.all()))
+        self.assertIn("Deleting path",
+                      output.getvalue())
+        self.assertIn("duplicate paths have been deleted",
+                      output.getvalue())
+
+
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class LoadPathsCommandTest(TestCase):
     def setUp(self):
         self.filename = os.path.join(os.path.dirname(__file__), 'data', 'paths.geojson')
@@ -89,6 +128,18 @@ class LoadPathsCommandTest(TestCase):
         value = Path.objects.first()
         self.assertEqual(value.name, 'lulu')
         self.assertEqual(value.structure, self.structure)
+
+    @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, -1, 1, 5))
+    def test_load_paths_comments(self):
+        output = StringIO()
+        call_command('loadpaths', self.filename, srid=4326, verbosity=2, comment=['comment', 'foo'], stdout=output)
+        output = output.getvalue()
+        self.assertEquals(Path.objects.count(), 1)
+        value = Path.objects.first()
+        self.assertEqual(value.name, 'lulu')
+        self.assertEqual(value.comments, 'Comment 2</br>foo2')
+        self.assertEqual(value.structure, self.structure)
+        self.assertIn('The comment %s was added on %s' % (value.comments, value.name), output)
 
     @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, -1, 1, 5))
     def test_load_paths_intersect_spatial_extent(self):

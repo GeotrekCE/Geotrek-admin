@@ -1,8 +1,11 @@
 from django import forms
 from django.conf import settings
-from django.db.models import Q, Max
+from django.contrib.gis.forms.fields import GeometryField
+from django.db.models import Max
 from django.forms.models import inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
+
+from leaflet.forms.widgets import LeafletWidget
 
 from crispy_forms.layout import Layout
 from crispy_forms.helper import FormHelper
@@ -11,8 +14,7 @@ from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.widgets import PointTopologyWidget
 from geotrek.infrastructure.forms import BaseInfrastructureForm
-from geotrek.infrastructure.models import InfrastructureCondition
-from geotrek.signage.models import Signage, SignageType, Blade, Line
+from geotrek.signage.models import Signage, Blade, Line
 
 
 class LineForm(forms.ModelForm):
@@ -27,6 +29,10 @@ class LineForm(forms.ModelForm):
         self.fields['pictogram_name'].widget.attrs['class'] = 'input-mini'
         self.fields['time'].widget.attrs['class'] = 'input-mini'
 
+    def save(self, *args, **kwargs):
+        self.instance.structure = self.instance.blade.structure
+        return super(LineForm, self).save(*args, **kwargs)
+
     class Meta:
         fields = ('id', 'blade', 'number', 'text', 'distance', 'pictogram_name', 'time')
 
@@ -34,26 +40,19 @@ class LineForm(forms.ModelForm):
 LineFormset = inlineformset_factory(Blade, Line, form=LineForm, extra=1)
 
 
-class BladeForm(CommonForm):
+class BaseBladeForm(CommonForm):
     topology = TopologyField(label="")
     geomfields = ['topology']
     leftpanel_scrollable = True
 
     def __init__(self, *args, **kwargs):
-        super(BladeForm, self).__init__(*args, **kwargs)
+        super(BaseBladeForm, self).__init__(*args, **kwargs)
         self.helper.form_tag = False
         if not self.instance.pk:
             self.signage = kwargs.get('initial', {}).get('signage')
             self.helper.form_action += '?signage=%s' % self.signage.pk
         else:
             self.signage = self.instance.signage
-        self.fields['topology'].initial = self.signage
-        self.fields['topology'].widget.modifiable = True
-        self.fields['topology'].label = '%s%s %s' % (
-            self.instance.signage_display,
-            unicode(_("On %s") % _(self.signage.kind.lower())),
-            u'<a href="%s">%s</a>' % (self.signage.get_detail_url(), unicode(self.signage))
-        )
         value_max = self.signage.blade_set.existing().aggregate(max=Max('number'))['max']
         if settings.BLADE_CODE_TYPE == int:
             if not value_max:
@@ -69,7 +68,8 @@ class BladeForm(CommonForm):
     def save(self, *args, **kwargs):
         self.instance.set_topology(self.signage)
         self.instance.signage = self.signage
-        return super(BladeForm, self).save(*args, **kwargs)
+        self.instance.structure = self.signage.structure
+        return super(CommonForm, self).save(*args, **kwargs)
 
     def clean_number(self):
         blades = self.signage.blade_set.existing()
@@ -85,27 +85,111 @@ class BladeForm(CommonForm):
         fields = ['id', 'number', 'direction', 'type', 'condition', 'color']
 
 
-class SignageForm(BaseInfrastructureForm):
-    leftpanel_scrollable = False
-    geomfields = ['topology']
+if settings.TREKKING_TOPOLOGY_ENABLED:
+    class BladeForm(CommonForm):
+        topology = TopologyField(label="")
+        geomfields = ['topology']
+        leftpanel_scrollable = True
 
-    def __init__(self, *args, **kwargs):
-        super(SignageForm, self).__init__(*args, **kwargs)
+        def __init__(self, *args, **kwargs):
+            super(BladeForm, self).__init__(*args, **kwargs)
+            self.helper.form_tag = False
+            if not self.instance.pk:
+                self.signage = kwargs.get('initial', {}).get('signage')
+                self.helper.form_action += '?signage=%s' % self.signage.pk
+            else:
+                self.signage = self.instance.signage
+            self.fields['topology'].initial = self.signage
+            self.fields['topology'].widget.modifiable = True
+            self.fields['topology'].label = '%s%s %s' % (
+                self.instance.signage_display,
+                unicode(_("On %s") % _(self.signage.kind.lower())),
+                u'<a href="%s">%s</a>' % (self.signage.get_detail_url(), unicode(self.signage))
+            )
+            value_max = self.signage.blade_set.existing().aggregate(max=Max('number'))['max']
+            if settings.BLADE_CODE_TYPE == int:
+                if not value_max:
+                    self.fields['number'].initial = "1"
+                elif value_max.isdigit():
+                    self.fields['number'].initial = str(int(value_max) + 1)
+            elif settings.BLADE_CODE_TYPE in (str, unicode):
+                if not value_max:
+                    self.fields['number'].initial = "A"
+                elif len(value_max) == 1 and "A" <= value_max[0] < "Z":
+                    self.fields['number'].initial = chr(ord(value_max[0]) + 1)
 
-        if not settings.SIGNAGE_LINE_ENABLED:
-            modifiable = self.fields['topology'].widget.modifiable
-            self.fields['topology'].widget = PointTopologyWidget()
-            self.fields['topology'].widget.modifiable = modifiable
+        def save(self, *args, **kwargs):
+            self.instance.set_topology(self.signage)
+            self.instance.signage = self.signage
+            self.instance.structure = self.signage.structure
+            return super(CommonForm, self).save(*args, **kwargs)
 
-        if self.instance.pk:
-            structure = self.instance.structure
-        else:
-            structure = self.user.profile.structure
-        self.fields['type'].queryset = SignageType.objects.filter(Q(structure=structure) | Q(structure=None))
-        self.fields['condition'].queryset = InfrastructureCondition.objects.filter(
-            Q(structure=structure) | Q(structure=None))
-        self.helper.form_tag = False
+        def clean_number(self):
+            blades = self.signage.blade_set.existing()
+            if self.instance.pk:
+                blades = blades.exclude(number=self.instance.number)
+            already_used = ', '.join([str(number) for number in blades.values_list('number', flat=True)])
+            if blades.filter(number=self.cleaned_data['number']).exists():
+                raise forms.ValidationError(_("Number already exists, numbers already used : %s" % already_used))
+            return self.cleaned_data['number']
 
-    class Meta(BaseInfrastructureForm.Meta):
-        model = Signage
-        fields = BaseInfrastructureForm.Meta.fields + ['code', 'printed_elevation', 'manager', 'sealing']
+        class Meta:
+            model = Blade
+            fields = ['id', 'number', 'direction', 'type', 'condition', 'color']
+else:
+    class BladeForm(BaseBladeForm):
+        geomfields = ['topology']
+        topology = GeometryField(label="")
+
+        def __init__(self, *args, **kwargs):
+
+            super(BladeForm, self).__init__(*args, **kwargs)
+            self.fields['topology'].initial = self.signage.geom
+            self.fields['topology'].widget = LeafletWidget(attrs={'geom_type': 'POINT'})
+            self.fields['topology'].widget.modifiable = False
+            self.fields['topology'].label = '%s%s %s' % (
+                self.instance.signage_display,
+                unicode(_("On %s") % _(self.signage.kind.lower())),
+                u'<a href="%s">%s</a>' % (self.signage.get_detail_url(), unicode(self.signage))
+            )
+            self.helper.form_tag = False
+
+if settings.TREKKING_TOPOLOGY_ENABLED:
+    class SignageForm(BaseInfrastructureForm):
+        leftpanel_scrollable = False
+        geomfields = ['topology']
+
+        def __init__(self, *args, **kwargs):
+            super(SignageForm, self).__init__(*args, **kwargs)
+
+            if not settings.SIGNAGE_LINE_ENABLED and settings.TREKKING_TOPOLOGY_ENABLED:
+                modifiable = self.fields['topology'].widget.modifiable
+                self.fields['topology'].widget = PointTopologyWidget()
+                self.fields['topology'].widget.modifiable = modifiable
+            self.helper.form_tag = False
+
+        def save(self, *args, **kwargs):
+            # Fix blade and line structure if signage structure change
+            blades = self.instance.blade_set.all()
+            blades.update(structure=self.instance.structure)
+            Line.objects.filter(blade__in=blades).update(structure=self.instance.structure)
+            return super(SignageForm, self).save(*args, **kwargs)
+
+        class Meta(BaseInfrastructureForm.Meta):
+            model = Signage
+            fields = BaseInfrastructureForm.Meta.fields + ['code', 'printed_elevation', 'manager', 'sealing']
+else:
+    class SignageForm(BaseInfrastructureForm):
+        leftpanel_scrollable = False
+        geomfields = ['geom']
+
+        def save(self, *args, **kwargs):
+            # Fix blade and line structure if signage structure change
+            blades = self.instance.blade_set.all()
+            blades.update(structure=self.instance.structure)
+            Line.objects.filter(blade__in=blades).update(structure=self.instance.structure)
+            return super(SignageForm, self).save(*args, **kwargs)
+
+        class Meta(BaseInfrastructureForm.Meta):
+            model = Signage
+            fields = BaseInfrastructureForm.Meta.fields + ['code', 'printed_elevation', 'manager', 'sealing']

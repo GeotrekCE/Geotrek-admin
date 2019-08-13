@@ -1,6 +1,8 @@
 import factory
 
-from geotrek.core.factories import PathFactory, StakeFactory
+from django.conf import settings
+
+from geotrek.core.factories import PathFactory, StakeFactory, TopologyFactory
 from geotrek.common.factories import OrganismFactory
 from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import SignageFactory
@@ -52,6 +54,8 @@ class InterventionFactory(factory.DjangoModelFactory):
     status = factory.SubFactory(InterventionStatusFactory)
     stake = factory.SubFactory(StakeFactory)
     type = factory.SubFactory(InterventionTypeFactory)
+    if not settings.TREKKING_TOPOLOGY_ENABLED:
+        topology = factory.SubFactory(TopologyFactory)
 
     @factory.post_generation
     def create_intervention(obj, create, extracted, **kwargs):
@@ -72,8 +76,12 @@ class InfrastructureInterventionFactory(InterventionFactory):
 class InfrastructurePointInterventionFactory(InterventionFactory):
     @factory.post_generation
     def create_infrastructure_point_intervention(obj, create, extracted, **kwargs):
-        infra = InfrastructureFactory.create(no_path=True)
-        infra.add_path(PathFactory.create(), start=0.5, end=0.5)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            infra = InfrastructureFactory.create(no_path=True)
+
+            infra.add_path(PathFactory.create(), start=0.5, end=0.5)
+        else:
+            infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700040 6600040)')
         obj.set_topology(infra)
         if create:
             obj.save()

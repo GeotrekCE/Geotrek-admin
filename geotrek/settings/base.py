@@ -1,7 +1,11 @@
+# coding: utf8
+
 import os
 import sys
 
 from django.contrib.messages import constants as messages
+
+from easy_thumbnails.conf import Settings as easy_thumbnails_defaults
 
 from geotrek import __version__
 from . import PROJECT_ROOT_PATH
@@ -377,8 +381,11 @@ THUMBNAIL_ALIASES = {
         'medium': {'size': (800, 800)},
         # Header image for trek export (keep ratio of TREK_EXPORT_HEADER_IMAGE_SIZE)
         'print': {'size': (1000, 500), 'crop': 'smart'},
+        'mobile_picto': {'size': (32, 32)},
     },
 }
+
+THUMBNAIL_PROCESSORS = easy_thumbnails_defaults.THUMBNAIL_PROCESSORS + ('geotrek.common.thumbnail_processors.add_watermark',)
 
 
 PAPERCLIP_ENABLE_VIDEO = True
@@ -439,8 +446,8 @@ ALTIMETRIC_AREA_MARGIN = 0.15
 LEAFLET_CONFIG = {
     'SRID': 3857,
     'TILES': [
-        ('OSM', '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '(c) OpenStreetMap Contributors'),
-        ('OSM N&B', '//{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', '(c) OpenStreetMap Contributors'),
+        ('OpenTopoMap', 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', 'Données: © Contributeurs OpenStreetMap, SRTM | Affichage: © OpenTopoMap (CC-BY-SA)'),
+        ('OSM', 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', '© Contributeurs OpenStreetMap'),
     ],
     'TILES_EXTENT': SPATIAL_EXTENT,
     # Extent in API projection (Leaflet view default extent)
@@ -531,11 +538,31 @@ EMBED_VIDEO_BACKENDS = (
     'embed_video.backends.SoundCloudBackend',
 )
 
+# Remove menu and possibility to add trail on the other Model
 TRAIL_MODEL_ENABLED = True
+
+# Remove only the menu of the different 'model' (Top Left)
+SIGNAGE_MODEL_ENABLED = True
+INFRASTRUCTURE_MODEL_ENABLED = True
+TREKKING_MODEL_ENABLED = True
+POI_MODEL_ENABLED = True
+SERVICE_MODEL_ENABLED = True
+LANDEDGE_MODEL_ENABLED = True
+PROJECT_MODEL_ENABLED = True
+INTERVENTION_MODEL_ENABLED = True
+REPORT_MODEL_ENABLED = True
+TOURISTICCONTENT_MODEL_ENABLED = True
+TOURISTICEVENT_MODEL_ENABLED = True
+# This model is necessary for most of the other. Can be add in case if the paths will not be change by anyone.
+PATH_MODEL_ENABLED = True
+
+
 TREKKING_TOPOLOGY_ENABLED = True
 FLATPAGES_ENABLED = True
 TOURISM_ENABLED = True
 
+TREK_SIGNAGE_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+TREK_INFRASTRUCTURE_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
 TREK_POI_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
 TOURISM_INTERSECTION_MARGIN = 500  # meters (always used)
 
@@ -589,7 +616,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap'
 
 # Mobile app_directories
 MOBILE_TILES_URL = [
-    'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
 ]
 MOBILE_TILES_EXTENSION = None  # auto
 MOBILE_TILES_RADIUS_LARGE = 0.01  # ~1 km
@@ -597,11 +624,20 @@ MOBILE_TILES_RADIUS_SMALL = 0.005  # ~500 m
 MOBILE_TILES_GLOBAL_ZOOMS = range(13)
 MOBILE_TILES_LOW_ZOOMS = range(13, 15)
 MOBILE_TILES_HIGH_ZOOMS = range(15, 17)
+MOBILE_CATEGORY_PICTO_SIZE = 32
+MOBILE_POI_PICTO_SIZE = 32
+MOBILE_INFORMATIONDESKTYPE_PICTO_SIZE = 32
 MOBILE_LENGTH_INTERVALS = [
     {"id": 1, "name": "< 10 km", "interval": [0, 9999]},
     {"id": 2, "name": "10 - 30", "interval": [9999, 29999]},
     {"id": 3, "name": "30 - 50", "interval": [30000, 50000]},
     {"id": 4, "name": "> 50 km", "interval": [50000, 999999]}
+]
+MOBILE_ASCENT_INTERVALS = [
+    {"id": 1, "name": "< 300 m", "interval": [0, 299]},
+    {"id": 2, "name": "300 - 600", "interval": [300, 599]},
+    {"id": 3, "name": "600 - 1000", "interval": [600, 999]},
+    {"id": 4, "name": "> 1000 m", "interval": [1000, 9999]}
 ]
 MOBILE_DURATION_INTERVALS = [
     {"id": 1, "name": "< 1 heure", "interval": [0, 1]},
@@ -641,9 +677,33 @@ BLADE_CODE_FORMAT = u"{signagecode}-{bladenumber}"
 LINE_CODE_FORMAT = u"{signagecode}-{bladenumber}-{linenumber}"
 SHOW_EXTREMITIES = False
 
+THUMBNAIL_COPYRIGHT_FORMAT = u""
+
+# If you want copyright added to your pictures, change THUMBNAIL_COPYRIGHT_FORMAT to this :
+# THUMBNAIL_COPYRIGHT_FORMAT = u"{title} {author}"
+# You can also add legend
+
+THUMBNAIL_COPYRIGHT_SIZE = 15
+
 REST_FRAMEWORK = {
     'UNICODE_JSON': False
 }
 
-ENABLED_MOBILE_FILTERS = ['difficulty', 'lengths', 'cities', 'accessibilities', 'practice', 'durations', 'themes',
-                          'route']
+ENABLED_MOBILE_FILTERS = [
+    'practice',
+    'difficulty',
+    'durations',
+    'ascent',
+    'lengths',
+    'themes',
+    'route',
+    'districts',
+    'cities',
+    'accessibilities',
+]
+
+PRIMARY_COLOR = "#7b8c12"
+
+ONLY_EXTERNAL_PUBLIC_PDF = False
+
+SEND_REPORT_ACK = True

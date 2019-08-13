@@ -5,6 +5,10 @@
 
     <table class="table-striped table-bordered table">
         <tr>
+            <th>{{ object|verbose:"structure" }}</th>
+            <td>{{ object.structure }}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"name" }}</th>
             <td>{{ object.name }}</td>
         </tr>
@@ -52,10 +56,6 @@
             <td>{{ object.published|yesno|title }}</td>
         </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
-        <tr>
-            <th>{{ object|verbose:"structure" }}</th>
-            <td>{{ object.structure }}</td>
-        </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 
@@ -79,22 +79,22 @@
                     <td><a href="{% url 'signage:blade_detail' blade.pk %}">{{ blade }}</td>
                     <td>{{ blade.color|default_if_none:"" }}</td>
                     <td>
-                        {% for line in blade.order_lines %}
+                        {% for line in blade.order_lines.all %}
                             {{ line.text }}{% if not forloop.last %}<br>{% endif %}
                         {% endfor %}
                     </td>
                     <td>
-                        {% for line in blade.order_lines %}
+                        {% for line in blade.order_lines.all %}
                             {{ line.pictogram_name|default_if_none:"" }}{% if not forloop.last %}<br>{% endif %}
                         {% endfor %}
                     </td>
                     <td>
-                        {% for line in blade.order_lines %}
+                        {% for line in blade.order_lines.all %}
                             {{ line.distance|default_if_none:"" }}{% if not forloop.last %}<br>{% endif %}
                         {% endfor %}
                     </td>
                     <td>
-                        {% for line in blade.order_lines %}
+                        {% for line in blade.order_lines.all %}
                             {{ line.time|default_if_none:"" }}{% if not forloop.last %}<br>{% endif %}
                         {% endfor %}
                     </td>

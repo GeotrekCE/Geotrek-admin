@@ -6,6 +6,10 @@
 
     <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ sensitivearea|verbose:"structure" }}</th>
+            <td>{{ sensitivearea.structure }}</td>
+        </tr>
         {% if sensitivearea.species.category == 2 %}
             <tr>
                 <th>{{ sensitivearea.species|verbose:"name" }}</th>
@@ -42,10 +46,6 @@
         <tr>
             <th>{{ sensitivearea|verbose:"contact" }}</th>
             <td>{{ sensitivearea.contact|safe }}</td>
-        </tr>
-        <tr>
-            <th>{{ sensitivearea|verbose:"structure" }}</th>
-            <td>{{ sensitivearea.structure }}</td>
         </tr>
         {% include "common/publication_info_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}

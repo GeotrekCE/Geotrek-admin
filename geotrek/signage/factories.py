@@ -12,7 +12,7 @@ class SignageTypeFactory(factory.DjangoModelFactory):
         model = models.SignageType
 
     label = factory.Sequence(lambda n: u"Type %s" % n)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('signage-type-%s.png')
 
 
 class SignageTypeNoPictogramFactory(factory.DjangoModelFactory):
@@ -83,6 +83,11 @@ class BladeFactory(factory.DjangoModelFactory):
     color = factory.SubFactory(BladeColorFactory)
     topology = factory.SubFactory(TopologyFactory)
     signage = factory.SubFactory(SignageFactory)
+
+    @factory.post_generation
+    def lines(obj, create, extracted=None, **kwargs):
+        if create:
+            LineFactory.create(blade=obj)
 
 
 class LineFactory(factory.DjangoModelFactory):

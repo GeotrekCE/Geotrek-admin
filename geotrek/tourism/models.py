@@ -7,6 +7,7 @@ from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.formats import date_format
 
+from colorfield.fields import ColorField
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
@@ -176,6 +177,8 @@ class TouristicContentCategory(PictogramMixin):
                                    db_column='label_type2', blank=True)
     order = models.IntegerField(verbose_name=_(u"Order"), null=True, blank=True, db_column='tri',
                                 help_text=_(u"Alphabetical order if blank"))
+    color = ColorField(verbose_name=_(u"Color"), default='#444444', db_column='couleur',
+                       help_text=_(u"Color of the category, only used in mobile."))  # To be implemented in Geotrek-rando
 
     id_prefix = 'C'
 

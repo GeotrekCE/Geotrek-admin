@@ -56,16 +56,18 @@ class AltimetryMixin(models.Model):
     def get_elevation_limits(self):
         return AltimetryHelper.altimetry_limits(self.get_elevation_profile())
 
-    def get_elevation_profile_svg(self):
-        return AltimetryHelper.profile_svg(self.get_elevation_profile())
+    def get_elevation_profile_svg(self, language=None):
+        return AltimetryHelper.profile_svg(self.get_elevation_profile(), language)
 
-    def get_elevation_chart_url(self):
+    def get_elevation_chart_url(self, language=None):
         """Generic url. Will fail if there is no such url defined
         for the required model (see core.Path and trekking.Trek)
         """
         app_label = self._meta.app_label
         model_name = self._meta.model_name
-        return reverse('%s:%s_profile_svg' % (app_label, model_name), kwargs={'lang': get_language(), 'pk': self.pk})
+        if not language:
+            language = get_language()
+        return reverse('%s:%s_profile_svg' % (app_label, model_name), kwargs={'lang': language, 'pk': self.pk})
 
     def get_elevation_chart_url_png(self, language=None):
         """Path to the PNG version of elevation chart. Relative to MEDIA_URL/MEDIA_ROOT.
@@ -93,7 +95,7 @@ class AltimetryMixin(models.Model):
         if is_file_newer(path, self.date_update):
             return False
         # Download converted chart as png using convertit
-        source = smart_urljoin(rooturl, self.get_elevation_chart_url())
+        source = smart_urljoin(rooturl, self.get_elevation_chart_url(language))
         convertit_download(source,
                            path,
                            from_type=HttpSVGResponse.content_type,

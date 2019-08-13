@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.conf.urls import url
 
 from mapentity.registry import registry
@@ -8,8 +9,7 @@ from mapentity.registry import MapEntityOptions
 
 from . import models
 from .views import (
-    TrekDocumentPublic, POIDocumentPublic, TrekMapImage,
-    TrekMarkupPublic, POIMarkupPublic,
+    TrekDocumentPublic, TrekMapImage, TrekMarkupPublic,
     TrekGPXDetail, TrekKMLDetail, WebLinkCreatePopup,
     CirkwiTrekView, CirkwiPOIView, TrekPOIViewSet,
     SyncRandoRedirect, TrekServiceViewSet, sync_view,
@@ -53,8 +53,6 @@ class TrekEntityOptions(AltimetryEntityOptions, PublishableEntityOptions):
 
 
 class POIEntityOptions(PublishableEntityOptions):
-    document_public_view = POIDocumentPublic
-    markup_public_view = POIMarkupPublic
 
     def get_serializer(self):
         return trekking_serializers.POISerializer
@@ -66,6 +64,6 @@ class ServiceEntityOptions(MapEntityOptions):
         return trekking_serializers.ServiceSerializer
 
 
-urlpatterns += registry.register(models.Trek, TrekEntityOptions)
-urlpatterns += registry.register(models.POI, POIEntityOptions)
-urlpatterns += registry.register(models.Service, ServiceEntityOptions)
+urlpatterns += registry.register(models.Trek, TrekEntityOptions, menu=settings.TREKKING_MODEL_ENABLED)
+urlpatterns += registry.register(models.POI, POIEntityOptions, menu=settings.POI_MODEL_ENABLED)
+urlpatterns += registry.register(models.Service, ServiceEntityOptions, menu=settings.SERVICE_MODEL_ENABLED)

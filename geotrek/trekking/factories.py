@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import factory
+from django.conf import settings
 from django.contrib.gis.geos import Point
 
 from . import models
@@ -15,7 +16,7 @@ class TrekNetworkFactory(factory.DjangoModelFactory):
         model = models.TrekNetwork
 
     network = factory.Sequence(lambda n: u"network %s" % n)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('network-%s.png')
 
 
 class PracticeFactory(factory.DjangoModelFactory):
@@ -23,7 +24,7 @@ class PracticeFactory(factory.DjangoModelFactory):
         model = models.Practice
 
     name = factory.Sequence(lambda n: u"usage %s" % n)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('practice-%s.png')
 
 
 class AccessibilityFactory(factory.DjangoModelFactory):
@@ -31,7 +32,7 @@ class AccessibilityFactory(factory.DjangoModelFactory):
         model = models.Accessibility
 
     name = factory.Sequence(lambda n: u"accessibility %s" % n)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('accessibility-%s.png')
 
 
 class RouteFactory(factory.DjangoModelFactory):
@@ -39,7 +40,7 @@ class RouteFactory(factory.DjangoModelFactory):
         model = models.Route
 
     route = factory.Sequence(lambda n: u"route %s" % n)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('route-%s.png')
 
 
 class DifficultyLevelFactory(factory.DjangoModelFactory):
@@ -47,7 +48,7 @@ class DifficultyLevelFactory(factory.DjangoModelFactory):
         model = models.DifficultyLevel
 
     difficulty = factory.Sequence(lambda n: u"difficulty %s" % n)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('difficulty-%s.png')
 
 
 class WebLinkCategoryFactory(factory.DjangoModelFactory):
@@ -55,7 +56,7 @@ class WebLinkCategoryFactory(factory.DjangoModelFactory):
         model = models.WebLinkCategory
 
     label = factory.Sequence(lambda n: u"Category %s" % n)
-    pictogram = dummy_filefield_as_sequence('thumbnail %s')
+    pictogram = dummy_filefield_as_sequence('weblink-category-%s.png')
 
 
 class WebLinkFactory(factory.DjangoModelFactory):
@@ -100,6 +101,7 @@ class TrekFactory(TopologyFactory):
     route = factory.SubFactory(RouteFactory)
     difficulty = factory.SubFactory(DifficultyLevelFactory)
     practice = factory.SubFactory(PracticeFactory)
+    geom = 'SRID=2154;LINESTRING (700000 6600000, 700100 6600100)'
 
     @factory.post_generation
     def sources(obj, create, extracted=None, **kwargs):
@@ -119,63 +121,87 @@ class TrekFactory(TopologyFactory):
 class TrekWithPOIsFactory(TrekFactory):
     @factory.post_generation
     def create_trek_with_poi(obj, create, extracted, **kwargs):
-        path = obj.paths.all()[0]
-        poi1 = POIFactory.create(no_path=True)
-        poi1.add_path(path, start=0.5, end=0.5)
-        poi2 = POIFactory.create(no_path=True)
-        poi2.add_path(path, start=0.4, end=0.4)
-        if create:
-            obj.save()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            path = obj.paths.all()[0]
+            poi1 = POIFactory.create(no_path=True)
+            poi1.add_path(path, start=0.5, end=0.5)
+            poi2 = POIFactory.create(no_path=True)
+            poi2.add_path(path, start=0.4, end=0.4)
+            if create:
+                obj.save()
+        else:
+            POIFactory.create(geom='SRID=2154;POINT (700050 6600050)')
+            POIFactory.create(geom='SRID=2154;POINT (700040 6600040)')
 
 
 class TrekWithPublishedPOIsFactory(TrekFactory):
     @factory.post_generation
     def create_trek_with_poi(obj, create, extracted, **kwargs):
-        path = obj.paths.all()[0]
-        poi1 = POIFactory.create(no_path=True, published=True, published_en=True, published_fr=True)
-        poi1.add_path(path, start=0.5, end=0.5)
-        poi2 = POIFactory.create(no_path=True, published=True, published_en=True, published_fr=True)
-        poi2.add_path(path, start=0.4, end=0.4)
-        if create:
-            obj.save()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            path = obj.paths.all()[0]
+            poi1 = POIFactory.create(no_path=True, published=True, published_en=True, published_fr=True)
+            poi1.add_path(path, start=0.5, end=0.5)
+            poi2 = POIFactory.create(no_path=True, published=True, published_en=True, published_fr=True)
+            poi2.add_path(path, start=0.4, end=0.4)
+            if create:
+                obj.save()
+        else:
+            POIFactory.create(geom='SRID=2154;POINT (700040 6600040)',
+                              published=True, published_en=True, published_fr=True)
+            POIFactory.create(geom='SRID=2154;POINT (700050 6600050)',
+                              published=True, published_en=True, published_fr=True)
 
 
 class TrekWithInfrastructuresFactory(TrekFactory):
     @factory.post_generation
     def create_trek_with_infrastructures(obj, create, extracted, **kwargs):
-        path = obj.paths.all()[0]
-        infra1 = InfrastructureFactory.create(no_path=True)
-        infra1.add_path(path, start=0.5, end=0.5)
-        infra2 = InfrastructureFactory.create(no_path=True)
-        infra2.add_path(path, start=0.4, end=0.4)
-        if create:
-            obj.save()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            path = obj.paths.all()[0]
+            infra1 = InfrastructureFactory.create(no_path=True)
+            infra1.add_path(path, start=0.5, end=0.5)
+            infra2 = InfrastructureFactory.create(no_path=True)
+            infra2.add_path(path, start=0.4, end=0.4)
+            if create:
+                obj.save()
+        else:
+            InfrastructureFactory.create(geom='SRID=2154;POINT (700040 6600040)')
+            InfrastructureFactory.create(geom='SRID=2154;POINT (700050 6600050)')
 
 
 class TrekWithSignagesFactory(TrekFactory):
     @factory.post_generation
     def create_trek_with_infrastructures(obj, create, extracted, **kwargs):
-        path = obj.paths.all()[0]
-        signa1 = SignageFactory.create(no_path=True)
-        signa1.add_path(path, start=0.5, end=0.5)
-        signa2 = SignageFactory.create(no_path=True)
-        signa2.add_path(path, start=0.4, end=0.4)
-        if create:
-            obj.save()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            path = obj.paths.all()[0]
+            signa1 = SignageFactory.create(no_path=True)
+            signa1.add_path(path, start=0.5, end=0.5)
+            signa2 = SignageFactory.create(no_path=True)
+            signa2.add_path(path, start=0.4, end=0.4)
+            if create:
+                obj.save()
+        else:
+            SignageFactory.create(geom='SRID=2154;POINT (700040 6600040)')
+            SignageFactory.create(geom='SRID=2154;POINT (700050 6600050)')
 
 
 class TrekWithServicesFactory(TrekFactory):
     @factory.post_generation
     def create_trek_with_services(obj, create, extracted, **kwargs):
-        path = obj.paths.all()[0]
-        service1 = ServiceFactory.create(no_path=True)
-        service1.add_path(path, start=0.5, end=0.5)
-        service1.type.practices.add(obj.practice)
-        service2 = ServiceFactory.create(no_path=True)
-        service2.add_path(path, start=0.4, end=0.4)
-        service2.type.practices.add(obj.practice)
-        if create:
-            obj.save()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            path = obj.paths.all()[0]
+            service1 = ServiceFactory.create(no_path=True)
+            service1.add_path(path, start=0.5, end=0.5)
+            service1.type.practices.add(obj.practice)
+            service2 = ServiceFactory.create(no_path=True)
+            service2.add_path(path, start=0.4, end=0.4)
+            service2.type.practices.add(obj.practice)
+            if create:
+                obj.save()
+        else:
+            service1 = ServiceFactory.create(geom='SRID=2154;POINT (700040 6600040)')
+            service1.type.practices.add(obj.practice)
+            service2 = ServiceFactory.create(geom='SRID=2154;POINT (700050 6600050)')
+            service2.type.practices.add(obj.practice)
 
 
 class TrekRelationshipFactory(factory.DjangoModelFactory):
@@ -195,7 +221,7 @@ class POITypeFactory(factory.DjangoModelFactory):
         model = models.POIType
 
     label = factory.Sequence(lambda n: u"POIType %s" % n)
-    pictogram = dummy_filefield_as_sequence('pictogram %s')
+    pictogram = dummy_filefield_as_sequence('poi-type-%s.png')
 
 
 class POIFactory(PointTopologyFactory):
@@ -206,6 +232,7 @@ class POIFactory(PointTopologyFactory):
     description = factory.Sequence(lambda n: u"<p>description %s</p>" % n)
     type = factory.SubFactory(POITypeFactory)
     published = True
+    geom = 'SRID=2154;POINT (700000 6600000)'
 
 
 class ServiceTypeFactory(factory.DjangoModelFactory):
@@ -213,7 +240,7 @@ class ServiceTypeFactory(factory.DjangoModelFactory):
         model = models.ServiceType
 
     name = factory.Sequence(lambda n: u"ServiceType %s" % n)
-    pictogram = dummy_filefield_as_sequence('pictogram %s')
+    pictogram = dummy_filefield_as_sequence('service-type-%s.png')
     published = True
 
 

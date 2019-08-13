@@ -33,7 +33,7 @@ class ElevationChart(LastModifiedMixin, BaseDetailView):
         return super(ElevationChart, self).dispatch(*args, **kwargs)
 
     def render_to_response(self, context, **response_kwargs):
-        return HttpSVGResponse(self.get_object().get_elevation_profile_svg(),
+        return HttpSVGResponse(self.get_object().get_elevation_profile_svg(self.kwargs['lang']),
                                **response_kwargs)
 
 

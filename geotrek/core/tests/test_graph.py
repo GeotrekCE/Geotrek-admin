@@ -1,6 +1,8 @@
 import json
+from unittest import skipIf
 
 from django.test import TestCase
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import LineString
 from django.core.urlresolvers import reverse
@@ -10,6 +12,7 @@ from geotrek.core.graph import graph_edges_nodes_of_qs
 from geotrek.core.models import Path
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class SimpleGraph(TestCase):
 
     def setUp(self):

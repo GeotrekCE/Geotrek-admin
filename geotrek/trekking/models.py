@@ -516,8 +516,8 @@ class Practice(PictogramMixin):
     cirkwi = models.ForeignKey('cirkwi.CirkwiLocomotion', verbose_name=_(u"Cirkwi locomotion"), null=True, blank=True)
     order = models.IntegerField(verbose_name=_(u"Order"), null=True, blank=True, db_column='tri',
                                 help_text=_(u"Alphabetical order if blank"))
-    mobile_color = ColorField(verbose_name=_(u"Mobile color"), default='#444444', db_column='couleur_mobile',
-                              help_text=_(u"Color of the practice in mobile"))
+    color = ColorField(verbose_name=_(u"Color"), default='#444444', db_column='couleur',
+                       help_text=_(u"Color of the practice, only used in mobile."))  # To be implemented in Geotrek-rando
 
     class Meta:
         db_table = 'o_b_pratique'
@@ -698,22 +698,15 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
 
     @classmethod
     def topology_pois(cls, topology):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            qs = cls.overlapping(topology)
-            qs = cls.exclude_pois(qs, topology)
-        else:
-            area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
-            qs = cls.objects.existing().filter(geom__intersects=area)
-            qs = cls.exclude_pois(qs, topology)
-        return qs
+        return cls.exclude_pois(cls.topology_all_pois(topology), topology)
 
     @classmethod
     def topology_all_pois(cls, topology):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             qs = cls.overlapping(topology)
         else:
-            area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
-            qs = cls.objects.existing().filter(geom__intersects=area)
+            area = topology.geom.transform(settings.SRID, clone=True).buffer(settings.TREK_POI_INTERSECTION_MARGIN)
+            qs = cls.objects.existing().filter(geom__intersects=area).order_by('pk')
         return qs
 
     @classmethod

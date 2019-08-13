@@ -2,12 +2,188 @@
 CHANGELOG
 =========
 
-2.26.6.dev0
+2.28.1.dev0
+-------------------
+
+**New features**
+
+- Fix map screenshots with SSL enabled
+
+
+2.28.0 (2019-08-09)
+-------------------
+
+**New features**
+
+- Geotrek without dynamic segmentation is back
+
+**Minor Changes**
+
+- Add a settings allowing to remove certain items from the left menu
+- Serve attachment with 'Topoguide' type as public PDF
+
+**Bug fixes**
+
+- Fix missing pictograms for mobile app
+- Translate feedback acknoledgment email
+- Fix sync_mobile command for itinerancy
+- Fix map screenshots with SSL enabled
+
+
+2.27.12 (2019-07-22)
+--------------------
+
+**Minor Changes**
+
+- Add itinerancy mobile
+
+
+2.27.11 (2019-07-17)
+--------------------
+
+**Minor Changes**
+
+- Change condition's on_delete for SET_NULL
+- Add the possibility to add Multipoint with one Point on commands loadinfrastructure/loadsignage
+
+**Bug fixes**
+
+- Fix choices fields, should only take in account existing (not deleted) elements
+- Fix delete Organism
+- Fix sensitivity parser with MultiPolygon
+- Fix profile and languages
+
+
+2.27.10 (2019-07-10)
+--------------------
+
+**Minor Changes**
+
+- Set OpenTopoMap as default map background
+- Resize information desk type pictograms in mobile API
+
+**Bug fixes**
+
+- Fix delete intervention type
+
+
+2.27.9 (2019-07-01)
+-------------------
+
+**Minor Changes**
+
+- Add ambiance field to trek detail endpoint in mobile API
+
+
+2.27.8 (2019-06-28)
+-------------------
+
+**Minor Changes**
+
+- Add primary color setting for PDF
+- Allow to override practices pictogram color in custom trek PDF template
+
+
+2.27.7 (2019-06-26)
 -------------------
 
 **Bug fixes**
 
-- Fix map screenshots with SSL enabled
+- Fix public PDF overflow
+- Resize category and POI pictograms for mobile app
+- Convert pictograms from SVG to PNG for mobile app
+- Fix structure (or not) related scrolldowns validation
+- Remove unvisible paths in remove_duplicate_paths command
+- Fix list of additional layers in layer selector
+- Don't reset excluded POIs when saving treks
+
+**Minor Changes**
+
+- Allow to merge multiple comment columns when importing paths
+- Add color field to touristic contents categories (for mobile app only)
+- Handle invalid geometries when importing districts
+
+
+2.27.6 (2019-06-04)
+-------------------
+
+**Bug fixes**
+
+- Fix mobile API
+
+
+2.27.5 (2019-05-29)
+-------------------
+
+**Bug fixes**
+
+- Fix regulatory sensitive area parser
+- Fix handling of parser errors
+
+
+2.27.4 (2019-05-27)
+-------------------
+
+**Bug fixes**
+
+- Fix crash with --srid option of loadpaths command
+- Add option portal in sync_mobile for the treks
+- Fix encoding error on watermarks
+- Fix bad references to sync_mobile in sync_rando command
+
+
+2.27.3 (2019-05-23)
+-------------------
+
+**New features**
+
+- Allow to set order of filters in mobile API
+- Add ascent and district filters to mobile API
+
+**Minor Changes**
+
+- Replace text by an id in url of pictures with watermarks
+- Change default settings watermark
+
+**Documentation**
+
+- Add PDF overriding section
+
+
+2.27.2 (2019-05-14)
+-------------------
+
+**Minor Changes**
+
+- Add points_reference by treks in api mobile
+
+**Bug fixes**
+
+- Remove public pdf poi
+- Fix filter cities without paths
+
+
+2.27.1 (2019-05-06)
+-------------------
+
+**Bug fixes**
+
+- Fix api mobile with only sensitivity app
+
+
+2.27.0 (2019-05-02)
+-------------------
+
+**New features**
+
+- Add watermark on pictures
+- Allow to change structure of an object with permission by_pass_structure
+
+**Bug fixes**
+
+- Fix a floating point computation problem in SQL trigger
+- Fix trails in detail of intervention and opposite
+- Fix color on restricted area
 
 
 2.26.5 (2019-04-19)
