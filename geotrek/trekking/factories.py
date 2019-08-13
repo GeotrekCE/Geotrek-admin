@@ -130,8 +130,8 @@ class TrekWithPOIsFactory(TrekFactory):
             if create:
                 obj.save()
         else:
-            POIFactory.create(geom='SRID=2154;POINT (700050 6600050)')
             POIFactory.create(geom='SRID=2154;POINT (700040 6600040)')
+            POIFactory.create(geom='SRID=2154;POINT (700050 6600050)')
 
 
 class TrekWithPublishedPOIsFactory(TrekFactory):
