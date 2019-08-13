@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
+from django.db.models import F, Value
 from django.template.defaultfilters import slugify
 from django.utils.translation import get_language, ugettext, ugettext_lazy as _
 from django.urls import reverse
@@ -13,6 +14,7 @@ import simplekml
 from mapentity.models import MapEntityMixin
 from mapentity.serializers import plain_text
 
+from geotrek.api.v2.functions import LineLocatePoint, Transform
 from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Path, Topology
 from geotrek.common.utils import intersecting, classproperty
@@ -705,8 +707,15 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
         if settings.TREKKING_TOPOLOGY_ENABLED:
             qs = cls.overlapping(topology)
         else:
-            area = topology.geom.transform(settings.SRID, clone=True).buffer(settings.TREK_POI_INTERSECTION_MARGIN)
-            qs = cls.objects.existing().filter(geom__intersects=area)
+            object_geom = topology.geom.transform(settings.SRID, clone=True).buffer(settings.TREK_POI_INTERSECTION_MARGIN)
+            qs = cls.objects.existing().filter(geom__intersects=object_geom)
+            if topology.geom.geom_type == 'LineString':
+                qs = qs.annotate(locate=LineLocatePoint(Transform(Value(topology.geom.ewkt,
+                                                                        output_field=models.GeometryField()),
+                                                                  settings.SRID),
+                                                        Transform(F('geom'), settings.SRID)))
+                qs = qs.order_by('locate')
+
         return qs
 
     @classmethod

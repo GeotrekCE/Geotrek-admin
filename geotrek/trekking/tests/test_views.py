@@ -857,9 +857,9 @@ class TrekGPXTest(TrekkingManagerTest):
         elevation = waypoint.find('ele').string
         self.assertEqual(name, u"%s: %s" % (pois[0].type, pois[0].name))
         self.assertEqual(description, pois[0].description)
-
-        self.assertEqual(waypoint['lat'], '46.5003601787')
-        self.assertEqual(waypoint['lon'], '3.00052158552')
+        # POI order follows trek direction
+        self.assertAlmostEqual(float(waypoint['lat']), 46.5003602)
+        self.assertAlmostEqual(float(waypoint['lon']), 3.0005216)
         self.assertEqual(elevation, '42.0')
 
 

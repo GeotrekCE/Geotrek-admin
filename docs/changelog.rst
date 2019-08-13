@@ -7,7 +7,7 @@ CHANGELOG
 
 **New features**
 
--
+- Fix map screenshots with SSL enabled
 
 
 2.28.0 (2019-08-09)
