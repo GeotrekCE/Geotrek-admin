@@ -44,7 +44,7 @@ from geotrek.infrastructure.serializers import InfrastructureSerializer
 from geotrek.signage.serializers import SignageSerializer
 
 from .tasks import launch_sync_rando
-if 'tourism' in settings.INSTALLED_APPS:
+if 'geotrek.tourism' in settings.INSTALLED_APPS:
     from geotrek.tourism.models import TouristicContent, TouristicEvent
 
 
@@ -669,7 +669,7 @@ class Meta(TemplateView):
             | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
                    'trek_parents__parent__deleted': False})
         )
-        if 'tourism' in settings.INSTALLED_APPS:
+        if 'geotrek.tourism' in settings.INSTALLED_APPS:
             context['contents'] = TouristicContent.objects.existing().order_by('pk').filter(
                 **{'published_{lang}'.format(lang=lang): True}
             )
