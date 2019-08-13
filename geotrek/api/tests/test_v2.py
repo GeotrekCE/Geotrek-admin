@@ -81,17 +81,35 @@ class BaseApiTest(TestCase):
         self.login()
         return self.client.get(reverse('apiv2:trek-all-difficulties'), params)
 
+    def get_trek_used_difficulties_list(self, params=None):
+        self.login()
+        return self.client.get(reverse('apiv2:trek-used-difficulties'), params)
+
     def get_trek_all_practices_list(self, params=None):
         self.login()
         return self.client.get(reverse('apiv2:trek-all-practices'), params)
+
+    def get_trek_used_practices_list(self, params=None):
+        self.login()
+        return self.client.get(reverse('apiv2:trek-used-practices'), params)
 
     def get_trek_all_networks_list(self, params=None):
         self.login()
         return self.client.get(reverse('apiv2:trek-all-networks'), params)
 
+    def get_trek_used_networks_list(self, params=None):
+        # Not used in API but could be use in the future
+        self.login()
+        return self.client.get(reverse('apiv2:trek-used-networks'), params)
+
     def get_trek_all_themes_list(self, params=None):
         self.login()
         return self.client.get(reverse('apiv2:trek-all-themes'), params)
+
+    def get_trek_used_themes_list(self, params=None):
+        # Not used in API but could be use in the future
+        self.login()
+        return self.client.get(reverse('apiv2:trek-used-themes'), params)
 
     def get_poi_list(self, params=None):
         self.login()
@@ -135,6 +153,26 @@ class APIAnonymousTestCase(BaseApiTest):
     def test_trek_network_list(self):
         self.client.logout()
         response = self.get_trek_all_networks_list()
+        self.assertEqual(response.status_code, 401)
+
+    def test_trek_difficulty_used_list(self):
+        self.client.logout()
+        response = self.get_trek_used_difficulties_list()
+        self.assertEqual(response.status_code, 401)
+
+    def test_trek_practice_used_list(self):
+        self.client.logout()
+        response = self.get_trek_used_practices_list()
+        self.assertEqual(response.status_code, 401)
+
+    def test_trek_theme_used_list(self):
+        self.client.logout()
+        response = self.get_trek_used_themes_list()
+        self.assertEqual(response.status_code, 401)
+
+    def test_trek_network_used_list(self):
+        self.client.logout()
+        response = self.get_trek_used_networks_list()
         self.assertEqual(response.status_code, 401)
 
     def test_poi_list(self):
@@ -247,6 +285,26 @@ class APIAccessAdministratorTestCase(BaseApiTest):
     def test_trek_network_list(self):
         self.client.logout()
         response = self.get_trek_all_networks_list()
+        self.assertEqual(response.status_code, 200)
+
+    def test_trek_difficulty_used_list(self):
+        self.client.logout()
+        response = self.get_trek_used_difficulties_list()
+        self.assertEqual(response.status_code, 200)
+
+    def test_trek_practice_used_list(self):
+        self.client.logout()
+        response = self.get_trek_used_practices_list()
+        self.assertEqual(response.status_code, 200)
+
+    def test_trek_theme_used_list(self):
+        self.client.logout()
+        response = self.get_trek_used_themes_list()
+        self.assertEqual(response.status_code, 200)
+
+    def test_trek_network_used_list(self):
+        self.client.logout()
+        response = self.get_trek_used_networks_list()
         self.assertEqual(response.status_code, 200)
 
     def test_poi_list(self):
