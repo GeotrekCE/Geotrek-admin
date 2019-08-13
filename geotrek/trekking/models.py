@@ -709,8 +709,11 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
         else:
             object_geom = topology.geom.transform(settings.SRID, clone=True).buffer(settings.TREK_POI_INTERSECTION_MARGIN)
             qs = cls.objects.existing().filter(geom__intersects=object_geom)
-            qs = qs.annotate(geom_type=GeometryType(F('geom')))
-            qs = qs.annotate(locate=LineLocatePoint(Value(topology.geom.ewkt), Transform(F('geom'), settings.SRID)))
+            if topology.geom.geom_type == 'LineString':
+                qs = qs.annotate(locate=LineLocatePoint(Transform(Value(topology.geom.ewkt,
+                                                                        output_field=models.GeometryField()),
+                                                                  settings.SRID),
+                                                        Transform(F('geom'), settings.SRID)))
             qs = qs.order_by('locate')
 
         return qs
