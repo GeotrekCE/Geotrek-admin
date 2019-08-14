@@ -119,6 +119,14 @@ class BaseApiTest(TestCase):
         self.login()
         return self.client.get(reverse('apiv2:poi-detail', args=(id_poi,)), params)
 
+    def get_poi_all_types_list(self, params=None):
+        self.login()
+        return self.client.get(reverse('apiv2:poi-all-types'), params)
+
+    def get_poi_used_types_list(self, params=None):
+        self.login()
+        return self.client.get(reverse('apiv2:poi-used-types'), params)
+
 
 class APIAnonymousTestCase(BaseApiTest):
     """
@@ -183,6 +191,16 @@ class APIAnonymousTestCase(BaseApiTest):
     def test_poi_detail(self):
         self.client.logout()
         response = self.get_poi_detail(trek_models.POI.objects.order_by('?').first().pk)
+        self.assertEqual(response.status_code, 401)
+
+    def test_poi_type_all_list(self):
+        self.client.logout()
+        response = self.get_poi_used_types_list()
+        self.assertEqual(response.status_code, 401)
+
+    def test_poi_type_used_list(self):
+        self.client.logout()
+        response = self.get_poi_all_types_list()
         self.assertEqual(response.status_code, 401)
 
 
@@ -400,3 +418,13 @@ class APIAccessAdministratorTestCase(BaseApiTest):
 
         self.assertEqual(sorted(json_response.get('properties').keys()),
                          POI_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
+
+    def test_poi_type_all_list(self):
+        self.client.logout()
+        response = self.get_poi_used_types_list()
+        self.assertEqual(response.status_code, 200)
+
+    def test_poi_type_used_list(self):
+        self.client.logout()
+        response = self.get_poi_all_types_list()
+        self.assertEqual(response.status_code, 200)
