@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   id="svg20"
+   viewBox="NaN NaN NaN 187.5"
+   y="0px"
+   x="0px"
+   version="1.1">
+  <metadata
+     id="metadata26">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs24" />
+  <g
+     transform="matrix(0.52995732,0,0,0.52995732,11.057153,8.7702179)"
+     id="g12"
+     style="fill:#ffffff;fill-opacity:1">
+    <path
+       d="M 0.987,14.151 24.471,38.174 33.506,30.062 25.333,14.226 Z"
+       id="path2"
+       style="fill:#ffffff;fill-opacity:1" />
+    <path
+       d="m 106.869,81.392 c 4.432,1.213 9.201,-1.283 10.48,-5.82 1.212,-4.432 -1.388,-9.092 -5.834,-10.361 l -3.467,-0.943 -4.522,16.12 z"
+       id="path4"
+       style="fill:#ffffff;fill-opacity:1" />
+    <path
+       d="M 104.132,63.262 76.04,55.344 c -1.861,-0.473 -3.736,0.63 -4.243,2.477 l -2.637,9.395 c -0.507,1.861 0.497,3.737 2.367,4.3 l 28.135,7.842 z"
+       id="path6"
+       style="fill:#ffffff;fill-opacity:1" />
+    <path
+       d="m 108.576,89.971 c -2.136,-2.027 -4.811,-3.651 -7.918,-4.503 L 66.585,75.911 45.644,38.765 c -1.108,-1.932 -2.893,-3.442 -5.19,-4.067 -4.579,-1.284 -9.352,1.406 -10.607,5.985 -0.62,2.202 -0.331,4.414 0.668,6.289 l 26.201,45.959 c 0,0 2.136,3.443 7.539,5.228 l 47.617,13.355 22.087,22.399 c 0.739,0.777 1.71,1.388 2.842,1.71 3.338,0.923 6.824,-1.066 7.771,-4.357 0.649,-2.33 -0.095,-4.774 -1.757,-6.289 z"
+       id="path8"
+       style="fill:#ffffff;fill-opacity:1" />
+    <path
+       d="m 134.011,99.238 4.948,6.474 10.054,-10.977 -8.491,-4.736 c 0.824,-5.967 -2.893,-11.73 -8.803,-13.392 -6.512,-1.824 -13.274,1.951 -15.097,8.462 -1.862,6.559 1.97,13.284 8.462,15.097 3.107,0.895 6.251,0.398 8.927,-0.928"
+       id="path10"
+       style="fill:#ffffff;fill-opacity:1" />
+  </g>
+</svg>

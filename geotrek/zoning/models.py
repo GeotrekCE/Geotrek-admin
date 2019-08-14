@@ -13,6 +13,8 @@ from geotrek.tourism.models import TouristicContent, TouristicEvent
 from operator import attrgetter
 
 from geotrek.core.models import Topology, Path
+if 'geotrek.diving' in settings.INSTALLED_APPS:
+    from geotrek.diving.models import Dive
 
 
 class RestrictedAreaType(models.Model):
@@ -107,6 +109,8 @@ TouristicContent.add_property('areas', lambda self: intersecting(RestrictedArea,
                               _(u"Restricted areas"))
 TouristicEvent.add_property('areas', lambda self: intersecting(RestrictedArea, self, distance=0),
                             _(u"Restricted areas"))
+if 'geotrek.diving' in settings.INSTALLED_APPS:
+    Dive.add_property('areas', lambda self: intersecting(RestrictedArea, self, distance=0), _(u"Restricted areas"))
 
 
 class City(models.Model):
@@ -171,6 +175,8 @@ else:
 
 TouristicContent.add_property('cities', lambda self: intersecting(City, self, distance=0), _(u"Cities"))
 TouristicEvent.add_property('cities', lambda self: intersecting(City, self, distance=0), _(u"Cities"))
+if 'geotrek.diving' in settings.INSTALLED_APPS:
+    Dive.add_property('cities', lambda self: intersecting(City, self, distance=0), _(u"Cities"))
 
 
 class District(models.Model):
@@ -240,3 +246,5 @@ else:
 
 TouristicContent.add_property('districts', lambda self: intersecting(District, self, distance=0), _(u"Districts"))
 TouristicEvent.add_property('districts', lambda self: intersecting(District, self, distance=0), _(u"Districts"))
+if 'geotrek.diving' in settings.INSTALLED_APPS:
+    Dive.add_property('districts', lambda self: intersecting(District, self, distance=0), _(u"Districts"))
