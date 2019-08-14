@@ -288,7 +288,6 @@ INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.zoning',
     'geotrek.land',
     'geotrek.trekking',
-    'geotrek.diving',
     'geotrek.tourism',
     'geotrek.flatpages',
     'geotrek.feedback',

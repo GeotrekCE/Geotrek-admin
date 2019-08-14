@@ -89,6 +89,17 @@ The following settings are related to sensitive areas:
     SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters
 
 
+Diving
+------
+
+In order to enable diving module, in the custom settings file,
+add the following code:
+
+.. code-block :: python
+
+    # Enable diving module
+    INSTALLED_APPS += ('geotrek.diving', )
+
 
 WYSIWYG editor configuration
 ----------------------------
