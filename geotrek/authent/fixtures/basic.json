@@ -180,6 +180,8 @@
                 ["read_poi", "trekking", "poi"],
                 ["read_service", "trekking", "service"],
 
+                ["read_dive", "diving", "dive"],
+
                 ["add_report", "feedback", "report"],
                 ["read_report", "feedback", "report"]
             ]
@@ -280,6 +282,23 @@
                 ["read_trek", "trekking", "trek"],
                 ["read_poi", "trekking", "poi"],
                 ["read_service", "trekking", "service"],
+
+                ["read_dive", "diving", "dive"],
+                ["add_dive", "diving", "dive"],
+                ["publish_dive", "diving", "dive"],
+                ["change_dive", "diving", "dive"],
+                ["change_geom_dive", "diving", "dive"],
+                ["delete_dive", "diving", "dive"],
+                ["export_dive", "diving", "dive"],
+                ["add_practice", "diving", "practice"],
+                ["change_practice", "diving", "practice"],
+                ["delete_practice", "diving", "practice"],
+                ["add_difficulty", "diving", "difficulty"],
+                ["change_difficulty", "diving", "difficulty"],
+                ["delete_difficulty", "diving", "difficulty"],
+                ["add_level", "diving", "level"],
+                ["change_level", "diving", "level"],
+                ["delete_level", "diving", "level"],
 
                 ["add_report", "feedback", "report"],
                 ["read_report", "feedback", "report"],
@@ -388,6 +407,8 @@
                 ["read_poi", "trekking", "poi"],
                 ["read_service", "trekking", "service"],
 
+                ["read_dive", "diving", "dive"],
+
                 ["add_report", "feedback", "report"],
                 ["read_report", "feedback", "report"]
             ]
@@ -414,6 +435,9 @@
                 ["export_touristicevent", "tourism", "touristicevent"],
                 ["read_touristiccontent", "tourism", "touristiccontent"],
                 ["export_touristiccontent", "tourism", "touristiccontent"],
+
+                ["read_dive", "diving", "dive"],
+                ["export_dive", "diving", "dive"],
 
                 ["read_flatpage", "flatpages", "flatpage"],
 
