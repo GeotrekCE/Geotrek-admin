@@ -52,5 +52,25 @@ class DivingManagerFactory(UserFactory):
     @factory.post_generation
     def create_biodiv_manager(obj, create, extracted, **kwargs):
         content_type_dive = ContentType.objects.get_for_model(models.Dive)
-        for perm in Permission.objects.filter(content_type__in=[content_type_dive.pk, ]):
+        content_type_divelevel = ContentType.objects.get_for_model(models.Level)
+        content_type_divedifficutly = ContentType.objects.get_for_model(models.Difficulty)
+        for perm in Permission.objects.filter(content_type__in=[content_type_dive.pk, content_type_divelevel.pk,
+                                                                content_type_divedifficutly.pk]):
             obj.user_permissions.add(perm)
+
+
+class DifficultyFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Difficulty
+
+    name = factory.Sequence(lambda n: u"difficulty %s" % n)
+    pictogram = get_dummy_uploaded_image('difficulty-%s.png')
+
+
+class LevelFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Level
+
+    name = factory.Sequence(lambda n: u"level %s" % n)
+    description = factory.Sequence(lambda n: u"<p>description %s</p>" % n)
+    pictogram = get_dummy_uploaded_image('level-%s.png')
