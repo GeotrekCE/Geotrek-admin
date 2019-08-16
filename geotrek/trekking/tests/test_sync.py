@@ -17,7 +17,6 @@ from django.test.utils import override_settings
 from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory, AttachmentFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_file
 from geotrek.diving.factories import DiveFactory
-from geotrek.diving.models import Dive
 from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.sensitivity.factories import SensitiveAreaFactory
 from geotrek.signage.factories import SignageFactory
@@ -312,10 +311,10 @@ class SyncTest(TestCase):
     def test_sync_filtering_sources_diving(self):
         # source A only
         with mock.patch('geotrek.diving.models.Dive.prepare_map_image'):
-            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', with_dives=True,
+            management.call_command('sync_rando', 'tmp', url='http://localhost:8000', with_dives=True,
                                     source=self.source_a.name, skip_tiles=True, skip_pdf=True, verbosity=2,
                                     stdout=BytesIO())
-            with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
+            with open(os.path.join('tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
                 dives = json.load(f)
                 # only 1 trek in Source A
                 self.assertEquals(len(dives['features']),
@@ -348,10 +347,10 @@ class SyncTest(TestCase):
     def test_sync_filtering_portals_diving(self):
         # portal B only
         with mock.patch('geotrek.diving.models.Dive.prepare_map_image'):
-            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', with_dives=True,
+            management.call_command('sync_rando', 'tmp', url='http://localhost:8000', with_dives=True,
                                     portal=self.portal_b.name, skip_tiles=True, skip_pdf=True, verbosity=2,
                                     stdout=BytesIO())
-            with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
+            with open(os.path.join('tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
                 dives = json.load(f)
 
                 # only 2 dives in Portal B + 1 without portal specified
@@ -359,10 +358,10 @@ class SyncTest(TestCase):
 
         # portal A and B
         with mock.patch('geotrek.diving.models.Dive.prepare_map_image'):
-            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
+            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
                                     portal='{},{}'.format(self.portal_a.name, self.portal_b.name), with_dives=True,
                                     skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
-            with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
+            with open(os.path.join('tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
                 dives = json.load(f)
                 # 4 dives have portal A or B or no portal
                 self.assertEquals(len(dives['features']), 4)
