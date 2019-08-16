@@ -82,5 +82,61 @@
         "description_fr": "Plongeur capable de r\u00e9aliser des plong\u00e9es d'exploration :\r\n- jusqu'\u00e0 20 m de profondeur, au sein d'une palanqu\u00e9e, en autonomie, sans Guide de Palanqu\u00e9e (GP), avec un ou deux \u00e9quipiers majeurs ayant, au minimum, les m\u00eames comp\u00e9tences et en pr\u00e9sence d'un Directeur de Plong\u00e9e (DP) sur le site qui donne les consignes relatives au d\u00e9roulement de laplong\u00e9e.\r\n- jusqu'\u00e0 40 m de profondeur, au sein d'une palanqu\u00e9e, avec un Guide de Palanqu\u00e9e (GP) qui prend en charge la conduite de la plong\u00e9e.",
         "description_it": ""
     }
+},
+{
+    "pk": 1,
+    "model": "auth.group",
+    "fields": {
+        "name": "R\u00e9f\u00e9rents sentiers",
+        "permissions": [
+            ["read_dive", "diving", "dive"]
+        ]
+    }
+},
+{
+    "pk": 2,
+    "model": "auth.group",
+    "fields": {
+        "name": "R\u00e9f\u00e9rents communication",
+        "permissions": [
+            ["read_dive", "diving", "dive"],
+            ["add_dive", "diving", "dive"],
+            ["publish_dive", "diving", "dive"],
+            ["change_dive", "diving", "dive"],
+            ["change_geom_dive", "diving", "dive"],
+            ["delete_dive", "diving", "dive"],
+            ["export_dive", "diving", "dive"],
+            ["add_practice", "diving", "practice"],
+            ["change_practice", "diving", "practice"],
+            ["delete_practice", "diving", "practice"],
+            ["add_difficulty", "diving", "difficulty"],
+            ["change_difficulty", "diving", "difficulty"],
+            ["delete_difficulty", "diving", "difficulty"],
+            ["add_level", "diving", "level"],
+            ["change_level", "diving", "level"],
+            ["delete_level", "diving", "level"]
+        ]
+    }
+},
+{
+    "pk": 3,
+    "model": "auth.group",
+    "fields": {
+        "name": "R\u00e9dacteurs",
+        "permissions": [
+            ["read_dive", "diving", "dive"],
+        ]
+    }
+},
+{
+    "pk": 5,
+    "model": "auth.group",
+    "fields": {
+        "name": "Geotrek-rando",
+        "permissions": [
+            ["read_dive", "diving", "dive"],
+            ["export_dive", "diving", "dive"]
+        ]
+    }
 }
 ]
