@@ -100,7 +100,7 @@ class LevelAdmin(TranslationAdmin):
     def save_model(self, request, obj, form, change):
         """
         Allows to change Level id from Admin form.
-        It will migrate all dives using this difficulty to the new id.
+        It will migrate all dives using these levels to the new id.
         """
         self.oldid = None
 
@@ -112,8 +112,8 @@ class LevelAdmin(TranslationAdmin):
         with transaction.atomic():
             # Migrate Dives
             migrated = []
-            for t in Dive.objects.filter(difficulty=form.oldid):
-                t.difficulty = None
+            for t in Dive.objects.filter(levels__in=[form.oldid]):
+                t.levels.remove(Level.objects.get(id=form.oldid))
                 t.save()
                 migrated.append(t)
             # Apply id change
@@ -123,7 +123,7 @@ class LevelAdmin(TranslationAdmin):
             old.delete()
             # Restore
             for t in migrated:
-                t.difficulty = obj
+                t.levels.add(obj)
                 t.save()
 
     def response_change(self, request, obj):
