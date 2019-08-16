@@ -46,14 +46,14 @@ class DifficultyTest(AuthentFixturesTest):
         self.assertEquals(self.dive.difficulty_id, self.difficulty.pk)
         response = self.client.get(reverse('admin:diving_difficulty_change', args=[self.difficulty.pk]))
         csrf = self.get_csrf_token(response)
-        post_data = {'id': 4,
+        post_data = {'id': 5,
                      'name_en': 'Dur-dur',
                      'csrfmiddlewaretoken': csrf}
         response = self.client.post(reverse('admin:diving_difficulty_change', args=[self.difficulty.pk]), post_data)
         self.assertRedirects(response, reverse('admin:diving_difficulty_changelist'))
         trek = Dive.objects.get(pk=self.dive.pk)
         self.assertNotEquals(trek.difficulty.name, self.difficulty.name)
-        self.assertEquals(trek.difficulty_id, 4)
+        self.assertEquals(trek.difficulty_id, 5)
 
     def test_cant_create_duplicate_id_level(self):
         self.login()
@@ -81,5 +81,5 @@ class DifficultyTest(AuthentFixturesTest):
         response = self.client.post(reverse('admin:diving_level_change', args=[self.level.pk]), post_data)
         self.assertRedirects(response, reverse('admin:diving_level_changelist'))
         dive = Dive.objects.get(pk=self.dive.pk)
-        self.assertNotEquals(dive.levels.first().name, self.level.name)
-        self.assertEquals(dive.levels.first().id, 5)
+        self.assertNotIn(self.level.name, [level.name for level in dive.levels.all()])
+        self.assertIn(5, [level.id for level in dive.levels.all()])
