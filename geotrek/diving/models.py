@@ -5,7 +5,8 @@ from math import trunc
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.template.defaultfilters import slugify
-from django.utils.translation import ugettext as _, pgettext
+from django.urls import reverse
+from django.utils.translation import get_language, ugettext as _, pgettext
 
 from colorfield.fields import ColorField
 from mapentity.models import MapEntityMixin
@@ -158,6 +159,9 @@ class Dive(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
             return '{prefix}{id}'.format(prefix=self.category_id_prefix, id=self.practice.id)
         else:
             return self.category_id_prefix
+
+    def get_map_image_url(self):
+        return reverse('diving:dive_map_image', args=[str(self.pk), get_language()])
 
 
 Topology.add_property('dives', lambda self: intersecting(Dive, self), _(u"Dives"))
