@@ -52,5 +52,5 @@ class DivingManagerFactory(UserFactory):
     @factory.post_generation
     def create_biodiv_manager(obj, create, extracted, **kwargs):
         content_type_dive = ContentType.objects.get_for_model(models.Dive)
-        for perm in Permission.objects.filter(content_type__in=[content_type_dive.pk, ]).exlude(codename='can_bypass_structure'):
+        for perm in Permission.objects.filter(content_type__in=[content_type_dive.pk, ]):
             obj.user_permissions.add(perm)
