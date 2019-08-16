@@ -58,6 +58,16 @@ class Difficulty(OptionalPictogramMixin):
     def __unicode__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        """Manually auto-increment ids"""
+        if not self.id:
+            try:
+                last = self.__class__.objects.all().order_by('-id')[0]
+                self.id = last.id + 1
+            except IndexError:
+                self.id = 1
+        super(Difficulty, self).save(*args, **kwargs)
+
 
 class Level(OptionalPictogramMixin):
     """We use an IntegerField for id, since we want to edit it in Admin.
@@ -77,6 +87,16 @@ class Level(OptionalPictogramMixin):
 
     def __unicode__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        """Manually auto-increment ids"""
+        if not self.id:
+            try:
+                last = self.__class__.objects.all().order_by('-id')[0]
+                self.id = last.id + 1
+            except IndexError:
+                self.id = 1
+        super(Level, self).save(*args, **kwargs)
 
 
 class Dive(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
