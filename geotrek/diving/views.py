@@ -155,8 +155,7 @@ class DiveViewSet(MapEntityViewSet):
         qs = self.model.objects.existing()
         qs = qs.select_related('structure', 'difficulty', 'practice')
         qs = qs.prefetch_related('levels', 'source', 'portal', 'themes', 'attachments')
-        qs = qs.filter(published=True).order_by('pk')
-
+        qs = qs.filter(published=True).order_by('pk').distinct('pk')
         if 'source' in self.request.GET:
             qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
 
