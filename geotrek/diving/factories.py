@@ -2,10 +2,16 @@
 
 import factory
 
+from django.contrib.contenttypes.models import ContentType
+
 from geotrek.authent.factories import StructureRelatedDefaultFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 
 from . import models
+
+from mapentity.factories import UserFactory
+
+from django.contrib.auth.models import Permission
 
 
 class PracticeFactory(factory.DjangoModelFactory):
@@ -38,3 +44,13 @@ class DiveFactory(StructureRelatedDefaultFactory):
             if extracted:
                 for portal in extracted:
                     obj.portal.add(portal)
+
+
+class DivingManagerFactory(UserFactory):
+    is_staff = True
+
+    @factory.post_generation
+    def create_biodiv_manager(obj, create, extracted, **kwargs):
+        content_type_dive = ContentType.objects.get_for_model(models.Dive)
+        for perm in Permission.objects.filter(content_type__in=[content_type_dive.pk, ]).exlude(codename='can_bypass_structure'):
+            obj.user_permissions.add(perm)

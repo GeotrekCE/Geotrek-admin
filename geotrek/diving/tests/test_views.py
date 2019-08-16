@@ -2,19 +2,19 @@ from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
 from geotrek.authent.models import Structure
-from geotrek.authent.factories import TrekkingManagerFactory
 from geotrek.common.tests import CommonTest
 from geotrek.diving.models import Dive
-from geotrek.diving.factories import DiveFactory, PracticeFactory
+from geotrek.diving.factories import DiveFactory, DivingManagerFactory, PracticeFactory
 
 
 class DiveViewsTests(CommonTest):
     model = Dive
     modelfactory = DiveFactory
-    userfactory = TrekkingManagerFactory
+    userfactory = DivingManagerFactory
 
     def setUp(self):
         translation.deactivate()
+
         super(DiveViewsTests, self).setUp()
 
     def get_bad_data(self):

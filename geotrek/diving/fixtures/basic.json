@@ -84,20 +84,10 @@
     }
 },
 {
-    "pk": 1,
+    "pk": 7,
     "model": "auth.group",
     "fields": {
-        "name": "R\u00e9f\u00e9rents sentiers",
-        "permissions": [
-            ["read_dive", "diving", "dive"]
-        ]
-    }
-},
-{
-    "pk": 2,
-    "model": "auth.group",
-    "fields": {
-        "name": "R\u00e9f\u00e9rents communication",
+        "name": "Diving",
         "permissions": [
             ["read_dive", "diving", "dive"],
             ["add_dive", "diving", "dive"],
@@ -115,27 +105,6 @@
             ["add_level", "diving", "level"],
             ["change_level", "diving", "level"],
             ["delete_level", "diving", "level"]
-        ]
-    }
-},
-{
-    "pk": 3,
-    "model": "auth.group",
-    "fields": {
-        "name": "R\u00e9dacteurs",
-        "permissions": [
-            ["read_dive", "diving", "dive"],
-        ]
-    }
-},
-{
-    "pk": 5,
-    "model": "auth.group",
-    "fields": {
-        "name": "Geotrek-rando",
-        "permissions": [
-            ["read_dive", "diving", "dive"],
-            ["export_dive", "diving", "dive"]
         ]
     }
 }
