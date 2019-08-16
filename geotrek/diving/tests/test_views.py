@@ -2,9 +2,11 @@ from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
 from geotrek.authent.models import Structure
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import CommonLiveTest, CommonTest
 from geotrek.diving.models import Dive
 from geotrek.diving.factories import DiveFactory, DivingManagerFactory, PracticeFactory
+
+from mapentity.factories import SuperUserFactory
 
 
 class DiveViewsTests(CommonTest):
@@ -29,3 +31,9 @@ class DiveViewsTests(CommonTest):
             'practice': PracticeFactory.create().pk,
             'geom': '{"type": "Point", "coordinates":[0, 0]}',
         }
+
+
+class DiveViewsLiveTests(CommonLiveTest):
+    model = Dive
+    modelfactory = DiveFactory
+    userfactory = SuperUserFactory
