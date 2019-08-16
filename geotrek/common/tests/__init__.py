@@ -1,4 +1,7 @@
 # -*- encoding: utf-8 -*-
+import mock
+import os
+
 from django.contrib.auth.models import Permission
 from django.utils import translation
 from django.utils.translation import ugettext as _
@@ -7,7 +10,8 @@ from django.conf import settings
 # Workaround https://code.djangoproject.com/ticket/22865
 from geotrek.common.models import FileType  # NOQA
 
-from mapentity.tests import MapEntityTest
+from mapentity.factories import SuperUserFactory
+from mapentity.tests import MapEntityTest, MapEntityLiveTest
 
 from geotrek.authent.factories import StructureFactory
 from geotrek.authent.tests import AuthentFixturesTest
@@ -81,3 +85,45 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         obj = self.model.objects.last()
         self.assertEqual(obj.structure, self.user.profile.structure)
         self.logout()
+
+    def test_detail_other_language(self):
+        if self.model is None:
+            return  # Abstract test should not run
+
+        self.login()
+
+        obj = self.modelfactory()
+
+        response = self.client.get('%s?lang=fr' % obj.get_detail_url())
+        self.assertEqual(response.status_code, 200)
+
+
+class CommonLiveTest(MapEntityLiveTest):
+    @mock.patch('mapentity.helpers.requests')
+    def test_map_image_other_language(self, mock_requests):
+        if self.model is None:
+            return  # Abstract test should not run
+
+        SuperUserFactory.create(username='Superuser', password='booh')
+        self.client.login(username='Superuser', password='booh')
+
+        obj = self.modelfactory.create(geom='POINT(0 0)')
+
+        # Initially, map image does not exists
+        image_path = obj.get_map_image_path()
+        if os.path.exists(image_path):
+            os.remove(image_path)
+        self.assertFalse(os.path.exists(image_path))
+
+        # Mock Screenshot response
+        mock_requests.get.return_value.status_code = 200
+        mock_requests.get.return_value.content = '*' * 100
+
+        response = self.client.get(obj.map_image_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(os.path.exists(image_path))
+
+        mapimage_url = '%s%s?context&lang=fr' % (self.live_server_url, obj.get_detail_url())
+        screenshot_url = 'http://0.0.0.0:8001/?url=%s' % mapimage_url
+        url_called = mock_requests.get.call_args_list[0]
+        self.assertTrue(url_called.startswith(screenshot_url))
