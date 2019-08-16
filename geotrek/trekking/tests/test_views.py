@@ -25,12 +25,11 @@ from django.utils import translation
 from django.utils.timezone import utc, make_aware
 from unittest import util as testutil
 
-from mapentity.tests import MapEntityLiveTest
 from mapentity.factories import SuperUserFactory
 
 from geotrek.common.factories import (AttachmentFactory, ThemeFactory,
                                       RecordSourceFactory, TargetPortalFactory)
-from geotrek.common.tests import CommonTest, TranslationResetMixin
+from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.authent.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
@@ -235,8 +234,20 @@ class TrekViewsTest(CommonTest):
         self.client.post(self.model.get_update_url(trek), good_data)
         self.assertIn(poi, trek.pois_excluded.all())
 
+        def test_detail_lother_language(self):
+            self.login()
 
-class TrekViewsLiveTest(MapEntityLiveTest):
+            bad_data, form_error = self.get_bad_data()
+            bad_data['parking_location'] = 'POINT (1.0 1.0)'  # good data
+
+            url = self.model.get_add_url()
+            response = self.client.post(url, bad_data)
+            self.assertEqual(response.status_code, 200)
+            form = self.get_form(response)
+            self.assertEqual(form.data['parking_location'], bad_data['parking_location'])
+
+
+class TrekViewsLiveTests(CommonLiveTest):
     model = Trek
     modelfactory = TrekFactory
     userfactory = SuperUserFactory
