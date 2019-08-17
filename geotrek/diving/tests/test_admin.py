@@ -55,6 +55,21 @@ class DifficultyTest(AuthentFixturesTest):
         self.assertNotEquals(trek.difficulty.name, self.difficulty.name)
         self.assertEquals(trek.difficulty_id, 5)
 
+    def test_migrate_dive_difficulty_not_changing_order(self):
+        self.login()
+        self.assertEquals(self.dive.difficulty, self.difficulty)
+        self.assertEquals(self.dive.difficulty_id, self.difficulty.pk)
+        response = self.client.get(reverse('admin:diving_difficulty_change', args=[self.difficulty.pk]))
+        csrf = self.get_csrf_token(response)
+        post_data = {'id': self.difficulty.pk,
+                     'name_en': 'Dur-dur',
+                     'csrfmiddlewaretoken': csrf}
+        response = self.client.post(reverse('admin:diving_difficulty_change', args=[self.difficulty.pk]), post_data)
+        self.assertRedirects(response, reverse('admin:diving_difficulty_changelist'))
+        trek = Dive.objects.get(pk=self.dive.pk)
+        self.assertNotEquals(trek.difficulty.name, self.difficulty.name)
+        self.assertEquals(trek.difficulty_id, self.difficulty.pk)
+
     def test_cant_create_duplicate_id_level(self):
         self.login()
         response = self.client.get(reverse('admin:diving_level_add'))
@@ -83,3 +98,20 @@ class DifficultyTest(AuthentFixturesTest):
         dive = Dive.objects.get(pk=self.dive.pk)
         self.assertNotIn(self.level.name, [level.name for level in dive.levels.all()])
         self.assertIn(5, [level.id for level in dive.levels.all()])
+
+    def test_migrate_dive_level_not_changing_order(self):
+        self.login()
+        level_2 = LevelFactory.create()
+        self.dive.levels.add(level_2)
+        self.assertEquals(self.dive.levels.first(), self.level)
+        self.assertEquals(self.dive.levels.first().id, self.level.pk)
+        response = self.client.get(reverse('admin:diving_level_change', args=[self.level.pk]))
+        csrf = self.get_csrf_token(response)
+        post_data = {'id': self.level.pk,
+                     'name_en': 'Dur-dur',
+                     'csrfmiddlewaretoken': csrf}
+        response = self.client.post(reverse('admin:diving_level_change', args=[self.level.pk]), post_data)
+        self.assertRedirects(response, reverse('admin:diving_level_changelist'))
+        dive = Dive.objects.get(pk=self.dive.pk)
+        self.assertNotIn(self.level.name, [level.name for level in dive.levels.all()])
+        self.assertIn(self.level.pk, [level.id for level in dive.levels.all()])
