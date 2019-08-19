@@ -308,10 +308,10 @@ class SyncTest(TestCase):
 
     def test_sync_filtering_sources_diving(self):
         # source A only
-        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', with_dives=True,
+        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', with_dives=True,
                                 source=self.source_a.name, skip_tiles=True, skip_pdf=True, verbosity=2,
                                 stdout=BytesIO())
-        with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
+        with open(os.path.join('tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
             dives = json.load(f)
             # only 1 trek in Source A
             self.assertEquals(len(dives['features']),
@@ -341,20 +341,20 @@ class SyncTest(TestCase):
 
     def test_sync_filtering_portals_diving(self):
         # portal B only
-        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', with_dives=True,
+        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', with_dives=True,
                                 portal=self.portal_b.name, skip_tiles=True, skip_pdf=True, verbosity=2,
                                 stdout=BytesIO())
-        with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
+        with open(os.path.join('tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
             dives = json.load(f)
 
             # only 2 dives in Portal B + 1 without portal specified
             self.assertEquals(len(dives['features']), 3)
 
         # portal A and B
-        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
+        management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
                                 portal='{},{}'.format(self.portal_a.name, self.portal_b.name), with_dives=True,
                                 skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
-        with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
+        with open(os.path.join('tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
             dives = json.load(f)
             # 4 dives have portal A or B or no portal
             self.assertEquals(len(dives['features']), 4)
@@ -365,16 +365,16 @@ class SyncTest(TestCase):
     @mock.patch('geotrek.tourism.models.TouristicEvent.prepare_map_image')
     def test_sync_pdfs(self, event, content, dive, trek):
         output = BytesIO()
-        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
+        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', verbosity=2,
                                 with_dives=True, skip_tiles=True, stdout=output)
-        self.assertTrue(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_1.pk), '%s.pdf' % self.dive_1.slug))
-        self.assertTrue(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_2.pk), '%s.pdf' % self.dive_2.slug))
-        self.assertTrue(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_3.pk), '%s.pdf' % self.dive_3.slug))
-        self.assertTrue(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_4.pk), '%s.pdf' % self.dive_4.slug))
-        self.assertTrue(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_1.slug))
-        self.assertTrue(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_2.slug))
-        self.assertTrue(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_3.slug))
-        self.assertTrue(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug))
+        self.assertTrue(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_1.pk), '%s.pdf' % self.dive_1.slug))
+        self.assertTrue(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_2.pk), '%s.pdf' % self.dive_2.slug))
+        self.assertTrue(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_3.pk), '%s.pdf' % self.dive_3.slug))
+        self.assertTrue(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_4.pk), '%s.pdf' % self.dive_4.slug))
+        self.assertTrue(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_1.slug))
+        self.assertTrue(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_2.slug))
+        self.assertTrue(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_3.slug))
+        self.assertTrue(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug))
 
     def tearDown(self):
         shutil.rmtree('tmp')
