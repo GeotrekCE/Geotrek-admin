@@ -84,7 +84,7 @@
             {% if object.depth %}
               <span class="meta-item">
                 <span class="meta-item-label">{% trans "Maximum depth" %}</span>
-                <span class="meta-item-value">{{ object.ascent }} m</span>
+                <span class="meta-item-value">{{ object.depth }} m</span>
               </span>
             {% endif %}
             {% if object.difficulty %}
@@ -99,6 +99,12 @@
                 <span class="meta-item-value">{{ object.level }}</span>
               </span>
             {% endif %}
+            {% if object.facilities %}
+              <span class="meta-item">
+                <span class="meta-item-label">{% trans "Facilities" %}</span>
+                <span class="meta-item-value">{{ object.facilities }}</span>
+              </span>
+            {% endif %}
             <div class="lists">
               {% if object.themes.all %}
                 <span class="meta-item">
@@ -106,28 +112,20 @@
                   {% for theme in object.themes.all %}<span class="meta-item-value">{{ theme.label }}</span>{% endfor %}
                 </span>
               {% endif %}
-              {% if object.accessibilities.all %}
-                <span class="meta-item">
-                  <span class="meta-item-label">{% trans "Accessibility" %}</span>
-                  {% for accessibility in object.accessibilities.all %}<span class="meta-item-value">{{ accessibility.name }}</span>{% endfor %}
-                </span>
-              {% endif %}
             </div>
           </section>
         </div>
       </div>
       {% block description %}
-        {% if object.departure or object.arrival %}
+        {% if object.departure or object.description %}
           <div class="inner-title">
             <h2>{% trans "Dive" %}</h2>
           </div>
-          {% if object.departure %}
-            <div class="gray text-content departure-arrival">
-              <ul>
-                <li>{% trans "Departure area" %} : {{ object.departure }}</li>
-              </ul>
-            </div>
-          {% endif %}
+          <div class="gray text-content departure-arrival">
+            <ul>
+              <li>{% trans "Departure area" %} : {{ object.departure }}</li>
+            </ul>
+          </div>
           <section class="description">
             <div class="text-content">{{ object.description|safe }}</div>
           </section>
@@ -140,7 +138,7 @@
         <div class="advice">
           <div class="advice-title">
             <div class="advice-icon">
-              <img src="file://{{ STATIC_ROOT }}/trekking/advice.svg">
+              <img src="file://{{ STATIC_ROOT }}/diving/advice.svg">
             </div>
             {% trans "Advices" %}
           </div>
@@ -168,14 +166,14 @@
         </section>
         <div style="clear: both"></div>
       {% endif %}
-      {% block access %}
-        {% if object.access %}
+      {% block disabled_sport %}
+        {% if object.disabled_sport %}
           <section class="half-block access">
-            <h2>{% trans "Access" %}</h2>
-            <div class="text-content">{{ object.access|safe }}</div>
+            <h2>{% trans "Disabled sport accessibility" %}</h2>
+            <div class="text-content">{{ object.disabled_sport|safe }}</div>
           </section>
         {% endif %}
-      {% endblock access %}
+      {% endblock disabled_sport %}
       {% block source %}
         {% if object.source.all %}
           <section class="half-block source">
