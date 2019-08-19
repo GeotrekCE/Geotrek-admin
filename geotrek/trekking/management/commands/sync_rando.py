@@ -583,7 +583,7 @@ class Command(BaseCommand):
                 params['source'] = self.source[0]
 
             view = tourism_views.TouristicContentDocumentPublic.as_view(model=type(content))
-            self.sync_object_view(lang, content, view, '{obj.slug}.pdf', params=params)
+            self.sync_object_view(lang, content, view, '{obj.slug}.pdf', params=params, slug=content.slug)
 
         for picture, resized in content.resized_pictures:
             self.sync_media_file(lang, resized)
@@ -598,7 +598,7 @@ class Command(BaseCommand):
             if self.portal:
                 params['portal'] = self.portal[0]
             view = tourism_views.TouristicEventDocumentPublic.as_view(model=type(event))
-            self.sync_object_view(lang, event, view, '{obj.slug}.pdf', params=params)
+            self.sync_object_view(lang, event, view, '{obj.slug}.pdf', params=params, slug=event.slug)
 
         for picture, resized in event.resized_pictures:
             self.sync_media_file(lang, resized)
@@ -613,7 +613,7 @@ class Command(BaseCommand):
             if self.portal:
                 params['portal'] = self.portal[0]
             view = diving_views.DiveDocumentPublic.as_view(model=type(dive))
-            self.sync_object_view(lang, dive, view, '{obj.slug}.pdf', params=params)
+            self.sync_object_view(lang, dive, view, '{obj.slug}.pdf', params=params, slug=dive.slug)
 
         for picture, resized in dive.resized_pictures:
             self.sync_media_file(lang, resized)

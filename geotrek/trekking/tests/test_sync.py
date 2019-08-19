@@ -138,10 +138,11 @@ class SyncRandoFailTest(TestCase):
         self.assertEqual(e.exception.message, 'Some errors raised during synchronization.')
         self.assertFalse(os.path.exists(os.path.join('tmp', 'mobile', 'nolang', 'media', 'trekking_trek')))
 
+    @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
     @mock.patch('geotrek.trekking.views.TrekViewSet.list')
-    def test_response_500(self, mocke):
+    def test_response_500(self, mocke_list, mocke_map_image):
         output = BytesIO()
-        mocke.return_value = HttpResponse(status=500)
+        mocke_list.return_value = HttpResponse(status=500)
         TrekWithPublishedPOIsFactory.create(published_fr=True)
         with self.assertRaises(CommandError) as e:
             management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
@@ -249,16 +250,15 @@ class SyncTest(TestCase):
                 self.assertEquals(len(treks['features']),
                                   trek_models.Trek.objects.filter(published=True).count())
 
-    def test_sync(self):
-        with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
-            management.call_command('sync_rando', 'tmp', with_signages=True, with_infrastructures=True, with_dives=True,
-                                    with_events=True, content_categories="1", url='http://localhost:8000',
-                                    skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
-            with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
-                treks = json.load(f)
-                # there are 4 treks
-                self.assertEquals(len(treks['features']),
-                                  trek_models.Trek.objects.filter(published=True).count())
+    def test_sync_without_pdf(self):
+        management.call_command('sync_rando', 'tmp', with_signages=True, with_infrastructures=True, with_dives=True,
+                                with_events=True, content_categories="1", url='http://localhost:8000',
+                                skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
+        with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+            treks = json.load(f)
+            # there are 4 treks
+            self.assertEquals(len(treks['features']),
+                              trek_models.Trek.objects.filter(published=True).count())
 
     def test_sync_https(self):
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
@@ -290,81 +290,91 @@ class SyncTest(TestCase):
         output = BytesIO()
         mocke.return_value = StreamingHttpResponse()
         trek = TrekWithPublishedPOIsFactory.create(published_fr=True)
-        with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
-            management.call_command('sync_rando', 'tmp', url='http://localhost:8000', skip_pdf=True,
-                                    skip_tiles=True, verbosity=2, stdout=output)
+        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', skip_pdf=True,
+                                skip_tiles=True, verbosity=2, stdout=output)
         self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'fr', 'treks', str(trek.pk), 'profile.png')))
 
     def test_sync_filtering_sources(self):
         # source A only
-        with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
-            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
-                                    source=self.source_a.name, skip_tiles=True, skip_pdf=True, verbosity=2,
-                                    stdout=BytesIO())
-            with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
-                treks = json.load(f)
-                # only 1 trek in Source A
-                self.assertEquals(len(treks['features']),
-                                  trek_models.Trek.objects.filter(published=True,
-                                                                  source__name__in=[self.source_a.name, ]).count())
+        management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+                                source=self.source_a.name, skip_tiles=True, skip_pdf=True, verbosity=2,
+                                stdout=BytesIO())
+        with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+            treks = json.load(f)
+            # only 1 trek in Source A
+            self.assertEquals(len(treks['features']),
+                              trek_models.Trek.objects.filter(published=True,
+                                                              source__name__in=[self.source_a.name, ]).count())
 
     def test_sync_filtering_sources_diving(self):
         # source A only
-        with mock.patch('geotrek.diving.models.Dive.prepare_map_image'):
-            management.call_command('sync_rando', 'tmp', url='http://localhost:8000', with_dives=True,
-                                    source=self.source_a.name, skip_tiles=True, skip_pdf=True, verbosity=2,
-                                    stdout=BytesIO())
-            with open(os.path.join('tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
-                dives = json.load(f)
-                # only 1 trek in Source A
-                self.assertEquals(len(dives['features']),
-                                  trek_models.Trek.objects.filter(published=True,
-                                                                  source__name__in=[self.source_a.name, ]).count())
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', with_dives=True,
+                                source=self.source_a.name, skip_tiles=True, skip_pdf=True, verbosity=2,
+                                stdout=BytesIO())
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
+            dives = json.load(f)
+            # only 1 trek in Source A
+            self.assertEquals(len(dives['features']),
+                              trek_models.Trek.objects.filter(published=True,
+                                                              source__name__in=[self.source_a.name, ]).count())
 
     def test_sync_filtering_portals(self):
         # portal B only
-        with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
-            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
-                                    portal=self.portal_b.name, skip_tiles=True, skip_pdf=True, verbosity=2,
-                                    stdout=BytesIO())
-            with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
-                treks = json.load(f)
+        management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+                                portal=self.portal_b.name, skip_tiles=True, skip_pdf=True, verbosity=2,
+                                stdout=BytesIO())
+        with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+            treks = json.load(f)
 
-                # only 2 treks in Portal B + 1 without portal specified
-                self.assertEquals(len(treks['features']), 3)
+            # only 2 treks in Portal B + 1 without portal specified
+            self.assertEquals(len(treks['features']), 3)
 
         # portal A and B
-        with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
-            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
-                                    portal='{},{}'.format(self.portal_a.name, self.portal_b.name),
-                                    skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
-            with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
-                treks = json.load(f)
+        management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+                                portal='{},{}'.format(self.portal_a.name, self.portal_b.name),
+                                skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
+        with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+            treks = json.load(f)
 
-                # 4 treks have portal A or B or no portal
-                self.assertEquals(len(treks['features']), 4)
+            # 4 treks have portal A or B or no portal
+            self.assertEquals(len(treks['features']), 4)
 
     def test_sync_filtering_portals_diving(self):
         # portal B only
-        with mock.patch('geotrek.diving.models.Dive.prepare_map_image'):
-            management.call_command('sync_rando', 'tmp', url='http://localhost:8000', with_dives=True,
-                                    portal=self.portal_b.name, skip_tiles=True, skip_pdf=True, verbosity=2,
-                                    stdout=BytesIO())
-            with open(os.path.join('tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
-                dives = json.load(f)
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', with_dives=True,
+                                portal=self.portal_b.name, skip_tiles=True, skip_pdf=True, verbosity=2,
+                                stdout=BytesIO())
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
+            dives = json.load(f)
 
-                # only 2 dives in Portal B + 1 without portal specified
-                self.assertEquals(len(dives['features']), 3)
+            # only 2 dives in Portal B + 1 without portal specified
+            self.assertEquals(len(dives['features']), 3)
 
         # portal A and B
-        with mock.patch('geotrek.diving.models.Dive.prepare_map_image'):
-            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
-                                    portal='{},{}'.format(self.portal_a.name, self.portal_b.name), with_dives=True,
-                                    skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
-            with open(os.path.join('tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
-                dives = json.load(f)
-                # 4 dives have portal A or B or no portal
-                self.assertEquals(len(dives['features']), 4)
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
+                                portal='{},{}'.format(self.portal_a.name, self.portal_b.name), with_dives=True,
+                                skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
+            dives = json.load(f)
+            # 4 dives have portal A or B or no portal
+            self.assertEquals(len(dives['features']), 4)
+
+    @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
+    @mock.patch('geotrek.diving.models.Dive.prepare_map_image')
+    @mock.patch('geotrek.tourism.models.TouristicContent.prepare_map_image')
+    @mock.patch('geotrek.tourism.models.TouristicEvent.prepare_map_image')
+    def test_sync_pdfs(self, event, content, dive, trek):
+        output = BytesIO()
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
+                                with_dives=True, skip_tiles=True, stdout=output)
+        self.assertTrue(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_1.pk), '%s.pdf' % self.dive_1.slug))
+        self.assertTrue(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_2.pk), '%s.pdf' % self.dive_2.slug))
+        self.assertTrue(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_3.pk), '%s.pdf' % self.dive_3.slug))
+        self.assertTrue(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_4.pk), '%s.pdf' % self.dive_4.slug))
+        self.assertTrue(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_1.slug))
+        self.assertTrue(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_2.slug))
+        self.assertTrue(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_3.slug))
+        self.assertTrue(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug))
 
     def tearDown(self):
         shutil.rmtree('tmp')

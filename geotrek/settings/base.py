@@ -515,6 +515,7 @@ LAND_BBOX_AREAS_ENABLED = False
 PUBLISHED_BY_LANG = True
 
 EXPORT_MAP_IMAGE_SIZE = {
+    'dive': (18.2, 18.2),
     'trek': (18.2, 18.2),
     'poi': (18.2, 18.2),
     'touristiccontent': (18.2, 18.2),
