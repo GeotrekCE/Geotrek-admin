@@ -11,21 +11,27 @@ from geotrek.diving import models as diving_models
 
 
 class DifficultySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+    label = rest_serializers.ReadOnlyField(source='name')
+
     class Meta:
         model = diving_models.Difficulty
-        fields = ('id', 'pictogram', 'name')
+        fields = ('id', 'pictogram', 'label')
 
 
 class LevelSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+    label = rest_serializers.ReadOnlyField(source='name')
+
     class Meta:
         model = diving_models.Level
-        fields = ('id', 'pictogram', 'name', 'description')
+        fields = ('id', 'pictogram', 'label', 'description')
 
 
 class PracticeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+    label = rest_serializers.ReadOnlyField(source='name')
+
     class Meta:
         model = diving_models.Practice
-        fields = ('id', 'pictogram', 'name')
+        fields = ('id', 'pictogram', 'label')
 
 
 class DiveSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
