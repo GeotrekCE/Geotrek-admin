@@ -134,7 +134,7 @@ class SyncRandoFailTest(TestCase):
         os.remove(attachment.attachment_file.path)
         with self.assertRaises(CommandError) as e:
             management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
-                                    skip_tiles=True, languages='fr', verbosity=2, stdout=BytesIO())
+                                    skip_tiles=True, languages='fr', verbosity=2, stdout=BytesIO(), stderr=BytesIO())
         self.assertEqual(e.exception.message, 'Some errors raised during synchronization.')
         self.assertFalse(os.path.exists(os.path.join('tmp', 'mobile', 'nolang', 'media', 'trekking_trek')))
 
@@ -146,7 +146,7 @@ class SyncRandoFailTest(TestCase):
         TrekWithPublishedPOIsFactory.create(published_fr=True)
         with self.assertRaises(CommandError) as e:
             management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
-                                    skip_tiles=True, verbosity=2, stdout=output)
+                                    skip_tiles=True, verbosity=2, stdout=output, stderr=BytesIO())
         self.assertEqual(e.exception.message, 'Some errors raised during synchronization.')
         self.assertIn("failed (HTTP 500)", output.getvalue())
 
@@ -156,7 +156,7 @@ class SyncRandoFailTest(TestCase):
         TrekWithPublishedPOIsFactory.create(published_fr=True)
         with self.assertRaises(AttributeError) as e:
             management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
-                                    skip_tiles=True, languages='fr', verbosity=2, stdout=output)
+                                    skip_tiles=True, languages='fr', verbosity=2, stdout=output, stderr=BytesIO())
         self.assertEqual(e.exception.message, "'int' object has no attribute 'strip'")
         self.assertIn("Exception raised in callable attribute", output.getvalue())
 
@@ -367,14 +367,33 @@ class SyncTest(TestCase):
         output = BytesIO()
         management.call_command('sync_rando', 'tmp', url='http://localhost:8000', verbosity=2,
                                 with_dives=True, skip_tiles=True, stdout=output)
-        self.assertTrue(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_1.pk), '%s.pdf' % self.dive_1.slug))
-        self.assertTrue(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_2.pk), '%s.pdf' % self.dive_2.slug))
-        self.assertTrue(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_3.pk), '%s.pdf' % self.dive_3.slug))
-        self.assertTrue(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_4.pk), '%s.pdf' % self.dive_4.slug))
-        self.assertTrue(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_1.slug))
-        self.assertTrue(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_2.slug))
-        self.assertTrue(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_3.slug))
-        self.assertTrue(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_1.pk), '%s.pdf' % self.dive_1.slug)))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_2.pk), '%s.pdf' % self.dive_2.slug)))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_3.pk), '%s.pdf' % self.dive_3.slug)))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_4.pk), '%s.pdf' % self.dive_4.slug)))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_1.slug)))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_2.pk), '%s.pdf' % self.trek_2.slug)))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_3.pk), '%s.pdf' % self.trek_3.slug)))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug)))
+
+    @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
+    @mock.patch('geotrek.diving.models.Dive.prepare_map_image')
+    @mock.patch('geotrek.tourism.models.TouristicContent.prepare_map_image')
+    @mock.patch('geotrek.tourism.models.TouristicEvent.prepare_map_image')
+    def test_sync_pdfs_portals_sources(self, event, content, dive, trek):
+        output = BytesIO()
+        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', verbosity=2,
+                                with_dives=True, skip_tiles=True, portal=self.portal_b.name, source=self.source_a.name,
+                                stdout=output)
+        # It has to be portal b or 'No portal' and source a : only dive_1 and trek_1 has both of these statements
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_1.pk), '%s.pdf' % self.dive_1.slug)))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_2.pk), '%s.pdf' % self.dive_2.slug)))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_3.pk), '%s.pdf' % self.dive_3.slug)))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_4.pk), '%s.pdf' % self.dive_4.slug)))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_1.slug)))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_2.pk), '%s.pdf' % self.trek_2.slug)))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_3.pk), '%s.pdf' % self.trek_3.slug)))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug)))
 
     def tearDown(self):
         shutil.rmtree('tmp')
