@@ -10,8 +10,7 @@ from mapentity.registry import registry
 
 class AuthentFixturesMixin(object):
     fixtures = [os.path.join(settings.PROJECT_ROOT_PATH, 'authent', 'fixtures', 'minimal.json'),
-                os.path.join(settings.PROJECT_ROOT_PATH, 'authent', 'fixtures', 'basic.json'),
-                os.path.join(settings.PROJECT_ROOT_PATH, 'diving', 'fixtures', 'basic.json')]
+                os.path.join(settings.PROJECT_ROOT_PATH, 'authent', 'fixtures', 'basic.json')]
 
     def _pre_setup(self):
         if not isinstance(self, TestCase):
