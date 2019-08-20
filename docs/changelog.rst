@@ -2,12 +2,22 @@
 CHANGELOG
 =========
 
-2.28.1.dev0
+2.29.0 (2019-08-20)
 -------------------
 
 **New features**
 
-- Fix map screenshots with SSL enabled
+- Diving module (optional, see manual to enable)
+
+**Minor Changes**
+
+- Improve mobile sync
+- Do not automatically zoom over level 16
+
+**Bug fixes**
+
+- Fix black map screenshots (after a manual cache deletion)
+- Fix related POI order with dynamic segmentation disabled
 
 
 2.28.0 (2019-08-09)
