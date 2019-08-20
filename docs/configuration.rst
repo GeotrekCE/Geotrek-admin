@@ -10,7 +10,7 @@ After editing ``etc/settings.ini``, refresh the running instance with :
 
 ::
 
-    make env_standalone deploy
+    make env_standalone deploy   (docker)
 
 
 There a few cases where running ``install.sh`` would be necessary. If you

@@ -43,9 +43,11 @@ Business specific notions are implemented in Geotrek respective applications:
 * **core**: elevation, paths, snapping, spatial referencing (topologies)
 * **land**: static cities/districts/restricted areas layers, physical types, competence,
   signage and work management
-* **infrastructure**: buildings, signages, equipements
+* **infrastructure**: buildings, equipements
 * **maintenance**: interventions (on paths or on infrastructures) and projects
 * **trekking**: POIs and treks
+* **signage**: signages, blades, sealing
+* **diving** Dives
 
 
 Django conventions twists

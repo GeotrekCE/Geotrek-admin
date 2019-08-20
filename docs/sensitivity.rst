@@ -40,8 +40,8 @@ On command line, run
 
 .. code-block :: bash
 
-    ./bin/django import geotrek.sensitivity.parsers.BiodivParser
-
+    ./bin/django import geotrek.sensitivity.parsers.BiodivParser                                        (no-docker)
+    docker-compose run --rm web ./manage.py import geotrek.sensitivity.parsers.BiodivParser             (docker)
 
 Import from shapefile
 ---------------------
@@ -53,8 +53,8 @@ On command line, run:
 
 .. code-block :: bash
 
-    ./bin/django import geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser <file.shp>
-
+    ./bin/django import geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser <file.shp>          (no-docker)
+    docker-compose run --rm web ./manage.py import geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser <file.shp>             (docker)
 or:
 
 .. code-block :: bash

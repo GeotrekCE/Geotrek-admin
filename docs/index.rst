@@ -7,6 +7,7 @@ Contents:
    :maxdepth: 2
 
    installation
+   installation-docker
    loading-data
    configuration
    advanced-configuration
@@ -21,6 +22,7 @@ Contents:
    development
    authors
    changelog
+   upgrade-docker
 
 
 Indices and tables

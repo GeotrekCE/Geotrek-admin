@@ -7,6 +7,7 @@ LOADING DATA
 Required Initial Data
 ---------------------
 
+
 Load basic data :
 
 ::
@@ -36,7 +37,7 @@ Prerequisites for your data
 Layers
 ~~~~~~
 
-* WMS (scan + ortho)
+* WMTS (scan + ortho)
 * Projection
 * Bounding box in native projection
 
@@ -82,7 +83,8 @@ And use the Geotrek command to load it into PostGIS :
 
 ::
 
-    bin/django loaddem <PATH>/dem.tif
+    bin/django loaddem <PATH>/dem.tif                                   (no-docker)
+    docker-compose run --rm web ./manage.py loaddem <PATH>/dem.tif      (docker)
 
 
 :note:

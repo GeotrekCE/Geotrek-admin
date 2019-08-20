@@ -6,28 +6,27 @@ These instructions will update *Geotrek* on a dedicated server with docker for p
 without docker.
 
 First you should update at least to version 2.22.0 without docker.
-Please folow this documentation :
-
-WARNING:
-
-Intermediate versions are required to upgrade your instance,
-
-If your version is < 2.13.1, you need to install this version.
-
-If your version is < 2.16.2, you need to install this version
+Please folow this documentation if necessary : ``docs/upgrade.rst``
 
 
 Server migration docker
 -----------------------
 
-Follow the installation : ``docs/installation-docker.rst``
+First, follow the installation : ``docs/installation-docker.rst``
+
 Do not forget to create the server in another folder and stop postgresql :
 ::
+
     sudo service stop postgresql
 
 
 Move your different settings/datas in the new folder
 ::
+    # If you have custom favicon, logo of login and header.
+    cp ../previous-version/var/media/upload/favicon.png ./var/conf/extra_static/
+    cp ../previous-version/var/media/upload/logo-login.png ./var/conf/extra_static/
+    cp ../previous-version/var/media/upload/logo-header.png ./var/conf/extra_static/
+
     # Uploaded files
     cp -aR ../previous-version/var ./var
 
@@ -43,8 +42,15 @@ Move your different settings/datas in the new folder
     # If you have custom templates (example)
     cp ../previous-version/geotrek/trekking/templates/trekking/trek_public_pdf.html ./var/conf/extra_templates/
 
-You need to move the informations from settings.ini in var/conf/custom.py by hand.
 
-Then you can run your geotrek : ````
+You need to move the additional informations from settings.ini in var/conf/custom.py by hand.
 
-Then you can upgrade your docker to new versions : ``docs/upgrade-docker.rst``
+    less etc/settings.ini
+    editor var/conf/custom.py
+
+Then you can run your geotrek :
+::
+
+    sudo supervisorctl restart all
+
+If you are Then you can upgrade your docker to new versions : ``docs/upgrade-docker.rst``

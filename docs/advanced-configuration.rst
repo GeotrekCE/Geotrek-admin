@@ -4,8 +4,8 @@
 ADVANCED CONFIGURATION
 ======================
 
-Custom setting file
--------------------
+Custom setting file (no-docker)
+-------------------------------
 
 Geotrek basic configuration is currently restricted to values present in ``etc/settings.ini``.
 
@@ -30,6 +30,13 @@ However, it is possible to write a custom Django setting file to override all de
     settings = settings.custom
 
 * As for any change in ``etc/settings.ini``, re-run ``make env_standalone deploy``. To apply changes in ``geotrek/settings/custom.py``, you can just restart the application with ``sudo supervisorctl restart all``.
+
+Custom setting file (docker)
+----------------------------
+
+* Modify your file *var/conf/custom.py* with the following content :
+
+* Re-run ``docker-compose run --rm web update.sh``. To apply changes in ``var/conf/custom.py``, you can just restart the application with ``sudo systemctl restart geotrek``.
 
 
 Disable modules and components
@@ -277,7 +284,9 @@ applied. In order to disable, change this MapEntity setting :
 
   
 Override translations
-----------------------------
+---------------------------------
+
+**Without Docker**
 
 You can override default translation files available in each module (for example those from trekking module available in ``<geotrek-admin-folder>/geotrek/trekking/locale/fr/LC_MESSAGES/django.po``).
 
@@ -291,6 +300,17 @@ Create the custom translations destination folder:
      mkdir -p locale/en/LC_MESSAGES
 
 Then create a ``django.po`` file in this directory. You can do one folder and one ``django.po`` file for each language (example  ``<geotrek-admin-folder>/geotrek/locale/fr/LC_MESSAGES/django.po`` for French translation overriding)
+
+**With Docker**
+
+Override translations by creating a destination folder:
+
+::
+
+    mkdir -p var/conf/extra_locale/en/LC_MESSAGES
+    editor var/conf/extra_locale/en/LC_MESSAGES/django.po
+
+**With and without Docker**
 
 Override the translations that you want in these files.
 
@@ -324,6 +344,9 @@ Example of content for the French translation overriding:
     msgid "District"
     msgstr "Pays"
 
+
+**Without Docker**
+
 Apply changes : 
 
 ::
@@ -331,9 +354,20 @@ Apply changes :
     cd <geotrek-admin-folder>
     make env_standalone deploy
 
+**With Docker**
+
+Apply changes :
+
+::
+
+    cd <geotrek-admin-folder>
+    docker-compose run --rm web update.sh
+
 
 Override public pdf templates
 -----------------------------
+
+
 
 PDF are generated from html printed, using [Django templating](https://docs.djangoproject.com/en/1.11/ref/templates/).
 Trekkings, touristic contents and events can be exported in pdf files.
@@ -342,9 +376,21 @@ Trekkings, touristic contents and events can be exported in pdf files.
 - touristic contents : ``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``
 - touristic events : ``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``
 
+**Without Docker**
+
 Overriden templates have to be located in ``var/media/templates/<appname>``, with appname = trekking or tourism.
 To override trekking pdf for example, copy the file ``geotrek/trekking/templates/trekking/trek_public_pdf.html``
 to ``var/media/templates/trekking/trek_public_pdf.html``.
+
+**Without Docker**
+Override templates
+
+- Treks : ``var/conf/extra_templates/trekking/trek_public_pdf.html``
+- touristic contents : ``var/conf/extra_templates/tourism/touristiccontent_public_pdf.html``
+- touristic events : ``var/conf/extra_templates/tourism/touristiccontent_public_pdf.html``
+
+For any examples :  https://github.com/GeotrekCE/Geotrek-admin/tree/master/geotrek/<app>/templates/<app>
+
 
 These templates derive from base templates, which content is organized in blocks.
 To override for example the description block of trek pdf, copy and change the ``{% block description }…{% endblock description %}``
@@ -408,12 +454,21 @@ Beware of contrast, colour is used for text so we advise you to avoid light colo
 Custom logos
 ------------
 
+**Without Docker**
+
 You might also need to deploy logo images in the following places :
 
 * ``var/media/upload/favicon.png``
 * ``var/media/upload/logo-login.png``
 * ``var/media/upload/logo-header.png``
 
+**With Docker**
+
+You might also need to deploy logo images in the following places :
+
+* ``var/conf/extra_static/images/favicon.png``
+* ``var/conf/extra_static/images/logo-login.png``
+* ``var/conf/extra_static/images/logo-header.png``
 
 Share services between several Geotrek instances
 ------------------------------------------------
@@ -432,12 +487,13 @@ Database
 Sharing your postgreSQL server is highly recommended. Create several databases
 for each of your instances.
 
-Then in ``etc/settings.ini``, adjust the ``host`` and ``dbname`` sections of
+
+Then in ``etc/settings.ini`` (no-docker) or ``.env`` (docker), adjust the ``host`` and ``dbname`` sections of
 each instance.
 
 
-Capture and conversion
-~~~~~~~~~~~~~~~~~~~~~~
+Capture and conversion (without docker)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 On the standalone server, make sure the services will be available to others.
 Add the following lines in its ``settings.ini`` :
@@ -459,8 +515,8 @@ the one you installed as standalone) :
     MAPENTITY_CONFIG['CAPTURE_SERVER'] = 'http://SERVER:8001'
 
 
-Shutdown useless services
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Shutdown useless services (without docker)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Now that your instances point the shared server. You can shutdown the useless
 services on each instance.
@@ -486,6 +542,8 @@ of *standalone* in the deployment procedure (*or when settings are changed*) :
 Control number of workers and request timeouts
 ----------------------------------------------
 
+**Without Docker**
+
 By default, the application runs on 4 processes, and timeouts after 30 seconds.
 
 To control those values, add a section in ``etc/settings.ini`` for each running service.
@@ -496,5 +554,19 @@ See ``conf/settings-defaults.cfg`` for an exhaustive list:
     [gunicorn-app-conf]
     workers = 4
     timeout = 30
+
+To know how many workers you should set, please refer to `gunicorn documentation <http://gunicorn-docs.readthedocs.org/en/latest/design.html#how-many-workers>`_.
+
+
+**With Docker**
+
+By default, the application runs on 5 processes, and timeouts after 600 seconds.
+Change the args in your ``.env``
+
+::
+
+    GUNICORN_CMD_ARGS=--bind=0.0.0.0:8000 --workers=5 --timeout=600
+
+
 
 To know how many workers you should set, please refer to `gunicorn documentation <http://gunicorn-docs.readthedocs.org/en/latest/design.html#how-many-workers>`_.

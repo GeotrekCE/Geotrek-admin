@@ -7,9 +7,13 @@ These instructions will install *Geotrek* on a dedicated server for production.
 Requirements
 ------------
 
-* Ubuntu Server 18.04 Bionic Beaver (http://releases.ubuntu.com/18.04/)  or
-  Ubuntu Server 16.04 Xenial Xerus (http://releases.ubuntu.com/16.04/) or
-  Ubuntu Server 14.04 Trusty Tahr (http://releases.ubuntu.com/14.04/)
+* Any distro capable of install docker and docker-compose.
+
+However, we advise you to use ubuntu 18.04
+
+* Docker : https://docs.docker.com/install/
+
+Example for ubuntu : https://docs.docker.com/install/linux/docker-ce/ubuntu/
 
 A first estimation of minimal required system resources are :
 
@@ -53,6 +57,7 @@ You can rename Geotrek-admin-X.Y.Z folder to Geotrek-admin
 
 Go into Geotrek-admin folder and launch its installation
 ::
+
     cd Geotrek-admin
 
 
@@ -72,23 +77,25 @@ Create Data Base and user
     \q
 
 
-___
+_______________________
 
 Modify file .env.dist :
 ::
-    $ cp .env.dist .env
-    $ editor .env
+
+    cp .env.dist .env
+    editor .env
 
 
 
-    GEOTREK_VERSION=geotrek_version
-    POSTGRES_HOST=172.17.0.1
-    POSTGRES_USER=your_database_user
-    POSTGRES_DB=your_database
-    POSTGRES_PASSWORD=your_user_password
-    DOMAIN_NAME=your.final.geotrek.domain
-    SECRET_KEY=secret-and-unique-secret-and-unique
-    GUNICORN_CMD_ARGS=--bind=0.0.0.0:8000 --workers=5 --timeout=600
+
+        GEOTREK_VERSION=geotrek_version
+        POSTGRES_HOST=172.17.0.1
+        POSTGRES_USER=your_database_user
+        POSTGRES_DB=your_database
+        POSTGRES_PASSWORD=your_user_password
+        DOMAIN_NAME=your.final.geotrek.domain
+        SECRET_KEY=secret-and-unique-secret-and-unique
+        GUNICORN_CMD_ARGS=--bind=0.0.0.0:8000 --workers=5 --timeout=600
 
 
 For the version of geotrek check : https://hub.docker.com/r/geotrekce/admin/tags/
@@ -103,33 +110,42 @@ For the version of geotrek check : https://hub.docker.com/r/geotrekce/admin/tags
 
 Edit your custom parameters file
 ::
-    sudo nano ./var/conf/custom.py
+
+    sudo editor ./var/conf/custom.py
+
 
 
 Modify at least your :
-- SRID => Projection of your project
-- SPATIAL_EXTENT => BBOX of the project
-- DEFAULT_STRUCTURE_NAME => Name of your structure (ex: geotrek)
-- MODELTRANSLATION_LANGUAGES => https://fr.wikipedia.org/wiki/Liste_des_codes_ISO_639-1 (693-1)
 
+:Change:
+
+    - SRID => Projection of your project
+    - SPATIAL_EXTENT => BBOX of the project
+    - DEFAULT_STRUCTURE_NAME => Name of your structure (ex: geotrek)
+    - MODELTRANSLATION_LANGUAGES => https://fr.wikipedia.org/wiki/Liste_des_codes_ISO_639-1 (693-1)
+
+    Informations about custom.
 
 Change Working Directory in geotrek.service
 ::
-    WorkingDirectory=/directory_of_your_geotrek
+
+    WorkingDirectory=/directory_of_your_Geotrek-admin
 
 
-Initialize the project :
+**Initialize the project :**
 ::
+
     docker-compose run web initial.sh
 
 
 ____
 
-Install Service
+**Install Service**
 
 
 1. Create a symbolic link between your nginx and /etc/nginx/sites-enabled/
 ::
+
      mkdir var/www/geotrek -p
 
      ln -s /directory_of_your_geotrek/var/media /var/www/geotrek
@@ -142,14 +158,23 @@ Install Service
 
 2. Copy your service in /etc/systemd/system
 ::
+
     cp geotrek.service /etc/systemd/system/geotrek.service
 
 
 3. Enable the system
 ::
-    systemctl enable geotrek.service
+
+    sudo systemctl enable geotrek.service
 
 
 Create your first user :
 ::
-     $ docker-compose run --rm web ./manage.py createsuperuser
+
+     docker-compose run --rm web ./manage.py createsuperuser
+
+
+**Run your server :**
+::
+
+    sudo systemctl start geotrek.service
