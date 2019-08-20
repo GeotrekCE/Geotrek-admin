@@ -36,6 +36,9 @@ from geotrek.trekking.views import (TrekViewSet, POIViewSet, TrekPOIViewSet,
                                     TrekGPXDetail, TrekKMLDetail, TrekServiceViewSet,
                                     ServiceViewSet, TrekDocumentPublic, TrekMeta, Meta,
                                     TrekInfrastructureViewSet, TrekSignageViewSet,)
+if 'geotrek.diving' in settings.INSTALLED_APPS:
+    from geotrek.diving import models as diving_models
+    from geotrek.diving import views as diving_views
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     from geotrek.sensitivity import models as sensitivity_models
     from geotrek.sensitivity import views as sensitivity_views
@@ -119,6 +122,8 @@ class Command(BaseCommand):
                             help='include signages')
         parser.add_argument('--with-infrastructures', '-i', action='store_true', dest='with_infrastructures',
                             default=False, help='include infrastructures')
+        parser.add_argument('--with-dives', action='store_true', dest='with_dives',
+                            default=False, help='include dives')
 
     def mkdirs(self, name):
         dirname = os.path.dirname(name)
@@ -198,8 +203,10 @@ class Command(BaseCommand):
                 response.render()
         except Exception as e:
             self.successfull = False
-            if self.verbosity > 0:
-                self.stderr.write(self.style.ERROR(u"failed ({})".format(e)))
+            if self.verbosity == 2:
+                self.stdout.write(u"\x1b[3D\x1b[31mfailed ({})\x1b[0m".format(e))
+            if settings.DEBUG:
+                raise
             return
         if response.status_code != 200:
             self.successfull = False
@@ -331,6 +338,11 @@ class Command(BaseCommand):
     def sync_touristicevent_meta(self, lang, obj):
         name = os.path.join('meta', lang, obj.rando_url, 'index.html')
         self.sync_view(lang, tourism_views.TouristicEventMeta.as_view(), name, pk=obj.pk,
+                       params={'rando_url': self.rando_url})
+
+    def sync_dive_meta(self, lang, obj):
+        name = os.path.join('meta', lang, obj.rando_url, 'index.html')
+        self.sync_view(lang, diving_views.DiveMeta.as_view(), name, pk=obj.pk,
                        params={'rando_url': self.rando_url})
 
     def sync_file(self, lang, name, src_root, url, zipfile=None):
@@ -478,6 +490,10 @@ class Command(BaseCommand):
         self.sync_pictograms(lang, trekking_models.ServiceType, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.Route, zipfile=self.zipfile)
         self.sync_pictograms(lang, trekking_models.WebLinkCategory)
+        if self.with_dives:
+            self.sync_pictograms(lang, diving_models.Practice)
+            self.sync_pictograms(lang, diving_models.Difficulty)
+            self.sync_pictograms(lang, diving_models.Level)
 
         treks = trekking_models.Trek.objects.existing().order_by('pk')
         treks = treks.filter(
@@ -494,6 +510,9 @@ class Command(BaseCommand):
 
         for trek in treks:
             self.sync_trek(lang, trek)
+
+        if self.with_dives:
+            self.sync_dives(lang)
 
         self.sync_tourism(lang)
         self.sync_meta(lang)
@@ -564,7 +583,7 @@ class Command(BaseCommand):
                 params['source'] = self.source[0]
 
             view = tourism_views.TouristicContentDocumentPublic.as_view(model=type(content))
-            self.sync_object_view(lang, content, view, '{obj.slug}.pdf', params=params)
+            self.sync_object_view(lang, content, view, '{obj.slug}.pdf', params=params, slug=content.slug)
 
         for picture, resized in content.resized_pictures:
             self.sync_media_file(lang, resized)
@@ -579,9 +598,24 @@ class Command(BaseCommand):
             if self.portal:
                 params['portal'] = self.portal[0]
             view = tourism_views.TouristicEventDocumentPublic.as_view(model=type(event))
-            self.sync_object_view(lang, event, view, '{obj.slug}.pdf', params=params)
+            self.sync_object_view(lang, event, view, '{obj.slug}.pdf', params=params, slug=event.slug)
 
         for picture, resized in event.resized_pictures:
+            self.sync_media_file(lang, resized)
+
+    def sync_dive(self, lang, dive):
+        self.sync_dive_meta(lang, dive)
+
+        if not self.skip_pdf:
+            params = {}
+            if self.source:
+                params['source'] = self.source[0]
+            if self.portal:
+                params['portal'] = self.portal[0]
+            view = diving_views.DiveDocumentPublic.as_view(model=type(dive))
+            self.sync_object_view(lang, dive, view, '{obj.slug}.pdf', params=params, slug=dive.slug)
+
+        for picture, resized in dive.resized_pictures:
             self.sync_media_file(lang, resized)
 
     def sync_sensitiveareas(self, lang):
@@ -598,6 +632,21 @@ class Command(BaseCommand):
         view = sensitivity_views.TrekSensitiveAreaViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'sensitiveareas.geojson')
         self.sync_view(lang, view, name, params=params, pk=trek.pk)
+
+    def sync_dives(self, lang):
+        self.sync_geojson(lang, diving_views.DiveViewSet, 'dives.geojson')
+
+        dives = diving_models.Dive.objects.existing().order_by('pk')
+        dives = dives.filter(**{'published_{lang}'.format(lang=lang): True})
+
+        if self.source:
+            dives = dives.filter(source__name__in=self.source)
+
+        if self.portal:
+            dives = dives.filter(Q(portal__name__in=self.portal) | Q(portal=None))
+
+        for dive in dives:
+            self.sync_dive(lang, dive)
 
     def sync_tourism(self, lang):
         self.sync_geojson(lang, tourism_views.TouristicContentViewSet, 'touristiccontents.geojson')
@@ -774,6 +823,7 @@ class Command(BaseCommand):
             self.categories = options.get('content_categories', u"").split(',')
         self.with_signages = options.get('with_signages', False)
         self.with_infrastructures = options.get('with_infrastructures', False)
+        self.with_dives = options.get('with_dives', False)
         self.celery_task = options.get('task', None)
 
         if self.source is not None:

@@ -138,7 +138,7 @@
           <div class="inner-title">
             <h2>{% trans "Trek" %}</h2>
           </div>
-          {% if object.departure or object.departure or object.networks.all %}
+          {% if object.departure or object.arrival or object.networks.all %}
             <div class="gray text-content departure-arrival">
               <ul>
                 {% if object.departure %}<li>{% trans "Departure" %} : {{ object.departure }}</li>{% endif %}

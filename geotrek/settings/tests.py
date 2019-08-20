@@ -8,7 +8,10 @@ TEST = True
 
 TEST_EXCLUDE = ('django',)
 
-INSTALLED_APPS += ('geotrek.sensitivity', )
+INSTALLED_APPS += (
+    'geotrek.diving',
+    'geotrek.sensitivity',
+)
 
 LOGGING['handlers']['console']['level'] = 'CRITICAL'
 

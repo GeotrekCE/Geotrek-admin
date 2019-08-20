@@ -25,5 +25,8 @@
 {% for event in events %}
     <a href="{{ request.GET.rando_url }}/{{ event.rando_url }}">{{ event.name }}</a>
 {% endfor %}
+{% for dive in dives %}
+    <a href="{{ request.GET.rando_url }}/{{ dive.rando_url }}">{{ dive.name }}</a>
+{% endfor %}
 </body>
 </html>

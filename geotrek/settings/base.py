@@ -67,6 +67,7 @@ DATABASE_SCHEMAS = {
     'geotrek.signage': 'gestion',
     'geotrek.maintenance': 'gestion',
     'geotrek.tourism': 'tourisme',
+    'geotrek.diving': 'rando',
     'geotrek.trekking': 'rando',
     'geotrek.zoning': 'zonage',
     'geotrek.land': 'foncier',
@@ -376,6 +377,7 @@ MAPENTITY_CONFIG = {
     'LANGUAGES': LANGUAGES,
     'TRANSLATED_LANGUAGES': _MODELTRANSLATION_LANGUAGES,
     'GEOJSON_PRECISION': 7,
+    'MAP_FIT_MAX_ZOOM': 16,
 }
 
 DEFAULT_STRUCTURE_NAME = 'GEOTEAM'
@@ -472,6 +474,7 @@ LAND_BBOX_AREAS_ENABLED = False
 PUBLISHED_BY_LANG = True
 
 EXPORT_MAP_IMAGE_SIZE = {
+    'dive': (18.2, 18.2),
     'trek': (18.2, 18.2),
     'poi': (18.2, 18.2),
     'touristiccontent': (18.2, 18.2),
@@ -481,6 +484,7 @@ EXPORT_MAP_IMAGE_SIZE = {
 EXPORT_HEADER_IMAGE_SIZE = {
     'trek': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
     'poi': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
+    'dive': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
     'touristiccontent': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
     'touristicevent': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
 }
@@ -509,6 +513,7 @@ LANDEDGE_MODEL_ENABLED = True
 PROJECT_MODEL_ENABLED = True
 INTERVENTION_MODEL_ENABLED = True
 REPORT_MODEL_ENABLED = True
+DIVE_MODEL_ENABLED = True
 TOURISTICCONTENT_MODEL_ENABLED = True
 TOURISTICEVENT_MODEL_ENABLED = True
 # This model is necessary for most of the other. Can be add in case if the paths will not be change by anyone.
@@ -523,6 +528,7 @@ TREK_SIGNAGE_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY
 TREK_INFRASTRUCTURE_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
 TREK_POI_INTERSECTION_MARGIN = 500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
 TOURISM_INTERSECTION_MARGIN = 500  # meters (always used)
+DIVING_INTERSECTION_MARGIN = 500  # meters (always used)
 
 SIGNAGE_LINE_ENABLED = False
 
@@ -562,11 +568,13 @@ CACHE_TIMEOUT_LAND_LAYERS = 60 * 60 * 24
 
 TREK_CATEGORY_ORDER = 1
 ITINERANCY_CATEGORY_ORDER = 2
+DIVE_CATEGORY_ORDER = 10
 TOURISTIC_EVENT_CATEGORY_ORDER = 99
 SPLIT_TREKS_CATEGORIES_BY_PRACTICE = False
 SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False
 SPLIT_TREKS_CATEGORIES_BY_ITINERANCY = False
 HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = False
+SPLIT_DIVES_CATEGORIES_BY_PRACTICE = True
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap', 'bootstrap3')
 CRISPY_TEMPLATE_PACK = 'bootstrap'

@@ -46,6 +46,8 @@ if 'geotrek.maintenance' in settings.INSTALLED_APPS:
     urlpatterns.append(url(r'', include('geotrek.maintenance.urls', namespace='maintenance', app_name='maintenance')))
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     urlpatterns.append(url(r'', include('geotrek.trekking.urls', namespace='trekking', app_name='trekking')))
+if 'geotrek.diving' in settings.INSTALLED_APPS:
+    urlpatterns.append(url(r'', include('geotrek.diving.urls', namespace='diving', app_name='diving')))
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     urlpatterns.append(url(r'', include('geotrek.tourism.urls', namespace='tourism', app_name='tourism')))
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:

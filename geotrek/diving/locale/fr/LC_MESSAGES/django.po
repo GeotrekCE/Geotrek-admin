@@ -1,0 +1,169 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-08-13 17:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#, python-format
+msgid "Difficulty with id '%s' already exists"
+msgstr "Une difficulté avec l'id '%s' existe déjà"
+
+#, python-brace-format
+msgid "Difficulty id {old} was changed to {new} successfully."
+msgstr "La difficulté avec l'id {old} a été changée vers {new} avec succès."
+
+#, python-format
+msgid "Level with id '%s' already exists"
+msgstr "Un niveau avec l'id '%s' existe déjà"
+
+#, python-brace-format
+msgid "Level id {old} was changed to {new} successfully."
+msgstr "Le niveau avec l'id {old} a été changé vers {new} avec succès."
+
+msgid "Diving"
+msgstr "Plongée"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Order"
+msgstr "Ordre"
+
+msgid "Alphabetical order if blank"
+msgstr "Ordre alphabétique si vide"
+
+msgid "Color"
+msgstr "Couleur"
+
+msgid "Color of the practice, only used in mobile."
+msgstr "Couleur de la pratique, utilisé uniquement pour l'app mobile"
+
+msgid "Practice"
+msgstr "Pratique"
+
+msgid "Practices"
+msgstr "Pratiques"
+
+msgid "Difficulty level"
+msgstr "Niveau de difficulté"
+
+msgid "Difficulty levels"
+msgstr "Niveaux de difficulté"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Complete description"
+msgstr "Description complète"
+
+msgid "Technical level"
+msgstr "Niveau technique"
+
+msgid "Technical levels"
+msgstr "Niveaux techniques"
+
+msgid "Description teaser"
+msgstr "Chapeau"
+
+msgid "A brief summary"
+msgstr "Bref résumé"
+
+msgid "Owner"
+msgstr "Propriétaire"
+
+msgid "Departure area"
+msgstr "Aire de départ"
+
+msgid "Disabled sport accessibility"
+msgstr "Accessibilité handisport"
+
+msgid "Facilities"
+msgstr "Équipements"
+
+msgid "Maximum depth"
+msgstr "Profondeur maximum"
+
+msgid "meters"
+msgstr "mètres"
+
+msgid "Advice"
+msgstr "Recommandation"
+
+msgid "Risks, danger, best period, ..."
+msgstr "Risques, danger, meilleure période, ..."
+
+msgid "Themes"
+msgstr "Thèmes"
+
+msgid "Main theme(s)"
+msgstr "Thème(s) principal(aux)"
+
+msgid "Location"
+msgstr "Emplacement"
+
+msgid "Source"
+msgstr "Source"
+
+msgid "Portal"
+msgstr "Portail"
+
+msgid "External id"
+msgstr "Id externe"
+
+msgid "Dive"
+msgstr "Plongée"
+
+msgid "Dives"
+msgstr "Plongées"
+
+#. Translators: This is a slug (without space, accent or special char)
+msgid "dive"
+msgstr "plongee"
+
+#| msgid "N"
+msgctxt "North"
+msgid "N"
+msgstr "N"
+
+#| msgid "S"
+msgctxt "South"
+msgid "S"
+msgstr "S"
+
+#| msgid "W"
+msgctxt "West"
+msgid "W"
+msgstr "O"
+
+#| msgid "E"
+msgctxt "East"
+msgid "E"
+msgstr "E"
+
+msgid "Published dives"
+msgstr "Plongées publiées"
+
+msgid "Attributes"
+msgstr "Informations"
+
+msgid "Thumbnail"
+msgstr "Miniature"
+
+msgid "Geotrek Rando"
+msgstr "Geotrek Rando"
+
+msgid "Add a new dive"
+msgstr "Ajouter une plongée"

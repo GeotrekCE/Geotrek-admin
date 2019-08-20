@@ -26,6 +26,13 @@ def GeometryType(geom):
     return Func(geom, function='GeometryType', output_field=CharField())
 
 
+def LineLocatePoint(line, geom):
+    """
+    ST_LineLocatePoint postgis function
+    """
+    return Func(line, geom, function='ST_LINELOCATEPOINT', output_field=FloatField())
+
+
 class Length(Func):
     """
     ST_Length postgis function
