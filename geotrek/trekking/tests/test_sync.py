@@ -16,11 +16,12 @@ from django.test.utils import override_settings
 
 from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory, AttachmentFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_file
-from geotrek.diving.factories import DiveFactory
+from geotrek.diving.factories import DiveFactory, PracticeFactory as PracticeDiveFactory
+from geotrek.diving.models import Dive
 from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.sensitivity.factories import SensitiveAreaFactory
 from geotrek.signage.factories import SignageFactory
-from geotrek.trekking.factories import TrekFactory, TrekWithPublishedPOIsFactory
+from geotrek.trekking.factories import PracticeFactory as PracticeTrekFactory, TrekFactory, TrekWithPublishedPOIsFactory
 from geotrek.trekking import models as trek_models
 from geotrek.tourism.factories import InformationDeskFactory, TouristicContentFactory, TouristicEventFactory
 
@@ -174,7 +175,10 @@ class SyncTest(TestCase):
         self.portal_a = TargetPortalFactory()
         self.portal_b = TargetPortalFactory()
         information_desks = InformationDeskFactory.create()
-        self.trek_1 = TrekWithPublishedPOIsFactory.create(sources=(self.source_a, ),
+
+        self.practice_trek = PracticeTrekFactory.create(order=0)
+
+        self.trek_1 = TrekWithPublishedPOIsFactory.create(practice=self.practice_trek, sources=(self.source_a, ),
                                                           portals=(self.portal_b,),
                                                           published=True)
         self.trek_1.information_desks.add(information_desks)
@@ -185,9 +189,11 @@ class SyncTest(TestCase):
         self.trek_3 = TrekFactory.create(portals=(self.portal_b,
                                                   self.portal_a),
                                          published=True)
-        self.trek_4 = TrekFactory.create(portals=(self.portal_a,),
+        self.trek_4 = TrekFactory.create(practice=self.practice_trek, portals=(self.portal_a,),
                                          published=True)
-        self.dive_1 = DiveFactory.create(sources=(self.source_a,),
+        self.practice_dive = PracticeDiveFactory.create(order=0)
+
+        self.dive_1 = DiveFactory.create(practice=self.practice_dive, sources=(self.source_a,),
                                          portals=(self.portal_b,),
                                          published=True)
         self.attachment_dive = AttachmentFactory.create(content_object=self.dive_1,
@@ -197,7 +203,7 @@ class SyncTest(TestCase):
         self.dive_3 = DiveFactory.create(portals=(self.portal_b,
                                                   self.portal_a),
                                          published=True)
-        self.dive_4 = DiveFactory.create(portals=(self.portal_a,),
+        self.dive_4 = DiveFactory.create(practice=self.practice_dive, portals=(self.portal_a,),
                                          published=True)
         self.poi_1 = trek_models.POI.objects.first()
         self.attachment_poi_image_1 = AttachmentFactory.create(content_object=self.poi_1,
@@ -250,15 +256,59 @@ class SyncTest(TestCase):
                 self.assertEquals(len(treks['features']),
                                   trek_models.Trek.objects.filter(published=True).count())
 
+    @override_settings(SPLIT_TREKS_CATEGORIES_BY_PRACTICE=False, SPLIT_DIVES_CATEGORIES_BY_PRACTICE=False)
     def test_sync_without_pdf(self):
-        management.call_command('sync_rando', 'tmp', with_signages=True, with_infrastructures=True, with_dives=True,
-                                with_events=True, content_categories="1", url='http://localhost:8000',
+        management.call_command('sync_rando', 'tmp', with_signages=True, with_infrastructures=True,
+                                with_dives=True, with_events=True, content_categories="1", url='http://localhost:8000',
                                 skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
         with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
             # there are 4 treks
             self.assertEquals(len(treks['features']),
                               trek_models.Trek.objects.filter(published=True).count())
+            self.assertEquals(treks['features'][0]['properties']['category']['id'],
+                              treks['features'][3]['properties']['category']['id'],
+                              'T')
+            self.assertEquals(treks['features'][0]['properties']['name'], self.trek_1.name)
+            self.assertEquals(treks['features'][3]['properties']['name'], self.trek_4.name)
+
+        with open(os.path.join('tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
+            dives = json.load(f)
+            # there are 4 dives
+            self.assertEquals(len(dives['features']),
+                              Dive.objects.filter(published=True).count())
+            self.assertEquals(dives['features'][0]['properties']['category']['id'],
+                              dives['features'][3]['properties']['category']['id'],
+                              'D')
+            self.assertEquals(dives['features'][0]['properties']['name'], self.dive_1.name)
+            self.assertEquals(dives['features'][3]['properties']['name'], self.dive_4.name)
+
+    @override_settings(SPLIT_TREKS_CATEGORIES_BY_PRACTICE=True, SPLIT_DIVES_CATEGORIES_BY_PRACTICE=True)
+    def test_sync_without_pdf_split_by_practice(self):
+        management.call_command('sync_rando', 'tmp', with_signages=True, with_infrastructures=True,
+                                with_dives=True, with_events=True, content_categories="1", url='http://localhost:8000',
+                                skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
+        with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+            treks = json.load(f)
+            # there are 4 treks
+            self.assertEquals(len(treks['features']),
+                              trek_models.Trek.objects.filter(published=True).count())
+            self.assertEquals(treks['features'][0]['properties']['category']['id'],
+                              treks['features'][3]['properties']['category']['id'],
+                              'T%s' % self.practice_trek.pk)
+            self.assertEquals(treks['features'][0]['properties']['name'], self.trek_1.name)
+            self.assertEquals(treks['features'][3]['properties']['name'], self.trek_4.name)
+
+        with open(os.path.join('tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
+            dives = json.load(f)
+            # there are 4 dives
+            self.assertEquals(len(dives['features']),
+                              Dive.objects.filter(published=True).count())
+            self.assertEquals(dives['features'][0]['properties']['category']['id'],
+                              dives['features'][3]['properties']['category']['id'],
+                              'D%s' % self.practice_dive.pk)
+            self.assertEquals(dives['features'][0]['properties']['name'], self.dive_1.name)
+            self.assertEquals(dives['features'][3]['properties']['name'], self.dive_4.name)
 
     def test_sync_https(self):
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
