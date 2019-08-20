@@ -418,6 +418,7 @@ MAPENTITY_CONFIG = {
     'DRF_API_URL_PREFIX': r'^api/(?P<lang>[a-z]{2})/',
     'MAPENTITY_WEASYPRINT': False,
     'GEOJSON_PRECISION': 7,
+    'MAP_FIT_MAX_ZOOM': 16,
 }
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
