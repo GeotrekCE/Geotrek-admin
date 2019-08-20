@@ -429,6 +429,42 @@ class APIAccessAdministratorTestCase(BaseApiTest):
         response = self.get_poi_all_types_list()
         self.assertEqual(response.status_code, 200)
 
+    def test_poi_unpublished_detail_filter_published_false(self):
+        self.client.logout()
+        id_poi = trek_factory.POIFactory.create(published=False)
+        response = self.get_poi_detail(id_poi.pk, {'published': 'false'})
+        self.assertEqual(response.status_code, 200)
+
+    def test_poi_published_detail_filter_published_false(self):
+        self.client.logout()
+        id_poi = trek_factory.POIFactory.create(published_fr=True, published=False)
+        response = self.get_poi_detail(id_poi.pk, {'published': 'false'})
+        self.assertEqual(response.status_code, 404)
+
+    def test_poi_published_detail_filter_published_false_lang_en(self):
+        self.client.logout()
+        id_poi = trek_factory.POIFactory.create(published_fr=True, published=False)
+        response = self.get_poi_detail(id_poi.pk, {'published': 'false', 'language': 'en'})
+        self.assertEqual(response.status_code, 200)
+
+    def test_poi_published_detail_filter_published_false_lang_fr(self):
+        self.client.logout()
+        id_poi = trek_factory.POIFactory.create(published_fr=True, published=False)
+        response = self.get_poi_detail(id_poi.pk, {'published': 'false', 'language': 'fr'})
+        self.assertEqual(response.status_code, 404)
+
+    def test_poi_published_detail_filter_published_true_lang_fr(self):
+        self.client.logout()
+        id_poi = trek_factory.POIFactory.create(published_fr=True, published=False)
+        response = self.get_poi_detail(id_poi.pk, {'published': 'true', 'language': 'fr'})
+        self.assertEqual(response.status_code, 200)
+
+    def test_poi_published_detail_filter_published_ok(self):
+        self.client.logout()
+        id_poi = trek_factory.POIFactory.create(published_fr=True, published=False)
+        response = self.get_poi_detail(id_poi.pk, {'published': 'ok', 'language': 'fr'})
+        self.assertEqual(response.status_code, 200)
+
 
 class APIASwaggerTestCase(BaseApiTest):
     """
