@@ -5,7 +5,8 @@ from math import trunc
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.template.defaultfilters import slugify
-from django.utils.translation import ugettext as _, pgettext
+from django.urls import reverse
+from django.utils.translation import get_language, ugettext as _, pgettext
 
 from colorfield.fields import ColorField
 from mapentity.models import MapEntityMixin
@@ -57,6 +58,16 @@ class Difficulty(OptionalPictogramMixin):
     def __unicode__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        """Manually auto-increment ids"""
+        if not self.id:
+            try:
+                last = self.__class__.objects.all().order_by('-id')[0]
+                self.id = last.id + 1
+            except IndexError:
+                self.id = 1
+        super(Difficulty, self).save(*args, **kwargs)
+
 
 class Level(OptionalPictogramMixin):
     """We use an IntegerField for id, since we want to edit it in Admin.
@@ -76,6 +87,16 @@ class Level(OptionalPictogramMixin):
 
     def __unicode__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        """Manually auto-increment ids"""
+        if not self.id:
+            try:
+                last = self.__class__.objects.all().order_by('-id')[0]
+                self.id = last.id + 1
+            except IndexError:
+                self.id = 1
+        super(Level, self).save(*args, **kwargs)
 
 
 class Dive(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
@@ -158,6 +179,9 @@ class Dive(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
             return '{prefix}{id}'.format(prefix=self.category_id_prefix, id=self.practice.id)
         else:
             return self.category_id_prefix
+
+    def get_map_image_url(self):
+        return reverse('diving:dive_map_image', args=[str(self.pk), get_language()])
 
 
 Topology.add_property('dives', lambda self: intersecting(Dive, self), _(u"Dives"))

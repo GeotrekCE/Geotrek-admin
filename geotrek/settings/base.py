@@ -288,7 +288,6 @@ INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.zoning',
     'geotrek.land',
     'geotrek.trekking',
-    'geotrek.diving',
     'geotrek.tourism',
     'geotrek.flatpages',
     'geotrek.feedback',
@@ -419,6 +418,7 @@ MAPENTITY_CONFIG = {
     'DRF_API_URL_PREFIX': r'^api/(?P<lang>[a-z]{2})/',
     'MAPENTITY_WEASYPRINT': False,
     'GEOJSON_PRECISION': 7,
+    'MAP_FIT_MAX_ZOOM': 16,
 }
 
 DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
@@ -516,6 +516,7 @@ LAND_BBOX_AREAS_ENABLED = False
 PUBLISHED_BY_LANG = True
 
 EXPORT_MAP_IMAGE_SIZE = {
+    'dive': (18.2, 18.2),
     'trek': (18.2, 18.2),
     'poi': (18.2, 18.2),
     'touristiccontent': (18.2, 18.2),
