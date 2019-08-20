@@ -118,7 +118,7 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             qs = qs.filter(species__practices__id__in=practices.split(','))
         structure = request.GET.get('structure', '')
         if structure:
-            qs = qs.filter(structure_id=structure)
+            qs = qs.filter(structure_id=int(structure))
         period = request.GET.get('period', '')
         if not period:
             qs = qs.filter(**{'species__period{:02}'.format(date.today().month): True})

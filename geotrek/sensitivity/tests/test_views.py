@@ -1,5 +1,7 @@
 import os
 
+from datetime import date
+
 from django.contrib.auth.models import User, Permission
 from django.conf import settings
 from django.test import TestCase
@@ -268,3 +270,40 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
             u'next': None,
             u'results': result_sportpractice
         })
+
+    def test_filters_structure(self):
+        other_structure = StructureFactory.create(name='other')
+        self.sensitivearea_other_structure = SensitiveAreaFactory.create(structure=other_structure)
+        url = '/api/v2/sensitivearea/?format=json&language=en&period=ignore&structure={}'.format(other_structure.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.json()['count'], 1)
+        self.assertEqual(response.json()['results'][0]['name'], self.sensitivearea_other_structure.species.name)
+
+    def test_filters_no_period(self):
+        StructureFactory.create()
+        url = '/api/v2/sensitivearea/?format=json&language=en'
+        response = self.client.get(url)
+        self.assertEqual(response.json()['count'], 0)
+
+    def test_filters_any_period(self):
+        SensitiveAreaFactory.create()
+        url = '/api/v2/sensitivearea/?format=json&language=en&period=any'
+        response = self.client.get(url)
+        self.assertEqual(response.json()['count'], 2)
+
+    def test_filters_specific_period(self):
+        sensitive_area_jf = SensitiveAreaFactory.create(species__period01=True, species__period02=True)
+        SensitiveAreaFactory.create(species__period01=True)
+        SensitiveAreaFactory.create(species__period04=True)
+        url = '/api/v2/sensitivearea/?format=json&language=en&period=2,3'
+        response = self.client.get(url)
+        self.assertEqual(response.json()['count'], 1)
+        self.assertEqual(response.json()['results'][0]['name'], sensitive_area_jf.species.name)
+
+    def test_filters_no_period_get_month(self):
+        sensitive_area_month = SensitiveAreaFactory.create(**{'species__period{:02}'.format(date.today().month): True})
+        SensitiveAreaFactory.create(**{'species__period{:02}'.format(date.today().month + 1): True})
+        url = '/api/v2/sensitivearea/?format=json&language=en'
+        response = self.client.get(url)
+        self.assertEqual(response.json()['count'], 1)
+        self.assertEqual(response.json()['results'][0]['name'], sensitive_area_month.species.name)
