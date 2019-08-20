@@ -428,3 +428,41 @@ class APIAccessAdministratorTestCase(BaseApiTest):
         self.client.logout()
         response = self.get_poi_all_types_list()
         self.assertEqual(response.status_code, 200)
+
+
+class APIASwaggerTestCase(BaseApiTest):
+    """
+    TestCase for administrator API profile
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        #  created user
+        cls.administrator = User.objects.create(username="administrator", is_superuser=True,
+                                                is_staff=True, is_active=True)
+        cls.administrator.set_password('administrator')
+        cls.administrator.save()
+        cls.administrator.refresh_from_db()
+
+        BaseApiTest.setUpTestData()
+
+    def login(self):
+        """
+        Override base class login method, used before all function request 'get_api_element'
+        """
+        self.client.login(username="administrator", password="administrator")
+
+    def test_schema_good_status(self):
+        self.login()
+        response = self.client.get(reverse('apiv2:schema'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_schema_fields(self):
+        self.login()
+        response = self.client.get(reverse('apiv2:schema'))
+        self.assertIn('Filter elements contained in bbox formatted like SW-lng,SW-lat,NE-lng,NE-lat', response.content)
+        self.assertIn('Publication state. If language specified, '
+                      'only language published are filterted. true/false/all. true by default.', response.content)
+        self.assertIn('Reference point to compute distance LNG,LAT', response.content)
+        self.assertIn('Practices ids separated by comas.', response.content)
+        self.assertEqual(response.status_code, 200)
