@@ -167,7 +167,7 @@ class Dive(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
             lng_deg=trunc(abs(location.x)),
             lng_min=trunc((abs(location.x) * 60) % 60),
             lng_sec=trunc((abs(location.x) * 3600) % 60),
-            lng_card=pgettext("West", u"W") if location.x >= 0 else pgettext("East", u"E"),
+            lng_card=pgettext("East", u"E") if location.x >= 0 else pgettext("West", u"W"),
         )
 
     def distance(self, to_cls):

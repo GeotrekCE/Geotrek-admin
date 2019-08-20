@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix coordinates in diving module
 
 
 2.29.0 (2019-08-20)
