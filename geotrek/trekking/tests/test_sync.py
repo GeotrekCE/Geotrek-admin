@@ -156,12 +156,13 @@ class SyncRandoFailTest(TestCase):
     @mock.patch('geotrek.trekking.views.TrekViewSet.list')
     def test_response_500(self, mocke_list, mocke_map_image):
         output = BytesIO()
+        error = BytesIO()
         mocke_list.return_value = HttpResponse(status=500)
         TrekWithPublishedPOIsFactory.create(published_fr=True)
         with self.assertRaises(CommandError) as e:
             management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
-                                    skip_tiles=True, verbosity=2, stdout=output, stderr=BytesIO())
-        self.assertIn("failed (HTTP 500)", output.getvalue())
+                                    skip_tiles=True, skip_pdf=True, verbosity=2, stdout=output, stderr=error)
+        self.assertIn("failed (HTTP 500)", error.getvalue())
         self.assertEqual(e.exception.message, 'Some errors raised during synchronization.')
 
     @override_settings(MEDIA_URL=9)
