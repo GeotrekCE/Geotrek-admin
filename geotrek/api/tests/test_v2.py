@@ -586,7 +586,7 @@ class APIAccessAdministratorTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 200)
 
 
-class APIASwaggerTestCase(BaseApiTest):
+class APISwaggerTestCase(BaseApiTest):
     """
     TestCase for administrator API profile
     """
