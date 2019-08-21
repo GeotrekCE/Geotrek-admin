@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse
 from django.test.client import Client
 from django.test.testcases import TestCase
 
+from geotrek.common import factories as common_factory
 from geotrek.trekking import factories as trek_factory, models as trek_models
 
 PAGINATED_JSON_STRUCTURE = sorted([
@@ -64,7 +65,11 @@ class BaseApiTest(TestCase):
         cls.client = Client()
         cls.nb_treks = 15
         cls.nb_pois = 55
+        cls.theme = common_factory.ThemeFactory.create()
+        cls.network = trek_factory.TrekNetworkFactory.create()
         cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(cls.nb_treks)
+        cls.treks[0].themes.add(cls.theme)
+        cls.treks[0].networks.add(cls.network)
 
     def login(self):
         pass
@@ -297,11 +302,13 @@ class APIAccessAdministratorTestCase(BaseApiTest):
     def test_trek_theme_list(self):
         self.client.logout()
         response = self.get_trek_all_themes_list()
+        self.assertIn(self.theme.label, response.content)
         self.assertEqual(response.status_code, 200)
 
     def test_trek_network_list(self):
         self.client.logout()
         response = self.get_trek_all_networks_list()
+        self.assertIn(self.network.network, response.content)
         self.assertEqual(response.status_code, 200)
 
     def test_trek_difficulty_used_list(self):
@@ -317,11 +324,13 @@ class APIAccessAdministratorTestCase(BaseApiTest):
     def test_trek_theme_used_list(self):
         self.client.logout()
         response = self.get_trek_used_themes_list()
+        self.assertIn(self.theme.label, response.content)
         self.assertEqual(response.status_code, 200)
 
     def test_trek_network_used_list(self):
         self.client.logout()
         response = self.get_trek_used_networks_list()
+        self.assertIn(self.network.network, response.content)
         self.assertEqual(response.status_code, 200)
 
     def test_poi_list(self):
