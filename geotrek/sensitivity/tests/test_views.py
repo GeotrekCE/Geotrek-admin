@@ -259,6 +259,15 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
             u'results': [self.expected_result],
         })
 
+    def test_list_bubble_sensitivearea_with_point(self):
+        sensitive_area_point = SensitiveAreaFactory.create(geom='SRID=2154;POINT (700040 6600040)',
+                                                           species__period01=True, species__radius=5)
+        url = '/api/v2/sensitivearea/?format=json&period=ignore&language=en&bubble=True&period=1'
+        response = self.client.get(url)
+        self.assertEqual(response.json()['count'], 1)
+        self.assertEqual(response.json()['results'][0]['radius'], 5)
+        self.assertEqual(response.json()['results'][0]['name'], sensitive_area_point.species.name)
+
     def test_list_sportpractice(self):
         url = '/api/v2/sportpractice/?format=json&language=en'
         response = self.client.get(url)
