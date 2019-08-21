@@ -337,3 +337,23 @@ class APIAccessTestCase(BaseApiTest):
                          TOURISTIC_CONTENT_LIST_PROPERTIES_GEOJSON_STRUCTURE)
         self.assertEqual(json_response.get('features')[0].get('properties')['description'],
                          "Sisi")
+
+
+class APISwaggerTestCase(BaseApiTest):
+    """
+    TestCase for administrator API profile
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        BaseApiTest.setUpTestData()
+
+    def test_schema_good_status(self):
+        response = self.client.get(reverse('apimobile:schema'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_schema_fields(self):
+        response = self.client.get(reverse('apiv2:schema'))
+        self.assertIn('Set geometry dimension (2 by default for 2D, 3 for 3D)', response.content)
+        self.assertIn('Set output format (json / geojson). JSON by default', response.content)
+        self.assertEqual(response.status_code, 200)
