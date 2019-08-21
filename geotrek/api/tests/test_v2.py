@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.db.models import Count
 from django.test.client import Client
 from django.test.testcases import TestCase
 
@@ -168,7 +169,10 @@ class APIAnonymousTestCase(BaseApiTest):
 
     def test_trek_detail(self):
         self.client.logout()
-        response = self.get_trek_detail(trek_models.Trek.objects.order_by('?').first().pk)
+        id_trek = trek_models.Trek.objects.annotate(
+            count_parents=Count('trek_parents'), count_children=Count('trek_children')
+        ).exclude(count_parents__gt=0).exclude(count_children__gt=0).order_by('?').first().pk
+        response = self.get_trek_detail(id_trek)
         self.assertEqual(response.status_code, 401)
 
     def test_tour_list(self):
@@ -338,7 +342,9 @@ class APIAccessAdministratorTestCase(BaseApiTest):
 
     def test_trek_detail(self):
         self.client.logout()
-        id_trek = trek_models.Trek.objects.order_by('?').first().pk
+        id_trek = trek_models.Trek.objects.annotate(
+            count_parents=Count('trek_parents'), count_children=Count('trek_children')
+        ).exclude(count_parents__gt=0).exclude(count_children__gt=0).order_by('?').first().pk
         response = self.get_trek_detail(id_trek)
         # test response code
         self.assertEqual(response.status_code, 200)
