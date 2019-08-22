@@ -26,7 +26,19 @@
             <th>{{ trek|verbose:"duration" }}</th>
             <td>{{ trek.duration|duration }}</td>
         </tr>
-        {% include "altimetry/elevationinfo_fragment.html" %}
+        {% if trek.practice.on_water %}
+            <tr>
+                <th>{% trans "Length" %}</th>
+                <td>
+                <span title="{% trans "2D" %}">(&#8594; {{ trek.geom.length|floatformat }}m)</span></td>
+            </tr>
+            <tr>
+                <th>{% trans "Depth" %}</th>
+                <td>Min: {{ trek.min_depth|floatformat }}m, Max: {{ trek.max_depth|floatformat }}m</td>
+            </tr>
+        {% else %}
+            {% include "altimetry/elevationinfo_fragment.html" %}
+        {% endif %}
         <tr>
             <th>{{ trek|verbose:"route" }}</th>
             <td>{% if trek.route %}{{ trek.route|safe }}

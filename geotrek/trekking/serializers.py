@@ -69,7 +69,7 @@ class PracticeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
 
     class Meta:
         model = trekking_models.Practice
-        fields = ('id', 'pictogram', 'label')
+        fields = ('id', 'pictogram', 'label', 'on_water')
 
 
 class AccessibilitySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
@@ -215,7 +215,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                   'disabled_infrastructure', 'parking_location', 'relationships',
                   'points_reference', 'gpx', 'kml', 'source', 'portal',
                   'type2', 'category', 'structure', 'treks', 'children', 'parents',
-                  'previous', 'next') + \
+                  'previous', 'next', 'min_depth', 'max_depth') + \
             AltimetrySerializerMixin.Meta.fields + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \

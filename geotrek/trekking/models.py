@@ -138,6 +138,14 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     def __unicode__(self):
         return self.name
 
+    @property
+    def min_depth(self):
+        return settings.WATER_LEVEL - self.max_elevation
+
+    @property
+    def max_depth(self):
+        return settings.WATER_LEVEL - self.min_elevation
+
     def get_map_image_url(self):
         return reverse('trekking:trek_map_image', args=[str(self.pk), get_language()])
 
@@ -520,6 +528,7 @@ class Practice(PictogramMixin):
                                 help_text=_(u"Alphabetical order if blank"))
     color = ColorField(verbose_name=_(u"Color"), default='#444444', db_column='couleur',
                        help_text=_(u"Color of the practice, only used in mobile."))  # To be implemented in Geotrek-rando
+    on_water = models.BooleanField(verbose_name=_("On water"), default=False, db_column='sur_leau')
 
     class Meta:
         db_table = 'o_b_pratique'
