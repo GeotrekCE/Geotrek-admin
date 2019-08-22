@@ -111,6 +111,9 @@ class BaseApiTest(TestCase):
                                                                     name_fr='Coucou_Event', description_fr="Sisi_Event",
                                                                     description_teaser_fr="mini", published_fr=True)
         cls.district = zoning_factory.DistrictFactory(geom=MultiPolygon(Polygon.from_bbox(cls.treks[0].geom.extent)))
+        bigger_extent = (cls.treks[0].geom.extent[0] - 1, cls.treks[0].geom.extent[1] - 1,
+                         cls.treks[0].geom.extent[2] + 1, cls.treks[0].geom.extent[3] + 1)
+        cls.city = zoning_factory.CityFactory(geom=MultiPolygon(Polygon.from_bbox(bigger_extent)))
 
     def get_treks_list(self, lang, params=None):
         return self.client.get(reverse('apimobile:treks-list'), params, HTTP_ACCEPT_LANGUAGE=lang)
@@ -159,6 +162,23 @@ class APIAccessTestCase(BaseApiTest):
         self.assertAlmostEqual(0, json_response.get('properties').get('points_reference')[0][0])
         self.assertAlmostEqual(0, json_response.get('properties').get('parking_location')[0])
         self.assertEqual(len(json_response['properties']['districts']), 1)
+        self.assertEqual(len(json_response['properties']['cities']), 1)
+        self.assertEqual(json_response['properties']['departure_city'], self.city.code)
+        self.assertEqual(json_response['properties']['arrival_city'], self.city.code)
+
+    def test_trek_detail_no_parking_location(self):
+        trek_no_parking = trek_factory.TrekFactory(name_fr='no_parking', parking_location=None, published_fr=True)
+        response = self.get_treks_detail(trek_no_parking.pk, 'fr')
+        self.assertEqual(response.status_code, 200)
+
+        json_response = response.json()
+
+        # test geojson format
+        self.assertEqual(sorted(json_response.keys()),
+                         DETAIL_TREK_GEOJSON_STRUCTURE)
+        self.assertEqual(sorted(json_response.get('properties').keys()),
+                         TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
+        self.assertIsNone(json_response.get('properties').get('parking_location'))
 
     def test_trek_parent_detail(self):
         response = self.get_treks_detail(self.trek_parent.pk, 'fr')
