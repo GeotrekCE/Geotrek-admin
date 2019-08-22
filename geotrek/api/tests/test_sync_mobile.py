@@ -1,4 +1,6 @@
+import errno
 from io import StringIO
+
 import json
 from landez.sources import DownloadError
 import mock
@@ -120,6 +122,23 @@ class SyncMobileFailTest(TestCase):
             management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2)
         shutil.rmtree(os.path.join('tmp', 'other'))
+
+    def test_fail_sync_already_running(self):
+        os.makedirs(os.path.join('tmp_sync_mobile'))
+        msg = "The tmp_sync_mobile/ directory already exists. " \
+              "Please check no other sync_mobile command is already running. " \
+              "If not, please delete this directory."
+        with self.assertRaises(CommandError, msg=msg):
+            management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                    skip_tiles=True, verbosity=2)
+        shutil.rmtree(os.path.join('tmp_sync_mobile'))
+
+    @mock.patch('os.mkdir')
+    def test_fail_sync_tmp_sync_rando_permission_denied(self, mkdir):
+        mkdir.side_effect = OSError(errno.EACCES, 'Permission Denied')
+        with self.assertRaises(OSError, msg="[Errno 13] Permission Denied") as e:
+            management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                    skip_tiles=True, verbosity=2)
 
     def test_fail_url_ftp(self):
         with self.assertRaises(CommandError, msg="url parameter should start with http:// or https://"):
