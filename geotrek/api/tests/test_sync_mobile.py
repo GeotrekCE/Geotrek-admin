@@ -27,6 +27,7 @@ from geotrek.trekking.models import Trek, POI, OrderedTrekChild
 from geotrek.trekking.factories import TrekFactory, TrekWithPublishedPOIsFactory, PracticeFactory
 from geotrek.tourism.factories import (InformationDeskFactory, InformationDeskTypeFactory,
                                        TouristicContentFactory, TouristicEventFactory)
+from geotrek.tourism.models import TouristicEventType
 
 
 @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
@@ -381,7 +382,6 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
                 trek_geojson = json.load(f)
                 self.assertEqual(len(trek_geojson['features']),
                                  Trek.objects.filter(**{'published_{}'.format(lang): True}).count())
-
         self.assertIn('en/treks.geojson', output.getvalue())
 
     def test_sync_treks_by_pk(self):
@@ -473,18 +473,16 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         output = StringIO()
         mocke.return_value = StreamingHttpResponse()
         TrekWithPublishedPOIsFactory.create(published_fr=True)
-        with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
-            management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
-                                    skip_tiles=True, verbosity=2, stdout=output)
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                skip_tiles=True, skip_pdf=True, verbosity=2, stdout=output)
         self.assertTrue(os.path.exists(os.path.join('tmp', 'en', 'treks.geojson')))
 
     def test_indent(self):
         indent = 3
         output = BytesIO()
         TrekWithPublishedPOIsFactory.create(published_fr=True)
-        with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
-            management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
-                                    skip_tiles=True, verbosity=2, indent=indent, stdout=output)
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                skip_tiles=True, skip_pdf=True, verbosity=2, indent=indent, stdout=output)
         with open(os.path.join('tmp', 'en', 'treks.geojson')) as f:
             # without indent the json is in one line
             json_file = f.readlines()
@@ -492,6 +490,20 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
             self.assertGreater(len(json_file), 1)
             # there are 3 spaces in the second line because the indent is 3
             self.assertEqual(json_file[1][:indent], indent * ' ')
+
+    def test_object_without_pictogram(self):
+        pictogram_name_before = os.path.basename(self.touristic_event.type.pictogram.name)
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                skip_tiles=True, skip_pdf=True, verbosity=0)
+        self.assertIn(pictogram_name_before, os.listdir(os.path.join('tmp', 'nolang', 'media', 'upload')))
+
+        for event_type in TouristicEventType.objects.all():
+            event_type.pictogram = None
+            event_type.save()
+
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                skip_tiles=True, skip_pdf=True, verbosity=0)
+        self.assertNotIn(pictogram_name_before, os.listdir(os.path.join('tmp', 'nolang', 'media', 'upload')))
 
     @classmethod
     def tearDownClass(cls):
