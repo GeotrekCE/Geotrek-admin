@@ -468,7 +468,7 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
             # Check inside file generated we have only one picture.
             self.assertEqual(len(trek_geojson['features'][0]['properties']['pictures']), 1)
 
-    @mock.patch('geotrek.trekking.views.TrekViewSet.list')
+    @mock.patch('geotrek.api.mobile.views.TrekViewSet.list')
     def test_streaminghttpresponse(self, mocke):
         output = StringIO()
         mocke.return_value = StreamingHttpResponse()
@@ -477,6 +477,21 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
             management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2, stdout=output)
         self.assertTrue(os.path.exists(os.path.join('tmp', 'en', 'treks.geojson')))
+
+    def test_indent(self):
+        indent = 3
+        output = BytesIO()
+        TrekWithPublishedPOIsFactory.create(published_fr=True)
+        with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
+            management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                    skip_tiles=True, verbosity=2, indent=indent, stdout=output)
+        with open(os.path.join('tmp', 'en', 'treks.geojson')) as f:
+            # without indent the json is in one line
+            json_file = f.readlines()
+            # with indent the json is stocked in more than one line
+            self.assertGreater(len(json_file), 1)
+            # there are 3 spaces in the second line because the indent is 3
+            self.assertEqual(json_file[1][:indent], indent * ' ')
 
     @classmethod
     def tearDownClass(cls):
