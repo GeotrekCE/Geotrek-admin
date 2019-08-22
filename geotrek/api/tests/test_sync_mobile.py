@@ -7,9 +7,11 @@ import mock
 import os
 from PIL import Image
 import shutil
+from unittest import skipIf
 import zipfile
 
 from django.conf import settings
+from django.contrib.gis.geos import MultiLineString, LineString
 from django.core import management
 from django.core.management.base import CommandError
 from django.db.models import Q
@@ -504,6 +506,17 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                 skip_tiles=True, skip_pdf=True, verbosity=0)
         self.assertNotIn(pictogram_name_before, os.listdir(os.path.join('tmp', 'nolang', 'media', 'upload')))
+
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    def test_multilinestring(self):
+        TrekFactory.create(geom=MultiLineString(LineString((0, 0), (0, 1)), LineString((100, 100), (100, 101))))
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', skip_tiles=True, skip_pdf=True,
+                                verbosity=0)
+        for lang in settings.MODELTRANSLATION_LANGUAGES:
+            with open(os.path.join('tmp', lang, 'treks.geojson'), 'r') as f:
+                trek_geojson = json.load(f)
+                self.assertEqual(len(trek_geojson['features']),
+                                 Trek.objects.filter(**{'published_{}'.format(lang): True}).count())
 
     @classmethod
     def tearDownClass(cls):
