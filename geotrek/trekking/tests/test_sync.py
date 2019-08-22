@@ -1,3 +1,4 @@
+import errno
 import os
 import json
 from landez.sources import DownloadError
@@ -132,6 +133,23 @@ class SyncRandoFailTest(TestCase):
             management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=StringIO(), stderr=StringIO())
         self.assertFalse(os.path.exists(os.path.join('tmp', 'mobile', 'nolang', 'media', 'trekking_trek')))
+
+    def test_fail_sync_already_running(self):
+        os.makedirs(os.path.join('tmp_sync_rando'))
+        msg = "The tmp_sync_rando/ directory already exists. " \
+              "Please check no other sync_rando command is already running. " \
+              "If not, please delete this directory."
+        with self.assertRaises(CommandError, msg=msg):
+            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+                                    skip_tiles=True, verbosity=2)
+        shutil.rmtree(os.path.join('tmp_sync_rando'))
+
+    @mock.patch('os.mkdir')
+    def test_fail_sync_tmp_sync_rando_permission_denied(self, mkdir):
+        mkdir.side_effect = OSError(errno.EACCES, 'Permission Denied')
+        with self.assertRaises(OSError, msg='[Errno 13] Permission Denied') as e:
+            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+                                    skip_tiles=True, verbosity=2)
 
     @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
     @mock.patch('geotrek.trekking.views.TrekViewSet.list')
