@@ -121,9 +121,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                     return city.code
             return None
 
-        def get_geometry(self, obj):
-            return obj.geom2d_transformed
-
         def get_information_desks(self, obj):
             return [
                 InformationDeskSerializer(information_desk, context={'root_pk': obj.pk}).data
