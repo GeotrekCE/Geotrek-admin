@@ -316,14 +316,16 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         picto_desk = get_dummy_uploaded_image()
         information_desk_type = InformationDeskTypeFactory.create(pictogram=picto_desk)
         info_desk = InformationDeskFactory.create(type=information_desk_type)
+        info_desk_no_picture = InformationDeskFactory.create(photo=None)
 
         cls.trek_1 = TrekWithPublishedPOIsFactory.create()
-        cls.trek_1.information_desks = (info_desk,)
+        cls.trek_1.information_desks = (info_desk, info_desk_no_picture)
         cls.trek_2 = TrekWithPublishedPOIsFactory.create(portals=(cls.portal_a,))
         cls.trek_3 = TrekWithPublishedPOIsFactory.create(portals=(cls.portal_b,))
         cls.trek_4 = TrekFactory.create()
         OrderedTrekChild.objects.create(parent=cls.trek_1, child=cls.trek_4, order=1)
         cls.desk = InformationDeskFactory.create()
+
         cls.trek_4.information_desks.add(cls.desk)
 
         cls.attachment_1 = AttachmentFactory.create(content_object=cls.trek_1,

@@ -47,7 +47,7 @@ class SettingsMobileTest(TestCase):
         self.assertEqual(sorted(values_data),
                          SETTINGS_DATA_STRUCTURE)
 
-    def test_settings_information_desk(self):
+    def test_settings_information_desk_type(self):
         informationdesktype = tourism_factories.InformationDeskTypeFactory()
         tourism_factories.InformationDeskTypeFactory()
         response = self.get_settings()
@@ -63,7 +63,7 @@ class SettingsMobileTest(TestCase):
         self.assertEqual(informationdesk_item[0].get('name'), informationdesktype.label)
         self.assertIn(str(informationdesktype.pictogram), informationdesk_item[0].get('pictogram'))
 
-    def test_settings_information_desk_no_picto(self):
+    def test_settings_information_desk_type_no_picto(self):
         informationdesktype = tourism_factories.InformationDeskTypeFactory(pictogram=None)
         tourism_factories.InformationDeskTypeFactory()
         response = self.get_settings()
