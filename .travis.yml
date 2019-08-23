@@ -42,7 +42,7 @@ install:
 script:
   - if [[ $ACTION == codestyle ]]; then flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings; fi
   - if [[ $ACTION == codestyle ]]; then flake8 geotrek; fi
-  - if [[ $ACTION == codestyle ]]; then find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID; fi
+  - if [[ $ACTION == codestyle ]]; then test $(find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0; fi
   - if [[ $ACTION == deploy || $ACTION == integration ]]; then make load_demo; fi
   - if [[ $ACTION == deploy ]]; then make test_nav host=localhost port=80; fi
   - if [[ $ACTION == integration ]]; then make test_export host=localhost port=80; fi
