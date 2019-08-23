@@ -181,3 +181,12 @@ msgstr "Id de la structure."
 
 msgid "External ID"
 msgstr "ID externe"
+
+msgid "Mobile sync"
+msgstr "Synchro mobile"
+
+msgid "Sync mobile ended"
+msgstr "Synchro mobile terminé"
+
+msgid "Launch Sync Mobile"
+msgstr "Lancer la synchro mobile"

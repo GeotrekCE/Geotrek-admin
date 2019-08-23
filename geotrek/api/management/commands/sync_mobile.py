@@ -503,6 +503,16 @@ class Command(BaseCommand):
             )
         try:
             self.sync()
+            if self.celery_task:
+                self.celery_task.update_state(
+                    state='PROGRESS',
+                    meta={
+                        'name': self.celery_task.name,
+                        'current': 100,
+                        'total': 100,
+                        'infos': u"{}".format(_(u"Sync mobile ended"))
+                    }
+                )
         except Exception:
             shutil.rmtree(self.tmp_root)
             raise

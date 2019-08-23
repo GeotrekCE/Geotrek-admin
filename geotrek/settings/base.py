@@ -658,7 +658,9 @@ TINYMCE_DEFAULT_CONFIG = {
     'convert_urls': False,
 }
 
+
 SYNC_RANDO_OPTIONS = {}
+SYNC_MOBILE_OPTIONS = {'skip_tiles': False}
 
 '''
 If true; displays the attached pois pictures in the Trek's geojson pictures property.
