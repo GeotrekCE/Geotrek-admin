@@ -92,19 +92,16 @@
                 <span class="meta-item-label">{% trans "Difficulty level" %}</span>
                 <span class="meta-item-value">{{ object.difficulty }}</span>
               </span>
+            <div class="lists">
             {% endif %}
-            {% if object.level %}
-              <span class="meta-item">
-                <span class="meta-item-label">{% trans "Technical levels" %}</span>
-                <span class="meta-item-value">{{ object.level }}</span>
-              </span>
-            {% endif %}
-            {% if object.facilities %}
-              <span class="meta-item">
-                <span class="meta-item-label">{% trans "Facilities" %}</span>
-                <span class="meta-item-value">{{ object.facilities }}</span>
-              </span>
-            {% endif %}
+            <div class="lists">
+              {% if object.levels.all %}
+                <span class="meta-item">
+                  <span class="meta-item-label">{% trans "Technical levels" %}</span>
+                  {% for level in object.levels.all %}<span class="meta-item-value">{{ level.name }}</span>{% endfor %}
+                </span>
+              {% endif %}
+            </div>
             <div class="lists">
               {% if object.themes.all %}
                 <span class="meta-item">
@@ -174,6 +171,14 @@
           </section>
         {% endif %}
       {% endblock disabled_sport %}
+      {% block facilities %}
+        {% if object.facilities %}
+          <section class="half-block facilities">
+            <h2>{% trans "Facilities" %}</h2>
+            <div class="text-content">{{ object.facilities|safe }}</div>
+          </section>
+        {% endif %}
+      {% endblock facilities %}
       {% block source %}
         {% if object.source.all %}
           <section class="half-block source">
