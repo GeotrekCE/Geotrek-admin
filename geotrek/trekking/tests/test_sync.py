@@ -162,6 +162,29 @@ class SyncRandoFailTest(TestCase):
                                     skip_tiles=True, verbosity=2, stdout=output, stderr=StringIO())
         self.assertIn("failed (HTTP 500)", output.getvalue())
 
+    @mock.patch('geotrek.trekking.views.TrekViewSet.list')
+    def test_response_view_exception(self, mocke):
+        output = BytesIO()
+        mocke.side_effect = Exception('This is a test')
+        TrekWithPublishedPOIsFactory.create(published_fr=True)
+        with self.assertRaises(CommandError) as e:
+            management.call_command('sync_rando', 'tmp', url='http://localhost:8000', portal='portal', skip_pdf=True,
+                                    skip_tiles=True, languages='fr', verbosity=2, stdout=output)
+        self.assertEqual(e.exception.message, 'Some errors raised during synchronization.')
+        self.assertIn("failed (This is a test)", output.getvalue())
+
+    @override_settings(DEBUG=True)
+    @mock.patch('geotrek.trekking.views.TrekViewSet.list')
+    def test_response_view_exception_with_debug(self, mocke):
+        output = BytesIO()
+        mocke.side_effect = ValueError('This is a test')
+        TrekWithPublishedPOIsFactory.create(published_fr=True)
+        with self.assertRaises(ValueError) as e:
+            management.call_command('sync_rando', 'tmp', url='http://localhost:8000', portal='portal', skip_pdf=True,
+                                    skip_tiles=True, languages='fr', verbosity=2, stdout=output)
+        self.assertEqual(e.exception.message, 'This is a test')
+        self.assertIn("failed (This is a test)", output.getvalue())
+
     @override_settings(MEDIA_URL=9)
     def test_bad_settings(self):
         output = StringIO()

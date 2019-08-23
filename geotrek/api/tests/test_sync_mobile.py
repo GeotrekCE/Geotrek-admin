@@ -162,6 +162,18 @@ class SyncMobileFailTest(TestCase):
         self.assertFalse(os.path.exists(os.path.join('tmp', 'nolang', 'media', 'trekking_trek')))
 
     @mock.patch('geotrek.api.mobile.views.common.SettingsView.get')
+    def test_response_view_exception(self, mocke):
+        output = BytesIO()
+        mocke.side_effect = Exception('This is a test')
+        TrekWithPublishedPOIsFactory.create(published_fr=True)
+        with self.assertRaises(CommandError) as e:
+            management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', portal='portal',
+                                    skip_tiles=True, languages='fr', verbosity=2, stdout=output)
+        self.assertEqual(e.exception.message, 'Some errors raised during synchronization.')
+
+        self.assertIn("failed (This is a test)", output.getvalue())
+
+    @mock.patch('geotrek.api.mobile.views.common.SettingsView.get')
     def test_response_500(self, mocke):
         output = StringIO()
         mocke.return_value = HttpResponse(status=500)
