@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug Fixes**
 
--
+- Fix crash when a dive is not a point
 
 
 2.29.1 (2019-08-26)

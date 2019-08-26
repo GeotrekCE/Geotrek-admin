@@ -156,7 +156,7 @@ class Dive(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
 
     @property
     def wgs84_pretty(self):
-        location = self.geom.transform(4326, clone=True)
+        location = self.geom.centroid.transform(4326, clone=True)
         return (
             u"{lat_deg}°{lat_min:02d}'{lat_sec:02d}\" {lat_card} / "
             + u"{lng_deg}°{lng_min:02d}'{lng_sec:02d}\" {lng_card}"
