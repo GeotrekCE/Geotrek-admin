@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix coordinates in diving module
+- Fix retrieval of content-length of attachments with HTTPS
 
 
 2.29.0 (2019-08-20)
