@@ -18,6 +18,7 @@ from geotrek.common.mixins import (NoDeleteMixin, TimeStampedModelMixin,
 from geotrek.common.models import Theme
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Topology
+from geotrek.trekking.models import Trek
 
 
 class Practice(PictogramMixin):
@@ -167,7 +168,7 @@ class Dive(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
             lng_deg=trunc(abs(location.x)),
             lng_min=trunc((abs(location.x) * 60) % 60),
             lng_sec=trunc((abs(location.x) * 3600) % 60),
-            lng_card=pgettext("West", u"W") if location.x >= 0 else pgettext("East", u"E"),
+            lng_card=pgettext("East", u"E") if location.x >= 0 else pgettext("West", u"W"),
         )
 
     def distance(self, to_cls):
@@ -188,3 +189,5 @@ Topology.add_property('dives', lambda self: intersecting(Dive, self), _(u"Dives"
 Topology.add_property('published_dives', lambda self: intersecting(Dive, self).filter(published=True), _(u"Published dives"))
 Dive.add_property('dives', lambda self: intersecting(Dive, self), _(u"Dives"))
 Dive.add_property('published_dives', lambda self: intersecting(Dive, self).filter(published=True), _(u"Published dives"))
+Dive.add_property('treks', lambda self: intersecting(Trek, self), _(u"Treks"))
+Dive.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _(u"Published treks"))

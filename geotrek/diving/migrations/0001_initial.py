@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 import colorfield.fields
+from django.conf import settings
 import django.contrib.gis.db.models.fields
 from django.db import migrations, models
 import django.db.models.deletion
@@ -53,7 +54,7 @@ class Migration(migrations.Migration):
                 ('facilities', models.TextField(blank=True, db_column=b'equipements', verbose_name='Facilities')),
                 ('depth', models.PositiveIntegerField(blank=True, db_column=b'profondeur', help_text='m\xe8tres', null=True, verbose_name='Maximum depth')),
                 ('advice', models.TextField(blank=True, db_column=b'recommandation', help_text='Risques, danger, meilleure p\xe9riode, ...', verbose_name='Recommandations')),
-                ('geom', django.contrib.gis.db.models.fields.GeometryField(srid=2154, verbose_name='Emplacement')),
+                ('geom', django.contrib.gis.db.models.fields.GeometryField(srid=settings.SRID, verbose_name='Emplacement')),
                 ('eid', models.CharField(blank=True, db_column=b'id_externe', max_length=1024, null=True, verbose_name='ID externe')),
                 ('difficulty', models.ForeignKey(blank=True, db_column=b'difficulte', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='dives', to='diving.Difficulty', verbose_name='Niveau de difficult\xe9')),
             ],

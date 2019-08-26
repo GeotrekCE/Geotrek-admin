@@ -95,7 +95,7 @@ jobs:
         - flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings
         - flake8 geotrek
         # prevent SRID value in migrations
-        - find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID
+        - test $(find geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
 
     - stage: build
 
