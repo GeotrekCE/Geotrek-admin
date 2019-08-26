@@ -5,9 +5,16 @@ CHANGELOG
 2.29.1.dev0
 -------------------
 
+**Minor Changes**
+
+- Show treks related to dives
+
 **Bug fixes**
 
-- Fix coordinates in diving module
+- Fix detection of hardcoded SRID in migrations
+- Fix Est/West swap in diving module
+- Fix version of more-itertools
+- Fix missing difficulty and technical levels in dive detail page and PDF
 
 
 2.29.0 (2019-08-20)
