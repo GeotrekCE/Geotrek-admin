@@ -18,7 +18,7 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"practice" }}</th>
-            <td>{{ object.practice }}</td>
+            <td>{{ object.practice|default:"" }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"description_teaser" }}</th>
@@ -49,8 +49,12 @@
             <td>{{ object.disabled_sport|safe }}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"difficulty" }}</th>
+            <td>{{ object.difficulty|default:"" }}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"levels" }}</th>
-            <td>{% valuelist trek.levels.all %}</td>
+            <td>{% valuelist object.levels.all %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"themes" }}</th>
@@ -62,7 +66,7 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"depth" }}</th>
-            <td>{{ object.depth }} mètres</td>
+            <td>{{ object.depth|default:"" }} mètres</td>
         </tr>
         <tr>
             <th>{% trans "Source" %}</th>
