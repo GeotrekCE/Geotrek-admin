@@ -2,6 +2,7 @@ import mock
 import os
 
 from django.contrib.auth.models import Permission
+from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.translation import ugettext as _
 from django.conf import settings
@@ -39,6 +40,21 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         self.assertEqual(response.status_code, 302)
         obj = self.model.objects.last()
         self.assertEqual(obj.structure, self.user.profile.structure)
+
+    @override_settings(FORCED_LAYERS=[('OSM', [(42, 100000), (43.87017822557581, 7.506408691406249),
+                                               (43.90185050527358, 7.555847167968749), (42, 100000)])])
+    def test_forced_layers(self):
+        if self.model is None:
+            return  # Abstract test should not run
+
+        self.login()
+
+        obj = self.modelfactory()
+
+        response = self.client.get(obj.get_list_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("forced_layers_data", response.content)
+        self.assertIn("[42, 100000]", response.content)
 
     def test_structure_is_not_changed_without_permission(self):
         if not hasattr(self.model, 'structure'):
