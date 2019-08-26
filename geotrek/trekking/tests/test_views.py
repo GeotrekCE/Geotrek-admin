@@ -1,7 +1,9 @@
 import os
+from io import StringIO
 import datetime
 from collections import OrderedDict
 import hashlib
+import shutil
 
 from unittest import skipIf
 
@@ -43,6 +45,7 @@ from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory,
                                         TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
                                         TrekWithServicesFactory, TrekWithInfrastructuresFactory,
                                         TrekWithSignagesFactory)
+from geotrek.trekking.tasks import launch_sync_rando
 from geotrek.trekking.templatetags import trekking_tags
 from geotrek.trekking.serializers import timestamp
 from geotrek.trekking import views as trekking_views
@@ -1400,3 +1403,14 @@ class SyncRandoViewTest(TestCase):
         self.client.login(username='homer', password='doooh')
         response = self.client.post(reverse('trekking:sync_randos_state'), data={})
         self.assertRedirects(response, '/login/?next=/commands/statesync/')
+
+    @mock.patch('sys.stdout', new_callable=StringIO)
+    def test_launch_sync_rando(self, mocked_stdout):
+        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
+            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
+        task = launch_sync_rando.s(url="http://localhost:8000", skip_tiles=True, skip_pdf=True,
+                                   skip_dem=True, skip_profile_png=True).apply()
+        self.assertIn("Done", mocked_stdout.getvalue())
+        self.assertEqual(task.status, "SUCCESS")
+        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
+            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))

@@ -1,10 +1,15 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+from io import StringIO
+from mock import patch
+import os
+import shutil
+
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
 from mapentity.factories import SuperUserFactory
+
+from geotrek.api.mobile.tasks import launch_sync_mobile
 
 
 class SyncMobileViewTest(TestCase):
@@ -48,3 +53,25 @@ class SyncMobileViewTest(TestCase):
         self.client.login(username='homer', password='doooh')
         response = self.client.post(reverse('apimobile:sync_mobiles_state'), data={})
         self.assertRedirects(response, '/login/?next=/api/mobile/commands/statesync/')
+
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_launch_sync_mobile(self, mocked_stdout):
+        if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
+            shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
+        task = launch_sync_mobile.s(url="http://localhost:8000", skip_tiles=True, skip_pdf=True, ).apply()
+        self.assertIn("Done", mocked_stdout.getvalue())
+
+        self.assertEqual(task.status, "SUCCESS")
+        print(task.result)
+        if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
+            shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
+
+    @patch('django.core.management.call_command')
+    #@patch('sys.stdout', new_callable=BytesIO)
+    def test_launch_sync_rando(self, ccommand):
+        ccommand.side_effect = Exception('This is a test')
+        task = launch_sync_mobile.s(url="http://localhost:8000", skip_tiles=True, skip_pdf=True,
+                                    skip_dem=True, skip_profile_png=True).apply()
+        print(mocked_stdout.getvalue())
+        self.assertIn("Done", mocked_stdout.getvalue())
+        self.assertEqual(task.status, "SUCCESS")
