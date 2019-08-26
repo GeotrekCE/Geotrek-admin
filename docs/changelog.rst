@@ -11,6 +11,7 @@ CHANGELOG
 
 **Bug fixes**
 
+- Fix retrieval of content-length of attachments with HTTPS
 - Fix detection of hardcoded SRID in migrations
 - Fix Est/West swap in diving module
 - Fix version of more-itertools
