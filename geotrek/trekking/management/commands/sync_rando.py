@@ -194,7 +194,7 @@ class Command(BaseCommand):
             self.stdout.flush()
         fullname = os.path.join(self.tmp_root, name)
         self.mkdirs(fullname)
-        request = self.factory.get(url, params, HTTP_HOST=self.host)
+        request = self.factory.get(url, params, HTTP_HOST=self.host, secure=self.secure)
         request.LANGUAGE_CODE = lang
         request.user = AnonymousUser()
         try:
@@ -796,7 +796,11 @@ class Command(BaseCommand):
         self.dst_root = options["path"].rstrip('/')
         self.check_dst_root_is_empty()
         url = options['url']
-        if not re.search('http[s]?://', url):
+        if url.startswith('https://'):
+            self.secure = True
+        elif url.startswith('http://'):
+            self.secure = False
+        else:
             raise CommandError('url parameter should start with http:// or https://')
         self.referer = options['url']
         self.host = self.referer.split('://')[1]
