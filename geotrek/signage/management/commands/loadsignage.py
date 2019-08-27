@@ -3,7 +3,7 @@
 import os.path
 
 from django.contrib.gis.gdal import DataSource
-from django.contrib.gis.geos import fromstr, Point
+from django.contrib.gis.geos import Point
 from django.contrib.gis.geos.error import GEOSException
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
