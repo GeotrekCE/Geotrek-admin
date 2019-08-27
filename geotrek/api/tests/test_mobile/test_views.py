@@ -62,16 +62,14 @@ class SyncMobileViewTest(TestCase):
         self.assertIn("Done", mocked_stdout.getvalue())
 
         self.assertEqual(task.status, "SUCCESS")
-        print(task.result)
         if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
             shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
 
     @patch('django.core.management.call_command')
-    #@patch('sys.stdout', new_callable=BytesIO)
-    def test_launch_sync_rando(self, ccommand):
+    @patch('sys.stdout', new_callable=BytesIO)
+    def test_launch_sync_rando(self, mocked_stdout, ccommand):
         ccommand.side_effect = Exception('This is a test')
         task = launch_sync_mobile.s(url="http://localhost:8000", skip_tiles=True, skip_pdf=True,
                                     skip_dem=True, skip_profile_png=True).apply()
-        print(mocked_stdout.getvalue())
         self.assertIn("Done", mocked_stdout.getvalue())
         self.assertEqual(task.status, "SUCCESS")
