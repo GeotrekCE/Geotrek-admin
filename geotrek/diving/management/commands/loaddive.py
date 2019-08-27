@@ -93,17 +93,15 @@ class Command(BaseCommand):
                 for feature in layer:
                     feature_geom = feature.geom.transform(settings.SRID, clone=True)
                     feature_geom.coord_dim = 2
-
                     name = feature.get(field_name)
                     if feature_geom.geom_type == 'MultiPoint':
                         self.stdout.write(self.style.NOTICE(u"This object is a MultiPoint : %s" % name))
                         if len(feature_geom) < 2:
-                            feature_geom = fromstr(feature_geom[0].wkt)
+                            feature_geom = feature_geom[0].geos
                         else:
                             raise CommandError("One of your geometry is a MultiPoint object with multiple points")
                     depth = feature.get(field_depth) if field_depth in available_fields else None
                     eid = feature.get(field_eid) if field_eid in available_fields else None
-
                     self.create_dive(feature_geom, name, depth, practice, structure, verbosity, eid)
 
             transaction.savepoint_commit(sid)

@@ -5,16 +5,9 @@
       "type": "Feature",
       "properties": {"name": "name", "depth": 10},
       "geometry": {
-        "type": "LineString",
+        "type": "MultiPoint",
         "coordinates": [
-          [
-            -3,
-             0
-          ],
-          [
-            -4,
-             0
-          ]
+            [1.0, 0.0]
         ]
       }
     }
