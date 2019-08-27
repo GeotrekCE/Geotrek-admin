@@ -8,49 +8,54 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.core.management.base import CommandError
 
+from geotrek.common.utils import almostequal
+from geotrek.core.factories import PathFactory
 from geotrek.signage.factories import SignageFactory
 from geotrek.signage.models import Signage
 from geotrek.authent.factories import StructureFactory
 
 
-class InfrastructureCommandTest(TestCase):
+class SignageCommandTest(TestCase):
     """
-    There are 2 infrastructures in the file signage.shp
+    There are 2 signages in the file signage.shp
     """
+    def setUp(self):
+        self.path = PathFactory.create()
+
     def test_load_signage(self):
         output = StringIO()
         structure = StructureFactory.create(name='structure')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
-        signage = SignageFactory(name="name", implantation_year=2010)
         call_command('loadsignage', filename, type_default='label', name_default='name',
                      condition_default='condition', structure_default='structure',
                      description_default='description', year_default=2010, verbosity=2, stdout=output)
         self.assertIn('Signages will be linked to %s' % structure, output.getvalue())
         self.assertIn('2 objects created.', output.getvalue())
-        value = Signage.objects.all()
-        self.assertEquals(signage.name, value[1].name)
-        self.assertEquals(signage.implantation_year, value[1].implantation_year)
-        self.assertEquals(value.count(), 3)
+        value = Signage.objects.filter(name='name')
+        self.assertEquals(2010, value[0].implantation_year)
+        self.assertEquals(value.count(), 2)
+        self.assertTrue(almostequal(value[0].geom.x, -436345.7048306435))
+        self.assertTrue(almostequal(value[0].geom.y, 1176487.7429172313))
+        self.assertTrue(almostequal(value[1].geom.x, -436345.5053471739))
+        self.assertTrue(almostequal(value[1].geom.y, 1176480.9183338303))
 
     def test_load_signage_multipoints(self):
         output = StringIO()
         structure = StructureFactory.create(name='structure')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage_good_multipoint.geojson')
-        building = SignageFactory(name="name", implantation_year=2010)
         call_command('loadsignage', filename, type_default='label', name_default='name',
                      condition_default='condition', structure_default='structure',
                      description_default='description', year_default=2010, verbosity=2, stdout=output)
         self.assertIn('Signages will be linked to %s' % structure, output.getvalue())
         self.assertIn('1 objects created.', output.getvalue())
-        value = Signage.objects.all()
-        self.assertEquals(building.name, value[1].name)
-        self.assertEquals(building.implantation_year, value[1].implantation_year)
-        self.assertEquals(value.count(), 2)
+        value = Signage.objects.first()
+        self.assertEquals('name', value.name)
+        self.assertEquals(2010, value.implantation_year)
+        self.assertEquals(Signage.objects.count(), 1)
 
     def test_load_signage_bad_multipoints_error(self):
         output = StringIO()
         StructureFactory.create(name='structure')
-        SignageFactory(name="name", implantation_year=2010)
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage_bad_multipoint.geojson')
         with self.assertRaises(CommandError) as e:
             call_command('loadsignage', filename, type_default='label', name_default='name',
@@ -62,7 +67,6 @@ class InfrastructureCommandTest(TestCase):
         output = StringIO()
         structure = StructureFactory.create(name='structure')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
-        SignageFactory(name="name")
         call_command('loadsignage', filename, type_field='label', name_field='name',
                      condition_field='condition', structure_default='structure',
                      description_field='descriptio', year_field='year', verbosity=1, stdout=output)
@@ -75,7 +79,7 @@ class InfrastructureCommandTest(TestCase):
         self.assertIn('coucou', names)
         self.assertIn(2010, years)
         self.assertIn(2012, years)
-        self.assertEquals(value.count(), 3)
+        self.assertEquals(value.count(), 2)
 
     def test_no_file_fail(self):
         with self.assertRaises(CommandError) as cm:
@@ -123,7 +127,8 @@ class InfrastructureCommandTest(TestCase):
             self.assertIn("Field '{}' not found in data source".format(element),
                           output.getvalue())
 
-    def test_line_fail_rolling_back(self):
+    def test_no_line_fail_rolling_back(self):
+        self.path.delete()
         StructureFactory.create(name='structure')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'line.geojson')
         output = StringIO()
