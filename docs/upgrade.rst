@@ -1,72 +1,46 @@
-===============
-Software update
-===============
+============
+UPDATE
+============
 
-WARNING:
+These instructions will update *Geotrek-admin* on a dedicated server for production.
 
-Intermediate versions are required to upgrade your instance.
+Save database
+-------------
 
-If your version is < 2.13.1, you need to install this version.
-
-If your version is < 2.16.2, you need to install this version
-
-All versions are published on `the Github forge <https://github.com/GeotrekCE/Geotrek-admin/releases>`_.
-Download and extract the new version in a separate folder (**recommended**).
-
-.. code-block:: bash
-
-    wget https://github.com/GeotrekCE/Geotrek-admin/archive/X.Y.Z.zip
-    unzip X.Y.Z.zip
-    cd Geotrek-X.Y.Z/
-
-Before upgrading, **READ CAREFULLY** the release notes, either from the ``docs/changelog.rst``
-files `or online <https://github.com/GeotrekCE/Geotrek-admin/releases>`_.
-
-Shutdown previous running version :
-
+Launch backup script
 ::
 
-    # Shutdown previous version
-    sudo supervisorctl stop all
+ cd /home/<user>/Geotrek-admin
+ ./backup.sh
 
+Update docker image
+-------------------
 
-Copy your old configuration and uploaded files to your new folder.
-
+Get future image version
 ::
 
-    # Configuration files
-    cp -aR ../previous-version/etc/ .
+ docker pull geotrekce/admin:<tag>
 
-    # Uploaded files
-    cp -aR ../previous-version/var/ .
-
-    # If you have advanced settings
-    cp ../previous-version/geotrek/settings/custom.py geotrek/settings/custom.py
-
-    # If you have import parsers
-    cp ../previous-version/bulkimport/parsers.py bulkimport/parsers.py
-
-    # If you have custom translations
-    cp -aR ../previous-version/geotrek/locale/ geotrek/
-
-Deploy the new version :
-
+Edit GEOTREK_VERSION for the new version in the file .env
 ::
 
-    # Re-run install
-    ./install.sh
+ GEOTREK_VERSION=geotrek_version  <--
+ POSTGRES_HOST=172.17.0.1
+ POSTGRES_USER=your_database_user
+ POSTGRES_DB=your_database
+ POSTGRES_PASSWORD=your_user_password
+ DOMAIN_NAME=your.final.geotrek.domain
+ SECRET_KEY=secret-and-unique-secret-and-unique
+ GUNICORN_CMD_ARGS=--bind=0.0.0.0:8000 --workers=5 --timeout=600
 
-    # Empty cache
-    sudo service memcached restart
+For the version of geotrek check : https://hub.docker.com/r/geotrekce/admin/tags/
 
+Restart the containers
+::
 
-Check the version on the login page !
+ sudo systemctl restart <instance_name>
 
-:note:
+Run the update script
+::
 
-    Shutting down the current instance may not be necessary. But this allows us to
-    keep a generic software update procedure.
-
-    If you don't want to interrupt the service, skip the ``stop`` step, at your own risk.
-
-Check out the :ref:`troubleshooting page<troubleshooting-section>` for common problems.
+ docker-compose run --rm web update.sh

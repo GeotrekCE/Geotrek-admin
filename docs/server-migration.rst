@@ -19,7 +19,7 @@ Get and unzip Geotrek sources on the new server:
 
 ::
 
-    wget https://github.com/GeotrekCE/Geotrek-admin/archive/2.0.0.zip
+    wget https://github.com/GeotrekCE/Geotrek-admin-starter/archive/X.Y.Z.zip
     unzip 2.0.0.zip
     mv Geotrek-2.0.0 Geotrek
     cd Geotrek
@@ -31,22 +31,20 @@ Restore files on the new server:
     scp old_server:Geotrek/data.tgz .
     tar xvzf data.tgz
 
-Then edit `etc/settings.ini` to update host variable and `geotrek/settings/custom.py`
-to update IGN key.
+Then edit `var/conf/custom.py` to update host variable to update IGN key.
 
-Install Geotrek on the new server:
-
-::
-
-    ./install.sh
 
 Restore database on the new server:
 
 ::
 
-    sudo supervisorctl stop all
     sudo -u postgres psql -c "drop database geotrekdb;"
     sudo -u postgres psql -c "create database geotrekdb owner geotrek;"
     sudo -u postgres pg_restore -d geotrekdb geotrekdb.backup
-    make update
-    sudo supervisorctl start all
+
+
+Install Geotrek on the new server:
+
+::
+
+    docker-compose run --rm web update.sh

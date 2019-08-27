@@ -6,13 +6,13 @@ These instructions will update *Geotrek* on a dedicated server with docker for p
 without docker.
 
 First you should update at least to version 2.22.0 without docker.
-Please folow this documentation if necessary : ``docs/upgrade.rst``
+Please folow this documentation if necessary : ``https://geotrek.readthedocs.io/en/2.22.1/installation.html#software-update``
 
 
 Server migration docker
 -----------------------
 
-First, follow the installation : ``docs/installation-docker.rst``
+First, follow the installation : ``docs/installation.rst``
 
 Do not forget to create the server in another folder and stop postgresql :
 ::
@@ -53,4 +53,4 @@ Then you can run your geotrek :
 
     sudo supervisorctl restart all
 
-If you are Then you can upgrade your docker to new versions : ``docs/upgrade-docker.rst``
+If you are Then you can upgrade your docker to new versions : ``docs/upgrade.rst``

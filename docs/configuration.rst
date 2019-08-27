@@ -6,15 +6,12 @@ CONFIGURATION
 Configuration update
 --------------------
 
-After editing ``etc/settings.ini``, refresh the running instance with :
+After editing ``var/conf/custom.py``, refresh the running instance with :
 
 ::
 
-    make env_standalone deploy   (docker)
-
-
-There a few cases where running ``install.sh`` would be necessary. If you
-change the ``rooturl`` or other parameters that affect *nginx* site configuration.
+    docker-compose run --rm web update.sh
+    sudo systemctl restart geotrek.service
 
 
 Spatial extents
@@ -118,16 +115,15 @@ Geotrek will send emails :
 * to administrators when internal errors occur
 * to managers when a feedback report is created
 
-Email configuration takes place in ``etc/settings.ini``, where you control
-recipients emails (``mailadmins``, ``mailmanagers``) as well as server
-parameters (``host``, ``user``, ``password``, ...)
+Email configuration takes place in ``var/conf/custom.py``, where you control
+recipients emails (``MANAGERS``, ``ADMINS``)
 
 You can test you configuration with the following command. A fake email will
 be sent to the managers :
 
 ::
 
-    bin/django test_managers_emails
+    docker-compose run --rm web ./manage.py test_managers_emails
 
 
 Advanced Configuration

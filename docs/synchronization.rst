@@ -26,7 +26,11 @@ You can set up automatic synchronization by creating a file ``/etc/crond.d/geotr
 
 ::
 
-    0 3 * * * root /path/to/geotrek/bin/django sync_rando /where/to/generate/data
+    0 3 * * * root /path/to/geotrek/sync_rando.sh
+
+/!\ The file sync_rando.sh in /path/to/geotrek has to be filled. Example :
+
+/usr/local/bin/docker-compose run --rm web ./manage.py sync_rando --rando-url https://rando --url https://admin -v2 /app/src/var/data
 
 This example will automatically synchronize data a 3 am every day.
 
@@ -70,7 +74,7 @@ You can filter treks, touristic contents, touristic events and static pages by s
 
 ::
 
-    ./bin/django sync_rando --source "source A,source B" dataAB
+    docker-compose run --rm web ./manage.py sync_rando --source "source A,source B" dataAB
 
 Multiple sources are separated with comas (without space before or after coma). Do not forget to add double quotes after and before the parameter if there are spaces in source names.
 You can run several commands to export several sources combinations into several directories and use them to publish several distinct web portals.
@@ -80,7 +84,7 @@ You can do exactly the same with Target_Portal filed value.
 
 ::
 
-    ./bin/django sync_rando --portal "portal A" dataA
+    docker-compose run --rm web ./manage.py  sync_rando --portal "portal A" dataA
 
 
 Synchronization filtered by touristic content categories
@@ -90,7 +94,7 @@ In Geotrek-mobile, you can choose to also include touristic content per trek. Yo
 
 ::
 
-    ./bin/django sync_rando --with-touristiccontent-categories="1,3"
+    docker-compose run --rm web ./manage.py  sync_rando --with-touristiccontent-categories="1,3"
 
 Multiple categories are separated with comas (without space before or after coma).
 

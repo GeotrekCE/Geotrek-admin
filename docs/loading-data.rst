@@ -4,27 +4,12 @@
 LOADING DATA
 ============
 
-Required Initial Data
----------------------
-
-
-Load basic data :
-
-::
-
-    make load_data
-
-:note:
-
-    This command will load default users, groups, default values for lists... in French and English. So you need to enable EN and FR at least in ``etc/settings.ini``
-
-
 Required Super User
 -------------------
 
 .. code-block:: bash
 
-    bin/django createsuperuser
+    docker-compose run --rm web ./manage.py createsuperuser
 
 
 You will be prompted to enter an username, a password and mail address for your super user.
@@ -83,15 +68,14 @@ And use the Geotrek command to load it into PostGIS :
 
 ::
 
-    bin/django loaddem <PATH>/dem.tif                                   (no-docker)
-    docker-compose run --rm web ./manage.py loaddem <PATH>/dem.tif      (docker)
+    docker-compose run --rm web ./manage.py loaddem <PATH>/dem.tif
 
 
 :note:
 
     This command makes use of *GDAL* and ``raster2pgsql`` internally. It
     therefore supports all GDAL raster input formats. You can list these formats
-    with the command ``raster2pgsql -G``.
+    with the command ``docker-compose run --rm web raster2pgsql -G``.
     
 :note:
 

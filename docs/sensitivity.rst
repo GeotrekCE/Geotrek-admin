@@ -40,8 +40,7 @@ On command line, run
 
 .. code-block :: bash
 
-    ./bin/django import geotrek.sensitivity.parsers.BiodivParser                                        (no-docker)
-    docker-compose run --rm web ./manage.py import geotrek.sensitivity.parsers.BiodivParser             (docker)
+    docker-compose run --rm web ./manage.py import geotrek.sensitivity.parsers.BiodivParser
 
 Import from shapefile
 ---------------------
@@ -53,13 +52,7 @@ On command line, run:
 
 .. code-block :: bash
 
-    ./bin/django import geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser <file.shp>          (no-docker)
-    docker-compose run --rm web ./manage.py import geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser <file.shp>             (docker)
-or:
-
-.. code-block :: bash
-
-    ./bin/django import geotrek.sensitivity.parsers.RegulatorySensitiveAreaShapeParser <file.shp>.
+    docker-compose run --rm web ./manage.py import geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser <file.shp>
 
 Attributes for "zones sensibles espèce" are:
  
@@ -84,6 +77,6 @@ Just run:
 
 .. code-block :: bash
 
-    ./bin/django sync_rando
+    docker-compose run --rm web ./manage.py sync_rando
     
 as usual. If sensitivity module is enabled, sensitive areas will be automatically synced.

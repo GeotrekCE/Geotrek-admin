@@ -35,7 +35,7 @@ at *http://server/tools/extents/*.
 No background tiles
 -------------------
 
-Check the values of your WMS settings (server name should end with ``?``, layers names should exist on server).
+Check the values of your WMTS settings (server name should end with ``?``, layers names should exist on server).
 
 
 Error at loading DEM
@@ -52,14 +52,15 @@ services run with the following commands :
 
 ::
 
-    sudo supervisorctl status
+    sudo systemctl status geotrek
 
 You may want to force their restart :
 
 ::
 
-    sudo supervisorctl restart all
+    sudo systemctl restart geotrek
 
 
-If they don't stay alive, check the log files in the ``var/log/`` folder.
+If they don't stay alive, check the log files in the ``var/log/``  folder or use ``docker-compose logs <service>``.
+Services : web, api, celery, screamshotter, redis, convertit
 It might come from a configuration problem.

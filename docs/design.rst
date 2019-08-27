@@ -100,16 +100,15 @@ install.sh script
 * Idem-potent, used for both installation and upgrade
 
 
-etc/settings.ini
+.env
 ----------------
 
-* Centralize configuration values (for both Django and system configuration files)
-* Easy syntax
-* Default and overridable values (*conf/settings-default.ini*)
+* Information of Server
+
 
 Regarding Django settings organisation:
 
 * All application settings have a default (working) value in *settings/base.py*.
-* The mechanizm that uses *etc/settings.ini* takes place in *settings/default.py* **only**.
   This means that other settings management can be derived from *base.py*.
 * Production settings (*settings/prod.py*) contains tweaks that are relevant in production only.
+* And *custom.py* with the custom settings.

@@ -6,7 +6,7 @@ IMPORT DATA
 Configure APIDAE (ex-SITRA) import
 ----------------------------------
 
-To import touristic content from APIDAE (ex-SITRA), create a ``bulkimport/parsers.py`` (no-docker) or ``var/conf/parsers.py`` (docker) file with the following content:
+To import touristic content from APIDAE (ex-SITRA), create a ``var/conf/parsers.py`` file with the following content:
 
 ::
 
@@ -35,12 +35,11 @@ Then set up appropriate values:
 You can duplicate the class. Each class must have a different name.
 Don't forget the u character before strings if they contain non-ascii characters.
 
-To apply changes, you may have to run ``sudo supervisorctl restart all``.
 
 Configure Marque Esprit Parc import
 -----------------------------------
 
-To import touristic content from Esprit Parc national database, create (or update) ``bulkimport/parsers.py`` (no-docker) or ``var/conf/parsers.py`` (docker) file with the following content:
+To import touristic content from Esprit Parc national database, create (or update) ``var/conf/parsers.py`` file with the following content:
 
 ::
 
@@ -96,8 +95,7 @@ When sensitive areas module is enabled, Geotrek provides 3 parsers to import dat
   `descriptio`, `periode` (month numbers separated with comas), `pratiques` (separated with comas), and `url`.
   Practices with corresponding names have to be created manually before import.
 
-You can start imports from "Import" menu or from command line. You can override them in your ``bulkimport/parsers.py`` (no-docker)
-or ``var/conf/parsers.py`` (docker) file.
+You can start imports from "Import" menu or from command line. You can override them in your ``var/conf/parsers.py`` file.
 
 Start import from command line
 ------------------------------
@@ -106,9 +104,9 @@ Just run:
 
 ::
 
-    ./bin/django import bulkimport.parsers.HebergementParser
+    docker-compose run --rm web ./manage.py import bulkimport.parsers.HebergementParser
 
-Change the last element ``HebergementParser`` to match one of the class names in ``bulkimport/parsers.py`` file.
+Change the last element ``HebergementParser`` to match one of the class names in ``var/conf/parsers.py`` file.
 You can add ``-v2`` parameter to make the command more verbose (show progress).
 Thank to ``cron`` utility you can configure automatic imports.
 
@@ -126,19 +124,16 @@ To list all Geotrek commands available:
 
 ::
 
-    ./bin/django (no-docker)
-    docker-compose run --rm web ./manage.py (docker)
+    docker-compose run --rm web ./manage.py
     
 To get help about a command:
 
 ::
 
-    ./bin/django help <subcommand> (no-docker)
-    docker-compose run --rm web ./manage.py <subcommand> (docker)
+    docker-compose run --rm web ./manage.py <subcommand>
     
 Example:
 
 ::
 
-    ./bin/django help loadpoi (no-docker)
-    docker-compose run --rm web ./manage.py (docker)
+    docker-compose run --rm web ./manage.py loadpoi
