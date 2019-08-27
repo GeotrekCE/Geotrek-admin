@@ -5,6 +5,10 @@ CHANGELOG
 2.29.2.dev0
 -------------------
 
+**Minor Changes**
+
+- Add a command to import dives
+
 **Bug Fixes**
 
 -
