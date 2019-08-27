@@ -58,7 +58,7 @@ class SyncMobileViewTest(TestCase):
     def test_launch_sync_mobile(self, mocked_stdout):
         if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
             shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
-        task = launch_sync_mobile.s(url="http://localhost:8000", skip_tiles=True, skip_pdf=True, ).apply()
+        task = launch_sync_mobile.apply(kwargs={'url': 'http://localhost:8000', 'skip_tiles': True, 'skip_pdf': True})
         log = mocked_stdout.getvalue()
         self.assertIn("Done", log)
         self.assertIn('Sync mobile ended', log)
@@ -70,8 +70,8 @@ class SyncMobileViewTest(TestCase):
            side_effect=Exception('This is a test'))
     @patch('sys.stdout', new_callable=BytesIO)
     def test_launch_sync_rando(self, mocked_stdout, ccommand):
-        task = launch_sync_mobile.s(url="http://localhost:8000", skip_tiles=True, skip_pdf=True,
-                                    skip_dem=True, skip_profile_png=True).apply()
+        task = launch_sync_mobile.apply(kwargs={'url': 'http://localhost:8000', 'skip_tiles': True, 'skip_pdf': True,
+                                                'skip_dem': True, 'skip_profile_png': True})
         log = mocked_stdout.getvalue()
         self.assertNotIn("Done", log)
         self.assertNotIn('Sync mobile ended', log)

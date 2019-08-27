@@ -1408,8 +1408,8 @@ class SyncRandoViewTest(TestCase):
     def test_launch_sync_rando(self, mocked_stdout):
         if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
             shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
-        task = launch_sync_rando.s(url="http://localhost:8000", skip_tiles=True, skip_pdf=True,
-                                   skip_dem=True, skip_profile_png=True).apply()
+        task = launch_sync_rando.apply(kwargs={'url': "http://localhost:8000", 'skip_tiles': True, 'skip_pdf': True,
+                                               'skip_dem': True, 'skip_profile_png': True})
         self.assertIn("Done", mocked_stdout.getvalue())
         self.assertEqual(task.status, "SUCCESS")
         if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
