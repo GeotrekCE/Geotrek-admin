@@ -147,9 +147,7 @@ class Command(BaseCommand):
                     break
 
                 for feature in layer:
-                    feature_geom = feature.geom.transform(settings.API_SRID, clone=True)
-                    feature_geom.coord_dim = 2
-
+                    feature_geom = feature.geom
                     name = feature.get(field_name) if field_name in available_fields else options.get('name_default')
                     if feature_geom.geom_type == 'MultiPoint':
                         self.stdout.write(self.style.NOTICE(u"This object is a MultiPoint : %s" % name))
@@ -226,15 +224,18 @@ class Command(BaseCommand):
                 infra = Infrastructure.objects.create(**fields_without_eid)
         if settings.TREKKING_TOPOLOGY_ENABLED:
             try:
+                geometry.coord_dim = 2
+                geometry = geometry.transform(settings.API_SRID, clone=True)
                 serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
                 topology = TopologyHelper.deserialize(serialized)
                 infra.mutate(topology)
             except IndexError:
-                raise GEOSException('Invalid Geometry type.')
+                raise GEOSException('Invalid Geometry type. You need 1 path')
         else:
             if geometry.geom_type != 'Point':
                 raise GEOSException('Invalid Geometry type.')
-            infra.geom = Point(geometry.x, geometry.y, srid=settings.SRID)
+            geometry = geometry.transform(settings.SRID, clone=True)
+            infra.geom = Point(geometry.x, geometry.y)
             infra.save()
         self.counter += 1
 

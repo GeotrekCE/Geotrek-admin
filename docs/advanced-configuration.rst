@@ -75,6 +75,8 @@ The following settings are related to sensitive areas:
 
 .. code-block :: python
 
+    SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT = True
+    
     # Default radius of sensitivity bubbles when not specified for species
     SENSITIVITY_DEFAULT_RADIUS = 100  # meters
 
@@ -93,6 +95,14 @@ add the following code:
     # Enable diving module
     INSTALLED_APPS += ('geotrek.diving', )
 
+Then run ``make env_standalone deploy``.
+
+You can also insert diving minimal data (default practices, difficulties, levels and group permissions values):
+
+::
+
+    ./bin/django loaddata geotrek/diving/fixtures/basic.json
+    cp geotrek/diving/fixtures/upload/* var/media/upload/
 
 WYSIWYG editor configuration
 ----------------------------
@@ -264,7 +274,7 @@ Disable darker map backgrounds
 Since IGN map backgrounds are very dense and colourful, a dark opacity is
 applied. In order to disable, change this MapEntity setting :
 
-.. code-block:: python
+.. code-block :: python
 
     MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = False
 

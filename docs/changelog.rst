@@ -2,6 +2,18 @@
 CHANGELOG
 =========
 
+2.29.2 (2019-08-28)
+-------------------
+
+**Minor Changes**
+
+- Add a command to import dives
+
+**Bug Fixes**
+
+- Fix crash when a dive is not a point
+
+
 2.29.1 (2019-08-26)
 -------------------
 
