@@ -9,7 +9,6 @@ from django.test import TestCase
 from django.core.management.base import CommandError
 
 from geotrek.common.utils import almostequal
-from geotrek.core.factories import PathFactory
 from geotrek.diving.factories import DiveFactory
 from geotrek.diving.models import Dive
 from geotrek.authent.factories import StructureFactory
@@ -29,7 +28,7 @@ class DiveCommandTest(TestCase):
         structure = StructureFactory.create(name='structure')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'dive.shp')
         DiveFactory.create(name='name', eid='eid1', depth=10)
-        call_command('loaddive', filename, name_field='name', depth_field='depth',  eid_field='eid',
+        call_command('loaddive', filename, name_field='name', depth_field='depth', eid_field='eid',
                      practice_default='Practice', structure_default='structure', verbosity=2, stdout=output)
         self.assertIn('Dives will be linked to %s' % structure, output.getvalue())
         self.assertIn('2 objects created.', output.getvalue())
@@ -117,7 +116,7 @@ class DiveCommandTest(TestCase):
 
     def test_load_dive_bad_multipoints(self):
         output = StringIO()
-        structure = StructureFactory.create(name='structure')
+        StructureFactory.create(name='structure')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'dive_bad_multipoint.geojson')
         with self.assertRaises(CommandError) as e:
             call_command('loaddive', filename, name_field='name', depth_field='depth', practice_default='Practice',
@@ -128,7 +127,7 @@ class DiveCommandTest(TestCase):
         StructureFactory.create(name='structure')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'dive.shp')
         output = StringIO()
-        call_command('loaddive', filename, name_field='wrong_name_field',  structure_default='structure', stdout=output)
+        call_command('loaddive', filename, name_field='wrong_name_field', structure_default='structure', stdout=output)
         call_command('loaddive', filename, name_field='name', depth_field='wrong_depth_field',
                      structure_default='structure', stdout=output)
         call_command('loaddive', filename, name_field='name', depth_field='depth', eid_field='wrong_eid_field',
