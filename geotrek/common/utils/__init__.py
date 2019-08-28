@@ -93,10 +93,6 @@ def sqlfunction(function, *args):
     return result
 
 
-def almostequal(v1, v2, precision=2):
-    return abs(v1 - v2) < 10 ** -precision
-
-
 def uniquify(values):
     """
     Return unique values, order preserved

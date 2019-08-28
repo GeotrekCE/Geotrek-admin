@@ -5,8 +5,6 @@ from django.conf import settings
 
 from unittest import skipIf
 
-from geotrek.common.utils import almostequal
-
 from geotrek.core.factories import PathFactory, TopologyFactory, NetworkFactory, UsageFactory
 from geotrek.core.models import Path, Topology
 
@@ -1133,9 +1131,9 @@ class SplitPathPointTopologyTest(TestCase):
         aggr = topology.aggregations.all()[0]
         position = topology.geom.coords
 
-        self.assertTrue(almostequal(3, topology.offset))
-        self.assertTrue(almostequal(0.125, aggr.start_position))
-        self.assertTrue(almostequal(0.125, aggr.end_position))
+        self.assertAlmostEqual(3, topology.offset, places=6)
+        self.assertAlmostEqual(0.125, aggr.start_position, places=6)
+        self.assertAlmostEqual(0.125, aggr.end_position, places=6)
 
         # Add CD
         PathFactory.create(name="CD", geom=LineString((4, 0), (4, 2)))
@@ -1143,13 +1141,13 @@ class SplitPathPointTopologyTest(TestCase):
         aggr_ab = ab.aggregations.all()[0]
 
         topology.reload()
-        self.assertTrue(almostequal(3, topology.offset))
+        self.assertAlmostEqual(3, topology.offset, places=6)
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(len(ab.aggregations.all()), 1)
         self.assertEqual(len(cb.aggregations.all()), 0)
         self.assertEqual(position, topology.geom.coords)
-        self.assertTrue(almostequal(0.5, aggr_ab.start_position))
-        self.assertTrue(almostequal(0.5, aggr_ab.end_position))
+        self.assertAlmostEqual(0.5, aggr_ab.start_position, places=6)
+        self.assertAlmostEqual(0.5, aggr_ab.end_position, places=6)
 
     def test_split_tee_7(self):
         """
@@ -1168,9 +1166,9 @@ class SplitPathPointTopologyTest(TestCase):
         aggr = topology.aggregations.all()[0]
         position = topology.geom.coords
 
-        self.assertTrue(almostequal(3, topology.offset))
-        self.assertTrue(almostequal(0.875, aggr.start_position))
-        self.assertTrue(almostequal(0.875, aggr.end_position))
+        self.assertAlmostEqual(3, topology.offset, places=6)
+        self.assertAlmostEqual(0.875, aggr.start_position, places=6)
+        self.assertAlmostEqual(0.875, aggr.end_position, places=6)
 
         # Add CD
         PathFactory.create(name="CD", geom=LineString((4, 0), (4, 2)))
@@ -1180,11 +1178,11 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(len(ab.aggregations.all()), 0)
         self.assertEqual(len(cb.aggregations.all()), 1)
-        self.assertTrue(almostequal(3, topology.offset), topology.offset)
+        self.assertAlmostEqual(3, topology.offset, places=6)
         self.assertEqual(position, topology.geom.coords)
         aggr_cb = cb.aggregations.all()[0]
-        self.assertTrue(almostequal(0.75, aggr_cb.start_position))
-        self.assertTrue(almostequal(0.75, aggr_cb.end_position))
+        self.assertAlmostEqual(0.75, aggr_cb.start_position, places=6)
+        self.assertAlmostEqual(0.75, aggr_cb.end_position, places=6)
 
     def test_split_on_update(self):
         """                               + D
