@@ -6,6 +6,8 @@ from .default import *
 
 TEST = True
 
+CELERY_ALWAYS_EAGER = True
+
 TEST_EXCLUDE = ('django',)
 
 INSTALLED_APPS += (
