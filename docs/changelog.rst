@@ -5,6 +5,10 @@ CHANGELOG
 2.29.3.dev0
 -------------------
 
+**Minor Changes**
+
+- Allow to override nginx port in etc/settings.ini
+
 **Bug fixes**
 
 - Fix sync of manual PDF 

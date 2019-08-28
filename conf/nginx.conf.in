@@ -27,7 +27,7 @@ server {
 {% end %}
 
 server {
-    listen ${options.port} {% if options.default in ['True', 'true'] %} default {% end %};
+    listen ${parts['nginx-conf'].port} {% if options.default in ['True', 'true'] %} default {% end %};
     server_name ${options.server_name};
     {% for h in [a for a in options.server_aliases.strip().split() if a.strip()]%ZZ}
     server_alias ${h};
