@@ -14,7 +14,7 @@ from django.core.management.base import CommandError
 from django.http import HttpResponse, StreamingHttpResponse
 from django.test.utils import override_settings
 
-from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory, AttachmentFactory
+from geotrek.common.factories import FileTypeFactory, RecordSourceFactory, TargetPortalFactory, AttachmentFactory, ThemeFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_file
 from geotrek.diving.factories import DiveFactory, PracticeFactory as PracticeDiveFactory
 from geotrek.diving.models import Dive
@@ -161,13 +161,32 @@ class SyncRandoFailTest(TestCase):
         self.assertEqual(e.exception.message, "'int' object has no attribute 'strip'")
         self.assertIn("Exception raised in callable attribute", output.getvalue())
 
+    def test_sync_fail_src_file_not_exist(self):
+        output = BytesIO()
+        theme = ThemeFactory.create()
+        theme.pictogram = "other"
+        theme.save()
+        with self.assertRaises(CommandError) as e:
+            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+                                    skip_tiles=True, languages='fr', verbosity=2, stdout=output, stderr=BytesIO())
+        self.assertEqual(e.exception.message, 'Some errors raised during synchronization.')
+        self.assertIn("file does not exist", output.getvalue())
+
     @classmethod
     def tearDownClass(cls):
         super(SyncRandoFailTest, cls).tearDownClass()
         shutil.rmtree('tmp')
 
 
-class SyncTest(TestCase):
+class SyncSetup(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        if os.path.exists(os.path.join('tmp_sync_rando')):
+            shutil.rmtree(os.path.join('tmp_sync_rando'))
+        if os.path.exists(os.path.join('tmp')):
+            shutil.rmtree(os.path.join('tmp'))
+        super(SyncSetup, cls).setUpClass()
+
     def setUp(self):
         self.source_a = RecordSourceFactory()
         self.source_b = RecordSourceFactory()
@@ -230,6 +249,11 @@ class SyncTest(TestCase):
         self.attachment_touristic_event = AttachmentFactory.create(content_object=self.touristic_event,
                                                                    attachment_file=get_dummy_uploaded_image())
 
+    def tearDown(self):
+        shutil.rmtree(os.path.join('tmp'))
+
+
+class SyncTest(SyncSetup):
     @override_settings(THUMBNAIL_COPYRIGHT_FORMAT=u'*' * 300)
     def test_sync_pictures_long_title_legend_author(self):
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
@@ -409,10 +433,35 @@ class SyncTest(TestCase):
             # 4 dives have portal A or B or no portal
             self.assertEquals(len(dives['features']), 4)
 
-    @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
-    @mock.patch('geotrek.diving.models.Dive.prepare_map_image')
-    @mock.patch('geotrek.tourism.models.TouristicContent.prepare_map_image')
-    @mock.patch('geotrek.tourism.models.TouristicEvent.prepare_map_image')
+
+@mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
+@mock.patch('geotrek.diving.models.Dive.prepare_map_image')
+@mock.patch('geotrek.tourism.models.TouristicContent.prepare_map_image')
+@mock.patch('geotrek.tourism.models.TouristicEvent.prepare_map_image')
+class SyncTestPdf(SyncSetup):
+    def setUp(self):
+        super(SyncTestPdf, self).setUp()
+        self.trek_5 = TrekFactory.create(practice=self.practice_trek, portals=(self.portal_a,),
+                                         published=True)
+        filetype_topoguide = FileTypeFactory.create(type='Topoguide')
+        AttachmentFactory.create(content_object=self.trek_5, attachment_file=get_dummy_uploaded_image(),
+                                 filetype=filetype_topoguide)
+
+    @override_settings(ONLY_EXTERNAL_PUBLIC_PDF=True)
+    def test_only_external_public_pdf(self, event, content, dive, trek):
+        output = BytesIO()
+        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', verbosity=2,
+                                skip_pdf=False, skip_tiles=True, stdout=output)
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_1.pk), '%s.pdf' % self.dive_1.slug)))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_2.pk), '%s.pdf' % self.dive_2.slug)))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_3.pk), '%s.pdf' % self.dive_3.slug)))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_4.pk), '%s.pdf' % self.dive_4.slug)))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_1.slug)))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_2.pk), '%s.pdf' % self.trek_2.slug)))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_3.pk), '%s.pdf' % self.trek_3.slug)))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug)))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_5.pk), '%s.pdf' % self.trek_5.slug)))
+
     def test_sync_pdfs(self, event, content, dive, trek):
         output = BytesIO()
         management.call_command('sync_rando', 'tmp', url='http://localhost:8000', verbosity=2,
@@ -425,11 +474,8 @@ class SyncTest(TestCase):
         self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_2.pk), '%s.pdf' % self.trek_2.slug)))
         self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_3.pk), '%s.pdf' % self.trek_3.slug)))
         self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug)))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_5.pk), '%s.pdf' % self.trek_5.slug)))
 
-    @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
-    @mock.patch('geotrek.diving.models.Dive.prepare_map_image')
-    @mock.patch('geotrek.tourism.models.TouristicContent.prepare_map_image')
-    @mock.patch('geotrek.tourism.models.TouristicEvent.prepare_map_image')
     def test_sync_pdfs_portals_sources(self, event, content, dive, trek):
         output = BytesIO()
         management.call_command('sync_rando', 'tmp', url='http://localhost:8000', verbosity=2,
@@ -444,6 +490,4 @@ class SyncTest(TestCase):
         self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_2.pk), '%s.pdf' % self.trek_2.slug)))
         self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_3.pk), '%s.pdf' % self.trek_3.slug)))
         self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug)))
-
-    def tearDown(self):
-        shutil.rmtree('tmp')
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_5.pk), '%s.pdf' % self.trek_5.slug)))
