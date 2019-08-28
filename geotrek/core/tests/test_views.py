@@ -16,7 +16,6 @@ from mapentity.factories import UserFactory
 
 from geotrek.common.tests import CommonTest
 from geotrek.common.utils import LTE
-from geotrek.common.utils import almostequal
 
 from geotrek.authent.factories import PathManagerFactory, StructureFactory
 from geotrek.authent.tests import AuthentFixturesTest
@@ -690,7 +689,7 @@ class RemovePathKeepTopology(TestCase):
         poi.add_path(ab, start=0.5, end=0.5)
         poi.save()
 
-        self.assertTrue(almostequal(1, poi.offset))
+        self.assertAlmostEqual(1, poi.offset)
 
         self.assertEqual(poi.geom, Point(0.5, 1.0, srid=2154))
 
@@ -703,4 +702,4 @@ class RemovePathKeepTopology(TestCase):
         self.assertEqual(e1.deleted, True)
         self.assertEqual(poi.deleted, False)
 
-        self.assertTrue(almostequal(1.5, poi.offset))
+        self.assertAlmostEqual(1.5, poi.offset)
