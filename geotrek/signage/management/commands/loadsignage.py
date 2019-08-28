@@ -3,7 +3,7 @@
 import os.path
 
 from django.contrib.gis.gdal import DataSource
-from django.contrib.gis.geos import fromstr, Point
+from django.contrib.gis.geos import Point
 from django.contrib.gis.geos.error import GEOSException
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
@@ -132,14 +132,12 @@ class Command(BaseCommand):
                     break
 
                 for feature in layer:
-                    feature_geom = feature.geom.transform(settings.API_SRID, clone=True)
-                    feature_geom.coord_dim = 2
-
+                    feature_geom = feature.geom
                     name = feature.get(field_name) if field_name in available_fields else options.get('name_default')
                     if feature_geom.geom_type == 'MultiPoint':
                         self.stdout.write(self.style.NOTICE(u"This object is a MultiPoint : %s" % name))
                         if len(feature_geom) < 2:
-                            feature_geom = fromstr(feature_geom[0].wkt)
+                            feature_geom = feature_geom[0].geos
                         else:
                             raise CommandError("One of your geometry is a MultiPoint object with multiple points")
                     type = feature.get(
@@ -159,8 +157,8 @@ class Command(BaseCommand):
                         field_implantation_year).isdigit() else options.get('year_default')
                     eid = feature.get(field_eid) if field_eid in available_fields else None
 
-                    self.create_infrastructure(feature_geom, name, type, condition, structure, description, year,
-                                               verbosity, eid, use_structure)
+                    self.create_signage(feature_geom, name, type, condition, structure, description, year,
+                                        verbosity, eid, use_structure)
 
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
@@ -171,8 +169,8 @@ class Command(BaseCommand):
             transaction.savepoint_rollback(sid)
             raise
 
-    def create_infrastructure(self, geometry, name, type,
-                              condition, structure, description, year, verbosity, eid, use_structure):
+    def create_signage(self, geometry, name, type,
+                       condition, structure, description, year, verbosity, eid, use_structure):
 
         infra_type, created = SignageType.objects.get_or_create(label=type,
                                                                 structure=structure if use_structure else None)
@@ -208,6 +206,8 @@ class Command(BaseCommand):
                 infra = Signage.objects.create(**fields_without_eid)
         if settings.TREKKING_TOPOLOGY_ENABLED:
             try:
+                geometry = geometry.transform(settings.API_SRID, clone=True)
+                geometry.coord_dim = 2
                 serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
                 topology = TopologyHelper.deserialize(serialized)
                 infra.mutate(topology)
@@ -216,7 +216,8 @@ class Command(BaseCommand):
         else:
             if geometry.geom_type != 'Point':
                 raise GEOSException('Invalid Geometry type.')
-            infra.geom = Point(geometry.x, geometry.y, srid=settings.SRID)
+            geometry = geometry.transform(settings.SRID, clone=True)
+            infra.geom = Point(geometry.x, geometry.y)
             infra.save()
         self.counter += 1
 
