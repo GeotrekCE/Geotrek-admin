@@ -8,7 +8,6 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.core.management.base import CommandError
 
-from geotrek.common.utils import almostequal
 from geotrek.diving.factories import DiveFactory
 from geotrek.diving.models import Dive
 from geotrek.authent.factories import StructureFactory
@@ -37,8 +36,8 @@ class DiveCommandTest(TestCase):
         self.assertEquals('Practice', value[0].practice.name)
         self.assertEquals(value.count(), 1)
         self.assertEquals(Dive.objects.count(), 2)
-        self.assertTrue(almostequal(value[0].geom.x, -436345.7048306435))
-        self.assertTrue(almostequal(value[0].geom.y, 1176487.7429172313))
+        self.assertAlmostEqual(value[0].geom.x, -436345.704831, places=5)
+        self.assertAlmostEqual(value[0].geom.y, 1176487.742917, places=5)
 
     def test_load_dive_no_eid(self):
         output = StringIO()
@@ -55,8 +54,8 @@ class DiveCommandTest(TestCase):
         self.assertEquals('Practice', value[1].practice.name)
         self.assertEquals(value.count(), 2)
         self.assertEquals(Dive.objects.count(), 3)
-        self.assertTrue(almostequal(value[1].geom.x, -436345.7048306435))
-        self.assertTrue(almostequal(value[1].geom.y, 1176487.7429172313))
+        self.assertAlmostEqual(value[1].geom.x, -436345.704831, places=5)
+        self.assertAlmostEqual(value[1].geom.y, 1176487.742917, places=5)
 
     def test_load_dive_no_eid_no_practice_default(self):
         output = StringIO()
@@ -111,8 +110,8 @@ class DiveCommandTest(TestCase):
         value = Dive.objects.get(name='name')
         self.assertEquals(10, value.depth)
         self.assertEquals('Practice', value.practice.name)
-        self.assertTrue(almostequal(value.geom.x, 402314.30044897617))
-        self.assertTrue(almostequal(value.geom.y, 905126.7898456538))
+        self.assertAlmostEqual(value.geom.x, 402314.30044897617)
+        self.assertAlmostEqual(value.geom.y, 905126.7898456538)
 
     def test_load_dive_bad_multipoints(self):
         output = StringIO()

@@ -8,7 +8,6 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.core.management.base import CommandError
 
-from geotrek.common.utils import almostequal
 from geotrek.core.factories import PathFactory
 from geotrek.signage.factories import SignageFactory
 from geotrek.signage.models import Signage
@@ -34,10 +33,10 @@ class SignageCommandTest(TestCase):
         value = Signage.objects.filter(name='name')
         self.assertEquals(2010, value[0].implantation_year)
         self.assertEquals(value.count(), 2)
-        self.assertTrue(almostequal(value[0].geom.x, -436345.7048306435))
-        self.assertTrue(almostequal(value[0].geom.y, 1176487.7429172313))
-        self.assertTrue(almostequal(value[1].geom.x, -436345.5053471739))
-        self.assertTrue(almostequal(value[1].geom.y, 1176480.9183338303))
+        self.assertAlmostEqual(value[0].geom.x, -436345.704831, places=5)
+        self.assertAlmostEqual(value[0].geom.y, 1176487.742917, places=5)
+        self.assertAlmostEqual(value[1].geom.x, -436345.505347, places=5)
+        self.assertAlmostEqual(value[1].geom.y, 1176480.918334, places=5)
 
     def test_load_signage_multipoints(self):
         output = StringIO()

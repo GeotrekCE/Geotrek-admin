@@ -2,6 +2,18 @@
 CHANGELOG
 =========
 
+2.29.3 (2019-08-28)
+-------------------
+
+**Minor Changes**
+
+- Allow to override nginx port in etc/settings.ini
+
+**Bug fixes**
+
+- Fix sync of manual PDF 
+
+
 2.29.2 (2019-08-28)
 -------------------
 

@@ -7,7 +7,7 @@ from django.conf import settings
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.contrib.gis.geos import Point, LineString
 
-from geotrek.common.utils import dbnow, almostequal
+from geotrek.common.utils import dbnow
 from geotrek.core.factories import (PathFactory, PathAggregationFactory,
                                     TopologyFactory)
 from geotrek.core.models import Path, Topology, PathAggregation
@@ -244,18 +244,18 @@ class TopologyPointTest(TestCase):
 
         poi = Point(3, 1, srid=settings.SRID)
         position, distance = Path.interpolate(p1, poi)
-        self.assertTrue(almostequal(0.5, position))
-        self.assertTrue(almostequal(-1.414, distance))
+        self.assertAlmostEqual(0.5, position, places=6)
+        self.assertAlmostEqual(-1.414, distance, places=2)
         # Verify that deserializing this, we obtain the same original coordinates
         # (use lat/lng as in forms)
         poi.transform(settings.API_SRID)
         poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
         # Computed topology properties match original interpolation
-        self.assertTrue(almostequal(0.5, poitopo.aggregations.all()[0].start_position))
-        self.assertTrue(almostequal(-1.414, poitopo.offset))
+        self.assertAlmostEqual(0.5, poitopo.aggregations.all()[0].start_position, places=6)
+        self.assertAlmostEqual(-1.414, poitopo.offset, places=2)
         # Resulting geometry
-        self.assertTrue(almostequal(3, poitopo.geom.x))
-        self.assertTrue(almostequal(1, poitopo.geom.y))
+        self.assertAlmostEqual(3, poitopo.geom.x, places=6)
+        self.assertAlmostEqual(1, poitopo.geom.y, places=6)
 
     def test_point_geom_not_moving(self):
         r"""
@@ -276,10 +276,10 @@ class TopologyPointTest(TestCase):
         poi.transform(settings.API_SRID)
         poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
         self.assertEqual(0.5, poitopo.aggregations.all()[0].start_position)
-        self.assertTrue(almostequal(-5, poitopo.offset))
+        self.assertAlmostEqual(-5, poitopo.offset, places=6)
         # It should have kept its position !
-        self.assertTrue(almostequal(10, poitopo.geom.x))
-        self.assertTrue(almostequal(10, poitopo.geom.y))
+        self.assertAlmostEqual(10, poitopo.geom.x, places=6)
+        self.assertAlmostEqual(10, poitopo.geom.y, places=6)
         # Change path, it should still be in the same position
         p1.geom = LineString((0, 0),
                              (0, 5),
@@ -288,8 +288,8 @@ class TopologyPointTest(TestCase):
                              (0, 20))
         p1.save()
         poitopo.reload()
-        self.assertTrue(almostequal(10, poitopo.geom.x))
-        self.assertTrue(almostequal(10, poitopo.geom.y))
+        self.assertAlmostEqual(10, poitopo.geom.x, places=6)
+        self.assertAlmostEqual(10, poitopo.geom.y, places=6)
 
     def test_point_offset_kept(self):
         """
@@ -303,17 +303,17 @@ class TopologyPointTest(TestCase):
         poi = Point(5, 10, srid=settings.SRID)
         poi.transform(settings.API_SRID)
         poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
-        self.assertTrue(almostequal(0.25, poitopo.aggregations.all()[0].start_position))
-        self.assertTrue(almostequal(10, poitopo.offset))
+        self.assertAlmostEqual(0.25, poitopo.aggregations.all()[0].start_position, places=6)
+        self.assertAlmostEqual(10, poitopo.offset, places=6)
 
         p1.geom = LineString((0, 0), (10, 0))
         p1.save()
         poitopo.reload()
 
-        self.assertTrue(almostequal(10, poitopo.offset))
+        self.assertAlmostEqual(10, poitopo.offset, places=6)
         # Not moved:
-        self.assertTrue(almostequal(5, poitopo.geom.x))
-        self.assertTrue(almostequal(10, poitopo.geom.y))
+        self.assertAlmostEqual(5, poitopo.geom.x, places=6)
+        self.assertAlmostEqual(10, poitopo.geom.y, places=6)
 
     def test_point_offset_updated(self):
         """
@@ -327,16 +327,16 @@ class TopologyPointTest(TestCase):
         poi = Point(10, 10, srid=settings.SRID)
         poi.transform(settings.API_SRID)
         poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
-        self.assertTrue(almostequal(0.5, poitopo.aggregations.all()[0].start_position))
-        self.assertTrue(almostequal(10, poitopo.offset))
+        self.assertAlmostEqual(0.5, poitopo.aggregations.all()[0].start_position, places=6)
+        self.assertAlmostEqual(10, poitopo.offset, places=6)
 
         p1.geom = LineString((0, 0), (0, 5))
         p1.save()
         poitopo.reload()
-        self.assertTrue(almostequal(11.180339887, poitopo.offset))
+        self.assertAlmostEqual(11.180339887, poitopo.offset, places=6)
         # Not moved:
-        self.assertTrue(almostequal(10, poitopo.geom.x))
-        self.assertTrue(almostequal(10, poitopo.geom.y))
+        self.assertAlmostEqual(10, poitopo.geom.x, places=6)
+        self.assertAlmostEqual(10, poitopo.geom.y, places=6)
 
     def test_point_geom_moving(self):
         p1 = PathFactory.create(geom=LineString((0, 0),
@@ -344,16 +344,16 @@ class TopologyPointTest(TestCase):
         poi = Point(0, 2.5, srid=settings.SRID)
         poi.transform(settings.API_SRID)
         poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
-        self.assertTrue(almostequal(0.5, poitopo.aggregations.all()[0].start_position))
-        self.assertTrue(almostequal(0, poitopo.offset))
-        self.assertTrue(almostequal(0, poitopo.geom.x))
-        self.assertTrue(almostequal(2.5, poitopo.geom.y))
+        self.assertAlmostEqual(0.5, poitopo.aggregations.all()[0].start_position, places=6)
+        self.assertAlmostEqual(0, poitopo.offset, places=6)
+        self.assertAlmostEqual(0, poitopo.geom.x, places=6)
+        self.assertAlmostEqual(2.5, poitopo.geom.y, places=6)
         p1.geom = LineString((10, 0),
                              (10, 5))
         p1.save()
         poitopo.reload()
-        self.assertTrue(almostequal(10, poitopo.geom.x))
-        self.assertTrue(almostequal(2.5, poitopo.geom.y))
+        self.assertAlmostEqual(10, poitopo.geom.x, places=6)
+        self.assertAlmostEqual(2.5, poitopo.geom.y, places=6)
 
     def test_junction_point(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (2, 2)))
@@ -392,8 +392,8 @@ class TopologyPointTest(TestCase):
         poi.transform(settings.API_SRID)
         son = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
         father.mutate(son)
-        self.assertTrue(almostequal(father.geom.x, 500))
-        self.assertTrue(almostequal(father.geom.y, 600))
+        self.assertAlmostEqual(father.geom.x, 500, places=6)
+        self.assertAlmostEqual(father.geom.y, 600, places=6)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -813,8 +813,8 @@ class TopologySerialization(TestCase):
         # fieldvalue is like '{"lat": -5.983842291017086, "lng": -1.3630770374505987, "kind": "TOPOLOGY"}'
         field = json.loads(fieldvalue)
         self.assertEqual(field['pk'], topology.pk)
-        self.assertAlmostEqual(field['lat'], 46.5004566)
-        self.assertAlmostEqual(field['lng'], 3.0006428)
+        self.assertAlmostEqual(field['lat'], 46.5004566, places=6)
+        self.assertAlmostEqual(field['lng'], 3.0006428, places=6)
         self.assertEqual(field['kind'], "TOPOLOGY")
 
     def test_serialize_two_consecutive_forced(self):
@@ -887,11 +887,11 @@ class TopologyDerialization(TestCase):
         self.assertEqual(closest.geom.coords, ((700000, 6600000), (700100, 6600100)))
         # The point has same x as first point of path, and y to 0 :
         topology = Topology.deserialize('{"lng": %s, "lat": %s}' % (p.x, p.y))
-        self.assertAlmostEqual(topology.offset, -70.7106781)
+        self.assertAlmostEqual(topology.offset, -70.7106781, places=6)
         self.assertEqual(len(topology.paths.all()), 1)
         pagg = topology.aggregations.get()
-        self.assertTrue(almostequal(pagg.start_position, 0.5))
-        self.assertTrue(almostequal(pagg.end_position, 0.5))
+        self.assertAlmostEqual(pagg.start_position, 0.5, places=6)
+        self.assertAlmostEqual(pagg.end_position, 0.5, places=6)
 
     def test_deserialize_serialize(self):
         path = PathFactory.create(geom=LineString((1, 1), (2, 2), (2, 0)))
@@ -906,8 +906,8 @@ class TopologyDerialization(TestCase):
         end_before = before.aggregations.all()[0].end_position
         start_after = after.aggregations.all()[0].start_position
         end_after = after.aggregations.all()[0].end_position
-        self.assertTrue(almostequal(start_before, start_after), '%s != %s' % (start_before, start_after))
-        self.assertTrue(almostequal(end_before, end_after), '%s != %s' % (end_before, end_after))
+        self.assertAlmostEqual(start_before, start_after, places=6)
+        self.assertAlmostEqual(end_before, end_after, places=6)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')

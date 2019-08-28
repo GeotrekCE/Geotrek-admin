@@ -5,7 +5,7 @@ import mock
 from django.db import connection
 from django.test import TestCase
 
-from ..utils import almostequal, sql_extent, uniquify
+from ..utils import sql_extent, uniquify
 from ..utils.postgresql import debug_pg_notices
 from ..utils.import_celery import (create_tmp_destination,
                                    subclasses,
@@ -15,13 +15,6 @@ from geotrek.common.parsers import Parser
 
 
 class UtilsTest(TestCase):
-
-    def test_almostequal(self):
-        self.assertTrue(almostequal(0.001, 0.002))
-        self.assertFalse(almostequal(0.001, 0.002, precision=3))
-        self.assertFalse(almostequal(1, 2, precision=0))
-        self.assertFalse(almostequal(-1, 1))
-        self.assertFalse(almostequal(1, -1))
 
     def test_sqlextent(self):
         ext = sql_extent(

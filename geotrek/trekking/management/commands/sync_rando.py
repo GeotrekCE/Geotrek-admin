@@ -290,17 +290,6 @@ class Command(BaseCommand):
         name = os.path.join('api', lang, '{modelname}s'.format(modelname=modelname), str(obj.pk), basename_fmt.format(obj=obj))
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=obj.pk, **kwargs)
 
-    def sync_trek_pdf(self, lang, obj):
-        if self.skip_pdf:
-            return
-        view = TrekDocumentPublic.as_view(model=type(obj))
-        params = {}
-        if self.source:
-            params['source'] = self.source[0]
-        if self.portal:
-            params['portal'] = ','.join(self.portal)
-        self.sync_object_view(lang, obj, view, '{obj.slug}.pdf', params=params, slug=obj.slug)
-
     def sync_profile_json(self, lang, obj, zipfile=None):
         view = ElevationProfile.as_view(model=type(obj))
         self.sync_object_view(lang, obj, view, 'profile.json', zipfile=zipfile)
@@ -350,6 +339,11 @@ class Command(BaseCommand):
         src = os.path.join(src_root, name)
         dst = os.path.join(self.tmp_root, url, name)
         self.mkdirs(dst)
+        if not os.path.isfile(src):
+            self.successfull = False
+            if self.verbosity == 2:
+                self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{url}/{name}\x1b[0m \x1b[31mfile does not exist\x1b[0m".format(lang=lang, url=url, name=name))
+            return
         if not os.path.isfile(dst):
             os.link(src, dst)
         if zipfile:
@@ -393,7 +387,7 @@ class Command(BaseCommand):
         self.sync_gpx(lang, trek)
         self.sync_kml(lang, trek)
         self.sync_trek_meta(lang, trek)
-        self.sync_trek_pdf(lang, trek)
+        self.sync_pdf(lang, trek, TrekDocumentPublic.as_view(model=type(trek)))
         self.sync_profile_json(lang, trek)
         if not self.skip_profile_png:
             self.sync_profile_png(lang, trek, zipfile=self.zipfile)
@@ -574,47 +568,47 @@ class Command(BaseCommand):
                     }
                 )
 
-    def sync_content(self, lang, content):
-        self.sync_touristiccontent_meta(lang, content)
-
-        if not self.skip_pdf:
+    def sync_pdf(self, lang, obj, view):
+        if self.skip_pdf:
+            return
+        try:
+            file_type = FileType.objects.get(type="Topoguide")
+        except FileType.DoesNotExist:
+            file_type = None
+        attachments = common_models.Attachment.objects.attachments_for_object_only_type(obj, file_type)
+        if attachments:
+            path = attachments[0].attachment_file.name
+            modelname = obj._meta.model_name
+            src = os.path.join(settings.MEDIA_ROOT, path)
+            dst = os.path.join(self.tmp_root, 'api', lang, '{modelname}s'.format(modelname=modelname), str(obj.pk), obj.slug + '.pdf')
+            os.link(src, dst)
+            if self.verbosity == 2:
+                self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{dst}\x1b[0m \x1b[32mcopied\x1b[0m".format(lang=lang, dst=dst))
+        elif settings.ONLY_EXTERNAL_PUBLIC_PDF:
+            return
+        else:
             params = {}
             if self.source:
                 params['source'] = self.source[0]
+            if self.portal:
+                params['portal'] = self.portal[0]
+            self.sync_object_view(lang, obj, view, '{obj.slug}.pdf', params=params, slug=obj.slug)
 
-            view = tourism_views.TouristicContentDocumentPublic.as_view(model=type(content))
-            self.sync_object_view(lang, content, view, '{obj.slug}.pdf', params=params, slug=content.slug)
-
+    def sync_content(self, lang, content):
+        self.sync_touristiccontent_meta(lang, content)
+        self.sync_pdf(lang, content, tourism_views.TouristicContentDocumentPublic.as_view(model=type(content)))
         for picture, resized in content.resized_pictures:
             self.sync_media_file(lang, resized)
 
     def sync_event(self, lang, event):
         self.sync_touristicevent_meta(lang, event)
-
-        if not self.skip_pdf:
-            params = {}
-            if self.source:
-                params['source'] = self.source[0]
-            if self.portal:
-                params['portal'] = self.portal[0]
-            view = tourism_views.TouristicEventDocumentPublic.as_view(model=type(event))
-            self.sync_object_view(lang, event, view, '{obj.slug}.pdf', params=params, slug=event.slug)
-
+        self.sync_pdf(lang, event, tourism_views.TouristicEventDocumentPublic.as_view(model=type(event)))
         for picture, resized in event.resized_pictures:
             self.sync_media_file(lang, resized)
 
     def sync_dive(self, lang, dive):
         self.sync_dive_meta(lang, dive)
-
-        if not self.skip_pdf:
-            params = {}
-            if self.source:
-                params['source'] = self.source[0]
-            if self.portal:
-                params['portal'] = self.portal[0]
-            view = diving_views.DiveDocumentPublic.as_view(model=type(dive))
-            self.sync_object_view(lang, dive, view, '{obj.slug}.pdf', params=params, slug=dive.slug)
-
+        self.sync_pdf(lang, dive, diving_views.DiveDocumentPublic.as_view(model=type(dive)))
         for picture, resized in dive.resized_pictures:
             self.sync_media_file(lang, resized)
 
