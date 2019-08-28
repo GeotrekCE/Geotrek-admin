@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix sync of manual PDF 
 
 
 2.29.2 (2019-08-28)
