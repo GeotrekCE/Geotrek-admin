@@ -181,7 +181,7 @@ class SyncRandoFailTest(TestCase):
         theme.pictogram = "other"
         theme.save()
         with self.assertRaises(CommandError) as e:
-            management.call_command('sync_rando',  os.path.join('var', 'tmp'), url='http://localhost:8000',
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output, stderr=BytesIO())
         self.assertEqual(e.exception.message, 'Some errors raised during synchronization.')
         self.assertIn("file does not exist", output.getvalue())
