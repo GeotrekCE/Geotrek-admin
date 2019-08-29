@@ -181,7 +181,7 @@ class SyncRandoFailTest(TestCase):
         theme.pictogram = "other"
         theme.save()
         with self.assertRaises(CommandError) as e:
-            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+            management.call_command('sync_rando',  os.path.join('var', 'tmp'), url='http://localhost:8000',
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output, stderr=BytesIO())
         self.assertEqual(e.exception.message, 'Some errors raised during synchronization.')
         self.assertIn("file does not exist", output.getvalue())
@@ -264,7 +264,7 @@ class SyncSetup(TestCase):
                                                                    attachment_file=get_dummy_uploaded_image())
 
     def tearDown(self):
-        shutil.rmtree(os.path.join('tmp'))
+        shutil.rmtree(os.path.join('var', 'tmp'))
 
 
 class SyncTest(SyncSetup):
@@ -464,17 +464,17 @@ class SyncTestPdf(SyncSetup):
     @override_settings(ONLY_EXTERNAL_PUBLIC_PDF=True)
     def test_only_external_public_pdf(self, event, content, dive, trek):
         output = BytesIO()
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', verbosity=2,
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
                                 skip_pdf=False, skip_tiles=True, stdout=output)
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_1.pk), '%s.pdf' % self.dive_1.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_2.pk), '%s.pdf' % self.dive_2.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_3.pk), '%s.pdf' % self.dive_3.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_4.pk), '%s.pdf' % self.dive_4.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_1.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_2.pk), '%s.pdf' % self.trek_2.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_3.pk), '%s.pdf' % self.trek_3.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug)))
-        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_5.pk), '%s.pdf' % self.trek_5.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_1.pk), '%s.pdf' % self.dive_1.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_2.pk), '%s.pdf' % self.dive_2.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_3.pk), '%s.pdf' % self.dive_3.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_4.pk), '%s.pdf' % self.dive_4.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_1.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_2.pk), '%s.pdf' % self.trek_2.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_3.pk), '%s.pdf' % self.trek_3.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug)))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_5.pk), '%s.pdf' % self.trek_5.slug)))
 
     def test_sync_pdfs(self, event, content, dive, trek):
         output = BytesIO()

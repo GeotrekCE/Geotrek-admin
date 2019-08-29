@@ -30,7 +30,7 @@ class InfrastructureCommandTest(TestCase):
                      description_default='description', year_default=2010, verbosity=2, stdout=output)
         self.assertIn('Infrastructures will be linked to %s' % structure, output.getvalue())
         self.assertIn('2 objects created.', output.getvalue())
-        value = Infrastructure.objects.filter(name='name')
+        value = Infrastructure.objects.filter(name='name').order_by('pk')
         self.assertEquals(2010, value[0].implantation_year)
         self.assertEquals(value.count(), 2)
         self.assertAlmostEqual(value[0].geom.x, -436345.704831, places=5)
