@@ -60,6 +60,13 @@ Fix rights and log in with your user for all operations
     chown -R geotrek:geotrek /srv/geotrek
     su - geotrek
 
+**GET YOUR DOCKER-COMPOSE**
+
+::
+
+    wget https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/docker-integration/install/docker-compose.yml
+
+
 **CREATE ENVIRONMENT OF INSTALL**
 
 In your instance folder create a ``.env`` file
@@ -141,6 +148,10 @@ Set at least MODELTRANSLATION_LANGUAGES / SRID / SPATIAL_EXTENT / DEFAULT_STRUCT
 **INSTALL GEOTREK AS SERVICE**
 
 Use this example : ``install/geotrek.service``
+
+::
+
+    wget https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/docker-integration/install/geotrek.service
 
 Modify line :
 
