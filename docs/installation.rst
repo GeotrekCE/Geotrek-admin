@@ -71,6 +71,8 @@ Fix rights and log in with your user for all operations
 
 In your instance folder create a ``.env`` file
 
+In this example : the server is inside a container of docker. You may want to use a remote server or a locale one.
+Change POSTGRES_HOST and every information about POSTGRES and PGPORT
 ::
 
     GEOTREK_VERSION=<VERSION OF GEOTREK>  # Check changelog
@@ -139,11 +141,18 @@ Set at least MODELTRANSLATION_LANGUAGES / SRID / SPATIAL_EXTENT / DEFAULT_STRUCT
 
     docker-compose run postgres -d
 
+**INITIATE REQUIRED DATAS** *WARNING Only from scratch*
+
+::
+    docker-compose run web initial.sh
+
+
 **CREATE USER**
 
 ::
 
     docker-compose run web ./manage.py createsuperuser
+
 
 **INSTALL GEOTREK AS SERVICE**
 
@@ -173,4 +182,14 @@ Put your certificate and key in this folder
 Uncomment and edit docker-compose.yml nginx section
 Edit custom.py (uncomment SESSION_COOKIE_SECURE = True, CSRF_COOKIE_SECURE = True)
 Edit your geotrek_nginx.conf with mounted path of your files
+
+
+**RUN, STOP, UPDATE GEOTREK**
+
+For run, stop or after any update your geotrek instance do this command.
+
+::
+
+    sudo systemctl start geotrek
+    sudo systemctl stop geotrek
 
