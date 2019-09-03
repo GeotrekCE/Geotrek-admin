@@ -241,6 +241,17 @@ class BasicJSONAPITest(TranslationResetMixin):
                               'author': video_dailymotion.author,
                               'code': video_detected_dailymotion.code})
 
+    def test_video_dailymotion_wrong_id(self):
+        common_factories.AttachmentFactory(
+            content_object=self.content, attachment_file='',
+            attachment_video='http://www.dailymotion.com/video/noid')
+
+        pk = self.content.pk
+        url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.model_name, pk=pk)
+        response = self.client.get(url)
+        result = json.loads(response.content)
+        self.assertFalse(result['videos'])
+
     def test_cities(self):
         self.assertDictEqual(self.result['cities'][0],
                              {"code": self.city.code,
