@@ -1,4 +1,6 @@
 from django.core.management import call_command
+from django.core.management.base import CommandError
+
 from django.test import TestCase
 from django.core import mail
 from django.conf import settings
@@ -69,12 +71,44 @@ class CommandTests(TestCase):
         self.assertEqual(path_usages.usage, 'hello')
         self.assertEqual(path_usages.structure, None)
 
-    def test_unset_structure_without_structure(self):
-        infratype = InfrastructureTypeFactory.create(label="annyeong", structure=None, pictogram=None)
-        self.assertEqual(InfrastructureType.objects.count(), 1)
-        self.assertIsNone(infratype.structure)
+    def test_unset_structure_without_structure_keep_pk(self):
+        structure = StructureFactory.create(name="Test")
+        infratype_no_structure = InfrastructureTypeFactory.create(label="type1", structure=None, pictogram=None)
+        InfrastructureFactory.create(name='infra1', type=infratype_no_structure)
+        infratype_structure = InfrastructureTypeFactory.create(label="type2", structure=structure, pictogram=None)
+        InfrastructureFactory.create(name='infra2', type=infratype_structure)
+
+        self.assertEqual(InfrastructureType.objects.count(), 2)
+        self.assertIsNone(infratype_no_structure.structure)
+        self.assertIsNotNone(infratype_structure.structure)
+        old_pk_no_structure = infratype_no_structure.pk
+        old_pk_structure = infratype_structure.pk
         call_command('unset_structure', '--all', verbosity=0)
-        self.assertIsNone(infratype.structure)
+        type1 = InfrastructureType.objects.get(label="type1")
+        type2 = InfrastructureType.objects.get(label="type1")
+        new_pk_no_structure = type1.pk
+        new_pk_structure = type2.pk
+
+        self.assertEqual(old_pk_no_structure, new_pk_no_structure)
+        self.assertNotEqual(old_pk_structure, new_pk_structure)
+
+        self.assertIsNone(type1.structure)
+        self.assertIsNone(type2.structure)
+
+    def test_unset_structure_fail_no_model_not_all(self):
+        InfrastructureTypeFactory.create(label="annyeong", structure=None, pictogram=None)
+        with self.assertRaises(CommandError) as e:
+            call_command('unset_structure', verbosity=0)
+        self.assertIn("You should specify model", e.exception.message)
+
+    def test_unset_structure_list(self):
+        output = StringIO()
+        call_command('unset_structure', '--list', verbosity=0, stdout=output)
+        stdout = output.getvalue()
+        # Some of them listed.
+        self.assertIn('Organism', stdout)
+        self.assertIn('File type', stdout)
+        self.assertIn('Path source', stdout)
 
     def test_remove_thumbnails(self):
         output = StringIO()
