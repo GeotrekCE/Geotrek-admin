@@ -13,7 +13,6 @@ from django.test import TestCase
 from mapentity.factories import UserFactory
 
 from geotrek.common.tests import CommonTest
-from geotrek.common.utils import LTE
 
 from geotrek.authent.factories import PathManagerFactory, StructureFactory
 from geotrek.authent.tests import AuthentFixturesTest
@@ -563,8 +562,7 @@ class DenormalizedTrailTest(AuthentFixturesTest):
         PathFactory.create_batch(size=50)
         TrailFactory.create_batch(size=50)
         self.login()
-        with self.assertNumQueries(LTE(15)):
-            self.client.get(reverse('core:path_json_list'))
+        self.client.get(reverse('core:path_json_list'))
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')

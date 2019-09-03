@@ -1,13 +1,9 @@
 import logging
-import re
 
 from django.db import connection
 from django.utils.timezone import utc
 from django.conf import settings
 from django.contrib.gis.measure import Distance
-
-from mapentity.serializers import plain_text
-
 
 logger = logging.getLogger(__name__)
 
