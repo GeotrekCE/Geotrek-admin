@@ -40,9 +40,9 @@ class CommonForm(MapEntityForm):
         codeperm = '%s.publish_%s' % (
             model._meta.app_label, model._meta.model_name)
         if 'published' in self.fields and self.user and not self.user.has_perm(codeperm):
-            del self.fields['published']
+            self.deep_remove(self.fieldslayout, 'published')
         if 'review' in self.fields and self.instance and self.instance.any_published:
-            del self.fields['review']
+            self.deep_remove(self.fieldslayout, 'review')
         super(CommonForm, self).replace_orig_fields()
 
     def filter_related_field(self, name, field):
@@ -68,15 +68,6 @@ class CommonForm(MapEntityForm):
         super(CommonForm, self).__init__(*args, **kwargs)
 
         self.update = kwargs.get("instance") is not None
-
-        # allow to modify layout per instance
-        self.helper.fieldlayout = deepcopy(self.fieldslayout)
-        model = self._meta.model
-        codeperm = '%s.publish_%s' % (model._meta.app_label, model._meta.model_name)
-        if 'published' in self.fields and self.user and not self.user.has_perm(codeperm):
-            self.deep_remove(self.helper.fieldslayout, 'published')
-        if 'review' in self.fields and self.instance and self.instance.any_published:
-            self.deep_remove(self.helper.fieldslayout, 'review')
         if 'structure' in self.fields:
             if self.user.has_perm('authent.can_bypass_structure'):
                 if not self.instance.pk:

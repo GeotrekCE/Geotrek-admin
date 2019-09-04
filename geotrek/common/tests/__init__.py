@@ -1,7 +1,8 @@
 import mock
 import os
 
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, User
+from django.shortcuts import get_object_or_404
 from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.translation import ugettext as _
@@ -111,6 +112,27 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
 
         response = self.client.get('%s?lang=fr' % obj.get_detail_url())
         self.assertEqual(response.status_code, 200)
+
+    def test_permission_published(self):
+        if not self.model:
+            return
+        if 'published' not in [field.name for field in self.model._meta.get_fields()]:
+            return
+        self.user = self.userfactory(password='booh')
+        codename = 'publish_%s' % self.model._meta.model_name
+        if not Permission.objects.filter(codename=codename).count():
+            return
+        perm = Permission.objects.get(codename=codename)
+        group = self.user.groups.first()
+        if group:
+            group.permissions.remove(perm)
+        self.user.user_permissions.remove(perm)
+        self.user.save()
+        self.user = get_object_or_404(User, pk=self.user.pk)
+        success = self.client.login(username=self.user.username, password='booh')
+        self.assertTrue(success)
+        response = self.client.post(self._get_add_url(), self.get_good_data())
+        self.assertEqual(response.status_code, 302)
 
 
 class CommonLiveTest(MapEntityLiveTest):
