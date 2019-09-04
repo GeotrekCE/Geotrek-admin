@@ -1,4 +1,3 @@
-from copy import deepcopy
 from zipfile import is_zipfile
 
 from django import forms
