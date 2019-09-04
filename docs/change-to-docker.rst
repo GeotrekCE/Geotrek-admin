@@ -9,6 +9,17 @@ First you should update at least to version 2.22.0 without docker.
 Please folow this documentation if necessary : ``https://geotrek.readthedocs.io/en/2.22.1/installation.html#software-update``
 
 
+Backup
+------
+
+First backup your database :
+
+::
+
+    sudo su postgres
+    pg_dump --no-acl --no-owner -Fc geotrekdb > /place_you_canfind_it/`date +%Y%m%d%H%M`-database.backup
+    exit
+
 Server migration docker
 -----------------------
 

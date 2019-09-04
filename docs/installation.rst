@@ -5,6 +5,20 @@ INSTALLATION
 These instructions will install *Geotrek* on a dedicated server for production.
 For a developer instance, please follow  :ref:`the dedicated procedure <development-section>`.
 
+Requirements
+------------
+
+A first estimation of minimal required system resources are :
+
+2 cores
+4 Go RAM
+20 Go disk space
+For big instances required system resources are :
+
+4 cores
+8 Go RAM or more
+50 Go disk space or more (20 Go + estimated size of attached files like photos, including elements imported from SIT)
+
 
 Installation
 ------------
@@ -17,6 +31,8 @@ Check your linux distribution :
     sudo cat /etc/issue
 
 Find the most adequate docker install in :
+https://docs.docker.com/install/
+Example ubuntu :
 https://docs.docker.com/install/linux/docker-ce/ubuntu/
 
 And docker-compose :
@@ -24,22 +40,9 @@ https://docs.docker.com/compose/install/#install-compose
 
 
 
-Once the OS is installed (basic installation), log in with an other user.
+Once the OS is installed (basic installation), log in with an other user (not root).
 
    You should not launch docker with root.
-
-
-**CREATE A DEDICATED USER**
-
-Do the following 3 commands or use your user and do the last command for your user.
-
-::
-
-    useradd geotrek
-    adduser geotrek sudo
-
-    adduser geotrek docker
-
 
 
 **CREATE THE FOLDER OF YOUR INSTANCE**
@@ -71,7 +74,7 @@ Fix rights and log in with your user for all operations
 
 In your instance folder create a ``.env`` file
 
-In this example : the server is inside a container of docker. You may want to use a remote server or a locale one.
+In this example : the server is inside a container of docker. You may want to use a remote database server (separate) or a locale one.
 Change POSTGRES_HOST and every information about POSTGRES and PGPORT
 ::
 
@@ -92,7 +95,7 @@ Change POSTGRES_HOST and every information about POSTGRES and PGPORT
     CAPTURE_PORT=8000
 
 :notes:
-    In order to use a remote server (*recommended*), set the appropriate values
+    In order to use a remote database server (*recommended*), set the appropriate values
     for the connection.
     The connection must be operational (it will be tested during install).
     *make sure postgresql > 9.3 and postgis > 2.1*
