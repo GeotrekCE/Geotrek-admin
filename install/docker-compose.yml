@@ -81,7 +81,7 @@ services:
       - ./var/log/nginx:/var/log/nginx
       - ./var/static:/var/www/static:ro
       - ./var/media:/var/www/media:ro
-    command: /bin/bash -c "envsubst '$$DOMAIN_NAME' < /geotrek-nginx.conf > /etc/nginx/conf.d/geotrek.conf && nginx -g 'daemon off;'"
+    command: /bin/bash -c "envsubst '$$DOMAIN_NAME' < /geotrek.conf > /etc/nginx/conf.d/geotrek.conf && nginx -g 'daemon off;'"
 
 # delete postgres section if you want to use external databse
 volumes:
