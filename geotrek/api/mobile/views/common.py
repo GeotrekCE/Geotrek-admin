@@ -24,7 +24,7 @@ class SettingsView(APIView):
     def get(self, request, *args, **kwargs):
         filters = []
         for filter in settings.ENABLED_MOBILE_FILTERS:
-            if filter == 'difficulty':
+            if filter == 'difficulty' and DifficultyLevel.objects.exists():
                 filters.append({
                     "id": "difficulty",
                     "type": "contains",
@@ -45,28 +45,28 @@ class SettingsView(APIView):
                     "showAllLabel": _("Show all ascents"),
                     "hideAllLabel": _("Hide all ascents")
                 })
-            if filter == 'districts':
+            if filter == 'districts' and District.objects.exists():
                 filters.append({
                     "id": "districts",
                     "type": "contains",
                     "showAllLabel": _("Show all districts"),
                     "hideAllLabel": _("Hide all districts")
                 })
-            if filter == 'cities':
+            if filter == 'cities' and City.objects.exists():
                 filters.append({
                     "id": "cities",
                     "type": "contains",
                     "showAllLabel": _("Show all cities"),
                     "hideAllLabel": _("Hide all cities")
                 })
-            if filter == 'accessibilities':
+            if filter == 'accessibilities' and Accessibility.objects.exists():
                 filters.append({
                     "id": "accessibilities",
                     "type": "contains",
                     "showAllLabel": _("Show all accessibilities"),
                     "hideAllLabel": _("Hide all accessibilities")
                 })
-            if filter == 'practice':
+            if filter == 'practice' and Practice.objects.exists():
                 filters.append({
                     "id": "practice",
                     "type": "contains",
@@ -80,14 +80,14 @@ class SettingsView(APIView):
                     "showAllLabel": _("Show all durations"),
                     "hideAllLabel": _("Hide all durations")
                 })
-            if filter == 'themes':
+            if filter == 'themes' and Theme.objects.exists():
                 filters.append({
                     "id": "themes",
                     "type": "contains",
                     "showAllLabel": _("Show all themes"),
                     "hideAllLabel": _("Hide all themes")
                 })
-            if filter == 'route':
+            if filter == 'route' and Route.objects.exists():
                 filters.append({
                     "id": "route",
                     "type": "contains",
