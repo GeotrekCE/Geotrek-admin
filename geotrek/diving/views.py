@@ -43,7 +43,7 @@ class DiveFormatList(MapEntityFormat, DiveList):
         'advice', 'difficulty', 'levels',
         'themes', 'practice', 'disabled_sport',
         'published', 'publication_date', 'date_insert', 'date_update',
-        'areas', 'source', 'portal',
+        'areas', 'source', 'portal', 'review'
     ]
 
 
