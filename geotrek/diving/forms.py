@@ -6,7 +6,7 @@ class DiveForm(CommonForm):
     geomfields = ['geom']
 
     class Meta:
-        fields = ['structure', 'name', 'practice', 'published',
+        fields = ['structure', 'name', 'practice', 'review', 'published',
                   'description_teaser', 'description', 'advice',
                   'difficulty', 'levels', 'themes', 'owner', 'depth',
                   'facilities', 'departure', 'disabled_sport',
