@@ -2,13 +2,16 @@
 CHANGELOG
 =========
 
-2.29.4.dev0
+2.29.4 (2019-09-09)
 -------------------
+
+**Minor Changes**
+
+- Add reviews in dives module
 
 **Bug fixes**
 
--
-
+- Fix length should be length_2d in pdfs
 
 2.29.3 (2019-08-28)
 -------------------
