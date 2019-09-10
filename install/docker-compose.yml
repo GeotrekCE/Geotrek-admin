@@ -1,6 +1,6 @@
 version: "3"
 services:
-  # delete postgres section if you want to use external databse
+  # delete postgres section if you want to use external database
   postgres:
     image: makinacorpus/postgis:11-2.5
     env_file:
@@ -31,7 +31,7 @@ services:
     env_file:
       - .env
     depends_on:
-      # delete postgres section if you want to use external databse
+      # delete postgres section if you want to use external database
       - postgres
       - redis
       - screamshotter
@@ -83,6 +83,6 @@ services:
       - ./var/media:/var/www/media:ro
     command: /bin/bash -c "envsubst '$$DOMAIN_NAME' < /geotrek.conf > /etc/nginx/conf.d/geotrek.conf && nginx -g 'daemon off;'"
 
-# delete postgres section if you want to use external databse
+# delete postgres section if you want to use external database
 volumes:
   postgres:

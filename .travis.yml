@@ -138,3 +138,9 @@ jobs:
         on:
           #branch: master
           branch: docker-integration
+
+      #after_success:
+        #- cp VERSION install/VERSION
+        #- wget https://raw.githubusercontent.com/megastep/makeself/master/makeself.sh
+        #- wget https://raw.githubusercontent.com/megastep/makeself/master/makeself-header.sh
+        #- ./makeself.sh --gzip --current ./install Geotrek-admin.run "Geotrek-admin 2.24.3" ./install.sh
