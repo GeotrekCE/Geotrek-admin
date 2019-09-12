@@ -1,0 +1,378 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-06-16 09:02+0000\n"
+"PO-Revision-Date: 2015-10-22 14:33+0200\n"
+"Last-Translator: jean.lenormand\n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Verésion: PACKAGE VERSION\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 1.8.4\n"
+
+msgid "Tourism"
+msgstr "Tourismus"
+
+msgid "After"
+msgstr "Ausgehend von der"
+
+msgid "Before"
+msgstr "Bis"
+
+msgid "Completed"
+msgstr "Abgeschlossen"
+
+msgid "dd/mm/yyyy"
+msgstr "tt/mm/jjjj"
+
+msgid "HH:MM"
+msgstr "ZZ:MM"
+
+msgid "GeoJSON"
+msgstr "GeoJSON"
+
+msgid "TourInFrance"
+msgstr "TourInFrance"
+
+msgid "Apidae"
+msgstr "Apidae"
+
+msgid "Public website"
+msgstr "Öffentliche Website"
+
+msgid "Label"
+msgstr "Label"
+
+msgid "Information desk type"
+msgstr "Art des Informationspunktes"
+
+msgid "Information desk types"
+msgstr "Art des Informationspunktes"
+
+msgid "Title"
+msgstr "Titel"
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "Brief description"
+msgstr "Kurzbeschreibung"
+
+msgid "Phone"
+msgstr "Telefon-Nummer"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Website"
+msgstr "Site Web"
+
+msgid "Photo"
+msgstr "Foto"
+
+msgid "Street"
+msgstr "Straße"
+
+msgid "Postal code"
+msgstr "Postleitzahl"
+
+msgid "Municipality"
+msgstr "Stadt"
+
+msgid "Emplacement"
+msgstr "Standort"
+
+msgid "Information desk"
+msgstr "Informationspunkte"
+
+msgid "Information desks"
+msgstr "Informationspunkte"
+
+#, python-format
+msgid "Image %s invalid or missing from disk."
+msgstr "Das %s Image ist ungültig oder fehlt auf der Festplatte."
+
+msgid "Point"
+msgstr "Punkt"
+
+msgid "Line"
+msgstr "Linie"
+
+msgid "Polygon"
+msgstr "Polygone"
+
+msgid "Any"
+msgstr "Alle"
+
+msgid "First list label"
+msgstr "Name der ersten Liste"
+
+msgid "Second list label"
+msgstr "Name der zweiten Liste"
+
+msgid "Order"
+msgstr "Sortierung"
+
+msgid "Alphabetical order if blank"
+msgstr "Alphabetische Reihenfolge bei Leerzeichen"
+
+msgid "Touristic content category"
+msgstr "Kategorie der touristischen Inhalte"
+
+msgid "Touristic content categories"
+msgstr "Kategorien der touristische Inhalte"
+
+msgid "Category"
+msgstr "Kategorie"
+
+msgid "First"
+msgstr "Erste"
+
+msgid "Second"
+msgstr "Zweiter"
+
+msgid "Touristic content type"
+msgstr "Art der touristischen Inhalte"
+
+msgid "First list types"
+msgstr "Typen in der ersten Liste"
+
+msgid "Second list types"
+msgstr "Typen in der zweiten Liste"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Reservation system"
+msgstr "Buchungssystem"
+
+msgid "Reservation systems"
+msgstr "Buchungssysteme"
+
+msgid "Description teaser"
+msgstr "Beschreibung Teaser"
+
+msgid "A brief summary"
+msgstr "Kurze Übersicht"
+
+msgid "Complete description"
+msgstr "Komplette Beschreibung"
+
+msgid "Themes"
+msgstr "Themen"
+
+msgid "Main theme(s)"
+msgstr "Themenschwerpunkte"
+
+msgid "Location"
+msgstr "Standort"
+
+msgid "Contact"
+msgstr "Kontakt"
+
+msgid "Address, phone, etc."
+msgstr "Adresse, Telefon, etc."
+
+msgid "Practical info"
+msgstr "Praktische Informationen"
+
+msgid "Anything worth to know"
+msgstr "Gut zu wissen"
+
+msgid "Type 1"
+msgstr "Typ 1"
+
+msgid "Type 2"
+msgstr "Typ 2"
+
+msgid "Source"
+msgstr "Quelle"
+
+msgid "Portal"
+msgstr "Portal"
+
+msgid "External id"
+msgstr "Externer Identifikator"
+
+msgid "Reservation ID"
+msgstr "Buchungs-ID"
+
+msgid "Approved"
+msgstr "Labelliert"
+
+msgid "Touristic content"
+msgstr "Touristische Inhalte"
+
+msgid "Touristic contents"
+msgstr "Touristische Inhalte"
+
+msgid "Published touristic contents"
+msgstr "Veröffentlichte touristische Inhalte"
+
+msgid "Touristic event type"
+msgstr "Art der touristischen Veranstaltung"
+
+msgid "Touristic event types"
+msgstr "Arten von touristischen Veranstaltungen"
+
+msgid "Begin date"
+msgstr "Startdatum"
+
+msgid "End date"
+msgstr "Enddatum"
+
+msgid "Duration"
+msgstr "Dauer"
+
+msgid "3 days, season, ..."
+msgstr "3 Tage, Saison, ..."
+
+msgid "Meeting point"
+msgstr "Treffpunkt"
+
+msgid "Where exactly ?"
+msgstr "Wo genau?"
+
+msgid "Meeting time"
+msgstr "Terminzeit"
+
+msgid "11:00, 23:30"
+msgstr "11:00, 23:30"
+
+msgid "Organizer"
+msgstr "Organisator"
+
+msgid "Speaker"
+msgstr "Lautsprecher"
+
+msgid "Accessibility"
+msgstr "Zugänglichkeit"
+
+msgid "Number of participants"
+msgstr "Anzahl der Plätze"
+
+msgid "Booking"
+msgstr "Reservierung"
+
+msgid "Target audience"
+msgstr "Zielgruppe"
+
+msgid "Recommandations / To plan / Advices"
+msgstr "Empfehlungen / Zu erwarten / Beratung"
+
+msgid "Touristic event"
+msgstr "Touristische Veranstaltung"
+
+msgid "Touristic events"
+msgstr "Touristische Veranstaltungen"
+
+#, python-brace-format
+msgid "starting from {begin}"
+msgstr "von der {begin}"
+
+#, python-brace-format
+msgid "up to {end}"
+msgstr "bis {end}"
+
+#, python-brace-format
+msgid "from {begin} to {end}"
+msgstr "von {begin} bis {end}"
+
+msgid "Published touristic events"
+msgstr "Veröffentlichte touristische Veranstaltungen"
+
+#, python-brace-format
+msgid "Failed to download {url}. HTTP status code {status_code}"
+msgstr "Der Download von {url} konnte nicht durchgeführt werden. HTTP Statuscode {status_code}"
+
+#, python-brace-format
+msgid "Type 1 '{subval}' does not exist for category '{cat}'. Please add it"
+msgstr "Typ 1 '{subval}' existiert nicht für die Kategorie '{cat}'. Bitte fügen Sie es hinzu"
+
+#, python-brace-format
+msgid "Type 2 '{subval}' does not exist for category '{cat}'. Please add it"
+msgstr "Typ 2 '{subval}' existiert nicht für die Kategorie '{cat}'. Bitte fügen Sie es hinzu"
+
+msgid "touristic-content"
+msgstr "touristische Inhalte"
+
+msgid "touristic-event"
+msgstr "touristische Veranstaltung"
+
+msgid "Add a new touristic content"
+msgstr "Touristische Inhalte hinzufügen
+
+msgid "Add a new touristic event"
+msgstr "Eine touristische Veranstaltung hinzufügen"
+
+msgid "Data sources"
+msgstr "Externe Datenquellen"
+
+msgid "No result"
+msgstr "Kein Resultat"
+
+msgid "Choose value(s)"
+msgstr "Wert(e) auswählen"
+
+msgid "Public print"
+msgstr "Öffentliches Drucken"
+
+msgid "Print"
+msgstr "Druck"
+
+msgid "Attributes"
+msgstr "Informationen"
+
+msgid "yes,no"
+msgstr "Ja, nein,"
+
+msgid "Thumbnail"
+msgstr "Thumbnail"
+
+msgid "All"
+msgstr "Alle"
+
+msgid "Powered by geotrek.fr"
+msgstr "Powered by geotrek.fr"
+
+msgid "Attribution"
+msgstr "Fotonachweis"
+
+msgid "Useful information"
+msgstr "Praktische Informationen"
+
+msgid "Geographical location"
+msgstr "Geographische Lage"
+
+msgid "All useful information"
+msgstr "Alle praktischen Informationen"
+
+msgid "Advice"
+msgstr "Mitteilungen"
+
+msgid "Related Treks"
+msgstr "Zugehörige Routen"
+
+msgid "Powered by http://geotrek.fr"
+msgstr "Powered by geotrek.fr"
+
+msgid "None"
+msgstr "Keine"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Invalid geometry value."
+msgstr "Ungültiger Geometriewert"
