@@ -611,6 +611,13 @@ class Command(BaseCommand):
         self.sync_pdf(lang, dive, diving_views.DiveDocumentPublic.as_view(model=type(dive)))
         for picture, resized in dive.resized_pictures:
             self.sync_media_file(lang, resized)
+        for poi in dive.published_pois:
+            if poi.resized_pictures:
+                self.sync_media_file(lang, poi.resized_pictures[0][1])
+            for picture, resized in poi.resized_pictures[1:]:
+                self.sync_media_file(lang, resized)
+            for other_file in poi.files:
+                self.sync_media_file(lang, other_file.attachment_file)
 
     def sync_sensitiveareas(self, lang):
         self.sync_geojson(lang, sensitivity_views.SensitiveAreaViewSet, 'sensitiveareas.geojson',
