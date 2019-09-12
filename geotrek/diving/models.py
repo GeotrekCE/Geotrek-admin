@@ -18,7 +18,8 @@ from geotrek.common.mixins import (NoDeleteMixin, TimeStampedModelMixin,
 from geotrek.common.models import Theme
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Topology
-from geotrek.trekking.models import Trek
+from geotrek.tourism import models as tourism_models
+from geotrek.trekking.models import POI, Service, Trek
 
 
 class Practice(PictogramMixin):
@@ -191,3 +192,20 @@ Dive.add_property('dives', lambda self: intersecting(Dive, self), _(u"Dives"))
 Dive.add_property('published_dives', lambda self: intersecting(Dive, self).filter(published=True), _(u"Published dives"))
 Dive.add_property('treks', lambda self: intersecting(Trek, self), _(u"Treks"))
 Dive.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _(u"Published treks"))
+
+Dive.add_property('pois', lambda self: intersecting(POI, self), _(u"POIs"))
+Dive.add_property('published_pois', lambda self: intersecting(POI, self).filter(published=True), _(u"Published POIs"))
+
+Dive.add_property('services', lambda self: intersecting(Service, self), _(u"Services"))
+Dive.add_property('published_services', lambda self: intersecting(Service, self).filter(published=True), _(u"Published Services"))
+
+if 'geotrek.tourism' in settings.INSTALLED_APPS:
+    tourism_models.TouristicContent.add_property('dives', lambda self: intersecting(Dive, self), _(u"Dives"))
+    tourism_models.TouristicContent.add_property('published_dives', lambda self: intersecting(Dive, self).filter(published=True), _(u"Published dives"))
+    tourism_models.TouristicEvent.add_property('dives', lambda self: intersecting(Dive, self), _(u"Dives"))
+    tourism_models.TouristicEvent.add_property('published_dives', lambda self: intersecting(Dive, self).filter(published=True), _(u"Published dives"))
+
+    Dive.add_property('touristic_contents', lambda self: intersecting(tourism_models.TouristicContent, self), _(u"Touristic contents"))
+    Dive.add_property('published_touristic_contents', lambda self: intersecting(tourism_models.TouristicContent, self).filter(published=True), _(u"Published touristic contents"))
+    Dive.add_property('touristic_events', lambda self: intersecting(tourism_models.TouristicEvent, self), _(u"Touristic events"))
+    Dive.add_property('published_touristic_events', lambda self: intersecting(tourism_models.TouristicEvent, self).filter(published=True), _(u"Published touristic events"))
