@@ -1,0 +1,78 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-06-16 09:02+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Zoning"
+msgstr "Zonierung"
+
+msgid "City"
+msgstr "Kommune"
+
+msgid "District"
+msgstr "Distrikt"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Restricted area type"
+msgstr "Eingeschränkter Bereichstyp"
+
+msgid "Restricted area"
+msgstr "Regulatorische Zonierung"
+
+msgid "Restricted areas"
+msgstr "Regulatorische Zonierung"
+
+msgid "Restricted area edge"
+msgstr "Restricted area edge"
+
+msgid "Restricted area edges"
+msgstr "Restricted area edge"
+
+msgid "Cities"
+msgstr "Kommunen"
+
+msgid "City edge"
+msgstr "City edge"
+
+msgid "City edges"
+msgstr "City edges"
+
+msgid "Districts"
+msgstr "Distrikte"
+
+msgid "District edge"
+msgstr "District edge"
+
+msgid "District edges"
+msgstr "District edges"
+
+#, python-brace-format
+msgid "Invalid geometry for field '{src}'"
+msgstr "Die Geometrie des Feldes '{src}' ist ungültig."
+
+#, python-brace-format
+msgid ""
+"Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not "
+"{geom_type}"
+msgstr ""
+"Der Geometrietyp des Feldes '{src}' ist ungültig. Es sollte "
+"(Multi)Polygon, nicht {geom_type}"
+
+msgid "Restricted Area"
+msgstr "Regulatorische Zonierung"
