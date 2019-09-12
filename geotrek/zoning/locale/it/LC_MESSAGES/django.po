@@ -1,0 +1,78 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-06-16 09:02+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Zoning"
+msgstr "Zonazione"
+
+msgid "City"
+msgstr "Comune"
+
+msgid "District"
+msgstr "Secteur"
+
+msgid "Name"
+msgstr "Nome"
+
+msgid "Restricted area type"
+msgstr "Tipo di zonizzazione regolatoria"
+
+msgid "Restricted area"
+msgstr "Zonizzazione normativa"
+
+msgid "Restricted areas"
+msgstr "Zonizzazione normativa"
+
+msgid "Restricted area edge"
+msgstr "Sezione di zonizzazione normativa"
+
+msgid "Restricted area edges"
+msgstr "Sezioni di zonizzazione normativa"
+
+msgid "Cities"
+msgstr "Comuni"
+
+msgid "City edge"
+msgstr "Sezione comune"
+
+msgid "City edges"
+msgstr "Sezioni comuni"
+
+msgid "Districts"
+msgstr "Settori"
+
+msgid "District edge"
+msgstr "Sezione settoriale"
+
+msgid "District edges"
+msgstr "Sezioni di settore"
+
+#, python-brace-format
+msgid "Invalid geometry for field '{src}'"
+msgstr "La geometria del campo '{src}' non è valida"
+
+#, python-brace-format
+msgid ""
+"Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not "
+"{geom_type}"
+msgstr ""
+"Il tipo di geometria del campo '{src}' non è valido. Dovrebbe essere "
+"(Multi)Polygon, non {geom_type}"
+
+msgid "Restricted Area"
+msgstr "Area di regolamentazione"
