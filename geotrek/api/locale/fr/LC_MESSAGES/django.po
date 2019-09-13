@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-25 09:25+0200\n"
+"POT-Creation-Date: 2019-08-29 11:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,53 +17,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-msgid "Set geometry dimension (2 by default for 2D, 3 for 3D)"
-msgstr "Définit la dimension géométrique (2 par défaut pour la 2D, 3 pour la 3D)"
+msgid "Medias syncing ..."
+msgstr "Synchronisation des media"
 
-msgid "Set language for translation. 'all' by default"
-msgstr "Définit le language pour la traduction. 'all' par défaut."
-
-msgid "Set output format (json / geojson). JSON by default"
-msgstr "Format de sortie. json par défaut, geojson disponible"
-
-msgid "Limit required fields to increase performances. Ex : id,url,geometry"
-msgstr "limiter les champs de sortie pour améliorer les performances. Ex: id,url,geometry"
-
-msgid "Omit specified fields to increase performance. Ex: url,category"
-msgstr "Supprimer des champs de sortie pour améliorer les performances. Ex: url,category"
-
-msgid ""
-"Filter elements contained in bbox formatted like SW-lng,SW-lat,NE-lng,NE-lat"
-msgstr "Filter les éléments contenus dans une enveloppe telle que SO-lng,SO-lat,NE-lng,NE-lat"
-
-msgid "Max distance in meters between point and elements"
-msgstr "Distance maximale entre le point et les éléments à filtrer"
-
-msgid "Reference point to compute distance LNG,LAT"
-msgstr "Point de référence pour calculer la distance. Ex: LNG,LAT"
-
-msgid ""
-"Publication state. If language specified, only language published are "
-"filterted. true / false"
-msgstr "État de la publication. Si une langue est définie, les filtres s'appliquent uniquement à elle."
-
-msgid "External ID"
-msgstr "ID externe"
-
-msgid "Difficulties"
-msgstr "Difficultés"
-
-msgid "Lengths"
-msgstr "Longueurs"
-
-msgid "Durations"
-msgstr "Durées"
-
-msgid "Show all cities"
-msgstr "Afficher toutes les communes"
-
-msgid "Hide all cities"
-msgstr "Ne plus afficher toutes les communes"
+msgid "Language"
+msgstr "Langue"
 
 msgid "Show all difficulties"
 msgstr "Afficher toutes les difficultés"
@@ -72,11 +29,29 @@ msgstr "Afficher toutes les difficultés"
 msgid "Hide all difficulties"
 msgstr "Ne plus afficher toutes les difficultés"
 
+msgid "Show all lengths"
+msgstr "Afficher toutes les distances"
+
+msgid "Hide all lengths"
+msgstr "Ne plus afficher toutes les distances"
+
+msgid "Show all ascents"
+msgstr "Afficher tous les dénivelés"
+
+msgid "Hide all ascents"
+msgstr "Ne plus afficher tous les dénivelés"
+
 msgid "Show all districts"
 msgstr "Afficher tous les secteurs"
 
 msgid "Hide all districts"
 msgstr "Ne plus afficher tous les secteurs"
+
+msgid "Show all cities"
+msgstr "Afficher toutes les communes"
+
+msgid "Hide all cities"
+msgstr "Ne plus afficher toutes les communes"
 
 msgid "Show all accessibilities"
 msgstr "Afficher toutes les accessibilités"
@@ -90,6 +65,12 @@ msgstr "Afficher toutes les pratiques"
 msgid "Hide all practices"
 msgstr "Ne plus afficher toutes les pratiques"
 
+msgid "Show all durations"
+msgstr "Afficher toutes les durées"
+
+msgid "Hide all durations"
+msgstr "Ne plus afficher toutes les durées"
+
 msgid "Show all themes"
 msgstr "Afficher tous les thèmes"
 
@@ -102,17 +83,101 @@ msgstr "Afficher tous les parcours"
 msgid "Hide all routes"
 msgstr "Ne plus afficher tous les parcours"
 
-msgid "Show all lengths"
-msgstr "Afficher toutes les distances"
+msgid "Length"
+msgstr "Longueur"
 
-msgid "Hide all lengths"
-msgstr "Ne plus afficher toutes les distances"
+msgid "Ascent"
+msgstr "Dénivelé positif"
 
-msgid "Show all durations"
-msgstr "Afficher toutes les durées"
+msgid "Duration"
+msgstr "Durée"
 
-msgid "Hide all durations"
-msgstr "Ne plus afficher toutes les durées"
+msgid "Difficulty"
+msgstr "Difficulté"
+
+msgid "Practice"
+msgstr "Pratique"
+
+msgid "Accessibilities"
+msgstr "Accessibilités"
+
+msgid "Route"
+msgstr "Parcours"
+
+msgid "Themes"
+msgstr "Thèmes"
+
+msgid "Networks"
+msgstr "Réseaux"
 
 msgid "Information Desks Types"
 msgstr "Types de lieux de renseignement"
+
+msgid "Districts"
+msgstr "Secteurs"
+
+msgid "Cities"
+msgstr "Communes"
+
+msgid "POI types"
+msgstr "Types de POI"
+
+msgid "Touristic content types"
+msgstr "Types de contenu touristique"
+
+msgid "Touristic event types"
+msgstr "Types d'événements touristiques"
+
+msgid "Set geometry dimension (2 by default for 2D, 3 for 3D)"
+msgstr ""
+"Définit la dimension géométrique (2 par défaut pour la 2D, 3 pour la 3D)"
+
+msgid "Set language for translation. 'all' by default"
+msgstr "Définit le language pour la traduction. 'all' par défaut."
+
+msgid "Set output format (json / geojson). JSON by default"
+msgstr "Format de sortie. json par défaut, geojson disponible"
+
+msgid "Limit required fields to increase performances. Ex : id,url,geometry"
+msgstr ""
+"limiter les champs de sortie pour améliorer les performances. Ex: id,url,"
+"geometry"
+
+msgid "Omit specified fields to increase performance. Ex: url,category"
+msgstr ""
+"Supprimer des champs de sortie pour améliorer les performances. Ex: url,"
+"category"
+
+msgid ""
+"Filter elements contained in bbox formatted like SW-lng,SW-lat,NE-lng,NE-lat"
+msgstr ""
+"Filter les éléments contenus dans une enveloppe telle que SO-lng,SO-lat,NE-"
+"lng,NE-lat"
+
+msgid "Max distance in meters between point and elements"
+msgstr "Distance maximale entre le point et les éléments à filtrer"
+
+msgid "Reference point to compute distance LNG,LAT"
+msgstr "Point de référence pour calculer la distance. Ex: LNG,LAT"
+
+msgid ""
+"Publication state. If language specified, only language published are "
+"filterted. true/false/all. true by default."
+msgstr ""
+"État de la publication. Si une langue est définie, les filtres s'appliquent "
+"uniquement à elle. Oui/non/tous. Oui par défaut."
+
+msgid ""
+"Period of occupancy. Month numbers (1-12) separated by comas. any = occupied "
+"at any time in the year. ignore = occupied or not."
+msgstr "Période d'occupation. NUméros de mois (1-12) séparés par des virgules. any = occupé"
+"à n'importe quel moment de l'année. ignore = occupé ou non."
+
+msgid "Practices ids separated by comas."
+msgstr "Id des pratiques séparés par des virgules"
+
+msgid "Structure id."
+msgstr "Id de la structure."
+
+msgid "External ID"
+msgstr "ID externe"

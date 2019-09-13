@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-13 17:03+0200\n"
+"POT-Creation-Date: 2019-08-29 11:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -133,28 +133,36 @@ msgstr "Plongées"
 msgid "dive"
 msgstr "plongee"
 
-#| msgid "N"
 msgctxt "North"
 msgid "N"
 msgstr "N"
 
-#| msgid "S"
 msgctxt "South"
 msgid "S"
 msgstr "S"
 
-#| msgid "W"
-msgctxt "West"
-msgid "W"
-msgstr "O"
-
-#| msgid "E"
 msgctxt "East"
 msgid "E"
 msgstr "E"
 
+msgctxt "West"
+msgid "W"
+msgstr "O"
+
 msgid "Published dives"
 msgstr "Plongées publiées"
+
+msgid "Treks"
+msgstr "Itinéraires"
+
+msgid "Published treks"
+msgstr "Itinéraires publiés"
+
+msgid "Public print"
+msgstr "Impression grand public"
+
+msgid "Print"
+msgstr "Impr."
 
 msgid "Attributes"
 msgstr "Informations"
@@ -165,5 +173,48 @@ msgstr "Miniature"
 msgid "Geotrek Rando"
 msgstr "Geotrek Rando"
 
+msgid "Powered by geotrek.fr"
+msgstr "Propulsé par geotrek.fr"
+
+msgid "Useful information"
+msgstr "Infos pratiques"
+
+msgid "All useful information"
+msgstr "Toutes les infos pratiques"
+
+msgid "Advices"
+msgstr "Recommandations"
+
+msgid "Environmental sensitive areas"
+msgstr "Zones de sensibilité environnementale"
+
+msgid ""
+"\n"
+"            Along your trek, you will go through sensitive areas related to "
+"the presence of a specific species or\n"
+"            environment. In these areas, an appropriate behaviour allows to "
+"contribute to their preservation. For\n"
+"            detailed information, specific forms are accessible for each "
+"area.\n"
+"          "
+msgstr ""
+"\n"
+"            Au cour de votre itinéraire, vous allez traverser des zones sensibles en rapport avec "
+"la présence d'une espèce ou d'un envrionnement\n"
+"            spécifique. Dans ces zones, un comportement approprié permet de "
+"contribuer à leurs préservation. Pour\n"
+"            plus d'information, des fiches sont disponibles pour chaque "
+"zone.\n"
+"          "
+
+msgid "Sensitivity period:"
+msgstr "Période de sensibilité :"
+
+msgid "Contact:"
+msgstr "Contact :"
+
 msgid "Add a new dive"
 msgstr "Ajouter une plongée"
+
+msgid "Invalid geometry value."
+msgstr "Valeur de géométrie invalide"

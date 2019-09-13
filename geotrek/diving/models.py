@@ -185,6 +185,10 @@ class Dive(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
     def get_map_image_url(self):
         return reverse('diving:dive_map_image', args=[str(self.pk), get_language()])
 
+    @classmethod
+    def get_create_label(cls):
+        return _(u"Add a new dive")
+
 
 Topology.add_property('dives', lambda self: intersecting(Dive, self), _(u"Dives"))
 Topology.add_property('published_dives', lambda self: intersecting(Dive, self).filter(published=True), _(u"Published dives"))

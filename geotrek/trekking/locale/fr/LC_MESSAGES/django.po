@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-25 16:40+0200\n"
+"POT-Creation-Date: 2019-08-29 11:38+0200\n"
 "PO-Revision-Date: 2015-10-21 11:16+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -218,6 +218,9 @@ msgstr "Id externe"
 msgid "Second external id"
 msgstr "Deuxième id externe"
 
+msgid "Excluded POIs"
+msgstr "POI exclus"
+
 msgid "Treks"
 msgstr "Itinéraires"
 
@@ -240,8 +243,14 @@ msgstr "Zone de sensibilité"
 msgid "POIs"
 msgstr "POIs"
 
-msgid "services"
-msgstr "services"
+msgid "Services"
+msgstr "Services"
+
+msgid "Signages"
+msgstr "Signalétiques"
+
+msgid "Infrastructures"
+msgstr "Aménagements"
 
 msgid "Published treks"
 msgstr "Itinéraires publiés"
@@ -297,10 +306,8 @@ msgstr "Ordre alphabétique si vide"
 msgid "Color"
 msgstr "Couleur"
 
-msgid ""
-"Color of the practice, only used in mobile."
-msgstr ""
-"Couleur définie pour la pratique, utilisée seulement pour le mobile."
+msgid "Color of the practice, only used in mobile."
+msgstr "Couleur définie pour la pratique, utilisée seulement pour le mobile."
 
 msgid "Cirkwi tag"
 msgstr "Tag Cirkwi"
@@ -371,9 +378,6 @@ msgstr "Types de service"
 msgid "Service"
 msgstr "Service"
 
-msgid "Services"
-msgstr "Services"
-
 msgid "Published"
 msgstr "Publié"
 
@@ -412,6 +416,9 @@ msgstr "itinerance"
 msgid "Itinerancy"
 msgstr "Itinérance"
 
+msgid "Hike"
+msgstr "Randonnée"
+
 msgid "Init sync ..."
 msgstr "Début de synchro"
 
@@ -421,12 +428,6 @@ msgstr "Geotrek Rando"
 msgid "Geotrek is a web app allowing you to prepare your next trekking trip !"
 msgstr ""
 "Geotrek est une web app permettant de préparer à l'avance ses randonnées !"
-
-msgid "Public print"
-msgstr "Impression grand public"
-
-msgid "Print"
-msgstr "Impr."
 
 msgid "Attributes"
 msgstr "Informations"
@@ -479,6 +480,12 @@ msgstr "GPX"
 
 msgid "KML"
 msgstr "KML"
+
+msgid "Public print"
+msgstr "Impression grand public"
+
+msgid "Print"
+msgstr "Impr."
 
 msgid "yes,no"
 msgstr "oui,non"
@@ -600,28 +607,6 @@ msgstr "Transports"
 msgid "Disabled Infrastructure"
 msgstr "Aménagement handicapés"
 
-msgid ""
-"This hike is in the core of the national park > The national park is an "
-"unrestricted natural area but subjected to regulations which must be known "
-"by all visitors."
-msgstr ""
-"Cet itinéraire est dans le cœur du Parc national > Le Parc national est un "
-"territoire naturel, ouvert à tous, mais soumis à une réglementation qu’il "
-"est utile de connaître pour préparer son séjour"
-
-msgid "On the way..."
-msgstr "Sur le chemin..."
-
-msgid "Related Treks"
-msgstr "Itinéraires liés"
-
-msgid ""
-"To check the practicability of the hiking paths and to know more about the "
-"National park, please visit us or call us at"
-msgstr ""
-"Afin de vérifier que les sentiers soient praticables et pour en savoir plus "
-"sur la découverte du territoire, veuillez-vous renseigner préalablement"
-
 msgid "Add a new poi"
 msgstr "Ajouter un POI"
 
@@ -649,9 +634,3 @@ msgstr "%s min"
 
 msgid "Geographical location"
 msgstr "Situation géographique"
-
-msgid "Hike"
-msgstr "Randonnée"
-
-msgid "Excluded POIs"
-msgstr "POI exclus"

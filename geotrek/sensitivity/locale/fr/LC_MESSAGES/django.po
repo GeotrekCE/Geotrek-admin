@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-26 16:37+0000\n"
+"POT-Creation-Date: 2019-08-29 11:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,6 +26,9 @@ msgstr "Espèce"
 
 msgid "Name"
 msgstr "Nom"
+
+msgid "Elevation"
+msgstr "Altitude"
 
 msgid "Pictogram"
 msgstr "Pictogramme"
@@ -87,6 +90,9 @@ msgstr "Catégorie"
 msgid "Regulatory"
 msgstr "Réglementaire"
 
+msgid "External id"
+msgstr "ID externe"
+
 msgid "Species"
 msgstr "Espèces"
 
@@ -114,14 +120,28 @@ msgstr "Zones sensibles"
 msgid "Radius"
 msgstr "Rayon"
 
+msgid "Period"
+msgstr "Période"
+
+msgid "Practices"
+msgstr "Pratiques"
+
 msgid "Published sensitive areas"
 msgstr "Zones sensibles publiées"
 
+#, python-brace-format
+msgid ""
+"Failed to download https://biodiv-sports.fr/api/v2/sportpractice/. HTTP "
+"status code {status_code}"
+msgstr "Erreur de téléchargement de https://biodiv-sports.fr/api/v2/sportpractice/. HTTP "
+"status code {status_code}"
+
+#, python-brace-format
+msgid "Failed to download {url}. HTTP status code {status_code}"
+msgstr "Erreur de téléchargement de {url}. HTTP status code {status_code}"
+
 msgid "Attributes"
 msgstr "Informations"
-
-msgid "Period"
-msgstr "Période"
 
 msgid "Add a sensitive area (Species)"
 msgstr "Ajouter une zone espèce"
