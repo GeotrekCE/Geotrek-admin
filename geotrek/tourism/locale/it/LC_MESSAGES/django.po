@@ -19,347 +19,344 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Tourism"
-msgstr ""
+msgstr "Turismo"
 
 msgid "After"
-msgstr ""
+msgstr "Dopo"
 
 msgid "Before"
-msgstr ""
+msgstr "Prima"
 
 msgid "Completed"
-msgstr ""
+msgstr "Completato"
 
 msgid "dd/mm/yyyy"
-msgstr ""
+msgstr "gg/mm/aaaa"
 
 msgid "HH:MM"
-msgstr ""
+msgstr "HH:MM"
 
 msgid "Public website"
-msgstr ""
+msgstr "Sito web pubblico"
 
 msgid "Label"
-msgstr ""
-
-msgid "Color of the category, only used in mobile."
-msgstr ""
+msgstr "Label"
 
 msgid "Information desk type"
-msgstr ""
+msgstr "Tipo di punto informazioni"
 
 msgid "Information desk types"
-msgstr ""
+msgstr "Tipi di punti d'informazione"
 
 msgid "Title"
-msgstr ""
+msgstr "Titolo"
 
 msgid "Type"
-msgstr ""
+msgstr "Tipo"
 
 msgid "Description"
-msgstr ""
+msgstr "Descrizione"
 
 msgid "Brief description"
-msgstr ""
+msgstr "Breve descrizione"
 
 msgid "Phone"
-msgstr ""
+msgstr "Telefono"
 
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 msgid "Website"
-msgstr ""
+msgstr "Website"
 
 msgid "Photo"
-msgstr ""
+msgstr "Foto"
 
 msgid "Street"
-msgstr ""
+msgstr "Via"
 
 msgid "Postal code"
-msgstr ""
+msgstr "Codice postale"
 
 msgid "Municipality"
-msgstr ""
+msgstr "Comune"
 
 msgid "Emplacement"
-msgstr ""
+msgstr "Posizione"
 
 msgid "Information desk"
-msgstr ""
+msgstr "Punto informazioni"
 
 msgid "Information desks"
-msgstr ""
+msgstr "Punti di informazione"
 
 #, python-format
 msgid "Image %s invalid or missing from disk."
-msgstr ""
+msgstr "Immagine %s non valida o mancante dal disco"
 
 msgid "Point"
-msgstr ""
+msgstr "Punto"
 
 msgid "Line"
-msgstr ""
+msgstr "Linea"
 
 msgid "Polygon"
-msgstr ""
+msgstr "Poligono"
 
 msgid "Any"
-msgstr ""
+msgstr "Tutti"
 
 msgid "First list label"
-msgstr ""
+msgstr "Nome della prima lista"
 
 msgid "Second list label"
-msgstr ""
+msgstr "Nome della seconda lista"
 
 msgid "Order"
-msgstr ""
+msgstr "Ordine"
 
 msgid "Alphabetical order if blank"
-msgstr ""
+msgstr "Ordine alfabetico se vuoto"
 
 msgid "Touristic content category"
-msgstr ""
+msgstr "Categoria di contenuti turistici"
 
 msgid "Touristic content categories"
-msgstr ""
+msgstr "Categorie di contenuti turistici"
 
 msgid "Category"
-msgstr ""
+msgstr "Categoria"
 
 msgid "First"
-msgstr ""
+msgstr "Prima"
 
 msgid "Second"
-msgstr ""
+msgstr "Secondo"
 
 msgid "Touristic content type"
-msgstr ""
+msgstr "Tipo di contenuto turistico"
 
 msgid "First list types"
-msgstr ""
+msgstr "Tipi nel primo elenco"
 
 msgid "Second list types"
-msgstr ""
+msgstr "Tipi nella seconda lista"
 
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 msgid "Reservation system"
 msgstr ""
 
 msgid "Reservation systems"
-msgstr ""
+msgstr "Sistemi di prenotazione"
 
 msgid "Description teaser"
-msgstr ""
+msgstr "Descrizione teaser"
 
 msgid "A brief summary"
-msgstr ""
+msgstr "Un breve riassunto"
 
 msgid "Complete description"
-msgstr ""
+msgstr "Descrizione completa"
 
 msgid "Themes"
-msgstr ""
+msgstr "Temi"
 
 msgid "Main theme(s)"
-msgstr ""
+msgstr "Temi principali"
 
 msgid "Location"
-msgstr ""
+msgstr "Posizione"
 
 msgid "Contact"
-msgstr ""
+msgstr "Contatto"
 
 msgid "Address, phone, etc."
-msgstr ""
+msgstr "Indirizzo, telefono, ecc."
 
 msgid "Practical info"
-msgstr ""
+msgstr "Info pratiche"
 
 msgid "Anything worth to know"
-msgstr ""
+msgstr "Buono a sapersi"
 
 msgid "Type 1"
-msgstr ""
+msgstr "Tipo 1"
 
 msgid "Type 2"
-msgstr ""
+msgstr "Tipo 2"
 
 msgid "Source"
-msgstr ""
+msgstr "Fonte"
 
 msgid "Portal"
-msgstr ""
+msgstr "Portale"
 
 msgid "External id"
-msgstr ""
+msgstr "External id"
 
 msgid "Reservation ID"
-msgstr ""
+msgstr "ID di prenotazione"
 
 msgid "Approved"
-msgstr ""
+msgstr "Approvato"
 
 msgid "Touristic content"
-msgstr ""
+msgstr "Contenuto turistico"
 
 msgid "Touristic contents"
-msgstr ""
+msgstr "Contenuti turistici"
 
 msgid "touristic-content"
-msgstr ""
+msgstr "touristic-content"
 
 msgid "Published touristic contents"
-msgstr ""
+msgstr "Contenuti turistici pubblicati"
 
 msgid "Touristic event type"
-msgstr ""
+msgstr "Tipo di evento turistico"
 
 msgid "Touristic event types"
-msgstr ""
+msgstr "Tipi di eventi turistici"
 
 msgid "Begin date"
-msgstr ""
+msgstr "Data di inizio"
 
 msgid "End date"
-msgstr ""
+msgstr "Data di fine"
 
 msgid "Duration"
-msgstr ""
+msgstr "Durata"
 
 msgid "3 days, season, ..."
-msgstr ""
+msgstr "3 giorni, stagione, ...."
 
 msgid "Meeting point"
-msgstr ""
+msgstr "Punto d'incontro"
 
-msgid "Where exactly ?"
-msgstr ""
+msgid "Where exactly?"
+msgstr "Dove esattamente?"
 
 msgid "Meeting time"
-msgstr ""
+msgstr "Orario della riunione"
 
 msgid "11:00, 23:30"
-msgstr ""
+msgstr "11:00, 23:30"
 
 msgid "Organizer"
-msgstr ""
+msgstr "Organizzatore"
 
 msgid "Speaker"
-msgstr ""
+msgstr "Altoparlante"
 
 msgid "Accessibility"
 msgstr "Accessibilità"
 
 msgid "Number of participants"
-msgstr ""
+msgstr "Numero di partecipanti"
 
 msgid "Booking"
-msgstr ""
+msgstr "Prenotazione"
 
 msgid "Target audience"
-msgstr ""
+msgstr "Pubblico destinatario"
 
 msgid "Recommandations / To plan / Advices"
-msgstr ""
+msgstr "Raccomandazioni / A pianificare / Consigli"
 
 msgid "Touristic event"
-msgstr ""
+msgstr "Evento turistico"
 
 msgid "Touristic events"
-msgstr ""
+msgstr "Eventi turistici"
 
 #, python-brace-format
 msgid "starting from {begin}"
-msgstr ""
+msgstr "a partire da {begin}"
 
 #, python-brace-format
 msgid "up to {end}"
-msgstr ""
+msgstr "fino a {end}"
 
 #, python-brace-format
 msgid "from {begin} to {end}"
-msgstr ""
+msgstr "da {begin} a {end}"
 
 msgid "touristic-event"
-msgstr ""
+msgstr "touristic-event"
 
 msgid "Published touristic events"
-msgstr ""
+msgstr "Pubblicato eventi turistici"
 
 #, python-brace-format
 msgid "Failed to download {url}. HTTP status code {status_code}"
-msgstr ""
+msgstr "Non è riuscito a scaricare {url}. Codice di stato HTTP {status_code}"
 
 #, python-brace-format
 msgid "Type 1 '{subval}' does not exist for category '{cat}'. Please add it"
-msgstr ""
+msgstr "Il tipo 1 '{subval}' non esiste per la categoria '{cat}'. Si prega di aggiungerlo"
 
 #, python-brace-format
 msgid "Type 2 '{subval}' does not exist for category '{cat}'. Please add it"
-msgstr ""
+msgstr "Il tipo 2 '{subval}' non esiste per la categoria '{cat}'. Si prega di aggiungerlo"
 
 msgid "Add a new touristic content"
-msgstr ""
+msgstr "Aggiungere un nuovo contenuto turistico"
 
 msgid "Add a new touristic event"
-msgstr ""
+msgstr "Aggiungere un nuovo evento turistico"
 
 msgid "Data sources"
-msgstr ""
+msgstr "Fonti di dati esterne"
 
 msgid "No result"
-msgstr ""
+msgstr "Nessun risultato"
 
 msgid "Choose value(s)"
-msgstr ""
+msgstr "Scegliere il valore (i)"
 
 msgid "Public print"
-msgstr ""
+msgstr "Public print"
 
 msgid "Print"
-msgstr ""
+msgstr "Stampa"
 
 msgid "Attributes"
-msgstr ""
+msgstr "Attributi"
 
 msgid "yes,no"
-msgstr ""
+msgstr "si, no"
 
 msgid "Thumbnail"
-msgstr ""
+msgstr "Thumbnail"
 
 msgid "All"
-msgstr ""
+msgstr "Tutti"
 
 msgid "Geotrek Rando"
-msgstr ""
+msgstr "Geotrek Rando"
 
 msgid "Powered by geotrek.fr"
-msgstr ""
+msgstr "Realizzato da geotrek.fr"
 
 msgid "Attribution"
-msgstr ""
+msgstr "Attribuzione"
 
 msgid "Useful information"
-msgstr ""
+msgstr "Informazioni utili"
 
 msgid "Geographical location"
-msgstr ""
+msgstr "Posizione geografica"
 
 msgid "All useful information"
-msgstr ""
+msgstr "Tutte le informazioni utili"
 
 msgid "None"
-msgstr ""
+msgstr "Nessuna"
 
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 msgid "Invalid geometry value."
-msgstr ""
+msgstr "Valore geometrico non valido"

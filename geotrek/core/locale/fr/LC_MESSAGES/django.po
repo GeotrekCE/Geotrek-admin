@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-23 16:01+0100\n"
+"POT-Creation-Date: 2019-08-29 11:38+0200\n"
 "PO-Revision-Date: 2015-11-06 11:07+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -137,6 +137,24 @@ msgstr "Ajouter un tronçon"
 msgid "Action"
 msgstr "Action"
 
+msgid "Treks"
+msgstr "Itinéraires"
+
+msgid "Services"
+msgstr "Services"
+
+msgid "Pois"
+msgstr "POI"
+
+msgid "Signages"
+msgstr "Signalétiques"
+
+msgid "Infrastructures"
+msgstr "Aménagements"
+
+msgid "Interventions"
+msgstr "Interventions"
+
 msgid "Offset"
 msgstr "Décalage"
 
@@ -194,8 +212,24 @@ msgstr "Pas d'information"
 msgid "Add a new trail"
 msgstr "Ajouter un sentier"
 
+#, python-format
+msgid "Do you really wish to delete <strong>%(object)s</strong> ?"
+msgstr "Voulez-vous réellement supprimer <strong>%(object)s</strong> ?"
+
+msgid "Yes, delete"
+msgstr "Oui, supprimer"
+
+msgid "No, back to list view"
+msgstr "Non, retour à la liste"
+
 msgid "Different topologies are linked with this path"
 msgstr "Différentes Topologies sont liées à ce tronçon"
+
+msgid "GPX"
+msgstr "GPX"
+
+msgid "KML"
+msgstr "KML"
 
 msgid "Not validated"
 msgstr "Non validé"
@@ -212,11 +246,11 @@ msgstr "Sélectionner deux tronçons pour les fusionner"
 msgid "Are you sure you want to merge these paths ?"
 msgstr "Etes-vous certain de vouloir fusionner ces tronçons ?"
 
-msgid "Unknown error"
-msgstr "Erreur inconnue"
-
 msgid "Merge"
 msgstr "Fusionner"
+
+msgid "Delete"
+msgstr "Supprimer"
 
 msgid "Merge paths"
 msgstr "Fusionner les tronçons"
@@ -226,26 +260,15 @@ msgstr "Annuler"
 
 msgid ""
 "Access to the requested resource is restricted. You have been redirected."
-msgstr ""
-"L'accès à cette ressource est restreint. Vous avez été redirigé."
+msgstr "L'accès à cette ressource est restreint. Vous avez été redirigé."
 
-msgid "Treks"
-msgstr "Itinéraires"
+msgid ""
+"Access to the requested resource is restricted by structure. You have been "
+"redirected."
+msgstr "L'accès à cette ressource est restreint selon la structure. Vous avez été redirigé."
 
-msgid "Services"
-msgstr "Services"
-
-msgid "Pois"
-msgstr "POI"
-
-msgid "Signages"
-msgstr "Signalétiques"
-
-msgid "Infrastructures"
-msgstr "Aménagements"
-
-msgid "Interventions"
-msgstr "Interventions"
+msgid "You should select two paths"
+msgstr "Vous devez sélectionner 2 tronçons"
 
 msgid "You don't have the right to change these paths"
 msgstr "Vous n'avez pas le droit de modifier ces tronçons"
@@ -264,6 +287,3 @@ msgstr "Aucun point de correspondance trouvé pour fusionner les tronçons"
 
 msgid "Paths merged successfully"
 msgstr "Les tronçons ont été fusionnés."
-
-msgid "No, back to list view"
-msgstr "Non, retour à la liste"

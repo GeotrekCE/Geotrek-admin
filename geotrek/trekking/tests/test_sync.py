@@ -21,7 +21,7 @@ from geotrek.diving.models import Dive
 from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.sensitivity.factories import SensitiveAreaFactory
 from geotrek.signage.factories import SignageFactory
-from geotrek.trekking.factories import PracticeFactory as PracticeTrekFactory, TrekFactory, TrekWithPublishedPOIsFactory
+from geotrek.trekking.factories import POIFactory, PracticeFactory as PracticeTrekFactory, TrekFactory, TrekWithPublishedPOIsFactory
 from geotrek.trekking import models as trek_models
 from geotrek.tourism.factories import InformationDeskFactory, TouristicContentFactory, TouristicEventFactory
 
@@ -228,21 +228,27 @@ class SyncSetup(TestCase):
 
         self.dive_1 = DiveFactory.create(practice=self.practice_dive, sources=(self.source_a,),
                                          portals=(self.portal_b,),
-                                         published=True)
+                                         published=True, geom='SRID=2154;POINT(700001 6600001)')
         self.attachment_dive = AttachmentFactory.create(content_object=self.dive_1,
                                                         attachment_file=get_dummy_uploaded_image())
         self.dive_2 = DiveFactory.create(sources=(self.source_b,),
-                                         published=True)
+                                         published=True, geom='SRID=2154;LINESTRING (700000 6600000, 700100 6600100)')
         self.dive_3 = DiveFactory.create(portals=(self.portal_b,
                                                   self.portal_a),
-                                         published=True)
+                                         published=True, geom='POLYGON((700000 6600000, 700000 6600100, '
+                                                              '700100 6600100, 700100 6600000, 700000 6600000))')
         self.dive_4 = DiveFactory.create(practice=self.practice_dive, portals=(self.portal_a,),
                                          published=True)
         self.poi_1 = trek_models.POI.objects.first()
+        self.poi_dive = POIFactory.create(name="dive_poi", published=True)
         self.attachment_poi_image_1 = AttachmentFactory.create(content_object=self.poi_1,
                                                                attachment_file=get_dummy_uploaded_image())
+        AttachmentFactory.create(content_object=self.poi_dive,
+                                 attachment_file=get_dummy_uploaded_image())
         self.attachment_poi_image_2 = AttachmentFactory.create(content_object=self.poi_1,
                                                                attachment_file=get_dummy_uploaded_image())
+        AttachmentFactory.create(content_object=self.poi_dive,
+                                 attachment_file=get_dummy_uploaded_file())
         self.attachment_poi_file = AttachmentFactory.create(content_object=self.poi_1,
                                                             attachment_file=get_dummy_uploaded_file())
         if settings.TREKKING_TOPOLOGY_ENABLED:

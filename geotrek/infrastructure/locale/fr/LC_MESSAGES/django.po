@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-16 09:02+0000\n"
+"POT-Creation-Date: 2019-08-29 11:38+0200\n"
 "PO-Revision-Date: 2015-09-25 17:37+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -21,20 +21,17 @@ msgstr ""
 msgid "Infrastructure"
 msgstr "Aménagement"
 
-msgid "Intervention year"
-msgstr "Année d'intervention"
-
 msgid "Name"
 msgstr "Nom"
 
 msgid "Description"
 msgstr "Description"
 
-msgid "Implantation year"
-msgstr "Année d'implantation"
-
 msgid "Category"
 msgstr "Catégorie"
+
+msgid "Implantation year"
+msgstr "Année d'implantation"
 
 msgid "Building"
 msgstr "Ouvrage"
@@ -60,20 +57,37 @@ msgstr "Référence, code, ..."
 msgid "Specificites"
 msgstr "Spécificités"
 
-msgid "Type"
-msgstr "Type"
-
 msgid "Condition"
 msgstr "Etat"
+
+msgid "External id"
+msgstr ""
+
+msgid "Published"
+msgstr ""
 
 msgid "Cities"
 msgstr "Communes"
 
+msgid "Type"
+msgstr "Type"
+
 msgid "Infrastructures"
 msgstr "Aménagements"
+
+#, fuzzy
+#| msgid "Infrastructures"
+msgid "Published Infrastructures"
+msgstr "Aménagements"
+
+msgid "Attributes"
+msgstr ""
 
 msgid "None"
 msgstr "Aucun(e)"
 
 msgid "Add a new infrastructure"
 msgstr "Ajouter un aménagement"
+
+msgid "Intervention year"
+msgstr "Année d'intervention"
