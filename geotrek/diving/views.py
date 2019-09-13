@@ -2,13 +2,15 @@ from urlparse import urljoin
 
 from django.conf import settings
 from django.db.models import Q
+from django.http import Http404
 from django.utils import translation
 from django.views.generic import DetailView
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityFormat, MapEntityDetail, MapEntityMapImage,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityViewSet)
-from rest_framework import permissions as rest_permissions
+from rest_framework import permissions as rest_permissions, viewsets
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.models import RecordSource, TargetPortal
@@ -18,6 +20,8 @@ from .filters import DiveFilterSet
 from .forms import DiveForm
 from .models import Dive
 from .serializers import DiveSerializer
+from geotrek.trekking.models import POI, Service
+from geotrek.trekking.serializers import POISerializer, ServiceSerializer
 from geotrek.trekking.views import FlattenPicturesMixin
 
 
@@ -166,6 +170,45 @@ class DiveViewSet(MapEntityViewSet):
 
         return qs
 
+
+class DivePOIViewSet(viewsets.ModelViewSet):
+    model = POI
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_serializer_class(self):
+        class Serializer(POISerializer, GeoFeatureModelSerializer):
+            pass
+        return Serializer
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        try:
+            dive = Dive.objects.existing().get(pk=pk)
+        except Dive.DoesNotExist:
+            raise Http404
+        if not dive.is_public:
+            raise Http404
+        return dive.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
+
+
+class DiveServiceViewSet(viewsets.ModelViewSet):
+    model = Service
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_serializer_class(self):
+        class Serializer(ServiceSerializer, GeoFeatureModelSerializer):
+            pass
+        return Serializer
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        try:
+            dive = Dive.objects.existing().get(pk=pk)
+        except Dive.DoesNotExist:
+            raise Http404
+        if not dive.is_public:
+            raise Http404
+        return dive.services.filter(type__published=True).transform(settings.API_SRID, field_name='geom')
 
 # Translations for public PDF
 # translation.ugettext_noop(u"...")

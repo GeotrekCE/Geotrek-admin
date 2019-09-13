@@ -23,6 +23,7 @@ from geotrek.altimetry.views import ElevationProfile, ElevationArea, serve_eleva
 from geotrek.common import models as common_models
 from geotrek.common.views import ThemeViewSet
 from geotrek.core.views import ParametersView
+from geotrek.diving.views import DivePOIViewSet, DiveServiceViewSet
 from geotrek.feedback.views import CategoryList as FeedbackCategoryList
 from geotrek.flatpages.models import FlatPage
 from geotrek.flatpages.views import FlatPageViewSet, FlatPageMeta
@@ -284,6 +285,17 @@ class Command(BaseCommand):
         view = TrekServiceViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'services.geojson')
         self.sync_view(lang, view, name, params={'format': 'geojson'}, zipfile=zipfile, pk=trek.pk)
+
+    def sync_dive_pois(self, lang, dive):
+        params = {'format': 'geojson'}
+        view = DivePOIViewSet.as_view({'get': 'list'})
+        name = os.path.join('api', lang, 'dives', str(dive.pk), 'pois.geojson')
+        self.sync_view(lang, view, name, params=params, pk=dive.pk)
+
+    def sync_dive_services(self, lang, dive):
+        view = DiveServiceViewSet.as_view({'get': 'list'})
+        name = os.path.join('api', lang, 'dives', str(dive.pk), 'services.geojson')
+        self.sync_view(lang, view, name, params={'format': 'geojson'}, pk=dive.pk)
 
     def sync_object_view(self, lang, obj, view, basename_fmt, zipfile=None, params={}, **kwargs):
         modelname = obj._meta.model_name
@@ -609,8 +621,17 @@ class Command(BaseCommand):
     def sync_dive(self, lang, dive):
         self.sync_dive_meta(lang, dive)
         self.sync_pdf(lang, dive, diving_views.DiveDocumentPublic.as_view(model=type(dive)))
+        self.sync_dive_pois(lang, dive)
+        self.sync_dive_services(lang, dive)
         for picture, resized in dive.resized_pictures:
             self.sync_media_file(lang, resized)
+        for poi in dive.published_pois:
+            if poi.resized_pictures:
+                self.sync_media_file(lang, poi.resized_pictures[0][1])
+            for picture, resized in poi.resized_pictures[1:]:
+                self.sync_media_file(lang, resized)
+            for other_file in poi.files:
+                self.sync_media_file(lang, other_file.attachment_file)
 
     def sync_sensitiveareas(self, lang):
         self.sync_geojson(lang, sensitivity_views.SensitiveAreaViewSet, 'sensitiveareas.geojson',
