@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Sync POIs related to dives
 
 
 2.29.4 (2019-09-09)
