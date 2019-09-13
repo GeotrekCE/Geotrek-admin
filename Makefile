@@ -108,7 +108,7 @@ deploy: update
 	sudo service supervisor restart
 
 all_makemessages:
-	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django makemessages --no-location --all; popd > /dev/null; done
+	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django makemessages --no-location -l fr; popd > /dev/null; done
 
 all_compilemessages:
 	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django compilemessages; popd > /dev/null; done
