@@ -593,6 +593,7 @@ class Command(BaseCommand):
             modelname = obj._meta.model_name
             src = os.path.join(settings.MEDIA_ROOT, path)
             dst = os.path.join(self.tmp_root, 'api', lang, '{modelname}s'.format(modelname=modelname), str(obj.pk), obj.slug + '.pdf')
+            self.mkdirs(dst)
             os.link(src, dst)
             if self.verbosity == 2:
                 self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{dst}\x1b[0m \x1b[32mcopied\x1b[0m".format(lang=lang, dst=dst))
