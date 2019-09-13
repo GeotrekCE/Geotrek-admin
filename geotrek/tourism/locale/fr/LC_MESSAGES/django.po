@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-16 09:02+0000\n"
+"POT-Creation-Date: 2019-08-29 11:38+0200\n"
 "PO-Revision-Date: 2015-10-22 14:33+0200\n"
 "Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
 "Language-Team: \n"
@@ -37,24 +37,11 @@ msgstr "jj/mm/aaaa"
 msgid "HH:MM"
 msgstr "HH:MM"
 
-msgid "GeoJSON"
-msgstr "GeoJSON"
-
-msgid "TourInFrance"
-msgstr "TourInFrance"
-
-msgid "Apidae"
-msgstr "Apidae"
-
 msgid "Public website"
 msgstr "Site web public"
 
 msgid "Label"
 msgstr "Label"
-
-msgid "Color of the category, only used in mobile."
-msgstr ""
-"Couleur définie pour la catégorie, utilisée seulement pour le mobile."
 
 msgid "Information desk type"
 msgstr "Type de lieu de renseignement"
@@ -132,6 +119,12 @@ msgstr "Tri"
 msgid "Alphabetical order if blank"
 msgstr "Ordre alphabétique si vide"
 
+msgid "Color"
+msgstr "Couleur"
+
+msgid "Color of the category, only used in mobile."
+msgstr "Couleur définie pour la catégorie, utilisée seulement pour le mobile."
+
 msgid "Touristic content category"
 msgstr "Catégorie de contenu touristique"
 
@@ -150,8 +143,14 @@ msgstr "Deuxième"
 msgid "Touristic content type"
 msgstr "Type de contenu touristique"
 
+msgid "Type1"
+msgstr "Type1"
+
 msgid "First list types"
 msgstr "Types dans la première liste"
+
+msgid "Type2"
+msgstr "Type2"
 
 msgid "Second list types"
 msgstr "Types dans la deuxième liste"
@@ -221,6 +220,9 @@ msgstr "Contenu touristique"
 
 msgid "Touristic contents"
 msgstr "Contenus touristiques"
+
+msgid "touristic-content"
+msgstr "contenu-touristique"
 
 msgid "Published touristic contents"
 msgstr "Contenus touristiques publiés"
@@ -294,6 +296,9 @@ msgstr "jusqu'au {end}"
 msgid "from {begin} to {end}"
 msgstr "du {begin} au {end}"
 
+msgid "touristic-event"
+msgstr "evenement-touristique"
+
 msgid "Published touristic events"
 msgstr "Évènements touristiques publiés"
 
@@ -308,12 +313,6 @@ msgstr ""
 #, python-brace-format
 msgid "Type 2 '{subval}' does not exist for category '{cat}'. Please add it"
 msgstr ""
-
-msgid "touristic-content"
-msgstr "contenu-touristique"
-
-msgid "touristic-event"
-msgstr "evenement-touristique"
 
 msgid "Add a new touristic content"
 msgstr "Ajouter un contenu touristique"
@@ -348,8 +347,11 @@ msgstr "Aperçu"
 msgid "All"
 msgstr "Tout"
 
+msgid "Geotrek Rando"
+msgstr "Geotrek Rando"
+
 msgid "Powered by geotrek.fr"
-msgstr ""
+msgstr "Propulsé par geotrek.fr"
 
 msgid "Attribution"
 msgstr "Crédit photos"
@@ -362,15 +364,6 @@ msgstr "Emplacement géographique"
 
 msgid "All useful information"
 msgstr "Toutes les informations pratiques"
-
-msgid "Advice"
-msgstr "Avis"
-
-msgid "Related Treks"
-msgstr "Itinéraires liés"
-
-msgid "Powered by http://geotrek.fr"
-msgstr ""
 
 msgid "None"
 msgstr "Aucun"

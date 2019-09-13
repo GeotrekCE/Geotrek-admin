@@ -33,10 +33,10 @@ msgid "3D Length"
 msgstr "Longueur 3D"
 
 msgid "Ascent"
-msgstr "Dénivelée positive"
+msgstr "Dénivelé positif"
 
 msgid "Descent"
-msgstr "Dénivelée négative"
+msgstr "Dénivelé négatif"
 
 msgid "Minimum elevation"
 msgstr "Altitude minimum"
@@ -45,7 +45,7 @@ msgid "Maximum elevation"
 msgstr "Altitude maximum"
 
 msgid "Slope"
-msgstr "Dénivelé"
+msgstr "Pente"
 
 msgid "Toggle altimetric profile"
 msgstr "Afficher/cacher le profile altimétrique"

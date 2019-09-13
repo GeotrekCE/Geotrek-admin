@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-16 09:02+0000\n"
+"POT-Creation-Date: 2019-08-29 11:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,6 +23,15 @@ msgstr "Maintenance"
 msgid "Year"
 msgstr "Année"
 
+msgid "Infrastructure"
+msgstr "Aménagement"
+
+msgid "Signage"
+msgstr "Signalétique"
+
+msgid "On"
+msgstr "Sur"
+
 msgid "Year of activity"
 msgstr "Année d'activité"
 
@@ -31,6 +40,9 @@ msgstr "Jours"
 
 msgid "Length"
 msgstr "Longueur"
+
+msgid "Project"
+msgstr "Chantier"
 
 msgid "Main"
 msgstr "Basique"
@@ -84,6 +96,9 @@ msgstr "Coût sous-traitance"
 msgid "Interventions"
 msgstr "Interventions"
 
+msgid "3D Length"
+msgstr "Longueur 3D"
+
 msgid "Stake"
 msgstr "Enjeu"
 
@@ -99,9 +114,6 @@ msgstr "Désordres"
 msgid "Jobs"
 msgstr "Fonctions"
 
-msgid "Project"
-msgstr "Chantier"
-
 msgid "Description"
 msgstr "Descriptif"
 
@@ -110,9 +122,6 @@ msgstr "Remarques et notes"
 
 msgid "Intervention"
 msgstr "Intervention"
-
-msgid "On"
-msgstr "Sur"
 
 msgid "Path"
 msgstr "Tronçon"

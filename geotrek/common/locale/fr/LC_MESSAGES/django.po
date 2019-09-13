@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-16 09:02+0000\n"
+"POT-Creation-Date: 2019-08-29 11:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,6 +31,14 @@ msgstr "min %s"
 msgid "max %s"
 msgstr "max %s"
 
+#, python-brace-format
+msgid ""
+"Please select a choice related to all structures (without brackets) or "
+"related to the structure {struc} (in brackets)"
+msgstr ""
+"Veuillez sélectionner un choix lié à toutes les structures (sans "
+"parenthèses) ou lié à la structure {struc} (entre parenthèses)"
+
 msgid "Data to import from network"
 msgstr "Données à importer depuis le réseau"
 
@@ -39,6 +47,9 @@ msgstr "Importer"
 
 msgid "File"
 msgstr "Fichier"
+
+msgid "Encoding"
+msgstr "Encodage"
 
 msgid "Data to import from local file"
 msgstr "Données à importer depuis un fichier local"
@@ -91,6 +102,9 @@ msgstr "Organisme"
 
 msgid "Organisms"
 msgstr "Organismes"
+
+msgid "Creation Date"
+msgstr "Date de création"
 
 msgid "Label"
 msgstr "Label"
@@ -166,6 +180,10 @@ msgstr ""
 "avec cet identifiant"
 
 #, python-brace-format
+msgid "Bad ownership '{structure}' for object '{eid_val}'."
+msgstr "Mauvaise appartenance de '{structure}' sur l'objet '{eid_val}'."
+
+#, python-brace-format
 msgid "Bad value '{val}' for field {src}. Should contain {values}"
 msgstr ""
 "Mauvaise valeur '{val}' pour le champ '{src}'. Elle doit contenir {values}"
@@ -234,6 +252,14 @@ msgstr "Souris"
 msgid "Imports"
 msgstr "Imports"
 
+msgid "Decoding error. Please check encoding and use only ASCII in file names."
+msgstr ""
+"Erreur de décodage. Merci de vérifier l'encodage et d'utiliser l'ASCII (sans "
+"accents) pour les noms de fichier."
+
+msgid "No parser available."
+msgstr "Aucun parser disponible."
+
 msgid "Display report"
 msgstr "Afficher le rapport"
 
@@ -288,17 +314,11 @@ msgstr "a une géométrie invalide;"
 msgid "Topology is not valid."
 msgstr "L'événement n'est pas valide"
 
+msgid "Invalid geometry value."
+msgstr "Pointeur de géométrie invalide."
+
 msgid "Any year"
 msgstr "N'importe quelle année"
 
-msgid "No parser available."
-msgstr "Aucun parser disponible."
-
-msgid "Encoding"
-msgstr "Encodage"
-
-msgid "Decoding error. Please check encoding and use only ASCII in file names."
-msgstr "Erreur de décodage. Merci de vérifier l'encodage et d'utiliser l'ASCII (sans accents) pour les noms de fichier."
-
-msgid "Please select a choice related to all structures (without brackets) or related to the structure {struc} (in brackets)"
-msgstr "Veuillez sélectionner un choix lié à toutes les structures (sans parenthèses) ou lié à la structure {struc} (entre parenthèses)"
+msgid "Any value"
+msgstr "N'importe quelle valeur"
