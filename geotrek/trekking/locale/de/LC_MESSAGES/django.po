@@ -247,7 +247,7 @@ msgid "Published treks"
 msgstr "Publizierte Routen"
 
 msgid "Common departure"
-msgstr Gemeinsame Abreise"
+msgstr "Gemeinsame Abreise"
 
 msgid "Common edge"
 msgstr "Gemeinsame Strecken"
@@ -282,7 +282,7 @@ msgstr "Länge"
 msgid ""
 "Touristic contents and events will associate within this distance (meters)"
 msgstr ""
-"Touristische Inhalte und Veranstaltungen werden entsprechend dieser Entfernung zugeordnet.
+"Touristische Inhalte und Veranstaltungen werden entsprechend dieser Entfernung zugeordnet."
 "(meter)"
 
 msgid "Cirkwi locomotion"
@@ -629,11 +629,11 @@ msgstr "%s Tage"
 
 #, python-format
 msgid "%(hour)s h %(min)s"
-msgstr "%(stunde)s h %(min)s"
+msgstr "%(hour)s h %(min)s"
 
 #, python-format
 msgid "%(hour)s h"
-msgstr "%(stunde)s h"
+msgstr "%(hour)s h"
 
 #, python-format
 msgid "%s min"
