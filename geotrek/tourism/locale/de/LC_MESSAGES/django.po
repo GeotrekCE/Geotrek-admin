@@ -312,7 +312,7 @@ msgid "touristic-event"
 msgstr "touristische Veranstaltung"
 
 msgid "Add a new touristic content"
-msgstr "Touristische Inhalte hinzufügen
+msgstr "Touristische Inhalte hinzufügen"
 
 msgid "Add a new touristic event"
 msgstr "Eine touristische Veranstaltung hinzufügen"
