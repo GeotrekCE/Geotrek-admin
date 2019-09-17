@@ -299,7 +299,7 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
             u'pois', u'practical_info', u'printable', u'publication_date',
             u'published', u'published_status', u'reservation_id', u'reservation_system',
             u'slug', u'source', u'portal', u'themes', u'thumbnail', u'touristic_contents',
-            u'touristic_events', u'treks', u'type1', u'type2', u'videos', u'website']),
+            u'touristic_events', u'treks', u'type1', u'type2', u'videos', u'website', u'dives']),
             sorted(self.result.keys()))
 
     def test_type1(self):
@@ -340,7 +340,7 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
             u'printable', u'publication_date', u'published', u'published_status',
             u'slug', u'source', u'speaker', u'target_audience', u'themes',
             u'thumbnail', u'touristic_contents', u'touristic_events', u'treks', u'type',
-            u'type1', u'videos', u'website']),
+            u'type1', u'videos', u'website', u'dives']),
             sorted(self.result.keys()))
 
     def test_type(self):
