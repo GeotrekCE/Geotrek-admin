@@ -373,7 +373,8 @@ class TrekTouristicContentViewSet(viewsets.ModelViewSet):
 
         except Trek.DoesNotExist:
             raise Http404
-
+        if not trek.is_public():
+            raise Http404
         queryset = trek.touristic_contents.filter(published=True)
 
         if 'categories' in self.request.GET:
@@ -405,7 +406,8 @@ class TrekTouristicEventViewSet(viewsets.ModelViewSet):
 
         except Trek.DoesNotExist:
             raise Http404
-
+        if not trek.is_public():
+            raise Http404
         queryset = trek.touristic_events.filter(published=True)
 
         if 'source' in self.request.GET:

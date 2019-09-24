@@ -133,7 +133,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 trek = Trek.objects.existing().get(pk=pk)
             except Trek.DoesNotExist:
                 raise Http404
-            if not trek.is_public:
+            if not trek.is_public():
                 raise Http404
             qs = trek.published_sensitive_areas
             qs = qs.prefetch_related('species')
