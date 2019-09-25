@@ -123,6 +123,21 @@ class POIViewsTest(CommonTest):
 
         settings.DEBUG = False
 
+    def test_pois_on_treks_do_not_exist(self):
+        self.login()
+        self.modelfactory.create()
+
+        response = self.client.get(reverse('trekking:trek_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': 0}))
+        self.assertEqual(response.status_code, 404)
+
+    def test_pois_on_treks_not_public(self):
+        self.login()
+        self.modelfactory.create()
+
+        trek = TrekFactory.create(published=False)
+        response = self.client.get(reverse('trekking:trek_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
+        self.assertEqual(response.status_code, 404)
+
 
 class TrekViewsTest(CommonTest):
     model = Trek
@@ -1276,6 +1291,21 @@ class ServiceViewsTest(CommonTest):
             self.client.get(self.model.get_format_list_url())
 
         settings.DEBUG = False
+
+    def test_services_on_treks_do_not_exist(self):
+        self.login()
+        self.modelfactory.create()
+
+        response = self.client.get(reverse('trekking:trek_service_geojson', kwargs={'lang': translation.get_language(), 'pk': 0}))
+        self.assertEqual(response.status_code, 404)
+
+    def test_services_on_treks_not_public(self):
+        self.login()
+        self.modelfactory.create()
+
+        trek = TrekFactory.create(published=False)
+        response = self.client.get(reverse('trekking:trek_service_geojson', kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
+        self.assertEqual(response.status_code, 404)
 
 
 class ServiceJSONTest(TrekkingManagerTest):

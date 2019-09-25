@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
@@ -31,6 +32,30 @@ class DiveViewsTests(CommonTest):
             'practice': PracticeFactory.create().pk,
             'geom': '{"type": "Point", "coordinates":[0, 0]}',
         }
+
+    def test_services_on_treks_do_not_exist(self):
+        self.login()
+        self.modelfactory.create()
+        response = self.client.get(reverse('diving:dive_service_geojson', kwargs={'lang': translation.get_language(), 'pk': 0}))
+        self.assertEqual(response.status_code, 404)
+
+    def test_services_on_treks_not_public(self):
+        self.login()
+        dive = self.modelfactory.create(published=False)
+        response = self.client.get(reverse('diving:dive_service_geojson', kwargs={'lang': translation.get_language(), 'pk': dive.pk}))
+        self.assertEqual(response.status_code, 404)
+
+    def test_pois_on_treks_do_not_exist(self):
+        self.login()
+        self.modelfactory.create()
+        response = self.client.get(reverse('diving:dive_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': 0}))
+        self.assertEqual(response.status_code, 404)
+
+    def test_pois_on_treks_not_public(self):
+        self.login()
+        dive = self.modelfactory.create(published=False)
+        response = self.client.get(reverse('diving:dive_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': dive.pk}))
+        self.assertEqual(response.status_code, 404)
 
 
 class DiveViewsLiveTests(CommonLiveTest):

@@ -439,7 +439,7 @@ class TrekPOIViewSet(viewsets.ModelViewSet):
             trek = Trek.objects.existing().get(pk=pk)
         except Trek.DoesNotExist:
             raise Http404
-        if not trek.is_public:
+        if not trek.is_public():
             raise Http404
         return trek.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
 
@@ -459,7 +459,7 @@ class TrekSignageViewSet(viewsets.ModelViewSet):
             trek = Trek.objects.existing().get(pk=pk)
         except Trek.DoesNotExist:
             raise Http404
-        if not trek.is_public:
+        if not trek.is_public():
             raise Http404
         return trek.signages.filter(published=True).transform(settings.API_SRID, field_name='geom')
 
@@ -479,7 +479,7 @@ class TrekInfrastructureViewSet(viewsets.ModelViewSet):
             trek = Trek.objects.existing().get(pk=pk)
         except Trek.DoesNotExist:
             raise Http404
-        if not trek.is_public:
+        if not trek.is_public():
             raise Http404
         return trek.infrastructures.filter(published=True).transform(settings.API_SRID, field_name='geom')
 
@@ -560,7 +560,7 @@ class TrekServiceViewSet(viewsets.ModelViewSet):
             trek = Trek.objects.existing().get(pk=pk)
         except Trek.DoesNotExist:
             raise Http404
-        if not trek.is_public:
+        if not trek.is_public():
             raise Http404
         return trek.services.filter(type__published=True).transform(settings.API_SRID, field_name='geom')
 
