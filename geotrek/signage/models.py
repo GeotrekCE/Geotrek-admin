@@ -267,7 +267,7 @@ class Line(StructureRelated):
 
     @property
     def signage_csv_display(self):
-        return "%s #%s" % (self.blade.signage, self.blade.number)
+        return u"%s #%s" % (self.blade.signage, self.blade.number)
 
     @property
     def lat_csv_display(self):
