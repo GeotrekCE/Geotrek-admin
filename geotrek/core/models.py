@@ -57,7 +57,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                                 help_text=_(u"Approved by manager"))
     visible = models.BooleanField(db_column='visible', default=True, verbose_name=_(u"Visible"),
                                   help_text=_(u"Shown in lists and maps"))
-    name = models.CharField(null=True, blank=True, max_length=20, db_column='nom', verbose_name=_(u"Name"),
+    name = models.CharField(null=True, blank=True, max_length=250, db_column='nom', verbose_name=_(u"Name"),
                             help_text=_(u"Official name"))
     comments = models.TextField(null=True, blank=True, db_column='remarques', verbose_name=_(u"Comments"),
                                 help_text=_(u"Remarks"))
