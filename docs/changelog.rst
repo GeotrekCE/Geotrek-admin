@@ -2,6 +2,20 @@
 CHANGELOG
 =========
 
+2.29.7 (2019-09-25)
+-------------------
+
+**Minor Changes**
+
+- Add pois services tourism on sync_rando
+- Add endpoints api for diving
+
+**Bug fixes**
+
+- Fix is_public() call checking if the object is ppublic or not.
+- Remove duplicate description detail diving
+
+
 2.29.6 (2019-09-19)
 -------------------
 

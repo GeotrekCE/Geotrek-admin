@@ -192,16 +192,24 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
 
         super(TrekSerializer, self).__init__(instance, *args, **kwargs)
 
-        from geotrek.tourism import serializers as tourism_serializers
-
         if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
             del self.fields['practice']
         if settings.SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY:
             del self.fields['type2']
 
-        self.fields['information_desks'] = tourism_serializers.InformationDeskSerializer(many=True)
-        self.fields['touristic_contents'] = tourism_serializers.CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
-        self.fields['touristic_events'] = tourism_serializers.CloseTouristicEventSerializer(many=True, source='published_touristic_events')
+        if 'geotrek.tourism' in settings.INSTALLED_APPS:
+
+            from geotrek.tourism import serializers as tourism_serializers
+
+            self.fields['information_desks'] = tourism_serializers.InformationDeskSerializer(many=True)
+            self.fields['touristic_contents'] = tourism_serializers.CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
+            self.fields['touristic_events'] = tourism_serializers.CloseTouristicEventSerializer(many=True, source='published_touristic_events')
+
+        if 'geotrek.diving' in settings.INSTALLED_APPS:
+
+            from geotrek.diving.serializers import CloseDiveSerializer
+
+            self.fields['dives'] = CloseDiveSerializer(many=True, source='published_dives')
 
     class Meta:
         model = trekking_models.Trek

@@ -632,6 +632,12 @@ class Command(BaseCommand):
                 self.sync_media_file(lang, resized)
             for other_file in poi.files:
                 self.sync_media_file(lang, other_file.attachment_file)
+        if self.with_events:
+            self.sync_dive_touristicevents(lang, dive)
+        if self.categories:
+            self.sync_dive_touristiccontents(lang, dive)
+        if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+            self.sync_dive_sensitiveareas(lang, dive)
 
     def sync_sensitiveareas(self, lang):
         self.sync_geojson(lang, sensitivity_views.SensitiveAreaViewSet, 'sensitiveareas.geojson',
@@ -647,6 +653,13 @@ class Command(BaseCommand):
         view = sensitivity_views.TrekSensitiveAreaViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'sensitiveareas.geojson')
         self.sync_view(lang, view, name, params=params, pk=trek.pk)
+
+    def sync_dive_sensitiveareas(self, lang, dive):
+        params = {'format': 'geojson', 'practices': 'Terrestre'}
+
+        view = sensitivity_views.DiveSensitiveAreaViewSet.as_view({'get': 'list'})
+        name = os.path.join('api', lang, 'dives', str(dive.pk), 'sensitiveareas.geojson')
+        self.sync_view(lang, view, name, params=params, pk=dive.pk)
 
     def sync_dives(self, lang):
         self.sync_geojson(lang, diving_views.DiveViewSet, 'dives.geojson')
@@ -738,14 +751,39 @@ class Command(BaseCommand):
             self.sync_touristiccontent_media(lang, content, zipfile=self.trek_zipfile)
 
     def sync_trek_touristicevents(self, lang, trek, zipfile=None):
-        params = {'format': 'geojson',
-                  'portal': ','.join(portal for portal in self.portal)}
+        params = {'format': 'geojson'}
+        if self.portal:
+            params['portal'] = ','.join(portal for portal in self.portal)
         view = tourism_views.TrekTouristicEventViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'touristicevents.geojson')
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
 
         for event in trek.touristic_events.all():
             self.sync_touristicevent_media(lang, event, zipfile=self.trek_zipfile)
+
+    def sync_dive_touristiccontents(self, lang, dive):
+        params = {'format': 'geojson',
+                  'categories': ','.join(category for category in self.categories)}
+        if self.portal:
+            params['portal'] = ','.join(portal for portal in self.portal)
+
+        view = tourism_views.DiveTouristicContentViewSet.as_view({'get': 'list'})
+        name = os.path.join('api', lang, 'dives', str(dive.pk), 'touristiccontents.geojson')
+        self.sync_view(lang, view, name, params=params, pk=dive.pk)
+
+        for content in dive.touristic_contents.all():
+            self.sync_touristiccontent_media(lang, content)
+
+    def sync_dive_touristicevents(self, lang, dive):
+        params = {'format': 'geojson'}
+        if self.portal:
+            params['portal'] = ','.join(portal for portal in self.portal)
+        view = tourism_views.DiveTouristicEventViewSet.as_view({'get': 'list'})
+        name = os.path.join('api', lang, 'dives', str(dive.pk), 'touristicevents.geojson')
+        self.sync_view(lang, view, name, params=params, pk=dive.pk)
+
+        for event in dive.touristic_events.all():
+            self.sync_touristicevent_media(lang, event)
 
     def sync_touristicevent_media(self, lang, event, zipfile=None):
         if event.resized_pictures:

@@ -31,6 +31,9 @@ from .serializers import (TouristicContentSerializer, TouristicEventSerializer,
                           InformationDeskSerializer)
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
+if 'geotrek.diving' in settings.INSTALLED_APPS:
+    from geotrek.diving.models import Dive
+
 
 logger = logging.getLogger(__name__)
 
@@ -370,7 +373,8 @@ class TrekTouristicContentViewSet(viewsets.ModelViewSet):
 
         except Trek.DoesNotExist:
             raise Http404
-
+        if not trek.is_public():
+            raise Http404
         queryset = trek.touristic_contents.filter(published=True)
 
         if 'categories' in self.request.GET:
@@ -402,7 +406,8 @@ class TrekTouristicEventViewSet(viewsets.ModelViewSet):
 
         except Trek.DoesNotExist:
             raise Http404
-
+        if not trek.is_public():
+            raise Http404
         queryset = trek.touristic_events.filter(published=True)
 
         if 'source' in self.request.GET:
@@ -413,6 +418,65 @@ class TrekTouristicEventViewSet(viewsets.ModelViewSet):
 
         return queryset.transform(settings.API_SRID,
                                   field_name='geom')
+
+
+if 'geotrek.diving' in settings.INSTALLED_APPS:
+    class DiveTouristicContentViewSet(viewsets.ModelViewSet):
+        model = TouristicContent
+        permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+        def get_serializer_class(self):
+            class Serializer(TouristicContentSerializer, GeoFeatureModelSerializer):
+                class Meta(TouristicContentSerializer.Meta):
+                    pass
+
+            return Serializer
+
+        def get_queryset(self):
+            try:
+                dive = Dive.objects.existing().get(pk=self.kwargs['pk'])
+
+            except Dive.DoesNotExist:
+                raise Http404
+
+            queryset = dive.touristic_contents.filter(published=True)
+
+            if 'categories' in self.request.GET:
+                queryset = queryset.filter(category__pk__in=self.request.GET['categories'].split(','))
+
+            if 'source' in self.request.GET:
+                queryset = queryset.filter(source__name__in=self.request.GET['source'].split(','))
+
+            if 'portal' in self.request.GET:
+                queryset = queryset.filter(portal__name__in=self.request.GET['portal'].split(','))
+
+            return queryset.transform(settings.API_SRID,
+                                      field_name='geom')
+
+    class DiveTouristicEventViewSet(viewsets.ModelViewSet):
+        model = TouristicEvent
+        permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+        def get_serializer_class(self):
+            class Serializer(TouristicEventSerializer, GeoFeatureModelSerializer):
+                class Meta(TouristicEventSerializer.Meta):
+                    pass
+
+            return Serializer
+
+        def get_queryset(self):
+            try:
+                dive = Dive.objects.existing().get(pk=self.kwargs['pk'])
+
+            except Dive.DoesNotExist:
+                raise Http404
+            queryset = dive.touristic_events.filter(published=True)
+            if 'source' in self.request.GET:
+                queryset = queryset.filter(source__name__in=self.request.GET['source'].split(','))
+            if 'portal' in self.request.GET:
+                queryset = queryset.filter(portal__name__in=self.request.GET['portal'].split(','))
+            return queryset.transform(settings.API_SRID,
+                                      field_name='geom')
 
 
 class TouristicCategoryView(APIView):

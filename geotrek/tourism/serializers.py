@@ -81,6 +81,14 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
     treks = trekking_serializers.CloseTrekSerializer(many=True, source='published_treks')
     pois = trekking_serializers.ClosePOISerializer(many=True, source='published_pois')
 
+    def __init__(self, instance=None, *args, **kwargs):
+        super(TouristicContentSerializer, self).__init__(instance, *args, **kwargs)
+        if 'geotrek.diving' in settings.INSTALLED_APPS:
+
+            from geotrek.diving.serializers import CloseDiveSerializer
+
+            self.fields['dives'] = CloseDiveSerializer(many=True, source='published_dives')
+
     class Meta:
         model = tourism_models.TouristicContent
         geo_field = 'geom'
@@ -118,6 +126,13 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
     # For consistency with touristic contents
     type1 = TouristicEventTypeSerializer(many=True)
     category = rest_serializers.SerializerMethodField()
+
+    def __init__(self, instance=None, *args, **kwargs):
+        super(TouristicEventSerializer, self).__init__(instance, *args, **kwargs)
+        if 'geotrek.diving' in settings.INSTALLED_APPS:
+            from geotrek.diving.serializers import CloseDiveSerializer
+
+            self.fields['dives'] = CloseDiveSerializer(many=True, source='published_dives')
 
     class Meta:
         model = tourism_models.TouristicEvent

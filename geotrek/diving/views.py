@@ -186,7 +186,7 @@ class DivePOIViewSet(viewsets.ModelViewSet):
             dive = Dive.objects.existing().get(pk=pk)
         except Dive.DoesNotExist:
             raise Http404
-        if not dive.is_public:
+        if not dive.is_public():
             raise Http404
         return dive.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
 
@@ -206,7 +206,7 @@ class DiveServiceViewSet(viewsets.ModelViewSet):
             dive = Dive.objects.existing().get(pk=pk)
         except Dive.DoesNotExist:
             raise Http404
-        if not dive.is_public:
+        if not dive.is_public():
             raise Http404
         return dive.services.filter(type__published=True).transform(settings.API_SRID, field_name='geom')
 
