@@ -7,6 +7,10 @@ CHANGELOG
 
 **Minor Changes**
 
+- Increase path name field length
+
+**Bug fixes**
+
 -
 
 
