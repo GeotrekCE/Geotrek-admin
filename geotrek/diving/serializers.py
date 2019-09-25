@@ -8,7 +8,7 @@ from geotrek.common.serializers import (ThemeSerializer, PublishableSerializerMi
                                         PicturesSerializerMixin, TranslatedModelSerializer,
                                         TargetPortalSerializer)
 from geotrek.diving import models as diving_models
-from geotrek.trekking.serializers import CloseTrekSerializer
+from geotrek.trekking import serializers as trekking_serializers
 
 
 class DifficultySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
@@ -53,7 +53,8 @@ class DiveSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
     portal = TargetPortalSerializer(many=True)
     category = rest_serializers.SerializerMethodField()
     dives = CloseDiveSerializer(many=True, source='published_dives')
-    treks = CloseTrekSerializer(many=True, source='published_treks')
+    treks = trekking_serializers.CloseTrekSerializer(many=True, source='published_treks')
+    pois = trekking_serializers.ClosePOISerializer(many=True, source='published_pois')
 
     def __init__(self, instance=None, *args, **kwargs):
         super(DiveSerializer, self).__init__(instance, *args, **kwargs)
@@ -73,7 +74,7 @@ class DiveSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
             'id', 'practice', 'description_teaser', 'description', 'advice',
             'difficulty', 'levels', 'themes', 'owner', 'depth',
             'facilities', 'departure', 'disabled_sport', 'category',
-            'source', 'portal', 'eid', 'dives', 'treks'
+            'source', 'portal', 'eid', 'dives', 'treks', 'pois'
         ) + PublishableSerializerMixin.Meta.fields + PicturesSerializerMixin.Meta.fields
 
     def get_category(self, obj):
