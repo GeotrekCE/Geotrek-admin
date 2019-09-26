@@ -2,6 +2,18 @@
 CHANGELOG
 =========
 
+2.29.8 (2019-09-26)
+-------------------
+
+**Minor Changes**
+
+- Increase path name field length
+
+**Bug fixes**
+
+- Fix csv_display signage with not ascii character
+
+
 2.29.7 (2019-09-25)
 -------------------
 

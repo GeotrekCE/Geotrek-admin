@@ -137,8 +137,16 @@ class BladeViewsTest(CommonTest):
 
     def test_basic_format(self):
         self.login()
-        self.modelfactory.create()
         blade = BladeFactory.create()
+        LineFactory.create(blade=blade)
+        for fmt in ('csv', 'shp', 'gpx'):
+            response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
+            self.assertEqual(response.status_code, 200, u"")
+
+    def test_basic_format_not_ascii(self):
+        self.login()
+        signage = SignageFactory.create(name="ééé")
+        blade = BladeFactory.create(signage=signage)
         LineFactory.create(blade=blade)
         for fmt in ('csv', 'shp', 'gpx'):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
