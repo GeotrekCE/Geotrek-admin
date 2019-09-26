@@ -413,7 +413,7 @@ Primary color in PDF templates
 ------------------------------
 
 You can override `PRIMARY_COLOR` to change emphase text in PDF export.
-Beware of contrast, colour is used for text so we advise you to avoid light colour.
+Beware of contrast, white colour is used for text so we advise you to avoid light colour.
 
 Custom logos
 ------------
@@ -423,6 +423,22 @@ You might also need to deploy logo images in the following places :
 * ``var/media/upload/favicon.png``
 * ``var/media/upload/logo-login.png``
 * ``var/media/upload/logo-header.png``
+
+
+Copyright on pictures
+---------------------
+
+If you want copyright added to your pictures, change `THUMBNAIL_COPYRIGHT_FORMAT` to this :
+
+::
+
+THUMBNAIL_COPYRIGHT_FORMAT = u"{title} {author}"
+
+You can also add `{legend}`.
+
+::
+
+THUMBNAIL_COPYRIGHT_SIZE = 15
 
 
 Share services between several Geotrek instances
