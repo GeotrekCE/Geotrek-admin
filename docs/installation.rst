@@ -93,6 +93,7 @@ Change POSTGRES_HOST and every information about POSTGRES and PGPORT
     CONVERSION_PORT=6543
     CAPTURE_HOST=screamshotter
     CAPTURE_PORT=8000
+    GUNICORN_TIMEOUT=60
 
 :notes:
     In order to use a remote database server (*recommended*), set the appropriate values
