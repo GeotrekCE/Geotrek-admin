@@ -53,6 +53,7 @@ services:
        - .:/app/src
      depends_on:
        - celery
+       - postgres
      working_dir: /app/src
      command: ./manage.py runserver 0.0.0.0:8000
      networks:
