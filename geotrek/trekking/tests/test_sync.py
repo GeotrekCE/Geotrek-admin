@@ -19,7 +19,7 @@ from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_up
 from geotrek.diving.factories import DiveFactory, PracticeFactory as PracticeDiveFactory
 from geotrek.diving.models import Dive
 from geotrek.infrastructure.factories import InfrastructureFactory
-from geotrek.sensitivity.factories import SensitiveAreaFactory
+from geotrek.sensitivity.factories import SensitiveAreaFactory, SportPracticeFactory
 from geotrek.signage.factories import SignageFactory
 from geotrek.trekking.factories import POIFactory, PracticeFactory as PracticeTrekFactory, TrekFactory, TrekWithPublishedPOIsFactory
 from geotrek.trekking import models as trek_models
@@ -40,7 +40,7 @@ class SyncRandoTilesTest(TestCase):
     def test_tiles(self, mock_tileslist, mock_tiles):
         output = BytesIO()
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
-                                stdout=output)
+                                languages='en', stdout=output)
         zfile = zipfile.ZipFile(os.path.join('var', 'tmp', 'zip', 'tiles', 'global.zip'))
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
@@ -53,7 +53,7 @@ class SyncRandoTilesTest(TestCase):
         mock_tiles.side_effect = DownloadError
         output = BytesIO()
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
-                                stdout=output)
+                                languages='en', stdout=output)
         zfile = zipfile.ZipFile(os.path.join('var', 'tmp', 'zip', 'tiles', 'global.zip'))
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
@@ -68,7 +68,7 @@ class SyncRandoTilesTest(TestCase):
         mock_tiles.side_effect = DownloadError
         output = BytesIO()
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
-                                stdout=output)
+                                languages='en', stdout=output)
         zfile = zipfile.ZipFile(os.path.join('var', 'tmp', 'zip', 'tiles', 'global.zip'))
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
@@ -82,7 +82,7 @@ class SyncRandoTilesTest(TestCase):
         mock_tiles.side_effect = DownloadError
         output = BytesIO()
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
-                                stdout=output)
+                                languages='en', stdout=output)
         zfile = zipfile.ZipFile(os.path.join('var', 'tmp', 'zip', 'tiles', 'global.zip'))
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
@@ -96,7 +96,7 @@ class SyncRandoTilesTest(TestCase):
         output = BytesIO()
         trek = TrekFactory.create(published=True)
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
-                                stdout=output)
+                                languages='en', stdout=output)
         zfile = zipfile.ZipFile(os.path.join('var', 'tmp', 'zip', 'tiles', 'global.zip'))
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
@@ -132,7 +132,7 @@ class SyncRandoFailTest(TestCase):
     def test_fail_url_ftp(self):
         with self.assertRaises(CommandError) as e:
             management.call_command('sync_rando', os.path.join('var', 'tmp'), url='ftp://localhost:8000',
-                                    skip_tiles=True, verbosity=2)
+                                    languages='en', skip_tiles=True, verbosity=2)
         self.assertIn("url parameter should start with http:// or https://", e.exception.message)
 
     def test_language_not_in_db(self):
@@ -259,7 +259,9 @@ class SyncSetup(TestCase):
         else:
             InfrastructureFactory.create(geom='SRID=2154;POINT(700000 6600000)', name="INFRA_1")
             SignageFactory.create(geom='SRID=2154;POINT(700000 6600000)', name="SIGNA_1")
-        SensitiveAreaFactory.create(published=True)
+        area = SensitiveAreaFactory.create(published=True)
+        area.species.practices.add(SportPracticeFactory.create(name='Terrestre'))
+        area.save()
         self.touristic_content = TouristicContentFactory(
             geom='SRID=%s;POINT(700001 6600001)' % settings.SRID, published=True)
         self.touristic_event = TouristicEventFactory(
@@ -280,7 +282,7 @@ class SyncTest(SyncSetup):
             management.call_command('sync_rando', os.path.join('var', 'tmp'), with_signages=True,
                                     with_infrastructures=True, with_dives=True,
                                     with_events=True, content_categories="1", url='http://localhost:8000',
-                                    skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
+                                    skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=BytesIO())
             with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
                 # there are 4 treks
@@ -293,7 +295,7 @@ class SyncTest(SyncSetup):
             management.call_command('sync_rando', os.path.join('var', 'tmp'), with_signages=True,
                                     with_infrastructures=True, with_dives=True,
                                     with_events=True, content_categories="1", url='http://localhost:8000',
-                                    skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
+                                    skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=BytesIO())
             with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
                 # there are 4 treks
@@ -304,7 +306,7 @@ class SyncTest(SyncSetup):
     def test_sync_without_pdf(self):
         management.call_command('sync_rando', os.path.join('var', 'tmp'), with_signages=True, with_infrastructures=True,
                                 with_dives=True, with_events=True, content_categories="1", url='http://localhost:8000',
-                                skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
+                                skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=BytesIO())
         with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
             # there are 4 treks
@@ -331,7 +333,7 @@ class SyncTest(SyncSetup):
     def test_sync_without_pdf_split_by_practice(self):
         management.call_command('sync_rando', os.path.join('var', 'tmp'), with_signages=True, with_infrastructures=True,
                                 with_dives=True, with_events=True, content_categories="1", url='http://localhost:8000',
-                                skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
+                                skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=BytesIO())
         with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
             # there are 4 treks
@@ -358,7 +360,7 @@ class SyncTest(SyncSetup):
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
             management.call_command('sync_rando', os.path.join('var', 'tmp'), with_signages=True, with_infrastructures=True, with_dives=True,
                                     with_events=True, content_categories="1", url='https://localhost:8000',
-                                    skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
+                                    skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=BytesIO())
             with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
                 # there are 4 treks
@@ -373,7 +375,7 @@ class SyncTest(SyncSetup):
         self.trek_4.delete()
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
             management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
-                                    skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
+                                    skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=BytesIO())
             with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
                 # \u2028 is translated to \n
@@ -385,13 +387,13 @@ class SyncTest(SyncSetup):
         mocke.return_value = StreamingHttpResponse()
         trek = TrekWithPublishedPOIsFactory.create(published_fr=True)
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', skip_pdf=True,
-                                skip_tiles=True, verbosity=2, stdout=output)
+                                skip_tiles=True, languages='fr', verbosity=2, stdout=output)
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'fr', 'treks', str(trek.pk), 'profile.png')))
 
     def test_sync_filtering_sources(self):
         # source A only
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
-                                source=self.source_a.name, skip_tiles=True, skip_pdf=True, verbosity=2,
+                                source=self.source_a.name, skip_tiles=True, skip_pdf=True, languages='en', verbosity=2,
                                 stdout=BytesIO())
         with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
@@ -403,7 +405,7 @@ class SyncTest(SyncSetup):
     def test_sync_filtering_sources_diving(self):
         # source A only
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', with_dives=True,
-                                source=self.source_a.name, skip_tiles=True, skip_pdf=True, verbosity=2,
+                                source=self.source_a.name, skip_tiles=True, skip_pdf=True, languages='en', verbosity=2,
                                 stdout=BytesIO())
         with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
             dives = json.load(f)
@@ -415,7 +417,7 @@ class SyncTest(SyncSetup):
     def test_sync_filtering_portals(self):
         # portal B only
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
-                                portal=self.portal_b.name, skip_tiles=True, skip_pdf=True, verbosity=2,
+                                portal=self.portal_b.name, skip_tiles=True, skip_pdf=True, languages='en', verbosity=2,
                                 stdout=BytesIO())
         with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
@@ -426,7 +428,7 @@ class SyncTest(SyncSetup):
         # portal A and B
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                 portal='{},{}'.format(self.portal_a.name, self.portal_b.name),
-                                skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
+                                skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=BytesIO())
         with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
 
@@ -436,7 +438,7 @@ class SyncTest(SyncSetup):
     def test_sync_filtering_portals_diving(self):
         # portal B only
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', with_dives=True,
-                                portal=self.portal_b.name, skip_tiles=True, skip_pdf=True, verbosity=2,
+                                portal=self.portal_b.name, skip_tiles=True, skip_pdf=True, languages='en', verbosity=2,
                                 stdout=BytesIO())
         with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
             dives = json.load(f)
@@ -447,11 +449,24 @@ class SyncTest(SyncSetup):
         # portal A and B
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                 portal='{},{}'.format(self.portal_a.name, self.portal_b.name), with_dives=True,
-                                skip_tiles=True, skip_pdf=True, verbosity=2, stdout=BytesIO())
+                                skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=BytesIO())
         with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
             dives = json.load(f)
             # 4 dives have portal A or B or no portal
             self.assertEquals(len(dives['features']), 4)
+
+    @override_settings(SPLIT_TREKS_CATEGORIES_BY_PRACTICE=False, SPLIT_DIVES_CATEGORIES_BY_PRACTICE=False)
+    def test_sync_with_multipolygon_sensitive_area(self):
+        area = SensitiveAreaFactory.create(geom='MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))', published=True)
+        area.species.practices.add(SportPracticeFactory.create(name='Terrestre'))
+        area.save()
+        management.call_command('sync_rando', 'tmp', with_signages=True, with_infrastructures=True,
+                                with_dives=True, with_events=True, content_categories="1", url='http://localhost:8000',
+                                skip_tiles=True, skip_pdf=True, verbosity=2, languages='en', stdout=BytesIO())
+        with open(os.path.join('tmp', 'api', 'en', 'sensitiveareas.geojson'), 'r') as f:
+            area = json.load(f)
+            # there are 2 areas
+            self.assertEquals(len(area['features']), 2)
 
 
 @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')

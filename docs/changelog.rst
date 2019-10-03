@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+2.29.9 (2019-10-02)
+-------------------
+
+**Bug fixes**
+
+- Fix sync_rando : sensitive area with multi polygons
+
+
 2.29.8 (2019-09-26)
 -------------------
 
