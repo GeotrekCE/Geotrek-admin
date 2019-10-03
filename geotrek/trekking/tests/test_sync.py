@@ -460,10 +460,10 @@ class SyncTest(SyncSetup):
         area = SensitiveAreaFactory.create(geom='MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))', published=True)
         area.species.practices.add(SportPracticeFactory.create(name='Terrestre'))
         area.save()
-        management.call_command('sync_rando', 'tmp', with_signages=True, with_infrastructures=True,
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), with_signages=True, with_infrastructures=True,
                                 with_dives=True, with_events=True, content_categories="1", url='http://localhost:8000',
                                 skip_tiles=True, skip_pdf=True, verbosity=2, languages='en', stdout=BytesIO())
-        with open(os.path.join('tmp', 'api', 'en', 'sensitiveareas.geojson'), 'r') as f:
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'sensitiveareas.geojson'), 'r') as f:
             area = json.load(f)
             # there are 2 areas
             self.assertEquals(len(area['features']), 2)
