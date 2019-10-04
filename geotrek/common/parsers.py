@@ -753,7 +753,7 @@ class TourismSystemParser(AttachmentParserMixin, Parser):
                 'size': size,
                 'start': skip,
             }
-            response = requests.get(self.url, params=params, auth=HTTPBasicAuth(self.user, self.password))
+            response = requests.get(self.url, params=params, auth=HTTPBasicAuth(self.login, self.password))
             if response.status_code != 200:
                 raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
             self.root = response.json()
