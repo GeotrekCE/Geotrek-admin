@@ -15,6 +15,7 @@ from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
 from easy_thumbnails.alias import aliases
 from embed_video.backends import detect_backend, VideoDoesntExistException
+from PIL.Image import DecompressionBombError
 
 from geotrek.common.utils import classproperty
 
@@ -133,8 +134,8 @@ class PicturesMixin(object):
                                                })
 
                 thdetail = thumbnailer.get_thumbnail(ali)
-            except (IOError, InvalidImageFormatError):
-                logger.info(_("Image %s invalid or missing from disk.") % picture.attachment_file)
+            except (IOError, InvalidImageFormatError, DecompressionBombError) as e:
+                logger.info(_(u"Image {} invalid or missing from disk: {}.").format(picture.attachment_file, unicode(e)))
             else:
                 resized.append((picture, thdetail))
         return resized
@@ -145,8 +146,8 @@ class PicturesMixin(object):
             thumbnailer = get_thumbnailer(picture.attachment_file)
             try:
                 thumbnail = thumbnailer.get_thumbnail(aliases.get('print'))
-            except (IOError, InvalidImageFormatError):
-                logger.info(_("Image %s invalid or missing from disk.") % picture.attachment_file)
+            except (IOError, InvalidImageFormatError, DecompressionBombError) as e:
+                logger.info(_(u"Image {} invalid or missing from disk: {}.").format(picture.attachment_file, unicode(e)))
                 continue
             thumbnail.author = picture.author
             thumbnail.legend = picture.legend
@@ -159,8 +160,8 @@ class PicturesMixin(object):
             thumbnailer = get_thumbnailer(picture.attachment_file)
             try:
                 thumbnail = thumbnailer.get_thumbnail(aliases.get('small-square'))
-            except (IOError, InvalidImageFormatError):
-                logger.info(_("Image %s invalid or missing from disk.") % picture.attachment_file)
+            except (IOError, InvalidImageFormatError, DecompressionBombError) as e:
+                logger.info(_(u"Image {} invalid or missing from disk: {}.").format(picture.attachment_file, unicode(e)))
                 continue
             thumbnail.author = picture.author
             thumbnail.legend = picture.legend
