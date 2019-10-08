@@ -2,6 +2,20 @@
 CHANGELOG
 =========
 
+2.29.10 (2019-10-08)
+--------------------
+
+**Minor changes**
+
+- Do not set username as attachment author by default
+
+**Bug fixes**
+
+- Don't crash sync_rando with PIL.Image.DecompressionBombError
+- Fix mode selection when adding/editing an attachment
+- Fix authenticated parsers
+
+
 2.29.9 (2019-10-02)
 -------------------
 

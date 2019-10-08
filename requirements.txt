@@ -34,6 +34,8 @@ djangorestframework-gis==0.13
 drf-dynamic-fields==0.3.0
 drf-extensions==0.4.*
 lxml==4.2.1
+Pillow==6.2.0
+paperclip==2.2.2
 # dev & test
 django-debug-toolbar==1.10.*
 django-extensions==2.1.*
