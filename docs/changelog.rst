@@ -2,8 +2,8 @@
 CHANGELOG
 =========
 
-2.29.10.dev0
--------------------
+2.29.10 (2019-10-08)
+--------------------
 
 **Minor changes**
 
@@ -13,6 +13,7 @@ CHANGELOG
 
 - Don't crash sync_rando with PIL.Image.DecompressionBombError
 - Fix mode selection when adding/editing an attachment
+- Fix authenticated parsers
 
 
 2.29.9 (2019-10-02)
