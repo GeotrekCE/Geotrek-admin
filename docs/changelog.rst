@@ -5,9 +5,9 @@ CHANGELOG
 2.29.10.dev0
 -------------------
 
-**Minor Changes**
+**Bug fixes**
 
--
+- Don't crash sync_rando with PIL.Image.DecompressionBombError
 
 
 2.29.9 (2019-10-02)
