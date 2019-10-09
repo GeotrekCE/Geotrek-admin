@@ -285,7 +285,34 @@ applied. In order to disable, change this MapEntity setting :
 
     MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = False
 
-  
+
+Configure Social network
+-----------------------------
+
+Facebook configuration
+~~~~~~~~~~~~~~~~~~~~~~~
+
+When a content is shared to Facebook in Geotrek-rando,
+ it needs static html files built by synchronization (thanks to option `--rando-url`).
+
+In Facebook developper dashboard, create a Facebook app dedicated to Geotrek-rando and activate it.
+
+.. image :: images/facebookappid.png
+
+In `custom.py` set Facebook App ID:
+
+::
+
+    FACEBOOK_APP_ID = '<your Facebook AppID>'
+
+you can also override these configuration:
+
+::
+
+    FACEBOOK_IMAGE = '/images/logo-geotrek.png'
+    FACEBOOK_IMAGE_WIDTH = 200
+    FACEBOOK_IMAGE_HEIGHT = 200
+
 Override translations
 ----------------------------
 
