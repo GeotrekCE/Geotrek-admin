@@ -293,7 +293,7 @@ Facebook configuration
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 When a content is shared to Facebook in Geotrek-rando,
- it needs static html files built by synchronization (thanks to option `--rando-url`).
+it needs static html files built by synchronization (thanks to option `--rando-url`).
 
 In Facebook developper dashboard, create a Facebook app dedicated to Geotrek-rando and activate it.
 
