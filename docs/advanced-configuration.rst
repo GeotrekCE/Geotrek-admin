@@ -299,7 +299,7 @@ In Facebook developper dashboard, create a Facebook app dedicated to Geotrek-ran
 
 .. image :: images/facebookappid.png
 
-In `custom.py` set Facebook App ID:
+In ``custom.py`` set Facebook App ID:
 
 ::
 
@@ -439,7 +439,7 @@ See *Leaflet* reference documentation for detail about layers apparence.
 Primary color in PDF templates
 ------------------------------
 
-You can override `PRIMARY_COLOR` to change emphase text in PDF export.
+You can override ``PRIMARY_COLOR`` to change emphase text in PDF export.
 Beware of contrast, white colour is used for text so we advise you to avoid light colour.
 
 Custom logos
@@ -455,7 +455,7 @@ You might also need to deploy logo images in the following places :
 Copyright on pictures
 ---------------------
 
-If you want copyright added to your pictures, change `THUMBNAIL_COPYRIGHT_FORMAT` to this :
+If you want copyright added to your pictures, change ``THUMBNAIL_COPYRIGHT_FORMAT`` to this :
 
 ::
 
