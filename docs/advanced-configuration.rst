@@ -305,7 +305,7 @@ In `custom.py` set Facebook App ID:
 
     FACEBOOK_APP_ID = '<your Facebook AppID>'
 
-you can also override these configuration:
+you can also override these settings:
 
 ::
 
