@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.29.11.dev0
+2.29.11 (2019-10-17)
 --------------------
 
 **Bug fixes**
 
--
+- Fix filter still available after come back to list
 
 
 2.29.10 (2019-10-08)
