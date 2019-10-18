@@ -8,6 +8,7 @@ CHANGELOG
 **Minor changes**
 
 - Show completeness on dive detail page
+- Add practice field to trek and dive completeness
 
 **Bug fixes**
 
