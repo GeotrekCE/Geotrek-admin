@@ -5,6 +5,10 @@ CHANGELOG
 2.29.12.dev0
 --------------------
 
+**Minor changes**
+
+- Show completeness on dive detail page
+
 **Bug fixes**
 
 -
