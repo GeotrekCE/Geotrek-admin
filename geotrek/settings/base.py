@@ -533,7 +533,8 @@ EXPORT_HEADER_IMAGE_SIZE = {
 }
 
 COMPLETENESS_FIELDS = {
-    'trek': ['departure', 'duration', 'difficulty', 'description_teaser']
+    'trek': ['practice', 'departure', 'duration', 'difficulty', 'description_teaser'],
+    'dive': ['practice', 'difficulty', 'description_teaser'],
 }
 
 EMBED_VIDEO_BACKENDS = (
