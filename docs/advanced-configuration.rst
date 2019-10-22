@@ -285,7 +285,34 @@ applied. In order to disable, change this MapEntity setting :
 
     MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = False
 
-  
+
+Configure Social network
+-----------------------------
+
+Facebook configuration
+~~~~~~~~~~~~~~~~~~~~~~~
+
+When a content is shared to Facebook in Geotrek-rando,
+it needs static html files built by synchronization (thanks to option ``--rando-url``).
+
+In Facebook developper dashboard, create a Facebook app dedicated to Geotrek-rando and activate it.
+
+.. image :: images/facebookappid.png
+
+In ``custom.py`` set Facebook App ID:
+
+::
+
+    FACEBOOK_APP_ID = '<your Facebook AppID>'
+
+you can also override these settings:
+
+::
+
+    FACEBOOK_IMAGE = '/images/logo-geotrek.png'
+    FACEBOOK_IMAGE_WIDTH = 200
+    FACEBOOK_IMAGE_HEIGHT = 200
+
 Override translations
 ----------------------------
 
@@ -412,8 +439,8 @@ See *Leaflet* reference documentation for detail about layers apparence.
 Primary color in PDF templates
 ------------------------------
 
-You can override `PRIMARY_COLOR` to change emphase text in PDF export.
-Beware of contrast, colour is used for text so we advise you to avoid light colour.
+You can override ``PRIMARY_COLOR`` to change emphase text in PDF export.
+Beware of contrast, white colour is used for text so we advise you to avoid light colour.
 
 Custom logos
 ------------
@@ -423,6 +450,22 @@ You might also need to deploy logo images in the following places :
 * ``var/media/upload/favicon.png``
 * ``var/media/upload/logo-login.png``
 * ``var/media/upload/logo-header.png``
+
+
+Copyright on pictures
+---------------------
+
+If you want copyright added to your pictures, change ``THUMBNAIL_COPYRIGHT_FORMAT`` to this :
+
+::
+
+THUMBNAIL_COPYRIGHT_FORMAT = u"{title} {author}"
+
+You can also add `{legend}`.
+
+::
+
+THUMBNAIL_COPYRIGHT_SIZE = 15
 
 
 Share services between several Geotrek instances
