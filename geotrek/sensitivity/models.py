@@ -205,10 +205,10 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from geotrek.core.models import Topology
-    Topology.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN), _(u"Sensitive areas"))
-    Topology.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN).filter(published=True), _(u"Published sensitive areas"))
+    Topology.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _(u"Sensitive areas"))
+    Topology.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _(u"Published sensitive areas"))
 
 if 'geotrek.diving' in settings.INSTALLED_APPS:
     from geotrek.diving.models import Dive
-    Dive.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN), _(u"Sensitive areas"))
-    Dive.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN).filter(published=True), _(u"Published sensitive areas"))
+    Dive.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _(u"Sensitive areas"))
+    Dive.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _(u"Published sensitive areas"))
