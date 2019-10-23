@@ -8,3 +8,8 @@
   <div class="btn-group pull-right">
     <a class="btn btn-mini" href="{% url 'diving:dive_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans "Public print" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print" %}</a>
 {% endblock download %}
+
+{% block detailspanel %}
+    {% include "common/publishable_completeness_fragment.html" %}
+    {{ block.super }}
+{% endblock detailspanel %}

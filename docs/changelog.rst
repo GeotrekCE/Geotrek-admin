@@ -2,12 +2,27 @@
 CHANGELOG
 =========
 
+2.29.12 (2019-10-23)
+--------------------
+
+**Minor changes**
+
+- Show completeness on dive detail page
+- Add practice field to trek and dive completeness
+
+**Bug fixes**
+
+- Fix multiple sensitive areas on treks with settings SENSITIVE_AREA_INTERSECTION_MARGIN = 0
+- Fix multiple sensitive areas on dives
+
+
 2.29.11 (2019-10-17)
 --------------------
 
 **Bug fixes**
 
 - Fix filter still available after come back to list
+- Add settings allowing to change permission on voluminous datas. Voluminous datas are not stocked at the same place
 
 
 2.29.10 (2019-10-08)
