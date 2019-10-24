@@ -20,7 +20,7 @@ from geotrek.common.utils import LTE
 from geotrek.authent.factories import PathManagerFactory, StructureFactory
 from geotrek.authent.tests import AuthentFixturesTest
 
-from geotrek.core.models import Path, Trail
+from geotrek.core.models import Path, Trail, PathSource
 
 from geotrek.trekking.factories import POIFactory, TrekFactory, ServiceFactory
 from geotrek.infrastructure.factories import InfrastructureFactory
@@ -505,9 +505,11 @@ class PathViewsTest(CommonTest):
         self.user.user_permissions.add(perm)
         structure = StructureFactory()
         structure_2 = StructureFactory()
+        source = PathSource.objects.create(source="Source_1", structure=structure)
         self.assertNotEqual(structure, self.user.profile.structure)
         obj = self.modelfactory.create(structure=structure)
         data = self.get_good_data()
+        data['source'] = source.pk
         data['structure'] = structure_2.pk
         result = self.client.post(obj.get_update_url(), data)
         self.assertEqual(result.status_code, 200)
