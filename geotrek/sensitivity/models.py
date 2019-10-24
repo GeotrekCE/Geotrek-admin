@@ -208,7 +208,40 @@ if 'geotrek.core' in settings.INSTALLED_APPS:
     Topology.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _(u"Sensitive areas"))
     Topology.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _(u"Published sensitive areas"))
 
+if 'geotrek.trekking' in settings.INSTALLED_APPS:
+    from geotrek.trekking import models as trekking_models
+    SensitiveArea.add_property('pois', lambda self: intersecting(trekking_models.POI, self, 0), _(u"POIs"))
+    SensitiveArea.add_property('treks', lambda self: intersecting(trekking_models.Trek, self, 0), _(u"Treks"))
+    SensitiveArea.add_property('services', lambda self: intersecting(trekking_models.Service, self, 0), _(u"Services"))
+
 if 'geotrek.diving' in settings.INSTALLED_APPS:
     from geotrek.diving.models import Dive
     Dive.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _(u"Sensitive areas"))
     Dive.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _(u"Published sensitive areas"))
+    SensitiveArea.add_property('dives', lambda self: intersecting(Dive, self, 0), _(u"Dives"))
+    SensitiveArea.add_property('published_dives',
+                               lambda self: intersecting(Dive, self, 0).filter(published=True),
+                               _(u"Published dives"))
+
+if 'geotrek.tourism' in settings.INSTALLED_APPS:
+    from geotrek.tourism import models as tourism_models
+
+    tourism_models.TouristicContent.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _(u"Sensitive areas"))
+    tourism_models.TouristicContent.add_property('published_sensitive_areas',
+                                                 lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _(u"Published sensitive areas"))
+    tourism_models.TouristicEvent.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _(u"Sensitive areas"))
+    tourism_models.TouristicEvent.add_property('published_sensitive_areas',
+                                               lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _(u"Published sensitive areas"))
+
+    SensitiveArea.add_property('touristic_contents', lambda self: intersecting(tourism_models.TouristicContent, self, 0), _(u"Touristic contents"))
+    SensitiveArea.add_property('published_touristic_contents', lambda self: intersecting(tourism_models.TouristicContent, self, 0).filter(published=True),
+                               _(u"Published touristic contents"))
+    SensitiveArea.add_property('touristic_events', lambda self: intersecting(tourism_models.TouristicEvent, self, 0), _(u"Touristic events"))
+    SensitiveArea.add_property('published_touristic_events',
+                               lambda self: intersecting(tourism_models.TouristicEvent, self, 0).filter(published=True),
+                               _(u"Published touristic events"))
+
+SensitiveArea.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, 0), _(u"Sensitive areas"))
+SensitiveArea.add_property('published_sensitive_areas',
+                           lambda self: intersecting(SensitiveArea, self, 0).filter(published=True),
+                           _(u"Published sensitive areas"))
