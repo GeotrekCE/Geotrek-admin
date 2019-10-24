@@ -108,7 +108,8 @@ class AttachmentParserTests(TestCase):
         self.filetype = FileType.objects.create(type=u"Photographie")
 
     def tearDown(self):
-        rmtree(settings.MEDIA_ROOT)
+        if os.path.exists(settings.MEDIA_ROOT):
+            rmtree(settings.MEDIA_ROOT)
 
     @mock.patch('requests.get')
     def test_attachment(self, mocked):
