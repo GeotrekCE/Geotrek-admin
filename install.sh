@@ -264,7 +264,7 @@ function screamshotter_system_dependencies {
         ln -sf $libpath/*phantomjs*/bin/phantomjs $binpath/phantomjs
         echo_progress
 
-        wget --quiet https://github.com/n1k0/casperjs/archive/1.1.4-1.zip -O casperjs.zip
+        wget --quiet https://github.com/n1k0/casperjs/archive/1.1.4-2.zip -O casperjs.zip
         if [ ! $? -eq 0 ]; then exit_error 9 "Failed to download casperjs"; fi
         rm -rf $libpath/*casperjs*/
         unzip -o casperjs.zip -d $libpath/ > /dev/null
