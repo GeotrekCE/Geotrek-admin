@@ -10,7 +10,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 
 from geotrek.common.parsers import (AttachmentParserMixin, Parser,
-                                    GlobalImportError, TourInSoftParser, TourInSoftParserV3)
+                                    GlobalImportError, TourInSoftParser)
 from geotrek.tourism.models import TouristicContent, TouristicEvent, TouristicContentType1, TouristicContentType2
 
 
@@ -676,8 +676,8 @@ class TouristicContentTourInSoftParser(TourInSoftParser):
         return u"<br><br>".join(infos)
 
 
-class TouristicContentTourInSoftParserV3(TourInSoftParserV3, TouristicContentTourInSoftParser):
-    pass
+class TouristicContentTourInSoftParserV3(TouristicContentTourInSoftParser):
+    version_tourinsoft = 3
 
 
 class TouristicEventTourInSoftParser(TourInSoftParser):
@@ -776,5 +776,5 @@ class TouristicEventTourInSoftParser(TourInSoftParser):
                     return '{year}-{month}-{day}'.format(year=year, month=month, day=day)
 
 
-class TouristicEventTourInSoftParserV3(TourInSoftParserV3, TouristicEventTourInSoftParser):
-    pass
+class TouristicEventTourInSoftParserV3(TouristicEventTourInSoftParser):
+    version_tourinsoft = 3

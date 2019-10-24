@@ -641,14 +641,19 @@ class AttachmentParserMixin(object):
 
 
 class TourInSoftParser(AttachmentParserMixin, Parser):
+    version_tourinsoft = 2
     separator = '#'
     separator2 = '|'
 
     @property
     def items(self):
+        if self.version_tourinsoft == 3:
+            return self.root['value']
         return self.root['d']['results']
 
     def get_nb(self):
+        if self.version_tourinsoft == 3:
+            return int(self.root['odata.count'])
         return int(self.root['d']['__count'])
 
     def next_row(self):
@@ -741,15 +746,6 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
                 infos.append(u"<strong>{} :</strong><br>{}".format(key, value))
 
         return u"<br><br>".join(infos)
-
-
-class TourInSoftParserV3(TourInSoftParser):
-    @property
-    def items(self):
-        return self.root['value']
-
-    def get_nb(self):
-        return int(self.root['odata.count'])
 
 
 class TourismSystemParser(AttachmentParserMixin, Parser):
