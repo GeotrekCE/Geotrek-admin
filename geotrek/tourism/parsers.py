@@ -14,6 +14,37 @@ from geotrek.common.parsers import (AttachmentParserMixin, Parser,
 from geotrek.tourism.models import TouristicContent, TouristicEvent, TouristicContentType1, TouristicContentType2
 
 
+class TouristicContentMixin(object):
+    # Mixin which handle multiple type1/2 with the same name in different categories
+    def get_to_delete_kwargs(self):
+        # FIXME: use mapping if it exists
+        kwargs = {}
+        for dst, val in self.constant_fields.iteritems():
+            field = self.model._meta.get_field(dst)
+            if isinstance(field, models.ForeignKey):
+                natural_key = self.natural_keys[dst]
+                try:
+                    kwargs[dst] = field.rel.to.objects.get(**{natural_key: val})
+                except field.rel.to.DoesNotExist:
+                    return None
+            else:
+                kwargs[dst] = val
+        for dst, val in self.m2m_constant_fields.iteritems():
+            assert not self.separator or self.separator not in val
+            field = self.model._meta.get_field(dst)
+            natural_key = self.natural_keys[dst]
+            filters = {natural_key: subval for subval in val}
+            if not filters:
+                continue
+            if dst in ('type1', 'type2'):
+                filters['category'] = kwargs['category'].pk
+            try:
+                kwargs[dst] = field.rel.to.objects.get(**filters)
+            except field.rel.to.DoesNotExist:
+                return None
+        return kwargs
+
+
 class ApidaeParser(AttachmentParserMixin, Parser):
     """Parser to import "anything" from APIDAE"""
     separator = None
@@ -274,12 +305,10 @@ class TouristicEventApidaeParser(ApidaeParser):
         return None
 
     def filter_participant_number(self, src, val):
-        if isinstance(val, (int, long)):
-            val = str(val)
         return self.apply_filter('participant_number', src, val)
 
 
-class TouristicContentApidaeParser(ApidaeParser):
+class TouristicContentApidaeParser(TouristicContentMixin, ApidaeParser):
     """Parser to import touristic contents from APIDAE"""
     separator = None
     api_key = None
@@ -342,36 +371,6 @@ class TouristicContentApidaeParser(ApidaeParser):
             self.m2m_constant_fields['source'] = self.source
         if self.portal is not None:
             self.m2m_constant_fields['portal'] = self.portal
-
-    # Same as parent but handle multiple type1/2 with the same name in different categories
-    def get_to_delete_kwargs(self):
-        # FIXME: use mapping if it exists
-        kwargs = {}
-        for dst, val in self.constant_fields.iteritems():
-            field = self.model._meta.get_field(dst)
-            if isinstance(field, models.ForeignKey):
-                natural_key = self.natural_keys[dst]
-                try:
-                    kwargs[dst] = field.rel.to.objects.get(**{natural_key: val})
-                except field.rel.to.DoesNotExist:
-                    return None
-            else:
-                kwargs[dst] = val
-        for dst, val in self.m2m_constant_fields.iteritems():
-            assert not self.separator or self.separator not in val
-            field = self.model._meta.get_field(dst)
-            natural_key = self.natural_keys[dst]
-            filters = {natural_key: subval for subval in val}
-            if not filters:
-                continue
-
-            if dst in ['type1', 'type2']:
-                filters['category'] = kwargs['category'].pk
-            try:
-                kwargs[dst] = field.rel.to.objects.get(**filters)
-            except field.rel.to.DoesNotExist:
-                return None
-        return kwargs
 
     def filter_attachments(self, src, val):
         result = []
@@ -590,7 +589,7 @@ TouristicContentSitraParser = TouristicContentApidaeParser
 HebergementsSitraParser = HebergementsApidaeParser
 
 
-class TouristicContentTourInSoftParser(TourInSoftParser):
+class TouristicContentTourInSoftParser(TouristicContentMixin, TourInSoftParser):
     eid = 'eid'
     model = TouristicContent
     delete = True
