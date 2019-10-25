@@ -30,7 +30,7 @@ class Command(BaseCommand):
             raise CommandError('File does not exists at: %s' % filename)
 
         ogrdriver = ogr.GetDriverByName("ESRI Shapefile")
-        datasource = ogrdriver.Open(filename, 1)
+        datasource = ogrdriver.Open(filename)
         layer = datasource.GetLayer()
         count = layer.GetFeatureCount()
         if options['verbosity'] >= 1:
