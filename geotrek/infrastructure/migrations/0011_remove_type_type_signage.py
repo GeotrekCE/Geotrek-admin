@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='infrastructuretype',
             name='type',
-            field=models.CharField(choices=[(b'A', 'Building'), (b'E', 'Facility')], db_column=b'type', max_length=1),
+            field=models.CharField(choices=[(b'A', 'Building'), (b'E', 'Facility')], db_column='type', max_length=1),
         ),
     ]

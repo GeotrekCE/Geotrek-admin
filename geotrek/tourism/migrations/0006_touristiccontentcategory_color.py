@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='touristiccontentcategory',
             name='color',
-            field=colorfield.fields.ColorField(db_column=b'couleur', default=b'#444444', max_length=18, verbose_name='Color (mobile app only)'),
+            field=colorfield.fields.ColorField(db_column='couleur', default='#444444', max_length=18, verbose_name='Color (mobile app only)'),
         ),
     ]

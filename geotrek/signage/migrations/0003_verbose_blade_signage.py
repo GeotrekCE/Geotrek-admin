@@ -16,17 +16,17 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='blade',
             name='color',
-            field=models.ForeignKey(blank=True, db_column=b'couleur', null=True, on_delete=django.db.models.deletion.PROTECT, to='signage.Color', verbose_name='Color'),
+            field=models.ForeignKey(blank=True, db_column='couleur', null=True, on_delete=django.db.models.deletion.PROTECT, to='signage.Color', verbose_name='Color'),
         ),
         migrations.AlterField(
             model_name='line',
             name='time',
-            field=models.DurationField(blank=True, db_column=b'temps', help_text='Hours:Minutes:Seconds', null=True, verbose_name='Time'),
+            field=models.DurationField(blank=True, db_column='temps', help_text='Hours:Minutes:Seconds', null=True, verbose_name='Time'),
         ),
         migrations.AlterField(
             model_name='signage',
             name='printed_elevation',
-            field=models.IntegerField(blank=True, db_column=b'altitude_imprimee', null=True, verbose_name='Printed elevation'),
+            field=models.IntegerField(blank=True, db_column='altitude_imprimee', null=True, verbose_name='Printed elevation'),
         ),
         migrations.AlterModelOptions(
             name='bladetype',

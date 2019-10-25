@@ -15,16 +15,16 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='touristiccontent',
             name='eid',
-            field=models.CharField(blank=True, db_column=b'id_externe', max_length=1024, null=True, verbose_name='External id'),
+            field=models.CharField(blank=True, db_column='id_externe', max_length=1024, null=True, verbose_name='External id'),
         ),
         migrations.AlterField(
             model_name='touristiccontent',
             name='reservation_id',
-            field=models.CharField(blank=True, db_column=b'id_reservation', max_length=1024, verbose_name='Reservation ID'),
+            field=models.CharField(blank=True, db_column='id_reservation', max_length=1024, verbose_name='Reservation ID'),
         ),
         migrations.AlterField(
             model_name='touristicevent',
             name='eid',
-            field=models.CharField(blank=True, db_column=b'id_externe', max_length=1024, null=True, verbose_name='External id'),
+            field=models.CharField(blank=True, db_column='id_externe', max_length=1024, null=True, verbose_name='External id'),
         ),
     ]

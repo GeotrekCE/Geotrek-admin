@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='attachment',
             name='creation_date',
-            field=models.DateField(blank=True, db_column=b'date_creation', null=True, verbose_name='Creation Date'),
+            field=models.DateField(blank=True, db_column='date_creation', null=True, verbose_name='Creation Date'),
         ),
     ]

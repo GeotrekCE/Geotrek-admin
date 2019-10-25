@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='practice',
             name='mobile_color',
-            field=colorfield.fields.ColorField(db_column=b'couleur_mobile', default=b'#444444', help_text="Color of the practice in mobile", max_length=18, verbose_name='Mobile color'),
+            field=colorfield.fields.ColorField(db_column='couleur_mobile', default='#444444', help_text="Color of the practice in mobile", max_length=18, verbose_name='Mobile color'),
         ),
     ]

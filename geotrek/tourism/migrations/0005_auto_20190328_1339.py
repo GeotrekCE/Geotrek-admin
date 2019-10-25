@@ -15,11 +15,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='touristiccontent',
             name='type1',
-            field=models.ManyToManyField(blank=True, db_table=b't_r_contenu_touristique_type1', related_name='contents1', to='tourism.TouristicContentType1', verbose_name='Type 1'),
+            field=models.ManyToManyField(blank=True, db_table='t_r_contenu_touristique_type1', related_name='contents1', to='tourism.TouristicContentType1', verbose_name='Type 1'),
         ),
         migrations.AlterField(
             model_name='touristiccontent',
             name='type2',
-            field=models.ManyToManyField(blank=True, db_table=b't_r_contenu_touristique_type2', related_name='contents2', to='tourism.TouristicContentType2', verbose_name='Type 2'),
+            field=models.ManyToManyField(blank=True, db_table='t_r_contenu_touristique_type2', related_name='contents2', to='tourism.TouristicContentType2', verbose_name='Type 2'),
         ),
     ]

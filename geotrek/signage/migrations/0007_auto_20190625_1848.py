@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='blade',
             name='number',
-            field=models.CharField(db_column=b'numero', max_length=250, verbose_name='Number'),
+            field=models.CharField(db_column='numero', max_length=250, verbose_name='Number'),
         ),
     ]

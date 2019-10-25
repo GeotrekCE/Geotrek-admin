@@ -15,26 +15,26 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='competenceedge',
             name='eid',
-            field=models.CharField(blank=True, db_column=b'id_externe', max_length=128, null=True, verbose_name='External id'),
+            field=models.CharField(blank=True, db_column='id_externe', max_length=128, null=True, verbose_name='External id'),
         ),
         migrations.AddField(
             model_name='landedge',
             name='eid',
-            field=models.CharField(blank=True, db_column=b'id_externe', max_length=128, null=True, verbose_name='External id'),
+            field=models.CharField(blank=True, db_column='id_externe', max_length=128, null=True, verbose_name='External id'),
         ),
         migrations.AddField(
             model_name='physicaledge',
             name='eid',
-            field=models.CharField(blank=True, db_column=b'id_externe', max_length=128, null=True, verbose_name='External id'),
+            field=models.CharField(blank=True, db_column='id_externe', max_length=128, null=True, verbose_name='External id'),
         ),
         migrations.AddField(
             model_name='signagemanagementedge',
             name='eid',
-            field=models.CharField(blank=True, db_column=b'id_externe', max_length=128, null=True, verbose_name='External id'),
+            field=models.CharField(blank=True, db_column='id_externe', max_length=128, null=True, verbose_name='External id'),
         ),
         migrations.AddField(
             model_name='workmanagementedge',
             name='eid',
-            field=models.CharField(blank=True, db_column=b'id_externe', max_length=128, null=True, verbose_name='External id'),
+            field=models.CharField(blank=True, db_column='id_externe', max_length=128, null=True, verbose_name='External id'),
         ),
     ]

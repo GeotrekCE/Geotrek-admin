@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='path',
             name='name',
-            field=models.CharField(blank=True, db_column=b'nom', help_text='Official name', max_length=250, null=True, verbose_name='Name'),
+            field=models.CharField(blank=True, db_column='nom', help_text='Official name', max_length=250, null=True, verbose_name='Name'),
         ),
     ]

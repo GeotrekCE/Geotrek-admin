@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='path',
             name='draft',
-            field=models.BooleanField(db_column=b'brouillon', db_index=True, default=False, verbose_name='Draft'),
+            field=models.BooleanField(db_column='brouillon', db_index=True, default=False, verbose_name='Draft'),
         ),
     ]

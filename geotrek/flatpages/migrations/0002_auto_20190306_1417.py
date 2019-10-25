@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='flatpage',
             name='date_update',
-            field=models.DateTimeField(auto_now=True, db_column=b'date_update', db_index=True, verbose_name='Update date'),
+            field=models.DateTimeField(auto_now=True, db_column='date_update', db_index=True, verbose_name='Update date'),
         ),
     ]

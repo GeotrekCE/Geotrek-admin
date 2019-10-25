@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='intervention',
             name='stake',
-            field=models.ForeignKey(blank=True, db_column=b'enjeu', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='interventions', to='core.Stake', verbose_name='Stake'),
+            field=models.ForeignKey(blank=True, db_column='enjeu', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='interventions', to='core.Stake', verbose_name='Stake'),
         ),
     ]

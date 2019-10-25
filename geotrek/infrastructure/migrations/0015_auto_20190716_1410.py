@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='infrastructure',
             name='condition',
-            field=models.ForeignKey(blank=True, db_column=b'etat', null=True, on_delete=django.db.models.deletion.SET_NULL, to='infrastructure.InfrastructureCondition', verbose_name='Condition'),
+            field=models.ForeignKey(blank=True, db_column='etat', null=True, on_delete=django.db.models.deletion.SET_NULL, to='infrastructure.InfrastructureCondition', verbose_name='Condition'),
         ),
     ]

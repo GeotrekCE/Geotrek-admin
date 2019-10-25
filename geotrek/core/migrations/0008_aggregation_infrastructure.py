@@ -17,11 +17,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name=b'PathAggregation',
             name='topo_object',
-            field=models.ForeignKey(db_column=b'evenement', on_delete=django.db.models.deletion.CASCADE, related_name='aggregations', to='core.Topology', verbose_name='Topology'),
+            field=models.ForeignKey(db_column='evenement', on_delete=django.db.models.deletion.CASCADE, related_name='aggregations', to='core.Topology', verbose_name='Topology'),
         ),
         migrations.AlterField(
             model_name=b'PathAggregation',
             name='topo_object',
-            field=models.ForeignKey(db_column=b'evenement', on_delete=django.db.models.deletion.CASCADE, related_name='aggregations', to='core.Topology', verbose_name='Topology'),
+            field=models.ForeignKey(db_column='evenement', on_delete=django.db.models.deletion.CASCADE, related_name='aggregations', to='core.Topology', verbose_name='Topology'),
         ),
     ]

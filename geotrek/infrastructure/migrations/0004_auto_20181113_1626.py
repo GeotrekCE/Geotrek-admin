@@ -15,16 +15,16 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='baseinfrastructure',
             name='publication_date',
-            field=models.DateField(blank=True, db_column=b'date_publication', editable=False, null=True, verbose_name='Publication date'),
+            field=models.DateField(blank=True, db_column='date_publication', editable=False, null=True, verbose_name='Publication date'),
         ),
         migrations.AddField(
             model_name='baseinfrastructure',
             name='published',
-            field=models.BooleanField(db_column=b'public', default=False, help_text='Online', verbose_name='Published'),
+            field=models.BooleanField(db_column='public', default=False, help_text='Online', verbose_name='Published'),
         ),
         migrations.AddField(
             model_name='infrastructuretype',
             name='pictogram',
-            field=models.FileField(blank=True, db_column=b'picto', max_length=512, null=True, upload_to=b'upload', verbose_name='Pictogram'),
+            field=models.FileField(blank=True, db_column='picto', max_length=512, null=True, upload_to=b'upload', verbose_name='Pictogram'),
         ),
     ]
