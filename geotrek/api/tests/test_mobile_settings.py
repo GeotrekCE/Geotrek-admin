@@ -260,7 +260,7 @@ class SettingsMobileTest(TestCase):
         poi_type_item = next((item.get('values') for item in json_response.get('data')
                               if item['id'] == 'poi_types'), None)
         self.assertEqual(len(poi_type_item), POIType.objects.count())
-        self.assertEqual(poi_type_item[0].get('name'), poi_type.label)
+        self.assertEqual(poi_type_item[0].get('label'), poi_type.label)
         self.assertIn(str(poi_type.pictogram), poi_type_item[0].get('pictogram'))
 
     def test_settings_poi_type_no_picto(self):
@@ -274,7 +274,7 @@ class SettingsMobileTest(TestCase):
         poi_type_item = next((item.get('values') for item in json_response.get('data')
                               if item['id'] == 'poi_types'), None)
         self.assertEqual(len(poi_type_item), POIType.objects.count())
-        self.assertEqual(poi_type_item[0].get('name'), poi_type.label)
+        self.assertEqual(poi_type_item[0].get('label'), poi_type.label)
         self.assertIsNone(poi_type_item[0].get('pictogram'))
 
     def test_settings_touristic_content_type(self):

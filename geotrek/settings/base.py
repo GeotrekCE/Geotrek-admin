@@ -658,7 +658,6 @@ TINYMCE_DEFAULT_CONFIG = {
     'convert_urls': False,
 }
 
-
 SYNC_RANDO_OPTIONS = {}
 SYNC_MOBILE_OPTIONS = {'skip_tiles': False}
 

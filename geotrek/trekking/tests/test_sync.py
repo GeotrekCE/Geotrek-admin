@@ -151,6 +151,24 @@ class SyncRandoFailTest(TestCase):
             management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2)
 
+    def test_fail_sync_already_running(self):
+        os.makedirs(os.path.join('tmp_sync_rando'))
+        with self.assertRaises(CommandError) as e:
+            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+                                    skip_tiles=True, verbosity=2)
+        shutil.rmtree(os.path.join('tmp_sync_rando'))
+        self.assertEqual(e.exception.message, "The tmp_sync_rando/ directory already exists. "
+                                              "Please check no other sync_rando command is already running. "
+                                              "If not, please delete this directory.")
+
+    @mock.patch('os.mkdir')
+    def test_fail_sync_tmp_sync_rando_permission_denied(self, mkdir):
+        mkdir.side_effect = OSError(errno.EACCES, 'Permission Denied')
+        with self.assertRaises(OSError) as e:
+            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+                                    skip_tiles=True, verbosity=2)
+        self.assertEqual(str(e.exception), "[Errno 13] Permission Denied")
+
     @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
     @mock.patch('geotrek.trekking.views.TrekViewSet.list')
     def test_response_500(self, mocke_list, mocke_map_image):
@@ -161,6 +179,29 @@ class SyncRandoFailTest(TestCase):
             management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2, stdout=output, stderr=StringIO())
         self.assertIn("failed (HTTP 500)", output.getvalue())
+
+    @mock.patch('geotrek.trekking.views.TrekViewSet.list')
+    def test_response_view_exception(self, mocke):
+        output = BytesIO()
+        mocke.side_effect = Exception('This is a test')
+        TrekWithPublishedPOIsFactory.create(published_fr=True)
+        with self.assertRaises(CommandError) as e:
+            management.call_command('sync_rando', 'tmp', url='http://localhost:8000', portal='portal', skip_pdf=True,
+                                    skip_tiles=True, languages='fr', verbosity=2, stdout=output)
+        self.assertEqual(e.exception.message, 'Some errors raised during synchronization.')
+        self.assertIn("failed (This is a test)", output.getvalue())
+
+    @override_settings(DEBUG=True)
+    @mock.patch('geotrek.trekking.views.TrekViewSet.list')
+    def test_response_view_exception_with_debug(self, mocke):
+        output = BytesIO()
+        mocke.side_effect = ValueError('This is a test')
+        TrekWithPublishedPOIsFactory.create(published_fr=True)
+        with self.assertRaises(ValueError) as e:
+            management.call_command('sync_rando', 'tmp', url='http://localhost:8000', portal='portal', skip_pdf=True,
+                                    skip_tiles=True, languages='fr', verbosity=2, stdout=output)
+        self.assertEqual(e.exception.message, 'This is a test')
+        self.assertIn("failed (This is a test)", output.getvalue())
 
     @mock.patch('geotrek.trekking.views.TrekViewSet.list')
     def test_response_view_exception(self, mocke):
