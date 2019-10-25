@@ -88,7 +88,7 @@ class DiveSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
         else:
             data = {
                 'id': obj.category_id_prefix,
-                'label': _(u"Dive"),
+                'label': _("Dive"),
                 'pictogram': '/static/diving/dive.svg',
                 # Translators: This is a slug (without space, accent or special char)
                 'slug': _('dive'),

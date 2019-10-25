@@ -6,11 +6,11 @@ from geotrek.signage.models import Signage
 
 
 class SignageYearSelect(InterventionYearSelect):
-    label = _(u"Intervention year")
+    label = _("Intervention year")
 
 
 class SignageImplantationYearSelect(YearSelect):
-    label = _(u"Implantation year")
+    label = _("Implantation year")
 
     def get_years(self):
         return Signage.objects.all_implantation_years()

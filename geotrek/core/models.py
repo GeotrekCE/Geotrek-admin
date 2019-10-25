@@ -53,19 +53,19 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=False,
                                            editable=False)
-    valid = models.BooleanField(db_column='valide', default=True, verbose_name=_(u"Validity"),
-                                help_text=_(u"Approved by manager"))
-    visible = models.BooleanField(db_column='visible', default=True, verbose_name=_(u"Visible"),
-                                  help_text=_(u"Shown in lists and maps"))
-    name = models.CharField(null=True, blank=True, max_length=250, db_column='nom', verbose_name=_(u"Name"),
-                            help_text=_(u"Official name"))
-    comments = models.TextField(null=True, blank=True, db_column='remarques', verbose_name=_(u"Comments"),
-                                help_text=_(u"Remarks"))
+    valid = models.BooleanField(db_column='valide', default=True, verbose_name=_("Validity"),
+                                help_text=_("Approved by manager"))
+    visible = models.BooleanField(db_column='visible', default=True, verbose_name=_("Visible"),
+                                  help_text=_("Shown in lists and maps"))
+    name = models.CharField(null=True, blank=True, max_length=250, db_column='nom', verbose_name=_("Name"),
+                            help_text=_("Official name"))
+    comments = models.TextField(null=True, blank=True, db_column='remarques', verbose_name=_("Comments"),
+                                help_text=_("Remarks"))
 
-    departure = models.CharField(null=True, blank=True, default="", max_length=250, db_column='depart', verbose_name=_(u"Departure"),
-                                 help_text=_(u"Departure place"))
-    arrival = models.CharField(null=True, blank=True, default="", max_length=250, db_column='arrivee', verbose_name=_(u"Arrival"),
-                               help_text=_(u"Arrival place"))
+    departure = models.CharField(null=True, blank=True, default="", max_length=250, db_column='depart', verbose_name=_("Departure"),
+                                 help_text=_("Departure place"))
+    arrival = models.CharField(null=True, blank=True, default="", max_length=250, db_column='arrivee', verbose_name=_("Arrival"),
+                               help_text=_("Arrival place"))
     valid = models.BooleanField(db_column='valide', default=True, verbose_name=_("Validity"),
                                 help_text=_("Approved by manager"))
     visible = models.BooleanField(db_column='visible', default=True, verbose_name=_("Visible"),

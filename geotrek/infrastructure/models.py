@@ -71,7 +71,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
                                   on_delete=models.SET_NULL)
     implantation_year = models.PositiveSmallIntegerField(verbose_name=_("Implantation year"),
                                                          db_column='annee_implantation', null=True)
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True,
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True,
                            db_column='id_externe')
 
     class Meta:

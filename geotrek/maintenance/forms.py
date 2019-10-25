@@ -60,7 +60,7 @@ class InterventionBaseForm(CommonForm):
                                      queryset=Signage.objects.existing(),
                                      widget=forms.HiddenInput())
     length = FloatField(required=False, label=_("Length"))
-    project = forms.ModelChoiceField(required=False, label=_(u"Project"),
+    project = forms.ModelChoiceField(required=False, label=_("Project"),
                                      queryset=Project.objects.existing())
     geomfields = ['topology']
     leftpanel_scrollable = False

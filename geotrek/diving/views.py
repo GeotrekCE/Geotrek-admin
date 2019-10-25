@@ -211,4 +211,4 @@ class DiveServiceViewSet(viewsets.ModelViewSet):
         return dive.services.filter(type__published=True).transform(settings.API_SRID, field_name='geom')
 
 # Translations for public PDF
-# translation.ugettext_noop(u"...")
+# translation.ugettext_noop("...")

@@ -372,7 +372,7 @@ def merge_path(request):
             ids_path_merge = request.POST.getlist('path[]')
 
             if len(ids_path_merge) != 2:
-                raise Exception(_(u"You should select two paths"))
+                raise Exception(_("You should select two paths"))
 
             path_a = Path.objects.get(pk=ids_path_merge[0])
             path_b = Path.objects.get(pk=ids_path_merge[1])
@@ -392,7 +392,7 @@ def merge_path(request):
                 raise Exception(_("No matching points to merge paths found"))
 
             else:
-                response = {u'success': _(u"Paths merged successfully")}
+                response = {u'success': _("Paths merged successfully")}
                 messages.success(request, response['success'])
 
         except Exception as exc:

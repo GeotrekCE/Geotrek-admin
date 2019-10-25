@@ -29,7 +29,7 @@ class PhysicalEdge(MapEntityMixin, Topology):
                                        db_column='evenement')
     physical_type = models.ForeignKey(PhysicalType, verbose_name=_("Physical type"),
                                       db_column='type')
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True,
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True,
                            db_column='id_externe')
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()

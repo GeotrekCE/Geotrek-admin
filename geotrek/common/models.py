@@ -48,7 +48,7 @@ class FileType(StructureOrNoneRelated, BaseFileType):
 
 class Attachment(BaseAttachment):
 
-    creation_date = models.DateField(verbose_name=_(u"Creation Date"), db_column="date_creation", null=True, blank=True)
+    creation_date = models.DateField(verbose_name=_("Creation Date"), db_column="date_creation", null=True, blank=True)
 
     class Meta(BaseAttachment.Meta):
         db_table = 'fl_t_fichier'

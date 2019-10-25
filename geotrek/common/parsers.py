@@ -529,7 +529,7 @@ class AttachmentParserMixin(object):
     delete_attachments = False
     filetype_name = u"Photographie"
     non_fields = {
-        'attachments': _(u"Attachments"),
+        'attachments': _("Attachments"),
     }
 
     def start(self):
@@ -542,7 +542,7 @@ class AttachmentParserMixin(object):
             try:
                 self.filetype = FileType.objects.get(type=self.filetype_name, structure=self.structure)
             except FileType.DoesNotExist:
-                raise GlobalImportError(_(u"FileType '{name}' does not exists in "
+                raise GlobalImportError(_("FileType '{name}' does not exists in "
                                           u"Geotrek-Admin. Please add it").format(name=self.filetype_name))
         self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
 
@@ -694,7 +694,7 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
             if not subval:
                 continue
             key, value = subval.split(self.separator2)
-            if key in (u"Mél", u"Mail"):
+            if key in ("Mél", u"Mail"):
                 return value
 
         return u""
@@ -706,7 +706,7 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
             if not subval:
                 continue
             key, value = subval.split(self.separator2)
-            if key in (u"Site web", u"Site web (URL)"):
+            if key in ("Site web", u"Site web (URL)"):
                 return value
 
         return u""
@@ -735,9 +735,9 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
                 if not subval:
                     continue
                 key, value = subval.split(self.separator2)
-                if key in (u"Mél", u"Mail", u"Site web", u"Site web (URL)"):
+                if key in ("Mél", u"Mail", u"Site web", u"Site web (URL)"):
                     continue
-                infos.append(u"<strong>{} :</strong><br>{}".format(key, value))
+                infos.append("<strong>{} :</strong><br>{}".format(key, value))
 
         return u"<br><br>".join(infos)
 

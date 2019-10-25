@@ -355,7 +355,7 @@ class Command(BaseCommand):
         if not os.path.isfile(src):
             self.successfull = False
             if self.verbosity == 2:
-                self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{url}/{name}\x1b[0m \x1b[31mfile does not exist\x1b[0m".format(lang=lang, url=url, name=name))
+                self.stdout.write("\x1b[36m{lang}\x1b[0m \x1b[1m{url}/{name}\x1b[0m \x1b[31mfile does not exist\x1b[0m".format(lang=lang, url=url, name=name))
             return
         if not os.path.isfile(dst):
             os.link(src, dst)
@@ -597,7 +597,7 @@ class Command(BaseCommand):
             self.mkdirs(dst)
             os.link(src, dst)
             if self.verbosity == 2:
-                self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{dst}\x1b[0m \x1b[32mcopied\x1b[0m".format(lang=lang, dst=dst))
+                self.stdout.write("\x1b[36m{lang}\x1b[0m \x1b[1m{dst}\x1b[0m \x1b[32mcopied\x1b[0m".format(lang=lang, dst=dst))
         elif settings.ONLY_EXTERNAL_PUBLIC_PDF:
             return
         else:
