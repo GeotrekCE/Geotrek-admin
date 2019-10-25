@@ -15,7 +15,7 @@ from geotrek.core.factories import PathFactory
 
 from easy_thumbnails.models import Thumbnail
 
-from StringIO import StringIO
+from io import StringIO
 import os
 
 

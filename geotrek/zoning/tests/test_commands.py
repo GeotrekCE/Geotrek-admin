@@ -1,5 +1,5 @@
 import os
-from StringIO import StringIO
+from io import StringIO
 
 from django.contrib.gis.gdal import GDALException
 from django.core.management import call_command

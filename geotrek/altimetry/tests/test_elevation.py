@@ -16,7 +16,7 @@ from geotrek.altimetry.helpers import AltimetryHelper
 import os
 import sys
 import mock
-from StringIO import StringIO
+from io import StringIO
 
 
 class ElevationTest(TestCase):

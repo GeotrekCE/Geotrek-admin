@@ -1,7 +1,7 @@
 import os
 import mock
 import sys
-from StringIO import StringIO
+from io import StringIO
 
 from django.contrib.gis.geos.error import GEOSException
 from django.core.management import call_command
