@@ -676,6 +676,10 @@ class TouristicContentTourInSoftParser(TourInSoftParser):
         return u"<br><br>".join(infos)
 
 
+class TouristicContentTourInSoftParserV3(TouristicContentTourInSoftParser):
+    version_tourinsoft = 3
+
+
 class TouristicEventTourInSoftParser(TourInSoftParser):
     eid = 'eid'
     model = TouristicEvent
@@ -770,3 +774,7 @@ class TouristicEventTourInSoftParser(TourInSoftParser):
                     if datetime.date(int(year), int(month), int(day)) < datetime.date.today():
                         continue
                     return '{year}-{month}-{day}'.format(year=year, month=month, day=day)
+
+
+class TouristicEventTourInSoftParserV3(TouristicEventTourInSoftParser):
+    version_tourinsoft = 3
