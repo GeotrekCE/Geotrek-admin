@@ -34,7 +34,7 @@ class AttachmentAdminTest(TestCase):
         self.login()
         list_url = reverse('admin:common_attachment_changelist')
         response = self.client.get(list_url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn(Attachment.objects.get(pk=self.picture.pk).title, response.content)
         self.assertIn(Attachment.objects.get(pk=self.picture_2.pk).title, response.content)
 
@@ -46,7 +46,7 @@ class AttachmentAdminTest(TestCase):
         }
 
         response = self.client.get(list_url, data)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         self.assertIn(Attachment.objects.get(pk=self.picture.pk).title, response.content)
         self.assertNotIn(Attachment.objects.get(pk=self.picture_2.pk).title, response.content)
@@ -56,7 +56,7 @@ class AttachmentAdminTest(TestCase):
         change_url = reverse('admin:common_attachment_change', args=[self.picture.pk])
         file_type = FileType.objects.first()
         response = self.client.post(change_url, {'title': 'Coucou', 'filetype': file_type.pk, 'starred': True})
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         attachment_modified = Attachment.objects.get(pk=self.picture.pk)
         self.assertEqual(attachment_modified.title, self.picture.title)
         # Is not changed depend on file title

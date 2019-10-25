@@ -21,7 +21,7 @@ class SignageTest(TestCase):
     def test_helpers(self):
         p = PathFactory.create()
 
-        self.assertEquals(len(p.signages), 0)
+        self.assertEqual(len(p.signages), 0)
         sign = SignageFactory.create(no_path=True)
         sign.add_path(path=p, start=0.5, end=0.5)
 

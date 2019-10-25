@@ -481,7 +481,7 @@ class ExportTest(TranslationResetMixin, TestCase):
         closest_path = PathFactory(geom=LineString(Point(0, 0), Point(1, 0), srid=settings.SRID))
         topo_point = TopologyHelper._topologypoint(lng, lat, None).reload()
 
-        self.assertEquals(topo_point.paths.get(), closest_path)
+        self.assertEqual(topo_point.paths.get(), closest_path)
 
         # Create one intervention by geometry (point/linestring)
         it_point = InterventionFactory.create(topology=topo_point)
@@ -500,18 +500,18 @@ class ExportTest(TranslationResetMixin, TestCase):
         devnull = open(os.devnull, "wb")
         pfl.serialize(Project.objects.all(), stream=devnull, delete=False,
                       fields=ProjectFormatList.columns)
-        self.assertEquals(len(pfl.layers), 2)
+        self.assertEqual(len(pfl.layers), 2)
 
         ds_point = gdal.DataSource(pfl.layers.values()[0])
         layer_point = ds_point[0]
         ds_line = gdal.DataSource(pfl.layers.values()[1])
         layer_line = ds_line[0]
 
-        self.assertEquals(layer_point.geom_type.name, 'MultiPoint')
-        self.assertEquals(layer_line.geom_type.name, 'LineString')
+        self.assertEqual(layer_point.geom_type.name, 'MultiPoint')
+        self.assertEqual(layer_line.geom_type.name, 'LineString')
 
         for layer in [layer_point, layer_line]:
-            self.assertEquals(layer.srs.name, 'RGF93_Lambert_93')
+            self.assertEqual(layer.srs.name, 'RGF93_Lambert_93')
             self.assertItemsEqual(layer.fields, [
                 'id', 'name', 'period', 'type', 'domain', 'constraint',
                 'global_cos', 'interventi', 'interven_1', 'comments',

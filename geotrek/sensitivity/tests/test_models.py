@@ -75,4 +75,4 @@ class SensitiveAreaModelTest(TestCase):
                  " 6600081.27526753861457109, 700090.01486325822770596 6600097.75564803835004568, 700100 6600100, "
                  "700100 6600000, 700000 6600000))")
         trek = TrekFactory.create()
-        self.assertEquals(trek.published_sensitive_areas.count(), 2)
+        self.assertEqual(trek.published_sensitive_areas.count(), 2)

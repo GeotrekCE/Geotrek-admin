@@ -173,7 +173,7 @@ class SyncMobileSpecificOptionsTest(TranslationResetMixin, TestCase):
                                 skip_tiles=True, verbosity=0, languages='fr')
         with open(os.path.join('tmp', 'fr', 'flatpages.json'), 'r') as f:
             flatpages = json.load(f)
-            self.assertEquals(len(flatpages), 1)
+            self.assertEqual(len(flatpages), 1)
         with self.assertRaises(IOError):
             open(os.path.join('tmp', 'en', 'flatpages.json'), 'r')
 
@@ -182,7 +182,7 @@ class SyncMobileSpecificOptionsTest(TranslationResetMixin, TestCase):
                                 skip_tiles=True, verbosity=0)
         with open(os.path.join('tmp', 'fr', 'flatpages.json'), 'r') as f:
             flatpages = json.load(f)
-            self.assertEquals(len(flatpages), 1)
+            self.assertEqual(len(flatpages), 1)
 
 
 class SyncMobileFlatpageTest(TranslationResetMixin, TestCase):
@@ -216,7 +216,7 @@ class SyncMobileFlatpageTest(TranslationResetMixin, TestCase):
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             with open(os.path.join('tmp', lang, 'flatpages.json'), 'r') as f:
                 flatpages = json.load(f)
-                self.assertEquals(len(flatpages),
+                self.assertEqual(len(flatpages),
                                   FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
         self.assertIn('en/flatpages.json', output.getvalue())
 
@@ -229,10 +229,10 @@ class SyncMobileFlatpageTest(TranslationResetMixin, TestCase):
                                 portal=self.portal_b.name, skip_tiles=True, verbosity=2, stdout=output)
         with open(os.path.join('tmp', 'fr', 'flatpages.json'), 'r') as f_file:
             flatpages = json.load(f_file)
-            self.assertEquals(len(flatpages), 0)
+            self.assertEqual(len(flatpages), 0)
         with open(os.path.join('tmp', 'en', 'flatpages.json'), 'r') as f_file:
             flatpages = json.load(f_file)
-            self.assertEquals(len(flatpages), 3)
+            self.assertEqual(len(flatpages), 3)
         self.assertIn('en/flatpages.json', output.getvalue())
 
     def test_sync_flatpage_lang(self):
@@ -245,7 +245,7 @@ class SyncMobileFlatpageTest(TranslationResetMixin, TestCase):
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             with open(os.path.join('tmp', lang, 'flatpages.json'), 'r') as f:
                 flatpages = json.load(f)
-                self.assertEquals(len(flatpages),
+                self.assertEqual(len(flatpages),
                                   FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
         self.assertIn('en/flatpages.json', output.getvalue())
 
@@ -256,7 +256,7 @@ class SyncMobileFlatpageTest(TranslationResetMixin, TestCase):
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             with open(os.path.join('tmp', lang, 'flatpages.json'), 'r') as f:
                 flatpages = json.load(f)
-                self.assertEquals(len(flatpages),
+                self.assertEqual(len(flatpages),
                                   FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
         self.assertIn('en/flatpages.json', output.getvalue())
 
@@ -279,7 +279,7 @@ class SyncMobileSettingsTest(TranslationResetMixin, TestCase):
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             with open(os.path.join('tmp', lang, 'settings.json'), 'r') as f:
                 settings_json = json.load(f)
-                self.assertEquals(len(settings_json), 2)
+                self.assertEqual(len(settings_json), 2)
                 self.assertEqual(len(settings_json['data']), 16)
 
         self.assertIn('en/settings.json', output.getvalue())
@@ -296,7 +296,7 @@ class SyncMobileSettingsTest(TranslationResetMixin, TestCase):
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             with open(os.path.join('tmp', lang, 'settings.json'), 'r') as f:
                 settings_json = json.load(f)
-                self.assertEquals(len(settings_json), 2)
+                self.assertEqual(len(settings_json), 2)
                 self.assertEqual(len(settings_json['data']), 16)
                 self.assertEqual(settings_json['data'][4]['values'][0]['pictogram'], pictogram_png)
                 self.assertEqual(settings_json['data'][9]['values'][0]['pictogram'], pictogram_desk_png)

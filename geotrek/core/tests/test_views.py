@@ -259,7 +259,7 @@ class PathViewsTest(CommonTest):
         self.login()
         p1 = PathFactory(geom=LineString((0, 0), (0, 1000), srid=settings.SRID))
         city = CityFactory(code='09000', geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)), srid=settings.SRID)))
-        self.assertEquals(p1.aggregations.count(), 0)
+        self.assertEqual(p1.aggregations.count(), 0)
         response = self.client.get('/api/path/paths.json?city=%s' % city.code)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content)['sumPath'], 0.0)

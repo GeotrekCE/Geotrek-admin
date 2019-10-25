@@ -68,8 +68,8 @@ class InterventionTest(TestCase):
     def test_path_helpers(self):
         p = PathFactory.create()
 
-        self.assertEquals(len(p.interventions), 0)
-        self.assertEquals(len(p.projects), 0)
+        self.assertEqual(len(p.interventions), 0)
+        self.assertEqual(len(p.projects), 0)
 
         sign = SignageFactory.create(no_path=True)
         sign.add_path(p, start=0.5, end=0.5)
@@ -102,23 +102,23 @@ class InterventionTest(TestCase):
         proj = ProjectFactory.create()
 
         self.assertFalse(interv.on_existing_topology)
-        self.assertEquals(interv.infrastructure, None)
+        self.assertEqual(interv.infrastructure, None)
 
         interv.set_topology(infra)
         self.assertTrue(interv.on_existing_topology)
         self.assertFalse(interv.is_signage)
         self.assertTrue(interv.is_infrastructure)
-        self.assertEquals(interv.signages, [])
-        self.assertEquals(interv.infrastructures, [infra])
-        self.assertEquals(interv.infrastructure, infra)
+        self.assertEqual(interv.signages, [])
+        self.assertEqual(interv.infrastructures, [infra])
+        self.assertEqual(interv.infrastructure, infra)
 
         interv.set_topology(sign)
         self.assertTrue(interv.on_existing_topology)
         self.assertTrue(interv.is_signage)
         self.assertFalse(interv.is_infrastructure)
-        self.assertEquals(interv.signages, [sign])
-        self.assertEquals(interv.infrastructures, [])
-        self.assertEquals(interv.signage, sign)
+        self.assertEqual(interv.signages, [sign])
+        self.assertEqual(interv.infrastructures, [])
+        self.assertEqual(interv.signage, sign)
 
         self.assertFalse(interv.in_project)
         interv.project = proj

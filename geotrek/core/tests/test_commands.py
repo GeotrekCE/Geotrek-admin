@@ -61,7 +61,7 @@ class RemoveDuplicatePathTest(TestCase):
         output = StringIO()
         call_command('remove_duplicate_paths', verbosity=2, stdout=output)
 
-        self.assertEquals(Path.objects.count(), 5)
+        self.assertEqual(Path.objects.count(), 5)
         self.assertItemsEqual((self.p1, self.p3, self.p5, self.p6, self.p8),
                               list(Path.objects.all()))
         self.assertIn("Deleting path",
@@ -93,8 +93,8 @@ class RemoveDuplicatePathTest(TestCase):
         self.p4.save()
         call_command('remove_duplicate_paths', verbosity=2, stdout=output)
 
-        self.assertEquals(Path.include_invisible.count(), 5)
-        self.assertEquals(Path.objects.count(), 4)
+        self.assertEqual(Path.include_invisible.count(), 5)
+        self.assertEqual(Path.objects.count(), 4)
         self.assertItemsEqual((self.p2, self.p3, self.p5, self.p6, self.p8),
                               list(Path.include_invisible.all()))
         self.assertItemsEqual((self.p2, self.p5, self.p6, self.p8),
@@ -119,12 +119,12 @@ class LoadPathsCommandTest(TestCase):
     @override_settings(SRID=4326, SPATIAL_EXTENT=(5, 10.0, 5, 11))
     def test_load_paths_out_of_spatial_extent(self):
         call_command('loadpaths', self.filename, srid=4326, verbosity=0)
-        self.assertEquals(Path.objects.count(), 0)
+        self.assertEqual(Path.objects.count(), 0)
 
     @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, -1, 1, 5))
     def test_load_paths_within_spatial_extent(self):
         call_command('loadpaths', self.filename, srid=4326, verbosity=0)
-        self.assertEquals(Path.objects.count(), 1)
+        self.assertEqual(Path.objects.count(), 1)
         value = Path.objects.first()
         self.assertEqual(value.name, 'lulu')
         self.assertEqual(value.structure, self.structure)
@@ -134,7 +134,7 @@ class LoadPathsCommandTest(TestCase):
         output = StringIO()
         call_command('loadpaths', self.filename, srid=4326, verbosity=2, comment=['comment', 'foo'], stdout=output)
         output = output.getvalue()
-        self.assertEquals(Path.objects.count(), 1)
+        self.assertEqual(Path.objects.count(), 1)
         value = Path.objects.first()
         self.assertEqual(value.name, 'lulu')
         self.assertEqual(value.comments, 'Comment 2</br>foo2')
@@ -147,7 +147,7 @@ class LoadPathsCommandTest(TestCase):
         call_command('loadpaths', self.filename, '-i', srid=4326, verbosity=2, stdout=output)
         output = output.getvalue()
         self.assertIn('All paths in DataSource will be linked to the structure : %s' % self.structure.name, output)
-        self.assertEquals(Path.objects.count(), 1)
+        self.assertEqual(Path.objects.count(), 1)
         path = Path.objects.first()
         self.assertIn('Create path with pk : %s' % path.pk, output)
         value = Path.objects.first()
@@ -161,7 +161,7 @@ class LoadPathsCommandTest(TestCase):
                      stdout=output)
         output = output.getvalue()
         self.assertIn('All paths in DataSource will be linked to the structure : %s' % self.structure.name, output)
-        self.assertEquals(Path.objects.count(), 2)
+        self.assertEqual(Path.objects.count(), 2)
         paths = Path.objects.all()
         self.assertIn('Create path with pk : %s' % paths[0].pk, output)
         self.assertIn('Create path with pk : %s' % paths[1].pk, output)

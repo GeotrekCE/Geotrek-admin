@@ -41,7 +41,7 @@ class InfrastructureTypeAdminNoBypassTest(TestCase):
         self.login()
         changelist_url = reverse('admin:infrastructure_infrastructuretype_changelist')
         response = self.client.get(changelist_url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn(InfrastructureType.objects.get(pk=self.infra.pk).label, response.content)
 
     def test_infrastructuretype_can_be_change(self):
@@ -50,7 +50,7 @@ class InfrastructureTypeAdminNoBypassTest(TestCase):
         response = self.client.post(change_url, {'label': 'coucou', 'type': 'A',
                                                  'pictogram': os.path.join(
                                                      settings.MEDIA_URL, self.infra.pictogram.name)})
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         self.assertEqual(InfrastructureType.objects.get(pk=self.infra.pk).label, 'coucou')
 
         self.assertEqual(response.url, '/admin/infrastructure/infrastructuretype/')
@@ -61,7 +61,7 @@ class InfrastructureTypeAdminNoBypassTest(TestCase):
         infra = InfrastructureTypeFactory.create(structure=structure)
         change_url = reverse('admin:infrastructure_infrastructuretype_change', args=[infra.pk])
         response = self.client.get(change_url)
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         self.assertEqual(InfrastructureType.objects.get(pk=self.infra.pk).label, self.infra.label)
 
         self.assertEqual(response.url, '/admin/')
@@ -94,14 +94,14 @@ class InfrastructureConditionAdminNoBypassTest(TestCase):
         self.login()
         changelist_url = reverse('admin:infrastructure_infrastructurecondition_changelist')
         response = self.client.get(changelist_url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn(InfrastructureCondition.objects.get(pk=self.infra.pk).label, response.content)
 
     def test_infrastructurecondition_can_be_change(self):
         self.login()
         change_url = reverse('admin:infrastructure_infrastructurecondition_change', args=[self.infra.pk])
         response = self.client.post(change_url, {'label': 'coucou', 'structure': Structure.objects.first().pk})
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         self.assertEqual(InfrastructureCondition.objects.get(pk=self.infra.pk).label, 'coucou')
 
         self.assertEqual(response.url, '/admin/infrastructure/infrastructurecondition/')
@@ -112,7 +112,7 @@ class InfrastructureConditionAdminNoBypassTest(TestCase):
         infra = InfrastructureConditionFactory.create(structure=structure)
         change_url = reverse('admin:infrastructure_infrastructurecondition_change', args=[infra.pk])
         response = self.client.get(change_url)
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         self.assertEqual(InfrastructureCondition.objects.get(pk=self.infra.pk).label, self.infra.label)
 
         self.assertEqual(response.url, '/admin/')
@@ -137,7 +137,7 @@ class InfrastructureTypeAdminTest(AuthentFixturesTest):
         response = self.client.post(change_url, {'label': 'coucou', 'type': 'A',
                                                  'pictogram': os.path.join(
                                                      settings.MEDIA_URL, self.infra.pictogram.name)})
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         self.assertEqual(InfrastructureType.objects.get(pk=self.infra.pk).label, 'coucou')
 
         self.assertEqual(response.url, '/admin/infrastructure/infrastructuretype/')
@@ -146,7 +146,7 @@ class InfrastructureTypeAdminTest(AuthentFixturesTest):
         self.login()
         changelist_url = reverse('admin:infrastructure_infrastructuretype_changelist')
         response = self.client.get(changelist_url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn(InfrastructureType.objects.get(pk=self.infra.pk).label, response.content)
 
 
@@ -168,7 +168,7 @@ class InfrastructureConditionAdminTest(AuthentFixturesTest):
 
         change_url = reverse('admin:infrastructure_infrastructurecondition_change', args=[self.infra.pk])
         response = self.client.post(change_url, {'label': 'coucou', 'structure': Structure.objects.first().pk})
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         self.assertEqual(InfrastructureCondition.objects.get(pk=self.infra.pk).label, 'coucou')
 
         self.assertEqual(response.url, '/admin/infrastructure/infrastructurecondition/')
@@ -177,5 +177,5 @@ class InfrastructureConditionAdminTest(AuthentFixturesTest):
         self.login()
         changelist_url = reverse('admin:infrastructure_infrastructurecondition_changelist')
         response = self.client.get(changelist_url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIn(InfrastructureCondition.objects.get(pk=self.infra.pk).label, response.content)

@@ -32,10 +32,10 @@ class DiveCommandTest(TestCase):
         self.assertIn('Dives will be linked to %s' % structure, output.getvalue())
         self.assertIn('2 objects created.', output.getvalue())
         value = Dive.objects.filter(name='name')
-        self.assertEquals(5, value[0].depth)    # The dive was updated because has the same eid (eid1)
-        self.assertEquals('Practice', value[0].practice.name)
-        self.assertEquals(value.count(), 1)
-        self.assertEquals(Dive.objects.count(), 2)
+        self.assertEqual(5, value[0].depth)    # The dive was updated because has the same eid (eid1)
+        self.assertEqual('Practice', value[0].practice.name)
+        self.assertEqual(value.count(), 1)
+        self.assertEqual(Dive.objects.count(), 2)
         self.assertAlmostEqual(value[0].geom.x, -436345.704831, places=5)
         self.assertAlmostEqual(value[0].geom.y, 1176487.742917, places=5)
 
@@ -49,11 +49,11 @@ class DiveCommandTest(TestCase):
         self.assertIn('Dives will be linked to %s' % structure, output.getvalue())
         self.assertIn('2 objects created.', output.getvalue())
         value = Dive.objects.filter(name='name')
-        self.assertEquals(10, value[0].depth)    # The dive was not updated
-        self.assertEquals(5, value[1].depth)
-        self.assertEquals('Practice', value[1].practice.name)
-        self.assertEquals(value.count(), 2)
-        self.assertEquals(Dive.objects.count(), 3)
+        self.assertEqual(10, value[0].depth)    # The dive was not updated
+        self.assertEqual(5, value[1].depth)
+        self.assertEqual('Practice', value[1].practice.name)
+        self.assertEqual(value.count(), 2)
+        self.assertEqual(Dive.objects.count(), 3)
         self.assertAlmostEqual(value[1].geom.x, -436345.704831, places=5)
         self.assertAlmostEqual(value[1].geom.y, 1176487.742917, places=5)
 
@@ -108,8 +108,8 @@ class DiveCommandTest(TestCase):
         self.assertIn('Dives will be linked to %s' % structure, output.getvalue())
         self.assertIn('1 objects created.', output.getvalue())
         value = Dive.objects.get(name='name')
-        self.assertEquals(10, value.depth)
-        self.assertEquals('Practice', value.practice.name)
+        self.assertEqual(10, value.depth)
+        self.assertEqual('Practice', value.practice.name)
         self.assertAlmostEqual(value.geom.x, 402314.30044897617)
         self.assertAlmostEqual(value.geom.y, 905126.7898456538)
 

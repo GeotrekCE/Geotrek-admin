@@ -33,29 +33,29 @@ class ProjectTest(TestCase):
 
         proj = ProjectFactory.create()
         self.assertItemsEqual(proj.paths.all(), [])
-        self.assertEquals(proj.signages, [])
-        self.assertEquals(proj.infrastructures, [])
+        self.assertEqual(proj.signages, [])
+        self.assertEqual(proj.infrastructures, [])
 
         i1.save()
 
         proj.interventions.add(i1)
         self.assertItemsEqual(proj.paths.all(), [p1])
-        self.assertEquals(proj.signages, [sign])
-        self.assertEquals(proj.infrastructures, [])
+        self.assertEqual(proj.signages, [sign])
+        self.assertEqual(proj.infrastructures, [])
 
         i2.save()
 
         proj.interventions.add(i2)
         self.assertItemsEqual(proj.paths.all(), [p1, p2])
-        self.assertEquals(proj.signages, [sign])
-        self.assertEquals(proj.infrastructures, [infra])
+        self.assertEqual(proj.signages, [sign])
+        self.assertEqual(proj.infrastructures, [infra])
 
         i3.save()
 
         proj.interventions.add(i3)
         self.assertItemsEqual(proj.paths.all(), [p1, p2])
-        self.assertEquals(proj.signages, [sign])
-        self.assertEquals(proj.infrastructures, [infra])
+        self.assertEqual(proj.signages, [sign])
+        self.assertEqual(proj.infrastructures, [infra])
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_helpers_nds(self):
@@ -73,26 +73,26 @@ class ProjectTest(TestCase):
 
         proj = ProjectFactory.create()
         self.assertItemsEqual(proj.paths.all(), [])
-        self.assertEquals(proj.signages, [])
-        self.assertEquals(proj.infrastructures, [])
+        self.assertEqual(proj.signages, [])
+        self.assertEqual(proj.infrastructures, [])
 
         i1.save()
 
         proj.interventions.add(i1)
-        self.assertEquals(proj.signages, [sign])
-        self.assertEquals(proj.infrastructures, [])
+        self.assertEqual(proj.signages, [sign])
+        self.assertEqual(proj.infrastructures, [])
 
         i2.save()
 
         proj.interventions.add(i2)
-        self.assertEquals(proj.signages, [sign])
-        self.assertEquals(proj.infrastructures, [infra])
+        self.assertEqual(proj.signages, [sign])
+        self.assertEqual(proj.infrastructures, [infra])
 
         i3.save()
 
         proj.interventions.add(i3)
-        self.assertEquals(proj.signages, [sign])
-        self.assertEquals(proj.infrastructures, [infra])
+        self.assertEqual(proj.signages, [sign])
+        self.assertEqual(proj.infrastructures, [infra])
 
     def test_deleted_intervention(self):
         i1 = InterventionFactory.create()
@@ -102,9 +102,9 @@ class ProjectTest(TestCase):
 
         proj = ProjectFactory.create()
         proj.interventions.add(i1)
-        self.assertEquals(proj.signages, [sign])
+        self.assertEqual(proj.signages, [sign])
         i1.delete()
-        self.assertEquals(proj.signages, [])
+        self.assertEqual(proj.signages, [])
 
     def test_deleted_infrastructure(self):
         i1 = InterventionFactory.create()
@@ -114,11 +114,11 @@ class ProjectTest(TestCase):
 
         proj = ProjectFactory.create()
         proj.interventions.add(i1)
-        self.assertEquals(proj.infrastructures, [infra])
+        self.assertEqual(proj.infrastructures, [infra])
 
         infra.delete()
 
-        self.assertEquals(proj.infrastructures, [])
+        self.assertEqual(proj.infrastructures, [])
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')

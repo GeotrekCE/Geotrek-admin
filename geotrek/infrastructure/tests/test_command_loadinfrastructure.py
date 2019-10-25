@@ -31,8 +31,8 @@ class InfrastructureCommandTest(TestCase):
         self.assertIn('Infrastructures will be linked to %s' % structure, output.getvalue())
         self.assertIn('2 objects created.', output.getvalue())
         value = Infrastructure.objects.filter(name='name').order_by('pk')
-        self.assertEquals(2010, value[0].implantation_year)
-        self.assertEquals(value.count(), 2)
+        self.assertEqual(2010, value[0].implantation_year)
+        self.assertEqual(value.count(), 2)
         self.assertAlmostEqual(value[0].geom.x, -436345.704831, places=5)
         self.assertAlmostEqual(value[0].geom.y, 1176487.742917, places=5)
         self.assertAlmostEqual(value[1].geom.x, -436345.505347, places=5)
@@ -48,9 +48,9 @@ class InfrastructureCommandTest(TestCase):
         self.assertIn('Infrastructures will be linked to %s' % structure, output.getvalue())
         self.assertIn('1 objects created.', output.getvalue())
         value = Infrastructure.objects.first()
-        self.assertEquals('name', value.name)
-        self.assertEquals(2010, value.implantation_year)
-        self.assertEquals(Infrastructure.objects.count(), 1)
+        self.assertEqual('name', value.name)
+        self.assertEqual(2010, value.implantation_year)
+        self.assertEqual(Infrastructure.objects.count(), 1)
 
     def test_load_infrastructure_bad_multipoints_error(self):
         output = StringIO()
@@ -78,7 +78,7 @@ class InfrastructureCommandTest(TestCase):
         self.assertIn('coucou', names)
         self.assertIn(2010, years)
         self.assertIn(2012, years)
-        self.assertEquals(value.count(), 2)
+        self.assertEqual(value.count(), 2)
 
     def test_load_infrastructure_with_fields(self):
         output = StringIO()
@@ -96,7 +96,7 @@ class InfrastructureCommandTest(TestCase):
         self.assertIn('coucou', names)
         self.assertIn(2010, years)
         self.assertIn(2012, years)
-        self.assertEquals(value.count(), 2)
+        self.assertEqual(value.count(), 2)
 
     def test_no_file_fail(self):
         with self.assertRaises(CommandError) as cm:

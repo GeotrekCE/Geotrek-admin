@@ -65,17 +65,17 @@ class TraductionTestCase(TestCase):
         add_difficulty_url = admin_add_url_from_model(DifficultyLevel)
 
         response = self.client.get(add_difficulty_url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         # Get data for DifficultyLevel creation and create it through admin view
         data = self.get_dummy_data_trad()
 
         response = self.client.post(add_difficulty_url, data, follow=True)
         self.assertRedirects(response, admin_list_url_from_model(DifficultyLevel))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         iss = DifficultyLevel.objects.all()
-        self.assertEquals(len(iss), 1, "One and only one DifficultyLevel should be created")
+        self.assertEqual(len(iss), 1, "One and only one DifficultyLevel should be created")
 
         # This may test too much.
         # Test language translation for DifficultyLevel.difficulty works
@@ -89,6 +89,6 @@ class TraductionTestCase(TestCase):
         for language in ('fr', 'it', 'en'):
             translation.activate(language)
             translated_difficulty = difficulty_trad['difficulty_%s' % language]
-            self.assertEquals(intervention_difficulty.difficulty, translated_difficulty)
+            self.assertEqual(intervention_difficulty.difficulty, translated_difficulty)
 
         translation.activate(orig_language)

@@ -286,7 +286,7 @@ class SyncTest(SyncSetup):
             with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
                 # there are 4 treks
-                self.assertEquals(len(treks['features']),
+                self.assertEqual(len(treks['features']),
                                   trek_models.Trek.objects.filter(published=True).count())
 
     @override_settings(THUMBNAIL_COPYRIGHT_FORMAT=u'{author} éà@za,£')
@@ -299,7 +299,7 @@ class SyncTest(SyncSetup):
             with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
                 # there are 4 treks
-                self.assertEquals(len(treks['features']),
+                self.assertEqual(len(treks['features']),
                                   trek_models.Trek.objects.filter(published=True).count())
 
     @override_settings(SPLIT_TREKS_CATEGORIES_BY_PRACTICE=False, SPLIT_DIVES_CATEGORIES_BY_PRACTICE=False)
@@ -310,24 +310,24 @@ class SyncTest(SyncSetup):
         with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
             # there are 4 treks
-            self.assertEquals(len(treks['features']),
+            self.assertEqual(len(treks['features']),
                               trek_models.Trek.objects.filter(published=True).count())
-            self.assertEquals(treks['features'][0]['properties']['category']['id'],
+            self.assertEqual(treks['features'][0]['properties']['category']['id'],
                               treks['features'][3]['properties']['category']['id'],
                               'T')
-            self.assertEquals(treks['features'][0]['properties']['name'], self.trek_1.name)
-            self.assertEquals(treks['features'][3]['properties']['name'], self.trek_4.name)
+            self.assertEqual(treks['features'][0]['properties']['name'], self.trek_1.name)
+            self.assertEqual(treks['features'][3]['properties']['name'], self.trek_4.name)
 
         with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
             dives = json.load(f)
             # there are 4 dives
-            self.assertEquals(len(dives['features']),
+            self.assertEqual(len(dives['features']),
                               Dive.objects.filter(published=True).count())
-            self.assertEquals(dives['features'][0]['properties']['category']['id'],
+            self.assertEqual(dives['features'][0]['properties']['category']['id'],
                               dives['features'][3]['properties']['category']['id'],
                               'D')
-            self.assertEquals(dives['features'][0]['properties']['name'], self.dive_1.name)
-            self.assertEquals(dives['features'][3]['properties']['name'], self.dive_4.name)
+            self.assertEqual(dives['features'][0]['properties']['name'], self.dive_1.name)
+            self.assertEqual(dives['features'][3]['properties']['name'], self.dive_4.name)
 
     @override_settings(SPLIT_TREKS_CATEGORIES_BY_PRACTICE=True, SPLIT_DIVES_CATEGORIES_BY_PRACTICE=True)
     def test_sync_without_pdf_split_by_practice(self):
@@ -337,24 +337,24 @@ class SyncTest(SyncSetup):
         with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
             # there are 4 treks
-            self.assertEquals(len(treks['features']),
+            self.assertEqual(len(treks['features']),
                               trek_models.Trek.objects.filter(published=True).count())
-            self.assertEquals(treks['features'][0]['properties']['category']['id'],
+            self.assertEqual(treks['features'][0]['properties']['category']['id'],
                               treks['features'][3]['properties']['category']['id'],
                               'T%s' % self.practice_trek.pk)
-            self.assertEquals(treks['features'][0]['properties']['name'], self.trek_1.name)
-            self.assertEquals(treks['features'][3]['properties']['name'], self.trek_4.name)
+            self.assertEqual(treks['features'][0]['properties']['name'], self.trek_1.name)
+            self.assertEqual(treks['features'][3]['properties']['name'], self.trek_4.name)
 
         with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
             dives = json.load(f)
             # there are 4 dives
-            self.assertEquals(len(dives['features']),
+            self.assertEqual(len(dives['features']),
                               Dive.objects.filter(published=True).count())
-            self.assertEquals(dives['features'][0]['properties']['category']['id'],
+            self.assertEqual(dives['features'][0]['properties']['category']['id'],
                               dives['features'][3]['properties']['category']['id'],
                               'D%s' % self.practice_dive.pk)
-            self.assertEquals(dives['features'][0]['properties']['name'], self.dive_1.name)
-            self.assertEquals(dives['features'][3]['properties']['name'], self.dive_4.name)
+            self.assertEqual(dives['features'][0]['properties']['name'], self.dive_1.name)
+            self.assertEqual(dives['features'][3]['properties']['name'], self.dive_4.name)
 
     def test_sync_https(self):
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
@@ -364,7 +364,7 @@ class SyncTest(SyncSetup):
             with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
                 # there are 4 treks
-                self.assertEquals(len(treks['features']),
+                self.assertEqual(len(treks['features']),
                                   trek_models.Trek.objects.filter(published=True).count())
 
     def test_sync_2028(self):
@@ -379,7 +379,7 @@ class SyncTest(SyncSetup):
             with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
                 # \u2028 is translated to \n
-                self.assertEquals(treks['features'][0]['properties']['description'], u'toto\ntata')
+                self.assertEqual(treks['features'][0]['properties']['description'], u'toto\ntata')
 
     @mock.patch('geotrek.trekking.views.TrekViewSet.list')
     def test_streaminghttpresponse(self, mocke):
@@ -398,7 +398,7 @@ class SyncTest(SyncSetup):
         with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
             # only 1 trek in Source A
-            self.assertEquals(len(treks['features']),
+            self.assertEqual(len(treks['features']),
                               trek_models.Trek.objects.filter(published=True,
                                                               source__name__in=[self.source_a.name, ]).count())
 
@@ -410,7 +410,7 @@ class SyncTest(SyncSetup):
         with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
             dives = json.load(f)
             # only 1 trek in Source A
-            self.assertEquals(len(dives['features']),
+            self.assertEqual(len(dives['features']),
                               trek_models.Trek.objects.filter(published=True,
                                                               source__name__in=[self.source_a.name, ]).count())
 
@@ -423,7 +423,7 @@ class SyncTest(SyncSetup):
             treks = json.load(f)
 
             # only 2 treks in Portal B + 1 without portal specified
-            self.assertEquals(len(treks['features']), 3)
+            self.assertEqual(len(treks['features']), 3)
 
         # portal A and B
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
@@ -433,7 +433,7 @@ class SyncTest(SyncSetup):
             treks = json.load(f)
 
             # 4 treks have portal A or B or no portal
-            self.assertEquals(len(treks['features']), 4)
+            self.assertEqual(len(treks['features']), 4)
 
     def test_sync_filtering_portals_diving(self):
         # portal B only
@@ -444,7 +444,7 @@ class SyncTest(SyncSetup):
             dives = json.load(f)
 
             # only 2 dives in Portal B + 1 without portal specified
-            self.assertEquals(len(dives['features']), 3)
+            self.assertEqual(len(dives['features']), 3)
 
         # portal A and B
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
@@ -453,7 +453,7 @@ class SyncTest(SyncSetup):
         with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
             dives = json.load(f)
             # 4 dives have portal A or B or no portal
-            self.assertEquals(len(dives['features']), 4)
+            self.assertEqual(len(dives['features']), 4)
 
     @override_settings(SPLIT_TREKS_CATEGORIES_BY_PRACTICE=False, SPLIT_DIVES_CATEGORIES_BY_PRACTICE=False)
     def test_sync_with_multipolygon_sensitive_area(self):
@@ -466,7 +466,7 @@ class SyncTest(SyncSetup):
         with open(os.path.join('var', 'tmp', 'api', 'en', 'sensitiveareas.geojson'), 'r') as f:
             area = json.load(f)
             # there are 2 areas
-            self.assertEquals(len(area['features']), 2)
+            self.assertEqual(len(area['features']), 2)
 
 
 @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
