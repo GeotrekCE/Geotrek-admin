@@ -956,7 +956,7 @@ class SplitPathLineTopologyTest(TestCase):
 
         PathFactory.create(name="split", geom=LineString((9, -1), (9, 1)))
         topology.reload()
-        self.assertItemsEqual(topology.aggregations.order_by('order').values_list('order', 'path__name'),
+        self.assertCountEqual(topology.aggregations.order_by('order').values_list('order', 'path__name'),
                               [(1, 'AB'), (2, 'BC'), (3, 'CD'), (3, 'CD'), (4, 'CD'),
                                (5, 'CD'), (5, 'CD'), (6, 'BC'), (7, 'AB')])
         self.assertTrue(topology.geom.equals(topogeom))
@@ -977,7 +977,7 @@ class SplitPathLineTopologyTest(TestCase):
         PathFactory.create(name="split", geom=LineString((2, -2), (2, 2)))
 
         topology.reload()
-        self.assertItemsEqual(topology.aggregations.order_by('order').values_list('order', 'path__name'),
+        self.assertCountEqual(topology.aggregations.order_by('order').values_list('order', 'path__name'),
                               [(1, 'AB'), (1, 'AB')])
         self.assertTrue(topology.geom.equals(topogeom))
 
@@ -999,7 +999,7 @@ class SplitPathLineTopologyTest(TestCase):
         PathFactory.create(name="split", geom=LineString((2, -2), (2, 2)))
 
         topology.reload()
-        self.assertItemsEqual(topology.aggregations.order_by('order').values_list('order', 'path__name'),
+        self.assertCountEqual(topology.aggregations.order_by('order').values_list('order', 'path__name'),
                               [(1, 'AB'), (1, 'AB'), (2, 'AB'), (3, 'AB')])
         self.assertTrue(topology.geom.equals(topogeom))
 

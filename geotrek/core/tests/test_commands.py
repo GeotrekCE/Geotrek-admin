@@ -62,7 +62,7 @@ class RemoveDuplicatePathTest(TestCase):
         call_command('remove_duplicate_paths', verbosity=2, stdout=output)
 
         self.assertEqual(Path.objects.count(), 5)
-        self.assertItemsEqual((self.p1, self.p3, self.p5, self.p6, self.p8),
+        self.assertCountEqual((self.p1, self.p3, self.p5, self.p6, self.p8),
                               list(Path.objects.all()))
         self.assertIn("Deleting path",
                       output.getvalue())
@@ -95,9 +95,9 @@ class RemoveDuplicatePathTest(TestCase):
 
         self.assertEqual(Path.include_invisible.count(), 5)
         self.assertEqual(Path.objects.count(), 4)
-        self.assertItemsEqual((self.p2, self.p3, self.p5, self.p6, self.p8),
+        self.assertCountEqual((self.p2, self.p3, self.p5, self.p6, self.p8),
                               list(Path.include_invisible.all()))
-        self.assertItemsEqual((self.p2, self.p5, self.p6, self.p8),
+        self.assertCountEqual((self.p2, self.p5, self.p6, self.p8),
                               list(Path.objects.all()))
         self.assertIn("Deleting path",
                       output.getvalue())

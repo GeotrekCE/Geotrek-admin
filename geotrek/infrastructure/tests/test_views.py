@@ -23,7 +23,7 @@ class InfrastructureTest(TestCase):
         infra = InfrastructureFactory.create(no_path=True)
         infra.add_path(path=p)
 
-        self.assertItemsEqual(p.infrastructures, [infra])
+        self.assertCountEqual(p.infrastructures, [infra])
 
 
 class InfrastructureViewsTest(CommonTest):
@@ -88,7 +88,7 @@ class InfrastructureConditionTest(TestCase):
         it2 = InfrastructureConditionFactory.create()
         it3 = InfrastructureConditionFactory.create()
 
-        self.assertItemsEqual(InfrastructureCondition.objects.all(), [it1, it2, it3])
+        self.assertCountEqual(InfrastructureCondition.objects.all(), [it1, it2, it3])
 
 
 class InfraFilterTestMixin():
@@ -128,7 +128,7 @@ class InfraFilterTestMixin():
         self.assertEqual(response.status_code, 200)
         topo_pk = json.loads(response.content)['map_obj_pk']
 
-        self.assertItemsEqual(topo_pk, [good_topo.pk])
+        self.assertCountEqual(topo_pk, [good_topo.pk])
 
     def test_intervention_filter_has_correct_label(self):
         self.login()

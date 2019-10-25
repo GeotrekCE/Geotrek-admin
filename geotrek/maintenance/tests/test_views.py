@@ -315,10 +315,10 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
         form = self.get_form(response)
         projects = form.fields['project'].queryset.all()
-        self.assertItemsEqual(projects, [p1, p2])
+        self.assertCountEqual(projects, [p1, p2])
         p2.delete()
         projects = form.fields['project'].queryset.all()
-        self.assertItemsEqual(projects, [p1])
+        self.assertCountEqual(projects, [p1])
 
     def test_no_html_in_csv_infrastructure(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -512,7 +512,7 @@ class ExportTest(TranslationResetMixin, TestCase):
 
         for layer in [layer_point, layer_line]:
             self.assertEqual(layer.srs.name, 'RGF93_Lambert_93')
-            self.assertItemsEqual(layer.fields, [
+            self.assertCountEqual(layer.fields, [
                 'id', 'name', 'period', 'type', 'domain', 'constraint',
                 'global_cos', 'interventi', 'interven_1', 'comments',
                 'contractor', 'project_ow', 'project_ma', 'founders',
