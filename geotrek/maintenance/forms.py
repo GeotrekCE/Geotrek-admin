@@ -140,8 +140,8 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
                 self.fields['topology'].widget = TopologyReadonlyWidget()
                 self.fields['topology'].label = '%s%s %s' % (
                     self.instance.infrastructure_display,
-                    unicode(_("On %s") % _(infrastructure.kind.lower())),
-                    u'<a href="%s">%s</a>' % (infrastructure.get_detail_url(), unicode(infrastructure))
+                    _("On %s") % _(infrastructure.kind.lower()),
+                    u'<a href="%s">%s</a>' % (infrastructure.get_detail_url(), infrastructure)
                 )
             elif signage:
                 self.helper.form_action += '?signage=%s' % signage.pk
@@ -149,8 +149,8 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
                 self.fields['topology'].widget = TopologyReadonlyWidget()
                 self.fields['topology'].label = '%s%s %s' % (
                     self.instance.infrastructure_display,
-                    unicode(_("On %s") % _(signage.kind.lower())),
-                    u'<a href="%s">%s</a>' % (signage.get_detail_url(), unicode(signage))
+                    _("On %s") % _(signage.kind.lower()),
+                    u'<a href="%s">%s</a>' % (signage.get_detail_url(), signage)
                 )
             # Length is not editable in AltimetryMixin
             self.fields['length'].initial = self.instance.length

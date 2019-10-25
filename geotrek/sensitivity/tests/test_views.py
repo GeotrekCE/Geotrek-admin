@@ -146,8 +146,8 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
         self.species = self.sensitivearea.species
         self.pk = self.sensitivearea.pk
         self.expected_properties = {
-            'create_datetime': unicode(self.sensitivearea.date_insert.isoformat().replace('+00:00', 'Z')),
-            'update_datetime': unicode(self.sensitivearea.date_update.isoformat().replace('+00:00', 'Z')),
+            'create_datetime': self.sensitivearea.date_insert.isoformat().replace('+00:00', 'Z'),
+            'update_datetime': self.sensitivearea.date_update.isoformat().replace('+00:00', 'Z'),
             'description': "Blabla",
             "elevation": None,
             'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',

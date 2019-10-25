@@ -103,8 +103,8 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
             self.fields['topology'].widget.modifiable = True
             self.fields['topology'].label = '%s%s %s' % (
                 self.instance.signage_display,
-                unicode(_("On %s") % _(self.signage.kind.lower())),
-                u'<a href="%s">%s</a>' % (self.signage.get_detail_url(), unicode(self.signage))
+                _("On %s") % _(self.signage.kind.lower()),
+                u'<a href="%s">%s</a>' % (self.signage.get_detail_url(), self.signage)
             )
             value_max = self.signage.blade_set.existing().aggregate(max=Max('number'))['max']
             if settings.BLADE_CODE_TYPE == int:
@@ -149,8 +149,8 @@ else:
             self.fields['topology'].widget.modifiable = False
             self.fields['topology'].label = '%s%s %s' % (
                 self.instance.signage_display,
-                unicode(_("On %s") % _(self.signage.kind.lower())),
-                u'<a href="%s">%s</a>' % (self.signage.get_detail_url(), unicode(self.signage))
+                _("On %s") % _(self.signage.kind.lower()),
+                u'<a href="%s">%s</a>' % (self.signage.get_detail_url(), self.signage)
             )
             self.helper.form_tag = False
 

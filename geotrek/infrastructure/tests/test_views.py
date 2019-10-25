@@ -59,7 +59,7 @@ class InfrastructureViewsTest(CommonTest):
         self.assertTrue('form' in response.context)
         form = response.context['form']
         type = form.fields['type']
-        self.assertTrue((infratype.pk, unicode(infratype)) in type.choices)
+        self.assertTrue((infratype.pk, infratype) in type.choices)
 
     def test_no_pictogram(self):
         self.modelfactory = InfrastructureNoPictogramFactory

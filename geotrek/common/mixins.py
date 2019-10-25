@@ -135,7 +135,7 @@ class PicturesMixin(object):
 
                 thdetail = thumbnailer.get_thumbnail(ali)
             except (IOError, InvalidImageFormatError, DecompressionBombError) as e:
-                logger.info(_("Image {} invalid or missing from disk: {}.").format(picture.attachment_file, unicode(e)))
+                logger.info(_("Image {} invalid or missing from disk: {}.").format(picture.attachment_file, e))
             else:
                 resized.append((picture, thdetail))
         return resized
@@ -147,7 +147,7 @@ class PicturesMixin(object):
             try:
                 thumbnail = thumbnailer.get_thumbnail(aliases.get('print'))
             except (IOError, InvalidImageFormatError, DecompressionBombError) as e:
-                logger.info(_("Image {} invalid or missing from disk: {}.").format(picture.attachment_file, unicode(e)))
+                logger.info(_("Image {} invalid or missing from disk: {}.").format(picture.attachment_file, e))
                 continue
             thumbnail.author = picture.author
             thumbnail.legend = picture.legend
@@ -161,7 +161,7 @@ class PicturesMixin(object):
             try:
                 thumbnail = thumbnailer.get_thumbnail(aliases.get('small-square'))
             except (IOError, InvalidImageFormatError, DecompressionBombError) as e:
-                logger.info(_("Image {} invalid or missing from disk: {}.").format(picture.attachment_file, unicode(e)))
+                logger.info(_("Image {} invalid or missing from disk: {}.").format(picture.attachment_file, e))
                 continue
             thumbnail.author = picture.author
             thumbnail.legend = picture.legend

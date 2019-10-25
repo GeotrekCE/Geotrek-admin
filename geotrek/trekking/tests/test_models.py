@@ -345,7 +345,7 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         city2 = CityFactory.create(geom=MultiPolygon(Polygon(((3, 3), (9, 3), (9, 9),
                                                               (3, 9), (3, 3)))))
         self.assertEqual([city for city in trek.cities], [city1, city2])
-        self.assertEqual(trek.city_departure, unicode(city1))
+        self.assertEqual(trek.city_departure, city1)
 
 
 class TrekUpdateGeomTest(TestCase):

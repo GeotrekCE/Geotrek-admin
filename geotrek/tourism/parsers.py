@@ -90,7 +90,7 @@ class ApidaeParser(AttachmentParserMixin, Parser):
         return name
 
     def filter_eid(self, src, val):
-        return unicode(val)
+        return val
 
     def filter_geom(self, src, val):
         lng, lat = val
