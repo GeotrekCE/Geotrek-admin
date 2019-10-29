@@ -1,7 +1,7 @@
 import factory
 
 from geotrek.common.utils.testdata import dummy_filefield_as_sequence
-from geotrek.core.factories import TopologyFactory
+from geotrek.core.factories import PointTopologyFactory, TopologyFactory
 from geotrek.infrastructure.factories import InfrastructureConditionFactory
 
 from . import models
@@ -50,7 +50,7 @@ class SealingFactory(factory.DjangoModelFactory):
     label = factory.Sequence(lambda n: u"Sealing %s" % n)
 
 
-class SignageFactory(TopologyFactory):
+class SignageFactory(PointTopologyFactory):
     class Meta:
         model = models.Signage
 

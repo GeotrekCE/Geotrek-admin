@@ -213,18 +213,18 @@ class Command(BaseCommand):
             if self.verbosity > 0:
                 self.stderr.write(self.style.ERROR("failed (HTTP {code})".format(code=response.status_code)))
             return
-        f = open(fullname, 'w')
+        f = open(fullname, 'wb')
         if isinstance(response, StreamingHttpResponse):
-            content = ''
+            content = b''
             for sc in response.streaming_content:
-                content += sc.decode()
+                content += sc
         else:
-            content = response.content.decode()
+            content = response.content
         # Fix strange unicode characters 2028 and 2029 that make Geotrek-rando crash
         if fix2028:
-            content = content.replace('\\u2028', '\\n')
-            content = content.replace('\\u2029', '\\n')
-        f.write(content.decode())
+            content = content.replace(b'\\u2028', b'\\n')
+            content = content.replace(b'\\u2029', b'\\n')
+        f.write(content)
         f.close()
         oldfilename = os.path.join(self.dst_root, name)
         # If new file is identical to old one, don't recreate it. This will help backup

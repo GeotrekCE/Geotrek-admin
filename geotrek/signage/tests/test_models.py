@@ -45,6 +45,5 @@ class BladeModelTest(TestCase):
     def test_set_topology_other_error(self):
         blade = BladeFactory.create()
         infra = InfrastructureFactory.create()
-        with self.assertRaises(ValueError) as e:
+        with self.assertRaises(ValueError, msg="Expecting a signage"):
             blade.set_topology(infra)
-        self.assertEqual(e.exception.message, "Expecting a signage")

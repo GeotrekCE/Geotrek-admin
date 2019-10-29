@@ -34,19 +34,16 @@ class AttachmentParser(AttachmentParserMixin, OrganismEidParser):
 
 class ParserTests(TestCase):
     def test_bad_parser_class(self):
-        with self.assertRaises(CommandError) as cm:
+        with self.assertRaises(CommandError, msg="Failed to import parser class 'geotrek.common.DoesNotExist'"):
             call_command('import', 'geotrek.common.DoesNotExist', '', verbosity=0)
-        self.assertEqual(str(cm.exception), "Failed to import parser class 'geotrek.common.DoesNotExist'")
 
     def test_no_filename_no_url(self):
-        with self.assertRaises(CommandError) as cm:
+        with self.assertRaises(CommandError, msg="File path missing"):
             call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', '', verbosity=0)
-        self.assertEqual(str(cm.exception), "File path missing")
 
     def test_bad_filename(self):
-        with self.assertRaises(CommandError) as cm:
+        with self.assertRaises(CommandError, msg="File does not exists at: find_me/I_am_not_there.shp"):
             call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', 'find_me/I_am_not_there.shp', verbosity=0)
-        self.assertEqual(str(cm.exception), "File does not exists at: find_me/I_am_not_there.shp")
 
     def test_progress(self):
         output = StringIO()

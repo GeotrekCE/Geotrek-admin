@@ -341,7 +341,7 @@ class TouristicContentApidaeParser(ApidaeParser):
     # Same as parent but handle multiple type1/2 with the same name in different categories
     def get_to_delete_kwargs(self):
         kwargs = {}
-        for dst, val in self.constant_fields.iteritems():
+        for dst, val in self.constant_fields.items():
             field = self.model._meta.get_field(dst)
             if isinstance(field, models.ForeignKey):
                 natural_key = self.natural_keys[dst]
@@ -351,7 +351,7 @@ class TouristicContentApidaeParser(ApidaeParser):
                     return None
             else:
                 kwargs[dst] = val
-        for dst, val in self.m2m_constant_fields.iteritems():
+        for dst, val in self.m2m_constant_fields.items():
             assert not self.separator or self.separator not in val
             field = self.model._meta.get_field(dst)
             natural_key = self.natural_keys[dst]
@@ -366,7 +366,6 @@ class TouristicContentApidaeParser(ApidaeParser):
             except field.rel.to.DoesNotExist:
                 return None
         return kwargs
-
 
     def filter_attachments(self, src, val):
         result = []

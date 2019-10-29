@@ -128,7 +128,8 @@ class ViewsImportTest(TestCase):
         self.user.save()
 
         url = reverse('common:import_dataset')
-        real_key = dict(self.client.get(url).context['form_without_file'].fields['parser'].choices).keys()[0]
+        real_key = [*dict(self.client.get(url).context['form_without_file'].fields['parser'].choices)][0]
+
         response_real = self.client.post(
             url, {
                 'import-web': 'Upload',

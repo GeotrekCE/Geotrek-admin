@@ -665,7 +665,6 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"), db_column='type')
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
 
-
     class Meta:
         db_table = 'o_t_poi'
         verbose_name = _("POI")
@@ -811,9 +810,9 @@ class Service(StructureRelated, MapEntityMixin, Topology):
     @property
     def name_display(self):
         s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
-                                                              self.get_detail_url(),
-                                                              self.name,
-                                                              self.name)
+                                                             self.get_detail_url(),
+                                                             self.name,
+                                                             self.name)
         if self.type.published:
             s = '<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
         elif self.type.review:

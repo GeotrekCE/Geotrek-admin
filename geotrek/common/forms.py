@@ -82,7 +82,7 @@ class CommonForm(MapEntityForm):
                 if not self.instance.pk:
                     self.fields['structure'].initial = self.user.profile.structure
             else:
-                for name, field in self.fields.items():
+                for name, field in list(self.fields.items()):
                     self.filter_related_field(name, field)
                 del self.fields['structure']
 
@@ -90,8 +90,7 @@ class CommonForm(MapEntityForm):
         structure = self.cleaned_data.get('structure')
         if not structure:
             return self.cleaned_data
-
-        for name, field in self.cleaned_data.items():
+        for name, field in list(self.cleaned_data.items()):
             if isinstance(field, QuerySet):
                 for value in field:
                     self.check_structure(value, structure, name)

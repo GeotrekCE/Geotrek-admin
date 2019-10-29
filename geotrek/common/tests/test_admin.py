@@ -35,8 +35,8 @@ class AttachmentAdminTest(TestCase):
         list_url = reverse('admin:common_attachment_changelist')
         response = self.client.get(list_url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(Attachment.objects.get(pk=self.picture.pk).title, response.content)
-        self.assertIn(Attachment.objects.get(pk=self.picture_2.pk).title, response.content)
+        self.assertContains(response, Attachment.objects.get(pk=self.picture.pk).title)
+        self.assertContains(response, Attachment.objects.get(pk=self.picture_2.pk).title)
 
     def test_changelist_attachment_filter_content_id(self):
         self.login()
@@ -48,8 +48,8 @@ class AttachmentAdminTest(TestCase):
         response = self.client.get(list_url, data)
         self.assertEqual(response.status_code, 200)
 
-        self.assertIn(Attachment.objects.get(pk=self.picture.pk).title, response.content)
-        self.assertNotIn(Attachment.objects.get(pk=self.picture_2.pk).title, response.content)
+        self.assertContains(response, Attachment.objects.get(pk=self.picture.pk).title)
+        self.assertNotContains(response, Attachment.objects.get(pk=self.picture_2.pk).title)
 
     def test_attachment_can_be_change(self):
         self.login()

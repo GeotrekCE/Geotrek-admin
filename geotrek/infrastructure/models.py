@@ -51,7 +51,7 @@ class InfrastructureCondition(StructureOrNoneRelated):
         verbose_name_plural = _("Infrastructure Conditions")
         db_table = "a_b_etat"
 
-    def  __str__(self):
+    def __str__(self):
         if self.structure:
             return "{} ({})".format(self.label, self.structure.name)
         return self.label
@@ -90,7 +90,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
                                                               self,
                                                               self)
         if self.published:
-            s = u'<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
+            s = '<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
         return s
 
     @property

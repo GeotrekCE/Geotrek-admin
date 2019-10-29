@@ -84,7 +84,7 @@ class POIViewsTest(CommonTest):
         self.login()
         response = self.client.get(self.model.get_jsonlist_url())
         self.assertEqual(response.status_code, 200)
-        self.assertIn('Waiting for publication', response.content)
+        self.assertContains(response, 'Waiting for publication')
 
     def test_empty_topology(self):
         self.login()
@@ -249,17 +249,17 @@ class TrekViewsTest(CommonTest):
         self.client.post(self.model.get_update_url(trek), good_data)
         self.assertIn(poi, trek.pois_excluded.all())
 
-        def test_detail_lother_language(self):
-            self.login()
+    def test_detail_lother_language(self):
+        self.login()
 
-            bad_data, form_error = self.get_bad_data()
-            bad_data['parking_location'] = 'POINT (1.0 1.0)'  # good data
+        bad_data, form_error = self.get_bad_data()
+        bad_data['parking_location'] = 'POINT (1.0 1.0)'  # good data
 
-            url = self.model.get_add_url()
-            response = self.client.post(url, bad_data)
-            self.assertEqual(response.status_code, 200)
-            form = self.get_form(response)
-            self.assertEqual(form.data['parking_location'], bad_data['parking_location'])
+        url = self.model.get_add_url()
+        response = self.client.post(url, bad_data)
+        self.assertEqual(response.status_code, 200)
+        form = self.get_form(response)
+        self.assertEqual(form.data['parking_location'], bad_data['parking_location'])
 
 
 class TrekViewsLiveTests(CommonLiveTest):
@@ -637,7 +637,7 @@ class TrekJSONDetailTest(TrekJSONSetUp):
                                      settings.THUMBNAIL_COPYRIGHT_FORMAT.format(
                                          author=self.attachment.author,
                                          title=self.attachment.title,
-                                         legend=self.attachment.legend)).hexdigest()),
+                                         legend=self.attachment.legend).encode('utf-8')).hexdigest()),
                               'title': self.attachment.title,
                               'legend': self.attachment.legend,
                               'author': self.attachment.author})
@@ -647,7 +647,6 @@ class TrekJSONDetailTest(TrekJSONSetUp):
                              {"id": self.network.id,
                               "pictogram": os.path.join(settings.MEDIA_URL, self.network.pictogram.name),
                               "name": self.network.network})
-
 
     def test_practice_not_none(self):
         self.assertDictEqual(self.result['practice'],
@@ -723,10 +722,10 @@ class TrekJSONDetailTest(TrekJSONSetUp):
                               'has_common_edge': False,
                               'is_circuit_step': True,
                               'trek': {'pk': self.trek_b.pk,
-                                        'id': self.trek_b.id,
-                                        'slug': self.trek_b.slug,
-                                        'category_slug': 'trek',
-                                        'name': self.trek_b.name}})
+                                       'id': self.trek_b.id,
+                                       'slug': self.trek_b.slug,
+                                       'category_slug': 'trek',
+                                       'name': self.trek_b.name}})
 
     def test_parking_location_in_wgs84(self):
         parking_location = self.result['parking_location']
@@ -1155,7 +1154,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<informations>'
             '<information langue="en"><titre>{poi_title}</titre><description>{poi_description}</description></information>'
             '</informations>'
-            '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
+            '<adresse><position><lat>46.499999999999936</lat><lng>3.0000000000000004</lng></position></adresse>'
             '</poi>'
             '</pois>'
             '</circuit>'
@@ -1171,18 +1170,14 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             'date_update': timestamp(self.poi.date_update),
         }
         self.assertXMLEqual(
-            response.content,
+            response.content.decode(),
             '<?xml version="1.0" encoding="utf8"?>\n'
             '<pois version="2">'
             '<poi id_poi="{pk}" date_modification="{date_update}" date_creation="1388534400">'
             '<informations>'
             '<information langue="en"><titre>{title}</titre><description>{description}</description></information>'
             '</informations>'
-<<<<<<< HEAD
-            '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
-=======
             '<adresse><position><lat>46.499999999999936</lat><lng>2.9999999999999996</lng></position></adresse>'
->>>>>>> de821a5ab... Python2to3 docker
             '</poi>'
             '</pois>'.format(**attrs))
 

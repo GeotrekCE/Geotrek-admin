@@ -37,20 +37,12 @@ class SensitiveAreaModelTest(TestCase):
         self.assertAlmostEqual(lat_max, 46.500900449784226)
 
     def test_get_kml(self):
-<<<<<<< HEAD
         species = SpeciesFactory.create(radius=5)
         sensitive_area = SensitiveAreaFactory.create(species=species)
-        self.assertIn('<coordinates>3.0,46.5,5.0 3.0,46.5000270135,5.0 3.00003911867,46.5000270135,5.0 3.00003911866,'
-                      '46.5,5.0 3.0,46.5,5.0</coordinates>', sensitive_area.kml())
-=======
-        sensitive_area = SensitiveAreaFactory.create()
-        self.assertIn('<coordinates>2.9999999999999996,46.499999999999936,'
-                      '0.0 2.9999999999999996,'
-                      '46.50002701349546,0.0 3.000039118674988,'
-                      '46.500027013488776,0.0 3.0000391186556086,'
-                      '46.49999999999323,0.0 2.9999999999999996,'
-                      '46.499999999999936,0.0</coordinates>', sensitive_area.kml())
->>>>>>> de821a5ab... Python2to3 docker
+        self.assertIn('<coordinates>2.9999999999999996,46.499999999999936,5.0 2.9999999999999996,'
+                      '46.50002701349546,5.0 3.000039118674988,46.500027013488776,5.0 3.0000391186556086,'
+                      '46.49999999999323,5.0 2.9999999999999996,46.499999999999936,5.0</coordinates>',
+                      sensitive_area.kml())
 
     def test_get_kml_point(self):
         sensitive_area = SensitiveAreaFactory.create(geom='POINT(700000 6600000)')

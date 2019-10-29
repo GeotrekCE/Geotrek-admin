@@ -66,7 +66,7 @@ class Command(BaseCommand):
                         self.stdout.write(
                             "Name's attribute do not correspond with options\n"
                             "Please, use --name to fix it.\n"
-                            "Fields in your file are : %s" % ', '.join(feat.fields))
+                            "Fields in your file are : %s" % b', '.join(feat.fields).decode())
                     count_error += 1
 
     def check_srid(self, srid, geom):

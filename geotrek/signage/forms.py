@@ -59,7 +59,7 @@ class BaseBladeForm(CommonForm):
                 self.fields['number'].initial = "1"
             elif value_max.isdigit():
                 self.fields['number'].initial = str(int(value_max) + 1)
-        elif settings.BLADE_CODE_TYPE in (str, unicode):
+        elif settings.BLADE_CODE_TYPE is str:
             if not value_max:
                 self.fields['number'].initial = "A"
             elif len(value_max) == 1 and "A" <= value_max[0] < "Z":
@@ -107,12 +107,12 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
                 u'<a href="%s">%s</a>' % (self.signage.get_detail_url(), self.signage)
             )
             value_max = self.signage.blade_set.existing().aggregate(max=Max('number'))['max']
-            if settings.BLADE_CODE_TYPE == int:
+            if settings.BLADE_CODE_TYPE is int:
                 if not value_max:
                     self.fields['number'].initial = "1"
                 elif value_max.isdigit():
                     self.fields['number'].initial = str(int(value_max) + 1)
-            elif settings.BLADE_CODE_TYPE in (str, unicode):
+            elif settings.BLADE_CODE_TYPE is str:
                 if not value_max:
                     self.fields['number'].initial = "A"
                 elif len(value_max) == 1 and "A" <= value_max[0] < "Z":

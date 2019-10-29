@@ -230,9 +230,9 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     @property
     def name_display(self):
         return '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
-                                                                  self.get_detail_url(),
-                                                                  self,
-                                                                  self)
+                                                                 self.get_detail_url(),
+                                                                 self,
+                                                                 self)
 
     @property
     def name_csv_display(self):
@@ -271,7 +271,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     @property
     def checkbox(self):
         return '<input type="checkbox" name="{}[]" value="{}" />'.format('path',
-                                                                          self.pk)
+                                                                         self.pk)
 
     @classproperty
     def checkbox_verbose_name(cls):
@@ -665,9 +665,9 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
     @property
     def name_display(self):
         return '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
-                                                                  self.get_detail_url(),
-                                                                  self,
-                                                                  self)
+                                                                 self.get_detail_url(),
+                                                                 self,
+                                                                 self)
 
     @classmethod
     def path_trails(cls, path):

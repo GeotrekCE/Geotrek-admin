@@ -5,10 +5,10 @@ import base64
 
 
 # Produce a small red dot
-IMG_FILE = 'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=='
+IMG_FILE = b'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=='
 
-SVG_FILE = '<svg width="3cm" height="2cm" version="1.1"> ' \
-           '<title> Rectangle </title> <desc> Un rectangle </desc> <rect x="0.5cm" y="0.5cm" width="2cm" height="1cm"/></svg>'
+SVG_FILE = b'<svg width="3cm" height="2cm" version="1.1"> ' \
+           b'<title> Rectangle </title> <desc> Un rectangle </desc> <rect x="0.5cm" y="0.5cm" width="2cm" height="1cm"/></svg>'
 
 
 def get_dummy_img():

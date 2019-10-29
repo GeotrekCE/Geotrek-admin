@@ -49,7 +49,7 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         poi = POIFactory.create(no_path=True)
         poi.add_path(path_1, start=0, end=0)
         response = self.client.get(reverse('core:path_list'))
-        self.assertIn('<a href="#delete" id="btn-delete" role="button">', response.content)
+        self.assertContains(response, '<a href="#delete" id="btn-delete" role="button">')
 
     def test_delete_view_multiple_path(self):
         path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
@@ -58,7 +58,7 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         poi.add_path(path_1, start=0, end=0)
         response = self.client.get(reverse('core:multiple_path_delete', args=['%s,%s' % (path_1.pk, path_2.pk)]))
         self.assertEqual(response.status_code, 200)
-        self.assertIn('Do you really wish to delete', response.content)
+        self.assertContains(response, 'Do you really wish to delete')
 
     def test_delete_multiple_path(self):
         path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
@@ -75,12 +75,12 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         service.add_path(path_2, start=0, end=1)
         InterventionFactory.create(topology=signage, name="INTER_1")
         response = self.client.get(reverse('core:multiple_path_delete', args=['%s,%s' % (path_1.pk, path_2.pk)]))
-        self.assertIn("POI_1", response.content)
-        self.assertIn("INFRA_1", response.content)
-        self.assertIn("SIGNA_1", response.content)
-        self.assertIn("TRAIL_1", response.content)
-        self.assertIn("ServiceType", response.content)
-        self.assertIn("INTER_1", response.content)
+        self.assertContains(response, "POI_1")
+        self.assertContains(response, "INFRA_1")
+        self.assertContains(response, "SIGNA_1")
+        self.assertContains(response, "TRAIL_1")
+        self.assertContains(response, "ServiceType")
+        self.assertContains(response, "INTER_1")
         response = self.client.post(reverse('core:multiple_path_delete', args=['%s,%s' % (path_1.pk, path_2.pk)]))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Path.objects.count(), 2)
@@ -245,7 +245,7 @@ class PathViewsTest(CommonTest):
         self.login()
         response = self.client.get('/api/path/paths.json')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.content.decode())['sumPath'], 0.0)
+        self.assertEqual(response.json()['sumPath'], 0.0)
 
     def test_sum_path_two(self):
         self.login()
@@ -253,7 +253,7 @@ class PathViewsTest(CommonTest):
         PathFactory()
         response = self.client.get('/api/path/paths.json')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.content.decode())['sumPath'], 0.3)
+        self.assertEqual(response.json()['sumPath'], 0.3)
 
     def test_sum_path_filter_cities(self):
         self.login()
@@ -272,10 +272,10 @@ class PathViewsTest(CommonTest):
         p1 = PathFactory.create()
         p2 = PathFactory.create()
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk]})
-        self.assertIn(b'error', response.json())
+        self.assertEqual({'error': 'You should select two paths'}, response.json())
 
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p1.pk, p2.pk]})
-        self.assertIn(b'error', response.json())
+        self.assertEqual({'error': 'You should select two paths'}, response.json())
         self.logout()
 
     def test_merge_fails_donttouch(self):
@@ -456,7 +456,6 @@ class PathViewsTest(CommonTest):
     def test_merge_works(self):
         self.login()
         p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
-<<<<<<< HEAD
         p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)))
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
         self.assertIn('success', response.json())
@@ -466,24 +465,6 @@ class PathViewsTest(CommonTest):
         self.login()
         p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
         p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)))
-=======
-        p2 = PathFactory.create(name="BC", geom=LineString((500, 0), (1000, 0)))
-        response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
-        self.assertEqual(response.content, b'error')
-        p3 = PathFactory.create(name="AB", geom=LineString((1, 0), (2, 0)))
-        p4 = PathFactory.create(name="BC", geom=LineString((1, 0), (10, 10)))
-        response = self.client.post('/mergepath/', {'path[]': [p3.pk, p4.pk]})
-        self.assertEqual(response.content, b'error')
-
-    def test_mege_works(self):
-        self.login()
-        p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
-        p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)))
-        response = self.client.post('/mergepath/', {'path[]': [p1.pk, p2.pk]})
-        self.assertEqual(response.content, b'success')
-        p1.reload()
-        self.assertEqual(p1.geom, LineString((0, 0), (1, 0), (2, 0), srid=settings.SRID))
->>>>>>> de821a5ab... Python2to3 docker
 
         PathFactory.create(name="CD", geom=LineString((2, 1), (3, 1)))
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
@@ -530,7 +511,7 @@ class PathViewsTest(CommonTest):
         data['structure'] = structure_2.pk
         result = self.client.post(obj.get_update_url(), data)
         self.assertEqual(result.status_code, 200)
-        self.assertIn("Please select a choice related to all structures", result.content)
+        self.assertContains(result, "Please select a choice related to all structures")
         self.logout()
 
 
@@ -585,15 +566,6 @@ class DenormalizedTrailTest(AuthentFixturesTest):
         self.login()
         with self.assertNumQueries(LTE(15)):
             self.client.get(reverse('core:path_json_list'))
-
-    def test_trails_are_shown_as_links_in_list(self):
-        self.login()
-        response = self.client.get(reverse('core:path_json_list'))
-        self.assertEqual(response.status_code, 200)
-        paths_json = json.loads(response.content.decode())
-        trails_column = paths_json['aaData'][0][6]
-        self.assertTrue(trails_column == '%s, %s' % (self.trail1.name_display, self.trail2.name_display) or
-                        trails_column == '%s, %s' % (self.trail2.name_display, self.trail1.name_display))
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')

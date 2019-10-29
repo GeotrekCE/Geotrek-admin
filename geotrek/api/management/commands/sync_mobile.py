@@ -72,15 +72,15 @@ class Command(BaseCommand):
             if self.verbosity == 2:
                 self.stdout.write("\x1b[3D\x1b[31;1mfailed (HTTP {code})\x1b[0m".format(code=response.status_code))
             return
-        f = open(fullname, 'w')
+        f = open(fullname, 'wb')
         if isinstance(response, StreamingHttpResponse):
             content = b''.join(response.streaming_content)
         else:
             content = response.content
         # Fix strange unicode characters 2028 and 2029 that make Geotrek-mobile crash
         if fix2028:
-            content = content.replace('\\u2028', '\\n')
-            content = content.replace('\\u2029', '\\n')
+            content = content.replace(b'\\u2028', b'\\n')
+            content = content.replace(b'\\u2029', b'\\n')
         f.write(content)
         f.close()
         oldfilename = os.path.join(self.dst_root, name)
@@ -161,7 +161,7 @@ class Command(BaseCommand):
             zipfile.write(dst, os.path.join(url, name))
         if self.verbosity == 2:
             self.stdout.write(
-                u"\x1b[36m**\x1b[0m \x1b[1m{directory}/{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
+                "\x1b[36m**\x1b[0m \x1b[1m{directory}/{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
                     directory=directory, url=url, name=name))
 
     def sync_media_file(self, field, prefix=None, directory='', zipfile=None):
@@ -195,7 +195,7 @@ class Command(BaseCommand):
                 zipfile.write(dst, name)
             if self.verbosity == 2:
                 self.stdout.write(
-                    u"\x1b[36m**\x1b[0m \x1b[1m{directory}{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
+                    "\x1b[36m**\x1b[0m \x1b[1m{directory}{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
                         directory=directory, url=obj.pictogram.url, name=name))
 
     def close_zip(self, zipfile, name):
@@ -270,7 +270,7 @@ class Command(BaseCommand):
                     'name': self.celery_task.name,
                     'current': 10,
                     'total': 100,
-                    'infos': u"{}".format(_("Medias syncing ..."))
+                    'infos': "{}".format(_("Medias syncing ..."))
                 }
             )
         self.sync_global_media()
@@ -400,7 +400,7 @@ class Command(BaseCommand):
 
         global_extent = settings.LEAFLET_CONFIG['SPATIAL_EXTENT']
 
-        logger.info("Global extent is %s" % global_extent)
+        logger.info("Global extent is %s" % str(global_extent))
         logger.info("Build global tiles file...")
 
         tiles = ZipTilesBuilder(zipfile, prefix='tiles/', **self.builder_args)
@@ -425,7 +425,7 @@ class Command(BaseCommand):
                         'name': self.celery_task.name,
                         'current': current_value + step_value,
                         'total': 100,
-                        'infos': u"{} : {} ...".format(_("Language"), lang)
+                        'infos': "{} : {} ...".format(_("Language"), lang)
                     }
                 )
                 current_value = current_value + step_value
@@ -467,8 +467,8 @@ class Command(BaseCommand):
         if options['languages']:
             for language in options['languages'].split(','):
                 if language not in settings.MODELTRANSLATION_LANGUAGES:
-                    raise CommandError("Language {lang_n} doesn't exist. Select in these one : {langs}".
-                                       format(lang_n=language, langs=settings.MODELTRANSLATION_LANGUAGES))
+                    raise CommandError("Language {lang_n} doesn't exist. Select in these one : {langs}".format(
+                        lang_n=language, langs=settings.MODELTRANSLATION_LANGUAGES))
             self.languages = options['languages'].split(',')
         else:
             self.languages = settings.MODELTRANSLATION_LANGUAGES

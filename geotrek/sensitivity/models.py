@@ -68,8 +68,8 @@ class Species(OptionalPictogramMixin):
 
     def pretty_period(self):
         return ", ".join([str(self._meta.get_field('period{:02}'.format(p)).verbose_name)
-                           for p in range(1, 13)
-                           if getattr(self, 'period{:02}'.format(p))])
+                         for p in range(1, 13)
+                         if getattr(self, 'period{:02}'.format(p))])
 
     def pretty_practices(self):
         return ", ".join([str(practice) for practice in self.practices.all()])
@@ -157,9 +157,9 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
     @property
     def species_display(self):
         s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
-                                                              self.get_detail_url(),
-                                                              self.species.name,
-                                                              self.species.name)
+                                                             self.get_detail_url(),
+                                                             self.species.name,
+                                                             self.species.name)
         if self.published:
             s = '<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
         return s
@@ -212,4 +212,3 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
     from geotrek.diving.models import Dive
     Dive.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _("Sensitive areas"))
     Dive.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _("Published sensitive areas"))
-

@@ -87,9 +87,9 @@ class BladeViewsTest(CommonTest):
         if self.user.has_perm('{app}.change_geom_{model}'.format(app=self.model._meta.app_label,
                                                                  model=self.model._meta.model_name)) and \
                 settings.TREKKING_TOPOLOGY_ENABLED:
-            self.assertIn('.modifiable = true;', response.content)
+            self.assertContains(response, '.modifiable = true;')
         else:
-            self.assertIn('.modifiable = false;', response.content)
+            self.assertContains(response, '.modifiable = false;')
 
     def test_api_geojson_list_for_model(self):
         # TODO: Fix problem with topology.geom should be possible to use a geom of an other model for the serialization
@@ -207,8 +207,8 @@ class SignageViewsTest(CommonTest):
             'condition': InfrastructureConditionFactory.create().pk,
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = PathFactory.create()
-            good_data['topology'] = '{"paths": [%s]}' % path.pk
+            PathFactory.create()
+            good_data['topology'] = '{"lat": 5.1, "lng": 6.6}'
         else:
             good_data['geom'] = 'POINT(0.42 0.666)'
         return good_data
@@ -227,7 +227,7 @@ class SignageViewsTest(CommonTest):
         self.assertTrue('form' in response.context)
         form = response.context['form']
         type = form.fields['type']
-        self.assertTrue((signagetype.pk, signagetype) in type.choices)
+        self.assertTrue((signagetype.pk, signagetype.label) in type.choices)
 
     def test_no_pictogram(self):
         self.modelfactory = SignageNoPictogramFactory
@@ -254,8 +254,8 @@ class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
         i2 = SignageFactory.create(implantation_year=2016)
         response = self.client.get(model.get_list_url())
 
-        self.assertTrue('<option value="2015">2015</option>' in str(response))
-        self.assertTrue('<option value="2016">2016</option>' in str(response))
+        self.assertContains(response, '<option value="2015">2015</option>')
+        self.assertContains(response, '<option value="2016">2016</option>')
 
         self.assertTrue(i in filter.qs)
         self.assertFalse(i2 in filter.qs)
@@ -268,8 +268,8 @@ class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
         i2 = SignageFactory.create(implantation_year=2016)
         response = self.client.get(model.get_list_url())
 
-        self.assertTrue('<option value="2015">2015</option>' in str(response))
-        self.assertTrue('<option value="2016">2016</option>' in str(response))
+        self.assertContains(response, '<option value="2015">2015</option>')
+        self.assertContains(response, '<option value="2016">2016</option>')
 
         self.assertIn(i, filter.qs)
         self.assertIn(i2, filter.qs)

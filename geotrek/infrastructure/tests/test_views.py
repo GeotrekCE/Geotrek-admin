@@ -59,7 +59,7 @@ class InfrastructureViewsTest(CommonTest):
         self.assertTrue('form' in response.context)
         form = response.context['form']
         type = form.fields['type']
-        self.assertTrue((infratype.pk, infratype) in type.choices)
+        self.assertTrue((infratype.pk, infratype.label) in type.choices)
 
     def test_no_pictogram(self):
         self.modelfactory = InfrastructureNoPictogramFactory
@@ -112,11 +112,11 @@ class InfraFilterTestMixin():
         # Bad topology/infrastructure: No intervention
         self.factory()
 
-        # Bad signage: intervention with wrong year
+        # Bad infrastructure: intervention with wrong year
         bad_topo = self.factory()
         InterventionFactory(topology=bad_topo, date=bad_date_year)
 
-        # Good signage: intervention with the good year
+        # Good infrastructure: intervention with the good year
         good_topo = self.factory()
         InterventionFactory(topology=good_topo, date=good_date_year)
 
@@ -144,11 +144,11 @@ class InfraFilterTestMixin():
         year = 2014
         year_t = datetime.datetime(year=year, month=2, day=2)
 
-        # Bad signage: intervention with wrong year
+        # Bad infrastructure: intervention with wrong year
         topo_1 = self.factory()
         InterventionFactory(topology=topo_1, date=year_t)
 
-        # Good signage: intervention with the good year
+        # Good infrastructure: intervention with the good year
         topo_2 = self.factory()
         InterventionFactory(topology=topo_2, date=year_t)
 

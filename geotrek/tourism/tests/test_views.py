@@ -196,10 +196,11 @@ class BasicJSONAPITest(TranslationResetMixin):
                                      settings.THUMBNAIL_COPYRIGHT_FORMAT.format(
                                          author=self.picture.author,
                                          title=self.picture.title,
-                                         legend=self.picture.legend)).hexdigest()),
+                                         legend=self.picture.legend).encode()).hexdigest()),
                               'title': self.picture.title,
                               'legend': self.picture.legend,
                               'author': self.picture.author})
+
     def test_files(self):
         self.assertDictEqual(self.result['files'][0],
                              {'url': os.path.join(settings.MEDIA_URL, self.document.attachment_file.name),

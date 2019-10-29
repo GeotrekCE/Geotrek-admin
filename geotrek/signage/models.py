@@ -103,14 +103,14 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     def gps_value(self):
         geom = self.geomtransform
         if geom.y > 0:
-            degreelong = u"%s°N" % geom.y
+            degreelong = "%s°N" % round(geom.y, 8)
         else:
-            degreelong = u"%s°S" % - geom.y
+            degreelong = "%s°S" % - round(geom.y, 8)
         if geom.x > 0:
-            degreelat = u"%s°E" % geom.x
+            degreelat = "%s°E" % round(geom.x, 8)
         else:
-            degreelat = u"%s°W" % - geom.x
-        return u"%s, %s" % (degreelong, degreelat)
+            degreelat = "%s°W" % - round(geom.x, 8)
+        return "%s, %s" % (degreelong, degreelat)
 
     @property
     def geomtransform(self):

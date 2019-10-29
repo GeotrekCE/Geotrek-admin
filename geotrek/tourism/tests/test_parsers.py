@@ -52,7 +52,7 @@ class ParserTests(TranslationResetMixin, TestCase):
     def test_create_content_apidae(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeContent.json')
-            with io.open(filename, 'r', encoding='utf8') as f:
+            with io.open(filename, 'r') as f:
                 return json.load(f)
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
@@ -90,11 +90,12 @@ class ParserTests(TranslationResetMixin, TestCase):
     def test_filetype_structure_none(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeContent.json')
-            with io.open(filename, 'r', encoding='utf8') as f:
+            with io.open(filename, 'r') as f:
                 return json.load(f)
 
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
+        mocked.return_value.content = b''
         FileType.objects.create(type="Photographie", structure=None)
         TouristicContentCategoryFactory(label="Eau vive")
         TouristicContentType1Factory(label="Type A")
@@ -106,13 +107,14 @@ class ParserTests(TranslationResetMixin, TestCase):
     def test_create_event_apidae(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeEvent.json')
-            with io.open(filename, 'r', encoding='utf8') as f:
+            with io.open(filename, 'r') as f:
                 return json.load(f)
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
+        mocked.return_value.content = b''
         FileType.objects.create(type="Photographie")
         self.assertEqual(TouristicEvent.objects.count(), 0)
-        output = io.BytesIO()
+        output = io.StringIO()
         call_command('import', 'geotrek.tourism.parsers.TouristicEventApidaeParser', verbosity=2, stdout=output)
         self.assertEqual(TouristicEvent.objects.count(), 1)
         event = TouristicEvent.objects.get()
@@ -187,6 +189,7 @@ class ParserTests(TranslationResetMixin, TestCase):
                 return json.load(f)
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
+        mocked.return_value.content = b''
         FileType.objects.create(type="Photographie")
         category = TouristicContentCategoryFactory(label="Où dormir")
         source = RecordSourceFactory(name="CDT 28")
@@ -198,7 +201,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(content.name, "Hôtel du Perche")
         self.assertEqual(content.description[:27], "")
         self.assertEqual(content.description_teaser[:26], "A deux pas du centre ville")
-        self.assertEqual(content.contact[:73], "<strong>Adresse :</strong><br>Rue de la Bruyère<br>28400 NOGENT-LE-ROTRO")
+        self.assertEqual(content.contact[:73], "<strong>Adresse :</strong><br>Rue de la Bruyère<br>28400 NOGENT-LE-ROTROU")
         self.assertEqual(content.email, "hotelduperche@brithotel.fr")
         self.assertEqual(content.website, "http://www.hotel-du-perche.com")
         self.assertEqual(round(content.geom.x), 537329)
@@ -223,6 +226,7 @@ class ParserTests(TranslationResetMixin, TestCase):
                 return json.load(f)
         mocked.return_value.status_code = 200
         mocked.return_value.json = mocked_json
+        mocked.return_value.content = b''
         FileType.objects.create(type="Photographie")
         type = TouristicEventTypeFactory(type="Agenda rando")
         source = RecordSourceFactory(name="CDT 28")

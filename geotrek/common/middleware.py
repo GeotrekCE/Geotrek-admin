@@ -1,11 +1,11 @@
 import re
 import socket
+from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.auth.signals import user_logged_in
 from django.db.utils import DatabaseError
 from django.utils import translation
-from django.utils.six.moves.urllib.parse import urlparse
 from django.utils.translation.trans_real import get_supported_language_variant
 from mapentity.middleware import AutoLoginMiddleware, get_internal_user
 

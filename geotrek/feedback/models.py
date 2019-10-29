@@ -67,9 +67,9 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
     @property
     def name_display(self):
         return '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
-                                                                  self.get_detail_url(),
-                                                                  self,
-                                                                  self)
+                                                                 self.get_detail_url(),
+                                                                 self,
+                                                                 self)
 
     @classmethod
     def get_create_label(cls):

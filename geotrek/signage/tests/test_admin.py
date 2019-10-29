@@ -42,7 +42,7 @@ class SignageTypeAdminNoBypassTest(TestCase):
         changelist_url = reverse('admin:signage_signagetype_changelist')
         response = self.client.get(changelist_url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(SignageType.objects.get(pk=self.signa.pk).label, response.content)
+        self.assertContains(response, SignageType.objects.get(pk=self.signa.pk).label)
 
     def test_signagetype_can_be_change(self):
         self.login()
@@ -94,7 +94,7 @@ class SealingAdminNoBypassTest(AuthentFixturesTest):
         changelist_url = reverse('admin:signage_sealing_changelist')
         response = self.client.get(changelist_url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(Sealing.objects.get(pk=self.sealing.pk).label, response.content)
+        self.assertContains(response, Sealing.objects.get(pk=self.sealing.pk).label)
 
     def test_sealing_can_be_change(self):
         self.login()
@@ -135,7 +135,7 @@ class ColorAdminNoBypassTest(AuthentFixturesTest):
         changelist_url = reverse('admin:signage_color_changelist')
         response = self.client.get(changelist_url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(Color.objects.get(pk=self.color.pk).label, response.content)
+        self.assertContains(response, Color.objects.get(pk=self.color.pk).label)
 
     def test_color_can_be_change(self):
         self.login()
@@ -164,7 +164,7 @@ class DirectionAdminNoBypassTest(AuthentFixturesTest):
         changelist_url = reverse('admin:signage_direction_changelist')
         response = self.client.get(changelist_url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(Direction.objects.get(pk=self.direction.pk).label, response.content)
+        self.assertContains(response, Direction.objects.get(pk=self.direction.pk).label)
 
     def test_direction_can_be_change(self):
         self.login()
@@ -202,7 +202,7 @@ class BladeTypeAdminNoBypassTest(AuthentFixturesTest):
         changelist_url = reverse('admin:signage_bladetype_changelist')
         response = self.client.get(changelist_url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(BladeType.objects.get(pk=self.bladetype.pk).label, response.content)
+        self.assertContains(response, BladeType.objects.get(pk=self.bladetype.pk).label)
 
     def test_bladetype_can_be_change(self):
         self.login()
@@ -238,7 +238,7 @@ class BladeTypeAdminTest(BladeTypeAdminNoBypassTest):
         change_url = reverse('admin:signage_bladetype_change', args=[bladetype.pk])
         response = self.client.get(change_url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn('<select name="structure" id="id_structure">', response.content)
+        self.assertContains(response, '<select name="structure" id="id_structure">')
 
 
 class SealingAdminTest(SealingAdminNoBypassTest):
@@ -254,7 +254,7 @@ class SealingAdminTest(SealingAdminNoBypassTest):
         change_url = reverse('admin:signage_sealing_change', args=[sealing.pk])
         response = self.client.get(change_url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn('<select name="structure" id="id_structure">', response.content)
+        self.assertContains(response, '<select name="structure" id="id_structure">')
 
 
 class SignageTypeAdminTest(SignageTypeAdminNoBypassTest):
@@ -270,4 +270,4 @@ class SignageTypeAdminTest(SignageTypeAdminNoBypassTest):
         change_url = reverse('admin:signage_signagetype_change', args=[signagetype.pk])
         response = self.client.get(change_url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn('<select name="structure" id="id_structure">', response.content)
+        self.assertContains(response, '<select name="structure" id="id_structure">')

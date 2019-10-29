@@ -18,14 +18,12 @@ class RestrictedAreasCommandTest(TestCase):
     Get Restricted Area
     """
     def test_load_restricted_areas_without_file(self):
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='Error: too few arguments'):
             call_command('loadrestrictedareas')
-        self.assertEqual(u'Error: too few arguments', e.exception.message)
 
     def test_load_cities_without_type(self):
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='Error: too few arguments'):
             call_command('loadrestrictedareas', self.filename_out_in)
-        self.assertEqual(u'Error: too few arguments', e.exception.message)
 
     @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, -3, 2, 2))
     def test_load_restrictedareas_with_one_inside_one_outside_within(self):
@@ -79,9 +77,8 @@ class RestrictedAreasCommandTest(TestCase):
         self.assertIn('NOM, Insee', output.getvalue())
 
     def test_load_restricted_areas_fail_bad_srid(self):
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='SRID is not well configurate, change/add option srid'):
             call_command('loadrestrictedareas', self.filename, 'type_area', name='NOM', verbosity=0)
-        self.assertEqual('SRID is not well configurate, change/add option srid', e.exception.message)
 
     def test_load_restricted_areas_with_geom_not_valid(self):
         output = StringIO()
@@ -101,9 +98,8 @@ class CitiesCommandTest(TestCase):
     Get cities
     """
     def test_load_cities_without_file(self):
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='Error: too few arguments'):
             call_command('loadcities')
-        self.assertEqual(u'Error: too few arguments', e.exception.message)
 
     @override_settings(SPATIAL_EXTENT=(0, 10.0, 1, 11))
     def test_load_cities_out_of_spatial_extent(self):
@@ -130,14 +126,12 @@ class CitiesCommandTest(TestCase):
         self.assertIn("wrong_polygon's geometry is not valid", output.getvalue())
 
     def test_load_cities_fail_bad_srid(self):
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='SRID is not well configurate, change/add option srid'):
             call_command('loadcities', self.filename, name='NOM', code='Insee', verbosity=0)
-        self.assertEqual('SRID is not well configurate, change/add option srid', e.exception.message)
 
     def test_load_cities_with_bad_file(self):
-        with self.assertRaises(GDALException) as e:
+        with self.assertRaises(GDALException, msg='Could not open the datasource at "toto.geojson"'):
             call_command('loadcities', 'toto.geojson', name='NOM', code='Insee', srid=2154, verbosity=0)
-        self.assertEqual(u'Could not open the datasource at "toto.geojson"', e.exception.message)
 
     def test_load_cities_with_line(self):
         output = StringIO()
@@ -200,9 +194,8 @@ class DistrictsCommandTest(TestCase):
     Get cities
     """
     def test_load_districts_without_file(self):
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='Error: too few arguments'):
             call_command('loaddistricts')
-        self.assertEqual(u'Error: too few arguments', e.exception.message)
 
     def test_load_districts_with_geom_not_valid(self):
         output = StringIO()
@@ -218,14 +211,12 @@ class DistrictsCommandTest(TestCase):
 
     def test_load_districts_fail_bad_srid(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'bad_srid.geojson')
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='SRID is not well configurate, change/add option srid'):
             call_command('loaddistricts', filename, name='NOM', verbosity=0)
-        self.assertEqual('SRID is not well configurate, change/add option srid', e.exception.message)
 
     def test_load_districts_with_bad_file(self):
-        with self.assertRaises(GDALException) as e:
+        with self.assertRaises(GDALException, msg='Could not open the datasource at "toto.geojson"'):
             call_command('loaddistricts', 'toto.geojson', name='NOM', srid=2154, verbosity=0)
-        self.assertEqual(u'Could not open the datasource at "toto.geojson"', e.exception.message)
 
     def test_load_districts_with_line(self):
         output = StringIO()

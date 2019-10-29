@@ -27,4 +27,4 @@ class ReportFactory(factory.DjangoModelFactory):
     name = factory.Sequence(lambda n: "name %s" % n)
     email = factory.Sequence(lambda n: "email%s@domain.tld" % n)
     comment = factory.Sequence(lambda n: "comment %s" % n)
-    geom = Point(700000, 6600000, srid=settings.SRID)
+    geom = Point(3, 46.5, srid=settings.API_SRID)

@@ -22,9 +22,9 @@ class DifficultyLevelTest(AuthentFixturesTest):
         self.assertTrue(success)
 
     def get_csrf_token(self, response):
-        csrf = b"name='csrfmiddlewaretoken' value='"
-        start = response.content.find(csrf) + len(csrf)
-        end = response.content.find(b"'", start)
+        csrf = "name='csrfmiddlewaretoken' value='"
+        start = response.content.decode().find(csrf) + len(csrf)
+        end = response.content.decode().find("'", start)
         return response.content[start:end]
 
     def test_cant_create_duplicate_id(self):

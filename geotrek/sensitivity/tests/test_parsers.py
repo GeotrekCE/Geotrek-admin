@@ -100,16 +100,10 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
         mocked.get.side_effect = side_effect
         call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
         practice = SportPractice.objects.get()
-<<<<<<< HEAD
         species = Species.objects.first()
         area_1 = SensitiveArea.objects.first()
         self.assertEqual(practice.name, "Land")
         self.assertEqual(practice.name_fr, "Terrestre")
-=======
-        species = Species.objects.get()
-        area = SensitiveArea.objects.get()
-        self.assertEqual(practice.name, "Land")
->>>>>>> de821a5ab... Python2to3 docker
         self.assertEqual(species.name, "Black grouse")
         self.assertEqual(species.name_fr, "Tétras lyre")
         self.assertTrue(species.period01)
@@ -135,9 +129,8 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
             response.status_code = 404
             return response
         mocked.get.side_effect = side_effect
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg="Failed to download https://biodiv-sports.fr/api/v2/sportpractice/"):
             call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
-        self.assertIn("Failed to download https://biodiv-sports.fr/api/v2/sportpractice/", str(e.exception.message))
 
     @mock.patch('geotrek.sensitivity.parsers.requests')
     def test_create_no_id(self, mocked):

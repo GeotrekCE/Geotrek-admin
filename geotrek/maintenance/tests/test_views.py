@@ -502,9 +502,9 @@ class ExportTest(TranslationResetMixin, TestCase):
                       fields=ProjectFormatList.columns)
         self.assertEqual(len(pfl.layers), 2)
 
-        ds_point = gdal.DataSource(pfl.layers.values()[0])
+        ds_point = gdal.DataSource(list(pfl.layers.values())[0])
         layer_point = ds_point[0]
-        ds_line = gdal.DataSource(pfl.layers.values()[1])
+        ds_line = gdal.DataSource(list(pfl.layers.values())[1])
         layer_line = ds_line[0]
 
         self.assertEqual(layer_point.geom_type.name, 'MultiPoint')

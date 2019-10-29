@@ -166,14 +166,12 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         if self.on_existing_topology:
             icon = self.topology.kind.lower()
             if self.infrastructure:
-                title = '%s: %s' % (_(self.topology.kind.capitalize()),
-                                     self.infrastructure)
+                title = '%s: %s' % (_(self.topology.kind.capitalize()), self.infrastructure)
             elif self.signage:
-                title = '%s: %s' % (_(self.topology.kind.capitalize()),
-                                     self.signage)
+                title = '%s: %s' % (_(self.topology.kind.capitalize()), self.signage)
         return '<img src="%simages/%s-16.png" title="%s">' % (settings.STATIC_URL,
-                                                               icon,
-                                                               title)
+                                                              icon,
+                                                              title)
 
     @property
     def infrastructure_csv_display(self):
@@ -283,9 +281,9 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     @property
     def name_display(self):
         return '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
-                                                                  self.get_detail_url(),
-                                                                  self.name,
-                                                                  self.name)
+                                                                 self.get_detail_url(),
+                                                                 self.name,
+                                                                 self.name)
 
     @property
     def name_csv_display(self):
@@ -495,9 +493,9 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
     @property
     def name_display(self):
         return '<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
-                                                                 self.get_detail_url(),
-                                                                 self.name,
-                                                                 self.name)
+                                                                self.get_detail_url(),
+                                                                self.name,
+                                                                self.name)
 
     @property
     def name_csv_display(self):

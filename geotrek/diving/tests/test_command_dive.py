@@ -81,14 +81,12 @@ class DiveCommandTest(TestCase):
     def test_fail_import(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'infrastructure.shp')
         with mock.patch.dict(sys.modules, {'osgeo': None}):
-            with self.assertRaises(CommandError) as e:
+            with self.assertRaises(CommandError, msg='GDAL Python bindings are not available. Can not proceed.'):
                 call_command('loaddive', filename, verbosity=0)
-            self.assertEqual('GDAL Python bindings are not available. Can not proceed.', e.exception.message)
 
     def test_no_file_fail(self):
-        with self.assertRaises(CommandError) as cm:
+        with self.assertRaises(CommandError, msg='File does not exists at: toto.shp'):
             call_command('loaddive', 'toto.shp')
-        self.assertEqual(cm.exception.message, "File does not exists at: toto.shp")
 
     def test_load_dive_wrong_structure_default(self):
         output = StringIO()
@@ -117,10 +115,9 @@ class DiveCommandTest(TestCase):
         output = StringIO()
         StructureFactory.create(name='structure')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'dive_bad_multipoint.geojson')
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='One of your geometry is a MultiPoint object with multiple points'):
             call_command('loaddive', filename, name_field='name', depth_field='depth', practice_default='Practice',
                          structure_default='structure', verbosity=2, stdout=output)
-        self.assertEqual('One of your geometry is a MultiPoint object with multiple points', e.exception.message)
 
     def test_wrong_fields_fail(self):
         StructureFactory.create(name='structure')

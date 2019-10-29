@@ -199,7 +199,7 @@ class Parser(object):
             if isinstance(old, float) and isinstance(val, float):
                 old = round(old, 10)
                 val = round(val, 10)
-            if isinstance(old, unicode):
+            if isinstance(old, str):
                 val = val or ""
             if old != val:
                 self.set_value(dst, src, val)
