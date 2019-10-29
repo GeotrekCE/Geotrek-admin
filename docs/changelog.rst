@@ -8,6 +8,7 @@ CHANGELOG
 **Minor changes**
 
 - Do not set structure by default when creating elements in dropdown lists.
+- Trek duration is now optional
 
 
 2.29.12 (2019-10-23)
