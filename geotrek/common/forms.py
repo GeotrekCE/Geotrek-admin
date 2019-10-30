@@ -4,6 +4,7 @@ from copy import deepcopy
 from zipfile import is_zipfile
 
 from django import forms
+from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.core.exceptions import FieldDoesNotExist
@@ -12,8 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from mapentity.forms import MapEntityForm
 
-from geotrek.authent.models import (default_structure, StructureRelated, StructureOrNoneRelated,
-                                    StructureRelatedQuerySet)
+from geotrek.authent.models import default_structure, StructureRelated, StructureOrNoneRelated
 
 from .mixins import NoDeleteMixin
 
@@ -59,9 +59,10 @@ class CommonForm(MapEntityForm):
             return
         model = modelfield.remote_field.to
         # Filter structured choice fields according to user's structure
-        if issubclass(model, StructureRelated) or issubclass(model, StructureOrNoneRelated):
-            field.queryset = StructureRelatedQuerySet.queryset_for_user(
-                field.queryset, self.user)
+        if issubclass(model, StructureRelated):
+            field.queryset = field.queryset.filter(structure=self.user.profile.structure)
+        if issubclass(model, StructureOrNoneRelated):
+            field.queryset = field.queryset.filter(Q(structure=self.user.profile.structure) | Q(structure=None))
         if issubclass(model, NoDeleteMixin):
             field.queryset = field.queryset.filter(deleted=False)
 

@@ -45,9 +45,8 @@ class PathTest(TestCase):
         self.assertEqual(len(Structure.objects.all()), 2)
         self.assertEqual(len(Path.objects.all()), 2)
 
-        self.assertEqual(Path.in_structure.for_user(user)[0], Path.for_user(user)[0])
-        self.assertTrue(p1 in Path.in_structure.for_user(user))
-        self.assertFalse(p2 in Path.in_structure.for_user(user))
+        self.assertTrue(p1 in Path.objects.filter(structure=user.profile.structure))
+        self.assertFalse(p2 in Path.objects.filter(structure=user.profile.structure))
 
         # Change user structure on-the-fly
         profile = user.profile
@@ -55,8 +54,8 @@ class PathTest(TestCase):
         profile.save()
 
         self.assertEqual(user.profile.structure.name, "other")
-        self.assertFalse(p1 in Path.in_structure.for_user(user))
-        self.assertTrue(p2 in Path.in_structure.for_user(user))
+        self.assertFalse(p1 in Path.objects.filter(structure=user.profile.structure))
+        self.assertTrue(p2 in Path.objects.filter(structure=user.profile.structure))
 
     def test_dates(self):
         t1 = dbnow()
