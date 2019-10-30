@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.29.13.dev0
+2.29.13 (2019-10-30)
 --------------------
 
 **Minor changes**
@@ -18,9 +18,6 @@ CHANGELOG
 
 - Fix SEO for static page titles
 - Fix TouristicContentParser deletion having type1/2 with same values
-
-**Bug fixes**
-
 - Fix serialization of MultiPolygon sensitive areas
 
 
