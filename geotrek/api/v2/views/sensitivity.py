@@ -44,7 +44,8 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekViewset):
         else:
             queryset = queryset.annotate(geom2d_transformed=Case(
                 When(geom_type='POINT', then=Transform(Buffer(F('geom'), F('species__radius'), 4), settings.API_SRID)),
-                When(geom_type='POLYGON', then=Transform(F('geom'), settings.API_SRID))
+                When(geom_type='POLYGON', then=Transform(F('geom'), settings.API_SRID)),
+                When(geom_type='MULTIPOLYGON', then=Transform(F('geom'), settings.API_SRID)),
             ))
         # Ensure smaller areas are at the end of the list, ie above bigger areas on the map
         # to ensure we can select every area in case of overlapping

@@ -19,6 +19,10 @@ CHANGELOG
 - Fix SEO for static page titles
 - Fix TouristicContentParser deletion having type1/2 with same values
 
+**Bug fixes**
+
+- Fix serialization of MultiPolygon sensitive areas
+
 
 2.29.12 (2019-10-23)
 --------------------
