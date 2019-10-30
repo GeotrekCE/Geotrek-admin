@@ -641,12 +641,20 @@ class AttachmentParserMixin(object):
 
 
 class TourInSoftParser(AttachmentParserMixin, Parser):
+    version_tourinsoft = 2
     separator = '#'
     separator2 = '|'
 
     @property
     def items(self):
+        if self.version_tourinsoft == 3:
+            return self.root['value']
         return self.root['d']['results']
+
+    def get_nb(self):
+        if self.version_tourinsoft == 3:
+            return int(self.root['odata.count'])
+        return int(self.root['d']['__count'])
 
     def next_row(self):
         skip = 0
@@ -661,7 +669,7 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
             if response.status_code != 200:
                 raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
             self.root = response.json()
-            self.nb = int(self.root['d']['__count'])
+            self.nb = self.get_nb()
             for row in self.items:
                 yield {self.normalize_field_name(src): val for src, val in row.iteritems()}
             skip += 1000

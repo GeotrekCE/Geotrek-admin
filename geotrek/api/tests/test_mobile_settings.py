@@ -9,7 +9,7 @@ from geotrek.trekking.models import TrekNetwork, Route, Practice, Accessibility,
 from geotrek.tourism import factories as tourism_factories
 from geotrek.tourism.models import InformationDeskType
 from geotrek.zoning import factories as zoning_factories
-from geotrek.zoning.models import City
+from geotrek.zoning.models import City, District
 
 
 SETTINGS_STRUCTURE = sorted([
@@ -205,3 +205,16 @@ class SettingsMobileTest(TestCase):
         self.assertEqual(len(city_item), City.objects.count())
         self.assertEqual(city_item[0].get('name'), city.name)
         self.assertEqual(city_item[0].get('id'), city.code)
+
+    def test_settings_district(self):
+        district = zoning_factories.DistrictFactory()
+        zoning_factories.DistrictFactory()
+        response = self.get_settings()
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+
+        json_response = response.json()
+        district_item = next((item.get('values') for item in json_response.get('data')
+                              if item['id'] == 'districts'), None)
+        self.assertEqual(len(district_item), District.objects.count())
+        self.assertEqual(district_item[0].get('name'), district.name)

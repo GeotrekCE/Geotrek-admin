@@ -54,6 +54,11 @@ class SensitiveAreaFactory(StructureRelatedDefaultFactory):
     contact = "<a href=\"mailto:toto@tata.com\">toto@tata.com</a>"
 
 
+class MultiPolygonSensitiveAreaFactory(SensitiveAreaFactory):
+    geom = 'MULTIPOLYGON(((700000 6600000, 700000 6600003, 700003 6600003, 700003 6600000, 700000 6600000)),' \
+        '((700010 6600010, 700010 6600013, 700013 6600013, 700013 6600010, 700010 6600010)))'
+
+
 class RegulatorySensitiveAreaFactory(SensitiveAreaFactory):
     species = factory.SubFactory(RegulatorySpeciesFactory)
 

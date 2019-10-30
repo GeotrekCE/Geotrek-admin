@@ -8,9 +8,9 @@ from django.contrib.gis.geos import LineString
 from django.db import IntegrityError
 
 from geotrek.common.utils import dbnow
-from geotrek.authent.factories import UserFactory
+from geotrek.authent.factories import StructureFactory, UserFactory
 from geotrek.authent.models import Structure
-from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory)
+from geotrek.core.factories import (ComfortFactory, PathFactory, StakeFactory, TrailFactory)
 from geotrek.core.models import Path
 
 
@@ -207,3 +207,14 @@ class PathGeometryTest(TestCase):
         path_snapped.geom = old_geom
         path_snapped.save()
         self.assertEqual(path_snapped.geom.coords, old_geom.coords)
+
+
+class ComfortTest(TestCase):
+    def test_name_with_structure(self):
+        structure = StructureFactory.create(name="structure")
+        comfort = ComfortFactory.create(comfort="comfort", structure=structure)
+        self.assertEqual("comfort (structure)", str(comfort))
+
+    def test_name_without_structure(self):
+        comfort = ComfortFactory.create(comfort="comfort")
+        self.assertEqual("comfort", str(comfort))

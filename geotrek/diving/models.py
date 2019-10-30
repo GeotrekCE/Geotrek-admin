@@ -18,7 +18,6 @@ from geotrek.common.mixins import (NoDeleteMixin, TimeStampedModelMixin,
 from geotrek.common.models import Theme
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Topology
-from geotrek.tourism import models as tourism_models
 from geotrek.trekking.models import POI, Service, Trek
 
 
@@ -204,6 +203,7 @@ Dive.add_property('services', lambda self: intersecting(Service, self), _(u"Serv
 Dive.add_property('published_services', lambda self: intersecting(Service, self).filter(published=True), _(u"Published Services"))
 
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
+    from geotrek.tourism import models as tourism_models
     tourism_models.TouristicContent.add_property('dives', lambda self: intersecting(Dive, self), _(u"Dives"))
     tourism_models.TouristicContent.add_property('published_dives', lambda self: intersecting(Dive, self).filter(published=True), _(u"Published dives"))
     tourism_models.TouristicEvent.add_property('dives', lambda self: intersecting(Dive, self), _(u"Dives"))
