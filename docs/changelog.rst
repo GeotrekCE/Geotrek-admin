@@ -9,6 +9,10 @@ CHANGELOG
 
 - Do not set structure by default when creating elements in dropdown lists.
 
+**Bug fixes**
+
+- Fix serialization of MultiPolygon sensitive areas
+
 
 2.29.12 (2019-10-23)
 --------------------
