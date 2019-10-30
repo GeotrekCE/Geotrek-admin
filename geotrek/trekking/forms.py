@@ -210,14 +210,6 @@ class TrekForm(BaseTrekForm):
                 raise ValidationError(_(u"Cannot use parent trek {name} as a child trek.".format(name=child.name)))
         return children
 
-    def clean_duration(self):
-        """For duration, an HTML5 "number" field is used. If the user fills an invalid
-        number (like "2H40"), the browser will submit an empty value (!).
-        Here we default to 0.0
-        """
-        duration = self.cleaned_data.get('duration')
-        return 0.0 if duration is None else duration
-
     def save(self, *args, **kwargs):
         """
         Custom form save override - ordered children management
