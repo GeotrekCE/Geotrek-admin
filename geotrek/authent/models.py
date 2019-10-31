@@ -47,6 +47,7 @@ class StructureRelated(models.Model):
                                   verbose_name=_(u"Related structure"), db_column='structure')
 
     objects = models.Manager()
+    check_structure_in_forms = True
 
     def same_structure(self, user):
         """ Returns True if the user is in the same structure or has
@@ -69,6 +70,7 @@ class StructureOrNoneRelated(models.Model):
                                   verbose_name=_(u"Related structure"), db_column='structure', blank=True, null=True)
 
     objects = models.Manager()
+    check_structure_in_forms = True
 
     class Meta:
         abstract = True
