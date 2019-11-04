@@ -4,7 +4,6 @@
     Models to manage users and profiles
 """
 from django.db import models
-from django.db.models import Q
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -40,25 +39,6 @@ def default_structure_pk():
     return default_structure().pk
 
 
-class StructureRelatedQuerySet(models.query.QuerySet):
-    def for_user(self, user):
-        return StructureRelatedQuerySet.queryset_for_user(self, user)
-
-    @staticmethod
-    def queryset_for_user(queryset, user):
-        return queryset.filter(Q(structure=user.profile.structure) | Q(structure=None))
-
-
-class StructureRelatedManager(models.Manager):
-    """ A simple manager to manage structure related objects"""
-    def get_queryset(self):
-        return StructureRelatedQuerySet(self.model, using=self._db)
-
-    def for_user(self, user):
-        """ Filter by user's structure """
-        return self.get_queryset().for_user(user)
-
-
 class StructureRelated(models.Model):
     """
     A mixin used for any entities that belong to a structure
@@ -67,12 +47,7 @@ class StructureRelated(models.Model):
                                   verbose_name=_(u"Related structure"), db_column='structure')
 
     objects = models.Manager()
-    in_structure = StructureRelatedManager()
-
-    @classmethod
-    def for_user(cls, user):
-        """ Shortcut to manager's filter by user """
-        return cls.in_structure.for_user(user)
+    check_structure_in_forms = True
 
     def same_structure(self, user):
         """ Returns True if the user is in the same structure or has
@@ -95,12 +70,7 @@ class StructureOrNoneRelated(models.Model):
                                   verbose_name=_(u"Related structure"), db_column='structure', blank=True, null=True)
 
     objects = models.Manager()
-    in_structure = StructureRelatedManager()
-
-    @classmethod
-    def for_user(cls, user):
-        """ Shortcut to manager's filter by user """
-        return cls.in_structure.for_user(user)
+    check_structure_in_forms = True
 
     class Meta:
         abstract = True

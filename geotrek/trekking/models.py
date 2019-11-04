@@ -673,6 +673,9 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     # Override default manager
     objects = Topology.get_manager_cls(POIManager)()
 
+    # Do no check structure when selecting POIs to exclude
+    check_structure_in_forms = False
+
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.type)
 

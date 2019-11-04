@@ -3,6 +3,7 @@ from PIL import Image
 
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 from paperclip.models import FileType as BaseFileType, Attachment as BaseAttachment
@@ -38,7 +39,7 @@ class FileType(StructureOrNoneRelated, BaseFileType):
     def objects_for(cls, request):
         """Override this method to filter form choices depending on structure.
         """
-        return cls.for_user(request.user)
+        return cls.objects.filter(Q(structure=request.user.profile.structure) | Q(structure=None))
 
     def __unicode__(self):
         if self.structure:
