@@ -2,6 +2,14 @@
 CHANGELOG
 =========
 
+2.29.14 (2019-11-04)
+--------------------
+
+**Bug fixes**
+
+- Do not check structure for excluded POIs
+
+
 2.29.13 (2019-10-30)
 --------------------
 
