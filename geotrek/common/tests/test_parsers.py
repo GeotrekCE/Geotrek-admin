@@ -13,6 +13,7 @@ from django.core.management.base import CommandError
 from django.test.utils import override_settings
 from django.template.exceptions import TemplateDoesNotExist
 
+from geotrek.authent.factories import StructureFactory
 from geotrek.trekking.models import Trek
 from geotrek.common.models import Organism, FileType, Attachment
 from geotrek.common.parsers import ExcelParser, AttachmentParserMixin, TourInSoftParser
@@ -107,7 +108,8 @@ class AttachmentParserTests(TestCase):
         self.filetype = FileType.objects.create(type=u"Photographie")
 
     def tearDown(self):
-        rmtree(settings.MEDIA_ROOT)
+        if os.path.exists(settings.MEDIA_ROOT):
+            rmtree(settings.MEDIA_ROOT)
 
     @mock.patch('requests.get')
     def test_attachment(self, mocked):
@@ -121,6 +123,35 @@ class AttachmentParserTests(TestCase):
         self.assertEqual(attachment.attachment_file.name, 'paperclip/common_organism/{pk}/titi.png'.format(pk=organism.pk))
         self.assertEqual(attachment.filetype, self.filetype)
         self.assertTrue(os.path.exists(attachment.attachment_file.path), True)
+
+    @mock.patch('requests.get')
+    def test_attachment_with_other_filetype_with_structure(self, mocked):
+        """
+        It will always take the one without structure first
+        """
+        structure = StructureFactory.create(name="Structure")
+        FileType.objects.create(type=u"Photographie", structure=structure)
+        mocked.return_value.status_code = 200
+        mocked.return_value.content = ''
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
+        organism = Organism.objects.get()
+        attachment = Attachment.objects.get()
+        self.assertEqual(attachment.content_object, organism)
+        self.assertEqual(attachment.attachment_file.name, 'paperclip/common_organism/{pk}/titi.png'.format(pk=organism.pk))
+        self.assertEqual(attachment.filetype, self.filetype)
+        self.assertEqual(attachment.filetype.structure, None)
+        self.assertTrue(os.path.exists(attachment.attachment_file.path), True)
+
+    @mock.patch('requests.get')
+    def test_attachment_with_no_filetype_photographie(self, mocked):
+        self.filetype.delete()
+        mocked.return_value.status_code = 200
+        mocked.return_value.content = ''
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
+        with self.assertRaises(CommandError) as cm:
+            call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
+        self.assertEqual(unicode(cm.exception), u"FileType 'Photographie' does not exists in Geotrek-Admin. Please add it")
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')

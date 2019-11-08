@@ -2,12 +2,31 @@
 CHANGELOG
 =========
 
-2.29.13.dev0
+2.29.14 (2019-11-04)
+--------------------
+
+**Bug fixes**
+
+- Do not check structure for excluded POIs
+
+
+2.29.13 (2019-10-30)
 --------------------
 
 **Minor changes**
 
--
+- Do not set structure by default when creating elements in dropdown lists.
+- Trek duration is now optional
+- Automatically disable empty filters in API for mobile v3
+- Add support for Tourinsoft v3 in addition to v2
+- Add more links form/to sensitive areas
+- Add more unit tests
+
+**Bug fixes**
+
+- Fix SEO for static page titles
+- Fix TouristicContentParser deletion having type1/2 with same values
+- Fix serialization of MultiPolygon sensitive areas
 
 
 2.29.12 (2019-10-23)

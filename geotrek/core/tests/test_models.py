@@ -8,9 +8,9 @@ from django.contrib.gis.geos import LineString
 from django.db import IntegrityError
 
 from geotrek.common.utils import dbnow
-from geotrek.authent.factories import UserFactory
+from geotrek.authent.factories import StructureFactory, UserFactory
 from geotrek.authent.models import Structure
-from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory)
+from geotrek.core.factories import (ComfortFactory, PathFactory, StakeFactory, TrailFactory)
 from geotrek.core.models import Path
 
 
@@ -45,9 +45,8 @@ class PathTest(TestCase):
         self.assertEqual(len(Structure.objects.all()), 2)
         self.assertEqual(len(Path.objects.all()), 2)
 
-        self.assertEqual(Path.in_structure.for_user(user)[0], Path.for_user(user)[0])
-        self.assertTrue(p1 in Path.in_structure.for_user(user))
-        self.assertFalse(p2 in Path.in_structure.for_user(user))
+        self.assertTrue(p1 in Path.objects.filter(structure=user.profile.structure))
+        self.assertFalse(p2 in Path.objects.filter(structure=user.profile.structure))
 
         # Change user structure on-the-fly
         profile = user.profile
@@ -55,8 +54,8 @@ class PathTest(TestCase):
         profile.save()
 
         self.assertEqual(user.profile.structure.name, "other")
-        self.assertFalse(p1 in Path.in_structure.for_user(user))
-        self.assertTrue(p2 in Path.in_structure.for_user(user))
+        self.assertFalse(p1 in Path.objects.filter(structure=user.profile.structure))
+        self.assertTrue(p2 in Path.objects.filter(structure=user.profile.structure))
 
     def test_dates(self):
         t1 = dbnow()
@@ -207,3 +206,14 @@ class PathGeometryTest(TestCase):
         path_snapped.geom = old_geom
         path_snapped.save()
         self.assertEqual(path_snapped.geom.coords, old_geom.coords)
+
+
+class ComfortTest(TestCase):
+    def test_name_with_structure(self):
+        structure = StructureFactory.create(name="structure")
+        comfort = ComfortFactory.create(comfort="comfort", structure=structure)
+        self.assertEqual("comfort (structure)", str(comfort))
+
+    def test_name_without_structure(self):
+        comfort = ComfortFactory.create(comfort="comfort")
+        self.assertEqual("comfort", str(comfort))

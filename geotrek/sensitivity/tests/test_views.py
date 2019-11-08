@@ -9,7 +9,7 @@ from geotrek.authent.factories import StructureFactory, UserProfileFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.trekking.tests import TrekkingManagerTest
 from geotrek.common.tests import TranslationResetMixin
-from geotrek.sensitivity.factories import SensitiveAreaFactory
+from geotrek.sensitivity.factories import SensitiveAreaFactory, MultiPolygonSensitiveAreaFactory
 
 
 class SensitiveAreaViewsSameStructureTests(AuthentFixturesTest):
@@ -220,3 +220,28 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
         )
         response = self.client.get(url)
         self.assertEqual(response.json()['count'], 1)
+
+    def test_multipolygon(self):
+        sensitivearea = MultiPolygonSensitiveAreaFactory.create()
+        expected_geom = {
+            u'type': u'MultiPolygon',
+            u'coordinates': [
+                [[
+                    [3.0000000000000004, 46.499999999999936],
+                    [3.0000000000000004, 46.500027013495476],
+                    [3.000039118674989, 46.50002701348879],
+                    [3.0000391186556095, 46.49999999999324],
+                    [3.0000000000000004, 46.499999999999936],
+                ]],
+                [[
+                    [3.000130395734028, 46.50009004491022],
+                    [3.000130395798627, 46.50011705840534],
+                    [3.0001695145382152, 46.50011705835403],
+                    [3.000169514454236, 46.50009004485892],
+                    [3.000130395734028, 46.50009004491022],
+                ]]
+            ],
+        }
+        url = '/api/v2/sensitivearea/{pk}/?format=json&period=ignore&language=en'.format(pk=sensitivearea.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.json()['geometry'], expected_geom)

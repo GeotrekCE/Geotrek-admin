@@ -73,7 +73,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                               help_text=_(u"Best way to go"))
     disabled_infrastructure = models.TextField(verbose_name=_(u"Disabled infrastructure"), db_column='handicap',
                                                blank=True, help_text=_(u"Any specific infrastructure"))
-    duration = models.FloatField(verbose_name=_(u"Duration"), default=0, blank=True, db_column='duree',
+    duration = models.FloatField(verbose_name=_(u"Duration"), null=True, blank=True, db_column='duree',
                                  help_text=_(u"In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"),
                                  validators=[MinValueValidator(0)])
     is_park_centered = models.BooleanField(verbose_name=_(u"Is in the midst of the park"), db_column='coeur',
@@ -672,6 +672,9 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
 
     # Override default manager
     objects = Topology.get_manager_cls(POIManager)()
+
+    # Do no check structure when selecting POIs to exclude
+    check_structure_in_forms = False
 
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.type)
