@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.29.15.dev0
+2.29.15 (2019-11-12)
 --------------------
 
 **Bug fixes**
 
-- 
+- Fix install (use a version of venusian that is compatible with Python 2)
 
 
 2.29.14 (2019-11-04)
