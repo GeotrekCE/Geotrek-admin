@@ -17,7 +17,7 @@
               {% if aggr.start_position == 0.0 or aggr.start_position == 1.0 %}
                 ↦ {{ aggr.end_meter }}m
               {% else %}
-                {% if aggr.end_position == 1.0 or aggr.end_position == 1.0 %}
+                {% if aggr.end_position == 0.0 or aggr.end_position == 1.0 %}
                   {{ aggr.start_meter }}m ⇥
                 {% else %}
                    {{ aggr.start_meter }}m ⇢ {{ aggr.end_meter }}m
