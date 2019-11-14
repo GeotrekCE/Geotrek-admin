@@ -47,3 +47,4 @@ coverage==4.5.3
 # prod
 gunicorn
 raven
+venusian==1.2.0
