@@ -16,9 +16,9 @@ class TrekRelationshipsTestCase(TestCase):
         TrekRelationshipFactory(trek_a=self.trek2, trek_b=self.trek3)
 
     def test_related_treks_symetries(self):
-        self.assertItemsEqual(self.trek1.related.all(), [self.trek2])
-        self.assertItemsEqual(self.trek2.related.all(), [self.trek1, self.trek3])
-        self.assertItemsEqual(self.trek3.related.all(), [self.trek2])
+        self.assertCountEqual(self.trek1.related.all(), [self.trek2])
+        self.assertCountEqual(self.trek2.related.all(), [self.trek1, self.trek3])
+        self.assertCountEqual(self.trek3.related.all(), [self.trek2])
 
     def test_symetrical_relationships(self):
         relations_1 = TrekRelationship.objects.filter(Q(trek_a=self.trek1) | Q(trek_b=self.trek1))

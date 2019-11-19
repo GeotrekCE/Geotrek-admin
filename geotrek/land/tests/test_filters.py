@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from django.test import TestCase
 
 # Make sure dynamic filters are set up when testing

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import json
 import shutil
@@ -51,11 +50,11 @@ class FlatPageFormTest(TestCase):
 class FlatPageModelTest(TestCase):
     def test_slug_is_taken_from_title(self):
         fp = FlatPageFactory(title="C'est pour toi")
-        self.assertEquals(fp.slug, 'cest-pour-toi')
+        self.assertEqual(fp.slug, 'cest-pour-toi')
 
     def test_target_is_all_by_default(self):
         fp = FlatPageFactory()
-        self.assertEquals(fp.target, 'all')
+        self.assertEqual(fp.target, 'all')
 
     def test_publication_date_is_filled_if_published(self):
         fp = FlatPageFactory()
@@ -108,7 +107,7 @@ class FlatPageMediaTest(TestCase):
         self.assertEqual(page.parse_media(), [])
 
     def test_media_returns_all_images_attributes(self):
-        html = u"""
+        html = """
         <h1>One page</h1>
         <body><p>Yéâh</p>
         <img src="/media/image1.png" title="Image 1" alt="image-1"/>
@@ -132,7 +131,7 @@ class AdminSiteTest(TestCase):
     def test_flatpages_are_registered(self):
         self.login()
         response = self.client.get('/admin/flatpages/flatpage/')
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_flatpages_are_translatable(self):
         self.login()
@@ -153,20 +152,20 @@ class RESTViewsTest(TestCase):
 
     def test_records_list(self):
         response = self.client.get('/api/en/flatpages.json')
-        self.assertEquals(response.status_code, 200)
-        records = json.loads(response.content)
-        self.assertEquals(len(records), 10)
+        self.assertEqual(response.status_code, 200)
+        records = response.json()
+        self.assertEqual(len(records), 10)
 
     def test_serialized_attributes(self):
         response = self.client.get('/api/en/flatpages.json')
-        records = json.loads(response.content)
+        records = response.json()
         record = records[0]
-        self.assertEquals(
+        self.assertEqual(
             sorted(record.keys()),
-            sorted([u'content', u'external_url', u'id', u'last_modified',
-                    u'media', u'portal', u'publication_date', u'published',
-                    u'published_status', u'slug', u'source', u'target',
-                    u'title']))
+            sorted(['content', 'external_url', 'id', 'last_modified',
+                    'media', 'portal', 'publication_date', 'published',
+                    'published_status', 'slug', 'source', 'target',
+                    'title']))
 
 
 class SyncTestPortal(TestCase):
@@ -196,8 +195,8 @@ class SyncTestPortal(TestCase):
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             with open(os.path.join('tmp', 'api', lang, 'flatpages.geojson'), 'r') as f:
                 flatpages = json.load(f)
-                self.assertEquals(len(flatpages),
-                                  FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
+                self.assertEqual(len(flatpages),
+                                 FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
 
     def test_sync_filtering_sources(self):
         '''
@@ -208,9 +207,9 @@ class SyncTestPortal(TestCase):
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             with open(os.path.join('tmp', 'api', lang, 'flatpages.geojson'), 'r') as f:
                 flatpages = json.load(f)
-                self.assertEquals(len(flatpages),
-                                  FlatPage.objects.filter(source__name__in=[self.source_a.name, ],
-                                                          **{'published_{}'.format(lang): True}).count())
+                self.assertEqual(len(flatpages),
+                                 FlatPage.objects.filter(source__name__in=[self.source_a.name, ],
+                                                         **{'published_{}'.format(lang): True}).count())
 
     def test_sync_filtering_portal(self):
         '''
@@ -220,10 +219,10 @@ class SyncTestPortal(TestCase):
                                 portal=self.portal_b.name, skip_tiles=True, verbosity=0)
         with open(os.path.join('tmp', 'api/fr/flatpages.geojson'), 'r') as f_file:
             flatpages = json.load(f_file)
-            self.assertEquals(len(flatpages), 0)
+            self.assertEqual(len(flatpages), 0)
         with open(os.path.join('tmp', 'api/en/flatpages.geojson'), 'r') as f_file:
             flatpages = json.load(f_file)
-            self.assertEquals(len(flatpages), 3)
+            self.assertEqual(len(flatpages), 3)
 
     @classmethod
     def tearDownClass(cls):

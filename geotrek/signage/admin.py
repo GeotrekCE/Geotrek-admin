@@ -1,5 +1,3 @@
-# -*- encoding: UTF-8 -*-
-
 from django.contrib import admin
 
 from geotrek.signage.models import SignageType, Color, Sealing, Direction, BladeType

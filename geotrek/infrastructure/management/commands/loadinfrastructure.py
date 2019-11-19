@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import os.path
 
 from django.contrib.gis.gdal import DataSource
@@ -87,33 +85,33 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.ERROR(
                         "Field '{}' not found in data source.".format(field_infrastructure_type)))
                     self.stdout.write(self.style.ERROR(
-                        u"Set it with --type-field, or set a default value with --type-default"))
+                        "Set it with --type-field, or set a default value with --type-default"))
                     break
                 if (field_infrastructure_category and field_infrastructure_category not in available_fields)\
                         or (not field_infrastructure_category and not options.get('category_default')):
                     self.stdout.write(self.style.ERROR(
                         "Field '{}' not found in data source.".format(field_infrastructure_category)))
                     self.stdout.write(self.style.ERROR(
-                        u"Change your --category-field option"))
+                        "Change your --category-field option"))
                     break
                 if (field_name and field_name not in available_fields)\
                         or (not field_name and not options.get('name_default')):
                     self.stdout.write(self.style.ERROR(
                         "Field '{}' not found in data source.".format(field_name)))
                     self.stdout.write(self.style.ERROR(
-                        u"Set it with --name-field, or set a default value with --name-default"))
+                        "Set it with --name-field, or set a default value with --name-default"))
                     break
                 if field_condition_type and field_condition_type not in available_fields:
                     self.stdout.write(self.style.ERROR(
                         "Field '{}' not found in data source.".format(field_condition_type)))
                     self.stdout.write(self.style.ERROR(
-                        u"Change your --condition-field option"))
+                        "Change your --condition-field option"))
                     break
                 if field_structure_type and field_structure_type not in available_fields:
                     self.stdout.write(self.style.ERROR(
                         "Field '{}' not found in data source.".format(field_structure_type)))
                     self.stdout.write(self.style.ERROR(
-                        u"Change your --structure-field option"))
+                        "Change your --structure-field option"))
                     break
                 elif not field_structure_type and not structure_default:
                     structure = default_structure()
@@ -121,15 +119,15 @@ class Command(BaseCommand):
                     try:
                         structure = Structure.objects.get(name=structure_default)
                         if verbosity > 0:
-                            self.stdout.write(u"Infrastructures will be linked to {}".format(structure))
+                            self.stdout.write("Infrastructures will be linked to {}".format(structure))
                     except Structure.DoesNotExist:
-                        self.stdout.write(u"Structure {} set in options doesn't exist".format(structure_default))
+                        self.stdout.write("Structure {} set in options doesn't exist".format(structure_default))
                         break
                 if field_description and field_description not in available_fields:
                     self.stdout.write(self.style.ERROR(
                         "Field '{}' not found in data source.".format(field_description)))
                     self.stdout.write(self.style.ERROR(
-                        u"Change your --description-field option"))
+                        "Change your --description-field option"))
                     break
 
                 if field_implantation_year and field_implantation_year not in available_fields:
@@ -143,14 +141,14 @@ class Command(BaseCommand):
                     self.stdout.write(
                         self.style.ERROR("Field '{}' not found in data source.".format(field_eid)))
                     self.stdout.write(self.style.ERROR(
-                        u"Change your --eid-field option"))
+                        "Change your --eid-field option"))
                     break
 
                 for feature in layer:
                     feature_geom = feature.geom
                     name = feature.get(field_name) if field_name in available_fields else options.get('name_default')
                     if feature_geom.geom_type == 'MultiPoint':
-                        self.stdout.write(self.style.NOTICE(u"This object is a MultiPoint : %s" % name))
+                        self.stdout.write(self.style.NOTICE("This object is a MultiPoint : %s" % name))
                         if len(feature_geom) < 2:
                             feature_geom = feature_geom[0].geos
                         else:
@@ -180,10 +178,10 @@ class Command(BaseCommand):
 
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
-                self.stdout.write(self.style.NOTICE(u"{} objects created.".format(self.counter)))
+                self.stdout.write(self.style.NOTICE("{} objects created.".format(self.counter)))
 
         except Exception:
-            self.stdout.write(self.style.ERROR(u"An error occured, rolling back operations."))
+            self.stdout.write(self.style.ERROR("An error occured, rolling back operations."))
             transaction.savepoint_rollback(sid)
             raise
 
@@ -193,14 +191,14 @@ class Command(BaseCommand):
         infra_type, created = InfrastructureType.objects.get_or_create(label=type, type=category,
                                                                        structure=structure if use_structure else None)
         if created and verbosity:
-            self.stdout.write(u"- InfrastructureType '{}' created".format(infra_type))
+            self.stdout.write("- InfrastructureType '{}' created".format(infra_type))
 
         if condition:
             condition_type, created = InfrastructureCondition.objects.get_or_create(
                 label=condition,
                 structure=structure if use_structure else None)
             if created and verbosity:
-                self.stdout.write(u"- Condition Type '{}' created".format(condition_type))
+                self.stdout.write("- Condition Type '{}' created".format(condition_type))
         else:
             condition_type = None
 
@@ -219,7 +217,7 @@ class Command(BaseCommand):
                     defaults=fields_without_eid
                 )
                 if verbosity > 0 and not created:
-                    self.stdout.write(u"Update : %s with eid %s" % (name, eid))
+                    self.stdout.write("Update : %s with eid %s" % (name, eid))
             else:
                 infra = Infrastructure.objects.create(**fields_without_eid)
         if settings.TREKKING_TOPOLOGY_ENABLED:

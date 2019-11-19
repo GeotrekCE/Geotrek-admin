@@ -229,7 +229,7 @@ class APIAccessTestCase(BaseApiTest):
         features = json_response.get('features')
         ids = [features[i].get('properties').get('id') for i in range(len(features))]
         pks_expected = [self.trek.pk, self.trek_parent.pk, self.trek_child_published_2.pk, self.trek_child_published.pk]
-        self.assertItemsEqual(ids, pks_expected)
+        self.assertCountEqual(ids, pks_expected)
         # test dim 2 ok
         self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')),
                          2)

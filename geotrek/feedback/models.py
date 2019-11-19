@@ -1,5 +1,5 @@
 import logging
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 
 from django.conf import settings
 from django.db import models
@@ -23,25 +23,25 @@ logger = logging.getLogger(__name__)
 class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
     """ User reports, mainly submitted via *Geotrek-rando*.
     """
-    name = models.CharField(verbose_name=_(u"Name"), max_length=256)
-    email = models.EmailField(verbose_name=_(u"Email"))
+    name = models.CharField(verbose_name=_("Name"), max_length=256)
+    email = models.EmailField(verbose_name=_("Email"))
     comment = models.TextField(blank=True,
                                default="",
-                               verbose_name=_(u"Comment"))
+                               verbose_name=_("Comment"))
     category = models.ForeignKey('ReportCategory',
                                  null=True,
                                  blank=True,
                                  default=None,
-                                 verbose_name=_(u"Category"))
+                                 verbose_name=_("Category"))
     status = models.ForeignKey('ReportStatus',
                                null=True,
                                blank=True,
                                default=None,
-                               verbose_name=_(u"Status"))
+                               verbose_name=_("Status"))
     geom = gis_models.PointField(null=True,
                                  blank=True,
                                  default=None,
-                                 verbose_name=_(u"Location"),
+                                 verbose_name=_("Location"),
                                  srid=settings.SRID)
     context_content_type = models.ForeignKey(ContentType,
                                              null=True,
@@ -57,23 +57,23 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
 
     class Meta:
         db_table = 'f_t_signalement'
-        verbose_name = _(u"Report")
-        verbose_name_plural = _(u"Reports")
+        verbose_name = _("Report")
+        verbose_name_plural = _("Reports")
         ordering = ['-date_insert']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     @property
     def name_display(self):
-        return u'<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
-                                                                  self.get_detail_url(),
-                                                                  self,
-                                                                  self)
+        return '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
+                                                                 self.get_detail_url(),
+                                                                 self,
+                                                                 self)
 
     @classmethod
     def get_create_label(cls):
-        return _(u"Add a new feedback")
+        return _("Add a new feedback")
 
     @property
     def geom_wgs84(self):
@@ -98,26 +98,26 @@ def on_report_saved(sender, instance, created, **kwargs):
 
 
 class ReportCategory(models.Model):
-    category = models.CharField(verbose_name=_(u"Category"),
+    category = models.CharField(verbose_name=_("Category"),
                                 max_length=128)
 
     class Meta:
         db_table = 'f_b_categorie'
-        verbose_name = _(u"Category")
-        verbose_name_plural = _(u"Categories")
+        verbose_name = _("Category")
+        verbose_name_plural = _("Categories")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.category
 
 
 class ReportStatus(models.Model):
-    status = models.CharField(verbose_name=_(u"Status"),
+    status = models.CharField(verbose_name=_("Status"),
                               max_length=128)
 
     class Meta:
         db_table = 'f_b_status'
-        verbose_name = _(u"Status")
-        verbose_name_plural = _(u"Status")
+        verbose_name = _("Status")
+        verbose_name_plural = _("Status")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.status

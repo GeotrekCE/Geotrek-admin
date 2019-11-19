@@ -1,4 +1,3 @@
-import json
 from unittest import skipIf
 
 from django.test import TestCase
@@ -30,9 +29,9 @@ class SimpleGraph(TestCase):
 
         def gen_random_point():
             """Return unique (non-conflicting) point"""
-            return ((0., x + 1.) for x in xrange(10, 100))
+            return ((0., x + 1.) for x in range(10, 100))
 
-        r_point = gen_random_point().next
+        r_point = gen_random_point().__next__
 
         e_1_2 = PathFactory(geom=LineString(p_1_1, r_point(), p_2_2))
         e_2_3 = PathFactory(geom=LineString(p_2_2, r_point(), p_3_3))
@@ -62,16 +61,16 @@ class SimpleGraph(TestCase):
 
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        graph = json.loads(response.content)
+        graph = response.json()
         self.assertDictEqual({'edges': {}, 'nodes': {}}, graph)
 
     def test_json_graph_simple(self):
         path = PathFactory(geom=LineString((0, 0), (1, 1)))
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        graph = json.loads(response.content)
-        self.assertDictEqual({'edges': {str(path.pk): {u'id': path.pk, u'length': 1.4142135623731, u'nodes_id': [1, 2]}},
-                              'nodes': {u'1': {u'2': path.pk}, u'2': {u'1': path.pk}}}, graph)
+        graph = response.json()
+        self.assertDictEqual({'edges': {str(path.pk): {'id': path.pk, 'length': 1.4142135623731, 'nodes_id': [1, 2]}},
+                              'nodes': {'1': {'2': path.pk}, '2': {'1': path.pk}}}, graph)
 
     def test_json_graph_headers(self):
         """

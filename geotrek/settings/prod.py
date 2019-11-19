@@ -28,7 +28,8 @@ LOGGING['loggers']['mapentity']['handlers'].append('logfile')
 # Optimizations
 # ..........................
 
-DATABASES['default']['CONN_MAX_AGE'] = 600
+# https://github.com/celery/celery/issues/4878
+# DATABASES['default']['CONN_MAX_AGE'] = 600
 
 # Template caching is not compatible with MAPENTITY_CONFIG['MAPENTITY_WEASYPRINT'] = False
 # TEMPLATES[1]['OPTIONS']['loaders'] = (

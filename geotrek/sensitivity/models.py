@@ -17,15 +17,15 @@ from geotrek.common.utils import intersecting, classproperty
 
 
 class SportPractice(models.Model):
-    name = models.CharField(max_length=250, db_column='nom', verbose_name=_(u"Name"))
+    name = models.CharField(max_length=250, db_column='nom', verbose_name=_("Name"))
 
     class Meta:
         ordering = ['name']
         db_table = 's_b_pratique_sportive'
-        verbose_name = _(u"Sport practice")
-        verbose_name_plural = _(u"Sport practices")
+        verbose_name = _("Sport practice")
+        verbose_name_plural = _("Sport practices")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -33,74 +33,74 @@ class Species(OptionalPictogramMixin):
     SPECIES = 1
     REGULATORY = 2
 
-    name = models.CharField(max_length=250, db_column='nom', verbose_name=_(u"Name"))
-    period01 = models.BooleanField(default=False, db_column='periode01', verbose_name=_(u"January"))
-    period02 = models.BooleanField(default=False, db_column='periode02', verbose_name=_(u"February"))
-    period03 = models.BooleanField(default=False, db_column='periode03', verbose_name=_(u"March"))
-    period04 = models.BooleanField(default=False, db_column='periode04', verbose_name=_(u"April"))
-    period05 = models.BooleanField(default=False, db_column='periode05', verbose_name=_(u"May"))
-    period06 = models.BooleanField(default=False, db_column='periode06', verbose_name=_(u"June"))
-    period07 = models.BooleanField(default=False, db_column='periode07', verbose_name=_(u"July"))
-    period08 = models.BooleanField(default=False, db_column='periode08', verbose_name=_(u"August"))
-    period09 = models.BooleanField(default=False, db_column='periode09', verbose_name=_(u"September"))
-    period10 = models.BooleanField(default=False, db_column='periode10', verbose_name=_(u"October"))
-    period11 = models.BooleanField(default=False, db_column='periode11', verbose_name=_(u"November"))
-    period12 = models.BooleanField(default=False, db_column='periode12', verbose_name=_(u"Decembre"))
+    name = models.CharField(max_length=250, db_column='nom', verbose_name=_("Name"))
+    period01 = models.BooleanField(default=False, db_column='periode01', verbose_name=_("January"))
+    period02 = models.BooleanField(default=False, db_column='periode02', verbose_name=_("February"))
+    period03 = models.BooleanField(default=False, db_column='periode03', verbose_name=_("March"))
+    period04 = models.BooleanField(default=False, db_column='periode04', verbose_name=_("April"))
+    period05 = models.BooleanField(default=False, db_column='periode05', verbose_name=_("May"))
+    period06 = models.BooleanField(default=False, db_column='periode06', verbose_name=_("June"))
+    period07 = models.BooleanField(default=False, db_column='periode07', verbose_name=_("July"))
+    period08 = models.BooleanField(default=False, db_column='periode08', verbose_name=_("August"))
+    period09 = models.BooleanField(default=False, db_column='periode09', verbose_name=_("September"))
+    period10 = models.BooleanField(default=False, db_column='periode10', verbose_name=_("October"))
+    period11 = models.BooleanField(default=False, db_column='periode11', verbose_name=_("November"))
+    period12 = models.BooleanField(default=False, db_column='periode12', verbose_name=_("Decembre"))
     practices = models.ManyToManyField(SportPractice, db_table='s_r_espece_pratique_sportive',
-                                       verbose_name=_(u"Sport practices"))
+                                       verbose_name=_("Sport practices"))
     url = models.URLField(blank=True, verbose_name="URL")
-    radius = models.IntegerField(db_column='rayon', blank=True, null=True, verbose_name=_(u"Bubble radius"),
-                                 help_text=_(u"meters"))
-    category = models.IntegerField(verbose_name=_(u"Category"), db_column='categorie', editable=False, default=SPECIES,
-                                   choices=((SPECIES, pgettext_lazy(u"Singular", u"Species")),
-                                            (REGULATORY, _(u"Regulatory"))))
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True,
+    radius = models.IntegerField(db_column='rayon', blank=True, null=True, verbose_name=_("Bubble radius"),
+                                 help_text=_("meters"))
+    category = models.IntegerField(verbose_name=_("Category"), db_column='categorie', editable=False, default=SPECIES,
+                                   choices=((SPECIES, pgettext_lazy("Singular", "Species")),
+                                            (REGULATORY, _("Regulatory"))))
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True,
                            db_column='id_externe')
 
     class Meta:
         ordering = ['name']
         db_table = 's_b_espece_ou_suite_zone_regl'
-        verbose_name = pgettext_lazy(u"Singular", u"Species")
-        verbose_name_plural = _(u"Species")
+        verbose_name = pgettext_lazy("Singular", "Species")
+        verbose_name_plural = _("Species")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def pretty_period(self):
-        return u", ".join([unicode(self._meta.get_field('period{:02}'.format(p)).verbose_name)
-                           for p in range(1, 13)
-                           if getattr(self, 'period{:02}'.format(p))])
+        return ", ".join([str(self._meta.get_field('period{:02}'.format(p)).verbose_name)
+                          for p in range(1, 13)
+                          if getattr(self, 'period{:02}'.format(p))])
 
     def pretty_practices(self):
-        return u", ".join([unicode(practice) for practice in self.practices.all()])
+        return ", ".join([str(practice) for practice in self.practices.all()])
 
 
 class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
                     AddPropertyMixin):
     geom = models.GeometryField(srid=settings.SRID)
-    species = models.ForeignKey(Species, verbose_name=_(u"Sensitive area"), db_column='espece',
+    species = models.ForeignKey(Species, verbose_name=_("Sensitive area"), db_column='espece',
                                 on_delete=models.PROTECT)
-    published = models.BooleanField(verbose_name=_(u"Published"), default=False,
-                                    help_text=_(u"Online"), db_column='public')
-    publication_date = models.DateField(verbose_name=_(u"Publication date"),
+    published = models.BooleanField(verbose_name=_("Published"), default=False,
+                                    help_text=_("Online"), db_column='public')
+    publication_date = models.DateField(verbose_name=_("Publication date"),
                                         null=True, blank=True, editable=False,
                                         db_column='date_publication')
     description = models.TextField(verbose_name=_("Description"), blank=True)
     contact = models.TextField(verbose_name=_("Contact"), blank=True)
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True,
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True,
                            db_column='id_externe')
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
 
     class Meta:
         db_table = 's_t_zone_sensible'
-        verbose_name = _(u"Sensitive area")
-        verbose_name_plural = _(u"Sensitive areas")
+        verbose_name = _("Sensitive area")
+        verbose_name_plural = _("Sensitive areas")
         permissions = (
             ("import_sensitivearea", "Can import Sensitive area"),
         )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.species.name
 
     @property
@@ -156,12 +156,12 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
 
     @property
     def species_display(self):
-        s = u'<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
-                                                              self.get_detail_url(),
-                                                              self.species.name,
-                                                              self.species.name)
+        s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
+                                                             self.get_detail_url(),
+                                                             self.species.name,
+                                                             self.species.name)
         if self.published:
-            s = u'<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
+            s = '<span class="badge badge-success" title="%s">&#x2606;</span> ' % _("Published") + s
         return s
 
     @property
@@ -205,43 +205,43 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from geotrek.core.models import Topology
-    Topology.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _(u"Sensitive areas"))
-    Topology.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _(u"Published sensitive areas"))
+    Topology.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _("Sensitive areas"))
+    Topology.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _("Published sensitive areas"))
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     from geotrek.trekking import models as trekking_models
-    SensitiveArea.add_property('pois', lambda self: intersecting(trekking_models.POI, self, 0), _(u"POIs"))
-    SensitiveArea.add_property('treks', lambda self: intersecting(trekking_models.Trek, self, 0), _(u"Treks"))
-    SensitiveArea.add_property('services', lambda self: intersecting(trekking_models.Service, self, 0), _(u"Services"))
+    SensitiveArea.add_property('pois', lambda self: intersecting(trekking_models.POI, self, 0), _("POIs"))
+    SensitiveArea.add_property('treks', lambda self: intersecting(trekking_models.Trek, self, 0), _("Treks"))
+    SensitiveArea.add_property('services', lambda self: intersecting(trekking_models.Service, self, 0), _("Services"))
 
 if 'geotrek.diving' in settings.INSTALLED_APPS:
     from geotrek.diving.models import Dive
-    Dive.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _(u"Sensitive areas"))
-    Dive.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _(u"Published sensitive areas"))
-    SensitiveArea.add_property('dives', lambda self: intersecting(Dive, self, 0), _(u"Dives"))
+    Dive.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _("Sensitive areas"))
+    Dive.add_property('published_sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _("Published sensitive areas"))
+    SensitiveArea.add_property('dives', lambda self: intersecting(Dive, self, 0), _("Dives"))
     SensitiveArea.add_property('published_dives',
                                lambda self: intersecting(Dive, self, 0).filter(published=True),
-                               _(u"Published dives"))
+                               _("Published dives"))
 
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     from geotrek.tourism import models as tourism_models
 
-    tourism_models.TouristicContent.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _(u"Sensitive areas"))
+    tourism_models.TouristicContent.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _("Sensitive areas"))
     tourism_models.TouristicContent.add_property('published_sensitive_areas',
-                                                 lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _(u"Published sensitive areas"))
-    tourism_models.TouristicEvent.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _(u"Sensitive areas"))
+                                                 lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _("Published sensitive areas"))
+    tourism_models.TouristicEvent.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False), _("Sensitive areas"))
     tourism_models.TouristicEvent.add_property('published_sensitive_areas',
-                                               lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _(u"Published sensitive areas"))
+                                               lambda self: intersecting(SensitiveArea, self, settings.SENSITIVE_AREA_INTERSECTION_MARGIN, False).filter(published=True), _("Published sensitive areas"))
 
-    SensitiveArea.add_property('touristic_contents', lambda self: intersecting(tourism_models.TouristicContent, self, 0), _(u"Touristic contents"))
+    SensitiveArea.add_property('touristic_contents', lambda self: intersecting(tourism_models.TouristicContent, self, 0), _("Touristic contents"))
     SensitiveArea.add_property('published_touristic_contents', lambda self: intersecting(tourism_models.TouristicContent, self, 0).filter(published=True),
-                               _(u"Published touristic contents"))
-    SensitiveArea.add_property('touristic_events', lambda self: intersecting(tourism_models.TouristicEvent, self, 0), _(u"Touristic events"))
+                               _("Published touristic contents"))
+    SensitiveArea.add_property('touristic_events', lambda self: intersecting(tourism_models.TouristicEvent, self, 0), _("Touristic events"))
     SensitiveArea.add_property('published_touristic_events',
                                lambda self: intersecting(tourism_models.TouristicEvent, self, 0).filter(published=True),
-                               _(u"Published touristic events"))
+                               _("Published touristic events"))
 
-SensitiveArea.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, 0), _(u"Sensitive areas"))
+SensitiveArea.add_property('sensitive_areas', lambda self: intersecting(SensitiveArea, self, 0), _("Sensitive areas"))
 SensitiveArea.add_property('published_sensitive_areas',
                            lambda self: intersecting(SensitiveArea, self, 0).filter(published=True),
-                           _(u"Published sensitive areas"))
+                           _("Published sensitive areas"))

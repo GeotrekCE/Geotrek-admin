@@ -22,8 +22,8 @@ etc/settings.ini:
 	chmod -f 600 etc/settings.ini
 
 bin/python:
-	virtualenv .
-	bin/pip install -U setuptools==38.7.0 zc.buildout==2.11.1
+	virtualenv -p python3 .
+	bin/pip install -U setuptools==41.6.0 zc.buildout==2.13.2
 	mkdir -p lib/src
 	mkdir -p lib/eggs
 

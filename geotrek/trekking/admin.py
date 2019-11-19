@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from django import forms
 from django.conf import settings
 from django.db import transaction
@@ -118,7 +117,7 @@ class ServiceTypeAdmin(TranslationAdmin):
 
     def practices_display(self, obj):
         return ', '.join([practice.name for practice in obj.practices.all()])
-    practices_display.short_description = _(u"Practices")
+    practices_display.short_description = _("Practices")
 
 
 # Register previously defined modeladmins

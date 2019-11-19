@@ -1,5 +1,3 @@
-# -*- encoding: UTF-8 -*-
-
 import json
 import os
 import mock
@@ -52,16 +50,16 @@ class SyncTest(TranslationResetMixin, TestCase):
                 with open(os.path.join('tmp', 'api', 'en', 'touristiccontents.geojson'), 'r') as f:
                     # 2 contents
                     tcontents = json.load(f)
-                    self.assertEquals(len(tcontents['features']), 2)
+                    self.assertEqual(len(tcontents['features']), 2)
 
                 with open(os.path.join('tmp', 'api', 'en', 'touristicevents.geojson'), 'r') as f:
                     #  only 1 event
                     tevents = json.load(f)
-                    self.assertEquals(len(tevents['features']), 1)
+                    self.assertEqual(len(tevents['features']), 1)
 
                 with open(os.path.join('tmp', 'api', 'en', 'touristiccategories.json'), 'r') as f:
                     tcategories = json.load(f)
-                    self.assertEquals(len(tcategories), 2)
+                    self.assertEqual(len(tcategories), 2)
 
     def test_sync_portal_filtering(self):
 
@@ -73,16 +71,16 @@ class SyncTest(TranslationResetMixin, TestCase):
         with open(os.path.join('tmp', 'api', 'en', 'touristiccontents.geojson'), 'r') as f:
             tcontents = json.load(f)
             # 1 content on portal b
-            self.assertEquals(len(tcontents['features']), 1)
+            self.assertEqual(len(tcontents['features']), 1)
 
         with open(os.path.join('tmp', 'api', 'en', 'touristicevents.geojson'), 'r') as f:
             tevents = json.load(f)
             # 2 events on portal b
-            self.assertEquals(len(tevents['features']), 2)
+            self.assertEqual(len(tevents['features']), 2)
 
         with open(os.path.join('tmp', 'api', 'en', 'touristiccategories.json'), 'r') as f:
             tevents = json.load(f)
-            self.assertEquals(len(tevents), 2)
+            self.assertEqual(len(tevents), 2)
 
     def test_sync_trek_zip_content(self):
         """
@@ -101,7 +99,7 @@ class SyncTest(TranslationResetMixin, TestCase):
                                     skip_profile_png=True,
                                     skip_pdf=True,
                                     skip_dem=True,
-                                    content_categories=u"1,2",
+                                    content_categories="1,2",
                                     verbosity=0)
 
         for lang in settings.MODELTRANSLATION_LANGUAGES:
@@ -121,22 +119,22 @@ class SyncTest(TranslationResetMixin, TestCase):
 
                 self.assertIn(path_touristevents_geojson,
                               file_list,
-                              msg=u"Unable to find {file} in {lang}/global.zip".format(file=path_touristevents_geojson,
-                                                                                       lang=lang))
-                read_content = json.loads(zipf.read(path_touristevents_geojson))
+                              msg="Unable to find {file} in {lang}/global.zip".format(file=path_touristevents_geojson,
+                                                                                      lang=lang))
+                read_content = json.loads(zipf.read(path_touristevents_geojson).decode())
                 self.assertIn('features', read_content)
 
                 self.assertIn(path_touristcontents_geojson,
                               file_list,
-                              msg=u"Unable to find {file} in {lang}/global.zip".format(file=path_touristcontents_geojson,
-                                                                                       lang=lang))
-                read_content = json.loads(zipf.read(path_touristcontents_geojson))
+                              msg="Unable to find {file} in {lang}/global.zip".format(file=path_touristcontents_geojson,
+                                                                                      lang=lang))
+                read_content = json.loads(zipf.read(path_touristcontents_geojson).decode())
                 self.assertIn('features', read_content)
 
                 self.assertIn(path_touristcategories_json,
                               file_list,
-                              msg=u"Unable to find {file} in {lang}/global.zip".format(file=path_touristcategories_json,
-                                                                                       lang=lang))
+                              msg="Unable to find {file} in {lang}/global.zip".format(file=path_touristcategories_json,
+                                                                                      lang=lang))
 
     def tearDown(self):
         shutil.rmtree('tmp')

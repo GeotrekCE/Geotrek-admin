@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import factory
 
 from django.contrib.auth.models import Permission
@@ -16,16 +14,16 @@ class SportPracticeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.SportPractice
 
-    name = factory.Sequence(lambda n: u"Practice %s" % n)
+    name = factory.Sequence(lambda n: "Practice %s" % n)
 
 
 class SpeciesFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Species
 
-    name = factory.Sequence(lambda n: u"Species %s" % n)
+    name = factory.Sequence(lambda n: "Species %s" % n)
     pictogram = dummy_filefield_as_sequence('species-%s.png')
-    url = factory.Sequence(lambda n: u"http://url%s.com" % n)
+    url = factory.Sequence(lambda n: "http://url%s.com" % n)
     period06 = True
     period07 = True
     category = models.Species.SPECIES

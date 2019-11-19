@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
 import datetime
-import json
 
 from django.conf import settings
 from django.test import TestCase
@@ -23,7 +21,7 @@ class InfrastructureTest(TestCase):
         infra = InfrastructureFactory.create(no_path=True)
         infra.add_path(path=p)
 
-        self.assertItemsEqual(p.infrastructures, [infra])
+        self.assertCountEqual(p.infrastructures, [infra])
 
 
 class InfrastructureViewsTest(CommonTest):
@@ -56,10 +54,10 @@ class InfrastructureViewsTest(CommonTest):
         infratype = InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING, structure=None)
         response = self.client.get(self.model.get_add_url())
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('form' in response.context)
+        self.assertIn('form', response.context)
         form = response.context['form']
         type = form.fields['type']
-        self.assertTrue((infratype.pk, unicode(infratype)) in type.choices)
+        self.assertTrue((infratype.pk, str(infratype)) in type.choices)
 
     def test_no_pictogram(self):
         self.modelfactory = InfrastructureNoPictogramFactory
@@ -88,7 +86,7 @@ class InfrastructureConditionTest(TestCase):
         it2 = InfrastructureConditionFactory.create()
         it3 = InfrastructureConditionFactory.create()
 
-        self.assertItemsEqual(InfrastructureCondition.objects.all(), [it1, it2, it3])
+        self.assertCountEqual(InfrastructureCondition.objects.all(), [it1, it2, it3])
 
 
 class InfraFilterTestMixin():
@@ -126,9 +124,9 @@ class InfraFilterTestMixin():
         response = self.client.get(model.get_jsonlist_url(), data)
 
         self.assertEqual(response.status_code, 200)
-        topo_pk = json.loads(response.content)['map_obj_pk']
+        topo_pk = response.json()['map_obj_pk']
 
-        self.assertItemsEqual(topo_pk, [good_topo.pk])
+        self.assertCountEqual(topo_pk, [good_topo.pk])
 
     def test_intervention_filter_has_correct_label(self):
         self.login()
@@ -153,9 +151,7 @@ class InfraFilterTestMixin():
         InterventionFactory(topology=topo_2, date=year_t)
 
         response = self.client.get(model.get_list_url())
-        self.assertContains(response, '<option value="2014">2014</option>')
-        response = str(response).replace('<option value="2014">2014</option>', '', 1)
-        self.assertFalse('<option value="2014">2014</option>' in response)
+        self.assertContains(response, '<option value="2014">2014</option>', count=1)
 
 
 class InfrastructureFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
@@ -178,8 +174,8 @@ class InfrastructureFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
         i2 = InfrastructureFactory.create(implantation_year=2016)
         response = self.client.get(model.get_list_url())
 
-        self.assertTrue('<option value="2015">2015</option>' in str(response))
-        self.assertTrue('<option value="2016">2016</option>' in str(response))
+        self.assertContains(response, '<option value="2015">2015</option>')
+        self.assertContains(response, '<option value="2016">2016</option>')
 
         self.assertTrue(i in filter.qs)
         self.assertFalse(i2 in filter.qs)
@@ -192,8 +188,8 @@ class InfrastructureFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
         i2 = InfrastructureFactory.create(implantation_year=2016)
         response = self.client.get(model.get_list_url())
 
-        self.assertTrue('<option value="2015">2015</option>' in str(response))
-        self.assertTrue('<option value="2016">2016</option>' in str(response))
+        self.assertContains(response, '<option value="2015">2015</option>')
+        self.assertContains(response, '<option value="2016">2016</option>')
 
         self.assertIn(i, filter.qs)
         self.assertIn(i2, filter.qs)

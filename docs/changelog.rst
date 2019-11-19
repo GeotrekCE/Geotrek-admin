@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.29.16.dev0
+2.30.0.dev0
 --------------------
 
-**Bug fixes**
+**Maintenance**
 
--
+- Move to Python 3.5
 
 
 2.29.15 (2019-11-12)

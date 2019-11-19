@@ -1,4 +1,4 @@
-from StringIO import StringIO
+from io import StringIO
 from unittest import skipIf
 
 from django.conf import settings
@@ -61,8 +61,8 @@ class RemoveDuplicatePathTest(TestCase):
         output = StringIO()
         call_command('remove_duplicate_paths', verbosity=2, stdout=output)
 
-        self.assertEquals(Path.objects.count(), 5)
-        self.assertItemsEqual((self.p1, self.p3, self.p5, self.p6, self.p8),
+        self.assertEqual(Path.objects.count(), 5)
+        self.assertCountEqual((self.p1, self.p3, self.p5, self.p6, self.p8),
                               list(Path.objects.all()))
         self.assertIn("Deleting path",
                       output.getvalue())
@@ -93,11 +93,11 @@ class RemoveDuplicatePathTest(TestCase):
         self.p4.save()
         call_command('remove_duplicate_paths', verbosity=2, stdout=output)
 
-        self.assertEquals(Path.include_invisible.count(), 5)
-        self.assertEquals(Path.objects.count(), 4)
-        self.assertItemsEqual((self.p2, self.p3, self.p5, self.p6, self.p8),
+        self.assertEqual(Path.include_invisible.count(), 5)
+        self.assertEqual(Path.objects.count(), 4)
+        self.assertCountEqual((self.p2, self.p3, self.p5, self.p6, self.p8),
                               list(Path.include_invisible.all()))
-        self.assertItemsEqual((self.p2, self.p5, self.p6, self.p8),
+        self.assertCountEqual((self.p2, self.p5, self.p6, self.p8),
                               list(Path.objects.all()))
         self.assertIn("Deleting path",
                       output.getvalue())
@@ -112,19 +112,18 @@ class LoadPathsCommandTest(TestCase):
         self.structure = Structure.objects.create(name='huh')
 
     def test_load_paths_without_file(self):
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='Error: too few arguments'):
             call_command('loadpaths')
-        self.assertEqual(u'Error: too few arguments', e.exception.message)
 
     @override_settings(SRID=4326, SPATIAL_EXTENT=(5, 10.0, 5, 11))
     def test_load_paths_out_of_spatial_extent(self):
         call_command('loadpaths', self.filename, srid=4326, verbosity=0)
-        self.assertEquals(Path.objects.count(), 0)
+        self.assertEqual(Path.objects.count(), 0)
 
     @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, -1, 1, 5))
     def test_load_paths_within_spatial_extent(self):
         call_command('loadpaths', self.filename, srid=4326, verbosity=0)
-        self.assertEquals(Path.objects.count(), 1)
+        self.assertEqual(Path.objects.count(), 1)
         value = Path.objects.first()
         self.assertEqual(value.name, 'lulu')
         self.assertEqual(value.structure, self.structure)
@@ -134,7 +133,7 @@ class LoadPathsCommandTest(TestCase):
         output = StringIO()
         call_command('loadpaths', self.filename, srid=4326, verbosity=2, comment=['comment', 'foo'], stdout=output)
         output = output.getvalue()
-        self.assertEquals(Path.objects.count(), 1)
+        self.assertEqual(Path.objects.count(), 1)
         value = Path.objects.first()
         self.assertEqual(value.name, 'lulu')
         self.assertEqual(value.comments, 'Comment 2</br>foo2')
@@ -147,7 +146,7 @@ class LoadPathsCommandTest(TestCase):
         call_command('loadpaths', self.filename, '-i', srid=4326, verbosity=2, stdout=output)
         output = output.getvalue()
         self.assertIn('All paths in DataSource will be linked to the structure : %s' % self.structure.name, output)
-        self.assertEquals(Path.objects.count(), 1)
+        self.assertEqual(Path.objects.count(), 1)
         path = Path.objects.first()
         self.assertIn('Create path with pk : %s' % path.pk, output)
         value = Path.objects.first()
@@ -161,7 +160,7 @@ class LoadPathsCommandTest(TestCase):
                      stdout=output)
         output = output.getvalue()
         self.assertIn('All paths in DataSource will be linked to the structure : %s' % self.structure.name, output)
-        self.assertEquals(Path.objects.count(), 2)
+        self.assertEqual(Path.objects.count(), 2)
         paths = Path.objects.all()
         self.assertIn('Create path with pk : %s' % paths[0].pk, output)
         self.assertIn('Create path with pk : %s' % paths[1].pk, output)
@@ -174,25 +173,21 @@ class LoadPathsCommandTest(TestCase):
         output = StringIO()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'point.geojson')
         call_command('loadpaths', filename, structure=self.structure.name, srid=4326, verbosity=2, stdout=output)
-        self.assertIn("Feature FID 0 in Layer<OGRGeoJSON>'s geometry is not a Linestring", output.getvalue())
+        self.assertIn("Feature FID 0 in Layer<point>'s geometry is not a Linestring", output.getvalue())
 
     def test_load_paths_fail_bad_srid(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'bad_srid.geojson')
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='SRID is not well configurate, change/add option srid'):
             call_command('loadpaths', filename, verbosity=0)
-        self.assertEqual('SRID is not well configurate, change/add option srid', e.exception.message)
 
     def test_load_paths_with_bad_structure(self):
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg="Structure does not match with instance's structures"):
             call_command('loadpaths', self.filename, structure='gr', verbosity=0)
-        self.assertIn("Structure does not match with instance's structures", e.exception.message)
 
     def test_load_paths_with_multiple_structure(self):
         Structure.objects.create(name='other_structure')
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg="There are more than 1 structure and you didn't define the option structure\nUse --structure to define it"):
             call_command('loadpaths', self.filename, verbosity=0)
-        self.assertIn("There are more than 1 structure and you didn't define the option structure\n"
-                      "Use --structure to define it", e.exception.message)
 
     @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, 0, 4, 2))
     def test_load_paths_dry(self):

@@ -1,5 +1,3 @@
-# -*- encoding: UTF-8 -
-
 import logging
 import filecmp
 import os
@@ -51,7 +49,7 @@ class Command(BaseCommand):
 
     def sync_view(self, lang, view, name, url='/', params=None, headers={}, zipfile=None, fix2028=False, **kwargs):
         if self.verbosity == 2:
-            self.stdout.write(u"\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=name), ending="")
+            self.stdout.write("\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=name), ending="")
             self.stdout.flush()
         fullname = os.path.join(self.tmp_root, name)
         self.mkdirs(fullname)
@@ -65,22 +63,22 @@ class Command(BaseCommand):
         except Exception as e:
             self.successfull = False
             if self.verbosity == 2:
-                self.stdout.write(u"\x1b[3D\x1b[31mfailed ({})\x1b[0m".format(e))
+                self.stdout.write("\x1b[3D\x1b[31mfailed ({})\x1b[0m".format(e))
             return
         if response.status_code != 200:
             self.successfull = False
             if self.verbosity == 2:
-                self.stdout.write(u"\x1b[3D\x1b[31;1mfailed (HTTP {code})\x1b[0m".format(code=response.status_code))
+                self.stdout.write("\x1b[3D\x1b[31;1mfailed (HTTP {code})\x1b[0m".format(code=response.status_code))
             return
-        f = open(fullname, 'w')
+        f = open(fullname, 'wb')
         if isinstance(response, StreamingHttpResponse):
             content = b''.join(response.streaming_content)
         else:
             content = response.content
         # Fix strange unicode characters 2028 and 2029 that make Geotrek-mobile crash
         if fix2028:
-            content = content.replace('\\u2028', '\\n')
-            content = content.replace('\\u2029', '\\n')
+            content = content.replace(b'\\u2028', b'\\n')
+            content = content.replace(b'\\u2029', b'\\n')
         f.write(content)
         f.close()
         oldfilename = os.path.join(self.dst_root, name)
@@ -89,10 +87,10 @@ class Command(BaseCommand):
             os.unlink(fullname)
             os.link(oldfilename, fullname)
             if self.verbosity == 2:
-                self.stdout.write(u"\x1b[3D\x1b[32munchanged\x1b[0m")
+                self.stdout.write("\x1b[3D\x1b[32munchanged\x1b[0m")
         else:
             if self.verbosity == 2:
-                self.stdout.write(u"\x1b[3D\x1b[32mgenerated\x1b[0m")
+                self.stdout.write("\x1b[3D\x1b[32mgenerated\x1b[0m")
 
     def sync_json(self, lang, viewset, name, zipfile=None, params={}, as_view_args=[], **kwargs):
         view = viewset.as_view(*as_view_args)
@@ -161,7 +159,7 @@ class Command(BaseCommand):
             zipfile.write(dst, os.path.join(url, name))
         if self.verbosity == 2:
             self.stdout.write(
-                u"\x1b[36m**\x1b[0m \x1b[1m{directory}/{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
+                "\x1b[36m**\x1b[0m \x1b[1m{directory}/{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
                     directory=directory, url=url, name=name))
 
     def sync_media_file(self, field, prefix=None, directory='', zipfile=None):
@@ -195,12 +193,12 @@ class Command(BaseCommand):
                 zipfile.write(dst, name)
             if self.verbosity == 2:
                 self.stdout.write(
-                    u"\x1b[36m**\x1b[0m \x1b[1m{directory}{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
+                    "\x1b[36m**\x1b[0m \x1b[1m{directory}{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(
                         directory=directory, url=obj.pictogram.url, name=name))
 
     def close_zip(self, zipfile, name):
         if self.verbosity == 2:
-            self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=name), ending="")
+            self.stdout.write("\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=name), ending="")
             self.stdout.flush()
 
         oldzipfilename = os.path.join(self.dst_root, name)
@@ -222,9 +220,9 @@ class Command(BaseCommand):
 
         if self.verbosity == 2:
             if uptodate:
-                self.stdout.write(u"\x1b[3D\x1b[32munchanged\x1b[0m")
+                self.stdout.write("\x1b[3D\x1b[32munchanged\x1b[0m")
             else:
-                self.stdout.write(u"\x1b[3D\x1b[32mzipped\x1b[0m")
+                self.stdout.write("\x1b[3D\x1b[32mzipped\x1b[0m")
 
     def sync_flatpage(self, lang):
         flatpages = FlatPage.objects.order_by('pk').filter(target__in=['mobile', 'all']).filter(
@@ -270,7 +268,7 @@ class Command(BaseCommand):
                     'name': self.celery_task.name,
                     'current': 10,
                     'total': 100,
-                    'infos': u"{}".format(_(u"Medias syncing ..."))
+                    'infos': "{}".format(_("Medias syncing ..."))
                 }
             )
         self.sync_global_media()
@@ -366,7 +364,7 @@ class Command(BaseCommand):
         """
 
         if self.verbosity == 2:
-            self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1mnolang/{}/tiles/\x1b[0m ...".format(trek.pk), ending="")
+            self.stdout.write("\x1b[36m**\x1b[0m \x1b[1mnolang/{}/tiles/\x1b[0m ...".format(trek.pk), ending="")
             self.stdout.flush()
 
         def _radius2bbox(lng, lat, radius):
@@ -389,18 +387,18 @@ class Command(BaseCommand):
         tiles.run()
 
         if self.verbosity == 2:
-            self.stdout.write(u"\x1b[3D\x1b[32mdownloaded\x1b[0m")
+            self.stdout.write("\x1b[3D\x1b[32mdownloaded\x1b[0m")
 
     def sync_global_tiles(self, zipfile):
         """ Add tiles to zipfile on the global extent.
         """
         if self.verbosity == 2:
-            self.stdout.write(u"\x1b[36m**\x1b[0m \x1b[1mtiles/\x1b[0m ...", ending="")
+            self.stdout.write("\x1b[36m**\x1b[0m \x1b[1mtiles/\x1b[0m ...", ending="")
             self.stdout.flush()
 
         global_extent = settings.LEAFLET_CONFIG['SPATIAL_EXTENT']
 
-        logger.info("Global extent is %s" % unicode(global_extent))
+        logger.info("Global extent is %s" % str(global_extent))
         logger.info("Build global tiles file...")
 
         tiles = ZipTilesBuilder(zipfile, prefix='tiles/', **self.builder_args)
@@ -409,7 +407,7 @@ class Command(BaseCommand):
         tiles.run()
 
         if self.verbosity == 2:
-            self.stdout.write(u"\x1b[3D\x1b[32mdownloaded\x1b[0m")
+            self.stdout.write("\x1b[3D\x1b[32mdownloaded\x1b[0m")
 
     def sync(self):
         step_value = int(50 / len(settings.MODELTRANSLATION_LANGUAGES))
@@ -425,7 +423,7 @@ class Command(BaseCommand):
                         'name': self.celery_task.name,
                         'current': current_value + step_value,
                         'total': 100,
-                        'infos': u"{} : {} ...".format(_(u"Language"), lang)
+                        'infos': "{} : {} ...".format(_("Language"), lang)
                     }
                 )
                 current_value = current_value + step_value
@@ -443,7 +441,7 @@ class Command(BaseCommand):
         existing = set([os.path.basename(p) for p in os.listdir(self.dst_root)])
         remaining = existing - {'nolang'} - set(settings.MODELTRANSLATION_LANGUAGES)
         if remaining:
-            raise CommandError(u"Destination directory contains extra data")
+            raise CommandError("Destination directory contains extra data")
 
     def rename_root(self):
         if os.path.exists(self.dst_root):

@@ -10,18 +10,16 @@ To import touristic content from APIDAE (ex-SITRA), create a ``bulkimport/parser
 
 ::
 
-    # -*- coding: utf8 -*-
-
     from geotrek.tourism.parsers import TouristicContentApidaeParser
 
     class HebergementParser(TouristicContentApidaeParser):
-        label = u"Hébergements"
+        label = "Hébergements"
         api_key = 'xxxxxxxx'
         project_id = 9999
         selection_id = 99999
-        category = u"Hébergement"
-        type1 = [u"Camping"]
-        type2 = [u"3 étoiles", "Tourisme et Handicap"]  # just remove this line if no type2
+        category = "Hébergement"
+        type1 = ["Camping"]
+        type2 = ["3 étoiles", "Tourisme et Handicap"]  # just remove this line if no type2
 
 Then set up appropriate values:
 
@@ -44,13 +42,11 @@ To import touristic content from Esprit Parc national database, create (or updat
 
 ::
 
-    # -*- coding: utf8 -*-
-
     from geotrek.tourism.parsers import EspritParcParser
 
     class XXXEspritParcParser(EspritParcParser):
-        label = u"Marque Esprit Parc"
-        url = u"http://gestion.espritparcnational.com/ws/?f=getProduitsSelonParc&codeParc=XXX"
+        label = "Marque Esprit Parc"
+        url = "http://gestion.espritparcnational.com/ws/?f=getProduitsSelonParc&codeParc=XXX"
 
 Then set up appropriate values:
 
@@ -68,16 +64,16 @@ If you use an url that filters a unique category, you can change its name. Examp
 ::
 
     class MielEspritParcParser(EspritParcParser):
-        label = u"Miel Esprit Parc national"
-        url = u"http://gestion.espritparcnational.com/ws/?f=getProduitsSelonParc&codeParc=XXX&typologie=API"
+        label = "Miel Esprit Parc national"
+        url = "http://gestion.espritparcnational.com/ws/?f=getProduitsSelonParc&codeParc=XXX&typologie=API"
         constant_fields = {
-            'category': u"GeotrekCategoryName",
+            'category': "GeotrekCategoryName",
             'published': True,
             'approved': True,
             'deleted': False,
         }
         m2m_constant_fields = {
-            'type1': [u"GeotrekTypeName"],
+            'type1': ["GeotrekTypeName"],
         }
 
 URL to get Esprit parc types: `http://gestion.espritparcnational.com/ws/?f=getTypologieProduits`.

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import logging
 import functools
 
@@ -53,19 +52,19 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=False,
                                            editable=False)
-    valid = models.BooleanField(db_column='valide', default=True, verbose_name=_(u"Validity"),
-                                help_text=_(u"Approved by manager"))
-    visible = models.BooleanField(db_column='visible', default=True, verbose_name=_(u"Visible"),
-                                  help_text=_(u"Shown in lists and maps"))
-    name = models.CharField(null=True, blank=True, max_length=250, db_column='nom', verbose_name=_(u"Name"),
-                            help_text=_(u"Official name"))
-    comments = models.TextField(null=True, blank=True, db_column='remarques', verbose_name=_(u"Comments"),
-                                help_text=_(u"Remarks"))
+    valid = models.BooleanField(db_column='valide', default=True, verbose_name=_("Validity"),
+                                help_text=_("Approved by manager"))
+    visible = models.BooleanField(db_column='visible', default=True, verbose_name=_("Visible"),
+                                  help_text=_("Shown in lists and maps"))
+    name = models.CharField(null=True, blank=True, max_length=250, db_column='nom', verbose_name=_("Name"),
+                            help_text=_("Official name"))
+    comments = models.TextField(null=True, blank=True, db_column='remarques', verbose_name=_("Comments"),
+                                help_text=_("Remarks"))
 
-    departure = models.CharField(null=True, blank=True, default="", max_length=250, db_column='depart', verbose_name=_(u"Departure"),
-                                 help_text=_(u"Departure place"))
-    arrival = models.CharField(null=True, blank=True, default="", max_length=250, db_column='arrivee', verbose_name=_(u"Arrival"),
-                               help_text=_(u"Arrival place"))
+    departure = models.CharField(null=True, blank=True, default="", max_length=250, db_column='depart', verbose_name=_("Departure"),
+                                 help_text=_("Departure place"))
+    arrival = models.CharField(null=True, blank=True, default="", max_length=250, db_column='arrivee', verbose_name=_("Arrival"),
+                               help_text=_("Arrival place"))
 
     comfort = models.ForeignKey('Comfort',
                                 null=True, blank=True, related_name='paths',
@@ -78,12 +77,12 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                               verbose_name=_("Maintenance stake"), db_column='enjeu')
     usages = models.ManyToManyField('Usage',
                                     blank=True, related_name="paths",
-                                    verbose_name=_(u"Usages"), db_table="l_r_troncon_usage")
+                                    verbose_name=_("Usages"), db_table="l_r_troncon_usage")
     networks = models.ManyToManyField('Network',
                                       blank=True, related_name="paths",
-                                      verbose_name=_(u"Networks"), db_table="l_r_troncon_reseau")
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
-    draft = models.BooleanField(db_column='brouillon', default=False, verbose_name=_(u"Draft"), db_index=True)
+                                      verbose_name=_("Networks"), db_table="l_r_troncon_reseau")
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
+    draft = models.BooleanField(db_column='brouillon', default=False, verbose_name=_("Draft"), db_index=True)
 
     objects = PathManager()
     include_invisible = PathInvisibleManager()
@@ -99,7 +98,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     @classproperty
     def length_2d_verbose_name(cls):
-        return _(u"2D Length")
+        return _("2D Length")
 
     @property
     def length_2d_display(self):
@@ -116,13 +115,13 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         line.style.linestyle.width = 4  # pixels
         return kml.kml()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name or _('path %d') % self.pk
 
     class Meta:
         db_table = 'l_t_troncon'
-        verbose_name = _(u"Path")
-        verbose_name_plural = _(u"Paths")
+        verbose_name = _("Path")
+        verbose_name_plural = _("Paths")
         permissions = MapEntityMixin._meta.permissions + [("add_draft_path", "Can add draft Path"),
                                                           ("change_draft_path", "Can change draft Path"),
                                                           ("delete_draft_path", "Can delete draft Path"),
@@ -216,14 +215,14 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     @property
     def name_display(self):
-        return u'<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
-                                                                  self.get_detail_url(),
-                                                                  self,
-                                                                  self)
+        return '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
+                                                                 self.get_detail_url(),
+                                                                 self,
+                                                                 self)
 
     @property
     def name_csv_display(self):
-        return unicode(self)
+        return str(self)
 
     @classproperty
     def trails_verbose_name(cls):
@@ -240,25 +239,25 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     def trails_csv_display(self):
         trails = getattr(self, '_trails', self.trails)
         if trails:
-            return ", ".join([unicode(t) for t in trails])
+            return ", ".join([str(t) for t in trails])
         return _("None")
 
     @property
     def usages_display(self):
-        return u", ".join([unicode(u) for u in self.usages.all()])
+        return ", ".join([str(u) for u in self.usages.all()])
 
     @property
     def networks_display(self):
-        return u", ".join([unicode(n) for n in self.networks.all()])
+        return ", ".join([str(n) for n in self.networks.all()])
 
     @classmethod
     def get_create_label(cls):
-        return _(u"Add a new path")
+        return _("Add a new path")
 
     @property
     def checkbox(self):
-        return u'<input type="checkbox" name="{}[]" value="{}" />'.format('path',
-                                                                          self.pk)
+        return '<input type="checkbox" name="{}[]" value="{}" />'.format('path',
+                                                                         self.pk)
 
     @classproperty
     def checkbox_verbose_name(cls):
@@ -318,9 +317,9 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
 
 class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDeleteMixin):
-    paths = models.ManyToManyField(Path, db_column='troncons', through='PathAggregation', verbose_name=_(u"Path"))
-    offset = models.FloatField(default=0.0, db_column='decallage', verbose_name=_(u"Offset"))  # in SRID units
-    kind = models.CharField(editable=False, verbose_name=_(u"Kind"), max_length=32)
+    paths = models.ManyToManyField(Path, db_column='troncons', through='PathAggregation', verbose_name=_("Path"))
+    offset = models.FloatField(default=0.0, db_column='decallage', verbose_name=_("Offset"))  # in SRID units
+    kind = models.CharField(editable=False, verbose_name=_("Kind"), max_length=32)
 
     # Override default manager
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
@@ -334,8 +333,8 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
 
     class Meta:
         db_table = 'e_t_evenement'
-        verbose_name = _(u"Topology")
-        verbose_name_plural = _(u"Topologies")
+        verbose_name = _("Topology")
+        verbose_name_plural = _("Topologies")
 
     def __init__(self, *args, **kwargs):
         super(Topology, self).__init__(*args, **kwargs)
@@ -352,7 +351,7 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
 
     @classproperty
     def length_2d_verbose_name(cls):
-        return _(u"2D Length")
+        return _("2D Length")
 
     @property
     def length_2d_display(self):
@@ -362,8 +361,8 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
     def KIND(cls):
         return cls._meta.object_name.upper()
 
-    def __unicode__(self):
-        return u"%s (%s)" % (_(u"Topology"), self.pk)
+    def __str__(self):
+        return "%s (%s)" % (_("Topology"), self.pk)
 
     def ispoint(self):
         if not settings.TREKKING_TOPOLOGY_ENABLED or not self.pk:
@@ -492,20 +491,20 @@ class PathAggregationManager(models.GeoManager):
 
 class PathAggregation(models.Model):
     path = models.ForeignKey(Path, null=False, db_column='troncon',
-                             verbose_name=_(u"Path"),
+                             verbose_name=_("Path"),
                              related_name="aggregations",
                              on_delete=models.DO_NOTHING)  # The CASCADE behavior is enforced at DB-level (see file ../sql/20_evenements_troncons.sql)
     topo_object = models.ForeignKey(Topology, null=False, related_name="aggregations",
-                                    db_column='evenement', verbose_name=_(u"Topology"))
-    start_position = models.FloatField(db_column='pk_debut', verbose_name=_(u"Start position"), db_index=True)
-    end_position = models.FloatField(db_column='pk_fin', verbose_name=_(u"End position"), db_index=True)
-    order = models.IntegerField(db_column='ordre', default=0, blank=True, null=True, verbose_name=_(u"Order"))
+                                    db_column='evenement', verbose_name=_("Topology"))
+    start_position = models.FloatField(db_column='pk_debut', verbose_name=_("Start position"), db_index=True)
+    end_position = models.FloatField(db_column='pk_fin', verbose_name=_("End position"), db_index=True)
+    order = models.IntegerField(db_column='ordre', default=0, blank=True, null=True, verbose_name=_("Order"))
 
     # Override default manager
     objects = PathAggregationManager()
 
-    def __unicode__(self):
-        return u"%s (%s-%s: %s - %s)" % (_("Path aggregation"), self.path.pk, self.path.name, self.start_position, self.end_position)
+    def __str__(self):
+        return "%s (%s-%s: %s - %s)" % (_("Path aggregation"), self.path.pk, self.path.name, self.start_position, self.end_position)
 
     @property
     def start_meter(self):
@@ -532,37 +531,37 @@ class PathAggregation(models.Model):
 
     class Meta:
         db_table = 'e_r_evenement_troncon'
-        verbose_name = _(u"Path aggregation")
-        verbose_name_plural = _(u"Path aggregations")
+        verbose_name = _("Path aggregation")
+        verbose_name_plural = _("Path aggregations")
         # Important - represent the order of the path in the Topology path list
         ordering = ['order', ]
 
 
 class PathSource(StructureOrNoneRelated):
 
-    source = models.CharField(verbose_name=_(u"Source"), max_length=50)
+    source = models.CharField(verbose_name=_("Source"), max_length=50)
 
     class Meta:
         db_table = 'l_b_source_troncon'
-        verbose_name = _(u"Path source")
-        verbose_name_plural = _(u"Path sources")
+        verbose_name = _("Path source")
+        verbose_name_plural = _("Path sources")
         ordering = ['source']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.source, self.structure.name)
+            return "{} ({})".format(self.source, self.structure.name)
         return self.source
 
 
 @functools.total_ordering
 class Stake(StructureOrNoneRelated):
 
-    stake = models.CharField(verbose_name=_(u"Stake"), max_length=50, db_column='enjeu')
+    stake = models.CharField(verbose_name=_("Stake"), max_length=50, db_column='enjeu')
 
     class Meta:
         db_table = 'l_b_enjeu'
-        verbose_name = _(u"Maintenance stake")
-        verbose_name_plural = _(u"Maintenance stakes")
+        verbose_name = _("Maintenance stake")
+        verbose_name_plural = _("Maintenance stakes")
         ordering = ['id']
 
     def __lt__(self, other):
@@ -574,87 +573,87 @@ class Stake(StructureOrNoneRelated):
         return isinstance(other, Stake) \
             and self.pk == other.pk
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.stake, self.structure.name)
+            return "{} ({})".format(self.stake, self.structure.name)
         return self.stake
 
 
 class Comfort(StructureOrNoneRelated):
 
-    comfort = models.CharField(verbose_name=_(u"Comfort"), max_length=50, db_column='confort')
+    comfort = models.CharField(verbose_name=_("Comfort"), max_length=50, db_column='confort')
 
     class Meta:
         db_table = 'l_b_confort'
-        verbose_name = _(u"Comfort")
-        verbose_name_plural = _(u"Comforts")
+        verbose_name = _("Comfort")
+        verbose_name_plural = _("Comforts")
         ordering = ['comfort']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.comfort, self.structure.name)
+            return "{} ({})".format(self.comfort, self.structure.name)
         return self.comfort
 
 
 class Usage(StructureOrNoneRelated):
 
-    usage = models.CharField(verbose_name=_(u"Usage"), max_length=50, db_column='usage')
+    usage = models.CharField(verbose_name=_("Usage"), max_length=50, db_column='usage')
 
     class Meta:
         db_table = 'l_b_usage'
-        verbose_name = _(u"Usage")
-        verbose_name_plural = _(u"Usages")
+        verbose_name = _("Usage")
+        verbose_name_plural = _("Usages")
         ordering = ['usage']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.usage, self.structure.name)
+            return "{} ({})".format(self.usage, self.structure.name)
         return self.usage
 
 
 class Network(StructureOrNoneRelated):
 
-    network = models.CharField(verbose_name=_(u"Network"), max_length=50, db_column='reseau')
+    network = models.CharField(verbose_name=_("Network"), max_length=50, db_column='reseau')
 
     class Meta:
         db_table = 'l_b_reseau'
-        verbose_name = _(u"Network")
-        verbose_name_plural = _(u"Networks")
+        verbose_name = _("Network")
+        verbose_name_plural = _("Networks")
         ordering = ['network']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.network, self.structure.name)
+            return "{} ({})".format(self.network, self.structure.name)
         return self.network
 
 
 class Trail(MapEntityMixin, Topology, StructureRelated):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
-    name = models.CharField(verbose_name=_(u"Name"), max_length=64, db_column='nom')
-    departure = models.CharField(verbose_name=_(u"Departure"), max_length=64, db_column='depart')
-    arrival = models.CharField(verbose_name=_(u"Arrival"), max_length=64, db_column='arrivee')
-    comments = models.TextField(default="", blank=True, verbose_name=_(u"Comments"), db_column='commentaire')
-    eid = models.CharField(verbose_name=_(u"External id"), max_length=1024, blank=True, null=True,
+    name = models.CharField(verbose_name=_("Name"), max_length=64, db_column='nom')
+    departure = models.CharField(verbose_name=_("Departure"), max_length=64, db_column='depart')
+    arrival = models.CharField(verbose_name=_("Arrival"), max_length=64, db_column='arrivee')
+    comments = models.TextField(default="", blank=True, verbose_name=_("Comments"), db_column='commentaire')
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True,
                            db_column='id_externe')
 
     class Meta:
         db_table = 'l_t_sentier'
-        verbose_name = _(u"Trail")
-        verbose_name_plural = _(u"Trails")
+        verbose_name = _("Trail")
+        verbose_name_plural = _("Trails")
         ordering = ['name']
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     @property
     def name_display(self):
-        return u'<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
-                                                                  self.get_detail_url(),
-                                                                  self,
-                                                                  self)
+        return '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
+                                                                 self.get_detail_url(),
+                                                                 self,
+                                                                 self)
 
     @classmethod
     def path_trails(cls, path):
@@ -672,5 +671,5 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
         return kml.kml()
 
 
-Path.add_property('trails', lambda self: Trail.path_trails(self), _(u"Trails"))
-Topology.add_property('trails', lambda self: Trail.overlapping(self), _(u"Trails"))
+Path.add_property('trails', lambda self: Trail.path_trails(self), _("Trails"))
+Topology.add_property('trails', lambda self: Trail.overlapping(self), _("Trails"))

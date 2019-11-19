@@ -1,6 +1,3 @@
-import sys
-from decimal import Decimal
-
 from django.utils.translation import ugettext_lazy as _
 
 from django_filters import RangeFilter, Filter
@@ -13,19 +10,11 @@ class OptionalRangeFilter(RangeFilter):
         self.field.fields[0].label = _('min %s') % self.field.label
         self.field.fields[1].label = _('max %s') % self.field.label
 
-    def filter(self, qs, value):
-        if value:
-            if value.start and not value.stop:
-                value = slice(value.start, Decimal(sys.maxint), value.step)
-            if not value.start and value.stop:
-                value = slice(Decimal(-(sys.maxint + 1)), value.stop, value.step)
-        return super(OptionalRangeFilter, self).filter(qs, value)
-
 
 class YearFilter(Filter):
     def do_filter(self, qs, year):
         return qs.filter(**{
-            '%s__year' % self.name: year,
+            '%s__year' % self.field_name: year,
         }).distinct()
 
     def filter(self, qs, value):
@@ -39,7 +28,7 @@ class YearFilter(Filter):
 class ValueFilter(Filter):
     def do_filter(self, qs, value):
         return qs.filter(**{
-            '%s' % self.name: value,
+            '%s' % self.field_name: value,
         }).distinct()
 
     def filter(self, qs, value):
@@ -52,11 +41,11 @@ class ValueFilter(Filter):
 
 class YearBetweenFilter(YearFilter):
     def __init__(self, *args, **kwargs):
-        assert len(kwargs['name']) == 2
+        assert len(kwargs['field_name']) == 2
         super(YearBetweenFilter, self).__init__(*args, **kwargs)
 
     def do_filter(self, qs, year):
-        begin, end = self.name
+        begin, end = self.field_name
         qs = qs.filter(**{
             '%s__lte' % begin: year,
             '%s__gte' % end: year,
