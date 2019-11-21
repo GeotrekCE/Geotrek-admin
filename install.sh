@@ -206,7 +206,7 @@ function check_postgres_connection {
 function minimum_system_dependencies {
     sudo apt-get update -qq
     echo_progress
-    sudo apt-get install -y -qq python3 unzip wget software-properties-common
+    sudo apt-get install -y -qq python3 unzip wget software-properties-common make
     echo_progress
     sudo apt-get install -y -qq git gettext build-essential python3-dev
     echo_progress
@@ -214,7 +214,8 @@ function minimum_system_dependencies {
 
 
 function geotrek_system_dependencies {
-    sudo apt-get install -y -q --no-upgrade gdal-bin libgdal-dev libssl-dev binutils libproj-dev
+    sudo apt-get install -y -q --no-upgrade gdal-bin libgdal-dev libssl-dev binutils libproj-dev \
+        fonts-dejavu-core fonts-liberation
     echo_progress
     # PostgreSQL client and headers
     sudo apt-get install -y -q --no-upgrade postgresql-client-$psql_version postgresql-server-dev-$psql_version
@@ -549,10 +550,14 @@ function geotrek_setup {
 
         # restart supervisor in case of xenial before 'make deploy'
         if [ $trusty -eq 1 ]; then
-            sudo service supervisor force-stop && sudo service supervisor stop && sudo service supervisor start
+            sudo service supervisor force-stop && sudo service supervisor stop
+            if [ $? -ne 0 ]; then
+                exit_error 10 "Could not stop supervisord !"
+            fi
         fi
+        sudo service supervisor start
         if [ $? -ne 0 ]; then
-            exit_error 10 "Could not restart supervisor !"
+            exit_error 10 "Could not start supervisord !"
         fi
 
         echo_progress
