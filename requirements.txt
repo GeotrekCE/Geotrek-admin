@@ -5,29 +5,28 @@ gdal==2.2.4 --global-option=build_ext --global-option="-I/usr/include/gdal/"
 -e git+https://github.com/makinacorpus/django-modeltranslation.git@master#egg=modeltranslation
 # leaflet must be place before mapentity to override its dependencies
 -e git+https://github.com/GeotrekCE/django-leaflet.git@0.19.0+geotrek4#egg=leaflet
-django-filter==1.1.0
-mapentity==4.4.16
+django-filter==2.2.0
+mapentity==6.0.3
 tif2geojson==0.1.3
 geojson==2.3.0
-celery==4.2.*
+celery==4.3.0
 django-celery-results==1.0.1
 psycopg2>=2.7,<2.8 --no-binary psycopg2
 simplekml==1.3.0
 redis==3.2.0
 xlrd==1.1.0
-appy==0.9.12
-landez==2.4.1
-WeasyPrint==0.41
+appy-python-3==2019.11.19
+landez==2.5.0
+WeasyPrint==50
 beautifulsoup4==4.6.0
 pygal==2.4.0
 django-extended-choices==1.3
 django-multiselectfield==0.1.5
 django-crispy-forms==1.7.2
 django-geojson==2.11.0
-django-appypod==1.0.0
+django-appypod==2.0.2
 django-embed-video==1.1.2
-django-weasyprint==0.1
-django-shapes==0.2.0
+django-weasyprint==0.5.4
 django-rest-swagger==2.2.*
 djangorestframework==3.8.*
 djangorestframework-gis==0.13
@@ -41,10 +40,11 @@ django-debug-toolbar==1.10.*
 django-extensions==2.1.*
 python-memcached==1.59
 cairocffi==0.9.0
-cairosvg==1.0.22
+cairosvg==2.4.2
 django-colorfield==0.1.15
 coverage==4.5.3
 # prod
 gunicorn
 raven
 venusian==1.2.0
+factory_boy==2.8.1
