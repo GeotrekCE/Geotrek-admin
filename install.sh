@@ -563,7 +563,7 @@ function geotrek_setup {
             # touch var/log/nginx-access.log
             # touch var/log/nginx-error.log
 			
-            sudo systemctl restart nginx
+            sudo service nginx restart
 
             if [ -f /etc/init/supervisor.conf ]; then
                 # Previous Geotrek naming
