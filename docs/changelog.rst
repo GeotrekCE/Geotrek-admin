@@ -5,9 +5,13 @@ CHANGELOG
 2.30.0.dev0
 --------------------
 
+**Breaking changes**
+
+- Remove support of Ubuntu 14.04 Trusty
+
 **Maintenance**
 
-- Move to Python 3.5
+- Move from Python 2 to Python 3
 
 
 2.29.15 (2019-11-12)

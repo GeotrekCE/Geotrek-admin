@@ -9,8 +9,7 @@ Requirements
 ------------
 
 * Ubuntu Server 18.04 LTS Bionic Beaver (http://releases.ubuntu.com/18.04/) or
-  Ubuntu Server 16.04 Xenial Xerus (http://releases.ubuntu.com/16.04/) or
-  Ubuntu Server 14.04 Trusty Tahr (http://releases.ubuntu.com/14.04/)
+  Ubuntu Server 16.04 Xenial Xerus (http://releases.ubuntu.com/16.04/)
 
 
 A first estimation of minimal required system resources are :

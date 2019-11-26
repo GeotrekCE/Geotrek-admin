@@ -470,9 +470,6 @@ function geotrek_setup {
 	
     echo_step "Install Geotrek python dependencies..."
 
-    if [ $trusty -eq 1 ]; then
-        echo -e "[versions]\nGDAL=1.10.0" > ./etc/gdal-version.ini
-    fi
     if [ $xenial -eq 1 ]; then
         echo -e "[versions]\nGDAL=1.11.2" > ./etc/gdal-version.ini
     fi
@@ -549,12 +546,6 @@ function geotrek_setup {
         echo_step "Generate services configuration files..."
 
         # restart supervisor in case of xenial before 'make deploy'
-        if [ $trusty -eq 1 ]; then
-            sudo service supervisor force-stop && sudo service supervisor stop
-            if [ $? -ne 0 ]; then
-                exit_error 10 "Could not stop supervisord !"
-            fi
-        fi
         sudo service supervisor start
         if [ $? -ne 0 ]; then
             exit_error 10 "Could not start supervisord !"
@@ -572,12 +563,7 @@ function geotrek_setup {
             # touch var/log/nginx-access.log
             # touch var/log/nginx-error.log
 			
-			# if 15.04 or higher
-			if [ $vivid -eq 1 -o $xenial -eq 1 ]; then
-                sudo systemctl restart nginx
-            else
-                sudo /etc/init.d/nginx restart
-            fi
+            sudo systemctl restart nginx
 
             if [ -f /etc/init/supervisor.conf ]; then
                 # Previous Geotrek naming
@@ -623,17 +609,10 @@ function geotrek_setup {
 
 precise=$(grep "Ubuntu 12.04" /etc/issue | wc -l)
 trusty=$(grep "Ubuntu 14.04" /etc/issue | wc -l)
-vivid=$(grep "Ubuntu 15.04" /etc/issue | wc -l)
 xenial=$(grep "Ubuntu 16.04" /etc/issue | wc -l)
 bionic=$(grep "Ubuntu 18.04" /etc/issue | wc -l)
 
-if [ $trusty -eq 1 ]; then
-    psql_version=9.3
-    pgis_version=2.1
-elif [ $vivid -eq 1 ]; then
-    psql_version=9.4
-    pgis_version=2.1
-elif [ $xenial -eq 1 ]; then
+if [ $xenial -eq 1 ]; then
     psql_version=9.5
     pgis_version=2.2
 elif [ $bionic -eq 1 ]; then
@@ -641,10 +620,12 @@ elif [ $bionic -eq 1 ]; then
     pgis_version=2.4
 fi
 
-if [ $trusty -eq 1 -o $vivid -eq 1 -o $xenial -eq 1 -o $bionic -eq 1 ] ; then
+if [ $xenial -eq 1 -o $bionic -eq 1 ] ; then
     geotrek_setup
 elif [ $precise -eq 1 ] ; then
     exit_error 5 "Support for Ubuntu Precise 12.04 was dropped. Upgrade your server first. Aborted."
+elif [ $trusty -eq 1 ] ; then
+    exit_error 5 "Support for Ubuntu Trusty 14.04 was dropped. Upgrade your server first. Aborted."
 else
     exit_error 5 "Unsupported operating system. Aborted."
 fi
