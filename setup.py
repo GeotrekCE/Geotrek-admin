@@ -1,5 +1,4 @@
-#!/usr/bin/python
-# -*- coding: utf8 -*-
+#!/usr/bin/python3
 import os
 from setuptools import setup, find_packages
 
@@ -41,6 +40,7 @@ setup(
         'requests[security]',
         'drf-extensions',
         'django-colorfield',
+        'factory_boy',
     ],
     license='BSD, see LICENSE file.',
     packages=find_packages(),

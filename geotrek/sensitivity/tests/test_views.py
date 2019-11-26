@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 
 from django.contrib.auth.models import User, Permission
@@ -17,11 +16,11 @@ class SensitiveAreaViewsSameStructureTests(AuthentFixturesTest):
         profile = UserProfileFactory.create(user__username='homer',
                                             user__password='dooh')
         user = profile.user
-        user.user_permissions.add(Permission.objects.get(codename=u"add_sensitivearea"))
-        user.user_permissions.add(Permission.objects.get(codename=u"change_sensitivearea"))
-        user.user_permissions.add(Permission.objects.get(codename=u"delete_sensitivearea"))
-        user.user_permissions.add(Permission.objects.get(codename=u"read_sensitivearea"))
-        user.user_permissions.add(Permission.objects.get(codename=u"export_sensitivearea"))
+        user.user_permissions.add(Permission.objects.get(codename="add_sensitivearea"))
+        user.user_permissions.add(Permission.objects.get(codename="change_sensitivearea"))
+        user.user_permissions.add(Permission.objects.get(codename="delete_sensitivearea"))
+        user.user_permissions.add(Permission.objects.get(codename="read_sensitivearea"))
+        user.user_permissions.add(Permission.objects.get(codename="export_sensitivearea"))
         self.client.login(username=user.username, password='dooh')
         self.area1 = SensitiveAreaFactory.create()
         structure = StructureFactory.create()
@@ -79,31 +78,31 @@ class BasicJSONAPITest(TranslationResetMixin, TrekkingManagerTest):
         self.species = self.sensitivearea.species
         self.pk = self.sensitivearea.pk
         self.expected_properties = {
-            u'publication_date': unicode(self.sensitivearea.publication_date.strftime('%Y-%m-%d')),
-            u'published': True,
-            u'description': u"Blabla",
-            u'contact': u'<a href="mailto:toto@tata.com">toto@tata.com</a>',
-            u'kml_url': u'/api/en/sensitiveareas/{pk}.kml'.format(pk=self.pk),
-            u'species': {
-                u"id": self.species.id,
-                u"name": self.species.name,
-                u'pictogram': os.path.join(settings.MEDIA_URL, self.species.pictogram.name),
-                u"period": [False, False, False, False, False, True, True, False, False, False, False, False],
-                u'practices': [
-                    {u'id': self.species.practices.all()[0].pk, u'name': self.species.practices.all()[0].name},
-                    {u'id': self.species.practices.all()[1].pk, u'name': self.species.practices.all()[1].name},
+            'publication_date': self.sensitivearea.publication_date.strftime('%Y-%m-%d'),
+            'published': True,
+            'description': "Blabla",
+            'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
+            'kml_url': '/api/en/sensitiveareas/{pk}.kml'.format(pk=self.pk),
+            'species': {
+                "id": self.species.id,
+                "name": self.species.name,
+                'pictogram': os.path.join(settings.MEDIA_URL, self.species.pictogram.name),
+                "period": [False, False, False, False, False, True, True, False, False, False, False, False],
+                'practices': [
+                    {'id': self.species.practices.all()[0].pk, 'name': self.species.practices.all()[0].name},
+                    {'id': self.species.practices.all()[1].pk, 'name': self.species.practices.all()[1].name},
                 ],
-                u'url': self.species.url,
+                'url': self.species.url,
             },
         }
         self.expected_geom = {
-            u'type': u'Polygon',
-            u'coordinates': [[
-                [3.0000000000000004, 46.49999999999995],
-                [3.0000000000000004, 46.50002701349549],
-                [3.0000391186749895, 46.5000270134888],
-                [3.00003911865561, 46.49999999999326],
-                [3.0000000000000004, 46.49999999999995],
+            'type': 'Polygon',
+            'coordinates': [[
+                [3.0000000000000004, 46.49999999999994],
+                [3.0000000000000004, 46.500027013495476],
+                [3.000039118674989, 46.50002701348879],
+                [3.0000391186556095, 46.49999999999324],
+                [3.0000000000000004, 46.49999999999994],
             ]],
         }
         self.expected_result = dict(self.expected_properties)
@@ -119,22 +118,22 @@ class BasicJSONAPITest(TranslationResetMixin, TrekkingManagerTest):
     def test_object(self):
         url = '/api/en/sensitiveareas/{pk}.json'.format(pk=self.pk)
         response = self.client.get(url)
-        self.assertJSONEqual(response.content, self.expected_result)
+        self.assertJSONEqual(response.content.decode(), self.expected_result)
 
     def test_list(self):
         url = '/api/en/sensitiveareas.json'
         response = self.client.get(url)
-        self.assertJSONEqual(response.content, [self.expected_result])
+        self.assertJSONEqual(response.content.decode(), [self.expected_result])
 
     def test_geo_object(self):
         url = '/api/en/sensitiveareas/{pk}.geojson'.format(pk=self.pk)
         response = self.client.get(url)
-        self.assertJSONEqual(response.content, self.expected_geo_result)
+        self.assertJSONEqual(response.content.decode(), self.expected_geo_result)
 
     def test_geo_list(self):
         url = '/api/en/sensitiveareas.geojson'
         response = self.client.get(url)
-        self.assertJSONEqual(response.content, {u'type': u'FeatureCollection', u'features': [self.expected_geo_result]})
+        self.assertJSONEqual(response.content.decode(), {'type': 'FeatureCollection', 'features': [self.expected_geo_result]})
 
 
 class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
@@ -146,72 +145,72 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
         self.species = self.sensitivearea.species
         self.pk = self.sensitivearea.pk
         self.expected_properties = {
-            u'create_datetime': unicode(self.sensitivearea.date_insert.isoformat().replace('+00:00', 'Z')),
-            u'update_datetime': unicode(self.sensitivearea.date_update.isoformat().replace('+00:00', 'Z')),
-            u'description': u"Blabla",
-            u"elevation": None,
-            u'contact': u'<a href="mailto:toto@tata.com">toto@tata.com</a>',
-            u'kml_url': u'http://testserver/api/en/sensitiveareas/{pk}.kml'.format(pk=self.pk),
-            u'info_url': self.species.url,
-            u'species_id': self.species.id,
-            u"name": self.species.name,
-            u"period": [False, False, False, False, False, True, True, False, False, False, False, False],
-            u'practices': [p.pk for p in self.species.practices.all()],
-            u'structure': u'PNX',
-            u'published': True,
+            'create_datetime': self.sensitivearea.date_insert.isoformat().replace('+00:00', 'Z'),
+            'update_datetime': self.sensitivearea.date_update.isoformat().replace('+00:00', 'Z'),
+            'description': "Blabla",
+            "elevation": None,
+            'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
+            'kml_url': 'http://testserver/api/en/sensitiveareas/{pk}.kml'.format(pk=self.pk),
+            'info_url': self.species.url,
+            'species_id': self.species.id,
+            "name": self.species.name,
+            "period": [False, False, False, False, False, True, True, False, False, False, False, False],
+            'practices': [p.pk for p in self.species.practices.all()],
+            'structure': 'PNX',
+            'published': True,
         }
         self.expected_geom = {
-            u'type': u'Polygon',
-            u'coordinates': [[
-                [3.0000000000000004, 46.49999999999995],
-                [3.0000000000000004, 46.50002701349549],
-                [3.0000391186749895, 46.5000270134888],
-                [3.00003911865561, 46.49999999999326],
-                [3.0000000000000004, 46.49999999999995],
+            'type': 'Polygon',
+            'coordinates': [[
+                [3.0000000000000004, 46.49999999999994],
+                [3.0000000000000004, 46.500027013495476],
+                [3.000039118674989, 46.50002701348879],
+                [3.0000391186556095, 46.49999999999324],
+                [3.0000000000000004, 46.49999999999994],
             ]],
         }
         self.expected_result = dict(self.expected_properties)
-        self.expected_result[u'id'] = self.pk
-        self.expected_result[u'geometry'] = self.expected_geom
-        self.expected_result[u'url'] = u'http://testserver/api/v2/sensitivearea/{}/?format=json'.format(self.pk)
+        self.expected_result['id'] = self.pk
+        self.expected_result['geometry'] = self.expected_geom
+        self.expected_result['url'] = 'http://testserver/api/v2/sensitivearea/{}/?format=json'.format(self.pk)
         self.expected_geo_result = {
-            u'bbox': [3.0, 46.49999999999325, 3.0000391186749886, 46.500027013495476],
-            u'geometry': self.expected_geom,
-            u'type': u'Feature',
-            u'id': self.pk,
-            u'properties': dict(self.expected_properties),
+            'bbox': [2.9999999999999996, 46.49999999999323, 3.000039118674988, 46.50002701349546],
+            'geometry': self.expected_geom,
+            'type': 'Feature',
+            'id': self.pk,
+            'properties': dict(self.expected_properties),
         }
-        self.expected_geo_result[u'properties'][u'url'] = u'http://testserver/api/v2/sensitivearea/{}/?format=geojson'.format(self.pk)
+        self.expected_geo_result['properties']['url'] = 'http://testserver/api/v2/sensitivearea/{}/?format=geojson'.format(self.pk)
 
     def test_object(self):
         url = '/api/v2/sensitivearea/{pk}/?format=json&period=ignore&language=en'.format(pk=self.pk)
         response = self.client.get(url)
-        self.assertJSONEqual(response.content, self.expected_result)
+        self.assertJSONEqual(response.content.decode(), self.expected_result)
 
     def test_list(self):
         url = '/api/v2/sensitivearea/?format=json&period=ignore&language=en'
         response = self.client.get(url)
-        self.assertJSONEqual(response.content, {
-            u'count': 1,
-            u'previous': None,
-            u'next': None,
-            u'results': [self.expected_result],
+        self.assertJSONEqual(response.content.decode(), {
+            'count': 1,
+            'previous': None,
+            'next': None,
+            'results': [self.expected_result],
         })
 
     def test_geo_object(self):
         url = '/api/v2/sensitivearea/{pk}/?format=geojson&period=ignore&language=en'.format(pk=self.pk)
         response = self.client.get(url)
-        self.assertJSONEqual(response.content, self.expected_geo_result)
+        self.assertJSONEqual(response.content.decode(), self.expected_geo_result)
 
     def test_geo_list(self):
         url = '/api/v2/sensitivearea/?format=geojson&period=ignore&language=en'
         response = self.client.get(url)
-        self.assertJSONEqual(response.content, {
-            u'count': 1,
-            u'next': None,
-            u'previous': None,
-            u'type': u'FeatureCollection',
-            u'features': [self.expected_geo_result]
+        self.assertJSONEqual(response.content.decode(), {
+            'count': 1,
+            'next': None,
+            'previous': None,
+            'type': 'FeatureCollection',
+            'features': [self.expected_geo_result]
         })
 
     def test_no_duplicates(self):
@@ -224,21 +223,21 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
     def test_multipolygon(self):
         sensitivearea = MultiPolygonSensitiveAreaFactory.create()
         expected_geom = {
-            u'type': u'MultiPolygon',
-            u'coordinates': [
+            'type': 'MultiPolygon',
+            'coordinates': [
                 [[
-                    [3.0000000000000004, 46.49999999999995],
-                    [3.0000000000000004, 46.50002701349549],
-                    [3.0000391186749895, 46.5000270134888],
-                    [3.00003911865561, 46.49999999999326],
-                    [3.0000000000000004, 46.49999999999995],
+                    [3.0000000000000004, 46.49999999999994],
+                    [3.0000000000000004, 46.500027013495476],
+                    [3.000039118674989, 46.50002701348879],
+                    [3.0000391186556095, 46.49999999999324],
+                    [3.0000000000000004, 46.49999999999994],
                 ]],
                 [[
-                    [3.0001303957340286, 46.50009004491023],
-                    [3.0001303957986276, 46.500117058405344],
-                    [3.0001695145382152, 46.500117058354036],
-                    [3.0001695144542366, 46.50009004485893],
-                    [3.0001303957340286, 46.50009004491023],
+                    [3.000130395734028, 46.50009004491022],
+                    [3.000130395798627, 46.50011705840534],
+                    [3.0001695145382152, 46.50011705835403],
+                    [3.000169514454236, 46.50009004485892],
+                    [3.000130395734028, 46.50009004491022],
                 ]]
             ],
         }

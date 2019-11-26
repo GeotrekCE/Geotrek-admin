@@ -1,7 +1,7 @@
 
 import os
 import re
-import ConfigParser
+import configparser
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -17,7 +17,7 @@ class EnvIniReader(object):
         self.default_section = 'settings'
         # read file
         self.path = path
-        self.ini = ConfigParser.ConfigParser()
+        self.ini = configparser.ConfigParser()
         self.ini.readfp(open(path))
 
     def get(self, name, default=empty, section=None, env=True):
@@ -30,7 +30,7 @@ class EnvIniReader(object):
         section = section or self.default_section
         try:
             return self.ini.get(section, name)
-        except (ConfigParser.NoOptionError, ConfigParser.NoSectionError):
+        except (configparser.NoOptionError, configparser.NoSectionError):
             pass
         # Nothing found, use default
         if default is not empty:

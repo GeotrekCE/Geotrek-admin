@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import json
 
 import datetime
@@ -19,7 +17,7 @@ class TouristicContentMixin(object):
     def get_to_delete_kwargs(self):
         # FIXME: use mapping if it exists
         kwargs = {}
-        for dst, val in self.constant_fields.iteritems():
+        for dst, val in self.constant_fields.items():
             field = self.model._meta.get_field(dst)
             if isinstance(field, models.ForeignKey):
                 natural_key = self.natural_keys[dst]
@@ -29,7 +27,7 @@ class TouristicContentMixin(object):
                     return None
             else:
                 kwargs[dst] = val
-        for dst, val in self.m2m_constant_fields.iteritems():
+        for dst, val in self.m2m_constant_fields.items():
             assert not self.separator or self.separator not in val
             field = self.model._meta.get_field(dst)
             natural_key = self.natural_keys[dst]
@@ -107,7 +105,7 @@ class ApidaeParser(AttachmentParserMixin, Parser):
             }
             response = requests.get(self.url, params={'query': json.dumps(params)})
             if response.status_code != 200:
-                msg = _(u"Failed to download {url}. HTTP status code {status_code}")
+                msg = _("Failed to download {url}. HTTP status code {status_code}")
                 raise GlobalImportError(msg.format(url=response.url, status_code=response.status_code))
             self.root = response.json()
             self.nb = int(self.root['numFound'])
@@ -121,7 +119,7 @@ class ApidaeParser(AttachmentParserMixin, Parser):
         return name
 
     def filter_eid(self, src, val):
-        return unicode(val)
+        return str(val)
 
     def filter_geom(self, src, val):
         lng, lat = val
@@ -238,7 +236,7 @@ class TouristicEventApidaeParser(ApidaeParser):
         (address1, address2, address3, zipCode, commune, comm) = val
         tel = self.filter_comm(comm, 201, multiple=True)
         if tel:
-            tel = u"Tél. " + tel
+            tel = "Tél. " + tel
         lines = [line for line in [
             address1,
             address2,
@@ -257,21 +255,21 @@ class TouristicEventApidaeParser(ApidaeParser):
     def filter_practical_info(self, src, val):
         (ouverture, capacite, tarifs, paiement, services, langues, localisation, datemodif, proprio) = val
         if ouverture:
-            ouverture = u"<b>Ouverture:</b><br>" + u"<br>".join(ouverture.splitlines()) + u"<br>"
+            ouverture = "<b>Ouverture:</b><br>" + "<br>".join(ouverture.splitlines()) + "<br>"
         if capacite:
-            capacite = u"<b>Capacité totale:</b><br>" + str(capacite) + u"<br>"
+            capacite = "<b>Capacité totale:</b><br>" + str(capacite) + "<br>"
         if tarifs:
-            tarifs = u"<b>Tarifs:</b><br>" + u"<br>".join(tarifs.splitlines()) + u"<br>"
+            tarifs = "<b>Tarifs:</b><br>" + "<br>".join(tarifs.splitlines()) + "<br>"
         if paiement:
-            paiement = u"<b>Modes de paiement:</b><br>" + ", ".join([i['libelleFr'] for i in paiement]) + u"<br>"
+            paiement = "<b>Modes de paiement:</b><br>" + ", ".join([i['libelleFr'] for i in paiement]) + "<br>"
         if services:
-            services = u"<b>Services:</b><br>" + ", ".join([i['libelleFr'] for i in services]) + u"<br>"
+            services = "<b>Services:</b><br>" + ", ".join([i['libelleFr'] for i in services]) + "<br>"
         if langues:
-            langues = u"<b>Langues Parlés:</b><br>" + ", ".join([i['libelleFr'] for i in langues]) + u"<br>"
+            langues = "<b>Langues Parlés:</b><br>" + ", ".join([i['libelleFr'] for i in langues]) + "<br>"
         if localisation:
-            localisation = u"<b>Accès:</b><br>" + u"<br>".join(localisation.splitlines()) + u"<br>"
+            localisation = "<b>Accès:</b><br>" + "<br>".join(localisation.splitlines()) + "<br>"
         datemodif = datetime.datetime.strptime(datemodif[:10], "%Y-%m-%d").strftime("%d/%m/%Y")
-        modif = u"<i>Fiche mise à jour par " + proprio + u" le " + datemodif + u"</i>"
+        modif = "<i>Fiche mise à jour par " + proprio + " le " + datemodif + "</i>"
         lines = [line for line in [
             ouverture,
             capacite,
@@ -399,7 +397,7 @@ class TouristicContentApidaeParser(TouristicContentMixin, ApidaeParser):
         (address1, address2, address3, zipCode, commune, comm) = val
         tel = self.filter_comm(comm, 201, multiple=True)
         if tel:
-            tel = u"Tél. " + tel
+            tel = "Tél. " + tel
         lines = [line for line in [
             address1,
             address2,
@@ -412,19 +410,19 @@ class TouristicContentApidaeParser(TouristicContentMixin, ApidaeParser):
     def filter_practical_info(self, src, val):
         (ouverture, capacite, tarifs, paiement, services, localisation, datemodif, proprio) = val
         if ouverture:
-            ouverture = u"<b>Ouverture:</b><br>" + u"<br>".join(ouverture.splitlines()) + u"<br>"
+            ouverture = "<b>Ouverture:</b><br>" + "<br>".join(ouverture.splitlines()) + "<br>"
         if capacite:
-            capacite = u"<b>Capacité totale:</b><br>" + str(capacite) + u"<br>"
+            capacite = "<b>Capacité totale:</b><br>" + str(capacite) + "<br>"
         if tarifs:
-            tarifs = u"<b>Tarifs:</b><br>" + u"<br>".join(tarifs.splitlines()) + u"<br>"
+            tarifs = "<b>Tarifs:</b><br>" + "<br>".join(tarifs.splitlines()) + "<br>"
         if paiement:
-            paiement = u"<b>Modes de paiement:</b><br>" + ", ".join([i['libelleFr'] for i in paiement]) + u"<br>"
+            paiement = "<b>Modes de paiement:</b><br>" + ", ".join([i['libelleFr'] for i in paiement]) + "<br>"
         if services:
-            services = u"<b>Services:</b><br>" + ", ".join([i['libelleFr'] for i in services]) + u"<br>"
+            services = "<b>Services:</b><br>" + ", ".join([i['libelleFr'] for i in services]) + "<br>"
         if localisation:
-            localisation = u"<b>Accès:</b><br>" + u"<br>".join(localisation.splitlines()) + u"<br>"
+            localisation = "<b>Accès:</b><br>" + "<br>".join(localisation.splitlines()) + "<br>"
         datemodif = datetime.datetime.strptime(datemodif[:10], "%Y-%m-%d").strftime("%d/%m/%Y")
-        modif = u"<i>Fiche mise à jour par " + proprio + u" le " + datemodif + u"</i>"
+        modif = "<i>Fiche mise à jour par " + proprio + " le " + datemodif + "</i>"
         lines = [line for line in [
             ouverture,
             capacite,
@@ -444,7 +442,7 @@ class TouristicContentApidaeParser(TouristicContentMixin, ApidaeParser):
 
 
 class HebergementsApidaeParser(TouristicContentApidaeParser):
-    category = u"Hébergements"
+    category = "Hébergements"
     m2m_fields = {
         'type1': 'informationsHebergementCollectif.hebergementCollectifType.libelleFr',
     }
@@ -522,7 +520,7 @@ class EspritParcParser(AttachmentParserMixin, Parser):
     def next_row(self):
         response = requests.get(self.url)
         if response.status_code != 200:
-            msg = _(u"Failed to download {url}. HTTP status code {status_code}")
+            msg = _("Failed to download {url}. HTTP status code {status_code}")
             raise GlobalImportError(msg.format(url=response.url,
                                                status_code=response.status_code))
 
@@ -536,12 +534,12 @@ class EspritParcParser(AttachmentParserMixin, Parser):
         return name
 
     def filter_eid(self, src, val):
-        return u"{}".format(val)
+        return "{}".format(val)
 
     def filter_contact(self, src, val):
         (address, zipCode, commune, telephone, gsm, fax, facebook, twitter) = val
-        cp_com = u' '.join([part for part in (zipCode, commune) if part])
-        return u'<br>'.join([part for part in (address, cp_com, telephone, gsm, fax, facebook, twitter) if part])
+        cp_com = ' '.join([part for part in (zipCode, commune) if part])
+        return '<br>'.join([part for part in (address, cp_com, telephone, gsm, fax, facebook, twitter) if part])
 
     def filter_geom(self, src, val):
         lng = val['lon']
@@ -566,7 +564,7 @@ class EspritParcParser(AttachmentParserMixin, Parser):
                 dst.append(TouristicContentType1.objects.get(category=self.obj.category, label=subval))
             except TouristicContentType1.DoesNotExist:
                 self.add_warning(
-                    _(u"Type 1 '{subval}' does not exist for category '{cat}'. Please add it").format(
+                    _("Type 1 '{subval}' does not exist for category '{cat}'. Please add it").format(
                         subval=subval, cat=self.obj.category.label))
         return dst
 
@@ -576,7 +574,7 @@ class EspritParcParser(AttachmentParserMixin, Parser):
             try:
                 dst.append(TouristicContentType2.objects.get(category=self.obj.category, label=subval))
             except TouristicContentType2.DoesNotExist:
-                self.add_warning(_(u"Type 2 '{subval}' does not exist for category '{cat}'. Please add it").format(
+                self.add_warning(_("Type 2 '{subval}' does not exist for category '{cat}'. Please add it").format(
                     subval=subval, cat=self.obj.category.label))
         return dst
 
@@ -655,27 +653,27 @@ class TouristicContentTourInSoftParser(TouristicContentMixin, TourInSoftParser):
 
         if langues:
             infos.append(
-                u"<strong>Langues parlées :</strong><br>"
-                + u"<br>".join(langues.split(self.separator))
+                "<strong>Langues parlées :</strong><br>"
+                + "<br>".join(langues.split(self.separator))
             )
 
         if periodes:
-            periode_infos = [u"<strong>Période d'ouverture :</strong>"]
+            periode_infos = ["<strong>Période d'ouverture :</strong>"]
             for periode in periodes.split(self.separator):
                 items = periode.split(self.separator2)
                 if len(items) >= 2 and items[0] and items[1]:
                     periode_infos.append(
-                        u"du %s au %s" % (items[0], items[1])
+                        "du %s au %s" % (items[0], items[1])
                     )
             infos.append("<br>".join(periode_infos))
 
         if equipements:
             infos.append(
-                u"<strong>Équipements :</strong><br>"
-                + u"<br>".join(equipements.split(self.separator))
+                "<strong>Équipements :</strong><br>"
+                + "<br>".join(equipements.split(self.separator))
             )
 
-        return u"<br><br>".join(infos)
+        return "<br><br>".join(infos)
 
 
 class TouristicContentTourInSoftParserV3(TouristicContentTourInSoftParser):
@@ -743,17 +741,17 @@ class TouristicEventTourInSoftParser(TourInSoftParser):
 
         if langues:
             infos.append(
-                u"<strong>Langues parlées :</strong><br>"
-                + u"<br>".join(langues.split(self.separator))
+                "<strong>Langues parlées :</strong><br>"
+                + "<br>".join(langues.split(self.separator))
             )
 
         if equipements:
             infos.append(
-                u"<strong>Équipements :</strong><br>"
-                + u"<br>".join(equipements.split(self.separator))
+                "<strong>Équipements :</strong><br>"
+                + "<br>".join(equipements.split(self.separator))
             )
 
-        return u"<br><br>".join(infos)
+        return "<br><br>".join(infos)
 
     def filter_begin_date(self, src, val):
         if val:

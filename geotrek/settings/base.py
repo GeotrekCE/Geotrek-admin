@@ -1,5 +1,3 @@
-# coding: utf-8
-
 import os
 import sys
 
@@ -263,7 +261,6 @@ PROJECT_APPS += (
     'django_filters',
     'tinymce',
     'geotrek.appconfig.EasyThumbnailsGeotrekConfig',  # easy_thumbnails
-    'shapes',
     'paperclip',
     'mapentity',
     'leaflet',  # After mapentity to allow it to patch settings
@@ -683,14 +680,14 @@ PASSWORD_HASHERS = [
 ]
 
 BLADE_CODE_TYPE = int
-BLADE_CODE_FORMAT = u"{signagecode}-{bladenumber}"
-LINE_CODE_FORMAT = u"{signagecode}-{bladenumber}-{linenumber}"
+BLADE_CODE_FORMAT = "{signagecode}-{bladenumber}"
+LINE_CODE_FORMAT = "{signagecode}-{bladenumber}-{linenumber}"
 SHOW_EXTREMITIES = False
 
-THUMBNAIL_COPYRIGHT_FORMAT = u""
+THUMBNAIL_COPYRIGHT_FORMAT = ""
 
 # If you want copyright added to your pictures, change THUMBNAIL_COPYRIGHT_FORMAT to this :
-# THUMBNAIL_COPYRIGHT_FORMAT = u"{title} {author}"
+# THUMBNAIL_COPYRIGHT_FORMAT = "{title} {author}"
 # You can also add legend
 
 THUMBNAIL_COPYRIGHT_SIZE = 15

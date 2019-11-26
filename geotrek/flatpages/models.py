@@ -28,15 +28,15 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
     Historically, we started static pages as static HTML files within
     *Geotrek-rando* folders.
     """
-    title = models.CharField(verbose_name=_(u'Title'), max_length=200,
+    title = models.CharField(verbose_name=_('Title'), max_length=200,
                              db_column='titre')
-    external_url = models.URLField(verbose_name=_(u'External URL'), blank=True,
+    external_url = models.URLField(verbose_name=_('External URL'), blank=True,
                                    db_column='url_externe', default='',
                                    help_text=_('Link to external website instead of HTML content'))
-    content = models.TextField(verbose_name=_(u'Content'), null=True, blank=True,
+    content = models.TextField(verbose_name=_('Content'), null=True, blank=True,
                                db_column='contenu',
                                help_text=_('HTML content'))
-    target = models.CharField(verbose_name=_(u'Target'), max_length=12, choices=FLATPAGES_TARGETS,
+    target = models.CharField(verbose_name=_('Target'), max_length=12, choices=FLATPAGES_TARGETS,
                               db_column='cible', default=FLATPAGES_TARGETS.ALL)
     source = models.ManyToManyField('common.RecordSource',
                                     blank=True, related_name='flatpages',
@@ -45,8 +45,8 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
                                     blank=True, related_name='flatpages',
                                     verbose_name=_("Portal"), db_table='t_r_page_portal')
     order = models.IntegerField(default=None, null=True, blank=True,
-                                help_text=_(u"ID order if blank", ),
-                                verbose_name=_(u"Order"))
+                                help_text=_("ID order if blank", ),
+                                verbose_name=_("Order"))
 
     @property
     def slug(self):
@@ -54,14 +54,14 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
 
     class Meta:
         db_table = 'p_t_page'
-        verbose_name = _(u'Flat page')
-        verbose_name_plural = _(u'Flat pages')
+        verbose_name = _('Flat page')
+        verbose_name_plural = _('Flat pages')
         ordering = ['order', 'id']
         permissions = (
             ("read_flatpage", "Can read FlatPage"),
         )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     def get_permission_codename(self, *args):

@@ -1,5 +1,4 @@
-# -*- encoding: UTF-8 -*-
-from io import BytesIO
+from io import StringIO
 import json
 from landez.sources import DownloadError
 import mock
@@ -35,25 +34,25 @@ class SyncMobileTilesTest(TestCase):
         super(SyncMobileTilesTest, cls).setUpClass()
         translation.deactivate()
 
-    @mock.patch('landez.TilesManager.tile', return_value='I am a png')
+    @mock.patch('landez.TilesManager.tile', return_value=b'I am a png')
     def test_tiles(self, mock_tiles, mock_tileslist):
-        output = BytesIO()
+        output = StringIO()
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', verbosity=2, stdout=output)
         zfile = zipfile.ZipFile(os.path.join('tmp', 'nolang', 'global.zip'))
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
-            self.assertEqual(ifile.readline(), 'I am a png')
+            self.assertEqual(ifile.readline(), b'I am a png')
         self.assertIn("nolang/global.zip", output.getvalue())
 
     @mock.patch('landez.TilesManager.tile', return_value='Error')
     def test_tile_fail(self, mock_tiles, mock_tileslist):
         mock_tiles.side_effect = DownloadError
-        output = BytesIO()
+        output = StringIO()
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', verbosity=2, stdout=output)
         zfile = zipfile.ZipFile(os.path.join('tmp', 'nolang', 'global.zip'))
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
-            self.assertEqual(ifile.readline(), 'I am a png')
+            self.assertEqual(ifile.readline(), b'I am a png')
         self.assertIn("nolang/global.zip", output.getvalue())
 
     @override_settings(MOBILE_TILES_URL=['http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -61,28 +60,28 @@ class SyncMobileTilesTest(TestCase):
     @mock.patch('landez.TilesManager.tile', return_value='Error')
     def test_multiple_tiles(self, mock_tiles, mock_tileslist):
         mock_tiles.side_effect = DownloadError
-        output = BytesIO()
+        output = StringIO()
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', verbosity=2, stdout=output)
         zfile = zipfile.ZipFile(os.path.join('tmp', 'nolang', 'global.zip'))
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
-            self.assertEqual(ifile.readline(), 'I am a png')
+            self.assertEqual(ifile.readline(), b'I am a png')
 
     @override_settings(MOBILE_TILES_URL='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
     @mock.patch('landez.TilesManager.tile', return_value='Error')
     def test_mobile_tiles_url_str(self, mock_tiles, mock_tileslist):
         mock_tiles.side_effect = DownloadError
-        output = BytesIO()
+        output = StringIO()
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', verbosity=2, stdout=output)
         zfile = zipfile.ZipFile(os.path.join('tmp', 'nolang', 'global.zip'))
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
-            self.assertEqual(ifile.readline(), 'I am a png')
+            self.assertEqual(ifile.readline(), b'I am a png')
 
     @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
-    @mock.patch('landez.TilesManager.tile', return_value='I am a png')
+    @mock.patch('landez.TilesManager.tile', return_value=b'I am a png')
     def test_tiles_with_treks(self, mock_tiles, mock_prepare, mock_tileslist):
-        output = BytesIO()
+        output = StringIO()
         portal_a = TargetPortalFactory()
         portal_b = TargetPortalFactory()
         trek = TrekWithPublishedPOIsFactory.create(published=True)
@@ -94,12 +93,12 @@ class SyncMobileTilesTest(TestCase):
         for finfo in zfile_global.infolist():
             ifile_global = zfile_global.open(finfo)
             if ifile_global.name.startswith('tiles/'):
-                self.assertEqual(ifile_global.readline(), 'I am a png')
+                self.assertEqual(ifile_global.readline(), b'I am a png')
         zfile_trek = zipfile.ZipFile(os.path.join('tmp', 'nolang', '{}.zip'.format(trek.pk)))
         for finfo in zfile_trek.infolist():
             ifile_trek = zfile_trek.open(finfo)
             if ifile_global.name.startswith('tiles/'):
-                self.assertEqual(ifile_trek.readline(), 'I am a png')
+                self.assertEqual(ifile_trek.readline(), b'I am a png')
         self.assertIn("nolang/global.zip", output.getvalue())
         self.assertIn("nolang/{pk}.zip".format(pk=trek.pk), output.getvalue())
 
@@ -117,42 +116,37 @@ class SyncMobileFailTest(TestCase):
 
     def test_fail_directory_not_empty(self):
         os.makedirs(os.path.join('tmp', 'other'))
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg="Destination directory contains extra data"):
             management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2)
-        self.assertEqual(e.exception.message, "Destination directory contains extra data")
         shutil.rmtree(os.path.join('tmp', 'other'))
 
     def test_fail_url_ftp(self):
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg="url parameter should start with http:// or https://"):
             management.call_command('sync_mobile', 'tmp', url='ftp://localhost:8000',
                                     skip_tiles=True, verbosity=2)
-        self.assertEqual(e.exception.message, "url parameter should start with http:// or https://")
 
     def test_language_not_in_db(self):
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg="Language cat doesn't exist. Select in these one : ('en', 'es', 'fr', 'it')"):
             management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, languages='cat', verbosity=2)
-        self.assertEqual(e.exception.message,
-                         "Language cat doesn't exist. Select in these one : ('en', 'es', 'fr', 'it')")
 
     def test_attachments_missing_from_disk(self):
         trek_1 = TrekWithPublishedPOIsFactory.create(published_fr=True)
         attachment = AttachmentFactory(content_object=trek_1, attachment_file=get_dummy_uploaded_image())
         os.remove(attachment.attachment_file.path)
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
-                                skip_tiles=True, languages='fr', verbosity=2, stdout=BytesIO())
+                                skip_tiles=True, languages='fr', verbosity=2, stdout=StringIO())
         self.assertFalse(os.path.exists(os.path.join('tmp', 'nolang', 'media', 'trekking_trek')))
 
     @mock.patch('geotrek.api.mobile.views.common.SettingsView.get')
     def test_response_500(self, mocke):
-        output = BytesIO()
+        output = StringIO()
         mocke.return_value = HttpResponse(status=500)
         TrekWithPublishedPOIsFactory.create(published_fr=True)
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='Some errors raised during synchronization.'):
             management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', portal='portal',
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output)
-        self.assertEqual(e.exception.message, 'Some errors raised during synchronization.')
         self.assertIn("failed (HTTP 500)", output.getvalue())
 
     @classmethod
@@ -173,7 +167,7 @@ class SyncMobileSpecificOptionsTest(TranslationResetMixin, TestCase):
                                 skip_tiles=True, verbosity=0, languages='fr')
         with open(os.path.join('tmp', 'fr', 'flatpages.json'), 'r') as f:
             flatpages = json.load(f)
-            self.assertEquals(len(flatpages), 1)
+            self.assertEqual(len(flatpages), 1)
         with self.assertRaises(IOError):
             open(os.path.join('tmp', 'en', 'flatpages.json'), 'r')
 
@@ -182,7 +176,7 @@ class SyncMobileSpecificOptionsTest(TranslationResetMixin, TestCase):
                                 skip_tiles=True, verbosity=0)
         with open(os.path.join('tmp', 'fr', 'flatpages.json'), 'r') as f:
             flatpages = json.load(f)
-            self.assertEquals(len(flatpages), 1)
+            self.assertEqual(len(flatpages), 1)
 
 
 class SyncMobileFlatpageTest(TranslationResetMixin, TestCase):
@@ -210,33 +204,33 @@ class SyncMobileFlatpageTest(TranslationResetMixin, TestCase):
         '''
         Test synced flatpages
         '''
-        output = BytesIO()
+        output = StringIO()
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             with open(os.path.join('tmp', lang, 'flatpages.json'), 'r') as f:
                 flatpages = json.load(f)
-                self.assertEquals(len(flatpages),
-                                  FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
+                self.assertEqual(len(flatpages),
+                                 FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
         self.assertIn('en/flatpages.json', output.getvalue())
 
     def test_sync_filtering_portal(self):
         '''
         Test if synced flatpages are filtered by portal
         '''
-        output = BytesIO()
+        output = StringIO()
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                 portal=self.portal_b.name, skip_tiles=True, verbosity=2, stdout=output)
         with open(os.path.join('tmp', 'fr', 'flatpages.json'), 'r') as f_file:
             flatpages = json.load(f_file)
-            self.assertEquals(len(flatpages), 0)
+            self.assertEqual(len(flatpages), 0)
         with open(os.path.join('tmp', 'en', 'flatpages.json'), 'r') as f_file:
             flatpages = json.load(f_file)
-            self.assertEquals(len(flatpages), 3)
+            self.assertEqual(len(flatpages), 3)
         self.assertIn('en/flatpages.json', output.getvalue())
 
     def test_sync_flatpage_lang(self):
-        output = BytesIO()
+        output = StringIO()
         FlatPageFactory.create(published_fr=True)
         FlatPageFactory.create(published_en=True)
         FlatPageFactory.create(published_es=True)
@@ -245,19 +239,19 @@ class SyncMobileFlatpageTest(TranslationResetMixin, TestCase):
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             with open(os.path.join('tmp', lang, 'flatpages.json'), 'r') as f:
                 flatpages = json.load(f)
-                self.assertEquals(len(flatpages),
-                                  FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
+                self.assertEqual(len(flatpages),
+                                 FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
         self.assertIn('en/flatpages.json', output.getvalue())
 
     def test_sync_flatpage_content(self):
-        output = BytesIO()
+        output = StringIO()
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             with open(os.path.join('tmp', lang, 'flatpages.json'), 'r') as f:
                 flatpages = json.load(f)
-                self.assertEquals(len(flatpages),
-                                  FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
+                self.assertEqual(len(flatpages),
+                                 FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
         self.assertIn('en/flatpages.json', output.getvalue())
 
     @classmethod
@@ -273,19 +267,19 @@ class SyncMobileSettingsTest(TranslationResetMixin, TestCase):
         translation.deactivate()
 
     def test_sync_settings(self):
-        output = BytesIO()
+        output = StringIO()
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             with open(os.path.join('tmp', lang, 'settings.json'), 'r') as f:
                 settings_json = json.load(f)
-                self.assertEquals(len(settings_json), 2)
+                self.assertEqual(len(settings_json), 2)
                 self.assertEqual(len(settings_json['data']), 16)
 
         self.assertIn('en/settings.json', output.getvalue())
 
     def test_sync_settings_with_picto_svg(self):
-        output = BytesIO()
+        output = StringIO()
         practice = PracticeFactory.create(pictogram=get_dummy_uploaded_image_svg())
         information_desk_type = InformationDeskTypeFactory.create(pictogram=get_dummy_uploaded_image())
         InformationDeskFactory.create(type=information_desk_type)
@@ -296,7 +290,7 @@ class SyncMobileSettingsTest(TranslationResetMixin, TestCase):
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             with open(os.path.join('tmp', lang, 'settings.json'), 'r') as f:
                 settings_json = json.load(f)
-                self.assertEquals(len(settings_json), 2)
+                self.assertEqual(len(settings_json), 2)
                 self.assertEqual(len(settings_json['data']), 16)
                 self.assertEqual(settings_json['data'][4]['values'][0]['pictogram'], pictogram_png)
                 self.assertEqual(settings_json['data'][9]['values'][0]['pictogram'], pictogram_desk_png)
@@ -358,7 +352,7 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         translation.deactivate()
 
     def test_sync_treks(self):
-        output = BytesIO()
+        output = StringIO()
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         for lang in settings.MODELTRANSLATION_LANGUAGES:
@@ -370,7 +364,7 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         self.assertIn('en/treks.geojson', output.getvalue())
 
     def test_sync_treks_by_pk(self):
-        output = BytesIO()
+        output = StringIO()
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         with open(os.path.join('tmp', 'en', '{pk}'.format(pk=str(self.trek_1.pk)),
@@ -383,7 +377,7 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
                       output.getvalue())
 
     def test_sync_treks_with_portal(self):
-        output = BytesIO()
+        output = StringIO()
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, portal=self.portal_a.name, stdout=output)
         self.assertFalse(os.path.exists(
@@ -397,7 +391,7 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
                                  .filter(Q(portal__name__in=(self.portal_a,)) | Q(portal=None)).count())
 
     def test_sync_pois_by_treks(self):
-        output = BytesIO()
+        output = StringIO()
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         with open(os.path.join('tmp', 'en', str(self.trek_1.pk), 'pois.geojson'), 'r') as f:
@@ -411,7 +405,7 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         self.assertIn('en/{pk}/pois.geojson'.format(pk=str(self.trek_1.pk)), output.getvalue())
 
     def test_medias_treks(self):
-        output = BytesIO()
+        output = StringIO()
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         self.assertTrue(os.path.exists(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
@@ -427,7 +421,7 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
                                                     'upload')))
 
     def test_medias_treks_one_picture(self):
-        output = BytesIO()
+        output = StringIO()
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         self.assertEqual(1, len(os.listdir(os.path.join('tmp', 'nolang', str(self.trek_1.pk), 'media',
@@ -455,7 +449,7 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
 
     @mock.patch('geotrek.trekking.views.TrekViewSet.list')
     def test_streaminghttpresponse(self, mocke):
-        output = BytesIO()
+        output = StringIO()
         mocke.return_value = StreamingHttpResponse()
         TrekWithPublishedPOIsFactory.create(published_fr=True)
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):

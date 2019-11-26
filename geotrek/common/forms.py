@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from copy import deepcopy
 from zipfile import is_zipfile
 
@@ -93,7 +91,8 @@ class CommonForm(MapEntityForm):
         if not structure:
             return self.cleaned_data
 
-        for name, field in self.cleaned_data.items():
+        # Copy cleaned_data because self.add_error may remove an item
+        for name, field in self.cleaned_data.copy().items():
             try:
                 modelfield = self.instance._meta.get_field(name)
             except FieldDoesNotExist:

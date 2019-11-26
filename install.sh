@@ -206,15 +206,16 @@ function check_postgres_connection {
 function minimum_system_dependencies {
     sudo apt-get update -qq
     echo_progress
-    sudo apt-get install -y -qq python unzip wget software-properties-common
+    sudo apt-get install -y -qq python3 unzip wget software-properties-common make
     echo_progress
-    sudo apt-get install -y -qq git gettext build-essential python-dev
+    sudo apt-get install -y -qq git gettext build-essential python3-dev
     echo_progress
 }
 
 
 function geotrek_system_dependencies {
-    sudo apt-get install -y -q --no-upgrade gdal-bin libgdal-dev libssl-dev binutils libproj-dev
+    sudo apt-get install -y -q --no-upgrade gdal-bin libgdal-dev libssl-dev binutils libproj-dev \
+        fonts-dejavu-core fonts-liberation
     echo_progress
     # PostgreSQL client and headers
     sudo apt-get install -y -q --no-upgrade postgresql-client-$psql_version postgresql-server-dev-$psql_version
@@ -222,7 +223,7 @@ function geotrek_system_dependencies {
     sudo apt-get install -y -qq libxml2-dev libxslt-dev  # pygal lxml
     echo_progress
     # Necessary for MapEntity Weasyprint
-    sudo apt-get install -y -qq python-lxml libcairo2 libpango1.0-0 libgdk-pixbuf2.0-dev libffi-dev shared-mime-info libfreetype6-dev
+    sudo apt-get install -y -qq python3-lxml libcairo2 libpango1.0-0 libgdk-pixbuf2.0-dev libffi-dev shared-mime-info libfreetype6-dev
     echo_progress
     # Redis for async imports and tasks management
     sudo apt-get install -y -qq redis-server
@@ -424,7 +425,7 @@ function geotrek_setup {
 
     # install pip and virtualenv
     wget https://bootstrap.pypa.io/get-pip.py
-    sudo python ./get-pip.py
+    sudo python3 ./get-pip.py
     sudo pip install virtualenv -U
     rm get-pip.py
 
@@ -469,9 +470,14 @@ function geotrek_setup {
 	
     echo_step "Install Geotrek python dependencies..."
 
+    if [ $trusty -eq 1 ]; then
+        echo -e "[versions]\nGDAL=1.10.0" > ./etc/gdal-version.ini
+    fi
+    if [ $xenial -eq 1 ]; then
+        echo -e "[versions]\nGDAL=1.11.2" > ./etc/gdal-version.ini
+    fi
     if [ $bionic -eq 1 ]; then
-        # fix gdal version for bionic
-        sed -i 's/GDAL=.*/GDAL=2.2.4/' ./conf/buildout.cfg
+        echo -e "[versions]\nGDAL=2.2.4" > ./etc/gdal-version.ini
     fi
 
     if $dev ; then
@@ -522,6 +528,9 @@ function geotrek_setup {
     if $dev ; then
         echo_step "Initializing data..."
         make update
+        if [ $? -ne 0 ]; then
+            exit_error 11 "Could not update data !"
+        fi
         echo_progress
     fi
 
@@ -541,10 +550,14 @@ function geotrek_setup {
 
         # restart supervisor in case of xenial before 'make deploy'
         if [ $trusty -eq 1 ]; then
-            sudo service supervisor force-stop && sudo service supervisor stop && sudo service supervisor start
+            sudo service supervisor force-stop && sudo service supervisor stop
+            if [ $? -ne 0 ]; then
+                exit_error 10 "Could not stop supervisord !"
+            fi
         fi
+        sudo service supervisor start
         if [ $? -ne 0 ]; then
-            exit_error 10 "Could not restart supervisor !"
+            exit_error 10 "Could not start supervisord !"
         fi
 
         echo_progress

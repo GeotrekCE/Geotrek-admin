@@ -1,5 +1,3 @@
-# -*- encoding: UTF-8 -
-
 import os
 
 from celery import shared_task, current_task
@@ -16,7 +14,7 @@ def launch_sync_rando(*args, **kwargs):
     if not os.path.exists(settings.SYNC_RANDO_ROOT):
         os.mkdir(settings.SYNC_RANDO_ROOT)
 
-    print 'Sync rando started'
+    print('Sync rando started')
 
     try:
         current_task.update_state(
@@ -25,7 +23,7 @@ def launch_sync_rando(*args, **kwargs):
                 'name': current_task.name,
                 'current': 5,
                 'total': 100,
-                'infos': u"{}".format(_(u"Init sync ..."))
+                'infos': "{}".format(_("Init sync ..."))
             }
         )
 
@@ -45,7 +43,7 @@ def launch_sync_rando(*args, **kwargs):
     except Exception:
         raise
 
-    print 'Sync rando ended'
+    print('Sync rando ended')
 
     return {
         'name': current_task.name,

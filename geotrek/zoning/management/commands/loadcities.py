@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.gis.gdal import DataSource, GDALException, OGRIndexError
 from geotrek.zoning.models import City
@@ -64,7 +63,7 @@ class Command(BaseCommand):
                         self.stdout.write(
                             "Code's attribute or Name's attribute do not correspond with options\n"
                             "Please, use --code and --name to fix it.\n"
-                            "Fields in your file are : %s" % ', '.join(feat.fields))
+                            "Fields in your file are : %s" % ', '.join(layer.fields))
                     count_error += 1
 
     def check_srid(self, srid, geom):

@@ -34,7 +34,7 @@ def query_db(sqlquery):
 
 def password2md5(password):
     import hashlib
-    return hashlib.md5(password).hexdigest()
+    return hashlib.md5(password.encode()).hexdigest()
 
 
 @override_settings(AUTHENT_DATABASE='default',

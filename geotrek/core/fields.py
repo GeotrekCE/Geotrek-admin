@@ -23,9 +23,9 @@ class TopologyField(forms.CharField):
     widget = PointLineTopologyWidget
 
     default_error_messages = {
-        'empty_topology': _(u'Topology is empty.'),
-        'invalid_topology': _(u'Topology is not valid.'),
-        'unknown_topology': _(u'Topology %s does not exist.'),
+        'empty_topology': _('Topology is empty.'),
+        'invalid_topology': _('Topology is not valid.'),
+        'unknown_topology': _('Topology %s does not exist.'),
     }
 
     def clean(self, value):
@@ -49,7 +49,7 @@ class SnappedLineStringField(LineStringField):
     widget = SnappedLineStringWidget
 
     default_error_messages = {
-        'invalid_snap_line': _(u'Linestring invalid snapping.'),
+        'invalid_snap_line': _('Linestring invalid snapping.'),
     }
 
     def clean(self, value):

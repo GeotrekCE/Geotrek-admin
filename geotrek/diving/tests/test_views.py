@@ -23,12 +23,12 @@ class DiveViewsTests(CommonTest):
     def get_bad_data(self):
         return {
             'geom': 'doh!'
-        }, _(u'Invalid geometry value.')
+        }, _('Invalid geometry value.')
 
     def get_good_data(self):
         return {
             'structure': Structure.objects.first().pk,
-            'name_fr': u'test',
+            'name_fr': 'test',
             'practice': PracticeFactory.create().pk,
             'geom': '{"type": "Point", "coordinates":[0, 0]}',
         }

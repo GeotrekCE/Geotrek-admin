@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-
 import os
 
 from django.contrib.gis.geos import Point, LineString, MultiLineString
@@ -99,32 +97,33 @@ class TrekParserFilterGeomTests(TestCase):
         self.assertTrue(self.parser.warnings)
 
 
-WKT = ('LINESTRING (356392.8992765303 6689612.102616735, '
+WKT = ('LINESTRING ('
+       '356392.8992765303 6689612.102616733, '
        '356466.0587726549 6689740.131734952, '
        '356411.1891505615 6689868.16085317, '
-       '356566.6530798262 6689904.740601233, '
-       '356712.9720720753 6689804.146294061, '
-       '356703.8271350598 6689703.55198689, '
-       '356621.5227019196 6689639.537427781, '
-       '356612.3777649041 6689511.508309563, '
-       '356447.7688986238 6689502.363372548)')
+       '356566.6530798261 6689904.740601233, '
+       '356712.9720720752 6689804.14629406, '
+       '356703.8271350597 6689703.551986889, '
+       '356621.5227019195 6689639.537427781, '
+       '356612.3777649039 6689511.508309562, '
+       '356447.7688986238 6689502.363372547)')
 
 
 class TrekParserTests(TestCase):
     def setUp(self):
-        self.difficulty = DifficultyLevel.objects.create(difficulty=u"Facile")
-        self.route = Route.objects.create(route=u"Boucle")
+        self.difficulty = DifficultyLevel.objects.create(difficulty="Facile")
+        self.route = Route.objects.create(route="Boucle")
         self.themes = (
-            Theme.objects.create(label=u"Littoral"),
-            Theme.objects.create(label=u"Marais"),
+            Theme.objects.create(label="Littoral"),
+            Theme.objects.create(label="Marais"),
         )
-        self.filetype = FileType.objects.create(type=u"Photographie")
+        self.filetype = FileType.objects.create(type="Photographie")
 
     def test_create(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'trek.shp')
         call_command('import', 'geotrek.trekking.parsers.TrekParser', filename, verbosity=0)
         trek = Trek.objects.all().last()
-        self.assertEqual(trek.name, u"Balade")
+        self.assertEqual(trek.name, "Balade")
         self.assertEqual(trek.difficulty, self.difficulty)
         self.assertEqual(trek.route, self.route)
         self.assertQuerysetEqual(trek.themes.all(), [repr(t) for t in self.themes], ordered=False)

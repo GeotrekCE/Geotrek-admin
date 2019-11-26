@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import factory
 
 from django.contrib.contenttypes.models import ContentType
@@ -18,7 +16,7 @@ class PracticeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Practice
 
-    name = factory.Sequence(lambda n: u"Practice %s" % n)
+    name = factory.Sequence(lambda n: "Practice %s" % n)
     pictogram = get_dummy_uploaded_image()
 
 
@@ -26,7 +24,7 @@ class DiveFactory(StructureRelatedDefaultFactory):
     class Meta:
         model = models.Dive
 
-    name = factory.Sequence(lambda n: u"Dive %s" % n)
+    name = factory.Sequence(lambda n: "Dive %s" % n)
     practice = factory.SubFactory(PracticeFactory)
     geom = 'POINT(0 0)'
     published = True
@@ -63,7 +61,7 @@ class DifficultyFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Difficulty
 
-    name = factory.Sequence(lambda n: u"difficulty %s" % n)
+    name = factory.Sequence(lambda n: "difficulty %s" % n)
     pictogram = get_dummy_uploaded_image('difficulty-%s.png')
 
 
@@ -71,6 +69,6 @@ class LevelFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Level
 
-    name = factory.Sequence(lambda n: u"level %s" % n)
-    description = factory.Sequence(lambda n: u"<p>description %s</p>" % n)
+    name = factory.Sequence(lambda n: "level %s" % n)
+    description = factory.Sequence(lambda n: "<p>description %s</p>" % n)
     pictogram = get_dummy_uploaded_image('level-%s.png')

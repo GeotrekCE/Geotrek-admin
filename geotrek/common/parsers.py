@@ -1,16 +1,16 @@
-# -*- encoding: utf-8 -*-
-
 import os
 import re
 import requests
 from requests.auth import HTTPBasicAuth
 import xlrd
 import xml.etree.ElementTree as ET
-import urllib2
+from functools import reduce
+from urllib.request import urlopen
+from collections import Iterable
 
 from ftplib import FTP
 from os.path import dirname
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 from django.db import models, connection
 from django.db.utils import DatabaseError
@@ -104,13 +104,13 @@ class Parser(object):
         return name.upper()
 
     def normalize_src(self, src):
-        if hasattr(src, '__iter__'):
+        if isinstance(src, Iterable) and not isinstance(src, str):
             return [self.normalize_field_name(subsrc) for subsrc in src]
         else:
             return self.normalize_field_name(src)
 
     def add_warning(self, msg):
-        key = _(u"Line {line}".format(line=self.line))
+        key = _("Line {line}".format(line=self.line))
         warnings = self.warnings.setdefault(key, [])
         warnings.append(msg)
 
@@ -133,28 +133,28 @@ class Parser(object):
                 return self.get_part(dst, left, val[part])
 
     def get_val(self, row, dst, src):
-        if hasattr(src, '__iter__'):
+        if isinstance(src, Iterable) and not isinstance(src, str):
             val = []
             for subsrc in src:
                 try:
                     val.append(self.get_val(row, dst, subsrc))
                 except ValueImportError as warning:
                     if self.warn_on_missing_fields:
-                        self.add_warning(unicode(warning))
+                        self.add_warning(str(warning))
                     val.append(None)
             return val
         else:
             try:
                 return self.get_part(dst, src, row)
             except (KeyError, IndexError):
-                required = u"required " if self.field_options.get(dst, {}).get('required', False) else ""
-                raise ValueImportError(_(u"Missing {required}field '{src}'").format(required=required, src=src))
+                required = "required " if self.field_options.get(dst, {}).get('required', False) else ""
+                raise ValueImportError(_("Missing {required}field '{src}'").format(required=required, src=src))
 
     def apply_filter(self, dst, src, val):
         field = self.model._meta.get_field(dst)
         if (isinstance(field, models.ForeignKey) or isinstance(field, models.ManyToManyField)):
             if dst not in self.natural_keys:
-                raise ValueImportError(_(u"Destination field '{dst}' not in natural keys configuration").format(dst=dst))
+                raise ValueImportError(_("Destination field '{dst}' not in natural keys configuration").format(dst=dst))
             to = field.rel.to
             natural_key = self.natural_keys[dst]
             kwargs = self.field_options.get(dst, {})
@@ -173,11 +173,11 @@ class Parser(object):
         field = self.model._meta.get_field(dst)
         if val is None and not field.null:
             if field.blank and (isinstance(field, models.CharField) or isinstance(field, models.TextField)):
-                val = u""
+                val = ""
             else:
-                raise RowImportError(_(u"Null value not allowed for field '{src}'".format(src=src)))
-        if val == u"" and not field.blank:
-            raise RowImportError(_(u"Blank value not allowed for field '{src}'".format(src=src)))
+                raise RowImportError(_("Null value not allowed for field '{src}'".format(src=src)))
+        if val == "" and not field.blank:
+            raise RowImportError(_("Blank value not allowed for field '{src}'".format(src=src)))
         if isinstance(field, models.CharField):
             val = val[:256]
         setattr(self.obj, dst, val)
@@ -197,7 +197,7 @@ class Parser(object):
             if isinstance(old, float) and isinstance(val, float):
                 old = round(old, 10)
                 val = round(val, 10)
-            if isinstance(old, unicode):
+            if isinstance(old, str):
                 val = val or ""
             if old != val:
                 self.set_value(dst, src, val)
@@ -235,7 +235,7 @@ class Parser(object):
                 if self.field_options.get(dst, {}).get('required', False):
                     raise RowImportError(warning)
                 if self.warn_on_missing_fields:
-                    self.add_warning(unicode(warning))
+                    self.add_warning(str(warning))
                 continue
         return updated
 
@@ -244,16 +244,16 @@ class Parser(object):
             update_fields = self.parse_fields(row, self.fields)
             update_fields += self.parse_fields(row, self.constant_fields)
         except RowImportError as warnings:
-            self.add_warning(unicode(warnings))
+            self.add_warning(str(warnings))
             return
-        if operation == u"created":
+        if operation == "created":
             self.obj.save()
         else:
             self.obj.save(update_fields=update_fields)
         update_fields += self.parse_fields(row, self.m2m_fields)
         update_fields += self.parse_fields(row, self.m2m_constant_fields)
         update_fields += self.parse_fields(row, self.non_fields, non_field=True)
-        if operation == u"created":
+        if operation == "created":
             self.nb_created += 1
         elif update_fields:
             self.nb_updated += 1
@@ -264,12 +264,12 @@ class Parser(object):
         try:
             eid_src = self.fields[self.eid]
         except KeyError:
-            raise GlobalImportError(_(u"Eid field '{eid_dst}' missing in parser configuration").format(eid_dst=self.eid))
+            raise GlobalImportError(_("Eid field '{eid_dst}' missing in parser configuration").format(eid_dst=self.eid))
         eid_src = self.normalize_field_name(eid_src)
         try:
             eid_val = self.get_val(row, self.eid, eid_src)
         except KeyError:
-            raise GlobalImportError(_(u"Missing id field '{eid_src}'").format(eid_src=eid_src))
+            raise GlobalImportError(_("Missing id field '{eid_src}'").format(eid_src=eid_src))
         if hasattr(self, 'filter_{0}'.format(self.eid)):
             eid_val = getattr(self, 'filter_{0}'.format(self.eid))(eid_src, eid_val)
         self.eid_src = eid_src
@@ -286,21 +286,21 @@ class Parser(object):
             try:
                 eid_kwargs = self.get_eid_kwargs(row)
             except RowImportError as warnings:
-                self.add_warning(unicode(warnings))
+                self.add_warning(str(warnings))
                 return
             objects = self.model.objects.filter(**eid_kwargs)
         if len(objects) == 0 and self.update_only:
             if self.warn_on_missing_objects:
-                self.add_warning(_(u"Bad value '{eid_val}' for field '{eid_src}'. No object with this identifier").format(eid_val=self.eid_val, eid_src=self.eid_src))
+                self.add_warning(_("Bad value '{eid_val}' for field '{eid_src}'. No object with this identifier").format(eid_val=self.eid_val, eid_src=self.eid_src))
             return
         elif len(objects) == 0:
             obj = self.model(**eid_kwargs)
             if hasattr(obj, 'structure'):
                 obj.structure = self.structure
             objects = [obj]
-            operation = u"created"
+            operation = "created"
         elif len(objects) >= 2 and not self.duplicate_eid_allowed:
-            self.add_warning(_(u"Bad value '{eid_val}' for field '{eid_src}'. Multiple objects with this identifier").format(eid_val=self.eid_val, eid_src=self.eid_src))
+            self.add_warning(_("Bad value '{eid_val}' for field '{eid_src}'. Multiple objects with this identifier").format(eid_val=self.eid_val, eid_src=self.eid_src))
             return
         else:
             _objects = []
@@ -309,9 +309,9 @@ class Parser(object):
                     _objects.append(obj)
                 else:
                     self.to_delete.discard(obj.pk)
-                    self.add_warning(_(u"Bad ownership '{structure}' for object '{eid_val}'.").format(structure=obj.structure.name, eid_val=self.eid_val))
+                    self.add_warning(_("Bad ownership '{structure}' for object '{eid_val}'.").format(structure=obj.structure.name, eid_val=self.eid_val))
             objects = _objects
-            operation = u"updated"
+            operation = "updated"
         for self.obj in objects:
             self.parse_obj(row, operation)
             self.to_delete.discard(self.obj.pk)
@@ -334,18 +334,18 @@ class Parser(object):
     def get_mapping(self, src, val, mapping, partial):
         if partial:
             found = False
-            for i, j in mapping.iteritems():
+            for i, j in mapping.items():
                 if i in val:
                     val = j
                     found = True
                     break
             if not found:
-                self.add_warning(_(u"Bad value '{val}' for field {src}. Should contain {values}").format(val=val, src=src, separator=self.separator, values=', '.join(mapping.keys())))
+                self.add_warning(_("Bad value '{val}' for field {src}. Should contain {values}").format(val=val, src=src, separator=self.separator, values=', '.join(mapping.keys())))
                 return None
         else:
             if mapping is not None:
                 if val not in mapping.keys():
-                    self.add_warning(_(u"Bad value '{val}' for field {src}. Should be {values}").format(val=val, src=src, separator=self.separator, values=', '.join(mapping.keys())))
+                    self.add_warning(_("Bad value '{val}' for field {src}. Should be {values}").format(val=val, src=src, separator=self.separator, values=', '.join(mapping.keys())))
                     return None
                 val = mapping[val]
         return val
@@ -360,12 +360,12 @@ class Parser(object):
         if create:
             val, created = model.objects.get_or_create(**fields)
             if created:
-                self.add_warning(_(u"{model} '{val}' did not exist in Geotrek-Admin and was automatically created").format(model=model._meta.verbose_name.title(), val=val))
+                self.add_warning(_("{model} '{val}' did not exist in Geotrek-Admin and was automatically created").format(model=model._meta.verbose_name.title(), val=val))
             return val
         try:
             return model.objects.get(**fields)
         except model.DoesNotExist:
-            self.add_warning(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=model._meta.verbose_name.title(), val=val))
+            self.add_warning(_("{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=model._meta.verbose_name.title(), val=val))
             return None
 
     def filter_m2m(self, src, val, model, field, mapping=None, partial=False, create=False, fk=None, **kwargs):
@@ -385,20 +385,20 @@ class Parser(object):
             if create:
                 subval, created = model.objects.get_or_create(**fields)
                 if created:
-                    self.add_warning(_(u"{model} '{val}' did not exist in Geotrek-Admin and was automatically created").format(model=model._meta.verbose_name.title(), val=subval))
+                    self.add_warning(_("{model} '{val}' did not exist in Geotrek-Admin and was automatically created").format(model=model._meta.verbose_name.title(), val=subval))
                 dst.append(subval)
                 continue
             try:
                 dst.append(model.objects.get(**fields))
             except model.DoesNotExist:
-                self.add_warning(_(u"{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=model._meta.verbose_name.title(), val=subval))
+                self.add_warning(_("{model} '{val}' does not exists in Geotrek-Admin. Please add it").format(model=model._meta.verbose_name.title(), val=subval))
                 continue
         return dst
 
     def get_to_delete_kwargs(self):
         # FIXME: use mapping if it exists
         kwargs = {}
-        for dst, val in self.constant_fields.iteritems():
+        for dst, val in self.constant_fields.items():
             field = self.model._meta.get_field(dst)
             if isinstance(field, models.ForeignKey):
                 natural_key = self.natural_keys[dst]
@@ -408,7 +408,7 @@ class Parser(object):
                     return None
             else:
                 kwargs[dst] = val
-        for dst, val in self.m2m_constant_fields.iteritems():
+        for dst, val in self.m2m_constant_fields.items():
             assert not self.separator or self.separator not in val
             field = self.model._meta.get_field(dst)
             natural_key = self.natural_keys[dst]
@@ -436,9 +436,9 @@ class Parser(object):
         if filename:
             self.filename = filename
         if not self.url and not self.filename:
-            raise GlobalImportError(_(u"Filename is required"))
+            raise GlobalImportError(_("Filename is required"))
         if self.filename and not os.path.exists(self.filename):
-            raise GlobalImportError(_(u"File does not exists at: {filename}").format(filename=self.filename))
+            raise GlobalImportError(_("File does not exists at: {filename}").format(filename=self.filename))
         self.start()
         for i, row in enumerate(self.next_row()):
             if limit and i >= limit:
@@ -450,11 +450,12 @@ class Parser(object):
                     raise
                 self.add_warning(str(e).decode('utf8'))
             except (ValueImportError, RowImportError) as e:
-                self.add_warning(unicode(e))
+                self.add_warning(str(e))
             except Exception as e:
+                raise
                 if settings.DEBUG:
                     raise
-                self.add_warning(unicode(e))
+                self.add_warning(str(e))
         self.end()
 
 
@@ -471,7 +472,7 @@ class ShapeParser(Parser):
             try:
                 ogrgeom = feature.geom
             except GDALException:
-                print _(u"Invalid geometry pointer"), i
+                print(_("Invalid geometry pointer"), i)
                 geom = None
             else:
                 ogrgeom.coord_dim = 2  # Flatten to 2D
@@ -525,23 +526,23 @@ class AttachmentParserMixin(object):
     download_attachments = True
     base_url = ''
     delete_attachments = False
-    filetype_name = u"Photographie"
+    filetype_name = "Photographie"
     non_fields = {
-        'attachments': _(u"Attachments"),
+        'attachments': _("Attachments"),
     }
 
     def start(self):
         super(AttachmentParserMixin, self).start()
         if settings.PAPERCLIP_ENABLE_LINK is False and self.download_attachments is False:
-            raise Exception(u'You need to enable PAPERCLIP_ENABLE_LINK to use this function')
+            raise Exception('You need to enable PAPERCLIP_ENABLE_LINK to use this function')
         try:
             self.filetype = FileType.objects.get(type=self.filetype_name, structure=None)
         except FileType.DoesNotExist:
             try:
                 self.filetype = FileType.objects.get(type=self.filetype_name, structure=self.structure)
             except FileType.DoesNotExist:
-                raise GlobalImportError(_(u"FileType '{name}' does not exists in "
-                                          u"Geotrek-Admin. Please add it").format(name=self.filetype_name))
+                raise GlobalImportError(_("FileType '{name}' does not exists in "
+                                          "Geotrek-Admin. Please add it").format(name=self.filetype_name))
         self.creator, created = get_user_model().objects.get_or_create(username='import', defaults={'is_active': False})
 
     def filter_attachments(self, src, val):
@@ -571,9 +572,9 @@ class AttachmentParserMixin(object):
         parsed_url = urlparse(url)
         if parsed_url.scheme == 'ftp':
             try:
-                response = urllib2.urlopen(url)
+                response = urlopen(url)
             except Exception:
-                self.add_warning(_(u"Failed to download '{url}'").format(url=url))
+                self.add_warning(_("Failed to download '{url}'").format(url=url))
                 return None
             return response.read()
         else:
@@ -583,7 +584,7 @@ class AttachmentParserMixin(object):
                 except requests.exceptions.RequestException as e:
                     raise ValueImportError('Failed to load attachment: {exc}'.format(exc=e))
                 if response.status_code != requests.codes.ok:
-                    self.add_warning(_(u"Failed to download '{url}'").format(url=url))
+                    self.add_warning(_("Failed to download '{url}'").format(url=url))
                     return None
                 return response.content
             return None
@@ -593,14 +594,14 @@ class AttachmentParserMixin(object):
         attachments_to_delete = list(Attachment.objects.attachments_for_object(self.obj))
         for url, legend, author in self.filter_attachments(src, val):
             url = self.base_url + url
-            legend = legend or u""
-            author = author or u""
+            legend = legend or ""
+            author = author or ""
             name = os.path.basename(url)
             found = False
             for attachment in attachments_to_delete:
                 upload_name, ext = os.path.splitext(attachment_upload(attachment, name))
                 existing_name = attachment.attachment_file.name
-                if re.search(ur"^{name}(_[a-zA-Z0-9]{{7}})?{ext}$".format(
+                if re.search(r"^{name}(_[a-zA-Z0-9]{{7}})?{ext}$".format(
                         name=upload_name, ext=ext), existing_name
                 ) and not self.has_size_changed(url, attachment):
                     found = True
@@ -667,11 +668,11 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
             }
             response = requests.get(self.url, params=params)
             if response.status_code != 200:
-                raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
+                raise GlobalImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
             self.root = response.json()
             self.nb = self.get_nb()
             for row in self.items:
-                yield {self.normalize_field_name(src): val for src, val in row.iteritems()}
+                yield {self.normalize_field_name(src): val for src, val in row.items()}
             skip += 1000
             if skip >= self.nb:
                 return
@@ -694,16 +695,16 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
         return geom
 
     def filter_email(self, src, val):
-        val = val or u""
+        val = val or ""
 
         for subval in val.split(self.separator):
             if not subval:
                 continue
             key, value = subval.split(self.separator2)
-            if key in (u"Mél", u"Mail"):
+            if key in ("Mél", "Mail"):
                 return value
 
-        return u""
+        return ""
 
     def filter_website(self, src, val):
         val = val or ""
@@ -712,10 +713,10 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
             if not subval:
                 continue
             key, value = subval.split(self.separator2)
-            if key in (u"Site web", u"Site web (URL)"):
+            if key in ("Site web", "Site web (URL)"):
                 return value
 
-        return u""
+        return ""
 
     def filter_contact(self, src, val):
         com, adresse = val
@@ -732,8 +733,8 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
             # Remove empty lines
             lines = [line for line in lines if line]
             infos.append(
-                u"<strong>Adresse :</strong><br>"
-                + u"<br>".join(lines)
+                "<strong>Adresse :</strong><br>"
+                + "<br>".join(lines)
             )
 
         if com:
@@ -741,11 +742,11 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
                 if not subval:
                     continue
                 key, value = subval.split(self.separator2)
-                if key in (u"Mél", u"Mail", u"Site web", u"Site web (URL)"):
+                if key in ("Mél", "Mail", "Site web", "Site web (URL)"):
                     continue
-                infos.append(u"<strong>{} :</strong><br>{}".format(key, value))
+                infos.append("<strong>{} :</strong><br>{}".format(key, value))
 
-        return u"<br><br>".join(infos)
+        return "<br><br>".join(infos)
 
 
 class TourismSystemParser(AttachmentParserMixin, Parser):
@@ -763,11 +764,11 @@ class TourismSystemParser(AttachmentParserMixin, Parser):
             }
             response = requests.get(self.url, params=params, auth=HTTPBasicAuth(self.login, self.password))
             if response.status_code != 200:
-                raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
+                raise GlobalImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
             self.root = response.json()
             self.nb = int(self.root['metadata']['total'])
             for row in self.items:
-                yield {self.normalize_field_name(src): val for src, val in row.iteritems()}
+                yield {self.normalize_field_name(src): val for src, val in row.items()}
             skip += size
             if skip >= self.nb:
                 return
@@ -797,7 +798,7 @@ class OpenSystemParser(Parser):
         }
         response = requests.get(self.url, params=params)
         if response.status_code != 200:
-            raise GlobalImportError(_(u"Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
+            raise GlobalImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
         self.root = ET.fromstring(response.content).find('Resultat').find('Objets')
         self.nb = len(self.root)
         for row in self.root:

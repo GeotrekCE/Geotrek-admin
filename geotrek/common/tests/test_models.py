@@ -14,10 +14,10 @@ class ThemeModelTest(TestCase):
         self.assertEqual(os.path.getsize(self.path), 6203)
         self.theme = Theme.objects.create()
 
-        self.theme.pictogram = File(open(self.path))
+        self.theme.pictogram = File(open(self.path, 'rb'))
         file = self.theme.pictogram_off
         path_off = os.path.join(self.directory, 'picto_off.png')
-        self.assertEqual(os.path.getsize(path_off), 4047)
+        self.assertEqual(os.path.getsize(path_off), 4069)
         self.assertEqual(file.name, path_off)
 
     def tearDown(self):

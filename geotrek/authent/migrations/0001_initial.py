@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.db import migrations, models
 from django.conf import settings
 import geotrek.authent.models
@@ -30,8 +27,8 @@ class Migration(migrations.Migration):
             name='UserProfile',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('language', models.CharField(default=b'fr', max_length=10, verbose_name='Language', choices=[(b'en', b'English'), (b'fr', b'French'), (b'it', b'Italian'), (b'es', b'Spanish')])),
-                ('structure', models.ForeignKey(db_column=b'structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('language', models.CharField(default='fr', max_length=10, verbose_name='Language', choices=[('en', 'English'), ('fr', 'French'), ('it', 'Italian'), ('es', 'Spanish')])),
+                ('structure', models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
                 ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
             ],
             options={

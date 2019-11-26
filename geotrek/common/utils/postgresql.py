@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import logging
 import traceback
 from functools import wraps
@@ -93,7 +91,7 @@ def load_sql_files(app):
             pattern = re.compile(r'{{\s*(.*)\s*}}')
             for m in pattern.finditer(sql):
                 value = getattr(settings, m.group(1))
-                sql = sql.replace(m.group(0), unicode(value))
+                sql = sql.replace(m.group(0), str(value))
             cursor.execute(sql)
         except Exception as e:
             logger.critical("Failed to install custom SQL file '%s': %s\n" %

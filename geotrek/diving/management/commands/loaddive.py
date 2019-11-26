@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import os.path
 
 from django.contrib.gis.gdal import DataSource
@@ -52,15 +50,15 @@ class Command(BaseCommand):
         try:
             structure = Structure.objects.get(name=structure_default)
             if verbosity > 0:
-                self.stdout.write(u"Dives will be linked to {}".format(structure))
+                self.stdout.write("Dives will be linked to {}".format(structure))
         except Structure.DoesNotExist:
-            self.stdout.write(u"Structure {} set in options doesn't exist".format(structure_default))
+            self.stdout.write("Structure {} set in options doesn't exist".format(structure_default))
             return
         practice_default = options.get('practice_default')
         if practice_default:
             practice, created = Practice.objects.get_or_create(name=practice_default)
             if created and verbosity:
-                self.stdout.write(u"- Practice '{}' created".format(practice))
+                self.stdout.write("- Practice '{}' created".format(practice))
         else:
             practice = None
 
@@ -73,21 +71,21 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.ERROR(
                         "Field '{}' not found in data source.".format(field_name)))
                     self.stdout.write(self.style.ERROR(
-                        u"Set it with --name-field"))
+                        "Set it with --name-field"))
                     break
 
                 if field_depth and field_depth not in available_fields:
                     self.stdout.write(self.style.ERROR(
                         "Field '{}' not found in data source.".format(field_depth)))
                     self.stdout.write(self.style.ERROR(
-                        u"Set it with --depth-field"))
+                        "Set it with --depth-field"))
                     break
 
                 if field_eid and field_eid not in available_fields:
                     self.stdout.write(
                         self.style.ERROR("Field '{}' not found in data source.".format(field_eid)))
                     self.stdout.write(self.style.ERROR(
-                        u"Change your --eid-field option"))
+                        "Change your --eid-field option"))
                     break
 
                 for feature in layer:
@@ -95,7 +93,7 @@ class Command(BaseCommand):
                     feature_geom.coord_dim = 2
                     name = feature.get(field_name)
                     if feature_geom.geom_type == 'MultiPoint':
-                        self.stdout.write(self.style.NOTICE(u"This object is a MultiPoint : %s" % name))
+                        self.stdout.write(self.style.NOTICE("This object is a MultiPoint : %s" % name))
                         if len(feature_geom) < 2:
                             feature_geom = feature_geom[0].geos
                         else:
@@ -106,10 +104,10 @@ class Command(BaseCommand):
 
             transaction.savepoint_commit(sid)
             if verbosity >= 2:
-                self.stdout.write(self.style.NOTICE(u"{} objects created.".format(self.counter)))
+                self.stdout.write(self.style.NOTICE("{} objects created.".format(self.counter)))
 
         except Exception:
-            self.stdout.write(self.style.ERROR(u"An error occured, rolling back operations."))
+            self.stdout.write(self.style.ERROR("An error occured, rolling back operations."))
             transaction.savepoint_rollback(sid)
             raise
 
@@ -129,7 +127,7 @@ class Command(BaseCommand):
                     defaults=fields_without_eid
                 )
                 if verbosity > 0 and not created:
-                    self.stdout.write(u"Update : %s with eid %s" % (name, eid))
+                    self.stdout.write("Update : %s with eid %s" % (name, eid))
             else:
                 dive = Dive.objects.create(**fields_without_eid)
         self.counter += 1

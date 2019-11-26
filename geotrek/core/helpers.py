@@ -55,13 +55,13 @@ class TopologyHelper(object):
         if not settings.TREKKING_TOPOLOGY_ENABLED:
             return Topology.objects.create(geom=GEOSGeometry(serialized, srid=settings.API_SRID))
         objdict = serialized
-        if isinstance(serialized, basestring):
+        if isinstance(serialized, str):
             try:
                 objdict = json.loads(serialized)
             except ValueError as e:
                 raise ValueError("Invalid serialization: %s" % e)
 
-        if objdict and not isinstance(objdict, (list,)):
+        if objdict and not isinstance(objdict, list):
             lat = objdict.get('lat')
             lng = objdict.get('lng')
             pk = objdict.get('pk')

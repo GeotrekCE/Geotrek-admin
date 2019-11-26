@@ -11,8 +11,8 @@ from unittest import skipIf
 class SmartMakelineTest(TestCase):
 
     def smart_makeline(self, lines):
-        assert lines > 0
-        if isinstance(lines[0], basestring):
+        assert lines
+        if isinstance(lines[0], str):
             lines = ["ST_GeomFromText('%s')" % l for l in lines]
         else:
             lines = ["ST_GeomFromText('%s')" % l.wkt for l in lines]

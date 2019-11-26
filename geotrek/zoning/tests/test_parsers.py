@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import os
 
 from django.contrib.gis.geos import Polygon, MultiPolygon
@@ -10,9 +8,10 @@ from geotrek.zoning.models import City
 from geotrek.zoning.parsers import CityParser
 
 
-WKT = ('MULTIPOLYGON (((309716.2814121812 6698350.202176196, '
-       '330923.9023929063 6728938.117052309, 341391.7665949241 6698214.255887863, '
-       '309716.2814121812 6698350.202176196)))')
+WKT = ('MULTIPOLYGON (((309716.281412181 6698350.202176195, '
+       '330923.9023929063 6728938.117052309, '
+       '341391.766594924 6698214.255887862, '
+       '309716.281412181 6698350.202176195)))')
 
 
 class CityParserTest(TestCase):
@@ -20,8 +19,8 @@ class CityParserTest(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'city.shp')
         call_command('import', 'geotrek.zoning.parsers.CityParser', filename, verbosity=0)
         city = City.objects.get()
-        self.assertEqual(city.code, u"99999")
-        self.assertEqual(city.name, u"Trifouilli-les-Oies")
+        self.assertEqual(city.code, "99999")
+        self.assertEqual(city.name, "Trifouilli-les-Oies")
         self.assertEqual(city.geom.wkt, WKT)
 
 

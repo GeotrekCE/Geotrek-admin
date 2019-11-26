@@ -10,14 +10,14 @@ from django.utils.translation import ugettext_lazy as _
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
     class BaseInfrastructureForm(TopologyForm):
-        implantation_year = forms.IntegerField(label=_(u"Implantation year"), required=False)
+        implantation_year = forms.IntegerField(label=_("Implantation year"), required=False)
 
         class Meta(TopologyForm.Meta):
             fields = TopologyForm.Meta.fields + \
                 ['structure', 'name', 'description', 'type', 'condition', 'implantation_year', 'published']
 else:
     class BaseInfrastructureForm(CommonForm):
-        implantation_year = forms.IntegerField(label=_(u"Implantation year"), required=False)
+        implantation_year = forms.IntegerField(label=_("Implantation year"), required=False)
         geomfields = ['geom']
 
         def __init__(self, *args, **kwargs):

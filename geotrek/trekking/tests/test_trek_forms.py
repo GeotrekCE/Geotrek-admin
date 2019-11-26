@@ -25,14 +25,12 @@ class TrekItinerancyTestCase(TestCase):
         OrderedTrekChild(child=self.trek1, parent=self.trek2, order=0).save()
         form = TrekForm(instance=self.trek3, user=self.user)
         form.cleaned_data = {'children_trek': [self.trek2]}
-        with self.assertRaises(ValidationError) as cm:
+        with self.assertRaises(ValidationError, msg='Cannot use parent trek 2 as a child trek.'):
             form.clean_children_trek()
-        self.assertEquals(cm.exception.message, u'Cannot use parent trek 2 as a child trek.')
 
     def test_child_with_itself_child(self):
         OrderedTrekChild(child=self.trek1, parent=self.trek2, order=0).save()
         form = TrekForm(instance=self.trek1, user=self.user)
         form.cleaned_data = {'children_trek': [self.trek3]}
-        with self.assertRaises(ValidationError) as cm:
+        with self.assertRaises(ValidationError, msg='Cannot add children because this trek is itself a child.'):
             form.clean_children_trek()
-        self.assertEquals(cm.exception.message, u'Cannot add children because this trek is itself a child.')
