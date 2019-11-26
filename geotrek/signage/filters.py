@@ -10,9 +10,9 @@ from geotrek.signage.widgets import SignageYearSelect, SignageImplantationYearSe
 class SignageFilterSet(StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     description = CharFilter(label=_('Description'), lookup_expr='icontains')
-    implantation_year = ValueFilter(name='implantation_year',
+    implantation_year = ValueFilter(field_name='implantation_year',
                                     widget=SignageImplantationYearSelect)
-    intervention_year = YearFilter(name='interventions_set__date',
+    intervention_year = YearFilter(field_name='interventions_set__date',
                                    widget=SignageYearSelect)
 
     def __init__(self, *args, **kwargs):
@@ -26,7 +26,7 @@ class SignageFilterSet(StructureRelatedFilterSet):
 
 
 class BladeFilterSet(StructureRelatedFilterSet):
-    bbox = PolygonTopologyFilter(name='topology', lookup_expr='intersects')
+    bbox = PolygonTopologyFilter(field_name='topology', lookup_expr='intersects')
 
     def __init__(self, *args, **kwargs):
         super(BladeFilterSet, self).__init__(*args, **kwargs)

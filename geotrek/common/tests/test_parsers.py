@@ -1,10 +1,8 @@
-# -*- encoding: utf-8 -*-
-
 import mock
 import os
 from shutil import rmtree
 from tempfile import mkdtemp
-from StringIO import StringIO
+from io import StringIO
 
 from django.test import TestCase
 from django.conf import settings
@@ -36,19 +34,16 @@ class AttachmentParser(AttachmentParserMixin, OrganismEidParser):
 
 class ParserTests(TestCase):
     def test_bad_parser_class(self):
-        with self.assertRaises(CommandError) as cm:
+        with self.assertRaises(CommandError, msg="Failed to import parser class 'geotrek.common.DoesNotExist'"):
             call_command('import', 'geotrek.common.DoesNotExist', '', verbosity=0)
-        self.assertEqual(unicode(cm.exception), u"Failed to import parser class 'geotrek.common.DoesNotExist'")
 
     def test_no_filename_no_url(self):
-        with self.assertRaises(CommandError) as cm:
+        with self.assertRaises(CommandError, msg="File path missing"):
             call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', '', verbosity=0)
-        self.assertEqual(unicode(cm.exception), u"File path missing")
 
     def test_bad_filename(self):
-        with self.assertRaises(CommandError) as cm:
+        with self.assertRaises(CommandError, msg="File does not exists at: find_me/I_am_not_there.shp"):
             call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', 'find_me/I_am_not_there.shp', verbosity=0)
-        self.assertEqual(unicode(cm.exception), u"File does not exists at: find_me/I_am_not_there.shp")
 
     def test_progress(self):
         output = StringIO()
@@ -61,7 +56,7 @@ class ParserTests(TestCase):
         call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', filename, verbosity=0)
         self.assertEqual(Organism.objects.count(), 1)
         organism = Organism.objects.get()
-        self.assertEqual(organism.organism, u"Comité Théodule")
+        self.assertEqual(organism.organism, "Comité Théodule")
 
     def test_duplicate_without_eid(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
@@ -82,19 +77,18 @@ class ParserTests(TestCase):
         call_command('import', 'geotrek.common.tests.test_parsers.OrganismEidParser', filename2, verbosity=0)
         self.assertEqual(Organism.objects.count(), 2)
         organisms = Organism.objects.order_by('pk')
-        self.assertEqual(organisms[0].organism, u"Comité Théodule")
-        self.assertEqual(organisms[1].organism, u"Comité Hippolyte")
+        self.assertEqual(organisms[0].organism, "Comité Théodule")
+        self.assertEqual(organisms[1].organism, "Comité Hippolyte")
 
     def test_report_format_text(self):
         parser = OrganismParser()
-        self.assertRegexpMatches(parser.report(), '0/0 lines imported.')
-        self.assertNotRegexpMatches(parser.report(),
-                                    r'<div id=\"collapse-\$celery_id\" class=\"collapse\">')
+        self.assertRegex(parser.report(), '0/0 lines imported.')
+        self.assertNotRegex(parser.report(), r'<div id=\"collapse-\$celery_id\" class=\"collapse\">')
 
     def test_report_format_html(self):
         parser = OrganismParser()
-        self.assertRegexpMatches(parser.report(output_format='html'),
-                                 r'<div id=\"collapse-\$celery_id\" class=\"collapse\">')
+        self.assertRegex(parser.report(output_format='html'),
+                         r'<div id=\"collapse-\$celery_id\" class=\"collapse\">')
 
     def test_report_format_bad(self):
         parser = OrganismParser()
@@ -105,7 +99,7 @@ class ParserTests(TestCase):
 @override_settings(MEDIA_ROOT=mkdtemp('geotrek_test'))
 class AttachmentParserTests(TestCase):
     def setUp(self):
-        self.filetype = FileType.objects.create(type=u"Photographie")
+        self.filetype = FileType.objects.create(type="Photographie")
 
     def tearDown(self):
         if os.path.exists(settings.MEDIA_ROOT):
@@ -130,7 +124,7 @@ class AttachmentParserTests(TestCase):
         It will always take the one without structure first
         """
         structure = StructureFactory.create(name="Structure")
-        FileType.objects.create(type=u"Photographie", structure=structure)
+        FileType.objects.create(type="Photographie", structure=structure)
         mocked.return_value.status_code = 200
         mocked.return_value.content = ''
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
@@ -149,9 +143,8 @@ class AttachmentParserTests(TestCase):
         mocked.return_value.status_code = 200
         mocked.return_value.content = ''
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
-        with self.assertRaises(CommandError) as cm:
+        with self.assertRaises(CommandError, msg="FileType 'Photographie' does not exists in Geotrek-Admin. Please add it"):
             call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
-        self.assertEqual(unicode(cm.exception), u"FileType 'Photographie' does not exists in Geotrek-Admin. Please add it")
 
     @mock.patch('requests.get')
     @mock.patch('requests.head')

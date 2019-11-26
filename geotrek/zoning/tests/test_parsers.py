@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import os
 
 from django.contrib.gis.geos import Polygon, MultiPolygon
@@ -21,8 +19,8 @@ class CityParserTest(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'city.shp')
         call_command('import', 'geotrek.zoning.parsers.CityParser', filename, verbosity=0)
         city = City.objects.get()
-        self.assertEqual(city.code, u"99999")
-        self.assertEqual(city.name, u"Trifouilli-les-Oies")
+        self.assertEqual(city.code, "99999")
+        self.assertEqual(city.name, "Trifouilli-les-Oies")
         self.assertEqual(city.geom.wkt, WKT)
 
 

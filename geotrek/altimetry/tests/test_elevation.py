@@ -16,7 +16,7 @@ from geotrek.altimetry.helpers import AltimetryHelper
 import os
 import sys
 import mock
-from StringIO import StringIO
+from io import StringIO
 
 
 class ElevationTest(TestCase):
@@ -138,9 +138,9 @@ class ElevationProfileTest(TestCase):
         profile = AltimetryHelper.elevation_profile(geom)
         language = translation.get_language()
         svg = AltimetryHelper.profile_svg(profile, language)
-        self.assertIn('Generated with pygal', svg)
-        self.assertIn(settings.ALTIMETRIC_PROFILE_BACKGROUND, svg)
-        self.assertIn(settings.ALTIMETRIC_PROFILE_COLOR, svg)
+        self.assertIn('Generated with pygal'.encode(), svg)
+        self.assertIn(settings.ALTIMETRIC_PROFILE_BACKGROUND.encode(), svg)
+        self.assertIn(settings.ALTIMETRIC_PROFILE_COLOR.encode(), svg)
 
     def test_elevation_altimetry_limits(self):
         geom = LineString((1.5, 2.5, 8), (2.5, 2.5, 10),
@@ -422,9 +422,8 @@ class CommandLoadDemTest(TestCase):
     def test_fail_import(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
         with mock.patch.dict(sys.modules, {'osgeo': None}):
-            with self.assertRaises(CommandError) as e:
+            with self.assertRaises(CommandError, msg='GDAL Python bindings are not available. Can not proceed.'):
                 call_command('loaddem', filename, '--replace', verbosity=0)
-            self.assertEqual('GDAL Python bindings are not available. Can not proceed.', e.exception.message)
 
     def test_success(self):
         output_stdout = StringIO()
@@ -450,29 +449,25 @@ class CommandLoadDemTest(TestCase):
         cur = conn.cursor()
         cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='DEM file exists, use --replace to overwrite'):
             call_command('loaddem', filename, verbosity=0)
-        self.assertIn('DEM file exists, use --replace to overwrite', e.exception)
         cur.execute('DROP TABLE mnt;')
 
     def test_fail_no_file(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'no.tif')
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='DEM file does not exists at: %s' % filename):
             call_command('loaddem', filename, verbosity=0)
-        self.assertIn('DEM file does not exists at: %s' % filename, e.exception)
 
     def test_fail_wrong_format(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'test.xml')
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='DEM format is not recognized by GDAL.'):
             call_command('loaddem', filename, verbosity=0)
-        self.assertIn('DEM format is not recognized by GDAL.', e.exception)
 
     @override_settings(SPATIAL_EXTENT=(0, 0, 0, 0))
     def test_bbox_not_intersect(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='DEM file does not match project extent'):
             call_command('loaddem', filename, '--replace', verbosity=0)
-        self.assertIn('DEM file does not match project extent', e.exception.message)
 
     @mock.patch('geotrek.altimetry.management.commands.loaddem.Command.call_command_system')
     def test_fail_raster2pgsql_first(self, sp):
@@ -482,9 +477,8 @@ class CommandLoadDemTest(TestCase):
             return 0
         sp.side_effect = command_fail_raster
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='Caught Exception: raster2pgsql failed with exit code 1'):
             call_command('loaddem', filename, '--replace', verbosity=0)
-        self.assertEqual('Caught Exception: raster2pgsql failed with exit code 1', e.exception.message)
 
     @mock.patch('geotrek.altimetry.management.commands.loaddem.Command.call_command_system')
     def test_fail_gdalwarp(self, sp):
@@ -494,9 +488,8 @@ class CommandLoadDemTest(TestCase):
             return 0
         sp.side_effect = command_fail_gdalwarp
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='Caught Exception: gdalwarp failed with exit code 1'):
             call_command('loaddem', filename, '--replace', verbosity=0)
-        self.assertEqual('Caught Exception: gdalwarp failed with exit code 1', e.exception.message)
 
     @mock.patch('geotrek.altimetry.management.commands.loaddem.Command.call_command_system')
     def test_fail_raster2pgsql_second(self, sp):
@@ -506,20 +499,17 @@ class CommandLoadDemTest(TestCase):
             return 0
         sp.side_effect = command_fail_raster
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='Caught Exception: raster2pgsql failed with exit code 1'):
             call_command('loaddem', filename, '--replace', verbosity=0)
-        self.assertEqual('Caught Exception: raster2pgsql failed with exit code 1', e.exception.message)
 
     @mock.patch('osgeo.gdal.Dataset.GetProjection', return_value='')
     def test_fail_projection(self, sp):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='DEM coordinate system is unknown.'):
             call_command('loaddem', filename, '--replace', verbosity=0)
-        self.assertEqual('DEM coordinate system is unknown.', e.exception.message)
 
     @mock.patch('osgeo.gdal.Dataset.GetGeoTransform', return_value=None)
     def test_fail_extent(self, sp):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='DEM extent is unknown.'):
             call_command('loaddem', filename, '--replace', verbosity=0)
-        self.assertEqual('DEM extent is unknown.', e.exception.message)

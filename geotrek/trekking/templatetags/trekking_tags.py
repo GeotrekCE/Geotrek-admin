@@ -13,7 +13,7 @@ def duration(value):
     Returns a duration in hours to a human readable version (minutes, days, ...)
     """
     if value is None:
-        return u""
+        return ""
 
     seconds = timedelta(minutes=float(value) * 60)
     duration = datetime(1, 1, 1) + seconds

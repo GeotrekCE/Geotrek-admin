@@ -24,8 +24,8 @@ class DifficultyTest(AuthentFixturesTest):
 
     def get_csrf_token(self, response):
         csrf = "name='csrfmiddlewaretoken' value='"
-        start = response.content.find(csrf) + len(csrf)
-        end = response.content.find("'", start)
+        start = response.content.decode().find(csrf) + len(csrf)
+        end = response.content.decode().find("'", start)
         return response.content[start:end]
 
     def test_cant_create_duplicate_id_difficulty(self):
@@ -42,8 +42,8 @@ class DifficultyTest(AuthentFixturesTest):
 
     def test_migrate_dive_difficulty(self):
         self.login()
-        self.assertEquals(self.dive.difficulty, self.difficulty)
-        self.assertEquals(self.dive.difficulty_id, self.difficulty.pk)
+        self.assertEqual(self.dive.difficulty, self.difficulty)
+        self.assertEqual(self.dive.difficulty_id, self.difficulty.pk)
         response = self.client.get(reverse('admin:diving_difficulty_change', args=[self.difficulty.pk]))
         csrf = self.get_csrf_token(response)
         post_data = {'id': 5,
@@ -52,13 +52,13 @@ class DifficultyTest(AuthentFixturesTest):
         response = self.client.post(reverse('admin:diving_difficulty_change', args=[self.difficulty.pk]), post_data)
         self.assertRedirects(response, reverse('admin:diving_difficulty_changelist'))
         trek = Dive.objects.get(pk=self.dive.pk)
-        self.assertNotEquals(trek.difficulty.name, self.difficulty.name)
-        self.assertEquals(trek.difficulty_id, 5)
+        self.assertNotEqual(trek.difficulty.name, self.difficulty.name)
+        self.assertEqual(trek.difficulty_id, 5)
 
     def test_migrate_dive_difficulty_not_changing_order(self):
         self.login()
-        self.assertEquals(self.dive.difficulty, self.difficulty)
-        self.assertEquals(self.dive.difficulty_id, self.difficulty.pk)
+        self.assertEqual(self.dive.difficulty, self.difficulty)
+        self.assertEqual(self.dive.difficulty_id, self.difficulty.pk)
         response = self.client.get(reverse('admin:diving_difficulty_change', args=[self.difficulty.pk]))
         csrf = self.get_csrf_token(response)
         post_data = {'id': self.difficulty.pk,
@@ -67,8 +67,8 @@ class DifficultyTest(AuthentFixturesTest):
         response = self.client.post(reverse('admin:diving_difficulty_change', args=[self.difficulty.pk]), post_data)
         self.assertRedirects(response, reverse('admin:diving_difficulty_changelist'))
         trek = Dive.objects.get(pk=self.dive.pk)
-        self.assertNotEquals(trek.difficulty.name, self.difficulty.name)
-        self.assertEquals(trek.difficulty_id, self.difficulty.pk)
+        self.assertNotEqual(trek.difficulty.name, self.difficulty.name)
+        self.assertEqual(trek.difficulty_id, self.difficulty.pk)
 
     def test_cant_create_duplicate_id_level(self):
         self.login()
@@ -86,8 +86,8 @@ class DifficultyTest(AuthentFixturesTest):
         self.login()
         level_2 = LevelFactory.create()
         self.dive.levels.add(level_2)
-        self.assertEquals(self.dive.levels.first(), self.level)
-        self.assertEquals(self.dive.levels.first().id, self.level.pk)
+        self.assertEqual(self.dive.levels.first(), self.level)
+        self.assertEqual(self.dive.levels.first().id, self.level.pk)
         response = self.client.get(reverse('admin:diving_level_change', args=[self.level.pk]))
         csrf = self.get_csrf_token(response)
         post_data = {'id': 5,
@@ -103,8 +103,8 @@ class DifficultyTest(AuthentFixturesTest):
         self.login()
         level_2 = LevelFactory.create()
         self.dive.levels.add(level_2)
-        self.assertEquals(self.dive.levels.first(), self.level)
-        self.assertEquals(self.dive.levels.first().id, self.level.pk)
+        self.assertEqual(self.dive.levels.first(), self.level)
+        self.assertEqual(self.dive.levels.first().id, self.level.pk)
         response = self.client.get(reverse('admin:diving_level_change', args=[self.level.pk]))
         csrf = self.get_csrf_token(response)
         post_data = {'id': self.level.pk,

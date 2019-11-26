@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import json
 import logging
 from collections import defaultdict
@@ -98,7 +96,7 @@ class PathList(MapEntityList):
         return columns
 
     def get_template_names(self):
-        return (u"core/path_list.html",)
+        return ("core/path_list.html",)
 
 
 class PathJsonList(MapEntityJsonList, PathList):
@@ -177,11 +175,11 @@ class PathUpdate(MapEntityUpdate):
         path = self.get_object()
         if path.draft and not self.request.user.has_perm('core.change_draft_path'):
             messages.warning(self.request, _(
-                u'Access to the requested resource is restricted. You have been redirected.'))
+                'Access to the requested resource is restricted. You have been redirected.'))
             return redirect('core:path_detail', **kwargs)
         if not path.draft and not self.request.user.has_perm('core.change_path'):
             messages.warning(self.request, _(
-                u'Access to the requested resource is restricted. You have been redirected.'))
+                'Access to the requested resource is restricted. You have been redirected.'))
             return redirect('core:path_detail', **kwargs)
         if path.draft and self.request.user.has_perm('core.change_draft_path'):
             return super(MapEntityUpdate, self).dispatch(*args, **kwargs)
@@ -201,15 +199,15 @@ class MultiplePathDelete(TemplateView):
             self.paths.append(path)
             if path.draft and not self.request.user.has_perm('core.delete_draft_path'):
                 messages.warning(self.request, _(
-                    u'Access to the requested resource is restricted. You have been redirected.'))
+                    'Access to the requested resource is restricted. You have been redirected.'))
                 return redirect('core:path_list')
             if not path.draft and not self.request.user.has_perm('core.delete_path'):
                 messages.warning(self.request, _(
-                    u'Access to the requested resource is restricted. You have been redirected.'))
+                    'Access to the requested resource is restricted. You have been redirected.'))
                 return redirect('core:path_list')
             if not path.same_structure(self.request.user):
-                messages.warning(self.request, _(u'Access to the requested resource is restricted by structure. '
-                                                 u'You have been redirected.'))
+                messages.warning(self.request, _('Access to the requested resource is restricted by structure. '
+                                                 'You have been redirected.'))
                 return redirect('core:path_list')
         return super(MultiplePathDelete, self).dispatch(*args, **kwargs)
 
@@ -239,11 +237,11 @@ class PathDelete(MapEntityDelete):
         path = self.get_object()
         if path.draft and not self.request.user.has_perm('core.delete_draft_path'):
             messages.warning(self.request, _(
-                u'Access to the requested resource is restricted. You have been redirected.'))
+                'Access to the requested resource is restricted. You have been redirected.'))
             return redirect('core:path_detail', **kwargs)
         if not path.draft and not self.request.user.has_perm('core.delete_path'):
             messages.warning(self.request, _(
-                u'Access to the requested resource is restricted. You have been redirected.'))
+                'Access to the requested resource is restricted. You have been redirected.'))
             return redirect('core:path_detail', **kwargs)
         if path.draft and self.request.user.has_perm('core.delete_draft_path'):
             return super(MapEntityDelete, self).dispatch(*args, **kwargs)
@@ -373,31 +371,31 @@ def merge_path(request):
             ids_path_merge = request.POST.getlist('path[]')
 
             if len(ids_path_merge) != 2:
-                raise Exception(_(u"You should select two paths"))
+                raise Exception(_("You should select two paths"))
 
             path_a = Path.objects.get(pk=ids_path_merge[0])
             path_b = Path.objects.get(pk=ids_path_merge[1])
 
             if not path_a.same_structure(request.user) or not path_b.same_structure(request.user):
-                raise Exception(_(u"You don't have the right to change these paths"))
+                raise Exception(_("You don't have the right to change these paths"))
 
             if path_a.draft != path_b.draft:
-                raise Exception(_(u"You can't merge 1 draft path with 1 normal path"))
+                raise Exception(_("You can't merge 1 draft path with 1 normal path"))
 
             result = path_a.merge_path(path_b)
 
             if result == 2:
-                raise Exception(_(u"You can't merge 2 paths with a 3rd path in the intersection"))
+                raise Exception(_("You can't merge 2 paths with a 3rd path in the intersection"))
 
             elif result == 0:
-                raise Exception(_(u"No matching points to merge paths found"))
+                raise Exception(_("No matching points to merge paths found"))
 
             else:
-                response = {u'success': _(u"Paths merged successfully")}
+                response = {'success': _("Paths merged successfully")}
                 messages.success(request, response['success'])
 
         except Exception as exc:
-            response = {u'error': u'%s' % exc, }
+            response = {'error': '%s' % exc, }
 
     return JsonResponse(response)
 

@@ -17,11 +17,11 @@ class PolygonTopologyFilter(PolygonFilter):
             return qs
         lookup = self.lookup_expr
         inner_qs = Topology.objects.filter(**{'geom__%s' % lookup: value})
-        return qs.filter(**{'%s__in' % self.name: inner_qs})
+        return qs.filter(**{'%s__in' % self.field_name: inner_qs})
 
 
 class InterventionYearSelect(YearSelect):
-    label = _(u"Year")
+    label = _("Year")
 
     def get_years(self):
         return Intervention.objects.all_years()
@@ -29,11 +29,11 @@ class InterventionYearSelect(YearSelect):
 
 class InterventionFilterSet(StructureRelatedFilterSet):
     ON_CHOICES = (('INFRASTRUCTURE', _("Infrastructure")), ('SIGNAGE', _("Signage")))
-    bbox = PolygonTopologyFilter(name='topology', lookup_expr='intersects')
-    year = YearFilter(name='date',
+    bbox = PolygonTopologyFilter(field_name='topology', lookup_expr='intersects')
+    year = YearFilter(field_name='date',
                       widget=InterventionYearSelect,
-                      label=_(u"Year"))
-    on = ChoiceFilter(name='topology__kind', choices=ON_CHOICES, label=_("On"), empty_label=_("On"))
+                      label=_("Year"))
+    on = ChoiceFilter(field_name='topology__kind', choices=ON_CHOICES, label=_("On"), empty_label=_("On"))
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Intervention
@@ -43,17 +43,17 @@ class InterventionFilterSet(StructureRelatedFilterSet):
 
 
 class ProjectYearSelect(YearSelect):
-    label = _(u"Year of activity")
+    label = _("Year of activity")
 
     def get_years(self):
         return Project.objects.all_years()
 
 
 class ProjectFilterSet(StructureRelatedFilterSet):
-    bbox = PythonPolygonFilter(name='geom')
-    in_year = YearBetweenFilter(name=('begin_year', 'end_year'),
+    bbox = PythonPolygonFilter(field_name='geom')
+    in_year = YearBetweenFilter(field_name=('begin_year', 'end_year'),
                                 widget=ProjectYearSelect,
-                                label=_(u"Year of activity"))
+                                label=_("Year of activity"))
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Project

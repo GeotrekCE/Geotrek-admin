@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-import json
 import re
 from unittest import skipIf
 
@@ -49,7 +47,7 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         poi = POIFactory.create(no_path=True)
         poi.add_path(path_1, start=0, end=0)
         response = self.client.get(reverse('core:path_list'))
-        self.assertIn('<a href="#delete" id="btn-delete" role="button">', response.content)
+        self.assertContains(response, '<a href="#delete" id="btn-delete" role="button">')
 
     def test_delete_view_multiple_path(self):
         path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
@@ -58,7 +56,7 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         poi.add_path(path_1, start=0, end=0)
         response = self.client.get(reverse('core:multiple_path_delete', args=['%s,%s' % (path_1.pk, path_2.pk)]))
         self.assertEqual(response.status_code, 200)
-        self.assertIn('Do you really wish to delete', response.content)
+        self.assertContains(response, 'Do you really wish to delete')
 
     def test_delete_multiple_path(self):
         path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
@@ -75,12 +73,12 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         service.add_path(path_2, start=0, end=1)
         InterventionFactory.create(topology=signage, name="INTER_1")
         response = self.client.get(reverse('core:multiple_path_delete', args=['%s,%s' % (path_1.pk, path_2.pk)]))
-        self.assertIn("POI_1", response.content)
-        self.assertIn("INFRA_1", response.content)
-        self.assertIn("SIGNA_1", response.content)
-        self.assertIn("TRAIL_1", response.content)
-        self.assertIn("ServiceType", response.content)
-        self.assertIn("INTER_1", response.content)
+        self.assertContains(response, "POI_1")
+        self.assertContains(response, "INFRA_1")
+        self.assertContains(response, "SIGNA_1")
+        self.assertContains(response, "TRAIL_1")
+        self.assertContains(response, "ServiceType")
+        self.assertContains(response, "INTER_1")
         response = self.client.post(reverse('core:multiple_path_delete', args=['%s,%s' % (path_1.pk, path_2.pk)]))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Path.objects.count(), 2)
@@ -130,7 +128,7 @@ class PathViewsTest(CommonTest):
             form = response.context['form']
             self.assertTrue('stake' in form.fields)
             stakefield = form.fields['stake']
-            self.assertTrue((stake.pk, unicode(stake)) in stakefield.choices)
+            self.assertTrue((stake.pk, str(stake)) in stakefield.choices)
             self.client.logout()
         # Test for two structures
         s1 = StructureFactory.create()
@@ -160,9 +158,9 @@ class PathViewsTest(CommonTest):
         form = response.context['form']
         self.assertTrue('stake' in form.fields)
         stakefield = form.fields['stake']
-        self.assertTrue((st0.pk, unicode(st0)) in stakefield.choices)
-        self.assertTrue((st1.pk, unicode(st1)) in stakefield.choices)
-        self.assertFalse((st2.pk, unicode(st2)) in stakefield.choices)
+        self.assertTrue((st0.pk, str(st0)) in stakefield.choices)
+        self.assertTrue((st1.pk, str(st1)) in stakefield.choices)
+        self.assertFalse((st2.pk, str(st2)) in stakefield.choices)
 
     def test_set_structure_with_permission_object_linked_none_structure(self):
         if not hasattr(self.model, 'structure'):
@@ -184,7 +182,7 @@ class PathViewsTest(CommonTest):
 
     def test_basic_format(self):
         self.modelfactory.create()
-        self.modelfactory.create(name=u"ãéè")
+        self.modelfactory.create(name="ãéè")
         super(CommonTest, self).test_basic_format()
 
     def test_path_form_is_not_valid_if_no_geometry_provided(self):
@@ -245,7 +243,7 @@ class PathViewsTest(CommonTest):
         self.login()
         response = self.client.get('/api/path/paths.json')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.content)['sumPath'], 0.0)
+        self.assertEqual(response.json()['sumPath'], 0.0)
 
     def test_sum_path_two(self):
         self.login()
@@ -253,16 +251,16 @@ class PathViewsTest(CommonTest):
         PathFactory()
         response = self.client.get('/api/path/paths.json')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.content)['sumPath'], 0.3)
+        self.assertEqual(response.json()['sumPath'], 0.3)
 
     def test_sum_path_filter_cities(self):
         self.login()
         p1 = PathFactory(geom=LineString((0, 0), (0, 1000), srid=settings.SRID))
         city = CityFactory(code='09000', geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)), srid=settings.SRID)))
-        self.assertEquals(p1.aggregations.count(), 0)
+        self.assertEqual(p1.aggregations.count(), 0)
         response = self.client.get('/api/path/paths.json?city=%s' % city.code)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(json.loads(response.content)['sumPath'], 0.0)
+        self.assertEqual(response.json()['sumPath'], 0.0)
 
     def test_merge_fails_parameters(self):
         """
@@ -272,10 +270,10 @@ class PathViewsTest(CommonTest):
         p1 = PathFactory.create()
         p2 = PathFactory.create()
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk]})
-        self.assertIn('error', response.json())
+        self.assertEqual({'error': 'You should select two paths'}, response.json())
 
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p1.pk, p2.pk]})
-        self.assertIn('error', response.json())
+        self.assertEqual({'error': 'You should select two paths'}, response.json())
         self.logout()
 
     def test_merge_fails_donttouch(self):
@@ -284,7 +282,7 @@ class PathViewsTest(CommonTest):
         p4 = PathFactory.create(name="BC", geom=LineString((500, 0), (1000, 0)))
 
         response = self.client.post(reverse('core:merge_path'), {'path[]': [p3.pk, p4.pk]})
-        self.assertIn('error', response.json())
+        self.assertEqual({'error': 'No matching points to merge paths found'}, response.json())
         self.logout()
 
     def test_merge_fails_other_path_intersection_less_than_snapping(self):
@@ -508,12 +506,11 @@ class PathViewsTest(CommonTest):
         source = PathSource.objects.create(source="Source_1", structure=structure)
         self.assertNotEqual(structure, self.user.profile.structure)
         obj = self.modelfactory.create(structure=structure)
-        data = self.get_good_data()
+        data = self.get_good_data().copy()
         data['source'] = source.pk
         data['structure'] = structure_2.pk
-        result = self.client.post(obj.get_update_url(), data)
-        self.assertEqual(result.status_code, 200)
-        self.assertIn("Please select a choice related to all structures", result.content)
+        response = self.client.post(obj.get_update_url(), data)
+        self.assertContains(response, "Please select a choice related to all structures")
         self.logout()
 
 
@@ -598,11 +595,11 @@ class TrailViewsTest(CommonTest):
 
     @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
     def test_document_export(self, get_attributes_html):
-        get_attributes_html.return_value = '<p>mock</p>'
+        get_attributes_html.return_value = b'<p>mock</p>'
         trail = TrailFactory()
         self.login()
-        with open(trail.get_map_image_path(), 'w') as f:
-            f.write('***' * 1000)
+        with open(trail.get_map_image_path(), 'wb') as f:
+            f.write(b'***' * 1000)
         response = self.client.get(trail.get_document_url())
         self.assertEqual(response.status_code, 200)
 

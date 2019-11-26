@@ -1,7 +1,7 @@
 import os
 import mock
 import sys
-from StringIO import StringIO
+from io import StringIO
 
 from django.contrib.gis.geos.error import GEOSException
 from django.core.management import call_command
@@ -31,8 +31,8 @@ class SignageCommandTest(TestCase):
         self.assertIn('Signages will be linked to %s' % structure, output.getvalue())
         self.assertIn('2 objects created.', output.getvalue())
         value = Signage.objects.filter(name='name')
-        self.assertEquals(2010, value[0].implantation_year)
-        self.assertEquals(value.count(), 2)
+        self.assertEqual(2010, value[0].implantation_year)
+        self.assertEqual(value.count(), 2)
         self.assertAlmostEqual(value[0].geom.x, -436345.704831, places=5)
         self.assertAlmostEqual(value[0].geom.y, 1176487.742917, places=5)
         self.assertAlmostEqual(value[1].geom.x, -436345.505347, places=5)
@@ -48,19 +48,18 @@ class SignageCommandTest(TestCase):
         self.assertIn('Signages will be linked to %s' % structure, output.getvalue())
         self.assertIn('1 objects created.', output.getvalue())
         value = Signage.objects.first()
-        self.assertEquals('name', value.name)
-        self.assertEquals(2010, value.implantation_year)
-        self.assertEquals(Signage.objects.count(), 1)
+        self.assertEqual('name', value.name)
+        self.assertEqual(2010, value.implantation_year)
+        self.assertEqual(Signage.objects.count(), 1)
 
     def test_load_signage_bad_multipoints_error(self):
         output = StringIO()
         StructureFactory.create(name='structure')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage_bad_multipoint.geojson')
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='One of your geometry is a MultiPoint object with multiple points'):
             call_command('loadsignage', filename, type_default='label', name_default='name',
                          condition_default='condition', structure_default='structure',
                          description_default='description', year_default=2010, verbosity=2, stdout=output)
-        self.assertEqual('One of your geometry is a MultiPoint object with multiple points', e.exception.message)
 
     def test_load_signage_with_fields(self):
         output = StringIO()
@@ -78,12 +77,11 @@ class SignageCommandTest(TestCase):
         self.assertIn('coucou', names)
         self.assertIn(2010, years)
         self.assertIn(2012, years)
-        self.assertEquals(value.count(), 2)
+        self.assertEqual(value.count(), 2)
 
     def test_no_file_fail(self):
-        with self.assertRaises(CommandError) as cm:
+        with self.assertRaises(CommandError, msg="File does not exists at: toto.shp"):
             call_command('loadsignage', 'toto.shp')
-        self.assertEqual(cm.exception.message, "File does not exists at: toto.shp")
 
     def test_missing_defaults(self):
         StructureFactory.create(name='structure')
@@ -149,9 +147,8 @@ class SignageCommandTest(TestCase):
     def test_fail_import(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
         with mock.patch.dict(sys.modules, {'osgeo': None}):
-            with self.assertRaises(CommandError) as e:
+            with self.assertRaises(CommandError, msg='GDAL Python bindings are not available. Can not proceed.'):
                 call_command('loadsignage', filename, verbosity=0)
-            self.assertEqual('GDAL Python bindings are not available. Can not proceed.', e.exception.message)
 
     def test_fail_structure_default_do_not_exist(self):
         output = StringIO()

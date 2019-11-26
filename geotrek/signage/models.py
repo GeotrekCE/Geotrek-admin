@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 
 from django.db import models
@@ -19,16 +18,16 @@ from geotrek.infrastructure.models import BaseInfrastructure, InfrastructureCond
 
 class Sealing(StructureOrNoneRelated):
     """ A sealing linked with a signage"""
-    label = models.CharField(verbose_name=_(u"Name"), db_column="etat", max_length=250)
+    label = models.CharField(verbose_name=_("Name"), db_column="etat", max_length=250)
 
     class Meta:
         db_table = 's_b_scellement'
-        verbose_name = _(u"Sealing")
-        verbose_name_plural = _(u"Sealings")
+        verbose_name = _("Sealing")
+        verbose_name_plural = _("Sealings")
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.label, self.structure.name)
+            return "{} ({})".format(self.label, self.structure.name)
         return self.label
 
 
@@ -38,12 +37,12 @@ class SignageType(StructureOrNoneRelated, OptionalPictogramMixin):
 
     class Meta:
         db_table = 's_b_signaletique'
-        verbose_name = _(u"Signage Type")
-        verbose_name_plural = _(u"Signage Types")
+        verbose_name = _("Signage Type")
+        verbose_name_plural = _("Signage Types")
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.label, self.structure.name)
+            return "{} ({})".format(self.label, self.structure.name)
         return self.label
 
     def get_pictogram_url(self):
@@ -64,19 +63,19 @@ class SignageGISManager(gismodels.GeoManager):
 class Signage(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is of type SIGNAGE """
     objects = BaseInfrastructure.get_manager_cls(SignageGISManager)()
-    code = models.CharField(verbose_name=_(u"Code"), max_length=250, blank=True, null=True,
+    code = models.CharField(verbose_name=_("Code"), max_length=250, blank=True, null=True,
                             db_column='code')
     manager = models.ForeignKey(Organism, db_column='gestionnaire', verbose_name=_("Manager"), null=True, blank=True)
     sealing = models.ForeignKey(Sealing, db_column='scellement', verbose_name=_("Sealing"), null=True, blank=True)
-    printed_elevation = models.IntegerField(verbose_name=_(u"Printed elevation"), blank=True, null=True,
+    printed_elevation = models.IntegerField(verbose_name=_("Printed elevation"), blank=True, null=True,
                                             db_column='altitude_imprimee')
     type = models.ForeignKey(SignageType, db_column='type', verbose_name=_("Type"))
     gps_value_verbose_name = _("GPS coordinates")
 
     class Meta:
         db_table = 's_t_signaletique'
-        verbose_name = _(u"Signage")
-        verbose_name_plural = _(u"Signages")
+        verbose_name = _("Signage")
+        verbose_name_plural = _("Signages")
 
     @classmethod
     def path_signages(cls, path):
@@ -102,15 +101,16 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     @property
     def gps_value(self):
         geom = self.geomtransform
+        assert geom.geom_type == 'Point'
         if geom.y > 0:
-            degreelong = u"%s°N" % geom.y
+            degreelong = "%0.6f°N" % geom.y
         else:
-            degreelong = u"%s°S" % - geom.y
+            degreelong = "%0.6f°S" % - geom.y
         if geom.x > 0:
-            degreelat = u"%s°E" % geom.x
+            degreelat = "%0.6f°E" % geom.x
         else:
-            degreelat = u"%s°W" % - geom.x
-        return u"%s, %s" % (degreelong, degreelat)
+            degreelat = "%0.6f°W" % - geom.x
+        return "%s, %s" % (degreelong, degreelat)
 
     @property
     def geomtransform(self):
@@ -126,10 +126,10 @@ class Signage(MapEntityMixin, BaseInfrastructure):
         return self.geomtransform.y
 
 
-Path.add_property('signages', lambda self: Signage.path_signages(self), _(u"Signages"))
-Topology.add_property('signages', Signage.topology_signages, _(u"Signages"))
+Path.add_property('signages', lambda self: Signage.path_signages(self), _("Signages"))
+Topology.add_property('signages', Signage.topology_signages, _("Signages"))
 Topology.add_property('published_signages', lambda self: Signage.published_topology_signages(self),
-                      _(u"Published Signages"))
+                      _("Published Signages"))
 
 
 class Direction(models.Model):
@@ -137,10 +137,10 @@ class Direction(models.Model):
 
     class Meta:
         db_table = 's_b_direction'
-        verbose_name = _(u"Direction")
-        verbose_name_plural = _(u"Directions")
+        verbose_name = _("Direction")
+        verbose_name_plural = _("Directions")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.label
 
 
@@ -149,10 +149,10 @@ class Color(models.Model):
 
     class Meta:
         db_table = 's_b_color'
-        verbose_name = _(u"Blade color")
-        verbose_name_plural = _(u"Blade colors")
+        verbose_name = _("Blade color")
+        verbose_name_plural = _("Blade colors")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.label
 
 
@@ -166,35 +166,35 @@ class BladeType(StructureOrNoneRelated):
 
     class Meta:
         db_table = 's_b_lame'
-        verbose_name = _(u"Blade type")
-        verbose_name_plural = _(u"Blade types")
+        verbose_name = _("Blade type")
+        verbose_name_plural = _("Blade types")
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.label, self.structure.name)
+            return "{} ({})".format(self.label, self.structure.name)
         return self.label
 
 
 class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
     signage = models.ForeignKey(Signage, db_column='signaletique', verbose_name=_("Signage"),
                                 on_delete=models.PROTECT)
-    number = models.CharField(verbose_name=_(u"Number"), max_length=250, db_column='numero')
-    direction = models.ForeignKey(Direction, verbose_name=_(u"Direction"), db_column='direction',
+    number = models.CharField(verbose_name=_("Number"), max_length=250, db_column='numero')
+    direction = models.ForeignKey(Direction, verbose_name=_("Direction"), db_column='direction',
                                   on_delete=models.PROTECT)
     type = models.ForeignKey(BladeType, db_column='type', verbose_name=_("Type"))
     color = models.ForeignKey(Color, db_column='couleur', on_delete=models.PROTECT, null=True, blank=True,
                               verbose_name=_("Color"))
     condition = models.ForeignKey(InfrastructureCondition, db_column='etat', verbose_name=_("Condition"),
                                   null=True, blank=True, on_delete=models.PROTECT)
-    topology = models.ForeignKey(Topology, related_name="blades_set", verbose_name=_(u"Blades"))
+    topology = models.ForeignKey(Topology, related_name="blades_set", verbose_name=_("Blades"))
     objects = NoDeleteMixin.get_manager_cls(BladeManager)()
 
     class Meta:
         db_table = 's_t_lame'
-        verbose_name = _(u"Blade")
-        verbose_name_plural = _(u"Blades")
+        verbose_name = _("Blade")
+        verbose_name_plural = _("Blades")
 
-    def __unicode__(self):
+    def __str__(self):
         return settings.BLADE_CODE_FORMAT.format(signagecode=self.signage.code, bladenumber=self.number)
 
     def set_topology(self, topology):
@@ -218,7 +218,7 @@ class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
 
     @property
     def signage_display(self):
-        return u'<img src="%simages/signage-16.png" title="Signage">' % settings.STATIC_URL
+        return '<img src="%simages/signage-16.png" title="Signage">' % settings.STATIC_URL
 
     @property
     def order_lines(self):
@@ -252,7 +252,7 @@ class Line(StructureRelated):
     def geomfield(cls):
         return Topology._meta.get_field('geom')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.linecode_csv_display
 
     @property
@@ -267,7 +267,7 @@ class Line(StructureRelated):
 
     @property
     def signage_csv_display(self):
-        return u"%s #%s" % (self.blade.signage, self.blade.number)
+        return "%s #%s" % (self.blade.signage, self.blade.number)
 
     @property
     def lat_csv_display(self):
@@ -292,5 +292,5 @@ class Line(StructureRelated):
     class Meta:
         unique_together = (('blade', 'number'), )
         db_table = 's_t_ligne'
-        verbose_name = _(u"Line")
-        verbose_name_plural = _(u"Lines")
+        verbose_name = _("Line")
+        verbose_name_plural = _("Lines")

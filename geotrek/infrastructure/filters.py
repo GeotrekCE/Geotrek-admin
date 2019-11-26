@@ -9,9 +9,9 @@ from .models import Infrastructure
 class InfrastructureFilterSet(StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     description = CharFilter(label=_('Description'), lookup_expr='icontains')
-    implantation_year = ValueFilter(name='implantation_year',
+    implantation_year = ValueFilter(field_name='implantation_year',
                                     widget=InfrastructureImplantationYearSelect)
-    intervention_year = YearFilter(name='interventions_set__date',
+    intervention_year = YearFilter(field_name='interventions_set__date',
                                    widget=InfrastructureYearSelect)
 
     def __init__(self, *args, **kwargs):
@@ -19,7 +19,7 @@ class InfrastructureFilterSet(StructureRelatedFilterSet):
 
         field = self.form.fields['type__type']
         all_choices = list(field.widget.choices)
-        field.widget.choices = [('', _(u"Category"))] + all_choices[1:]
+        field.widget.choices = [('', _("Category"))] + all_choices[1:]
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Infrastructure

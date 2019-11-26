@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 Custom Template Context Processors for Geotrek
 """

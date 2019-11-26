@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.db import migrations, models
 
 
@@ -14,6 +11,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='species',
             name='pictogram',
-            field=models.FileField(db_column=b'picto', upload_to=b'upload', max_length=512, blank=True, null=True, verbose_name='Pictogram'),
+            field=models.FileField(db_column='picto', upload_to='upload', max_length=512, blank=True, null=True, verbose_name='Pictogram'),
         ),
     ]

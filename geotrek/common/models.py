@@ -14,17 +14,17 @@ from geotrek.common.mixins import PictogramMixin, OptionalPictogramMixin
 
 class Organism(StructureOrNoneRelated):
 
-    organism = models.CharField(max_length=128, verbose_name=_(u"Organism"), db_column='organisme')
+    organism = models.CharField(max_length=128, verbose_name=_("Organism"), db_column='organisme')
 
     class Meta:
         db_table = 'm_b_organisme'
-        verbose_name = _(u"Organism")
-        verbose_name_plural = _(u"Organisms")
+        verbose_name = _("Organism")
+        verbose_name_plural = _("Organisms")
         ordering = ['organism']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.organism, self.structure.name)
+            return "{} ({})".format(self.organism, self.structure.name)
         return self.organism
 
 
@@ -41,15 +41,15 @@ class FileType(StructureOrNoneRelated, BaseFileType):
         """
         return cls.objects.filter(Q(structure=request.user.profile.structure) | Q(structure=None))
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
-            return u"{} ({})".format(self.type, self.structure.name)
+            return "{} ({})".format(self.type, self.structure.name)
         return self.type
 
 
 class Attachment(BaseAttachment):
 
-    creation_date = models.DateField(verbose_name=_(u"Creation Date"), db_column="date_creation", null=True, blank=True)
+    creation_date = models.DateField(verbose_name=_("Creation Date"), db_column="date_creation", null=True, blank=True)
 
     class Meta(BaseAttachment.Meta):
         db_table = 'fl_t_fichier'
@@ -57,16 +57,16 @@ class Attachment(BaseAttachment):
 
 class Theme(PictogramMixin):
 
-    label = models.CharField(verbose_name=_(u"Label"), max_length=128, db_column='theme')
-    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_(u"Cirkwi tag"), null=True, blank=True)
+    label = models.CharField(verbose_name=_("Label"), max_length=128, db_column='theme')
+    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True)
 
     class Meta:
         db_table = 'o_b_theme'
-        verbose_name = _(u"Theme")
-        verbose_name_plural = _(u"Themes")
+        verbose_name = _("Theme")
+        verbose_name_plural = _("Themes")
         ordering = ['label']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.label
 
     @property
@@ -90,35 +90,35 @@ class Theme(PictogramMixin):
             if w > h:
                 image = image.crop((0, 0, w / 2, h))
             image.save(output)
-        return open(output)
+        return open(output, 'rb')
 
 
 class RecordSource(OptionalPictogramMixin):
 
-    name = models.CharField(verbose_name=_(u"Name"), max_length=50)
-    website = models.URLField(verbose_name=_(u"Website"), max_length=256,
+    name = models.CharField(verbose_name=_("Name"), max_length=50)
+    website = models.URLField(verbose_name=_("Website"), max_length=256,
                               db_column='website', blank=True, null=True)
 
     class Meta:
         db_table = 'o_b_source_fiche'
-        verbose_name = _(u"Record source")
-        verbose_name_plural = _(u"Record sources")
+        verbose_name = _("Record source")
+        verbose_name_plural = _("Record sources")
         ordering = ['name']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
 class TargetPortal(models.Model):
-    name = models.CharField(verbose_name=_(u"Name"), max_length=50, unique="True", help_text=_(u"Used for sync"))
-    website = models.URLField(verbose_name=_(u"Website"), max_length=256,
-                              db_column='website', unique="True")
+    name = models.CharField(verbose_name=_("Name"), max_length=50, unique=True, help_text=_("Used for sync"))
+    website = models.URLField(verbose_name=_("Website"), max_length=256,
+                              db_column='website', unique=True)
 
     class Meta:
         db_table = 'o_b_target_portal'
-        verbose_name = _(u"Target portal")
-        verbose_name_plural = _(u"Target portals")
+        verbose_name = _("Target portal")
+        verbose_name_plural = _("Target portals")
         ordering = ('name',)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name

@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-
 import mock
 
 from django.db import connection
@@ -49,7 +47,7 @@ class UtilsTest(TestCase):
                 'ShapeParser',
                 'ApidaeParser',
                 'TourismSystemParser'):
-            self.assert_(classname not in class_list)
+            self.assertTrue(classname not in class_list)
 
     def test_create_tmp_directory(self):
         self.assertTupleEqual(

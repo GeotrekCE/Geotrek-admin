@@ -45,7 +45,7 @@ class PermissionDraftPath(TestCase):
 
         response = self.client.get('/path/add/')
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn('name="draft"', response.content)
+        self.assertNotContains(response, 'name="draft"')
 
     def test_permission_view_add_path_without_draft_permission(self):
         """
@@ -61,7 +61,7 @@ class PermissionDraftPath(TestCase):
 
         response = self.client.get('/path/add/')
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn('name="draft"', response.content)
+        self.assertNotContains(response, 'name="draft"')
 
     def test_permission_view_add_path_with_2_permissions(self):
         """
@@ -78,7 +78,7 @@ class PermissionDraftPath(TestCase):
 
         response = self.client.get('/path/add/')
         self.assertEqual(response.status_code, 200)
-        self.assertIn('name="draft"', response.content)
+        self.assertContains(response, 'name="draft"')
 
     def test_permission_view_change_path_with_draft_permission(self):
         """
@@ -105,7 +105,7 @@ class PermissionDraftPath(TestCase):
 
         response = self.client.get('/path/edit/%s/' % draft_path.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn('name="draft"', response.content)
+        self.assertNotContains(response, 'name="draft"')
 
     def test_permission_view_change_path_without_draft_permission(self):
         """
@@ -129,7 +129,7 @@ class PermissionDraftPath(TestCase):
 
         response = self.client.get('/path/edit/%s/' % path.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn('name="draft"', response.content)
+        self.assertNotContains(response, 'name="draft"')
 
         response = self.client.get('/path/edit/%s/' % draft_path.pk)
         self.assertEqual(response.status_code, 302)
@@ -155,11 +155,11 @@ class PermissionDraftPath(TestCase):
 
         response = self.client.get('/path/edit/%s/' % path.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn('name="draft"', response.content)
+        self.assertNotContains(response, 'name="draft"')
 
         response = self.client.get('/path/edit/%s/' % draft_path.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertIn('name="draft"', response.content)
+        self.assertContains(response, 'name="draft"')
 
     def test_permission_view_delete_path_with_draft_permission(self):
         """

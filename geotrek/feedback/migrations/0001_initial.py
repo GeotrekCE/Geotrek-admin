@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.conf import settings
 from django.db import migrations, models
 import geotrek.common.mixins
@@ -19,11 +16,11 @@ class Migration(migrations.Migration):
             name='Report',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('date_insert', models.DateTimeField(auto_now_add=True, verbose_name='Insertion date', db_column=b'date_insert')),
-                ('date_update', models.DateTimeField(auto_now=True, verbose_name='Update date', db_column=b'date_update')),
+                ('date_insert', models.DateTimeField(auto_now_add=True, verbose_name='Insertion date', db_column='date_insert')),
+                ('date_update', models.DateTimeField(auto_now=True, verbose_name='Update date', db_column='date_update')),
                 ('name', models.CharField(max_length=256, verbose_name='Name')),
                 ('email', models.EmailField(max_length=254, verbose_name='Email')),
-                ('comment', models.TextField(default=b'', verbose_name='Comment', blank=True)),
+                ('comment', models.TextField(default='', verbose_name='Comment', blank=True)),
                 ('geom', django.contrib.gis.db.models.fields.PointField(default=None, srid=settings.SRID, null=True, verbose_name='Location', blank=True)),
                 ('context_object_id', models.PositiveIntegerField(null=True, editable=False, blank=True)),
             ],

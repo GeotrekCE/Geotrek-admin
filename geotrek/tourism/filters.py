@@ -20,11 +20,15 @@ class TouristicContentFilterSet(StructureRelatedFilterSet):
 
 class AfterFilter(django_filters.DateFilter):
     def filter(self, qs, value):
+        if not value:
+            return qs
         return qs.filter(end_date__gte=value)
 
 
 class BeforeFilter(django_filters.DateFilter):
     def filter(self, qs, value):
+        if not value:
+            return qs
         return qs.filter(begin_date__lte=value)
 
 
@@ -51,9 +55,9 @@ class CompletedFilter(django_filters.BooleanFilter):
 
 
 class TouristicEventFilterSet(StructureRelatedFilterSet):
-    after = AfterFilter(label=_(u"After"))
-    before = BeforeFilter(label=_(u"Before"))
-    completed = CompletedFilter(label=_(u"Completed"))
+    after = AfterFilter(label=_("After"))
+    before = BeforeFilter(label=_("Before"))
+    completed = CompletedFilter(label=_("Completed"))
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = TouristicEvent
@@ -71,6 +75,8 @@ class TouristicEventApiFilterSet(django_filters.rest_framework.FilterSet):
         fields = ('ends_after', )
 
     def events_end_after(self, queryset, name, value):
+        if not value:
+            return queryset
         return queryset.filter(
             Q(end_date__isnull=True) | Q(end_date__gte=value)
         )

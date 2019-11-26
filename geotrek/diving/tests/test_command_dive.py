@@ -1,7 +1,7 @@
 import os
 import mock
 import sys
-from StringIO import StringIO
+from io import StringIO
 
 from django.contrib.gis.geos.error import GEOSException
 from django.core.management import call_command
@@ -32,10 +32,10 @@ class DiveCommandTest(TestCase):
         self.assertIn('Dives will be linked to %s' % structure, output.getvalue())
         self.assertIn('2 objects created.', output.getvalue())
         value = Dive.objects.filter(name='name')
-        self.assertEquals(5, value[0].depth)    # The dive was updated because has the same eid (eid1)
-        self.assertEquals('Practice', value[0].practice.name)
-        self.assertEquals(value.count(), 1)
-        self.assertEquals(Dive.objects.count(), 2)
+        self.assertEqual(5, value[0].depth)    # The dive was updated because has the same eid (eid1)
+        self.assertEqual('Practice', value[0].practice.name)
+        self.assertEqual(value.count(), 1)
+        self.assertEqual(Dive.objects.count(), 2)
         self.assertAlmostEqual(value[0].geom.x, -436345.704831, places=5)
         self.assertAlmostEqual(value[0].geom.y, 1176487.742917, places=5)
 
@@ -49,11 +49,11 @@ class DiveCommandTest(TestCase):
         self.assertIn('Dives will be linked to %s' % structure, output.getvalue())
         self.assertIn('2 objects created.', output.getvalue())
         value = Dive.objects.filter(name='name')
-        self.assertEquals(10, value[0].depth)    # The dive was not updated
-        self.assertEquals(5, value[1].depth)
-        self.assertEquals('Practice', value[1].practice.name)
-        self.assertEquals(value.count(), 2)
-        self.assertEquals(Dive.objects.count(), 3)
+        self.assertEqual(10, value[0].depth)    # The dive was not updated
+        self.assertEqual(5, value[1].depth)
+        self.assertEqual('Practice', value[1].practice.name)
+        self.assertEqual(value.count(), 2)
+        self.assertEqual(Dive.objects.count(), 3)
         self.assertAlmostEqual(value[1].geom.x, -436345.704831, places=5)
         self.assertAlmostEqual(value[1].geom.y, 1176487.742917, places=5)
 
@@ -81,14 +81,12 @@ class DiveCommandTest(TestCase):
     def test_fail_import(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'infrastructure.shp')
         with mock.patch.dict(sys.modules, {'osgeo': None}):
-            with self.assertRaises(CommandError) as e:
+            with self.assertRaises(CommandError, msg='GDAL Python bindings are not available. Can not proceed.'):
                 call_command('loaddive', filename, verbosity=0)
-            self.assertEqual('GDAL Python bindings are not available. Can not proceed.', e.exception.message)
 
     def test_no_file_fail(self):
-        with self.assertRaises(CommandError) as cm:
+        with self.assertRaises(CommandError, msg="File does not exists at: toto.shp"):
             call_command('loaddive', 'toto.shp')
-        self.assertEqual(cm.exception.message, "File does not exists at: toto.shp")
 
     def test_load_dive_wrong_structure_default(self):
         output = StringIO()
@@ -108,8 +106,8 @@ class DiveCommandTest(TestCase):
         self.assertIn('Dives will be linked to %s' % structure, output.getvalue())
         self.assertIn('1 objects created.', output.getvalue())
         value = Dive.objects.get(name='name')
-        self.assertEquals(10, value.depth)
-        self.assertEquals('Practice', value.practice.name)
+        self.assertEqual(10, value.depth)
+        self.assertEqual('Practice', value.practice.name)
         self.assertAlmostEqual(value.geom.x, 402314.30044897617)
         self.assertAlmostEqual(value.geom.y, 905126.7898456538)
 
@@ -117,10 +115,9 @@ class DiveCommandTest(TestCase):
         output = StringIO()
         StructureFactory.create(name='structure')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'dive_bad_multipoint.geojson')
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaises(CommandError, msg='One of your geometry is a MultiPoint object with multiple points'):
             call_command('loaddive', filename, name_field='name', depth_field='depth', practice_default='Practice',
                          structure_default='structure', verbosity=2, stdout=output)
-        self.assertEqual('One of your geometry is a MultiPoint object with multiple points', e.exception.message)
 
     def test_wrong_fields_fail(self):
         StructureFactory.create(name='structure')

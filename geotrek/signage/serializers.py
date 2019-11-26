@@ -83,7 +83,7 @@ class CSVBladeSerializer(Serializer):
                         c = f.verbose_name
                 except FieldDoesNotExist:
                     c = _(field.title())
-            headers.append(smart_str(unicode(c)))
+            headers.append(smart_str(str(c)))
         getters = {}
         for field in columns:
             try:

@@ -38,7 +38,7 @@
 		{% blocktrans count n=warnings|length %}{{ n }} warning:{% plural %}{{ n }} warnings:{% endblocktrans %}
 		
 		<ul>
-		{% for id, msgs in warnings.iteritems %}
+		{% for id, msgs in warnings.items %}
 			<li><div># {{ id }}:</div>
 			{% for msg in msgs %}
 				<div>- {{ msg|safe }},</div></li>

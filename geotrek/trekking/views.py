@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import json
 import redis
-from urlparse import urljoin
+from urllib.parse import urljoin
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -439,7 +439,7 @@ class TrekPOIViewSet(viewsets.ModelViewSet):
             trek = Trek.objects.existing().get(pk=pk)
         except Trek.DoesNotExist:
             raise Http404
-        if not trek.is_public():
+        if not self.request.user.has_perm('trekking.read_poi') and not trek.is_public():
             raise Http404
         return trek.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
 
@@ -459,7 +459,7 @@ class TrekSignageViewSet(viewsets.ModelViewSet):
             trek = Trek.objects.existing().get(pk=pk)
         except Trek.DoesNotExist:
             raise Http404
-        if not trek.is_public():
+        if not self.request.user.has_perm('trekking.read_signage') and not trek.is_public():
             raise Http404
         return trek.signages.filter(published=True).transform(settings.API_SRID, field_name='geom')
 
@@ -479,7 +479,7 @@ class TrekInfrastructureViewSet(viewsets.ModelViewSet):
             trek = Trek.objects.existing().get(pk=pk)
         except Trek.DoesNotExist:
             raise Http404
-        if not trek.is_public():
+        if not self.request.user.has_perm('trekking.read_infrastructure') and not trek.is_public():
             raise Http404
         return trek.infrastructures.filter(published=True).transform(settings.API_SRID, field_name='geom')
 
@@ -560,7 +560,7 @@ class TrekServiceViewSet(viewsets.ModelViewSet):
             trek = Trek.objects.existing().get(pk=pk)
         except Trek.DoesNotExist:
             raise Http404
-        if not trek.is_public():
+        if not self.request.user.has_perm('trekking.read_service') and not trek.is_public():
             raise Http404
         return trek.services.filter(type__published=True).transform(settings.API_SRID, field_name='geom')
 
@@ -627,12 +627,12 @@ def sync_update_json(request):
                                            'total': 0},
                 'status': task.status
             })
-    i = celery_app.control.inspect([u'celery@geotrek'])
+    i = celery_app.control.inspect(['celery@geotrek'])
     try:
         reserved = i.reserved()
     except redis.exceptions.ConnectionError:
         reserved = None
-    tasks = [] if reserved is None else reversed(reserved[u'celery@geotrek'])
+    tasks = [] if reserved is None else reversed(reserved['celery@geotrek'])
     for task in tasks:
         if task['name'].startswith('geotrek.trekking'):
             results.append(
@@ -686,17 +686,17 @@ class Meta(TemplateView):
 
 
 # Translations for public PDF
-translation.ugettext_noop(u"Advices")
-translation.ugettext_noop(u"All useful information")
-translation.ugettext_noop(u"Altimetric profile")
-translation.ugettext_noop(u"Attribution")
-translation.ugettext_noop(u"Geographical location")
-translation.ugettext_noop(u"Markings")
-translation.ugettext_noop(u"Max elevation")
-translation.ugettext_noop(u"Min elevation")
-translation.ugettext_noop(u"On your path...")
-translation.ugettext_noop(u"Powered by geotrek.fr")
-translation.ugettext_noop(u"The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors.")
-translation.ugettext_noop(u"This hike is in the core of the national park")
-translation.ugettext_noop(u"Trek ascent")
-translation.ugettext_noop(u"Useful information")
+translation.ugettext_noop("Advices")
+translation.ugettext_noop("All useful information")
+translation.ugettext_noop("Altimetric profile")
+translation.ugettext_noop("Attribution")
+translation.ugettext_noop("Geographical location")
+translation.ugettext_noop("Markings")
+translation.ugettext_noop("Max elevation")
+translation.ugettext_noop("Min elevation")
+translation.ugettext_noop("On your path...")
+translation.ugettext_noop("Powered by geotrek.fr")
+translation.ugettext_noop("The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors.")
+translation.ugettext_noop("This hike is in the core of the national park")
+translation.ugettext_noop("Trek ascent")
+translation.ugettext_noop("Useful information")

@@ -137,7 +137,7 @@ class TrekTest(TranslationResetMixin, TestCase):
         TrekFactory.create(name='A')
         TrekFactory.create(name='B')
         self.assertQuerysetEqual(Trek.objects.all(),
-                                 [u'<Trek: A>', u'<Trek: B>', u'<Trek: Ca>', u'<Trek: Cb>'],
+                                 ['<Trek: A>', '<Trek: B>', '<Trek: Ca>', '<Trek: Cb>'],
                                  ordered=False)
 
     def test_trek_itself_as_parent(self):
@@ -147,7 +147,7 @@ class TrekTest(TranslationResetMixin, TestCase):
         trek1 = TrekFactory.create(name='trek1')
         OrderedTrekChild.objects.create(parent=trek1, child=trek1)
         self.assertRaisesMessage(ValidationError,
-                                 u"Cannot use itself as child trek.",
+                                 "Cannot use itself as child trek.",
                                  trek1.full_clean)
 
 
@@ -199,27 +199,27 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         d1 = DistrictFactory.create(geom=MultiPolygon(
             Polygon(((-2, -2), (3, -2), (3, 3), (-2, 3), (-2, -2)))))
         # Ensure related objects are accessible
-        self.assertItemsEqual(trek.pois_excluded.all(), [poi2])
-        self.assertItemsEqual(trek.all_pois, [poi, poi2])
-        self.assertItemsEqual(trek.pois, [poi])
-        self.assertItemsEqual(trek.services, [service])
-        self.assertItemsEqual(poi.treks, [trek])
-        self.assertItemsEqual(service.treks, [trek])
-        self.assertItemsEqual(trek.districts, [d1])
+        self.assertCountEqual(trek.pois_excluded.all(), [poi2])
+        self.assertCountEqual(trek.all_pois, [poi, poi2])
+        self.assertCountEqual(trek.pois, [poi])
+        self.assertCountEqual(trek.services, [service])
+        self.assertCountEqual(poi.treks, [trek])
+        self.assertCountEqual(service.treks, [trek])
+        self.assertCountEqual(trek.districts, [d1])
 
         # Ensure there is no duplicates
 
         trek.add_path(path=p1, start=0.5, end=1)
-        self.assertItemsEqual(trek.pois_excluded.all(), [poi2])
-        self.assertItemsEqual(trek.all_pois, [poi, poi2])
-        self.assertItemsEqual(trek.pois, [poi])
-        self.assertItemsEqual(trek.services, [service])
-        self.assertItemsEqual(poi.treks, [trek])
-        self.assertItemsEqual(service.treks, [trek])
+        self.assertCountEqual(trek.pois_excluded.all(), [poi2])
+        self.assertCountEqual(trek.all_pois, [poi, poi2])
+        self.assertCountEqual(trek.pois, [poi])
+        self.assertCountEqual(trek.services, [service])
+        self.assertCountEqual(poi.treks, [trek])
+        self.assertCountEqual(service.treks, [trek])
 
         d2 = DistrictFactory.create(geom=MultiPolygon(
             Polygon(((3, 3), (9, 3), (9, 9), (3, 9), (3, 3)))))
-        self.assertItemsEqual(trek.districts, [d1, d2])
+        self.assertCountEqual(trek.districts, [d1, d2])
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_helpers_nds(self):
@@ -234,30 +234,30 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         d1 = DistrictFactory.create(geom=MultiPolygon(
             Polygon(((-2, -2), (3, -2), (3, 3), (-2, 3), (-2, -2)))))
         # Ensure related objects are accessible
-        self.assertItemsEqual(trek.pois_excluded.all(), [poi2])
-        self.assertItemsEqual(trek.all_pois, [poi, poi2])
-        self.assertItemsEqual(trek.pois, [poi])
-        self.assertItemsEqual(trek.services, [service])
-        self.assertItemsEqual(poi.treks, [trek])
-        self.assertItemsEqual(service.treks, [trek])
-        self.assertItemsEqual(trek.districts, [d1])
+        self.assertCountEqual(trek.pois_excluded.all(), [poi2])
+        self.assertCountEqual(trek.all_pois, [poi, poi2])
+        self.assertCountEqual(trek.pois, [poi])
+        self.assertCountEqual(trek.services, [service])
+        self.assertCountEqual(poi.treks, [trek])
+        self.assertCountEqual(service.treks, [trek])
+        self.assertCountEqual(trek.districts, [d1])
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_deleted_pois_nds(self):
         trek = TrekFactory.create(geom=LineString((0, 0), (4, 4)))
         poi = POIFactory.create(geom=Point(2.4, 2.4))
-        self.assertItemsEqual(trek.pois, [poi])
+        self.assertCountEqual(trek.pois, [poi])
         poi.delete()
-        self.assertItemsEqual(trek.pois, [])
+        self.assertCountEqual(trek.pois, [])
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_deleted_services_nds(self):
         trek = TrekFactory.create(geom=LineString((0, 0), (4, 4)))
         service = ServiceFactory.create(geom=Point(2.4, 2.4))
         service.type.practices.add(trek.practice)
-        self.assertItemsEqual(trek.services, [service])
+        self.assertCountEqual(trek.services, [service])
         service.delete()
-        self.assertItemsEqual(trek.services, [])
+        self.assertCountEqual(trek.services, [])
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_deleted_pois(self):
@@ -266,9 +266,9 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         trek.add_path(p1)
         poi = POIFactory.create(no_path=True)
         poi.add_path(p1, start=0.6, end=0.6)
-        self.assertItemsEqual(trek.pois, [poi])
+        self.assertCountEqual(trek.pois, [poi])
         poi.delete()
-        self.assertItemsEqual(trek.pois, [])
+        self.assertCountEqual(trek.pois, [])
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_deleted_services(self):
@@ -278,9 +278,9 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         service = ServiceFactory.create(no_path=True)
         service.type.practices.add(trek.practice)
         service.add_path(p1, start=0.6, end=0.6)
-        self.assertItemsEqual(trek.services, [service])
+        self.assertCountEqual(trek.services, [service])
         service.delete()
-        self.assertItemsEqual(trek.services, [])
+        self.assertCountEqual(trek.services, [])
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_pois_should_be_ordered_by_progression(self):
@@ -317,9 +317,9 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         self.poi3 = POIFactory.create(geom=Point(4, 4))
 
         pois = self.trek.pois
-        self.assertItemsEqual([self.poi1, self.poi2, self.poi3], pois)
+        self.assertCountEqual([self.poi1, self.poi2, self.poi3], pois)
         pois = self.trek_reverse.pois
-        self.assertItemsEqual([self.poi1, self.poi2, self.poi3], pois)
+        self.assertCountEqual([self.poi1, self.poi2, self.poi3], pois)
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_city_departure(self):
@@ -333,7 +333,7 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         city2 = CityFactory.create(geom=MultiPolygon(Polygon(((3, 3), (9, 3), (9, 9),
                                                               (3, 9), (3, 3)))))
         self.assertEqual([city for city in trek.cities], [city1, city2])
-        self.assertEqual(trek.city_departure, unicode(city1))
+        self.assertEqual(trek.city_departure, str(city1))
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_city_departure_nds(self):
@@ -345,7 +345,7 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         city2 = CityFactory.create(geom=MultiPolygon(Polygon(((3, 3), (9, 3), (9, 9),
                                                               (3, 9), (3, 3)))))
         self.assertEqual([city for city in trek.cities], [city1, city2])
-        self.assertEqual(trek.city_departure, unicode(city1))
+        self.assertEqual(trek.city_departure, str(city1))
 
 
 class TrekUpdateGeomTest(TestCase):
@@ -397,10 +397,10 @@ class TrekUpdateGeomTest(TestCase):
 
 class TrekItinerancyTest(TestCase):
     def test_next_previous(self):
-        trekA = TrekFactory(name=u"A")
-        trekB = TrekFactory(name=u"B")
-        trekC = TrekFactory(name=u"C")
-        trekD = TrekFactory(name=u"D")
+        trekA = TrekFactory(name="A")
+        trekB = TrekFactory(name="B")
+        trekC = TrekFactory(name="C")
+        trekD = TrekFactory(name="D")
         OrderedTrekChild(parent=trekC, child=trekA, order=42).save()
         OrderedTrekChild(parent=trekC, child=trekB, order=15).save()
         OrderedTrekChild(parent=trekD, child=trekA, order=1).save()
@@ -418,9 +418,9 @@ class TrekItinerancyTest(TestCase):
         self.assertEqual(trekD.previous_id, {})
 
     def test_delete_child(self):
-        trekA = TrekFactory(name=u"A")
-        trekB = TrekFactory(name=u"B")
-        trekC = TrekFactory(name=u"C")
+        trekA = TrekFactory(name="A")
+        trekB = TrekFactory(name="B")
+        trekC = TrekFactory(name="C")
         OrderedTrekChild(parent=trekA, child=trekB, order=1).save()
         OrderedTrekChild(parent=trekA, child=trekC, order=2).save()
         self.assertTrue(OrderedTrekChild.objects.filter(child=trekB).exists())
@@ -442,9 +442,9 @@ class TrekItinerancyTest(TestCase):
         self.assertEqual(trekC.parents_id, [trekA.id])
 
     def test_delete_parent(self):
-        trekA = TrekFactory(name=u"A")
-        trekB = TrekFactory(name=u"B")
-        trekC = TrekFactory(name=u"C")
+        trekA = TrekFactory(name="A")
+        trekB = TrekFactory(name="B")
+        trekC = TrekFactory(name="C")
         OrderedTrekChild(parent=trekB, child=trekA, order=1).save()
         OrderedTrekChild(parent=trekC, child=trekA, order=2).save()
         self.assertTrue(OrderedTrekChild.objects.filter(parent=trekB).exists())

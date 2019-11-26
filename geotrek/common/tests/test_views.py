@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from django.test import TestCase
@@ -52,7 +50,7 @@ class ViewsImportTest(TestCase):
         self.user.is_superuser = True
         self.user.save()
 
-        real_archive = open('geotrek/common/tests/data/test.zip', 'r+')
+        real_archive = open('geotrek/common/tests/data/test.zip', 'rb')
         url = reverse('common:import_dataset')
 
         response_real = self.client.post(
@@ -73,7 +71,7 @@ class ViewsImportTest(TestCase):
         Parser.label = "Test"
 
         fake_archive = SimpleUploadedFile(
-            "file.doc", "file_content", content_type="application/msword")
+            "file.doc", b"file_content", content_type="application/msword")
         url = reverse('common:import_dataset')
 
         response_fake = self.client.post(
@@ -93,7 +91,7 @@ class ViewsImportTest(TestCase):
         self.user.is_superuser = False
         self.user.save()
 
-        real_archive = open('geotrek/common/tests/data/test.zip', 'r+')
+        real_archive = open('geotrek/common/tests/data/test.zip', 'rb+')
         url = reverse('common:import_dataset')
 
         response_real = self.client.post(
@@ -128,7 +126,7 @@ class ViewsImportTest(TestCase):
         self.user.save()
 
         url = reverse('common:import_dataset')
-        real_key = dict(self.client.get(url).context['form_without_file'].fields['parser'].choices).keys()[0]
+        real_key = self.client.get(url).context['form_without_file'].fields['parser'].choices[0][0]
         response_real = self.client.post(
             url, {
                 'import-web': 'Upload',

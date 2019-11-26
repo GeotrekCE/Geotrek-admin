@@ -2,6 +2,22 @@
 CHANGELOG
 =========
 
+2.30.0 (2019-11-26)
+-------------------
+
+**Breaking changes**
+
+- Remove support of Ubuntu 14.04 Trusty
+
+**Maintenance**
+
+- Move from Python 2 to Python 3
+
+**Bug fixes**
+
+- Fix PDF generation for not published treks
+
+
 2.29.15 (2019-11-12)
 --------------------
 

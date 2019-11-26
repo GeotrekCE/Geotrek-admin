@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from collections import OrderedDict
 
 from django.conf import settings
@@ -21,11 +20,11 @@ class SignageTest(TestCase):
     def test_helpers(self):
         p = PathFactory.create()
 
-        self.assertEquals(len(p.signages), 0)
+        self.assertEqual(len(p.signages), 0)
         sign = SignageFactory.create(no_path=True)
         sign.add_path(path=p, start=0.5, end=0.5)
 
-        self.assertItemsEqual(p.signages, [sign])
+        self.assertCountEqual(p.signages, [sign])
 
 
 class BladeViewsTest(CommonTest):
@@ -39,7 +38,7 @@ class BladeViewsTest(CommonTest):
             ('lines-TOTAL_FORMS', '0'),
             ('lines-INITIAL_FORMS', '1'),
             ('lines-MAX_NUM_FORMS', '0'),
-        ]), u'This field is required.'
+        ]), 'This field is required.'
 
     def get_good_data(self):
         good_data = {
@@ -87,9 +86,9 @@ class BladeViewsTest(CommonTest):
         if self.user.has_perm('{app}.change_geom_{model}'.format(app=self.model._meta.app_label,
                                                                  model=self.model._meta.model_name)) and \
                 settings.TREKKING_TOPOLOGY_ENABLED:
-            self.assertIn('.modifiable = true;', response.content)
+            self.assertContains(response, '.modifiable = true;')
         else:
-            self.assertIn('.modifiable = false;', response.content)
+            self.assertContains(response, '.modifiable = false;')
 
     def test_api_geojson_list_for_model(self):
         # TODO: Fix problem with topology.geom should be possible to use a geom of an other model for the serialization
@@ -102,7 +101,7 @@ class BladeViewsTest(CommonTest):
         self.login()
 
         signa = SignageFactory.create()
-        signage = u"%s" % signa
+        signage = "%s" % signa
 
         response = self.client.get(Blade.get_add_url() + '?signage=%s' % signa.pk)
         self.assertEqual(response.status_code, 200)
@@ -141,7 +140,7 @@ class BladeViewsTest(CommonTest):
         LineFactory.create(blade=blade)
         for fmt in ('csv', 'shp', 'gpx'):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
-            self.assertEqual(response.status_code, 200, u"")
+            self.assertEqual(response.status_code, 200, "")
 
     def test_basic_format_not_ascii(self):
         self.login()
@@ -150,7 +149,7 @@ class BladeViewsTest(CommonTest):
         LineFactory.create(blade=blade)
         for fmt in ('csv', 'shp', 'gpx'):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
-            self.assertEqual(response.status_code, 200, u"")
+            self.assertEqual(response.status_code, 200, "")
 
     def test_set_structure_with_permission(self):
         # The structure do not change because it changes with the signage form.
@@ -227,7 +226,7 @@ class SignageViewsTest(CommonTest):
         self.assertTrue('form' in response.context)
         form = response.context['form']
         type = form.fields['type']
-        self.assertTrue((signagetype.pk, unicode(signagetype)) in type.choices)
+        self.assertTrue((signagetype.pk, str(signagetype)) in type.choices)
 
     def test_no_pictogram(self):
         self.modelfactory = SignageNoPictogramFactory
@@ -244,7 +243,7 @@ class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
         model = self.factory._meta.model
         SignageFactory.create()
         response = self.client.get(model.get_list_url())
-        self.assertFalse('option value="" selected>None</option' in str(response))
+        self.assertNotContains(response, 'option value="" selected>None</option')
 
     def test_implantation_year_filter(self):
         filter = SignageFilterSet(data={'implantation_year': 2015})
@@ -254,8 +253,8 @@ class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
         i2 = SignageFactory.create(implantation_year=2016)
         response = self.client.get(model.get_list_url())
 
-        self.assertTrue('<option value="2015">2015</option>' in str(response))
-        self.assertTrue('<option value="2016">2016</option>' in str(response))
+        self.assertContains(response, '<option value="2015">2015</option>')
+        self.assertContains(response, '<option value="2016">2016</option>')
 
         self.assertTrue(i in filter.qs)
         self.assertFalse(i2 in filter.qs)
@@ -268,8 +267,8 @@ class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):
         i2 = SignageFactory.create(implantation_year=2016)
         response = self.client.get(model.get_list_url())
 
-        self.assertTrue('<option value="2015">2015</option>' in str(response))
-        self.assertTrue('<option value="2016">2016</option>' in str(response))
+        self.assertContains(response, '<option value="2015">2015</option>')
+        self.assertContains(response, '<option value="2016">2016</option>')
 
         self.assertIn(i, filter.qs)
         self.assertIn(i2, filter.qs)
