@@ -23,7 +23,7 @@ jobs:
       - run: make build
       - run: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
       - run: docker tag geotrek:latest geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
-      - run: docker push geotrekce/circleci-admin:W$CIRCLE_WORKFLOW_ID
+      - run: docker push geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
   test:
     machine: true
     environment:
