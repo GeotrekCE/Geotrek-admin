@@ -133,6 +133,13 @@ class POIViewsTest(CommonTest):
 
         trek = TrekFactory.create(published=False)
         response = self.client.get(reverse('trekking:trek_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
+        self.assertEqual(response.status_code, 200)
+
+    def test_pois_on_treks_not_public_anonymous(self):
+        self.modelfactory.create()
+
+        trek = TrekFactory.create(published=False)
+        response = self.client.get(reverse('trekking:trek_poi_geojson', kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
         self.assertEqual(response.status_code, 404)
 
 
@@ -1298,6 +1305,13 @@ class ServiceViewsTest(CommonTest):
 
     def test_services_on_treks_not_public(self):
         self.login()
+        self.modelfactory.create()
+
+        trek = TrekFactory.create(published=False)
+        response = self.client.get(reverse('trekking:trek_service_geojson', kwargs={'lang': translation.get_language(), 'pk': trek.pk}))
+        self.assertEqual(response.status_code, 200)
+
+    def test_services_on_treks_not_public_anonymous(self):
         self.modelfactory.create()
 
         trek = TrekFactory.create(published=False)
