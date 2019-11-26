@@ -33,6 +33,20 @@ jobs:
       - codecov/upload:
           file: coverage.xml
           flags: test
+  test_xenial:
+    docker:
+      - image: ubuntu:xenial
+    environment:
+      LANG: C.UTF-8
+    steps:
+      - run: apt update
+      - run: DEBIAN_FRONTEND="noninteractive" apt install -y curl git sudo tzdata
+      - checkout
+      - run: ./install.sh --tests --noinput
+      - run: sed -i "s/bind .*/bind 127.0.0.1/g" /etc/redis/redis.conf; service redis-server start
+      - run: ./bin/django test -v2 geotrek
+      - run: apt install -y npm
+      - run: make test_js
   test_nds:
     docker:
       - image: ubuntu:bionic
@@ -73,4 +87,5 @@ workflows:
       - codestyle
       - test
       - test_nds
+      - test_xenial
       - deploy
