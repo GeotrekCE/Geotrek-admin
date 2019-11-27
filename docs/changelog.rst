@@ -7,6 +7,12 @@ CHANGELOG
 
 **Bug fixes**
 
+-
+
+**Minor changes**
+
+- SHOW_LABELS setting allow to hide status labels on map
+
 
 2.30.0 (2019-11-26)
 -------------------
