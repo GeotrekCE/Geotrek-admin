@@ -14,7 +14,7 @@ setup(
     long_description=(open(os.path.join(here, 'README.rst')).read() + '\n\n'
                       + open(os.path.join(here, 'docs', 'changelog.rst')).read()),
     install_requires=[
-        # pinned by buildout
+        # pinned by requirements.txt
         'psycopg2',
         'docutils',
         'GDAL',
@@ -41,6 +41,7 @@ setup(
         'drf-extensions',
         'django-colorfield',
         'factory_boy',
+        'mock',
     ],
     license='BSD, see LICENSE file.',
     packages=find_packages(),

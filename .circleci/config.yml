@@ -19,7 +19,6 @@ jobs:
     machine: true
     steps:
       - checkout
-      - run: docker pull makinacorpus/geodjango:bionic-py2
       - run: make build
       - run: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
       - run: docker tag geotrek:latest geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
@@ -29,14 +28,25 @@ jobs:
     environment:
       LANG: C.UTF-8
     steps:
-      - run: docker-compose run web coverage run --parallel-mode ./manage.py test --settings=geotrek.settings.tests
+      - checkout
+      - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
+      - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrek:latest
+      - run: docker-compose run web coverage run ./manage.py test --settings=geotrek.settings.tests geotrek
+      - run: docker-compose run web make test_js
+      - run: docker-compose run web coverage xml
+      - codecov/upload:
+          file: coverage.xml
+          flags: test
+          when: on_success
   deploy:
     docker:
       - image: ubuntu:bionic
     environment:
       LANG: C.UTF-8
     steps:
-      - run: ./docker/deploy.sh
+      - run: docker tag geotrekce/admin:$(cat VERSION)
+#      - run: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
+#      - run: docker push geotrekce/admin:$(cat VERSION)
 workflows:
   version: 2
   all:
