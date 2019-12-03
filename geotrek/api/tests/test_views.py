@@ -42,7 +42,7 @@ class SyncMobileViewTest(TestCase):
         self.client.login(username='admin', password='super')
         response = self.client.post(reverse('apimobile:sync_mobiles_state'), data={})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content, '[]')
+        self.assertEqual(response.content, b'[]')
 
     def test_get_sync_mobile_states_simpleuser(self):
         self.client.login(username='homer', password='doooh')

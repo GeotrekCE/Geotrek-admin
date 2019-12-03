@@ -164,16 +164,16 @@ class SyncMobileFailTest(TestCase):
 
     @override_settings(MEDIA_URL=9)
     def test_bad_settings(self):
-        output = BytesIO()
+        output = StringIO()
         TrekWithPublishedPOIsFactory.create(published_fr=True)
         with self.assertRaisesRegexp(AttributeError, "'int' object has no attribute 'strip'"):
             management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
-                                    skip_tiles=True, languages='fr', verbosity=2, stdout=output, stderr=BytesIO())
+                                    skip_tiles=True, languages='fr', verbosity=2, stdout=output, stderr=StringIO())
             self.assertIn("Exception raised in callable attribute", output.getvalue())
 
     @mock.patch('geotrek.api.mobile.views.common.SettingsView.get')
     def test_response_view_exception(self, mocke):
-        output = BytesIO()
+        output = StringIO()
         mocke.side_effect = Exception('This is a test')
         TrekWithPublishedPOIsFactory.create(published_fr=True)
         with self.assertRaisesRegexp(CommandError, 'Some errors raised during synchronization.'):
@@ -502,7 +502,7 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
 
     def test_indent(self):
         indent = 3
-        output = BytesIO()
+        output = StringIO()
         TrekWithPublishedPOIsFactory.create(published_fr=True)
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                 skip_tiles=True, skip_pdf=True, verbosity=2, indent=indent, stdout=output)

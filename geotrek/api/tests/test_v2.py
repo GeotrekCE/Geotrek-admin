@@ -401,13 +401,13 @@ class APIAccessAdministratorTestCase(BaseApiTest):
     def test_trek_theme_list(self):
         self.client.logout()
         response = self.get_trek_all_themes_list()
-        self.assertIn(self.theme.label, response.content)
+        self.assertIn(self.theme.label, str(response.content))
         self.assertEqual(response.status_code, 200)
 
     def test_trek_network_list(self):
         self.client.logout()
         response = self.get_trek_all_networks_list()
-        self.assertIn(self.network.network, response.content)
+        self.assertIn(self.network.network, str(response.content))
         self.assertEqual(response.status_code, 200)
 
     def test_trek_difficulty_used_list(self):
@@ -423,13 +423,13 @@ class APIAccessAdministratorTestCase(BaseApiTest):
     def test_trek_theme_used_list(self):
         self.client.logout()
         response = self.get_trek_used_themes_list()
-        self.assertIn(self.theme.label, response.content)
+        self.assertIn(self.theme.label, str(response.content))
         self.assertEqual(response.status_code, 200)
 
     def test_trek_network_used_list(self):
         self.client.logout()
         response = self.get_trek_used_networks_list()
-        self.assertIn(self.network.network, response.content)
+        self.assertIn(self.network.network, str(response.content))
         self.assertEqual(response.status_code, 200)
 
     def test_poi_list(self):

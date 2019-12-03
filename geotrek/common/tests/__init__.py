@@ -54,8 +54,8 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
 
         response = self.client.get(obj.get_list_url())
         self.assertEqual(response.status_code, 200)
-        self.assertIn("forced_layers_data", response.content)
-        self.assertIn("[42, 100000]", response.content)
+        self.assertIn(b"forced_layers_data", response.content)
+        self.assertIn(b"[42, 100000]", response.content)
 
     def test_structure_is_not_changed_without_permission(self):
         if not hasattr(self.model, 'structure'):
