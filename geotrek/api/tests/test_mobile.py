@@ -368,12 +368,6 @@ class APISwaggerTestCase(BaseApiTest):
     def setUpTestData(cls):
         BaseApiTest.setUpTestData()
 
-    def test_schema_good_status(self):
+    def test_schema_status_code(self):
         response = self.client.get(reverse('apimobile:schema'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_schema_fields(self):
-        response = self.client.get(reverse('apiv2:schema'))
-        self.assertIn('Set geometry dimension (2 by default for 2D, 3 for 3D)', response.content)
-        self.assertIn('Set output format (json / geojson). JSON by default', response.content)
         self.assertEqual(response.status_code, 200)
