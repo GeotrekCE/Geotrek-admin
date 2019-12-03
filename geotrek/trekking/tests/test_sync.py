@@ -186,8 +186,8 @@ class SyncSetup(TestCase):
         self.portal_b = TargetPortalFactory()
         information_desks = InformationDeskFactory.create()
 
-        self.practice_trek = PracticeTrekFactory.create(order=0)
-
+        self.practice_trek = PracticeTrekFactory.create(order=1)
+        self.practice_trek_first = PracticeTrekFactory.create(order=0)
         self.trek_1 = TrekWithPublishedPOIsFactory.create(practice=self.practice_trek, sources=(self.source_a, ),
                                                           portals=(self.portal_b,),
                                                           published=True)
@@ -201,6 +201,9 @@ class SyncSetup(TestCase):
                                          published=True)
         self.trek_4 = TrekFactory.create(practice=self.practice_trek, portals=(self.portal_a,),
                                          published=True)
+        self.trek_5 = TrekFactory.create(practice=self.practice_trek_first, portals=(self.portal_a,),
+                                         published=True, name="other")
+
         self.practice_dive = PracticeDiveFactory.create(order=0)
 
         self.dive_1 = DiveFactory.create(practice=self.practice_dive, sources=(self.source_a,),
@@ -410,7 +413,19 @@ class SyncTest(SyncSetup):
             treks = json.load(f)
 
             # 4 treks have portal A or B or no portal
-            self.assertEqual(len(treks['features']), 4)
+            self.assertEqual(len(treks['features']), 5)
+
+    def test_sync_practice_orders(self):
+        management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+                                skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=StringIO())
+        with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+            treks = json.load(f)
+            self.assertEqual(len(treks['features']), 5)
+            trek_name = [trek.get('properties').get('name') for trek in treks['features']]
+
+            # other => Practice (order 0); name 0, name 5 =>  Practice (order 1);
+            # name 3, name 4 => usage 4 (no order, alphabetical)
+            self.assertEqual(['other', 'name 0', 'name 5', 'name 3', 'name 4'], trek_name)
 
     def test_sync_filtering_portals_diving(self):
         # portal B only
