@@ -121,7 +121,7 @@ class SyncMobileFailTest(TestCase):
 
     def test_fail_directory_not_empty(self):
         os.makedirs(os.path.join('tmp', 'other'))
-        with self.assertRaises(CommandError, msg="Destination directory contains extra data"):
+        with self.assertRaisesRegexp(CommandError, "Destination directory contains extra data"):
             management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2)
         shutil.rmtree(os.path.join('tmp', 'other'))
@@ -131,7 +131,7 @@ class SyncMobileFailTest(TestCase):
         msg = "The tmp_sync_mobile/ directory already exists. " \
               "Please check no other sync_mobile command is already running. " \
               "If not, please delete this directory."
-        with self.assertRaises(CommandError, msg=msg):
+        with self.assertRaisesRegexp(CommandError, msg):
             management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2)
         shutil.rmtree(os.path.join('tmp_sync_mobile'))
@@ -139,17 +139,18 @@ class SyncMobileFailTest(TestCase):
     @mock.patch('os.mkdir')
     def test_fail_sync_tmp_sync_rando_permission_denied(self, mkdir):
         mkdir.side_effect = OSError(errno.EACCES, 'Permission Denied')
-        with self.assertRaises(OSError, msg="[Errno 13] Permission Denied") as e:
+        with self.assertRaisesRegexp(OSError, "\[Errno 13\] Permission Denied"):
             management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2)
 
     def test_fail_url_ftp(self):
-        with self.assertRaises(CommandError, msg="url parameter should start with http:// or https://"):
+        with self.assertRaisesRegexp(CommandError, "url parameter should start with http:// or https://"):
             management.call_command('sync_mobile', 'tmp', url='ftp://localhost:8000',
                                     skip_tiles=True, verbosity=2)
 
     def test_language_not_in_db(self):
-        with self.assertRaises(CommandError, msg="Language cat doesn't exist. Select in these one : ('en', 'es', 'fr', 'it')"):
+        with self.assertRaisesRegexp(CommandError,
+                                     "Language cat doesn't exist. Select in these one : \('en', 'es', 'fr', 'it'\)"):
             management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, languages='cat', verbosity=2)
 
@@ -165,21 +166,19 @@ class SyncMobileFailTest(TestCase):
     def test_bad_settings(self):
         output = BytesIO()
         TrekWithPublishedPOIsFactory.create(published_fr=True)
-        with self.assertRaises(AttributeError) as e:
+        with self.assertRaisesRegexp(AttributeError, "'int' object has no attribute 'strip'"):
             management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output, stderr=BytesIO())
             self.assertIn("Exception raised in callable attribute", output.getvalue())
-        self.assertEqual(e.exception.message, "'int' object has no attribute 'strip'")
 
     @mock.patch('geotrek.api.mobile.views.common.SettingsView.get')
     def test_response_view_exception(self, mocke):
         output = BytesIO()
         mocke.side_effect = Exception('This is a test')
         TrekWithPublishedPOIsFactory.create(published_fr=True)
-        with self.assertRaises(CommandError) as e:
+        with self.assertRaisesRegexp(CommandError, 'Some errors raised during synchronization.'):
             management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', portal='portal',
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output)
-        self.assertEqual(e.exception.message, 'Some errors raised during synchronization.')
 
         self.assertIn("failed (This is a test)", output.getvalue())
 
@@ -188,7 +187,7 @@ class SyncMobileFailTest(TestCase):
         output = StringIO()
         mocke.return_value = HttpResponse(status=500)
         TrekWithPublishedPOIsFactory.create(published_fr=True)
-        with self.assertRaises(CommandError, msg='Some errors raised during synchronization.'):
+        with self.assertRaisesRegexp(CommandError, 'Some errors raised during synchronization.'):
             management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', portal='portal',
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output)
         self.assertIn("failed (HTTP 500)", output.getvalue())
