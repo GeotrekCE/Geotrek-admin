@@ -26,11 +26,8 @@ class SpeciesSerializer(TranslatedModelSerializer, PictogramSerializerMixin):
 
 class SensitiveAreaSerializer(TranslatedModelSerializer):
     species = SpeciesSerializer()
-    geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
+    geometry = geo_serializers.GeometryField(read_only=True, source="geom2d_transformed", precision=7)
     kml_url = rest_serializers.SerializerMethodField(read_only=True)
-
-    def get_geometry(self, obj):
-        return obj.geom2d_transformed
 
     def get_kml_url(self, obj):
         return reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})

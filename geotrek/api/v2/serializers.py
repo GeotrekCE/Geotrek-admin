@@ -22,16 +22,6 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     from geotrek.sensitivity import models as sensitivity_models
 
 
-class Base3DSerializer(object):
-    """
-    Mixin used to replace geom with geom_3d field
-    """
-    geometry = geo_serializers.GeometryField(read_only=True)
-
-    def get_geometry(self, obj):
-        return obj.geom3d_transformed
-
-
 class BaseGeoJSONSerializer(geo_serializers.GeoFeatureModelSerializer):
     """
     Mixin used to serialize geojson
@@ -48,9 +38,10 @@ def override_serializer(format_output, dimension, base_serializer_class):
     """
     if format_output == 'geojson':
         if dimension == '3':
-            class GeneratedGeo3DSerializer(Base3DSerializer,
-                                           BaseGeoJSONSerializer,
+            class GeneratedGeo3DSerializer(BaseGeoJSONSerializer,
                                            base_serializer_class):
+                geometry = geo_serializers.GeometryField(read_only=True, source='geom3d_transformed', precision=7)
+
                 class Meta(BaseGeoJSONSerializer.Meta,
                            base_serializer_class.Meta):
                     pass
@@ -67,8 +58,9 @@ def override_serializer(format_output, dimension, base_serializer_class):
             final_class = GeneratedGeoSerializer
     else:
         if dimension == '3':
-            class Generated3DSerializer(Base3DSerializer,
-                                        base_serializer_class):
+            class Generated3DSerializer(base_serializer_class):
+                geometry = geo_serializers.GeometryField(read_only=True, source='geom3d_transformed', precision=7)
+
                 class Meta(base_serializer_class.Meta):
                     pass
 
@@ -152,10 +144,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
     class TouristicContentListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:touristiccontent-detail')
         category = TouristicContentCategorySerializer()
-        geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
-
-        def get_geometry(self, obj):
-            return obj.geom2d_transformed
+        geometry = geo_serializers.GeometryField(read_only=True, source="geom2d_transformed", precision=7)
 
         class Meta:
             model = tourism_models.TouristicContent
@@ -174,7 +163,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 if 'geotrek.core' in settings.INSTALLED_APPS:
     class PathListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:trek-detail')
-        geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
+        geometry = geo_serializers.GeometryField(read_only=True, source="geom2d_transformed", precision=7)
         length_2d = serializers.SerializerMethodField(read_only=True)
         length_3d = serializers.SerializerMethodField(read_only=True)
 
@@ -183,9 +172,6 @@ if 'geotrek.core' in settings.INSTALLED_APPS:
 
         def get_length_3d(self, obj):
             return round(obj.length_3d_m, 1)
-
-        def get_geometry(self, obj):
-            return obj.geom2d_transformed
 
         class Meta:
             model = core_models.Path
@@ -196,7 +182,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
     class TrekListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:trek-detail')
         published = serializers.SerializerMethodField(read_only=True)
-        geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
+        geometry = geo_serializers.GeometryField(read_only=True, source="geom2d_transformed", precision=7)
         length_2d = serializers.SerializerMethodField(read_only=True)
         length_3d = serializers.SerializerMethodField(read_only=True)
         name = serializers.SerializerMethodField(read_only=True)
@@ -244,9 +230,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         def get_external_id(self, obj):
             return obj.eid
-
-        def get_geometry(self, obj):
-            return obj.geom2d_transformed
 
         class Meta:
             model = trekking_models.Trek
@@ -312,7 +295,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         published = serializers.SerializerMethodField(read_only=True)
         create_datetime = serializers.SerializerMethodField(read_only=True)
         update_datetime = serializers.SerializerMethodField(read_only=True)
-        geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
+        geometry = geo_serializers.GeometryField(read_only=True, source="geom2d_transformed", precision=7)
         type = POITypeSerializer(read_only=True)
 
         def get_published(self, obj):
@@ -332,9 +315,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         def get_description(self, obj):
             return get_translation_or_dict('description', self, obj)
-
-        def get_geometry(self, obj):
-            return obj.geom2d_transformed
 
         class Meta:
             model = trekking_models.POI
@@ -363,7 +343,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
         structure = serializers.CharField(source='structure.name')
         create_datetime = serializers.DateTimeField(source='date_insert')
         update_datetime = serializers.DateTimeField(source='date_update')
-        geometry = geo_serializers.GeometrySerializerMethodField(read_only=True)
+        geometry = geo_serializers.GeometryField(read_only=True, source="geom2d_transformed", precision=7)
         species_id = serializers.SerializerMethodField(read_only=True)
         kml_url = serializers.SerializerMethodField(read_only=True)
 
@@ -378,9 +358,6 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
 
         def get_practices(self, obj):
             return obj.species.practices.values_list('id', flat=True)
-
-        def get_geometry(self, obj):
-            return obj.geom2d_transformed
 
         def get_elevation(self, obj):
             return obj.species.radius
