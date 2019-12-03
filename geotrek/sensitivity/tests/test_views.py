@@ -316,8 +316,8 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
         self.assertEqual(response.json()['results'][0]['name'], sensitive_area_jf.species.name)
 
     def test_filters_no_period_get_month(self):
-        sensitive_area_month = SensitiveAreaFactory.create(**{'species__period{:02}'.format(date.today().month): True})
-        SensitiveAreaFactory.create(**{'species__period{:02}'.format(date.today().month + 1): True})
+        sensitive_area_month = SensitiveAreaFactory.create(**{'species__period11': True})
+        SensitiveAreaFactory.create(**{'species__period12': True})
         url = '/api/v2/sensitivearea/?format=json&language=en'
         response = self.client.get(url)
         self.assertEqual(response.json()['count'], 1)
