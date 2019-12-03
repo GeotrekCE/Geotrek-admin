@@ -295,7 +295,7 @@ class SyncTest(SyncSetup):
             self.assertEqual(treks['features'][0]['properties']['category']['id'],
                              treks['features'][3]['properties']['category']['id'],
                              'T')
-            self.assertEqual(treks['features'][0]['properties']['name'], self.trek_1.name)
+            self.assertEqual(treks['features'][0]['properties']['name'], self.trek_2.name)
             self.assertEqual(treks['features'][3]['properties']['name'], self.trek_4.name)
 
         with open(os.path.join('tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
@@ -319,10 +319,10 @@ class SyncTest(SyncSetup):
             # there are 4 treks
             self.assertEqual(len(treks['features']),
                              trek_models.Trek.objects.filter(published=True).count())
-            self.assertEqual(treks['features'][0]['properties']['category']['id'],
+            self.assertEqual(treks['features'][2]['properties']['category']['id'],
                              treks['features'][3]['properties']['category']['id'],
                              'T%s' % self.practice_trek.pk)
-            self.assertEqual(treks['features'][0]['properties']['name'], self.trek_1.name)
+            self.assertEqual(treks['features'][2]['properties']['name'], self.trek_1.name)
             self.assertEqual(treks['features'][3]['properties']['name'], self.trek_4.name)
 
         with open(os.path.join('tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
@@ -423,10 +423,11 @@ class SyncTest(SyncSetup):
             self.assertEqual(len(treks['features']), 5)
             trek_name = [trek.get('properties').get('name') for trek in treks['features']]
 
-            # other => Practice (order 0); name 0, name 5 =>  Practice (order 1);
-            # name 3, name 4 => usage 4 (no order, alphabetical)
+            # trek_5 => Practice (order 0); trek_1, trek_4 =>  Practice (order 1);
+            # trek_2, trek_3 => usage 4 (no order, alphabetical)
             # It's desc for rando.
-            self.assertEqual(['name 4', 'name 5', 'name 3', 'other', 'name 0'], trek_name)
+            self.assertEqual([self.trek_2.name, self.trek_3.name, self.trek_1.name, self.trek_4.name, self.trek_5.name],
+                             trek_name)
 
     def test_sync_filtering_portals_diving(self):
         # portal B only
