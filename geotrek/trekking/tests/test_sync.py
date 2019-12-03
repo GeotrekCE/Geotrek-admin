@@ -68,7 +68,7 @@ class SyncRandoTilesTest(TestCase):
         output = StringIO()
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
                                 languages='en', stdout=output)
-        zfile = zipfile.ZipFile(os.path.join('tmp', 'zip', 'tiles', 'global.zip'))
+        zfile = zipfile.ZipFile(os.path.join('var', 'tmp', 'zip', 'tiles', 'global.zip'))
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
             self.assertEqual(ifile.read(), b'I am a png')
