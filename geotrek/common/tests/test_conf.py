@@ -15,7 +15,4 @@ class StartupCheckTest(TestCase):
         if hasattr(check_srid_has_meter_unit, '_checked'):
             delattr(check_srid_has_meter_unit, '_checked')
         with self.settings(SRID=2154):
-            try:
-                check_srid_has_meter_unit
-            except ImproperlyConfigured:
-                self.fail("check_srid_has_meter_unit raised ImproperlyConfigured exception unexpectedly")
+            check_srid_has_meter_unit
