@@ -41,7 +41,6 @@ setup(
         'drf-extensions',
         'django-colorfield',
         'factory_boy',
-        'mock',
     ],
     license='BSD, see LICENSE file.',
     packages=find_packages(),

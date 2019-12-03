@@ -1,7 +1,6 @@
 import re
-from unittest import skipIf
+from unittest import skipIf, mock
 
-import mock
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import Permission

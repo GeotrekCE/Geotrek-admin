@@ -3,9 +3,8 @@ import datetime
 from collections import OrderedDict
 import hashlib
 
-from unittest import skipIf
+from unittest import skipIf, mock
 
-import mock
 from bs4 import BeautifulSoup
 
 from django.conf import settings

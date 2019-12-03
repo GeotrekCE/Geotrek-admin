@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.test import TestCase
-from unittest import SkipTest, skipIf
+from unittest import SkipTest, skipIf, mock
 
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.contrib.gis.geos import MultiLineString, LineString
@@ -15,7 +15,6 @@ from geotrek.altimetry.helpers import AltimetryHelper
 
 import os
 import sys
-import mock
 from io import StringIO
 
 

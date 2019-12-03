@@ -1,7 +1,7 @@
 from datetime import date
 import io
 import json
-import mock
+from unittest import mock
 import os
 
 from django.test import TestCase

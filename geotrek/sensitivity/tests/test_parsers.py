@@ -1,6 +1,6 @@
 import os
-import mock
 import requests
+from unittest import mock
 
 from django.core.management import call_command
 from django.core.management.base import CommandError

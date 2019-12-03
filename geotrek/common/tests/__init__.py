@@ -1,5 +1,6 @@
-import mock
 import os
+
+from unittest import mock
 
 from django.contrib.auth.models import Permission
 from django.utils import translation

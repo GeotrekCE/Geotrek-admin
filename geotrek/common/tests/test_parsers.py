@@ -1,5 +1,5 @@
-import mock
 import os
+from unittest import mock
 from shutil import rmtree
 from tempfile import mkdtemp
 from io import StringIO

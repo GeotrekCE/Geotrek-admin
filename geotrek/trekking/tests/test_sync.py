@@ -1,7 +1,7 @@
 import os
 import json
 from landez.sources import DownloadError
-import mock
+from unittest import mock
 import shutil
 from io import StringIO
 import zipfile

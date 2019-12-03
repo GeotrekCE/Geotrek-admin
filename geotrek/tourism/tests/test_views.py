@@ -3,7 +3,7 @@ import hashlib
 from shutil import rmtree
 from tempfile import mkdtemp
 
-import mock
+from unittest import mock
 
 from datetime import datetime
 from django.contrib.auth.models import Group
