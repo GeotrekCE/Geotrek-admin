@@ -31,6 +31,7 @@ jobs:
       - checkout
       - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrek:latest
+      - run: docker-compose run web update.sh collectstatic
       - run: docker-compose run web coverage run ./manage.py test --settings=geotrek.settings.tests geotrek
       - run: docker-compose run web make test_js
       - run: docker-compose run web coverage xml
