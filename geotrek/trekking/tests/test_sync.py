@@ -425,7 +425,8 @@ class SyncTest(SyncSetup):
 
             # other => Practice (order 0); name 0, name 5 =>  Practice (order 1);
             # name 3, name 4 => usage 4 (no order, alphabetical)
-            self.assertEqual(['other', 'name 0', 'name 5', 'name 3', 'name 4'], trek_name)
+            # It's desc for rando.
+            self.assertEqual(['name 4', 'name 5', 'name 3', 'other', 'name 0'], trek_name)
 
     def test_sync_filtering_portals_diving(self):
         # portal B only
