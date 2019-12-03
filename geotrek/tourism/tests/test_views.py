@@ -1,5 +1,6 @@
 import os
 import hashlib
+import json
 from shutil import rmtree
 from tempfile import mkdtemp
 
