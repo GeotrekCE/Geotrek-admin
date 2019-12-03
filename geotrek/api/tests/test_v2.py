@@ -353,8 +353,11 @@ class APIAccessAdministratorTestCase(BaseApiTest):
 
         json_response = response.json()
         # test default structure
+
         self.assertEqual(sorted(json_response.keys()),
                          POI_DETAIL_JSON_STRUCTURE)
+
+        self.assertEqual(len(json_response.get('geometry').get('coordinates')), 2)
 
     def test_poi_detail_3d(self):
         self.client.logout()
@@ -374,6 +377,23 @@ class APIAccessAdministratorTestCase(BaseApiTest):
 
         response = self.get_poi_detail(id_poi, {'format': "geojson", "dim": "3"})
         json_response = response.json()
+
+        self.assertEqual(len(json_response.get('geometry').get('coordinates')), 3)
+
+        self.assertEqual(sorted(json_response.keys()),
+                         GEOJSON_STRUCTURE)
+
+        self.assertEqual(sorted(json_response.get('properties').keys()),
+                         POI_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
+
+    def test_poi_detail_geojson(self):
+        self.client.logout()
+        id_poi = trek_models.POI.objects.order_by('?').first().pk
+
+        response = self.get_poi_detail(id_poi, {'format': "geojson"})
+        json_response = response.json()
+
+        self.assertEqual(len(json_response.get('geometry').get('coordinates')), 2)
 
         self.assertEqual(sorted(json_response.keys()),
                          GEOJSON_STRUCTURE)
