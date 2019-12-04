@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.management.base import CommandError
 from django.core.management import call_command
 from django.test import TestCase
-from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.geos import GEOSGeometry, WKTWriter
 
 from geotrek.core.factories import PathFactory
 from geotrek.trekking.models import POI
@@ -41,14 +41,14 @@ class LoadPOITest(TestCase):
             self.assertEqual(mocked.call_count, 2)
 
     def test_create_pois_receives_geometries(self):
-        geom1 = GEOSGeometry('POINT(-1.36308670782119 -5.98358469800135)')
-        geom2 = GEOSGeometry('POINT(-1.36308720233111 -5.98358423531847)')
+        geom1 = b'POINT (-1.3630867 -5.9835847)'
+        geom2 = b'POINT (-1.3630872 -5.9835842)'
         with patch.object(Command, 'create_poi') as mocked:
             self.cmd.handle(point_layer=self.filename, verbosity=0)
             call1 = mocked.call_args_list[0][0]
             call2 = mocked.call_args_list[1][0]
-            self.assertEqual(call1[0], geom1)
-            self.assertEqual(call2[0], geom2)
+            self.assertEqual(WKTWriter(precision=7).write(call1[0]), geom1)
+            self.assertEqual(WKTWriter(precision=7).write(call2[0]), geom2)
 
     def test_create_pois_receives_fields_names_and_types(self):
         with patch.object(Command, 'create_poi') as mocked:

@@ -250,7 +250,7 @@ class BasicJSONAPITest(TranslationResetMixin):
         pk = self.content.pk
         url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.model_name, pk=pk)
         response = self.client.get(url)
-        result = json.loads(response.content)
+        result = json.loads(response.content.decode())
         self.assertFalse(result['videos'])
 
     def test_cities(self):

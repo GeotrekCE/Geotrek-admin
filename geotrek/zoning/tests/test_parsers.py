@@ -1,6 +1,6 @@
 import os
 
-from django.contrib.gis.geos import Polygon, MultiPolygon
+from django.contrib.gis.geos import Polygon, MultiPolygon, WKTWriter
 from django.core.management import call_command
 from django.test import TestCase
 
@@ -8,10 +8,14 @@ from geotrek.zoning.models import City
 from geotrek.zoning.parsers import CityParser
 
 
-WKT = ('MULTIPOLYGON (((309716.281412181 6698350.202176195, '
-       '330923.9023929063 6728938.117052309, '
-       '341391.766594924 6698214.255887862, '
-       '309716.281412181 6698350.202176195)))')
+WKT = (
+    b'MULTIPOLYGON ((('
+    b'309716.2814122 6698350.2021762, '
+    b'330923.9023929 6728938.1170523, '
+    b'341391.7665949 6698214.2558879, '
+    b'309716.2814122 6698350.2021762'
+    b')))'
+)
 
 
 class CityParserTest(TestCase):
@@ -21,7 +25,7 @@ class CityParserTest(TestCase):
         city = City.objects.get()
         self.assertEqual(city.code, "99999")
         self.assertEqual(city.name, "Trifouilli-les-Oies")
-        self.assertEqual(city.geom.wkt, WKT)
+        self.assertEqual(WKTWriter(precision=7).write(city.geom), WKT)
 
 
 class FilterGeomTest(TestCase):

@@ -177,7 +177,7 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
         self.expected_result['geometry'] = self.expected_geom
         self.expected_result['url'] = 'http://testserver/api/v2/sensitivearea/{}/?format=json'.format(self.pk)
         self.expected_geo_result = {
-            'bbox': [3.0000000000000004, 46.49999999999324, 3.000039118674989, 46.500027013495476],
+            'bbox': [3.0, 46.5, 3.0000391, 46.500027],
             'geometry': self.expected_geom,
             'type': 'Feature',
             'id': self.pk,
@@ -258,7 +258,7 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
         url = '/api/v2/sensitivearea/?format=json&period=ignore&language=en&bubble=True'
         response = self.client.get(url)
         self.expected_result[u'radius'] = None
-        self.assertJSONEqual(response.content, {
+        self.assertJSONEqual(response.content.decode(), {
             u'count': 1,
             u'previous': None,
             u'next': None,
@@ -279,7 +279,7 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
         response = self.client.get(url)
         sports_practice = SportPractice.objects.all()
         result_sportpractice = [{'id': sp.id, 'name': sp.name} for sp in sports_practice]
-        self.assertJSONEqual(response.content, {
+        self.assertJSONEqual(response.content.decode(), {
             u'count': 2,
             u'previous': None,
             u'next': None,

@@ -16,7 +16,7 @@ from mapentity.serializers import plain_text
 
 from geotrek.api.v2.functions import LineLocatePoint, Transform
 from geotrek.authent.models import StructureRelated
-from geotrek.core.models import Path, Topology
+from geotrek.core.models import Path, Topology, simplify_coords
 from geotrek.common.utils import intersecting, classproperty
 from geotrek.common.mixins import (PicturesMixin, PublishableMixin,
                                    PictogramMixin, OptionalPictogramMixin)
@@ -239,7 +239,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         geom3d = self.geom_3d.transform(4326, clone=True)  # KML uses WGS84
         line = kml.newlinestring(name=self.name,
                                  description=plain_text(self.description),
-                                 coords=geom3d.coords)
+                                 coords=simplify_coords(geom3d.coords))
         line.style.linestyle.color = simplekml.Color.red  # Red
         line.style.linestyle.width = 4  # pixels
         # Place marks
@@ -247,7 +247,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
             place = poi.geom_3d.transform(settings.API_SRID, clone=True)
             kml.newpoint(name=poi.name,
                          description=plain_text(poi.description),
-                         coords=[place.coords])
+                         coords=simplify_coords([place.coords]))
         return kml.kml()
 
     def has_geom_valid(self):

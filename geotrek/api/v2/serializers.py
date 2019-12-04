@@ -10,6 +10,7 @@ from rest_framework_gis import serializers as geo_serializers
 from geotrek.api.v2.functions import Transform, Length, Length3D
 from geotrek.api.v2.utils import get_translation_or_dict
 from geotrek.common import models as common_models
+from geotrek.core.models import simplify_coords
 from geotrek.authent import models as authent_models
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
@@ -26,6 +27,12 @@ class BaseGeoJSONSerializer(geo_serializers.GeoFeatureModelSerializer):
     """
     Mixin used to serialize geojson
     """
+
+    def to_representation(self, instance):
+        """Round bbox coordinates"""
+        feature = super().to_representation(instance)
+        feature['bbox'] = simplify_coords(feature['bbox'])
+        return feature
 
     class Meta:
         geo_field = 'geometry'

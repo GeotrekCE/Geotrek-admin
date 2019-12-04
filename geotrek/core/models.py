@@ -25,6 +25,14 @@ from django.contrib.gis.geos import Point
 logger = logging.getLogger(__name__)
 
 
+def simplify_coords(coords):
+    if isinstance(coords, (list, tuple)):
+        return [simplify_coords(coord) for coord in coords]
+    elif isinstance(coords, float):
+        return round(coords, 7)
+    raise Exception("Param is {}. Should be <list>, <tuple> or <float>".format(type(coords)))
+
+
 class PathManager(models.GeoManager):
     # Use this manager when walking through FK/M2M relationships
     use_for_related_fields = True
@@ -108,9 +116,10 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         """ Exports path into KML format, add geometry as linestring """
         kml = simplekml.Kml()
         geom3d = self.geom_3d.transform(4326, clone=True)  # KML uses WGS84
+
         line = kml.newlinestring(name=self.name,
                                  description=plain_text(self.comments),
-                                 coords=geom3d.coords)
+                                 coords=simplify_coords(geom3d.coords))
         line.style.linestyle.color = simplekml.Color.red  # Red
         line.style.linestyle.width = 4  # pixels
         return kml.kml()
@@ -665,7 +674,7 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
         geom3d = self.geom_3d.transform(4326, clone=True)  # KML uses WGS84
         line = kml.newlinestring(name=self.name,
                                  description=plain_text(self.comments),
-                                 coords=geom3d.coords)
+                                 coords=simplify_coords(geom3d.coords))
         line.style.linestyle.color = simplekml.Color.red  # Red
         line.style.linestyle.width = 4  # pixels
         return kml.kml()
