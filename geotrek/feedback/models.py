@@ -105,6 +105,7 @@ class ReportCategory(models.Model):
         db_table = 'f_b_categorie'
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
+        ordering = ("category",)
 
     def __str__(self):
         return self.category

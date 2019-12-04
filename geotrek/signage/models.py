@@ -39,6 +39,7 @@ class SignageType(StructureOrNoneRelated, OptionalPictogramMixin):
         db_table = 's_b_signaletique'
         verbose_name = _("Signage Type")
         verbose_name_plural = _("Signage Types")
+        ordering = ('label',)
 
     def __str__(self):
         if self.structure:
