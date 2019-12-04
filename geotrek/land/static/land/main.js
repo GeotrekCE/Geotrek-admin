@@ -54,7 +54,7 @@ $(window).on('entity:map', function (e, data) {
                 color = colorspool[idx % colorspool.length];
             layer.setStyle({color: color});
 
-            if (window.SETTINGS.showExtremities && data.properties.name) {
+            if (window.SETTINGS.showLabels && data.properties.name) {
                 // Add label in the middle of the line
                 MapEntity.showLineLabel(layer, {
                     color: color,
