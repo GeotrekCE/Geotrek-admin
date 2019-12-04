@@ -14,6 +14,7 @@ from mapentity.serializers import plain_text
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins import (OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin, AddPropertyMixin)
 from geotrek.common.utils import intersecting, classproperty
+from geotrek.core.models import simplify_coords
 
 
 class SportPractice(models.Model):
@@ -184,7 +185,7 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
         line = kml.newpolygon(name=self.species.name,
                               description=plain_text(self.description),
                               altitudemode=simplekml.AltitudeMode.relativetoground,
-                              outerboundaryis=geom.coords[0])
+                              outerboundaryis=simplify_coords(geom.coords[0]))
         line.style.linestyle.color = simplekml.Color.red  # Red
         line.style.linestyle.width = 4  # pixels
         return kml.kml()

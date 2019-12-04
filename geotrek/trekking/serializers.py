@@ -409,8 +409,8 @@ class CirkwiPOISerializer(object):
             self.xml.startElement('adresse', {})
             self.xml.startElement('position', {})
             coords = poi.geom.transform(4326, clone=True).coords
-            self.serialize_field('lat', coords[1])
-            self.serialize_field('lng', coords[0])
+            self.serialize_field('lat', round(coords[1], 7))
+            self.serialize_field('lng', round(coords[0], 7))
             self.xml.endElement('position')
             self.xml.endElement('adresse')
             self.xml.endElement('poi')

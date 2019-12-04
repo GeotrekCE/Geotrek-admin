@@ -1,6 +1,6 @@
 import os
 
-from django.contrib.gis.geos import Point, LineString, MultiLineString
+from django.contrib.gis.geos import Point, LineString, MultiLineString, WKTWriter
 from django.core.management import call_command
 from django.test import TestCase
 
@@ -97,16 +97,13 @@ class TrekParserFilterGeomTests(TestCase):
         self.assertTrue(self.parser.warnings)
 
 
-WKT = ('LINESTRING ('
-       '356392.8992765303 6689612.102616733, '
-       '356466.0587726549 6689740.131734952, '
-       '356411.1891505615 6689868.16085317, '
-       '356566.6530798261 6689904.740601233, '
-       '356712.9720720752 6689804.14629406, '
-       '356703.8271350597 6689703.551986889, '
-       '356621.5227019195 6689639.537427781, '
-       '356612.3777649039 6689511.508309562, '
-       '356447.7688986238 6689502.363372547)')
+WKT = (
+    b'LINESTRING ('
+    b'356392.8992765 6689612.1026167, 356466.0587727 6689740.1317350, 356411.1891506 6689868.1608532, '
+    b'356566.6530798 6689904.7406012, 356712.9720721 6689804.1462941, 356703.8271351 6689703.5519869, '
+    b'356621.5227019 6689639.5374278, 356612.3777649 6689511.5083096, 356447.7688986 6689502.3633725'
+    b')'
+)
 
 
 class TrekParserTests(TestCase):
@@ -127,4 +124,4 @@ class TrekParserTests(TestCase):
         self.assertEqual(trek.difficulty, self.difficulty)
         self.assertEqual(trek.route, self.route)
         self.assertQuerysetEqual(trek.themes.all(), [repr(t) for t in self.themes], ordered=False)
-        self.assertEqual(trek.geom.wkt, WKT)
+        self.assertEqual(WKTWriter(precision=7).write(trek.geom), WKT)
