@@ -169,7 +169,6 @@ class SyncRandoFailTest(TestCase):
     @mock.patch('geotrek.trekking.views.TrekViewSet.list')
     def test_response_500(self, mocke_list, mocke_map_image):
         output = StringIO()
-        error = StringIO()
         mocke_list.return_value = HttpResponse(status=500)
         TrekWithPublishedPOIsFactory.create(published_fr=True)
         with self.assertRaisesRegexp(CommandError, 'Some errors raised during synchronization.'):
