@@ -149,14 +149,14 @@ class SyncRandoFailTest(TestCase):
         self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'mobile', 'nolang', 'media', 'trekking_trek')))
 
     def test_fail_sync_already_running(self):
-        os.makedirs(os.path.join('tmp_sync_rando'))
+        os.makedirs(os.path.join('var', 'tmp_sync_rando'))
         msg = "The tmp_sync_rando/ directory already exists. " \
               "Please check no other sync_rando command is already running. " \
               "If not, please delete this directory."
         with self.assertRaisesRegexp(CommandError, msg):
             management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2)
-        shutil.rmtree(os.path.join('tmp_sync_rando'))
+        shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
 
     @mock.patch('os.mkdir')
     def test_fail_sync_tmp_sync_rando_permission_denied(self, mkdir):
