@@ -122,7 +122,7 @@ class SyncRandoFailTest(TestCase):
 
     def test_language_not_in_db(self):
         with self.assertRaisesRegexp(CommandError,
-                                     "Language cat doesn't exist. Select in these one : \('en', 'es', 'fr', 'it'\)"):
+                                     r"Language cat doesn't exist. Select in these one : \('en', 'es', 'fr', 'it'\)"):
             management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, languages='cat', verbosity=2)
 
@@ -148,7 +148,7 @@ class SyncRandoFailTest(TestCase):
     @mock.patch('os.mkdir')
     def test_fail_sync_tmp_sync_rando_permission_denied(self, mkdir):
         mkdir.side_effect = OSError(errno.EACCES, 'Permission Denied')
-        with self.assertRaisesRegexp(OSError, '\[Errno 13\] Permission Denied'):
+        with self.assertRaisesRegexp(OSError, r'\[Errno 13\] Permission Denied'):
             management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2)
 
