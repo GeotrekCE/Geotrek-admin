@@ -432,7 +432,7 @@ class SyncTest(SyncSetup):
     def test_sync_practice_orders(self):
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                 skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=StringIO())
-        with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
             self.assertEqual(len(treks['features']), 5)
             trek_name = [trek.get('properties').get('name') for trek in treks['features']]
