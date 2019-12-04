@@ -45,8 +45,6 @@ jobs:
       - run: ./install.sh --tests --noinput
       - run: sed -i "s/bind .*/bind 127.0.0.1/g" /etc/redis/redis.conf; service redis-server start
       - run: ./bin/django test -v2 geotrek
-      - run: apt install -y npm
-      - run: make test_js
   test_nds:
     docker:
       - image: ubuntu:bionic
