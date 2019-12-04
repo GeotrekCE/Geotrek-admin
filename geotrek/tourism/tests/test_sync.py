@@ -1,6 +1,6 @@
 import json
 import os
-import mock
+from unittest import mock
 import shutil
 from zipfile import ZipFile
 

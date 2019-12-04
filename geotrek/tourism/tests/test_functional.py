@@ -13,7 +13,7 @@ from geotrek.tourism.factories import (TouristicContentFactory,
                                        TouristicContentCategoryFactory,
                                        TouristicEventFactory)
 
-from mock import patch
+from unittest.mock import patch
 import os
 
 

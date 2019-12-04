@@ -1,4 +1,4 @@
-import mock
+from unittest import mock
 import os
 
 from django.contrib.auth.models import Permission
