@@ -1157,7 +1157,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<informations>'
             '<information langue="en"><titre>{poi_title}</titre><description>{poi_description}</description></information>'
             '</informations>'
-            '<adresse><position><lat>46.499999999999936</lat><lng>3.0000000000000004</lng></position></adresse>'
+            '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
             '</poi>'
             '</pois>'
             '</circuit>'
@@ -1180,7 +1180,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<informations>'
             '<information langue="en"><titre>{title}</titre><description>{description}</description></information>'
             '</informations>'
-            '<adresse><position><lat>46.499999999999936</lat><lng>2.9999999999999996</lng></position></adresse>'
+            '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
             '</poi>'
             '</pois>'.format(**attrs))
 
@@ -1205,7 +1205,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<information langue="fr"><titre>{title}</titre><description>{description}</description></information>'
             '<information langue="it"><titre>{title}</titre><description>{description}</description></information>'
             '</informations>'
-            '<adresse><position><lat>46.499999999999936</lat><lng>2.9999999999999996</lng></position></adresse>'
+            '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
             '</poi>'
             '</pois>'.format(**attrs))
 

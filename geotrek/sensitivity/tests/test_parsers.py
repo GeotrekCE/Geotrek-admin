@@ -3,6 +3,7 @@ import os
 import requests
 from unittest import mock
 
+from django.contrib.gis.geos import WKTWriter
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
@@ -206,10 +207,12 @@ class SpeciesSensitiveAreaShapeParserTest(TestCase):
         self.assertEqual(area.contact, "Contact")
         self.assertEqual(area.description, "Test UTF8 éêè")
         self.assertEqual(
-            area.geom.wkt,
-            'POLYGON ((929315.3613368585 6483309.443505396, 929200.3539448171 6483204.020062691, '
-            '928404.8861498644 6482494.807811771, 928194.0392644553 6482082.697990287, '
-            '927925.6886830255 6481210.558600639, 927676.5060002692 6481287.230195334, '
-            '927772.345493637 6481498.077080746, 927887.3528856782 6481900.602952889, '
-            '928184.4553151187 6482600.231254471, 928625.3169846105 6483520.290390805, '
-            '929162.0181474701 6483664.049630859, 929315.3613368585 6483309.443505396))')
+            WKTWriter(precision=7).write(area.geom),
+            b'POLYGON (('
+            b'929315.3613369 6483309.4435054, 929200.3539448 6483204.0200627, '
+            b'928404.8861499 6482494.8078118, 928194.0392645 6482082.6979903, '
+            b'927925.6886830 6481210.5586006, 927676.5060003 6481287.2301953, '
+            b'927772.3454936 6481498.0770807, 927887.3528857 6481900.6029529, '
+            b'928184.4553151 6482600.2312545, 928625.3169846 6483520.2903908, '
+            b'929162.0181475 6483664.0496309, 929315.3613369 6483309.4435054'
+            b'))')
