@@ -2,7 +2,9 @@ import os
 
 from unittest import mock
 
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, User
+from django.shortcuts import get_object_or_404
+from django.test.utils import override_settings
 from django.utils import translation
 from django.utils.translation import ugettext as _
 from django.conf import settings
@@ -40,6 +42,21 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         self.assertEqual(response.status_code, 302)
         obj = self.model.objects.last()
         self.assertEqual(obj.structure, self.user.profile.structure)
+
+    @override_settings(FORCED_LAYERS=[('OSM', [(42, 100000), (43.87017822557581, 7.506408691406249),
+                                               (43.90185050527358, 7.555847167968749), (42, 100000)])])
+    def test_forced_layers(self):
+        if self.model is None:
+            return  # Abstract test should not run
+
+        self.login()
+
+        obj = self.modelfactory()
+
+        response = self.client.get(obj.get_list_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"forced_layers_data", response.content)
+        self.assertIn(b"[42, 100000]", response.content)
 
     def test_structure_is_not_changed_without_permission(self):
         if not hasattr(self.model, 'structure'):
@@ -96,6 +113,27 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
 
         response = self.client.get('%s?lang=fr' % obj.get_detail_url())
         self.assertEqual(response.status_code, 200)
+
+    def test_permission_published(self):
+        if not self.model:
+            return
+        if 'published' not in [field.name for field in self.model._meta.get_fields()]:
+            return
+        self.user = self.userfactory(password='booh')
+        codename = 'publish_%s' % self.model._meta.model_name
+        if not Permission.objects.filter(codename=codename).count():
+            return
+        perm = Permission.objects.get(codename=codename)
+        group = self.user.groups.first()
+        if group:
+            group.permissions.remove(perm)
+        self.user.user_permissions.remove(perm)
+        self.user.save()
+        self.user = get_object_or_404(User, pk=self.user.pk)
+        success = self.client.login(username=self.user.username, password='booh')
+        self.assertTrue(success)
+        response = self.client.post(self._get_add_url(), self.get_good_data())
+        self.assertEqual(response.status_code, 302)
 
 
 class CommonLiveTest(MapEntityLiveTest):

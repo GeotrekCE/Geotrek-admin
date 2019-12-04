@@ -64,7 +64,7 @@ if 'geotrek.api' in settings.INSTALLED_APPS:
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-if settings.DEBUG:
+if settings.DEBUG or settings.TEST:
     try:
         import debug_toolbar
         urlpatterns = [

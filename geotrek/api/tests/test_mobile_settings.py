@@ -5,9 +5,9 @@ from django.test.testcases import TestCase
 from geotrek.common import factories as common_factories
 from geotrek.common.models import Theme
 from geotrek.trekking import factories as trekking_factories
-from geotrek.trekking.models import TrekNetwork, Route, Practice, Accessibility, DifficultyLevel
+from geotrek.trekking.models import Accessibility, DifficultyLevel, POIType, Practice, Route, TrekNetwork
 from geotrek.tourism import factories as tourism_factories
-from geotrek.tourism.models import InformationDeskType
+from geotrek.tourism.models import InformationDeskType, TouristicContentType, TouristicContentCategory, TouristicEventType
 from geotrek.zoning import factories as zoning_factories
 from geotrek.zoning.models import City, District
 
@@ -47,7 +47,7 @@ class SettingsMobileTest(TestCase):
         self.assertEqual(sorted(values_data),
                          SETTINGS_DATA_STRUCTURE)
 
-    def test_settings_information_desk(self):
+    def test_settings_information_desk_type(self):
         informationdesktype = tourism_factories.InformationDeskTypeFactory()
         tourism_factories.InformationDeskTypeFactory()
         response = self.get_settings()
@@ -63,6 +63,22 @@ class SettingsMobileTest(TestCase):
         self.assertEqual(informationdesk_item[0].get('name'), informationdesktype.label)
         self.assertIn(str(informationdesktype.pictogram), informationdesk_item[0].get('pictogram'))
 
+    def test_settings_information_desk_type_no_picto(self):
+        informationdesktype = tourism_factories.InformationDeskTypeFactory(pictogram=None)
+        tourism_factories.InformationDeskTypeFactory()
+        response = self.get_settings()
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+
+        json_response = response.json()
+
+        informationdesk_item = next((item.get('values') for item in json_response.get('data')
+                                     if item['id'] == 'information_desk_types'), None)
+
+        self.assertEqual(len(informationdesk_item), InformationDeskType.objects.count())
+        self.assertEqual(informationdesk_item[0].get('name'), informationdesktype.label)
+        self.assertIsNone(informationdesk_item[0].get('pictogram'))
+
     def test_settings_network(self):
         network = trekking_factories.TrekNetworkFactory()
         trekking_factories.TrekNetworkFactory()
@@ -77,6 +93,22 @@ class SettingsMobileTest(TestCase):
         self.assertEqual(len(network_item), TrekNetwork.objects.count())
         self.assertEqual(network_item[0].get('name'), network.network)
         self.assertIn(str(network.pictogram), network_item[0].get('pictogram'))
+
+    def test_settings_network_no_picto(self):
+        # Should not happen directly, the picto is mandatory in the form, but could happen with an import
+        network = trekking_factories.TrekNetworkFactory(pictogram=None)
+        trekking_factories.TrekNetworkFactory()
+        response = self.get_settings()
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+
+        json_response = response.json()
+
+        network_item = next((item.get('values') for item in json_response.get('data')
+                             if item['id'] == 'networks'), None)
+        self.assertEqual(len(network_item), TrekNetwork.objects.count())
+        self.assertEqual(network_item[0].get('name'), network.network)
+        self.assertIsNone(network_item[0].get('pictogram'))
 
     def test_settings_route(self):
         route = trekking_factories.RouteFactory()
@@ -106,7 +138,7 @@ class SettingsMobileTest(TestCase):
 
         self.assertEqual(len(route_item), Route.objects.count())
         self.assertEqual(route_item[0].get('name'), route.route)
-        self.assertEqual(None, route_item[0].get('pictogram'))
+        self.assertIsNone(route_item[0].get('pictogram'))
 
     def test_settings_practice(self):
         practice = trekking_factories.PracticeFactory()
@@ -148,7 +180,7 @@ class SettingsMobileTest(TestCase):
                                    if item['id'] == 'accessibilities'), None)
         self.assertEqual(len(accessibility_item), Accessibility.objects.count())
         self.assertEqual(accessibility_item[0].get('name'), accessibility.name)
-        self.assertEqual(None, accessibility_item[0].get('pictogram'))
+        self.assertIsNone(accessibility_item[0].get('pictogram'))
 
     def test_settings_difficulty(self):
         difficulty = trekking_factories.DifficultyLevelFactory()
@@ -176,7 +208,7 @@ class SettingsMobileTest(TestCase):
                                 if item['id'] == 'difficulty'), None)
         self.assertEqual(len(difficulty_item), DifficultyLevel.objects.count())
         self.assertEqual(difficulty_item[0].get('name'), difficulty.difficulty)
-        self.assertEqual(None, difficulty_item[0].get('pictogram'))
+        self.assertIsNone(difficulty_item[0].get('pictogram'))
 
     def test_settings_theme(self):
         theme = common_factories.ThemeFactory()
@@ -218,3 +250,109 @@ class SettingsMobileTest(TestCase):
                               if item['id'] == 'districts'), None)
         self.assertEqual(len(district_item), District.objects.count())
         self.assertEqual(district_item[0].get('name'), district.name)
+
+    def test_settings_poi_type(self):
+        poi_type = trekking_factories.POITypeFactory.create()
+        response = self.get_settings()
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        poi_type_item = next((item.get('values') for item in json_response.get('data')
+                              if item['id'] == 'poi_types'), None)
+        self.assertEqual(len(poi_type_item), POIType.objects.count())
+        self.assertEqual(poi_type_item[0].get('label'), poi_type.label)
+        self.assertIn(str(poi_type.pictogram), poi_type_item[0].get('pictogram'))
+
+    def test_settings_poi_type_no_picto(self):
+        # Should not happen directly, the picto is mandatory in the form, but could happen with an import
+        poi_type = trekking_factories.POITypeFactory.create(pictogram=None)
+        response = self.get_settings()
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+
+        json_response = response.json()
+        poi_type_item = next((item.get('values') for item in json_response.get('data')
+                              if item['id'] == 'poi_types'), None)
+        self.assertEqual(len(poi_type_item), POIType.objects.count())
+        self.assertEqual(poi_type_item[0].get('label'), poi_type.label)
+        self.assertIsNone(poi_type_item[0].get('pictogram'))
+
+    def test_settings_touristic_content_type(self):
+        type1 = tourism_factories.TouristicContentType1Factory()
+        tourism_factories.TouristicContentType2Factory()
+        response = self.get_settings()
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+
+        json_response = response.json()
+        touristic_content_type_item = next((item.get('values') for item in json_response.get('data')
+                                            if item['id'] == 'touristiccontent_types'), None)
+        self.assertEqual(len(touristic_content_type_item), TouristicContentType.objects.count())
+        self.assertEqual(touristic_content_type_item[0].get('name'), type1.label)
+        self.assertIn(str(type1.pictogram), touristic_content_type_item[0].get('pictogram'))
+
+    def test_settings_touristic_content_type_no_picto(self):
+        type1 = tourism_factories.TouristicContentType1Factory(pictogram=None)
+        tourism_factories.TouristicContentType2Factory(pictogram=None)
+        response = self.get_settings()
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+
+        json_response = response.json()
+        touristic_content_type_item = next((item.get('values') for item in json_response.get('data')
+                                            if item['id'] == 'touristiccontent_types'), None)
+        self.assertEqual(len(touristic_content_type_item), TouristicContentType.objects.count())
+        self.assertEqual(touristic_content_type_item[0].get('name'), type1.label)
+        self.assertIsNone(touristic_content_type_item[0].get('pictogram'))
+
+    def test_settings_touristic_event_type(self):
+        type_event = tourism_factories.TouristicEventTypeFactory()
+        response = self.get_settings()
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+
+        json_response = response.json()
+        touristic_event_type_item = next((item.get('values') for item in json_response.get('data')
+                                          if item['id'] == 'touristicevent_types'), None)
+        self.assertEqual(len(touristic_event_type_item), TouristicEventType.objects.count())
+        self.assertEqual(touristic_event_type_item[0].get('name'), type_event.type)
+        self.assertIn(str(type_event.pictogram), touristic_event_type_item[0].get('pictogram'))
+
+    def test_settings_touristic_event_type_no_picto(self):
+        type_event = tourism_factories.TouristicEventTypeFactory(pictogram=None)
+        response = self.get_settings()
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+
+        json_response = response.json()
+        touristic_event_type_item = next((item.get('values') for item in json_response.get('data')
+                                          if item['id'] == 'touristicevent_types'), None)
+        self.assertEqual(len(touristic_event_type_item), TouristicEventType.objects.count())
+        self.assertEqual(touristic_event_type_item[0].get('name'), type_event.type)
+        self.assertIsNone(touristic_event_type_item[0].get('pictogram'))
+
+    def test_settings_touristic_content_category(self):
+        category = tourism_factories.TouristicContentCategoryFactory.create()
+        response = self.get_settings()
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+
+        json_response = response.json()
+        category_item = next((item.get('values') for item in json_response.get('data')
+                              if item['id'] == 'touristiccontent_categories'), None)
+        self.assertEqual(len(category_item), TouristicContentCategory.objects.count())
+        self.assertEqual(category_item[0].get('name'), category.label)
+        self.assertIn(str(category.pictogram), category_item[0].get('pictogram'))
+
+    def test_settings_touristic_content_category_no_picto(self):
+        category = tourism_factories.TouristicContentCategoryFactory.create(pictogram=None)
+        response = self.get_settings()
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+
+        json_response = response.json()
+        category_item = next((item.get('values') for item in json_response.get('data')
+                              if item['id'] == 'touristiccontent_categories'), None)
+        self.assertEqual(len(category_item), TouristicContentCategory.objects.count())
+        self.assertEqual(category_item[0].get('name'), category.label)
+        self.assertIsNone(category_item[0].get('pictogram'))

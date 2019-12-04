@@ -12,7 +12,6 @@ from django.test import TestCase
 from mapentity.factories import UserFactory
 
 from geotrek.common.tests import CommonTest
-from geotrek.common.utils import LTE
 
 from geotrek.authent.factories import PathManagerFactory, StructureFactory
 from geotrek.authent.tests import AuthentFixturesTest
@@ -562,7 +561,7 @@ class DenormalizedTrailTest(AuthentFixturesTest):
         PathFactory.create_batch(size=50)
         TrailFactory.create_batch(size=50)
         self.login()
-        with self.assertNumQueries(LTE(15)):
+        with self.assertNumQueries(7):
             self.client.get(reverse('core:path_json_list'))
 
 

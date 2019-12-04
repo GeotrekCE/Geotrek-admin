@@ -1,3 +1,4 @@
+import errno
 import os
 import json
 from landez.sources import DownloadError
@@ -122,18 +123,19 @@ class SyncRandoFailTest(TestCase):
 
     def test_fail_directory_not_empty(self):
         os.makedirs(os.path.join('var', 'tmp', 'other'))
-        with self.assertRaises(CommandError, msg="Destination directory contains extra data"):
+        with self.assertRaisesRegexp(CommandError, "Destination directory contains extra data"):
             management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2)
         shutil.rmtree(os.path.join('var', 'tmp', 'other'))
 
     def test_fail_url_ftp(self):
-        with self.assertRaises(CommandError, msg="url parameter should start with http:// or https://"):
+        with self.assertRaisesRegexp(CommandError, "url parameter should start with http:// or https://"):
             management.call_command('sync_rando', os.path.join('var', 'tmp'), url='ftp://localhost:8000',
-                                    languages='en', skip_tiles=True, verbosity=2)
+                                    skip_tiles=True, languages='en', verbosity=2)
 
     def test_language_not_in_db(self):
-        with self.assertRaises(CommandError):
+        with self.assertRaisesRegexp(CommandError,
+                                     r"Language cat doesn't exist. Select in these one : \('en', 'es', 'fr', 'it'\)"):
             management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                     skip_tiles=True, languages='cat', verbosity=2)
 
@@ -141,10 +143,27 @@ class SyncRandoFailTest(TestCase):
         trek_1 = TrekWithPublishedPOIsFactory.create(published_fr=True)
         attachment = AttachmentFactory(content_object=trek_1, attachment_file=get_dummy_uploaded_image())
         os.remove(attachment.attachment_file.path)
-        with self.assertRaises(CommandError, msg='Some errors raised during synchronization.'):
+        with self.assertRaisesRegexp(CommandError, 'Some errors raised during synchronization.'):
             management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=StringIO(), stderr=StringIO())
         self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'mobile', 'nolang', 'media', 'trekking_trek')))
+
+    def test_fail_sync_already_running(self):
+        os.makedirs(os.path.join('tmp_sync_rando'))
+        msg = "The tmp_sync_rando/ directory already exists. " \
+              "Please check no other sync_rando command is already running. " \
+              "If not, please delete this directory."
+        with self.assertRaisesRegexp(CommandError, msg):
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
+                                    skip_tiles=True, verbosity=2)
+        shutil.rmtree(os.path.join('tmp_sync_rando'))
+
+    @mock.patch('os.mkdir')
+    def test_fail_sync_tmp_sync_rando_permission_denied(self, mkdir):
+        mkdir.side_effect = OSError(errno.EACCES, 'Permission Denied')
+        with self.assertRaisesRegexp(OSError, r'\[Errno 13\] Permission Denied'):
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
+                                    skip_tiles=True, verbosity=2)
 
     @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
     @mock.patch('geotrek.trekking.views.TrekViewSet.list')
@@ -153,18 +172,41 @@ class SyncRandoFailTest(TestCase):
         error = StringIO()
         mocke_list.return_value = HttpResponse(status=500)
         TrekWithPublishedPOIsFactory.create(published_fr=True)
-        with self.assertRaises(CommandError, msg='Some errors raised during synchronization.'):
+        with self.assertRaisesRegexp(CommandError, 'Some errors raised during synchronization.'):
             management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
-                                    skip_tiles=True, skip_pdf=True, verbosity=2, stdout=output, stderr=error)
-        self.assertIn("failed (HTTP 500)", error.getvalue())
+                                    skip_tiles=True, verbosity=2, stdout=output, stderr=StringIO())
+        self.assertIn("failed (HTTP 500)", output.getvalue())
+
+    @mock.patch('geotrek.trekking.views.TrekViewSet.list')
+    def test_response_view_exception(self, mocke):
+        output = StringIO()
+        mocke.side_effect = Exception('This is a test')
+        TrekWithPublishedPOIsFactory.create(published_fr=True)
+        with self.assertRaisesRegexp(CommandError, 'Some errors raised during synchronization.'):
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
+                                    portal='portal', skip_pdf=True,
+                                    skip_tiles=True, languages='fr', verbosity=2, stdout=output)
+        self.assertIn("failed (This is a test)", output.getvalue())
+
+    @override_settings(DEBUG=True)
+    @mock.patch('geotrek.trekking.views.TrekViewSet.list')
+    def test_response_view_exception_with_debug(self, mocke):
+        output = StringIO()
+        mocke.side_effect = ValueError('This is a test')
+        TrekWithPublishedPOIsFactory.create(published_fr=True)
+        with self.assertRaisesRegexp(ValueError, 'This is a test'):
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
+                                    portal='portal', skip_pdf=True,
+                                    skip_tiles=True, languages='fr', verbosity=2, stdout=output)
+        self.assertIn("failed (This is a test)", output.getvalue())
 
     @override_settings(MEDIA_URL=9)
     def test_bad_settings(self):
         output = StringIO()
         TrekWithPublishedPOIsFactory.create(published_fr=True)
-        with self.assertRaises(AttributeError, msg="Cannot mix str and non-str arguments"):
+        with self.assertRaisesRegexp(AttributeError, "'int' object has no attribute 'strip'"):
             management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
-                                    skip_tiles=True, languages='fr', verbosity=2, stdout=output, stderr=StringIO())
+                                    skip_tiles=True, languages='fr', verbosity=2, stdout=output)
         self.assertIn("failed (Cannot mix str and non-str arguments)", output.getvalue())
 
     def test_sync_fail_src_file_not_exist(self):
@@ -172,7 +214,7 @@ class SyncRandoFailTest(TestCase):
         theme = ThemeFactory.create()
         theme.pictogram = "other"
         theme.save()
-        with self.assertRaises(CommandError, msg='Some errors raised during synchronization.'):
+        with self.assertRaisesRegexp(CommandError, 'Some errors raised during synchronization.'):
             management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output, stderr=StringIO())
         self.assertIn("file does not exist", output.getvalue())
@@ -432,7 +474,7 @@ class SyncTest(SyncSetup):
     def test_sync_practice_orders(self):
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                 skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=StringIO())
-        with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
             self.assertEqual(len(treks['features']), 5)
             trek_name = [trek.get('properties').get('name') for trek in treks['features']]

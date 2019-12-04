@@ -617,7 +617,9 @@ TINYMCE_DEFAULT_CONFIG = {
 }
 
 SYNC_RANDO_ROOT = os.path.join(VAR_DIR, 'data')
+SYNC_MOBILE_ROOT = os.path.join(VAR_DIR, 'mobile')
 SYNC_RANDO_OPTIONS = {}
+SYNC_MOBILE_OPTIONS = {'skip_tiles': False}
 
 '''
 If true; displays the attached pois pictures in the Trek's geojson pictures property.

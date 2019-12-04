@@ -81,7 +81,7 @@ class Command(BaseCommand):
         self.get_all_items()
 
         if options['list']:
-            for m in sorted(self.items.keys()):
+            for m in self.items.keys():
                 self.stdout.write("{} : {}".format(m._meta.model_name, m._meta.verbose_name))
             return
 
