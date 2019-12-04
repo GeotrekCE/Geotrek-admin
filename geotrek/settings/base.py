@@ -379,7 +379,7 @@ MAPENTITY_CONFIG = {
     'MAP_FIT_MAX_ZOOM': 16,
 }
 
-DEFAULT_STRUCTURE_NAME = 'GEOTEAM'
+DEFAULT_STRUCTURE_NAME = 'Principale'
 
 VIEWPORT_MARGIN = 0.1  # On list page, around spatial extent from settings.ini
 

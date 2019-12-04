@@ -28,7 +28,8 @@ RUN apt-get update && apt-get install -y \
     libcairo2 \
     libpango1.0-0 \
     libgdk-pixbuf2.0-dev \
-    libffi-dev &&\
+    libffi-dev \
+    npm &&\
     apt-get --no-install-recommends install postgis -y && \
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
