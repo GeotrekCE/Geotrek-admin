@@ -1,5 +1,5 @@
 import os
-import mock
+from unittest import mock
 import sys
 from io import StringIO
 

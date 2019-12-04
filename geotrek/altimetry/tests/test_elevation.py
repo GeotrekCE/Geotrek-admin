@@ -15,7 +15,7 @@ from geotrek.altimetry.helpers import AltimetryHelper
 
 import os
 import sys
-import mock
+from unittest import mock
 from io import StringIO
 
 
