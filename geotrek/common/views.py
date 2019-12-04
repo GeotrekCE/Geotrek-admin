@@ -156,6 +156,7 @@ class JSSettings(mapentity_views.JSSettings):
         )
         dictsettings['version'] = __version__
         dictsettings['showExtremities'] = settings.SHOW_EXTREMITIES
+        dictsettings['showLabels'] = settings.SHOW_LABELS
         return dictsettings
 
 

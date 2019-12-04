@@ -716,7 +716,8 @@ LOGGING = {
 BLADE_CODE_TYPE = int
 BLADE_CODE_FORMAT = "{signagecode}-{bladenumber}"
 LINE_CODE_FORMAT = "{signagecode}-{bladenumber}-{linenumber}"
-SHOW_EXTREMITIES = False
+SHOW_EXTREMITIES = False  # Show a bullet at path extremities
+SHOW_LABELS = True  # Show labels on status
 
 THUMBNAIL_COPYRIGHT_FORMAT = ""
 
