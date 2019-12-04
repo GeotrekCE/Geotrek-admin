@@ -401,9 +401,8 @@ class TrekViewSet(MapEntityViewSet):
             Prefetch('trek_children', queryset=OrderedTrekChild.objects.select_related('parent', 'child')),
             Prefetch('trek_parents', queryset=OrderedTrekChild.objects.select_related('parent', 'child')),
         )
-        qs = qs.filter(Q(published=True) | Q(trek_parents__parent__published=True))\
-               .order_by('pk').distinct('pk')
-
+        qs = qs.filter(Q(published=True) | Q(trek_parents__parent__published=True)).distinct('practice__order', 'pk').\
+            order_by('-practice__order', 'pk')
         if 'source' in self.request.GET:
             qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
 
