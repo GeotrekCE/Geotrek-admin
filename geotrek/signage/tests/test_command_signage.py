@@ -56,7 +56,7 @@ class SignageCommandTest(TestCase):
         output = StringIO()
         StructureFactory.create(name='structure')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage_bad_multipoint.geojson')
-        with self.assertRaises(CommandError, msg='One of your geometry is a MultiPoint object with multiple points'):
+        with self.assertRaisesRegexp(CommandError, 'One of your geometry is a MultiPoint object with multiple points'):
             call_command('loadsignage', filename, type_default='label', name_default='name',
                          condition_default='condition', structure_default='structure',
                          description_default='description', year_default=2010, verbosity=2, stdout=output)
@@ -80,7 +80,7 @@ class SignageCommandTest(TestCase):
         self.assertEqual(value.count(), 2)
 
     def test_no_file_fail(self):
-        with self.assertRaises(CommandError, msg="File does not exists at: toto.shp"):
+        with self.assertRaisesRegexp(CommandError, "File does not exists at: toto.shp"):
             call_command('loadsignage', 'toto.shp')
 
     def test_missing_defaults(self):
@@ -147,7 +147,7 @@ class SignageCommandTest(TestCase):
     def test_fail_import(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'signage.shp')
         with mock.patch.dict(sys.modules, {'osgeo': None}):
-            with self.assertRaises(CommandError, msg='GDAL Python bindings are not available. Can not proceed.'):
+            with self.assertRaisesRegexp(CommandError, 'GDAL Python bindings are not available. Can not proceed.'):
                 call_command('loadsignage', filename, verbosity=0)
 
     def test_fail_structure_default_do_not_exist(self):

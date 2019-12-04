@@ -50,3 +50,79 @@ msgstr ""
 
 msgid "External ID"
 msgstr ""
+
+msgid "Difficulties"
+msgstr ""
+
+msgid "Lengths"
+msgstr ""
+
+msgid "Durations"
+msgstr ""
+
+msgid "Show all cities"
+msgstr ""
+
+msgid "Hide all cities"
+msgstr ""
+
+msgid "Show all difficulties"
+msgstr ""
+
+msgid "Hide all difficulties"
+msgstr ""
+
+msgid "Show all districts"
+msgstr ""
+
+msgid "Hide all districts"
+msgstr ""
+
+msgid "Show all accessibilities"
+msgstr ""
+
+msgid "Hide all accessibilities"
+msgstr ""
+
+msgid "Show all practices"
+msgstr ""
+
+msgid "Hide all practices"
+msgstr ""
+
+msgid "Show all themes"
+msgstr ""
+
+msgid "Hide all themes"
+msgstr ""
+
+msgid "Show all routes"
+msgstr ""
+
+msgid "Hide all routes"
+msgstr ""
+
+msgid "Show all lengths"
+msgstr ""
+
+msgid "Hide all lengths"
+msgstr ""
+
+msgid "Show all durations"
+msgstr ""
+
+msgid "Hide all durations"
+msgstr ""
+
+msgid "Information Desks Types"
+msgstr ""
+
+msgid "Mobile sync"
+msgstr ""
+
+msgid "Sync mobile ended"
+msgstr ""
+
+msgid "Launch Sync Mobile"
+msgstr ""
+

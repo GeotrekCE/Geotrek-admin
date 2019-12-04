@@ -1,13 +1,9 @@
 import logging
-import re
 
 from django.db import connection
 from django.utils.timezone import utc
 from django.conf import settings
 from django.contrib.gis.measure import Distance
-
-from mapentity.serializers import plain_text
-
 
 logger = logging.getLogger(__name__)
 
@@ -41,22 +37,6 @@ class reify(object):
         val = self.wrapped(inst)
         setattr(inst, self.wrapped.__name__, val)
         return val
-
-
-class LTE(int):
-    """ Less or equal object comparator
-    Source: https://github.com/justquick/django-activity-stream/blob/22b22297054776f7864ff642b73add15b256a2ad/actstream/tests.py
-    """
-    def __new__(cls, n):
-        obj = super(LTE, cls).__new__(cls, n)
-        obj.n = n
-        return obj
-
-    def __eq__(self, other):
-        return other <= self.n
-
-    def __repr__(self):
-        return "<= %s" % self.n
 
 
 def dbnow():
@@ -127,14 +107,3 @@ def intersecting(cls, obj, distance=None, ordering=True):
         # Prevent self intersection
         qs = qs.exclude(pk=obj.pk)
     return qs
-
-
-def plain_text_preserve_linebreaks(value):
-    value = re.sub(r'\s*<br\s*/?>\s*', '##~~~~~~##', value)
-    value = re.sub(r'\s*<p>\s*', '##~~~~~~####~~~~~~##', value)
-    value = re.sub(r'\s*</p>\s*', '', value)
-    value = plain_text(value)
-    value = re.sub(r'\s+', ' ', value)
-    value = re.sub('##~~~~~~##', '\n', value)
-    value = value.strip()
-    return value

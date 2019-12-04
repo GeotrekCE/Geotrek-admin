@@ -1,13 +1,17 @@
+import errno
 from io import StringIO
+
 import json
 from landez.sources import DownloadError
 from unittest import mock
 import os
 from PIL import Image
 import shutil
+from unittest import skipIf
 import zipfile
 
 from django.conf import settings
+from django.contrib.gis.geos import MultiLineString, LineString
 from django.core import management
 from django.core.management.base import CommandError
 from django.db.models import Q
@@ -25,6 +29,7 @@ from geotrek.trekking.models import Trek, POI, OrderedTrekChild
 from geotrek.trekking.factories import TrekFactory, TrekWithPublishedPOIsFactory, PracticeFactory
 from geotrek.tourism.factories import (InformationDeskFactory, InformationDeskTypeFactory,
                                        TouristicContentFactory, TouristicEventFactory)
+from geotrek.tourism.models import TouristicEventType
 
 
 @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
@@ -116,18 +121,36 @@ class SyncMobileFailTest(TestCase):
 
     def test_fail_directory_not_empty(self):
         os.makedirs(os.path.join('tmp', 'other'))
-        with self.assertRaises(CommandError, msg="Destination directory contains extra data"):
+        with self.assertRaisesRegexp(CommandError, "Destination directory contains extra data"):
             management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2)
         shutil.rmtree(os.path.join('tmp', 'other'))
 
+    def test_fail_sync_already_running(self):
+        os.makedirs(os.path.join('tmp_sync_mobile'))
+        msg = "The tmp_sync_mobile/ directory already exists. " \
+              "Please check no other sync_mobile command is already running. " \
+              "If not, please delete this directory."
+        with self.assertRaisesRegexp(CommandError, msg):
+            management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                    skip_tiles=True, verbosity=2)
+        shutil.rmtree(os.path.join('tmp_sync_mobile'))
+
+    @mock.patch('os.mkdir')
+    def test_fail_sync_tmp_sync_rando_permission_denied(self, mkdir):
+        mkdir.side_effect = OSError(errno.EACCES, 'Permission Denied')
+        with self.assertRaisesRegexp(OSError, r"\[Errno 13\] Permission Denied"):
+            management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                    skip_tiles=True, verbosity=2)
+
     def test_fail_url_ftp(self):
-        with self.assertRaises(CommandError, msg="url parameter should start with http:// or https://"):
+        with self.assertRaisesRegexp(CommandError, "url parameter should start with http:// or https://"):
             management.call_command('sync_mobile', 'tmp', url='ftp://localhost:8000',
                                     skip_tiles=True, verbosity=2)
 
     def test_language_not_in_db(self):
-        with self.assertRaises(CommandError, msg="Language cat doesn't exist. Select in these one : ('en', 'es', 'fr', 'it')"):
+        with self.assertRaisesRegexp(CommandError,
+                                     r"Language cat doesn't exist. Select in these one : \('en', 'es', 'fr', 'it'\)"):
             management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, languages='cat', verbosity=2)
 
@@ -139,12 +162,32 @@ class SyncMobileFailTest(TestCase):
                                 skip_tiles=True, languages='fr', verbosity=2, stdout=StringIO())
         self.assertFalse(os.path.exists(os.path.join('tmp', 'nolang', 'media', 'trekking_trek')))
 
+    @override_settings(MEDIA_URL=9)
+    def test_bad_settings(self):
+        output = StringIO()
+        TrekWithPublishedPOIsFactory.create(published_fr=True)
+        with self.assertRaisesRegexp(AttributeError, "'int' object has no attribute 'strip'"):
+            management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                    skip_tiles=True, languages='fr', verbosity=2, stdout=output, stderr=StringIO())
+            self.assertIn("Exception raised in callable attribute", output.getvalue())
+
+    @mock.patch('geotrek.api.mobile.views.common.SettingsView.get')
+    def test_response_view_exception(self, mocke):
+        output = StringIO()
+        mocke.side_effect = Exception('This is a test')
+        TrekWithPublishedPOIsFactory.create(published_fr=True)
+        with self.assertRaisesRegexp(CommandError, 'Some errors raised during synchronization.'):
+            management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', portal='portal',
+                                    skip_tiles=True, languages='fr', verbosity=2, stdout=output)
+
+        self.assertIn("failed (This is a test)", output.getvalue())
+
     @mock.patch('geotrek.api.mobile.views.common.SettingsView.get')
     def test_response_500(self, mocke):
         output = StringIO()
         mocke.return_value = HttpResponse(status=500)
         TrekWithPublishedPOIsFactory.create(published_fr=True)
-        with self.assertRaises(CommandError, msg='Some errors raised during synchronization.'):
+        with self.assertRaisesRegexp(CommandError, 'Some errors raised during synchronization.'):
             management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', portal='portal',
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output)
         self.assertIn("failed (HTTP 500)", output.getvalue())
@@ -316,14 +359,16 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         picto_desk = get_dummy_uploaded_image()
         information_desk_type = InformationDeskTypeFactory.create(pictogram=picto_desk)
         info_desk = InformationDeskFactory.create(type=information_desk_type)
+        info_desk_no_picture = InformationDeskFactory.create(photo=None)
 
         cls.trek_1 = TrekWithPublishedPOIsFactory.create()
-        cls.trek_1.information_desks = (info_desk,)
+        cls.trek_1.information_desks = (info_desk, info_desk_no_picture)
         cls.trek_2 = TrekWithPublishedPOIsFactory.create(portals=(cls.portal_a,))
         cls.trek_3 = TrekWithPublishedPOIsFactory.create(portals=(cls.portal_b,))
         cls.trek_4 = TrekFactory.create()
         OrderedTrekChild.objects.create(parent=cls.trek_1, child=cls.trek_4, order=1)
         cls.desk = InformationDeskFactory.create()
+
         cls.trek_4.information_desks.add(cls.desk)
 
         cls.attachment_1 = AttachmentFactory.create(content_object=cls.trek_1,
@@ -360,7 +405,6 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
                 trek_geojson = json.load(f)
                 self.assertEqual(len(trek_geojson['features']),
                                  Trek.objects.filter(**{'published_{}'.format(lang): True}).count())
-
         self.assertIn('en/treks.geojson', output.getvalue())
 
     def test_sync_treks_by_pk(self):
@@ -447,15 +491,53 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
             # Check inside file generated we have only one picture.
             self.assertEqual(len(trek_geojson['features'][0]['properties']['pictures']), 1)
 
-    @mock.patch('geotrek.trekking.views.TrekViewSet.list')
+    @mock.patch('geotrek.api.mobile.views.TrekViewSet.list')
     def test_streaminghttpresponse(self, mocke):
         output = StringIO()
         mocke.return_value = StreamingHttpResponse()
         TrekWithPublishedPOIsFactory.create(published_fr=True)
-        with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
-            management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
-                                    skip_tiles=True, verbosity=2, stdout=output)
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                skip_tiles=True, skip_pdf=True, verbosity=2, stdout=output)
         self.assertTrue(os.path.exists(os.path.join('tmp', 'en', 'treks.geojson')))
+
+    def test_indent(self):
+        indent = 3
+        output = StringIO()
+        TrekWithPublishedPOIsFactory.create(published_fr=True)
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                skip_tiles=True, skip_pdf=True, verbosity=2, indent=indent, stdout=output)
+        with open(os.path.join('tmp', 'en', 'treks.geojson')) as f:
+            # without indent the json is in one line
+            json_file = f.readlines()
+            # with indent the json is stocked in more than one line
+            self.assertGreater(len(json_file), 1)
+            # there are 3 spaces in the second line because the indent is 3
+            self.assertEqual(json_file[1][:indent], indent * ' ')
+
+    def test_object_without_pictogram(self):
+        pictogram_name_before = os.path.basename(self.touristic_event.type.pictogram.name)
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                skip_tiles=True, skip_pdf=True, verbosity=0)
+        self.assertIn(pictogram_name_before, os.listdir(os.path.join('tmp', 'nolang', 'media', 'upload')))
+
+        for event_type in TouristicEventType.objects.all():
+            event_type.pictogram = None
+            event_type.save()
+
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                skip_tiles=True, skip_pdf=True, verbosity=0)
+        self.assertNotIn(pictogram_name_before, os.listdir(os.path.join('tmp', 'nolang', 'media', 'upload')))
+
+    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    def test_multilinestring(self):
+        TrekFactory.create(geom=MultiLineString(LineString((0, 0), (0, 1)), LineString((100, 100), (100, 101))))
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', skip_tiles=True, skip_pdf=True,
+                                verbosity=0)
+        for lang in settings.MODELTRANSLATION_LANGUAGES:
+            with open(os.path.join('tmp', lang, 'treks.geojson'), 'r') as f:
+                trek_geojson = json.load(f)
+                self.assertEqual(len(trek_geojson['features']),
+                                 Trek.objects.filter(**{'published_{}'.format(lang): True}).count())
 
     @classmethod
     def tearDownClass(cls):

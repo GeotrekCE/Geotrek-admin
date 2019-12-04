@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 import json
 import redis
 from urllib.parse import urljoin
@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.db.models.query import Prefetch
 from django.http import HttpResponse, Http404
 from django.shortcuts import render
-from django.utils import translation
+from django.utils import timezone, translation
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
 from django.views.generic import CreateView, ListView, RedirectView, DetailView, TemplateView
@@ -616,7 +616,7 @@ def sync_update_json(request):
     get info from sync_rando celery_task
     """
     results = []
-    threshold = datetime.now() - timedelta(seconds=60)
+    threshold = timezone.now() - timedelta(seconds=60)
     for task in TaskResult.objects.filter(date_done__gte=threshold, status='PROGRESS'):
         json_results = json.loads(task.result)
         if json_results.get('name', '').startswith('geotrek.trekking'):

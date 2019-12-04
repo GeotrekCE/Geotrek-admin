@@ -112,7 +112,7 @@ class LoadPathsCommandTest(TestCase):
         self.structure = Structure.objects.create(name='huh')
 
     def test_load_paths_without_file(self):
-        with self.assertRaises(CommandError, msg='Error: too few arguments'):
+        with self.assertRaisesRegexp(CommandError, 'Error: the following arguments are required: file_path'):
             call_command('loadpaths')
 
     @override_settings(SRID=4326, SPATIAL_EXTENT=(5, 10.0, 5, 11))
@@ -177,16 +177,16 @@ class LoadPathsCommandTest(TestCase):
 
     def test_load_paths_fail_bad_srid(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'bad_srid.geojson')
-        with self.assertRaises(CommandError, msg='SRID is not well configurate, change/add option srid'):
+        with self.assertRaisesRegexp(CommandError, 'SRID is not well configurate, change/add option srid'):
             call_command('loadpaths', filename, verbosity=0)
 
     def test_load_paths_with_bad_structure(self):
-        with self.assertRaises(CommandError, msg="Structure does not match with instance's structures"):
+        with self.assertRaisesRegexp(CommandError, "Structure does not match with instance's structures"):
             call_command('loadpaths', self.filename, structure='gr', verbosity=0)
 
     def test_load_paths_with_multiple_structure(self):
         Structure.objects.create(name='other_structure')
-        with self.assertRaises(CommandError, msg="There are more than 1 structure and you didn't define the option structure\nUse --structure to define it"):
+        with self.assertRaisesRegexp(CommandError, "There are more than 1 structure and you didn't define the option structure\nUse --structure to define it"):
             call_command('loadpaths', self.filename, verbosity=0)
 
     @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, 0, 4, 2))
