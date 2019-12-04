@@ -430,7 +430,7 @@ class SyncTest(SyncSetup):
             self.assertEqual(len(treks['features']), 5)
 
     def test_sync_practice_orders(self):
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                 skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=StringIO())
         with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
