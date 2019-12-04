@@ -140,8 +140,6 @@ class AltimetryHelper(object):
             logger.warn("No DEM present")
             return {}
 
-        print(xmin, ymin, xmax, ymax, precision)
-
         sql = """
             -- Author: Celian Garcia
             WITH columns AS (
@@ -192,7 +190,6 @@ class AltimetryHelper(object):
         cursor.execute(sql)
         result = cursor.fetchall()
         first = result[0]
-        print(first)
         envelop_native, envelop, center_z, min_z, max_z, resolution_w, resolution_h, a = first
         envelop = GEOSGeometry(envelop, srid=4326)
         envelop_native = GEOSGeometry(envelop_native, srid=settings.SRID)
