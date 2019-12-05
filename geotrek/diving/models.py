@@ -1,10 +1,8 @@
-from math import trunc
-
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.template.defaultfilters import slugify
 from django.urls import reverse
-from django.utils.translation import get_language, ugettext as _, pgettext
+from django.utils.translation import get_language, ugettext as _
 
 from colorfield.fields import ColorField
 from mapentity.models import MapEntityMixin
@@ -14,7 +12,7 @@ from geotrek.common.mixins import (NoDeleteMixin, TimeStampedModelMixin,
                                    PublishableMixin, PicturesMixin, AddPropertyMixin,
                                    PictogramMixin, OptionalPictogramMixin)
 from geotrek.common.models import Theme
-from geotrek.common.utils import intersecting
+from geotrek.common.utils import intersecting, format_coordinates
 from geotrek.core.models import Topology
 from geotrek.trekking.models import POI, Service, Trek
 
@@ -153,21 +151,8 @@ class Dive(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
         return '{}/{}/'.format(category_slug, self.slug)
 
     @property
-    def wgs84_pretty(self):
-        location = self.geom.centroid.transform(4326, clone=True)
-        return (
-            "{lat_deg}°{lat_min:02d}'{lat_sec:02d}\" {lat_card} / "
-            + "{lng_deg}°{lng_min:02d}'{lng_sec:02d}\" {lng_card}"
-        ).format(
-            lat_deg=trunc(abs(location.y)),
-            lat_min=trunc((abs(location.y) * 60) % 60),
-            lat_sec=trunc((abs(location.y) * 3600) % 60),
-            lat_card=pgettext("North", "N") if location.y >= 0 else pgettext("South", "S"),
-            lng_deg=trunc(abs(location.x)),
-            lng_min=trunc((abs(location.x) * 60) % 60),
-            lng_sec=trunc((abs(location.x) * 3600) % 60),
-            lng_card=pgettext("East", "E") if location.x >= 0 else pgettext("West", "W"),
-        )
+    def display_geom(self):
+        return format_coordinates(self.geom)
 
     def distance(self, to_cls):
         return settings.DIVING_INTERSECTION_MARGIN

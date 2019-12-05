@@ -10,7 +10,7 @@ from mapentity.models import MapEntityMixin
 from geotrek.authent.models import StructureOrNoneRelated, StructureRelated
 from geotrek.common.mixins import NoDeleteMixin, OptionalPictogramMixin
 from geotrek.common.models import Organism
-from geotrek.common.utils import classproperty
+from geotrek.common.utils import classproperty, format_coordinates
 from geotrek.core.models import Topology, Path
 
 from geotrek.infrastructure.models import BaseInfrastructure, InfrastructureCondition
@@ -101,22 +101,7 @@ class Signage(MapEntityMixin, BaseInfrastructure):
 
     @property
     def gps_value(self):
-        geom = self.geomtransform
-        assert geom.geom_type == 'Point'
-        if geom.y > 0:
-            degreelong = "%0.6f°N" % geom.y
-        else:
-            degreelong = "%0.6f°S" % - geom.y
-        if geom.x > 0:
-            degreelat = "%0.6f°E" % geom.x
-        else:
-            degreelat = "%0.6f°W" % - geom.x
-        return "%s, %s" % (degreelong, degreelat)
-
-    @property
-    def geomtransform(self):
-        geom = self.topo_object.geom
-        return geom.transform(settings.API_SRID, clone=True)
+        return format_coordinates(self.topo_object.geom)
 
     @property
     def lat_value(self):
