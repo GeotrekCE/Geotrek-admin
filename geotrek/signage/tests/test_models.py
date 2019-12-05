@@ -17,8 +17,8 @@ class SignageModelTest(TestCase):
         signage_S_W = SignageFactory.create(no_path=True)
         signage_N_E.add_path(path, start=1, end=1)
         signage_S_W.add_path(path, start=0, end=0)
-        self.assertEqual(signage_N_E.gps_value, '4.000000°N, 4.000000°E')
-        self.assertEqual(signage_S_W.gps_value, '4.000000°S, 4.000000°W')
+        self.assertEqual(signage_N_E.gps_value, '3°59\'59" N / 3°59\'59" E (WGS 84 / Pseudo-Mercator)')
+        self.assertEqual(signage_S_W.gps_value, '3°59\'59" S / 3°59\'59" W (WGS 84 / Pseudo-Mercator)')
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_gps_value_all_cases_nds(self):
