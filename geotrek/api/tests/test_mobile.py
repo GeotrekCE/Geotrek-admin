@@ -265,18 +265,18 @@ class APIAccessTestCase(BaseApiTest):
         self.assertIsNone(json_response.get('features')[0].get('properties').get('description_teaser'))
 
     def test_poi_list(self):
-        response = self.get_poi_list(trek_models.Trek.objects.first().pk, 'fr')
+        response = self.get_poi_list(self.trek.pk, 'fr')
         #  test response code
         self.assertEqual(response.status_code, 200)
 
         # json collection structure is ok
         json_response = response.json()
-
         # poi count by treks is ok
         self.assertEqual(len(json_response.get('features')),
-                         trek_models.Trek.objects.first().published_pois.count())
+                         self.trek.published_pois.count())
 
         # test dim 2 ok
+
         self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')),
                          2)
 
