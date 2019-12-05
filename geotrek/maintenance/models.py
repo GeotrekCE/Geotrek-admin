@@ -310,12 +310,13 @@ Topology.add_property('interventions', lambda self: Intervention.topology_interv
 class InterventionStatus(StructureOrNoneRelated):
 
     status = models.CharField(verbose_name=_("Status"), max_length=128, db_column='status')
+    order = models.PositiveSmallIntegerField(verbose_name=_("Display order"), default=0, db_column='order')
 
     class Meta:
         db_table = 'm_b_suivi'
         verbose_name = _("Intervention's status")
         verbose_name_plural = _("Intervention's statuses")
-        ordering = ['id']
+        ordering = ['order', 'id']
 
     def __str__(self):
         if self.structure:
@@ -431,7 +432,7 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
         db_table = 'm_t_chantier'
         verbose_name = _("Project")
         verbose_name_plural = _("Projects")
-        ordering = ['name', '-begin_year',]
+        ordering = ['-begin_year', 'name']
 
     def __init__(self, *args, **kwargs):
         super(Project, self).__init__(*args, **kwargs)
@@ -539,7 +540,7 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
         return _("Interventions total cost")
 
     def __str__(self):
-        return "%s (%s-%s)" % (self.name, self.begin_year, self.end_year)
+        return "%s - %s" % (self.begin_year, self.name)
 
     @classmethod
     def path_projects(cls, path):

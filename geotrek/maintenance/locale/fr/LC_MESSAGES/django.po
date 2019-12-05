@@ -300,3 +300,6 @@ msgstr "Ajouter un financement"
 
 msgid "No intervention related."
 msgstr "Pas d'intervention liée."
+
+msgid "Display order"
+msgstr "Ordre d'affichage"

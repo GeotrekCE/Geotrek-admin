@@ -13,8 +13,8 @@ class ContractorAdmin(admin.ModelAdmin):
 
 
 class InterventionStatusAdmin(admin.ModelAdmin):
-    list_display = ('status', 'structure')
-    search_fields = ('status', 'structure')
+    list_display = ('status', 'order', 'structure')
+    search_fields = ('status', 'order', 'structure')
     list_filter = ('structure',)
 
 
