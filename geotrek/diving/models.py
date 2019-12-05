@@ -123,7 +123,7 @@ class Dive(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
     themes = models.ManyToManyField(Theme, related_name="dives",
                                     db_table="g_r_plongee_theme", blank=True, verbose_name=_("Themes"),
                                     help_text=_("Main theme(s)"))
-    geom = models.GeometryField(verbose_name=_("Location"), srid=settings.SRID)
+    geom = models.GeometryField(verbose_name=_("Location"), srid=settings.DISPLAY_SRID)
     source = models.ManyToManyField('common.RecordSource',
                                     blank=True, related_name='dives',
                                     verbose_name=_("Source"), db_table='g_r_plongee_source')

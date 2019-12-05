@@ -399,7 +399,10 @@ SRID = 2154  # Lambert-93 for Metropolitan France
 # API projection (client-side), can differ from SRID (database). Leaflet requires 4326.
 API_SRID = 4326
 
-# Extent in native projection (Toulouse area)
+# SRID displayed for the user (screens / pdf ...)
+DISPLAY_SRID = 3857
+
+# Extent in native projection (France area)
 SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
 
 
