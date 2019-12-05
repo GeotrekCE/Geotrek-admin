@@ -316,7 +316,7 @@ class InterventionStatus(StructureOrNoneRelated):
         db_table = 'm_b_suivi'
         verbose_name = _("Intervention's status")
         verbose_name_plural = _("Intervention's statuses")
-        ordering = ['order', 'id']
+        ordering = ['order', 'status']
 
     def __str__(self):
         if self.structure:
