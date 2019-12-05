@@ -150,7 +150,7 @@ class SyncRandoFailTest(TestCase):
 
     def test_fail_sync_already_running(self):
         os.makedirs(os.path.join('var', 'tmp_sync_rando'))
-        msg = "The tmp_sync_rando/ directory already exists. " \
+        msg = "The var/tmp_sync_rando/ directory already exists. " \
               "Please check no other sync_rando command is already running. " \
               "If not, please delete this directory."
         with self.assertRaisesRegexp(CommandError, msg):
@@ -166,15 +166,15 @@ class SyncRandoFailTest(TestCase):
                                     skip_tiles=True, verbosity=2)
 
     @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
-    @mock.patch('geotrek.trekking.views.TrekViewSet.list')
-    def test_response_500(self, mocke_list, mocke_map_image):
-        output = StringIO()
-        mocke_list.return_value = HttpResponse(status=500)
+    @mock.patch('geotrek.trekking.views.TrekViewSet.as_view')
+    def test_response_500(self, mock_view, mocke_map_image):
+        error = StringIO()
+        mock_view.return_value.return_value = HttpResponse(status=500)
         TrekWithPublishedPOIsFactory.create(published_fr=True)
         with self.assertRaisesRegexp(CommandError, 'Some errors raised during synchronization.'):
             management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
-                                    skip_tiles=True, verbosity=2, stdout=output, stderr=StringIO())
-        self.assertIn("failed (HTTP 500)", output.getvalue())
+                                    skip_tiles=True, verbosity=2, stdout=StringIO(), stderr=error)
+        self.assertIn("failed (HTTP 500)", error.getvalue())
 
     @mock.patch('geotrek.trekking.views.TrekViewSet.list')
     def test_response_view_exception(self, mocke):
