@@ -172,6 +172,12 @@ class SyncTestPortal(TestCase):
     @classmethod
     def setUpClass(cls):
         super(SyncTestPortal, cls).setUpClass()
+
+        if os.path.exists('var/tmp_sync_rando'):
+            shutil.rmtree('var/tmp_sync_rando')
+        if os.path.exists('var/tmp'):
+            shutil.rmtree('var/tmp')
+
         cls.source_a = RecordSourceFactory()
         cls.source_b = RecordSourceFactory()
         cls.portal_a = TargetPortalFactory()
@@ -190,10 +196,10 @@ class SyncTestPortal(TestCase):
         '''
         Test synced flatpages
         '''
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+        management.call_command('sync_rando', 'var/tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=0)
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            with open(os.path.join('tmp', 'api', lang, 'flatpages.geojson'), 'r') as f:
+            with open(os.path.join('var/tmp/api', lang, 'flatpages.geojson'), 'r') as f:
                 flatpages = json.load(f)
                 self.assertEqual(len(flatpages),
                                  FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
@@ -202,10 +208,10 @@ class SyncTestPortal(TestCase):
         '''
         Test if synced flatpages are filtered by source
         '''
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+        management.call_command('sync_rando', 'var/tmp', url='http://localhost:8000',
                                 source=self.source_a.name, skip_tiles=True, verbosity=0)
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            with open(os.path.join('tmp', 'api', lang, 'flatpages.geojson'), 'r') as f:
+            with open(os.path.join('var/tmp/api', lang, 'flatpages.geojson'), 'r') as f:
                 flatpages = json.load(f)
                 self.assertEqual(len(flatpages),
                                  FlatPage.objects.filter(source__name__in=[self.source_a.name, ],
@@ -215,16 +221,16 @@ class SyncTestPortal(TestCase):
         '''
         Test if synced flatpages are filtered by portal
         '''
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+        management.call_command('sync_rando', 'var/tmp', url='http://localhost:8000',
                                 portal=self.portal_b.name, skip_tiles=True, verbosity=0)
-        with open(os.path.join('tmp', 'api/fr/flatpages.geojson'), 'r') as f_file:
+        with open('var/tmp/api/fr/flatpages.geojson', 'r') as f_file:
             flatpages = json.load(f_file)
             self.assertEqual(len(flatpages), 0)
-        with open(os.path.join('tmp', 'api/en/flatpages.geojson'), 'r') as f_file:
+        with open('var/tmp/api/en/flatpages.geojson', 'r') as f_file:
             flatpages = json.load(f_file)
             self.assertEqual(len(flatpages), 3)
 
     @classmethod
     def tearDownClass(cls):
         super(SyncTestPortal, cls).tearDownClass()
-        shutil.rmtree('tmp')
+        shutil.rmtree('var/tmp')
