@@ -2,16 +2,13 @@
 CHANGELOG
 =========
 
-2.30.1.dev0
+2.31.0 (2019-12-06)
 -------------------
 
-**Bug fixes**
+**New features**
 
--
-
-**Minor changes**
-
-- SHOW_LABELS setting allow to hide status labels on map
+- Sync mobile data from web UI
+- The SHOW_LABELS setting allows to hide status labels on map
 
 
 2.30.0 (2019-11-26)
