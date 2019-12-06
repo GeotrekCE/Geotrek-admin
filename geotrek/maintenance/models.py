@@ -36,14 +36,14 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                                          db_column='sous_traitance')
 
     # Technical information
-    width = models.FloatField(default=0.0, verbose_name=_("Width"), db_column='largeur')
-    height = models.FloatField(default=0.0, verbose_name=_("Height"), db_column='hauteur')
+    width = models.FloatField(default=0.0, blank=True, verbose_name=_("Width"), db_column='largeur')
+    height = models.FloatField(default=0.0, blank=True, verbose_name=_("Height"), db_column='hauteur')
     area = models.FloatField(editable=False, default=0, verbose_name=_("Area"), db_column='surface')
 
     # Costs
-    material_cost = models.FloatField(default=0.0, verbose_name=_("Material cost"), db_column='cout_materiel')
-    heliport_cost = models.FloatField(default=0.0, verbose_name=_("Heliport cost"), db_column='cout_heliport')
-    subcontract_cost = models.FloatField(default=0.0, verbose_name=_("Subcontract cost"), db_column='cout_soustraitant')
+    material_cost = models.FloatField(default=0.0, blank=True, verbose_name=_("Material cost"), db_column='cout_materiel')
+    heliport_cost = models.FloatField(default=0.0, blank=True, verbose_name=_("Heliport cost"), db_column='cout_heliport')
+    subcontract_cost = models.FloatField(default=0.0, blank=True, verbose_name=_("Subcontract cost"), db_column='cout_soustraitant')
 
     """ Topology can be of type Infrastructure, Signage or of own type Intervention """
     topology = models.ForeignKey(Topology, null=True,  # TODO: why null ?
@@ -409,22 +409,22 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
 
     name = models.CharField(verbose_name=_("Name"), max_length=128, db_column='nom')
     begin_year = models.IntegerField(verbose_name=_("Begin year"), db_column='annee_debut')
-    end_year = models.IntegerField(verbose_name=_("End year"), db_column='annee_fin')
+    end_year = models.IntegerField(verbose_name=_("End year"), blank=True, db_column='annee_fin')
     constraint = models.TextField(verbose_name=_("Constraint"), blank=True, db_column='contraintes',
                                   help_text=_("Specific conditions, ..."))
     global_cost = models.FloatField(verbose_name=_("Global cost"), default=0, db_column='cout_global',
-                                    help_text=_("€"))
+                                    blank=True, help_text=_("€"))
     comments = models.TextField(verbose_name=_("Comments"), blank=True, db_column='commentaires',
                                 help_text=_("Remarks and notes"))
     type = models.ForeignKey('ProjectType', null=True, blank=True,
                              verbose_name=_("Type"), db_column='type')
     domain = models.ForeignKey('ProjectDomain', null=True, blank=True,
                                verbose_name=_("Domain"), db_column='domaine')
-    contractors = models.ManyToManyField('Contractor', related_name="projects",
+    contractors = models.ManyToManyField('Contractor', related_name="projects", blank=True,
                                          db_table="m_r_chantier_prestataire", verbose_name=_("Contractors"))
-    project_owner = models.ForeignKey(Organism, related_name='own',
+    project_owner = models.ForeignKey(Organism, related_name='own', blank=True,
                                       verbose_name=_("Project owner"), db_column='maitre_oeuvre')
-    project_manager = models.ForeignKey(Organism, related_name='manage',
+    project_manager = models.ForeignKey(Organism, related_name='manage', blank=True,
                                         verbose_name=_("Project manager"), db_column='maitre_ouvrage')
     founders = models.ManyToManyField(Organism, through='Funding', verbose_name=_("Founders"))
 
