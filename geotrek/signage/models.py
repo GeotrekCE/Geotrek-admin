@@ -102,7 +102,7 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     @property
     def gps_value(self):
         return format_coordinates(self.topo_object.geom)
-    
+
     @property
     def geomtransform(self):
         geom = self.topo_object.geom
