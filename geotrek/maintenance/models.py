@@ -310,7 +310,9 @@ Topology.add_property('interventions', lambda self: Intervention.topology_interv
 class InterventionStatus(StructureOrNoneRelated):
 
     status = models.CharField(verbose_name=_("Status"), max_length=128, db_column='status')
-    order = models.PositiveSmallIntegerField(verbose_name=_("Display order"), default=0, db_column='order')
+    order = models.PositiveSmallIntegerField(default=None, null=True, blank=True,
+                                             verbose_name=_("Display order"),
+                                             db_column='order')
 
     class Meta:
         db_table = 'm_b_suivi'
