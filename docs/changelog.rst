@@ -9,6 +9,10 @@ CHANGELOG
 
 -
 
+**New features**
+
+- Add DISPLAY_SRID into settings to allow user to choose it's own format for GPS coordinates
+
 
 2.31.0 (2019-12-06)
 -------------------
