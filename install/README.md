@@ -61,7 +61,7 @@ Open .env and complete it
 POSTGRES_USER=<your_personnal_database_user>
 POSTGRES_DB=<your_personnal_database_user>
 POSTGRES_PASSWORD=<your_personnal_database_password>
-DOMAIN_NAME=<your.geotrek.com>
+ALLOWED_HOSTS=<your.geotrek.com>
 SECRET_KEY=<your_personnal_secret_key>
 ```
 **If you use external database, make sure postgresql > 9.3

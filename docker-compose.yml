@@ -1,65 +1,61 @@
 version: "3"
 services:
-  postgres:
-    image: makinacorpus/postgis:11-2.5
-    ports:
-      - "5432:5432"
+  memcached:
+    image: memcached:1.5-alpine
     env_file:
       - .env
-    volumes:
-      - postgres:/var/lib/postgresql/data
 
   redis:
     image: redis:5.0-alpine
-
-  convertit:
-     image: makinacorpus/convertit
-     working_dir: /opt/apps/convertit/
-     command: /opt/apps/convertit/bin/pserve development.ini --reload
-
-  screamshotter:
-     image: makinacorpus/screamshotter
-     environment:
-       - DJANGO_SETTINGS_MODULE=screamshotter.settings
-     depends_on:
-       - convertit
-
-  celery:
-    image: geotrek
     env_file:
       - .env
-    build:
-      context: .
-      args:
-        LOCAL_UID: ${LOCAL_USER_ID}
-    depends_on:
-      - postgres
-      - redis
-      - screamshotter
+
+  convertit:
+     image: makinacorpus/convertit:latest
+     env_file:
+      - .env
+
+  screamshotter:
+     image: makinacorpus/screamshotter:latest
+     env_file:
+      - .env
+
+  celery:
+    image: geotrekce/admin:${GEOTREK_VERSION:-latest}
+    env_file:
+      - .env
     volumes:
-       - .:/app/src
-    working_dir: /app/src
-    command: celery -A geotrek worker -c 1 -l debug
+        - .:/app/src
+    depends_on:
+      - memcached
+      - redis
+    user: ${UID:-0}:${GID:-0}
+    command: celery -A geotrek worker -c 1
 
   web:
-     image: geotrek
-     tty: true
-     hostname: ${DOMAIN_NAME}
-     ports:
-       - "8000:8000"
-     env_file:
-       - .env
-     volumes:
-       - .:/app/src
-     depends_on:
-       - celery
-       - postgres
-     working_dir: /app/src
-     command: ./manage.py runserver 0.0.0.0:8000
-     networks:
-       default:
-         aliases:
-           - ${DOMAIN_NAME}
+    image: geotrekce/admin:${GEOTREK_VERSION:-latest}
+    env_file:
+      - .env
+    ports:
+      - "${WEB_PORT:-8001}:8000"
+    volumes:
+      - ./var:/app/src/var
+    depends_on:
+      - memcached
+      - redis
+      - screamshotter
+      - convertit
+    user: ${UID:-0}:${GID:-0}
 
-volumes:
-  postgres:
+  api:
+    image: geotrekce/admin:${GEOTREK_VERSION:-latest}
+    env_file:
+      - .env
+    ports:
+      - "${API_PORT:-8002}:8000"
+    volumes:
+      - ./var:/app/src/var
+    depends_on:
+      - memcached
+      - redis
+    user: ${UID:-0}:${GID:-0}

@@ -72,7 +72,7 @@ as defined in ``custom.py``, you can load the following dataset :
 .. note::
 
     PDF Generation tool screamshotter cannot work with `localhost:8000` and needs an real domain name.
-    Add `127.0.0.1  geotrek.local` to your `/etc/hosts` and check `DOMAIN_NAME` is set in your `.env` file.
+    Add `127.0.0.1  geotrek.local` to your `/etc/hosts` and check `ALLOWED_HOSTS` is set in your `.env` file.
 
 
 Conventions

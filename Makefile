@@ -1,13 +1,8 @@
-LOCAL_USER_ID=$(shell id -u)
-
-var:
-	mkdir var
-
 build:
-	LOCAL_USER_ID=$(LOCAL_USER_ID) docker-compose build
+	docker build -t geotrek .
 
 build-no-cache:
-	LOCAL_USER_ID=$(LOCAL_USER_ID) docker-compose build --no-cache
+	docker build -t geotrek --no-cache .
 
 serve:
 	docker-compose up
@@ -33,9 +28,9 @@ update:
 	docker-compose run web update.sh
 
 load_data:
-	docker-compose run web initial.sh
+	docker-compose run web load_data.sh
 
-load_demo: load_data
+load_demo:
 	docker-compose run web ./manage.py loaddata development-pne
 
 css:

@@ -5,9 +5,7 @@ from django.conf.global_settings import LANGUAGES as LANGUAGES_LIST
 #
 # Django Production
 # ..........................
-ALLOWED_HOSTS += [
-    os.getenv('DOMAIN_NAME'),
-]
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(' ')
 
 USE_X_FORWARDED_HOST = True
 COMPRESS_ENABLED = True

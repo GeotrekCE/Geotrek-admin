@@ -83,7 +83,7 @@ Change POSTGRES_HOST and every information about POSTGRES and PGPORT
     POSTGRES_USER=<your_personnal_database_user>
     POSTGRES_DB=<your_personnal_database_user>
     POSTGRES_PASSWORD=<your_personnal_database_password>
-    DOMAIN_NAME=<your.geotrek.com>
+    ALLOWED_HOSTS=<your.geotrek.com>
     SECRET_KEY=<your_personnal_secret_key>
     PGPORT=5432
     REDIS_HOST=redis

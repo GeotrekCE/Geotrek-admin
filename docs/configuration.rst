@@ -14,7 +14,7 @@ After editing ``.env``, refresh the running instance with :
 
 
 There a few cases where running ``install.sh`` would be necessary. If you
-change the ``DOMAIN_NAME`` or other parameters that affect *nginx* site configuration.
+change the ``ALLOWED_HOSTS`` or other parameters that affect *nginx* site configuration.
 
 
 Spatial extents

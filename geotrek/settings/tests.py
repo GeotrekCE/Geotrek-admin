@@ -25,9 +25,7 @@ MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = (
     ('it', 'Italian'),
 )
 
-ALLOWED_HOSTS = [
-    'localhost',
-]
+ALLOWED_HOSTS = ['localhost']
 
 
 class DisableMigrations():
