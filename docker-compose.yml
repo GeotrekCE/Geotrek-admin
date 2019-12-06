@@ -4,7 +4,7 @@ services:
     image: memcached:1.5-alpine
     env_file:
       - .env
-    
+
   redis:
     image: redis:5.0-alpine
     env_file:
@@ -19,7 +19,7 @@ services:
      image: makinacorpus/screamshotter:latest
      env_file:
       - .env
-   
+
   celery:
     image: geotrekce/admin:${GEOTREK_VERSION:-latest}
     env_file:
@@ -31,7 +31,7 @@ services:
       - redis
     user: ${UID:-0}:${GID:-0}
     command: celery -A geotrek worker -c 1
-    
+
   web:
     image: geotrekce/admin:${GEOTREK_VERSION:-latest}
     env_file:

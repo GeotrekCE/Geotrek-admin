@@ -34,11 +34,10 @@ jobs:
       - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
       - run: docker-compose run web update.sh
-      - run: docker-compose run web coverage run ./manage.py test --settings=geotrek.settings.tests geotrek
-      - run: docker-compose run web make test_js
-      - run: docker-compose run web coverage xml
+      - run: docker-compose run -e COVERAGE_FILE=var/.coverage web coverage run ./manage.py test --settings=geotrek.settings.tests
+      - run: docker-compose run -e COVERAGE_FILE=var/.coverage web coverage xml -o var/coverage.xml
       - codecov/upload:
-          file: coverage.xml
+          file: var/coverage.xml
           flags: test
           when: on_success
   test_nds:
@@ -52,13 +51,25 @@ jobs:
       - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
       - run: docker-compose run web update.sh
-      - run: docker-compose run web coverage run ./manage.py test --settings=geotrek.settings.tests_nds geotrek
-      - run: docker-compose run web make test_js
-      - run: docker-compose run web coverage xml
+      - run: docker-compose run -e COVERAGE_FILE=var/.coverage web coverage run ./manage.py test --settings=geotrek.settings.tests_nds
+      - run: docker-compose run -e COVERAGE_FILE=var/.coverage web coverage xml -o var/coverage.xml
       - codecov/upload:
-          file: coverage.xml
-          flags: test
+          file: var/coverage.xml
+          flags: test_nds
           when: on_success
+  test_js:
+    docker:
+      - image: geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
+    environment:
+      LANG: C.UTF-8
+      SECRET_KEY: foo
+    steps:
+      - checkout
+      - run: apt-get update && apt-get install -y npm
+      - run: mkdir -p var/conf/extra_static
+      - run: ./manage.py collectstatic --noinput --settings=geotrek.settings.tests
+      - run: npm install geotrek/jstests
+      - run: ./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
   deploy:
     machine: true
     environment:
@@ -83,8 +94,12 @@ workflows:
       - test_nds:
           requires:
             - build
+      - test_js:
+          requires:
+            - build
       - deploy:
           requires:
             - codestyle
             - test
             - test_nds
+            - test_js
