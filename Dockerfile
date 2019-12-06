@@ -1,16 +1,16 @@
 FROM makinacorpus/geodjango:bionic-3.6
 
-ENV DJANGO_SETTINGS_MODULE geotrek.settings.prod
-# SET LOCAL_UID, help to use in dev
-ARG LOCAL_UID=1000
-# Add default SECRET KEY / used for compilemessages
-ENV SECRET_KEY temp
-# default gunicorn options
-ENV GUNICORN_CMD_ARGS="--bind 0.0.0.0:8000 --workers 5 --timeout 600"
-# Add default path for log / used for compilemessages
-RUN mkdir -p /app/src/var/log
+ENV ALLOWED_HOSTS="localhost"
+# If POSTGRES_HOST is empty, entrypoint will set it to the IP of the docker host in the container
+ENV POSTGRES_HOST=""
+ENV POSTGRES_PORT="5432"
+ENV POSTGRES_USER="geotrek"
+ENV POSTGRES_PASSWORD="geotrek"
+ENV POSTGRES_DB="geotrekdb"
 
-# install postgis without dependencies to get raster2pgsql command
+WORKDIR /app/src
+
+# Install postgis because raster2pgsl is required by manage.py loaddem
 RUN apt-get update && apt-get install -y \
     unzip \
     sudo \
@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
     nano \
     curl \
     git \
-    gosu \
+    iproute2 \
     software-properties-common \
     shared-mime-info \
     fonts-liberation \
@@ -28,31 +28,24 @@ RUN apt-get update && apt-get install -y \
     libcairo2 \
     libpango1.0-0 \
     libgdk-pixbuf2.0-dev \
-    libffi-dev \
-    npm &&\
-    apt-get --no-install-recommends install postgis -y && \
+    libffi-dev && \
+    apt-get install -y --no-install-recommends postgis && \
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
-RUN useradd -ms /bin/bash django --uid $LOCAL_UID
-ADD geotrek /app/src/geotrek
-ADD manage.py /app/src/manage.py
-ADD bulkimport /app/src/bulkimport
-ADD VERSION /app/src/VERSION
-ADD .coveragerc /app/src/.coveragerc
-RUN chown django:django -R /app
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY geotrek/ geotrek/
+COPY manage.py manage.py
+COPY bulkimport/ bulkimport/
+COPY VERSION VERSION
+COPY .coveragerc .coveragerc
 COPY docker/* /usr/local/bin/
-COPY tools/* /usr/local/bin/
 
-ADD requirements.txt /app/src/requirements.txt
-RUN pip install --no-cache-dir -r /app/src/requirements.txt
-
-USER django
-WORKDIR /app/src
-# persists compiled locales
-RUN ./manage.py compilemessages
+RUN ln -s /app/src/var/conf/custom.py /app/src/geotrek/settings/custom.py
+RUN ln -s /app/src/var/conf/parsers.py /app/src/bulkimport/parsers.py
+RUN SECRET_KEY=tmp ./manage.py compilemessages --settings=geotrek.settings.dev
 
 EXPOSE 8000
-USER root
-
 ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]
-CMD ["./manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["gunicorn", "geotrek.wsgi:application", "--bind=0.0.0.0:8000"]

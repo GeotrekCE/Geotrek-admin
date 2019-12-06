@@ -2,8 +2,6 @@
 
 cd /app/src
 
-/usr/local/bin/update.sh
-
 ./manage.py loaddata minimal
 ./manage.py loaddata cirkwi
 ./manage.py loaddata basic
