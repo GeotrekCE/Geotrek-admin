@@ -44,7 +44,7 @@ class TrekOrderedChildManager(models.Manager):
 class OrderedTrekChild(models.Model):
     parent = models.ForeignKey('Trek', related_name='trek_children', on_delete=models.CASCADE)
     child = models.ForeignKey('Trek', related_name='trek_parents', on_delete=models.CASCADE)
-    order = models.PositiveIntegerField(default=0)
+    order = models.PositiveIntegerField(default=0, blank=True)
 
     objects = TrekOrderedChildManager()
 
