@@ -24,8 +24,8 @@ class SignageModelTest(TestCase):
     def test_gps_value_all_cases_nds(self):
         signage_N_E = SignageFactory.create(geom=Point(4, 4, srid=4326))
         signage_S_W = SignageFactory.create(geom=Point(-4, -4, srid=4326))
-        self.assertEqual(signage_N_E.gps_value, '4.000000°N, 4.000000°E')
-        self.assertEqual(signage_S_W.gps_value, '4.000000°S, 4.000000°W')
+        self.assertEqual(signage_N_E.gps_value, '3°59\'59" N / 3°59\'59" E (WGS 84 / Pseudo-Mercator)')
+        self.assertEqual(signage_S_W.gps_value, '3°59\'59" S / 3°59\'59" W (WGS 84 / Pseudo-Mercator)')
 
 
 class SealingModelTest(TestCase):
