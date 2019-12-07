@@ -30,7 +30,7 @@ SECRET_KEY_FILE=/app/src/var/conf/secret_key
 if [ -z $SECRET_KEY ]; then
     if [ ! -f $SECRET_KEY_FILE ]; then
         echo "Generate a secret key"
-        od -An -N16 -tx < /dev/urandom | sed 's/ //g' > $SECRET_KEY_FILE
+        dd bs=48 count=1 if=/dev/urandom 2>/dev/null | base64 > $SECRET_KEY_FILE
         chmod go-r $SECRET_KEY_FILE
     fi
     export SECRET_KEY=`cat $SECRET_KEY_FILE`
