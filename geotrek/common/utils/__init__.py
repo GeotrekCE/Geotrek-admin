@@ -111,9 +111,9 @@ def intersecting(cls, obj, distance=None, ordering=True):
     return qs
 
 
-def format_coordinates(geometry_field):
+def format_coordinates(geom):
     if settings.DISPLAY_SRID in [4326, 3857]:  # WGS84 formatting
-        location = geometry_field.centroid.transform(4326, clone=True)
+        location = geom.centroid.transform(4326, clone=True)
         rounded_lat_sec = round(abs(location.y) * 3600)
         rounded_lng_sec = round(abs(location.x) * 3600)
 
@@ -131,7 +131,7 @@ def format_coordinates(geometry_field):
             lng_card=pgettext("East", "E") if location.x >= 0 else pgettext("West", "W"),
         )
     else:
-        location = geometry_field.centroid.transform(settings.DISPLAY_SRID, clone=True)
+        location = geom.centroid.transform(settings.DISPLAY_SRID, clone=True)
         result = "X: {lat} / Y: {lng}".format(
             lat=round(location.x),
             lng=round(location.y),
