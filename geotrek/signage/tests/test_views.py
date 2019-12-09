@@ -212,7 +212,7 @@ class SignageViewsTest(CommonTest):
             good_data['geom'] = 'POINT(0.42 0.666)'
         return good_data
 
-    def test_description_in_detail_page(self):
+    def test_content_in_detail_page(self):
         signa = SignageFactory.create(description="<b>Beautiful !</b>")
         self.login()
         response = self.client.get(signa.get_detail_url())
