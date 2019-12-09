@@ -1,9 +1,10 @@
 from unittest import mock
 
+from django.contrib.gis.geos import Point
 from django.db import connection
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
-from ..utils import sql_extent, uniquify
+from ..utils import sql_extent, uniquify, format_coordinates
 from ..utils.postgresql import debug_pg_notices
 from ..utils.import_celery import (create_tmp_destination,
                                    subclasses,
@@ -54,3 +55,13 @@ class UtilsTest(TestCase):
             ('/tmp/geotrek/bombadil', '/tmp/geotrek/bombadil/bombadil'),
             create_tmp_destination('bombadil')
         )
+
+    @override_settings(DISPLAY_SRID=3857)
+    def test_format_coordinates_wgs84(self):
+        geom = Point(x=25382910.3, y=-12037913.2, srid=2154)
+        self.assertEqual(format_coordinates(geom), '65°00\'00" S / 65°00\'00" E (WGS 84 / Pseudo-Mercator)')
+
+    @override_settings(DISPLAY_SRID=32631)
+    def test_format_coordinates_custom_srid(self):
+        geom = Point(x=-5267624.63, y=7604466.80, srid=2154)
+        self.assertEqual(format_coordinates(geom), 'X: -6500000 / Y: 6500000 (WGS 84 / UTM zone 31N)')

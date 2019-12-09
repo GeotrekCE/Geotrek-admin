@@ -217,6 +217,7 @@ class SignageViewsTest(CommonTest):
         self.login()
         response = self.client.get(signa.get_detail_url())
         self.assertContains(response, "<b>Beautiful !</b>")
+        self.assertContains(response, "(WGS 84 / Pseudo-Mercator)")
 
     def test_check_structure_or_none_related_are_visible(self):
         self.login()
