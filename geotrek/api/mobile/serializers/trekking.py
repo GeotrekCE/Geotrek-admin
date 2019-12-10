@@ -81,6 +81,10 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         children_number = serializers.SerializerMethodField()
         geometry = geo_serializers.GeometryField(read_only=True, precision=7, source='start_point', )
 
+        def get_first_picture(self, obj):
+            root_pk = self.context.get('root_pk') or obj.pk
+            return obj.serializable_pictures_mobile(root_pk)
+
         def get_children_number(self, obj):
             return obj.children.count()
 
