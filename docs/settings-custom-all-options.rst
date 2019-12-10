@@ -483,7 +483,8 @@ Options of the sync_mobile command
 
 URL's Tiles used for the mobile.
 
-    *Change for ign :
+    *Change for ign :*
+
     ::
 
         MOBILE_TILES_URL = ['https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png']
@@ -530,6 +531,7 @@ Intervals of the mobile for the ascent filter
     *Do the same as above*
 
 ::
+
     MOBILE_DURATION_INTERVALS = [
         {"id": 1, "name": "< 1 heure", "interval": [0, 1]},
         {"id": 2, "name": "1h - 2h30", "interval": [1, 2.5]},
