@@ -130,14 +130,15 @@ class ApidaeParser(AttachmentParserMixin, Parser):
 
     def get_different_languages(self):
         fields_model = [f.name for f in self.model._meta.get_fields()]
-        for key, value in self.fields.items():
+        fields = self.fields.copy()
+        for key, value in fields.items():
             if 'libelle' in value:
                 key_without_tra = key[:-3]
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
                     new_key = key_without_tra + '_%s' % lang
                     if new_key in fields_model:
                         self.fields[new_key] = value[:-2].replace('libelle', 'libelle%s' % lang.title())
-            if hasattr(value, '__iter__'):
+            if not isinstance(value, str):
                 key_without_tra = key[:-3]
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
                     new_key = key_without_tra + '_%s' % lang
