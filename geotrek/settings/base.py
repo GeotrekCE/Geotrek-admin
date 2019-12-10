@@ -78,7 +78,7 @@ DATABASES = {
         'USER': os.getenv('POSTGRES_USER'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
         'HOST': os.getenv('POSTGRES_HOST', 'postgres'),
-        'PORT': os.getenv('PGPORT', '5432'),
+        'PORT': os.getenv('POSTGRES_PORT', '5432'),
         'OPTIONS': {
             'options': '-c search_path=public,%s' % ','.join(set(DATABASE_SCHEMAS.values()))
         },

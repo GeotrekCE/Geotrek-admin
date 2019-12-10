@@ -1,0 +1,49 @@
+version: "3"
+services:
+  postgres:
+    image: makinacorpus/postgis:11-2.5
+    env_file:
+      - .env
+    environment:
+      - PGPORT=${POSTGRES_PORT:-5432}
+    ports:
+      - "${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}"
+
+  redis:
+    image: redis:5.0-alpine
+
+  convertit:
+     image: makinacorpus/convertit:latest
+
+  screamshotter:
+     image: makinacorpus/screamshotter:latest
+
+  celery:
+    image: geotrek
+    build:
+      context: .
+    env_file:
+      - .env
+    volumes:
+        - .:/app/src
+    depends_on:
+      - postgres
+      - redis
+    user: ${UID:-1000}:${GID:-1000}
+    command: celery -A geotrek worker -c 1
+
+  web:
+    image: geotrek
+    env_file:
+      - .env
+    ports:
+      - "${WEB_PORT:-8000}:8000"
+    volumes:
+      - ./:/app/src/
+    depends_on:
+      - postgres
+      - redis
+      - screamshotter
+      - convertit
+    user: ${UID:-1000}:${GID:-1000}
+    command: ./manage.py runserver 0.0.0.0:8000

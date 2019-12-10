@@ -4,75 +4,19 @@
 DEVELOPMENT
 ===========
 
-This documentation is dedicated to code contributors, in order to run a development instance.
-
-Developers are advice to run their *Geotrek* instance in an isolated environment,
-however it is not an absolute prerequisite. More details below.
-
-
-Isolated environment
---------------------
-
-Development stack is managed by docker and docker-compose
+Quickstart
+----------
 
 ::
 
-    make build
+    cp .env-dev.dist .env
+    cp docker-compose-dev.yml docker-compose.yml
+    docker-compose run --rm web update.sh
+    docker-compose run --rm web load_data.sh
+    docker-compose run --rm web ./manage.py createsuperuser
+    docker-compose up -d
 
-Why make build ? To run test and load data tests, geotrek user in docker container needs to have same UID that's your current user.
-make build just pass your UID as argument to build development docker image.
-
-Run
----
-
-Start local instance :
-
-::
-
-    docker-compose up
-
-.. note::
-
-    Running ``docker-compose run web update.sh`` is recommended after a pull of new source code.
-
-
-Run unit tests :
-
-::
-
-    docker-compose run web ./manage.py test --settings=geotrek.settings.tests
-
-
-Run unit tests in verbose mode, and without migrations :
-
-::
-
-    docker-compose run web ./manage.py test --settings=geotrek.settings.tests -v 2
-
-
-Development data
-----------------
-
-::
-
-    docker-compose run web initial.sh
-
-    docker-compose run web ./manage.py loaddata development-pne
-
-
-In order to get elevation data, a DEM is necessary. If you use the default extent,
-as defined in ``custom.py``, you can load the following dataset :
-
-::
-
-    wget http://depot.makina-corpus.org/public/geotrek/mnt_0_ecrins.zip -o geotrek/var/mnt_0_ecrins.zip
-    unzip geotrek/var/mnt_0_ecrins.zip
-    docker-compose run web ./manage.py loaddem /app/var/mnt_0_ecrins/w001001.adf
-
-.. note::
-
-    PDF Generation tool screamshotter cannot work with `localhost:8000` and needs an real domain name.
-    Add `127.0.0.1  geotrek.local` to your `/etc/hosts` and check `ALLOWED_HOSTS` is set in your `.env` file.
+Got to http://localhost:8001
 
 
 Conventions
@@ -133,32 +77,7 @@ Data only:
     docker-compose run web ./manage.py  flush
 
 
-Everything:
-
-::
-
-    dbname=geotrekdb
-    sudo -n -u postgres -s -- psql -c "DROP DATABASE ${dbname};" && sudo -n -u postgres -s -- psql -c "CREATE DATABASE ${dbname};" && sudo -n -u postgres -s -- psql -d ${dbname} -c "CREATE EXTENSION postgis;"
-
-
 Mapentity development
 ---------------------
 
-To develop mapentity and Geotrek together, modify lines to ``requirement.txt``:
-
-::
-
-    [sources]
-    mapentity = git https://github.com/makinacorpus/django-mapentity.git
-
-    [buildout]
-    auto-checkout += mapentity
-
-Then run:
-
-::
-
-    make env_dev update
-    cd lib/src/mapentity/
-    git submodule init
-    git submodule update
+TODO
