@@ -35,7 +35,7 @@ def launch_sync_rando(*args, **kwargs):
         call_command(
             'sync_rando',
             settings.SYNC_RANDO_ROOT,
-            verbosity='2',
+            verbosity=2,
             task=current_task,
             **sync_rando_options
         )
