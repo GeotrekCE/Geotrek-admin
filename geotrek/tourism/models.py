@@ -261,6 +261,7 @@ class ReservationSystem(models.Model):
         db_table = 't_b_systeme_reservation'
         verbose_name = _("Reservation system")
         verbose_name_plural = _("Reservation systems")
+        ordering = ('name',)
 
 
 class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,

@@ -290,7 +290,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     def name_csv_display(self):
         return self.name
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s (%s)" % (self.name, self.date)
 
     @classmethod
@@ -310,14 +310,17 @@ Topology.add_property('interventions', lambda self: Intervention.topology_interv
 class InterventionStatus(StructureOrNoneRelated):
 
     status = models.CharField(verbose_name=_("Status"), max_length=128, db_column='status')
+    order = models.PositiveSmallIntegerField(default=None, null=True, blank=True,
+                                             verbose_name=_("Display order"),
+                                             db_column='order')
 
     class Meta:
         db_table = 'm_b_suivi'
         verbose_name = _("Intervention's status")
         verbose_name_plural = _("Intervention's statuses")
-        ordering = ['id']
+        ordering = ['order', 'status']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
             return "{} ({})".format(self.status, self.structure.name)
         return self.status
@@ -333,7 +336,7 @@ class InterventionType(StructureOrNoneRelated):
         verbose_name_plural = _("Intervention's types")
         ordering = ['type']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
             return "{} ({})".format(self.type, self.structure.name)
         return self.type
@@ -349,7 +352,7 @@ class InterventionDisorder(StructureOrNoneRelated):
         verbose_name_plural = _("Intervention's disorders")
         ordering = ['disorder']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
             return "{} ({})".format(self.disorder, self.structure.name)
         return self.disorder
@@ -366,7 +369,7 @@ class InterventionJob(StructureOrNoneRelated):
         verbose_name_plural = _("Intervention's jobs")
         ordering = ['job']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
             return "{} ({})".format(self.job, self.structure.name)
         return self.job
@@ -387,7 +390,7 @@ class ManDay(models.Model):
     def cost(self):
         return float(self.nb_days * self.job.cost)
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.nb_days)
 
 
@@ -538,8 +541,8 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
     def interventions_total_cost_verbose_name(cls):
         return _("Interventions total cost")
 
-    def __unicode__(self):
-        return "%s (%s-%s)" % (self.name, self.begin_year, self.end_year)
+    def __str__(self):
+        return "%s - %s" % (self.begin_year, self.name)
 
     @classmethod
     def path_projects(cls, path):
@@ -586,7 +589,7 @@ class ProjectType(StructureOrNoneRelated):
         verbose_name_plural = _("Project types")
         ordering = ['type']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
             return "{} ({})".format(self.type, self.structure.name)
         return self.type
@@ -602,7 +605,7 @@ class ProjectDomain(StructureOrNoneRelated):
         verbose_name_plural = _("Project domains")
         ordering = ['domain']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
             return "{} ({})".format(self.domain, self.structure.name)
         return self.domain
@@ -618,7 +621,7 @@ class Contractor(StructureOrNoneRelated):
         verbose_name_plural = _("Contractors")
         ordering = ['contractor']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
             return "{} ({})".format(self.contractor, self.structure.name)
         return self.contractor
@@ -635,5 +638,5 @@ class Funding(models.Model):
         verbose_name = _("Funding")
         verbose_name_plural = _("Fundings")
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s : %s" % (self.project, self.amount)

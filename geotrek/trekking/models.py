@@ -134,6 +134,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         db_table = 'o_t_itineraire'
         verbose_name = _("Trek")
         verbose_name_plural = _("Treks")
+        ordering = ('name',)
 
     def __str__(self):
         return self.name

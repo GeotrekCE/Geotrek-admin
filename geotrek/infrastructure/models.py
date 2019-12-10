@@ -50,6 +50,7 @@ class InfrastructureCondition(StructureOrNoneRelated):
         verbose_name = _("Infrastructure Condition")
         verbose_name_plural = _("Infrastructure Conditions")
         db_table = "a_b_etat"
+        ordering = ('label',)
 
     def __str__(self):
         if self.structure:
