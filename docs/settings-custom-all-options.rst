@@ -1,212 +1,573 @@
 ===============
 Global Settings
 ===============
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| **Option**                              | **Type** | **Default**                          | **Description**                                 | **more information**                                   |
-|                                         |          | *Necessary to change                 |                                                 |                                                        |
-|                                         |          | before install*                      |                                                 |                                                        |
-|                                         |          |                                      |                                                 |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| SPATIAL_EXTENT                          | list     | **(105000, 6150000,                  | boundingbox : corner bottom left xy,            | Should not be change after install.                    |
-|                                         |          | 1100000, 7150000)**                  | corner top right xy                             |                                                        |
-|                                         |          |                                      | of your project                                 |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| TREKKING_TOPOLOGY_ENABLED               | boolean  | True                                 | Use dynamic segmentation or not.                | Do not change it after install, or dump your database  |
-|                                         |          |                                      |                                                 | before.                                                |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| FLATPAGES_ENABLED                       | boolean  | True                                 | Show flatpages on menus or not.                 | Can be change whenever you want.                       |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| TOURISM_ENABLED                         | boolean  | True                                 | Show Tourism models (Touristic Event and        | Can be change whenever you want.                       |
-|                                         |          |                                      | Touristic Content on menus or not               |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| PATH_SNAPPING_DISTANCE                  | float    | 1                                    | Distance of path snapping in metters            | Change the distance. Better to keep it like this.      |
-|                                         |          |                                      |                                                 | Not used when TREKKING_TOPOLOGY_ENABLED = True         |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| SNAP_DISTANCE                           | integer  | 30                                   | Distance of snapping for the cursor in pixels   | Change the distance.                                   |
-|                                         |          |                                      | on map leaflet                                  |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| PATH_MERGE_SNAPPING_DISTANCE            | float    | 2                                    | Minimum distance to merge 2 paths               | Change the distance. Should be higher or the same as   |
-|                                         |          |                                      |                                                 | PATH_SNAPPING_DISTANCE.                                |
-|                                         |          |                                      |                                                 | Not used when TREKKING_TOPOLOGY_ENABLED = True         |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| MAP_STYLES                              | dict     | Click to see                         | Color of the different layers on the map        | MAP_STYLES['path'] = {'weigth': 2, 'opacity': 2.0,     |
-|                                         |          |                                      |                                                 | 'color': 'yellow'}                                     |
-|                                         |          |                                      |                                                 | MAP_STYLES['city']['opacity'] = 0.8                    |
-|                                         |          |                                      |                                                 |                                                        |
-|                                         |          |                                      |                                                 |                                                        |
-|                                         |          |                                      |                                                 | For color : color picker                               |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| COLORS_POOL                             | dict     |                                      | Color of the different layers on the top right. | MAP_STYLES['restrictedarea'] = ['plum', 'violet',      |
-|                                         |          |                                      |                                                 | 'deeppink']                                            |
-|                                         |          |                                      |                                                 |                                                        |
-|                                         |          |                                      |                                                 |                                                        |
-|                                         |          |                                      |                                                 | For land, physical, competence, signagemanagement,     |
-|                                         |          |                                      |                                                 | workmanagement should have 5 values.                   |
-|                                         |          |                                      |                                                 |                                                        |
-|                                         |          |                                      |                                                 | For restricted Area : add as many color as your        |
-|                                         |          |                                      |                                                 | number of restricted area type                         |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| TOURISM_INTERSECTION_MARGIN             | integer  | 500                                  | Distance to which tourist contents and          | This distance can be changed by practice in the admin. |
-|                                         |          |                                      | tourist events will be displayed                |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| DIVING_INTERSECTION_MARGIN              | integer  | 500                                  | Distance to which dives will be displayed       |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| TREK_POINTS_OF_REFERENCE_ENABLED        | integer  | True                                 | Points of reference are enabled on form of      |                                                        |
-|                                         |          |                                      | treks                                           |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| TREK_EXPORT_POI_LIST_LIMIT              | integer  | 14                                   | Limit of the number of pois on treks pdf        | 14 is already a huge amount of POI, but it's possible  |
-|                                         |          |                                      |                                                 | to add more.                                           |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT | integer  | 2                                    | Limit of the number of information desks on     | You can put -1 if you want all the information desks   |
-|                                         |          |                                      | treks pdf                                       |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT  | boolean  | True                                 | Show sensitive areas on maps of pdf             | Show sensitive areas only if app sensitivy is enabled  |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| SHOW_POIS_ON_MAP_SCREENSHOT             | boolean  | True                                 | Show pois on maps of pdf                        |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| SHOW_SERVICES_ON_MAP_SCREENSHOT         | boolean  | True                                 | Show services on maps of pdf                    |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| SHOW_SIGNAGES_ON_MAP_SCREENSHOT         | boolean  | True                                 | Show signages on maps of pdf                    |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT  | boolean  | True                                 | Show infrastructures on maps of pdf             |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| TOPOLOGY_STATIC_OFFSETS                 | dict     | {'land': -5,                         | Land objects are added on other objects         | You should not change this settings, except if you     |
-|                                         |          |  'physical': 0,                      | with offset.                                    | want to use less type. Example :                       |
-|                                         |          |  'competence': 5,                    |                                                 |                                                        |
-|                                         |          |  'signagemanagement': -10,           |                                                 | {'land': -5,                                           |
-|                                         |          |  'workmanagement': 10}               |                                                 |  'competence': 0,                                      |
-|                                         |          |                                      |                                                 |  'workmanagement': 5}                                  |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| TREK_CATEGORY_ORDER                     | integer  | 1                                    | Order of all the treks without practice on      | All the settings about order are the order inside      |
-|                                         |          |                                      | 'Rando' web site                                | rando web site.                                        |
-|                                         |          |                                      |                                                 | Practices of diving, treks and touristic contents are  |
-|                                         |          |                                      |                                                 | taken in account Treks without practices will          |
-|                                         |          |                                      |                                                 | be first.                                              |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| ITINERANCY_CATEGORY_ORDER               | integer  | 2                                    | Order of itinerancy on 'Rando' web site         | Itinerancy will be second only if there are itinerancy |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| DIVE_CATEGORY_ORDER                     | integer  | 10                                   | Order of dives on 'Rando' web site              | Dives will be third if there are no treks              |
-|                                         |          |                                      |                                                 | with practices                                         |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| TOURISTIC_EVENT_CATEGORY_ORDER          | integer  | 99                                   | Order of touristic events on 'Rando' web site   | Touristic events will be last.                         |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| SPLIT_TREKS_CATEGORIES_BY_PRACTICE      | boolean  | False                                | On the Rando web site, treks                    | Order in admin will be take in account                 |
-|                                         |          |                                      | practices will be displayed separately          |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY | boolean  | False                                | On the Rando web site,                          |                                                        |
-|                                         |          |                                      | accessibilites will be displayed separately     |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| SPLIT_TREKS_CATEGORIES_BY_ITINERANCY    | boolean  | False                                | On the Rando web site,                          |                                                        |
-|                                         |          |                                      | if a trek has a children it will be displayed   |                                                        |
-|                                         |          |                                      |  separately                                     |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| SPLIT_DIVES_CATEGORIES_BY_PRACTICE      | boolean  | True                                 | On the Rando web site, dives                    |                                                        |
-|                                         |          |                                      | practices will be displayed separately          |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES      | boolean  | False                                | On the 'Rando' web site, treks near other       |                                                        |
-|                                         |          |                                      | are hide                                        |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| MOBILE_TILES_URL                        | list     | ['https://{s}.tile.                  |                                                 |                                                        |
-|                                         |          | 'opentopomap.org'                    |                                                 |                                                        |
-|                                         |          | '/{z}/{x}/{y}.png']                  |                                                 |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| MOBILE_LENGTH_INTERVALS                 | list     | [{"id": 1,                           | Intervals of the mobile for the length filter   |                                                        |
-|                                         |          |   "name": "< 10 km",                 |                                                 |                                                        |
-|                                         |          |   "interval": [0, 9999]},            |                                                 |                                                        |
-|                                         |          |  {"id": 2,                           |                                                 |                                                        |
-|                                         |          |   "name": "10 - 30",                 |                                                 |                                                        |
-|                                         |          |   "interval": [9999, 29999]},        |                                                 |                                                        |
-|                                         |          |  {"id": 3,                           |                                                 |                                                        |
-|                                         |          |   "name": "30 - 50",                 |                                                 |                                                        |
-|                                         |          |   "interval": [30000, 50000]},       |                                                 |                                                        |
-|                                         |          |  {"id": 4,                           |                                                 |                                                        |
-|                                         |          |   "name": "> 50 km",                 |                                                 |                                                        |
-|                                         |          |   "interval": [50000, 999999]}]      |                                                 |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| MOBILE_ASCENT_INTERVALS                 | list     | [{"id": 1,                           | Intervals of the mobile for the ascent filter   |                                                        |
-|                                         |          |   "name": "< 300 m",                 |                                                 |                                                        |
-|                                         |          |   "interval": [0, 299]},             |                                                 |                                                        |
-|                                         |          |  {"id": 2,                           |                                                 |                                                        |
-|                                         |          |   "name": "300 - 600",               |                                                 |                                                        |
-|                                         |          |   "interval": [300, 599]},           |                                                 |                                                        |
-|                                         |          |  {"id": 3,                           |                                                 |                                                        |
-|                                         |          |   "name": "600 - 1000",              |                                                 |                                                        |
-|                                         |          |   "interval": [600, 999]},           |                                                 |                                                        |
-|                                         |          |  {"id": 4,                           |                                                 |                                                        |
-|                                         |          |   "name": "> 1000 m",                |                                                 |                                                        |
-|                                         |          |   "interval": [1000, 9999]}]         |                                                 |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| MOBILE_DURATION_INTERVALS               | list     | [{"id": 1,                           | Intervals of the mobile for the duration filter |                                                        |
-|                                         |          |   "name": "< 1 heure",               |                                                 |                                                        |
-|                                         |          |   "interval": [0, 1]},               |                                                 |                                                        |
-|                                         |          |  {"id": 2,                           |                                                 |                                                        |
-|                                         |          |   "name": "1h - 2h30",               |                                                 |                                                        |
-|                                         |          |   "interval": [1, 2.5]},             |                                                 |                                                        |
-|                                         |          |  {"id": 3,                           |                                                 |                                                        |
-|                                         |          |   "name": "2h30 - 5h",               |                                                 |                                                        |
-|                                         |          |   "interval": [2.5, 5]},             |                                                 |                                                        |
-|                                         |          |  {"id": 4,                           |                                                 |                                                        |
-|                                         |          |   "name": "5h - 9h",                 |                                                 |                                                        |
-|                                         |          |   "interval": [5, 9]},               |                                                 |                                                        |
-|                                         |          |  {"id": 5,                           |                                                 |                                                        |
-|                                         |          |   "name": "> 9h",                    |                                                 |                                                        |
-|                                         |          |   "interval": [9, 9999999]}]         |                                                 |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| SYNC_RANDO_ROOT                         | string   | os.path.join(VAR_DIR, 'data')        | Path on your server wehre the datas for rando   | If you want to change it, you should import os         |
-|                                         |          | */<instance_Geotrek>/<var_dir>/data* | web site will be generated                      | at the top of your file and do something similar to    |
-|                                         |          |                                      |                                                 | the default                                            |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| SYNC_MOBILE_ROOT                        | string   | os.path.join(VAR_DIR, 'mobile')      | Path on your server wehre the datas for mobile  | If you want to change it, you should import os         |
-|                                         |          | /<instance_Geotrek>/<var_dir>/mobile | will be generated                               | at the top of your file and do something similar to    |
-|                                         |          |                                      |                                                 | the default                                            |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| SYNC_RANDO_OPTIONS                      | dict     | {}                                   | Options of the sync_rando command               |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| SYNC_MOBILE_OPTIONS                     | dict     | {'skip_tiles': False}                | Options of the sync_mobile command              |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| TREK_WITH_POIS_PICTURES                 | boolean  | False                                |                                                 |                                                        |
-|                                         |          |                                      | Geotrek Rando it enables correlated pictures    |                                                        |
-|                                         |          |                                      | to be displayed in the slideshow.               |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| BLADE_CODE_TYPE                         | type     | int                                  | Type of the blade code                          | It can be str or int.                                  |
-|                                         |          |                                      |                                                 | If you have an integer code : int                      |
-|                                         |          |                                      |                                                 | If you have an string code : str                       |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| BLADE_CODE_FORMAT                       | str      | "{signagecode}-{bladenumber}"        | Correspond of the format showed on export of    | If you want to change : move information under bracket |
-|                                         |          |                                      | blades code                                     | You can also remove one element between bracket        |
-|                                         |          |                                      |                                                 | You can do for exemple :                               |
-|                                         |          |                                      |                                                 | "CD99.{signagecode}.{bladenumber}"                     |
-|                                         |          |                                      |                                                 | It will display : CD99.XIDNZEIU.01                     |
-|                                         |          |                                      |                                                 | signagecode is the code of the signage                 |
-|                                         |          |                                      |                                                 | bladenumber is the number of the blade                 |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| LINE_CODE_FORMAT                        | str      | "{signagecode}-{bladenumber}"        | Correspond of the format showed on export       | Similar with above                                     |
-|                                         |          | "-{linenumber}"                      | of lines code                                   | You can do for example :                               |
-|                                         |          |                                      |                                                 | "CD99.{signagecode}-{bladenumber}.{linenumber}"        |
-|                                         |          |                                      |                                                 | It will display : CD99.XIDNZEIU-01.01                  |
-|                                         |          |                                      |                                                 | signagecode is the code of the signage                 |
-|                                         |          |                                      |                                                 | bladenumber is the number of the blade                 |
-|                                         |          |                                      |                                                 | linenumber is the number of the line                   |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| THUMBNAIL_COPYRIGHT_FORMAT              | str      | ""                                   | Add a thumbnail on every picture for rando      | Example :                                              |
-|                                         |          |                                      | web site.                                       | "{title} {author} {legend}"                            |
-|                                         |          |                                      |                                                 | Will display title of the picture the author           |
-|                                         |          |                                      |                                                 | on Geotrek and the legend                              |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| THUMBNAIL_COPYRIGHT_SIZE                | int      | 15                                   | Size of you thumbnail                           |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| ENABLED_MOBILE_FILTERS                  | list     | ['practice', 'difficulty',           | List of all the filters enabled on mobile.      | Remove any of the filters,                             |
-|                                         |          |  'durations', 'ascent',              |                                                 | if you don't want one of them.                         |
-|                                         |          |  'lengths', 'themes',                |                                                 |                                                        |
-|                                         |          |  'route', 'districts',               |                                                 | It's useless to add other one.                         |
-|                                         |          |  'cities', 'accessibilities',]       |                                                 |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| PRIMARY_COLOR                           | str      | "#7b8c12"                            | Primary color of your pdf                       | Check : "color picker"                                 |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| ONLY_EXTERNAL_PUBLIC_PDF                | boolean  | False                                | If True, on rando web site, only pdf imported   |                                                        |
-|                                         |          |                                      | with FileType : "Topoguide"                     |                                                        |
-|                                         |          |                                      | and not autogenerated                           |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
-| SEND_REPORT_ACK                         | boolean  | True                                 | If false, no mail will be sent to the sender of |                                                        |
-|                                         |          |                                      | any feedback on Rando web site                  |                                                        |
-+-----------------------------------------+----------+--------------------------------------+-------------------------------------------------+--------------------------------------------------------+
+
+|
+
+**Options before install**
+==========================
+
+**Spatial reference identifier**
+::
+
+    SRID = 2154
+
+Spatial reference identifier of your database. 2154 is RGF93 / Lambert-93 - France
+
+   *It should not be change after any creation of geometries.*
+
+   *Choose wisely with epsg.io for example*
+
+**Spatial Extent**
+::
+
+    SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
+
+Boundingbox of your project : corner bottom left xy, corner top right xy, corner top right xy
+
+   *It should not be change after install*
+
+
+**Dynamic segmentation**
+::
+
+    TREKKING_TOPOLOGY_ENABLED = True
+
+Use dynamic segmentation or not.
+
+   *Do not change it after install, or dump your database*
+
+**First Structure**
+::
+
+    DEFAULT_STRUCTURE_NAME = "GEOTEAM"
+
+Name for your default structure.
+
+   *This one can be changed, except it's tricky.*
+
+   * *First change the name in the admin (authent/structure),*
+   * *Stop your instance admin.*
+   * *Change in the settings*
+   * *Re-run the server.*
+
+**Translations**
+::
+
+   MODELTRANSLATION_LANGUAGES = ('en', 'fr', 'it', 'es')
+
+Languages of your project. It will be used to generate fields for translations. (ex: description_fr, description_en)
+
+   *You won't be able to change it easily, avoid to add any languages and do not remove any.*
+
+**Options admin**
+=================
+
+**Enable Apps**
+::
+
+    FLATPAGES_ENABLED = True
+
+Show Flatpages on menu or not. Flatpages are used in Geotrek Rando.
+
+|
+
+::
+
+    TOURISM_ENABLED = True
+
+Show TouristicContents and TouristicEvents on menu or not.
+
+|
+
+::
+
+    TRAIL_MODEL_ENABLED = True
+
+Show Trails on menu or not.
+
+|
+
+::
+
+    LANDEDGE_MODEL_ENABLED = True
+
+Show land on menu or not.
+
+|
+
+::
+
+   LAND_BBOX_CITIES_ENABLED = True
+   LAND_BBOX_DISTRICTS_ENABLED = True
+   LAND_BBOX_AREAS_ENABLED = False
+
+Show filter bbox by zoning.
+
+.. image:: images/options/zoning_bboxs.png
+
+**Translations**
+::
+
+    LANGUAGE_CODE = 'fr'
+
+Language of your interface.
+
+**Geographical CRUD**
+::
+
+    PATH_SNAPPING_DISTANCE = 2.0
+
+Minimum distance to merge 2 paths in unit of SRID
+
+    *Change the distance. Better to keep it like this. Not used when TREKKING_TOPOLOGY_ENABLED = True*
+
+::
+
+    SNAP_DISTANCE = 30
+
+Distance of snapping for the cursor in pixels on map leaflet.
+
+
+::
+
+    PATH_MERGE_SNAPPING_DISTANCE = 2
+
+Minimum distance to merge 2 paths.
+
+    *Change the distance. Should be higher or the same as PATH_SNAPPING_DISTANCE*
+
+    *Used when TREKKING_TOPOLOGY_ENABLED = True*
+
+::
+
+    MAP_STYLES = {'path': {'weight': 2, 'opacity': 1.0, 'color': '#FF4800'},
+                  'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
+                  'city': {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
+                  'district': {'weight': 6, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
+                  'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
+                  'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+                  'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+                  'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+                  'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+                  'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
+                  'print': {'path': {'weight': 1},
+                            'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
+                                     'arrowColor': 'black', 'arrowSize': 10},}
+                  }
+
+Color of the different layers on the map
+
+    *To change any map_style do as following :*
+
+    ::
+
+        MAP_STYLES['path'] = {'weigth': 2, 'opacity': 2.0, 'color': 'yellow'}*
+        MAP_STYLES['city']['opacity'] = 0.8*
+
+    *For color : use color picker for example*
+
+|
+
+::
+
+    COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '#9c79f3', '#7af379'],
+                   'physical': ['#f3799d', '#79c1f3', '#e4f379', '#de79f3', '#79f3ba', '#f39779', '#797ff3'],
+                   'competence': ['#a2f379', '#f379c6', '#79e9f3', '#f3d979', '#b579f3', '#79f392', '#f37984'],
+                   'signagemanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
+                   'workmanagement': ['#79a8f3', '#cbf379', '#f379ee', '#79f3e3', '#79f3d3'],
+                   'restrictedarea': ['plum', 'violet', 'deeppink', 'orchid',
+                                      'darkviolet', 'lightcoral', 'palevioletred',
+                                      'MediumVioletRed', 'MediumOrchid', 'Magenta',
+                                      'LightSalmon', 'HotPink', 'Fuchsia']}
+
+Color of the different layers on the top right for landing.
+
+    * For land, physical, competence, signagemanagement, workmanagement should have 5 values.
+    * For restricted Area : add as many color as your number of restricted area type
+
+    *To change any map_style do as following :*
+
+    ::
+
+        COLORS_POOL['restrictedarea'] = ['plum', 'violet', 'yellow', 'red', '#79a8f3']
+        MAP_STYLES['city']['opacity'] = 0.8*
+
+    *For color : use color picker for example*
+
+|
+
+::
+
+    TREK_POINTS_OF_REFERENCE_ENABLED = True
+
+Points of reference are enabled on form of treks.
+
+|
+
+::
+
+    TOPOLOGY_STATIC_OFFSETS = {'land': -5, 'physical': 0, 'competence': 5, 'signagemanagement': -10, 'workmanagement': 10}
+
+Land objects are added on other objects (path for example) with offset, avoiding overlay.
+
+    *You should not change it to avoid overlay except if you want to have more overlay.*
+    *You can do for example for :*
+
+    ::
+
+        TOPOLOGY_STATIC_OFFSETS = {'land': -7, 'physical': 0, 'competence': 7, 'signagemanagement': -14, 'workmanagement': 14}
+
+|
+
+**Signage and Blade**
+::
+
+    BLADE_CODE_TYPE = int
+
+Type of the blade code (str or int)
+
+    *It can be str or int.*
+
+    *If you have an integer code : int*
+
+    *If you have an string code : str*
+
+|
+
+::
+
+    BLADE_CODE_FORMAT = "{signagecode}-{bladenumber}"
+
+Correspond of the format of blades. Show N3-1 for the blade 1 of the signage N3.
+
+    *If you want to change : move information under bracket*
+
+    *You can also remove one element between bracket*
+
+    *You can do for exemple :*
+    *"CD99.{signagecode}.{bladenumber}"*
+
+    *It will display : CD99.XIDNZEIU.01 (first blade of XIDNZEIU)*
+
+    * *signagecode is the code of the signage*
+    * *bladenumber is the number of the blade*
+
+|
+
+::
+
+    LINE_CODE_FORMAT = "{signagecode}-{bladenumber}-{linenumber}"
+
+Correspond of the format showed on export of lines. Used in csv of signage.
+
+    *Similar with above*
+    *You can do for example :*
+    *"CD99.{signagecode}-{bladenumber}.{linenumber}"*
+
+    *It will display : CD99.XIDNZEIU-01.02 (second line of the first blade of XIDNZEIU)*
+
+    * *signagecode is the code of the signage*
+    * *bladenumber is the number of the blade*
+    * *linenumber is the number of the line*
+
+
+**Screenshots**
+::
+
+    SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT = True
+    SHOW_POIS_ON_MAP_SCREENSHOT = True
+    SHOW_SERVICES_ON_MAP_SCREENSHOT = True
+    SHOW_SIGNAGES_ON_MAP_SCREENSHOT = True
+    SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT = True
+
+Show objects on maps of pdf
+
+|
+
+::
+
+    MAP_CAPTURE_SIZE = 800
+
+Size in px of the capture.
+
+    *Be careful with your pdfs.*
+    *If you change this value, pdfs will be rendered differently*
+
+
+**Synchro Geotrek-Rando**
+::
+
+    SYNC_RANDO_ROOT = os.path.join(VAR_DIR, 'data')
+
+Path on your server where the datas for rando website will be generated
+
+    *if you want to modify it, do not forget to import os at the top of the file.*
+    *Check* `import Python <https://docs.python.org/3/reference/import.html>`_ *, if you need any information*
+
+::
+
+    THUMBNAIL_COPYRIGHT_FORMAT = ""
+
+Add a thumbnail on every picture for geotrek-rando
+
+
+    *Example :*
+
+    *"{title}-:-{author}-:-{legend}"*
+
+    *Will display title of the picture, author*
+    *and the legend :*
+    *Puy de Dômes-:-Paul Paul-:-Beautiful sunrise on Puy de Dômes"*
+
+|
+
+::
+
+    THUMBNAIL_COPYRIGHT_SIZE = 15
+
+Size of the thumbnail.
+
+|
+
+::
+    TOURISM_INTERSECTION_MARGIN = 500
+
+Distance to which tourist contents, tourist events, treks, pois, services will be displayed
+
+    *This distance can be changed by practice for treks in the admin.*
+
+|
+
+::
+
+    DIVING_INTERSECTION_MARGIN = 500
+
+Distance to which dives will be displayed.
+
+|
+
+::
+
+    TREK_EXPORT_POI_LIST_LIMIT = 14
+
+Limit of the number of pois on treks pdf.
+
+    *14 is already a huge amount of POI, but it's possible to add more*
+
+|
+
+::
+
+    TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT = 2
+
+Limit of the number of information desks on treks pdf.
+
+    *You can put -1 if you want all the information desks*
+
+|
+
+::
+
+    SPLIT_TREKS_CATEGORIES_BY_PRACTICE = False
+
+On the Rando web site, treks practices will be displayed separately
+
+    *Field order for each practices in admin will be take in account*
+
+|
+
+::
+
+    SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False
+
+On the Rando web site, accessibilites will be displayed separately
+
+|
+
+::
+
+    SPLIT_TREKS_CATEGORIES_BY_ITINERANCY = False
+
+On the Rando web site, if a trek has a children it will be displayed separately
+
+|
+
+::
+
+    SPLIT_DIVES_CATEGORIES_BY_PRACTICE = True
+
+On the Rando web site, dives practices will be displayed separately
+
+|
+
+::
+
+    HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = False
+
+On the 'Rando' web site, treks near other are hide
+
+|
+
+::
+
+    SYNC_RANDO_OPTIONS = {}
+
+Options of the sync_rando command in Geotrek-admin interface.
+
+|
+
+::
+
+    TREK_WITH_POIS_PICTURES = False
+
+It enables correlated pictures on Gotrek-Rando to be displayed in the slideshow
+
+|
+
+::
+
+    PRIMARY_COLOR = "#7b8c12"
+
+Primary color of your pdf
+    *check : "color picker"*
+
+|
+
+::
+
+    ONLY_EXTERNAL_PUBLIC_PDF = False
+
+On rando web site, only pdf imported with filetype "Topoguide"
+will be used and not autogenerated.
+
+|
+
+::
+
+    TREK_CATEGORY_ORDER = 1
+    ITINERANCY_CATEGORY_ORDER = 2
+    DIVE_CATEGORY_ORDER = 10
+    TOURISTIC_EVENT_CATEGORY_ORDER = 99
+
+Order of all the objects without practices on 'Rando' web site
+
+    *All the settings about order are the order inside rando web site.*
+
+    *Practices of diving, treks and categories of touristic contents are taken in account*
+
+|
+
+**Synchro Geotrek-Mobile**
+::
+
+    SYNC_MOBILE_ROOT = os.path.join(VAR_DIR, 'mobile')
+
+Path on your server wehre the datas for mobile
+
+    *if you want to modify it, do not forget to import os at the top of the file.*
+    *Check* `import Python <https://docs.python.org/3/reference/import.html>`_ *, if you need any information*
+
+|
+
+::
+
+    SYNC_MOBILE_OPTIONS = {'skip_tiles': False}
+
+Options of the sync_mobile command
+
+|
+
+::
+    MOBILE_TILES_URL = ['https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png']
+
+URL's Tiles used for the mobile.
+
+    *Change for ign :
+    ::
+
+        MOBILE_TILES_URL = ['https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png']
+
+|
+
+::
+
+    MOBILE_LENGTH_INTERVALS =  [
+        {"id": 1, "name": "< 10 km", "interval": [0, 9999]},
+        {"id": 2, "name": "10 - 30", "interval": [9999, 29999]},
+        {"id": 3, "name": "30 - 50", "interval": [30000, 50000]},
+        {"id": 4, "name": "> 50 km", "interval": [50000, 999999]}
+    ]
+
+Intervals of the mobile for the length filter
+
+    *Interval's key is in meters.*
+    *You can add new intervals*
+
+    ::
+
+        MOBILE_LENGTH_INTERVALS =  [
+            {"id": 1, "name": "< 10 km", "interval": [0, 9999]},
+            {"id": 2, "name": "10 - 30 km", "interval": [9999, 29999]},
+            {"id": 3, "name": "30 - 50 km", "interval": [30000, 50000]},
+            {"id": 4, "name": "50 - 80 km", "interval": [50000, 80000]}
+            {"id": 5, "name": "> 80 km", "interval": [80000, 999999]}
+        ]
+
+|
+
+::
+
+    MOBILE_ASCENT_INTERVALS = [
+        {"id": 1, "name": "< 300 m", "interval": [0, 299]},
+        {"id": 2, "name": "300 - 600", "interval": [300, 599]},
+        {"id": 3, "name": "600 - 1000", "interval": [600, 999]},
+        {"id": 4, "name": "> 1000 m", "interval": [1000, 9999]}
+    ]
+
+Intervals of the mobile for the ascent filter
+
+    *Do the same as above*
+
+::
+    MOBILE_DURATION_INTERVALS = [
+        {"id": 1, "name": "< 1 heure", "interval": [0, 1]},
+        {"id": 2, "name": "1h - 2h30", "interval": [1, 2.5]},
+        {"id": 3, "name": "2h30 - 5h", "interval": [2.5, 5]},
+        {"id": 4, "name": "5h - 9h", "interval": [5, 9]},
+        {"id": 5, "name": "> 9h", "interval": [9, 9999999]}
+    ]
+
+Intervals of the mobile for the duration filter
+
+    *Check MOBILE_LENGTH_INTERVALS comment to use it, here interval correspond to 1 unit of hour*
+
+|
+
+::
+
+    ENABLED_MOBILE_FILTERS = [
+        'practice',
+        'difficulty',
+        'durations',
+        'ascent',
+        'lengths',
+        'themes',
+        'route',
+        'districts',
+        'cities',
+        'accessibilities',
+    ]
+
+List of all the filters enabled on mobile.
+
+    *Remove any of the filters if you don't want one of them. It's useless to add other one.*
+
+
+
+**Other settings**
+::
+
+    SEND_REPORT_ACK = True
+
+If false, no mail will be sent to the sender of any feedback on Rando web site
