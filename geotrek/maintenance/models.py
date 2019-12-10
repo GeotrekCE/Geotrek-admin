@@ -41,7 +41,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     area = models.FloatField(editable=False, default=0, blank=True, null=True, verbose_name=_("Area"), db_column='surface')
 
     # Costs
-    material_cost = models.FloatField(default=0.0, blank=True, null=True,verbose_name=_("Material cost"), db_column='cout_materiel')
+    material_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Material cost"), db_column='cout_materiel')
     heliport_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Heliport cost"), db_column='cout_heliport')
     subcontract_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Subcontract cost"), db_column='cout_soustraitant')
 
