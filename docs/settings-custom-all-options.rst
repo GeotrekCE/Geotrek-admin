@@ -479,6 +479,7 @@ Options of the sync_mobile command
 |
 
 ::
+
     MOBILE_TILES_URL = ['https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png']
 
 URL's Tiles used for the mobile.
