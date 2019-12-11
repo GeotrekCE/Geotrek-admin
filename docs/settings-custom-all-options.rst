@@ -100,7 +100,7 @@ Configuration of the tiles.
 
 You can define the max_zoom the user can zoom for all tiles.
 
-    *It can be interesting when your tiles can't go to this zoom. For example opentopomap.*
+    *It can be interesting when your tiles can't go to a zoom. For example opentopomap is 17.*
 
 **Enable Apps**
 ::
@@ -278,7 +278,7 @@ All settings used for generate altimetric profile.
 
     *All this settings can be modify but you need to check the result every time*
 
-    *The one modified most of the time is ALTIMETRIC_PROFILE_COLOR*
+    *The only one modified most of the time is ALTIMETRIC_PROFILE_COLOR*
 
 **Signage and Blade**
 ::
