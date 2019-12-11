@@ -42,8 +42,6 @@ COPY VERSION VERSION
 COPY .coveragerc .coveragerc
 COPY docker/* /usr/local/bin/
 
-RUN ln -s /app/src/var/conf/custom.py /app/src/geotrek/settings/custom.py
-RUN ln -s /app/src/var/conf/parsers.py /app/src/bulkimport/parsers.py
 RUN SECRET_KEY=tmp ./manage.py compilemessages --settings=geotrek.settings.dev
 
 EXPOSE 8000
