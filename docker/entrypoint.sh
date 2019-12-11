@@ -22,8 +22,9 @@ if [ ! -f /app/src/var/conf/parsers.py ]; then
     touch /app/src/var/conf/parsers.py
 fi
 
-ln -sf /app/src/var/conf/custom.py /app/src/geotrek/settings/custom.py
-ln -sf /app/src/var/conf/parsers.py /app/src/bulkimport/parsers.py
+if [ "$ENV" = "dev" ]; then
+    ln -sf /app/src/var/conf/parsers.py /app/src/bulkimport/parsers.py
+fi
 
 # Defaults POSTGRES_HOST to Docker host IP
 export POSTGRES_HOST=${POSTGRES_HOST:-`ip route | grep default | sed 's/.* \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\) .*/\1/'`}
