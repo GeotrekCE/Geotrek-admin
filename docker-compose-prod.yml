@@ -17,7 +17,7 @@ services:
     env_file:
       - .env
     volumes:
-        - .:/app/src
+      - ./var:/app/src/var
     depends_on:
       - memcached
       - redis
