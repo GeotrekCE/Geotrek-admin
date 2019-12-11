@@ -1,12 +1,7 @@
 from django.test import TestCase
-from unittest import skipIf
 
-from django.conf import settings
-
-from geotrek.core.factories import PathFactory
-from geotrek.signage.factories import SignageFactory, SealingFactory, BladeTypeFactory, BladeFactory
+from geotrek.signage.factories import SealingFactory, BladeTypeFactory, BladeFactory
 from geotrek.infrastructure.factories import InfrastructureFactory
-from django.contrib.gis.geos import LineString, Point
 
 
 class SealingModelTest(TestCase):
