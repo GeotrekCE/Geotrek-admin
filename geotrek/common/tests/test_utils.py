@@ -58,10 +58,10 @@ class UtilsTest(TestCase):
 
     @override_settings(DISPLAY_SRID=3857)
     def test_format_coordinates_wgs84(self):
-        geom = Point(x=25382910.3, y=-12037913.2, srid=2154)
-        self.assertEqual(format_coordinates(geom), '65°00\'00" S / 65°00\'00" E (WGS 84 / Pseudo-Mercator)')
+        geom = Point(x=700000, y=6600000, srid=2154)
+        self.assertEqual(format_coordinates(geom), '46°30\'00" N / 3°00\'00" E (WGS 84 / Pseudo-Mercator)')
 
     @override_settings(DISPLAY_SRID=32631)
     def test_format_coordinates_custom_srid(self):
-        geom = Point(x=-5267624.63, y=7604466.80, srid=2154)
-        self.assertEqual(format_coordinates(geom), 'X: -6500000 / Y: 6500000 (WGS 84 / UTM zone 31N)')
+        geom = Point(x=333958, y=5160979, srid=3857)
+        self.assertEqual(format_coordinates(geom), 'X: 500000 / Y: 4649776 (WGS 84 / UTM zone 31N)')
