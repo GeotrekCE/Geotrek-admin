@@ -256,9 +256,9 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     @property
     def total_cost(self):
         return self.total_cost_mandays + \
-            self.material_cost if not None else 0.0 + \
-            self.heliport_cost if not None else 0.0 + \
-            self.subcontract_cost if not None else 0.0
+            self.material_cost or 0 + \
+            self.heliport_cost or 0 + \
+            self.subcontract_cost or 0
 
     @classproperty
     def total_cost_verbose_name(cls):
