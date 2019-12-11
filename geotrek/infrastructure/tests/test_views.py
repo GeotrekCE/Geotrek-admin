@@ -54,7 +54,7 @@ class InfrastructureViewsTest(CommonTest):
         infratype = InfrastructureTypeFactory.create(type=INFRASTRUCTURE_TYPES.BUILDING, structure=None)
         response = self.client.get(self.model.get_add_url())
         self.assertEqual(response.status_code, 200)
-        self.assertIn('form', response.context)
+        self.assertContains(response, 'form')
         form = response.context['form']
         type = form.fields['type']
         self.assertTrue((infratype.pk, str(infratype)) in type.choices)

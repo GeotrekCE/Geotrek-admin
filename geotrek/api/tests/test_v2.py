@@ -401,14 +401,12 @@ class APIAccessAdministratorTestCase(BaseApiTest):
     def test_trek_theme_list(self):
         self.client.logout()
         response = self.get_trek_all_themes_list()
-        self.assertIn(self.theme.label, str(response.content))
-        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.theme.label)
 
     def test_trek_network_list(self):
         self.client.logout()
         response = self.get_trek_all_networks_list()
-        self.assertIn(self.network.network, str(response.content))
-        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.network.network)
 
     def test_trek_difficulty_used_list(self):
         self.client.logout()
@@ -423,14 +421,12 @@ class APIAccessAdministratorTestCase(BaseApiTest):
     def test_trek_theme_used_list(self):
         self.client.logout()
         response = self.get_trek_used_themes_list()
-        self.assertIn(self.theme.label, str(response.content))
-        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.theme.label)
 
     def test_trek_network_used_list(self):
         self.client.logout()
         response = self.get_trek_used_networks_list()
-        self.assertIn(self.network.network, str(response.content))
-        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.network.network)
 
     def test_poi_list(self):
         response = self.get_poi_list()
@@ -611,9 +607,8 @@ class APISwaggerTestCase(BaseApiTest):
     def test_schema_fields(self):
         self.login()
         response = self.client.get(reverse('apiv2:schema'))
-        self.assertIn(b'Filter elements contained in bbox formatted like SW-lng,SW-lat,NE-lng,NE-lat', response.content)
-        self.assertIn(b'Publication state. If language specified, '
-                      b'only language published are filterted. true/false/all. true by default.', response.content)
-        self.assertIn(b'Reference point to compute distance LNG,LAT', response.content)
-        self.assertIn(b'Practices ids separated by comas.', response.content)
-        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Filter elements contained in bbox formatted like SW-lng,SW-lat,NE-lng,NE-lat')
+        self.assertContains(response, 'Publication state. If language specified, ')
+        self.assertContains(response, 'only language published are filterted. true/false/all. true by default.')
+        self.assertContains(response, 'Reference point to compute distance LNG,LAT')
+        self.assertContains(response, 'Practices ids separated by comas.')
