@@ -2,23 +2,15 @@ version: "3"
 services:
   memcached:
     image: memcached:1.5-alpine
-    env_file:
-      - .env
 
   redis:
     image: redis:5.0-alpine
-    env_file:
-      - .env
 
   convertit:
      image: makinacorpus/convertit:latest
-     env_file:
-      - .env
 
   screamshotter:
      image: makinacorpus/screamshotter:latest
-     env_file:
-      - .env
 
   celery:
     image: geotrekce/admin:${GEOTREK_VERSION:-latest}

@@ -1,5 +1,3 @@
-from .base import *  # NoQA
-
 #
 #  Django Tests
 # ..........................
@@ -18,12 +16,6 @@ LOGGING['handlers']['console']['level'] = 'CRITICAL'
 LANGUAGE_CODE = 'en'
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'
 MODELTRANSLATION_LANGUAGES = ('en', 'es', 'fr', 'it')
-MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = (
-    ('en', 'English'),
-    ('es', 'Spanish'),
-    ('fr', 'French'),
-    ('it', 'Italian'),
-)
 
 ALLOWED_HOSTS = ['localhost']
 

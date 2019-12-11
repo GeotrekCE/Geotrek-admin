@@ -16,7 +16,7 @@ Quickstart
     docker-compose run --rm web ./manage.py createsuperuser
     docker-compose up -d
 
-Got to http://localhost:8001
+Got to http://localhost:8000
 
 
 Conventions

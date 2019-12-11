@@ -372,9 +372,6 @@ MAPENTITY_CONFIG = {
     'SENDFILE_HTTP_HEADER': 'X-Accel-Redirect',
     'DRF_API_URL_PREFIX': r'^api/(?P<lang>[a-z]{2})/',
     'MAPENTITY_WEASYPRINT': False,
-    'LANGUAGE_CODE': LANGUAGE_CODE,
-    'LANGUAGES': LANGUAGES,
-    'TRANSLATED_LANGUAGES': _MODELTRANSLATION_LANGUAGES,
     'GEOJSON_PRECISION': 7,
     'MAP_FIT_MAX_ZOOM': 16,
 }
@@ -751,3 +748,21 @@ PRIMARY_COLOR = "#7b8c12"
 ONLY_EXTERNAL_PUBLIC_PDF = False
 
 SEND_REPORT_ACK = True
+
+# Override with prod/dev/tests/tests_nds settings
+ENV = os.getenv('ENV', 'prod')
+assert ENV in ('prod', 'dev', 'tests', 'tests_nds')
+env_settings_file = os.path.join(os.path.dirname(__file__), ENV + '.py')
+with open(env_settings_file, 'r') as f:
+    exec(f.read())
+
+# Override with custom settings
+custom_settings_file = os.getenv('CUSTOM_SETTINGS_FILE')
+if custom_settings_file:
+    with open(custom_settings_file, 'r') as f:
+        exec(f.read())
+
+# Computed settings takes place at the end after customization
+MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = [l for l in LANGUAGES_LIST if l[0] in MODELTRANSLATION_LANGUAGES]
+LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
+LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)

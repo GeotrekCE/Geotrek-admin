@@ -1,5 +1,4 @@
 import os
-from .base import *  # NoQA
 
 #
 # Django Production

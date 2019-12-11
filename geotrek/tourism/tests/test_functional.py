@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
 import filecmp
@@ -22,10 +21,6 @@ class TouristicContentViewsTests(CommonTest):
     modelfactory = TouristicContentFactory
     userfactory = TrekkingManagerFactory
 
-    def setUp(self):
-        translation.deactivate()
-        super(TouristicContentViewsTests, self).setUp()
-
     def get_bad_data(self):
         return {
             'geom': 'doh!'
@@ -34,7 +29,7 @@ class TouristicContentViewsTests(CommonTest):
     def get_good_data(self):
         return {
             'structure': Structure.objects.first().pk,
-            'name_fr': 'test',
+            'name_en': 'test',
             'category': TouristicContentCategoryFactory.create().pk,
             'geom': '{"type": "Point", "coordinates":[0, 0]}',
         }
@@ -53,7 +48,7 @@ class TouristicEventViewsTests(CommonTest):
     def get_good_data(self):
         return {
             'structure': Structure.objects.first().pk,
-            'name_fr': 'test',
+            'name_en': 'test',
             'geom': '{"type": "Point", "coordinates":[0, 0]}',
         }
 

@@ -42,7 +42,7 @@ COPY VERSION VERSION
 COPY .coveragerc .coveragerc
 COPY docker/* /usr/local/bin/
 
-RUN SECRET_KEY=tmp ./manage.py compilemessages --settings=geotrek.settings.dev
+RUN ENV=dev SECRET_KEY=tmp ./manage.py compilemessages
 
 EXPOSE 8000
 ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]
