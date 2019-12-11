@@ -62,6 +62,45 @@ Languages of your project. It will be used to generate fields for translations. 
 
 **Options admin**
 =================
+**Map config**
+::
+
+    LEAFLET_CONFIG['TILES'] = [
+        ('Scan', '//wxs.ign.fr/<key>/wmts?LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD&EXCEPTIONS=image/jpeg&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
+         '&copy; IGN - GeoPortail'),
+        ('Ortho', '//wxs.ign.fr/<key>/wmts?LAYER=ORTHOIMAGERY.ORTHOPHOTOS&EXCEPTIONS=image/jpeg&FORMAT=image/jpeg&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
+         '&copy; IGN - GeoPortail'),
+        ('Cadastre', '//wxs.ign.fr/<key>/wmts?LAYER=CADASTRALPARCELS.PARCELS&EXCEPTIONS=image/jpeg&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
+         '&copy; IGN - GeoPortail'),
+        ('OSM', 'http://{s}.tile.osm.org/{z}/{x}/{y}.png', '&copy; OSM contributors'),
+    ]
+
+    LEAFLET_CONFIG['OVERLAYS'] = [
+        ('Cadastre',
+         '//wxs.ign.fr/<key>/wmts?LAYER=CADASTRALPARCELS.PARCELS&EXCEPTIONS=text/xml&FORMAT=image/png&SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&STYLE=bdparcellaire_o&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
+         '&copy; IGN - GeoPortail'),
+    ]
+
+Configuration of the tiles.
+
+    *If you want to change it,*
+    *Change the array like that :*
+
+    ::
+
+        LEAFLET_CONFIG['TILES'] = [('NAME_OF_TILE', 'URL', 'COPYRIGHT'), ...]
+
+    *It's the same for the overlay but use only transparent tiles*
+
+|
+
+::
+
+    LEAFLET_CONFIG['MAX_ZOOM'] = 19
+
+You can define the max_zoom the user can zoom for all tiles.
+
+    *It can be interesting when your tiles can't go to this zoom. For example opentopomap.*
 
 **Enable Apps**
 ::
@@ -220,6 +259,27 @@ Land objects are added on other objects (path for example) with offset, avoiding
 
 |
 
+::
+
+    ALTIMETRIC_PROFILE_PRECISION = 25  # Sampling precision in meters
+    ALTIMETRIC_PROFILE_AVERAGE = 2  # nb of points for altimetry moving average
+    ALTIMETRIC_PROFILE_STEP = 1  # Step min precision for positive / negative altimetry gain
+    ALTIMETRIC_PROFILE_BACKGROUND = 'white'
+    ALTIMETRIC_PROFILE_COLOR = '#F77E00'
+    ALTIMETRIC_PROFILE_HEIGHT = 400
+    ALTIMETRIC_PROFILE_WIDTH = 800
+    ALTIMETRIC_PROFILE_FONTSIZE = 25
+    ALTIMETRIC_PROFILE_FONT = 'ubuntu'
+    ALTIMETRIC_PROFILE_MIN_YSCALE = 1200  # Minimum y scale (in meters)
+    ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/height)
+    ALTIMETRIC_AREA_MARGIN = 0.15
+
+All settings used for generate altimetric profile.
+
+    *All this settings can be modify but you need to check the result every time*
+
+    *The one modified most of the time is ALTIMETRIC_PROFILE_COLOR*
+
 **Signage and Blade**
 ::
 
@@ -331,6 +391,7 @@ Size of the thumbnail.
 |
 
 ::
+
     TOURISM_INTERSECTION_MARGIN = 500
 
 Distance to which tourist contents, tourist events, treks, pois, services will be displayed
