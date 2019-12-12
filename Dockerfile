@@ -1,5 +1,6 @@
 FROM makinacorpus/geodjango:bionic-3.6
 
+ENV ENV=prod
 ENV ALLOWED_HOSTS="localhost"
 # If POSTGRES_HOST is empty, entrypoint will set it to the IP of the docker host in the container
 ENV POSTGRES_HOST=""
@@ -7,6 +8,7 @@ ENV POSTGRES_PORT="5432"
 ENV POSTGRES_USER="geotrek"
 ENV POSTGRES_PASSWORD="geotrek"
 ENV POSTGRES_DB="geotrekdb"
+ENV CUSTOM_SETTINGS_FILE="/app/src/var/conf/custom.py"
 
 WORKDIR /app/src
 
