@@ -44,7 +44,7 @@ COPY VERSION VERSION
 COPY .coveragerc .coveragerc
 COPY docker/* /usr/local/bin/
 
-RUN ENV=dev SECRET_KEY=tmp ./manage.py compilemessages
+RUN ENV=dev CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp ./manage.py compilemessages
 RUN ln -s /app/src/var/conf/parsers.py /app/src/bulkimport/parsers.py
 
 EXPOSE 8000
