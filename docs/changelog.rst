@@ -2,16 +2,15 @@
 CHANGELOG
 =========
 
-2.31.1.dev0
+2.32.0 (2019-12-13)
 -------------------
-
-**Bug fixes**
-
--
 
 **New features**
 
 - Add DISPLAY_SRID into settings to allow user to choose it's own format for GPS coordinates
+- Make some fields optional (class Trail, Intervention, Project, OrdererdTrekChild, POI)
+- Sort dropdown lists
+- Document settings
 
 
 2.31.0 (2019-12-06)
@@ -21,7 +20,6 @@ CHANGELOG
 
 - Sync mobile data from web UI
 - The SHOW_LABELS setting allows to hide status labels on map
-- Make some fields optional (class Trail, Intervention, Project, OrdererdTrekChild, POI)
 
 
 2.30.0 (2019-11-26)
