@@ -24,8 +24,9 @@ class PhysicalType(StructureOrNoneRelated):
 
 
 class PhysicalEdge(MapEntityMixin, Topology):
-    topo_object = models.OneToOneField(Topology, parent_link=True)
-    physical_type = models.ForeignKey(PhysicalType, verbose_name=_("Physical type"))
+    topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
+    physical_type = models.ForeignKey(PhysicalType, verbose_name=_("Physical type"),
+                                      on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
@@ -88,8 +89,8 @@ class LandType(StructureOrNoneRelated):
 
 
 class LandEdge(MapEntityMixin, Topology):
-    topo_object = models.OneToOneField(Topology, parent_link=True)
-    land_type = models.ForeignKey(LandType, verbose_name=_("Land type"))
+    topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
+    land_type = models.ForeignKey(LandType, verbose_name=_("Land type"), on_delete=models.CASCADE)
     owner = models.TextField(verbose_name=_("Owner"), blank=True)
     agreement = models.BooleanField(verbose_name=_("Agreement"), default=False)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
@@ -140,8 +141,8 @@ Project.add_property('land_edges', lambda self: self.edges_by_attr('land_edges')
 
 
 class CompetenceEdge(MapEntityMixin, Topology):
-    topo_object = models.OneToOneField(Topology, parent_link=True)
-    organization = models.ForeignKey(Organism, verbose_name=_("Organism"))
+    topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
+    organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     # Override default manager
@@ -190,8 +191,8 @@ Project.add_property('competence_edges', lambda self: self.edges_by_attr('compet
 
 
 class WorkManagementEdge(MapEntityMixin, Topology):
-    topo_object = models.OneToOneField(Topology, parent_link=True)
-    organization = models.ForeignKey(Organism, verbose_name=_("Organism"))
+    topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
+    organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     # Override default manager
@@ -240,12 +241,12 @@ Project.add_property('work_edges', lambda self: self.edges_by_attr('work_edges')
 
 
 class SignageManagementEdge(MapEntityMixin, Topology):
-    topo_object = models.OneToOneField(Topology, parent_link=True)
-    organization = models.ForeignKey(Organism, verbose_name=_("Organism"))
+    topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
+    organization = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     # Override default manager
-    objects = Topology.get_manager_cls(models.GeoManager)()
+    objects = Topology.get_manager_cls(models.Manager)()
 
     class Meta:
         verbose_name = _("Signage management edge")

@@ -44,17 +44,18 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     """ Topology can be of type Infrastructure, Signage or of own type Intervention """
     topology = models.ForeignKey(Topology, null=True,  # TODO: why null ?
+                                 on_delete=models.CASCADE,
                                  related_name="interventions_set",
                                  verbose_name=_("Interventions"))
     # AltimetyMixin for denormalized fields from related topology, updated via trigger.
     length = models.FloatField(editable=True, default=0.0, null=True, blank=True, verbose_name=_("3D Length"))
 
-    stake = models.ForeignKey('core.Stake', null=True, blank=True,
+    stake = models.ForeignKey('core.Stake', null=True, blank=True, on_delete=models.CASCADE,
                               related_name='interventions', verbose_name=_("Stake"))
 
-    status = models.ForeignKey('InterventionStatus', verbose_name=_("Status"))
+    status = models.ForeignKey('InterventionStatus', verbose_name=_("Status"), on_delete=models.CASCADE)
 
-    type = models.ForeignKey('InterventionType', null=True, blank=True,
+    type = models.ForeignKey('InterventionType', null=True, blank=True, on_delete=models.CASCADE,
                              verbose_name=_("Type"))
 
     disorders = models.ManyToManyField('InterventionDisorder', related_name="interventions",
@@ -63,12 +64,10 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     jobs = models.ManyToManyField('InterventionJob', through='ManDay', verbose_name=_("Jobs"))
 
     project = models.ForeignKey('Project', null=True, blank=True, related_name="interventions",
-                                verbose_name=_("Project"))
+                                on_delete=models.CASCADE, verbose_name=_("Project"))
     description = models.TextField(blank=True, verbose_name=_("Description"), help_text=_("Remarks and notes"))
 
-    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
-
-    objects = NoDeleteMixin.get_manager_cls(InterventionManager)()
+    objects = InterventionManager()
 
     class Meta:
         verbose_name = _("Intervention")
@@ -367,8 +366,8 @@ class InterventionJob(StructureOrNoneRelated):
 class ManDay(models.Model):
 
     nb_days = models.DecimalField(verbose_name=_("Mandays"), decimal_places=2, max_digits=6)
-    intervention = models.ForeignKey(Intervention)
-    job = models.ForeignKey(InterventionJob, verbose_name=_("Job"))
+    intervention = models.ForeignKey(Intervention, on_delete=models.CASCADE)
+    job = models.ForeignKey(InterventionJob, verbose_name=_("Job"), on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = _("Manday")
@@ -396,15 +395,21 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     begin_year = models.IntegerField(verbose_name=_("Begin year"))
     end_year = models.IntegerField(verbose_name=_("End year"), blank=True, null=True)
-    constraint = models.TextField(verbose_name=_("Constraint"), blank=True, help_text=_("Specific conditions, ..."))
-    global_cost = models.FloatField(verbose_name=_("Global cost"), default=0, blank=True, null=True, help_text=_("€"))
-    comments = models.TextField(verbose_name=_("Comments"), blank=True, help_text=_("Remarks and notes"))
-    type = models.ForeignKey('ProjectType', null=True, blank=True, verbose_name=_("Type"))
-    domain = models.ForeignKey('ProjectDomain', null=True, blank=True, verbose_name=_("Domain"))
-    contractors = models.ManyToManyField('Contractor', related_name="projects", blank=True, verbose_name=_("Contractors"))
-    project_owner = models.ForeignKey(Organism, related_name='own', blank=True, null=True,
-                                      verbose_name=_("Project owner"),)
-    project_manager = models.ForeignKey(Organism, related_name='manage', blank=True, null=True,
+    constraint = models.TextField(verbose_name=_("Constraint"), blank=True,
+                                  help_text=_("Specific conditions, ..."))
+    global_cost = models.FloatField(verbose_name=_("Global cost"), default=0,
+                                    blank=True, null=True, help_text=_("€"))
+    comments = models.TextField(verbose_name=_("Comments"), blank=True,
+                                help_text=_("Remarks and notes"))
+    type = models.ForeignKey('ProjectType', null=True, blank=True, on_delete=models.CASCADE,
+                             verbose_name=_("Type"))
+    domain = models.ForeignKey('ProjectDomain', null=True, blank=True, on_delete=models.CASCADE,
+                               verbose_name=_("Domain"))
+    contractors = models.ManyToManyField('Contractor', related_name="projects", blank=True,
+                                         verbose_name=_("Contractors"))
+    project_owner = models.ForeignKey(Organism, related_name='own', blank=True, null=True, on_delete=models.CASCADE,
+                                      verbose_name=_("Project owner"))
+    project_manager = models.ForeignKey(Organism, related_name='manage', blank=True, null=True, on_delete=models.CASCADE,
                                         verbose_name=_("Project manager"))
     founders = models.ManyToManyField(Organism, through='Funding', verbose_name=_("Founders"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
@@ -607,8 +612,8 @@ class Contractor(StructureOrNoneRelated):
 class Funding(models.Model):
 
     amount = models.FloatField(verbose_name=_("Amount"))
-    project = models.ForeignKey(Project, verbose_name=_("Project"))
-    organism = models.ForeignKey(Organism, verbose_name=_("Organism"))
+    project = models.ForeignKey(Project, verbose_name=_("Project"), on_delete=models.CASCADE)
+    organism = models.ForeignKey(Organism, verbose_name=_("Organism"), on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = _("Funding")

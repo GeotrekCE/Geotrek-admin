@@ -29,11 +29,13 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
                                default="",
                                verbose_name=_("Comment"))
     category = models.ForeignKey('ReportCategory',
+                                 on_delete=models.CASCADE,
                                  null=True,
                                  blank=True,
                                  default=None,
                                  verbose_name=_("Category"))
     status = models.ForeignKey('ReportStatus',
+                               on_delete=models.CASCADE,
                                null=True,
                                blank=True,
                                default=None,
@@ -44,6 +46,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
                                  verbose_name=_("Location"),
                                  srid=settings.SRID)
     context_content_type = models.ForeignKey(ContentType,
+                                             on_delete=models.CASCADE,
                                              null=True,
                                              blank=True,
                                              editable=False)
