@@ -519,7 +519,7 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
 
     @property
     def period(self):
-        return "%s - %s" % (self.begin_year, self.end_year)
+        return "%s - %s" % (self.begin_year, self.end_year or "")
 
     @property
     def period_display(self):

@@ -17,6 +17,7 @@ CHANGELOG
 
 - Sync mobile data from web UI
 - The SHOW_LABELS setting allows to hide status labels on map
+- Make some fields optional (class Trail, Intervention, Project, OrdererdTrekChild, POI)
 
 
 2.30.0 (2019-11-26)
