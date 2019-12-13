@@ -44,7 +44,7 @@ class TrekOrderedChildManager(models.Manager):
 class OrderedTrekChild(models.Model):
     parent = models.ForeignKey('Trek', related_name='trek_children', on_delete=models.CASCADE)
     child = models.ForeignKey('Trek', related_name='trek_parents', on_delete=models.CASCADE)
-    order = models.PositiveIntegerField(default=0)
+    order = models.PositiveIntegerField(default=0, blank=True, null=True)
 
     objects = TrekOrderedChildManager()
 
@@ -134,6 +134,7 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
         db_table = 'o_t_itineraire'
         verbose_name = _("Trek")
         verbose_name_plural = _("Treks")
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -661,7 +662,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     description = models.TextField(verbose_name=_("Description"), db_column='description',
-                                   help_text=_("History, details,  ..."))
+                                   blank=True, help_text=_("History, details,  ..."))
     type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"), db_column='type')
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
 

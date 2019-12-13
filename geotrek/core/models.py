@@ -640,8 +640,8 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
     topo_object = models.OneToOneField(Topology, parent_link=True,
                                        db_column='evenement')
     name = models.CharField(verbose_name=_("Name"), max_length=64, db_column='nom')
-    departure = models.CharField(verbose_name=_("Departure"), max_length=64, db_column='depart')
-    arrival = models.CharField(verbose_name=_("Arrival"), max_length=64, db_column='arrivee')
+    departure = models.CharField(verbose_name=_("Departure"), blank=True, max_length=64, db_column='depart')
+    arrival = models.CharField(verbose_name=_("Arrival"), blank=True, max_length=64, db_column='arrivee')
     comments = models.TextField(default="", blank=True, verbose_name=_("Comments"), db_column='commentaire')
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True,
                            db_column='id_externe')

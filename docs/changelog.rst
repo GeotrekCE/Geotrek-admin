@@ -2,6 +2,17 @@
 CHANGELOG
 =========
 
+2.32.0 (2019-12-13)
+-------------------
+
+**New features**
+
+- Add DISPLAY_SRID into settings to allow user to choose it's own format for GPS coordinates
+- Make some fields optional (class Trail, Intervention, Project, OrdererdTrekChild, POI)
+- Sort dropdown lists
+- Document settings
+
+
 2.31.0 (2019-12-06)
 -------------------
 

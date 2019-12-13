@@ -14,7 +14,7 @@
         </tr>
         <tr>
             <th>{% trans "Location" %}</th>
-            <td>{{ object.wgs84_pretty }} (WGS84)</td>
+            <td>{{ object.display_geom }}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"practice" }}</th>

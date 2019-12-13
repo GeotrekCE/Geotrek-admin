@@ -36,14 +36,14 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                                          db_column='sous_traitance')
 
     # Technical information
-    width = models.FloatField(default=0.0, verbose_name=_("Width"), db_column='largeur')
-    height = models.FloatField(default=0.0, verbose_name=_("Height"), db_column='hauteur')
-    area = models.FloatField(editable=False, default=0, verbose_name=_("Area"), db_column='surface')
+    width = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Width"), db_column='largeur')
+    height = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Height"), db_column='hauteur')
+    area = models.FloatField(editable=False, default=0, blank=True, null=True, verbose_name=_("Area"), db_column='surface')
 
     # Costs
-    material_cost = models.FloatField(default=0.0, verbose_name=_("Material cost"), db_column='cout_materiel')
-    heliport_cost = models.FloatField(default=0.0, verbose_name=_("Heliport cost"), db_column='cout_heliport')
-    subcontract_cost = models.FloatField(default=0.0, verbose_name=_("Subcontract cost"), db_column='cout_soustraitant')
+    material_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Material cost"), db_column='cout_materiel')
+    heliport_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Heliport cost"), db_column='cout_heliport')
+    subcontract_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Subcontract cost"), db_column='cout_soustraitant')
 
     """ Topology can be of type Infrastructure, Signage or of own type Intervention """
     topology = models.ForeignKey(Topology, null=True,  # TODO: why null ?
@@ -256,9 +256,9 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     @property
     def total_cost(self):
         return self.total_cost_mandays + \
-            self.material_cost + \
-            self.heliport_cost + \
-            self.subcontract_cost
+            self.material_cost or 0 + \
+            self.heliport_cost or 0 + \
+            self.subcontract_cost or 0
 
     @classproperty
     def total_cost_verbose_name(cls):
@@ -290,7 +290,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     def name_csv_display(self):
         return self.name
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s (%s)" % (self.name, self.date)
 
     @classmethod
@@ -310,14 +310,17 @@ Topology.add_property('interventions', lambda self: Intervention.topology_interv
 class InterventionStatus(StructureOrNoneRelated):
 
     status = models.CharField(verbose_name=_("Status"), max_length=128, db_column='status')
+    order = models.PositiveSmallIntegerField(default=None, null=True, blank=True,
+                                             verbose_name=_("Display order"),
+                                             db_column='order')
 
     class Meta:
         db_table = 'm_b_suivi'
         verbose_name = _("Intervention's status")
         verbose_name_plural = _("Intervention's statuses")
-        ordering = ['id']
+        ordering = ['order', 'status']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
             return "{} ({})".format(self.status, self.structure.name)
         return self.status
@@ -333,7 +336,7 @@ class InterventionType(StructureOrNoneRelated):
         verbose_name_plural = _("Intervention's types")
         ordering = ['type']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
             return "{} ({})".format(self.type, self.structure.name)
         return self.type
@@ -349,7 +352,7 @@ class InterventionDisorder(StructureOrNoneRelated):
         verbose_name_plural = _("Intervention's disorders")
         ordering = ['disorder']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
             return "{} ({})".format(self.disorder, self.structure.name)
         return self.disorder
@@ -366,7 +369,7 @@ class InterventionJob(StructureOrNoneRelated):
         verbose_name_plural = _("Intervention's jobs")
         ordering = ['job']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
             return "{} ({})".format(self.job, self.structure.name)
         return self.job
@@ -387,7 +390,7 @@ class ManDay(models.Model):
     def cost(self):
         return float(self.nb_days * self.job.cost)
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.nb_days)
 
 
@@ -406,22 +409,22 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
 
     name = models.CharField(verbose_name=_("Name"), max_length=128, db_column='nom')
     begin_year = models.IntegerField(verbose_name=_("Begin year"), db_column='annee_debut')
-    end_year = models.IntegerField(verbose_name=_("End year"), db_column='annee_fin')
+    end_year = models.IntegerField(verbose_name=_("End year"), blank=True, null=True, db_column='annee_fin')
     constraint = models.TextField(verbose_name=_("Constraint"), blank=True, db_column='contraintes',
                                   help_text=_("Specific conditions, ..."))
     global_cost = models.FloatField(verbose_name=_("Global cost"), default=0, db_column='cout_global',
-                                    help_text=_("€"))
+                                    blank=True, null=True, help_text=_("€"))
     comments = models.TextField(verbose_name=_("Comments"), blank=True, db_column='commentaires',
                                 help_text=_("Remarks and notes"))
     type = models.ForeignKey('ProjectType', null=True, blank=True,
                              verbose_name=_("Type"), db_column='type')
     domain = models.ForeignKey('ProjectDomain', null=True, blank=True,
                                verbose_name=_("Domain"), db_column='domaine')
-    contractors = models.ManyToManyField('Contractor', related_name="projects",
+    contractors = models.ManyToManyField('Contractor', related_name="projects", blank=True,
                                          db_table="m_r_chantier_prestataire", verbose_name=_("Contractors"))
-    project_owner = models.ForeignKey(Organism, related_name='own',
+    project_owner = models.ForeignKey(Organism, related_name='own', blank=True, null=True,
                                       verbose_name=_("Project owner"), db_column='maitre_oeuvre')
-    project_manager = models.ForeignKey(Organism, related_name='manage',
+    project_manager = models.ForeignKey(Organism, related_name='manage', blank=True, null=True,
                                         verbose_name=_("Project manager"), db_column='maitre_ouvrage')
     founders = models.ManyToManyField(Organism, through='Funding', verbose_name=_("Founders"))
 
@@ -516,7 +519,7 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
 
     @property
     def period(self):
-        return "%s - %s" % (self.begin_year, self.end_year)
+        return "%s - %s" % (self.begin_year, self.end_year or "")
 
     @property
     def period_display(self):
@@ -538,8 +541,8 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
     def interventions_total_cost_verbose_name(cls):
         return _("Interventions total cost")
 
-    def __unicode__(self):
-        return "%s (%s-%s)" % (self.name, self.begin_year, self.end_year)
+    def __str__(self):
+        return "%s - %s" % (self.begin_year, self.name)
 
     @classmethod
     def path_projects(cls, path):
@@ -586,7 +589,7 @@ class ProjectType(StructureOrNoneRelated):
         verbose_name_plural = _("Project types")
         ordering = ['type']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
             return "{} ({})".format(self.type, self.structure.name)
         return self.type
@@ -602,7 +605,7 @@ class ProjectDomain(StructureOrNoneRelated):
         verbose_name_plural = _("Project domains")
         ordering = ['domain']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
             return "{} ({})".format(self.domain, self.structure.name)
         return self.domain
@@ -618,7 +621,7 @@ class Contractor(StructureOrNoneRelated):
         verbose_name_plural = _("Contractors")
         ordering = ['contractor']
 
-    def __unicode__(self):
+    def __str__(self):
         if self.structure:
             return "{} ({})".format(self.contractor, self.structure.name)
         return self.contractor
@@ -635,5 +638,5 @@ class Funding(models.Model):
         verbose_name = _("Funding")
         verbose_name_plural = _("Fundings")
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s : %s" % (self.project, self.amount)

@@ -85,7 +85,7 @@
             <th>{% trans "Related Project" %}</th>
             <td>{% if intervention.project %}
                     {{ intervention.project.name_display|safe }}
-                    ({{ intervention.project.begin_year }} - {{ intervention.project.end_year }})
+                    ({{ intervention.project.begin_year }} - {{ intervention.project.end_year|default:"" }})
                 {% else %} <span class="none">{% trans "None" %}</span>
                 {% endif %}
             </td>

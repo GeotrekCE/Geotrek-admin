@@ -3,21 +3,24 @@
         "pk": 1,
         "model": "maintenance.interventionstatus",
         "fields": {
-            "status": "souhait\u00e9e"
+            "status": "souhait\u00e9e",
+            "order": 10
         }
     },
     {
         "pk": 2,
         "model": "maintenance.interventionstatus",
         "fields": {
-            "status": "planifi\u00e9e"
+            "status": "planifi\u00e9e",
+            "order": 20
         }
     },
     {
         "pk": 3,
         "model": "maintenance.interventionstatus",
         "fields": {
-            "status": "termin\u00e9e"
+            "status": "termin\u00e9e",
+            "order": 30
         }
     },
     {
