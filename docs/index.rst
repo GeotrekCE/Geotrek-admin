@@ -21,7 +21,6 @@ Contents:
    development
    authors
    changelog
-   settings-custom-all-options
 
 
 Indices and tables
