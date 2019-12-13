@@ -2,8 +2,10 @@ import logging
 
 from django.db import connection
 from django.utils.timezone import utc
+from django.utils.translation import pgettext
 from django.conf import settings
 from django.contrib.gis.measure import Distance
+from django.contrib.gis.gdal import SpatialReference
 
 logger = logging.getLogger(__name__)
 
@@ -107,3 +109,35 @@ def intersecting(cls, obj, distance=None, ordering=True):
         # Prevent self intersection
         qs = qs.exclude(pk=obj.pk)
     return qs
+
+
+def format_coordinates(geom):
+    if settings.DISPLAY_SRID in [4326, 3857]:  # WGS84 formatting
+        location = geom.centroid.transform(4326, clone=True)
+        rounded_lat_sec = round(abs(location.y) * 3600)
+        rounded_lng_sec = round(abs(location.x) * 3600)
+
+        result = (
+            "{lat_deg}°{lat_min:02d}'{lat_sec:02d}\" {lat_card} / "
+            + "{lng_deg}°{lng_min:02d}'{lng_sec:02d}\" {lng_card}"
+        ).format(
+            lat_deg=(rounded_lat_sec // 3600),
+            lat_min=((rounded_lat_sec // 60) % 60),
+            lat_sec=(rounded_lat_sec % 60),
+            lat_card=pgettext("North", "N") if location.y >= 0 else pgettext("South", "S"),
+            lng_deg=(rounded_lng_sec // 3600),
+            lng_min=((rounded_lng_sec // 60) % 60),
+            lng_sec=(rounded_lng_sec % 60),
+            lng_card=pgettext("East", "E") if location.x >= 0 else pgettext("West", "W"),
+        )
+    else:
+        location = geom.centroid.transform(settings.DISPLAY_SRID, clone=True)
+        result = "X: {lat} / Y: {lng}".format(
+            lat=round(location.x),
+            lng=round(location.y),
+        )
+    spatial_reference = SpatialReference(settings.DISPLAY_SRID)
+
+    return result + " ({epsg_name})".format(
+        epsg_name=spatial_reference.name
+    )
