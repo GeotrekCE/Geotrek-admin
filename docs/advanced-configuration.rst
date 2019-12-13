@@ -577,7 +577,15 @@ Spatial reference identifier of your database. 2154 is RGF93 / Lambert-93 - Fran
 
     SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
 
-Boundingbox of your project : corner bottom left xy, corner top right xy, corner top right xy
+Boundingbox of your project : x minimum , y minimum , xmax, y max
+
+    4 ^
+      |
+1     |     3
+<-----+----->
+      |
+      |
+    2 v
 
    *It should not be change after install*
 
