@@ -69,7 +69,7 @@ jobs:
       - checkout
       - run: apt-get update && apt-get install -y npm
       - run: mkdir -p var/conf/extra_static
-      - run: ./manage.py collectstatic --noinput
+      - run: env/bin/python manage.py collectstatic --noinput
       - run: npm install geotrek/jstests
       - run: ./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
   deploy:
