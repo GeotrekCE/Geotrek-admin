@@ -64,6 +64,7 @@ jobs:
       LANG: C.UTF-8
       ENV: tests
       SECRET_KEY: foo
+      CUSTOM_SETTINGS_FILE: ""
     steps:
       - checkout
       - run: apt-get update && apt-get install -y npm
