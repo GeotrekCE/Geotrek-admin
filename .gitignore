@@ -36,5 +36,6 @@ docs/_build/
 /bulkimport/
 !/bulkimport/__init__.py
 
+/env/
 /.env
 /docker-compose.yml

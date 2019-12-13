@@ -35,7 +35,8 @@ RUN apt-get update && apt-get install -y \
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
 COPY requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python3 -m venv env
+RUN env/bin/pip install --no-cache-dir -r requirements.txt
 
 COPY geotrek/ geotrek/
 COPY manage.py manage.py
@@ -44,7 +45,7 @@ COPY VERSION VERSION
 COPY .coveragerc .coveragerc
 COPY docker/* /usr/local/bin/
 
-RUN ENV=dev CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp ./manage.py compilemessages
+RUN cd geotrek; ENV=dev CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp ../env/bin/python ../manage.py compilemessages; cd ..
 RUN ln -s /app/src/var/conf/parsers.py /app/src/bulkimport/parsers.py
 
 EXPOSE 8000

@@ -22,9 +22,17 @@ if [ ! -f /app/src/var/conf/parsers.py ]; then
     touch /app/src/var/conf/parsers.py
 fi
 
+# When a volume is mounted to /app/src, bulkimport/parsers.py and venv are hidden
 if [ "$ENV" = "dev" ]; then
     ln -sf /app/src/var/conf/parsers.py /app/src/bulkimport/parsers.py
+    if [ ! -d env ]; then
+        python3 -m venv env
+        env/bin/pip install --no-cache-dir -r requirements.txt
+    fi
 fi
+
+# Activate venv
+. env/bin/activate
 
 # Defaults POSTGRES_HOST to Docker host IP
 export POSTGRES_HOST=${POSTGRES_HOST:-`ip route | grep default | sed 's/.* \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\) .*/\1/'`}
