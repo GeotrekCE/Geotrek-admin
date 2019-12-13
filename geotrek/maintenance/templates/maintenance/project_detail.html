@@ -13,7 +13,7 @@
         </tr>
         <tr>
             <th>{{ project|verbose:"end_year" }}</th>
-            <td>{{ project.end_year }}</td>
+            <td>{{ project.end_year|default:"" }}</td>
         </tr>
         <tr>
             <th>{{ project|verbose:"global_cost" }}</th>
