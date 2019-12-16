@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import LineString
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from geotrek.core.factories import PathFactory
 from geotrek.core.graph import graph_edges_nodes_of_qs

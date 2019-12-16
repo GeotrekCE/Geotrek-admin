@@ -14,7 +14,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core.management import call_command
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import connection, connections, DEFAULT_DB_ALIAS
 from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
