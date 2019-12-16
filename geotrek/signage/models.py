@@ -51,7 +51,7 @@ class SignageType(StructureOrNoneRelated, OptionalPictogramMixin):
         return os.path.join(settings.STATIC_URL, 'signage/picto-signage.png')
 
 
-class SignageGISManager(gismodels.GeoManager):
+class SignageGISManager(gismodels.Model):
     """ Overide default typology mixin manager, and filter by type. """
     def all_implantation_years(self):
         all_years = self.get_queryset().filter(implantation_year__isnull=False)\
@@ -140,7 +140,7 @@ class Color(models.Model):
         return self.label
 
 
-class BladeManager(gismodels.GeoManager):
+class BladeManager(gismodels.Model):
     pass
 
 

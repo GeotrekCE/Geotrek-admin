@@ -107,7 +107,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
         return _("Cities")
 
 
-class InfrastructureGISManager(gismodels.GeoManager):
+class InfrastructureGISManager(gismodels.Model):
     """ Overide default typology mixin manager"""
     def all_implantation_years(self):
         all_years = self.get_queryset().filter(implantation_year__isnull=False)\

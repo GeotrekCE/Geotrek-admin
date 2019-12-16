@@ -56,7 +56,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
     context_object = GenericForeignKey('context_content_type',
                                        'context_object_id')
 
-    objects = gis_models.GeoManager()
+    objects = gis_models.Manager()
 
     class Meta:
         verbose_name = _("Report")

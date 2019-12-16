@@ -29,7 +29,7 @@ class PhysicalEdge(MapEntityMixin, Topology):
                                       on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     # Override default manager
-    objects = Topology.get_manager_cls(models.GeoManager)()
+    objects = Topology.get_manager_cls(models.Manager)()
 
     class Meta:
         verbose_name = _("Physical edge")
@@ -96,7 +96,7 @@ class LandEdge(MapEntityMixin, Topology):
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     # Override default manager
-    objects = Topology.get_manager_cls(models.GeoManager)()
+    objects = Topology.get_manager_cls(models.Manager)()
 
     class Meta:
         verbose_name = _("Land edge")
@@ -146,7 +146,7 @@ class CompetenceEdge(MapEntityMixin, Topology):
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     # Override default manager
-    objects = Topology.get_manager_cls(models.GeoManager)()
+    objects = Topology.get_manager_cls(models.Manager)()
 
     class Meta:
         verbose_name = _("Competence edge")
@@ -196,7 +196,7 @@ class WorkManagementEdge(MapEntityMixin, Topology):
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     # Override default manager
-    objects = Topology.get_manager_cls(models.GeoManager)()
+    objects = Topology.get_manager_cls(models.Manager)()
 
     class Meta:
         verbose_name = _("Work management edge")

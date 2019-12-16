@@ -117,7 +117,7 @@ class Dive(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
     portal = models.ManyToManyField('common.TargetPortal', blank=True, related_name='dives', verbose_name=_("Portal"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
-    objects = Topology.get_manager_cls(models.GeoManager)()
+    objects = Topology.get_manager_cls(models.Manager)()
 
     category_id_prefix = 'D'
 

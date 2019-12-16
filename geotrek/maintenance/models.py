@@ -19,7 +19,7 @@ from geotrek.infrastructure.models import Infrastructure
 from geotrek.signage.models import Signage
 
 
-class InterventionManager(models.GeoManager):
+class InterventionManager(models.Model):
     def all_years(self):
         return self.existing().filter(date__isnull=False).annotate(year=ExtractYear('date')) \
             .order_by('-year').values_list('year', flat=True).distinct()
@@ -381,7 +381,7 @@ class ManDay(models.Model):
         return str(self.nb_days)
 
 
-class ProjectManager(models.GeoManager):
+class ProjectManager(models.Model):
     def all_years(self):
         all_years = list(self.existing().exclude(begin_year=None).values_list('begin_year', flat=True))
         all_years += list(self.existing().exclude(end_year=None).values_list('end_year', flat=True))

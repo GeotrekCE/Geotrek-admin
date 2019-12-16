@@ -73,7 +73,7 @@ class InformationDesk(models.Model):
                              blank=True, null=True,
                              srid=settings.SRID, spatial_index=False)
 
-    objects = models.GeoManager()
+    objects = models.Manager()
 
     class Meta:
         verbose_name = _("Information desk")
@@ -264,7 +264,7 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
                                       blank=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
 
-    objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
+    objects = NoDeleteMixin.get_manager_cls(models.Manager)()
 
     class Meta:
         verbose_name = _("Touristic content")
@@ -373,7 +373,7 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
 
-    objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
+    objects = NoDeleteMixin.get_manager_cls(models.Manager)()
 
     category_id_prefix = 'E'
 

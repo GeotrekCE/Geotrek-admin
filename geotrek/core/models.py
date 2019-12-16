@@ -33,7 +33,7 @@ def simplify_coords(coords):
     raise Exception("Param is {}. Should be <list>, <tuple> or <float>".format(type(coords)))
 
 
-class PathManager(models.GeoManager):
+class PathManager(models.Model):
     # Use this manager when walking through FK/M2M relationships
     use_for_related_fields = True
 
@@ -43,7 +43,7 @@ class PathManager(models.GeoManager):
         return super(PathManager, self).get_queryset().filter(visible=True)
 
 
-class PathInvisibleManager(models.GeoManager):
+class PathInvisibleManager(models.Model):
     use_for_related_fields = True
 
     def get_queryset(self):
@@ -330,7 +330,7 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
     kind = models.CharField(editable=False, verbose_name=_("Kind"), max_length=32)
 
     # Override default manager
-    objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
+    objects = NoDeleteMixin.get_manager_cls(models.Manager)()
 
     geom = models.GeometryField(editable=(not settings.TREKKING_TOPOLOGY_ENABLED),
                                 srid=settings.SRID, null=True,
@@ -491,7 +491,7 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
         return None
 
 
-class PathAggregationManager(models.GeoManager):
+class PathAggregationManager(models.Model):
     def get_queryset(self):
         return super(PathAggregationManager, self).get_queryset().order_by('order')
 
@@ -641,7 +641,7 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
         verbose_name_plural = _("Trails")
         ordering = ['name']
 
-    objects = Topology.get_manager_cls(models.GeoManager)()
+    objects = Topology.get_manager_cls(models.Manager)()
 
     def __str__(self):
         return self.name
