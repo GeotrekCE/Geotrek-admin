@@ -29,7 +29,7 @@ urlpatterns = [
         kwargs={'attachment_form': AttachmentForm}, name="update_attachment"),
     url(r'^paperclip/', include('paperclip.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
 ]
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
