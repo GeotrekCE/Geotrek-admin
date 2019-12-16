@@ -25,6 +25,11 @@ def get_language_from_path(path):
 
 
 class APILocaleMiddleware(object):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        return self.get_response(request)
 
     def process_request(self, request):
         language = get_language_from_path(request.path_info)
@@ -45,6 +50,12 @@ for interface in interfaces():
 
 
 class FixedAutoLoginMiddleware(AutoLoginMiddleware):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        return self.get_response(request)
+
     def process_request(self, request):
         if "HTTP_X_FORWARDED_FOR" in request.META:
             request.META["HTTP_X_PROXY_REMOTE_ADDR"] = request.META["REMOTE_ADDR"]
