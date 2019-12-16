@@ -33,7 +33,7 @@ def simplify_coords(coords):
     raise Exception("Param is {}. Should be <list>, <tuple> or <float>".format(type(coords)))
 
 
-class PathManager(models.Model):
+class PathManager(models.Manager):
     # Use this manager when walking through FK/M2M relationships
     use_for_related_fields = True
 
@@ -43,7 +43,7 @@ class PathManager(models.Model):
         return super(PathManager, self).get_queryset().filter(visible=True)
 
 
-class PathInvisibleManager(models.Model):
+class PathInvisibleManager(models.Manager):
     use_for_related_fields = True
 
     def get_queryset(self):
@@ -491,7 +491,7 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
         return None
 
 
-class PathAggregationManager(models.Model):
+class PathAggregationManager(models.Manager):
     def get_queryset(self):
         return super(PathAggregationManager, self).get_queryset().order_by('order')
 
