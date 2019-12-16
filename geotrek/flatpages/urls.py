@@ -11,6 +11,7 @@ without sugar.
 router = DefaultRouter(trailing_slash=False)
 router.register(r'flatpages', FlatPageViewSet, base_name='flatpages')
 
+app_name = 'flatpages'
 urlpatterns = [
     url(r'^api/(?P<lang>[a-z]{2})/', include(router.urls)),
     url(r'^api/(?P<lang>[a-z]{2})/flatpages/(?P<pk>\d+)/meta.html$', FlatPageMeta.as_view(), name="flatpage_meta"),

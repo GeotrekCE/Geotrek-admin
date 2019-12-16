@@ -9,6 +9,7 @@ from . import models
 from . import views as tourism_views
 
 
+app_name = 'tourism'
 urlpatterns = [
     url(r'^api/(?P<lang>\w\w)/information_desks.(?P<format>geojson)$', tourism_views.InformationDeskViewSet.as_view({'get': 'list'}), name="information_desk_geojson"),
     url(r'^api/(?P<lang>\w\w)/information_desks-(?P<type>\d+).(?P<format>geojson)$', tourism_views.InformationDeskViewSet.as_view({'get': 'list'})),

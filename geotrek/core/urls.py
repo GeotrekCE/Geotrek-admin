@@ -10,6 +10,7 @@ from geotrek.core.views import (
     MultiplePathDelete
 )
 
+app_name = 'core'
 urlpatterns = [
     url(r'^api/graph.json$', get_graph_json, name="path_json_graph"),
     url(r'^api/(?P<lang>\w\w)/parameters.json$', ParametersView.as_view(), name='parameters_json'),

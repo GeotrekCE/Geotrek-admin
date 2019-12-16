@@ -7,6 +7,7 @@ from . import models
 from geotrek.trekking.views import TrekInfrastructureViewSet
 
 
+app_name = 'infrastructure'
 urlpatterns = registry.register(models.Infrastructure, menu=settings.INFRASTRUCTURE_MODEL_ENABLED)
 urlpatterns += [
     url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/infrastructures\.geojson$',

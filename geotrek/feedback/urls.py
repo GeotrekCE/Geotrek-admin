@@ -7,6 +7,7 @@ from geotrek.feedback import models as feedback_models
 from .views import CategoryList
 
 
+app_name = 'feedback'
 urlpatterns = [
     url(r'^api/(?P<lang>\w+)/feedback/categories.json$', CategoryList.as_view(), name="categories_json"),
 ]

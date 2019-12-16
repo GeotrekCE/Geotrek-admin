@@ -2,6 +2,7 @@ from django.conf.urls import url
 from . import views
 
 
+app_name = 'zoning'
 urlpatterns = [
     url(r'^api/city/city.geojson$', views.CityGeoJSONLayer.as_view(), name="city_layer"),
     url(r'^api/restrictedarea/restrictedarea.geojson$', views.RestrictedAreaGeoJSONLayer.as_view(), name="restrictedarea_layer"),

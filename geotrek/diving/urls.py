@@ -9,6 +9,7 @@ from . import models
 from .views import DiveMapImage, DivePOIViewSet, DiveServiceViewSet
 
 
+app_name = 'diving'
 urlpatterns = [
     url(r'^image/dive-(?P<pk>\d+)-(?P<lang>\w\w).png$', DiveMapImage.as_view(), name='dive_map_image'),
     url(r'^api/(?P<lang>\w\w)/dives/(?P<pk>\d+)/pois\.geojson$', DivePOIViewSet.as_view({'get': 'list'}),

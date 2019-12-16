@@ -6,6 +6,7 @@ from geotrek.altimetry.views import (ElevationProfile, ElevationChart,
                                      ElevationArea, serve_elevation_chart)
 
 
+app_name = 'altimetry'
 urlpatterns = [
     url(r'^%s/profiles/(?P<model_name>.+)-(?P<pk>\d+).png$' % settings.MEDIA_URL.strip('/'), serve_elevation_chart),
 ]

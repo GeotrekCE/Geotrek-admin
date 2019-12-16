@@ -17,6 +17,7 @@ from .views import (
 )
 
 
+app_name = 'trekking'
 urlpatterns = [
     url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/pois\.geojson$', TrekPOIViewSet.as_view({'get': 'list'}), name="trek_poi_geojson"),
     url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/services\.geojson$', TrekServiceViewSet.as_view({'get': 'list'}), name="trek_service_geojson"),

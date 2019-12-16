@@ -18,6 +18,7 @@ class SensitiveAreaEntityOptions(PublishableEntityOptions):
         return self.model.objects.existing()
 
 
+app_name = 'sensitivity'
 urlpatterns = [
     url(r'^api/(?P<lang>\w\w)/sensitiveareas/(?P<pk>\d+).kml$',
         views.SensitiveAreaKMLDetail.as_view(), name="sensitivearea_kml_detail"),

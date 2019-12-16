@@ -18,6 +18,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     router.register(r'sensitivearea', api_views.SensitiveAreaViewSet, base_name='sensitivearea')
     router.register(r'sportpractice', api_views.SportPracticeViewSet, base_name='sportpractice')
 
+app_name = 'apiv2'
 urlpatterns = [
     url(r'^$', api_views.SwaggerSchemaView.as_view(), name="schema"),
     url(r'^', include(router.urls))

@@ -5,6 +5,7 @@ from .views import (JSSettings, admin_check_extents, DocumentPublic, import_view
                     ThemeViewSet, MarkupPublic)
 
 
+app_name = 'common'
 urlpatterns = [
     url(r'^api/settings.json', JSSettings.as_view(), name='settings_json'),
     url(r'^tools/extents/', admin_check_extents, name='check_extents'),
