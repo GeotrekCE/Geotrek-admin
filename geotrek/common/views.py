@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError, PermissionDenied
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.conf import settings
 from django.shortcuts import render, redirect

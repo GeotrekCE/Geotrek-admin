@@ -18,7 +18,7 @@ from geotrek.core.forms import TopologyForm
 from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
 from .models import Trek, POI, WebLink, Service, ServiceType, OrderedTrekChild
 from django.db import transaction
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 class TrekRelationshipForm(forms.ModelForm):

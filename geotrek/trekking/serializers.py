@@ -4,7 +4,7 @@ import json
 
 import gpxpy.gpx
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils import translation
 from django.utils.translation import get_language, ugettext_lazy as _
 from django.utils.timezone import utc, make_aware

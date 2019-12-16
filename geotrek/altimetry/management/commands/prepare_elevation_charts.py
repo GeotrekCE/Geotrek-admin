@@ -1,7 +1,7 @@
 import logging
 
 from django.conf import settings
-from django.core.urlresolvers import NoReverseMatch
+from django.urls import NoReverseMatch
 
 from geotrek.common.management.commands.prepare_map_images import Command as PrepareImageCommand
 

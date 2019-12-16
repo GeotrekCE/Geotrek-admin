@@ -4,7 +4,7 @@ from rest_framework import permissions as rest_permissions
 from rest_framework import viewsets
 
 from django.conf import settings
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 from django.db.models import Q
 from django.views.generic import CreateView, UpdateView, DetailView
 
