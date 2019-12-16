@@ -43,7 +43,7 @@ def combobox_bbox_land():
     }
 
 
-@register.assignment_tag
+@register.simple_tag
 def restricted_area_types():
     all_used_types = RestrictedArea.objects.values_list('area_type', flat=True)
     used_types = RestrictedAreaType.objects.filter(pk__in=all_used_types)
