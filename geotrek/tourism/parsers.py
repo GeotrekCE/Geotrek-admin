@@ -135,13 +135,13 @@ class ApidaeParser(AttachmentParserMixin, Parser):
             if 'libelle' in value:
                 key_without_tra = key[:-3]
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    new_key = key_without_tra + '_%s' % lang
+                    new_key = '%s_%s' % (key_without_tra, lang)
                     if new_key in fields_model:
                         self.fields[new_key] = value[:-2].replace('libelle', 'libelle%s' % lang.title())
             if not isinstance(value, str):
                 key_without_tra = key[:-3]
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    new_key = key_without_tra + '_%s' % lang
+                    new_key = '%s_%s' % (key_without_tra, lang)
                     if new_key in fields_model:
                         new_value = [value_list if 'libelle' not in value_list
                                      else value_list[:-2].replace('libelle', 'libelle%s' % lang.title())
