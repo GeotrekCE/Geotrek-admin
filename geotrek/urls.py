@@ -10,9 +10,6 @@ from geotrek.common import views as common_views
 
 from paperclip import views as paperclip_views
 
-handler403 = 'mapentity.views.handler403'
-handler404 = 'mapentity.views.handler404'
-
 
 urlpatterns = [
     url(r'^$', common_views.home, name='home'),

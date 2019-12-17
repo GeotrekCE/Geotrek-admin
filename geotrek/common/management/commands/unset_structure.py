@@ -62,9 +62,10 @@ class Command(BaseCommand):
                 old_fk = getattr(obj, fk_name)
                 if m2m:
                     new_fk = [self.get_new_fk(value, RelatedModel, related_fields) for value in old_fk.all()]
+                    old_fk.set(new_fk)
                 else:
                     new_fk = self.get_new_fk(old_fk, RelatedModel, related_fields)
-                setattr(obj, fk_name, new_fk)
+                    setattr(obj, fk_name, new_fk)
                 obj.save()
                 if self.options['verbosity'] > 0:
                     self.stdout.write("    Update {}".format(obj))

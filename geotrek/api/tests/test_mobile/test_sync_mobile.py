@@ -369,7 +369,7 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         info_desk_no_picture = InformationDeskFactory.create(photo=None)
 
         cls.trek_1 = TrekWithPublishedPOIsFactory.create()
-        cls.trek_1.information_desks = (cls.info_desk, info_desk_no_picture)
+        cls.trek_1.information_desks.set((cls.info_desk, info_desk_no_picture))
         cls.trek_2 = TrekWithPublishedPOIsFactory.create(portals=(cls.portal_a,))
         cls.trek_3 = TrekWithPublishedPOIsFactory.create(portals=(cls.portal_b,))
         cls.trek_4 = TrekFactory.create()

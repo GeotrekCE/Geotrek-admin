@@ -56,7 +56,7 @@ class CommonForm(MapEntityForm):
             modelfield = None
         if not isinstance(modelfield, (ForeignKey, ManyToManyField)):
             return
-        model = modelfield.remote_field.to
+        model = modelfield.remote_field.model
         # Filter structured choice fields according to user's structure
         if issubclass(model, StructureRelated) and model.check_structure_in_forms:
             field.queryset = field.queryset.filter(structure=self.user.profile.structure)

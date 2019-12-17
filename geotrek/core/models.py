@@ -3,6 +3,7 @@ import functools
 
 import simplekml
 from django.contrib.gis.db import models
+from django.contrib.gis.db.models.functions import Distance
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import fromstr, LineString
@@ -147,7 +148,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         qs = cls.objects.exclude(draft=True)
         if exclude:
             qs = qs.exclude(pk=exclude.pk)
-        return qs.exclude(visible=False).distance(point).order_by('distance')[0]
+        return qs.exclude(visible=False).annotate(distance=Distance('geom', point)).order_by('distance')[0]
 
     def is_overlap(self):
         return not PathHelper.disjoint(self.geom, self.pk)
