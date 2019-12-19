@@ -9,6 +9,7 @@ CHANGELOG
 
 - Fix a crash in stake computation when adding an intervention
 - Fix a crash in project list when one of them has no end year
+- Fix drapping with no-data DEM values
 
 
 2.32.0 (2019-12-13)
