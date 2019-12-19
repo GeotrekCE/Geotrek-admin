@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.gis.db.models.functions import Transform
 from django.http import HttpResponse
 
 import logging
@@ -90,7 +91,7 @@ class SignageViewSet(MapEntityViewSet):
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
-        return Signage.objects.existing().filter(published=True).transform(settings.API_SRID, field_name='geom')
+        return Signage.objects.existing().filter(published=True).annotate(transform=Transform("geom", settings.API_SRID))
 
 
 class BladeDetail(MapEntityDetail):
