@@ -29,6 +29,8 @@ ALLOWED_HOSTS = [
     'localhost',
 ]
 
+LAND_BBOX_AREAS_ENABLED = True
+
 
 class DisableMigrations(object):
     def __contains__(self, item):

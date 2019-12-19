@@ -345,8 +345,8 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
             "order": None,
             "label": self.category.label,
             "slug": "touristic-content",
-            "type1_label": self.category.type1_label,
-            "type2_label": self.category.type2_label,
+            "type1_label": self.content.type1_label,
+            "type2_label": self.content.type2_label,
             "pictogram": os.path.join(settings.MEDIA_URL, self.category.pictogram.name)})
 
 

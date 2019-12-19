@@ -224,14 +224,15 @@ class SyncSetup(TestCase):
 
         self.portal_a = TargetPortalFactory()
         self.portal_b = TargetPortalFactory()
-        information_desks = InformationDeskFactory.create()
-
+        self.information_desks = InformationDeskFactory.create()
+        information_desk_without_photo = InformationDeskFactory.create(photo=None)
         self.practice_trek = PracticeTrekFactory.create(order=1)
         self.practice_trek_first = PracticeTrekFactory.create(order=0)
         self.trek_1 = TrekWithPublishedPOIsFactory.create(practice=self.practice_trek, sources=(self.source_a, ),
                                                           portals=(self.portal_b,),
                                                           published=True)
-        self.trek_1.information_desks.add(information_desks)
+        self.trek_1.information_desks.add(self.information_desks)
+        self.trek_1.information_desks.add(information_desk_without_photo)
         self.attachment_1 = AttachmentFactory.create(content_object=self.trek_1,
                                                      attachment_file=get_dummy_uploaded_image())
         self.trek_2 = TrekFactory.create(sources=(self.source_b,),
@@ -501,6 +502,15 @@ class SyncTest(SyncSetup):
             area = json.load(f)
             # there are 2 areas
             self.assertEqual(len(area['features']), 2)
+
+    @override_settings(SPLIT_TREKS_CATEGORIES_BY_PRACTICE=False, SPLIT_DIVES_CATEGORIES_BY_PRACTICE=False)
+    def test_sync_picture_missing_from_disk(self):
+        os.remove(self.information_desks.photo.path)
+        output = StringIO()
+        management.call_command('sync_rando', 'tmp', with_signages=True, with_infrastructures=True,
+                                with_dives=True, with_events=True, content_categories="1", url='http://localhost:8000',
+                                skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=output)
+        self.assertIn('Done', output.getvalue())
 
 
 @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')

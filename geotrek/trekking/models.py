@@ -693,11 +693,6 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
     def type_display(self):
         return str(self.type)
 
-    @property
-    def serializable_type(self):
-        return {'label': self.type.label,
-                'pictogram': self.type.get_pictogram_url()}
-
     @classmethod
     def path_pois(cls, path):
         return cls.objects.existing().filter(aggregations__path=path).distinct('pk')
@@ -830,11 +825,6 @@ class Service(StructureRelated, MapEntityMixin, Topology):
     @property
     def type_display(self):
         return str(self.type)
-
-    @property
-    def serializable_type(self):
-        return {'label': self.type.label,
-                'pictogram': self.type.get_pictogram_url()}
 
     @classmethod
     def path_services(cls, path):

@@ -358,11 +358,11 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         cls.portal_b = TargetPortalFactory()
         picto_desk = get_dummy_uploaded_image()
         information_desk_type = InformationDeskTypeFactory.create(pictogram=picto_desk)
-        info_desk = InformationDeskFactory.create(type=information_desk_type)
+        cls.info_desk = InformationDeskFactory.create(type=information_desk_type)
         info_desk_no_picture = InformationDeskFactory.create(photo=None)
 
         cls.trek_1 = TrekWithPublishedPOIsFactory.create()
-        cls.trek_1.information_desks = (info_desk, info_desk_no_picture)
+        cls.trek_1.information_desks = (cls.info_desk, info_desk_no_picture)
         cls.trek_2 = TrekWithPublishedPOIsFactory.create(portals=(cls.portal_a,))
         cls.trek_3 = TrekWithPublishedPOIsFactory.create(portals=(cls.portal_b,))
         cls.trek_4 = TrekFactory.create()
@@ -538,6 +538,13 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
                 trek_geojson = json.load(f)
                 self.assertEqual(len(trek_geojson['features']),
                                  Trek.objects.filter(**{'published_{}'.format(lang): True}).count())
+
+    def test_sync_treks_informationdesk_photo_missing(self):
+        os.remove(self.info_desk.photo.path)
+        output = StringIO()
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                skip_tiles=True, verbosity=2, stdout=output)
+        self.assertIn('Done', output.getvalue())
 
     @classmethod
     def tearDownClass(cls):
