@@ -22,8 +22,8 @@ class TouristicContentMixin(object):
             if isinstance(field, models.ForeignKey):
                 natural_key = self.natural_keys[dst]
                 try:
-                    kwargs[dst] = field.rel.to.objects.get(**{natural_key: val})
-                except field.rel.to.DoesNotExist:
+                    kwargs[dst] = field.remote_field.model.objects.get(**{natural_key: val})
+                except field.remote_field.model.DoesNotExist:
                     return None
             else:
                 kwargs[dst] = val
@@ -37,8 +37,8 @@ class TouristicContentMixin(object):
             if dst in ('type1', 'type2'):
                 filters['category'] = kwargs['category'].pk
             try:
-                kwargs[dst] = field.rel.to.objects.get(**filters)
-            except field.rel.to.DoesNotExist:
+                kwargs[dst] = field.remote_field.model.objects.get(**filters)
+            except field.remote_field.model.DoesNotExist:
                 return None
         return kwargs
 

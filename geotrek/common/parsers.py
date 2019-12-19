@@ -158,7 +158,7 @@ class Parser(object):
         if (isinstance(field, models.ForeignKey) or isinstance(field, models.ManyToManyField)):
             if dst not in self.natural_keys:
                 raise ValueImportError(_("Destination field '{dst}' not in natural keys configuration").format(dst=dst))
-            to = field.rel.to
+            to = field.remote_field.model
             natural_key = self.natural_keys[dst]
             kwargs = self.field_options.get(dst, {})
             if isinstance(field, models.ForeignKey):
@@ -183,7 +183,11 @@ class Parser(object):
             raise RowImportError(_("Blank value not allowed for field '{src}'".format(src=src)))
         if isinstance(field, models.CharField):
             val = val[:256]
-        setattr(self.obj, dst, val)
+        if isinstance(field, models.ManyToManyField):
+            fk = getattr(self.obj, dst)
+            fk.set(val)
+        else:
+            setattr(self.obj, dst, val)
 
     def parse_real_field(self, dst, src, val):
         """Returns True if modified"""
@@ -406,8 +410,8 @@ class Parser(object):
             if isinstance(field, models.ForeignKey):
                 natural_key = self.natural_keys[dst]
                 try:
-                    kwargs[dst] = field.rel.to.objects.get(**{natural_key: val})
-                except field.rel.to.DoesNotExist:
+                    kwargs[dst] = field.remote_field.model.objects.get(**{natural_key: val})
+                except field.remote_field.model.DoesNotExist:
                     return None
             else:
                 kwargs[dst] = val
@@ -419,8 +423,8 @@ class Parser(object):
             if not filters:
                 continue
             try:
-                kwargs[dst] = field.rel.to.objects.get(**filters)
-            except field.rel.to.DoesNotExist:
+                kwargs[dst] = field.remote_field.model.objects.get(**filters)
+            except field.remote_field.model.DoesNotExist:
                 return None
         return kwargs
 

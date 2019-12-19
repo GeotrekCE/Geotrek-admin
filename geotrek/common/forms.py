@@ -92,7 +92,7 @@ class CommonForm(MapEntityForm):
                 continue
             if not isinstance(modelfield, (ForeignKey, ManyToManyField)):
                 continue
-            model = modelfield.remote_field.to
+            model = modelfield.remote_field.model
             if not issubclass(model, (StructureRelated, StructureOrNoneRelated)):
                 continue
             if not model.check_structure_in_forms:
