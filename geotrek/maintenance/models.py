@@ -91,7 +91,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     def default_stake(self):
         stake = None
         if self.topology:
-            for path in self.topology.paths.all():
+            for path in self.topology.paths.exclude(stake=None):
                 if path.stake > stake:
                     stake = path.stake
         return stake
