@@ -54,8 +54,6 @@ class PathFactory(StructureRelatedDefaultFactory):
     geom_cadastre = LineString(Point(5, 5), Point(6, 6), srid=settings.SRID)
     valid = True
     name = factory.Sequence(lambda n: "name %s" % n)
-    departure = factory.Sequence(lambda n: "departure %s" % n)
-    arrival = factory.Sequence(lambda n: "arrival %s" % n)
     comments = factory.Sequence(lambda n: "comment %s" % n)
 
     # Trigger will override :
