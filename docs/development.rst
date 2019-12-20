@@ -10,7 +10,9 @@ Quickstart
 ::
 
     cp .env-dev.dist .env
+    # Edit .env if need be
     cp docker-compose-dev.yml docker-compose.yml
+    docker-compose build
     docker-compose run --rm web update.sh
     docker-compose run --rm web load_data.sh
     docker-compose run --rm web ./manage.py createsuperuser

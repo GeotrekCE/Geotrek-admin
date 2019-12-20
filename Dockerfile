@@ -46,7 +46,7 @@ COPY .coveragerc .coveragerc
 COPY docker/* /usr/local/bin/
 
 RUN cd geotrek; ENV=dev CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp ../env/bin/python ../manage.py compilemessages; cd ..
-RUN ln -s /app/src/var/conf/parsers.py /app/src/bulkimport/parsers.py
+RUN ln -sf /app/src/var/conf/parsers.py /app/src/bulkimport/parsers.py
 
 EXPOSE 8000
 ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]
