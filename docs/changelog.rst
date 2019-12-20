@@ -10,6 +10,7 @@ CHANGELOG
 - Fix a crash in stake computation when adding an intervention
 - Fix a crash in project list when one of them has no end year
 - Fix drapping with no-data DEM values
+- Fix nav pills to choose language in forms
 
 
 2.32.0 (2019-12-13)
