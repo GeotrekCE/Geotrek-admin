@@ -65,11 +65,11 @@ jobs:
       ENV: tests
       SECRET_KEY: foo
       CUSTOM_SETTINGS_FILE: ""
+    working_directory: /app/src
     steps:
-      - checkout
       - run: apt-get update && apt-get install -y npm
       - run: mkdir -p var/conf/extra_static
-      - run: env/bin/python manage.py collectstatic --noinput
+      - run: ./env/bin/python manage.py collectstatic --noinput
       - run: npm install geotrek/jstests
       - run: ./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
   deploy:
