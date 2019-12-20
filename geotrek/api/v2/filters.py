@@ -67,8 +67,7 @@ class GeotrekPublishedFilter(BaseFilterBackend):
 
     def filter_queryset(self, request, queryset, view):
         qs = queryset
-        published = request.GET.get('published', 'true')
-
+        published = request.GET.get('published', None)
         if published == 'true':
             published = True
         elif published == 'false':

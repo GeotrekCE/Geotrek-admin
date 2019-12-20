@@ -4,6 +4,7 @@ from django.db.models import Count
 from django.test.client import Client
 from django.test.testcases import TestCase
 
+from geotrek.core import factories as core_factory, models as path_models
 from geotrek.common import factories as common_factory
 from geotrek.trekking import factories as trek_factory, models as trek_models
 
@@ -27,6 +28,8 @@ TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'difficulty', 'duration', 'id', 'length_2d', 'length_3d', 'max_elevation', 'min_elevation',
     'name', 'networks', 'themes', 'update_datetime', 'url', 'practice', 'external_id', 'published'
 ])
+
+PATH_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted(['comments', 'length_2d', 'length_3d', 'name', 'url'])
 
 TOUR_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted(TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE + ['count_children'])
 
@@ -78,7 +81,7 @@ class BaseApiTest(TestCase):
         cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(cls.nb_treks)
         cls.treks[0].themes.add(cls.theme)
         cls.treks[0].networks.add(cls.network)
-
+        cls.path = core_factory.PathFactory.create()
         cls.parent = trek_factory.TrekFactory.create(published=True, name='Parent')
         cls.child1 = trek_factory.TrekFactory.create(published=False, name='Child 1')
         cls.child2 = trek_factory.TrekFactory.create(published=True, name='Child 2')
@@ -156,11 +159,23 @@ class BaseApiTest(TestCase):
         self.login()
         return self.client.get(reverse('apiv2:poi-used-types'), params)
 
+    def get_path_list(self, params=None):
+        self.login()
+        return self.client.get(reverse('apiv2:path-list'), params)
+
+    def get_path_detail(self, id_path, params=None):
+        self.login()
+        return self.client.get(reverse('apiv2:path-detail', args=(id_path,)), params)
+
 
 class APIAnonymousTestCase(BaseApiTest):
     """
     TestCase for anonymous API profile
     """
+    def test_path_list(self):
+        self.client.logout()
+        response = self.get_path_list()
+        self.assertEqual(response.status_code, 401)
 
     def test_trek_list(self):
         self.client.logout()
@@ -267,6 +282,31 @@ class APIAccessAdministratorTestCase(BaseApiTest):
         Override base class login method, used before all function request 'get_api_element'
         """
         self.client.login(username="administrator", password="administrator")
+
+    def test_path_list(self):
+        self.client.logout()
+        response = self.get_path_list()
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(sorted(json_response.keys()),
+                         PAGINATED_JSON_STRUCTURE)
+        self.assertEqual(len(json_response.get('results')), path_models.Path.objects.all().count())
+        self.assertEqual(len(json_response.get('results')[0].get('geometry').get('coordinates')[0]),
+                         2)
+        response = self.get_path_list({'format': 'geojson', 'dim': '3'})
+        json_response = response.json()
+
+        # test geojson format
+        self.assertEqual(sorted(json_response.keys()),
+                         PAGINATED_GEOJSON_STRUCTURE)
+
+        self.assertEqual(len(json_response.get('features')),
+                         path_models.Path.objects.all().count(), json_response)
+        # test dim 3 ok
+        self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')[0]), 3)
+
+        self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
+                        PATH_LIST_PROPERTIES_GEOJSON_STRUCTURE)
 
     def test_trek_list(self):
         response = self.get_trek_list()

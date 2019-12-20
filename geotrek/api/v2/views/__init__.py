@@ -12,6 +12,8 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     from .sensitivity import SensitiveAreaViewSet  # noqa
     from .sensitivity import SportPracticeViewSet  # noqa
+if 'geotrek.tourism' in settings.INSTALLED_APPS:
+    from .tourism import TouristicContentViewSet  # noqa
 
 
 class SwaggerSchemaView(APIView):

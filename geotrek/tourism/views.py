@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.http import Http404
 from django.views.generic import DetailView
 from mapentity.views import (MapEntityCreate,
-                             MapEntityUpdate, MapEntityLayer, MapEntityList,
+                             MapEntityUpdate, MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDetail, MapEntityDelete, MapEntityViewSet,
                              MapEntityFormat, MapEntityDocument)
 from rest_framework import permissions as rest_permissions, viewsets
@@ -21,7 +21,7 @@ from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, MarkupPublic
-from geotrek.tourism.serializers import TouristicContentCategorySerializer
+from django.shortcuts import get_object_or_404
 from geotrek.trekking.models import Trek
 
 from .filters import TouristicContentFilterSet, TouristicEventFilterSet, TouristicEventApiFilterSet
@@ -52,6 +52,10 @@ class TouristicContentList(MapEntityList):
     def categories_list(self):
         used = TouristicContent.objects.values_list('category__pk')
         return TouristicContentCategory.objects.filter(pk__in=used)
+
+
+class TouristicContentJsonList(MapEntityJsonList, TouristicContentList):
+    pass
 
 
 class TouristicContentFormatList(MapEntityFormat, TouristicContentList):
@@ -169,6 +173,10 @@ class TouristicEventList(MapEntityList):
     columns = ['id', 'name', 'type', 'begin_date', 'end_date']
 
 
+class TouristicEventJsonList(MapEntityJsonList, TouristicEventList):
+    pass
+
+
 class TouristicEventFormatList(MapEntityFormat, TouristicEventList):
     columns = [
         'id', 'structure', 'eid', 'name', 'type', 'description_teaser', 'description', 'themes',
@@ -282,20 +290,6 @@ class TouristicContentViewSet(MapEntityViewSet):
         return qs
 
 
-class TouristicContentCategoryViewSet(MapEntityViewSet):
-    model = TouristicContentCategory
-    serializer_class = TouristicContentCategorySerializer
-    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_queryset(self):
-        queryset = super(TouristicContentCategoryViewSet, self).get_queryset()
-
-        if 'categories' in self.request.GET:
-            queryset = queryset.filter(pk__in=self.request.GET['categories'].split(','))
-
-        return queryset
-
-
 class TouristicEventViewSet(MapEntityViewSet):
     model = TouristicEvent
     serializer_class = TouristicEventSerializer
@@ -323,13 +317,10 @@ class InformationDeskViewSet(viewsets.ModelViewSet):
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_serializer_class(self):
-        renderer, media_type = self.perform_content_negotiation(self.request)
-        if getattr(renderer, 'format') == 'geojson':
-            class Serializer(InformationDeskSerializer, GeoFeatureModelSerializer):
-                class Meta(InformationDeskSerializer.Meta):
-                    pass
-            return Serializer
-        return InformationDeskSerializer
+        class Serializer(InformationDeskSerializer, GeoFeatureModelSerializer):
+            class Meta(InformationDeskSerializer.Meta):
+                pass
+        return Serializer
 
     def get_queryset(self):
         qs = super(InformationDeskViewSet, self).get_queryset()
@@ -350,10 +341,7 @@ class TrekInformationDeskViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         pk = self.kwargs['pk']
-        try:
-            trek = Trek.objects.existing().get(pk=pk)
-        except Trek.DoesNotExist:
-            raise Http404
+        trek = get_object_or_404(Trek.objects.existing(), pk=pk)
         return trek.information_desks.all().transform(settings.API_SRID, field_name='geom')
 
 
@@ -368,11 +356,7 @@ class TrekTouristicContentViewSet(viewsets.ModelViewSet):
         return Serializer
 
     def get_queryset(self):
-        try:
-            trek = Trek.objects.existing().get(pk=self.kwargs['pk'])
-
-        except Trek.DoesNotExist:
-            raise Http404
+        trek = get_object_or_404(Trek.objects.existing(), pk=self.kwargs['pk'])
         if not trek.is_public():
             raise Http404
         queryset = trek.touristic_contents.filter(published=True)
@@ -401,11 +385,7 @@ class TrekTouristicEventViewSet(viewsets.ModelViewSet):
         return Serializer
 
     def get_queryset(self):
-        try:
-            trek = Trek.objects.existing().get(pk=self.kwargs['pk'])
-
-        except Trek.DoesNotExist:
-            raise Http404
+        trek = get_object_or_404(Trek.objects.existing(), pk=self.kwargs['pk'])
         if not trek.is_public():
             raise Http404
         queryset = trek.touristic_events.filter(published=True)
@@ -433,12 +413,7 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
             return Serializer
 
         def get_queryset(self):
-            try:
-                dive = Dive.objects.existing().get(pk=self.kwargs['pk'])
-
-            except Dive.DoesNotExist:
-                raise Http404
-
+            dive = get_object_or_404(Dive.objects.existing(), pk=self.kwargs['pk'])
             queryset = dive.touristic_contents.filter(published=True)
 
             if 'categories' in self.request.GET:
@@ -465,11 +440,8 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
             return Serializer
 
         def get_queryset(self):
-            try:
-                dive = Dive.objects.existing().get(pk=self.kwargs['pk'])
+            dive = get_object_or_404(Dive.objects.existing(), pk=self.kwargs['pk'])
 
-            except Dive.DoesNotExist:
-                raise Http404
             queryset = dive.touristic_events.filter(published=True)
             if 'source' in self.request.GET:
                 queryset = queryset.filter(source__name__in=self.request.GET['source'].split(','))

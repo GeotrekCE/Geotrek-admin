@@ -514,7 +514,7 @@ class TouristicEventViewSetTest(TestCase):
         self.assertEqual(len(geojson['features']), 10)
 
 
-class TouristicContentCategoryViewSetTest(TestCase):
+class TouristicCategoryViewTest(TestCase):
     def test_get_categories(self):
         """
         Test category json serialization via api
@@ -538,3 +538,19 @@ class InformationDeskAPITest(TestCase):
         self.assertEqual(result['features'][0]['type'], 'Feature')
         self.assertEqual(result['features'][0]['geometry']['type'], 'Point')
         self.assertEqual(result['features'][0]['properties']['name'], desk2.name)
+
+
+class TrekInformationDeskAPITest(TestCase):
+    def test_geojson(self):
+        trek = trekking_factories.TrekFactory()
+        desk = InformationDeskFactory.create()
+        InformationDeskFactory.create()
+        trek.information_desks.add(desk)
+        trek.save()
+        response = self.client.get(reverse('tourism:trek_information_desk_geojson', kwargs={'pk': trek.pk, 'format': 'geojson'}))
+        self.assertEqual(response.status_code, 200)
+        result = response.json()
+        self.assertEqual(len(result['features']), 1)
+        self.assertEqual(result['features'][0]['type'], 'Feature')
+        self.assertEqual(result['features'][0]['geometry']['type'], 'Point')
+        self.assertEqual(result['features'][0]['properties']['name'], desk.name)

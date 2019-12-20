@@ -15,7 +15,6 @@ from .views import (
     SyncRandoRedirect, TrekServiceViewSet, sync_view,
     sync_update_json
 )
-from . import serializers as trekking_serializers
 
 
 urlpatterns = [
@@ -45,23 +44,13 @@ class TrekEntityOptions(AltimetryEntityOptions, PublishableEntityOptions):
     document_public_view = TrekDocumentPublic
     markup_public_view = TrekMarkupPublic
 
-    def get_serializer(self):
-        return trekking_serializers.TrekSerializer
-
-    def get_queryset(self):
-        return self.model.objects.existing()
-
 
 class POIEntityOptions(PublishableEntityOptions):
-
-    def get_serializer(self):
-        return trekking_serializers.POISerializer
+    pass
 
 
 class ServiceEntityOptions(MapEntityOptions):
-
-    def get_serializer(self):
-        return trekking_serializers.ServiceSerializer
+    pass
 
 
 urlpatterns += registry.register(models.Trek, TrekEntityOptions, menu=settings.TREKKING_MODEL_ENABLED)

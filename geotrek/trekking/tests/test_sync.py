@@ -415,7 +415,7 @@ class SyncTest(SyncSetup):
         # source A only
         management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
                                 source=self.source_a.name, skip_tiles=True, skip_pdf=True, languages='en', verbosity=2,
-                                stdout=StringIO())
+                                content_categories="1", with_events=True, stdout=StringIO())
         with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
             # only 1 trek in Source A
@@ -427,10 +427,10 @@ class SyncTest(SyncSetup):
         # source A only
         management.call_command('sync_rando', 'tmp', url='http://localhost:8000', with_dives=True,
                                 source=self.source_a.name, skip_tiles=True, skip_pdf=True, languages='en', verbosity=2,
-                                stdout=StringIO())
+                                content_categories="1", with_events=True, stdout=StringIO())
         with open(os.path.join('tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
             dives = json.load(f)
-            # only 1 trek in Source A
+            # only 1 dive in Source A
             self.assertEqual(len(dives['features']),
                              trek_models.Trek.objects.filter(published=True,
                                                              source__name__in=[self.source_a.name, ]).count())
@@ -439,7 +439,7 @@ class SyncTest(SyncSetup):
         # portal B only
         management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
                                 portal=self.portal_b.name, skip_tiles=True, languages='en', skip_pdf=True, verbosity=2,
-                                stdout=StringIO())
+                                content_categories="1", with_events=True, stdout=StringIO())
         with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
 
