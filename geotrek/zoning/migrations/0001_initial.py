@@ -27,8 +27,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CityEdge',
             fields=[
-                ('topo_object', models.OneToOneField(parent_link=True, primary_key=True, db_column='evenement', serialize=False, to='core.Topology')),
-                ('city', models.ForeignKey(db_column='commune', verbose_name='City', to='zoning.City')),
+                ('topo_object', models.OneToOneField(parent_link=True, on_delete=django.db.models.deletion.CASCADE, primary_key=True, db_column='evenement', serialize=False, to='core.Topology')),
+                ('city', models.ForeignKey(db_column='commune', on_delete=django.db.models.deletion.CASCADE, verbose_name='City', to='zoning.City')),
             ],
             options={
                 'db_table': 'f_t_commune',
@@ -54,8 +54,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='DistrictEdge',
             fields=[
-                ('topo_object', models.OneToOneField(parent_link=True, primary_key=True, db_column='evenement', serialize=False, to='core.Topology')),
-                ('district', models.ForeignKey(db_column='secteur', verbose_name='District', to='zoning.District')),
+                ('topo_object', models.OneToOneField(parent_link=True, on_delete=django.db.models.deletion.CASCADE, primary_key=True, db_column='evenement', serialize=False, to='core.Topology')),
+                ('district', models.ForeignKey(db_column='secteur', on_delete=django.db.models.deletion.CASCADE, verbose_name='District', to='zoning.District')),
             ],
             options={
                 'db_table': 'f_t_secteur',
@@ -81,8 +81,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='RestrictedAreaEdge',
             fields=[
-                ('topo_object', models.OneToOneField(parent_link=True, primary_key=True, db_column='evenement', serialize=False, to='core.Topology')),
-                ('restricted_area', models.ForeignKey(db_column='zone', verbose_name='Restricted area', to='zoning.RestrictedArea')),
+                ('topo_object', models.OneToOneField(parent_link=True, on_delete=django.db.models.deletion.CASCADE, primary_key=True, db_column='evenement', serialize=False, to='core.Topology')),
+                ('restricted_area', models.ForeignKey(db_column='zone', on_delete=django.db.models.deletion.CASCADE, verbose_name='Restricted area', to='zoning.RestrictedArea')),
             ],
             options={
                 'db_table': 'f_t_zonage',
@@ -105,6 +105,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='restrictedarea',
             name='area_type',
-            field=models.ForeignKey(db_column='type', verbose_name='Restricted area', to='zoning.RestrictedAreaType'),
+            field=models.ForeignKey(db_column='type', on_delete=django.db.models.deletion.CASCADE, verbose_name='Restricted area', to='zoning.RestrictedAreaType'),
         ),
     ]

@@ -3,6 +3,7 @@ import embed_video.fields
 import paperclip.models
 from django.conf import settings
 import geotrek.authent.models
+import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
@@ -28,8 +29,8 @@ class Migration(migrations.Migration):
                 ('starred', models.BooleanField(default=False, help_text='Mark as starred', verbose_name='Starred', db_column='marque')),
                 ('date_insert', models.DateTimeField(auto_now_add=True, verbose_name='Insertion date')),
                 ('date_update', models.DateTimeField(auto_now=True, verbose_name='Update date')),
-                ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
-                ('creator', models.ForeignKey(related_name='created_attachments', verbose_name='Creator', to=settings.AUTH_USER_MODEL, help_text='User that uploaded')),
+                ('content_type', models.ForeignKey(to='contenttypes.ContentType', on_delete=django.db.models.deletion.CASCADE)),
+                ('creator', models.ForeignKey(related_name='created_attachments', on_delete=django.db.models.deletion.CASCADE, verbose_name='Creator', to=settings.AUTH_USER_MODEL, help_text='User that uploaded')),
             ],
             options={
                 'ordering': ['-date_insert'],
@@ -46,7 +47,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('type', models.CharField(max_length=128, verbose_name='File type')),
-                ('structure', models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['type'],
@@ -61,7 +62,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('organism', models.CharField(max_length=128, verbose_name='Organism', db_column='organisme')),
-                ('structure', models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['organism'],
@@ -105,7 +106,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('pictogram', models.FileField(max_length=512, null=True, verbose_name='Pictogram', db_column='picto', upload_to='upload')),
                 ('label', models.CharField(max_length=128, verbose_name='Label', db_column='theme')),
-                ('cirkwi', models.ForeignKey(verbose_name='Cirkwi tag', blank=True, to='cirkwi.CirkwiTag', null=True)),
+                ('cirkwi', models.ForeignKey(verbose_name='Cirkwi tag', on_delete=django.db.models.deletion.CASCADE, blank=True, to='cirkwi.CirkwiTag', null=True)),
             ],
             options={
                 'ordering': ['label'],
@@ -117,6 +118,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='attachment',
             name='filetype',
-            field=models.ForeignKey(verbose_name='File type', to='common.FileType'),
+            field=models.ForeignKey(verbose_name='File type', on_delete=django.db.models.deletion.CASCADE, to='common.FileType'),
         ),
     ]

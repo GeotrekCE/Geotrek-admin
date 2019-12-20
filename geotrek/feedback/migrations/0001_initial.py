@@ -59,16 +59,16 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='report',
             name='category',
-            field=models.ForeignKey(default=None, blank=True, to='feedback.ReportCategory', null=True, verbose_name='Category'),
+            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, blank=True, to='feedback.ReportCategory', null=True, verbose_name='Category'),
         ),
         migrations.AddField(
             model_name='report',
             name='context_content_type',
-            field=models.ForeignKey(blank=True, editable=False, to='contenttypes.ContentType', null=True),
+            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, editable=False, to='contenttypes.ContentType', null=True),
         ),
         migrations.AddField(
             model_name='report',
             name='status',
-            field=models.ForeignKey(default=None, blank=True, to='feedback.ReportStatus', null=True, verbose_name='Status'),
+            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, blank=True, to='feedback.ReportStatus', null=True, verbose_name='Status'),
         ),
     ]

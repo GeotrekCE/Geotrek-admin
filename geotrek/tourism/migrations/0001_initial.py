@@ -116,7 +116,7 @@ class Migration(migrations.Migration):
                 ('pictogram', models.FileField(db_column='picto', upload_to='upload', max_length=512, blank=True, null=True, verbose_name='Pictogram')),
                 ('label', models.CharField(max_length=128, verbose_name='Label', db_column='nom')),
                 ('in_list', models.IntegerField(db_column='liste_choix', choices=[(1, 'First'), (2, 'Second')])),
-                ('category', models.ForeignKey(related_name='types', db_column='categorie', verbose_name='Category', to='tourism.TouristicContentCategory')),
+                ('category', models.ForeignKey(related_name='types', on_delete=django.db.models.deletion.CASCADE, db_column='categorie', verbose_name='Category', to='tourism.TouristicContentCategory')),
             ],
             options={
                 'ordering': ['label'],
@@ -158,7 +158,7 @@ class Migration(migrations.Migration):
                 ('approved', models.BooleanField(default=False, verbose_name='Approved', db_column='labellise')),
                 ('portal', models.ManyToManyField(related_name='touristicevents', db_table='t_r_evenement_touristique_portal', verbose_name='Portal', to='common.TargetPortal', blank=True)),
                 ('source', models.ManyToManyField(related_name='touristicevents', db_table='t_r_evenement_touristique_source', verbose_name='Source', to='common.RecordSource', blank=True)),
-                ('structure', models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
                 ('themes', models.ManyToManyField(related_name='touristic_events', to='common.Theme', db_table='t_r_evenement_touristique_theme', blank=True, help_text='Main theme(s)', verbose_name='Themes')),
             ],
             options={
@@ -186,12 +186,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='touristicevent',
             name='type',
-            field=models.ForeignKey(db_column='type', blank=True, to='tourism.TouristicEventType', null=True, verbose_name='Type'),
+            field=models.ForeignKey(db_column='type', on_delete=django.db.models.deletion.CASCADE, blank=True, to='tourism.TouristicEventType', null=True, verbose_name='Type'),
         ),
         migrations.AddField(
             model_name='touristiccontent',
             name='category',
-            field=models.ForeignKey(related_name='contents', db_column='categorie', verbose_name='Category', to='tourism.TouristicContentCategory'),
+            field=models.ForeignKey(related_name='contents', on_delete=django.db.models.deletion.CASCADE, db_column='categorie', verbose_name='Category', to='tourism.TouristicContentCategory'),
         ),
         migrations.AddField(
             model_name='touristiccontent',
@@ -201,7 +201,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='touristiccontent',
             name='reservation_system',
-            field=models.ForeignKey(verbose_name='Reservation system', blank=True, to='tourism.ReservationSystem', null=True),
+            field=models.ForeignKey(verbose_name='Reservation system', on_delete=django.db.models.deletion.CASCADE, blank=True, to='tourism.ReservationSystem', null=True),
         ),
         migrations.AddField(
             model_name='touristiccontent',
@@ -211,7 +211,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='touristiccontent',
             name='structure',
-            field=models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure'),
+            field=models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure'),
         ),
         migrations.AddField(
             model_name='touristiccontent',
@@ -231,7 +231,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='informationdesk',
             name='type',
-            field=models.ForeignKey(related_name='desks', db_column='type', verbose_name='Type', to='tourism.InformationDeskType'),
+            field=models.ForeignKey(related_name='desks', on_delete=django.db.models.deletion.CASCADE, db_column='type', verbose_name='Type', to='tourism.InformationDeskType'),
         ),
         migrations.CreateModel(
             name='TouristicContentType1',

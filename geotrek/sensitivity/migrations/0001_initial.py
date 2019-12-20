@@ -78,11 +78,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='sensitivearea',
             name='species',
-            field=models.ForeignKey(db_column='espece', verbose_name='Species', to='sensitivity.Species'),
+            field=models.ForeignKey(db_column='espece', on_delete=django.db.models.deletion.CASCADE, verbose_name='Species', to='sensitivity.Species'),
         ),
         migrations.AddField(
             model_name='sensitivearea',
             name='structure',
-            field=models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure'),
+            field=models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure'),
         ),
     ]
