@@ -14,14 +14,12 @@ class LocaleForcedMiddleware(object):
         self.get_response = get_response
 
     def __call__(self, request):
-        return self.get_response(request)
-
-    def process_request(self, request):
         user_agent = request.META.get('HTTP_USER_AGENT')
         is_api_call = (user_agent is None or 'geotrek' in user_agent)
         forced_language = request.META.get('HTTP_ACCEPT_LANGUAGE')
         if is_api_call and forced_language and hasattr(request, 'session'):
             request.session[LANGUAGE_SESSION_KEY] = forced_language
+        return self.get_response(request)
 
 
 class CorsMiddleware(object):
@@ -29,7 +27,8 @@ class CorsMiddleware(object):
         self.get_response = get_response
 
     def __call__(self, request):
-        return self.get_response(request)
+        response = self.get_response(request)
+        return self.process_response(request, response)
 
     def process_response(self, request, response):
         if settings.DEBUG:
