@@ -755,7 +755,7 @@ SEND_REPORT_ACK = True
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
 assert ENV in ('prod', 'dev', 'tests', 'tests_nds')
-env_settings_file = os.path.join(os.path.dirname(__file__), ENV + '.py')
+env_settings_file = os.path.join(os.path.dirname(__file__), 'env_{}.py'.format(ENV))
 with open(env_settings_file, 'r') as f:
     exec(f.read())
 

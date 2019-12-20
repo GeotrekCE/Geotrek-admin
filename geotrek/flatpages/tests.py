@@ -29,11 +29,13 @@ class FlatPageFormTest(TestCase):
     def test_validation_does_not_fail_if_content_is_none_and_url_is_filled(self):
         user = self.login()
         data = {
-            'title_fr': 'Reduce your flat page',
-            'external_url_fr': 'http://geotrek.fr',
+            'title_en': 'Reduce your flat page',
+            'external_url_en': 'http://geotrek.fr',
             'target': 'all',
         }
         form = FlatPageForm(data=data, user=user)
+        form.is_valid()
+        print(form.errors)
         self.assertTrue(form.is_valid())
 
     def test_validation_does_fail_if_url_is_badly_filled(self):
