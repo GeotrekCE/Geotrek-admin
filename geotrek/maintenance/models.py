@@ -91,7 +91,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     def default_stake(self):
         stake = None
         if self.topology:
-            for path in self.topology.paths.all():
+            for path in self.topology.paths.exclude(stake=None):
                 if path.stake > stake:
                     stake = path.stake
         return stake
@@ -396,11 +396,9 @@ class ManDay(models.Model):
 
 class ProjectManager(models.GeoManager):
     def all_years(self):
-        all_years = []
-        for (begin, end) in self.existing().values_list('begin_year', 'end_year'):
-            all_years.append(begin)
-            all_years.append(end)
-        all_years = list(reversed(sorted(set(all_years))))
+        all_years = list(self.existing().exclude(begin_year=None).values_list('begin_year', flat=True))
+        all_years += list(self.existing().exclude(end_year=None).values_list('end_year', flat=True))
+        all_years.sort(reverse=True)
         return all_years
 
 

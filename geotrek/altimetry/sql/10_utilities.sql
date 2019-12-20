@@ -150,7 +150,7 @@ BEGIN
         SELECT ST_Value(rast, 1, geom)::integer INTO ele
         FROM mnt
         WHERE ST_Intersects(rast, geom);
-        IF NOT FOUND THEN
+        IF NOT FOUND OR ele IS NULL THEN
             ele := 0;
         END IF;
     END IF;

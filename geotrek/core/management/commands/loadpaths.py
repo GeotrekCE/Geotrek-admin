@@ -4,7 +4,7 @@ from geotrek.authent.models import Structure
 from django.contrib.gis.geos.collections import Polygon, LineString
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-from django.db.utils import IntegrityError
+from django.db.utils import IntegrityError, InternalError
 from django.db import transaction
 
 
@@ -97,7 +97,7 @@ class Command(BaseCommand):
                             self.stdout.write('Create path with pk : {}'.format(path.pk))
                         if verbosity > 1:
                             self.stdout.write("The comment %s was added on %s" % (comment_final, name))
-                    except IntegrityError:
+                    except (IntegrityError, InternalError):
                         if fail:
                             counter_fail += 1
                             self.stdout.write('Integrity Error on path : {}, {}'.format(name, geom))

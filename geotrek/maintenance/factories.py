@@ -122,12 +122,7 @@ class ProjectFactory(factory.DjangoModelFactory):
         model = models.Project
 
     name = factory.Sequence(lambda n: "Project %s" % n)
-    type = factory.SubFactory(ProjectTypeFactory)
-    domain = factory.SubFactory(ProjectDomainFactory)
     begin_year = 2010
-    end_year = 2012
-    project_owner = factory.SubFactory(OrganismFactory)
-    project_manager = factory.SubFactory(OrganismFactory)
 
     @factory.post_generation
     def create_project(obj, create, extracted, **kwargs):
