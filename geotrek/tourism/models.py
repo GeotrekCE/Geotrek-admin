@@ -293,14 +293,6 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
         return self.category.type2_label
 
     @property
-    def type1_display(self):
-        return ', '.join([str(n) for n in self.type1.all()])
-
-    @property
-    def type2_display(self):
-        return ', '.join([str(n) for n in self.type2.all()])
-
-    @property
     def prefixed_category_id(self):
         return self.category.prefixed_id
 
@@ -311,26 +303,6 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     def type(self):
         """Fake type to simulate POI for mobile app v1"""
         return self.category
-
-    @property
-    def min_elevation(self):
-        return 0
-
-    @property
-    def max_elevation(self):
-        return 0
-
-    @property
-    def portal_display(self):
-        return ', '.join([str(portal) for portal in self.portal.all()])
-
-    @property
-    def source_display(self):
-        return ','.join([str(source) for source in self.source.all()])
-
-    @property
-    def themes_display(self):
-        return ','.join([str(source) for source in self.themes.all()])
 
     @property
     def extent(self):
@@ -427,10 +399,6 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
         return [self.type] if self.type else []
 
     @property
-    def type2(self):
-        return []
-
-    @property
     def districts_display(self):
         return ', '.join([str(d) for d in self.districts])
 
@@ -457,18 +425,6 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
 
     def distance(self, to_cls):
         return settings.TOURISM_INTERSECTION_MARGIN
-
-    @property
-    def portal_display(self):
-        return ', '.join([str(portal) for portal in self.portal.all()])
-
-    @property
-    def source_display(self):
-        return ', '.join([str(source) for source in self.source.all()])
-
-    @property
-    def themes_display(self):
-        return ','.join([str(source) for source in self.themes.all()])
 
     @property
     def rando_url(self):
