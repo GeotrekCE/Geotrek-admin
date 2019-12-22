@@ -88,7 +88,7 @@ json_test_species = {
 
 
 class BiodivParserTests(TranslationResetMixin, TestCase):
-    @mock.patch('geotrek.sensitivity.parsers.requests')
+    @mock.patch('requests.get')
     def test_create(self, mocked):
         def side_effect(url):
             response = requests.Response()
@@ -98,7 +98,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
             else:
                 response.json = lambda: json_test_species
             return response
-        mocked.get.side_effect = side_effect
+        mocked.side_effect = side_effect
         call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
         practice = SportPractice.objects.get()
         species = Species.objects.first()
@@ -123,17 +123,17 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(area_2.eid, '2')
         self.assertEqual(area_2.geom.geom_type, 'MultiPolygon')
 
-    @mock.patch('geotrek.sensitivity.parsers.requests')
+    @mock.patch('requests.get')
     def test_status_code_404(self, mocked):
         def side_effect(url):
             response = requests.Response()
             response.status_code = 404
             return response
-        mocked.get.side_effect = side_effect
+        mocked.side_effect = side_effect
         with self.assertRaisesRegexp(CommandError, "Failed to download https://biodiv-sports.fr/api/v2/sportpractice/"):
             call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
 
-    @mock.patch('geotrek.sensitivity.parsers.requests')
+    @mock.patch('requests.get')
     def test_create_no_id(self, mocked):
         def side_effect(url):
             response = requests.Response()
@@ -146,7 +146,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
                 json_test_species_without_id['results'][1]['species_id'] = None
                 response.json = lambda: json_test_species_without_id
             return response
-        mocked.get.side_effect = side_effect
+        mocked.side_effect = side_effect
         call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
         practice = SportPractice.objects.first()
         species = Species.objects.first()
@@ -159,7 +159,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
         self.assertQuerysetEqual(species.practices.all(), ['<SportPractice: Land>'])
         self.assertEqual(area.eid, '1')
 
-    @mock.patch('geotrek.sensitivity.parsers.requests')
+    @mock.patch('requests.get')
     def test_create_species_url(self, mocked):
         def side_effect(url):
             response = requests.Response()
@@ -169,14 +169,15 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
             else:
                 json_test_species_without_id = json_test_species.copy()
                 json_test_species_without_id['results'][0]['info_url'] = "toto.com"
+                json_test_species_without_id['results'][1]['info_url'] = "toto.com"
                 response.json = lambda: json_test_species_without_id
             return response
-        mocked.get.side_effect = side_effect
+        mocked.side_effect = side_effect
         call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
         species = Species.objects.first()
         self.assertEqual(species.url, "toto.com")
 
-    @mock.patch('geotrek.sensitivity.parsers.requests')
+    @mock.patch('requests.get')
     def test_create_species_radius(self, mocked):
         def side_effect(url):
             response = requests.Response()
@@ -189,7 +190,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
                 json_test_species_without_id['results'][1]['radius'] = 5
                 response.json = lambda: json_test_species_without_id
             return response
-        mocked.get.side_effect = side_effect
+        mocked.side_effect = side_effect
         call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
         species = Species.objects.first()
         self.assertEqual(species.radius, 5)
