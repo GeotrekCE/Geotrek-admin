@@ -34,7 +34,11 @@ class AttachmentParser(AttachmentParserMixin, OrganismEidParser):
 
 class ParserTests(TestCase):
     def test_bad_parser_class(self):
-        with self.assertRaisesRegexp(CommandError, "Failed to import parser class 'geotrek.common.DoesNotExist'"):
+        with self.assertRaisesRegexp(CommandError, "Failed to import parser class 'DoesNotExist'"):
+            call_command('import', 'geotrek.common.tests.test_parsers.DoesNotExist', '', verbosity=0)
+
+    def test_bad_parser_file(self):
+        with self.assertRaisesRegexp(CommandError, "Failed to import parser file 'geotrek/common.py'"):
             call_command('import', 'geotrek.common.DoesNotExist', '', verbosity=0)
 
     def test_no_filename_no_url(self):
@@ -54,6 +58,13 @@ class ParserTests(TestCase):
     def test_create(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', filename, verbosity=0)
+        self.assertEqual(Organism.objects.count(), 1)
+        organism = Organism.objects.get()
+        self.assertEqual(organism.organism, "Comité Théodule")
+
+    def test_create_with_file_option(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
+        call_command('import', 'OrganismParser', filename, file='geotrek/common/tests/test_parsers.py', verbosity=0)
         self.assertEqual(Organism.objects.count(), 1)
         organism = Organism.objects.get()
         self.assertEqual(organism.organism, "Comité Théodule")
