@@ -6,6 +6,7 @@ import os
 
 from django.test import TestCase
 from django.core.management import call_command
+from django.core.management.base import CommandError
 
 from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.common.models import Attachment, FileType
@@ -13,8 +14,29 @@ from geotrek.common.tests import TranslationResetMixin
 from geotrek.tourism.factories import (TouristicContentCategoryFactory, TouristicContentType1Factory,
                                        TouristicContentType2Factory, TouristicEventTypeFactory)
 from geotrek.tourism.models import TouristicContent, TouristicEvent
-from geotrek.tourism.parsers import (TouristicContentApidaeParser, EspritParcParser, TouristicContentTourInSoftParserV3,
-                                     TouristicContentTourInSoftParser, TouristicEventTourInSoftParser)
+from geotrek.tourism.parsers import (TouristicContentApidaeParser, TouristicEventApidaeParser, EspritParcParser,
+                                     TouristicContentTourInSoftParserV3, TouristicContentTourInSoftParser,
+                                     TouristicEventTourInSoftParser)
+
+
+class ApidaeConstantFieldContentParser(TouristicContentApidaeParser):
+    category = "Constant Content"
+    type1 = ["Type1 1", "Type1 2"]
+    type2 = ["Type2 1", "Type2 2"]
+    themes = ["Theme 1", "Theme 2"]
+    source = ["Source 1", "Source 2"]
+    portal = ["Portal 1", "Portal 2"]
+    field_options = {'themes': {'create': True},
+                     'category': {'create': True},
+                     'type1': {'create': True, 'fk': 'category'},
+                     'type2': {'create': True, 'fk': 'category'}}
+
+
+class ApidaeConstantFieldEventParser(TouristicEventApidaeParser):
+    type = "Constant Event"
+    themes = ["Theme 1", "Theme 2"]
+    source = ["Source 1", "Source 2"]
+    portal = ["Portal 1", "Portal 2"]
 
 
 class EauViveParser(TouristicContentApidaeParser):
@@ -55,6 +77,74 @@ class FMA28(TouristicEventTourInSoftParser):
 
 
 class ParserTests(TranslationResetMixin, TestCase):
+    @mock.patch('requests.get')
+    def test_create_content_apidae_failed(self, mocked):
+        mocked.return_value.status_code = 404
+        FileType.objects.create(type="Photographie")
+        TouristicContentCategoryFactory(label="Eau vive")
+        TouristicContentType1Factory(label="Type A")
+        TouristicContentType1Factory(label="Type B")
+        with self.assertRaises(CommandError):
+            call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=2)
+
+    @mock.patch('requests.get')
+    def test_create_content_espritparc_failed(self, mocked):
+        mocked.return_value.status_code = 404
+        FileType.objects.create(type="Photographie")
+        category = TouristicContentCategoryFactory(label="Miels et produits de la ruche")
+        TouristicContentType1Factory(label="Miel", category=category)
+        TouristicContentType1Factory(label="Gelée royale, propolis et pollen", category=category)
+        TouristicContentType1Factory(label="Pollen", category=category)
+        TouristicContentType1Factory(label="Cire", category=category)
+        TouristicContentType2Factory(label="Hautes Alpes Naturellement", category=category)
+        TouristicContentType2Factory(label="Bienvenue à la ferme", category=category)
+        TouristicContentType2Factory(label="Agriculture biologique", category=category)
+        with self.assertRaises(CommandError):
+            call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=2)
+
+    @mock.patch('requests.get')
+    def test_create_content_espritparc_not_fail_type1_does_not_exist(self, mocked):
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'espritparc.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'espritparc.json')
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        mocked.return_value.content = b'Fake image'
+        FileType.objects.create(type="Photographie")
+        category = TouristicContentCategoryFactory(label="Miels et produits de la ruche")
+        TouristicContentType2Factory(label="Hautes Alpes Naturellement", category=category)
+        TouristicContentType2Factory(label="Bienvenue à la ferme", category=category)
+        TouristicContentType2Factory(label="Agriculture biologique", category=category)
+        output = io.StringIO()
+        call_command('import', 'geotrek.tourism.tests.test_parsers.EspritParc', filename, verbosity=2, stdout=output)
+        self.assertIn("Type 1 'Miel' does not exist for category 'Miels et produits de la ruche'. Please add it,",
+                      output.getvalue())
+
+    @mock.patch('requests.get')
+    def test_create_content_espritparc_not_fail_type2_does_not_exist(self, mocked):
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'espritparc.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'espritparc.json')
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        mocked.return_value.content = b'Fake image'
+        FileType.objects.create(type="Photographie")
+        category = TouristicContentCategoryFactory(label="Miels et produits de la ruche")
+        TouristicContentType1Factory(label="Miel", category=category)
+        TouristicContentType1Factory(label="Gelée royale, propolis et pollen", category=category)
+        TouristicContentType1Factory(label="Pollen", category=category)
+        TouristicContentType1Factory(label="Cire", category=category)
+        output = io.StringIO()
+        call_command('import', 'geotrek.tourism.tests.test_parsers.EspritParc', filename, verbosity=2, stdout=output)
+        self.assertIn("Type 2 'Bienvenue à la ferme' does not exist for category 'Miels et produits de la ruche'. Please add it",
+                      output.getvalue())
+
     @mock.patch('requests.get')
     def test_create_content_apidae(self, mocked):
         def mocked_json():
@@ -146,6 +236,58 @@ class ParserTests(TranslationResetMixin, TestCase):
             ['<Theme: Cyclisme>', '<Theme: Sports cyclistes>']
         )
         self.assertEqual(Attachment.objects.count(), 3)
+
+    @mock.patch('requests.get')
+    def test_create_event_apidae_constant_fields(self, mocked):
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeEvent.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        mocked.return_value.content = b'Fake image'
+        FileType.objects.create(type="Photographie")
+        TargetPortalFactory(name='Portal 1')
+        TargetPortalFactory(name='Portal 2')
+        RecordSourceFactory(name='Source 1')
+        RecordSourceFactory(name='Source 2')
+        self.assertEqual(TouristicEvent.objects.count(), 0)
+        output = io.StringIO()
+        call_command('import', 'geotrek.tourism.tests.test_parsers.ApidaeConstantFieldEventParser', verbosity=2,
+                     stdout=output)
+        self.assertEqual(TouristicEvent.objects.count(), 1)
+        event = TouristicEvent.objects.get()
+        self.assertEqual(str(event.type), "Constant Event")
+        self.assertQuerysetEqual(event.themes.all(), ["Theme 1", "Theme 2"], transform=str)
+        self.assertQuerysetEqual(event.source.all(), ["Source 1", "Source 2"], transform=str)
+        self.assertQuerysetEqual(event.portal.all(), ["Portal 1", "Portal 2"], transform=str)
+
+    @mock.patch('requests.get')
+    def test_create_content_apidae_constant_fields(self, mocked):
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeContent.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        mocked.return_value.content = b'Fake image'
+        FileType.objects.create(type="Photographie")
+        TargetPortalFactory(name='Portal 1')
+        TargetPortalFactory(name='Portal 2')
+        RecordSourceFactory(name='Source 1')
+        RecordSourceFactory(name='Source 2')
+        self.assertEqual(TouristicContent.objects.count(), 0)
+        output = io.StringIO()
+        call_command('import', 'geotrek.tourism.tests.test_parsers.ApidaeConstantFieldContentParser', verbosity=2,
+                     stdout=output)
+        self.assertEqual(TouristicContent.objects.count(), 1)
+        content = TouristicContent.objects.get()
+        self.assertEqual(str(content.category), "Constant Content")
+        self.assertQuerysetEqual(content.type1.all(), ["Type1 1", "Type1 2"], transform=str)
+        self.assertQuerysetEqual(content.type2.all(), ["Type2 1", "Type2 2"], transform=str)
+        self.assertQuerysetEqual(content.themes.all(), ["Theme 1", "Theme 2"], transform=str)
+        self.assertQuerysetEqual(content.source.all(), ["Source 1", "Source 2"], transform=str)
+        self.assertQuerysetEqual(content.portal.all(), ["Portal 1", "Portal 2"], transform=str)
 
     @mock.patch('requests.get')
     def test_create_esprit(self, mocked):
