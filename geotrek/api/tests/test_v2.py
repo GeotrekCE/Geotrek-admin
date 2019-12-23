@@ -329,7 +329,7 @@ class APIAccessAdministratorTestCase(BaseApiTest):
         self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')[0]), 3)
 
         self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
-                        PATH_LIST_PROPERTIES_GEOJSON_STRUCTURE)
+                         PATH_LIST_PROPERTIES_GEOJSON_STRUCTURE)
 
     def test_trek_list(self):
         response = self.get_trek_list()
