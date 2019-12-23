@@ -173,6 +173,8 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(content.practical_info[:39], "<b>Ouverture:</b><br>Du 01/05 au 31/10.")
         self.assertTrue("<br><b>Capacité totale:</b><br>10<br>" in content.practical_info)
         self.assertTrue("><br><b>Services:</b><br>Test, Test2, Test3, Test4<br>" in content.practical_info)
+        self.assertIn("<b>Tarifs:</b><br>A partir de 30 € par personne<br>", content.practical_info)
+        self.assertIn("<b>Accès:</b><br>TestFr<br>", content.practical_info)
         self.assertTrue(content.published)
         self.assertEqual(content.category, category)
         self.assertQuerysetEqual(
@@ -227,6 +229,9 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(event.practical_info[:38], "<b>Ouverture:</b><br>Mardi 6 août 2019")
         self.assertIn("><br><b>Services:</b><br>Le plus grand des services, Un autre grand service<br>",
                       event.practical_info)
+        self.assertIn("<b>Ouverture:</b><br>Mardi 6 août 2019 de 9h à midi.<br>", event.practical_info)
+        self.assertIn("<b>Langues Parlées:</b><br>Français<br>", event.practical_info)
+        self.assertIn("<b>Accès:</b><br>TestFr<br>", event.practical_info)
         self.assertTrue(event.published)
         self.assertEqual(event.organizer, 'Toto')
         self.assertEqual(str(event.meeting_time), '09:00:00')
