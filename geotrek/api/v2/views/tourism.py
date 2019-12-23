@@ -11,7 +11,7 @@ class TouristicContentViewSet(api_viewsets.GeotrekViewset):
     serializer_class = api_serializers.TouristicContentListSerializer
     serializer_detail_class = api_serializers.TouristicContentDetailSerializer
     queryset = tourism_models.TouristicContent.objects.existing()\
-        .select_related('category', 'source', 'reservation_system') \
+        .select_related('category', 'reservation_system') \
         .prefetch_related('source', 'themes', 'type1', 'type2') \
         .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID)) \
         .order_by('pk')  # Required for reliable pagination

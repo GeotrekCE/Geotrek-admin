@@ -158,7 +158,6 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             fields = ('id', 'url', 'description_teaser', 'description', 'category', 'approved', 'geometry')
 
     class TouristicContentDetailSerializer(TouristicContentListSerializer):
-        pictures = serializers.SerializerMethodField()
 
         class Meta(TouristicContentListSerializer.Meta):
             fields = tuple(field for field in TouristicContentListSerializer.Meta.fields if field != 'url') + ('pictures',)

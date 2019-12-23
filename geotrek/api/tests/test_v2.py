@@ -7,6 +7,7 @@ from django.test.testcases import TestCase
 from geotrek.core import factories as core_factory, models as path_models
 from geotrek.common import factories as common_factory
 from geotrek.trekking import factories as trek_factory, models as trek_models
+from geotrek.tourism import factories as tourism_factory, models as tourism_models
 
 PAGINATED_JSON_STRUCTURE = sorted([
     'count', 'next', 'previous', 'results',
@@ -65,6 +66,10 @@ POI_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'name', 'update_datetime', 'pictures', 'published'
 ])
 
+TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted([
+    'approved', 'category', 'description', 'description_teaser', 'geometry', 'id', 'pictures'
+])
+
 
 class BaseApiTest(TestCase):
     """
@@ -87,7 +92,7 @@ class BaseApiTest(TestCase):
         cls.child2 = trek_factory.TrekFactory.create(published=True, name='Child 2')
         trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child1, order=2).save()
         trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child2, order=1).save()
-
+        cls.content = tourism_factory.TouristicContentFactory.create(published=True)
         cls.nb_treks += 2  # add parent and 1 child published
 
     def login(self):
@@ -167,7 +172,7 @@ class BaseApiTest(TestCase):
         self.login()
         return self.client.get(reverse('apiv2:path-detail', args=(id_path,)), params)
 
-    def get_touristiccontent_list(self, id_content, params=None):
+    def get_touristiccontent_list(self, params=None):
         self.login()
         return self.client.get(reverse('apiv2:touristiccontent-list'), params)
 
@@ -266,6 +271,16 @@ class APIAnonymousTestCase(BaseApiTest):
     def test_poi_type_used_list(self):
         self.client.logout()
         response = self.get_poi_all_types_list()
+        self.assertEqual(response.status_code, 401)
+
+    def test_touristiccontent_detail(self):
+        self.client.logout()
+        response = self.get_touristiccontent_detail(self.content.pk)
+        self.assertEqual(response.status_code, 401)
+
+    def test_touristiccontent_list(self):
+        self.client.logout()
+        response = self.get_touristiccontent_list()
         self.assertEqual(response.status_code, 401)
 
 
@@ -628,6 +643,29 @@ class APIAccessAdministratorTestCase(BaseApiTest):
         id_poi = trek_factory.POIFactory.create(published_fr=True, published=False)
         response = self.get_poi_detail(id_poi.pk, {'published': 'ok', 'language': 'fr'})
         self.assertEqual(response.status_code, 200)
+
+    def test_touristiccontent_detail(self):
+        self.client.logout()
+        response = self.get_touristiccontent_detail(self.content.pk)
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        # test default structure
+        self.assertEqual(sorted(json_response.keys()),
+                         TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE)
+
+    def test_touristiccontent_list(self):
+        self.client.logout()
+        response = self.get_touristiccontent_list()
+        self.assertEqual(response.status_code, 200)
+
+        # json collection structure is ok
+        json_response = response.json()
+        self.assertEqual(sorted(json_response.keys()),
+                         PAGINATED_JSON_STRUCTURE)
+
+        # touristiccontent count is ok
+        self.assertEqual(len(json_response.get('results')),
+                         tourism_models.TouristicContent.objects.all().count())
 
 
 class APISwaggerTestCase(BaseApiTest):

@@ -335,9 +335,14 @@ class TrekInformationDeskViewSet(viewsets.ModelViewSet):
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_serializer_class(self):
-        class Serializer(InformationDeskSerializer, GeoFeatureModelSerializer):
-            pass
-        return Serializer
+        renderer, media_type = self.perform_content_negotiation(self.request)
+        if getattr(renderer, 'format') == 'geojson':
+            class Serializer(InformationDeskSerializer, GeoFeatureModelSerializer):
+                class Meta(InformationDeskSerializer.Meta):
+                    pass
+
+            return Serializer
+        return InformationDeskSerializer
 
     def get_queryset(self):
         pk = self.kwargs['pk']

@@ -77,7 +77,6 @@ class GeotrekPublishedFilter(BaseFilterBackend):
             published = False
         else:
             published = None
-        print(published)
         if published is not None:
             language = request.GET.get('language', 'all')
 
