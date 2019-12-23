@@ -167,6 +167,14 @@ class BaseApiTest(TestCase):
         self.login()
         return self.client.get(reverse('apiv2:path-detail', args=(id_path,)), params)
 
+    def get_touristiccontent_list(self, id_content, params=None):
+        self.login()
+        return self.client.get(reverse('apiv2:touristiccontent-list'), params)
+
+    def get_touristiccontent_detail(self, id_content, params=None):
+        self.login()
+        return self.client.get(reverse('apiv2:touristiccontent-detail', args=(id_content,)), params)
+
 
 class APIAnonymousTestCase(BaseApiTest):
     """
