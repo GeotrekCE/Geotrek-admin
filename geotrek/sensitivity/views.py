@@ -3,6 +3,7 @@ import logging
 from django.conf import settings
 from django.db.models import F, Case, When
 from django.http import Http404, HttpResponse
+from django.shortcuts import get_object_or_404
 from django.views.generic.detail import BaseDetailView
 from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityLayer, MapEntityList, MapEntityDetail,
                              MapEntityDelete, MapEntityViewSet, MapEntityFormat, LastModifiedMixin)
@@ -129,10 +130,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         def get_queryset(self):
             pk = self.kwargs['pk']
-            try:
-                trek = Trek.objects.existing().get(pk=pk)
-            except Trek.DoesNotExist:
-                raise Http404
+            trek = get_object_or_404(Trek.objects.existing(), pk=pk)
             if not trek.is_public():
                 raise Http404
             qs = trek.published_sensitive_areas
@@ -163,10 +161,7 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
 
         def get_queryset(self):
             pk = self.kwargs['pk']
-            try:
-                dive = Dive.objects.existing().get(pk=pk)
-            except Dive.DoesNotExist:
-                raise Http404
+            dive = get_object_or_404(Dive.objects.existing(), pk=pk)
             if not dive.is_public:
                 raise Http404
             qs = dive.published_sensitive_areas
