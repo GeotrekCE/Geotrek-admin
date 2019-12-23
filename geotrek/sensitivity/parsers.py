@@ -204,6 +204,3 @@ class RegulatorySensitiveAreaShapeParser(ShapeParser):
         species.save()
         species.practices.add(*practices)
         return species
-
-    def normalize_field_name(self, name):
-        return unicodedata.normalize('NFD', name).encode('ascii', 'ignore').upper()
