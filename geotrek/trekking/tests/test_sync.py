@@ -291,6 +291,12 @@ class SyncSetup(TestCase):
                                                                      attachment_file=get_dummy_uploaded_image())
         self.attachment_touristic_event = AttachmentFactory.create(content_object=self.touristic_event,
                                                                    attachment_file=get_dummy_uploaded_image())
+        self.touristic_content_without_attachment = TouristicContentFactory(
+            geom='SRID=%s;POINT(700002 6600002)' % settings.SRID, published=True, portals=(self.portal_b,),
+            sources=(self.source_a,))
+        self.touristic_event_without_attachment = TouristicEventFactory(
+            geom='SRID=%s;POINT(700002 6600002)' % settings.SRID, published=True, portals=(self.portal_a,),
+            sources=(self.source_b,))
 
     def tearDown(self):
         shutil.rmtree(os.path.join('tmp'))
@@ -540,6 +546,17 @@ class SyncTestPdf(SyncSetup):
         self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_3.pk), '%s.pdf' % self.trek_3.slug)))
         self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug)))
         self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_5.pk), '%s.pdf' % self.trek_5.slug)))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristiccontents',
+                                                     str(self.touristic_content.pk), '%s.pdf' % self.touristic_content.slug)))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristiccontents',
+                                                     str(self.touristic_content_without_attachment.pk),
+                                                     '%s.pdf' % self.touristic_content_without_attachment.slug)))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristicevents',
+                                                     str(self.touristic_event.pk),
+                                                     '%s.pdf' % self.touristic_event.slug)))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristicevents',
+                                                     str(self.touristic_event_without_attachment.pk),
+                                                     '%s.pdf' % self.touristic_event_without_attachment.slug)))
 
     def test_sync_pdfs(self, event, content, dive, trek):
         output = StringIO()
@@ -554,6 +571,16 @@ class SyncTestPdf(SyncSetup):
         self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_3.pk), '%s.pdf' % self.trek_3.slug)))
         self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug)))
         self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_5.pk), '%s.pdf' % self.trek_5.slug)))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristiccontents',
+                                                    str(self.touristic_content.pk), '%s.pdf' % self.touristic_content.slug)))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristiccontents',
+                                                    str(self.touristic_content_without_attachment.pk),
+                                                    '%s.pdf' % self.touristic_content_without_attachment.slug)))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristicevents',
+                                                    str(self.touristic_event.pk), '%s.pdf' % self.touristic_event.slug)))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristicevents',
+                                                    str(self.touristic_event_without_attachment.pk),
+                                                    '%s.pdf' % self.touristic_event_without_attachment.slug)))
 
     def test_sync_pdfs_portals_sources(self, event, content, dive, trek):
         output = StringIO()
@@ -570,3 +597,13 @@ class SyncTestPdf(SyncSetup):
         self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_3.pk), '%s.pdf' % self.trek_3.slug)))
         self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug)))
         self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_5.pk), '%s.pdf' % self.trek_5.slug)))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristiccontents',
+                                                     str(self.touristic_content.pk), '%s.pdf' % self.touristic_content.slug)))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristiccontents',
+                                                    str(self.touristic_content_without_attachment.pk),
+                                                    '%s.pdf' % self.touristic_content_without_attachment.slug)))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristicevents',
+                                                     str(self.touristic_event.pk), '%s.pdf' % self.touristic_event.slug)))
+        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristicevents',
+                                                     str(self.touristic_event_without_attachment.pk),
+                                                     '%s.pdf' % self.touristic_event_without_attachment.slug)))
