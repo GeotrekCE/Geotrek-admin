@@ -57,6 +57,18 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Do you really wish to delete')
 
+    def test_delete_view_multiple_path_one_wrong_structure(self):
+        other_structure = StructureFactory(name="Other")
+        path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
+        path_2 = PathFactory.create(name="path_2", geom=LineString((2, 2), (2, -2)), structure=other_structure)
+        poi = POIFactory.create(no_path=True)
+        poi.add_path(path_1, start=0, end=0)
+        response = self.client.get(reverse('core:multiple_path_delete', args=['%s,%s' % (path_1.pk, path_2.pk)]))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('core:path_list'))
+        self.assertIn(response.content, b'Access to the requested resource is restricted by structure.')
+        self.assertEqual(Path.objects.count(), 4)
+
     def test_delete_multiple_path(self):
         path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
         path_2 = PathFactory.create(name="path_2", geom=LineString((2, 2), (2, -2)))
@@ -524,6 +536,14 @@ class PathViewsTest(CommonTest):
                                                                                srid=settings.SRID)))
         response = self.client.get(obj.get_detail_url())
         self.assertContains(response, '/api/restrictedarea/type/{}/restrictedarea.geojson'.format(area_type.pk))
+
+    def test_draft_path_layer(self):
+        self.login()
+        obj = self.modelfactory(draft=False)
+        self.modelfactory(draft=False)
+        self.modelfactory(draft=True)
+        response = self.client.get(obj.get_layer_url(), {"no_draft": "true"})
+        self.assertEqual(len(response.json()['features']), 2)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
