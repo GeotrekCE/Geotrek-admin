@@ -1,5 +1,4 @@
 import requests
-import unicodedata
 
 from django.conf import settings
 from django.contrib.gis.geos import Point, Polygon, MultiPolygon

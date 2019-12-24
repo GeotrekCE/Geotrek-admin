@@ -45,7 +45,7 @@ class TouristicContentViewsTests(CommonTest):
         self.modelfactory.create()
         CityFactory.create(name="Are", code='09000',
                            geom=MultiPolygon(Polygon(((0, 0), (300, 0), (300, 100), (200, 100), (0, 0)),
-                                                            )))
+                                                     srid=settings.SRID)))
         CityFactory.create(name="Nor", code='09001',
                            geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)),
                                                      srid=settings.SRID)))

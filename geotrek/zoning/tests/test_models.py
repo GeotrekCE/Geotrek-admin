@@ -174,7 +174,7 @@ class ZoningModelsTest(TestCase):
     def test_city(self):
         city = CityFactory.create(name="Are", code='09000',
                                   geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)),
-                                               srid=settings.SRID)))
+                                                            srid=settings.SRID)))
         self.assertEqual(str(city), "Are")
 
     def test_city_edge(self):
