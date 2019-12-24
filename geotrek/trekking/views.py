@@ -469,7 +469,7 @@ class TrekInfrastructureViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         pk = self.kwargs['pk']
         trek = get_object_or_404(Trek.objects.existing(), pk=pk)
-        if not self.request.user.has_perm('trekking.read_infrastructure') and not trek.is_public():
+        if not self.request.user.has_perm('infrastructure.read_infrastructure') and not trek.is_public():
             raise Http404
         return trek.infrastructures.filter(published=True).transform(settings.API_SRID, field_name='geom')
 
