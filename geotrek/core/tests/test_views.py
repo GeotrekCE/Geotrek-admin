@@ -470,6 +470,15 @@ class PathViewsTest(CommonTest):
         self.assertIn('success', response.json())
         self.logout()
 
+    def test_merge_works_wrong_structure(self):
+        self.login()
+        other_structure = StructureFactory(name="Other")
+        p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
+        p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)), structure=other_structure)
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
+        self.assertEqual({'error': "You don't have the right to change these paths"}, response.json())
+        self.logout()
+
     def test_merge_works_other_line(self):
         self.login()
         p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))

@@ -1,5 +1,5 @@
 from io import StringIO
-from unittest import skipIf
+from unittest import mock, skipIf
 
 from django.conf import settings
 from django.contrib.gis.geos import LineString
