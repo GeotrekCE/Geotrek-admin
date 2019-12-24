@@ -210,3 +210,12 @@ class LoadPathsCommandTest(TestCase):
         output = StringIO()
         with self.assertRaises(IntegrityError):
             call_command('loadpaths', filename, '-i', verbosity=2, stdout=output)
+
+    @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, -1, 1, 5))
+    def test_load_paths_within_spatial_extent_no_srid_geom(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'paths_no_srid.shp')
+        call_command('loadpaths', filename, srid=4326, verbosity=0)
+        self.assertEqual(Path.objects.count(), 1)
+        value = Path.objects.first()
+        self.assertEqual(value.name, 'lulu')
+        self.assertEqual(value.structure, self.structure)
