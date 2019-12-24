@@ -17,7 +17,9 @@ INSTALLED_APPS = (
 
 INTERNAL_IPS = type(str('c'), (), {'__contains__': lambda *a: True})()
 
-MIDDLEWARE_CLASSES += (
+ALLOWED_HOSTS = ['*']
+
+MIDDLEWARE += (
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 #
