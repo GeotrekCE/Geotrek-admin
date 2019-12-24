@@ -168,6 +168,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
             else:
                 json_test_species_without_id = json_test_species.copy()
                 json_test_species_without_id['results'][0]['info_url'] = "toto.com"
+                json_test_species_without_id['results'].pop(1)
                 response.json = lambda: json_test_species_without_id
             return response
         mocked.get.side_effect = side_effect
