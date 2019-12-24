@@ -24,7 +24,7 @@ from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import SignageFactory
 from geotrek.maintenance.factories import InterventionFactory
 from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, ComfortFactory, TopologyFactory, PathAggregationFactory)
-from geotrek.zoning.factories import CityFactory
+from geotrek.zoning.factories import CityFactory, RestrictedAreaFactory, RestrictedAreaTypeFactory
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -511,6 +511,19 @@ class PathViewsTest(CommonTest):
         response = self.client.post(obj.get_update_url(), data)
         self.assertContains(response, "Please select a choice related to all structures")
         self.logout()
+
+    def test_restricted_area_urls_fragment(self):
+        area_type = RestrictedAreaTypeFactory(name="Test")
+        self.login()
+        obj = self.modelfactory()
+        response = self.client.get(obj.get_detail_url())
+        self.assertNotContains(response, '/api/restrictedarea/type/{}/restrictedarea.geojson'.format(area_type.pk))
+
+        self.restricted_area = RestrictedAreaFactory(area_type=area_type, name="Tel",
+                                                     geom=MultiPolygon(Polygon(((0, 0), (300, 0), (300, 100), (200, 100), (0, 0)),
+                                                                               srid=settings.SRID)))
+        response = self.client.get(obj.get_detail_url())
+        self.assertContains(response, '/api/restrictedarea/type/{}/restrictedarea.geojson'.format(area_type.pk))
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')

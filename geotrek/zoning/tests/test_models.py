@@ -6,8 +6,8 @@ from geotrek.core.models import Topology
 from geotrek.core.factories import PathFactory
 from geotrek.land.tests.test_views import EdgeHelperTest
 from geotrek.zoning.models import City
-from geotrek.zoning.factories import (DistrictEdgeFactory, CityEdgeFactory,
-                                      RestrictedAreaFactory, RestrictedAreaEdgeFactory)
+from geotrek.zoning.factories import (DistrictEdgeFactory, CityEdgeFactory, CityFactory, DistrictFactory,
+                                      RestrictedAreaFactory, RestrictedAreaTypeFactory, RestrictedAreaEdgeFactory)
 
 
 class CitiesEdgeTest(EdgeHelperTest):
@@ -39,7 +39,7 @@ class PathUpdateTest(TestCase):
         p1.save()
 
 
-class LandLayersUpdateTest(TestCase):
+class ZoningLayersUpdateTest(TestCase):
 
     def test_troncons_link(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (1, 1)))
@@ -168,3 +168,37 @@ class LandLayersUpdateTest(TestCase):
         self.assertEqual(Topology.objects.filter(pk=t_ra1.pk).count(), 0)
         self.assertEqual(ra2.restrictedareaedge_set.count(), 0)
         self.assertEqual(Topology.objects.filter(pk=t_ra2.pk).count(), 0)
+
+
+class ZoningModelsTest(TestCase):
+    def test_city(self):
+        city = CityFactory.create(name="Are", code='09000',
+                                  geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)),
+                                               srid=settings.SRID)))
+        self.assertEqual(str(city), "Are")
+
+    def test_city_edge(self):
+        city_edge = CityEdgeFactory()
+        self.assertEqual(str(city_edge), "City edge: {}".format(city_edge.city.name))
+
+    def test_district(self):
+        district = DistrictFactory.create(name="Lil",
+                                          geom=MultiPolygon(Polygon(((201, 0), (300, 0), (300, 100), (200, 100), (201, 0)),
+                                                                    srid=settings.SRID)))
+        self.assertEqual(str(district), "Lil")
+
+    def test_district_edge(self):
+        district_edge = DistrictEdgeFactory()
+        self.assertEqual(str(district_edge), "District edge: {}".format(district_edge.district.name))
+
+    def test_restricted_area(self):
+        area_type = RestrictedAreaTypeFactory.create(name="Test")
+        restricted_area = RestrictedAreaFactory.create(area_type=area_type, name="Tel",
+                                                       geom=MultiPolygon(Polygon(((201, 0), (300, 0), (300, 100), (200, 100), (201, 0)),
+                                                                                 srid=settings.SRID)))
+        self.assertEqual(str(restricted_area), "Test - Tel")
+
+    def test_restricted_area_edge(self):
+        restricted_area_edge = RestrictedAreaEdgeFactory()
+        self.assertEqual(str(restricted_area_edge), "Restricted area edge: {} - {}".format(restricted_area_edge.restricted_area.area_type,
+                                                                                           restricted_area_edge.restricted_area.name))

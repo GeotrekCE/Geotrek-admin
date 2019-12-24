@@ -88,6 +88,13 @@ class RestrictedAreasCommandTest(TestCase):
         self.assertEqual(RestrictedArea.objects.count(), 0)
         self.assertIn("wrong_polygon's geometry is not valid", output.getvalue())
 
+    def test_load_restricted_areas_with_line(self):
+        output = StringIO()
+        filename_line = os.path.join(os.path.dirname(__file__), 'data', 'line.geojson')
+        call_command('loadrestrictedareas', filename_line, 'type_area', name='NOM', srid=2154, verbosity=2,
+                     stdout=output)
+        self.assertIn("coucou's geometry is not a polygon", output.getvalue())
+
 
 class CitiesCommandTest(TestCase):
 
