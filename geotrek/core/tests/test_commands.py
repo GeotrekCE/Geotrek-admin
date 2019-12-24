@@ -104,6 +104,17 @@ class RemoveDuplicatePathTest(TestCase):
         self.assertIn("duplicate paths have been deleted",
                       output.getvalue())
 
+    def test_remove_duplicate_path_fail(self):
+        output = StringIO()
+        with mock.patch('geotrek.core.models.Path.delete') as mock_delete:
+            mock_delete.side_effect = Exception('An ERROR')
+            call_command('remove_duplicate_paths', verbosity=2, stdout=output)
+        self.assertIn("An ERROR", output.getvalue())
+        self.assertEqual(Path.include_invisible.count(), 9)
+        self.assertEqual(Path.objects.count(), 9)
+        self.assertIn("0 duplicate paths have been deleted",
+                      output.getvalue())
+
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class LoadPathsCommandTest(TestCase):
