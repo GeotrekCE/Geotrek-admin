@@ -16,8 +16,6 @@ class DiveViewsTests(CommonTest):
     userfactory = DivingManagerFactory
 
     def setUp(self):
-        translation.deactivate()
-
         super(DiveViewsTests, self).setUp()
 
     def get_bad_data(self):
