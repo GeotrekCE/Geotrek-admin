@@ -14,9 +14,10 @@ coverage==4.5.3
 cryptography==2.8
 cssselect2==0.2.2
 defusedxml==0.6.0
-Django==1.11.28
+# Django==1.11.28
+Django==2.0.*
 django-appconf==1.0.3
-django-appypod==2.0.2
+django-appypod==2.0.4
 django-celery-results==1.0.1
 django-colorfield==0.1.15
 django-compressor==2.4
@@ -28,7 +29,7 @@ django-extensions==2.1.9
 django-filter==2.2.0
 django-geojson==2.11.0
 git+https://github.com/GeotrekCE/django-leaflet.git@0.19.0+geotrek4#egg=django-leaflet
-git+https://github.com/makinacorpus/django-modeltranslation.git@master#egg=django-modeltranslation
+django-modeltranslation==0.13.4
 django-multiselectfield==0.1.5
 django-rest-swagger==2.2.0
 django-tinymce==2.8.0
@@ -57,7 +58,7 @@ Jinja2==2.11.1
 kombu==4.6.7
 landez==2.5.0
 lxml==4.2.1
-mapentity==6.0.5
+mapentity==6.1.0
 MarkupSafe==1.1.1
 mbutil==0.3.0
 mccabe==0.6.1
