@@ -133,6 +133,21 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
             call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
 
     @mock.patch('geotrek.sensitivity.parsers.requests')
+    def test_status_code_404_practice(self, mocked):
+        def side_effect(url):
+            response = requests.Response()
+            if 'in_bbox' in url:
+                response.status_code = 404
+                response.url = "https://rhododendron.com"
+            else:
+                response.status_code = 200
+                response.json = lambda: {"results": []}
+            return response
+        mocked.get.side_effect = side_effect
+        with self.assertRaisesRegexp(CommandError, "Failed to download https://rhododendron.com. HTTP status code 404"):
+            call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
+
+    @mock.patch('geotrek.sensitivity.parsers.requests')
     def test_create_no_id(self, mocked):
         def side_effect(url):
             response = requests.Response()
