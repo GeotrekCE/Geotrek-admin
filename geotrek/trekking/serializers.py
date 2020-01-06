@@ -511,7 +511,7 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
             if not self.exclude_pois:
                 if trek.published_pois:
                     self.xml.startElement('pois', {})
-                    self.serialize_pois(trek.published_pois.annotate(transform=Transform('geom', 4326)))
+                    self.serialize_pois(trek.published_pois.annotate(transformed_geom=Transform('geom', 4326)))
                     self.xml.endElement('pois')
             self.xml.endElement('circuit')
         self.xml.endElement('circuits')

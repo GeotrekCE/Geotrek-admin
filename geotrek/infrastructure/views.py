@@ -81,4 +81,4 @@ class InfrastructureViewSet(MapEntityViewSet):
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
-        return Infrastructure.objects.existing().filter(published=True).annotate(transform=Transform("geom", settings.API_SRID))
+        return Infrastructure.objects.existing().filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))

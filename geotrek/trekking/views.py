@@ -410,7 +410,7 @@ class TrekViewSet(MapEntityViewSet):
         if 'portal' in self.request.GET:
             qs = qs.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
 
-        qs = qs.annotate(transform=Transform("geom", settings.API_SRID))
+        qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
 
         return qs
 
@@ -421,7 +421,7 @@ class POIViewSet(MapEntityViewSet):
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
-        return POI.objects.existing().filter(published=True).annotate(transform=Transform("geom", settings.API_SRID))
+        return POI.objects.existing().filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
 class TrekPOIViewSet(viewsets.ModelViewSet):
@@ -438,7 +438,7 @@ class TrekPOIViewSet(viewsets.ModelViewSet):
         trek = get_object_or_404(Trek.objects.existing(), pk=pk)
         if not self.request.user.has_perm('trekking.read_poi') and not trek.is_public():
             raise Http404
-        return trek.pois.filter(published=True).annotate(transform=Transform("geom", settings.API_SRID))
+        return trek.pois.filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
 class TrekSignageViewSet(viewsets.ModelViewSet):
@@ -455,7 +455,7 @@ class TrekSignageViewSet(viewsets.ModelViewSet):
         trek = get_object_or_404(Trek.objects.existing(), pk=pk)
         if not self.request.user.has_perm('trekking.read_signage') and not trek.is_public():
             raise Http404
-        return trek.signages.filter(published=True).annotate(transform=Transform("geom", settings.API_SRID))
+        return trek.signages.filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
 class TrekInfrastructureViewSet(viewsets.ModelViewSet):
@@ -472,7 +472,7 @@ class TrekInfrastructureViewSet(viewsets.ModelViewSet):
         trek = get_object_or_404(Trek.objects.existing(), pk=pk)
         if not self.request.user.has_perm('infrastructure.read_infrastructure') and not trek.is_public():
             raise Http404
-        return trek.infrastructures.filter(published=True).annotate(transform=Transform("geom", settings.API_SRID))
+        return trek.infrastructures.filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
 class ServiceLayer(MapEntityLayer):
@@ -533,7 +533,7 @@ class ServiceViewSet(MapEntityViewSet):
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
-        return Service.objects.existing().filter(type__published=True).annotate(transform=Transform("geom", settings.API_SRID))
+        return Service.objects.existing().filter(type__published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
 class TrekServiceViewSet(viewsets.ModelViewSet):
@@ -550,7 +550,7 @@ class TrekServiceViewSet(viewsets.ModelViewSet):
         trek = get_object_or_404(Trek.objects.existing(), pk=pk)
         if not self.request.user.has_perm('trekking.read_service') and not trek.is_public():
             raise Http404
-        return trek.services.filter(type__published=True).annotate(transform=Transform("geom", settings.API_SRID))
+        return trek.services.filter(type__published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
 class CirkwiTrekView(ListView):

@@ -168,7 +168,7 @@ class DiveViewSet(MapEntityViewSet):
         if 'portal' in self.request.GET:
             qs = qs.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
 
-        qs = qs.annotate(transform=Transform("geom", settings.API_SRID))
+        qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
 
         return qs
 
@@ -187,7 +187,7 @@ class DivePOIViewSet(viewsets.ModelViewSet):
         dive = get_object_or_404(Dive.objects.existing(), pk=pk)
         if not dive.is_public():
             raise Http404
-        return dive.pois.filter(published=True).annotate(transform=Transform("geom", settings.API_SRID))
+        return dive.pois.filter(published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
 class DiveServiceViewSet(viewsets.ModelViewSet):
@@ -204,7 +204,7 @@ class DiveServiceViewSet(viewsets.ModelViewSet):
         dive = get_object_or_404(Dive.objects.existing(), pk=pk)
         if not dive.is_public():
             raise Http404
-        return dive.services.filter(type__published=True).annotate(transform=Transform("geom", settings.API_SRID))
+        return dive.services.filter(type__published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
 
 # Translations for public PDF
 # translation.ugettext_noop("...")
