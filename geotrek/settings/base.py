@@ -232,7 +232,6 @@ TEMPLATES = [
 ]
 
 MIDDLEWARE = (
-    # 'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'geotrek.authent.middleware.LocaleForcedMiddleware',

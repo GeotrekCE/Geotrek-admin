@@ -503,7 +503,7 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         mocke.return_value = StreamingHttpResponse()
         TrekWithPublishedPOIsFactory.create(published_fr=True)
         management.call_command('sync_mobile', 'var/tmp', url='http://localhost:8000',
-                                skip_tiles=True, skip_pdf=True, verbosity=2, stdout=output)
+                                skip_tiles=True, verbosity=2, stdout=output)
         self.assertTrue(os.path.exists(os.path.join('var/tmp/en', 'treks.geojson')))
 
     def test_indent(self):
@@ -511,7 +511,7 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         output = StringIO()
         TrekWithPublishedPOIsFactory.create(published_fr=True)
         management.call_command('sync_mobile', 'var/tmp', url='http://localhost:8000',
-                                skip_tiles=True, skip_pdf=True, verbosity=2, indent=indent, stdout=output)
+                                skip_tiles=True, verbosity=2, indent=indent, stdout=output)
         with open(os.path.join('var/tmp/en', 'treks.geojson')) as f:
             # without indent the json is in one line
             json_file = f.readlines()
@@ -523,7 +523,7 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
     def test_object_without_pictogram(self):
         pictogram_name_before = os.path.basename(self.touristic_event.type.pictogram.name)
         management.call_command('sync_mobile', 'var/tmp', url='http://localhost:8000',
-                                skip_tiles=True, skip_pdf=True, verbosity=0)
+                                skip_tiles=True, verbosity=0)
         self.assertIn(pictogram_name_before, os.listdir('var/tmp/nolang/media/upload'))
 
         for event_type in TouristicEventType.objects.all():
@@ -531,13 +531,13 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
             event_type.save()
 
         management.call_command('sync_mobile', 'var/tmp', url='http://localhost:8000',
-                                skip_tiles=True, skip_pdf=True, verbosity=0)
+                                skip_tiles=True, verbosity=0)
         self.assertNotIn(pictogram_name_before, os.listdir('var/tmp/nolang/media/upload'))
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_multilinestring(self):
         TrekFactory.create(geom=MultiLineString(LineString((0, 0), (0, 1)), LineString((100, 100), (100, 101))))
-        management.call_command('sync_mobile', 'var/tmp', url='http://localhost:8000', skip_tiles=True, skip_pdf=True,
+        management.call_command('sync_mobile', 'var/tmp', url='http://localhost:8000', skip_tiles=True,
                                 verbosity=0)
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             with open(os.path.join('var/tmp', lang, 'treks.geojson'), 'r') as f:

@@ -40,7 +40,6 @@ docs/_build/
 /pyvenv.cfg
 /.env
 /docker-compose.yml
-/src/
 
 # Packaging
 /debian/.debhelper/

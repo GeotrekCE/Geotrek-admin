@@ -8,7 +8,6 @@ from django.conf import settings
 
 class Command(BaseCommand):
     help = 'Load Districts from a file within the spatial extent\n'
-    stealth_options = ('code',)
 
     def add_arguments(self, parser):
         parser.add_argument('file_path', help="File's path of the districts")

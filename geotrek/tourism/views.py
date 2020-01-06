@@ -351,6 +351,7 @@ class TrekInformationDeskViewSet(viewsets.ModelViewSet):
         return trek.information_desks.all().annotate(transform=Transform("geom", settings.API_SRID))
 
 
+class TrekTouristicContentViewSet(viewsets.ModelViewSet):
     model = TouristicContent
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 

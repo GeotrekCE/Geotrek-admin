@@ -33,8 +33,6 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    stealth_options = ('skip_pdf',)
-
     def add_arguments(self, parser):
         parser.add_argument('path')
         parser.add_argument('--languages', '-l', dest='languages', default='', help='Languages to sync')
