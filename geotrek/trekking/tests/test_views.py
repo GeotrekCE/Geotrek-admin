@@ -1416,3 +1416,13 @@ class SyncRandoViewTest(TestCase):
         self.assertEqual(task.status, "SUCCESS")
         if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
             shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
+
+    @mock.patch('geotrek.trekking.management.commands.sync_rando.Command.handle', return_value=None,
+                side_effect=Exception('This is a test'))
+    @mock.patch('sys.stdout', new_callable=StringIO)
+    def test_launch_sync_rando_fail(self, mocked_stdout, command):
+        task = launch_sync_rando.apply()
+        log = mocked_stdout.getvalue()
+        self.assertNotIn("Done", log)
+        self.assertNotIn('Sync rando ended', log)
+        self.assertEqual(task.status, "FAILURE")
