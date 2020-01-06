@@ -56,6 +56,20 @@ class SyncMobileViewTest(TestCase):
         self.assertRedirects(response, '/login/?next=/api/mobile/commands/statesync/')
 
     @patch('sys.stdout', new_callable=StringIO)
+    @override_settings(CELERY_ALWAYS_EAGER=False,
+                       SYNC_MOBILE_ROOT='tmp', SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000',
+                                                                    'skip_tiles': True, 'skip_pdf': True,
+                                                                    'skip_dem': True, 'skip_profile_png': True})
+    def test_get_sync_mobile_states_superuser_with_sync_mobile(self, mocked_stdout):
+        self.client.login(username='admin', password='super')
+        if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
+            shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
+        launch_sync_mobile.apply()
+        response = self.client.post(reverse('apimobile:sync_mobiles_state'), data={})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'"infos": "Sync mobile ended"', response.content)
+
+    @patch('sys.stdout', new_callable=StringIO)
     @override_settings(SYNC_MOBILE_ROOT='tmp', SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000',
                                                                     'skip_tiles': True, 'skip_pdf': True,
                                                                     'skip_dem': True, 'skip_profile_png': True})
