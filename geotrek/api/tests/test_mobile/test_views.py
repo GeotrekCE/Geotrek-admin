@@ -1,9 +1,10 @@
 from io import StringIO
-from mock import patch
+from unittest.mock import patch
 import os
 import shutil
 
 from django.test import TestCase
+from django.test.utils import override_settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
@@ -55,10 +56,12 @@ class SyncMobileViewTest(TestCase):
         self.assertRedirects(response, '/login/?next=/api/mobile/commands/statesync/')
 
     @patch('sys.stdout', new_callable=StringIO)
+    @override_settings(SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000', 'skip_tiles': True, 'skip_pdf': True,
+                                            'skip_dem': True, 'skip_profile_png': True})
     def test_launch_sync_mobile(self, mocked_stdout):
         if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
             shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
-        task = launch_sync_mobile.apply(kwargs={'url': 'http://localhost:8000', 'skip_tiles': True, 'skip_pdf': True})
+        task = launch_sync_mobile.apply()
         log = mocked_stdout.getvalue()
         self.assertIn("Done", log)
         self.assertIn('Sync mobile ended', log)
@@ -69,9 +72,8 @@ class SyncMobileViewTest(TestCase):
     @patch('geotrek.api.management.commands.sync_mobile.Command.handle', return_value=None,
            side_effect=Exception('This is a test'))
     @patch('sys.stdout', new_callable=StringIO)
-    def test_launch_sync_rando(self, mocked_stdout, ccommand):
-        task = launch_sync_mobile.apply(kwargs={'url': 'http://localhost:8000', 'skip_tiles': True, 'skip_pdf': True,
-                                                'skip_dem': True, 'skip_profile_png': True})
+    def test_launch_sync_rando(self, mocked_stdout, command):
+        task = launch_sync_mobile.apply()
         log = mocked_stdout.getvalue()
         self.assertNotIn("Done", log)
         self.assertNotIn('Sync mobile ended', log)

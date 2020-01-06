@@ -1405,6 +1405,8 @@ class SyncRandoViewTest(TestCase):
         self.assertRedirects(response, '/login/?next=/commands/statesync/')
 
     @mock.patch('sys.stdout', new_callable=StringIO)
+    @override_settings(SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000', 'skip_tiles': True, 'skip_pdf': True,
+                                           'skip_dem': True, 'skip_profile_png': True})
     def test_launch_sync_rando(self, mocked_stdout):
         if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
             shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))

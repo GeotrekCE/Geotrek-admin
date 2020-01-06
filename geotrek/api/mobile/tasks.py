@@ -32,11 +32,10 @@ def launch_sync_mobile(*args, **kwargs):
             'url': kwargs.get('url'),
         }
         sync_mobile_options.update(settings.SYNC_MOBILE_OPTIONS)
-
         call_command(
             'sync_mobile',
             settings.SYNC_MOBILE_ROOT,
-            verbosity='2',
+            verbosity=2,
             task=current_task,
             **sync_mobile_options
         )
