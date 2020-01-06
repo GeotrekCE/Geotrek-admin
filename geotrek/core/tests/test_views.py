@@ -24,7 +24,7 @@ from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import SignageFactory
 from geotrek.maintenance.factories import InterventionFactory
 from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, ComfortFactory, TopologyFactory, PathAggregationFactory)
-from geotrek.zoning.factories import CityFactory, RestrictedAreaFactory, RestrictedAreaTypeFactory
+from geotrek.zoning.factories import CityFactory, DistrictFactory, RestrictedAreaFactory, RestrictedAreaTypeFactory
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -268,10 +268,29 @@ class PathViewsTest(CommonTest):
         self.login()
         p1 = PathFactory(geom=LineString((0, 0), (0, 1000), srid=settings.SRID))
         city = CityFactory(code='09000', geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)), srid=settings.SRID)))
-        self.assertEqual(p1.aggregations.count(), 0)
+        city2 = CityFactory(code='09001', geom=MultiPolygon(
+            Polygon(((0, 0), (1000, 0), (1000, 1000), (0, 1000), (0, 0)), srid=settings.SRID)))
+        self.assertEqual(p1.aggregations.count(), 1)
         response = self.client.get('/api/path/paths.json?city=%s' % city.code)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['sumPath'], 0.0)
+        response = self.client.get('/api/path/paths.json?city=%s' % city2.code)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['sumPath'], 1.0)
+
+    def test_sum_path_filter_districts(self):
+        self.login()
+        p1 = PathFactory(geom=LineString((0, 0), (0, 1000), srid=settings.SRID))
+        district = DistrictFactory(geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)), srid=settings.SRID)))
+        district2 = DistrictFactory(geom=MultiPolygon(
+            Polygon(((0, 0), (1000, 0), (1000, 1000), (0, 1000), (0, 0)), srid=settings.SRID)))
+        self.assertEqual(p1.aggregations.count(), 1)
+        response = self.client.get('/api/path/paths.json?district=%s' % district.pk)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['sumPath'], 0.0)
+        response = self.client.get('/api/path/paths.json?district=%s' % district2.pk)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['sumPath'], 1.0)
 
     def test_merge_fails_parameters(self):
         """
