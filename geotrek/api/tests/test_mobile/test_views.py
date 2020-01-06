@@ -68,7 +68,7 @@ class SyncMobileViewTest(TestCase):
 
     @patch('geotrek.api.management.commands.sync_mobile.Command.handle', return_value=None,
            side_effect=Exception('This is a test'))
-    @patch('sys.stdout', new_callable=BytesIO)
+    @patch('sys.stdout', new_callable=StringIO)
     def test_launch_sync_rando(self, mocked_stdout, ccommand):
         task = launch_sync_mobile.apply(kwargs={'url': 'http://localhost:8000', 'skip_tiles': True, 'skip_pdf': True,
                                                 'skip_dem': True, 'skip_profile_png': True})
