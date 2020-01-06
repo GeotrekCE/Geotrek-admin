@@ -92,8 +92,8 @@ class Level(OptionalPictogramMixin):
         super(Level, self).save(*args, **kwargs)
 
 
-class Dive(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-           TimeStampedModelMixin, PicturesMixin, NoDeleteMixin):
+class Dive(NoDeleteMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
+           TimeStampedModelMixin, PicturesMixin):
     description_teaser = models.TextField(verbose_name=_("Description teaser"), blank=True,
                                           help_text=_("A brief summary"))
     description = models.TextField(verbose_name=_("Description"), blank=True,
@@ -116,8 +116,6 @@ class Dive(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
     source = models.ManyToManyField('common.RecordSource', blank=True, related_name='dives', verbose_name=_("Source"))
     portal = models.ManyToManyField('common.TargetPortal', blank=True, related_name='dives', verbose_name=_("Portal"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
-
-    objects = Topology.get_manager_cls(models.Manager)()
 
     category_id_prefix = 'D'
 

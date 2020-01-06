@@ -330,9 +330,6 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
     offset = models.FloatField(default=0.0, verbose_name=_("Offset"))  # in SRID units
     kind = models.CharField(editable=False, verbose_name=_("Kind"), max_length=32)
 
-    # Override default manager
-    objects = NoDeleteMixin.get_manager_cls(models.Manager)()
-
     geom = models.GeometryField(editable=(not settings.TREKKING_TOPOLOGY_ENABLED),
                                 srid=settings.SRID, null=True,
                                 default=None, spatial_index=False)
@@ -641,8 +638,6 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
         verbose_name = _("Trail")
         verbose_name_plural = _("Trails")
         ordering = ['name']
-
-    objects = Topology.get_manager_cls(models.Manager)()
 
     def __str__(self):
         return self.name

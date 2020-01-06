@@ -37,8 +37,18 @@ class TimeStampedModelMixin(models.Model):
         return self
 
 
+class NoDeleteManager(DefaultManager):
+    # Use this manager when walking through FK/M2M relationships
+    use_for_related_fields = True
+
+    # Filter out deleted objects
+    def existing(self):
+        return self.get_queryset().filter(deleted=False)
+
+
 class NoDeleteMixin(models.Model):
     deleted = models.BooleanField(editable=False, default=False, verbose_name=_("Deleted"))
+    objects = NoDeleteManager()
 
     def delete(self, force=False, using=None, **kwargs):
         if force:
@@ -55,19 +65,6 @@ class NoDeleteMixin(models.Model):
         """
         self.deleted = fromdb.deleted
         return self
-
-    @classmethod
-    def get_manager_cls(cls, parent_mgr_cls=DefaultManager):
-
-        class NoDeleteManager(parent_mgr_cls):
-            # Use this manager when walking through FK/M2M relationships
-            use_for_related_fields = True
-
-            # Filter out deleted objects
-            def existing(self):
-                return self.get_queryset().filter(deleted=False)
-
-        return NoDeleteManager
 
 
 class PicturesMixin(object):

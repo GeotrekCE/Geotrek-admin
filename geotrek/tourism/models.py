@@ -264,8 +264,6 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
                                       blank=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
 
-    objects = NoDeleteMixin.get_manager_cls(models.Manager)()
-
     class Meta:
         verbose_name = _("Touristic content")
         verbose_name_plural = _("Touristic contents")
@@ -372,8 +370,6 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
                                     verbose_name=_("Portal"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
-
-    objects = NoDeleteMixin.get_manager_cls(models.Manager)()
 
     category_id_prefix = 'E'
 

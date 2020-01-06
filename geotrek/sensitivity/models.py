@@ -81,8 +81,6 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
     contact = models.TextField(verbose_name=_("Contact"), blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
-    objects = NoDeleteMixin.get_manager_cls(models.Manager)()
-
     class Meta:
         verbose_name = _("Sensitive area")
         verbose_name_plural = _("Sensitive areas")

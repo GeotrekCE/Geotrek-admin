@@ -13,13 +13,13 @@ from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.core.models import Topology, Path, Trail
 from geotrek.common.models import Organism
-from geotrek.common.mixins import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin
+from geotrek.common.mixins import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin, NoDeleteManager
 from geotrek.common.utils import classproperty
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.signage.models import Signage
 
 
-class InterventionManager(models.Manager):
+class InterventionManager(NoDeleteManager):
     def all_years(self):
         return self.existing().filter(date__isnull=False).annotate(year=ExtractYear('date')) \
             .order_by('-year').values_list('year', flat=True).distinct()
@@ -68,7 +68,6 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     description = models.TextField(blank=True, verbose_name=_("Description"), help_text=_("Remarks and notes"))
 
     objects = InterventionManager()
-
     class Meta:
         verbose_name = _("Intervention")
         verbose_name_plural = _("Interventions")
@@ -381,7 +380,7 @@ class ManDay(models.Model):
         return str(self.nb_days)
 
 
-class ProjectManager(models.Manager):
+class ProjectManager(NoDeleteManager):
     def all_years(self):
         all_years = list(self.existing().exclude(begin_year=None).values_list('begin_year', flat=True))
         all_years += list(self.existing().exclude(end_year=None).values_list('end_year', flat=True))
@@ -414,7 +413,7 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
     founders = models.ManyToManyField(Organism, through='Funding', verbose_name=_("Founders"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
-    objects = NoDeleteMixin.get_manager_cls(ProjectManager)()
+    objects = ProjectManager()
 
     class Meta:
         verbose_name = _("Project")

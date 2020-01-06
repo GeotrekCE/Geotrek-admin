@@ -44,7 +44,6 @@ class StructureRelated(models.Model):
     structure = models.ForeignKey(Structure, default=default_structure_pk, on_delete=models.CASCADE,
                                   verbose_name=_("Related structure"))
 
-    objects = models.Manager()
     check_structure_in_forms = True
 
     def same_structure(self, user):

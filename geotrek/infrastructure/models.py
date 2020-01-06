@@ -2,7 +2,6 @@ import os
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.gis.db import models as gismodels
 from django.conf import settings
 
 from extended_choices import Choices
@@ -11,7 +10,7 @@ from mapentity.models import MapEntityMixin
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
-from geotrek.common.mixins import BasePublishableMixin, OptionalPictogramMixin
+from geotrek.common.mixins import BasePublishableMixin, OptionalPictogramMixin, NoDeleteManager
 
 
 INFRASTRUCTURE_TYPES = Choices(
@@ -107,7 +106,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
         return _("Cities")
 
 
-class InfrastructureGISManager(gismodels.Manager):
+class InfrastructureGISManager(NoDeleteManager):
     """ Overide default typology mixin manager"""
     def all_implantation_years(self):
         all_years = self.get_queryset().filter(implantation_year__isnull=False)\
@@ -118,7 +117,7 @@ class InfrastructureGISManager(gismodels.Manager):
 class Infrastructure(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is not of type SIGNAGE """
     type = models.ForeignKey(InfrastructureType, verbose_name=_("Type"), on_delete=models.CASCADE)
-    objects = BaseInfrastructure.get_manager_cls(InfrastructureGISManager)()
+    objects = InfrastructureGISManager()
 
     class Meta:
         verbose_name = _("Infrastructure")

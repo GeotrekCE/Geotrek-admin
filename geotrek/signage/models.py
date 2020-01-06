@@ -2,13 +2,12 @@ import os
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _, pgettext_lazy
-from django.contrib.gis.db import models as gismodels
 from django.conf import settings
 
 from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureOrNoneRelated, StructureRelated
-from geotrek.common.mixins import NoDeleteMixin, OptionalPictogramMixin
+from geotrek.common.mixins import NoDeleteMixin, OptionalPictogramMixin, NoDeleteManager
 from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty, format_coordinates
 from geotrek.core.models import Topology, Path
@@ -51,7 +50,7 @@ class SignageType(StructureOrNoneRelated, OptionalPictogramMixin):
         return os.path.join(settings.STATIC_URL, 'signage/picto-signage.png')
 
 
-class SignageGISManager(gismodels.Manager):
+class SignageGISManager(NoDeleteManager):
     """ Overide default typology mixin manager, and filter by type. """
     def all_implantation_years(self):
         all_years = self.get_queryset().filter(implantation_year__isnull=False)\
@@ -61,7 +60,7 @@ class SignageGISManager(gismodels.Manager):
 
 class Signage(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is of type SIGNAGE """
-    objects = BaseInfrastructure.get_manager_cls(SignageGISManager)()
+    objects = SignageGISManager()
     code = models.CharField(verbose_name=_("Code"), max_length=250, blank=True, null=True)
     manager = models.ForeignKey(Organism, verbose_name=_("Manager"), null=True, blank=True, on_delete=models.CASCADE)
     sealing = models.ForeignKey(Sealing, verbose_name=_("Sealing"), null=True, blank=True, on_delete=models.CASCADE)
@@ -140,10 +139,6 @@ class Color(models.Model):
         return self.label
 
 
-class BladeManager(gismodels.Manager):
-    pass
-
-
 class BladeType(StructureOrNoneRelated):
     """ Types of blades"""
     label = models.CharField(max_length=128)
@@ -169,7 +164,6 @@ class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
     condition = models.ForeignKey(InfrastructureCondition, verbose_name=_("Condition"),
                                   null=True, blank=True, on_delete=models.PROTECT)
     topology = models.ForeignKey(Topology, related_name="blades_set", verbose_name=_("Blades"), on_delete=models.CASCADE)
-    objects = NoDeleteMixin.get_manager_cls(BladeManager)()
 
     class Meta:
         verbose_name = _("Blade")
