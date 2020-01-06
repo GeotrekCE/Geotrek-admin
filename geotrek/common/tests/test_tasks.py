@@ -82,7 +82,6 @@ class TasksTest(TestCase):
 
         task = import_datas_from_web.s(url="http://url_test.com", name='TouristicEventApidaeParser',
                                        module='geotrek.tourism.parsers').apply()
-        log = mock.getvalue()
         self.assertEqual(TouristicEvent.objects.count(), 1)
         event = TouristicEvent.objects.get()
         self.assertEqual(event.eid, "323154")
