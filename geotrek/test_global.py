@@ -1,4 +1,4 @@
-from mock import patch
+from unittest.mock import patch
 from StringIO import StringIO
 
 from geotrek.celery import debug_task
