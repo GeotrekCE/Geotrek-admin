@@ -71,9 +71,9 @@ class GeotrekPublishedFilter(BaseFilterBackend):
         qs = queryset
         published = request.GET.get('published', 'true')
 
-        if str(published).lower() == 'true':
+        if published.lower() == 'true':
             published = True
-        elif str(published).lower() == 'false':
+        elif published.lower() == 'false':
             published = False
         else:
             published = None
