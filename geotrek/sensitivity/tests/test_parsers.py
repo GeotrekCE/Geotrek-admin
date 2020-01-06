@@ -8,6 +8,7 @@ from django.core.management.base import CommandError
 from django.test import TestCase
 
 from geotrek.common.tests import TranslationResetMixin
+from geotrek.sensitivity.parsers import BiodivParser
 from geotrek.sensitivity.models import SportPractice, Species, SensitiveArea
 from geotrek.sensitivity.factories import SpeciesFactory, SportPracticeFactory
 
@@ -22,6 +23,30 @@ json_test_sport_practice = {
             "name": {
                 "fr": "Terrestre",
                 "en": "Land",
+                "it": None,
+            },
+        },
+    ],
+}
+
+json_test_sport_practice_2 = {
+    "count": 2,
+    "next": None,
+    "previous": None,
+    "results": [
+        {
+            "id": 1,
+            "name": {
+                "fr": "Terrestre",
+                "en": "Land",
+                "it": None,
+            },
+        },
+        {
+            "id": 2,
+            "name": {
+                "fr": "Aerien",
+                "en": "Air",
                 "it": None,
             },
         },
@@ -86,6 +111,10 @@ json_test_species = {
 }
 
 
+class BiodivWithPracticeParser(BiodivParser):
+    practices = "1"
+
+
 class BiodivParserTests(TranslationResetMixin, TestCase):
     @mock.patch('geotrek.sensitivity.parsers.requests')
     def test_create(self, mocked):
@@ -121,6 +150,20 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(area_2.description_fr, "Blabla2")
         self.assertEqual(area_2.eid, '2')
         self.assertEqual(area_2.geom.geom_type, 'MultiPolygon')
+
+    @mock.patch('geotrek.sensitivity.parsers.requests')
+    def test_create_with_practice(self, mocked):
+        def side_effect(url):
+            response = requests.Response()
+            response.status_code = 200
+            if 'sportpractice' in url:
+                response.json = lambda: json_test_sport_practice_2
+            else:
+                response.json = lambda: json_test_species
+            return response
+        mocked.get.side_effect = side_effect
+        call_command('import', 'geotrek.sensitivity.tests.test_parsers.BiodivWithPracticeParser', verbosity=0)
+        self.assertEqual(SportPractice.objects.count(), 2)
 
     @mock.patch('geotrek.sensitivity.parsers.requests')
     def test_status_code_404(self, mocked):
