@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.conf.urls import url
+from django.urls import path
 
 from mapentity.registry import registry
 
@@ -20,11 +20,11 @@ class SensitiveAreaEntityOptions(PublishableEntityOptions):
 
 app_name = 'sensitivity'
 urlpatterns = [
-    url(r'^api/(?P<lang>\w\w)/sensitiveareas/(?P<pk>\d+).kml$',
-        views.SensitiveAreaKMLDetail.as_view(), name="sensitivearea_kml_detail"),
+    path('api/<str:lang>/sensitiveareas/<int:pk>.kml',
+         views.SensitiveAreaKMLDetail.as_view(), name="sensitivearea_kml_detail"),
 ]
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
-    urlpatterns.append(url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/sensitiveareas\.geojson$',
-                           views.TrekSensitiveAreaViewSet.as_view({'get': 'list'}),
-                           name="trek_sensitivearea_geojson"))
+    urlpatterns.append(path('api/<str:lang>/treks/<int:pk>/sensitiveareas.geojson',
+                            views.TrekSensitiveAreaViewSet.as_view({'get': 'list'}),
+                            name="trek_sensitivearea_geojson"))
 urlpatterns += registry.register(models.SensitiveArea, SensitiveAreaEntityOptions)

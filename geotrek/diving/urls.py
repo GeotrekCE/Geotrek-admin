@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.conf.urls import url
+from django.urls import path
 
 from mapentity.registry import registry
 
@@ -11,11 +11,11 @@ from .views import DiveMapImage, DivePOIViewSet, DiveServiceViewSet
 
 app_name = 'diving'
 urlpatterns = [
-    url(r'^image/dive-(?P<pk>\d+)-(?P<lang>\w\w).png$', DiveMapImage.as_view(), name='dive_map_image'),
-    url(r'^api/(?P<lang>\w\w)/dives/(?P<pk>\d+)/pois\.geojson$', DivePOIViewSet.as_view({'get': 'list'}),
-        name="dive_poi_geojson"),
-    url(r'^api/(?P<lang>\w\w)/dives/(?P<pk>\d+)/services\.geojson$', DiveServiceViewSet.as_view({'get': 'list'}),
-        name="dive_service_geojson"),
+    path('image/dive-<int:pk>-<str:lang>.png', DiveMapImage.as_view(), name='dive_map_image'),
+    path('api/<str:lang>/dives/<int:pk>/pois.geojson', DivePOIViewSet.as_view({'get': 'list'}),
+         name="dive_poi_geojson"),
+    path('api/<str:lang>/dives/<int:pk>/services.geojson', DiveServiceViewSet.as_view({'get': 'list'}),
+         name="dive_service_geojson"),
 ]
 
 

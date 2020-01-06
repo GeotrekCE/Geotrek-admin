@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.conf.urls import url
+from django.urls import path
 
 from mapentity.registry import registry
 
@@ -10,6 +10,6 @@ app_name = 'signage'
 urlpatterns = registry.register(models.Signage, menu=settings.SIGNAGE_MODEL_ENABLED)
 urlpatterns += registry.register(models.Blade, menu=False)
 urlpatterns += [
-    url(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/signages\.geojson$',
-        TrekSignageViewSet.as_view({'get': 'list'}), name="trek_signage_geojson"),
+    path('api/<str:lang>/treks/<int:pk>/signages.geojson',
+         TrekSignageViewSet.as_view({'get': 'list'}), name="trek_signage_geojson"),
 ]
