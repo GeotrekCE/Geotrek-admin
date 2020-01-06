@@ -1405,14 +1405,15 @@ class SyncRandoViewTest(TestCase):
         self.assertRedirects(response, '/login/?next=/commands/statesync/')
 
     @mock.patch('sys.stdout', new_callable=StringIO)
-    @override_settings(SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000', 'skip_tiles': True, 'skip_pdf': True,
-                                           'skip_dem': True, 'skip_profile_png': True})
+    @override_settings(SYNC_RANDO_ROOT='tmp', SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000', 'skip_tiles': True,
+                                                                  'skip_pdf': True,
+                                                                  'skip_dem': True, 'skip_profile_png': True})
     def test_launch_sync_rando(self, mocked_stdout):
         if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
             shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
-        task = launch_sync_rando.apply(kwargs={'url': "http://localhost:8000", 'skip_tiles': True, 'skip_pdf': True,
-                                               'skip_dem': True, 'skip_profile_png': True})
-        self.assertIn("Done", mocked_stdout.getvalue())
+        task = launch_sync_rando.apply()
+        log = mocked_stdout.getvalue()
+        self.assertIn("Done", log)
         self.assertEqual(task.status, "SUCCESS")
         if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
             shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
@@ -1421,6 +1422,19 @@ class SyncRandoViewTest(TestCase):
                 side_effect=Exception('This is a test'))
     @mock.patch('sys.stdout', new_callable=StringIO)
     def test_launch_sync_rando_fail(self, mocked_stdout, command):
+        task = launch_sync_rando.apply()
+        log = mocked_stdout.getvalue()
+        self.assertNotIn("Done", log)
+        self.assertNotIn('Sync rando ended', log)
+        self.assertEqual(task.status, "FAILURE")
+
+    @mock.patch('geotrek.trekking.management.commands.sync_rando.Command.handle', return_value=None,
+                side_effect=Exception('This is a test'))
+    @override_settings(SYNC_RANDO_ROOT='tmp')
+    @mock.patch('sys.stdout', new_callable=StringIO)
+    def test_launch_sync_rando_no_rando_root(self, mocked_stdout, command):
+        if os.path.exists('tmp'):
+            shutil.rmtree('tmp')
         task = launch_sync_rando.apply()
         log = mocked_stdout.getvalue()
         self.assertNotIn("Done", log)
