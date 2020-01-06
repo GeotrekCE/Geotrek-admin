@@ -1,7 +1,13 @@
+from io import StringIO
+import json
+import os
+from unittest.mock import patch
+
 from django.test import TestCase
 from geotrek.common.tasks import import_datas, import_datas_from_web
-from geotrek.common.models import Organism
+from geotrek.common.models import Organism, FileType
 from geotrek.common.parsers import ExcelParser, GlobalImportError
+from geotrek.tourism.models import TouristicEvent
 
 
 class OrganismParser(ExcelParser):
@@ -48,3 +54,36 @@ class TasksTest(TestCase):
             name='OrganismParser',
             module='geotrek.common.tests.test_tasks'
         )
+
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_import_data_task(self, mock):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
+        task = import_datas.s(filename=filename, name='OrganismParser', module='geotrek.common.tests.test_tasks').apply()
+        log = mock.getvalue()
+        self.assertEqual(Organism.objects.count(), 1)
+        organism = Organism.objects.get()
+        self.assertEqual(organism.organism, "Comité Théodule")
+        self.assertEqual("100%", log)
+        self.assertEqual(task.status, "SUCCESS")
+
+    @patch('requests.get')
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_import_data_from_web_task(self, mock, mocked):
+        def mocked_json():
+
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeEvent.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        mocked.return_value.content = b'Fake image'
+        FileType.objects.create(type="Photographie")
+
+        task = import_datas_from_web.s(url="http://url_test.com", name='TouristicEventApidaeParser',
+                                       module='geotrek.tourism.parsers').apply()
+        log = mock.getvalue()
+        self.assertEqual(TouristicEvent.objects.count(), 1)
+        event = TouristicEvent.objects.get()
+        self.assertEqual(event.eid, "323154")
+        self.assertEqual(task.status, "SUCCESS")
