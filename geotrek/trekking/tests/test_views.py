@@ -1405,6 +1405,36 @@ class SyncRandoViewTest(TestCase):
         self.assertRedirects(response, '/login/?next=/commands/statesync/')
 
     @mock.patch('sys.stdout', new_callable=StringIO)
+    @override_settings(CELERY_ALWAYS_EAGER=False,
+                       SYNC_RANDO_ROOT='tmp', SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000',
+                                                                  'skip_tiles': True, 'skip_pdf': True,
+                                                                  'skip_dem': True, 'skip_profile_png': True})
+    def test_get_sync_rando_states_superuser_with_sync_rando(self, mocked_stdout):
+        self.client.login(username='admin', password='super')
+        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
+            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
+        launch_sync_rando.apply()
+        response = self.client.post(reverse('trekking:sync_randos_state'), data={})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'"infos": "Sync ended"', response.content)
+
+    @mock.patch('sys.stdout', new_callable=StringIO)
+    @mock.patch('geotrek.trekking.management.commands.sync_rando.Command.handle', return_value=None,
+                side_effect=Exception('This is a test'))
+    @override_settings(CELERY_ALWAYS_EAGER=False,
+                       SYNC_RANDO_ROOT='tmp', SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000',
+                                                                  'skip_tiles': True, 'skip_pdf': True,
+                                                                  'skip_dem': True, 'skip_profile_png': True})
+    def test_get_sync_mobile_states_superuser_with_sync_mobile_fail(self, mocked_stdout, command):
+        self.client.login(username='admin', password='super')
+        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
+            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
+        launch_sync_rando.apply()
+        response = self.client.post(reverse('trekking:sync_randos_state'), data={})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'"exc_message": "This is a test"', response.content)
+
+    @mock.patch('sys.stdout', new_callable=StringIO)
     @override_settings(SYNC_RANDO_ROOT='tmp', SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000', 'skip_tiles': True,
                                                                   'skip_pdf': True,
                                                                   'skip_dem': True, 'skip_profile_png': True})
@@ -1425,7 +1455,7 @@ class SyncRandoViewTest(TestCase):
         task = launch_sync_rando.apply()
         log = mocked_stdout.getvalue()
         self.assertNotIn("Done", log)
-        self.assertNotIn('Sync rando ended', log)
+        self.assertNotIn('Sync ended', log)
         self.assertEqual(task.status, "FAILURE")
 
     @mock.patch('geotrek.trekking.management.commands.sync_rando.Command.handle', return_value=None,

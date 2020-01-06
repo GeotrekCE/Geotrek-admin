@@ -7,8 +7,10 @@ from django.conf import settings
 from django.core.management import call_command
 from django.utils.translation import ugettext as _
 
+from geotrek.common.tasks import GeotrekImportTask
 
-@shared_task(name='geotrek.api.mobile.sync-mobile')
+
+@shared_task(base=GeotrekImportTask, name='geotrek.api.mobile.sync-mobile')
 def launch_sync_mobile(*args, **kwargs):
     """
     celery shared task - sync mobile command

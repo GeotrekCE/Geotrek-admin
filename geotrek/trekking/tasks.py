@@ -1,12 +1,14 @@
 import os
 
+from geotrek.common.tasks import GeotrekImportTask
+
 from celery import shared_task, current_task
 from django.conf import settings
 from django.core.management import call_command
 from django.utils.translation import ugettext as _
 
 
-@shared_task(name='geotrek.trekking.sync-rando')
+@shared_task(base=GeotrekImportTask, name='geotrek.trekking.sync-rando')
 def launch_sync_rando(*args, **kwargs):
     """
     celery shared task - sync rando command
