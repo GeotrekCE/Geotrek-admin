@@ -9,6 +9,7 @@ import zipfile
 
 from django.test import TestCase
 from django.conf import settings
+from django.contrib.gis.geos import LineString
 from django.core import management
 from django.core.management.base import CommandError
 from django.http import HttpResponse, StreamingHttpResponse
@@ -16,6 +17,7 @@ from django.test.utils import override_settings
 
 from geotrek.common.factories import FileTypeFactory, RecordSourceFactory, TargetPortalFactory, AttachmentFactory, ThemeFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_file
+from geotrek.core.factories import PathFactory
 from geotrek.diving.factories import DiveFactory, PracticeFactory as PracticeDiveFactory
 from geotrek.diving.models import Dive
 from geotrek.infrastructure.factories import InfrastructureFactory
@@ -31,16 +33,29 @@ class SyncRandoTilesTest(TestCase):
     def setUpClass(cls):
         super(SyncRandoTilesTest, cls).setUpClass()
 
+    @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
     @mock.patch('landez.TilesManager.tile', return_value=b'I am a png')
-    @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
     def test_tiles(self, mock_tileslist, mock_tiles):
         output = StringIO()
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', languages='en', verbosity=2, stdout=output)
+        trek_multi = TrekFactory.create(published=True, no_path=True)
+        p = PathFactory.create(geom=LineString((0, 0), (0, 10)))
+        trek_multi.add_path(p, start=0.0, end=0.1)
+        trek_multi.add_path(p, start=0.2, end=0.3)
+        trek_multi.save()
+        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', languages='en', verbosity=2,
+                                stdout=output)
         zfile = zipfile.ZipFile(os.path.join('tmp', 'zip', 'tiles', 'global.zip'))
         for finfo in zfile.infolist():
-            ifile = zfile.open(finfo)
-            self.assertEqual(ifile.read(), b'I am a png')
-        self.assertIn("zip/tiles/global.zip", output.getvalue())
+            ifile_global = zfile.open(finfo)
+            if ifile_global.name.startswith('tiles/'):
+                self.assertEqual(ifile_global.readline(), b'I am a png')
+        zfile_trek = zipfile.ZipFile(os.path.join('tmp', 'zip', 'tiles', '{}.zip'.format(trek_multi.pk)))
+        for finfo in zfile_trek.infolist():
+            ifile_trek = zfile_trek.open(finfo)
+            if ifile_trek.name.startswith('tiles/'):
+                self.assertEqual(ifile_trek.readline(), b'I am a png')
+        self.assertIn("tiles/global.zip", output.getvalue())
+        self.assertIn("tiles/{pk}.zip".format(pk=trek_multi.pk), output.getvalue())
 
     @mock.patch('landez.TilesManager.tile', return_value='Error')
     @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
