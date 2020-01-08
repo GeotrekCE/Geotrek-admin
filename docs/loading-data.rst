@@ -11,7 +11,7 @@ Load basic data :
 
 ::
 
-    docker-compose run web initial.sh
+    ./scripts/load_data.sh
 
 :note:
 
@@ -23,7 +23,7 @@ Required Super User
 
 .. code-block:: bash
 
-    docker-compose run web ./manage.py createsuperuser
+    ./manage.py createsuperuser
 
 
 You will be prompted to enter an username, a password and mail address for your super user.
@@ -82,7 +82,7 @@ And use the Geotrek command to load it into PostGIS :
 
 ::
 
-    docker-compose run web ./manage.py loaddem <PATH>/dem.tif
+    ./manage.py loaddem <PATH>/dem.tif
 
 
 :note:

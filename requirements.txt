@@ -1,6 +1,5 @@
 # base
 Django==1.11.*
-gdal==2.2.4 --global-option=build_ext --global-option="-I/usr/include/gdal/"
 # modeltranslation must be place before mapentity to override its dependencies
 git+https://github.com/makinacorpus/django-modeltranslation.git@master#egg=modeltranslation
 # leaflet must be place before mapentity to override its dependencies
@@ -36,7 +35,9 @@ lxml==4.2.1
 Pillow==6.2.0
 paperclip==2.2.2
 factory_boy==2.8.1
+env-file==2019.4.13
 # dev & test
+flake8==3.7.9
 django-debug-toolbar==1.10.*
 django-extensions==2.1.*
 python-memcached==1.59
@@ -45,6 +46,6 @@ cairosvg==2.4.2
 django-colorfield==0.1.15
 coverage==4.5.3
 # prod
-gunicorn
+gunicorn==20.0.4
 raven
 venusian==1.2.0

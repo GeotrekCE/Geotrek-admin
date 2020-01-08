@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#!/usr/bin/env bash
+"exec" "`dirname $0`/env/bin/python" "$0" "$@"
 import os
 import sys
 

@@ -33,7 +33,7 @@ Then set up appropriate values:
 You can duplicate the class. Each class must have a different name.
 Don't forget the u character before strings if they contain non-ascii characters.
 
-To apply changes, you may have to run ``sudo supervisorctl restart all``.
+To apply changes, you may have to run ``make restart``.
 
 Configure Marque Esprit Parc import
 -----------------------------------
@@ -102,7 +102,7 @@ Just run:
 
 ::
 
-    ./bin/django import bulkimport.parsers.HebergementParser
+    ./manage.py import bulkimport.parsers.HebergementParser
 
 Change the last element ``HebergementParser`` to match one of the class names in ``var/conf/parsers.py`` file.
 You can add ``-v2`` parameter to make the command more verbose (show progress).
@@ -122,12 +122,12 @@ To list all Geotrek commands available:
 
 ::
 
-    ./bin/django
+    ./manage.py
     
 To get help about a command:
 
 ::
 
-    ./bin/django help <subcommand>
+    ./manage.py help <subcommand>
     
-Example: ``./bin/django help loadpoi``
+Example: ``./manage.py help loadpoi``

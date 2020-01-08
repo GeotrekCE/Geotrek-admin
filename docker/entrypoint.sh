@@ -14,7 +14,7 @@ mkdir -p /app/src/var/static \
 
 # if not custom.py present, create it
 if [ ! -f /app/src/var/conf/custom.py ]; then
-    cp /app/src/geotrek/settings/custom.py.dist /app/src/var/conf/custom.py
+    touch /app/src/var/conf/custom.py
 fi
 
 # if not parsers.py present, create it
@@ -34,8 +34,12 @@ fi
 # Activate venv
 . env/bin/activate
 
-# Defaults POSTGRES_HOST to Docker host IP
-export POSTGRES_HOST=${POSTGRES_HOST:-`ip route | grep default | sed 's/.* \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\) .*/\1/'`}
+# Set POSTGRES_HOST to Docker host IP instead of localhost
+echo -e "\nPOSTGRES_HOST=$POSTGRES_HOST"
+if [ "$POSTGRES_HOST" = "localhost" ]; then
+    export POSTGRES_HOST=`ip route | grep default | sed 's/.* \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\) .*/\1/'`
+fi
+echo "POSTGRES_HOST=$POSTGRES_HOST"
 
 # Defaults SECRET_KEY to a random value
 SECRET_KEY_FILE=/app/src/var/conf/secret_key

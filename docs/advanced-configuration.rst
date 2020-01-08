@@ -4,23 +4,8 @@
 ADVANCED CONFIGURATION
 ======================
 
-Custom setting file
--------------------
-
-Geotrek configuration is currently restricted to values present in ``.env`` and ``var/conf/custom.py``.
-
-However, it is still possible to all django or geotrek settings in custom.py :
-
-.. code-block :: python
-
-    from .prod import *
-
-    # My custom value
-    HIDDEN_OPTION = 3.14
-
-All overridable setting can be found in geotrek/settings.base.py
-
-* As for any change in ``custom.py``, re-run ``sudo systemctl restart geotrek``.
+All overridable settings can be found in geotrek/settings/base.py
+After any change, run ``make restart``.
 
 
 Disable modules and components
@@ -93,13 +78,13 @@ add the following code:
     # Enable diving module
     INSTALLED_APPS += ('geotrek.diving', )
 
-Then run ``make env_standalone deploy``.
+Then run ``make restart``.
 
 You can also insert diving minimal data (default practices, difficulties, levels and group permissions values):
 
 ::
 
-    ./bin/django loaddata geotrek/diving/fixtures/basic.json
+    ./manage.py loaddata geotrek/diving/fixtures/basic.json
     cp geotrek/diving/fixtures/upload/* var/media/upload/
 
 WYSIWYG editor configuration
@@ -173,7 +158,8 @@ External authent
 
 You can authenticate user against a remote database table or view. 
 
-To enable this feature, fill *authent_dbname* and other fields in ``etc/settings.ini``.
+To enable this feature, fill *AUTHENT_DATABASE* and *AUTHENT_TABLENAME* in ``var/conf/custom.py``,
+and add the line ``AUTHENTICATION_BACKENDS = ('geotrek.authent.backend.DatabaseBackend',)``
 
 Expected columns in table/view are :
 
@@ -315,8 +301,8 @@ Create the custom translations destination folder:
 
 ::
 
-     cd  <geotrek-admin-folder>/geotrek/
-     mkdir -p locale/en/LC_MESSAGES
+     cd  <geotrek-admin-folder>/var/conf
+     mkdir -p extra_locale/en/LC_MESSAGES
 
 Then create a ``django.po`` file in this directory. You can do one folder and one ``django.po`` file for each language (example  ``<geotrek-admin-folder>/geotrek/locale/fr/LC_MESSAGES/django.po`` for French translation overriding)
 
@@ -357,14 +343,8 @@ Apply changes :
 ::
 
     cd <geotrek-admin-folder>
-    make env_standalone deploy
+    make update
 
-
-WARNING: Documentation to be updated. Geotrek-admin now uses Weasyprint to create public PDF based on HTML templates
-and no more on ODT templates. Default HTML templates are in ``geotrek/trekking/templates/`` and can be copied in ``var/conf/extra_templates/`` with same path and file names to be overriden.
-
-Copy the file ``geotrek/trekking/templates/trekking/trek_public.odt`` to
-``var/conf/extra_templates/trekking/trek_public.odt``.
 
 Override public pdf templates
 -----------------------------
@@ -476,16 +456,6 @@ A simple way to achieve this is to install one instance with everything
 as usual (*standalone*), and plug the other instances on its underlying services.
 
 
-Database
-~~~~~~~~
-
-Geotrek stack come with its own database within its docker-compose.yml file
-
-You can use own external postgis enabled database by adjust your settings in ``.env``
-
-Then delete postgres section in docker-compose.yml
-
-
 Capture and conversion
 ~~~~~~~~~~~~~~~~~~~~~~
 If you want to use external services,
@@ -498,8 +468,6 @@ In ``.env``, add following variables:
     CAPTURE_PORT=XX
     CONVERSION_HOST=x.x.x.x
     CONVERSION_PORT=XX
-
-Then, you can delete all screamshotter and convertit references in docker-compose.yml
 
 
 Shutdown useless services
@@ -520,9 +488,16 @@ Control number of workers and request timeouts
 
 By default, the application runs on 4 processes, and timeouts after 30 seconds.
 
-To control those values, edit and fix your docker-compose.yml file in web and api section
+To control those values, edit and fix your custom.py file
 
 ::
+    GUNICORN_CONF = {
+        'app': {'WORKERS': 4, 'TIMEOUT': 300},
+        'api': {'WORKERS': 4, 'TIMEOUT': 300},
+        'screamshotter': {'WORKERS': 4, 'TIMEOUT': 300},
+        'convertit': {'WORKERS': 4, 'TIMEOUT': 300},
+    }
+
 
 To know how many workers you should set, please refer to `gunicorn documentation <http://gunicorn-docs.readthedocs.org/en/latest/design.html#how-many-workers>`_.
 

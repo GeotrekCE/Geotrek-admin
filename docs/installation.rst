@@ -8,192 +8,281 @@ For a developer instance, please follow  :ref:`the dedicated procedure <developm
 Requirements
 ------------
 
+* Ubuntu Server 18.04 LTS Bionic Beaver (http://releases.ubuntu.com/18.04/) or
+  Ubuntu Server 16.04 Xenial Xerus (http://releases.ubuntu.com/16.04/)
+
+
 A first estimation of minimal required system resources are :
 
-2 cores
-4 Go RAM
-20 Go disk space
+* 2 cores
+* 4 Go RAM
+* 20 Go disk space
+
 For big instances required system resources are :
 
-4 cores
-8 Go RAM or more
-50 Go disk space or more (20 Go + estimated size of attached files like photos, including elements imported from SIT)
+* 4 cores
+* 8 Go RAM or more
+* 50 Go disk space or more (20 Go + estimated size of attached files like photos, including elements imported from SIT)
 
 
 Installation
 ------------
-**INSTALL DOCKER AND DOCKER-COMPOSE**
+Once the OS is installed (basic installation, with OpenSSH server), log in with your linux user (not root). 
+You will also need unzip and wget (``sudo apt-get install unzip wget``).
 
-Check your linux distribution :
-
-::
-
-    sudo cat /etc/issue
-
-Find the most adequate docker install in :
-https://docs.docker.com/install/
-Example ubuntu :
-https://docs.docker.com/install/linux/docker-ce/ubuntu/
-
-And docker-compose :
-https://docs.docker.com/compose/install/#install-compose
-
-
-
-Once the OS is installed (basic installation), log in with an other user (not root).
-
-   You should not launch docker with root.
-
-
-**CREATE THE FOLDER OF YOUR INSTANCE**
+Make sure you are in the user folder :
 
 ::
 
-    mkdir /path/of/your/instance/geotrek
-    cd  /path/of/your/instance/geotrek
+    cd /home/mylinuxuser
 
-*Later in this install /path/of/your/instance/geotrek is /srv/geotrek*
-
-**FIX RIGHTS**
-
-Fix rights and log in with your user for all operations
+Download the latest version of Geotrek-admin with the following commands (X.Y.Z to replace 
+with the latest stable version number : https://github.com/GeotrekCE/Geotrek-admin/releases) :
 
 ::
 
-    chown -R geotrek:geotrek /srv/geotrek
-    su - geotrek
+    wget https://github.com/GeotrekCE/Geotrek-admin/archive/X.Y.Z.zip
 
-**GET YOUR DOCKER-COMPOSE**
+Unzip the archive of Geotrek-admin
 
 ::
 
-    wget https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/docker-integration/install/docker-compose.yml
+    unzip Geotrek-admin-X.Y.Z.zip
+    
+You can rename Geotrek-admin-X.Y.Z folder to Geotrek-admin
 
+Go into Geotrek-admin folder and launch its installation
 
-**CREATE ENVIRONMENT OF INSTALL**
-
-In your instance folder create a ``.env`` file
-
-In this example : the server is inside a container of docker. You may want to use a remote database server (separate) or a locale one.
-Change POSTGRES_HOST and every information about POSTGRES and PGPORT
 ::
 
-    GEOTREK_VERSION=<VERSION OF GEOTREK>  # Check changelog
-    POSTGRES_HOST=postgres
-    POSTGRES_USER=<your_personnal_database_user>
-    POSTGRES_DB=<your_personnal_database_user>
-    POSTGRES_PASSWORD=<your_personnal_database_password>
-    ALLOWED_HOSTS=<your.geotrek.com>
-    SECRET_KEY=<your_personnal_secret_key>
-    PGPORT=5432
-    REDIS_HOST=redis
-    REDIS_PORT=6379
-    REDIS_DB=0
-    CONVERSION_HOST=convertit
-    CONVERSION_PORT=6543
-    CAPTURE_HOST=screamshotter
-    CAPTURE_PORT=8000
-    GUNICORN_TIMEOUT=60
+    cd Geotrek-admin
+    ./install.sh
+
+You will be prompted for base configuration variables:
+* Domain name
+* PostgreSQL access
+* Geographic projection
+* Your organization name
+* Spatial extent
+* Languages and time zone
+* Email
 
 :notes:
-    In order to use a remote database server (*recommended*), set the appropriate values
+
+    If you leave *localhost* for the database host, a
+    Postgresql with PostGis will be installed locally.
+
+    In order to use a remote server (*recommended*), set the appropriate values
     for the connection.
     The connection must be operational (it will be tested during install).
-    *make sure postgresql > 9.3 and postgis > 2.1*
-    Add these environment variables :
-
-        POSTGRES_HOST=<your_host_or_ip>
-        PGPORT=<your_port>
-
-    *and comment postgresql section in docker-compose.yml*
-
-        volumes:
-            postgres:
 
 
-**CREATE THE VAR FOLDER**
+To make sure the application runs well after a reboot, try now : ``sudo reboot``.
+And access the application ``http://yourserver/``.
 
-::
-
-    mkdir -p var
-    docker-compose run web /bin/sh -c exit
-
-**EDIT YOUR CUSTOM.py FILE**
-
-The custom.py file is in ``var/conf``
-Set at least MODELTRANSLATION_LANGUAGES / SRID / SPATIAL_EXTENT / DEFAULT_STRUCTURE_NAME
-
-::
-
-    cd ./var/conf
-    sudo editor custom.py
-
-     _________________________________________________________
-
-        MODELTRANSLATION_LANGUAGES = ('en', 'fr', 'it', 'es')
-
-        SRID = 2154
-
-        SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
-
-        DEFAULT_STRUCTURE_NAME = 'Principale'
+You will be prompted for login, jump to :ref:`loading data section <loading data>`,
+to create the admin user and fill the database with your data!
 
 
-**INITIATE DATABASE**
+Software update
+---------------
+
+WARNING:
+
+Intermediate versions are required to upgrade your instance.
+
+If your version is < 2.13.1, you need to install this version.
+
+If your version is < 2.16.3, you need to install this version
+
+All versions are published on `the Github forge <https://github.com/GeotrekCE/Geotrek-admin/releases>`_.
+Download and extract the new version in a separate folder (**recommended**).
+
+.. code-block:: bash
+
+    wget https://github.com/GeotrekCE/Geotrek-admin/archive/X.Y.Z.zip
+    unzip X.Y.Z.zip
+    cd Geotrek-X.Y.Z/
+
+Before upgrading, **READ CAREFULLY** the release notes, either from the ``docs/changelog.rst``
+files `or online <https://github.com/GeotrekCE/Geotrek-admin/releases>`_.
+
+Shutdown previous running version :
 
 ::
 
-    docker-compose run postgres -d
-
-**INITIATE REQUIRED DATAS** *WARNING Only from scratch*
-
-::
-    docker-compose run web initial.sh
+    # Shutdown previous version
+    sudo supervisorctl stop all
 
 
-**CREATE USER**
+Copy your old configuration and uploaded files to your new folder.
 
 ::
 
-    docker-compose run web ./manage.py createsuperuser
+    # Uploaded files
+    cp -aR ../previous-version/var/ .
 
 
-**INSTALL GEOTREK AS SERVICE**
-
-Use this example : ``install/geotrek.service``
-
-::
-
-    wget https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/docker-integration/install/geotrek.service
-
-Modify line :
+Deploy the new version :
 
 ::
 
-    WorkingDirectory=<absolute path of your instance>
+    # Re-run install
+    ./install.sh
+
+    # Empty cache
+    sudo service memcached restart
 
 
-Enable it
+Check the version on the login page !
+
+
+:note:
+
+    Shutting down the current instance may not be necessary. But this allows us to
+    keep a generic software update procedure.
+
+    If you don't want to interrupt the service, skip the ``stop`` step, at your own risk.
+
+
+Check out the :ref:`troubleshooting page<troubleshooting-section>` for common problems.
+
+
+Software update from 2.32.3 or less to 2.33.0 or more
+-----------------------------------------------------
+
+If you upgrade from 2.32.3 or less to 2.33.0 or more, configuration scheme changed.
+Before running ./install.sh You'll have to copy some other files:
 
 ::
 
-    sudo cp geotrek.service /etc/systemd/system/geotrek.service
-    sudo systemctl enable geotrek
+    mkdir -p var/conf/extra_static/
 
-**USE SSL**
+    # If you have advanced settings
+    cp ../previous-version/geotrek/settings/custom.py var/conf/custom.py
 
-Put your certificate and key in this folder
-Uncomment and edit docker-compose.yml nginx section
-Edit custom.py (uncomment SESSION_COOKIE_SECURE = True, CSRF_COOKIE_SECURE = True)
-Edit your geotrek_nginx.conf with mounted path of your files
+    # If you have import parsers
+    cp ../previous-version/bulkimport/parsers.py var/conf/parsers.py
 
+    # If you have custom translations
+    cp -aR ../previous-version/geotrek/locale/ var/conf/extra_locale
 
-**RUN, STOP, UPDATE GEOTREK**
+    # If you have custom templates
+    cp -aR ../previous-version/var/media/templates/ ./var/conf/extra_templates/
 
-For run, stop or after any update your geotrek instance do this command.
+    # If you have custom logos
+    cp ../previous-version/var/media/upload/favicon.png var/conf/extra_static/
+    cp ../previous-version/var/media/upload/logo-login.png var/conf/extra_static/
+    cp ../previous-version/var/media/upload/logo-header.png var/conf/extra_static/
+
+Then, remove the line `from .prod import *` from the top of `var/conf/custom.py`.
+
+Then, add to this file:
 
 ::
 
-    sudo systemctl start geotrek
-    sudo systemctl stop geotrek
+    SRID = 2154
+    DEFAULT_STRUCTURE_NAME = 'PNX'
+    SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
+    LANGUAGE_CODE = 'fr'
+    MODELTRANSLATION_LANGUAGES = ('en', 'fr')
+    ADMINS = (('admin', 'root@localhost'), )
+    MANAGERS = (('manager', 'root@localhost'), )
+    TIME_ZONE = "Europe/Paris"
+    EMAIL_HOST =
+    EMAIL_HOST_USER =
+    EMAIL_HOST_PASSWORD =
+    EMAIL_HOST_PORT =
+    EMAIL_USE_TLS = FALSE
+    EMAIL_USE_SSL = FALSE
 
+And replace values by your own configuration. This replaces the old etc/settings.ini file.
+
+
+Server migration
+----------------
+
+It is a new installation with an additional backup/restore and a file transfert
+in between. The commands below are examples to adapt to your actual configuration
+(server names, database configuration).
+
+Backup settings, media files and database on the old server:
+
+::
+
+    cd Geotrek
+    sudo -u postgres pg_dump -Fc geotrekdb > geotrekdb.backup
+    tar cvzf data.tgz geotrekdb.backup var/conf/ var/media/paperclip/ var/media/upload/
+
+Get and unzip Geotrek sources on the new server:
+
+::
+
+    wget https://github.com/GeotrekCE/Geotrek-admin/archive/2.0.0.zip
+    unzip 2.0.0.zip
+    mv Geotrek-2.0.0 Geotrek
+    cd Geotrek
+
+Restore files on the new server:
+
+::
+
+    scp old_server:Geotrek/data.tgz .
+    tar xvzf data.tgz
+
+Then edit `var/conf/custom.py` to update ALLOWED_HOSTS variable IGN key.
+
+Install Geotrek on the new server:
+
+::
+
+    ./install.sh
+
+Restore database on the new server:
+
+::
+
+    sudo supervisorctl stop all
+    sudo -u postgres psql -c "drop database geotrekdb;"
+    sudo -u postgres psql -c "create database geotrekdb owner geotrek;"
+    sudo -u postgres pg_restore -d geotrekdb geotrekdb.backup
+    ./scripts/update.sh
+    sudo supervisorctl start all
+
+
+Tips and Tricks
+---------------
+
+* Use symlinks for uploaded files and cached tiles to avoid duplicating them on disk:
+
+::
+
+    mv var/tiles ~/tiles
+    ln -s ~/tiles `pwd`/var/tiles
+
+    mv var/media ~/media
+    ln -s ~/media `pwd`/var/media
+
+
+* Speed-up upgrades by caching downloads :
+
+::
+
+    mkdir ~/downloads
+    mkdir  ~/.buildout
+
+Create ``/home/sentiers/.buildout/default.cfg`` with ::
+
+    [buildout]
+    download-cache = /home/sentiers/downloads
+
+Secure your server
+------------------
+
+* Use fail2ban:
+
+::
+
+    sudo apt-get install fail2ban
+
+* Documentation : https://www.fail2ban.org/wiki/index.php/MANUAL_0_8

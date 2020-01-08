@@ -7,4 +7,4 @@ cd /app/src
 ./manage.py loaddata basic
 
 # copy media files for fixtures
-for dir in `find geotrek/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null; cp -R $dir/* /app/src/var/media/upload/ ; popd > /dev/null; done
+for dir in `find geotrek/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null; cp -R $dir/* var/media/upload/ ; popd > /dev/null; done

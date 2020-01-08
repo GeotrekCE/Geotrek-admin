@@ -1,5 +1,7 @@
+import os
 from unittest import mock
 
+from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.db import connection
 from django.test import TestCase, override_settings
@@ -52,7 +54,10 @@ class UtilsTest(TestCase):
 
     def test_create_tmp_directory(self):
         self.assertTupleEqual(
-            ('/app/src/var/tmp/bombadil', '/app/src/var/tmp/bombadil/bombadil'),
+            (
+                os.path.join(settings.VAR_DIR, 'tmp/bombadil'),
+                os.path.join(settings.VAR_DIR, 'tmp/bombadil/bombadil')
+            ),
             create_tmp_destination('bombadil')
         )
 

@@ -2,13 +2,16 @@ FROM makinacorpus/geodjango:bionic-3.6
 
 ENV ENV=prod
 ENV ALLOWED_HOSTS="localhost"
-# If POSTGRES_HOST is empty, entrypoint will set it to the IP of the docker host in the container
-ENV POSTGRES_HOST=""
+# If POSTGRES_HOST is set to localhost, entrypoint.sh will set it
+# to the IP of the docker host in the container
+ENV POSTGRES_HOST="localhost"
 ENV POSTGRES_PORT="5432"
 ENV POSTGRES_USER="geotrek"
 ENV POSTGRES_PASSWORD="geotrek"
 ENV POSTGRES_DB="geotrekdb"
-ENV CUSTOM_SETTINGS_FILE="/app/src/var/conf/custom.py"
+ENV REDIS_HOST="redis"
+ENV CONVERSION_HOST="convertit"
+ENV CAPTURE_HOST="screamshotter"
 
 WORKDIR /app/src
 
@@ -36,7 +39,9 @@ RUN apt-get update && apt-get install -y \
 
 COPY requirements.txt requirements.txt
 RUN python3 -m venv env
+RUN env/bin/pip install --upgrade pip==19.3.1
 RUN env/bin/pip install --no-cache-dir -r requirements.txt
+RUN env/bin/pip install --no-cache-dir gdal==2.2.4 --global-option=build_ext --global-option="-I/usr/include/gdal/"
 
 COPY geotrek/ geotrek/
 COPY manage.py manage.py

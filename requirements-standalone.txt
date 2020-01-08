@@ -1,0 +1,3 @@
+django-screamshot==0.8.1
+screamshotter==1.1.2
+convertit==2.2.0

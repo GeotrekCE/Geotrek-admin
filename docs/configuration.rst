@@ -128,7 +128,7 @@ be sent to the managers :
 
 ::
 
-    docker-compose run web ./manage.py test_managers_emails
+    ./manage.py test_managers_emails
 
 
 Advanced Configuration

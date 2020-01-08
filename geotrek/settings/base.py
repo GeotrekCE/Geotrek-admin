@@ -1,3 +1,4 @@
+import env_file
 import os
 import sys
 
@@ -25,13 +26,17 @@ def api_bbox(bbox, buffer):
     return tuple(native.extent)
 
 
-ALLOWED_HOSTS = []
-
 ROOT_URL = ""
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 VAR_DIR = os.path.join(BASE_DIR, 'var')
 TMP_DIR = os.path.join(VAR_DIR, 'tmp')
+
+DOT_ENV_FILE = os.path.join(BASE_DIR, '.env')
+if os.path.exists(DOT_ENV_FILE):
+    env_file.load(path=DOT_ENV_FILE)
+
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(' ')
 
 CACHE_ROOT = os.path.join(VAR_DIR, 'cache')
 
@@ -74,10 +79,10 @@ DATABASE_SCHEMAS = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.getenv('POSTGRES_DB'),
-        'USER': os.getenv('POSTGRES_USER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('POSTGRES_HOST', 'postgres'),
+        'NAME': os.getenv('POSTGRES_DB', 'geotrekdb'),
+        'USER': os.getenv('POSTGRES_USER', 'geotrek'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'geotrek'),
+        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
         'PORT': os.getenv('POSTGRES_PORT', '5432'),
         'OPTIONS': {
             'options': '-c search_path=public,%s' % ','.join(set(DATABASE_SCHEMAS.values()))
@@ -186,6 +191,13 @@ COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    try:
+        with open(os.path.join(VAR_DIR, 'conf/secret_key'), 'r') as f:
+            SECRET_KEY = f.read()
+    except FileNotFoundError:
+        pass
+
 
 TEMPLATES = [
     {
@@ -361,15 +373,37 @@ SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
 _MODELTRANSLATION_LANGUAGES = [l for l in LANGUAGES_LIST
                                if l[0] in ("en", "fr", "it", "es")]
 
+# Gunicorn config. Any change requires to generate config files again.
+GUNICORN_CONF = {
+    'app': {'WORKERS': 4, 'TIMEOUT': 300},
+    'api': {'WORKERS': 4, 'TIMEOUT': 300},
+    'screamshotter': {'WORKERS': 4, 'TIMEOUT': 300},
+    'convertit': {'WORKERS': 4, 'TIMEOUT': 300},
+}
+CONVERTIT_CONF = {
+    'HOST': os.getenv('CONVERSION_HOST', 'localhost'),
+    'PORT': os.getenv('CONVERSION_PORT', '6543')
+}
+SCREAMSHOTTER_CONF = {
+    'HOST': os.getenv('CAPTURE_HOST', 'localhost'),
+    'PORT': os.getenv('CAPTURE_PORT', '8000')
+}
+NGINX_CONF = {
+    # 'CORS': 'domain.name.of.geotrek-rando.com',
+    'SERVER_NAME': ' '.join(ALLOWED_HOSTS),
+    'PORT': 80,
+    'EXPIRETIME': '1d',
+}
+
 MAPENTITY_CONFIG = {
     'TITLE': TITLE,
     'ROOT_URL': ROOT_URL,
     'TEMP_DIR': '/tmp',
     'HISTORY_ITEMS_MAX': 7,
-    'CONVERSION_SERVER': 'http://{}:{}'.format(os.getenv('CONVERSION_HOST', 'convertit'),
-                                               os.getenv('CONVERSION_PORT', '6543')),
-    'CAPTURE_SERVER': 'http://{}:{}'.format(os.getenv('CAPTURE_HOST', 'screamshotter'),
-                                            os.getenv('CAPTURE_PORT', '8000')),
+    'CONVERSION_SERVER': 'http://{}:{}'.format(CONVERTIT_CONF['HOST'],
+                                               CONVERTIT_CONF['PORT']),
+    'CAPTURE_SERVER': 'http://{}:{}'.format(SCREAMSHOTTER_CONF['HOST'],
+                                            SCREAMSHOTTER_CONF['PORT']),
     'MAP_BACKGROUND_FOGGED': True,
     'GEOJSON_LAYERS_CACHE_BACKEND': 'fat',
     'SENDFILE_HTTP_HEADER': 'X-Accel-Redirect',
@@ -381,7 +415,7 @@ MAPENTITY_CONFIG = {
 
 DEFAULT_STRUCTURE_NAME = 'Principale'
 
-VIEWPORT_MARGIN = 0.1  # On list page, around spatial extent from settings.ini
+VIEWPORT_MARGIN = 0.1  # On list page, around spatial extent
 
 PATHS_LINE_MARKER = 'dotL'
 PATH_SNAPPING_DISTANCE = 1  # Distance of path snapping in meters
@@ -755,15 +789,17 @@ SEND_REPORT_ACK = True
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
 assert ENV in ('prod', 'dev', 'tests', 'tests_nds')
-env_settings_file = os.path.join(os.path.dirname(__file__), 'env_{}.py'.format(ENV))
+env_settings_file = os.path.join(BASE_DIR, 'geotrek/settings/env_{}.py'.format(ENV))
 with open(env_settings_file, 'r') as f:
     exec(f.read())
 
 # Override with custom settings
-custom_settings_file = os.getenv('CUSTOM_SETTINGS_FILE')
-if custom_settings_file:
+custom_settings_file = os.getenv('CUSTOM_SETTINGS_FILE', os.path.join(BASE_DIR, 'var/conf/custom.py'))
+try:
     with open(custom_settings_file, 'r') as f:
         exec(f.read())
+except FileNotFoundError:
+    pass
 
 # Computed settings takes place at the end after customization
 MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = [l for l in LANGUAGES_LIST if l[0] in MODELTRANSLATION_LANGUAGES]

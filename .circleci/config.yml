@@ -19,7 +19,7 @@ jobs:
     machine: true
     steps:
       - checkout
-      - run: make build
+      - run: docker build -t geotrek .
       - run: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
       - run: docker tag geotrek:latest geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - run: docker push geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
@@ -86,6 +86,20 @@ jobs:
       - run: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
       - run: docker push geotrekce/admin:$(cat VERSION)
       - run: docker push geotrekce/admin:latest
+  local:
+    docker:
+      - image: ubuntu:bionic
+    environment:
+      LANG: C.UTF-8
+      ENV: tests
+    steps:
+      - run: apt update
+      - run: DEBIAN_FRONTEND="noninteractive" apt install -y curl git sudo tzdata
+      - checkout
+      - run: ./install.sh --noinput
+      - run: sudo -u postgres psql -c "ALTER USER geotrek SUPERUSER;"
+      - run: sed -i "s/bind .*/bind 127.0.0.1/g" /etc/redis/redis.conf; service redis-server start
+      - run: ./manage.py test -v2 geotrek
 workflows:
   version: 2
   all:
@@ -111,3 +125,4 @@ workflows:
             branches:
               only:
                 - docker-integration
+      - local

@@ -2,6 +2,15 @@
 CHANGELOG
 =========
 
+2.33.0.dev0
+-------------------
+
+**Maintenance**
+
+- Move all configuration to var/conf. WARNING! Please read
+  carrefully documentation to upgrate to this version.
+
+
 2.32.3 (2020-01-27)
 -------------------
 

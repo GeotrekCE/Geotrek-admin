@@ -4,25 +4,6 @@
 TROUBLESHOOTING
 ===============
 
-Installation outputs a lot of database FATAL ERROR
---------------------------------------------------
-
-Data schema migrations code do not inspect the database before executing commands.
-When appropriate, errors are skipped in python code, but PostgreSQL error output still
-remains.
-
-http://south.aeracode.org/ticket/1247
-
-Installation script hangs on syncdb --migrate
----------------------------------------------
-
-This command is in charge of changing the database schema [1].
-
-Make sure you close every *pgADMIN* session on the database while upgrading.
-
-[1] http://south.aeracode.org/ticket/209
-
-
 No paths in list, where table contains records
 ----------------------------------------------
 

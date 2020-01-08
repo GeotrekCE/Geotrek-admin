@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+echo -e "\e[91m\e[1mThe command $0 is deprecated. Please use ./manage.py instead.\e[0m"
+
+exec `dirname $0`/../manage.py $*

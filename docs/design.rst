@@ -77,17 +77,6 @@ Topological path network :
 * Snap paths extremities
 
 
-Why buildout ?
---------------
-
-* Multiple sub-projects under development (*mr.developer*)
-* GDAL installation (*include-dirs*)
-* Unique and simple file for user settings input (*etc/settings.ini*)
-* Simple provisionning (*configuration templating*)
-* Python dependencies versions consistency
-* Multiple sets of dependencies (*dev, tests, prod*)
-
-
 install.sh script
 -----------------
 
@@ -96,18 +85,3 @@ install.sh script
 * Install system dependencies
 * Single tenant on dedicated server
 * Idem-potent, used for both installation and upgrade
-
-
-etc/settings.ini
-----------------
-
-* Centralize configuration values (for both Django and system configuration files)
-* Easy syntax
-* Default and overridable values (*conf/settings-default.ini*)
-
-Regarding Django settings organisation:
-
-* All application settings have a default (working) value in *settings/base.py*.
-* The mechanizm that uses *etc/settings.ini* takes place in *settings/default.py* **only**.
-  This means that other settings management can be derived from *base.py*.
-* Production settings (*settings/prod.py*) contains tweaks that are relevant in production only.

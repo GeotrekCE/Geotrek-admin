@@ -1,36 +1,39 @@
 # import os
 
+ALLOWED_HOSTS = ('localhost', )
+
+DATABASES['default']['HOST'] = 'localhost'
+DATABASES['default']['PORT'] = '5432'
+DATABASES['default']['NAME'] = 'geotrekdb'
+DATABASES['default']['USER'] = 'geotrek'
+DATABASES['default']['PASSWORD'] = 'geotrek'
+
 #
 # BASIC SETTINGS
 # ..............
-# SRID = 2154  # LAMBERT EXTENDED FOR FRANCE, used for geometric columns.
+SRID = 2154  # LAMBERT EXTENDED FOR FRANCE, used for geometric columns.
 # Must be a projection in meters Fixed at install, don't change it after
 #
-# DEFAULT_STRUCTURE_NAME = 'Principale' # -> Name for your default structure. Can be changed in geotrek admin interface
+DEFAULT_STRUCTURE_NAME = 'Principale' # -> Name for your default structure. Can be changed in geotrek admin interface
 #
-# SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
+SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
 # spatial bbox in your own projection (example here with 2154)
 # this spatial_extent will limit map exploration, and will cut your raster imports
 #
-# LANGUAGE_CODE = 'en' # for web interface. default to fr (French)
+LANGUAGE_CODE = 'en' # for web interface. default to fr (French)
 
-# MODELTRANSLATION_LANGUAGES = ('en', 'fr', 'it', 'es')
+MODELTRANSLATION_LANGUAGES = ('fr', 'en')
 # Change with your own wanted translations
 # ex: MODELTRANSLATION_LANGUAGES = ('en', 'fr', 'de', 'ne')
 
-# ADMINS = (
-#     ('admin1', 'admin1@geotrek.fr'), # change with tuple ('your name', 'your@address.mail')
-# )
+ADMINS = (('admin1', 'admin1@geotrek.fr'), )  # change with tuple ('your name', 'your@address.mail')
 # used to send error mails
 
-# MANAGERS = (
-#     ('manager1', 'manager1@geotrek.fr'), # change with tuple ('your name', 'your@address.mail')
-# )
-
+MANAGERS = (('manager1', 'manager1@geotrek.fr'), )  # change with tuple ('your name', 'your@address.mail')
 # or MANAGERS = ADMIN
 # used to send report mail
 
-# TIME_ZONE="Europe/Paris"
+TIME_ZONE = "Europe/Paris"
 # set your timezone for date format. For France, uncomment line beside
 # For other zones : find your timezone in https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 

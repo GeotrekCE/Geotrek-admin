@@ -1,41 +1,33 @@
-*.pyc
+# Downloaded files
 *.tar.gz
-*.mo
 
+# Generated files
+__pycache__/
+*.mo
+docs/_build/
+
+# Installed files
+/node_modules/
+
+# Configuration
 /var/
-/etc/
+/.env
+/docker-compose.yml
+
+# Logs
+/install.log
+
+# IDE
 /.idea/
 /.vscode/
-geotrek/settings/custom.py
-# buildout stuff
-.mr.developer.cfg
-.installed.cfg
-pip-selfcheck.json
-bin/
-downloads/
-develop-eggs/
-eggs/
-parts/
-docs/_build/
-*.egg-info/
-/node_modules/
-/salt.cfg
-
-/bulkimport/
-!/bulkimport/__init__.py
-/sync_trek/
-
 /.project
 /.pydevproject
 /.settings/
 
-/share/
-/install/*.tgz
-/install/.env
-/install/var/
+# Parsers
 /bulkimport/
 !/bulkimport/__init__.py
 
+# Venv
 /env/
-/.env
-/docker-compose.yml
+/pyvenv.cfg
