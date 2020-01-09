@@ -17,7 +17,7 @@ redis==3.2.0
 xlrd==1.1.0
 appy-python-3==2019.11.19
 landez==2.5.0
-WeasyPrint==49
+WeasyPrint==51
 beautifulsoup4==4.6.0
 pygal==2.4.0
 django-extended-choices==1.3
