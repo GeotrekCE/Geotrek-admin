@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Upgrade WeasyPrint
 
 
 2.32.1 (2019-12-20)
