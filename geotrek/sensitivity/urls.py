@@ -1,9 +1,9 @@
 from django.conf import settings
-from django.urls import path
+from django.urls import path, register_converter
 
 from mapentity.registry import registry
 
-from geotrek.common.urls import PublishableEntityOptions
+from geotrek.common.urls import PublishableEntityOptions, LangConverter
 
 from . import models
 from . import serializers
@@ -18,13 +18,15 @@ class SensitiveAreaEntityOptions(PublishableEntityOptions):
         return self.model.objects.existing()
 
 
+register_converter(LangConverter, 'lang')
+
 app_name = 'sensitivity'
 urlpatterns = [
-    path('api/<str:lang>/sensitiveareas/<int:pk>.kml',
+    path('api/<lang:lang>/sensitiveareas/<int:pk>.kml',
          views.SensitiveAreaKMLDetail.as_view(), name="sensitivearea_kml_detail"),
 ]
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
-    urlpatterns.append(path('api/<str:lang>/treks/<int:pk>/sensitiveareas.geojson',
+    urlpatterns.append(path('api/<lang:lang>/treks/<int:pk>/sensitiveareas.geojson',
                             views.TrekSensitiveAreaViewSet.as_view({'get': 'list'}),
                             name="trek_sensitivearea_geojson"))
 urlpatterns += registry.register(models.SensitiveArea, SensitiveAreaEntityOptions)

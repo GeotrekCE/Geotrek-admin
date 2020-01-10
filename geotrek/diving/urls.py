@@ -1,20 +1,21 @@
 from django.conf import settings
-from django.urls import path
+from django.urls import path, register_converter
 
 from mapentity.registry import registry
 
-from geotrek.common.urls import PublishableEntityOptions
+from geotrek.common.urls import PublishableEntityOptions, LangConverter
 
 from . import models
 from .views import DiveMapImage, DivePOIViewSet, DiveServiceViewSet
 
+register_converter(LangConverter, 'lang')
 
 app_name = 'diving'
 urlpatterns = [
-    path('image/dive-<int:pk>-<str:lang>.png', DiveMapImage.as_view(), name='dive_map_image'),
-    path('api/<str:lang>/dives/<int:pk>/pois.geojson', DivePOIViewSet.as_view({'get': 'list'}),
+    path('image/dive-<int:pk>-<lang:lang>.png', DiveMapImage.as_view(), name='dive_map_image'),
+    path('api/<lang:lang>/dives/<int:pk>/pois.geojson', DivePOIViewSet.as_view({'get': 'list'}),
          name="dive_poi_geojson"),
-    path('api/<str:lang>/dives/<int:pk>/services.geojson', DiveServiceViewSet.as_view({'get': 'list'}),
+    path('api/<lang:lang>/dives/<int:pk>/services.geojson', DiveServiceViewSet.as_view({'get': 'list'}),
          name="dive_service_geojson"),
 ]
 

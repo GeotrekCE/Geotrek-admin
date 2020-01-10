@@ -1,10 +1,10 @@
 from django.conf import settings
-from django.urls import path
+from django.urls import path, register_converter
 
 from mapentity.registry import registry
 
 from geotrek.altimetry.urls import AltimetryEntityOptions
-from geotrek.common.urls import PublishableEntityOptions
+from geotrek.common.urls import PublishableEntityOptions, LangConverter
 from mapentity.registry import MapEntityOptions
 
 from . import models
@@ -16,21 +16,22 @@ from .views import (
     sync_update_json
 )
 
+register_converter(LangConverter, 'lang')
 
 app_name = 'trekking'
 urlpatterns = [
-    path('api/<str:lang>/treks/<int:pk>/pois.geojson', TrekPOIViewSet.as_view({'get': 'list'}), name="trek_poi_geojson"),
-    path('api/<str:lang>/treks/<int:pk>/services.geojson', TrekServiceViewSet.as_view({'get': 'list'}), name="trek_service_geojson"),
-    path('api/<str:lang>/treks/<int:pk>/<slug:slug>.gpx', TrekGPXDetail.as_view(), name="trek_gpx_detail"),
-    path('api/<str:lang>/treks/<int:pk>/<slug:slug>.kml', TrekKMLDetail.as_view(), name="trek_kml_detail"),
-    path('api/<str:lang>/treks/<int:pk>/meta.html', TrekKMLDetail.as_view(), name="trek_meta"),
+    path('api/<lang:lang>/treks/<int:pk>/pois.geojson', TrekPOIViewSet.as_view({'get': 'list'}), name="trek_poi_geojson"),
+    path('api/<lang:lang>/treks/<int:pk>/services.geojson', TrekServiceViewSet.as_view({'get': 'list'}), name="trek_service_geojson"),
+    path('api/<lang:lang>/treks/<int:pk>/<slug:slug>.gpx', TrekGPXDetail.as_view(), name="trek_gpx_detail"),
+    path('api/<lang:lang>/treks/<int:pk>/<slug:slug>.kml', TrekKMLDetail.as_view(), name="trek_kml_detail"),
+    path('api/<lang:lang>/treks/<int:pk>/meta.html', TrekKMLDetail.as_view(), name="trek_meta"),
     path('popup/add/weblink/', WebLinkCreatePopup.as_view(), name='weblink_add'),
     path('api/cirkwi/circuits.xml', CirkwiTrekView.as_view()),
     path('api/cirkwi/pois.xml', CirkwiPOIView.as_view()),
     path('commands/sync', SyncRandoRedirect.as_view(), name='sync_randos'),
     path('commands/syncview', sync_view, name='sync_randos_view'),
     path('commands/statesync/', sync_update_json, name='sync_randos_state'),
-    path('image/trek-<int:pk>-<str:lang>.png', TrekMapImage.as_view(), name='trek_map_image'),
+    path('image/trek-<int:pk>-<lang:lang>.png', TrekMapImage.as_view(), name='trek_map_image'),
 ]
 
 

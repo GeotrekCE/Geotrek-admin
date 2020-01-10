@@ -22,13 +22,13 @@ class AltimetryEntityOptions(MapEntityOptions):
         """
         views = super(AltimetryEntityOptions, self).scan_views(*args, **kwargs)
         altimetry_views = [
-            path('api/<str:lang>/{modelname}s/<int:pk>/profile.json'.format(modelname=self.modelname),
+            path('api/<lang:lang>/{modelname}s/<int:pk>/profile.json'.format(modelname=self.modelname),
                  self.elevation_profile_view.as_view(model=self.model),
                  name="%s_profile" % self.modelname),
-            path('api/<str:lang>/{modelname}s/<int:pk>/dem.json'.format(modelname=self.modelname),
+            path('api/<lang:lang>/{modelname}s/<int:pk>/dem.json'.format(modelname=self.modelname),
                  self.elevation_area_view.as_view(model=self.model),
                  name="%s_elevation_area" % self.modelname),
-            path('api/<str:lang>/{modelname}s/<int:pk>/profile.svg'.format(modelname=self.modelname),
+            path('api/<lang:lang>/{modelname}s/<int:pk>/profile.svg'.format(modelname=self.modelname),
                  self.elevation_chart_view.as_view(model=self.model),
                  name='%s_profile_svg' % self.modelname),
         ]
