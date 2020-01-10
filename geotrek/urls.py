@@ -31,33 +31,33 @@ urlpatterns = [
 ]
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
-    urlpatterns.append(path('', include('geotrek.core.urls', namespace='core')))
+    urlpatterns.append(path('', include('geotrek.core.urls')))
 if 'geotrek.land' in settings.INSTALLED_APPS:
-    urlpatterns.append(path('', include('geotrek.land.urls', namespace='land')))
+    urlpatterns.append(path('', include('geotrek.land.urls')))
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
-    urlpatterns.append(path('', include('geotrek.zoning.urls', namespace='zoning')))
+    urlpatterns.append(path('', include('geotrek.zoning.urls')))
 if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
-    urlpatterns.append(path('', include('geotrek.infrastructure.urls', namespace='infrastructure')))
+    urlpatterns.append(path('', include('geotrek.infrastructure.urls')))
 if 'geotrek.signage' in settings.INSTALLED_APPS:
-    urlpatterns.append(path('', include('geotrek.signage.urls', namespace='signage')))
+    urlpatterns.append(path('', include('geotrek.signage.urls')))
 if 'geotrek.maintenance' in settings.INSTALLED_APPS:
-    urlpatterns.append(path('', include('geotrek.maintenance.urls', namespace='maintenance')))
+    urlpatterns.append(path('', include('geotrek.maintenance.urls')))
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
-    urlpatterns.append(path('', include('geotrek.trekking.urls', namespace='trekking')))
+    urlpatterns.append(path('', include('geotrek.trekking.urls')))
 if 'geotrek.diving' in settings.INSTALLED_APPS:
-    urlpatterns.append(path('', include('geotrek.diving.urls', namespace='diving')))
+    urlpatterns.append(path('', include('geotrek.diving.urls')))
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
-    urlpatterns.append(path('', include('geotrek.tourism.urls', namespace='tourism')))
+    urlpatterns.append(path('', include('geotrek.tourism.urls')))
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
-    urlpatterns.append(path('', include('geotrek.flatpages.urls', namespace='flatpages')))
+    urlpatterns.append(path('', include('geotrek.flatpages.urls')))
 if 'geotrek.feedback' in settings.INSTALLED_APPS:
-    urlpatterns.append(path('', include('geotrek.feedback.urls', namespace='feedback')))
+    urlpatterns.append(path('', include('geotrek.feedback.urls')))
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
-    urlpatterns.append(path('', include('geotrek.sensitivity.urls', namespace='sensitivity')))
+    urlpatterns.append(path('', include('geotrek.sensitivity.urls')))
 if 'geotrek.api' in settings.INSTALLED_APPS:
-    urlpatterns.append(path('api/v2/', include('geotrek.api.v2.urls', namespace='apiv2')))
+    urlpatterns.append(path('api/v2/', include('geotrek.api.v2.urls')))
     if 'geotrek.flatpages' in settings.INSTALLED_APPS and 'geotrek.trekking' in settings.INSTALLED_APPS and 'geotrek.tourism' in settings.INSTALLED_APPS:
-        urlpatterns.append(path('api/mobile/', include('geotrek.api.mobile.urls', namespace='apimobile')))
+        urlpatterns.append(path('api/mobile/', include('geotrek.api.mobile.urls')))
 
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

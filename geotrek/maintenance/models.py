@@ -68,6 +68,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     description = models.TextField(blank=True, verbose_name=_("Description"), help_text=_("Remarks and notes"))
 
     objects = InterventionManager()
+
     class Meta:
         verbose_name = _("Intervention")
         verbose_name_plural = _("Interventions")
