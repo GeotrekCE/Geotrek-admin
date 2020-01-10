@@ -107,3 +107,7 @@ workflows:
             - test
             - test_nds
             - test_js
+          filters:
+            branches:
+              only:
+                - docker-integration
