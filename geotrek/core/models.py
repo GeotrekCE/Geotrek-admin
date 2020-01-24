@@ -666,7 +666,10 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
 
     @classmethod
     def path_trails(cls, path):
-        return cls.objects.existing().filter(aggregations__path=path)
+        trails = cls.objects.existing().filter(aggregations__path=path)
+        # The following part prevents conflict with default trail ordering
+        # ProgrammingError: SELECT DISTINCT ON expressions must match initial ORDER BY expressions
+        return trails.order_by('topo_object').distinct('topo_object')
 
     def kml(self):
         """ Exports path into KML format, add geometry as linestring """
