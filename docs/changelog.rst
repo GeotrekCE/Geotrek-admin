@@ -2,12 +2,14 @@
 CHANGELOG
 =========
 
-2.32.3.dev0
+2.32.3 (2020-01-27)
 -------------------
 
 **Bug fixes**
 
--
+- Fix review, publish do not display after resave a published or without permission to publish
+- Fix attachment asterisks and crispy form
+- Display only one time the same path when on trail detail
 
 
 2.32.2 (2020-01-09)
