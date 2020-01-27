@@ -1,4 +1,5 @@
 from zipfile import is_zipfile
+from copy import deepcopy
 
 from django import forms
 from django.db.models import Q
@@ -64,6 +65,7 @@ class CommonForm(MapEntityForm):
             field.queryset = field.queryset.filter(deleted=False)
 
     def __init__(self, *args, **kwargs):
+        self.fieldslayout = deepcopy(self.fieldslayout)
         super(CommonForm, self).__init__(*args, **kwargs)
 
         self.update = kwargs.get("instance") is not None

@@ -277,8 +277,8 @@ PROJECT_APPS += (
     'django_filters',
     'tinymce',
     'geotrek.appconfig.EasyThumbnailsGeotrekConfig',  # easy_thumbnails
-    'paperclip',
     'mapentity',
+    'paperclip',  # paperclip should be load after mapentity for templates
     'leaflet',  # After mapentity to allow it to patch settings
     'rest_framework',
     'rest_framework_gis',
