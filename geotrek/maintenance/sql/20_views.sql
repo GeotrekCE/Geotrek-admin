@@ -7,7 +7,7 @@ CREATE OR REPLACE VIEW gestion.v_interventions AS (
 
 CREATE OR REPLACE VIEW gestion.v_projects AS (
 	SELECT ST_Union(t.geom) AS geom_chantier, s.*
-	FROM maintenance_intervention AS t, maintenance_project AS s
+	FROM v_interventions AS t, maintenance_project AS s
 	WHERE t.project_id = s.id
 	GROUP BY t.project_id, s.id
 );
