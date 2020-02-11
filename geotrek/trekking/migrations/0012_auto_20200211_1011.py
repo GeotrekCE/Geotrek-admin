@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 import colorfield.fields
+from django.conf import settings
 import django.contrib.gis.db.models.fields
 import django.core.validators
 from django.db import migrations, models
@@ -204,12 +205,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='trek',
             name='parking_location',
-            field=django.contrib.gis.db.models.fields.PointField(blank=True, null=True, spatial_index=False, srid=2154, verbose_name='Parking location'),
+            field=django.contrib.gis.db.models.fields.PointField(blank=True, null=True, spatial_index=False, srid=settings.SRID, verbose_name='Parking location'),
         ),
         migrations.AlterField(
             model_name='trek',
             name='points_reference',
-            field=django.contrib.gis.db.models.fields.MultiPointField(blank=True, null=True, spatial_index=False, srid=2154, verbose_name='Points of reference'),
+            field=django.contrib.gis.db.models.fields.MultiPointField(blank=True, null=True, spatial_index=False, srid=settings.SRID, verbose_name='Points of reference'),
         ),
         migrations.AlterField(
             model_name='trek',

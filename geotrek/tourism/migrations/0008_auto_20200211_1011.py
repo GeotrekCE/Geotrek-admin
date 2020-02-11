@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 import colorfield.fields
+from django.conf import settings
 import django.contrib.gis.db.models.fields
 from django.db import migrations, models
 import django.db.models.deletion
@@ -33,7 +34,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='informationdesk',
             name='geom',
-            field=django.contrib.gis.db.models.fields.PointField(blank=True, null=True, spatial_index=False, srid=2154, verbose_name='Emplacement'),
+            field=django.contrib.gis.db.models.fields.PointField(blank=True, null=True, spatial_index=False, srid=settings.SRID, verbose_name='Emplacement'),
         ),
         migrations.AlterField(
             model_name='informationdesk',
