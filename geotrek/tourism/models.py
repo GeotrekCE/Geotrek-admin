@@ -47,10 +47,9 @@ def _get_target_choices():
 
 class InformationDeskType(PictogramMixin):
 
-    label = models.CharField(verbose_name=_("Label"), max_length=128, db_column='label')
+    label = models.CharField(verbose_name=_("Label"), max_length=128)
 
     class Meta:
-        db_table = 't_b_type_renseignement'
         verbose_name = _("Information desk type")
         verbose_name_plural = _("Information desk types")
         ordering = ['label']
@@ -61,36 +60,35 @@ class InformationDeskType(PictogramMixin):
 
 class InformationDesk(models.Model):
 
-    name = models.CharField(verbose_name=_("Title"), max_length=256, db_column='nom')
+    name = models.CharField(verbose_name=_("Title"), max_length=256)
     type = models.ForeignKey(InformationDeskType, verbose_name=_("Type"),
-                             related_name='desks', db_column='type')
-    description = models.TextField(verbose_name=_("Description"), blank=True, db_column='description',
+                             related_name='desks')
+    description = models.TextField(verbose_name=_("Description"), blank=True,
                                    help_text=_("Brief description"))
     phone = models.CharField(verbose_name=_("Phone"), max_length=32,
-                             blank=True, null=True, db_column='telephone')
-    email = models.EmailField(verbose_name=_("Email"), max_length=256, db_column='email',
+                             blank=True, null=True)
+    email = models.EmailField(verbose_name=_("Email"), max_length=256,
                               blank=True, null=True)
-    website = models.URLField(verbose_name=_("Website"), max_length=256, db_column='website',
+    website = models.URLField(verbose_name=_("Website"), max_length=256,
                               blank=True, null=True)
     photo = models.FileField(verbose_name=_("Photo"), upload_to=settings.UPLOAD_DIR,
-                             db_column='photo', max_length=512, blank=True, null=True)
+                             max_length=512, blank=True, null=True)
 
     street = models.CharField(verbose_name=_("Street"), max_length=256,
-                              blank=True, null=True, db_column='rue')
+                              blank=True, null=True)
     postal_code = models.CharField(verbose_name=_("Postal code"), max_length=8,
-                                   blank=True, null=True, db_column='code')
+                                   blank=True, null=True)
     municipality = models.CharField(verbose_name=_("Municipality"),
                                     blank=True, null=True,
-                                    max_length=256, db_column='commune')
+                                    max_length=256)
 
-    geom = models.PointField(verbose_name=_("Emplacement"), db_column='geom',
+    geom = models.PointField(verbose_name=_("Emplacement"),
                              blank=True, null=True,
                              srid=settings.SRID, spatial_index=False)
 
     objects = models.GeoManager()
 
     class Meta:
-        db_table = 't_b_renseignement'
         verbose_name = _("Information desk")
         verbose_name_plural = _("Information desks")
         ordering = ['name']
@@ -168,22 +166,20 @@ GEOMETRY_TYPES = Choices(
 
 class TouristicContentCategory(PictogramMixin):
 
-    label = models.CharField(verbose_name=_("Label"), max_length=128, db_column='nom')
-    geometry_type = models.CharField(db_column="type_geometrie", max_length=16,
-                                     choices=GEOMETRY_TYPES, default=GEOMETRY_TYPES.POINT)
+    label = models.CharField(verbose_name=_("Label"), max_length=128)
+    geometry_type = models.CharField(max_length=16, choices=GEOMETRY_TYPES, default=GEOMETRY_TYPES.POINT)
     type1_label = models.CharField(verbose_name=_("First list label"), max_length=128,
-                                   db_column='label_type1', blank=True)
+                                   blank=True)
     type2_label = models.CharField(verbose_name=_("Second list label"), max_length=128,
-                                   db_column='label_type2', blank=True)
-    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True, db_column='tri',
+                                   blank=True)
+    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
                                 help_text=_("Alphabetical order if blank"))
-    color = ColorField(verbose_name=_("Color"), default='#444444', db_column='couleur',
+    color = ColorField(verbose_name=_("Color"), default='#444444',
                        help_text=_("Color of the category, only used in mobile."))  # To be implemented in Geotrek-rando
 
     id_prefix = 'C'
 
     class Meta:
-        db_table = 't_b_contenu_touristique_categorie'
         verbose_name = _("Touristic content category")
         verbose_name_plural = _("Touristic content categories")
         ordering = ['order', 'label']
@@ -198,14 +194,13 @@ class TouristicContentCategory(PictogramMixin):
 
 class TouristicContentType(OptionalPictogramMixin):
 
-    label = models.CharField(verbose_name=_("Label"), max_length=128, db_column='nom')
+    label = models.CharField(verbose_name=_("Label"), max_length=128)
     category = models.ForeignKey(TouristicContentCategory, related_name='types',
-                                 verbose_name=_("Category"), db_column='categorie')
+                                 verbose_name=_("Category"))
     # Choose in which list of choices this type will appear
-    in_list = models.IntegerField(choices=((1, _("First")), (2, _("Second"))), db_column='liste_choix')
+    in_list = models.IntegerField(choices=((1, _("First")), (2, _("Second"))))
 
     class Meta:
-        db_table = 't_b_contenu_touristique_type'
         verbose_name = _("Touristic content type")
         verbose_name_plural = _("Touristic content type")
         ordering = ['label']
@@ -258,7 +253,6 @@ class ReservationSystem(models.Model):
         return self.name
 
     class Meta:
-        db_table = 't_b_systeme_reservation'
         verbose_name = _("Reservation system")
         verbose_name_plural = _("Reservation systems")
         ordering = ('name',)
@@ -269,46 +263,45 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     """ A generic touristic content (accomodation, museum, etc.) in the park
     """
     description_teaser = models.TextField(verbose_name=_("Description teaser"), blank=True,
-                                          help_text=_("A brief summary"), db_column='chapeau')
-    description = models.TextField(verbose_name=_("Description"), blank=True, db_column='description',
+                                          help_text=_("A brief summary"))
+    description = models.TextField(verbose_name=_("Description"), blank=True,
                                    help_text=_("Complete description"))
     themes = models.ManyToManyField(Theme, related_name="touristiccontents",
-                                    db_table="t_r_contenu_touristique_theme", blank=True, verbose_name=_("Themes"),
+                                    blank=True, verbose_name=_("Themes"),
                                     help_text=_("Main theme(s)"))
     geom = models.GeometryField(verbose_name=_("Location"), srid=settings.SRID)
     category = models.ForeignKey(TouristicContentCategory, related_name='contents',
-                                 verbose_name=_("Category"), db_column='categorie')
-    contact = models.TextField(verbose_name=_("Contact"), blank=True, db_column='contact',
+                                 verbose_name=_("Category"))
+    contact = models.TextField(verbose_name=_("Contact"), blank=True,
                                help_text=_("Address, phone, etc."))
-    email = models.EmailField(verbose_name=_("Email"), max_length=256, db_column='email',
+    email = models.EmailField(verbose_name=_("Email"), max_length=256,
                               blank=True, null=True)
-    website = models.URLField(verbose_name=_("Website"), max_length=256, db_column='website',
+    website = models.URLField(verbose_name=_("Website"), max_length=256,
                               blank=True, null=True)
-    practical_info = models.TextField(verbose_name=_("Practical info"), blank=True, db_column='infos_pratiques',
+    practical_info = models.TextField(verbose_name=_("Practical info"), blank=True,
                                       help_text=_("Anything worth to know"))
     type1 = models.ManyToManyField(TouristicContentType1, related_name='contents1',
-                                   verbose_name=_("Type 1"), db_table="t_r_contenu_touristique_type1",
+                                   verbose_name=_("Type 1"),
                                    blank=True)
     type2 = models.ManyToManyField(TouristicContentType2, related_name='contents2',
-                                   verbose_name=_("Type 2"), db_table="t_r_contenu_touristique_type2",
+                                   verbose_name=_("Type 2"),
                                    blank=True)
     source = models.ManyToManyField('common.RecordSource',
                                     blank=True, related_name='touristiccontents',
-                                    verbose_name=_("Source"), db_table='t_r_contenu_touristique_source')
+                                    verbose_name=_("Source"))
     portal = models.ManyToManyField('common.TargetPortal',
                                     blank=True, related_name='touristiccontents',
-                                    verbose_name=_("Portal"), db_table='t_r_contenu_touristique_portal')
-    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
+                                    verbose_name=_("Portal"))
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     reservation_system = models.ForeignKey(ReservationSystem, verbose_name=_("Reservation system"),
                                            blank=True, null=True)
     reservation_id = models.CharField(verbose_name=_("Reservation ID"), max_length=1024,
-                                      blank=True, db_column='id_reservation')
-    approved = models.BooleanField(verbose_name=_("Approved"), default=False, db_column='labellise')
+                                      blank=True)
+    approved = models.BooleanField(verbose_name=_("Approved"), default=False)
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
 
     class Meta:
-        db_table = 't_t_contenu_touristique'
         verbose_name = _("Touristic content")
         verbose_name_plural = _("Touristic contents")
 
@@ -389,10 +382,9 @@ TouristicContent.add_property('published_touristic_contents', lambda self: inter
 
 class TouristicEventType(OptionalPictogramMixin):
 
-    type = models.CharField(verbose_name=_("Type"), max_length=128, db_column='type')
+    type = models.CharField(verbose_name=_("Type"), max_length=128)
 
     class Meta:
-        db_table = 't_b_evenement_touristique_type'
         verbose_name = _("Touristic event type")
         verbose_name_plural = _("Touristic event types")
         ordering = ['type']
@@ -406,50 +398,49 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
     """ A touristic event (conference, workshop, etc.) in the park
     """
     description_teaser = models.TextField(verbose_name=_("Description teaser"), blank=True,
-                                          help_text=_("A brief summary"), db_column='chapeau')
-    description = models.TextField(verbose_name=_("Description"), blank=True, db_column='description',
+                                          help_text=_("A brief summary"))
+    description = models.TextField(verbose_name=_("Description"), blank=True,
                                    help_text=_("Complete description"))
     themes = models.ManyToManyField(Theme, related_name="touristic_events",
-                                    db_table="t_r_evenement_touristique_theme", blank=True, verbose_name=_("Themes"),
+                                    blank=True, verbose_name=_("Themes"),
                                     help_text=_("Main theme(s)"))
     geom = models.PointField(verbose_name=_("Location"), srid=settings.SRID)
-    begin_date = models.DateField(blank=True, null=True, verbose_name=_("Begin date"), db_column='date_debut')
-    end_date = models.DateField(blank=True, null=True, verbose_name=_("End date"), db_column='date_fin')
-    duration = models.CharField(verbose_name=_("Duration"), max_length=64, blank=True, db_column='duree',
+    begin_date = models.DateField(blank=True, null=True, verbose_name=_("Begin date"))
+    end_date = models.DateField(blank=True, null=True, verbose_name=_("End date"))
+    duration = models.CharField(verbose_name=_("Duration"), max_length=64, blank=True,
                                 help_text=_("3 days, season, ..."))
-    meeting_point = models.CharField(verbose_name=_("Meeting point"), max_length=256, blank=True, db_column='point_rdv',
+    meeting_point = models.CharField(verbose_name=_("Meeting point"), max_length=256, blank=True,
                                      help_text=_("Where exactly ?"))
-    meeting_time = models.TimeField(verbose_name=_("Meeting time"), blank=True, null=True, db_column='heure_rdv',
+    meeting_time = models.TimeField(verbose_name=_("Meeting time"), blank=True, null=True,
                                     help_text=_("11:00, 23:30"))
-    contact = models.TextField(verbose_name=_("Contact"), blank=True, db_column='contact')
-    email = models.EmailField(verbose_name=_("Email"), max_length=256, db_column='email',
+    contact = models.TextField(verbose_name=_("Contact"), blank=True)
+    email = models.EmailField(verbose_name=_("Email"), max_length=256,
                               blank=True, null=True)
-    website = models.URLField(verbose_name=_("Website"), max_length=256, db_column='website',
+    website = models.URLField(verbose_name=_("Website"), max_length=256,
                               blank=True, null=True)
-    organizer = models.CharField(verbose_name=_("Organizer"), max_length=256, blank=True, db_column='organisateur')
-    speaker = models.CharField(verbose_name=_("Speaker"), max_length=256, blank=True, db_column='intervenant')
-    type = models.ForeignKey(TouristicEventType, verbose_name=_("Type"), blank=True, null=True, db_column='type')
-    accessibility = models.CharField(verbose_name=_("Accessibility"), max_length=256, blank=True, db_column='accessibilite')
-    participant_number = models.CharField(verbose_name=_("Number of participants"), max_length=256, blank=True, db_column='nb_places')
-    booking = models.TextField(verbose_name=_("Booking"), blank=True, db_column='reservation')
-    target_audience = models.CharField(verbose_name=_("Target audience"), max_length=128, blank=True, null=True, db_column='public_vise')
-    practical_info = models.TextField(verbose_name=_("Practical info"), blank=True, db_column='infos_pratiques',
+    organizer = models.CharField(verbose_name=_("Organizer"), max_length=256, blank=True)
+    speaker = models.CharField(verbose_name=_("Speaker"), max_length=256, blank=True)
+    type = models.ForeignKey(TouristicEventType, verbose_name=_("Type"), blank=True, null=True)
+    accessibility = models.CharField(verbose_name=_("Accessibility"), max_length=256, blank=True)
+    participant_number = models.CharField(verbose_name=_("Number of participants"), max_length=256, blank=True)
+    booking = models.TextField(verbose_name=_("Booking"), blank=True)
+    target_audience = models.CharField(verbose_name=_("Target audience"), max_length=128, blank=True, null=True)
+    practical_info = models.TextField(verbose_name=_("Practical info"), blank=True,
                                       help_text=_("Recommandations / To plan / Advices"))
     source = models.ManyToManyField('common.RecordSource',
                                     blank=True, related_name='touristicevents',
-                                    verbose_name=_("Source"), db_table='t_r_evenement_touristique_source')
+                                    verbose_name=_("Source"))
     portal = models.ManyToManyField('common.TargetPortal',
                                     blank=True, related_name='touristicevents',
-                                    verbose_name=_("Portal"), db_table='t_r_evenement_touristique_portal')
-    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
-    approved = models.BooleanField(verbose_name=_("Approved"), default=False, db_column='labellise')
+                                    verbose_name=_("Portal"))
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    approved = models.BooleanField(verbose_name=_("Approved"), default=False)
 
     objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
 
     category_id_prefix = 'E'
 
     class Meta:
-        db_table = 't_t_evenement_touristique'
         verbose_name = _("Touristic event")
         verbose_name_plural = _("Touristic events")
         ordering = ['-begin_date']

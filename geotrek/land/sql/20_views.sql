@@ -1,36 +1,36 @@
 SELECT create_schema_if_not_exist('foncier');
 
 CREATE OR REPLACE VIEW foncier.f_v_nature AS (
-	SELECT e.*, b.nom, b.structure
-	FROM e_t_evenement AS e, f_t_nature AS f, f_b_nature AS b
-	WHERE f.evenement = e.id AND f.type = b.id
-	AND supprime = FALSE
+	SELECT e.*, b.name, b.structure_id
+	FROM core_topology AS e, land_physicaledge AS f, land_physicaltype AS b
+	WHERE f.topo_object_id = e.id AND f.physical_type_id = b.id
+	AND deleted = FALSE
 );
 
 CREATE OR REPLACE VIEW foncier.f_v_foncier AS (
-	SELECT e.*, b.structure, b.foncier, b.droit_de_passage
-	FROM e_t_evenement AS e, f_t_foncier AS f, f_b_foncier AS b
-	WHERE f.evenement = e.id AND f.type = b.id
-	AND supprime = FALSE
+	SELECT e.*, b.structure_id, b.name, b.right_of_way
+	FROM core_topology AS e, land_landedge AS f, land_landtype AS b
+	WHERE f.topo_object_id = e.id AND f.land_type_id = b.id
+	AND deleted = FALSE
 );
 
 CREATE OR REPLACE VIEW foncier.f_v_competence AS (
-	SELECT e.*, b.structure, b.organisme
-	FROM e_t_evenement AS e, f_t_competence AS f, m_b_organisme AS b
-	WHERE f.evenement = e.id AND f.organisme = b.id
-	AND supprime = FALSE
+	SELECT e.*, b.structure_id, b.organism
+	FROM core_topology AS e, land_competenceedge AS f, common_organism AS b
+	WHERE f.topo_object_id = e.id AND f.organization_id = b.id
+	AND deleted = FALSE
 );
 
 CREATE OR REPLACE VIEW foncier.f_v_gestion_signaletique AS (
-	SELECT e.*, b.structure, b.organisme
-	FROM e_t_evenement AS e, f_t_gestion_signaletique AS f, m_b_organisme AS b
-	WHERE f.evenement = e.id AND f.organisme = b.id
-	AND supprime = FALSE
+	SELECT e.*, b.structure_id, b.organism
+	FROM core_topology AS e, land_signagemanagementedge AS f, common_organism AS b
+	WHERE f.topo_object_id = e.id AND f.organization_id = b.id
+	AND deleted = FALSE
 );
 
 CREATE OR REPLACE VIEW foncier.f_v_gestion_travaux AS (
-	SELECT e.*, b.structure, b.organisme
-	FROM e_t_evenement AS e, f_t_gestion_travaux AS f, m_b_organisme AS b
-	WHERE f.evenement = e.id AND f.organisme = b.id
-	AND supprime = FALSE
+	SELECT e.*, b.structure_id, b.organism
+	FROM core_topology AS e, land_workmanagementedge AS f, common_organism AS b
+	WHERE f.topo_object_id = e.id AND f.organization_id = b.id
+	AND deleted = FALSE
 );

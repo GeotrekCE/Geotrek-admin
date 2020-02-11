@@ -225,20 +225,20 @@ class TopologyHelper(object):
         WITH topologies AS (SELECT id FROM %(topology_table)s WHERE id IN (%(topology_list)s)),
         -- Concerned aggregations
              aggregations AS (SELECT * FROM %(aggregations_table)s a, topologies t
-                              WHERE a.evenement = t.id),
+                              WHERE a.topo_object_id = t.id),
         -- Concerned paths along with (start, end)
-             paths_aggr AS (SELECT a.pk_debut AS start, a.pk_fin AS end, p.id, a.ordre AS order
+             paths_aggr AS (SELECT a.start_position AS start, a.end_position AS end, p.id, a.order AS order
                             FROM %(paths_table)s p, aggregations a
-                            WHERE a.troncon = p.id
-                            ORDER BY a.ordre)
+                            WHERE a.path_id = p.id
+                            ORDER BY a.order)
         -- Retrieve primary keys
         SELECT t.id
         FROM %(topology_table)s t, %(aggregations_table)s a, paths_aggr pa
-        WHERE a.troncon = pa.id AND a.evenement = t.id
-          AND least(a.pk_debut, a.pk_fin) <= greatest(pa.start, pa.end)
-          AND greatest(a.pk_debut, a.pk_fin) >= least(pa.start, pa.end)
+        WHERE a.path_id = pa.id AND a.topo_object_id = t.id
+          AND least(a.start_position, a.end_position) <= greatest(pa.start, pa.end)
+          AND greatest(a.start_position, a.end_position) >= least(pa.start, pa.end)
           AND %(extra_condition)s
-        ORDER BY (pa.order + CASE WHEN pa.start > pa.end THEN (1 - a.pk_debut) ELSE a.pk_debut END);
+        ORDER BY (pa.order + CASE WHEN pa.start > pa.end THEN (1 - a.start_position) ELSE a.start_position END);
         """ % {
             'topology_table': Topology._meta.db_table,
             'aggregations_table': PathAggregation._meta.db_table,

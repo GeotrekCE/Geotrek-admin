@@ -10,10 +10,9 @@ from geotrek.maintenance.models import Intervention, Project
 
 
 class PhysicalType(StructureOrNoneRelated):
-    name = models.CharField(max_length=128, verbose_name=_("Name"), db_column='nom')
+    name = models.CharField(max_length=128, verbose_name=_("Name"))
 
     class Meta:
-        db_table = 'f_b_nature'
         verbose_name = _("Physical type")
         verbose_name_plural = _("Physical types")
         ordering = ['name']
@@ -25,17 +24,13 @@ class PhysicalType(StructureOrNoneRelated):
 
 
 class PhysicalEdge(MapEntityMixin, Topology):
-    topo_object = models.OneToOneField(Topology, parent_link=True,
-                                       db_column='evenement')
-    physical_type = models.ForeignKey(PhysicalType, verbose_name=_("Physical type"),
-                                      db_column='type')
-    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True,
-                           db_column='id_externe')
+    topo_object = models.OneToOneField(Topology, parent_link=True)
+    physical_type = models.ForeignKey(PhysicalType, verbose_name=_("Physical type"))
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
-        db_table = 'f_t_nature'
         verbose_name = _("Physical edge")
         verbose_name_plural = _("Physical edges")
 
@@ -78,11 +73,10 @@ Project.add_property('physical_edges', lambda self: self.edges_by_attr('physical
 
 
 class LandType(StructureOrNoneRelated):
-    name = models.CharField(max_length=128, db_column='foncier', verbose_name=_("Name"))
-    right_of_way = models.BooleanField(default=False, db_column='droit_de_passage', verbose_name=_("Right of way"))
+    name = models.CharField(max_length=128, verbose_name=_("Name"))
+    right_of_way = models.BooleanField(default=False, verbose_name=_("Right of way"))
 
     class Meta:
-        db_table = 'f_b_foncier'
         verbose_name = _("Land type")
         verbose_name_plural = _("Land types")
         ordering = ['name']
@@ -94,19 +88,16 @@ class LandType(StructureOrNoneRelated):
 
 
 class LandEdge(MapEntityMixin, Topology):
-    topo_object = models.OneToOneField(Topology, parent_link=True,
-                                       db_column='evenement')
-    land_type = models.ForeignKey(LandType, verbose_name=_("Land type"), db_column='type')
-    owner = models.TextField(verbose_name=_("Owner"), db_column='proprietaire', blank=True)
-    agreement = models.BooleanField(verbose_name=_("Agreement"), db_column='convention', default=False)
-    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True,
-                           db_column='id_externe')
+    topo_object = models.OneToOneField(Topology, parent_link=True)
+    land_type = models.ForeignKey(LandType, verbose_name=_("Land type"))
+    owner = models.TextField(verbose_name=_("Owner"), blank=True)
+    agreement = models.BooleanField(verbose_name=_("Agreement"), default=False)
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
-        db_table = 'f_t_foncier'
         verbose_name = _("Land edge")
         verbose_name_plural = _("Land edges")
 
@@ -149,17 +140,14 @@ Project.add_property('land_edges', lambda self: self.edges_by_attr('land_edges')
 
 
 class CompetenceEdge(MapEntityMixin, Topology):
-    topo_object = models.OneToOneField(Topology, parent_link=True,
-                                       db_column='evenement')
-    organization = models.ForeignKey(Organism, verbose_name=_("Organism"), db_column='organisme')
-    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True,
-                           db_column='id_externe')
+    topo_object = models.OneToOneField(Topology, parent_link=True)
+    organization = models.ForeignKey(Organism, verbose_name=_("Organism"))
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
-        db_table = 'f_t_competence'
         verbose_name = _("Competence edge")
         verbose_name_plural = _("Competence edges")
 
@@ -202,17 +190,14 @@ Project.add_property('competence_edges', lambda self: self.edges_by_attr('compet
 
 
 class WorkManagementEdge(MapEntityMixin, Topology):
-    topo_object = models.OneToOneField(Topology, parent_link=True,
-                                       db_column='evenement')
-    organization = models.ForeignKey(Organism, verbose_name=_("Organism"), db_column='organisme')
-    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True,
-                           db_column='id_externe')
+    topo_object = models.OneToOneField(Topology, parent_link=True)
+    organization = models.ForeignKey(Organism, verbose_name=_("Organism"))
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
-        db_table = 'f_t_gestion_travaux'
         verbose_name = _("Work management edge")
         verbose_name_plural = _("Work management edges")
 
@@ -255,17 +240,14 @@ Project.add_property('work_edges', lambda self: self.edges_by_attr('work_edges')
 
 
 class SignageManagementEdge(MapEntityMixin, Topology):
-    topo_object = models.OneToOneField(Topology, parent_link=True,
-                                       db_column='evenement')
-    organization = models.ForeignKey(Organism, verbose_name=_("Organism"), db_column='organisme')
-    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True,
-                           db_column='id_externe')
+    topo_object = models.OneToOneField(Topology, parent_link=True)
+    organization = models.ForeignKey(Organism, verbose_name=_("Organism"))
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
-        db_table = 'f_t_gestion_signaletique'
         verbose_name = _("Signage management edge")
         verbose_name_plural = _("Signage management edges")
 

@@ -170,7 +170,7 @@ def admin_check_extents(request):
     to be more admin tools like this one. Move this to a separate Django app and
     style HTML properly.
     """
-    path_extent_native = sql_extent("SELECT ST_Extent(geom) FROM l_t_troncon;")
+    path_extent_native = sql_extent("SELECT ST_Extent(geom) FROM core_path;")
     path_extent = api_bbox(path_extent_native)
     try:
         dem_extent_native = sql_extent(

@@ -1,18 +1,19 @@
-DROP TRIGGER IF EXISTS o_r_create_relationships_iu_tgr ON o_r_itineraire_itineraire;
+DROP TRIGGER IF EXISTS o_r_create_relationships_iu_tgr ON trekking_trekrelationship;
 
 CREATE OR REPLACE FUNCTION rando.create_relationships_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     t_count integer;
 BEGIN
     IF TG_OP = 'UPDATE' THEN
-        UPDATE o_r_itineraire_itineraire SET depart_commun = NEW.depart_commun, troncons_communs = NEW.troncons_communs, etape_circuit = NEW.etape_circuit
-        WHERE itineraire_a = NEW.itineraire_b AND itineraire_b = NEW.itineraire_a
-          AND (depart_commun != NEW.depart_commun OR troncons_communs != NEW.troncons_communs OR etape_circuit != NEW.etape_circuit);
+        UPDATE trekking_trekrelationship SET has_common_departure = NEW.has_common_departure, has_common_edge = NEW.has_common_edge,
+        is_circuit_step = NEW.is_circuit_step
+        WHERE trek_a_id = NEW.trek_b_id AND trek_b_id = NEW.trek_a_id
+          AND (has_common_departure != NEW.has_common_departure OR has_common_edge != NEW.has_common_edge OR is_circuit_step != NEW.is_circuit_step);
     ELSE
-        SELECT COUNT(*) INTO t_count FROM o_r_itineraire_itineraire WHERE itineraire_a = NEW.itineraire_b AND itineraire_b = NEW.itineraire_a;
+        SELECT COUNT(*) INTO t_count FROM trekking_trekrelationship WHERE trek_a_id = NEW.trek_b_id AND trek_b_id = NEW.trek_a_id;
         IF t_count = 0 THEN
-            INSERT INTO o_r_itineraire_itineraire (itineraire_a, itineraire_b, depart_commun, troncons_communs, etape_circuit)
-            VALUES (NEW.itineraire_b, NEW.itineraire_a, NEW.depart_commun, NEW.troncons_communs, NEW.etape_circuit);
+            INSERT INTO trekking_trekrelationship (trek_a_id, trek_b_id, has_common_departure, has_common_edge, is_circuit_step)
+            VALUES (NEW.trek_b_id, NEW.trek_a_id, NEW.has_common_departure, NEW.has_common_edge, NEW.is_circuit_step);
         END IF;
     END IF;
     RETURN NEW;
@@ -20,22 +21,22 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER o_r_create_relationships_iu_tgr
-AFTER INSERT OR UPDATE ON o_r_itineraire_itineraire
+AFTER INSERT OR UPDATE ON trekking_trekrelationship
 FOR EACH ROW EXECUTE PROCEDURE create_relationships_iu();
 
 
-DROP TRIGGER IF EXISTS o_r_cleanup_relationships_d_tgr ON o_r_itineraire_itineraire;
+DROP TRIGGER IF EXISTS o_r_cleanup_relationships_d_tgr ON trekking_trekrelationship;
 
 CREATE OR REPLACE FUNCTION rando.cleanup_relationships_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
 BEGIN
-    DELETE FROM o_r_itineraire_itineraire
-    WHERE itineraire_a = OLD.itineraire_b
-      AND itineraire_b = OLD.itineraire_a;
+    DELETE FROM trekking_trekrelationship
+    WHERE trek_a_id = OLD.trek_b_id
+      AND trek_b_id = OLD.trek_a_id;
     RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER o_r_cleanup_relationships_d_tgr
-AFTER DELETE ON o_r_itineraire_itineraire
+AFTER DELETE ON trekking_trekrelationship
 FOR EACH ROW EXECUTE PROCEDURE cleanup_relationships_d();

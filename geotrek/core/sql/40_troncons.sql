@@ -4,12 +4,12 @@
 -- database default column values.
 -------------------------------------------------------------------------------
 
-ALTER TABLE l_t_troncon ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE l_t_troncon ALTER COLUMN date_update SET DEFAULT now();
-ALTER TABLE l_t_troncon ALTER COLUMN depart SET DEFAULT '';
-ALTER TABLE l_t_troncon ALTER COLUMN arrivee SET DEFAULT '';
-ALTER TABLE l_t_troncon ALTER COLUMN valide SET DEFAULT false;
-ALTER TABLE l_t_troncon ALTER COLUMN visible SET DEFAULT true;
+ALTER TABLE core_path ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE core_path ALTER COLUMN date_update SET DEFAULT now();
+ALTER TABLE core_path ALTER COLUMN departure SET DEFAULT '';
+ALTER TABLE core_path ALTER COLUMN arrival SET DEFAULT '';
+ALTER TABLE core_path ALTER COLUMN valid SET DEFAULT false;
+ALTER TABLE core_path ALTER COLUMN visible SET DEFAULT true;
 
 
 
@@ -19,35 +19,35 @@ ALTER TABLE l_t_troncon ALTER COLUMN visible SET DEFAULT true;
 
 DROP INDEX IF EXISTS troncons_geom_idx;
 DROP INDEX IF EXISTS l_t_troncon_geom_idx;
-CREATE INDEX l_t_troncon_geom_idx ON l_t_troncon USING gist(geom);
+CREATE INDEX l_t_troncon_geom_idx ON core_path USING gist(geom);
 
 DROP INDEX IF EXISTS troncons_start_point_idx;
 DROP INDEX IF EXISTS l_t_troncon_start_point_idx;
-CREATE INDEX l_t_troncon_start_point_idx ON l_t_troncon USING gist(ST_StartPoint(geom));
+CREATE INDEX l_t_troncon_start_point_idx ON core_path USING gist(ST_StartPoint(geom));
 
 DROP INDEX IF EXISTS troncons_end_point_idx;
 DROP INDEX IF EXISTS l_t_troncon_end_point_idx;
-CREATE INDEX l_t_troncon_end_point_idx ON l_t_troncon USING gist(ST_EndPoint(geom));
+CREATE INDEX l_t_troncon_end_point_idx ON core_path USING gist(ST_EndPoint(geom));
 
 DROP INDEX IF EXISTS troncons_geom_cadastre_idx;
 DROP INDEX IF EXISTS l_t_troncon_geom_cadastre_idx;
-CREATE INDEX l_t_troncon_geom_cadastre_idx ON l_t_troncon USING gist(geom_cadastre);
+CREATE INDEX l_t_troncon_geom_cadastre_idx ON core_path USING gist(geom_cadastre);
 
 DROP INDEX IF EXISTS l_t_troncon_geom_3d_idx;
-CREATE INDEX l_t_troncon_geom_3d_idx ON l_t_troncon USING gist(geom_3d);
+CREATE INDEX l_t_troncon_geom_3d_idx ON core_path USING gist(geom_3d);
 
 -------------------------------------------------------------------------------
 -- Keep dates up-to-date
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS l_t_troncon_date_insert_tgr ON l_t_troncon;
+DROP TRIGGER IF EXISTS l_t_troncon_date_insert_tgr ON core_path;
 CREATE TRIGGER l_t_troncon_date_insert_tgr
-    BEFORE INSERT ON l_t_troncon
+    BEFORE INSERT ON core_path
     FOR EACH ROW EXECUTE PROCEDURE ft_date_insert();
 
-DROP TRIGGER IF EXISTS l_t_troncon_date_update_tgr ON l_t_troncon;
+DROP TRIGGER IF EXISTS l_t_troncon_date_update_tgr ON core_path;
 CREATE TRIGGER l_t_troncon_date_update_tgr
-    BEFORE INSERT OR UPDATE ON l_t_troncon
+    BEFORE INSERT OR UPDATE ON core_path
     FOR EACH ROW EXECUTE PROCEDURE ft_date_update();
 
 
@@ -66,7 +66,7 @@ BEGIN
     -- Crossing and extremity touching is OK.
     -- Overlapping and --almost overlapping-- is KO.
     SELECT COUNT(*) INTO t_count
-    FROM l_t_troncon
+    FROM core_path
     WHERE pid != id
       AND ST_GeometryType(ST_intersection(geom, line)) IN ('ST_LineString', 'ST_MultiLineString');
       -- not extremity touching
@@ -86,8 +86,8 @@ $$ LANGUAGE plpgsql;
 -- Update geometry of related topologies
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS l_t_troncon_evenements_geom_u_tgr ON l_t_troncon;
-DROP TRIGGER IF EXISTS l_t_troncon_90_evenements_geom_u_tgr ON l_t_troncon;
+DROP TRIGGER IF EXISTS l_t_troncon_evenements_geom_u_tgr ON core_path;
+DROP TRIGGER IF EXISTS l_t_troncon_90_evenements_geom_u_tgr ON core_path;
 
 CREATE OR REPLACE FUNCTION geotrek.update_evenement_geom_when_troncon_changes() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
@@ -99,24 +99,24 @@ BEGIN
     -- Geometry of linear topologies are always updated
     -- Geometry of point topologies are updated if offset = 0
     FOR eid IN SELECT e.id
-               FROM e_r_evenement_troncon et, e_t_evenement e
-               WHERE et.troncon = NEW.id AND et.evenement = e.id
-               GROUP BY e.id, e.decallage
-               HAVING BOOL_OR(et.pk_debut != et.pk_fin) OR e.decallage = 0.0
+               FROM core_pathaggregation et, core_topology e
+               WHERE et.path_id = NEW.id AND et.topo_object_id = e.id
+               GROUP BY e.id, e."offset"
+               HAVING BOOL_OR(et.start_position != et.end_position) OR e."offset" = 0.0
     LOOP
         PERFORM update_geometry_of_evenement(eid);
     END LOOP;
 
     -- Special case of point geometries with offset != 0
     FOR eid, egeom IN SELECT e.id, e.geom
-               FROM e_r_evenement_troncon et, e_t_evenement e
-               WHERE et.troncon = NEW.id AND et.evenement = e.id
-               GROUP BY e.id, e.geom, e.decallage
-               HAVING COUNT(et.id) = 1 AND BOOL_OR(et.pk_debut = et.pk_fin) AND e.decallage != 0.0
+               FROM core_pathaggregation et, core_topology e
+               WHERE et.path_id = NEW.id AND et.topo_object_id = e.id
+               GROUP BY e.id, e.geom, e."offset"
+               HAVING COUNT(et.id) = 1 AND BOOL_OR(et.start_position = et.end_position) AND e."offset" != 0.0
     LOOP
         SELECT * INTO linear_offset, side_offset FROM ST_InterpolateAlong(NEW.geom, egeom) AS (position float, distance float);
-        UPDATE e_t_evenement SET decallage = side_offset WHERE id = eid;
-        UPDATE e_r_evenement_troncon SET pk_debut = linear_offset, pk_fin = linear_offset WHERE evenement = eid AND troncon = NEW.id;
+        UPDATE core_topology SET "offset" = side_offset WHERE id = eid;
+        UPDATE core_pathaggregation SET start_position = linear_offset, end_position = linear_offset WHERE topo_object_id = eid AND path_id = NEW.id;
     END LOOP;
 
     RETURN NULL;
@@ -124,7 +124,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER l_t_troncon_90_evenements_geom_u_tgr
-AFTER UPDATE OF geom ON l_t_troncon
+AFTER UPDATE OF geom ON core_path
 FOR EACH ROW EXECUTE PROCEDURE update_evenement_geom_when_troncon_changes();
 
 
@@ -132,21 +132,21 @@ FOR EACH ROW EXECUTE PROCEDURE update_evenement_geom_when_troncon_changes();
 -- Ensure paths have valid geometries
 -------------------------------------------------------------------------------
 
-ALTER TABLE l_t_troncon DROP CONSTRAINT IF EXISTS troncons_geom_issimple;
+ALTER TABLE core_path DROP CONSTRAINT IF EXISTS troncons_geom_issimple;
 
-ALTER TABLE l_t_troncon DROP CONSTRAINT IF EXISTS l_t_troncon_geom_isvalid;
-ALTER TABLE l_t_troncon ADD CONSTRAINT l_t_troncon_geom_isvalid CHECK (ST_IsValid(geom));
+ALTER TABLE core_path DROP CONSTRAINT IF EXISTS l_t_troncon_geom_isvalid;
+ALTER TABLE core_path ADD CONSTRAINT l_t_troncon_geom_isvalid CHECK (ST_IsValid(geom));
 
-ALTER TABLE l_t_troncon DROP CONSTRAINT IF EXISTS l_t_troncon_geom_issimple;
-ALTER TABLE l_t_troncon ADD CONSTRAINT l_t_troncon_geom_issimple CHECK (ST_IsSimple(geom));
+ALTER TABLE core_path DROP CONSTRAINT IF EXISTS l_t_troncon_geom_issimple;
+ALTER TABLE core_path ADD CONSTRAINT l_t_troncon_geom_issimple CHECK (ST_IsSimple(geom));
 
 
 -------------------------------------------------------------------------------
 -- Compute elevation and elevation-based indicators
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS l_t_troncon_elevation_iu_tgr ON l_t_troncon;
-DROP TRIGGER IF EXISTS l_t_troncon_10_elevation_iu_tgr ON l_t_troncon;
+DROP TRIGGER IF EXISTS l_t_troncon_elevation_iu_tgr ON core_path;
+DROP TRIGGER IF EXISTS l_t_troncon_10_elevation_iu_tgr ON core_path;
 
 CREATE OR REPLACE FUNCTION geotrek.elevation_troncon_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
@@ -156,18 +156,18 @@ BEGIN
     SELECT * FROM ft_elevation_infos(NEW.geom, {{ALTIMETRIC_PROFILE_STEP}}) INTO elevation;
     -- Update path geometry
     NEW.geom_3d := elevation.draped;
-    NEW.longueur := ST_3DLength(elevation.draped);
-    NEW.pente := elevation.slope;
-    NEW.altitude_minimum := elevation.min_elevation;
-    NEW.altitude_maximum := elevation.max_elevation;
-    NEW.denivelee_positive := elevation.positive_gain;
-    NEW.denivelee_negative := elevation.negative_gain;
+    NEW.length := ST_3DLength(elevation.draped);
+    NEW.slope := elevation.slope;
+    NEW.min_elevation := elevation.min_elevation;
+    NEW.max_elevation := elevation.max_elevation;
+    NEW.ascent := elevation.positive_gain;
+    NEW.descent := elevation.negative_gain;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER l_t_troncon_10_elevation_iu_tgr
-BEFORE INSERT OR UPDATE OF geom ON l_t_troncon
+BEFORE INSERT OR UPDATE OF geom ON core_path
 FOR EACH ROW EXECUTE PROCEDURE elevation_troncon_iu();
 
 
@@ -175,18 +175,18 @@ FOR EACH ROW EXECUTE PROCEDURE elevation_troncon_iu();
 -- Change status of related objects when paths are deleted
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS l_t_troncon_related_objects_d_tgr ON l_t_troncon;
+DROP TRIGGER IF EXISTS l_t_troncon_related_objects_d_tgr ON core_path;
 
 CREATE OR REPLACE FUNCTION geotrek.troncons_related_objects_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
 BEGIN
     -- Mark empty topologies as deleted
-    UPDATE e_t_evenement e
-        SET supprime = TRUE
-        FROM e_r_evenement_troncon et
-        WHERE et.evenement = e.id AND et.troncon = OLD.id AND NOT EXISTS(
-            SELECT * FROM e_r_evenement_troncon
-            WHERE evenement = e.id AND troncon != OLD.id
+    UPDATE core_topology e
+        SET deleted = TRUE
+        FROM core_pathaggregation et
+        WHERE et.topo_object_id = e.id AND et.path_id = OLD.id AND NOT EXISTS(
+            SELECT * FROM core_pathaggregation
+            WHERE topo_object_id = e.id AND path_id != OLD.id
         );
 
     RETURN OLD;
@@ -194,7 +194,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER l_t_troncon_related_objects_d_tgr
-BEFORE DELETE ON l_t_troncon
+BEFORE DELETE ON core_path
 FOR EACH ROW EXECUTE PROCEDURE troncons_related_objects_d();
 
 
@@ -202,18 +202,18 @@ FOR EACH ROW EXECUTE PROCEDURE troncons_related_objects_d();
 -- Make sure cache key (base on lastest updated) is refresh on DELETE
 ---------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS l_t_troncon_latest_updated_d_tgr ON l_t_troncon;
+DROP TRIGGER IF EXISTS l_t_troncon_latest_updated_d_tgr ON core_path;
 
 CREATE OR REPLACE FUNCTION geotrek.troncon_latest_updated_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
 BEGIN
     -- Touch latest path
-    UPDATE l_t_troncon SET date_update = NOW()
-    WHERE id IN (SELECT id FROM l_t_troncon ORDER BY date_update DESC LIMIT 1);
+    UPDATE core_path SET date_update = NOW()
+    WHERE id IN (SELECT id FROM core_path ORDER BY date_update DESC LIMIT 1);
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER l_t_troncon_latest_updated_d_tgr
-AFTER DELETE ON l_t_troncon
+AFTER DELETE ON core_path
 FOR EACH ROW EXECUTE PROCEDURE troncon_latest_updated_d();

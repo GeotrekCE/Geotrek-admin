@@ -17,6 +17,3 @@ SELECT set_schema('django_admin_log', 'django');
 SELECT set_schema('django_content_type', 'django');
 SELECT set_schema('django_session', 'django');
 SELECT set_schema('south_migrationhistory', 'django');
-
--- Django-paperclip is not managed by South
-SELECT set_schema('fl_t_fichier', 'geotrek');

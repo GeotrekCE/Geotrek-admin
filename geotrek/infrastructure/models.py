@@ -22,11 +22,10 @@ INFRASTRUCTURE_TYPES = Choices(
 
 class InfrastructureType(StructureOrNoneRelated, OptionalPictogramMixin):
     """ Types of infrastructures (bridge, WC, stairs, ...) """
-    label = models.CharField(db_column="nom", max_length=128)
-    type = models.CharField(db_column="type", max_length=1, choices=INFRASTRUCTURE_TYPES)
+    label = models.CharField(max_length=128)
+    type = models.CharField(max_length=1, choices=INFRASTRUCTURE_TYPES)
 
     class Meta:
-        db_table = 'a_b_infrastructure'
         verbose_name = _("Infrastructure Type")
         verbose_name_plural = _("Infrastructure Types")
         ordering = ['label', 'type']
@@ -44,12 +43,11 @@ class InfrastructureType(StructureOrNoneRelated, OptionalPictogramMixin):
 
 
 class InfrastructureCondition(StructureOrNoneRelated):
-    label = models.CharField(verbose_name=_("Name"), db_column="etat", max_length=250)
+    label = models.CharField(verbose_name=_("Name"), max_length=250)
 
     class Meta:
         verbose_name = _("Infrastructure Condition")
         verbose_name_plural = _("Infrastructure Conditions")
-        db_table = "a_b_etat"
         ordering = ('label',)
 
     def __str__(self):
@@ -60,20 +58,14 @@ class InfrastructureCondition(StructureOrNoneRelated):
 
 class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
     """ A generic infrastructure in the park """
-    topo_object = models.OneToOneField(Topology, parent_link=True,
-                                       db_column='evenement')
+    topo_object = models.OneToOneField(Topology, parent_link=True)
 
-    name = models.CharField(db_column="nom", max_length=128,
-                            help_text=_("Reference, code, ..."), verbose_name=_("Name"))
-    description = models.TextField(blank=True, db_column='description',
-                                   verbose_name=_("Description"), help_text=_("Specificites"))
-    condition = models.ForeignKey(InfrastructureCondition, db_column='etat',
-                                  verbose_name=_("Condition"), blank=True, null=True,
+    name = models.CharField(max_length=128, help_text=_("Reference, code, ..."), verbose_name=_("Name"))
+    description = models.TextField(blank=True, verbose_name=_("Description"), help_text=_("Specificites"))
+    condition = models.ForeignKey(InfrastructureCondition, verbose_name=_("Condition"), blank=True, null=True,
                                   on_delete=models.SET_NULL)
-    implantation_year = models.PositiveSmallIntegerField(verbose_name=_("Implantation year"),
-                                                         db_column='annee_implantation', null=True)
-    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True,
-                           db_column='id_externe')
+    implantation_year = models.PositiveSmallIntegerField(verbose_name=_("Implantation year"), null=True)
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     class Meta:
         abstract = True
@@ -121,11 +113,10 @@ class InfrastructureGISManager(gismodels.GeoManager):
 
 class Infrastructure(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is not of type SIGNAGE """
-    type = models.ForeignKey(InfrastructureType, db_column='type', verbose_name=_("Type"))
+    type = models.ForeignKey(InfrastructureType, verbose_name=_("Type"))
     objects = BaseInfrastructure.get_manager_cls(InfrastructureGISManager)()
 
     class Meta:
-        db_table = 'a_t_infrastructure'
         verbose_name = _("Infrastructure")
         verbose_name_plural = _("Infrastructures")
 

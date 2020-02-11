@@ -28,8 +28,8 @@ BEGIN
 	
     END IF;
     
-    updated_geom := (SELECT geom FROM l_t_troncon WHERE id = updated);
-    merged_geom := (SELECT geom FROM l_t_troncon WHERE id = merged);
+    updated_geom := (SELECT geom FROM core_path WHERE id = updated);
+    merged_geom := (SELECT geom FROM core_path WHERE id = merged);
 
     -- DETECT matching point to rebuild path line
     IF ST_Equals(ST_StartPoint(updated_geom), ST_StartPoint(merged_geom))
@@ -85,7 +85,7 @@ BEGIN
 
     END IF;
 
-    SELECT COUNT(*) INTO count_snapping FROM l_t_troncon WHERE (ST_DWITHIN(ST_StartPoint(geom), point_snapping, snap_distance) OR ST_DWITHIN(ST_EndPoint(geom), point_snapping, snap_distance)) AND brouillon = FALSE AND id != updated AND id != merged;
+    SELECT COUNT(*) INTO count_snapping FROM core_path WHERE (ST_DWITHIN(ST_StartPoint(geom), point_snapping, snap_distance) OR ST_DWITHIN(ST_EndPoint(geom), point_snapping, snap_distance)) AND draft = FALSE AND id != updated AND id != merged;
 
     IF count_snapping != 0 THEN
         RETURN 2;
@@ -93,92 +93,92 @@ BEGIN
 
     -- update events on updated path
     FOR element IN
-        SELECT * FROM e_r_evenement_troncon et
-                 JOIN e_t_evenement as evt ON et.evenement=evt.id
-                 JOIN l_t_troncon as tr on et.troncon = tr.id
-        WHERE et.troncon = updated
+        SELECT * FROM core_pathaggregation et
+                 JOIN core_topology as evt ON et.topo_object_id=evt.id
+                 JOIN core_path as tr on et.path_id = tr.id
+        WHERE et.path_id = updated
     LOOP
         IF reverse_update = TRUE
 	THEN
 	    -- update reverse pk
-	    UPDATE e_r_evenement_troncon
-		   SET pk_debut = (1- pk_debut) * ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom)),
-		       pk_fin = (1- pk_fin) * ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))
+	    UPDATE core_pathaggregation
+		   SET start_position = (1- start_position) * ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom)),
+		       end_position = (1- end_position) * ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))
 		   WHERE id = element.id;
 	    -- update reverse offset
-            UPDATE e_t_evenement
-                   SET decallage = -decallage
-                   WHERE id = element.evenement;
+            UPDATE core_topology
+                   SET "offset" = -"offset"
+                   WHERE id = element.topo_object_id;
 	ELSE
-	    UPDATE e_r_evenement_troncon
-		   SET pk_debut = pk_debut * ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom)),
-		       pk_fin = pk_fin * ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))
+	    UPDATE core_pathaggregation
+		   SET start_position = start_position * ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom)),
+		       end_position = end_position * ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))
 		   WHERE id = element.id;
 	END IF;
     END LOOP;
     
     -- update events on merged path
     FOR element IN
-        SELECT * FROM e_r_evenement_troncon et
-                 JOIN e_t_evenement as evt ON et.evenement=evt.id
-                 JOIN l_t_troncon as tr on et.troncon = tr.id
-        WHERE et.troncon = merged
+        SELECT * FROM core_pathaggregation et
+                 JOIN core_topology as evt ON et.topo_object_id=evt.id
+                 JOIN core_path as tr on et.path_id = tr.id
+        WHERE et.path_id = merged
     LOOP
         IF reverse_merged = TRUE
         THEN
-	    UPDATE e_r_evenement_troncon
-		   SET pk_debut = ((1- pk_debut) * ST_Length(merged_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))) + (ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))),
-		       pk_fin = ((1- pk_fin) * ST_Length(merged_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))) + (ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom)))
+	    UPDATE core_pathaggregation
+		   SET start_position = ((1- start_position) * ST_Length(merged_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))) + (ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))),
+		       end_position = ((1- end_position) * ST_Length(merged_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))) + (ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom)))
 		   WHERE id = element.id;
 
-            UPDATE e_t_evenement
-                   SET decallage = -decallage
-                   WHERE id = element.evenement;
+            UPDATE core_topology
+                   SET "offset" = -"offset"
+                   WHERE id = element.topo_object_id;
         ELSE
-	    UPDATE e_r_evenement_troncon
-		   SET pk_debut = (pk_debut * ST_Length(merged_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))) + (ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))),
-		       pk_fin = (pk_fin * ST_Length(merged_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))) + (ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom)))
+	    UPDATE core_pathaggregation
+		   SET start_position = (start_position * ST_Length(merged_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))) + (ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))),
+		       end_position = (end_position * ST_Length(merged_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom))) + (ST_Length(updated_geom) / (ST_Length(updated_geom) + ST_Length(merged_geom)))
 		   WHERE id = element.id;
         END IF;
     END LOOP;
 	
     -- fix new geom to updated
-    UPDATE l_t_troncon
+    UPDATE core_path
            SET geom = rebuild_line
            WHERE id = updated;
    
     -- Link merged events to updated
-    UPDATE e_r_evenement_troncon
-           SET troncon = updated
-           WHERE troncon = merged;
+    UPDATE core_pathaggregation
+           SET path_id = updated
+           WHERE path_id = merged;
 
     -- link element or delete if target unique already present
-    FOR element IN SELECT * FROM l_r_troncon_reseau WHERE path_id = merged
+    FOR element IN SELECT * FROM core_path_networks WHERE path_id = merged
     LOOP
-        IF NOT EXISTS (SELECT 1 FROM l_r_troncon_reseau WHERE network_id=element.network_id AND path_id = updated) THEN
-	    UPDATE l_r_troncon_reseau
+        IF NOT EXISTS (SELECT 1 FROM core_path_networks WHERE network_id=element.network_id AND path_id = updated) THEN
+	    UPDATE core_path_networks
 		   SET path_id = updated
 		   WHERE id = element.id;
         ELSE
-            DELETE FROM l_r_troncon_reseau WHERE path_id = merged;
+            DELETE FROM core_path_networks WHERE path_id = merged;
         END IF;
     END LOOP;
 
     -- link element or delete if target unique already present
-    FOR element IN SELECT * FROM l_r_troncon_usage WHERE path_id = merged
+    FOR element IN SELECT * FROM core_path_usages WHERE path_id = merged
     LOOP
-        IF NOT EXISTS (SELECT 1 FROM l_r_troncon_usage WHERE usage_id=element.usage_id AND path_id = updated) THEN
-	    UPDATE l_r_troncon_usage
+        IF NOT EXISTS (SELECT 1 FROM core_path_usages WHERE usage_id=element.usage_id AND path_id = updated) THEN
+	    UPDATE core_path_usages
 		   SET path_id = updated
 		   WHERE id = element.id;
         ELSE
-            DELETE FROM l_r_troncon_usage WHERE path_id = merged;
+            DELETE FROM core_path_usages WHERE path_id = merged;
         END IF;
     END LOOP;
 		   
     
     -- Delete merged Path
-    DELETE FROM l_t_troncon WHERE id = merged;
+    DELETE FROM core_path WHERE id = merged;
 
     RETURN 1;
 

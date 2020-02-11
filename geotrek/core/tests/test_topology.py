@@ -106,11 +106,11 @@ class TopologyTest(TestCase):
         cur.execute(
             """
             SELECT t.id as id_path,
-                   et.evenement as id_topology,
+                   et.topo_object_id as id_topology,
                    t.visible as visible
-            FROM e_r_evenement_troncon et
-            JOIN l_t_troncon t ON et.troncon=t.id
-            WHERE et.evenement={topo_id}
+            FROM core_pathaggregation et
+            JOIN core_path t ON et.path_id=t.id
+            WHERE et.topo_object_id={topo_id}
             """.format(topo_id=topology.pk))
 
         datas = dictfetchall(cur)
@@ -126,11 +126,11 @@ class TopologyTest(TestCase):
         cur.execute(
             """
             SELECT t.id as id_path,
-                   et.evenement as id_topology,
+                   et.topo_object_id as id_topology,
                    t.visible as visible
-            FROM e_r_evenement_troncon et
-            JOIN l_t_troncon t ON et.troncon=t.id
-            WHERE et.evenement={topo_id}
+            FROM core_pathaggregation et
+            JOIN core_path t ON et.path_id=t.id
+            WHERE et.topo_object_id={topo_id}
             """.format(topo_id=topology.pk))
 
         datas = dictfetchall(cur)
