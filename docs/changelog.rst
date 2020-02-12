@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix install on Xenial
 
 
 2.32.3 (2020-01-27)

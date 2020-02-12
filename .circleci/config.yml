@@ -27,8 +27,7 @@ jobs:
       - run: ./install.sh --tests --noinput
       - run: sed -i "s/bind .*/bind 127.0.0.1/g" /etc/redis/redis.conf; service redis-server start
       - run: ./bin/coverage run ./bin/django test -v2 geotrek
-      - run: apt install -y npm
-      - run: make test_js
+      - run: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash && . ~/.nvm/nvm.sh && nvm install v12 && make test_js
       - run: ./bin/coverage report -m && ./bin/coverage xml
       - codecov/upload:
           file: coverage.xml
@@ -58,8 +57,7 @@ jobs:
       - run: ./install.sh --tests --noinput
       - run: sed -i "s/bind .*/bind 127.0.0.1/g" /etc/redis/redis.conf; service redis-server start
       - run: ./bin/coverage run ./bin/django test -v2 geotrek --settings=geotrek.settings.tests_nds
-      - run: apt install -y npm
-      - run: make test_js
+      - run: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash && . ~/.nvm/nvm.sh && nvm install v12 && make test_js
       - run: ./bin/coverage report -m && ./bin/coverage xml
       - codecov/upload:
           file: coverage.xml
