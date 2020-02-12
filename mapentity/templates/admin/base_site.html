@@ -1,0 +1,20 @@
+{% extends "admin/base.html" %}
+{% load static i18n %}
+
+{% block title %}{{ title }} | {{ TITLE }} {% trans 'administration' %}{% endblock %}
+
+{% block extrastyle %}
+    <link rel="icon" type="image/png" href="{% static "favicon.png" %}" />
+{% endblock extrastyle %}
+
+{% block branding %}
+<h1 id="site-name">{{ TITLE }} {% trans 'administration' %}</h1>
+{% endblock branding %}
+
+{% block userlinks %}
+    <a href="{% url 'home' %}">{% trans 'Back to application' %}</a> /
+    <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
+    <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

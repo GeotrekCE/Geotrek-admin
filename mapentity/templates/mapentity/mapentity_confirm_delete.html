@@ -1,0 +1,25 @@
+{% extends "mapentity/base_site.html" %}
+{% load i18n mapentity_tags %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <style>
+        .div-center { margin: 0 auto; width: 400px; }
+    </style>
+{% endblock extrahead %}
+
+{% block objectname %}{{ object }}{% endblock objectname %}
+
+{% block mainpanel %}
+    <div class="div-center">
+        <div class="alert alert-block">
+            <h4 class="alert-heading">Warning!</h4>
+            {% blocktrans %}Do you really wish to delete <strong>{{ object }}</strong> ?{% endblocktrans %}
+        </div>
+        <form method="POST" action="{{ object.get_delete_url }}">
+            {% csrf_token %}
+            <input type="submit" class="btn btn-danger" value="{% trans "Yes, delete" %}"></input>
+            <a class="btn btn-inverse" href="{{ object.get_update_url }}">{% trans "No, back to edit view" %}</a>
+        </form>
+    </div>
+{% endblock mainpanel %}

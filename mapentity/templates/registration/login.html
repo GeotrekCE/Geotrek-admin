@@ -1,0 +1,21 @@
+{% extends "mapentity/base_site.html" %}
+{% load i18n mapentity_tags %}
+
+{% block content %}
+<div class="offset1 span8">
+    <img src="{% media_static_fallback "upload/logo-login.png" "images/logo-login.png" %}" />
+
+    <form action="" method="post" class="form-horizontal">
+        {% csrf_token %}
+        {{ form }}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div>
+    </form>
+
+    <p>Version {{ VERSION}}</p>
+</div>
+{% endblock content %}
+
+{% block extrabody %}
+{% endblock extrabody %}

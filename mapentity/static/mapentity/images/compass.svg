@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="317"
+   height="317"
+   id="svg3015"
+   version="1.1"
+   inkscape:version="0.48.1 r9760"
+   sodipodi:docname="Compass-Rose-BW.svg">
+  <title
+     id="title3013">Compass Rose</title>
+  <defs
+     id="defs3017" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.8"
+     inkscape:cx="133.92857"
+     inkscape:cy="136.06639"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1000"
+     inkscape:window-height="1024"
+     inkscape:window-x="918"
+     inkscape:window-y="26"
+     inkscape:window-maximized="0"
+     fit-margin-top="2"
+     fit-margin-left="2"
+     fit-margin-right="2"
+     fit-margin-bottom="2" />
+  <metadata
+     id="metadata3020">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Compass Rose</dc:title>
+        <dc:description>Compass rose with a black ring</dc:description>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>compass rose</rdf:li>
+            <rdf:li>cartography</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <dc:date>4 June 2011</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Serious Tux</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>Public Domain</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:publisher>
+          <cc:Agent>
+            <dc:title>Open Clip Art</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(2.5,2.5)">
+    <g
+       id="ring">
+      <path
+         d="m 228,156 a 72,72 0 1 1 -144,0 72,72 0 1 1 144,0 z"
+         sodipodi:ry="72"
+         sodipodi:rx="72"
+         sodipodi:cy="156"
+         sodipodi:cx="156"
+         id="inner-line"
+         style="fill:none;stroke:#000000;stroke-width:0.25;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         sodipodi:type="arc" />
+      <path
+         sodipodi:type="arc"
+         style="fill:none;stroke:#000000;stroke-width:0.25;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         id="outer-line"
+         sodipodi:cx="156"
+         sodipodi:cy="156"
+         sodipodi:rx="96"
+         sodipodi:ry="96"
+         d="m 252,156 a 96,96 0 1 1 -192,0 96,96 0 1 1 192,0 z" />
+      <path
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.25;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         d="m 156,60 c -53.01934,0 -96,42.98066 -96,96 0,53.01934 42.98066,96 96,96 53.01934,0 96,-42.98066 96,-96 0,-53.01934 -42.98066,-96 -96,-96 z m 0,24 c 39.7645,0 72,32.2355 72,72 0,39.7645 -32.2355,72 -72,72 -39.7645,0 -72,-32.2355 -72,-72 0,-39.7645 32.2355,-72 72,-72 z"
+         id="ring-fill"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       id="major-rose-edge"
+       style="fill:none;stroke:#ffffff;stroke-opacity:1">
+      <path
+         inkscape:connector-curvature="0"
+         id="highlight-north"
+         d="M 156,156 180,132 156,0"
+         style="fill:none;stroke:#ffffff;stroke-opacity:1" />
+      <path
+         d="m 156,156 24,24 132,-24"
+         id="highlight-east"
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#ffffff;stroke-opacity:1" />
+      <path
+         d="m 156,156 -24,24 24,132"
+         id="highlight-south"
+         inkscape:connector-curvature="0"
+         style="fill:none;stroke:#ffffff;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         id="highlight-west"
+         d="M 156,156 132,132 0,156"
+         style="fill:none;stroke:#ffffff;stroke-opacity:1" />
+    </g>
+    <g
+       id="minor-rose">
+      <g
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.25;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         id="light-minor">
+        <path
+           d="m 156,156 48,-48 -48,23"
+           id="light-northeast"
+           inkscape:connector-curvature="0"
+           style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.25;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+        <path
+           inkscape:connector-curvature="0"
+           id="light-southeast"
+           d="m 156,156 48,48 -23,-48"
+           style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.25;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+        <path
+           d="m 156,156 -48,48 48,-23"
+           id="light-southwest"
+           inkscape:connector-curvature="0"
+           style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.25;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+        <path
+           inkscape:connector-curvature="0"
+           id="light-northwest"
+           d="m 156,156 -48,-48 23,48"
+           style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.25;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      </g>
+      <g
+         id="dark-minor"
+         style="fill:#000000;fill-opacity:1;stroke:none">
+        <path
+           inkscape:connector-curvature="0"
+           id="dark-northeast"
+           d="m 156,156 48,-48 -23,48" />
+        <path
+           d="m 156,156 48,48 -48,-23"
+           id="dark-southeast"
+           inkscape:connector-curvature="0" />
+        <path
+           inkscape:connector-curvature="0"
+           id="dark-southwest"
+           d="m 156,156 -48,48 23,-48" />
+        <path
+           d="m 156,156 -48,-48 48,23"
+           id="dark-northwest"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       id="major-rose">
+      <g
+         id="light-major"
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.25;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none">
+        <path
+           style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.25;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+           inkscape:connector-curvature="0"
+           id="light-north"
+           d="M 156,156 132,132 156,0" />
+        <path
+           style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.25;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+           d="m 156,156 24,-24 132,24"
+           id="light-east"
+           inkscape:connector-curvature="0" />
+        <path
+           style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.25;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+           d="m 156,156 24,24 -24,132"
+           id="light-south"
+           inkscape:connector-curvature="0" />
+        <path
+           style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.25;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+           inkscape:connector-curvature="0"
+           id="light-west"
+           d="M 156,156 132,180 0,156" />
+      </g>
+      <g
+         style="fill:#000000;fill-opacity:1;stroke:none"
+         id="dark-major">
+        <path
+           d="M 156,156 180,132 156,0"
+           id="dark-north"
+           inkscape:connector-curvature="0" />
+        <path
+           inkscape:connector-curvature="0"
+           id="dark-east"
+           d="m 156,156 24,24 132,-24" />
+        <path
+           inkscape:connector-curvature="0"
+           id="dark-south"
+           d="m 156,156 -24,24 24,132" />
+        <path
+           d="M 156,156 132,132 0,156"
+           id="dark-west"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+  </g>
+</svg>

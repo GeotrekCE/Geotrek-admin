@@ -1,0 +1,17 @@
+{% load mapentity_tags i18n %}
+<tr>
+    <th>{{ object|verbose:"date_insert" }}</th>
+    <td>{{ object.date_insert }} ({{ object.date_insert|timesince }})</td>
+</tr><tr>
+    <th>{{ object|verbose:"date_update" }}</th>
+    <td>{{ object.get_date_update }} ({{ object.get_date_update|timesince }})</td>
+</tr><tr>
+    <th>{% trans "Last author" %}</th>
+    <td>{{ object.last_author|default:"" }}</td>
+</tr><tr>
+    <th>{% trans "Creator" %}</th>
+    <td>{{ object.creator|default:"" }}</td>
+</tr><tr>
+    <th>{% trans "Authors" %}</th>
+    <td>{{ object.authors|join:", " }}</td>
+</tr>

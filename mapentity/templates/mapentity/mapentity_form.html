@@ -1,0 +1,18 @@
+{% extends "mapentity/base_site.html" %}
+{% load i18n static crispy_forms_tags %}
+
+{% block title %}{{ title }} | {{ block.super }}{% endblock title %}
+
+{% block extrahead %}
+    {{ block.super }}
+{% endblock extrahead %}
+
+{% block nav-detail %}active{% endblock nav-detail %}
+
+{% block mainpanel %}
+    <div class="form-panel {{ modelname }}">
+        {% block mainform %}
+        {% crispy form form.helper %}
+        {% endblock mainform %}
+    </div>
+{% endblock mainpanel %}
