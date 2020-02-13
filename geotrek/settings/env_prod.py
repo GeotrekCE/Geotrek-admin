@@ -3,7 +3,6 @@ import os
 #
 # Django Production
 # ..........................
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(' ')
 
 USE_X_FORWARDED_HOST = True
 COMPRESS_ENABLED = True

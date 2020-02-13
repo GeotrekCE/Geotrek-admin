@@ -102,9 +102,9 @@ Just run:
 
 ::
 
-    ./bin/django import bulkimport.parsers.HebergementParser
+    ./bin/django import HebergementParser
 
-Change the last element ``HebergementParser`` to match one of the class names in ``var/conf/parsers.py`` file.
+Change ``HebergementParser`` to match one of the class names in ``var/conf/parsers.py`` file.
 You can add ``-v2`` parameter to make the command more verbose (show progress).
 Thank to ``cron`` utility you can configure automatic imports.
 

@@ -1,0 +1,84 @@
+Template: geotrek-admin/SERVER_NAME
+Type: string
+Description: Server name(s)
+ Domain name(s) of Geotrek-admin web server.
+ You can enter several domains separated by a space.
+
+Template: geotrek-admin/RANDO_SERVER_NAME
+Type: string
+Default: *
+Description: Geotrek-rando server name(s)
+ Domain name(s) of Geotrek-rando web server(s).
+ You can enter several domains separated by a space.
+ If set to * Geotrek-admin will accept user report from any domain.
+
+Template: geotrek-admin/MANAGE_DB
+Type: boolean
+Default: yes
+Description: Create a PostgreSQL database?
+ Choose yes to let Geotrek create a local user and database for you.
+ Choose no to specify your own database connexion settings.
+
+Template: geotrek-admin/POSTGRES_HOST
+Type: string
+Default: localhost
+Description: PostgreSQL host
+
+Template: geotrek-admin/POSTGRES_PORT
+Type: string
+Default: 5432
+Description: PostgreSQL port
+
+Template: geotrek-admin/POSTGRES_USER
+Type: string
+Default: geotrek
+Description: PostgreSQL user
+
+Template: geotrek-admin/POSTGRES_PASSWORD
+Type: password
+Default: geotrek
+Description: PostgreSQL password
+
+Template: geotrek-admin/POSTGRES_DB
+Type: string
+Default: geotrekdb
+Description: PostgreSQL database name
+
+Template: geotrek-admin/WORKERS
+Type: string
+Default: 4
+Description: Number of workers
+ Number of parallel processes to handle web requests.
+ This number will used twice, once for UI requests and once for API requests.
+
+Template: geotrek-admin/TIMEOUT
+Type: string
+Default: 300
+Description: UI timeout (sec)
+ Maximum number of seconds allowed to handle web requests.
+
+Template: geotrek-admin/SRID
+Type: string
+Default: 2154
+Description: SRID
+ Please choose the Spatial Reference System Identifier (SRID) to use.
+ The projection must match your geographic area and coordinates must be in meters.
+
+Template: geotrek-admin/LANGUAGES
+Type: string
+Default: fr en
+Description: Languages
+ Two-letters codes of languages to which you want to translate contents.
+ Separated by a space. The first one is the default language.
+
+Template: geotrek-admin/TIME_ZONE
+Type: string
+Description: Time zone
+ From database names (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+
+Template: geotrek-admin/DEFAULT_STRUCTURE
+Type: string
+Default: My structure
+Description: Default structure name
+ The acronym (or short name) of your main structure. For exemple PNE (Parc national des écrins)
+ or CD05 (Département des Hautes-Alpes).

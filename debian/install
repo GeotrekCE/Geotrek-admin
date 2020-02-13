@@ -1,0 +1,7 @@
+conf/env.in opt/geotrek-admin/var/conf
+conf/nginx.conf.in opt/geotrek-admin/var/conf
+conf/gunicorn-geotrek.conf.py.in opt/geotrek-admin/var/conf
+conf/gunicorn-geotrek_api.conf.py.in opt/geotrek-admin/var/conf
+conf/supervisor-geotrek.conf.in opt/geotrek-admin/var/conf
+conf/supervisor-geotrek-api.conf.in opt/geotrek-admin/var/conf
+conf/supervisor-geotrek-celery.conf.in opt/geotrek-admin/var/conf

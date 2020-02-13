@@ -1,0 +1,37 @@
+Source: geotrek-admin
+Maintainer: Gaël UTARD <gael.utard@makina-corpus.com>
+Section: misc
+Priority: optional
+Standards-Version: 3.9.2
+Build-Depends:
+ debhelper (>= 9),
+ dh-virtualenv (>= 1.0),
+ git,
+ python3 (>= 3.5),
+ python3-venv (>= 3.5),
+ python3-dev (>= 3.5),
+ libgdal-dev (>= 2.2),
+ libgdal-dev (<< 2.3),
+ libffi-dev (>= 3),
+ libxml2-dev (>= 2.9.2),
+ libxslt1-dev (>= 1.1.28)
+
+Package: geotrek-admin
+Architecture: any
+Pre-depends:
+ libcairo2
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends},
+ nginx,
+ memcached,
+ supervisor,
+ gettext,
+ gdal-bin,
+ fonts-dejavu-core,
+ fonts-liberation,
+ shared-mime-info,
+ redis-server,
+ screamshotter,
+ convertit
+Description: Manage and promote your tourist trails and activites

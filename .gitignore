@@ -1,5 +1,9 @@
 *.pyc
 *.tar.gz
+*.log
+
+# Generated files
+__pycache__/
 *.mo
 
 /var/
@@ -21,8 +25,6 @@ docs/_build/
 /node_modules/
 /salt.cfg
 
-/bulkimport/
-!/bulkimport/__init__.py
 /sync_trek/
 
 /.project
@@ -33,9 +35,18 @@ docs/_build/
 /install/*.tgz
 /install/.env
 /install/var/
-/bulkimport/
-!/bulkimport/__init__.py
 
 /env/
+/pyvenv.cfg
 /.env
 /docker-compose.yml
+
+# Packaging
+/debian/.debhelper/
+/debian/debhelper-build-stamp
+/debian/download/
+/debian/files
+/debian/geotrek-admin.substvars
+/debian/geotrek-admin/
+/debian/geotrek-admin.postinst.debhelper
+/debian/geotrek-admin.postrm.debhelper

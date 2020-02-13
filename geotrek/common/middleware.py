@@ -1,5 +1,6 @@
 import re
 import socket
+from netifaces import interfaces, ifaddresses, AF_INET
 
 from django.conf import settings
 from django.contrib.auth.signals import user_logged_in
@@ -34,40 +35,13 @@ class APILocaleMiddleware(object):
 
 CONVERSION_SERVER_HOST = urlparse(settings.MAPENTITY_CONFIG['CONVERSION_SERVER']).hostname
 CAPTURE_SERVER_HOST = urlparse(settings.MAPENTITY_CONFIG['CAPTURE_SERVER']).hostname
-LOCALHOST = [
-    '127.0.0.1',
-    socket.gethostname(),
-    # default convertion docker service hostnames
-    CONVERSION_SERVER_HOST,
-    CAPTURE_SERVER_HOST,
+AUTOLOGIN_IPS = [
+    socket.gethostbyname(CONVERSION_SERVER_HOST),
+    socket.gethostbyname(CAPTURE_SERVER_HOST),
 ]
-
-REMOTE_HOSTS = [
-    'localhost',
-    socket.gethostname(),
-    CONVERSION_SERVER_HOST,
-    CAPTURE_SERVER_HOST,
-]
-
-try:
-    socket.inet_aton(CONVERSION_SERVER_HOST)
-    LOCALHOST.append(CONVERSION_SERVER_HOST)
-
-except socket.error:
-    try:
-        LOCALHOST.append(socket.gethostbyname(CONVERSION_SERVER_HOST))
-    except socket.gaierror:
-        pass
-
-try:
-    socket.inet_aton(CAPTURE_SERVER_HOST)
-    LOCALHOST.append(CAPTURE_SERVER_HOST)
-
-except socket.error:
-    try:
-        LOCALHOST.append(socket.gethostbyname(CAPTURE_SERVER_HOST))
-    except socket.gaierror:
-        pass
+for interface in interfaces():
+    for link in ifaddresses(interface)[AF_INET]:
+        AUTOLOGIN_IPS.append(link['addr'])
 
 
 class FixedAutoLoginMiddleware(AutoLoginMiddleware):
@@ -86,15 +60,8 @@ class FixedAutoLoginMiddleware(AutoLoginMiddleware):
 
         if user and user.is_anonymous() and not is_running_tests:
             remoteip = request.META.get('REMOTE_ADDR')
-            remotehost = request.META.get('REMOTE_HOST')
 
-            is_auto_allowed = (
-                (remoteip in LOCALHOST or remotehost in REMOTE_HOSTS)
-                or (remoteip and remoteip in (CONVERSION_SERVER_HOST, CAPTURE_SERVER_HOST))
-                or (remotehost and remotehost in (CONVERSION_SERVER_HOST, CAPTURE_SERVER_HOST))
-            )
-            if is_auto_allowed:
-                print("Auto-login for %s/%s" % (remoteip, remotehost))
+            if remoteip in AUTOLOGIN_IPS:
                 user = get_internal_user()
                 try:
                     user_logged_in.send(self, user=user, request=request)

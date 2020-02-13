@@ -25,7 +25,7 @@ services:
     env_file:
       - .env
     volumes:
-        - .:/app/src
+        - .:/opt/geotrek-admin
     depends_on:
       - postgres
       - redis
@@ -39,7 +39,7 @@ services:
     ports:
       - "${WEB_PORT:-8000}:8000"
     volumes:
-      - ./:/app/src/
+      - ./:/opt/geotrek-admin/
     depends_on:
       - postgres
       - redis

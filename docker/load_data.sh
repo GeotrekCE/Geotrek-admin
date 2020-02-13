@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-cd /app/src
+cd /opt/geotrek-admin
 
 ./manage.py loaddata minimal
 ./manage.py loaddata cirkwi
 ./manage.py loaddata basic
 
 # copy media files for fixtures
-for dir in `find geotrek/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null; cp -R $dir/* /app/src/var/media/upload/ ; popd > /dev/null; done
+for dir in `find geotrek/ -type d -name upload`; do pushd `dirname $$dir` > /dev/null; cp -R $dir/* /opt/geotrek-admin/var/media/upload/ ; popd > /dev/null; done
