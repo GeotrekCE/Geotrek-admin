@@ -66,7 +66,7 @@ Synchronization options
 Synchronization filtered by source and portal
 ---------------------------------------------
 
-You can filter treks, touristic contents, touristic events and static pages by source(s). For example, if you created 3 records sources named `source A`, `source B` and `source C` and you want only export data only from `source A` and `source B` to your web public portal, you can synchronize with:
+You can filter treks, touristic contents, touristic events and static pages by source(s). For example, if you created 3 sources records named ``source A``, ``source B`` and ``source C`` and you want to only export data from ``source A`` and ``source B`` to your web public portal, you can synchronize with:
 
 ::
 
@@ -75,7 +75,7 @@ You can filter treks, touristic contents, touristic events and static pages by s
 Multiple sources are separated with comas (without space before or after coma). Do not forget to add double quotes after and before the parameter if there are spaces in source names.
 You can run several commands to export several sources combinations into several directories and use them to publish several distinct web portals.
 
-You can do exactly the same with Target_Portal filed value. 
+You can do exactly the same with ``Target_Portal`` field value. It will include objects associated to the selected portal + those without portal.
 
 
 ::
@@ -98,8 +98,8 @@ Multiple categories are separated with comas (without space before or after coma
 Synchronization with a distant Geotrek-Rando serveur
 ----------------------------------------------------
 
-If your server hosts both Geotrek-Admin and Geotrek-Rando, you just have to configure Geotrek-Rando so
-it uses the directory chosen above. Be sure nginx or apache will have access rights to read these data.
+If your server hosts both Geotrek-admin and Geotrek-rando, you just have to configure Geotrek-rando so
+it uses the directory chosen above. Be sure NGINX or Apache will have access rights to read these data.
 
 If you have separated servers, you have to copy files, for example with ``rsync`` command:
 
