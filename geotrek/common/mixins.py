@@ -205,6 +205,7 @@ class PicturesMixin(object):
         serialized = []
         for att in self.videos:
             video = detect_backend(att.attachment_video)
+            video.is_secure = True
             try:
                 serialized.append({
                     'author': att.author,
