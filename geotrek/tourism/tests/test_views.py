@@ -210,7 +210,7 @@ class BasicJSONAPITest(TranslationResetMixin):
 
     def test_video_youtube(self):
         video_youtube = common_factories.AttachmentFactory(content_object=self.content, attachment_file='',
-                                                           attachment_video='http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque')
+                                                           attachment_video='https://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque')
         video_detected_youtube = detect_backend(video_youtube.attachment_video)
         pk = self.content.pk
         url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.model_name, pk=pk)
@@ -218,7 +218,7 @@ class BasicJSONAPITest(TranslationResetMixin):
         result = response.json()
         self.assertDictEqual(result['videos'][0],
                              {'backend': 'Youtube',
-                              'url': 'http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque',
+                              'url': 'https://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque',
                               'title': video_youtube.title,
                               'legend': video_youtube.legend,
                               'author': video_youtube.author,
@@ -227,7 +227,7 @@ class BasicJSONAPITest(TranslationResetMixin):
     def test_video_dailymotion(self):
         video_dailymotion = common_factories.AttachmentFactory(
             content_object=self.content, attachment_file='',
-            attachment_video='http://www.dailymotion.com/video/x6e0q24')
+            attachment_video='https://www.dailymotion.com/video/x6e0q24')
         video_detected_dailymotion = detect_backend(video_dailymotion.attachment_video)
         pk = self.content.pk
         url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.model_name, pk=pk)
@@ -236,7 +236,7 @@ class BasicJSONAPITest(TranslationResetMixin):
 
         self.assertDictEqual(result['videos'][0],
                              {'backend': 'Dailymotion',
-                              'url': 'http://www.dailymotion.com/embed/video/x6e0q24',
+                              'url': 'https://www.dailymotion.com/embed/video/x6e0q24',
                               'title': video_dailymotion.title,
                               'legend': video_dailymotion.legend,
                               'author': video_dailymotion.author,
@@ -245,7 +245,7 @@ class BasicJSONAPITest(TranslationResetMixin):
     def test_video_dailymotion_wrong_id(self):
         common_factories.AttachmentFactory(
             content_object=self.content, attachment_file='',
-            attachment_video='http://www.dailymotion.com/video/noid')
+            attachment_video='https://www.dailymotion.com/video/noid')
 
         pk = self.content.pk
         url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.model_name, pk=pk)
