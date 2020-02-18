@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix video embed url https
 
 
 2.32.5 (2020-02-18)
