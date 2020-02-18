@@ -141,6 +141,7 @@ class MapEntityTest(TestCase):
     def test_no_html_in_csv(self):
         if self.model is None:
             return  # Abstract test should not run
+
         self.login()
 
         self.modelfactory.create()

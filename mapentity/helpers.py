@@ -145,7 +145,7 @@ def get_source(url, headers):
 
     status_error = 'Request on %s failed (status=%s)' % (url, source.status_code)
     assert source.status_code == 200, status_error
-    print(source.status_code, url)
+
     content_error = 'Request on %s returned empty content' % url
     assert len(source.content) > 0, content_error
 
@@ -159,10 +159,9 @@ def download_to_stream(url, stream, silent=False, headers=None):
 
     try:
         try:
-            print(url, headers)
             source = get_source(url, headers)
         except requests.exceptions.ConnectionError:
-            time.sleep(2)
+            time.sleep(1)
             source = get_source(url, headers)
     except (AssertionError, requests.exceptions.RequestException) as e:
         logger.exception(e)
@@ -172,7 +171,7 @@ def download_to_stream(url, stream, silent=False, headers=None):
 
         if not silent:
             raise
-    print("coucou\n\n\n_n\n", source)
+
     if source is None:
         return source
 
