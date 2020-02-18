@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix filters sort in mobile v3 API
 
 
 2.32.4 (2020-02-12)
