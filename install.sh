@@ -533,6 +533,7 @@ function geotrek_setup {
 
     if $tests ; then
         bin/django collectstatic --clear --noinput --verbosity=0
+        make all_compilemessages
     fi
 
     if $prod || $standalone ; then
