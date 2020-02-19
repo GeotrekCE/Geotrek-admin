@@ -113,6 +113,7 @@ all_makemessages:
 all_compilemessages:
 	for dir in `find geotrek/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django compilemessages; popd > /dev/null; done
 	for dir in `find lib/src/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django compilemessages; popd > /dev/null; done
+	for dir in `find mapentity/ -type d -name locale`; do pushd `dirname $$dir` > /dev/null; $(ROOT_DIR)/bin/django compilemessages; popd > /dev/null; done
 
 
 
