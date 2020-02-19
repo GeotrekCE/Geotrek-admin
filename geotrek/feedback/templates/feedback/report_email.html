@@ -4,7 +4,7 @@
 {% trans "Category" %} : {{report.category}}
 {% if report.comment %}{% blocktrans with comment=report.comment|striptags %}Comment : {{comment}}{% endblocktrans %}{% endif %}
 {% if report.geom %}{% blocktrans with lat=report.geom_wgs84.y|unlocalize|floatformat:"6" lng=report.geom_wgs84.x|unlocalize|floatformat:"6" %}
-Lat : {{lat}} / Lon : {{lng}}
-http://www.openstreetmap.org/?mlat={{lat}}&mlon={{lng}}
+Lat : {{lat|stringformat:"f"}} / Lon : {{lng|stringformat:"f"}}
+http://www.openstreetmap.org/?mlat={{lat|stringformat:"f"}}&mlon={{lng|stringformat:"f"}}
 {% endblocktrans %}{% endif %}
 {% endautoescape %}
