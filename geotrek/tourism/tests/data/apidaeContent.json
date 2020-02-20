@@ -15,7 +15,9 @@
     "type" : "COMMERCE_ET_SERVICE",
     "id" : 479743,
     "nom" : {
-      "libelleFr" : "Quey' Raft"
+      "libelleFr" : "Quey' Raft",
+      "libelleEs" : "Test ES",
+      "libelleEn" : "Test EN"
     },
     "gestion" : {
       "dateModification" : "2017-11-24T15:52:27.974+0000",
@@ -61,10 +63,14 @@
     },
     "presentation" : {
       "descriptifCourt" : {
-        "libelleFr" : "Des descentes familiales ou plus sportives l'été, un parcours plus engagé au printemps..."
+        "libelleFr" : "Des descentes familiales ou plus sportives l'été, un parcours plus engagé au printemps...",
+        "libelleEs" : "Descriptif Court ES",
+        "libelleEn" : "Descriptif Court EN",
+        "libelleIt" : "Descriptif Court IT"
       },
       "descriptifDetaille" : {
-        "libelleFr" : "Au pied du château médiéval, l'enchaînement de rapides variés sur 25 km dans les gorges font du Guil une des rivières les plus appréciées dans le monde de l'eau vive.\r\nLes sensations et les émotions sont multiples."
+        "libelleFr": "Au pied du château médiéval, l'enchaînement de rapides variés sur 25 km dans les gorges font du Guil une des rivières les plus appréciées dans le monde de l'eau vive.\r\nLes sensations et les émotions sont multiples.",
+        "libelleEn": "Descriptif Détaillé EN"
       }
     },
     "localisation" : {
@@ -85,6 +91,10 @@
         }
       },
       "geolocalisation" : {
+        "complement" : {
+          "libelleFr" : "TestFr",
+          "libelleEn" : "TestEn"
+        },
         "geoJson" : {
           "coordinates" : [ 6.794103, 44.756403 ]
         }
@@ -95,32 +105,38 @@
         "elementReferenceType" : "Testserv",
         "id" : 1300,
         "libelleFr" : "Test",
+        "libelleEn" : "Test EN",
         "ordre" : 9
       }, {
         "elementReferenceType" : "Testserv",
         "id" : 1301,
         "libelleFr" : "Test2",
+        "libelleEn" : "Test2 EN",
         "ordre" : 14
       }, {
         "elementReferenceType" : "Testserv",
         "id" : 1302,
         "libelleFr" : "Test3",
+        "libelleEn" : "Test3 EN",
         "ordre" : 18
       }, {
         "elementReferenceType" : "Testserv",
         "id" : 1303,
         "libelleFr" : "Test4",
+        "libelleEn" : "Test4 EN",
         "ordre" : 4
       } ]
     },
     "ouverture" : {
       "periodeEnClair" : {
-        "libelleFr" : "Du 01/05 au 31/10."
+        "libelleFr" : "Du 01/05 au 31/10.",
+        "libelleEn" : "From 01/05 to 31/10."
       }
     },
     "descriptionTarif" : {
       "tarifsEnClair" : {
-        "libelleFr" : "A partir de 30 € par personne"
+        "libelleFr" : "A partir de 30 € par personne",
+        "libelleEn" : "From 30 € per person"
       },
       "modesPaiement" : [ {
         "elementReferenceType" : "ModePaiement",

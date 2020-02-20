@@ -1,5 +1,4 @@
 import os
-import re
 import logging
 
 from django.conf import settings
@@ -11,9 +10,8 @@ from colorfield.fields import ColorField
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
-from mapentity.registry import registry
 from mapentity.models import MapEntityMixin
-from mapentity.serializers import plain_text, smart_plain_text
+from mapentity.serializers import plain_text
 
 from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Topology
@@ -32,17 +30,6 @@ else:
     from django.db.models import Manager as MultilingualManager
 
 logger = logging.getLogger(__name__)
-
-
-def _get_target_choices():
-    """ Populate choices using installed apps names.
-    """
-    apps = [('public', _("Public website"))]
-    for model, entity in registry.registry.items():
-        if entity.menu:
-            appname = model._meta.app_label.lower()
-            apps.append((appname, entity.label))
-    return tuple(apps)
 
 
 class InformationDeskType(PictogramMixin):
@@ -99,34 +86,12 @@ class InformationDesk(models.Model):
         return self.name
 
     @property
-    def description_strip(self):
-        """Used in trek public template.
-        """
-        nobr = re.compile(r'(\s*<br.*?>)+\s*', re.I)
-        newlines = nobr.sub("\n", self.description)
-        return smart_plain_text(newlines)
-
-    @property
-    def serializable_type(self):
-        return {
-            'id': self.type.id,
-            'label': self.type.label,
-            'pictogram': self.type.pictogram.url,
-        }
-
-    @property
     def latitude(self):
-        if self.geom:
-            api_geom = self.geom.transform(settings.API_SRID, clone=True)
-            return api_geom.y
-        return None
+        return self.geom.transform(settings.API_SRID, clone=True).y if self.geom else None
 
     @property
     def longitude(self):
-        if self.geom:
-            api_geom = self.geom.transform(settings.API_SRID, clone=True)
-            return api_geom.x
-        return None
+        return self.geom.transform(settings.API_SRID, clone=True).x if self.geom else None
 
     @property
     def thumbnail(self):
@@ -328,14 +293,6 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
         return self.category.type2_label
 
     @property
-    def type1_display(self):
-        return ', '.join([str(n) for n in self.type1.all()])
-
-    @property
-    def type2_display(self):
-        return ', '.join([str(n) for n in self.type2.all()])
-
-    @property
     def prefixed_category_id(self):
         return self.category.prefixed_id
 
@@ -346,26 +303,6 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
     def type(self):
         """Fake type to simulate POI for mobile app v1"""
         return self.category
-
-    @property
-    def min_elevation(self):
-        return 0
-
-    @property
-    def max_elevation(self):
-        return 0
-
-    @property
-    def portal_display(self):
-        return ', '.join([str(portal) for portal in self.portal.all()])
-
-    @property
-    def source_display(self):
-        return ','.join([str(source) for source in self.source.all()])
-
-    @property
-    def themes_display(self):
-        return ','.join([str(source) for source in self.themes.all()])
 
     @property
     def extent(self):
@@ -462,10 +399,6 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
         return [self.type] if self.type else []
 
     @property
-    def type2(self):
-        return []
-
-    @property
     def districts_display(self):
         return ', '.join([str(d) for d in self.districts])
 
@@ -492,18 +425,6 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
 
     def distance(self, to_cls):
         return settings.TOURISM_INTERSECTION_MARGIN
-
-    @property
-    def portal_display(self):
-        return ', '.join([str(portal) for portal in self.portal.all()])
-
-    @property
-    def source_display(self):
-        return ', '.join([str(source) for source in self.source.all()])
-
-    @property
-    def themes_display(self):
-        return ','.join([str(source) for source in self.themes.all()])
 
     @property
     def rando_url(self):

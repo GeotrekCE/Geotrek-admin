@@ -48,7 +48,7 @@ class RestrictedArea(models.Model):
         verbose_name_plural = _("Restricted areas")
 
     def __str__(self):
-        return "%s - %s" % (self.area_type.name, self.name)
+        return "{} - {}".format(self.area_type.name, self.name)
 
 
 class RestrictedAreaEdge(Topology):
@@ -66,7 +66,7 @@ class RestrictedAreaEdge(Topology):
         verbose_name_plural = _("Restricted area edges")
 
     def __str__(self):
-        return _("Restricted area edge") + ": %s" % self.restricted_area
+        return "{}: {}".format(_("Restricted area edge"), self.restricted_area)
 
     @classmethod
     def path_area_edges(cls, path):
@@ -146,7 +146,7 @@ class CityEdge(Topology):
         verbose_name_plural = _("City edges")
 
     def __str__(self):
-        return _("City edge") + ": %s" % self.city
+        return "{}: {}".format(_("City edge"), self.city)
 
     @classmethod
     def path_city_edges(cls, path):
@@ -210,7 +210,7 @@ class DistrictEdge(Topology):
         verbose_name_plural = _("District edges")
 
     def __str__(self):
-        return _("District edge") + ": %s" % self.district
+        return "{}: {}".format(_("District edge"), self.district)
 
     @classmethod
     def path_district_edges(cls, path):

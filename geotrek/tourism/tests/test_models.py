@@ -5,15 +5,17 @@ from django.test.utils import override_settings
 from geotrek.core import factories as core_factories
 from geotrek.tourism import factories as tourism_factories
 from geotrek.trekking import factories as trekking_factories
-from geotrek.tourism.factories import InformationDeskFactory
+from geotrek.tourism.factories import InformationDeskTypeFactory
+
+import datetime
 
 
-class InformationDeskTest(TestCase):
+class InformationDeskTypeTest(TestCase):
     def setUp(self):
-        self.informationDesk1 = InformationDeskFactory.create(description="Coucou")
+        self.type_informationdesk = InformationDeskTypeFactory(label="Office")
 
-    def test_serializable_type(self):
-        self.assertCountEqual(['pictogram', 'id', 'label'], self.informationDesk1.serializable_type.keys())
+    def test_str(self):
+        self.assertEqual(str(self.type_informationdesk), "Office")
 
 
 class TourismRelations(TestCase):
@@ -85,3 +87,39 @@ class TourismRelations(TestCase):
         self.trek.practice.save()
         self.assertNotIn(self.content, self.trek.touristic_contents.all())
         self.assertNotIn(self.event, self.trek.touristic_events.all())
+
+
+class TouristicEventModelTest(TestCase):
+    def test_dates_display_no_begin_date(self):
+        date = datetime.datetime(year=2000, month=1, day=12)
+        event = tourism_factories.TouristicEventFactory(begin_date=None, end_date=date)
+        self.assertEqual('up to 01/12/2000', event.dates_display)
+
+    def test_dates_display_no_end_date(self):
+        date = datetime.datetime(year=2000, month=1, day=12)
+        event = tourism_factories.TouristicEventFactory(begin_date=date, end_date=None)
+        self.assertEqual('starting from 01/12/2000', event.dates_display)
+
+    def test_dates_display_same_date(self):
+        date = datetime.datetime(year=2000, month=1, day=12)
+        event = tourism_factories.TouristicEventFactory(begin_date=date, end_date=date)
+        self.assertEqual('01/12/2000', event.dates_display)
+
+    def test_dates_display_no_end_begin_date(self):
+        event = tourism_factories.TouristicEventFactory(begin_date=None, end_date=None)
+        self.assertEqual('', event.dates_display)
+
+    def test_dates_display_end_begin_date_different(self):
+        date_1 = datetime.datetime(year=2000, month=1, day=12)
+        date_2 = datetime.datetime(year=2001, month=1, day=12)
+        event = tourism_factories.TouristicEventFactory(begin_date=date_1, end_date=date_2)
+        self.assertEqual('from 01/12/2000 to 01/12/2001', event.dates_display)
+
+
+class TouristicContentModelTest(TestCase):
+    def tests_type_poi_mobilev1(self):
+        category = tourism_factories.TouristicContentCategoryFactory(label="Test")
+        content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
+                                                            category=category)
+
+        self.assertEqual(str(content.type), "Test")

@@ -1,3 +1,4 @@
+from django.contrib.gis.geos import Polygon, MultiPolygon
 from django.conf import settings
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
@@ -12,6 +13,7 @@ from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.tourism.factories import (TouristicContentFactory,
                                        TouristicContentCategoryFactory,
                                        TouristicEventFactory)
+from geotrek.zoning.factories import CityFactory
 
 from unittest.mock import patch
 import os
@@ -38,6 +40,24 @@ class TouristicContentViewsTests(CommonTest):
             'category': TouristicContentCategoryFactory.create().pk,
             'geom': '{"type": "Point", "coordinates":[0, 0]}',
         }
+
+    def test_intersection_zoning(self):
+        self.modelfactory.create()
+        CityFactory.create(name="Are", code='09000',
+                           geom=MultiPolygon(Polygon(((0, 0), (300, 0), (300, 100), (200, 100), (0, 0)),
+                                                     srid=settings.SRID)))
+        CityFactory.create(name="Nor", code='09001',
+                           geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)),
+                                                     srid=settings.SRID)))
+        self.login()
+        params = '?city=09000'
+        response = self.client.get(self.model.get_jsonlist_url() + params)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()["map_obj_pk"]), 1)
+        params = '?city=09001'
+        response = self.client.get(self.model.get_jsonlist_url() + params)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()["map_obj_pk"]), 0)
 
 
 class TouristicEventViewsTests(CommonTest):

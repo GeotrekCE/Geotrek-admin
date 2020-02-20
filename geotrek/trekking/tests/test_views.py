@@ -15,6 +15,7 @@ from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core.management import call_command
 from django.core.urlresolvers import reverse
 from django.db import connection, connections, DEFAULT_DB_ALIAS
+from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from django.test import RequestFactory
 from django.test.utils import override_settings
@@ -253,17 +254,17 @@ class TrekViewsTest(CommonTest):
         self.client.post(self.model.get_update_url(trek), good_data)
         self.assertIn(poi, trek.pois_excluded.all())
 
-        def test_detail_lother_language(self):
-            self.login()
+    def test_detail_lother_language(self):
+        self.login()
 
-            bad_data, form_error = self.get_bad_data()
-            bad_data['parking_location'] = 'POINT (1.0 1.0)'  # good data
+        bad_data, form_error = self.get_bad_data()
+        bad_data['parking_location'] = 'POINT (1.0 1.0)'  # good data
 
-            url = self.model.get_add_url()
-            response = self.client.post(url, bad_data)
-            self.assertEqual(response.status_code, 200)
-            form = self.get_form(response)
-            self.assertEqual(form.data['parking_location'], bad_data['parking_location'])
+        url = self.model.get_add_url()
+        response = self.client.post(url, bad_data)
+        self.assertEqual(response.status_code, 200)
+        form = self.get_form(response)
+        self.assertEqual(form.data['parking_location'], bad_data['parking_location'])
 
 
 class TrekViewsLiveTests(CommonLiveTest):
@@ -290,6 +291,21 @@ class TrekCustomViewTests(TrekkingManagerTest):
         infrastructureslayer = response.json()
         names = [feature['properties']['name'] for feature in infrastructureslayer['features']]
         self.assertIn(infra.name, names)
+
+    def test_trek_infrastructure_geojson_not_public_no_permission(self):
+        trek = TrekWithInfrastructuresFactory.create(published=False)
+        self.assertEqual(len(trek.infrastructures), 2)
+        infra = trek.infrastructures[0]
+        infra.published = True
+        infra.save()
+        self.assertEqual(len(trek.infrastructures), 2)
+        self.user.groups.remove(Group.objects.first())
+        self.user.groups.clear()
+        self.user = get_object_or_404(User, pk=self.user.pk)
+        self.client.login(username=self.user.username, password='booh')
+        url = '/api/en/treks/{pk}/infrastructures.geojson'.format(pk=trek.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
 
     def test_trek_signage_geojson(self):
         trek = TrekWithSignagesFactory.create(published=True)

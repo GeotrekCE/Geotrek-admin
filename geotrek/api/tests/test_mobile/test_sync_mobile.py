@@ -23,6 +23,7 @@ from django.utils import translation
 from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory, AttachmentFactory
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg, get_dummy_uploaded_image, get_dummy_uploaded_file
+from geotrek.core.factories import PathFactory
 from geotrek.flatpages.factories import FlatPageFactory
 from geotrek.flatpages.models import FlatPage
 from geotrek.trekking.models import Trek, POI, OrderedTrekChild
@@ -91,6 +92,11 @@ class SyncMobileTilesTest(TestCase):
         portal_b = TargetPortalFactory()
         trek = TrekWithPublishedPOIsFactory.create(published=True)
         trek_not_same_portal = TrekWithPublishedPOIsFactory.create(published=True, portals=(portal_a, ))
+        trek_multi = TrekFactory.create(published=True, no_path=True)
+        p = PathFactory.create(geom=LineString((0, 0), (0, 10)))
+        trek_multi.add_path(p, start=0.0, end=0.1)
+        trek_multi.add_path(p, start=0.2, end=0.3)
+        trek_multi.save()
         management.call_command('sync_mobile', 'tmp', url='http://localhost:8000', verbosity=2, stdout=output,
                                 portal=portal_b.name)
 
@@ -102,12 +108,13 @@ class SyncMobileTilesTest(TestCase):
         zfile_trek = zipfile.ZipFile(os.path.join('tmp', 'nolang', '{}.zip'.format(trek.pk)))
         for finfo in zfile_trek.infolist():
             ifile_trek = zfile_trek.open(finfo)
-            if ifile_global.name.startswith('tiles/'):
+            if ifile_trek.name.startswith('tiles/'):
                 self.assertEqual(ifile_trek.readline(), b'I am a png')
         self.assertIn("nolang/global.zip", output.getvalue())
         self.assertIn("nolang/{pk}.zip".format(pk=trek.pk), output.getvalue())
 
         self.assertFalse(os.path.exists(os.path.join('tmp', 'nolang', '{}.zip'.format(trek_not_same_portal.pk))))
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'nolang', '{}.zip'.format(trek_multi.pk))))
 
     def tearDown(self):
         shutil.rmtree('tmp')
@@ -358,11 +365,11 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         cls.portal_b = TargetPortalFactory()
         picto_desk = get_dummy_uploaded_image()
         information_desk_type = InformationDeskTypeFactory.create(pictogram=picto_desk)
-        info_desk = InformationDeskFactory.create(type=information_desk_type)
+        cls.info_desk = InformationDeskFactory.create(type=information_desk_type)
         info_desk_no_picture = InformationDeskFactory.create(photo=None)
 
         cls.trek_1 = TrekWithPublishedPOIsFactory.create()
-        cls.trek_1.information_desks = (info_desk, info_desk_no_picture)
+        cls.trek_1.information_desks = (cls.info_desk, info_desk_no_picture)
         cls.trek_2 = TrekWithPublishedPOIsFactory.create(portals=(cls.portal_a,))
         cls.trek_3 = TrekWithPublishedPOIsFactory.create(portals=(cls.portal_b,))
         cls.trek_4 = TrekFactory.create()
@@ -538,6 +545,13 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
                 trek_geojson = json.load(f)
                 self.assertEqual(len(trek_geojson['features']),
                                  Trek.objects.filter(**{'published_{}'.format(lang): True}).count())
+
+    def test_sync_treks_informationdesk_photo_missing(self):
+        os.remove(self.info_desk.photo.path)
+        output = StringIO()
+        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+                                skip_tiles=True, verbosity=2, stdout=output)
+        self.assertIn('Done', output.getvalue())
 
     @classmethod
     def tearDownClass(cls):

@@ -11,8 +11,9 @@ if 'geotrek.core' in settings.INSTALLED_APPS:
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     router.register(r'trek', api_views.TrekViewSet, base_name='trek')
     router.register(r'poi', api_views.POIViewSet, base_name='poi')
-if 'geotrek.tourism' in settings.INSTALLED_APPS:
     router.register(r'tour', api_views.TourViewSet, base_name='tour')
+if 'geotrek.tourism' in settings.INSTALLED_APPS:
+    router.register(r'touristiccontent', api_views.TouristicContentViewSet, base_name='touristiccontent')
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     router.register(r'sensitivearea', api_views.SensitiveAreaViewSet, base_name='sensitivearea')
     router.register(r'sportpractice', api_views.SportPracticeViewSet, base_name='sportpractice')

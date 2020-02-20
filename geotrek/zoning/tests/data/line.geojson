@@ -3,7 +3,7 @@
   "features": [
     {
       "type": "Feature",
-      "properties": {"NOM": "coucou"},
+      "properties": {"NOM": "coucou", "INSEE": 123},
       "geometry": {
         "type": "LineString",
         "coordinates": [

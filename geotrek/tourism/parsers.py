@@ -265,7 +265,7 @@ class TouristicEventApidaeParser(ApidaeParser):
         if services:
             services = "<b>Services:</b><br>" + ", ".join([i['libelleFr'] for i in services]) + "<br>"
         if langues:
-            langues = "<b>Langues Parlés:</b><br>" + ", ".join([i['libelleFr'] for i in langues]) + "<br>"
+            langues = "<b>Langues Parlées:</b><br>" + ", ".join([i['libelleFr'] for i in langues]) + "<br>"
         if localisation:
             localisation = "<b>Accès:</b><br>" + "<br>".join(localisation.splitlines()) + "<br>"
         datemodif = datetime.datetime.strptime(datemodif[:10], "%Y-%m-%d").strftime("%d/%m/%Y")
@@ -314,6 +314,7 @@ class TouristicContentApidaeParser(TouristicContentMixin, ApidaeParser):
     type2 = None
     source = None
     portal = None
+    themes = None
     url = 'http://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques/'
     model = TouristicContent
     eid = 'eid'
@@ -345,6 +346,7 @@ class TouristicContentApidaeParser(TouristicContentMixin, ApidaeParser):
         ),
     }
     natural_keys = {
+        'themes': 'label',
         'category': 'label',
         'type1': 'label',
         'type2': 'label',
@@ -362,6 +364,8 @@ class TouristicContentApidaeParser(TouristicContentMixin, ApidaeParser):
             self.m2m_constant_fields['type1'] = self.type1
         if self.type2 is not None:
             self.m2m_constant_fields['type2'] = self.type2
+        if self.themes is not None:
+            self.m2m_constant_fields['themes'] = self.themes
         if self.source is not None:
             self.m2m_constant_fields['source'] = self.source
         if self.portal is not None:
@@ -591,6 +595,7 @@ class TouristicContentTourInSoftParser(TouristicContentMixin, TourInSoftParser):
     category = None
     type1 = None
     type2 = None
+    themes = None
     source = None
     portal = None
 
@@ -642,6 +647,8 @@ class TouristicContentTourInSoftParser(TouristicContentMixin, TourInSoftParser):
             self.m2m_constant_fields['type1'] = self.type1
         if self.type2 is not None:
             self.m2m_constant_fields['type2'] = self.type2
+        if self.themes is not None:
+            self.m2m_constant_fields['themes'] = self.themes
         if self.source is not None:
             self.m2m_constant_fields['source'] = self.source
         if self.portal is not None:
@@ -685,6 +692,7 @@ class TouristicEventTourInSoftParser(TourInSoftParser):
     model = TouristicEvent
     delete = True
     type = None
+    themes = None
     source = None
     portal = None
 
@@ -730,6 +738,8 @@ class TouristicEventTourInSoftParser(TourInSoftParser):
         self.m2m_constant_fields = self.m2m_constant_fields.copy()
         if self.type is not None:
             self.constant_fields['type'] = self.type
+        if self.themes is not None:
+            self.m2m_constant_fields['themes'] = self.themes
         if self.source is not None:
             self.m2m_constant_fields['source'] = self.source
         if self.portal is not None:

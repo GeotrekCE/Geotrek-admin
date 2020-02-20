@@ -74,15 +74,13 @@ class PathLayer(MapEntityLayer):
         """
         language = self.request.LANGUAGE_CODE
         latest_saved = Path.latest_updated()
+        geojson_lookup = None
         if latest_saved:
             geojson_lookup = '%s_path_%s%s_json_layer' % (
                 language,
                 latest_saved.strftime('%y%m%d%H%M%S%f'),
                 '_nodraft' if self.request.GET.get('no_draft') == 'true' else ''
             )
-        else:
-            geojson_lookup = None
-
         return geojson_lookup
 
 

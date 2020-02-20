@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q
 from django.db.models.query import Prefetch
 from django.http import HttpResponse, Http404
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.utils import timezone, translation
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
@@ -434,10 +434,7 @@ class TrekPOIViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         pk = self.kwargs['pk']
-        try:
-            trek = Trek.objects.existing().get(pk=pk)
-        except Trek.DoesNotExist:
-            raise Http404
+        trek = get_object_or_404(Trek.objects.existing(), pk=pk)
         if not self.request.user.has_perm('trekking.read_poi') and not trek.is_public():
             raise Http404
         return trek.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
@@ -454,10 +451,7 @@ class TrekSignageViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         pk = self.kwargs['pk']
-        try:
-            trek = Trek.objects.existing().get(pk=pk)
-        except Trek.DoesNotExist:
-            raise Http404
+        trek = get_object_or_404(Trek.objects.existing(), pk=pk)
         if not self.request.user.has_perm('trekking.read_signage') and not trek.is_public():
             raise Http404
         return trek.signages.filter(published=True).transform(settings.API_SRID, field_name='geom')
@@ -474,11 +468,8 @@ class TrekInfrastructureViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         pk = self.kwargs['pk']
-        try:
-            trek = Trek.objects.existing().get(pk=pk)
-        except Trek.DoesNotExist:
-            raise Http404
-        if not self.request.user.has_perm('trekking.read_infrastructure') and not trek.is_public():
+        trek = get_object_or_404(Trek.objects.existing(), pk=pk)
+        if not self.request.user.has_perm('infrastructure.read_infrastructure') and not trek.is_public():
             raise Http404
         return trek.infrastructures.filter(published=True).transform(settings.API_SRID, field_name='geom')
 
@@ -555,10 +546,7 @@ class TrekServiceViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         pk = self.kwargs['pk']
-        try:
-            trek = Trek.objects.existing().get(pk=pk)
-        except Trek.DoesNotExist:
-            raise Http404
+        trek = get_object_or_404(Trek.objects.existing(), pk=pk)
         if not self.request.user.has_perm('trekking.read_service') and not trek.is_public():
             raise Http404
         return trek.services.filter(type__published=True).transform(settings.API_SRID, field_name='geom')

@@ -1,4 +1,4 @@
-from django.http import Http404
+from django.shortcuts import get_object_or_404
 from django.views.decorators.cache import cache_page
 from django.conf import settings
 from django.utils.decorators import method_decorator
@@ -31,10 +31,7 @@ class RestrictedAreaTypeGeoJSONLayer(LandLayerMixin, GeoJSONLayerView):
     def get_queryset(self):
         type_pk = self.kwargs['type_pk']
         qs = super(RestrictedAreaTypeGeoJSONLayer, self).get_queryset()
-        try:
-            RestrictedAreaType.objects.get(pk=type_pk)
-        except RestrictedAreaType.DoesNotExist:
-            raise Http404
+        get_object_or_404(RestrictedAreaType, pk=type_pk)
         return qs.filter(area_type=type_pk)
 
 

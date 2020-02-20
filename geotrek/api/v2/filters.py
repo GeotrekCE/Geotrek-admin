@@ -66,16 +66,17 @@ class GeotrekPublishedFilter(BaseFilterBackend):
     """
 
     def filter_queryset(self, request, queryset, view):
+        if not hasattr(queryset.model, 'published'):
+            return queryset
         qs = queryset
         published = request.GET.get('published', 'true')
 
-        if published == 'true':
+        if published.lower() == 'true':
             published = True
-        elif published == 'false':
+        elif published.lower() == 'false':
             published = False
         else:
             published = None
-
         if published is not None:
             language = request.GET.get('language', 'all')
 

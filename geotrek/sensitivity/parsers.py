@@ -1,5 +1,4 @@
 import requests
-import unicodedata
 
 from django.conf import settings
 from django.contrib.gis.geos import Point, Polygon, MultiPolygon
@@ -204,6 +203,3 @@ class RegulatorySensitiveAreaShapeParser(ShapeParser):
         species.save()
         species.practices.add(*practices)
         return species
-
-    def normalize_field_name(self, name):
-        return unicodedata.normalize('NFD', name).encode('ascii', 'ignore').upper()

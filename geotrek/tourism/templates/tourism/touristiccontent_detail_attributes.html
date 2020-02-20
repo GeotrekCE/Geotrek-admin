@@ -17,7 +17,7 @@
             <td>{{ object.category }}</td>
         </tr>
         <tr>
-            <th>{% if object.category.type1_label %}{{ object.category.type1_label }}{% else %}{{ object|verbose:"type1" }}{% endif %}</th>
+            <th>{% if object.type1_label %}{{ object.type1_label }}{% else %}{{ object|verbose:"type1" }}{% endif %}</th>
             <td>{% valuelist object.type1.all %}</td>
         </tr>
         <tr>
