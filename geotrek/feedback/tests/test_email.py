@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.core import mail
 from django.core.mail.backends.base import BaseEmailBackend
+from django.utils import translation
 
 from geotrek.feedback.factories import ReportFactory
 
@@ -40,3 +41,15 @@ class EmailSendingTest(TestCase):
                          '[Geotrek] Feedback from john.doe@nowhere.com')
         self.assertIn("Comment : This is a 'comment'", sent_mail.body)
         self.assertIn("Lat : 46.500000 / Lon : 3.000000", sent_mail.body)
+
+    def test_email_format_and_content_fr(self):
+        translation.activate('fr')
+        ReportFactory.create(name='Jacques Dupont',
+                             email='jacques.dupont@nulpart.com',
+                             comment="Ceci est un commentaire")
+        sent_mail = mail.outbox[0]
+        self.assertEqual(sent_mail.subject,
+                         '[Geotrek] Signalement de Jack Dupont (jacques.dupont@nulpart.com)')
+        self.assertIn("Commentaire : Ceci est un commentaire", sent_mail.body)
+        self.assertIn("Lat : 46.500000 / Lon : 3.000000", sent_mail.body)
+        translation.deactivate()
