@@ -49,7 +49,7 @@ class EmailSendingTest(TestCase):
                              comment="Ceci est un commentaire")
         sent_mail = mail.outbox[0]
         self.assertEqual(sent_mail.subject,
-                         '[Geotrek] Signalement de Jack Dupont (jacques.dupont@nulpart.com)')
+                         '[Geotrek] Signalement de Jacques Dupont (jacques.dupont@nulpart.com)')
         self.assertIn("Commentaire : Ceci est un commentaire", sent_mail.body)
         self.assertIn("Lat : 46.500000 / Lon : 3.000000", sent_mail.body)
         translation.deactivate()
