@@ -23,9 +23,9 @@ from django.utils.six.moves.urllib.parse import quote
 from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _
 
-from .factories import SuperUserFactory
-from .forms import MapEntityForm
-from .helpers import smart_urljoin
+from ..factories import SuperUserFactory
+from ..forms import MapEntityForm
+from ..helpers import smart_urljoin
 
 
 class AdjustDebugLevel():

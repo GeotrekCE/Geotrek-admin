@@ -12,7 +12,7 @@ from django.conf import settings
 from geotrek.common.models import FileType  # NOQA
 
 from mapentity.factories import SuperUserFactory
-from mapentity.tests import MapEntityTest, MapEntityLiveTest
+from mapentity.tests.global_tests import MapEntityTest, MapEntityLiveTest
 
 from geotrek.authent.factories import StructureFactory
 from geotrek.authent.tests import AuthentFixturesTest
