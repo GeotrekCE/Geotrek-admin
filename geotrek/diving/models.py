@@ -18,14 +18,13 @@ from geotrek.trekking.models import POI, Service, Trek
 
 
 class Practice(PictogramMixin):
-    name = models.CharField(verbose_name=_("Name"), max_length=128, db_column='nom')
-    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True, db_column='tri',
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
                                 help_text=_("Alphabetical order if blank"))
-    color = ColorField(verbose_name=_("Color"), default='#444444', db_column='couleur',
+    color = ColorField(verbose_name=_("Color"), default='#444444',
                        help_text=_("Color of the practice, only used in mobile."))  # To be implemented in Geotrek-rando
 
     class Meta:
-        db_table = 'g_b_pratique'
         verbose_name = _("Practice")
         verbose_name_plural = _("Practices")
         ordering = ['order', 'name']
@@ -44,10 +43,9 @@ class Difficulty(OptionalPictogramMixin):
     where treks are filtered by difficulty ids.
     """
     id = models.IntegerField(primary_key=True, verbose_name=_("Order"))
-    name = models.CharField(verbose_name=_("Name"), max_length=128, db_column='nom')
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
 
     class Meta:
-        db_table = 'g_b_difficulte'
         verbose_name = _("Difficulty level")
         verbose_name_plural = _("Difficulty levels")
         ordering = ['id']
@@ -72,12 +70,10 @@ class Level(OptionalPictogramMixin):
     where treks are filtered by level ids.
     """
     id = models.IntegerField(primary_key=True, verbose_name=_("Order"))
-    name = models.CharField(verbose_name=_("Name"), max_length=128, db_column='nom')
-    description = models.TextField(verbose_name=_("Description"), blank=True, db_column='description',
-                                   help_text=_("Complete description"))
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    description = models.TextField(verbose_name=_("Description"), blank=True, help_text=_("Complete description"))
 
     class Meta:
-        db_table = 'g_b_niveau'
         verbose_name = _("Technical level")
         verbose_name_plural = _("Technical levels")
         ordering = ['id']
@@ -99,43 +95,33 @@ class Level(OptionalPictogramMixin):
 class Dive(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
            TimeStampedModelMixin, PicturesMixin, NoDeleteMixin):
     description_teaser = models.TextField(verbose_name=_("Description teaser"), blank=True,
-                                          help_text=_("A brief summary"), db_column='chapeau')
-    description = models.TextField(verbose_name=_("Description"), blank=True, db_column='description',
+                                          help_text=_("A brief summary"))
+    description = models.TextField(verbose_name=_("Description"), blank=True,
                                    help_text=_("Complete description"))
-    owner = models.CharField(verbose_name=_("Owner"), max_length=256, blank=True, db_column='proprietaire')
+    owner = models.CharField(verbose_name=_("Owner"), max_length=256, blank=True)
     practice = models.ForeignKey(Practice, related_name="dives",
-                                 blank=True, null=True, verbose_name=_("Practice"), db_column='pratique')
-    departure = models.CharField(verbose_name=_("Departure area"), max_length=128, blank=True,
-                                 db_column='depart')
-    disabled_sport = models.TextField(verbose_name=_("Disabled sport accessibility"),
-                                      db_column='handicap', blank=True)
-    facilities = models.TextField(verbose_name=_("Facilities"), db_column='equipements', blank=True)
+                                 blank=True, null=True, verbose_name=_("Practice"))
+    departure = models.CharField(verbose_name=_("Departure area"), max_length=128, blank=True)
+    disabled_sport = models.TextField(verbose_name=_("Disabled sport accessibility"), blank=True)
+    facilities = models.TextField(verbose_name=_("Facilities"), blank=True)
     difficulty = models.ForeignKey(Difficulty, related_name='dives', blank=True,
-                                   null=True, verbose_name=_("Difficulty level"), db_column='difficulte')
+                                   null=True, verbose_name=_("Difficulty level"))
     levels = models.ManyToManyField(Level, related_name='dives', blank=True,
-                                    verbose_name=_("Technical levels"), db_table='g_r_plongee_niveau')
-    depth = models.PositiveIntegerField(verbose_name=_("Maximum depth"), db_column='profondeur',
-                                        blank=True, null=True, help_text=_("meters"))
-    advice = models.TextField(verbose_name=_("Advice"), blank=True, db_column='recommandation',
-                              help_text=_("Risks, danger, best period, ..."))
-    themes = models.ManyToManyField(Theme, related_name="dives",
-                                    db_table="g_r_plongee_theme", blank=True, verbose_name=_("Themes"),
+                                    verbose_name=_("Technical levels"))
+    depth = models.PositiveIntegerField(verbose_name=_("Maximum depth"), blank=True, null=True, help_text=_("meters"))
+    advice = models.TextField(verbose_name=_("Advice"), blank=True, help_text=_("Risks, danger, best period, ..."))
+    themes = models.ManyToManyField(Theme, related_name="dives", blank=True, verbose_name=_("Themes"),
                                     help_text=_("Main theme(s)"))
     geom = models.GeometryField(verbose_name=_("Location"), srid=settings.SRID)
-    source = models.ManyToManyField('common.RecordSource',
-                                    blank=True, related_name='dives',
-                                    verbose_name=_("Source"), db_table='g_r_plongee_source')
-    portal = models.ManyToManyField('common.TargetPortal',
-                                    blank=True, related_name='dives',
-                                    verbose_name=_("Portal"), db_table='g_r_plongee_portal')
-    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
+    source = models.ManyToManyField('common.RecordSource', blank=True, related_name='dives', verbose_name=_("Source"))
+    portal = models.ManyToManyField('common.TargetPortal', blank=True, related_name='dives', verbose_name=_("Portal"))
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
     category_id_prefix = 'D'
 
     class Meta:
-        db_table = 'g_t_plongee'
         verbose_name = _("Dive")
         verbose_name_plural = _("Dives")
 

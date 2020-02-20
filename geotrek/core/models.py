@@ -60,37 +60,37 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=False,
                                            editable=False)
-    valid = models.BooleanField(db_column='valide', default=True, verbose_name=_("Validity"),
+    valid = models.BooleanField(default=True, verbose_name=_("Validity"),
                                 help_text=_("Approved by manager"))
-    visible = models.BooleanField(db_column='visible', default=True, verbose_name=_("Visible"),
+    visible = models.BooleanField(default=True, verbose_name=_("Visible"),
                                   help_text=_("Shown in lists and maps"))
-    name = models.CharField(null=True, blank=True, max_length=250, db_column='nom', verbose_name=_("Name"),
+    name = models.CharField(null=True, blank=True, max_length=250, verbose_name=_("Name"),
                             help_text=_("Official name"))
-    comments = models.TextField(null=True, blank=True, db_column='remarques', verbose_name=_("Comments"),
+    comments = models.TextField(null=True, blank=True, verbose_name=_("Comments"),
                                 help_text=_("Remarks"))
 
-    departure = models.CharField(null=True, blank=True, default="", max_length=250, db_column='depart', verbose_name=_("Departure"),
+    departure = models.CharField(null=True, blank=True, default="", max_length=250, verbose_name=_("Departure"),
                                  help_text=_("Departure place"))
-    arrival = models.CharField(null=True, blank=True, default="", max_length=250, db_column='arrivee', verbose_name=_("Arrival"),
+    arrival = models.CharField(null=True, blank=True, default="", max_length=250, verbose_name=_("Arrival"),
                                help_text=_("Arrival place"))
 
     comfort = models.ForeignKey('Comfort',
                                 null=True, blank=True, related_name='paths',
-                                verbose_name=_("Comfort"), db_column='confort')
+                                verbose_name=_("Comfort"))
     source = models.ForeignKey('PathSource',
                                null=True, blank=True, related_name='paths',
-                               verbose_name=_("Source"), db_column='source')
+                               verbose_name=_("Source"))
     stake = models.ForeignKey('Stake',
                               null=True, blank=True, related_name='paths',
-                              verbose_name=_("Maintenance stake"), db_column='enjeu')
+                              verbose_name=_("Maintenance stake"))
     usages = models.ManyToManyField('Usage',
                                     blank=True, related_name="paths",
-                                    verbose_name=_("Usages"), db_table="l_r_troncon_usage")
+                                    verbose_name=_("Usages"))
     networks = models.ManyToManyField('Network',
                                       blank=True, related_name="paths",
-                                      verbose_name=_("Networks"), db_table="l_r_troncon_reseau")
-    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
-    draft = models.BooleanField(db_column='brouillon', default=False, verbose_name=_("Draft"), db_index=True)
+                                      verbose_name=_("Networks"))
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    draft = models.BooleanField(default=False, verbose_name=_("Draft"), db_index=True)
 
     objects = PathManager()
     include_invisible = PathInvisibleManager()
@@ -128,7 +128,6 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         return self.name or _('path %d') % self.pk
 
     class Meta:
-        db_table = 'l_t_troncon'
         verbose_name = _("Path")
         verbose_name_plural = _("Paths")
         permissions = MapEntityMixin._meta.permissions + [("add_draft_path", "Can add draft Path"),
@@ -326,8 +325,8 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
 
 class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDeleteMixin):
-    paths = models.ManyToManyField(Path, db_column='troncons', through='PathAggregation', verbose_name=_("Path"))
-    offset = models.FloatField(default=0.0, db_column='decallage', verbose_name=_("Offset"))  # in SRID units
+    paths = models.ManyToManyField(Path, through='PathAggregation', verbose_name=_("Path"))
+    offset = models.FloatField(default=0.0, verbose_name=_("Offset"))  # in SRID units
     kind = models.CharField(editable=False, verbose_name=_("Kind"), max_length=32)
 
     # Override default manager
@@ -341,7 +340,6 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
     srid = settings.API_SRID
 
     class Meta:
-        db_table = 'e_t_evenement'
         verbose_name = _("Topology")
         verbose_name_plural = _("Topologies")
 
@@ -499,15 +497,15 @@ class PathAggregationManager(models.GeoManager):
 
 
 class PathAggregation(models.Model):
-    path = models.ForeignKey(Path, null=False, db_column='troncon',
+    path = models.ForeignKey(Path, null=False,
                              verbose_name=_("Path"),
                              related_name="aggregations",
                              on_delete=models.DO_NOTHING)  # The CASCADE behavior is enforced at DB-level (see file ../sql/20_evenements_troncons.sql)
     topo_object = models.ForeignKey(Topology, null=False, related_name="aggregations",
-                                    db_column='evenement', verbose_name=_("Topology"))
-    start_position = models.FloatField(db_column='pk_debut', verbose_name=_("Start position"), db_index=True)
-    end_position = models.FloatField(db_column='pk_fin', verbose_name=_("End position"), db_index=True)
-    order = models.IntegerField(db_column='ordre', default=0, blank=True, null=True, verbose_name=_("Order"))
+                                    verbose_name=_("Topology"))
+    start_position = models.FloatField(verbose_name=_("Start position"), db_index=True)
+    end_position = models.FloatField(verbose_name=_("End position"), db_index=True)
+    order = models.IntegerField(default=0, blank=True, null=True, verbose_name=_("Order"))
 
     # Override default manager
     objects = PathAggregationManager()
@@ -539,7 +537,6 @@ class PathAggregation(models.Model):
         return super(PathAggregation, self).save(*args, **kwargs)
 
     class Meta:
-        db_table = 'e_r_evenement_troncon'
         verbose_name = _("Path aggregation")
         verbose_name_plural = _("Path aggregations")
         # Important - represent the order of the path in the Topology path list
@@ -551,7 +548,6 @@ class PathSource(StructureOrNoneRelated):
     source = models.CharField(verbose_name=_("Source"), max_length=50)
 
     class Meta:
-        db_table = 'l_b_source_troncon'
         verbose_name = _("Path source")
         verbose_name_plural = _("Path sources")
         ordering = ['source']
@@ -565,10 +561,9 @@ class PathSource(StructureOrNoneRelated):
 @functools.total_ordering
 class Stake(StructureOrNoneRelated):
 
-    stake = models.CharField(verbose_name=_("Stake"), max_length=50, db_column='enjeu')
+    stake = models.CharField(verbose_name=_("Stake"), max_length=50)
 
     class Meta:
-        db_table = 'l_b_enjeu'
         verbose_name = _("Maintenance stake")
         verbose_name_plural = _("Maintenance stakes")
         ordering = ['id']
@@ -590,10 +585,9 @@ class Stake(StructureOrNoneRelated):
 
 class Comfort(StructureOrNoneRelated):
 
-    comfort = models.CharField(verbose_name=_("Comfort"), max_length=50, db_column='confort')
+    comfort = models.CharField(verbose_name=_("Comfort"), max_length=50)
 
     class Meta:
-        db_table = 'l_b_confort'
         verbose_name = _("Comfort")
         verbose_name_plural = _("Comforts")
         ordering = ['comfort']
@@ -606,10 +600,9 @@ class Comfort(StructureOrNoneRelated):
 
 class Usage(StructureOrNoneRelated):
 
-    usage = models.CharField(verbose_name=_("Usage"), max_length=50, db_column='usage')
+    usage = models.CharField(verbose_name=_("Usage"), max_length=50)
 
     class Meta:
-        db_table = 'l_b_usage'
         verbose_name = _("Usage")
         verbose_name_plural = _("Usages")
         ordering = ['usage']
@@ -622,10 +615,9 @@ class Usage(StructureOrNoneRelated):
 
 class Network(StructureOrNoneRelated):
 
-    network = models.CharField(verbose_name=_("Network"), max_length=50, db_column='reseau')
+    network = models.CharField(verbose_name=_("Network"), max_length=50)
 
     class Meta:
-        db_table = 'l_b_reseau'
         verbose_name = _("Network")
         verbose_name_plural = _("Networks")
         ordering = ['network']
@@ -637,17 +629,14 @@ class Network(StructureOrNoneRelated):
 
 
 class Trail(MapEntityMixin, Topology, StructureRelated):
-    topo_object = models.OneToOneField(Topology, parent_link=True,
-                                       db_column='evenement')
-    name = models.CharField(verbose_name=_("Name"), max_length=64, db_column='nom')
-    departure = models.CharField(verbose_name=_("Departure"), blank=True, max_length=64, db_column='depart')
-    arrival = models.CharField(verbose_name=_("Arrival"), blank=True, max_length=64, db_column='arrivee')
-    comments = models.TextField(default="", blank=True, verbose_name=_("Comments"), db_column='commentaire')
-    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True,
-                           db_column='id_externe')
+    topo_object = models.OneToOneField(Topology, parent_link=True)
+    name = models.CharField(verbose_name=_("Name"), max_length=64)
+    departure = models.CharField(verbose_name=_("Departure"), blank=True, max_length=64)
+    arrival = models.CharField(verbose_name=_("Arrival"), blank=True, max_length=64)
+    comments = models.TextField(default="", blank=True, verbose_name=_("Comments"))
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     class Meta:
-        db_table = 'l_t_sentier'
         verbose_name = _("Trail")
         verbose_name_plural = _("Trails")
         ordering = ['name']

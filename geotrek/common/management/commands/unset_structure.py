@@ -34,9 +34,9 @@ class Command(BaseCommand):
                     RelatedModel = field.related_model
                     if not RelatedModel:
                         continue
-                    if '_b_' not in RelatedModel._meta.db_table:
-                        continue
                     if 'structure' not in [f.name for f in RelatedModel._meta.get_fields()]:
+                        continue
+                    if not RelatedModel._meta.get_field('structure').null:
                         continue
                     self.items[RelatedModel].append((Model, field.name, isinstance(field, ManyToManyField)))
 

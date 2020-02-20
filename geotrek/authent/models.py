@@ -41,8 +41,7 @@ class StructureRelated(models.Model):
     """
     A mixin used for any entities that belong to a structure
     """
-    structure = models.ForeignKey(Structure, default=default_structure_pk,
-                                  verbose_name=_("Related structure"), db_column='structure')
+    structure = models.ForeignKey(Structure, default=default_structure_pk, verbose_name=_("Related structure"))
 
     objects = models.Manager()
     check_structure_in_forms = True
@@ -65,7 +64,7 @@ class StructureOrNoneRelated(models.Model):
     A mixin used for any entities that belong to a structure or None entity
     """
     structure = models.ForeignKey(Structure,
-                                  verbose_name=_("Related structure"), db_column='structure', blank=True, null=True)
+                                  verbose_name=_("Related structure"), blank=True, null=True)
 
     objects = models.Manager()
     check_structure_in_forms = True

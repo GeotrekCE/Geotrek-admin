@@ -49,7 +49,6 @@ class OrderedTrekChild(models.Model):
     objects = TrekOrderedChildManager()
 
     class Meta:
-        db_table = 'o_r_itineraire_itineraire2'
         ordering = ('parent__id', 'order')
         unique_together = (
             ('parent', 'child'),
@@ -57,73 +56,67 @@ class OrderedTrekChild(models.Model):
 
 
 class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
-    topo_object = models.OneToOneField(Topology, parent_link=True,
-                                       db_column='evenement')
+    topo_object = models.OneToOneField(Topology, parent_link=True)
     departure = models.CharField(verbose_name=_("Departure"), max_length=128, blank=True,
-                                 help_text=_("Departure description"), db_column='depart')
+                                 help_text=_("Departure description"))
     arrival = models.CharField(verbose_name=_("Arrival"), max_length=128, blank=True,
-                               help_text=_("Arrival description"), db_column='arrivee')
+                               help_text=_("Arrival description"))
     description_teaser = models.TextField(verbose_name=_("Description teaser"), blank=True,
-                                          help_text=_("A brief summary (map pop-ups)"), db_column='chapeau')
-    description = models.TextField(verbose_name=_("Description"), blank=True, db_column='description',
+                                          help_text=_("A brief summary (map pop-ups)"))
+    description = models.TextField(verbose_name=_("Description"), blank=True,
                                    help_text=_("Complete description"))
-    ambiance = models.TextField(verbose_name=_("Ambiance"), blank=True, db_column='ambiance',
+    ambiance = models.TextField(verbose_name=_("Ambiance"), blank=True,
                                 help_text=_("Main attraction and interest"))
-    access = models.TextField(verbose_name=_("Access"), blank=True, db_column='acces',
+    access = models.TextField(verbose_name=_("Access"), blank=True,
                               help_text=_("Best way to go"))
-    disabled_infrastructure = models.TextField(verbose_name=_("Disabled infrastructure"), db_column='handicap',
+    disabled_infrastructure = models.TextField(verbose_name=_("Disabled infrastructure"),
                                                blank=True, help_text=_("Any specific infrastructure"))
-    duration = models.FloatField(verbose_name=_("Duration"), null=True, blank=True, db_column='duree',
+    duration = models.FloatField(verbose_name=_("Duration"), null=True, blank=True,
                                  help_text=_("In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"),
                                  validators=[MinValueValidator(0)])
-    is_park_centered = models.BooleanField(verbose_name=_("Is in the midst of the park"), db_column='coeur',
+    is_park_centered = models.BooleanField(verbose_name=_("Is in the midst of the park"),
                                            help_text=_("Crosses center of park"), default=False)
-    advised_parking = models.CharField(verbose_name=_("Advised parking"), max_length=128, blank=True, db_column='parking',
+    advised_parking = models.CharField(verbose_name=_("Advised parking"), max_length=128, blank=True,
                                        help_text=_("Where to park"))
-    parking_location = models.PointField(verbose_name=_("Parking location"), db_column='geom_parking',
+    parking_location = models.PointField(verbose_name=_("Parking location"),
                                          srid=settings.SRID, spatial_index=False, blank=True, null=True)
-    public_transport = models.TextField(verbose_name=_("Public transport"), blank=True, db_column='transport',
+    public_transport = models.TextField(verbose_name=_("Public transport"), blank=True,
                                         help_text=_("Train, bus (see web links)"))
-    advice = models.TextField(verbose_name=_("Advice"), blank=True, db_column='recommandation',
+    advice = models.TextField(verbose_name=_("Advice"), blank=True,
                               help_text=_("Risks, danger, best period, ..."))
-    themes = models.ManyToManyField(Theme, related_name="treks",
-                                    db_table="o_r_itineraire_theme", blank=True, verbose_name=_("Themes"),
+    themes = models.ManyToManyField(Theme, related_name="treks", blank=True, verbose_name=_("Themes"),
                                     help_text=_("Main theme(s)"))
-    networks = models.ManyToManyField('TrekNetwork', related_name="treks",
-                                      db_table="o_r_itineraire_reseau", blank=True, verbose_name=_("Networks"),
+    networks = models.ManyToManyField('TrekNetwork', related_name="treks", blank=True, verbose_name=_("Networks"),
                                       help_text=_("Hiking networks"))
     practice = models.ForeignKey('Practice', related_name="treks",
-                                 blank=True, null=True, verbose_name=_("Practice"), db_column='pratique')
-    accessibilities = models.ManyToManyField('Accessibility', related_name="treks",
-                                             db_table="o_r_itineraire_accessibilite", blank=True,
+                                 blank=True, null=True, verbose_name=_("Practice"))
+    accessibilities = models.ManyToManyField('Accessibility', related_name="treks", blank=True,
                                              verbose_name=_("Accessibility"))
     route = models.ForeignKey('Route', related_name='treks',
-                              blank=True, null=True, verbose_name=_("Route"), db_column='parcours')
+                              blank=True, null=True, verbose_name=_("Route"))
     difficulty = models.ForeignKey('DifficultyLevel', related_name='treks',
-                                   blank=True, null=True, verbose_name=_("Difficulty"), db_column='difficulte')
-    web_links = models.ManyToManyField('WebLink', related_name="treks",
-                                       db_table="o_r_itineraire_web", blank=True, verbose_name=_("Web links"),
+                                   blank=True, null=True, verbose_name=_("Difficulty"))
+    web_links = models.ManyToManyField('WebLink', related_name="treks", blank=True, verbose_name=_("Web links"),
                                        help_text=_("External resources"))
     related_treks = models.ManyToManyField('self', through='TrekRelationship',
                                            verbose_name=_("Related treks"), symmetrical=False,
                                            help_text=_("Connections between treks"),
                                            related_name='related_treks+')  # Hide reverse attribute
     information_desks = models.ManyToManyField(tourism_models.InformationDesk, related_name='treks',
-                                               db_table="o_r_itineraire_renseignement", blank=True,
-                                               verbose_name=_("Information desks"),
+                                               blank=True, verbose_name=_("Information desks"),
                                                help_text=_("Where to obtain information"))
-    points_reference = models.MultiPointField(verbose_name=_("Points of reference"), db_column='geom_points_reference',
+    points_reference = models.MultiPointField(verbose_name=_("Points of reference"),
                                               srid=settings.SRID, spatial_index=False, blank=True, null=True)
     source = models.ManyToManyField('common.RecordSource',
                                     blank=True, related_name='treks',
-                                    verbose_name=_("Source"), db_table='o_r_itineraire_source')
+                                    verbose_name=_("Source"))
     portal = models.ManyToManyField('common.TargetPortal',
                                     blank=True, related_name='treks',
-                                    verbose_name=_("Portal"), db_table='o_r_itineraire_portal')
-    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
-    eid2 = models.CharField(verbose_name=_("Second external id"), max_length=1024, blank=True, null=True, db_column='id_externe2')
+                                    verbose_name=_("Portal"))
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    eid2 = models.CharField(verbose_name=_("Second external id"), max_length=1024, blank=True, null=True)
     pois_excluded = models.ManyToManyField('Poi', related_name='excluded_treks', verbose_name=_("Excluded POIs"),
-                                           db_table="l_r_troncon_poi_exclus", blank=True)
+                                           blank=True)
 
     objects = Topology.get_manager_cls(models.GeoManager)()
 
@@ -131,7 +124,6 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     capture_map_image_waitfor = '.poi_enum_loaded.services_loaded.info_desks_loaded.ref_points_loaded'
 
     class Meta:
-        db_table = 'o_t_itineraire'
         verbose_name = _("Trek")
         verbose_name_plural = _("Treks")
         ordering = ('name',)
@@ -466,17 +458,16 @@ class TrekRelationship(models.Model):
     Relationships between treks : symmetrical aspect is managed by a trigger that
     duplicates all couples (trek_a, trek_b)
     """
-    has_common_departure = models.BooleanField(verbose_name=_("Common departure"), db_column='depart_commun', default=False)
-    has_common_edge = models.BooleanField(verbose_name=_("Common edge"), db_column='troncons_communs', default=False)
-    is_circuit_step = models.BooleanField(verbose_name=_("Circuit step"), db_column='etape_circuit', default=False)
+    has_common_departure = models.BooleanField(verbose_name=_("Common departure"), default=False)
+    has_common_edge = models.BooleanField(verbose_name=_("Common edge"), default=False)
+    is_circuit_step = models.BooleanField(verbose_name=_("Circuit step"), default=False)
 
-    trek_a = models.ForeignKey(Trek, related_name="trek_relationship_a", db_column='itineraire_a')
-    trek_b = models.ForeignKey(Trek, related_name="trek_relationship_b", db_column='itineraire_b', verbose_name=_("Trek"))
+    trek_a = models.ForeignKey(Trek, related_name="trek_relationship_a")
+    trek_b = models.ForeignKey(Trek, related_name="trek_relationship_b", verbose_name=_("Trek"))
 
     objects = TrekRelationshipManager()
 
     class Meta:
-        db_table = 'o_r_itineraire_itineraire'
         verbose_name = _("Trek relationship")
         verbose_name_plural = _("Trek relationships")
         unique_together = ('trek_a', 'trek_b')
@@ -499,10 +490,9 @@ class TrekRelationship(models.Model):
 
 
 class TrekNetwork(PictogramMixin):
-    network = models.CharField(verbose_name=_("Name"), max_length=128, db_column='reseau')
+    network = models.CharField(verbose_name=_("Name"), max_length=128)
 
     class Meta:
-        db_table = 'o_b_reseau'
         verbose_name = _("Trek network")
         verbose_name_plural = _("Trek networks")
         ordering = ['network']
@@ -513,17 +503,16 @@ class TrekNetwork(PictogramMixin):
 
 class Practice(PictogramMixin):
 
-    name = models.CharField(verbose_name=_("Name"), max_length=128, db_column='nom')
-    distance = models.IntegerField(verbose_name=_("Distance"), blank=True, null=True, db_column='distance',
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    distance = models.IntegerField(verbose_name=_("Distance"), blank=True, null=True,
                                    help_text=_("Touristic contents and events will associate within this distance (meters)"))
     cirkwi = models.ForeignKey('cirkwi.CirkwiLocomotion', verbose_name=_("Cirkwi locomotion"), null=True, blank=True)
-    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True, db_column='tri',
+    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
                                 help_text=_("Alphabetical order if blank"))
-    color = ColorField(verbose_name=_("Color"), default='#444444', db_column='couleur',
+    color = ColorField(verbose_name=_("Color"), default='#444444',
                        help_text=_("Color of the practice, only used in mobile."))  # To be implemented in Geotrek-rando
 
     class Meta:
-        db_table = 'o_b_pratique'
         verbose_name = _("Practice")
         verbose_name_plural = _("Practices")
         ordering = ['order', 'name']
@@ -538,13 +527,12 @@ class Practice(PictogramMixin):
 
 class Accessibility(OptionalPictogramMixin):
 
-    name = models.CharField(verbose_name=_("Name"), max_length=128, db_column='nom')
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
     cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True)
 
     id_prefix = 'A'
 
     class Meta:
-        db_table = 'o_b_accessibilite'
         verbose_name = _("Accessibility")
         verbose_name_plural = _("Accessibilities")
         ordering = ['name']
@@ -563,10 +551,9 @@ class Accessibility(OptionalPictogramMixin):
 
 class Route(OptionalPictogramMixin):
 
-    route = models.CharField(verbose_name=_("Name"), max_length=128, db_column='parcours')
+    route = models.CharField(verbose_name=_("Name"), max_length=128)
 
     class Meta:
-        db_table = 'o_b_parcours'
         verbose_name = _("Route")
         verbose_name_plural = _("Routes")
         ordering = ['route']
@@ -582,14 +569,12 @@ class DifficultyLevel(OptionalPictogramMixin):
     where treks are filtered by difficulty ids.
     """
     id = models.IntegerField(primary_key=True)
-    difficulty = models.CharField(verbose_name=_("Difficulty level"),
-                                  max_length=128, db_column='difficulte')
+    difficulty = models.CharField(verbose_name=_("Difficulty level"), max_length=128)
     cirkwi_level = models.IntegerField(verbose_name=_("Cirkwi level"), blank=True, null=True,
-                                       db_column='niveau_cirkwi', help_text=_("Between 1 and 8"))
+                                       help_text=_("Between 1 and 8"))
     cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True)
 
     class Meta:
-        db_table = 'o_b_difficulte'
         verbose_name = _("Difficulty level")
         verbose_name_plural = _("Difficulty levels")
         ordering = ['id']
@@ -615,16 +600,14 @@ class WebLinkManager(models.Manager):
 
 class WebLink(models.Model):
 
-    name = models.CharField(verbose_name=_("Name"), max_length=128, db_column='nom')
-    url = models.URLField(verbose_name=_("URL"), max_length=2048, db_column='url')
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    url = models.URLField(verbose_name=_("URL"), max_length=2048)
     category = models.ForeignKey('WebLinkCategory', verbose_name=_("Category"),
-                                 related_name='links', null=True, blank=True,
-                                 db_column='categorie')
+                                 related_name='links', null=True, blank=True)
 
     objects = WebLinkManager()
 
     class Meta:
-        db_table = 'o_t_web'
         verbose_name = _("Web link")
         verbose_name_plural = _("Web links")
         ordering = ['name']
@@ -640,10 +623,9 @@ class WebLink(models.Model):
 
 class WebLinkCategory(PictogramMixin):
 
-    label = models.CharField(verbose_name=_("Label"), max_length=128, db_column='nom')
+    label = models.CharField(verbose_name=_("Label"), max_length=128)
 
     class Meta:
-        db_table = 'o_b_web_category'
         verbose_name = _("Web link category")
         verbose_name_plural = _("Web link categories")
         ordering = ['label']
@@ -659,15 +641,12 @@ class POIManager(models.GeoManager):
 
 class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
 
-    topo_object = models.OneToOneField(Topology, parent_link=True,
-                                       db_column='evenement')
-    description = models.TextField(verbose_name=_("Description"), db_column='description',
-                                   blank=True, help_text=_("History, details,  ..."))
-    type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"), db_column='type')
-    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
+    topo_object = models.OneToOneField(Topology, parent_link=True)
+    description = models.TextField(verbose_name=_("Description"), blank=True, help_text=_("History, details,  ..."))
+    type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"))
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     class Meta:
-        db_table = 'o_t_poi'
         verbose_name = _("POI")
         verbose_name_plural = _("POI")
 
@@ -750,11 +729,10 @@ tourism_models.TouristicEvent.add_property('published_pois', lambda self: inters
 
 class POIType(PictogramMixin):
 
-    label = models.CharField(verbose_name=_("Label"), max_length=128, db_column='nom')
+    label = models.CharField(verbose_name=_("Label"), max_length=128)
     cirkwi = models.ForeignKey('cirkwi.CirkwiPOICategory', verbose_name=_("Cirkwi POI category"), null=True, blank=True)
 
     class Meta:
-        db_table = 'o_b_poi'
         verbose_name = _("POI type")
         verbose_name_plural = _("POI types")
         ordering = ['label']
@@ -766,11 +744,10 @@ class POIType(PictogramMixin):
 class ServiceType(PictogramMixin, PublishableMixin):
 
     practices = models.ManyToManyField('Practice', related_name="services",
-                                       db_table="o_r_service_pratique", blank=True,
+                                       blank=True,
                                        verbose_name=_("Practices"))
 
     class Meta:
-        db_table = 'o_b_service'
         verbose_name = _("Service type")
         verbose_name_plural = _("Service types")
         ordering = ['name']
@@ -786,13 +763,11 @@ class ServiceManager(models.GeoManager):
 
 class Service(StructureRelated, MapEntityMixin, Topology):
 
-    topo_object = models.OneToOneField(Topology, parent_link=True,
-                                       db_column='evenement')
-    type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_("Type"), db_column='type')
-    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True, db_column='id_externe')
+    topo_object = models.OneToOneField(Topology, parent_link=True)
+    type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_("Type"))
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     class Meta:
-        db_table = 'o_t_service'
         verbose_name = _("Service")
         verbose_name_plural = _("Services")
 

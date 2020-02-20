@@ -9,30 +9,30 @@ BEGIN
     -- Obtain FK name (which is dynamically generated when table is created)
     SELECT c.conname INTO fk_name
         FROM pg_class t1, pg_class t2, pg_constraint c
-        WHERE t1.relname = 'e_r_evenement_troncon' AND c.conrelid = t1.oid
-          AND t2.relname = 'l_t_troncon' AND c.confrelid = t2.oid
+        WHERE t1.relname = 'core_pathaggregation' AND c.conrelid = t1.oid
+          AND t2.relname = 'core_path' AND c.confrelid = t2.oid
           AND c.contype = 'f';
     -- Use a dynamic SQL statement with the name found
     IF fk_name IS NOT NULL THEN
-        EXECUTE 'ALTER TABLE e_r_evenement_troncon DROP CONSTRAINT ' || quote_ident(fk_name);
+        EXECUTE 'ALTER TABLE core_pathaggregation DROP CONSTRAINT ' || quote_ident(fk_name);
     END IF;
 END;
 $$;
 
 -- Now re-create the FK with cascade option
-ALTER TABLE e_r_evenement_troncon ADD FOREIGN KEY (troncon) REFERENCES l_t_troncon(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE core_pathaggregation ADD FOREIGN KEY (path_id) REFERENCES core_path(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 -------------------------------------------------------------------------------
 -- Evenements utilities
 -------------------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION geotrek.ft_troncon_interpolate(troncon integer, point geometry) RETURNS RECORD AS $$
+CREATE OR REPLACE FUNCTION geotrek.ft_troncon_interpolate(path integer, point geometry) RETURNS RECORD AS $$
 DECLARE 
   line GEOMETRY;
   result RECORD;
 BEGIN
-    SELECT geom FROM l_t_troncon WHERE id=troncon INTO line;
+    SELECT geom FROM core_path WHERE id=path INTO line;
     SELECT * FROM ST_InterpolateAlong(line, point) AS (position FLOAT, distance FLOAT) INTO result;
     RETURN result;
 END;
@@ -43,7 +43,7 @@ $$ LANGUAGE plpgsql;
 -- Compute geometry of Evenements
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS e_r_evenement_troncon_geometry_tgr ON e_r_evenement_troncon;
+DROP TRIGGER IF EXISTS e_r_evenement_troncon_geometry_tgr ON core_pathaggregation;
 
 CREATE OR REPLACE FUNCTION geotrek.ft_evenements_troncons_geometry() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
@@ -51,12 +51,12 @@ DECLARE
     eids integer[];
 BEGIN
     IF TG_OP = 'INSERT' THEN
-        eids := array_append(eids, NEW.evenement);
+        eids := array_append(eids, NEW.topo_object_id);
     ELSE
-        eids := array_append(eids, OLD.evenement);
+        eids := array_append(eids, OLD.topo_object_id);
         IF TG_OP = 'UPDATE' THEN -- /!\ Logical ops are commutative in SQL
-            IF NEW.evenement != OLD.evenement THEN
-                eids := array_append(eids, NEW.evenement);
+            IF NEW.topo_object_id != OLD.topo_object_id THEN
+                eids := array_append(eids, NEW.topo_object_id);
             END IF;
         END IF;
     END IF;
@@ -70,7 +70,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER e_r_evenement_troncon_geometry_tgr
-AFTER INSERT OR UPDATE OR DELETE ON e_r_evenement_troncon
+AFTER INSERT OR UPDATE OR DELETE ON core_pathaggregation
 FOR EACH ROW EXECUTE PROCEDURE ft_evenements_troncons_geometry();
 
 
@@ -78,7 +78,7 @@ FOR EACH ROW EXECUTE PROCEDURE ft_evenements_troncons_geometry();
 -- Emulate junction points
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS e_r_evenement_troncon_junction_point_iu_tgr ON e_r_evenement_troncon;
+DROP TRIGGER IF EXISTS e_r_evenement_troncon_junction_point_iu_tgr ON core_pathaggregation;
 
 CREATE OR REPLACE FUNCTION geotrek.ft_evenements_troncons_junction_point_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
@@ -88,14 +88,14 @@ BEGIN
     -- Deal with previously connected paths in the case of an UDPATE action
     IF TG_OP = 'UPDATE' THEN
         -- There were connected paths only if it was a junction point
-        IF OLD.pk_debut = OLD.pk_fin AND OLD.pk_debut IN (0.0, 1.0) THEN
-            DELETE FROM e_r_evenement_troncon
-            WHERE id != OLD.id AND evenement = OLD.evenement;
+        IF OLD.start_position = OLD.end_position AND OLD.start_position IN (0.0, 1.0) THEN
+            DELETE FROM core_pathaggregation
+            WHERE id != OLD.id AND topo_object_id = OLD.topo_object_id;
         END IF;
     END IF;
 
     -- Don't proceed for non-junction points
-    IF NEW.pk_debut != NEW.pk_fin OR NEW.pk_debut NOT IN (0.0, 1.0) THEN
+    IF NEW.start_position != NEW.end_position OR NEW.start_position NOT IN (0.0, 1.0) THEN
         RETURN NULL;
     END IF;
 
@@ -103,32 +103,32 @@ BEGIN
     -- is not the only evenement_troncon, then it's an intermediate marker.
     SELECT count(*)
         INTO t_count
-        FROM e_r_evenement_troncon et
-        WHERE et.evenement = NEW.evenement;
+        FROM core_pathaggregation et
+        WHERE et.topo_object_id = NEW.topo_object_id;
     IF t_count > 1 THEN
         RETURN NULL;
     END IF;
 
     -- Deal with newly connected paths
-    IF NEW.pk_debut = 0.0 THEN
-        SELECT ST_StartPoint(geom) INTO junction FROM l_t_troncon WHERE id = NEW.troncon;
-    ELSIF NEW.pk_debut = 1.0 THEN
-        SELECT ST_EndPoint(geom) INTO junction FROM l_t_troncon WHERE id = NEW.troncon;
+    IF NEW.start_position = 0.0 THEN
+        SELECT ST_StartPoint(geom) INTO junction FROM core_path WHERE id = NEW.path_id;
+    ELSIF NEW.start_position = 1.0 THEN
+        SELECT ST_EndPoint(geom) INTO junction FROM core_path WHERE id = NEW.path_id;
     END IF;
 
-    INSERT INTO e_r_evenement_troncon (troncon, evenement, pk_debut, pk_fin)
-    SELECT id, NEW.evenement, 0.0, 0.0 -- Troncon departing from this junction
-    FROM l_t_troncon t
-    WHERE id != NEW.troncon AND ST_StartPoint(geom) = junction AND NOT EXISTS (
+    INSERT INTO core_pathaggregation (path_id, topo_object_id, start_position, end_position)
+    SELECT id, NEW.topo_object_id, 0.0, 0.0 -- Troncon departing from this junction
+    FROM core_path t
+    WHERE id != NEW.path_id AND ST_StartPoint(geom) = junction AND NOT EXISTS (
         -- prevent trigger recursion
-        SELECT * FROM e_r_evenement_troncon WHERE troncon = t.id AND evenement = NEW.evenement
+        SELECT * FROM core_pathaggregation WHERE path_id = t.id AND topo_object_id = NEW.topo_object_id
     )
     UNION
-    SELECT id, NEW.evenement, 1.0, 1.0-- Troncon arriving at this junction
-    FROM l_t_troncon t
-    WHERE id != NEW.troncon AND ST_EndPoint(geom) = junction AND NOT EXISTS (
+    SELECT id, NEW.topo_object_id, 1.0, 1.0-- Troncon arriving at this junction
+    FROM core_path t
+    WHERE id != NEW.path_id AND ST_EndPoint(geom) = junction AND NOT EXISTS (
         -- prevent trigger recursion
-        SELECT * FROM e_r_evenement_troncon WHERE troncon = t.id AND evenement = NEW.evenement
+        SELECT * FROM core_pathaggregation WHERE path_id = t.id AND topo_object_id = NEW.topo_object_id
     );
 
     RETURN NULL;
@@ -138,5 +138,5 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- required for this case (in order to avoid trigger cascading)
 
 CREATE TRIGGER e_r_evenement_troncon_junction_point_iu_tgr
-AFTER INSERT OR UPDATE OF pk_debut, pk_fin ON e_r_evenement_troncon
+AFTER INSERT OR UPDATE OF start_position, end_position ON core_pathaggregation
 FOR EACH ROW EXECUTE PROCEDURE ft_evenements_troncons_junction_point_iu();

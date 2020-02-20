@@ -14,10 +14,9 @@ from geotrek.common.mixins import PictogramMixin, OptionalPictogramMixin
 
 class Organism(StructureOrNoneRelated):
 
-    organism = models.CharField(max_length=128, verbose_name=_("Organism"), db_column='organisme')
+    organism = models.CharField(max_length=128, verbose_name=_("Organism"))
 
     class Meta:
-        db_table = 'm_b_organisme'
         verbose_name = _("Organism")
         verbose_name_plural = _("Organisms")
         ordering = ['organism']
@@ -33,7 +32,7 @@ class FileType(StructureOrNoneRelated, BaseFileType):
     Attachment FileTypes, related to structure and with custom table name.
     """
     class Meta(BaseFileType.Meta):
-        db_table = 'fl_b_fichier'
+        pass
 
     @classmethod
     def objects_for(cls, request):
@@ -49,19 +48,15 @@ class FileType(StructureOrNoneRelated, BaseFileType):
 
 class Attachment(BaseAttachment):
 
-    creation_date = models.DateField(verbose_name=_("Creation Date"), db_column="date_creation", null=True, blank=True)
-
-    class Meta(BaseAttachment.Meta):
-        db_table = 'fl_t_fichier'
+    creation_date = models.DateField(verbose_name=_("Creation Date"), null=True, blank=True)
 
 
 class Theme(PictogramMixin):
 
-    label = models.CharField(verbose_name=_("Label"), max_length=128, db_column='theme')
+    label = models.CharField(verbose_name=_("Label"), max_length=128)
     cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True)
 
     class Meta:
-        db_table = 'o_b_theme'
         verbose_name = _("Theme")
         verbose_name_plural = _("Themes")
         ordering = ['label']
@@ -96,11 +91,9 @@ class Theme(PictogramMixin):
 class RecordSource(OptionalPictogramMixin):
 
     name = models.CharField(verbose_name=_("Name"), max_length=50)
-    website = models.URLField(verbose_name=_("Website"), max_length=256,
-                              db_column='website', blank=True, null=True)
+    website = models.URLField(verbose_name=_("Website"), max_length=256, blank=True, null=True)
 
     class Meta:
-        db_table = 'o_b_source_fiche'
         verbose_name = _("Record source")
         verbose_name_plural = _("Record sources")
         ordering = ['name']
@@ -111,11 +104,9 @@ class RecordSource(OptionalPictogramMixin):
 
 class TargetPortal(models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=50, unique=True, help_text=_("Used for sync"))
-    website = models.URLField(verbose_name=_("Website"), max_length=256,
-                              db_column='website', unique=True)
+    website = models.URLField(verbose_name=_("Website"), max_length=256, unique=True)
 
     class Meta:
-        db_table = 'o_b_target_portal'
         verbose_name = _("Target portal")
         verbose_name_plural = _("Target portals")
         ordering = ('name',)
