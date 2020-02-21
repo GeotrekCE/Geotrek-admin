@@ -15,7 +15,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from mapentity.factories import SuperUserFactory, UserFactory
 
 from mapentity.registry import app_settings
-from mapentity.tests import MapEntityTest, MapEntityLiveTest
+from mapentity.tests.global_tests import MapEntityTest, MapEntityLiveTest
 from mapentity.views import serve_attachment, Convert, JSSettings
 
 
