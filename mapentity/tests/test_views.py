@@ -17,7 +17,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from mapentity.factories import UserFactory
 
 from mapentity.registry import app_settings
-from mapentity.views import serve_attachment, Convert, JSSettings, MapEntityList
+from mapentity.views import serve_attachment, Convert, JSSettings, MapEntityList, map_screenshot
 
 
 from geotrek.common.models import Attachment
@@ -262,6 +262,13 @@ class AttachmentTest(BaseTest):
         request.user = self.user
         with self.assertRaises(PermissionDenied):
             serve_attachment(request, str(self.attachment.attachment_file))
+
+    def test_map_screenshot_error(self):
+        self.login_as_superuser()
+        request = RequestFactory().get('/bad-request')
+        request.user = self.superuser
+        l = map_screenshot(request)
+        self.assertEqual(400, l.status_code)
 
 
 class TestList(MapEntityList):
