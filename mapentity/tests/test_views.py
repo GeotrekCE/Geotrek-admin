@@ -17,11 +17,12 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from mapentity.factories import UserFactory
 
 from mapentity.registry import app_settings
-from mapentity.views import serve_attachment, Convert, JSSettings
+from mapentity.views import serve_attachment, Convert, JSSettings, MapEntityList
 
 
 from geotrek.common.models import Attachment
 from geotrek.common.models import FileType
+from geotrek.tourism.filters import TouristicEventFilterSet
 from geotrek.tourism.factories import TouristicEventFactory
 from geotrek.tourism.models import TouristicEvent
 from geotrek.tourism.views import TouristicEventList, TouristicEventDetail
@@ -261,6 +262,26 @@ class AttachmentTest(BaseTest):
         request.user = self.user
         with self.assertRaises(PermissionDenied):
             serve_attachment(request, str(self.attachment.attachment_file))
+
+
+class TestList(MapEntityList):
+    queryset = TouristicEvent.objects.existing()
+    filterform = TouristicEventFilterSet
+    columns = None
+
+
+class ViewTestList(BaseTest):
+    def test_every_field_column_none(self):
+        self.login_as_superuser()
+        TouristicEventFactory.create()
+        request = RequestFactory().get('/fake-path')
+        request.user = self.superuser
+        request.session = {}
+        view = TestList.as_view()
+        response = view(request)
+        html = response.render()
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(b'Description' in html.content)
 
 
 class SettingsViewTest(BaseTest):
