@@ -1,6 +1,8 @@
 import os
 from unittest import mock
 
+from django.contrib.gis.geos import Polygon
+from django.contrib.gis.geos.error import GEOSException
 from django.test import TestCase
 
 from mapentity.registry import app_settings
@@ -8,12 +10,99 @@ from mapentity.helpers import (
     capture_url,
     convertit_url,
     user_has_perm,
-    download_to_stream
+    download_to_stream,
+    bbox_split_srid_2154,
+    api_bbox,
+    wkt_to_geom,
+    is_file_newer
 )
+import shutil
+import tempfile
+
+
+class GeomHelpersTest(TestCase):
+    def setUp(self):
+        self.bbox = (200000, 300000, 1100000, 1200000)
+
+    def test_bbox_split_srid_2154_cycle(self):
+        bbox = bbox_split_srid_2154(self.bbox, by_x=2, by_y=2, cycle=True)
+        polygon_1 = Polygon.from_bbox(next(bbox))
+        polygon_2 = Polygon.from_bbox(next(bbox))
+        polygon_3 = Polygon.from_bbox(next(bbox))
+        polygon_4 = Polygon.from_bbox(next(bbox))
+        self.assertEqual(polygon_1,
+                         "POLYGON ((200000 300000, 200000 750000, 650000 750000, 650000 300000, 200000 300000))")
+        self.assertEqual(polygon_2,
+                         "POLYGON ((200000 750000, 200000 1200000, 650000 1200000, 650000 750000, 200000 750000))")
+        self.assertEqual(polygon_3,
+                         "POLYGON ((650000 300000, 650000 750000, 1100000 750000, 1100000 300000, 650000 300000))")
+        self.assertEqual(polygon_4,
+                         "POLYGON ((650000 750000, 650000 1200000, 1100000 1200000, 1100000 750000, 650000 750000))")
+        polygon_5 = Polygon.from_bbox(next(bbox))
+        self.assertEqual(polygon_1, polygon_5)
+
+    def test_bbox_split_srid_2154_no_cycle(self):
+        bbox = bbox_split_srid_2154(self.bbox, by_x=2, by_y=2, cycle=False)
+        polygon_1 = Polygon.from_bbox(next(bbox))
+        polygon_2 = Polygon.from_bbox(next(bbox))
+        polygon_3 = Polygon.from_bbox(next(bbox))
+        polygon_4 = Polygon.from_bbox(next(bbox))
+        self.assertEqual(polygon_1,
+                         "POLYGON ((200000 300000, 200000 750000, 650000 750000, 650000 300000, 200000 300000))")
+        self.assertEqual(polygon_2,
+                         "POLYGON ((200000 750000, 200000 1200000, 650000 1200000, 650000 750000, 200000 750000))")
+        self.assertEqual(polygon_3,
+                         "POLYGON ((650000 300000, 650000 750000, 1100000 750000, 1100000 300000, 650000 300000))")
+        self.assertEqual(polygon_4,
+                         "POLYGON ((650000 750000, 650000 1200000, 1100000 1200000, 1100000 750000, 650000 750000))")
+        with self.assertRaises(StopIteration):
+            Polygon.from_bbox(next(bbox))
+
+    def test_api_bbox(self):
+        bbox = api_bbox(self.bbox, srid=2154, buffer=0.5)
+        self.assertEqual(bbox,
+                         (-3.541720187208087, -7.128188339796316, 8.85446791766016, 5.0971257963327625))
+        bbox_no_buffer = api_bbox(self.bbox, srid=2154, buffer=0.0)
+        self.assertEqual(bbox_no_buffer,
+                         (-0.4442674114234903, -4.028058663629689, 5.756043049259614, 1.9970003967648557))
+
+    def test_wkt_to_geom(self):
+        geom_wkt = "POINT (650000 750000)"
+        geom = wkt_to_geom(geom_wkt, srid_from=2154)
+        self.assertEqual(geom.ewkt, "SRID=2154;%s" % geom_wkt)
+
+    def test_wkt_to_geom_fail(self):
+        geom_wkt = "GeometryCollection2 (1090 1090)"
+        with self.assertRaises(GEOSException):
+            wkt_to_geom(geom_wkt)
+
+
+class OtherHelpers(TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        if not os.path.exists(os.path.join('tmp')):
+            os.makedirs(os.path.join('tmp'))
+
+    def setUp(self):
+        self.path = os.path.join('tmp', 'test.txt')
+
+    def test_is_file_newer_do_not_exists(self):
+        tempfile.NamedTemporaryFile(dir='tmp', prefix='test', suffix='txt')
+        self.assertTrue(is_file_newer(self.path, "2014-02-12T11:21:48.961Z"))
+
+    def test_is_file_newer_exists(self):
+        self.assertTrue(is_file_newer(self.path, "2014-02-12T11:21:48.961Z"))
+
+    def test_no_file(self):
+        self.assertTrue(is_file_newer(self.path, "2014-02-12T11:21:48.961Z"))
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(os.path.join('tmp'))
 
 
 class MapEntityCaptureHelpersTest(TestCase):
-
     def test_capture_url_uses_setting(self):
         orig = app_settings['CAPTURE_SERVER']
         app_settings['CAPTURE_SERVER'] = 'https://vlan'
