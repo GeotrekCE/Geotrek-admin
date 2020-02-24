@@ -89,7 +89,7 @@ class AltimetryMixin(models.Model):
         from .views import HttpSVGResponse
         path = self.get_elevation_chart_path(language)
         # Do nothing if image is up-to-date
-        if is_file_newer(path, self.date_update):
+        if not is_file_newer(path, self.date_update):
             return False
         # Download converted chart as png using convertit
         source = smart_urljoin(rooturl, self.get_elevation_chart_url(language))

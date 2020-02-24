@@ -201,7 +201,7 @@ class MapEntityMixin(models.Model):
     def prepare_map_image(self, rooturl):
         path = self.get_map_image_path()
         # Do nothing if image is up-to-date
-        if is_file_newer(path, self.get_date_update()):
+        if not is_file_newer(path, self.get_date_update()):
             return False
         if self.get_geom() is None:
             size = app_settings['MAP_CAPTURE_SIZE']

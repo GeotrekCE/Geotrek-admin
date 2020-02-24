@@ -124,19 +124,19 @@ def smart_urljoin(base, path):
 
 def is_file_newer(path, date_update, delete_empty=True):
     if not os.path.exists(path):
-        return False
+        return True
 
     if date_update is None:
-        return False
+        return True
 
     if os.path.getsize(path) == 0:
         if delete_empty:
             os.remove(path)
-        return False
+        return True
 
     modified = datetime.utcfromtimestamp(os.path.getmtime(path))
     modified = modified.replace(tzinfo=timezone.utc)
-    return modified > date_update
+    return not modified > date_update
 
 
 def get_source(url, headers):
