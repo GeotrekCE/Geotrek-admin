@@ -1,3 +1,9 @@
+[run]
+source = geotrek
+         mapentity
+omit =
+   */settings*
+   geotrek/wsgi.py
 [report]
 omit =
     */tests*
