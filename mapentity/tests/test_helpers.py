@@ -3,11 +3,13 @@ from unittest import mock
 
 from django.contrib.gis.geos import Polygon
 from django.contrib.gis.geos.error import GEOSException
+from django.http import HttpResponse
 from django.test import TestCase
 
 from mapentity.registry import app_settings
 from mapentity.helpers import (
     capture_url,
+    capture_map_image,
     convertit_url,
     user_has_perm,
     download_to_stream,
@@ -17,7 +19,6 @@ from mapentity.helpers import (
     is_file_newer
 )
 import shutil
-import tempfile
 
 
 class GeomHelpersTest(TestCase):
@@ -87,15 +88,38 @@ class OtherHelpers(TestCase):
     def setUp(self):
         self.path = os.path.join('tmp', 'test.txt')
 
-    def test_is_file_newer_do_not_exists(self):
-        tempfile.NamedTemporaryFile(dir='tmp', prefix='test', suffix='txt')
-        self.assertTrue(is_file_newer(self.path, "2014-02-12T11:21:48.961Z"))
+    @mock.patch("os.path.exists", return_value=True)
+    def test_is_file_newer_no_date(self, mock_value):
+        self.assertTrue(is_file_newer(self.path, None))
 
-    def test_is_file_newer_exists(self):
-        self.assertTrue(is_file_newer(self.path, "2014-02-12T11:21:48.961Z"))
+    @mock.patch('mapentity.helpers.get_source', return_value=None)
+    def test_download_to_stream_source_is_None(self, mock_value):
+        source = download_to_stream('fake_url', 'fake_header')
+        self.assertIsNone(source)
 
-    def test_no_file(self):
-        self.assertTrue(is_file_newer(self.path, "2014-02-12T11:21:48.961Z"))
+    @mock.patch('mapentity.helpers.get_source', return_value=HttpResponse('test', content_type='text'))
+    @mock.patch('django.http.HttpResponse.write', side_effect=IOError("Test"))
+    def test_download_to_stream_source_error_io(self, mock_write, mock_get_source):
+        with self.assertRaises(IOError):
+            download_to_stream('fake_url', HttpResponse('test', content_type='text/javascript'))
+
+    @mock.patch('mapentity.helpers.get_source', return_value=HttpResponse('test', content_type='text'))
+    def test_download_to_stream_source_header(self, mock_get_source):
+        response = HttpResponse('test', content_type='text/javascript')
+        response["data"] = "test"
+        source = download_to_stream('fake_url', response)
+
+    @mock.patch('mapentity.helpers.get_source', return_value=HttpResponse(b'test', content_type='text'))
+    def test_capture_map_image_no_size(self, mock_value):
+        capture_map_image('fake_url', 'tmp/test.txt')
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'test.txt')))
+        os.remove(os.path.join('tmp', 'test.txt'))
+
+    @mock.patch('mapentity.helpers.get_source', return_value=HttpResponse(b'test', content_type='text'))
+    def test_capture_map_image_aspect(self, mock_value):
+        capture_map_image('fake_url', 'tmp/test.txt', aspect=0.1)
+        self.assertTrue(os.path.exists(os.path.join('tmp', 'test.txt')))
+        os.remove(os.path.join('tmp', 'test.txt'))
 
     @classmethod
     def tearDownClass(cls):

@@ -164,7 +164,7 @@ def download_to_stream(url, stream, silent=False, headers=None):
     if isinstance(stream, HttpResponse):
         stream.status_code = source.status_code
         # Copy headers
-        for header, value in source.headers.items():
+        for header, value in source.items():
             stream[header] = value
 
     return source
