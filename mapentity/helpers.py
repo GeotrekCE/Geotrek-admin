@@ -92,28 +92,6 @@ def wkt_to_geom(wkt, srid_from=None, silent=False):
         return None
 
 
-def transform_wkt(wkt, srid_from=None, srid_to=None, dim=3):
-    """
-    Changes SRID, and returns 3D wkt
-    """
-    if srid_from is None:
-        srid_from = API_SRID
-    if srid_to is None:
-        srid_to = settings.SRID
-    try:
-        geom = fromstr(wkt, srid=srid_from)
-        if srid_from != srid_to:
-            geom.transform(srid_to)
-        extracoords = ' 0.0' * (dim - 2)  # add missing dimensions
-        wkt3d = geom.wkt.replace(',', extracoords + ',')
-        wkt3d = wkt3d.replace(')', extracoords + ')')
-        return 'SRID=%s;%s' % (srid_to, wkt3d)
-    except (OGRException, GEOSException, TypeError, ValueError) as e:
-        if settings.DEBUG or not getattr(settings, 'TEST', False):
-            logger.error("wkt_to_geom('%s', %s, %s) : %s" % (wkt, srid_from, srid_to, e))
-        return None
-
-
 def smart_urljoin(base, path):
     if base[-1] != '/':
         base += '/'
