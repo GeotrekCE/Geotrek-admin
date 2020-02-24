@@ -6,16 +6,17 @@ import factory
 
 from django.conf import settings
 from django.core.management import call_command
+from django.http import Http404
 from django.test import TestCase, RequestFactory
 from django.test.utils import override_settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
+from django.core.exceptions import PermissionDenied
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from mapentity.factories import SuperUserFactory, UserFactory
+from mapentity.factories import UserFactory
 
 from mapentity.registry import app_settings
-from mapentity.tests.global_tests import MapEntityTest, MapEntityLiveTest
 from mapentity.views import serve_attachment, Convert, JSSettings
 
 
@@ -24,6 +25,7 @@ from geotrek.common.models import FileType
 from geotrek.tourism.factories import TouristicEventFactory
 from geotrek.tourism.models import TouristicEvent
 from geotrek.tourism.views import TouristicEventList, TouristicEventDetail
+from geotrek.zoning.factories import CityFactory
 
 
 User = get_user_model()
@@ -242,6 +244,23 @@ class AttachmentTest(BaseTest):
         self.assertEqual(response['Content-Type'], 'application/pdf')
         self.assertFalse('Content-Disposition' in response)
         app_settings['SERVE_MEDIA_AS_ATTACHMENT'] = True
+
+    def test_serve_attachment_model_nomapentity(self):
+        obj = CityFactory.create(code=1)
+        attachment = AttachmentFactory.create(content_object=obj)
+        request = RequestFactory().get('/fake-path')
+        request.user = User.objects.create_superuser('test', 'email@corp.com', 'booh')
+        with self.assertRaises(Http404):
+            serve_attachment(request, str(attachment.attachment_file))
+
+    def test_serve_attachment_model_no_permission_read(self):
+        self.login()
+        perm1 = Permission.objects.get(codename='read_attachment')
+        self.user.user_permissions.add(perm1)
+        request = RequestFactory().get('/fake-path')
+        request.user = self.user
+        with self.assertRaises(PermissionDenied):
+            serve_attachment(request, str(self.attachment.attachment_file))
 
 
 class SettingsViewTest(BaseTest):
