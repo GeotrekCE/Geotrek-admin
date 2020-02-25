@@ -130,6 +130,16 @@ class MapEntityTest(TestCase):
         self.assertEqual(response.status_code, 200)
         response.content = allresponse.content
 
+    def test_callback_jsonlist(self):
+        if self.model is None:
+            return  # Abstract test should not run
+        self.login()
+        params = '?callback=json_decode'
+        # If no objects exist, should not fail.
+        response = self.client.get(self.model.get_jsonlist_url() + params)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(b'json_decode({"aaData": [], "map_obj_pk": []});', response.content)
+
     def test_basic_format(self):
         if self.model is None:
             return  # Abstract test should not run
