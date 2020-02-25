@@ -61,11 +61,6 @@ class ModelViewMixin(object):
     """
     Add model meta information in context data
     """
-
-    @classmethod
-    def get_entity_kind(self):
-        return None
-
     def get_title(self):
         return None
 
