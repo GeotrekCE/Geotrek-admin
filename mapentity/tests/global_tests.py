@@ -138,7 +138,7 @@ class MapEntityTest(TestCase):
         # If no objects exist, should not fail.
         response = self.client.get(self.model.get_jsonlist_url() + params)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'json_decode({"aaData": []', response.content)
+        self.assertIn(b'json_decode(', response.content)
 
     def test_basic_format(self):
         if self.model is None:
