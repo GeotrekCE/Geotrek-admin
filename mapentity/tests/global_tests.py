@@ -139,6 +139,15 @@ class MapEntityTest(TestCase):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
             self.assertEqual(response.status_code, 200, u"")
 
+    def test_no_basic_format_fail(self):
+        if self.model is None:
+            return  # Abstract test should not run
+        self.login()
+        self.modelfactory.create()
+
+        response = self.client.get(self.model.get_format_list_url() + '?format=')
+        self.assertEqual(response.status_code, 400)
+
     def test_no_html_in_csv(self):
         if self.model is None:
             return  # Abstract test should not run

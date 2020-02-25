@@ -1,10 +1,12 @@
 from django.contrib.admin.models import ADDITION, CHANGE, DELETION
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
 from django.http import HttpRequest
 from django.test.client import Client
 from django.test import TestCase
 
 from mapentity.models import LogEntry
+from mapentity.registry import app_settings
 from mapentity.views.generic import log_action
 
 from geotrek.authent.models import Structure
@@ -83,6 +85,17 @@ class TestCreator(TestCase):
     def test_creator(self):
         log_action(self.request, self.obj, ADDITION)
         self.assertEqual(self.obj.creator, self.user)
+
+    def test_not_authenticated(self):
+        self.request.user = AnonymousUser()
+        log_action(self.request, self.obj, ADDITION)
+        self.assertIsNone(self.obj.creator)
+
+    def test_action_history_not_enabled(self):
+        app_settings["ACTION_HISTORY_ENABLED"] = False
+        log_action(self.request, self.obj, ADDITION)
+        self.assertIsNone(self.obj.creator)
+        app_settings["ACTION_HISTORY_ENABLED"] = True
 
     def test_multiple_creators(self):
         """No crash if multiple creators in history table"""

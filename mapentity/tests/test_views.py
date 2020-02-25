@@ -13,6 +13,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.core.exceptions import PermissionDenied
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.template.exceptions import TemplateDoesNotExist
 
 from mapentity.factories import UserFactory
 
@@ -22,6 +23,8 @@ from mapentity.views import serve_attachment, Convert, JSSettings, MapEntityList
 
 from geotrek.common.models import Attachment
 from geotrek.common.models import FileType
+from geotrek.trekking.factories import TrekFactory
+from geotrek.trekking.views import TrekDocumentPublic, TrekDocument
 from geotrek.tourism.filters import TouristicEventFilterSet
 from geotrek.tourism.factories import TouristicEventFactory
 from geotrek.tourism.models import TouristicEvent
@@ -498,3 +501,27 @@ class LogViewTest(BaseTest):
         self.login()
         response = self.client.get('/logentry/list/')
         self.assertRedirects(response, "/login/")
+
+
+class TemplateTest(BaseTest):
+    @mock.patch('mapentity.views.generic.smart_get_template', return_value=None)
+    def test_no_template_pdf(self, mock_get_template):
+        self.login_as_superuser()
+        request = RequestFactory().get('/fake-path')
+        request.user = self.superuser
+        request.session = {}
+        trek = TrekFactory.create()
+        view = TrekDocumentPublic.as_view()
+        with self.assertRaises(TemplateDoesNotExist):
+            view(request, pk=trek.pk, slug=trek.slug)
+
+    @mock.patch('mapentity.views.generic.smart_get_template', return_value=None)
+    def test_no_template_odt(self, mock_get_template):
+        self.login_as_superuser()
+        request = RequestFactory().get('/fake-path')
+        request.user = self.superuser
+        request.session = {}
+        trek = TrekFactory.create()
+        view = TrekDocument.as_view()
+        with self.assertRaises(TemplateDoesNotExist):
+            view(request, pk=trek.pk, slug=trek.slug)
