@@ -26,6 +26,7 @@ from django.utils.translation import ugettext_lazy as _
 from ..factories import SuperUserFactory
 from ..forms import MapEntityForm
 from ..helpers import smart_urljoin
+from ..registry import app_settings
 
 
 class AdjustDebugLevel():
@@ -326,6 +327,9 @@ class MapEntityLiveTest(LiveServerTestCase):
     modelfactory = None
     session = None
 
+    def setUp(self):
+        app_settings['SENDFILE_HTTP_HEADER'] = None
+
     def _pre_setup(self):
         # Workaround https://code.djangoproject.com/ticket/10827
         ContentType.objects.clear_cache()
@@ -450,3 +454,6 @@ class MapEntityLiveTest(LiveServerTestCase):
 
         response = self.client.get(obj.map_image_url)
         self.assertEqual(response.status_code, 200 if obj.is_public() else 403)
+
+    def tearDown(self):
+        app_settings['SENDFILE_HTTP_HEADER'] = None
