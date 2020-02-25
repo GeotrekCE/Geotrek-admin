@@ -11,7 +11,8 @@ from django.conf import settings
 # Workaround https://code.djangoproject.com/ticket/22865
 from geotrek.common.models import FileType  # NOQA
 
-from mapentity.factories import SuperUserFactory
+from mapentity.factories import SuperUserFactory, UserFactory
+from mapentity.registry import app_settings
 from mapentity.tests.global_tests import MapEntityTest, MapEntityLiveTest
 
 from geotrek.authent.factories import StructureFactory
@@ -188,3 +189,98 @@ class CommonLiveTest(MapEntityLiveTest):
         screenshot_url = 'http://0.0.0.0:8001/?url=%s' % mapimage_url
         url_called = mock_requests.get.call_args_list[0]
         self.assertTrue(url_called.startswith(screenshot_url))
+
+    @mock.patch('mapentity.helpers.requests')
+    def test_map_image_not_published_superuser(self, mock_requests):
+        if self.model is None:
+            return  # Abstract test should not run
+
+        SuperUserFactory.create(username='Superuser', password='booh')
+        self.client.login(username='Superuser', password='booh')
+
+        obj = self.modelfactory.create(geom='POINT(0 0)', published=False)
+
+        # Initially, map image does not exists
+        image_path = obj.get_map_image_path()
+        if os.path.exists(image_path):
+            os.remove(image_path)
+        self.assertFalse(os.path.exists(image_path))
+
+        # Mock Screenshot response
+        mock_requests.get.return_value.status_code = 200
+        mock_requests.get.return_value.content = b'*' * 100
+
+        response = self.client.get(obj.map_image_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(os.path.exists(image_path))
+
+        mapimage_url = '%s%s?context' % (self.live_server_url, obj.get_detail_url())
+        screenshot_url = 'http://0.0.0.0:8001/?url=%s' % mapimage_url
+        url_called = mock_requests.get.call_args_list[0]
+        self.assertTrue(url_called.startswith(screenshot_url))
+
+    @mock.patch('mapentity.helpers.requests')
+    def test_map_image_not_published_not_authenticated(self, mock_requests):
+        if self.model is None:
+            return  # Abstract test should not run
+
+        obj = self.modelfactory.create(geom='POINT(0 0)', published=False)
+
+        # Initially, map image does not exists
+        image_path = obj.get_map_image_path()
+        if os.path.exists(image_path):
+            os.remove(image_path)
+        self.assertFalse(os.path.exists(image_path))
+
+        response = self.client.get(obj.map_image_url)
+        self.assertEqual(response.status_code, 403)
+        self.assertFalse(os.path.exists(image_path))
+
+    @mock.patch('mapentity.helpers.requests')
+    def test_map_image_not_published_no_permission(self, mock_requests):
+        if self.model is None:
+            return  # Abstract test should not run
+
+        UserFactory.create(username='user', password='booh')
+        self.client.login(username='user', password='booh')
+
+        obj = self.modelfactory.create(geom='POINT(0 0)', published=False)
+
+        # Initially, map image does not exists
+        image_path = obj.get_map_image_path()
+        if os.path.exists(image_path):
+            os.remove(image_path)
+        self.assertFalse(os.path.exists(image_path))
+
+        # Mock Screenshot response
+        mock_requests.get.return_value.status_code = 200
+        mock_requests.get.return_value.content = b'*' * 100
+
+        response = self.client.get(obj.map_image_url)
+        self.assertEqual(response.status_code, 403)
+        self.assertFalse(os.path.exists(image_path))
+
+    @mock.patch('mapentity.helpers.requests')
+    @override_settings(DEBUG=False)
+    def test_map_image_not_serve(self, mock_requests):
+        if self.model is None:
+            return  # Abstract test should not run
+        app_settings['SENDFILE_HTTP_HEADER'] = 'X-Accel-Redirect'
+        SuperUserFactory.create(username='Superuser', password='booh')
+        self.client.login(username='Superuser', password='booh')
+
+        obj = self.modelfactory.create(geom='POINT(0 0)')
+
+        # Initially, map image does not exists
+        image_path = obj.get_map_image_path()
+        if os.path.exists(image_path):
+            os.remove(image_path)
+        self.assertFalse(os.path.exists(image_path))
+
+        # Mock Screenshot response
+        mock_requests.get.return_value.status_code = 200
+        mock_requests.get.return_value.content = b'*' * 100
+
+        response = self.client.get(obj.map_image_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(os.path.exists(image_path))
