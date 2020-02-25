@@ -114,6 +114,17 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         response = self.client.get('%s?lang=fr' % obj.get_detail_url())
         self.assertEqual(response.status_code, 200)
 
+    def test_detail_with_context(self):
+        if self.model is None:
+            return  # Abstract test should not run
+
+        self.login()
+
+        obj = self.modelfactory()
+
+        response = self.client.get('%s?context={"mapsize":{"width":5,"height":6}}' % obj.get_detail_url())
+        self.assertEqual(response.status_code, 200)
+
     def test_permission_published(self):
         if not self.model:
             return
