@@ -404,6 +404,9 @@ class DetailViewTest(BaseTest):
         self.assertContains(response, 'dumber')
 
     def test_export_buttons_odt(self):
+        if app_settings['MAPENTITY_WEASYPRINT']:
+           return  # The button is remove when the settings is True initially
+
         self.login()
 
         tmp = app_settings['MAPENTITY_WEASYPRINT']
