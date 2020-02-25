@@ -426,6 +426,11 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
+    def test_kml_do_not_exist(self):
+        url = '/api/en/treks/{pk}/slug.kml'.format(pk=999)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
     def test_not_published_profile_json(self):
         trek = TrekFactory.create(published=False)
         url = '/api/en/treks/{pk}/profile.json'.format(pk=trek.pk)
