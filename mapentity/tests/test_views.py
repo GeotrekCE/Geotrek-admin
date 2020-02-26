@@ -273,6 +273,19 @@ class AttachmentTest(BaseTest):
         l = map_screenshot(request)
         self.assertEqual(400, l.status_code)
 
+    @mock.patch('mapentity.views.base.capture_image')
+    def test_map_screenshot_work(self, mock_capture_image):
+        """
+        This test do not use normal printcontext it lacks info of the context.
+        """
+        self.login_as_superuser()
+        request = RequestFactory().post('/', data={"printcontext": '{"url":"/path/list/",'
+                                                                   '"viewport":{"width":1745,"height":887},'
+                                                                   '"selector":"#mainmap"}'})
+        request.user = self.superuser
+        l = map_screenshot(request)
+        self.assertEqual(200, l.status_code)
+
 
 class TestList(MapEntityList):
     queryset = TouristicEvent.objects.existing()
