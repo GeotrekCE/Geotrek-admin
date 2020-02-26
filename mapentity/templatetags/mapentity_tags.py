@@ -98,30 +98,32 @@ def humanize_timesince(date):
     Humanized and localized version of built-in timesince template filter.
     Based on Joey Bratton's idea.
     """
-    delta = datetime.datetime.utcnow().replace(tzinfo=utc) - date
+    if date:
+        delta = datetime.datetime.now().replace(tzinfo=utc) - date
+    else:
+        return ""
 
     num_years = delta.days / 365
 
     if math.floor(num_years) > 0:
-        return ungettext(u"%d year ago", u"%d years ago", num_years or 1) % num_years
+        return ungettext("%d year ago", u"%d years ago", math.floor(num_years)) % num_years
 
     num_weeks = delta.days / 7
     if math.floor(num_weeks) > 0:
-        return ungettext(u"%d week ago", u"%d weeks ago", math.floor(num_weeks)) % num_weeks
+        return ungettext("%d week ago", u"%d weeks ago", math.floor(num_weeks)) % num_weeks
 
     if math.floor(delta.days) > 0:
-        return ungettext(u"%d day ago", u"%d days ago", math.floor(delta.days)) % delta.days
+        return ungettext("%d day ago", u"%d days ago", math.floor(delta.days)) % delta.days
 
     num_hours = delta.seconds / 3600
-    print(delta.seconds)
     if math.floor(num_hours) > 0:
-        return ungettext(u"%d hour ago", u"%d hours ago", math.floor(num_hours)) % num_hours
+        return ungettext("%d hour ago", u"%d hours ago", math.floor(num_hours)) % num_hours
 
     num_minutes = delta.seconds / 60
     if math.floor(num_minutes) > 0:
-        return ungettext(u"%d minute ago", u"%d minutes ago", math.floor(num_minutes)) % num_minutes
+        return ungettext("%d minute ago", u"%d minutes ago", math.floor(num_minutes)) % num_minutes
 
-    return ugettext(u"just a few seconds ago")
+    return ugettext("just a few seconds ago")
 
 
 @register.inclusion_tag('mapentity/_detail_valuelist_fragment.html')

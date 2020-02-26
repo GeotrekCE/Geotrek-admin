@@ -188,7 +188,7 @@ class TimeSinceTest(TestCase):
         self.assertIn('1 week ago', out)
 
     def test_time_since_days(self):
-        date = make_aware(datetime.now() - timedelta(days=4), utc)
+        date = make_aware(datetime.now() - timedelta(days=3), utc)
         object_event = TouristicEventFactory.create(begin_date=date)
         out = Template(
             '{% load mapentity_tags %}'
@@ -197,7 +197,7 @@ class TimeSinceTest(TestCase):
         self.assertIn('3 days ago', out)
 
     def test_time_since_day(self):
-        date = make_aware(datetime.now() - timedelta(days=2), utc)
+        date = make_aware(datetime.now() - timedelta(days=1), utc)
         object_event = TouristicEventFactory.create(begin_date=date)
         out = Template(
             '{% load mapentity_tags %}'
@@ -210,15 +210,58 @@ class TimeSinceTest(TestCase):
         object_event = TouristicEventFactory.create(begin_date=date)
         out = Template(
             '{% load mapentity_tags %}'
-            '{{ objecgit.begin_date|timesince }}'
+            '{{ object.begin_date|timesince }}'
         ).render(Context({'object': object_event}))
-        self.assertIn('3 hours ago', out)
+        self.assertIn('4 hours ago', out)
 
     def test_time_since_hour(self):
-        date = make_aware(datetime.now() - timedelta(hours=2), utc)
+        date = make_aware(datetime.now() - timedelta(hours=1), utc)
         object_event = TouristicEventFactory.create(begin_date=date)
         out = Template(
             '{% load mapentity_tags %}'
             '{{ object.begin_date|timesince }}'
         ).render(Context({'object': object_event}))
         self.assertIn('1 hour ago', out)
+
+    def test_time_since_minutes(self):
+        date = make_aware(datetime.now() - timedelta(minutes=3), utc)
+        object_event = TouristicEventFactory.create(begin_date=date)
+        out = Template(
+            '{% load mapentity_tags %}'
+            '{{ object.begin_date|timesince }}'
+        ).render(Context({'object': object_event}))
+        self.assertIn('3 minutes ago', out)
+
+    def test_time_since_minute(self):
+        date = make_aware(datetime.now() - timedelta(minutes=1), utc)
+        object_event = TouristicEventFactory.create(begin_date=date)
+        out = Template(
+            '{% load mapentity_tags %}'
+            '{{ object.begin_date|timesince }}'
+        ).render(Context({'object': object_event}))
+        self.assertIn('1 minute ago', out)
+
+    def test_time_since_seconds(self):
+        date = make_aware(datetime.now() - timedelta(seconds=15), utc)
+        object_event = TouristicEventFactory.create(begin_date=date)
+        out = Template(
+            '{% load mapentity_tags %}'
+            '{{ object.begin_date|timesince }}'
+        ).render(Context({'object': object_event}))
+        self.assertIn('just a few seconds ago', out)
+
+    def test_time_since_now(self):
+        date = make_aware(datetime.now(), utc)
+        object_event = TouristicEventFactory.create(begin_date=date)
+        out = Template(
+            '{% load mapentity_tags %}'
+            '{{ object.begin_date|timesince }}'
+        ).render(Context({'object': object_event}))
+        self.assertIn('just a few seconds ago', out)
+
+    def test_time_since_wrong_object(self):
+        out = Template(
+            '{% load mapentity_tags %}'
+            '{{ object.begin_date|timesince }}'
+        ).render(Context())
+        self.assertIn('', out)
