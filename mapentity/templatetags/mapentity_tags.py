@@ -1,4 +1,5 @@
 import datetime
+import math
 import os
 
 from django import template
@@ -100,23 +101,25 @@ def humanize_timesince(date):
     delta = datetime.datetime.utcnow().replace(tzinfo=utc) - date
 
     num_years = delta.days / 365
-    if (num_years > 0):
-        return ungettext(u"%d year ago", u"%d years ago", num_years) % num_years
+
+    if math.floor(num_years) > 0:
+        return ungettext(u"%d year ago", u"%d years ago", num_years or 1) % num_years
 
     num_weeks = delta.days / 7
-    if (num_weeks > 0):
-        return ungettext(u"%d week ago", u"%d weeks ago", num_weeks) % num_weeks
+    if math.floor(num_weeks) > 0:
+        return ungettext(u"%d week ago", u"%d weeks ago", math.floor(num_weeks)) % num_weeks
 
-    if (delta.days > 0):
-        return ungettext(u"%d day ago", u"%d days ago", delta.days) % delta.days
+    if math.floor(delta.days) > 0:
+        return ungettext(u"%d day ago", u"%d days ago", math.floor(delta.days)) % delta.days
 
     num_hours = delta.seconds / 3600
-    if (num_hours > 0):
-        return ungettext(u"%d hour ago", u"%d hours ago", num_hours) % num_hours
+    print(delta.seconds)
+    if math.floor(num_hours) > 0:
+        return ungettext(u"%d hour ago", u"%d hours ago", math.floor(num_hours)) % num_hours
 
     num_minutes = delta.seconds / 60
-    if (num_minutes > 0):
-        return ungettext(u"%d minute ago", u"%d minutes ago", num_minutes) % num_minutes
+    if math.floor(num_minutes) > 0:
+        return ungettext(u"%d minute ago", u"%d minutes ago", math.floor(num_minutes)) % num_minutes
 
     return ugettext(u"just a few seconds ago")
 
