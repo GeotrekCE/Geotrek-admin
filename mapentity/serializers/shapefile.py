@@ -293,14 +293,6 @@ def info_from_geo_field(geo_field):
     def get_geom(obj):
         return getattr(obj, geo_field_name)
 
-    if hasattr(geo_field, 'geom_type'):
-        geom_type = geo_field.geom_type
-    else:
-        geom_type = geo_field._geom
-
-    if hasattr(geo_field, 'srid'):
-        srid = geo_field.srid
-    else:
-        srid = geo_field._srid
-
+    geom_type = geo_field.geom_type
+    srid = geo_field.srid
     return get_geom, geom_type, srid

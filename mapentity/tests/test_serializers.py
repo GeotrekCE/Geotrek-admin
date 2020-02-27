@@ -3,17 +3,20 @@ from io import StringIO
 
 from django.test import TestCase
 from django.conf import settings
-from django.contrib.gis.db.models import GeometryField
 from django.contrib.gis import gdal
+from django.contrib.gis.gdal import DataSource
 from django.http import HttpResponse
 from django.test.utils import override_settings
 from django.utils import translation
 
 from mapentity.serializers import ZipShapeSerializer, CSVSerializer
-from mapentity.serializers.shapefile import shapefile_files
+from mapentity.serializers.shapefile import shapefile_files, shape_write, info_from_geo_field, geo_field_from_model
+from mapentity.settings import app_settings
 
+from geotrek.core.models import Path
+from geotrek.core.factories import PathFactory
 from geotrek.diving.factories import DiveFactory
-from geotrek.diving.models import Dive
+from geotrek.diving.models import Dive, Difficulty
 from geotrek.common.factories import ThemeFactory
 
 
@@ -99,6 +102,45 @@ class ShapefileSerializer(TestCase):
         layer_multilinestring, layer_multipolygon = self.getShapefileLayers()
         feature = layer_point[0]
         self.assertEquals(feature['name'].value, self.point1.name)
+
+    def test_serializer_model_no_geofield(self):
+        self.serializer = ZipShapeSerializer()
+        response = HttpResponse()
+        with self.assertRaisesRegexp(ValueError, "No geodjango geometry fields found in this model"):
+            self.serializer.serialize(Difficulty.objects.all(), stream=response,
+                                      fields=['id', 'name'], delete=False)
+
+    def test_serializer_model_geofield_multiple(self):
+        app_settings['GEOM_FIELD_NAME'] = None
+        self.serializer = ZipShapeSerializer()
+        PathFactory.create()
+        response = HttpResponse()
+        with self.assertRaisesRegexp(ValueError, "More than one geodjango geometry field found, please specify which "
+                                                 "to use by name using the 'geo_field' keyword. "
+                                                 "Available fields are: 'geom_3d, geom, geom_cadastre'"):
+            self.serializer.serialize(Path.objects.all(), stream=response,
+                                      fields=['id', 'name'], delete=False)
+        app_settings['GEOM_FIELD_NAME'] = 'geom'
+
+    def test_serializer_model_geofield_do_not_exist(self):
+        app_settings['GEOM_FIELD_NAME'] = 'do_not_exist'
+        self.serializer = ZipShapeSerializer()
+        PathFactory.create()
+        response = HttpResponse()
+        with self.assertRaisesRegexp(ValueError, "Geodjango geometry field not found with the name 'do_not_exist', "
+                                                 "fields available are: 'geom_3d, geom, geom_cadastre'"):
+            self.serializer.serialize(Path.objects.all(), stream=response,
+                                      fields=['id', 'name'], delete=False)
+        app_settings['GEOM_FIELD_NAME'] = 'geom'
+
+    def test_serializer_shape_write_special_srid(self):
+        geo_field = geo_field_from_model(Dive, 'geom')
+        get_geom, geom_type, srid = info_from_geo_field(geo_field)
+        l = [dive for dive in Dive.objects.all() if dive.geom.geom_type == 'Point']
+        ds = DataSource(shape_write(l, Dive, ['id', 'name'], get_geom, 'POINT', 2154, 3812))
+        layer = ds[0]
+        for feature in layer:
+            self.assertEqual(feature.geom.wkt, 'POINT (-315454.738110134 -6594196.36395464)')
 
 
 class CSVSerializerTests(TestCase):
