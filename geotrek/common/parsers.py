@@ -7,6 +7,7 @@ import xml.etree.ElementTree as ET
 from functools import reduce
 from urllib.request import urlopen
 from collections import Iterable
+import time
 
 from ftplib import FTP
 from os.path import dirname
@@ -69,6 +70,8 @@ class Parser(object):
     non_fields = {}
     natural_keys = {}
     field_options = {}
+    sleep_time = 60
+    number_of_retry = 3
 
     def __init__(self, progress_cb=None, user=None, encoding='utf8'):
         self.warnings = {}
@@ -458,6 +461,18 @@ class Parser(object):
                 self.add_warning(str(e))
         self.end()
 
+    def retry(self, response, retry):
+        if response.status_code == 503:
+            retry -= 1
+        if response.status_code != 200 and not retry:
+            raise GlobalImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=self.url,
+                                                                                                         status_code=response.status_code))
+        elif response.status_code != 200 and retry:
+            time.spleep(self.sleep_time)
+            return True
+        else:
+            return False
+
 
 class ShapeParser(Parser):
     def next_row(self):
@@ -659,6 +674,7 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
 
     def next_row(self):
         skip = 0
+        retry = self.number_of_retry
         while True:
             params = {
                 '$format': 'json',
@@ -667,15 +683,14 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
                 '$skip': skip,
             }
             response = requests.get(self.url, params=params)
-            if response.status_code != 200:
-                raise GlobalImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
-            self.root = response.json()
-            self.nb = self.get_nb()
-            for row in self.items:
-                yield {self.normalize_field_name(src): val for src, val in row.items()}
-            skip += 1000
-            if skip >= self.nb:
-                return
+            if not self.retry(response, retry):
+                self.root = response.json()
+                self.nb = self.get_nb()
+                for row in self.items:
+                    yield {self.normalize_field_name(src): val for src, val in row.items()}
+                skip += 1000
+                if skip >= self.nb:
+                    return
 
     def filter_attachments(self, src, val):
         if not val:
@@ -757,21 +772,21 @@ class TourismSystemParser(AttachmentParserMixin, Parser):
     def next_row(self):
         size = 1000
         skip = 0
+        retry = self.number_of_retry
         while True:
             params = {
                 'size': size,
                 'start': skip,
             }
             response = requests.get(self.url, params=params, auth=HTTPBasicAuth(self.login, self.password))
-            if response.status_code != 200:
-                raise GlobalImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
-            self.root = response.json()
-            self.nb = int(self.root['metadata']['total'])
-            for row in self.items:
-                yield {self.normalize_field_name(src): val for src, val in row.items()}
-            skip += size
-            if skip >= self.nb:
-                return
+            if not self.retry(response, retry):
+                self.root = response.json()
+                self.nb = int(self.root['metadata']['total'])
+                for row in self.items:
+                    yield {self.normalize_field_name(src): val for src, val in row.items()}
+                skip += size
+                if skip >= self.nb:
+                    return
 
     def filter_attachments(self, src, val):
         result = []
