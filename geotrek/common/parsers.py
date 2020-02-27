@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 from functools import reduce
 from urllib.request import urlopen
 from collections import Iterable
-import time
+from time import sleep
 
 from ftplib import FTP
 from os.path import dirname
@@ -468,7 +468,7 @@ class Parser(object):
             raise GlobalImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=self.url,
                                                                                                          status_code=response.status_code))
         elif response.status_code != 200 and retry:
-            time.spleep(self.sleep_time)
+            spleep(self.sleep_time)
             return True
         else:
             return False
