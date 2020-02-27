@@ -32,9 +32,6 @@ class ZipShapeSerializer(Serializer):
         super(ZipShapeSerializer, self).__init__(*args, **kwargs)
         self.layers = OrderedDict()
 
-    def start_object(self, *args, **kwargs):
-        pass
-
     def serialize(self, queryset, **options):
         columns = options.pop('fields')
         stream = options.pop('stream')
