@@ -1,10 +1,7 @@
-import requests
-
 from django.conf import settings
 from django.contrib.gis.geos import Point, Polygon, MultiPolygon
-from django.utils.translation import ugettext as _
 
-from geotrek.common.parsers import Parser, ShapeParser, GlobalImportError, RowImportError, ValueImportError
+from geotrek.common.parsers import Parser, ShapeParser, RowImportError, ValueImportError
 from .models import SensitiveArea, Species, SportPractice
 
 
