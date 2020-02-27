@@ -94,7 +94,6 @@ class ApidaeParser(AttachmentParserMixin, Parser):
         return self.root['objetsTouristiques']
 
     def next_row(self):
-        retry = self.number_of_retry
         while True:
             params = {
                 'apiKey': self.api_key,
@@ -104,15 +103,14 @@ class ApidaeParser(AttachmentParserMixin, Parser):
                 'first': self.skip,
                 'responseFields': self.responseFields
             }
-            response = requests.get(self.url, params={'query': json.dumps(params)})
-            if not self.retry(response, retry):
-                self.root = response.json()
-                self.nb = int(self.root['numFound'])
-                for row in self.items:
-                    yield row
-                self.skip += self.size
-                if self.skip >= self.nb:
-                    return
+            response = self.get_or_retry(self.url, {'query': json.dumps(params)})
+            self.root = response.json()
+            self.nb = int(self.root['numFound'])
+            for row in self.items:
+                yield row
+            self.skip += self.size
+            if self.skip >= self.nb:
+                return
 
     def normalize_field_name(self, name):
         return name
@@ -521,12 +519,7 @@ class EspritParcParser(AttachmentParserMixin, Parser):
         return self.root['responseData']
 
     def next_row(self):
-        response = requests.get(self.url)
-        if response.status_code != 200:
-            msg = _("Failed to download {url}. HTTP status code {status_code}")
-            raise GlobalImportError(msg.format(url=response.url,
-                                               status_code=response.status_code))
-
+        response = self.get_or_retry(self.url)
         self.root = response.json()
         self.nb = int(self.root['numFound'])
 

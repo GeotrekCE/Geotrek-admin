@@ -116,9 +116,9 @@ class BiodivWithPracticeParser(BiodivParser):
 
 
 class BiodivParserTests(TranslationResetMixin, TestCase):
-    @mock.patch('geotrek.sensitivity.parsers.requests')
+    @mock.patch('geotrek.common.parsers.requests')
     def test_create(self, mocked):
-        def side_effect(url):
+        def side_effect(url, params, auth):
             response = requests.Response()
             response.status_code = 200
             if 'sportpractice' in url:
@@ -151,9 +151,9 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(area_2.eid, '2')
         self.assertEqual(area_2.geom.geom_type, 'MultiPolygon')
 
-    @mock.patch('geotrek.sensitivity.parsers.requests')
+    @mock.patch('geotrek.common.parsers.requests')
     def test_create_with_practice(self, mocked):
-        def side_effect(url):
+        def side_effect(url, params, auth):
             response = requests.Response()
             response.status_code = 200
             if 'sportpractice' in url:
@@ -165,19 +165,20 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
         call_command('import', 'geotrek.sensitivity.tests.test_parsers.BiodivWithPracticeParser', verbosity=0)
         self.assertEqual(SportPractice.objects.count(), 2)
 
-    @mock.patch('geotrek.sensitivity.parsers.requests')
+    @mock.patch('geotrek.common.parsers.requests')
     def test_status_code_404(self, mocked):
-        def side_effect(url):
+        def side_effect(url, params, auth):
             response = requests.Response()
             response.status_code = 404
+            response.url = url
             return response
         mocked.get.side_effect = side_effect
         with self.assertRaisesRegexp(CommandError, "Failed to download https://biodiv-sports.fr/api/v2/sportpractice/"):
             call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
 
-    @mock.patch('geotrek.sensitivity.parsers.requests')
+    @mock.patch('geotrek.common.parsers.requests')
     def test_status_code_404_practice(self, mocked):
-        def side_effect(url):
+        def side_effect(url, params, auth):
             response = requests.Response()
             if 'in_bbox' in url:
                 response.status_code = 404
@@ -190,9 +191,9 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
         with self.assertRaisesRegexp(CommandError, "Failed to download https://rhododendron.com. HTTP status code 404"):
             call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
 
-    @mock.patch('geotrek.sensitivity.parsers.requests')
+    @mock.patch('geotrek.common.parsers.requests')
     def test_create_no_id(self, mocked):
-        def side_effect(url):
+        def side_effect(url, params, auth):
             response = requests.Response()
             response.status_code = 200
             if 'sportpractice' in url:
@@ -216,9 +217,9 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
         self.assertQuerysetEqual(species.practices.all(), ['<SportPractice: Land>'])
         self.assertEqual(area.eid, '1')
 
-    @mock.patch('geotrek.sensitivity.parsers.requests')
+    @mock.patch('geotrek.common.parsers.requests')
     def test_create_species_url(self, mocked):
-        def side_effect(url):
+        def side_effect(url, params, auth):
             response = requests.Response()
             response.status_code = 200
             if 'sportpractice' in url:
@@ -234,9 +235,9 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
         species = Species.objects.first()
         self.assertEqual(species.url, "toto.com")
 
-    @mock.patch('geotrek.sensitivity.parsers.requests')
+    @mock.patch('geotrek.common.parsers.requests')
     def test_create_species_radius(self, mocked):
-        def side_effect(url):
+        def side_effect(url, params, auth):
             response = requests.Response()
             response.status_code = 200
             if 'sportpractice' in url:

@@ -461,17 +461,19 @@ class Parser(object):
                 self.add_warning(str(e))
         self.end()
 
-    def retry(self, response, retry):
-        if response.status_code == 503:
-            retry -= 1
-        if response.status_code != 200 and not retry:
-            raise GlobalImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=self.url,
-                                                                                                         status_code=response.status_code))
-        elif response.status_code != 200 and retry:
-            spleep(self.sleep_time)
-            return True
-        else:
-            return False
+    def get_or_retry(self, url, params=None, authent=None):
+        retry = self.number_of_retry
+        response = requests.get(url, params=params, auth=authent)
+        while retry:
+            if response.status_code == 503:
+                response = requests.get(url, params=params, auth=authent)
+                retry -= 1
+            elif response.status_code == 200:
+                return response
+            else:
+                break
+        raise GlobalImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=response.url,
+                                                                                                     status_code=response.status_code))
 
 
 class ShapeParser(Parser):
@@ -674,7 +676,6 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
 
     def next_row(self):
         skip = 0
-        retry = self.number_of_retry
         while True:
             params = {
                 '$format': 'json',
@@ -682,15 +683,14 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
                 '$top': 1000,
                 '$skip': skip,
             }
-            response = requests.get(self.url, params=params)
-            if not self.retry(response, retry):
-                self.root = response.json()
-                self.nb = self.get_nb()
-                for row in self.items:
-                    yield {self.normalize_field_name(src): val for src, val in row.items()}
-                skip += 1000
-                if skip >= self.nb:
-                    return
+            response = self.get_or_retry(self.url, params)
+            self.root = response.json()
+            self.nb = self.get_nb()
+            for row in self.items:
+                yield {self.normalize_field_name(src): val for src, val in row.items()}
+            skip += 1000
+            if skip >= self.nb:
+                return
 
     def filter_attachments(self, src, val):
         if not val:
@@ -772,21 +772,19 @@ class TourismSystemParser(AttachmentParserMixin, Parser):
     def next_row(self):
         size = 1000
         skip = 0
-        retry = self.number_of_retry
         while True:
             params = {
                 'size': size,
                 'start': skip,
             }
-            response = requests.get(self.url, params=params, auth=HTTPBasicAuth(self.login, self.password))
-            if not self.retry(response, retry):
-                self.root = response.json()
-                self.nb = int(self.root['metadata']['total'])
-                for row in self.items:
-                    yield {self.normalize_field_name(src): val for src, val in row.items()}
-                skip += size
-                if skip >= self.nb:
-                    return
+            response = self.get_or_retry(self.url, params, HTTPBasicAuth(self.login, self.password))
+            self.root = response.json()
+            self.nb = int(self.root['metadata']['total'])
+            for row in self.items:
+                yield {self.normalize_field_name(src): val for src, val in row.items()}
+            skip += size
+            if skip >= self.nb:
+                return
 
     def filter_attachments(self, src, val):
         result = []
@@ -811,9 +809,7 @@ class OpenSystemParser(Parser):
             'Pass': self.password,
             'Action': 'concentrateur_liaisons',
         }
-        response = requests.get(self.url, params=params)
-        if response.status_code != 200:
-            raise GlobalImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
+        response = self.get_or_retry(self.url, params)
         self.root = ET.fromstring(response.content).find('Resultat').find('Objets')
         self.nb = len(self.root)
         for row in self.root:
