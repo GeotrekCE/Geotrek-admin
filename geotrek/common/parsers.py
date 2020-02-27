@@ -71,7 +71,7 @@ class Parser(object):
     natural_keys = {}
     field_options = {}
     sleep_time = 60
-    number_of_retry = 3
+    number_of_try = 3
 
     def __init__(self, progress_cb=None, user=None, encoding='utf8'):
         self.warnings = {}
@@ -462,13 +462,13 @@ class Parser(object):
         self.end()
 
     def get_or_retry(self, url, params=None, authent=None):
-        retry = self.number_of_retry
-        response = requests.get(url, params=params, auth=authent)
-        while retry:
+        try_get = self.number_of_try
+        assert try_get > 0
+        while try_get:
+            response = requests.get(url, params=params, auth=authent)
             if response.status_code == 503:
                 sleep(self.sleep_time)
-                response = requests.get(url, params=params, auth=authent)
-                retry -= 1
+                try_get -= 1
             elif response.status_code == 200:
                 return response
             else:
