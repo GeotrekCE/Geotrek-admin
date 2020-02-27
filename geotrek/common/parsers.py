@@ -466,6 +466,7 @@ class Parser(object):
         response = requests.get(url, params=params, auth=authent)
         while retry:
             if response.status_code == 503:
+                sleep(self.sleep_time)
                 response = requests.get(url, params=params, auth=authent)
                 retry -= 1
             elif response.status_code == 200:
