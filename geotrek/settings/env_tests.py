@@ -4,6 +4,8 @@
 
 TEST = True
 
+CELERY_ALWAYS_EAGER = True
+
 TEST_EXCLUDE = ('django',)
 
 INSTALLED_APPS += (
@@ -18,6 +20,8 @@ MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'
 MODELTRANSLATION_LANGUAGES = ('en', 'es', 'fr', 'it')
 
 ALLOWED_HOSTS = ['localhost']
+
+LAND_BBOX_AREAS_ENABLED = True
 
 
 class DisableMigrations():

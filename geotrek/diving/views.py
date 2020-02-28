@@ -3,6 +3,7 @@ from urllib.parse import urljoin
 from django.conf import settings
 from django.db.models import Q
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 from django.utils import translation
 from django.views.generic import DetailView
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
@@ -182,10 +183,7 @@ class DivePOIViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         pk = self.kwargs['pk']
-        try:
-            dive = Dive.objects.existing().get(pk=pk)
-        except Dive.DoesNotExist:
-            raise Http404
+        dive = get_object_or_404(Dive.objects.existing(), pk=pk)
         if not dive.is_public():
             raise Http404
         return dive.pois.filter(published=True).transform(settings.API_SRID, field_name='geom')
@@ -202,10 +200,7 @@ class DiveServiceViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         pk = self.kwargs['pk']
-        try:
-            dive = Dive.objects.existing().get(pk=pk)
-        except Dive.DoesNotExist:
-            raise Http404
+        dive = get_object_or_404(Dive.objects.existing(), pk=pk)
         if not dive.is_public():
             raise Http404
         return dive.services.filter(type__published=True).transform(settings.API_SRID, field_name='geom')

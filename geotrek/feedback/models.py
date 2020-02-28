@@ -56,7 +56,6 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
     objects = gis_models.GeoManager()
 
     class Meta:
-        db_table = 'f_t_signalement'
         verbose_name = _("Report")
         verbose_name_plural = _("Reports")
         ordering = ['-date_insert']
@@ -102,7 +101,6 @@ class ReportCategory(models.Model):
                                 max_length=128)
 
     class Meta:
-        db_table = 'f_b_categorie'
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
         ordering = ("category",)
@@ -116,7 +114,6 @@ class ReportStatus(models.Model):
                               max_length=128)
 
     class Meta:
-        db_table = 'f_b_status'
         verbose_name = _("Status")
         verbose_name_plural = _("Status")
 

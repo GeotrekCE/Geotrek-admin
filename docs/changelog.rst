@@ -2,6 +2,15 @@
 CHANGELOG
 =========
 
+2.32.6 (2020-02-28)
+-------------------
+
+**Bug fixes**
+
+- Fix video embed url https
+- Fix "Only LINESTRING and MULTILINESTRING are supported" crash in SQL triggers
+
+
 2.32.5 (2020-02-18)
 -------------------
 

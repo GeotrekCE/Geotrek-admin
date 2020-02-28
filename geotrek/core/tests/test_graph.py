@@ -72,6 +72,16 @@ class SimpleGraph(TestCase):
         self.assertDictEqual({'edges': {str(path.pk): {'id': path.pk, 'length': 1.4142135623731, 'nodes_id': [1, 2]}},
                               'nodes': {'1': {'2': path.pk}, '2': {'1': path.pk}}}, graph)
 
+    def test_json_graph_simple_cached(self):
+        path = PathFactory(geom=LineString((0, 0), (1, 1)))
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        graph = response.json()
+        self.assertDictEqual({'edges': {str(path.pk): {'id': path.pk, 'length': 1.4142135623731, 'nodes_id': [1, 2]}},
+                              'nodes': {'1': {'2': path.pk}, '2': {'1': path.pk}}}, graph)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
     def test_json_graph_headers(self):
         """
         Last modified depends on

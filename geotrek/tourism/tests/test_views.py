@@ -210,7 +210,7 @@ class BasicJSONAPITest(TranslationResetMixin):
 
     def test_video_youtube(self):
         video_youtube = common_factories.AttachmentFactory(content_object=self.content, attachment_file='',
-                                                           attachment_video='http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque')
+                                                           attachment_video='https://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque')
         video_detected_youtube = detect_backend(video_youtube.attachment_video)
         pk = self.content.pk
         url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.model_name, pk=pk)
@@ -218,7 +218,7 @@ class BasicJSONAPITest(TranslationResetMixin):
         result = response.json()
         self.assertDictEqual(result['videos'][0],
                              {'backend': 'Youtube',
-                              'url': 'http://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque',
+                              'url': 'https://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque',
                               'title': video_youtube.title,
                               'legend': video_youtube.legend,
                               'author': video_youtube.author,
@@ -227,7 +227,7 @@ class BasicJSONAPITest(TranslationResetMixin):
     def test_video_dailymotion(self):
         video_dailymotion = common_factories.AttachmentFactory(
             content_object=self.content, attachment_file='',
-            attachment_video='http://www.dailymotion.com/video/x6e0q24')
+            attachment_video='https://www.dailymotion.com/video/x6e0q24')
         video_detected_dailymotion = detect_backend(video_dailymotion.attachment_video)
         pk = self.content.pk
         url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.model_name, pk=pk)
@@ -236,7 +236,7 @@ class BasicJSONAPITest(TranslationResetMixin):
 
         self.assertDictEqual(result['videos'][0],
                              {'backend': 'Dailymotion',
-                              'url': 'http://www.dailymotion.com/embed/video/x6e0q24',
+                              'url': 'https://www.dailymotion.com/embed/video/x6e0q24',
                               'title': video_dailymotion.title,
                               'legend': video_dailymotion.legend,
                               'author': video_dailymotion.author,
@@ -245,7 +245,7 @@ class BasicJSONAPITest(TranslationResetMixin):
     def test_video_dailymotion_wrong_id(self):
         common_factories.AttachmentFactory(
             content_object=self.content, attachment_file='',
-            attachment_video='http://www.dailymotion.com/video/noid')
+            attachment_video='https://www.dailymotion.com/video/noid')
 
         pk = self.content.pk
         url = '/api/en/{model}s/{pk}.json'.format(model=self.content._meta.model_name, pk=pk)
@@ -345,8 +345,8 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
             "order": None,
             "label": self.category.label,
             "slug": "touristic-content",
-            "type1_label": self.category.type1_label,
-            "type2_label": self.category.type2_label,
+            "type1_label": self.content.type1_label,
+            "type2_label": self.content.type2_label,
             "pictogram": os.path.join(settings.MEDIA_URL, self.category.pictogram.name)})
 
 
@@ -514,7 +514,7 @@ class TouristicEventViewSetTest(TestCase):
         self.assertEqual(len(geojson['features']), 10)
 
 
-class TouristicContentCategoryViewSetTest(TestCase):
+class TouristicCategoryViewTest(TestCase):
     def test_get_categories(self):
         """
         Test category json serialization via api
@@ -538,3 +538,19 @@ class InformationDeskAPITest(TestCase):
         self.assertEqual(result['features'][0]['type'], 'Feature')
         self.assertEqual(result['features'][0]['geometry']['type'], 'Point')
         self.assertEqual(result['features'][0]['properties']['name'], desk2.name)
+
+
+class TrekInformationDeskAPITest(TestCase):
+    def test_geojson(self):
+        trek = trekking_factories.TrekFactory()
+        desk = InformationDeskFactory.create()
+        InformationDeskFactory.create()
+        trek.information_desks.add(desk)
+        trek.save()
+        response = self.client.get(reverse('tourism:trek_information_desk_geojson', kwargs={'pk': trek.pk, 'format': 'geojson'}))
+        self.assertEqual(response.status_code, 200)
+        result = response.json()
+        self.assertEqual(len(result['features']), 1)
+        self.assertEqual(result['features'][0]['type'], 'Feature')
+        self.assertEqual(result['features'][0]['geometry']['type'], 'Point')
+        self.assertEqual(result['features'][0]['properties']['name'], desk.name)

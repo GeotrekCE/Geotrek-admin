@@ -106,7 +106,7 @@ class CommandTests(TestCase):
         stdout = output.getvalue()
         # Some of them listed.
         self.assertIn('Organism', stdout)
-        self.assertIn('File type', stdout)
+        self.assertIn('filetype', stdout)
         self.assertIn('Path source', stdout)
 
     def test_remove_thumbnails(self):

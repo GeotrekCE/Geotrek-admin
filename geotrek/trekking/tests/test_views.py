@@ -1,7 +1,9 @@
 import os
+from io import StringIO
 import datetime
 from collections import OrderedDict
 import hashlib
+import shutil
 
 from unittest import skipIf, mock
 
@@ -14,6 +16,7 @@ from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core.management import call_command
 from django.core.urlresolvers import reverse
 from django.db import connection, connections, DEFAULT_DB_ALIAS
+from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from django.test import RequestFactory
 from django.test.utils import override_settings
@@ -41,6 +44,7 @@ from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory,
                                         TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
                                         TrekWithServicesFactory, TrekWithInfrastructuresFactory,
                                         TrekWithSignagesFactory)
+from geotrek.trekking.tasks import launch_sync_rando
 from geotrek.trekking.templatetags import trekking_tags
 from geotrek.trekking.serializers import timestamp
 from geotrek.trekking import views as trekking_views
@@ -252,17 +256,17 @@ class TrekViewsTest(CommonTest):
         self.client.post(self.model.get_update_url(trek), good_data)
         self.assertIn(poi, trek.pois_excluded.all())
 
-        def test_detail_lother_language(self):
-            self.login()
+    def test_detail_lother_language(self):
+        self.login()
 
-            bad_data, form_error = self.get_bad_data()
-            bad_data['parking_location'] = 'POINT (1.0 1.0)'  # good data
+        bad_data, form_error = self.get_bad_data()
+        bad_data['parking_location'] = 'POINT (1.0 1.0)'  # good data
 
-            url = self.model.get_add_url()
-            response = self.client.post(url, bad_data)
-            self.assertEqual(response.status_code, 200)
-            form = self.get_form(response)
-            self.assertEqual(form.data['parking_location'], bad_data['parking_location'])
+        url = self.model.get_add_url()
+        response = self.client.post(url, bad_data)
+        self.assertEqual(response.status_code, 200)
+        form = self.get_form(response)
+        self.assertEqual(form.data['parking_location'], bad_data['parking_location'])
 
 
 class TrekViewsLiveTests(CommonLiveTest):
@@ -289,6 +293,21 @@ class TrekCustomViewTests(TrekkingManagerTest):
         infrastructureslayer = response.json()
         names = [feature['properties']['name'] for feature in infrastructureslayer['features']]
         self.assertIn(infra.name, names)
+
+    def test_trek_infrastructure_geojson_not_public_no_permission(self):
+        trek = TrekWithInfrastructuresFactory.create(published=False)
+        self.assertEqual(len(trek.infrastructures), 2)
+        infra = trek.infrastructures[0]
+        infra.published = True
+        infra.save()
+        self.assertEqual(len(trek.infrastructures), 2)
+        self.user.groups.remove(Group.objects.first())
+        self.user.groups.clear()
+        self.user = get_object_or_404(User, pk=self.user.pk)
+        self.client.login(username=self.user.username, password='booh')
+        url = '/api/en/treks/{pk}/infrastructures.geojson'.format(pk=trek.pk)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
 
     def test_trek_signage_geojson(self):
         trek = TrekWithSignagesFactory.create(published=True)
@@ -1383,3 +1402,70 @@ class SyncRandoViewTest(TestCase):
         self.client.login(username='homer', password='doooh')
         response = self.client.post(reverse('trekking:sync_randos_state'), data={})
         self.assertRedirects(response, '/login/?next=/commands/statesync/')
+
+    @mock.patch('sys.stdout', new_callable=StringIO)
+    @override_settings(CELERY_ALWAYS_EAGER=False,
+                       SYNC_RANDO_ROOT='tmp', SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000',
+                                                                  'skip_tiles': True, 'skip_pdf': True,
+                                                                  'skip_dem': True, 'skip_profile_png': True})
+    def test_get_sync_rando_states_superuser_with_sync_rando(self, mocked_stdout):
+        self.client.login(username='admin', password='super')
+        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
+            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
+        launch_sync_rando.apply()
+        response = self.client.post(reverse('trekking:sync_randos_state'), data={})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'"infos": "Sync ended"', response.content)
+
+    @mock.patch('sys.stdout', new_callable=StringIO)
+    @mock.patch('geotrek.trekking.management.commands.sync_rando.Command.handle', return_value=None,
+                side_effect=Exception('This is a test'))
+    @override_settings(CELERY_ALWAYS_EAGER=False,
+                       SYNC_RANDO_ROOT='tmp', SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000',
+                                                                  'skip_tiles': True, 'skip_pdf': True,
+                                                                  'skip_dem': True, 'skip_profile_png': True})
+    def test_get_sync_mobile_states_superuser_with_sync_mobile_fail(self, mocked_stdout, command):
+        self.client.login(username='admin', password='super')
+        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
+            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
+        launch_sync_rando.apply()
+        response = self.client.post(reverse('trekking:sync_randos_state'), data={})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'"exc_message": "This is a test"', response.content)
+
+    @mock.patch('sys.stdout', new_callable=StringIO)
+    @override_settings(SYNC_RANDO_ROOT='tmp', SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000', 'skip_tiles': True,
+                                                                  'skip_pdf': True,
+                                                                  'skip_dem': True, 'skip_profile_png': True})
+    def test_launch_sync_rando(self, mocked_stdout):
+        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
+            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
+        task = launch_sync_rando.apply()
+        log = mocked_stdout.getvalue()
+        self.assertIn("Done", log)
+        self.assertEqual(task.status, "SUCCESS")
+        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
+            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
+
+    @mock.patch('geotrek.trekking.management.commands.sync_rando.Command.handle', return_value=None,
+                side_effect=Exception('This is a test'))
+    @mock.patch('sys.stdout', new_callable=StringIO)
+    def test_launch_sync_rando_fail(self, mocked_stdout, command):
+        task = launch_sync_rando.apply()
+        log = mocked_stdout.getvalue()
+        self.assertNotIn("Done", log)
+        self.assertNotIn('Sync ended', log)
+        self.assertEqual(task.status, "FAILURE")
+
+    @mock.patch('geotrek.trekking.management.commands.sync_rando.Command.handle', return_value=None,
+                side_effect=Exception('This is a test'))
+    @override_settings(SYNC_RANDO_ROOT='tmp')
+    @mock.patch('sys.stdout', new_callable=StringIO)
+    def test_launch_sync_rando_no_rando_root(self, mocked_stdout, command):
+        if os.path.exists('tmp'):
+            shutil.rmtree('tmp')
+        task = launch_sync_rando.apply()
+        log = mocked_stdout.getvalue()
+        self.assertNotIn("Done", log)
+        self.assertNotIn('Sync rando ended', log)
+        self.assertEqual(task.status, "FAILURE")

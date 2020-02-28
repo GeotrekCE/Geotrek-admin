@@ -9,8 +9,9 @@ from django.core.management.base import CommandError
 from django.test import TestCase
 
 from geotrek.common.tests import TranslationResetMixin
+from geotrek.sensitivity.parsers import BiodivParser
 from geotrek.sensitivity.models import SportPractice, Species, SensitiveArea
-from geotrek.sensitivity.factories import SpeciesFactory
+from geotrek.sensitivity.factories import SpeciesFactory, SportPracticeFactory
 
 
 json_test_sport_practice = {
@@ -23,6 +24,30 @@ json_test_sport_practice = {
             "name": {
                 "fr": "Terrestre",
                 "en": "Land",
+                "it": None,
+            },
+        },
+    ],
+}
+
+json_test_sport_practice_2 = {
+    "count": 2,
+    "next": None,
+    "previous": None,
+    "results": [
+        {
+            "id": 1,
+            "name": {
+                "fr": "Terrestre",
+                "en": "Land",
+                "it": None,
+            },
+        },
+        {
+            "id": 2,
+            "name": {
+                "fr": "Aerien",
+                "en": "Air",
                 "it": None,
             },
         },
@@ -87,6 +112,10 @@ json_test_species = {
 }
 
 
+class BiodivWithPracticeParser(BiodivParser):
+    practices = "1"
+
+
 class BiodivParserTests(TranslationResetMixin, TestCase):
     @mock.patch('geotrek.sensitivity.parsers.requests')
     def test_create(self, mocked):
@@ -124,6 +153,20 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(area_2.geom.geom_type, 'MultiPolygon')
 
     @mock.patch('geotrek.sensitivity.parsers.requests')
+    def test_create_with_practice(self, mocked):
+        def side_effect(url):
+            response = requests.Response()
+            response.status_code = 200
+            if 'sportpractice' in url:
+                response.json = lambda: json_test_sport_practice_2
+            else:
+                response.json = lambda: json_test_species
+            return response
+        mocked.get.side_effect = side_effect
+        call_command('import', 'geotrek.sensitivity.tests.test_parsers.BiodivWithPracticeParser', verbosity=0)
+        self.assertEqual(SportPractice.objects.count(), 2)
+
+    @mock.patch('geotrek.sensitivity.parsers.requests')
     def test_status_code_404(self, mocked):
         def side_effect(url):
             response = requests.Response()
@@ -131,6 +174,21 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
             return response
         mocked.get.side_effect = side_effect
         with self.assertRaisesRegexp(CommandError, "Failed to download https://biodiv-sports.fr/api/v2/sportpractice/"):
+            call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
+
+    @mock.patch('geotrek.sensitivity.parsers.requests')
+    def test_status_code_404_practice(self, mocked):
+        def side_effect(url):
+            response = requests.Response()
+            if 'in_bbox' in url:
+                response.status_code = 404
+                response.url = "https://rhododendron.com"
+            else:
+                response.status_code = 200
+                response.json = lambda: {"results": []}
+            return response
+        mocked.get.side_effect = side_effect
+        with self.assertRaisesRegexp(CommandError, "Failed to download https://rhododendron.com. HTTP status code 404"):
             call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
 
     @mock.patch('geotrek.sensitivity.parsers.requests')
@@ -169,6 +227,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
             else:
                 json_test_species_without_id = json_test_species.copy()
                 json_test_species_without_id['results'][0]['info_url'] = "toto.com"
+                json_test_species_without_id['results'].pop(1)
                 response.json = lambda: json_test_species_without_id
             return response
         mocked.get.side_effect = side_effect
@@ -204,6 +263,35 @@ class SpeciesSensitiveAreaShapeParserTest(TestCase):
         call_command('import', 'geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser', filename, verbosity=0)
         area = SensitiveArea.objects.first()
         self.assertEqual(area.species, species)
+        self.assertEqual(area.contact, "Contact")
+        self.assertEqual(area.description, "Test UTF8 éêè")
+        self.assertEqual(
+            WKTWriter(precision=7).write(area.geom),
+            b'POLYGON (('
+            b'929315.3613369 6483309.4435054, 929200.3539448 6483204.0200627, '
+            b'928404.8861499 6482494.8078118, 928194.0392645 6482082.6979903, '
+            b'927925.6886830 6481210.5586006, 927676.5060003 6481287.2301953, '
+            b'927772.3454936 6481498.0770807, 927887.3528857 6481900.6029529, '
+            b'928184.4553151 6482600.2312545, 928625.3169846 6483520.2903908, '
+            b'929162.0181475 6483664.0496309, 929315.3613369 6483309.4435054'
+            b'))')
+
+
+class RegulatorySensitiveAreaShapeParserTest(TestCase):
+    def test_regulatory_sensitive_area_shape(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'species_regu.shp')
+        call_command('import', 'geotrek.sensitivity.parsers.RegulatorySensitiveAreaShapeParser', filename, verbosity=0)
+        self.assertEqual(SensitiveArea.objects.count(), 0)
+        SportPracticeFactory(name="sport")
+        call_command('import', 'geotrek.sensitivity.parsers.RegulatorySensitiveAreaShapeParser', filename, verbosity=0)
+        area = SensitiveArea.objects.first()
+        self.assertEqual(str(area.species), "Nom")
+        self.assertTrue(area.species.period10)
+        self.assertTrue(area.species.period11)
+        self.assertTrue(area.species.period12)
+        self.assertFalse(area.species.period08)
+        self.assertEqual(area.species.radius, 23)
+        self.assertEqual(area.species.url, "http://test.com")
         self.assertEqual(area.contact, "Contact")
         self.assertEqual(area.description, "Test UTF8 éêè")
         self.assertEqual(

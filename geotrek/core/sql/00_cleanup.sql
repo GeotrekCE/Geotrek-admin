@@ -1,5 +1,7 @@
 -- Cleanup public schema if installed before release 0.28
 DROP VIEW IF EXISTS public.l_v_sentier;
+DROP VIEW IF EXISTS geotrek.l_v_sentier;
+DROP VIEW IF EXISTS geotrek.v_trails;
 DROP FUNCTION IF EXISTS public.ST_InterpolateAlong(geometry, geometry) CASCADE;
 DROP FUNCTION IF EXISTS public.ST_SmartLineSubstring(geometry, float, float) CASCADE;
 DROP FUNCTION IF EXISTS public.ft_IsBefore(geometry, geometry) CASCADE;

@@ -38,7 +38,7 @@ class TimeStampedModelMixin(models.Model):
 
 
 class NoDeleteMixin(models.Model):
-    deleted = models.BooleanField(editable=False, default=False, db_column='supprime', verbose_name=_("Deleted"))
+    deleted = models.BooleanField(editable=False, default=False, verbose_name=_("Deleted"))
 
     def delete(self, force=False, using=None, **kwargs):
         if force:
@@ -205,6 +205,7 @@ class PicturesMixin(object):
         serialized = []
         for att in self.videos:
             video = detect_backend(att.attachment_video)
+            video.is_secure = True
             try:
                 serialized.append({
                     'author': att.author,

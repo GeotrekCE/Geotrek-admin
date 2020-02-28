@@ -23,7 +23,7 @@ from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import SignageFactory
 from geotrek.maintenance.factories import InterventionFactory
 from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, ComfortFactory, TopologyFactory, PathAggregationFactory)
-from geotrek.zoning.factories import CityFactory
+from geotrek.zoning.factories import CityFactory, DistrictFactory, RestrictedAreaFactory, RestrictedAreaTypeFactory
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -55,6 +55,18 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         response = self.client.get(reverse('core:multiple_path_delete', args=['%s,%s' % (path_1.pk, path_2.pk)]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Do you really wish to delete')
+
+    def test_delete_view_multiple_path_one_wrong_structure(self):
+        other_structure = StructureFactory(name="Other")
+        path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
+        path_2 = PathFactory.create(name="path_2", geom=LineString((2, 2), (2, -2)), structure=other_structure)
+        poi = POIFactory.create(no_path=True)
+        poi.add_path(path_1, start=0, end=0)
+        response = self.client.get(reverse('core:multiple_path_delete', args=['%s,%s' % (path_1.pk, path_2.pk)]))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('core:path_list'))
+        self.assertIn(response.content, b'Access to the requested resource is restricted by structure.')
+        self.assertEqual(Path.objects.count(), 4)
 
     def test_delete_multiple_path(self):
         path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
@@ -255,10 +267,29 @@ class PathViewsTest(CommonTest):
         self.login()
         p1 = PathFactory(geom=LineString((0, 0), (0, 1000), srid=settings.SRID))
         city = CityFactory(code='09000', geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)), srid=settings.SRID)))
-        self.assertEqual(p1.aggregations.count(), 0)
+        city2 = CityFactory(code='09001', geom=MultiPolygon(
+            Polygon(((0, 0), (1000, 0), (1000, 1000), (0, 1000), (0, 0)), srid=settings.SRID)))
+        self.assertEqual(p1.aggregations.count(), 1)
         response = self.client.get('/api/path/paths.json?city=%s' % city.code)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['sumPath'], 0.0)
+        response = self.client.get('/api/path/paths.json?city=%s' % city2.code)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['sumPath'], 1.0)
+
+    def test_sum_path_filter_districts(self):
+        self.login()
+        p1 = PathFactory(geom=LineString((0, 0), (0, 1000), srid=settings.SRID))
+        district = DistrictFactory(geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)), srid=settings.SRID)))
+        district2 = DistrictFactory(geom=MultiPolygon(
+            Polygon(((0, 0), (1000, 0), (1000, 1000), (0, 1000), (0, 0)), srid=settings.SRID)))
+        self.assertEqual(p1.aggregations.count(), 1)
+        response = self.client.get('/api/path/paths.json?district=%s' % district.pk)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['sumPath'], 0.0)
+        response = self.client.get('/api/path/paths.json?district=%s' % district2.pk)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['sumPath'], 1.0)
 
     def test_merge_fails_parameters(self):
         """
@@ -457,6 +488,15 @@ class PathViewsTest(CommonTest):
         self.assertIn('success', response.json())
         self.logout()
 
+    def test_merge_works_wrong_structure(self):
+        self.login()
+        other_structure = StructureFactory(name="Other")
+        p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
+        p2 = PathFactory.create(name="BC", geom=LineString((1, 0), (2, 0)), structure=other_structure)
+        response = self.client.post(reverse('core:merge_path'), {'path[]': [p1.pk, p2.pk]})
+        self.assertEqual({'error': "You don't have the right to change these paths"}, response.json())
+        self.logout()
+
     def test_merge_works_other_line(self):
         self.login()
         p1 = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
@@ -510,6 +550,27 @@ class PathViewsTest(CommonTest):
         response = self.client.post(obj.get_update_url(), data)
         self.assertContains(response, "Please select a choice related to all structures")
         self.logout()
+
+    def test_restricted_area_urls_fragment(self):
+        area_type = RestrictedAreaTypeFactory(name="Test")
+        self.login()
+        obj = self.modelfactory()
+        response = self.client.get(obj.get_detail_url())
+        self.assertNotContains(response, '/api/restrictedarea/type/{}/restrictedarea.geojson'.format(area_type.pk))
+
+        self.restricted_area = RestrictedAreaFactory(area_type=area_type, name="Tel",
+                                                     geom=MultiPolygon(Polygon(((0, 0), (300, 0), (300, 100), (200, 100), (0, 0)),
+                                                                               srid=settings.SRID)))
+        response = self.client.get(obj.get_detail_url())
+        self.assertContains(response, '/api/restrictedarea/type/{}/restrictedarea.geojson'.format(area_type.pk))
+
+    def test_draft_path_layer(self):
+        self.login()
+        obj = self.modelfactory(draft=False)
+        self.modelfactory(draft=False)
+        self.modelfactory(draft=True)
+        response = self.client.get(obj.get_layer_url(), {"no_draft": "true"})
+        self.assertEqual(len(response.json()['features']), 2)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')

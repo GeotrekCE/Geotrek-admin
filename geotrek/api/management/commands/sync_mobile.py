@@ -510,7 +510,7 @@ class Command(BaseCommand):
                         'name': self.celery_task.name,
                         'current': 100,
                         'total': 100,
-                        'infos': u"{}".format(_(u"Sync mobile ended"))
+                        'infos': "{}".format(_("Sync mobile ended"))
                     }
                 )
         except Exception:

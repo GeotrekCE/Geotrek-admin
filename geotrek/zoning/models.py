@@ -18,10 +18,9 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
 
 
 class RestrictedAreaType(models.Model):
-    name = models.CharField(max_length=200, verbose_name=_("Name"), db_column='nom')
+    name = models.CharField(max_length=200, verbose_name=_("Name"))
 
     class Meta:
-        db_table = 'f_b_zonage'
         verbose_name = _("Restricted area type")
 
     def __str__(self):
@@ -34,39 +33,35 @@ class RestrictedAreaManager(models.GeoManager):
 
 
 class RestrictedArea(models.Model):
-    name = models.CharField(max_length=250, db_column='zonage', verbose_name=_("Name"))
+    name = models.CharField(max_length=250, verbose_name=_("Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
-    area_type = models.ForeignKey(RestrictedAreaType, verbose_name=_("Restricted area"), db_column='type')
+    area_type = models.ForeignKey(RestrictedAreaType, verbose_name=_("Restricted area"))
 
     # Override default manager
     objects = RestrictedAreaManager()
 
     class Meta:
         ordering = ['area_type', 'name']
-        db_table = 'l_zonage_reglementaire'
         verbose_name = _("Restricted area")
         verbose_name_plural = _("Restricted areas")
 
     def __str__(self):
-        return "%s - %s" % (self.area_type.name, self.name)
+        return "{} - {}".format(self.area_type.name, self.name)
 
 
 class RestrictedAreaEdge(Topology):
-    topo_object = models.OneToOneField(Topology, parent_link=True,
-                                       db_column='evenement')
-    restricted_area = models.ForeignKey(RestrictedArea, verbose_name=_("Restricted area"),
-                                        db_column='zone')
+    topo_object = models.OneToOneField(Topology, parent_link=True)
+    restricted_area = models.ForeignKey(RestrictedArea, verbose_name=_("Restricted area"))
 
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
-        db_table = 'f_t_zonage'
         verbose_name = _("Restricted area edge")
         verbose_name_plural = _("Restricted area edges")
 
     def __str__(self):
-        return _("Restricted area edge") + ": %s" % self.restricted_area
+        return "{}: {}".format(_("Restricted area edge"), self.restricted_area)
 
     @classmethod
     def path_area_edges(cls, path):
@@ -114,15 +109,14 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
 
 
 class City(models.Model):
-    code = models.CharField(primary_key=True, max_length=6, db_column='insee')
-    name = models.CharField(max_length=128, db_column='commune', verbose_name=_("Name"))
+    code = models.CharField(primary_key=True, max_length=6)
+    name = models.CharField(max_length=128, verbose_name=_("Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
 
     # Override default manager
     objects = models.GeoManager()
 
     class Meta:
-        db_table = 'l_commune'
         verbose_name = _("City")
         verbose_name_plural = _("Cities")
         ordering = ['name']
@@ -132,21 +126,19 @@ class City(models.Model):
 
 
 class CityEdge(Topology):
-    topo_object = models.OneToOneField(Topology, parent_link=True,
-                                       db_column='evenement')
+    topo_object = models.OneToOneField(Topology, parent_link=True)
 
-    city = models.ForeignKey(City, verbose_name=_("City"), db_column='commune')
+    city = models.ForeignKey(City, verbose_name=_("City"))
 
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
-        db_table = 'f_t_commune'
         verbose_name = _("City edge")
         verbose_name_plural = _("City edges")
 
     def __str__(self):
-        return _("City edge") + ": %s" % self.city
+        return "{}: {}".format(_("City edge"), self.city)
 
     @classmethod
     def path_city_edges(cls, path):
@@ -180,14 +172,13 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
 
 
 class District(models.Model):
-    name = models.CharField(max_length=128, db_column='secteur', verbose_name=_("Name"))
+    name = models.CharField(max_length=128, verbose_name=_("Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
 
     # Override default manager
     objects = models.GeoManager()
 
     class Meta:
-        db_table = 'l_secteur'
         verbose_name = _("District")
         verbose_name_plural = _("Districts")
         ordering = ['name']
@@ -197,20 +188,18 @@ class District(models.Model):
 
 
 class DistrictEdge(Topology):
-    topo_object = models.OneToOneField(Topology, parent_link=True,
-                                       db_column='evenement')
-    district = models.ForeignKey(District, verbose_name=_("District"), db_column='secteur')
+    topo_object = models.OneToOneField(Topology, parent_link=True)
+    district = models.ForeignKey(District, verbose_name=_("District"))
 
     # Override default manager
     objects = Topology.get_manager_cls(models.GeoManager)()
 
     class Meta:
-        db_table = 'f_t_secteur'
         verbose_name = _("District edge")
         verbose_name_plural = _("District edges")
 
     def __str__(self):
-        return _("District edge") + ": %s" % self.district
+        return "{}: {}".format(_("District edge"), self.district)
 
     @classmethod
     def path_district_edges(cls, path):

@@ -1,0 +1,319 @@
+{
+  "query" : {
+    "selectionIds" : [ 69627 ],
+    "searchFields" : "NOM_DESCRIPTION_CRITERES",
+    "first" : 0,
+    "count" : 100,
+    "order" : "IDENTIFIANT",
+    "asc" : true,
+    "responseFields" : [ "id", "nom", "ouverture.periodeEnClair", "ouverture.periodesOuvertures", "informationsFeteEtManifestation", "presentation.descriptifCourt", "presentation.descriptifDetaille", "localisation.adresse", "localisation.geolocalisation.geoJson.coordinates", "localisation.geolocalisation.complement.libelleFr", "informations.moyensCommunication", "informations.structureGestion.nom.libelleFr", "descriptionTarif.tarifsEnClair", "descriptionTarif.modesPaiement", "prestations", "gestion.dateModification", "gestion.membreProprietaire.nom", "illustrations" ],
+    "apiKey" : "34wq2Iid",
+    "projetId" : 3367
+  },
+  "numFound" : 6,
+  "objetsTouristiques" : [ {
+    "type" : "FETE_ET_MANIFESTATION",
+    "id" : 323154,
+    "nom" : {
+      "libelleFr" : "Cols Réservés 2019 : Montée de Chabre (Laragne)"
+    },
+    "gestion" : {
+      "dateModification" : "2018-11-30T08:42:14.436+0000",
+      "membreProprietaire" : {
+        "nom" : "Office de Tourisme de Sisteron Buëch"
+      }
+    },
+    "informations" : {
+      "moyensCommunication" : [ {
+        "identifiant" : 20044585,
+        "type" : {
+          "elementReferenceType" : "MoyenCommunicationType",
+          "id" : 201,
+          "libelleFr" : "Téléphone",
+          "ordre" : 1
+        },
+        "coordonnees" : {
+          "fr" : "04 92 65 09 38"
+        }
+      }, {
+        "identifiant" : 21920956,
+        "type" : {
+          "elementReferenceType" : "MoyenCommunicationType",
+          "id" : 202,
+          "libelleFr" : "Fax",
+          "ordre" : 5
+        },
+        "coordonnees" : {
+          "fr" : "04 92 65 28 41"
+        }
+      }, {
+        "identifiant" : 21920957,
+        "type" : {
+          "elementReferenceType" : "MoyenCommunicationType",
+          "id" : 204,
+          "libelleFr" : "Mél",
+          "ordre" : 2
+        },
+        "coordonnees" : {
+          "fr" : "LeGrandTim@mail.fr"
+        }
+      }, {
+        "identifiant" : 21920958,
+        "type" : {
+          "elementReferenceType" : "MoyenCommunicationType",
+          "id" : 205,
+          "libelleFr" : "Site web (URL)",
+          "ordre" : 3
+        },
+        "coordonnees" : {
+          "fr" : "http://www.LeGrandTim.fr"
+        }
+      }, {
+        "identifiant" : 21920959,
+        "type" : {
+          "elementReferenceType" : "MoyenCommunicationType",
+          "id" : 207,
+          "libelleFr" : "Page facebook",
+          "ordre" : 7
+        },
+        "coordonnees" : {
+          "fr" : "http://facebook.com"
+        }
+      }, {
+        "identifiant" : 35282263,
+        "type" : {
+          "elementReferenceType" : "MoyenCommunicationType",
+          "id" : 205,
+          "libelleFr" : "Site web (URL)",
+          "ordre" : 3
+        },
+        "coordonnees" : {
+          "fr" : "http://www.coucou.com"
+        }
+      } ],
+      "structureGestion" : {
+        "type" : "STRUCTURE",
+        "id" : 227551,
+        "nom" : {
+          "libelleFr" : "Toto"
+        },
+        "identifier" : "sitraSTR791179",
+        "state" : "PUBLISHED",
+        "adresse" : {
+          "adresse1" : "Place des Aires",
+          "codePostal" : "05300",
+          "commune" : {
+            "id" : 1822,
+            "code" : "05070",
+            "nom" : "Laragne-Montéglin",
+            "pays" : {
+              "elementReferenceType" : "Pays",
+              "id" : 532,
+              "libelleFr" : "France",
+              "ordre" : 78
+            },
+            "codePostal" : "05300"
+          }
+        },
+        "geolocalisation" : {
+          "altitude" : 570,
+          "valide" : true,
+          "geoJson" : {
+            "type" : "Point",
+            "coordinates" : [ 5.823290, 44.315036 ]
+          }
+        }
+      }
+    },
+    "presentation" : {
+      "descriptifCourt" : {
+        "libelleFr" : "Une des ascensions mythiques du sud des Hautes Alpes ! La Montée de Chabre est réservée aux amoureux de la \"petite reine\", c'est gratuit, sans inscription, ouvert à tous et le ravitaillement est offert !"
+      },
+      "descriptifDetaille" : {
+        "libelleFr" : "Le département des Hautes-Alpes ferme la circulation de 10 grands cols aux véhicules motorisés pour les réserver aux cyclistes. Lors de l’événement \"Cols Réservés\", deux semaines leur sont dédiées.\r\n\r\nCap au sud du département à la découverte des cols insoupçonnés (mais costauds !). Les cyclistes découvrent des boucles moins renommées mais tout aussi séduisantes. Venez profiter de la Montée de Chabre qui sera réservée aux cyclistes de 9h à 12h à partir de l'embranchement de la route de Pomet."
+      }
+    },
+    "localisation" : {
+      "adresse" : {
+        "adresse3" : "Châteauneuf de Chabre",
+        "codePostal" : "05300",
+        "commune" : {
+          "id" : 1868,
+          "code" : "05118",
+          "nom" : "Val Buëch-Méouge",
+          "pays" : {
+            "elementReferenceType" : "Pays",
+            "id" : 532,
+            "libelleFr" : "France",
+            "ordre" : 78
+          },
+          "codePostal" : "05300"
+        }
+      },
+      "geolocalisation" : {
+        "geoJson" : {
+          "coordinates" : [ 5.793507, 44.277451 ]
+        }
+      }
+    },
+    "prestations" : {
+      "services" : [ {
+        "elementReferenceType" : "PrestationService",
+        "id" : 687,
+        "libelleFr" : "Le plus grand des services",
+        "ordre" : 271
+      }, {
+        "elementReferenceType" : "PrestationService",
+        "id" : 687,
+        "libelleFr" : "Un autre grand service",
+        "ordre" : 271
+      }],
+      "animauxAcceptes" : "NON_DISPONIBLE",
+      "animauxAcceptesSupplement" : "NON_DISPONIBLE"
+    },
+    "ouverture" : {
+      "periodeEnClair" : {
+        "libelleFr" : "Mardi 6 août 2019 de 9h à midi."
+      },
+      "periodesOuvertures" : [ {
+        "identifiant" : 10270496,
+        "dateDebut" : "2019-08-06",
+        "dateFin" : "2019-08-06",
+        "horaireOuverture" : "09:00:00",
+        "horaireFermeture" : "12:00:00",
+        "type" : "OUVERTURE_TOUS_LES_JOURS",
+        "tousLesAns" : false,
+        "identifiantTechnique" : 16073279
+      } ]
+    },
+    "descriptionTarif" : {
+      "tarifsEnClair" : {
+        "libelleFr" : "Gratuit."
+      }
+    },
+    "illustrations" : [ {
+      "identifiant" : 4480274,
+      "link" : false,
+      "type" : "IMAGE",
+      "nom" : {
+        "libelleFr" : "Cols réservés"
+      },
+      "legende" : {
+        "libelleFr" : "Affiche 2018"
+      },
+      "copyright" : {
+        "libelleFr" : "ADDET"
+      },
+      "traductionFichiers" : [ {
+        "locale" : "fr",
+        "url" : "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/129/66/4342401.jpg",
+        "urlListe" : "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/129/66/4342401-liste.jpg",
+        "urlFiche" : "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/129/66/4342401-fiche.jpg",
+        "urlDiaporama" : "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/129/66/4342401-diaporama.jpg",
+        "extension" : "jpg",
+        "fileName" : "cols réservés 2018",
+        "taille" : 271411,
+        "hauteur" : 1200,
+        "largeur" : 849,
+        "lastModifiedDate" : "2018-07-09T16:28:05.000+0000"
+      } ],
+      "locked" : false
+    }, {
+      "identifiant" : 843537,
+      "link" : false,
+      "type" : "IMAGE",
+      "legende" : {
+        "libelleFr" : "Accueil"
+      },
+      "copyright" : {
+        "libelleFr" : "OT Laragne"
+      },
+      "traductionFichiers" : [ {
+        "locale" : "fr",
+        "url" : "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/108/42/797292.jpg",
+        "urlListe" : "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/108/42/797292-liste.jpg",
+        "urlFiche" : "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/108/42/797292-fiche.jpg",
+        "urlDiaporama" : "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/108/42/797292-diaporama.jpg",
+        "extension" : "jpg",
+        "fileName" : "P1040822",
+        "taille" : 4734976,
+        "hauteur" : 2432,
+        "largeur" : 4320,
+        "lastModifiedDate" : "2015-03-27T13:54:26.000+0000"
+      } ],
+      "locked" : false
+    }, {
+      "identifiant" : 843538,
+      "link" : false,
+      "type" : "IMAGE",
+      "legende" : {
+        "libelleFr" : "Montée de Chabre"
+      },
+      "copyright" : {
+        "libelleFr" : "OT Laragne"
+      },
+      "traductionFichiers" : [ {
+        "locale" : "fr",
+        "url" : "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/109/42/797293.jpg",
+        "urlListe" : "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/109/42/797293-liste.jpg",
+        "urlFiche" : "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/109/42/797293-fiche.jpg",
+        "urlDiaporama" : "http://static.apidae-tourisme.com/filestore/objets-touristiques/images/109/42/797293-diaporama.jpg",
+        "extension" : "jpg",
+        "fileName" : "P1040834",
+        "taille" : 4675072,
+        "hauteur" : 2432,
+        "largeur" : 4320,
+        "lastModifiedDate" : "2015-03-27T13:54:21.000+0000"
+      } ],
+      "locked" : false
+    } ],
+    "informationsFeteEtManifestation" : {
+      "nomLieu" : "Embranchement de la route de Pomet",
+      "typesManifestation" : [ {
+        "elementReferenceType" : "FeteEtManifestationType",
+        "id" : 1971,
+        "libelleFr" : "Sports",
+        "ordre" : 10,
+        "description" : "Concerne uniquement les évènements à caractère sportif.\r\nUtiliser le type \"distractions et loisirs\" pour tout ce qui n'a pas de caractère sportif."
+      } ],
+      "themes" : [ {
+        "elementReferenceType" : "FeteEtManifestationTheme",
+        "id" : 2256,
+        "libelleFr" : "Sports cyclistes",
+        "ordre" : 112,
+        "familleCritere" : {
+          "elementReferenceType" : "FamilleCritere",
+          "id" : 105,
+          "libelleFr" : "Sport",
+          "ordre" : 121
+        }
+      }, {
+        "elementReferenceType" : "FeteEtManifestationTheme",
+        "id" : 2337,
+        "libelleFr" : "Cyclisme",
+        "ordre" : 114,
+        "description" : "Idée de compétition sportive",
+        "familleCritere" : {
+          "elementReferenceType" : "FamilleCritere",
+          "id" : 105,
+          "libelleFr" : "Sport",
+          "ordre" : 121
+        },
+        "parent" : {
+          "elementReferenceType" : "FeteEtManifestationTheme",
+          "id" : 2256,
+          "libelleFr" : "Sports cyclistes",
+          "ordre" : 112
+        }
+      } ],
+      "portee" : {
+        "elementReferenceType" : "FeteEtManifestationPortee",
+        "id" : 2351,
+        "libelleFr" : "Départementale",
+        "ordre" : 4,
+        "description" : "La manifestation est susceptible d'intéresser des spectateurs habitant ou résidant dans un rayon de 25 à 70 km."
+      }
+    }
+  }],
+  "formatVersion" : "v002"
+}

@@ -9,6 +9,7 @@ import zipfile
 
 from django.test import TestCase
 from django.conf import settings
+from django.contrib.gis.geos import LineString
 from django.core import management
 from django.core.management.base import CommandError
 from django.http import HttpResponse, StreamingHttpResponse
@@ -16,6 +17,7 @@ from django.test.utils import override_settings
 
 from geotrek.common.factories import FileTypeFactory, RecordSourceFactory, TargetPortalFactory, AttachmentFactory, ThemeFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_file
+from geotrek.core.factories import PathFactory
 from geotrek.diving.factories import DiveFactory, PracticeFactory as PracticeDiveFactory
 from geotrek.diving.models import Dive
 from geotrek.infrastructure.factories import InfrastructureFactory
@@ -35,17 +37,29 @@ class SyncRandoTilesTest(TestCase):
             shutil.rmtree(os.path.join('var', 'tmp'))
         super(SyncRandoTilesTest, cls).setUpClass()
 
+    @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
     @mock.patch('landez.TilesManager.tile', return_value=b'I am a png')
-    @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
     def test_tiles(self, mock_tileslist, mock_tiles):
         output = StringIO()
+        trek_multi = TrekFactory.create(published=True, no_path=True)
+        p = PathFactory.create(geom=LineString((0, 0), (0, 10)))
+        trek_multi.add_path(p, start=0.0, end=0.1)
+        trek_multi.add_path(p, start=0.2, end=0.3)
+        trek_multi.save()
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
                                 languages='en', stdout=output)
         zfile = zipfile.ZipFile(os.path.join('var', 'tmp', 'zip', 'tiles', 'global.zip'))
         for finfo in zfile.infolist():
-            ifile = zfile.open(finfo)
-            self.assertEqual(ifile.read(), b'I am a png')
-        self.assertIn("zip/tiles/global.zip", output.getvalue())
+            ifile_global = zfile.open(finfo)
+            if ifile_global.name.startswith('tiles/'):
+                self.assertEqual(ifile_global.readline(), b'I am a png')
+        zfile_trek = zipfile.ZipFile(os.path.join('tmp', 'zip', 'tiles', '{}.zip'.format(trek_multi.pk)))
+        for finfo in zfile_trek.infolist():
+            ifile_trek = zfile_trek.open(finfo)
+            if ifile_trek.name.startswith('tiles/'):
+                self.assertEqual(ifile_trek.readline(), b'I am a png')
+        self.assertIn("tiles/global.zip", output.getvalue())
+        self.assertIn("tiles/{pk}.zip".format(pk=trek_multi.pk), output.getvalue())
 
     @mock.patch('landez.TilesManager.tile', return_value='Error')
     @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
@@ -239,14 +253,15 @@ class SyncSetup(TestCase):
 
         self.portal_a = TargetPortalFactory()
         self.portal_b = TargetPortalFactory()
-        information_desks = InformationDeskFactory.create()
-
+        self.information_desks = InformationDeskFactory.create()
+        information_desk_without_photo = InformationDeskFactory.create(photo=None)
         self.practice_trek = PracticeTrekFactory.create(order=1)
         self.practice_trek_first = PracticeTrekFactory.create(order=0)
         self.trek_1 = TrekWithPublishedPOIsFactory.create(practice=self.practice_trek, sources=(self.source_a, ),
                                                           portals=(self.portal_b,),
                                                           published=True)
-        self.trek_1.information_desks.add(information_desks)
+        self.trek_1.information_desks.add(self.information_desks)
+        self.trek_1.information_desks.add(information_desk_without_photo)
         self.attachment_1 = AttachmentFactory.create(content_object=self.trek_1,
                                                      attachment_file=get_dummy_uploaded_image())
         self.trek_2 = TrekFactory.create(sources=(self.source_b,),
@@ -305,6 +320,12 @@ class SyncSetup(TestCase):
                                                                      attachment_file=get_dummy_uploaded_image())
         self.attachment_touristic_event = AttachmentFactory.create(content_object=self.touristic_event,
                                                                    attachment_file=get_dummy_uploaded_image())
+        self.touristic_content_without_attachment = TouristicContentFactory(
+            geom='SRID=%s;POINT(700002 6600002)' % settings.SRID, published=True, portals=(self.portal_b,),
+            sources=(self.source_a,))
+        self.touristic_event_without_attachment = TouristicEventFactory(
+            geom='SRID=%s;POINT(700002 6600002)' % settings.SRID, published=True, portals=(self.portal_a,),
+            sources=(self.source_b,))
 
     def tearDown(self):
         shutil.rmtree(os.path.join('var', 'tmp'))
@@ -429,7 +450,7 @@ class SyncTest(SyncSetup):
         # source A only
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                 source=self.source_a.name, skip_tiles=True, skip_pdf=True, languages='en', verbosity=2,
-                                stdout=StringIO())
+                                content_categories="1", with_events=True, stdout=StringIO())
         with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
             # only 1 trek in Source A
@@ -441,19 +462,19 @@ class SyncTest(SyncSetup):
         # source A only
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', with_dives=True,
                                 source=self.source_a.name, skip_tiles=True, skip_pdf=True, languages='en', verbosity=2,
-                                stdout=StringIO())
+                                content_categories="1", with_events=True, stdout=StringIO())
         with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
             dives = json.load(f)
-            # only 1 trek in Source A
+            # only 1 dive in Source A
             self.assertEqual(len(dives['features']),
                              trek_models.Trek.objects.filter(published=True,
                                                              source__name__in=[self.source_a.name, ]).count())
 
     def test_sync_filtering_portals(self):
         # portal B only
-        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
-                                portal=self.portal_b.name, skip_tiles=True, skip_pdf=True, languages='en', verbosity=2,
-                                stdout=StringIO())
+        management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+                                portal=self.portal_b.name, skip_tiles=True, languages='en', skip_pdf=True, verbosity=2,
+                                content_categories="1", with_events=True, stdout=StringIO())
         with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
 
@@ -517,6 +538,15 @@ class SyncTest(SyncSetup):
             # there are 2 areas
             self.assertEqual(len(area['features']), 2)
 
+    @override_settings(SPLIT_TREKS_CATEGORIES_BY_PRACTICE=False, SPLIT_DIVES_CATEGORIES_BY_PRACTICE=False)
+    def test_sync_picture_missing_from_disk(self):
+        os.remove(self.information_desks.photo.path)
+        output = StringIO()
+        management.call_command('sync_rando', 'tmp', with_signages=True, with_infrastructures=True,
+                                with_dives=True, with_events=True, content_categories="1", url='http://localhost:8000',
+                                skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=output)
+        self.assertIn('Done', output.getvalue())
+
 
 @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
 @mock.patch('geotrek.diving.models.Dive.prepare_map_image')
@@ -545,6 +575,17 @@ class SyncTestPdf(SyncSetup):
         self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_3.pk), '%s.pdf' % self.trek_3.slug)))
         self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug)))
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_5.pk), '%s.pdf' % self.trek_5.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristiccontents',
+                                                     str(self.touristic_content.pk), '%s.pdf' % self.touristic_content.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristiccontents',
+                                                     str(self.touristic_content_without_attachment.pk),
+                                                     '%s.pdf' % self.touristic_content_without_attachment.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristicevents',
+                                                     str(self.touristic_event.pk),
+                                                     '%s.pdf' % self.touristic_event.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristicevents',
+                                                     str(self.touristic_event_without_attachment.pk),
+                                                     '%s.pdf' % self.touristic_event_without_attachment.slug)))
 
     def test_sync_pdfs(self, event, content, dive, trek):
         output = StringIO()
@@ -559,6 +600,16 @@ class SyncTestPdf(SyncSetup):
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_3.pk), '%s.pdf' % self.trek_3.slug)))
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug)))
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_5.pk), '%s.pdf' % self.trek_5.slug)))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristiccontents',
+                                                    str(self.touristic_content.pk), '%s.pdf' % self.touristic_content.slug)))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristiccontents',
+                                                    str(self.touristic_content_without_attachment.pk),
+                                                    '%s.pdf' % self.touristic_content_without_attachment.slug)))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristicevents',
+                                                    str(self.touristic_event.pk), '%s.pdf' % self.touristic_event.slug)))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristicevents',
+                                                    str(self.touristic_event_without_attachment.pk),
+                                                    '%s.pdf' % self.touristic_event_without_attachment.slug)))
 
     def test_sync_pdfs_portals_sources(self, event, content, dive, trek):
         output = StringIO()
@@ -575,6 +626,16 @@ class SyncTestPdf(SyncSetup):
         self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_3.pk), '%s.pdf' % self.trek_3.slug)))
         self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug)))
         self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_5.pk), '%s.pdf' % self.trek_5.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristiccontents',
+                                                     str(self.touristic_content.pk), '%s.pdf' % self.touristic_content.slug)))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristiccontents',
+                                                    str(self.touristic_content_without_attachment.pk),
+                                                    '%s.pdf' % self.touristic_content_without_attachment.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristicevents',
+                                                     str(self.touristic_event.pk), '%s.pdf' % self.touristic_event.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristicevents',
+                                                     str(self.touristic_event_without_attachment.pk),
+                                                     '%s.pdf' % self.touristic_event_without_attachment.slug)))
 
     def tearDown(self):
         shutil.rmtree(os.path.join('var', 'tmp'))
