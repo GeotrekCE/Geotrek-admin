@@ -219,6 +219,10 @@ class TrekViewsTest(CommonTest):
             good_data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
         return good_data
 
+    def test_status(self):
+        TrekFactory.create(duration=float('nan'))
+        super(TrekViewsTest, self).test_status()
+
     def test_badfield_goodgeom(self):
         self.login()
 
