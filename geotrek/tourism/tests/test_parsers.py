@@ -1,6 +1,7 @@
 from datetime import date
 import io
 import json
+import requests
 from unittest import mock
 import os
 
@@ -101,6 +102,34 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentType2Factory(label="Agriculture biologique", category=category)
         with self.assertRaises(CommandError):
             call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=2)
+
+    @mock.patch('requests.get')
+    @mock.patch('geotrek.common.parsers.Parser.sleep_time', 0)
+    @mock.patch('geotrek.common.parsers.AttachmentParserMixin.download_attachments', False)
+    def test_create_content_espritparc_retry(self, mocked):
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeContent.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        def side_effect(url, params, auth, code):
+            response = requests.Response()
+            response.status_code = code
+            response.url = url
+            if code == 200:
+                response.json = mocked_json
+            return response
+
+        mocked.side_effect = [side_effect(EauViveParser.url, None, None, 503),
+                              side_effect(EauViveParser.url, None, None, 503),
+                              side_effect(EauViveParser.url, None, None, 200)]
+
+        FileType.objects.create(type="Photographie")
+        TouristicContentCategoryFactory(label="Eau vive")
+        TouristicContentType1Factory(label="Type A")
+        TouristicContentType1Factory(label="Type B")
+        call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser')
+        self.assertEqual(TouristicContent.objects.count(), 1)
 
     @mock.patch('requests.get')
     def test_create_content_espritparc_not_fail_type1_does_not_exist(self, mocked):
