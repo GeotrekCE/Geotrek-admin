@@ -1,14 +1,14 @@
 import json
 
 import datetime
-import requests
+
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.db import models
 from django.utils.translation import ugettext as _
 
 from geotrek.common.parsers import (AttachmentParserMixin, Parser,
-                                    GlobalImportError, TourInSoftParser)
+                                    TourInSoftParser)
 from geotrek.tourism.models import TouristicContent, TouristicEvent, TouristicContentType1, TouristicContentType2
 
 
@@ -103,10 +103,7 @@ class ApidaeParser(AttachmentParserMixin, Parser):
                 'first': self.skip,
                 'responseFields': self.responseFields
             }
-            response = requests.get(self.url, params={'query': json.dumps(params)})
-            if response.status_code != 200:
-                msg = _("Failed to download {url}. HTTP status code {status_code}")
-                raise GlobalImportError(msg.format(url=response.url, status_code=response.status_code))
+            response = self.get_or_retry(self.url, {'query': json.dumps(params)})
             self.root = response.json()
             self.nb = int(self.root['numFound'])
             for row in self.items:
@@ -522,12 +519,7 @@ class EspritParcParser(AttachmentParserMixin, Parser):
         return self.root['responseData']
 
     def next_row(self):
-        response = requests.get(self.url)
-        if response.status_code != 200:
-            msg = _("Failed to download {url}. HTTP status code {status_code}")
-            raise GlobalImportError(msg.format(url=response.url,
-                                               status_code=response.status_code))
-
+        response = self.get_or_retry(self.url)
         self.root = response.json()
         self.nb = int(self.root['numFound'])
 

@@ -7,6 +7,7 @@ import xml.etree.ElementTree as ET
 from functools import reduce
 from urllib.request import urlopen
 from collections import Iterable
+from time import sleep
 
 from ftplib import FTP
 from os.path import dirname
@@ -69,6 +70,8 @@ class Parser(object):
     non_fields = {}
     natural_keys = {}
     field_options = {}
+    sleep_time = 60
+    number_of_try = 3
 
     def __init__(self, progress_cb=None, user=None, encoding='utf8'):
         self.warnings = {}
@@ -458,6 +461,21 @@ class Parser(object):
                 self.add_warning(str(e))
         self.end()
 
+    def get_or_retry(self, url, params=None, authent=None):
+        try_get = self.number_of_try
+        assert try_get > 0
+        while try_get:
+            response = requests.get(url, params=params, auth=authent)
+            if response.status_code == 503:
+                sleep(self.sleep_time)
+                try_get -= 1
+            elif response.status_code == 200:
+                return response
+            else:
+                break
+        raise GlobalImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=response.url,
+                                                                                                     status_code=response.status_code))
+
 
 class ShapeParser(Parser):
     def next_row(self):
@@ -666,9 +684,7 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
                 '$top': 1000,
                 '$skip': skip,
             }
-            response = requests.get(self.url, params=params)
-            if response.status_code != 200:
-                raise GlobalImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
+            response = self.get_or_retry(self.url, params)
             self.root = response.json()
             self.nb = self.get_nb()
             for row in self.items:
@@ -762,9 +778,7 @@ class TourismSystemParser(AttachmentParserMixin, Parser):
                 'size': size,
                 'start': skip,
             }
-            response = requests.get(self.url, params=params, auth=HTTPBasicAuth(self.login, self.password))
-            if response.status_code != 200:
-                raise GlobalImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
+            response = self.get_or_retry(self.url, params, HTTPBasicAuth(self.login, self.password))
             self.root = response.json()
             self.nb = int(self.root['metadata']['total'])
             for row in self.items:
@@ -796,9 +810,7 @@ class OpenSystemParser(Parser):
             'Pass': self.password,
             'Action': 'concentrateur_liaisons',
         }
-        response = requests.get(self.url, params=params)
-        if response.status_code != 200:
-            raise GlobalImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=self.url, status_code=response.status_code))
+        response = self.get_or_retry(self.url, params)
         self.root = ET.fromstring(response.content).find('Resultat').find('Objets')
         self.nb = len(self.root)
         for row in self.root:
