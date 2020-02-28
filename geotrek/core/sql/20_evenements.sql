@@ -134,7 +134,7 @@ BEGIN
                                                                ST_SmartLineSubstring(t.geom_3d, et.start_position, et.end_position)
                FROM core_topology e, core_pathaggregation et, core_path t
                WHERE e.id = evenementid AND et.topo_object_id = e.id AND et.path_id = t.id
-                 AND et.start_position != et.end_position
+                 AND GeometryType(ST_SmartLineSubstring(t.geom, et.start_position, et.end_position)) != 'POINT'
                ORDER BY et."order", et.id  -- /!\ We suppose that evenement_troncons were created in the right order
         LOOP
             tomerge := array_append(tomerge, t_geom);
