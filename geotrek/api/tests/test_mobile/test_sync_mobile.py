@@ -548,7 +548,7 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
     def test_sync_treks_informationdesk_photo_missing(self):
         os.remove(self.info_desk.photo.path)
         output = StringIO()
-        management.call_command('sync_mobile', 'tmp', url='http://localhost:8000',
+        management.call_command('sync_mobile', 'var/tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         self.assertIn('Done', output.getvalue())
 

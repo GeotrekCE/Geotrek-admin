@@ -1405,9 +1405,9 @@ class SyncRandoViewTest(TestCase):
 
     @mock.patch('sys.stdout', new_callable=StringIO)
     @override_settings(CELERY_ALWAYS_EAGER=False,
-                       SYNC_RANDO_ROOT='tmp', SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000',
-                                                                  'skip_tiles': True, 'skip_pdf': True,
-                                                                  'skip_dem': True, 'skip_profile_png': True})
+                       SYNC_RANDO_ROOT='var/tmp', SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000',
+                                                                      'skip_tiles': True, 'skip_pdf': True,
+                                                                      'skip_dem': True, 'skip_profile_png': True})
     def test_get_sync_rando_states_superuser_with_sync_rando(self, mocked_stdout):
         self.client.login(username='admin', password='super')
         if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
@@ -1434,9 +1434,9 @@ class SyncRandoViewTest(TestCase):
         self.assertIn(b'"exc_message": "This is a test"', response.content)
 
     @mock.patch('sys.stdout', new_callable=StringIO)
-    @override_settings(SYNC_RANDO_ROOT='tmp', SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000', 'skip_tiles': True,
-                                                                  'skip_pdf': True,
-                                                                  'skip_dem': True, 'skip_profile_png': True})
+    @override_settings(SYNC_RANDO_ROOT='var/tmp', SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000', 'skip_tiles': True,
+                                                                      'skip_pdf': True,
+                                                                      'skip_dem': True, 'skip_profile_png': True})
     def test_launch_sync_rando(self, mocked_stdout):
         if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
             shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))

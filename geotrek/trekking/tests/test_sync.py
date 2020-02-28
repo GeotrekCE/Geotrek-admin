@@ -53,7 +53,7 @@ class SyncRandoTilesTest(TestCase):
             ifile_global = zfile.open(finfo)
             if ifile_global.name.startswith('tiles/'):
                 self.assertEqual(ifile_global.readline(), b'I am a png')
-        zfile_trek = zipfile.ZipFile(os.path.join('tmp', 'zip', 'tiles', '{}.zip'.format(trek_multi.pk)))
+        zfile_trek = zipfile.ZipFile(os.path.join('var', 'tmp', 'zip', 'tiles', '{}.zip'.format(trek_multi.pk)))
         for finfo in zfile_trek.infolist():
             ifile_trek = zfile_trek.open(finfo)
             if ifile_trek.name.startswith('tiles/'):
@@ -472,7 +472,7 @@ class SyncTest(SyncSetup):
 
     def test_sync_filtering_portals(self):
         # portal B only
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+        management.call_command('sync_rando', 'var/tmp', url='http://localhost:8000',
                                 portal=self.portal_b.name, skip_tiles=True, languages='en', skip_pdf=True, verbosity=2,
                                 content_categories="1", with_events=True, stdout=StringIO())
         with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
@@ -542,7 +542,7 @@ class SyncTest(SyncSetup):
     def test_sync_picture_missing_from_disk(self):
         os.remove(self.information_desks.photo.path)
         output = StringIO()
-        management.call_command('sync_rando', 'tmp', with_signages=True, with_infrastructures=True,
+        management.call_command('sync_rando', 'var/tmp', with_signages=True, with_infrastructures=True,
                                 with_dives=True, with_events=True, content_categories="1", url='http://localhost:8000',
                                 skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=output)
         self.assertIn('Done', output.getvalue())
