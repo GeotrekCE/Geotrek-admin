@@ -1,12 +1,15 @@
 from unittest import mock
-from django.test import TransactionTestCase, RequestFactory
+from django.test import TestCase, TransactionTestCase, RequestFactory
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.test.utils import override_settings
 from django.urls import reverse
 
+from mapentity.factories import SuperUserFactory
 from mapentity.registry import app_settings
 from mapentity.decorators import view_permission_required
+
+from geotrek.tourism.factories import TouristicEventFactory
 
 
 class ViewPermissionRequiredTestCase(TransactionTestCase):
@@ -77,3 +80,23 @@ class ViewPermissionRequiredTestCase(TransactionTestCase):
         self.assertEqual(response.status_code, 302)
         touristiceventlist_url = reverse('tourism:touristicevent_list')
         self.assertTrue(touristiceventlist_url in response['Location'])
+
+
+class HistoryTest(TestCase):
+    def test_history_items_max(self):
+        app_settings['HISTORY_ITEMS_MAX'] = 0
+        SuperUserFactory.create(username='Superuser', password='booh')
+        self.client.login(username='Superuser', password='booh')
+        self.object = TouristicEventFactory.create()
+        self.client.get('/touristicevent/{pk}/'.format(pk=self.object.pk))
+        session = self.client.session
+        self.assertEqual(session['history'], [])
+        app_settings['HISTORY_ITEMS_MAX'] = 7
+
+    def test_history_items(self):
+        SuperUserFactory.create(username='Superuser', password='booh')
+        self.client.login(username='Superuser', password='booh')
+        self.object = TouristicEventFactory.create()
+        self.client.get('/touristicevent/{pk}/'.format(pk=self.object.pk))
+        session = self.client.session
+        self.assertNotEqual(session['history'], [])
