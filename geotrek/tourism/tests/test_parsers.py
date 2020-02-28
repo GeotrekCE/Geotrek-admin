@@ -132,6 +132,29 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(TouristicContent.objects.count(), 1)
 
     @mock.patch('requests.get')
+    @mock.patch('geotrek.common.parsers.Parser.sleep_time', 0)
+    def test_create_content_espritparc_retry_fail(self, mocked):
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeContent.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+
+        def side_effect(url, params, auth):
+            response = requests.Response()
+            response.status_code = 503
+            response.url = url
+            return response
+
+        mocked.side_effect = side_effect
+
+        FileType.objects.create(type="Photographie")
+        TouristicContentCategoryFactory(label="Eau vive")
+        TouristicContentType1Factory(label="Type A")
+        TouristicContentType1Factory(label="Type B")
+        with self.assertRaisesRegexp(CommandError, "Failed to download %s. HTTP status code 503" % EauViveParser.url):
+            call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser')
+
+    @mock.patch('requests.get')
     def test_create_content_espritparc_not_fail_type1_does_not_exist(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'espritparc.json')
