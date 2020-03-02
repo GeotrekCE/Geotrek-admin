@@ -1,10 +1,7 @@
-import requests
-
 from django.conf import settings
 from django.contrib.gis.geos import Point, Polygon, MultiPolygon
-from django.utils.translation import ugettext as _
 
-from geotrek.common.parsers import Parser, ShapeParser, GlobalImportError, RowImportError, ValueImportError
+from geotrek.common.parsers import Parser, ShapeParser, RowImportError, ValueImportError
 from .models import SensitiveArea, Species, SportPractice
 
 
@@ -49,10 +46,7 @@ class BiodivParser(Parser):
         return kwargs
 
     def next_row(self):
-        response = requests.get('https://biodiv-sports.fr/api/v2/sportpractice/')
-        if response.status_code != 200:
-            msg = _("Failed to download https://biodiv-sports.fr/api/v2/sportpractice/. HTTP status code {status_code}")
-            raise GlobalImportError(msg.format(url=response.url, status_code=response.status_code))
+        response = self.get_or_retry('https://biodiv-sports.fr/api/v2/sportpractice/')
         for practice in response.json()['results']:
             defaults = {'name_' + lang: practice['name'][lang] for lang in practice['name'].keys() if lang in settings.MODELTRANSLATION_LANGUAGES}
             SportPractice.objects.get_or_create(id=practice['id'], defaults=defaults)
@@ -63,10 +57,7 @@ class BiodivParser(Parser):
         url += '&in_bbox={}'.format(','.join([str(coord) for coord in bbox.extent]))
         if self.practices:
             url += '&practices={}'.format(','.join([str(practice) for practice in self.practices]))
-        response = requests.get(url)
-        if response.status_code != 200:
-            msg = _("Failed to download {url}. HTTP status code {status_code}")
-            raise GlobalImportError(msg.format(url=response.url, status_code=response.status_code))
+        response = self.get_or_retry(url)
 
         self.root = response.json()
         self.nb = int(self.root['count'])

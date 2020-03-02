@@ -27,6 +27,8 @@ ALTER TABLE core_pathaggregation ADD FOREIGN KEY (path_id) REFERENCES core_path(
 -- Evenements utilities
 -------------------------------------------------------------------------------
 
+DROP FUNCTION IF EXISTS geotrek.ft_troncon_interpolate(integer, geometry);
+
 CREATE OR REPLACE FUNCTION geotrek.ft_troncon_interpolate(path integer, point geometry) RETURNS RECORD AS $$
 DECLARE 
   line GEOMETRY;

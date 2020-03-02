@@ -2,13 +2,28 @@
 CHANGELOG
 =========
 
-2.32.6 (2020-02-28)
+2.32.7 (2020-03-02)
 -------------------
+
+**BREAKING CHANGES**
+
+- Rename tables and fields in database
+
+**Minor changes**
+
+- Retry on HTTP 503 errors in parsers
 
 **Bug fixes**
 
+- Fix install on Xenial (again)
 - Fix video embed url https
 - Fix "Only LINESTRING and MULTILINESTRING are supported" crash in SQL triggers
+
+
+2.32.6 (2020-02-28)
+-------------------
+
+**DO NOT USE IT!**
 
 
 2.32.5 (2020-02-18)
