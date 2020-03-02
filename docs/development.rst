@@ -170,6 +170,8 @@ Everything:
 Restore existing Database
 -------------------------
 
+Assuming a dump of your database is located in your project directory:
+
 ::
 
     docker-compose run --rm web pg_restore -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB /app/src/<path_to_backup>.dump
