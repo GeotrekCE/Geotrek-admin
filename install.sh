@@ -426,7 +426,7 @@ function geotrek_setup {
     # install pip and virtualenv
     wget https://bootstrap.pypa.io/get-pip.py
     sudo python3 ./get-pip.py
-    sudo pip install virtualenv -U
+    sudo pip install virtualenv==16.7.10
     rm get-pip.py
 
     # Python bootstrap
