@@ -23,8 +23,8 @@ logger = logging.getLogger(__name__)
 
 class TimeStampedModelMixin(models.Model):
     # Computed values (managed at DB-level with triggers)
-    date_insert = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_("Insertion date"), db_column='date_insert')
-    date_update = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Update date"), db_column='date_update', db_index=True)
+    date_insert = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_("Insertion date"))
+    date_update = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Update date"), db_index=True)
 
     class Meta:
         abstract = True
@@ -244,10 +244,9 @@ class BasePublishableMixin(models.Model):
     It is used for flat pages and publishable entities.
     """
     published = models.BooleanField(verbose_name=_("Published"), default=False,
-                                    help_text=_("Online"), db_column='public')
+                                    help_text=_("Online"))
     publication_date = models.DateField(verbose_name=_("Publication date"),
-                                        null=True, blank=True, editable=False,
-                                        db_column='date_publication')
+                                        null=True, blank=True, editable=False)
 
     class Meta:
         abstract = True
@@ -311,9 +310,9 @@ class PublishableMixin(BasePublishableMixin):
     can be published (c.f. PN Cevennes project).
     """
     name = models.CharField(verbose_name=_("Name"), max_length=128,
-                            help_text=_("Public name (Change carefully)"), db_column='nom')
+                            help_text=_("Public name (Change carefully)"))
     review = models.BooleanField(verbose_name=_("Waiting for publication"),
-                                 default=False, db_column='relecture')
+                                 default=False)
 
     class Meta:
         abstract = True
@@ -384,7 +383,7 @@ class PublishableMixin(BasePublishableMixin):
 
 class PictogramMixin(models.Model):
     pictogram = models.FileField(verbose_name=_("Pictogram"), upload_to=settings.UPLOAD_DIR,
-                                 db_column='picto', max_length=512, null=True)
+                                 max_length=512, null=True)
 
     class Meta:
         abstract = True

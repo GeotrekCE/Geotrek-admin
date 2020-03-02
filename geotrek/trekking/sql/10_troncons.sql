@@ -7,14 +7,14 @@ DECLARE
 BEGIN
     -- Un-published treks because they might be broken
     UPDATE trekking_trek i
-        SET public = FALSE
+        SET published = FALSE
         FROM core_pathaggregation et
         WHERE et.topo_object_id = i.topo_object_id AND et.path_id = OLD.id;
 
 
     IF {{PUBLISHED_BY_LANG}} THEN
         UPDATE trekking_trek i
-            SET public_{{LANGUAGE_CODE}} = FALSE
+            SET published_{{LANGUAGE_CODE}} = FALSE
             FROM core_pathaggregation et
             WHERE et.topo_object_id = i.topo_object_id AND et.path_id = OLD.id;
     END IF;
