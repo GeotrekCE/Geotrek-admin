@@ -5,6 +5,10 @@ CHANGELOG
 2.32.8.dev0
 -------------------
 
+**Minor changes**
+
+- Allow to choose Touristic content ordering in API
+
 **Bug fixes**
 
 -
