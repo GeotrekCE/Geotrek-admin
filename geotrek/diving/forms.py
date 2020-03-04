@@ -1,9 +1,35 @@
 from .models import Dive
 from geotrek.common.forms import CommonForm
 
+from crispy_forms.layout import Div
+
 
 class DiveForm(CommonForm):
     geomfields = ['geom']
+
+    fieldslayout = [
+        Div(
+            'structure',
+            'name',
+            'practice',
+            'review',
+            'published',
+            'description_teaser',
+            'description',
+            'advice',
+            'difficulty',
+            'levels',
+            'themes',
+            'owner',
+            'depth',
+            'facilities',
+            'departure',
+            'disabled_sport',
+            'source',
+            'portal',
+            'eid',
+        )
+    ]
 
     class Meta:
         fields = ['structure', 'name', 'practice', 'review', 'published',

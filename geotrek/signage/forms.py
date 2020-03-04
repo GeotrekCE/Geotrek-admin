@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from leaflet.forms.widgets import LeafletWidget
 
-from crispy_forms.layout import Layout
+from crispy_forms.layout import Div, Layout
 from crispy_forms.helper import FormHelper
 
 from geotrek.common.forms import CommonForm
@@ -182,6 +182,22 @@ else:
     class SignageForm(BaseInfrastructureForm):
         leftpanel_scrollable = False
         geomfields = ['geom']
+
+        fieldslayout = [
+            Div(
+                'structure',
+                'name',
+                'description',
+                'type',
+                'condition',
+                'implantation_year',
+                'published',
+                'code',
+                'printed_elevation',
+                'manager',
+                'sealing'
+            )
+        ]
 
         def save(self, *args, **kwargs):
             # Fix blade and line structure if signage structure change

@@ -3,9 +3,36 @@ from django.utils.translation import ugettext_lazy as _
 from .models import TouristicContent, TouristicEvent
 from geotrek.common.forms import CommonForm
 
+from crispy_forms.layout import Div
+
 
 class TouristicContentForm(CommonForm):
     geomfields = ['geom']
+
+    fieldslayout = [
+        Div(
+            'structure',
+            'name',
+            'category',
+            'type1',
+            'type2',
+            'review',
+            'published',
+            'description_teaser',
+            'description',
+            'themes',
+            'contact',
+            'email',
+            'website',
+            'practical_info',
+            'approved',
+            'source',
+            'portal',
+            'eid',
+            'reservation_system',
+            'reservation_id'
+        )
+    ]
 
     class Meta:
         fields = ['structure', 'name', 'category', 'type1', 'type2', 'review', 'published',
@@ -23,6 +50,38 @@ class TouristicContentForm(CommonForm):
 
 class TouristicEventForm(CommonForm):
     geomfields = ['geom']
+
+    fieldslayout = [
+        Div(
+            'name',
+            'review',
+            'published',
+            'description_teaser',
+            'description',
+            'themes',
+            'begin_date',
+            'end_date',
+            'duration',
+            'meeting_point',
+            'meeting_time',
+            'contact',
+            'email',
+            'website',
+            'organizer',
+            'speaker',
+            'type',
+            'accessibility',
+            'participant_number',
+            'booking',
+            'target_audience',
+            'practical_info',
+            'approved',
+            'source',
+            'portal',
+            'eid',
+            'structure'
+        )
+    ]
 
     class Meta:
         fields = ['name', 'review', 'published', 'description_teaser', 'description',
