@@ -155,7 +155,6 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         obj = self.modelfactory(published=True)
 
         response = self.client.post(obj.get_update_url(), self.get_good_data())
-        print(self.get_good_data())
         self.assertEqual(response.status_code, 302)
         self.assertTrue(self.model.objects.get(pk=obj.pk).published)
 
