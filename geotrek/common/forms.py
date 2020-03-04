@@ -32,6 +32,7 @@ class CommonForm(MapEntityForm):
         elif hasattr(fieldslayout, 'fields'):
             if name in fieldslayout.fields:
                 fieldslayout.fields.remove(name)
+                self.fields.pop(name)
             for field in fieldslayout.fields:
                 self.deep_remove(field, name)
 
@@ -67,7 +68,7 @@ class CommonForm(MapEntityForm):
     def __init__(self, *args, **kwargs):
         self.fieldslayout = deepcopy(self.fieldslayout)
         super(CommonForm, self).__init__(*args, **kwargs)
-
+        self.fields = deepcopy(self.fields)
         self.update = kwargs.get("instance") is not None
         if 'structure' in self.fields:
             if self.user.has_perm('authent.can_bypass_structure'):
