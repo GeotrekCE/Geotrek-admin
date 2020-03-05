@@ -66,6 +66,8 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                                 verbose_name=_("Project"))
     description = models.TextField(blank=True, verbose_name=_("Description"), help_text=_("Remarks and notes"))
 
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+
     objects = NoDeleteMixin.get_manager_cls(InterventionManager)()
 
     class Meta:
@@ -405,6 +407,7 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
     project_manager = models.ForeignKey(Organism, related_name='manage', blank=True, null=True,
                                         verbose_name=_("Project manager"))
     founders = models.ManyToManyField(Organism, through='Funding', verbose_name=_("Founders"))
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     objects = NoDeleteMixin.get_manager_cls(ProjectManager)()
 
