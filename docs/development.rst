@@ -20,7 +20,6 @@ Quickstart
 
 Got to http://localhost:8000
 
-
 Conventions
 -----------
 
@@ -78,6 +77,18 @@ Data only:
 
     docker-compose run web ./manage.py  flush
 
+Restore existing Database
+-------------------------
+
+Assuming a dump of your database is located in your project directory:
+
+::
+
+    docker-compose run --rm web pg_restore -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB /app/src/<path_to_backup>.dump
+
+Restore your `./var/conf/` project files, and data files into `./var/media`.
+
+Then run a synchronization.
 
 Mapentity development
 ---------------------

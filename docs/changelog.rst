@@ -2,6 +2,19 @@
 CHANGELOG
 =========
 
+2.32.8 (2020-03-05)
+-------------------
+
+**Minor changes**
+
+- Allow to choose Touristic content ordering in API
+- Add external ID to projects and interventions
+
+**Bug fixes**
+
+- Fix the modification of the published field without the "Can publish…" permission
+
+
 2.32.7 (2020-03-02)
 -------------------
 

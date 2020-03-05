@@ -8,6 +8,8 @@ from leaflet.forms.widgets import LeafletWidget
 from .models import Infrastructure
 from django.utils.translation import ugettext_lazy as _
 
+from crispy_forms.layout import Div
+
 if settings.TREKKING_TOPOLOGY_ENABLED:
     class BaseInfrastructureForm(TopologyForm):
         implantation_year = forms.IntegerField(label=_("Implantation year"), required=False)
@@ -17,6 +19,7 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
                 ['structure', 'name', 'description', 'type', 'condition', 'implantation_year', 'published']
 else:
     class BaseInfrastructureForm(CommonForm):
+
         implantation_year = forms.IntegerField(label=_("Implantation year"), required=False)
         geomfields = ['geom']
 
@@ -33,5 +36,18 @@ else:
 
 
 class InfrastructureForm(BaseInfrastructureForm):
+
+    fieldslayout = [
+        Div(
+            'structure',
+            'name',
+            'description',
+            'type',
+            'condition',
+            'implantation_year',
+            'published'
+        )
+    ]
+
     class Meta(BaseInfrastructureForm.Meta):
         model = Infrastructure

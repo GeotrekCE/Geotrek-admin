@@ -88,6 +88,15 @@ class TourismRelations(TestCase):
         self.assertNotIn(self.content, self.trek.touristic_contents.all())
         self.assertNotIn(self.event, self.trek.touristic_events.all())
 
+    def test_spatial_link_default_ordering(self):
+        self.assertEqual(self.trek.touristic_contents.all()[0], self.content)
+        self.assertEqual(self.trek.touristic_contents.all()[1], self.content2)
+
+    @override_settings(TOURISTIC_CONTENTS_API_ORDER=('-name', ))
+    def test_spatial_link_settings_ordering(self):
+        self.assertEqual(self.trek.touristic_contents.all()[0], self.content2)
+        self.assertEqual(self.trek.touristic_contents.all()[1], self.content)
+
 
 class TouristicEventModelTest(TestCase):
     def test_dates_display_no_begin_date(self):

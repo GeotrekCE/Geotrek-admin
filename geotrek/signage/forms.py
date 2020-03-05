@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from leaflet.forms.widgets import LeafletWidget
 
-from crispy_forms.layout import Layout
+from crispy_forms.layout import Div, Layout
 from crispy_forms.helper import FormHelper
 
 from geotrek.common.forms import CommonForm
@@ -155,12 +155,12 @@ else:
             self.helper.form_tag = False
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
-    class SignageForm(BaseInfrastructureForm):
+    class BaseSignageForm(BaseInfrastructureForm):
         leftpanel_scrollable = False
         geomfields = ['topology']
 
         def __init__(self, *args, **kwargs):
-            super(SignageForm, self).__init__(*args, **kwargs)
+            super(BaseSignageForm, self).__init__(*args, **kwargs)
 
             if not settings.SIGNAGE_LINE_ENABLED and settings.TREKKING_TOPOLOGY_ENABLED:
                 modifiable = self.fields['topology'].widget.modifiable
@@ -168,28 +168,37 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
                 self.fields['topology'].widget.modifiable = modifiable
             self.helper.form_tag = False
 
-        def save(self, *args, **kwargs):
-            # Fix blade and line structure if signage structure change
-            blades = self.instance.blade_set.all()
-            blades.update(structure=self.instance.structure)
-            Line.objects.filter(blade__in=blades).update(structure=self.instance.structure)
-            return super(SignageForm, self).save(*args, **kwargs)
-
-        class Meta(BaseInfrastructureForm.Meta):
-            model = Signage
-            fields = BaseInfrastructureForm.Meta.fields + ['code', 'printed_elevation', 'manager', 'sealing']
 else:
-    class SignageForm(BaseInfrastructureForm):
+    class BaseSignageForm(BaseInfrastructureForm):
         leftpanel_scrollable = False
         geomfields = ['geom']
 
-        def save(self, *args, **kwargs):
-            # Fix blade and line structure if signage structure change
-            blades = self.instance.blade_set.all()
-            blades.update(structure=self.instance.structure)
-            Line.objects.filter(blade__in=blades).update(structure=self.instance.structure)
-            return super(SignageForm, self).save(*args, **kwargs)
 
-        class Meta(BaseInfrastructureForm.Meta):
-            model = Signage
-            fields = BaseInfrastructureForm.Meta.fields + ['code', 'printed_elevation', 'manager', 'sealing']
+class SignageForm(BaseSignageForm):
+
+    fieldslayout = [
+        Div(
+            'structure',
+            'name',
+            'description',
+            'type',
+            'condition',
+            'implantation_year',
+            'published',
+            'code',
+            'printed_elevation',
+            'manager',
+            'sealing'
+        )
+    ]
+
+    def save(self, *args, **kwargs):
+        # Fix blade and line structure if signage structure change
+        blades = self.instance.blade_set.all()
+        blades.update(structure=self.instance.structure)
+        Line.objects.filter(blade__in=blades).update(structure=self.instance.structure)
+        return super(SignageForm, self).save(*args, **kwargs)
+
+    class Meta(BaseInfrastructureForm.Meta):
+        model = Signage
+        fields = BaseInfrastructureForm.Meta.fields + ['code', 'printed_elevation', 'manager', 'sealing']
