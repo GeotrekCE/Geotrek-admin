@@ -134,6 +134,30 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         response = self.client.post(self._get_add_url(), self.get_good_data())
         self.assertEqual(response.status_code, 302)
 
+    def test_stay_publish_no_permission(self):
+        if not self.model:
+            return
+        if 'published' not in [field.name for field in self.model._meta.get_fields()]:
+            return
+        self.user = self.userfactory(password='booh')
+        codename = 'publish_%s' % self.model._meta.model_name
+        if not Permission.objects.filter(codename=codename).count():
+            return
+        perm = Permission.objects.get(codename=codename)
+        group = self.user.groups.first()
+        if group:
+            group.permissions.remove(perm)
+        self.user.user_permissions.remove(perm)
+        self.user.save()
+        self.user = get_object_or_404(User, pk=self.user.pk)
+        success = self.client.login(username=self.user.username, password='booh')
+        self.assertTrue(success)
+        obj = self.modelfactory(published=True)
+
+        response = self.client.post(obj.get_update_url(), self.get_good_data())
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(self.model.objects.get(pk=obj.pk).published)
+
 
 class CommonLiveTest(MapEntityLiveTest):
     @mock.patch('mapentity.helpers.requests')
