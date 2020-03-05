@@ -311,10 +311,16 @@ class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Struc
         return plain_text(self.description_teaser or self.description)[:500]
 
 
-Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Touristic contents"))
-Topology.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Published touristic contents"))
-TouristicContent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Touristic contents"))
-TouristicContent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Published touristic contents"))
+if settings.TOURISTIC_CONTENTS_API_ORDER:
+    Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, ordering=False).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Touristic contents"))
+    Topology.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self, ordering=False).filter(published=True).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Published touristic contents"))
+    TouristicContent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self, ordering=False).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Touristic contents"))
+    TouristicContent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self, ordering=False).filter(published=True).order_by(*settings.TOURISTIC_CONTENTS_API_ORDER), _("Published touristic contents"))
+else:
+    Topology.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _("Touristic contents"))
+    Topology.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True), _("Published touristic contents"))
+    TouristicContent.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _("Touristic contents"))
+    TouristicContent.add_property('published_touristic_contents', lambda self: intersecting(TouristicContent, self).filter(published=True), _("Published touristic contents"))
 
 
 class TouristicEventType(OptionalPictogramMixin):

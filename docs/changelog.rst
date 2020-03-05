@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-- 
+- Fix Touristic content ordering in API
 
 
 2.32.8 (2020-03-05)
