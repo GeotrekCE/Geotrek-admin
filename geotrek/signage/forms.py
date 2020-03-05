@@ -160,7 +160,7 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
         geomfields = ['topology']
 
         def __init__(self, *args, **kwargs):
-            super(SignageForm, self).__init__(*args, **kwargs)
+            super(BaseSignageForm, self).__init__(*args, **kwargs)
 
             if not settings.SIGNAGE_LINE_ENABLED and settings.TREKKING_TOPOLOGY_ENABLED:
                 modifiable = self.fields['topology'].widget.modifiable
