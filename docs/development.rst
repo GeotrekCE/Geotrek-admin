@@ -102,7 +102,6 @@ as defined in ``conf/settings.ini.sample``, you can load the following dataset :
     unzip mnt_0_ecrins.zip
     bin/django loaddem mnt_0_ecrins/w001001.adf
 
-
 Conventions
 -----------
 
@@ -168,6 +167,18 @@ Everything:
     dbname=geotrekdb
     sudo -n -u postgres -s -- psql -c "DROP DATABASE ${dbname};" && sudo -n -u postgres -s -- psql -c "CREATE DATABASE ${dbname};" && sudo -n -u postgres -s -- psql -d ${dbname} -c "CREATE EXTENSION postgis;"
 
+Restore existing Database
+-------------------------
+
+Assuming a dump of your database is located in your project directory:
+
+::
+
+    docker-compose run --rm web pg_restore -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB /app/src/<path_to_backup>.dump
+
+Restore your `./var/conf/` project files, and data files into `./var/media`.
+
+Then run a synchronization.
 
 Mapentity development
 ---------------------
