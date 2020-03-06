@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-- 
+- Fix "upper bound of FOR loop cannot be null" crash in SQL triggers
 
 
 2.32.8 (2020-03-05)

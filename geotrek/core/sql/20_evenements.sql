@@ -108,11 +108,11 @@ BEGIN
         IF t_offset = 0 OR egeom IS NULL OR ST_IsEmpty(egeom) OR (ST_X(egeom) = 0 AND ST_Y(egeom) = 0) THEN
             -- ST_LocateAlong can give no point when we try to get the startpoint or the endpoint of the line
             SELECT et.start_position INTO position_point FROM core_pathaggregation et WHERE et.topo_object_id = evenementid;
-            IF (position_point = 0) THEN
+            IF (position_point < 0.000000000000001) THEN
                 SELECT ST_StartPoint(t.geom) INTO egeom
                 FROM core_topology e, core_pathaggregation et, core_path t
                 WHERE e.id = evenementid AND et.topo_object_id = e.id AND et.path_id = t.id;
-            ELSIF (position_point = 1) THEN
+            ELSIF (position_point > 0.999999999999999) THEN
                 SELECT ST_EndPoint(t.geom) INTO egeom
                 FROM core_topology e, core_pathaggregation et, core_path t
                 WHERE e.id = evenementid AND et.topo_object_id = e.id AND et.path_id = t.id;
