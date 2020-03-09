@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix POI, touristic contents and touristic events sort in mobile v3 API
 
 
 2.32.9 (2020-03-06)
