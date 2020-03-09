@@ -17,7 +17,6 @@ class ReportViewsetMailSend(TestCase):
         self.client.post(
             '/api/en/reports/report',
             {
-                'name': 'toto',
                 'email': 'test@geotrek.local',
                 'comment': 'Test comment',
             })
@@ -39,7 +38,6 @@ class ReportViewsTest(CommonTest):
     def get_good_data(self):
         return {
             'geom': '{"type": "Point", "coordinates": [0, 0]}',
-            'name': 'You Yeah',
             'email': 'yeah@you.com',
         }
 
@@ -69,8 +67,10 @@ class CreateReportsAPITest(BaseAPITest):
         self.add_url = '/api/en/reports/report'
         self.data = {
             'geom': '{"type": "Point", "coordinates": [3, 46.5]}',
-            'name': 'You Yeah',
             'email': 'yeah@you.com'
+        }
+        self.data_anon = {
+            'geom': '{"type": "Point", "coordinates": [3, 46.5]}',
         }
 
     def post_report_data(self, data):
@@ -81,7 +81,7 @@ class CreateReportsAPITest(BaseAPITest):
 
     def test_reports_can_be_created_using_post(self):
         self.post_report_data(self.data)
-        self.assertTrue(feedback_models.Report.objects.filter(name='You Yeah').exists())
+        self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
         report = feedback_models.Report.objects.get()
         self.assertAlmostEqual(report.geom.x, 700000)
         self.assertAlmostEqual(report.geom.y, 6600000)
@@ -89,8 +89,11 @@ class CreateReportsAPITest(BaseAPITest):
     def test_reports_can_be_created_without_geom(self):
         self.data.pop('geom')
         self.post_report_data(self.data)
-        self.assertTrue(feedback_models.Report.objects.filter(name='You Yeah').exists())
+        self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
 
+    def test_reports_can_be_created_without_email(self):
+        self.post_report_data(self.data_anon)
+        self.assertTrue(feedback_models.Report.objects.filter(email__isnull=True).exists())
 
 class ListCategoriesTest(TranslationResetMixin, BaseAPITest):
     def setUp(self):

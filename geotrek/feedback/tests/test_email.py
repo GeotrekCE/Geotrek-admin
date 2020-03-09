@@ -22,7 +22,7 @@ class EmailSendingTest(TestCase):
     def test_a_mail_is_not_sent_on_report_modification(self):
         r = ReportFactory.create()
         self.assertEqual(len(mail.outbox), 1)
-        r.name = 'toto'
+        r.comment = 'More info about it'
         r.save()
         self.assertEqual(len(mail.outbox), 1)
 
@@ -33,11 +33,10 @@ class EmailSendingTest(TestCase):
         self.assertIsNotNone(r.id)
 
     def test_email_format_and_content(self):
-        ReportFactory.create(name='John Doe',
-                             email='john.doe@nowhere.com',
+        ReportFactory.create(email='john.doe@nowhere.com',
                              comment="This is a 'comment'")
         sent_mail = mail.outbox[0]
         self.assertEqual(sent_mail.subject,
-                         '[Geotrek] Feedback from John Doe (john.doe@nowhere.com)')
+                         '[Geotrek] Feedback from john.doe@nowhere.com')
         self.assertIn("Comment : This is a 'comment'", sent_mail.body)
         self.assertIn("Lat : 46.500000 / Lon : 3.000000", sent_mail.body)
