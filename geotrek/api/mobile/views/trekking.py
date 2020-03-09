@@ -51,8 +51,7 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
         root_pk = self.request.GET.get('root_pk') or trek.pk
         qs = trek.pois.filter(published=True).select_related('topo_object', 'type', )\
             .prefetch_related('topo_object__aggregations', 'attachments') \
-            .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID)) \
-            .order_by('pk')
+            .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
         data = api_serializers_trekking.POIListSerializer(qs, many=True, context={'root_pk': root_pk}).data
         return response.Response(data)
 
@@ -61,8 +60,7 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
         trek = self.get_object()
         root_pk = self.request.GET.get('root_pk') or trek.pk
         qs = trek.touristic_contents.filter(published=True).prefetch_related('attachments') \
-            .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID)) \
-            .order_by('pk')
+            .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
         data = api_serializers_tourism.TouristicContentListSerializer(qs, many=True, context={'root_pk': root_pk}).data
         return response.Response(data)
 
@@ -71,7 +69,6 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
         trek = self.get_object()
         root_pk = self.request.GET.get('root_pk') or trek.pk
         qs = trek.trek.touristic_events.filter(published=True).prefetch_related('attachments') \
-            .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID)) \
-            .order_by('pk')
+            .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID))
         data = api_serializers_tourism.TouristicEventListSerializer(qs, many=True, context={'root_pk': root_pk}).data
         return response.Response(data)
