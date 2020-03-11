@@ -26,12 +26,18 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
     comment = models.TextField(blank=True,
                                default="",
                                verbose_name=_("Comment"))
+    activity = models.ForeignKey('ReportActivity',
+                                 default=None,
+                                 verbose_name=_("Activity"))
     category = models.ForeignKey('ReportCategory',
                                  on_delete=models.CASCADE,
                                  null=True,
                                  blank=True,
                                  default=None,
                                  verbose_name=_("Category"))
+    problem_magnitude = models.ForeignKey('ReportProblemMagnitude',
+                                 default=None,
+                                 verbose_name=_("Problem magnitude"))
     status = models.ForeignKey('ReportStatus',
                                on_delete=models.CASCADE,
                                null=True,
@@ -97,6 +103,20 @@ def on_report_saved(sender, instance, created, **kwargs):
         logger.exception(e)  # This sends an email to admins :)
 
 
+class ReportActivity(models.Model):
+    """Activity involved in report"""
+    activity = models.CharField(verbose_name=_("Activity"),
+                              max_length=128)
+
+    class Meta:
+        verbose_name = _("Activity")
+        verbose_name_plural = _("Activities")
+        ordering = ("activity",)
+
+    def __str__(self):
+        return self.activity
+
+
 class ReportCategory(models.Model):
     category = models.CharField(verbose_name=_("Category"),
                                 max_length=128)
@@ -120,3 +140,17 @@ class ReportStatus(models.Model):
 
     def __str__(self):
         return self.status
+
+
+class ReportProblemMagnitude(models.Model):
+    """Report problem magnitude"""
+    magnitude = models.CharField(verbose_name=_("Problem magnitude"),
+                              max_length=128)
+
+    class Meta:
+        verbose_name = _("Problem magnitude")
+        verbose_name_plural = _("Problem magnitudes")
+        ordering = ("id",)
+
+    def __str__(self):
+        return self.magnitude
