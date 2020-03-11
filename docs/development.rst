@@ -201,3 +201,10 @@ Then run:
     cd lib/src/mapentity/
     git submodule init
     git submodule update
+
+UML diagrams of data model
+--------------------------
+
+UML diagrams of Geotrek data models are available in (:path:docs/data-model) directory.
+To regenerate them from Postgresql, install postgresql-autodoc and graphviz Ubuntu packages
+and run `make uml`.
