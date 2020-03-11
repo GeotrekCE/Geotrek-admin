@@ -9,6 +9,7 @@ CHANGELOG
 
 - Fix POI, touristic contents and touristic events sort in mobile v3 API
 - Change Lambert93 signage coordinates format
+- Fix TourInSoftparser with # inside <MoyenDeCom> values
 
 
 2.32.9 (2020-03-06)

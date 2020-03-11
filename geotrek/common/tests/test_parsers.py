@@ -14,7 +14,7 @@ from django.template.exceptions import TemplateDoesNotExist
 from geotrek.authent.factories import StructureFactory
 from geotrek.trekking.models import Trek
 from geotrek.common.models import Organism, FileType, Attachment
-from geotrek.common.parsers import ExcelParser, AttachmentParserMixin, TourInSoftParser
+from geotrek.common.parsers import ExcelParser, AttachmentParserMixin, TourInSoftParser, ValueImportError
 
 
 class OrganismParser(ExcelParser):
@@ -173,3 +173,17 @@ class TourInSoftParserTests(TestCase):
         parser = TestTourParser()
         result = parser.filter_attachments('', 'a||b||c##||||##d||e||f')
         self.assertListEqual(result, [['a', 'b', 'c'], ['d', 'e', 'f']])
+
+    def test_moyen_de_com_split_failure(self):
+        class TestTourParser(TourInSoftParser):
+            def __init__(self):
+                self.model = Trek
+                super(TestTourParser, self).__init__()
+
+        parser = TestTourParser()
+        with self.assertRaises(ValueImportError):
+            parser.filter_email('', 'Téléphone filaire|02 37 37 80 11#Instagram|#chateaudesenonches')
+        with self.assertRaises(ValueImportError):
+            parser.filter_website('', 'Mél|chateau.senonches@gmail.Com#Instagram|#chateaudesenonches')
+        with self.assertRaises(ValueImportError):
+            parser.filter_contact('', ('Mél|chateau.senonches@gmail.Com#Instagram|#chateaudesenonches', ''))
