@@ -132,7 +132,7 @@ def format_coordinates(geom):
         )
     else:
         location = geom.centroid.transform(settings.DISPLAY_SRID, clone=True)
-        result = "X: {lat} / Y: {lng}".format(
+        result = "X : {lat:07d} / Y : {lng:07d}".format(
             lat=round(location.x),
             lng=round(location.y),
         )
