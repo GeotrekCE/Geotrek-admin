@@ -67,10 +67,7 @@ class CreateReportsAPITest(BaseAPITest):
         self.add_url = '/api/en/reports/report'
         self.data = {
             'geom': '{"type": "Point", "coordinates": [3, 46.5]}',
-            'email': 'yeah@you.com'
-        }
-        self.data_anon = {
-            'geom': '{"type": "Point", "coordinates": [3, 46.5]}',
+            'email': 'yeah@you.com',
         }
 
     def post_report_data(self, data):
@@ -90,10 +87,6 @@ class CreateReportsAPITest(BaseAPITest):
         self.data.pop('geom')
         self.post_report_data(self.data)
         self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
-
-    def test_reports_can_be_created_without_email(self):
-        self.post_report_data(self.data_anon)
-        self.assertTrue(feedback_models.Report.objects.filter(email__isnull=True).exists())
 
 class ListCategoriesTest(TranslationResetMixin, BaseAPITest):
     def setUp(self):
