@@ -128,7 +128,7 @@ class ProjectFactory(factory.DjangoModelFactory):
     def create_project(obj, create, extracted, **kwargs):
         if create:
             obj.contractors.add(ContractorFactory.create())
-            FundingFactory.create(project=obj)
+            FundingFactory.create(project=obj, amount=1000)
 
 
 class FundingFactory(factory.DjangoModelFactory):

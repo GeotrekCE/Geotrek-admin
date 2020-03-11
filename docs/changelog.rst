@@ -10,6 +10,9 @@ CHANGELOG
 - Fix POI, touristic contents and touristic events sort in mobile v3 API
 - Change Lambert93 signage coordinates format
 - Fix TourInSoftparser with # inside <MoyenDeCom> values
+- Show File and URL fields as required in attachement form
+- Do not show Function field as required in Intervention form
+- Do not show Amount and Organism fields as required in Project form
 
 
 2.32.9 (2020-03-06)
