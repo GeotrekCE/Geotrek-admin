@@ -64,4 +64,4 @@ class UtilsTest(TestCase):
     @override_settings(DISPLAY_SRID=32631)
     def test_format_coordinates_custom_srid(self):
         geom = Point(x=333958, y=5160979, srid=3857)
-        self.assertEqual(format_coordinates(geom), 'X: 500000 / Y: 4649776 (WGS 84 / UTM zone 31N)')
+        self.assertEqual(format_coordinates(geom), 'X : 0500000 / Y : 4649776 (WGS 84 / UTM zone 31N)')

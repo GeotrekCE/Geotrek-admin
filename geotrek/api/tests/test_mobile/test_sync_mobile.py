@@ -26,7 +26,7 @@ from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg, get_dumm
 from geotrek.core.factories import PathFactory
 from geotrek.flatpages.factories import FlatPageFactory
 from geotrek.flatpages.models import FlatPage
-from geotrek.trekking.models import Trek, POI, OrderedTrekChild
+from geotrek.trekking.models import Trek, OrderedTrekChild
 from geotrek.trekking.factories import TrekFactory, TrekWithPublishedPOIsFactory, PracticeFactory
 from geotrek.tourism.factories import (InformationDeskFactory, InformationDeskTypeFactory,
                                        TouristicContentFactory, TouristicEventFactory)
@@ -383,7 +383,7 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         AttachmentFactory.create(content_object=cls.trek_1,
                                  attachment_file=get_dummy_uploaded_image())
 
-        cls.poi_1 = POI.objects.first()
+        cls.poi_1 = cls.trek_1.published_pois.first()
         cls.attachment_poi_image_1 = AttachmentFactory.create(content_object=cls.poi_1,
                                                               attachment_file=get_dummy_uploaded_image())
         cls.attachment_poi_image_2 = AttachmentFactory.create(content_object=cls.poi_1,

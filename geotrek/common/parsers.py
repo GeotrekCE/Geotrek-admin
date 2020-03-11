@@ -716,7 +716,10 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
         for subval in val.split(self.separator):
             if not subval:
                 continue
-            key, value = subval.split(self.separator2)
+            try:
+                key, value = subval.split(self.separator2)
+            except ValueError as e:
+                raise ValueImportError("Fail to split <MoyenDeCom>: {}".format(e))
             if key in ("Mél", "Mail"):
                 return value
 
@@ -728,7 +731,10 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
         for subval in val.split(self.separator):
             if not subval:
                 continue
-            key, value = subval.split(self.separator2)
+            try:
+                key, value = subval.split(self.separator2)
+            except ValueError as e:
+                raise ValueImportError("Fail to split <MoyenDeCom>: {}".format(e))
             if key in ("Site web", "Site web (URL)"):
                 return value
 
@@ -757,7 +763,10 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
             for subval in com.split(self.separator):
                 if not subval:
                     continue
-                key, value = subval.split(self.separator2)
+                try:
+                    key, value = subval.split(self.separator2)
+                except ValueError as e:
+                    raise ValueImportError("Fail to split <MoyenDeCom>: {}".format(e))
                 if key in ("Mél", "Mail", "Site web", "Site web (URL)"):
                     continue
                 infos.append("<strong>{} :</strong><br>{}".format(key, value))

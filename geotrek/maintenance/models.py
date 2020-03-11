@@ -606,7 +606,7 @@ class Contractor(StructureOrNoneRelated):
 
 class Funding(models.Model):
 
-    amount = models.FloatField(default=0.0, verbose_name=_("Amount"))
+    amount = models.FloatField(verbose_name=_("Amount"))
     project = models.ForeignKey(Project, verbose_name=_("Project"))
     organism = models.ForeignKey(Organism, verbose_name=_("Organism"))
 
