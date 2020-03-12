@@ -6,6 +6,13 @@ import factory
 from geotrek.feedback import models as feedback_models
 
 
+class ReportActivityFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = feedback_models.ReportActivity
+
+    activity = factory.Sequence(lambda n: "Activity %s" % n)
+
+
 class ReportCategoryFactory(factory.DjangoModelFactory):
     class Meta:
         model = feedback_models.ReportCategory
@@ -20,6 +27,13 @@ class ReportStatusFactory(factory.DjangoModelFactory):
     status = factory.Sequence(lambda n: "Status %s" % n)
 
 
+class ReportProblemMagnitudeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = feedback_models.ReportProblemMagnitude
+
+    magnitude = factory.Sequence(lambda n: "Utilisation %s" % n)
+
+
 class ReportFactory(factory.DjangoModelFactory):
     class Meta:
         model = feedback_models.Report
@@ -27,3 +41,5 @@ class ReportFactory(factory.DjangoModelFactory):
     email = factory.Sequence(lambda n: "email%s@domain.tld" % n)
     comment = factory.Sequence(lambda n: "comment %s" % n)
     geom = Point(700000, 6600000, srid=settings.SRID)
+    activity = factory.SubFactory(ReportActivityFactory)
+    problem_magnitude = factory.SubFactory(ReportProblemMagnitudeFactory)
