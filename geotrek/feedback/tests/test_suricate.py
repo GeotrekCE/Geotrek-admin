@@ -1,0 +1,49 @@
+from unittest import mock
+
+from django.test import TestCase
+from django.test.utils import override_settings
+from django.core import mail
+from django.core.mail.backends.base import BaseEmailBackend
+
+from geotrek.feedback.factories import ReportFactory
+from geotrek.feedback.helpers import post_report_to_suricate
+
+
+class SuricateAPITest(TestCase):
+    """Test Suricate API"""
+
+    @override_settings(SEND_REPORT_TO_SURICATE=True)
+    @mock.patch('geotrek.feedback.models.post_report_to_suricate')
+    def test_save_report_post_to_suricate(self, mock_post_report_to_suricate):
+        """Test post to suricate on save Report"""
+        mock_post_report_to_suricate.return_value = {
+            "code_ok": "true",
+            "id_user": "XXX123",
+            "check": "515996edc2da463424f4c6e21e19352f ",
+            "message": "Merci d’avoir remonté ce problème, nos services vont traiter votre signalement."
+        }
+        report = ReportFactory()
+
+        mock_post_report_to_suricate.assert_called_once_with(report)
+
+
+    @mock.patch('geotrek.feedback.helpers.requests.post')
+    def test_post_request_to_suricate(self, mock_post):
+        """Test post request itself"""
+        report = ReportFactory.build()
+        mock_response = mock.Mock()
+        expected_dict = {
+            "code_ok": "true",
+            "id_user": "XXX123",
+            "check": "515996edc2da463424f4c6e21e19352f ",
+            "message": "Merci d’avoir remonté ce problème, nos services vont traiter votre signalement."
+        }
+        mock_response.json.return_value = expected_dict
+        mock_response.status_code = 200
+
+        # Define response for the fake API
+        mock_post.return_value = mock_response
+
+        # Call the function
+        result = post_report_to_suricate(report)
+        self.assertEqual(result, None)
