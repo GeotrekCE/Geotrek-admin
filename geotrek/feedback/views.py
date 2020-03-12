@@ -14,13 +14,17 @@ from geotrek.feedback import serializers as feedback_serializers
 class ReportLayer(mapentity_views.MapEntityLayer):
     model = feedback_models.Report
     filterform = ReportFilterSet
-    properties = ['email']
+    properties = ['email', 'activity']
 
 
 class ReportList(mapentity_views.MapEntityList):
     model = feedback_models.Report
     filterform = ReportFilterSet
-    columns = ['id', 'email', 'category', 'status', 'date_insert']
+    columns = [
+        'id', 'email', 'activity', 'comment', 'category',
+        'problem_magnitude', 'status',
+        'date_insert', 'date_update',
+    ]
 
 
 class ReportJsonList(mapentity_views.MapEntityJsonList, ReportList):
@@ -29,7 +33,8 @@ class ReportJsonList(mapentity_views.MapEntityJsonList, ReportList):
 
 class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
     columns = [
-        'id', 'email', 'comment', 'category', 'status',
+        'id', 'email', 'activity', 'comment', 'category',
+        'problem_magnitude', 'status',
         'date_insert', 'date_update',
     ]
 
