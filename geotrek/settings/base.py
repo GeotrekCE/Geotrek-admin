@@ -763,6 +763,16 @@ ONLY_EXTERNAL_PUBLIC_PDF = False
 
 SEND_REPORT_ACK = True
 
+SEND_REPORT_TO_SURICATE = False
+
+SURICATE_SETTINGS = {
+    'URL': 'http://sentinelles-preprod.sportsdenature.fr/rest/suricate/wsstandard/',
+    'ID_ORIGIN': 'geotrek',
+    'PRIVATE_KEY_CLIENT_SERVER': '',
+    'PRIVATE_KEY_SERVER_CLIENT': '',
+    'ID_USER': '',
+}
+
 # Parser parameters for retries and error codes
 PARSER_RETRY_SLEEP_TIME = 60  # time of sleep between requests
 PARSER_NUMBER_OF_TRIES = 3  # number of requests to try before abandon
