@@ -19,8 +19,9 @@ class ReportViewsetMailSend(TestCase):
             {
                 'email': 'test@geotrek.local',
                 'comment': 'Test comment',
+                'activity': feedback_factories.ReportActivityFactory.create().pk,
+                'problem_magnitude': feedback_factories.ReportProblemMagnitudeFactory.create().pk,
             })
-
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[1].subject, "Geotrek : Signal a mistake")
         self.assertIn("We acknowledge receipt of your feedback", mail.outbox[1].body)
@@ -39,6 +40,8 @@ class ReportViewsTest(CommonTest):
         return {
             'geom': '{"type": "Point", "coordinates": [0, 0]}',
             'email': 'yeah@you.com',
+            'activity': feedback_factories.ReportActivityFactory.create().pk,
+            'problem_magnitude': feedback_factories.ReportProblemMagnitudeFactory.create().pk,
         }
 
     def test_good_data_with_name(self):
@@ -79,6 +82,8 @@ class CreateReportsAPITest(BaseAPITest):
         self.data = {
             'geom': '{"type": "Point", "coordinates": [3, 46.5]}',
             'email': 'yeah@you.com',
+            'activity': feedback_factories.ReportActivityFactory.create().pk,
+            'problem_magnitude': feedback_factories.ReportProblemMagnitudeFactory.create().pk,
         }
 
     def post_report_data(self, data):

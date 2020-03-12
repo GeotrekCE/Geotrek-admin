@@ -10,7 +10,8 @@ class ReportSerializer(rest_serializers.ModelSerializer):
     class Meta:
         model = feedback_models.Report
         id_field = 'id'
-        fields = ('id', 'email', 'comment', 'category', 'status', 'geom', 'context_object')
+        fields = ('id', 'email', 'activity', 'comment', 'category',
+                  'status', 'problem_magnitude', 'geom', 'context_object')
 
     def validate_geom(self, value):
         return GEOSGeometry(value, srid=4326)
