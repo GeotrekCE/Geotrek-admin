@@ -13,7 +13,7 @@ from mapentity.models import MapEntityMixin
 
 from geotrek.common.mixins import TimeStampedModelMixin
 
-from .helpers import send_report_managers
+from .helpers import send_report_managers, post_report_to_suricate
 
 
 logger = logging.getLogger(__name__)
@@ -101,6 +101,13 @@ def on_report_saved(sender, instance, created, **kwargs):
     except Exception as e:
         logger.error('Email could not be sent to managers.')
         logger.exception(e)  # This sends an email to admins :)
+
+    if settings.SEND_REPORT_TO_SURICATE:
+        try:
+            post_report_to_suricate(instance)
+        except Exception as e:
+            logger.error('Report could not be sent to Suricate API.')
+            logger.exception(e)
 
 
 class ReportActivity(models.Model):

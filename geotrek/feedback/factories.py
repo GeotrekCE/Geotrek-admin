@@ -43,3 +43,4 @@ class ReportFactory(factory.DjangoModelFactory):
     geom = Point(700000, 6600000, srid=settings.SRID)
     activity = factory.SubFactory(ReportActivityFactory)
     problem_magnitude = factory.SubFactory(ReportProblemMagnitudeFactory)
+    category = factory.SubFactory(ReportCategoryFactory)
