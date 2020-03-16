@@ -32,6 +32,14 @@ class DisableMigrations():
 
 MIGRATION_MODULES = DisableMigrations()
 
+SURICATE_SETTINGS = {
+    'URL': 'http://sentinelles-preprod.sportsdenature.fr/rest/suricate/wsstandard/',
+    'ID_ORIGIN': 'geotrek',
+    'PRIVATE_KEY_CLIENT_SERVER': '',
+    'PRIVATE_KEY_SERVER_CLIENT': '',
+    'ID_USER': 'XXX123',
+}
+
 ADMINS = (
     ('test', 'test@test.com'),
 )
