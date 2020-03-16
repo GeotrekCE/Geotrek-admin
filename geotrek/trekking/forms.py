@@ -117,9 +117,9 @@ class TrekForm(BaseTrekForm):
                     'practice',
                     'difficulty',
                     'route',
-                    'ambiance',
                     'access',
                     'description_teaser',
+                    'ambiance',
                     'description',
                     css_id="main",
                     css_class="scrollable tab-pane active"
