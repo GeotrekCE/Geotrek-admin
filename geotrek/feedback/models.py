@@ -60,7 +60,9 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
         ordering = ['-date_insert']
 
     def __str__(self):
-        return self.email
+        if self.email:
+            return self.email
+        return "Anonymized report"
 
     @property
     def name_display(self):
