@@ -766,8 +766,8 @@ SEND_REPORT_ACK = True
 SEND_REPORT_TO_SURICATE = False
 
 SURICATE_SETTINGS = {
-    'URL': 'http://sentinelles-preprod.sportsdenature.fr/rest/suricate/wsstandard/',
-    'ID_ORIGIN': 'geotrek',
+    'URL': '',
+    'ID_ORIGIN': '',
     'PRIVATE_KEY_CLIENT_SERVER': '',
     'PRIVATE_KEY_SERVER_CLIENT': '',
     'ID_USER': '',
