@@ -88,6 +88,7 @@ class CreateReportsAPITest(BaseAPITest):
         self.post_report_data(self.data)
         self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
 
+
 class ListCategoriesTest(TranslationResetMixin, BaseAPITest):
     def setUp(self):
         super(ListCategoriesTest, self).setUp()
