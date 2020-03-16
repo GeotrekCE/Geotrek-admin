@@ -614,7 +614,7 @@ class WebLink(models.Model):
 
     def __str__(self):
         category = "%s - " % self.category.label if self.category else ""
-        return "%s%s (%s)" % (category, self.name, self.url)
+        return "%s%s" % (category, self.name)
 
     @classmethod
     def get_add_url(cls):
