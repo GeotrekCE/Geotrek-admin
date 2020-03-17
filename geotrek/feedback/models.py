@@ -36,8 +36,8 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
                                  default=None,
                                  verbose_name=_("Category"))
     problem_magnitude = models.ForeignKey('ReportProblemMagnitude',
-                                 default=None,
-                                 verbose_name=_("Problem magnitude"))
+                                          default=None,
+                                          verbose_name=_("Problem magnitude"))
     status = models.ForeignKey('ReportStatus',
                                on_delete=models.CASCADE,
                                null=True,
@@ -113,7 +113,7 @@ def on_report_saved(sender, instance, created, **kwargs):
 class ReportActivity(models.Model):
     """Activity involved in report"""
     activity = models.CharField(verbose_name=_("Activity"),
-                              max_length=128)
+                                max_length=128)
 
     class Meta:
         verbose_name = _("Activity")
@@ -152,7 +152,7 @@ class ReportStatus(models.Model):
 class ReportProblemMagnitude(models.Model):
     """Report problem magnitude"""
     magnitude = models.CharField(verbose_name=_("Problem magnitude"),
-                              max_length=128)
+                                 max_length=128)
 
     class Meta:
         verbose_name = _("Problem magnitude")

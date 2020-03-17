@@ -2,8 +2,6 @@ from unittest import mock
 
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.core import mail
-from django.core.mail.backends.base import BaseEmailBackend
 
 from geotrek.feedback.factories import ReportFactory
 from geotrek.feedback.helpers import post_report_to_suricate
@@ -23,7 +21,6 @@ Helper `post_report_to_suricate` function is mock
 
         # Assert post_report_to_suricate is called
         mock_post_report_to_suricate.assert_called_once_with(report)
-
 
     @mock.patch('geotrek.feedback.helpers.requests.post')
     def test_post_request_to_suricate(self, mock_post):
