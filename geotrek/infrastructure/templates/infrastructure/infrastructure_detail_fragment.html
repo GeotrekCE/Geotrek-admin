@@ -12,7 +12,7 @@
                 </p>
             {% endif %}
 
-            {% valuelist object.infrastructures field='name' %}
+            {% valuelist object.infrastructures.0 field='name' %}
         </td>
     </tr>
     {% endif %}

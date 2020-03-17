@@ -2,6 +2,7 @@ import os
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.contenttypes.fields import GenericRelation
 from django.conf import settings
 
 from extended_choices import Choices
@@ -10,7 +11,9 @@ from mapentity.models import MapEntityMixin
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
+
 from geotrek.common.mixins import BasePublishableMixin, OptionalPictogramMixin, NoDeleteManager
+from geotrek.maintenance.models import Intervention
 
 
 INFRASTRUCTURE_TYPES = Choices(
@@ -69,6 +72,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
                                   on_delete=models.SET_NULL)
     implantation_year = models.PositiveSmallIntegerField(verbose_name=_("Implantation year"), null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+    interventions = GenericRelation(Intervention, related_query_name='infrastructures')
 
     class Meta:
         abstract = True

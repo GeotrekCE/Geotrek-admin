@@ -4,6 +4,8 @@ from datetime import datetime
 from django.db.models.functions import ExtractYear
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GeometryCollection
 
@@ -15,8 +17,6 @@ from geotrek.core.models import Topology, Path, Trail
 from geotrek.common.models import Organism
 from geotrek.common.mixins import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin, NoDeleteManager
 from geotrek.common.utils import classproperty
-from geotrek.infrastructure.models import Infrastructure
-from geotrek.signage.models import Signage
 
 
 class InterventionManager(NoDeleteManager):
@@ -27,6 +27,10 @@ class InterventionManager(NoDeleteManager):
 
 class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                    TimeStampedModelMixin, StructureRelated, NoDeleteMixin):
+
+    content_type = models.ForeignKey(ContentType, null=True, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField(blank=True, null=True)
+    content_object = GenericForeignKey('content_type', 'object_id')
 
     name = models.CharField(verbose_name=_("Name"), max_length=128, help_text=_("Brief summary"))
     date = models.DateField(default=datetime.now, verbose_name=_("Date"), help_text=_("When ?"))
@@ -42,11 +46,6 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     heliport_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Heliport cost"))
     subcontract_cost = models.FloatField(default=0.0, blank=True, null=True, verbose_name=_("Subcontract cost"))
 
-    """ Topology can be of type Infrastructure, Signage or of own type Intervention """
-    topology = models.ForeignKey(Topology, null=True,  # TODO: why null ?
-                                 on_delete=models.CASCADE,
-                                 related_name="interventions_set",
-                                 verbose_name=_("Interventions"))
     # AltimetyMixin for denormalized fields from related topology, updated via trigger.
     length = models.FloatField(editable=True, default=0.0, null=True, blank=True, verbose_name=_("3D Length"))
 
@@ -79,15 +78,10 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         super(Intervention, self).__init__(*args, **kwargs)
         self._geom = None
 
-    def set_topology(self, topology):
-        self.topology = topology
-        if not self.on_existing_topology:
-            raise ValueError("Expecting an infrastructure or signage")
-
     def default_stake(self):
         stake = None
-        if self.topology:
-            for path in self.topology.paths.exclude(stake=None):
+        if self.content_object:
+            for path in self.content_object.paths.exclude(stake=None):
                 if path.stake > stake:
                     stake = path.stake
         return stake
@@ -99,8 +93,8 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
             AltimetryMixin.reload(self, fromdb)
             TimeStampedModelMixin.reload(self, fromdb)
             NoDeleteMixin.reload(self, fromdb)
-            if self.topology:
-                self.topology.reload()
+            if self.content_object:
+                self.content_object.reload()
         return self
 
     def save(self, *args, **kwargs):
@@ -110,10 +104,10 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         super(Intervention, self).save(*args, **kwargs)
 
         # Set kind of Intervention topology
-        if self.topology and not self.on_existing_topology:
+        if self.content_object and not self.on_existing_topology:
             topology_kind = self._meta.object_name.upper()
-            self.topology.kind = topology_kind
-            self.topology.save(update_fields=['kind'])
+            self.content_object.kind = topology_kind
+            self.content_object.save(update_fields=['kind'])
 
         # Invalidate project map
         if self.project:
@@ -126,7 +120,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     @property
     def on_existing_topology(self):
-        return self.is_infrastructure or self.is_signage
+        return True if self.content_object else False
 
     @property
     def infrastructure(self):
@@ -134,7 +128,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         Equivalent of topology attribute, but casted to related type (Infrastructure)
         """
         if self.is_infrastructure:
-            return self.infrastructures[0]
+            return self.infrastructures.first()
         return None
 
     @property
@@ -143,7 +137,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         Equivalent of topology attribute, but casted to related type (Signage)
         """
         if self.is_signage:
-            return self.signages[0]
+            return self.signages.first()
         return None
 
     @classproperty
@@ -159,12 +153,12 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         icon = 'path'
         title = _('Path')
         if self.on_existing_topology:
-            icon = self.topology.kind.lower()
+            icon = self.content_object.kind.lower()
             if self.infrastructure:
-                title = '%s: %s' % (_(self.topology.kind.capitalize()),
+                title = '%s: %s' % (_(self.content_object.kind.capitalize()),
                                     self.infrastructure)
             elif self.signage:
-                title = '%s: %s' % (_(self.topology.kind.capitalize()),
+                title = '%s: %s' % (_(self.content_object.kind.capitalize()),
                                     self.signage)
         return '<img src="%simages/%s-16.png" title="%s">' % (settings.STATIC_URL,
                                                               icon,
@@ -175,26 +169,26 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         if self.on_existing_topology:
             if self.infrastructure:
                 return "%s: %s (%s)" % (
-                    _(self.topology.kind.capitalize()),
+                    _(self.content_object.kind.capitalize()),
                     self.infrastructure,
                     self.infrastructure.pk)
             elif self.signage:
                 return "%s: %s (%s)" % (
-                    _(self.topology.kind.capitalize()),
+                    _(self.content_object.kind.capitalize()),
                     self.signage,
                     self.signage.pk)
         return ''
 
     @property
     def is_infrastructure(self):
-        if self.topology:
-            return self.topology.kind == Infrastructure.KIND
+        if self.infrastructures.count():
+            return True
         return False
 
     @property
     def is_signage(self):
-        if self.topology:
-            return self.topology.kind == Signage.KIND
+        if self.signages.count():
+            return True
         return False
 
     @property
@@ -203,29 +197,9 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     @property
     def paths(self):
-        if self.topology:
-            return self.topology.paths.all()
+        if self.content_object:
+            return self.content_object.paths.all()
         return Path.objects.none()
-
-    @property
-    def trails(self):
-        s = []
-        for p in self.paths.all():
-            for t in p.trails.all():
-                s.append(t.pk)
-        return Trail.objects.filter(pk__in=s)
-
-    @property
-    def signages(self):
-        if self.is_signage:
-            return [Signage.objects.existing().get(pk=self.topology.pk)]
-        return []
-
-    @property
-    def infrastructures(self):
-        if self.is_infrastructure:
-            return [Infrastructure.objects.existing().get(pk=self.topology.pk)]
-        return []
 
     @property
     def total_manday(self):
@@ -267,8 +241,8 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     @property
     def geom(self):
         if self._geom is None:
-            if self.topology:
-                self._geom = self.topology.geom
+            if self.content_object:
+                self._geom = self.content_object.geom
         return self._geom
 
     @geom.setter
@@ -549,7 +523,7 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
 
     @classmethod
     def topology_projects(cls, topology):
-        return cls.objects.existing().filter(interventions__in=topology.interventions).distinct()
+        return cls.objects.existing().filter(interventions__in=topology.interventions.all()).distinct()
 
     def edges_by_attr(self, interventionattr):
         """ Return related topology objects of project, by aggregating the same attribute

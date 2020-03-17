@@ -97,10 +97,10 @@ class InterventionCreate(ManDayFormsetMixin, CreateFromTopologyMixin, MapEntityC
         signage = self.on_signage()
         if infrastructure:
             # Create intervention on an infrastructure
-            initial['infrastructure'] = infrastructure
+            initial['object_linked'] = infrastructure
         elif signage:
             # Create intervention on a signage
-            initial['signage'] = signage
+            initial['object_linked'] = signage
         return initial
 
 

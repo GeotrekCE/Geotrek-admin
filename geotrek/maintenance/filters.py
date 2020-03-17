@@ -13,11 +13,18 @@ from .models import Intervention, Project
 
 class PolygonTopologyFilter(PolygonFilter):
     def filter(self, qs, value):
+        print(qs.filter(signages__name="test"))
         if not value:
             return qs
         lookup = self.lookup_expr
         inner_qs = Topology.objects.filter(**{'geom__%s' % lookup: value})
-        return qs.filter(**{'%s__in' % self.field_name: inner_qs})
+        print(inner_qs)
+        print({'infrastructures__%s__in' % self.field_name: inner_qs,
+               'signages__%s__in' % self.field_name: inner_qs})
+        qs = qs.filter(**{'infrastructures__%s__in' % self.field_name: inner_qs,
+                          'signages__%s__in' % self.field_name: inner_qs})
+        print(qs)
+        return qs
 
 
 class InterventionYearSelect(YearSelect):
@@ -29,11 +36,11 @@ class InterventionYearSelect(YearSelect):
 
 class InterventionFilterSet(StructureRelatedFilterSet):
     ON_CHOICES = (('INFRASTRUCTURE', _("Infrastructure")), ('SIGNAGE', _("Signage")))
-    bbox = PolygonTopologyFilter(field_name='topology', lookup_expr='intersects')
+    bbox = PolygonTopologyFilter(field_name='topo_object', lookup_expr='intersects')
     year = YearFilter(field_name='date',
                       widget=InterventionYearSelect,
                       label=_("Year"))
-    on = ChoiceFilter(field_name='topology__kind', choices=ON_CHOICES, label=_("On"), empty_label=_("On"))
+    on = ChoiceFilter(field_name='infrastructures__topo_object__kind', choices=ON_CHOICES, label=_("On"), empty_label=_("On"))
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Intervention

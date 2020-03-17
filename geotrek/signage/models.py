@@ -2,6 +2,9 @@ import os
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _, pgettext_lazy
+
+from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.gis.db import models as gismodels
 from django.conf import settings
 
 from mapentity.models import MapEntityMixin
@@ -11,6 +14,7 @@ from geotrek.common.mixins import NoDeleteMixin, OptionalPictogramMixin, NoDelet
 from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty, format_coordinates
 from geotrek.core.models import Topology, Path
+from geotrek.maintenance.models import Intervention
 
 from geotrek.infrastructure.models import BaseInfrastructure, InfrastructureCondition
 
@@ -66,6 +70,7 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     sealing = models.ForeignKey(Sealing, verbose_name=_("Sealing"), null=True, blank=True, on_delete=models.CASCADE)
     printed_elevation = models.IntegerField(verbose_name=_("Printed elevation"), blank=True, null=True)
     type = models.ForeignKey(SignageType, verbose_name=_("Type"), on_delete=models.CASCADE)
+    interventions = GenericRelation(Intervention, related_query_name='signages')
     gps_value_verbose_name = _("GPS coordinates")
 
     class Meta:
