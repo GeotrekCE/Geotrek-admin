@@ -50,14 +50,14 @@
             </td>
         </tr>
         <tr>
-            <th>{{ trek|verbose:"description" }}</th>
-            <td>{% if trek.description %}{{ trek.description|safe }}
+            <th>{{ trek|verbose:"ambiance" }}</th>
+            <td>{% if trek.ambiance %}{{ trek.ambiance|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
         <tr>
-            <th>{{ trek|verbose:"ambiance" }}</th>
-            <td>{% if trek.ambiance %}{{ trek.ambiance|safe }}
+            <th>{{ trek|verbose:"description" }}</th>
+            <td>{% if trek.description %}{{ trek.description|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
