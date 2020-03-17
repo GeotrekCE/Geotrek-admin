@@ -26,3 +26,4 @@ class TestRemoveEmailsOlders(TestCase):
         call_command('erase_emails', stdout=output)
         old_report = Report.objects.get(id=self.old_report.id)
         self.assertEqual(old_report.email, "")
+        self.assertEqual(old_report.__str__(), "Anonymized report")
