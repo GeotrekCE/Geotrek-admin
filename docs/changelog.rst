@@ -5,9 +5,17 @@ CHANGELOG
 2.32.12.dev0
 --------------------
 
+**BREAKING CHANGES**
+
+- Remove name fiedl from feedback report, to be GPDR compliant
+
 **Bug fixes**
 
 -
+
+**New features**
+
+- Add a django command to erase email from feedback reports after 365 days
 
 
 2.32.11 (2020-03-17)
