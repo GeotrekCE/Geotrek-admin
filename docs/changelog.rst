@@ -2,12 +2,19 @@
 CHANGELOG
 =========
 
-2.32.11.dev0
+2.32.11 (2020-03-17)
 --------------------
+
+**Minor changes**
+
+- Add UML digrams of data model to documentation
+- Remove URL in weblinks dropdown
+- Move ambiance after description teaser
 
 **Bug fixes**
 
--
+- Fix a WeasyPrint warning
+- Fix zoning filters on path
 
 
 2.32.10 (2020-03-11)
