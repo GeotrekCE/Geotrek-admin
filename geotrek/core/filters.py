@@ -46,17 +46,17 @@ class TopologyFilter(ModelChoiceFilter):
         """
         This piece of code should be rewritten nicely with managers : TODO !
         """
-        overlapping = Topology.overlapping(edges)
-
         # In case, we filter on paths
         if qs.model == Path:
             paths = []
-            for o in overlapping:
-                paths.extend(o.paths.all())
+            for edge in edges:
+                paths.extend(edge.paths.all())
             return qs.filter(pk__in=[path.pk for path in set(paths)])
 
+        overlapping = Topology.overlapping(edges)
+
         # TODO: This is (amazingly) ugly in terms of OOP. Should refactor overlapping()
-        elif issubclass(qs.model, maintenance_models.Intervention):
+        if issubclass(qs.model, maintenance_models.Intervention):
             return qs.filter(topology__in=[topo.pk for topo in overlapping])
         elif issubclass(qs.model, maintenance_models.Project):
             # Find all interventions overlapping those edges
