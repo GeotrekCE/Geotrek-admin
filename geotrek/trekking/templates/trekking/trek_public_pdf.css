@@ -10,12 +10,12 @@
 }
 
 html {
-  -weasy-hyphens: manual;
+  hyphens: manual;
 }
 
 * {
   box-sizing: border-box;
-  -weasy-bookmark-level: none;
+  bookmark-level: none;
 }
 
 body {

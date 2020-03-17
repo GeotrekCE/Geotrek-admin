@@ -35,3 +35,22 @@ load_demo:
 
 css:
 	for f in `find geotrek/ -name '*.scss'`; do node-sass --output-style=expanded $$f -o `dirname $$f`; done
+
+%.pdf:
+	mkdir -p docs/data-model
+	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot -m "$*_.*"
+	dot geotrekdb.dot -T pdf -o docs/data-model/$@
+	rm geotrekdb.dot
+
+authent.pdf:
+	mkdir -p docs/data-model
+	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot -m "auth(ent)?_.*"
+	dot geotrekdb.dot -T pdf -o docs/data-model/authent.pdf
+	rm geotrekdb.dot
+
+global.pdf:
+	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot
+	dot geotrekdb.dot -T pdf -o docs/data-model/global.pdf
+	rm geotrekdb.dot
+
+uml: authent.pdf cirkwi.pdf core.pdf diving.pdf feedback.pdf flatpages.pdf infrastructure.pdf land.pdf maintenance.pdf sensitivity.pdf signage.pdf tourism.pdf trekking.pdf zoning.pdf global.pdf
