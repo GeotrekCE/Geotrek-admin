@@ -4,7 +4,8 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.utils import timezone
 
-from geotrek.feedback import factories as feedback_factories
+from geotrek.feedback.models import Report
+from geotrek.feedback.factories import ReportFactory
 
 
 class TestRemoveEmailsOlders(TestCase):
@@ -12,8 +13,8 @@ class TestRemoveEmailsOlders(TestCase):
 
     def setUp(self):
         # Create two reports
-        self.old_report = feedback_factories.ReportFactory()
-        self.recent_report = feedback_factories.ReportFactory()
+        self.old_report = ReportFactory()
+        self.recent_report = ReportFactory()
 
         # Modify date_insert for old_report
         one_year_one_day = timezone.timedelta(days=370)
@@ -22,6 +23,6 @@ class TestRemoveEmailsOlders(TestCase):
 
     def test_erase_old_emails(self):
         output = StringIO()
-        call_command('erase_emails', stdout=output, verbosity=2)
-        self.assertEqual(self.old_report.email, "")
-        self.assertIn('1 email(s) erased', output.getvalue())
+        call_command('erase_emails', stdout=output)
+        old_report = Report.objects.get(id=self.old_report.id)
+        self.assertEqual(old_report.email, "")
