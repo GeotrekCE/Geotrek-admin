@@ -1187,9 +1187,21 @@ List of all the filters enabled on mobile.
 
 
 
-**Other settings**
+**Feedback settings**
 ::
 
     SEND_REPORT_ACK = True
 
 If false, no mail will be sent to the sender of any feedback on Rando web site
+
+::
+
+    SEND_REPORT_TO_SURICATE = False
+
+    SURICATE_SETTINGS = {
+        'URL': 'http://sentinelles-preprod.sportsdenature.fr/rest/suricate/wsstandard/',
+        'ID_ORIGIN': 'geotrek',
+        'PRIVATE_KEY_CLIENT_SERVER': '<your private key client / server>',
+        'PRIVATE_KEY_SERVER_CLIENT': '<your private key client / server>',
+        'ID_USER': 'XXX123',
+    }
