@@ -7,7 +7,7 @@ CHANGELOG
 
 **BREAKING CHANGES**
 
-- Remove name fiedl from feedback report, to be GPDR compliant
+- Remove name field from feedback report, to be GPDR compliant
 
 **Bug fixes**
 

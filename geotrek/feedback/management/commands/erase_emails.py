@@ -29,6 +29,6 @@ class Command(BaseCommand):
 
         if not options['dry_run']:
             updated_reports = older_reports.update(email='')
-            logger.info('{0} email(s) erased'.format(updated_reports,))
+            logger.info('{0} email(s) erased'.format(updated_reports))
         else:
             logger.info('Dry run mode,{0} report(s) should be modified'.format(older_reports.count(),))

@@ -62,7 +62,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
     def __str__(self):
         if self.email:
             return self.email
-        return "Anonymized report"
+        return "Anonymous report"
 
     @property
     def name_display(self):
