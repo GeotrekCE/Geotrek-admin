@@ -13,8 +13,8 @@ class TestRemoveEmailsOlders(TestCase):
 
     def setUp(self):
         # Create two reports
-        self.old_report = ReportFactory()
-        self.recent_report = ReportFactory()
+        self.old_report = ReportFactory(email="to_erase@you.com")
+        self.recent_report = ReportFactory(email="yeah@you.com")
 
         # Modify date_insert for old_report
         one_year_one_day = timezone.timedelta(days=370)
@@ -26,4 +26,11 @@ class TestRemoveEmailsOlders(TestCase):
         call_command('erase_emails', stdout=output)
         old_report = Report.objects.get(id=self.old_report.id)
         self.assertEqual(old_report.email, "")
-        self.assertEqual(old_report.__str__(), "Anonymized report")
+        self.assertEqual(old_report.__str__(), "Anonymous report")
+
+    def test_dry_run_command(self):
+        """Test if dry_run mode keeps emails"""
+        output = StringIO()
+        call_command('erase_emails', dry_run=True, stdout=output)
+        old_report = Report.objects.get(id=self.old_report.id)
+        self.assertEqual(old_report.email, "to_erase@you.com")
