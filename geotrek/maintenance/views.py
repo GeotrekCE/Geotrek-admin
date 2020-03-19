@@ -11,7 +11,7 @@ from geotrek.common.views import FormsetMixin
 from geotrek.authent.decorators import same_structure_required
 from .models import Intervention, Project
 from .filters import InterventionFilterSet, ProjectFilterSet
-from .forms import (InterventionForm, InterventionCreateForm, ProjectForm,
+from .forms import (InterventionForm, ProjectForm,
                     FundingFormSet, ManDayFormSet)
 from .serializers import (InterventionSerializer, ProjectSerializer,
                           InterventionGeojsonSerializer, ProjectGeojsonSerializer)
@@ -68,7 +68,7 @@ class ManDayFormsetMixin(FormsetMixin):
 
 class InterventionCreate(ManDayFormsetMixin, CreateFromTopologyMixin, MapEntityCreate):
     model = Intervention
-    form_class = InterventionCreateForm
+    form_class = InterventionForm
 
     def on_object(self):
         object_id = self.request.GET.get('object_id')

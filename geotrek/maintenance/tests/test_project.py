@@ -61,17 +61,20 @@ class ProjectTest(TestCase):
 
     @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
     def test_helpers_nds(self):
-        i1 = InterventionFactory.create()
-        i2 = InterventionFactory.create()
-        i3 = InterventionFactory.create()
+        i1 = InterventionFactory.create(content_object=None)
+        i2 = InterventionFactory.create(content_object=None)
+        i3 = InterventionFactory.create(content_object=None)
         sign = SignageFactory.create(geom="SRID=4326;POINT(0 5)")
-        i1.set_topology(sign)
+        i1.content_object = sign
+        i1.save()
 
         infra = InfrastructureFactory.create(geom="SRID=4326;POINT(1 5)")
-        i2.set_topology(infra)
+        i2.content_object = infra
+        i2.save()
 
         t = TopologyFactory.create(geom="SRID=4326;POINT(2 5)")
-        i3.topology = t
+        i3.content_object = t
+        i3.save()
 
         proj = ProjectFactory.create()
         self.assertCountEqual(proj.paths.all(), [])
