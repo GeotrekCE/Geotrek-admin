@@ -237,8 +237,8 @@ class InterventionViewsTest(CommonTest):
         # If form invalid, it should not fail
         data.pop('status')
         response = self.client.post('%s?object_id=%s&ct=%s' % (Intervention.get_add_url(),
-                                                              infra.pk,
-                                                              ContentType.objects.get(model='infrastructure').pk), data)
+                                                               infra.pk,
+                                                               ContentType.objects.get(model='infrastructure').pk), data)
         self.assertEqual(response.status_code, 200)
 
     def test_update_form_on_infrastructure(self):

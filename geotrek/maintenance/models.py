@@ -614,7 +614,6 @@ if 'geotrek.core' in settings.INSTALLED_APPS:
         object_id=self.pk), verbose_name=_("Intervention"))
 
 if 'geotrek.signage' in settings.INSTALLED_APPS:
-    from geotrek.signage.models import Blade
     Blade.add_property('intervention', lambda self: Intervention.objects.filter(
         content_type=ContentType.objects.get(app_label='signage',
                                              model='blade'),

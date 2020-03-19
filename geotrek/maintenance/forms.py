@@ -10,7 +10,6 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Fieldset, Layout, Div, HTML
 
 from geotrek.common.forms import CommonForm
-from geotrek.core.models import Topology
 from geotrek.core.fields import TopologyField
 from geotrek.core.widgets import TopologyReadonlyWidget
 from geotrek.maintenance.widgets import InterventionWidget

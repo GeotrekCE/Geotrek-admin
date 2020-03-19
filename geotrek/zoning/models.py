@@ -85,11 +85,9 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
     Topology.add_property('areas', lambda self: uniquify(
         intersecting(RestrictedArea, self)) if self.ispoint() else uniquify(
         map(attrgetter('restricted_area'), self.area_edges)), _("Restricted areas"))
-    Intervention.add_property('area_edges', lambda self: self.content_object.area_edges
-        if self.content_object and self.content_object else [],
+    Intervention.add_property('area_edges', lambda self: self.content_object.area_edges if self.content_object and self.content_object else [],
                               _("Restricted area edges"))
-    Intervention.add_property('areas', lambda self: self.content_object.areas
-        if self.content_object and self.content_object else [],
+    Intervention.add_property('areas', lambda self: self.content_object.areas if self.content_object and self.content_object else [],
                               _("Restricted areas"))
     Project.add_property('area_edges', lambda self: self.edges_by_attr('area_edges'), _("Restricted area edges"))
     Project.add_property('areas', lambda self: uniquify(map(attrgetter('restricted_area'), self.area_edges)),
