@@ -91,17 +91,10 @@
             </td>
         </tr>
 
-        {% if intervention.is_infrastructure %}
+        {% if intervention.on_existing_topology %}
         <tr>
-            <th>{% trans "Related infrastructure" %}</th>
-            <td><img src="{% static "images/infrastructure-16.png" %}"/> {{ intervention.infrastructure.name_display|safe }}</td>
-        </tr>
-        {% endif %}
-
-        {% if intervention.is_signage %}
-        <tr>
-            <th>{% trans "Related signage" %}</th>
-            <td><img src="{% static "images/signage-16.png" %}"/> {{ intervention.signage.name_display|safe }}</td>
+            <th>{% trans "Related object" %}</th>
+            <td>{{ intervention.related_object_display|safe }}</td>
         </tr>
         {% endif %}
         <tr>

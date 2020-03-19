@@ -31,6 +31,10 @@ from colorfield.fields import ColorField
 logger = logging.getLogger(__name__)
 
 
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    from geotrek.signage.models import Blade
+
+
 class TrekOrderedChildManager(models.Manager):
     use_for_related_fields = True
 
@@ -439,6 +443,9 @@ tourism_models.TouristicContent.add_property('treks', lambda self: intersecting(
 tourism_models.TouristicContent.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _("Published treks"))
 tourism_models.TouristicEvent.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
 tourism_models.TouristicEvent.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _("Published treks"))
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    Blade.add_property('treks', lambda self: self.signage.treks, _("Treks"))
+    Blade.add_property('published_treks', lambda self: self.signage.published_treks, _("Published treks"))
 
 
 class TrekRelationshipManager(models.Manager):
@@ -723,6 +730,9 @@ tourism_models.TouristicContent.add_property('pois', lambda self: intersecting(P
 tourism_models.TouristicContent.add_property('published_pois', lambda self: intersecting(POI, self).filter(published=True), _("Published POIs"))
 tourism_models.TouristicEvent.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
 tourism_models.TouristicEvent.add_property('published_pois', lambda self: intersecting(POI, self).filter(published=True), _("Published POIs"))
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    Blade.add_property('pois', lambda self: self.signage.pois, _("POIs"))
+    Blade.add_property('published_pois', lambda self: self.signage.published_pois, _("Published POIs"))
 
 
 class POIType(PictogramMixin):
@@ -832,3 +842,6 @@ tourism_models.TouristicContent.add_property('services', lambda self: intersecti
 tourism_models.TouristicContent.add_property('published_services', lambda self: intersecting(Service, self).filter(published=True), _("Published Services"))
 tourism_models.TouristicEvent.add_property('services', lambda self: intersecting(Service, self), _("Services"))
 tourism_models.TouristicEvent.add_property('published_services', lambda self: intersecting(Service, self).filter(published=True), _("Published Services"))
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    Blade.add_property('services', lambda self: self.signage.services, _("Services"))
+    Blade.add_property('published_services', lambda self: self.signage.published_pois, _("Published Services"))

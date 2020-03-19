@@ -3,18 +3,15 @@ import os
 from django.db import models
 from django.utils.translation import ugettext_lazy as _, pgettext_lazy
 
-from django.contrib.contenttypes.fields import GenericRelation
-from django.contrib.gis.db import models as gismodels
 from django.conf import settings
 
 from mapentity.models import MapEntityMixin
 
 from geotrek.authent.models import StructureOrNoneRelated, StructureRelated
-from geotrek.common.mixins import NoDeleteMixin, OptionalPictogramMixin, NoDeleteManager
+from geotrek.common.mixins import AddPropertyMixin, NoDeleteMixin, OptionalPictogramMixin, NoDeleteManager
 from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty, format_coordinates
 from geotrek.core.models import Topology, Path
-from geotrek.maintenance.models import Intervention
 
 from geotrek.infrastructure.models import BaseInfrastructure, InfrastructureCondition
 
@@ -70,7 +67,6 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     sealing = models.ForeignKey(Sealing, verbose_name=_("Sealing"), null=True, blank=True, on_delete=models.CASCADE)
     printed_elevation = models.IntegerField(verbose_name=_("Printed elevation"), blank=True, null=True)
     type = models.ForeignKey(SignageType, verbose_name=_("Type"), on_delete=models.CASCADE)
-    interventions = GenericRelation(Intervention, related_query_name='signages')
     gps_value_verbose_name = _("GPS coordinates")
 
     class Meta:
@@ -158,7 +154,7 @@ class BladeType(StructureOrNoneRelated):
         return self.label
 
 
-class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
+class Blade(AddPropertyMixin, NoDeleteMixin, MapEntityMixin, StructureRelated):
     signage = models.ForeignKey(Signage, verbose_name=_("Signage"),
                                 on_delete=models.PROTECT)
     number = models.CharField(verbose_name=_("Number"), max_length=250)
@@ -181,6 +177,10 @@ class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
         self.topology = topology
         if not self.is_signage:
             raise ValueError("Expecting a signage")
+
+    @property
+    def paths(self):
+        return self.signage.paths.all()
 
     @property
     def is_signage(self):
@@ -207,6 +207,14 @@ class Blade(NoDeleteMixin, MapEntityMixin, StructureRelated):
     @property
     def number_display(self):
         s = '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk, self.get_detail_url(), self, self)
+        return s
+
+    @property
+    def name_display(self):
+        s = '<a data-pk="%s" href="%s" title="%s">%s</a>' % (self.pk,
+                                                             self.get_detail_url(),
+                                                             self,
+                                                             self)
         return s
 
 

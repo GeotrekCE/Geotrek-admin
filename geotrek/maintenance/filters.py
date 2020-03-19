@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from django_filters import ChoiceFilter
 
@@ -10,20 +12,40 @@ from geotrek.common.widgets import YearSelect
 
 from .models import Intervention, Project
 
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    from geotrek.signage.models import Blade
+
+
+class InterventionYearTargetFilter(YearFilter):
+    def do_filter(self, qs, year):
+        interventions = Intervention.objects.filter(date__year=year).values_list('object_id', flat=True)
+        return qs.filter(**{
+            'id__in': interventions
+        }).distinct()
+
+
+class ChoiceObjectFilter(ChoiceFilter):
+    def __init__(self, *args, **kwargs):
+        self.choices = [[value.model.upper(), _(value.model.capitalize())] for value in ContentType.objects.all()]
+        super(ChoiceFilter, self).__init__(*args, **kwargs)
+
+    def filter(self, qs, value):
+        if not value:
+            return qs
+        qs.filter(content_type=value)
+        return qs
+
 
 class PolygonTopologyFilter(PolygonFilter):
     def filter(self, qs, value):
-        print(qs.filter(signages__name="test"))
         if not value:
             return qs
         lookup = self.lookup_expr
-        inner_qs = Topology.objects.filter(**{'geom__%s' % lookup: value})
-        print(inner_qs)
-        print({'infrastructures__%s__in' % self.field_name: inner_qs,
-               'signages__%s__in' % self.field_name: inner_qs})
-        qs = qs.filter(**{'infrastructures__%s__in' % self.field_name: inner_qs,
-                          'signages__%s__in' % self.field_name: inner_qs})
-        print(qs)
+
+        inner_qs = list(Topology.objects.filter(**{'geom__%s' % lookup: value}).values_list('id', flat=True))
+        if 'geotrek.signage' in settings.INSTALLED_APPS:
+            inner_qs.extend(Blade.objects.filter(**{'signage__geom__%s' % lookup: value}).values_list('id', flat=True))
+        qs = qs.filter(**{'object_id__in': inner_qs})
         return qs
 
 
@@ -36,11 +58,11 @@ class InterventionYearSelect(YearSelect):
 
 class InterventionFilterSet(StructureRelatedFilterSet):
     ON_CHOICES = (('INFRASTRUCTURE', _("Infrastructure")), ('SIGNAGE', _("Signage")))
-    bbox = PolygonTopologyFilter(field_name='topo_object', lookup_expr='intersects')
+    bbox = PolygonTopologyFilter(lookup_expr='intersects')
     year = YearFilter(field_name='date',
                       widget=InterventionYearSelect,
                       label=_("Year"))
-    on = ChoiceFilter(field_name='infrastructures__topo_object__kind', choices=ON_CHOICES, label=_("On"), empty_label=_("On"))
+    on = ChoiceObjectFilter(field_name='content_type', label=_("On"), empty_label=_("On"))
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Intervention

@@ -16,19 +16,22 @@ from geotrek.zoning.factories import (CityEdgeFactory, DistrictEdgeFactory,
 class ProjectTest(TestCase):
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_helpers(self):
-        i1 = InterventionFactory.create()
-        i2 = InterventionFactory.create()
-        i3 = InterventionFactory.create()
+        i1 = InterventionFactory.create(content_object=None)
+        i2 = InterventionFactory.create(content_object=None)
+        i3 = InterventionFactory.create(content_object=None)
         sign = SignageFactory.create()
-        i1.set_topology(sign)
+        i1.content_object = sign
+        i1.save()
+
         p1 = sign.paths.get()
 
         infra = InfrastructureFactory.create()
-        i2.set_topology(infra)
+        i2.content_object = infra
+        i2.save()
         p2 = infra.paths.get()
 
         t = TopologyFactory.create(paths=[p1])
-        i3.topology = t
+        i3.content_object = t
 
         proj = ProjectFactory.create()
         self.assertCountEqual(proj.paths.all(), [])
@@ -94,10 +97,8 @@ class ProjectTest(TestCase):
         self.assertEqual(proj.infrastructures, [infra])
 
     def test_deleted_intervention(self):
-        i1 = InterventionFactory.create()
         sign = SignageFactory.create()
-        i1.set_topology(sign)
-        i1.save()
+        i1 = InterventionFactory.create(content_object=sign)
 
         proj = ProjectFactory.create()
         proj.interventions.add(i1)
@@ -106,10 +107,8 @@ class ProjectTest(TestCase):
         self.assertEqual(proj.signages, [])
 
     def test_deleted_infrastructure(self):
-        i1 = InterventionFactory.create()
         infra = InfrastructureFactory.create()
-        i1.set_topology(infra)
-        i1.save()
+        i1 = InterventionFactory.create(content_object=infra)
 
         proj = ProjectFactory.create()
         proj.interventions.add(i1)
@@ -123,14 +122,11 @@ class ProjectTest(TestCase):
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class ProjectLandTest(TestCase):
     def setUp(self):
-        self.intervention = InterventionFactory.create()
+        infra = InfrastructureFactory.create()
+        self.intervention = InterventionFactory.create(content_object=infra)
         self.project = ProjectFactory.create()
         self.project.interventions.add(self.intervention)
         self.project.interventions.add(InterventionFactory.create())
-
-        infra = InfrastructureFactory.create()
-        self.intervention.set_topology(infra)
-        self.intervention.save()
 
         path = infra.paths.get()
 

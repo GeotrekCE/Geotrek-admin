@@ -57,7 +57,7 @@ class TopologyFilter(ModelChoiceFilter):
 
         # TODO: This is (amazingly) ugly in terms of OOP. Should refactor overlapping()
         if issubclass(qs.model, maintenance_models.Intervention):
-            return qs.filter(topology__in=[topo.pk for topo in overlapping])
+            return qs.filter(object_id__in=[topo.pk for topo in overlapping])
         elif issubclass(qs.model, maintenance_models.Project):
             # Find all interventions overlapping those edges
             interventions = self._topology_filter(maintenance_models.Intervention.objects.existing()

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -7,6 +8,10 @@ from geotrek.authent.models import StructureOrNoneRelated
 from geotrek.core.models import Topology, Path
 from geotrek.common.models import Organism
 from geotrek.maintenance.models import Intervention, Project
+
+
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    from geotrek.signage.models import Blade
 
 
 class PhysicalType(StructureOrNoneRelated):
@@ -69,6 +74,8 @@ Path.add_property('physical_edges', PhysicalEdge.path_physicals, _("Physical edg
 Topology.add_property('physical_edges', PhysicalEdge.topology_physicals, _("Physical edges"))
 Intervention.add_property('physical_edges', lambda self: self.content_object.physical_edges if self.content_object else [], _("Physical edges"))
 Project.add_property('physical_edges', lambda self: self.edges_by_attr('physical_edges'), _("Physical edges"))
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    Blade.add_property('physical_edges', lambda self: self.signage.physical_edges, _("Physical edges"))
 
 
 class LandType(StructureOrNoneRelated):
@@ -133,6 +140,8 @@ Path.add_property('land_edges', LandEdge.path_lands, _("Land edges"))
 Topology.add_property('land_edges', LandEdge.topology_lands, _("Land edges"))
 Intervention.add_property('land_edges', lambda self: self.content_object.land_edges if self.content_object else [], _("Land edges"))
 Project.add_property('land_edges', lambda self: self.edges_by_attr('land_edges'), _("Land edges"))
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    Blade.add_property('land_edges', lambda self: self.signage.land_edges, _("Land edges"))
 
 
 class CompetenceEdge(MapEntityMixin, Topology):
@@ -180,6 +189,8 @@ Path.add_property('competence_edges', CompetenceEdge.path_competences, _("Compet
 Topology.add_property('competence_edges', CompetenceEdge.topology_competences, _("Competence edges"))
 Intervention.add_property('competence_edges', lambda self: self.content_object.competence_edges if self.content_object else [], _("Competence edges"))
 Project.add_property('competence_edges', lambda self: self.edges_by_attr('competence_edges'), _("Competence edges"))
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    Blade.add_property('competence_edges', lambda self: self.signage.competence_edges, _("Competence edges"))
 
 
 class WorkManagementEdge(MapEntityMixin, Topology):
@@ -227,6 +238,8 @@ Path.add_property('work_edges', WorkManagementEdge.path_works, _("Work managemen
 Topology.add_property('work_edges', WorkManagementEdge.topology_works, _("Work management edges"))
 Intervention.add_property('work_edges', lambda self: self.content_object.work_edges if self.content_object else [], _("Work management edges"))
 Project.add_property('work_edges', lambda self: self.edges_by_attr('work_edges'), _("Work management edges"))
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    Blade.add_property('work_edges', lambda self: self.signage.work_edges, _("Work management edges"))
 
 
 class SignageManagementEdge(MapEntityMixin, Topology):
@@ -274,3 +287,5 @@ Path.add_property('signage_edges', SignageManagementEdge.path_signages, _("Signa
 Topology.add_property('signage_edges', SignageManagementEdge.topology_signages, _("Signage management edges"))
 Intervention.add_property('signage_edges', lambda self: self.content_object.signage_edges if self.content_object else [], _("Signage management edges"))
 Project.add_property('signage_edges', lambda self: self.edges_by_attr('signage_edges'), _("Signage management edges"))
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    Blade.add_property('signage_edges', lambda self: self.signage.signage_edges, _("Signage management edges"))

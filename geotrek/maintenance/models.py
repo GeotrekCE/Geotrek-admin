@@ -19,6 +19,10 @@ from geotrek.common.mixins import TimeStampedModelMixin, NoDeleteMixin, AddPrope
 from geotrek.common.utils import classproperty
 
 
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    from geotrek.signage.models import Blade
+
+
 class InterventionManager(NoDeleteManager):
     def all_years(self):
         return self.existing().filter(date__isnull=False).annotate(year=ExtractYear('date')) \
@@ -93,7 +97,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
             AltimetryMixin.reload(self, fromdb)
             TimeStampedModelMixin.reload(self, fromdb)
             NoDeleteMixin.reload(self, fromdb)
-            if self.content_object:
+            if isinstance(self.content_object, Topology):
                 self.content_object.reload()
         return self
 
@@ -122,81 +126,53 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     def on_existing_topology(self):
         return True if self.content_object else False
 
-    @property
-    def infrastructure(self):
-        """
-        Equivalent of topology attribute, but casted to related type (Infrastructure)
-        """
-        if self.is_infrastructure:
-            return self.infrastructures.first()
-        return None
-
-    @property
-    def signage(self):
-        """
-        Equivalent of topology attribute, but casted to related type (Signage)
-        """
-        if self.is_signage:
-            return self.signages.first()
-        return None
+    @classproperty
+    def related_object(cls):
+        return ""
 
     @classproperty
-    def infrastructure_verbose_name(cls):
-        return _("On")
-
-    @classproperty
-    def signage_verbose_name(cls):
+    def related_object_verbose_name(cls):
         return _("On")
 
     @property
-    def infrastructure_display(self):
+    def object_picture(self):
+        if self.content_object._meta.model_name == "topology":
+            return "images/path-16.png"
+        return "images/%s-16.png" % self.content_object._meta.model_name
+
+    @property
+    def related_object_display(self):
         icon = 'path'
-        title = _('Path')
-        if self.on_existing_topology:
-            icon = self.content_object.kind.lower()
-            if self.infrastructure:
-                title = '%s: %s' % (_(self.content_object.kind.capitalize()),
-                                    self.infrastructure)
-            elif self.signage:
-                title = '%s: %s' % (_(self.content_object.kind.capitalize()),
-                                    self.signage)
-        return '<img src="%simages/%s-16.png" title="%s">' % (settings.STATIC_URL,
-                                                              icon,
-                                                              title)
+        title = _('Paths')
+        if not self.content_object._meta.model_name == "topology":
+            icon = self.content_object._meta.model_name
+
+            title = self.content_object.name_display
+        return '<img src="%simages/%s-16.png"> %s' % (settings.STATIC_URL,
+                                                      icon,
+                                                      title)
 
     @property
-    def infrastructure_csv_display(self):
+    def related_object_csv_display(self):
         if self.on_existing_topology:
-            if self.infrastructure:
-                return "%s: %s (%s)" % (
-                    _(self.content_object.kind.capitalize()),
-                    self.infrastructure,
-                    self.infrastructure.pk)
-            elif self.signage:
-                return "%s: %s (%s)" % (
-                    _(self.content_object.kind.capitalize()),
-                    self.signage,
-                    self.signage.pk)
+            return "%s: %s (%s)" % (
+                _(self.content_object.kind.capitalize()),
+                self.content_object,
+                self.content_object.pk)
         return ''
-
-    @property
-    def is_infrastructure(self):
-        if self.infrastructures.count():
-            return True
-        return False
-
-    @property
-    def is_signage(self):
-        if self.signages.count():
-            return True
-        return False
 
     @property
     def in_project(self):
         return self.project is not None
 
     @property
+    def on_blade(self):
+        return self.content_object._meta.model_name == 'blade'
+
+    @property
     def paths(self):
+        if self.on_blade:
+            return self.content_object.signage.paths.all()
         if self.content_object:
             return self.content_object.paths.all()
         return Path.objects.none()
@@ -271,12 +247,33 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     @classmethod
     def path_interventions(cls, path):
-        return cls.objects.existing().filter(topology__aggregations__path=path)
+        topologies = list(Topology.objects.filter(aggregations__path=path).values_list('pk', flat=True))
+        if 'geotrek.signage' in settings.INSTALLED_APPS:
+            topologies.extend(
+                Blade.objects.filter(signage__in=topologies).values_list('pk', flat=True)
+            )
+        return cls.objects.existing().filter(object_id__in=topologies)
 
     @classmethod
     def topology_interventions(cls, topology):
-        topos = Topology.overlapping(topology).values_list('pk', flat=True)
-        return cls.objects.existing().filter(topology__in=topos).distinct('pk')
+        topologies = list(Topology.overlapping(topology).values_list('pk', flat=True))
+        if 'geotrek.signage' in settings.INSTALLED_APPS:
+            topologies.extend(
+                Blade.objects.filter(signage__in=topologies).values_list('id', flat=True)
+            )
+        return cls.objects.existing().filter(object_id__in=topologies).distinct('pk')
+
+    @property
+    def signages(self):
+        if self.content_type == ContentType.objects.get(model='signage'):
+            return [self.content_object]
+        return []
+
+    @property
+    def infrastructures(self):
+        if self.content_type == ContentType.objects.get(model='infrastructure'):
+            return [self.content_object]
+        return []
 
 
 Path.add_property('interventions', lambda self: Intervention.path_interventions(self), _("Interventions"))
@@ -418,7 +415,7 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
     def trails(self):
         s = []
         for i in self.interventions.existing():
-            for p in i.paths.all():
+            for p in i.content_object.paths.all():
                 for t in p.trails.all():
                     s.append(t.pk)
 
@@ -426,17 +423,15 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
 
     @property
     def signages(self):
-        s = []
-        for i in self.interventions.existing():
-            s += i.signages
-        return list(set(s))
+        from geotrek.signage.models import Signage
+        object_ids = self.interventions.existing().filter(content_type=ContentType.objects.get(model='signage')).values_list('object_id', flat=True)
+        return list(Signage.objects.filter(topo_object__in=object_ids))
 
     @property
     def infrastructures(self):
-        s = []
-        for i in self.interventions.existing():
-            s += i.infrastructures
-        return list(set(s))
+        from geotrek.infrastructure.models import Infrastructure
+        object_ids = list(self.interventions.existing().filter(content_type=ContentType.objects.get(model='infrastructure')).values_list('object_id', flat=True))
+        return list(Infrastructure.objects.filter(topo_object__in=object_ids))
 
     @classproperty
     def geomfield(cls):
@@ -609,3 +604,18 @@ class Funding(models.Model):
 
     def __str__(self):
         return "%s : %s" % (self.project, self.amount)
+
+
+if 'geotrek.core' in settings.INSTALLED_APPS:
+    from geotrek.core.models import Topology
+    Topology.add_property('intervention', lambda self: Intervention.objects.filter(
+        content_type=ContentType.objects.get(app_label='core',
+                                             model='topology'),
+        object_id=self.pk), verbose_name=_("Intervention"))
+
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    from geotrek.signage.models import Blade
+    Blade.add_property('intervention', lambda self: Intervention.objects.filter(
+        content_type=ContentType.objects.get(app_label='signage',
+                                             model='blade'),
+        object_id=self.pk), verbose_name=_("Intervention"))

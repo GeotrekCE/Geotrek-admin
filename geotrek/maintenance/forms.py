@@ -4,11 +4,13 @@ from django.contrib.contenttypes.models import ContentType
 from django.forms import FloatField
 from django.utils.translation import ugettext_lazy as _
 from django.forms.models import inlineformset_factory
+from django.shortcuts import get_object_or_404
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Fieldset, Layout, Div, HTML
 
 from geotrek.common.forms import CommonForm
+from geotrek.core.models import Topology
 from geotrek.core.fields import TopologyField
 from geotrek.core.widgets import TopologyReadonlyWidget
 from geotrek.maintenance.widgets import InterventionWidget
@@ -110,8 +112,8 @@ class InterventionBaseForm(CommonForm):
         model = Intervention
         fields = CommonForm.Meta.fields + \
             ['structure', 'name', 'date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
-             'height', 'stake', 'project', 'material_cost', 'heliport_cost', 'subcontract_cost',
-             'topology', 'content_type', 'object_id']
+             'height', 'stake', 'project', 'material_cost', 'heliport_cost', 'subcontract_cost', 'content_type', 'object_id',
+             'topology']
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -120,41 +122,59 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
 
         def __init__(self, *args, **kwargs):
             super(InterventionForm, self).__init__(*args, **kwargs)
+
             # If we create or edit an intervention on infrastructure or signage, set
             # topology field as read-only
-            object_linked = kwargs.get('initial', {}).get('object_linked')
+            object_id = kwargs.get('initial', {}).get('object_id')
+            content_type = kwargs.get('initial', {}).get('content_type')
             if self.instance.on_existing_topology:
-                if self.instance.infrastructure:
-                    infrastructure = self.instance.infrastructure
-                    self.fields['content_type'].initial = ContentType.objects.get_for_model(object_linked)
-                    self.fields['object_id'].initial = object_linked
-                elif self.instance.signage:
-                    signage = self.instance.signage
-                    self.fields['content_type'].initial = ContentType.objects.get_for_model(object_linked)
-                    self.fields['object_id'].initial = object_linked
-            if object_linked:
-                self.helper.form_action += '?infrastructure=%s' % object_linked.pk
+                object_id = self.instance.object_id
+                ct = self.instance.content_type
+                self.fields['content_type'].initial = content_type
+                self.fields['object_id'].initial = object_id
+
+            if content_type and object_id:
+                ct = get_object_or_404(ContentType, pk=content_type)
+
+            if object_id:
+                final_object = ct.model_class().objects.get(pk=object_id)
+                icon = final_object._meta.model_name
+                title = '%s' % (_(final_object._meta.model_name).capitalize())
+                self.helper.form_action += '?object_id=%s' % object_id
                 self.fields['topology'].required = False
                 self.fields['topology'].widget = TopologyReadonlyWidget()
-                self.fields['topology'].label = '%s%s %s' % (
-                    self.instance.infrastructure_display,
-                    _("On %s") % _(object_linked.kind.lower()),
-                    '<a href="%s">%s</a>' % (object_linked.get_detail_url(), str(object_linked))
-                )
-                self.fields['content_type'].initial = ContentType.objects.get_for_model(object_linked)
-                self.fields['object_id'].initial = object_linked.pk
-            print(self.fields['content_type'].initial, self.fields['object_id'].initial)
+
+                if final_object._meta.model_name != "topology":
+                    self.fields['topology'].label = '%s%s %s' % (
+                        '<img src="%simages/%s-16.png" title="%s">' % (settings.STATIC_URL,
+                                                                       icon,
+                                                                       title),
+                        _("On %s") % _(str(ct)).lower(),
+                        '<a href="%s">%s</a>' % (final_object.get_detail_url(),
+                                                 str(final_object))
+                    )
+                else:
+                    self.fields['topology'].label = '%s%s' % (
+                        '<img src="%simages/path-16.png" title="%s">' % (settings.STATIC_URL,
+                                                                         title),
+                        _("On %s") % _(str(ct)).lower()
+                    )
+                self.fields['object_id'].initial = object_id
+                self.fields['content_type'].initial = content_type
             # Length is not editable in AltimetryMixin
             self.fields['length'].initial = self.instance.length
-            editable = bool(self.instance.geom and self.instance.geom.geom_type == 'Point')
+            editable = bool(self.instance.geom and (self.instance.geom.geom_type == 'Point'
+                            or self.instance.geom.geom_type == 'LineString'))
             self.fields['length'].widget.attrs['readonly'] = editable
+            modifiable = self.fields['topology'].widget.modifiable
 
         def clean(self, *args, **kwargs):
             # If topology was read-only, topology field is empty, get it from infra.
             cleaned_data = super(InterventionForm, self).clean()
-            topology_readonly = self.cleaned_data.get('topology', None) is None
-            if topology_readonly:
-                self.cleaned_data['topology'] = self.cleaned_data['object_id']
+            if not cleaned_data.get('object_id') and cleaned_data.get('topology'):
+                cleaned_data['object_id'] = cleaned_data['topology'].pk
+                ct = ContentType.objects.get(app_label='core', model='topology')
+                cleaned_data['content_type'] = ct
             return cleaned_data
 
         def save(self, *args, **kwargs):
@@ -233,11 +253,14 @@ else:
 class InterventionCreateForm(InterventionForm):
     def __init__(self, *args, **kwargs):
         # If we create an intervention on infrastructure, get its topology
+        """
         initial = kwargs.get('initial', {})
-        object_linked = initial.get('object_linked')
+        object_id = initial.get('object_id')
+        content_type = initial.get('content_type')
         if object_linked:
             initial['topology'] = object_linked
         kwargs['initial'] = initial
+        """
         super(InterventionCreateForm, self).__init__(*args, **kwargs)
 
 

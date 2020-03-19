@@ -1,5 +1,6 @@
 import logging
 
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityFormat, MapEntityViewSet,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate, MapEntityDelete)
@@ -8,8 +9,6 @@ from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.common.views import FormsetMixin
 from geotrek.authent.decorators import same_structure_required
-from geotrek.infrastructure.models import Infrastructure
-from geotrek.signage.models import Signage
 from .models import Intervention, Project
 from .filters import InterventionFilterSet, ProjectFilterSet
 from .forms import (InterventionForm, InterventionCreateForm, ProjectForm,
@@ -30,7 +29,7 @@ class InterventionLayer(MapEntityLayer):
 class InterventionList(MapEntityList):
     queryset = Intervention.objects.existing()
     filterform = InterventionFilterSet
-    columns = ['id', 'name', 'date', 'type', 'infrastructure', 'status', 'stake']
+    columns = ['id', 'name', 'date', 'type', 'related_object', 'status', 'stake']
 
 
 class InterventionJsonList(MapEntityJsonList, InterventionList):
@@ -39,7 +38,7 @@ class InterventionJsonList(MapEntityJsonList, InterventionList):
 
 class InterventionFormatList(MapEntityFormat, InterventionList):
     columns = [
-        'id', 'name', 'date', 'type', 'infrastructure', 'status', 'stake',
+        'id', 'name', 'date', 'type', 'related_object', 'status', 'stake',
         'disorders', 'total_manday', 'project', 'subcontracting',
         'width', 'height', 'length', 'area', 'structure',
         'description', 'date_insert', 'date_update',
@@ -71,36 +70,23 @@ class InterventionCreate(ManDayFormsetMixin, CreateFromTopologyMixin, MapEntityC
     model = Intervention
     form_class = InterventionCreateForm
 
-    def on_infrastucture(self):
-        pk_infra = self.request.GET.get('infrastructure')
-        if pk_infra:
-            try:
-                return Infrastructure.objects.existing().get(pk=pk_infra)
-            except Infrastructure.DoesNotExist:
-                logger.warning("Intervention on unknown infrastructure %s" % pk_infra)
-
-    def on_signage(self):
-        pk_signa = self.request.GET.get('signage')
-        if pk_signa:
-            try:
-                return Signage.objects.existing().get(pk=pk_signa)
-            except Signage.DoesNotExist:
-                logger.warning("Intervention on unknown signage %s" % pk_signa)
-        return None
+    def on_object(self):
+        object_id = self.request.GET.get('object_id')
+        content_type = self.request.GET.get('ct')
+        if object_id and content_type:
+            return object_id, content_type
+        return None, None
 
     def get_initial(self):
         """
         Returns the initial data to use for forms on this view.
         """
         initial = super(InterventionCreate, self).get_initial()
-        infrastructure = self.on_infrastucture()
-        signage = self.on_signage()
-        if infrastructure:
+        topology, content_type = self.on_object()
+        if topology:
             # Create intervention on an infrastructure
-            initial['object_linked'] = infrastructure
-        elif signage:
-            # Create intervention on a signage
-            initial['object_linked'] = signage
+            initial['object_id'] = topology
+            initial['content_type'] = content_type
         return initial
 
 

@@ -20,21 +20,13 @@ class InterventionTest(TestCase):
     def test_topology_has_intervention_kind(self):
         topo = TopologyFactory.create()
         self.assertEqual('TOPOLOGY', topo.kind)
-        i = InterventionFactory.create(topology=topo)
-        self.assertEqual('INTERVENTION', i.topology.kind)
-
-    def test_infrastructure(self):
-        i = InterventionFactory.create()
-        self.assertFalse(i.on_existing_topology)
-        infra = InfrastructureFactory.create()
-        i.set_topology(infra)
-        self.assertTrue(i.on_existing_topology)
-        sign = SignageFactory.create()
-        i.set_topology(sign)
-        self.assertTrue(i.on_existing_topology)
+        i = InterventionFactory.create(object_id=topo.pk)
+        self.assertEqual('TOPOLOGY', i.content_object.kind)
 
     def test_default_stake(self):
-        i = InterventionFactory.create()
+        # Add paths to topology
+        infra = InfrastructureFactory.create(no_path=True)
+        i = InterventionFactory.create(content_object=infra)
         i.stake = None
         self.assertTrue(i.stake is None)
         i.save()
@@ -51,7 +43,6 @@ class InterventionTest(TestCase):
         infra = InfrastructureFactory.create(paths=[PathFactory.create(stake=lowstake),
                                                     PathFactory.create(stake=highstake),
                                                     PathFactory.create(stake=lowstake)])
-        i.set_topology(infra)
         # Stake is not None anymore
         i.save()
         self.assertFalse(i.stake is None)
@@ -74,15 +65,11 @@ class InterventionTest(TestCase):
 
         infra = InfrastructureFactory.create(paths=[p])
 
-        i1 = InterventionFactory.create()
-        i1.set_topology(sign)
-        i1.save()
+        i1 = InterventionFactory.create(content_object=sign)
 
         self.assertCountEqual(p.interventions, [i1])
 
-        i2 = InterventionFactory.create()
-        i2.set_topology(infra)
-        i2.save()
+        i2 = InterventionFactory.create(content_object=infra)
 
         self.assertCountEqual(p.interventions, [i1, i2])
 
@@ -95,27 +82,19 @@ class InterventionTest(TestCase):
     def test_helpers(self):
         infra = InfrastructureFactory.create()
         sign = SignageFactory.create()
-        interv = InterventionFactory.create()
+        interv = InterventionFactory.create(content_object=infra)
         proj = ProjectFactory.create()
 
-        self.assertFalse(interv.on_existing_topology)
-        self.assertEqual(interv.infrastructure, None)
+        self.assertEqual(interv.content_object, infra)
 
-        interv.set_topology(infra)
-        self.assertTrue(interv.on_existing_topology)
-        self.assertFalse(interv.is_signage)
-        self.assertTrue(interv.is_infrastructure)
         self.assertEqual(interv.signages, [])
         self.assertEqual(interv.infrastructures, [infra])
-        self.assertEqual(interv.infrastructure, infra)
 
-        interv.set_topology(sign)
-        self.assertTrue(interv.on_existing_topology)
-        self.assertTrue(interv.is_signage)
-        self.assertFalse(interv.is_infrastructure)
+        interv.content_object = sign
+        interv.save()
+
         self.assertEqual(interv.signages, [sign])
         self.assertEqual(interv.infrastructures, [])
-        self.assertEqual(interv.signage, sign)
 
         self.assertFalse(interv.in_project)
         interv.project = proj
@@ -123,8 +102,7 @@ class InterventionTest(TestCase):
 
     def test_delete_topology(self):
         infra = InfrastructureFactory.create()
-        interv = InterventionFactory.create()
-        interv.set_topology(infra)
+        interv = InterventionFactory.create(content_object=infra)
         interv.save()
         infra.delete()
         self.assertEqual(Infrastructure.objects.existing().count(), 0)
@@ -135,9 +113,7 @@ class InterventionTest(TestCase):
         infra.save()
 
         def create_interv():
-            interv = InterventionFactory.create()
-            interv.set_topology(infra)
-            interv.save()
+            interv = InterventionFactory.create(content_object=infra)
             return interv
 
         if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -207,18 +183,18 @@ class InterventionTest(TestCase):
     def test_infrastructure_display_is_path_by_default(self):
         translation.activate('en')
         on_path = InterventionFactory.create()
-        self.assertIn('Path', on_path.infrastructure_display)
-        self.assertIn('path-16.png', on_path.infrastructure_display)
+        self.assertIn('Path', on_path.related_object_display)
+        self.assertIn('path-16.png', on_path.related_object_display)
 
-    def test_infrastructure_display_shows_infrastructure_name(self):
+    def test_infrastructure_display_shows_object_name(self):
         interv = InfrastructureInterventionFactory.create()
-        self.assertIn('Infrastructure', interv.infrastructure_display)
-        self.assertIn('infrastructure-16.png', interv.infrastructure_display)
-        name = interv.infrastructure.name
-        self.assertIn(name, interv.infrastructure_display)
+        self.assertIn('Infrastructure', interv.related_object_display)
+        self.assertIn('infrastructure-16.png', interv.related_object_display)
+        name = interv.content_object.name
+        self.assertIn(name, interv.related_object_display)
 
         interv = SignageInterventionFactory.create()
-        self.assertIn('Signage', interv.infrastructure_display)
-        self.assertIn('signage-16.png', interv.infrastructure_display)
-        name = interv.signage.name
-        self.assertIn(name, interv.infrastructure_display)
+        self.assertIn('Signage', interv.related_object_display)
+        self.assertIn('signage-16.png', interv.related_object_display)
+        name = interv.content_object.name
+        self.assertIn(name, interv.related_object_display)
