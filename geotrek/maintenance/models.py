@@ -108,7 +108,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         super(Intervention, self).save(*args, **kwargs)
 
         # Set kind of Intervention topology
-        if self.content_object and not self.on_existing_topology:
+        if self.content_object and not self.on_existing_target:
             topology_kind = self._meta.object_name.upper()
             self.content_object.kind = topology_kind
             self.content_object.save(update_fields=['kind'])
@@ -123,8 +123,8 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         self.reload()
 
     @property
-    def on_existing_topology(self):
-        return True if self.content_object else False
+    def on_existing_target(self):
+        return bool(self.content_object)
 
     @classproperty
     def related_object(cls):
@@ -154,7 +154,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     @property
     def related_object_csv_display(self):
-        if self.on_existing_topology:
+        if self.on_existing_target:
             return "%s: %s (%s)" % (
                 _(self.content_object.kind.capitalize()),
                 self.content_object,

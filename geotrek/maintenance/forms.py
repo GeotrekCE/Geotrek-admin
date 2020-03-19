@@ -126,7 +126,7 @@ class InterventionForm(InterventionBaseForm):
         # topology field as read-only
         object_id = kwargs.get('initial', {}).get('object_id')
         content_type = kwargs.get('initial', {}).get('content_type')
-        if self.instance.on_existing_topology:
+        if self.instance.on_existing_target:
             object_id = self.instance.object_id
             ct = self.instance.content_type
             self.fields['content_type'].initial = content_type
