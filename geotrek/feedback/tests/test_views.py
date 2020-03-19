@@ -41,6 +41,17 @@ class ReportViewsTest(CommonTest):
             'email': 'yeah@you.com',
         }
 
+    def test_good_data_with_name(self):
+        """Test report created if `name` in data"""
+        data = self.get_good_data()
+        data['name'] = 'Anonymous'
+        self.login()
+        response = self.client.post(self._get_add_url(), data)
+        self.assertEqual(response.status_code, 302)
+        obj = self.model.objects.last()
+        self.assertEqual(obj.email, data['email'])
+        self.logout()
+
 
 class BaseAPITest(TestCase):
     def setUp(self):
