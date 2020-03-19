@@ -27,6 +27,8 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
                                default="",
                                verbose_name=_("Comment"))
     activity = models.ForeignKey('ReportActivity',
+                                 null=True,
+                                 blank=True,
                                  default=None,
                                  verbose_name=_("Activity"))
     category = models.ForeignKey('ReportCategory',
@@ -36,6 +38,8 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
                                  default=None,
                                  verbose_name=_("Category"))
     problem_magnitude = models.ForeignKey('ReportProblemMagnitude',
+                                          null=True,
+                                          blank=True,
                                           default=None,
                                           verbose_name=_("Problem magnitude"))
     status = models.ForeignKey('ReportStatus',
