@@ -45,12 +45,14 @@ class InterventionYearSelect(YearSelect):
 
 
 class InterventionFilterSet(StructureRelatedFilterSet):
-    ON_CHOICES = (('infrastructure', _("Infrastructure")), ('signage', _("Signage")), ('blade', _("Blade")))
+    ON_CHOICES = (('infrastructure', _("Infrastructure")), ('signage', _("Signage")), ('blade', _("Blade")),
+                  ('topology', _("Path")), ('trek', _("Trek")), ('poi', _("POI")), ('service', _("Service")),
+                  ('trail', _("Trail")))
     bbox = PolygonTopologyFilter(lookup_expr='intersects')
     year = YearFilter(field_name='date',
                       widget=InterventionYearSelect,
                       label=_("Year"))
-    on = ChoiceFilter(field_name='content_type__model', label=_("On"), empty_label=_("On"))
+    on = ChoiceFilter(field_name='content_type__model', choices=ON_CHOICES, label=_("On"), empty_label=_("On"))
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Intervention

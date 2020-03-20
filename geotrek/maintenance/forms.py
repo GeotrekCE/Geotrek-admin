@@ -159,7 +159,7 @@ class InterventionForm(InterventionBaseForm):
                 )
             self.fields['object_id'].initial = object_id
             self.fields['content_type'].initial = content_type
-        elif settings.TREKKING_TOPOLOGY_ENABLED:
+        elif not settings.TREKKING_TOPOLOGY_ENABLED:
             self.fields['topology'].required = False
             self.fields['topology'].widget = InterventionWidget(attrs={'geom_type': 'POINT'})
         # Length is not editable in AltimetryMixin
