@@ -24,18 +24,6 @@ class InterventionYearTargetFilter(YearFilter):
         }).distinct()
 
 
-class ChoiceObjectFilter(ChoiceFilter):
-    def __init__(self, *args, **kwargs):
-        self.choices = [[value.model.upper(), _(value.model.capitalize())] for value in ContentType.objects.all()]
-        super(ChoiceFilter, self).__init__(*args, **kwargs)
-
-    def filter(self, qs, value):
-        if not value:
-            return qs
-        qs.filter(content_type=value)
-        return qs
-
-
 class PolygonTopologyFilter(PolygonFilter):
     def filter(self, qs, value):
         if not value:
@@ -57,12 +45,12 @@ class InterventionYearSelect(YearSelect):
 
 
 class InterventionFilterSet(StructureRelatedFilterSet):
-    ON_CHOICES = (('INFRASTRUCTURE', _("Infrastructure")), ('SIGNAGE', _("Signage")))
+    ON_CHOICES = (('infrastructure', _("Infrastructure")), ('signage', _("Signage")), ('blade', _("Blade")))
     bbox = PolygonTopologyFilter(lookup_expr='intersects')
     year = YearFilter(field_name='date',
                       widget=InterventionYearSelect,
                       label=_("Year"))
-    on = ChoiceObjectFilter(field_name='content_type', label=_("On"), empty_label=_("On"))
+    on = ChoiceFilter(field_name='content_type__model', label=_("On"), empty_label=_("On"))
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Intervention
