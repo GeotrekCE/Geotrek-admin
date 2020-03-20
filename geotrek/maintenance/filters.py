@@ -17,7 +17,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
 
 class InterventionYearTargetFilter(YearFilter):
     def do_filter(self, qs, year):
-        interventions = Intervention.objects.filter(date__year=year).values_list('object_id', flat=True)
+        interventions = Intervention.objects.filter(date__year=year).values_list('target_id', flat=True)
         return qs.filter(**{
             'id__in': interventions
         }).distinct()
@@ -32,7 +32,7 @@ class PolygonTopologyFilter(PolygonFilter):
         inner_qs = list(Topology.objects.filter(**{'geom__%s' % lookup: value}).values_list('id', flat=True))
         if 'geotrek.signage' in settings.INSTALLED_APPS:
             inner_qs.extend(Blade.objects.filter(**{'signage__geom__%s' % lookup: value}).values_list('id', flat=True))
-        qs = qs.filter(**{'object_id__in': inner_qs})
+        qs = qs.filter(**{'target_id__in': inner_qs})
         return qs
 
 
@@ -51,7 +51,7 @@ class InterventionFilterSet(StructureRelatedFilterSet):
     year = YearFilter(field_name='date',
                       widget=InterventionYearSelect,
                       label=_("Year"))
-    on = ChoiceFilter(field_name='content_type__model', choices=ON_CHOICES, label=_("On"), empty_label=_("On"))
+    on = ChoiceFilter(field_name='target_type__model', choices=ON_CHOICES, label=_("On"), empty_label=_("On"))
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Intervention

@@ -20,12 +20,12 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='intervention',
-            name='content_type',
+            name='target_type',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='contenttypes.ContentType'),
         ),
         migrations.AddField(
             model_name='intervention',
-            name='object_id',
+            name='target_id',
             field=models.PositiveIntegerField(blank=True, null=True),
         ),
     ]

@@ -88,21 +88,21 @@ class InterventionViewsTest(CommonTest):
             signa = SignageFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         signage = "%s" % signa
 
-        response = self.client.get('%s?object_id=%s&ct=%s' % (Intervention.get_add_url(),
-                                                              signa.pk,
-                                                              ContentType.objects.get(model='signage').pk
-                                                              ))
+        response = self.client.get('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
+                                                                       signa.pk,
+                                                                       ContentType.objects.get(model='signage').pk
+                                                                       ))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, signage)
         form = response.context['form']
-        self.assertEqual(form.initial['object_id'], str(signa.pk))
+        self.assertEqual(form.initial['target_id'], str(signa.pk))
         # Should be able to save form successfully
         data = self.get_good_data()
-        data['object_id'] = signa.pk
-        response = self.client.post('%s?object_id=%s&ct=%s' % (Intervention.get_add_url(),
-                                                               signa.pk,
-                                                               ContentType.objects.get(model='signage').pk
-                                                               ),
+        data['target_id'] = signa.pk
+        response = self.client.post('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
+                                                                        signa.pk,
+                                                                        ContentType.objects.get(model='signage').pk
+                                                                        ),
                                     data)
         self.assertEqual(response.status_code, 302)
 
@@ -115,23 +115,23 @@ class InterventionViewsTest(CommonTest):
             signa = SignageFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         signage = "%s" % signa
 
-        response = self.client.get('%s?object_id=%s&ct=%s' % (Intervention.get_add_url(),
-                                                              signa.pk,
-                                                              ContentType.objects.get(model='signage').pk
-                                                              ))
+        response = self.client.get('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
+                                                                       signa.pk,
+                                                                       ContentType.objects.get(model='signage').pk
+                                                                       ))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, signage)
         form = response.context['form']
-        self.assertEqual(form.initial['object_id'], str(signa.pk))
+        self.assertEqual(form.initial['target_id'], str(signa.pk))
         data = self.get_good_data()
-        data['object_id'] = signa.pk
+        data['target_id'] = signa.pk
 
         # If form invalid, it should not fail
         data.pop('status')
-        response = self.client.post('%s?object_id=%s&ct=%s' % (Intervention.get_add_url(),
-                                                               signa.pk,
-                                                               ContentType.objects.get(model='signage').pk
-                                                               ),
+        response = self.client.post('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
+                                                                        signa.pk,
+                                                                        ContentType.objects.get(model='signage').pk
+                                                                        ),
                                     data)
         self.assertEqual(response.status_code, 200)
 
@@ -144,7 +144,7 @@ class InterventionViewsTest(CommonTest):
             signa = SignageFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         signage = "%s" % signa
 
-        intervention = InterventionFactory.create(content_object=signa)
+        intervention = InterventionFactory.create(target=signa)
         response = self.client.get(intervention.get_update_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, signage)
@@ -153,14 +153,14 @@ class InterventionViewsTest(CommonTest):
         data = form.initial
         data['disorders'] = data['disorders'][0].pk
         data['project'] = ''
-        data['object_id'] = form.fields['object_id'].initial  # because it is set after form init, not form.initial :(
+        data['target_id'] = form.fields['target_id'].initial  # because it is set after form init, not form.initial :(
         data.update(**{
             'manday_set-TOTAL_FORMS': '0',
             'manday_set-INITIAL_FORMS': '0',
             'manday_set-MAX_NUM_FORMS': '',
         })
         # Form URL is modified in form init
-        formurl = '%s?object_id=%s&ct=%s' % (intervention.get_update_url(), signa.pk, ContentType.objects.get(model='signage').pk)
+        formurl = '%s?target_id=%s&target_type=%s' % (intervention.get_update_url(), signa.pk, ContentType.objects.get(model='signage').pk)
         response = self.client.post(formurl, data)
         self.assertEqual(response.status_code, 302)
 
@@ -171,7 +171,7 @@ class InterventionViewsTest(CommonTest):
             intervention = SignageInterventionFactory.create()
         else:
             intervention = SignageInterventionFactory.create(geom='SRID=2154;POINT (700000 6600000)')
-        signa = intervention.content_object
+        signa = intervention.target
         # Save infrastructure form
         response = self.client.get(signa.get_update_url())
         form = response.context['form']
@@ -188,8 +188,8 @@ class InterventionViewsTest(CommonTest):
         # Check that intervention was not deleted (bug #783)
         intervention = Intervention.objects.first()
         self.assertFalse(intervention.deleted)
-        self.assertEqual(intervention.content_object.name, 'modified')
-        self.assertEqual(intervention.content_object.implantation_year, target_year)
+        self.assertEqual(intervention.target.name, 'modified')
+        self.assertEqual(intervention.target.implantation_year, target_year)
 
     def test_creation_form_on_infrastructure(self):
         self.login()
@@ -199,19 +199,19 @@ class InterventionViewsTest(CommonTest):
             infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         infrastr = "%s" % infra
 
-        response = self.client.get('%s?object_id=%s&ct=%s' % (Intervention.get_add_url(),
-                                                              infra.pk,
-                                                              ContentType.objects.get(model='infrastructure').pk))
+        response = self.client.get('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
+                                                                       infra.pk,
+                                                                       ContentType.objects.get(model='infrastructure').pk))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, infrastr)
         form = response.context['form']
-        self.assertEqual(form.initial['object_id'], str(infra.pk))
+        self.assertEqual(form.initial['target_id'], str(infra.pk))
         # Should be able to save form successfully
         data = self.get_good_data()
-        data['object_id'] = infra.pk
-        response = self.client.post('%s?object_id=%s&ct=%s' % (Intervention.get_add_url(),
-                                                               infra.pk,
-                                                               ContentType.objects.get(model='infrastructure').pk),
+        data['target_id'] = infra.pk
+        response = self.client.post('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
+                                                                        infra.pk,
+                                                                        ContentType.objects.get(model='infrastructure').pk),
                                     data)
         self.assertEqual(response.status_code, 302)
 
@@ -224,21 +224,21 @@ class InterventionViewsTest(CommonTest):
             infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         infrastr = "%s" % infra
 
-        response = self.client.get('%s?object_id=%s&ct=%s' % (Intervention.get_add_url(),
-                                                              infra.pk,
-                                                              ContentType.objects.get(model='infrastructure').pk))
+        response = self.client.get('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
+                                                                       infra.pk,
+                                                                       ContentType.objects.get(model='infrastructure').pk))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, infrastr)
         form = response.context['form']
-        self.assertEqual(form.initial['object_id'], str(infra.pk))
+        self.assertEqual(form.initial['target_id'], str(infra.pk))
         data = self.get_good_data()
-        data['object_id'] = infra.pk
+        data['target_id'] = infra.pk
 
         # If form invalid, it should not fail
         data.pop('status')
-        response = self.client.post('%s?object_id=%s&ct=%s' % (Intervention.get_add_url(),
-                                                               infra.pk,
-                                                               ContentType.objects.get(model='infrastructure').pk), data)
+        response = self.client.post('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
+                                                                        infra.pk,
+                                                                        ContentType.objects.get(model='infrastructure').pk), data)
         self.assertEqual(response.status_code, 200)
 
     def test_update_form_on_infrastructure(self):
@@ -250,7 +250,7 @@ class InterventionViewsTest(CommonTest):
             infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         infrastr = "%s" % infra
 
-        intervention = InterventionFactory.create(content_object=infra)
+        intervention = InterventionFactory.create(target=infra)
         response = self.client.get(intervention.get_update_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, infrastr)
@@ -259,16 +259,16 @@ class InterventionViewsTest(CommonTest):
         data = form.initial
         data['disorders'] = data['disorders'][0].pk
         data['project'] = ''
-        data['object_id'] = form.fields['object_id'].initial  # because it is set after form init, not form.initial :(
+        data['target_id'] = form.fields['target_id'].initial  # because it is set after form init, not form.initial :(
         data.update(**{
             'manday_set-TOTAL_FORMS': '0',
             'manday_set-INITIAL_FORMS': '0',
             'manday_set-MAX_NUM_FORMS': '',
         })
         # Form URL is modified in form init
-        formurl = '%s?object_id=%s&ct=%s' % (Intervention.get_add_url(),
-                                             infra.pk,
-                                             ContentType.objects.get(model='infrastructure').pk)
+        formurl = '%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
+                                                      infra.pk,
+                                                      ContentType.objects.get(model='infrastructure').pk)
         response = self.client.post(formurl, data)
         self.assertEqual(response.status_code, 302)
 
@@ -286,7 +286,7 @@ class InterventionViewsTest(CommonTest):
             intervention = InfrastructureInterventionFactory.create()
         else:
             intervention = InfrastructureInterventionFactory.create(geom='SRID=2154;POINT (700000 6600000)')
-        infra = intervention.content_object
+        infra = intervention.target
         # Save infrastructure form
         response = self.client.get(infra.get_update_url())
         form = response.context['form']
@@ -301,8 +301,8 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(response.status_code, 302)
         intervention = Intervention.objects.first()
         self.assertFalse(intervention.deleted)
-        self.assertEqual(intervention.content_object.name, 'modified')
-        self.assertEqual(intervention.content_object.implantation_year, target_year)
+        self.assertEqual(intervention.target.name, 'modified')
+        self.assertEqual(intervention.target.implantation_year, target_year)
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_form_default_stake(self):
@@ -438,7 +438,7 @@ class ProjectViewsTest(CommonTest):
             t = TopologyFactory.create()
         else:
             t = TopologyFactory.create(geom='SRID=2154;POINT (700000 6600000)')
-        InterventionFactory.create(project=p1, content_object=t)
+        InterventionFactory.create(project=p1, target=t)
 
         def jsonlist(bbox):
             url = self.model.get_jsonlist_url() + bbox
@@ -500,8 +500,8 @@ class ExportTest(TranslationResetMixin, TestCase):
         self.assertEqual(topo_point.paths.get(), closest_path)
 
         # Create one intervention by geometry (point/linestring)
-        it_point = InterventionFactory.create(content_object=topo_point)
-        it_line = InterventionFactory.create(content_object=topo_line)
+        it_point = InterventionFactory.create(target=topo_point)
+        it_line = InterventionFactory.create(target=topo_line)
         # reload
         it_point = type(it_point).objects.get(pk=it_point.pk)
         it_line = type(it_line).objects.get(pk=it_line.pk)

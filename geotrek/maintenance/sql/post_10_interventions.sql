@@ -20,7 +20,7 @@ CREATE TRIGGER maintenance_project_date_update_tgr
 
 CREATE FUNCTION {# geotrek.maintenance #}.delete_related_intervention() RETURNS trigger SECURITY DEFINER AS $$
 BEGIN
-    UPDATE maintenance_intervention SET deleted = NEW.deleted WHERE object_id = NEW.id;
+    UPDATE maintenance_intervention SET deleted = NEW.deleted WHERE target_id = NEW.id;
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
@@ -48,7 +48,7 @@ BEGIN
         slope = NEW.slope,
         min_elevation = NEW.min_elevation, max_elevation = NEW.max_elevation,
         ascent = NEW.ascent, descent = NEW.descent
-     WHERE object_id = NEW.id;
+     WHERE target_id = NEW.id;
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
@@ -65,7 +65,7 @@ DECLARE
     elevation elevation_infos;
 BEGIN
     SELECT geom_3d, slope, min_elevation, max_elevation, ascent, descent
-    FROM core_topology WHERE id = NEW.object_id INTO elevation;
+    FROM core_topology WHERE id = NEW.target_id INTO elevation;
 
     IF ST_GeometryType(elevation.draped) <> 'ST_Point' THEN
         NEW.length := ST_3DLength(elevation.draped);
@@ -81,7 +81,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER m_t_intervention_altimetry_iu_tgr
-BEFORE INSERT OR UPDATE OF object_id ON maintenance_intervention
+BEFORE INSERT OR UPDATE OF target_id ON maintenance_intervention
 FOR EACH ROW EXECUTE PROCEDURE update_altimetry_intervention();
 
 

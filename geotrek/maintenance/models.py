@@ -32,9 +32,9 @@ class InterventionManager(NoDeleteManager):
 class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                    TimeStampedModelMixin, StructureRelated, NoDeleteMixin):
 
-    content_type = models.ForeignKey(ContentType, null=True, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField(blank=True, null=True)
-    content_object = GenericForeignKey('content_type', 'object_id')
+    target_type = models.ForeignKey(ContentType, null=True, on_delete=models.CASCADE)
+    target_id = models.PositiveIntegerField(blank=True, null=True)
+    target = GenericForeignKey('target_type', 'target_id')
 
     name = models.CharField(verbose_name=_("Name"), max_length=128, help_text=_("Brief summary"))
     date = models.DateField(default=datetime.now, verbose_name=_("Date"), help_text=_("When ?"))
@@ -84,8 +84,8 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     def default_stake(self):
         stake = None
-        if self.content_object:
-            for path in self.content_object.paths.exclude(stake=None):
+        if self.target:
+            for path in self.target.paths.exclude(stake=None):
                 if path.stake > stake:
                     stake = path.stake
         return stake
@@ -97,8 +97,8 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
             AltimetryMixin.reload(self, fromdb)
             TimeStampedModelMixin.reload(self, fromdb)
             NoDeleteMixin.reload(self, fromdb)
-            if isinstance(self.content_object, Topology):
-                self.content_object.reload()
+            if isinstance(self.target, Topology):
+                self.target.reload()
         return self
 
     def save(self, *args, **kwargs):
@@ -108,10 +108,10 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         super(Intervention, self).save(*args, **kwargs)
 
         # Set kind of Intervention topology
-        if self.content_object and not self.on_existing_target:
+        if self.target and not self.on_existing_target:
             topology_kind = self._meta.object_name.upper()
-            self.content_object.kind = topology_kind
-            self.content_object.save(update_fields=['kind'])
+            self.target.kind = topology_kind
+            self.target.save(update_fields=['kind'])
 
         # Invalidate project map
         if self.project:
@@ -124,7 +124,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     @property
     def on_existing_target(self):
-        return bool(self.content_object)
+        return bool(self.target)
 
     @classproperty
     def related_object(cls):
@@ -136,18 +136,18 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     @property
     def object_picture(self):
-        if self.content_object._meta.model_name == "topology":
+        if self.target._meta.model_name == "topology":
             return "images/path-16.png"
-        return "images/%s-16.png" % self.content_object._meta.model_name
+        return "images/%s-16.png" % self.target._meta.model_name
 
     @property
     def related_object_display(self):
         icon = 'path'
         title = _('Paths')
-        if not self.content_object._meta.model_name == "topology":
-            icon = self.content_object._meta.model_name
+        if not self.target._meta.model_name == "topology":
+            icon = self.target._meta.model_name
 
-            title = self.content_object.name_display
+            title = self.target.name_display
         return '<img src="%simages/%s-16.png"> %s' % (settings.STATIC_URL,
                                                       icon,
                                                       title)
@@ -156,9 +156,9 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     def related_object_csv_display(self):
         if self.on_existing_target:
             return "%s: %s (%s)" % (
-                _(self.content_object.kind.capitalize()),
-                self.content_object,
-                self.content_object.pk)
+                _(self.target.kind.capitalize()),
+                self.target,
+                self.target.pk)
         return ''
 
     @property
@@ -167,14 +167,14 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     @property
     def on_blade(self):
-        return self.content_object._meta.model_name == 'blade'
+        return self.target._meta.model_name == 'blade'
 
     @property
     def paths(self):
         if self.on_blade:
-            return self.content_object.signage.paths.all()
-        if self.content_object:
-            return self.content_object.paths.all()
+            return self.target.signage.paths.all()
+        if self.target:
+            return self.target.paths.all()
         return Path.objects.none()
 
     @property
@@ -217,8 +217,8 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     @property
     def geom(self):
         if self._geom is None:
-            if self.content_object:
-                self._geom = self.content_object.geom
+            if self.target:
+                self._geom = self.target.geom
         return self._geom
 
     @geom.setter
@@ -252,7 +252,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
             topologies.extend(
                 Blade.objects.filter(signage__in=topologies).values_list('pk', flat=True)
             )
-        return cls.objects.existing().filter(object_id__in=topologies)
+        return cls.objects.existing().filter(target_id__in=topologies)
 
     @classmethod
     def topology_interventions(cls, topology):
@@ -261,7 +261,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
             topologies.extend(
                 Blade.objects.filter(signage__in=topologies).values_list('id', flat=True)
             )
-        return cls.objects.existing().filter(object_id__in=topologies).distinct('pk')
+        return cls.objects.existing().filter(target_id__in=topologies).distinct('pk')
 
     @classmethod
     def blade_interventions(cls, blade):
@@ -270,18 +270,18 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
             topologies.extend(
                 Blade.objects.filter(signage__in=topologies).values_list('id', flat=True)
             )
-        return cls.objects.existing().filter(object_id__in=topologies).distinct('pk')
+        return cls.objects.existing().filter(target_id__in=topologies).distinct('pk')
 
     @property
     def signages(self):
-        if self.content_type == ContentType.objects.get(model='signage'):
-            return [self.content_object]
+        if self.target_type == ContentType.objects.get(model='signage'):
+            return [self.target]
         return []
 
     @property
     def infrastructures(self):
-        if self.content_type == ContentType.objects.get(model='infrastructure'):
-            return [self.content_object]
+        if self.target_type == ContentType.objects.get(model='infrastructure'):
+            return [self.target]
         return []
 
 
@@ -426,7 +426,7 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
     def trails(self):
         s = []
         for i in self.interventions.existing():
-            for p in i.content_object.paths.all():
+            for p in i.target.paths.all():
                 for t in p.trails.all():
                     s.append(t.pk)
 
@@ -435,14 +435,14 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
     @property
     def signages(self):
         from geotrek.signage.models import Signage
-        object_ids = self.interventions.existing().filter(content_type=ContentType.objects.get(model='signage')).values_list('object_id', flat=True)
-        return list(Signage.objects.filter(topo_object__in=object_ids))
+        target_ids = self.interventions.existing().filter(target_type=ContentType.objects.get(model='signage')).values_list('target_id', flat=True)
+        return list(Signage.objects.filter(topo_object__in=target_ids))
 
     @property
     def infrastructures(self):
         from geotrek.infrastructure.models import Infrastructure
-        object_ids = list(self.interventions.existing().filter(content_type=ContentType.objects.get(model='infrastructure')).values_list('object_id', flat=True))
-        return list(Infrastructure.objects.filter(topo_object__in=object_ids))
+        target_ids = list(self.interventions.existing().filter(target_type=ContentType.objects.get(model='infrastructure')).values_list('target_id', flat=True))
+        return list(Infrastructure.objects.filter(topo_object__in=target_ids))
 
     @classproperty
     def geomfield(cls):

@@ -70,10 +70,10 @@ class InterventionCreate(ManDayFormsetMixin, CreateFromTopologyMixin, MapEntityC
     form_class = InterventionForm
 
     def on_object(self):
-        object_id = self.request.GET.get('object_id')
-        content_type = self.request.GET.get('ct')
-        if object_id and content_type:
-            return object_id, content_type
+        target_id = self.request.GET.get('target_id')
+        target_type = self.request.GET.get('target_type')
+        if target_id and target_type:
+            return target_id, target_type
         return None, None
 
     def get_initial(self):
@@ -81,11 +81,11 @@ class InterventionCreate(ManDayFormsetMixin, CreateFromTopologyMixin, MapEntityC
         Returns the initial data to use for forms on this view.
         """
         initial = super(InterventionCreate, self).get_initial()
-        topology, content_type = self.on_object()
+        topology, target_type = self.on_object()
         if topology:
             # Create intervention on an infrastructure
-            initial['object_id'] = topology
-            initial['content_type'] = content_type
+            initial['target_id'] = topology
+            initial['target_type'] = target_type
         return initial
 
 

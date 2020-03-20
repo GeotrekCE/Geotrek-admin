@@ -1,7 +1,7 @@
 CREATE VIEW {# geotrek.maintenance #}.v_interventions AS (
 	SELECT e.geom, i.*
 	FROM maintenance_intervention AS i, core_topology AS e
-	WHERE i.object_id = e.id
+	WHERE i.target_id = e.id
 	AND i.deleted = FALSE
 );
 

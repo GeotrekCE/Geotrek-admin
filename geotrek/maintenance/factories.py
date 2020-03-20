@@ -54,7 +54,7 @@ class InterventionFactory(factory.DjangoModelFactory):
     status = factory.SubFactory(InterventionStatusFactory)
     stake = factory.SubFactory(StakeFactory)
     type = factory.SubFactory(InterventionTypeFactory)
-    content_object = factory.SubFactory(TopologyFactory)
+    target = factory.SubFactory(TopologyFactory)
 
     @factory.post_generation
     def create_intervention(obj, create, extracted, **kwargs):
@@ -64,11 +64,11 @@ class InterventionFactory(factory.DjangoModelFactory):
 
 
 class InfrastructureInterventionFactory(InterventionFactory):
-    content_object = factory.SubFactory(InfrastructureFactory)
+    target = factory.SubFactory(InfrastructureFactory)
 
 
 class InfrastructurePointInterventionFactory(InterventionFactory):
-    content_object = None
+    target = None
 
     @factory.post_generation
     def create_infrastructure_point_intervention(obj, create, extracted, **kwargs):
@@ -77,13 +77,13 @@ class InfrastructurePointInterventionFactory(InterventionFactory):
 
         else:
             infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700040 6600040)')
-        obj.content_object = infra
+        obj.target = infra
         if create:
             obj.save()
 
 
 class SignageInterventionFactory(InterventionFactory):
-    content_object = factory.SubFactory(SignageFactory)
+    target = factory.SubFactory(SignageFactory)
 
 
 class ContractorFactory(factory.DjangoModelFactory):

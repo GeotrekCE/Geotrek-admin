@@ -53,11 +53,11 @@ FundingFormSet = inlineformset_factory(Project, Project.founders.through, form=F
 
 
 class InterventionBaseForm(CommonForm):
-    object_id = forms.IntegerField(required=False,
+    target_id = forms.IntegerField(required=False,
                                    widget=forms.HiddenInput())
-    content_type = forms.ModelChoiceField(required=False,
-                                          queryset=ContentType.objects.all(),
-                                          widget=forms.HiddenInput())
+    target_type = forms.ModelChoiceField(required=False,
+                                         queryset=ContentType.objects.all(),
+                                         widget=forms.HiddenInput())
     length = FloatField(required=False, label=_("Length"))
     project = forms.ModelChoiceField(required=False, label=_("Project"),
                                      queryset=Project.objects.existing())
@@ -88,8 +88,8 @@ class InterventionBaseForm(CommonForm):
                     'stake',
                     'project',
                     'description',
-                    'content_type',
-                    'object_id',
+                    'target_type',
+                    'target_id',
                     css_id="main",
                     css_class="tab-pane active"
                 ),
@@ -111,7 +111,7 @@ class InterventionBaseForm(CommonForm):
         model = Intervention
         fields = CommonForm.Meta.fields + \
             ['structure', 'name', 'date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
-             'height', 'stake', 'project', 'material_cost', 'heliport_cost', 'subcontract_cost', 'content_type', 'object_id',
+             'height', 'stake', 'project', 'material_cost', 'heliport_cost', 'subcontract_cost', 'target_type', 'target_id',
              'topology']
 
 
@@ -123,22 +123,22 @@ class InterventionForm(InterventionBaseForm):
 
         # If we create or edit an intervention on infrastructure or signage, set
         # topology field as read-only
-        object_id = kwargs.get('initial', {}).get('object_id')
-        content_type = kwargs.get('initial', {}).get('content_type')
+        target_id = kwargs.get('initial', {}).get('target_id')
+        target_type = kwargs.get('initial', {}).get('target_type')
         if self.instance.on_existing_target:
-            object_id = self.instance.object_id
-            ct = self.instance.content_type
-            self.fields['content_type'].initial = content_type
-            self.fields['object_id'].initial = object_id
+            target_id = self.instance.target_id
+            ct = self.instance.target_type
+            self.fields['target_type'].initial = target_type
+            self.fields['target_id'].initial = target_id
 
-        if content_type and object_id:
-            ct = get_object_or_404(ContentType, pk=content_type)
+        if target_type and target_id:
+            ct = get_object_or_404(ContentType, pk=target_type)
 
-        if object_id:
-            final_object = ct.model_class().objects.get(pk=object_id)
+        if target_id:
+            final_object = ct.model_class().objects.get(pk=target_id)
             icon = final_object._meta.model_name
             title = '%s' % (_(final_object._meta.model_name).capitalize())
-            self.helper.form_action += '?object_id=%s' % object_id
+            self.helper.form_action += '?target_id=%s' % target_id
             if final_object._meta.model_name != "topology":
                 self.fields['topology'].required = False
                 self.fields['topology'].widget = TopologyReadonlyWidget()
@@ -156,8 +156,8 @@ class InterventionForm(InterventionBaseForm):
                                                                      title),
                     _("On %s") % _(str(ct)).lower()
                 )
-            self.fields['object_id'].initial = object_id
-            self.fields['content_type'].initial = content_type
+            self.fields['target_id'].initial = target_id
+            self.fields['target_type'].initial = target_type
         elif not settings.TREKKING_TOPOLOGY_ENABLED:
             self.fields['topology'].required = False
             self.fields['topology'].widget = InterventionWidget(attrs={'geom_type': 'POINT'})
@@ -170,10 +170,10 @@ class InterventionForm(InterventionBaseForm):
     def clean(self, *args, **kwargs):
         # If topology was read-only, topology field is empty, get it from infra.
         cleaned_data = super(InterventionForm, self).clean()
-        if not cleaned_data.get('object_id') and cleaned_data.get('topology'):
-            cleaned_data['object_id'] = cleaned_data['topology'].pk
+        if not cleaned_data.get('target_id') and cleaned_data.get('topology'):
+            cleaned_data['target_id'] = cleaned_data['topology'].pk
             ct = ContentType.objects.get(app_label='core', model='topology')
-            cleaned_data['content_type'] = ct
+            cleaned_data['target_type'] = ct
         return cleaned_data
 
     def save(self, *args, **kwargs):
