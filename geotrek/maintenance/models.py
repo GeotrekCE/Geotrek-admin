@@ -263,6 +263,15 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
             )
         return cls.objects.existing().filter(object_id__in=topologies).distinct('pk')
 
+    @classmethod
+    def blade_interventions(cls, blade):
+        topologies = list(Topology.overlapping(blade.signage).values_list('pk', flat=True))
+        if 'geotrek.signage' in settings.INSTALLED_APPS:
+            topologies.extend(
+                Blade.objects.filter(signage__in=topologies).values_list('id', flat=True)
+            )
+        return cls.objects.existing().filter(object_id__in=topologies).distinct('pk')
+
     @property
     def signages(self):
         if self.content_type == ContentType.objects.get(model='signage'):
@@ -278,6 +287,8 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
 Path.add_property('interventions', lambda self: Intervention.path_interventions(self), _("Interventions"))
 Topology.add_property('interventions', lambda self: Intervention.topology_interventions(self), _("Interventions"))
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    Blade.add_property('interventions', lambda self: Intervention.blade_interventions(self), _("Interventions"))
 
 
 class InterventionStatus(StructureOrNoneRelated):
@@ -604,17 +615,3 @@ class Funding(models.Model):
 
     def __str__(self):
         return "%s : %s" % (self.project, self.amount)
-
-
-if 'geotrek.core' in settings.INSTALLED_APPS:
-    from geotrek.core.models import Topology
-    Topology.add_property('intervention', lambda self: Intervention.objects.filter(
-        content_type=ContentType.objects.get(app_label='core',
-                                             model='topology'),
-        object_id=self.pk), verbose_name=_("Intervention"))
-
-if 'geotrek.signage' in settings.INSTALLED_APPS:
-    Blade.add_property('intervention', lambda self: Intervention.objects.filter(
-        content_type=ContentType.objects.get(app_label='signage',
-                                             model='blade'),
-        object_id=self.pk), verbose_name=_("Intervention"))
