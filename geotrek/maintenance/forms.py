@@ -139,10 +139,9 @@ class InterventionForm(InterventionBaseForm):
             icon = final_object._meta.model_name
             title = '%s' % (_(final_object._meta.model_name).capitalize())
             self.helper.form_action += '?object_id=%s' % object_id
-            self.fields['topology'].required = False
-            self.fields['topology'].widget = TopologyReadonlyWidget()
-
             if final_object._meta.model_name != "topology":
+                self.fields['topology'].required = False
+                self.fields['topology'].widget = TopologyReadonlyWidget()
                 self.fields['topology'].label = '%s%s %s' % (
                     '<img src="%simages/%s-16.png" title="%s">' % (settings.STATIC_URL,
                                                                    icon,
