@@ -1,6 +1,6 @@
 import logging
 
-from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.gis.db.models import GeometryField
 from django.http import HttpResponse, HttpResponseNotFound
 from django.views.decorators.http import last_modified as cache_last_modified
@@ -121,7 +121,7 @@ class FilterListMixin(object):
                 class Meta:
                     model = _model
                     fields = [field.name for field in _model._meta.get_fields() if
-                              not isinstance(field, GeometryField) and not isinstance(field, GenericRelation)]
+                              not isinstance(field, GeometryField) and not isinstance(field, GenericForeignKey) and not isinstance(field, GenericRelation)]
             self.filterform = filterklass
         self._filterform = self.filterform(None, self.queryset)
 
