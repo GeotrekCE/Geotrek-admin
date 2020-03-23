@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 class InterventionLayer(MapEntityLayer):
     queryset = Intervention.objects.existing()
+    filterform = InterventionFilterSet
     properties = ['name']
 
 
