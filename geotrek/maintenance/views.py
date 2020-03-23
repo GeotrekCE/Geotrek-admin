@@ -28,7 +28,7 @@ class InterventionLayer(MapEntityLayer):
 class InterventionList(MapEntityList):
     queryset = Intervention.objects.existing()
     filterform = InterventionFilterSet
-    columns = ['id', 'name', 'date', 'type', 'related_object', 'status', 'stake']
+    columns = ['id', 'name', 'date', 'type', 'target', 'status', 'stake']
 
 
 class InterventionJsonList(MapEntityJsonList, InterventionList):
@@ -37,7 +37,7 @@ class InterventionJsonList(MapEntityJsonList, InterventionList):
 
 class InterventionFormatList(MapEntityFormat, InterventionList):
     columns = [
-        'id', 'name', 'date', 'type', 'related_object', 'status', 'stake',
+        'id', 'name', 'date', 'type', 'target', 'status', 'stake',
         'disorders', 'total_manday', 'project', 'subcontracting',
         'width', 'height', 'length', 'area', 'structure',
         'description', 'date_insert', 'date_update',

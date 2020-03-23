@@ -67,12 +67,11 @@ def latlngbounds(obj):
 def field_verbose_name(obj, field):
     """Usage: {{ object|get_object_field }}"""
     try:
+        if hasattr(obj, '%s_verbose_name' % field):
+            return u"{}".format(getattr(obj, '%s_verbose_name' % field))
         return obj._meta.get_field(field).verbose_name
     except FieldDoesNotExist:
-        a = getattr(obj, '%s_verbose_name' % field)
-        if a is None:
-            raise
-        return u"{}".format(a)
+        raise
 
 
 @register.simple_tag()

@@ -127,7 +127,7 @@ class InterventionForm(InterventionBaseForm):
         target_type = kwargs.get('initial', {}).get('target_type')
         if self.instance.on_existing_target:
             target_id = self.instance.target_id
-            target_type = self.instance.target_type
+            target_type = self.instance.target_type.pk
             self.fields['target_type'].initial = target_type
             self.fields['target_id'].initial = target_id
 

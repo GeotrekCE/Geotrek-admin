@@ -127,21 +127,11 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         return bool(self.target)
 
     @classproperty
-    def related_object(cls):
-        return ""
-
-    @classproperty
-    def related_object_verbose_name(cls):
+    def target_verbose_name(cls):
         return _("On")
 
     @property
-    def object_picture(self):
-        if self.target._meta.model_name == "topology":
-            return "images/path-16.png"
-        return "images/%s-16.png" % self.target._meta.model_name
-
-    @property
-    def related_object_display(self):
+    def target_display(self):
         icon = 'path'
         title = _('Paths')
         if not self.target._meta.model_name == "topology":
@@ -153,7 +143,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                                                       title)
 
     @property
-    def related_object_csv_display(self):
+    def target_csv_display(self):
         if self.on_existing_target:
             return "%s: %s (%s)" % (
                 _(self.target.kind.capitalize()),
