@@ -82,10 +82,10 @@ class InterventionCreate(ManDayFormsetMixin, CreateFromTopologyMixin, MapEntityC
         Returns the initial data to use for forms on this view.
         """
         initial = super(InterventionCreate, self).get_initial()
-        topology, target_type = self.on_object()
+        target_id, target_type = self.on_object()
         if topology:
             # Create intervention on an infrastructure
-            initial['target_id'] = topology
+            initial['target_id'] = target_id
             initial['target_type'] = target_type
         return initial
 
