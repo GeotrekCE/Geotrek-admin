@@ -143,11 +143,11 @@ class InfraFilterTestMixin():
 
         # Bad signage: intervention with wrong year
         topo_1 = self.factory()
-        InterventionFactory(target_id=topo_1.pk, date=year_t)
+        InterventionFactory(target=topo_1, date=year_t)
 
         # Good signage: intervention with the good year
         topo_2 = self.factory()
-        InterventionFactory(target_id=topo_2.pk, date=year_t)
+        InterventionFactory(target=topo_2, date=year_t)
 
         response = self.client.get(model.get_list_url())
         self.assertContains(response, '<option value="2014">2014</option>', count=1)

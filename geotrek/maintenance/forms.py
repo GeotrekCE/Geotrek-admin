@@ -127,7 +127,7 @@ class InterventionForm(InterventionBaseForm):
         target_type = kwargs.get('initial', {}).get('target_type')
         if self.instance.on_existing_target:
             target_id = self.instance.target_id
-            ct = self.instance.target_type
+            target_type = self.instance.target_type
             self.fields['target_type'].initial = target_type
             self.fields['target_id'].initial = target_id
 
@@ -175,15 +175,6 @@ class InterventionForm(InterventionBaseForm):
             ct = ContentType.objects.get(app_label='core', model='topology')
             cleaned_data['target_type'] = ct
         return cleaned_data
-
-    def save(self, *args, **kwargs):
-        infrastructure = self.cleaned_data.get('infrastructure')
-        signage = self.cleaned_data.get('signage')
-        if infrastructure:
-            self.instance.set_topology(infrastructure)
-        elif signage:
-            self.instance.set_topology(signage)
-        return super(InterventionForm, self).save(*args, **kwargs)
 
 
 class ProjectForm(CommonForm):

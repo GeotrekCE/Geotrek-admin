@@ -166,12 +166,8 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         return self.project is not None
 
     @property
-    def on_blade(self):
-        return self.target._meta.model_name == 'blade'
-
-    @property
     def paths(self):
-        if self.on_blade:
+        if self.target._meta.model_name == 'blade':
             return self.target.signage.paths.all()
         if self.target:
             return self.target.paths.all()
