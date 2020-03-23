@@ -6,6 +6,24 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 
+def intervention_sgnage_infrastructure(apps, schema_editor):
+    InterventionModel = apps.get_model('maintenance', 'Intervention')
+    ContentTypeModel = apps.get_model("contenttypes", "ContentType")
+    signage = ContentTypeModel.objects.get(app_label='signage', model='signage')
+    infrastructure = ContentTypeModel.objects.get(app_label='infrastructure', model='infrastructure')
+    topology = ContentTypeModel.objects.get(app_label='core', model='topology')
+    for intervention in InterventionModel.objects.all():
+        intervention.target = intervention.topology
+        intervention.target_id = intervention.topology.pk
+        if intervention.topology.kind == "SIGNAGE":
+            intervention.target_type = signage
+        elif intervention.topology.kind == "INFRASTRUCTURE":
+            intervention.target_type = infrastructure
+        else:
+            intervention.target_type = topology
+        intervention.save()
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -14,10 +32,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='intervention',
-            name='topology',
-        ),
         migrations.AddField(
             model_name='intervention',
             name='target_type',
@@ -27,5 +41,10 @@ class Migration(migrations.Migration):
             model_name='intervention',
             name='target_id',
             field=models.PositiveIntegerField(blank=True, null=True),
+        ),
+        migrations.RunPython(intervention_sgnage_infrastructure),
+        migrations.RemoveField(
+            model_name='intervention',
+            name='topology',
         ),
     ]
