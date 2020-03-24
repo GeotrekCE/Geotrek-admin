@@ -12,16 +12,11 @@ def intervention_sgnage_infrastructure(apps, schema_editor):
     signage = ContentTypeModel.objects.get(app_label='signage', model='signage')
     infrastructure = ContentTypeModel.objects.get(app_label='infrastructure', model='infrastructure')
     topology = ContentTypeModel.objects.get(app_label='core', model='topology')
-    for intervention in InterventionModel.objects.all():
-        intervention.target = intervention.topology
-        intervention.target_id = intervention.topology.pk
-        if intervention.topology.kind == "SIGNAGE":
-            intervention.target_type = signage
-        elif intervention.topology.kind == "INFRASTRUCTURE":
-            intervention.target_type = infrastructure
-        else:
-            intervention.target_type = topology
-        intervention.save()
+    InterventionModel.objects.filter(topology__kind='INTERVENTION').update(target_type=topology, target_id=models.F('topology_id'))
+    InterventionModel.objects.filter(topology__kind='SIGNAGE').update(target_type=signage,
+                                                                      target_id=models.F('topology_id'))
+    InterventionModel.objects.filter(topology__kind='INFRASTRUCTURE').update(target_type=infrastructure,
+                                                                             target_id=models.F('topology_id'))
 
 
 class Migration(migrations.Migration):
