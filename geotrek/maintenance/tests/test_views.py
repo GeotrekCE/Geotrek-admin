@@ -122,27 +122,47 @@ class InterventionViewsTest(CommonTest):
             trek.add_path(path, start=0.5, end=0.5)
             service = ServiceFactory.create(no_path=True)
             service.add_path(path, start=0.5, end=0.5)
+            topo = TopologyFactory.create(no_path=True)
+            topo.add_path(path, start=0.5, end=0.5)
+            topo.save()
+
+            path_other = PathFactory.create(geom=LineString((10000, 0), (10010, 0)))
+            signa_other = SignageFactory.create(no_path=True)
+            signa_other.add_path(path_other, start=0.5, end=0.5)
+            signa_other.save()
         else:
             signa = SignageFactory.create(geom='SRID=2154;POINT (250 250)')
             infrastructure = InfrastructureFactory.create(geom='SRID=2154;POINT (250 250)')
             poi = POIFactory.create(geom='SRID=2154;POINT (250 250)')
             trek = TrekFactory.create(geom='SRID=2154;POINT (250 250)')
             service = ServiceFactory.create(geom='SRID=2154;POINT (250 250)')
+            topo = TopologyFactory.create(geom='SRID=2154;POINT (250 250)')
+
+            signa_other = SignageFactory.create(geom='SRID=2154;POINT (10005 0)')
+
         intervention_signa = InterventionFactory.create(target=signa)
         intervention_infra = InterventionFactory.create(target=infrastructure)
         intervention_poi = InterventionFactory.create(target=poi)
         intervention_trek = InterventionFactory.create(target=trek)
         intervention_service = InterventionFactory.create(target=service)
+        intervention_topo = InterventionFactory.create(target=topo)
         blade = BladeFactory(signage=signa, number="1")
         intervention_blade = InterventionFactory.create(target=blade)
+
+        intervention_other = InterventionFactory.create(target=signa_other)
+
         response = self.client.get(signa.get_detail_url())
         self.assertEqual(response.status_code, 200)
+
         self.assertContains(response, intervention_signa.target_display)
         self.assertContains(response, intervention_infra.target_display)
         self.assertContains(response, intervention_poi.target_display)
         self.assertContains(response, intervention_trek.target_display)
         self.assertContains(response, intervention_service.target_display)
         self.assertContains(response, intervention_blade.target_display)
+        self.assertContains(response, intervention_topo.target_display)
+
+        self.assertNotContains(response, intervention_other.target_display)
 
     def test_creation_form_on_signage_with_errors(self):
         self.login()

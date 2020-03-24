@@ -232,6 +232,23 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         return "%s (%s)" % (self.name, self.date)
 
     @classmethod
+    def get_interventions(cls, obj):
+        blade_content_type = ContentType.objects.get(model='blade')
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            topologies = list(Topology.overlapping(obj).values_list('pk', flat=True))
+        else:
+            area = obj.geom.buffer(settings.INTERVENTION_INTERSECTION_MARGIN)
+            topologies = list(Topology.objects.existing().filter(geom__intersects=area).values_list('pk', flat=True))
+        topologies_intervention = cls.objects.existing().filter(target_id__in=topologies).exclude(
+            target_type=blade_content_type).distinct('pk')
+        interventions = list(topologies_intervention)
+        if 'geotrek.signage' in settings.INSTALLED_APPS:
+            blades = list(Blade.objects.filter(signage__in=topologies).values_list('id', flat=True))
+            blades_intervention = cls.objects.existing().filter(target_id__in=blades, target_type=blade_content_type)
+            interventions.extend(blades_intervention)
+        return interventions
+
+    @classmethod
     def path_interventions(cls, path):
         topologies = list(Topology.objects.filter(aggregations__path=path).values_list('pk', flat=True))
         if 'geotrek.signage' in settings.INSTALLED_APPS:
