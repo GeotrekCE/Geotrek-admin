@@ -118,6 +118,11 @@ class ReportActivity(models.Model):
     """Activity involved in report"""
     activity = models.CharField(verbose_name=_("Activity"),
                                 max_length=128)
+    suricate_id = models.CharField(_("Suricate id"),
+                                   null=True,
+                                   blank=True,
+                                   default=None,
+                                   max_length=50)
 
     class Meta:
         verbose_name = _("Activity")
@@ -131,6 +136,11 @@ class ReportActivity(models.Model):
 class ReportCategory(models.Model):
     category = models.CharField(verbose_name=_("Category"),
                                 max_length=128)
+    suricate_id = models.CharField(_("Suricate id"),
+                                   null=True,
+                                   blank=True,
+                                   default=None,
+                                   max_length=50)
 
     class Meta:
         verbose_name = _("Category")
@@ -157,6 +167,11 @@ class ReportProblemMagnitude(models.Model):
     """Report problem magnitude"""
     magnitude = models.CharField(verbose_name=_("Problem magnitude"),
                                  max_length=128)
+    suricate_id = models.CharField(_("Suricate id"),
+                                   null=True,
+                                   blank=True,
+                                   default=None,
+                                   max_length=50)
 
     class Meta:
         verbose_name = _("Problem magnitude")
