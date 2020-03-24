@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from django_filters import ChoiceFilter
 
@@ -28,11 +29,19 @@ class PolygonTopologyFilter(PolygonFilter):
         if not value:
             return qs
         lookup = self.lookup_expr
+        blade_content_type = ContentType.objects.get(model='blade')
+        topologies = list(Topology.objects.filter(**{'geom__%s' % lookup: value}).values_list('id', flat=True))
+        topologies_intervention = Intervention.objects.existing().filter(target_id__in=topologies).exclude(
+            target_type=blade_content_type).distinct('pk').values_list('id', flat=True)
 
-        inner_qs = list(Topology.objects.filter(**{'geom__%s' % lookup: value}).values_list('id', flat=True))
+        interventions = list(topologies_intervention)
         if 'geotrek.signage' in settings.INSTALLED_APPS:
-            inner_qs.extend(Blade.objects.filter(**{'signage__geom__%s' % lookup: value}).values_list('id', flat=True))
-        qs = qs.filter(**{'target_id__in': inner_qs})
+            blades = list(Blade.objects.filter(signage__in=topologies).values_list('id', flat=True))
+            blades_intervention = Intervention.objects.existing().filter(target_id__in=blades,
+                                                                         target_type=blade_content_type).values_list('id',
+                                                                                                                     flat=True)
+            interventions.extend(blades_intervention)
+        qs = qs.filter(pk__in=interventions)
         return qs
 
 
