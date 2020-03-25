@@ -22,10 +22,11 @@ if [ ! -f var/conf/parsers.py ]; then
     touch var/conf/parsers.py
 fi
 
-# When a volume is mounted to /opt/geotrek-admin, venv is hidden
+# When a volume is mounted to /app/src and venv are hidden
 if [ "$ENV" = "dev" ]; then
     if [ ! -d env ]; then
         python3 -m venv env
+        env/bin/pip install -U setuptools==45.2.0
         env/bin/pip install --no-cache-dir -r requirements.txt
     fi
 fi

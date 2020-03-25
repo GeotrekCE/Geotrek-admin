@@ -1,10 +1,12 @@
 from __future__ import absolute_import
 
 import importlib
+from os.path import join
 import sys
 from celery import Task, shared_task, current_task
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
+from django.conf import settings
 
 
 class GeotrekImportTask(Task):
@@ -30,6 +32,18 @@ class GeotrekImportTask(Task):
         )
 
 
+def get_parser_class(module_name, class_name):
+    if module_name == 'parsers':
+        module_path = join(settings.VAR_DIR, 'conf/parsers.py')
+        spec = importlib.util.spec_from_file_location(module_name, module_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+    else:
+        module = importlib.import_module(module_name)
+
+    return getattr(module, class_name)
+
+
 @shared_task(base=GeotrekImportTask, name='geotrek.common.import-file')
 def import_datas(**kwargs):
     class_name = kwargs.get('name')
@@ -37,12 +51,8 @@ def import_datas(**kwargs):
     module_name = kwargs.get('module')
     encoding = kwargs.get('encoding')
     user_pk = kwargs.get('user', None)
-    try:
-        module = importlib.import_module(module_name)
-        Parser = getattr(module, class_name)
-    except ImportError:
-        raise ImportError("Failed to import parser class '{0}' from module '{1}'".format(
-            class_name, module_name))
+
+    Parser = get_parser_class(module_name, class_name)
 
     def progress_cb(progress, line, eid):
         current_task.update_state(
@@ -81,12 +91,8 @@ def import_datas_from_web(**kwargs):
     class_name = kwargs.get('name')
     module_name = kwargs.get('module')
     user_pk = kwargs.get('user', None)
-    try:
-        module = importlib.import_module(module_name)
-        Parser = getattr(module, class_name)
-    except ImportError:
-        raise ImportError("Failed to import parser class '{0}' from module '{1}'".format(
-            class_name, module_name))
+
+    Parser = get_parser_class(module_name, class_name)
 
     def progress_cb(progress, line, eid):
         current_task.update_state(
