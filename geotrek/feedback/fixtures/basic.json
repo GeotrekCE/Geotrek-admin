@@ -6,7 +6,7 @@
         "category": "Environnement",
         "category_en": "Environment",
         "category_fr": "Environnement",
-        "suricate_id": "Environnement"
+        "suricate_id": 3
     }
 },
 {
@@ -16,7 +16,7 @@
         "category": "Balisage / Signal\u00e9tique",
         "category_en": "Signage",
         "category_fr": "Balisage / Signal\u00e9tique",
-        "suricate_id": "Balisage / Signal\u00e9tique"
+        "suricate_id": 0
     }
 },
 {
@@ -26,7 +26,7 @@
         "category": "Incident / S\u00e9curit\u00e9",
         "category_en": "Incident / Security",
         "category_fr": "Incident / S\u00e9curit\u00e9",
-        "suricate_id": "Incident / S\u00e9curit\u00e9"
+        "suricate_id": 2
     }
 },
 {
@@ -36,7 +36,7 @@
         "category": "Conflits d'usage",
         "category_en": "conflicts",
         "category_fr": "Conflits d'usage",
-        "suricate_id": "Conflits d'usage"
+        "suricate_id": 1
     }
 },
 {
@@ -45,7 +45,7 @@
     "fields": {
         "magnitude": "Utilisation possible",
         "magnitude_fr": "Utilisation possible",
-        "suricate_id": "possible"
+        "suricate_id": 0
     }
 },
 {
@@ -54,7 +54,7 @@
     "fields": {
         "magnitude": "Utilisation difficile",
         "magnitude_fr": "Utilisation difficile",
-        "suricate_id": "difficile"
+        "suricate_id": 1
     }
 },
 {
@@ -63,7 +63,7 @@
     "fields": {
         "magnitude": "Utilisation impossible",
         "magnitude_fr": "Utilisation impossible",
-        "suricate_id": "impossible"
+        "suricate_id": 2
     }
 },
 {
