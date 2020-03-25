@@ -42,3 +42,6 @@ def post_report_to_suricate(report):
     response = requests.post(URL + 'wsSendReport', params)
 
     logger.debug("Report sent to Suricate API with status {0}".format(response.status_code))
+
+    if response.status_code not in [200, 201]:
+        raise Exception("Failed to post on Suricate API")
