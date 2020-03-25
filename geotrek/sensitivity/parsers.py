@@ -46,7 +46,7 @@ class BiodivParser(Parser):
         return kwargs
 
     def next_row(self):
-        response = self.get_or_retry('https://biodiv-sports.fr/api/v2/sportpractice/')
+        response = self.request_or_retry('https://biodiv-sports.fr/api/v2/sportpractice/')
         for practice in response.json()['results']:
             defaults = {'name_' + lang: practice['name'][lang] for lang in practice['name'].keys() if lang in settings.MODELTRANSLATION_LANGUAGES}
             SportPractice.objects.get_or_create(id=practice['id'], defaults=defaults)
@@ -57,7 +57,7 @@ class BiodivParser(Parser):
         url += '&in_bbox={}'.format(','.join([str(coord) for coord in bbox.extent]))
         if self.practices:
             url += '&practices={}'.format(','.join([str(practice) for practice in self.practices]))
-        response = self.get_or_retry(url)
+        response = self.request_or_retry(url)
 
         self.root = response.json()
         self.nb = int(self.root['count'])

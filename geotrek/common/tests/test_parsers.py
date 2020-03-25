@@ -151,6 +151,7 @@ class AttachmentParserTests(TestCase):
     def test_attachment_not_updated(self, mocked_head, mocked_get):
         mocked_get.return_value.status_code = 200
         mocked_get.return_value.content = ''
+        mocked_head.return_value.status_code = 200
         mocked_head.return_value.headers = {'content-length': 0}
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)

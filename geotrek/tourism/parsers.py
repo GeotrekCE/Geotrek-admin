@@ -103,7 +103,7 @@ class ApidaeParser(AttachmentParserMixin, Parser):
                 'first': self.skip,
                 'responseFields': self.responseFields
             }
-            response = self.get_or_retry(self.url, {'query': json.dumps(params)})
+            response = self.request_or_retry(self.url, params={'query': json.dumps(params)})
             self.root = response.json()
             self.nb = int(self.root['numFound'])
             for row in self.items:
@@ -519,7 +519,7 @@ class EspritParcParser(AttachmentParserMixin, Parser):
         return self.root['responseData']
 
     def next_row(self):
-        response = self.get_or_retry(self.url)
+        response = self.request_or_retry(self.url)
         self.root = response.json()
         self.nb = int(self.root['numFound'])
 
