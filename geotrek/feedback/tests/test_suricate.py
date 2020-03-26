@@ -10,7 +10,7 @@ from geotrek.feedback.helpers import post_report_to_suricate
 class SuricateAPITest(TestCase):
     """Test Suricate API"""
 
-    @override_settings(SEND_REPORT_TO_SURICATE=True)
+    @override_settings(SURICATE_REPORT_ENABLED=True)
     @mock.patch('geotrek.feedback.models.post_report_to_suricate')
     def test_save_report_post_to_suricate(self, mock_post_report_to_suricate):
         """Test post to suricate on save Report
@@ -48,7 +48,7 @@ class SuricateAPITest(TestCase):
         result = post_report_to_suricate(report)
         self.assertEqual(result, None)
 
-    @override_settings(SEND_REPORT_TO_SURICATE=True)
+    @override_settings(SURICATE_REPORT_ENABLED=True)
     @mock.patch('geotrek.feedback.helpers.requests.post')
     def test_post_request_to_suricate_fails(self, mock_post):
         """Test post request itself but fails

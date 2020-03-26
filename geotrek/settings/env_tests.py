@@ -32,7 +32,7 @@ class DisableMigrations():
 
 MIGRATION_MODULES = DisableMigrations()
 
-SURICATE_SETTINGS = {
+SURICATE_REPORT_SETTINGS = {
     'URL': 'http://sentinelles-preprod.sportsdenature.fr/rest/suricate/wsstandard/',
     'ID_ORIGIN': 'geotrek',
     'PRIVATE_KEY_CLIENT_SERVER': '',
