@@ -106,7 +106,7 @@ def on_report_saved(sender, instance, created, **kwargs):
         logger.error('Email could not be sent to managers.')
         logger.exception(e)  # This sends an email to admins :)
 
-    if settings.SEND_REPORT_TO_SURICATE and settings.SURICATE_SETTINGS['ID_USER']:
+    if settings.SURICATE_REPORT_ENABLED and settings.SURICATE_REPORT_SETTINGS['ID_USER']:
         try:
             post_report_to_suricate(instance)
         except Exception as e:
