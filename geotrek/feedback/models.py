@@ -121,7 +121,6 @@ class ReportActivity(models.Model):
     suricate_id = models.CharField(_("Suricate id"),
                                    null=True,
                                    blank=True,
-                                   default=None,
                                    max_length=50)
 
     class Meta:
@@ -139,7 +138,6 @@ class ReportCategory(models.Model):
     suricate_id = models.CharField(_("Suricate id"),
                                    null=True,
                                    blank=True,
-                                   default=None,
                                    max_length=50)
 
     class Meta:
@@ -170,7 +168,6 @@ class ReportProblemMagnitude(models.Model):
     suricate_id = models.CharField(_("Suricate id"),
                                    null=True,
                                    blank=True,
-                                   default=None,
                                    max_length=50)
 
     class Meta:
