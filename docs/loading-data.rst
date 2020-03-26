@@ -4,31 +4,6 @@
 LOADING DATA
 ============
 
-Required Initial Data
----------------------
-
-Load basic data :
-
-::
-
-    docker-compose run web initial.sh
-
-:note:
-
-    This command will load default users, groups, default values for lists... in French and English. So you need to enable EN and FR at least in ``custom.py``
-
-
-Required Super User
--------------------
-
-.. code-block:: bash
-
-    docker-compose run web ./manage.py createsuperuser
-
-
-You will be prompted to enter an username, a password and mail address for your super user.
-This first user will allow you to login in Geotrek, having all permissions to create and manage other users.
-
 
 Prerequisites for your data
 ---------------------------
@@ -36,9 +11,8 @@ Prerequisites for your data
 Layers
 ~~~~~~
 
-* WMS (scan + ortho)
-* Projection
-* Bounding box in native projection
+* WMTS protocol
+* WebMercator Projection
 
 Core
 ~~~~
@@ -82,7 +56,7 @@ And use the Geotrek command to load it into PostGIS :
 
 ::
 
-    docker-compose run web ./manage.py loaddem <PATH>/dem.tif
+    sudo geotrek loaddem <PATH>/dem.tif
 
 
 :note:

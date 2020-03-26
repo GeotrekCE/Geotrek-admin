@@ -6,7 +6,7 @@ IMPORT DATA
 Configure APIDAE (ex-SITRA) import
 ----------------------------------
 
-To import touristic content from APIDAE (ex-SITRA), edit ``var/conf/parsers.py`` file with the following content:
+To import touristic content from APIDAE (ex-SITRA), edit ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
 
 ::
 
@@ -38,7 +38,7 @@ To apply changes, you may have to run ``sudo supervisorctl restart all``.
 Configure Marque Esprit Parc import
 -----------------------------------
 
-To import touristic content from Esprit Parc national database, create (or update) ``var/conf/parsers.py`` file with the following content:
+To import touristic content from Esprit Parc national database, create (or update) ``/opt/geotrek-admin/var/conf/parsers.py`` file with the following content:
 
 ::
 
@@ -102,7 +102,7 @@ Just run:
 
 ::
 
-    ./bin/django import HebergementParser
+    sudo geotrek import HebergementParser
 
 Change ``HebergementParser`` to match one of the class names in ``var/conf/parsers.py`` file.
 You can add ``-v2`` parameter to make the command more verbose (show progress).
@@ -122,12 +122,12 @@ To list all Geotrek commands available:
 
 ::
 
-    ./bin/django
+    sudo geotrek
     
 To get help about a command:
 
 ::
 
-    ./bin/django help <subcommand>
+    sudo geotrek help <subcommand>
     
-Example: ``./bin/django help loadpoi``
+Example: ``sudo geotrek help loadpoi``

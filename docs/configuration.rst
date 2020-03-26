@@ -6,15 +6,16 @@ CONFIGURATION
 Configuration update
 --------------------
 
-After editing ``.env``, refresh the running instance with :
-
-::
-
-    sudo systemctl restart geotrek
+To update server name, or set workers number or timeout, run `sudo dpkg-reconfigure geotrek-admin`.
 
 
-There a few cases where running ``install.sh`` would be necessary. If you
-change the ``SERVER_NAME`` or other parameters that affect *nginx* site configuration.
+Nginx configuration
+-------------------
+
+Nginx configuration is controlled by Geotrek and will be erased at each upgrade.
+Do not modify /etc/nginx/sites-available/geotrek.conf or /etc/nginx/sites-enable/geotrek.conf.
+Modify /opt/geotrek-admin/var/conf/nginx.conf.in instead.
+Then run `sudo dpkg-reconfigure geotrek-admin` to update nginx.conf.
 
 
 Spatial extents
@@ -26,35 +27,6 @@ is available at http://server/tools/extents/.
 :notes:
 
     Administrator privileges are required.
-
-
-Custom spatial reference
-------------------------
-
-*Geotrek* comes with a few projection systems included (*EPSG:2154*, *EPSG:32600*,
-*EPSG:32620*, *EPSG:32632*)
-
-In order to use a specific projection system :
-
-* Make sure the SRID is present in the ``spatial_ref_sys`` table. See PostGIS
-  documentation to add new ones
-* Download the JavaScript *proj4js* definition from `http://spatialreference.org`_
-  and save it to `Geotrek/static/proj4js/<SRID>.js`
-
-Using the command-line :
-
-::
-
-    curl "http://spatialreference.org/ref/epsg/<SRID>/proj4js/" > Geotrek/var/conf/extra_static/proj4js/<SRID>.js
-
-
-:note:
-
-    *Geotrek* won't run if the spatial reference has not a metric unit.
-
-It's possible to store your data using a specific SRID, and use a classic
-Google Maps projection (3857) in the Web interface (useful for *WMTS* or *OpenStreetMap* layers).
-See :ref:`advanced configuration <advanced-configuration-section>`...
 
 
 Users management
@@ -118,17 +90,15 @@ Geotrek will send emails :
 * to administrators when internal errors occur
 * to managers when a feedback report is created
 
-Email configuration takes place in ``var/conf/custom.py``, where you control
+Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control
 recipients emails (``ADMINS``, ``MAIL_MANAGERS``) and email server configuration.
-
-Database server parameters and domain name take place in .env file
 
 You can test you configuration with the following command. A fake email will
 be sent to the managers :
 
 ::
 
-    docker-compose run web ./manage.py test_managers_emails
+    sudo geotrek test_managers_emails
 
 
 Advanced Configuration

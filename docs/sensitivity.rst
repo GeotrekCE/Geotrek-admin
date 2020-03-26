@@ -40,7 +40,7 @@ On command line, run
 
 .. code-block :: bash
 
-    docker-compose run web ./manage.py import geotrek.sensitivity.parsers.BiodivParser
+    sudo geotrek import geotrek.sensitivity.parsers.BiodivParser
 
 
 Import from shapefile
@@ -53,13 +53,13 @@ On command line, run:
 
 .. code-block :: bash
 
-    docker-compose run web ./manage.py import geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser <file.shp>
+    sudo geotrek import geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser <file.shp>
 
 or:
 
 .. code-block :: bash
 
-    docker-compose run web ./manage.py  import geotrek.sensitivity.parsers.RegulatorySensitiveAreaShapeParser <file.shp>.
+    sudo geotrek  import geotrek.sensitivity.parsers.RegulatorySensitiveAreaShapeParser <file.shp>.
 
 Attributes for "zones sensibles espèce" are:
  
@@ -84,6 +84,6 @@ Just run:
 
 .. code-block :: bash
 
-    docker-compose run web ./manage.py sync_rando
+    sudo geotrek sync_rando
     
 as usual. If sensitivity module is enabled, sensitive areas will be automatically synced.

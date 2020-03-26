@@ -7,20 +7,10 @@ ADVANCED CONFIGURATION
 Custom setting file
 -------------------
 
-Geotrek configuration is currently restricted to values present in ``.env`` and ``var/conf/custom.py``.
+Geotrek configuration is done in ``/opt/geotrek-admin/var/conf/custom.py`` file.
+The list of all overridable setting and default values can be found `there<https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
 
-However, it is still possible to all django or geotrek settings in custom.py :
-
-.. code-block :: python
-
-    from .prod import *
-
-    # My custom value
-    HIDDEN_OPTION = 3.14
-
-All overridable setting can be found in geotrek/settings.base.py
-
-* As for any change in ``custom.py``, re-run ``sudo systemctl restart geotrek``.
+After any change in ``custom.py``, run ``sudo supervisorctl restart all``.
 
 
 Disable modules and components

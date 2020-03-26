@@ -23,11 +23,8 @@ Installation
 1. Run docker-compose run --rm web update.sh
 1. Run docker-compose up
 
+
 Management commands
 -------------------
 
-Replace `geotrek …` command by `cd <install directory>; docker-compose run --rm ./manage.py …`
-
-Upgrade
--------
-
+Replace `sudo geotrek …` command by `cd <install directory>; docker-compose run --rm ./manage.py …`
