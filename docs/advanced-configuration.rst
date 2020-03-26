@@ -52,6 +52,26 @@ In order to remove zoning combo-boxes on list map:
     Never forget to mention this customization if you ask for community support.
 
 
+Send feedback reports to Suricate
+---------------------------------
+
+It is possible to send report saved to Suricate API (deactivated by default).
+
+In order to activate suricate reports and your account settings:
+
+.. code-block :: python
+
+    SEND_REPORT_TO_SURICATE = True
+
+    SURICATE_SETTINGS = {
+        'URL': <Suricate API Url>,
+        'ID_ORIGIN':  <Suricate origin ID>,
+        'PRIVATE_KEY_CLIENT_SERVER':  <Suricate private key client server>,
+        'PRIVATE_KEY_SERVER_CLIENT': <Suricate private key server client>,
+        'ID_USER': <Suricate user ID>,
+    }
+
+
 Anonymize feedback reports
 ---------------------------
 
