@@ -19,10 +19,10 @@ def send_report_managers(report, template_name='feedback/report_email.html'):
 def post_report_to_suricate(report):
     """Send report to Suricate Rest API"""
 
-    URL = settings.SURICATE_SETTINGS['URL']
-    ID_ORIGIN = settings.SURICATE_SETTINGS['ID_ORIGIN']
-    PRIVATE_KEY_CLIENT_SERVER = settings.SURICATE_SETTINGS['PRIVATE_KEY_CLIENT_SERVER']
-    ID_USER = settings.SURICATE_SETTINGS['ID_USER']
+    URL = settings.SURICATE_REPORT_SETTINGS['URL']
+    ID_ORIGIN = settings.SURICATE_REPORT_SETTINGS['ID_ORIGIN']
+    PRIVATE_KEY_CLIENT_SERVER = settings.SURICATE_REPORT_SETTINGS['PRIVATE_KEY_CLIENT_SERVER']
+    ID_USER = settings.SURICATE_REPORT_SETTINGS['ID_USER']
     CHECK = md5((PRIVATE_KEY_CLIENT_SERVER + ID_USER).encode()).hexdigest()
 
     params = {

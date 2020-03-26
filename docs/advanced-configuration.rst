@@ -61,9 +61,9 @@ In order to activate suricate reports and your account settings:
 
 .. code-block :: python
 
-    SEND_REPORT_TO_SURICATE = True
+    SURICATE_REPORT_ENABLED = True
 
-    SURICATE_SETTINGS = {
+    SURICATE_REPORT_SETTINGS = {
         'URL': <Suricate API Url>,
         'ID_ORIGIN':  <Suricate origin ID>,
         'PRIVATE_KEY_CLIENT_SERVER':  <Suricate private key client server>,
@@ -1216,9 +1216,9 @@ If false, no mail will be sent to the sender of any feedback on Rando web site
 
 ::
 
-    SEND_REPORT_TO_SURICATE = False
+    SURICATE_REPORT_ENABLED = False
 
-    SURICATE_SETTINGS = {
+    SURICATE_REPORT_SETTINGS = {
         'URL': 'http://sentinelles-preprod.sportsdenature.fr/rest/suricate/wsstandard/',
         'ID_ORIGIN': 'geotrek',
         'PRIVATE_KEY_CLIENT_SERVER': '<your private key client / server>',
