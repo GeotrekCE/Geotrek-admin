@@ -4,6 +4,8 @@ from django.core.mail import send_mail
 from django.utils.translation import ugettext as _
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from mapentity import views as mapentity_views
 
 from geotrek.feedback.filters import ReportFilterSet
@@ -48,6 +50,26 @@ class CategoryList(mapentity_views.JSONResponseMixin, ListView):
     def get_context_data(self, **kwargs):
         return [{'id': c.id,
                  'label': c.category} for c in self.object_list]
+
+
+class FeedbackOptionsView(APIView):
+    permission_classes = [AllowAny, ]
+
+    def get(self, request, *args, **kwargs):
+        categories = feedback_models.ReportCategory.objects.all()
+        cat_serializer = feedback_serializers.ReportCategorySerializer(categories, many=True)
+        activities = feedback_models.ReportActivity.objects.all()
+        activities_serializer = feedback_serializers.ReportActivitySerializer(activities, many=True)
+        magnitude_problems = feedback_models.ReportProblemMagnitude.objects.all()
+        mag_serializer = feedback_serializers.ReportProblemMagnitudeSerializer(magnitude_problems, many=True)
+
+        options = {
+            "categories": cat_serializer.data,
+            "activities": activities_serializer.data,
+            "magnitudeProblems": mag_serializer.data
+        }
+
+        return Response(options)
 
 
 class ReportViewSet(mapentity_views.MapEntityViewSet):
