@@ -104,7 +104,7 @@ No changes. Just force a new build in CI
 - Allow to merge dropdown list items in admin. Check them in list view and choose "Action: Merge"
 - Add a django command to erase email from feedback reports after 365 days
 - Add fields to reports for Suricate support
-- Add helper to send report to Suricate API on save
+- Add helper to send report to Suricate API on save, if setting `SEND_REPORT_TO_SURICATE` is `True`
 
 **Upgrade notes**
 
