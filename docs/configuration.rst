@@ -6,16 +6,23 @@ CONFIGURATION
 Configuration update
 --------------------
 
-To update server name, or set workers number or timeout, run `sudo dpkg-reconfigure geotrek-admin`.
+To update server name, or set workers number or timeout, run:
+
+::
+
+    sudo dpkg-reconfigure geotrek-admin
 
 
 Nginx configuration
 -------------------
 
 Nginx configuration is controlled by Geotrek and will be erased at each upgrade.
-Do not modify /etc/nginx/sites-available/geotrek.conf or /etc/nginx/sites-enable/geotrek.conf.
-Modify /opt/geotrek-admin/var/conf/nginx.conf.in instead.
-Then run `sudo dpkg-reconfigure geotrek-admin` to update nginx.conf.
+Do not modify ``/etc/nginx/sites-available/geotrek.conf`` or ``/etc/nginx/sites-enable/geotrek.conf``.
+Modify ``/opt/geotrek-admin/var/conf/nginx.conf.in`` instead. To update nginx.conf, then run:
+
+::
+
+    sudo dpkg-reconfigure geotrek-admin
 
 
 Spatial extents
