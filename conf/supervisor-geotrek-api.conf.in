@@ -1,9 +1,0 @@
-[program:geotrek_api]
-command=/opt/geotrek-admin/bin/gunicorn --config=/opt/geotrek-admin/var/conf/gunicorn-geotrek_api.conf.py geotrek.wsgi
-process_name=geotrek_api
-autostart=true
-user=root
-directory=/opt/geotrek-admin
-priority=20
-redirect_stderr=true
-stdout_logfile=/opt/geotrek-admin/var/log/supervisor/geotrek-api.log

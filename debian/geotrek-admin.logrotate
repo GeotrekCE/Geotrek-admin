@@ -1,4 +1,4 @@
-/opt/geotrek-admin/var/log/*.log /opt/geotrek-admin/var/log/supervisor/*.log {
+/opt/geotrek-admin/var/log/*.log {
     rotate 4
     su root root
     weekly

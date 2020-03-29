@@ -25,7 +25,6 @@ Depends:
  ${shlibs:Depends},
  nginx,
  memcached,
- supervisor,
  gettext,
  gdal-bin,
  fonts-dejavu-core,

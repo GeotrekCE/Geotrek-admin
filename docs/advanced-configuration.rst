@@ -15,7 +15,7 @@ After any change in ``custom.py``, run:
 
 ::
 
-    sudo supervisorctl restart all
+    sudo service geotrek restart
 
 
 Disable modules and components

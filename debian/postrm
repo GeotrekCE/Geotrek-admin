@@ -5,27 +5,12 @@
 
 if [ "$1" = "purge" ]; then
 	rm -rf /opt/geotrek-admin/var
+	deluser --quiet geotrek || true
 fi
 
 if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
 	rm -f /etc/nginx/sites-available/geotrek.conf
 	rm -f /etc/nginx/sites-enabled/geotrek.conf
-	rm -f /etc/supervisor/conf.d/supervisor-geotrek.conf
-	rm -f /etc/supervisor/conf.d/supervisor-geotrek-api.conf
-	rm -f /etc/supervisor/conf.d/supervisor-geotrek-celery.conf
-
-	# Reload supervisor
-	if [ -f /etc/init.d/supervisor ] ; then
-		if which invoke-rc.d > /dev/null ; then
-			if invoke-rc.d supervisor status > /dev/null 2>&1 ; then
-				invoke-rc.d supervisor reload 3>/dev/null || true
-			fi
-		else
-			if /etc/init.d/supervisor status > /dev/null 2>&1 ; then
-				/etc/init.d/supervisor reload 3>/dev/null || true
-			fi
-		fi
-	fi
 
 	# Reload nginx
 	if [ -f /etc/init.d/nginx ] ; then

@@ -33,7 +33,7 @@ Then set up appropriate values:
 You can duplicate the class. Each class must have a different name.
 Don't forget the u character before strings if they contain non-ascii characters.
 
-To apply changes, you may have to run ``sudo supervisorctl restart all``.
+To apply changes, you may have to run ``sudo service geotrek restart``.
 
 Configure Marque Esprit Parc import
 -----------------------------------

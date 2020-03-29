@@ -49,4 +49,5 @@ docs/_build/
 /debian/geotrek-admin.substvars
 /debian/geotrek-admin/
 /debian/geotrek-admin.postinst.debhelper
+/debian/geotrek-admin.prerm.debhelper
 /debian/geotrek-admin.postrm.debhelper
