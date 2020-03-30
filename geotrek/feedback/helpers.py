@@ -22,21 +22,20 @@ def post_report_to_suricate(report):
     URL = settings.SURICATE_REPORT_SETTINGS['URL']
     ID_ORIGIN = settings.SURICATE_REPORT_SETTINGS['ID_ORIGIN']
     PRIVATE_KEY_CLIENT_SERVER = settings.SURICATE_REPORT_SETTINGS['PRIVATE_KEY_CLIENT_SERVER']
-    ID_USER = settings.SURICATE_REPORT_SETTINGS['ID_USER']
-    CHECK = md5((PRIVATE_KEY_CLIENT_SERVER + ID_USER).encode()).hexdigest()
+    CHECK = md5((PRIVATE_KEY_CLIENT_SERVER + report.email).encode()).hexdigest()
 
     params = {
         'id_origin': ID_ORIGIN,
-        'id_user': ID_USER,
+        'id_user': report.email,
         'lat': report.geom.y,
         'long': report.geom.x,
         'report': report.comment,
-        'activite': report.activity.id,
-        'nature_prb': report.category.id,
-        'ampleur_prb': report.problem_magnitude.id,
+        'activite': report.activity.suricate_id,
+        'nature_prb': report.category.suricate_id,
+        'ampleur_prb': report.problem_magnitude.suricate_id,
         'check': CHECK,
         'os': 'linux',
-        'version': '0.1',
+        'version': settings.VERSION,
     }
 
     response = requests.post(URL + 'wsSendReport', params)

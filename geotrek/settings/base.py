@@ -770,7 +770,6 @@ SURICATE_REPORT_SETTINGS = {
     'ID_ORIGIN': '',
     'PRIVATE_KEY_CLIENT_SERVER': '',
     'PRIVATE_KEY_SERVER_CLIENT': '',
-    'ID_USER': '',
 }
 
 # Parser parameters for retries and error codes
