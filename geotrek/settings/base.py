@@ -720,3 +720,8 @@ PRIMARY_COLOR = "#7b8c12"
 ONLY_EXTERNAL_PUBLIC_PDF = False
 
 SEND_REPORT_ACK = True
+
+# Parser parameters for retries and error codes
+PARSER_RETRY_SLEEP_TIME = 60  # time of sleep between requests
+PARSER_NUMBER_OF_TRIES = 3  # number of requests to try before abandon
+PARSER_RETRY_HTTP_STATUS = [503]
