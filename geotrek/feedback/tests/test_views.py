@@ -108,44 +108,44 @@ class CreateReportsAPITest(BaseAPITest):
 class ListCategoriesTest(TranslationResetMixin, BaseAPITest):
     def setUp(self):
         super(ListCategoriesTest, self).setUp()
-        self.cat = feedback_factories.ReportCategoryFactory(category_it='Obstaculo')
+        self.cat = feedback_factories.ReportCategoryFactory(label_it='Obstaculo')
 
     def test_categories_can_be_obtained_as_json(self):
         response = self.client.get('/api/en/feedback/categories.json')
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertEqual(data[0]['id'], self.cat.id)
-        self.assertEqual(data[0]['label'], self.cat.category)
+        self.assertEqual(data[0]['label'], self.cat.label)
 
     def test_categories_are_translated(self):
         response = self.client.get('/api/it/feedback/categories.json')
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertEqual(data[0]['label'], self.cat.category_it)
+        self.assertEqual(data[0]['label'], self.cat.label_it)
 
 
 class ListOptionsTest(TranslationResetMixin, BaseAPITest):
     def setUp(self):
         super(ListOptionsTest, self).setUp()
-        self.activity = feedback_factories.ReportActivityFactory(activity_it='Hiking')
-        self.cat = feedback_factories.ReportCategoryFactory(category_it='Obstaculo')
-        self.pb_magnitude = feedback_factories.ReportProblemMagnitudeFactory(magnitude_it='Possible')
+        self.activity = feedback_factories.ReportActivityFactory(label_it='Hiking')
+        self.cat = feedback_factories.ReportCategoryFactory(label_it='Obstaculo')
+        self.pb_magnitude = feedback_factories.ReportProblemMagnitudeFactory(label_it='Possible')
 
     def test_options_can_be_obtained_as_json(self):
         response = self.client.get('/api/en/feedback/options.json')
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertEqual(data['activities'][0]['id'], self.activity.id)
-        self.assertEqual(data['activities'][0]['label'], self.activity.activity)
+        self.assertEqual(data['activities'][0]['label'], self.activity.label)
         self.assertEqual(data['categories'][0]['id'], self.cat.id)
-        self.assertEqual(data['categories'][0]['label'], self.cat.category)
+        self.assertEqual(data['categories'][0]['label'], self.cat.label)
         self.assertEqual(data['magnitudeProblems'][0]['id'], self.pb_magnitude.id)
-        self.assertEqual(data['magnitudeProblems'][0]['label'], self.pb_magnitude.magnitude)
+        self.assertEqual(data['magnitudeProblems'][0]['label'], self.pb_magnitude.label)
 
     def test_options_are_translated(self):
         response = self.client.get('/api/it/feedback/options.json')
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertEqual(data['activities'][0]['label'], self.activity.activity_it)
-        self.assertEqual(data['categories'][0]['label'], self.cat.category_it)
-        self.assertEqual(data['magnitudeProblems'][0]['label'], self.pb_magnitude.magnitude_it)
+        self.assertEqual(data['activities'][0]['label'], self.activity.label_it)
+        self.assertEqual(data['categories'][0]['label'], self.cat.label_it)
+        self.assertEqual(data['magnitudeProblems'][0]['label'], self.pb_magnitude.label_it)

@@ -49,7 +49,7 @@ class CategoryList(mapentity_views.JSONResponseMixin, ListView):
 
     def get_context_data(self, **kwargs):
         return [{'id': c.id,
-                 'label': c.category} for c in self.object_list]
+                 'label': c.label} for c in self.object_list]
 
 
 class FeedbackOptionsView(APIView):

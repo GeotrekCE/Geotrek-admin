@@ -27,24 +27,18 @@ class ReportGeojsonSerializer(GeoFeatureModelSerializer, ReportSerializer):
 
 
 class ReportActivitySerializer(rest_serializers.ModelSerializer):
-    label = rest_serializers.CharField(source='activity', read_only=True)
-
     class Meta:
         model = feedback_models.ReportActivity
         fields = ['id', 'label']
 
 
 class ReportCategorySerializer(rest_serializers.ModelSerializer):
-    label = rest_serializers.CharField(source='category', read_only=True)
-
     class Meta:
         model = feedback_models.ReportCategory
         fields = ['id', 'label']
 
 
 class ReportProblemMagnitudeSerializer(rest_serializers.ModelSerializer):
-    label = rest_serializers.CharField(source='magnitude', read_only=True)
-
     class Meta:
         model = feedback_models.ReportProblemMagnitude
         fields = ['id', 'label']
