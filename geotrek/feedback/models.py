@@ -116,59 +116,56 @@ def on_report_saved(sender, instance, created, **kwargs):
 
 class ReportActivity(models.Model):
     """Activity involved in report"""
-    activity = models.CharField(verbose_name=_("Activity"),
-                                max_length=128)
-    suricate_id = models.CharField(_("Suricate id"),
+    label = models.CharField(verbose_name=_("Activity"),
+                             max_length=128)
+    suricate_id = models.PositiveIntegerField(_("Suricate id"),
                                    null=True,
-                                   blank=True,
-                                   max_length=50)
+                                   blank=True)
 
     class Meta:
         verbose_name = _("Activity")
         verbose_name_plural = _("Activities")
-        ordering = ("activity",)
+        ordering = ("label",)
 
     def __str__(self):
-        return self.activity
+        return self.label
 
 
 class ReportCategory(models.Model):
-    category = models.CharField(verbose_name=_("Category"),
-                                max_length=128)
-    suricate_id = models.CharField(_("Suricate id"),
+    label = models.CharField(verbose_name=_("Category"),
+                             max_length=128)
+    suricate_id = models.PositiveIntegerField(_("Suricate id"),
                                    null=True,
-                                   blank=True,
-                                   max_length=50)
+                                   blank=True)
 
     class Meta:
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
-        ordering = ("category",)
+        ordering = ("label",)
 
     def __str__(self):
-        return self.category
+        return self.label
 
 
 class ReportStatus(models.Model):
-    status = models.CharField(verbose_name=_("Status"),
-                              max_length=128)
+    label = models.CharField(verbose_name=_("Status"),
+                             max_length=128)
 
     class Meta:
         verbose_name = _("Status")
         verbose_name_plural = _("Status")
 
     def __str__(self):
-        return self.status
+        return self.label
 
 
 class ReportProblemMagnitude(models.Model):
     """Report problem magnitude"""
-    magnitude = models.CharField(verbose_name=_("Problem magnitude"),
-                                 max_length=128)
-    suricate_id = models.CharField(_("Suricate id"),
+    label = models.CharField(verbose_name=_("Problem magnitude"),
+                             max_length=128)
+    suricate_id = models.PositiveIntegerField(_("Suricate id"),
                                    null=True,
-                                   blank=True,
-                                   max_length=50)
+                                   blank=True)
 
     class Meta:
         verbose_name = _("Problem magnitude")
@@ -176,4 +173,4 @@ class ReportProblemMagnitude(models.Model):
         ordering = ("id",)
 
     def __str__(self):
-        return self.magnitude
+        return self.label
