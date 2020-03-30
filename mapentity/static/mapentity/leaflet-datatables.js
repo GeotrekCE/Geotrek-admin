@@ -1,5 +1,5 @@
 L.MapListSync = L.Class.extend({
-    includes: L.Mixin.Events,
+    includes:L.Evented,
     options: {
         filter: null,
         /* { form: $('#mainfilter'),
@@ -40,7 +40,7 @@ L.MapListSync = L.Class.extend({
     _onListFilter: function () {
         var filterTxt = $(".dataTables_filter input[type='text']").val();
         var results = this.dt.fnGetColumnData(0);
-        this.fire('reloaded', {
+        this.map.fire('reloaded', {
             nbrecords: results.length,
         });
         this.layer.updateFromPks(results);
@@ -140,7 +140,7 @@ L.MapListSync = L.Class.extend({
                 }
             }
 
-            self.fire('reloaded', {
+            self.map.fire('reloaded', {
                 nbrecords: nbrecords,
             });
 

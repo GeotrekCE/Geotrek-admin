@@ -107,7 +107,7 @@ _LEAFLET_PLUGINS = OrderedDict([
                'mapentity/Leaflet.FileLayer/leaflet.filelayer.js']
     }),
     ('leaflet.geometryutil', {
-        'js': 'mapentity/Leaflet.GeometryUtil/dist/leaflet.geometryutil.js'
+        'js': 'mapentity/Leaflet.GeometryUtil/leaflet.geometryutil.js'
     }),
     ('forms', {}),
     ('leaflet.snap', {
@@ -122,8 +122,8 @@ _LEAFLET_PLUGINS = OrderedDict([
         'js': 'mapentity/leaflet.fullscreen/Control.FullScreen.js'
     }),
     ('leaflet.groupedlayercontrol', {
-        'css': 'mapentity/Leaflet.groupedlayercontrol/src/leaflet.groupedlayercontrol.css',
-        'js': 'mapentity/Leaflet.groupedlayercontrol/src/leaflet.groupedlayercontrol.js'
+        'css': 'mapentity/Leaflet.groupedlayercontrol/leaflet.groupedlayercontrol.css',
+        'js': 'mapentity/Leaflet.groupedlayercontrol/leaflet.groupedlayercontrol.js'
     }),
     ('mapentity', {
         'js': ['mapentity/mapentity.js',

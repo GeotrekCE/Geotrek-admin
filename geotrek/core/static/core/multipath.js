@@ -13,10 +13,10 @@ L.Mixin.ActivableControl = {
                 L.DomUtil.addClass(this._container, 'control-disabled');
         }
 
-        this.handler.on('enabled', function (e) {
+        this.handler.map.on('enabled', function (e) {
             L.DomUtil.addClass(this._container, 'enabled');
         }, this);
-        this.handler.on('disabled', function (e) {
+        this.handler.map.on('disabled', function (e) {
             L.DomUtil.removeClass(this._container, 'enabled');
         }, this);
     },
@@ -24,7 +24,7 @@ L.Mixin.ActivableControl = {
     setState: function (state) {
         if (state) {
             this.handler.enable.call(this.handler);
-            this.handler.fire('enabled');
+            this.handler.map.fire('enabled');
         }
         else {
             this.handler.disable.call(this.handler);
@@ -52,7 +52,7 @@ L.Control.ExclusiveActivation = L.Class.extend({
         this._controls.push(control);
         var self = this;
         control.activable(true);
-        control.handler.on('enabled', function (e) {
+        control.handler.map.on('enabled', function (e) {
             // When this control is enabled, activate this one,
             // disable the others and prevent them to be activable.
             $.each(self._controls, function (i, c) {
@@ -62,7 +62,7 @@ L.Control.ExclusiveActivation = L.Class.extend({
             });
         }, this);
 
-        control.handler.on('disabled', function (e) {
+        control.handler.map.on('disabled', function (e) {
             // When this control is disabled, re-enable the others !
             // Careful, this will not take care of previous state :)
             $.each(self._controls, function (i, c) {
@@ -118,7 +118,7 @@ L.Handler.PointTopology = L.Draw.Marker.extend({
         if (this._topoMarker) {
             this._map.removeLayer(this._topoMarker);
         }
-        this.fire('computed_topology', {topology: null});
+        this.map.fire('computed_topology', {topology: null});
     },
 
     restoreTopology: function (topo) {
@@ -135,7 +135,7 @@ L.Handler.PointTopology = L.Draw.Marker.extend({
                 this._map.removeLayer(this._topoMarker);
             }
 
-            this.fire('topo:created');
+            this.map.fire('topo:created');
             this._topoMarker = L.marker(e.layer.getLatLng());
             this._initMarker(this._topoMarker);
         }
@@ -148,7 +148,7 @@ L.Handler.PointTopology = L.Draw.Marker.extend({
         marker.editing.addGuideLayer(this._guidesLayer);
         marker.editing.enable();
         marker.on('move snap', function (e) {
-            this.fire('computed_topology', {topology: marker});
+            this.map.fire('computed_topology', {topology: marker});
         }, this);
         // Fire now : don't wait for move/snap (i.e. on click)
         this.fire('computed_topology', {topology: marker});
@@ -234,7 +234,7 @@ L.ActivableMarker = L.Marker.extend({
 
 
 L.Handler.MultiPath = L.Handler.extend({
-    includes: L.Mixin.Events,
+    includes: L.Evented.prototype,
 
     initialize: function (map, guidesLayer, options) {
         this.map = map;
@@ -263,7 +263,7 @@ L.Handler.MultiPath = L.Handler.extend({
          */
         this.drawOnMouseMove = null;
 
-        this.on('disabled', function() {
+        this.map.on('disabled', function() {
             this.drawOnMouseMove && this.map.off('mousemove', this.drawOnMouseMove);
         }, this);
 
@@ -291,7 +291,7 @@ L.Handler.MultiPath = L.Handler.extend({
             init();
         })();
 
-        this.on('computed_paths', this.onComputedPaths, this);
+        this.map.on('computed_paths', this.onComputedPaths, this);
     },
 
     setGraph: function (graph) {
@@ -362,7 +362,7 @@ L.Handler.MultiPath = L.Handler.extend({
 
         this.stepsToggleActivate(true);
 
-        this.fire('enabled');
+        this.map.fire('enabled');
     },
 
     removeHooks: function() {
@@ -417,7 +417,7 @@ L.Handler.MultiPath = L.Handler.extend({
 
     forceMarkerToLayer: function(marker, layer) {
         var closest = L.GeometryUtil.closest(this.map, layer, marker.getLatLng());
-        marker.editing._updateSnap(marker, layer, closest);
+        L.Snap.updateSnap(marker, layer, closest);
     },
 
     createStep: function(marker, idx) {
@@ -425,8 +425,9 @@ L.Handler.MultiPath = L.Handler.extend({
 
         var pop = new Geotrek.PointOnPolyline(marker);
         this.steps.splice(idx, 0, pop);  // Insert pop at position idx
-
+        console.log(pop.events)
         pop.events.on('valid', function() {
+            console.log('hey')
             self.computePaths();
         });
 
@@ -721,6 +722,7 @@ L.Handler.MultiPath = L.Handler.extend({
         var markersFactory = {
             isDragging: isDragging,
             makeSnappable: function(marker) {
+                console.log("coucou")
                 marker.editing = new L.Handler.MarkerSnap(map, marker);
 
                 marker.editing.addGuideLayer(guidesLayer);
@@ -844,7 +846,7 @@ Geotrek.PointOnPolyline = function (marker) {
     this.percent_distance = null;
     this._activated = false;
 
-    this.events = L.Util.extend({}, L.Mixin.Events);
+    this.events = L.Util.extend({}, L.Evented.prototype);
 
     this.markerEvents = {
         'move': function onMove (e) {

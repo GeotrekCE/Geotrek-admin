@@ -15,7 +15,7 @@ L.labelVersion = '0.2.2-dev';
 
 L.Label = L.Class.extend({
 
-	includes: L.Mixin.Events,
+	includes:L.Evented,
 
 	options: {
 		className: '',

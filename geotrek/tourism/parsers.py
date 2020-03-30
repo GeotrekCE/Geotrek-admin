@@ -519,7 +519,7 @@ class EspritParcParser(AttachmentParserMixin, Parser):
         return self.root['responseData']
 
     def next_row(self):
-        response = self.request_or_retry(self.url)
+        response = self.request_or_retry(self.url, params={'allow_redirects': True})
         self.root = response.json()
         self.nb = int(self.root['numFound'])
 

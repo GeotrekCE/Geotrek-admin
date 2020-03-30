@@ -14,7 +14,7 @@ L.FieldStore.LineSnapStore = L.FieldStore.extend({
         if (edited.length === 0)
             return '';
         layer = edited[0];
-
+        console.log(layer.getLatLngs())
         // Store snaplist
         var n = layer.getLatLngs().length,
             snaplist = new Array(n);

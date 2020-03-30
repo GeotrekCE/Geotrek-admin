@@ -326,7 +326,7 @@ L.Class.addInitHook = function (fn) { // (Function) || (String, args...)
 
 
 /*
- * L.Mixin.Events is used to add custom events functionality to Leaflet classes.
+ *L.Evented is used to add custom events functionality to Leaflet classes.
  */
 
 var eventsKey = '_leaflet_events';
@@ -498,10 +498,10 @@ L.Mixin.Events = {
 	}
 };
 
-L.Mixin.Events.on = L.Mixin.Events.addEventListener;
-L.Mixin.Events.off = L.Mixin.Events.removeEventListener;
-L.Mixin.Events.once = L.Mixin.Events.addOneTimeEventListener;
-L.Mixin.Events.fire = L.Mixin.Events.fireEvent;
+L.Mixin.Events.on =L.Evented.addEventListener;
+L.Mixin.Events.off =L.Evented.removeEventListener;
+L.Mixin.Events.once =L.Evented.addOneTimeEventListener;
+L.Mixin.Events.fire =L.Evented.fireEvent;
 
 
 /*
@@ -1506,7 +1506,7 @@ L.CRS.EPSG4326 = L.extend({}, L.CRS, {
 
 L.Map = L.Class.extend({
 
-	includes: L.Mixin.Events,
+	includes:L.Evented,
 
 	options: {
 		crs: L.CRS.EPSG3857,
@@ -2385,7 +2385,7 @@ L.CRS.EPSG3395 = L.extend({}, L.CRS, {
  */
 
 L.TileLayer = L.Class.extend({
-	includes: L.Mixin.Events,
+	includes:L.Evented,
 
 	options: {
 		minZoom: 0,
@@ -3132,7 +3132,7 @@ L.tileLayer.canvas = function (options) {
  */
 
 L.ImageOverlay = L.Class.extend({
-	includes: L.Mixin.Events,
+	includes:L.Evented,
 
 	options: {
 		opacity: 1
@@ -3440,7 +3440,7 @@ L.Icon.Default.imagePath = (function () {
 
 L.Marker = L.Class.extend({
 
-	includes: L.Mixin.Events,
+	includes:L.Evented,
 
 	options: {
 		icon: new L.Icon.Default(),
@@ -3810,7 +3810,7 @@ L.Map.mergeOptions({
 });
 
 L.Popup = L.Class.extend({
-	includes: L.Mixin.Events,
+	includes:L.Evented,
 
 	options: {
 		minWidth: 50,
@@ -4352,7 +4352,7 @@ L.layerGroup = function (layers) {
  */
 
 L.FeatureGroup = L.LayerGroup.extend({
-	includes: L.Mixin.Events,
+	includes:L.Evented,
 
 	statics: {
 		EVENTS: 'click dblclick mouseover mouseout mousemove contextmenu popupopen popupclose'
@@ -6581,7 +6581,7 @@ L.DomEvent.off = L.DomEvent.removeListener;
  */
 
 L.Draggable = L.Class.extend({
-	includes: L.Mixin.Events,
+	includes:L.Evented,
 
 	statics: {
 		START: L.Browser.touch ? ['touchstart', 'mousedown'] : ['mousedown'],
@@ -8534,7 +8534,7 @@ L.control.layers = function (baseLayers, overlays, options) {
  */
 
 L.PosAnimation = L.Class.extend({
-	includes: L.Mixin.Events,
+	includes:L.Evented,
 
 	run: function (el, newPos, duration, easeLinearity) { // (HTMLElement, Point[, Number, Number])
 		this.stop();

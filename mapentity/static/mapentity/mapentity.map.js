@@ -1,5 +1,5 @@
 L.Control.Screenshot = L.Control.extend({
-    includes: L.Mixin.Events,
+    includes:L.Evented,
     options: {
         position: 'topleft',
     },
@@ -98,7 +98,7 @@ $(window).on('entity:map', function (e, data) {
 
     // Replace default layer switcher with Leaflet.GroupedLayerSwitcher
     if (map.layerscontrol) {
-        map.layerscontrol.removeFrom(map);
+        map.layerscontrol.remove(map);
     }
     var baseLayers = {};
     var overlaysLayers = {};
@@ -272,7 +272,8 @@ $(window).on('entity:map:list', function (e, data) {
                                             resetbutton: $('#reset'),
                                             bboxfield: $('#id_bbox'),
                                         }
-                                    });
+                                    }).map;
+
     mapsync.on('reloaded', function (data) {
         // Show and save number of results
         MapEntity.history.saveListInfo({model: data.modelname,

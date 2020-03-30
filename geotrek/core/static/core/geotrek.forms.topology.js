@@ -80,11 +80,11 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
                     map.addControl(control);
                     exclusive.add(control);
                     control.activable(false);
-                control.handler.on('computed_topology', function (e) {
+                control.handler.map.on('computed_topology', function (e) {
                     this.store.save(e.topology);
                 }, this);
                 // Make sure, we clean-up geometries when user changes from point to line
-                control.handler.on('enabled', resetTopologies, this);
+                control.handler.map.on('enabled', resetTopologies, this);
             }
             else {
                 map.remove()

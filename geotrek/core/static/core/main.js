@@ -120,9 +120,9 @@ $(window).on('detailmap:ready', function (e, data) {
 
     // Show start and end
     layer.eachLayer(function (layer) {
-        if (layer instanceof L.MultiPolyline)
+        if (layer.constructor === L.MultiPolyline)
             return;
-        if (layer instanceof L.Polygon)
+        if (layer.constructor === L.Polygon)
             return;
         if (typeof layer.getLatLngs != 'function')  // points
             return;

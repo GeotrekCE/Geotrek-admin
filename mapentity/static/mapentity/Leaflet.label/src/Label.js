@@ -1,6 +1,6 @@
 L.Label = L.Class.extend({
 
-	includes: L.Mixin.Events,
+	includes:L.Evented,
 
 	options: {
 		className: '',
