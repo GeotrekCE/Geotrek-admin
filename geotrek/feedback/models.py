@@ -119,8 +119,8 @@ class ReportActivity(models.Model):
     label = models.CharField(verbose_name=_("Activity"),
                              max_length=128)
     suricate_id = models.PositiveIntegerField(_("Suricate id"),
-                                   null=True,
-                                   blank=True)
+                                              null=True,
+                                              blank=True)
 
     class Meta:
         verbose_name = _("Activity")
@@ -135,8 +135,8 @@ class ReportCategory(models.Model):
     label = models.CharField(verbose_name=_("Category"),
                              max_length=128)
     suricate_id = models.PositiveIntegerField(_("Suricate id"),
-                                   null=True,
-                                   blank=True)
+                                              null=True,
+                                              blank=True)
 
     class Meta:
         verbose_name = _("Category")
@@ -164,8 +164,8 @@ class ReportProblemMagnitude(models.Model):
     label = models.CharField(verbose_name=_("Problem magnitude"),
                              max_length=128)
     suricate_id = models.PositiveIntegerField(_("Suricate id"),
-                                   null=True,
-                                   blank=True)
+                                              null=True,
+                                              blank=True)
 
     class Meta:
         verbose_name = _("Problem magnitude")
