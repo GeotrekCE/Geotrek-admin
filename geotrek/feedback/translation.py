@@ -4,15 +4,15 @@ from geotrek.feedback import models as feedback_models
 
 
 class ReportCategoryTO(TranslationOptions):
-    fields = ('category',)
+    fields = ('label',)
 
 
 class ReportActivityTO(TranslationOptions):
-    fields = ('activity',)
+    fields = ('label',)
 
 
 class ReportProblemMagnitudeTO(TranslationOptions):
-    fields = ('magnitude',)
+    fields = ('label',)
 
 
 translator.register(feedback_models.ReportCategory, ReportCategoryTO)

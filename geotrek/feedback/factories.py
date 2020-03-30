@@ -10,28 +10,28 @@ class ReportActivityFactory(factory.DjangoModelFactory):
     class Meta:
         model = feedback_models.ReportActivity
 
-    activity = factory.Sequence(lambda n: "Activity %s" % n)
+    label = factory.Sequence(lambda n: "Activity %s" % n)
 
 
 class ReportCategoryFactory(factory.DjangoModelFactory):
     class Meta:
         model = feedback_models.ReportCategory
 
-    category = factory.Sequence(lambda n: "Category %s" % n)
+    label = factory.Sequence(lambda n: "Category %s" % n)
 
 
 class ReportStatusFactory(factory.DjangoModelFactory):
     class Meta:
         model = feedback_models.ReportStatus
 
-    status = factory.Sequence(lambda n: "Status %s" % n)
+    label = factory.Sequence(lambda n: "Status %s" % n)
 
 
 class ReportProblemMagnitudeFactory(factory.DjangoModelFactory):
     class Meta:
         model = feedback_models.ReportProblemMagnitude
 
-    magnitude = factory.Sequence(lambda n: "Utilisation %s" % n)
+    label = factory.Sequence(lambda n: "Utilisation %s" % n)
 
 
 class ReportFactory(factory.DjangoModelFactory):
