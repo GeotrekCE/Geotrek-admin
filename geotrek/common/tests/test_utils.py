@@ -52,7 +52,7 @@ class UtilsTest(TestCase):
 
     def test_create_tmp_directory(self):
         self.assertTupleEqual(
-            ('/app/src/var/tmp/bombadil', '/app/src/var/tmp/bombadil/bombadil'),
+            ('/opt/geotrek-admin/var/tmp/bombadil', '/opt/geotrek-admin/var/tmp/bombadil/bombadil'),
             create_tmp_destination('bombadil')
         )
 

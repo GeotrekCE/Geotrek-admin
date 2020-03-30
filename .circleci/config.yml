@@ -15,7 +15,7 @@ jobs:
       - run: flake8 --exclude "" --ignore=E501,F821 geotrek/settings
       - run: flake8 geotrek
       - run: test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
-  build:
+  docker_image:
     machine: true
     steps:
       - checkout
@@ -23,7 +23,7 @@ jobs:
       - run: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
       - run: docker tag geotrek:latest geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - run: docker push geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
-  test:
+  docker_test:
     machine: true
     environment:
       LANG: C.UTF-8
@@ -40,7 +40,7 @@ jobs:
           file: var/coverage.xml
           flags: test
           when: on_success
-  test_nds:
+  docker_test_nds:
     machine: true
     environment:
       LANG: C.UTF-8
@@ -57,7 +57,7 @@ jobs:
           file: var/coverage.xml
           flags: test_nds
           when: on_success
-  test_js:
+  docker_test_js:
     docker:
       - image: geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
     environment:
@@ -65,14 +65,14 @@ jobs:
       ENV: tests
       SECRET_KEY: foo
       CUSTOM_SETTINGS_FILE: ""
-    working_directory: /app/src
+    working_directory: /opt/geotrek-admin
     steps:
-      - run: apt-get update && apt-get install -y npm
+      - run: apt-get update -q && apt-get install -q -y npm
       - run: mkdir -p var/conf/extra_static
       - run: ./env/bin/python manage.py collectstatic --noinput
       - run: npm install geotrek/jstests
       - run: ./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
-  deploy:
+  docker_publish:
     machine: true
     environment:
       LANG: C.UTF-8
@@ -86,28 +86,56 @@ jobs:
       - run: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
       - run: docker push geotrekce/admin:$(cat VERSION)
       - run: docker push geotrekce/admin:latest
+  ubuntu_package:
+    docker:
+      - image: ubuntu:bionic
+    environment:
+      LANG: C.UTF-8
+    steps:
+      - checkout
+      - run: apt-get update -q && apt-get install -q -y dpkg-dev debhelper dh-virtualenv git python3 python3-venv python3-dev libgdal-dev libffi-dev libxml2-dev libxslt1-dev
+      - run: dpkg-buildpackage -uc -us -b
+      - persist_to_workspace:
+          root: /root
+          paths: geotrek-admin_*_amd64.deb
+  ubuntu_publish:
+    docker:
+      - image: ubuntu:bionic
+    environment:
+      LANG: C.UTF-8
+    steps:
+      - run: apt-get update -q && apt-get install -q -y ca-certificates openssh-client
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: scp -P $SSH_PORT -o StrictHostKeyChecking=no /tmp/workspace/geotrek-admin_*_amd64.deb $SSH_USER@$SSH_HOST:/srv/packages/incoming/
+      - run: ssh -p $SSH_PORT -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST make -C /srv/packages
 workflows:
   version: 2
   all:
     jobs:
       - codestyle
-      - build
-      - test:
+      - docker_image
+      - docker_test:
           requires:
-            - build
-      - test_nds:
+            - docker_image
+      - docker_test_nds:
           requires:
-            - build
-      - test_js:
+            - docker_image
+      - docker_test_js:
           requires:
-            - build
-      - deploy:
+            - docker_image
+      - docker_publish:
           requires:
             - codestyle
-            - test
-            - test_nds
-            - test_js
+            - docker_test
+            - docker_test_nds
+            - docker_test_js
           filters:
             branches:
               only:
                 - docker-integration
+      - ubuntu_package
+      - ubuntu_publish:
+          requires:
+            - codestyle
+            - ubuntu_package

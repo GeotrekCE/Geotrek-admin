@@ -7,20 +7,15 @@ ADVANCED CONFIGURATION
 Custom setting file
 -------------------
 
-Geotrek configuration is currently restricted to values present in ``.env`` and ``var/conf/custom.py``.
+Geotrek configuration is done in ``/opt/geotrek-admin/var/conf/custom.py`` file.
+The list of all overridable setting and default values can be found
+`there <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
 
-However, it is still possible to all django or geotrek settings in custom.py :
+After any change in ``custom.py``, run:
 
-.. code-block :: python
+::
 
-    from .prod import *
-
-    # My custom value
-    HIDDEN_OPTION = 3.14
-
-All overridable setting can be found in geotrek/settings.base.py
-
-* As for any change in ``custom.py``, re-run ``sudo systemctl restart geotrek``.
+    sudo service geotrek restart
 
 
 Disable modules and components
@@ -369,7 +364,7 @@ Copy the file ``geotrek/trekking/templates/trekking/trek_public.odt`` to
 Override public pdf templates
 -----------------------------
 
-PDF are generated from html printed, using [Django templating](https://docs.djangoproject.com/en/1.11/ref/templates/).
+PDF are generated from html printed, using `Django templating <https://docs.djangoproject.com/en/1.11/ref/templates/>`_.
 Trekkings, touristic contents and events can be exported in pdf files.
 
 - Treks : ``geotrek/trekking/templates/trekking/trek_public_pdf.html``
@@ -456,13 +451,13 @@ If you want copyright added to your pictures, change ``THUMBNAIL_COPYRIGHT_FORMA
 
 ::
 
-THUMBNAIL_COPYRIGHT_FORMAT = "{title} {author}"
+    THUMBNAIL_COPYRIGHT_FORMAT = "{title} {author}"
 
 You can also add `{legend}`.
 
 ::
 
-THUMBNAIL_COPYRIGHT_SIZE = 15
+    THUMBNAIL_COPYRIGHT_SIZE = 15
 
 
 Share services between several Geotrek instances
@@ -474,16 +469,6 @@ between several instances, in order to save system resources for example.
 
 A simple way to achieve this is to install one instance with everything
 as usual (*standalone*), and plug the other instances on its underlying services.
-
-
-Database
-~~~~~~~~
-
-Geotrek stack come with its own database within its docker-compose.yml file
-
-You can use own external postgis enabled database by adjust your settings in ``.env``
-
-Then delete postgres section in docker-compose.yml
 
 
 Capture and conversion
@@ -522,8 +507,6 @@ By default, the application runs on 4 processes, and timeouts after 30 seconds.
 
 To control those values, edit and fix your docker-compose.yml file in web and api section
 
-::
-
 To know how many workers you should set, please refer to `gunicorn documentation <http://gunicorn-docs.readthedocs.org/en/latest/design.html#how-many-workers>`_.
 
 
@@ -535,7 +518,7 @@ Global Settings
 |
 
 **Options before install**
-==========================
+--------------------------
 
 **Spatial reference identifier**
 ::
@@ -544,9 +527,9 @@ Global Settings
 
 Spatial reference identifier of your database. 2154 is RGF93 / Lambert-93 - France
 
-   *It should not be change after any creation of geometries.*
+*It should not be change after any creation of geometries.*
 
-   *Choose wisely with epsg.io for example*
+*Choose wisely with epsg.io for example*
 
 **Spatial Extent**
 ::
@@ -555,15 +538,17 @@ Spatial reference identifier of your database. 2154 is RGF93 / Lambert-93 - Fran
 
 Boundingbox of your project : x minimum , y minimum , xmax, y max
 
-    4 ^
-      |
-1     |     3
-<-----+----->
-      |
-      |
-    2 v
+::
 
-   *It should not be change after install*
+        4 ^
+          |
+    1     |     3
+    <-----+----->
+          |
+          |
+        2 v
+
+*It should not be changed after install*
 
 
 **Dynamic segmentation**
@@ -599,7 +584,8 @@ Languages of your project. It will be used to generate fields for translations. 
    *You won't be able to change it easily, avoid to add any languages and do not remove any.*
 
 **Options admin**
-=================
+-----------------
+
 **Map config**
 ::
 

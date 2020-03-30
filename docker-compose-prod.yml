@@ -17,7 +17,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./var:/app/src/var
+      - ./var:/opt/geotrek-admin/var
     depends_on:
       - memcached
       - redis
@@ -31,7 +31,7 @@ services:
     ports:
       - "${WEB_PORT:-8001}:8000"
     volumes:
-      - ./var:/app/src/var
+      - ./var:/opt/geotrek-admin/var
     depends_on:
       - memcached
       - redis
@@ -46,7 +46,7 @@ services:
     ports:
       - "${API_PORT:-8002}:8000"
     volumes:
-      - ./var:/app/src/var
+      - ./var:/opt/geotrek-admin/var
     depends_on:
       - memcached
       - redis

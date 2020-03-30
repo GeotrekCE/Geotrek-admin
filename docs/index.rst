@@ -14,10 +14,10 @@ Contents:
    synchronization
    import
    sensitivity
-   troubleshooting
    faq
    user-manual
    design
+   docker
    development
    authors
    changelog

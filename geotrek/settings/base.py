@@ -1,3 +1,4 @@
+import env_file
 import os
 import sys
 
@@ -25,13 +26,17 @@ def api_bbox(bbox, buffer):
     return tuple(native.extent)
 
 
-ALLOWED_HOSTS = []
-
 ROOT_URL = ""
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BASE_DIR = os.path.dirname(PROJECT_DIR)
-VAR_DIR = os.path.join(BASE_DIR, 'var')
+VAR_DIR = '/opt/geotrek-admin/var'
 TMP_DIR = os.path.join(VAR_DIR, 'tmp')
+
+DOT_ENV_FILE = os.path.join(VAR_DIR, 'conf/env')
+if os.path.exists(DOT_ENV_FILE):
+    env_file.load(path=DOT_ENV_FILE)
+
+ALLOWED_HOSTS = os.getenv('SERVER_NAME', 'localhost').split(' ')
+ALLOWED_HOSTS = ['*' if host == '_' else host for host in ALLOWED_HOSTS]
 
 CACHE_ROOT = os.path.join(VAR_DIR, 'cache')
 
@@ -119,8 +124,8 @@ LANGUAGES = (
 )
 LANGUAGE_CODE = 'fr'
 
-MODELTRANSLATION_LANGUAGES = ('en', 'fr', 'it', 'es')
-MODELTRANSLATION_DEFAULT_LANGUAGE = LANGUAGE_CODE
+MODELTRANSLATION_LANGUAGES = os.getenv('LANGUAGES', 'fr en').split(' ')
+MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
 
 LOCALE_PATHS = (
     # override locale
@@ -186,6 +191,12 @@ COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    try:
+        with open(os.path.join(VAR_DIR, 'conf/secret_key'), 'r') as f:
+            SECRET_KEY = f.read()
+    except FileNotFoundError:
+        pass
 
 TEMPLATES = [
     {
@@ -347,7 +358,7 @@ PAPERCLIP_FILETYPE_MODEL = 'common.FileType'
 PAPERCLIP_ATTACHMENT_MODEL = 'common.Attachment'
 
 # Data projection
-SRID = 2154  # Lambert-93 for Metropolitan France
+SRID = int(os.getenv('SRID', '2154'))  # Lambert-93 for Metropolitan France
 
 # API projection (client-side), can differ from SRID (database). Leaflet requires 4326.
 API_SRID = 4326
@@ -379,7 +390,7 @@ MAPENTITY_CONFIG = {
     'MAP_FIT_MAX_ZOOM': 16,
 }
 
-DEFAULT_STRUCTURE_NAME = 'Principale'
+DEFAULT_STRUCTURE_NAME = os.getenv('DEFAULT_STRUCTURE', 'My structure')
 
 VIEWPORT_MARGIN = 0.1  # On list page, around spatial extent from settings.ini
 

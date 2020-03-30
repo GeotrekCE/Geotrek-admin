@@ -1,0 +1,6 @@
+backlog = 2048
+bind = "unix:/tmp/gunicorn-geotrek_api.sock"
+pidfile = "/opt/geotrek-admin/var/pid/gunicorn-geotrek_api.pid"
+workers = ${WORKERS}
+timeout = ${TIMEOUT}
+debug = False

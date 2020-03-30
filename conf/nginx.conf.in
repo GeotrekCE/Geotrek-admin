@@ -1,0 +1,56 @@
+upstream ui_server {
+    server unix:/tmp/gunicorn-geotrek.sock fail_timeout=0;
+}
+
+upstream api_server {
+    server unix:/tmp/gunicorn-geotrek_api.sock fail_timeout=0;
+}
+
+add_header Access-Control-Allow-Origin ${RANDO_SERVER_NAME};
+
+server {
+    listen ${NGINX_PORT};
+    server_name ${SERVER_NAME};
+    server_name_in_redirect on;
+
+    access_log /var/log/nginx/geotrek_access.log;
+    error_log /var/log/nginx/geotrek_error.log;
+
+    client_max_body_size 10M;
+
+    location /static {
+        expires 1d;
+        alias /opt/geotrek-admin/var/static;
+    }
+
+    location /media/upload {
+        expires 1d;
+        alias /opt/geotrek-admin/var/media/upload;
+    }
+
+    location /media_secure {
+        internal;
+        expires 1d;
+        alias /opt/geotrek-admin/var/media;
+    }
+
+    location / {
+        proxy_set_header X-Forwarded-Proto ${DOLLAR}scheme;
+        proxy_set_header X-Forwarded-Host ${DOLLAR}host;
+        proxy_set_header X-Forwarded-Server ${DOLLAR}host;
+        proxy_set_header X-Forwarded-For ${DOLLAR}proxy_add_x_forwarded_for;
+
+        proxy_set_header Host ${DOLLAR}http_host;
+        proxy_redirect off;
+
+        keepalive_timeout 0;
+
+        location ~ ^/api {
+            proxy_pass http://api_server;
+            proxy_read_timeout ${TIMEOUT}s;
+        }
+
+        proxy_pass http://ui_server;
+        proxy_read_timeout ${TIMEOUT}s;
+    }
+}
