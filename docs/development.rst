@@ -50,12 +50,14 @@ Check TODO in the source tree ::
 Release
 -------
 
-* Update *VERSION* file, *docs/conf.py*
-* Pin (fixed revision) of eggs under development in *buildout.cfg*
-* Use semantic versioning
-* Use zest.releaser
+* Update files *VERSION*, *docs/conf.py* and *docs/changelog.rst* to remove ~dev0 suffix
+* Run ``dch -r -D bionic``, remove ~dev0 suffix in version and save
+* Commit
 * Add git tag X.Y.Z
-* Add release on Github (copy-paste ``CHANGES`` paragraph)
+* Update files *VERSION*, *docs/conf.py* and *docs/changelog.rst* to increment version (using semantic versionning) and add .dev0 suffix
+* Run ``dch -v <future version>~dev0 --no-force-save-on-release`` and save
+* Push branch and tag
+* Add release on Github (copy-paste ``doc/changelog.rst`` paragraph)
 
 
 Model modification
