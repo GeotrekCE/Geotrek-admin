@@ -125,17 +125,17 @@ class TopologyFactory(factory.DjangoModelFactory):
     date_update = dbnow()
 
     @factory.post_generation
-    def path(obj, create, path, **kwargs):
-        start = kwargs.get('start', 0)
-        end = kwargs.get('end', 1)
-        order = kwargs.get('order', 0)
+    def path(obj, create, path, start=0, end=1, order=0):
+        if not create:
+            return
 
-        if create and path:
+        if path:
             obj.add_path(path, start, end, order)
-            obj.update_geometry(obj.id)
-            obj.reload()
         elif create and path is None:
             PathAggregationFactory.create(topo_object=obj)
+
+        obj.update_geometry(obj.id)
+        obj.reload()
 
 
 class PointTopologyFactory(TopologyFactory):
