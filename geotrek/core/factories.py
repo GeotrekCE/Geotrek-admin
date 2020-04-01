@@ -125,29 +125,22 @@ class TopologyFactory(factory.DjangoModelFactory):
     date_update = dbnow()
 
     @factory.post_generation
-    def no_path(obj, create, extracted=False, **kwargs):
-        """
-        A topology mixin should be linked to at least one Path (through
-        PathAggregation).
-        """
-        if not extracted and create and settings.TREKKING_TOPOLOGY_ENABLED:
+    def path(obj, create, path, **kwargs):
+        start = kwargs.get('start', 0)
+        end = kwargs.get('end', 1)
+        order = kwargs.get('order', 0)
+
+        if create and path:
+            obj.add_path(path, start, end, order)
+            obj.update_geometry(obj.id)
+            obj.reload()
+        elif create and path is None:
             PathAggregationFactory.create(topo_object=obj)
-            # Note that it is not possible to attach a related object before the
-            # topo_mixin has an ID.
 
 
 class PointTopologyFactory(TopologyFactory):
-    @factory.post_generation
-    def no_path(obj, create, extracted=False, **kwargs):
-        """
-        A topology mixin should be linked to at least one Path (through
-        PathAggregation).
-        """
-
-        if not extracted and create:
-            PathAggregationFactory.create(topo_object=obj,
-                                          start_position=0.0,
-                                          end_position=0.0)
+    path__start = 0
+    path__end = 0
 
 
 class PathAggregationFactory(factory.DjangoModelFactory):

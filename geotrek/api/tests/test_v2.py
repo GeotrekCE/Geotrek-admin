@@ -94,6 +94,7 @@ class BaseApiTest(TestCase):
         trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child2, order=1).save()
         cls.content = tourism_factory.TouristicContentFactory.create(published=True)
         cls.nb_treks += 2  # add parent and 1 child published
+        print([l.geom.wkt for l in trek_models.Trek.objects.all()])
 
     def login(self):
         pass

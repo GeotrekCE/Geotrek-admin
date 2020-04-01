@@ -18,10 +18,8 @@ class LandFiltersTest(TestCase):
         return PathFactory(), PathFactory(geom=getRandomLineStringInBounds())
 
     def create_pair_of_distinct_topologies(self, topologyfactoryclass, useless_path, seek_path):
-        topo_1 = topologyfactoryclass(no_path=True)
-        topo_1.add_path(path=useless_path, start=0, end=1)
-        seek_topo = topologyfactoryclass(no_path=True)
-        seek_topo.add_path(path=seek_path, start=0, end=1)
+        topo_1 = topologyfactoryclass(path=useless_path)
+        seek_topo = topologyfactoryclass(path=seek_path)
         return topo_1, seek_topo
 
     def _filter_by_edge(self, edgefactoryclass, key, getvalue):

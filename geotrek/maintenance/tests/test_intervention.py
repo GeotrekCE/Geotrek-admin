@@ -48,10 +48,10 @@ class InterventionTest(TestCase):
             highstake = tmp
 
         # Add paths to topology
-        infra = InfrastructureFactory.create(no_path=True)
-        infra.add_path(PathFactory.create(stake=lowstake))
+        infra = InfrastructureFactory.create(path=PathFactory.create(stake=lowstake))
         infra.add_path(PathFactory.create(stake=highstake))
         infra.add_path(PathFactory.create(stake=lowstake))
+        infra.update_geometry(infra.id)
         i.set_topology(infra)
         # Stake is not None anymore
         i.save()
@@ -71,11 +71,9 @@ class InterventionTest(TestCase):
         self.assertEqual(len(p.interventions), 0)
         self.assertEqual(len(p.projects), 0)
 
-        sign = SignageFactory.create(no_path=True)
-        sign.add_path(p, start=0.5, end=0.5)
+        sign = SignageFactory.create(path=p, path__start=0.5, path__end=0.5)
 
-        infra = InfrastructureFactory.create(no_path=True)
-        infra.add_path(p)
+        infra = InfrastructureFactory.create(path=p)
 
         i1 = InterventionFactory.create()
         i1.set_topology(sign)
@@ -125,7 +123,7 @@ class InterventionTest(TestCase):
         self.assertTrue(interv.in_project)
 
     def test_delete_topology(self):
-        infra = InfrastructureFactory.create()
+        infra = InfrastructureFactory.create(path=False)
         interv = InterventionFactory.create()
         interv.set_topology(infra)
         interv.save()
@@ -134,8 +132,8 @@ class InterventionTest(TestCase):
         self.assertEqual(Intervention.objects.existing().count(), 0)
 
     def test_denormalized_fields(self):
-        infra = InfrastructureFactory.create()
-        infra.save()
+        path = PathFactory.create()
+        infra = InfrastructureFactory.create(path=path)
 
         def create_interv():
             interv = InterventionFactory.create()

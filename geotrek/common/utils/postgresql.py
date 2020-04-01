@@ -81,12 +81,13 @@ def load_sql_files(app):
             f = open(sql_file)
             sql = f.read()
             f.close()
+            """
             if not settings.TEST:
                 # Remove RAISE NOTICE (/!\ only one-liners)
                 sql = re.sub(r"\n.*RAISE NOTICE.*\n", "\n", sql)
                 # TODO: this is the ugliest driver hack ever
                 sql = sql.replace('%', '%%')
-
+            """
             # Replace curly braces with settings values
             pattern = re.compile(r'{{\s*(.*)\s*}}')
             for m in pattern.finditer(sql):

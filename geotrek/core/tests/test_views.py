@@ -43,16 +43,14 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
     def test_show_delete_multiple_path_in_list(self):
         path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
         PathFactory.create(name="path_2", geom=LineString((2, 2), (2, -2)))
-        poi = POIFactory.create(no_path=True)
-        poi.add_path(path_1, start=0, end=0)
+        poi = POIFactory.create(path=path_1)
         response = self.client.get(reverse('core:path_list'))
         self.assertContains(response, '<a href="#delete" id="btn-delete" role="button">')
 
     def test_delete_view_multiple_path(self):
         path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
         path_2 = PathFactory.create(name="path_2", geom=LineString((2, 2), (2, -2)))
-        poi = POIFactory.create(no_path=True)
-        poi.add_path(path_1, start=0, end=0)
+        poi = POIFactory.create(path=path_1)
         response = self.client.get(reverse('core:multiple_path_delete', args=['%s,%s' % (path_1.pk, path_2.pk)]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Do you really wish to delete')
@@ -61,8 +59,7 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         other_structure = StructureFactory(name="Other")
         path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
         path_2 = PathFactory.create(name="path_2", geom=LineString((2, 2), (2, -2)), structure=other_structure)
-        poi = POIFactory.create(no_path=True)
-        poi.add_path(path_1, start=0, end=0)
+        POIFactory.create(path=path_1)
         response = self.client.get(reverse('core:multiple_path_delete', args=['%s,%s' % (path_1.pk, path_2.pk)]))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('core:path_list'))
@@ -72,16 +69,11 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
     def test_delete_multiple_path(self):
         path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
         path_2 = PathFactory.create(name="path_2", geom=LineString((2, 2), (2, -2)))
-        poi = POIFactory.create(no_path=True, name="POI_1")
-        poi.add_path(path_1, start=0, end=0)
-        infrastructure = InfrastructureFactory.create(no_path=True, name="INFRA_1")
-        infrastructure.add_path(path_1, start=0, end=1)
-        signage = SignageFactory.create(no_path=True, name="SIGNA_1")
-        signage.add_path(path_1, start=0, end=1)
-        trail = TrailFactory.create(no_path=True, name="TRAIL_1")
-        trail.add_path(path_2, start=0, end=1)
-        service = ServiceFactory.create(no_path=True)
-        service.add_path(path_2, start=0, end=1)
+        p = POIFactory.create(path=path_1, name="POI_1")
+        InfrastructureFactory.create(path=path_1, path__start=0, path__end=1, name="INFRA_1")
+        signage = SignageFactory.create(path=path_1, path__start=0, path__end=1, name="SIGNA_1")
+        TrailFactory.create(path=path_1, path__start=0, path__end=1, name="TRAIL_1")
+        ServiceFactory.create(path=path_2, path__start=0, path__end=1)
         InterventionFactory.create(topology=signage, name="INTER_1")
         response = self.client.get(reverse('core:multiple_path_delete', args=['%s,%s' % (path_1.pk, path_2.pk)]))
         self.assertContains(response, "POI_1")
@@ -214,21 +206,14 @@ class PathViewsTest(CommonTest):
     def test_delete_show_topologies(self):
         self.login()
         path = PathFactory(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
-        poi = POIFactory.create(name='POI', no_path=True)
-        poi.add_path(path, start=0.5, end=0.5)
-        trail = TrailFactory.create(name='Trail', no_path=True)
-        trail.add_path(path, start=0.1, end=0.2)
-        trek = TrekFactory.create(name='Trek', no_path=True)
-        trek.add_path(path, start=0.2, end=0.3)
-        service = ServiceFactory.create(no_path=True, type__name='ServiceType')
-        service.add_path(path, start=0.2, end=0.3)
-        signage = SignageFactory.create(name='Signage', no_path=True)
-        signage.add_path(path, start=0.2, end=0.2)
-        infrastructure = InfrastructureFactory.create(name='Infrastructure', no_path=True)
-        infrastructure.add_path(path, start=0.2, end=0.2)
+        poi = POIFactory.create(name='POI', path=path, path__start=0.5, path__end=0.5)
+        trail = TrailFactory.create(name='Trail', path=path, path__start=0.1, path__end=0.2)
+        trek = TrekFactory.create(name='Trek', path=path, path__start=0.2, path__end=0.3)
+        service = ServiceFactory.create(path=path, path__start=0.2, path__end=0.3, type__name='ServiceType')
+        signage = SignageFactory.create(name='Signage', path=path, path__start=0.2, path__end=0.2)
+        infrastructure = InfrastructureFactory.create(name='Infrastructure', path=path, path__start=0.2, path__end=0.2)
         intervention1 = InterventionFactory.create(topology=signage, name='Intervention1')
-        t = TopologyFactory.create(no_path=True)
-        t.add_path(path, start=0.2, end=0.5)
+        t = TopologyFactory.create(path=path, path__start=0.2, path__end=0.5)
         intervention2 = InterventionFactory.create(topology=t, name='Intervention2')
         response = self.client.get(path.get_delete_url())
         self.assertEqual(response.status_code, 200)
@@ -604,11 +589,9 @@ class PathKmlGPXTest(TestCase):
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class DenormalizedTrailTest(AuthentFixturesTest):
     def setUp(self):
-        self.trail1 = TrailFactory(no_path=True)
-        self.trail2 = TrailFactory(no_path=True)
         self.path = PathFactory()
-        self.trail1.add_path(self.path)
-        self.trail2.add_path(self.path)
+        self.trail1 = TrailFactory(path=self.path)
+        self.trail2 = TrailFactory(path=self.path)
 
     def test_path_and_trails_are_linked(self):
         self.assertIn(self.trail1, self.path.trails.all())
@@ -656,7 +639,7 @@ class TrailViewsTest(CommonTest):
     @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
     def test_document_export(self, get_attributes_html):
         get_attributes_html.return_value = b'<p>mock</p>'
-        trail = TrailFactory()
+        trail = TrailFactory(path__aggr=False)
         self.login()
         with open(trail.get_map_image_path(), 'wb') as f:
             f.write(b'***' * 1000)
@@ -697,6 +680,7 @@ class TrailKmlGPXTest(TestCase):
         self.client.force_login(self.user)
 
         self.trail = TrailFactory.create(comments='exportable trail')
+        self.trail.update_geometry(self.trail.id)
 
         self.gpx_response = self.client.get(reverse('core:trail_gpx_detail', args=('en', self.trail.pk, 'slug')))
         self.gpx_parsed = BeautifulSoup(self.gpx_response.content, 'lxml')
@@ -742,11 +726,8 @@ class RemovePathKeepTopology(TestCase):
         """
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
         PathFactory.create(name="CD", geom=LineString((2, 0), (2, 1)))
-        poi = POIFactory.create(no_path=True, offset=1)
-        e1 = TopologyFactory.create(no_path=True)
-        PathAggregationFactory.create(path=ab, topo_object=e1, start_position=0.5, end_position=1)
-        poi.add_path(ab, start=0.5, end=0.5)
-        poi.save()
+        poi = POIFactory.create(path=ab, path__start=0.5, path__end=0.5, offset=1)
+        e1 = TopologyFactory.create(path=ab, path__start=0.5, path__end=1)
 
         self.assertAlmostEqual(1, poi.offset)
 

@@ -188,7 +188,9 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER e_t_evenement_offset_u_tgr
 AFTER UPDATE OF "offset" ON core_topology
-FOR EACH ROW EXECUTE PROCEDURE update_evenement_geom_when_offset_changes();
+FOR EACH ROW
+WHEN (OLD."offset" != NEW."offset")
+EXECUTE PROCEDURE update_evenement_geom_when_offset_changes();
 
 -------------------------------------------------------------------------------
 -- Update altimetry when geom change (Geotrek-light)
@@ -203,7 +205,7 @@ BEGIN
     IF {{TREKKING_TOPOLOGY_ENABLED}} THEN
         RETURN NEW;
     END IF;
-    SELECT * FROM ft_elevation_infos(NEW.geom, {{ALTIMETRIC_PROFILE_STEP}}) INTO elevation;
+    SELECT * FROM ft_elevation_infos(NEW.geom, NEW.id) INTO elevation;
     -- Update path geometry
     NEW.geom_3d := elevation.draped;
     NEW."length" := ST_3DLength(elevation.draped);

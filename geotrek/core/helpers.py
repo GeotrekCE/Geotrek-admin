@@ -92,7 +92,7 @@ class TopologyHelper(object):
 
         kind = objdict[0].get('kind')
         offset = objdict[0].get('offset', 0.0)
-        topology = TopologyFactory.create(no_path=True, kind=kind, offset=offset)
+        topology = TopologyFactory.create(kind=kind, offset=offset)
         # Remove all existing path aggregation (WTF: created from factory ?)
         PathAggregation.objects.filter(topo_object=topology).delete()
 
@@ -135,6 +135,7 @@ class TopologyHelper(object):
                     counter += 1
         except (AssertionError, ValueError, KeyError, Path.DoesNotExist) as e:
             raise ValueError("Invalid serialized topology : %s" % e)
+        topology.update_geometry(topology.id)
         topology.save()
         return topology
 
@@ -157,14 +158,10 @@ class TopologyHelper(object):
             position, offset = closest.interpolate(point)
             offset = 0
         # We can now instantiante a Topology object
-        topology = TopologyFactory.create(no_path=True, kind=kind, offset=offset)
-        aggrobj = PathAggregation(topo_object=topology,
-                                  start_position=position,
-                                  end_position=position,
-                                  path=closest)
-        aggrobj.save()
+        topology = TopologyFactory.create(path=closest, path__start=position, path__end=position, kind=kind, offset=offset)
         point = Point(point.x, point.y, srid=settings.SRID)
         topology.geom = point
+        topology.update_geometry(topology.id)
         topology.save()
         return topology
 

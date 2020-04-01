@@ -46,33 +46,23 @@ $$ LANGUAGE plpgsql;
 -------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS e_r_evenement_troncon_geometry_tgr ON core_pathaggregation;
+DROP TRIGGER IF EXISTS e_r_evenement_troncon_geometry_tgr_2 ON core_topology;
 
 CREATE OR REPLACE FUNCTION geotrek.ft_evenements_troncons_geometry() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
+    element RECORD;
     eid integer;
     eids integer[];
 BEGIN
-    IF TG_OP = 'INSERT' THEN
-        eids := array_append(eids, NEW.topo_object_id);
-    ELSE
-        eids := array_append(eids, OLD.topo_object_id);
-        IF TG_OP = 'UPDATE' THEN -- /!\ Logical ops are commutative in SQL
-            IF NEW.topo_object_id != OLD.topo_object_id THEN
-                eids := array_append(eids, NEW.topo_object_id);
-            END IF;
-        END IF;
-    END IF;
-
-    FOREACH eid IN ARRAY eids LOOP
-        PERFORM update_geometry_of_evenement(eid);
-    END LOOP;
-
+    UPDATE core_topology t
+    SET need_update = TRUE
+    WHERE t.id = NEW.topo_object_id;
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER e_r_evenement_troncon_geometry_tgr
-AFTER INSERT OR UPDATE OR DELETE ON core_pathaggregation
+AFTER UPDATE OR INSERT ON core_pathaggregation
 FOR EACH ROW EXECUTE PROCEDURE ft_evenements_troncons_geometry();
 
 

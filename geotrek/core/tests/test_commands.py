@@ -38,12 +38,9 @@ class RemoveDuplicatePathTest(TestCase):
         self.p8 = Path.objects.create(name='Eighth Path', geom=geom_5)
         self.p9 = Path.objects.create(name='Nineth Path', geom=geom_5)
 
-        poi1 = POIFactory.create(name='POI1', no_path=True)
-        poi1.add_path(self.p1, start=0.5, end=0.5)
-        poi2 = POIFactory.create(name='POI2', no_path=True)
-        poi2.add_path(self.p2, start=0.5, end=0.5)
-        poi3 = POIFactory.create(name='POI3', no_path=True)
-        poi3.add_path(self.p4, start=0.5, end=0.5)
+        POIFactory.create(name='POI1', path=self.p1, path__start=0.5, path__end=0.5)
+        POIFactory.create(name='POI2', path=self.p2, path__start=0.5, path__end=0.5)
+        POIFactory.create(name='POI3', path=self.p4, path__start=0.5, path__end=0.5)
 
     def test_remove_duplicate_path(self):
         """

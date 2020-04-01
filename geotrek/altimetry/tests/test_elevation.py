@@ -65,9 +65,7 @@ class ElevationTest(TestCase):
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_elevation_topology_line(self):
-        topo = TopologyFactory.create(no_path=True)
-        topo.add_path(self.path, start=0.2, end=0.8)
-        topo.save()
+        topo = TopologyFactory.create(path=self.path, path__start=0.2, path__end=0.8)
         topo.get_elevation_profile()
         self.assertEqual(topo.ascent, 7)
         self.assertEqual(topo.descent, 0)
@@ -99,9 +97,7 @@ class ElevationTest(TestCase):
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_elevation_topology_point_offset(self):
-        topo = TopologyFactory.create(no_path=True, offset=1)
-        topo.add_path(self.path, start=0.5, end=0.5)
-        topo.save()
+        topo = TopologyFactory.create(path=self.path, path__start=0.5, path__end=0.5, offset=1)
         self.assertEqual(topo.geom_3d.coords[2], 15)
         self.assertEqual(topo.ascent, 0)
         self.assertEqual(topo.descent, 0)
@@ -111,9 +107,7 @@ class ElevationTest(TestCase):
     def test_elevation_topology_outside_dem(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             outside_path = Path.objects.create(geom=LineString((200, 200), (300, 300)))
-            topo = TopologyFactory.create(no_path=True)
-            topo.add_path(outside_path, start=0.5, end=0.5)
-            topo.save()
+            topo = TopologyFactory.create(path=outside_path, path__start=0.5, path__end=0.5)
         else:
             topo = TopologyFactory.create(geom="SRID=2154;POINT(250 250)")
         self.assertEqual(topo.geom_3d.coords[2], 0)

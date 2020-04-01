@@ -194,6 +194,8 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                 aggr.save()
             self._is_reversed = False
         super(Path, self).save(*args, **kwargs)
+        for topology in Topology.objects.filter(need_update=True):
+            topology.update_geometry(topology.id)
         self.reload()
 
     def delete(self, *args, **kwargs):
@@ -335,7 +337,7 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
     geom = models.GeometryField(editable=(not settings.TREKKING_TOPOLOGY_ENABLED),
                                 srid=settings.SRID, null=True,
                                 default=None, spatial_index=False)
-
+    need_update = models.BooleanField(default=False, null=False)
     """ Fake srid attribute, that prevents transform() calls when using Django map widgets. """
     srid = settings.API_SRID
 
@@ -402,6 +404,12 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
         """
         return TopologyHelper.overlapping(cls, topologies)
 
+    def update_geometry(self, id):
+        conn = connections[DEFAULT_DB_ALIAS]
+        cursor = conn.cursor()
+        sql = """SELECT update_geometry_of_evenement({});""".format(id)
+        cursor.execute(sql)
+
     def mutate(self, other, delete=True):
         """
         Take alls attributes of the other topology specified and
@@ -425,6 +433,8 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
         for aggr in aggrs:
             self.add_path(aggr.path, aggr.start_position, aggr.end_position, aggr.order, reload=False)
         self.reload()
+        self.update_geometry(self.pk)
+        self.update_geometry(other.pk)
         if delete:
             other.delete(force=True)  # Really delete it from database
         return self

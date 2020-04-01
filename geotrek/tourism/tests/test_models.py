@@ -27,10 +27,8 @@ class TourismRelations(TestCase):
         self.event2 = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(60 60)' % settings.SRID)
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path = core_factories.PathFactory(geom='SRID=%s;LINESTRING(0 100, 100 100)' % settings.SRID)
-            self.trek = trekking_factories.TrekFactory(no_path=True)
-            self.trek.add_path(path)
-            self.poi = trekking_factories.POIFactory(no_path=True)
-            self.poi.add_path(path, start=0.5, end=0.5)
+            self.trek = trekking_factories.TrekFactory(path=path)
+            self.poi = trekking_factories.POIFactory(path=path, path__start=0.5, path__end=0.5)
         else:
             self.trek = trekking_factories.TrekFactory(geom='SRID=%s;LINESTRING(0 100, 100 100)' % settings.SRID)
             self.poi = trekking_factories.POIFactory(geom='SRID=%s;POINT(50 100)' % settings.SRID)
