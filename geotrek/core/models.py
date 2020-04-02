@@ -411,7 +411,7 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
         self.save(update_fields=['offset'])
         PathAggregation.objects.filter(topo_object=self).delete()
         # The previous operation has put deleted = True (in triggers)
-        # and NULL in geom (see update_geometry_of_evenement:: IF t_count = 0)
+        # and NULL in geom (see update_geometry_of_topology:: IF t_count = 0)
         self.deleted = False
         self.geom = other.geom
         self.save(update_fields=['deleted', 'geom'])
@@ -500,7 +500,7 @@ class PathAggregation(models.Model):
     path = models.ForeignKey(Path, null=False,
                              verbose_name=_("Path"),
                              related_name="aggregations",
-                             on_delete=models.DO_NOTHING)  # The CASCADE behavior is enforced at DB-level (see file ../sql/20_evenements_troncons.sql)
+                             on_delete=models.DO_NOTHING)  # The CASCADE behavior is enforced at DB-level (see file ../sql/30_topologies_paths.sql)
     topo_object = models.ForeignKey(Topology, null=False, related_name="aggregations",
                                     verbose_name=_("Topology"))
     start_position = models.FloatField(verbose_name=_("Start position"), db_index=True)

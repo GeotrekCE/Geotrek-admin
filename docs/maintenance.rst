@@ -26,7 +26,7 @@ Database
 .. code-block:: bash
 
     sudo su postgres
-    pg_dump -Fc geotrekdb > /home/sentiers/`date +%Y%m%d%H%M`-database.backup
+    pg_dump -Fc geotrekdb > /home/geotrek/`date +%Y%m%d%H%M`-database.backup
     exit
 
 Media files
@@ -34,7 +34,7 @@ Media files
 .. code-block:: bash
 
     cd Geotrek-X.Y.Z/
-    tar -zcvf /home/sentiers/`date +%Y%m%d%H%M`-media.tar.gz var/media/
+    tar -zcvf /home/geotrek/`date +%Y%m%d%H%M`-media.tar.gz var/media/
 
 
 Configuration
@@ -42,7 +42,7 @@ Configuration
 .. code-block:: bash
 
     # Folder Geotrek-X.Y.Z/
-    tar -zcvf /home/sentiers/`date +%Y%m%d%H%M`-conf.tar.gz etc/ geotrek/settings/custom.py
+    tar -zcvf /home/geotrek/`date +%Y%m%d%H%M`-conf.tar.gz etc/ geotrek/settings/custom.py
 
 
 

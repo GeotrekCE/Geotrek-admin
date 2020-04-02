@@ -288,7 +288,7 @@ class PathHelper(object):
         cursor = connection.cursor()
         sql = """
         SELECT position, distance
-        FROM ft_troncon_interpolate(%(pk)s, ST_GeomFromText('POINT(%(x)s %(y)s)',%(srid)s))
+        FROM ft_path_interpolate(%(pk)s, ST_GeomFromText('POINT(%(x)s %(y)s)',%(srid)s))
              AS (position FLOAT, distance FLOAT)
         """ % {'pk': path.pk,
                'x': point.x,

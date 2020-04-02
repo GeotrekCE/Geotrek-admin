@@ -1,5 +1,5 @@
-DROP FUNCTION IF EXISTS geotrek.ft_merge_path(integer,integer) CASCADE;
-CREATE FUNCTION geotrek.ft_merge_path(updated integer, merged integer)
+DROP FUNCTION IF EXISTS ft_merge_path(integer,integer) CASCADE;
+CREATE FUNCTION {# geotrek.core #}.ft_merge_path(updated integer, merged integer)
   RETURNS integer AS $$
 
 DECLARE
@@ -17,8 +17,8 @@ DECLARE
 BEGIN
     reverse_update := FALSE;
     reverse_merged := FALSE;
-    max_snap_distance := {{PATH_MERGE_SNAPPING_DISTANCE}};
-    snap_distance := {{PATH_SNAPPING_DISTANCE}};
+    max_snap_distance := {{ PATH_MERGE_SNAPPING_DISTANCE }};
+    snap_distance := {{ PATH_SNAPPING_DISTANCE }};
     rebuild_line := NULL;
 
     IF updated = merged

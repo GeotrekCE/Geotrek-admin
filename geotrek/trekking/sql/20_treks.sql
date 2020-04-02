@@ -1,6 +1,7 @@
 DROP TRIGGER IF EXISTS o_r_create_relationships_iu_tgr ON trekking_trekrelationship;
+DROP FUNCTION IF EXISTS create_relationships_iu() CASCADE;
 
-CREATE OR REPLACE FUNCTION rando.create_relationships_iu() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {# geotrek.trekking #}.create_relationships_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     t_count integer;
 BEGIN
@@ -26,8 +27,9 @@ FOR EACH ROW EXECUTE PROCEDURE create_relationships_iu();
 
 
 DROP TRIGGER IF EXISTS o_r_cleanup_relationships_d_tgr ON trekking_trekrelationship;
+DROP FUNCTION IF EXISTS cleanup_relationships_d() CASCADE;
 
-CREATE OR REPLACE FUNCTION rando.cleanup_relationships_d() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {# geotrek.trekking #}.cleanup_relationships_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
 BEGIN
     DELETE FROM trekking_trekrelationship

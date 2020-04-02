@@ -3,7 +3,8 @@
 -------------------------------------------------------------------------------
 
 DROP TYPE IF EXISTS elevation_infos CASCADE;
-CREATE TYPE elevation_infos AS (
+
+CREATE TYPE {# geotrek.altimetry #}.elevation_infos AS (
     draped geometry,
     slope float,
     min_elevation integer,
@@ -12,7 +13,9 @@ CREATE TYPE elevation_infos AS (
     negative_gain integer
 );
 
-CREATE OR REPLACE FUNCTION geotrek.ft_smooth_line(geom geometry)
+DROP FUNCTION IF EXISTS ft_smooth_line(geometry);
+
+CREATE FUNCTION {# geotrek.altimetry #}.ft_smooth_line(geom geometry)
   RETURNS SETOF geometry AS $$
 DECLARE
     current geometry;
@@ -43,7 +46,9 @@ END;
 
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION geotrek.ft_smooth_line(
+DROP FUNCTION IF EXISTS ft_smooth_line(geometry, integer);
+
+CREATE FUNCTION {# geotrek.altimetry #}.ft_smooth_line(
     linegeom geometry,
     step integer)
   RETURNS SETOF geometry AS $$
@@ -94,7 +99,9 @@ END;
 
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION geotrek.ft_drape_line(linegeom geometry, step integer)
+DROP FUNCTION IF EXISTS ft_drape_line(geometry, integer);
+
+CREATE FUNCTION {# geotrek.altimetry #}.ft_drape_line(linegeom geometry, step integer)
     RETURNS SETOF geometry AS $$
 DECLARE
     points geometry[];
@@ -133,8 +140,9 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+DROP FUNCTION IF EXISTS add_point_elevation(geometry);
 
-CREATE OR REPLACE FUNCTION geotrek.add_point_elevation(geom geometry) RETURNS geometry AS $$
+CREATE FUNCTION {# geotrek.altimetry #}.add_point_elevation(geom geometry) RETURNS geometry AS $$
 DECLARE
     ele integer;
     geom3d geometry;
@@ -161,8 +169,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP FUNCTION IF EXISTS ft_elevation_infos(geometry);
 
-CREATE OR REPLACE FUNCTION geotrek.ft_elevation_infos(geom geometry) RETURNS elevation_infos AS $$
+CREATE FUNCTION {# geotrek.altimetry #}.ft_elevation_infos(geom geometry) RETURNS elevation_infos AS $$
 DECLARE
     num_points integer;
     current geometry;
@@ -201,7 +210,7 @@ BEGIN
     last_last_ele := NULL;
     points3d := ARRAY[]::geometry[];
 
-    FOR current IN SELECT * FROM ft_drape_line(geom, {{ALTIMETRIC_PROFILE_PRECISION}}) LOOP
+    FOR current IN SELECT * FROM ft_drape_line(geom, {{ ALTIMETRIC_PROFILE_PRECISION }}) LOOP
         -- Smooth the elevation profile
         ele := ST_Z(current);
         -- Create the 3d points
@@ -228,7 +237,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION geotrek.ft_elevation_infos(geom geometry, epsilon float) RETURNS elevation_infos AS $$
+DROP FUNCTION IF EXISTS ft_elevation_infos(geometry, float);
+
+CREATE FUNCTION {# geotrek.altimetry #}.ft_elevation_infos(geom geometry, epsilon float) RETURNS elevation_infos AS $$
 DECLARE
     num_points integer;
     current geometry;
@@ -274,13 +285,13 @@ BEGIN
     points3d_smoothed := ARRAY[]::geometry[];
     points3d_simplified := ARRAY[]::geometry[];
 
-    FOR current IN SELECT * FROM ft_drape_line(geom, {{ALTIMETRIC_PROFILE_PRECISION}}) LOOP
+    FOR current IN SELECT * FROM ft_drape_line(geom, {{ ALTIMETRIC_PROFILE_PRECISION }}) LOOP
         -- Create the 3d points
         points3d := array_append(points3d, current);
     END LOOP;
 
     -- smoothing line
-    FOR current IN SELECT * FROM ft_smooth_line(St_MakeLine(points3d), {{ALTIMETRIC_PROFILE_AVERAGE}}) LOOP
+    FOR current IN SELECT * FROM ft_smooth_line(St_MakeLine(points3d), {{ ALTIMETRIC_PROFILE_AVERAGE }}) LOOP
         -- Create the 3d points
         points3d_smoothed := array_append(points3d_smoothed, current);
     END LOOP;

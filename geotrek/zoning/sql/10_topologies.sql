@@ -1,20 +1,21 @@
-SELECT create_schema_if_not_exist('zonage');
-
 -------------------------------------------------------------------------------
 -- Add spatial index (will boost spatial filters)
 -------------------------------------------------------------------------------
 
 DROP INDEX IF EXISTS couche_communes_geom_idx;
 DROP INDEX IF EXISTS l_commune_geom_idx;
-CREATE INDEX l_commune_geom_idx ON zoning_city USING gist(geom);
+DROP INDEX IF EXISTS zoning_city_geom_idx;
+CREATE INDEX zoning_city_geom_idx ON zoning_city USING gist(geom);
 
 DROP INDEX IF EXISTS couche_secteurs_geom_idx;
 DROP INDEX IF EXISTS l_secteur_geom_idx;
-CREATE INDEX l_secteur_geom_idx ON zoning_district USING gist(geom);
+DROP INDEX IF EXISTS zoning_district_geom_idx;
+CREATE INDEX zoning_district_geom_idx ON zoning_district USING gist(geom);
 
 DROP INDEX IF EXISTS couche_zonage_reglementaire_geom_idx;
 DROP INDEX IF EXISTS l_zonage_reglementaire_geom_idx;
-CREATE INDEX l_zonage_reglementaire_geom_idx ON zoning_restrictedarea USING gist(geom);
+DROP INDEX IF EXISTS zoning_restrictedarea_geom_idx;
+CREATE INDEX zoning_restrictedarea_geom_idx ON zoning_restrictedarea USING gist(geom);
 
 
 -------------------------------------------------------------------------------
@@ -22,21 +23,26 @@ CREATE INDEX l_zonage_reglementaire_geom_idx ON zoning_restrictedarea USING gist
 -------------------------------------------------------------------------------
 
 ALTER TABLE zoning_city DROP CONSTRAINT IF EXISTS l_commune_geom_isvalid;
-ALTER TABLE zoning_city ADD CONSTRAINT l_commune_geom_isvalid CHECK (ST_IsValid(geom));
+ALTER TABLE zoning_city DROP CONSTRAINT IF EXISTS zoning_city_geom_isvalid;
+ALTER TABLE zoning_city ADD CONSTRAINT zoning_city_geom_isvalid CHECK (ST_IsValid(geom));
 
 ALTER TABLE zoning_district DROP CONSTRAINT IF EXISTS l_secteur_geom_isvalid;
-ALTER TABLE zoning_district ADD CONSTRAINT l_secteur_geom_isvalid CHECK (ST_IsValid(geom));
+ALTER TABLE zoning_district DROP CONSTRAINT IF EXISTS zoning_district_geom_isvalid;
+ALTER TABLE zoning_district ADD CONSTRAINT zoning_district_geom_isvalid CHECK (ST_IsValid(geom));
 
 ALTER TABLE zoning_restrictedarea DROP CONSTRAINT IF EXISTS l_zonage_reglementaire_geom_isvalid;
-ALTER TABLE zoning_restrictedarea ADD CONSTRAINT l_zonage_reglementaire_geom_isvalid CHECK (ST_IsValid(geom));
+ALTER TABLE zoning_restrictedarea DROP CONSTRAINT IF EXISTS zoning_restrictedarea_geom_isvalid;
+ALTER TABLE zoning_restrictedarea ADD CONSTRAINT zoning_restrictedarea_geom_isvalid CHECK (ST_IsValid(geom));
 
 -------------------------------------------------------------------------------
--- Delete Commune/Zonage/Secteur when evenements are deleted
+-- Delete City/District/Restrictedarea when topologies are deleted
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS troncons_couches_sig_d_tgr ON core_pathaggregation;
+DROP TRIGGER IF EXISTS path_topologies_d_tgr ON core_pathaggregation;
+DROP FUNCTION IF EXISTS lien_auto_troncon_couches_sig_d() CASCADE;
+DROP FUNCTION IF EXISTS auto_link_path_topologies_d() CASCADE;
 
-CREATE OR REPLACE FUNCTION zonage.lien_auto_troncon_couches_sig_d() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {# geotrek.zoning #}.auto_link_path_topologies_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     tab varchar;
     eid integer;
@@ -44,12 +50,12 @@ BEGIN
     FOREACH tab IN ARRAY ARRAY[['zoning_cityedge', 'zoning_districtedge', 'zoning_restrictedareaedge']]
     LOOP
         -- Delete related object in association tables
-        -- /!\ This query is executed for any kind of evenement, but it will
-        -- return an eid only if the evenement is involved in an association
+        -- /!\ This query is executed for any kind of topology, but it will
+        -- return an eid only if the topology is involved in an association
         -- table with commune, secteur or zonage. It returns NULL otherwise.
         EXECUTE 'DELETE FROM '|| quote_ident(tab) ||' WHERE topo_object_id = $1 RETURNING topo_object_id' INTO eid USING OLD.topo_object_id;
 
-        -- Delete the evenement itself
+        -- Delete the topology itself
         IF eid IS NOT NULL THEN
             DELETE FROM core_topology WHERE id = eid;
         END IF;
@@ -59,20 +65,25 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER troncons_couches_sig_d_tgr
+CREATE TRIGGER path_topologies_d_tgr
 AFTER DELETE ON core_pathaggregation
-FOR EACH ROW EXECUTE PROCEDURE lien_auto_troncon_couches_sig_d();
+FOR EACH ROW EXECUTE PROCEDURE auto_link_path_topologies_d();
 
 
 -------------------------------------------------------------------------------
--- Delete evenements when Commune/Zonage/Secteur are deleted
+-- Delete topologies when City/District/Restrictedarea are deleted
 -------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS commune_troncons_d_tgr ON zoning_cityedge;
+DROP TRIGGER IF EXISTS city_paths_d_tgr ON zoning_cityedge;
 DROP TRIGGER IF EXISTS secteur_troncons_d_tgr ON zoning_districtedge;
+DROP TRIGGER IF EXISTS district_paths_d_tgr ON zoning_districtedge;
 DROP TRIGGER IF EXISTS zonage_troncons_d_tgr ON zoning_restrictedareaedge;
+DROP TRIGGER IF EXISTS restrictedarea_paths_d_tgr ON zoning_restrictedareaedge;
+DROP FUNCTION IF EXISTS nettoyage_auto_couches_sig_d() CASCADE;
+DROP FUNCTION IF EXISTS auto_clean_topologies_sig_d() CASCADE;
 
-CREATE OR REPLACE FUNCTION zonage.nettoyage_auto_couches_sig_d() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {# geotrek.zoning #}.auto_clean_topologies_sig_d() RETURNS trigger SECURITY DEFINER AS $$
 BEGIN
     DELETE FROM core_pathaggregation WHERE topo_object_id = OLD.topo_object_id;
     DELETE FROM core_topology WHERE id = OLD.topo_object_id;
@@ -80,17 +91,17 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER commune_troncons_d_tgr
+CREATE TRIGGER city_paths_d_tgr
 AFTER DELETE ON zoning_cityedge
-FOR EACH ROW EXECUTE PROCEDURE nettoyage_auto_couches_sig_d();
+FOR EACH ROW EXECUTE PROCEDURE auto_clean_topologies_sig_d();
 
-CREATE TRIGGER secteur_troncons_d_tgr
+CREATE TRIGGER district_paths_d_tgr
 AFTER DELETE ON zoning_districtedge
-FOR EACH ROW EXECUTE PROCEDURE nettoyage_auto_couches_sig_d();
+FOR EACH ROW EXECUTE PROCEDURE auto_clean_topologies_sig_d();
 
-CREATE TRIGGER zonage_troncons_d_tgr
+CREATE TRIGGER restrictedarea_paths_d_tgr
 AFTER DELETE ON zoning_restrictedareaedge
-FOR EACH ROW EXECUTE PROCEDURE nettoyage_auto_couches_sig_d();
+FOR EACH ROW EXECUTE PROCEDURE auto_clean_topologies_sig_d();
 
 
 
@@ -99,22 +110,25 @@ FOR EACH ROW EXECUTE PROCEDURE nettoyage_auto_couches_sig_d();
 -------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS l_t_troncon_couches_sig_iu_tgr ON core_path;
+DROP TRIGGER IF EXISTS core_path_topologies_iu_tgr ON core_path;
+DROP FUNCTION IF EXISTS lien_auto_troncon_couches_sig_iu() CASCADE;
+DROP FUNCTION IF EXISTS auto_link_path_topologies_iu() CASCADE;
 
-CREATE OR REPLACE FUNCTION lien_auto_troncon_couches_sig_iu() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {# geotrek.zoning #}.auto_link_path_topologies_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     rec record;
     tab varchar;
     eid integer;
 BEGIN
-    -- Remove obsolete evenement
+    -- Remove obsolete topology
     IF TG_OP = 'UPDATE' THEN
-        -- Related evenement/zonage/secteur/commune will be cleared by another trigger
+        -- Related topology/zonage/secteur/commune will be cleared by another trigger
         DELETE FROM core_pathaggregation et USING zoning_restrictedareaedge z WHERE et.path_id = OLD.id AND et.topo_object_id = z.topo_object_id;
         DELETE FROM core_pathaggregation et USING zoning_districtedge s WHERE et.path_id = OLD.id AND et.topo_object_id = s.topo_object_id;
         DELETE FROM core_pathaggregation et USING zoning_cityedge c WHERE et.path_id = OLD.id AND et.topo_object_id = c.topo_object_id;
     END IF;
 
-    -- Add new evenement
+    -- Add new topology
     -- Note: Column names differ between commune, secteur and zonage, we can not use an elegant loop.
 
     -- Commune
@@ -145,9 +159,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER l_t_troncon_couches_sig_iu_tgr
+CREATE TRIGGER core_path_topologies_iu_tgr
 AFTER INSERT OR UPDATE OF geom ON core_path
-FOR EACH ROW EXECUTE PROCEDURE lien_auto_troncon_couches_sig_iu();
+FOR EACH ROW EXECUTE PROCEDURE auto_link_path_topologies_iu();
 
 
 
@@ -156,10 +170,15 @@ FOR EACH ROW EXECUTE PROCEDURE lien_auto_troncon_couches_sig_iu();
 -------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS commune_troncons_iu_tgr ON zoning_city;
+DROP TRIGGER IF EXISTS city_paths_iu_tgr ON zoning_city;
 DROP TRIGGER IF EXISTS secteur_troncons_iu_tgr ON zoning_district;
+DROP TRIGGER IF EXISTS district_paths_iu_tgr ON zoning_district;
 DROP TRIGGER IF EXISTS zonage_troncons_iu_tgr ON zoning_restrictedarea;
+DROP TRIGGER IF EXISTS restrictedarea_paths_iu_tgr ON zoning_restrictedarea;
+DROP FUNCTION IF EXISTS lien_auto_couches_sig_troncon_iu() CASCADE;
+DROP FUNCTION IF EXISTS auto_link_topologies_path_iu() CASCADE;
 
-CREATE OR REPLACE FUNCTION lien_auto_couches_sig_troncon_iu() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {# geotrek.zoning #}.auto_link_topologies_path_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     table_name varchar := TG_ARGV[0];
     id_name varchar := TG_ARGV[1];
@@ -177,12 +196,12 @@ BEGIN
             SELECT NEW.id AS id INTO obj;
     END;
 
-    -- Remove obsolete evenement
+    -- Remove obsolete topology
     IF TG_OP = 'UPDATE' THEN
         EXECUTE 'DELETE FROM '|| quote_ident(table_name) ||' WHERE '|| quote_ident(fk_name) ||' = $1' USING obj.id;
     END IF;
 
-    -- Add new evenement
+    -- Add new topology
     FOR rec IN EXECUTE 'SELECT id, egeom AS geom, ST_LineLocatePoint(tgeom, ST_StartPoint(egeom)) AS pk_a, ST_LineLocatePoint(tgeom, ST_EndPoint(egeom)) AS pk_b FROM (SELECT id, geom AS tgeom, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS egeom FROM core_path WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
     LOOP
         IF rec.pk_a IS NOT NULL AND rec.pk_b IS NOT NULL THEN
@@ -196,14 +215,14 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER commune_troncons_iu_tgr
+CREATE TRIGGER city_paths_iu_tgr
 AFTER INSERT OR UPDATE OF geom ON zoning_city
-FOR EACH ROW EXECUTE PROCEDURE lien_auto_couches_sig_troncon_iu('zoning_cityedge', 'code', 'city_id', 'CITYEDGE');
+FOR EACH ROW EXECUTE PROCEDURE auto_link_topologies_path_iu('zoning_cityedge', 'code', 'city_id', 'CITYEDGE');
 
-CREATE TRIGGER secteur_troncons_iu_tgr
+CREATE TRIGGER district_paths_iu_tgr
 AFTER INSERT OR UPDATE OF geom ON zoning_district
-FOR EACH ROW EXECUTE PROCEDURE lien_auto_couches_sig_troncon_iu('zoning_districtedge', 'id', 'district_id', 'DISTRICTEDGE');
+FOR EACH ROW EXECUTE PROCEDURE auto_link_topologies_path_iu('zoning_districtedge', 'id', 'district_id', 'DISTRICTEDGE');
 
-CREATE TRIGGER zonage_troncons_iu_tgr
+CREATE TRIGGER restrictedarea_paths_iu_tgr
 AFTER INSERT OR UPDATE OF geom ON zoning_restrictedarea
-FOR EACH ROW EXECUTE PROCEDURE lien_auto_couches_sig_troncon_iu('zoning_restrictedareaedge', 'id', 'restricted_area_id', 'RESTRICTEDAREAEDGE');
+FOR EACH ROW EXECUTE PROCEDURE auto_link_topologies_path_iu('zoning_restrictedareaedge', 'id', 'restricted_area_id', 'RESTRICTEDAREAEDGE');

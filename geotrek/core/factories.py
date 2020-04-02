@@ -116,7 +116,7 @@ class TopologyFactory(factory.DjangoModelFactory):
         model = models.Topology
 
     # Factory
-    # troncons (M2M)
+    # paths (M2M)
     offset = 0
     deleted = False
 

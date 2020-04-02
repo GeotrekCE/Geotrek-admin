@@ -7,10 +7,10 @@ from geotrek.common.utils.postgresql import load_sql_files, move_models_to_schem
 
 def pm_callback(sender, **kwargs):
     """
-    Post Migrate callbghack Re/load sql files and move models to schemas
+    Post Migrate callback Re/load sql files and move models to schemas
     """
-    load_sql_files(sender)
     move_models_to_schemas(sender)
+    load_sql_files(sender)
 
 
 def check_srid_has_meter_unit():
