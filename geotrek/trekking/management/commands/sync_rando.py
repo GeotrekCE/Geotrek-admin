@@ -1,3 +1,4 @@
+import argparse
 import logging
 import filecmp
 import os
@@ -122,6 +123,7 @@ class Command(BaseCommand):
                             default=False, help='include infrastructures')
         parser.add_argument('--with-dives', action='store_true', dest='with_dives',
                             default=False, help='include dives')
+        parser.add_argument('--task', default=None, help=argparse.SUPPRESS)
 
     def mkdirs(self, name):
         dirname = os.path.dirname(name)

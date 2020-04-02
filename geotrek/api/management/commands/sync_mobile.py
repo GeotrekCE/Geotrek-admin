@@ -1,3 +1,4 @@
+import argparse
 import logging
 import filecmp
 import os
@@ -41,6 +42,7 @@ class Command(BaseCommand):
                             help='Skip inclusion of tiles in zip files')
         parser.add_argument('--url', '-u', dest='url', default='http://localhost', help='Base url')
         parser.add_argument('--indent', '-i', default=0, type=int, help='Indent json files')
+        parser.add_argument('--task', default=None, help=argparse.SUPPRESS)
 
     def mkdirs(self, name):
         dirname = os.path.dirname(name)
