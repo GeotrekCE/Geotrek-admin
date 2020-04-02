@@ -4,6 +4,7 @@ from django.core.mail import send_mail
 from django.utils.translation import ugettext as _
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from mapentity import views as mapentity_views
@@ -99,3 +100,14 @@ http://www.geotrek.fr"""),
                 [request.data.get('email')]
             )
         return response
+
+
+class ReportWithPicturesView(APIView):
+    """Endpoint to post pictures"""
+    parser_classes = [FormParser, MultiPartParser]
+    permission_classes = [AllowAny]
+
+    @list_route(methods=['post'])
+    def post(self, request, format=None, *args, **kwargs):
+        return Response({'raw': request.data, 'data': request._request.POST,
+                         'files': str(request._request.FILES)})
