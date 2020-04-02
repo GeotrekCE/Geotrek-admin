@@ -412,12 +412,12 @@ class ProjectViewsTest(CommonTest):
 
     def test_project_bbox_filter(self):
         self.login()
-
+        path = PathFactory.create()
         p1 = ProjectFactory.create()
         ProjectFactory.create()
         ProjectFactory.create()
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            t = TopologyFactory.create()
+            t = TopologyFactory.create(path=path, path__start=0, path__end=0)
         else:
             t = TopologyFactory.create(geom='SRID=2154;POINT (700000 6600000)')
         InterventionFactory.create(project=p1, topology=t)

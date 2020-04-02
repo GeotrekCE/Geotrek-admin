@@ -136,7 +136,7 @@ BEGIN
     -- Zonage
     FOR rec IN EXECUTE 'SELECT id, ST_LineLocatePoint($1, COALESCE(ST_StartPoint(geom), geom)) as pk_a, ST_LineLocatePoint($1, COALESCE(ST_EndPoint(geom), geom)) as pk_b FROM (SELECT id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM zoning_restrictedarea WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
     LOOP
-        INSERT INTO core_topology (date_insert, date_update, kind, "offset", length, geom, deleted) VALUES (now(), now(), 'RESTRICTEDAREAEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
+        INSERT INTO core_topology (date_insert, date_update, kind, "offset", length, geom, deleted, need_update) VALUES (now(), now(), 'RESTRICTEDAREAEDGE', 0, 0, NEW.geom, FALSE, FALSE) RETURNING id INTO eid;
         INSERT INTO core_pathaggregation (path_id, topo_object_id, start_position, end_position) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
         INSERT INTO zoning_restrictedareaedge (topo_object_id, restricted_area_id) VALUES (eid, rec.id);
     END LOOP;

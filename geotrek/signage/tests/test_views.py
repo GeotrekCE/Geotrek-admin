@@ -21,8 +21,7 @@ class SignageTest(TestCase):
         p = PathFactory.create()
 
         self.assertEqual(len(p.signages), 0)
-        sign = SignageFactory.create(no_path=True)
-        sign.add_path(path=p, start=0.5, end=0.5)
+        sign = SignageFactory.create(path=p, path__start=0.5, path__end=0.5)
 
         self.assertCountEqual(p.signages, [sign])
 

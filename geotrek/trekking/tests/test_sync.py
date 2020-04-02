@@ -31,16 +31,16 @@ from geotrek.tourism.factories import InformationDeskFactory, TouristicContentFa
 class SyncRandoTilesTest(TestCase):
     @classmethod
     def setUpClass(cls):
+        cls.p = PathFactory.create(geom=LineString((0, 0), (0, 10)))
         super(SyncRandoTilesTest, cls).setUpClass()
 
     @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
     @mock.patch('landez.TilesManager.tile', return_value=b'I am a png')
     def test_tiles(self, mock_tileslist, mock_tiles):
         output = StringIO()
-        trek_multi = TrekFactory.create(published=True, no_path=True)
-        p = PathFactory.create(geom=LineString((0, 0), (0, 10)))
-        trek_multi.add_path(p, start=0.0, end=0.1)
-        trek_multi.add_path(p, start=0.2, end=0.3)
+        trek_multi = TrekFactory.create(published=True, path=self.p, path__start=0, path__end=0.1)
+        trek_multi.add_path(self.p, start=0.2, end=0.3)
+        trek_multi.update_geometry(trek_multi.id)
         trek_multi.save()
         management.call_command('sync_rando', 'tmp', url='http://localhost:8000', languages='en', verbosity=2,
                                 stdout=output)
@@ -101,7 +101,7 @@ class SyncRandoTilesTest(TestCase):
     @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
     def test_tiles_with_treks(self, mock_tileslist, mock_tiles, mock_prepare):
         output = StringIO()
-        trek = TrekFactory.create(published=True)
+        trek = TrekFactory.create(path=self.p, published=True)
         management.call_command('sync_rando', 'tmp', url='http://localhost:8000', verbosity=2, languages='en', stdout=output)
         zfile = zipfile.ZipFile(os.path.join('tmp', 'zip', 'tiles', 'global.zip'))
         for finfo in zfile.infolist():
@@ -122,6 +122,7 @@ class SyncRandoFailTest(TestCase):
     @classmethod
     def setUpClass(cls):
         super(SyncRandoFailTest, cls).setUpClass()
+        cls.p = PathFactory.create(geom=LineString((0, 0), (0, 10)))
 
     def test_fail_directory_not_empty(self):
         os.makedirs(os.path.join('tmp', 'other'))
@@ -142,7 +143,7 @@ class SyncRandoFailTest(TestCase):
                                     skip_tiles=True, languages='cat', verbosity=2)
 
     def test_attachments_missing_from_disk(self):
-        trek_1 = TrekWithPublishedPOIsFactory.create(published_fr=True)
+        trek_1 = TrekWithPublishedPOIsFactory.create(path=self.p, published_fr=True)
         attachment = AttachmentFactory(content_object=trek_1, attachment_file=get_dummy_uploaded_image())
         os.remove(attachment.attachment_file.path)
         with self.assertRaisesRegexp(CommandError, 'Some errors raised during synchronization.'):
@@ -172,7 +173,7 @@ class SyncRandoFailTest(TestCase):
     def test_response_500(self, mocke_list, mocke_map_image):
         output = StringIO()
         mocke_list.return_value = HttpResponse(status=500)
-        TrekWithPublishedPOIsFactory.create(published_fr=True)
+        TrekWithPublishedPOIsFactory.create(path=self.p, published_fr=True)
         with self.assertRaisesRegexp(CommandError, 'Some errors raised during synchronization.'):
             management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2, stdout=output, stderr=StringIO())
@@ -182,7 +183,7 @@ class SyncRandoFailTest(TestCase):
     def test_response_view_exception(self, mocke):
         output = StringIO()
         mocke.side_effect = Exception('This is a test')
-        TrekWithPublishedPOIsFactory.create(published_fr=True)
+        TrekWithPublishedPOIsFactory.create(path=self.p, published_fr=True)
         with self.assertRaisesRegexp(CommandError, 'Some errors raised during synchronization.'):
             management.call_command('sync_rando', 'tmp', url='http://localhost:8000', portal='portal', skip_pdf=True,
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output)
@@ -193,7 +194,7 @@ class SyncRandoFailTest(TestCase):
     def test_response_view_exception_with_debug(self, mocke):
         output = StringIO()
         mocke.side_effect = ValueError('This is a test')
-        TrekWithPublishedPOIsFactory.create(published_fr=True)
+        TrekWithPublishedPOIsFactory.create(path=self.p, published_fr=True)
         with self.assertRaisesRegexp(ValueError, 'This is a test'):
             management.call_command('sync_rando', 'tmp', url='http://localhost:8000', portal='portal', skip_pdf=True,
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output)
@@ -202,7 +203,7 @@ class SyncRandoFailTest(TestCase):
     @override_settings(MEDIA_URL=9)
     def test_bad_settings(self):
         output = StringIO()
-        TrekWithPublishedPOIsFactory.create(published_fr=True)
+        TrekWithPublishedPOIsFactory.create(path=self.p, published_fr=True)
         with self.assertRaisesRegexp(AttributeError, "'int' object has no attribute 'strip'"):
             management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output)
@@ -243,21 +244,21 @@ class SyncSetup(TestCase):
         information_desk_without_photo = InformationDeskFactory.create(photo=None)
         self.practice_trek = PracticeTrekFactory.create(order=1)
         self.practice_trek_first = PracticeTrekFactory.create(order=0)
-        self.trek_1 = TrekWithPublishedPOIsFactory.create(practice=self.practice_trek, sources=(self.source_a, ),
-                                                          portals=(self.portal_b,),
+        self.path = PathFactory.create()
+        self.trek_1 = TrekWithPublishedPOIsFactory.create(path=self.path, practice=self.practice_trek,
+                                                          sources=(self.source_a, ), portals=(self.portal_b,),
                                                           published=True)
         self.trek_1.information_desks.add(self.information_desks)
         self.trek_1.information_desks.add(information_desk_without_photo)
         self.attachment_1 = AttachmentFactory.create(content_object=self.trek_1,
                                                      attachment_file=get_dummy_uploaded_image())
-        self.trek_2 = TrekFactory.create(sources=(self.source_b,),
+        self.trek_2 = TrekFactory.create(path=self.path, sources=(self.source_b,),
                                          published=True)
-        self.trek_3 = TrekFactory.create(portals=(self.portal_b,
-                                                  self.portal_a),
+        self.trek_3 = TrekFactory.create(path=self.path, portals=(self.portal_b, self.portal_a),
                                          published=True)
-        self.trek_4 = TrekFactory.create(practice=self.practice_trek, portals=(self.portal_a,),
+        self.trek_4 = TrekFactory.create(path=self.path, practice=self.practice_trek, portals=(self.portal_a,),
                                          published=True)
-        self.trek_5 = TrekFactory.create(practice=self.practice_trek_first, portals=(self.portal_a,),
+        self.trek_5 = TrekFactory.create(path=self.path, practice=self.practice_trek_first, portals=(self.portal_a,),
                                          published=True, name="other")
 
         self.practice_dive = PracticeDiveFactory.create(order=0)
@@ -276,7 +277,7 @@ class SyncSetup(TestCase):
         self.dive_4 = DiveFactory.create(practice=self.practice_dive, portals=(self.portal_a,),
                                          published=True)
         self.poi_1 = trek_models.POI.objects.first()
-        self.poi_dive = POIFactory.create(name="dive_poi", published=True)
+        self.poi_dive = POIFactory.create(path=self.path, name="dive_poi", published=True)
         self.attachment_poi_image_1 = AttachmentFactory.create(content_object=self.poi_1,
                                                                attachment_file=get_dummy_uploaded_image())
         AttachmentFactory.create(content_object=self.poi_dive,
@@ -288,10 +289,12 @@ class SyncSetup(TestCase):
         self.attachment_poi_file = AttachmentFactory.create(content_object=self.poi_1,
                                                             attachment_file=get_dummy_uploaded_file())
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            infrastructure = InfrastructureFactory.create(no_path=True, name="INFRA_1")
-            infrastructure.add_path(self.trek_1.paths.first(), start=0, end=0)
-            signage = SignageFactory.create(no_path=True, name="SIGNA_1")
-            signage.add_path(self.trek_1.paths.first(), start=0, end=0)
+            InfrastructureFactory.create(path=self.trek_1.paths.first(),
+                                         path__start=0, path__end=0,
+                                         name="INFRA_1")
+            SignageFactory.create(path=self.trek_1.paths.first(),
+                                  path__start=0, path__end=0,
+                                  name="SIGNA_1")
         else:
             InfrastructureFactory.create(geom='SRID=2154;POINT(700000 6600000)', name="INFRA_1")
             SignageFactory.create(geom='SRID=2154;POINT(700000 6600000)', name="SIGNA_1")
@@ -427,7 +430,7 @@ class SyncTest(SyncSetup):
     def test_streaminghttpresponse(self, mocke):
         output = StringIO()
         mocke.return_value = StreamingHttpResponse()
-        trek = TrekWithPublishedPOIsFactory.create(published_fr=True)
+        trek = TrekWithPublishedPOIsFactory.create(path=self.path, published_fr=True)
         management.call_command('sync_rando', 'tmp', url='http://localhost:8000', skip_pdf=True,
                                 skip_tiles=True, languages='fr', verbosity=2, stdout=output)
         self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'fr', 'treks', str(trek.pk), 'profile.png')))
@@ -541,7 +544,7 @@ class SyncTest(SyncSetup):
 class SyncTestPdf(SyncSetup):
     def setUp(self):
         super(SyncTestPdf, self).setUp()
-        self.trek_5 = TrekFactory.create(practice=self.practice_trek, portals=(self.portal_a,),
+        self.trek_5 = TrekFactory.create(path=self.path, practice=self.practice_trek, portals=(self.portal_a,),
                                          published=True)
         filetype_topoguide = FileTypeFactory.create(type='Topoguide')
         AttachmentFactory.create(content_object=self.trek_5, attachment_file=get_dummy_uploaded_image(),

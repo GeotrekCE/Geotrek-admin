@@ -639,7 +639,7 @@ class TrailViewsTest(CommonTest):
     @mock.patch('mapentity.models.MapEntityMixin.get_attributes_html')
     def test_document_export(self, get_attributes_html):
         get_attributes_html.return_value = b'<p>mock</p>'
-        trail = TrailFactory(path__aggr=False)
+        trail = TrailFactory()
         self.login()
         with open(trail.get_map_image_path(), 'wb') as f:
             f.write(b'***' * 1000)

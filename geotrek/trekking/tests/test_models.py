@@ -17,8 +17,11 @@ from geotrek.trekking.models import Trek, OrderedTrekChild
 
 
 class TrekTest(TranslationResetMixin, TestCase):
+    def setUp(self):
+        self.path = PathFactory.create()
+
     def test_is_publishable(self):
-        t = TrekFactory.create()
+        t = TrekFactory.create(path=self.path)
         t.geom = LineString((0, 0), (1, 1))
         self.assertTrue(t.has_geom_valid())
 
@@ -36,7 +39,7 @@ class TrekTest(TranslationResetMixin, TestCase):
         self.assertFalse(t.is_publishable())
 
     def test_any_published_property(self):
-        t = TrekFactory.create(published=False)
+        t = TrekFactory.create(published=False, path=self.path)
         t.published_fr = False
         t.published_it = False
         t.save()
@@ -47,13 +50,13 @@ class TrekTest(TranslationResetMixin, TestCase):
 
     @override_settings(PUBLISHED_BY_LANG=False)
     def test_any_published_without_published_by_lang(self):
-        t = TrekFactory.create(published=False)
+        t = TrekFactory.create(published=False, path=self.path)
         t.published_fr = True
         t.save()
         self.assertFalse(t.any_published)
 
     def test_published_status(self):
-        t = TrekFactory.create(published=False)
+        t = TrekFactory.create(published=False, path=self.path)
         t.published_fr = False
         t.published_it = True
         t.save()
@@ -65,7 +68,7 @@ class TrekTest(TranslationResetMixin, TestCase):
 
     @override_settings(PUBLISHED_BY_LANG=False)
     def test_published_status_without_published_by_lang(self):
-        t = TrekFactory.create(published=True)
+        t = TrekFactory.create(published=True, path=self.path)
         t.published_fr = False
         t.published_it = False
         t.save()
@@ -77,7 +80,7 @@ class TrekTest(TranslationResetMixin, TestCase):
 
     @override_settings(PUBLISHED_BY_LANG=False)
     def test_published_langs_without_published_by_lang_not_published(self):
-        t = TrekFactory.create(published=False)
+        t = TrekFactory.create(published=False, path=self.path)
         t.published_fr = True
         t.published_it = True
         t.save()
@@ -85,7 +88,7 @@ class TrekTest(TranslationResetMixin, TestCase):
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_kml_coordinates_should_be_3d(self):
-        trek = TrekWithPOIsFactory.create()
+        trek = TrekWithPOIsFactory.create(path=self.path)
         kml = trek.kml()
         parsed = BeautifulSoup(kml, 'lxml')
         for placemark in parsed.findAll('placemark'):
@@ -94,7 +97,7 @@ class TrekTest(TranslationResetMixin, TestCase):
             self.assertTrue(all([len(i) == 3 for i in tuples]))
 
     def test_pois_types(self):
-        trek = TrekWithPOIsFactory.create()
+        trek = TrekWithPOIsFactory.create(path=self.path)
         type0 = trek.pois[0].type
         type1 = trek.pois[1].type
         self.assertEqual(2, len(trek.poi_types))
@@ -104,10 +107,9 @@ class TrekTest(TranslationResetMixin, TestCase):
     def test_delete_cascade(self):
         p1 = PathFactory.create()
         p2 = PathFactory.create()
-        t = TrekFactory.create(no_path=True)
-        t.add_path(p1)
+        t = TrekFactory.create(path=p1)
         t.add_path(p2)
-
+        t.update_geometry(t.id)
         # Everything should be all right before delete
         self.assertTrue(t.published)
         self.assertFalse(t.deleted)
@@ -132,10 +134,10 @@ class TrekTest(TranslationResetMixin, TestCase):
         self.assertEqual(t.aggregations.count(), 0)
 
     def test_treks_are_sorted_by_name(self):
-        TrekFactory.create(name='Cb')
-        TrekFactory.create(name='Ca')
-        TrekFactory.create(name='A')
-        TrekFactory.create(name='B')
+        TrekFactory.create(path=self.path, name='Cb')
+        TrekFactory.create(path=self.path, name='Ca')
+        TrekFactory.create(path=self.path, name='A')
+        TrekFactory.create(path=self.path, name='B')
         self.assertQuerysetEqual(Trek.objects.all(),
                                  ['<Trek: A>', '<Trek: B>', '<Trek: Ca>', '<Trek: Cb>'],
                                  ordered=False)
@@ -144,7 +146,7 @@ class TrekTest(TranslationResetMixin, TestCase):
         """
         Test if a trek it is its own parent
         """
-        trek1 = TrekFactory.create(name='trek1')
+        trek1 = TrekFactory.create(path=self.path, name='trek1')
         OrderedTrekChild.objects.create(parent=trek1, child=trek1)
         self.assertRaisesMessage(ValidationError,
                                  "Cannot use itself as child trek.",
@@ -153,7 +155,8 @@ class TrekTest(TranslationResetMixin, TestCase):
 
 class TrekPublicationDateTest(TranslationResetMixin, TestCase):
     def setUp(self):
-        self.trek = TrekFactory.create(published=False)
+        self.path = PathFactory.create()
+        self.trek = TrekFactory.create(path=self.path, published=False)
 
     def test_default_value_is_null(self):
         self.assertIsNone(self.trek.publication_date)
@@ -181,18 +184,15 @@ class TrekPublicationDateTest(TranslationResetMixin, TestCase):
 class RelatedObjectsTest(TranslationResetMixin, TestCase):
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_helpers(self):
-        trek = TrekFactory.create(no_path=True)
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
         p2 = PathFactory.create(geom=LineString((4, 4), (8, 8)))
-        poi = POIFactory.create(no_path=True)
-        poi2 = POIFactory.create(no_path=True)
-        service = ServiceFactory.create(no_path=True)
+        trek = TrekFactory.create(path=p1, path__start=0.5, path__end=1)
+        poi = POIFactory.create(path=p1, path__start=0.6, path__end=0.6)
+        poi2 = POIFactory.create(path=p1, path__start=0.6, path__end=0.6)
+        service = ServiceFactory.create(path=p1, path__start=0.7, path__end=0.7)
         service.type.practices.add(trek.practice)
-        trek.add_path(path=p1, start=0.5, end=1)
         trek.add_path(path=p2, start=0, end=1)
-        poi.add_path(path=p1, start=0.6, end=0.6)
-        poi2.add_path(path=p1, start=0.6, end=0.6)
-        service.add_path(path=p1, start=0.7, end=0.7)
+        trek.update_geometry(trek.id)
         trek.pois_excluded.add(poi2.pk)
 
         # /!\ District are automatically linked to paths at DB level
@@ -210,6 +210,7 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
         # Ensure there is no duplicates
 
         trek.add_path(path=p1, start=0.5, end=1)
+        trek.update_geometry(trek.id)
         self.assertCountEqual(trek.pois_excluded.all(), [poi2])
         self.assertCountEqual(trek.all_pois, [poi, poi2])
         self.assertCountEqual(trek.pois, [poi])
@@ -262,10 +263,8 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_deleted_pois(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
-        trek = TrekFactory.create(no_path=True)
-        trek.add_path(p1)
-        poi = POIFactory.create(no_path=True)
-        poi.add_path(p1, start=0.6, end=0.6)
+        trek = TrekFactory.create(path=p1)
+        poi = POIFactory.create(path=p1, path__start=0.6, path__end=0.6)
         self.assertCountEqual(trek.pois, [poi])
         poi.delete()
         self.assertCountEqual(trek.pois, [])
@@ -273,11 +272,9 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_deleted_services(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
-        trek = TrekFactory.create(no_path=True)
-        trek.add_path(p1)
-        service = ServiceFactory.create(no_path=True)
+        trek = TrekFactory.create(path=p1)
+        service = ServiceFactory.create(path=p1, path__start=0.6, path__end=0.6)
         service.type.practices.add(trek.practice)
-        service.add_path(p1, start=0.6, end=0.6)
         self.assertCountEqual(trek.services, [service])
         service.delete()
         self.assertCountEqual(trek.services, [])
@@ -286,20 +283,17 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
     def test_pois_should_be_ordered_by_progression(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
         p2 = PathFactory.create(geom=LineString((4, 4), (8, 8)))
-        self.trek = TrekFactory.create(no_path=True)
-        self.trek.add_path(p1)
+        self.trek = TrekFactory.create(path=p1)
         self.trek.add_path(p2, order=1)
+        self.trek.update_geometry(self.trek.id)
 
-        self.trek_reverse = TrekFactory.create(no_path=True)
-        self.trek_reverse.add_path(p2, start=0.8, end=0, order=0)
+        self.trek_reverse = TrekFactory.create(path=p2, path__start=0.8, path__end=0, path__order=0)
         self.trek_reverse.add_path(p1, start=1, end=0.2, order=1)
+        self.trek_reverse.update_geometry(self.trek_reverse.id)
 
-        self.poi1 = POIFactory.create(no_path=True)
-        self.poi1.add_path(p1, start=0.8, end=0.8)
-        self.poi2 = POIFactory.create(no_path=True)
-        self.poi2.add_path(p1, start=0.3, end=0.3)
-        self.poi3 = POIFactory.create(no_path=True)
-        self.poi3.add_path(p2, start=0.5, end=0.5)
+        self.poi1 = POIFactory.create(path=p1, path__start=0.8, path__end=0.8)
+        self.poi2 = POIFactory.create(path=p1, path__start=0.3, path__end=0.3)
+        self.poi3 = POIFactory.create(path=p2, path__start=0.5, path__end=0.5)
 
         pois = self.trek.pois
         self.assertEqual([self.poi2, self.poi1, self.poi3], list(pois))
@@ -323,9 +317,9 @@ class RelatedObjectsTest(TranslationResetMixin, TestCase):
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_city_departure(self):
-        trek = TrekFactory.create(no_path=True)
+
         p1 = PathFactory.create(geom=LineString((0, 0), (5, 5)))
-        trek.add_path(p1)
+        trek = TrekFactory.create(path=p1)
         self.assertEqual(trek.city_departure, '')
 
         city1 = CityFactory.create(geom=MultiPolygon(Polygon(((-1, -1), (3, -1), (3, 3),

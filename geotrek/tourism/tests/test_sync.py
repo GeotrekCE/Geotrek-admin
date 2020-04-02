@@ -13,6 +13,7 @@ from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.tourism.factories import (TouristicContentFactory, TouristicEventFactory,
                                        TrekWithTouristicEventFactory, TrekWithTouristicContentFactory)
+from geotrek.core.factories import PathFactory
 
 
 class SyncTest(TranslationResetMixin, TestCase):
@@ -22,9 +23,9 @@ class SyncTest(TranslationResetMixin, TestCase):
         self.contents = []
         self.events = []
         self.portals = []
-
         self.portal_a = TargetPortalFactory()
         self.portal_b = TargetPortalFactory()
+        self.path = PathFactory.create()
 
         self.source_a = RecordSourceFactory()
         self.source_b = RecordSourceFactory()
@@ -87,8 +88,8 @@ class SyncTest(TranslationResetMixin, TestCase):
         Test including tevents and tcontents in trek zips
         """
 
-        trek1 = TrekWithTouristicEventFactory.create()
-        trek2 = TrekWithTouristicContentFactory.create()
+        trek1 = TrekWithTouristicEventFactory.create(path= self.path)
+        trek2 = TrekWithTouristicContentFactory.create(path= self.path)
 
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
             management.call_command('sync_rando',

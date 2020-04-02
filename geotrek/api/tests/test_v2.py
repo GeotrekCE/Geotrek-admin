@@ -83,18 +83,17 @@ class BaseApiTest(TestCase):
         cls.nb_pois = 55
         cls.theme = common_factory.ThemeFactory.create()
         cls.network = trek_factory.TrekNetworkFactory.create()
-        cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(cls.nb_treks)
+        cls.path = core_factory.PathFactory.create()
+        cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(cls.nb_treks, path=cls.path)
         cls.treks[0].themes.add(cls.theme)
         cls.treks[0].networks.add(cls.network)
-        cls.path = core_factory.PathFactory.create()
-        cls.parent = trek_factory.TrekFactory.create(published=True, name='Parent')
-        cls.child1 = trek_factory.TrekFactory.create(published=False, name='Child 1')
-        cls.child2 = trek_factory.TrekFactory.create(published=True, name='Child 2')
+        cls.parent = trek_factory.TrekFactory.create(path=cls.path, published=True, name='Parent')
+        cls.child1 = trek_factory.TrekFactory.create(path=cls.path, published=False, name='Child 1')
+        cls.child2 = trek_factory.TrekFactory.create(path=cls.path, published=True, name='Child 2')
         trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child1, order=2).save()
         trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child2, order=1).save()
         cls.content = tourism_factory.TouristicContentFactory.create(published=True)
         cls.nb_treks += 2  # add parent and 1 child published
-        print([l.geom.wkt for l in trek_models.Trek.objects.all()])
 
     def login(self):
         pass

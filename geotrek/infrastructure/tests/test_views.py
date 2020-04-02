@@ -18,8 +18,7 @@ class InfrastructureTest(TestCase):
     def test_helpers(self):
         p = PathFactory.create()
 
-        infra = InfrastructureFactory.create(no_path=True)
-        infra.add_path(path=p)
+        infra = InfrastructureFactory.create(path=p)
 
         self.assertCountEqual(p.infrastructures, [infra])
 

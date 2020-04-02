@@ -152,6 +152,10 @@ class TrekViewsTest(CommonTest):
     modelfactory = TrekFactory
     userfactory = TrekkingManagerFactory
 
+    def setUp(self):
+        super(TrekViewsTest, self).setUp()
+        self.path = PathFactory.create()
+
     def get_bad_data(self):
         return OrderedDict([
             ('name_en', ''),
@@ -200,21 +204,20 @@ class TrekViewsTest(CommonTest):
             'trek_relationship_a-MAX_NUM_FORMS': '',
 
             'trek_relationship_a-0-id': '',
-            'trek_relationship_a-0-trek_b': TrekFactory.create().pk,
+            'trek_relationship_a-0-trek_b': TrekFactory.create(path=self.path).pk,
             'trek_relationship_a-0-has_common_edge': 'on',
             'trek_relationship_a-0-has_common_departure': 'on',
             'trek_relationship_a-0-is_circuit_step': '',
 
             'trek_relationship_a-1-id': '',
-            'trek_relationship_a-1-trek_b': TrekFactory.create().pk,
+            'trek_relationship_a-1-trek_b': TrekFactory.create(path=self.path).pk,
             'trek_relationship_a-1-has_common_edge': '',
             'trek_relationship_a-1-has_common_departure': '',
             'trek_relationship_a-1-is_circuit_step': 'on',
-            'pois_excluded': POIFactory.create().pk
+            'pois_excluded': POIFactory.create(path=self.path).pk
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = PathFactory.create()
-            good_data['topology'] = '{"paths": [%s]}' % path.pk
+            good_data['topology'] = '{"paths": [%s]}' % self.path.pk
         else:
             good_data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
         return good_data
@@ -233,7 +236,7 @@ class TrekViewsTest(CommonTest):
 
     def test_basic_format(self):
         super(TrekViewsTest, self).test_basic_format()
-        self.modelfactory.create(name="ukélélé")  # trek with utf8
+        self.modelfactory.create(path=self.path, name="ukélélé")  # trek with utf8
         for fmt in ('csv', 'shp', 'gpx'):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
             self.assertEqual(response.status_code, 200)
@@ -247,10 +250,8 @@ class TrekViewsTest(CommonTest):
     def test_pois_detached_update(self):
         self.login()
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
-        trek = TrekFactory.create(no_path=True)
-        trek.add_path(p1)
-        poi = POIFactory.create(no_path=True)
-        poi.add_path(p1, start=0.6, end=0.6)
+        trek = TrekFactory.create(path=p1)
+        poi = POIFactory.create(path=p1, path__start=0.6, path__end=0.6)
 
         good_data = self.get_good_data()
         good_data['pois_excluded'] = poi.pk
@@ -278,10 +279,11 @@ class TrekViewsLiveTests(CommonLiveTest):
 
 class TrekCustomViewTests(TrekkingManagerTest):
     def setUp(self):
+        self.path = PathFactory.create()
         self.login()
 
     def test_trek_infrastructure_geojson(self):
-        trek = TrekWithInfrastructuresFactory.create(published=True)
+        trek = TrekWithInfrastructuresFactory.create(path=self.path, published=True)
         self.assertEqual(len(trek.infrastructures), 2)
         infra = trek.infrastructures[0]
         infra.published = True
@@ -296,7 +298,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertIn(infra.name, names)
 
     def test_trek_infrastructure_geojson_not_public_no_permission(self):
-        trek = TrekWithInfrastructuresFactory.create(published=False)
+        trek = TrekWithInfrastructuresFactory.create(path=self.path, published=False)
         self.assertEqual(len(trek.infrastructures), 2)
         infra = trek.infrastructures[0]
         infra.published = True
@@ -311,7 +313,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertEqual(response.status_code, 404)
 
     def test_trek_signage_geojson(self):
-        trek = TrekWithSignagesFactory.create(published=True)
+        trek = TrekWithSignagesFactory.create(path=self.path, published=True)
         self.assertEqual(len(trek.signages), 2)
         signa = trek.signages[0]
         signa.published = True
@@ -326,7 +328,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertIn(signa.name, names)
 
     def test_trek_pois_geojson(self):
-        trek = TrekWithPOIsFactory.create(published=True)
+        trek = TrekWithPOIsFactory.create(path=self.path, published=True)
         first_poi = trek.pois.first()
         trek.pois_excluded.add(first_poi)
         trek.save()
@@ -348,8 +350,8 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertEqual(poifeature['properties']['name'], poi.name)
 
     def test_pois_geojson(self):
-        poi = POIFactory.create()
-        poi2 = POIFactory.create()
+        poi = POIFactory.create(path=self.path)
+        poi2 = POIFactory.create(path=self.path)
         self.assertEqual(POI.objects.count(), 2)
         poi.published = True
         poi2.published = False
@@ -369,8 +371,8 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertEqual(poifeature['properties']['name'], poi.name)
 
     def test_infrastructures_geojson(self):
-        infra = InfrastructureFactory.create()
-        infra2 = InfrastructureFactory.create()
+        infra = InfrastructureFactory.create(path=self.path)
+        infra2 = InfrastructureFactory.create(path=self.path)
         self.assertEqual(Infrastructure.objects.count(), 2)
         infra.published = True
         infra2.published = False
@@ -387,8 +389,8 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertEqual(infrafeature['properties']['name'], infra.name)
 
     def test_signages_geojson(self):
-        signa = SignageFactory.create()
-        signa2 = SignageFactory.create()
+        signa = SignageFactory.create(path=self.path)
+        signa2 = SignageFactory.create(path=self.path)
         self.assertEqual(Signage.objects.count(), 2)
         signa.published = True
         signa2.published = False
@@ -405,7 +407,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertEqual(poifeature['properties']['name'], signa.name)
 
     def test_services_geojson(self):
-        trek = TrekWithServicesFactory.create(published=True)
+        trek = TrekWithServicesFactory.create(path=self.path, published=True)
         self.assertEqual(len(trek.services), 2)
         service = trek.services[0]
         service.published = True
@@ -420,28 +422,28 @@ class TrekCustomViewTests(TrekkingManagerTest):
         self.assertTrue('type' in servicefeature['properties'])
 
     def test_kml(self):
-        trek = TrekWithPOIsFactory.create()
+        trek = TrekWithPOIsFactory.create(path=self.path)
         url = '/api/en/treks/{pk}/slug.kml'.format(pk=trek.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/vnd.google-earth.kml+xml')
 
     def test_not_published_profile_json(self):
-        trek = TrekFactory.create(published=False)
+        trek = TrekFactory.create(path=self.path, published=False)
         url = '/api/en/treks/{pk}/profile.json'.format(pk=trek.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_not_published_elevation_area_json(self):
-        trek = TrekFactory.create(published=False)
+        trek = TrekFactory.create(path=self.path, published=False)
         url = '/api/en/treks/{pk}/dem.json'.format(pk=trek.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_profile_svg(self):
-        trek = TrekFactory.create()
+        trek = TrekFactory.create(path=self.path)
         url = '/api/en/treks/{pk}/profile.svg'.format(pk=trek.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -471,39 +473,41 @@ class TrekCustomViewTests(TrekkingManagerTest):
 
 
 class TrekCustomPublicViewTests(TrekkingManagerTest):
+    def setUp(self):
+        self.path = PathFactory.create()
+
     @mock.patch('djappypod.backend.os.path.exists', create=True)
     def test_overriden_public_template(self, exists_patched):
         overriden_template = os.path.join(settings.MEDIA_ROOT, 'templates', 'trekking', 'trek_public.odt')
 
         def fake_exists(path):
             return path == overriden_template
-
         exists_patched.side_effect = fake_exists
         template = get_template('trekking/trek_public.odt')
         self.assertEqual(template.path, overriden_template)
 
     def test_profile_json(self):
-        trek = TrekFactory.create(published=True)
+        trek = TrekFactory.create(path=self.path, published=True)
         url = '/api/en/treks/{pk}/profile.json'.format(pk=trek.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_not_published_profile_json(self):
-        trek = TrekFactory.create(published=False)
+        trek = TrekFactory.create(path=self.path, published=False)
         url = '/api/en/treks/{pk}/profile.json'.format(pk=trek.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 
     def test_elevation_area_json(self):
-        trek = TrekFactory.create(published=True)
+        trek = TrekFactory.create(path=self.path, published=True)
         url = '/api/en/treks/{pk}/dem.json'.format(pk=trek.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_not_published_elevation_area_json(self):
-        trek = TrekFactory.create(published=False)
+        trek = TrekFactory.create(path=self.path, published=False)
         url = '/api/en/treks/{pk}/dem.json'.format(pk=trek.pk)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
@@ -517,19 +521,18 @@ class TrekJSONSetUp(TrekkingManagerTest):
         polygon = 'SRID=%s;MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))' % settings.SRID
         self.city = CityFactory(geom=polygon)
         self.district = DistrictFactory(geom=polygon)
-
-        self.trek = TrekFactory.create(
-            name='Step 2',
-            no_path=True,
-            points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
-            parking_location=Point(0, 0, srid=settings.SRID)
-        )
+        path1 = None
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path1 = PathFactory.create(geom='SRID=%s;LINESTRING(0 0, 1 0)' % settings.SRID)
-            self.trek.add_path(path1)
         else:
             self.trek.geom = 'SRID=%s;LINESTRING(0 0, 1 0)' % settings.SRID
             self.trek.save()
+        self.trek = TrekFactory.create(
+            name='Step 2',
+            path=path1,
+            points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
+            parking_location=Point(0, 0, srid=settings.SRID)
+        )
         self.attachment = AttachmentFactory.create(content_object=self.trek,
                                                    attachment_file=get_dummy_uploaded_image())
 
@@ -554,19 +557,16 @@ class TrekJSONSetUp(TrekkingManagerTest):
         self.portal = TargetPortalFactory.create()
         self.trek.portal.add(self.portal)
 
-        self.trek_b = TrekFactory.create(no_path=True,
-                                         geom='SRID=%s;POINT(2 2)' % settings.SRID,
+        self.trek_b = TrekFactory.create(geom='SRID=%s;POINT(2 2)' % settings.SRID,
                                          published=True)
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path2 = PathFactory.create(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID)
             self.trek_b.add_path(path2)
-            trek2 = TrekFactory(no_path=True, published=False)  # not published
-            trek2.add_path(path2)
-            self.trek3 = TrekFactory(no_path=True, published=True)  # deleted
-            self.trek3.add_path(path2)
+            TrekFactory(path=path2, published=False)  # not published
+            self.trek3 = TrekFactory(path=path2, published=True)  # deleted
             self.trek3.delete()
-            trek4 = TrekFactory(no_path=True, published=True)  # too far
-            trek4.add_path(PathFactory.create(geom='SRID=%s;LINESTRING(0 2000, 1 2000)' % settings.SRID))
+            path_far = PathFactory.create(geom='SRID=%s;LINESTRING(0 2000, 1 2000)' % settings.SRID)
+            TrekFactory(path=path_far, published=True)  # too far
         else:
             self.trek_b.geom = 'SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID
             self.trek_b.save()
@@ -574,7 +574,6 @@ class TrekJSONSetUp(TrekkingManagerTest):
             trek3 = TrekFactory(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID, published=True)
             trek3.delete()
             TrekFactory(geom='SRID=%s;LINESTRING(0 2000, 1 2000)' % settings.SRID, published=True)  # too far
-
         TrekRelationshipFactory.create(has_common_departure=True,
                                        has_common_edge=False,
                                        is_circuit_step=True,
@@ -965,9 +964,9 @@ class TrekViewTranslationTest(TrekkingManagerTest):
 
     def test_poi_geojson_translation(self):
         # Create a Trek with a POI
-        trek = TrekFactory.create(no_path=True, published_fr=True, published_it=True)
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
-        poi = POIFactory.create(no_path=True)
+        trek = TrekFactory.create(path=p1, path__start=0.5, published_fr=True, published_it=True)
+        poi = POIFactory.create(path=p1, path__start=0.6, path__end=0.6)
         poi.name_fr = "Chapelle"
         poi.name_en = "Chapel"
         poi.name_it = "Capela"
@@ -975,8 +974,6 @@ class TrekViewTranslationTest(TrekkingManagerTest):
         poi.published_en = True
         poi.published_it = True
         poi.save()
-        trek.add_path(p1, start=0.5)
-        poi.add_path(p1, start=0.6, end=0.6)
         # Check that it applies to GeoJSON also :
         self.assertEqual(len(trek.pois), 1)
         poi = trek.pois[0]
@@ -1124,14 +1121,15 @@ class CirkwiTests(TranslationResetMixin, TestCase):
     def setUp(self):
         testutil._MAX_LENGTH = 10000
         creation = make_aware(datetime.datetime(2014, 1, 1), utc)
-        self.trek = TrekFactory.create(published=True)
+        path = PathFactory.create()
+        self.trek = TrekFactory.create(path=path, published=True)
         self.trek.date_insert = creation
         self.trek.save()
-        self.poi = POIFactory.create(published=True)
+        self.poi = POIFactory.create(path=path, published=True)
         self.poi.date_insert = creation
         self.poi.save()
-        TrekFactory.create(published=False)
-        POIFactory.create(published=False)
+        TrekFactory.create(path=path, published=False)
+        POIFactory.create(path=path, published=False)
 
     def tearDown(self):
         testutil._MAX_LENGTH = 80

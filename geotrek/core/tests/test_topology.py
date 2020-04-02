@@ -161,7 +161,7 @@ class TopologyTest(TestCase):
 class TopologyDeletionTest(TestCase):
 
     def test_deleted_is_hidden_but_still_exists(self):
-        topology = TopologyFactory.create(offset=1, path__aggr=True)
+        topology = TopologyFactory.create(offset=1)
         path = topology.paths.get()
         self.assertEqual(len(PathAggregation.objects.filter(topo_object=topology)), 1)
         self.assertEqual(len(path.topology_set.all()), 1)
@@ -178,7 +178,7 @@ class TopologyDeletionTest(TestCase):
         self.assertEqual(len(path.topology_set.existing()), 0)
 
     def test_deleted_when_all_path_are_deleted(self):
-        topology = TopologyFactory.create(path__aggr=True)
+        topology = TopologyFactory.create()
         self.assertFalse(topology.deleted)
 
         paths = topology.paths.all()
