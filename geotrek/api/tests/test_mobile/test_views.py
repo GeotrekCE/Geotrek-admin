@@ -58,8 +58,7 @@ class SyncMobileViewTest(TestCase):
     @patch('sys.stdout', new_callable=StringIO)
     @override_settings(CELERY_ALWAYS_EAGER=False,
                        SYNC_MOBILE_ROOT='tmp', SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000',
-                                                                    'skip_tiles': True, 'skip_pdf': True,
-                                                                    'skip_dem': True, 'skip_profile_png': True})
+                                                                    'skip_tiles': True})
     def test_get_sync_mobile_states_superuser_with_sync_mobile(self, mocked_stdout):
         self.client.login(username='admin', password='super')
         if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
@@ -73,8 +72,7 @@ class SyncMobileViewTest(TestCase):
     @patch('geotrek.api.management.commands.sync_mobile.Command.handle', return_value=None,
            side_effect=Exception('This is a test'))
     @override_settings(SYNC_MOBILE_ROOT='tmp', SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000',
-                                                                    'skip_tiles': True, 'skip_pdf': True,
-                                                                    'skip_dem': True, 'skip_profile_png': True})
+                                                                    'skip_tiles': True})
     def test_get_sync_mobile_states_superuser_with_sync_mobile_fail(self, mocked_stdout, command):
         self.client.login(username='admin', password='super')
         if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
@@ -86,8 +84,7 @@ class SyncMobileViewTest(TestCase):
 
     @patch('sys.stdout', new_callable=StringIO)
     @override_settings(SYNC_MOBILE_ROOT='tmp', SYNC_MOBILE_OPTIONS={'url': 'http://localhost:8000',
-                                                                    'skip_tiles': True, 'skip_pdf': True,
-                                                                    'skip_dem': True, 'skip_profile_png': True})
+                                                                    'skip_tiles': True})
     def test_launch_sync_mobile(self, mocked_stdout):
         if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
             shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
