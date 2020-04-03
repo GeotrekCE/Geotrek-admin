@@ -10,16 +10,24 @@ class LocaleForcedMiddleware(object):
     calls, we use ``Accept-language`` header to obtain translations, we
     override it.
     """
-    def process_request(self, request):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
         user_agent = request.META.get('HTTP_USER_AGENT')
         is_api_call = (user_agent is None or 'geotrek' in user_agent)
         forced_language = request.META.get('HTTP_ACCEPT_LANGUAGE')
         if is_api_call and forced_language and hasattr(request, 'session'):
             request.session[LANGUAGE_SESSION_KEY] = forced_language
+        return self.get_response(request)
 
 
 class CorsMiddleware(object):
-    def process_response(self, request, response):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
         if settings.DEBUG:
             response['Access-Control-Allow-Origin'] = "*"
         return response

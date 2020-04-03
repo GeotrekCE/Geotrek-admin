@@ -1,0 +1,14 @@
+[Unit]
+Description=Geotrek-admin API
+PartOf=geotrek-admin.service
+After=geotrek-admin.service
+
+[Service]
+ExecStart=/opt/geotrek-admin/bin/gunicorn --config=/opt/geotrek-admin/var/conf/gunicorn-geotrek_api.conf.py geotrek.wsgi
+Restart=on-failure
+User=geotrek
+Group=geotrek
+UMask=002
+
+[Install]
+WantedBy=geotrek-admin.service

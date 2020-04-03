@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.test import TestCase
-from unittest import SkipTest, skipIf
+from unittest import SkipTest, skipIf, mock
 
 from django.db import connections, DEFAULT_DB_ALIAS
 from django.contrib.gis.geos import MultiLineString, LineString
@@ -15,7 +15,6 @@ from geotrek.altimetry.helpers import AltimetryHelper
 
 import os
 import sys
-from unittest import mock
 from io import StringIO
 
 
@@ -416,6 +415,9 @@ class SamplingTestTopology(TestCase):
 
 
 class CommandLoadDemTest(TestCase):
+    """
+    TODO: We will need to replace raster management with geodjango (>= py3 / django 2.0).
+    """
     def test_fail_import(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
         with mock.patch.dict(sys.modules, {'osgeo': None}):

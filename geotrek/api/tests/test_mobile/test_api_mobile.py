@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test.testcases import TestCase
 from django.contrib.gis.geos import Point, MultiPoint, MultiPolygon, Polygon
 

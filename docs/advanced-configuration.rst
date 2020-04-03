@@ -7,27 +7,15 @@ ADVANCED CONFIGURATION
 Custom setting file
 -------------------
 
-Geotrek basic configuration is currently restricted to values present in ``etc/settings.ini``.
+Geotrek configuration is done in ``/opt/geotrek-admin/var/conf/custom.py`` file.
+The list of all overridable setting and default values can be found
+`there <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
 
-However, it is possible to write a custom Django setting file to override all default values from ``geotrek/settings/base.py`` file.
+After any change in ``custom.py``, run:
 
-* Create your a file in *geotrek/settings/custom.py* with the following content :
+::
 
-.. code-block :: python
-
-    from .prod import *
-
-    # My custom value
-    HIDDEN_OPTION = 3.14
-
-* Add this ``etc/settings.ini`` to specify the newly created setting :
-
-.. code-block :: ini
-
-    [django]
-    settings = settings.custom
-
-* As for any change in ``etc/settings.ini``, re-run ``make env_standalone deploy``. To apply changes in ``geotrek/settings/custom.py``, you can just restart the application with ``sudo supervisorctl restart all``.
+    sudo service geotrek restart
 
 
 Disable modules and components
@@ -233,7 +221,7 @@ All layers colors can be customized from the settings.
 See `Leaflet reference <http://leafletjs.com/reference.html#path>`_ for vectorial
 layer style.
 
-* To apply these style changes, re-run ``sudo supervisorctl restart all``.
+* To apply these style changes, re-run ``sudo systemctl restart geotrek``.
 
 .. code-block :: python
 
@@ -387,10 +375,16 @@ Apply changes :
     make env_standalone deploy
 
 
+WARNING: Documentation to be updated. Geotrek-admin now uses Weasyprint to create public PDF based on HTML templates
+and no more on ODT templates. Default HTML templates are in ``geotrek/trekking/templates/`` and can be copied in ``var/conf/extra_templates/`` with same path and file names to be overriden.
+
+Copy the file ``geotrek/trekking/templates/trekking/trek_public.odt`` to
+``var/conf/extra_templates/trekking/trek_public.odt``.
+
 Override public pdf templates
 -----------------------------
 
-PDF are generated from html printed, using [Django templating](https://docs.djangoproject.com/en/1.11/ref/templates/).
+PDF are generated from html printed, using `Django templating <https://docs.djangoproject.com/en/1.11/ref/templates/>`_.
 Trekkings, touristic contents and events can be exported in pdf files.
 
 - Treks : ``geotrek/trekking/templates/trekking/trek_public_pdf.html``
@@ -465,9 +459,9 @@ Custom logos
 
 You might also need to deploy logo images in the following places :
 
-* ``var/media/upload/favicon.png``
-* ``var/media/upload/logo-login.png``
-* ``var/media/upload/logo-header.png``
+* ``var/conf/extra_static/images/favicon.png``
+* ``var/conf/extra_static/images/logo-login.png``
+* ``var/conf/extra_static/images/logo-header.png``
 
 
 Copyright on pictures
@@ -477,13 +471,13 @@ If you want copyright added to your pictures, change ``THUMBNAIL_COPYRIGHT_FORMA
 
 ::
 
-THUMBNAIL_COPYRIGHT_FORMAT = "{title} {author}"
+    THUMBNAIL_COPYRIGHT_FORMAT = "{title} {author}"
 
 You can also add `{legend}`.
 
 ::
 
-THUMBNAIL_COPYRIGHT_SIZE = 15
+    THUMBNAIL_COPYRIGHT_SIZE = 15
 
 
 Share services between several Geotrek instances
@@ -497,37 +491,20 @@ A simple way to achieve this is to install one instance with everything
 as usual (*standalone*), and plug the other instances on its underlying services.
 
 
-Database
-~~~~~~~~
-
-Sharing your postgreSQL server is highly recommended. Create several databases
-for each of your instances.
-
-Then in ``etc/settings.ini``, adjust the ``host`` and ``dbname`` sections of
-each instance.
-
-
 Capture and conversion
 ~~~~~~~~~~~~~~~~~~~~~~
+If you want to use external services,
 
-On the standalone server, make sure the services will be available to others.
-Add the following lines in its ``settings.ini`` :
+In ``.env``, add following variables:
 
-.. code-block:: python
+.. code-block :: bash
 
-    [convertit]
-    host = 0.0.0.0
+    CAPTURE_HOST=x.x.x.x
+    CAPTURE_PORT=XX
+    CONVERSION_HOST=x.x.x.x
+    CONVERSION_PORT=XX
 
-    [screamshotter]
-    host = 0.0.0.0
-
-In ``custom.py``, point the tiles URL to the shared services (replace ``SERVER`` by
-the one you installed as standalone) :
-
-.. code-block :: python
-
-    MAPENTITY_CONFIG['CONVERSION_SERVER'] = 'http://SERVER:6543'
-    MAPENTITY_CONFIG['CAPTURE_SERVER'] = 'http://SERVER:8001'
+Then, you can delete all screamshotter and convertit references in docker-compose.yml
 
 
 Shutdown useless services
@@ -540,18 +517,7 @@ Start by stopping everything :
 
 ::
 
-    sudo stop geotrek
-
-Before you used to run ``make env_standalone deploy`` on every server.
-Now you will have only one *standalone*, and on the other ones
-the *Geotrek* application only.
-
-To achieve this, you will just have to run the *prod* environment instead
-of *standalone* in the deployment procedure (*or when settings are changed*) :
-
-::
-
-    make env_prod deploy
+    sudo systemctl stop geotrek
 
 
 Control number of workers and request timeouts
@@ -559,14 +525,7 @@ Control number of workers and request timeouts
 
 By default, the application runs on 4 processes, and timeouts after 30 seconds.
 
-To control those values, add a section in ``etc/settings.ini`` for each running service.
-See ``conf/settings-defaults.cfg`` for an exhaustive list:
-
-::
-
-    [gunicorn-app-conf]
-    workers = 4
-    timeout = 30
+To control those values, edit and fix your docker-compose.yml file in web and api section
 
 To know how many workers you should set, please refer to `gunicorn documentation <http://gunicorn-docs.readthedocs.org/en/latest/design.html#how-many-workers>`_.
 
@@ -579,7 +538,7 @@ Global Settings
 |
 
 **Options before install**
-==========================
+--------------------------
 
 **Spatial reference identifier**
 ::
@@ -588,9 +547,9 @@ Global Settings
 
 Spatial reference identifier of your database. 2154 is RGF93 / Lambert-93 - France
 
-   *It should not be change after any creation of geometries.*
+*It should not be change after any creation of geometries.*
 
-   *Choose wisely with epsg.io for example*
+*Choose wisely with epsg.io for example*
 
 **Spatial Extent**
 ::
@@ -599,15 +558,17 @@ Spatial reference identifier of your database. 2154 is RGF93 / Lambert-93 - Fran
 
 Boundingbox of your project : x minimum , y minimum , xmax, y max
 
-    4 ^
-      |
-1     |     3
-<-----+----->
-      |
-      |
-    2 v
+::
 
-   *It should not be change after install*
+        4 ^
+          |
+    1     |     3
+    <-----+----->
+          |
+          |
+        2 v
+
+*It should not be changed after install*
 
 
 **Dynamic segmentation**
@@ -643,7 +604,8 @@ Languages of your project. It will be used to generate fields for translations. 
    *You won't be able to change it easily, avoid to add any languages and do not remove any.*
 
 **Options admin**
-=================
+-----------------
+
 **Map config**
 ::
 

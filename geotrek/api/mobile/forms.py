@@ -4,7 +4,7 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 class SyncMobileForm(forms.Form):

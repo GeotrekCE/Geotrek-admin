@@ -27,7 +27,7 @@ class RestrictedAreaType(models.Model):
         return self.name
 
 
-class RestrictedAreaManager(models.GeoManager):
+class RestrictedAreaManager(models.Manager):
     def get_queryset(self):
         return super(RestrictedAreaManager, self).get_queryset().select_related('area_type')
 
@@ -35,7 +35,7 @@ class RestrictedAreaManager(models.GeoManager):
 class RestrictedArea(models.Model):
     name = models.CharField(max_length=250, verbose_name=_("Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
-    area_type = models.ForeignKey(RestrictedAreaType, verbose_name=_("Restricted area"))
+    area_type = models.ForeignKey(RestrictedAreaType, verbose_name=_("Restricted area"), on_delete=models.CASCADE)
 
     # Override default manager
     objects = RestrictedAreaManager()
@@ -50,11 +50,8 @@ class RestrictedArea(models.Model):
 
 
 class RestrictedAreaEdge(Topology):
-    topo_object = models.OneToOneField(Topology, parent_link=True)
-    restricted_area = models.ForeignKey(RestrictedArea, verbose_name=_("Restricted area"))
-
-    # Override default manager
-    objects = Topology.get_manager_cls(models.GeoManager)()
+    topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
+    restricted_area = models.ForeignKey(RestrictedArea, verbose_name=_("Restricted area"), on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = _("Restricted area edge")
@@ -113,9 +110,6 @@ class City(models.Model):
     name = models.CharField(max_length=128, verbose_name=_("Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
 
-    # Override default manager
-    objects = models.GeoManager()
-
     class Meta:
         verbose_name = _("City")
         verbose_name_plural = _("Cities")
@@ -126,12 +120,9 @@ class City(models.Model):
 
 
 class CityEdge(Topology):
-    topo_object = models.OneToOneField(Topology, parent_link=True)
+    topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
 
-    city = models.ForeignKey(City, verbose_name=_("City"))
-
-    # Override default manager
-    objects = Topology.get_manager_cls(models.GeoManager)()
+    city = models.ForeignKey(City, verbose_name=_("City"), on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = _("City edge")
@@ -175,9 +166,6 @@ class District(models.Model):
     name = models.CharField(max_length=128, verbose_name=_("Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
 
-    # Override default manager
-    objects = models.GeoManager()
-
     class Meta:
         verbose_name = _("District")
         verbose_name_plural = _("Districts")
@@ -188,11 +176,8 @@ class District(models.Model):
 
 
 class DistrictEdge(Topology):
-    topo_object = models.OneToOneField(Topology, parent_link=True)
-    district = models.ForeignKey(District, verbose_name=_("District"))
-
-    # Override default manager
-    objects = Topology.get_manager_cls(models.GeoManager)()
+    topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
+    district = models.ForeignKey(District, verbose_name=_("District"), on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = _("District edge")

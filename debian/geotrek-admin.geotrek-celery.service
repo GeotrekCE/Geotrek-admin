@@ -1,0 +1,14 @@
+[Unit]
+Description=Geotrek-admin asynchronous tasks
+PartOf=geotrek-admin.service
+After=geotrek-admin.service
+
+[Service]
+ExecStart=/opt/geotrek-admin/bin/celery -A geotrek worker -c 1 -n geotrek
+Restart=on-failure
+User=geotrek
+Group=geotrek
+UMask=002
+
+[Install]
+WantedBy=geotrek-admin.service

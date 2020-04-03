@@ -1,0 +1,11 @@
+geotrek-admin (2.32.12~dev0) UNRELEASED; urgency=medium
+
+  *
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Fri, 03 Apr 2020 09:17:42 +0200
+
+geotrek-admin (2.32.11) bionic; urgency=medium
+
+  * Initial Ubuntu release.
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Sun, 22 Mar 2020 11:12:01 +0100

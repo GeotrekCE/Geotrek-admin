@@ -4,103 +4,22 @@
 DEVELOPMENT
 ===========
 
-This documentation is dedicated to code contributors, in order to run a development instance.
-
-Developers are advice to run their *Geotrek* instance in an isolated environment,
-however it is not an absolute prerequisite. More details below.
-
-
-Isolated environment
---------------------
-
-If you use virtual machines or containers (*Vagrant*, *LXC*, ...), this
-will install all the necessary components for development :
+Quickstart
+----------
 
 ::
 
-    ./install.sh --dev
+    cp .env-dev.dist .env
+    # Edit .env if need be
+    cp docker-compose-dev.yml docker-compose.yml
+    docker-compose build
+    docker-compose run --rm web update.sh
+    docker-compose run --rm web load_data.sh
+    docker-compose run --rm web ./manage.py createsuperuser
+    docker-compose up -d
 
+Got to http://localhost:8000
 
-Directly on your host
----------------------
-
-The most minimal components required to run an instance are :
-
-* PostGIS 2 server
-* GDAL, GEOS, libproj
-* gettext
-* libfreetype
-* libxml2, libxslt
-* Usual Python dev stuff
-
-See `the list of minimal packages on Debian/Ubuntu <https://github.com/GeotrekCE/Geotrek-admin/blob/211cd/install.sh#L136-L148>`_.
-
-If you already have all these components installed your OS (probably
-because you're already a python/GIS developer), then just jump to the
-next section !
-
-
-Run
----
-
-Start local instance :
-
-::
-
-    make env_dev update serve
-
-.. note::
-
-    Running ``env_dev`` and ``update`` is recommended after a pull of new source code,
-    but is not mandatory : ``make serve`` is enough most of the time.
-
-
-Run unit tests :
-
-::
-
-    make env_test update tests
-
-
-Run unit tests in verbose mode, and without migrations :
-
-::
-
-    make env_dev update tests
-
-
-For Capture server, run an instance of screamshotter in a separate terminal :
-
-::
-
-    bin/django runserver --settings=screamshotter.settings 8001
-
-
-For PDF conversion server, run an instance of Convertit in a separate terminal on ``http://localhost:6543``
-
-::
-
-    bin/convertit lib/src/convertit/development.ini
-
-
-Development data
-----------------
-
-::
-
-    make load_data
-
-    bin/django loaddata development-pne
-
-
-In order to get elevation data, a DEM is necessary. If you use the default extent,
-as defined in ``conf/settings.ini.sample``, you can load the following dataset :
-
-::
-
-    wget http://depot.makina-corpus.org/public/geotrek/mnt_0_ecrins.zip
-    unzip mnt_0_ecrins.zip
-    bin/django loaddem mnt_0_ecrins/w001001.adf
 
 Conventions
 -----------
@@ -131,19 +50,21 @@ Check TODO in the source tree ::
 Release
 -------
 
-* Update *VERSION* file, *docs/conf.py*
-* Pin (fixed revision) of eggs under development in *buildout.cfg*
-* Use semantic versioning
-* Use zest.releaser
+* Update files *VERSION*, *docs/conf.py* and *docs/changelog.rst* to remove ~dev0 suffix
+* Run ``dch -r -D bionic``, remove ~dev0 suffix in version and save
+* Commit
 * Add git tag X.Y.Z
-* Add release on Github (copy-paste ``CHANGES`` paragraph)
+* Update files *VERSION*, *docs/conf.py* and *docs/changelog.rst* to increment version (using semantic versionning) and add .dev0 suffix
+* Run ``dch -v <future version>~dev0 --no-force-save-on-release`` and save
+* Push branch and tag
+* Add release on Github (copy-paste ``doc/changelog.rst`` paragraph)
 
 
 Model modification
 ------------------
 
-    bin/django makemigrations <appName>
-    bin/django migrate
+    docker-compose run web ./manage.py makemigrations <appName>
+    docker-compose run web ./manage.py migrate
 
 :notes:
 
@@ -157,15 +78,7 @@ Data only:
 
 ::
 
-    bin/django flush
-
-
-Everything:
-
-::
-
-    dbname=geotrekdb
-    sudo -n -u postgres -s -- psql -c "DROP DATABASE ${dbname};" && sudo -n -u postgres -s -- psql -c "CREATE DATABASE ${dbname};" && sudo -n -u postgres -s -- psql -d ${dbname} -c "CREATE EXTENSION postgis;"
+    docker-compose run web ./manage.py  flush
 
 Restore existing Database
 -------------------------
@@ -183,24 +96,8 @@ Then run a synchronization.
 Mapentity development
 ---------------------
 
-To develop mapentity and Geotrek together, add the following lines to ``etc/settings.ini``:
+TODO
 
-::
-
-    [sources]
-    mapentity = git https://github.com/makinacorpus/django-mapentity.git
-
-    [buildout]
-    auto-checkout += mapentity
-
-Then run:
-
-::
-
-    make env_dev update
-    cd lib/src/mapentity/
-    git submodule init
-    git submodule update
 
 UML diagrams of data model
 --------------------------

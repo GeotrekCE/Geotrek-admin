@@ -1,0 +1,12 @@
+/opt/geotrek-admin/var/log/*.log {
+    rotate 4
+    su root root
+    weekly
+    create
+    compress
+    delaycompress
+    sharedscripts
+    postrotate
+        for pidfile in /opt/geotrek-admin/var/pid/*.pid; do kill -USR1 `cat $pidfile`; done
+    endscript
+}

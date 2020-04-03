@@ -44,20 +44,20 @@ class SyncTest(TranslationResetMixin, TestCase):
     def test_sync(self):
         with mock.patch('geotrek.tourism.models.TouristicContent.prepare_map_image'):
             with mock.patch('geotrek.tourism.models.TouristicEvent.prepare_map_image'):
-                management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+                management.call_command('sync_rando', 'var/tmp', url='http://localhost:8000',
                                         source=self.source_a.name, skip_tiles=True, skip_pdf=True, verbosity=0)
 
-                with open(os.path.join('tmp', 'api', 'en', 'touristiccontents.geojson'), 'r') as f:
+                with open('var/tmp/api/en/touristiccontents.geojson', 'r') as f:
                     # 2 contents
                     tcontents = json.load(f)
                     self.assertEqual(len(tcontents['features']), 2)
 
-                with open(os.path.join('tmp', 'api', 'en', 'touristicevents.geojson'), 'r') as f:
+                with open('var/tmp/api/en/touristicevents.geojson', 'r') as f:
                     #  only 1 event
                     tevents = json.load(f)
                     self.assertEqual(len(tevents['features']), 1)
 
-                with open(os.path.join('tmp', 'api', 'en', 'touristiccategories.json'), 'r') as f:
+                with open('var/tmp/api/en/touristiccategories.json', 'r') as f:
                     tcategories = json.load(f)
                     self.assertEqual(len(tcategories), 2)
 
@@ -65,20 +65,20 @@ class SyncTest(TranslationResetMixin, TestCase):
 
         with mock.patch('geotrek.tourism.models.TouristicContent.prepare_map_image'):
             with mock.patch('geotrek.tourism.models.TouristicEvent.prepare_map_image'):
-                management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+                management.call_command('sync_rando', 'var/tmp', url='http://localhost:8000',
                                         portal=self.portal_b.name, skip_tiles=True, skip_pdf=True, verbosity=0)
 
-        with open(os.path.join('tmp', 'api', 'en', 'touristiccontents.geojson'), 'r') as f:
+        with open('var/tmp/api/en/touristiccontents.geojson', 'r') as f:
             tcontents = json.load(f)
             # 1 content on portal b
             self.assertEqual(len(tcontents['features']), 1)
 
-        with open(os.path.join('tmp', 'api', 'en', 'touristicevents.geojson'), 'r') as f:
+        with open('var/tmp/api/en/touristicevents.geojson', 'r') as f:
             tevents = json.load(f)
             # 2 events on portal b
             self.assertEqual(len(tevents['features']), 2)
 
-        with open(os.path.join('tmp', 'api', 'en', 'touristiccategories.json'), 'r') as f:
+        with open('var/tmp/api/en/touristiccategories.json', 'r') as f:
             tevents = json.load(f)
             self.assertEqual(len(tevents), 2)
 
@@ -92,7 +92,7 @@ class SyncTest(TranslationResetMixin, TestCase):
 
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
             management.call_command('sync_rando',
-                                    'tmp',
+                                    'var/tmp',
                                     url='http://localhost:8000',
                                     skip_tiles=True,
                                     with_events=True,
@@ -103,7 +103,7 @@ class SyncTest(TranslationResetMixin, TestCase):
                                     verbosity=0)
 
         for lang in settings.MODELTRANSLATION_LANGUAGES:
-            with ZipFile(os.path.join('tmp', 'zip', 'treks', lang,
+            with ZipFile(os.path.join('var/tmp', 'zip', 'treks', lang,
                                       'global.zip'),
                          'r') as zipf:
                 file_list = zipf.namelist()
@@ -137,4 +137,4 @@ class SyncTest(TranslationResetMixin, TestCase):
                                                                                       lang=lang))
 
     def tearDown(self):
-        shutil.rmtree('tmp')
+        shutil.rmtree('var/tmp')

@@ -1,3 +1,4 @@
+import argparse
 import logging
 import filecmp
 import os
@@ -122,6 +123,7 @@ class Command(BaseCommand):
                             default=False, help='include infrastructures')
         parser.add_argument('--with-dives', action='store_true', dest='with_dives',
                             default=False, help='include dives')
+        parser.add_argument('--task', default=None, help=argparse.SUPPRESS)
 
     def mkdirs(self, name):
         dirname = os.path.dirname(name)
@@ -158,7 +160,7 @@ class Command(BaseCommand):
         zipname = os.path.join('zip', 'tiles', '{pk}.zip'.format(pk=trek.pk))
 
         if self.verbosity == 2:
-            self.stdout.write("\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
+            self.stdout.write("{name} ...".format(name=zipname), ending="")
             self.stdout.flush()
 
         trek_file = os.path.join(self.tmp_root, zipname)
@@ -188,7 +190,7 @@ class Command(BaseCommand):
 
     def sync_view(self, lang, view, name, url='/', params={}, zipfile=None, fix2028=False, **kwargs):
         if self.verbosity == 2:
-            self.stdout.write("\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=name), ending="")
+            self.stdout.write("{lang} {name} ...".format(lang=lang, name=name), ending="")
             self.stdout.flush()
         fullname = os.path.join(self.tmp_root, name)
         self.mkdirs(fullname)
@@ -208,8 +210,8 @@ class Command(BaseCommand):
             return
         if response.status_code != 200:
             self.successfull = False
-            if self.verbosity == 2:
-                self.stdout.write("\x1b[3D\x1b[31;1mfailed (HTTP {code})\x1b[0m".format(code=response.status_code))
+            if self.verbosity > 0:
+                self.stderr.write(self.style.ERROR("failed (HTTP {code})".format(code=response.status_code)))
             return
         f = open(fullname, 'wb')
         if isinstance(response, StreamingHttpResponse):
@@ -228,10 +230,10 @@ class Command(BaseCommand):
             os.unlink(fullname)
             os.link(oldfilename, fullname)
             if self.verbosity == 2:
-                self.stdout.write("\x1b[3D\x1b[32munchanged\x1b[0m")
+                self.stdout.write("unchanged")
         else:
             if self.verbosity == 2:
-                self.stdout.write("\x1b[3D\x1b[32mgenerated\x1b[0m")
+                self.stdout.write("generated")
         # FixMe: Find why there are duplicate files.
         if zipfile:
             if name not in zipfile.namelist():
@@ -358,7 +360,7 @@ class Command(BaseCommand):
         if zipfile:
             zipfile.write(dst, os.path.join(url, name))
         if self.verbosity == 2:
-            self.stdout.write("\x1b[36m{lang}\x1b[0m \x1b[1m{url}/{name}\x1b[0m \x1b[32mcopied\x1b[0m".format(lang=lang, url=url, name=name))
+            self.stdout.write("{lang} {url}/{name} copied".format(lang=lang, url=url, name=name))
 
     def sync_static_file(self, lang, name):
         self.sync_file(lang, name, settings.STATIC_ROOT, settings.STATIC_URL)
@@ -419,7 +421,7 @@ class Command(BaseCommand):
             self.sync_trek_sensitiveareas(lang, trek)
 
         if self.verbosity == 2:
-            self.stdout.write("\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname),
+            self.stdout.write("{lang} {name} ...".format(lang=lang, name=zipname),
                               ending="")
 
         self.close_zip(self.trek_zipfile, zipname)
@@ -444,9 +446,9 @@ class Command(BaseCommand):
 
         if self.verbosity == 2:
             if uptodate:
-                self.stdout.write("\x1b[3D\x1b[32munchanged\x1b[0m")
+                self.stdout.write("unchanged")
             else:
-                self.stdout.write("\x1b[3D\x1b[32mzipped\x1b[0m")
+                self.stdout.write("zipped")
 
     def sync_flatpages(self, lang):
         self.sync_geojson(lang, FlatPageViewSet, 'flatpages.geojson', zipfile=self.zipfile)
@@ -524,7 +526,7 @@ class Command(BaseCommand):
             self.sync_sensitiveareas(lang)
 
         if self.verbosity == 2:
-            self.stdout.write("\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=zipname), ending="")
+            self.stdout.write("{lang} {name} ...".format(lang=lang, name=zipname), ending="")
 
         self.close_zip(self.zipfile, zipname)
 
@@ -898,7 +900,7 @@ class Command(BaseCommand):
             'tiles_url': tiles_url,
             'tiles_headers': {"Referer": self.referer},
             'ignore_errors': True,
-            'tiles_dir': os.path.join(settings.DEPLOY_ROOT, 'var', 'tiles'),
+            'tiles_dir': os.path.join(settings.VAR_DIR, 'tiles'),
         }
         self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_rando')
         try:

@@ -41,9 +41,9 @@ class StructureRelated(models.Model):
     """
     A mixin used for any entities that belong to a structure
     """
-    structure = models.ForeignKey(Structure, default=default_structure_pk, verbose_name=_("Related structure"))
+    structure = models.ForeignKey(Structure, default=default_structure_pk, on_delete=models.CASCADE,
+                                  verbose_name=_("Related structure"))
 
-    objects = models.Manager()
     check_structure_in_forms = True
 
     def same_structure(self, user):
@@ -63,7 +63,7 @@ class StructureOrNoneRelated(models.Model):
     """
     A mixin used for any entities that belong to a structure or None entity
     """
-    structure = models.ForeignKey(Structure,
+    structure = models.ForeignKey(Structure, on_delete=models.CASCADE,
                                   verbose_name=_("Related structure"), blank=True, null=True)
 
     objects = models.Manager()
@@ -79,7 +79,7 @@ class UserProfile(StructureRelated):
     """
     A custom user profile
     """
-    user = models.OneToOneField(User, unique=True)
+    user = models.OneToOneField(User, unique=True, on_delete=models.CASCADE)
 
     language = models.CharField(_("Language"), max_length=10,
                                 choices=settings.LANGUAGES,

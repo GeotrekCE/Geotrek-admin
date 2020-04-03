@@ -1,6 +1,6 @@
 import os
-from unittest import mock
 import sys
+from unittest import mock
 from io import StringIO
 
 from django.contrib.gis.geos.error import GEOSException

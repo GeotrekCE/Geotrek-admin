@@ -1,0 +1,30 @@
+#!/usr/bin/make -f
+
+export DH_VIRTUALENV_INSTALL_ROOT=/opt
+
+%:
+	dh $@ --with python-virtualenv
+
+override_dh_virtualenv:
+	dh_virtualenv \
+	--python /usr/bin/python3 \
+	--builtin-venv \
+	--extra-pip-arg --quiet
+
+override_dh_installinit:
+	dh_installinit --name=geotrek
+	dh_installinit --name=geotrek-ui
+	dh_installinit --name=geotrek-api
+	dh_installinit --name=geotrek-celery
+
+override_dh_systemd_enable:
+	dh_systemd_enable --name=geotrek
+	dh_systemd_enable --name=geotrek-ui
+	dh_systemd_enable --name=geotrek-api
+	dh_systemd_enable --name=geotrek-celery
+
+override_dh_systemd_start:
+	dh_systemd_start --name=geotrek
+	dh_systemd_start --name=geotrek-ui
+	dh_systemd_start --name=geotrek-api
+	dh_systemd_start --name=geotrek-celery

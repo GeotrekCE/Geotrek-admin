@@ -11,10 +11,11 @@ setup(
     author_email='geobi@makina-corpus.com',
     url='http://makina-corpus.com',
     description="Geotrek",
-    long_description=(open(os.path.join(here, 'README.rst')).read() + '\n\n' +
-                      open(os.path.join(here, 'docs', 'changelog.rst')).read()),
+    long_description=(open(os.path.join(here, 'README.rst')).read() + '\n\n'
+                      + open(os.path.join(here, 'docs', 'changelog.rst')).read()),
+    scripts=['manage.py'],
     install_requires=[
-        # pinned by buildout
+        # pinned by requirements.txt
         'psycopg2',
         'docutils',
         'GDAL',
@@ -42,6 +43,7 @@ setup(
         'django-colorfield',
         'factory_boy',
     ],
+    include_package_data=True,
     license='BSD, see LICENSE file.',
     packages=find_packages(),
     classifiers=['Natural Language :: English',

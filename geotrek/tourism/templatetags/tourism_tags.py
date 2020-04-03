@@ -9,7 +9,7 @@ from geotrek.tourism.models import TouristicContentCategory
 register = template.Library()
 
 
-@register.assignment_tag
+@register.simple_tag
 def touristic_content_categories():
     categories = {
         str(category.pk): {
@@ -30,6 +30,6 @@ def touristic_content_categories():
     return json.dumps(categories)
 
 
-@register.assignment_tag
+@register.simple_tag
 def is_tourism_enabled():
     return settings.TOURISM_ENABLED

@@ -81,7 +81,7 @@ class RegulatorySensitiveAreaForm(CommonForm):
             fieldname = 'period{:02}'.format(p)
             setattr(species, fieldname, self.cleaned_data[fieldname])
         species.save()
-        species.practices = self.cleaned_data['practices']
+        species.practices.set(self.cleaned_data['practices'])
         area = super(RegulatorySensitiveAreaForm, self).save(commit=False)
         area.species = species
         area.save()

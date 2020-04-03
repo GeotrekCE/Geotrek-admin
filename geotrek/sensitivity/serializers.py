@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.translation import get_language
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis import serializers as geo_serializers

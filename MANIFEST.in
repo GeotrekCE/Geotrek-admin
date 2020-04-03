@@ -1,2 +1,2 @@
-recursive-include geotrek/static *.css
-recursive-include geotrek/templates *.html
+graft geotrek
+global-exclude *.py[cod] __pycache__ *.so

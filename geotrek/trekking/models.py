@@ -19,7 +19,7 @@ from geotrek.authent.models import StructureRelated
 from geotrek.core.models import Path, Topology, simplify_coords
 from geotrek.common.utils import intersecting, classproperty
 from geotrek.common.mixins import (PicturesMixin, PublishableMixin,
-                                   PictogramMixin, OptionalPictogramMixin)
+                                   PictogramMixin, OptionalPictogramMixin, NoDeleteManager)
 from geotrek.common.models import Theme
 from geotrek.maintenance.models import Intervention, Project
 from geotrek.tourism import models as tourism_models
@@ -55,8 +55,8 @@ class OrderedTrekChild(models.Model):
         )
 
 
-class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
-    topo_object = models.OneToOneField(Topology, parent_link=True)
+class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin):
+    topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     departure = models.CharField(verbose_name=_("Departure"), max_length=128, blank=True,
                                  help_text=_("Departure description"))
     arrival = models.CharField(verbose_name=_("Arrival"), max_length=128, blank=True,
@@ -88,13 +88,13 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
                                     help_text=_("Main theme(s)"))
     networks = models.ManyToManyField('TrekNetwork', related_name="treks", blank=True, verbose_name=_("Networks"),
                                       help_text=_("Hiking networks"))
-    practice = models.ForeignKey('Practice', related_name="treks",
+    practice = models.ForeignKey('Practice', related_name="treks", on_delete=models.CASCADE,
                                  blank=True, null=True, verbose_name=_("Practice"))
     accessibilities = models.ManyToManyField('Accessibility', related_name="treks", blank=True,
                                              verbose_name=_("Accessibility"))
-    route = models.ForeignKey('Route', related_name='treks',
+    route = models.ForeignKey('Route', related_name='treks', on_delete=models.CASCADE,
                               blank=True, null=True, verbose_name=_("Route"))
-    difficulty = models.ForeignKey('DifficultyLevel', related_name='treks',
+    difficulty = models.ForeignKey('DifficultyLevel', related_name='treks', on_delete=models.CASCADE,
                                    blank=True, null=True, verbose_name=_("Difficulty"))
     web_links = models.ManyToManyField('WebLink', related_name="treks", blank=True, verbose_name=_("Web links"),
                                        help_text=_("External resources"))
@@ -117,8 +117,6 @@ class Trek(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, To
     eid2 = models.CharField(verbose_name=_("Second external id"), max_length=1024, blank=True, null=True)
     pois_excluded = models.ManyToManyField('Poi', related_name='excluded_treks', verbose_name=_("Excluded POIs"),
                                            blank=True)
-
-    objects = Topology.get_manager_cls(models.GeoManager)()
 
     category_id_prefix = 'T'
     capture_map_image_waitfor = '.poi_enum_loaded.services_loaded.info_desks_loaded.ref_points_loaded'
@@ -462,8 +460,8 @@ class TrekRelationship(models.Model):
     has_common_edge = models.BooleanField(verbose_name=_("Common edge"), default=False)
     is_circuit_step = models.BooleanField(verbose_name=_("Circuit step"), default=False)
 
-    trek_a = models.ForeignKey(Trek, related_name="trek_relationship_a")
-    trek_b = models.ForeignKey(Trek, related_name="trek_relationship_b", verbose_name=_("Trek"))
+    trek_a = models.ForeignKey(Trek, related_name="trek_relationship_a", on_delete=models.CASCADE)
+    trek_b = models.ForeignKey(Trek, related_name="trek_relationship_b", verbose_name=_("Trek"), on_delete=models.CASCADE)
 
     objects = TrekRelationshipManager()
 
@@ -506,7 +504,7 @@ class Practice(PictogramMixin):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     distance = models.IntegerField(verbose_name=_("Distance"), blank=True, null=True,
                                    help_text=_("Touristic contents and events will associate within this distance (meters)"))
-    cirkwi = models.ForeignKey('cirkwi.CirkwiLocomotion', verbose_name=_("Cirkwi locomotion"), null=True, blank=True)
+    cirkwi = models.ForeignKey('cirkwi.CirkwiLocomotion', verbose_name=_("Cirkwi locomotion"), null=True, blank=True, on_delete=models.CASCADE)
     order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
                                 help_text=_("Alphabetical order if blank"))
     color = ColorField(verbose_name=_("Color"), default='#444444',
@@ -528,7 +526,7 @@ class Practice(PictogramMixin):
 class Accessibility(OptionalPictogramMixin):
 
     name = models.CharField(verbose_name=_("Name"), max_length=128)
-    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True)
+    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True, on_delete=models.CASCADE)
 
     id_prefix = 'A'
 
@@ -572,7 +570,7 @@ class DifficultyLevel(OptionalPictogramMixin):
     difficulty = models.CharField(verbose_name=_("Difficulty level"), max_length=128)
     cirkwi_level = models.IntegerField(verbose_name=_("Cirkwi level"), blank=True, null=True,
                                        help_text=_("Between 1 and 8"))
-    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True)
+    cirkwi = models.ForeignKey('cirkwi.CirkwiTag', verbose_name=_("Cirkwi tag"), null=True, blank=True, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = _("Difficulty level")
@@ -603,7 +601,7 @@ class WebLink(models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     url = models.URLField(verbose_name=_("URL"), max_length=2048)
     category = models.ForeignKey('WebLinkCategory', verbose_name=_("Category"),
-                                 related_name='links', null=True, blank=True)
+                                 related_name='links', null=True, blank=True, on_delete=models.CASCADE)
 
     objects = WebLinkManager()
 
@@ -634,16 +632,16 @@ class WebLinkCategory(PictogramMixin):
         return "%s" % self.label
 
 
-class POIManager(models.GeoManager):
+class POIManager(NoDeleteManager):
     def get_queryset(self):
-        return super(POIManager, self).get_queryset().select_related('type', 'structure')
+        return super().get_queryset().select_related('type', 'structure')
 
 
 class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Topology):
 
-    topo_object = models.OneToOneField(Topology, parent_link=True)
+    topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     description = models.TextField(verbose_name=_("Description"), blank=True, help_text=_("History, details,  ..."))
-    type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"))
+    type = models.ForeignKey('POIType', related_name='pois', verbose_name=_("Type"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     class Meta:
@@ -651,7 +649,7 @@ class POI(StructureRelated, PicturesMixin, PublishableMixin, MapEntityMixin, Top
         verbose_name_plural = _("POI")
 
     # Override default manager
-    objects = Topology.get_manager_cls(POIManager)()
+    objects = POIManager()
 
     # Do no check structure when selecting POIs to exclude
     check_structure_in_forms = False
@@ -730,7 +728,7 @@ tourism_models.TouristicEvent.add_property('published_pois', lambda self: inters
 class POIType(PictogramMixin):
 
     label = models.CharField(verbose_name=_("Label"), max_length=128)
-    cirkwi = models.ForeignKey('cirkwi.CirkwiPOICategory', verbose_name=_("Cirkwi POI category"), null=True, blank=True)
+    cirkwi = models.ForeignKey('cirkwi.CirkwiPOICategory', verbose_name=_("Cirkwi POI category"), null=True, blank=True, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = _("POI type")
@@ -756,15 +754,16 @@ class ServiceType(PictogramMixin, PublishableMixin):
         return self.name
 
 
-class ServiceManager(models.GeoManager):
+class ServiceManager(NoDeleteManager):
     def get_queryset(self):
-        return super(ServiceManager, self).get_queryset().select_related('type', 'structure')
+        return super().get_queryset().select_related('type', 'structure')
 
 
 class Service(StructureRelated, MapEntityMixin, Topology):
 
-    topo_object = models.OneToOneField(Topology, parent_link=True)
-    type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_("Type"))
+    topo_object = models.OneToOneField(Topology, parent_link=True,
+                                       on_delete=models.CASCADE)
+    type = models.ForeignKey('ServiceType', related_name='services', verbose_name=_("Type"), on_delete=models.CASCADE)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     class Meta:
@@ -772,7 +771,7 @@ class Service(StructureRelated, MapEntityMixin, Topology):
         verbose_name_plural = _("Services")
 
     # Override default manager
-    objects = Topology.get_manager_cls(ServiceManager)()
+    objects = ServiceManager()
 
     def __str__(self):
         return str(self.type)

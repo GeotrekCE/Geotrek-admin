@@ -1,42 +1,55 @@
+import env_file
 import os
 import sys
 
+from django.contrib.gis.geos import fromstr
 from django.contrib.messages import constants as messages
+from django.conf.global_settings import LANGUAGES as LANGUAGES_LIST
 
 from easy_thumbnails.conf import Settings as easy_thumbnails_defaults
 
 from geotrek import __version__
-from . import PROJECT_ROOT_PATH
 
 
-def gettext_noop(s):
+def _(s):
     return s
 
+
+def api_bbox(bbox, buffer):
+    wkt_box = 'POLYGON(({0} {1}, {2} {1}, {2} {3}, {0} {3}, {0} {1}))'
+    wkt = wkt_box.format(*bbox)
+    native = fromstr(wkt, srid=SRID)
+    native.transform(API_SRID)
+    extent = native.extent
+    width = extent[2] - extent[0]
+    native = native.buffer(width * buffer)
+    return tuple(native.extent)
+
+
+ROOT_URL = ""
+PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+VAR_DIR = '/opt/geotrek-admin/var'
+TMP_DIR = os.path.join(VAR_DIR, 'tmp')
+
+DOT_ENV_FILE = os.path.join(VAR_DIR, 'conf/env')
+if os.path.exists(DOT_ENV_FILE):
+    env_file.load(path=DOT_ENV_FILE)
+
+ALLOWED_HOSTS = os.getenv('SERVER_NAME', 'localhost').split(' ')
+ALLOWED_HOSTS = ['*' if host == '_' else host for host in ALLOWED_HOSTS]
+
+CACHE_ROOT = os.path.join(VAR_DIR, 'cache')
+
+TITLE = _("Geotrek")
 
 DEBUG = False
 TEST = 'test' in sys.argv
 VERSION = __version__
 
 ADMINS = (
-    ('Makina Corpus', 'geobi@makina-corpus.com'),
 )
 
 MANAGERS = ADMINS
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'OPTIONS': {},
-        'NAME': '',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-        'TEST': {
-            'SERIALIZE': False,
-        },
-    }
-}
 
 #
 # PostgreSQL Schemas for apps and models.
@@ -64,8 +77,18 @@ DATABASE_SCHEMAS = {
     # 'geotrek.land': 'land',
 }
 
-DATABASES['default']['OPTIONS'] = {
-    'options': '-c search_path={}'.format(','.join(('public', ) + tuple(set(DATABASE_SCHEMAS.values()))))
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST', 'postgres'),
+        'PORT': os.getenv('POSTGRES_PORT', '5432'),
+        'OPTIONS': {
+            'options': '-c search_path={}'.format(','.join(('public', ) + tuple(set(DATABASE_SCHEMAS.values()))))
+        },
+    }
 }
 
 #
@@ -90,24 +113,26 @@ AUTHENT_GROUPS_MAPPING = {
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'Europe/Paris'
+TIME_ZONE = os.getenv('TIME_ZONE', 'UTC')
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
+LANGUAGES = (
+    ('en', _('English')),
+    ('fr', _('French')),
+    ('it', _('Italian')),
+    ('es', _('Spanish')),
+)
 LANGUAGE_CODE = 'fr'
 
-MODELTRANSLATION_DEFAULT_LANGUAGE = LANGUAGE_CODE
-
-
-LANGUAGES = (
-    ('en', gettext_noop('English')),
-    ('fr', gettext_noop('French')),
-    ('it', gettext_noop('Italian')),
-    ('es', gettext_noop('Spanish')),
-)
+MODELTRANSLATION_LANGUAGES = os.getenv('LANGUAGES', 'fr en').split(' ')
+MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
 
 LOCALE_PATHS = (
-    os.path.join(PROJECT_ROOT_PATH, 'locale'),
+    # override locale
+    os.path.join(VAR_DIR, 'conf', 'extra_locale'),
+    # project locale
+    os.path.join(PROJECT_DIR, 'locale'),
 )
 
 SITE_ID = 1
@@ -125,36 +150,27 @@ USE_TZ = True
 
 DATE_INPUT_FORMATS = ('%d/%m/%Y',)
 
-ROOT_URL = ''
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = 'home'
-
-# Absolute filesystem path to the directory that will hold user-uploaded files.
-# Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = os.path.join(PROJECT_ROOT_PATH, 'media')
-
-UPLOAD_DIR = 'upload'    # media root subdir
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = '/media/'
 MEDIA_URL_SECURE = '/media_secure/'
-
-# Absolute path to the directory static files should be collected to.
-# Don't put anything in this directory yourself; store your static files
-# in apps' "static/" subdirectories and in STATICFILES_DIRS.
-# Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+MEDIA_ROOT = os.path.join(VAR_DIR, 'media')
+UPLOAD_DIR = 'upload'  # media root subdir
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(VAR_DIR, 'static')
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT_PATH, 'static'),
+    os.path.join(VAR_DIR, 'conf', 'extra_static'),
+    os.path.join(PROJECT_DIR, 'static'),
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -175,7 +191,13 @@ COMPRESS_ENABLED = False
 COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'public_key'
+SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    try:
+        with open(os.path.join(VAR_DIR, 'conf/secret_key'), 'r') as f:
+            SECRET_KEY = f.read()
+    except FileNotFoundError:
+        pass
 
 TEMPLATES = [
     {
@@ -183,7 +205,10 @@ TEMPLATES = [
     },
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': (),
+        'DIRS': (
+            os.path.join(VAR_DIR, 'conf', 'extra_templates'),
+            os.path.join(PROJECT_DIR, 'templates'),
+        ),
         'OPTIONS': {
             'context_processors': [
                 'django.contrib.auth.context_processors.auth',
@@ -207,7 +232,7 @@ TEMPLATES = [
     },
 ]
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'geotrek.authent.middleware.LocaleForcedMiddleware',
@@ -219,14 +244,17 @@ MIDDLEWARE_CLASSES = (
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'geotrek.authent.middleware.CorsMiddleware',
-    'mapentity.middleware.AutoLoginMiddleware'
+    # TODO: delete geotrek geotrek.common.middleware.FixedAutoLoginMiddleware and set mapentity with py3 version
+    # 'mapentity.middleware.AutoLoginMiddleware'
+    'geotrek.common.middleware.FixedAutoLoginMiddleware'
 )
+FORCE_SCRIPT_NAME = ROOT_URL if ROOT_URL != '' else None
+ADMIN_MEDIA_PREFIX = '%s/static/admin/' % ROOT_URL
 
 ROOT_URLCONF = 'geotrek.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'geotrek.wsgi.application'
-
 
 # Do not migrate translated fields, they differ per instance, and
 # can be added/removed using `update_translation_fields`
@@ -249,11 +277,10 @@ PROJECT_APPS += (
     'geotrek.appconfig.SessionsGeotrekConfig',  # django.contrib.sessions
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'geotrek.appconfig.AdminGeotrekConfig',   # django.contrib.admin
+    'geotrek.appconfig.AdminGeotrekConfig',  # django.contrib.admin
     'django.contrib.admindocs',
     'django.contrib.gis',
 )
-
 
 PROJECT_APPS += (
     'crispy_forms',
@@ -272,7 +299,6 @@ PROJECT_APPS += (
     'geotrek.appconfig.CeleryGeotrekConfig',  # django_celery_results
     'colorfield',
 )
-
 
 INSTALLED_APPS = PROJECT_APPS + (
     'geotrek.cirkwi',
@@ -299,74 +325,13 @@ SERIALIZATION_MODULES = {
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        'TIMEOUT': 28800,  # 8 hours
     },
     # The fat backend is used to store big chunk of data (>1 Mo)
     'fat': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-    }
-}
-
-# A sample logging configuration. The only tangible logging
-# performed by this configuration is to send an email to
-# the site admins on every HTTP 500 error when DEBUG=False.
-# See http://docs.djangoproject.com/en/dev/topics/logging for
-# more details on how to customize your logging configuration.
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        }
-    },
-    'formatters': {
-        'simple': {
-            'format': '%(levelname)s %(asctime)s %(name)s %(message)s'
-        },
-    },
-    'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'logging.NullHandler'
-        },
-        'console': {
-            'level': 'WARNING',
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple'
-        },
-    },
-    'loggers': {
-        'django.db.backends': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'django.request': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'django': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'geotrek': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'mapentity': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        '': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-            'propagate': False,
-        },
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': CACHE_ROOT,
+        'TIMEOUT': 28800,  # 8 hours
     }
 }
 
@@ -393,9 +358,8 @@ PAPERCLIP_ENABLE_LINK = True
 PAPERCLIP_FILETYPE_MODEL = 'common.FileType'
 PAPERCLIP_ATTACHMENT_MODEL = 'common.Attachment'
 
-
 # Data projection
-SRID = 2154  # Lambert-93 for Metropolitan France
+SRID = int(os.getenv('SRID', '2154'))  # Lambert-93 for Metropolitan France
 
 # API projection (client-side), can differ from SRID (database). Leaflet requires 4326.
 API_SRID = 4326
@@ -406,14 +370,18 @@ DISPLAY_SRID = 3857
 # Extent in native projection (France area)
 SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
 
+_MODELTRANSLATION_LANGUAGES = [l for l in LANGUAGES_LIST
+                               if l[0] in ("en", "fr", "it", "es")]
 
 MAPENTITY_CONFIG = {
-    'TITLE': gettext_noop("Geotrek"),
+    'TITLE': TITLE,
+    'ROOT_URL': ROOT_URL,
     'TEMP_DIR': '/tmp',
     'HISTORY_ITEMS_MAX': 7,
-    'CONVERSION_SERVER': 'http://127.0.0.1:6543',
-    'CAPTURE_SERVER': 'http://127.0.0.1:8001',
-    'ROOT_URL': ROOT_URL,
+    'CONVERSION_SERVER': 'http://{}:{}'.format(os.getenv('CONVERSION_HOST', 'convertit'),
+                                               os.getenv('CONVERSION_PORT', '6543')),
+    'CAPTURE_SERVER': 'http://{}:{}'.format(os.getenv('CAPTURE_HOST', 'screamshotter'),
+                                            os.getenv('CAPTURE_PORT', '8000')),
     'MAP_BACKGROUND_FOGGED': True,
     'GEOJSON_LAYERS_CACHE_BACKEND': 'fat',
     'SENDFILE_HTTP_HEADER': 'X-Accel-Redirect',
@@ -423,7 +391,7 @@ MAPENTITY_CONFIG = {
     'MAP_FIT_MAX_ZOOM': 16,
 }
 
-DEFAULT_STRUCTURE_NAME = gettext_noop('Default')
+DEFAULT_STRUCTURE_NAME = os.getenv('DEFAULT_STRUCTURE', 'My structure')
 
 VIEWPORT_MARGIN = 0.1  # On list page, around spatial extent from settings.ini
 
@@ -445,7 +413,6 @@ ALTIMETRIC_PROFILE_MIN_YSCALE = 1200  # Minimum y scale (in meters)
 ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/height)
 ALTIMETRIC_AREA_MARGIN = 0.15
 
-
 # Let this be defined at instance-level
 LEAFLET_CONFIG = {
     'SRID': 3857,
@@ -455,7 +422,7 @@ LEAFLET_CONFIG = {
     ],
     'TILES_EXTENT': SPATIAL_EXTENT,
     # Extent in API projection (Leaflet view default extent)
-    'SPATIAL_EXTENT': (1.3, 43.7, 1.5, 43.5),
+    'SPATIAL_EXTENT': api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN),
     'NO_GLOBALS': False,
     'PLUGINS': {
         'geotrek': {'js': ['core/leaflet.lineextremities.js',
@@ -487,18 +454,19 @@ COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '
                                   'LightSalmon', 'HotPink', 'Fuchsia']}
 
 MAP_STYLES = {
-    'path': {'weight': 2, 'opacity': 1.0, 'color': '#FF4800'},
+    'path': {'weight': 2, 'color': '#FF4800', 'opacity': 1.0},
     'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
-
-    'city': {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
-    'district': {'weight': 6, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
-
+    'city': {'weight': 4, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0},
+    'district': {'weight': 6, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
     'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
     'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
     'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
     'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
     'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
     'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
+
+    'detail': {'color': '#ffff00'},
+    'others': {'color': '#ffff00'},
 
     'print': {
         'path': {'weight': 1},
@@ -507,8 +475,7 @@ MAP_STYLES = {
     }
 }
 
-
-LAYER_PRECISION_LAND = 4   # Number of fraction digit
+LAYER_PRECISION_LAND = 4  # Number of fraction digit
 LAYER_SIMPLIFY_LAND = 10  # Simplification tolerance
 
 LAND_BBOX_CITIES_ENABLED = True
@@ -601,7 +568,6 @@ TOPOLOGY_STATIC_OFFSETS = {'land': -5,
                            'signagemanagement': -10,
                            'workmanagement': 10}
 
-
 MESSAGE_TAGS = {
     messages.SUCCESS: 'alert-success',
     messages.INFO: 'alert-info',
@@ -633,9 +599,9 @@ MOBILE_TILES_URL = [
 MOBILE_TILES_EXTENSION = None  # auto
 MOBILE_TILES_RADIUS_LARGE = 0.01  # ~1 km
 MOBILE_TILES_RADIUS_SMALL = 0.005  # ~500 m
-MOBILE_TILES_GLOBAL_ZOOMS = range(13)
-MOBILE_TILES_LOW_ZOOMS = range(13, 15)
-MOBILE_TILES_HIGH_ZOOMS = range(15, 17)
+MOBILE_TILES_GLOBAL_ZOOMS = list(range(13))
+MOBILE_TILES_LOW_ZOOMS = list(range(13, 15))
+MOBILE_TILES_HIGH_ZOOMS = list(range(15, 17))
 MOBILE_CATEGORY_PICTO_SIZE = 32
 MOBILE_POI_PICTO_SIZE = 32
 MOBILE_INFORMATIONDESKTYPE_PICTO_SIZE = 32
@@ -663,6 +629,8 @@ TINYMCE_DEFAULT_CONFIG = {
     'convert_urls': False,
 }
 
+SYNC_RANDO_ROOT = os.path.join(VAR_DIR, 'data')
+SYNC_MOBILE_ROOT = os.path.join(VAR_DIR, 'mobile')
 SYNC_RANDO_OPTIONS = {}
 SYNC_MOBILE_OPTIONS = {'skip_tiles': False}
 
@@ -684,6 +652,81 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
     'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',  # Used for extern authent
 ]
+
+EMAIL_SUBJECT_PREFIX = '[%s] ' % TITLE
+
+FACEBOOK_APP_ID = ''
+FACEBOOK_IMAGE = '/images/logo-geotrek.png'
+FACEBOOK_IMAGE_WIDTH = 200
+FACEBOOK_IMAGE_HEIGHT = 200
+
+FORMAT_LINE_CODE = "{signagecode}-{bladenumber}-{linenumber}"
+
+CAPTURE_AUTOLOGIN_TOKEN = os.getenv('CAPTURE_AUTOLOGIN_TOKEN', None)
+
+# A sample logging configuration. The only tangible logging
+# performed by this configuration is to send an email to
+# the site admins on every HTTP 500 error when DEBUG=False.
+# See http://docs.djangoproject.com/en/dev/topics/logging for
+# more details on how to customize your logging configuration.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'formatters': {
+        'simple': {
+            'format': '%(levelname)s %(asctime)s %(name)s %(message)s'
+        },
+    },
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'logging.NullHandler'
+        },
+        'console': {
+            'level': 'WARNING',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'geotrek': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'mapentity': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        '': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    }
+}
 
 BLADE_CODE_TYPE = int
 BLADE_CODE_FORMAT = "{signagecode}-{bladenumber}"
@@ -726,3 +769,21 @@ SEND_REPORT_ACK = True
 PARSER_RETRY_SLEEP_TIME = 60  # time of sleep between requests
 PARSER_NUMBER_OF_TRIES = 3  # number of requests to try before abandon
 PARSER_RETRY_HTTP_STATUS = [503]
+
+# Override with prod/dev/tests/tests_nds settings
+ENV = os.getenv('ENV', 'prod')
+assert ENV in ('prod', 'dev', 'tests', 'tests_nds')
+env_settings_file = os.path.join(os.path.dirname(__file__), 'env_{}.py'.format(ENV))
+with open(env_settings_file, 'r') as f:
+    exec(f.read())
+
+# Override with custom settings
+custom_settings_file = os.getenv('CUSTOM_SETTINGS_FILE')
+if custom_settings_file:
+    with open(custom_settings_file, 'r') as f:
+        exec(f.read())
+
+# Computed settings takes place at the end after customization
+MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = [l for l in LANGUAGES_LIST if l[0] in MODELTRANSLATION_LANGUAGES]
+LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
+LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)

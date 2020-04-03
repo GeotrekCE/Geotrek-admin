@@ -1,10 +1,8 @@
-from __future__ import absolute_import
-
-import django
 from celery import Celery
+import os
 
-# Setup django project. DJANGO_SETTINGS_MODULE must be set by supervisor.
-django.setup()
+# set the default Django settings module for the 'celery' program.
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'geotrek.settings')
 
 app = Celery('geotrek')
 

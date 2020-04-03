@@ -19,7 +19,7 @@ class TasksTest(TestCase):
     def test_import_datas_message_exception(self):
         self.assertRaisesMessage(
             ImportError,
-            "Failed to import parser class 'haricot' from module 'toto'",
+            "No module named 'toto'",
             import_datas,
             filename='bombadil',
             name='haricot',
@@ -29,7 +29,7 @@ class TasksTest(TestCase):
     def test_import_datas_from_web_message_exception(self):
         self.assertRaisesMessage(
             ImportError,
-            "Failed to import parser class 'haricot' from module 'toto'",
+            "No module named 'toto'",
             import_datas_from_web,
             filename='bombadil',
             name='haricot',

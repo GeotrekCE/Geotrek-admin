@@ -12,76 +12,133 @@ jobs:
       - run: apt install -y python3-pip
       - checkout
       - run: pip3 install flake8
-      - run: flake8 --exclude "" --ignore=E501,F403,F405 geotrek/settings
+      - run: flake8 --exclude "" --ignore=E501,F821 geotrek/settings
       - run: flake8 geotrek
       - run: test $(ls geotrek/*/migrations/*.py | xargs grep -l srid | xargs grep -L SRID | wc -l) -eq 0
-  test:
-    docker:
-      - image: ubuntu:bionic
+  docker_image:
+    machine: true
+    steps:
+      - checkout
+      - run: make build
+      - run: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
+      - run: docker tag geotrek:latest geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
+      - run: docker push geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
+  docker_test:
+    machine: true
     environment:
       LANG: C.UTF-8
     steps:
-      - run: apt update
-      - run: DEBIAN_FRONTEND="noninteractive" apt install -y curl git sudo tzdata
       - checkout
-      - run: ./install.sh --tests --noinput
-      - run: sed -i "s/bind .*/bind 127.0.0.1/g" /etc/redis/redis.conf; service redis-server start
-      - run: ./bin/coverage run ./bin/django test -v2 geotrek
-      - run: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash && . ~/.nvm/nvm.sh && nvm install v12 && make test_js
-      - run: ./bin/coverage report -m && ./bin/coverage xml
+      - run: cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
+      - run: docker run -p 5432:5432 --env-file .env -d makinacorpus/postgis:11-2.5
+      - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
+      - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+      - run: docker-compose run web update.sh
+      - run: docker-compose run -e ENV=tests -e COVERAGE_FILE=var/.coverage web coverage run ./manage.py test geotrek
+      - run: docker-compose run -e COVERAGE_FILE=var/.coverage web coverage xml -o var/coverage.xml
       - codecov/upload:
-          file: coverage.xml
+          file: var/coverage.xml
           flags: test
-  test_xenial:
-    docker:
-      - image: ubuntu:xenial
+          when: on_success
+  docker_test_nds:
+    machine: true
     environment:
       LANG: C.UTF-8
     steps:
-      - run: apt update
-      - run: DEBIAN_FRONTEND="noninteractive" apt install -y curl git sudo tzdata
       - checkout
-      - run: ./install.sh --tests --noinput
-      - run: sed -i "s/bind .*/bind 127.0.0.1/g" /etc/redis/redis.conf; service redis-server start
-      - run: ./bin/django test -v2 geotrek
-  test_nds:
-    docker:
-      - image: ubuntu:bionic
-    environment:
-      LANG: C.UTF-8
-    steps:
-      - run: apt update
-      - run: DEBIAN_FRONTEND="noninteractive" apt install -y curl git sudo tzdata
-      - checkout
-      - run: sed -i 's/TREKKING_TOPOLOGY_ENABLED = True/TREKKING_TOPOLOGY_ENABLED = False/g' geotrek/settings/base.py
-      - run: ./install.sh --tests --noinput
-      - run: sed -i "s/bind .*/bind 127.0.0.1/g" /etc/redis/redis.conf; service redis-server start
-      - run: ./bin/coverage run ./bin/django test -v2 geotrek --settings=geotrek.settings.tests_nds
-      - run: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash && . ~/.nvm/nvm.sh && nvm install v12 && make test_js
-      - run: ./bin/coverage report -m && ./bin/coverage xml
+      - run: cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
+      - run: docker run -p 5432:5432 --env-file .env -d makinacorpus/postgis:11-2.5
+      - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
+      - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+      - run: docker-compose run web update.sh
+      - run: docker-compose run -e ENV=tests_nds -e COVERAGE_FILE=var/.coverage web coverage run ./manage.py test geotrek
+      - run: docker-compose run -e COVERAGE_FILE=var/.coverage web coverage xml -o var/coverage.xml
       - codecov/upload:
-          file: coverage.xml
+          file: var/coverage.xml
           flags: test_nds
-  deploy:
+          when: on_success
+  docker_test_js:
+    docker:
+      - image: geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
+    environment:
+      LANG: C.UTF-8
+      ENV: tests
+      SECRET_KEY: foo
+      CUSTOM_SETTINGS_FILE: ""
+    working_directory: /opt/geotrek-admin
+    steps:
+      - run: apt-get update -q && apt-get install -q -y npm
+      - run: mkdir -p var/conf/extra_static
+      - run: ./env/bin/python manage.py collectstatic --noinput
+      - run: npm install geotrek/jstests
+      - run: ./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
+  docker_publish:
+    machine: true
+    environment:
+      LANG: C.UTF-8
+    steps:
+      - checkout
+      # Check this is a release and not a development version
+      - run: grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || circleci-agent step halt
+      - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
+      - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:$(cat VERSION)
+      - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+      - run: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
+      - run: docker push geotrekce/admin:$(cat VERSION)
+      - run: docker push geotrekce/admin:latest
+  ubuntu_package:
     docker:
       - image: ubuntu:bionic
     environment:
       LANG: C.UTF-8
     steps:
-      - run: chmod 755 /root  # Allow nginx to access static and media
-      - run: apt update
-      - run: DEBIAN_FRONTEND="noninteractive" apt install -y git sudo tzdata
       - checkout
-      - run: ./install.sh --noinput
-      - run: sed -i "s/bind .*/bind 127.0.0.1/g" /etc/redis/redis.conf; service redis-server start
-      - run: make load_demo
-      - run: make test_nav host=localhost port=80
+      - run: apt-get update -q && apt-get install -q -y dpkg-dev debhelper dh-virtualenv git python3 python3-venv python3-dev libgdal-dev libffi-dev libxml2-dev libxslt1-dev
+      - run: dpkg-buildpackage -uc -us -b
+      - persist_to_workspace:
+          root: /root
+          paths: geotrek-admin_*_amd64.deb
+  ubuntu_publish:
+    docker:
+      - image: ubuntu:bionic
+    environment:
+      LANG: C.UTF-8
+    steps:
+      - checkout
+      # Check this is a release and not a development version
+      - run: grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || circleci-agent step halt
+      - run: apt-get update -q && apt-get install -q -y ca-certificates openssh-client
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: scp -P $SSH_PORT -o StrictHostKeyChecking=no /tmp/workspace/geotrek-admin_*_amd64.deb $SSH_USER@$SSH_HOST:/srv/packages/incoming/
+      - run: ssh -p $SSH_PORT -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST make -C /srv/packages
 workflows:
   version: 2
   all:
     jobs:
       - codestyle
-      - test
-      - test_nds
-      - test_xenial
-      - deploy
+      - docker_image
+      - docker_test:
+          requires:
+            - docker_image
+      - docker_test_nds:
+          requires:
+            - docker_image
+      - docker_test_js:
+          requires:
+            - docker_image
+      - docker_publish:
+          requires:
+            - codestyle
+            - docker_test
+            - docker_test_nds
+            - docker_test_js
+          filters:
+            branches:
+              only:
+                - docker-integration
+      - ubuntu_package
+      - ubuntu_publish:
+          requires:
+            - codestyle
+            - ubuntu_package

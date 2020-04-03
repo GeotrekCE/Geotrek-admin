@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from django.contrib.gis.gdal import DataSource, GDALException, OGRIndexError
+from django.contrib.gis.gdal import DataSource, GDALException
 from geotrek.zoning.models import RestrictedArea, RestrictedAreaType
 from django.contrib.gis.geos.polygon import Polygon
 from django.contrib.gis.geos.collections import MultiPolygon
@@ -61,7 +61,7 @@ class Command(BaseCommand):
                     else:
                         if verbosity > 0:
                             self.stdout.write("%s's geometry is not valid" % feat.get(name_column))
-                except OGRIndexError:
+                except IndexError:
                     if count_error == 0:
                         self.stdout.write(
                             "Name's attribute do not correspond with options\n"

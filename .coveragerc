@@ -2,6 +2,7 @@
 omit =
     */tests*
     */migrations*
-    lib/*
+    */lib*
+    /src*
 
 ignore_errors = true

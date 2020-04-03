@@ -5,9 +5,8 @@ from collections import OrderedDict
 import hashlib
 import shutil
 
-from unittest import skipIf
+from unittest import skipIf, mock
 
-from unittest import mock
 from bs4 import BeautifulSoup
 
 from django.conf import settings
@@ -15,7 +14,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core.management import call_command
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import connection, connections, DEFAULT_DB_ALIAS
 from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
@@ -473,7 +472,7 @@ class TrekCustomViewTests(TrekkingManagerTest):
 class TrekCustomPublicViewTests(TrekkingManagerTest):
     @mock.patch('djappypod.backend.os.path.exists', create=True)
     def test_overriden_public_template(self, exists_patched):
-        overriden_template = os.path.join(settings.MEDIA_ROOT, 'templates', 'trekking', 'trek_public.odt')
+        overriden_template = os.path.join(settings.VAR_DIR, 'conf', 'extra_templates', 'trekking', 'trek_public.odt')
 
         def fake_exists(path):
             return path == overriden_template
@@ -1153,7 +1152,7 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             response.content.decode(),
             '<?xml version="1.0" encoding="utf8"?>\n'
             '<circuits version="2">'
-            '<circuit id_circuit="{pk}" date_modification="{date_update}" date_creation="1388534400">'
+            '<circuit date_creation="1388534400" date_modification="{date_update}" id_circuit="{pk}">'
             '<informations>'
             '<information langue="en">'
             '<titre>{title}</titre>'
@@ -1171,9 +1170,9 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '</informations>'
             '<distance>141</distance>'
             '<locomotions><locomotion duree="5400"></locomotion></locomotions>'
-            '<fichier_trace url="http://testserver/api/en/treks/{pk}/name-{n}.kml"/>'
+            '<fichier_trace url="http://testserver/api/en/treks/{pk}/name-{n}.kml"></fichier_trace>'
             '<pois>'
-            '<poi id_poi="{poi_pk}" date_modification="{poi_date_update}" date_creation="1388534400">'
+            '<poi date_creation="1388534400" date_modification="{poi_date_update}" id_poi="{poi_pk}">'
             '<informations>'
             '<information langue="en"><titre>{poi_title}</titre><description>{poi_description}</description></information>'
             '</informations>'
@@ -1406,9 +1405,9 @@ class SyncRandoViewTest(TestCase):
 
     @mock.patch('sys.stdout', new_callable=StringIO)
     @override_settings(CELERY_ALWAYS_EAGER=False,
-                       SYNC_RANDO_ROOT='tmp', SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000',
-                                                                  'skip_tiles': True, 'skip_pdf': True,
-                                                                  'skip_dem': True, 'skip_profile_png': True})
+                       SYNC_RANDO_ROOT='var/tmp', SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000',
+                                                                      'skip_tiles': True, 'skip_pdf': True,
+                                                                      'skip_dem': True, 'skip_profile_png': True})
     def test_get_sync_rando_states_superuser_with_sync_rando(self, mocked_stdout):
         self.client.login(username='admin', password='super')
         if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
@@ -1435,9 +1434,9 @@ class SyncRandoViewTest(TestCase):
         self.assertIn(b'"exc_message": "This is a test"', response.content)
 
     @mock.patch('sys.stdout', new_callable=StringIO)
-    @override_settings(SYNC_RANDO_ROOT='tmp', SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000', 'skip_tiles': True,
-                                                                  'skip_pdf': True,
-                                                                  'skip_dem': True, 'skip_profile_png': True})
+    @override_settings(SYNC_RANDO_ROOT='var/tmp', SYNC_RANDO_OPTIONS={'url': 'http://localhost:8000', 'skip_tiles': True,
+                                                                      'skip_pdf': True,
+                                                                      'skip_dem': True, 'skip_profile_png': True})
     def test_launch_sync_rando(self, mocked_stdout):
         if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
             shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))

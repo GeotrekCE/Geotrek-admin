@@ -92,19 +92,19 @@ class Level(OptionalPictogramMixin):
         super(Level, self).save(*args, **kwargs)
 
 
-class Dive(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-           TimeStampedModelMixin, PicturesMixin, NoDeleteMixin):
+class Dive(NoDeleteMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
+           TimeStampedModelMixin, PicturesMixin):
     description_teaser = models.TextField(verbose_name=_("Description teaser"), blank=True,
                                           help_text=_("A brief summary"))
     description = models.TextField(verbose_name=_("Description"), blank=True,
                                    help_text=_("Complete description"))
     owner = models.CharField(verbose_name=_("Owner"), max_length=256, blank=True)
-    practice = models.ForeignKey(Practice, related_name="dives",
+    practice = models.ForeignKey(Practice, related_name="dives", on_delete=models.CASCADE,
                                  blank=True, null=True, verbose_name=_("Practice"))
     departure = models.CharField(verbose_name=_("Departure area"), max_length=128, blank=True)
     disabled_sport = models.TextField(verbose_name=_("Disabled sport accessibility"), blank=True)
     facilities = models.TextField(verbose_name=_("Facilities"), blank=True)
-    difficulty = models.ForeignKey(Difficulty, related_name='dives', blank=True,
+    difficulty = models.ForeignKey(Difficulty, related_name='dives', blank=True, on_delete=models.CASCADE,
                                    null=True, verbose_name=_("Difficulty level"))
     levels = models.ManyToManyField(Level, related_name='dives', blank=True,
                                     verbose_name=_("Technical levels"))
@@ -116,8 +116,6 @@ class Dive(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
     source = models.ManyToManyField('common.RecordSource', blank=True, related_name='dives', verbose_name=_("Source"))
     portal = models.ManyToManyField('common.TargetPortal', blank=True, related_name='dives', verbose_name=_("Portal"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
-
-    objects = Topology.get_manager_cls(models.GeoManager)()
 
     category_id_prefix = 'D'
 

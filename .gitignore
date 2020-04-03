@@ -1,13 +1,16 @@
 *.pyc
 *.tar.gz
+*.log
+
+# Generated files
+__pycache__/
 *.mo
 
 /var/
 /etc/
-/install
 /.idea/
 /.vscode/
-
+geotrek/settings/custom.py
 # buildout stuff
 .mr.developer.cfg
 .installed.cfg
@@ -18,29 +21,33 @@ develop-eggs/
 eggs/
 parts/
 docs/_build/
-include/
-lib/
-local/
 *.egg-info/
 /node_modules/
 /salt.cfg
-/etc
-/lib
-/var
-bootstrap.py
-/.buildout
-geotrek/settings/custom.py
-/bulkimport/
-!/bulkimport/__init__.py
-/install.log
-/data/
-/mobile/
+
 /sync_trek/
 
 /.project
 /.pydevproject
 /.settings/
-screamshotter.log
 
 /share/
-/geotrek/settings/local.py
+/install/*.tgz
+/install/.env
+/install/var/
+
+/env/
+/pyvenv.cfg
+/.env
+/docker-compose.yml
+
+# Packaging
+/debian/.debhelper/
+/debian/debhelper-build-stamp
+/debian/download/
+/debian/files
+/debian/geotrek-admin.substvars
+/debian/geotrek-admin/
+/debian/geotrek-admin.postinst.debhelper
+/debian/geotrek-admin.prerm.debhelper
+/debian/geotrek-admin.postrm.debhelper

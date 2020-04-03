@@ -1,5 +1,6 @@
 from django.conf import settings
-from django.conf.urls import include, url, static
+from django.urls import include, path
+from django.conf.urls import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
@@ -10,65 +11,62 @@ from geotrek.common import views as common_views
 
 from paperclip import views as paperclip_views
 
-handler403 = 'mapentity.views.handler403'
-handler404 = 'mapentity.views.handler404'
-
 
 urlpatterns = [
-    url(r'^$', common_views.home, name='home'),
-    url(r'^login/$', auth_views.login, name='login'),
-    url(r'^logout/$', auth_views.logout, {'next_page': settings.ROOT_URL + '/'}, name='logout',),
+    path('', common_views.home, name='home'),
+    path('login/', auth_views.login, name='login'),
+    path('logout/', auth_views.logout, {'next_page': settings.ROOT_URL + '/'}, name='logout',),
 
-    url(r'', include('geotrek.common.urls', namespace='common', app_name='common')),
-    url(r'', include('geotrek.altimetry.urls', namespace='altimetry', app_name='altimetry')),
+    path('', include('geotrek.common.urls', namespace='common')),
+    path('', include('geotrek.altimetry.urls', namespace='altimetry')),
 
-    url(r'', include('mapentity.urls', namespace='mapentity', app_name='mapentity')),
-    url(r'^paperclip/add-for/(?P<app_label>[\w\-]+)/(?P<model_name>[\w\-]+)/(?P<pk>\d+)/$',
-        paperclip_views.add_attachment, kwargs={'attachment_form': AttachmentForm}, name="add_attachment"),
-    url(r'^paperclip/update/(?P<attachment_pk>\d+)/$', paperclip_views.update_attachment,
-        kwargs={'attachment_form': AttachmentForm}, name="update_attachment"),
-    url(r'^paperclip/', include('paperclip.urls')),
-    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    url(r'^admin/', include(admin.site.urls)),
+    path('', include(('mapentity.urls', 'mapentity'), namespace='mapentity')),
+    path('paperclip/add-for/<str:app_label>/<str:model_name>/<int:pk>/',
+         paperclip_views.add_attachment, kwargs={'attachment_form': AttachmentForm}, name="add_attachment"),
+    path('paperclip/update/<int:attachment_pk>/', paperclip_views.update_attachment,
+         kwargs={'attachment_form': AttachmentForm}, name="update_attachment"),
+    path('paperclip/', include('paperclip.urls')),
+    path('admin/doc/', include('django.contrib.admindocs.urls')),
+    path('admin/', admin.site.urls),
 ]
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
-    urlpatterns.append(url(r'', include('geotrek.core.urls', namespace='core', app_name='core')))
+    urlpatterns.append(path('', include('geotrek.core.urls')))
 if 'geotrek.land' in settings.INSTALLED_APPS:
-    urlpatterns.append(url(r'', include('geotrek.land.urls', namespace='land', app_name='land')))
+    urlpatterns.append(path('', include('geotrek.land.urls')))
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
-    urlpatterns.append(url(r'', include('geotrek.zoning.urls', namespace='zoning', app_name='zoning')))
+    urlpatterns.append(path('', include('geotrek.zoning.urls')))
 if 'geotrek.infrastructure' in settings.INSTALLED_APPS:
-    urlpatterns.append(url(r'', include('geotrek.infrastructure.urls', namespace='infrastructure', app_name='infrastructure')))
+    urlpatterns.append(path('', include('geotrek.infrastructure.urls')))
 if 'geotrek.signage' in settings.INSTALLED_APPS:
-    urlpatterns.append(url(r'', include('geotrek.signage.urls', namespace='signage', app_name='signage')))
+    urlpatterns.append(path('', include('geotrek.signage.urls')))
 if 'geotrek.maintenance' in settings.INSTALLED_APPS:
-    urlpatterns.append(url(r'', include('geotrek.maintenance.urls', namespace='maintenance', app_name='maintenance')))
+    urlpatterns.append(path('', include('geotrek.maintenance.urls')))
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
-    urlpatterns.append(url(r'', include('geotrek.trekking.urls', namespace='trekking', app_name='trekking')))
+    urlpatterns.append(path('', include('geotrek.trekking.urls')))
 if 'geotrek.diving' in settings.INSTALLED_APPS:
-    urlpatterns.append(url(r'', include('geotrek.diving.urls', namespace='diving', app_name='diving')))
+    urlpatterns.append(path('', include('geotrek.diving.urls')))
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
-    urlpatterns.append(url(r'', include('geotrek.tourism.urls', namespace='tourism', app_name='tourism')))
+    urlpatterns.append(path('', include('geotrek.tourism.urls')))
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
-    urlpatterns.append(url(r'', include('geotrek.flatpages.urls', namespace='flatpages', app_name='flatpages')))
+    urlpatterns.append(path('', include('geotrek.flatpages.urls')))
 if 'geotrek.feedback' in settings.INSTALLED_APPS:
-    urlpatterns.append(url(r'', include('geotrek.feedback.urls', namespace='feedback', app_name='feedback')))
+    urlpatterns.append(path('', include('geotrek.feedback.urls')))
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
-    urlpatterns.append(url(r'', include('geotrek.sensitivity.urls', namespace='sensitivity', app_name='sensitivity')))
+    urlpatterns.append(path('', include('geotrek.sensitivity.urls')))
 if 'geotrek.api' in settings.INSTALLED_APPS:
-    urlpatterns.append(url(r'^api/v2/', include('geotrek.api.v2.urls', namespace='apiv2', app_name='apiv2')))
+    urlpatterns.append(path('api/v2/', include('geotrek.api.v2.urls')))
     if 'geotrek.flatpages' in settings.INSTALLED_APPS and 'geotrek.trekking' in settings.INSTALLED_APPS and 'geotrek.tourism' in settings.INSTALLED_APPS:
-        urlpatterns.append(url(r'^api/mobile/', include('geotrek.api.mobile.urls', namespace='apimobile', app_name='apimobile')))
+        urlpatterns.append(path('api/mobile/', include('geotrek.api.mobile.urls')))
 
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-if settings.DEBUG and settings.DEBUG_TOOLBAR or settings.TEST:
+if settings.DEBUG or settings.TEST:
     try:
         import debug_toolbar
         urlpatterns = [
-            url(r'^__debug__/', include(debug_toolbar.urls)),
+            path('__debug__/', include(debug_toolbar.urls)),
         ] + urlpatterns
     except ImportError:
         pass

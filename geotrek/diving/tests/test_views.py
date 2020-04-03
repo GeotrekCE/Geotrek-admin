@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
@@ -16,8 +16,6 @@ class DiveViewsTests(CommonTest):
     userfactory = DivingManagerFactory
 
     def setUp(self):
-        translation.deactivate()
-
         super(DiveViewsTests, self).setUp()
 
     def get_bad_data(self):
@@ -28,7 +26,7 @@ class DiveViewsTests(CommonTest):
     def get_good_data(self):
         return {
             'structure': Structure.objects.first().pk,
-            'name_fr': 'test',
+            'name_en': 'test',
             'practice': PracticeFactory.create().pk,
             'geom': '{"type": "Point", "coordinates":[0, 0]}',
         }

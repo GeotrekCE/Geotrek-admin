@@ -3,6 +3,7 @@ import functools
 
 import simplekml
 from django.contrib.gis.db import models
+from django.contrib.gis.db.models.functions import Distance
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.gis.geos import fromstr, LineString
@@ -33,7 +34,7 @@ def simplify_coords(coords):
     raise Exception("Param is {}. Should be <list>, <tuple> or <float>".format(type(coords)))
 
 
-class PathManager(models.GeoManager):
+class PathManager(models.Manager):
     # Use this manager when walking through FK/M2M relationships
     use_for_related_fields = True
 
@@ -43,7 +44,7 @@ class PathManager(models.GeoManager):
         return super(PathManager, self).get_queryset().filter(visible=True)
 
 
-class PathInvisibleManager(models.GeoManager):
+class PathInvisibleManager(models.Manager):
     use_for_related_fields = True
 
     def get_queryset(self):
@@ -74,13 +75,13 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     arrival = models.CharField(null=True, blank=True, default="", max_length=250, verbose_name=_("Arrival"),
                                help_text=_("Arrival place"))
 
-    comfort = models.ForeignKey('Comfort',
+    comfort = models.ForeignKey('Comfort', on_delete=models.CASCADE,
                                 null=True, blank=True, related_name='paths',
                                 verbose_name=_("Comfort"))
-    source = models.ForeignKey('PathSource',
+    source = models.ForeignKey('PathSource', on_delete=models.CASCADE,
                                null=True, blank=True, related_name='paths',
                                verbose_name=_("Source"))
-    stake = models.ForeignKey('Stake',
+    stake = models.ForeignKey('Stake', on_delete=models.CASCADE,
                               null=True, blank=True, related_name='paths',
                               verbose_name=_("Maintenance stake"))
     usages = models.ManyToManyField('Usage',
@@ -147,7 +148,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         qs = cls.objects.exclude(draft=True)
         if exclude:
             qs = qs.exclude(pk=exclude.pk)
-        return qs.exclude(visible=False).distance(point).order_by('distance')[0]
+        return qs.exclude(visible=False).annotate(distance=Distance('geom', point)).order_by('distance')[0]
 
     def is_overlap(self):
         return not PathHelper.disjoint(self.geom, self.pk)
@@ -329,9 +330,6 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
     offset = models.FloatField(default=0.0, verbose_name=_("Offset"))  # in SRID units
     kind = models.CharField(editable=False, verbose_name=_("Kind"), max_length=32)
 
-    # Override default manager
-    objects = NoDeleteMixin.get_manager_cls(models.GeoManager)()
-
     geom = models.GeometryField(editable=(not settings.TREKKING_TOPOLOGY_ENABLED),
                                 srid=settings.SRID, null=True,
                                 default=None, spatial_index=False)
@@ -491,7 +489,7 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
         return None
 
 
-class PathAggregationManager(models.GeoManager):
+class PathAggregationManager(models.Manager):
     def get_queryset(self):
         return super(PathAggregationManager, self).get_queryset().order_by('order')
 
@@ -501,7 +499,7 @@ class PathAggregation(models.Model):
                              verbose_name=_("Path"),
                              related_name="aggregations",
                              on_delete=models.DO_NOTHING)  # The CASCADE behavior is enforced at DB-level (see file ../sql/30_topologies_paths.sql)
-    topo_object = models.ForeignKey(Topology, null=False, related_name="aggregations",
+    topo_object = models.ForeignKey(Topology, null=False, related_name="aggregations", on_delete=models.CASCADE,
                                     verbose_name=_("Topology"))
     start_position = models.FloatField(verbose_name=_("Start position"), db_index=True)
     end_position = models.FloatField(verbose_name=_("End position"), db_index=True)
@@ -629,7 +627,7 @@ class Network(StructureOrNoneRelated):
 
 
 class Trail(MapEntityMixin, Topology, StructureRelated):
-    topo_object = models.OneToOneField(Topology, parent_link=True)
+    topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     name = models.CharField(verbose_name=_("Name"), max_length=64)
     departure = models.CharField(verbose_name=_("Departure"), blank=True, max_length=64)
     arrival = models.CharField(verbose_name=_("Arrival"), blank=True, max_length=64)
@@ -640,8 +638,6 @@ class Trail(MapEntityMixin, Topology, StructureRelated):
         verbose_name = _("Trail")
         verbose_name_plural = _("Trails")
         ordering = ['name']
-
-    objects = Topology.get_manager_cls(models.GeoManager)()
 
     def __str__(self):
         return self.name

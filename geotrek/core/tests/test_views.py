@@ -1,12 +1,11 @@
 import re
-from unittest import skipIf
+from unittest import skipIf, mock
 
-from unittest import mock
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.utils.translation import ugettext_lazy as _
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.gis.geos import LineString, Point, Polygon, MultiPolygon
 from django.test import TestCase
 

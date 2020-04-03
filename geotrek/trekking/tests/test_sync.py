@@ -31,6 +31,10 @@ from geotrek.tourism.factories import InformationDeskFactory, TouristicContentFa
 class SyncRandoTilesTest(TestCase):
     @classmethod
     def setUpClass(cls):
+        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
+            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
+        if os.path.exists(os.path.join('var', 'tmp')):
+            shutil.rmtree(os.path.join('var', 'tmp'))
         super(SyncRandoTilesTest, cls).setUpClass()
 
     @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
@@ -42,14 +46,14 @@ class SyncRandoTilesTest(TestCase):
         trek_multi.add_path(p, start=0.0, end=0.1)
         trek_multi.add_path(p, start=0.2, end=0.3)
         trek_multi.save()
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', languages='en', verbosity=2,
-                                stdout=output)
-        zfile = zipfile.ZipFile(os.path.join('tmp', 'zip', 'tiles', 'global.zip'))
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
+                                languages='en', stdout=output)
+        zfile = zipfile.ZipFile(os.path.join('var', 'tmp', 'zip', 'tiles', 'global.zip'))
         for finfo in zfile.infolist():
             ifile_global = zfile.open(finfo)
             if ifile_global.name.startswith('tiles/'):
                 self.assertEqual(ifile_global.readline(), b'I am a png')
-        zfile_trek = zipfile.ZipFile(os.path.join('tmp', 'zip', 'tiles', '{}.zip'.format(trek_multi.pk)))
+        zfile_trek = zipfile.ZipFile(os.path.join('var', 'tmp', 'zip', 'tiles', '{}.zip'.format(trek_multi.pk)))
         for finfo in zfile_trek.infolist():
             ifile_trek = zfile_trek.open(finfo)
             if ifile_trek.name.startswith('tiles/'):
@@ -62,8 +66,9 @@ class SyncRandoTilesTest(TestCase):
     def test_tile_fail(self, mock_tileslist, mock_tiles):
         mock_tiles.side_effect = DownloadError
         output = StringIO()
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', languages='en', verbosity=2, stdout=output)
-        zfile = zipfile.ZipFile(os.path.join('tmp', 'zip', 'tiles', 'global.zip'))
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
+                                languages='en', stdout=output)
+        zfile = zipfile.ZipFile(os.path.join('var', 'tmp', 'zip', 'tiles', 'global.zip'))
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
             self.assertEqual(ifile.read(), b'I am a png')
@@ -76,8 +81,9 @@ class SyncRandoTilesTest(TestCase):
     def test_multiple_tiles(self, mock_tileslist, mock_tiles):
         mock_tiles.side_effect = DownloadError
         output = StringIO()
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', languages='en', verbosity=2, stdout=output)
-        zfile = zipfile.ZipFile(os.path.join('tmp', 'zip', 'tiles', 'global.zip'))
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
+                                languages='en', stdout=output)
+        zfile = zipfile.ZipFile(os.path.join('var', 'tmp', 'zip', 'tiles', 'global.zip'))
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
             self.assertEqual(ifile.read(), b'I am a png')
@@ -89,8 +95,9 @@ class SyncRandoTilesTest(TestCase):
     def test_tiles_url_str(self, mock_tileslist, mock_tiles):
         mock_tiles.side_effect = DownloadError
         output = StringIO()
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', languages='en', verbosity=2, stdout=output)
-        zfile = zipfile.ZipFile(os.path.join('tmp', 'zip', 'tiles', 'global.zip'))
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
+                                languages='en', stdout=output)
+        zfile = zipfile.ZipFile(os.path.join('var', 'tmp', 'zip', 'tiles', 'global.zip'))
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
             self.assertEqual(ifile.read(), b'I am a png')
@@ -102,43 +109,48 @@ class SyncRandoTilesTest(TestCase):
     def test_tiles_with_treks(self, mock_tileslist, mock_tiles, mock_prepare):
         output = StringIO()
         trek = TrekFactory.create(published=True)
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', verbosity=2, languages='en', stdout=output)
-        zfile = zipfile.ZipFile(os.path.join('tmp', 'zip', 'tiles', 'global.zip'))
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
+                                languages='en', stdout=output)
+        zfile = zipfile.ZipFile(os.path.join('var', 'tmp', 'zip', 'tiles', 'global.zip'))
         for finfo in zfile.infolist():
             ifile = zfile.open(finfo)
             self.assertEqual(ifile.read(), b'I am a png')
         self.assertIn("zip/tiles/global.zip", output.getvalue())
-        zfile_trek = zipfile.ZipFile(os.path.join('tmp', 'zip', 'tiles', '{pk}.zip'.format(pk=trek.pk)))
+        zfile_trek = zipfile.ZipFile(os.path.join('var', 'tmp', 'zip', 'tiles', '{pk}.zip'.format(pk=trek.pk)))
         for finfo in zfile_trek.infolist():
             ifile_trek = zfile_trek.open(finfo)
             self.assertEqual(ifile_trek.read(), b'I am a png')
         self.assertIn("zip/tiles/{pk}.zip".format(pk=trek.pk), output.getvalue())
 
     def tearDown(self):
-        shutil.rmtree('tmp')
+        shutil.rmtree(os.path.join('var', 'tmp'))
 
 
 class SyncRandoFailTest(TestCase):
     @classmethod
     def setUpClass(cls):
+        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
+            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
+        if os.path.exists(os.path.join('var', 'tmp')):
+            shutil.rmtree(os.path.join('var', 'tmp'))
         super(SyncRandoFailTest, cls).setUpClass()
 
     def test_fail_directory_not_empty(self):
-        os.makedirs(os.path.join('tmp', 'other'))
+        os.makedirs(os.path.join('var', 'tmp', 'other'))
         with self.assertRaisesRegexp(CommandError, "Destination directory contains extra data"):
-            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2)
-        shutil.rmtree(os.path.join('tmp', 'other'))
+        shutil.rmtree(os.path.join('var', 'tmp', 'other'))
 
     def test_fail_url_ftp(self):
         with self.assertRaisesRegexp(CommandError, "url parameter should start with http:// or https://"):
-            management.call_command('sync_rando', 'tmp', url='ftp://localhost:8000',
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='ftp://localhost:8000',
                                     skip_tiles=True, languages='en', verbosity=2)
 
     def test_language_not_in_db(self):
         with self.assertRaisesRegexp(CommandError,
                                      r"Language cat doesn't exist. Select in these one : \('en', 'es', 'fr', 'it'\)"):
-            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                     skip_tiles=True, languages='cat', verbosity=2)
 
     def test_attachments_missing_from_disk(self):
@@ -146,37 +158,37 @@ class SyncRandoFailTest(TestCase):
         attachment = AttachmentFactory(content_object=trek_1, attachment_file=get_dummy_uploaded_image())
         os.remove(attachment.attachment_file.path)
         with self.assertRaisesRegexp(CommandError, 'Some errors raised during synchronization.'):
-            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=StringIO(), stderr=StringIO())
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'mobile', 'nolang', 'media', 'trekking_trek')))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'mobile', 'nolang', 'media', 'trekking_trek')))
 
     def test_fail_sync_already_running(self):
-        os.makedirs(os.path.join('tmp_sync_rando'))
-        msg = "The tmp_sync_rando/ directory already exists. " \
+        os.makedirs(os.path.join('var', 'tmp_sync_rando'))
+        msg = "The var/tmp_sync_rando/ directory already exists. " \
               "Please check no other sync_rando command is already running. " \
               "If not, please delete this directory."
         with self.assertRaisesRegexp(CommandError, msg):
-            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2)
-        shutil.rmtree(os.path.join('tmp_sync_rando'))
+        shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
 
     @mock.patch('os.mkdir')
     def test_fail_sync_tmp_sync_rando_permission_denied(self, mkdir):
         mkdir.side_effect = OSError(errno.EACCES, 'Permission Denied')
         with self.assertRaisesRegexp(OSError, r'\[Errno 13\] Permission Denied'):
-            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2)
 
     @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
-    @mock.patch('geotrek.trekking.views.TrekViewSet.list')
-    def test_response_500(self, mocke_list, mocke_map_image):
-        output = StringIO()
-        mocke_list.return_value = HttpResponse(status=500)
+    @mock.patch('geotrek.trekking.views.TrekViewSet.as_view')
+    def test_response_500(self, mock_view, mocke_map_image):
+        error = StringIO()
+        mock_view.return_value.return_value = HttpResponse(status=500)
         TrekWithPublishedPOIsFactory.create(published_fr=True)
         with self.assertRaisesRegexp(CommandError, 'Some errors raised during synchronization.'):
-            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
-                                    skip_tiles=True, verbosity=2, stdout=output, stderr=StringIO())
-        self.assertIn("failed (HTTP 500)", output.getvalue())
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
+                                    skip_tiles=True, verbosity=2, stdout=StringIO(), stderr=error)
+        self.assertIn("failed (HTTP 500)", error.getvalue())
 
     @mock.patch('geotrek.trekking.views.TrekViewSet.list')
     def test_response_view_exception(self, mocke):
@@ -184,7 +196,8 @@ class SyncRandoFailTest(TestCase):
         mocke.side_effect = Exception('This is a test')
         TrekWithPublishedPOIsFactory.create(published_fr=True)
         with self.assertRaisesRegexp(CommandError, 'Some errors raised during synchronization.'):
-            management.call_command('sync_rando', 'tmp', url='http://localhost:8000', portal='portal', skip_pdf=True,
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
+                                    portal='portal', skip_pdf=True,
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output)
         self.assertIn("failed (This is a test)", output.getvalue())
 
@@ -195,7 +208,8 @@ class SyncRandoFailTest(TestCase):
         mocke.side_effect = ValueError('This is a test')
         TrekWithPublishedPOIsFactory.create(published_fr=True)
         with self.assertRaisesRegexp(ValueError, 'This is a test'):
-            management.call_command('sync_rando', 'tmp', url='http://localhost:8000', portal='portal', skip_pdf=True,
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
+                                    portal='portal', skip_pdf=True,
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output)
         self.assertIn("failed (This is a test)", output.getvalue())
 
@@ -204,7 +218,7 @@ class SyncRandoFailTest(TestCase):
         output = StringIO()
         TrekWithPublishedPOIsFactory.create(published_fr=True)
         with self.assertRaisesRegexp(AttributeError, "'int' object has no attribute 'strip'"):
-            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output)
         self.assertIn("failed (Cannot mix str and non-str arguments)", output.getvalue())
 
@@ -214,23 +228,23 @@ class SyncRandoFailTest(TestCase):
         theme.pictogram = "other"
         theme.save()
         with self.assertRaisesRegexp(CommandError, 'Some errors raised during synchronization.'):
-            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output, stderr=StringIO())
         self.assertIn("file does not exist", output.getvalue())
 
     @classmethod
     def tearDownClass(cls):
         super(SyncRandoFailTest, cls).tearDownClass()
-        shutil.rmtree('tmp')
+        shutil.rmtree(os.path.join('var', 'tmp'))
 
 
 class SyncSetup(TestCase):
     @classmethod
     def setUpClass(cls):
-        if os.path.exists(os.path.join('tmp_sync_rando')):
-            shutil.rmtree(os.path.join('tmp_sync_rando'))
-        if os.path.exists(os.path.join('tmp')):
-            shutil.rmtree(os.path.join('tmp'))
+        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
+            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
+        if os.path.exists(os.path.join('var', 'tmp')):
+            shutil.rmtree(os.path.join('var', 'tmp'))
         super(SyncSetup, cls).setUpClass()
 
     def setUp(self):
@@ -314,18 +328,18 @@ class SyncSetup(TestCase):
             sources=(self.source_b,))
 
     def tearDown(self):
-        shutil.rmtree(os.path.join('tmp'))
+        shutil.rmtree(os.path.join('var', 'tmp'))
 
 
 class SyncTest(SyncSetup):
     @override_settings(THUMBNAIL_COPYRIGHT_FORMAT='*' * 300)
     def test_sync_pictures_long_title_legend_author(self):
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
-            management.call_command('sync_rando', 'tmp', with_signages=True,
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), with_signages=True,
                                     with_infrastructures=True, with_dives=True,
                                     with_events=True, content_categories="1", url='http://localhost:8000',
                                     skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=StringIO())
-            with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+            with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
                 # there are 4 treks
                 self.assertEqual(len(treks['features']),
@@ -334,11 +348,11 @@ class SyncTest(SyncSetup):
     @override_settings(THUMBNAIL_COPYRIGHT_FORMAT='{author} éà@za,£')
     def test_sync_pictures_with_accents(self):
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
-            management.call_command('sync_rando', 'tmp', with_signages=True,
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), with_signages=True,
                                     with_infrastructures=True, with_dives=True,
                                     with_events=True, content_categories="1", url='http://localhost:8000',
                                     skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=StringIO())
-            with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+            with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
                 # there are 4 treks
                 self.assertEqual(len(treks['features']),
@@ -346,10 +360,10 @@ class SyncTest(SyncSetup):
 
     @override_settings(SPLIT_TREKS_CATEGORIES_BY_PRACTICE=False, SPLIT_DIVES_CATEGORIES_BY_PRACTICE=False)
     def test_sync_without_pdf(self):
-        management.call_command('sync_rando', 'tmp', with_signages=True, with_infrastructures=True,
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), with_signages=True, with_infrastructures=True,
                                 with_dives=True, with_events=True, content_categories="1", url='http://localhost:8000',
                                 skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=StringIO())
-        with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
             # there are 4 treks
             self.assertEqual(len(treks['features']),
@@ -360,7 +374,7 @@ class SyncTest(SyncSetup):
             self.assertEqual(treks['features'][0]['properties']['name'], self.trek_2.name)
             self.assertEqual(treks['features'][3]['properties']['name'], self.trek_4.name)
 
-        with open(os.path.join('tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
             dives = json.load(f)
             # there are 4 dives
             self.assertEqual(len(dives['features']),
@@ -373,10 +387,10 @@ class SyncTest(SyncSetup):
 
     @override_settings(SPLIT_TREKS_CATEGORIES_BY_PRACTICE=True, SPLIT_DIVES_CATEGORIES_BY_PRACTICE=True)
     def test_sync_without_pdf_split_by_practice(self):
-        management.call_command('sync_rando', 'tmp', with_signages=True, with_infrastructures=True,
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), with_signages=True, with_infrastructures=True,
                                 with_dives=True, with_events=True, content_categories="1", url='http://localhost:8000',
                                 skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=StringIO())
-        with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
             # there are 4 treks
             self.assertEqual(len(treks['features']),
@@ -387,7 +401,7 @@ class SyncTest(SyncSetup):
             self.assertEqual(treks['features'][2]['properties']['name'], self.trek_1.name)
             self.assertEqual(treks['features'][3]['properties']['name'], self.trek_4.name)
 
-        with open(os.path.join('tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
             dives = json.load(f)
             # there are 4 dives
             self.assertEqual(len(dives['features']),
@@ -400,10 +414,10 @@ class SyncTest(SyncSetup):
 
     def test_sync_https(self):
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
-            management.call_command('sync_rando', 'tmp', with_signages=True, with_infrastructures=True, with_dives=True,
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), with_signages=True, with_infrastructures=True, with_dives=True,
                                     with_events=True, content_categories="1", url='https://localhost:8000',
                                     skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=StringIO())
-            with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+            with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
                 # there are 4 treks
                 self.assertEqual(len(treks['features']),
@@ -416,9 +430,9 @@ class SyncTest(SyncSetup):
         self.trek_3.delete()
         self.trek_4.delete()
         with mock.patch('geotrek.trekking.models.Trek.prepare_map_image'):
-            management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                     skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=StringIO())
-            with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+            with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
                 treks = json.load(f)
                 # \u2028 is translated to \n
                 self.assertEqual(treks['features'][0]['properties']['description'], 'toto\ntata')
@@ -428,16 +442,16 @@ class SyncTest(SyncSetup):
         output = StringIO()
         mocke.return_value = StreamingHttpResponse()
         trek = TrekWithPublishedPOIsFactory.create(published_fr=True)
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', skip_pdf=True,
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', skip_pdf=True,
                                 skip_tiles=True, languages='fr', verbosity=2, stdout=output)
-        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'fr', 'treks', str(trek.pk), 'profile.png')))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'fr', 'treks', str(trek.pk), 'profile.png')))
 
     def test_sync_filtering_sources(self):
         # source A only
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                 source=self.source_a.name, skip_tiles=True, skip_pdf=True, languages='en', verbosity=2,
                                 content_categories="1", with_events=True, stdout=StringIO())
-        with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
             # only 1 trek in Source A
             self.assertEqual(len(treks['features']),
@@ -446,10 +460,10 @@ class SyncTest(SyncSetup):
 
     def test_sync_filtering_sources_diving(self):
         # source A only
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', with_dives=True,
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', with_dives=True,
                                 source=self.source_a.name, skip_tiles=True, skip_pdf=True, languages='en', verbosity=2,
                                 content_categories="1", with_events=True, stdout=StringIO())
-        with open(os.path.join('tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
             dives = json.load(f)
             # only 1 dive in Source A
             self.assertEqual(len(dives['features']),
@@ -458,29 +472,29 @@ class SyncTest(SyncSetup):
 
     def test_sync_filtering_portals(self):
         # portal B only
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+        management.call_command('sync_rando', 'var/tmp', url='http://localhost:8000',
                                 portal=self.portal_b.name, skip_tiles=True, languages='en', skip_pdf=True, verbosity=2,
                                 content_categories="1", with_events=True, stdout=StringIO())
-        with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
 
             # only 2 treks in Portal B + 1 without portal specified
             self.assertEqual(len(treks['features']), 3)
 
         # portal A and B
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                 portal='{},{}'.format(self.portal_a.name, self.portal_b.name),
                                 skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=StringIO())
-        with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
 
             # 4 treks have portal A or B or no portal
             self.assertEqual(len(treks['features']), 5)
 
     def test_sync_practice_orders(self):
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                 skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=StringIO())
-        with open(os.path.join('tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
             treks = json.load(f)
             self.assertEqual(len(treks['features']), 5)
             trek_name = [trek.get('properties').get('name') for trek in treks['features']]
@@ -493,20 +507,20 @@ class SyncTest(SyncSetup):
 
     def test_sync_filtering_portals_diving(self):
         # portal B only
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', with_dives=True,
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', with_dives=True,
                                 portal=self.portal_b.name, skip_tiles=True, skip_pdf=True, languages='en', verbosity=2,
                                 stdout=StringIO())
-        with open(os.path.join('tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
             dives = json.load(f)
 
             # only 2 dives in Portal B + 1 without portal specified
             self.assertEqual(len(dives['features']), 3)
 
         # portal A and B
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000',
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                 portal='{},{}'.format(self.portal_a.name, self.portal_b.name), with_dives=True,
                                 skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=StringIO())
-        with open(os.path.join('tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
             dives = json.load(f)
             # 4 dives have portal A or B or no portal
             self.assertEqual(len(dives['features']), 4)
@@ -516,10 +530,10 @@ class SyncTest(SyncSetup):
         area = SensitiveAreaFactory.create(geom='MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))', published=True)
         area.species.practices.add(SportPracticeFactory.create(name='Terrestre'))
         area.save()
-        management.call_command('sync_rando', 'tmp', with_signages=True, with_infrastructures=True,
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), with_signages=True, with_infrastructures=True,
                                 with_dives=True, with_events=True, content_categories="1", url='http://localhost:8000',
                                 skip_tiles=True, skip_pdf=True, verbosity=2, languages='en', stdout=StringIO())
-        with open(os.path.join('tmp', 'api', 'en', 'sensitiveareas.geojson'), 'r') as f:
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'sensitiveareas.geojson'), 'r') as f:
             area = json.load(f)
             # there are 2 areas
             self.assertEqual(len(area['features']), 2)
@@ -528,7 +542,7 @@ class SyncTest(SyncSetup):
     def test_sync_picture_missing_from_disk(self):
         os.remove(self.information_desks.photo.path)
         output = StringIO()
-        management.call_command('sync_rando', 'tmp', with_signages=True, with_infrastructures=True,
+        management.call_command('sync_rando', 'var/tmp', with_signages=True, with_infrastructures=True,
                                 with_dives=True, with_events=True, content_categories="1", url='http://localhost:8000',
                                 skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=output)
         self.assertIn('Done', output.getvalue())
@@ -550,75 +564,78 @@ class SyncTestPdf(SyncSetup):
     @override_settings(ONLY_EXTERNAL_PUBLIC_PDF=True)
     def test_only_external_public_pdf(self, event, content, dive, trek):
         output = StringIO()
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', verbosity=2,
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
                                 skip_pdf=False, skip_tiles=True, stdout=output)
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_1.pk), '%s.pdf' % self.dive_1.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_2.pk), '%s.pdf' % self.dive_2.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_3.pk), '%s.pdf' % self.dive_3.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_4.pk), '%s.pdf' % self.dive_4.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_1.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_2.pk), '%s.pdf' % self.trek_2.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_3.pk), '%s.pdf' % self.trek_3.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug)))
-        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_5.pk), '%s.pdf' % self.trek_5.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristiccontents',
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_1.pk), '%s.pdf' % self.dive_1.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_2.pk), '%s.pdf' % self.dive_2.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_3.pk), '%s.pdf' % self.dive_3.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_4.pk), '%s.pdf' % self.dive_4.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_1.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_2.pk), '%s.pdf' % self.trek_2.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_3.pk), '%s.pdf' % self.trek_3.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug)))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_5.pk), '%s.pdf' % self.trek_5.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristiccontents',
                                                      str(self.touristic_content.pk), '%s.pdf' % self.touristic_content.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristiccontents',
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristiccontents',
                                                      str(self.touristic_content_without_attachment.pk),
                                                      '%s.pdf' % self.touristic_content_without_attachment.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristicevents',
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristicevents',
                                                      str(self.touristic_event.pk),
                                                      '%s.pdf' % self.touristic_event.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristicevents',
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristicevents',
                                                      str(self.touristic_event_without_attachment.pk),
                                                      '%s.pdf' % self.touristic_event_without_attachment.slug)))
 
     def test_sync_pdfs(self, event, content, dive, trek):
         output = StringIO()
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', verbosity=2,
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
                                 with_dives=True, skip_tiles=True, stdout=output)
-        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_1.pk), '%s.pdf' % self.dive_1.slug)))
-        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_2.pk), '%s.pdf' % self.dive_2.slug)))
-        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_3.pk), '%s.pdf' % self.dive_3.slug)))
-        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_4.pk), '%s.pdf' % self.dive_4.slug)))
-        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_1.slug)))
-        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_2.pk), '%s.pdf' % self.trek_2.slug)))
-        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_3.pk), '%s.pdf' % self.trek_3.slug)))
-        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug)))
-        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_5.pk), '%s.pdf' % self.trek_5.slug)))
-        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristiccontents',
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_1.pk), '%s.pdf' % self.dive_1.slug)))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_2.pk), '%s.pdf' % self.dive_2.slug)))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_3.pk), '%s.pdf' % self.dive_3.slug)))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_4.pk), '%s.pdf' % self.dive_4.slug)))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_1.slug)))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_2.pk), '%s.pdf' % self.trek_2.slug)))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_3.pk), '%s.pdf' % self.trek_3.slug)))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug)))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_5.pk), '%s.pdf' % self.trek_5.slug)))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristiccontents',
                                                     str(self.touristic_content.pk), '%s.pdf' % self.touristic_content.slug)))
-        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristiccontents',
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristiccontents',
                                                     str(self.touristic_content_without_attachment.pk),
                                                     '%s.pdf' % self.touristic_content_without_attachment.slug)))
-        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristicevents',
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristicevents',
                                                     str(self.touristic_event.pk), '%s.pdf' % self.touristic_event.slug)))
-        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristicevents',
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristicevents',
                                                     str(self.touristic_event_without_attachment.pk),
                                                     '%s.pdf' % self.touristic_event_without_attachment.slug)))
 
     def test_sync_pdfs_portals_sources(self, event, content, dive, trek):
         output = StringIO()
-        management.call_command('sync_rando', 'tmp', url='http://localhost:8000', verbosity=2,
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
                                 with_dives=True, skip_tiles=True, portal=self.portal_b.name, source=self.source_a.name,
                                 stdout=output)
         # It has to be portal b or 'No portal' and source a : only dive_1 and trek_1 has both of these statements
-        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_1.pk), '%s.pdf' % self.dive_1.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_2.pk), '%s.pdf' % self.dive_2.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_3.pk), '%s.pdf' % self.dive_3.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'dives', str(self.dive_4.pk), '%s.pdf' % self.dive_4.slug)))
-        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_1.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_2.pk), '%s.pdf' % self.trek_2.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_3.pk), '%s.pdf' % self.trek_3.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'treks', str(self.trek_5.pk), '%s.pdf' % self.trek_5.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristiccontents',
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_1.pk), '%s.pdf' % self.dive_1.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_2.pk), '%s.pdf' % self.dive_2.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_3.pk), '%s.pdf' % self.dive_3.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'dives', str(self.dive_4.pk), '%s.pdf' % self.dive_4.slug)))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_1.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_2.pk), '%s.pdf' % self.trek_2.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_3.pk), '%s.pdf' % self.trek_3.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_4.pk), '%s.pdf' % self.trek_4.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_5.pk), '%s.pdf' % self.trek_5.slug)))
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristiccontents',
                                                      str(self.touristic_content.pk), '%s.pdf' % self.touristic_content.slug)))
-        self.assertTrue(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristiccontents',
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristiccontents',
                                                     str(self.touristic_content_without_attachment.pk),
                                                     '%s.pdf' % self.touristic_content_without_attachment.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristicevents',
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristicevents',
                                                      str(self.touristic_event.pk), '%s.pdf' % self.touristic_event.slug)))
-        self.assertFalse(os.path.exists(os.path.join('tmp', 'api', 'en', 'touristicevents',
+        self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristicevents',
                                                      str(self.touristic_event_without_attachment.pk),
                                                      '%s.pdf' % self.touristic_event_without_attachment.slug)))
+
+    def tearDown(self):
+        shutil.rmtree(os.path.join('var', 'tmp'))

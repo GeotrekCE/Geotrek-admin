@@ -2,8 +2,7 @@ import logging
 from html.parser import HTMLParser
 
 from django.conf import settings
-from django.db import models
-from django.contrib.gis.db import models as gis_models
+from django.contrib.gis.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
@@ -28,21 +27,24 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
                                default="",
                                verbose_name=_("Comment"))
     category = models.ForeignKey('ReportCategory',
+                                 on_delete=models.CASCADE,
                                  null=True,
                                  blank=True,
                                  default=None,
                                  verbose_name=_("Category"))
     status = models.ForeignKey('ReportStatus',
+                               on_delete=models.CASCADE,
                                null=True,
                                blank=True,
                                default=None,
                                verbose_name=_("Status"))
-    geom = gis_models.PointField(null=True,
-                                 blank=True,
-                                 default=None,
-                                 verbose_name=_("Location"),
-                                 srid=settings.SRID)
+    geom = models.PointField(null=True,
+                             blank=True,
+                             default=None,
+                             verbose_name=_("Location"),
+                             srid=settings.SRID)
     context_content_type = models.ForeignKey(ContentType,
+                                             on_delete=models.CASCADE,
                                              null=True,
                                              blank=True,
                                              editable=False)
@@ -51,8 +53,6 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
                                                     editable=False)
     context_object = GenericForeignKey('context_content_type',
                                        'context_object_id')
-
-    objects = gis_models.GeoManager()
 
     class Meta:
         verbose_name = _("Report")

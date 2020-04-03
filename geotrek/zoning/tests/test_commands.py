@@ -276,7 +276,7 @@ class DistrictsCommandTest(TestCase):
     @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, -3, 2, 2))
     def test_load_districts_no_match_properties(self):
         output = StringIO()
-        call_command('loaddistricts', self.filename, name='toto', code='tata', stdout=output)
+        call_command('loaddistricts', self.filename, name='toto', stdout=output)
         self.assertIn('NOM, Insee', output.getvalue())
-        call_command('loaddistricts', self.filename, '-i', name='toto', code='tata', stdout=output)
+        call_command('loaddistricts', self.filename, '-i', name='toto', stdout=output)
         self.assertIn('NOM, Insee', output.getvalue())

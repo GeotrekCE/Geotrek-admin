@@ -29,10 +29,11 @@ class SensitiveAreaModelTest(TestCase):
     def test_get_extent(self):
         sensitive_area = SensitiveAreaFactory.create(
             geom='POLYGON((700000 6600000, 700000 6600100, 700100 6600100, 700100 6600000, 700000 6600000))')
-        self.assertAlmostEqual(sensitive_area.extent[0], 3)
-        self.assertAlmostEqual(sensitive_area.extent[1], 46.5)
-        self.assertAlmostEqual(sensitive_area.extent[2], 3.00130397)
-        self.assertAlmostEqual(sensitive_area.extent[3], 46.50090044)
+        lng_min, lat_min, lng_max, lat_max = sensitive_area.extent
+        self.assertAlmostEqual(lng_min, 3)
+        self.assertAlmostEqual(lat_min, 46.5)
+        self.assertAlmostEqual(lng_max, 3.00130397)
+        self.assertAlmostEqual(lat_max, 46.50090044)
 
     def test_get_kml(self):
         species = SpeciesFactory.create(radius=5)

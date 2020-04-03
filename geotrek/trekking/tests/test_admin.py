@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.authent.factories import TrekkingManagerFactory

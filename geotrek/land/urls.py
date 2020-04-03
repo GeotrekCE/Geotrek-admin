@@ -3,6 +3,7 @@ from mapentity.registry import registry
 
 from . import models
 
+app_name = 'land'
 
 urlpatterns = registry.register(models.PhysicalEdge, menu=False)
 urlpatterns += registry.register(models.LandEdge, menu=settings.TREKKING_TOPOLOGY_ENABLED and settings.LANDEDGE_MODEL_ENABLED)

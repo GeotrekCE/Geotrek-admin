@@ -1,5 +1,5 @@
-from unittest import mock
 import os
+from unittest import mock
 from shutil import rmtree
 from tempfile import mkdtemp
 from io import StringIO
@@ -37,7 +37,11 @@ class AttachmentParser(AttachmentParserMixin, OrganismEidParser):
 
 class ParserTests(TestCase):
     def test_bad_parser_class(self):
-        with self.assertRaisesRegexp(CommandError, "Failed to import parser class 'geotrek.common.DoesNotExist'"):
+        with self.assertRaisesRegexp(CommandError, "Failed to import parser class 'DoesNotExist'"):
+            call_command('import', 'geotrek.common.tests.test_parsers.DoesNotExist', '', verbosity=0)
+
+    def test_bad_parser_file(self):
+        with self.assertRaisesRegexp(CommandError, "Failed to import parser file 'geotrek/common.py'"):
             call_command('import', 'geotrek.common.DoesNotExist', '', verbosity=0)
 
     def test_no_filename_no_url(self):
@@ -47,6 +51,11 @@ class ParserTests(TestCase):
     def test_bad_filename(self):
         with self.assertRaisesRegexp(CommandError, "File does not exists at: find_me/I_am_not_there.shp"):
             call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', 'find_me/I_am_not_there.shp', verbosity=0)
+
+    @override_settings(VAR_DIR=os.path.join(os.path.dirname(__file__), 'data'))
+    def test_custom_parser(self):
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
+        call_command('import', 'CustomParser', filename, verbosity=0)
 
     def test_progress(self):
         output = StringIO()

@@ -14,8 +14,8 @@ class FlatPagesAdmin(admin.ModelAdmin):
     def add_view(self, request, form_url='', extra_context=None):
         return FlatPageCreate.as_view()(request)
 
-    def change_view(self, request, pk, form_url='', extra_context=None):
-        return FlatPageUpdate.as_view()(request, pk=pk)
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        return FlatPageUpdate.as_view()(request, pk=object_id)
 
     def portals(self, obj):
         return ', '.join([portal.name for portal in obj.portal.all()])

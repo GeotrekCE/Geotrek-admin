@@ -2,7 +2,6 @@ import os
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.gis.db import models as gismodels
 from django.conf import settings
 
 from extended_choices import Choices
@@ -11,7 +10,7 @@ from mapentity.models import MapEntityMixin
 from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
-from geotrek.common.mixins import BasePublishableMixin, OptionalPictogramMixin
+from geotrek.common.mixins import BasePublishableMixin, OptionalPictogramMixin, NoDeleteManager
 
 
 INFRASTRUCTURE_TYPES = Choices(
@@ -58,11 +57,15 @@ class InfrastructureCondition(StructureOrNoneRelated):
 
 class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
     """ A generic infrastructure in the park """
-    topo_object = models.OneToOneField(Topology, parent_link=True)
+    topo_object = models.OneToOneField(Topology, parent_link=True,
+                                       on_delete=models.CASCADE)
 
-    name = models.CharField(max_length=128, help_text=_("Reference, code, ..."), verbose_name=_("Name"))
-    description = models.TextField(blank=True, verbose_name=_("Description"), help_text=_("Specificites"))
-    condition = models.ForeignKey(InfrastructureCondition, verbose_name=_("Condition"), blank=True, null=True,
+    name = models.CharField(max_length=128,
+                            help_text=_("Reference, code, ..."), verbose_name=_("Name"))
+    description = models.TextField(blank=True,
+                                   verbose_name=_("Description"), help_text=_("Specificites"))
+    condition = models.ForeignKey(InfrastructureCondition,
+                                  verbose_name=_("Condition"), blank=True, null=True,
                                   on_delete=models.SET_NULL)
     implantation_year = models.PositiveSmallIntegerField(verbose_name=_("Implantation year"), null=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
@@ -103,7 +106,7 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
         return _("Cities")
 
 
-class InfrastructureGISManager(gismodels.GeoManager):
+class InfrastructureGISManager(NoDeleteManager):
     """ Overide default typology mixin manager"""
     def all_implantation_years(self):
         all_years = self.get_queryset().filter(implantation_year__isnull=False)\
@@ -113,8 +116,8 @@ class InfrastructureGISManager(gismodels.GeoManager):
 
 class Infrastructure(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is not of type SIGNAGE """
-    type = models.ForeignKey(InfrastructureType, verbose_name=_("Type"))
-    objects = BaseInfrastructure.get_manager_cls(InfrastructureGISManager)()
+    type = models.ForeignKey(InfrastructureType, verbose_name=_("Type"), on_delete=models.CASCADE)
+    objects = InfrastructureGISManager()
 
     class Meta:
         verbose_name = _("Infrastructure")
