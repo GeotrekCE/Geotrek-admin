@@ -104,6 +104,9 @@ jobs:
     environment:
       LANG: C.UTF-8
     steps:
+      - checkout
+      # Check this is a release and not a development version
+      - run: grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || circleci-agent step halt
       - run: apt-get update -q && apt-get install -q -y ca-certificates openssh-client
       - attach_workspace:
           at: /tmp/workspace
