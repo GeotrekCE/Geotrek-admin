@@ -22,9 +22,10 @@ from django.utils.six.moves.urllib.parse import quote
 from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _
 
-from .factories import SuperUserFactory
-from .forms import MapEntityForm
-from .helpers import smart_urljoin
+from ..factories import SuperUserFactory
+from ..forms import MapEntityForm
+from ..helpers import smart_urljoin
+from ..registry import app_settings
 
 
 class AdjustDebugLevel():
@@ -128,6 +129,16 @@ class MapEntityTest(TestCase):
         self.assertEqual(response.status_code, 200)
         response.content = allresponse.content
 
+    def test_callback_jsonlist(self):
+        if self.model is None:
+            return  # Abstract test should not run
+        self.login()
+        params = '?callback=json_decode'
+        # If no objects exist, should not fail.
+        response = self.client.get(self.model.get_jsonlist_url() + params)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'json_decode(', response.content)
+
     def test_basic_format(self):
         if self.model is None:
             return  # Abstract test should not run
@@ -136,6 +147,15 @@ class MapEntityTest(TestCase):
         for fmt in ('csv', 'shp', 'gpx'):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
             self.assertEqual(response.status_code, 200, u"")
+
+    def test_no_basic_format_fail(self):
+        if self.model is None:
+            return  # Abstract test should not run
+        self.login()
+        self.modelfactory.create()
+
+        response = self.client.get(self.model.get_format_list_url() + '?format=')
+        self.assertEqual(response.status_code, 400)
 
     def test_no_html_in_csv(self):
         if self.model is None:
@@ -324,6 +344,9 @@ class MapEntityLiveTest(LiveServerTestCase):
     userfactory = None
     modelfactory = None
 
+    def setUp(self):
+        app_settings['SENDFILE_HTTP_HEADER'] = None
+
     def _pre_setup(self):
         # Workaround https://code.djangoproject.com/ticket/10827
         ContentType.objects.clear_cache()
@@ -392,8 +415,9 @@ class MapEntityLiveTest(LiveServerTestCase):
         self.assertNotEqual(md5sum, new_hasher.digest())
 
         # Ask again with headers, and expect a 304 status (not changed)
-        lastmodified = response.get('Last-Modified')
-        response = self.client.get(geojson_layer_url, HTTP_IF_MODIFIED_SINCE=lastmodified)
+        lastmodified = response.headers.get('Last-Modified')
+        response = self.client.get(geojson_layer_url,
+                                   headers={'if-modified-since': lastmodified})
         self.assertEqual(response.status_code, 304)
 
         # Ask again with headers in the past, and expect a 200
@@ -445,3 +469,6 @@ class MapEntityLiveTest(LiveServerTestCase):
 
         response = self.client.get(obj.map_image_url)
         self.assertEqual(response.status_code, 200 if obj.is_public() else 403)
+
+    def tearDown(self):
+        app_settings['SENDFILE_HTTP_HEADER'] = None
