@@ -24,7 +24,6 @@ class ReportFactory(factory.DjangoModelFactory):
     class Meta:
         model = feedback_models.Report
 
-    name = factory.Sequence(lambda n: "name %s" % n)
     email = factory.Sequence(lambda n: "email%s@domain.tld" % n)
     comment = factory.Sequence(lambda n: "comment %s" % n)
     geom = Point(700000, 6600000, srid=settings.SRID)

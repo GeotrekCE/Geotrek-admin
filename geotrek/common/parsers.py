@@ -1,11 +1,11 @@
 import os
 import re
 import requests
+import logging
 from requests.auth import HTTPBasicAuth
 import xlrd
 import xml.etree.ElementTree as ET
 from functools import reduce
-from urllib.request import urlopen
 from collections import Iterable
 from time import sleep
 
@@ -32,6 +32,8 @@ from geotrek.common.models import FileType, Attachment
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.fields import TranslationField
     from modeltranslation.translator import translator, NotRegistered
+
+logger = logging.getLogger(__name__)
 
 
 class ImportError(Exception):
@@ -70,8 +72,6 @@ class Parser(object):
     non_fields = {}
     natural_keys = {}
     field_options = {}
-    sleep_time = 60
-    number_of_try = 3
 
     def __init__(self, progress_cb=None, user=None, encoding='utf8'):
         self.warnings = {}
@@ -465,20 +465,22 @@ class Parser(object):
                 self.add_warning(str(e))
         self.end()
 
-    def get_or_retry(self, url, params=None, authent=None):
-        try_get = self.number_of_try
+    def request_or_retry(self, url, verb='get', params=None, authent=None):
+        try_get = settings.PARSER_NUMBER_OF_TRIES
         assert try_get > 0
         while try_get:
-            response = requests.get(url, params=params, auth=authent)
-            if response.status_code == 503:
-                sleep(self.sleep_time)
+            action = getattr(requests, verb)
+            response = action(url, params=params, auth=authent)
+            if response.status_code in settings.PARSER_RETRY_HTTP_STATUS:
+                logger.info("Failed to fetch url {}. Retrying ...".format(url))
+                sleep(settings.PARSER_RETRY_SLEEP_TIME)
                 try_get -= 1
             elif response.status_code == 200:
                 return response
             else:
                 break
-        raise GlobalImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=response.url,
-                                                                                                     status_code=response.status_code))
+        logger.warning("Failed to fetch {} after {} times. Status code : {}.".format(url, settings.PARSER_NUMBER_OF_TRIES, response.status_code))
+        raise GlobalImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=response.url, status_code=response.status_code))
 
 
 class ShapeParser(Parser):
@@ -584,7 +586,10 @@ class AttachmentParserMixin(object):
             return size != attachment.attachment_file.size
 
         if parsed_url.scheme == 'http' or parsed_url.scheme == 'https':
-            response = requests.head(url, allow_redirects=True)
+            try:
+                response = self.request_or_retry(url, verb='head', params={'allow_redirects': True})
+            except requests.exceptions.RequestException as e:
+                raise ValueImportError('Failed to load attachment: {exc}'.format(exc=e))
             size = response.headers.get('content-length')
             return size is not None and int(size) != attachment.attachment_file.size
 
@@ -594,15 +599,14 @@ class AttachmentParserMixin(object):
         parsed_url = urlparse(url)
         if parsed_url.scheme == 'ftp':
             try:
-                response = urlopen(url)
-            except Exception:
-                self.add_warning(_("Failed to download '{url}'").format(url=url))
-                return None
+                response = self.request_or_retry(url)
+            except requests.exceptions.RequestException as e:
+                raise ValueImportError('Failed to load attachment: {exc}'.format(exc=e))
             return response.read()
         else:
             if self.download_attachments:
                 try:
-                    response = requests.get(url)
+                    response = self.request_or_retry(url)
                 except requests.exceptions.RequestException as e:
                     raise ValueImportError('Failed to load attachment: {exc}'.format(exc=e))
                 if response.status_code != requests.codes.ok:
@@ -688,7 +692,7 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
                 '$top': 1000,
                 '$skip': skip,
             }
-            response = self.get_or_retry(self.url, params)
+            response = self.request_or_retry(self.url, params=params)
             self.root = response.json()
             self.nb = self.get_nb()
             for row in self.items:
@@ -791,7 +795,7 @@ class TourismSystemParser(AttachmentParserMixin, Parser):
                 'size': size,
                 'start': skip,
             }
-            response = self.get_or_retry(self.url, params, HTTPBasicAuth(self.login, self.password))
+            response = self.request_or_retry(self.url, params=params, authent=HTTPBasicAuth(self.login, self.password))
             self.root = response.json()
             self.nb = int(self.root['metadata']['total'])
             for row in self.items:
@@ -823,7 +827,7 @@ class OpenSystemParser(Parser):
             'Pass': self.password,
             'Action': 'concentrateur_liaisons',
         }
-        response = self.get_or_retry(self.url, params)
+        response = self.request_or_retry(self.url, params=params)
         self.root = ET.fromstring(response.content).find('Resultat').find('Objets')
         self.nb = len(self.root)
         for row in self.root:

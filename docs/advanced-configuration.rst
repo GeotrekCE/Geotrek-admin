@@ -52,6 +52,26 @@ In order to remove zoning combo-boxes on list map:
     Never forget to mention this customization if you ask for community support.
 
 
+Anonymize feedback reports
+---------------------------
+
+To be compliant to GDPR, you cannot keep personnal data infinitely,
+and should notice your users on how many time you keep their email.
+
+A django command is available to anonymize reports, by default older
+than 365 days.
+
+.. code-block :: bash
+
+    ./bin/django anonymize_reports
+
+Or if you want to erase emails for reports older than 90 days
+
+.. code-block :: bash
+
+    ./bin/django anonymize_reports --days 90
+
+
 Sensitive areas
 ----------------------
 

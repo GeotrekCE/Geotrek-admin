@@ -22,7 +22,6 @@ logger = logging.getLogger(__name__)
 class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
     """ User reports, mainly submitted via *Geotrek-rando*.
     """
-    name = models.CharField(verbose_name=_("Name"), max_length=256)
     email = models.EmailField(verbose_name=_("Email"))
     comment = models.TextField(blank=True,
                                default="",
@@ -61,7 +60,9 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
         ordering = ['-date_insert']
 
     def __str__(self):
-        return self.name
+        if self.email:
+            return self.email
+        return "Anonymous report"
 
     @property
     def name_display(self):

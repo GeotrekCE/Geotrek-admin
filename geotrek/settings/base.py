@@ -764,6 +764,11 @@ ONLY_EXTERNAL_PUBLIC_PDF = False
 
 SEND_REPORT_ACK = True
 
+# Parser parameters for retries and error codes
+PARSER_RETRY_SLEEP_TIME = 60  # time of sleep between requests
+PARSER_NUMBER_OF_TRIES = 3  # number of requests to try before abandon
+PARSER_RETRY_HTTP_STATUS = [503]
+
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv('ENV', 'prod')
 assert ENV in ('prod', 'dev', 'tests', 'tests_nds')

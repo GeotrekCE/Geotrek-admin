@@ -17,7 +17,6 @@ class ReportViewsetMailSend(TestCase):
         self.client.post(
             '/api/en/reports/report',
             {
-                'name': 'toto',
                 'email': 'test@geotrek.local',
                 'comment': 'Test comment',
             })
@@ -39,9 +38,19 @@ class ReportViewsTest(CommonTest):
     def get_good_data(self):
         return {
             'geom': '{"type": "Point", "coordinates": [0, 0]}',
-            'name': 'You Yeah',
             'email': 'yeah@you.com',
         }
+
+    def test_good_data_with_name(self):
+        """Test report created if `name` in data"""
+        data = self.get_good_data()
+        data['name'] = 'Anonymous'
+        self.login()
+        response = self.client.post(self._get_add_url(), data)
+        self.assertEqual(response.status_code, 302)
+        obj = self.model.objects.last()
+        self.assertEqual(obj.email, data['email'])
+        self.logout()
 
 
 class BaseAPITest(TestCase):
@@ -69,8 +78,7 @@ class CreateReportsAPITest(BaseAPITest):
         self.add_url = '/api/en/reports/report'
         self.data = {
             'geom': '{"type": "Point", "coordinates": [3, 46.5]}',
-            'name': 'You Yeah',
-            'email': 'yeah@you.com'
+            'email': 'yeah@you.com',
         }
 
     def post_report_data(self, data):
@@ -81,7 +89,7 @@ class CreateReportsAPITest(BaseAPITest):
 
     def test_reports_can_be_created_using_post(self):
         self.post_report_data(self.data)
-        self.assertTrue(feedback_models.Report.objects.filter(name='You Yeah').exists())
+        self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
         report = feedback_models.Report.objects.get()
         self.assertAlmostEqual(report.geom.x, 700000)
         self.assertAlmostEqual(report.geom.y, 6600000)
@@ -89,7 +97,7 @@ class CreateReportsAPITest(BaseAPITest):
     def test_reports_can_be_created_without_geom(self):
         self.data.pop('geom')
         self.post_report_data(self.data)
-        self.assertTrue(feedback_models.Report.objects.filter(name='You Yeah').exists())
+        self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
 
 
 class ListCategoriesTest(TranslationResetMixin, BaseAPITest):
