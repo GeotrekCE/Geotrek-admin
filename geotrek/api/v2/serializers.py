@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.models import F
 from django.utils.translation import get_language, ugettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin

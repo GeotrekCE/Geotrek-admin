@@ -9,7 +9,7 @@ from unittest import mock
 from datetime import datetime
 from django.contrib.auth.models import Group
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.conf import settings
 from django.test.utils import override_settings
 from django.test import TestCase

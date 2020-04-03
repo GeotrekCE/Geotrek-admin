@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('contractor', models.CharField(max_length=128, verbose_name='Contractor', db_column='prestataire')),
-                ('structure', models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['contractor'],
@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('amount', models.FloatField(default=0.0, verbose_name='Amount', db_column='montant')),
-                ('organism', models.ForeignKey(db_column='organisme', verbose_name='Organism', to='common.Organism')),
+                ('organism', models.ForeignKey(db_column='organisme', on_delete=django.db.models.deletion.CASCADE, verbose_name='Organism', to='common.Organism')),
             ],
             options={
                 'db_table': 'm_r_chantier_financement',
@@ -80,7 +80,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('disorder', models.CharField(max_length=128, verbose_name='Disorder', db_column='desordre')),
-                ('structure', models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['disorder'],
@@ -95,7 +95,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('job', models.CharField(max_length=128, verbose_name='Job', db_column='fonction')),
                 ('cost', models.DecimalField(default=1.0, decimal_places=2, verbose_name='Cost', max_digits=8, db_column='cout_jour')),
-                ('structure', models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['job'],
@@ -109,7 +109,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('status', models.CharField(max_length=128, verbose_name='Status', db_column='status')),
-                ('structure', models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['id'],
@@ -123,7 +123,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('type', models.CharField(max_length=128, verbose_name='Type', db_column='type')),
-                ('structure', models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['type'],
@@ -137,8 +137,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('nb_days', models.DecimalField(decimal_places=2, verbose_name='Mandays', max_digits=6, db_column='nb_jours')),
-                ('intervention', models.ForeignKey(to='maintenance.Intervention', db_column='intervention')),
-                ('job', models.ForeignKey(db_column='fonction', verbose_name='Job', to='maintenance.InterventionJob')),
+                ('intervention', models.ForeignKey(to='maintenance.Intervention', on_delete=django.db.models.deletion.CASCADE, db_column='intervention')),
+                ('job', models.ForeignKey(db_column='fonction', on_delete=django.db.models.deletion.CASCADE, verbose_name='Job', to='maintenance.InterventionJob')),
             ],
             options={
                 'db_table': 'm_r_intervention_fonction',
@@ -174,7 +174,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('domain', models.CharField(max_length=128, verbose_name='Domain', db_column='domaine')),
-                ('structure', models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['domain'],
@@ -188,7 +188,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('type', models.CharField(max_length=128, verbose_name='Type', db_column='type')),
-                ('structure', models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
+                ('structure', models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure')),
             ],
             options={
                 'ordering': ['type'],
@@ -200,7 +200,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='domain',
-            field=models.ForeignKey(db_column='domaine', blank=True, to='maintenance.ProjectDomain', null=True, verbose_name='Domain'),
+            field=models.ForeignKey(db_column='domaine', on_delete=django.db.models.deletion.CASCADE, blank=True, to='maintenance.ProjectDomain', null=True, verbose_name='Domain'),
         ),
         migrations.AddField(
             model_name='project',
@@ -210,22 +210,22 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='project',
             name='project_manager',
-            field=models.ForeignKey(related_name='manage', db_column='maitre_ouvrage', verbose_name='Project manager', to='common.Organism'),
+            field=models.ForeignKey(related_name='manage', on_delete=django.db.models.deletion.CASCADE, db_column='maitre_ouvrage', verbose_name='Project manager', to='common.Organism'),
         ),
         migrations.AddField(
             model_name='project',
             name='project_owner',
-            field=models.ForeignKey(related_name='own', db_column='maitre_oeuvre', verbose_name='Project owner', to='common.Organism'),
+            field=models.ForeignKey(related_name='own', on_delete=django.db.models.deletion.CASCADE, db_column='maitre_oeuvre', verbose_name='Project owner', to='common.Organism'),
         ),
         migrations.AddField(
             model_name='project',
             name='structure',
-            field=models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure'),
+            field=models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure'),
         ),
         migrations.AddField(
             model_name='project',
             name='type',
-            field=models.ForeignKey(db_column='type', blank=True, to='maintenance.ProjectType', null=True, verbose_name='Type'),
+            field=models.ForeignKey(db_column='type', on_delete=django.db.models.deletion.CASCADE, blank=True, to='maintenance.ProjectType', null=True, verbose_name='Type'),
         ),
         migrations.AddField(
             model_name='intervention',
@@ -240,36 +240,36 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='intervention',
             name='project',
-            field=models.ForeignKey(related_name='interventions', db_column='chantier', blank=True, to='maintenance.Project', null=True, verbose_name='Project'),
+            field=models.ForeignKey(related_name='interventions', on_delete=django.db.models.deletion.CASCADE, db_column='chantier', blank=True, to='maintenance.Project', null=True, verbose_name='Project'),
         ),
         migrations.AddField(
             model_name='intervention',
             name='stake',
-            field=models.ForeignKey(related_name='interventions', db_column='enjeu', verbose_name='Stake', to='core.Stake', null=True),
+            field=models.ForeignKey(related_name='interventions', on_delete=django.db.models.deletion.CASCADE, db_column='enjeu', verbose_name='Stake', to='core.Stake', null=True),
         ),
         migrations.AddField(
             model_name='intervention',
             name='status',
-            field=models.ForeignKey(db_column='status', verbose_name='Status', to='maintenance.InterventionStatus'),
+            field=models.ForeignKey(db_column='status', on_delete=django.db.models.deletion.CASCADE, verbose_name='Status', to='maintenance.InterventionStatus'),
         ),
         migrations.AddField(
             model_name='intervention',
             name='structure',
-            field=models.ForeignKey(db_column='structure', default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure'),
+            field=models.ForeignKey(db_column='structure', on_delete=django.db.models.deletion.CASCADE, default=geotrek.authent.models.default_structure_pk, verbose_name='Related structure', to='authent.Structure'),
         ),
         migrations.AddField(
             model_name='intervention',
             name='topology',
-            field=models.ForeignKey(related_name='interventions_set', verbose_name='Interventions', to='core.Topology', null=True),
+            field=models.ForeignKey(related_name='interventions_set', on_delete=django.db.models.deletion.CASCADE, verbose_name='Interventions', to='core.Topology', null=True),
         ),
         migrations.AddField(
             model_name='intervention',
             name='type',
-            field=models.ForeignKey(db_column='type', blank=True, to='maintenance.InterventionType', null=True, verbose_name='Type'),
+            field=models.ForeignKey(db_column='type', on_delete=django.db.models.deletion.CASCADE, blank=True, to='maintenance.InterventionType', null=True, verbose_name='Type'),
         ),
         migrations.AddField(
             model_name='funding',
             name='project',
-            field=models.ForeignKey(db_column='chantier', verbose_name='Project', to='maintenance.Project'),
+            field=models.ForeignKey(db_column='chantier', on_delete=django.db.models.deletion.CASCADE, verbose_name='Project', to='maintenance.Project'),
         ),
     ]

@@ -4,7 +4,8 @@ import json
 
 import gpxpy.gpx
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.contrib.gis.db.models.functions import Transform
+from django.urls import reverse
 from django.utils import translation
 from django.utils.translation import get_language, ugettext_lazy as _
 from django.utils.timezone import utc, make_aware
@@ -510,7 +511,7 @@ class CirkwiTrekSerializer(CirkwiPOISerializer):
             if not self.exclude_pois:
                 if trek.published_pois:
                     self.xml.startElement('pois', {})
-                    self.serialize_pois(trek.published_pois.transform(4326, field_name='geom'))
+                    self.serialize_pois(trek.published_pois.annotate(transformed_geom=Transform('geom', 4326)))
                     self.xml.endElement('pois')
             self.xml.endElement('circuit')
         self.xml.endElement('circuits')

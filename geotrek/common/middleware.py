@@ -25,12 +25,15 @@ def get_language_from_path(path):
 
 
 class APILocaleMiddleware(object):
+    def __init__(self, get_response):
+        self.get_response = get_response
 
-    def process_request(self, request):
+    def __call__(self, request):
         language = get_language_from_path(request.path_info)
         if language:
             translation.activate(language)
             request.LANGUAGE_CODE = translation.get_language()
+        return self.get_response(request)
 
 
 CONVERSION_SERVER_HOST = urlparse(settings.MAPENTITY_CONFIG['CONVERSION_SERVER']).hostname
@@ -45,7 +48,10 @@ for interface in interfaces():
 
 
 class FixedAutoLoginMiddleware(AutoLoginMiddleware):
-    def process_request(self, request):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
         if "HTTP_X_FORWARDED_FOR" in request.META:
             request.META["HTTP_X_PROXY_REMOTE_ADDR"] = request.META["REMOTE_ADDR"]
             parts = request.META["HTTP_X_FORWARDED_FOR"].split(",", 1)
@@ -58,7 +64,7 @@ class FixedAutoLoginMiddleware(AutoLoginMiddleware):
 
         user = getattr(request, 'user', None)
 
-        if user and user.is_anonymous() and not is_running_tests:
+        if user and user.is_anonymous and not is_running_tests:
             remoteip = request.META.get('REMOTE_ADDR')
 
             if remoteip in AUTOLOGIN_IPS:
@@ -69,4 +75,4 @@ class FixedAutoLoginMiddleware(AutoLoginMiddleware):
                     print(exc)
                 request.user = user
 
-        return None
+        return self.get_response(request)

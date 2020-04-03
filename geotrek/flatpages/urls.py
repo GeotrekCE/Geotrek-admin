@@ -1,7 +1,8 @@
-from django.conf.urls import url, include
+from django.urls import path, include, register_converter
 from rest_framework.routers import DefaultRouter
 
 from geotrek.flatpages.views import FlatPageViewSet, FlatPageMeta
+from geotrek.common.urls import LangConverter
 
 
 """
@@ -9,9 +10,12 @@ We don't use MapEntity for FlatPages, thus we use Django Rest Framework
 without sugar.
 """
 router = DefaultRouter(trailing_slash=False)
-router.register(r'flatpages', FlatPageViewSet, base_name='flatpages')
+router.register('flatpages', FlatPageViewSet, base_name='flatpages')
 
+register_converter(LangConverter, 'lang')
+
+app_name = 'flatpages'
 urlpatterns = [
-    url(r'^api/(?P<lang>[a-z]{2})/', include(router.urls)),
-    url(r'^api/(?P<lang>[a-z]{2})/flatpages/(?P<pk>\d+)/meta.html$', FlatPageMeta.as_view(), name="flatpage_meta"),
+    path('api/<lang:lang>/', include(router.urls)),
+    path('api/<lang:lang>/flatpages/<int:pk>/meta.html', FlatPageMeta.as_view(), name="flatpage_meta"),
 ]

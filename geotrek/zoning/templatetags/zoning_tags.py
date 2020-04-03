@@ -2,7 +2,7 @@ import json
 
 from django import template
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from geotrek.zoning.models import District, City, RestrictedArea, RestrictedAreaType
 
@@ -43,7 +43,7 @@ def combobox_bbox_land():
     }
 
 
-@register.assignment_tag
+@register.simple_tag
 def restricted_area_types():
     all_used_types = RestrictedArea.objects.values_list('area_type', flat=True)
     used_types = RestrictedAreaType.objects.filter(pk__in=all_used_types)

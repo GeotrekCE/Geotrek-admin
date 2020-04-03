@@ -1,7 +1,7 @@
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from django.test import TestCase
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from mapentity.factories import UserFactory
 from geotrek.common.parsers import Parser

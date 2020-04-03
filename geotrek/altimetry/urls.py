@@ -1,13 +1,14 @@
 from django.conf import settings
-from django.conf.urls import url
+from django.urls import path
 from mapentity.registry import MapEntityOptions
 
 from geotrek.altimetry.views import (ElevationProfile, ElevationChart,
                                      ElevationArea, serve_elevation_chart)
 
 
+app_name = 'altimetry'
 urlpatterns = [
-    url(r'^%s/profiles/(?P<model_name>.+)-(?P<pk>\d+).png$' % settings.MEDIA_URL.strip('/'), serve_elevation_chart),
+    path('%s/profiles/<path:model_name>-<int:pk>.png' % settings.MEDIA_URL.strip('/'), serve_elevation_chart),
 ]
 
 
@@ -21,14 +22,14 @@ class AltimetryEntityOptions(MapEntityOptions):
         """
         views = super(AltimetryEntityOptions, self).scan_views(*args, **kwargs)
         altimetry_views = [
-            url(r'^api/(?P<lang>\w+)/{modelname}s/(?P<pk>\d+)/profile.json$'.format(modelname=self.modelname),
-                self.elevation_profile_view.as_view(model=self.model),
-                name="%s_profile" % self.modelname),
-            url(r'^api/(?P<lang>\w+)/{modelname}s/(?P<pk>\d+)/dem.json$'.format(modelname=self.modelname),
-                self.elevation_area_view.as_view(model=self.model),
-                name="%s_elevation_area" % self.modelname),
-            url(r'^api/(?P<lang>\w+)/{modelname}s/(?P<pk>\d+)/profile.svg$'.format(modelname=self.modelname),
-                self.elevation_chart_view.as_view(model=self.model),
-                name='%s_profile_svg' % self.modelname),
+            path('api/<lang:lang>/{modelname}s/<int:pk>/profile.json'.format(modelname=self.modelname),
+                 self.elevation_profile_view.as_view(model=self.model),
+                 name="%s_profile" % self.modelname),
+            path('api/<lang:lang>/{modelname}s/<int:pk>/dem.json'.format(modelname=self.modelname),
+                 self.elevation_area_view.as_view(model=self.model),
+                 name="%s_elevation_area" % self.modelname),
+            path('api/<lang:lang>/{modelname}s/<int:pk>/profile.svg'.format(modelname=self.modelname),
+                 self.elevation_chart_view.as_view(model=self.model),
+                 name='%s_profile_svg' % self.modelname),
         ]
         return views + altimetry_views

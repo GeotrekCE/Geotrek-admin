@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
@@ -16,8 +16,6 @@ class DiveViewsTests(CommonTest):
     userfactory = DivingManagerFactory
 
     def setUp(self):
-        translation.deactivate()
-
         super(DiveViewsTests, self).setUp()
 
     def get_bad_data(self):
