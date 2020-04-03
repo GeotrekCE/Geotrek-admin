@@ -11,7 +11,7 @@ from mimetypes import types_map
 import bs4
 import requests
 from django.conf import settings
-from django.contrib.gis.gdal.error import OGRException
+from django.contrib.gis.gdal.error import GDALException
 from django.contrib.gis.geos import GEOSException, fromstr
 from django.urls import resolve
 from django.http import HttpResponse
@@ -86,7 +86,7 @@ def wkt_to_geom(wkt, srid_from=None, silent=False):
         srid_from = API_SRID
     try:
         return fromstr(wkt, srid=srid_from)
-    except (OGRException, GEOSException) as e:
+    except (GDALException, GEOSException) as e:
         if not silent:
             raise e
         return None
