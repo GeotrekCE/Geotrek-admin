@@ -1,4 +1,3 @@
-import datetime
 import os
 
 from django import template
@@ -8,7 +7,7 @@ from django.core.exceptions import FieldDoesNotExist
 from django.template import Context
 from django.template.exceptions import TemplateDoesNotExist
 from django.utils import six
-from django.utils.timezone import utc
+from django.utils.timezone import now
 from django.utils.translation import ugettext, ungettext
 
 from ..helpers import alphabet_enumeration
@@ -97,24 +96,27 @@ def humanize_timesince(date):
     Humanized and localized version of built-in timesince template filter.
     Based on Joey Bratton's idea.
     """
-    delta = datetime.datetime.utcnow().replace(tzinfo=utc) - date
+    if not date:
+        return ""
 
-    num_years = delta.days / 365
+    delta = now() - date
+
+    num_years = delta.days // 365
     if (num_years > 0):
         return ungettext(u"%d year ago", u"%d years ago", num_years) % num_years
 
-    num_weeks = delta.days / 7
+    num_weeks = delta.days // 7
     if (num_weeks > 0):
         return ungettext(u"%d week ago", u"%d weeks ago", num_weeks) % num_weeks
 
     if (delta.days > 0):
         return ungettext(u"%d day ago", u"%d days ago", delta.days) % delta.days
 
-    num_hours = delta.seconds / 3600
+    num_hours = delta.seconds // 3600
     if (num_hours > 0):
         return ungettext(u"%d hour ago", u"%d hours ago", num_hours) % num_hours
 
-    num_minutes = delta.seconds / 60
+    num_minutes = delta.seconds // 60
     if (num_minutes > 0):
         return ungettext(u"%d minute ago", u"%d minutes ago", num_minutes) % num_minutes
 
