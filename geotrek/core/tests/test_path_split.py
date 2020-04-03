@@ -859,7 +859,8 @@ class SplitPathLineTopologyTest(TestCase):
                                                    (1.0, 0.0), (0.4, 0.0), srid=settings.SRID))
 
     def test_split_on_update(self):
-        """                               + E
+        """
+                                          + E
                                           :
                                          ||
         A +-----------+ B         A +----++---+ B
@@ -885,7 +886,8 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual((0.0, 0.75), (aggr_cd2.start_position, aggr_cd2.end_position))
 
     def test_split_on_update_2(self):
-        """                               + E
+        """
+                                          + E
                                           :
                                           :
         A +-----------+ B         A +-----+---+ B
@@ -909,7 +911,8 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual((0.25, 0.5), (aggr_cd.start_position, aggr_cd.end_position))
 
     def test_split_on_update_3(self):
-        """                               + E
+        """
+                                          + E
                                           ||
                                           ||
         A +-----------+ B         A +-----+---+ B
@@ -1184,7 +1187,8 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertAlmostEqual(0.75, aggr_cb.end_position, places=6)
 
     def test_split_on_update(self):
-        """                               + D
+        """
+                                          + D
                                           :
                                           :
         A +-----------+ B         A +-----X---+ B
@@ -1219,7 +1223,8 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual((0.0, 0.0), (aggr_cd2.start_position, aggr_cd2.end_position))
 
     def test_split_on_update_2(self):
-        """                               + D
+        """
+                                          + D
                                           :
                                           :
         A +-----------+ B         A +-----+---+ B
@@ -1242,7 +1247,8 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual((0.5, 0.5), (aggr_cd.start_position, aggr_cd.end_position))
 
     def test_split_on_update_3(self):
-        """                               + E
+        """
+                                          + E
                                           X
                                           :
         A +-----------+ B         A +-----+---+ B
@@ -1265,7 +1271,8 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual((0.5, 0.5), (aggr_cd2.start_position, aggr_cd2.end_position))
 
     def test_split_on_update_4(self):
-        """                               + E
+        """
+                                          + E
                                           :
                                           :
         A +-----------+ B         A +-----+---+ B
@@ -1288,7 +1295,8 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual((0.0, 0.0), (aggr_cd.start_position, aggr_cd.end_position))
 
     def test_split_on_update_5(self):
-        """                               X E
+        """
+                                          X E
                                           :
                                           :
         A +-----------+ B         A +-----+---+ B
