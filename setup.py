@@ -27,7 +27,6 @@ setup(
         'django-multiselectfield',
         'geojson',
         'tif2geojson',
-        'mapentity',
         'pytz',
         'djangorestframework-gis',
         'drf-dynamic-fields',
