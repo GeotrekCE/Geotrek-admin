@@ -415,7 +415,7 @@ class MapEntityLiveTest(LiveServerTestCase):
         self.assertNotEqual(md5sum, new_hasher.digest())
 
         # Ask again with headers, and expect a 304 status (not changed)
-        lastmodified = response.headers.get('Last-Modified')
+        lastmodified = response.get('Last-Modified')
         response = self.client.get(geojson_layer_url,
                                    headers={'if-modified-since': lastmodified})
         self.assertEqual(response.status_code, 304)
