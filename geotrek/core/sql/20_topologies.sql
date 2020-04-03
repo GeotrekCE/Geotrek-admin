@@ -4,7 +4,8 @@
 
 DROP INDEX IF EXISTS evenements_geom_idx;
 DROP INDEX IF EXISTS e_t_evenement_geom_idx;
-CREATE INDEX e_t_evenement_geom_idx ON core_topology USING gist(geom);
+DROP INDEX IF EXISTS core_topology_geom_idx;
+CREATE INDEX core_topology_geom_idx ON core_topology USING gist(geom);
 
 
 ALTER TABLE core_topology ALTER COLUMN "length" SET DEFAULT 0.0;
@@ -16,7 +17,8 @@ ALTER TABLE core_topology ALTER COLUMN descent SET DEFAULT 0;
 
 
 ALTER TABLE core_topology DROP CONSTRAINT IF EXISTS e_t_evenement_geom_not_empty;
-ALTER TABLE core_topology ADD CONSTRAINT e_t_evenement_geom_not_empty CHECK (deleted OR (geom IS NOT NULL));
+ALTER TABLE core_topology DROP CONSTRAINT IF EXISTS core_topology_geom_not_empty;
+ALTER TABLE core_topology ADD CONSTRAINT core_topology_geom_not_empty CHECK (deleted OR (geom IS NOT NULL));
 
 
 -------------------------------------------------------------------------------
@@ -24,12 +26,14 @@ ALTER TABLE core_topology ADD CONSTRAINT e_t_evenement_geom_not_empty CHECK (del
 -------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS e_t_evenement_date_insert_tgr ON core_topology;
-CREATE TRIGGER e_t_evenement_date_insert_tgr
+DROP TRIGGER IF EXISTS core_topology_date_insert_tgr ON core_topology;
+CREATE TRIGGER core_topology_date_insert_tgr
     BEFORE INSERT ON core_topology
     FOR EACH ROW EXECUTE PROCEDURE ft_date_insert();
 
 DROP TRIGGER IF EXISTS e_t_evenement_date_update_tgr ON core_topology;
-CREATE TRIGGER e_t_evenement_date_update_tgr
+DROP TRIGGER IF EXISTS core_topology_date_update_tgr ON core_topology;
+CREATE TRIGGER core_topology_date_update_tgr
     BEFORE INSERT OR UPDATE ON core_topology
     FOR EACH ROW EXECUTE PROCEDURE ft_date_update();
 
@@ -38,8 +42,11 @@ CREATE TRIGGER e_t_evenement_date_update_tgr
 ---------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS e_t_evenement_latest_updated_d_tgr ON core_topology;
+DROP TRIGGER IF EXISTS core_topology_latest_updated_d_tgr ON core_topology;
+DROP FUNCTION IF EXISTS evenement_latest_updated_d() CASCADE;
+DROP FUNCTION IF EXISTS topology_latest_updated_d() CASCADE;
 
-CREATE OR REPLACE FUNCTION geotrek.evenement_latest_updated_d() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {# geotrek.core #}.topology_latest_updated_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
 BEGIN
     -- Touch latest path
@@ -49,17 +56,18 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER e_t_evenement_latest_updated_d_tgr
+CREATE TRIGGER core_topology_latest_updated_d_tgr
 AFTER DELETE ON core_topology
-FOR EACH ROW EXECUTE PROCEDURE evenement_latest_updated_d();
+FOR EACH ROW EXECUTE PROCEDURE topology_latest_updated_d();
 
 
 -------------------------------------------------------------------------------
--- Update geometry of an "evenement"
+-- Update geometry of a topology
 -------------------------------------------------------------------------------
 
-DROP FUNCTION IF EXISTS geotrek.update_geometry_of_evenement(integer) CASCADE;
-CREATE OR REPLACE FUNCTION geotrek.update_geometry_of_evenement(evenementid integer) RETURNS void AS $$
+DROP FUNCTION IF EXISTS update_geometry_of_evenement(integer) CASCADE;
+DROP FUNCTION IF EXISTS update_geometry_of_topology(integer) CASCADE;
+CREATE FUNCTION {# geotrek.core #}.update_geometry_of_topology(topology_id integer) RETURNS void AS $$
 DECLARE
     egeom geometry;
     egeom_3d geometry;
@@ -78,7 +86,7 @@ DECLARE
     tomerge_3d geometry[];
 BEGIN
     -- If Geotrek-light, don't do anything
-    IF NOT {{TREKKING_TOPOLOGY_ENABLED}} THEN
+    IF NOT {{ TREKKING_TOPOLOGY_ENABLED }} THEN
         RETURN;
     END IF;
 
@@ -86,41 +94,41 @@ BEGIN
     SELECT bool_and(et.start_position != et.end_position), bool_and(et.start_position = et.end_position), count(*)
         INTO lines_only, points_only, t_count
         FROM core_pathaggregation et
-        WHERE et.topo_object_id = evenementid;
+        WHERE et.topo_object_id = topology_id;
 
     -- /!\ linear offset (start and end point) are given as a fraction of the
     -- 2D-length in Postgis. Since we are working on 3D geometry, it could lead
     -- to unexpected results.
     -- January 2013 : It does indeed.
 
-    -- RAISE NOTICE 'update_geometry_of_evenement (lines_only:% points_only:% t_count:%)', lines_only, points_only, t_count;
+    -- RAISE NOTICE 'update_geometry_of_topology (lines_only:% points_only:% t_count:%)', lines_only, points_only, t_count;
 
     IF t_count = 0 THEN
-        -- No more troncons, close this topology
-        UPDATE core_topology SET deleted = true, geom = NULL, "length" = 0 WHERE id = evenementid;
+        -- No more paths, close this topology
+        UPDATE core_topology SET deleted = true, geom = NULL, "length" = 0 WHERE id = topology_id;
     ELSIF (NOT lines_only AND t_count = 1) OR points_only THEN
         -- Special case: the topology describe a point on the path
         -- Note: We are faking a M-geometry in order to use LocateAlong.
         -- This is handy because this function includes an offset parameter
         -- which could be otherwise diffcult to handle.
-        SELECT geom, "offset" INTO egeom, t_offset FROM core_topology e WHERE e.id = evenementid;
+        SELECT geom, "offset" INTO egeom, t_offset FROM core_topology e WHERE e.id = topology_id;
         -- RAISE NOTICE '% % % %', (t_offset = 0), (egeom IS NULL), (ST_IsEmpty(egeom)), (ST_X(egeom) = 0 AND ST_Y(egeom) = 0);
         IF t_offset = 0 OR egeom IS NULL OR ST_IsEmpty(egeom) OR (ST_X(egeom) = 0 AND ST_Y(egeom) = 0) THEN
             -- ST_LocateAlong can give no point when we try to get the startpoint or the endpoint of the line
-            SELECT et.start_position INTO position_point FROM core_pathaggregation et WHERE et.topo_object_id = evenementid;
+            SELECT et.start_position INTO position_point FROM core_pathaggregation et WHERE et.topo_object_id = topology_id;
             IF (position_point < 0.000000000000001) THEN
                 SELECT ST_StartPoint(t.geom) INTO egeom
                 FROM core_topology e, core_pathaggregation et, core_path t
-                WHERE e.id = evenementid AND et.topo_object_id = e.id AND et.path_id = t.id;
+                WHERE e.id = topology_id AND et.topo_object_id = e.id AND et.path_id = t.id;
             ELSIF (position_point > 0.999999999999999) THEN
                 SELECT ST_EndPoint(t.geom) INTO egeom
                 FROM core_topology e, core_pathaggregation et, core_path t
-                WHERE e.id = evenementid AND et.topo_object_id = e.id AND et.path_id = t.id;
+                WHERE e.id = topology_id AND et.topo_object_id = e.id AND et.path_id = t.id;
             ELSE
                 SELECT ST_GeometryN(ST_LocateAlong(ST_AddMeasure(ST_Force2D(t.geom), 0, 1), et.start_position, e.offset), 1)
                     INTO egeom
                     FROM core_topology e, core_pathaggregation et, core_path t
-                    WHERE e.id = evenementid AND et.topo_object_id = e.id AND et.path_id = t.id;
+                    WHERE e.id = topology_id AND et.topo_object_id = e.id AND et.path_id = t.id;
             END IF;
         END IF;
 
@@ -133,9 +141,9 @@ BEGIN
         FOR t_offset, t_geom, t_geom_3d IN SELECT e."offset", ST_SmartLineSubstring(t.geom, et.start_position, et.end_position),
                                                                ST_SmartLineSubstring(t.geom_3d, et.start_position, et.end_position)
                FROM core_topology e, core_pathaggregation et, core_path t
-               WHERE e.id = evenementid AND et.topo_object_id = e.id AND et.path_id = t.id
+               WHERE e.id = topology_id AND et.topo_object_id = e.id AND et.path_id = t.id
                  AND GeometryType(ST_SmartLineSubstring(t.geom, et.start_position, et.end_position)) != 'POINT'
-               ORDER BY et."order", et.id  -- /!\ We suppose that evenement_troncons were created in the right order
+               ORDER BY et."order", et.id  -- /!\ We suppose that path aggregations were created in the right order
         LOOP
             tomerge := array_append(tomerge, t_geom);
             tomerge_3d := array_append(tomerge_3d, t_geom_3d);
@@ -151,7 +159,7 @@ BEGIN
     END IF;
 
     IF t_count > 0 THEN
-        SELECT * FROM ft_elevation_infos(egeom_3d, {{ALTIMETRIC_PROFILE_STEP}}) INTO elevation;
+        SELECT * FROM ft_elevation_infos(egeom_3d, {{ ALTIMETRIC_PROFILE_STEP }}) INTO elevation;
         UPDATE core_topology SET geom = ST_Force2D(egeom),
                                  geom_3d = ST_Force3DZ(elevation.draped),
                                  "length" = ST_3DLength(elevation.draped),
@@ -160,7 +168,7 @@ BEGIN
                                  max_elevation = elevation.max_elevation,
                                  ascent = elevation.positive_gain,
                                  descent = elevation.negative_gain
-                             WHERE id = evenementid;
+                             WHERE id = topology_id;
     END IF;
 END;
 $$ LANGUAGE plpgsql;
@@ -171,39 +179,45 @@ $$ LANGUAGE plpgsql;
 -------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS e_t_evenement_offset_u_tgr ON core_topology;
+DROP TRIGGER IF EXISTS core_topology_offset_u_tgr ON core_topology;
+DROP FUNCTION IF EXISTS update_evenement_geom_when_offset_changes() CASCADE;
+DROP FUNCTION IF EXISTS update_topology_geom_when_offset_changes() CASCADE;
 
-CREATE OR REPLACE FUNCTION geotrek.update_evenement_geom_when_offset_changes() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {# geotrek.core #}.update_topology_geom_when_offset_changes() RETURNS trigger SECURITY DEFINER AS $$
 BEGIN
     -- Note: We are using an "after" trigger here because the function below
     -- takes topology id as an argument and emits its own SQL queries to read
     -- and write data.
-    -- Since the evenement to be modified is available in NEW, we could improve
+    -- Since the topology to be modified is available in NEW, we could improve
     -- performance with some refactoring.
 
-    PERFORM update_geometry_of_evenement(NEW.id);
+    PERFORM update_geometry_of_topology(NEW.id);
 
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER e_t_evenement_offset_u_tgr
+CREATE TRIGGER core_topology_offset_u_tgr
 AFTER UPDATE OF "offset" ON core_topology
-FOR EACH ROW EXECUTE PROCEDURE update_evenement_geom_when_offset_changes();
+FOR EACH ROW EXECUTE PROCEDURE update_topology_geom_when_offset_changes();
 
 -------------------------------------------------------------------------------
 -- Update altimetry when geom change (Geotrek-light)
 -------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS e_t_evenement_geom_iu_tgr ON core_topology;
+DROP TRIGGER IF EXISTS core_topology_geom_iu_tgr ON core_topology;
+DROP FUNCTION IF EXISTS evenement_elevation_iu() CASCADE;
+DROP FUNCTION IF EXISTS topology_elevation_iu() CASCADE;
 
-CREATE OR REPLACE FUNCTION geotrek.evenement_elevation_iu() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {# geotrek.core #}.topology_elevation_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     elevation elevation_infos;
 BEGIN
-    IF {{TREKKING_TOPOLOGY_ENABLED}} THEN
+    IF {{ TREKKING_TOPOLOGY_ENABLED }} THEN
         RETURN NEW;
     END IF;
-    SELECT * FROM ft_elevation_infos(NEW.geom, {{ALTIMETRIC_PROFILE_STEP}}) INTO elevation;
+    SELECT * FROM ft_elevation_infos(NEW.geom, {{ ALTIMETRIC_PROFILE_STEP }}) INTO elevation;
     -- Update path geometry
     NEW.geom_3d := elevation.draped;
     NEW."length" := ST_3DLength(elevation.draped);
@@ -216,6 +230,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER e_t_evenement_geom_iu_tgr
+CREATE TRIGGER core_topology_geom_iu_tgr
 BEFORE INSERT OR UPDATE OF geom ON core_topology
-FOR EACH ROW EXECUTE PROCEDURE evenement_elevation_iu();
+FOR EACH ROW EXECUTE PROCEDURE topology_elevation_iu();

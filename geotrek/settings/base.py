@@ -42,29 +42,30 @@ DATABASES = {
 # PostgreSQL Schemas for apps and models.
 #
 # Caution: editing this setting might not be enough.
-# Indeed, it won't apply to apps that not managed of South, nor database views and functions.
+# Indeed, it won't apply to apps that not managed of migrations, nor database views and functions.
 # See all sql/*-schemas.sql files in each Geotrek app.
 #
 DATABASE_SCHEMAS = {
-    'default': 'geotrek',
-    'django.contrib.gis': 'public',
-    'django.contrib.auth': 'django',
-    'django': 'django',
-    'django_celery_results': 'django',
-    'easy_thumbnails': 'django',
-    'geotrek.feedback': 'gestion',
-    'geotrek.infrastructure': 'gestion',
-    'geotrek.signage': 'gestion',
-    'geotrek.maintenance': 'gestion',
-    'geotrek.tourism': 'tourisme',
-    'geotrek.diving': 'rando',
-    'geotrek.trekking': 'rando',
-    'geotrek.zoning': 'zonage',
-    'geotrek.land': 'foncier',
+    'django': 'toto',
+    # 'default': 'geotrek',
+    # 'django.contrib.gis': 'public',
+    # 'django.contrib.auth': 'django',
+    # 'django': 'django',
+    # 'django_celery_results': 'django',
+    # 'easy_thumbnails': 'django',
+    # 'geotrek.feedback': 'management',
+    # 'geotrek.infrastructure': 'management',
+    # 'geotrek.signage': 'management',
+    # 'geotrek.maintenance': 'management',
+    # 'geotrek.tourism': 'tourism',
+    # 'geotrek.diving': 'trekking',
+    # 'geotrek.trekking': 'trekking',
+    # 'geotrek.zoning': 'zoning',
+    # 'geotrek.land': 'land',
 }
 
 DATABASES['default']['OPTIONS'] = {
-    'options': '-c search_path=public,%s' % ','.join(set(DATABASE_SCHEMAS.values()))
+    'options': '-c search_path={}'.format(','.join(('public', ) + tuple(set(DATABASE_SCHEMAS.values()))))
 }
 
 #

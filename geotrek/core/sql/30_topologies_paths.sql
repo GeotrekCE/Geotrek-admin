@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
--- Alter FK to troncon in order to add CASCADE behavior at DB-level
+-- Alter FK to path in order to add CASCADE behavior at DB-level
 -------------------------------------------------------------------------------
 
 DO LANGUAGE plpgsql $$
@@ -27,9 +27,10 @@ ALTER TABLE core_pathaggregation ADD FOREIGN KEY (path_id) REFERENCES core_path(
 -- Evenements utilities
 -------------------------------------------------------------------------------
 
-DROP FUNCTION IF EXISTS geotrek.ft_troncon_interpolate(integer, geometry);
+DROP FUNCTION IF EXISTS ft_troncon_interpolate(integer, geometry) CASCADE;
+DROP FUNCTION IF EXISTS ft_path_interpolate(integer, geometry) CASCADE;
 
-CREATE OR REPLACE FUNCTION geotrek.ft_troncon_interpolate(path integer, point geometry) RETURNS RECORD AS $$
+CREATE FUNCTION {# geotrek.core #}.ft_path_interpolate(path integer, point geometry) RETURNS RECORD AS $$
 DECLARE 
   line GEOMETRY;
   result RECORD;
@@ -46,8 +47,11 @@ $$ LANGUAGE plpgsql;
 -------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS e_r_evenement_troncon_geometry_tgr ON core_pathaggregation;
+DROP TRIGGER IF EXISTS core_pathaggregation_geometry_tgr ON core_pathaggregation;
+DROP FUNCTION IF EXISTS ft_evenements_troncons_geometry() CASCADE;
+DROP FUNCTION IF EXISTS ft_topologies_paths_geometry() CASCADE;
 
-CREATE OR REPLACE FUNCTION geotrek.ft_evenements_troncons_geometry() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {# geotrek.core #}.ft_topologies_paths_geometry() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     eid integer;
     eids integer[];
@@ -64,16 +68,16 @@ BEGIN
     END IF;
 
     FOREACH eid IN ARRAY eids LOOP
-        PERFORM update_geometry_of_evenement(eid);
+        PERFORM update_geometry_of_topology(eid);
     END LOOP;
 
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER e_r_evenement_troncon_geometry_tgr
+CREATE TRIGGER core_pathaggregation_geometry_tgr
 AFTER INSERT OR UPDATE OR DELETE ON core_pathaggregation
-FOR EACH ROW EXECUTE PROCEDURE ft_evenements_troncons_geometry();
+FOR EACH ROW EXECUTE PROCEDURE ft_topologies_paths_geometry();
 
 
 -------------------------------------------------------------------------------
@@ -81,8 +85,11 @@ FOR EACH ROW EXECUTE PROCEDURE ft_evenements_troncons_geometry();
 -------------------------------------------------------------------------------
 
 DROP TRIGGER IF EXISTS e_r_evenement_troncon_junction_point_iu_tgr ON core_pathaggregation;
+DROP TRIGGER IF EXISTS core_pathaggregation_junction_point_iu_tgr ON core_pathaggregation;
+DROP FUNCTION IF EXISTS ft_evenements_troncons_junction_point_iu() CASCADE;
+DROP FUNCTION IF EXISTS ft_topologies_paths_junction_point_iu() CASCADE;
 
-CREATE OR REPLACE FUNCTION geotrek.ft_evenements_troncons_junction_point_iu() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {# geotrek.core #}.ft_topologies_paths_junction_point_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     junction geometry;
     t_count integer;
@@ -102,7 +109,7 @@ BEGIN
     END IF;
 
     -- Don't proceed for intermediate markers (forced passage) : if this 
-    -- is not the only evenement_troncon, then it's an intermediate marker.
+    -- is not the only path aggregation, then it's an intermediate marker.
     SELECT count(*)
         INTO t_count
         FROM core_pathaggregation et
@@ -139,6 +146,6 @@ $$ LANGUAGE plpgsql VOLATILE;
 -- VOLATILE is the default but I prefer to set it explicitly because it is
 -- required for this case (in order to avoid trigger cascading)
 
-CREATE TRIGGER e_r_evenement_troncon_junction_point_iu_tgr
+CREATE TRIGGER core_pathaggregation_junction_point_iu_tgr
 AFTER INSERT OR UPDATE OF start_position, end_position ON core_pathaggregation
-FOR EACH ROW EXECUTE PROCEDURE ft_evenements_troncons_junction_point_iu();
+FOR EACH ROW EXECUTE PROCEDURE ft_topologies_paths_junction_point_iu();

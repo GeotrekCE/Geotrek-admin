@@ -41,7 +41,7 @@ class PathUpdateTest(TestCase):
 
 class ZoningLayersUpdateTest(TestCase):
 
-    def test_troncons_link(self):
+    def test_paths_link(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (1, 1)))
         p2 = PathFactory.create(geom=LineString((1, 1), (3, 3)))
         p3 = PathFactory.create(geom=LineString((3, 3), (4, 4)))

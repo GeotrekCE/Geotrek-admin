@@ -227,10 +227,10 @@ Tips and Tricks
     mkdir ~/downloads
     mkdir  ~/.buildout
 
-Create ``/home/sentiers/.buildout/default.cfg`` with ::
+Create ``/home/geotrek/.buildout/default.cfg`` with ::
 
     [buildout]
-    download-cache = /home/sentiers/downloads
+    download-cache = /home/geotrek/downloads
 
 Secure your server
 ------------------

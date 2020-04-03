@@ -1,6 +1,9 @@
 DROP TRIGGER IF EXISTS l_t_troncon_00_snap_geom_iu_tgr ON core_path;
+DROP TRIGGER IF EXISTS core_path_00_snap_geom_iu_tgr ON core_path;
+DROP FUNCTION IF EXISTS troncons_snap_extremities() CASCADE;
+DROP FUNCTION IF EXISTS paths_snap_extremities() CASCADE;
 
-CREATE OR REPLACE FUNCTION geotrek.troncons_snap_extremities() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {# geotrek.core #}.paths_snap_extremities() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     linestart geometry;
     lineend geometry;
@@ -12,7 +15,7 @@ DECLARE
 
     DISTANCE float8;
 BEGIN
-    DISTANCE := {{PATH_SNAPPING_DISTANCE}};
+    DISTANCE := {{ PATH_SNAPPING_DISTANCE }};
 
     linestart := ST_StartPoint(NEW.geom);
     lineend := ST_EndPoint(NEW.geom);
@@ -79,9 +82,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER l_t_troncon_00_snap_geom_iu_tgr
+CREATE TRIGGER core_path_00_snap_geom_iu_tgr
 BEFORE INSERT OR UPDATE OF geom ON core_path
-FOR EACH ROW EXECUTE PROCEDURE troncons_snap_extremities();
+FOR EACH ROW EXECUTE PROCEDURE paths_snap_extremities();
 
 
 -------------------------------------------------------------------------------
@@ -90,10 +93,13 @@ FOR EACH ROW EXECUTE PROCEDURE troncons_snap_extremities();
 
 DROP TRIGGER IF EXISTS l_t_troncon_split_geom_iu_tgr ON core_path;
 DROP TRIGGER IF EXISTS l_t_troncon_10_split_geom_iu_tgr ON core_path;
+DROP TRIGGER IF EXISTS core_path_10_split_geom_iu_tgr ON core_path;
+DROP FUNCTION IF EXISTS troncons_evenement_intersect_split() CASCADE;
+DROP FUNCTION IF EXISTS paths_topology_intersect_split() CASCADE;
 
-CREATE OR REPLACE FUNCTION geotrek.troncons_evenement_intersect_split() RETURNS trigger SECURITY DEFINER AS $$
+CREATE FUNCTION {# geotrek.core #}.paths_topology_intersect_split() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
-    troncon record;
+    path record;
     tid_clone integer;
     t_count integer;
     existing_et integer[];
@@ -114,7 +120,7 @@ BEGIN
     intersections_on_new := ARRAY[0::float];
 
     -- Iterate paths intersecting, excluding those touching only by extremities
-    FOR troncon IN SELECT *
+    FOR path IN SELECT *
                    FROM core_path t
                    WHERE id != NEW.id
                          AND draft = FALSE
@@ -123,15 +129,15 @@ BEGIN
                          AND GeometryType(ST_Intersection(geom, NEW.geom)) NOT IN ('LINESTRING', 'MULTILINESTRING')
     LOOP
 
-        RAISE NOTICE '%-% (%) intersects %-% (%) : %', NEW.id, NEW.name, ST_AsText(NEW.geom), troncon.id, troncon.name, ST_AsText(troncon.geom), ST_AsText(ST_Intersection(troncon.geom, NEW.geom));
+        RAISE NOTICE '%-% (%) intersects %-% (%) : %', NEW.id, NEW.name, ST_AsText(NEW.geom), path.id, path.name, ST_AsText(path.geom), ST_AsText(ST_Intersection(path.geom, NEW.geom));
 
         -- Locate intersecting point(s) on NEW, for later use
         FOR fraction IN SELECT ST_LineLocatePoint(NEW.geom,
-                                                  (ST_Dump(ST_Intersection(troncon.geom, NEW.geom))).geom)
-                        WHERE NOT ST_Equals(ST_StartPoint(NEW.geom), ST_StartPoint(troncon.geom))
-                          AND NOT ST_Equals(ST_StartPoint(NEW.geom), ST_EndPoint(troncon.geom))
-                          AND NOT ST_Equals(ST_EndPoint(NEW.geom), ST_StartPoint(troncon.geom))
-                          AND NOT ST_Equals(ST_EndPoint(NEW.geom), ST_EndPoint(troncon.geom))
+                                                  (ST_Dump(ST_Intersection(path.geom, NEW.geom))).geom)
+                        WHERE NOT ST_Equals(ST_StartPoint(NEW.geom), ST_StartPoint(path.geom))
+                          AND NOT ST_Equals(ST_StartPoint(NEW.geom), ST_EndPoint(path.geom))
+                          AND NOT ST_Equals(ST_EndPoint(NEW.geom), ST_StartPoint(path.geom))
+                          AND NOT ST_Equals(ST_EndPoint(NEW.geom), ST_EndPoint(path.geom))
         LOOP
             intersections_on_new := array_append(intersections_on_new, fraction);
         END LOOP;
@@ -144,22 +150,22 @@ BEGIN
         -- Locate intersecting point(s) on current path (array of  : {0, 0.32, 0.89, 1})
         intersections_on_current := ARRAY[0::float];
 
-        IF ST_DWithin(ST_StartPoint(NEW.geom), troncon.geom, 0)
+        IF ST_DWithin(ST_StartPoint(NEW.geom), path.geom, 0)
         THEN
             intersections_on_current := array_append(intersections_on_current,
-                                                 ST_LineLocatePoint(troncon.geom,
-                                                                      ST_ClosestPoint(troncon.geom, ST_StartPoint(NEW.geom))));
+                                                 ST_LineLocatePoint(path.geom,
+                                                                      ST_ClosestPoint(path.geom, ST_StartPoint(NEW.geom))));
         END IF;
 
-        IF ST_DWithin(ST_EndPoint(NEW.geom), troncon.geom, 0)
+        IF ST_DWithin(ST_EndPoint(NEW.geom), path.geom, 0)
         THEN
             intersections_on_current := array_append(intersections_on_current,
-                                                 ST_LineLocatePoint(troncon.geom,
-                                                                      ST_ClosestPoint(troncon.geom, ST_EndPoint(NEW.geom))));
+                                                 ST_LineLocatePoint(path.geom,
+                                                                      ST_ClosestPoint(path.geom, ST_EndPoint(NEW.geom))));
 
         END IF;
         RAISE NOTICE 'EEE : %', array_to_string(intersections_on_current, ', ');
-        FOR fraction IN SELECT ST_LineLocatePoint(troncon.geom, (ST_Dump(ST_Intersection(troncon.geom, NEW.geom))).geom)
+        FOR fraction IN SELECT ST_LineLocatePoint(path.geom, (ST_Dump(ST_Intersection(path.geom, NEW.geom))).geom)
         LOOP
             intersections_on_current := array_append(intersections_on_current, fraction);
         END LOOP;
@@ -182,7 +188,7 @@ BEGIN
 
         -- Skip if intersections are 0,1 (means not crossing)
         IF array_length(intersections_on_new, 1) > 2 THEN
-            RAISE NOTICE 'New: % % intersecting on NEW % % : %', NEW.id, NEW.name, troncon.id, troncon.name, intersections_on_new;
+            RAISE NOTICE 'New: % % intersecting on NEW % % : %', NEW.id, NEW.name, path.id, path.name, intersections_on_new;
 
             FOR i IN 1..(array_length(intersections_on_new, 1) - 1)
             LOOP
@@ -252,11 +258,11 @@ BEGIN
 
         -- Skip if intersections are 0,1 (means not crossing)
         IF array_length(intersections_on_current, 1) > 2 THEN
-            RAISE NOTICE 'Current: % % intersecting on current % % : %', NEW.id, NEW.name, troncon.id, troncon.name, intersections_on_current;
+            RAISE NOTICE 'Current: % % intersecting on current % % : %', NEW.id, NEW.name, path.id, path.name, intersections_on_current;
 
-            SELECT array_agg(id) INTO existing_et FROM core_pathaggregation et WHERE et.path_id = troncon.id;
+            SELECT array_agg(id) INTO existing_et FROM core_pathaggregation et WHERE et.path_id = path.id;
              IF existing_et IS NOT NULL THEN
-                 RAISE NOTICE 'Existing topologies id for %-% (%): %', troncon.id, troncon.name, ST_AsText(troncon.geom), existing_et;
+                 RAISE NOTICE 'Existing topologies id for %-% (%): %', path.id, path.name, ST_AsText(path.geom), existing_et;
              END IF;
 
             FOR i IN 1..(array_length(intersections_on_current, 1) - 1)
@@ -264,7 +270,7 @@ BEGIN
                 a := intersections_on_current[i];
                 b := intersections_on_current[i+1];
 
-                segment := ST_LineSubstring(troncon.geom, a, b);
+                segment := ST_LineSubstring(path.geom, a, b);
 
                 IF coalesce(ST_Length(segment), 0) < 1 THEN
                      intersections_on_new[i+1] := a;
@@ -273,16 +279,16 @@ BEGIN
 
                 IF i = 1 THEN
                     -- First segment : shrink it !
-                    SELECT geom INTO t_geom FROM core_path WHERE id = troncon.id;
+                    SELECT geom INTO t_geom FROM core_path WHERE id = path.id;
                     IF NOT ST_Equals(t_geom, segment) THEN
-                        RAISE NOTICE 'Current: Skrink %-% (%) to %', troncon.id, troncon.name, ST_AsText(troncon.geom), ST_AsText(segment);
-                        UPDATE core_path SET geom = segment WHERE id = troncon.id;
+                        RAISE NOTICE 'Current: Skrink %-% (%) to %', path.id, path.name, ST_AsText(path.geom), ST_AsText(segment);
+                        UPDATE core_path SET geom = segment WHERE id = path.id;
                     END IF;
                 ELSE
                     -- Next ones : create clones !
                     SELECT COUNT(*) INTO t_count FROM core_path WHERE ST_Contains(ST_Buffer(geom,0.0001),segment);
                     IF t_count = 0 THEN
-                        RAISE NOTICE 'Current: Create clone of %-% (%) with geom %', troncon.id, troncon.name, ST_AsText(troncon.geom), ST_AsText(segment);
+                        RAISE NOTICE 'Current: Create clone of %-% (%) with geom %', path.id, path.name, ST_AsText(path.geom), ST_AsText(segment);
                         INSERT INTO core_path (structure_id,
                                                  visible,
                                                  valid,
@@ -297,31 +303,31 @@ BEGIN
                                                  eid,
                                                  geom,
                                                  draft)
-                            VALUES (troncon.structure_id,
-                                    troncon.visible,
-                                    troncon.valid,
-                                    troncon.name,
-                                    troncon.comments,
-                                    troncon.source_id,
-                                    troncon.stake_id,
-                                    troncon.geom_cadastre,
-                                    troncon.departure,
-                                    troncon.arrival,
-                                    troncon.comfort_id,
-                                    troncon.eid,
+                            VALUES (path.structure_id,
+                                    path.visible,
+                                    path.valid,
+                                    path.name,
+                                    path.comments,
+                                    path.source_id,
+                                    path.stake_id,
+                                    path.geom_cadastre,
+                                    path.departure,
+                                    path.arrival,
+                                    path.comfort_id,
+                                    path.eid,
                                     segment,
-                                    troncon.draft)
+                                    path.draft)
                             RETURNING id INTO tid_clone;
 
                         -- Copy N-N relations
                         INSERT INTO core_path_networks (path_id, network_id)
                             SELECT tid_clone, tr.network_id
                             FROM core_path_networks tr
-                            WHERE tr.path_id = troncon.id;
+                            WHERE tr.path_id = path.id;
                         INSERT INTO core_path_usages (path_id, usage_id)
                             SELECT tid_clone, tr.usage_id
                             FROM core_path_usages tr
-                            WHERE tr.path_id = troncon.id;
+                            WHERE tr.path_id = path.id;
 
                         -- Copy topologies overlapping start/end
                         INSERT INTO core_pathaggregation (path_id, topo_object_id, start_position, end_position, "order")
@@ -342,45 +348,45 @@ BEGIN
                             FROM core_pathaggregation et,
                                  core_topology e
                             WHERE et.topo_object_id = e.id
-                                  AND et.path_id = troncon.id
+                                  AND et.path_id = path.id
                                   AND ((least(start_position, end_position) < b AND greatest(start_position, end_position) > a) OR       -- Overlapping
                                        (start_position = end_position AND start_position = a AND "offset" = 0)); -- Point
                         GET DIAGNOSTICS t_count = ROW_COUNT;
                         IF t_count > 0 THEN
-                            RAISE NOTICE 'Duplicated % topologies of %-% (%) on [% ; %] for %-% (%)', t_count, troncon.id, troncon.name, ST_AsText(troncon.geom), a, b, tid_clone, troncon.name, ST_AsText(segment);
+                            RAISE NOTICE 'Duplicated % topologies of %-% (%) on [% ; %] for %-% (%)', t_count, path.id, path.name, ST_AsText(path.geom), a, b, tid_clone, path.name, ST_AsText(segment);
                         END IF;
                         -- Special case : point topology at the end of path
                         IF b = 1 THEN
-                            SELECT geom INTO t_geom FROM core_path WHERE id = troncon.id;
-                            fraction := ST_LineLocatePoint(segment, ST_EndPoint(troncon.geom));
+                            SELECT geom INTO t_geom FROM core_path WHERE id = path.id;
+                            fraction := ST_LineLocatePoint(segment, ST_EndPoint(path.geom));
                             INSERT INTO core_pathaggregation (path_id, topo_object_id, start_position, end_position)
                                 SELECT tid_clone, topo_object_id, start_position, end_position
                                 FROM core_pathaggregation et,
                                      core_topology e
                                 WHERE et.topo_object_id = e.id AND
-                                      et.path_id = troncon.id AND
+                                      et.path_id = path.id AND
                                       start_position = end_position AND
                                       start_position = 1 AND
                                       "offset" = 0;
                             GET DIAGNOSTICS t_count = ROW_COUNT;
                             IF t_count > 0 THEN
-                                RAISE NOTICE 'Duplicated % point topologies of %-% (%) on intersection at the end of %-% (%) at [%]', t_count, troncon.id, troncon.name, ST_AsText(t_geom), tid_clone, troncon.name, ST_AsText(segment), fraction;
+                                RAISE NOTICE 'Duplicated % point topologies of %-% (%) on intersection at the end of %-% (%) at [%]', t_count, path.id, path.name, ST_AsText(t_geom), tid_clone, path.name, ST_AsText(segment), fraction;
                             END IF;
                         END IF;
                         -- Special case : point topology exactly where NEW path intersects
                         IF a > 0 THEN
-                            fraction := ST_LineLocatePoint(NEW.geom, ST_LineInterpolatePoint(troncon.geom, a));
+                            fraction := ST_LineLocatePoint(NEW.geom, ST_LineInterpolatePoint(path.geom, a));
                             INSERT INTO core_pathaggregation (path_id, topo_object_id, start_position, end_position, "order")
                                 SELECT NEW.id, et.topo_object_id, fraction, fraction, "order"
                                 FROM core_pathaggregation et,
                                      core_topology e
                                 WHERE et.topo_object_id = e.id
-                                  AND et.path_id = troncon.id
+                                  AND et.path_id = path.id
                                   AND start_position = end_position AND start_position = a
                                   AND "offset" = 0;
                             GET DIAGNOSTICS t_count = ROW_COUNT;
                             IF t_count > 0 THEN
-                                RAISE NOTICE 'Duplicated % point topologies of %-% (%) on intersection by %-% (%) at [%]', t_count, troncon.id, troncon.name, ST_AsText(troncon.geom), NEW.id, NEW.name, ST_AsText(NEW.geom), a;
+                                RAISE NOTICE 'Duplicated % point topologies of %-% (%) on intersection by %-% (%) at [%]', t_count, path.id, path.name, ST_AsText(path.geom), NEW.id, NEW.name, ST_AsText(NEW.geom), a;
                             END IF;
                         END IF;
 
@@ -396,13 +402,13 @@ BEGIN
                                          core_topology e
                                    WHERE et.topo_object_id = e.id
                                      AND e."offset" > 0
-                                     AND et.path_id = troncon.id
+                                     AND et.path_id = path.id
                                      AND et.id = ANY(existing_et)
                                      GROUP BY e.id, e."offset", e.geom
                                      HAVING COUNT(et.id) = 1 AND BOOL_OR(et.start_position = et.end_position)),
                  closest_path AS (SELECT er.id AS et_id, t.id AS closest_id
                                     FROM core_path t, existing_rec er
-                                   WHERE t.id != troncon.id
+                                   WHERE t.id != path.id
                                      AND ST_Distance(er.geom, t.geom) < er."offset"
                                 ORDER BY ST_Distance(er.geom, t.geom)
                                    LIMIT 1)
@@ -411,7 +417,7 @@ BEGIN
                  WHERE id = et_id;
             GET DIAGNOSTICS t_count = ROW_COUNT;
             IF t_count > 0 THEN
-                -- Update geom of affected paths to trigger update_evenement_geom_when_troncon_changes()
+                -- Update geom of affected paths to trigger update_topology_geom_when_path_changes()
                 UPDATE core_path t SET geom = geom
                   FROM core_pathaggregation et
                  WHERE t.id = et.path_id
@@ -428,23 +434,23 @@ BEGIN
             -- Now handle first path topologies
             a := intersections_on_current[1];
             b := intersections_on_current[2];
-            DELETE FROM core_pathaggregation et WHERE et.path_id = troncon.id
+            DELETE FROM core_pathaggregation et WHERE et.path_id = path.id
                                                  AND id = ANY(existing_et)
                                                  AND (least(start_position, end_position) > b OR greatest(start_position, end_position) < a);
             GET DIAGNOSTICS t_count = ROW_COUNT;
             IF t_count > 0 THEN
-                RAISE NOTICE 'Removed % topologies of %-% on [% ; %]', t_count, troncon.id,  troncon.name, a, b;
+                RAISE NOTICE 'Removed % topologies of %-% on [% ; %]', t_count, path.id,  path.name, a, b;
             END IF;
 
             -- Update topologies overlapping
             UPDATE core_pathaggregation et SET
                 start_position = CASE WHEN start_position / (b - a) > 1 THEN 1 ELSE start_position / (b - a) END,
                 end_position = CASE WHEN end_position / (b - a) > 1 THEN 1 ELSE end_position / (b - a) END
-                WHERE et.path_id = troncon.id
+                WHERE et.path_id = path.id
                 AND least(start_position, end_position) <= b AND greatest(start_position, end_position) >= a;
             GET DIAGNOSTICS t_count = ROW_COUNT;
             IF t_count > 0 THEN
-                RAISE NOTICE 'Updated % topologies of %-% on [% ; %]', t_count, troncon.id,  troncon.name, a, b;
+                RAISE NOTICE 'Updated % topologies of %-% on [% ; %]', t_count, path.id,  path.name, a, b;
             END IF;
         END IF;
 
@@ -459,6 +465,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE TRIGGER l_t_troncon_10_split_geom_iu_tgr
+CREATE TRIGGER core_path_10_split_geom_iu_tgr
 AFTER INSERT OR UPDATE OF geom, draft ON core_path
-FOR EACH ROW EXECUTE PROCEDURE troncons_evenement_intersect_split();
+FOR EACH ROW EXECUTE PROCEDURE paths_topology_intersect_split();

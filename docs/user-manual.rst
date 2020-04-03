@@ -102,7 +102,7 @@ Tous les objets sont saisis et stockés relativement aux tronçons, en utilisant
 
 C'est pourquoi, modifier un tronçon peut entrainer des modifications des objets qui lui sont rattachés (signalétique, interventions, itinéraires, POIs...). Supprimer un tronçon, supprime les objets qui lui sont rattachés. 
 
-Les éléments ponctuels et linéaires des différents modules sont stockés sous forme d'évènements (PKdebut, PKfin et décalage dans la table ``geotrek.e_t_evenement``) liés à un ou plusieurs tronçons (``geotrek.e_r_evenement_troncon``).
+Les éléments ponctuels et linéaires des différents modules sont stockés sous forme d'évènements (PKdebut, PKfin et décalage dans la table ``geotrek.core_topology``) liés à un ou plusieurs tronçons (``geotrek.core_pathaggregation``).
 
 Un objet peut ainsi être associé à un ou plusieurs tronçons, partiellement ou entièrement. 
 

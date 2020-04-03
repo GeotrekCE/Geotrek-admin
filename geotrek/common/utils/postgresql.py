@@ -6,6 +6,7 @@ import os
 import re
 from django.conf import settings
 from django.db import connection
+from django.db.models import ManyToManyField
 
 logger = logging.getLogger(__name__)
 
@@ -88,10 +89,20 @@ def load_sql_files(app):
                 sql = sql.replace('%', '%%')
 
             # Replace curly braces with settings values
-            pattern = re.compile(r'{{\s*(.*)\s*}}')
+            pattern = re.compile(r'{{\s*([^\s]*)\s*}}')
             for m in pattern.finditer(sql):
                 value = getattr(settings, m.group(1))
                 sql = sql.replace(m.group(0), str(value))
+
+            # Replace sharp braces with schemas
+            pattern = re.compile(r'{#\s*([^\s]*)\s*#}')
+            for m in pattern.finditer(sql):
+                try:
+                    value = settings.DATABASE_SCHEMAS[m.group(1)]
+                except KeyError:
+                    value = settings.DATABASE_SCHEMAS.get('default', 'public')
+                sql = sql.replace(m.group(0), str(value))
+
             cursor.execute(sql)
         except Exception as e:
             logger.critical("Failed to install custom SQL file '%s': %s\n" %
@@ -106,7 +117,7 @@ def move_models_to_schemas(app):
 
     Views, functions and triggers will be moved in Geotrek app SQL files.
     """
-    default_schema = settings.DATABASE_SCHEMAS.get('default')
+    default_schema = settings.DATABASE_SCHEMAS.get('default', 'public')
     app_schema = settings.DATABASE_SCHEMAS.get(app.name, default_schema)
 
     table_schemas = {}
@@ -116,12 +127,19 @@ def move_models_to_schemas(app):
         model_schema = settings.DATABASE_SCHEMAS.get(model_name, app_schema)
         table_schemas.setdefault(model_schema, []).append(table_name)
 
-        for m2m_field in model._meta.many_to_many:
-            table_name = m2m_field.db_table
-            if table_name:
-                table_schemas[model_schema].append(table_name)
+        for field in model._meta.get_fields():
+            if isinstance(field, ManyToManyField):
+                table_schemas[model_schema].append(field.m2m_db_table())
 
+    # Set search path with all existing schema + new ones
     cursor = connection.cursor()
+    cursor.execute('SELECT schema_name FROM information_schema.schemata')
+    search_path = set([s[0] for s in cursor.fetchall() if not s[0].startswith('pg_')])
+    search_path |= set(settings.DATABASE_SCHEMAS.values())
+    search_path.discard('public')
+    search_path.discard('information_schema')
+    search_path = ('public', ) + tuple(search_path)
+    cursor.execute('SET search_path TO {}'.format(', '.join(search_path)))
 
     for schema_name in table_schemas.keys():
         try:
@@ -146,6 +164,6 @@ def move_models_to_schemas(app):
     if app.name == 'geotrek.common':
         dbname = settings.DATABASES['default']['NAME']
         dbuser = settings.DATABASES['default']['USER']
-        search_path = 'public,%s' % ','.join(set(settings.DATABASE_SCHEMAS.values()))
+        search_path = ', '.join(('public', ) + tuple(set(settings.DATABASE_SCHEMAS.values())))
         sql = "ALTER ROLE %s IN DATABASE %s SET search_path=%s;" % (dbuser, dbname, search_path)
         cursor.execute(sql)

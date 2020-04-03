@@ -490,7 +490,7 @@ class TopologyLineTest(TestCase):
         t2.save()
         self.assertEqual(t2.geom, t.geom)
 
-    def test_troncon_geom_update(self):
+    def test_path_geom_update(self):
         # Create a path
         p = PathFactory.create(geom=LineString((0, 0), (4, 0)))
 
