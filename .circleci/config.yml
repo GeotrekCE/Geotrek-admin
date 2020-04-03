@@ -136,9 +136,13 @@ workflows:
           filters:
             branches:
               only:
-                - docker-integration
+                - master
       - ubuntu_package
       - ubuntu_publish:
           requires:
             - codestyle
             - ubuntu_package
+          filters:
+            branches:
+              only:
+                - master
