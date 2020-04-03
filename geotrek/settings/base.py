@@ -244,9 +244,7 @@ MIDDLEWARE = (
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'geotrek.authent.middleware.CorsMiddleware',
-    # TODO: delete geotrek geotrek.common.middleware.FixedAutoLoginMiddleware and set mapentity with py3 version
-    # 'mapentity.middleware.AutoLoginMiddleware'
-    'geotrek.common.middleware.FixedAutoLoginMiddleware'
+    'mapentity.middleware.AutoLoginMiddleware',
 )
 FORCE_SCRIPT_NAME = ROOT_URL if ROOT_URL != '' else None
 ADMIN_MEDIA_PREFIX = '%s/static/admin/' % ROOT_URL
