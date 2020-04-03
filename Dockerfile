@@ -44,12 +44,14 @@ RUN env/bin/pip install -U setuptools==45.2.0
 RUN env/bin/pip install --no-cache-dir -r requirements.txt
 
 COPY geotrek/ geotrek/
+COPY mapentity/ mapentity/
 COPY manage.py manage.py
 COPY VERSION VERSION
 COPY .coveragerc .coveragerc
 COPY docker/* /usr/local/bin/
 
 RUN cd geotrek; ENV=dev CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp ../env/bin/python ../manage.py compilemessages; cd ..
+RUN cd mapentity; ENV=dev CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp ../env/bin/python ../manage.py compilemessages; cd ..
 
 EXPOSE 8000
 ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]
