@@ -19,7 +19,7 @@ from rest_framework import permissions as rest_permissions
 
 from mapentity.templatetags.mapentity_tags import humanize_timesince
 from .settings import app_settings, API_SRID
-from .helpers import smart_urljoin, is_file_newer, capture_map_image, extract_attributes_html
+from .helpers import smart_urljoin, is_file_uptodate, capture_map_image, extract_attributes_html
 
 
 # Used to create the matching url name
@@ -201,7 +201,7 @@ class MapEntityMixin(models.Model):
     def prepare_map_image(self, rooturl):
         path = self.get_map_image_path()
         # Do nothing if image is up-to-date
-        if is_file_newer(path, self.get_date_update()):
+        if is_file_uptodate(path, self.get_date_update()):
             return False
         if self.get_geom() is None:
             size = app_settings['MAP_CAPTURE_SIZE']

@@ -218,6 +218,10 @@ class TrekViewsTest(CommonTest):
             good_data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
         return good_data
 
+    def test_status(self):
+        TrekFactory.create(duration=float('nan'))
+        super(TrekViewsTest, self).test_status()
+
     def test_badfield_goodgeom(self):
         self.login()
 
@@ -424,6 +428,11 @@ class TrekCustomViewTests(TrekkingManagerTest):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/vnd.google-earth.kml+xml')
+
+    def test_kml_do_not_exist(self):
+        url = '/api/en/treks/{pk}/slug.kml'.format(pk=999)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
 
     def test_not_published_profile_json(self):
         trek = TrekFactory.create(published=False)

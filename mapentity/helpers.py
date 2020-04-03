@@ -11,7 +11,7 @@ from mimetypes import types_map
 import bs4
 import requests
 from django.conf import settings
-from django.contrib.gis.gdal.error import GDALException
+from django.contrib.gis.gdal.error import OGRException
 from django.contrib.gis.geos import GEOSException, fromstr
 from django.urls import resolve
 from django.http import HttpResponse
@@ -86,31 +86,9 @@ def wkt_to_geom(wkt, srid_from=None, silent=False):
         srid_from = API_SRID
     try:
         return fromstr(wkt, srid=srid_from)
-    except (GDALException, GEOSException) as e:
+    except (OGRException, GEOSException) as e:
         if not silent:
             raise e
-        return None
-
-
-def transform_wkt(wkt, srid_from=None, srid_to=None, dim=3):
-    """
-    Changes SRID, and returns 3D wkt
-    """
-    if srid_from is None:
-        srid_from = API_SRID
-    if srid_to is None:
-        srid_to = settings.SRID
-    try:
-        geom = fromstr(wkt, srid=srid_from)
-        if srid_from != srid_to:
-            geom.transform(srid_to)
-        extracoords = ' 0.0' * (dim - 2)  # add missing dimensions
-        wkt3d = geom.wkt.replace(',', extracoords + ',')
-        wkt3d = wkt3d.replace(')', extracoords + ')')
-        return 'SRID=%s;%s' % (srid_to, wkt3d)
-    except (GDALException, GEOSException, TypeError, ValueError) as e:
-        if settings.DEBUG or not getattr(settings, 'TEST', False):
-            logger.error("wkt_to_geom('%s', %s, %s) : %s" % (wkt, srid_from, srid_to, e))
         return None
 
 
@@ -122,7 +100,7 @@ def smart_urljoin(base, path):
     return urljoin(base, path)
 
 
-def is_file_newer(path, date_update, delete_empty=True):
+def is_file_uptodate(path, date_update, delete_empty=True):
     if not os.path.exists(path):
         return False
 
@@ -186,7 +164,7 @@ def download_to_stream(url, stream, silent=False, headers=None):
     if isinstance(stream, HttpResponse):
         stream.status_code = source.status_code
         # Copy headers
-        for header, value in source.headers.items():
+        for header, value in source.items():
             stream[header] = value
 
     return source

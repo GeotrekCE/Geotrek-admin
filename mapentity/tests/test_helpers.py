@@ -16,7 +16,7 @@ from mapentity.helpers import (
     bbox_split_srid_2154,
     api_bbox,
     wkt_to_geom,
-    is_file_newer
+    is_file_uptodate
 )
 import shutil
 
@@ -89,8 +89,8 @@ class OtherHelpers(TestCase):
         self.path = os.path.join('tmp', 'test.txt')
 
     @mock.patch("os.path.exists", return_value=True)
-    def test_is_file_newer_no_date(self, mock_value):
-        self.assertFalse(is_file_newer(self.path, None))
+    def test_is_file_uptodate_no_date(self, mock_value):
+        self.assertFalse(is_file_uptodate(self.path, None))
 
     @mock.patch('mapentity.helpers.get_source', return_value=None)
     def test_download_to_stream_source_is_None(self, mock_value):

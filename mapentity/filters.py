@@ -1,4 +1,3 @@
-from django.db.models import Q
 from django.db.models.fields.related import ManyToOneRel
 from django.conf import settings
 
@@ -19,14 +18,6 @@ class PolygonFilter(Filter):
         kwargs.setdefault('widget', HiddenGeometryWidget)
         kwargs.setdefault('lookup_expr', 'intersects')
         super(PolygonFilter, self).__init__(*args, **kwargs)
-
-    def filter(self, qs, value):
-        if not value:
-            return qs
-        return qs.filter(
-            Q(**{'{}__{}'.format(self.field_name, self.lookup_expr): value})
-            | Q(**{'{}__isnull'.format(self.field_name): True})
-        )
 
 
 class PythonPolygonFilter(PolygonFilter):
