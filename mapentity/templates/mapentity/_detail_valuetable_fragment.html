@@ -1,0 +1,28 @@
+{% load i18n %}
+{% if records %}
+    <table class="table">
+        <thead>
+            <tr>
+            {% for column in columns %}
+            <th class="{{ column.name }}">{{ column.text }}</th>
+            {% endfor %}
+            </tr>
+        </thead>
+    <tbody>
+    {% for record in records %}
+        <tr {% if modelname and record.pk %}class="hoverable" data-modelname="{{ modelname }}" data-pk="{{ record.pk }}"{% endif %}>
+            {% for attr in record.attrs %}
+            <td>
+                {% if forloop.first and record.enumeration %}
+                  <span class="enumeration-value">{{ record.enumeration }}.&nbsp;</span>
+                {% endif %}
+                {{ attr|safe }}
+            </td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+{% else %}
+    <span class="none">{% trans "None" %}</span>
+{% endif %}

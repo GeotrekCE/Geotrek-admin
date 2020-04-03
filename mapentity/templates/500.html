@@ -1,0 +1,12 @@
+{% extends "mapentity/base_site.html" %}
+{% load i18n %}
+
+{% block container %}
+    <div class="page-header">
+      <h1>{% trans "Internal error" %} <small>{{ exception }}</small></h1>
+    </div>
+    <div class="alert alert-error">
+        <strong>{% trans "Details" %}</strong>
+        <pre>{{ stack }}</pre>
+    </div>
+{% endblock container %}

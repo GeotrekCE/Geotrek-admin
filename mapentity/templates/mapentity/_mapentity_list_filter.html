@@ -1,0 +1,24 @@
+{% load i18n %}
+<span class="pull-right">
+    <a href="#" id="filters-btn" class="btn  btn-info"><i class="icon-filter icon-white"></i> {% trans "Filter" %}</a>
+</span>
+
+<div id="filters-hover"></div>
+<div id="filters-popover"></div>
+<div id="filters-wrapper" style="display:None">
+    <div id="filters-panel">
+        <form id="mainfilter" action="{{ model.get_jsonlist_url }}" class="well form-inline">
+            <div id="filters-close">
+                <a href="#"><i class="icon-remove"></i></a>
+            </div>
+            <div class="left">
+                {{ filterform.form.as_p }}
+            </div>
+            <div class="right"></div>
+            <div class="actions">
+                <input id="reset" type="reset" class="btn" />
+                <a id="filter" class="btn btn-primary"><i class="icon-search icon-white"></i> {% trans "Filter" %}</a>
+            </div>
+        </form>
+    </div>
+</div>

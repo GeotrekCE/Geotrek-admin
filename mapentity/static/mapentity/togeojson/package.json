@@ -1,0 +1,31 @@
+{
+  "name": "togeojson",
+  "version": "0.3.0",
+  "description": "turn KML and GPX into GeoJSON",
+  "main": "togeojson.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha -R spec"
+  },
+  "devDependencies": {
+    "mocha": "1.12.x",
+    "mocha-phantomjs": "~3.1.0",
+    "geojsonhint": "~0.1.2",
+    "expect.js": "~0.2.0"
+  },
+  "bin": {
+    "togeojson": "togeojson"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tmcw/togeojson.git"
+  },
+  "license": "BSD",
+  "dependencies": {
+    "jsdom": "~0.3.1",
+    "optimist": "~0.3.5",
+    "xmldom": "~0.1.16"
+  }
+}

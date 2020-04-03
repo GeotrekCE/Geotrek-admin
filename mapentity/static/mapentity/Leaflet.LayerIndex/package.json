@@ -1,0 +1,21 @@
+{
+    "name": "leaflet-layerindex"
+  , "version": "0.0.1"
+  , "description": "Spatial index of Leaflet layer objects using RTree.js"
+  , "keywords": ["Leaflet", "GIS", "RTree"]
+  , "main": "leaflet.layerindex.js"
+  , "bugs": {
+    "url": "https://github.com/makinacorpus/Leaflet.LayerIndex/issues"
+  }
+  , "repository": {
+    "type": "git",
+    "url": "git://github.com/makinacorpus/Leaflet.LayerIndex.git"
+  }
+  , "license": "MIT"
+  , "scripts": {
+  }
+  , "dependencies": {
+    "leaflet": "*",
+    "rtree": "*"
+  }
+}

@@ -1,0 +1,86 @@
+{% extends "mapentity/base_site.html" %}
+{% load i18n static leaflet_tags mapentity_tags %}
+
+{% block title %}{{ objectsname }} | {{ block.super }}{% endblock title %}
+
+
+{% block container %}
+    <div id="container">
+
+    <!-- List Panel -->
+    <div id="panelleft">
+
+        <!-- Modules Panel -->
+        <div id="entitylist">
+            <ul class="nav nav-pills nav-stacked">
+                {% for entity in allowed_entities %}
+                    {% if entity.menu %}
+                        <li class="centered {% if entity.modelname == modelname %}active{% endif %}">
+                          <a href="{% url entity.url_list %}" title="{{ entity.label }}"><img src="{% static entity.icon %}"/></a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div id="list-panel">
+
+            <div class="btn-toolbar clearfix">
+                {% block mainactions %}
+                    {% if can_add %}
+                        <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus icon-white"></i> {{ create_label }}</a>
+                    {% else %}
+                        <span class="btn disabled" href="#"><i class="icon-plus icon-white"></i> {{ create_label }}</span>
+                    {% endif %}
+                {% endblock mainactions %}
+
+                {% smart_include "listactions" %}
+
+                {% include "mapentity/_mapentity_list_filter.html" %}
+            </div>
+
+            {% block mainlist %}
+                <table id="objects-list" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            {% for field in columns %}
+                            <th>{{ model|verbose:field }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+                <div id="list-download-toolbar">
+                    <div class="btn-group {% if not can_export %}disabled{% endif %}">
+                        <button class="btn btn-mini" name="csv" title="{% trans "CSV" %}"><img src="{% static "paperclip/fileicons/csv.png" %}"></button>
+                        <button class="btn btn-mini" name="shp" title="{% trans "Shapefile" %}"><img src="{% static "paperclip/fileicons/shp.png" %}"></button>
+                        <button class="btn btn-mini" name="gpx" title="{% trans "GPX" %}"><img src="{% static "paperclip/fileicons/gpx.png" %}"></button>
+                     </div>
+                </div>
+            {% endblock mainlist %}
+        </div>
+    </div>
+
+    <!-- Map Panel -->
+    <div id="panelright">
+        <div class="map-panel">
+        {% block mainmap %}
+            <div id="maphead">
+                {% smart_include "maphead" %}
+            </div>
+            <div id="mainmap"/>
+        {% endblock mainmap %}
+        </div>
+    </div>
+
+    </div>
+{% endblock container %}
+
+
+{% block extrabody %}
+    {{ block.super }}
+
+    {% leaflet_map "mainmap" fitextent=False creatediv=False %}
+{% endblock extrabody %}
