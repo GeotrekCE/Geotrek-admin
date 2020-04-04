@@ -79,7 +79,7 @@ def load_sql_files(app, stage):
             f = open(sql_file)
             sql = f.read()
             f.close()
-            if not settings.TEST:
+            if not settings.TEST and not settings.DEBUG:
                 # Remove RAISE NOTICE (/!\ only one-liners)
                 sql = re.sub(r"\n.*RAISE NOTICE.*\n", "\n", sql)
                 # TODO: this is the ugliest driver hack ever
