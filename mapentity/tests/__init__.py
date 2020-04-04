@@ -416,8 +416,7 @@ class MapEntityLiveTest(LiveServerTestCase):
 
         # Ask again with headers, and expect a 304 status (not changed)
         lastmodified = response.get('Last-Modified')
-        response = self.client.get(geojson_layer_url,
-                                   headers={'if-modified-since': lastmodified})
+        response = self.client.get(geojson_layer_url, HTTP_IF_MODIFIED_SINCE=lastmodified)
         self.assertEqual(response.status_code, 304)
 
         # Ask again with headers in the past, and expect a 200
