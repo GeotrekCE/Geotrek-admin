@@ -5,7 +5,7 @@ from django.contrib.gis.db import models
 from django.utils.translation import get_language, ugettext_lazy as _
 from django.urls import reverse
 
-from mapentity.helpers import is_file_newer, convertit_download, smart_urljoin
+from mapentity.helpers import is_file_uptodate, convertit_download, smart_urljoin
 from .helpers import AltimetryHelper
 
 
@@ -89,7 +89,7 @@ class AltimetryMixin(models.Model):
         from .views import HttpSVGResponse
         path = self.get_elevation_chart_path(language)
         # Do nothing if image is up-to-date
-        if is_file_newer(path, self.date_update):
+        if is_file_uptodate(path, self.date_update):
             return False
         # Download converted chart as png using convertit
         source = smart_urljoin(rooturl, self.get_elevation_chart_url(language))

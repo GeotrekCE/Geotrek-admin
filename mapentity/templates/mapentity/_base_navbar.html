@@ -1,0 +1,90 @@
+{% load static i18n mapentity_tags %}
+<div class="navbar">
+  <div class="navbar-inner">
+
+    <ul id="historylist" class="nav">
+      {% if request.user.is_authenticated %}
+      <li class="history {% if viewname == "list" %}{{ modelname }} active{% endif %}">
+        <div id="entitylist-dropdown" class="btn-group">
+              <button class="btn" onclick="javascript:location='{% url 'home' %}';">
+                {% trans "List" %} <span id="nbresults" class="badge">?</span>
+              </button>
+              <button class="btn dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                {% for entity in allowed_entities %}
+                  {% if entity.menu %}
+                    <li class="{% if entity.modelname == modelname %}active{% endif %}">
+                      <a href="{% url entity.url_list %}">
+                        <img src="{% static entity.icon_small %}"/> {{ entity.label }}
+                      </a>
+                      <div class="add-btn">
+                        <a class="btn btn-success btn-mini" title="{% trans "Add" %}" href="{% url entity.url_add %}">+</a>
+                      </div>
+                    </li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+        </div>
+      </li>
+      {% endif %}
+      {% block toolbar %}
+        {% for item in request.session.history %}
+            {% if forloop.first and viewname != "list" %}
+                <li class="{{ modelname }} active history first">
+                    <a href="{{ item.path }}">
+                        <span class="content">{% if title|lower %}{{ title }}{% else %}{{ item.title }}{% endif %}</span>
+                        {% if viewname == "detail" %}
+                           <button class="close hidden">&times;</button>
+                        {% endif %}
+                    </a>
+                </li>
+            {% else %}
+                <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %} {{ item.modelname }} history">
+                    <a href="{{ item.path }}" title="{{ item.title }}">
+                        <span class="content">{{ item.title|truncatechars:12 }}</span>
+                        <button class="close hidden">&times;</button>
+                    </a>
+                </li>
+            {% endif %}
+        {% endfor %}
+      {% endblock toolbar %}
+    </ul>
+
+    <ul class="nav pull-right">
+        {% if request.user.is_authenticated %}
+        <li class="divider-vertical"></li>
+        <li class="dropdown">
+           <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="icon-user"></i>
+              {{ request.user }}
+              {% smart_include "usermenu" %}
+              <b class="caret"></b>
+           </a>
+           <ul class="dropdown-menu">
+
+              {% smart_include "menuentries" %}
+
+              {% if request.user.is_staff %}
+              <li><a href="{% url 'admin:index' %}">{% trans "Admin" %}</a></li>
+              {% else %}
+              <li class="disabled"><a href="#">{% trans "Admin" %}</a></li>
+              {% endif %}
+
+              {% if ACTION_HISTORY_ENABLED %}
+                {% if 'admin.read_logentry' in perms %}
+                <li><a class="{% block nav-logbook %}{% endblock nav-logbook %}" href="{% url 'mapentity:logentry_list' %}">{% trans "Logbook" %}</a></li>
+                {% else %}
+                <li class="disabled"><a href="#">{% trans "Logbook" %}</a></li>
+                {% endif %}
+              {% endif %}
+
+              <li class="divider"></li>
+              <li><a href="{% url 'logout' %}"><i class="icon-off"></i> {% trans "Logout" %}</a></li>
+           </ul>
+        </li>
+        {% endif %}
+      </ul>
+  </div>
+</div>

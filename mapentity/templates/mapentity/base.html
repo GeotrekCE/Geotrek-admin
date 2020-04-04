@@ -1,0 +1,159 @@
+{% load static i18n leaflet_tags compress mapentity_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+<!-- version {{ VERSION }} -->
+{% block head %}
+
+  <title>{% block title %}{{ TITLE }}{% endblock title %}</title>
+  <link rel="icon" type="image/png" href="{% media_static_fallback "upload/favicon.png" "images/favicon.png" %}" />
+
+  {% compress css %}
+    {% if DEBUG %}
+        <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.css" %}" />
+        <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap-responsive.css" %}" />
+    {% else %}
+        <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}" />
+        <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap-responsive.min.css" %}" />
+    {% endif %}
+    <link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/datepicker.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "mapentity/dataTables/css/dataTables.bootstrap.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "mapentity/chosen/chosen.css" %}">
+    {% leaflet_css plugins="ALL" %}
+
+    <style>
+    {% for entity in allowed_entities %}
+        .form-panel.{{ entity.modelname }}, .details-panel.{{ entity.modelname }} {
+            background: url({% static entity.icon_big %}) no-repeat;
+        }
+        li.history.{{ entity.modelname }} > a, li.history.{{ entity.modelname }} button:first-child {
+            background-image: url({% static entity.icon_small %});
+        }
+    {% endfor %}
+    {% if not DEBUG %}
+        .map-error { border: 0px;}
+    {% endif %}
+    </style>
+    <link rel="stylesheet" href="{% static "mapentity/style.css" %}" />
+
+    {% smart_include "extracss" %}
+
+  {% endcompress %}
+
+  {% if DEBUG %}
+      <script type="text/javascript" src="{% static "mapentity/jquery.js" %}"></script>
+  {% else %}
+      <script type="text/javascript" src="{% static "mapentity/jquery.min.js" %}"></script>
+  {% endif %}
+{% endblock head %}
+
+{% block extrahead %}
+{% endblock extrahead %}
+</head>
+<body data-viewname="{{ viewname }}"
+      data-appname="{{ appname }}"
+      data-modelname="{{ modelname }}"
+      data-objectsname="{{ objectsname }}"
+      data-pk="{{ object.pk }}">
+
+  {% if messages %}
+  <ul id="alert-box">
+      {% for message in messages %}
+      <li class="alert {{ message.tags }}">
+          {{ message }}
+          {% if 'warning' in message.tags or 'error' in message.tags %}
+          <button class="close" data-dismiss="alert">×</button>
+          {% endif %}
+      </li>
+      {% endfor %}
+  </ul>
+  {% endif %}
+
+  {% block content %}
+    {% block navbar %}
+        {% include "mapentity/_base_navbar.html" %}
+    {% endblock navbar %}
+
+    {% block container %}
+    <div id="container" class="container-fluid {% if MAP_BACKGROUND_FOGGED %}map-fogged{% endif %}">
+        <div class="row-fluid">
+            {% block mainpanel %}
+            {% endblock mainpanel %}
+        </div><!--/row-->
+    </div><!--/container-->
+    {% endblock container %}
+  {% endblock content %}
+
+
+  {% block extrabody %}
+    {{ block.super }}
+
+    {# Global Javascript settings #}
+    <script src="{% url JS_SETTINGS_VIEW %}?callback=window.SETTINGS%3D"></script>
+    {% block change_style %}{% endblock change_style %}
+    {% compress js %}
+
+        {% if DEBUG %}
+          <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.js" %}"></script>
+        {% else %}
+          <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+        {% endif %}
+        <script src="{% static "mapentity/jquery.hoverIntent.js" %}"></script>
+        <script src="{% static "paperclip/bootstrap-confirm.js" %}"></script>
+        <script src="{% static "bootstrap/js/bootstrap-datepicker.js" %}"></script>
+        {% for lang in LANGUAGES %}
+            {% if lang.0 != 'en' %}<script type="text/javascript" src="{% get_static_prefix %}bootstrap/js/locales/bootstrap-datepicker.{{ lang.0 }}.js"  charset="UTF-8"></script>{% endif %}
+        {% endfor %}
+
+        {% leaflet_js plugins="ALL" %}
+
+        <script type="text/javascript" src="{% static "mapentity/mapentity.helpers.js" %}"></script>
+        <script type="text/javascript" src="{% static "mapentity/mapentity.views.js" %}"></script>
+        <script type="text/javascript" src="{% static "mapentity/mapentity.history.js" %}"></script>
+        <script type="text/javascript" src="{% static "mapentity/mapentity.map.js" %}"></script>
+        <script type="text/javascript" src="{% static "mapentity/mapentity.context.js" %}"></script>
+        <script type="text/javascript" src="{% static "mapentity/mapentity.filter.js" %}"></script>
+
+        <script type="text/javascript">
+            L.Icon.Default.imagePath = '{% static "leaflet/images/" %}';
+            L.Control.MeasureControl.TITLE = "{% trans "Measure distances" %}";
+            L.Control.Screenshot.TITLE = "{% trans "Save map as image" %}";
+            L.Control.FileLayerLoad.LABEL = '<i class="icon-folder-open"></i>';
+            L.Control.FileLayerLoad.TITLE = "{% trans "Load local file (GPX, KML, GeoJSON)" %}";
+            L.GeometryField.unsavedText = "{% trans "Map geometry is unsaved" %}";
+
+            MapEntity.i18n = {
+              'Objects': "{% trans "Objects" %}",
+              'Search': "{% trans "Search" %}",
+              'results': "{% trans "results" %}",
+              'Current criteria': "{% trans "Current criteria" %}",
+              'No filter': "{% trans "No filter" %}",
+            };
+        </script>
+
+        <script type="text/javascript" src="{% static "mapentity/jquery.deserialize.js" %}"></script>
+        <script type="text/javascript" src="{% static "mapentity/chosen/chosen.jquery.min.js" %}"></script>
+        <script type="text/javascript" src="{% static "mapentity/dataTables/js/jquery.dataTables.js" %}"></script>
+        <script type="text/javascript" src="{% static "mapentity/dataTables/js/dataTables.ajax_list.js" %}"></script>
+        <script type="text/javascript" src="{% static "mapentity/dataTables/js/dataTables.plugins.js" %}"></script>
+
+        <script type="text/javascript" src="{% static "mapentity/leaflet-objectslayer.js" %}"></script>
+        <script type="text/javascript" src="{% static "mapentity/leaflet-serializers.js" %}"></script>
+        <script type="text/javascript" src="{% static "mapentity/leaflet-datatables.js" %}"></script>
+        <script type="text/javascript" src="{% static "mapentity/leaflet.informationcontrol.js" %}"></script>
+        <script type="text/javascript" src="{% static "mapentity/leaflet.enumeration.js" %}"></script>
+
+        <!-- Forms -->
+        <script src="{% static "mapentity/RelatedObjectLookups.js" %}"></script>
+        <script src="{% static "mapentity/jquery.formset-patched.js" %}"></script>
+
+        {% smart_include "extrajs" %}
+
+    {% endcompress %}
+
+    {% smart_include "extrabody" %}
+
+  {% endblock extrabody %}
+</body>
+</html>
+

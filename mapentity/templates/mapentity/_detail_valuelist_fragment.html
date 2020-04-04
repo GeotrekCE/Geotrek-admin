@@ -1,0 +1,8 @@
+{% load i18n %}
+{% for v in valuelist %}
+    {% if forloop.first %}<ul>{% endif %}
+    <li{% if modelname and v.pk %} class="hoverable" data-modelname="{{ modelname }}" data-pk="{{ v.pk }}"{% endif %}>{% if v.enumeration %}<span class="enumeration-value">{{ v.enumeration }}.&nbsp;</span>{% endif %}{{ v.text|safe }}</li>
+    {% if forloop.last %}</ul>{% endif %}
+{% empty %}
+    <span class="none">{% trans "None" %}</span>
+{% endfor %}

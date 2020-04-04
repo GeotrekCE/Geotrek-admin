@@ -1,8 +1,12 @@
-[report]
+[run]
+source =
+    mapentity
+    geotrek
 omit =
     */tests*
     */migrations*
-    */lib*
-    /src*
+    */settings*
+data_file = var/.coverage
 
+[report]
 ignore_errors = true
