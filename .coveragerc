@@ -5,7 +5,7 @@ source =
 omit =
     */tests*
     */migrations*
-    /env/lib*
+    */settings*
 data_file = var/.coverage
 
 [report]
