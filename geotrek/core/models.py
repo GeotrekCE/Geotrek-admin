@@ -420,8 +420,16 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
         # In this case, the trigger will create them, so ignore them here.
         if other.ispoint():
             aggrs = aggrs[:1]
-        for aggr in aggrs:
-            self.add_path(aggr.path, aggr.start_position, aggr.end_position, aggr.order, reload=False)
+        PathAggregation.objects.bulk_create([
+            PathAggregation(
+                path=aggr.path,
+                topo_object=self,
+                start_position=aggr.start_position,
+                end_position=aggr.end_position,
+                order=aggr.order
+            )
+            for aggr in aggrs
+        ])
         self.reload()
         if delete:
             other.delete(force=True)  # Really delete it from database

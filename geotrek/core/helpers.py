@@ -103,13 +103,20 @@ class TopologyHelper(object):
                 positions = subtopology.get('positions', {})
                 paths = subtopology['paths']
                 # Create path aggregations
+                aggrs = []
                 for i, path in enumerate(paths):
                     last_path = i == len(paths) - 1
                     # Javascript hash keys are parsed as a string
                     idx = str(i)
                     start_position, end_position = positions.get(idx, (0.0, 1.0))
                     path = Path.objects.get(pk=path)
-                    topology.add_path(path, start=start_position, end=end_position, order=counter, reload=False)
+                    aggrs.append(PathAggregation(
+                        path=path,
+                        topo_object=topology,
+                        start_position=start_position,
+                        end_position=end_position,
+                        order=counter
+                    ))
                     if not last_topo and last_path:
                         counter += 1
                         # Intermediary marker.
@@ -131,8 +138,15 @@ class TopologyHelper(object):
                         elif len(paths) == 1:
                             pos = end_position
                         assert pos >= 0, "Invalid position (%s, %s)." % (start_position, end_position)
-                        topology.add_path(path, start=pos, end=pos, order=counter, reload=False)
+                        aggrs.append(PathAggregation(
+                            path=path,
+                            topo_object=topology,
+                            start_position=pos,
+                            end_position=pos,
+                            order=counter
+                        ))
                     counter += 1
+                PathAggregation.objects.bulk_create(aggrs)
         except (AssertionError, ValueError, KeyError, Path.DoesNotExist) as e:
             raise ValueError("Invalid serialized topology : %s" % e)
         topology.save()
