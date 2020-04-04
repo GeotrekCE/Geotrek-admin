@@ -11,6 +11,9 @@ override_dh_virtualenv:
 	--builtin-venv \
 	--extra-pip-arg --quiet
 
+override_dh_strip:
+	dh_strip --no-automatic-dbgsym
+
 override_dh_installinit:
 	dh_installinit --name=geotrek debian/geotrek.service
 	dh_installinit --name=geotrek-ui debian/geotrek-ui.service
