@@ -27,8 +27,7 @@ class PhysicalEdge(MapEntityMixin, Topology):
     topo_object = models.OneToOneField(Topology, parent_link=True, on_delete=models.CASCADE)
     physical_type = models.ForeignKey(PhysicalType, verbose_name=_("Physical type"),
                                       on_delete=models.CASCADE)
-    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True,
-                           db_column='id_externe')
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     class Meta:
         verbose_name = _("Physical edge")
