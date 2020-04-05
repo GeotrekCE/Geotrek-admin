@@ -67,6 +67,8 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                                 on_delete=models.CASCADE, verbose_name=_("Project"))
     description = models.TextField(blank=True, verbose_name=_("Description"), help_text=_("Remarks and notes"))
 
+    eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
+
     objects = InterventionManager()
 
     class Meta:
