@@ -53,7 +53,7 @@ class TopologyHelper(object):
         except (TypeError, ValueError):
             pass  # value is not integer, thus should be deserialized
         if not settings.TREKKING_TOPOLOGY_ENABLED:
-            return Topology.objects.create(geom=GEOSGeometry(serialized, srid=settings.API_SRID))
+            return Topology.objects.create(kind='TMP', geom=GEOSGeometry(serialized, srid=settings.API_SRID))
         objdict = serialized
         if isinstance(serialized, str):
             try:
@@ -90,9 +90,8 @@ class TopologyHelper(object):
             except (Topology.DoesNotExist, ValueError):
                 pass
 
-        kind = objdict[0].get('kind')
         offset = objdict[0].get('offset', 0.0)
-        topology = TopologyFactory.create(no_path=True, kind=kind, offset=offset)
+        topology = TopologyFactory.create(no_path=True, kind='TMP', offset=offset)
         # Remove all existing path aggregation (WTF: created from factory ?)
         PathAggregation.objects.filter(topo_object=topology).delete()
 

@@ -181,7 +181,7 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER core_topology_offset_u_tgr
 AFTER UPDATE OF "offset" ON core_topology
 FOR EACH ROW
-WHEN (NEW.geom_3d IS NULL OR OLD.offset != NEW.offset)
+WHEN (NEW.kind != 'TMP' AND (NEW.geom_3d IS NULL OR OLD.offset != NEW.offset))
 EXECUTE PROCEDURE update_topology_geom_when_offset_changes();
 
 -------------------------------------------------------------------------------

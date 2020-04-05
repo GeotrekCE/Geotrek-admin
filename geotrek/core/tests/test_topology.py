@@ -623,6 +623,7 @@ class TopologyCornerCases(TestCase):
             }
            ]
         """ % {'p1': p1.pk, 'p2': p2.pk, 'p3': p3.pk})
+        topo.kind = 'TOPOLOGY'
         topo.save()
         self.assertEqual(topo.geom, LineString((2.5, 0), (5, 0), (5, 10),
                                                (7, 10), (5, 10), (5, 0),
@@ -701,6 +702,8 @@ class TopologyLoopTests(TestCase):
            [{"positions":{"0":[0.3,1],"1":[1, 0.4]},"paths":[%(pk1)s,%(pk2)s]},
             {"positions":{"0":[0.4, 0.2]},"paths":[%(pk2)s]},
             {"positions":{"0":[0.2,0],"1":[1,0.3]},"paths":[%(pk2)s,%(pk1)s]}]""" % {'pk1': p1.pk, 'pk2': p2.pk})
+        topod.kind = 'TOPOLOGY'
+        topod.save()
         self.assertEqual(topo.geom, topod.geom)
         self.assertEqual(len(topod.aggregations.all()), 7)
 
@@ -852,7 +855,7 @@ class TopologyDerialization(TestCase):
         path = PathFactory.create()
         topology = Topology.deserialize('[{"paths": [%s], "positions": {"0": [0.0, 1.0]}, "offset": 1}]' % (path.pk))
         self.assertEqual(topology.offset, 1)
-        self.assertEqual(topology.kind, Topology.KIND)
+        self.assertEqual(topology.kind, 'TMP')
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(topology.aggregations.all()[0].path, path)
         self.assertEqual(topology.aggregations.all()[0].start_position, 0.0)

@@ -344,7 +344,7 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
 
     def __init__(self, *args, **kwargs):
         super(Topology, self).__init__(*args, **kwargs)
-        if not self.pk:
+        if not self.pk and not self.kind:
             self.kind = self.__class__.KIND
 
     @property

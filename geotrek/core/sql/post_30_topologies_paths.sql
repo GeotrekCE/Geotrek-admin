@@ -63,12 +63,12 @@ $$ LANGUAGE plpgsql;
 CREATE FUNCTION {# geotrek.core #}.ft_topologies_paths_geometry() RETURNS trigger SECURITY DEFINER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
-        UPDATE core_topology SET geom_need_update = TRUE WHERE id = NEW.topo_object_id;
+        UPDATE core_topology SET geom_need_update = TRUE WHERE id = NEW.topo_object_id AND kind != 'TMP';
     ELSE
-        UPDATE core_topology SET geom_need_update = TRUE WHERE id = OLD.topo_object_id;
+        UPDATE core_topology SET geom_need_update = TRUE WHERE id = OLD.topo_object_id AND kind != 'TMP';
         IF TG_OP = 'UPDATE' THEN -- /!\ Logical ops are commutative in SQL
             IF NEW.topo_object_id != OLD.topo_object_id THEN
-                UPDATE core_topology SET geom_need_update = TRUE WHERE id = NEW.topo_object_id;
+                UPDATE core_topology SET geom_need_update = TRUE WHERE id = NEW.topo_object_id AND kind != 'TMP';
             END IF;
         END IF;
     END IF;
