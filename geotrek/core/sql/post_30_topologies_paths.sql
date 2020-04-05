@@ -61,24 +61,17 @@ $$ LANGUAGE plpgsql;
 -------------------------------------------------------------------------------
 
 CREATE FUNCTION {# geotrek.core #}.ft_topologies_paths_geometry() RETURNS trigger SECURITY DEFINER AS $$
-DECLARE
-    eid integer;
-    eids integer[];
 BEGIN
     IF TG_OP = 'INSERT' THEN
-        eids := array_append(eids, NEW.topo_object_id);
+        UPDATE core_topology SET geom_need_update = TRUE WHERE id = NEW.topo_object_id;
     ELSE
-        eids := array_append(eids, OLD.topo_object_id);
+        UPDATE core_topology SET geom_need_update = TRUE WHERE id = OLD.topo_object_id;
         IF TG_OP = 'UPDATE' THEN -- /!\ Logical ops are commutative in SQL
             IF NEW.topo_object_id != OLD.topo_object_id THEN
-                eids := array_append(eids, NEW.topo_object_id);
+                UPDATE core_topology SET geom_need_update = TRUE WHERE id = NEW.topo_object_id;
             END IF;
         END IF;
     END IF;
-
-    FOREACH eid IN ARRAY eids LOOP
-        PERFORM update_geometry_of_topology(eid);
-    END LOOP;
 
     RETURN NULL;
 END;
@@ -87,6 +80,26 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER core_pathaggregation_geometry_tgr
 AFTER INSERT OR UPDATE OR DELETE ON core_pathaggregation
 FOR EACH ROW EXECUTE PROCEDURE ft_topologies_paths_geometry();
+
+
+DROP TRIGGER IF EXISTS core_pathaggregation_geometry_statement_tgr ON core_pathaggregation;
+DROP FUNCTION IF EXISTS ft_topologies_paths_geometry_statement() CASCADE;
+
+CREATE FUNCTION {# geotrek.core #}.ft_topologies_paths_geometry_statement() RETURNS trigger SECURITY DEFINER AS $$
+DECLARE
+    rec record;
+BEGIN
+    FOR rec IN SELECT * FROM core_topology WHERE geom_need_update = TRUE LOOP
+        PERFORM update_geometry_of_topology(rec.id);
+    END LOOP;
+
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER core_pathaggregation_geometry_statement_tgr
+AFTER INSERT OR UPDATE OR DELETE ON core_pathaggregation
+FOR EACH STATEMENT EXECUTE PROCEDURE ft_topologies_paths_geometry_statement();
 
 
 -------------------------------------------------------------------------------

@@ -10,6 +10,7 @@ ALTER TABLE core_topology ALTER COLUMN min_elevation SET DEFAULT 0;
 ALTER TABLE core_topology ALTER COLUMN max_elevation SET DEFAULT 0;
 ALTER TABLE core_topology ALTER COLUMN ascent SET DEFAULT 0;
 ALTER TABLE core_topology ALTER COLUMN descent SET DEFAULT 0;
+ALTER TABLE core_topology ALTER COLUMN geom_need_update SET DEFAULT FALSE;
 
 ALTER TABLE core_topology DROP CONSTRAINT IF EXISTS e_t_evenement_geom_not_empty;
 ALTER TABLE core_topology DROP CONSTRAINT IF EXISTS core_topology_geom_not_empty;
@@ -154,6 +155,7 @@ BEGIN
                                  descent = elevation.negative_gain
                              WHERE id = topology_id;
     END IF;
+    UPDATE core_topology SET geom_need_update = FALSE WHERE id = topology_id;
 END;
 $$ LANGUAGE plpgsql;
 
