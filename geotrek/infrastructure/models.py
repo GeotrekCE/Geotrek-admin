@@ -2,7 +2,6 @@ import os
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.gis.db import models as gismodels
 from django.conf import settings
 
 from extended_choices import Choices
@@ -12,7 +11,6 @@ from geotrek.common.utils import classproperty
 from geotrek.core.models import Topology, Path
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.mixins import BasePublishableMixin, OptionalPictogramMixin, NoDeleteManager
-
 
 
 INFRASTRUCTURE_TYPES = Choices(
