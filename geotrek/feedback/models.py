@@ -27,15 +27,14 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
                                default="",
                                verbose_name=_("Comment"))
     activity = models.ForeignKey('ReportActivity',
+                                 on_delete=models.SET_NULL,
                                  null=True,
                                  blank=True,
-                                 on_delete=models.SET_NULL,
                                  verbose_name=_("Activity"))
     category = models.ForeignKey('ReportCategory',
-                                 on_delete=models.CASCADE,
+                                 on_delete=models.SET_NULL,
                                  null=True,
                                  blank=True,
-                                 on_delete=models.SET_NULL,
                                  verbose_name=_("Category"))
     problem_magnitude = models.ForeignKey('ReportProblemMagnitude',
                                           null=True,
@@ -43,7 +42,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
                                           on_delete=models.SET_NULL,
                                           verbose_name=_("Problem magnitude"))
     status = models.ForeignKey('ReportStatus',
-                               on_delete=models.CASCADE,
+                               on_delete=models.SET_NULL,
                                null=True,
                                blank=True,
                                default=None,
