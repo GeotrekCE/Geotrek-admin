@@ -2,11 +2,7 @@
 -- Add spatial index (will boost spatial filters)
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS evenements_geom_idx;
-DROP INDEX IF EXISTS e_t_evenement_geom_idx;
-DROP INDEX IF EXISTS core_topology_geom_idx;
 CREATE INDEX core_topology_geom_idx ON core_topology USING gist(geom);
-
 
 ALTER TABLE core_topology ALTER COLUMN "length" SET DEFAULT 0.0;
 ALTER TABLE core_topology ALTER COLUMN slope SET DEFAULT 0.0;
@@ -14,7 +10,6 @@ ALTER TABLE core_topology ALTER COLUMN min_elevation SET DEFAULT 0;
 ALTER TABLE core_topology ALTER COLUMN max_elevation SET DEFAULT 0;
 ALTER TABLE core_topology ALTER COLUMN ascent SET DEFAULT 0;
 ALTER TABLE core_topology ALTER COLUMN descent SET DEFAULT 0;
-
 
 ALTER TABLE core_topology DROP CONSTRAINT IF EXISTS e_t_evenement_geom_not_empty;
 ALTER TABLE core_topology DROP CONSTRAINT IF EXISTS core_topology_geom_not_empty;
@@ -25,14 +20,10 @@ ALTER TABLE core_topology ADD CONSTRAINT core_topology_geom_not_empty CHECK (del
 -- Keep dates up-to-date
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS e_t_evenement_date_insert_tgr ON core_topology;
-DROP TRIGGER IF EXISTS core_topology_date_insert_tgr ON core_topology;
 CREATE TRIGGER core_topology_date_insert_tgr
     BEFORE INSERT ON core_topology
     FOR EACH ROW EXECUTE PROCEDURE ft_date_insert();
 
-DROP TRIGGER IF EXISTS e_t_evenement_date_update_tgr ON core_topology;
-DROP TRIGGER IF EXISTS core_topology_date_update_tgr ON core_topology;
 CREATE TRIGGER core_topology_date_update_tgr
     BEFORE INSERT OR UPDATE ON core_topology
     FOR EACH ROW EXECUTE PROCEDURE ft_date_update();
@@ -40,11 +31,6 @@ CREATE TRIGGER core_topology_date_update_tgr
 ---------------------------------------------------------------------
 -- Make sure cache key (base on lastest updated) is refresh on DELETE
 ---------------------------------------------------------------------
-
-DROP TRIGGER IF EXISTS e_t_evenement_latest_updated_d_tgr ON core_topology;
-DROP TRIGGER IF EXISTS core_topology_latest_updated_d_tgr ON core_topology;
-DROP FUNCTION IF EXISTS evenement_latest_updated_d() CASCADE;
-DROP FUNCTION IF EXISTS topology_latest_updated_d() CASCADE;
 
 CREATE FUNCTION {# geotrek.core #}.topology_latest_updated_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
@@ -65,8 +51,6 @@ FOR EACH ROW EXECUTE PROCEDURE topology_latest_updated_d();
 -- Update geometry of a topology
 -------------------------------------------------------------------------------
 
-DROP FUNCTION IF EXISTS update_geometry_of_evenement(integer) CASCADE;
-DROP FUNCTION IF EXISTS update_geometry_of_topology(integer) CASCADE;
 CREATE FUNCTION {# geotrek.core #}.update_geometry_of_topology(topology_id integer) RETURNS void AS $$
 DECLARE
     egeom geometry;
@@ -178,11 +162,6 @@ $$ LANGUAGE plpgsql;
 -- Update geometry when offset change
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS e_t_evenement_offset_u_tgr ON core_topology;
-DROP TRIGGER IF EXISTS core_topology_offset_u_tgr ON core_topology;
-DROP FUNCTION IF EXISTS update_evenement_geom_when_offset_changes() CASCADE;
-DROP FUNCTION IF EXISTS update_topology_geom_when_offset_changes() CASCADE;
-
 CREATE FUNCTION {# geotrek.core #}.update_topology_geom_when_offset_changes() RETURNS trigger SECURITY DEFINER AS $$
 BEGIN
     -- Note: We are using an "after" trigger here because the function below
@@ -204,11 +183,6 @@ FOR EACH ROW EXECUTE PROCEDURE update_topology_geom_when_offset_changes();
 -------------------------------------------------------------------------------
 -- Update altimetry when geom change (Geotrek-light)
 -------------------------------------------------------------------------------
-
-DROP TRIGGER IF EXISTS e_t_evenement_geom_iu_tgr ON core_topology;
-DROP TRIGGER IF EXISTS core_topology_geom_iu_tgr ON core_topology;
-DROP FUNCTION IF EXISTS evenement_elevation_iu() CASCADE;
-DROP FUNCTION IF EXISTS topology_elevation_iu() CASCADE;
 
 CREATE FUNCTION {# geotrek.core #}.topology_elevation_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE

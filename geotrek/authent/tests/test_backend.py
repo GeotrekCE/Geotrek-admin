@@ -1,4 +1,4 @@
-from django.test import TransactionTestCase
+from django.test import TestCase
 
 from django.db import connections
 from django.core.exceptions import ImproperlyConfigured
@@ -27,9 +27,8 @@ _CREATE_TABLE_STATEMENT = """
 
 def query_db(sqlquery):
     connection = connections[settings.AUTHENT_DATABASE or 'default']
-    cursor = connection.cursor()
-    cursor.execute(sqlquery)
-    return cursor
+    with connection.cursor() as cursor:
+        cursor.execute(sqlquery)
 
 
 def password2md5(password):
@@ -40,7 +39,7 @@ def password2md5(password):
 @override_settings(AUTHENT_DATABASE='default',
                    AUTHENT_TABLENAME='authent_table',
                    AUTHENTICATION_BACKENDS=('geotrek.authent.backend.DatabaseBackend',))
-class AuthentDatabaseTest(AuthentFixturesMixin, TransactionTestCase):
+class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
     def setUp(self):
         self.backend = DatabaseBackend()
         query_db(_CREATE_TABLE_STATEMENT % settings.AUTHENT_TABLENAME)

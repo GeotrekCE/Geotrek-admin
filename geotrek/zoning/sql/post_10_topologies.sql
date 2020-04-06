@@ -2,19 +2,8 @@
 -- Add spatial index (will boost spatial filters)
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS couche_communes_geom_idx;
-DROP INDEX IF EXISTS l_commune_geom_idx;
-DROP INDEX IF EXISTS zoning_city_geom_idx;
 CREATE INDEX zoning_city_geom_idx ON zoning_city USING gist(geom);
-
-DROP INDEX IF EXISTS couche_secteurs_geom_idx;
-DROP INDEX IF EXISTS l_secteur_geom_idx;
-DROP INDEX IF EXISTS zoning_district_geom_idx;
 CREATE INDEX zoning_district_geom_idx ON zoning_district USING gist(geom);
-
-DROP INDEX IF EXISTS couche_zonage_reglementaire_geom_idx;
-DROP INDEX IF EXISTS l_zonage_reglementaire_geom_idx;
-DROP INDEX IF EXISTS zoning_restrictedarea_geom_idx;
 CREATE INDEX zoning_restrictedarea_geom_idx ON zoning_restrictedarea USING gist(geom);
 
 
@@ -37,10 +26,6 @@ ALTER TABLE zoning_restrictedarea ADD CONSTRAINT zoning_restrictedarea_geom_isva
 -------------------------------------------------------------------------------
 -- Delete City/District/Restrictedarea when topologies are deleted
 -------------------------------------------------------------------------------
-
-DROP TRIGGER IF EXISTS path_topologies_d_tgr ON core_pathaggregation;
-DROP FUNCTION IF EXISTS lien_auto_troncon_couches_sig_d() CASCADE;
-DROP FUNCTION IF EXISTS auto_link_path_topologies_d() CASCADE;
 
 CREATE FUNCTION {# geotrek.zoning #}.auto_link_path_topologies_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
@@ -74,15 +59,6 @@ FOR EACH ROW EXECUTE PROCEDURE auto_link_path_topologies_d();
 -- Delete topologies when City/District/Restrictedarea are deleted
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS commune_troncons_d_tgr ON zoning_cityedge;
-DROP TRIGGER IF EXISTS city_paths_d_tgr ON zoning_cityedge;
-DROP TRIGGER IF EXISTS secteur_troncons_d_tgr ON zoning_districtedge;
-DROP TRIGGER IF EXISTS district_paths_d_tgr ON zoning_districtedge;
-DROP TRIGGER IF EXISTS zonage_troncons_d_tgr ON zoning_restrictedareaedge;
-DROP TRIGGER IF EXISTS restrictedarea_paths_d_tgr ON zoning_restrictedareaedge;
-DROP FUNCTION IF EXISTS nettoyage_auto_couches_sig_d() CASCADE;
-DROP FUNCTION IF EXISTS auto_clean_topologies_sig_d() CASCADE;
-
 CREATE FUNCTION {# geotrek.zoning #}.auto_clean_topologies_sig_d() RETURNS trigger SECURITY DEFINER AS $$
 BEGIN
     DELETE FROM core_pathaggregation WHERE topo_object_id = OLD.topo_object_id;
@@ -104,15 +80,9 @@ AFTER DELETE ON zoning_restrictedareaedge
 FOR EACH ROW EXECUTE PROCEDURE auto_clean_topologies_sig_d();
 
 
-
 -------------------------------------------------------------------------------
 -- Sync when Troncon modified
 -------------------------------------------------------------------------------
-
-DROP TRIGGER IF EXISTS l_t_troncon_couches_sig_iu_tgr ON core_path;
-DROP TRIGGER IF EXISTS core_path_topologies_iu_tgr ON core_path;
-DROP FUNCTION IF EXISTS lien_auto_troncon_couches_sig_iu() CASCADE;
-DROP FUNCTION IF EXISTS auto_link_path_topologies_iu() CASCADE;
 
 CREATE FUNCTION {# geotrek.zoning #}.auto_link_path_topologies_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
@@ -164,19 +134,9 @@ AFTER INSERT OR UPDATE OF geom ON core_path
 FOR EACH ROW EXECUTE PROCEDURE auto_link_path_topologies_iu();
 
 
-
 -------------------------------------------------------------------------------
 -- Sync when Commune/Zonage/Secteur modified
 -------------------------------------------------------------------------------
-
-DROP TRIGGER IF EXISTS commune_troncons_iu_tgr ON zoning_city;
-DROP TRIGGER IF EXISTS city_paths_iu_tgr ON zoning_city;
-DROP TRIGGER IF EXISTS secteur_troncons_iu_tgr ON zoning_district;
-DROP TRIGGER IF EXISTS district_paths_iu_tgr ON zoning_district;
-DROP TRIGGER IF EXISTS zonage_troncons_iu_tgr ON zoning_restrictedarea;
-DROP TRIGGER IF EXISTS restrictedarea_paths_iu_tgr ON zoning_restrictedarea;
-DROP FUNCTION IF EXISTS lien_auto_couches_sig_troncon_iu() CASCADE;
-DROP FUNCTION IF EXISTS auto_link_topologies_path_iu() CASCADE;
 
 CREATE FUNCTION {# geotrek.zoning #}.auto_link_topologies_path_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE

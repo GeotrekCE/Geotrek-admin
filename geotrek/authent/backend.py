@@ -90,18 +90,16 @@ class DatabaseBackend(ModelBackend):
             raise ImproperlyConfigured("Database backend is used, without AUTHENT_TABLENAME setting.")
         try:
             result = None
-            cursor = connections[settings.AUTHENT_DATABASE].cursor()
+            with connections[settings.AUTHENT_DATABASE].cursor() as cursor:
+                table_list = [table.name for table in connections[settings.AUTHENT_DATABASE].introspection.get_table_list(cursor)]
+                tablename = settings.AUTHENT_TABLENAME if '.' not in settings.AUTHENT_TABLENAME else settings.AUTHENT_TABLENAME.split('.', 1)[1]
+                if tablename not in table_list:
+                    raise ImproperlyConfigured("Database backend is used, and AUTHENT_TABLENAME does not exists.")
 
-            table_list = [table.name for table in connections[settings.AUTHENT_DATABASE].introspection.get_table_list(cursor)]
-            tablename = settings.AUTHENT_TABLENAME if '.' not in settings.AUTHENT_TABLENAME else settings.AUTHENT_TABLENAME.split('.', 1)[1]
-            if tablename not in table_list:
-                raise ImproperlyConfigured("Database backend is used, and AUTHENT_TABLENAME does not exists.")
-
-            sqlquery = "SELECT %s FROM %s WHERE username = " % (', '.join(FIELDS), settings.AUTHENT_TABLENAME)
-            cursor.execute(sqlquery + "%s", [username])
-            result = cursor.fetchone()
+                sqlquery = "SELECT %s FROM %s WHERE username = " % (', '.join(FIELDS), settings.AUTHENT_TABLENAME)
+                cursor.execute(sqlquery + "%s", [username])
+                result = cursor.fetchone()
         except ImproperlyConfigured as e:
-            connections[settings.AUTHENT_DATABASE].close()
             logger.exception(e)
             raise
         if result:

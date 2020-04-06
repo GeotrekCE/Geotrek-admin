@@ -1,8 +1,7 @@
+from django.apps import AppConfig
 from django.utils.translation import ugettext_lazy as _
 
-from geotrek.appconfig import GeotrekConfig
 
-
-class ZoningConfig(GeotrekConfig):
+class ZoningConfig(AppConfig):
     name = 'geotrek.zoning'
     verbose_name = _("Zoning")

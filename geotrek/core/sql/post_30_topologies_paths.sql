@@ -9,12 +9,29 @@ BEGIN
     -- Obtain FK name (which is dynamically generated when table is created)
     SELECT c.conname INTO fk_name
         FROM pg_class t1, pg_class t2, pg_constraint c
+        WHERE t1.relname = 'e_r_evenement_troncon' AND c.conrelid = t1.oid
+          AND t2.relname = 'l_t_troncon' AND c.confrelid = t2.oid
+          AND c.contype = 'f';
+    -- Use a dynamic SQL statement with the name found
+    IF fk_name IS NOT NULL THEN
+        EXECUTE 'ALTER TABLE e_r_evenement_troncon DROP CONSTRAINT IF EXISTS ' || quote_ident(fk_name);
+    END IF;
+END;
+$$;
+
+DO LANGUAGE plpgsql $$
+DECLARE
+    fk_name varchar;
+BEGIN
+    -- Obtain FK name (which is dynamically generated when table is created)
+    SELECT c.conname INTO fk_name
+        FROM pg_class t1, pg_class t2, pg_constraint c
         WHERE t1.relname = 'core_pathaggregation' AND c.conrelid = t1.oid
           AND t2.relname = 'core_path' AND c.confrelid = t2.oid
           AND c.contype = 'f';
     -- Use a dynamic SQL statement with the name found
     IF fk_name IS NOT NULL THEN
-        EXECUTE 'ALTER TABLE core_pathaggregation DROP CONSTRAINT ' || quote_ident(fk_name);
+        EXECUTE 'ALTER TABLE core_pathaggregation DROP CONSTRAINT IF EXISTS ' || quote_ident(fk_name);
     END IF;
 END;
 $$;
@@ -26,9 +43,6 @@ ALTER TABLE core_pathaggregation ADD FOREIGN KEY (path_id) REFERENCES core_path(
 -------------------------------------------------------------------------------
 -- Evenements utilities
 -------------------------------------------------------------------------------
-
-DROP FUNCTION IF EXISTS ft_troncon_interpolate(integer, geometry) CASCADE;
-DROP FUNCTION IF EXISTS ft_path_interpolate(integer, geometry) CASCADE;
 
 CREATE FUNCTION {# geotrek.core #}.ft_path_interpolate(path integer, point geometry) RETURNS RECORD AS $$
 DECLARE 
@@ -45,11 +59,6 @@ $$ LANGUAGE plpgsql;
 -------------------------------------------------------------------------------
 -- Compute geometry of Evenements
 -------------------------------------------------------------------------------
-
-DROP TRIGGER IF EXISTS e_r_evenement_troncon_geometry_tgr ON core_pathaggregation;
-DROP TRIGGER IF EXISTS core_pathaggregation_geometry_tgr ON core_pathaggregation;
-DROP FUNCTION IF EXISTS ft_evenements_troncons_geometry() CASCADE;
-DROP FUNCTION IF EXISTS ft_topologies_paths_geometry() CASCADE;
 
 CREATE FUNCTION {# geotrek.core #}.ft_topologies_paths_geometry() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
@@ -83,11 +92,6 @@ FOR EACH ROW EXECUTE PROCEDURE ft_topologies_paths_geometry();
 -------------------------------------------------------------------------------
 -- Emulate junction points
 -------------------------------------------------------------------------------
-
-DROP TRIGGER IF EXISTS e_r_evenement_troncon_junction_point_iu_tgr ON core_pathaggregation;
-DROP TRIGGER IF EXISTS core_pathaggregation_junction_point_iu_tgr ON core_pathaggregation;
-DROP FUNCTION IF EXISTS ft_evenements_troncons_junction_point_iu() CASCADE;
-DROP FUNCTION IF EXISTS ft_topologies_paths_junction_point_iu() CASCADE;
 
 CREATE FUNCTION {# geotrek.core #}.ft_topologies_paths_junction_point_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE

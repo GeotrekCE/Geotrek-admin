@@ -2,8 +2,6 @@
 -- Convert 2D to 3D using a DEM
 -------------------------------------------------------------------------------
 
-DROP TYPE IF EXISTS elevation_infos CASCADE;
-
 CREATE TYPE {# geotrek.altimetry #}.elevation_infos AS (
     draped geometry,
     slope float,
@@ -12,8 +10,6 @@ CREATE TYPE {# geotrek.altimetry #}.elevation_infos AS (
     positive_gain integer,
     negative_gain integer
 );
-
-DROP FUNCTION IF EXISTS ft_smooth_line(geometry);
 
 CREATE FUNCTION {# geotrek.altimetry #}.ft_smooth_line(geom geometry)
   RETURNS SETOF geometry AS $$
@@ -45,8 +41,6 @@ BEGIN
 END;
 
 $$ LANGUAGE plpgsql;
-
-DROP FUNCTION IF EXISTS ft_smooth_line(geometry, integer);
 
 CREATE FUNCTION {# geotrek.altimetry #}.ft_smooth_line(
     linegeom geometry,
@@ -99,8 +93,6 @@ END;
 
 $$ LANGUAGE plpgsql;
 
-DROP FUNCTION IF EXISTS ft_drape_line(geometry, integer);
-
 CREATE FUNCTION {# geotrek.altimetry #}.ft_drape_line(linegeom geometry, step integer)
     RETURNS SETOF geometry AS $$
 DECLARE
@@ -140,8 +132,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-DROP FUNCTION IF EXISTS add_point_elevation(geometry);
-
 CREATE FUNCTION {# geotrek.altimetry #}.add_point_elevation(geom geometry) RETURNS geometry AS $$
 DECLARE
     ele integer;
@@ -168,8 +158,6 @@ BEGIN
     RETURN geom3d;
 END;
 $$ LANGUAGE plpgsql;
-
-DROP FUNCTION IF EXISTS ft_elevation_infos(geometry);
 
 CREATE FUNCTION {# geotrek.altimetry #}.ft_elevation_infos(geom geometry) RETURNS elevation_infos AS $$
 DECLARE
@@ -236,8 +224,6 @@ BEGIN
     RETURN result;
 END;
 $$ LANGUAGE plpgsql;
-
-DROP FUNCTION IF EXISTS ft_elevation_infos(geometry, float);
 
 CREATE FUNCTION {# geotrek.altimetry #}.ft_elevation_infos(geom geometry, epsilon float) RETURNS elevation_infos AS $$
 DECLARE

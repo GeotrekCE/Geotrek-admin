@@ -1,8 +1,3 @@
-DROP TRIGGER IF EXISTS l_t_troncon_00_snap_geom_iu_tgr ON core_path;
-DROP TRIGGER IF EXISTS core_path_00_snap_geom_iu_tgr ON core_path;
-DROP FUNCTION IF EXISTS troncons_snap_extremities() CASCADE;
-DROP FUNCTION IF EXISTS paths_snap_extremities() CASCADE;
-
 CREATE FUNCTION {# geotrek.core #}.paths_snap_extremities() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
     linestart geometry;
@@ -90,12 +85,6 @@ FOR EACH ROW EXECUTE PROCEDURE paths_snap_extremities();
 -------------------------------------------------------------------------------
 -- Split paths when crossing each other
 -------------------------------------------------------------------------------
-
-DROP TRIGGER IF EXISTS l_t_troncon_split_geom_iu_tgr ON core_path;
-DROP TRIGGER IF EXISTS l_t_troncon_10_split_geom_iu_tgr ON core_path;
-DROP TRIGGER IF EXISTS core_path_10_split_geom_iu_tgr ON core_path;
-DROP FUNCTION IF EXISTS troncons_evenement_intersect_split() CASCADE;
-DROP FUNCTION IF EXISTS paths_topology_intersect_split() CASCADE;
 
 CREATE FUNCTION {# geotrek.core #}.paths_topology_intersect_split() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE

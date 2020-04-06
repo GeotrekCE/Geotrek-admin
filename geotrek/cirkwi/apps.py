@@ -1,8 +1,7 @@
+from django.apps import AppConfig
 from django.utils.translation import ugettext_lazy as _
 
-from geotrek.appconfig import GeotrekConfig
 
-
-class CirkwiConfig(GeotrekConfig):
+class CirkwiConfig(AppConfig):
     name = 'geotrek.cirkwi'
     verbose_name = _("Cirkwi")

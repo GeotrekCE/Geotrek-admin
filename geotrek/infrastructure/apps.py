@@ -1,8 +1,7 @@
+from django.apps import AppConfig
 from django.utils.translation import ugettext_lazy as _
 
-from geotrek.appconfig import GeotrekConfig
 
-
-class InfrastructureConfig(GeotrekConfig):
+class InfrastructureConfig(AppConfig):
     name = 'geotrek.infrastructure'
     verbose_name = _("Infrastructure")

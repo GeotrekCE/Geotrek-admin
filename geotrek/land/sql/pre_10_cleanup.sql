@@ -1,0 +1,10 @@
+DROP VIEW IF EXISTS f_v_nature;
+DROP VIEW IF EXISTS v_physicals;
+DROP VIEW IF EXISTS f_v_foncier;
+DROP VIEW IF EXISTS v_lands;
+DROP VIEW IF EXISTS f_v_competence;
+DROP VIEW IF EXISTS v_competences;
+DROP VIEW IF EXISTS f_v_gestion_signaletique;
+DROP VIEW IF EXISTS v_signagemanagements;
+DROP VIEW IF EXISTS f_v_gestion_travaux;
+DROP VIEW IF EXISTS v_workmanagements;

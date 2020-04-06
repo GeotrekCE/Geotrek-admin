@@ -1,4 +1,3 @@
-DROP FUNCTION IF EXISTS ft_merge_path(integer,integer) CASCADE;
 CREATE FUNCTION {# geotrek.core #}.ft_merge_path(updated integer, merged integer)
   RETURNS integer AS $$
 
