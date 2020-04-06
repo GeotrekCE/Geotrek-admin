@@ -329,6 +329,7 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
     paths = models.ManyToManyField(Path, through='PathAggregation', verbose_name=_("Path"))
     offset = models.FloatField(default=0.0, verbose_name=_("Offset"))  # in SRID units
     kind = models.CharField(editable=False, verbose_name=_("Kind"), max_length=32)
+    geom_need_update = models.BooleanField(default=False)
 
     geom = models.GeometryField(editable=(not settings.TREKKING_TOPOLOGY_ENABLED),
                                 srid=settings.SRID, null=True,
@@ -343,7 +344,7 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
 
     def __init__(self, *args, **kwargs):
         super(Topology, self).__init__(*args, **kwargs)
-        if not self.pk:
+        if not self.pk and not self.kind:
             self.kind = self.__class__.KIND
 
     @property
@@ -420,8 +421,16 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
         # In this case, the trigger will create them, so ignore them here.
         if other.ispoint():
             aggrs = aggrs[:1]
-        for aggr in aggrs:
-            self.add_path(aggr.path, aggr.start_position, aggr.end_position, aggr.order, reload=False)
+        PathAggregation.objects.bulk_create([
+            PathAggregation(
+                path=aggr.path,
+                topo_object=self,
+                start_position=aggr.start_position,
+                end_position=aggr.end_position,
+                order=aggr.order
+            )
+            for aggr in aggrs
+        ])
         self.reload()
         if delete:
             other.delete(force=True)  # Really delete it from database

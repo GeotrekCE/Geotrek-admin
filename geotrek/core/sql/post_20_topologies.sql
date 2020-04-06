@@ -10,6 +10,7 @@ ALTER TABLE core_topology ALTER COLUMN min_elevation SET DEFAULT 0;
 ALTER TABLE core_topology ALTER COLUMN max_elevation SET DEFAULT 0;
 ALTER TABLE core_topology ALTER COLUMN ascent SET DEFAULT 0;
 ALTER TABLE core_topology ALTER COLUMN descent SET DEFAULT 0;
+ALTER TABLE core_topology ALTER COLUMN geom_need_update SET DEFAULT FALSE;
 
 ALTER TABLE core_topology DROP CONSTRAINT IF EXISTS e_t_evenement_geom_not_empty;
 ALTER TABLE core_topology DROP CONSTRAINT IF EXISTS core_topology_geom_not_empty;
@@ -154,6 +155,7 @@ BEGIN
                                  descent = elevation.negative_gain
                              WHERE id = topology_id;
     END IF;
+    UPDATE core_topology SET geom_need_update = FALSE WHERE id = topology_id;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -178,7 +180,9 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER core_topology_offset_u_tgr
 AFTER UPDATE OF "offset" ON core_topology
-FOR EACH ROW EXECUTE PROCEDURE update_topology_geom_when_offset_changes();
+FOR EACH ROW
+WHEN (NEW.kind != 'TMP' AND (NEW.geom_3d IS NULL OR OLD.offset != NEW.offset))
+EXECUTE PROCEDURE update_topology_geom_when_offset_changes();
 
 -------------------------------------------------------------------------------
 -- Update altimetry when geom change (Geotrek-light)

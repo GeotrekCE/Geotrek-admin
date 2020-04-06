@@ -36,7 +36,7 @@ BEGIN
             END IF;
         END LOOP;
         IF NOT ST_Equals(linestart, result) THEN
-            RAISE NOTICE 'Snapped start % to %, from %', ST_AsText(linestart), ST_AsText(result), ST_AsText(other);
+            -- RAISE NOTICE 'Snapped start % to %, from %', ST_AsText(linestart), ST_AsText(result), ST_AsText(other);
         END IF;
     END IF;
     newline := array_append(newline, result);
@@ -66,12 +66,12 @@ BEGIN
             END IF;
         END LOOP;
         IF NOT ST_Equals(lineend, result) THEN
-            RAISE NOTICE 'Snapped end % to %, from %', ST_AsText(lineend), ST_AsText(result), ST_AsText(other);
+            -- RAISE NOTICE 'Snapped end % to %, from %', ST_AsText(lineend), ST_AsText(result), ST_AsText(other);
         END IF;
     END IF;
     newline := array_append(newline, result);
 
-    RAISE NOTICE 'New geom %', ST_AsText(ST_MakeLine(newline));
+    -- RAISE NOTICE 'New geom %', ST_AsText(ST_MakeLine(newline));
     NEW.geom := ST_MakeLine(newline);
     RETURN NEW;
 END;
@@ -118,7 +118,7 @@ BEGIN
                          AND GeometryType(ST_Intersection(geom, NEW.geom)) NOT IN ('LINESTRING', 'MULTILINESTRING')
     LOOP
 
-        RAISE NOTICE '%-% (%) intersects %-% (%) : %', NEW.id, NEW.name, ST_AsText(NEW.geom), path.id, path.name, ST_AsText(path.geom), ST_AsText(ST_Intersection(path.geom, NEW.geom));
+        -- RAISE NOTICE '%-% (%) intersects %-% (%) : %', NEW.id, NEW.name, ST_AsText(NEW.geom), path.id, path.name, ST_AsText(path.geom), ST_AsText(ST_Intersection(path.geom, NEW.geom));
 
         -- Locate intersecting point(s) on NEW, for later use
         FOR fraction IN SELECT ST_LineLocatePoint(NEW.geom,
@@ -153,7 +153,7 @@ BEGIN
                                                                       ST_ClosestPoint(path.geom, ST_EndPoint(NEW.geom))));
 
         END IF;
-        RAISE NOTICE 'EEE : %', array_to_string(intersections_on_current, ', ');
+        -- RAISE NOTICE 'EEE : %', array_to_string(intersections_on_current, ', ');
         FOR fraction IN SELECT ST_LineLocatePoint(path.geom, (ST_Dump(ST_Intersection(path.geom, NEW.geom))).geom)
         LOOP
             intersections_on_current := array_append(intersections_on_current, fraction);
@@ -177,7 +177,7 @@ BEGIN
 
         -- Skip if intersections are 0,1 (means not crossing)
         IF array_length(intersections_on_new, 1) > 2 THEN
-            RAISE NOTICE 'New: % % intersecting on NEW % % : %', NEW.id, NEW.name, path.id, path.name, intersections_on_new;
+            -- RAISE NOTICE 'New: % % intersecting on NEW % % : %', NEW.id, NEW.name, path.id, path.name, intersections_on_new;
 
             FOR i IN 1..(array_length(intersections_on_new, 1) - 1)
             LOOP
@@ -195,14 +195,14 @@ BEGIN
                     -- First segment : shrink it !
                     SELECT COUNT(*) INTO t_count FROM core_path WHERE ST_Contains(ST_Buffer(segment,0.0001),geom);
                     IF t_count = 0 THEN
-                        RAISE NOTICE 'New: Skrink %-% (%) to %', NEW.id, NEW.name, ST_AsText(NEW.geom), ST_AsText(segment);
+                        -- RAISE NOTICE 'New: Skrink %-% (%) to %', NEW.id, NEW.name, ST_AsText(NEW.geom), ST_AsText(segment);
                         UPDATE core_path SET geom = segment WHERE id = NEW.id;
                     END IF;
                 ELSE
                     -- Next ones : create clones !
                     SELECT COUNT(*) INTO t_count FROM core_path WHERE ST_Contains(ST_Buffer(segment,0.0001),geom);
                     IF t_count = 0 THEN
-                        RAISE NOTICE 'New: Create clone of %-% with geom %', NEW.id, NEW.name, ST_AsText(segment);
+                        -- RAISE NOTICE 'New: Create clone of %-% with geom %', NEW.id, NEW.name, ST_AsText(segment);
                         INSERT INTO core_path (structure_id,
                                                  visible,
                                                  valid,
@@ -247,11 +247,11 @@ BEGIN
 
         -- Skip if intersections are 0,1 (means not crossing)
         IF array_length(intersections_on_current, 1) > 2 THEN
-            RAISE NOTICE 'Current: % % intersecting on current % % : %', NEW.id, NEW.name, path.id, path.name, intersections_on_current;
+            -- RAISE NOTICE 'Current: % % intersecting on current % % : %', NEW.id, NEW.name, path.id, path.name, intersections_on_current;
 
             SELECT array_agg(id) INTO existing_et FROM core_pathaggregation et WHERE et.path_id = path.id;
              IF existing_et IS NOT NULL THEN
-                 RAISE NOTICE 'Existing topologies id for %-% (%): %', path.id, path.name, ST_AsText(path.geom), existing_et;
+                 -- RAISE NOTICE 'Existing topologies id for %-% (%): %', path.id, path.name, ST_AsText(path.geom), existing_et;
              END IF;
 
             FOR i IN 1..(array_length(intersections_on_current, 1) - 1)
@@ -270,14 +270,14 @@ BEGIN
                     -- First segment : shrink it !
                     SELECT geom INTO t_geom FROM core_path WHERE id = path.id;
                     IF NOT ST_Equals(t_geom, segment) THEN
-                        RAISE NOTICE 'Current: Skrink %-% (%) to %', path.id, path.name, ST_AsText(path.geom), ST_AsText(segment);
+                        -- RAISE NOTICE 'Current: Skrink %-% (%) to %', path.id, path.name, ST_AsText(path.geom), ST_AsText(segment);
                         UPDATE core_path SET geom = segment WHERE id = path.id;
                     END IF;
                 ELSE
                     -- Next ones : create clones !
                     SELECT COUNT(*) INTO t_count FROM core_path WHERE ST_Contains(ST_Buffer(geom,0.0001),segment);
                     IF t_count = 0 THEN
-                        RAISE NOTICE 'Current: Create clone of %-% (%) with geom %', path.id, path.name, ST_AsText(path.geom), ST_AsText(segment);
+                        -- RAISE NOTICE 'Current: Create clone of %-% (%) with geom %', path.id, path.name, ST_AsText(path.geom), ST_AsText(segment);
                         INSERT INTO core_path (structure_id,
                                                  visible,
                                                  valid,
@@ -342,7 +342,7 @@ BEGIN
                                        (start_position = end_position AND start_position = a AND "offset" = 0)); -- Point
                         GET DIAGNOSTICS t_count = ROW_COUNT;
                         IF t_count > 0 THEN
-                            RAISE NOTICE 'Duplicated % topologies of %-% (%) on [% ; %] for %-% (%)', t_count, path.id, path.name, ST_AsText(path.geom), a, b, tid_clone, path.name, ST_AsText(segment);
+                            -- RAISE NOTICE 'Duplicated % topologies of %-% (%) on [% ; %] for %-% (%)', t_count, path.id, path.name, ST_AsText(path.geom), a, b, tid_clone, path.name, ST_AsText(segment);
                         END IF;
                         -- Special case : point topology at the end of path
                         IF b = 1 THEN
@@ -359,7 +359,7 @@ BEGIN
                                       "offset" = 0;
                             GET DIAGNOSTICS t_count = ROW_COUNT;
                             IF t_count > 0 THEN
-                                RAISE NOTICE 'Duplicated % point topologies of %-% (%) on intersection at the end of %-% (%) at [%]', t_count, path.id, path.name, ST_AsText(t_geom), tid_clone, path.name, ST_AsText(segment), fraction;
+                                -- RAISE NOTICE 'Duplicated % point topologies of %-% (%) on intersection at the end of %-% (%) at [%]', t_count, path.id, path.name, ST_AsText(t_geom), tid_clone, path.name, ST_AsText(segment), fraction;
                             END IF;
                         END IF;
                         -- Special case : point topology exactly where NEW path intersects
@@ -375,7 +375,7 @@ BEGIN
                                   AND "offset" = 0;
                             GET DIAGNOSTICS t_count = ROW_COUNT;
                             IF t_count > 0 THEN
-                                RAISE NOTICE 'Duplicated % point topologies of %-% (%) on intersection by %-% (%) at [%]', t_count, path.id, path.name, ST_AsText(path.geom), NEW.id, NEW.name, ST_AsText(NEW.geom), a;
+                                -- RAISE NOTICE 'Duplicated % point topologies of %-% (%) on intersection by %-% (%) at [%]', t_count, path.id, path.name, ST_AsText(path.geom), NEW.id, NEW.name, ST_AsText(NEW.geom), a;
                             END IF;
                         END IF;
 
@@ -428,7 +428,7 @@ BEGIN
                                                  AND (least(start_position, end_position) > b OR greatest(start_position, end_position) < a);
             GET DIAGNOSTICS t_count = ROW_COUNT;
             IF t_count > 0 THEN
-                RAISE NOTICE 'Removed % topologies of %-% on [% ; %]', t_count, path.id,  path.name, a, b;
+                -- RAISE NOTICE 'Removed % topologies of %-% on [% ; %]', t_count, path.id,  path.name, a, b;
             END IF;
 
             -- Update topologies overlapping
@@ -439,7 +439,7 @@ BEGIN
                 AND least(start_position, end_position) <= b AND greatest(start_position, end_position) >= a;
             GET DIAGNOSTICS t_count = ROW_COUNT;
             IF t_count > 0 THEN
-                RAISE NOTICE 'Updated % topologies of %-% on [% ; %]', t_count, path.id,  path.name, a, b;
+                -- RAISE NOTICE 'Updated % topologies of %-% on [% ; %]', t_count, path.id,  path.name, a, b;
             END IF;
         END IF;
 
@@ -447,7 +447,7 @@ BEGIN
     END LOOP;
 
     IF array_length(intersections_on_new, 1) > 0 OR array_length(intersections_on_current, 1) > 0 THEN
-        RAISE NOTICE 'Done %-% (%).', NEW.id, NEW.name, ST_AsText(NEW.geom);
+        -- RAISE NOTICE 'Done %-% (%).', NEW.id, NEW.name, ST_AsText(NEW.geom);
     END IF;
     RETURN NULL;
 END;
