@@ -151,6 +151,7 @@ class InterventionForm(InterventionBaseForm):
                                              str(final_object))
                 )
             else:
+                self.fields['topology'].initial = final_object
                 self.fields['topology'].label = '%s%s' % (
                     '<img src="%simages/path-16.png" title="%s">' % (settings.STATIC_URL,
                                                                      title),
