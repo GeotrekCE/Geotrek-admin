@@ -1,8 +1,7 @@
+from django.apps import AppConfig
 from django.utils.translation import ugettext_lazy as _
 
-from geotrek.appconfig import GeotrekConfig
 
-
-class TourismConfig(GeotrekConfig):
+class TourismConfig(AppConfig):
     name = 'geotrek.tourism'
     verbose_name = _("Tourism")

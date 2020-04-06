@@ -54,7 +54,7 @@ def debug_pg_notices(f):
     return wrapped
 
 
-def load_sql_files(app):
+def load_sql_files(app, stage):
     """
     Look for SQL files in Django app, and load them into database.
     We remove RAISE NOTICE instructions from SQL outside unit testing
@@ -66,14 +66,11 @@ def load_sql_files(app):
         logger.debug("No SQL folder for %s" % app.module)
         return
 
-    r = re.compile(r'^.*\.sql$')
+    r = re.compile(r'^{}_.*\.sql$'.format(stage))
     sql_files = [os.path.join(sql_dir, f)
                  for f in os.listdir(sql_dir)
                  if r.match(f) is not None]
     sql_files.sort()
-
-    if len(sql_files) == 0:
-        logger.warning("Empty folder %s" % sql_dir)
 
     cursor = connection.cursor()
     for sql_file in sql_files:
@@ -111,6 +108,18 @@ def load_sql_files(app):
             raise
 
 
+def set_search_path():
+    # Set search path with all existing schema + new ones
+    cursor = connection.cursor()
+    cursor.execute('SELECT schema_name FROM information_schema.schemata')
+    search_path = set([s[0] for s in cursor.fetchall() if not s[0].startswith('pg_')])
+    search_path |= set(settings.DATABASE_SCHEMAS.values())
+    search_path.discard('public')
+    search_path.discard('information_schema')
+    search_path = ('public', ) + tuple(search_path)
+    cursor.execute('SET search_path TO {}'.format(', '.join(search_path)))
+
+
 def move_models_to_schemas(app):
     """
     Move models tables to PostgreSQL schemas.
@@ -131,15 +140,7 @@ def move_models_to_schemas(app):
             if isinstance(field, ManyToManyField):
                 table_schemas[model_schema].append(field.m2m_db_table())
 
-    # Set search path with all existing schema + new ones
     cursor = connection.cursor()
-    cursor.execute('SELECT schema_name FROM information_schema.schemata')
-    search_path = set([s[0] for s in cursor.fetchall() if not s[0].startswith('pg_')])
-    search_path |= set(settings.DATABASE_SCHEMAS.values())
-    search_path.discard('public')
-    search_path.discard('information_schema')
-    search_path = ('public', ) + tuple(search_path)
-    cursor.execute('SET search_path TO {}'.format(', '.join(search_path)))
 
     for schema_name in table_schemas.keys():
         try:

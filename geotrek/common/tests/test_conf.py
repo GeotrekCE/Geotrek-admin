@@ -1,7 +1,7 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
 
-from geotrek.common.utils.signals import check_srid_has_meter_unit
+from geotrek.common.management.commands.migrate import check_srid_has_meter_unit
 
 
 class StartupCheckTest(TestCase):

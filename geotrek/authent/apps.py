@@ -1,8 +1,7 @@
+from django.apps import AppConfig
 from django.utils.translation import ugettext_lazy as _
 
-from geotrek.appconfig import GeotrekConfig
 
-
-class AuthentConfig(GeotrekConfig):
+class AuthentConfig(AppConfig):
     name = 'geotrek.authent'
     verbose_name = _("Authent")

@@ -12,47 +12,25 @@ ALTER TABLE core_path ALTER COLUMN valid SET DEFAULT false;
 ALTER TABLE core_path ALTER COLUMN visible SET DEFAULT true;
 
 
-
 -------------------------------------------------------------------------------
 -- Add spatial index (will boost spatial filters)
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS troncons_geom_idx;
-DROP INDEX IF EXISTS l_t_troncon_geom_idx;
-DROP INDEX IF EXISTS core_path_geom_idx;
 CREATE INDEX core_path_geom_idx ON core_path USING gist(geom);
-
-DROP INDEX IF EXISTS troncons_start_point_idx;
-DROP INDEX IF EXISTS l_t_troncon_start_point_idx;
-DROP INDEX IF EXISTS core_path_start_point_idx;
 CREATE INDEX core_path_start_point_idx ON core_path USING gist(ST_StartPoint(geom));
-
-DROP INDEX IF EXISTS troncons_end_point_idx;
-DROP INDEX IF EXISTS l_t_troncon_end_point_idx;
-DROP INDEX IF EXISTS core_path_end_point_idx;
 CREATE INDEX core_path_end_point_idx ON core_path USING gist(ST_EndPoint(geom));
-
-DROP INDEX IF EXISTS troncons_geom_cadastre_idx;
-DROP INDEX IF EXISTS l_t_troncon_geom_cadastre_idx;
-DROP INDEX IF EXISTS core_path_geom_cadastre_idx;
 CREATE INDEX core_path_geom_cadastre_idx ON core_path USING gist(geom_cadastre);
-
-DROP INDEX IF EXISTS l_t_troncon_geom_3d_idx;
-DROP INDEX IF EXISTS core_path_geom_3d_idx;
 CREATE INDEX core_path_geom_3d_idx ON core_path USING gist(geom_3d);
+
 
 -------------------------------------------------------------------------------
 -- Keep dates up-to-date
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS l_t_troncon_date_insert_tgr ON core_path;
-DROP TRIGGER IF EXISTS core_path_date_insert_tgr ON core_path;
 CREATE TRIGGER core_path_date_insert_tgr
     BEFORE INSERT ON core_path
     FOR EACH ROW EXECUTE PROCEDURE ft_date_insert();
 
-DROP TRIGGER IF EXISTS l_t_troncon_date_update_tgr ON core_path;
-DROP TRIGGER IF EXISTS core_path_date_update_tgr ON core_path;
 CREATE TRIGGER core_path_date_update_tgr
     BEFORE INSERT OR UPDATE ON core_path
     FOR EACH ROW EXECUTE PROCEDURE ft_date_update();
@@ -61,8 +39,6 @@ CREATE TRIGGER core_path_date_update_tgr
 -------------------------------------------------------------------------------
 -- Check overlapping paths
 -------------------------------------------------------------------------------
-
-DROP FUNCTION IF EXISTS check_path_not_overlap(integer, geometry) CASCADE;
 
 CREATE FUNCTION {# geotrek.core #}.check_path_not_overlap(pid integer, line geometry) RETURNS BOOL AS $$
 DECLARE
@@ -94,12 +70,6 @@ $$ LANGUAGE plpgsql;
 -------------------------------------------------------------------------------
 -- Update geometry of related topologies
 -------------------------------------------------------------------------------
-
-DROP TRIGGER IF EXISTS l_t_troncon_evenements_geom_u_tgr ON core_path;
-DROP TRIGGER IF EXISTS l_t_troncon_90_evenements_geom_u_tgr ON core_path;
-DROP TRIGGER IF EXISTS core_path_90_topologies_geom_u_tgr ON core_path;
-DROP FUNCTION IF EXISTS update_evenement_geom_when_troncon_changes() CASCADE;
-DROP FUNCTION IF EXISTS update_topology_geom_when_path_changes() CASCADE;
 
 CREATE FUNCTION {# geotrek.core #}.update_topology_geom_when_path_changes() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
@@ -146,23 +116,18 @@ FOR EACH ROW EXECUTE PROCEDURE update_topology_geom_when_path_changes();
 
 ALTER TABLE core_path DROP CONSTRAINT IF EXISTS l_t_troncon_geom_isvalid;
 ALTER TABLE core_path DROP CONSTRAINT IF EXISTS core_path_geom_isvalid;
-ALTER TABLE core_path ADD CONSTRAINT core_path_geom_isvalid CHECK (ST_IsValid(geom));
 
 ALTER TABLE core_path DROP CONSTRAINT IF EXISTS troncons_geom_issimple;
 ALTER TABLE core_path DROP CONSTRAINT IF EXISTS l_t_troncon_geom_issimple;
 ALTER TABLE core_path DROP CONSTRAINT IF EXISTS core_path_geom_issimple;
+
+ALTER TABLE core_path ADD CONSTRAINT core_path_geom_isvalid CHECK (ST_IsValid(geom));
 ALTER TABLE core_path ADD CONSTRAINT core_path_geom_issimple CHECK (ST_IsSimple(geom));
 
 
 -------------------------------------------------------------------------------
 -- Compute elevation and elevation-based indicators
 -------------------------------------------------------------------------------
-
-DROP TRIGGER IF EXISTS l_t_troncon_elevation_iu_tgr ON core_path;
-DROP TRIGGER IF EXISTS l_t_troncon_10_elevation_iu_tgr ON core_path;
-DROP TRIGGER IF EXISTS core_path_10_elevation_iu_tgr ON core_path;
-DROP FUNCTION IF EXISTS elevation_troncon_iu() CASCADE;
-DROP FUNCTION IF EXISTS elevation_path_iu() CASCADE;
 
 CREATE FUNCTION {# geotrek.core #}.elevation_path_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
@@ -191,11 +156,6 @@ FOR EACH ROW EXECUTE PROCEDURE elevation_path_iu();
 -- Change status of related objects when paths are deleted
 -------------------------------------------------------------------------------
 
-DROP TRIGGER IF EXISTS l_t_troncon_related_objects_d_tgr ON core_path;
-DROP TRIGGER IF EXISTS core_path_related_objects_d_tgr ON core_path;
-DROP FUNCTION IF EXISTS troncons_related_objects_d() CASCADE;
-DROP FUNCTION IF EXISTS paths_related_objects_d() CASCADE;
-
 CREATE FUNCTION {# geotrek.core #}.paths_related_objects_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
 BEGIN
@@ -220,11 +180,6 @@ FOR EACH ROW EXECUTE PROCEDURE paths_related_objects_d();
 ---------------------------------------------------------------------
 -- Make sure cache key (base on lastest updated) is refresh on DELETE
 ---------------------------------------------------------------------
-
-DROP TRIGGER IF EXISTS l_t_troncon_latest_updated_d_tgr ON core_path;
-DROP TRIGGER IF EXISTS core_path_latest_updated_d_tgr ON core_path;
-DROP FUNCTION IF EXISTS troncon_latest_updated_d() CASCADE;
-DROP FUNCTION IF EXISTS path_latest_updated_d() CASCADE;
 
 CREATE FUNCTION {# geotrek.core #}.path_latest_updated_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE

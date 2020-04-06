@@ -59,7 +59,6 @@ MANAGERS = ADMINS
 # See all sql/*-schemas.sql files in each Geotrek app.
 #
 DATABASE_SCHEMAS = {
-    'django': 'toto',
     # 'default': 'geotrek',
     # 'django.contrib.gis': 'public',
     # 'django.contrib.auth': 'django',
@@ -270,12 +269,12 @@ else:
 # https://code.djangoproject.com/ticket/12288
 #
 PROJECT_APPS += (
-    'geotrek.appconfig.AuthGeotrekConfig',  # django.contrib.app
-    'geotrek.appconfig.ContenttypeGeotrekConfig',  # django.contrib.contenttypes
-    'geotrek.appconfig.SessionsGeotrekConfig',  # django.contrib.sessions
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'geotrek.appconfig.AdminGeotrekConfig',  # django.contrib.admin
+    'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.gis',
 )
@@ -286,7 +285,7 @@ PROJECT_APPS += (
     'djgeojson',
     'django_filters',
     'tinymce',
-    'geotrek.appconfig.EasyThumbnailsGeotrekConfig',  # easy_thumbnails
+    'easy_thumbnails',
     'mapentity',
     'paperclip',  # paperclip should be load after mapentity for templates
     'leaflet',  # After mapentity to allow it to patch settings
@@ -294,7 +293,7 @@ PROJECT_APPS += (
     'rest_framework_gis',
     'rest_framework_swagger',
     'embed_video',
-    'geotrek.appconfig.CeleryGeotrekConfig',  # django_celery_results
+    'django_celery_results',
     'colorfield',
 )
 

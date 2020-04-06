@@ -1,8 +1,3 @@
-DROP VIEW IF EXISTS m_v_intervention CASCADE;
-DROP VIEW IF EXISTS v_interventions CASCADE;
-DROP VIEW IF EXISTS m_v_chantier;
-DROP VIEW IF EXISTS v_projects;
-
 CREATE VIEW {# geotrek.maintenance #}.v_interventions AS (
 	SELECT e.geom, i.*
 	FROM maintenance_intervention AS i, core_topology AS e

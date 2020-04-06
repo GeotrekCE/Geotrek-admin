@@ -1,7 +1,3 @@
-DROP TRIGGER IF EXISTS l_t_unpublish_trek_d_tgr ON core_path;
-DROP FUNCTION IF EXISTS troncons_unpublish_trek_d() CASCADE;
-DROP FUNCTION IF EXISTS paths_unpublish_trek_d() CASCADE;
-
 CREATE OR REPLACE FUNCTION {# geotrek.trekking #}.paths_unpublish_trek_d() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
 BEGIN
