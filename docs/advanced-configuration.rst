@@ -188,7 +188,13 @@ External authent
 
 You can authenticate user against a remote database table or view. 
 
-To enable this feature, fill *authent_dbname* and other fields in ``etc/settings.ini``.
+To enable this feature, fill these fields in ``/opt/geotrek-admin/var/conf/custom.py``:
+
+::
+
+    AUTHENT_DATABASE = 'your_authent_dbname'
+    AUTHENT_TABLENAME = 'your_authent_table_name'
+    AUTHENTICATION_BACKENDS = ['geotrek.authent.backend.DatabaseBackend']
 
 Expected columns in table/view are :
 
@@ -203,12 +209,12 @@ Expected columns in table/view are :
 
 :notes:
 
-    The schema used in ``authent_tablename`` must be in the user search_path (``ALTER USER $geotrek_db_user SET search_path=public,userschema;``)
+    The schema used in ``AUTHENT_TABLENAME`` must be in the user search_path (``ALTER USER $geotrek_db_user SET search_path=public,userschema;``)
     
     User management will be disabled from Administration backoffice.
 
-    In order to disable remote login, just remove *authent_dbname* value in settings
-    file, and update instance (see paragraph above).
+    In order to disable remote login, just comment *AUTHENTICATION_BACKENDS* line in settings
+    file, and restart instance (see paragraph above).
 
     Geotrek can support many types of users authentication (LDAP, oauth, ...), contact us
     for more details.

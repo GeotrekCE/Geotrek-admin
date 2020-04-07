@@ -390,7 +390,7 @@ MAPENTITY_CONFIG = {
 
 DEFAULT_STRUCTURE_NAME = os.getenv('DEFAULT_STRUCTURE', 'My structure')
 
-VIEWPORT_MARGIN = 0.1  # On list page, around spatial extent from settings.ini
+VIEWPORT_MARGIN = 0.1  # On list page, around SPATIAL_EXTENT
 
 PATHS_LINE_MARKER = 'dotL'
 PATH_SNAPPING_DISTANCE = 1  # Distance of path snapping in meters

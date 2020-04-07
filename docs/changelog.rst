@@ -2,16 +2,25 @@
 CHANGELOG
 =========
 
-2.32.12.dev0
+2.33.0.dev0
 --------------------
 
 **BREAKING CHANGES**
 
-- Remove name field from feedback report, to be GPDR compliant
+- New installation method (Ubuntu packaging)
+- Alternative installation method (Docker, for experts only)
+- Remove name field from feedback report, to be GDPR compliant
+- Rename functions, triggers and sequences in database
 
 **Bug fixes**
 
--
+- Fix timeout when saving long treks (increase computation performances)
+- Fix mecanism to put tables in postgresql schemas
+- Better download errors handling in parsers
+
+**Maintenance**
+
+- Upgrade from Django 1.11 to Django 2.0
 
 **New features**
 
