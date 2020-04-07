@@ -76,12 +76,18 @@ If you are not confident with the install.sh script, or if you are having troubl
 Upgrade from Geotrek-admin >= 2.33
 ----------------------------------
 
-To upgrade the whole server, run:
+To upgrade the whole server, includind, geotrek-admin, run:
 
 ::
 
    apt-get update
    apt-get upgrade
+
+To prevent upgrading geotrek-admin with the whole distribution, you can run:
+
+::
+
+   sudo apt-mark hold geotrek-admin
 
 To upgrade only Geotrek-admin and its dependencies, run:
 
@@ -120,3 +126,5 @@ To remove dependencies (convertit, screamshooter…), run:
 ::
 
    apt-get autoremove
+
+Note: postgresql and database will not be removed by these commands. If need be, remove them manually.
