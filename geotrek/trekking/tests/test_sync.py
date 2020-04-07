@@ -553,8 +553,10 @@ class SyncTestGeom(SyncSetup):
     def get_coordinates(self, geojsonfilename):
         with open(os.path.join('var', 'tmp', 'api', 'en', geojsonfilename), 'r') as f:
             geojsonfile = json.load(f)
-            coordinates = geojsonfile['features'][0]['geometry']['coordinates']
-            return coordinates
+            if geojsonfile['features']:
+                coordinates = geojsonfile['features'][0]['geometry']['coordinates']
+                return coordinates
+            return None
 
 
     def test_sync_geom_4326(self):
@@ -571,11 +573,15 @@ class SyncTestGeom(SyncSetup):
             'services.geojson',
         ]
         for geojsonfilename in geojson_files:
-            coordinates = self.get_coordinates(geojsonfilename)
-            if isinstance(coordinates[0], float):
-                self.assertIn(coordinates[0], range(0, 90))
-            elif isinstance(coordinates[0], list):
-                self.assertIn(coordinates[0][0], range(0, 90))
+            with self.subTest(line=geojsonfilename):
+                coordinates = self.get_coordinates(geojsonfilename)
+                if coordinates:
+                    if isinstance(coordinates[0], float):
+                        self.assertIn(coordinates[0], range(0, 90))
+                    elif isinstance(coordinates[0][0], float):
+                        self.assertIn(coordinates[0][0], range(0, 90))
+                    elif isinstance(coordinates[0][0][0], float):
+                        self.assertIn(coordinates[0][0][0], range(0, 90))
 
 
 @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
