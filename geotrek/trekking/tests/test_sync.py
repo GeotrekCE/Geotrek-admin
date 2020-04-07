@@ -446,15 +446,6 @@ class SyncTest(SyncSetup):
                                 skip_tiles=True, languages='fr', verbosity=2, stdout=output)
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'fr', 'treks', str(trek.pk), 'profile.png')))
 
-    def test_sync_geom_4326(self):
-        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
-                                skip_tiles=True, skip_pdf=True, languages='en', verbosity=2,
-                                content_categories="1", with_events=True, stdout=StringIO())
-        with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
-            treks = json.load(f)
-            # coord are 4326
-            self.assertIn([3.0, 46.5], treks['features'][0]['geometry']['coordinates'])
-
     def test_sync_filtering_sources(self):
         # source A only
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
@@ -555,6 +546,23 @@ class SyncTest(SyncSetup):
                                 with_dives=True, with_events=True, content_categories="1", url='http://localhost:8000',
                                 skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=output)
         self.assertIn('Done', output.getvalue())
+
+
+class SyncTestGeom(SyncSetup):
+
+    def test_sync_geom_4326(self):
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
+                                skip_tiles=True, skip_pdf=True, languages='en', verbosity=2,
+                                content_categories="1", with_events=True, stdout=StringIO())
+
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'pois.geojson'), 'r') as f:
+            pois = json.load(f)
+            # coord are 4326
+            self.assertIn(pois['features'][0]['geometry']['coordinates'][0], range(0, 90))
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
+            treks = json.load(f)
+            # coord are 4326
+            self.assertIn(treks['features'][0]['geometry']['coordinates'][0][0], range(0, 90))
 
 
 @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
