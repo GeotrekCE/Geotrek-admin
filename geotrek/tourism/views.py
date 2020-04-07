@@ -287,7 +287,7 @@ class TouristicContentViewSet(MapEntityViewSet):
         if 'portal' in self.request.GET:
             qs = qs.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
 
-        qs.annotate(api_geom=Transform("geom", settings.API_SRID))
+        qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
         return qs
 
 
@@ -308,7 +308,7 @@ class TouristicEventViewSet(MapEntityViewSet):
         if 'portal' in self.request.GET:
             qs = qs.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
 
-        qs.annotate(api_geom=Transform("geom", settings.API_SRID))
+        qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
         return qs
 
 
@@ -327,7 +327,7 @@ class InformationDeskViewSet(viewsets.ModelViewSet):
         qs = super(InformationDeskViewSet, self).get_queryset()
         if self.kwargs.get('type'):
             qs = qs.filter(type_id=self.kwargs['type'])
-        qs.annotate(api_geom=Transform("geom", settings.API_SRID))
+        qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
         return qs
 
 

@@ -576,11 +576,11 @@ class SyncTestGeom(SyncSetup):
                 coordinates = self.get_coordinates(geojsonfilename)
                 if coordinates:
                     if isinstance(coordinates[0], float):
-                        self.assertIn(coordinates[0], range(0, 90))
+                        self.assertTrue(coordinates[0] < 90)
                     elif isinstance(coordinates[0][0], float):
-                        self.assertIn(coordinates[0][0], range(0, 90))
+                        self.assertTrue(coordinates[0][0] < 90)
                     elif isinstance(coordinates[0][0][0], float):
-                        self.assertIn(coordinates[0][0][0], range(0, 90))
+                        self.assertTrue(coordinates[0][0][0] < 90)
 
 
 @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')

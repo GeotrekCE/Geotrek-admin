@@ -22,12 +22,9 @@ class InformationDeskTypeSerializer(PictogramSerializerMixin, TranslatedModelSer
 class InformationDeskSerializer(TranslatedModelSerializer):
     type = InformationDeskTypeSerializer()
 
-    # Annotated geom field with API_SRID
-    api_geom = rest_gis_fields.GeometryField()
-
     class Meta:
         model = tourism_models.InformationDesk
-        geo_field = 'api_geom'
+        geo_field = 'geom'
         fields = ('name', 'description', 'phone', 'email', 'website',
                   'photo_url', 'street', 'postal_code', 'municipality',
                   'latitude', 'longitude', 'type')
@@ -85,6 +82,9 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
     treks = trekking_serializers.CloseTrekSerializer(many=True, source='published_treks')
     pois = trekking_serializers.ClosePOISerializer(many=True, source='published_pois')
 
+    # Annotated geom field with API_SRID
+    api_geom = rest_gis_fields.GeometryField()
+
     def __init__(self, instance=None, *args, **kwargs):
         super(TouristicContentSerializer, self).__init__(instance, *args, **kwargs)
         if 'geotrek.diving' in settings.INSTALLED_APPS:
@@ -95,7 +95,7 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
 
     class Meta:
         model = tourism_models.TouristicContent
-        geo_field = 'geom'
+        geo_field = 'api_geom'
         fields = ('id', 'description', 'description_teaser', 'category',
                   'themes', 'contact', 'email', 'website', 'practical_info',
                   'type1', 'type2', 'touristic_contents', 'touristic_events',
@@ -121,6 +121,9 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
     source = RecordSourceSerializer(many=True)
     portal = TargetPortalSerializer(many=True)
 
+    # Annotated geom field with API_SRID
+    api_geom = rest_gis_fields.GeometryField()
+
     # Nearby
     touristic_contents = CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
     touristic_events = CloseTouristicEventSerializer(many=True, source='published_touristic_events')
@@ -140,7 +143,7 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
 
     class Meta:
         model = tourism_models.TouristicEvent
-        geo_field = 'geom'
+        geo_field = 'api_geom'
         fields = ('id', 'description_teaser', 'description', 'themes',
                   'begin_date', 'end_date', 'duration', 'meeting_point',
                   'meeting_time', 'contact', 'email', 'website',
