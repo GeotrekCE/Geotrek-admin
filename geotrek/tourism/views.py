@@ -173,6 +173,9 @@ class TouristicEventList(MapEntityList):
     filterform = TouristicEventFilterSet
     columns = ['id', 'name', 'type', 'begin_date', 'end_date']
 
+    def get_queryset(self):
+        return TouristicEvent.objects.existing()
+
 
 class TouristicEventJsonList(MapEntityJsonList, TouristicEventList):
     pass
