@@ -558,10 +558,9 @@ class SyncTestGeom(SyncSetup):
                 return coordinates
             return None
 
-
     def test_sync_geom_4326(self):
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
-                                with_signages=True, with_infrastructures=True, with_dives=True, 
+                                with_signages=True, with_infrastructures=True, with_dives=True,
                                 skip_tiles=True, skip_pdf=True, languages='en', verbosity=2,
                                 content_categories="1", with_events=True, stdout=StringIO())
         geojson_files = [
