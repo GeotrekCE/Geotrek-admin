@@ -11,6 +11,7 @@ from django.utils.translation import get_language, ugettext_lazy as _
 from django.utils.timezone import utc, make_aware
 from django.utils.xmlutils import SimplerXMLGenerator
 from rest_framework import serializers as rest_serializers
+from rest_framework_gis import fields as rest_gis_fields
 
 from mapentity.serializers import GPXSerializer, plain_text
 
@@ -164,6 +165,9 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     previous = rest_serializers.ReadOnlyField(source='previous_id')
     next = rest_serializers.ReadOnlyField(source='next_id')
 
+    # Geom field
+    api_geom = rest_gis_fields.GeometryField()
+
     # Idea: use rest-framework-gis
     parking_location = rest_serializers.SerializerMethodField()
     points_reference = rest_serializers.SerializerMethodField()
@@ -215,7 +219,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     class Meta:
         model = trekking_models.Trek
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        geo_field = 'geom'
+        geo_field = 'api_geom'
         fields = ('id', 'departure', 'arrival', 'duration', 'duration_pretty',
                   'description', 'description_teaser', 'networks', 'advice',
                   'ambiance', 'difficulty', 'information_desks', 'themes',
