@@ -79,9 +79,6 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
     portal = TargetPortalSerializer(many=True)
     reservation_system = rest_serializers.ReadOnlyField(source='reservation_system.name', default="")
 
-    # Annotated geom field with API_SRID
-    api_geom = rest_gis_fields.GeometryField()
-
     # Nearby
     touristic_contents = CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
     touristic_events = CloseTouristicEventSerializer(many=True, source='published_touristic_events')
@@ -98,7 +95,7 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
 
     class Meta:
         model = tourism_models.TouristicContent
-        geo_field = 'api_geom'
+        geo_field = 'geom'
         fields = ('id', 'description', 'description_teaser', 'category',
                   'themes', 'contact', 'email', 'website', 'practical_info',
                   'type1', 'type2', 'touristic_contents', 'touristic_events',
@@ -124,9 +121,6 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
     source = RecordSourceSerializer(many=True)
     portal = TargetPortalSerializer(many=True)
 
-    # Annotated geom field with API_SRID
-    api_geom = rest_gis_fields.GeometryField()
-
     # Nearby
     touristic_contents = CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
     touristic_events = CloseTouristicEventSerializer(many=True, source='published_touristic_events')
@@ -146,7 +140,7 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
 
     class Meta:
         model = tourism_models.TouristicEvent
-        geo_field = 'api_geom'
+        geo_field = 'geom'
         fields = ('id', 'description_teaser', 'description', 'themes',
                   'begin_date', 'end_date', 'duration', 'meeting_point',
                   'meeting_time', 'contact', 'email', 'website',
