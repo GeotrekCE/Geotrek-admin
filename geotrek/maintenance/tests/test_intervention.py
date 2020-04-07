@@ -48,10 +48,9 @@ class InterventionTest(TestCase):
             highstake = tmp
 
         # Add paths to topology
-        infra = InfrastructureFactory.create(no_path=True)
-        infra.add_path(PathFactory.create(stake=lowstake))
-        infra.add_path(PathFactory.create(stake=highstake))
-        infra.add_path(PathFactory.create(stake=lowstake))
+        infra = InfrastructureFactory.create(paths=[PathFactory.create(stake=lowstake),
+                                                    PathFactory.create(stake=highstake),
+                                                    PathFactory.create(stake=lowstake)])
         i.set_topology(infra)
         # Stake is not None anymore
         i.save()
@@ -71,11 +70,9 @@ class InterventionTest(TestCase):
         self.assertEqual(len(p.interventions), 0)
         self.assertEqual(len(p.projects), 0)
 
-        sign = SignageFactory.create(no_path=True)
-        sign.add_path(p, start=0.5, end=0.5)
+        sign = SignageFactory.create(paths=[p])
 
-        infra = InfrastructureFactory.create(no_path=True)
-        infra.add_path(p)
+        infra = InfrastructureFactory.create(paths=[p])
 
         i1 = InterventionFactory.create()
         i1.set_topology(sign)

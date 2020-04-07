@@ -92,11 +92,8 @@ class SyncMobileTilesTest(TestCase):
         portal_b = TargetPortalFactory()
         trek = TrekWithPublishedPOIsFactory.create(published=True)
         trek_not_same_portal = TrekWithPublishedPOIsFactory.create(published=True, portals=(portal_a, ))
-        trek_multi = TrekFactory.create(published=True, no_path=True)
         p = PathFactory.create(geom=LineString((0, 0), (0, 10)))
-        trek_multi.add_path(p, start=0.0, end=0.1)
-        trek_multi.add_path(p, start=0.2, end=0.3)
-        trek_multi.save()
+        trek_multi = TrekFactory.create(published=True, paths=[(p, 0, 0.1), (p, 0.2, 0.3)])
         management.call_command('sync_mobile', 'var/tmp', url='http://localhost:8000', verbosity=2, stdout=output,
                                 portal=portal_b.name)
 

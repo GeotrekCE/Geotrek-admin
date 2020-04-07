@@ -27,8 +27,7 @@ class ProjectTest(TestCase):
         i2.set_topology(infra)
         p2 = infra.paths.get()
 
-        t = TopologyFactory.create(no_path=True)
-        PathAggregationFactory.create(topo_object=t, path=p1)
+        t = TopologyFactory.create(paths=[p1])
         i3.topology = t
 
         proj = ProjectFactory.create()
@@ -135,19 +134,13 @@ class ProjectLandTest(TestCase):
 
         path = infra.paths.get()
 
-        self.signagemgt = SignageManagementEdgeFactory.create(no_path=True)
-        self.signagemgt.add_path(path, start=0.3, end=0.7)
-        self.workmgt = WorkManagementEdgeFactory.create(no_path=True)
-        self.workmgt.add_path(path, start=0.3, end=0.7)
-        self.competencemgt = CompetenceEdgeFactory.create(no_path=True)
-        self.competencemgt.add_path(path, start=0.3, end=0.7)
+        self.signagemgt = SignageManagementEdgeFactory.create(paths=[(path, 0.3, 0.7)])
+        self.workmgt = WorkManagementEdgeFactory.create(paths=[(path, 0.3, 0.7)])
+        self.competencemgt = CompetenceEdgeFactory.create(paths=[(path, 0.3, 0.7)])
 
-        self.cityedge = CityEdgeFactory.create(no_path=True)
-        self.cityedge.add_path(path, start=0.3, end=0.7)
-        self.districtedge = DistrictEdgeFactory.create(no_path=True)
-        self.districtedge.add_path(path, start=0.3, end=0.7)
-        self.restricted = RestrictedAreaEdgeFactory.create(no_path=True)
-        self.restricted.add_path(path, start=0.3, end=0.7)
+        self.cityedge = CityEdgeFactory.create(paths=[(path, 0.3, 0.7)])
+        self.districtedge = DistrictEdgeFactory.create(paths=[(path, 0.3, 0.7)])
+        self.restricted = RestrictedAreaEdgeFactory.create(paths=[(path, 0.3, 0.7)])
 
     def test_project_has_signage_management(self):
         self.assertIn(self.signagemgt, self.intervention.signage_edges)

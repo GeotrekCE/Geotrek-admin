@@ -41,11 +41,9 @@ class SyncRandoTilesTest(TestCase):
     @mock.patch('landez.TilesManager.tile', return_value=b'I am a png')
     def test_tiles(self, mock_tileslist, mock_tiles):
         output = StringIO()
-        trek_multi = TrekFactory.create(published=True, no_path=True)
+
         p = PathFactory.create(geom=LineString((0, 0), (0, 10)))
-        trek_multi.add_path(p, start=0.0, end=0.1)
-        trek_multi.add_path(p, start=0.2, end=0.3)
-        trek_multi.save()
+        trek_multi = TrekFactory.create(published=True, paths=[(p, 0, 0.1), (p, 0.2, 0.3)])
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
                                 languages='en', stdout=output)
         zfile = zipfile.ZipFile(os.path.join('var', 'tmp', 'zip', 'tiles', 'global.zip'))
@@ -302,10 +300,8 @@ class SyncSetup(TestCase):
         self.attachment_poi_file = AttachmentFactory.create(content_object=self.poi_1,
                                                             attachment_file=get_dummy_uploaded_file())
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            infrastructure = InfrastructureFactory.create(no_path=True, name="INFRA_1")
-            infrastructure.add_path(self.trek_1.paths.first(), start=0, end=0)
-            signage = SignageFactory.create(no_path=True, name="SIGNA_1")
-            signage.add_path(self.trek_1.paths.first(), start=0, end=0)
+            InfrastructureFactory.create(paths=[(self.trek_1.paths.first(), 0, 0)], name="INFRA_1")
+            SignageFactory.create(paths=[(self.trek_1.paths.first(), 0, 0)], name="SIGNA_1")
         else:
             InfrastructureFactory.create(geom='SRID=2154;POINT(700000 6600000)', name="INFRA_1")
             SignageFactory.create(geom='SRID=2154;POINT(700000 6600000)', name="SIGNA_1")

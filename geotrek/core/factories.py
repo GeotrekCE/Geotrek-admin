@@ -125,29 +125,35 @@ class TopologyFactory(factory.DjangoModelFactory):
     date_update = dbnow()
 
     @factory.post_generation
-    def no_path(obj, create, extracted=False, **kwargs):
-        """
-        A topology mixin should be linked to at least one Path (through
-        PathAggregation).
-        """
-        if not extracted and create and settings.TREKKING_TOPOLOGY_ENABLED:
+    def paths(obj, create, paths):
+        if not create:
+            return
+        elif create and paths is None:
             PathAggregationFactory.create(topo_object=obj)
-            # Note that it is not possible to attach a related object before the
-            # topo_mixin has an ID.
+            return
+        for i, path in enumerate(paths):
+            if isinstance(path, tuple):
+                obj.add_path(path[0], path[1], path[2], i)
+            else:
+                obj.add_path(path, 0, 1, i)
 
 
 class PointTopologyFactory(TopologyFactory):
     @factory.post_generation
-    def no_path(obj, create, extracted=False, **kwargs):
-        """
-        A topology mixin should be linked to at least one Path (through
-        PathAggregation).
-        """
-
-        if not extracted and create:
-            PathAggregationFactory.create(topo_object=obj,
-                                          start_position=0.0,
-                                          end_position=0.0)
+    def paths(obj, create, paths):
+        if not create:
+            return
+        elif create and paths is None:
+            PathAggregationFactory.create(topo_object=obj)
+            return
+        path = paths[0]
+        if isinstance(path, tuple):
+            obj.add_path(path[0], path[1], path[2])
+        else:
+            obj.add_path(path, 0, 0)
+        if not settings.TREKKING_TOPOLOGY_ENABLED:
+            obj.geom = 'SRID=2154;POINT (700000 6600000)'
+            obj.save()
 
 
 class PathAggregationFactory(factory.DjangoModelFactory):
