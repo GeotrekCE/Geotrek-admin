@@ -106,11 +106,13 @@ jobs:
     steps:
       - checkout
       # Check this is a release and not a development version
-      - run: grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION && export DEB_COMPONENT=main || export DEB_COMPONENT=dev
       - run: apt-get update -q && apt-get install -q -y ca-certificates openssh-client
       - attach_workspace:
           at: /tmp/workspace
-      - run: scp -P $SSH_PORT -o StrictHostKeyChecking=no /tmp/workspace/geotrek-admin_*_amd64.deb $SSH_USER@$SSH_HOST:/srv/packages/incoming/$DEB_COMPONENT/
+      - run:
+          command: |
+            grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION && export DEB_COMPONENT=main || export DEB_COMPONENT=dev
+            scp -P $SSH_PORT -o StrictHostKeyChecking=no /tmp/workspace/geotrek-admin_*_amd64.deb $SSH_USER@$SSH_HOST:/srv/packages/incoming/$DEB_COMPONENT/
       - run: ssh -p $SSH_PORT -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST make -C /srv/packages
 workflows:
   version: 2
