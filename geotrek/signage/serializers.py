@@ -15,6 +15,7 @@ from mapentity.serializers.helpers import smart_plain_text, field_as_string
 from mapentity.serializers.shapefile import ZipShapeSerializer
 
 from rest_framework import serializers as rest_serializers
+from rest_framework_gis import fields as rest_gis_fields
 
 
 class SignageTypeSerializer(PictogramSerializerMixin):
@@ -27,10 +28,13 @@ class SignageSerializer(BasePublishableSerializerMixin):
     type = SignageTypeSerializer()
     structure = StructureSerializer()
 
+    # Annotated geom field with API_SRID
+    api_geom = rest_gis_fields.GeometryField()
+
     class Meta:
         model = signage_models.Signage
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        geo_field = 'geom'
+        geo_field = 'api_geom'
         fields = ('id', 'structure', 'name', 'type', 'code', 'printed_elevation', 'condition',
                   'manager', 'sealing') + \
             BasePublishableSerializerMixin.Meta.fields

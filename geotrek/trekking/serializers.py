@@ -165,7 +165,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     previous = rest_serializers.ReadOnlyField(source='previous_id')
     next = rest_serializers.ReadOnlyField(source='next_id')
 
-    # Geom field
+    # Annotated geom field with API_SRID
     api_geom = rest_gis_fields.GeometryField()
 
     # Idea: use rest-framework-gis
@@ -313,6 +313,9 @@ class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     type = POITypeSerializer()
     structure = StructureSerializer()
 
+    # Annotated geom field with API_SRID
+    api_geom = rest_gis_fields.GeometryField()
+
     def __init__(self, *args, **kwargs):
         super(POISerializer, self).__init__(*args, **kwargs)
 
@@ -324,7 +327,7 @@ class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     class Meta:
         model = trekking_models.Trek
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        geo_field = 'geom'
+        geo_field = 'api_geom'
         fields = ('id', 'description', 'type',) + \
             ('min_elevation', 'max_elevation', 'structure') + \
             ZoningSerializerMixin.Meta.fields + \
@@ -342,10 +345,13 @@ class ServiceSerializer(rest_serializers.ModelSerializer):
     type = ServiceTypeSerializer()
     structure = StructureSerializer()
 
+    # Annotated geom field with API_SRID
+    api_geom = rest_gis_fields.GeometryField()
+
     class Meta:
         model = trekking_models.Service
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        geo_field = 'geom'
+        geo_field = 'api_geom'
         fields = ('id', 'type', 'structure')
 
 
