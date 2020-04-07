@@ -550,19 +550,32 @@ class SyncTest(SyncSetup):
 
 class SyncTestGeom(SyncSetup):
 
+    def get_coordinates(self, geojsonfilename):
+        with open(os.path.join('var', 'tmp', 'api', 'en', geojsonfilename), 'r') as f:
+            geojsonfile = json.load(f)
+            coordinates = geojsonfile['features'][0]['geometry']['coordinates']
+            return coordinates
+
+
     def test_sync_geom_4326(self):
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
+                                with_signages=True, with_infrastructures=True, with_dives=True, 
                                 skip_tiles=True, skip_pdf=True, languages='en', verbosity=2,
                                 content_categories="1", with_events=True, stdout=StringIO())
-
-        with open(os.path.join('var', 'tmp', 'api', 'en', 'pois.geojson'), 'r') as f:
-            pois = json.load(f)
-            # coord are 4326
-            self.assertIn(pois['features'][0]['geometry']['coordinates'][0], range(0, 90))
-        with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
-            treks = json.load(f)
-            # coord are 4326
-            self.assertIn(treks['features'][0]['geometry']['coordinates'][0][0], range(0, 90))
+        geojson_files = [
+            'infrastructures.geojson',
+            'touristiccontents.geojson',
+            'touristicevents.geojson',
+            'sensitiveareas.geojson',
+            'signages.geojson',
+            'services.geojson',
+        ]
+        for geojsonfilename in geojson_files:
+            coordinates = self.get_coordinates(geojsonfilename)
+            if isinstance(coordinates[0], float):
+                self.assertIn(coordinates[0], range(0, 90))
+            elif isinstance(coordinates[0], list):
+                self.assertIn(coordinates[0][0], range(0, 90))
 
 
 @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
