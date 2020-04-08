@@ -11,7 +11,7 @@ from geotrek.core.views import CreateFromTopologyMixin
 from .filters import InfrastructureFilterSet
 from .forms import InfrastructureForm
 from .models import Infrastructure
-from .serializers import InfrastructureSerializer
+from .serializers import InfrastructureSerializer, InfrastructureGeojsonSerializer
 
 from rest_framework import permissions as rest_permissions
 from mapentity.views import MapEntityViewSet
@@ -78,6 +78,7 @@ class InfrastructureDelete(MapEntityDelete):
 class InfrastructureViewSet(MapEntityViewSet):
     model = Infrastructure
     serializer_class = InfrastructureSerializer
+    geojson_serializer_class = InfrastructureGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):

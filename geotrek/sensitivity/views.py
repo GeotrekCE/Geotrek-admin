@@ -8,7 +8,6 @@ from django.views.generic.detail import BaseDetailView
 from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityLayer, MapEntityList, MapEntityDetail,
                              MapEntityDelete, MapEntityViewSet, MapEntityFormat, LastModifiedMixin)
 from rest_framework import permissions as rest_permissions, viewsets
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.api.v2.functions import Transform, Buffer, GeometryType, Area
 from geotrek.authent.decorators import same_structure_required
@@ -17,7 +16,7 @@ from geotrek.common.views import PublicOrReadPermMixin
 from .filters import SensitiveAreaFilterSet
 from .forms import SensitiveAreaForm, RegulatorySensitiveAreaForm
 from .models import SensitiveArea, Species
-from .serializers import SensitiveAreaSerializer
+from .serializers import SensitiveAreaSerializer, SensitiveAreaGeojsonSerializer
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     from geotrek.trekking.models import Trek
@@ -97,6 +96,7 @@ class SensitiveAreaDelete(MapEntityDelete):
 class SensitiveAreaViewSet(MapEntityViewSet):
     model = SensitiveArea
     serializer_class = SensitiveAreaSerializer
+    geojson_serializer_class = SensitiveAreaGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
@@ -121,12 +121,8 @@ class SensitiveAreaViewSet(MapEntityViewSet):
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     class TrekSensitiveAreaViewSet(viewsets.ModelViewSet):
         model = SensitiveArea
+        serializer_class = SensitiveAreaGeojsonSerializer
         permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-        def get_serializer_class(self):
-            class Serializer(SensitiveAreaSerializer, GeoFeatureModelSerializer):
-                pass
-            return Serializer
 
         def get_queryset(self):
             pk = self.kwargs['pk']
@@ -155,9 +151,11 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
         permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
         def get_serializer_class(self):
-            class Serializer(SensitiveAreaSerializer, GeoFeatureModelSerializer):
-                pass
-            return Serializer
+            renderer, media_type = self.perform_content_negotiation(self.request)
+            if getattr(renderer, 'format') == 'geojson':
+                return SensitiveAreaGeojsonSerializer
+            else:
+                return SensitiveAreaSerializer
 
         def get_queryset(self):
             pk = self.kwargs['pk']

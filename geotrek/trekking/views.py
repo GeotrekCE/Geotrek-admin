@@ -22,7 +22,6 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, LastModifiedMixin, MapEntityViewSet)
 from rest_framework import permissions as rest_permissions, viewsets
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.models import RecordSource, TargetPortal, Attachment
@@ -38,11 +37,12 @@ from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
                     WebLinkCreateFormPopup, ServiceForm)
 from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
-                          CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer)
+                          CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer,
+                          TrekGeojsonSerializer, POIGeojsonSerializer, ServiceGeojsonSerializer)
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.signage.models import Signage
-from geotrek.infrastructure.serializers import InfrastructureSerializer
-from geotrek.signage.serializers import SignageSerializer
+from geotrek.infrastructure.serializers import InfrastructureGeojsonSerializer
+from geotrek.signage.serializers import SignageGeojsonSerializer
 
 from .tasks import launch_sync_rando
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
@@ -389,6 +389,7 @@ class WebLinkCreatePopup(CreateView):
 class TrekViewSet(MapEntityViewSet):
     model = Trek
     serializer_class = TrekSerializer
+    geojson_serializer_class = TrekGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
@@ -418,6 +419,7 @@ class TrekViewSet(MapEntityViewSet):
 class POIViewSet(MapEntityViewSet):
     model = POI
     serializer_class = POISerializer
+    geojson_serializer_class = POIGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
@@ -426,12 +428,8 @@ class POIViewSet(MapEntityViewSet):
 
 class TrekPOIViewSet(viewsets.ModelViewSet):
     model = POI
+    serializer_class = POIGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_serializer_class(self):
-        class Serializer(POISerializer, GeoFeatureModelSerializer):
-            pass
-        return Serializer
 
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -443,12 +441,8 @@ class TrekPOIViewSet(viewsets.ModelViewSet):
 
 class TrekSignageViewSet(viewsets.ModelViewSet):
     model = Signage
+    serializer_class = SignageGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_serializer_class(self):
-        class Serializer(SignageSerializer, GeoFeatureModelSerializer):
-            pass
-        return Serializer
 
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -460,12 +454,8 @@ class TrekSignageViewSet(viewsets.ModelViewSet):
 
 class TrekInfrastructureViewSet(viewsets.ModelViewSet):
     model = Infrastructure
+    serializer_class = InfrastructureGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_serializer_class(self):
-        class Serializer(InfrastructureSerializer, GeoFeatureModelSerializer):
-            pass
-        return Serializer
 
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -530,6 +520,7 @@ class ServiceDelete(MapEntityDelete):
 class ServiceViewSet(MapEntityViewSet):
     model = Service
     serializer_class = ServiceSerializer
+    geojson_serializer_class = ServiceGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
@@ -538,12 +529,8 @@ class ServiceViewSet(MapEntityViewSet):
 
 class TrekServiceViewSet(viewsets.ModelViewSet):
     model = Service
+    serializer_class = ServiceGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_serializer_class(self):
-        class Serializer(ServiceSerializer, GeoFeatureModelSerializer):
-            pass
-        return Serializer
 
     def get_queryset(self):
         pk = self.kwargs['pk']

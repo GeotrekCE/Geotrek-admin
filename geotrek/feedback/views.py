@@ -50,6 +50,7 @@ class ReportViewSet(mapentity_views.MapEntityViewSet):
     model = feedback_models.Report
     queryset = feedback_models.Report.objects.all()
     serializer_class = feedback_serializers.ReportSerializer
+    geojson_serializer_class = feedback_serializers.ReportGeojsonSerializer
     authentication_classes = []
     permission_classes = [AllowAny]
 

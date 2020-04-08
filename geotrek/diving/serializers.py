@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis import fields as rest_gis_fields
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.common.serializers import (ThemeSerializer, PublishableSerializerMixin,
                                         PictogramSerializerMixin, RecordSourceSerializer,
@@ -57,9 +58,6 @@ class DiveSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
     treks = trekking_serializers.CloseTrekSerializer(many=True, source='published_treks')
     pois = trekking_serializers.ClosePOISerializer(many=True, source='published_pois')
 
-    # Annotated geom field with API_SRID
-    api_geom = rest_gis_fields.GeometryField()
-
     def __init__(self, instance=None, *args, **kwargs):
         super(DiveSerializer, self).__init__(instance, *args, **kwargs)
         if 'geotrek.tourism' in settings.INSTALLED_APPS:
@@ -73,7 +71,6 @@ class DiveSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
 
     class Meta:
         model = diving_models.Dive
-        geo_field = 'api_geom'
         fields = (
             'id', 'practice', 'description_teaser', 'description', 'advice',
             'difficulty', 'levels', 'themes', 'owner', 'depth',
@@ -102,3 +99,12 @@ class DiveSerializer(PicturesSerializerMixin, PublishableSerializerMixin,
         else:
             data['order'] = settings.DIVE_CATEGORY_ORDER
         return data
+
+
+class DiveGeojsonSerializer(GeoFeatureModelSerializer, DiveSerializer):
+    # Annotated geom field with API_SRID
+    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
+
+    class Meta(DiveSerializer.Meta):
+        geo_field = 'api_geom'
+        fields = DiveSerializer.Meta.fields + ('api_geom', )

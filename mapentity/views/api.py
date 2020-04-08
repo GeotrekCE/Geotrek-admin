@@ -1,10 +1,10 @@
 import logging
 
+from django.contrib.gis.db.models.functions import Transform
 from django.views.generic.list import ListView
 
 from djgeojson.views import GeoJSONLayerView
 from rest_framework import viewsets
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from mapentity import models as mapentity_models
 from ..settings import API_SRID, app_settings
@@ -78,11 +78,11 @@ class MapEntityJsonList(JSONResponseMixin, BaseListView, ListView):
 
 class MapEntityViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
-        serializer = super(MapEntityViewSet, self).get_serializer_class()
         renderer, media_type = self.perform_content_negotiation(self.request)
         if getattr(renderer, 'format') == 'geojson':
-            class Serializer(serializer, GeoFeatureModelSerializer):
-                class Meta(serializer.Meta):
-                    pass
-            return Serializer
-        return serializer
+            return self.geojson_serializer_class
+        else:
+            return self.serializer_class
+
+    def get_queryset(self):
+        return super().get_queryset().annotate(api_geom=Transform("geom", API_SRID))

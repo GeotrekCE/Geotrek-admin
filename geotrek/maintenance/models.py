@@ -276,6 +276,12 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         self._geom = value
 
     @property
+    def api_geom(self):
+        if not self.geom:
+            return None
+        return self.geom.transform(settings.API_SRID, clone=True)
+
+    @property
     def name_display(self):
         return '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
                                                                  self.get_detail_url(),
@@ -476,6 +482,12 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
             if geoms:
                 self._geom = GeometryCollection(*geoms, srid=settings.SRID)
         return self._geom
+
+    @property
+    def api_geom(self):
+        if not self.geom:
+            return None
+        return self.geom.transform(settings.API_SRID, clone=True)
 
     @geom.setter
     def geom(self, value):

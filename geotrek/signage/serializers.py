@@ -16,6 +16,7 @@ from mapentity.serializers.shapefile import ZipShapeSerializer
 
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis import fields as rest_gis_fields
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 
 class SignageTypeSerializer(PictogramSerializerMixin):
@@ -28,16 +29,21 @@ class SignageSerializer(BasePublishableSerializerMixin):
     type = SignageTypeSerializer()
     structure = StructureSerializer()
 
-    # Annotated geom field with API_SRID
-    api_geom = rest_gis_fields.GeometryField()
-
     class Meta:
         model = signage_models.Signage
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        geo_field = 'api_geom'
         fields = ('id', 'structure', 'name', 'type', 'code', 'printed_elevation', 'condition',
                   'manager', 'sealing') + \
             BasePublishableSerializerMixin.Meta.fields
+
+
+class SignageGeojsonSerializer(GeoFeatureModelSerializer, SignageSerializer):
+    # Annotated geom field with API_SRID
+    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
+
+    class Meta(SignageSerializer.Meta):
+        geo_field = 'api_geom'
+        fields = SignageSerializer.Meta.fields + ('api_geom', )
 
 
 class BladeTypeSerializer(rest_serializers.ModelSerializer):
@@ -54,14 +60,20 @@ class BladeSerializer(rest_serializers.ModelSerializer):
     def get_order_lines(self, obj):
         return obj.order_lines.values_list('pk', flat=True)
 
-    # TODO: Fix problem with topology.geom should be possible to use a geom of an other model for the serialization
-
     class Meta:
         model = signage_models.Blade
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        geo_field = 'geom'
         fields = ('id', 'structure', 'number', 'order_lines', 'type', 'color', 'condition', 'direction')
         # TODO: Do a lineserializer for order_lines
+
+
+class BladeGeojsonSerializer(GeoFeatureModelSerializer, BladeSerializer):
+    # Annotated geom field with API_SRID
+    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
+
+    class Meta(BladeSerializer.Meta):
+        geo_field = 'api_geom'
+        fields = BladeSerializer.Meta.fields + ('api_geom', )
 
 
 class CSVBladeSerializer(Serializer):

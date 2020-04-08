@@ -14,7 +14,8 @@ from .models import Intervention, Project
 from .filters import InterventionFilterSet, ProjectFilterSet
 from .forms import (InterventionForm, InterventionCreateForm, ProjectForm,
                     FundingFormSet, ManDayFormSet)
-from .serializers import InterventionSerializer, ProjectSerializer
+from .serializers import (InterventionSerializer, ProjectSerializer,
+                          InterventionGeojsonSerializer, ProjectGeojsonSerializer)
 from rest_framework import permissions as rest_permissions
 
 
@@ -124,7 +125,12 @@ class InterventionViewSet(MapEntityViewSet):
     model = Intervention
     queryset = Intervention.objects.existing()
     serializer_class = InterventionSerializer
+    geojson_serializer_class = InterventionGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        # Override annotation done by MapEntityViewSet.get_queryset()
+        return Intervention.objects.all()
 
 
 class ProjectLayer(MapEntityLayer):
@@ -201,4 +207,9 @@ class ProjectViewSet(MapEntityViewSet):
     model = Project
     queryset = Project.objects.existing()
     serializer_class = ProjectSerializer
+    geojson_serializer_class = ProjectGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        # Override annotation done by MapEntityViewSet.get_queryset()
+        return Project.objects.all()

@@ -12,7 +12,6 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityViewSet)
 from rest_framework import permissions as rest_permissions, viewsets
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.models import RecordSource, TargetPortal
@@ -21,9 +20,9 @@ from geotrek.common.views import DocumentPublic, MarkupPublic
 from .filters import DiveFilterSet
 from .forms import DiveForm
 from .models import Dive
-from .serializers import DiveSerializer
+from .serializers import DiveSerializer, DiveGeojsonSerializer
 from geotrek.trekking.models import POI, Service
-from geotrek.trekking.serializers import POISerializer, ServiceSerializer
+from geotrek.trekking.serializers import POIGeojsonSerializer, ServiceGeojsonSerializer
 from geotrek.trekking.views import FlattenPicturesMixin
 
 
@@ -155,6 +154,7 @@ class DiveMeta(DetailView):
 class DiveViewSet(MapEntityViewSet):
     model = Dive
     serializer_class = DiveSerializer
+    geojson_serializer_class = DiveGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
@@ -175,12 +175,8 @@ class DiveViewSet(MapEntityViewSet):
 
 class DivePOIViewSet(viewsets.ModelViewSet):
     model = POI
+    serializer_class = POIGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_serializer_class(self):
-        class Serializer(POISerializer, GeoFeatureModelSerializer):
-            pass
-        return Serializer
 
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -192,12 +188,8 @@ class DivePOIViewSet(viewsets.ModelViewSet):
 
 class DiveServiceViewSet(viewsets.ModelViewSet):
     model = Service
+    serializer_class = ServiceGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_serializer_class(self):
-        class Serializer(ServiceSerializer, GeoFeatureModelSerializer):
-            pass
-        return Serializer
 
     def get_queryset(self):
         pk = self.kwargs['pk']

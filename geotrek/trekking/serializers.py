@@ -12,6 +12,7 @@ from django.utils.timezone import utc, make_aware
 from django.utils.xmlutils import SimplerXMLGenerator
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis import fields as rest_gis_fields
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from mapentity.serializers import GPXSerializer, plain_text
 
@@ -165,9 +166,6 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     previous = rest_serializers.ReadOnlyField(source='previous_id')
     next = rest_serializers.ReadOnlyField(source='next_id')
 
-    # Annotated geom field with API_SRID
-    api_geom = rest_gis_fields.GeometryField()
-
     # Idea: use rest-framework-gis
     parking_location = rest_serializers.SerializerMethodField()
     points_reference = rest_serializers.SerializerMethodField()
@@ -219,7 +217,6 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     class Meta:
         model = trekking_models.Trek
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        geo_field = 'api_geom'
         fields = ('id', 'departure', 'arrival', 'duration', 'duration_pretty',
                   'description', 'description_teaser', 'networks', 'advice',
                   'ambiance', 'difficulty', 'information_desks', 'themes',
@@ -294,6 +291,15 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         return data
 
 
+class TrekGeojsonSerializer(GeoFeatureModelSerializer, TrekSerializer):
+    # Annotated geom field with API_SRID
+    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
+
+    class Meta(TrekSerializer.Meta):
+        geo_field = 'api_geom'
+        fields = TrekSerializer.Meta.fields + ('api_geom', )
+
+
 class POITypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
     class Meta:
         model = trekking_models.POIType
@@ -313,26 +319,23 @@ class POISerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     type = POITypeSerializer()
     structure = StructureSerializer()
 
-    # Annotated geom field with API_SRID
-    api_geom = rest_gis_fields.GeometryField()
-
-    def __init__(self, *args, **kwargs):
-        super(POISerializer, self).__init__(*args, **kwargs)
-
-        from geotrek.tourism import serializers as tourism_serializers
-
-        self.fields['touristic_contents'] = tourism_serializers.CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
-        self.fields['touristic_events'] = tourism_serializers.CloseTouristicEventSerializer(many=True, source='published_touristic_events')
-
     class Meta:
         model = trekking_models.Trek
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        geo_field = 'api_geom'
         fields = ('id', 'description', 'type',) + \
             ('min_elevation', 'max_elevation', 'structure') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
+
+
+class POIGeojsonSerializer(GeoFeatureModelSerializer, POISerializer):
+    # Annotated geom field with API_SRID
+    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
+
+    class Meta(POISerializer.Meta):
+        geo_field = 'api_geom'
+        fields = POISerializer.Meta.fields + ('api_geom', )
 
 
 class ServiceTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
@@ -345,14 +348,19 @@ class ServiceSerializer(rest_serializers.ModelSerializer):
     type = ServiceTypeSerializer()
     structure = StructureSerializer()
 
-    # Annotated geom field with API_SRID
-    api_geom = rest_gis_fields.GeometryField()
-
     class Meta:
         model = trekking_models.Service
         id_field = 'id'  # By default on this model it's topo_object = OneToOneField(parent_link=True)
-        geo_field = 'api_geom'
         fields = ('id', 'type', 'structure')
+
+
+class ServiceGeojsonSerializer(GeoFeatureModelSerializer, ServiceSerializer):
+    # Annotated geom field with API_SRID
+    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
+
+    class Meta(ServiceSerializer.Meta):
+        geo_field = 'api_geom'
+        fields = ServiceSerializer.Meta.fields + ('api_geom', )
 
 
 def timestamp(dt):
