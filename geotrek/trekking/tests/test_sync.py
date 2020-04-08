@@ -28,15 +28,21 @@ from geotrek.trekking import models as trek_models
 from geotrek.tourism.factories import InformationDeskFactory, TouristicContentFactory, TouristicEventFactory
 
 
-class SyncRandoTilesTest(TestCase):
-    @classmethod
-    def setUpClass(cls):
+class VarTmpTestCase(TestCase):
+    def setUp(self):
         if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
             shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
         if os.path.exists(os.path.join('var', 'tmp')):
             shutil.rmtree(os.path.join('var', 'tmp'))
-        super(SyncRandoTilesTest, cls).setUpClass()
 
+    def tearDown(self):
+        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
+            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
+        if os.path.exists(os.path.join('var', 'tmp')):
+            shutil.rmtree(os.path.join('var', 'tmp'))
+
+
+class SyncRandoTilesTest(VarTmpTestCase):
     @mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
     @mock.patch('landez.TilesManager.tile', return_value=b'I am a png')
     def test_tiles(self, mock_tileslist, mock_tiles):
@@ -122,25 +128,13 @@ class SyncRandoTilesTest(TestCase):
             self.assertEqual(ifile_trek.read(), b'I am a png')
         self.assertIn("zip/tiles/{pk}.zip".format(pk=trek.pk), output.getvalue())
 
-    def tearDown(self):
-        shutil.rmtree(os.path.join('var', 'tmp'))
 
-
-class SyncRandoFailTest(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
-        if os.path.exists(os.path.join('var', 'tmp')):
-            shutil.rmtree(os.path.join('var', 'tmp'))
-        super(SyncRandoFailTest, cls).setUpClass()
-
+class SyncRandoFailTest(VarTmpTestCase):
     def test_fail_directory_not_empty(self):
         os.makedirs(os.path.join('var', 'tmp', 'other'))
         with self.assertRaisesRegexp(CommandError, "Destination directory contains extra data"):
             management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2)
-        shutil.rmtree(os.path.join('var', 'tmp', 'other'))
 
     def test_fail_url_ftp(self):
         with self.assertRaisesRegexp(CommandError, "url parameter should start with http:// or https://"):
@@ -170,7 +164,6 @@ class SyncRandoFailTest(TestCase):
         with self.assertRaisesRegexp(CommandError, msg):
             management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2)
-        shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
 
     @mock.patch('os.mkdir')
     def test_fail_sync_tmp_sync_rando_permission_denied(self, mkdir):
@@ -232,22 +225,10 @@ class SyncRandoFailTest(TestCase):
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output, stderr=StringIO())
         self.assertIn("file does not exist", output.getvalue())
 
-    @classmethod
-    def tearDownClass(cls):
-        super(SyncRandoFailTest, cls).tearDownClass()
-        shutil.rmtree(os.path.join('var', 'tmp'))
 
-
-class SyncSetup(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
-            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))
-        if os.path.exists(os.path.join('var', 'tmp')):
-            shutil.rmtree(os.path.join('var', 'tmp'))
-        super(SyncSetup, cls).setUpClass()
-
+class SyncSetup(VarTmpTestCase):
     def setUp(self):
+        super().setUp()
         self.source_a = RecordSourceFactory()
         self.source_b = RecordSourceFactory()
 
@@ -326,9 +307,6 @@ class SyncSetup(TestCase):
         self.touristic_event_without_attachment = TouristicEventFactory(
             geom='SRID=%s;POINT(700002 6600002)' % settings.SRID, published=True, portals=(self.portal_a,),
             sources=(self.source_b,))
-
-    def tearDown(self):
-        shutil.rmtree(os.path.join('var', 'tmp'))
 
 
 class SyncTest(SyncSetup):
@@ -549,7 +527,6 @@ class SyncTest(SyncSetup):
 
 
 class SyncTestGeom(SyncSetup):
-
     def get_coordinates(self, geojsonfilename):
         with open(os.path.join('var', 'tmp', 'api', 'en', geojsonfilename), 'r') as f:
             geojsonfile = json.load(f)
@@ -671,6 +648,3 @@ class SyncTestPdf(SyncSetup):
         self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristicevents',
                                                      str(self.touristic_event_without_attachment.pk),
                                                      '%s.pdf' % self.touristic_event_without_attachment.slug)))
-
-    def tearDown(self):
-        shutil.rmtree(os.path.join('var', 'tmp'))

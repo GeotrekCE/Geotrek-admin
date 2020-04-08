@@ -33,8 +33,22 @@ from geotrek.tourism.factories import (InformationDeskFactory, InformationDeskTy
 from geotrek.tourism.models import TouristicEventType
 
 
+class VarTmpTestCase(TestCase):
+    def setUp(self):
+        if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
+            shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
+        if os.path.exists(os.path.join('var', 'tmp')):
+            shutil.rmtree(os.path.join('var', 'tmp'))
+
+    def tearDown(self):
+        if os.path.exists(os.path.join('var', 'tmp_sync_mobile')):
+            shutil.rmtree(os.path.join('var', 'tmp_sync_mobile'))
+        if os.path.exists(os.path.join('var', 'tmp')):
+            shutil.rmtree(os.path.join('var', 'tmp'))
+
+
 @mock.patch('landez.TilesManager.tileslist', return_value=[(9, 258, 199)])
-class SyncMobileTilesTest(TestCase):
+class SyncMobileTilesTest(VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
         super(SyncMobileTilesTest, cls).setUpClass()
@@ -116,11 +130,8 @@ class SyncMobileTilesTest(TestCase):
         self.assertFalse(os.path.exists(os.path.join('var/tmp', 'nolang', '{}.zip'.format(trek_not_same_portal.pk))))
         self.assertTrue(os.path.exists(os.path.join('var/tmp', 'nolang', '{}.zip'.format(trek_multi.pk))))
 
-    def tearDown(self):
-        shutil.rmtree('var/tmp')
 
-
-class SyncMobileFailTest(TestCase):
+class SyncMobileFailTest(VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
         super(SyncMobileFailTest, cls).setUpClass()
@@ -131,7 +142,6 @@ class SyncMobileFailTest(TestCase):
         with self.assertRaisesRegexp(CommandError, "Destination directory contains extra data"):
             management.call_command('sync_mobile', 'var/tmp', url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2)
-        shutil.rmtree('var/tmp/other')
 
     def test_fail_sync_already_running(self):
         os.makedirs('var/tmp_sync_mobile')
@@ -141,7 +151,6 @@ class SyncMobileFailTest(TestCase):
         with self.assertRaisesRegexp(CommandError, msg):
             management.call_command('sync_mobile', 'var/tmp', url='http://localhost:8000',
                                     skip_tiles=True, verbosity=2)
-        shutil.rmtree('var/tmp_sync_mobile')
 
     @mock.patch('os.mkdir')
     def test_fail_sync_tmp_sync_rando_permission_denied(self, mkdir):
@@ -199,13 +208,8 @@ class SyncMobileFailTest(TestCase):
                                     skip_tiles=True, languages='fr', verbosity=2, stdout=output)
         self.assertIn("failed (HTTP 500)", output.getvalue())
 
-    @classmethod
-    def tearDownClass(cls):
-        super(SyncMobileFailTest, cls).tearDownClass()
-        shutil.rmtree('var/tmp')
 
-
-class SyncMobileSpecificOptionsTest(TranslationResetMixin, TestCase):
+class SyncMobileSpecificOptionsTest(TranslationResetMixin, VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
         super(SyncMobileSpecificOptionsTest, cls).setUpClass()
@@ -229,7 +233,7 @@ class SyncMobileSpecificOptionsTest(TranslationResetMixin, TestCase):
             self.assertEqual(len(flatpages), 1)
 
 
-class SyncMobileFlatpageTest(TranslationResetMixin, TestCase):
+class SyncMobileFlatpageTest(TranslationResetMixin, VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
         super(SyncMobileFlatpageTest, cls).setUpClass()
@@ -304,13 +308,8 @@ class SyncMobileFlatpageTest(TranslationResetMixin, TestCase):
                                  FlatPage.objects.filter(**{'published_{}'.format(lang): True}).count())
         self.assertIn('en/flatpages.json', output.getvalue())
 
-    @classmethod
-    def tearDownClass(cls):
-        super(SyncMobileFlatpageTest, cls).tearDownClass()
-        shutil.rmtree('var/tmp')
 
-
-class SyncMobileSettingsTest(TranslationResetMixin, TestCase):
+class SyncMobileSettingsTest(TranslationResetMixin, VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
         super(SyncMobileSettingsTest, cls).setUpClass()
@@ -351,13 +350,8 @@ class SyncMobileSettingsTest(TranslationResetMixin, TestCase):
         self.assertEqual(image_desk.size, (32, 32))
         self.assertIn('en/settings.json', output.getvalue())
 
-    @classmethod
-    def tearDownClass(cls):
-        super(SyncMobileSettingsTest, cls).tearDownClass()
-        shutil.rmtree('var/tmp')
 
-
-class SyncMobileTreksTest(TranslationResetMixin, TestCase):
+class SyncMobileTreksTest(TranslationResetMixin, VarTmpTestCase):
     @classmethod
     def setUpClass(cls):
         super(SyncMobileTreksTest, cls).setUpClass()
@@ -551,8 +545,3 @@ class SyncMobileTreksTest(TranslationResetMixin, TestCase):
         management.call_command('sync_mobile', 'var/tmp', url='http://localhost:8000',
                                 skip_tiles=True, verbosity=2, stdout=output)
         self.assertIn('Done', output.getvalue())
-
-    @classmethod
-    def tearDownClass(cls):
-        super(SyncMobileTreksTest, cls).tearDownClass()
-        shutil.rmtree('var/tmp')
