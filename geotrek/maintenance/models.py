@@ -250,30 +250,24 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     @classmethod
     def path_interventions(cls, path):
+        blade_content_type = ContentType.objects.get(model='blade')
         topologies = list(Topology.objects.filter(aggregations__path=path).values_list('pk', flat=True))
+        topologies_intervention = cls.objects.existing().filter(target_id__in=topologies).exclude(
+            target_type=blade_content_type).distinct('pk')
+        interventions = list(topologies_intervention)
         if 'geotrek.signage' in settings.INSTALLED_APPS:
-            topologies.extend(
-                Blade.objects.filter(signage__in=topologies).values_list('pk', flat=True)
-            )
-        return cls.objects.existing().filter(target_id__in=topologies)
+            blades = list(Blade.objects.filter(signage__in=topologies).values_list('id', flat=True))
+            blades_intervention = cls.objects.existing().filter(target_id__in=blades, target_type=blade_content_type)
+            interventions.extend(blades_intervention)
+        return interventions
 
     @classmethod
     def topology_interventions(cls, topology):
-        topologies = list(Topology.overlapping(topology).values_list('pk', flat=True))
-        if 'geotrek.signage' in settings.INSTALLED_APPS:
-            topologies.extend(
-                Blade.objects.filter(signage__in=topologies).values_list('id', flat=True)
-            )
-        return cls.objects.existing().filter(target_id__in=topologies).distinct('pk')
+        return cls.get_interventions(topology)
 
     @classmethod
     def blade_interventions(cls, blade):
-        topologies = list(Topology.overlapping(blade.signage).values_list('pk', flat=True))
-        if 'geotrek.signage' in settings.INSTALLED_APPS:
-            topologies.extend(
-                Blade.objects.filter(signage__in=topologies).values_list('id', flat=True)
-            )
-        return cls.objects.existing().filter(target_id__in=topologies).distinct('pk')
+        return cls.get_interventions(blade.signage)
 
     @property
     def signages(self):
@@ -528,7 +522,7 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
 
     @classmethod
     def path_projects(cls, path):
-        return cls.objects.existing().filter(interventions__in=path.interventions).distinct()
+        return cls.objects.existing().filter(interventions__in=path.interventions.all()).distinct()
 
     @classmethod
     def topology_projects(cls, topology):

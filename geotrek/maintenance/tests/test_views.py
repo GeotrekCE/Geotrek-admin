@@ -20,11 +20,12 @@ from geotrek.maintenance.models import Intervention, InterventionStatus, Project
 from geotrek.maintenance.views import ProjectFormatList
 from geotrek.core.factories import PathFactory, TopologyFactory
 from geotrek.infrastructure.factories import InfrastructureFactory
-from geotrek.signage.factories import SignageFactory
+from geotrek.signage.factories import BladeFactory, SignageFactory
 from geotrek.maintenance.factories import (InterventionFactory, InfrastructureInterventionFactory,
                                            InterventionDisorderFactory, InterventionStatusFactory,
                                            ProjectFactory, ContractorFactory, InterventionJobFactory,
                                            SignageInterventionFactory, ProjectWithInterventionFactory)
+from geotrek.trekking.factories import POIFactory, TrekFactory, ServiceFactory
 
 
 class InterventionViewsTest(CommonTest):

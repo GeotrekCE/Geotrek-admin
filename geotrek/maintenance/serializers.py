@@ -36,7 +36,7 @@ class ProjectSerializer(ModelSerializer):
             'interventions', 'interventions_total_cost', 'comments', 'contractors',
             'project_owner', 'project_manager', 'founders',
             'structure', 'date_insert', 'date_update',
-            'cities', 'districts', 'areas', 'geom',
+            'cities', 'districts', 'areas',
         )
 
 
