@@ -242,7 +242,8 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     def get_parking_location(self, obj):
         if not obj.parking_location:
             return None
-        return obj.parking_location.transform(settings.API_SRID, clone=True).coords
+        point = obj.parking_location.transform(settings.API_SRID, clone=True)
+        return [round(point.x, 7), round(point.y, 7)]
 
     def get_points_reference(self, obj):
         if not obj.points_reference:

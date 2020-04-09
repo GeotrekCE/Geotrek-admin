@@ -89,7 +89,7 @@ class TouristicContentTemplatesTest(TrekkingManagerTest):
         cat = self.content.category
         cat.type1_label = 'Michelin'
         cat.save()
-        self.category2 = TouristicContentCategoryFactory()
+        self.category2 = TouristicContentCategoryFactory(label="Another category")
         self.login()
 
     def tearDown(self):
@@ -98,8 +98,8 @@ class TouristicContentTemplatesTest(TrekkingManagerTest):
     def test_only_used_categories_are_shown(self):
         url = "/touristiccontent/list/"
         response = self.client.get(url)
-        self.assertContains(response, 'title="%s"' % self.content.category.label)
-        self.assertNotContains(response, 'title="%s"' % self.category2.label)
+        self.assertContains(response, 'title="Category"')
+        self.assertNotContains(response, 'title="Another category"')
 
     def test_shown_in_details_when_enabled(self):
         url = "/touristiccontent/%s/" % self.content.pk

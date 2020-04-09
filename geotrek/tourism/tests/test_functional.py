@@ -22,6 +22,59 @@ class TouristicContentViewsTests(CommonTest):
     model = TouristicContent
     modelfactory = TouristicContentFactory
     userfactory = TrekkingManagerFactory
+    expected_json_geom = {'type': 'Point', 'coordinates': [-1.3630812, -5.9838563]}
+
+    def get_expected_json_attrs(self):
+        return {
+            'approved': False,
+            'areas': [],
+            'category': {
+                'id': 'C{}'.format(self.obj.category.pk),
+                'label': 'Category',
+                'order': None,
+                'pictogram': '/media/upload/touristiccontent-category.png',
+                'slug': 'touristic-content',
+                'type1_label': 'Type1 label',
+                'type2_label': '',
+            },
+            'cities': [],
+            'contact': '',
+            'description': '',
+            'description_teaser': '',
+            'districts': [],
+            'dives': [],
+            'email': None,
+            'filelist_url': '/paperclip/get/tourism/touristiccontent/{}/'.format(self.obj.pk),
+            'files': [],
+            'map_image_url': '/image/touristiccontent-{}.png'.format(self.obj.pk),
+            'name': 'Touristic content',
+            'pictures': [],
+            'pois': [],
+            'portal': [],
+            'practical_info': '',
+            'printable': '/api/en/touristiccontents/{}/touristic-content.pdf'.format(self.obj.pk),
+            'publication_date': '2020-03-17',
+            'published': True,
+            'published_status': [
+                {'lang': 'en', 'language': 'English', 'status': True},
+                {'lang': 'es', 'language': 'Spanish', 'status': False},
+                {'lang': 'fr', 'language': 'French', 'status': False},
+                {'lang': 'it', 'language': 'Italian', 'status': False},
+            ],
+            'reservation_id': 'XXXXXXXXX',
+            'reservation_system': self.obj.reservation_system.name,
+            'slug': 'touristic-content',
+            'source': [],
+            'themes': [],
+            'thumbnail': None,
+            'touristic_contents': [],
+            'touristic_events': [],
+            'treks': [],
+            'type1': [],
+            'type2': [],
+            'videos': [],
+            'website': None,
+        }
 
     def get_bad_data(self):
         return {
@@ -59,6 +112,75 @@ class TouristicEventViewsTests(CommonTest):
     model = TouristicEvent
     modelfactory = TouristicEventFactory
     userfactory = TrekkingManagerFactory
+    expected_json_geom = {'type': 'Point', 'coordinates': [-1.3630812, -5.9838563]}
+
+    def get_expected_json_attrs(self):
+        return {
+            'accessibility': '',
+            'approved': False,
+            'areas': [],
+            'begin_date': '2020-04-20',
+            'booking': '',
+            'category': {
+                'id': 'E',
+                'label': 'Touristic events',
+                'order': 99,
+                'pictogram': '/static/tourism/touristicevent.svg',
+                'slug': 'touristic-event',
+                'type1_label': 'Type',
+            },
+            'cities': [],
+            'contact': '',
+            'description': '',
+            'description_teaser': '',
+            'districts': [],
+            'dives': [],
+            'duration': '',
+            'email': None,
+            'end_date': '2020-04-20',
+            'filelist_url': '/paperclip/get/tourism/touristicevent/{}/'.format(self.obj.pk),
+            'files': [],
+            'map_image_url': '/image/touristicevent-{}.png'.format(self.obj.pk),
+            'meeting_point': '',
+            'meeting_time': None,
+            'name': 'Touristic event',
+            'organizer': '',
+            'participant_number': '',
+            'pictures': [],
+            'pois': [],
+            'portal': [],
+            'practical_info': '',
+            'printable': '/api/en/touristicevents/{}/touristic-event.pdf'.format(self.obj.pk),
+            'publication_date': '2020-03-17',
+            'published': True,
+            'published_status': [
+                {'lang': 'en', 'language': 'English', 'status': True},
+                {'lang': 'es', 'language': 'Spanish', 'status': False},
+                {'lang': 'fr', 'language': 'French', 'status': False},
+                {'lang': 'it', 'language': 'Italian', 'status': False},
+            ],
+            'slug': 'touristic-event',
+            'source': [],
+            'speaker': '',
+            'target_audience': None,
+            'themes': [],
+            'thumbnail': None,
+            'touristic_contents': [],
+            'touristic_events': [],
+            'treks': [],
+            'type': {
+                'id': self.obj.type1[0].pk,
+                'name': 'Type',
+                'pictogram': '/media/upload/touristicevent-type.png'
+            },
+            'type1': [{
+                'id': self.obj.type1[0].pk,
+                'name': 'Type',
+                'pictogram': '/media/upload/touristicevent-type.png'
+            }],
+            'videos': [],
+            'website': None,
+        }
 
     def get_bad_data(self):
         return {

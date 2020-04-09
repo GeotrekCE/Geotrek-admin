@@ -2,6 +2,7 @@ import json
 import logging
 from collections import defaultdict
 
+from django.contrib.gis.db.models.functions import Transform
 from django.contrib.auth.decorators import permission_required
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -14,9 +15,10 @@ from django.utils.translation import ugettext as _
 from django.core.cache import caches
 from django.views.generic.detail import BaseDetailView
 from django.http import HttpResponseRedirect
+from rest_framework import permissions as rest_permissions
 
 from mapentity.serializers import GPXSerializer
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
+from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList, MapEntityViewSet,
                              MapEntityDetail, MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, MapEntityFormat, HttpJSONResponse, LastModifiedMixin,)
 
@@ -29,6 +31,7 @@ from geotrek.core.models import AltimetryMixin
 from .models import Path, Trail, Topology
 from .forms import PathForm, TrailForm
 from .filters import PathFilterSet, TrailFilterSet
+from .serializers import PathSerializer, PathGeojsonSerializer, TrailSerializer, TrailGeojsonSerializer
 from . import graph as graph_lib
 from django.http.response import HttpResponse, JsonResponse
 from django.contrib import messages
@@ -253,6 +256,16 @@ class PathDelete(MapEntityDelete):
         return context
 
 
+class PathViewSet(MapEntityViewSet):
+    model = Path
+    serializer_class = PathSerializer
+    geojson_serializer_class = PathGeojsonSerializer
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        return Path.objects.annotate(api_geom=Transform("geom", settings.API_SRID))
+
+
 @login_required
 @cache_control(max_age=0, must_revalidate=True)
 @cache_last_modified(lambda x: Path.latest_updated())
@@ -355,6 +368,16 @@ class TrailDelete(MapEntityDelete):
     @same_structure_required('core:trail_detail')
     def dispatch(self, *args, **kwargs):
         return super(TrailDelete, self).dispatch(*args, **kwargs)
+
+
+class TrailViewSet(MapEntityViewSet):
+    model = Trail
+    serializer_class = TrailSerializer
+    geojson_serializer_class = TrailGeojsonSerializer
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        return Trail.objects.existing().annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
 @permission_required('core.change_path')

@@ -4,7 +4,7 @@ from django.contrib.gis.geos import Point
 
 from . import models
 from geotrek.core.factories import TopologyFactory, PointTopologyFactory
-from geotrek.common.utils.testdata import dummy_filefield_as_sequence
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import SignageFactory
 
@@ -13,56 +13,56 @@ class TrekNetworkFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.TrekNetwork
 
-    network = factory.Sequence(lambda n: "network %s" % n)
-    pictogram = dummy_filefield_as_sequence('network-%s.png')
+    network = "Network"
+    pictogram = get_dummy_uploaded_image('network.png')
 
 
 class PracticeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Practice
 
-    name = factory.Sequence(lambda n: "usage %s" % n)
-    pictogram = dummy_filefield_as_sequence('practice-%s.png')
+    name = "Usage"
+    pictogram = get_dummy_uploaded_image('practice.png')
 
 
 class AccessibilityFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Accessibility
 
-    name = factory.Sequence(lambda n: "accessibility %s" % n)
-    pictogram = dummy_filefield_as_sequence('accessibility-%s.png')
+    name = "Accessibility"
+    pictogram = get_dummy_uploaded_image('accessibility.png')
 
 
 class RouteFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Route
 
-    route = factory.Sequence(lambda n: "route %s" % n)
-    pictogram = dummy_filefield_as_sequence('route-%s.png')
+    route = "Route"
+    pictogram = get_dummy_uploaded_image('routes.png')
 
 
 class DifficultyLevelFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.DifficultyLevel
 
-    difficulty = factory.Sequence(lambda n: "difficulty %s" % n)
-    pictogram = dummy_filefield_as_sequence('difficulty-%s.png')
+    difficulty = "Difficulty"
+    pictogram = get_dummy_uploaded_image('difficulty.png')
 
 
 class WebLinkCategoryFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.WebLinkCategory
 
-    label = factory.Sequence(lambda n: "Category %s" % n)
-    pictogram = dummy_filefield_as_sequence('weblink-category-%s.png')
+    label = "Category"
+    pictogram = get_dummy_uploaded_image('weblink-category.png')
 
 
 class WebLinkFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.WebLink
 
-    name = factory.Sequence(lambda n: "web link name %s" % n)
-    url = factory.Sequence(lambda n: "http://dummy.url/%s" % n)
+    name = "Web link"
+    url = "http://dummy.url"
     category = factory.SubFactory(WebLinkCategoryFactory)
 
 
@@ -70,9 +70,9 @@ class TrekFactory(TopologyFactory):
     class Meta:
         model = models.Trek
 
-    name = factory.Sequence(lambda n: "name %s" % n)
-    departure = factory.Sequence(lambda n: "departure %s" % n)
-    arrival = factory.Sequence(lambda n: "arrival %s" % n)
+    name = "Trek"
+    departure = "Departure"
+    arrival = "Arrival"
     published = True
 
     length = 10
@@ -81,20 +81,20 @@ class TrekFactory(TopologyFactory):
     min_elevation = 0
     max_elevation = 0
 
-    description_teaser = factory.Sequence(lambda n: "<p>description_teaser %s</p>" % n)
-    description = factory.Sequence(lambda n: "<p>description %s</p>" % n)
-    ambiance = factory.Sequence(lambda n: "<p>ambiance %s</p>" % n)
-    access = factory.Sequence(lambda n: "<p>access %s</p>" % n)
-    disabled_infrastructure = factory.Sequence(lambda n: "<p>disabled_infrastructure %s</p>" % n)
+    description_teaser = "<p>Description teaser</p>"
+    description = "<p>Description</p>"
+    ambiance = "<p>Ambiance</p>"
+    access = "<p>Access</p>"
+    disabled_infrastructure = "<p>Disabled infrastructure</p>"
     duration = 1.5  # hour
 
     is_park_centered = False
 
-    advised_parking = factory.Sequence(lambda n: "<p>Advised parking %s</p>" % n)
+    advised_parking = "<p>Advised parking</p>"
     parking_location = Point(1, 1)
 
-    public_transport = factory.Sequence(lambda n: "<p>Public transport %s</p>" % n)
-    advice = factory.Sequence(lambda n: "<p>Advice %s</p>" % n)
+    public_transport = "<p>Public transport</p>"
+    advice = "<p>Advice</p>"
 
     route = factory.SubFactory(RouteFactory)
     difficulty = factory.SubFactory(DifficultyLevelFactory)
@@ -208,16 +208,16 @@ class POITypeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.POIType
 
-    label = factory.Sequence(lambda n: "POIType %s" % n)
-    pictogram = dummy_filefield_as_sequence('poi-type-%s.png')
+    label = "POI type"
+    pictogram = get_dummy_uploaded_image('poi-type.png')
 
 
 class POIFactory(PointTopologyFactory):
     class Meta:
         model = models.POI
 
-    name = factory.Sequence(lambda n: "POI %s" % n)
-    description = factory.Sequence(lambda n: "<p>description %s</p>" % n)
+    name = "POI"
+    description = "<p>Description</p>"
     type = factory.SubFactory(POITypeFactory)
     published = True
 
@@ -226,8 +226,8 @@ class ServiceTypeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.ServiceType
 
-    name = factory.Sequence(lambda n: "ServiceType %s" % n)
-    pictogram = dummy_filefield_as_sequence('service-type-%s.png')
+    name = "Service type"
+    pictogram = get_dummy_uploaded_image('service-type.png')
     published = True
 
 

@@ -60,6 +60,40 @@ class POIViewsTest(CommonTest):
     model = POI
     modelfactory = POIFactory
     userfactory = TrekkingManagerFactory
+    expected_json_geom = {'type': 'Point', 'coordinates': [3.0, 46.5]}
+
+    def get_expected_json_attrs(self):
+        return {
+            'areas': [],
+            'cities': [],
+            'description': '<p>Description</p>',
+            'districts': [],
+            'filelist_url': '/paperclip/get/trekking/poi/{}/'.format(self.obj.pk),
+            'files': [],
+            'map_image_url': '/image/poi-{}.png'.format(self.obj.pk),
+            'max_elevation': 0,
+            'min_elevation': 0,
+            'name': 'POI',
+            'pictures': [],
+            'printable': '/api/en/pois/{}/poi.pdf'.format(self.obj.pk),
+            'publication_date': '2020-03-17',
+            'published': True,
+            'published_status': [
+                {'lang': 'en', 'language': 'English', 'status': True},
+                {'lang': 'es', 'language': 'Spanish', 'status': False},
+                {'lang': 'fr', 'language': 'French', 'status': False},
+                {'lang': 'it', 'language': 'Italian', 'status': False},
+            ],
+            'slug': 'poi',
+            'structure': {'id': self.obj.structure.pk, 'name': 'My structure'},
+            'thumbnail': None,
+            'type': {
+                'id': self.obj.type.pk,
+                'label': 'POI type',
+                'pictogram': '/media/upload/poi-type.png',
+            },
+            'videos': [],
+        }
 
     def get_good_data(self):
         good_data = {
@@ -150,6 +184,106 @@ class TrekViewsTest(CommonTest):
     model = Trek
     modelfactory = TrekFactory
     userfactory = TrekkingManagerFactory
+    expected_json_geom = {'type': 'LineString', 'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]]}
+
+    def get_expected_json_attrs(self):
+        return {
+            'access': '<p>Access</p>',
+            'accessibilities': [],
+            'advice': '<p>Advice</p>',
+            'advised_parking': '<p>Advised parking</p>',
+            'altimetric_profile': '/api/en/treks/{}/profile.json'.format(self.obj.pk),
+            'ambiance': '<p>Ambiance</p>',
+            'areas': [],
+            'arrival': 'Arrival',
+            'ascent': 0,
+            'category': {
+                'id': 'T',
+                'label': 'Hike',
+                'order': 1,
+                'pictogram': '/static/trekking/trek.svg',
+                'slug': 'trek',
+                'type2_label': 'Accessibility',
+            },
+            'children': [],
+            'cities': [],
+            'departure': 'Departure',
+            'descent': 0,
+            'description': '<p>Description</p>',
+            'description_teaser': '<p>Description teaser</p>',
+            'difficulty': {
+                'id': self.obj.difficulty.pk,
+                'label': 'Difficulty',
+                'pictogram': '/media/upload/difficulty.png',
+            },
+            'disabled_infrastructure': '<p>Disabled infrastructure</p>',
+            'districts': [],
+            'dives': [],
+            'duration': 1.5,
+            'duration_pretty': '1 h 30',
+            'elevation_area_url': '/api/en/treks/{}/dem.json'.format(self.obj.pk),
+            'elevation_svg_url': '/api/en/treks/{}/profile.svg'.format(self.obj.pk),
+            'filelist_url': '/paperclip/get/trekking/trek/{}/'.format(self.obj.pk),
+            'files': [],
+            'gpx': '/api/en/treks/{}/trek.gpx'.format(self.obj.pk),
+            'information_desks': [],
+            'is_park_centered': False,
+            'kml': '/api/en/treks/{}/trek.kml'.format(self.obj.pk),
+            'length': 141.42135623731,
+            'map_image_url': '/image/trek-{}-en.png'.format(self.obj.pk),
+            'max_elevation': 0,
+            'min_elevation': 0,
+            'name': 'Trek',
+            'networks': [],
+            'next': {},
+            'parents': [],
+            'parking_location': [-1.3630753, -5.9838497],
+            'pictures': [],
+            'points_reference': None,
+            'portal': [],
+            'practice': {
+                'id': self.obj.practice.pk,
+                'label': 'Usage',
+                'pictogram': '/media/upload/practice.png',
+            },
+            'previous': {},
+            'printable': '/api/en/treks/{}/trek.pdf'.format(self.obj.pk),
+            'public_transport': '<p>Public transport</p>',
+            'publication_date': '2020-03-17',
+            'published': True,
+            'published_status': [
+                {'lang': 'en', 'language': 'English', 'status': True},
+                {'lang': 'es', 'language': 'Spanish', 'status': False},
+                {'lang': 'fr', 'language': 'French', 'status': False},
+                {'lang': 'it', 'language': 'Italian', 'status': False}
+            ],
+            'relationships': [],
+            'route': {
+                'id': self.obj.route.pk,
+                'label': 'Route',
+                'pictogram': '/media/upload/routes.png',
+            },
+            'slope': 0.0,
+            'slug': 'trek',
+            'source': [],
+            'structure': {
+                'id': self.obj.structure.pk,
+                'name': 'My structure',
+            },
+            'themes': [],
+            'thumbnail': None,
+            'touristic_contents': [],
+            'touristic_events': [],
+            'treks': [],
+            'type2': [],
+            'usages': [{
+                'id': self.obj.practice.pk,
+                'label': 'Usage',
+                'pictogram': '/media/upload/practice.png'
+            }],
+            'videos': [],
+            'web_links': [],
+        }
 
     def get_bad_data(self):
         return OrderedDict([
@@ -1163,25 +1297,25 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<informations>'
             '<information langue="en">'
             '<titre>{title}</titre>'
-            '<description>description_teaser {n}\n\ndescription {n}</description>'
+            '<description>Description teaser\n\nDescription</description>'
             '<informations_complementaires>'
-            '<information_complementaire><titre>Departure</titre><description>departure {n}</description></information_complementaire>'
-            '<information_complementaire><titre>Arrival</titre><description>arrival {n}</description></information_complementaire>'
-            '<information_complementaire><titre>Ambiance</titre><description>ambiance {n}</description></information_complementaire>'
-            '<information_complementaire><titre>Access</titre><description>access {n}</description></information_complementaire>'
-            '<information_complementaire><titre>Disabled infrastructure</titre><description>disabled_infrastructure {n}</description></information_complementaire>'
-            '<information_complementaire><titre>Advised parking</titre><description>Advised parking {n}</description></information_complementaire>'
-            '<information_complementaire><titre>Public transport</titre><description>Public transport {n}</description></information_complementaire>'
-            '<information_complementaire><titre>Advice</titre><description>Advice {n}</description></information_complementaire></informations_complementaires>'
+            '<information_complementaire><titre>Departure</titre><description>Departure</description></information_complementaire>'
+            '<information_complementaire><titre>Arrival</titre><description>Arrival</description></information_complementaire>'
+            '<information_complementaire><titre>Ambiance</titre><description>Ambiance</description></information_complementaire>'
+            '<information_complementaire><titre>Access</titre><description>Access</description></information_complementaire>'
+            '<information_complementaire><titre>Disabled infrastructure</titre><description>Disabled infrastructure</description></information_complementaire>'
+            '<information_complementaire><titre>Advised parking</titre><description>Advised parking</description></information_complementaire>'
+            '<information_complementaire><titre>Public transport</titre><description>Public transport</description></information_complementaire>'
+            '<information_complementaire><titre>Advice</titre><description>Advice</description></information_complementaire></informations_complementaires>'
             '</information>'
             '</informations>'
             '<distance>141</distance>'
             '<locomotions><locomotion duree="5400"></locomotion></locomotions>'
-            '<fichier_trace url="http://testserver/api/en/treks/{pk}/name-{n}.kml"></fichier_trace>'
+            '<fichier_trace url="http://testserver/api/en/treks/{pk}/trek.kml"></fichier_trace>'
             '<pois>'
             '<poi date_creation="1388534400" date_modification="{poi_date_update}" id_poi="{poi_pk}">'
             '<informations>'
-            '<information langue="en"><titre>{poi_title}</titre><description>{poi_description}</description></information>'
+            '<information langue="en"><titre>POI</titre><description>Description</description></information>'
             '</informations>'
             '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
             '</poi>'
@@ -1266,6 +1400,20 @@ class ServiceViewsTest(CommonTest):
     model = Service
     modelfactory = ServiceFactory
     userfactory = TrekkingManagerFactory
+    expected_json_geom = {'type': 'Point', 'coordinates': [3.0, 46.5]}
+
+    def get_expected_json_attrs(self):
+        return {
+            'structure': {
+                'id': self.obj.structure.pk,
+                'name': 'My structure'
+            },
+            'type': {
+                'id': self.obj.type.pk,
+                'name': 'Service type',
+                'pictogram': '/media/upload/service-type.png'
+            }
+        }
 
     def get_good_data(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:

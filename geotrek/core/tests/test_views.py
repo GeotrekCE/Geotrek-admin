@@ -78,7 +78,7 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         self.assertContains(response, "INFRA_1")
         self.assertContains(response, "SIGNA_1")
         self.assertContains(response, "TRAIL_1")
-        self.assertContains(response, "ServiceType")
+        self.assertContains(response, "Service type")
         self.assertContains(response, "INTER_1")
         response = self.client.post(reverse('core:multiple_path_delete', args=['%s,%s' % (path_1.pk, path_2.pk)]))
         self.assertEqual(response.status_code, 302)
@@ -91,6 +91,27 @@ class PathViewsTest(CommonTest):
     model = Path
     modelfactory = PathFactory
     userfactory = PathManagerFactory
+    expected_json_geom = {
+        'type': 'LineString',
+        'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]],
+    }
+
+    def get_expected_json_attrs(self):
+        return {
+            'arrival': '',
+            'ascent': 0,
+            'departure': '',
+            'descent': 0,
+            'draft': False,
+            'eid': None,
+            'length': 141.42135623731,
+            'max_elevation': 0,
+            'min_elevation': 0,
+            'name': self.obj.name,
+            'slope': 0.0,
+            'valid': True,
+            'visible': True
+        }
 
     def get_bad_data(self):
         return {'geom': '{"geom": "LINESTRING (0.0 0.0, 1.0 1.0)"}'}, _("Linestring invalid snapping.")
@@ -613,6 +634,18 @@ class TrailViewsTest(CommonTest):
     model = Trail
     modelfactory = TrailFactory
     userfactory = PathManagerFactory
+    expected_json_geom = {
+        'type': 'LineString',
+        'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]],
+    }
+
+    def get_expected_json_attrs(self):
+        return {
+            'name': self.obj.name,
+            'departure': self.obj.departure,
+            'arrival': self.obj.arrival,
+            'comments': self.obj.comments,
+        }
 
     def get_good_data(self):
         good_data = {

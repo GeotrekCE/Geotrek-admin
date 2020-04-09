@@ -1,7 +1,7 @@
 import factory
 
 from geotrek.common.utils.testdata import dummy_filefield_as_sequence
-from geotrek.core.factories import TopologyFactory
+from geotrek.core.factories import TopologyFactory, PointTopologyFactory
 
 from . import models
 
@@ -31,6 +31,15 @@ class InfrastructureConditionFactory(factory.DjangoModelFactory):
 
 
 class InfrastructureFactory(TopologyFactory):
+    class Meta:
+        model = models.Infrastructure
+    name = factory.Sequence(lambda n: "Infrastructure %s" % n)
+    type = factory.SubFactory(InfrastructureTypeFactory)
+    condition = factory.SubFactory(InfrastructureConditionFactory)
+    published = True
+
+
+class PointInfrastructureFactory(PointTopologyFactory):
     class Meta:
         model = models.Infrastructure
     name = factory.Sequence(lambda n: "Infrastructure %s" % n)

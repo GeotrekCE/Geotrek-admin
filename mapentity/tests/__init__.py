@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import csv
-import json
 import hashlib
 import logging
 import os
 import shutil
 import time
 from datetime import datetime
+from freezegun import freeze_time
 from io import StringIO
 from unittest.mock import patch
 
@@ -47,6 +47,11 @@ class MapEntityTest(TestCase):
     modelfactory = None
     userfactory = None
     api_prefix = '/api/'
+    expected_json_geom = {}
+    maxDiff = None
+
+    def get_expected_json_attrs(self):
+        return {}
 
     def setUp(self):
         if os.path.exists(settings.MEDIA_ROOT):
@@ -202,7 +207,7 @@ class MapEntityTest(TestCase):
         response = self.client.post(url, self.get_good_data())
         if response.status_code != 302:
             form = self.get_form(response)
-            self.assertEqual(form.errors, [])  # this will show form errors
+            self.assertFalse(form.errors)  # this will show form errors
 
         self.assertEqual(response.status_code, 302)  # success, redirects to detail view
 
@@ -278,65 +283,80 @@ class MapEntityTest(TestCase):
 
     """
 
+    @freeze_time("2020-03-17")
     def test_api_list_for_model(self):
+        if self.get_expected_json_attrs is None:
+            return
         if self.model is None:
             return  # Abstract test should not run
         self.login()
 
-        obj = self.modelfactory.create()
+        self.obj = self.modelfactory.create()
         list_url = '{api_prefix}{modelname}s.json'.format(api_prefix=self.api_prefix,
                                                           modelname=self.model._meta.model_name)
         response = self.client.get(list_url)
         self.assertEqual(response.status_code, 200)
-        result = json.loads(response.content.decode())
-        self.assertEqual(len(result), 1)
-        first_result = result[0]
-        self.assertEqual(first_result['id'], obj.pk)
+        self.assertJSONEqual(response.content, [{'id': self.obj.pk, **self.get_expected_json_attrs()}])
 
+    @freeze_time("2020-03-17")
     def test_api_geojson_list_for_model(self):
+        if self.get_expected_json_attrs is None:
+            return
         if self.model is None:
             return  # Abstract test should not run
         self.login()
 
-        obj = self.modelfactory.create()
+        self.obj = self.modelfactory.create()
         list_url = '{api_prefix}{modelname}s.geojson'.format(api_prefix=self.api_prefix,
                                                              modelname=self.model._meta.model_name)
         response = self.client.get(list_url)
         self.assertEqual(response.status_code, 200)
-        result = json.loads(response.content.decode())
-        self.assertEqual(result['type'], 'FeatureCollection')
-        self.assertEqual(len(result['features']), 1)
-        first_result = result['features'][0]
-        self.assertEqual(first_result['id'], obj.pk)
-        self.assertEqual(first_result['type'], 'Feature')
+        self.assertJSONEqual(response.content, {
+            'type': 'FeatureCollection',
+            'features': [{
+                'id': self.obj.pk,
+                'type': 'Feature',
+                'geometry': self.expected_json_geom,
+                'properties': self.get_expected_json_attrs(),
+            }],
+        })
 
+    @freeze_time("2020-03-17")
     def test_api_detail_for_model(self):
+        if self.get_expected_json_attrs is None:
+            return
         if self.model is None:
             return  # Abstract test should not run
         self.login()
 
-        obj = self.modelfactory.create()
+        self.obj = self.modelfactory.create()
         detail_url = '{api_prefix}{modelname}s/{id}'.format(api_prefix=self.api_prefix,
                                                             modelname=self.model._meta.model_name,
-                                                            id=obj.pk)
+                                                            id=self.obj.pk)
         response = self.client.get(detail_url)
         self.assertEqual(response.status_code, 200)
-        result = json.loads(response.content.decode())
-        self.assertEqual(result['id'], obj.pk)
+        self.assertJSONEqual(response.content, {'id': self.obj.pk, **self.get_expected_json_attrs()})
 
+    @freeze_time("2020-03-17")
     def test_api_geojson_detail_for_model(self):
+        if self.get_expected_json_attrs is None:
+            return
         if self.model is None:
             return  # Abstract test should not run
         self.login()
 
-        obj = self.modelfactory.create()
+        self.obj = self.modelfactory.create()
         detail_url = '{api_prefix}{modelname}s/{id}.geojson'.format(api_prefix=self.api_prefix,
                                                                     modelname=self.model._meta.model_name,
-                                                                    id=obj.pk)
+                                                                    id=self.obj.pk)
         response = self.client.get(detail_url)
         self.assertEqual(response.status_code, 200)
-        result = json.loads(response.content.decode())
-        self.assertEqual(result['id'], obj.pk)
+        self.assertJSONEqual(response.content, {
+            'id': self.obj.pk,
+            'type': 'Feature',
+            'geometry': self.expected_json_geom,
+            'properties': self.get_expected_json_attrs(),
+        })
 
 
 class MapEntityLiveTest(LiveServerTestCase):

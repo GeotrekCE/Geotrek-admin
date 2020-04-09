@@ -3,7 +3,7 @@ import factory
 from django.contrib.auth.models import Permission
 
 from geotrek.authent.factories import StructureRelatedDefaultFactory
-from geotrek.common.utils.testdata import dummy_filefield_as_sequence
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
 
 from . import models
 
@@ -14,16 +14,16 @@ class SportPracticeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.SportPractice
 
-    name = factory.Sequence(lambda n: "Practice %s" % n)
+    name = "Practice"
 
 
 class SpeciesFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Species
 
-    name = factory.Sequence(lambda n: "Species %s" % n)
-    pictogram = dummy_filefield_as_sequence('species-%s.png')
-    url = factory.Sequence(lambda n: "http://url%s.com" % n)
+    name = "Species"
+    pictogram = get_dummy_uploaded_image()
+    url = "http://url.com"
     period06 = True
     period07 = True
     category = models.Species.SPECIES
@@ -32,7 +32,10 @@ class SpeciesFactory(factory.DjangoModelFactory):
     def practices(obj, create, extracted=None, **kwargs):
         if create:
             if not extracted:
-                practices = [SportPracticeFactory.create(), SportPracticeFactory.create()]
+                practices = [
+                    SportPracticeFactory.create(name="Practice1"),
+                    SportPracticeFactory.create(name="Practice2")
+                ]
             for practice in practices:
                 obj.practices.add(practice)
 
