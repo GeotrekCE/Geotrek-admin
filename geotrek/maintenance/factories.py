@@ -131,6 +131,15 @@ class ProjectFactory(factory.DjangoModelFactory):
             FundingFactory.create(project=obj, amount=1000)
 
 
+class ProjectWithInterventionFactory(ProjectFactory):
+    @factory.post_generation
+    def create_project(obj, create, extracted, **kwargs):
+        if create:
+            obj.contractors.add(ContractorFactory.create())
+            FundingFactory.create(project=obj, amount=1000)
+            InfrastructureInterventionFactory.create(project=obj)
+
+
 class FundingFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Funding

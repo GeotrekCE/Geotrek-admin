@@ -13,7 +13,6 @@ from django.urls import reverse
 from django.conf import settings
 from django.test.utils import override_settings
 from django.test import TestCase
-from django.utils import translation
 
 from geotrek.authent.factories import StructureFactory, UserProfileFactory, UserFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
@@ -75,14 +74,12 @@ class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
         self.assertRedirects(response, "/touristiccontent/{pk}/".format(pk=self.content2.pk))
 
     def test_contents_on_treks_do_not_exist(self):
-        response = self.client.get(reverse('tourism:trek_contents_geojson', kwargs={'lang': translation.get_language(),
-                                                                                    'pk': 0, 'format': 'geojson'}))
+        response = self.client.get('api/en/treks/0/touristiccontents.geojson')
         self.assertEqual(response.status_code, 404)
 
     def test_contents_on_treks_not_public(self):
         trek = trekking_factories.TrekFactory.create(published=False)
-        response = self.client.get(reverse('tourism:trek_contents_geojson', kwargs={'lang': translation.get_language(),
-                                                                                    'pk': trek.pk, 'format': 'geojson'}))
+        response = self.client.get('api/en/treks/{}/touristiccontents.geojson'.format(trek.pk))
         self.assertEqual(response.status_code, 404)
 
 
@@ -420,12 +417,12 @@ class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
         self.assertRedirects(response, "/touristicevent/{pk}/".format(pk=self.event2.pk))
 
     def test_events_on_treks_do_not_exist(self):
-        response = self.client.get(reverse('tourism:trek_events_geojson', kwargs={'lang': translation.get_language(), 'pk': 0, 'format': 'geojson'}))
+        response = self.client.get('/api/en/treks/0/touristicevents.geojson')
         self.assertEqual(response.status_code, 404)
 
     def test_events_on_treks_not_public(self):
         trek = trekking_factories.TrekFactory.create(published=False)
-        response = self.client.get(reverse('tourism:trek_events_geojson', kwargs={'lang': translation.get_language(), 'pk': trek.pk, 'format': 'geojson'}))
+        response = self.client.get('/api/en/treks/{}/touristicevents.geojson'.format(trek.pk))
         self.assertEqual(response.status_code, 404)
 
 
@@ -547,7 +544,7 @@ class TrekInformationDeskAPITest(TestCase):
         InformationDeskFactory.create()
         trek.information_desks.add(desk)
         trek.save()
-        response = self.client.get(reverse('tourism:trek_information_desk_geojson', kwargs={'pk': trek.pk, 'format': 'geojson'}))
+        response = self.client.get('/api/en/treks/{}/information_desks.geojson'.format(trek.pk))
         self.assertEqual(response.status_code, 200)
         result = response.json()
         self.assertEqual(len(result['features']), 1)

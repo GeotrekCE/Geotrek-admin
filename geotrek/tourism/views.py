@@ -29,7 +29,7 @@ from .forms import TouristicContentForm, TouristicEventForm
 from .models import (TouristicContent, TouristicEvent, TouristicContentCategory, InformationDesk)
 from .serializers import (TouristicContentSerializer, TouristicEventSerializer,
                           TouristicContentGeojsonSerializer, TouristicEventGeojsonSerializer,
-                          InformationDeskSerializer, InformationDeskGeojsonSerializer)
+                          InformationDeskGeojsonSerializer)
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 if 'geotrek.diving' in settings.INSTALLED_APPS:
@@ -317,14 +317,8 @@ class TouristicEventViewSet(MapEntityViewSet):
 class InformationDeskViewSet(viewsets.ModelViewSet):
     model = InformationDesk
     queryset = InformationDesk.objects.all()
+    serializer_class = InformationDeskGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_serializer_class(self):
-        renderer, media_type = self.perform_content_negotiation(self.request)
-        if getattr(renderer, 'format') == 'geojson':
-            return InformationDeskGeojsonSerializer
-        else:
-            return InformationDeskSerializer
 
     def get_queryset(self):
         qs = super(InformationDeskViewSet, self).get_queryset()
@@ -336,14 +330,8 @@ class InformationDeskViewSet(viewsets.ModelViewSet):
 
 class TrekInformationDeskViewSet(viewsets.ModelViewSet):
     model = InformationDesk
+    serializer_class = InformationDeskGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_serializer_class(self):
-        renderer, media_type = self.perform_content_negotiation(self.request)
-        if getattr(renderer, 'format') == 'geojson':
-            return InformationDeskGeojsonSerializer
-        else:
-            return InformationDeskSerializer
 
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -353,14 +341,8 @@ class TrekInformationDeskViewSet(viewsets.ModelViewSet):
 
 class TrekTouristicContentViewSet(viewsets.ModelViewSet):
     model = TouristicContent
+    serializer_class = TouristicContentGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_serializer_class(self):
-        renderer, media_type = self.perform_content_negotiation(self.request)
-        if getattr(renderer, 'format') == 'geojson':
-            return TouristicContentGeojsonSerializer
-        else:
-            return TouristicContentSerializer
 
     def get_queryset(self):
         trek = get_object_or_404(Trek.objects.existing(), pk=self.kwargs['pk'])
@@ -382,14 +364,8 @@ class TrekTouristicContentViewSet(viewsets.ModelViewSet):
 
 class TrekTouristicEventViewSet(viewsets.ModelViewSet):
     model = TouristicEvent
+    serializer_class = TouristicEventGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_serializer_class(self):
-        renderer, media_type = self.perform_content_negotiation(self.request)
-        if getattr(renderer, 'format') == 'geojson':
-            return TouristicEventGeojsonSerializer
-        else:
-            return TouristicEventSerializer
 
     def get_queryset(self):
         trek = get_object_or_404(Trek.objects.existing(), pk=self.kwargs['pk'])

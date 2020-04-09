@@ -148,14 +148,8 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 if 'geotrek.diving' in settings.INSTALLED_APPS:
     class DiveSensitiveAreaViewSet(viewsets.ModelViewSet):
         model = SensitiveArea
+        serializer_class = SensitiveAreaGeojsonSerializer
         permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
-
-        def get_serializer_class(self):
-            renderer, media_type = self.perform_content_negotiation(self.request)
-            if getattr(renderer, 'format') == 'geojson':
-                return SensitiveAreaGeojsonSerializer
-            else:
-                return SensitiveAreaSerializer
 
         def get_queryset(self):
             pk = self.kwargs['pk']
