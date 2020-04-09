@@ -98,21 +98,19 @@ class BasicJSONAPITest(TranslationResetMixin, TrekkingManagerTest):
                 'url': self.species.url,
             },
         }
-        self.expected_geom = {
-            'type': 'Polygon',
-            'coordinates': [[
-                [3.0, 46.5],
-                [3.0, 46.500027],
-                [3.0000391, 46.500027],
-                [3.0000391, 46.5],
-                [3.0, 46.5],
-            ]],
-        }
         self.expected_result = dict(self.expected_properties)
         self.expected_result['id'] = self.pk
-        self.expected_result['geometry'] = self.expected_geom
         self.expected_geo_result = {
-            'geometry': self.expected_geom,
+            'geometry': {
+                'type': 'Polygon',
+                'coordinates': [[
+                    [3.0, 46.5],
+                    [3.0, 46.500027],
+                    [3.0000391, 46.500027],
+                    [3.0000391, 46.5],
+                    [3.0, 46.5],
+                ]],
+            },
             'type': 'Feature',
             'id': self.pk,
             'properties': self.expected_properties,

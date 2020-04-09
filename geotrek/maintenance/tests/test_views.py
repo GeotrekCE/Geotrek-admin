@@ -24,7 +24,7 @@ from geotrek.signage.factories import SignageFactory
 from geotrek.maintenance.factories import (InterventionFactory, InfrastructureInterventionFactory,
                                            InterventionDisorderFactory, InterventionStatusFactory,
                                            ProjectFactory, ContractorFactory, InterventionJobFactory,
-                                           SignageInterventionFactory)
+                                           SignageInterventionFactory, ProjectWithInterventionFactory)
 
 
 class InterventionViewsTest(CommonTest):
@@ -345,7 +345,7 @@ class InterventionViewsTest(CommonTest):
 
 class ProjectViewsTest(CommonTest):
     model = Project
-    modelfactory = ProjectFactory
+    modelfactory = ProjectWithInterventionFactory
     userfactory = PathManagerFactory
 
     def get_bad_data(self):

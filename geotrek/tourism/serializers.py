@@ -1,4 +1,6 @@
 from rest_framework import serializers as rest_serializers
+from rest_framework_gis import fields as rest_gis_fields
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from django.conf import settings
 from django.utils.translation import ugettext as _
@@ -27,6 +29,15 @@ class InformationDeskSerializer(TranslatedModelSerializer):
         fields = ('name', 'description', 'phone', 'email', 'website',
                   'photo_url', 'street', 'postal_code', 'municipality',
                   'latitude', 'longitude', 'type')
+
+
+class InformationDeskGeojsonSerializer(GeoFeatureModelSerializer, InformationDeskSerializer):
+    # Annotated geom field with API_SRID
+    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
+
+    class Meta(InformationDeskSerializer.Meta):
+        geo_field = 'api_geom'
+        fields = InformationDeskSerializer.Meta.fields + ('api_geom', )
 
 
 class CloseTouristicContentSerializer(TranslatedModelSerializer):
@@ -91,7 +102,6 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
 
     class Meta:
         model = tourism_models.TouristicContent
-        geo_field = 'geom'
         fields = ('id', 'description', 'description_teaser', 'category',
                   'themes', 'contact', 'email', 'website', 'practical_info',
                   'type1', 'type2', 'touristic_contents', 'touristic_events',
@@ -100,6 +110,15 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
+
+
+class TouristicContentGeojsonSerializer(GeoFeatureModelSerializer, TouristicContentSerializer):
+    # Annotated geom field with API_SRID
+    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
+
+    class Meta(TouristicContentSerializer.Meta):
+        geo_field = 'api_geom'
+        fields = TouristicContentSerializer.Meta.fields + ('api_geom', )
 
 
 class TouristicEventTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
@@ -136,7 +155,6 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
 
     class Meta:
         model = tourism_models.TouristicEvent
-        geo_field = 'geom'
         fields = ('id', 'description_teaser', 'description', 'themes',
                   'begin_date', 'end_date', 'duration', 'meeting_point',
                   'meeting_time', 'contact', 'email', 'website',
@@ -157,3 +175,12 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
             'pictogram': '/static/tourism/touristicevent.svg',
             'slug': _('touristic-event'),
         }
+
+
+class TouristicEventGeojsonSerializer(GeoFeatureModelSerializer, TouristicEventSerializer):
+    # Annotated geom field with API_SRID
+    api_geom = rest_gis_fields.GeometryField(read_only=True, precision=7)
+
+    class Meta(TouristicEventSerializer.Meta):
+        geo_field = 'api_geom'
+        fields = TouristicEventSerializer.Meta.fields + ('api_geom', )

@@ -12,11 +12,11 @@ register_converter(LangConverter, 'lang')
 
 app_name = 'tourism'
 urlpatterns = [
-    re_path(r'^api/(?P<lang>\w\w)/information_desks.(?P<format>geojson)$', tourism_views.InformationDeskViewSet.as_view({'get': 'list'}), name="information_desk_geojson"),
-    re_path(r'^api/(?P<lang>\w\w)/information_desks-(?P<type>\d+).(?P<format>geojson)$', tourism_views.InformationDeskViewSet.as_view({'get': 'list'})),
-    re_path(r'^api/treks/(?P<pk>\d+)/information_desks.(?P<format>geojson)$', tourism_views.TrekInformationDeskViewSet.as_view({'get': 'list'}), name="trek_information_desk_geojson"),
-    re_path(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/touristicevents\.(?P<format>geojson)$', tourism_views.TrekTouristicEventViewSet.as_view({'get': 'list'}), name="trek_events_geojson"),
-    re_path(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/touristiccontents\.(?P<format>geojson)$', tourism_views.TrekTouristicContentViewSet.as_view({'get': 'list'}), name="trek_contents_geojson"),
+    re_path(r'^api/(?P<lang>\w\w)/information_desks\.geojson$', tourism_views.InformationDeskViewSet.as_view({'get': 'list'}), name="information_desk_geojson"),
+    re_path(r'^api/(?P<lang>\w\w)/information_desks-(?P<type>\d+)\.geojson$', tourism_views.InformationDeskViewSet.as_view({'get': 'list'})),
+    re_path(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/information_desks.geojson$', tourism_views.TrekInformationDeskViewSet.as_view({'get': 'list'}), name="trek_information_desk_geojson"),
+    re_path(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/touristicevents\.geojson$', tourism_views.TrekTouristicEventViewSet.as_view({'get': 'list'}), name="trek_events_geojson"),
+    re_path(r'^api/(?P<lang>\w\w)/treks/(?P<pk>\d+)/touristiccontents\.geojson$', tourism_views.TrekTouristicContentViewSet.as_view({'get': 'list'}), name="trek_contents_geojson"),
     path('api/<lang:lang>/touristiccategories.json', tourism_views.TouristicCategoryView.as_view(), name="touristic_categories_json"),
     path('api/<lang:lang>/touristiccontents/<int:pk>/meta.html', tourism_views.TouristicContentMeta.as_view(), name="touristiccontent_meta"),
     path('api/<lang:lang>/touristicevents/<int:pk>/meta.html', tourism_views.TouristicEventMeta.as_view(), name="touristicevent_meta"),

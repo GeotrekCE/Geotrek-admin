@@ -13,7 +13,9 @@ from geotrek.core.models import AltimetryMixin
 from geotrek.signage.filters import SignageFilterSet, BladeFilterSet
 from geotrek.signage.forms import SignageForm, BladeForm, LineFormset
 from geotrek.signage.models import Signage, Blade, Line
-from geotrek.signage.serializers import SignageSerializer, BladeSerializer, CSVBladeSerializer, ZipBladeShapeSerializer
+from geotrek.signage.serializers import (SignageSerializer, BladeSerializer,
+                                         SignageGeojsonSerializer, BladeGeojsonSerializer,
+                                         CSVBladeSerializer, ZipBladeShapeSerializer)
 
 from rest_framework import permissions as rest_permissions
 
@@ -88,6 +90,7 @@ class SignageDelete(MapEntityDelete):
 class SignageViewSet(MapEntityViewSet):
     model = Signage
     serializer_class = SignageSerializer
+    geojson_serializer_class = SignageGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
@@ -146,8 +149,12 @@ class BladeDelete(MapEntityDelete):
 class BladeViewSet(MapEntityViewSet):
     model = Blade
     serializer_class = BladeSerializer
+    geojson_serializer_class = BladeGeojsonSerializer
     queryset = Blade.objects.existing()
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        return Blade.objects.existing().annotate(api_geom=Transform("signage__geom", settings.API_SRID))
 
 
 class BladeList(MapEntityList):
