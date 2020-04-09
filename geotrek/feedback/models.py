@@ -74,7 +74,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
         return "Anonymous report"
 
     @property
-    def name_display(self):
+    def email_display(self):
         return '<a data-pk="%s" href="%s" title="%s" >%s</a>' % (self.pk,
                                                                  self.get_detail_url(),
                                                                  self,
