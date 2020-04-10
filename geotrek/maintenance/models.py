@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 
+from django.db.models import Q
 from django.db.models.functions import ExtractYear
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -239,27 +240,21 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         else:
             area = obj.geom.buffer(settings.INTERVENTION_INTERSECTION_MARGIN)
             topologies = list(Topology.objects.existing().filter(geom__intersects=area).values_list('pk', flat=True))
-        topologies_intervention = cls.objects.existing().filter(target_id__in=topologies).exclude(
-            target_type=blade_content_type).distinct('pk')
-        interventions = list(topologies_intervention)
+        qs = Q(target_id__in=topologies) & ~Q(target_type=blade_content_type)
         if 'geotrek.signage' in settings.INSTALLED_APPS:
             blades = list(Blade.objects.filter(signage__in=topologies).values_list('id', flat=True))
-            blades_intervention = cls.objects.existing().filter(target_id__in=blades, target_type=blade_content_type)
-            interventions.extend(blades_intervention)
-        return interventions
+            qs |= Q(target_id__in=blades, target_type=blade_content_type)
+        return Intervention.objects.existing().filter(qs).distinct('pk')
 
     @classmethod
     def path_interventions(cls, path):
         blade_content_type = ContentType.objects.get(model='blade')
         topologies = list(Topology.objects.filter(aggregations__path=path).values_list('pk', flat=True))
-        topologies_intervention = cls.objects.existing().filter(target_id__in=topologies).exclude(
-            target_type=blade_content_type).distinct('pk')
-        interventions = list(topologies_intervention)
+        qs = Q(target_id__in=topologies) & ~Q(target_type=blade_content_type)
         if 'geotrek.signage' in settings.INSTALLED_APPS:
             blades = list(Blade.objects.filter(signage__in=topologies).values_list('id', flat=True))
-            blades_intervention = cls.objects.existing().filter(target_id__in=blades, target_type=blade_content_type)
-            interventions.extend(blades_intervention)
-        return interventions
+            qs |= Q(target_id__in=blades, target_type=blade_content_type)
+        return Intervention.objects.existing().filter(qs).distinct('pk')
 
     @classmethod
     def topology_interventions(cls, topology):
