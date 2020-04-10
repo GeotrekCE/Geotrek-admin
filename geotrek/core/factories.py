@@ -128,7 +128,7 @@ class TopologyFactory(factory.DjangoModelFactory):
     def paths(obj, create, paths):
         if not create:
             return
-        elif create and paths is None:
+        elif paths is None:
             PathAggregationFactory.create(topo_object=obj)
             return
         for i, path in enumerate(paths):
@@ -143,7 +143,7 @@ class PointTopologyFactory(TopologyFactory):
     def paths(obj, create, paths):
         if not create:
             return
-        elif create and paths is None:
+        elif paths is None:
             PathAggregationFactory.create(topo_object=obj)
             return
         path = paths[0]
