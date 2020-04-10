@@ -63,15 +63,15 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
         self.deleted = True
 
     def test_returns_none_if_user_is_invalid(self):
-        self.assertEqual(None, self.backend.authenticate('toto', 'totopwd'))
+        self.assertEqual(None, self.backend.authenticate(username='toto', password='totopwd'))
 
     def test_invalid(self):
-        self.assertEqual(None, self.backend.authenticate('toto', 'totopwd'))
+        self.assertEqual(None, self.backend.authenticate(username='toto', password='totopwd'))
         query_db("INSERT INTO %s (username, password) VALUES ('toto', '%s')" % (settings.AUTHENT_TABLENAME, password2md5('totopwd')))
         # Valid returns a user
-        self.assertNotEqual(None, self.backend.authenticate('toto', 'totopwd'))
+        self.assertNotEqual(None, self.backend.authenticate(username='toto', password='totopwd'))
         # SQL injection safe ?
-        self.assertEqual(None, self.backend.authenticate('toto', "' OR '' = '"))
+        self.assertEqual(None, self.backend.authenticate(username='toto', password="' OR '' = '"))
 
     def test_login(self):
         query_db("INSERT INTO %s (username, password) VALUES ('harold', '%s')" % (settings.AUTHENT_TABLENAME, password2md5('kumar')))
@@ -93,7 +93,7 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
 
     def test_userprofile(self):
         query_db("INSERT INTO %s (username, password, first_name, last_name, structure, lang) VALUES ('aladeen', '%s', 'Ala', 'Deen', 'Walydia', 'ar')" % (settings.AUTHENT_TABLENAME, password2md5('aladeen')))
-        user = self.backend.authenticate('aladeen', 'aladeen')
+        user = self.backend.authenticate(username='aladeen', password='aladeen')
         self.assertEqual(user.first_name, 'Ala')
         self.assertEqual(user.last_name, 'Deen')
         self.assertEqual(user.profile.structure, Structure.objects.get(name='Walydia'))
@@ -102,12 +102,12 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
 
     def test_usergroups(self):
         query_db("INSERT INTO %s (username, password) VALUES ('a', '%s')" % (settings.AUTHENT_TABLENAME, password2md5('a')))
-        user = self.backend.authenticate('a', 'a')
+        user = self.backend.authenticate(username='a', password='a')
         self.assertFalse(user.is_superuser)
 
         def test_level(username, level, groups):
             query_db("UPDATE %s SET level = %s WHERE username = '%s'" % (settings.AUTHENT_TABLENAME, level, username))
-            user = self.backend.authenticate('a', 'a')
+            user = self.backend.authenticate(username='a', password='a')
             if user:
                 usergroups = user.groups.all()
                 for group in groups:

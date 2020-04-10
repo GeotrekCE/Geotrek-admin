@@ -22,7 +22,7 @@ class DatabaseBackend(ModelBackend):
     """
     Authenticate against a table in Authent database.
     """
-    def authenticate(self, username=None, password=None):
+    def authenticate(self, request=None, username=None, password=None):
         credentials = self.query_credentials(username)
         if credentials and check_password(password, credentials.password):
             try:
