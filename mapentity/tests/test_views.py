@@ -341,9 +341,9 @@ class ListViewTest(BaseTest):
 
     def test_mapentity_template_is_last_candidate(self):
         listview = TouristicEventList()
-        listview.object_list = []
-        self.assertEqual(listview.get_template_names(),
-                         ['mapentity/mapentity_list.html'])
+        listview.object_list = TouristicEvent.objects.none()
+        self.assertEqual(listview.get_template_names()[-1],
+                         'mapentity/mapentity_list.html')
 
     def test_list_should_have_some_perms_in_context(self):
         view = TouristicEventList()
