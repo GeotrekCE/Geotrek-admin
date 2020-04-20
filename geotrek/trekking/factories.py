@@ -99,7 +99,6 @@ class TrekFactory(TopologyFactory):
     route = factory.SubFactory(RouteFactory)
     difficulty = factory.SubFactory(DifficultyLevelFactory)
     practice = factory.SubFactory(PracticeFactory)
-    geom = 'SRID=2154;LINESTRING (700000 6600000, 700100 6600100)'
 
     @factory.post_generation
     def sources(obj, create, extracted=None, **kwargs):
