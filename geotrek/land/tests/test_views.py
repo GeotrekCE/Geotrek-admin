@@ -26,8 +26,7 @@ class EdgeHelperTest(TestCase):
             return   # ignore abstract test
         p = PathFactory.create()
         self.assertEqual(len(getattr(p, self.helper_name)), 0)
-        e = self.factory.create(no_path=True)
-        e.add_path(p)
+        e = self.factory.create(paths=[p])
         self.assertEqual([o.pk for o in getattr(p, self.helper_name).all()],
                          [e.pk])
 

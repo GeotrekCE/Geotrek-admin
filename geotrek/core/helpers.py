@@ -91,10 +91,9 @@ class TopologyHelper(object):
                 pass
 
         offset = objdict[0].get('offset', 0.0)
-        topology = TopologyFactory.create(no_path=True, kind='TMP', offset=offset)
+        topology = TopologyFactory.create(kind='TMP', offset=offset)
         # Remove all existing path aggregation (WTF: created from factory ?)
         PathAggregation.objects.filter(topo_object=topology).delete()
-
         try:
             counter = 0
             for j, subtopology in enumerate(objdict):
@@ -157,7 +156,7 @@ class TopologyHelper(object):
         Receives a point (lng, lat) with API_SRID, and returns
         a topology objects with a computed path aggregation.
         """
-        from .models import Path, PathAggregation
+        from .models import Path
         from .factories import TopologyFactory
         # Find closest path
         point = Point(lng, lat, srid=settings.API_SRID)
@@ -170,12 +169,7 @@ class TopologyHelper(object):
             position, offset = closest.interpolate(point)
             offset = 0
         # We can now instantiante a Topology object
-        topology = TopologyFactory.create(no_path=True, kind=kind, offset=offset)
-        aggrobj = PathAggregation(topo_object=topology,
-                                  start_position=position,
-                                  end_position=position,
-                                  path=closest)
-        aggrobj.save()
+        topology = TopologyFactory.create(paths=[(closest, position, position)], kind=kind, offset=offset)
         point = Point(point.x, point.y, srid=settings.SRID)
         topology.geom = point
         topology.save()

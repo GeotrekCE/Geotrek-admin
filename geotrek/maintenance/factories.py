@@ -77,9 +77,8 @@ class InfrastructurePointInterventionFactory(InterventionFactory):
     @factory.post_generation
     def create_infrastructure_point_intervention(obj, create, extracted, **kwargs):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            infra = InfrastructureFactory.create(no_path=True)
+            infra = InfrastructureFactory.create(paths=[(PathFactory.create(), 0.5, 0.5)])
 
-            infra.add_path(PathFactory.create(), start=0.5, end=0.5)
         else:
             infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700040 6600040)')
         obj.set_topology(infra)

@@ -10,7 +10,7 @@ from geotrek.trekking.models import Trek
 
 class AltimetryMixinTest(TestCase):
     def test_get_elevation_chart_none(self):
-        trek = TrekFactory.create(no_path=True, published=True)
+        trek = TrekFactory.create(published=True)
         response = self.client.get('/media/profiles/trek-%s.png' % trek.pk)
         self.assertEqual(response.status_code, 200)
         # In PDF

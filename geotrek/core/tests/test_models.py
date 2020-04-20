@@ -102,8 +102,7 @@ class TrailTest(TestCase):
 
     def test_trail_csv(self):
         p1 = PathFactory.create()
-        t1 = TrailFactory.create(no_path=True)
-        t1.add_path(p1)
+        t1 = TrailFactory.create(paths=[p1])
         self.assertEqual(p1.trails_csv_display, t1.name)
 
     def test_trails_verbose_name(self):

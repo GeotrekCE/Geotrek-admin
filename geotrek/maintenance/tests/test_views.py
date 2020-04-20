@@ -17,8 +17,7 @@ from geotrek.common.factories import OrganismFactory
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.maintenance.models import Intervention, InterventionStatus, Project
 from geotrek.maintenance.views import ProjectFormatList
-from geotrek.core.factories import (PathFactory, PathAggregationFactory,
-                                    TopologyFactory)
+from geotrek.core.factories import PathFactory, TopologyFactory
 from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import SignageFactory
 from geotrek.maintenance.factories import (InterventionFactory, InfrastructureInterventionFactory,
@@ -469,9 +468,9 @@ class ExportTest(TranslationResetMixin, TestCase):
         """
 
         # Create topology line
-        topo_line = TopologyFactory.create(no_path=True)
+
         line = PathFactory.create(geom=LineString(Point(10, 10), Point(11, 10)))
-        PathAggregationFactory.create(topo_object=topo_line, path=line)
+        topo_line = TopologyFactory.create(paths=[line])
 
         # Create a topology point
         lng, lat = tuple(Point(1, 1, srid=settings.SRID).transform(settings.API_SRID, clone=True))
