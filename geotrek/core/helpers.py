@@ -156,7 +156,7 @@ class TopologyHelper(object):
         Receives a point (lng, lat) with API_SRID, and returns
         a topology objects with a computed path aggregation.
         """
-        from .models import Path, PathAggregation
+        from .models import Path
         from .factories import TopologyFactory
         # Find closest path
         point = Point(lng, lat, srid=settings.API_SRID)

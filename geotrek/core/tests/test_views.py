@@ -22,7 +22,7 @@ from geotrek.trekking.factories import POIFactory, TrekFactory, ServiceFactory
 from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import SignageFactory
 from geotrek.maintenance.factories import InterventionFactory
-from geotrek.core.factories import (PathFactory, StakeFactory, TrailFactory, ComfortFactory, TopologyFactory, PathAggregationFactory)
+from geotrek.core.factories import PathFactory, StakeFactory, TrailFactory, ComfortFactory, TopologyFactory
 from geotrek.zoning.factories import CityFactory, DistrictFactory, RestrictedAreaFactory, RestrictedAreaTypeFactory
 
 
@@ -49,7 +49,6 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
     def test_delete_view_multiple_path(self):
         path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
         path_2 = PathFactory.create(name="path_2", geom=LineString((2, 2), (2, -2)))
-        poi = POIFactory.create(paths=[(path_1, 0, 0)])
         response = self.client.get(reverse('core:multiple_path_delete', args=['%s,%s' % (path_1.pk, path_2.pk)]))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Do you really wish to delete')

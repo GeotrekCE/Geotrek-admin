@@ -6,7 +6,7 @@ from geotrek.land.factories import (
     PhysicalEdgeFactory, LandEdgeFactory, CompetenceEdgeFactory,
     WorkManagementEdgeFactory, SignageManagementEdgeFactory
 )
-from geotrek.core.factories import PathFactory, PathAggregationFactory, getRandomLineStringInBounds, TopologyFactory
+from geotrek.core.factories import PathFactory, getRandomLineStringInBounds, TopologyFactory
 
 # Make sure dynamic filters are set up when testing
 from geotrek.land import filters  # noqa

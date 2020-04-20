@@ -6,7 +6,7 @@ from unittest import skipIf
 from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import SignageFactory
 from geotrek.maintenance.factories import InterventionFactory, ProjectFactory
-from geotrek.core.factories import TopologyFactory, PathAggregationFactory
+from geotrek.core.factories import TopologyFactory
 from geotrek.land.factories import (SignageManagementEdgeFactory, WorkManagementEdgeFactory,
                                     CompetenceEdgeFactory)
 from geotrek.zoning.factories import (CityEdgeFactory, DistrictEdgeFactory,

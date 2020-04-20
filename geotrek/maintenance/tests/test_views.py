@@ -17,8 +17,7 @@ from geotrek.common.factories import OrganismFactory
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.maintenance.models import Intervention, InterventionStatus, Project
 from geotrek.maintenance.views import ProjectFormatList
-from geotrek.core.factories import (PathFactory, PathAggregationFactory,
-                                    TopologyFactory)
+from geotrek.core.factories import PathFactory, TopologyFactory
 from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import SignageFactory
 from geotrek.maintenance.factories import (InterventionFactory, InfrastructureInterventionFactory,
