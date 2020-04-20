@@ -13,8 +13,11 @@ from geotrek.tourism.models import TouristicContent, TouristicEvent
 from operator import attrgetter
 
 from geotrek.core.models import Topology, Path
+
 if 'geotrek.diving' in settings.INSTALLED_APPS:
     from geotrek.diving.models import Dive
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    from geotrek.signage.models import Blade
 
 
 class RestrictedAreaType(models.Model):
@@ -82,9 +85,9 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
     Topology.add_property('areas', lambda self: uniquify(
         intersecting(RestrictedArea, self)) if self.ispoint() else uniquify(
         map(attrgetter('restricted_area'), self.area_edges)), _("Restricted areas"))
-    Intervention.add_property('area_edges', lambda self: self.topology.area_edges if self.topology else [],
+    Intervention.add_property('area_edges', lambda self: self.target.area_edges if self.target and self.target else [],
                               _("Restricted area edges"))
-    Intervention.add_property('areas', lambda self: self.topology.areas if self.topology else [],
+    Intervention.add_property('areas', lambda self: self.target.areas if self.target and self.target else [],
                               _("Restricted areas"))
     Project.add_property('area_edges', lambda self: self.edges_by_attr('area_edges'), _("Restricted area edges"))
     Project.add_property('areas', lambda self: uniquify(map(attrgetter('restricted_area'), self.area_edges)),
@@ -103,6 +106,8 @@ TouristicEvent.add_property('areas', lambda self: intersecting(RestrictedArea, s
                             _("Restricted areas"))
 if 'geotrek.diving' in settings.INSTALLED_APPS:
     Dive.add_property('areas', lambda self: uniquify(intersecting(RestrictedArea, self, distance=0)), _("Restricted areas"))
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    Blade.add_property('areas', lambda self: self.signage.areas, _("Restricted areas"))
 
 
 class City(models.Model):
@@ -146,9 +151,9 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
     Topology.add_property('city_edges', CityEdge.topology_city_edges, _("City edges"))
     Topology.add_property('cities',
                           lambda self: uniquify(intersecting(City, self, distance=0)), _("Cities"))
-    Intervention.add_property('city_edges', lambda self: self.topology.city_edges if self.topology else [],
+    Intervention.add_property('city_edges', lambda self: self.target.city_edges if self.target else [],
                               _("City edges"))
-    Intervention.add_property('cities', lambda self: self.topology.cities if self.topology else [], _("Cities"))
+    Intervention.add_property('cities', lambda self: self.target.cities if self.target else [], _("Cities"))
     Project.add_property('city_edges', lambda self: self.edges_by_attr('city_edges'), _("City edges"))
     Project.add_property('cities', lambda self: uniquify(map(attrgetter('city'), self.city_edges)), _("Cities"))
 else:
@@ -160,6 +165,8 @@ TouristicContent.add_property('cities', lambda self: intersecting(City, self, di
 TouristicEvent.add_property('cities', lambda self: intersecting(City, self, distance=0), _("Cities"))
 if 'geotrek.diving' in settings.INSTALLED_APPS:
     Dive.add_property('cities', lambda self: uniquify(intersecting(City, self, distance=0)), _("Cities"))
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    Blade.add_property('cities', lambda self: self.signage.cities, _("Cities"))
 
 
 class District(models.Model):
@@ -203,9 +210,8 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
     Topology.add_property('districts', lambda self: uniquify(
         intersecting(District, self)) if self.ispoint() else uniquify(
         map(attrgetter('district'), self.district_edges)), _("Districts"))
-    Intervention.add_property('district_edges', lambda self: self.topology.district_edges if self.topology else [],
-                              _("District edges"))
-    Intervention.add_property('districts', lambda self: self.topology.districts if self.topology else [],
+    Intervention.add_property('district_edges', lambda self: self.target.district_edges if self.target else [], _("District edges"))
+    Intervention.add_property('districts', lambda self: self.target.districts if self.target else [],
                               _("Districts"))
     Project.add_property('district_edges', lambda self: self.edges_by_attr('district_edges'), _("District edges"))
     Project.add_property('districts', lambda self: uniquify(map(attrgetter('district'), self.district_edges)),
@@ -222,3 +228,5 @@ TouristicContent.add_property('districts', lambda self: intersecting(District, s
 TouristicEvent.add_property('districts', lambda self: intersecting(District, self, distance=0), _("Districts"))
 if 'geotrek.diving' in settings.INSTALLED_APPS:
     Dive.add_property('districts', lambda self: uniquify(intersecting(District, self, distance=0)), _("Districts"))
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    Blade.add_property('districts', lambda self: self.signage.districts, _("Districts"))

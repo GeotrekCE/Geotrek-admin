@@ -8,8 +8,8 @@ class InterventionSerializer(ModelSerializer):
     class Meta:
         model = Intervention
         fields = (
-            'id', 'name', 'date', 'type', 'infrastructure', 'signage', 'status', 'stake',
-            'disorders', 'total_manday', 'project', 'subcontracting',
+            'id', 'name', 'date', 'type', 'status', 'stake',
+            'disorders', 'total_manday', 'subcontracting',
             'width', 'height', 'length', 'area', 'structure',
             'description', 'date_insert', 'date_update',
             'material_cost', 'heliport_cost', 'subcontract_cost',

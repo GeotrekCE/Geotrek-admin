@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from django_filters import ChoiceFilter
 
@@ -10,14 +12,37 @@ from geotrek.common.widgets import YearSelect
 
 from .models import Intervention, Project
 
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    from geotrek.signage.models import Blade
+
+
+class InterventionYearTargetFilter(YearFilter):
+    def do_filter(self, qs, year):
+        interventions = Intervention.objects.filter(date__year=year).values_list('target_id', flat=True)
+        return qs.filter(**{
+            'id__in': interventions
+        }).distinct()
+
 
 class PolygonTopologyFilter(PolygonFilter):
     def filter(self, qs, value):
         if not value:
             return qs
         lookup = self.lookup_expr
-        inner_qs = Topology.objects.filter(**{'geom__%s' % lookup: value})
-        return qs.filter(**{'%s__in' % self.field_name: inner_qs})
+        blade_content_type = ContentType.objects.get(model='blade')
+        topologies = list(Topology.objects.filter(**{'geom__%s' % lookup: value}).values_list('id', flat=True))
+        topologies_intervention = Intervention.objects.existing().filter(target_id__in=topologies).exclude(
+            target_type=blade_content_type).distinct('pk').values_list('id', flat=True)
+
+        interventions = list(topologies_intervention)
+        if 'geotrek.signage' in settings.INSTALLED_APPS:
+            blades = list(Blade.objects.filter(signage__in=topologies).values_list('id', flat=True))
+            blades_intervention = Intervention.objects.existing().filter(target_id__in=blades,
+                                                                         target_type=blade_content_type).values_list('id',
+                                                                                                                     flat=True)
+            interventions.extend(blades_intervention)
+        qs = qs.filter(pk__in=interventions)
+        return qs
 
 
 class InterventionYearSelect(YearSelect):
@@ -28,12 +53,14 @@ class InterventionYearSelect(YearSelect):
 
 
 class InterventionFilterSet(StructureRelatedFilterSet):
-    ON_CHOICES = (('INFRASTRUCTURE', _("Infrastructure")), ('SIGNAGE', _("Signage")))
-    bbox = PolygonTopologyFilter(field_name='topology', lookup_expr='intersects')
+    ON_CHOICES = (('infrastructure', _("Infrastructure")), ('signage', _("Signage")), ('blade', _("Blade")),
+                  ('topology', _("Path")), ('trek', _("Trek")), ('poi', _("POI")), ('service', _("Service")),
+                  ('trail', _("Trail")))
+    bbox = PolygonTopologyFilter(lookup_expr='intersects')
     year = YearFilter(field_name='date',
                       widget=InterventionYearSelect,
                       label=_("Year"))
-    on = ChoiceFilter(field_name='topology__kind', choices=ON_CHOICES, label=_("On"), empty_label=_("On"))
+    on = ChoiceFilter(field_name='target_type__model', choices=ON_CHOICES, label=_("On"), empty_label=_("On"))
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Intervention

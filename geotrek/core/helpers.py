@@ -183,7 +183,7 @@ class TopologyHelper(object):
             objdict = dict(kind=topology.kind, lng=point.x, lat=point.y)
             if with_pk:
                 objdict['pk'] = topology.pk
-            if topology.offset == 0:
+            if settings.TREKKING_TOPOLOGY_ENABLED and topology.offset == 0:
                 objdict['snap'] = topology.aggregations.all()[0].path.pk
         else:
             # Line topology

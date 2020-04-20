@@ -54,8 +54,7 @@ class InterventionFactory(factory.DjangoModelFactory):
     status = factory.SubFactory(InterventionStatusFactory)
     stake = factory.SubFactory(StakeFactory)
     type = factory.SubFactory(InterventionTypeFactory)
-    if not settings.TREKKING_TOPOLOGY_ENABLED:
-        topology = factory.SubFactory(TopologyFactory)
+    target = factory.SubFactory(TopologyFactory)
 
     @factory.post_generation
     def create_intervention(obj, create, extracted, **kwargs):
@@ -65,15 +64,12 @@ class InterventionFactory(factory.DjangoModelFactory):
 
 
 class InfrastructureInterventionFactory(InterventionFactory):
-    @factory.post_generation
-    def create_infrastructure_intervention(obj, create, extracted, **kwargs):
-        infra = InfrastructureFactory.create()
-        obj.set_topology(infra)
-        if create:
-            obj.save()
+    target = factory.SubFactory(InfrastructureFactory)
 
 
 class InfrastructurePointInterventionFactory(InterventionFactory):
+    target = None
+
     @factory.post_generation
     def create_infrastructure_point_intervention(obj, create, extracted, **kwargs):
         if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -81,18 +77,13 @@ class InfrastructurePointInterventionFactory(InterventionFactory):
 
         else:
             infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700040 6600040)')
-        obj.set_topology(infra)
+        obj.target = infra
         if create:
             obj.save()
 
 
 class SignageInterventionFactory(InterventionFactory):
-    @factory.post_generation
-    def create_signage_intervention(obj, create, extracted, **kwargs):
-        infra = SignageFactory.create()
-        obj.set_topology(infra)
-        if create:
-            obj.save()
+    target = factory.SubFactory(SignageFactory)
 
 
 class ContractorFactory(factory.DjangoModelFactory):

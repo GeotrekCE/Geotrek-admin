@@ -12,3 +12,8 @@ def settings_value(name):
 @register.simple_tag
 def is_topology_model(model):
     return hasattr(model, 'kind') and hasattr(model, 'offset')
+
+
+@register.simple_tag
+def is_blade_model(model):
+    return model._meta.model_name == 'blade'

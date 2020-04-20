@@ -8,11 +8,9 @@ from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.common.views import FormsetMixin
 from geotrek.authent.decorators import same_structure_required
-from geotrek.infrastructure.models import Infrastructure
-from geotrek.signage.models import Signage
 from .models import Intervention, Project
 from .filters import InterventionFilterSet, ProjectFilterSet
-from .forms import (InterventionForm, InterventionCreateForm, ProjectForm,
+from .forms import (InterventionForm, ProjectForm,
                     FundingFormSet, ManDayFormSet)
 from .serializers import (InterventionSerializer, ProjectSerializer,
                           InterventionGeojsonSerializer, ProjectGeojsonSerializer)
@@ -24,13 +22,14 @@ logger = logging.getLogger(__name__)
 
 class InterventionLayer(MapEntityLayer):
     queryset = Intervention.objects.existing()
+    filterform = InterventionFilterSet
     properties = ['name']
 
 
 class InterventionList(MapEntityList):
     queryset = Intervention.objects.existing()
     filterform = InterventionFilterSet
-    columns = ['id', 'name', 'date', 'type', 'infrastructure', 'status', 'stake']
+    columns = ['id', 'name', 'date', 'type', 'target', 'status', 'stake']
 
 
 class InterventionJsonList(MapEntityJsonList, InterventionList):
@@ -39,7 +38,7 @@ class InterventionJsonList(MapEntityJsonList, InterventionList):
 
 class InterventionFormatList(MapEntityFormat, InterventionList):
     columns = [
-        'id', 'name', 'date', 'type', 'infrastructure', 'status', 'stake',
+        'id', 'name', 'date', 'type', 'target', 'status', 'stake',
         'disorders', 'total_manday', 'project', 'subcontracting',
         'width', 'height', 'length', 'area', 'structure',
         'description', 'date_insert', 'date_update',
@@ -69,38 +68,25 @@ class ManDayFormsetMixin(FormsetMixin):
 
 class InterventionCreate(ManDayFormsetMixin, CreateFromTopologyMixin, MapEntityCreate):
     model = Intervention
-    form_class = InterventionCreateForm
+    form_class = InterventionForm
 
-    def on_infrastucture(self):
-        pk_infra = self.request.GET.get('infrastructure')
-        if pk_infra:
-            try:
-                return Infrastructure.objects.existing().get(pk=pk_infra)
-            except Infrastructure.DoesNotExist:
-                logger.warning("Intervention on unknown infrastructure %s" % pk_infra)
-
-    def on_signage(self):
-        pk_signa = self.request.GET.get('signage')
-        if pk_signa:
-            try:
-                return Signage.objects.existing().get(pk=pk_signa)
-            except Signage.DoesNotExist:
-                logger.warning("Intervention on unknown signage %s" % pk_signa)
-        return None
+    def on_target(self):
+        target_id = self.request.GET.get('target_id')
+        target_type = self.request.GET.get('target_type')
+        if target_id and target_type:
+            return target_id, target_type
+        return None, None
 
     def get_initial(self):
         """
         Returns the initial data to use for forms on this view.
         """
         initial = super(InterventionCreate, self).get_initial()
-        infrastructure = self.on_infrastucture()
-        signage = self.on_signage()
-        if infrastructure:
+        target_id, target_type = self.on_target()
+        if target_id:
             # Create intervention on an infrastructure
-            initial['infrastructure'] = infrastructure
-        elif signage:
-            # Create intervention on a signage
-            initial['signage'] = signage
+            initial['target_id'] = target_id
+            initial['target_type'] = target_type
         return initial
 
 

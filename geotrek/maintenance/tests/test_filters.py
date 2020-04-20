@@ -29,8 +29,8 @@ class InterventionFilteringByLandTest(TestCase):
 
         seek_topo = TopologyFactory.create(paths=[seek_path])
 
-        InterventionFactory.create(topology=topo_1)
-        seek_it = InterventionFactory.create(topology=seek_topo)
+        InterventionFactory.create(target=topo_1)
+        seek_it = InterventionFactory.create(target=seek_topo)
         return seek_it, seek_path
 
     def test_filter_by_physical_edge(self):
@@ -110,8 +110,8 @@ class ProjectFilteringByLandTest(TestCase):
 
         seek_topo = TopologyFactory.create(paths=[seek_path])
 
-        it_p1 = InterventionFactory.create(topology=topo_1)
-        seek_it = InterventionFactory.create(topology=seek_topo)
+        it_p1 = InterventionFactory.create(target=topo_1)
+        seek_it = InterventionFactory.create(target=seek_topo)
 
         seek_proj = ProjectFactory.create()
         seek_proj.interventions.add(seek_it)

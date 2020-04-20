@@ -1,8 +1,9 @@
 from django.utils.translation import ugettext_lazy as _
 from django_filters import CharFilter
 
-from geotrek.common.filters import StructureRelatedFilterSet, YearFilter, ValueFilter
+from geotrek.common.filters import StructureRelatedFilterSet, ValueFilter
 from geotrek.infrastructure.widgets import InfrastructureYearSelect, InfrastructureImplantationYearSelect
+from geotrek.maintenance.filters import InterventionYearTargetFilter
 from .models import Infrastructure
 
 
@@ -11,8 +12,7 @@ class InfrastructureFilterSet(StructureRelatedFilterSet):
     description = CharFilter(label=_('Description'), lookup_expr='icontains')
     implantation_year = ValueFilter(field_name='implantation_year',
                                     widget=InfrastructureImplantationYearSelect)
-    intervention_year = YearFilter(field_name='interventions_set__date',
-                                   widget=InfrastructureYearSelect)
+    intervention_year = InterventionYearTargetFilter(widget=InfrastructureYearSelect)
 
     def __init__(self, *args, **kwargs):
         super(InfrastructureFilterSet, self).__init__(*args, **kwargs)
