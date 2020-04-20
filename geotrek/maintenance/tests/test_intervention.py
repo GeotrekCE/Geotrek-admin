@@ -25,7 +25,7 @@ class InterventionTest(TestCase):
 
     def test_default_stake(self):
         # Add paths to topology
-        infra = InfrastructureFactory.create(no_path=True)
+        infra = InfrastructureFactory.create(paths=[])
         i = InterventionFactory.create(target=infra)
         i.stake = None
         self.assertTrue(i.stake is None)
@@ -40,9 +40,9 @@ class InterventionTest(TestCase):
             highstake = tmp
 
         # Add paths to topology
-        infra = InfrastructureFactory.create(paths=[PathFactory.create(stake=lowstake),
-                                                    PathFactory.create(stake=highstake),
-                                                    PathFactory.create(stake=lowstake)])
+        infra.add_path(PathFactory.create(stake=lowstake))
+        infra.add_path(PathFactory.create(stake=highstake))
+        infra.add_path(PathFactory.create(stake=lowstake))
         # Stake is not None anymore
         i.save()
         self.assertFalse(i.stake is None)
