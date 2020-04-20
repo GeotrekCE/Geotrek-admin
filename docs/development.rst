@@ -5,7 +5,7 @@ DEVELOPMENT
 ===========
 
 Quickstart
-----------
+==========
 
 ::
 
@@ -20,6 +20,9 @@ Quickstart
 
 Got to http://localhost:8000
 
+
+Contribution guide
+==================
 
 Conventions
 -----------
@@ -60,6 +63,9 @@ Release
 * Add release on Github (copy-paste ``doc/changelog.rst`` paragraph)
 
 
+Developement
+============
+
 Model modification
 ------------------
 
@@ -69,6 +75,16 @@ Model modification
 :notes:
 
     Add migration file to source control.
+
+
+Run tests
+---------
+
+`ENV` variable must be set to run tests:
+
+```
+docker-compose run --rm -e ENV=tests -e COVERAGE_FILE=var/.coverage web coverage run ./manage.py test [<app>]
+```
 
 
 Database reset
