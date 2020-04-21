@@ -90,10 +90,11 @@ class TrekLayer(MapEntityLayer):
 
 
 class TrekList(FlattenPicturesMixin, MapEntityList):
-    model = Trek
-    queryset = Trek.objects.existing()
     filterform = TrekFilterSet
     columns = ['id', 'name', 'duration', 'difficulty', 'departure', 'thumbnail']
+
+    def get_queryset(self):
+        return Trek.objects.existing()
 
 
 class TrekJsonList(MapEntityJsonList, TrekList):
@@ -279,10 +280,11 @@ class POILayer(MapEntityLayer):
 
 
 class POIList(FlattenPicturesMixin, MapEntityList):
-    model = POI
-    queryset = POI.objects.existing()
     filterform = POIFilterSet
     columns = ['id', 'name', 'type', 'thumbnail']
+
+    def get_queryset(self):
+        return POI.objects.existing()
 
 
 class POIJsonList(MapEntityJsonList, POIList):
