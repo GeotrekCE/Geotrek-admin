@@ -1,5 +1,3 @@
-from datetime import datetime, timedelta
-
 from django.test import TestCase
 
 from geotrek.tourism.factories import TouristicEventFactory
@@ -22,8 +20,10 @@ class FilterList(TestCase):
         self.assertEqual(cf.filter(self.qs, False).count(), 1)
         self.assertEqual(cf.filter(self.qs, True).count(), 0)
         # Before : date <= date_of_filter
-        self.assertEqual(bf.filter(self.qs, datetime.today()).count(), 1)
-        self.assertEqual(bf.filter(self.qs, datetime.today() - timedelta(1)).count(), 0)
+        self.assertEqual(bf.filter(self.qs, '2000-01-01').count(), 0)
+        self.assertEqual(bf.filter(self.qs, '2150-01-01').count(), 1)
+        self.assertEqual(bf.filter(self.qs, '2300-01-01').count(), 1)
         # After : date >= date_of_filter
-        self.assertEqual(af.filter(self.qs, datetime.today()).count(), 1)
-        self.assertEqual(af.filter(self.qs, datetime.today() - timedelta(1)).count(), 1)
+        self.assertEqual(af.filter(self.qs, '2000-01-01').count(), 1)
+        self.assertEqual(af.filter(self.qs, '2150-01-01').count(), 1)
+        self.assertEqual(af.filter(self.qs, '2300-01-01').count(), 0)

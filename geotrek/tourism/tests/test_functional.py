@@ -119,7 +119,7 @@ class TouristicEventViewsTests(CommonTest):
             'accessibility': '',
             'approved': False,
             'areas': [],
-            'begin_date': '2020-04-20',
+            'begin_date': '2002-02-20',
             'booking': '',
             'category': {
                 'id': 'E',
@@ -137,7 +137,7 @@ class TouristicEventViewsTests(CommonTest):
             'dives': [],
             'duration': '',
             'email': None,
-            'end_date': '2020-04-20',
+            'end_date': '2202-02-22',
             'filelist_url': '/paperclip/get/tourism/touristicevent/{}/'.format(self.obj.pk),
             'files': [],
             'map_image_url': '/image/touristicevent-{}.png'.format(self.obj.pk),
