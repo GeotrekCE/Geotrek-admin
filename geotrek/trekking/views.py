@@ -284,7 +284,7 @@ class POIList(FlattenPicturesMixin, MapEntityList):
     columns = ['id', 'name', 'type', 'thumbnail']
 
     def get_queryset(self):
-        return POI.objects.existing().prefetch_related('attachments', )
+        return POI.objects.existing().select_related('type')
 
 
 class POIJsonList(MapEntityJsonList, POIList):
