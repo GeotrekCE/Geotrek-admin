@@ -101,6 +101,7 @@ class POIViewsTest(CommonTest):
         else:
             self.assertEqual(form.errors, {'geom': ['No geometry value provided.']})
 
+    @override_settings(DEBUG=True)  # Enable count queries
     def test_listing_number_queries(self):
         self.login()
         # Create many instances
@@ -108,9 +109,6 @@ class POIViewsTest(CommonTest):
             self.modelfactory.create()
         for i in range(10):
             DistrictFactory.create()
-
-        # Enable query counting
-        settings.DEBUG = True
 
         for url in [self.model.get_jsonlist_url(),
                     self.model.get_format_list_url()]:
@@ -120,8 +118,6 @@ class POIViewsTest(CommonTest):
 
             nb_queries = num_queries_new - num_queries_old
             self.assertTrue(0 < nb_queries < 100, '%s queries !' % nb_queries)
-
-        settings.DEBUG = False
 
     def test_pois_on_treks_do_not_exist(self):
         self.login()
@@ -1302,6 +1298,7 @@ class ServiceViewsTest(CommonTest):
         form = self.get_form(response)
         self.assertEqual(form.errors, {'geom': ['No geometry value provided.']})
 
+    @override_settings(DEBUG=True)  # enable count queries
     def test_listing_number_queries(self):
         self.login()
         # Create many instances
@@ -1310,9 +1307,6 @@ class ServiceViewsTest(CommonTest):
         for i in range(10):
             DistrictFactory.create()
 
-        # Enable query counting
-        settings.DEBUG = True
-
         # 1) session, 2) user, 3) user perms, 4) group perms, 5) last modified, 6) list
         with self.assertNumQueries(6):
             self.client.get(self.model.get_jsonlist_url())
@@ -1320,8 +1314,6 @@ class ServiceViewsTest(CommonTest):
         # 1) session, 2) user, 3) user perms, 4) group perms, 5) list
         with self.assertNumQueries(5):
             self.client.get(self.model.get_format_list_url())
-
-        settings.DEBUG = False
 
     def test_services_on_treks_do_not_exist(self):
         self.login()
