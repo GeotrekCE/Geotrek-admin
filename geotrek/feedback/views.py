@@ -4,7 +4,7 @@ from django.core.mail import send_mail
 from django.utils.translation import ugettext as _
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
-from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.parsers import FileUploadParser, FormParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from mapentity import views as mapentity_views
@@ -111,3 +111,19 @@ class ReportWithPicturesView(APIView):
     def post(self, request, format=None, *args, **kwargs):
         return Response({'raw': request.data, 'data': request._request.POST,
                          'files': str(request._request.FILES)})
+
+
+class ReportFilesView(APIView):
+    """Endpoint to post pictures"""
+    parser_classes = [FileUploadParser]
+    permission_classes = [AllowAny]
+
+    def put(self, request, filename, format=None, lang=None):
+        file_obj = request.data['file']
+        print(lang)
+        print(filename)
+        print(request.data['file'])
+        # ...
+        # do some stuff with uploaded file
+        # ...
+        return Response(status=204)
