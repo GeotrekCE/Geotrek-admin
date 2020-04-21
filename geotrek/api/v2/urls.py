@@ -5,18 +5,18 @@ from rest_framework import routers
 from geotrek.api.v2 import views as api_views
 
 router = routers.DefaultRouter()
-router.register('structure', api_views.StructureViewSet, base_name='structure')
+router.register('structure', api_views.StructureViewSet, basename='structure')
 if 'geotrek.core' in settings.INSTALLED_APPS:
-    router.register('path', api_views.PathViewSet, base_name='path')
+    router.register('path', api_views.PathViewSet, basename='path')
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
-    router.register('trek', api_views.TrekViewSet, base_name='trek')
-    router.register('poi', api_views.POIViewSet, base_name='poi')
-    router.register('tour', api_views.TourViewSet, base_name='tour')
+    router.register('trek', api_views.TrekViewSet, basename='trek')
+    router.register('poi', api_views.POIViewSet, basename='poi')
+    router.register('tour', api_views.TourViewSet, basename='tour')
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
-    router.register('touristiccontent', api_views.TouristicContentViewSet, base_name='touristiccontent')
+    router.register('touristiccontent', api_views.TouristicContentViewSet, basename='touristiccontent')
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
-    router.register('sensitivearea', api_views.SensitiveAreaViewSet, base_name='sensitivearea')
-    router.register('sportpractice', api_views.SportPracticeViewSet, base_name='sportpractice')
+    router.register('sensitivearea', api_views.SensitiveAreaViewSet, basename='sensitivearea')
+    router.register('sportpractice', api_views.SportPracticeViewSet, basename='sportpractice')
 
 app_name = 'apiv2'
 urlpatterns = [

@@ -22,7 +22,7 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
         .order_by('pk')  # Required for reliable pagination
     filter_fields = ('difficulty', 'themes', 'networks', 'practice')
 
-    @decorators.list_route(methods=['get'])
+    @decorators.action(detail=False, methods=['get'])
     def all_practices(self, request, *args, **kwargs):
         """
         Get all practices list
@@ -32,7 +32,7 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
                                                       context={'request': request}).data
         return response.Response(data)
 
-    @decorators.list_route(methods=['get'])
+    @decorators.action(detail=False, methods=['get'])
     def used_practices(self, request, *args, **kwargs):
         """
         Get practices used by Trek instances
@@ -43,7 +43,7 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
             context={'request': request}).data
         return response.Response(data)
 
-    @decorators.list_route(methods=['get'])
+    @decorators.action(detail=False, methods=['get'])
     def all_themes(self, request, *args, **kwargs):
         """
         Get all themes list
@@ -53,7 +53,7 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
                                                    context={'request': request}).data
         return response.Response(data)
 
-    @decorators.list_route(methods=['get'])
+    @decorators.action(detail=False, methods=['get'])
     def used_themes(self, request, *args, **kwargs):
         """
         Get themes used by Trek instances
@@ -64,7 +64,7 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
             context={'request': request}).data
         return response.Response(data)
 
-    @decorators.list_route(methods=['get'])
+    @decorators.action(detail=False, methods=['get'])
     def all_networks(self, request, *args, **kwargs):
         """
         Get all networks list
@@ -74,7 +74,7 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
                                                      context={'request': request}).data
         return response.Response(data)
 
-    @decorators.list_route(methods=['get'])
+    @decorators.action(detail=False, methods=['get'])
     def used_networks(self, request, *args, **kwargs):
         """
         Get networks used by Trek instances
@@ -85,7 +85,7 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
             context={'request': request}).data
         return response.Response(data)
 
-    @decorators.list_route(methods=['get'])
+    @decorators.action(detail=False, methods=['get'])
     def all_difficulties(self, request, *args, **kwargs):
         """
         Get all difficulties list
@@ -94,7 +94,7 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
         data = api_serializers.DifficultySerializer(qs, many=True, context={'request': request}).data
         return response.Response(data)
 
-    @decorators.list_route(methods=['get'])
+    @decorators.action(detail=False, methods=['get'])
     def used_difficulties(self, request, *args, **kwargs):
         """
         Get difficulties used by Trek instances
@@ -124,7 +124,7 @@ class POIViewSet(api_viewsets.GeotrekViewset):
         .order_by('pk')  # Required for reliable pagination
     filter_fields = ('type',)
 
-    @decorators.list_route(methods=['get'])
+    @decorators.action(detail=False, methods=['get'])
     def all_types(self, request, *args, **kwargs):
         """
         Get all POI types
@@ -134,7 +134,7 @@ class POIViewSet(api_viewsets.GeotrekViewset):
                                                  context={'request': request}).data
         return response.Response(data)
 
-    @decorators.list_route(methods=['get'])
+    @decorators.action(detail=False, methods=['get'])
     def used_types(self, request, *args, **kwargs):
         """
         Get POI types used by POI instances
