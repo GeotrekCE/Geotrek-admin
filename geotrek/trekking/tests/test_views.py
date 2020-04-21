@@ -15,7 +15,7 @@ from django.contrib.auth.models import User, Group, Permission
 from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core.management import call_command
 from django.urls import reverse
-from django.db import connection, connections, DEFAULT_DB_ALIAS
+from django.db import connections, DEFAULT_DB_ALIAS
 from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from django.test import RequestFactory
@@ -101,7 +101,7 @@ class POIViewsTest(CommonTest):
         else:
             self.assertEqual(form.errors, {'geom': ['No geometry value provided.']})
 
-    @override_settings(DEBUG=True)  # Enable count queries
+    @override_settings(DEBUG=True)
     def test_listing_number_queries(self):
         self.login()
         # Create many instances
@@ -110,14 +110,11 @@ class POIViewsTest(CommonTest):
         for i in range(10):
             DistrictFactory.create()
 
-        for url in [self.model.get_jsonlist_url(),
-                    self.model.get_format_list_url()]:
-            num_queries_old = len(connection.queries)
-            self.client.get(url)
-            num_queries_new = len(connection.queries)
+        with self.assertNumQueries(6):
+            self.client.get(self.model.get_jsonlist_url())
 
-            nb_queries = num_queries_new - num_queries_old
-            self.assertTrue(0 < nb_queries < 100, '%s queries !' % nb_queries)
+        with self.assertNumQueries(5):
+            self.client.get(self.model.get_format_list_url())
 
     def test_pois_on_treks_do_not_exist(self):
         self.login()
