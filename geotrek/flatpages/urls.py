@@ -10,7 +10,7 @@ We don't use MapEntity for FlatPages, thus we use Django Rest Framework
 without sugar.
 """
 router = DefaultRouter(trailing_slash=False)
-router.register('flatpages', FlatPageViewSet, base_name='flatpages')
+router.register('flatpages', FlatPageViewSet, basename='flatpages')
 
 register_converter(LangConverter, 'lang')
 

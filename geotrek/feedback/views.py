@@ -2,7 +2,7 @@ from django.conf import settings
 from django.views.generic.list import ListView
 from django.core.mail import send_mail
 from django.utils.translation import ugettext as _
-from rest_framework.decorators import list_route
+from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from mapentity import views as mapentity_views
 
@@ -53,7 +53,7 @@ class ReportViewSet(mapentity_views.MapEntityViewSet):
     authentication_classes = []
     permission_classes = [AllowAny]
 
-    @list_route(methods=['post'])
+    @action(detail=False, methods=['post'])
     def report(self, request, lang=None):
         response = super(ReportViewSet, self).create(request)
         if settings.SEND_REPORT_ACK and response.status_code == 201:
