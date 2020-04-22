@@ -101,7 +101,6 @@ class POIViewsTest(CommonTest):
         else:
             self.assertEqual(form.errors, {'geom': ['No geometry value provided.']})
 
-    @override_settings(DEBUG=True)
     def test_listing_number_queries(self):
         self.login()
         # Create many instances
@@ -1295,7 +1294,6 @@ class ServiceViewsTest(CommonTest):
         form = self.get_form(response)
         self.assertEqual(form.errors, {'geom': ['No geometry value provided.']})
 
-    @override_settings(DEBUG=True)  # enable count queries
     def test_listing_number_queries(self):
         self.login()
         # Create many instances
