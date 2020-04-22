@@ -84,13 +84,13 @@ Run tests
 
 ::
 
-    docker-compose run --rm -e ENV=tests -e web run ./manage.py test
+    docker-compose run --rm -e ENV=tests web run ./manage.py test
 
 Test without dynamic segmentation
 
 ::
 
-    docker-compose run --rm -e ENV=tests_nds -e web run ./manage.py test
+    docker-compose run --rm -e ENV=tests_nds web run ./manage.py test
 
 
 Database reset
