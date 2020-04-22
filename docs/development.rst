@@ -82,9 +82,15 @@ Run tests
 
 `ENV` variable must be set to run tests:
 
-```
-docker-compose run --rm -e ENV=tests -e COVERAGE_FILE=var/.coverage web coverage run ./manage.py test [<app>]
-```
+::
+
+    docker-compose run --rm -e ENV=tests -e web run ./manage.py test
+
+Test without dynamic segmentation
+
+::
+
+    docker-compose run --rm -e ENV=tests_nds -e web run ./manage.py test
 
 
 Database reset
