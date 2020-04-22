@@ -32,6 +32,7 @@ class InterventionViewsTest(CommonTest):
     model = Intervention
     modelfactory = InterventionFactory
     userfactory = PathManagerFactory
+    get_expected_json_attrs = None  # Disable API tests
 
     def get_bad_data(self):
         return OrderedDict([
@@ -417,6 +418,7 @@ class ProjectViewsTest(CommonTest):
     model = Project
     modelfactory = ProjectWithInterventionFactory
     userfactory = PathManagerFactory
+    get_expected_json_attrs = None  # Disable API tests
 
     def get_bad_data(self):
         return OrderedDict([

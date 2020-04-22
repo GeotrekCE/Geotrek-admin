@@ -11,7 +11,7 @@ from geotrek.signage.models import Signage, Blade
 from geotrek.core.factories import PathFactory
 from geotrek.signage.factories import (SignageFactory, SignageTypeFactory, BladeFactory, BladeTypeFactory,
                                        SignageNoPictogramFactory, BladeDirectionFactory, BladeColorFactory,
-                                       InfrastructureConditionFactory, LineFactory)
+                                       InfrastructureConditionFactory)
 from geotrek.signage.filters import SignageFilterSet
 from geotrek.infrastructure.tests.test_views import InfraFilterTestMixin
 
@@ -21,7 +21,10 @@ class SignageTest(TestCase):
         p = PathFactory.create()
 
         self.assertEqual(len(p.signages), 0)
-        sign = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            sign = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+        else:
+            sign = SignageFactory.create(geom='SRID=2154;POINT (700050 6600050)')
 
         self.assertCountEqual(p.signages, [sign])
 
@@ -30,6 +33,20 @@ class BladeViewsTest(CommonTest):
     model = Blade
     modelfactory = BladeFactory
     userfactory = PathManagerFactory
+    expected_json_geom = {'type': 'Point', 'coordinates': [3.0, 46.5]}
+
+    def get_expected_json_attrs(self):
+        return {
+            'color': self.obj.color.pk,
+            'condition': self.obj.condition.pk,
+            'direction': self.obj.direction.pk,
+            'number': '1',
+            'order_lines': [self.obj.lines.get().pk],
+            'structure': {'id': self.obj.structure.pk, 'name': 'My structure'},
+            'type': {
+                'label': 'Blade type'
+            }
+        }
 
     def get_bad_data(self):
         return OrderedDict([
@@ -41,7 +58,7 @@ class BladeViewsTest(CommonTest):
 
     def get_good_data(self):
         good_data = {
-            'number': '1',
+            'number': '2',
             'type': BladeTypeFactory.create().pk,
             'condition': InfrastructureConditionFactory.create().pk,
             'direction': BladeDirectionFactory.create().pk,
@@ -51,7 +68,7 @@ class BladeViewsTest(CommonTest):
             'lines-MAX_NUM_FORMS': '1000',
             'lines-MIN_NUM_FORMS': '',
 
-            'lines-0-number': "1",
+            'lines-0-number': "2",
             'lines-0-text': 'Text 0',
             'lines-0-distance': "10",
             'lines-0-pictogram_name': 'toto',
@@ -59,7 +76,7 @@ class BladeViewsTest(CommonTest):
             'lines-0-id': '',
             'lines-0-DELETE': '',
 
-            'lines-1-number': "2",
+            'lines-1-number': "3",
             'lines-1-text': 'Text 1',
             'lines-1-distance': "0.2",
             'lines-1-pictogram_name': 'coucou',
@@ -89,13 +106,6 @@ class BladeViewsTest(CommonTest):
         else:
             self.assertContains(response, '.modifiable = false;')
 
-    def test_api_geojson_list_for_model(self):
-        # TODO: Fix problem with topology.geom should be possible to use a geom of an other model for the serialization
-        pass
-
-    def test_api_geojson_detail_for_model(self):
-        pass
-
     def test_creation_form_on_signage(self):
         self.login()
 
@@ -123,29 +133,10 @@ class BladeViewsTest(CommonTest):
         obj = self.model.objects.last()
         self.assertEqual(obj.structure, self.user.profile.structure)
 
-    def test_no_html_in_csv(self):
-        self.login()
-
-        blade = BladeFactory.create()
-        LineFactory.create(blade=blade)
-        fmt = 'csv'
-        response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.get('Content-Type'), 'text/csv')
-
-    def test_basic_format(self):
-        self.login()
-        blade = BladeFactory.create()
-        LineFactory.create(blade=blade)
-        for fmt in ('csv', 'shp', 'gpx'):
-            response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
-            self.assertEqual(response.status_code, 200, "")
-
     def test_basic_format_not_ascii(self):
         self.login()
         signage = SignageFactory.create(name="ééé")
-        blade = BladeFactory.create(signage=signage)
-        LineFactory.create(blade=blade)
+        BladeFactory.create(signage=signage)
         for fmt in ('csv', 'shp', 'gpx'):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
             self.assertEqual(response.status_code, 200, "")
@@ -168,34 +159,47 @@ class BladeViewsTest(CommonTest):
         self.assertEqual(obj.structure, structure)
         self.logout()
 
-    def test_structure_is_changed_with_permission(self):
-        self.login()
-        perm = Permission.objects.get(codename='can_bypass_structure')
-        self.user.user_permissions.add(perm)
-        structure = StructureFactory()
-        self.assertNotEqual(structure, self.user.profile.structure)
-        obj = self.modelfactory.create()
-        data = self.get_good_data()
-        data['structure'] = structure
-        result = self.client.post(obj.get_update_url(), data)
-        self.assertEqual(result.status_code, 302)
-        self.assertEqual(self.model.objects.first().structure, self.user.profile.structure)
-        self.logout()
-
     def test_structure_is_not_changed_without_permission(self):
         self.login()
         structure = StructureFactory()
         self.assertNotEqual(structure, self.user.profile.structure)
         self.assertFalse(self.user.has_perm('authent.can_bypass_structure'))
-        obj = self.modelfactory.create(structure=structure)
-        self.client.post(obj.get_update_url(), self.get_good_data())
-        self.assertEqual(obj.structure, structure)
+        obj = self.modelfactory.create(signage__structure=structure)
+        result = self.client.post(obj.get_update_url(), self.get_good_data())
+        self.assertEqual(result.status_code, 302)
+        self.assertEqual(self.model.objects.first().structure, structure)
+        self.logout()
 
 
 class SignageViewsTest(CommonTest):
     model = Signage
     modelfactory = SignageFactory
     userfactory = PathManagerFactory
+    expected_json_geom = {'type': 'Point', 'coordinates': [3.0, 46.5]}
+
+    def get_expected_json_attrs(self):
+        return {
+            'code': None,
+            'condition': self.obj.condition.pk,
+            'manager': None,
+            'name': 'Signage',
+            'printed_elevation': 4807,
+            'publication_date': None,
+            'published': True,
+            'published_status': [
+                {'lang': 'en', 'language': 'English', 'status': False},
+                {'lang': 'es', 'language': 'Spanish', 'status': False},
+                {'lang': 'fr', 'language': 'French', 'status': False},
+                {'lang': 'it', 'language': 'Italian', 'status': False}
+            ],
+            'sealing': self.obj.sealing.pk,
+            'structure': {'id': self.obj.structure.pk, 'name': 'My structure'},
+            'type': {
+                'id': self.obj.type.pk,
+                'label': 'Signage type',
+                'pictogram': '/media/upload/signage_type.png',
+            },
+        }
 
     def get_good_data(self):
         good_data = {
@@ -229,8 +233,14 @@ class SignageViewsTest(CommonTest):
         self.assertTrue((signagetype.pk, str(signagetype)) in type.choices)
 
     def test_no_pictogram(self):
-        self.modelfactory = SignageNoPictogramFactory
-        super(SignageViewsTest, self).test_api_detail_for_model()
+        self.login()
+
+        self.obj = SignageNoPictogramFactory.create()
+        response = self.client.get('/api/en/signages/{}'.format(self.obj.pk))
+        self.assertEqual(response.status_code, 200)
+        expected_json_attrs = {'id': self.obj.pk, **self.get_expected_json_attrs()}
+        expected_json_attrs['type']['pictogram'] = '/static/signage/picto-signage.png'
+        self.assertJSONEqual(response.content, expected_json_attrs)
 
 
 class SignageFilterTest(InfraFilterTestMixin, AuthentFixturesTest):

@@ -117,6 +117,8 @@ class TopologyFactory(factory.DjangoModelFactory):
 
     # Factory
     # paths (M2M)
+    if not settings.TREKKING_TOPOLOGY_ENABLED:
+        geom = 'SRID=2154;LINESTRING (700000 6600000, 700100 6600100)'
     offset = 0
     deleted = False
 
@@ -126,9 +128,9 @@ class TopologyFactory(factory.DjangoModelFactory):
 
     @factory.post_generation
     def paths(obj, create, paths):
-        if not create:
+        if not create or not settings.TREKKING_TOPOLOGY_ENABLED:
             return
-        elif paths is None:
+        if paths is None:
             PathAggregationFactory.create(topo_object=obj)
             return
         for i, path in enumerate(paths):
@@ -139,21 +141,21 @@ class TopologyFactory(factory.DjangoModelFactory):
 
 
 class PointTopologyFactory(TopologyFactory):
+    if not settings.TREKKING_TOPOLOGY_ENABLED:
+        geom = 'SRID=2154;POINT (700000 6600000)'
+
     @factory.post_generation
     def paths(obj, create, paths):
-        if not create:
+        if not create or not settings.TREKKING_TOPOLOGY_ENABLED:
             return
-        elif paths is None:
-            PathAggregationFactory.create(topo_object=obj)
+        if paths is None:
+            PointPathAggregationFactory.create(topo_object=obj)
             return
         path = paths[0]
         if isinstance(path, tuple):
             obj.add_path(path[0], path[1], path[2])
         else:
             obj.add_path(path, 0, 0)
-        if not settings.TREKKING_TOPOLOGY_ENABLED:
-            obj.geom = 'SRID=2154;POINT (700000 6600000)'
-            obj.save()
 
 
 class PathAggregationFactory(factory.DjangoModelFactory):
@@ -166,6 +168,10 @@ class PathAggregationFactory(factory.DjangoModelFactory):
     start_position = 0.0
     end_position = 1.0
     order = 0
+
+
+class PointPathAggregationFactory(PathAggregationFactory):
+    end_position = 0
 
 
 class TrailFactory(TopologyFactory):

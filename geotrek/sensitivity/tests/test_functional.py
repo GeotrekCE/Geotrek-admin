@@ -11,6 +11,30 @@ class SensitiveAreaViewsTests(CommonTest):
     model = SensitiveArea
     modelfactory = SensitiveAreaFactory
     userfactory = BiodivManagerFactory
+    expected_json_geom = {
+        'type': 'Polygon',
+        'coordinates': [[[3.0, 46.5], [3.0, 46.500027], [3.0000391, 46.500027], [3.0000391, 46.5], [3.0, 46.5]]],
+    }
+
+    def get_expected_json_attrs(self):
+        return {
+            'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
+            'description': 'Blabla',
+            'kml_url': '/api/en/sensitiveareas/{}.kml'.format(self.obj.pk),
+            'publication_date': '2020-03-17',
+            'published': True,
+            'species': {
+                'id': self.obj.species.pk,
+                'name': "Species",
+                'period': [False, False, False, False, False, True, True, False, False, False, False, False],
+                'pictogram': "/media/upload/dummy_img.png",
+                'practices': [
+                    {'id': self.obj.species.practices.all()[0].pk, 'name': "Practice1"},
+                    {'id': self.obj.species.practices.all()[1].pk, 'name': "Practice2"},
+                ],
+                'url': self.obj.species.url,
+            },
+        }
 
     def setUp(self):
         translation.deactivate()
@@ -33,6 +57,30 @@ class RegulatorySensitiveAreaViewsTests(CommonTest):
     model = SensitiveArea
     modelfactory = RegulatorySensitiveAreaFactory
     userfactory = BiodivManagerFactory
+    expected_json_geom = {
+        'type': 'Polygon',
+        'coordinates': [[[3.0, 46.5], [3.0, 46.500027], [3.0000391, 46.500027], [3.0000391, 46.5], [3.0, 46.5]]],
+    }
+
+    def get_expected_json_attrs(self):
+        return {
+            'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
+            'description': 'Blabla',
+            'kml_url': '/api/en/sensitiveareas/{}.kml'.format(self.obj.pk),
+            'publication_date': '2020-03-17',
+            'published': True,
+            'species': {
+                'id': self.obj.species.pk,
+                'name': "Species",
+                'period': [False, False, False, False, False, True, True, False, False, False, False, False],
+                'pictogram': "/media/upload/dummy_img.png",
+                'practices': [
+                    {'id': self.obj.species.practices.all()[0].pk, 'name': "Practice1"},
+                    {'id': self.obj.species.practices.all()[1].pk, 'name': "Practice2"},
+                ],
+                'url': self.obj.species.url,
+            },
+        }
 
     def setUp(self):
         translation.deactivate()

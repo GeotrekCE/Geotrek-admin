@@ -11,6 +11,9 @@ class ReportSerializer(rest_serializers.ModelSerializer):
         model = feedback_models.Report
         id_field = 'id'
         fields = ('id', 'email', 'comment', 'category', 'status', 'geom', 'context_object')
+        extra_kwargs = {
+            'geom': {'write_only': True},
+        }
 
     def validate_geom(self, value):
         return GEOSGeometry(value, srid=4326)

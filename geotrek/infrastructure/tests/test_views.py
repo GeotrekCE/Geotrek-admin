@@ -10,7 +10,8 @@ from geotrek.maintenance.factories import InterventionFactory
 from geotrek.infrastructure.models import (Infrastructure, InfrastructureCondition, INFRASTRUCTURE_TYPES)
 from geotrek.core.factories import PathFactory
 from geotrek.infrastructure.factories import (InfrastructureFactory, InfrastructureNoPictogramFactory,
-                                              InfrastructureTypeFactory, InfrastructureConditionFactory)
+                                              InfrastructureTypeFactory, InfrastructureConditionFactory,
+                                              PointInfrastructureFactory)
 from geotrek.infrastructure.filters import InfrastructureFilterSet
 
 
@@ -18,7 +19,10 @@ class InfrastructureTest(TestCase):
     def test_helpers(self):
         p = PathFactory.create()
 
-        infra = InfrastructureFactory.create(paths=[p])
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            infra = InfrastructureFactory.create(paths=[p])
+        else:
+            infra = InfrastructureFactory.create(geom=p.geom)
 
         self.assertCountEqual(p.infrastructures, [infra])
 
@@ -27,6 +31,29 @@ class InfrastructureViewsTest(CommonTest):
     model = Infrastructure
     modelfactory = InfrastructureFactory
     userfactory = PathManagerFactory
+    expected_json_geom = {'type': 'LineString', 'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]]}
+
+    def get_expected_json_attrs(self):
+        return {
+            'name': self.obj.name,
+            'publication_date': None,
+            'published': True,
+            'published_status': [
+                {'lang': 'en', 'language': 'English', 'status': False},
+                {'lang': 'es', 'language': 'Spanish', 'status': False},
+                {'lang': 'fr', 'language': 'French', 'status': False},
+                {'lang': 'it', 'language': 'Italian', 'status': False}
+            ],
+            'structure': {
+                'id': self.obj.structure.pk,
+                'name': self.obj.structure.name,
+            },
+            'type': {
+                'id': self.obj.type.pk,
+                'label': self.obj.type.label,
+                'pictogram': self.obj.type.pictogram.url if self.obj.type.pictogram else '/static/infrastructure/picto-infrastructure.png',
+            },
+        }
 
     def get_good_data(self):
         good_data = {
@@ -64,6 +91,9 @@ class InfrastructureViewsTest(CommonTest):
 
 
 class PointInfrastructureViewsTest(InfrastructureViewsTest):
+    modelfactory = PointInfrastructureFactory
+    expected_json_geom = {'type': 'Point', 'coordinates': [3.0, 46.5]}
+
     def get_good_data(self):
         good_data = {
             'name': 'test',

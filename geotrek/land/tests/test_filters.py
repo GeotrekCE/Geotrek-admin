@@ -1,3 +1,6 @@
+from unittest import skipIf
+
+from django.conf import settings
 from django.test import TestCase
 
 # Make sure dynamic filters are set up when testing
@@ -10,6 +13,7 @@ from geotrek.land.factories import (
 )
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class LandFiltersTest(TestCase):
 
     filterclass = None

@@ -16,7 +16,7 @@ class PracticeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Practice
 
-    name = factory.Sequence(lambda n: "Practice %s" % n)
+    name = "Practice"
     pictogram = get_dummy_uploaded_image()
 
 
@@ -24,7 +24,7 @@ class DiveFactory(StructureRelatedDefaultFactory):
     class Meta:
         model = models.Dive
 
-    name = factory.Sequence(lambda n: "Dive %s" % n)
+    name = "Dive"
     practice = factory.SubFactory(PracticeFactory)
     geom = 'POINT(0 0)'
     published = True
@@ -61,14 +61,14 @@ class DifficultyFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Difficulty
 
-    name = factory.Sequence(lambda n: "difficulty %s" % n)
-    pictogram = get_dummy_uploaded_image('difficulty-%s.png')
+    name = "Difficulty"
+    pictogram = get_dummy_uploaded_image('difficulty.png')
 
 
 class LevelFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Level
 
-    name = factory.Sequence(lambda n: "level %s" % n)
-    description = factory.Sequence(lambda n: "<p>description %s</p>" % n)
-    pictogram = get_dummy_uploaded_image('level-%s.png')
+    name = "Level"
+    description = "<p>Description</p>"
+    pictogram = get_dummy_uploaded_image('level.png')

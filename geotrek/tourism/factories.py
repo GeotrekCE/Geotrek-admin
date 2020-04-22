@@ -1,10 +1,9 @@
 from django.contrib.gis.geos import Point
-from django.utils import timezone
 
 import factory
 
 from geotrek.authent.factories import StructureRelatedDefaultFactory
-from geotrek.common.utils.testdata import get_dummy_uploaded_image, dummy_filefield_as_sequence
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
 
 from . import models
 from geotrek.trekking.factories import TrekFactory
@@ -15,7 +14,7 @@ class InformationDeskTypeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.InformationDeskType
 
-    label = factory.Sequence(lambda n: "Type %s" % n)
+    label = "Type"
     pictogram = get_dummy_uploaded_image()
 
 
@@ -23,16 +22,16 @@ class InformationDeskFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.InformationDesk
 
-    name = factory.Sequence(lambda n: "information desk name %s" % n)
+    name = "Information desk"
     type = factory.SubFactory(InformationDeskTypeFactory)
-    description = factory.Sequence(lambda n: "<p>description %s</p>" % n)
-    phone = factory.Sequence(lambda n: "01 02 03 %s" % n)
-    email = factory.Sequence(lambda n: "email-%s@makina-corpus.com" % n)
-    website = factory.Sequence(lambda n: "http://makina-corpus.com/%s" % n)
-    photo = dummy_filefield_as_sequence('photo %s')
-    street = factory.Sequence(lambda n: "%s baker street" % n)
+    description = "<p>Description</p>"
+    phone = "01 02 03 04 05"
+    email = "email@makina-corpus.com"
+    website = "https://makina-corpus.com"
+    photo = get_dummy_uploaded_image('photo')
+    street = "42 Baker street"
     postal_code = '28300'
-    municipality = factory.Sequence(lambda n: "Bailleau L'évêque-%s" % n)
+    municipality = "Bailleau L'évêque"
     geom = Point(3.14, 42)
 
 
@@ -40,42 +39,42 @@ class TouristicContentCategoryFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.TouristicContentCategory
 
-    label = factory.Sequence(lambda n: "Category %s" % n)
-    type1_label = factory.Sequence(lambda n: "Type1_label %s" % n)
+    label = "Category"
+    type1_label = "Type1 label"
     # Keep type2_label with default value
-    pictogram = dummy_filefield_as_sequence('touristiccontent-category-%s.png')
+    pictogram = get_dummy_uploaded_image('touristiccontent-category.png')
 
 
 class TouristicContentType1Factory(factory.DjangoModelFactory):
     class Meta:
         model = models.TouristicContentType1
 
-    label = factory.Sequence(lambda n: "Type1 %s" % n)
+    label = "Type1"
     category = factory.SubFactory(TouristicContentCategoryFactory)
-    pictogram = dummy_filefield_as_sequence('touristiccontent-type1-%s.png')
+    pictogram = get_dummy_uploaded_image('touristiccontent-type1.png')
 
 
 class TouristicContentType2Factory(factory.DjangoModelFactory):
     class Meta:
         model = models.TouristicContentType2
 
-    label = factory.Sequence(lambda n: "Type2 %s" % n)
+    label = "Type2"
     category = factory.SubFactory(TouristicContentCategoryFactory)
-    pictogram = dummy_filefield_as_sequence('touristiccontent-type2-%s.png')
+    pictogram = get_dummy_uploaded_image('touristiccontent-type2.png')
 
 
 class ReservationSystemFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.ReservationSystem
 
-    name = factory.Sequence(lambda n: "ReservationSystem %s" % n)
+    name = factory.Sequence(lambda n: "Reservation system %s" % n)
 
 
 class TouristicContentFactory(StructureRelatedDefaultFactory):
     class Meta:
         model = models.TouristicContent
 
-    name = factory.Sequence(lambda n: "TouristicContent %s" % n)
+    name = "Touristic content"
     category = factory.SubFactory(TouristicContentCategoryFactory)
     geom = 'POINT(0 0)'
     published = True
@@ -101,19 +100,19 @@ class TouristicEventTypeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.TouristicEventType
 
-    type = factory.Sequence(lambda n: "Type %s" % n)
-    pictogram = dummy_filefield_as_sequence('touristicevent-type-%s.png')
+    type = "Type"
+    pictogram = get_dummy_uploaded_image('touristicevent-type.png')
 
 
 class TouristicEventFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.TouristicEvent
 
-    name = factory.Sequence(lambda n: "TouristicEvent %s" % n)
+    name = "Touristic event"
     geom = 'POINT(0 0)'
     published = True
-    begin_date = timezone.now()
-    end_date = timezone.now()
+    begin_date = '2002-02-20'
+    end_date = '2202-02-22'
 
     type = factory.SubFactory(TouristicEventTypeFactory)
 

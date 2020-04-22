@@ -101,6 +101,7 @@ class TrekTest(TranslationResetMixin, TestCase):
         self.assertIn(type0, trek.poi_types)
         self.assertIn(type1, trek.poi_types)
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_delete_cascade(self):
         p1 = PathFactory.create()
         p2 = PathFactory.create()
