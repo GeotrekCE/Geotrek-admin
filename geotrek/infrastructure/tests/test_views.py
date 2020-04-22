@@ -19,7 +19,10 @@ class InfrastructureTest(TestCase):
     def test_helpers(self):
         p = PathFactory.create()
 
-        infra = InfrastructureFactory.create(paths=[p])
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            infra = InfrastructureFactory.create(paths=[p])
+        else:
+            infra = InfrastructureFactory.create(geom=p.geom)
 
         self.assertCountEqual(p.infrastructures, [infra])
 

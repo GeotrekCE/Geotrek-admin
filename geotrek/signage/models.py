@@ -74,7 +74,11 @@ class Signage(MapEntityMixin, BaseInfrastructure):
 
     @classmethod
     def path_signages(cls, path):
-        return cls.objects.existing().filter(aggregations__path=path).distinct('pk')
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            return cls.objects.existing().filter(aggregations__path=path).distinct('pk')
+        else:
+            area = path.geom.buffer(settings.TREK_SIGNAGE_INTERSECTION_MARGIN)
+            return cls.objects.existing().filter(geom__intersects=area)
 
     @classmethod
     def topology_signages(cls, topology):

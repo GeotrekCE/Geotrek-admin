@@ -21,7 +21,10 @@ class SignageTest(TestCase):
         p = PathFactory.create()
 
         self.assertEqual(len(p.signages), 0)
-        sign = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            sign = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+        else:
+            sign = SignageFactory.create(geom='SRID=2154;POINT (700050 6600050)')
 
         self.assertCountEqual(p.signages, [sign])
 
