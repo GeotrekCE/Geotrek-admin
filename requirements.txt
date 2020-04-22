@@ -30,11 +30,11 @@ django-geojson==2.11.0
 git+https://github.com/GeotrekCE/django-leaflet.git@0.19.0+geotrek5#egg=django-leaflet
 django-modeltranslation==0.13.4
 django-multiselectfield==0.1.5
-django-rest-swagger==2.2.0
+django-rest-swagger==2.2.0  # TODO: deprecated, replace with drf-yasg
 django-tinymce==2.8.0
 django-weasyprint==0.5.4
 djangorestframework==3.11.0
-djangorestframework-gis==0.14  # wait for non wheel release to use it (0.15 is wrong)
+git+https://github.com/openwisp/django-rest-framework-gis.git@v0.15.0#egg=djangorestframework-gis # wait for non wheel release on pypi
 docutils==0.16
 drf-dynamic-fields==0.3.1
 drf-extensions==0.4.0
