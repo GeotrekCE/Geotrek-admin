@@ -1,9 +1,7 @@
 from django import forms
 from django.conf import settings
 from django.contrib.gis.forms.fields import GeometryField
-from django.core.exceptions import FieldDoesNotExist
 from django.db.models import Max
-from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.forms.models import inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
 

@@ -7,8 +7,8 @@ from django.conf import settings
 
 from mapentity.models import MapEntityMixin
 
-from geotrek.authent.models import StructureOrNoneRelated, StructureRelated
-from geotrek.common.mixins import AddPropertyMixin, NoDeleteMixin, OptionalPictogramMixin, NoDeleteManager
+from geotrek.authent.models import StructureOrNoneRelated
+from geotrek.common.mixins import AddPropertyMixin, OptionalPictogramMixin, NoDeleteManager
 from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty, format_coordinates
 from geotrek.core.models import Topology, Path
