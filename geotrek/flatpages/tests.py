@@ -34,8 +34,6 @@ class FlatPageFormTest(TestCase):
             'target': 'all',
         }
         form = FlatPageForm(data=data, user=user)
-        form.is_valid()
-        print(form.errors)
         self.assertTrue(form.is_valid())
 
     def test_validation_does_fail_if_url_is_badly_filled(self):
