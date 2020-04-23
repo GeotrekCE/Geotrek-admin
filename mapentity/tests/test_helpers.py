@@ -1,4 +1,5 @@
 import os
+import requests
 from unittest import mock
 
 from django.contrib.gis.geos import Polygon
@@ -92,31 +93,43 @@ class OtherHelpers(TestCase):
     def test_is_file_uptodate_no_date(self, mock_value):
         self.assertFalse(is_file_uptodate(self.path, None))
 
-    @mock.patch('mapentity.helpers.get_source', return_value=None)
-    def test_download_to_stream_source_is_None(self, mock_value):
-        source = download_to_stream('fake_url', 'fake_header')
+    @mock.patch('requests.get')
+    def test_download_to_stream_source_is_None(self, mock_get):
+        def itfails(url, headers):
+            raise requests.exceptions.ConnectionError()
+        mock_get.side_effect = itfails
+        source = download_to_stream('fake_url', 'fake_stream', silent=True)
         self.assertIsNone(source)
 
-    @mock.patch('mapentity.helpers.get_source', return_value=HttpResponse('test', content_type='text'))
+    @mock.patch('requests.get')
     @mock.patch('django.http.HttpResponse.write', side_effect=IOError("Test"))
-    def test_download_to_stream_source_error_io(self, mock_write, mock_get_source):
+    def test_download_to_stream_source_error_io(self, mock_write, mock_get):
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.content = b'xxx'
         with self.assertRaises(IOError):
             download_to_stream('fake_url', HttpResponse('test', content_type='text/javascript'))
 
-    @mock.patch('mapentity.helpers.get_source', return_value=HttpResponse('test', content_type='text'))
-    def test_download_to_stream_source_header(self, mock_get_source):
+    @mock.patch('requests.get')
+    def test_download_to_stream_source_header(self, mock_get):
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.content = b'xxx'
+        mock_get.return_value.headers = {'data': 'test'}
         response = HttpResponse('test', content_type='text/javascript')
-        response["data"] = "test"
         download_to_stream('fake_url', response)
+        self.assertEqual(response['data'], 'test')
 
-    @mock.patch('mapentity.helpers.get_source', return_value=HttpResponse(b'test', content_type='text'))
-    def test_capture_map_image_no_size(self, mock_value):
+    @mock.patch('requests.get')
+    def test_capture_map_image_no_size(self, mock_get):
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.content = b'xxx'
         capture_map_image('fake_url', 'tmp/test.txt')
         self.assertTrue(os.path.exists(os.path.join('tmp', 'test.txt')))
         os.remove(os.path.join('tmp', 'test.txt'))
 
-    @mock.patch('mapentity.helpers.get_source', return_value=HttpResponse(b'test', content_type='text'))
-    def test_capture_map_image_aspect(self, mock_value):
+    @mock.patch('requests.get')
+    def test_capture_map_image_aspect(self, mock_get):
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.content = b'xxx'
         capture_map_image('fake_url', 'tmp/test.txt', aspect=0.1)
         self.assertTrue(os.path.exists(os.path.join('tmp', 'test.txt')))
         os.remove(os.path.join('tmp', 'test.txt'))
