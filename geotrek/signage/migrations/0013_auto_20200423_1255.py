@@ -11,6 +11,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL(sql=[("DELETE FROM geotrek.signage_blade WHERE deleted=TRUE;", )]),
         migrations.RemoveField(
             model_name='blade',
             name='deleted',
