@@ -4,6 +4,14 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 
+def delete_force(apps, schema_editor):
+    # We can't import Infrastructure models directly as it may be a newer
+    # version than this migration expects. We use the historical version.
+    Blade = apps.get_model('signage', 'Blade')
+    for blade in Blade.objects.filter(deleted=True):
+        blade.delete()
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -11,7 +19,13 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunSQL(sql=[("DELETE FROM geotrek.signage_blade WHERE deleted=TRUE;", )]),
+        migrations.AlterField(
+            model_name='line',
+            name='blade',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lines',
+                                    to='signage.Blade', verbose_name='Blade'),
+        ),
+        migrations.RunPython(delete_force),
         migrations.RemoveField(
             model_name='blade',
             name='deleted',
@@ -23,11 +37,5 @@ class Migration(migrations.Migration):
         migrations.RemoveField(
             model_name='line',
             name='structure',
-        ),
-        migrations.AlterField(
-            model_name='line',
-            name='blade',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lines',
-                                    to='signage.Blade', verbose_name='Blade'),
         ),
     ]
