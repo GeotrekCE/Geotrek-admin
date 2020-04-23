@@ -1,7 +1,9 @@
 from django import forms
 from django.conf import settings
 from django.contrib.gis.forms.fields import GeometryField
+from django.core.exceptions import FieldDoesNotExist
 from django.db.models import Max
+from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.forms.models import inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
 
@@ -30,7 +32,6 @@ class LineForm(forms.ModelForm):
         self.fields['time'].widget.attrs['class'] = 'input-mini'
 
     def save(self, *args, **kwargs):
-        self.instance.structure = self.instance.blade.structure
         return super(LineForm, self).save(*args, **kwargs)
 
     class Meta:
@@ -45,6 +46,11 @@ class BaseBladeForm(CommonForm):
     geomfields = ['topology']
     leftpanel_scrollable = True
 
+    def filter_related_field(self, name, field):
+        if not isinstance(field, forms.models.ModelChoiceField):
+            return
+        field.queryset = field.queryset.filter(signage__structure=self.user.profile.structure)
+
     def __init__(self, *args, **kwargs):
         super(BaseBladeForm, self).__init__(*args, **kwargs)
         self.helper.form_tag = False
@@ -53,7 +59,7 @@ class BaseBladeForm(CommonForm):
             self.helper.form_action += '?signage=%s' % self.signage.pk
         else:
             self.signage = self.instance.signage
-        value_max = self.signage.blade_set.existing().aggregate(max=Max('number'))['max']
+        value_max = self.signage.blade_set.all().aggregate(max=Max('number'))['max']
         if settings.BLADE_CODE_TYPE == int:
             if not value_max:
                 self.fields['number'].initial = "1"
@@ -68,11 +74,10 @@ class BaseBladeForm(CommonForm):
     def save(self, *args, **kwargs):
         self.instance.set_topology(self.signage)
         self.instance.signage = self.signage
-        self.instance.structure = self.signage.structure
         return super(CommonForm, self).save(*args, **kwargs)
 
     def clean_number(self):
-        blades = self.signage.blade_set.existing()
+        blades = self.signage.blade_set.all()
         if self.instance.pk:
             blades = blades.exclude(number=self.instance.number)
         already_used = ', '.join([str(number) for number in blades.values_list('number', flat=True)])
@@ -106,7 +111,7 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
                 _("On %s") % _(self.signage.kind.lower()),
                 '<a href="%s">%s</a>' % (self.signage.get_detail_url(), str(self.signage))
             )
-            value_max = self.signage.blade_set.existing().aggregate(max=Max('number'))['max']
+            value_max = self.signage.blade_set.all().aggregate(max=Max('number'))['max']
             if settings.BLADE_CODE_TYPE == int:
                 if not value_max:
                     self.fields['number'].initial = "1"
@@ -121,11 +126,10 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
         def save(self, *args, **kwargs):
             self.instance.set_topology(self.signage)
             self.instance.signage = self.signage
-            self.instance.structure = self.signage.structure
             return super(CommonForm, self).save(*args, **kwargs)
 
         def clean_number(self):
-            blades = self.signage.blade_set.existing()
+            blades = self.signage.blade_set.all()
             if self.instance.pk:
                 blades = blades.exclude(number=self.instance.number)
             already_used = ', '.join([str(number) for number in blades.values_list('number', flat=True)])
@@ -191,13 +195,6 @@ class SignageForm(BaseSignageForm):
             'sealing'
         )
     ]
-
-    def save(self, *args, **kwargs):
-        # Fix blade and line structure if signage structure change
-        blades = self.instance.blade_set.all()
-        blades.update(structure=self.instance.structure)
-        Line.objects.filter(blade__in=blades).update(structure=self.instance.structure)
-        return super(SignageForm, self).save(*args, **kwargs)
 
     class Meta(BaseInfrastructureForm.Meta):
         model = Signage

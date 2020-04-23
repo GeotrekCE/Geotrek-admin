@@ -5,9 +5,9 @@ from geotrek.core.models import Topology
 from geotrek.common.filters import StructureRelatedFilterSet, ValueFilter
 from geotrek.maintenance.filters import InterventionYearTargetFilter
 from geotrek.signage.models import Signage, Blade
-from geotrek.signage.widgets import SignageYearSelect, SignageImplantationYearSelect
+from geotrek.signage.widgets import SignageYearSelect, SignageImplantationYearSelect, SignageStructureSelect
 
-from mapentity.filters import PolygonFilter
+from mapentity.filters import MapEntityFilterSet, PolygonFilter
 
 
 class PolygonTopologyFilter(PolygonFilter):
@@ -17,6 +17,13 @@ class PolygonTopologyFilter(PolygonFilter):
         lookup = self.lookup_expr
         inner_qs = Topology.objects.filter(**{'geom__%s' % lookup: value})
         return qs.filter(**{'%s__in' % self.field_name: inner_qs})
+
+
+class SignageStructureFilter(ValueFilter):
+    def filter(self, qs, value):
+        if not value:
+            return qs
+        return qs.filter(**{'signage__structure__name': value})
 
 
 class SignageFilterSet(StructureRelatedFilterSet):
@@ -36,12 +43,13 @@ class SignageFilterSet(StructureRelatedFilterSet):
                                                           'sealing']
 
 
-class BladeFilterSet(StructureRelatedFilterSet):
+class BladeFilterSet(MapEntityFilterSet):
     bbox = PolygonTopologyFilter(field_name='topology', lookup_expr='intersects')
+    structure = SignageStructureFilter(widget=SignageStructureSelect)
 
     def __init__(self, *args, **kwargs):
         super(BladeFilterSet, self).__init__(*args, **kwargs)
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Blade
-        fields = StructureRelatedFilterSet.Meta.fields + ['number', 'direction', 'type', 'color', 'condition']
+        fields = ['structure', 'number', 'direction', 'type', 'color', 'condition']

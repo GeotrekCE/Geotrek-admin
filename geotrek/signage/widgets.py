@@ -1,6 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 
-from geotrek.common.widgets import YearSelect
+from geotrek.authent.models import Structure
+from geotrek.common.widgets import ValueSelect, YearSelect
 from geotrek.maintenance.filters import InterventionYearSelect
 from geotrek.signage.models import Signage
 
@@ -14,3 +15,10 @@ class SignageImplantationYearSelect(YearSelect):
 
     def get_years(self):
         return Signage.objects.all_implantation_years()
+
+
+class SignageStructureSelect(ValueSelect):
+    label = _("Related structure")
+
+    def get_values(self):
+        return Structure.objects.all()
