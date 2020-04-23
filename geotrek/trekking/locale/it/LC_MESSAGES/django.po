@@ -443,10 +443,10 @@ msgid "Powered by http://geotrek.fr"
 msgstr "Alimentato da http://geotrek.fr"
 
 msgid ""
-"Your <strong>pictures should have the same ratio<strong> (height/width) for "
+"Your pictures should have the same ratio (height/width) for "
 "a better apparence in public portal."
 msgstr ""
-"Le tue <strong>immagini dovrebbero avere lo stesso rapporto<strong> (altezza/larghezza) per "
+"Le tue immagini dovrebbero avere lo stesso rapporto (altezza/larghezza) per "
 "una migliore apparenza nel portale pubblico."
 
 msgid "Sync verifications"
