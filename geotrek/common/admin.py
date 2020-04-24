@@ -27,7 +27,8 @@ def apply_merge(modeladmin, request, queryset):
                     getattr(element, remote_field).add(main)
     setattr(main, modeladmin.merge_field, name)
     main.save()
-    #queryset.filter(**{'%s' % modeladmin.merge_field: tail}).delete()
+    for element_to_delete in tail:
+        element_to_delete.delete()
 
 
 apply_merge.short_description = _('Apply merge')
