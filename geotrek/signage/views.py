@@ -132,6 +132,10 @@ class BladeCreate(LineMixin, MapEntityCreate):
         initial['signage'] = signage
         return initial
 
+    @same_structure_required('signage:blade_list')
+    def dispatch(self, *args, **kwargs):
+        return super(BladeCreate, self).dispatch(*args, **kwargs)
+
 
 class BladeUpdate(LineMixin, MapEntityUpdate):
     queryset = Blade.objects.all()
@@ -144,6 +148,10 @@ class BladeUpdate(LineMixin, MapEntityUpdate):
 
 class BladeDelete(MapEntityDelete):
     model = Blade
+
+    @same_structure_required('signage:blade_detail')
+    def dispatch(self, *args, **kwargs):
+        return super(BladeDelete, self).dispatch(*args, **kwargs)
 
 
 class BladeViewSet(MapEntityViewSet):
