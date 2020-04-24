@@ -8,8 +8,7 @@ def delete_force(apps, schema_editor):
     # We can't import Infrastructure models directly as it may be a newer
     # version than this migration expects. We use the historical version.
     Blade = apps.get_model('signage', 'Blade')
-    for blade in Blade.objects.filter(deleted=True):
-        blade.delete()
+    Blade.objects.filter(deleted=True).delete()
 
 
 class Migration(migrations.Migration):

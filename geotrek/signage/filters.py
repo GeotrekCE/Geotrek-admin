@@ -21,7 +21,7 @@ class PolygonTopologyFilter(PolygonFilter):
 
 class SignageStructureFilter(ValueFilter):
     def filter(self, qs, value):
-        if not value:
+        if not value or value == -1:
             return qs
         return qs.filter(**{'signage__structure__name': value})
 
@@ -50,6 +50,6 @@ class BladeFilterSet(MapEntityFilterSet):
     def __init__(self, *args, **kwargs):
         super(BladeFilterSet, self).__init__(*args, **kwargs)
 
-    class Meta(StructureRelatedFilterSet.Meta):
+    class Meta(MapEntityFilterSet.Meta):
         model = Blade
-        fields = ['structure', 'number', 'direction', 'type', 'color', 'condition']
+        fields = MapEntityFilterSet.Meta.fields + ['structure', 'number', 'direction', 'type', 'color', 'condition']
