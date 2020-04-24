@@ -49,6 +49,7 @@ class FileTypeAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ('type', 'structure')
     search_fields = ('type', 'structure')
     list_filter = ('structure',)
+    merge_field = 'type'
 
 
 class MapEntityContentTypeFilter(admin.SimpleListFilter):
@@ -81,9 +82,10 @@ class AttachmentAdmin(admin.ModelAdmin):
         return False
 
 
-class ThemeAdmin(TranslationAdmin):
+class ThemeAdmin(MergeActionMixin, TranslationAdmin):
     list_display = ('label', 'cirkwi', 'pictogram_img')
     search_fields = ('label',)
+    merge_field = 'label'
 
 
 class RecordSourceAdmin(admin.ModelAdmin):

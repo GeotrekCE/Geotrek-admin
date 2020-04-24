@@ -1,12 +1,16 @@
 from django.contrib import admin
+
+from geotrek.common.admin import MergeActionMixin
 from geotrek.sensitivity.models import SportPractice, Species
 
 
-class SportPracticeAdmin(admin.ModelAdmin):
-    pass
+class SportPracticeAdmin(MergeActionMixin, admin.ModelAdmin):
+    merge_field = "name"
 
 
-class SpeciesAdmin(admin.ModelAdmin):
+class SpeciesAdmin(MergeActionMixin, admin.ModelAdmin):
+    merge_field = "name"
+
     def get_queryset(self, request):
         return super(SpeciesAdmin, self).get_queryset(request).filter(category=Species.SPECIES)
 
