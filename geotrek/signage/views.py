@@ -100,6 +100,11 @@ class SignageViewSet(MapEntityViewSet):
 class BladeDetail(MapEntityDetail):
     queryset = Blade.objects.all()
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(BladeDetail, self).get_context_data(*args, **kwargs)
+        context['can_edit'] = self.get_object().signage.same_structure(self.request.user)
+        return context
+
 
 class BladeDocument(MapEntityDocument):
     model = Blade
