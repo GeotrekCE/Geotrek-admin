@@ -6,7 +6,7 @@ from geotrek.core.models import Topology
 from geotrek.common.filters import StructureRelatedFilterSet, ValueFilter
 from geotrek.maintenance.filters import InterventionYearTargetFilter
 from geotrek.signage.models import Signage, Blade
-from geotrek.signage.widgets import SignageYearSelect, SignageImplantationYearSelect, SignageStructureSelect
+from geotrek.signage.widgets import SignageYearSelect, SignageImplantationYearSelect
 
 from mapentity.filters import MapEntityFilterSet, PolygonFilter
 
@@ -18,13 +18,6 @@ class PolygonTopologyFilter(PolygonFilter):
         lookup = self.lookup_expr
         inner_qs = Topology.objects.filter(**{'geom__%s' % lookup: value})
         return qs.filter(**{'%s__in' % self.field_name: inner_qs})
-
-
-class SignageStructureFilter(ValueFilter):
-    def filter(self, qs, value):
-        if not value or value == -1:
-            return qs
-        return qs.filter(**{'signage__structure__name': value})
 
 
 class SignageFilterSet(StructureRelatedFilterSet):
