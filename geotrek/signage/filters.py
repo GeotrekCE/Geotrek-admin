@@ -1,6 +1,7 @@
-from django_filters import CharFilter
+from django_filters import CharFilter, ModelChoiceFilter
 from django.utils.translation import ugettext_lazy as _
 
+from geotrek.authent.models import Structure
 from geotrek.core.models import Topology
 from geotrek.common.filters import StructureRelatedFilterSet, ValueFilter
 from geotrek.maintenance.filters import InterventionYearTargetFilter
@@ -45,7 +46,7 @@ class SignageFilterSet(StructureRelatedFilterSet):
 
 class BladeFilterSet(MapEntityFilterSet):
     bbox = PolygonTopologyFilter(field_name='topology', lookup_expr='intersects')
-    structure = SignageStructureFilter(widget=SignageStructureSelect)
+    structure = ModelChoiceFilter(field_name='signage__structure', queryset=Structure.objects.all())
 
     def __init__(self, *args, **kwargs):
         super(BladeFilterSet, self).__init__(*args, **kwargs)
