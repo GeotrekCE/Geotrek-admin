@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
-
+from django.db.models.fields.related import ForeignKey
 from . import models as common_models
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
@@ -10,13 +10,41 @@ else:
     TranslationAdmin = admin.ModelAdmin
 
 
-class OrganismAdmin(admin.ModelAdmin):
+def apply_merge(modeladmin, request, queryset):
+
+    main = queryset[0]
+    tail = queryset[1:]
+    name = ' + '.join(queryset.values_list(modeladmin.merge_field, flat=True))
+
+    related = main._meta.get_fields(include_hidden=True)
+    for r in related:
+        if r.remote_field:
+            remote_field = r.remote_field.name
+            if isinstance(r.remote_field, ForeignKey):
+                r.remote_field.model.objects.filter(**{'%s__in' % remote_field: tail}).update(**{remote_field: main})
+            else:
+                for element in r.remote_field.model.objects.filter(**{'%s__in' % remote_field: tail}):
+                    getattr(element, remote_field).add(main)
+    setattr(main, modeladmin.merge_field, name)
+    main.save()
+    #queryset.filter(**{'%s' % modeladmin.merge_field: tail}).delete()
+
+
+apply_merge.short_description = _('Apply merge')
+
+
+class MergeActionMixin(object):
+    actions = [apply_merge, ]
+
+
+class OrganismAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ('organism', 'structure')
     search_fields = ('organism', 'structure')
     list_filter = ('structure',)
+    merge_field = 'organism'
 
 
-class FileTypeAdmin(admin.ModelAdmin):
+class FileTypeAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ('type', 'structure')
     search_fields = ('type', 'structure')
     list_filter = ('structure',)
