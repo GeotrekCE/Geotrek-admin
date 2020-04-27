@@ -106,6 +106,23 @@ Go inside your existing Geotrek-admin installation directory. Then run:
    curl https://packages.geotrek.fr/migrate.sh | bash
 
 
+Troubleshooting
+---------------
+
+If Geotrek does not start, take a look to systemd logs:
+
+::
+
+   sudo journalctl -eu geotrek-api
+
+The output is paginated, with -e option you are at the end of the logs but you can got up an down with arrows.
+Type Q to quit. If you want to copy the log to a file, do:
+
+::
+
+   sudo journalctl -u geotrek-api > systemd-geotrek-api.log
+
+
 Uninstallation
 --------------
 
