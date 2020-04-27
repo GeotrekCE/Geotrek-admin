@@ -1,0 +1,7 @@
+geotrek-admin	geotrek-admin/DEFAULT_STRUCTURE	string	My structure
+geotrek-admin	geotrek-admin/RANDO_SERVER_NAME	string	*
+geotrek-admin	geotrek-admin/LANGUAGES	string	fr en
+geotrek-admin	geotrek-admin/SRID	string	2154
+geotrek-admin	geotrek-admin/TIME_ZONE	string	Etc/UTC
+geotrek-admin	geotrek-admin/MANAGE_DB	boolean	true
+geotrek-admin	geotrek-admin/SERVER_NAME	string	localhost
