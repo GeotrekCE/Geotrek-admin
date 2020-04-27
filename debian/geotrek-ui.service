@@ -2,8 +2,8 @@
 Description=Geotrek-admin UI
 PartOf=geotrek.service
 After=geotrek.service
-StartLimitIntervalSec=10
-StartLimitBurst=3
+StartLimitIntervalSec=30
+StartLimitBurst=2
 
 [Service]
 ExecStart=/opt/geotrek-admin/bin/gunicorn --config=/opt/geotrek-admin/var/conf/gunicorn-geotrek.conf.py geotrek.wsgi
