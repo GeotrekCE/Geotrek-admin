@@ -16,15 +16,15 @@ def apply_merge(modeladmin, request, queryset):
     if not tail:
         return
     name = ' + '.join(queryset.values_list(modeladmin.merge_field, flat=True))
-    related = main._meta.get_fields()
+    fields = main._meta.get_fields()
 
-    for r in related:
-        if r.remote_field:
-            remote_field = r.remote_field.name
-            if isinstance(r.remote_field, ForeignKey):
-                r.remote_field.model.objects.filter(**{'%s__in' % remote_field: tail}).update(**{remote_field: main})
-            elif isinstance(r.remote_field, ManyToManyField):
-                for element in r.remote_field.model.objects.filter(**{'%s__in' % remote_field: tail}):
+    for field in fields:
+        if field.remote_field:
+            remote_field = field.remote_field.name
+            if isinstance(field.remote_field, ForeignKey):
+                field.remote_field.model.objects.filter(**{'%s__in' % remote_field: tail}).update(**{remote_field: main})
+            elif isinstance(field.remote_field, ManyToManyField):
+                for element in field.remote_field.model.objects.filter(**{'%s__in' % remote_field: tail}):
                     getattr(element, remote_field).add(main)
 
     setattr(main, modeladmin.merge_field, name)
