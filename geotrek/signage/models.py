@@ -292,10 +292,6 @@ class Line(models.Model):
     def geom(self):
         return self.blade.geom
 
-    @property
-    def structure(self):
-        return self.blade.signage.structure
-
     class Meta:
         unique_together = (('blade', 'number'), )
         verbose_name = _("Line")

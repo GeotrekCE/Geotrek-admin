@@ -44,11 +44,6 @@ class BaseBladeForm(CommonForm):
     geomfields = ['topology']
     leftpanel_scrollable = True
 
-    def filter_related_field(self, name, field):
-        if not isinstance(field, forms.models.ModelChoiceField):
-            return
-        field.queryset = field.queryset.filter(signage__structure=self.user.profile.structure)
-
     def __init__(self, *args, **kwargs):
         super(BaseBladeForm, self).__init__(*args, **kwargs)
         self.helper.form_tag = False
