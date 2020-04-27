@@ -29,7 +29,7 @@ def apply_merge(modeladmin, request, queryset):
                 for element in field.remote_field.model.objects.filter(**{'%s__in' % remote_field: tail}):
                     getattr(element, remote_field).add(main)
     max_length = main._meta.get_field(modeladmin.merge_field).max_length
-    name = '%s ...' % name[:max_length - 4]
+    name = name if not len(name) > max_length - 4 else '%s ...' % name[:max_length - 4]
     setattr(main, modeladmin.merge_field, name)
     main.save()
     for element_to_delete in tail:

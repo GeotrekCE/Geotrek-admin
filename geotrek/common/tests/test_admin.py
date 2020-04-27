@@ -90,7 +90,7 @@ class MergeActionAdminTest(TestCase):
            T
 
         B main
-        C tail
+        A C tail
         T linked only to B only
         """
         self.login()
@@ -148,3 +148,27 @@ class MergeActionAdminTest(TestCase):
         data = {'action': 'apply_merge', '_selected_action': DifficultyLevel.objects.filter(difficulty="Dif 1").values_list('pk', flat=True)}
         self.client.post(reverse("admin:trekking_difficultylevel_changelist"), data, follow=True)
         self.assertEqual(DifficultyLevel.objects.count(), 3)
+
+    def test_merge_actions_long_name(self):
+        """
+        (A B C)
+         | | |
+           T
+
+        B main
+        A C tail
+        T linked only to B only
+        """
+        self.login()
+        self.theme.label = '*' * 128
+        self.theme.save()
+        data = {'action': 'apply_merge', '_selected_action': Theme.objects.all().values_list('pk', flat=True)}
+        self.client.post(reverse("admin:common_theme_changelist"), data, follow=True)
+        self.assertEqual(Theme.objects.count(), 1)
+        self.assertEqual(len(Theme.objects.first().label), 128)
+        self.assertEqual(Theme.objects.first().label,
+                         "*********************************************************************************************"
+                         "******************************* ...")
+        self.assertEqual(self.trek.themes.first().label,
+                         "*********************************************************************************************"
+                         "******************************* ...")
