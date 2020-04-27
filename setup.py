@@ -1,23 +1,24 @@
 #!/usr/bin/python3
 import os
 import distutils.command.build
+from pathlib import Path
 from setuptools import setup, find_packages
+from shutil import copy
 
 here = os.path.abspath(os.path.dirname(__file__))
 
 
 class BuildCommand(distutils.command.build.build):
     def run(self):
-        print("before")
         distutils.command.build.build.run(self)
-        print("after")
         from django.core.management import call_command
         curdir = os.getcwd()
-        os.chdir(os.path.join(curdir, 'geotrek'))
-        call_command('compilemessages')
-        os.chdir(os.path.join(curdir, 'mapentity'))
-        call_command('compilemessages')
-        os.chdir(curdir)
+        for subdir in ('geotrek', 'mapentity'):
+            os.chdir(subdir)
+            call_command('compilemessages')
+            for path in Path('.').rglob('*.mo'):
+                copy(path, os.path.join(curdir, self.build_lib, subdir, path))
+            os.chdir(curdir)
 
 
 setup(
