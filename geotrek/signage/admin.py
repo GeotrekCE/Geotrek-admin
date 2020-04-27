@@ -1,18 +1,22 @@
 from django.contrib import admin
 
+from geotrek.common.admin import MergeActionMixin
 from geotrek.signage.models import SignageType, Color, Sealing, Direction, BladeType
 
 
-class ColorBladeAdmin(admin.ModelAdmin):
+class ColorBladeAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label',)
+    merge_field = 'label'
 
 
-class DirectionBladeAdmin(admin.ModelAdmin):
+class DirectionBladeAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label',)
+    merge_field = 'label'
 
 
-class SealingAdmin(admin.ModelAdmin):
+class SealingAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label',)
+    merge_field = 'label'
 
     def get_queryset(self, request):
         """
@@ -46,8 +50,9 @@ class SealingAdmin(admin.ModelAdmin):
         return ('structure', )
 
 
-class BladeTypeAdmin(admin.ModelAdmin):
+class BladeTypeAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label', 'structure')
+    merge_field = 'label'
 
     def get_queryset(self, request):
         """
@@ -81,8 +86,9 @@ class BladeTypeAdmin(admin.ModelAdmin):
         return ('structure', )
 
 
-class SignageTypeAdmin(admin.ModelAdmin):
+class SignageTypeAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label', 'structure')
+    merge_field = 'label'
 
     def get_queryset(self, request):
         """

@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.contrib import admin
 
+from geotrek.common.admin import MergeActionMixin
 from .models import (
     POIType, TrekNetwork, Practice, Accessibility, Route, DifficultyLevel,
     WebLink, WebLinkCategory, Trek, ServiceType,
@@ -16,29 +17,34 @@ else:
     TranslationAdmin = admin.ModelAdmin
 
 
-class POITypeAdmin(TranslationAdmin):
+class POITypeAdmin(MergeActionMixin, TranslationAdmin):
     list_display = ('label', 'cirkwi', 'pictogram_img')
     search_fields = ('label',)
+    merge_field = 'label'
 
 
-class TrekNetworkAdmin(TranslationAdmin):
+class TrekNetworkAdmin(MergeActionMixin, TranslationAdmin):
     list_display = ('network', 'pictogram_img')
     search_fields = ('network',)
+    merge_field = 'network'
 
 
-class PracticeAdmin(TranslationAdmin):
+class PracticeAdmin(MergeActionMixin, TranslationAdmin):
     list_display = ('name', 'order', 'cirkwi', 'distance', 'pictogram_img')
     search_fields = ('name',)
+    merge_field = 'network'
 
 
-class AccessibilityAdmin(TranslationAdmin):
+class AccessibilityAdmin(MergeActionMixin, TranslationAdmin):
     list_display = ('name', 'cirkwi', 'pictogram_img')
     search_fields = ('name',)
+    merge_field = 'network'
 
 
-class RouteAdmin(TranslationAdmin):
+class RouteAdmin(MergeActionMixin, TranslationAdmin):
     list_display = ('route', 'pictogram_img')
     search_fields = ('route',)
+    merge_field = 'route'
 
 
 class DifficultyLevelForm(forms.ModelForm):
@@ -53,11 +59,12 @@ class DifficultyLevelForm(forms.ModelForm):
         return self.newid
 
 
-class DifficultyLevelAdmin(TranslationAdmin):
+class DifficultyLevelAdmin(MergeActionMixin, TranslationAdmin):
     form = DifficultyLevelForm
     list_display = ('id', 'difficulty', 'cirkwi_level', 'cirkwi', 'pictogram_img')
     search_fields = ('difficulty',)
     fields = ('id', 'difficulty', 'cirkwi_level', 'cirkwi', 'pictogram')
+    merge_field = 'difficulty'
 
     def save_model(self, request, obj, form, change):
         """
@@ -101,19 +108,22 @@ class DifficultyLevelAdmin(TranslationAdmin):
         return super(DifficultyLevelAdmin, self).response_change(request, obj)
 
 
-class WebLinkAdmin(TranslationAdmin):
+class WebLinkAdmin(MergeActionMixin, TranslationAdmin):
     list_display = ('name', 'url', )
     search_fields = ('name', 'url', )
+    merge_field = 'name'
 
 
-class WebLinkCategoryAdmin(TranslationAdmin):
+class WebLinkCategoryAdmin(MergeActionMixin, TranslationAdmin):
     list_display = ('label', 'pictogram_img')
     search_fields = ('label', )
+    merge_field = 'label'
 
 
-class ServiceTypeAdmin(TranslationAdmin):
+class ServiceTypeAdmin(MergeActionMixin, TranslationAdmin):
     list_display = ('name', 'pictogram_img', 'practices_display')
     search_fields = ('name',)
+    merge_field = 'name'
 
     def practices_display(self, obj):
         return ', '.join([practice.name for practice in obj.practices.all()])

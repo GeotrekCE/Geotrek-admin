@@ -322,3 +322,6 @@ msgstr "N'importe quelle année"
 
 msgid "Any value"
 msgstr "N'importe quelle valeur"
+
+msgid "Merge"
+msgstr "Fusionner"

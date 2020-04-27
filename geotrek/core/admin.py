@@ -1,36 +1,42 @@
 from django.contrib import admin
 
 from geotrek.core.models import (PathSource, Stake, Usage, Network, Comfort)
+from geotrek.common.admin import MergeActionMixin
 
 
-class PathSourceAdmin(admin.ModelAdmin):
+class PathSourceAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ('source', 'structure')
     search_fields = ('source', 'structure')
     list_filter = ('structure',)
+    merge_field = "source"
 
 
-class StakeAdmin(admin.ModelAdmin):
+class StakeAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ('stake', 'structure')
     search_fields = ('stake', 'structure')
     list_filter = ('structure',)
+    merge_field = "stake"
 
 
-class UsageAdmin(admin.ModelAdmin):
+class UsageAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ('usage', 'structure')
     search_fields = ('usage', 'structure')
     list_filter = ('structure',)
+    merge_field = "usage"
 
 
-class NetworkAdmin(admin.ModelAdmin):
+class NetworkAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ('network', 'structure')
     search_fields = ('network', 'structure')
     list_filter = ('structure',)
+    merge_field = "network"
 
 
-class ComfortAdmin(admin.ModelAdmin):
+class ComfortAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ('comfort', 'structure')
     search_fields = ('comfort', 'structure')
     list_filter = ('structure',)
+    merge_field = "comfort"
 
 
 admin.site.register(PathSource, PathSourceAdmin)

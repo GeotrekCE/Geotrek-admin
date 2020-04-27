@@ -1,10 +1,12 @@
 from django.contrib import admin
 
+from geotrek.common.admin import MergeActionMixin
 from geotrek.infrastructure.models import InfrastructureType, InfrastructureCondition
 
 
-class InfrastructureTypeAdmin(admin.ModelAdmin):
+class InfrastructureTypeAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label', 'structure')
+    merge_field = "label"
 
     def get_queryset(self, request):
         """
@@ -38,8 +40,9 @@ class InfrastructureTypeAdmin(admin.ModelAdmin):
         return ('type', 'structure')
 
 
-class InfrastructureConditionAdmin(admin.ModelAdmin):
+class InfrastructureConditionAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('label', 'structure')
+    merge_field = "label"
 
     def get_queryset(self, request):
         """
