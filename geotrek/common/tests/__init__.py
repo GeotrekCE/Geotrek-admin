@@ -73,7 +73,7 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         self.logout()
 
     def test_structure_is_changed_with_permission(self):
-        if not hasattr(self.model, 'structure'):
+        if not self.model or 'structure' not in self.model._meta.get_fields():
             return
         self.login()
         perm = Permission.objects.get(codename='can_bypass_structure')

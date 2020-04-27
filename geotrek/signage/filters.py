@@ -1,13 +1,14 @@
-from django_filters import CharFilter
+from django_filters import CharFilter, ModelChoiceFilter
 from django.utils.translation import ugettext_lazy as _
 
+from geotrek.authent.models import Structure
 from geotrek.core.models import Topology
 from geotrek.common.filters import StructureRelatedFilterSet, ValueFilter
 from geotrek.maintenance.filters import InterventionYearTargetFilter
 from geotrek.signage.models import Signage, Blade
 from geotrek.signage.widgets import SignageYearSelect, SignageImplantationYearSelect
 
-from mapentity.filters import PolygonFilter
+from mapentity.filters import MapEntityFilterSet, PolygonFilter
 
 
 class PolygonTopologyFilter(PolygonFilter):
@@ -36,12 +37,13 @@ class SignageFilterSet(StructureRelatedFilterSet):
                                                           'sealing']
 
 
-class BladeFilterSet(StructureRelatedFilterSet):
+class BladeFilterSet(MapEntityFilterSet):
     bbox = PolygonTopologyFilter(field_name='topology', lookup_expr='intersects')
+    structure = ModelChoiceFilter(field_name='signage__structure', queryset=Structure.objects.all())
 
     def __init__(self, *args, **kwargs):
         super(BladeFilterSet, self).__init__(*args, **kwargs)
 
-    class Meta(StructureRelatedFilterSet.Meta):
+    class Meta(MapEntityFilterSet.Meta):
         model = Blade
-        fields = StructureRelatedFilterSet.Meta.fields + ['number', 'direction', 'type', 'color', 'condition']
+        fields = MapEntityFilterSet.Meta.fields + ['structure', 'number', 'direction', 'type', 'color', 'condition']

@@ -156,7 +156,7 @@ class BladeViewsTest(CommonTest):
         response = self.client.post('%s?signage=%s' % (Blade.get_add_url(), signage.pk), data)
         self.assertEqual(response.status_code, 302)
         obj = self.model.objects.last()
-        self.assertEqual(obj.structure, structure)
+        self.assertEqual(obj.signage.structure, structure)
         self.logout()
 
     def test_structure_is_not_changed_without_permission(self):

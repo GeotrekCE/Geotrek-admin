@@ -7,8 +7,8 @@ from django.conf import settings
 
 from mapentity.models import MapEntityMixin
 
-from geotrek.authent.models import StructureOrNoneRelated, StructureRelated
-from geotrek.common.mixins import AddPropertyMixin, NoDeleteMixin, OptionalPictogramMixin, NoDeleteManager
+from geotrek.authent.models import StructureOrNoneRelated
+from geotrek.common.mixins import AddPropertyMixin, OptionalPictogramMixin, NoDeleteManager
 from geotrek.common.models import Organism
 from geotrek.common.utils import classproperty, format_coordinates
 from geotrek.core.models import Topology, Path
@@ -96,7 +96,7 @@ class Signage(MapEntityMixin, BaseInfrastructure):
 
     @property
     def order_blades(self):
-        return self.blade_set.existing().order_by('number')
+        return self.blade_set.all().order_by('number')
 
     @property
     def gps_value(self):
@@ -158,7 +158,7 @@ class BladeType(StructureOrNoneRelated):
         return self.label
 
 
-class Blade(AddPropertyMixin, NoDeleteMixin, MapEntityMixin, StructureRelated):
+class Blade(AddPropertyMixin, MapEntityMixin):
     signage = models.ForeignKey(Signage, verbose_name=_("Signage"),
                                 on_delete=models.PROTECT)
     number = models.CharField(verbose_name=_("Number"), max_length=250)
@@ -221,10 +221,21 @@ class Blade(AddPropertyMixin, NoDeleteMixin, MapEntityMixin, StructureRelated):
                                                              self)
         return s
 
+    @property
+    def structure(self):
+        return self.signage.structure
 
-class Line(StructureRelated):
+    def same_structure(self, user):
+        """ Returns True if the user is in the same structure or has
+            bypass_structure permission, False otherwise. """
+        return (user.profile.structure == self.structure
+                or user.is_superuser
+                or user.has_perm('authent.can_bypass_structure'))
+
+
+class Line(models.Model):
     blade = models.ForeignKey(Blade, related_name='lines', verbose_name=_("Blade"),
-                              on_delete=models.PROTECT)
+                              on_delete=models.CASCADE)
     number = models.IntegerField(verbose_name=_("Number"))
     text = models.CharField(verbose_name=_("Text"), max_length=1000)
     distance = models.DecimalField(verbose_name=_("Distance"), null=True, blank=True,
