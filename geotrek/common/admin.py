@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
+from django.db import transaction
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 from . import models as common_models
 
@@ -15,22 +16,24 @@ def apply_merge(modeladmin, request, queryset):
     tail = queryset[1:]
     if not tail:
         return
-    name = ' + '.join(queryset.values_list(modeladmin.merge_field, flat=True))
-    fields = main._meta.get_fields()
+    with transaction.atomic():
+        name = ' + '.join(queryset.values_list(modeladmin.merge_field, flat=True))
+        fields = main._meta.get_fields()
 
-    for field in fields:
-        if field.remote_field:
-            remote_field = field.remote_field.name
-            if isinstance(field.remote_field, ForeignKey):
-                field.remote_field.model.objects.filter(**{'%s__in' % remote_field: tail}).update(**{remote_field: main})
-            elif isinstance(field.remote_field, ManyToManyField):
-                for element in field.remote_field.model.objects.filter(**{'%s__in' % remote_field: tail}):
-                    getattr(element, remote_field).add(main)
-
-    setattr(main, modeladmin.merge_field, name)
-    main.save()
-    for element_to_delete in tail:
-        element_to_delete.delete()
+        for field in fields:
+            if field.remote_field:
+                remote_field = field.remote_field.name
+                if isinstance(field.remote_field, ForeignKey):
+                    field.remote_field.model.objects.filter(**{'%s__in' % remote_field: tail}).update(**{remote_field: main})
+                elif isinstance(field.remote_field, ManyToManyField):
+                    for element in field.remote_field.model.objects.filter(**{'%s__in' % remote_field: tail}):
+                        getattr(element, remote_field).add(main)
+        max_length = main._meta.get_field(modeladmin.merge_field).max_length
+        name = '%s ...' % name[:max_length - 4]
+        setattr(main, modeladmin.merge_field, name)
+        main.save()
+        for element_to_delete in tail:
+            element_to_delete.delete()
 
 
 apply_merge.short_description = _('Merge')
