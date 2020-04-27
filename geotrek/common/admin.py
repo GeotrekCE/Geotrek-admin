@@ -33,7 +33,7 @@ def apply_merge(modeladmin, request, queryset):
         element_to_delete.delete()
 
 
-apply_merge.short_description = _('Apply merge')
+apply_merge.short_description = _('Merge')
 
 
 class MergeActionMixin(object):

@@ -86,7 +86,7 @@ class MergeActionAdminTest(TestCase):
     def test_merge_actions_many2many(self):
         """
         (A B C)
-          \|/
+         | | |
            T
 
         B main
@@ -111,8 +111,7 @@ class MergeActionAdminTest(TestCase):
         T linked to A after merge and C
         """
         self.login()
-        data = {'action': 'apply_merge', '_selected_action': Theme.objects.filter(label__in=['Theme 1', 'Autre theme'])
-            .values_list('pk', flat=True)}
+        data = {'action': 'apply_merge', '_selected_action': Theme.objects.filter(label__in=['Theme 1', 'Autre theme']).values_list('pk', flat=True)}
         self.client.post(reverse("admin:common_theme_changelist"), data, follow=True)
         self.assertEqual(Theme.objects.count(), 2)
         self.assertEqual(Theme.objects.exclude(label="Theme 2").first().label, "Autre theme + Theme 1")
@@ -129,8 +128,7 @@ class MergeActionAdminTest(TestCase):
         T linked to A
         """
         self.login()
-        data = {'action': 'apply_merge', '_selected_action': DifficultyLevel.objects.filter(difficulty__in=['Dif 1', 'Dif 2'])
-            .values_list('pk', flat=True)}
+        data = {'action': 'apply_merge', '_selected_action': DifficultyLevel.objects.filter(difficulty__in=['Dif 1', 'Dif 2']).values_list('pk', flat=True)}
         self.client.post(reverse("admin:trekking_difficultylevel_changelist"), data, follow=True)
         self.assertEqual(DifficultyLevel.objects.count(), 2)
         self.assertEqual(DifficultyLevel.objects.exclude(difficulty="Dif 3").first().difficulty, "Dif 1 + Dif 2")
