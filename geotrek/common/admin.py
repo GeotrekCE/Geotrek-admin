@@ -11,10 +11,10 @@ else:
 
 
 def apply_merge(modeladmin, request, queryset):
-    if not queryset:
-        return
     main = queryset[0]
     tail = queryset[1:]
+    if not tail:
+        return
     name = ' + '.join(queryset.values_list(modeladmin.merge_field, flat=True))
     related = main._meta.get_fields()
 

@@ -135,3 +135,18 @@ class MergeActionAdminTest(TestCase):
         self.assertEqual(DifficultyLevel.objects.count(), 2)
         self.assertEqual(DifficultyLevel.objects.exclude(difficulty="Dif 3").first().difficulty, "Dif 1 + Dif 2")
         self.assertEqual(Trek.objects.first().difficulty.difficulty, "Dif 1 + Dif 2")
+
+    def test_merge_actions_one_element(self):
+        """
+        A (B) C
+           |
+           T
+
+        A main
+        no tail
+        T linked to A
+        """
+        self.login()
+        data = {'action': 'apply_merge', '_selected_action': DifficultyLevel.objects.filter(difficulty="Dif 1").values_list('pk', flat=True)}
+        self.client.post(reverse("admin:trekking_difficultylevel_changelist"), data, follow=True)
+        self.assertEqual(DifficultyLevel.objects.count(), 3)
