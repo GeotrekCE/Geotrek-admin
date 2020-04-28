@@ -10,6 +10,7 @@ from unittest import skipIf, mock
 from bs4 import BeautifulSoup
 
 from django.conf import settings
+from django.db.models import F
 from django.test import TestCase
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.gis.geos import LineString, MultiPoint, Point
@@ -138,15 +139,13 @@ class POIViewsTest(CommonTest):
     def test_listing_number_queries(self):
         self.login()
         # Create many instances
-        for i in range(100):
-            self.modelfactory.create()
-        for i in range(10):
-            DistrictFactory.create()
+        self.modelfactory.build_batch(1000)
+        DistrictFactory.build_batch(10)
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(7):
             self.client.get(self.model.get_jsonlist_url())
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(8):
             self.client.get(self.model.get_format_list_url())
 
     def test_pois_on_treks_do_not_exist(self):
@@ -1004,10 +1003,8 @@ class TrekGPXTest(TrekkingManagerTest):
         self.trek.description_fr = 'Jolie rando'
         self.trek.save()
 
-        for poi in self.trek.pois.all():
-            poi.description_it = poi.description
-            poi.published_it = True
-            poi.save()
+        self.trek.pois.update(description_it=F('description'),
+                              published_it=True)
 
         url = '/api/it/treks/{pk}/slug.gpx'.format(pk=self.trek.pk)
         self.response = self.client.get(url)
@@ -1443,10 +1440,8 @@ class ServiceViewsTest(CommonTest):
     def test_listing_number_queries(self):
         self.login()
         # Create many instances
-        for i in range(100):
-            self.modelfactory.create()
-        for i in range(10):
-            DistrictFactory.create()
+        self.modelfactory.build_batch(1000)
+        DistrictFactory.build_batch(10)
 
         # 1) session, 2) user, 3) user perms, 4) group perms, 5) last modified, 6) list
         with self.assertNumQueries(6):

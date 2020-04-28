@@ -28,7 +28,7 @@ from geotrek.trekking.views import TrekDocumentPublic, TrekDocument
 from geotrek.tourism.filters import TouristicEventFilterSet
 from geotrek.tourism.factories import TouristicEventFactory
 from geotrek.tourism.models import TouristicEvent
-from geotrek.tourism.views import TouristicEventList, TouristicEventDetail
+from geotrek.tourism.views import TouristicEventList
 from geotrek.zoning.factories import CityFactory
 
 
@@ -339,12 +339,6 @@ class ListViewTest(BaseTest):
 
         self.user.has_perm = mock.MagicMock(side_effect=user_perms)
 
-    def test_mapentity_template_is_last_candidate(self):
-        listview = TouristicEventList()
-        listview.object_list = TouristicEvent.objects.none()
-        self.assertEqual(listview.get_template_names()[-1],
-                         'mapentity/mapentity_list.html')
-
     def test_list_should_have_some_perms_in_context(self):
         view = TouristicEventList()
         view.object_list = []
@@ -407,13 +401,6 @@ class DetailViewTest(BaseTest):
         self.user.save()
         self.logout()
         self.object = TouristicEventFactory.create(name='dumber')
-
-    def test_mapentity_template_is_last_candidate(self):
-        detailview = TouristicEventDetail()
-        detailview.object = self.object
-        self.assertEqual(detailview.get_template_names(),
-                         ['tourism/touristicevent_detail.html',
-                          'mapentity/mapentity_detail.html'])
 
     def test_properties_shown_in_extended_template(self):
         self.login()
