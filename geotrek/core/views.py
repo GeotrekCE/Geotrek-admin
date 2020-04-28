@@ -90,7 +90,6 @@ class PathLayer(MapEntityLayer):
 class PathList(MapEntityList):
     queryset = Path.objects.all()
     filterform = PathFilterSet
-    template_name = "core/path_list.html"
 
     @classproperty
     def columns(cls):
