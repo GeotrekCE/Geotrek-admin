@@ -56,7 +56,10 @@ class MapEntityList(BaseListView, ListView):
     A generic view list web page.
 
     """
-    template_name = 'mapentity/mapentity_list.html'
+
+    def get_template_names(self):
+        default = super(MapEntityList, self).get_template_names()
+        return default + ['mapentity/mapentity_list.html']
 
     @classmethod
     def get_entity_kind(cls):
@@ -327,10 +330,14 @@ class DocumentConvert(Convert, DetailView):
 
 
 class MapEntityCreate(ModelViewMixin, FormViewMixin, CreateView):
-    template_name = 'mapentity/mapentity_form.html'
+
     @classmethod
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_CREATE
+
+    def get_template_names(self):
+        default = super(MapEntityCreate, self).get_template_names()
+        return default + ['mapentity/mapentity_form.html']
 
     @classmethod
     def get_title(cls):
@@ -361,7 +368,6 @@ class MapEntityCreate(ModelViewMixin, FormViewMixin, CreateView):
 
 
 class MapEntityDetail(ModelViewMixin, DetailView):
-    template_name = 'mapentity/mapentity_detail.html'
 
     def __init__(self, *args, **kwargs):
         super(MapEntityDetail, self).__init__(*args, **kwargs)
@@ -373,6 +379,10 @@ class MapEntityDetail(ModelViewMixin, DetailView):
     @classmethod
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_DETAIL
+
+    def get_template_names(self):
+        default = super(MapEntityDetail, self).get_template_names()
+        return default + ['mapentity/mapentity_detail.html']
 
     def get_title(self):
         return u"{}".format(self.get_object())
@@ -410,11 +420,14 @@ class MapEntityDetail(ModelViewMixin, DetailView):
 
 
 class MapEntityUpdate(ModelViewMixin, FormViewMixin, UpdateView):
-    template_name = 'mapentity/mapentity_form.html'
 
     @classmethod
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_UPDATE
+
+    def get_template_names(self):
+        default = super(MapEntityUpdate, self).get_template_names()
+        return default + ['mapentity/mapentity_form.html']
 
     def get_title(self):
         return _("Edit %s") % self.get_object()
@@ -447,11 +460,14 @@ class MapEntityUpdate(ModelViewMixin, FormViewMixin, UpdateView):
 
 
 class MapEntityDelete(ModelViewMixin, DeleteView):
-    template_name = 'mapentity/mapentity_confirm_delete.html'
 
     @classmethod
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_DELETE
+
+    def get_template_names(self):
+        default = super(MapEntityDelete, self).get_template_names()
+        return default + ['mapentity/mapentity_confirm_delete.html']
 
     @view_permission_required(login_url=mapentity_models.ENTITY_DETAIL)
     def dispatch(self, *args, **kwargs):
