@@ -109,18 +109,21 @@ Go inside your existing Geotrek-admin installation directory. Then run:
 Troubleshooting
 ---------------
 
-If Geotrek does not start, take a look to systemd logs:
+If Geotrek does not start, take a look to systemd logs for each of the 3 Geotrek-admin services
+(user web interface, API and asynchronous tasks):
 
 ::
 
+   sudo journalctl -eu geotrek-ui
    sudo journalctl -eu geotrek-api
+   sudo journalctl -eu geotrek-celery
 
 The output is paginated, with -e option you are at the end of the logs but you can got up an down with arrows.
 Type Q to quit. If you want to copy the log to a file, do:
 
 ::
 
-   sudo journalctl -u geotrek-api > systemd-geotrek-api.log
+   sudo journalctl -u geotrek-ui > systemd-geotrek-ui.log
 
 
 Uninstallation

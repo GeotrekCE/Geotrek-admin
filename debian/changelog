@@ -1,11 +1,23 @@
-geotrek-admin (2.33.0~dev0) bionic; urgency=medium
+geotrek-admin (2.33.3~dev0) UNRELEASED; urgency=medium
 
-  * Test version before official first release
+  * New package release
 
- -- Gaël UTARD <gael.utard@makina-corpus.com>  Tue, 07 Apr 2020 11:24:31 +0200
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Tue, 28 Apr 2020 13:08:36 +0200
 
-geotrek-admin (2.32.11) bionic; urgency=medium
+geotrek-admin (2.33.2) bionic; urgency=medium
 
-  * Initial Ubuntu release.
+  * New package release
 
- -- Gaël UTARD <gael.utard@makina-corpus.com>  Sun, 22 Mar 2020 11:12:01 +0100
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Tue, 28 Apr 2020 13:07:40 +0200
+
+geotrek-admin (2.33.1) bionic; urgency=medium
+
+  * New package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Tue, 28 Apr 2020 12:42:47 +0200
+
+geotrek-admin (2.33.0) bionic; urgency=medium
+
+  * Initial package release
+
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Tue, 28 Apr 2020 10:29:00 +0200
