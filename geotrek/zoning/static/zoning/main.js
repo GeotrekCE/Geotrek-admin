@@ -18,7 +18,7 @@ $(window).on('entity:map', function (e, data) {
         var colorspools = L.Util.extend({}, window.SETTINGS.map.colorspool),
             colorspool = colorspools[landLayer.id];
         if (colorspool) {
-            var color = colorspool[i % colorspool.length];
+            var color = colorspool[(i < 2 ? i : i - 2) % colorspool.length];
             style['color'] = color;
         }
         var layer = new L.ObjectsLayer(null, {
