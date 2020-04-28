@@ -58,6 +58,9 @@ class MapEntityList(BaseListView, ListView):
     """
 
     def get_template_names(self):
+        """ Set a default template,
+            without use template_name because we want to keep app/model_suffix basic template
+            discovering as first template """
         default = super(MapEntityList, self).get_template_names()
         return default + ['mapentity/mapentity_list.html']
 
@@ -336,6 +339,9 @@ class MapEntityCreate(ModelViewMixin, FormViewMixin, CreateView):
         return mapentity_models.ENTITY_CREATE
 
     def get_template_names(self):
+        """ Set a default template,
+            without use template_name because we want to keep app/model_suffix basic template
+            discovering as first template """
         default = super(MapEntityCreate, self).get_template_names()
         return default + ['mapentity/mapentity_form.html']
 
@@ -381,6 +387,9 @@ class MapEntityDetail(ModelViewMixin, DetailView):
         return mapentity_models.ENTITY_DETAIL
 
     def get_template_names(self):
+        """ Set a default template,
+            without use template_name because we want to keep app/model_suffix basic template
+            discovering as first template """
         default = super(MapEntityDetail, self).get_template_names()
         return default + ['mapentity/mapentity_detail.html']
 
@@ -426,6 +435,9 @@ class MapEntityUpdate(ModelViewMixin, FormViewMixin, UpdateView):
         return mapentity_models.ENTITY_UPDATE
 
     def get_template_names(self):
+        """ Set a default template,
+            without use template_name because we want to keep app/model_suffix basic template
+            discovering as first template """
         default = super(MapEntityUpdate, self).get_template_names()
         return default + ['mapentity/mapentity_form.html']
 
@@ -466,6 +478,9 @@ class MapEntityDelete(ModelViewMixin, DeleteView):
         return mapentity_models.ENTITY_DELETE
 
     def get_template_names(self):
+        """ Set a default template,
+            without use template_name because we want to keep app/model_suffix basic template
+            discovering as first template """
         default = super(MapEntityDelete, self).get_template_names()
         return default + ['mapentity/mapentity_confirm_delete.html']
 
