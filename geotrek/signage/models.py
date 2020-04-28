@@ -241,17 +241,10 @@ class Blade(AddPropertyMixin, MapEntityMixin):
                 or user.is_superuser
                 or user.has_perm('authent.can_bypass_structure'))
 
+    @property
     def bladecode_csv_display(self):
         return settings.BLADE_CODE_FORMAT.format(signagecode=self.signage.code,
                                                  bladenumber=self.number)
-
-    @property
-    def color_csv_display(self):
-        return self.color or ""
-
-    @property
-    def signage_csv_display(self):
-        return "%s #%s" % (self.signage, self.number)
 
     @property
     def gps_value_csv_display(self):
@@ -262,20 +255,8 @@ class Blade(AddPropertyMixin, MapEntityMixin):
         return self.signage.printed_elevation or ""
 
     @property
-    def direction_csv_display(self):
-        return self.direction or ""
-
-    @property
     def city_csv_display(self):
         return self.signage.cities[0] if self.signage.cities else ""
-
-    @property
-    def type_csv_display(self):
-        return self.type or ""
-
-    @property
-    def condition_csv_display(self):
-        return self.condition or ""
 
 
 class Line(models.Model):
@@ -300,10 +281,6 @@ class Line(models.Model):
         return settings.LINE_CODE_FORMAT.format(signagecode=self.blade.signage.code,
                                                 bladenumber=self.blade.number,
                                                 linenumber=self.number)
-
-    @property
-    def geom(self):
-        return self.blade.geom
 
     class Meta:
         unique_together = (('blade', 'number'), )

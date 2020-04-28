@@ -11,6 +11,7 @@ from geotrek.authent.serializers import StructureSerializer
 from geotrek.common.serializers import PictogramSerializerMixin, BasePublishableSerializerMixin
 from geotrek.signage import models as signage_models
 
+from mapentity.serializers.commasv import CSVSerializer
 from mapentity.serializers.helpers import smart_plain_text, field_as_string
 from mapentity.serializers.shapefile import ZipShapeSerializer
 
@@ -76,7 +77,7 @@ class BladeGeojsonSerializer(GeoFeatureModelSerializer, BladeSerializer):
         fields = BladeSerializer.Meta.fields + ('api_geom', )
 
 
-class CSVBladeSerializer(Serializer):
+class CSVBladeSerializer(CSVSerializer):
     def serialize(self, queryset, **options):
         """
         Uses self.columns, containing fieldnames to produce the CSV.
@@ -89,65 +90,18 @@ class CSVBladeSerializer(Serializer):
         stream = options.pop('stream')
         ascii = options.get('ensure_ascii', True)
         max_lines = max([value.lines.count() for value in queryset])
-        headers = []
-        for field in columns:
-            c = getattr(model_blade, '%s_verbose_name' % field, None)
-            if c is None:
-                try:
-                    f = model_blade._meta.get_field(field)
-                    if f.one_to_many:
-                        c = f.field.model._meta.verbose_name_plural
-                    else:
-                        c = f.verbose_name
-                except FieldDoesNotExist:
-                    c = _(field.title())
-            headers.append(smart_str(str(c)))
 
-        headers_lines = []
-        for field in columns_lines:
-            c = getattr(model_line, '%s_verbose_name' % field, None)
-            if c is None:
-                try:
-                    f = model_line._meta.get_field(field)
-                    if f.one_to_many:
-                        c = f.field.model._meta.verbose_name_plural
-                    else:
-                        c = f.verbose_name
-                except FieldDoesNotExist:
-                    c = _(field.title())
-            headers_lines.append(smart_str(str(c)))
+        headers = self.get_csv_header(columns, model_blade)
+
+        headers_lines = self.get_csv_header(columns_lines, model_line)
 
         for i in range(max_lines):
             header_lines = ['%s %s' % (header, i + 1) for header in headers_lines]
             headers.extend(header_lines)
 
-        getters = {}
-        for field in columns:
-            try:
-                modelfield = model_blade._meta.get_field(field)
-            except FieldDoesNotExist:
-                modelfield = None
-            if isinstance(modelfield, ForeignKey):
-                getters[field] = lambda obj, field: smart_plain_text(getattr(obj, field), ascii)
-            elif isinstance(modelfield, ManyToManyField):
-                getters[field] = lambda obj, field: ','.join([smart_plain_text(o, ascii)
-                                                              for o in getattr(obj, field).all()] or '')
-            else:
-                getters[field] = partial(field_as_string, ascii=ascii)
+        getters = self.getters_csv(columns, model_blade, ascii)
 
-        getters_lines = {}
-        for field in columns_lines:
-            try:
-                modelfield = model_line._meta.get_field(field)
-            except FieldDoesNotExist:
-                modelfield = None
-            if isinstance(modelfield, ForeignKey):
-                getters_lines[field] = lambda obj, field: smart_plain_text(getattr(obj, field), ascii)
-            elif isinstance(modelfield, ManyToManyField):
-                getters_lines[field] = lambda obj, field: ','.join([smart_plain_text(o, ascii)
-                                                                   for o in getattr(obj, field).all()] or '')
-            else:
-                getters_lines[field] = partial(field_as_string, ascii=ascii)
+        getters_lines = self.getters_csv(columns_lines, model_line, ascii)
 
         def get_lines():
             yield headers
