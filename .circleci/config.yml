@@ -116,17 +116,32 @@ workflows:
   version: 2
   all:
     jobs:
-      - codestyle
-      - docker_image
+      - codestyle:
+          filters:
+            tags:
+              only: /[0-9]+\.[0-9]+\.[0-9]+/
+      - docker_image:
+          filters:
+            tags:
+              only: /[0-9]+\.[0-9]+\.[0-9]+/
       - docker_test:
           requires:
             - docker_image
+          filters:
+            tags:
+              only: /[0-9]+\.[0-9]+\.[0-9]+/
       - docker_test_nds:
           requires:
             - docker_image
+          filters:
+            tags:
+              only: /[0-9]+\.[0-9]+\.[0-9]+/
       - docker_test_js:
           requires:
             - docker_image
+          filters:
+            tags:
+              only: /[0-9]+\.[0-9]+\.[0-9]+/
       - docker_publish:
           requires:
             - codestyle
@@ -135,10 +150,13 @@ workflows:
             - docker_test_js
           filters:
             tags:
-              only: /^[0-9]+\.[0-9]+\.[0-9]+$/
+              only: /[0-9]+\.[0-9]+\.[0-9]+/
             branches:
               ignore: /.*/
-      - ubuntu_package
+      - ubuntu_package:
+          filters:
+            tags:
+              only: /[0-9]+\.[0-9]+\.[0-9]+/
       - ubuntu_publish:
           requires:
             - codestyle
@@ -148,7 +166,7 @@ workflows:
             - docker_test_js
           filters:
             tags:
-              only: /^[0-9]+\.[0-9]+\.[0-9]+$/
+              only: /[0-9]+\.[0-9]+\.[0-9]+/
             branches:
               only:
                 - master
