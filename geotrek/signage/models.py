@@ -169,10 +169,19 @@ class Blade(AddPropertyMixin, MapEntityMixin):
     condition = models.ForeignKey(InfrastructureCondition, verbose_name=_("Condition"),
                                   null=True, blank=True, on_delete=models.PROTECT)
     topology = models.ForeignKey(Topology, related_name="blades_set", verbose_name=_("Blades"), on_delete=models.CASCADE)
+    time_verbose_name = _("Time (Hours:Minutes:Seconds)")
+    colorblade_verbose_name = _("Color")
+    printedelevation_verbose_name = _("Printed elevation")
+    direction_verbose_name = _("Direction")
+    city_verbose_name = _("City")
 
     class Meta:
         verbose_name = _("Blade")
         verbose_name_plural = _("Blades")
+
+    @classproperty
+    def geomfield(cls):
+        return Topology._meta.get_field('geom')
 
     def __str__(self):
         return settings.BLADE_CODE_FORMAT.format(signagecode=self.signage.code, bladenumber=self.number)
@@ -232,6 +241,42 @@ class Blade(AddPropertyMixin, MapEntityMixin):
                 or user.is_superuser
                 or user.has_perm('authent.can_bypass_structure'))
 
+    def bladecode_csv_display(self):
+        return settings.BLADE_CODE_FORMAT.format(signagecode=self.signage.code,
+                                                 bladenumber=self.number)
+
+    @property
+    def color_csv_display(self):
+        return self.color or ""
+
+    @property
+    def signage_csv_display(self):
+        return "%s #%s" % (self.signage, self.number)
+
+    @property
+    def gps_value_csv_display(self):
+        return self.signage.gps_value or ""
+
+    @property
+    def printedelevation_csv_display(self):
+        return self.signage.printed_elevation or ""
+
+    @property
+    def direction_csv_display(self):
+        return self.direction or ""
+
+    @property
+    def city_csv_display(self):
+        return self.signage.cities[0] if self.signage.cities else ""
+
+    @property
+    def type_csv_display(self):
+        return self.type or ""
+
+    @property
+    def condition_csv_display(self):
+        return self.condition or ""
+
 
 class Line(models.Model):
     blade = models.ForeignKey(Blade, related_name='lines', verbose_name=_("Blade"),
@@ -245,48 +290,16 @@ class Line(models.Model):
     time = models.DurationField(verbose_name=pgettext_lazy("duration", "Time"), null=True, blank=True,
                                 help_text=_("Hours:Minutes:Seconds"))
     distance_verbose_name = _("Distance (km)")
-    time_verbose_name = _("Time (Hours:Minutes:Seconds)")
-    colorblade_verbose_name = _("Color")
     linecode_verbose_name = _("Code")
-    printedelevation_verbose_name = _("Printed elevation")
-    direction_verbose_name = _("Direction")
-
-    @classproperty
-    def geomfield(cls):
-        return Topology._meta.get_field('geom')
 
     def __str__(self):
-        return self.linecode_csv_display
+        return self.linecode
 
     @property
-    def linecode_csv_display(self):
+    def linecode(self):
         return settings.LINE_CODE_FORMAT.format(signagecode=self.blade.signage.code,
                                                 bladenumber=self.blade.number,
                                                 linenumber=self.number)
-
-    @property
-    def colorblade_csv_display(self):
-        return self.blade.color or ""
-
-    @property
-    def signage_csv_display(self):
-        return "%s #%s" % (self.blade.signage, self.blade.number)
-
-    @property
-    def lat_csv_display(self):
-        return self.blade.signage.lat_value
-
-    @property
-    def lng_csv_display(self):
-        return self.blade.signage.lng_value
-
-    @property
-    def printedelevation_csv_display(self):
-        return self.blade.signage.printed_elevation or ""
-
-    @property
-    def direction_csv_display(self):
-        return self.blade.direction or ""
 
     @property
     def geom(self):
