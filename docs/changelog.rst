@@ -2,8 +2,8 @@
 CHANGELOG
 =========
 
-2.33.0.dev0
---------------------
+2.33.0 (2020-04-28)
+-------------------
 
 **BREAKING CHANGES**
 
@@ -17,6 +17,7 @@ CHANGELOG
 - Fix timeout when saving long treks (increase computation performances)
 - Fix mecanism to put tables in postgresql schemas
 - Better download errors handling in parsers
+- Make sure signage and related blade have the same related structure
 
 **Maintenance**
 
@@ -24,6 +25,8 @@ CHANGELOG
 
 **New features**
 
+- Allow to attach interventions to blades, paths, trails, treks, POIs and services in addition to infrastructures and signages
+- Allow to merge dropdown list items in admin. Check them in list view and choose "Action: Merge"
 - Add a django command to erase email from feedback reports after 365 days
 
 **Upgrade notes**
@@ -31,7 +34,7 @@ CHANGELOG
 - The installation method has been totally rewritten with an Ubuntu packaging (``apt install geotrek-admin``), only available for Ubuntu 18.04 actually. 
 - If you upgrade from Geotrek-admin <= 2.32, then apply the dedicated migration script. See https://geotrek.readthedocs.io/en/master/installation.html#upgrade-from-geotrek-admin-2-32. 
 - Geotrek-admin is now automatically installed in ``/opt/geotrek-admin/`` directory and the advanced configuration file moved to ``/opt/geotrek-admin/var/conf/custom.py``. See advanced configuration documentation for details. 
-- The automatic NGINX configuration can be overriden in ``/opt/geotrek-admin/var/conf/nginx.conf.in`` file. See NGINX configuration documentation for details
+- The automatic NGINX configuration can be overriden in ``/opt/geotrek-admin/var/conf/nginx.conf.in`` file. See NGINX configuration documentation for details.
 
 
 2.32.11 (2020-03-17)
