@@ -6,9 +6,12 @@ export DH_VIRTUALENV_INSTALL_ROOT=/opt
 	dh $@ --with python-virtualenv
 
 override_dh_virtualenv:
+	CPLUS_INCLUDE_PATH=/usr/include/gdal \
+	C_INCLUDE_PATH=/usr/include/gdal \
 	dh_virtualenv \
 	--python /usr/bin/python3 \
 	--builtin-venv \
+	--extra-pip-arg --no-cache-dir \
 	--extra-pip-arg --quiet
 
 override_dh_strip:

@@ -31,6 +31,10 @@ from colorfield.fields import ColorField
 logger = logging.getLogger(__name__)
 
 
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    from geotrek.signage.models import Blade
+
+
 class TrekOrderedChildManager(models.Manager):
     use_for_related_fields = True
 
@@ -433,12 +437,15 @@ if settings.HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES:
     Topology.add_property('published_treks', lambda self: [], _("Published treks"))
 else:
     Topology.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _("Published treks"))
-Intervention.add_property('treks', lambda self: self.topology.treks if self.topology else [], _("Treks"))
+Intervention.add_property('treks', lambda self: self.target.treks if self.target else [], _("Treks"))
 Project.add_property('treks', lambda self: self.edges_by_attr('treks'), _("Treks"))
 tourism_models.TouristicContent.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
 tourism_models.TouristicContent.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _("Published treks"))
 tourism_models.TouristicEvent.add_property('treks', lambda self: intersecting(Trek, self), _("Treks"))
 tourism_models.TouristicEvent.add_property('published_treks', lambda self: intersecting(Trek, self).filter(published=True), _("Published treks"))
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    Blade.add_property('treks', lambda self: self.signage.treks, _("Treks"))
+    Blade.add_property('published_treks', lambda self: self.signage.published_treks, _("Published treks"))
 
 
 class TrekRelationshipManager(models.Manager):
@@ -717,12 +724,15 @@ Path.add_property('pois', POI.path_pois, _("POIs"))
 Topology.add_property('pois', POI.topology_pois, _("POIs"))
 Topology.add_property('all_pois', POI.topology_all_pois, _("POIs"))
 Topology.add_property('published_pois', POI.published_topology_pois, _("Published POIs"))
-Intervention.add_property('pois', lambda self: self.topology.pois if self.topology else [], _("POIs"))
+Intervention.add_property('pois', lambda self: self.target.pois if self.target else [], _("POIs"))
 Project.add_property('pois', lambda self: self.edges_by_attr('pois'), _("POIs"))
 tourism_models.TouristicContent.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
 tourism_models.TouristicContent.add_property('published_pois', lambda self: intersecting(POI, self).filter(published=True), _("Published POIs"))
 tourism_models.TouristicEvent.add_property('pois', lambda self: intersecting(POI, self), _("POIs"))
 tourism_models.TouristicEvent.add_property('published_pois', lambda self: intersecting(POI, self).filter(published=True), _("Published POIs"))
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    Blade.add_property('pois', lambda self: self.signage.pois, _("POIs"))
+    Blade.add_property('published_pois', lambda self: self.signage.published_pois, _("Published POIs"))
 
 
 class POIType(PictogramMixin):
@@ -826,9 +836,12 @@ class Service(StructureRelated, MapEntityMixin, Topology):
 Path.add_property('services', Service.path_services, _("Services"))
 Topology.add_property('services', Service.topology_services, _("Services"))
 Topology.add_property('published_services', Service.published_topology_services, _("Published Services"))
-Intervention.add_property('services', lambda self: self.topology.services if self.topology else [], _("Services"))
+Intervention.add_property('services', lambda self: self.target.services if self.target else [], _("Services"))
 Project.add_property('services', lambda self: self.edges_by_attr('services'), _("Services"))
 tourism_models.TouristicContent.add_property('services', lambda self: intersecting(Service, self), _("Services"))
 tourism_models.TouristicContent.add_property('published_services', lambda self: intersecting(Service, self).filter(published=True), _("Published Services"))
 tourism_models.TouristicEvent.add_property('services', lambda self: intersecting(Service, self), _("Services"))
 tourism_models.TouristicEvent.add_property('published_services', lambda self: intersecting(Service, self).filter(published=True), _("Published Services"))
+if 'geotrek.signage' in settings.INSTALLED_APPS:
+    Blade.add_property('services', lambda self: self.signage.services, _("Services"))
+    Blade.add_property('published_services', lambda self: self.signage.published_pois, _("Published Services"))

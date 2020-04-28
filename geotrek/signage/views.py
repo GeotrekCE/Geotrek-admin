@@ -13,7 +13,9 @@ from geotrek.core.models import AltimetryMixin
 from geotrek.signage.filters import SignageFilterSet, BladeFilterSet
 from geotrek.signage.forms import SignageForm, BladeForm, LineFormset
 from geotrek.signage.models import Signage, Blade, Line
-from geotrek.signage.serializers import SignageSerializer, BladeSerializer, CSVBladeSerializer, ZipBladeShapeSerializer
+from geotrek.signage.serializers import (SignageSerializer, BladeSerializer,
+                                         SignageGeojsonSerializer, BladeGeojsonSerializer,
+                                         CSVBladeSerializer, ZipBladeShapeSerializer)
 
 from rest_framework import permissions as rest_permissions
 
@@ -88,6 +90,7 @@ class SignageDelete(MapEntityDelete):
 class SignageViewSet(MapEntityViewSet):
     model = Signage
     serializer_class = SignageSerializer
+    geojson_serializer_class = SignageGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
@@ -95,11 +98,11 @@ class SignageViewSet(MapEntityViewSet):
 
 
 class BladeDetail(MapEntityDetail):
-    queryset = Blade.objects.existing()
+    queryset = Blade.objects.all()
 
     def get_context_data(self, *args, **kwargs):
         context = super(BladeDetail, self).get_context_data(*args, **kwargs)
-        context['can_edit'] = self.get_object().same_structure(self.request.user)
+        context['can_edit'] = self.get_object().signage.same_structure(self.request.user)
         return context
 
 
@@ -131,7 +134,7 @@ class BladeCreate(LineMixin, MapEntityCreate):
 
 
 class BladeUpdate(LineMixin, MapEntityUpdate):
-    queryset = Blade.objects.existing()
+    queryset = Blade.objects.all()
     form_class = BladeForm
 
     @same_structure_required('signage:blade_detail')
@@ -142,16 +145,24 @@ class BladeUpdate(LineMixin, MapEntityUpdate):
 class BladeDelete(MapEntityDelete):
     model = Blade
 
+    @same_structure_required('signage:blade_detail')
+    def dispatch(self, *args, **kwargs):
+        return super(BladeDelete, self).dispatch(*args, **kwargs)
+
 
 class BladeViewSet(MapEntityViewSet):
     model = Blade
     serializer_class = BladeSerializer
-    queryset = Blade.objects.existing()
+    geojson_serializer_class = BladeGeojsonSerializer
+    queryset = Blade.objects.all()
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        return Blade.objects.all().annotate(api_geom=Transform("signage__geom", settings.API_SRID))
 
 
 class BladeList(MapEntityList):
-    queryset = Blade.objects.existing()
+    queryset = Blade.objects.all()
     filterform = BladeFilterSet
     columns = ['id', 'number', 'direction', 'type', 'color']
 
@@ -161,7 +172,7 @@ class BladeJsonList(MapEntityJsonList, BladeList):
 
 
 class BladeLayer(MapEntityLayer):
-    queryset = Blade.objects.existing()
+    queryset = Blade.objects.all()
     properties = ['number']
 
 

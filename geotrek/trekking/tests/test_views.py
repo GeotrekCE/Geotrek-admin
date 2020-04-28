@@ -60,6 +60,40 @@ class POIViewsTest(CommonTest):
     model = POI
     modelfactory = POIFactory
     userfactory = TrekkingManagerFactory
+    expected_json_geom = {'type': 'Point', 'coordinates': [3.0, 46.5]}
+
+    def get_expected_json_attrs(self):
+        return {
+            'areas': [],
+            'cities': [],
+            'description': '<p>Description</p>',
+            'districts': [],
+            'filelist_url': '/paperclip/get/trekking/poi/{}/'.format(self.obj.pk),
+            'files': [],
+            'map_image_url': '/image/poi-{}.png'.format(self.obj.pk),
+            'max_elevation': 0,
+            'min_elevation': 0,
+            'name': 'POI',
+            'pictures': [],
+            'printable': '/api/en/pois/{}/poi.pdf'.format(self.obj.pk),
+            'publication_date': '2020-03-17',
+            'published': True,
+            'published_status': [
+                {'lang': 'en', 'language': 'English', 'status': True},
+                {'lang': 'es', 'language': 'Spanish', 'status': False},
+                {'lang': 'fr', 'language': 'French', 'status': False},
+                {'lang': 'it', 'language': 'Italian', 'status': False},
+            ],
+            'slug': 'poi',
+            'structure': {'id': self.obj.structure.pk, 'name': 'My structure'},
+            'thumbnail': None,
+            'type': {
+                'id': self.obj.type.pk,
+                'label': 'POI type',
+                'pictogram': '/media/upload/poi-type.png',
+            },
+            'videos': [],
+        }
 
     def get_good_data(self):
         good_data = {
@@ -142,6 +176,106 @@ class TrekViewsTest(CommonTest):
     model = Trek
     modelfactory = TrekFactory
     userfactory = TrekkingManagerFactory
+    expected_json_geom = {'type': 'LineString', 'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]]}
+
+    def get_expected_json_attrs(self):
+        return {
+            'access': '<p>Access</p>',
+            'accessibilities': [],
+            'advice': '<p>Advice</p>',
+            'advised_parking': '<p>Advised parking</p>',
+            'altimetric_profile': '/api/en/treks/{}/profile.json'.format(self.obj.pk),
+            'ambiance': '<p>Ambiance</p>',
+            'areas': [],
+            'arrival': 'Arrival',
+            'ascent': 0,
+            'category': {
+                'id': 'T',
+                'label': 'Hike',
+                'order': 1,
+                'pictogram': '/static/trekking/trek.svg',
+                'slug': 'trek',
+                'type2_label': 'Accessibility',
+            },
+            'children': [],
+            'cities': [],
+            'departure': 'Departure',
+            'descent': 0,
+            'description': '<p>Description</p>',
+            'description_teaser': '<p>Description teaser</p>',
+            'difficulty': {
+                'id': self.obj.difficulty.pk,
+                'label': 'Difficulty',
+                'pictogram': '/media/upload/difficulty.png',
+            },
+            'disabled_infrastructure': '<p>Disabled infrastructure</p>',
+            'districts': [],
+            'dives': [],
+            'duration': 1.5,
+            'duration_pretty': '1 h 30',
+            'elevation_area_url': '/api/en/treks/{}/dem.json'.format(self.obj.pk),
+            'elevation_svg_url': '/api/en/treks/{}/profile.svg'.format(self.obj.pk),
+            'filelist_url': '/paperclip/get/trekking/trek/{}/'.format(self.obj.pk),
+            'files': [],
+            'gpx': '/api/en/treks/{}/trek.gpx'.format(self.obj.pk),
+            'information_desks': [],
+            'is_park_centered': False,
+            'kml': '/api/en/treks/{}/trek.kml'.format(self.obj.pk),
+            'length': 141.42135623731,
+            'map_image_url': '/image/trek-{}-en.png'.format(self.obj.pk),
+            'max_elevation': 0,
+            'min_elevation': 0,
+            'name': 'Trek',
+            'networks': [],
+            'next': {},
+            'parents': [],
+            'parking_location': [-1.3630753, -5.9838497],
+            'pictures': [],
+            'points_reference': None,
+            'portal': [],
+            'practice': {
+                'id': self.obj.practice.pk,
+                'label': 'Usage',
+                'pictogram': '/media/upload/practice.png',
+            },
+            'previous': {},
+            'printable': '/api/en/treks/{}/trek.pdf'.format(self.obj.pk),
+            'public_transport': '<p>Public transport</p>',
+            'publication_date': '2020-03-17',
+            'published': True,
+            'published_status': [
+                {'lang': 'en', 'language': 'English', 'status': True},
+                {'lang': 'es', 'language': 'Spanish', 'status': False},
+                {'lang': 'fr', 'language': 'French', 'status': False},
+                {'lang': 'it', 'language': 'Italian', 'status': False}
+            ],
+            'relationships': [],
+            'route': {
+                'id': self.obj.route.pk,
+                'label': 'Route',
+                'pictogram': '/media/upload/routes.png',
+            },
+            'slope': 0.0,
+            'slug': 'trek',
+            'source': [],
+            'structure': {
+                'id': self.obj.structure.pk,
+                'name': 'My structure',
+            },
+            'themes': [],
+            'thumbnail': None,
+            'touristic_contents': [],
+            'touristic_events': [],
+            'treks': [],
+            'type2': [],
+            'usages': [{
+                'id': self.obj.practice.pk,
+                'label': 'Usage',
+                'pictogram': '/media/upload/practice.png'
+            }],
+            'videos': [],
+            'web_links': [],
+        }
 
     def get_bad_data(self):
         return OrderedDict([
@@ -152,6 +286,7 @@ class TrekViewsTest(CommonTest):
         ]), 'This field is required.'
 
     def get_good_data(self):
+        self.path = PathFactory.create()
         good_data = {
             'name_fr': 'Huh',
             'name_en': 'Hehe',
@@ -201,13 +336,14 @@ class TrekViewsTest(CommonTest):
             'trek_relationship_a-1-has_common_edge': '',
             'trek_relationship_a-1-has_common_departure': '',
             'trek_relationship_a-1-is_circuit_step': 'on',
-            'pois_excluded': POIFactory.create().pk
+
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = PathFactory.create()
-            good_data['topology'] = '{"paths": [%s]}' % path.pk
+            good_data['topology'] = '{"paths": [%s]}' % self.path.pk
+            good_data['pois_excluded'] = POIFactory.create(paths=[self.path]).pk
         else:
             good_data['geom'] = 'SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)'
+            good_data['pois_excluded'] = POIFactory.create(geom='SRID=2154;POINT (700000 6600000)').pk
         return good_data
 
     def test_status(self):
@@ -241,12 +377,13 @@ class TrekViewsTest(CommonTest):
 
     def test_pois_detached_update(self):
         self.login()
-        p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
-        trek = TrekFactory.create(no_path=True)
-        trek.add_path(p1)
-        poi = POIFactory.create(no_path=True)
-        poi.add_path(p1, start=0.6, end=0.6)
-
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
+            trek = TrekFactory.create(paths=[p1])
+            poi = POIFactory.create(paths=[(p1, 0.6, 0.6)])
+        else:
+            trek = TrekFactory.create(geom='SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)')
+            poi = POIFactory.create(geom='SRID=4326;POINT (0.6 0.6)')
         good_data = self.get_good_data()
         good_data['pois_excluded'] = poi.pk
         self.client.post(self.model.get_update_url(trek), good_data)
@@ -518,18 +655,20 @@ class TrekJSONSetUp(TrekkingManagerTest):
         self.city = CityFactory(geom=polygon)
         self.district = DistrictFactory(geom=polygon)
 
-        self.trek = TrekFactory.create(
-            name='Step 2',
-            no_path=True,
-            points_reference=MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
-            parking_location=Point(0, 0, srid=settings.SRID)
-        )
+        trek_args = {'name': 'Step 2',
+                     'points_reference': MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
+                     'parking_location': Point(0, 0, srid=settings.SRID)}
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path1 = PathFactory.create(geom='SRID=%s;LINESTRING(0 0, 1 0)' % settings.SRID)
-            self.trek.add_path(path1)
+            self.trek = TrekFactory.create(
+                paths=[path1],
+                **trek_args
+            )
         else:
-            self.trek.geom = 'SRID=%s;LINESTRING(0 0, 1 0)' % settings.SRID
-            self.trek.save()
+            self.trek = TrekFactory.create(
+                geom='SRID=%s;LINESTRING(0 0, 1 0)' % settings.SRID,
+                **trek_args
+            )
         self.attachment = AttachmentFactory.create(content_object=self.trek,
                                                    attachment_file=get_dummy_uploaded_image())
 
@@ -553,23 +692,17 @@ class TrekJSONSetUp(TrekkingManagerTest):
 
         self.portal = TargetPortalFactory.create()
         self.trek.portal.add(self.portal)
-
-        self.trek_b = TrekFactory.create(no_path=True,
-                                         geom='SRID=%s;POINT(2 2)' % settings.SRID,
-                                         published=True)
+        trek_b_args = {'published': True}
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path2 = PathFactory.create(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID)
-            self.trek_b.add_path(path2)
-            trek2 = TrekFactory(no_path=True, published=False)  # not published
-            trek2.add_path(path2)
-            self.trek3 = TrekFactory(no_path=True, published=True)  # deleted
-            self.trek3.add_path(path2)
+            self.trek_b = TrekFactory.create(paths=[path2], **trek_b_args)
+            TrekFactory(paths=[path2], published=False)  # not published
+            self.trek3 = TrekFactory(paths=[path2], published=True)  # deleted
             self.trek3.delete()
-            trek4 = TrekFactory(no_path=True, published=True)  # too far
-            trek4.add_path(PathFactory.create(geom='SRID=%s;LINESTRING(0 2000, 1 2000)' % settings.SRID))
+            TrekFactory(paths=[PathFactory.create(geom='SRID=%s;LINESTRING(0 2000, 1 2000)' % settings.SRID)],
+                        published=True)  # too far
         else:
-            self.trek_b.geom = 'SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID
-            self.trek_b.save()
+            self.trek_b = TrekFactory.create(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID, **trek_b_args)
             TrekFactory(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID, published=False)
             trek3 = TrekFactory(geom='SRID=%s;LINESTRING(0 1, 1 1)' % settings.SRID, published=True)
             trek3.delete()
@@ -965,9 +1098,8 @@ class TrekViewTranslationTest(TrekkingManagerTest):
 
     def test_poi_geojson_translation(self):
         # Create a Trek with a POI
-        trek = TrekFactory.create(no_path=True, published_fr=True, published_it=True)
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
-        poi = POIFactory.create(no_path=True)
+        poi = POIFactory.create(paths=[(p1, 0.6, 0.6)])
         poi.name_fr = "Chapelle"
         poi.name_en = "Chapel"
         poi.name_it = "Capela"
@@ -975,8 +1107,7 @@ class TrekViewTranslationTest(TrekkingManagerTest):
         poi.published_en = True
         poi.published_it = True
         poi.save()
-        trek.add_path(p1, start=0.5)
-        poi.add_path(p1, start=0.6, end=0.6)
+        trek = TrekFactory.create(paths=[(p1, 0.5, 1)], published_fr=True, published_it=True)
         # Check that it applies to GeoJSON also :
         self.assertEqual(len(trek.pois), 1)
         poi = trek.pois[0]
@@ -1124,14 +1255,15 @@ class CirkwiTests(TranslationResetMixin, TestCase):
     def setUp(self):
         testutil._MAX_LENGTH = 10000
         creation = make_aware(datetime.datetime(2014, 1, 1), utc)
-        self.trek = TrekFactory.create(published=True)
+        self.path = PathFactory.create()
+        self.trek = TrekFactory.create(published=True, paths=[self.path])
         self.trek.date_insert = creation
         self.trek.save()
-        self.poi = POIFactory.create(published=True)
+        self.poi = POIFactory.create(published=True, paths=[self.path])
         self.poi.date_insert = creation
         self.poi.save()
-        TrekFactory.create(published=False)
-        POIFactory.create(published=False)
+        TrekFactory.create(published=False, paths=[self.path])
+        POIFactory.create(published=False, paths=[self.path])
 
     def tearDown(self):
         testutil._MAX_LENGTH = 80
@@ -1157,25 +1289,25 @@ class CirkwiTests(TranslationResetMixin, TestCase):
             '<informations>'
             '<information langue="en">'
             '<titre>{title}</titre>'
-            '<description>description_teaser {n}\n\ndescription {n}</description>'
+            '<description>Description teaser\n\nDescription</description>'
             '<informations_complementaires>'
-            '<information_complementaire><titre>Departure</titre><description>departure {n}</description></information_complementaire>'
-            '<information_complementaire><titre>Arrival</titre><description>arrival {n}</description></information_complementaire>'
-            '<information_complementaire><titre>Ambiance</titre><description>ambiance {n}</description></information_complementaire>'
-            '<information_complementaire><titre>Access</titre><description>access {n}</description></information_complementaire>'
-            '<information_complementaire><titre>Disabled infrastructure</titre><description>disabled_infrastructure {n}</description></information_complementaire>'
-            '<information_complementaire><titre>Advised parking</titre><description>Advised parking {n}</description></information_complementaire>'
-            '<information_complementaire><titre>Public transport</titre><description>Public transport {n}</description></information_complementaire>'
-            '<information_complementaire><titre>Advice</titre><description>Advice {n}</description></information_complementaire></informations_complementaires>'
+            '<information_complementaire><titre>Departure</titre><description>Departure</description></information_complementaire>'
+            '<information_complementaire><titre>Arrival</titre><description>Arrival</description></information_complementaire>'
+            '<information_complementaire><titre>Ambiance</titre><description>Ambiance</description></information_complementaire>'
+            '<information_complementaire><titre>Access</titre><description>Access</description></information_complementaire>'
+            '<information_complementaire><titre>Disabled infrastructure</titre><description>Disabled infrastructure</description></information_complementaire>'
+            '<information_complementaire><titre>Advised parking</titre><description>Advised parking</description></information_complementaire>'
+            '<information_complementaire><titre>Public transport</titre><description>Public transport</description></information_complementaire>'
+            '<information_complementaire><titre>Advice</titre><description>Advice</description></information_complementaire></informations_complementaires>'
             '</information>'
             '</informations>'
             '<distance>141</distance>'
             '<locomotions><locomotion duree="5400"></locomotion></locomotions>'
-            '<fichier_trace url="http://testserver/api/en/treks/{pk}/name-{n}.kml"></fichier_trace>'
+            '<fichier_trace url="http://testserver/api/en/treks/{pk}/trek.kml"></fichier_trace>'
             '<pois>'
             '<poi date_creation="1388534400" date_modification="{poi_date_update}" id_poi="{poi_pk}">'
             '<informations>'
-            '<information langue="en"><titre>{poi_title}</titre><description>{poi_description}</description></information>'
+            '<information langue="en"><titre>POI</titre><description>Description</description></information>'
             '</informations>'
             '<adresse><position><lat>46.5</lat><lng>3.0</lng></position></adresse>'
             '</poi>'
@@ -1260,6 +1392,20 @@ class ServiceViewsTest(CommonTest):
     model = Service
     modelfactory = ServiceFactory
     userfactory = TrekkingManagerFactory
+    expected_json_geom = {'type': 'Point', 'coordinates': [3.0, 46.5]}
+
+    def get_expected_json_attrs(self):
+        return {
+            'structure': {
+                'id': self.obj.structure.pk,
+                'name': 'My structure'
+            },
+            'type': {
+                'id': self.obj.type.pk,
+                'name': 'Service type',
+                'pictogram': '/media/upload/service-type.png'
+            }
+        }
 
     def get_good_data(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:

@@ -1,9 +1,6 @@
-import os
-
 from datetime import date
 
 from django.contrib.auth.models import User, Permission
-from django.conf import settings
 from django.test import TestCase
 
 from geotrek.authent.factories import StructureFactory, UserProfileFactory
@@ -70,73 +67,6 @@ class SensitiveAreaTemplatesTest(TestCase):
         url = "/sensitivearea/{pk}/".format(pk=self.area.pk)
         response = self.client.get(url)
         self.assertContains(response, self.area.species.name)
-
-
-class BasicJSONAPITest(TranslationResetMixin, TrekkingManagerTest):
-    maxDiff = None
-
-    def setUp(self):
-        super(TrekkingManagerTest, self).setUp()
-        self.sensitivearea = SensitiveAreaFactory.create()
-        self.species = self.sensitivearea.species
-        self.pk = self.sensitivearea.pk
-        self.expected_properties = {
-            'publication_date': self.sensitivearea.publication_date.strftime('%Y-%m-%d'),
-            'published': True,
-            'description': "Blabla",
-            'contact': '<a href="mailto:toto@tata.com">toto@tata.com</a>',
-            'kml_url': '/api/en/sensitiveareas/{pk}.kml'.format(pk=self.pk),
-            'species': {
-                "id": self.species.id,
-                "name": self.species.name,
-                'pictogram': os.path.join(settings.MEDIA_URL, self.species.pictogram.name),
-                "period": [False, False, False, False, False, True, True, False, False, False, False, False],
-                'practices': [
-                    {'id': self.species.practices.all()[0].pk, 'name': self.species.practices.all()[0].name},
-                    {'id': self.species.practices.all()[1].pk, 'name': self.species.practices.all()[1].name},
-                ],
-                'url': self.species.url,
-            },
-        }
-        self.expected_geom = {
-            'type': 'Polygon',
-            'coordinates': [[
-                [3.0, 46.5],
-                [3.0, 46.500027],
-                [3.0000391, 46.500027],
-                [3.0000391, 46.5],
-                [3.0, 46.5],
-            ]],
-        }
-        self.expected_result = dict(self.expected_properties)
-        self.expected_result['id'] = self.pk
-        self.expected_result['geometry'] = self.expected_geom
-        self.expected_geo_result = {
-            'geometry': self.expected_geom,
-            'type': 'Feature',
-            'id': self.pk,
-            'properties': self.expected_properties,
-        }
-
-    def test_object(self):
-        url = '/api/en/sensitiveareas/{pk}.json'.format(pk=self.pk)
-        response = self.client.get(url)
-        self.assertJSONEqual(response.content.decode(), self.expected_result)
-
-    def test_list(self):
-        url = '/api/en/sensitiveareas.json'
-        response = self.client.get(url)
-        self.assertJSONEqual(response.content.decode(), [self.expected_result])
-
-    def test_geo_object(self):
-        url = '/api/en/sensitiveareas/{pk}.geojson'.format(pk=self.pk)
-        response = self.client.get(url)
-        self.assertJSONEqual(response.content.decode(), self.expected_geo_result)
-
-    def test_geo_list(self):
-        url = '/api/en/sensitiveareas.geojson'
-        response = self.client.get(url)
-        self.assertJSONEqual(response.content.decode(), {'type': 'FeatureCollection', 'features': [self.expected_geo_result]})
 
 
 class APIv2Test(TranslationResetMixin, TrekkingManagerTest):

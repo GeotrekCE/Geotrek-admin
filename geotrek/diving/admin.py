@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 
+from geotrek.common.admin import MergeActionMixin
 from .models import (
     Practice, Difficulty, Level, Dive
 )
@@ -15,7 +16,7 @@ else:
     TranslationAdmin = admin.ModelAdmin
 
 
-class PracticeAdmin(TranslationAdmin):
+class PracticeAdmin(MergeActionMixin, TranslationAdmin):
     list_display = ('name', 'order', 'pictogram_img')
     search_fields = ('name', )
 
@@ -31,11 +32,12 @@ class DifficultyForm(forms.ModelForm):
         return self.newid
 
 
-class DifficultyAdmin(TranslationAdmin):
+class DifficultyAdmin(MergeActionMixin, TranslationAdmin):
     form = DifficultyForm
     list_display = ('name', 'id', 'pictogram_img')
     search_fields = ('name',)
     fields = ('id', 'name', 'pictogram')
+    merge_field = "name"
 
     def save_model(self, request, obj, form, change):
         """
@@ -90,11 +92,12 @@ class LevelForm(forms.ModelForm):
         return self.newid
 
 
-class LevelAdmin(TranslationAdmin):
+class LevelAdmin(MergeActionMixin, TranslationAdmin):
     form = LevelForm
     list_display = ('name', 'id', 'pictogram_img')
     search_fields = ('name',)
     fields = ('id', 'name', 'description', 'pictogram')
+    merge_field = "name"
 
     def save_model(self, request, obj, form, change):
         """

@@ -41,10 +41,8 @@ class PolygonFilterTest(PolygonTest, TestCase):
         self.model = Topology
         self.none = Topology.objects.create(geom=None)
         path = PathFactory.create(geom='SRID=%s;LINESTRING(0 0, 10 0, 10 10)' % settings.SRID)
-        self.basic = TopologyFactory.create(no_path=True)
-        self.basic.add_path(path, 0.1, 0.1)
-        self.outside = TopologyFactory.create(no_path=True)
-        self.outside.add_path(path, 1, 1)
+        self.basic = TopologyFactory.create(paths=[(path, .1, .1)])
+        self.outside = TopologyFactory.create(paths=[(path, .1, .1)])
 
         self.filter = PolygonFilter()
 """

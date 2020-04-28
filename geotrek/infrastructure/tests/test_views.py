@@ -10,7 +10,8 @@ from geotrek.maintenance.factories import InterventionFactory
 from geotrek.infrastructure.models import (Infrastructure, InfrastructureCondition, INFRASTRUCTURE_TYPES)
 from geotrek.core.factories import PathFactory
 from geotrek.infrastructure.factories import (InfrastructureFactory, InfrastructureNoPictogramFactory,
-                                              InfrastructureTypeFactory, InfrastructureConditionFactory)
+                                              InfrastructureTypeFactory, InfrastructureConditionFactory,
+                                              PointInfrastructureFactory)
 from geotrek.infrastructure.filters import InfrastructureFilterSet
 
 
@@ -18,8 +19,10 @@ class InfrastructureTest(TestCase):
     def test_helpers(self):
         p = PathFactory.create()
 
-        infra = InfrastructureFactory.create(no_path=True)
-        infra.add_path(path=p)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            infra = InfrastructureFactory.create(paths=[p])
+        else:
+            infra = InfrastructureFactory.create(geom=p.geom)
 
         self.assertCountEqual(p.infrastructures, [infra])
 
@@ -28,6 +31,29 @@ class InfrastructureViewsTest(CommonTest):
     model = Infrastructure
     modelfactory = InfrastructureFactory
     userfactory = PathManagerFactory
+    expected_json_geom = {'type': 'LineString', 'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]]}
+
+    def get_expected_json_attrs(self):
+        return {
+            'name': self.obj.name,
+            'publication_date': None,
+            'published': True,
+            'published_status': [
+                {'lang': 'en', 'language': 'English', 'status': False},
+                {'lang': 'es', 'language': 'Spanish', 'status': False},
+                {'lang': 'fr', 'language': 'French', 'status': False},
+                {'lang': 'it', 'language': 'Italian', 'status': False}
+            ],
+            'structure': {
+                'id': self.obj.structure.pk,
+                'name': self.obj.structure.name,
+            },
+            'type': {
+                'id': self.obj.type.pk,
+                'label': self.obj.type.label,
+                'pictogram': self.obj.type.pictogram.url if self.obj.type.pictogram else '/static/infrastructure/picto-infrastructure.png',
+            },
+        }
 
     def get_good_data(self):
         good_data = {
@@ -65,6 +91,9 @@ class InfrastructureViewsTest(CommonTest):
 
 
 class PointInfrastructureViewsTest(InfrastructureViewsTest):
+    modelfactory = PointInfrastructureFactory
+    expected_json_geom = {'type': 'Point', 'coordinates': [3.0, 46.5]}
+
     def get_good_data(self):
         good_data = {
             'name': 'test',
@@ -112,11 +141,11 @@ class InfraFilterTestMixin():
 
         # Bad signage: intervention with wrong year
         bad_topo = self.factory()
-        InterventionFactory(topology=bad_topo, date=bad_date_year)
+        InterventionFactory(target=bad_topo, date=bad_date_year)
 
         # Good signage: intervention with the good year
         good_topo = self.factory()
-        InterventionFactory(topology=good_topo, date=good_date_year)
+        InterventionFactory(target=good_topo, date=good_date_year)
 
         data = {
             'intervention_year': year
@@ -144,11 +173,11 @@ class InfraFilterTestMixin():
 
         # Bad signage: intervention with wrong year
         topo_1 = self.factory()
-        InterventionFactory(topology=topo_1, date=year_t)
+        InterventionFactory(target=topo_1, date=year_t)
 
         # Good signage: intervention with the good year
         topo_2 = self.factory()
-        InterventionFactory(topology=topo_2, date=year_t)
+        InterventionFactory(target=topo_2, date=year_t)
 
         response = self.client.get(model.get_list_url())
         self.assertContains(response, '<option value="2014">2014</option>', count=1)

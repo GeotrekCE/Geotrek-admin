@@ -1,12 +1,15 @@
+from unittest import skipIf
+
 from datetime import datetime
 
+from django.conf import settings
 from django.test import TestCase
 
 from geotrek.land.factories import (
     PhysicalEdgeFactory, LandEdgeFactory, CompetenceEdgeFactory,
     WorkManagementEdgeFactory, SignageManagementEdgeFactory
 )
-from geotrek.core.factories import PathFactory, PathAggregationFactory, getRandomLineStringInBounds, TopologyFactory
+from geotrek.core.factories import PathFactory, getRandomLineStringInBounds, TopologyFactory
 
 # Make sure dynamic filters are set up when testing
 from geotrek.land import filters  # noqa
@@ -17,6 +20,7 @@ from geotrek.maintenance.factories import (InterventionFactory, ProjectFactory,
                                            InfrastructureInterventionFactory)
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class InterventionFilteringByLandTest(TestCase):
 
     def create_pair_of_distinct_path(self):
@@ -25,22 +29,18 @@ class InterventionFilteringByLandTest(TestCase):
     def create_pair_of_distinct_by_topo_intervention(self):
         p1, seek_path = self.create_pair_of_distinct_path()
 
-        topo_1 = TopologyFactory.create(no_path=True)
-        topo_1.add_path(path=p1, start=0, end=1)
+        topo_1 = TopologyFactory.create(paths=[p1])
 
-        seek_topo = TopologyFactory.create(no_path=True)
-        seek_topo.add_path(path=seek_path, start=0, end=1)
+        seek_topo = TopologyFactory.create(paths=[seek_path])
 
-        InterventionFactory.create(topology=topo_1)
-        seek_it = InterventionFactory.create(topology=seek_topo)
+        InterventionFactory.create(target=topo_1)
+        seek_it = InterventionFactory.create(target=seek_topo)
         return seek_it, seek_path
 
     def test_filter_by_physical_edge(self):
         seek_inter, seek_path = self.create_pair_of_distinct_by_topo_intervention()
 
-        edge = PhysicalEdgeFactory(no_path=True)
-        PathAggregationFactory.create(topo_object=edge, path=seek_path, start_position=0, end_position=1)
-        edge.reload()
+        edge = PhysicalEdgeFactory(paths=[seek_path])
 
         # filter by physical type
         data = {'physical_type': edge.physical_type.pk}
@@ -52,9 +52,7 @@ class InterventionFilteringByLandTest(TestCase):
     def test_filter_by_land_edge(self):
         seek_inter, seek_path = self.create_pair_of_distinct_by_topo_intervention()
 
-        edge = LandEdgeFactory(no_path=True)
-        PathAggregationFactory.create(topo_object=edge, path=seek_path, start_position=0, end_position=1)
-        edge.reload()
+        edge = LandEdgeFactory(paths=[seek_path])
 
         # filter by land type
         data = {'land_type': edge.land_type.pk}
@@ -67,9 +65,7 @@ class InterventionFilteringByLandTest(TestCase):
     def test_filter_by_competence_edge(self):
         seek_inter, seek_path = self.create_pair_of_distinct_by_topo_intervention()
 
-        edge = CompetenceEdgeFactory(no_path=True)
-        PathAggregationFactory.create(topo_object=edge, path=seek_path, start_position=0, end_position=1)
-        edge.reload()
+        edge = CompetenceEdgeFactory(paths=[seek_path])
 
         # filter by organization
         data = {'competence': edge.organization.pk}
@@ -82,9 +78,7 @@ class InterventionFilteringByLandTest(TestCase):
     def test_filter_by_work_management_edge(self):
         seek_inter, seek_path = self.create_pair_of_distinct_by_topo_intervention()
 
-        edge = WorkManagementEdgeFactory(no_path=True)
-        PathAggregationFactory.create(topo_object=edge, path=seek_path, start_position=0, end_position=1)
-        edge.reload()
+        edge = WorkManagementEdgeFactory(paths=[seek_path])
 
         # filter by organization
         data = {'work': edge.organization.pk}
@@ -97,9 +91,7 @@ class InterventionFilteringByLandTest(TestCase):
     def test_filter_by_signage_management_edge(self):
         seek_inter, seek_path = self.create_pair_of_distinct_by_topo_intervention()
 
-        edge = SignageManagementEdgeFactory(no_path=True)
-        PathAggregationFactory.create(topo_object=edge, path=seek_path, start_position=0, end_position=1)
-        edge.reload()
+        edge = SignageManagementEdgeFactory(paths=[seek_path])
 
         # filter by organization
         data = {'signage': edge.organization.pk}
@@ -110,6 +102,7 @@ class InterventionFilteringByLandTest(TestCase):
         self.assertEqual(qs[0], seek_inter)
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class ProjectFilteringByLandTest(TestCase):
 
     def create_pair_of_distinct_path(self):
@@ -118,14 +111,12 @@ class ProjectFilteringByLandTest(TestCase):
     def create_pair_of_distinct_by_topo_project(self):
         p1, seek_path = self.create_pair_of_distinct_path()
 
-        topo_1 = TopologyFactory.create(no_path=True)
-        topo_1.add_path(path=p1, start=0, end=1)
+        topo_1 = TopologyFactory.create(paths=[p1])
 
-        seek_topo = TopologyFactory.create(no_path=True)
-        seek_topo.add_path(path=seek_path, start=0, end=1)
+        seek_topo = TopologyFactory.create(paths=[seek_path])
 
-        it_p1 = InterventionFactory.create(topology=topo_1)
-        seek_it = InterventionFactory.create(topology=seek_topo)
+        it_p1 = InterventionFactory.create(target=topo_1)
+        seek_it = InterventionFactory.create(target=seek_topo)
 
         seek_proj = ProjectFactory.create()
         seek_proj.interventions.add(seek_it)
@@ -138,9 +129,7 @@ class ProjectFilteringByLandTest(TestCase):
     def test_filter_by_physical_edge(self):
         seek_proj, seek_path = self.create_pair_of_distinct_by_topo_project()
 
-        edge = PhysicalEdgeFactory(no_path=True)
-        PathAggregationFactory.create(topo_object=edge, path=seek_path, start_position=0, end_position=1)
-        edge.reload()
+        edge = PhysicalEdgeFactory(paths=[seek_path])
 
         # filter by physical type
         data = {'physical_type': edge.physical_type.pk}
@@ -153,9 +142,7 @@ class ProjectFilteringByLandTest(TestCase):
     def test_filter_by_land_edge(self):
         seek_proj, seek_path = self.create_pair_of_distinct_by_topo_project()
 
-        edge = LandEdgeFactory(no_path=True)
-        PathAggregationFactory.create(topo_object=edge, path=seek_path, start_position=0, end_position=1)
-        edge.reload()
+        edge = LandEdgeFactory(paths=[seek_path])
 
         # filter by land type
         data = {'land_type': edge.land_type.pk}
@@ -168,9 +155,7 @@ class ProjectFilteringByLandTest(TestCase):
     def test_filter_by_competence_edge(self):
         seek_proj, seek_path = self.create_pair_of_distinct_by_topo_project()
 
-        edge = CompetenceEdgeFactory(no_path=True)
-        PathAggregationFactory.create(topo_object=edge, path=seek_path, start_position=0, end_position=1)
-        edge.reload()
+        edge = CompetenceEdgeFactory(paths=[seek_path])
 
         # filter by organization
         data = {'competence': edge.organization.pk}
@@ -183,9 +168,7 @@ class ProjectFilteringByLandTest(TestCase):
     def test_filter_by_work_management_edge(self):
         seek_proj, seek_path = self.create_pair_of_distinct_by_topo_project()
 
-        edge = WorkManagementEdgeFactory(no_path=True)
-        PathAggregationFactory.create(topo_object=edge, path=seek_path, start_position=0, end_position=1)
-        edge.reload()
+        edge = WorkManagementEdgeFactory(paths=[seek_path])
 
         # filter by organization
         data = {'work': edge.organization.pk}
@@ -198,9 +181,7 @@ class ProjectFilteringByLandTest(TestCase):
     def test_filter_by_signage_management_edge(self):
         seek_proj, seek_path = self.create_pair_of_distinct_by_topo_project()
 
-        edge = SignageManagementEdgeFactory(no_path=True)
-        PathAggregationFactory.create(topo_object=edge, path=seek_path, start_position=0, end_position=1)
-        edge.reload()
+        edge = SignageManagementEdgeFactory(paths=[seek_path])
 
         # filter by organization
         data = {'signage': edge.organization.pk}

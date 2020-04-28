@@ -1,8 +1,10 @@
 from django import forms
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.forms import FloatField
 from django.utils.translation import ugettext_lazy as _
 from django.forms.models import inlineformset_factory
+from django.shortcuts import get_object_or_404
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Fieldset, Layout, Div, HTML
@@ -10,9 +12,7 @@ from crispy_forms.layout import Fieldset, Layout, Div, HTML
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.widgets import TopologyReadonlyWidget
-from geotrek.infrastructure.models import Infrastructure
 from geotrek.maintenance.widgets import InterventionWidget
-from geotrek.signage.models import Signage
 
 from .models import Intervention, Project
 
@@ -53,12 +53,11 @@ FundingFormSet = inlineformset_factory(Project, Project.founders.through, form=F
 
 
 class InterventionBaseForm(CommonForm):
-    infrastructure = forms.ModelChoiceField(required=False,
-                                            queryset=Infrastructure.objects.existing(),
-                                            widget=forms.HiddenInput())
-    signage = forms.ModelChoiceField(required=False,
-                                     queryset=Signage.objects.existing(),
-                                     widget=forms.HiddenInput())
+    target_id = forms.IntegerField(required=False,
+                                   widget=forms.HiddenInput())
+    target_type = forms.ModelChoiceField(required=False,
+                                         queryset=ContentType.objects.all(),
+                                         widget=forms.HiddenInput())
     length = FloatField(required=False, label=_("Length"))
     project = forms.ModelChoiceField(required=False, label=_("Project"),
                                      queryset=Project.objects.existing())
@@ -89,9 +88,8 @@ class InterventionBaseForm(CommonForm):
                     'stake',
                     'project',
                     'description',
-                    'infrastructure',
-                    'signage',
-
+                    'target_type',
+                    'target_id',
                     css_id="main",
                     css_class="tab-pane active"
                 ),
@@ -113,146 +111,71 @@ class InterventionBaseForm(CommonForm):
         model = Intervention
         fields = CommonForm.Meta.fields + \
             ['structure', 'name', 'date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
-             'height', 'stake', 'project', 'infrastructure', 'signage', 'material_cost', 'heliport_cost', 'subcontract_cost',
+             'height', 'stake', 'project', 'material_cost', 'heliport_cost', 'subcontract_cost', 'target_type', 'target_id',
              'topology']
 
 
-if settings.TREKKING_TOPOLOGY_ENABLED:
-    class InterventionForm(InterventionBaseForm):
-        """ An intervention can be a Point or a Line """
+class InterventionForm(InterventionBaseForm):
+    """ An intervention can be a Point or a Line """
 
-        def __init__(self, *args, **kwargs):
-            super(InterventionForm, self).__init__(*args, **kwargs)
-            # If we create or edit an intervention on infrastructure or signage, set
-            # topology field as read-only
-            infrastructure = kwargs.get('initial', {}).get('infrastructure')
-            signage = kwargs.get('initial', {}).get('signage')
-            if self.instance.on_existing_topology:
-                if self.instance.infrastructure:
-                    infrastructure = self.instance.infrastructure
-                    self.fields['infrastructure'].initial = infrastructure
-                elif self.instance.signage:
-                    signage = self.instance.signage
-                    self.fields['signage'].initial = signage
-            if infrastructure:
-                self.helper.form_action += '?infrastructure=%s' % infrastructure.pk
+    def __init__(self, *args, **kwargs):
+        super(InterventionForm, self).__init__(*args, **kwargs)
+
+        # If we create or edit an intervention on infrastructure or signage, set
+        # topology field as read-only
+        target_id = kwargs.get('initial', {}).get('target_id')
+        target_type = kwargs.get('initial', {}).get('target_type')
+        if self.instance.on_existing_target:
+            target_id = self.instance.target_id
+            target_type = self.instance.target_type.pk
+            self.fields['target_type'].initial = target_type
+            self.fields['target_id'].initial = target_id
+
+        if target_type and target_id:
+            ct = get_object_or_404(ContentType, pk=target_type)
+
+        if target_id:
+            final_object = ct.model_class().objects.get(pk=target_id)
+            icon = final_object._meta.model_name
+            title = '%s' % (_(final_object._meta.model_name).capitalize())
+            self.helper.form_action += '?target_id=%s' % target_id
+            if final_object._meta.model_name != "topology":
                 self.fields['topology'].required = False
                 self.fields['topology'].widget = TopologyReadonlyWidget()
                 self.fields['topology'].label = '%s%s %s' % (
-                    self.instance.infrastructure_display,
-                    _("On %s") % _(infrastructure.kind.lower()),
-                    '<a href="%s">%s</a>' % (infrastructure.get_detail_url(), str(infrastructure))
-                )
-            elif signage:
-                self.helper.form_action += '?signage=%s' % signage.pk
-                self.fields['topology'].required = False
-                self.fields['topology'].widget = TopologyReadonlyWidget()
-                self.fields['topology'].label = '%s%s %s' % (
-                    self.instance.infrastructure_display,
-                    _("On %s") % _(signage.kind.lower()),
-                    '<a href="%s">%s</a>' % (signage.get_detail_url(), str(signage))
-                )
-            # Length is not editable in AltimetryMixin
-            self.fields['length'].initial = self.instance.length
-            editable = bool(self.instance.geom and self.instance.geom.geom_type == 'Point')
-            self.fields['length'].widget.attrs['readonly'] = editable
-
-        def clean(self, *args, **kwargs):
-            # If topology was read-only, topology field is empty, get it from infra.
-            cleaned_data = super(InterventionForm, self).clean()
-            topology_readonly = self.cleaned_data.get('topology', None) is None
-            if topology_readonly:
-                if 'infrastructure' in self.cleaned_data:
-                    self.cleaned_data['topology'] = self.cleaned_data['infrastructure']
-                if 'signage' in self.cleaned_data and not self.cleaned_data['topology']:
-                    self.cleaned_data['topology'] = self.cleaned_data['signage']
-            return cleaned_data
-
-        def save(self, *args, **kwargs):
-            infrastructure = self.cleaned_data.get('infrastructure')
-            signage = self.cleaned_data.get('signage')
-            if infrastructure:
-                self.instance.set_topology(infrastructure)
-            elif signage:
-                self.instance.set_topology(signage)
-            return super(InterventionForm, self).save(*args, **kwargs)
-else:
-    class InterventionForm(InterventionBaseForm):
-        """ An intervention can be a Point or a Line """
-
-        def __init__(self, *args, **kwargs):
-            super(InterventionForm, self).__init__(*args, **kwargs)
-            # If we create or edit an intervention on infrastructure or signage, set
-            # topology field as read-only
-            infrastructure = kwargs.get('initial', {}).get('infrastructure')
-            signage = kwargs.get('initial', {}).get('signage')
-            if self.instance.on_existing_topology:
-                if self.instance.infrastructure:
-                    infrastructure = self.instance.infrastructure
-                    self.fields['infrastructure'].initial = infrastructure
-                elif self.instance.signage:
-                    signage = self.instance.signage
-                    self.fields['signage'].initial = signage
-            if infrastructure:
-                self.helper.form_action += '?infrastructure=%s' % infrastructure.pk
-                self.fields['topology'].required = False
-                self.fields['topology'].widget = TopologyReadonlyWidget()
-                self.fields['topology'].widget.modifiable = False
-                self.fields['topology'].label = '%s%s %s' % (
-                    self.instance.infrastructure_display,
-                    _("On %s") % _(infrastructure.kind.lower()),
-                    '<a href="%s">%s</a>' % (infrastructure.get_detail_url(), str(infrastructure))
-                )
-            elif signage:
-                self.helper.form_action += '?signage=%s' % signage.pk
-                self.fields['topology'].required = False
-                self.fields['topology'].widget = TopologyReadonlyWidget()
-                self.fields['topology'].label = '%s%s %s' % (
-                    self.instance.infrastructure_display,
-                    _("On %s") % _(signage.kind.lower()),
-                    '<a href="%s">%s</a>' % (signage.get_detail_url(), str(signage))
+                    '<img src="%simages/%s-16.png" title="%s">' % (settings.STATIC_URL,
+                                                                   icon,
+                                                                   title),
+                    _("On %s") % _(str(ct)).lower(),
+                    '<a href="%s">%s</a>' % (final_object.get_detail_url(),
+                                             str(final_object))
                 )
             else:
-                self.fields['topology'].required = False
-                self.fields['topology'].widget = InterventionWidget(attrs={'geom_type': 'POINT'})
-            # Length is not editable in AltimetryMixin
-            self.fields['length'].initial = self.instance.length
-            editable = bool(self.instance.geom and self.instance.geom.geom_type == 'Point')
-            self.fields['length'].widget.attrs['readonly'] = editable
+                self.fields['topology'].initial = final_object
+                self.fields['topology'].label = '%s%s' % (
+                    '<img src="%simages/path-16.png" title="%s">' % (settings.STATIC_URL,
+                                                                     title),
+                    _("On %s") % _(str(ct)).lower()
+                )
+            self.fields['target_id'].initial = target_id
+            self.fields['target_type'].initial = target_type
+        elif not settings.TREKKING_TOPOLOGY_ENABLED:
+            self.fields['topology'].required = False
+            self.fields['topology'].widget = InterventionWidget(attrs={'geom_type': 'POINT'})
+        # Length is not editable in AltimetryMixin
+        self.fields['length'].initial = self.instance.length
+        editable = bool(self.instance.geom and (self.instance.geom.geom_type == 'Point'
+                        or self.instance.geom.geom_type == 'LineString'))
+        self.fields['length'].widget.attrs['readonly'] = editable
 
-        def clean(self, *args, **kwargs):
-            # If topology was read-only, topology field is empty, get it from infra.
-            cleaned_data = super(InterventionForm, self).clean()
-            topology_readonly = self.cleaned_data.get('topology', None) is None
-            if topology_readonly:
-                if 'infrastructure' in self.cleaned_data:
-                    self.cleaned_data['topology'] = self.cleaned_data['infrastructure']
-                if 'signage' in self.cleaned_data and not self.cleaned_data['topology']:
-                    self.cleaned_data['topology'] = self.cleaned_data['signage']
-            return cleaned_data
-
-        def save(self, *args, **kwargs):
-            infrastructure = self.cleaned_data.get('infrastructure')
-            signage = self.cleaned_data.get('signage')
-            if infrastructure:
-                self.instance.set_topology(infrastructure)
-            elif signage:
-                self.instance.set_topology(signage)
-            return super(InterventionForm, self).save(*args, **kwargs)
-
-
-class InterventionCreateForm(InterventionForm):
-    def __init__(self, *args, **kwargs):
-        # If we create an intervention on infrastructure, get its topology
-        initial = kwargs.get('initial', {})
-        infrastructure = initial.get('infrastructure')
-        signage = initial.get('signage')
-        if infrastructure:
-            initial['topology'] = infrastructure
-        elif signage:
-            initial['topology'] = signage
-        kwargs['initial'] = initial
-        super(InterventionCreateForm, self).__init__(*args, **kwargs)
+    def clean(self, *args, **kwargs):
+        # If topology was read-only, topology field is empty, get it from infra.
+        cleaned_data = super(InterventionForm, self).clean()
+        if not cleaned_data.get('target_id') and cleaned_data.get('topology'):
+            cleaned_data['target_id'] = cleaned_data['topology'].pk
+            ct = ContentType.objects.get(app_label='core', model='topology')
+            cleaned_data['target_type'] = ct
+        return cleaned_data
 
 
 class ProjectForm(CommonForm):

@@ -10,7 +10,7 @@ class InterventionWidget(LeafletWidget):
 
     def serialize(self, value):
         if value:
-            return value.geom.transform(4326, clone=True).geojson
+            return value.transform(4326, clone=True).geojson
 
     def render(self, name, value, attrs=None, renderer=None):
         """Renders the fields. Parent class calls `serialize()` with the value.

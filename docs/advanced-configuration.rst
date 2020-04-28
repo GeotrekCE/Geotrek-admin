@@ -192,8 +192,16 @@ To enable this feature, fill these fields in ``/opt/geotrek-admin/var/conf/custo
 
 ::
 
-    AUTHENT_DATABASE = 'your_authent_dbname'
-    AUTHENT_TABLENAME = 'your_authent_table_name'
+    AUTHENT_DATABASE = 'authent'
+    DATABASES['authent'] = {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': '<database name>',
+        'USER': '<user name>',
+        'PASSWORD': '<password>',
+        'HOST': '<host>',
+        'PORT': '<port>',
+    }
+    AUTHENT_TABLENAME = '<table name>'
     AUTHENTICATION_BACKENDS = ['geotrek.authent.backend.DatabaseBackend']
 
 Expected columns in table/view are :

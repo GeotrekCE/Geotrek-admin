@@ -2,12 +2,14 @@ from django.contrib import admin
 
 from leaflet.admin import LeafletGeoAdmin
 
+from geotrek.common.admin import MergeActionMixin
 from geotrek.zoning import models as zoning_models
 
 
-class RestrictedAreaTypeAdmin(admin.ModelAdmin):
+class RestrictedAreaTypeAdmin(MergeActionMixin, admin.ModelAdmin):
     search_fields = ('name',)
     list_display = ('name',)
+    merge_field = 'name'
 
 
 class CityAdmin(LeafletGeoAdmin):

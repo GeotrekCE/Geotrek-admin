@@ -31,6 +31,19 @@ class ReportViewsTest(CommonTest):
     model = feedback_models.Report
     modelfactory = feedback_factories.ReportFactory
     userfactory = SuperUserFactory
+    expected_json_geom = {
+        'type': 'Point',
+        'coordinates': [3.0, 46.5],
+    }
+
+    def get_expected_json_attrs(self):
+        return {
+            'category': None,
+            'comment': self.obj.comment,
+            'context_object': None,
+            'email': self.obj.email,
+            'status': None,
+        }
 
     def get_bad_data(self):
         return {'geom': 'FOO'}, _('Invalid geometry value.')

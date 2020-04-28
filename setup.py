@@ -1,8 +1,25 @@
 #!/usr/bin/python3
 import os
+import distutils.command.build
+from pathlib import Path
 from setuptools import setup, find_packages
+from shutil import copy
 
 here = os.path.abspath(os.path.dirname(__file__))
+
+
+class BuildCommand(distutils.command.build.build):
+    def run(self):
+        distutils.command.build.build.run(self)
+        from django.core.management import call_command
+        curdir = os.getcwd()
+        for subdir in ('geotrek', 'mapentity'):
+            os.chdir(subdir)
+            call_command('compilemessages')
+            for path in Path('.').rglob('*.mo'):
+                copy(path, os.path.join(curdir, self.build_lib, subdir, path))
+            os.chdir(curdir)
+
 
 setup(
     name='geotrek',
@@ -42,6 +59,7 @@ setup(
         'django-colorfield',
         'factory_boy',
     ],
+    cmdclass={"build": BuildCommand},
     include_package_data=True,
     license='BSD, see LICENSE file.',
     packages=find_packages(),

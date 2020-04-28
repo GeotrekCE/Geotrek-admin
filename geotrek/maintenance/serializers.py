@@ -1,14 +1,15 @@
 from rest_framework.serializers import ModelSerializer
+from rest_framework_gis.fields import GeometryField
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from .models import Intervention, Project
 
 
 class InterventionSerializer(ModelSerializer):
     class Meta:
         model = Intervention
-        geo_field = 'topology'
         fields = (
-            'id', 'name', 'date', 'type', 'infrastructure', 'signage', 'status', 'stake',
-            'disorders', 'total_manday', 'project', 'subcontracting',
+            'id', 'name', 'date', 'type', 'status', 'stake',
+            'disorders', 'total_manday', 'subcontracting',
             'width', 'height', 'length', 'area', 'structure',
             'description', 'date_insert', 'date_update',
             'material_cost', 'heliport_cost', 'subcontract_cost',
@@ -18,10 +19,18 @@ class InterventionSerializer(ModelSerializer):
         )
 
 
+class InterventionGeojsonSerializer(GeoFeatureModelSerializer, InterventionSerializer):
+    # Annotated geom field with API_SRID
+    api_geom = GeometryField(read_only=True, precision=7)
+
+    class Meta(InterventionSerializer.Meta):
+        geo_field = 'api_geom'
+        fields = InterventionSerializer.Meta.fields + ('api_geom', )
+
+
 class ProjectSerializer(ModelSerializer):
     class Meta:
         model = Project
-        geo_field = 'geom'
         fields = (
             'id', 'name', 'period', 'type', 'domain', 'constraint', 'global_cost',
             'interventions', 'interventions_total_cost', 'comments', 'contractors',
@@ -29,3 +38,12 @@ class ProjectSerializer(ModelSerializer):
             'structure', 'date_insert', 'date_update',
             'cities', 'districts', 'areas',
         )
+
+
+class ProjectGeojsonSerializer(GeoFeatureModelSerializer, ProjectSerializer):
+    # Annotated geom field with API_SRID
+    api_geom = GeometryField(read_only=True, precision=7)
+
+    class Meta(ProjectSerializer.Meta):
+        geo_field = 'api_geom'
+        fields = ProjectSerializer.Meta.fields + ('api_geom', )

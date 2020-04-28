@@ -84,7 +84,7 @@ class DifficultyTest(AuthentFixturesTest):
 
     def test_migrate_dive_level(self):
         self.login()
-        level_2 = LevelFactory.create()
+        level_2 = LevelFactory.create(name="Level 2")
         self.dive.levels.add(level_2)
         self.assertEqual(self.dive.levels.first(), self.level)
         self.assertEqual(self.dive.levels.first().id, self.level.pk)
@@ -101,7 +101,7 @@ class DifficultyTest(AuthentFixturesTest):
 
     def test_migrate_dive_level_not_changing_order(self):
         self.login()
-        level_2 = LevelFactory.create()
+        level_2 = LevelFactory.create(name="Level 2")
         self.dive.levels.add(level_2)
         self.assertEqual(self.dive.levels.first(), self.level)
         self.assertEqual(self.dive.levels.first().id, self.level.pk)

@@ -1,3 +1,6 @@
+from unittest import skipIf
+
+from django.conf import settings
 from django.test import TestCase
 
 # Make sure dynamic filters are set up when testing
@@ -10,6 +13,7 @@ from geotrek.land.factories import (
 )
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class LandFiltersTest(TestCase):
 
     filterclass = None
@@ -18,10 +22,8 @@ class LandFiltersTest(TestCase):
         return PathFactory(), PathFactory(geom=getRandomLineStringInBounds())
 
     def create_pair_of_distinct_topologies(self, topologyfactoryclass, useless_path, seek_path):
-        topo_1 = topologyfactoryclass(no_path=True)
-        topo_1.add_path(path=useless_path, start=0, end=1)
-        seek_topo = topologyfactoryclass(no_path=True)
-        seek_topo.add_path(path=seek_path, start=0, end=1)
+        topo_1 = topologyfactoryclass(paths=[useless_path])
+        seek_topo = topologyfactoryclass(paths=[seek_path])
         return topo_1, seek_topo
 
     def _filter_by_edge(self, edgefactoryclass, key, getvalue):

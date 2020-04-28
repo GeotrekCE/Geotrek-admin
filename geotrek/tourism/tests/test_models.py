@@ -22,15 +22,13 @@ class TourismRelations(TestCase):
 
     def setUp(self):
         self.content = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
-        self.content2 = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID)
+        self.content2 = tourism_factories.TouristicContentFactory(geom='SRID=%s;POINT(2 2)' % settings.SRID, name="ZZZ")
         self.event = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(50 50)' % settings.SRID)
-        self.event2 = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(60 60)' % settings.SRID)
+        self.event2 = tourism_factories.TouristicEventFactory(geom='SRID=%s;POINT(60 60)' % settings.SRID, name="ZZZ")
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path = core_factories.PathFactory(geom='SRID=%s;LINESTRING(0 100, 100 100)' % settings.SRID)
-            self.trek = trekking_factories.TrekFactory(no_path=True)
-            self.trek.add_path(path)
-            self.poi = trekking_factories.POIFactory(no_path=True)
-            self.poi.add_path(path, start=0.5, end=0.5)
+            self.trek = trekking_factories.TrekFactory(paths=[path])
+            self.poi = trekking_factories.POIFactory(paths=[(path, 0.5, 0.5)])
         else:
             self.trek = trekking_factories.TrekFactory(geom='SRID=%s;LINESTRING(0 100, 100 100)' % settings.SRID)
             self.poi = trekking_factories.POIFactory(geom='SRID=%s;POINT(50 100)' % settings.SRID)

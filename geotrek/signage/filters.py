@@ -1,10 +1,23 @@
-from django_filters import CharFilter
+from django_filters import CharFilter, ModelChoiceFilter
 from django.utils.translation import ugettext_lazy as _
 
-from geotrek.common.filters import StructureRelatedFilterSet, YearFilter, ValueFilter
-from geotrek.maintenance.filters import PolygonTopologyFilter
+from geotrek.authent.models import Structure
+from geotrek.core.models import Topology
+from geotrek.common.filters import StructureRelatedFilterSet, ValueFilter
+from geotrek.maintenance.filters import InterventionYearTargetFilter
 from geotrek.signage.models import Signage, Blade
 from geotrek.signage.widgets import SignageYearSelect, SignageImplantationYearSelect
+
+from mapentity.filters import MapEntityFilterSet, PolygonFilter
+
+
+class PolygonTopologyFilter(PolygonFilter):
+    def filter(self, qs, value):
+        if not value:
+            return qs
+        lookup = self.lookup_expr
+        inner_qs = Topology.objects.filter(**{'geom__%s' % lookup: value})
+        return qs.filter(**{'%s__in' % self.field_name: inner_qs})
 
 
 class SignageFilterSet(StructureRelatedFilterSet):
@@ -12,8 +25,7 @@ class SignageFilterSet(StructureRelatedFilterSet):
     description = CharFilter(label=_('Description'), lookup_expr='icontains')
     implantation_year = ValueFilter(field_name='implantation_year',
                                     widget=SignageImplantationYearSelect)
-    intervention_year = YearFilter(field_name='interventions_set__date',
-                                   widget=SignageYearSelect)
+    intervention_year = InterventionYearTargetFilter(widget=SignageYearSelect)
 
     def __init__(self, *args, **kwargs):
         super(SignageFilterSet, self).__init__(*args, **kwargs)
@@ -25,12 +37,13 @@ class SignageFilterSet(StructureRelatedFilterSet):
                                                           'sealing']
 
 
-class BladeFilterSet(StructureRelatedFilterSet):
+class BladeFilterSet(MapEntityFilterSet):
     bbox = PolygonTopologyFilter(field_name='topology', lookup_expr='intersects')
+    structure = ModelChoiceFilter(field_name='signage__structure', queryset=Structure.objects.all())
 
     def __init__(self, *args, **kwargs):
         super(BladeFilterSet, self).__init__(*args, **kwargs)
 
-    class Meta(StructureRelatedFilterSet.Meta):
+    class Meta(MapEntityFilterSet.Meta):
         model = Blade
-        fields = StructureRelatedFilterSet.Meta.fields + ['number', 'direction', 'type', 'color', 'condition']
+        fields = MapEntityFilterSet.Meta.fields + ['structure', 'number', 'direction', 'type', 'color', 'condition']

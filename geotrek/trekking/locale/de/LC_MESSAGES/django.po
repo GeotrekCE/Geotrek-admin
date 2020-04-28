@@ -439,10 +439,10 @@ msgid "Powered by http://geotrek.fr"
 msgstr "Unterstützt von http://geotrek.fr"
 
 msgid ""
-"Your <strong>pictures should have the same ratio<strong> (height/width) for "
+"Your pictures should have the same ratio (height/width) for "
 "a better apparence in public portal."
 msgstr ""
-"Ihre <strong>Bilder müssen das gleiche Verhältnis</strong> (Höhe/Breite) haben, "
+"Ihre Bilder müssen das gleiche Verhältnis (Höhe/Breite) haben, "
 "um besser in das öffentliche Portal integriert werden zu können."
 
 msgid "Sync verifications"

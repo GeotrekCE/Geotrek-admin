@@ -15,6 +15,8 @@ from django.contrib.auth.models import Permission
 
 from rest_framework import routers as rest_routers
 from rest_framework import serializers as rest_serializers
+from rest_framework_gis.fields import GeometryField
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from mapentity import models as mapentity_models
 from mapentity.middleware import get_internal_user
 from mapentity.settings import app_settings
@@ -111,10 +113,12 @@ class MapEntityOptions(object):
         if rest_viewset is None:
             _queryset = self.get_queryset()
             _serializer = self.get_serializer()
+            _geojson_serializer = self.get_geojson_serializer()
 
             class dynamic_viewset(mapentity_views.MapEntityViewSet):
                 queryset = _queryset
                 serializer_class = _serializer
+                geojson_serializer_class = _geojson_serializer
             rest_viewset = dynamic_viewset
 
         self.rest_router.register(self.modelname + 's', rest_viewset, basename=self.modelname)
@@ -128,7 +132,20 @@ class MapEntityOptions(object):
         class Serializer(rest_serializers.ModelSerializer):
             class Meta:
                 model = _model
-                geo_field = app_settings['GEOM_FIELD_NAME']
+                id_field = 'id'
+                exclude = []
+
+        return Serializer
+
+    def get_geojson_serializer(self):
+        _model = self.model
+
+        class Serializer(GeoFeatureModelSerializer):
+            api_geom = GeometryField(read_only=True, precision=7)
+
+            class Meta:
+                model = _model
+                geo_field = 'api_geom'
                 id_field = 'id'
                 exclude = []
 

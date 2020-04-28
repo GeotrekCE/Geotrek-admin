@@ -255,11 +255,8 @@ msgstr "Total"
 msgid "Related Project"
 msgstr "Chantier"
 
-msgid "Related infrastructure"
-msgstr "Aménagement lié"
-
-msgid "Related signage"
-msgstr "Signalétique liée"
+msgid "Related object"
+msgstr "Objet lié"
 
 msgid "Dimensions"
 msgstr "Dimensions"

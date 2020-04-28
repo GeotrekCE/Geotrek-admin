@@ -30,7 +30,7 @@
             <td>{% if object.color %}{{ object.color }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"structure" }}</th>
+            <th>{{ object.signage|verbose:"structure" }}</th>
             <td>{% if object.structure %}{{ object.structure }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
     </table>

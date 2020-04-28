@@ -116,9 +116,17 @@ class LatLngBoundsTest(TestCase):
 
 
 class FieldVerboseNameTest(TestCase):
+    def test_field_no_field_but_verbose_name_field(self):
+        object_event = TouristicEventFactory.create()
+        setattr(object_event, 'do_not_exist_verbose_name', "test")
+        template = Template(
+            '{% load mapentity_tags %}'
+            '{{ object|verbose:"do_not_exist" }}'
+        ).render(Context({'object': object_event}))
+        self.assertEqual(template, "test")
+
     def test_field_verbose_name_field_does_not_exist(self):
         object_event = TouristicEventFactory.create()
-        setattr(object_event, 'do_not_exist_verbose_name', None)
         with self.assertRaisesRegexp(FieldDoesNotExist, "TouristicEvent has no field named 'do_not_exist'"):
             Template(
                 '{% load mapentity_tags %}'

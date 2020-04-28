@@ -2,8 +2,8 @@
 Description=Geotrek-admin asynchronous tasks
 PartOf=geotrek.service
 After=geotrek.service
-StartLimitIntervalSec=10
-StartLimitBurst=3
+StartLimitIntervalSec=30
+StartLimitBurst=2
 
 [Service]
 ExecStart=/opt/geotrek-admin/bin/celery -A geotrek worker -c 1 -n geotrek

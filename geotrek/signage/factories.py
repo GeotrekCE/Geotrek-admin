@@ -1,6 +1,6 @@
 import factory
 
-from geotrek.common.utils.testdata import dummy_filefield_as_sequence
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.factories import PointTopologyFactory
 from geotrek.infrastructure.factories import InfrastructureConditionFactory
 
@@ -11,72 +11,69 @@ class SignageTypeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.SignageType
 
-    label = factory.Sequence(lambda n: "Type %s" % n)
-    pictogram = dummy_filefield_as_sequence('signage-type-%s.png')
+    label = "Signage type"
+    pictogram = get_dummy_uploaded_image('signage_type.png')
 
 
 class SignageTypeNoPictogramFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.SignageType
 
-    label = factory.Sequence(lambda n: "Type %s" % n)
+    label = "Signage type"
 
 
 class BladeTypeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.BladeType
 
-    label = factory.Sequence(lambda n: "Type %s" % n)
+    label = "Blade type"
 
 
 class BladeColorFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Color
 
-    label = factory.Sequence(lambda n: "Color %s" % n)
+    label = "Blade color"
 
 
 class BladeDirectionFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Direction
 
-    label = factory.Sequence(lambda n: "Direction %s" % n)
+    label = "Blade direction"
 
 
 class SealingFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Sealing
 
-    label = factory.Sequence(lambda n: "Sealing %s" % n)
+    label = "Sealing"
 
 
 class SignageFactory(PointTopologyFactory):
     class Meta:
         model = models.Signage
 
-    name = factory.Sequence(lambda n: "Signage %s" % n)
+    name = "Signage"
     type = factory.SubFactory(SignageTypeFactory)
     condition = factory.SubFactory(InfrastructureConditionFactory)
     sealing = factory.SubFactory(SealingFactory)
-    printed_elevation = factory.Sequence(lambda n: "%d" % n)
+    printed_elevation = 4807
     published = True
 
 
-class SignageNoPictogramFactory(PointTopologyFactory):
+class SignageNoPictogramFactory(SignageFactory):
     class Meta:
         model = models.Signage
 
-    name = factory.Sequence(lambda n: "Signage %s" % n)
     type = factory.SubFactory(SignageTypeNoPictogramFactory)
-    condition = factory.SubFactory(InfrastructureConditionFactory)
-    published = True
 
 
 class BladeFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Blade
 
-    number = factory.Sequence(lambda n: "%d" % n)
+    number = 1
     type = factory.SubFactory(BladeTypeFactory)
     condition = factory.SubFactory(InfrastructureConditionFactory)
     direction = factory.SubFactory(BladeDirectionFactory)
@@ -94,9 +91,9 @@ class LineFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Line
 
-    number = factory.Sequence(lambda n: "%d" % n)
-    text = factory.Sequence(lambda n: "Text %s" % n)
-    distance = factory.Sequence(lambda n: "%d" % 10)
-    pictogram_name = factory.Sequence(lambda n: "Pictogram %s" % n)
-    time = factory.Sequence(lambda n: "%s:%s:%s" % (n, n + 1, n + 2))
+    number = "1"
+    text = "Text"
+    distance = 42.5
+    pictogram_name = "Pictogram name"
+    time = "0:42:30"
     blade = factory.SubFactory(BladeFactory)

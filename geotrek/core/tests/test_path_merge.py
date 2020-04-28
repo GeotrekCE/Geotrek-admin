@@ -207,9 +207,7 @@ class MergePathTest(TestCase):
         """
         path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 1), (10, 1)))
         path_CD = PathFactory.create(name="PATH_CD", geom=LineString((10, 1), (20, 1)))
-        e1 = TopologyFactory.create(no_path=True)
-        PathAggregationFactory.create(path=path_AB, topo_object=e1, start_position=0.5, end_position=1, order=0)
-        PathAggregationFactory.create(path=path_CD, topo_object=e1, start_position=0, end_position=0.5, order=1)
+        e1 = TopologyFactory.create(paths=[(path_AB, 0.5, 1), (path_CD, 0, 0.5)])
         path_AB.merge_path(path_CD)
         self.assertEqual(path_AB.geom, LineString((0, 1), (10, 1), (20, 1), srid=settings.SRID))
         self.assertEqual(PathAggregation.objects.filter(topo_object=e1).count(), 2)

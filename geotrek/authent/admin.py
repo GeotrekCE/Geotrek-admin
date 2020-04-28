@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 
 from geotrek.authent.models import Structure
 from geotrek.authent.models import UserProfile
+from geotrek.common.admin import MergeActionMixin
 
 
 admin.site.unregister(User)
@@ -23,7 +24,13 @@ class UserProfileAdmin(UserAdmin):
     inlines = [UserProfileInline]
 
 
+class StructureAdmin(MergeActionMixin, admin.ModelAdmin):
+    list_display = ('name', )
+    search_fields = ('name', )
+    merge_field = "name"
+
+
 if not settings.AUTHENT_TABLENAME:
     # If users are authenticated in a custom database, do not manage them here.
     admin.site.register(User, UserProfileAdmin)
-    admin.site.register(Structure)
+    admin.site.register(Structure, StructureAdmin)

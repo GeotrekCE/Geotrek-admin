@@ -14,6 +14,62 @@ class DiveViewsTests(CommonTest):
     model = Dive
     modelfactory = DiveFactory
     userfactory = DivingManagerFactory
+    expected_json_geom = {
+        'type': 'Point',
+        'coordinates': [-1.3630812, -5.9838563],
+    }
+
+    def get_expected_json_attrs(self):
+        return {
+            'advice': '',
+            'category': {
+                'id': 'D{}'.format(self.obj.practice.id),
+                'label': 'Practice',
+                'order': None,
+                'pictogram': '/media/upload/dummy_img.png',
+                'slug': self.obj.practice.slug,
+            },
+            'departure': '',
+            'depth': None,
+            'description': '',
+            'description_teaser': '',
+            'difficulty': None,
+            'disabled_sport': '',
+            'dives': [],
+            'eid': None,
+            'facilities': '',
+            'filelist_url': '/paperclip/get/diving/dive/{}/'.format(self.obj.pk),
+            'files': [],
+            'levels': [],
+            'map_image_url': '/image/dive-{}-en.png'.format(self.obj.pk),
+            'name': 'Dive',
+            'owner': '',
+            'pictures': [],
+            'pois': [],
+            'portal': [],
+            'practice': {
+                'id': self.obj.practice.pk,
+                'label': 'Practice',
+                'pictogram': '/media/upload/dummy_img.png'
+            },
+            'printable': '/api/en/dives/{}/dive.pdf'.format(self.obj.pk),
+            'publication_date': '2020-03-17',
+            'published': True,
+            'published_status': [
+                {'lang': 'en', 'language': 'English', 'status': True},
+                {'lang': 'es', 'language': 'Spanish', 'status': False},
+                {'lang': 'fr', 'language': 'French', 'status': False},
+                {'lang': 'it', 'language': 'Italian', 'status': False}
+            ],
+            'slug': self.obj.slug,
+            'source': [],
+            'themes': [],
+            'thumbnail': None,
+            'touristic_contents': [],
+            'touristic_events': [],
+            'treks': [],
+            'videos': [],
+        }
 
     def setUp(self):
         super(DiveViewsTests, self).setUp()

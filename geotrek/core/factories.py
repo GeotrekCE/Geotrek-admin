@@ -117,6 +117,8 @@ class TopologyFactory(factory.DjangoModelFactory):
 
     # Factory
     # paths (M2M)
+    if not settings.TREKKING_TOPOLOGY_ENABLED:
+        geom = 'SRID=2154;LINESTRING (700000 6600000, 700100 6600100)'
     offset = 0
     deleted = False
 
@@ -125,29 +127,35 @@ class TopologyFactory(factory.DjangoModelFactory):
     date_update = dbnow()
 
     @factory.post_generation
-    def no_path(obj, create, extracted=False, **kwargs):
-        """
-        A topology mixin should be linked to at least one Path (through
-        PathAggregation).
-        """
-        if not extracted and create and settings.TREKKING_TOPOLOGY_ENABLED:
+    def paths(obj, create, paths):
+        if not create or not settings.TREKKING_TOPOLOGY_ENABLED:
+            return
+        if paths is None:
             PathAggregationFactory.create(topo_object=obj)
-            # Note that it is not possible to attach a related object before the
-            # topo_mixin has an ID.
+            return
+        for i, path in enumerate(paths):
+            if isinstance(path, tuple):
+                obj.add_path(path[0], path[1], path[2], i)
+            else:
+                obj.add_path(path, 0, 1, i)
 
 
 class PointTopologyFactory(TopologyFactory):
-    @factory.post_generation
-    def no_path(obj, create, extracted=False, **kwargs):
-        """
-        A topology mixin should be linked to at least one Path (through
-        PathAggregation).
-        """
+    if not settings.TREKKING_TOPOLOGY_ENABLED:
+        geom = 'SRID=2154;POINT (700000 6600000)'
 
-        if not extracted and create:
-            PathAggregationFactory.create(topo_object=obj,
-                                          start_position=0.0,
-                                          end_position=0.0)
+    @factory.post_generation
+    def paths(obj, create, paths):
+        if not create or not settings.TREKKING_TOPOLOGY_ENABLED:
+            return
+        if paths is None:
+            PointPathAggregationFactory.create(topo_object=obj)
+            return
+        path = paths[0]
+        if isinstance(path, tuple):
+            obj.add_path(path[0], path[1], path[2])
+        else:
+            obj.add_path(path, 0, 0)
 
 
 class PathAggregationFactory(factory.DjangoModelFactory):
@@ -160,6 +168,10 @@ class PathAggregationFactory(factory.DjangoModelFactory):
     start_position = 0.0
     end_position = 1.0
     order = 0
+
+
+class PointPathAggregationFactory(PathAggregationFactory):
+    end_position = 0
 
 
 class TrailFactory(TopologyFactory):
