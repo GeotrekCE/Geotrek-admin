@@ -78,8 +78,6 @@ jobs:
       LANG: C.UTF-8
     steps:
       - checkout
-      # Check this is a release and not a development version
-      - run: grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || circleci-agent step halt
       - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:$(cat VERSION)
       - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
@@ -106,7 +104,6 @@ jobs:
       LANG: C.UTF-8
     steps:
       - checkout
-      # Check this is a release and not a development version
       - run: apt-get update -q && apt-get install -q -y ca-certificates openssh-client
       - attach_workspace:
           at: /tmp/workspace
@@ -137,15 +134,16 @@ workflows:
             - docker_test_nds
             - docker_test_js
           filters:
-            branches:
-              only:
-                - master
+            tags:
+              only: /^[0-9]\+\.[0-9]\+\.[0-9]\+$/
       - ubuntu_package
       - ubuntu_publish:
           requires:
             - codestyle
             - ubuntu_package
           filters:
+            tags:
+              only: /^[0-9]\+\.[0-9]\+\.[0-9]\+$/
             branches:
               only:
                 - master
