@@ -280,9 +280,12 @@ class POILayer(MapEntityLayer):
 
 
 class POIList(FlattenPicturesMixin, MapEntityList):
-    queryset = POI.objects.existing()
+    model = POI
     filterform = POIFilterSet
     columns = ['id', 'name', 'type', 'thumbnail']
+
+    def get_queryset(self):
+        return self.model.objects.existing()
 
 
 class POIJsonList(MapEntityJsonList, POIList):
@@ -300,7 +303,7 @@ class POIFormatList(MapEntityFormat, POIList):
     set(POIList.columns + ['description', 'treks', 'districts', 'cities', 'areas', 'structure'])
 
     def get_queryset(self):
-        qs = self.queryset
+        qs = super().get_queryset()
 
         denormalized = {}
 
