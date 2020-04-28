@@ -141,6 +141,9 @@ workflows:
           requires:
             - codestyle
             - ubuntu_package
+            - docker_test
+            - docker_test_nds
+            - docker_test_js
           filters:
             tags:
               only: /^[0-9]\+\.[0-9]\+\.[0-9]\+$/
