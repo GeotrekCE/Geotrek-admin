@@ -10,7 +10,6 @@ from unittest import skipIf, mock
 from bs4 import BeautifulSoup
 
 from django.conf import settings
-from django.db.models import F
 from django.test import TestCase
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.gis.geos import LineString, MultiPoint, Point
@@ -1003,8 +1002,10 @@ class TrekGPXTest(TrekkingManagerTest):
         self.trek.description_fr = 'Jolie rando'
         self.trek.save()
 
-        self.trek.pois.update(description_it=F('description'),
-                              published_it=True)
+        for poi in self.trek.pois.all():
+            poi.description_it = poi.description
+            poi.published_it = True
+            poi.save()
 
         url = '/api/it/treks/{pk}/slug.gpx'.format(pk=self.trek.pk)
         self.response = self.client.get(url)
