@@ -12,7 +12,7 @@ from geotrek.core.models import AltimetryMixin
 
 from geotrek.signage.filters import SignageFilterSet, BladeFilterSet
 from geotrek.signage.forms import SignageForm, BladeForm, LineFormset
-from geotrek.signage.models import Signage, Blade, Line
+from geotrek.signage.models import Signage, Blade
 from geotrek.signage.serializers import (SignageSerializer, BladeSerializer,
                                          SignageGeojsonSerializer, BladeGeojsonSerializer,
                                          CSVBladeSerializer, ZipBladeShapeSerializer)
