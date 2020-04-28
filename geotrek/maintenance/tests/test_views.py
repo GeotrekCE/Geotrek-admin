@@ -236,8 +236,6 @@ class InterventionViewsTest(CommonTest):
         else:
             data['geom'] = 'SRID=4326;POINT (2.0 6.6)'
         data['manager'] = OrganismFactory.create().pk
-        if not data['code']:
-            data['code'] = ''
         response = self.client.post(signa.get_update_url(), data)
         self.assertEqual(response.status_code, 302)
         # Check that intervention was not deleted (bug #783)

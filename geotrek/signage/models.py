@@ -62,7 +62,7 @@ class SignageGISManager(NoDeleteManager):
 class Signage(MapEntityMixin, BaseInfrastructure):
     """ An infrastructure in the park, which is of type SIGNAGE """
     objects = SignageGISManager()
-    code = models.CharField(verbose_name=_("Code"), max_length=250, blank=True, null=True)
+    code = models.CharField(verbose_name=_("Code"), max_length=250, blank=True, null=False, default='')
     manager = models.ForeignKey(Organism, verbose_name=_("Manager"), null=True, blank=True, on_delete=models.CASCADE)
     sealing = models.ForeignKey(Sealing, verbose_name=_("Sealing"), null=True, blank=True, on_delete=models.CASCADE)
     printed_elevation = models.IntegerField(verbose_name=_("Printed elevation"), blank=True, null=True)
