@@ -658,8 +658,6 @@ FACEBOOK_IMAGE = '/images/logo-geotrek.png'
 FACEBOOK_IMAGE_WIDTH = 200
 FACEBOOK_IMAGE_HEIGHT = 200
 
-FORMAT_LINE_CODE = "{signagecode}-{bladenumber}-{linenumber}"
-
 CAPTURE_AUTOLOGIN_TOKEN = os.getenv('CAPTURE_AUTOLOGIN_TOKEN', None)
 
 # A sample logging configuration. The only tangible logging
