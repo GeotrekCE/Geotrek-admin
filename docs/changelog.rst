@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.33.1.dev0
+2.33.1 (2020-04-28)
 -------------------
 
 **Bug fixes**
 
--
+- None. Just force a new build in CI
 
 
 2.33.0 (2020-04-28)
