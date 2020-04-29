@@ -62,6 +62,9 @@ msgstr "Type"
 msgid "GPS coordinates"
 msgstr "Coordonnées GPS"
 
+msgid "Coordinates"
+msgstr "Coordonnées"
+
 msgid "Signages"
 msgstr "Signalétiques"
 

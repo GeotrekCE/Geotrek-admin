@@ -137,11 +137,7 @@ def format_coordinates(geom):
             lat=round(location.x),
             lng=round(location.y),
         )
-    spatial_reference = SpatialReference(settings.DISPLAY_SRID)
-
-    return result + " ({epsg_name})".format(
-        epsg_name=spatial_reference.name
-    )
+    return result
 
 
 def collate_c(field):
@@ -150,3 +146,8 @@ def collate_c(field):
         function='C',
         template='(%(expressions)s) COLLATE "%(function)s"')
     return field_collate
+
+
+def spacial_reference():
+    return "{epsg_name}".format(epsg_name=SpatialReference(settings.DISPLAY_SRID).name)
+

@@ -10,7 +10,8 @@ from mapentity.models import MapEntityMixin
 from geotrek.authent.models import StructureOrNoneRelated
 from geotrek.common.mixins import AddPropertyMixin, OptionalPictogramMixin, NoDeleteManager
 from geotrek.common.models import Organism
-from geotrek.common.utils import classproperty, format_coordinates, collate_c
+from geotrek.common.utils import classproperty, format_coordinates, collate_c, spacial_reference
+
 from geotrek.core.models import Topology, Path
 
 from geotrek.infrastructure.models import BaseInfrastructure, InfrastructureCondition
@@ -100,7 +101,7 @@ class Signage(MapEntityMixin, BaseInfrastructure):
 
     @property
     def gps_value(self):
-        return format_coordinates(self.topo_object.geom)
+        return "{} ({})".format(format_coordinates(self.geom), spacial_reference())
 
     @property
     def geomtransform(self):
@@ -174,6 +175,8 @@ class Blade(AddPropertyMixin, MapEntityMixin):
     printedelevation_verbose_name = _("Printed elevation")
     direction_verbose_name = _("Direction")
     city_verbose_name = _("City")
+    bladecode_verbose_name = _("Code")
+    gps_value_verbose_name = "{} ({})".format(_("Coordinates"), spacial_reference())
 
     class Meta:
         verbose_name = _("Blade")
@@ -248,7 +251,7 @@ class Blade(AddPropertyMixin, MapEntityMixin):
 
     @property
     def gps_value_csv_display(self):
-        return self.signage.gps_value or ""
+        return self.gps_.value or ""
 
     @property
     def printedelevation_csv_display(self):
@@ -258,6 +261,10 @@ class Blade(AddPropertyMixin, MapEntityMixin):
     def city_csv_display(self):
         return self.signage.cities[0] if self.signage.cities else ""
 
+    @property
+    def gps_value(self):
+        return format_coordinates(self.geom)
+
 
 class Line(models.Model):
     blade = models.ForeignKey(Blade, related_name='lines', verbose_name=_("Blade"),
@@ -266,7 +273,7 @@ class Line(models.Model):
     text = models.CharField(verbose_name=_("Text"), max_length=1000)
     distance = models.DecimalField(verbose_name=_("Distance"), null=True, blank=True,
                                    decimal_places=3, max_digits=8)
-    pictogram_name = models.CharField(verbose_name=_("Pictogramm name"), max_length=250,
+    pictogram_name = models.CharField(verbose_name=_("Pictogramm"), max_length=250,
                                       blank=True, null=True)
     time = models.DurationField(verbose_name=pgettext_lazy("duration", "Time"), null=True, blank=True,
                                 help_text=_("Hours:Minutes:Seconds"))

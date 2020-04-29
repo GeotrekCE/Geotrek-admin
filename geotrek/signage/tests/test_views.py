@@ -148,10 +148,10 @@ class BladeViewsTest(CommonTest):
         LineFactory.create(blade=blade, number=3)
         response = self.client.get(self.model.get_format_list_url() + '?format=csv')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content.split(b'\r\n')[0], b"ID,City,Signage,Printed elevation,Bladecode,Type,Color,"
-                                                             b"Direction,Condition,Gps_Value,Number 1,Text 1,"
-                                                             b"Distance (km) 1,Time 1,Pictogramm name 1,Number 2,Text 2,"
-                                                             b"Distance (km) 2,Time 2,Pictogramm name 2")
+        self.assertEqual(response.content.split(b'\r\n')[0], b"ID,City,Signage,Printed elevation,Code,Type,Color,"
+                                                             b"Direction,Condition,Coordinates (WGS 84 / Pseudo-Mercator),Number 1,Text 1,"
+                                                             b"Distance (km) 1,Time 1,Pictogramm 1,Number 2,Text 2,"
+                                                             b"Distance (km) 2,Time 2,Pictogramm 2")
 
     def test_set_structure_with_permission(self):
         # The structure do not change because it changes with the signage form.
