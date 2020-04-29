@@ -11,9 +11,12 @@ just run this command:
 
 ::
 
-    sudo geotrek sync_rando /where/to/generate/data
+    sudo geotrek sync_rando /opt/geotrek-admin/var/data
 
 The parameter is the destination directory for synchronized data.
+If you choose another directory, make sure the parent of this directory is writable by geotrek user.
+Otherwise you will get a PermissionError message.
+
 If Geotrek-Admin is not accessible on localhost:80, you have to use the ``--url`` option.
 To make output less or more verbose, you can use the ``--verbose`` option.
 
@@ -26,7 +29,7 @@ You can set up automatic synchronization by creating a file ``/etc/crond.d/geotr
 
 ::
 
-    0 3 * * * root geotrek sync_rando /where/to/generate/data
+    0 3 * * * root geotrek sync_rando /opt/geotrek-admin/var/data
 
 This example will automatically synchronize data a 3 am every day.
 

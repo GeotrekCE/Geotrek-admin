@@ -84,6 +84,6 @@ Just run:
 
 .. code-block :: bash
 
-    sudo geotrek sync_rando
+    sudo geotrek sync_rando <parameters>
     
 as usual. If sensitivity module is enabled, sensitive areas will be automatically synced.
