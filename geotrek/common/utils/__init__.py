@@ -1,6 +1,7 @@
 import logging
 
 from django.db import connection
+from django.db.models import Func
 from django.utils.timezone import utc
 from django.utils.translation import pgettext
 from django.conf import settings
@@ -141,3 +142,11 @@ def format_coordinates(geom):
     return result + " ({epsg_name})".format(
         epsg_name=spatial_reference.name
     )
+
+
+def collate_c(field):
+    field_collate = Func(
+        field,
+        function='C',
+        template='(%(expressions)s) COLLATE "%(function)s"')
+    return field_collate
