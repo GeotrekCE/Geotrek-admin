@@ -110,7 +110,7 @@ msgstr "Texte"
 msgid "Distance"
 msgstr "Distance"
 
-msgid "Pictogramm name"
+msgid "Pictogram"
 msgstr "Nom du pictogramme"
 
 msgctxt "duration"
@@ -120,8 +120,8 @@ msgstr "Temps"
 msgid "Hours:Minutes:Seconds"
 msgstr "Heures:Minutes:Secondes"
 
-msgid "Distance (km)"
-msgstr "Distance (km)"
+msgid "Distance"
+msgstr "Distance"
 
 msgid "Time (Hours:Minutes:Seconds)"
 msgstr "Temps (Heures:Minutes:Secondes)"

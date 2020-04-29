@@ -10,7 +10,7 @@ from mapentity.models import MapEntityMixin
 from geotrek.authent.models import StructureOrNoneRelated
 from geotrek.common.mixins import AddPropertyMixin, OptionalPictogramMixin, NoDeleteManager
 from geotrek.common.models import Organism
-from geotrek.common.utils import classproperty, format_coordinates, collate_c, spacial_reference
+from geotrek.common.utils import classproperty, format_coordinates, collate_c, spatial_reference
 
 from geotrek.core.models import Topology, Path
 
@@ -101,7 +101,7 @@ class Signage(MapEntityMixin, BaseInfrastructure):
 
     @property
     def gps_value(self):
-        return "{} ({})".format(format_coordinates(self.geom), spacial_reference())
+        return "{} ({})".format(format_coordinates(self.geom), spatial_reference())
 
     @property
     def geomtransform(self):
@@ -170,13 +170,12 @@ class Blade(AddPropertyMixin, MapEntityMixin):
     condition = models.ForeignKey(InfrastructureCondition, verbose_name=_("Condition"),
                                   null=True, blank=True, on_delete=models.PROTECT)
     topology = models.ForeignKey(Topology, related_name="blades_set", verbose_name=_("Blades"), on_delete=models.CASCADE)
-    time_verbose_name = _("Time (Hours:Minutes:Seconds)")
     colorblade_verbose_name = _("Color")
     printedelevation_verbose_name = _("Printed elevation")
     direction_verbose_name = _("Direction")
     city_verbose_name = _("City")
     bladecode_verbose_name = _("Code")
-    gps_value_verbose_name = "{} ({})".format(_("Coordinates"), spacial_reference())
+    gps_value_verbose_name = "{} ({})".format(_("Coordinates"), spatial_reference())
 
     class Meta:
         verbose_name = _("Blade")
@@ -277,7 +276,7 @@ class Line(models.Model):
                                       blank=True, null=True)
     time = models.DurationField(verbose_name=pgettext_lazy("duration", "Time"), null=True, blank=True,
                                 help_text=_("Hours:Minutes:Seconds"))
-    distance_pretty_verbose_name = _("Distance (km)")
+    distance_pretty_verbose_name = _("Distance")
     time_pretty_verbose_name = _("Time")
     linecode_verbose_name = _("Code")
 
@@ -292,10 +291,14 @@ class Line(models.Model):
 
     @property
     def distance_pretty(self):
+        if not self.distance:
+            return ""
         return settings.LINE_DISTANCE_FORMAT.format(self.distance)
 
     @property
     def time_pretty(self):
+        if not self.time:
+            return ""
         hours = self.time.seconds // 3600
         minutes = (self.time.seconds % 3600) // 60
         seconds = self.time.seconds % 60

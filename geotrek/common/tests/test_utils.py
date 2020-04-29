@@ -4,7 +4,7 @@ from django.contrib.gis.geos import Point
 from django.db import connection
 from django.test import TestCase, override_settings
 
-from ..utils import sql_extent, uniquify, format_coordinates, spacial_reference
+from ..utils import sql_extent, uniquify, format_coordinates, spatial_reference
 from ..utils.postgresql import debug_pg_notices
 from ..utils.import_celery import (create_tmp_destination,
                                    subclasses,
@@ -68,8 +68,8 @@ class UtilsTest(TestCase):
 
     @override_settings(DISPLAY_SRID=3857)
     def test_spatial_reference(self):
-        self.assertEqual(spacial_reference(), 'WGS 84 / Pseudo-Mercator')
+        self.assertEqual(spatial_reference(), 'WGS 84 / Pseudo-Mercator')
 
     @override_settings(DISPLAY_SRID=32631)
     def test_spatial_reference_wgs84(self):
-        self.assertEqual(spacial_reference(), 'WGS 84 / UTM zone 31N')
+        self.assertEqual(spatial_reference(), 'WGS 84 / UTM zone 31N')

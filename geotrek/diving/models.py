@@ -12,7 +12,7 @@ from geotrek.common.mixins import (NoDeleteMixin, TimeStampedModelMixin,
                                    PublishableMixin, PicturesMixin, AddPropertyMixin,
                                    PictogramMixin, OptionalPictogramMixin)
 from geotrek.common.models import Theme
-from geotrek.common.utils import intersecting, format_coordinates, spacial_reference
+from geotrek.common.utils import intersecting, format_coordinates, spatial_reference
 from geotrek.core.models import Topology
 from geotrek.trekking.models import POI, Service, Trek
 
@@ -136,7 +136,7 @@ class Dive(NoDeleteMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, St
 
     @property
     def display_geom(self):
-        return "{} ({})".format(format_coordinates(self.geom), spacial_reference())
+        return "{} ({})".format(format_coordinates(self.geom), spatial_reference())
 
     def distance(self, to_cls):
         return settings.DIVING_INTERSECTION_MARGIN

@@ -148,5 +148,5 @@ def collate_c(field):
     return field_collate
 
 
-def spacial_reference():
+def spatial_reference():
     return "{epsg_name}".format(epsg_name=SpatialReference(settings.DISPLAY_SRID).name)
