@@ -77,7 +77,7 @@ class MapEntityContentTypeFilter(admin.SimpleListFilter):
 class AttachmentAdmin(admin.ModelAdmin):
     date_hierarchy = 'date_update'
     search_fields = ('title', 'legend', 'author')
-    list_display = ('title', 'legend', 'author', 'content_type')
+    list_display = ('filename', 'legend', 'author', 'content_type')
     list_filter = ('filetype', MapEntityContentTypeFilter)
     readonly_fields = ('content_type', 'object_id', 'creator', 'title')
 

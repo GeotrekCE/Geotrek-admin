@@ -1,7 +1,10 @@
+import os
+import shutil
+
 from django.urls import reverse
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from geotrek.common.factories import AttachmentFactory, ThemeFactory
 from geotrek.common.models import Attachment, FileType, Theme
@@ -12,16 +15,20 @@ from geotrek.trekking.factories import DifficultyLevelFactory, POIFactory, TrekF
 from mapentity.factories import SuperUserFactory
 
 
+@override_settings(MEDIA_ROOT='/tmp/mapentity-media')
 class AttachmentAdminTest(TestCase):
     def setUp(self):
         self.user = SuperUserFactory.create(password='booh')
         self.content = POIFactory.create(geom='SRID=%s;POINT(1 1)' % settings.SRID)
 
-        self.picture = AttachmentFactory(content_object=self.content,
-                                         attachment_file=get_dummy_uploaded_image(), )
+        self.picture = AttachmentFactory(content_object=self.content, title='img1',
+                                         attachment_file=get_dummy_uploaded_image())
         self.trek = TrekFactory.create(geom='SRID=%s;LINESTRING(0 0, 1 0, 2 0)' % settings.SRID)
-        self.picture_2 = AttachmentFactory(content_object=self.trek,
-                                           attachment_file=get_dummy_uploaded_image(), )
+        self.picture_2 = AttachmentFactory(content_object=self.trek, title='img2',
+                                           attachment_file=get_dummy_uploaded_image())
+        if os.path.exists(settings.MEDIA_ROOT):
+            shutil.rmtree(settings.MEDIA_ROOT)
+        os.makedirs(settings.MEDIA_ROOT)
 
     def login(self):
         success = self.client.login(username=self.user.username, password='booh')
@@ -30,14 +37,15 @@ class AttachmentAdminTest(TestCase):
     def tearDown(self):
         self.client.logout()
         self.user.delete()
+        shutil.rmtree(settings.MEDIA_ROOT)
 
     def test_changelist_attachment(self):
         self.login()
         list_url = reverse('admin:common_attachment_changelist')
         response = self.client.get(list_url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, Attachment.objects.get(pk=self.picture.pk).title)
-        self.assertContains(response, Attachment.objects.get(pk=self.picture_2.pk).title)
+        self.assertContains(response, 'img1.png')
+        self.assertContains(response, 'img2.png')
 
     def test_changelist_attachment_filter_content_id(self):
         self.login()
@@ -49,8 +57,8 @@ class AttachmentAdminTest(TestCase):
         response = self.client.get(list_url, data)
         self.assertEqual(response.status_code, 200)
 
-        self.assertContains(response, Attachment.objects.get(pk=self.picture.pk).title)
-        self.assertNotContains(response, Attachment.objects.get(pk=self.picture_2.pk).title)
+        self.assertContains(response, 'img1.png')
+        self.assertNotContains(response, 'img2.png')
 
     def test_attachment_can_be_change(self):
         self.login()
