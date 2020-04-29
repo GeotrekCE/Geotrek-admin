@@ -272,7 +272,7 @@ class Line(models.Model):
     text = models.CharField(verbose_name=_("Text"), max_length=1000)
     distance = models.DecimalField(verbose_name=_("Distance"), null=True, blank=True,
                                    decimal_places=3, max_digits=8)
-    pictogram_name = models.CharField(verbose_name=_("Pictogramm"), max_length=250,
+    pictogram_name = models.CharField(verbose_name=_("Pictogram"), max_length=250,
                                       blank=True, null=True)
     time = models.DurationField(verbose_name=pgettext_lazy("duration", "Time"), null=True, blank=True,
                                 help_text=_("Hours:Minutes:Seconds"))
