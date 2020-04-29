@@ -99,7 +99,11 @@ To upgrade only Geotrek-admin and its dependencies, run:
 Upgrade from Geotrek-admin <= 2.32
 ----------------------------------
 
-Go inside your existing Geotrek-admin installation directory. Then run:
+First of all, make sure your current Geotrek-admin version works correctly.
+Especially, after an upgrade of the Ubuntu distribution, you will have to run ``./install.sh``
+before proceeding with Geotrek-admin upgrade.
+
+Then, go inside your existing Geotrek-admin installation directory and run:
 
 ::
 
