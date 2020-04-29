@@ -1,18 +1,10 @@
 import csv
-from functools import partial
-
-from django.core.exceptions import FieldDoesNotExist
-from django.core.serializers.base import Serializer
-from django.db.models.fields.related import ForeignKey, ManyToManyField
-from django.utils.encoding import smart_str
-from django.utils.translation import ugettext_lazy as _
 
 from geotrek.authent.serializers import StructureSerializer
 from geotrek.common.serializers import PictogramSerializerMixin, BasePublishableSerializerMixin
 from geotrek.signage import models as signage_models
 
 from mapentity.serializers.commasv import CSVSerializer
-from mapentity.serializers.helpers import smart_plain_text, field_as_string
 from mapentity.serializers.shapefile import ZipShapeSerializer
 
 from rest_framework import serializers as rest_serializers
@@ -91,20 +83,20 @@ class CSVBladeSerializer(CSVSerializer):
         ascii = options.get('ensure_ascii', True)
         max_lines = max([value.lines.count() for value in queryset])
 
-        headers = self.get_csv_header(columns, model_blade)
+        header = self.get_csv_header(columns, model_blade)
 
-        headers_lines = self.get_csv_header(columns_lines, model_line)
+        header_line = self.get_csv_header(columns_lines, model_line)
 
         for i in range(max_lines):
-            header_lines = ['%s %s' % (header, i + 1) for header in headers_lines]
-            headers.extend(header_lines)
+            numbered_header_lines = ['%s %s' % (header, i + 1) for header in header_line]
+            header.extend(numbered_header_lines)
 
         getters = self.getters_csv(columns, model_blade, ascii)
 
         getters_lines = self.getters_csv(columns_lines, model_line, ascii)
 
         def get_lines():
-            yield headers
+            yield header
             for blade in queryset.order_by('signage__code', 'number'):
                 column_getter = [getters[field](blade, field) for field in columns]
                 for obj in blade.lines.order_by('number'):
