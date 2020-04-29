@@ -277,7 +277,8 @@ class Line(models.Model):
                                       blank=True, null=True)
     time = models.DurationField(verbose_name=pgettext_lazy("duration", "Time"), null=True, blank=True,
                                 help_text=_("Hours:Minutes:Seconds"))
-    distance_verbose_name = _("Distance (km)")
+    distance_pretty_verbose_name = _("Distance (km)")
+    time_pretty_verbose_name = _("Time")
     linecode_verbose_name = _("Code")
 
     def __str__(self):
@@ -288,6 +289,17 @@ class Line(models.Model):
         return settings.LINE_CODE_FORMAT.format(signagecode=self.blade.signage.code,
                                                 bladenumber=self.blade.number,
                                                 linenumber=self.number)
+
+    @property
+    def distance_pretty(self):
+        return settings.LINE_DISTANCE_FORMAT.format(self.distance)
+
+    @property
+    def time_pretty(self):
+        hours = self.time.seconds // 3600
+        minutes = (self.time.seconds % 3600) // 60
+        seconds = self.time.seconds % 60
+        return settings.LINE_TIME_FORMAT.format(hours=hours, minutes=minutes, seconds=seconds)
 
     class Meta:
         unique_together = (('blade', 'number'), )

@@ -150,4 +150,3 @@ def collate_c(field):
 
 def spacial_reference():
     return "{epsg_name}".format(epsg_name=SpatialReference(settings.DISPLAY_SRID).name)
-

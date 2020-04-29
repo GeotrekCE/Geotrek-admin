@@ -52,8 +52,8 @@
                 <td>{{ line }}</td>
                 <td>{{ line.text }}</td>
                 <td>{{ line.pictogram_name }}</td>
-                <td>{{ line.distance|default_if_none:"" }}</td>
-                <td>{{ line.time|default_if_none:"" }}</td>
+                <td>{{ line.distance_pretty|default_if_none:"" }}</td>
+                <td>{{ line.time_pretty|default_if_none:"" }}</td>
             </tr>
         {% endfor %}
     </table>
