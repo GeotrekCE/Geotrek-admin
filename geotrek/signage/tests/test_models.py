@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from geotrek.signage.factories import SealingFactory, BladeTypeFactory, BladeFactory
+from geotrek.signage.factories import BladeFactory, BladeTypeFactory, SealingFactory, SignageFactory
 from geotrek.infrastructure.factories import InfrastructureFactory
 
 
@@ -22,3 +22,11 @@ class BladeModelTest(TestCase):
         infra = InfrastructureFactory.create()
         with self.assertRaisesRegexp(ValueError, "Expecting a signage"):
             blade.set_topology(infra)
+
+
+class SignageModelTest(TestCase):
+    def test_order_blades_C(self):
+        signage = SignageFactory.create(code="XR2")
+        blade_2 = BladeFactory.create(number='A', signage=signage)
+        blade = BladeFactory.create(number='*BL', signage=signage)
+        self.assertEqual([blade, blade_2], list(signage.order_blades))

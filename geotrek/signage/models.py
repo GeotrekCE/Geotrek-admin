@@ -10,7 +10,7 @@ from mapentity.models import MapEntityMixin
 from geotrek.authent.models import StructureOrNoneRelated
 from geotrek.common.mixins import AddPropertyMixin, OptionalPictogramMixin, NoDeleteManager
 from geotrek.common.models import Organism
-from geotrek.common.utils import classproperty, format_coordinates
+from geotrek.common.utils import classproperty, format_coordinates, collate_c
 from geotrek.core.models import Topology, Path
 
 from geotrek.infrastructure.models import BaseInfrastructure, InfrastructureCondition
@@ -96,7 +96,7 @@ class Signage(MapEntityMixin, BaseInfrastructure):
 
     @property
     def order_blades(self):
-        return self.blade_set.all().order_by('number')
+        return self.blade_set.all().order_by(collate_c('number'))
 
     @property
     def gps_value(self):
