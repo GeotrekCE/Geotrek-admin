@@ -91,7 +91,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='line',
             name='pictogram_name',
-            field=models.CharField(blank=True, max_length=250, null=True, verbose_name='Pictogram'),
+            field=models.CharField(blank=True, max_length=250, null=True, verbose_name='Pictogramm name'),
         ),
         migrations.AlterField(
             model_name='line',
