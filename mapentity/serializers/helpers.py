@@ -1,3 +1,4 @@
+import html
 import json
 
 from django.core.serializers import serialize
@@ -8,7 +9,6 @@ from django.utils.encoding import smart_str
 from django.utils.formats import number_format
 from django.utils.functional import Promise, curry
 from django.utils.html import strip_tags
-from django.utils.six.moves.html_parser import HTMLParser
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -25,9 +25,8 @@ def field_as_string(obj, field, ascii=False):
     return smart_plain_text(value, ascii)
 
 
-def plain_text(html):
-    h = HTMLParser()
-    return h.unescape(strip_tags(html))
+def plain_text(html_content):
+    return html.unescape(strip_tags(html_content))
 
 
 def smart_plain_text(s, ascii=False):
