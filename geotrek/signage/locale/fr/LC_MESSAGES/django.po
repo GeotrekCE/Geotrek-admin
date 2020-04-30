@@ -107,9 +107,6 @@ msgstr "Lame"
 msgid "Text"
 msgstr "Texte"
 
-msgid "Distance"
-msgstr "Distance"
-
 msgid "Pictogram"
 msgstr "Nom du pictogramme"
 
