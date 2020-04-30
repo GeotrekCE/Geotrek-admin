@@ -298,7 +298,7 @@ class TouristicEventViewSet(MapEntityViewSet):
     geojson_serializer_class = TouristicEventGeojsonSerializer
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
     filter_backends = [DjangoFilterBackend, ]
-    filter_class = TouristicEventApiFilterSet
+    filterset_class = TouristicEventApiFilterSet
 
     def get_queryset(self):
         qs = TouristicEvent.objects.existing()
