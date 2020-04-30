@@ -45,7 +45,7 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     def get_serializer_context(self):
         return {'root_pk': self.request.GET.get('root_pk')}
 
-    @decorators.detail_route(methods=['get'])
+    @decorators.action(detail=True, methods=['get'])
     def pois(self, request, *args, **kwargs):
         trek = self.get_object()
         root_pk = self.request.GET.get('root_pk') or trek.pk
@@ -55,7 +55,7 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
         data = api_serializers_trekking.POIListSerializer(qs, many=True, context={'root_pk': root_pk}).data
         return response.Response(data)
 
-    @decorators.detail_route(methods=['get'])
+    @decorators.action(detail=True, methods=['get'])
     def touristic_contents(self, request, *args, **kwargs):
         trek = self.get_object()
         root_pk = self.request.GET.get('root_pk') or trek.pk
@@ -64,7 +64,7 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
         data = api_serializers_tourism.TouristicContentListSerializer(qs, many=True, context={'root_pk': root_pk}).data
         return response.Response(data)
 
-    @decorators.detail_route(methods=['get'])
+    @decorators.action(detail=True, methods=['get'])
     def touristic_events(self, request, *args, **kwargs):
         trek = self.get_object()
         root_pk = self.request.GET.get('root_pk') or trek.pk

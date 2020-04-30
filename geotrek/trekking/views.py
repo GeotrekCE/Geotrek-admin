@@ -65,15 +65,6 @@ class SyncRandoRedirect(RedirectView):
 
 
 class FlattenPicturesMixin(object):
-    def get_template_names(self):
-        """ Due to bug in Django, providing get_queryset() method hides
-        template_names lookup.
-        https://code.djangoproject.com/ticket/17484
-        """
-        opts = self.get_model()._meta
-        extra = ["%s/%s%s.html" % (opts.app_label, opts.object_name.lower(), self.template_name_suffix)]
-        return extra + super(FlattenPicturesMixin, self).get_template_names()
-
     def get_queryset(self):
         """ Override queryset to avoid attachment lookup while serializing.
         It will fetch attachments, and force ``pictures`` attribute of instances.
@@ -99,9 +90,12 @@ class TrekLayer(MapEntityLayer):
 
 
 class TrekList(FlattenPicturesMixin, MapEntityList):
-    queryset = Trek.objects.existing()
+    model = Trek
     filterform = TrekFilterSet
     columns = ['id', 'name', 'duration', 'difficulty', 'departure', 'thumbnail']
+
+    def get_queryset(self):
+        return self.model.objects.existing()
 
 
 class TrekJsonList(MapEntityJsonList, TrekList):
@@ -287,9 +281,12 @@ class POILayer(MapEntityLayer):
 
 
 class POIList(FlattenPicturesMixin, MapEntityList):
-    queryset = POI.objects.existing()
+    model = POI
     filterform = POIFilterSet
     columns = ['id', 'name', 'type', 'thumbnail']
+
+    def get_queryset(self):
+        return self.model.objects.existing()
 
 
 class POIJsonList(MapEntityJsonList, POIList):
@@ -307,7 +304,7 @@ class POIFormatList(MapEntityFormat, POIList):
     set(POIList.columns + ['description', 'treks', 'districts', 'cities', 'areas', 'structure'])
 
     def get_queryset(self):
-        qs = super(POIFormatList, self).get_queryset()
+        qs = super().get_queryset()
 
         denormalized = {}
 

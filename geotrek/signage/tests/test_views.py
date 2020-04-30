@@ -191,7 +191,7 @@ class SignageViewsTest(CommonTest):
 
     def get_expected_json_attrs(self):
         return {
-            'code': None,
+            'code': '',
             'condition': self.obj.condition.pk,
             'manager': None,
             'name': 'Signage',

@@ -121,7 +121,7 @@ class MapEntityOptions(object):
                 geojson_serializer_class = _geojson_serializer
             rest_viewset = dynamic_viewset
 
-        self.rest_router.register(self.modelname + 's', rest_viewset, base_name=self.modelname)
+        self.rest_router.register(self.modelname + 's', rest_viewset, basename=self.modelname)
 
         # Returns Django URL patterns
         return self.__view_classes_to_url(*picked)

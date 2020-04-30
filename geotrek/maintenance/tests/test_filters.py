@@ -200,7 +200,7 @@ class InterventionYearsFilterTest(TestCase):
         self.widget = self.filter.filters['year'].field.widget
 
     def test_year_choices_come_from_interventions(self):
-        output = self.widget.render(name='year', value=None)
+        output = self.widget.render(name='year', value=None, renderer=None)
         self.assertEqual(type(self.widget), InterventionYearSelect)
         self.assertEqual(output.count('<option'), 3)
         self.assertIn('>2012<', output)
@@ -215,7 +215,7 @@ class ProjectYearsFilterTest(TestCase):
         self.widget = self.filter.filters['in_year'].field.widget
 
     def test_year_choices_come_from_project(self):
-        output = self.widget.render(name='project', value=None)
+        output = self.widget.render(name='project', value=None, renderer=None)
         self.assertEqual(type(self.widget), ProjectYearSelect)
         self.assertEqual(output.count('<option'), 5)
         self.assertIn('>1500<', output)

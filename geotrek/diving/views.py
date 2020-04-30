@@ -32,9 +32,12 @@ class DiveLayer(MapEntityLayer):
 
 
 class DiveList(FlattenPicturesMixin, MapEntityList):
-    queryset = Dive.objects.existing()
+    model = Dive
     filterform = DiveFilterSet
     columns = ['id', 'name', 'levels', 'thumbnail']
+
+    def get_queryset(self):
+        return self.model.objects.existing()
 
 
 class DiveJsonList(MapEntityJsonList, DiveList):

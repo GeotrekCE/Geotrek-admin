@@ -88,16 +88,13 @@ class PathLayer(MapEntityLayer):
 
 
 class PathList(MapEntityList):
-    queryset = Path.objects
+    queryset = Path.objects.all()
     filterform = PathFilterSet
 
     @classproperty
     def columns(cls):
         columns = ['id', 'checkbox', 'name', 'length', 'length_2d']
         return columns
-
-    def get_template_names(self):
-        return ("core/path_list.html",)
 
 
 class PathJsonList(MapEntityJsonList, PathList):

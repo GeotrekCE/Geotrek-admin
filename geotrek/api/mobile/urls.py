@@ -7,9 +7,9 @@ from geotrek.api.mobile.views_sync import SyncMobileRedirect, sync_mobile_view, 
 
 router = routers.DefaultRouter()
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
-    router.register('flatpages', api_mobile.FlatPageViewSet, base_name='flatpage')
+    router.register('flatpages', api_mobile.FlatPageViewSet, basename='flatpage')
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
-    router.register('treks', api_mobile.TrekViewSet, base_name='treks')
+    router.register('treks', api_mobile.TrekViewSet, basename='treks')
 app_name = 'apimobile'
 urlpatterns = [
     path('', api_mobile.SwaggerSchemaView.as_view(), name="schema"),

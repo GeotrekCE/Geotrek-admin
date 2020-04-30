@@ -55,7 +55,7 @@ class BaseTopologyWidget(MapWidget):
         except ValueError:
             return None
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         """Renders the fields. Parent class calls `serialize()` with the value.
         """
         if isinstance(value, int):
@@ -63,7 +63,7 @@ class BaseTopologyWidget(MapWidget):
         attrs = attrs or {}
         attrs.update(is_line_topology=self.is_line_topology,
                      is_point_topology=self.is_point_topology)
-        return super(BaseTopologyWidget, self).render(name, value, attrs)
+        return super(BaseTopologyWidget, self).render(name, value, attrs, renderer)
 
 
 class LineTopologyWidget(BaseTopologyWidget):
@@ -87,7 +87,7 @@ class PointLineTopologyWidget(PointTopologyWidget, LineTopologyWidget):
 class TopologyReadonlyWidget(BaseTopologyWidget):
     template_name = "mapentity/mapgeometry_fragment.html"
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         """
         Completely bypass widget rendering, and just render a geometry.
         """

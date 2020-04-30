@@ -7,7 +7,10 @@ CHANGELOG
 
 **Bug fixes**
 
--
+
+**Maintenance**
+
+- Upgrade from Django 2.0 to Django 2.2
 
 
 2.33.3 (2020-04-28)
@@ -361,7 +364,7 @@ No changes. Just force a new build in CI
 
 **Bug fixes**
 
-- Fix sync of manual PDF 
+- Fix sync of manual PDF
 
 
 2.29.2 (2019-08-28)

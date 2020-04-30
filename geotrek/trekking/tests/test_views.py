@@ -15,7 +15,7 @@ from django.contrib.auth.models import User, Group, Permission
 from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core.management import call_command
 from django.urls import reverse
-from django.db import connection, connections, DEFAULT_DB_ALIAS
+from django.db import connections, DEFAULT_DB_ALIAS
 from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from django.test import RequestFactory
@@ -138,24 +138,14 @@ class POIViewsTest(CommonTest):
     def test_listing_number_queries(self):
         self.login()
         # Create many instances
-        for i in range(100):
-            self.modelfactory.create()
-        for i in range(10):
-            DistrictFactory.create()
+        self.modelfactory.build_batch(1000)
+        DistrictFactory.build_batch(10)
 
-        # Enable query counting
-        settings.DEBUG = True
+        with self.assertNumQueries(6):
+            self.client.get(self.model.get_jsonlist_url())
 
-        for url in [self.model.get_jsonlist_url(),
-                    self.model.get_format_list_url()]:
-            num_queries_old = len(connection.queries)
-            self.client.get(url)
-            num_queries_new = len(connection.queries)
-
-            nb_queries = num_queries_new - num_queries_old
-            self.assertTrue(0 < nb_queries < 100, '%s queries !' % nb_queries)
-
-        settings.DEBUG = False
+        with self.assertNumQueries(9):
+            self.client.get(self.model.get_format_list_url())
 
     def test_pois_on_treks_do_not_exist(self):
         self.login()
@@ -1451,13 +1441,8 @@ class ServiceViewsTest(CommonTest):
     def test_listing_number_queries(self):
         self.login()
         # Create many instances
-        for i in range(100):
-            self.modelfactory.create()
-        for i in range(10):
-            DistrictFactory.create()
-
-        # Enable query counting
-        settings.DEBUG = True
+        self.modelfactory.build_batch(1000)
+        DistrictFactory.build_batch(10)
 
         # 1) session, 2) user, 3) user perms, 4) group perms, 5) last modified, 6) list
         with self.assertNumQueries(6):
@@ -1466,8 +1451,6 @@ class ServiceViewsTest(CommonTest):
         # 1) session, 2) user, 3) user perms, 4) group perms, 5) list
         with self.assertNumQueries(5):
             self.client.get(self.model.get_format_list_url())
-
-        settings.DEBUG = False
 
     def test_services_on_treks_do_not_exist(self):
         self.login()

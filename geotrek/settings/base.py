@@ -739,7 +739,9 @@ THUMBNAIL_COPYRIGHT_FORMAT = ""
 THUMBNAIL_COPYRIGHT_SIZE = 15
 
 REST_FRAMEWORK = {
-    'UNICODE_JSON': False
+    'UNICODE_JSON': False,
+    # ensure autoschema compatibility while using deprecated django-rest-swagger
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }
 
 ENABLED_MOBILE_FILTERS = [
