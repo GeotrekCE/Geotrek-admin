@@ -102,7 +102,7 @@ msgid "Sensitive area"
 msgstr "Zone sensible"
 
 msgid "Published"
-msgstr "Publié"
+msgstr "Publiée"
 
 msgid "Online"
 msgstr "En ligne"

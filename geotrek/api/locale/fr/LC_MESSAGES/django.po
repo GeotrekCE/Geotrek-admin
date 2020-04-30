@@ -142,12 +142,12 @@ msgstr "Format de sortie. json par défaut, geojson disponible"
 
 msgid "Limit required fields to increase performances. Ex : id,url,geometry"
 msgstr ""
-"Limiter les champs de sortie pour améliorer les performances. Ex : id, url, "
+"Limiter les champs de sortie pour améliorer les performances. Ex : id,url,geometry"
 "geometry"
 
 msgid "Omit specified fields to increase performance. Ex: url,category"
 msgstr ""
-"Supprimer des champs de sortie pour améliorer les performances. Ex : url, "
+"Supprimer des champs de sortie pour améliorer les performances. Ex : url,category"
 "category"
 
 msgid ""
