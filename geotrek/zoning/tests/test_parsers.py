@@ -30,7 +30,7 @@ class CityParserTest(TestCase):
 
     def test_wrong_geom(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'line.geojson')
-        with self.assertRaisesRegexp(CommandError, r"Invalid geometry type for field 'GEOM'. "
+        with self.assertRaisesRegex(CommandError, r"Invalid geometry type for field 'GEOM'. "
                                                    r"Should be \(Multi\)Polygon, not LineString"):
             call_command('import', 'geotrek.zoning.parsers.CityParser', filename, verbosity=2)
         self.assertEqual(City.objects.count(), 0)

@@ -151,7 +151,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         TouristicContentCategoryFactory(label="Eau vive")
         TouristicContentType1Factory(label="Type A")
         TouristicContentType1Factory(label="Type B")
-        with self.assertRaisesRegexp(CommandError, "Failed to download %s. HTTP status code 503" % EauViveParser.url):
+        with self.assertRaisesRegex(CommandError, "Failed to download %s. HTTP status code 503" % EauViveParser.url):
             call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser')
 
     @mock.patch('requests.get')

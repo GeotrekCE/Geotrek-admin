@@ -18,11 +18,11 @@ class RestrictedAreasCommandTest(TestCase):
     Get Restricted Area
     """
     def test_load_restricted_areas_without_file(self):
-        with self.assertRaisesRegexp(CommandError, 'Error: the following arguments are required: file_path, area_type'):
+        with self.assertRaisesRegex(CommandError, 'Error: the following arguments are required: file_path, area_type'):
             call_command('loadrestrictedareas')
 
     def test_load_cities_without_type(self):
-        with self.assertRaisesRegexp(CommandError, 'Error: the following arguments are required: area_type'):
+        with self.assertRaisesRegex(CommandError, 'Error: the following arguments are required: area_type'):
             call_command('loadrestrictedareas', self.filename_out_in)
 
     @override_settings(SRID=4326, SPATIAL_EXTENT=(-1, -3, 2, 2))
@@ -77,7 +77,7 @@ class RestrictedAreasCommandTest(TestCase):
         self.assertIn('NOM, Insee', output.getvalue())
 
     def test_load_restricted_areas_fail_bad_srid(self):
-        with self.assertRaisesRegexp(CommandError, 'SRID is not well configurate, change/add option srid'):
+        with self.assertRaisesRegex(CommandError, 'SRID is not well configurate, change/add option srid'):
             call_command('loadrestrictedareas', self.filename, 'type_area', name='NOM', verbosity=0)
 
     def test_load_restricted_areas_with_geom_not_valid(self):
@@ -105,7 +105,7 @@ class CitiesCommandTest(TestCase):
     Get cities
     """
     def test_load_cities_without_file(self):
-        with self.assertRaisesRegexp(CommandError, 'Error: the following arguments are required: file_path'):
+        with self.assertRaisesRegex(CommandError, 'Error: the following arguments are required: file_path'):
             call_command('loadcities')
 
     @override_settings(SPATIAL_EXTENT=(0, 10.0, 1, 11))
@@ -133,11 +133,11 @@ class CitiesCommandTest(TestCase):
         self.assertIn("wrong_polygon's geometry is not valid", output.getvalue())
 
     def test_load_cities_fail_bad_srid(self):
-        with self.assertRaisesRegexp(CommandError, 'SRID is not well configurate, change/add option srid'):
+        with self.assertRaisesRegex(CommandError, 'SRID is not well configurate, change/add option srid'):
             call_command('loadcities', self.filename, name='NOM', code='Insee', verbosity=0)
 
     def test_load_cities_with_bad_file(self):
-        with self.assertRaisesRegexp(GDALException, 'Could not open the datasource at "toto.geojson"'):
+        with self.assertRaisesRegex(GDALException, 'Could not open the datasource at "toto.geojson"'):
             call_command('loadcities', 'toto.geojson', name='NOM', code='Insee', srid=2154, verbosity=0)
 
     def test_load_cities_with_line(self):
@@ -201,7 +201,7 @@ class DistrictsCommandTest(TestCase):
     Get cities
     """
     def test_load_districts_without_file(self):
-        with self.assertRaisesRegexp(CommandError, 'Error: the following arguments are required: file_path'):
+        with self.assertRaisesRegex(CommandError, 'Error: the following arguments are required: file_path'):
             call_command('loaddistricts')
 
     def test_load_districts_with_geom_not_valid(self):
@@ -218,11 +218,11 @@ class DistrictsCommandTest(TestCase):
 
     def test_load_districts_fail_bad_srid(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'bad_srid.geojson')
-        with self.assertRaisesRegexp(CommandError, 'SRID is not well configurate, change/add option srid'):
+        with self.assertRaisesRegex(CommandError, 'SRID is not well configurate, change/add option srid'):
             call_command('loaddistricts', filename, name='NOM', verbosity=0)
 
     def test_load_districts_with_bad_file(self):
-        with self.assertRaisesRegexp(GDALException, 'Could not open the datasource at "toto.geojson"'):
+        with self.assertRaisesRegex(GDALException, 'Could not open the datasource at "toto.geojson"'):
             call_command('loaddistricts', 'toto.geojson', name='NOM', srid=2154, verbosity=0)
 
     def test_load_districts_with_line(self):

@@ -97,7 +97,7 @@ class CommandTests(TestCase):
 
     def test_unset_structure_fail_no_model_not_all(self):
         InfrastructureTypeFactory.create(label="annyeong", structure=None, pictogram=None)
-        with self.assertRaisesRegexp(CommandError, "You should specify model"):
+        with self.assertRaisesRegex(CommandError, "You should specify model"):
             call_command('unset_structure', verbosity=0)
 
     def test_unset_structure_list(self):

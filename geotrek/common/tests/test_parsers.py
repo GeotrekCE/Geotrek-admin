@@ -37,19 +37,19 @@ class AttachmentParser(AttachmentParserMixin, OrganismEidParser):
 
 class ParserTests(TestCase):
     def test_bad_parser_class(self):
-        with self.assertRaisesRegexp(CommandError, "Failed to import parser class 'DoesNotExist'"):
+        with self.assertRaisesRegex(CommandError, "Failed to import parser class 'DoesNotExist'"):
             call_command('import', 'geotrek.common.tests.test_parsers.DoesNotExist', '', verbosity=0)
 
     def test_bad_parser_file(self):
-        with self.assertRaisesRegexp(CommandError, "Failed to import parser file 'geotrek/common.py'"):
+        with self.assertRaisesRegex(CommandError, "Failed to import parser file 'geotrek/common.py'"):
             call_command('import', 'geotrek.common.DoesNotExist', '', verbosity=0)
 
     def test_no_filename_no_url(self):
-        with self.assertRaisesRegexp(CommandError, "File path missing"):
+        with self.assertRaisesRegex(CommandError, "File path missing"):
             call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', '', verbosity=0)
 
     def test_bad_filename(self):
-        with self.assertRaisesRegexp(CommandError, "File does not exists at: find_me/I_am_not_there.shp"):
+        with self.assertRaisesRegex(CommandError, "File does not exists at: find_me/I_am_not_there.shp"):
             call_command('import', 'geotrek.common.tests.test_parsers.OrganismParser', 'find_me/I_am_not_there.shp', verbosity=0)
 
     @override_settings(VAR_DIR=os.path.join(os.path.dirname(__file__), 'data'))
@@ -155,7 +155,7 @@ class AttachmentParserTests(TestCase):
         mocked.return_value.status_code = 200
         mocked.return_value.content = ''
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
-        with self.assertRaisesRegexp(CommandError, "FileType 'Photographie' does not exists in Geotrek-Admin. Please add it"):
+        with self.assertRaisesRegex(CommandError, "FileType 'Photographie' does not exists in Geotrek-Admin. Please add it"):
             call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
 
     @mock.patch('requests.get')

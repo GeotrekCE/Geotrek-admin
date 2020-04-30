@@ -106,7 +106,7 @@ class ShapefileSerializer(TestCase):
     def test_serializer_model_no_geofield(self):
         self.serializer = ZipShapeSerializer()
         response = HttpResponse()
-        with self.assertRaisesRegexp(ValueError, "No geodjango geometry fields found in this model"):
+        with self.assertRaisesRegex(ValueError, "No geodjango geometry fields found in this model"):
             self.serializer.serialize(Difficulty.objects.all(), stream=response,
                                       fields=['id', 'name'], delete=False)
 
@@ -115,7 +115,7 @@ class ShapefileSerializer(TestCase):
         self.serializer = ZipShapeSerializer()
         PathFactory.create()
         response = HttpResponse()
-        with self.assertRaisesRegexp(ValueError, "More than one geodjango geometry field found, please specify which "
+        with self.assertRaisesRegex(ValueError, "More than one geodjango geometry field found, please specify which "
                                                  "to use by name using the 'geo_field' keyword. "
                                                  "Available fields are: 'geom_3d, geom, geom_cadastre'"):
             self.serializer.serialize(Path.objects.all(), stream=response,
@@ -127,7 +127,7 @@ class ShapefileSerializer(TestCase):
         self.serializer = ZipShapeSerializer()
         PathFactory.create()
         response = HttpResponse()
-        with self.assertRaisesRegexp(ValueError, "Geodjango geometry field not found with the name 'do_not_exist', "
+        with self.assertRaisesRegex(ValueError, "Geodjango geometry field not found with the name 'do_not_exist', "
                                                  "fields available are: 'geom_3d, geom, geom_cadastre'"):
             self.serializer.serialize(Path.objects.all(), stream=response,
                                       fields=['id', 'name'], delete=False)
