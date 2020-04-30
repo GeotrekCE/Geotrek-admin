@@ -189,8 +189,9 @@ def convertit_url(url, from_type=None, to_type=None, proxy=False):
 def convertit_download(url, destination, from_type=None, to_type='application/pdf', headers=None):
     # Mock for tests
     if getattr(settings, 'TEST', False):
-        open(destination, 'w').write("Mock\n")
-        return
+        with open(destination, 'w') as out_file:
+            out_file.write("Mock\n")
+            return
 
     url = convertit_url(url, from_type, to_type)
     fd = open(destination, 'wb') if isinstance(destination, str) else destination
