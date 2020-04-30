@@ -116,8 +116,8 @@ class ShapefileSerializer(TestCase):
         PathFactory.create()
         response = HttpResponse()
         with self.assertRaisesRegex(ValueError, "More than one geodjango geometry field found, please specify which "
-                                                 "to use by name using the 'geo_field' keyword. "
-                                                 "Available fields are: 'geom_3d, geom, geom_cadastre'"):
+                                                "to use by name using the 'geo_field' keyword. "
+                                                "Available fields are: 'geom_3d, geom, geom_cadastre'"):
             self.serializer.serialize(Path.objects.all(), stream=response,
                                       fields=['id', 'name'], delete=False)
         app_settings['GEOM_FIELD_NAME'] = 'geom'
@@ -128,7 +128,7 @@ class ShapefileSerializer(TestCase):
         PathFactory.create()
         response = HttpResponse()
         with self.assertRaisesRegex(ValueError, "Geodjango geometry field not found with the name 'do_not_exist', "
-                                                 "fields available are: 'geom_3d, geom, geom_cadastre'"):
+                                                "fields available are: 'geom_3d, geom, geom_cadastre'"):
             self.serializer.serialize(Path.objects.all(), stream=response,
                                       fields=['id', 'name'], delete=False)
         app_settings['GEOM_FIELD_NAME'] = 'geom'
@@ -158,8 +158,8 @@ class CSVSerializerTests(TestCase):
         self.serializer.serialize(Dive.objects.all(), stream=self.stream,
                                   fields=['id', 'name'], delete=False)
         self.assertEqual(self.stream.getvalue(),
-                          ('ID,Name\r\n{},'
-                           'Test\r\n').format(self.point.pk))
+                         ('ID,Name\r\n{},'
+                          'Test\r\n').format(self.point.pk))
 
     @override_settings(USE_L10N=True)
     def test_content_fr(self):
@@ -167,6 +167,6 @@ class CSVSerializerTests(TestCase):
         self.serializer.serialize(Dive.objects.all(), stream=self.stream,
                                   fields=['id', 'name'], delete=False)
         self.assertEqual(self.stream.getvalue(),
-                          ('ID,Nom\r\n{},'
-                           'Test\r\n').format(self.point.pk))
+                         ('ID,Nom\r\n{},'
+                          'Test\r\n').format(self.point.pk))
         translation.deactivate()

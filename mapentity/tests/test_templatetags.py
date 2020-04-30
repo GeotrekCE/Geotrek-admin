@@ -90,7 +90,7 @@ class SmartIncludeTest(TestCase):
 
     def test_smart_include_no_quotes(self):
         with self.assertRaisesRegex(TemplateSyntaxError,
-                                     "'smart_include' tag's viewname argument should be in quotes"):
+                                    "'smart_include' tag's viewname argument should be in quotes"):
             Template(
                 '{% load mapentity_tags %}'
                 '{% smart_include test %}'
