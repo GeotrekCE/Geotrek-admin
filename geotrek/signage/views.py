@@ -12,7 +12,7 @@ from geotrek.core.models import AltimetryMixin
 
 from geotrek.signage.filters import SignageFilterSet, BladeFilterSet
 from geotrek.signage.forms import SignageForm, BladeForm, LineFormset
-from geotrek.signage.models import Signage, Blade, Line
+from geotrek.signage.models import Signage, Blade
 from geotrek.signage.serializers import (SignageSerializer, BladeSerializer,
                                          SignageGeojsonSerializer, BladeGeojsonSerializer,
                                          CSVBladeSerializer, ZipBladeShapeSerializer)
@@ -178,21 +178,23 @@ class BladeLayer(MapEntityLayer):
 
 class BladeFormatList(MapEntityFormat, BladeList):
     columns = [
-        'id', 'signage', 'number', 'text', 'distance', 'time', 'pictogram_name', 'linecode', 'colorblade', 'direction',
-        'lat', 'lng', 'printedelevation'
+        'id', 'city', 'signage', 'printedelevation', 'bladecode', 'type', 'color', 'direction', 'condition',
+        'coordinates'
     ]
+    columns_line = ['number', 'text', 'distance_pretty', 'time_pretty', 'pictogram_name']
 
     def csv_view(self, request, context, **kwargs):
         serializer = CSVBladeSerializer()
         response = HttpResponse(content_type='text/csv')
         serializer.serialize(queryset=self.get_queryset(), stream=response,
-                             model=self.get_model(), fields=self.columns, ensure_ascii=True)
+                             model=self.get_model(), fields=self.columns, line_fields=self.columns_line,
+                             ensure_ascii=True)
         return response
 
     def shape_view(self, request, context, **kwargs):
         serializer = ZipBladeShapeSerializer()
         response = HttpResponse(content_type='application/zip')
-        serializer.serialize(queryset=self.get_queryset(), model=Line,
+        serializer.serialize(queryset=self.get_queryset(), model=Blade,
                              stream=response, fields=self.columns)
         response['Content-length'] = str(len(response.content))
         return response

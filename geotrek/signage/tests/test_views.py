@@ -11,7 +11,7 @@ from geotrek.signage.models import Signage, Blade
 from geotrek.core.factories import PathFactory
 from geotrek.signage.factories import (SignageFactory, SignageTypeFactory, BladeFactory, BladeTypeFactory,
                                        SignageNoPictogramFactory, BladeDirectionFactory, BladeColorFactory,
-                                       InfrastructureConditionFactory)
+                                       InfrastructureConditionFactory, LineFactory)
 from geotrek.signage.filters import SignageFilterSet
 from geotrek.infrastructure.tests.test_views import InfraFilterTestMixin
 
@@ -140,6 +140,18 @@ class BladeViewsTest(CommonTest):
         for fmt in ('csv', 'shp', 'gpx'):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
             self.assertEqual(response.status_code, 200, "")
+
+    def test_csv_format_with_lines(self):
+        self.login()
+        signage = SignageFactory.create(name="ééé")
+        blade = BladeFactory.create(signage=signage)
+        LineFactory.create(blade=blade, number=3)
+        response = self.client.get(self.model.get_format_list_url() + '?format=csv')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content.split(b'\r\n')[0], b"ID,City,Signage,Printed elevation,Code,Type,Color,"
+                                                             b"Direction,Condition,Coordinates (WGS 84 / Pseudo-Mercator),Number 1,Text 1,"
+                                                             b"Distance 1,Time 1,Pictogram 1,Number 2,Text 2,"
+                                                             b"Distance 2,Time 2,Pictogram 2")
 
     def test_set_structure_with_permission(self):
         # The structure do not change because it changes with the signage form.

@@ -10,7 +10,8 @@ from mapentity.models import MapEntityMixin
 from geotrek.authent.models import StructureOrNoneRelated
 from geotrek.common.mixins import AddPropertyMixin, OptionalPictogramMixin, NoDeleteManager
 from geotrek.common.models import Organism
-from geotrek.common.utils import classproperty, format_coordinates, collate_c
+from geotrek.common.utils import classproperty, format_coordinates, collate_c, spatial_reference
+
 from geotrek.core.models import Topology, Path
 
 from geotrek.infrastructure.models import BaseInfrastructure, InfrastructureCondition
@@ -67,7 +68,7 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     sealing = models.ForeignKey(Sealing, verbose_name=_("Sealing"), null=True, blank=True, on_delete=models.CASCADE)
     printed_elevation = models.IntegerField(verbose_name=_("Printed elevation"), blank=True, null=True)
     type = models.ForeignKey(SignageType, verbose_name=_("Type"), on_delete=models.CASCADE)
-    gps_value_verbose_name = _("GPS coordinates")
+    coordinates_verbose_name = _("Coordinates")
 
     class Meta:
         verbose_name = _("Signage")
@@ -99,8 +100,8 @@ class Signage(MapEntityMixin, BaseInfrastructure):
         return self.blade_set.all().order_by(collate_c('number'))
 
     @property
-    def gps_value(self):
-        return format_coordinates(self.topo_object.geom)
+    def coordinates(self):
+        return "{} ({})".format(format_coordinates(self.geom), spatial_reference())
 
     @property
     def geomtransform(self):
@@ -169,10 +170,20 @@ class Blade(AddPropertyMixin, MapEntityMixin):
     condition = models.ForeignKey(InfrastructureCondition, verbose_name=_("Condition"),
                                   null=True, blank=True, on_delete=models.PROTECT)
     topology = models.ForeignKey(Topology, related_name="blades_set", verbose_name=_("Blades"), on_delete=models.CASCADE)
+    colorblade_verbose_name = _("Color")
+    printedelevation_verbose_name = _("Printed elevation")
+    direction_verbose_name = _("Direction")
+    city_verbose_name = _("City")
+    bladecode_verbose_name = _("Code")
+    coordinates_verbose_name = "{} ({})".format(_("Coordinates"), spatial_reference())
 
     class Meta:
         verbose_name = _("Blade")
         verbose_name_plural = _("Blades")
+
+    @classproperty
+    def geomfield(cls):
+        return Topology._meta.get_field('geom')
 
     def __str__(self):
         return settings.BLADE_CODE_FORMAT.format(signagecode=self.signage.code, bladenumber=self.number)
@@ -232,6 +243,27 @@ class Blade(AddPropertyMixin, MapEntityMixin):
                 or user.is_superuser
                 or user.has_perm('authent.can_bypass_structure'))
 
+    @property
+    def bladecode_csv_display(self):
+        return settings.BLADE_CODE_FORMAT.format(signagecode=self.signage.code,
+                                                 bladenumber=self.number)
+
+    @property
+    def coordinates_csv_display(self):
+        return self.coordinates or ""
+
+    @property
+    def printedelevation_csv_display(self):
+        return self.signage.printed_elevation or ""
+
+    @property
+    def city_csv_display(self):
+        return self.signage.cities[0] if self.signage.cities else ""
+
+    @property
+    def coordinates(self):
+        return format_coordinates(self.geom)
+
 
 class Line(models.Model):
     blade = models.ForeignKey(Blade, related_name='lines', verbose_name=_("Blade"),
@@ -240,57 +272,37 @@ class Line(models.Model):
     text = models.CharField(verbose_name=_("Text"), max_length=1000)
     distance = models.DecimalField(verbose_name=_("Distance"), null=True, blank=True,
                                    decimal_places=3, max_digits=8)
-    pictogram_name = models.CharField(verbose_name=_("Pictogramm name"), max_length=250,
+    pictogram_name = models.CharField(verbose_name=_("Pictogram"), max_length=250,
                                       blank=True, null=True)
     time = models.DurationField(verbose_name=pgettext_lazy("duration", "Time"), null=True, blank=True,
                                 help_text=_("Hours:Minutes:Seconds"))
-    distance_verbose_name = _("Distance (km)")
-    time_verbose_name = _("Time (Hours:Minutes:Seconds)")
-    colorblade_verbose_name = _("Color")
+    distance_pretty_verbose_name = _("Distance")
+    time_pretty_verbose_name = _("Time")
     linecode_verbose_name = _("Code")
-    printedelevation_verbose_name = _("Printed elevation")
-    direction_verbose_name = _("Direction")
-
-    @classproperty
-    def geomfield(cls):
-        return Topology._meta.get_field('geom')
 
     def __str__(self):
-        return self.linecode_csv_display
+        return self.linecode
 
     @property
-    def linecode_csv_display(self):
+    def linecode(self):
         return settings.LINE_CODE_FORMAT.format(signagecode=self.blade.signage.code,
                                                 bladenumber=self.blade.number,
                                                 linenumber=self.number)
 
     @property
-    def colorblade_csv_display(self):
-        return self.blade.color or ""
+    def distance_pretty(self):
+        if not self.distance:
+            return ""
+        return settings.LINE_DISTANCE_FORMAT.format(self.distance)
 
     @property
-    def signage_csv_display(self):
-        return "%s #%s" % (self.blade.signage, self.blade.number)
-
-    @property
-    def lat_csv_display(self):
-        return self.blade.signage.lat_value
-
-    @property
-    def lng_csv_display(self):
-        return self.blade.signage.lng_value
-
-    @property
-    def printedelevation_csv_display(self):
-        return self.blade.signage.printed_elevation or ""
-
-    @property
-    def direction_csv_display(self):
-        return self.blade.direction or ""
-
-    @property
-    def geom(self):
-        return self.blade.geom
+    def time_pretty(self):
+        if not self.time:
+            return ""
+        hours = self.time.seconds // 3600
+        minutes = (self.time.seconds % 3600) // 60
+        seconds = self.time.seconds % 60
+        return settings.LINE_TIME_FORMAT.format(hours=hours, minutes=minutes, seconds=seconds)
 
     class Meta:
         unique_together = (('blade', 'number'), )

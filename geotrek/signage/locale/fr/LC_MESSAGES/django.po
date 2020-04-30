@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-29 11:38+0200\n"
+"POT-Creation-Date: 2020-04-30 11:40+0000\n"
 "PO-Revision-Date: 2015-09-25 17:37+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -59,8 +59,8 @@ msgstr "Altitude affichée"
 msgid "Type"
 msgstr "Type"
 
-msgid "GPS coordinates"
-msgstr "Coordonnées GPS"
+msgid "Coordinates"
+msgstr "Coordonnées"
 
 msgid "Signages"
 msgstr "Signalétiques"
@@ -98,6 +98,9 @@ msgstr "Etat"
 msgid "Blades"
 msgstr "Lames"
 
+msgid "City"
+msgstr "Commune"
+
 msgid "Blade"
 msgstr "Lame"
 
@@ -107,7 +110,7 @@ msgstr "Texte"
 msgid "Distance"
 msgstr "Distance"
 
-msgid "Pictogramm name"
+msgid "Pictogram"
 msgstr "Nom du pictogramme"
 
 msgctxt "duration"
@@ -117,11 +120,8 @@ msgstr "Temps"
 msgid "Hours:Minutes:Seconds"
 msgstr "Heures:Minutes:Secondes"
 
-msgid "Distance (km)"
-msgstr "Distance (km)"
-
-msgid "Time (Hours:Minutes:Seconds)"
-msgstr "Temps (Heures:Minutes:Secondes)"
+msgid "Time"
+msgstr "Temps"
 
 msgid "Line"
 msgstr "Ligne"
@@ -139,10 +139,7 @@ msgid "Add a line"
 msgstr "Ajouter une ligne"
 
 msgid "Remove"
-msgstr "GPS"
-
-msgid "GPS"
-msgstr "GPS"
+msgstr "Supprimer"
 
 msgid "Add a new blade"
 msgstr "Ajouter une lame"

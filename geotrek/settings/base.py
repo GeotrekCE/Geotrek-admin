@@ -130,8 +130,6 @@ MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
 LOCALE_PATHS = (
     # override locale
     os.path.join(VAR_DIR, 'conf', 'extra_locale'),
-    # project locale
-    os.path.join(PROJECT_DIR, 'locale'),
 )
 
 SITE_ID = 1
@@ -658,8 +656,6 @@ FACEBOOK_IMAGE = '/images/logo-geotrek.png'
 FACEBOOK_IMAGE_WIDTH = 200
 FACEBOOK_IMAGE_HEIGHT = 200
 
-FORMAT_LINE_CODE = "{signagecode}-{bladenumber}-{linenumber}"
-
 CAPTURE_AUTOLOGIN_TOKEN = os.getenv('CAPTURE_AUTOLOGIN_TOKEN', None)
 
 # A sample logging configuration. The only tangible logging
@@ -729,6 +725,8 @@ LOGGING = {
 BLADE_CODE_TYPE = int
 BLADE_CODE_FORMAT = "{signagecode}-{bladenumber}"
 LINE_CODE_FORMAT = "{signagecode}-{bladenumber}-{linenumber}"
+LINE_DISTANCE_FORMAT = "{:0.1f} km"
+LINE_TIME_FORMAT = "{hours}h{minutes:02d}"
 SHOW_EXTREMITIES = False  # Show a bullet at path extremities
 SHOW_LABELS = True  # Show labels on status
 
