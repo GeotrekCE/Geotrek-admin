@@ -137,7 +137,7 @@ class AltimetryHelper(object):
         cursor = connection.cursor()
         cursor.execute("SELECT 1 FROM information_schema.tables WHERE table_name='mnt'")
         if cursor.rowcount == 0:
-            logger.warn("No DEM present")
+            logger.warning("No DEM present")
             return {}
 
         sql = """
