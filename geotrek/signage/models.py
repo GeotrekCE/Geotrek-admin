@@ -68,7 +68,7 @@ class Signage(MapEntityMixin, BaseInfrastructure):
     sealing = models.ForeignKey(Sealing, verbose_name=_("Sealing"), null=True, blank=True, on_delete=models.CASCADE)
     printed_elevation = models.IntegerField(verbose_name=_("Printed elevation"), blank=True, null=True)
     type = models.ForeignKey(SignageType, verbose_name=_("Type"), on_delete=models.CASCADE)
-    gps_value_verbose_name = _("GPS coordinates")
+    coordinates_verbose_name = _("Coordinates")
 
     class Meta:
         verbose_name = _("Signage")
@@ -100,7 +100,7 @@ class Signage(MapEntityMixin, BaseInfrastructure):
         return self.blade_set.all().order_by(collate_c('number'))
 
     @property
-    def gps_value(self):
+    def coordinates(self):
         return "{} ({})".format(format_coordinates(self.geom), spatial_reference())
 
     @property
@@ -175,7 +175,7 @@ class Blade(AddPropertyMixin, MapEntityMixin):
     direction_verbose_name = _("Direction")
     city_verbose_name = _("City")
     bladecode_verbose_name = _("Code")
-    gps_value_verbose_name = "{} ({})".format(_("Coordinates"), spatial_reference())
+    coordinates_verbose_name = "{} ({})".format(_("Coordinates"), spatial_reference())
 
     class Meta:
         verbose_name = _("Blade")
@@ -249,8 +249,8 @@ class Blade(AddPropertyMixin, MapEntityMixin):
                                                  bladenumber=self.number)
 
     @property
-    def gps_value_csv_display(self):
-        return self.gps_.value or ""
+    def coordinates_csv_display(self):
+        return self.coordinates or ""
 
     @property
     def printedelevation_csv_display(self):
@@ -261,7 +261,7 @@ class Blade(AddPropertyMixin, MapEntityMixin):
         return self.signage.cities[0] if self.signage.cities else ""
 
     @property
-    def gps_value(self):
+    def coordinates(self):
         return format_coordinates(self.geom)
 
 

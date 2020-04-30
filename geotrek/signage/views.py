@@ -179,7 +179,7 @@ class BladeLayer(MapEntityLayer):
 class BladeFormatList(MapEntityFormat, BladeList):
     columns = [
         'id', 'city', 'signage', 'printedelevation', 'bladecode', 'type', 'color', 'direction', 'condition',
-        'gps_value'
+        'coordinates'
     ]
     columns_line = ['number', 'text', 'distance_pretty', 'time_pretty', 'pictogram_name']
 

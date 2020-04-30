@@ -59,9 +59,6 @@ msgstr "Altitude affichée"
 msgid "Type"
 msgstr "Type"
 
-msgid "GPS coordinates"
-msgstr "Coordonnées GPS"
-
 msgid "Coordinates"
 msgstr "Coordonnées"
 
@@ -139,10 +136,7 @@ msgid "Add a line"
 msgstr "Ajouter une ligne"
 
 msgid "Remove"
-msgstr "GPS"
-
-msgid "GPS"
-msgstr "GPS"
+msgstr "Supprimer"
 
 msgid "Add a new blade"
 msgstr "Ajouter une lame"
