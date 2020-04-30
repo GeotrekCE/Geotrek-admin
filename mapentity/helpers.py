@@ -7,6 +7,7 @@ import string
 import time
 from datetime import datetime
 from mimetypes import types_map
+from urllib.parse import urljoin, quote
 
 import bs4
 import requests
@@ -17,9 +18,7 @@ from django.urls import resolve
 from django.http import HttpResponse
 from django.template.exceptions import TemplateDoesNotExist
 from django.template.loader import get_template
-from django.utils import six
 from django.utils import timezone
-from django.utils.six.moves.urllib.parse import urljoin, quote
 from django.utils.translation import get_language
 
 from .settings import app_settings, API_SRID
@@ -194,7 +193,7 @@ def convertit_download(url, destination, from_type=None, to_type='application/pd
         return
 
     url = convertit_url(url, from_type, to_type)
-    fd = open(destination, 'wb') if isinstance(destination, six.string_types) else destination
+    fd = open(destination, 'wb') if isinstance(destination, str) else destination
     download_to_stream(url, fd, headers=headers)
 
 

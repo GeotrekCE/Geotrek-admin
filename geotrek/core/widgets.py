@@ -11,7 +11,6 @@
 import json
 
 from django.template import loader
-from django.utils import six
 from django.conf import settings
 from mapentity.widgets import MapWidget
 
@@ -30,7 +29,7 @@ class SnappedLineStringWidget(MapWidget):
         return json.dumps(value)
 
     def deserialize(self, value):
-        if isinstance(value, six.string_types) and value:
+        if isinstance(value, str) and value:
             value = json.loads(value)
             value = value['geom']
         return super(SnappedLineStringWidget, self).deserialize(value)
@@ -92,7 +91,7 @@ class TopologyReadonlyWidget(BaseTopologyWidget):
         Completely bypass widget rendering, and just render a geometry.
         """
         topology = value
-        if isinstance(topology, (six.string_types, int)):
+        if isinstance(topology, (str, int)):
             topology = self.deserialize(topology)
         if topology:
             geom = topology.geom

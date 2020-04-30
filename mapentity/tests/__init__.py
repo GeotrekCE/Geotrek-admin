@@ -6,6 +6,8 @@ import os
 import shutil
 import time
 from datetime import datetime
+from urllib.parse import quote
+
 from freezegun import freeze_time
 from io import StringIO
 from unittest.mock import patch
@@ -18,7 +20,6 @@ from django.test.utils import override_settings
 from django.utils import html
 from django.utils.encoding import force_text
 from django.utils.http import http_date
-from django.utils.six.moves.urllib.parse import quote
 from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _
 

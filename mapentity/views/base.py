@@ -6,6 +6,7 @@ import mimetypes
 import os
 from datetime import datetime
 import re
+from urllib.parse import quote
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -14,7 +15,6 @@ from django.core.exceptions import PermissionDenied
 from django.urls import reverse
 from django.http import (HttpResponse, HttpResponseBadRequest, Http404)
 from django.shortcuts import get_object_or_404
-from django.utils.six.moves.urllib.parse import quote
 from django.views import static
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods

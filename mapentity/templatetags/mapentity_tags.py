@@ -6,7 +6,6 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.core.exceptions import FieldDoesNotExist
 from django.template import Context
 from django.template.exceptions import TemplateDoesNotExist
-from django.utils import six
 from django.utils.timezone import now
 from django.utils.translation import ugettext, ungettext
 
@@ -54,7 +53,7 @@ def do_smart_include(parser, token):
 
 @register.filter
 def latlngbounds(obj):
-    if obj is None or isinstance(obj, six.string_types):
+    if obj is None or isinstance(obj, str):
         return 'null'
     if isinstance(obj, GEOSGeometry):
         extent = obj.extent
