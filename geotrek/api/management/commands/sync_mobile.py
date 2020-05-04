@@ -52,7 +52,7 @@ class Command(BaseCommand):
     def sync_view(self, lang, view, name, url='/', params=None, headers={}, zipfile=None, fix2028=False, **kwargs):
         if self.verbosity == 2:
             self.stdout.write("\x1b[36m{lang}\x1b[0m \x1b[1m{name}\x1b[0m ...".format(lang=lang, name=name), ending="")
-            self.stdout.flush()
+            self.stdout._out.flush()
         fullname = os.path.join(self.tmp_root, name)
         self.mkdirs(fullname)
         request = self.factory.get(url, params, **headers)
@@ -201,7 +201,7 @@ class Command(BaseCommand):
     def close_zip(self, zipfile, name):
         if self.verbosity == 2:
             self.stdout.write("\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=name), ending="")
-            self.stdout.flush()
+            self.stdout._out.flush()
 
         oldzipfilename = os.path.join(self.dst_root, name)
         zipfilename = os.path.join(self.tmp_root, name)
@@ -367,7 +367,7 @@ class Command(BaseCommand):
 
         if self.verbosity == 2:
             self.stdout.write("\x1b[36m**\x1b[0m \x1b[1mnolang/{}/tiles/\x1b[0m ...".format(trek.pk), ending="")
-            self.stdout.flush()
+            self.stdout._out.flush()
 
         def _radius2bbox(lng, lat, radius):
             return (lng - radius, lat - radius,
@@ -396,7 +396,7 @@ class Command(BaseCommand):
         """
         if self.verbosity == 2:
             self.stdout.write("\x1b[36m**\x1b[0m \x1b[1mtiles/\x1b[0m ...", ending="")
-            self.stdout.flush()
+            self.stdout._out.flush()
 
         global_extent = settings.LEAFLET_CONFIG['SPATIAL_EXTENT']
 
