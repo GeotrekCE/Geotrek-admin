@@ -8,6 +8,8 @@ def delete_force(apps, schema_editor):
     # We can't import Infrastructure models directly as it may be a newer
     # version than this migration expects. We use the historical version.
     Blade = apps.get_model('signage', 'Blade')
+    Line = apps.get_model('signage', 'Line')
+    Line.objects.filter(blade__deleted=True).delete()
     Blade.objects.filter(deleted=True).delete()
 
 
@@ -18,23 +20,26 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='line',
-            name='blade',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lines',
-                                    to='signage.Blade', verbose_name='Blade'),
-        ),
-        migrations.RunPython(delete_force),
-        migrations.RemoveField(
-            model_name='blade',
-            name='deleted',
-        ),
-        migrations.RemoveField(
-            model_name='blade',
-            name='structure',
-        ),
-        migrations.RemoveField(
-            model_name='line',
-            name='structure',
-        ),
+        migrations.SeparateDatabaseAndState(
+            database_operations=[migrations.RunPython(delete_force)],
+            state_operations=[
+                migrations.AlterField(
+                    model_name='line',
+                    name='blade',
+                    field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lines',
+                                            to='signage.Blade', verbose_name='Blade'),
+                ),
+                migrations.RemoveField(
+                    model_name='blade',
+                    name='structure',
+                ),
+                migrations.RemoveField(
+                    model_name='line',
+                    name='structure',
+                ),
+                migrations.RemoveField(
+                    model_name='blade',
+                    name='deleted',
+                ),
+            ]),
     ]
