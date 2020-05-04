@@ -606,7 +606,7 @@ class AttachmentParserMixin(object):
         else:
             if self.download_attachments:
                 try:
-                    response = self.request_or_retry(url)
+                    response = self.request_or_retry(url, params={'allow_redirects': True})
                 except requests.exceptions.RequestException as e:
                     raise ValueImportError('Failed to load attachment: {exc}'.format(exc=e))
                 if response.status_code != requests.codes.ok:
