@@ -82,15 +82,15 @@ class ValueListTest(TestCase):
 
 class SmartIncludeTest(TestCase):
     def test_smart_include_no_argument(self):
-        with self.assertRaisesRegexp(TemplateSyntaxError, "'smart_include' tag requires one argument"):
+        with self.assertRaisesRegex(TemplateSyntaxError, "'smart_include' tag requires one argument"):
             Template(
                 '{% load mapentity_tags %}'
                 '{% smart_include %}'
             ).render(Context())
 
     def test_smart_include_no_quotes(self):
-        with self.assertRaisesRegexp(TemplateSyntaxError,
-                                     "'smart_include' tag's viewname argument should be in quotes"):
+        with self.assertRaisesRegex(TemplateSyntaxError,
+                                    "'smart_include' tag's viewname argument should be in quotes"):
             Template(
                 '{% load mapentity_tags %}'
                 '{% smart_include test %}'
@@ -127,7 +127,7 @@ class FieldVerboseNameTest(TestCase):
 
     def test_field_verbose_name_field_does_not_exist(self):
         object_event = TouristicEventFactory.create()
-        with self.assertRaisesRegexp(FieldDoesNotExist, "TouristicEvent has no field named 'do_not_exist'"):
+        with self.assertRaisesRegex(FieldDoesNotExist, "TouristicEvent has no field named 'do_not_exist'"):
             Template(
                 '{% load mapentity_tags %}'
                 '{{ object|verbose:"do_not_exist" }}'

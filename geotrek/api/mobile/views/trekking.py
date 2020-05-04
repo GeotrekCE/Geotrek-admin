@@ -20,7 +20,7 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     serializer_class = api_serializers_trekking.TrekListSerializer
     serializer_detail_class = api_serializers_trekking.TrekDetailSerializer
-    filter_fields = ('difficulty', 'themes', 'networks', 'practice')
+    filterset_fields = ('difficulty', 'themes', 'networks', 'practice')
     permission_classes = [AllowAny, ]
 
     def get_queryset(self, *args, **kwargs):

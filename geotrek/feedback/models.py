@@ -1,5 +1,5 @@
+import html
 import logging
-from html.parser import HTMLParser
 
 from django.conf import settings
 from django.contrib.gis.db import models
@@ -81,7 +81,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
 
     @property
     def comment_text(self):
-        return HTMLParser.unescape.__func__(HTMLParser, self.comment)
+        return html.unescape(self.comment)
 
 
 @receiver(post_save, sender=Report, dispatch_uid="on_report_created")

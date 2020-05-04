@@ -174,7 +174,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
             response.url = url
             return response
         mocked.side_effect = side_effect
-        with self.assertRaisesRegexp(CommandError, "Failed to download https://biodiv-sports.fr/api/v2/sportpractice/"):
+        with self.assertRaisesRegex(CommandError, "Failed to download https://biodiv-sports.fr/api/v2/sportpractice/"):
             call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
 
     @mock.patch('requests.get')
@@ -189,7 +189,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
                 response.json = lambda: {"results": []}
             return response
         mocked.side_effect = side_effect
-        with self.assertRaisesRegexp(CommandError, "Failed to download https://rhododendron.com. HTTP status code 404"):
+        with self.assertRaisesRegex(CommandError, "Failed to download https://rhododendron.com. HTTP status code 404"):
             call_command('import', 'geotrek.sensitivity.parsers.BiodivParser', verbosity=0)
 
     @mock.patch('requests.get')

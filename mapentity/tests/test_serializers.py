@@ -49,17 +49,17 @@ class ShapefileSerializer(TestCase):
         return layers
 
     def test_serializer_creates_one_layer_per_type(self):
-        self.assertEquals(len(self.serializer.layers), 6)
+        self.assertEqual(len(self.serializer.layers), 6)
 
     def test_each_layer_has_records_by_type(self):
         layer_point, layer_linestring, layer_polygon, layer_multipoint, \
             layer_multilinestring, layer_multipolygon = self.getShapefileLayers()
-        self.assertEquals(len(layer_point), 1)
-        self.assertEquals(len(layer_linestring), 1)
-        self.assertEquals(len(layer_multipoint), 1)
-        self.assertEquals(len(layer_polygon), 1)
-        self.assertEquals(len(layer_multilinestring), 1)
-        self.assertEquals(len(layer_multipolygon), 1)
+        self.assertEqual(len(layer_point), 1)
+        self.assertEqual(len(layer_linestring), 1)
+        self.assertEqual(len(layer_multipoint), 1)
+        self.assertEqual(len(layer_polygon), 1)
+        self.assertEqual(len(layer_multilinestring), 1)
+        self.assertEqual(len(layer_multipolygon), 1)
 
     def test_each_layer_has_a_different_geometry_type(self):
         layer_types = [l.geom_type.name for l in self.getShapefileLayers()]
@@ -74,39 +74,39 @@ class ShapefileSerializer(TestCase):
         layer_point, layer_linestring, layer_polygon, layer_multipoint, \
             layer_multilinestring, layer_multipolygon = self.getShapefileLayers()
         feature = layer_point[0]
-        self.assertEquals(str(feature['id']), str(self.point1.pk))
+        self.assertEqual(str(feature['id']), str(self.point1.pk))
         self.assertTrue(feature.geom.geos.equals(self.point1.geom))
 
         feature = layer_multipoint[0]
-        self.assertEquals(str(feature['id']), str(self.multipoint.pk))
+        self.assertEqual(str(feature['id']), str(self.multipoint.pk))
         self.assertTrue(feature.geom.geos.equals(self.multipoint.geom))
 
         feature = layer_linestring[0]
-        self.assertEquals(str(feature['id']), str(self.line1.pk))
+        self.assertEqual(str(feature['id']), str(self.line1.pk))
         self.assertTrue(feature.geom.geos.equals(self.line1.geom))
 
         feature = layer_multilinestring[0]
-        self.assertEquals(str(feature['id']), str(self.multiline.pk))
+        self.assertEqual(str(feature['id']), str(self.multiline.pk))
         self.assertTrue(feature.geom.geos.equals(self.multiline.geom))
 
         feature = layer_polygon[0]
-        self.assertEquals(str(feature['id']), str(self.polygon.pk))
+        self.assertEqual(str(feature['id']), str(self.polygon.pk))
         self.assertTrue(feature.geom.geos.equals(self.polygon.geom))
 
         feature = layer_multipolygon[0]
-        self.assertEquals(str(feature['id']), str(self.multipolygon.pk))
+        self.assertEqual(str(feature['id']), str(self.multipolygon.pk))
         self.assertTrue(feature.geom.geos.equals(self.multipolygon.geom))
 
     def test_attributes(self):
         layer_point, layer_linestring, layer_polygon, layer_multipoint, \
             layer_multilinestring, layer_multipolygon = self.getShapefileLayers()
         feature = layer_point[0]
-        self.assertEquals(feature['name'].value, self.point1.name)
+        self.assertEqual(feature['name'].value, self.point1.name)
 
     def test_serializer_model_no_geofield(self):
         self.serializer = ZipShapeSerializer()
         response = HttpResponse()
-        with self.assertRaisesRegexp(ValueError, "No geodjango geometry fields found in this model"):
+        with self.assertRaisesRegex(ValueError, "No geodjango geometry fields found in this model"):
             self.serializer.serialize(Difficulty.objects.all(), stream=response,
                                       fields=['id', 'name'], delete=False)
 
@@ -115,9 +115,9 @@ class ShapefileSerializer(TestCase):
         self.serializer = ZipShapeSerializer()
         PathFactory.create()
         response = HttpResponse()
-        with self.assertRaisesRegexp(ValueError, "More than one geodjango geometry field found, please specify which "
-                                                 "to use by name using the 'geo_field' keyword. "
-                                                 "Available fields are: 'geom_3d, geom, geom_cadastre'"):
+        with self.assertRaisesRegex(ValueError, "More than one geodjango geometry field found, please specify which "
+                                                "to use by name using the 'geo_field' keyword. "
+                                                "Available fields are: 'geom_3d, geom, geom_cadastre'"):
             self.serializer.serialize(Path.objects.all(), stream=response,
                                       fields=['id', 'name'], delete=False)
         app_settings['GEOM_FIELD_NAME'] = 'geom'
@@ -127,8 +127,8 @@ class ShapefileSerializer(TestCase):
         self.serializer = ZipShapeSerializer()
         PathFactory.create()
         response = HttpResponse()
-        with self.assertRaisesRegexp(ValueError, "Geodjango geometry field not found with the name 'do_not_exist', "
-                                                 "fields available are: 'geom_3d, geom, geom_cadastre'"):
+        with self.assertRaisesRegex(ValueError, "Geodjango geometry field not found with the name 'do_not_exist', "
+                                                "fields available are: 'geom_3d, geom, geom_cadastre'"):
             self.serializer.serialize(Path.objects.all(), stream=response,
                                       fields=['id', 'name'], delete=False)
         app_settings['GEOM_FIELD_NAME'] = 'geom'
@@ -157,16 +157,16 @@ class CSVSerializerTests(TestCase):
     def test_content(self):
         self.serializer.serialize(Dive.objects.all(), stream=self.stream,
                                   fields=['id', 'name'], delete=False)
-        self.assertEquals(self.stream.getvalue(),
-                          ('ID,Name\r\n{},'
-                           'Test\r\n').format(self.point.pk))
+        self.assertEqual(self.stream.getvalue(),
+                         ('ID,Name\r\n{},'
+                          'Test\r\n').format(self.point.pk))
 
     @override_settings(USE_L10N=True)
     def test_content_fr(self):
         translation.activate('fr')
         self.serializer.serialize(Dive.objects.all(), stream=self.stream,
                                   fields=['id', 'name'], delete=False)
-        self.assertEquals(self.stream.getvalue(),
-                          ('ID,Nom\r\n{},'
-                           'Test\r\n').format(self.point.pk))
+        self.assertEqual(self.stream.getvalue(),
+                         ('ID,Nom\r\n{},'
+                          'Test\r\n').format(self.point.pk))
         translation.deactivate()

@@ -6,6 +6,8 @@ import os
 import shutil
 import time
 from datetime import datetime
+from urllib.parse import quote
+
 from freezegun import freeze_time
 from io import StringIO
 from unittest.mock import patch
@@ -18,7 +20,6 @@ from django.test.utils import override_settings
 from django.utils import html
 from django.utils.encoding import force_text
 from django.utils.http import http_date
-from django.utils.six.moves.urllib.parse import quote
 from django.utils.timezone import utc
 from django.utils.translation import ugettext_lazy as _
 
@@ -184,7 +185,7 @@ class MapEntityTest(TestCase):
         for line in lines:
             for col in line:
                 # the col should not contains any html tags
-                self.assertEquals(force_text(col), html.strip_tags(force_text(col)))
+                self.assertEqual(force_text(col), html.strip_tags(force_text(col)))
 
     def _post_form(self, url):
         # no data

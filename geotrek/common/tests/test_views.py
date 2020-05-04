@@ -50,19 +50,19 @@ class ViewsImportTest(TestCase):
         self.user.is_superuser = True
         self.user.save()
 
-        real_archive = open('geotrek/common/tests/data/test.zip', 'rb')
-        url = reverse('common:import_dataset')
+        with open('geotrek/common/tests/data/test.zip', 'rb') as real_archive:
+            url = reverse('common:import_dataset')
 
-        response_real = self.client.post(
-            url, {
-                'upload-file': 'Upload',
-                'with-file-parser': '1',
-                'with-file-zipfile': real_archive,
-                'with-file-encoding': 'UTF-8'
-            }
-        )
-        self.assertEqual(response_real.status_code, 200)
-        self.assertNotContains(response_real, "File must be of ZIP type.")
+            response_real = self.client.post(
+                url, {
+                    'upload-file': 'Upload',
+                    'with-file-parser': '1',
+                    'with-file-zipfile': real_archive,
+                    'with-file-encoding': 'UTF-8'
+                }
+            )
+            self.assertEqual(response_real.status_code, 200)
+            self.assertNotContains(response_real, "File must be of ZIP type.")
 
     def test_import_from_file_bad_file(self):
         self.user.is_superuser = True
