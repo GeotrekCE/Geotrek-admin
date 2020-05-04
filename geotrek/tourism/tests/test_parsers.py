@@ -104,7 +104,7 @@ class ParserTests(TranslationResetMixin, TestCase):
             call_command('import', 'geotrek.tourism.tests.test_parsers.EauViveParser', verbosity=2)
 
     @mock.patch('requests.get')
-    @override_settings(PARSER_SLEEP_TIME=0)
+    @override_settings(PARSER_RETRY_SLEEP_TIME=0)
     @mock.patch('geotrek.common.parsers.AttachmentParserMixin.download_attachments', False)
     def test_create_content_espritparc_retry(self, mocked):
         def mocked_json():
@@ -132,7 +132,7 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(TouristicContent.objects.count(), 1)
 
     @mock.patch('requests.get')
-    @override_settings(PARSER_SLEEP_TIME=0)
+    @override_settings(PARSER_RETRY_SLEEP_TIME=0)
     def test_create_content_espritparc_retry_fail(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeContent.json')
