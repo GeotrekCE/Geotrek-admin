@@ -5,7 +5,7 @@ from django.test.utils import override_settings
 from geotrek.core import factories as core_factories
 from geotrek.tourism import factories as tourism_factories
 from geotrek.trekking import factories as trekking_factories
-from geotrek.tourism.factories import InformationDeskTypeFactory
+from geotrek.tourism.factories import InformationDeskTypeFactory, InformationDeskFactory
 
 import datetime
 

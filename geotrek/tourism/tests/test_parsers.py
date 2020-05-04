@@ -228,11 +228,11 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(content.website, "http://www.queyraft.com")
         self.assertEqual(round(content.geom.x), 1000157)
         self.assertEqual(round(content.geom.y), 6413576)
-        self.assertEqual(content.practical_info[:39], "<b>Ouverture:</b><br>Du 01/05 au 31/10.")
+        self.assertEqual(content.practical_info_fr[:39], "<b>Ouverture:</b><br>Du 01/05 au 31/10.")
         self.assertTrue("<br><b>Capacité totale:</b><br>10<br>" in content.practical_info_fr)
         self.assertTrue("><br><b>Services:</b><br>Test, Test2, Test3, Test4<br>" in content.practical_info_fr)
         self.assertIn("<b>Tarifs:</b><br>A partir de 30 € par personne<br>", content.practical_info_fr)
-        self.assertIn("<b>Accès:</b><br>TestFr<br>", content.practical_info)
+        self.assertIn("<b>Accès:</b><br>TestFr<br>", content.practical_info_fr)
         self.assertTrue("><br><b>Services:</b><br>Test EN, Test2 EN, Test3 EN, Test4 EN<br>"
                         in content.practical_info_en)
         self.assertTrue("><br><b>Services:</b><br>Test, Test2, Test3, Test4<br>" in content.practical_info_fr)
