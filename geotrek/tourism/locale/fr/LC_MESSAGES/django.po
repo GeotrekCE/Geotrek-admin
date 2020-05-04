@@ -8,16 +8,17 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-08-29 11:38+0200\n"
-"PO-Revision-Date: 2015-10-22 14:33+0200\n"
-"Last-Translator: jean-etienne.castagnede@makina-corpus.com\n"
-"Language-Team: \n"
+"PO-Revision-Date: 2020-04-22 07:36+0000\n"
+"Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/"
+"geotrek-admin/tourism/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.0.1\n"
 "Project-Id-Verésion: PACKAGE VERSION\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 1.8.4\n"
 
 msgid "Tourism"
 msgstr "Tourisme"
@@ -68,7 +69,7 @@ msgid "Email"
 msgstr "Email"
 
 msgid "Website"
-msgstr "Site Web"
+msgstr "Site web"
 
 msgid "Photo"
 msgstr "Photo"
@@ -204,10 +205,10 @@ msgid "Source"
 msgstr "Source"
 
 msgid "Portal"
-msgstr ""
+msgstr "Portail"
 
 msgid "External id"
-msgstr "Identifiant externe"
+msgstr "ID externe"
 
 msgid "Reservation ID"
 msgstr "ID de réservation"
@@ -304,15 +305,19 @@ msgstr "Évènements touristiques publiés"
 
 #, python-brace-format
 msgid "Failed to download {url}. HTTP status code {status_code}"
-msgstr ""
+msgstr "Téléchargement impossible de {url}. Code d'erreur HTTP {status_code}"
 
 #, python-brace-format
 msgid "Type 1 '{subval}' does not exist for category '{cat}'. Please add it"
 msgstr ""
+"Le type 1 \"{subval}\" n'existe pas pour la catégorie \"{cat}\". Vous devez "
+"l'ajouter."
 
 #, python-brace-format
 msgid "Type 2 '{subval}' does not exist for category '{cat}'. Please add it"
 msgstr ""
+"Le type 2 \"{subval}\" n'existe pas pour la catégorie \"{cat}\". Vous devrez "
+"l'ajouter."
 
 msgid "Add a new touristic content"
 msgstr "Ajouter un contenu touristique"
