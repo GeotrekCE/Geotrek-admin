@@ -137,7 +137,7 @@ class Command(BaseCommand):
 
         if self.verbosity == 2:
             self.stdout.write("\x1b[36m**\x1b[0m \x1b[1m{name}\x1b[0m ...".format(name=zipname), ending="")
-            self.stdout.flush()
+            self.stdout._out.flush()
 
         global_extent = settings.LEAFLET_CONFIG['SPATIAL_EXTENT']
 
@@ -161,7 +161,7 @@ class Command(BaseCommand):
 
         if self.verbosity == 2:
             self.stdout.write("{name} ...".format(name=zipname), ending="")
-            self.stdout.flush()
+            self.stdout._out.flush()
 
         trek_file = os.path.join(self.tmp_root, zipname)
 
@@ -191,7 +191,7 @@ class Command(BaseCommand):
     def sync_view(self, lang, view, name, url='/', params={}, zipfile=None, fix2028=False, **kwargs):
         if self.verbosity == 2:
             self.stdout.write("{lang} {name} ...".format(lang=lang, name=name), ending="")
-            self.stdout.flush()
+            self.stdout._out.flush()
         fullname = os.path.join(self.tmp_root, name)
         self.mkdirs(fullname)
         request = self.factory.get(url, params, HTTP_HOST=self.host, secure=self.secure)
