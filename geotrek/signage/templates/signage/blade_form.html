@@ -5,7 +5,7 @@
     <form id="mainform" action="{% if object.pk %}{{ object.get_update_url }}{% else %}{{ object.get_add_url }}{% endif %}" class="form-horizontal" method="POST">
     {% crispy form %}
     <h4>{% trans "Lines" %}</h4>
-    <fieldset class="formset">
+    <fieldset class="scrollable formset">
         {{ line_formset.non_form_errors }}
         {{ line_formset.management_form }}
         {% for line_form in line_formset %}
