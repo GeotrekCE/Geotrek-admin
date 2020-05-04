@@ -18,6 +18,7 @@ from geotrek.signage.models import Signage, Blade, Line
 
 
 class LineForm(forms.ModelForm):
+
     def __init__(self, *args, **kwargs):
         super(LineForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -185,7 +186,8 @@ class SignageForm(BaseSignageForm):
             'code',
             'printed_elevation',
             'manager',
-            'sealing'
+            'sealing',
+            css_class="scrollable"
         )
     ]
 
