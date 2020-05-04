@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from leaflet.forms.widgets import LeafletWidget
 
-from crispy_forms.layout import Div, Layout
+from crispy_forms.layout import Div, Fieldset, Layout
 from crispy_forms.helper import FormHelper
 
 from geotrek.common.forms import CommonForm
@@ -44,6 +44,18 @@ class BaseBladeForm(CommonForm):
     topology = TopologyField(label="")
     geomfields = ['topology']
     leftpanel_scrollable = True
+
+    fieldslayout = [
+        Div(
+            'number',
+            'direction',
+            'type',
+            'condition',
+            'color',
+            Fieldset(_('Line')),
+            css_class="scrollable",
+        )
+    ]
 
     def __init__(self, *args, **kwargs):
         super(BaseBladeForm, self).__init__(*args, **kwargs)
@@ -89,6 +101,18 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
         topology = TopologyField(label="")
         geomfields = ['topology']
         leftpanel_scrollable = True
+
+        fieldslayout = [
+            Div(
+                'number',
+                'direction',
+                'type',
+                'condition',
+                'color',
+                Fieldset(_('Line')),
+                css_class="scrollable",
+            )
+        ]
 
         def __init__(self, *args, **kwargs):
             super(BladeForm, self).__init__(*args, **kwargs)
