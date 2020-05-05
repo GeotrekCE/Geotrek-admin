@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from leaflet.forms.widgets import LeafletWidget
 
-from crispy_forms.layout import Div, Layout
+from crispy_forms.layout import Div, Fieldset, Layout
 from crispy_forms.helper import FormHelper
 
 from geotrek.common.forms import CommonForm
@@ -18,6 +18,7 @@ from geotrek.signage.models import Signage, Blade, Line
 
 
 class LineForm(forms.ModelForm):
+
     def __init__(self, *args, **kwargs):
         super(LineForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -42,7 +43,17 @@ LineFormset = inlineformset_factory(Blade, Line, form=LineForm, extra=1)
 class BaseBladeForm(CommonForm):
     topology = TopologyField(label="")
     geomfields = ['topology']
-    leftpanel_scrollable = True
+
+    fieldslayout = [
+        Div(
+            'number',
+            'direction',
+            'type',
+            'condition',
+            'color',
+            Fieldset(_('Lines')),
+        )
+    ]
 
     def __init__(self, *args, **kwargs):
         super(BaseBladeForm, self).__init__(*args, **kwargs)
@@ -87,7 +98,17 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
     class BladeForm(CommonForm):
         topology = TopologyField(label="")
         geomfields = ['topology']
-        leftpanel_scrollable = True
+
+        fieldslayout = [
+            Div(
+                'number',
+                'direction',
+                'type',
+                'condition',
+                'color',
+                Fieldset(_('Lines')),
+            )
+        ]
 
         def __init__(self, *args, **kwargs):
             super(BladeForm, self).__init__(*args, **kwargs)
@@ -153,7 +174,6 @@ else:
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
     class BaseSignageForm(BaseInfrastructureForm):
-        leftpanel_scrollable = False
         geomfields = ['topology']
 
         def __init__(self, *args, **kwargs):
@@ -167,7 +187,6 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
 
 else:
     class BaseSignageForm(BaseInfrastructureForm):
-        leftpanel_scrollable = False
         geomfields = ['geom']
 
 
@@ -185,7 +204,7 @@ class SignageForm(BaseSignageForm):
             'code',
             'printed_elevation',
             'manager',
-            'sealing'
+            'sealing',
         )
     ]
 

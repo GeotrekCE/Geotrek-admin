@@ -203,10 +203,6 @@ select[multiple] {
 
 /**** Maps ****/
 
-.leaflet-container {
-    min-height: 600px;
-}
-
 .map-fogged .leaflet-container {
      background-color: #000;
 }
