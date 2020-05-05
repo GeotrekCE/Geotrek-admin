@@ -43,7 +43,6 @@ LineFormset = inlineformset_factory(Blade, Line, form=LineForm, extra=1)
 class BaseBladeForm(CommonForm):
     topology = TopologyField(label="")
     geomfields = ['topology']
-    leftpanel_scrollable = True
 
     fieldslayout = [
         Div(
@@ -53,7 +52,6 @@ class BaseBladeForm(CommonForm):
             'condition',
             'color',
             Fieldset(_('Line')),
-            css_class="scrollable",
         )
     ]
 
@@ -100,7 +98,6 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
     class BladeForm(CommonForm):
         topology = TopologyField(label="")
         geomfields = ['topology']
-        leftpanel_scrollable = True
 
         fieldslayout = [
             Div(
@@ -110,7 +107,6 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
                 'condition',
                 'color',
                 Fieldset(_('Line')),
-                css_class="scrollable",
             )
         ]
 
@@ -178,7 +174,6 @@ else:
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
     class BaseSignageForm(BaseInfrastructureForm):
-        leftpanel_scrollable = False
         geomfields = ['topology']
 
         def __init__(self, *args, **kwargs):
@@ -192,7 +187,6 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
 
 else:
     class BaseSignageForm(BaseInfrastructureForm):
-        leftpanel_scrollable = False
         geomfields = ['geom']
 
 
@@ -211,7 +205,6 @@ class SignageForm(BaseSignageForm):
             'printed_elevation',
             'manager',
             'sealing',
-            css_class="scrollable"
         )
     ]
 
