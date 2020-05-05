@@ -169,6 +169,88 @@ class ZoningLayersUpdateTest(TestCase):
         self.assertEqual(ra2.restrictedareaedge_set.count(), 0)
         self.assertEqual(Topology.objects.filter(pk=t_ra2.pk).count(), 0)
 
+    def test_couches_sig_link_path_loop(self):
+        # Fake restricted areas
+        ra1 = RestrictedAreaFactory.create(geom=MultiPolygon(
+            Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)))))
+        ra2 = RestrictedAreaFactory.create(geom=MultiPolygon(
+            Polygon(((0, 1), (2, 1), (2, 2), (0, 2), (0, 1)))))
+
+        # Fake city
+        c = City(code='005178', name='Trifouillis-les-marmottes',
+                 geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)),
+                                           srid=settings.SRID)))
+        c.save()
+
+        # Fake paths in these areas
+        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)))
+        p.save()
+
+        # This should results in 3 PathAggregation (2 for RA1, 1 for RA2, 1 for City)
+        self.assertEqual(p.aggregations.count(), 4)
+        self.assertEqual(p.topology_set.count(), 4)
+
+        # PathAgg is plain for City
+        t_c = c.cityedge_set.get().topo_object
+        pa = c.cityedge_set.get().aggregations.get()
+        self.assertEqual(pa.start_position, 0.0)
+        self.assertEqual(pa.end_position, 1.0)
+
+        # PathAgg is splitted for RA
+        self.assertEqual(ra1.restrictedareaedge_set.count(), 2)
+        self.assertEqual(ra2.restrictedareaedge_set.count(), 1)
+        rae1a = ra1.restrictedareaedge_set.filter(aggregations__start_position=0).get()
+        rae1b = ra1.restrictedareaedge_set.filter(aggregations__end_position=1).get()
+        pa1a = rae1a.aggregations.get()
+        pa1b = rae1b.aggregations.get()
+        t_ra1a = rae1a.topo_object
+        t_ra1b = rae1b.topo_object
+        pa2 = ra2.restrictedareaedge_set.get().aggregations.get()
+        t_ra2 = ra2.restrictedareaedge_set.get().topo_object
+        self.assertAlmostEqual(pa1a.start_position, 0.0)
+        self.assertAlmostEqual(pa1a.end_position, 0.125)
+        self.assertAlmostEqual(pa1b.start_position, 0.625)
+        self.assertAlmostEqual(pa1b.end_position, 1.0)
+        self.assertAlmostEqual(pa2.start_position, 0.125)
+        self.assertAlmostEqual(pa2.end_position, 0.625)
+
+        # Ensure everything is in order after update
+        p.geom = LineString((0.5, 0.5), (1.5, 0.5))
+        p.save()
+        self.assertEqual(p.aggregations.count(), 2)
+        self.assertEqual(p.topology_set.count(), 2)
+        # Topology are re-created at DB-level after any update
+        self.assertRaises(Topology.DoesNotExist,
+                          Topology.objects.get, pk=t_c.pk)
+        self.assertRaises(Topology.DoesNotExist,
+                          Topology.objects.get, pk=t_ra1a.pk)
+        self.assertRaises(Topology.DoesNotExist,
+                          Topology.objects.get, pk=t_ra1b.pk)
+        self.assertRaises(Topology.DoesNotExist,
+                          Topology.objects.get, pk=t_ra2.pk)
+        self.assertEqual(ra1.restrictedareaedge_set.count(), 1)
+        # a new association exists for C
+        t_c = c.cityedge_set.get().topo_object
+        self.assertEqual(Topology.objects.filter(pk=t_c.pk).count(), 1)
+        # a new association exists for RA1
+        t_ra1 = ra1.restrictedareaedge_set.get().topo_object
+        self.assertEqual(Topology.objects.filter(pk=t_ra1.pk).count(), 1)
+        pa1 = ra1.restrictedareaedge_set.get().aggregations.get()
+        self.assertEqual(pa1.start_position, 0.0)
+        self.assertEqual(pa1.end_position, 1.0)
+        # RA2 is not connected anymore
+        self.assertEqual(ra2.restrictedareaedge_set.count(), 0)
+        self.assertEqual(Topology.objects.filter(pk=t_ra2.pk).count(), 0)
+
+        # All intermediary objects should be cleaned on delete
+        p.delete()
+        self.assertEqual(c.cityedge_set.count(), 0)
+        self.assertEqual(Topology.objects.filter(pk=t_c.pk).count(), 0)
+        self.assertEqual(ra1.restrictedareaedge_set.count(), 0)
+        self.assertEqual(Topology.objects.filter(pk=t_ra1.pk).count(), 0)
+        self.assertEqual(ra2.restrictedareaedge_set.count(), 0)
+        self.assertEqual(Topology.objects.filter(pk=t_ra2.pk).count(), 0)
+
 
 class ZoningModelsTest(TestCase):
     def test_city(self):
