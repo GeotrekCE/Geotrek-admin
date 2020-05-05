@@ -2,15 +2,26 @@
 CHANGELOG
 =========
 
-2.33.4.dev0
+2.33.4 (2020-05-04)
 -------------------
+
+**Minor changes**
+
+- Improve blade CSV export
 
 **Bug fixes**
 
+- Fix ordering of blades
+- Fix empty attachment link in admin list
+- Fix some french translations
+- Fix redirections when downloading attachments in parsers
+- Fix migrations when DB contains a deleted blade
+- Fix stdout flush in sync commands
 
 **Maintenance**
 
 - Upgrade from Django 2.0 to Django 2.2
+- Fix deprecation warnings
 
 
 2.33.3 (2020-04-28)
