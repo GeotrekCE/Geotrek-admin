@@ -51,7 +51,7 @@ class BaseBladeForm(CommonForm):
             'type',
             'condition',
             'color',
-            Fieldset(_('Line')),
+            Fieldset(_('Lines')),
         )
     ]
 
