@@ -106,7 +106,7 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
                 'type',
                 'condition',
                 'color',
-                Fieldset(_('Line')),
+                Fieldset(_('Lines')),
             )
         ]
 
