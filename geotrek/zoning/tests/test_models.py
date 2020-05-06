@@ -1,3 +1,4 @@
+from unittest import skipIf
 from django.test import TestCase
 from django.conf import settings
 from django.contrib.gis.geos import LineString, Polygon, MultiPolygon
@@ -88,6 +89,7 @@ class ZoningLayersUpdateTest(TestCase):
         self.assertEqual(p3.aggregations.count(), 1)
         self.assertEqual(p4.aggregations.count(), 2)
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_city_with_topo(self):
         """
         +-----------------+
@@ -108,6 +110,7 @@ class ZoningLayersUpdateTest(TestCase):
         signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
         self.assertEqual(signage.city_edges.count(), 1)
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_city_with_topo_2(self):
         """
                  S
@@ -127,6 +130,7 @@ class ZoningLayersUpdateTest(TestCase):
         signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
         self.assertEqual(signage.city_edges.count(), 0)
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_city_with_topo_3(self):
         """
              +-------+
@@ -145,6 +149,7 @@ class ZoningLayersUpdateTest(TestCase):
         signage = SignageFactory.create(paths=[(p, 1, 1)])
         self.assertEqual(signage.city_edges.count(), 1)
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_city_with_topo_on_loop(self):
         """
         +-----------------+
@@ -165,6 +170,7 @@ class ZoningLayersUpdateTest(TestCase):
         signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
         self.assertEqual(signage.city_edges.count(), 1)
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_city_with_topo_on_loop_2(self):
         """
                      S
@@ -184,6 +190,7 @@ class ZoningLayersUpdateTest(TestCase):
         signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
         self.assertEqual(signage.city_edges.count(), 0)
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_city_with_topo_on_loop_3(self):
         """
 
