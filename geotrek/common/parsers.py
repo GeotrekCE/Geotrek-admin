@@ -470,7 +470,7 @@ class Parser(object):
         assert try_get > 0
         while try_get:
             action = getattr(requests, verb)
-            response = action(url, params=params, auth=authent)
+            response = action(url, allow_redirects=True, params=params, auth=authent)
             if response.status_code in settings.PARSER_RETRY_HTTP_STATUS:
                 logger.info("Failed to fetch url {}. Retrying ...".format(url))
                 sleep(settings.PARSER_RETRY_SLEEP_TIME)
@@ -587,7 +587,7 @@ class AttachmentParserMixin(object):
 
         if parsed_url.scheme == 'http' or parsed_url.scheme == 'https':
             try:
-                response = self.request_or_retry(url, verb='head', params={'allow_redirects': True})
+                response = self.request_or_retry(url, verb='head')
             except requests.exceptions.RequestException as e:
                 raise ValueImportError('Failed to load attachment: {exc}'.format(exc=e))
             size = response.headers.get('content-length')
@@ -606,7 +606,7 @@ class AttachmentParserMixin(object):
         else:
             if self.download_attachments:
                 try:
-                    response = self.request_or_retry(url, params={'allow_redirects': True})
+                    response = self.request_or_retry(url)
                 except requests.exceptions.RequestException as e:
                     raise ValueImportError('Failed to load attachment: {exc}'.format(exc=e))
                 if response.status_code != requests.codes.ok:
