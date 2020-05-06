@@ -1,3 +1,4 @@
+from unittest import skipIf
 from django.test import TestCase
 from django.conf import settings
 from django.contrib.gis.geos import LineString, Polygon, MultiPolygon
@@ -5,6 +6,7 @@ from django.contrib.gis.geos import LineString, Polygon, MultiPolygon
 from geotrek.core.models import Topology
 from geotrek.core.factories import PathFactory
 from geotrek.land.tests.test_views import EdgeHelperTest
+from geotrek.signage.factories import SignageFactory
 from geotrek.zoning.models import City
 from geotrek.zoning.factories import (DistrictEdgeFactory, CityEdgeFactory, CityFactory, DistrictFactory,
                                       RestrictedAreaFactory, RestrictedAreaTypeFactory, RestrictedAreaEdgeFactory)
@@ -87,7 +89,138 @@ class ZoningLayersUpdateTest(TestCase):
         self.assertEqual(p3.aggregations.count(), 1)
         self.assertEqual(p4.aggregations.count(), 2)
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_city_with_topo(self):
+        """
+        +-----------------+
+        |        S        |
+        |    +---x---+    |
+        |    |       |    | City
+        |    |p      |    |
+        |    O       O    |
+        |                 |
+        +-----------------+
+        """
+        c = City(code='005178', name='Trifouillis-les-marmottes',
+                 geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)),
+                                           srid=settings.SRID)))
+        c.save()
+        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5)))
+        p.save()
+        signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+        self.assertEqual(signage.city_edges.count(), 1)
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_city_with_topo_2(self):
+        """
+                 S
+             +---x---+
+         _ _ | _ _ _ | _ _
+        |    |p      |    |
+        |    O       O    | City
+        |                 |
+        +-----------------+
+        """
+        c = City(code='005178', name='Trifouillis-les-marmottes',
+                 geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)),
+                                           srid=settings.SRID)))
+        c.save()
+        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5)))
+        p.save()
+        signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+        self.assertEqual(signage.city_edges.count(), 0)
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_city_with_topo_3(self):
+        """
+             +-------+
+         _ _ | _ _ _ | _ _
+        |    |p      |    |
+        |    O       X S  | City
+        |                 |
+        +-----------------+
+        """
+        c = City(code='005178', name='Trifouillis-les-marmottes',
+                 geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)),
+                                           srid=settings.SRID)))
+        c.save()
+        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5)))
+        p.save()
+        signage = SignageFactory.create(paths=[(p, 1, 1)])
+        self.assertEqual(signage.city_edges.count(), 1)
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_city_with_topo_on_loop(self):
+        """
+        +-----------------+
+        |            S    |
+        |    +-------x    |
+        |    |       |    | City
+        |    |p      |    |
+        |    O-------+    |
+        |                 |
+        +-----------------+
+        """
+        c = City(code='005178', name='Trifouillis-les-marmottes',
+                 geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)),
+                                           srid=settings.SRID)))
+        c.save()
+        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)))
+        p.save()
+        signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+        self.assertEqual(signage.city_edges.count(), 1)
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_city_with_topo_on_loop_2(self):
+        """
+                     S
+             +-------x
+         _ _ | _ _ _ | _ _
+        |    |p      |    |
+        |    O-------+    | City
+        |                 |
+        +-----------------+
+        """
+        c = City(code='005178', name='Trifouillis-les-marmottes',
+                 geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)),
+                                           srid=settings.SRID)))
+        c.save()
+        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)))
+        p.save()
+        signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+        self.assertEqual(signage.city_edges.count(), 0)
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_city_with_topo_on_loop_3(self):
+        """
+
+             +-------+
+         _ _ | _ _ _ | _ _
+        |    |p      |    |
+        |    O-------x S  | City
+        |                 |
+        +-----------------+
+        """
+        c = City(code='005178', name='Trifouillis-les-marmottes',
+                 geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)),
+                                           srid=settings.SRID)))
+        c.save()
+        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)))
+        p.save()
+        signage = SignageFactory.create(paths=[(p, 0.75, 0.75)])
+        self.assertEqual(signage.city_edges.count(), 1)
+
     def test_couches_sig_link(self):
+        """
+        +-----------------+    -
+        |                 |ra2  |
+        |    +-------+    |     |
+        | _ _|  _ _ _|_ _ |      - C
+        |    |p      |    |     |
+        |    O       O    |     |
+        |                 |ra1  |
+        +-----------------+    -
+        """
         # Fake restricted areas
         ra1 = RestrictedAreaFactory.create(geom=MultiPolygon(
             Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)))))
@@ -131,6 +264,98 @@ class ZoningLayersUpdateTest(TestCase):
         self.assertAlmostEqual(pa1b.end_position, 1.0)
         self.assertAlmostEqual(pa2.start_position, 0.5 / 3)
         self.assertAlmostEqual(pa2.end_position, 2.5 / 3)
+
+        # Ensure everything is in order after update
+        p.geom = LineString((0.5, 0.5), (1.5, 0.5))
+        p.save()
+        self.assertEqual(p.aggregations.count(), 2)
+        self.assertEqual(p.topology_set.count(), 2)
+        # Topology are re-created at DB-level after any update
+        self.assertRaises(Topology.DoesNotExist,
+                          Topology.objects.get, pk=t_c.pk)
+        self.assertRaises(Topology.DoesNotExist,
+                          Topology.objects.get, pk=t_ra1a.pk)
+        self.assertRaises(Topology.DoesNotExist,
+                          Topology.objects.get, pk=t_ra1b.pk)
+        self.assertRaises(Topology.DoesNotExist,
+                          Topology.objects.get, pk=t_ra2.pk)
+        self.assertEqual(ra1.restrictedareaedge_set.count(), 1)
+        # a new association exists for C
+        t_c = c.cityedge_set.get().topo_object
+        self.assertEqual(Topology.objects.filter(pk=t_c.pk).count(), 1)
+        # a new association exists for RA1
+        t_ra1 = ra1.restrictedareaedge_set.get().topo_object
+        self.assertEqual(Topology.objects.filter(pk=t_ra1.pk).count(), 1)
+        pa1 = ra1.restrictedareaedge_set.get().aggregations.get()
+        self.assertEqual(pa1.start_position, 0.0)
+        self.assertEqual(pa1.end_position, 1.0)
+        # RA2 is not connected anymore
+        self.assertEqual(ra2.restrictedareaedge_set.count(), 0)
+        self.assertEqual(Topology.objects.filter(pk=t_ra2.pk).count(), 0)
+
+        # All intermediary objects should be cleaned on delete
+        p.delete()
+        self.assertEqual(c.cityedge_set.count(), 0)
+        self.assertEqual(Topology.objects.filter(pk=t_c.pk).count(), 0)
+        self.assertEqual(ra1.restrictedareaedge_set.count(), 0)
+        self.assertEqual(Topology.objects.filter(pk=t_ra1.pk).count(), 0)
+        self.assertEqual(ra2.restrictedareaedge_set.count(), 0)
+        self.assertEqual(Topology.objects.filter(pk=t_ra2.pk).count(), 0)
+
+    def test_couches_sig_link_path_loop(self):
+        """
+        +-----------------+    -
+        |                 |ra2  |
+        |    +-------+    |     |
+        | _ _|  _ _ _|_ _ |      - C
+        |    |p      |    |     |
+        |    O-------+    |     |
+        |                 |ra1  |
+        +-----------------+    -
+        """
+        # Fake restricted areas
+        ra1 = RestrictedAreaFactory.create(geom=MultiPolygon(
+            Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)))))
+        ra2 = RestrictedAreaFactory.create(geom=MultiPolygon(
+            Polygon(((0, 1), (2, 1), (2, 2), (0, 2), (0, 1)))))
+
+        # Fake city
+        c = City(code='005178', name='Trifouillis-les-marmottes',
+                 geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)),
+                                           srid=settings.SRID)))
+        c.save()
+
+        # Fake paths in these areas
+        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)))
+        p.save()
+
+        # This should results in 3 PathAggregation (2 for RA1, 1 for RA2, 1 for City)
+        self.assertEqual(p.aggregations.count(), 4)
+        self.assertEqual(p.topology_set.count(), 4)
+
+        # PathAgg is plain for City
+        t_c = c.cityedge_set.get().topo_object
+        pa = c.cityedge_set.get().aggregations.get()
+        self.assertEqual(pa.start_position, 0.0)
+        self.assertEqual(pa.end_position, 1.0)
+
+        # PathAgg is splitted for RA
+        self.assertEqual(ra1.restrictedareaedge_set.count(), 2)
+        self.assertEqual(ra2.restrictedareaedge_set.count(), 1)
+        rae1a = ra1.restrictedareaedge_set.filter(aggregations__start_position=0).get()
+        rae1b = ra1.restrictedareaedge_set.filter(aggregations__end_position=1).get()
+        pa1a = rae1a.aggregations.get()
+        pa1b = rae1b.aggregations.get()
+        t_ra1a = rae1a.topo_object
+        t_ra1b = rae1b.topo_object
+        pa2 = ra2.restrictedareaedge_set.get().aggregations.get()
+        t_ra2 = ra2.restrictedareaedge_set.get().topo_object
+        self.assertAlmostEqual(pa1a.start_position, 0.0)
+        self.assertAlmostEqual(pa1a.end_position, 0.125)
+        self.assertAlmostEqual(pa1b.start_position, 0.625)
+        self.assertAlmostEqual(pa1b.end_position, 1.0)
+        self.assertAlmostEqual(pa2.start_position, 0.125)
+        self.assertAlmostEqual(pa2.end_position, 0.625)
 
         # Ensure everything is in order after update
         p.geom = LineString((0.5, 0.5), (1.5, 0.5))
