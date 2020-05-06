@@ -162,7 +162,7 @@ BEGIN
     END IF;
 
     -- Add new topology
-    FOR rec IN EXECUTE 'SELECT id, egeom AS geom, ST_LineLocatePoint(tgeom, ST_StartPoint(egeom)) AS pk_a, ST_LineLocatePoint(tgeom, ST_EndPoint(egeom)) AS pk_b FROM (SELECT id, geom AS tgeom, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS egeom FROM core_path WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
+    FOR rec IN EXECUTE 'SELECT id, egeom AS geom, ST_LineLocatePoint(tgeom, ST_StartPoint(egeom)) AS pk_a, CASE WHEN ST_EQUALS(ST_EndPoint(tgeom), ST_StartPoint(egeom)) THEN 1 ELSE ST_LineLocatePoint(tgeom, ST_EndPoint(egeom)) END AS pk_b FROM (SELECT id, geom AS tgeom, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS egeom FROM core_path WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
     LOOP
         IF rec.pk_a IS NOT NULL AND rec.pk_b IS NOT NULL THEN
             INSERT INTO core_topology (date_insert, date_update, kind, "offset", length, geom, deleted) VALUES (now(), now(), kind_name, 0, 0, rec.geom, FALSE) RETURNING id INTO eid;
