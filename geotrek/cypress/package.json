@@ -1,0 +1,11 @@
+{
+  "name": "geotrek-tests-cypress",
+  "version": "0.0.1",
+  "scripts": {
+    "test": ""
+  },
+  "dependencies": {
+    "leaflet": "0.7.7",
+    "cypress": "4.5.0"
+  }
+}
