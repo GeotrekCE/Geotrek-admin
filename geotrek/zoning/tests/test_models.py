@@ -5,6 +5,7 @@ from django.contrib.gis.geos import LineString, Polygon, MultiPolygon
 from geotrek.core.models import Topology
 from geotrek.core.factories import PathFactory
 from geotrek.land.tests.test_views import EdgeHelperTest
+from geotrek.signage.factories import SignageFactory
 from geotrek.zoning.models import City
 from geotrek.zoning.factories import (DistrictEdgeFactory, CityEdgeFactory, CityFactory, DistrictFactory,
                                       RestrictedAreaFactory, RestrictedAreaTypeFactory, RestrictedAreaEdgeFactory)
@@ -87,7 +88,132 @@ class ZoningLayersUpdateTest(TestCase):
         self.assertEqual(p3.aggregations.count(), 1)
         self.assertEqual(p4.aggregations.count(), 2)
 
+    def test_city_with_topo(self):
+        """
+        +-----------------+
+        |        S        |
+        |    +---x---+    |
+        |    |       |    | City
+        |    |p      |    |
+        |    O       O    |
+        |                 |
+        +-----------------+
+        """
+        c = City(code='005178', name='Trifouillis-les-marmottes',
+                 geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)),
+                                           srid=settings.SRID)))
+        c.save()
+        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5)))
+        p.save()
+        signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+        self.assertEqual(signage.city_edges.count(), 1)
+
+    def test_city_with_topo_2(self):
+        """
+                 S
+             +---x---+
+         _ _ | _ _ _ | _ _
+        |    |p      |    |
+        |    O       O    | City
+        |                 |
+        +-----------------+
+        """
+        c = City(code='005178', name='Trifouillis-les-marmottes',
+                 geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)),
+                                           srid=settings.SRID)))
+        c.save()
+        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5)))
+        p.save()
+        signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+        self.assertEqual(signage.city_edges.count(), 0)
+
+    def test_city_with_topo_3(self):
+        """
+             +-------+
+         _ _ | _ _ _ | _ _
+        |    |p      |    |
+        |    O       X S  | City
+        |                 |
+        +-----------------+
+        """
+        c = City(code='005178', name='Trifouillis-les-marmottes',
+                 geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)),
+                                           srid=settings.SRID)))
+        c.save()
+        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5)))
+        p.save()
+        signage = SignageFactory.create(paths=[(p, 1, 1)])
+        self.assertEqual(signage.city_edges.count(), 1)
+
+    def test_city_with_topo_on_loop(self):
+        """
+        +-----------------+
+        |            S    |
+        |    +-------x    |
+        |    |       |    | City
+        |    |p      |    |
+        |    O-------+    |
+        |                 |
+        +-----------------+
+        """
+        c = City(code='005178', name='Trifouillis-les-marmottes',
+                 geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)),
+                                           srid=settings.SRID)))
+        c.save()
+        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)))
+        p.save()
+        signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+        self.assertEqual(signage.city_edges.count(), 1)
+
+    def test_city_with_topo_on_loop_2(self):
+        """
+                     S
+             +-------x
+         _ _ | _ _ _ | _ _
+        |    |p      |    |
+        |    O-------+    | City
+        |                 |
+        +-----------------+
+        """
+        c = City(code='005178', name='Trifouillis-les-marmottes',
+                 geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)),
+                                           srid=settings.SRID)))
+        c.save()
+        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)))
+        p.save()
+        signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+        self.assertEqual(signage.city_edges.count(), 0)
+
+    def test_city_with_topo_on_loop_3(self):
+        """
+
+             +-------+
+         _ _ | _ _ _ | _ _
+        |    |p      |    |
+        |    O-------x S  | City
+        |                 |
+        +-----------------+
+        """
+        c = City(code='005178', name='Trifouillis-les-marmottes',
+                 geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)),
+                                           srid=settings.SRID)))
+        c.save()
+        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)))
+        p.save()
+        signage = SignageFactory.create(paths=[(p, 0.75, 0.75)])
+        self.assertEqual(signage.city_edges.count(), 1)
+
     def test_couches_sig_link(self):
+        """
+        +-----------------+    -
+        |                 |ra2  |
+        |    +-------+    |     |
+        | _ _|  _ _ _|_ _ |      - C
+        |    |p      |    |     |
+        |    O       O    |     |
+        |                 |ra1  |
+        +-----------------+    -
+        """
         # Fake restricted areas
         ra1 = RestrictedAreaFactory.create(geom=MultiPolygon(
             Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)))))
@@ -170,6 +296,16 @@ class ZoningLayersUpdateTest(TestCase):
         self.assertEqual(Topology.objects.filter(pk=t_ra2.pk).count(), 0)
 
     def test_couches_sig_link_path_loop(self):
+        """
+        +-----------------+    -
+        |                 |ra2  |
+        |    +-------+    |     |
+        | _ _|  _ _ _|_ _ |      - C
+        |    |p      |    |     |
+        |    O-------+    |     |
+        |                 |ra1  |
+        +-----------------+    -
+        """
         # Fake restricted areas
         ra1 = RestrictedAreaFactory.create(geom=MultiPolygon(
             Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)))))
