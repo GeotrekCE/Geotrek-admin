@@ -15,7 +15,7 @@ from paperclip import views as paperclip_views
 urlpatterns = [
     path('', common_views.home, name='home'),
     path('login/', auth_views.LoginView.as_view(), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), {'next_page': settings.ROOT_URL + '/'}, name='logout',),
+    path('logout/', auth_views.LogoutView.as_view(next_page=settings.ROOT_URL + '/'), name='logout',),
 
     path('', include('geotrek.common.urls', namespace='common')),
     path('', include('geotrek.altimetry.urls', namespace='altimetry')),
