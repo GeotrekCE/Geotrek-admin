@@ -61,46 +61,36 @@
 
     {% if perms.signage.read_blade %}
         <h3>{% trans "Blades" %}</h3>
-        <table class="table">
+        <table class="table blades">
             {% if object.order_blades %}
                 <tr>
                     <th>{% trans "Code" %}</th>
                     <th>{% trans "Color" %}</th>
+                    <th>{% trans "Direction" %}</th>
+                    <th>{% trans "Condition" %}</th>
                     <th>{% trans "Text" %}</th>
                     <th>{% trans "Picto" %}</th>
                     <th>{% trans "Distance" %}</th>
                     <th>{% trans "Time" context "duration" %}</th>
-                    <th>{% trans "Direction" %}</th>
-                    <th>{% trans "Condition" %}</th>
                 </tr>
             {% endif %}
             {% for blade in object.order_blades %}
-                <tr>
-                    <td><a href="{% url 'signage:blade_detail' blade.pk %}">{{ blade }}</td>
-                    <td>{{ blade.color|default_if_none:"" }}</td>
-                    <td>
-                        {% for line in blade.order_lines.all %}
-                            {{ line.text }}{% if not forloop.last %}<br>{% endif %}
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for line in blade.order_lines.all %}
-                            {{ line.pictogram_name|default_if_none:"" }}{% if not forloop.last %}<br>{% endif %}
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for line in blade.order_lines.all %}
-                            {{ line.distance_pretty|default_if_none:"" }}{% if not forloop.last %}<br>{% endif %}
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for line in blade.order_lines.all %}
-                            {{ line.time_pretty|default_if_none:"" }}{% if not forloop.last %}<br>{% endif %}
-                        {% endfor %}
-                    </td>
-                    <td>{{ blade.direction }}</td>
-                    <td>{{ blade.condition|default_if_none:"" }}</td>
+            {% for line in blade.order_lines.all %}
+                <tr class="{% if not forloop.last %}dashed-line{% endif %}">
+                    {% if forloop.first %}
+                        <td><a href="{% url 'signage:blade_detail' blade.pk %}">{{ blade }}</a></td>
+                        <td>{{ blade.color|default_if_none:"" }}</td>
+                        <td>{{ blade.direction }}</td>
+                        <td>{{ blade.condition|default_if_none:"" }}</td>
+                    {% else %}
+                        <td></td><td></td><td></td><td></td>
+                    {% endif %}
+                    <td>{{ line.text }}</td>
+                    <td>{{ line.pictogram_name|default_if_none:"" }}</td>
+                    <td>{{ line.distance_pretty|default_if_none:"" }}</td>
+                    <td>{{ line.time_pretty|default_if_none:"" }}</td>
                 </tr>
+            {% endfor %}
             {% endfor %}
         </table>
         {% if view|class_name == "SignageDetail" %}
