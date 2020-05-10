@@ -10,13 +10,13 @@ Lastly, for a developer instance, please follow :ref:`the dedicated procedure <d
 Requirements
 ------------
 
-A first estimation of minimal required system resources are :
+A first estimation of minimal required system resources are:
 
 * 2 cores
 * 4 Go RAM
 * 20 Go disk space
 
-For big instances required system resources are :
+For big instances required system resources are:
 
 * 4 cores
 * 8 Go RAM or more
@@ -32,9 +32,11 @@ An Internet connection with open HTTP and HTTPS destination ports is required.
 Information to prepare before installation
 ------------------------------------------
 
-* The **domain name** to use to access to **Geotrek-admin** web site.
-* Rando server name: the **domain name** to use to access to **Geotrek-rando** web site (if appropriate).
-* Postgresql **host, port, user, password and DB name** if you use an external DB server.
+These information will be asked during the installation process and are the basic configuration of Geotrek-admin:
+
+* The **domain name** or **IP** to use to access to **Geotrek-admin** web application.
+* Rando server name: the **domain name** to use to access to **Geotrek-rando** website (optional, if appropriate).
+* PostgreSQL **host, port, user, password and DB name** if you use an external DB server.
 * The **SRID** of the projection to use to store geometries. The projection must match your geographic area and coordinates must be in meters.
 * The list of **languages** into which translation of contents will be made
 * The name or acronym of your **organization**
@@ -50,40 +52,49 @@ Run the following command in a shell prompt on your server:
    curl https://packages.geotrek.fr/install.sh | bash
 
 If you don't want to use a local database, you could run the following command instead.
-This will prevent the script to install postgresql server locally.
-Don't forget to enable postgis extension in your remote database before installation.
+This will prevent the script to install PostgreSQL server locally.
+Don't forget to enable PostGIS extension in your remote database before installation.
 
 ::
 
    curl https://packages.geotrek.fr/install.sh | bash -s - --nodb
 
-Then create the administrator account and connect to the web interface.
+Then create the application administrator account and connect to the web interface.
 
 ::
 
    sudo geotrek createsuperuser
 
-If you are not confident with the install.sh script, or if you are having troubles, you can do the same operations by hand:
+If you are not confident with the ``install.sh`` script, or if you are having troubles, you can do the same operations by hand:
 
-1. Add ``deb https://packages.geotrek.fr/ubuntu bionic main`` to apt sources list.
+1. Add ``deb https://packages.geotrek.fr/ubuntu bionic main`` to APT sources list.
 2. Add https://packages.geotrek.fr/geotrek.gpg.key to apt keyring.
 3. Run ``apt-get update``
-4. If you want to use a local database, install postgis package (before installing geotrek-admin, not at the same time).
-   If not, you must create database and enable postgis extension before.
-5. Install the geotrek-admin package.
+4. If you want to use a local database, install PostGIS package (before installing Geotrek-admin, not at the same time).
+   If not, you must create database and enable PostGIS extension before.
+5. Install the Geotrek-admin package (``sudo apt install geotrek-admin``).
 
+.. note ::
+
+    Geotrek-admin is automatically installed in ``/opt/geotrek-admin/`` directory.
+	
+	The installation automatically creates an internal ``geotrek`` linux user, owner of this directory
+
+    The Geotrek-admin Python application is located in ``/opt/geotrek-admin/lib/python3.6/site-packages/geotrek`` directory
+
+    Basic configuration
 
 Upgrade from Geotrek-admin >= 2.33
 ----------------------------------
 
-To upgrade the whole server, includind, geotrek-admin, run:
+To upgrade the whole server, including Geotrek-admin, run:
 
 ::
 
    apt-get update
    apt-get upgrade
 
-To prevent upgrading geotrek-admin with the whole distribution, you can run:
+To prevent upgrading Geotrek-admin with the whole distribution, you can run:
 
 ::
 
@@ -103,17 +114,28 @@ First of all, make sure your current Geotrek-admin version works correctly.
 Especially, after an upgrade of the Ubuntu distribution, you will have to run ``./install.sh``
 before proceeding with Geotrek-admin upgrade.
 
-Then, go inside your existing Geotrek-admin installation directory and run:
+Then, go inside your existing Geotrek-admin installation directory and run the dedicated migration script:
 
 ::
 
    curl https://packages.geotrek.fr/migrate.sh | bash
 
+.. note ::
+
+    Geotrek-admin is now automatically installed in ``/opt/geotrek-admin/`` directory 
+    and the advanced configuration file moved to ``/opt/geotrek-admin/var/conf/custom.py``. 
+
+    See advanced configuration documentation for details.
+
+    The ``etc/settings.ini`` file is replaced by basic configuration 
+
+    Update your imports and synchronization commands and directories
 
 Troubleshooting
 ---------------
 
-If Geotrek does not start, take a look to systemd logs for each of the 3 Geotrek-admin services
+Geotrek-admin logs are stored in ``/opt/geotrek-admin/var/log/geotrek.log`` file.
+But if Geotrek-admin does not start, take a look to systemd logs for each of the 3 Geotrek-admin services
 (user web interface, API and asynchronous tasks):
 
 ::
@@ -122,7 +144,7 @@ If Geotrek does not start, take a look to systemd logs for each of the 3 Geotrek
    sudo journalctl -eu geotrek-api
    sudo journalctl -eu geotrek-celery
 
-The output is paginated, with -e option you are at the end of the logs but you can got up an down with arrows.
+The output is paginated. With -e option you are at the end of the logs but you can go up an down with arrows.
 Type Q to quit. If you want to copy the log to a file, do:
 
 ::
@@ -151,4 +173,6 @@ To remove dependencies (convertit, screamshooter…), run:
 
    apt-get autoremove
 
-Note: postgresql and database will not be removed by these commands. If need be, remove them manually.
+.. note ::
+
+    PostgreSQL and its database will not be removed by these commands. If need be, remove them manually.

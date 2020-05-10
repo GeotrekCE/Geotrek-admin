@@ -3,49 +3,41 @@ CONFIGURATION
 =============
 
 
-Configuration update
---------------------
+Basic configuration update
+--------------------------
 
-To update server name, or set workers number or timeout, run:
+To update basic configuration (server name, databse connection, languages, or set workers number or timeout), run:
 
 ::
 
     sudo dpkg-reconfigure geotrek-admin
 
+The basic configuration is stored in ``/opt/geotrek-admin/var/conf/env`` file, not to be changed manually.
+This file also contains the PostgreSQL authentification details, if you need to access your Geotrek-admin database.
 
-Nginx configuration
+
+NGINX configuration
 -------------------
 
-Nginx configuration is controlled by Geotrek and will be erased at each upgrade.
+NGINX configuration is controlled by Geotrek-admin and will be erased at each upgrade.
 Do not modify ``/etc/nginx/sites-available/geotrek.conf`` or ``/etc/nginx/sites-enable/geotrek.conf``.
-Modify ``/opt/geotrek-admin/var/conf/nginx.conf.in`` instead. To update nginx.conf, then run:
+Modify ``/opt/geotrek-admin/var/conf/nginx.conf.in`` instead. To update ``nginx.conf``, then run:
 
 ::
 
     sudo dpkg-reconfigure geotrek-admin
-
-
-Spatial extents
----------------
-
-In order to check your configuration of spatial extents, a small tool
-is available at http://server/tools/extents/.
-
-:notes:
-
-    Administrator privileges are required.
 
 
 Users management
 ----------------
 
-Geotrek relies on Django authentication and permissions system : Users belong to
-groups and permissions can be assigned at user or group-level.
+Geotrek-admin relies on Django authentication and permissions system. Users belong to
+groups. Permissions can be assigned at user or group-level.
 
 The whole configuration of user, groups and permissions is available in the *AdminSite*,
 if you did not enable *External authent* (see below).
 
-By default four groups are created :
+By default four groups are created:
 
 * Readers
 * Path managers
@@ -62,12 +54,12 @@ status using the dedicated checkbox.
 Database users
 --------------
 
-It is not safe to use the ``geotrek`` user in QGis, or to give its password to
+It is not safe to use the ``geotrek`` user in QGIS, or to give its password to
 many collaborators.
 
 A wise approach, is to create a *read-only* user, or with specific permissions.
 
-With *pgAdmin*, you can create database users like this :
+With *pgAdmin*, you can create database users like this:
 
 ::
 
@@ -86,26 +78,7 @@ And give them permissions by schema :
     GRANT SELECT ON ALL TABLES IN SCHEMA geotrek TO lecteur;
 
 
-You can also create groups, etc. See postgresql documentation.
-
-
-Email settings
---------------
-
-Geotrek will send emails :
-
-* to administrators when internal errors occur
-* to managers when a feedback report is created
-
-Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control
-recipients emails (``ADMINS``, ``MAIL_MANAGERS``) and email server configuration.
-
-You can test you configuration with the following command. A fake email will
-be sent to the managers :
-
-::
-
-    sudo geotrek test_managers_emails
+You can also create groups, etc. See PostgreSQL documentation.
 
 
 Advanced Configuration

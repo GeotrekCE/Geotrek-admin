@@ -21,13 +21,13 @@ Core
 * Simple geometries
 * Not overlapping
 
-If possible :
+If possible:
 
 * Connex graph
 * Name column
 * Data source
 
-Formats: Shapefile or pure SQL dump SQL (CREATE TABLE + INSERT)
+Formats: Shapefile or pure SQL dump (CREATE TABLE + INSERT)
 
 
 Land
@@ -47,24 +47,24 @@ Extras
 Load MNT raster
 ---------------
 
-`In QGIS <http://docs.qgis.org/latest/en/docs/training_manual/processing/cutting_merging.html>`_,
+In `QGIS <http://docs.qgis.org/latest/en/docs/training_manual/processing/cutting_merging.html>`_,
 you can visualize your DEM, or merge several tiles together (in *Raster* > *Misc* > *Merge*).
 
 Generate a GeoTIFF, and upload both files (``.tif`` + ``.tfw``) on the server.
-And use the Geotrek command to load it into PostGIS :
-
+And use the Geotrek-admin command to load it into PostGIS :
 
 ::
 
     sudo geotrek loaddem <PATH>/dem.tif
 
 
-:note:
+.. note ::
 
     This command makes use of *GDAL* and ``raster2pgsql`` internally. It
     therefore supports all GDAL raster input formats. You can list these formats
     with the command ``raster2pgsql -G``.
     
-:note:
+.. note ::
 
-    If you only have a ``.tif`` file, you can generate the ``.tfw`` file with the command ``gdal_translate -co "TFW=YES" in.tif out.tif``. It will generate a new ``.tif`` file with its ``.tfw`` metadata file.
+    If you only have a ``.tif`` file, you can generate the ``.tfw`` file with the command ``gdal_translate -co "TFW=YES" in.tif out.tif``. 
+	It will generate a new ``.tif`` file with its ``.tfw`` metadata file.

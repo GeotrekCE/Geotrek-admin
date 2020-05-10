@@ -37,7 +37,7 @@ Configuration
 Application restore
 -------------------
 
-Create empty database :
+Create empty database:
 
 .. code-block:: bash
 
@@ -45,14 +45,14 @@ Create empty database :
     sudo -u psql -d geotrekdb -c "CREATE EXTENSION postgis;"
 
 
-Restore backup :
+Restore backup:
 
 .. code-block:: bash
 
     sudo -u postgres pg_restore -d geotrekdb 20140610-geotrekdb.backup
 
 
-Extract media and configuration files :
+Extract media and configuration files:
 
 .. code-block:: bash
 
@@ -72,8 +72,8 @@ PostgreSQL optimization
 * Use `pg activity <https://github.com/julmon/pg_activity#readme>`_ for monitoring
 
 
-Access your database securely on your local machine (QGis)
+Access your database securely on your local machine (QGIS)
 ----------------------------------------------------------
 
-Instead of opening your database to the world (by opening the port 5432 for
+Instead of opening your database to the world (by opening the 5432 port for
 example), you can use `SSH tunnels <http://www.postgresql.org/docs/9.3/static/ssh-tunnels.html>`_.

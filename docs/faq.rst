@@ -39,7 +39,7 @@ When a POI is created, it is attached to the closest path.
 
 A trek is defined by a serie of paths, and some POIs are associated to them.
 
-:notes:
+.. note ::
 
     There is currently no way to manually control the association between
     treks and POIs.
@@ -60,7 +60,7 @@ Districts are a generic notion to qualify your territory. They can be valleys,
 mounts, ...
 
 You can imagine using the districts table for all those different notions,
-resulting in overlapping geometries. Geotrek will associate them all to your
+resulting in overlapping geometries. Geotrek-admin will associate them all to your
 objects.
 
 
@@ -118,10 +118,10 @@ the source code is probably the least common action. For example :
 * Write and talk about *Geotrek*, at conferences, workgroups, forums ;
 
 * Translate the documentation ;
-* Translate the menus, buttons and labels (we use `Transifex <https://www.transifex.com/organization/makina-corpus>`_) ;
+* Translate the menus, buttons and labels (we use `Weblate <https://weblate.makina-corpus.net>`_) ;
 * Maintain the installation script for different Linux distributions (*requires some basic Linux skills*) ;
 * Fix bugs or improve layout and apparence (*requires Webmaster skills*) ;
 * Fix bugs or improve core modules (*requires python/Django skills*).
 
-Join us on the mailing-list! Send an email to ``geotrek-fr+subscribe@googlegroups.com``
+Join us on the `mailing-list <https://groups.google.com/forum/#!forum/geotrek-fr>`_! Send an email to ``geotrek-fr+subscribe@googlegroups.com``
 and you will receive an invitation automatically :)

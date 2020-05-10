@@ -25,6 +25,10 @@ Makina Corpus
 .. image:: http://depot.makina-corpus.org/public/logo.gif
     :target: http://www.makina-corpus.com
 
+Parc national des Ecrins
+------------------------
+
+* Camille Monchicourt
 
 Credits
 -------
