@@ -51,7 +51,7 @@ Run the following command in a shell prompt on your server:
 
    curl https://packages.geotrek.fr/install.sh | bash
 
-If you don't want to use a local database, you could run the following command instead.
+If you don't want to use a local database, you can run the following command instead.
 This will prevent the script to install PostgreSQL server locally.
 Don't forget to enable PostGIS extension in your remote database before installation.
 
@@ -82,7 +82,6 @@ If you are not confident with the ``install.sh`` script, or if you are having tr
 
     The Geotrek-admin Python application is located in ``/opt/geotrek-admin/lib/python3.6/site-packages/geotrek`` directory
 
-    Basic configuration
 
 Upgrade from Geotrek-admin >= 2.33
 ----------------------------------
@@ -127,9 +126,10 @@ Then, go inside your existing Geotrek-admin installation directory and run the d
 
     See advanced configuration documentation for details.
 
-    The ``etc/settings.ini`` file is replaced by basic configuration 
+    The ``etc/settings.ini`` file is replaced by basic configuration.
 
-    Update your imports and synchronization commands and directories
+    Update your imports and synchronization commands and directories.
+
 
 Troubleshooting
 ---------------

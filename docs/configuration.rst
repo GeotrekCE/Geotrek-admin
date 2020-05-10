@@ -6,7 +6,7 @@ CONFIGURATION
 Basic configuration update
 --------------------------
 
-To update basic configuration (server name, databse connection, languages, or set workers number or timeout), run:
+To update basic configuration (server name, database connection, languages, or set workers number or timeout), run:
 
 ::
 

@@ -59,7 +59,7 @@ Extract media and configuration files:
     tar -zxvf 20140610-media.tar.gz
     tar -zxvf 20140610-conf.tar.gz
 
-Follow fresh installation method. Choose to manage database by yourself.
+Follow *Fresh installation* method. Choose to manage database by yourself.
 
 
 PostgreSQL optimization
