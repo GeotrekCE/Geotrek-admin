@@ -23,7 +23,6 @@
 
         createTile(coords, done) {
             var tile = L.DomUtil.create('div', 'leaflet-tile');
-            tile.style['box-shadow'] = 'inset 0 0 2px #f00';
             var url = this._expandUrl(this.url, coords);
             if (this.cache[coords]) {
                 done.call(this);
