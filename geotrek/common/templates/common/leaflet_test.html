@@ -14,10 +14,12 @@
     <script type="text/javascript" src="{% static 'common/js/leaflet.geojson.grid.js' %}"></script>
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function() {
+            // create map
             const map = L.map('map', {
                 center: [44, 4],
                 zoom: 8
             });
+            // create base layer
             const osm = L.tileLayer(
                 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
                 {
@@ -26,42 +28,59 @@
                     attribution: "¢ OSM"
                 }
             )
+            // add base layer to map
             osm.addTo(map);
-            const style = {
-                "clickable": true,
-                "color": "#00D",
-                "fillColor": "#00D",
-                "weight": 1.0,
-                "opacity": 0.3,
-                "fillOpacity": 0.2
-            };
-            const hoverStyle = {
-                "fillOpacity": 0.5
-            };
 
+            // path grid layer
             const tiles_path = new L.GeoJSONTileLayer('/api/path/path.geojson?z={z}&x={x}&y={y}', {
                 minZoom: 3,
                 maxZoom: 18,
+                style: {
+                    "clickable": true,
+                    "color": "#FF0000",
+                    "fillColor": "#00D",
+                    "weight": 2.0,
+                    "opacity": 0.3,
+                    "fillOpacity": 0.2
+                }
             });
+
+            // trek grid layer
             const tiles_trek = new L.GeoJSONTileLayer('/api/trek/trek.geojson?z={z}&x={x}&y={y}', {
                 minZoom: 3,
                 maxZoom: 18,
+                style:{
+                    "clickable": true,
+                    "color": "#006400",
+                    "weight": 2.0,
+                }
             });
+
+            // city grid layer
             const tiles_city = new L.GeoJSONTileLayer('/api/city/city.geojson?z={z}&x={x}&y={y}', {
                 minZoom: 3,
                 maxZoom: 18,
+                style: {
+                    "clickable": true,
+                    "fillColor": "#00D",
+                    "weight": 2.0,
+                    "fillOpacity": 0.2
+                }
             });
 
+            // base layer selector
             const baseMaps = {
                 "OSM": osm,
             };
 
+            // averlay layer selector
             const overlayMaps = {
                 "Tronçons": tiles_path,
                 "Itinéraires": tiles_trek,
                 "Communes": tiles_city,
             }
 
+            // control to show layers
             L.control.layers(baseMaps, overlayMaps).addTo(map);
         });
 
