@@ -11,6 +11,7 @@ __pycache__/
 /.idea/
 /.vscode/
 geotrek/settings/custom.py
+geotrek/cypress/node_modules
 # buildout stuff
 .mr.developer.cfg
 .installed.cfg

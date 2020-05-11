@@ -72,6 +72,32 @@ jobs:
       - run: ./env/bin/python manage.py collectstatic --noinput
       - run: npm install geotrek/jstests
       - run: ./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
+  docker_test_integration:
+    machine: true
+    environment:
+      LANG: C.UTF-8
+    steps:
+      - checkout
+      - run: cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
+      - run: docker run -p 5432:5432 --env-file .env -d makinacorpus/postgis:11-2.5
+      - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
+      - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
+      - run: docker-compose run web update.sh
+      - run: sudo apt-get update -q && sudo apt-get install -q -y npm nginx
+      - run: mkdir -p var/conf/extra_static
+      - run: make load_data
+      - run: make load_demo
+      - run: docker-compose up -d
+      - run: sudo mkdir /var/www/geotrek -p
+      - run: sudo ln -s /home/circleci/project/var/media /var/www/geotrek
+      - run: sudo ln -s /home/circleci/project/var/static /var/www/geotrek
+      - run: sudo ln -s /home/circleci/project/cypress/nginx.conf /etc/nginx/sites-enabled/geotrek.conf
+      - run: sudo ls -l /home/circleci/project
+      - run: sudo ls -l /var/www/geotrek
+      - run: sudo rm /etc/nginx/sites-enabled/default
+      - run: sudo nginx -s reload
+      - run: npm install cypress
+      - run: ./node_modules/.bin/cypress run "cypress/integration/nav_authent.js"
   docker_publish:
     machine: true
     environment:
@@ -142,12 +168,19 @@ workflows:
           filters:
             tags:
               only: /[0-9]+\.[0-9]+\.[0-9]+/
+      - docker_test_integration:
+          requires:
+            - docker_image
+          filters:
+            tags:
+              only: /[0-9]+\.[0-9]+\.[0-9]+/
       - docker_publish:
           requires:
             - codestyle
             - docker_test
             - docker_test_nds
             - docker_test_js
+            - docker_test_integration
           filters:
             tags:
               only: /[0-9]+\.[0-9]+\.[0-9]+/
@@ -164,6 +197,7 @@ workflows:
             - docker_test
             - docker_test_nds
             - docker_test_js
+            - docker_test_integration
           filters:
             tags:
               only: /[0-9]+\.[0-9]+\.[0-9]+/
