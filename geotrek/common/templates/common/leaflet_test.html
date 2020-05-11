@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>
+        Leaflet tiling test
+    </title>
+    <link rel="stylesheet" href="//unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+</head>
+<body>
+    <div id="map" style="height: 800px; width: 1900px;">
+    </div>
+    <script type="text/javascript" src="//unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script type="text/javascript" src="{% static 'common/js/leaflet.geojson.grid.js' %}"></script>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            const map = L.map('map', {
+                center: [44, 4],
+                zoom: 8
+            });
+            const osm = L.tileLayer(
+                'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+                {
+                    minZoom: 5,
+                    maxZoom: 19,
+                    attribution: "¢ OSM"
+                }
+            )
+            osm.addTo(map);
+            const style = {
+                "clickable": true,
+                "color": "#00D",
+                "fillColor": "#00D",
+                "weight": 1.0,
+                "opacity": 0.3,
+                "fillOpacity": 0.2
+            };
+            const hoverStyle = {
+                "fillOpacity": 0.5
+            };
+
+            const tiles_path = new L.GeoJSONTileLayer('/api/path/path.geojson?z={z}&x={x}&y={y}', {
+                minZoom: 3,
+                maxZoom: 18,
+            });
+            const tiles_trek = new L.GeoJSONTileLayer('/api/trek/trek.geojson?z={z}&x={x}&y={y}', {
+                minZoom: 3,
+                maxZoom: 18,
+            });
+            const tiles_city = new L.GeoJSONTileLayer('/api/city/city.geojson?z={z}&x={x}&y={y}', {
+                minZoom: 3,
+                maxZoom: 18,
+            });
+
+            const baseMaps = {
+                "OSM": osm,
+            };
+
+            const overlayMaps = {
+                "Tronçons": tiles_path,
+                "Itinéraires": tiles_trek,
+                "Communes": tiles_city,
+            }
+
+            L.control.layers(baseMaps, overlayMaps).addTo(map);
+        });
+
+    </script>
+</body>
+</html>
