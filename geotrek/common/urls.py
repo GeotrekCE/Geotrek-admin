@@ -2,7 +2,7 @@ from django.urls import path, converters, register_converter
 from mapentity.registry import MapEntityOptions
 
 from .views import (JSSettings, admin_check_extents, DocumentPublic, DocumentBookletPublic, import_view, import_update_json,
-                    ThemeViewSet, MarkupPublic, sync_view, sync_update_json, SyncRandoRedirect)
+                    ThemeViewSet, MarkupPublic, sync_view, sync_update_json, SyncRandoRedirect, LeafletTestView)
 
 
 class LangConverter(converters.StringConverter):
@@ -21,6 +21,7 @@ urlpatterns = [
     path('commands/syncview', sync_view, name='sync_randos_view'),
     path('commands/statesync/', sync_update_json, name='sync_randos_state'),
     path('api/<lang:lang>/themes.json', ThemeViewSet.as_view({'get': 'list'}), name="themes_json"),
+    path('leaflet-tiles/', LeafletTestView.as_view(), name="leaflet-tiles"),
 ]
 
 
