@@ -1,9 +1,14 @@
+import mercantile
+from math import pi
+from rest_framework.exceptions import ParseError
+
 from django.db.models.fields.related import ManyToOneRel
 from django.conf import settings
 
 from django_filters import FilterSet, Filter
 from django_filters.filterset import get_model_field
 from django.contrib.gis import forms
+from django.contrib.gis.geos import Polygon
 
 from .settings import app_settings, API_SRID
 from .widgets import HiddenGeometryWidget
@@ -19,24 +24,65 @@ class PolygonFilter(Filter):
         kwargs.setdefault('lookup_expr', 'intersects')
         super(PolygonFilter, self).__init__(*args, **kwargs)
 
+    def get_polygon_from_value(self, value):
+        if not value.srid:
+            value.srid = API_SRID
+        value.transform(settings.SRID)
+        return value
+
 
 class PythonPolygonFilter(PolygonFilter):
 
     def filter(self, qs, value):
         if not value:
             return qs
-        if not value.srid:
-            value.srid = API_SRID
-        value.transform(settings.SRID)
         filtered = []
         for o in qs.all():
             geom = getattr(o, self.field_name)
             if geom and geom.valid and not geom.empty:
-                if getattr(geom, self.lookup_expr)(value):
+                if getattr(geom, self.lookup_expr)(self.get_polygon_from_value(value)):
                     filtered.append(o.pk)
             else:
                 filtered.append(o.pk)
         return qs.filter(pk__in=filtered)
+
+
+class TileFilter(PythonPolygonFilter):
+    field_class = forms.CharField
+
+    def __init__(self, *args, **kwargs):
+        kwargs.update({
+            'widget': forms.HiddenInput
+        })
+        super(TileFilter, self).__init__(*args, **kwargs)
+
+    def _compute_pixel_size(self, zoom):
+        tile_pixel_size = 512
+        equatorial_radius_wgs84 = 6378137
+        circumference = 2 * pi * equatorial_radius_wgs84
+        return circumference / tile_pixel_size / 2 ** int(zoom)
+
+    def get_polygon_from_value(self, value):
+        if not value:
+            ParseError('Invalid tile string supplied')
+        # Parse coordinates from parameter
+        try:
+            z, x, y = (int(n) for n in value.split('/'))
+        except ValueError:
+            raise ParseError('Invalid tile string supplied for parameter {0}'.format(self.value))
+
+        # define bounds from x y z and create polygon from bounds
+        bounds = mercantile.bounds(int(x), int(y), int(z))
+        west, south = mercantile.xy(bounds.west, bounds.south)
+        east, north = mercantile.xy(bounds.east, bounds.north)
+        bbox = Polygon.from_bbox((west, south, east, north))
+        bbox.srid = 3857  # WGS84 SRID
+        # simplify the geometry
+        pixel_size = self._compute_pixel_size(z)
+        bbox = bbox.simplify(tolerance=pixel_size, preserve_topology=True)
+        # transform the polygon to match with db srid
+        bbox.transform(settings.SRID)
+        return bbox
 
 
 class BaseMapEntityFilterSet(FilterSet):
@@ -91,6 +137,7 @@ class BaseMapEntityFilterSet(FilterSet):
 
 class MapEntityFilterSet(BaseMapEntityFilterSet):
     bbox = PolygonFilter()
+    tiles = TileFilter()
 
     class Meta:
         fields = ['bbox']
