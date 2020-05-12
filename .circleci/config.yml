@@ -98,6 +98,7 @@ jobs:
       - run: sudo nginx -s reload
       - run: npm install cypress
       - run: ./node_modules/.bin/cypress run "cypress/integration/nav_authent.js"
+      - run: ./node_modules/.bin/cypress run "cypress/integration/nav_create_trek.js"
   docker_publish:
     machine: true
     environment:
