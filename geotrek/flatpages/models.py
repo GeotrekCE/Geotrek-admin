@@ -65,8 +65,8 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin):
 
     def clean(self):
         html_content = ''
-        for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
-            html_content += getattr(self, 'content_%s' % l[0], None) or ''
+        for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
+            html_content += getattr(self, 'content_%s' % language[0], None) or ''
 
     def parse_media(self):
         soup = BeautifulSoup(self.content or '', 'lxml')

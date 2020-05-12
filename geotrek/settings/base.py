@@ -365,8 +365,8 @@ DISPLAY_SRID = 3857
 # Extent in native projection (France area)
 SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
 
-_MODELTRANSLATION_LANGUAGES = [l for l in LANGUAGES_LIST
-                               if l[0] in ("en", "fr", "it", "es")]
+_MODELTRANSLATION_LANGUAGES = [language for language in LANGUAGES_LIST
+                               if language[0] in ("en", "fr", "it", "es")]
 
 MAPENTITY_CONFIG = {
     'TITLE': TITLE,
@@ -782,6 +782,8 @@ if custom_settings_file:
         exec(f.read())
 
 # Computed settings takes place at the end after customization
-MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = [l for l in LANGUAGES_LIST if l[0] in MODELTRANSLATION_LANGUAGES]
+MAPENTITY_CONFIG['TRANSLATED_LANGUAGES'] = [
+    language for language in LANGUAGES_LIST if language[0] in MODELTRANSLATION_LANGUAGES
+]
 LEAFLET_CONFIG['TILES_EXTENT'] = SPATIAL_EXTENT
 LEAFLET_CONFIG['SPATIAL_EXTENT'] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)

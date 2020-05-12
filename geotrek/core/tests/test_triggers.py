@@ -13,9 +13,9 @@ class SmartMakelineTest(TestCase):
     def smart_makeline(self, lines):
         assert lines
         if isinstance(lines[0], str):
-            lines = ["ST_GeomFromText('%s')" % l for l in lines]
+            lines = ["ST_GeomFromText('%s')" % line for line in lines]
         else:
-            lines = ["ST_GeomFromText('%s')" % l.wkt for l in lines]
+            lines = ["ST_GeomFromText('%s')" % line.wkt for line in lines]
         conn = connections[DEFAULT_DB_ALIAS]
         cursor = conn.cursor()
         sql = "SELECT ST_AsText(ft_Smart_MakeLine(ARRAY[%s]));" % ','.join(lines)
