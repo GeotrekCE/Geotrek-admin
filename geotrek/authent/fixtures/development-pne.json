@@ -20,7 +20,7 @@
         "pk": 1, 
         "model": "authent.userprofile", 
         "fields": {
-            "language": "fr", 
+            "language": "en",
             "user": [
                 "admin"
             ], 

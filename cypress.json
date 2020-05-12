@@ -4,5 +4,6 @@
   "integrationFolder": "cypress/integration",
   "pluginsFile": false,
   "screenshotsFolder": "cypress/screenshots",
-  "baseUrl": "http://localhost:8000"
+  "baseUrl": "http://localhost:8000",
+  "video": true
 }
