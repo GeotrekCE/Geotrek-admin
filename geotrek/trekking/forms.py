@@ -354,7 +354,7 @@ class WebLinkCreateFormPopup(TranslatedModelForm):
         # Main form layout
         # Adds every name field explicitly (name_fr, name_en, ...)
         self.helper.form_class = 'form-horizontal'
-        arg_list = ['name_{0}'.format(l[0]) for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
+        arg_list = ['name_{0}'.format(language[0]) for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
         arg_list += ['url', 'category', FormActions(
             HTML('<a href="#" class="btn" onclick="javascript:window.close();">%s</a>' % _("Cancel")),
             Submit('save_changes', _('Create'), css_class="btn-primary"),

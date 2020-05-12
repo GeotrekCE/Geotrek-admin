@@ -125,10 +125,10 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
         """Returns the publication status by language.
         """
         status = []
-        for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
+        for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
             status.append({
-                'lang': l[0],
-                'language': l[1],
+                'lang': language[0],
+                'language': language[1],
                 'status': self.published
             })
         return status
@@ -138,7 +138,7 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
         """Returns languages in which the object is published.
         """
         if self.published:
-            return [l[0] for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
+            return [language[0] for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
         else:
             return []
 

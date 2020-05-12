@@ -262,8 +262,8 @@ class BasePublishableMixin(models.Model):
         if not settings.PUBLISHED_BY_LANG:
             return self.published
 
-        for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
-            if getattr(self, 'published_%s' % l[0], False):
+        for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
+            if getattr(self, 'published_%s' % language[0], False):
                 return True
         return False
 
@@ -272,14 +272,14 @@ class BasePublishableMixin(models.Model):
         """Returns the publication status by language.
         """
         status = []
-        for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
+        for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']:
             if settings.PUBLISHED_BY_LANG:
-                published = getattr(self, 'published_%s' % l[0], None) or False
+                published = getattr(self, 'published_%s' % language[0], None) or False
             else:
                 published = self.published
             status.append({
-                'lang': l[0],
-                'language': l[1],
+                'lang': language[0],
+                'language': language[1],
                 'status': published
             })
         return status
@@ -288,9 +288,9 @@ class BasePublishableMixin(models.Model):
     def published_langs(self):
         """Returns languages in which the object is published.
         """
-        langs = [l[0] for l in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
+        langs = [language[0] for language in settings.MAPENTITY_CONFIG['TRANSLATED_LANGUAGES']]
         if settings.PUBLISHED_BY_LANG:
-            return [l for l in langs if getattr(self, 'published_%s' % l, None)]
+            return [language for language in langs if getattr(self, 'published_%s' % language, None)]
         elif self.published:
             return langs
         else:
