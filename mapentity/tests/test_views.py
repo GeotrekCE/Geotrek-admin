@@ -382,7 +382,7 @@ class MapEntityLayerViewTest(BaseTest):
 
     def test_geojson_layer_with_tile_parameter(self):
         self.login()
-        response = self.client.get(TouristicEvent.get_layer_url() + '?x=258&y=188&z=9')
+        response = self.client.get(TouristicEvent.get_layer_url() + '?tiles=10/258/188')
         self.assertEqual(len(json.loads(response.content.decode())['features']), 0)
 
     def test_geojson_layer_can_be_filtered(self):

@@ -32,7 +32,7 @@
             osm.addTo(map);
 
             // path grid layer
-            const tiles_path = new L.GeoJSONTileLayer('/api/path/path.geojson?z={z}&x={x}&y={y}', {
+            const tiles_path = new L.GeoJSONTileLayer('/api/path/path.geojson?tiles={z}/{x}/{y}', {
                 minZoom: 3,
                 maxZoom: 18,
                 style: {
@@ -46,7 +46,7 @@
             });
 
             // trek grid layer
-            const tiles_trek = new L.GeoJSONTileLayer('/api/trek/trek.geojson?z={z}&x={x}&y={y}', {
+            const tiles_trek = new L.GeoJSONTileLayer('/api/trek/trek.geojson?tiles={z}/{x}/{y}', {
                 minZoom: 3,
                 maxZoom: 18,
                 style:{
@@ -57,7 +57,7 @@
             });
 
             // city grid layer
-            const tiles_city = new L.GeoJSONTileLayer('/api/city/city.geojson?z={z}&x={x}&y={y}', {
+            const tiles_city = new L.GeoJSONTileLayer('/api/city/city.geojson?tiles={z}/{x}/{y}', {
                 minZoom: 3,
                 maxZoom: 18,
                 style: {

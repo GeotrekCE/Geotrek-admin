@@ -1,10 +1,7 @@
 import logging
-import mercantile
 
 from django.contrib.gis.db.models.functions import Transform
-from django.contrib.gis.geos import Polygon
 from django.views.generic.list import ListView
-from django.conf import settings
 
 from djgeojson.views import GeoJSONLayerView
 from rest_framework import viewsets
@@ -53,22 +50,6 @@ class MapEntityLayer(FilterListMixin, ModelViewMixin, GeoJSONLayerView):
     @view_cache_response_content()
     def render_to_response(self, context, **response_kwargs):
         return super(MapEntityLayer, self).render_to_response(context, **response_kwargs)
-
-    def get_queryset(self):
-        qs = super(MapEntityLayer, self).get_queryset()
-        x = self.request.GET.get('x', False)
-        y = self.request.GET.get('y', False)
-        z = self.request.GET.get('z', False)
-
-        if x and y and z:
-            bounds = mercantile.bounds(int(x), int(y), int(z))
-            west, south = mercantile.xy(bounds.west, bounds.south)
-            east, north = mercantile.xy(bounds.east, bounds.north)
-            bbox = Polygon.from_bbox((west, south, east, north))
-            bbox.srid = settings.DISPLAY_SRID
-            bbox.transform(settings.SRID)
-            qs = qs.filter(geom__intersects=bbox)
-        return qs
 
 
 class MapEntityJsonList(JSONResponseMixin, BaseListView, ListView):
