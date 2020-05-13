@@ -1,4 +1,6 @@
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.models import ContentType
 from django.views.generic.list import ListView
 from django.core.mail import send_mail
 from django.utils.translation import ugettext as _
@@ -9,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from mapentity import views as mapentity_views
 
+from geotrek.common.models import Attachment, FileType
 from geotrek.feedback.filters import ReportFilterSet
 from geotrek.feedback import models as feedback_models
 from geotrek.feedback import serializers as feedback_serializers
@@ -77,6 +80,7 @@ class ReportViewSet(mapentity_views.MapEntityViewSet):
     """Disable permissions requirement"""
     model = feedback_models.Report
     queryset = feedback_models.Report.objects.all()
+    parser_classes = [FormParser, MultiPartParser]
     serializer_class = feedback_serializers.ReportSerializer
     geojson_serializer_class = feedback_serializers.ReportGeojsonSerializer
     authentication_classes = []
@@ -85,45 +89,27 @@ class ReportViewSet(mapentity_views.MapEntityViewSet):
     @action(detail=False, methods=['post'])
     def report(self, request, lang=None):
         response = super(ReportViewSet, self).create(request)
+        creator, created = get_user_model().objects.get_or_create(username='feedback', defaults={'is_active': False})
+        for key, file in request._request.FILES.items():
+            Attachment.objects.create(
+                filetype=FileType.objects.get_or_create(type=settings.FILETYPE_FEEDBACK)[0],
+                content_type=ContentType.objects.get(id=feedback_models.Report.get_content_type_id()),
+                object_id=response.data.get('id'),
+                creator=creator,
+                attachment_file=file
+            )
         if settings.SEND_REPORT_ACK and response.status_code == 201:
             send_mail(
                 _("Geotrek : Signal a mistake"),
                 _("""Hello,
 
-We acknowledge receipt of your feedback, thank you for your interest in Geotrek.
+        We acknowledge receipt of your feedback, thank you for your interest in Geotrek.
 
-Best regards,
+        Best regards,
 
-The Geotrek Team
-http://www.geotrek.fr"""),
+        The Geotrek Team
+        http://www.geotrek.fr"""),
                 settings.DEFAULT_FROM_EMAIL,
                 [request.data.get('email')]
             )
         return response
-
-
-class ReportWithPicturesView(APIView):
-    """Endpoint to post pictures"""
-    parser_classes = [FormParser, MultiPartParser]
-    permission_classes = [AllowAny]
-
-    @list_route(methods=['post'])
-    def post(self, request, format=None, *args, **kwargs):
-        return Response({'raw': request.data, 'data': request._request.POST,
-                         'files': str(request._request.FILES)})
-
-
-class ReportFilesView(APIView):
-    """Endpoint to post pictures"""
-    parser_classes = [FileUploadParser]
-    permission_classes = [AllowAny]
-
-    def put(self, request, filename, format=None, lang=None):
-        file_obj = request.data['file']
-        print(lang)
-        print(filename)
-        print(request.data['file'])
-        # ...
-        # do some stuff with uploaded file
-        # ...
-        return Response(status=204)

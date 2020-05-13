@@ -772,6 +772,8 @@ SURICATE_REPORT_SETTINGS = {
     'PRIVATE_KEY_SERVER_CLIENT': '',
 }
 
+FILETYPE_FEEDBACK = "Feedback"
+
 # Parser parameters for retries and error codes
 PARSER_RETRY_SLEEP_TIME = 60  # time of sleep between requests
 PARSER_NUMBER_OF_TRIES = 3  # number of requests to try before abandon

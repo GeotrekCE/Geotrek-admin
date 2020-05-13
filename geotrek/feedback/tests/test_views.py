@@ -7,6 +7,7 @@ from django.core import mail
 from mapentity.factories import SuperUserFactory, UserFactory
 
 from geotrek.common.tests import CommonTest, TranslationResetMixin
+from geotrek.common.utils.testdata import get_dummy_uploaded_image_svg, get_dummy_uploaded_image, get_dummy_uploaded_file
 from geotrek.feedback import models as feedback_models
 from geotrek.feedback import factories as feedback_factories
 from rest_framework.test import APIClient
@@ -39,11 +40,13 @@ class ReportViewsTest(CommonTest):
 
     def get_expected_json_attrs(self):
         return {
-            'category': None,
+            'activity': self.obj.activity.pk,
+            'category': self.obj.category.pk,
             'comment': self.obj.comment,
             'context_object': None,
             'email': self.obj.email,
             'status': None,
+            'problem_magnitude': self.obj.problem_magnitude.pk
         }
 
     def get_bad_data(self):
@@ -116,6 +119,15 @@ class CreateReportsAPITest(BaseAPITest):
         self.data.pop('geom')
         self.post_report_data(self.data)
         self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
+
+    def test_reports_with_file(self):
+        self.data['file'] = get_dummy_uploaded_file()
+        self.data['csv'] = get_dummy_uploaded_image()
+        self.data['image'] = get_dummy_uploaded_image()
+        self.post_report_data(self.data)
+        self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
+        report = feedback_models.Report.objects.get()
+        self.assertEqual(report.attachments.count(), 3)
 
 
 class ListCategoriesTest(TranslationResetMixin, BaseAPITest):
