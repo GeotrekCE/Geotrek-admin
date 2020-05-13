@@ -122,7 +122,7 @@ class CreateReportsAPITest(BaseAPITest):
 
     def test_reports_with_file(self):
         self.data['file'] = get_dummy_uploaded_file()
-        self.data['csv'] = get_dummy_uploaded_image()
+        self.data['csv'] = get_dummy_uploaded_image_svg()
         self.data['image'] = get_dummy_uploaded_image()
         self.post_report_data(self.data)
         self.assertTrue(feedback_models.Report.objects.filter(email='yeah@you.com').exists())
