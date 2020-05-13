@@ -4,6 +4,7 @@ from django.conf import settings
 from django.utils.decorators import method_decorator
 from djgeojson.views import GeoJSONLayerView
 
+from mapentity.filters import MapEntityFilterSet
 from .models import City, RestrictedArea, RestrictedAreaType, District
 
 
@@ -15,6 +16,12 @@ class LandLayerMixin(object):
     @method_decorator(cache_page(settings.CACHE_TIMEOUT_LAND_LAYERS, cache="fat"))
     def dispatch(self, request, *args, **kwargs):
         return super(LandLayerMixin, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        # ensure mapentity filters are working for non Mapentity view
+        qs = super().get_queryset()
+        filtered = MapEntityFilterSet(self.request.GET, queryset=qs)
+        return filtered.qs
 
 
 class CityGeoJSONLayer(LandLayerMixin, GeoJSONLayerView):

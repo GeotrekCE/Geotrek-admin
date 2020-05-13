@@ -51,6 +51,7 @@ class TileFilter(PythonPolygonFilter):
     field_class = forms.CharField
 
     def __init__(self, *args, **kwargs):
+        self.tolerance = 0
         kwargs.update({
             'widget': forms.HiddenInput
         })
@@ -61,6 +62,12 @@ class TileFilter(PythonPolygonFilter):
         equatorial_radius_wgs84 = 6378137
         circumference = 2 * pi * equatorial_radius_wgs84
         return circumference / tile_pixel_size / 2 ** int(zoom)
+
+    def filter(self, qs, value):
+        qs = super().filter(qs, value)
+        for index in range(len(qs)):
+            qs[index].geom = qs[index].geom.simplify(2 * self.tolerance, preserve_topology=True)
+        return qs
 
     def get_polygon_from_value(self, value):
         if not value:
@@ -77,9 +84,9 @@ class TileFilter(PythonPolygonFilter):
         east, north = mercantile.xy(bounds.east, bounds.north)
         bbox = Polygon.from_bbox((west, south, east, north))
         bbox.srid = 3857  # WGS84 SRID
-        # simplify the geometry
-        pixel_size = self._compute_pixel_size(z)
-        bbox = bbox.simplify(tolerance=pixel_size, preserve_topology=True)
+        # compute the tolerance to simplify the geometries
+        if not self.tolerance:
+            self.tolerance = self._compute_pixel_size(z)
         # transform the polygon to match with db srid
         bbox.transform(settings.SRID)
         return bbox
@@ -136,8 +143,7 @@ class BaseMapEntityFilterSet(FilterSet):
 
 
 class MapEntityFilterSet(BaseMapEntityFilterSet):
-    bbox = PolygonFilter()
     tiles = TileFilter()
 
     class Meta:
-        fields = ['bbox']
+        fields = ['tiles']
