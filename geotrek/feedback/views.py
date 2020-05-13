@@ -90,7 +90,7 @@ class ReportViewSet(mapentity_views.MapEntityViewSet):
     def report(self, request, lang=None):
         response = super(ReportViewSet, self).create(request)
         creator, created = get_user_model().objects.get_or_create(username='feedback', defaults={'is_active': False})
-        for key, file in request._request.FILES.items():
+        for file in request._request.FILES.values():
             Attachment.objects.create(
                 filetype=FileType.objects.get_or_create(type=settings.FILETYPE_FEEDBACK)[0],
                 content_type=ContentType.objects.get(id=feedback_models.Report.get_content_type_id()),
