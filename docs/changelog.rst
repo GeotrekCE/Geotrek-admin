@@ -2,12 +2,23 @@
 CHANGELOG
 =========
 
-2.33.5.dev0
+2.33.5 (2020-05-13)
 -------------------
 
 **Bug fixes**
 
--
+- Add a scrollbar to signage and blade forms
+- Fix city affectation for looping paths
+- Fix attachment download with redirection
+- Fix logout next page
+- Fix blade/line creation crash
+- Fix lines layout in blade detail page
+
+**Upgrade notes**
+
+If you installed version 2.33.3 before (no matter if you upgrade directly or from 2.33.4),
+you should get errors like "django.db.utils.ProgrammingError: column "deleted" of relation signage_blade".
+To fix them, run ``sudo geotrek migrate --fake signage 0016;``.
 
 
 2.33.4 (2020-05-04)
