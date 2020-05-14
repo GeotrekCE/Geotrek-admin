@@ -89,4 +89,3 @@ describe('Logout', () => {
     cy.url().should('include', '/admin/logout/')
   })
 })
-
