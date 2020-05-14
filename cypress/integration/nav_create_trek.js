@@ -1,3 +1,9 @@
+Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+})
+
 describe('Create trek', () => {
   beforeEach(() => {
       const username = 'admin'
@@ -17,14 +23,14 @@ describe('Create trek', () => {
         })
   })
 
-  it('Create path', () => {
+  it('Create trek', () => {
     cy.visit('http://localhost:8000/trek/list')
     cy.get("a.btn-success[href='/trek/add/']").contains('Add a new trek').click()
     cy.get("a.linetopology-control").click()
     cy.get('.leaflet-map-pane')
-      .click(380, 220)
+      .click(405, 290)
       .click(450, 150);
-    cy.get("input[name='name']").type('Trek number 1')
+    cy.get("input[name='name_en']").type('Trek number 1')
     cy.get("a[href='#name_fr']").click()
     cy.get("input[name='name']").type('Randonnée numéro 1')
     cy.get("input[id='id_review']").click()

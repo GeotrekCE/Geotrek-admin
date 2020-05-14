@@ -55,7 +55,7 @@ class TranslatedModelForm(forms.ModelForm):
                 name = '%s_%s' % (modelfield, lang)
                 # Add to form.fields{}
                 translated = copy.deepcopy(native)
-                translated.required = native.required and (lang == app_settings['LANGUAGE_CODE'])
+                translated.required = native.required and (lang == settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
                 translated.label = u"%s [%s]" % (translated.label, lang)
                 self.fields[name] = translated
                 # Keep track of replacements
@@ -216,7 +216,7 @@ class MapEntityForm(TranslatedModelForm):
     def __tabbed_layout_for_field(self, field):
         fields = []
         for replacement in self._translated[field]:
-            active = "active" if replacement.endswith('_%s' % app_settings['LANGUAGE_CODE']) else ""
+            active = "active" if replacement.endswith('_%s' % settings.MODELTRANSLATION_DEFAULT_LANGUAGE) else ""
             fields.append(Div(replacement,
                               css_class="tab-pane " + active,
                               css_id=replacement))
@@ -224,12 +224,12 @@ class MapEntityForm(TranslatedModelForm):
         layout = Div(
             HTML("""
             <ul class="nav nav-pills">
-            {% for lang in TRANSLATED_LANGUAGES %}
-                <li {% if lang.0 == LANGUAGE_CODE %}class="active"{% endif %}><a href="#%s_{{ lang.0 }}"
-                    data-toggle="tab">{{ lang.0 }}</a></li>
-            {% endfor %}
+            {{% for lang in TRANSLATED_LANGUAGES %}}
+                <li {{% if lang.0 == '{lang_code}'""" """ %}}class="active"{{% endif %}}><a href="#{field}_{{{{ lang.0 }}}}"
+                    data-toggle="tab">{{{{ lang.0 }}}}</a></li>
+            {{% endfor %}}
             </ul>
-            """.replace("%s", field)),
+            """.format(lang_code=settings.MODELTRANSLATION_DEFAULT_LANGUAGE, field=field)),
             Div(
                 *fields,
                 css_class="tab-content"
