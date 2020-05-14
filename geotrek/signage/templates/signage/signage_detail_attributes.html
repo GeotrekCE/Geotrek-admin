@@ -75,22 +75,23 @@
                 </tr>
             {% endif %}
             {% for blade in object.order_blades %}
-            {% for line in blade.order_lines.all %}
-                <tr class="{% if not forloop.last %}dashed-line{% endif %}">
-                    {% if forloop.first %}
-                        <td><a href="{% url 'signage:blade_detail' blade.pk %}">{{ blade }}</a></td>
-                        <td>{{ blade.color|default_if_none:"" }}</td>
-                        <td>{{ blade.direction }}</td>
-                        <td>{{ blade.condition|default_if_none:"" }}</td>
-                    {% else %}
+                <tr {% if blade.order_lines.all|length > 1 %}class="dashed-line"{% endif %}>
+                    <td><a href="{% url 'signage:blade_detail' blade.pk %}">{{ blade }}</a></td>
+                    <td>{{ blade.color|default_if_none:"" }}</td>
+                    <td>{{ blade.direction }}</td>
+                    <td>{{ blade.condition|default_if_none:"" }}</td>
+                    {% for line in blade.order_lines.all %}
+                        {% if not forloop.first %}
+                            </tr><tr {% if not forloop.last %}class="dashed-line"{% endif %}><td></td><td></td><td></td><td></td>
+                        {% endif %}
+                        <td>{{ line.text }}</td>
+                        <td>{{ line.pictogram_name|default_if_none:"" }}</td>
+                        <td>{{ line.distance_pretty|default_if_none:"" }}</td>
+                        <td>{{ line.time_pretty|default_if_none:"" }}</td>
+                    {% empty %}
                         <td></td><td></td><td></td><td></td>
-                    {% endif %}
-                    <td>{{ line.text }}</td>
-                    <td>{{ line.pictogram_name|default_if_none:"" }}</td>
-                    <td>{{ line.distance_pretty|default_if_none:"" }}</td>
-                    <td>{{ line.time_pretty|default_if_none:"" }}</td>
+                    {% endfor %}
                 </tr>
-            {% endfor %}
             {% endfor %}
         </table>
         {% if view|class_name == "SignageDetail" %}
