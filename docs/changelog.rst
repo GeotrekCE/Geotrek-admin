@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.33.6.dev0
+2.33.6 (2020-05-14)
 -------------------
 
 **Bug fixes**
 
--
+- Don't overwrite initial data in existing database on first install
 
 
 2.33.5 (2020-05-13)
