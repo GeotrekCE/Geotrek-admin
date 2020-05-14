@@ -58,7 +58,6 @@ class AutoLoginMiddleware:
 
         useragent = request.META.get('HTTP_USER_AGENT', '')
         if useragent:
-            print(useragent)
             request.META['HTTP_USER_AGENT'] = useragent.replace('FrontendTest', '')
         is_running_tests = ('FrontendTest' in useragent or getattr(settings, 'TEST', False))
 
@@ -66,7 +65,6 @@ class AutoLoginMiddleware:
 
         if user and user.is_anonymous and not is_running_tests:
             remoteip = request.META.get('REMOTE_ADDR')
-            print(remoteip)
             if remoteip in AUTOLOGIN_IPS:
                 user = get_internal_user()
                 try:
