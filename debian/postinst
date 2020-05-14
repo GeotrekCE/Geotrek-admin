@@ -85,11 +85,6 @@ LDCONFIG_NOTRIGGER=y
 export LDCONFIG_NOTRIGGER
 ldconfig
 
-# Check if database is empty
-if echo "\\d" | geotrek dbshell | grep -v django_migrations > /dev/null; then
-	EMPTY_DB="true"
-fi
-
 # Update database
 echo "Migrate database" >&2
 geotrek migrate --noinput -v0 || true
@@ -102,7 +97,7 @@ echo "Copy static files" >&2
 geotrek collectstatic --clear --noinput -v0 || true
 
 # Insert initial data (only on a new install with an empty database)
-if [ "$2" = "" ] && [ "$EMPTY_DB" = "true" ]; then
+if [ "$MANAGE_DB" = "true" ] && [ "$2" = "" ]; then
 	echo "Insert initial data" >&2
 	geotrek loaddata -v0 minimal || true
 	geotrek loaddata -v0 cirkwi || true
