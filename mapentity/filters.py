@@ -3,6 +3,7 @@ from math import pi
 from rest_framework.exceptions import ParseError
 
 from django.db.models.fields.related import ManyToOneRel
+from django.db.models import Func
 from django.conf import settings
 
 from django_filters import FilterSet, Filter
@@ -10,64 +11,25 @@ from django_filters.filterset import get_model_field
 from django.contrib.gis import forms
 from django.contrib.gis.geos import Polygon
 
-from .settings import app_settings, API_SRID
-from .widgets import HiddenGeometryWidget
+from .settings import app_settings
 
 
 class PolygonFilter(Filter):
 
-    field_class = forms.PolygonField
-
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault('field_name', app_settings['GEOM_FIELD_NAME'])
-        kwargs.setdefault('widget', HiddenGeometryWidget)
-        kwargs.setdefault('lookup_expr', 'intersects')
-        super(PolygonFilter, self).__init__(*args, **kwargs)
-
-    def get_polygon_from_value(self, value):
-        if not value.srid:
-            value.srid = API_SRID
-        value.transform(settings.SRID)
-        return value
-
-
-class PythonPolygonFilter(PolygonFilter):
-
-    def filter(self, qs, value):
-        if not value:
-            return qs
-        filtered = []
-        for o in qs.all():
-            geom = getattr(o, self.field_name)
-            if geom and geom.valid and not geom.empty:
-                if getattr(geom, self.lookup_expr)(self.get_polygon_from_value(value)):
-                    filtered.append(o.pk)
-            else:
-                filtered.append(o.pk)
-        return qs.filter(pk__in=filtered)
-
-
-class TileFilter(PythonPolygonFilter):
     field_class = forms.CharField
 
     def __init__(self, *args, **kwargs):
+        kwargs.setdefault('field_name', app_settings['GEOM_FIELD_NAME'])
+        kwargs.setdefault('widget', forms.HiddenInput)
+        kwargs.setdefault('lookup_expr', 'intersects')
         self.tolerance = 0
-        kwargs.update({
-            'widget': forms.HiddenInput
-        })
-        super(TileFilter, self).__init__(*args, **kwargs)
+        super(PolygonFilter, self).__init__(*args, **kwargs)
 
     def _compute_pixel_size(self, zoom):
         tile_pixel_size = 512
         equatorial_radius_wgs84 = 6378137
         circumference = 2 * pi * equatorial_radius_wgs84
         return circumference / tile_pixel_size / 2 ** int(zoom)
-
-    def filter(self, qs, value):
-        qs = super().filter(qs, value)
-        for index in range(len(qs)):
-            qs[index].geom = qs[index].geom.simplify(2 * self.tolerance, preserve_topology=True)
-        return qs
 
     def get_polygon_from_value(self, value):
         if not value:
@@ -90,6 +52,39 @@ class TileFilter(PythonPolygonFilter):
         # transform the polygon to match with db srid
         bbox.transform(settings.SRID)
         return bbox
+
+
+class TileFilter(PolygonFilter):
+    def __init__(self, *args, **kwargs):
+        super(TileFilter, self).__init__(*args, **kwargs)
+
+    def filter(self, qs, value):
+        if not value:
+            return qs
+        bbox = self.get_polygon_from_value(value)
+        qs = qs.filter(geom__intersects=bbox)
+        return qs.annotate(simplified_geom=Func('geom', self.tolerance, function='ST_SimplifyPreserveTopology'))
+
+
+class PythonTileFilter(PolygonFilter):
+    def __init__(self, *args, **kwargs):
+        super(PythonTileFilter, self).__init__(*args, **kwargs)
+
+    def filter(self, qs, value):
+        if not value:
+            return qs
+        filtered = []
+        for o in qs.all():
+            geom = getattr(o, self.field_name)
+            if geom and geom.valid and not geom.empty:
+                if getattr(geom, self.lookup_expr)(self.get_polygon_from_value(value)):
+                    filtered.append(o.pk)
+            else:
+                filtered.append(o.pk)
+        qs = qs.filter(pk__in=filtered)
+        for index in range(len(qs)):
+            qs[index].geom = qs[index].geom.simplify(2 * self.tolerance, preserve_topology=True)
+        return qs
 
 
 class BaseMapEntityFilterSet(FilterSet):

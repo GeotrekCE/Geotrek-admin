@@ -3,7 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from django_filters import ChoiceFilter
 
-from mapentity.filters import PolygonFilter, PythonPolygonFilter
+from mapentity.filters import PolygonFilter
 
 from geotrek.core.models import Topology
 from geotrek.common.filters import (
@@ -77,7 +77,6 @@ class ProjectYearSelect(YearSelect):
 
 
 class ProjectFilterSet(StructureRelatedFilterSet):
-    bbox = PythonPolygonFilter(field_name='geom')
     in_year = YearBetweenFilter(field_name=('begin_year', 'end_year'),
                                 widget=ProjectYearSelect,
                                 label=_("Year of activity"))
