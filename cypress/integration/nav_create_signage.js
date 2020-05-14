@@ -26,9 +26,6 @@ describe('Create trek', () => {
   it('Create signage', () => {
     cy.visit('http://localhost:8000/signage/list')
     cy.get("a.btn-success[href='/signage/add/']").contains('Add a new signage').click()
-    cy.server()
-    cy.route('/api/graph.json').as('graph')
-    cy.wait('@graph')
     cy.get("a.pointtopology-control").click()
     cy.get('.leaflet-map-pane')
       .click(403, 287);

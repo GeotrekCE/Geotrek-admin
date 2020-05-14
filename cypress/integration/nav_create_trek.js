@@ -51,6 +51,7 @@ describe('Create trek', () => {
     cy.setTinyMceContent('id_access_en', 'Access number 1');
     cy.setTinyMceContent('id_description_teaser_en', 'Description teaser number 1')
     cy.setTinyMceContent('id_ambiance_en', 'Ambiance number 1')
+    cy.setTinyMceContent('id_description_en', 'Description number 1')
     cy.get('#save_changes').click()
     cy.url().should('not.include', '/trek/add/')
     cy.get('.content').should('contain', 'Trek number 1')
@@ -68,12 +69,5 @@ describe('Create trek', () => {
     cy.get("input[name='published_en']").click()
     cy.get("input[id='id_published_en']").check()
     cy.get('#save_changes').click()
-    cy.get("div.alert-error").contains("Object is published but looks incomplete;").should('have.length', 1)
-  })
-  it('Change trek published complete', () => {
-    cy.visit('http://localhost:8000/trek/edit/2')
-    cy.setTinyMceContent('id_description_en', 'Description number 1')
-    cy.get('#save_changes').click()
-    cy.get("div.alert-error").contains("Object is published but looks incomplete;").should('have.length', 0)
   })
 })
