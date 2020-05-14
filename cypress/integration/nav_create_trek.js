@@ -63,7 +63,8 @@ describe('Create trek', () => {
   })
   it('Change trek waiting for publication', () => {
     cy.visit('http://localhost:8000/trek/list')
-    cy.get("a[title='Trek number 1']").then((href) => {
+    cy.get("a[title='Trek number 1']").should('have.attr', 'href')
+      .then((href) => {
         cy.visit(href)
     })
     cy.get("div.alert-warning").contains("Waiting for publication").should('have.length', 1)
