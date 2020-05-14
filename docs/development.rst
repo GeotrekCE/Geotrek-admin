@@ -55,10 +55,11 @@ Release
 
 * Update files *VERSION*, *docs/conf.py* and *docs/changelog.rst* to remove ~dev0 suffix
 * Run ``dch -r -D bionic``, remove ~dev0 suffix in version and save
-* Commit
+* Commit with message 'Release x.y.z'
 * Add git tag X.Y.Z
 * Update files *VERSION*, *docs/conf.py* and *docs/changelog.rst* to increment version (using semantic versionning) and add .dev0 suffix
 * Run ``dch -v <future version>~dev0 --no-force-save-on-release`` and save
+* Commit with message 'Back to development'
 * Push branch and tag
 * Add release on Github (copy-paste ``doc/changelog.rst`` paragraph)
 
