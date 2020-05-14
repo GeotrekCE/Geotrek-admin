@@ -44,7 +44,9 @@
             for (const value of Object.values($('#objects-list input:checkbox:checked'))) {
                 pathsToDelete.push(value.value);
             };
-            window.location = pathDelete.replace('0,0', pathsToDelete.filter(Boolean).join(','));
+            if (pathsToDelete.filter(Boolean).length != 0) {
+                window.location = pathDelete.replace('0,0', pathsToDelete.filter(Boolean).join(','));
+            }
             });
 
    	        $('#btn-confirm').click(function() {

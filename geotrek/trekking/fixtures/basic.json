@@ -280,6 +280,7 @@
         "fields": {
             "pictogram": "upload/route-loop.svg",
             "route_fr": "Boucle",
+            "route_en": "Loop",
             "route": "Boucle"
         }
     },
@@ -289,6 +290,7 @@
         "fields": {
             "pictogram": "upload/route-return.svg",
             "route_fr": "Aller-retour",
+            "route_en": "Round trip",
             "route": "Aller-retour"
         }
     },
@@ -298,6 +300,7 @@
         "fields": {
             "pictogram": "upload/route-cross.svg",
             "route_fr": "Travers\u00e9e",
+            "route_en": "Crossing",
             "route": "Travers\u00e9e"
         }
     },

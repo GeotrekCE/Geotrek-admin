@@ -65,7 +65,6 @@ class AutoLoginMiddleware:
 
         if user and user.is_anonymous and not is_running_tests:
             remoteip = request.META.get('REMOTE_ADDR')
-
             if remoteip in AUTOLOGIN_IPS:
                 user = get_internal_user()
                 try:
