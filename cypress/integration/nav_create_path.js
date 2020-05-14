@@ -1,4 +1,4 @@
-describe('Create trek', () => {
+describe('Create path', () => {
   beforeEach(() => {
       const username = 'admin'
       const password = 'admin'
