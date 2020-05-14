@@ -62,9 +62,12 @@ describe('Create trek', () => {
     cy.get("span.badge-warning[title='Waiting for publication']").should('have.length', 1)
   })
   it('Change trek waiting for publication', () => {
-    cy.visit('http://localhost:8000/trek/2')
+    cy.visit('http://localhost:8000/trek/list')
+    cy.get("a[title='Trek number 1']").then((href) => {
+        cy.visit(href)
+    })
     cy.get("div.alert-warning").contains("Waiting for publication").should('have.length', 1)
-    cy.get("a.btn-primary[href='/trek/edit/2/']").click()
+    cy.get("a.btn-primary").contains("Update").click()
     cy.get("input[id='id_review']").check()
     cy.get("input[name='published_en']").click()
     cy.get("input[id='id_published_en']").check()
