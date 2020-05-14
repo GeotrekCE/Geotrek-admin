@@ -26,6 +26,9 @@ describe('Create trek', () => {
   it('Create trek', () => {
     cy.visit('http://localhost:8000/trek/list')
     cy.get("a.btn-success[href='/trek/add/']").contains('Add a new trek').click()
+    cy.server()
+    cy.route('/api/graph.json').as('graph')
+    cy.wait('@graph')
     cy.get("a.linetopology-control").click()
     cy.get('.leaflet-map-pane')
       .click(405, 290)
