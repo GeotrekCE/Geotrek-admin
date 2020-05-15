@@ -4,7 +4,7 @@ Cypress.on('uncaught:exception', (err, runnable) => {
     return false
 })
 
-describe('Create trek', () => {
+describe('Create signage', () => {
   beforeEach(() => {
       const username = 'admin'
       const password = 'admin'
@@ -25,9 +25,9 @@ describe('Create trek', () => {
 
   it('Create signage', () => {
     cy.visit('http://localhost:8000/signage/list')
-    cy.get("a.btn-success[href='/signage/add/']").contains('Add a new signage').click()
     cy.server()
     cy.route('/api/signage/signage.geojson').as('signage')
+    cy.get("a.btn-success[href='/signage/add/']").contains('Add a new signage').click()
     cy.wait('@signage')
     cy.get("a.pointtopology-control").click()
     cy.get('.leaflet-map-pane')
