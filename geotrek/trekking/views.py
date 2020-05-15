@@ -24,7 +24,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
 from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.models import RecordSource, TargetPortal, Attachment
+from geotrek.common.models import Attachment, RecordSource, TargetPortal
 from geotrek.common.views import FormsetMixin, PublicOrReadPermMixin, DocumentPublic, MarkupPublic
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
@@ -64,18 +64,30 @@ class SyncRandoRedirect(RedirectView):
         return super(SyncRandoRedirect, self).post(request, *args, **kwargs)
 
 
+class FlattenPicturesMixin(object):
+    def get_queryset(self):
+        """ Override queryset to avoid attachment lookup while serializing.
+        It will fetch attachments, and force ``pictures`` attribute of instances.
+        """
+        qs = super().get_queryset()
+        qs.prefetch_related(Prefetch('attachments',
+                                     queryset=Attachment.objects.filter(
+                                         is_image=True
+                                     ).exclude(title='mapimage').order_by('-starred', 'attachment_file'),
+                                     to_attr="_pictures"))
+        return qs
+
+
 class TrekLayer(MapEntityLayer):
     properties = ['name', 'published']
     queryset = Trek.objects.existing()
 
 
-class TrekList(MapEntityList):
+class TrekList(FlattenPicturesMixin, MapEntityList):
     model = Trek
     filterform = TrekFilterSet
     columns = ['id', 'name', 'duration', 'difficulty', 'departure', 'thumbnail']
-    queryset = model.objects.existing().prefetch_related(Prefetch('attachments',
-                                                                  queryset=Attachment.objects.all(),
-                                                                  to_attr="pictures"))
+    queryset = model.objects.existing()
 
 
 class TrekJsonList(MapEntityJsonList, TrekList):
@@ -260,13 +272,11 @@ class POILayer(MapEntityLayer):
     properties = ['name', 'published']
 
 
-class POIList(MapEntityList):
+class POIList(FlattenPicturesMixin, MapEntityList):
     model = POI
     filterform = POIFilterSet
     columns = ['id', 'name', 'type', 'thumbnail']
-    model.objects.existing().prefetch_related(Prefetch('attachments',
-                                                       queryset=Attachment.objects.all(),
-                                                       to_attr="pictures"))
+    queryset = model.objects.existing()
 
 
 class POIJsonList(MapEntityJsonList, POIList):

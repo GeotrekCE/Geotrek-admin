@@ -3,13 +3,12 @@
 from __future__ import unicode_literals
 
 
-from django.conf import settings
 from django.db import migrations
+from geotrek.common.models import Attachment
 
 
 def forward(apps, schema_editor):
-    AttachmentModel = apps.get_model('common', 'Attachment')
-    for attachment in AttachmentModel.objects.all():
+    for attachment in Attachment.objects.all():
         if attachment.is_an_image():
             attachment.is_image = True
             attachment.save()
