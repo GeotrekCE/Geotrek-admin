@@ -64,38 +64,18 @@ class SyncRandoRedirect(RedirectView):
         return super(SyncRandoRedirect, self).post(request, *args, **kwargs)
 
 
-class FlattenPicturesMixin(object):
-    def get_queryset(self):
-        """ Override queryset to avoid attachment lookup while serializing.
-        It will fetch attachments, and force ``pictures`` attribute of instances.
-        """
-        app_label = self.get_model()._meta.app_label
-        model_name = self.get_model()._meta.object_name.lower()
-        attachments = Attachment.objects.filter(content_type__app_label=app_label,
-                                                content_type__model=model_name)
-        pictures = {}
-        for attachment in attachments:
-            if attachment.is_image:
-                obj_id = attachment.object_id
-                pictures.setdefault(obj_id, []).append(attachment)
-
-        for obj in super(FlattenPicturesMixin, self).get_queryset():
-            obj.pictures = pictures.get(obj.id, [])
-            yield obj
-
-
 class TrekLayer(MapEntityLayer):
     properties = ['name', 'published']
     queryset = Trek.objects.existing()
 
 
-class TrekList(FlattenPicturesMixin, MapEntityList):
+class TrekList(MapEntityList):
     model = Trek
     filterform = TrekFilterSet
     columns = ['id', 'name', 'duration', 'difficulty', 'departure', 'thumbnail']
-
-    def get_queryset(self):
-        return self.model.objects.existing()
+    queryset = model.objects.existing().prefetch_related(Prefetch('attachments',
+                                                                  queryset=Attachment.objects.all(),
+                                                                  to_attr="pictures"))
 
 
 class TrekJsonList(MapEntityJsonList, TrekList):
@@ -280,13 +260,13 @@ class POILayer(MapEntityLayer):
     properties = ['name', 'published']
 
 
-class POIList(FlattenPicturesMixin, MapEntityList):
+class POIList(MapEntityList):
     model = POI
     filterform = POIFilterSet
     columns = ['id', 'name', 'type', 'thumbnail']
-
-    def get_queryset(self):
-        return self.model.objects.existing()
+    model.objects.existing().prefetch_related(Prefetch('attachments',
+                                                       queryset=Attachment.objects.all(),
+                                                       to_attr="pictures"))
 
 
 class POIJsonList(MapEntityJsonList, POIList):

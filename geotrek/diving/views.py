@@ -2,6 +2,7 @@ from urllib.parse import urljoin
 
 from django.conf import settings
 from django.db.models import Q
+from django.db.models.query import Prefetch
 from django.contrib.gis.db.models.functions import Transform
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -14,7 +15,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
 from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.models import RecordSource, TargetPortal
+from geotrek.common.models import Attachment, RecordSource, TargetPortal
 from geotrek.common.views import DocumentPublic, MarkupPublic
 
 from .filters import DiveFilterSet
@@ -23,7 +24,6 @@ from .models import Dive
 from .serializers import DiveSerializer, DiveGeojsonSerializer
 from geotrek.trekking.models import POI, Service
 from geotrek.trekking.serializers import POIGeojsonSerializer, ServiceGeojsonSerializer
-from geotrek.trekking.views import FlattenPicturesMixin
 
 
 class DiveLayer(MapEntityLayer):
@@ -31,13 +31,13 @@ class DiveLayer(MapEntityLayer):
     queryset = Dive.objects.existing()
 
 
-class DiveList(FlattenPicturesMixin, MapEntityList):
+class DiveList(MapEntityList):
     model = Dive
     filterform = DiveFilterSet
     columns = ['id', 'name', 'levels', 'thumbnail']
-
-    def get_queryset(self):
-        return self.model.objects.existing()
+    queryset = model.objects.existing().prefetch_related(Prefetch('attachments',
+                                                                  queryset=Attachment.objects.all(),
+                                                                  to_attr="pictures"))
 
 
 class DiveJsonList(MapEntityJsonList, DiveList):
