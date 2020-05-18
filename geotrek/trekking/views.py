@@ -24,7 +24,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
 from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.models import RecordSource, TargetPortal, Attachment
+from geotrek.common.models import Attachment, RecordSource, TargetPortal
 from geotrek.common.views import FormsetMixin, PublicOrReadPermMixin, DocumentPublic, MarkupPublic
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
@@ -69,19 +69,13 @@ class FlattenPicturesMixin(object):
         """ Override queryset to avoid attachment lookup while serializing.
         It will fetch attachments, and force ``pictures`` attribute of instances.
         """
-        app_label = self.get_model()._meta.app_label
-        model_name = self.get_model()._meta.object_name.lower()
-        attachments = Attachment.objects.filter(content_type__app_label=app_label,
-                                                content_type__model=model_name)
-        pictures = {}
-        for attachment in attachments:
-            if attachment.is_image:
-                obj_id = attachment.object_id
-                pictures.setdefault(obj_id, []).append(attachment)
-
-        for obj in super(FlattenPicturesMixin, self).get_queryset():
-            obj.pictures = pictures.get(obj.id, [])
-            yield obj
+        qs = super().get_queryset()
+        qs.prefetch_related(Prefetch('attachments',
+                                     queryset=Attachment.objects.filter(
+                                         is_image=True
+                                     ).exclude(title='mapimage').order_by('-starred', 'attachment_file'),
+                                     to_attr="_pictures"))
+        return qs
 
 
 class TrekLayer(MapEntityLayer):
@@ -93,9 +87,7 @@ class TrekList(FlattenPicturesMixin, MapEntityList):
     model = Trek
     filterform = TrekFilterSet
     columns = ['id', 'name', 'duration', 'difficulty', 'departure', 'thumbnail']
-
-    def get_queryset(self):
-        return self.model.objects.existing()
+    queryset = model.objects.existing()
 
 
 class TrekJsonList(MapEntityJsonList, TrekList):
@@ -284,9 +276,7 @@ class POIList(FlattenPicturesMixin, MapEntityList):
     model = POI
     filterform = POIFilterSet
     columns = ['id', 'name', 'type', 'thumbnail']
-
-    def get_queryset(self):
-        return self.model.objects.existing()
+    queryset = model.objects.existing()
 
 
 class POIJsonList(MapEntityJsonList, POIList):

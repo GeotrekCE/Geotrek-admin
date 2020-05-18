@@ -6,6 +6,7 @@ from .models import Trek, POI, Service
 
 
 class TrekFilterSet(MapEntityFilterSet):
+
     class Meta:
         model = Trek
         fields = ['published', 'difficulty', 'duration', 'themes', 'networks',

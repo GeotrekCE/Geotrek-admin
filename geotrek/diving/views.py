@@ -21,6 +21,7 @@ from .filters import DiveFilterSet
 from .forms import DiveForm
 from .models import Dive
 from .serializers import DiveSerializer, DiveGeojsonSerializer
+
 from geotrek.trekking.models import POI, Service
 from geotrek.trekking.serializers import POIGeojsonSerializer, ServiceGeojsonSerializer
 from geotrek.trekking.views import FlattenPicturesMixin
@@ -35,9 +36,7 @@ class DiveList(FlattenPicturesMixin, MapEntityList):
     model = Dive
     filterform = DiveFilterSet
     columns = ['id', 'name', 'levels', 'thumbnail']
-
-    def get_queryset(self):
-        return self.model.objects.existing()
+    queryset = model.objects.existing()
 
 
 class DiveJsonList(MapEntityJsonList, DiveList):
