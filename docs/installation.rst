@@ -78,7 +78,7 @@ If you are not confident with the ``install.sh`` script, or if you are having tr
 
     Geotrek-admin is automatically installed in ``/opt/geotrek-admin/`` directory.
 	
-	The installation automatically creates an internal ``geotrek`` linux user, owner of this directory
+    The installation automatically creates an internal ``geotrek`` linux user, owner of this directory
 
     The Geotrek-admin Python application is located in ``/opt/geotrek-admin/lib/python3.6/site-packages/geotrek`` directory
 
@@ -122,13 +122,15 @@ Then, go inside your existing Geotrek-admin installation directory and run the d
 .. note ::
 
     Geotrek-admin is now automatically installed in ``/opt/geotrek-admin/`` directory 
-    and the advanced configuration file moved to ``/opt/geotrek-admin/var/conf/custom.py``. 
+    and the advanced configuration file moved to ``/opt/geotrek-admin/var/conf/custom.py`` 
+    (with spatial extent, map and modules configuration...). 
 
     See advanced configuration documentation for details.
 
-    The ``etc/settings.ini`` file is replaced by basic configuration.
+    The ``etc/settings.ini`` file is replaced by basic configuration, updated with 
+    ``sudo dpkg-reconfigure geotrek-admin`` command (database, SRID, languages, server_name, timeout...).
 
-    Update your imports and synchronization commands and directories.
+    Update your imports, synchronization and backup commands and directories.
 
 
 Troubleshooting
