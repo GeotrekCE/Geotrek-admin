@@ -34,7 +34,7 @@ export NGINX_PORT="80"
 
 # Create geotrek user (only on a new install)
 if [ "$2" = "" ]; then
-	adduser --system --group --no-create-home --quiet geotrek
+	adduser --system --group --no-create-home --quiet geotrek || true
 fi
 
 # Create directories
