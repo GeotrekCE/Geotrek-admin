@@ -37,27 +37,38 @@ Configuration
 Application restore
 -------------------
 
-Create empty database:
+If you restore Geotrek-admin on a new server, you will have to install PostgreSQL and PostGIS and create a database user first. 
+Otherwise go directly to the database creation step. 
+
+Example for Ubuntu 18:
 
 .. code-block:: bash
 
-    sudo -u postgres psql -c "CREATE DATABASE geotrekdb ENCODING 'UTF8' TEMPLATE template0;"
-    sudo -u psql -d geotrekdb -c "CREATE EXTENSION postgis;"
+    sudo apt install postgresql-10 postgresql-10-postgis-2.4
+    sudo -u postgres psql -c "CREATE USER geotrek PASSWORD 'geotrek';"
+
+
+Create an empty database (``geotrekdb`` in this example):
+
+.. code-block:: bash
+
+    sudo -u postgres psql -c "CREATE DATABASE geotrekdb OWNER geotrek ENCODING 'UTF8' TEMPLATE template0;"
+    sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION postgis;"
 
 
 Restore backup:
 
 .. code-block:: bash
 
-    sudo -u postgres pg_restore -d geotrekdb 20140610-geotrekdb.backup
+    sudo -u postgres pg_restore -d geotrekdb 20200510-geotrekdb.backup
 
 
 Extract media and configuration files:
 
 .. code-block:: bash
 
-    tar -zxvf 20140610-media.tar.gz
-    tar -zxvf 20140610-conf.tar.gz
+    tar -zxvf 20200510-media.tar.gz
+    tar -zxvf 20200510-conf.tar.gz
 
 Follow *Fresh installation* method. Choose to manage database by yourself.
 
