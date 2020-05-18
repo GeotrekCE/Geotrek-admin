@@ -2,12 +2,14 @@
 CHANGELOG
 =========
 
-2.33.7.dev0
+2.33.7 (2020-05-18)
 -------------------
 
 **Bug fixes**
 
--
+- Show blades without line in signage detail page
+- Fix information desks editing
+- Fix trek and POI filtering
 
 
 2.33.6 (2020-05-14)
