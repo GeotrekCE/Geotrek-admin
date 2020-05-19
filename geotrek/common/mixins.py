@@ -80,8 +80,7 @@ class PicturesMixin(object):
         """
         if hasattr(self, '_pictures'):
             return self._pictures
-        all_attachments = self.attachments.all().order_by('-starred', 'attachment_file')
-        return [a for a in all_attachments if a.is_image and a.title != 'mapimage']
+        return self.attachments.filter(is_image=True).exclude(title='mapimage').order_by('-starred', 'attachment_file')
 
     @pictures.setter
     def pictures(self, values):
@@ -218,9 +217,7 @@ class PicturesMixin(object):
 
     @property
     def files(self):
-        all_attachments = self.attachments.all().order_by('-starred')
-        all_attachments = all_attachments.exclude(attachment_file='')
-        return [a for a in all_attachments if not a.is_image]
+        return self.attachments.exclude(is_image=True, attachment_file='').order_by('-starred')
 
     @property
     def serializable_files(self):
@@ -361,7 +358,7 @@ class PublishableMixin(BasePublishableMixin):
         TODO: remove this when screenshots are bullet-proof ?
         """
         attached = None
-        for picture in [a for a in self.attachments.all() if a.is_image]:
+        for picture in self.attachments.filter(is_image=True):
             if picture.title == 'mapimage':
                 attached = picture.attachment_file
                 break
