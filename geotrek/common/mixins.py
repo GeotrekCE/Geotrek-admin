@@ -7,6 +7,7 @@ import hashlib
 from django.conf import settings
 from django.db.models import Manager as DefaultManager
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 
@@ -217,7 +218,7 @@ class PicturesMixin(object):
 
     @property
     def files(self):
-        return self.attachments.exclude(is_image=True, attachment_file='').order_by('-starred')
+        return self.attachments.exclude(Q(is_image=True) | Q(attachment_file='')).order_by('-starred')
 
     @property
     def serializable_files(self):
@@ -357,18 +358,14 @@ class PublishableMixin(BasePublishableMixin):
         as a screenshot.
         TODO: remove this when screenshots are bullet-proof ?
         """
-        attached = None
-        for picture in self.attachments.filter(is_image=True):
-            if picture.title == 'mapimage':
-                attached = picture.attachment_file
-                break
-        if attached is None:
-            super(PublishableMixin, self).prepare_map_image(rooturl)
-        else:
-            # Copy it along other screenshots
+        picture = self.attachments.filter(is_image=True, title='mapimage').first()
+        if picture:
+            attached = picture.attachment_file
             src = os.path.join(settings.MEDIA_ROOT, attached.name)
             dst = self.get_map_image_path()
             shutil.copyfile(src, dst)
+        else:
+            super(PublishableMixin, self).prepare_map_image(rooturl)
 
     def is_public(self):
         return self.any_published
