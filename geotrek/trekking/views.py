@@ -84,10 +84,9 @@ class TrekLayer(MapEntityLayer):
 
 
 class TrekList(FlattenPicturesMixin, MapEntityList):
-    model = Trek
     filterform = TrekFilterSet
     columns = ['id', 'name', 'duration', 'difficulty', 'departure', 'thumbnail']
-    queryset = model.objects.existing()
+    queryset = Trek.objects.existing()
 
 
 class TrekJsonList(MapEntityJsonList, TrekList):
