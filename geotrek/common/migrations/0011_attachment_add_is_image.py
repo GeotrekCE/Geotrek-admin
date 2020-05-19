@@ -4,12 +4,13 @@ from __future__ import unicode_literals
 
 
 from django.db import migrations
-from geotrek.common.models import Attachment
+import mimetypes
 
 
 def forward(apps, schema_editor):
-    for attachment in Attachment.objects.all():
-        if attachment.is_an_image():
+    AttachmentModel = apps.get_model('common', 'Attachment')
+    for attachment in AttachmentModel.objects.all():
+        if mimetypes.guess_type(attachment.attachment_file.name, strict=True)[0].split('/')[0].startswith('image'):
             attachment.is_image = True
             attachment.save()
 
