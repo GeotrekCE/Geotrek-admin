@@ -27,6 +27,7 @@ class MapEntityLayer(FilterListMixin, ModelViewMixin, GeoJSONLayerView):
     force2d = True
     srid = API_SRID
     precision = app_settings.get('GEOJSON_PRECISION')
+    geometry_field = 'simplified_geom'
 
     def __init__(self, *args, **kwargs):
         super(MapEntityLayer, self).__init__(*args, **kwargs)
