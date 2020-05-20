@@ -63,7 +63,7 @@ class TileFilter(PolygonFilter):
             return qs
         bbox = self.get_polygon_from_value(value)
         qs = qs.filter(geom__intersects=bbox)
-        return qs.annotate(simplified_geom=Func('geom', self.tolerance, function='ST_SimplifyPreserveTopology'))
+        return qs.annotate(simplified_geom=Func('geom', 2 * self.tolerance, function='ST_SimplifyPreserveTopology'))
 
 
 class PythonTileFilter(PolygonFilter):
