@@ -2,12 +2,13 @@
 CHANGELOG
 =========
 
-2.33.8.dev0
+2.33.8 (2020-05-22)
 -------------------
 
 **Bug fixes**
 
--
+- Fix package install if geotrek user already exists
+- Attachment download error breaks global import
 
 
 2.33.7 (2020-05-18)
