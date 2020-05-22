@@ -4,7 +4,6 @@ from shutil import rmtree
 from tempfile import mkdtemp
 from io import StringIO
 from requests import Response
-from requests.exceptions import RequestException
 import urllib
 
 from django.test import TestCase
@@ -17,7 +16,10 @@ from django.template.exceptions import TemplateDoesNotExist
 from geotrek.authent.factories import StructureFactory
 from geotrek.trekking.models import Trek
 from geotrek.common.models import Organism, FileType, Attachment
-from geotrek.common.parsers import ExcelParser, AttachmentParserMixin, TourInSoftParser, ValueImportError, TourismSystemParser, OpenSystemParser
+from geotrek.common.parsers import (
+    ExcelParser, AttachmentParserMixin, TourInSoftParser, ValueImportError, DownloadImportError,
+    TourismSystemParser, OpenSystemParser,
+)
 
 
 class OrganismParser(ExcelParser):
@@ -171,7 +173,7 @@ class AttachmentParserTests(TestCase):
         self.assertEqual(mocked_get.call_count, 1)
         self.assertEqual(Attachment.objects.count(), 1)
 
-    @override_settings(PARSER_RETRY_SLEEP_TIME=1)
+    @override_settings(PARSER_RETRY_SLEEP_TIME=0)
     @mock.patch('requests.get')
     @mock.patch('requests.head')
     def test_attachment_request_fail(self, mocked_head, mocked_get):
@@ -180,8 +182,7 @@ class AttachmentParserTests(TestCase):
         mocked_head.return_value.status_code = 503
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
-        with self.assertRaises(CommandError):
-            call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
+        call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
         self.assertEqual(mocked_get.call_count, 1)
         self.assertEqual(mocked_head.call_count, 3)
         self.assertEqual(Attachment.objects.count(), 1)
@@ -191,7 +192,7 @@ class AttachmentParserTests(TestCase):
     def test_attachment_request_except(self, mocked_head, mocked_get):
         mocked_get.return_value.status_code = 200
         mocked_get.return_value.content = ''
-        mocked_head.side_effect = RequestException()
+        mocked_head.side_effect = DownloadImportError()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
@@ -203,7 +204,7 @@ class AttachmentParserTests(TestCase):
     @mock.patch('geotrek.common.parsers.urlparse')
     def test_attachment_download_fail(self, mocked_urlparse, mocked_get):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'organism.xls')
-        mocked_get.side_effect = RequestException()
+        mocked_get.side_effect = DownloadImportError()
         mocked_urlparse.return_value = urllib.parse.urlparse('ftp://test.url.com/organism.xls')
 
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentParser', filename, verbosity=0)
