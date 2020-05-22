@@ -52,6 +52,10 @@ class ValueImportError(ImportError):
     pass
 
 
+class DownloadImportError(ImportError):
+    pass
+
+
 class Parser(object):
     label = None
     model = None
@@ -480,7 +484,7 @@ class Parser(object):
             else:
                 break
         logger.warning("Failed to fetch {} after {} times. Status code : {}.".format(url, settings.PARSER_NUMBER_OF_TRIES, response.status_code))
-        raise GlobalImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=response.url, status_code=response.status_code))
+        raise DownloadImportError(_("Failed to download {url}. HTTP status code {status_code}").format(url=response.url, status_code=response.status_code))
 
 
 class ShapeParser(Parser):
@@ -588,7 +592,7 @@ class AttachmentParserMixin(object):
         if parsed_url.scheme == 'http' or parsed_url.scheme == 'https':
             try:
                 response = self.request_or_retry(url, verb='head')
-            except requests.exceptions.RequestException as e:
+            except DownloadImportError as e:
                 raise ValueImportError('Failed to load attachment: {exc}'.format(exc=e))
             size = response.headers.get('content-length')
             return size is not None and int(size) != attachment.attachment_file.size
@@ -600,14 +604,14 @@ class AttachmentParserMixin(object):
         if parsed_url.scheme == 'ftp':
             try:
                 response = self.request_or_retry(url)
-            except requests.exceptions.RequestException as e:
+            except DownloadImportError as e:
                 raise ValueImportError('Failed to load attachment: {exc}'.format(exc=e))
             return response.read()
         else:
             if self.download_attachments:
                 try:
                     response = self.request_or_retry(url)
-                except requests.exceptions.RequestException as e:
+                except DownloadImportError as e:
                     raise ValueImportError('Failed to load attachment: {exc}'.format(exc=e))
                 if response.status_code != requests.codes.ok:
                     self.add_warning(_("Failed to download '{url}'").format(url=url))
