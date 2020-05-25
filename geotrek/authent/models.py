@@ -30,7 +30,7 @@ class Structure(models.Model):
 
 def default_structure():
     """ Create default structure if necessary """
-    return Structure.objects.get_or_create(name=settings.DEFAULT_STRUCTURE_NAME)[0]
+    return Structure.objects.get_or_create(pk=1)[0]
 
 
 def default_structure_pk():
@@ -41,7 +41,7 @@ class StructureRelated(models.Model):
     """
     A mixin used for any entities that belong to a structure
     """
-    structure = models.ForeignKey(Structure, default=default_structure_pk, on_delete=models.CASCADE,
+    structure = models.ForeignKey(Structure, default=999, on_delete=models.CASCADE,
                                   verbose_name=_("Related structure"))
 
     check_structure_in_forms = True
