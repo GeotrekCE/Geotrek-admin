@@ -145,12 +145,7 @@ class ElevationProfileTest(TestCase):
         self.assertEqual(limits[1], -92)
 
 
-class ElevationAreaTest(TestCase):
-    def setUp(self):
-        self._fill_raster()
-        self.geom = LineString((100, 370), (1100, 370), srid=settings.SRID)
-        self.area = AltimetryHelper.elevation_area(self.geom)
-
+class AreaTestCase(TestCase):
     def _fill_raster(self):
         conn = connections[DEFAULT_DB_ALIAS]
         cur = conn.cursor()
@@ -162,21 +157,16 @@ class ElevationAreaTest(TestCase):
             for x in range(0, 4):
                 cur.execute('UPDATE mnt SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
 
+
+class ElevationAreaTest(AreaTestCase):
+    def setUp(self):
+        self._fill_raster()
+        self.geom = LineString((100, 370), (1100, 370), srid=settings.SRID)
+        self.area = AltimetryHelper.elevation_area(self.geom)
+
     def test_area_has_nice_ratio_if_horizontal(self):
         self.assertEqual(self.area['size']['x'], 1300.0)
         self.assertEqual(self.area['size']['y'], 800.0)
-
-    def test_area_has_nice_ratio_if_vertical(self):
-        geom = LineString((0, 0), (0, 1000), srid=settings.SRID)
-        area = AltimetryHelper.elevation_area(geom)
-        self.assertEqual(area['size']['x'], 800.0)
-        self.assertEqual(area['size']['y'], 1300.0)
-
-    def test_area_has_nice_ratio_if_square_enough(self):
-        geom = LineString((0, 0), (1000, 1000), srid=settings.SRID)
-        area = AltimetryHelper.elevation_area(geom)
-        self.assertEqual(area['size']['x'], 1300.0)
-        self.assertEqual(area['size']['y'], 1300.0)
 
     def test_area_provides_altitudes_as_matrix(self):
         self.assertEqual(len(self.area['altitudes']), 33)
@@ -219,6 +209,30 @@ class ElevationAreaTest(TestCase):
         extent = self.area['extent']
         self.assertEqual(extent['altitudes']['max'], 45)
         self.assertEqual(extent['altitudes']['min'], 0)
+
+
+class ElevationOtherGeomAreaTest(AreaTestCase):
+    def setUp(self):
+        self._fill_raster()
+
+    def test_area_small_geom(self):
+        geom = LineString((10, 10), (10, 5), srid=settings.SRID)
+        area = AltimetryHelper.elevation_area(geom)
+        extent = area['extent']
+        self.assertEqual(extent['altitudes']['max'], 45)
+        self.assertEqual(extent['altitudes']['min'], 0)
+
+    def test_area_has_nice_ratio_if_vertical(self):
+        geom = LineString((0, 0), (0, 1000), srid=settings.SRID)
+        area = AltimetryHelper.elevation_area(geom)
+        self.assertEqual(area['size']['x'], 800.0)
+        self.assertEqual(area['size']['y'], 1300.0)
+
+    def test_area_has_nice_ratio_if_square_enough(self):
+        geom = LineString((0, 0), (1000, 1000), srid=settings.SRID)
+        area = AltimetryHelper.elevation_area(geom)
+        self.assertEqual(area['size']['x'], 1300.0)
+        self.assertEqual(area['size']['y'], 1300.0)
 
 
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')

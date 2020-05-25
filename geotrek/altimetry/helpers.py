@@ -134,6 +134,8 @@ class AltimetryHelper(object):
             precision = int(width / max_resolution)
         if height / precision > 10000:
             precision = int(width / max_resolution)
+        if height < precision or width < precision:
+            precision = max([height, width])
         cursor = connection.cursor()
         cursor.execute("SELECT 1 FROM information_schema.tables WHERE table_name='mnt'")
         if cursor.rowcount == 0:
