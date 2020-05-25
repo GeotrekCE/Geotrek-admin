@@ -219,8 +219,8 @@ class ElevationOtherGeomAreaTest(AreaTestCase):
         geom = LineString((10, 10), (10, 5), srid=settings.SRID)
         area = AltimetryHelper.elevation_area(geom)
         extent = area['extent']
-        self.assertEqual(extent['altitudes']['max'], 45)
-        self.assertEqual(extent['altitudes']['min'], 0)
+        self.assertEqual(extent['altitudes']['max'], 30)
+        self.assertEqual(extent['altitudes']['min'], 30)
 
     def test_area_has_nice_ratio_if_vertical(self):
         geom = LineString((0, 0), (0, 1000), srid=settings.SRID)
