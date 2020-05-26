@@ -103,12 +103,12 @@ class ReportViewSet(mapentity_views.MapEntityViewSet):
                 _("Geotrek : Signal a mistake"),
                 _("""Hello,
 
-        We acknowledge receipt of your feedback, thank you for your interest in Geotrek.
+We acknowledge receipt of your feedback, thank you for your interest in Geotrek.
 
-        Best regards,
+Best regards,
 
-        The Geotrek Team
-        http://www.geotrek.fr"""),
+The Geotrek Team
+http://www.geotrek.fr"""),
                 settings.DEFAULT_FROM_EMAIL,
                 [request.data.get('email')]
             )
