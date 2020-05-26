@@ -20,7 +20,7 @@ from geotrek.feedback import serializers as feedback_serializers
 class ReportLayer(mapentity_views.MapEntityLayer):
     model = feedback_models.Report
     filterform = ReportFilterSet
-    properties = ['email', 'activity']
+    properties = ['email']
 
 
 class ReportList(mapentity_views.MapEntityList):
