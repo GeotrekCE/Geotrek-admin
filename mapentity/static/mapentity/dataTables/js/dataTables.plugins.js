@@ -70,49 +70,38 @@ $.fn.dataTableExt.oApi.fnReloadAjax = function ( oSettings, sNewSource, sAjaxDat
     }
     this.oApi._fnProcessingDisplay( oSettings, true );
     var that = this;
-    var iStart = oSettings._iDisplayStart;
     var aData = [];
 
     this.oApi._fnServerParams( oSettings, aData );
+    that.oApi._fnClearTable( oSettings );
+    var callback_args = {};
+    var getObjectDataFn = null;
 
-    oSettings.fnServerData( oSettings.sAjaxSource, aData, function(json) {
-        /* Clear the old information from the table */
-        that.oApi._fnClearTable( oSettings );
+    if (sAjaxDataPropWithCbArg !== undefined) {
+        getObjectDataFn = function(data, type) {
+            return sAjaxDataPropWithCbArg(data, type, callback_args);
+        };
+    } else if (oSettings.sAjaxDataProp !== "") {
+        getObjectDataFn = oSettings.sAjaxDataProp;
+    }
 
-        /* Got the data - add it to the table */
-        var callback_args = {};
-        var getObjectDataFn = null;
+    oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+    that.fnSettings().aoDrawCallback.push({
+        "fn": function (oSettings) {
+            var json = JSON.parse(oSettings.jqXHR.responseText)
+            var aData = getObjectDataFn ? that.oApi._fnGetObjectDataFn(getObjectDataFn)( json ) : json;
+            for ( var i=0 ; i<aData.length ; i++ )
+            {
+                that.oApi._fnAddData( oSettings, aData[i] );
+            }
 
-        if (sAjaxDataPropWithCbArg !== undefined) {
-            getObjectDataFn = function(data, type) {
-                return sAjaxDataPropWithCbArg(data, type, callback_args);
-            };
-        } else if (oSettings.sAjaxDataProp !== "") {
-            getObjectDataFn = oSettings.sAjaxDataProp;
-        }
-
-        var aData = getObjectDataFn ? that.oApi._fnGetObjectDataFn(getObjectDataFn)( json ) : json;
-
-        for ( var i=0 ; i<aData.length ; i++ )
-        {
-            that.oApi._fnAddData( oSettings, aData[i] );
-        }
-
-        oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
-        that.fnDraw();
-
-        if ( typeof bStandingRedraw != 'undefined' && bStandingRedraw === true )
-        {
-            oSettings._iDisplayStart = iStart;
-            that.fnDraw( false );
-        }
-
-        that.oApi._fnProcessingDisplay( oSettings, false );
-
-        /* Callback user function - for event handlers etc */
-        if ( typeof fnCallback == 'function' && fnCallback != null )
-        {
-            fnCallback( oSettings, callback_args );
-        }
-    }, oSettings );
+            if ( typeof fnCallback == 'function' && fnCallback != null )
+            {
+                fnCallback( oSettings, callback_args );
+            }
+        },
+        "sName": "user"
+    });
+    that.fnDraw();
+    that.oApi._fnProcessingDisplay( oSettings, false );
 };

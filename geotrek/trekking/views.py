@@ -64,7 +64,8 @@ class TrekList(FlattenPicturesMixin, MapEntityList):
 
 
 class TrekJsonList(MapEntityJsonList, TrekList):
-    pass
+    def get_context_data(self, **kwargs):
+        return super(TrekJsonList, self).get_context_data(queryset=self.filterform(self.request.GET).qs, **kwargs)
 
 
 class TrekFormatList(MapEntityFormat, TrekList):

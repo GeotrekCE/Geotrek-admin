@@ -644,7 +644,7 @@ class DenormalizedTrailTest(AuthentFixturesTest):
         PathFactory.create_batch(size=50)
         TrailFactory.create_batch(size=50)
         self.login()
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(9):
             self.client.get(reverse('core:path_json_list'))
 
 
