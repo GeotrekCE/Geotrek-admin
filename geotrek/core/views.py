@@ -308,7 +308,8 @@ class TrailList(MapEntityList):
 
 
 class TrailJsonList(MapEntityJsonList, TrailList):
-    pass
+    def get_context_data(self, **kwargs):
+        return super(TrailJsonList, self).get_context_data(queryset=self.filterform(self.request.GET).qs, **kwargs)
 
 
 class TrailFormatList(MapEntityFormat, TrailList):
