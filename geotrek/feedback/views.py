@@ -27,9 +27,8 @@ class ReportList(mapentity_views.MapEntityList):
     model = feedback_models.Report
     filterform = ReportFilterSet
     columns = [
-        'id', 'email', 'activity', 'comment', 'category',
-        'problem_magnitude', 'status',
-        'date_insert', 'date_update',
+        'id', 'email', 'category',
+        'problem_magnitude', 'status', 'date_update',
     ]
 
 
