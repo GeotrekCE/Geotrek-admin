@@ -11,7 +11,6 @@ SURICATE_REPORT_SETTINGS = {
     'ID_ORIGIN': 'geotrek',
     'PRIVATE_KEY_CLIENT_SERVER': '',
     'PRIVATE_KEY_SERVER_CLIENT': '',
-    'ID_USER': 'XXX123',
 }
 
 
@@ -43,7 +42,6 @@ class SuricateAPITest(TestCase):
         mock_response = mock.Mock()
         expected_dict = {
             "code_ok": "true",
-            "id_user": "XXX123",
             "check": "515996edc2da463424f4c6e21e19352f ",
             "message": "Merci d’avoir remonté ce problème, nos services vont traiter votre signalement."
         }
