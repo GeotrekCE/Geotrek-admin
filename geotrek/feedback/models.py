@@ -18,6 +18,13 @@ from .helpers import send_report_managers, post_report_to_suricate
 
 logger = logging.getLogger(__name__)
 
+def status_default():
+    """Set status to New by default"""
+    new_status_query = ReportStatus.objects.filter(label='Nouveau')
+    if new_status_query:
+        return new_status_query.get().pk
+    return None
+
 
 class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
     """ User reports, mainly submitted via *Geotrek-rando*.
@@ -45,7 +52,7 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
                                on_delete=models.CASCADE,
                                null=True,
                                blank=True,
-                               default=None,
+                               default=status_default,
                                verbose_name=_("Status"))
     geom = models.PointField(null=True,
                              blank=True,

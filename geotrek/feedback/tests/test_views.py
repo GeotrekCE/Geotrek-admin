@@ -13,6 +13,19 @@ from geotrek.feedback import factories as feedback_factories
 from rest_framework.test import APIClient
 
 
+class ReportModelTest(TestCase):
+    """Test some custom model"""
+
+    def test_default_no_status(self):
+        my_report = feedback_factories.ReportFactory()
+        self.assertEqual(my_report.status, None)
+
+    def test_default_status_exists(self):
+        self.default_status = feedback_factories.ReportStatusFactory(label="Nouveau")
+        my_report = feedback_factories.ReportFactory()
+        self.assertEqual(my_report.status, self.default_status)
+
+
 class ReportViewsetMailSend(TestCase):
     def test_mail_send_on_request(self):
         self.client.post(
