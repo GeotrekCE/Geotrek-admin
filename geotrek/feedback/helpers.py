@@ -1,6 +1,7 @@
 import logging
 from hashlib import md5
 import requests
+from requests.auth import HTTPBasicAuth
 
 from django.template.loader import render_to_string
 from django.conf import settings
@@ -38,9 +39,11 @@ def post_report_to_suricate(report):
         'version': settings.VERSION,
     }
 
-    response = requests.post(URL + 'wsSendReport', params)
-
-    logger.debug("Report sent to Suricate API with status {0}".format(response.status_code))
+    # If HTTP Auth required, add to request
+    if 'AUTH' in settings.SURICATE_REPORT_SETTINGS.keys():
+        response = requests.post(URL + 'wsSendReport', params, auth=settings.SURICATE_REPORT_SETTINGS['AUTH'])
+    else:
+        response = requests.post(URL + 'wsSendReport', params)
 
     if response.status_code not in [200, 201]:
         raise Exception("Failed to post on Suricate API")
