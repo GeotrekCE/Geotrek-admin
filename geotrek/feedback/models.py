@@ -18,6 +18,7 @@ from .helpers import send_report_managers, post_report_to_suricate
 
 logger = logging.getLogger(__name__)
 
+
 def status_default():
     """Set status to New by default"""
     new_status_query = ReportStatus.objects.filter(label='Nouveau')

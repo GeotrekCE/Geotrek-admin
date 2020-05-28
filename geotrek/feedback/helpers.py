@@ -1,7 +1,6 @@
 import logging
 from hashlib import md5
 import requests
-from requests.auth import HTTPBasicAuth
 
 from django.template.loader import render_to_string
 from django.conf import settings
