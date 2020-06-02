@@ -10,7 +10,8 @@ import mimetypes
 def forward(apps, schema_editor):
     AttachmentModel = apps.get_model('common', 'Attachment')
     for attachment in AttachmentModel.objects.all():
-        if mimetypes.guess_type(attachment.attachment_file.name, strict=True)[0].split('/')[0].startswith('image'):
+        mt = mimetypes.guess_type(attachment.attachment_file.name, strict=True)[0]
+        if mt is not None and mt.split('/')[0].startswith('image'):
             attachment.is_image = True
             attachment.save()
 
