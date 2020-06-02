@@ -21,12 +21,14 @@ from io import StringIO
 import os
 
 
-class CommandTests(TestCase):
+class CommandEmailsTests(TestCase):
     def test_command_emails_manager(self):
         call_command('test_managers_emails')
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, '[%s] Test email for managers' % settings.TITLE)
 
+
+class CommandUnsetStructureTests(TestCase):
     def test_command_unset_structure(self):
         structure1 = StructureFactory.create(name="coucou")
         structure2 = StructureFactory.create(name="coco")
@@ -109,11 +111,15 @@ class CommandTests(TestCase):
         self.assertIn('filetype', stdout)
         self.assertIn('Path source', stdout)
 
-    def test_remove_thumbnails(self):
-        output = StringIO()
+
+class CommandAttachmentsTests(TestCase):
+    def setUp(self):
         self.content = POIFactory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
         self.picture = AttachmentFactory(content_object=self.content,
                                          attachment_file=get_dummy_uploaded_image())
+
+    def test_remove_thumbnails(self):
+        output = StringIO()
         self.assertIsNotNone(self.content.thumbnail)
         self.assertTrue(os.path.exists(self.picture.attachment_file.path))
         self.assertTrue(os.path.exists("{path}.120x120_q85_crop.png".format(path=self.picture.attachment_file.path)))
@@ -124,3 +130,23 @@ class CommandTests(TestCase):
         self.assertTrue(os.path.exists(self.picture.attachment_file.path))
         self.assertFalse(os.path.exists("{name}.120x120_q85_crop.png".format(name=self.picture.attachment_file.path)))
         self.assertEqual(Thumbnail.objects.count(), 0)
+
+    def test_clean_attachments_deleted(self):
+        output = StringIO()
+        self.picture.delete()
+        call_command('clean_attachments', stdout=output, verbosity=2)
+        self.assertIn('%s... DELETED' % self.picture.attachment_file.name, output.getvalue())
+        self.assertFalse(os.path.exists(self.picture.attachment_file.path))
+
+    def test_clean_attachments_found(self):
+        output = StringIO()
+        call_command('clean_attachments', stdout=output, verbosity=2)
+        self.assertIn('%s... Found' % self.picture.attachment_file.name, output.getvalue())
+        self.assertTrue(os.path.exists(self.picture.attachment_file.path))
+
+    def test_clean_attachments_thumbnails(self):
+        output = StringIO()
+        self.assertIsNotNone(self.content.thumbnail)
+        call_command('clean_attachments', stdout=output, verbosity=2)
+        self.assertIn('%s... Thumbnail' % self.content.thumbnail.name, output.getvalue())
+        self.assertTrue(os.path.exists(self.content.thumbnail.path))
