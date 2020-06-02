@@ -2,12 +2,16 @@
 CHANGELOG
 =========
 
-2.33.10.dev0
+2.33.10 (2020-06-02)
 -------------------
 
 **Bug fixes**
 
--
+- Fix migration is_image 0011_attachment_add_is_image
+
+**New Feature**
+
+- Allow to clean attachments not used anymore (clean_attachments)
 
 
 2.33.9 (2020-06-02)
