@@ -26,7 +26,12 @@ class SensitiveAreaViewsTests(CommonTest):
             'species': {
                 'id': self.obj.species.pk,
                 'name': "Species",
-                'period': [False, False, False, False, False, True, True, False, False, False, False, False],
+                'period': [self.obj.species.period01, self.obj.species.period02,
+                           self.obj.species.period03, self.obj.species.period04,
+                           self.obj.species.period05, self.obj.species.period06,
+                           self.obj.species.period07, self.obj.species.period08,
+                           self.obj.species.period09, self.obj.species.period10,
+                           self.obj.species.period11, self.obj.species.period12],
                 'pictogram': "/media/upload/dummy_img.png",
                 'practices': [
                     {'id': self.obj.species.practices.all()[0].pk, 'name': "Practice1"},
@@ -72,7 +77,12 @@ class RegulatorySensitiveAreaViewsTests(CommonTest):
             'species': {
                 'id': self.obj.species.pk,
                 'name': "Species",
-                'period': [False, False, False, False, False, True, True, False, False, False, False, False],
+                'period': [self.obj.species.period01, self.obj.species.period02,
+                           self.obj.species.period03, self.obj.species.period04,
+                           self.obj.species.period05, self.obj.species.period06,
+                           self.obj.species.period07, self.obj.species.period08,
+                           self.obj.species.period09, self.obj.species.period10,
+                           self.obj.species.period11, self.obj.species.period12],
                 'pictogram': "/media/upload/dummy_img.png",
                 'practices': [
                     {'id': self.obj.species.practices.all()[0].pk, 'name': "Practice1"},

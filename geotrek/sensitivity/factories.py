@@ -1,4 +1,5 @@
 import factory
+from datetime import date
 
 from django.contrib.auth.models import Permission
 
@@ -24,8 +25,6 @@ class SpeciesFactory(factory.DjangoModelFactory):
     name = "Species"
     pictogram = get_dummy_uploaded_image()
     url = "http://url.com"
-    period06 = True
-    period07 = True
     category = models.Species.SPECIES
 
     @factory.post_generation
@@ -38,6 +37,13 @@ class SpeciesFactory(factory.DjangoModelFactory):
                 ]
             for practice in practices:
                 obj.practices.add(practice)
+
+    @factory.post_generation
+    def periods(obj, create, extracted, **kwargs):
+        next_month = date.today().month + 1 if not date.today().month == 12 else 1
+        one_after_next_month = next_month + 1 if not date.today().month == 12 else 1
+        setattr(obj, 'period{:02}'.format(next_month), True)
+        setattr(obj, 'period{:02}'.format(one_after_next_month), True)
 
 
 class RegulatorySpeciesFactory(SpeciesFactory):
