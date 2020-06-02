@@ -1,4 +1,4 @@
-from datetime import date
+from freezegun import freeze_time
 
 from django.contrib.auth.models import User, Permission
 from django.test import TestCase
@@ -69,6 +69,7 @@ class SensitiveAreaTemplatesTest(TestCase):
         self.assertContains(response, self.area.species.name)
 
 
+@freeze_time("2020-01-01")
 class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
     maxDiff = None
 
@@ -87,12 +88,7 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
             'info_url': self.species.url,
             'species_id': self.species.id,
             "name": self.species.name,
-            "period": [self.species.period01, self.species.period02,
-                       self.species.period03, self.species.period04,
-                       self.species.period05, self.species.period06,
-                       self.species.period07, self.species.period08,
-                       self.species.period09, self.species.period10,
-                       self.species.period11, self.species.period12],
+            "period": [False, False, False, False, False, True, True, False, False, False, False, False],
             'practices': [p.pk for p in self.species.practices.all()],
             'structure': 'My structure',
             'published': True,
@@ -251,9 +247,8 @@ class APIv2Test(TranslationResetMixin, TrekkingManagerTest):
         self.assertEqual(response.json()['results'][0]['name'], sensitive_area_jf.species.name)
 
     def test_filters_no_period_get_month(self):
-        sensitive_area_month = SensitiveAreaFactory.create(**{'species__period{:02}'.format(date.today().month): True})
-        SensitiveAreaFactory.create(**{'species__period{:02}'.format(date.today().month + 1
-                                                                     if not date.today().month == 12 else 1): True})
+        sensitive_area_month = SensitiveAreaFactory.create(**{'species__period01': True})
+        SensitiveAreaFactory.create(**{'species__period02': True})
         url = '/api/v2/sensitivearea/?format=json&language=en'
         response = self.client.get(url)
         self.assertEqual(response.json()['count'], 1)
