@@ -5,9 +5,10 @@ from mapentity.registry import registry
 
 from geotrek.altimetry.urls import AltimetryEntityOptions
 from geotrek.common.urls import LangConverter
+from geotrek.common.views import ParametersView
 from geotrek.core.models import Path, Trail
 from geotrek.core.views import (
-    get_graph_json, merge_path, ParametersView, PathGPXDetail, PathKMLDetail, TrailGPXDetail, TrailKMLDetail,
+    get_graph_json, merge_path, PathGPXDetail, PathKMLDetail, TrailGPXDetail, TrailKMLDetail,
     MultiplePathDelete
 )
 

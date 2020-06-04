@@ -18,7 +18,6 @@ from geotrek.core.forms import TopologyForm
 from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
 from .models import Trek, POI, WebLink, Service, ServiceType, OrderedTrekChild
 from django.db import transaction
-from django.urls import reverse
 
 
 class TrekRelationshipForm(forms.ModelForm):
@@ -368,23 +367,3 @@ class WebLinkCreateFormPopup(TranslatedModelForm):
     class Meta:
         model = WebLink
         fields = ['name', 'url', 'category']
-
-
-class SyncRandoForm(forms.Form):
-    """
-    Sync Rando View Form
-    """
-
-    @property
-    def helper(self):
-        helper = FormHelper()
-        helper.form_id = 'form-sync'
-        helper.form_action = reverse('trekking:sync_randos')
-        helper.form_class = 'search'
-        # submit button with boostrap attributes, disabled by default
-        helper.add_input(Submit('sync-web', _("Launch Sync"),
-                                **{'data-toggle': "modal",
-                                   'data-target': "#confirm-submit",
-                                   'disabled': 'disabled'}))
-
-        return helper

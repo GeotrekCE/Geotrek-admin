@@ -27,7 +27,7 @@ class FlatPageViewSet(viewsets.ModelViewSet):
             qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
 
         if self.request.GET.get('portal', '') != '':
-            qs = qs.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
+            qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
 
         return qs
 

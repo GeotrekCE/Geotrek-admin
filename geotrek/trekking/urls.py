@@ -12,8 +12,7 @@ from .views import (
     TrekDocumentPublic, TrekDocumentBookletPublic, TrekMapImage, TrekMarkupPublic,
     TrekGPXDetail, TrekKMLDetail, WebLinkCreatePopup,
     CirkwiTrekView, CirkwiPOIView, TrekPOIViewSet,
-    SyncRandoRedirect, TrekServiceViewSet, sync_view,
-    sync_update_json
+    TrekServiceViewSet
 )
 
 register_converter(LangConverter, 'lang')
@@ -28,9 +27,6 @@ urlpatterns = [
     path('popup/add/weblink/', WebLinkCreatePopup.as_view(), name='weblink_add'),
     path('api/cirkwi/circuits.xml', CirkwiTrekView.as_view()),
     path('api/cirkwi/pois.xml', CirkwiPOIView.as_view()),
-    path('commands/sync', SyncRandoRedirect.as_view(), name='sync_randos'),
-    path('commands/syncview', sync_view, name='sync_randos_view'),
-    path('commands/statesync/', sync_update_json, name='sync_randos_state'),
     path('image/trek-<int:pk>-<lang:lang>.png', TrekMapImage.as_view(), name='trek_map_image'),
 ]
 

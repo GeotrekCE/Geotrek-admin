@@ -157,7 +157,7 @@ class DiveViewSet(MapEntityViewSet):
             qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
 
         if 'portal' in self.request.GET:
-            qs = qs.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
+            qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
 
         qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
 

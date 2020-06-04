@@ -24,7 +24,7 @@ from geotrek.tourism import models as tourism_models
 from geotrek.trekking import models as trekking_models
 from geotrek.api.mobile.views.trekking import TrekViewSet
 from geotrek.api.mobile.views.common import FlatPageViewSet, SettingsView
-from geotrek.trekking.management.commands.sync_rando import ZipTilesBuilder
+from geotrek.common.helpers_sync import ZipTilesBuilder
 # Register mapentity models
 from geotrek.trekking import urls  # NOQA
 from geotrek.tourism import urls  # NOQA

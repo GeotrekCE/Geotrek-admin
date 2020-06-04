@@ -1,0 +1,96 @@
+import os
+from unittest.mock import patch
+import shutil
+from io import StringIO
+
+from django.test import TestCase
+from django.conf import settings
+
+from geotrek.common.factories import FakeSyncCommand, RecordSourceFactory, TargetPortalFactory, AttachmentFactory
+from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_file
+from geotrek.diving.factories import DiveFactory, PracticeFactory
+from geotrek.trekking.factories import POIFactory
+from geotrek.tourism.factories import TouristicContentFactory, TouristicEventFactory
+
+from geotrek.diving.helpers_sync import SyncRando
+
+
+@patch('geotrek.diving.models.Dive.prepare_map_image')
+class SyncRandoTestCase(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super(SyncRandoTestCase, cls).setUpClass()
+        cls.practice_dive = PracticeFactory.create(order=0)
+        cls.dive = DiveFactory.create(practice=cls.practice_dive, published=True,
+                                      geom='SRID=2154;POINT(700001 6600001)')
+        cls.attachment_dive = AttachmentFactory.create(content_object=cls.dive,
+                                                       attachment_file=get_dummy_uploaded_image())
+        cls.poi_dive = POIFactory.create(name="dive_poi", published=True)
+        AttachmentFactory.create(content_object=cls.poi_dive,
+                                 attachment_file=get_dummy_uploaded_image())
+        AttachmentFactory.create(content_object=cls.poi_dive,
+                                 attachment_file=get_dummy_uploaded_image())
+        AttachmentFactory.create(content_object=cls.poi_dive,
+                                 attachment_file=get_dummy_uploaded_file())
+        cls.touristic_content = TouristicContentFactory(
+            geom='SRID=%s;POINT(700001 6600001)' % settings.SRID, published=True)
+        cls.touristic_event = TouristicEventFactory(
+            geom='SRID=%s;POINT(700001 6600001)' % settings.SRID, published=True)
+        cls.attachment_touristic_content = AttachmentFactory.create(content_object=cls.touristic_content,
+                                                                    attachment_file=get_dummy_uploaded_image())
+        cls.attachment_touristic_event = AttachmentFactory.create(content_object=cls.touristic_event,
+                                                                  attachment_file=get_dummy_uploaded_image())
+        AttachmentFactory.create(content_object=cls.touristic_content,
+                                 attachment_file=get_dummy_uploaded_image())
+        AttachmentFactory.create(content_object=cls.touristic_event,
+                                 attachment_file=get_dummy_uploaded_image())
+        cls.source_a = RecordSourceFactory()
+        cls.source_b = RecordSourceFactory()
+
+        cls.portal_a = TargetPortalFactory()
+        cls.portal_b = TargetPortalFactory()
+
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_sync_detail_no_portal_no_source(self, stdout, mock_prepare):
+        command = FakeSyncCommand()
+        synchro = SyncRando(command)
+        synchro.sync_detail('fr', self.dive)
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'dives',
+                                                    str(self.dive.pk), '%s.pdf' % self.dive.slug)))
+
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_sync_detail_portal_source(self, stdout, mock_prepare):
+        command = FakeSyncCommand(portal=self.portal_b.name, source=self.source_b.name)
+        synchro = SyncRando(command)
+        synchro.sync_detail('fr', self.dive)
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'dives',
+                                                    str(self.dive.pk), '%s.pdf' % self.dive.slug)))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'dives',
+                                                    str(self.dive.pk), 'pois.geojson')))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'dives',
+                                                    str(self.dive.pk), 'touristiccontents.geojson')))
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'dives',
+                                                    str(self.dive.pk), 'touristicevents.geojson')))
+
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_sync_language(self, stdout, mock_prepare):
+        def side_effect_sync(lang, trek):
+            self.assertEqual(trek, self.dive)
+        command = FakeSyncCommand()
+        synchro = SyncRando(command)
+        with patch('geotrek.trekking.helpers_sync.SyncRando.sync_detail', side_effect=side_effect_sync):
+            synchro.sync('en')
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'dives.geojson')))
+
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_sync_language_portal_source(self, stdout, mock_prepare):
+        def side_effect_sync(lang, dive):
+            self.assertEqual(dive, self.dive)
+        command = FakeSyncCommand(portal=self.portal_b.name, source=self.source_b.name)
+        synchro = SyncRando(command)
+        with patch('geotrek.trekking.helpers_sync.SyncRando.sync_detail', side_effect=side_effect_sync):
+            synchro.sync('en')
+
+    def tearDown(self):
+        if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
+            shutil.rmtree(os.path.join('var', 'tmp_sync_rando'))

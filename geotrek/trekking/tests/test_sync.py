@@ -455,16 +455,6 @@ class SyncTest(SyncSetup):
             # only 2 treks in Portal B + 1 without portal specified
             self.assertEqual(len(treks['features']), 3)
 
-        # portal A and B
-        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
-                                portal='{},{}'.format(self.portal_a.name, self.portal_b.name),
-                                skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=StringIO())
-        with open(os.path.join('var', 'tmp', 'api', 'en', 'treks.geojson'), 'r') as f:
-            treks = json.load(f)
-
-            # 4 treks have portal A or B or no portal
-            self.assertEqual(len(treks['features']), 5)
-
     def test_sync_practice_orders(self):
         management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
                                 skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=StringIO())
@@ -489,15 +479,6 @@ class SyncTest(SyncSetup):
 
             # only 2 dives in Portal B + 1 without portal specified
             self.assertEqual(len(dives['features']), 3)
-
-        # portal A and B
-        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
-                                portal='{},{}'.format(self.portal_a.name, self.portal_b.name), with_dives=True,
-                                skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=StringIO())
-        with open(os.path.join('var', 'tmp', 'api', 'en', 'dives.geojson'), 'r') as f:
-            dives = json.load(f)
-            # 4 dives have portal A or B or no portal
-            self.assertEqual(len(dives['features']), 4)
 
     @override_settings(SPLIT_TREKS_CATEGORIES_BY_PRACTICE=False, SPLIT_DIVES_CATEGORIES_BY_PRACTICE=False)
     def test_sync_with_multipolygon_sensitive_area(self):
