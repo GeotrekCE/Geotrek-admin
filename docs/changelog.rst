@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.33.11.dev0
+2.33.11 (2020-06-05)
 -------------------
 
 **Bug fixes**
 
--
+- Fix long attachments name synchro
 
 
 2.33.10 (2020-06-02)
