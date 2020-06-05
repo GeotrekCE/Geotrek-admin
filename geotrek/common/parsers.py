@@ -626,7 +626,8 @@ class AttachmentParserMixin(object):
             url = self.base_url + url
             legend = legend or ""
             author = author or ""
-            name = os.path.basename(url)
+            basename, ext = os.path.splitext(os.path.basename(url))
+            name = '%s%s' % (basename[:128], ext)
             found = False
             for attachment in attachments_to_delete:
                 upload_name, ext = os.path.splitext(attachment_upload(attachment, name))
