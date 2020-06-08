@@ -37,3 +37,5 @@ ADMINS = (
 )
 
 MANAGERS = ADMINS
+
+TEST_RUNNER = 'geotrek.test_runner.TestRunner'
