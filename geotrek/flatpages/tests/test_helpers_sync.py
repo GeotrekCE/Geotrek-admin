@@ -14,7 +14,7 @@ class SyncRandoTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
         super(SyncRandoTestCase, cls).setUpClass()
-        cls.flatpage = FlatPageFactory.create(published=True)
+        cls.flatpage = FlatPageFactory.create(published=True, title="test-0")
         cls.source = RecordSourceFactory()
 
         cls.portal = TargetPortalFactory()
@@ -30,7 +30,7 @@ class SyncRandoTestCase(TestCase):
         synchro.sync('en')
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'flatpages.geojson')))
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'meta', 'en', 'informations',
-                                                    'page-0', 'index.html')))
+                                                    'test-0', 'index.html')))
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_flatpages_sources_portal_filter(self, mock_stdout):

@@ -49,6 +49,12 @@ class SyncRandoTestCase(TestCase):
 
         cls.portal_a = TargetPortalFactory()
         cls.portal_b = TargetPortalFactory()
+        cls.dive_portal_source = DiveFactory.create(practice=cls.practice_dive, published=True,
+                                                    geom='SRID=2154;POINT(700002 6600002)',
+                                                    portals=(cls.portal_a,), sources=(cls.source_a,))
+        cls.dive_other_portal_source = DiveFactory.create(practice=cls.practice_dive, published=True,
+                                                          geom='SRID=2154;POINT(700002 6600002)',
+                                                          portals=(cls.portal_b,), sources=(cls.source_b,))
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_sync_detail_no_portal_no_source(self, stdout, mock_prepare):
@@ -60,7 +66,7 @@ class SyncRandoTestCase(TestCase):
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_sync_detail_portal_source(self, stdout, mock_prepare):
-        command = FakeSyncCommand(portal=self.portal_b.name, source=self.source_b.name)
+        command = FakeSyncCommand(portal=[self.portal_b.name], source=[self.source_b.name])
         synchro = SyncRando(command)
         synchro.sync_detail('fr', self.dive)
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'dives',
@@ -75,21 +81,24 @@ class SyncRandoTestCase(TestCase):
     @patch('sys.stdout', new_callable=StringIO)
     def test_sync_language(self, stdout, mock_prepare):
         def side_effect_sync(lang, trek):
-            self.assertEqual(trek, self.dive)
+            pass
         command = FakeSyncCommand()
         synchro = SyncRando(command)
-        with patch('geotrek.trekking.helpers_sync.SyncRando.sync_detail', side_effect=side_effect_sync):
+        with patch('geotrek.diving.helpers_sync.SyncRando.sync_detail', side_effect=side_effect_sync) as mock_dive:
             synchro.sync('en')
+        self.assertEqual(len(mock_dive.call_args_list), 3)
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'dives.geojson')))
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_sync_language_portal_source(self, stdout, mock_prepare):
         def side_effect_sync(lang, dive):
-            self.assertEqual(dive, self.dive)
-        command = FakeSyncCommand(portal=self.portal_b.name, source=self.source_b.name)
+            self.assertEqual(dive, self.dive_portal_source)
+        command = FakeSyncCommand(portal=[self.portal_a.name], source=[self.source_a.name])
         synchro = SyncRando(command)
-        with patch('geotrek.trekking.helpers_sync.SyncRando.sync_detail', side_effect=side_effect_sync):
+        with patch('geotrek.diving.helpers_sync.SyncRando.sync_detail', side_effect=side_effect_sync) as mock_dive:
             synchro.sync('en')
+        self.assertEqual(len(mock_dive.call_args_list), 1)
+        mock_dive.assert_called_with('en', self.dive_portal_source)
 
     def tearDown(self):
         if os.path.exists(os.path.join('var', 'tmp_sync_rando')):

@@ -7,8 +7,6 @@ from geotrek.common.factories import ReservationSystemFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 
 from . import models
-from geotrek.trekking.factories import TrekFactory
-from django.conf import settings
 
 
 class InformationDeskTypeFactory(factory.DjangoModelFactory):
@@ -123,29 +121,3 @@ class TouristicEventFactory(factory.DjangoModelFactory):
             if extracted:
                 for portal in extracted:
                     obj.portal.add(portal)
-
-
-class TrekWithTouristicEventFactory(TrekFactory):
-    @factory.post_generation
-    def create_trek_with_touristic_event(obj, create, extracted, **kwargs):
-        TouristicEventFactory.create(geom='POINT(700000 6600000)')
-        TouristicEventFactory.create(geom='POINT(700100 6600100)')
-
-        if create:
-            for lang in settings.MODELTRANSLATION_LANGUAGES:
-                setattr(obj, 'published_{}'.format(lang), True)
-            obj.save()
-
-
-class TrekWithTouristicContentFactory(TrekFactory):
-    @factory.post_generation
-    def create_trek_with_touristic_content(obj, create, extracted, **kwargs):
-        TouristicContentFactory.create(category=TouristicContentCategoryFactory(label="Restaurant"),
-                                       geom='POINT(700000 6600000)')
-        TouristicContentFactory.create(category=TouristicContentCategoryFactory(label="Musée"),
-                                       geom='POINT(700100 6600100)')
-
-        if create:
-            for lang in settings.MODELTRANSLATION_LANGUAGES:
-                setattr(obj, 'published_{}'.format(lang), True)
-            obj.save()
