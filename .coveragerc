@@ -6,6 +6,8 @@ omit =
     */tests*
     */migrations*
     */settings*
+    */test_runner*
+    */test_global*
 data_file = var/.coverage
 
 [report]
