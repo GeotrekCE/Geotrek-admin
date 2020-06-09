@@ -171,7 +171,7 @@ class InterventionForm(InterventionBaseForm):
     def clean(self, *args, **kwargs):
         # If topology was read-only, topology field is empty, get it from infra.
         cleaned_data = super(InterventionForm, self).clean()
-        if not cleaned_data.get('target_id') and cleaned_data.get('topology'):
+        if cleaned_data.get('topology'):
             cleaned_data['target_id'] = cleaned_data['topology'].pk
             ct = ContentType.objects.get(app_label='core', model='topology')
             cleaned_data['target_type'] = ct
