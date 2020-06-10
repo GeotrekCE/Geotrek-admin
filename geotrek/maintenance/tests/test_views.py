@@ -417,6 +417,7 @@ class InterventionViewsTest(CommonTest):
         response = self.client.get(i.get_update_url())
         self.assertEqual(response.status_code, 302)
 
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_creation_form_line(self):
         path = PathFactory.create(geom=LineString(Point(700000, 6600000), Point(700300, 6600300), srid=settings.SRID))
         self.super_user = SuperUserFactory.create(username='admin', password='super')
