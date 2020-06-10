@@ -9,11 +9,13 @@ from django.contrib.gis import gdal
 from django.test import TestCase
 
 from geotrek.common.tests import CommonTest
+from mapentity.factories import SuperUserFactory
 from mapentity.serializers.shapefile import ZipShapeSerializer
 
-from geotrek.authent.factories import PathManagerFactory
+from geotrek.authent.factories import PathManagerFactory, StructureFactory
 from geotrek.core.factories import StakeFactory
 from geotrek.core.helpers import TopologyHelper
+from geotrek.core.models import PathAggregation
 from geotrek.common.factories import OrganismFactory
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.maintenance.models import Intervention, InterventionStatus, Project
@@ -414,6 +416,19 @@ class InterventionViewsTest(CommonTest):
         i = InterventionFactory.create()
         response = self.client.get(i.get_update_url())
         self.assertEqual(response.status_code, 302)
+
+    def test_creation_form_line(self):
+        path = PathFactory.create(geom=LineString(Point(700000, 6600000), Point(700300, 6600300), srid=settings.SRID))
+        self.super_user = SuperUserFactory.create(username='admin', password='super')
+        self.client.login(username='admin', password='super')
+        data = self.get_good_data()
+        data['structure'] = StructureFactory.create().pk
+        data['topology'] = '{"paths": [%s], "positions":{"0":[0,1]}}' % path.pk,
+        response = self.client.post('%s' % (Intervention.get_add_url()),
+                                    data)
+        self.assertEqual(PathAggregation.objects.count(), 1)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Intervention.objects.first().geom, path.geom)
 
 
 class ProjectViewsTest(CommonTest):
