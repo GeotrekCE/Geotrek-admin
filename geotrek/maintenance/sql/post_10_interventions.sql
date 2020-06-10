@@ -106,3 +106,23 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER maintenance_intervention_area_iu_tgr
 BEFORE INSERT OR UPDATE OF width, height ON maintenance_intervention
 FOR EACH ROW EXECUTE PROCEDURE update_area_intervention();
+
+
+CREATE FUNCTION {# geotrek.maintenance #}.update_intervention_topology() RETURNS trigger SECURITY DEFINER AS $$
+BEGIN
+     IF TG_OP = 'INSERT' THEN
+        IF NEW.target_type_id IN (SELECT id FROM django_content_type  AS ct WHERE ct.model = 'topology') THEN
+           PERFORM update_geometry_of_topology(NEW.target_id);
+        END IF;
+     ELSE
+        IF NEW.target_type_id IN (SELECT id FROM django_content_type  AS ct WHERE ct.model = 'topology') AND NEW.target_id != OLD.target_id THEN
+           PERFORM update_geometry_of_topology(NEW.target_id);
+        END IF;
+     END IF;
+   RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER maintenance_intervention_topology_tgr
+AFTER INSERT OR UPDATE ON maintenance_intervention
+FOR EACH ROW EXECUTE PROCEDURE update_intervention_topology();
