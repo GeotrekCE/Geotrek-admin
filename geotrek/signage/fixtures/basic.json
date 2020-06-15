@@ -152,5 +152,40 @@
         "fields": {
             "label": "Applique"
         }
+    },
+    {
+        "model": "auth.group",
+        "pk": 8,
+        "fields": {
+            "name": "Gestionnaire signal\u00e9tique",
+            "permissions": [
+                ["add_blade", "signage", "blade"],
+                ["change_blade", "signage", "blade"],
+                ["change_geom_blade", "signage", "blade"],
+                ["delete_blade", "signage", "blade"],
+                ["export_blade", "signage", "blade"],
+                ["read_blade", "signage", "blade"],
+                ["view_blade", "signage", "blade"],
+                ["view_bladetype", "signage", "bladetype"],
+                ["view_color", "signage", "color"],
+                ["view_direction", "signage", "direction"],
+                ["add_line",  "signage", "line"],
+                ["change_line", "signage", "line"],
+                ["delete_line", "signage", "line"],
+                ["view_line", "signage", "line"],
+                ["view_sealing", "signage", "sealing"],
+                ["add_signage", "signage", "signage"],
+                ["change_geom_signage", "signage", "signage"],
+                ["change_signage", "signage", "signage"],
+                ["delete_signage", "signage", "signage"],
+                ["export_signage", "signage", "signage"],
+                ["publish_signage", "signage", "signage"],
+                ["read_signage", "signage", "signage"],
+                ["view_signage", "signage", "signage"],
+                ["add_signagetype", "signage", "signagetype"],
+                ["change_signagetype", "signage", "signagetype"],
+                ["delete_signagetype", "signage", "signagetype"]
+            ]
+        }
     }
 ]
