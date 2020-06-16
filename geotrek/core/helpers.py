@@ -45,7 +45,6 @@ class TopologyHelper(object):
         Deserialize normally and create a topology from the geojson
         """
         from .models import Path, Topology, PathAggregation
-        from .factories import TopologyFactory
         try:
             return Topology.objects.get(pk=int(serialized))
         except Topology.DoesNotExist:
@@ -91,9 +90,7 @@ class TopologyHelper(object):
                 pass
 
         offset = objdict[0].get('offset', 0.0)
-        topology = TopologyFactory.create(kind='TMP', offset=offset)
-        # Remove all existing path aggregation (WTF: created from factory ?)
-        PathAggregation.objects.filter(topo_object=topology).delete()
+        topology = Topology.objects.create(kind='TMP', offset=offset)
         try:
             counter = 0
             for j, subtopology in enumerate(objdict):
