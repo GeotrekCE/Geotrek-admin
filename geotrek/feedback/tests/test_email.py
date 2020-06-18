@@ -43,13 +43,11 @@ class EmailSendingTest(TestCase):
         self.assertIn("Lat : 46.500000 / Lon : 3.000000", sent_mail.body)
 
     def test_email_format_and_content_fr(self):
-        translation.activate('fr')
-        ReportFactory.create(name='Jacques Dupont',
-                             email='jacques.dupont@nulpart.com',
+        ReportFactory.create(email='jacques.dupont@nulpart.com',
                              comment="Ceci est un commentaire")
         sent_mail = mail.outbox[0]
         self.assertEqual(sent_mail.subject,
-                         '[Geotrek] Signalement de Jacques Dupont (jacques.dupont@nulpart.com)')
-        self.assertIn("Commentaire : Ceci est un commentaire", sent_mail.body)
+                         '[Geotrek] Feedback from jacques.dupont@nulpart.com')
+        self.assertIn("Comment : Ceci est un commentaire", sent_mail.body)
         self.assertIn("Lat : 46.500000 / Lon : 3.000000", sent_mail.body)
-        translation.deactivate()
+        self.assertIn("http://www.openstreetmap.org/?mlat=46.500000&mlon=3.000000", sent_mail.body)
