@@ -747,7 +747,7 @@ REST_FRAMEWORK = {
 ENABLED_MOBILE_FILTERS = [
     'practice',
     'difficulty',
-    'durations',
+    'duration',
     'ascent',
     'lengths',
     'themes',
