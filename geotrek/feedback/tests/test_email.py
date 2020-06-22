@@ -48,7 +48,7 @@ class EmailSendingTest(TestCase):
                              comment="Ceci est un commentaire")
         sent_mail = mail.outbox[0]
         self.assertEqual(sent_mail.subject,
-                         '[Geotrek] Signalement de Jacques Dupont (jacques.dupont@nulpart.com)')
+                         '[Geotrek] Signalement de jacques.dupont@nulpart.com')
         self.assertIn("Commentaire : Ceci est un commentaire", sent_mail.body)
         self.assertIn("Lat : 46.500000 / Lon : 3.000000", sent_mail.body)
         self.assertIn("http://www.openstreetmap.org/?mlat=46.500000&mlon=3.000000", sent_mail.body)
