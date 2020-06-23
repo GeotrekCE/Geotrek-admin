@@ -17,6 +17,9 @@ Makina Corpus
 * Gaël Utard
 * Jean-Etienne Castagnede
 * Timothée de Montety
+* Michaël Viadere
+* Bastien Potiron
+* Emmanuelle Helly
 
 .. image:: http://depot.makina-corpus.org/public/logo.gif
     :target: http://www.makina-corpus.com
