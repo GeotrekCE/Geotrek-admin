@@ -265,7 +265,7 @@ Elles sont gérées depuis l'administe de Geotrek-admin et sont ensuite publiée
 
 Depuis l'Adminsite de Geotrek, sélectionnez "Pages statiques" dans la rubrique "Flatpages".
 
-.. image :: images/user-manual/flatpages-flatpages.jpg
+.. image :: images/user-manual/flatpages-flatpages.png
 
 Vous accédez alors à la liste des pages statiques. 
 Cliquer sur "Ajouter Page statique" en haut à droite de l'écran pour créer une première page.
@@ -376,7 +376,7 @@ Il est possible d'exclure les POI du flux pour ne diffuser que les randonnées. 
 
 Le référentiel CIRKWI a été intégré dans 3 tables accessibles dans l'Adminsite (à ne pas modifier) : 
 
-.. image :: images/user-manual/cirkwi-tables.jpg
+.. image :: images/user-manual/cirkwi-tables.png
 
 Si vous ne souhaitez pas utiliser les valeurs par défaut ou avez créez vos propres typologies, il faut que vous renseigniez les correspondances entre les catégories de votre Geotrek et celles du référentiel IGN (Cirkwi) dans votre Adminsite. Comme indiqué ici : https://github.com/GeotrekCE/Geotrek-admin/issues/806
 
