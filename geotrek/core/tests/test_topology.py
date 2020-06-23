@@ -154,6 +154,14 @@ class TopologyTest(TestCase):
         self.assertEqual(point.wkt, 'POINT (0 0)')
         self.assertEqual(closest, path_normal)
 
+    def test_topology_deserialize(self):
+        p1 = PathFactory.create(geom=LineString((0, 0), (2, 2)))
+        p2 = PathFactory.create(geom=LineString((2, 2), (2, 0)))
+        p3 = PathFactory.create(geom=LineString((2, 0), (4, 0)))
+        pks = [p.pk for p in [p1, p2, p3]]
+        Topology.deserialize('{"paths": %s, "positions": {"0": [0.3, 1.0], "2": [0.0, 0.7]}, "offset": 1}' % pks)
+        self.assertEqual(Path.objects.count(), 3)
+
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TopologyDeletionTest(TestCase):
