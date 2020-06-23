@@ -2,12 +2,20 @@
 CHANGELOG
 =========
 
-2.33.12.dev0
+2.33.12 (2020-06-23)
 -------------------
 
 **Bug fixes**
 
--
+- Change doc flatpages-flatpages.jpg to png
+- Fix line topologies create path
+- Fix svg's fixtures wich cannot be tranform as png with cairosvg
+- Fix duration's filter mobile
+- Fix report email OSM coords
+
+**New Feature**
+
+- Synchro mobile get only used practice, themes, networks ...
 
 
 2.33.11 (2020-06-05)
