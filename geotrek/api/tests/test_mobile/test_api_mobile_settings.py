@@ -3,11 +3,10 @@ from django.urls import reverse
 from django.test.testcases import TestCase
 
 from geotrek.common import factories as common_factories
-from geotrek.common.models import Theme
 from geotrek.trekking import factories as trekking_factories
-from geotrek.trekking.models import Accessibility, DifficultyLevel, POIType, Practice, Route, TrekNetwork
+from geotrek.trekking.models import POIType
 from geotrek.tourism import factories as tourism_factories
-from geotrek.tourism.models import InformationDeskType, TouristicContentType, TouristicContentCategory, TouristicEventType
+from geotrek.tourism.models import TouristicContentType, TouristicContentCategory, TouristicEventType
 from geotrek.zoning import factories as zoning_factories
 from geotrek.zoning.models import City, District
 
@@ -32,6 +31,21 @@ class SettingsMobileTest(TestCase):
         cls.administrator.save()
         cls.administrator.refresh_from_db()
 
+        cls.accessibility_1 = trekking_factories.AccessibilityFactory.create()
+        cls.accessibility_2 = trekking_factories.AccessibilityFactory.create()
+        cls.difficulty = trekking_factories.DifficultyLevelFactory.create()
+        cls.trek_network = trekking_factories.TrekNetworkFactory.create(network="TEST")
+        cls.route = trekking_factories.RouteFactory.create()
+        cls.practice = trekking_factories.PracticeFactory.create()
+        cls.theme = common_factories.ThemeFactory.create()
+        cls.trek = trekking_factories.TrekFactory.create(difficulty=cls.difficulty, practice=cls.practice,
+                                                         route=cls.route)
+        cls.trek.accessibilities.add(cls.accessibility_1, cls.accessibility_2)
+        cls.trek.networks.add(cls.trek_network)
+        cls.trek.themes.add(cls.theme)
+        cls.information_desk_type = tourism_factories.InformationDeskTypeFactory.create()
+        cls.information_desk = tourism_factories.InformationDeskFactory.create(type=cls.information_desk_type)
+
     def get_settings(self, params=None):
         return self.client.get(reverse('apimobile:settings'), params, HTTP_ACCEPT_LANGUAGE='fr')
 
@@ -48,7 +62,6 @@ class SettingsMobileTest(TestCase):
                          SETTINGS_DATA_STRUCTURE)
 
     def test_settings_information_desk_type(self):
-        informationdesktype = tourism_factories.InformationDeskTypeFactory()
         tourism_factories.InformationDeskTypeFactory()
         response = self.get_settings()
         #  test response code
@@ -59,13 +72,13 @@ class SettingsMobileTest(TestCase):
         informationdesk_item = next((item.get('values') for item in json_response.get('data')
                                      if item['id'] == 'information_desk_types'), None)
 
-        self.assertEqual(len(informationdesk_item), InformationDeskType.objects.count())
-        self.assertEqual(informationdesk_item[0].get('name'), informationdesktype.label)
-        self.assertIn(str(informationdesktype.pictogram), informationdesk_item[0].get('pictogram'))
+        self.assertEqual(len(informationdesk_item), 1)
+        self.assertEqual(informationdesk_item[0].get('name'), self.information_desk_type.label)
+        self.assertIn(str(self.information_desk_type.pictogram), informationdesk_item[0].get('pictogram'))
 
     def test_settings_information_desk_type_no_picto(self):
-        informationdesktype = tourism_factories.InformationDeskTypeFactory(pictogram=None)
-        tourism_factories.InformationDeskTypeFactory()
+        self.information_desk_type.pictogram = None
+        self.information_desk_type.save()
         response = self.get_settings()
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -75,13 +88,12 @@ class SettingsMobileTest(TestCase):
         informationdesk_item = next((item.get('values') for item in json_response.get('data')
                                      if item['id'] == 'information_desk_types'), None)
 
-        self.assertEqual(len(informationdesk_item), InformationDeskType.objects.count())
-        self.assertEqual(informationdesk_item[0].get('name'), informationdesktype.label)
+        self.assertEqual(len(informationdesk_item), 1)
+        self.assertEqual(informationdesk_item[0].get('name'), self.information_desk_type.label)
         self.assertIsNone(informationdesk_item[0].get('pictogram'))
 
     def test_settings_network(self):
-        network = trekking_factories.TrekNetworkFactory()
-        trekking_factories.TrekNetworkFactory()
+        trekking_factories.TrekNetworkFactory(network="MDR")
         response = self.get_settings()
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -90,14 +102,14 @@ class SettingsMobileTest(TestCase):
 
         network_item = next((item.get('values') for item in json_response.get('data')
                              if item['id'] == 'networks'), None)
-        self.assertEqual(len(network_item), TrekNetwork.objects.count())
-        self.assertEqual(network_item[0].get('name'), network.network)
-        self.assertIn(str(network.pictogram), network_item[0].get('pictogram'))
+        self.assertEqual(len(network_item), 1)
+        self.assertEqual(network_item[0].get('name'), self.trek_network.network)
+        self.assertIn(str(self.trek_network.pictogram), network_item[0].get('pictogram'))
 
     def test_settings_network_no_picto(self):
         # Should not happen directly, the picto is mandatory in the form, but could happen with an import
-        network = trekking_factories.TrekNetworkFactory(pictogram=None)
-        trekking_factories.TrekNetworkFactory()
+        self.trek_network.pictogram = None
+        self.trek_network.save()
         response = self.get_settings()
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -106,12 +118,11 @@ class SettingsMobileTest(TestCase):
 
         network_item = next((item.get('values') for item in json_response.get('data')
                              if item['id'] == 'networks'), None)
-        self.assertEqual(len(network_item), TrekNetwork.objects.count())
-        self.assertEqual(network_item[0].get('name'), network.network)
+        self.assertEqual(len(network_item), 1)
+        self.assertEqual(network_item[0].get('name'), self.trek_network.network)
         self.assertIsNone(network_item[0].get('pictogram'))
 
     def test_settings_route(self):
-        route = trekking_factories.RouteFactory()
         trekking_factories.RouteFactory()
         response = self.get_settings()
         #  test response code
@@ -121,13 +132,13 @@ class SettingsMobileTest(TestCase):
         route_item = next((item.get('values') for item in json_response.get('data')
                            if item['id'] == 'route'), None)
 
-        self.assertEqual(len(route_item), Route.objects.count())
-        self.assertEqual(route_item[0].get('name'), route.route)
-        self.assertIn(str(route.pictogram), route_item[0].get('pictogram'))
+        self.assertEqual(len(route_item), 1)
+        self.assertEqual(route_item[0].get('name'), self.route.route)
+        self.assertIn(str(self.route.pictogram), route_item[0].get('pictogram'))
 
     def test_settings_route_no_picto(self):
-        route = trekking_factories.RouteFactory(pictogram=None)
-        trekking_factories.RouteFactory()
+        self.route.pictogram = None
+        self.route.save()
         response = self.get_settings()
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -136,12 +147,11 @@ class SettingsMobileTest(TestCase):
         route_item = next((item.get('values') for item in json_response.get('data')
                            if item['id'] == 'route'), None)
 
-        self.assertEqual(len(route_item), Route.objects.count())
-        self.assertEqual(route_item[0].get('name'), route.route)
+        self.assertEqual(len(route_item), 1)
+        self.assertEqual(route_item[0].get('name'), self.route.route)
         self.assertIsNone(route_item[0].get('pictogram'))
 
     def test_settings_practice(self):
-        practice = trekking_factories.PracticeFactory()
         trekking_factories.PracticeFactory()
         response = self.get_settings()
         #  test response code
@@ -150,27 +160,35 @@ class SettingsMobileTest(TestCase):
         json_response = response.json()
         practice_item = next((item.get('values') for item in json_response.get('data')
                               if item['id'] == 'practice'), None)
-        self.assertEqual(len(practice_item), Practice.objects.count())
-        self.assertEqual(practice_item[0].get('name'), practice.name)
-        self.assertIn(str(practice.pictogram), practice_item[0].get('pictogram'))
+        self.assertEqual(len(practice_item), 1)
+        self.assertEqual(practice_item[0].get('name'), self.practice.name)
+        self.assertIn(str(self.practice.pictogram), practice_item[0].get('pictogram'))
+
+    def test_settings_accessibility_not_used(self):
+        trekking_factories.AccessibilityFactory.create()
+        response = self.get_settings()
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+
+        json_response = response.json()
+        accessibility_item = next((item.get('values') for item in json_response.get('data')
+                                   if item['id'] == 'accessibilities'), None)
+        self.assertEqual(len(accessibility_item), 2)
+        self.assertEqual(accessibility_item[0].get('name'), self.accessibility_2.name)
+        self.assertIn(str(self.accessibility_2.pictogram), accessibility_item[0].get('pictogram'))
 
     def test_settings_accessibility(self):
-        accessibility = trekking_factories.AccessibilityFactory()
-        trekking_factories.AccessibilityFactory()
         response = self.get_settings()
         #  test response code
         self.assertEqual(response.status_code, 200)
-
         json_response = response.json()
         accessibility_item = next((item.get('values') for item in json_response.get('data')
                                    if item['id'] == 'accessibilities'), None)
-        self.assertEqual(len(accessibility_item), Accessibility.objects.count())
-        self.assertEqual(accessibility_item[0].get('name'), accessibility.name)
-        self.assertIn(str(accessibility.pictogram), accessibility_item[0].get('pictogram'))
+        self.assertEqual(len(accessibility_item), 2)
 
     def test_settings_accessibility_no_picto(self):
-        accessibility = trekking_factories.AccessibilityFactory(pictogram=None)
-        trekking_factories.AccessibilityFactory()
+        self.accessibility_2.pictogram = None
+        self.accessibility_2.save()
         response = self.get_settings()
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -178,12 +196,11 @@ class SettingsMobileTest(TestCase):
         json_response = response.json()
         accessibility_item = next((item.get('values') for item in json_response.get('data')
                                    if item['id'] == 'accessibilities'), None)
-        self.assertEqual(len(accessibility_item), Accessibility.objects.count())
-        self.assertEqual(accessibility_item[0].get('name'), accessibility.name)
+        self.assertEqual(len(accessibility_item), 2)
+        self.assertEqual(accessibility_item[0].get('name'), self.accessibility_2.name)
         self.assertIsNone(accessibility_item[0].get('pictogram'))
 
     def test_settings_difficulty(self):
-        difficulty = trekking_factories.DifficultyLevelFactory()
         trekking_factories.DifficultyLevelFactory()
         response = self.get_settings()
         #  test response code
@@ -192,11 +209,13 @@ class SettingsMobileTest(TestCase):
         json_response = response.json()
         difficulty_item = next((item.get('values') for item in json_response.get('data')
                                 if item['id'] == 'difficulty'), None)
-        self.assertEqual(len(difficulty_item), DifficultyLevel.objects.count())
-        self.assertEqual(difficulty_item[0].get('name'), difficulty.difficulty)
-        self.assertIn(str(difficulty.pictogram), difficulty_item[0].get('pictogram'))
+        self.assertEqual(len(difficulty_item), 1)
+        self.assertEqual(difficulty_item[0].get('name'), self.difficulty.difficulty)
+        self.assertIn(str(self.difficulty.pictogram), difficulty_item[0].get('pictogram'))
 
     def test_settings_difficulty_no_picto(self):
+        self.difficulty.pictogram = None
+        self.difficulty.save()
         difficulty = trekking_factories.DifficultyLevelFactory(pictogram=None)
         trekking_factories.DifficultyLevelFactory()
         response = self.get_settings()
@@ -206,12 +225,11 @@ class SettingsMobileTest(TestCase):
         json_response = response.json()
         difficulty_item = next((item.get('values') for item in json_response.get('data')
                                 if item['id'] == 'difficulty'), None)
-        self.assertEqual(len(difficulty_item), DifficultyLevel.objects.count())
+        self.assertEqual(len(difficulty_item), 1)
         self.assertEqual(difficulty_item[0].get('name'), difficulty.difficulty)
         self.assertIsNone(difficulty_item[0].get('pictogram'))
 
     def test_settings_theme(self):
-        theme = common_factories.ThemeFactory()
         common_factories.ThemeFactory()
         response = self.get_settings()
         #  test response code
@@ -220,9 +238,9 @@ class SettingsMobileTest(TestCase):
         json_response = response.json()
         theme_item = next((item.get('values') for item in json_response.get('data')
                            if item['id'] == 'themes'), None)
-        self.assertEqual(len(theme_item), Theme.objects.count())
-        self.assertEqual(theme_item[0].get('name'), theme.label)
-        self.assertIn(str(theme.pictogram), theme_item[0].get('pictogram'))
+        self.assertEqual(len(theme_item), 1)
+        self.assertEqual(theme_item[0].get('name'), self.theme.label)
+        self.assertIn(str(self.theme.pictogram), theme_item[0].get('pictogram'))
 
     def test_settings_city(self):
         city = zoning_factories.CityFactory()

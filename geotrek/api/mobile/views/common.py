@@ -10,8 +10,8 @@ from rest_framework_extensions.mixins import DetailSerializerMixin
 
 from geotrek.api.mobile.serializers import common as api_serializers
 from geotrek.flatpages.models import FlatPage
-from geotrek.trekking.models import DifficultyLevel, Practice, Accessibility, Route, Theme, TrekNetwork, POIType
-from geotrek.tourism.models import (InformationDeskType, TouristicContentType, TouristicEventType,
+from geotrek.trekking.models import DifficultyLevel, Practice, Accessibility, Route, Theme, TrekNetwork, POIType, Trek
+from geotrek.tourism.models import (InformationDesk, InformationDeskType, TouristicContentType, TouristicEventType,
                                     TouristicContentCategory)
 from geotrek.zoning.models import City, District
 
@@ -114,48 +114,51 @@ class SettingsView(APIView):
                 {
                     'id': 'difficulty',
                     'name': _('Difficulty'),
-                    'values': api_serializers.DifficultySerializer(DifficultyLevel.objects.all().order_by('pk'),
-                                                                   many=True,
-                                                                   context={'request': request}).data
+                    'values': api_serializers.DifficultySerializer(DifficultyLevel.objects.filter(
+                        pk__in=Trek.objects.existing().values_list('difficulty_id', flat=True)
+                    ).order_by('pk'), many=True, context={'request': request}).data
                 },
                 {
                     'id': 'practice',
                     'name': _('Practice'),
-                    'values': api_serializers.PracticeSerializer(Practice.objects.all().order_by('order', 'name'),
-                                                                 many=True,
-                                                                 context={'request': request}).data,
+                    'values': api_serializers.PracticeSerializer(Practice.objects.filter(
+                        pk__in=Trek.objects.existing().values_list('practice_id', flat=True)
+                    ).order_by('order', 'name'), many=True, context={'request': request}).data,
                 },
                 {
                     'id': 'accessibilities',
                     'name': _('Accessibilities'),
-                    'values': api_serializers.AccessibilitySerializer(Accessibility.objects.all().order_by('name'),
-                                                                      many=True, context={'request': request}).data,
+                    'values': api_serializers.AccessibilitySerializer(Accessibility.objects.filter(
+                        pk__in=Trek.objects.existing().values_list('accessibilities', flat=True)
+                    ).order_by('name'), many=True, context={'request': request}).data,
                 },
                 {
                     'id': 'route',
                     'name': _('Route'),
-                    'values': api_serializers.RouteSerializer(Route.objects.all().order_by('route'), many=True,
-                                                              context={'request': request}).data,
+                    'values': api_serializers.RouteSerializer(Route.objects.filter(
+                        pk__in=Trek.objects.existing().values_list('route_id', flat=True)
+                    ).order_by('route'), many=True, context={'request': request}).data,
                 },
                 {
                     'id': 'themes',
                     'name': _('Themes'),
-                    'values': api_serializers.ThemeSerializer(Theme.objects.all().order_by('label'), many=True,
-                                                              context={'request': request}).data,
+                    'values': api_serializers.ThemeSerializer(Theme.objects.filter(
+                        pk__in=Trek.objects.existing().values_list('themes', flat=True)
+                    ).order_by('label'), many=True, context={'request': request}).data,
                 },
                 {
                     'id': 'networks',
                     'name': _('Networks'),
-                    'values': api_serializers.NetworkSerializer(TrekNetwork.objects.all().order_by('network'), many=True,
-                                                                context={'request': request}).data,
+                    'values': api_serializers.NetworkSerializer(TrekNetwork.objects.filter(
+                        pk__in=Trek.objects.existing().values_list('networks', flat=True)
+                    ).order_by('network'), many=True, context={'request': request}).data,
                 },
                 {
                     'id': 'information_desk_types',
                     'name': _('Information Desks Types'),
-                    'values': api_serializers.InformationDeskTypeSerializer(InformationDeskType.objects.all()
-                                                                            .order_by('label'),
-                                                                            many=True,
-                                                                            context={'request': request}).data,
+                    'values': api_serializers.InformationDeskTypeSerializer(InformationDeskType.objects.filter(
+                        pk__in=InformationDesk.objects.all().values_list('type_id', flat=True)
+                    ).order_by('label'), many=True, context={'request': request}).data,
                 },
                 {
                     'id': 'districts',
