@@ -71,9 +71,9 @@ class SettingsView(APIView):
                     "showAllLabel": _("Show all practices"),
                     "hideAllLabel": _("Hide all practices")
                 })
-            if filter == 'durations':
+            if filter == 'duration':
                 filters.append({
-                    "id": "durations",
+                    "id": "duration",
                     "type": "interval",
                     "showAllLabel": _("Show all durations"),
                     "hideAllLabel": _("Hide all durations")
