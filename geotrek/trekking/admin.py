@@ -30,7 +30,7 @@ class TrekNetworkAdmin(MergeActionMixin, TranslationAdmin):
 
 
 class PracticeAdmin(MergeActionMixin, TranslationAdmin):
-    list_display = ('name', 'order', 'cirkwi', 'distance', 'pictogram_img')
+    list_display = ('name', 'prefixed_id', 'order', 'cirkwi', 'distance', 'pictogram_img')
     search_fields = ('name',)
     merge_field = 'network'
 

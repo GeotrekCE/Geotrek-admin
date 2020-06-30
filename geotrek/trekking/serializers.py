@@ -268,14 +268,14 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
             }
         elif settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and obj.practice:
             data = {
-                'id': obj.prefixed_category_id,
+                'id': obj.practice.prefixed_id,
                 'label': obj.practice.name,
                 'pictogram': obj.practice.get_pictogram_url(),
                 'slug': obj.practice.slug,
             }
         else:
             data = {
-                'id': obj.category_id_prefix,
+                'id': trekking_models.Practice.id_prefix,
                 'label': _("Hike"),
                 'pictogram': '/static/trekking/trek.svg',
                 # Translators: This is a slug (without space, accent or special char)
