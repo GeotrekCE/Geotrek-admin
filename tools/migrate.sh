@@ -35,7 +35,7 @@ sudo cp -r --preserve=mode,timestamp var/media/* /opt/geotrek-admin/var/media/
 sudo mkdir -p /opt/geotrek-admin/var/conf/extra_locale /opt/geotrek-admin/var/conf/extra_templates
 if [ -f geotrek/settings/custom.py ]; then
 	sudo cp geotrek/settings/custom.py /opt/geotrek-admin/var/conf/
-	sudo sed -i 's/^from \.prod import \*$/# from .prod import */' /opt/geotrek-admin/var/conf/custom.py
+	sudo sed -i 's/^from \.prod import \*/# from .prod import */' /opt/geotrek-admin/var/conf/custom.py
 fi
 [ -f bulkimport/parsers.py ] && sudo cp bulkimport/parsers.py /opt/geotrek-admin/var/conf/
 [ -d geotrek/locale ] && sudo cp -r geotrek/locale/* /opt/geotrek-admin/var/conf/extra_locale/
