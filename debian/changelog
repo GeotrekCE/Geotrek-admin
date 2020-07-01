@@ -1,8 +1,8 @@
-geotrek-admin (2.33.13~dev0) UNRELEASED; urgency=medium
+geotrek-admin (2.33.13) bionic; urgency=medium
 
-  *
+  * New package release
 
- -- timothee <timothee@ramendacil-tdm>  Tue, 23 Jun 2020 16:08:02 +0200
+ -- Timothee de Montety <timothee.de-montety@makina-corpus.com>  Wed, 01 Jul 2020 13:40:10 +0200
 
 geotrek-admin (2.33.12) bionic; urgency=medium
 
