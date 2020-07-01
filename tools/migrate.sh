@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# This script is used to migrate Geotrek-admin
+# from versions <= 2.32 to superior, installed
+# via apt
+
 set -e
 
 # Disclaimer
