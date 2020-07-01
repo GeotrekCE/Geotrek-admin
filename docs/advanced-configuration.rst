@@ -73,7 +73,7 @@ In order to activate suricate reports and your account settings:
 
 .. code-block :: python
 
-    SURICATE_REPORT_ENABLED = False
+    SURICATE_REPORT_ENABLED = True
 
     SURICATE_REPORT_SETTINGS = {
         'URL': '<Suricate API Url>',
