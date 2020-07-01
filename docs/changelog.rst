@@ -166,6 +166,8 @@ No changes. Just force a new build in CI
 - Allow to attach interventions to blades, paths, trails, treks, POIs and services in addition to infrastructures and signages
 - Allow to merge dropdown list items in admin. Check them in list view and choose "Action: Merge"
 - Add a django command to erase email from feedback reports after 365 days
+- Add fields to reports for Suricate support
+- Add helper to send report to Suricate API on save, if setting `SURICATE_REPORT_ENABLED` is `True`
 
 **Upgrade notes**
 

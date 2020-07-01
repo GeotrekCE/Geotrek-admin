@@ -22,7 +22,7 @@ from geotrek.altimetry.views import ElevationProfile, ElevationArea, serve_eleva
 from geotrek.common import models as common_models
 from geotrek.common.views import ThemeViewSet
 from geotrek.core.views import ParametersView
-from geotrek.feedback.views import CategoryList as FeedbackCategoryList
+from geotrek.feedback.views import FeedbackOptionsView, CategoryList as FeedbackCategoryList
 from geotrek.flatpages.models import FlatPage
 from geotrek.flatpages.views import FlatPageViewSet, FlatPageMeta
 from geotrek.infrastructure import models as infrastructure_models
@@ -480,6 +480,9 @@ class Command(BaseCommand):
         self.sync_geojson(lang, ServiceViewSet, 'services.geojson', zipfile=self.zipfile)
         self.sync_view(lang, FeedbackCategoryList.as_view(),
                        os.path.join('api', lang, 'feedback', 'categories.json'),
+                       zipfile=self.zipfile)
+        self.sync_view(lang, FeedbackOptionsView.as_view(),
+                       os.path.join('api', lang, 'feedback', 'options.json'),
                        zipfile=self.zipfile)
         self.sync_static_file(lang, 'trekking/trek.svg')
         self.sync_static_file(lang, 'trekking/itinerancy.svg')

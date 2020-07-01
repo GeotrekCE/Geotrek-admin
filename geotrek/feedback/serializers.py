@@ -10,7 +10,8 @@ class ReportSerializer(rest_serializers.ModelSerializer):
     class Meta:
         model = feedback_models.Report
         id_field = 'id'
-        fields = ('id', 'email', 'comment', 'category', 'status', 'geom', 'context_object')
+        fields = ('id', 'email', 'activity', 'comment', 'category',
+                  'status', 'problem_magnitude', 'geom', 'context_object')
         extra_kwargs = {
             'geom': {'write_only': True},
         }
@@ -26,3 +27,21 @@ class ReportGeojsonSerializer(GeoFeatureModelSerializer, ReportSerializer):
     class Meta(ReportSerializer.Meta):
         geo_field = 'api_geom'
         fields = ReportSerializer.Meta.fields + ('api_geom', )
+
+
+class ReportActivitySerializer(rest_serializers.ModelSerializer):
+    class Meta:
+        model = feedback_models.ReportActivity
+        fields = ['id', 'label']
+
+
+class ReportCategorySerializer(rest_serializers.ModelSerializer):
+    class Meta:
+        model = feedback_models.ReportCategory
+        fields = ['id', 'label']
+
+
+class ReportProblemMagnitudeSerializer(rest_serializers.ModelSerializer):
+    class Meta:
+        model = feedback_models.ReportProblemMagnitude
+        fields = ['id', 'label']

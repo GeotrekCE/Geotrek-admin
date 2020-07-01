@@ -52,6 +52,37 @@ In order to remove zoning combo-boxes on list map:
     Never forget to mention this customization if you ask for community support.
 
 
+Feedback settings
+-----------------
+
+Send acknowledge email
+~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    SEND_REPORT_ACK = True
+
+If false, no mail will be sent to the sender of any feedback on Rando web site
+
+Suricate support
+~~~~~~~~~~~~~~~~~~~~~~
+
+It is possible to send report saved to Suricate API (deactivated by default).
+
+In order to activate suricate reports and your account settings:
+
+.. code-block :: python
+
+    SURICATE_REPORT_ENABLED = True
+
+    SURICATE_REPORT_SETTINGS = {
+        'URL': '<Suricate API Url>',
+        'ID_ORIGIN': '<Suricate origin ID>',
+        'PRIVATE_KEY_CLIENT_SERVER': '<your private key client / server>',
+        'PRIVATE_KEY_SERVER_CLIENT': '<your private key server / client>',
+    }
+
+
 Anonymize feedback reports
 ---------------------------
 
@@ -1184,12 +1215,3 @@ Intervals of the mobile for the duration filter
 List of all the filters enabled on mobile.
 
     *Remove any of the filters if you don't want one of them. It's useless to add other one.*
-
-
-
-**Other settings**
-::
-
-    SEND_REPORT_ACK = True
-
-If false, no mail will be sent to the sender of any feedback on Rando web site

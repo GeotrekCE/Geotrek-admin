@@ -5,4 +5,4 @@ from .models import Report
 class ReportFilterSet(MapEntityFilterSet):
     class Meta:
         model = Report
-        fields = ['email', 'category', 'status']
+        fields = ['activity', 'email', 'category', 'status', 'problem_magnitude']

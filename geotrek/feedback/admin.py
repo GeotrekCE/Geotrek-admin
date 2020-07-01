@@ -11,3 +11,5 @@ else:
 
 admin.site.register(feedback_models.ReportCategory, TranslationAdmin)
 admin.site.register(feedback_models.ReportStatus)
+admin.site.register(feedback_models.ReportActivity, TranslationAdmin)
+admin.site.register(feedback_models.ReportProblemMagnitude, TranslationAdmin)
