@@ -20,6 +20,7 @@ fi
 echo
 
 # Disable old conf
+echo "Disabling old configurations…"
 sudo rm -f /etc/nginx/sites-enabled/geotrek
 sudo rm -f /etc/nginx/sites-available/geotrek
 sudo rm -f /etc/supervisor/conf.d/supervisor-convertit.conf
@@ -27,15 +28,19 @@ sudo rm -f /etc/supervisor/conf.d/supervisor-geotrek-api.conf
 sudo rm -f /etc/supervisor/conf.d/supervisor-geotrek-celery.conf
 sudo rm -f /etc/supervisor/conf.d/supervisor-geotrek.conf
 sudo rm -f /etc/supervisor/conf.d/supervisor-screamshotter.conf
+echo "Old configurations are disabled."
 
 # Stop services
 sudo supervisorctl reload
 
 # Copy media
+echo "Copying meda to new /opt/geotrek-admin/ folder…"
 sudo mkdir -p /opt/geotrek-admin/var/media
 sudo cp -r --preserve=mode,timestamp var/media/* /opt/geotrek-admin/var/media/
+echo "Media have been copied."
 
 # Copy conf
+echo "Copying your Geotrek-admin configuration…"
 sudo mkdir -p /opt/geotrek-admin/var/conf/extra_locale /opt/geotrek-admin/var/conf/extra_templates
 if [ -f geotrek/settings/custom.py ]; then
 	sudo cp geotrek/settings/custom.py /opt/geotrek-admin/var/conf/
@@ -61,7 +66,10 @@ geotrek-admin geotrek-admin/SRID string `./bin/django shell -c "from django.conf
 geotrek-admin geotrek-admin/TIME_ZONE string `./bin/django shell -c "from django.conf import settings; print(settings.TIME_ZONE)"`
 EOF
 
+echo "Your Geotrek-admin configuration has been copied."
+
 # Install deb package
+echo "Installing geotrek-admin debian package…"
 if [ "`./bin/django shell -c "from django.conf import settings; print(settings.DATABASES['default']['HOST'])"`" == "localhost" ]; then
 	curl https://packages.geotrek.fr/install.sh | bash
 else
