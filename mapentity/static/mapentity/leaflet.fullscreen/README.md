@@ -1,13 +1,6 @@
 Leaflet.Control.FullScreen
 ============
 
-Downloads
-------
-
-[v1.1.1](https://github.com/brunob/leaflet.fullscreen/releases/tag/1.1.0) for Leaflet stable release
-
-[v1.0.0](https://github.com/brunob/leaflet.fullscreen/archive/1.0.0.zip) for Leaflet < 0.6
-
 What ?
 ------
 
@@ -44,6 +37,8 @@ If your map have a zoomControl the fullscreen button will be added at the bottom
 
 If your map doesn't have a zoomContron the fullscreen button will be added to topleft corner of the map (same as the zoomcontrol).
 
+If you want to use the plugin on a map embedded in an iframe, don't forget to set `allowfullscreen` attribute on your iframe.
+
 __Events and options__:
 
 ``` js
@@ -51,8 +46,11 @@ __Events and options__:
 L.control.fullscreen({
   position: 'topleft', // change the position of the button can be topleft, topright, bottomright or bottomleft, defaut topleft
   title: 'Show me the fullscreen !', // change the title of the button, default Full Screen
+  titleCancel: 'Exit fullscreen mode', // change the title of the button when fullscreen is on, default Exit Full Screen
+  content: null, // change the content of the button, can be HTML, default null
   forceSeparateButton: true, // force seperate button to detach from zoom buttons, default false
-  forcePseudoFullscreen: true // force use of pseudo full screen even if full screen API is available, default false
+  forcePseudoFullscreen: true, // force use of pseudo full screen even if full screen API is available, default false
+  fullscreenElement: false // Dom element to render in full screen, false by default, fallback to map._container
 }).addTo(map);
 
 // events are fired when entering or exiting fullscreen.
@@ -63,11 +61,16 @@ map.on('enterFullscreen', function(){
 map.on('exitFullscreen', function(){
   console.log('exited fullscreen');
 });
+
+// you can also toggle fullscreen from map object
+map.toggleFullScreen();
 ```
 
 Where ?
 ------
 
 Source code : https://github.com/brunob/leaflet.fullscreen
+
+Downloads : https://github.com/brunob/leaflet.fullscreen/releases
 
 Demo : http://brunob.github.com/leaflet.fullscreen/
