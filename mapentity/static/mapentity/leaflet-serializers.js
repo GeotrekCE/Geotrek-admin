@@ -3,7 +3,7 @@ L.Util.getWKT = function(layer) {
     if (layer instanceof L.Marker)
         return 'POINT(' + coord2str(layer.getLatLng()) + ')';
     else if (layer instanceof L.Polygon) {
-        var closed = layer.getLatLngs();
+        var closed = layer.getLatLngs()[0];
         if (!closed[0].equals(closed[closed.length-1])) {
             closed.push(closed[0]);
         }
