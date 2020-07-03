@@ -98,7 +98,7 @@ $(window).on('entity:map', function (e, data) {
 
     // Replace default layer switcher with Leaflet.GroupedLayerSwitcher
     if (map.layerscontrol) {
-        map.layerscontrol.removeFrom(map);
+        map.layerscontrol.remove(map);
     }
     var baseLayers = {};
     var overlaysLayers = {};
