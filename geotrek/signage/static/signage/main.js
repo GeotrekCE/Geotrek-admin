@@ -10,7 +10,7 @@ $(window).on('entity:map', function (e, data) {
 		modelname: 'signage',
 		style: L.Util.extend(window.SETTINGS.map.styles['signage'] || {}, { clickable:false }),
 		pointToLayer: function (feature, latlng) {
-			return L.marker(latlng).bindLabel(feature.properties.name, { noHide: true });
+			return L.marker(latlng).bindTooltip(feature.properties.name, { permanent: true });
 		}
 	});
 	var url = window.SETTINGS.urls['signage_layer'];

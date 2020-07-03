@@ -118,7 +118,7 @@
 
 
             function showInterventionLabel (geojson, layer) {
-                if (geojson.properties.name) layer.bindLabel(geojson.properties.name);
+                if (geojson.properties.name) layer.bindTooltip(geojson.properties.name);
             }
 
             function interventionUrl(properties, layer) {

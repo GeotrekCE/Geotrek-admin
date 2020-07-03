@@ -52,7 +52,7 @@ MapEntity.GeometryField = L.GeometryField.extend({
             },
             onEachFeature = function (feature, layer) {
                 if (feature.properties.name) {
-                    layer.bindLabel(feature.properties.name);
+                    layer.bindTooltip(feature.properties.name);
                 }
             },
             filecontrol = L.Control.fileLayerLoad({
@@ -106,7 +106,7 @@ MapEntity.GeometryField = L.GeometryField.extend({
             modelname: this.getModelName(),
             filter: exclude_current_object,
             onEachFeature: function (geojson, layer) {
-                if (geojson.properties.name) layer.bindLabel(geojson.properties.name);
+                if (geojson.properties.name) layer.bindTooltip(geojson.properties.name);
             }
         });
         objectsLayer.on('loaded', function() {
