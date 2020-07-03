@@ -1,22 +1,28 @@
-﻿// A layer control which provides for layer groupings.
+/* global L */
+
+// A layer control which provides for layer groupings.
 // Author: Ishmael Smyrnow
 L.Control.GroupedLayers = L.Control.extend({
+
   options: {
     collapsed: true,
     position: 'topright',
-    autoZIndex: true
+    autoZIndex: true,
+    exclusiveGroups: [],
+    groupCheckboxes: false
   },
 
   initialize: function (baseLayers, groupedOverlays, options) {
+    var i, j;
     L.Util.setOptions(this, options);
 
-    this._layers = {};
+    this._layers = [];
     this._lastZIndex = 0;
     this._handlingClick = false;
     this._groupList = [];
     this._domGroups = [];
 
-    for (var i in baseLayers) {
+    for (i in baseLayers) {
       this._addLayer(baseLayers[i], i);
     }
 
@@ -40,8 +46,8 @@ L.Control.GroupedLayers = L.Control.extend({
 
   onRemove: function (map) {
     map
-        .off('layeradd', this._onLayerChange)
-        .off('layerremove', this._onLayerChange);
+        .off('layeradd', this._onLayerChange, this)
+        .off('layerremove', this._onLayerChange, this);
   },
 
   addBaseLayer: function (layer, name) {
@@ -58,23 +64,34 @@ L.Control.GroupedLayers = L.Control.extend({
 
   removeLayer: function (layer) {
     var id = L.Util.stamp(layer);
-    delete this._layers[id];
+    var _layer = this._getLayer(id);
+    if (_layer) {
+      delete this._layers[this._layers.indexOf(_layer)];
+    }
     this._update();
     return this;
   },
 
+  _getLayer: function (id) {
+    for (var i = 0; i < this._layers.length; i++) {
+      if (this._layers[i] && L.stamp(this._layers[i].layer) === id) {
+        return this._layers[i];
+      }
+    }
+  },
+
   _initLayout: function () {
     var className = 'leaflet-control-layers',
-        container = this._container = L.DomUtil.create('div', className);
+      container = this._container = L.DomUtil.create('div', className);
 
-    //Makes this work on IE10 Touch devices by stopping it from firing a mouseout event when the touch is released
+    // Makes this work on IE10 Touch devices by stopping it from firing a mouseout event when the touch is released
     container.setAttribute('aria-haspopup', true);
 
-    if (!L.Browser.touch) {
+    if (L.Browser.touch) {
+      L.DomEvent.on(container, 'click', L.DomEvent.stopPropagation);
+    } else {
       L.DomEvent.disableClickPropagation(container);
       L.DomEvent.on(container, 'wheel', L.DomEvent.stopPropagation);
-    } else {
-      L.DomEvent.on(container, 'click', L.DomEvent.stopPropagation);
     }
 
     var form = this._form = L.DomUtil.create('form', className + '-list');
@@ -93,8 +110,7 @@ L.Control.GroupedLayers = L.Control.extend({
         L.DomEvent
             .on(link, 'click', L.DomEvent.stop)
             .on(link, 'click', this._expand, this);
-      }
-      else {
+      } else {
         L.DomEvent.on(link, 'focus', this._expand, this);
       }
 
@@ -114,22 +130,26 @@ L.Control.GroupedLayers = L.Control.extend({
   _addLayer: function (layer, name, group, overlay) {
     var id = L.Util.stamp(layer);
 
-    this._layers[id] = {
+    var _layer = {
       layer: layer,
       name: name,
       overlay: overlay
     };
+    this._layers.push(_layer);
 
     group = group || '';
-    var groupId = this._groupList.indexOf(group);
+    var groupId = this._indexOf(this._groupList, group);
 
     if (groupId === -1) {
       groupId = this._groupList.push(group) - 1;
     }
 
-    this._layers[id].group = {
+    var exclusive = (this._indexOf(this.options.exclusiveGroups, group) !== -1);
+
+    _layer.group = {
       name: group,
-      id: groupId
+      id: groupId,
+      exclusive: exclusive
     };
 
     if (this.options.autoZIndex && layer.setZIndex) {
@@ -148,10 +168,10 @@ L.Control.GroupedLayers = L.Control.extend({
     this._domGroups.length = 0;
 
     var baseLayersPresent = false,
-        overlaysPresent = false,
-        i, obj;
+      overlaysPresent = false,
+      i, obj;
 
-    for (i in this._layers) {
+    for (var i = 0; i < this._layers.length; i++) {
       obj = this._layers[i];
       this._addItem(obj);
       overlaysPresent = overlaysPresent || obj.overlay;
@@ -162,17 +182,22 @@ L.Control.GroupedLayers = L.Control.extend({
   },
 
   _onLayerChange: function (e) {
-    var obj = this._layers[L.Util.stamp(e.layer)];
+    var obj = this._getLayer(L.Util.stamp(e.layer)),
+      type;
 
-    if (!obj) { return; }
+    if (!obj) {
+      return;
+    }
 
     if (!this._handlingClick) {
       this._update();
     }
 
-    var type = obj.overlay ?
-      (e.type === 'layeradd' ? 'overlayadd' : 'overlayremove') :
-      (e.type === 'layeradd' ? 'baselayerchange' : null);
+    if (obj.overlay) {
+      type = e.type === 'layeradd' ? 'overlayadd' : 'overlayremove';
+    } else {
+      type = e.type === 'layeradd' ? 'baselayerchange' : null;
+    }
 
     if (type) {
       this._map.fire(type, obj);
@@ -181,7 +206,6 @@ L.Control.GroupedLayers = L.Control.extend({
 
   // IE7 bugs out if you create a radio dynamically, so you have to do it this hacky way (see http://bit.ly/PqYLBe)
   _createRadioElement: function (name, checked) {
-
     var radioHtml = '<input type="radio" class="leaflet-control-layers-selector" name="' + name + '"';
     if (checked) {
       radioHtml += ' checked="checked"';
@@ -196,20 +220,27 @@ L.Control.GroupedLayers = L.Control.extend({
 
   _addItem: function (obj) {
     var label = document.createElement('label'),
-        input,
-        checked = this._map.hasLayer(obj.layer);
+      input,
+      checked = this._map.hasLayer(obj.layer),
+      container,
+      groupRadioName;
 
     if (obj.overlay) {
-      input = document.createElement('input');
-      input.type = 'checkbox';
-      input.className = 'leaflet-control-layers-selector';
-      input.defaultChecked = checked;
+      if (obj.group.exclusive) {
+        groupRadioName = 'leaflet-exclusive-group-layer-' + obj.group.id;
+        input = this._createRadioElement(groupRadioName, checked);
+      } else {
+        input = document.createElement('input');
+        input.type = 'checkbox';
+        input.className = 'leaflet-control-layers-selector';
+        input.defaultChecked = checked;
+      }
     } else {
       input = this._createRadioElement('leaflet-base-layers', checked);
     }
 
     input.layerId = L.Util.stamp(obj.layer);
-
+    input.groupID = obj.group.id;
     L.DomEvent.on(input, 'click', this._onInputClick, this);
 
     var name = document.createElement('span');
@@ -229,9 +260,26 @@ L.Control.GroupedLayers = L.Control.extend({
         groupContainer.className = 'leaflet-control-layers-group';
         groupContainer.id = 'leaflet-control-layers-group-' + obj.group.id;
 
-        var groupLabel = document.createElement('span');
-        groupLabel.className = 'leaflet-control-layers-group-name';
-        groupLabel.innerHTML = obj.group.name;
+        var groupLabel = document.createElement('label');
+        groupLabel.className = 'leaflet-control-layers-group-label';
+
+        if (obj.group.name !== '' && !obj.group.exclusive) {
+          // ------ add a group checkbox with an _onInputClickGroup function
+          if (this.options.groupCheckboxes) {
+            var groupInput = document.createElement('input');
+            groupInput.type = 'checkbox';
+            groupInput.className = 'leaflet-control-layers-group-selector';
+            groupInput.groupID = obj.group.id;
+            groupInput.legend = this;
+            L.DomEvent.on(groupInput, 'click', this._onGroupInputClick, groupInput);
+            groupLabel.appendChild(groupInput);
+          }
+        }
+
+        var groupName = document.createElement('span');
+        groupName.className = 'leaflet-control-layers-group-name';
+        groupName.innerHTML = obj.group.name;
+        groupLabel.appendChild(groupName);
 
         groupContainer.appendChild(groupLabel);
         container.appendChild(groupContainer);
@@ -249,22 +297,48 @@ L.Control.GroupedLayers = L.Control.extend({
     return label;
   },
 
+  _onGroupInputClick: function () {
+    var i, input, obj;
+
+    var this_legend = this.legend;
+    this_legend._handlingClick = true;
+
+    var inputs = this_legend._form.getElementsByTagName('input');
+    var inputsLen = inputs.length;
+
+    for (i = 0; i < inputsLen; i++) {
+      input = inputs[i];
+      if (input.groupID === this.groupID && input.className === 'leaflet-control-layers-selector') {
+        input.checked = this.checked;
+        obj = this_legend._getLayer(input.layerId);
+        if (input.checked && !this_legend._map.hasLayer(obj.layer)) {
+          this_legend._map.addLayer(obj.layer);
+        } else if (!input.checked && this_legend._map.hasLayer(obj.layer)) {
+          this_legend._map.removeLayer(obj.layer);
+        }
+      }
+    }
+
+    this_legend._handlingClick = false;
+  },
+
   _onInputClick: function () {
     var i, input, obj,
-        inputs = this._form.getElementsByTagName('input'),
-        inputsLen = inputs.length;
+      inputs = this._form.getElementsByTagName('input'),
+      inputsLen = inputs.length;
 
     this._handlingClick = true;
 
     for (i = 0; i < inputsLen; i++) {
       input = inputs[i];
-      obj = this._layers[input.layerId];
+      if (input.className === 'leaflet-control-layers-selector') {
+        obj = this._getLayer(input.layerId);
 
-      if (input.checked && !this._map.hasLayer(obj.layer)) {
-        this._map.addLayer(obj.layer);
-
-      } else if (!input.checked && this._map.hasLayer(obj.layer)) {
-        this._map.removeLayer(obj.layer);
+        if (input.checked && !this._map.hasLayer(obj.layer)) {
+          this._map.addLayer(obj.layer);
+        } else if (!input.checked && this._map.hasLayer(obj.layer)) {
+          this._map.removeLayer(obj.layer);
+        }
       }
     }
 
@@ -273,10 +347,25 @@ L.Control.GroupedLayers = L.Control.extend({
 
   _expand: function () {
     L.DomUtil.addClass(this._container, 'leaflet-control-layers-expanded');
+    // permits to have a scrollbar if overlays heighter than the map.
+    var acceptableHeight = this._map._size.y - (this._container.offsetTop * 4);
+    if (acceptableHeight < this._form.clientHeight) {
+      L.DomUtil.addClass(this._form, 'leaflet-control-layers-scrollbar');
+      this._form.style.height = acceptableHeight + 'px';
+    }
   },
 
   _collapse: function () {
     this._container.className = this._container.className.replace(' leaflet-control-layers-expanded', '');
+  },
+
+  _indexOf: function (arr, obj) {
+    for (var i = 0, j = arr.length; i < j; i++) {
+      if (arr[i] === obj) {
+        return i;
+      }
+    }
+    return -1;
   }
 });
 
