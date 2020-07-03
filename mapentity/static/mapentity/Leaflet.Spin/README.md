@@ -1,18 +1,30 @@
 Leaflet.Spin
 ============
 
-Shows a nice spin cursor on the map.
+Shows a nice spin cursor on the map. See [online demo](http://makinacorpus.github.io/Leaflet.Spin/).
 
-Requires [Spin.js](http://fgnass.github.com/spin.js/).
+This plugin requires [Spin.js](http://fgnass.github.com/spin.js/).
 
-See [online demo](http://makinacorpus.github.io/Leaflet.Spin/).
+
+
+Install
+-----
+
+### NPM
+
+```
+npm install leaflet-spin
+```
+
+### Manually
+
+Download the [latest release](https://github.com/makinacorpus/Leaflet.Spin/releases/tag/1.1.2) and include it in your app
 
 
 Usage
 -----
 
-
-### Manually
+This plugin can be loaded with AMD/CommonJS.
 
 ```javascript
 map.spin(true);  // on
@@ -33,40 +45,69 @@ map.spin(true, {lines: 13, length: 40});
 
 ### With AJAX / JQuery
 
-```
-    map.spin(true);
-    $.ajax({url: 'http://server/api/'})
-     .done(function() {
-        map.spin(false);
-      })
-     .error(function () {
-        map.spin(false);
-      });
-
+```javascript
+map.spin(true);
+$.ajax({url: 'http://server/api/'})
+.done(function() {
+  map.spin(false);
+})
+.error(function () {
+  map.spin(false);
+});
 ```
 
 
 Using events:
 
-```
-    var layer = L.geoJson(null).addTo(map);
-    
-    layer.fire('data:loading');
-    $.getJSON('http://server/path.geojson', function (data) {
-        layer.fire('data:loaded');
-        layer.addData(data);
-    });
+```javascript
+var layer = L.geoJson(null).addTo(map);
 
+layer.fire('data:loading');
+$.getJSON('http://server/path.geojson', function (data) {
+    layer.fire('data:loaded');
+    layer.addData(data);
+});
 ```
 
 ### With [Leaflet.AJAX](https://github.com/calvinmetcalf/leaflet-ajax/)
 
+```javascript
+var layer = L.geoJson.ajax();
+layer.addUrl('http://server/path.geojson');
 ```
 
-    var layer = L.geoJson.ajax();
-    layer.addUrl('http://server/path.geojson');
+Development
+-----
+
+You can use example folder for testing.
 
 ```
+npm run release   # minify js and copy leaflet.spin.min.js in example folder
+npm run deploy    # deploy to gh-pages
+```
+
+
+Changelog
+-----
+
+### 1.1.2
+Should work with all 0.x and 1.x versions of leaflet
+
+### 1.1.1
+Add the dependency to spin.js in the module definition
+
+### 1.1.0
+Update export and extend system
+
+### 1.0.0
+Update structure with official Leaflet plugin rules
+
+### 0.1.1
+Update bower dependencies
+
+### 0.1.0
+Initial version
+
 
 
 Authors
