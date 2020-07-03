@@ -1,34 +1,38 @@
 /*
+ * Leaflet.TextPath - Shows text along a polyline
  * Inspired by Tom Mac Wright article :
  * http://mapbox.com/osmdev/2012/11/20/getting-serious-about-svg/
  */
 
+(function () {
+
+var __onAdd = L.Polyline.prototype.onAdd,
+    __onRemove = L.Polyline.prototype.onRemove,
+    __updatePath = L.Polyline.prototype._updatePath,
+    __bringToFront = L.Polyline.prototype.bringToFront;
+
+
 var PolylineTextPath = {
 
-    __updatePath: L.Polyline.prototype._updatePath,
-    __bringToFront: L.Polyline.prototype.bringToFront,
-    __onAdd: L.Polyline.prototype.onAdd,
-    __onRemove: L.Polyline.prototype.onRemove,
-
     onAdd: function (map) {
-        this.__onAdd.call(this, map);
+        __onAdd.call(this, map);
         this._textRedraw();
     },
 
     onRemove: function (map) {
         map = map || this._map;
-        if (map && this._textNode)
-            map._pathRoot.removeChild(this._textNode);
-        this.__onRemove.call(this, map);
+        if (map && this._textNode && map._renderer._container)
+            map._renderer._container.removeChild(this._textNode);
+        __onRemove.call(this, map);
     },
 
     bringToFront: function () {
-        this.__bringToFront.call(this);
+        __bringToFront.call(this);
         this._textRedraw();
     },
 
     _updatePath: function () {
-        this.__updatePath.call(this);
+        __updatePath.call(this);
         this._textRedraw();
     },
 
@@ -44,24 +48,39 @@ var PolylineTextPath = {
         this._text = text;
         this._textOptions = options;
 
-        var defaults = {repeat: false, fillColor: 'black', attributes: {}};
+        /* If not in SVG mode or Polyline not added to map yet return */
+        /* setText will be called by onAdd, using value stored in this._text */
+        if (!L.Browser.svg || typeof this._map === 'undefined') {
+          return this;
+        }
+
+        var defaults = {
+            repeat: false,
+            fillColor: 'black',
+            attributes: {},
+            below: false,
+        };
         options = L.Util.extend(defaults, options);
 
         /* If empty text, hide */
         if (!text) {
-            if (this._textNode)
-                this._map._pathRoot.removeChild(this._textNode);
+            if (this._textNode && this._textNode.parentNode) {
+                this._map._renderer._container.removeChild(this._textNode);
+                
+                /* delete the node, so it will not be removed a 2nd time if the layer is later removed from the map */
+                delete this._textNode;
+            }
             return this;
         }
 
         text = text.replace(/ /g, '\u00A0');  // Non breakable spaces
         var id = 'pathdef-' + L.Util.stamp(this);
-        var svg = this._map._pathRoot;
+        var svg = this._map._renderer._container;
         this._path.setAttribute('id', id);
 
         if (options.repeat) {
             /* Compute single pattern length */
-            var pattern = L.Path.prototype._createElement('text');
+            var pattern = L.SVG.create('text');
             for (var attr in options.attributes)
                 pattern.setAttribute(attr, options.attributes[attr]);
             pattern.appendChild(document.createTextNode(text));
@@ -70,12 +89,12 @@ var PolylineTextPath = {
             svg.removeChild(pattern);
 
             /* Create string as long as path */
-            text = new Array(Math.ceil(this._path.getTotalLength() / alength)).join(text);
+            text = new Array(Math.ceil(isNaN(this._path.getTotalLength() / alength) ? 0 : this._path.getTotalLength() / alength)).join(text);
         }
 
         /* Put it along the path using textPath */
-        var textNode = L.Path.prototype._createElement('text'),
-            textPath = L.Path.prototype._createElement('textPath');
+        var textNode = L.SVG.create('text'),
+            textPath = L.SVG.create('textPath');
 
         var dy = options.offset || this._path.getAttribute('stroke-width');
 
@@ -85,8 +104,55 @@ var PolylineTextPath = {
             textNode.setAttribute(attr, options.attributes[attr]);
         textPath.appendChild(document.createTextNode(text));
         textNode.appendChild(textPath);
-        svg.appendChild(textNode);
         this._textNode = textNode;
+
+        if (options.below) {
+            svg.insertBefore(textNode, svg.firstChild);
+        }
+        else {
+            svg.appendChild(textNode);
+        }
+
+        /* Center text according to the path's bounding box */
+        if (options.center) {
+            var textLength = textNode.getComputedTextLength();
+            var pathLength = this._path.getTotalLength();
+            /* Set the position for the left side of the textNode */
+            textNode.setAttribute('dx', ((pathLength / 2) - (textLength / 2)));
+        }
+
+        /* Change label rotation (if required) */
+        if (options.orientation) {
+            var rotateAngle = 0;
+            switch (options.orientation) {
+                case 'flip':
+                    rotateAngle = 180;
+                    break;
+                case 'perpendicular':
+                    rotateAngle = 90;
+                    break;
+                default:
+                    rotateAngle = options.orientation;
+            }
+
+            var rotatecenterX = (textNode.getBBox().x + textNode.getBBox().width / 2);
+            var rotatecenterY = (textNode.getBBox().y + textNode.getBBox().height / 2);
+            textNode.setAttribute('transform','rotate(' + rotateAngle + ' '  + rotatecenterX + ' ' + rotatecenterY + ')');
+        }
+
+        /* Initialize mouse events for the additional nodes */
+        if (this.options.interactive) {
+            if (L.Browser.svg || !L.Browser.vml) {
+                textPath.setAttribute('class', 'leaflet-interactive');
+            }
+
+            var events = ['click', 'dblclick', 'mousedown', 'mouseover',
+                          'mouseout', 'mousemove', 'contextmenu'];
+            for (var i = 0; i < events.length; i++) {
+                L.DomEvent.on(textNode, events[i], this.fire, this);
+            }
+        }
+
         return this;
     }
 };
@@ -103,3 +169,7 @@ L.LayerGroup.include({
         return this;
     }
 });
+
+
+
+})();
