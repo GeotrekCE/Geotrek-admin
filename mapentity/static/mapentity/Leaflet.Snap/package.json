@@ -1,24 +1,37 @@
 {
-    "name": "leaflet-snap"
-  , "version": "0.0.1"
-  , "description": "Enable snapping between layers"
-  , "keywords": ["Leaflet", "GIS"]
-  , "main": "leaflet.snap.js"
-  , "bugs": {
-    "url": "https://github.com/makinacorpus/Leaflet.Snap/issues"
-  }
-  , "repository": {
-    "type": "git",
-    "url": "git://github.com/makinacorpus/Leaflet.Snap.git"
-  }
-  , "license": "MIT"
-  , "scripts": {
-  }
-  , "dependencies": {
-    "leaflet": "*",
-    "leaflet-geometryutil": "*"
-  }
-  , "optionalDependencies": {
-    "leaflet-draw": "*",
-  }
+    "name": "leaflet-snap",
+    "version": "0.0.5",
+    "description": "Enable snapping between layers",
+    "keywords": [
+        "Leaflet",
+        "GIS"
+    ],
+    "main": "leaflet.snap.js",
+    "bugs": {
+        "url": "https://github.com/makinacorpus/Leaflet.Snap/issues"
+    },
+    "scripts": {
+      "test": "mocha-phantomjs ./test/index.html --reporter list || true"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/makinacorpus/Leaflet.Snap.git"
+    },
+    "license": "MIT",
+    "dependencies": {
+        "leaflet-geometryutil": "*"
+    },
+    "peerDependencies": {
+        "leaflet": ">=0.7.0 <2.0.0"
+    },
+    "optionalDependencies": {
+        "leaflet-draw": "^1.0.0"
+    },
+    "devDependencies": {
+        "chai": "^3.5.0",
+        "mocha": "^3.0.2",
+        "happen": "^0.3.1",
+        "mocha-phantomjs": "^4.1.0",
+        "sinon": "^1.17.5"
+    }
 }

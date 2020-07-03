@@ -417,7 +417,7 @@ L.Handler.MultiPath = L.Handler.extend({
 
     forceMarkerToLayer: function(marker, layer) {
         var closest = L.GeometryUtil.closest(this.map, layer, marker.getLatLng());
-        marker.editing._updateSnap(marker, layer, closest);
+        L.Snap.updateSnap(marker, layer, closest);
     },
 
     createStep: function(marker, idx) {
