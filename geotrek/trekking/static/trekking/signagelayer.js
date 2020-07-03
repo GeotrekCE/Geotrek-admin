@@ -24,6 +24,6 @@ var SignagesLayer = L.GeoJSON.extend({
                                     iconSize: [this.options.iconSize, this.options.iconSize],
                                     html: img});
 
-        return L.marker(latlng, {icon: serviceicon}).bindLabel(featureData.properties.name, {noHide: true});
+        return L.marker(latlng, {icon: serviceicon}).bindTooltip(featureData.properties.name, {permanent: true});
     }
 });

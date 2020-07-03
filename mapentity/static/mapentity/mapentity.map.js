@@ -51,7 +51,7 @@ MapEntity.showLineLabel = function (layer, options) {
 
     var rgb = parseColor(options.color);
 
-    layer.bindLabel(options.text, {noHide: true, className: options.className});
+    layer.bindTooltip(options.text, {permanent: true, className: options.className});
 
     var __layerOnAdd = layer.onAdd;
     layer.onAdd = function (map) {
@@ -245,7 +245,7 @@ $(window).on('entity:map:list', function (e, data) {
         style: style,
         modelname: data.modelname,
         onEachFeature: function (geojson, layer) {
-            if (geojson.properties.name) layer.bindLabel(geojson.properties.name);
+            if (geojson.properties.name) layer.bindTooltip(geojson.properties.name);
         }
     });
     objectsLayer.on('highlight select', function (e) {
@@ -307,7 +307,7 @@ $(window).on('entity:map:list', function (e, data) {
         },
         onEachFeature = function (feature, layer) {
             if (feature.properties.name) {
-                layer.bindLabel(feature.properties.name);
+                layer.bindTooltip(feature.properties.name);
             }
         },
         filecontrol = L.Control.fileLayerLoad({
