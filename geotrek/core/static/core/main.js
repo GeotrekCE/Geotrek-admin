@@ -126,14 +126,22 @@ $(window).on('detailmap:ready', function (e, data) {
             return;
 
         // Show start and end markers (similar to edition)
-        var _iconUrl = window.SETTINGS.urls.static + "core/images/marker-";
+        var imagePath = window.SETTINGS.urls.static + "core/images/";
         L.marker(layer.getLatLngs()[0], {
             clickable: false,
-            icon: new L.Icon.Default({iconUrl: _iconUrl + "source.png"})
+            icon: new L.Icon.Default({
+                imagePath: imagePath,
+                iconUrl: "marker-source.png",
+                iconRetinaUrl: "marker-source-2x.png"
+            })
         }).addTo(map);
         L.marker(layer.getLatLngs().slice(-1)[0], {
             clickable: false,
-            icon: new L.Icon.Default({iconUrl: _iconUrl + "target.png"})
+            icon: new L.Icon.Default({
+                imagePath: imagePath,
+                iconUrl: "marker-target.png",
+                iconRetinaUrl: "marker-target-2x.png"
+            })
         }).addTo(map);
 
         // Also add line orientation
