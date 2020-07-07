@@ -9,9 +9,9 @@
         <strong>{% trans "Interventions" %}</strong>
             {% with columns="target,name,status,stake,total_cost,date" %}
                 {% if modelname == "project" %}
-                    {% valuetable object.interventions.existing|dictsort:"on_existing_target" enumeration=True columns=columns %}
+                    {% valuetable object.interventions.existing enumeration=True columns=columns %}
                 {% else %}
-                    {% valuetable object.interventions.all|dictsort:"on_existing_target" columns=columns %}
+                    {% valuetable object.interventions.all columns=columns %}
                 {% endif %}
             {% endwith %}
 

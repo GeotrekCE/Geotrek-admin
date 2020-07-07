@@ -91,7 +91,7 @@
             </td>
         </tr>
 
-        {% if intervention.on_existing_target %}
+        {% if intervention.target %}
         <tr>
             <th>{% trans "Related object" %}</th>
             <td>{{ intervention.target_display|safe }}</td>

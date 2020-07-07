@@ -21,7 +21,7 @@ class InterventionTest(TestCase):
         topo = TopologyFactory.create()
         self.assertEqual('TOPOLOGY', topo.kind)
         i = InterventionFactory.create(target_id=topo.pk)
-        self.assertEqual('TOPOLOGY', i.target.kind)
+        self.assertEqual('INTERVENTION', i.target.kind)
 
     def test_default_stake(self):
         # Add paths to topology
