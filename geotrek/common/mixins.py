@@ -8,6 +8,7 @@ from django.conf import settings
 from django.db.models import Manager as DefaultManager
 from django.db import models
 from django.db.models import Q
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 
@@ -379,9 +380,8 @@ class PictogramMixin(models.Model):
         abstract = True
 
     def pictogram_img(self):
-        return '<img src="%s" />' % (self.pictogram.url if self.pictogram else "")
+        return mark_safe('<img src="%s" />' % (self.pictogram.url if self.pictogram else ""))
     pictogram_img.short_description = _("Pictogram")
-    pictogram_img.allow_tags = True
 
     def get_pictogram_url(self):
         return self.pictogram.url if self.pictogram else None
