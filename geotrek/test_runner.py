@@ -9,8 +9,7 @@ class TimedTextTestResult(TextTestResult):
     def __init__(self, *args, **kwargs):
         super(TimedTextTestResult, self).__init__(*args, **kwargs)
         self.clocks = dict()
-        self.max_time = 0
-        self.black_sheep = ""
+        self.sheeps = {}
 
     def startTest(self, test):
         self.clocks[test] = time()
@@ -25,9 +24,7 @@ class TimedTextTestResult(TextTestResult):
         if self.showAll:
             duration = time() - self.clocks[test]
             self.stream.writeln("ok (%.6fs)" % (duration))
-            if duration > self.max_time:
-                self.max_time = duration
-                self.black_sheep = test
+            self.sheeps[test] = duration
         elif self.dots:
             self.stream.write('.')
             self.stream.flush()
@@ -38,7 +35,10 @@ class TimedTextTestRunner(TextTestRunner):
 
     def run(self, test):
         result = super(TimedTextTestRunner, self).run(test)
-        self.stream.writeln("Longest test : %s" % result.black_sheep)
+        black_sheeps = [[k, v] for k, v in sorted(result.sheeps.items(), key=lambda item: item[1])][-10:]
+        self.stream.writeln("Top 10 : \n")
+        for black_sheep in black_sheeps[::-1]:
+            self.stream.writeln("%s : %s s" % (str(black_sheep[0]), black_sheep[1]))
         return result
 
 
