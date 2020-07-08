@@ -70,13 +70,3 @@ class TouristicEventTypeAdmin(MergeActionMixin, TranslationAdmin):
 
 if settings.TOURISM_ENABLED:
     admin.site.register(tourism_models.TouristicEventType, TouristicEventTypeAdmin)
-
-
-class ReservationSystemAdmin(MergeActionMixin, admin.ModelAdmin):
-    list_display = ('name',)
-    search_fields = ('name',)
-    merge_field = 'name'
-
-
-if settings.TOURISM_ENABLED:
-    admin.site.register(tourism_models.ReservationSystem, ReservationSystemAdmin)

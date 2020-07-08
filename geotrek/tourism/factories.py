@@ -3,6 +3,7 @@ from django.contrib.gis.geos import Point
 import factory
 
 from geotrek.authent.factories import StructureRelatedDefaultFactory
+from geotrek.common.factories import ReservationSystemFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 
 from . import models
@@ -61,13 +62,6 @@ class TouristicContentType2Factory(factory.DjangoModelFactory):
     label = "Type2"
     category = factory.SubFactory(TouristicContentCategoryFactory)
     pictogram = get_dummy_uploaded_image('touristiccontent-type2.png')
-
-
-class ReservationSystemFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = models.ReservationSystem
-
-    name = factory.Sequence(lambda n: "Reservation system %s" % n)
 
 
 class TouristicContentFactory(StructureRelatedDefaultFactory):

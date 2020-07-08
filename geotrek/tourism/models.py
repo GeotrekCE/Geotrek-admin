@@ -19,7 +19,7 @@ from geotrek.common.mixins import (NoDeleteMixin, TimeStampedModelMixin,
                                    PictogramMixin, OptionalPictogramMixin,
                                    PublishableMixin, PicturesMixin,
                                    AddPropertyMixin)
-from geotrek.common.models import Theme
+from geotrek.common.models import Theme, ReservationSystem
 from geotrek.common.utils import intersecting
 
 from extended_choices import Choices
@@ -208,19 +208,6 @@ class TouristicContentType2(TouristicContentType):
         proxy = True
         verbose_name = _("Type2")
         verbose_name_plural = _("Second list types")
-
-
-class ReservationSystem(models.Model):
-    name = models.CharField(verbose_name=_("Name"), max_length=256,
-                            blank=False, null=False, unique=True)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = _("Reservation system")
-        verbose_name_plural = _("Reservation systems")
-        ordering = ('name',)
 
 
 class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,

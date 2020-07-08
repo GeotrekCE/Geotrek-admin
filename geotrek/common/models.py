@@ -113,3 +113,16 @@ class TargetPortal(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ReservationSystem(models.Model):
+    name = models.CharField(verbose_name=_("Name"), max_length=256,
+                            blank=False, null=False, unique=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("Reservation system")
+        verbose_name_plural = _("Reservation systems")
+        ordering = ('name',)

@@ -804,26 +804,5 @@
         "type_en": "Show",
         "type_fr": "Spectacle"
     }
-},
-{
-    "pk": 1,
-    "model": "tourism.reservationsystem",
-    "fields": {
-        "name": "OpenSystem"
-    }
-},
-{
-    "pk": 2,
-    "model": "tourism.reservationsystem",
-    "fields": {
-        "name": "FFCAM"
-    }
-},
-{
-    "pk": 3,
-    "model": "tourism.reservationsystem",
-    "fields": {
-        "name": "Gites de France"
-    }
 }
 ]
