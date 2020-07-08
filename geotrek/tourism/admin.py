@@ -49,7 +49,7 @@ class TouristicContentType2Inline(TranslationTabularInline):
 
 
 class TouristicContentCategoryAdmin(MergeActionMixin, TranslationAdmin):
-    list_display = ('label', 'order', 'pictogram_img', 'type1_label', 'type2_label')
+    list_display = ('label', 'prefixed_id', 'order', 'pictogram_img', 'type1_label', 'type2_label')
     search_fields = ('label',)
     inlines = [
         TouristicContentType1Inline,

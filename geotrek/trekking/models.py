@@ -122,7 +122,6 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
     pois_excluded = models.ManyToManyField('Poi', related_name='excluded_treks', verbose_name=_("Excluded POIs"),
                                            blank=True)
 
-    category_id_prefix = 'T'
     capture_map_image_waitfor = '.poi_enum_loaded.services_loaded.info_desks_loaded.ref_points_loaded'
 
     class Meta:
@@ -350,9 +349,9 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
         if settings.SPLIT_TREKS_CATEGORIES_BY_ITINERANCY and self.children.exists():
             return 'I'
         elif settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and self.practice:
-            return '{prefix}{id}'.format(prefix=self.category_id_prefix, id=self.practice.id)
+            return self.practice.prefixed_id
         else:
-            return self.category_id_prefix
+            return Practice.id_prefix
 
     def distance(self, to_cls):
         if self.practice and self.practice.distance is not None:
@@ -517,6 +516,8 @@ class Practice(PictogramMixin):
     color = ColorField(verbose_name=_("Color"), default='#444444',
                        help_text=_("Color of the practice, only used in mobile."))  # To be implemented in Geotrek-rando
 
+    id_prefix = 'T'
+
     class Meta:
         verbose_name = _("Practice")
         verbose_name_plural = _("Practices")
@@ -528,6 +529,10 @@ class Practice(PictogramMixin):
     @property
     def slug(self):
         return slugify(self.name) or str(self.pk)
+
+    @property
+    def prefixed_id(self):
+        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
 
 
 class Accessibility(OptionalPictogramMixin):

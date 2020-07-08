@@ -24,6 +24,8 @@ class Practice(PictogramMixin):
     color = ColorField(verbose_name=_("Color"), default='#444444',
                        help_text=_("Color of the practice, only used in mobile."))  # To be implemented in Geotrek-rando
 
+    id_prefix = 'D'
+
     class Meta:
         verbose_name = _("Practice")
         verbose_name_plural = _("Practices")
@@ -31,6 +33,10 @@ class Practice(PictogramMixin):
 
     def __str__(self):
         return self.name
+
+    @property
+    def prefixed_id(self):
+        return '{prefix}{id}'.format(prefix=self.id_prefix, id=self.id)
 
     @property
     def slug(self):
@@ -117,8 +123,6 @@ class Dive(NoDeleteMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, St
     portal = models.ManyToManyField('common.TargetPortal', blank=True, related_name='dives', verbose_name=_("Portal"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
-    category_id_prefix = 'D'
-
     class Meta:
         verbose_name = _("Dive")
         verbose_name_plural = _("Dives")
@@ -144,9 +148,9 @@ class Dive(NoDeleteMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, St
     @property
     def prefixed_category_id(self):
         if settings.SPLIT_DIVES_CATEGORIES_BY_PRACTICE and self.practice:
-            return '{prefix}{id}'.format(prefix=self.category_id_prefix, id=self.practice.id)
+            return self.practice.prefixed_id
         else:
-            return self.category_id_prefix
+            return Practice.id_prefix
 
     def get_map_image_url(self):
         return reverse('diving:dive_map_image', args=[str(self.pk), get_language()])

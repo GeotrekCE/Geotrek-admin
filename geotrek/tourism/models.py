@@ -371,7 +371,7 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
     approved = models.BooleanField(verbose_name=_("Approved"), default=False)
 
-    category_id_prefix = 'E'
+    id_prefix = 'E'
 
     class Meta:
         verbose_name = _("Touristic event")
@@ -408,7 +408,7 @@ class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, Structu
 
     @property
     def prefixed_category_id(self):
-        return self.category_id_prefix
+        return self.id_prefix
 
     def distance(self, to_cls):
         return settings.TOURISM_INTERSECTION_MARGIN
