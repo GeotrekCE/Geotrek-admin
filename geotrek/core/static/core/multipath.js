@@ -272,7 +272,7 @@ L.Handler.MultiPath = L.Handler.extend({
         var self = this;
         (function() {
             function dragstart(e) {
-                var next_step_idx = self.draggable_marker.group_layer.step_idx + 1;
+                var next_step_idx = self.draggable_marker.layer.step_idx + 1;
                 self.addViaStep(self.draggable_marker, next_step_idx);
             }
             function dragend(e) {
@@ -417,7 +417,7 @@ L.Handler.MultiPath = L.Handler.extend({
 
     forceMarkerToLayer: function(marker, layer) {
         var closest = L.GeometryUtil.closest(this.map, layer, marker.getLatLng());
-        L.Snap.updateSnap(marker, layer, closest);
+        marker.editing._updateSnap(marker, layer, closest);
     },
 
     createStep: function(marker, idx) {
@@ -797,17 +797,15 @@ L.Handler.MultiPath = L.Handler.extend({
             var layerPoint = a.layerPoint
               , min_dist = Number.MAX_VALUE
               , closest_point = null
-              , matching_group_layer = null;
+              , matching_layer = null;
 
-            topology.layer && topology.layer.eachLayer(function(group_layer) {
-                group_layer.eachLayer(function(layer) {
-                    var p = layer.closestLayerPoint(layerPoint);
-                    if (p && p.distance < min_dist && p.distance < MIN_DIST) {
-                        min_dist = p.distance;
-                        closest_point = p;
-                        matching_group_layer = group_layer;
-                    }
-                });
+            topology.layer && topology.layer.eachLayer(function(layer) {
+                var p = layer.closestLayerPoint(layerPoint);
+                if (p && p.distance < min_dist && p.distance < MIN_DIST) {
+                    min_dist = p.distance;
+                    closest_point = p;
+                    matching_layer = layer;
+                }
             });
 
             if (closest_point) {
@@ -815,7 +813,7 @@ L.Handler.MultiPath = L.Handler.extend({
                 self.draggable_marker.addTo(self.map);
                 L.DomUtil.addClass(self.draggable_marker._icon, self.draggable_marker.classname);
                 self.draggable_marker._removeShadow();
-                self.draggable_marker.group_layer = matching_group_layer;
+                self.draggable_marker.layer = matching_layer;
             } else {
                 self.draggable_marker && self.map.removeLayer(self.draggable_marker);
             }
