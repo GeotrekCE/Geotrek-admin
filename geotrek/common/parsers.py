@@ -469,12 +469,12 @@ class Parser(object):
                 self.add_warning(str(e))
         self.end()
 
-    def request_or_retry(self, url, verb='get', params=None, authent=None):
+    def request_or_retry(self, url, verb='get', **kwargs):
         try_get = settings.PARSER_NUMBER_OF_TRIES
         assert try_get > 0
         while try_get:
             action = getattr(requests, verb)
-            response = action(url, allow_redirects=True, params=params, auth=authent)
+            response = action(url, allow_redirects=True, **kwargs)
             if response.status_code in settings.PARSER_RETRY_HTTP_STATUS:
                 logger.info("Failed to fetch url {}. Retrying ...".format(url))
                 sleep(settings.PARSER_RETRY_SLEEP_TIME)

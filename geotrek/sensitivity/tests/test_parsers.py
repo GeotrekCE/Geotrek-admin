@@ -119,7 +119,7 @@ class BiodivWithPracticeParser(BiodivParser):
 class BiodivParserTests(TranslationResetMixin, TestCase):
     @mock.patch('requests.get')
     def test_create(self, mocked):
-        def side_effect(url, allow_redirects, params, auth):
+        def side_effect(url, allow_redirects):
             response = requests.Response()
             response.status_code = 200
             if 'sportpractice' in url:
@@ -154,7 +154,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
 
     @mock.patch('requests.get')
     def test_create_with_practice(self, mocked):
-        def side_effect(url, allow_redirects, params, auth):
+        def side_effect(url, allow_redirects):
             response = requests.Response()
             response.status_code = 200
             if 'sportpractice' in url:
@@ -168,7 +168,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
 
     @mock.patch('requests.get')
     def test_status_code_404(self, mocked):
-        def side_effect(url, allow_redirects, params, auth):
+        def side_effect(url, allow_redirects):
             response = requests.Response()
             response.status_code = 404
             response.url = url
@@ -179,7 +179,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
 
     @mock.patch('requests.get')
     def test_status_code_404_practice(self, mocked):
-        def side_effect(url, allow_redirects, params, auth):
+        def side_effect(url, allow_redirects):
             response = requests.Response()
             if 'in_bbox' in url:
                 response.status_code = 404
@@ -194,7 +194,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
 
     @mock.patch('requests.get')
     def test_create_no_id(self, mocked):
-        def side_effect(url, allow_redirects, params, auth):
+        def side_effect(url, allow_redirects):
             response = requests.Response()
             response.status_code = 200
             if 'sportpractice' in url:
@@ -220,7 +220,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
 
     @mock.patch('requests.get')
     def test_create_species_url(self, mocked):
-        def side_effect(url, allow_redirects, params, auth):
+        def side_effect(url, allow_redirects):
             response = requests.Response()
             response.status_code = 200
             if 'sportpractice' in url:
@@ -238,7 +238,7 @@ class BiodivParserTests(TranslationResetMixin, TestCase):
 
     @mock.patch('requests.get')
     def test_create_species_radius(self, mocked):
-        def side_effect(url, allow_redirects, params, auth):
+        def side_effect(url, allow_redirects):
             response = requests.Response()
             response.status_code = 200
             if 'sportpractice' in url:
