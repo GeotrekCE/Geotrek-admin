@@ -318,7 +318,7 @@ class Parser(object):
         else:
             _objects = []
             for obj in objects:
-                if not hasattr(obj, 'structure') or obj.structure == self.structure or self.user.has_perm('authent.can_bypass_structure'):
+                if not hasattr(obj, 'structure') or obj.structure == self.structure or self.user is None or self.user.has_perm('authent.can_bypass_structure'):
                     _objects.append(obj)
                 else:
                     self.to_delete.discard(obj.pk)
