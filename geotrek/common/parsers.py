@@ -254,6 +254,8 @@ class Parser(object):
         try:
             update_fields = self.parse_fields(row, self.fields)
             update_fields += self.parse_fields(row, self.constant_fields)
+            if 'id' in update_fields:
+                update_fields.remove('id')  # Can't update primary key
         except RowImportError as warnings:
             self.add_warning(str(warnings))
             return
