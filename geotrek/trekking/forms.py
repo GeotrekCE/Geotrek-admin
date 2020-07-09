@@ -142,7 +142,7 @@ class TrekForm(BaseTrekForm):
                     'eid',
                     'eid2',
                     'reservation_system',
-                    'reservation_id'
+                    'reservation_id',
                     'pois_excluded',
                     'hidden_ordered_children',
                     Fieldset(_("Related treks"),),
