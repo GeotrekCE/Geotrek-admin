@@ -165,6 +165,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     parents = rest_serializers.ReadOnlyField(source='parents_id')
     previous = rest_serializers.ReadOnlyField(source='previous_id')
     next = rest_serializers.ReadOnlyField(source='next_id')
+    reservation_system = rest_serializers.ReadOnlyField(source='reservation_system.name', default="")
 
     # Idea: use rest-framework-gis
     parking_location = rest_serializers.SerializerMethodField()
@@ -224,8 +225,8 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
                   'public_transport', 'advised_parking', 'web_links', 'is_park_centered',
                   'disabled_infrastructure', 'parking_location', 'relationships',
                   'points_reference', 'gpx', 'kml', 'source', 'portal',
-                  'type2', 'category', 'structure', 'treks', 'children', 'parents',
-                  'previous', 'next') + \
+                  'type2', 'category', 'structure', 'treks', 'reservation_id', 'reservation_system',
+                  'children', 'parents', 'previous', 'next') + \
             AltimetrySerializerMixin.Meta.fields + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \

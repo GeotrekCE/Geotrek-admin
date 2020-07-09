@@ -20,7 +20,7 @@ from geotrek.core.models import Path, Topology, simplify_coords
 from geotrek.common.utils import intersecting, classproperty
 from geotrek.common.mixins import (PicturesMixin, PublishableMixin,
                                    PictogramMixin, OptionalPictogramMixin, NoDeleteManager)
-from geotrek.common.models import Theme
+from geotrek.common.models import Theme, ReservationSystem
 from geotrek.maintenance.models import Intervention, Project
 from geotrek.tourism import models as tourism_models
 
@@ -121,6 +121,10 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
     eid2 = models.CharField(verbose_name=_("Second external id"), max_length=1024, blank=True, null=True)
     pois_excluded = models.ManyToManyField('Poi', related_name='excluded_treks', verbose_name=_("Excluded POIs"),
                                            blank=True)
+    reservation_system = models.ForeignKey(ReservationSystem, verbose_name=_("Reservation system"),
+                                           on_delete=models.CASCADE, blank=True, null=True)
+    reservation_id = models.CharField(verbose_name=_("Reservation ID"), max_length=1024,
+                                      blank=True)
 
     capture_map_image_waitfor = '.poi_enum_loaded.services_loaded.info_desks_loaded.ref_points_loaded'
 

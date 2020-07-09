@@ -173,6 +173,14 @@
             <td>{{ trek.eid2 }}</td>
         </tr>
         <tr>
+            <th>{% trans "Reservation system" %}</th>
+            <td>{% if object.reservation_system %}{{ object.reservation_system }}{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Reservation ID" %}</th>
+            <td>{{ object.reservation_id }}</td>
+        </tr>
+        <tr>
             <th>{% trans "Thumbnail" %}</th>
             <td><img src="{{ trek.thumbnail.url }}"></td>
         </tr>
