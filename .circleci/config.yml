@@ -34,7 +34,7 @@ jobs:
       - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
       - run: docker-compose run web update.sh
-      - run: docker-compose run -e ENV=tests web coverage run ./manage.py test
+      - run: docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2
       - run: docker-compose run web coverage xml -o var/coverage.xml
       - codecov/upload:
           file: var/coverage.xml
@@ -51,7 +51,7 @@ jobs:
       - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
       - run: docker-compose run web update.sh
-      - run: docker-compose run -e ENV=tests_nds web coverage run ./manage.py test
+      - run: docker-compose run -e ENV=tests_nds web coverage run ./manage.py test -v 2
       - run: docker-compose run web coverage xml -o var/coverage.xml
       - codecov/upload:
           file: var/coverage.xml
