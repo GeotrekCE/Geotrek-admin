@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 cd /opt/geotrek-admin
 
 mkdir -p var/static \
