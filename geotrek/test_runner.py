@@ -35,10 +35,11 @@ class TimedTextTestRunner(TextTestRunner):
 
     def run(self, test):
         result = super(TimedTextTestRunner, self).run(test)
-        black_sheeps = [[k, v] for k, v in sorted(result.sheeps.items(), key=lambda item: item[1])][-10:]
-        self.stream.writeln("Top 10 : \n")
-        for black_sheep in black_sheeps[::-1]:
-            self.stream.writeln("%s : %s s" % (str(black_sheep[0]), black_sheep[1]))
+        if result.showAll:
+            black_sheeps = [[k, v] for k, v in sorted(result.sheeps.items(), key=lambda item: item[1])][-10:]
+            self.stream.writeln("Top 10 : \n")
+            for black_sheep in black_sheeps[::-1]:
+                self.stream.writeln("%s : %s s" % (str(black_sheep[0]), black_sheep[1]))
         return result
 
 
