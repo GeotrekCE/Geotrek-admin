@@ -273,6 +273,8 @@ class TrekViewsTest(CommonTest):
             }],
             'videos': [],
             'web_links': [],
+            'reservation_id': 'XXXXXXXXX',
+            'reservation_system': self.obj.reservation_system.name,
         }
 
     def get_bad_data(self):
@@ -959,6 +961,10 @@ class TrekJSONDetailTest(TrekJSONSetUp):
     def test_thumbnail_csv_display(self):
         self.assertIn('%s.120x120_q85_crop.png'
                       % self.attachment.attachment_file.name, self.trek.thumbnail_csv_display)
+
+    def test_reservation(self):
+        self.assertEqual(self.result['reservation_system'], self.trek.reservation_system.name)
+        self.assertEqual(self.result['reservation_id'], 'XXXXXXXXX')
 
 
 class TrekPointsReferenceTest(TrekkingManagerTest):

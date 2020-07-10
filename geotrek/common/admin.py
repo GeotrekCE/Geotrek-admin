@@ -103,9 +103,16 @@ class TargetPortalAdmin(admin.ModelAdmin):
     search_fields = ('name', 'website')
 
 
+class ReservationSystemAdmin(MergeActionMixin, admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+    merge_field = 'name'
+
+
 admin.site.register(common_models.Organism, OrganismAdmin)
 admin.site.register(common_models.Attachment, AttachmentAdmin)
 admin.site.register(common_models.FileType, FileTypeAdmin)
 admin.site.register(common_models.Theme, ThemeAdmin)
 admin.site.register(common_models.RecordSource, RecordSourceAdmin)
 admin.site.register(common_models.TargetPortal, TargetPortalAdmin)
+admin.site.register(common_models.ReservationSystem, ReservationSystemAdmin)

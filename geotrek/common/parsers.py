@@ -254,6 +254,8 @@ class Parser(object):
         try:
             update_fields = self.parse_fields(row, self.fields)
             update_fields += self.parse_fields(row, self.constant_fields)
+            if 'id' in update_fields:
+                update_fields.remove('id')  # Can't update primary key
         except RowImportError as warnings:
             self.add_warning(str(warnings))
             return
@@ -316,7 +318,7 @@ class Parser(object):
         else:
             _objects = []
             for obj in objects:
-                if not hasattr(obj, 'structure') or obj.structure == self.structure or self.user.has_perm('authent.can_bypass_structure'):
+                if not hasattr(obj, 'structure') or obj.structure == self.structure or self.user is None or self.user.has_perm('authent.can_bypass_structure'):
                     _objects.append(obj)
                 else:
                     self.to_delete.discard(obj.pk)
@@ -469,12 +471,12 @@ class Parser(object):
                 self.add_warning(str(e))
         self.end()
 
-    def request_or_retry(self, url, verb='get', params=None, authent=None):
+    def request_or_retry(self, url, verb='get', **kwargs):
         try_get = settings.PARSER_NUMBER_OF_TRIES
         assert try_get > 0
         while try_get:
             action = getattr(requests, verb)
-            response = action(url, allow_redirects=True, params=params, auth=authent)
+            response = action(url, allow_redirects=True, **kwargs)
             if response.status_code in settings.PARSER_RETRY_HTTP_STATUS:
                 logger.info("Failed to fetch url {}. Retrying ...".format(url))
                 sleep(settings.PARSER_RETRY_SLEEP_TIME)

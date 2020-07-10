@@ -185,5 +185,26 @@
             "label_fr": "Arch\u00e9ologie et histoire",
             "cirkwi": 39
         }
+    },
+    {
+        "pk": 1,
+        "model": "common.reservationsystem",
+        "fields": {
+            "name": "OpenSystem"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "common.reservationsystem",
+        "fields": {
+            "name": "FFCAM"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "common.reservationsystem",
+        "fields": {
+            "name": "Gites de France"
+        }
     }
 ]

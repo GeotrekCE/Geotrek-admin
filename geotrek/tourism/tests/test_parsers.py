@@ -139,7 +139,7 @@ class ParserTests(TranslationResetMixin, TestCase):
             with open(filename, 'r') as f:
                 return json.load(f)
 
-        def side_effect(url, allow_redirects, params, auth):
+        def side_effect(url, allow_redirects, params):
             response = requests.Response()
             response.status_code = 503
             response.url = url

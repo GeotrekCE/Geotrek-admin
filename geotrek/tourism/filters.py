@@ -14,7 +14,7 @@ class TouristicContentFilterSet(StructureRelatedFilterSet):
         model = TouristicContent
         fields = StructureRelatedFilterSet.Meta.fields + [
             'published', 'category', 'themes', 'type1',
-            'type2', 'approved', 'source', 'portal'
+            'type2', 'approved', 'source', 'portal', 'reservation_system',
         ]
 
 

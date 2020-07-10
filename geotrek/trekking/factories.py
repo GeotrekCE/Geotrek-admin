@@ -4,6 +4,7 @@ from django.contrib.gis.geos import Point
 
 from . import models
 from geotrek.core.factories import TopologyFactory, PointTopologyFactory
+from geotrek.common.factories import ReservationSystemFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import SignageFactory
@@ -99,6 +100,9 @@ class TrekFactory(TopologyFactory):
     route = factory.SubFactory(RouteFactory)
     difficulty = factory.SubFactory(DifficultyLevelFactory)
     practice = factory.SubFactory(PracticeFactory)
+
+    reservation_system = factory.SubFactory(ReservationSystemFactory)
+    reservation_id = 'XXXXXXXXX'
 
     @factory.post_generation
     def sources(obj, create, extracted=None, **kwargs):

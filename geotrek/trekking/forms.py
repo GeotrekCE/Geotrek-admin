@@ -141,6 +141,8 @@ class TrekForm(BaseTrekForm):
                     'children_trek',
                     'eid',
                     'eid2',
+                    'reservation_system',
+                    'reservation_id',
                     'pois_excluded',
                     'hidden_ordered_children',
                     Fieldset(_("Related treks"),),
@@ -256,7 +258,8 @@ class TrekForm(BaseTrekForm):
              'disabled_infrastructure', 'advised_parking', 'parking_location',
              'public_transport', 'advice', 'themes', 'networks', 'practice',
              'accessibilities', 'web_links', 'information_desks', 'source', 'portal',
-             'children_trek', 'eid', 'eid2', 'pois_excluded', 'hidden_ordered_children']
+             'children_trek', 'eid', 'eid2', 'reservation_system', 'reservation_id',
+             'pois_excluded', 'hidden_ordered_children']
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
