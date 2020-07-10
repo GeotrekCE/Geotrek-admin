@@ -2,12 +2,21 @@
 CHANGELOG
 =========
 
-2.33.14.dev0
+2.34.0 (2020-07-10)
 -------------------
+
+**New Feature**
+
+- Add reservation system/id fields to treks to allow itinerancy online booking
+- Add category code (used in Geotrek-rando) to categories list in admin
+
+**Minor changes**
+
+- Add install scripts for Ubuntu packages
 
 **Bug fixes**
 
--
+- Fix icons display in categories list in admin
 
 
 2.33.13 (2020-07-01)
