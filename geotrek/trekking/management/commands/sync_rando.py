@@ -326,6 +326,10 @@ class Command(BaseCommand):
         name = os.path.join('meta', lang, 'index.html')
         self.sync_view(lang, Meta.as_view(), name, params={'rando_url': self.rando_url, 'lang': lang})
 
+    def sync_parameters(self):
+        name = os.path.join('api', 'parameters.json')
+        self.sync_view(settings.LANGUAGE_CODE, ParametersView.as_view(), name, params={'rando_url': self.rando_url})
+
     def sync_trek_meta(self, lang, obj):
         name = os.path.join('meta', lang, obj.rando_url, 'index.html')
         self.sync_view(lang, TrekMeta.as_view(), name, pk=obj.pk, params={'rando_url': self.rando_url})
@@ -387,7 +391,6 @@ class Command(BaseCommand):
         self.mkdirs(zipfullname)
         self.trek_zipfile = ZipFile(zipfullname, 'w')
 
-        self.sync_json(lang, ParametersView, 'parameters', zipfile=self.zipfile)
         self.sync_json(lang, ThemeViewSet, 'themes', as_view_args=[{'get': 'list'}], zipfile=self.zipfile)
         self.sync_trek_pois(lang, trek, zipfile=self.zipfile)
         if self.with_infrastructures:
@@ -822,7 +825,7 @@ class Command(BaseCommand):
             translation.activate(lang)
             self.sync_trekking(lang)
             translation.deactivate()
-
+        self.sync_parameters()
         self.sync_static_file('**', 'tourism/touristicevent.svg')
         self.sync_pictograms('**', tourism_models.InformationDeskType)
         self.sync_pictograms('**', tourism_models.TouristicContentCategory)

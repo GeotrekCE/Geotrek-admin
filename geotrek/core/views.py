@@ -423,4 +423,18 @@ class ParametersView(View):
         response = {
             'geotrek_admin_version': settings.VERSION,
         }
+        colors_rando = {"main": settings.PRIMARY_COLOR}
+        colors_categories = {}
+        if 'geotrek.trekking' in settings.INSTALLED_APPS:
+            from geotrek.trekking.models import Practice
+            for practice in Practice.objects.all():
+                colors_categories.update({practice.prefixed_id: practice.color})
+            colors_categories.update({"T": "#61B22F"})
+        if 'geotrek.tourism' in settings.INSTALLED_APPS:
+            from geotrek.tourism.models import TouristicContentCategory
+            for category in TouristicContentCategory.objects.all():
+                colors_categories.update({category.prefixed_id: category.color})
+            colors_categories.update({"E": "#A05481"})
+        colors_rando.update({"categories": colors_categories})
+        response.update({"colors": colors_rando})
         return JsonResponse(response)
