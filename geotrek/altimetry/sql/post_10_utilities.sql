@@ -236,6 +236,9 @@ BEGIN
         RETURN result;
     END IF;
 
+    IF ST_IsEmpty(geom) THEN
+        RETURN result;
+    END IF;
     -- Ensure parameter is a point or a line
     IF ST_GeometryType(geom) NOT IN ('ST_Point', 'ST_LineString') THEN
         SELECT ST_Force3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
