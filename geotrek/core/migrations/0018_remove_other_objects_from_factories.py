@@ -6,10 +6,10 @@ from django.db import migrations
 def remove_generated_objects_factories(apps, schema_editor):
     ComfortModel = apps.get_model('core', 'Comfort')
     PathSourceModel = apps.get_model('core', 'PathSource')
-    StakeModel = apps.get_model('core',  'Stake')
+    StakeModel = apps.get_model('core', 'Stake')
     ComfortModel.objects.filter(paths__isnull=True, comfort__icontains="Comfort ").delete()
-    PathSourceModel.objects.filter(paths__isnull=True, comfort__icontains="PathSource ").delete()
-    StakeModel.objects.filter(paths__isnull=True, comfort__icontains="Stake ").delete()
+    PathSourceModel.objects.filter(paths__isnull=True, source__icontains="PathSource ").delete()
+    StakeModel.objects.filter(paths__isnull=True, stake__icontains="Stake ").delete()
 
 
 class Migration(migrations.Migration):
