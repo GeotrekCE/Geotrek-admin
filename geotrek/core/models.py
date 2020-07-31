@@ -584,6 +584,9 @@ class Stake(StructureOrNoneRelated):
         return isinstance(other, Stake) \
             and self.pk == other.pk
 
+    def __hash__(self):
+        return super().__hash__()
+
     def __str__(self):
         if self.structure:
             return "{} ({})".format(self.stake, self.structure.name)
