@@ -435,6 +435,11 @@ class ParametersView(View):
             for category in TouristicContentCategory.objects.all():
                 colors_categories.update({category.prefixed_id: category.color})
             colors_categories.update({"E": "#A05481"})
+        if 'geotrek.diving' in settings.INSTALLED_APPS:
+            from geotrek.diving.models import Practice
+            for category in Practice.objects.all():
+                colors_categories.update({category.prefixed_id: category.color})
+            colors_categories.update({"D": "#134088"})
         colors_rando.update({"categories": colors_categories})
         response.update({"colors": colors_rando})
         return JsonResponse(response)
