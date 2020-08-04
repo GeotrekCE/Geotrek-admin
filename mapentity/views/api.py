@@ -2,7 +2,7 @@ import logging
 
 from django.contrib.gis.db.models.functions import Transform
 from django.core.exceptions import FieldDoesNotExist
-from django.db.models import Q
+from django.db.models import F, Q
 from django.views.generic.list import ListView
 
 from djgeojson.views import GeoJSONLayerView
@@ -53,6 +53,10 @@ class MapEntityLayer(FilterListMixin, ModelViewMixin, GeoJSONLayerView):
     @view_cache_response_content()
     def render_to_response(self, context, **response_kwargs):
         return super(MapEntityLayer, self).render_to_response(context, **response_kwargs)
+
+    def get_queryset(self):
+        return super().get_queryset().annotate(api_geom=Transform("geom", API_SRID)).\
+            annotate(simplified_geom=F('geom'))
 
 
 class MapEntityJsonList(JSONResponseMixin, BaseListView, ListView):
