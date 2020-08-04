@@ -42,6 +42,7 @@ logger = logging.getLogger(__name__)
 class TouristicContentLayer(MapEntityLayer):
     queryset = TouristicContent.objects.existing()
     properties = ['name']
+    geometry_field_db = 'geom'
 
 
 class TouristicContentList(MapEntityList):
@@ -158,6 +159,7 @@ class TouristicContentMeta(MetaMixin, DetailView):
 class TouristicEventLayer(MapEntityLayer):
     queryset = TouristicEvent.objects.existing()
     properties = ['name']
+    geometry_field_db = 'geom'
 
 
 class TouristicEventList(MapEntityList):

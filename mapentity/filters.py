@@ -16,7 +16,7 @@ from .settings import app_settings
 
 class PolygonFilter(Filter):
 
-    field_class = forms.CharField
+    field_class = forms.PolygonField
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('field_name', app_settings['GEOM_FIELD_NAME'])
