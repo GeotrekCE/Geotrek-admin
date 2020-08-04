@@ -243,11 +243,10 @@ select[multiple] {
     z-index: -1;
 }
 
-@media(max-height: 800px) {
-    .leaflet-control-layers-group {
-        max-height: 150px;
-        overflow-y: auto;
-    }
+.leaflet-control-layers-list {
+   max-height: 800px;
+   overflow-y: auto;
+   overflow-x: hidden;
 }
 
 .leaflet-control-layers input[type="checkbox"] {
