@@ -122,6 +122,7 @@ class InterventionViewSet(MapEntityViewSet):
 class ProjectLayer(MapEntityLayer):
     queryset = Project.objects.existing()
     properties = ['name']
+    geometry_field_db = 'geom'
 
     def get_queryset(self):
         nonemptyqs = Intervention.objects.existing().filter(project__isnull=False).values('project')

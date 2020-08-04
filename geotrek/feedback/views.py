@@ -21,6 +21,7 @@ class ReportLayer(mapentity_views.MapEntityLayer):
     model = feedback_models.Report
     filterform = ReportFilterSet
     properties = ['email']
+    geometry_field_db = 'geom'
 
 
 class ReportList(mapentity_views.MapEntityList):

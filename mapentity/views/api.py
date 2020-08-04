@@ -54,8 +54,8 @@ class MapEntityLayer(FilterListMixin, ModelViewMixin, GeoJSONLayerView):
         return super(MapEntityLayer, self).render_to_response(context, **response_kwargs)
 
     def get_queryset(self):
-        return super().get_queryset().annotate(api_geom=Transform("geom", API_SRID)).\
-            annotate(simplified_geom=F('geom'))
+        return super().get_queryset().annotate(api_geom=Transform(self.geometry_field_db, API_SRID)).\
+            annotate(simplified_geom=F(self.geometry_field_db))
 
 
 class MapEntityJsonList(JSONResponseMixin, BaseListView, ListView):

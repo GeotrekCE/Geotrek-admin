@@ -65,6 +65,7 @@ class CreateFromTopologyMixin(object):
 class PathLayer(MapEntityLayer):
     properties = ['name', 'draft']
     queryset = Path.objects.all()
+    geometry_field_db = 'geom'
 
     def get_queryset(self):
         qs = super(PathLayer, self).get_queryset()
@@ -299,6 +300,7 @@ def get_graph_json(request):
 class TrailLayer(MapEntityLayer):
     queryset = Trail.objects.existing()
     properties = ['name']
+    geometry_field_db = 'geom'
 
 
 class TrailList(MapEntityList):
