@@ -55,9 +55,6 @@ class PolygonFilter(Filter):
 
 
 class TileFilter(PolygonFilter):
-    def __init__(self, *args, **kwargs):
-        super(TileFilter, self).__init__(*args, **kwargs)
-
     def filter(self, qs, value):
         if not value:
             return qs
@@ -67,9 +64,6 @@ class TileFilter(PolygonFilter):
 
 
 class PythonTileFilter(PolygonFilter):
-    def __init__(self, *args, **kwargs):
-        super(PythonTileFilter, self).__init__(*args, **kwargs)
-
     def filter(self, qs, value):
         if not value:
             return qs
