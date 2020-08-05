@@ -102,6 +102,8 @@ class MapEntityTest(TestCase):
         self.assertEqual(response.status_code, 200)
         response = self.client.get(self.model.get_jsonlist_url())
         self.assertEqual(response.status_code, 200)
+        response = self.client.get('%s?sSearch=test' % self.model.get_jsonlist_url())
+        self.assertEqual(response.status_code, 200)
 
     @patch('mapentity.helpers.requests')
     def test_document_export(self, mock_requests):
