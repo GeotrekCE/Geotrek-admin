@@ -74,26 +74,22 @@ class MapEntityJsonList(JSONResponseMixin, BaseListView, ListView):
         return qs
 
     def ordering_qs(self, qs):
-        try:
-            number_columns_sort = int(self.request.GET.get('iSortingCols', 0))
-        except ValueError:
-            number_columns_sort = 0
-
-        order = []
+        number_columns_sort = int(self.request.GET.get('iSortingCols', 0))
         for i in range(number_columns_sort):
+            sort_column = int(self.request.GET.get('iSortCol_{0}'.format(i), 0))
+            sort_direction = self.request.GET.get('sSortDir_{0}'.format(i), 'asc')
             try:
-                sort_column = int(self.request.GET.get('iSortCol_{0}'.format(i)))
-                sort_direction = self.request.GET.get('sSortDir_{0}'.format(i))
-            except ValueError:
-                sort_column = 0
-                sort_direction = 'asc'
+                sdir = '-' if sort_direction == 'desc' else ''
+                sortcol = self.columns[sort_column]
+                self.get_model()._meta.get_field(sortcol)
+                if sortcol:
+                    qs = qs.order_by('{0}{1}'.format(sdir, sortcol.replace('.', '__')))
+            except FieldDoesNotExist:
+                if sort_direction == 'asc':
 
-            sdir = '-' if sort_direction == 'desc' else ''
-            sortcol = self.columns[sort_column]
-            order.append('{0}{1}'.format(sdir, sortcol.replace('.', '__')))
-
-        if order:
-            return qs.order_by(*order)
+                    qs = sorted(qs, key=lambda t: -1 * float('inf') if getattr(t, sortcol) is None else getattr(t, sortcol))
+                else:
+                    qs = sorted(qs, key=lambda t: -1 * float('inf') if getattr(t, sortcol) is None else getattr(t, sortcol), reverse=True)
         return qs
 
     def paging(self, qs):
