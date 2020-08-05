@@ -68,7 +68,8 @@ class MapEntityJsonList(JSONResponseMixin, BaseListView, ListView):
                     field = self.get_model()._meta.get_field(col)
                     if field.get_internal_type() == "CharField":
                         q |= Q(**{'{0}__{1}'.format(col, searching_method): search})
-                except FieldDoesNotExist:
+                except (FieldDoesNotExist, AttributeError):
+                    # AttributeError is for generic relation (target)
                     pass
             qs = qs.filter(q)
         return qs
