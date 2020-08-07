@@ -126,21 +126,29 @@ class MapEntityTest(TestCase):
         if self.model is None:
             return  # Abstract test should not run
         self.login()
-        params = '?bbox=POLYGON((5+44+0%2C5+45+0%2C6+45+0%2C6+44+0%2C5+44+0))'
+        params = '?tiles=5,16,11'
         # If no objects exist, should not fail.
         response = self.client.get(self.model.get_jsonlist_url() + params)
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['map_obj_pk'], [])
         # If object exists, either :)
-        self.modelfactory.create()
+        obj = self.modelfactory.create()
         response = self.client.get(self.model.get_jsonlist_url() + params)
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['map_obj_pk'], [obj.pk])
         # If bbox is invalid, it should return all
         allresponse = self.client.get(self.model.get_jsonlist_url())
-        params = '?bbox=POLYGON(prout)'
+        self.assertEqual(allresponse.json()['map_obj_pk'], [obj.pk])
+        params = '?tiles=a,b,c'
         with AdjustDebugLevel('django.contrib.gis', logging.CRITICAL):
             response = self.client.get(self.model.get_jsonlist_url() + params)
         self.assertEqual(response.status_code, 200)
         response.content = allresponse.content
+        params = '?tiles=5,19,11'
+        # Out of box.
+        response = self.client.get(self.model.get_jsonlist_url() + params)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['map_obj_pk'], [])
 
     def test_callback_jsonlist(self):
         if self.model is None:

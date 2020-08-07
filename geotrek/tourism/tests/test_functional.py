@@ -107,6 +107,12 @@ class TouristicContentViewsTests(CommonTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()["map_obj_pk"]), 0)
 
+    def test_bbox_filter(self):
+        class TouristicContentGoodGeomFactory(TouristicContentFactory):
+            geom = 'Point(700000 6600000)'
+        self.modelfactory = TouristicContentGoodGeomFactory
+        super(TouristicContentViewsTests, self).test_bbox_filter()
+
 
 class TouristicEventViewsTests(CommonTest):
     model = TouristicEvent
@@ -211,3 +217,9 @@ class TouristicEventViewsTests(CommonTest):
         first_path = os.path.join(settings.MEDIA_ROOT, 'maps', element_in_dir[0])
         second_path = os.path.join(settings.MEDIA_ROOT, attachment.attachment_file.name)
         self.assertTrue(filecmp.cmp(first_path, second_path))
+
+    def test_bbox_filter(self):
+        class TouristicEventGoodGeomFactory(TouristicEventFactory):
+            geom = 'Point(700000 6600000)'
+        self.modelfactory = TouristicEventGoodGeomFactory
+        super(TouristicEventViewsTests, self).test_bbox_filter()
