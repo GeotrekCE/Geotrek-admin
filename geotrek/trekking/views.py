@@ -62,6 +62,7 @@ class TrekList(FlattenPicturesMixin, MapEntityList):
     filterform = TrekFilterSet
     columns = ['id', 'name', 'duration', 'difficulty', 'departure', 'thumbnail']
     queryset = Trek.objects.existing()
+    template_name = 'trekking/trek_list.html'
 
 
 class TrekJsonList(MapEntityJsonList, TrekList):
@@ -249,7 +250,8 @@ class POIList(FlattenPicturesMixin, MapEntityList):
     model = POI
     filterform = POIFilterSet
     columns = ['id', 'name', 'type', 'thumbnail']
-    queryset = model.objects.existing()
+    queryset = POI.objects.existing()
+    template_name = 'trekking/poi_list.html'
 
 
 class POIJsonList(MapEntityJsonList, POIList):
