@@ -16,7 +16,7 @@ from .settings import app_settings
 
 class PolygonFilter(Filter):
 
-    field_class = forms.PolygonField
+    field_class = forms.CharField
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('field_name', app_settings['GEOM_FIELD_NAME'])
@@ -32,13 +32,11 @@ class PolygonFilter(Filter):
         return circumference / tile_pixel_size / 2 ** int(zoom)
 
     def get_polygon_from_value(self, value):
-        if not value:
-            ParseError('Invalid tile string supplied')
         # Parse coordinates from parameter
         try:
-            z, x, y = (int(n) for n in value.split('/'))
+            z, x, y = (int(n) for n in value.split(','))
         except ValueError:
-            raise ParseError('Invalid tile string supplied for parameter {0}'.format(self.value))
+            return ""
 
         # define bounds from x y z and create polygon from bounds
         bounds = mercantile.bounds(int(x), int(y), int(z))
@@ -59,7 +57,8 @@ class TileFilter(PolygonFilter):
         if not value:
             return qs
         bbox = self.get_polygon_from_value(value)
-        qs = qs.filter(geom__intersects=bbox)
+        if bbox:
+            qs = qs.filter(geom__intersects=bbox)
         return qs.annotate(simplified_geom=Func('geom', 2 * self.tolerance, function='ST_SimplifyPreserveTopology'))
 
 
