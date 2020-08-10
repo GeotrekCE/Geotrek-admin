@@ -412,10 +412,16 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
             tarifs = "<b>Tarifs:</b><br>" + "<br>".join(tarifs.splitlines()) + "<br>"
         if paiement and any(values.get('libelleFr') for values in paiement):
             paiement = "<b>Modes de paiement:</b><br>" + ", ".join([i['libelleFr'] for i in paiement]) + "<br>"
+        else:
+            paiement = None
         if services and any(values.get('libelleFr') for values in services):
             services = "<b>Services:</b><br>" + ", ".join([i['libelleFr'] for i in services]) + "<br>"
+        else:
+            services = None
         if langues and any(values.get('libelleFr') for values in langues):
             langues = "<b>Langues Parlées:</b><br>" + ", ".join([i['libelleFr'] for i in langues]) + "<br>"
+        else:
+            langues = None
         if localisation:
             localisation = "<b>Accès:</b><br>" + "<br>".join(localisation.splitlines()) + "<br>"
         datemodif = datetime.datetime.strptime(datemodif[:10], "%Y-%m-%d").strftime("%d/%m/%Y")
@@ -442,10 +448,16 @@ class TouristicEventApidaeParser(AttachmentApidaeParserMixin, ApidaeParser):
             tarifs = "<b>Prices:</b><br>" + "<br>".join(tarifs.splitlines()) + "<br>"
         if paiement and any(values.get('libelleEn') for values in paiement):
             paiement = "<b>Payment method:</b><br>" + ", ".join([i['libelleEn'] for i in paiement]) + "<br>"
+        else:
+            paiement = None
         if services and any(values.get('libelleEn') for values in services):
             services = "<b>Services:</b><br>" + ", ".join([i['libelleEn'] for i in services]) + "<br>"
+        else:
+            services = None
         if langues and any(values.get('libelleEn') for values in langues):
             langues = "<b>Spoken languages:</b><br>" + ", ".join([i['libelleEn'] for i in langues]) + "<br>"
+        else:
+            langues = None
         if localisation:
             localisation = "<b>Access:</b><br>" + "<br>".join(localisation.splitlines()) + "<br>"
         datemodif = datetime.datetime.strptime(datemodif[:10], "%Y-%m-%d").strftime("%d/%m/%Y")
