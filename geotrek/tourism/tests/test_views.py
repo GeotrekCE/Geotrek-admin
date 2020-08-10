@@ -14,7 +14,7 @@ from django.conf import settings
 from django.test.utils import override_settings
 from django.test import TestCase
 
-from geotrek.authent.factories import StructureFactory, UserProfileFactory, UserFactory
+from geotrek.authent.factories import StructureFactory, UserFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.trekking.tests import TrekkingManagerTest
 from geotrek.core import factories as core_factories
@@ -41,8 +41,8 @@ PNG_BLACK_PIXEL = bytes.fromhex(
 
 class TouristicContentViewsSameStructureTests(AuthentFixturesTest):
     def setUp(self):
-        profile = UserProfileFactory.create(user__username='homer',
-                                            user__password='dooh')
+        profile = UserFactory.create(username='homer',
+                                     password='dooh')
         user = profile.user
         user.groups.add(Group.objects.get(name="Référents communication"))
         self.client.login(username=user.username, password='dooh')
@@ -385,8 +385,8 @@ class TouristicEventAPITest(BasicJSONAPITest, TrekkingManagerTest):
 
 class TouristicEventViewsSameStructureTests(AuthentFixturesTest):
     def setUp(self):
-        profile = UserProfileFactory.create(user__username='homer',
-                                            user__password='dooh')
+        profile = UsereFactory.create(username='homer',
+                                      password='dooh')
         user = profile.user
         user.groups.add(Group.objects.get(name="Référents communication"))
         self.client.login(username=user.username, password='dooh')

@@ -1,21 +1,23 @@
 from freezegun import freeze_time
 
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 
-from geotrek.authent.factories import StructureFactory, UserProfileFactory
+from geotrek.authent.factories import StructureFactory, UserFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.trekking.tests import TrekkingManagerTest
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.sensitivity.factories import RegulatorySensitiveAreaFactory, SensitiveAreaFactory, MultiPolygonSensitiveAreaFactory
 from geotrek.sensitivity.models import SportPractice
 
+User = get_user_model()
+
 
 class SensitiveAreaViewsSameStructureTests(AuthentFixturesTest):
     def setUp(self):
-        profile = UserProfileFactory.create(user__username='homer',
-                                            user__password='dooh')
-        user = profile.user
+        user = UserFactory.create(username='homer',
+                                  password='dooh')
         user.user_permissions.add(Permission.objects.get(codename="add_sensitivearea"))
         user.user_permissions.add(Permission.objects.get(codename="change_sensitivearea"))
         user.user_permissions.add(Permission.objects.get(codename="delete_sensitivearea"))

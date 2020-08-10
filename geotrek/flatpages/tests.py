@@ -10,18 +10,17 @@ from mapentity.factories import SuperUserFactory
 
 from geotrek.common.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.flatpages.factories import FlatPageFactory
-from geotrek.authent.factories import UserProfileFactory
+from geotrek.authent.factories import UserFactory
 from geotrek.flatpages.forms import FlatPageForm
 from geotrek.flatpages.models import FlatPage
 
 
 class FlatPageFormTest(TestCase):
     def login(self):
-        profile = UserProfileFactory(
-            user__username='spammer',
-            user__password='pipo'
+        user = UserFactory(
+            username='spammer',
+            password='pipo'
         )
-        user = profile.user
         success = self.client.login(username=user.username, password='pipo')
         self.assertTrue(success)
         return user

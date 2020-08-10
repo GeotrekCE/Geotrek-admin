@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from django.test import TestCase
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 from mapentity.factories import SuperUserFactory
+
+User = get_user_model()
 
 
 class SyncMobileViewTest(TestCase):

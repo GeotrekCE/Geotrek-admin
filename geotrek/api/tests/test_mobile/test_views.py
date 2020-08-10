@@ -5,12 +5,14 @@ import shutil
 
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 from mapentity.factories import SuperUserFactory
 
 from geotrek.api.mobile.tasks import launch_sync_mobile
+
+User = get_user_model()
 
 
 class SyncMobileViewTest(TestCase):

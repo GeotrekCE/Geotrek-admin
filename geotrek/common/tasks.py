@@ -5,8 +5,10 @@ from os.path import join
 import sys
 from celery import Task, shared_task, current_task
 from django.utils.translation import ugettext as _
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.conf import settings
+
+User = get_user_model()
 
 
 class GeotrekImportTask(Task):

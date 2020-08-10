@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.test import TestCase
 from django.utils import translation
@@ -11,6 +11,8 @@ from geotrek.trekking.models import DifficultyLevel
 
 
 Credential = namedtuple('Credential', ['username', 'password'])
+
+User = get_user_model()
 
 
 def create_superuser_from_cred(cred, email='admin@admin.com'):

@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.test.testcases import TestCase
 
@@ -9,6 +9,8 @@ from geotrek.tourism import factories as tourism_factories
 from geotrek.tourism.models import TouristicContentType, TouristicContentCategory, TouristicEventType
 from geotrek.zoning import factories as zoning_factories
 from geotrek.zoning.models import City, District
+
+User = get_user_model()
 
 
 SETTINGS_STRUCTURE = sorted([

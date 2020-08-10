@@ -2,14 +2,11 @@
     Models to manage users and profiles
 """
 from django.db import models
-from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
 from django.contrib.auth.signals import user_logged_in
 from django.utils.translation import LANGUAGE_SESSION_KEY
-
-from geotrek.common.utils import reify
 
 
 class Structure(models.Model):
@@ -79,8 +76,8 @@ class UserProfile(StructureRelated):
     """
     A custom user profile
     """
-    user = models.OneToOneField(User, unique=True, on_delete=models.CASCADE)
-
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, unique=True, related_name="profile",
+                                on_delete=models.DO_NOTHING)
     language = models.CharField(_("Language"), max_length=10,
                                 choices=settings.LANGUAGES,
                                 default=settings.LANGUAGE_CODE)
@@ -91,9 +88,6 @@ class UserProfile(StructureRelated):
 
     def __str__(self):
         return _("Profile for %s") % self.user
-
-
-User.profile = reify(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
 
 @receiver(user_logged_in)

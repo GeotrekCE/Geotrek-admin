@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.db.models import Count
 from django.test.client import Client
@@ -8,6 +8,9 @@ from geotrek.core import factories as core_factory, models as path_models
 from geotrek.common import factories as common_factory
 from geotrek.trekking import factories as trek_factory, models as trek_models
 from geotrek.tourism import factories as tourism_factory, models as tourism_models
+
+User = get_user_model()
+
 
 PAGINATED_JSON_STRUCTURE = sorted([
     'count', 'next', 'previous', 'results',

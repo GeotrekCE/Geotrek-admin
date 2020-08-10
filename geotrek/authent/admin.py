@@ -4,11 +4,14 @@
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 from geotrek.authent.models import Structure
 from geotrek.authent.models import UserProfile
 from geotrek.common.admin import MergeActionMixin
+
+
+User = get_user_model()
 
 
 admin.site.unregister(User)

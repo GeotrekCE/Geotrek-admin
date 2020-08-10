@@ -2,7 +2,8 @@ import logging
 from collections import namedtuple
 
 from django.conf import settings
-from django.contrib.auth.models import User, Group
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.contrib.auth.base_user import check_password
 from django.contrib.auth.backends import ModelBackend
 from django.db import connections
@@ -16,6 +17,7 @@ logger = logging.getLogger(__name__)
 FIELDS = 'username, first_name, last_name, password, email, level, structure, lang'.split(', ')
 
 Credentials = namedtuple('Credentials', FIELDS)
+User = get_user_model()
 
 
 class DatabaseBackend(ModelBackend):

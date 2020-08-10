@@ -51,14 +51,3 @@ class StructureRelatedDefaultFactory(factory.DjangoModelFactory):
         model = core_models.StructureRelated
 
     structure = factory.LazyAttribute(lambda _: core_models.default_structure())
-
-
-class UserProfileFactory(StructureRelatedDefaultFactory):
-    """
-    Create a normal user (language=fr and structure=default)
-    """
-    class Meta:
-        model = core_models.UserProfile
-
-    user = factory.SubFactory(UserFactory)
-    language = 'fr'

@@ -11,7 +11,8 @@ from bs4 import BeautifulSoup
 
 from django.conf import settings
 from django.test import TestCase
-from django.contrib.auth.models import User, Group, Permission
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group, Permission
 from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core.management import call_command
 from django.urls import reverse
@@ -30,7 +31,7 @@ from geotrek.common.factories import (AttachmentFactory, ThemeFactory,
                                       RecordSourceFactory, TargetPortalFactory)
 from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.authent.factories import TrekkingManagerFactory, StructureFactory, UserProfileFactory
+from geotrek.authent.factories import TrekkingManagerFactory, StructureFactory, UserFactory
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.core.factories import PathFactory
 from geotrek.infrastructure.models import Infrastructure
@@ -54,6 +55,8 @@ from geotrek.tourism import factories as tourism_factories
 from geotrek.trekking import urls  # NOQA
 
 from .base import TrekkingManagerTest
+
+User = get_user_model()
 
 
 class POIViewsTest(CommonTest):
@@ -1147,9 +1150,9 @@ class TemplateTagsTest(TestCase):
 
 class TrekViewsSameStructureTests(AuthentFixturesTest):
     def setUp(self):
-        profile = UserProfileFactory.create(user__username='homer',
-                                            user__password='dooh',
-                                            language='en')
+        profile = UserFactory.create(username='homer',
+                                     password='dooh',
+                                     language='en')
         self.user = profile.user
         self.user.groups.add(Group.objects.get(name="Référents communication"))
         self.client.login(username='homer', password='dooh')
@@ -1222,8 +1225,8 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
 
 class POIViewsSameStructureTests(TranslationResetMixin, AuthentFixturesTest):
     def setUp(self):
-        profile = UserProfileFactory.create(user__username='homer',
-                                            user__password='dooh')
+        profile = UserFactory.create(username='homer',
+                                     password='dooh')
         user = profile.user
         user.groups.add(Group.objects.get(name="Référents communication"))
         self.client.login(username=user.username, password='dooh')
