@@ -62,14 +62,17 @@ def load_sql_files(app, stage):
     """
     app_dir = app.path
     sql_dir = os.path.normpath(os.path.join(app_dir, 'sql'))
-    if not os.path.exists(sql_dir):
-        logger.debug("No SQL folder for %s" % app.module)
-        return
-
+    custom_sql_dir = os.path.join(settings.VAR_DIR, 'conf/extra_sql', app.label)
+    sql_files = []
     r = re.compile(r'^{}_.*\.sql$'.format(stage))
-    sql_files = [os.path.join(sql_dir, f)
-                 for f in os.listdir(sql_dir)
-                 if r.match(f) is not None]
+    if os.path.exists(sql_dir):
+        sql_files += [
+            os.path.join(sql_dir, f) for f in os.listdir(sql_dir) if r.match(f) is not None
+        ]
+    if os.path.exists(custom_sql_dir):
+        sql_files += [
+            os.path.join(custom_sql_dir, f) for f in os.listdir(custom_sql_dir) if r.match(f) is not None
+        ]
     sql_files.sort()
 
     cursor = connection.cursor()
