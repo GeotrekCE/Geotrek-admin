@@ -5,9 +5,13 @@ CHANGELOG
 2.34.1.dev0
 -------------------
 
+**New Feature**
+
+- Allow for custom SQL to be run at install/upgrade
+
 **Bug fixes**
 
--
+- Add an id field to each SQL view to allow QGIS to open them
 
 
 2.34.0 (2020-07-10)
