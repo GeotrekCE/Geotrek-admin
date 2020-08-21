@@ -1,8 +1,8 @@
-geotrek-admin (2.34.1~dev0) UNRELEASED; urgency=medium
+geotrek-admin (2.35.0) bionic; urgency=medium
 
   * New package release
 
- -- Gaël UTARD <gael.utard@makina-corpus.com>  Fri, 10 Jul 2020 10:30:39 +0200
+ -- Gaël UTARD <gael.utard@makina-corpus.com>  Fri, 21 Aug 2020 10:27:27 +0200
 
 geotrek-admin (2.34.0) bionic; urgency=medium
 
