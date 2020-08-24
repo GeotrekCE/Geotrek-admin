@@ -1215,3 +1215,12 @@ Intervals of the mobile for the duration filter
 List of all the filters enabled on mobile.
 
     *Remove any of the filters if you don't want one of them. It's useless to add other one.*
+
+
+**Custom SQL**
+
+Put your custom SQL in a file name `/opt/geotrek-admin/var/conf/extra_sql/<app name>/<pre or post>_<script name>.sql
+
+* app name is the name of the Django application, eg. trekking or tourism
+* pre_… scripts are executed before Django migrations and post_… scripts after
+* script are executed in INSTALLED_APPS order, then by alphabetical order of script names
