@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.35.1.dev0
+2.35.1 (2020-08-24)
 -------------------
 
 **Bug fixes**
 
--
+- Really add an id field to each SQL view
 
 
 2.35.0 (2020-08-21)
