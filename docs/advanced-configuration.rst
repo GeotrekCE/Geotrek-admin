@@ -44,6 +44,8 @@ Geotrek-admin will send emails:
 Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control
 recipients emails (``ADMINS``, ``MAIL_MANAGERS``) and email server configuration.
 
+Set configuration settings in ``geotrek/settings/custom.py.dist`` template file.
+
 You can test your configuration with the following command. A fake email will
 be sent to the managers:
 
@@ -421,8 +423,7 @@ Don't edit these default files, use them to find which words you want to overrid
 Create the custom translations destination folder:
 
 Create a ``django.po`` file in ``/opt/geotrek-admin/var/conf/extra_locale`` directory. 
-
-You can create one folder and one ``django.po`` file for each language 
+You can do one folder and one ``django.po`` file for each language 
 (example ``/opt/geotrek-admin/var/conf/extra_locale/fr/LC_MESSAGES/django.po`` for French translation overriding)
 
 Override the translations that you want in these files.
@@ -457,12 +458,14 @@ Example of content for the French translation overriding:
     msgid "District"
     msgstr "Pays"
 
-Apply changes : 
+Apply changes (French translation in this example) : 
 
 ::
 
-    cd <geotrek-admin-folder>
-    make env_standalone deploy
+    cd /opt/geotrek-admin/var/conf/extra_locale
+    sudo chown geotrek. fr/LC_MESSAGES/
+    sudo geotrek compilemessages
+    sudo service geotrek restart
 
 
 Override public PDF templates
@@ -685,7 +688,7 @@ Boundingbox of your project : x minimum , y minimum , x max, y max
           |
         2 v
 
-*It should not be changed after install*
+*It should not be changed after installation.*
 
 **Dynamic segmentation**
 
@@ -1277,19 +1280,4 @@ List of all the filters enabled on mobile.
 
     SEND_REPORT_ACK = True
 
-If false, no mail will be sent to the sender of any feedback on Rando web site
-
-::
-
-    USE_BOOKLET_PDF = True
-
-Use booklet for PDF. During the synchro, pois details will be removed, and the pages will be merged.
-It is possible to customize the pdf, with trek_public_booklet_pdf.html.
-
-**Custom SQL**
-
-Put your custom SQL in a file name `/opt/geotrek-admin/var/conf/extra_sql/<app name>/<pre or post>_<script name>.sql
-
-* app name is the name of the Django application, eg. trekking or tourism
-* pre_… scripts are executed before Django migrations and post_… scripts after
-* script are executed in INSTALLED_APPS order, then by alphabetical order of script names
+If false, no mail will be sent to the sender of any feedback on Geotrek-rando website
