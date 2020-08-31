@@ -81,8 +81,8 @@ msgstr "Aucun(e)"
 msgid "Published"
 msgstr "Publié"
 
-msgid "Online"
-msgstr "Publié"
+msgid "Visible on Geotrek-rando"
+msgstr "Visible sur Geotrek-rando"
 
 msgid "Publication date"
 msgstr "Date de publication"

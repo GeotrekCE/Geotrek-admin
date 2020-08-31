@@ -240,7 +240,7 @@ class BasePublishableMixin(models.Model):
     It is used for flat pages and publishable entities.
     """
     published = models.BooleanField(verbose_name=_("Published"), default=False,
-                                    help_text=_("Online"))
+                                    help_text=_("Visible on Geotrek-rando"))
     publication_date = models.DateField(verbose_name=_("Publication date"),
                                         null=True, blank=True, editable=False)
 

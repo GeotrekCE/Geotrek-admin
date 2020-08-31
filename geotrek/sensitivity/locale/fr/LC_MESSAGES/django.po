@@ -104,8 +104,8 @@ msgstr "Zone sensible"
 msgid "Published"
 msgstr "Publiée"
 
-msgid "Online"
-msgstr "En ligne"
+msgid "Visible on Geotrek-rando"
+msgstr "Visible sur Geotrek-rando"
 
 msgid "Publication date"
 msgstr "Date de publication"

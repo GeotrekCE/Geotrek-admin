@@ -75,7 +75,7 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
                     AddPropertyMixin):
     geom = models.GeometryField(srid=settings.SRID)
     species = models.ForeignKey(Species, verbose_name=_("Sensitive area"), on_delete=models.PROTECT)
-    published = models.BooleanField(verbose_name=_("Published"), default=False, help_text=_("Online"))
+    published = models.BooleanField(verbose_name=_("Published"), default=False, help_text=_("Visible on Geotrek-rando"))
     publication_date = models.DateField(verbose_name=_("Publication date"), null=True, blank=True, editable=False)
     description = models.TextField(verbose_name=_("Description"), blank=True)
     contact = models.TextField(verbose_name=_("Contact"), blank=True)
