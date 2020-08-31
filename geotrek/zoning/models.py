@@ -39,6 +39,7 @@ class RestrictedArea(models.Model):
     name = models.CharField(max_length=250, verbose_name=_("Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
     area_type = models.ForeignKey(RestrictedAreaType, verbose_name=_("Restricted area"), on_delete=models.CASCADE)
+    published = models.BooleanField(verbose_name=_("Published"), default=True, help_text=_("Visible on Geotrek-rando"))
 
     # Override default manager
     objects = RestrictedAreaManager()
@@ -114,6 +115,7 @@ class City(models.Model):
     code = models.CharField(primary_key=True, max_length=6)
     name = models.CharField(max_length=128, verbose_name=_("Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
+    published = models.BooleanField(verbose_name=_("Published"), default=True, help_text=_("Visible on Geotrek-rando"))
 
     class Meta:
         verbose_name = _("City")
@@ -172,6 +174,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
 class District(models.Model):
     name = models.CharField(max_length=128, verbose_name=_("Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
+    published = models.BooleanField(verbose_name=_("Published"), default=True, help_text=_("Visible on Geotrek-rando"))
 
     class Meta:
         verbose_name = _("District")
