@@ -82,6 +82,7 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
     Path.add_property('area_edges', RestrictedAreaEdge.path_area_edges, _("Restricted area edges"))
     Path.add_property('areas', lambda self: uniquify(map(attrgetter('restricted_area'), self.area_edges)),
                       _("Restricted areas"))
+    Path.add_property('published_areas', lambda self: [area for area in self.areas if area.published], _("Published areas"))
     Topology.add_property('area_edges', RestrictedAreaEdge.topology_area_edges, _("Restricted area edges"))
     Topology.add_property('areas', lambda self: uniquify(
         intersecting(RestrictedArea, self)) if self.ispoint() else uniquify(
@@ -107,8 +108,16 @@ TouristicEvent.add_property('areas', lambda self: intersecting(RestrictedArea, s
                             _("Restricted areas"))
 if 'geotrek.diving' in settings.INSTALLED_APPS:
     Dive.add_property('areas', lambda self: uniquify(intersecting(RestrictedArea, self, distance=0)), _("Restricted areas"))
+    Dive.add_property('published_areas', lambda self: [area for area in self.areas if area.published], _("Published areas"))
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     Blade.add_property('areas', lambda self: self.signage.areas, _("Restricted areas"))
+    Blade.add_property('published_areas', lambda self: [area for area in self.areas if area.published], _("Published areas"))
+
+Topology.add_property('published_areas', lambda self: [area for area in self.areas if area.published], _("Published areas"))
+Project.add_property('published_areas', lambda self: [area for area in self.areas if area.published], _("Published areas"))
+Intervention.add_property('published_areas', lambda self: [area for area in self.areas if area.published], _("Published areas"))
+TouristicContent.add_property('published_areas', lambda self: [area for area in self.areas if area.published], _("Published areas"))
+TouristicEvent.add_property('published_areas', lambda self: [area for area in self.areas if area.published], _("Published areas"))
 
 
 class City(models.Model):
@@ -150,6 +159,7 @@ class CityEdge(Topology):
 if settings.TREKKING_TOPOLOGY_ENABLED:
     Path.add_property('city_edges', CityEdge.path_city_edges, _("City edges"))
     Path.add_property('cities', lambda self: uniquify(map(attrgetter('city'), self.city_edges)), _("Cities"))
+    Path.add_property('published_cities', lambda self: [city for city in self.cities if city.published], _("Published cities"))
     Topology.add_property('city_edges', CityEdge.topology_city_edges, _("City edges"))
     Topology.add_property('cities',
                           lambda self: uniquify(intersecting(City, self, distance=0)), _("Cities"))
@@ -167,8 +177,16 @@ TouristicContent.add_property('cities', lambda self: intersecting(City, self, di
 TouristicEvent.add_property('cities', lambda self: intersecting(City, self, distance=0), _("Cities"))
 if 'geotrek.diving' in settings.INSTALLED_APPS:
     Dive.add_property('cities', lambda self: uniquify(intersecting(City, self, distance=0)), _("Cities"))
+    Dive.add_property('published_cities', lambda self: [city for city in self.cities if city.published], _("Published cities"))
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     Blade.add_property('cities', lambda self: self.signage.cities, _("Cities"))
+    Blade.add_property('published_cities', lambda self: [city for city in self.cities if city.published], _("Published cities"))
+
+Topology.add_property('published_cities', lambda self: [city for city in self.cities if city.published], _("Published cities"))
+Project.add_property('published_cities', lambda self: [city for city in self.cities if city.published], _("Published cities"))
+Intervention.add_property('published_cities', lambda self: [city for city in self.cities if city.published], _("Published cities"))
+TouristicContent.add_property('published_cities', lambda self: [city for city in self.cities if city.published], _("Published cities"))
+TouristicEvent.add_property('published_cities', lambda self: [city for city in self.cities if city.published], _("Published cities"))
 
 
 class District(models.Model):
@@ -209,6 +227,7 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
     Path.add_property('district_edges', DistrictEdge.path_district_edges, _("District edges"))
     Path.add_property('districts', lambda self: uniquify(map(attrgetter('district'), self.district_edges)),
                       _("Districts"))
+    Path.add_property('published_districts', lambda self: [district for district in self.districts if district.published], _("Published districts"))
     Topology.add_property('district_edges', DistrictEdge.topology_district_edges, _("District edges"))
     Topology.add_property('districts', lambda self: uniquify(
         intersecting(District, self)) if self.ispoint() else uniquify(
@@ -231,5 +250,13 @@ TouristicContent.add_property('districts', lambda self: intersecting(District, s
 TouristicEvent.add_property('districts', lambda self: intersecting(District, self, distance=0), _("Districts"))
 if 'geotrek.diving' in settings.INSTALLED_APPS:
     Dive.add_property('districts', lambda self: uniquify(intersecting(District, self, distance=0)), _("Districts"))
+    Dive.add_property('published_districts', lambda self: [district for district in self.districts if district.published], _("Published districts"))
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     Blade.add_property('districts', lambda self: self.signage.districts, _("Districts"))
+    Blade.add_property('published_districts', lambda self: [district for district in self.districts if district.published], _("Published districts"))
+
+Topology.add_property('published_districts', lambda self: [district for district in self.districts if district.published], _("Published districts"))
+Project.add_property('published_districts', lambda self: [district for district in self.districts if district.published], _("Published districts"))
+Intervention.add_property('published_districts', lambda self: [district for district in self.districts if district.published], _("Published districts"))
+TouristicContent.add_property('published_districts', lambda self: [district for district in self.districts if district.published], _("Published districts"))
+TouristicEvent.add_property('published_districts', lambda self: [district for district in self.districts if district.published], _("Published districts"))
