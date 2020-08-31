@@ -42,12 +42,12 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         departure_city = serializers.SerializerMethodField(read_only=True)
 
         def get_cities(self, obj):
-            qs = City.objects.all()
+            qs = City.objects.filter(published=True)
             cities = qs.filter(geom__intersects=(obj.geom, 0))
             return cities.values_list('code', flat=True)
 
         def get_departure_city(self, obj):
-            qs = City.objects.all()
+            qs = City.objects.filter(published=True)
             if obj.start_point:
                 city = qs.filter(geom__covers=(obj.start_point, 0)).first()
                 if city:
@@ -58,7 +58,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return round(obj.length_2d_m, 1)
 
         def get_districts(self, obj):
-            qs = District.objects.all()
+            qs = District.objects.filter(published=True)
             districts = qs.filter(geom__intersects=(obj.geom, 0))
             return [district.pk for district in districts]
 

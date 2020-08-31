@@ -43,14 +43,14 @@ class SettingsView(APIView):
                     "showAllLabel": _("Show all ascents"),
                     "hideAllLabel": _("Hide all ascents")
                 })
-            if filter == 'districts' and District.objects.exists():
+            if filter == 'districts' and District.objects.filter(published=True).exists():
                 filters.append({
                     "id": "districts",
                     "type": "contains",
                     "showAllLabel": _("Show all districts"),
                     "hideAllLabel": _("Hide all districts")
                 })
-            if filter == 'cities' and City.objects.exists():
+            if filter == 'cities' and City.objects.filter(published=True).exists():
                 filters.append({
                     "id": "cities",
                     "type": "contains",
@@ -163,14 +163,14 @@ class SettingsView(APIView):
                 {
                     'id': 'districts',
                     'name': _('Districts'),
-                    'values': api_serializers.DistrictSerializer(District.objects.all().order_by('name'), many=True,
-                                                                 context={'request': request}).data
+                    'values': api_serializers.DistrictSerializer(District.objects.filter(published=True).order_by('name'),
+                                                                 many=True, context={'request': request}).data
                 },
                 {
                     'id': 'cities',
                     'name': _('Cities'),
-                    'values': api_serializers.CitySerializer(City.objects.all().order_by('name'), many=True,
-                                                             context={'request': request}).data
+                    'values': api_serializers.CitySerializer(City.objects.filter(published=True).order_by('name'),
+                                                             many=True, context={'request': request}).data
                 },
                 {
                     'id': 'poi_types',
