@@ -7,17 +7,20 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-29 11:38+0200\n"
+"POT-Creation-Date: 2020-09-01 08:01+0000\n"
 "PO-Revision-Date: 2020-04-22 07:48+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
-"Language-Team: French <https://weblate.makina-corpus.net/projects/"
-"geotrek-admin/common/fr/>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
+"admin/common/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Weblate 4.0.1\n"
+
+msgid "Merge"
+msgstr "Fusionner"
 
 msgid "content type"
 msgstr "type d'objet"
@@ -69,8 +72,8 @@ msgid "Deleted"
 msgstr "Supprimé"
 
 #, python-format
-msgid "Image %s invalid or missing from disk."
-msgstr "L'image %s est invalide ou absente du disque"
+msgid "Image {} invalid or missing from disk: {}."
+msgstr "L'image {} est invalide ou absente du disque: {}."
 
 msgid "Thumbnail"
 msgstr "Miniature"
@@ -137,6 +140,12 @@ msgstr "Portail cible"
 
 msgid "Target portals"
 msgstr "Portails cibles"
+
+msgid "Reservation system"
+msgstr "Système de réservation"
+
+msgid "Reservation systems"
+msgstr "Systèmes de réservation"
 
 #, python-brace-format
 msgid "Line {line}"
@@ -213,6 +222,10 @@ msgstr "un nom de fichier est requis"
 msgid "File does not exists at: {filename}"
 msgstr "Le fichier à l'emplacement {filename} n'existe pas"
 
+#, python-brace-format
+msgid "Failed to download {url}. HTTP status code {status_code}"
+msgstr "Téléchargement impossible de {url}. Code d'erreur HTTP {status_code}"
+
 msgid "Invalid geometry pointer"
 msgstr "Pointeur de géométrie invalide"
 
@@ -228,10 +241,6 @@ msgstr ""
 #, python-brace-format
 msgid "Failed to download '{url}'"
 msgstr "Impossible de télécharger '{url}'"
-
-#, python-brace-format
-msgid "Failed to download {url}. HTTP status code {status_code}"
-msgstr "Téléchargement impossible de {url}. Code d'erreur HTTP {status_code}"
 
 msgid "Import from web."
 msgstr "Importer du web."
@@ -253,6 +262,9 @@ msgstr "Souris"
 
 msgid "Imports"
 msgstr "Imports"
+
+msgid "Sync mobile"
+msgstr "Synchro mobile"
 
 msgid "Decoding error. Please check encoding and use only ASCII in file names."
 msgstr ""
@@ -319,11 +331,24 @@ msgstr "L'événement n'est pas valide"
 msgid "Invalid geometry value."
 msgstr "Pointeur de géométrie invalide."
 
+msgctxt "North"
+msgid "N"
+msgstr "N"
+
+msgctxt "South"
+msgid "S"
+msgstr "S"
+
+msgctxt "East"
+msgid "E"
+msgstr "E"
+
+msgctxt "West"
+msgid "W"
+msgstr "O"
+
 msgid "Any year"
 msgstr "N'importe quelle année"
 
 msgid "Any value"
 msgstr "N'importe quelle valeur"
-
-msgid "Merge"
-msgstr "Fusionner"

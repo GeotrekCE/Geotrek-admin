@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-16 09:02+0000\n"
+"POT-Creation-Date: 2020-09-01 07:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,6 +35,12 @@ msgstr "Type de zonage réglementaire"
 msgid "Restricted area"
 msgstr "Zonage réglementaire"
 
+msgid "Published"
+msgstr "Publié"
+
+msgid "Visible on Geotrek-rando"
+msgstr "Visible sur Geotrek-rando"
+
 msgid "Restricted areas"
 msgstr "Zonage réglementaire"
 
@@ -43,6 +49,9 @@ msgstr "Tronçon de zonage réglementaire"
 
 msgid "Restricted area edges"
 msgstr "Tronçons de zonage réglementaire"
+
+msgid "Published areas"
+msgstr "Zonages réglementaires publiés"
 
 msgid "Cities"
 msgstr "Communes"
@@ -53,6 +62,9 @@ msgstr "Tronçon de commune"
 msgid "City edges"
 msgstr "Tronçons de commune"
 
+msgid "Published cities"
+msgstr "Communes publiées"
+
 msgid "Districts"
 msgstr "Secteurs"
 
@@ -61,6 +73,9 @@ msgstr "Tronçon de secteur"
 
 msgid "District edges"
 msgstr "Tronçons de secteur"
+
+msgid "Published districts"
+msgstr "Secteurs publiés"
 
 #, python-brace-format
 msgid "Invalid geometry for field '{src}'"
