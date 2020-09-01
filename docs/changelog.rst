@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.35.2.dev0
+2.36.0 (2020-09-07)
 -------------------
 
-**Bug fixes**
+**New Feature**
 
--
+- Allow to (un)publish some cities/district/areas on Geotrek-rando/mobile
 
 
 2.35.1 (2020-08-24)
