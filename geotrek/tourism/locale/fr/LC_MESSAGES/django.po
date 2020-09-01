@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-29 11:38+0200\n"
+"POT-Creation-Date: 2020-09-01 08:00+0000\n"
 "PO-Revision-Date: 2020-04-22 07:36+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
-"Language-Team: French <https://weblate.makina-corpus.net/projects/"
-"geotrek-admin/tourism/fr/>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
+"admin/tourism/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -37,9 +37,6 @@ msgstr "jj/mm/aaaa"
 
 msgid "HH:MM"
 msgstr "HH:MM"
-
-msgid "Public website"
-msgstr "Site web public"
 
 msgid "Label"
 msgstr "Label"
@@ -156,15 +153,6 @@ msgstr "Type2"
 msgid "Second list types"
 msgstr "Types dans la deuxième liste"
 
-msgid "Name"
-msgstr "Nom"
-
-msgid "Reservation system"
-msgstr "Système de réservation"
-
-msgid "Reservation systems"
-msgstr "Systèmes de réservation"
-
 msgid "Description teaser"
 msgstr "Chapeau"
 
@@ -209,6 +197,9 @@ msgstr "Portail"
 
 msgid "External id"
 msgstr "ID externe"
+
+msgid "Reservation system"
+msgstr "Système de réservation"
 
 msgid "Reservation ID"
 msgstr "ID de réservation"
@@ -302,10 +293,6 @@ msgstr "evenement-touristique"
 
 msgid "Published touristic events"
 msgstr "Évènements touristiques publiés"
-
-#, python-brace-format
-msgid "Failed to download {url}. HTTP status code {status_code}"
-msgstr "Téléchargement impossible de {url}. Code d'erreur HTTP {status_code}"
 
 #, python-brace-format
 msgid "Type 1 '{subval}' does not exist for category '{cat}'. Please add it"

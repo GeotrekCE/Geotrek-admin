@@ -226,7 +226,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
 
     @property
     def city_departure(self):
-        cities = self.cities
+        cities = self.published_cities
         return str(cities[0]) if len(cities) > 0 else ''
 
     def kml(self):

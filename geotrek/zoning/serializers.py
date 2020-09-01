@@ -26,9 +26,9 @@ class RestrictedAreaSerializer(rest_serializers.ModelSerializer):
 
 
 class ZoningSerializerMixin(rest_serializers.ModelSerializer):
-    cities = CitySerializer(many=True)
-    districts = DistrictSerializer(many=True)
-    areas = RestrictedAreaSerializer(many=True)
+    cities = CitySerializer(many=True, source='published_cities')
+    districts = DistrictSerializer(many=True, source='published_districts')
+    areas = RestrictedAreaSerializer(many=True, source='published_areas')
 
     class Meta:
         fields = ('cities', 'districts', 'areas')

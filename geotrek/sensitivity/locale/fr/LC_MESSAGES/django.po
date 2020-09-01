@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-29 11:38+0200\n"
+"POT-Creation-Date: 2020-09-01 08:00+0000\n"
 "PO-Revision-Date: 2020-04-22 07:48+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
-"Language-Team: French <https://weblate.makina-corpus.net/projects/"
-"geotrek-admin/sensitivity/fr/>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
+"admin/sensitivity/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -104,8 +104,8 @@ msgstr "Zone sensible"
 msgid "Published"
 msgstr "Publiée"
 
-msgid "Online"
-msgstr "En ligne"
+msgid "Visible on Geotrek-rando"
+msgstr "Visible sur Geotrek-rando"
 
 msgid "Publication date"
 msgstr "Date de publication"
@@ -131,16 +131,32 @@ msgstr "Pratiques"
 msgid "Published sensitive areas"
 msgstr "Zones sensibles publiées"
 
-#, python-brace-format
-msgid ""
-"Failed to download https://biodiv-sports.fr/api/v2/sportpractice/. HTTP "
-"status code {status_code}"
-msgstr "Erreur de téléchargement de https://biodiv-sports.fr/api/v2/sportpractice/. HTTP "
-"status code {status_code}"
+msgid "POIs"
+msgstr "POI"
 
-#, python-brace-format
-msgid "Failed to download {url}. HTTP status code {status_code}"
-msgstr "Téléchargement impossible de {url}. Code d'erreur HTTP {status_code}"
+msgid "Treks"
+msgstr "Itinéraires"
+
+msgid "Services"
+msgstr "Services"
+
+msgid "Dives"
+msgstr "Plongées"
+
+msgid "Published dives"
+msgstr "Plongées publiées"
+
+msgid "Touristic contents"
+msgstr "Contenus touristiques"
+
+msgid "Published touristic contents"
+msgstr "Contenus touristiques publiés"
+
+msgid "Touristic events"
+msgstr "Évènements touristiques"
+
+msgid "Published touristic events"
+msgstr "Évènements touristiques publiées"
 
 msgid "Attributes"
 msgstr "Informations"

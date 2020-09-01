@@ -69,7 +69,7 @@ msgstr "Ninguno (a)"
 msgid "Published"
 msgstr "Publicado"
 
-msgid "Online"
+msgid "Visible on Geotrek-rando"
 msgstr "En línea"
 
 msgid "Publication date"

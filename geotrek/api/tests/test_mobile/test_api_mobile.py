@@ -111,9 +111,11 @@ class BaseApiTest(TestCase):
                                                                     name_fr='Coucou_Event', description_fr="Sisi_Event",
                                                                     description_teaser_fr="mini", published_fr=True)
         cls.district = zoning_factory.DistrictFactory(geom=MultiPolygon(Polygon.from_bbox(cls.treks[0].geom.extent)))
+        cls.district2 = zoning_factory.DistrictFactory(geom=MultiPolygon(Polygon.from_bbox(cls.treks[0].geom.extent)), published=False)
         bigger_extent = (cls.treks[0].geom.extent[0] - 1, cls.treks[0].geom.extent[1] - 1,
                          cls.treks[0].geom.extent[2] + 1, cls.treks[0].geom.extent[3] + 1)
         cls.city = zoning_factory.CityFactory(geom=MultiPolygon(Polygon.from_bbox(bigger_extent)))
+        cls.city2 = zoning_factory.CityFactory(geom=MultiPolygon(Polygon.from_bbox(bigger_extent)), published=False)
 
     def get_treks_list(self, lang, params=None):
         return self.client.get(reverse('apimobile:treks-list'), params, HTTP_ACCEPT_LANGUAGE=lang)
