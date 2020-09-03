@@ -23,6 +23,9 @@ class AltimetryHelper(object):
         """
         precision = precision or settings.ALTIMETRIC_PROFILE_PRECISION
 
+        if geometry3d.geom_type == 'Point':
+            return [[0, geometry3d.x, geometry3d.y, geometry3d.z]]
+
         if geometry3d.geom_type == 'MultiLineString':
             profile = []
             for subcoords in geometry3d.coords:
