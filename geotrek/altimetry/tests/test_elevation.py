@@ -3,7 +3,7 @@ from django.test import TestCase
 from unittest import SkipTest, skipIf, mock
 
 from django.db import connections, DEFAULT_DB_ALIAS
-from django.contrib.gis.geos import MultiLineString, LineString
+from django.contrib.gis.geos import MultiLineString, LineString, Point
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test.utils import override_settings
@@ -118,13 +118,19 @@ class ElevationTest(TestCase):
 
 
 class ElevationProfileTest(TestCase):
-    def test_elevation_profile_wrong_geom(self):
+    def test_elevation_profile_multilinestring(self):
         geom = MultiLineString(LineString((1.5, 2.5, 8), (2.5, 2.5, 10)),
                                LineString((2.5, 2.5, 6), (2.5, 0, 7)),
                                srid=settings.SRID)
 
         profile = AltimetryHelper.elevation_profile(geom)
         self.assertEqual(len(profile), 4)
+
+    def test_elevation_profile_point(self):
+        geom = Point(1.5, 2.5, 8, srid=settings.SRID)
+
+        profile = AltimetryHelper.elevation_profile(geom)
+        self.assertEqual(profile, [[0, 1.5, 2.5, 8.0]])
 
     def test_elevation_svg_output(self):
         geom = LineString((1.5, 2.5, 8), (2.5, 2.5, 10),
