@@ -2,15 +2,15 @@
 CHANGELOG
 =========
 
-2.36.1.dev0
+2.36.1 (2020-09-04)
 -------------------
 
 **Bug fixes**
 
--
+- Fix crash in json DEM generation if the topology is a point
 
 
-2.36.0 (2020-09-07)
+2.36.0 (2020-09-01)
 -------------------
 
 **New Feature**
