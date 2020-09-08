@@ -34,7 +34,7 @@ echo "Old configurations are disabled."
 sudo supervisorctl reload
 
 # Copy media
-echo "Copying meda to new /opt/geotrek-admin/ folder…"
+echo "Copying media to new /opt/geotrek-admin/ folder…"
 sudo mkdir -p /opt/geotrek-admin/var/media
 sudo cp -r --preserve=mode,timestamp var/media/* /opt/geotrek-admin/var/media/
 echo "Media have been copied."
