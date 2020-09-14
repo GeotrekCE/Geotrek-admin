@@ -22,7 +22,7 @@ echo
 # Disable old conf
 echo "Disabling old configurations…"
 sudo rm -f /etc/nginx/sites-enabled/geotrek
-sudo rm -f /etc/nginx/sites-available/geotrek
+sudo mv /etc/nginx/sites-available/geotrek /etc/nginx/sites-available/geotrek-`date +%Y%m%d%H%M`.bak
 sudo rm -f /etc/supervisor/conf.d/supervisor-convertit.conf
 sudo rm -f /etc/supervisor/conf.d/supervisor-geotrek-api.conf
 sudo rm -f /etc/supervisor/conf.d/supervisor-geotrek-celery.conf
@@ -34,7 +34,7 @@ echo "Old configurations are disabled."
 sudo supervisorctl reload
 
 # Copy media
-echo "Copying meda to new /opt/geotrek-admin/ folder…"
+echo "Copying media to new /opt/geotrek-admin/ folder…"
 sudo mkdir -p /opt/geotrek-admin/var/media
 sudo cp -r --preserve=mode,timestamp var/media/* /opt/geotrek-admin/var/media/
 echo "Media have been copied."
