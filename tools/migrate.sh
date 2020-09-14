@@ -22,8 +22,7 @@ echo
 # Disable old conf
 echo "Disabling old configurations…"
 sudo rm -f /etc/nginx/sites-enabled/geotrek
-cp /etc/nginx/sites-available/geotrek /etc/nginx/sites-available/geotrek-`date +%Y%m%d%H%M`
-sudo rm -f /etc/nginx/sites-available/geotrek
+sudo mv /etc/nginx/sites-available/geotrek /etc/nginx/sites-available/geotrek-`date +%Y%m%d%H%M`.bak
 sudo rm -f /etc/supervisor/conf.d/supervisor-convertit.conf
 sudo rm -f /etc/supervisor/conf.d/supervisor-geotrek-api.conf
 sudo rm -f /etc/supervisor/conf.d/supervisor-geotrek-celery.conf
