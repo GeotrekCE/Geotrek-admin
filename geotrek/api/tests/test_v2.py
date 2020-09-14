@@ -27,7 +27,7 @@ GEOJSON_STRUCTURE = sorted([
 TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'arrival', 'ascent', 'create_datetime', 'departure', 'descent', 'description', 'description_teaser',
     'difficulty', 'duration', 'id', 'length_2d', 'length_3d', 'max_elevation', 'min_elevation',
-    'name', 'networks', 'themes', 'update_datetime', 'url', 'practice', 'external_id', 'published'
+    'name', 'networks', 'themes', 'update_datetime', 'url', 'practice', 'external_id', 'second_external_id', 'published'
 ])
 
 PATH_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted(['comments', 'length_2d', 'length_3d', 'name', 'url'])
@@ -37,7 +37,8 @@ TOUR_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted(TREK_LIST_PROPERTIES_GEOJSON_STR
 TREK_DETAIL_JSON_STRUCTURE = sorted([
     'arrival', 'ascent', 'create_datetime', 'departure', 'descent', 'description', 'description_teaser',
     'difficulty', 'duration', 'id', 'length_2d', 'length_3d', 'max_elevation', 'min_elevation',
-    'name', 'networks', 'themes', 'update_datetime', 'geometry', 'pictures', 'practice', 'external_id', 'published'
+    'name', 'networks', 'themes', 'update_datetime', 'geometry', 'pictures', 'practice', 'external_id', 'second_external_id',
+    'published'
 ])
 
 TOUR_DETAIL_JSON_STRUCTURE = sorted(TREK_DETAIL_JSON_STRUCTURE + ['steps'])
@@ -46,7 +47,8 @@ TOUR_DETAIL_JSON_STRUCTURE = sorted(TREK_DETAIL_JSON_STRUCTURE + ['steps'])
 TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'arrival', 'ascent', 'create_datetime', 'departure', 'descent', 'description', 'description_teaser',
     'difficulty', 'duration', 'length_2d', 'length_3d', 'max_elevation', 'min_elevation',
-    'name', 'networks', 'themes', 'update_datetime', 'pictures', 'practice', 'external_id', 'published'
+    'name', 'networks', 'themes', 'update_datetime', 'pictures', 'practice', 'external_id', 'second_external_id',
+    'published'
 ])
 
 TOUR_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted(TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE + ['steps'])
