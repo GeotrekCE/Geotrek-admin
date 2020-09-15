@@ -197,7 +197,8 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         themes = TrekThemeSerializer(many=True, read_only=True)
         networks = TrekNetworkSerializer(many=True, read_only=True)
         practice = TrekPracticeInTrekSerializer(read_only=True)
-        external_id = serializers.SerializerMethodField(read_only=True)
+        external_id = serializers.CharField(source='eid')
+        second_external_id = serializers.CharField(source='eid2')
         create_datetime = serializers.SerializerMethodField(read_only=True)
         update_datetime = serializers.SerializerMethodField(read_only=True)
 
@@ -231,9 +232,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         def get_length_3d(self, obj):
             return round(obj.length_3d_m, 1)
 
-        def get_external_id(self, obj):
-            return obj.eid
-
         class Meta:
             model = trekking_models.Trek
             fields = (
@@ -241,7 +239,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'description', 'departure', 'arrival', 'duration',
                 'difficulty', 'length_2d', 'length_3d', 'ascent', 'descent',
                 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice',
-                'external_id', 'published',
+                'external_id', 'second_external_id', 'published',
                 'geometry', 'update_datetime', 'create_datetime'
             )
 
@@ -323,8 +321,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.POI
             fields = (
                 'id', 'url', 'name', 'type', 'description', 'external_id',
-                'published',
-                'geometry', 'update_datetime', 'create_datetime'
+                'published', 'geometry', 'update_datetime', 'create_datetime'
             )
 
     class POIDetailSerializer(POIListSerializer):
