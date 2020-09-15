@@ -51,6 +51,10 @@ services:
       - convertit
     user: ${UID:-1000}:${GID:-1000}
     command: ./manage.py runserver 0.0.0.0:8000
+    networks:
+      default:
+        aliases:
+          - ${DOMAIN_NAME}
 
 volumes:
   postgres:
