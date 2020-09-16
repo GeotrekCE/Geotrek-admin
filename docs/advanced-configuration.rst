@@ -69,19 +69,31 @@ Suricate support
 
 It is possible to send report saved to Suricate API (deactivated by default).
 
-In order to activate suricate reports and your account settings:
+In order to activate suricate reports:
 
-.. code-block :: python
+1. Set your account settings in `custom.py`:
 
-    SURICATE_REPORT_ENABLED = True
+    .. code-block :: python
 
-    SURICATE_REPORT_SETTINGS = {
-        'URL': '<Suricate API Url>',
-        'ID_ORIGIN': '<Suricate origin ID>',
-        'PRIVATE_KEY_CLIENT_SERVER': '<your private key client / server>',
-        'PRIVATE_KEY_SERVER_CLIENT': '<your private key server / client>',
-    }
+        SURICATE_REPORT_ENABLED = True
 
+        SURICATE_REPORT_SETTINGS = {
+            'URL': '<Suricate API Url>',
+            'ID_ORIGIN': '<Suricate origin ID>',
+            'PRIVATE_KEY_CLIENT_SERVER': '<your private key client / server>',
+            'PRIVATE_KEY_SERVER_CLIENT': '<your private key server / client>',
+        }
+
+1. Load lists for category, activity and problem magnitude :
+
+    .. code-block :: python
+
+        geotrek loaddata geotrek/feedback/fixtures/basic.json
+
+1. To make these lists available for your Geotrek-rando,
+  run `sync_rando` (see `synchronization`_)
+
+.. _synchronisation:
 
 Anonymize feedback reports
 ---------------------------
