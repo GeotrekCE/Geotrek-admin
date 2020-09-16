@@ -50,6 +50,8 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 if 'geotrek.diving' in settings.INSTALLED_APPS:
     from geotrek.diving.models import Dive
 
+from mapentity.helpers import suffix_for, smart_get_template
+
 
 class SyncRandoRedirect(RedirectView):
     http_method_names = ['post']
@@ -219,7 +221,11 @@ class TrekDocumentPublicMixin(object):
 
 
 class TrekDocumentPublic(TrekDocumentPublicMixin, DocumentPublic):
-    pass
+    def __init__(self, *args, **kwargs):
+        super(TrekDocumentPublic, self).__init__(*args, **kwargs)
+        if settings.USE_BOOKLET_PDF:
+            suffix = suffix_for(self.template_name_suffix, "_booklet_pdf", "html")
+            self.template_name = smart_get_template(self.model, suffix)
 
 
 class TrekMarkupPublic(TrekDocumentPublicMixin, MarkupPublic):
