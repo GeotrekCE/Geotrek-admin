@@ -2,12 +2,16 @@
 CHANGELOG
 =========
 
-2.36.2.dev0
+2.37.0 (2020-09-16)
 -------------------
 
 **Bug fixes**
 
--
+- Fix script install
+
+**New Feature**
+
+- Add second external id api v2 for treks
 
 
 2.36.1 (2020-09-04)
