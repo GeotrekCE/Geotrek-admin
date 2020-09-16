@@ -2,6 +2,13 @@
 CHANGELOG
 =========
 
+2.29.16 (2020-09-16)
+--------------------
+
+**Bug fixes**
+
+- Fix install, fix python packages versions compatible with Python 2)
+
 2.29.15 (2019-11-12)
 --------------------
 
