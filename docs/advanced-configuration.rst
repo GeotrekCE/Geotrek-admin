@@ -84,16 +84,14 @@ In order to activate suricate reports:
             'PRIVATE_KEY_SERVER_CLIENT': '<your private key server / client>',
         }
 
-1. Load lists for category, activity and problem magnitude :
+2. Load lists for category, activity and problem magnitude :
 
     .. code-block :: python
 
         geotrek loaddata geotrek/feedback/fixtures/basic.json
 
-1. To make these lists available for your Geotrek-rando,
-  run `sync_rando` (see `synchronization`_)
+3. To make these lists available for your Geotrek-rando, run `sync_rando` (see :ref:`synchronization <synchronization>`)
 
-.. _synchronisation:
 
 Anonymize feedback reports
 ---------------------------
