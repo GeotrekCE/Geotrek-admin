@@ -1,7 +1,7 @@
 version: "3"
 services:
   postgres:
-    image: makinacorpus/postgis:11-2.5
+    image: postgis/postgis:11-2.5
     env_file:
       - .env
     environment:
