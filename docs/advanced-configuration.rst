@@ -94,13 +94,13 @@ than 365 days.
 
 .. code-block :: bash
 
-    ./bin/django anonymize_reports
+    geotrek erase_emails
 
 Or if you want to erase emails for reports older than 90 days
 
 .. code-block :: bash
 
-    ./bin/django anonymize_reports --days 90
+    geotrek erase_emails --days 90
 
 
 Sensitive areas
