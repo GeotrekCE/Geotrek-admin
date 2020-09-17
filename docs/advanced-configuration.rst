@@ -1222,7 +1222,7 @@ List of all the filters enabled on mobile.
 
     USE_BOOKLET_PDF = True
 
-Use booklet for PDF. During the synchro, pois details will be removed, and the pages will be merge.
+Use booklet for PDF. During the synchro, pois details will be removed, and the pages will be merged.
 It is possible to customize the pdf, with trek_public_booklet_pdf.html.
 
 **Custom SQL**

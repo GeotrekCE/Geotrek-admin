@@ -402,7 +402,7 @@ class Command(BaseCommand):
         if settings.USE_BOOKLET_PDF:
             modelname = trek._meta.model_name
             name_pdf = os.path.join('api', lang, '{modelname}s'.format(modelname=modelname), str(trek.pk))
-            original_pdf = os.path.join(os.getcwd(), self.tmp_root, name_pdf, '{obj.slug}.pdf'.format(obj=trek))
+            original_pdf = os.path.join(self.tmp_root, name_pdf, '{obj.slug}.pdf'.format(obj=trek))
             self.change_pdf_booklet(original_pdf)
 
         self.sync_profile_json(lang, trek)
@@ -839,7 +839,7 @@ class Command(BaseCommand):
         from pdfimpose import options
         import pdfimpose
         arguments = options.process_options(['--size', '2x1', name_1])
-        new_pdf = pdfimpose._legacy_pypdf_impose(  # pylint: disable=protected-access
+        new_pdf = pdfimpose._legacy_pypdf_impose(
             matrix=pdfimpose.ImpositionMatrix(arguments["fold"], arguments["bind"]),
             pages=arguments["pages"],
             last=arguments["last"]
