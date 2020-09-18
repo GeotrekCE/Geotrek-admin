@@ -352,3 +352,36 @@ msgstr "N'importe quelle année"
 
 msgid "Any value"
 msgstr "N'importe quelle valeur"
+
+msgid "Title Rando"
+msgstr "Titre Rando"
+
+msgid "Title on Geotrek Rando"
+msgstr "Titre sur Geotrek Rando"
+
+msgid "Description on Geotrek Rando"
+msgstr "Description sur Geotrek Rando"
+
+msgid "Facebook ID"
+msgstr ""
+
+msgid "Facebook image url"
+msgstr ""
+
+msgid "Url of the facebook image"
+msgstr "Url de l'image facebook"
+
+msgid "Facebook image height"
+msgstr ""
+
+msgid "Facebook image width"
+msgstr ""
+
+msgid "Facebook image's width"
+msgstr "Largeur de l'image facebook"
+
+msgid "Facebook image's height"
+msgstr "Hauteur de l'image facebook"
+
+msgid "Facebook ID for Geotrek Rando"
+msgstr "Id facebook pour Geotrek Rando"

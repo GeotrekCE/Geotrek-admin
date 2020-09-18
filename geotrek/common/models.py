@@ -105,6 +105,19 @@ class RecordSource(OptionalPictogramMixin):
 class TargetPortal(models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=50, unique=True, help_text=_("Used for sync"))
     website = models.URLField(verbose_name=_("Website"), max_length=256, unique=True)
+    title = models.CharField(verbose_name=_("Title Rando"), max_length=50, help_text=_("Title on Geotrek Rando"))
+    description = models.TextField(verbose_name=_("Description"), help_text=_("Description on Geotrek Rando"),
+                                   default='')
+    facebook_id = models.CharField(verbose_name=_("Facebook ID"), max_length=20,
+                                   help_text=_("Facebook ID for Geotrek Rando"), null=True, blank=True)
+    facebook_image_url = models.CharField(verbose_name=_("Facebook image url"), max_length=256,
+                                          help_text=_("Url of the facebook image"), default=settings.FACEBOOK_IMAGE)
+    facebook_image_width = models.IntegerField(verbose_name=_("Facebook image width"),
+                                               help_text=_("Facebook image's width"),
+                                               default=settings.FACEBOOK_IMAGE_WIDTH)
+    facebook_image_height = models.IntegerField(verbose_name=_("Facebook image height"),
+                                                help_text=_("Facebook image's height"),
+                                                default=settings.FACEBOOK_IMAGE_HEIGHT)
 
     class Meta:
         verbose_name = _("Target portal")

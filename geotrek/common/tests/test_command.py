@@ -6,7 +6,8 @@ from django.core import mail
 from django.conf import settings
 
 from geotrek.authent.factories import StructureFactory
-from geotrek.common.factories import AttachmentFactory
+from geotrek.common.factories import AttachmentFactory, TargetPortalFactory
+from geotrek.common.models import TargetPortal
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.trekking.factories import POIFactory
 from geotrek.infrastructure.factories import InfrastructureFactory, InfrastructureTypeFactory
@@ -20,12 +21,27 @@ from easy_thumbnails.models import Thumbnail
 from io import StringIO
 import os
 
+from unittest import mock
+
 
 class CommandEmailsTests(TestCase):
     def test_command_emails_manager(self):
         call_command('test_managers_emails')
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, '[%s] Test email for managers' % settings.TITLE)
+
+
+@mock.patch('sys.stdout', new_callable=StringIO)
+class CommandUpdatePostMigrationTests(TestCase):
+    def test_command_post_migration(self, mock_stdout):
+        portal = TargetPortalFactory.create(name="Test", title=None)
+        self.assertEqual(portal.title_fr, None)
+        self.assertEqual(portal.description_fr, "")
+        call_command('update_post_migration_languages')
+        changed_portal = TargetPortal.objects.get(name="Test")
+        self.assertEqual(changed_portal.title_fr, "Geotrek Rando")
+        self.assertEqual(changed_portal.description_fr, "Geotrek est une web app permettant de préparer à "
+                                                        "l'avance ses randonnées !")
 
 
 class CommandUnsetStructureTests(TestCase):

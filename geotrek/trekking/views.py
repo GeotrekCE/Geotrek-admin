@@ -13,6 +13,7 @@ from django.shortcuts import get_object_or_404, render
 from django.utils import timezone, translation
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
+from django.utils.translation import ugettext as _
 from django.views.generic import CreateView, ListView, RedirectView, DetailView, TemplateView
 from django.views.generic.detail import BaseDetailView
 from django_celery_results.models import TaskResult
@@ -258,11 +259,24 @@ class TrekMeta(DetailView):
     template_name = 'trekking/trek_meta.html'
 
     def get_context_data(self, **kwargs):
+        lang = self.request.GET['lang']
+        portal = self.request.GET['portal']
         context = super(TrekMeta, self).get_context_data(**kwargs)
-        context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
-        context['facebook_image'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
-        context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
-        context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
+        if portal:
+            target_portal = TargetPortal.objects.filter(name=portal)[0]
+            context['FACEBOOK_APP_ID'] = target_portal.facebook_id
+            context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], target_portal.facebook_image_url)
+            context['FACEBOOK_IMAGE_WIDTH'] = target_portal.facebook_image_width
+            context['FACEBOOK_IMAGE_HEIGHT'] = target_portal.facebook_image_height
+            context['META_TITLE'] = getattr(target_portal, 'title_{}'.format(lang))
+        else:
+            context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
+            context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
+            context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
+            context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
+            translation.activate(lang)
+            context['META_TITLE'] = _('Geotrek Rando')
+            translation.deactivate()
         return context
 
 
@@ -622,11 +636,25 @@ class Meta(TemplateView):
 
     def get_context_data(self, **kwargs):
         lang = self.request.GET['lang']
+        portal = self.request.GET['portal']
         context = super(Meta, self).get_context_data(**kwargs)
-        context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
-        context['facebook_image'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
-        context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
-        context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
+        if portal:
+            target_portal = TargetPortal.objects.filter(name=portal)[0]
+            context['FACEBOOK_APP_ID'] = target_portal.facebook_id
+            context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], target_portal.facebook_image_url)
+            context['FACEBOOK_IMAGE_WIDTH'] = target_portal.facebook_image_width
+            context['FACEBOOK_IMAGE_HEIGHT'] = target_portal.facebook_image_height
+            context['META_DESCRIPTION'] = getattr(target_portal, 'description_{}'.format(lang))
+            context['META_TITLE'] = getattr(target_portal, 'title_{}'.format(lang))
+        else:
+            context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
+            context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
+            context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
+            context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
+            translation.activate(lang)
+            context['META_DESCRIPTION'] = _('Geotrek is a web app allowing you to prepare your next trekking trip !')
+            context['META_TITLE'] = _('Geotrek Rando')
+            translation.deactivate()
         context['treks'] = Trek.objects.existing().order_by('pk').filter(
             Q(**{'published_{lang}'.format(lang=lang): True})
             | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
