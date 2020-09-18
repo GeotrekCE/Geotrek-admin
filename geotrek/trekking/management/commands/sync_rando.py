@@ -20,7 +20,7 @@ from landez.sources import DownloadError
 from geotrek.common.models import FileType  # NOQA
 from geotrek.altimetry.views import ElevationProfile, ElevationArea, serve_elevation_chart
 from geotrek.common import models as common_models
-from geotrek.common.views import ThemeViewSet
+from geotrek.common.views import ThemeViewSet, Meta
 from geotrek.core.views import ParametersView
 from geotrek.feedback.views import FeedbackOptionsView, CategoryList as FeedbackCategoryList
 from geotrek.flatpages.models import FlatPage
@@ -33,7 +33,7 @@ from geotrek.tourism import views as tourism_views
 from geotrek.trekking import models as trekking_models
 from geotrek.trekking.views import (TrekViewSet, POIViewSet, TrekPOIViewSet,
                                     TrekGPXDetail, TrekKMLDetail, TrekServiceViewSet,
-                                    ServiceViewSet, TrekDocumentPublic, TrekMeta, Meta,
+                                    ServiceViewSet, TrekDocumentPublic, TrekMeta,
                                     TrekInfrastructureViewSet, TrekSignageViewSet,)
 if 'geotrek.diving' in settings.INSTALLED_APPS:
     from geotrek.diving import models as diving_models
@@ -244,8 +244,7 @@ class Command(BaseCommand):
         name = os.path.join('api', lang, '{name}.json'.format(name=name))
         if self.source:
             params['source'] = ','.join(self.source)
-        if self.portal:
-            params['portal'] = ','.join(self.portal)
+        self.get_params_portal(params)
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, fix2028=True, **kwargs)
 
     def sync_geojson(self, lang, viewset, name, zipfile=None, params={}, **kwargs):
@@ -257,9 +256,7 @@ class Command(BaseCommand):
         if self.source:
             params['source'] = ','.join(self.source)
 
-        if self.portal:
-            params['portal'] = ','.join(self.portal)
-
+        self.get_params_portal(params)
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, fix2028=True, **kwargs)
 
     def sync_trek_infrastructures(self, lang, trek, zipfile=None):
@@ -324,30 +321,37 @@ class Command(BaseCommand):
 
     def sync_meta(self, lang):
         name = os.path.join('meta', lang, 'index.html')
-
-        self.sync_view(lang, Meta.as_view(), name, params={'rando_url': self.rando_url, 'lang': lang,
-                                                           'portal': '' if not self.portal else self.portal[0]})
+        params = {'rando_url': self.rando_url, 'lang': lang}
+        self.get_params_portal(params)
+        self.sync_view(lang, Meta.as_view(), name, params=params)
 
     def sync_trek_meta(self, lang, obj):
         name = os.path.join('meta', lang, obj.rando_url, 'index.html')
+        params = {'rando_url': self.rando_url, 'lang': lang}
+        self.get_params_portal(params)
         self.sync_view(lang, TrekMeta.as_view(), name, pk=obj.pk,
-                       params={'rando_url': self.rando_url, 'lang': lang,
-                               'portal': '' if not self.portal else self.portal[0]})
+                       params=params)
 
     def sync_touristiccontent_meta(self, lang, obj):
         name = os.path.join('meta', lang, obj.rando_url, 'index.html')
+        params = {'rando_url': self.rando_url, 'lang': lang}
+        self.get_params_portal(params)
         self.sync_view(lang, tourism_views.TouristicContentMeta.as_view(), name, pk=obj.pk,
-                       params={'rando_url': self.rando_url})
+                       params=params)
 
     def sync_touristicevent_meta(self, lang, obj):
         name = os.path.join('meta', lang, obj.rando_url, 'index.html')
+        params = {'rando_url': self.rando_url, 'lang': lang}
+        self.get_params_portal(params)
         self.sync_view(lang, tourism_views.TouristicEventMeta.as_view(), name, pk=obj.pk,
-                       params={'rando_url': self.rando_url})
+                       params=params)
 
     def sync_dive_meta(self, lang, obj):
         name = os.path.join('meta', lang, obj.rando_url, 'index.html')
+        params = {'rando_url': self.rando_url, 'lang': lang}
+        self.get_params_portal(params)
         self.sync_view(lang, diving_views.DiveMeta.as_view(), name, pk=obj.pk,
-                       params={'rando_url': self.rando_url})
+                       params=params)
 
     def sync_file(self, lang, name, src_root, url, zipfile=None):
         url = url.strip('/')
@@ -466,7 +470,7 @@ class Command(BaseCommand):
         if self.source:
             flatpages = flatpages.filter(source__name__in=self.source)
         if self.portal:
-            flatpages = flatpages.filter(Q(portal__name__in=self.portal) | Q(portal=None))
+            flatpages = flatpages.filter(Q(portal__name=self.portal) | Q(portal=None))
         for flatpage in flatpages:
             name = os.path.join('meta', lang, flatpage.rando_url, 'index.html')
             self.sync_view(lang, FlatPageMeta.as_view(), name, pk=flatpage.pk, params={'rando_url': self.rando_url})
@@ -524,7 +528,7 @@ class Command(BaseCommand):
             treks = treks.filter(source__name__in=self.source)
 
         if self.portal:
-            treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
+            treks = treks.filter(Q(portal__name=self.portal) | Q(portal=None))
 
         for trek in treks:
             self.sync_trek(lang, trek)
@@ -575,7 +579,7 @@ class Command(BaseCommand):
                 treks = treks.filter(source__name__in=self.source)
 
             if self.portal:
-                treks = treks.filter(Q(portal__name__in=self.portal) | Q(portal=None))
+                treks = treks.filter(Q(portal__name=self.portal) | Q(portal=None))
 
             for trek in treks:
                 if trek.any_published or any([parent.any_published for parent in trek.parents]):
@@ -615,8 +619,7 @@ class Command(BaseCommand):
             params = {}
             if self.source:
                 params['source'] = self.source[0]
-            if self.portal:
-                params['portal'] = self.portal[0]
+            self.get_params_portal(params)
             self.sync_object_view(lang, obj, view, '{obj.slug}.pdf', params=params, slug=obj.slug)
 
     def sync_content(self, lang, content):
@@ -684,7 +687,7 @@ class Command(BaseCommand):
             dives = dives.filter(source__name__in=self.source)
 
         if self.portal:
-            dives = dives.filter(Q(portal__name__in=self.portal) | Q(portal=None))
+            dives = dives.filter(Q(portal__name=self.portal) | Q(portal=None))
 
         for dive in dives:
             self.sync_dive(lang, dive)
@@ -725,7 +728,7 @@ class Command(BaseCommand):
             contents = contents.filter(source__name__in=self.source)
 
         if self.portal:
-            contents = contents.filter(Q(portal__name__in=self.portal) | Q(portal=None))
+            contents = contents.filter(Q(portal__name=self.portal) | Q(portal=None))
 
         for content in contents:
             self.sync_content(lang, content)
@@ -737,7 +740,7 @@ class Command(BaseCommand):
             events = events.filter(source__name__in=self.source)
 
         if self.portal:
-            events = events.filter(Q(portal__name__in=self.portal) | Q(portal=None))
+            events = events.filter(Q(portal__name=self.portal) | Q(portal=None))
 
         for event in events:
             self.sync_event(lang, event)
@@ -753,9 +756,7 @@ class Command(BaseCommand):
     def sync_trek_touristiccontents(self, lang, trek, zipfile=None):
         params = {'format': 'geojson',
                   'categories': ','.join(category for category in self.categories)}
-        if self.portal:
-            params['portal'] = ','.join(portal for portal in self.portal)
-
+        self.get_params_portal(params)
         view = tourism_views.TrekTouristicContentViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'touristiccontents.geojson')
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
@@ -765,8 +766,7 @@ class Command(BaseCommand):
 
     def sync_trek_touristicevents(self, lang, trek, zipfile=None):
         params = {'format': 'geojson'}
-        if self.portal:
-            params['portal'] = ','.join(portal for portal in self.portal)
+        self.get_params_portal(params)
         view = tourism_views.TrekTouristicEventViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'treks', str(trek.pk), 'touristicevents.geojson')
         self.sync_view(lang, view, name, params=params, zipfile=zipfile, pk=trek.pk)
@@ -777,9 +777,8 @@ class Command(BaseCommand):
     def sync_dive_touristiccontents(self, lang, dive):
         params = {'format': 'geojson',
                   'categories': ','.join(category for category in self.categories)}
-        if self.portal:
-            params['portal'] = ','.join(portal for portal in self.portal)
 
+        self.get_params_portal(params)
         view = tourism_views.DiveTouristicContentViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'dives', str(dive.pk), 'touristiccontents.geojson')
         self.sync_view(lang, view, name, params=params, pk=dive.pk)
@@ -789,8 +788,7 @@ class Command(BaseCommand):
 
     def sync_dive_touristicevents(self, lang, dive):
         params = {'format': 'geojson'}
-        if self.portal:
-            params['portal'] = ','.join(portal for portal in self.portal)
+        self.get_params_portal(params)
         view = tourism_views.DiveTouristicEventViewSet.as_view({'get': 'list'})
         name = os.path.join('api', lang, 'dives', str(dive.pk), 'touristicevents.geojson')
         self.sync_view(lang, view, name, params=params, pk=dive.pk)
@@ -850,6 +848,10 @@ class Command(BaseCommand):
         )
         with open(name_1, "wb") as outfile:
             new_pdf.write(outfile)
+
+    def get_params_portal(self, params):
+        if self.portal:
+            params['portal'] = self.portal
 
     def check_dst_root_is_empty(self):
         if not os.path.exists(self.dst_root):
@@ -911,11 +913,7 @@ class Command(BaseCommand):
         if self.source is not None:
             self.source = self.source.split(',')
 
-        if options['portal'] is not None:
-            self.portal = options['portal'].split(',')
-
-        else:
-            self.portal = []
+        self.portal = options['portal']
 
         if isinstance(settings.MOBILE_TILES_URL, str):
             tiles_url = settings.MOBILE_TILES_URL

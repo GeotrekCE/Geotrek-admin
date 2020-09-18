@@ -1,7 +1,6 @@
 from datetime import timedelta
 import json
 import redis
-from urllib.parse import urljoin
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -13,8 +12,7 @@ from django.shortcuts import get_object_or_404, render
 from django.utils import timezone, translation
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
-from django.utils.translation import ugettext as _
-from django.views.generic import CreateView, ListView, RedirectView, DetailView, TemplateView
+from django.views.generic import CreateView, ListView, RedirectView, DetailView
 from django.views.generic.detail import BaseDetailView
 from django_celery_results.models import TaskResult
 from mapentity.helpers import alphabet_enumeration
@@ -26,7 +24,7 @@ from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.models import Attachment, RecordSource, TargetPortal
-from geotrek.common.views import FormsetMixin, PublicOrReadPermMixin, DocumentPublic, MarkupPublic
+from geotrek.common.views import FormsetMixin, MetaObjectsMixin, PublicOrReadPermMixin, DocumentPublic, MarkupPublic
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.trekking.forms import SyncRandoForm
@@ -46,10 +44,6 @@ from geotrek.infrastructure.serializers import InfrastructureGeojsonSerializer
 from geotrek.signage.serializers import SignageGeojsonSerializer
 
 from .tasks import launch_sync_rando
-if 'geotrek.tourism' in settings.INSTALLED_APPS:
-    from geotrek.tourism.models import TouristicContent, TouristicEvent
-if 'geotrek.diving' in settings.INSTALLED_APPS:
-    from geotrek.diving.models import Dive
 
 from mapentity.helpers import suffix_for, smart_get_template
 
@@ -260,30 +254,9 @@ class TrekDelete(MapEntityDelete):
         return super(TrekDelete, self).dispatch(*args, **kwargs)
 
 
-class TrekMeta(DetailView):
+class TrekMeta(DetailView, MetaObjectsMixin):
     model = Trek
     template_name = 'trekking/trek_meta.html'
-
-    def get_context_data(self, **kwargs):
-        lang = self.request.GET['lang']
-        portal = self.request.GET['portal']
-        context = super(TrekMeta, self).get_context_data(**kwargs)
-        if portal:
-            target_portal = TargetPortal.objects.filter(name=portal)[0]
-            context['FACEBOOK_APP_ID'] = target_portal.facebook_id
-            context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], target_portal.facebook_image_url)
-            context['FACEBOOK_IMAGE_WIDTH'] = target_portal.facebook_image_width
-            context['FACEBOOK_IMAGE_HEIGHT'] = target_portal.facebook_image_height
-            context['META_TITLE'] = getattr(target_portal, 'title_{}'.format(lang))
-        else:
-            context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
-            context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
-            context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
-            context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
-            translation.activate(lang)
-            context['META_TITLE'] = _('Geotrek Rando')
-            translation.deactivate()
-        return context
 
 
 class POILayer(MapEntityLayer):
@@ -635,49 +608,6 @@ def sync_update_json(request):
 
     return HttpResponse(json.dumps(results),
                         content_type="application/json")
-
-
-class Meta(TemplateView):
-    template_name = 'trekking/meta.html'
-
-    def get_context_data(self, **kwargs):
-        lang = self.request.GET['lang']
-        portal = self.request.GET['portal']
-        context = super(Meta, self).get_context_data(**kwargs)
-        if portal:
-            target_portal = TargetPortal.objects.filter(name=portal)[0]
-            context['FACEBOOK_APP_ID'] = target_portal.facebook_id
-            context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], target_portal.facebook_image_url)
-            context['FACEBOOK_IMAGE_WIDTH'] = target_portal.facebook_image_width
-            context['FACEBOOK_IMAGE_HEIGHT'] = target_portal.facebook_image_height
-            context['META_DESCRIPTION'] = getattr(target_portal, 'description_{}'.format(lang))
-            context['META_TITLE'] = getattr(target_portal, 'title_{}'.format(lang))
-        else:
-            context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
-            context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
-            context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
-            context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
-            translation.activate(lang)
-            context['META_DESCRIPTION'] = _('Geotrek is a web app allowing you to prepare your next trekking trip !')
-            context['META_TITLE'] = _('Geotrek Rando')
-            translation.deactivate()
-        context['treks'] = Trek.objects.existing().order_by('pk').filter(
-            Q(**{'published_{lang}'.format(lang=lang): True})
-            | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
-                   'trek_parents__parent__deleted': False})
-        )
-        if 'geotrek.tourism' in settings.INSTALLED_APPS:
-            context['contents'] = TouristicContent.objects.existing().order_by('pk').filter(
-                **{'published_{lang}'.format(lang=lang): True}
-            )
-            context['events'] = TouristicEvent.objects.existing().order_by('pk').filter(
-                **{'published_{lang}'.format(lang=lang): True}
-            )
-        if 'geotrek.diving' in settings.INSTALLED_APPS:
-            context['dives'] = Dive.objects.existing().order_by('pk').filter(
-                **{'published_{lang}'.format(lang=lang): True}
-            )
-        return context
 
 
 # Translations for public PDF

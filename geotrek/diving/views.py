@@ -1,5 +1,3 @@
-from urllib.parse import urljoin
-
 from django.conf import settings
 from django.db.models import Q
 from django.contrib.gis.db.models.functions import Transform
@@ -15,7 +13,7 @@ from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.models import RecordSource, TargetPortal
-from geotrek.common.views import DocumentPublic, MarkupPublic
+from geotrek.common.views import DocumentPublic, MarkupPublic, MetaObjectsMixin
 
 from .filters import DiveFilterSet
 from .forms import DiveForm
@@ -139,17 +137,9 @@ class DiveDelete(MapEntityDelete):
         return super(DiveDelete, self).dispatch(*args, **kwargs)
 
 
-class DiveMeta(DetailView):
+class DiveMeta(DetailView, MetaObjectsMixin):
     model = Dive
     template_name = 'diving/dive_meta.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(DiveMeta, self).get_context_data(**kwargs)
-        context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
-        context['facebook_image'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
-        context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
-        context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
-        return context
 
 
 class DiveViewSet(MapEntityViewSet):

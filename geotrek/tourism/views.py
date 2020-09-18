@@ -1,6 +1,6 @@
 import logging
 import os
-from urllib.parse import urljoin
+
 from django.utils.translation import ugettext as _
 
 from django.conf import settings
@@ -20,7 +20,7 @@ from rest_framework.views import APIView
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.models import RecordSource, TargetPortal
-from geotrek.common.views import DocumentPublic, MarkupPublic
+from geotrek.common.views import DocumentPublic, MarkupPublic, MetaObjectsMixin
 from django.shortcuts import get_object_or_404
 from geotrek.trekking.models import Trek
 
@@ -150,17 +150,9 @@ class TouristicContentMarkupPublic(TouristicContentDocumentPublicMixin, MarkupPu
     pass
 
 
-class TouristicContentMeta(DetailView):
+class TouristicContentMeta(DetailView, MetaObjectsMixin):
     model = TouristicContent
     template_name = 'tourism/touristiccontent_meta.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(TouristicContentMeta, self).get_context_data(**kwargs)
-        context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
-        context['facebook_image'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
-        context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
-        context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
-        return context
 
 
 class TouristicEventLayer(MapEntityLayer):
@@ -259,17 +251,9 @@ class TouristicEventMarkupPublic(TouristicEventDocumentPublicMixin, MarkupPublic
     pass
 
 
-class TouristicEventMeta(DetailView):
+class TouristicEventMeta(DetailView, MetaObjectsMixin):
     model = TouristicEvent
     template_name = 'tourism/touristicevent_meta.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(TouristicEventMeta, self).get_context_data(**kwargs)
-        context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
-        context['facebook_image'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
-        context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
-        context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
-        return context
 
 
 class TouristicContentViewSet(MapEntityViewSet):

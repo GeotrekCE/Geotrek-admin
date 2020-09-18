@@ -14,7 +14,7 @@
         <meta property="og:image:width" content="{{ object.resized_pictures.0.1.width }}">
         <meta property="og:image:height" content="{{ object.resized_pictures.0.1.height }}">
     {% else %}
-        <meta property="og:image" content="{{ facebook_image }}">
+        <meta property="og:image" content="{{ FACEBOOK_IMAGE }}">
         <meta property="og:image:width" content="{{ FACEBOOK_IMAGE_WIDTH }}">
         <meta property="og:image:height" content="{{ FACEBOOK_IMAGE_HEIGHT }}">
     {% endif %}
@@ -22,6 +22,6 @@
 </head>
 <body>
 <h1>{{ object.name }}</h1>
-<a href="{{ request.GET.rando_url }}">{% trans 'Geotrek Rando' %}</a>
+<a href="{{ request.GET.rando_url }}">{{ META_TITLE }}</a>
 </body>
 </html>

@@ -2,23 +2,25 @@ from django.core.exceptions import ValidationError, PermissionDenied
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.conf import settings
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.utils import DatabaseError
 from django.http import HttpResponse, HttpResponseNotFound
-from django.utils.translation import ugettext as _
+from django.utils import translation
 from django_celery_results.models import TaskResult
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views import static
-
+from django.utils.translation import ugettext as _
+from django.views.generic import TemplateView
 from mapentity.helpers import api_bbox
 from mapentity.registry import registry
 from mapentity import views as mapentity_views
 
 from geotrek.celery import app as celery_app
 from geotrek.common.utils import sql_extent
-from geotrek.common.models import FileType, Attachment
+from geotrek.common.models import FileType, Attachment, TargetPortal
 from geotrek import __version__
 
 from rest_framework import permissions as rest_permissions, viewsets
@@ -28,6 +30,7 @@ import ast
 import os
 import json
 import redis
+from urllib.parse import urljoin
 from zipfile import ZipFile
 
 from datetime import timedelta
@@ -38,6 +41,56 @@ from .tasks import import_datas, import_datas_from_web
 from .forms import ImportDatasetForm, ImportDatasetFormWithFile
 from .models import Theme
 from .serializers import ThemeSerializer
+
+
+class Meta(TemplateView):
+    template_name = 'common/meta.html'
+
+    def get_context_data(self, **kwargs):
+        lang = self.request.GET['lang']
+        portal = self.request.GET.get('portal')
+        context = super(Meta, self).get_context_data(**kwargs)
+        context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
+        context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
+        context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
+        context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
+        translation.activate(lang)
+        context['META_DESCRIPTION'] = _('Geotrek is a web app allowing you to prepare your next trekking trip !')
+        context['META_TITLE'] = _('Geotrek Rando')
+        translation.deactivate()
+        if portal:
+            try:
+                target_portal = TargetPortal.objects.get(name=portal)
+                context['FACEBOOK_APP_ID'] = target_portal.facebook_id
+                context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], target_portal.facebook_image_url)
+                context['FACEBOOK_IMAGE_WIDTH'] = target_portal.facebook_image_width
+                context['FACEBOOK_IMAGE_HEIGHT'] = target_portal.facebook_image_height
+                context['META_DESCRIPTION'] = getattr(target_portal, 'description_{}'.format(lang))
+                context['META_TITLE'] = getattr(target_portal, 'title_{}'.format(lang))
+            except TargetPortal.DoesNotExist:
+                pass
+
+        if 'geotrek.trekking' in settings.INSTALLED_APPS:
+            from geotrek.trekking.models import Trek
+            context['treks'] = Trek.objects.existing().order_by('pk').filter(
+                Q(**{'published_{lang}'.format(lang=lang): True})
+                | Q(**{'trek_parents__parent__published_{lang}'.format(lang=lang): True,
+                       'trek_parents__parent__deleted': False})
+            )
+        if 'geotrek.tourism' in settings.INSTALLED_APPS:
+            from geotrek.tourism.models import TouristicContent, TouristicEvent
+            context['contents'] = TouristicContent.objects.existing().order_by('pk').filter(
+                **{'published_{lang}'.format(lang=lang): True}
+            )
+            context['events'] = TouristicEvent.objects.existing().order_by('pk').filter(
+                **{'published_{lang}'.format(lang=lang): True}
+            )
+        if 'geotrek.diving' in settings.INSTALLED_APPS:
+            from geotrek.diving.models import Dive
+            context['dives'] = Dive.objects.existing().order_by('pk').filter(
+                **{'published_{lang}'.format(lang=lang): True}
+            )
+        return context
 
 
 class FormsetMixin(object):
@@ -208,6 +261,31 @@ class UserArgMixin(object):
         kwargs = super(UserArgMixin, self).get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+
+class MetaObjectsMixin(object):
+    def get_context_data(self, **kwargs):
+        lang = self.request.GET['lang']
+        portal = self.request.GET['portal']
+        context = super(MetaObjectsMixin, self).get_context_data(**kwargs)
+        context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
+        context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
+        context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
+        context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
+        translation.activate(lang)
+        context['META_TITLE'] = _('Geotrek Rando')
+        translation.deactivate()
+        if portal:
+            try:
+                target_portal = TargetPortal.objects.get(name=portal)
+                context['FACEBOOK_APP_ID'] = target_portal.facebook_id
+                context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], target_portal.facebook_image_url)
+                context['FACEBOOK_IMAGE_WIDTH'] = target_portal.facebook_image_width
+                context['FACEBOOK_IMAGE_HEIGHT'] = target_portal.facebook_image_height
+                context['META_TITLE'] = getattr(target_portal, 'title_{}'.format(lang))
+            except TargetPortal.DoesNotExist:
+                pass
+        return context
 
 
 def import_file(uploaded, parser, encoding, user_pk):
