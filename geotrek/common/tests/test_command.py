@@ -35,7 +35,7 @@ class CommandEmailsTests(TestCase):
 class CommandUpdatePostMigrationTests(TestCase):
     def test_command_post_migration(self, mock_stdout):
         portal = TargetPortalFactory.create(name="Test", title=None)
-        self.assertEqual(portal.title_fr, None)
+        self.assertEqual(portal.title_fr, "")
         self.assertEqual(portal.description_fr, "")
         call_command('update_post_migration_languages')
         changed_portal = TargetPortal.objects.get(name="Test")
