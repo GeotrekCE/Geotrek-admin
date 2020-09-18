@@ -47,6 +47,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='targetportal',
             name='title',
-            field=models.CharField(help_text='Title on Geotrek Rando', max_length=50, verbose_name='Title Rando'),
+            field=models.CharField(default='', help_text='Title on Geotrek Rando', max_length=50, verbose_name='Title Rando'),
         ),
     ]

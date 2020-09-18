@@ -105,7 +105,8 @@ class RecordSource(OptionalPictogramMixin):
 class TargetPortal(models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=50, unique=True, help_text=_("Used for sync"))
     website = models.URLField(verbose_name=_("Website"), max_length=256, unique=True)
-    title = models.CharField(verbose_name=_("Title Rando"), max_length=50, help_text=_("Title on Geotrek Rando"))
+    title = models.CharField(verbose_name=_("Title Rando"), max_length=50, help_text=_("Title on Geotrek Rando"),
+                             default='')
     description = models.TextField(verbose_name=_("Description"), help_text=_("Description on Geotrek Rando"),
                                    default='')
     facebook_id = models.CharField(verbose_name=_("Facebook ID"), max_length=20,
