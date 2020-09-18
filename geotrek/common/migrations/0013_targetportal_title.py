@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='targetportal',
             name='title',
-            field=models.CharField(default='Geotrek Rando', help_text='Title on Geotrek Rando', max_length=50, verbose_name='Title Rando'),
+            field=models.CharField(default='', help_text='Title on Geotrek Rando', max_length=50, verbose_name='Title Rando'),
         ),
         migrations.AddField(
             model_name='targetportal',
@@ -43,10 +43,5 @@ class Migration(migrations.Migration):
             name='facebook_image_width',
             field=models.IntegerField(default=200, help_text="Facebook image's width",
                                       verbose_name='Facebook image width'),
-        ),
-        migrations.AlterField(
-            model_name='targetportal',
-            name='title',
-            field=models.CharField(default='', help_text='Title on Geotrek Rando', max_length=50, verbose_name='Title Rando'),
-        ),
+        )
     ]
