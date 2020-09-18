@@ -282,3 +282,36 @@ msgstr "La topología no está valida"
 
 msgid "Any year"
 msgstr ""
+
+msgid "Title Rando"
+msgstr ""
+
+msgid "Title on Geotrek Rando"
+msgstr ""
+
+msgid "Description on Geotrek Rando"
+msgstr ""
+
+msgid "Facebook ID"
+msgstr ""
+
+msgid "Facebook image url"
+msgstr ""
+
+msgid "Url of the facebook image"
+msgstr ""
+
+msgid "Facebook image height"
+msgstr ""
+
+msgid "Facebook image width"
+msgstr ""
+
+msgid "Facebook image's width"
+msgstr ""
+
+msgid "Facebook image's height"
+msgstr ""
+
+msgid "Facebook ID for Geotrek Rando"
+msgstr ""

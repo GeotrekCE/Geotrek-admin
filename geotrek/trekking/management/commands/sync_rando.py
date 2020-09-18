@@ -324,11 +324,15 @@ class Command(BaseCommand):
 
     def sync_meta(self, lang):
         name = os.path.join('meta', lang, 'index.html')
-        self.sync_view(lang, Meta.as_view(), name, params={'rando_url': self.rando_url, 'lang': lang})
+
+        self.sync_view(lang, Meta.as_view(), name, params={'rando_url': self.rando_url, 'lang': lang,
+                                                           'portal': '' if not self.portal else self.portal[0]})
 
     def sync_trek_meta(self, lang, obj):
         name = os.path.join('meta', lang, obj.rando_url, 'index.html')
-        self.sync_view(lang, TrekMeta.as_view(), name, pk=obj.pk, params={'rando_url': self.rando_url})
+        self.sync_view(lang, TrekMeta.as_view(), name, pk=obj.pk,
+                       params={'rando_url': self.rando_url, 'lang': lang,
+                               'portal': '' if not self.portal else self.portal[0]})
 
     def sync_touristiccontent_meta(self, lang, obj):
         name = os.path.join('meta', lang, obj.rando_url, 'index.html')

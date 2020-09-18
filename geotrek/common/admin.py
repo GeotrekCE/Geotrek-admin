@@ -99,7 +99,7 @@ class RecordSourceAdmin(admin.ModelAdmin):
 
 
 class TargetPortalAdmin(admin.ModelAdmin):
-    list_display = ('name', 'website')
+    list_display = ('name', 'website', 'title')
     search_fields = ('name', 'website')
 
 
