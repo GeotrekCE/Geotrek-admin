@@ -41,6 +41,10 @@ h5 {
   color: black;
 }
 
+legend {
+    font-size: .5em
+}
+
 #footer {
   position: fixed;
   bottom: -3.2cm;

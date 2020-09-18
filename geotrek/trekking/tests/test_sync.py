@@ -644,3 +644,28 @@ class SyncTestPdf(SyncSetup):
         self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'touristicevents',
                                                      str(self.touristic_event_without_attachment.pk),
                                                      '%s.pdf' % self.touristic_event_without_attachment.slug)))
+
+
+@mock.patch('geotrek.trekking.models.Trek.prepare_map_image')
+@mock.patch('geotrek.diving.models.Dive.prepare_map_image')
+@mock.patch('geotrek.tourism.models.TouristicContent.prepare_map_image')
+@mock.patch('geotrek.tourism.models.TouristicEvent.prepare_map_image')
+class SyncPdfBookletTest(VarTmpTestCase):
+    def setUp(self):
+        super().setUp()
+        self.trek_1 = TrekFactory.create(published=True)
+
+    @override_settings()
+    def test_sync_pdfs_booklet(self, event, content, dive, trek):
+        output = StringIO()
+        with override_settings(USE_BOOKLET_PDF=False):
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
+                                    with_dives=True, skip_tiles=True, stdout=output)
+            first_file = os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_1.slug)
+            size_first = os.stat(first_file).st_size
+        with override_settings(USE_BOOKLET_PDF=True):
+            management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', verbosity=2,
+                                    with_dives=True, skip_tiles=True, stdout=output)
+            second_file = os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek_1.pk), '%s.pdf' % self.trek_1.slug)
+            size_second = os.stat(second_file).st_size
+        self.assertLess(size_first, size_second)
