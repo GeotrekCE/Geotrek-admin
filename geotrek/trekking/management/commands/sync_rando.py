@@ -471,9 +471,11 @@ class Command(BaseCommand):
             flatpages = flatpages.filter(source__name__in=self.source)
         if self.portal:
             flatpages = flatpages.filter(Q(portal__name=self.portal) | Q(portal=None))
+        params = {'rando_url': self.rando_url, 'lang': lang}
+        self.get_params_portal(params)
         for flatpage in flatpages:
             name = os.path.join('meta', lang, flatpage.rando_url, 'index.html')
-            self.sync_view(lang, FlatPageMeta.as_view(), name, pk=flatpage.pk, params={'rando_url': self.rando_url})
+            self.sync_view(lang, FlatPageMeta.as_view(), name, pk=flatpage.pk, params=params)
 
     def sync_trekking(self, lang):
         zipname = os.path.join('zip', 'treks', lang, 'global.zip')

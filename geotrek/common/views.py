@@ -43,11 +43,11 @@ from .models import Theme
 from .serializers import ThemeSerializer
 
 
-class MetaObjectsMixin(object):
+class MetaMixin(object):
     def get_context_data(self, **kwargs):
-        lang = self.request.GET['lang']
+        lang = self.request.GET.get('lang')
         portal = self.request.GET.get('portal')
-        context = super(MetaObjectsMixin, self).get_context_data(**kwargs)
+        context = super(MetaMixin, self).get_context_data(**kwargs)
         context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
         context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
         context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
@@ -68,12 +68,11 @@ class MetaObjectsMixin(object):
         return context
 
 
-class Meta(TemplateView, MetaObjectsMixin):
+class Meta(MetaMixin, TemplateView):
     template_name = 'common/meta.html'
 
     def get_context_data(self, **kwargs):
-        super(Meta, self).get_context_data()
-        lang = self.request.GET['lang']
+        lang = self.request.GET.get('lang')
         portal = self.request.GET.get('portal')
         context = super(Meta, self).get_context_data(**kwargs)
         translation.activate(lang)

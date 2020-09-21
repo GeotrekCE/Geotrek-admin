@@ -20,7 +20,7 @@ from rest_framework.views import APIView
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.models import RecordSource, TargetPortal
-from geotrek.common.views import DocumentPublic, MarkupPublic, MetaObjectsMixin
+from geotrek.common.views import DocumentPublic, MarkupPublic, MetaMixin
 from django.shortcuts import get_object_or_404
 from geotrek.trekking.models import Trek
 
@@ -150,7 +150,7 @@ class TouristicContentMarkupPublic(TouristicContentDocumentPublicMixin, MarkupPu
     pass
 
 
-class TouristicContentMeta(DetailView, MetaObjectsMixin):
+class TouristicContentMeta(MetaMixin, DetailView):
     model = TouristicContent
     template_name = 'tourism/touristiccontent_meta.html'
 
@@ -251,7 +251,7 @@ class TouristicEventMarkupPublic(TouristicEventDocumentPublicMixin, MarkupPublic
     pass
 
 
-class TouristicEventMeta(DetailView, MetaObjectsMixin):
+class TouristicEventMeta(MetaMixin, DetailView):
     model = TouristicEvent
     template_name = 'tourism/touristicevent_meta.html'
 

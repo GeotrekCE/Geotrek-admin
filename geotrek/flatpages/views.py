@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.db.models import Q
 from django.views.generic import CreateView, UpdateView, DetailView
 
-from geotrek.common.views import MetaObjectsMixin
+from geotrek.common.views import MetaMixin
 from geotrek.flatpages.serializers import FlatPageSerializer
 from geotrek.flatpages import models as flatpages_models
 
@@ -51,6 +51,6 @@ class FlatPageUpdate(FlatPageEditMixin, UpdateView):
     pass
 
 
-class FlatPageMeta(DetailView, MetaObjectsMixin):
+class FlatPageMeta(MetaMixin, DetailView):
     model = flatpages_models.FlatPage
     template_name = 'flatpages/flatpage_meta.html'

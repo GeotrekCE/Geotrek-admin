@@ -24,7 +24,7 @@ from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.models import Attachment, RecordSource, TargetPortal
-from geotrek.common.views import FormsetMixin, MetaObjectsMixin, PublicOrReadPermMixin, DocumentPublic, MarkupPublic
+from geotrek.common.views import FormsetMixin, MetaMixin, PublicOrReadPermMixin, DocumentPublic, MarkupPublic
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.trekking.forms import SyncRandoForm
@@ -254,7 +254,7 @@ class TrekDelete(MapEntityDelete):
         return super(TrekDelete, self).dispatch(*args, **kwargs)
 
 
-class TrekMeta(DetailView, MetaObjectsMixin):
+class TrekMeta(MetaMixin, DetailView):
     model = Trek
     template_name = 'trekking/trek_meta.html'
 

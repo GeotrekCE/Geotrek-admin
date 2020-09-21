@@ -13,7 +13,7 @@ from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.models import RecordSource, TargetPortal
-from geotrek.common.views import DocumentPublic, MarkupPublic, MetaObjectsMixin
+from geotrek.common.views import DocumentPublic, MarkupPublic, MetaMixin
 
 from .filters import DiveFilterSet
 from .forms import DiveForm
@@ -137,7 +137,7 @@ class DiveDelete(MapEntityDelete):
         return super(DiveDelete, self).dispatch(*args, **kwargs)
 
 
-class DiveMeta(DetailView, MetaObjectsMixin):
+class DiveMeta(MetaMixin, DetailView):
     model = Dive
     template_name = 'diving/dive_meta.html'
 
