@@ -2,16 +2,31 @@
 CHANGELOG
 =========
 
-2.37.1.dev0
+2.38.0 (2020-09-21)
 -------------------
+
+**New Feature**
+
+- Add facebook informations on target Portals
+- Add description and title on target Portals
+- Synchronize multiple meta informations with target portals.
+- Add booklet pdfs with setting USE_BOOKLET_PDF
 
 **Bug fixes**
 
--
+- Fix stake deletion list
+- Fix generation of stake automatically created with factories
+
+**Minor changes**
+
+- Fix use of screamshotter and convertit for development
+- Use official postgis docker image
+- Change of legend size on pdfs
 
 **Doc fixes**
 
 - Update suricate configuration doc
+- Update anonymize report documentation
 
 
 2.37.0 (2020-09-16)
