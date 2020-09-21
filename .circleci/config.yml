@@ -65,6 +65,8 @@ jobs:
       ENV: tests
       SECRET_KEY: foo
       CUSTOM_SETTINGS_FILE: ""
+      CONVERSION_HOST: localhost
+      CAPTURE_HOST: localhost
     working_directory: /opt/geotrek-admin
     steps:
       - run: apt-get update -q && apt-get install -q -y npm
