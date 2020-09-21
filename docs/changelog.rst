@@ -18,6 +18,7 @@ CHANGELOG
 - Fix APIDAE parser when there is no element
 - Fix booklet generation with pdfimpose
 
+**Doc fixes**
 
 2.38.1 (2020-09-22)
 -------------------
