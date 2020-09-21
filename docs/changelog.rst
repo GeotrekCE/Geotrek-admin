@@ -9,6 +9,10 @@ CHANGELOG
 
 -
 
+**Doc fixes**
+
+- Update suricate configuration doc
+
 
 2.37.0 (2020-09-16)
 -------------------
