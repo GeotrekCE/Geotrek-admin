@@ -43,19 +43,16 @@ from .models import Theme
 from .serializers import ThemeSerializer
 
 
-class Meta(TemplateView):
-    template_name = 'common/meta.html'
-
+class MetaObjectsMixin(object):
     def get_context_data(self, **kwargs):
         lang = self.request.GET['lang']
         portal = self.request.GET.get('portal')
-        context = super(Meta, self).get_context_data(**kwargs)
+        context = super(MetaObjectsMixin, self).get_context_data(**kwargs)
         context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
         context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
         context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
         context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
         translation.activate(lang)
-        context['META_DESCRIPTION'] = _('Geotrek is a web app allowing you to prepare your next trekking trip !')
         context['META_TITLE'] = _('Geotrek Rando')
         translation.deactivate()
         if portal:
@@ -65,8 +62,27 @@ class Meta(TemplateView):
                 context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], target_portal.facebook_image_url)
                 context['FACEBOOK_IMAGE_WIDTH'] = target_portal.facebook_image_width
                 context['FACEBOOK_IMAGE_HEIGHT'] = target_portal.facebook_image_height
-                context['META_DESCRIPTION'] = getattr(target_portal, 'description_{}'.format(lang))
                 context['META_TITLE'] = getattr(target_portal, 'title_{}'.format(lang))
+            except TargetPortal.DoesNotExist:
+                pass
+        return context
+
+
+class Meta(TemplateView, MetaObjectsMixin):
+    template_name = 'common/meta.html'
+
+    def get_context_data(self, **kwargs):
+        super(Meta, self).get_context_data()
+        lang = self.request.GET['lang']
+        portal = self.request.GET.get('portal')
+        context = super(Meta, self).get_context_data(**kwargs)
+        translation.activate(lang)
+        context['META_DESCRIPTION'] = _('Geotrek is a web app allowing you to prepare your next trekking trip !')
+        translation.deactivate()
+        if portal:
+            try:
+                target_portal = TargetPortal.objects.get(name=portal)
+                context['META_DESCRIPTION'] = getattr(target_portal, 'description_{}'.format(lang))
             except TargetPortal.DoesNotExist:
                 pass
 
@@ -261,31 +277,6 @@ class UserArgMixin(object):
         kwargs = super(UserArgMixin, self).get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
-
-
-class MetaObjectsMixin(object):
-    def get_context_data(self, **kwargs):
-        lang = self.request.GET['lang']
-        portal = self.request.GET['portal']
-        context = super(MetaObjectsMixin, self).get_context_data(**kwargs)
-        context['FACEBOOK_APP_ID'] = settings.FACEBOOK_APP_ID
-        context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], settings.FACEBOOK_IMAGE)
-        context['FACEBOOK_IMAGE_WIDTH'] = settings.FACEBOOK_IMAGE_WIDTH
-        context['FACEBOOK_IMAGE_HEIGHT'] = settings.FACEBOOK_IMAGE_HEIGHT
-        translation.activate(lang)
-        context['META_TITLE'] = _('Geotrek Rando')
-        translation.deactivate()
-        if portal:
-            try:
-                target_portal = TargetPortal.objects.get(name=portal)
-                context['FACEBOOK_APP_ID'] = target_portal.facebook_id
-                context['FACEBOOK_IMAGE'] = urljoin(self.request.GET['rando_url'], target_portal.facebook_image_url)
-                context['FACEBOOK_IMAGE_WIDTH'] = target_portal.facebook_image_width
-                context['FACEBOOK_IMAGE_HEIGHT'] = target_portal.facebook_image_height
-                context['META_TITLE'] = getattr(target_portal, 'title_{}'.format(lang))
-            except TargetPortal.DoesNotExist:
-                pass
-        return context
 
 
 def import_file(uploaded, parser, encoding, user_pk):
