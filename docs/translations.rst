@@ -1,5 +1,5 @@
 ============
-Translations
+Traductions
 ============
 
 Contribuer à la traduction
@@ -22,7 +22,7 @@ Créer un compte
 
 -  Remplir le formulaire d’inscription
 
-   .. figure:: uploads/6662ec15d73e351582bfbafc1583b900/image.png
+   .. figure:: ./images/translating/weblate-create-account.png
       :alt: image
 
       image
@@ -42,7 +42,7 @@ Naviguer par projet
 
 -  Aller dans “Projet > Parcourir tous les projets”
 
-   .. figure:: uploads/0647bedaf3a1a59eac28d544f3082097/image.png
+   .. figure:: ./images/translating/weblate-project-menu.png
       :alt: image
 
       image
@@ -53,7 +53,7 @@ Naviguer par projet
 
 -  Choisir la langue à traduire
 
-   .. figure:: uploads/e50ee8ea097a4d7ac8d1cbfaafd1765b/image.png
+   .. figure:: ./images/translating/weblate-list-of-languages.png
       :alt: image
 
       image
@@ -82,7 +82,7 @@ Fonctionnalités intéressantes
 -  Détection automatique des points à vérifier (incohérences avec les
    autres projets, ponctuations…)
 
-   .. figure:: https://gitlab.makina-corpus.net/geotrek/sysadmin/uploads/2cec6d597ec2a21b72bcb2d608aaca6d/image.png
+   .. figure:: ./images/translating/weblate-check.png
       :alt: image
 
       image
@@ -93,7 +93,7 @@ Fonctionnalités intéressantes
    ou encore `“Invalide
    geometry” <https://weblate.makina-corpus.net/translate/geotrek-admin/tourism/fr/?checksum=62a4aced892dac8e>`__
 
-   .. figure:: https://gitlab.makina-corpus.net/geotrek/sysadmin/uploads/5d8ed1a2c1d4626bcb91de6a70407c6e/image.png
+   .. figure:: ./images/translating/weblate-check-list-occurrences.png
       :alt: image
 
       image
@@ -101,4 +101,5 @@ Fonctionnalités intéressantes
 -  Chaque traduction génère un lien permanent (picto |image| à droite de
    “Traduction”)
 
-.. |image| image:: https://gitlab.makina-corpus.net/geotrek/sysadmin/uploads/dd752ca6a40e790d2be7cae14573d74a/image.png
+.. |image| image:: ./images/translating/link.png
+
