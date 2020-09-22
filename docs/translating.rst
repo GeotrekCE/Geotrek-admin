@@ -2,14 +2,11 @@
 TRADUCTIONS
 ============
 
-Contribuer à la traduction
-==========================
-
 Les traductions peuvent se faire en ligne sur
 https://weblate.makina-corpus.net/
 
-Pour traduire
--------------
+Commencer à traduire
+--------------------
 
 -  Créer un compte
 -  Naviguer par projet
