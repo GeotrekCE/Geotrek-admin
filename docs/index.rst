@@ -16,6 +16,7 @@ Contents:
    sensitivity
    faq
    user-manual
+   translating
    design
    docker
    development

@@ -102,4 +102,3 @@ Fonctionnalités intéressantes
    “Traduction”)
 
 .. |image| image:: ./images/translating/link.png
-
