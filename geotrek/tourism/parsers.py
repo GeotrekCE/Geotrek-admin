@@ -91,6 +91,8 @@ class ApidaeParser(AttachmentParserMixin, Parser):
 
     @property
     def items(self):
+        if self.nb == 0:
+            return []
         return self.root['objetsTouristiques']
 
     def next_row(self):

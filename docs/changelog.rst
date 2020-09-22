@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix APIDAE parser when there is no element
 
 **Doc fixes**
 

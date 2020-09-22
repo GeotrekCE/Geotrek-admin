@@ -255,6 +255,20 @@ class ParserTests(TranslationResetMixin, TestCase):
         self.assertEqual(TouristicContent.objects.count(), 1)
 
     @mock.patch('requests.get')
+    def test_no_event_apidae(self, mocked):
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeNoEvent.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        mocked.return_value.content = b'Fake image'
+        FileType.objects.create(type="Photographie")
+        output = io.StringIO()
+        call_command('import', 'geotrek.tourism.parsers.TouristicEventApidaeParser', verbosity=2, stdout=output)
+        self.assertEqual(TouristicEvent.objects.count(), 0)
+
+    @mock.patch('requests.get')
     def test_create_event_apidae(self, mocked):
         def mocked_json():
             filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeEvent.json')
