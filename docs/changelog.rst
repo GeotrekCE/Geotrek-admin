@@ -2,16 +2,12 @@
 CHANGELOG
 =========
 
-2.38.1.dev0
+2.38.1 (2020-09-22)
 -------------------
 
 **Bug fixes**
 
--
-
-**Doc fixes**
-
--
+- Fix USE_BOOKLET_PDF setting
 
 
 2.38.0 (2020-09-21)
