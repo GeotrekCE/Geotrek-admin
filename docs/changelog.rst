@@ -20,6 +20,9 @@ CHANGELOG
 
 **Doc fixes**
 
+- Add doc for translating
+
+
 2.38.1 (2020-09-22)
 -------------------
 
