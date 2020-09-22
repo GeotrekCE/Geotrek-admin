@@ -5,11 +5,11 @@ Traductions
 Contribuer à la traduction
 ==========================
 
-Les traductions se font en ligne sur
+Les traductions peuvent se faire en ligne sur
 https://weblate.makina-corpus.net/
 
-Traduire
---------
+Pour traduire
+-------------
 
 -  Créer un compte
 -  Naviguer par projet
@@ -24,8 +24,6 @@ Créer un compte
 
    .. figure:: ./images/translating/weblate-create-account.png
       :alt: image
-
-      image
 
 -  Valider l’email
 
@@ -45,8 +43,6 @@ Naviguer par projet
    .. figure:: ./images/translating/weblate-project-menu.png
       :alt: image
 
-      image
-
 -  Sélectionner le projet auquel contribuer dans la liste
 
 -  Aller dans l’onglet “Langues”
@@ -55,8 +51,6 @@ Naviguer par projet
 
    .. figure:: ./images/translating/weblate-list-of-languages.png
       :alt: image
-
-      image
 
 Naviguer par langue
 ~~~~~~~~~~~~~~~~~~~
@@ -71,34 +65,25 @@ Et c’est parti !
 officielle <https://docs.weblate.org/en/latest/user/translating.html>`__
 de l’outil Weblate pour la traduction.
 
-Fonctionnalités intéressantes
+Fonctionnalités de traduction
 -----------------------------
 
--  Vue d’ensemble des traductions par langue
+Weblate permet une vue d’ensemble des traductions par langue et par module.
+Il est possible d'afficher les erreurs de traduction ainsi que le reste à traduire.
 
--  Liens directs vers les chaînes à vérifier, les erreurs de
-   traductions, le reste à traduire
+Weblate permet de détecter automatiquement les points à vérifier, tels que
+des incohérences incohérences entre les autres modules projets, les ponctuations…
 
--  Détection automatique des points à vérifier (incohérences avec les
-   autres projets, ponctuations…)
+.. figure:: ./images/translating/weblate-check.png
+   :alt: image
 
-   .. figure:: ./images/translating/weblate-check.png
-      :alt: image
+La liste des autres occurrences dans les autres composants permet de vérifier
+   la cohérence.
 
-      image
+.. figure:: ./images/translating/weblate-check-list-occurrences.png
+   :alt: image
 
--  Liste des autres occurrences dans les autres composants pour vérifier
-   la cohérence (meilleur exemple,
-   `“thumbnail” <https://weblate.makina-corpus.net/translate/geotrek-admin/tourism/fr/?checksum=43c1486ce24db7ad>`__,
-   ou encore `“Invalide
-   geometry” <https://weblate.makina-corpus.net/translate/geotrek-admin/tourism/fr/?checksum=62a4aced892dac8e>`__
-
-   .. figure:: ./images/translating/weblate-check-list-occurrences.png
-      :alt: image
-
-      image
-
--  Chaque traduction génère un lien permanent (picto |image| à droite de
+Chaque traduction génère un lien permanent (picto |image| à droite de
    “Traduction”)
 
 .. |image| image:: ./images/translating/link.png
