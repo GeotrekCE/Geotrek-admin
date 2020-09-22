@@ -843,6 +843,8 @@ class Command(BaseCommand):
         from pdfimpose import options
         import pdfimpose
         arguments = options.process_options(['--size', '2x1', name_1])
+        for x in arguments["pages"]:
+            x.pdf.strict = False
         new_pdf = pdfimpose._legacy_pypdf_impose(
             matrix=pdfimpose.ImpositionMatrix(arguments["fold"], arguments["bind"]),
             pages=arguments["pages"],
