@@ -72,18 +72,18 @@ Weblate permet une vue d’ensemble des traductions par langue et par module.
 Il est possible d'afficher les erreurs de traduction ainsi que le reste à traduire.
 
 Weblate permet de détecter automatiquement les points à vérifier, tels que
-des incohérences incohérences entre les autres modules projets, les ponctuations…
+des incohérences incohérences entre les autres modules projets, les ponctuations
 
 .. figure:: ./images/translating/weblate-check.png
    :alt: image
 
 La liste des autres occurrences dans les autres composants permet de vérifier
-   la cohérence.
+la cohérence.
 
 .. figure:: ./images/translating/weblate-check-list-occurrences.png
    :alt: image
 
 Chaque traduction génère un lien permanent (picto |image| à droite de
-   “Traduction”)
+“Traduction”).
 
 .. |image| image:: ./images/translating/link.png
