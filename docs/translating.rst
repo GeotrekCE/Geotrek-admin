@@ -1,5 +1,5 @@
 ============
-Traductions
+TRADUCTIONS
 ============
 
 Contribuer à la traduction
