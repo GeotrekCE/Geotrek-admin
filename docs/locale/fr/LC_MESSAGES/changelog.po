@@ -1,0 +1,6181 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2013-2014, Makina Corpus
+# This file is distributed under the same license as the Geotrek package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Geotrek 2.38\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-09-22 12:11+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+#: ../../changelog.rst:3
+msgid "CHANGELOG"
+msgstr ""
+
+#: ../../changelog.rst:6
+msgid "2.38.1.dev0"
+msgstr ""
+
+#: ../../changelog.rst:8 ../../changelog.rst:27 ../../changelog.rst:46
+#: ../../changelog.rst:58 ../../changelog.rst:74 ../../changelog.rst:86
+#: ../../changelog.rst:103 ../../changelog.rst:120 ../../changelog.rst:136
+#: ../../changelog.rst:144 ../../changelog.rst:156 ../../changelog.rst:164
+#: ../../changelog.rst:173 ../../changelog.rst:183 ../../changelog.rst:191
+#: ../../changelog.rst:214 ../../changelog.rst:257 ../../changelog.rst:291
+#: ../../changelog.rst:300 ../../changelog.rst:313 ../../changelog.rst:326
+#: ../../changelog.rst:342 ../../changelog.rst:358 ../../changelog.rst:366
+#: ../../changelog.rst:374 ../../changelog.rst:384 ../../changelog.rst:392
+#: ../../changelog.rst:431 ../../changelog.rst:439 ../../changelog.rst:447
+#: ../../changelog.rst:464 ../../changelog.rst:479 ../../changelog.rst:488
+#: ../../changelog.rst:501 ../../changelog.rst:511 ../../changelog.rst:523
+#: ../../changelog.rst:536 ../../changelog.rst:545 ../../changelog.rst:553
+#: ../../changelog.rst:566 ../../changelog.rst:578 ../../changelog.rst:602
+#: ../../changelog.rst:623 ../../changelog.rst:641 ../../changelog.rst:664
+#: ../../changelog.rst:680 ../../changelog.rst:705 ../../changelog.rst:725
+#: ../../changelog.rst:733 ../../changelog.rst:742 ../../changelog.rst:775
+#: ../../changelog.rst:784 ../../changelog.rst:797 ../../changelog.rst:807
+#: ../../changelog.rst:816 ../../changelog.rst:824 ../../changelog.rst:836
+#: ../../changelog.rst:846 ../../changelog.rst:859 ../../changelog.rst:870
+#: ../../changelog.rst:878 ../../changelog.rst:886 ../../changelog.rst:911
+#: ../../changelog.rst:923 ../../changelog.rst:931 ../../changelog.rst:952
+#: ../../changelog.rst:960 ../../changelog.rst:969 ../../changelog.rst:977
+#: ../../changelog.rst:1012 ../../changelog.rst:1021 ../../changelog.rst:1035
+#: ../../changelog.rst:1056 ../../changelog.rst:1075 ../../changelog.rst:1083
+#: ../../changelog.rst:1095 ../../changelog.rst:1104 ../../changelog.rst:1118
+#: ../../changelog.rst:1135 ../../changelog.rst:1151 ../../changelog.rst:1171
+#: ../../changelog.rst:1185 ../../changelog.rst:1205 ../../changelog.rst:1215
+#: ../../changelog.rst:1232 ../../changelog.rst:1244 ../../changelog.rst:1257
+#: ../../changelog.rst:1275 ../../changelog.rst:1291 ../../changelog.rst:1314
+#: ../../changelog.rst:1351 ../../changelog.rst:1375 ../../changelog.rst:1390
+#: ../../changelog.rst:1401 ../../changelog.rst:1417 ../../changelog.rst:1436
+#: ../../changelog.rst:1445 ../../changelog.rst:1453 ../../changelog.rst:1461
+#: ../../changelog.rst:1488 ../../changelog.rst:1519 ../../changelog.rst:1527
+#: ../../changelog.rst:1546 ../../changelog.rst:1555 ../../changelog.rst:1579
+#: ../../changelog.rst:1610 ../../changelog.rst:1624 ../../changelog.rst:1638
+#: ../../changelog.rst:1648 ../../changelog.rst:1674 ../../changelog.rst:1682
+#: ../../changelog.rst:1698 ../../changelog.rst:1707 ../../changelog.rst:1721
+#: ../../changelog.rst:1729 ../../changelog.rst:1744 ../../changelog.rst:1756
+#: ../../changelog.rst:1765 ../../changelog.rst:1778 ../../changelog.rst:1795
+#: ../../changelog.rst:1805 ../../changelog.rst:1816 ../../changelog.rst:1830
+#: ../../changelog.rst:1840 ../../changelog.rst:1847 ../../changelog.rst:1855
+#: ../../changelog.rst:1864 ../../changelog.rst:1882 ../../changelog.rst:1898
+#: ../../changelog.rst:1912 ../../changelog.rst:1936 ../../changelog.rst:1973
+#: ../../changelog.rst:1982 ../../changelog.rst:1994 ../../changelog.rst:2012
+#: ../../changelog.rst:2017 ../../changelog.rst:2025 ../../changelog.rst:2035
+#: ../../changelog.rst:2043 ../../changelog.rst:2052 ../../changelog.rst:2077
+#: ../../changelog.rst:2086 ../../changelog.rst:2098 ../../changelog.rst:2112
+#: ../../changelog.rst:2128 ../../changelog.rst:2161 ../../changelog.rst:2177
+#: ../../changelog.rst:2186 ../../changelog.rst:2194 ../../changelog.rst:2202
+#: ../../changelog.rst:2212 ../../changelog.rst:2241 ../../changelog.rst:2264
+#: ../../changelog.rst:2277 ../../changelog.rst:2296 ../../changelog.rst:2329
+#: ../../changelog.rst:2376 ../../changelog.rst:2388 ../../changelog.rst:2419
+#: ../../changelog.rst:2447 ../../changelog.rst:2457 ../../changelog.rst:2465
+#: ../../changelog.rst:2489 ../../changelog.rst:2507 ../../changelog.rst:2518
+#: ../../changelog.rst:2675 ../../changelog.rst:2694 ../../changelog.rst:2703
+msgid "**Bug fixes**"
+msgstr ""
+
+#: ../../changelog.rst:12 ../../changelog.rst:38
+msgid "**Doc fixes**"
+msgstr ""
+
+#: ../../changelog.rst:14
+msgid "Add translation documentation"
+msgstr ""
+
+#: ../../changelog.rst:18
+msgid "2.38.0 (2020-09-21)"
+msgstr ""
+
+#: ../../changelog.rst:20 ../../changelog.rst:50 ../../changelog.rst:66
+#: ../../changelog.rst:82 ../../changelog.rst:94 ../../changelog.rst:111
+#: ../../changelog.rst:128 ../../changelog.rst:148
+msgid "**New Feature**"
+msgstr ""
+
+#: ../../changelog.rst:22
+msgid "Add facebook informations on target Portals"
+msgstr ""
+
+#: ../../changelog.rst:23
+msgid "Add description and title on target Portals"
+msgstr ""
+
+#: ../../changelog.rst:24
+msgid "Synchronize multiple meta informations with target portals."
+msgstr ""
+
+#: ../../changelog.rst:25
+msgid "Add booklet pdfs with setting USE_BOOKLET_PDF"
+msgstr ""
+
+#: ../../changelog.rst:29
+msgid "Fix stake deletion list"
+msgstr ""
+
+#: ../../changelog.rst:30
+msgid "Fix generation of stake automatically created with factories"
+msgstr ""
+
+#: ../../changelog.rst:32 ../../changelog.rst:99 ../../changelog.rst:210
+#: ../../changelog.rst:285 ../../changelog.rst:321 ../../changelog.rst:338
+#: ../../changelog.rst:455 ../../changelog.rst:474 ../../changelog.rst:497
+#: ../../changelog.rst:898 ../../changelog.rst:919 ../../changelog.rst:1029
+#: ../../changelog.rst:1048 ../../changelog.rst:1064 ../../changelog.rst:1087
+#: ../../changelog.rst:1109 ../../changelog.rst:1155 ../../changelog.rst:1201
+#: ../../changelog.rst:1224 ../../changelog.rst:1236 ../../changelog.rst:1249
+#: ../../changelog.rst:1270 ../../changelog.rst:1296 ../../changelog.rst:1318
+#: ../../changelog.rst:1334 ../../changelog.rst:1343 ../../changelog.rst:1481
+#: ../../changelog.rst:1496 ../../changelog.rst:1509 ../../changelog.rst:1536
+#: ../../changelog.rst:1570 ../../changelog.rst:1584 ../../changelog.rst:1603
+#: ../../changelog.rst:1619 ../../changelog.rst:1633 ../../changelog.rst:1652
+#: ../../changelog.rst:1670 ../../changelog.rst:1686 ../../changelog.rst:1694
+#: ../../changelog.rst:2592
+msgid "**Minor changes**"
+msgstr ""
+
+#: ../../changelog.rst:34
+msgid "Fix use of screamshotter and convertit for development"
+msgstr ""
+
+#: ../../changelog.rst:35
+msgid "Use official postgis docker image"
+msgstr ""
+
+#: ../../changelog.rst:36
+msgid "Change of legend size on pdfs"
+msgstr ""
+
+#: ../../changelog.rst:40
+msgid "Update suricate configuration doc"
+msgstr ""
+
+#: ../../changelog.rst:44
+msgid "2.37.0 (2020-09-16)"
+msgstr ""
+
+#: ../../changelog.rst:48
+msgid "Fix script install"
+msgstr ""
+
+#: ../../changelog.rst:52
+msgid "Add second external id api v2 for treks"
+msgstr ""
+
+#: ../../changelog.rst:56
+msgid "2.36.1 (2020-09-04)"
+msgstr ""
+
+#: ../../changelog.rst:60
+msgid "Fix crash in json DEM generation if the topology is a point"
+msgstr ""
+
+#: ../../changelog.rst:64
+msgid "2.36.0 (2020-09-01)"
+msgstr ""
+
+#: ../../changelog.rst:68
+msgid "Allow to (un)publish some cities/district/areas on Geotrek-rando/mobile"
+msgstr ""
+
+#: ../../changelog.rst:72
+msgid "2.35.1 (2020-08-24)"
+msgstr ""
+
+#: ../../changelog.rst:76
+msgid "Really add an id field to each SQL view"
+msgstr ""
+
+#: ../../changelog.rst:80
+msgid "2.35.0 (2020-08-21)"
+msgstr ""
+
+#: ../../changelog.rst:84
+msgid "Allow for custom SQL to be run at install/upgrade"
+msgstr ""
+
+#: ../../changelog.rst:88
+msgid "Add an id field to each SQL view to allow QGIS to open them"
+msgstr ""
+
+#: ../../changelog.rst:92
+msgid "2.34.0 (2020-07-10)"
+msgstr ""
+
+#: ../../changelog.rst:96
+msgid ""
+"Add reservation system/id fields to treks to allow itinerancy online "
+"booking"
+msgstr ""
+
+#: ../../changelog.rst:97
+msgid "Add category code (used in Geotrek-rando) to categories list in admin"
+msgstr ""
+
+#: ../../changelog.rst:101
+msgid "Add install scripts for Ubuntu packages"
+msgstr ""
+
+#: ../../changelog.rst:105
+msgid "Fix icons display in categories list in admin"
+msgstr ""
+
+#: ../../changelog.rst:109
+msgid "2.33.13 (2020-07-01)"
+msgstr ""
+
+#: ../../changelog.rst:113
+msgid "Add fields to reports for Suricate support"
+msgstr ""
+
+#: ../../changelog.rst:114
+msgid ""
+"Add helper to send report to Suricate API on save, if setting "
+"`SURICATE_REPORT_ENABLED` is `True`"
+msgstr ""
+
+#: ../../changelog.rst:118
+msgid "2.33.12 (2020-06-23)"
+msgstr ""
+
+#: ../../changelog.rst:122
+msgid "Change doc flatpages-flatpages.jpg to png"
+msgstr ""
+
+#: ../../changelog.rst:123
+msgid "Fix line topologies create path"
+msgstr ""
+
+#: ../../changelog.rst:124
+msgid "Fix svg's fixtures wich cannot be tranform as png with cairosvg"
+msgstr ""
+
+#: ../../changelog.rst:125
+msgid "Fix duration's filter mobile"
+msgstr ""
+
+#: ../../changelog.rst:126
+msgid "Fix report email OSM coords"
+msgstr ""
+
+#: ../../changelog.rst:130
+msgid "Synchro mobile get only used practice, themes, networks ..."
+msgstr ""
+
+#: ../../changelog.rst:134
+msgid "2.33.11 (2020-06-05)"
+msgstr ""
+
+#: ../../changelog.rst:138
+msgid "Fix long attachments name synchro"
+msgstr ""
+
+#: ../../changelog.rst:142
+msgid "2.33.10 (2020-06-02)"
+msgstr ""
+
+#: ../../changelog.rst:146
+msgid "Fix migration is_image 0011_attachment_add_is_image"
+msgstr ""
+
+#: ../../changelog.rst:150
+msgid "Allow to clean attachments not used anymore (clean_attachments)"
+msgstr ""
+
+#: ../../changelog.rst:154
+msgid "2.33.9 (2020-06-02)"
+msgstr ""
+
+#: ../../changelog.rst:158
+msgid "Fix small treks profile"
+msgstr ""
+
+#: ../../changelog.rst:162
+msgid "2.33.8 (2020-05-22)"
+msgstr ""
+
+#: ../../changelog.rst:166
+msgid "Fix package install if geotrek user already exists"
+msgstr ""
+
+#: ../../changelog.rst:167
+msgid "Attachment download error breaks global import"
+msgstr ""
+
+#: ../../changelog.rst:171
+msgid "2.33.7 (2020-05-18)"
+msgstr ""
+
+#: ../../changelog.rst:175
+msgid "Show blades without line in signage detail page"
+msgstr ""
+
+#: ../../changelog.rst:176
+msgid "Fix information desks editing"
+msgstr ""
+
+#: ../../changelog.rst:177
+msgid "Fix trek and POI filtering"
+msgstr ""
+
+#: ../../changelog.rst:181
+msgid "2.33.6 (2020-05-14)"
+msgstr ""
+
+#: ../../changelog.rst:185
+msgid "Don't overwrite initial data in existing database on first install"
+msgstr ""
+
+#: ../../changelog.rst:189
+msgid "2.33.5 (2020-05-13)"
+msgstr ""
+
+#: ../../changelog.rst:193
+msgid "Add a scrollbar to signage and blade forms"
+msgstr ""
+
+#: ../../changelog.rst:194
+msgid "Fix city affectation for looping paths"
+msgstr ""
+
+#: ../../changelog.rst:195
+msgid "Fix attachment download with redirection"
+msgstr ""
+
+#: ../../changelog.rst:196
+msgid "Fix logout next page"
+msgstr ""
+
+#: ../../changelog.rst:197
+msgid "Fix blade/line creation crash"
+msgstr ""
+
+#: ../../changelog.rst:198
+msgid "Fix lines layout in blade detail page"
+msgstr ""
+
+#: ../../changelog.rst:200 ../../changelog.rst:274
+msgid "**Upgrade notes**"
+msgstr ""
+
+#: ../../changelog.rst:202
+msgid ""
+"If you installed version 2.33.3 before (no matter if you upgrade directly"
+" or from 2.33.4), you should get errors like "
+"\"django.db.utils.ProgrammingError: column \"deleted\" of relation "
+"signage_blade\". To fix them, run ``sudo geotrek migrate --fake signage "
+"0016;``."
+msgstr ""
+
+#: ../../changelog.rst:208
+msgid "2.33.4 (2020-05-04)"
+msgstr ""
+
+#: ../../changelog.rst:212
+msgid "Improve blade CSV export"
+msgstr ""
+
+#: ../../changelog.rst:216
+msgid "Fix ordering of blades"
+msgstr ""
+
+#: ../../changelog.rst:217
+msgid "Fix empty attachment link in admin list"
+msgstr ""
+
+#: ../../changelog.rst:218
+msgid "Fix some french translations"
+msgstr ""
+
+#: ../../changelog.rst:219
+msgid "Fix redirections when downloading attachments in parsers"
+msgstr ""
+
+#: ../../changelog.rst:220
+msgid "Fix migrations when DB contains a deleted blade"
+msgstr ""
+
+#: ../../changelog.rst:221
+msgid "Fix stdout flush in sync commands"
+msgstr ""
+
+#: ../../changelog.rst:223 ../../changelog.rst:264 ../../changelog.rst:427
+msgid "**Maintenance**"
+msgstr ""
+
+#: ../../changelog.rst:225
+msgid "Upgrade from Django 2.0 to Django 2.2"
+msgstr ""
+
+#: ../../changelog.rst:226
+msgid "Fix deprecation warnings"
+msgstr ""
+
+#: ../../changelog.rst:230
+msgid "2.33.3 (2020-04-28)"
+msgstr ""
+
+#: ../../changelog.rst:232 ../../changelog.rst:238 ../../changelog.rst:244
+msgid "No changes. Just force a new build in CI"
+msgstr ""
+
+#: ../../changelog.rst:236
+msgid "2.33.2 (2020-04-28)"
+msgstr ""
+
+#: ../../changelog.rst:242
+msgid "2.33.1 (2020-04-28)"
+msgstr ""
+
+#: ../../changelog.rst:248
+msgid "2.33.0 (2020-04-28)"
+msgstr ""
+
+#: ../../changelog.rst:250 ../../changelog.rst:334
+msgid "**BREAKING CHANGES**"
+msgstr ""
+
+#: ../../changelog.rst:252
+msgid "New installation method (Ubuntu packaging)"
+msgstr ""
+
+#: ../../changelog.rst:253
+msgid "Alternative installation method (Docker, for experts only)"
+msgstr ""
+
+#: ../../changelog.rst:254
+msgid "Remove name field from feedback report, to be GDPR compliant"
+msgstr ""
+
+#: ../../changelog.rst:255
+msgid "Rename functions, triggers and sequences in database"
+msgstr ""
+
+#: ../../changelog.rst:259
+msgid "Fix timeout when saving long treks (increase computation performances)"
+msgstr ""
+
+#: ../../changelog.rst:260
+msgid "Fix mecanism to put tables in postgresql schemas"
+msgstr ""
+
+#: ../../changelog.rst:261
+msgid "Better download errors handling in parsers"
+msgstr ""
+
+#: ../../changelog.rst:262
+msgid "Make sure signage and related blade have the same related structure"
+msgstr ""
+
+#: ../../changelog.rst:266
+msgid "Upgrade from Django 1.11 to Django 2.0"
+msgstr ""
+
+#: ../../changelog.rst:268 ../../changelog.rst:403 ../../changelog.rst:414
+#: ../../changelog.rst:614 ../../changelog.rst:632 ../../changelog.rst:753
+#: ../../changelog.rst:792 ../../changelog.rst:855 ../../changelog.rst:998
+#: ../../changelog.rst:1006 ../../changelog.rst:1127 ../../changelog.rst:1164
+#: ../../changelog.rst:1192 ../../changelog.rst:1367 ../../changelog.rst:1385
+#: ../../changelog.rst:1412 ../../changelog.rst:1430 ../../changelog.rst:1476
+#: ../../changelog.rst:1505 ../../changelog.rst:1590 ../../changelog.rst:1660
+#: ../../changelog.rst:1717 ../../changelog.rst:1737 ../../changelog.rst:1774
+#: ../../changelog.rst:1791 ../../changelog.rst:1824 ../../changelog.rst:1874
+#: ../../changelog.rst:1892 ../../changelog.rst:1907 ../../changelog.rst:1927
+#: ../../changelog.rst:1959 ../../changelog.rst:1990 ../../changelog.rst:2004
+#: ../../changelog.rst:2068 ../../changelog.rst:2106 ../../changelog.rst:2120
+#: ../../changelog.rst:2150 ../../changelog.rst:2173 ../../changelog.rst:2222
+#: ../../changelog.rst:2316 ../../changelog.rst:2405 ../../changelog.rst:2474
+#: ../../changelog.rst:2527 ../../changelog.rst:2622
+msgid "**New features**"
+msgstr ""
+
+#: ../../changelog.rst:270
+msgid ""
+"Allow to attach interventions to blades, paths, trails, treks, POIs and "
+"services in addition to infrastructures and signages"
+msgstr ""
+
+#: ../../changelog.rst:271
+msgid ""
+"Allow to merge dropdown list items in admin. Check them in list view and "
+"choose \"Action: Merge\""
+msgstr ""
+
+#: ../../changelog.rst:272
+msgid "Add a django command to erase email from feedback reports after 365 days"
+msgstr ""
+
+#: ../../changelog.rst:276
+msgid ""
+"The installation method has been totally rewritten with an Ubuntu "
+"packaging (``apt install geotrek-admin``), only available for Ubuntu "
+"18.04 actually."
+msgstr ""
+
+#: ../../changelog.rst:277
+msgid ""
+"If you upgrade from Geotrek-admin <= 2.32, then apply the dedicated "
+"migration script. See "
+"https://geotrek.readthedocs.io/en/master/installation.html#upgrade-from-"
+"geotrek-admin-2-32."
+msgstr ""
+
+#: ../../changelog.rst:278
+msgid ""
+"Geotrek-admin is now automatically installed in ``/opt/geotrek-admin/`` "
+"directory and the advanced configuration file moved to ``/opt/geotrek-"
+"admin/var/conf/custom.py``. See advanced configuration documentation for "
+"details."
+msgstr ""
+
+#: ../../changelog.rst:279
+msgid ""
+"The automatic NGINX configuration can be overriden in ``/opt/geotrek-"
+"admin/var/conf/nginx.conf.in`` file. See NGINX configuration "
+"documentation for details."
+msgstr ""
+
+#: ../../changelog.rst:283
+msgid "2.32.11 (2020-03-17)"
+msgstr ""
+
+#: ../../changelog.rst:287
+msgid "Add UML digrams of data model to documentation"
+msgstr ""
+
+#: ../../changelog.rst:288
+msgid "Remove URL in weblinks dropdown"
+msgstr ""
+
+#: ../../changelog.rst:289
+msgid "Move ambiance after description teaser"
+msgstr ""
+
+#: ../../changelog.rst:293
+msgid "Fix a WeasyPrint warning"
+msgstr ""
+
+#: ../../changelog.rst:294
+msgid "Fix zoning filters on path"
+msgstr ""
+
+#: ../../changelog.rst:298
+msgid "2.32.10 (2020-03-11)"
+msgstr ""
+
+#: ../../changelog.rst:302
+msgid "Fix POI, touristic contents and touristic events sort in mobile v3 API"
+msgstr ""
+
+#: ../../changelog.rst:303
+msgid "Change Lambert93 signage coordinates format"
+msgstr ""
+
+#: ../../changelog.rst:304
+msgid "Fix TourInSoftparser with # inside <MoyenDeCom> values"
+msgstr ""
+
+#: ../../changelog.rst:305
+msgid "Show File and URL fields as required in attachement form"
+msgstr ""
+
+#: ../../changelog.rst:306
+msgid "Do not show Function field as required in Intervention form"
+msgstr ""
+
+#: ../../changelog.rst:307
+msgid "Do not show Amount and Organism fields as required in Project form"
+msgstr ""
+
+#: ../../changelog.rst:311
+msgid "2.32.9 (2020-03-06)"
+msgstr ""
+
+#: ../../changelog.rst:315
+msgid "Fix \"upper bound of FOR loop cannot be null\" crash in SQL triggers"
+msgstr ""
+
+#: ../../changelog.rst:319
+msgid "2.32.8 (2020-03-05)"
+msgstr ""
+
+#: ../../changelog.rst:323
+msgid "Allow to choose Touristic content ordering in API"
+msgstr ""
+
+#: ../../changelog.rst:324
+msgid "Add external ID to projects and interventions"
+msgstr ""
+
+#: ../../changelog.rst:328
+msgid ""
+"Fix the modification of the published field without the \"Can publish…\" "
+"permission"
+msgstr ""
+
+#: ../../changelog.rst:332
+msgid "2.32.7 (2020-03-02)"
+msgstr ""
+
+#: ../../changelog.rst:336
+msgid "Rename tables and fields in database"
+msgstr ""
+
+#: ../../changelog.rst:340
+msgid "Retry on HTTP 503 errors in parsers"
+msgstr ""
+
+#: ../../changelog.rst:344
+msgid "Fix install on Xenial (again)"
+msgstr ""
+
+#: ../../changelog.rst:345
+msgid "Fix video embed url https"
+msgstr ""
+
+#: ../../changelog.rst:346
+msgid ""
+"Fix \"Only LINESTRING and MULTILINESTRING are supported\" crash in SQL "
+"triggers"
+msgstr ""
+
+#: ../../changelog.rst:350
+msgid "2.32.6 (2020-02-28)"
+msgstr ""
+
+#: ../../changelog.rst:352
+msgid "**DO NOT USE IT!**"
+msgstr ""
+
+#: ../../changelog.rst:356
+msgid "2.32.5 (2020-02-18)"
+msgstr ""
+
+#: ../../changelog.rst:360
+msgid "Fix filters sort in mobile v3 API"
+msgstr ""
+
+#: ../../changelog.rst:364
+msgid "2.32.4 (2020-02-12)"
+msgstr ""
+
+#: ../../changelog.rst:368
+msgid "Fix install on Xenial"
+msgstr ""
+
+#: ../../changelog.rst:372
+msgid "2.32.3 (2020-01-27)"
+msgstr ""
+
+#: ../../changelog.rst:376
+msgid ""
+"Fix review, publish do not display after resave a published or without "
+"permission to publish"
+msgstr ""
+
+#: ../../changelog.rst:377
+msgid "Fix attachment asterisks and crispy form"
+msgstr ""
+
+#: ../../changelog.rst:378
+msgid "Display only one time the same path when on trail detail"
+msgstr ""
+
+#: ../../changelog.rst:382
+msgid "2.32.2 (2020-01-09)"
+msgstr ""
+
+#: ../../changelog.rst:386
+msgid "Upgrade WeasyPrint"
+msgstr ""
+
+#: ../../changelog.rst:390
+msgid "2.32.1 (2019-12-20)"
+msgstr ""
+
+#: ../../changelog.rst:394
+msgid "Fix a crash in stake computation when adding an intervention"
+msgstr ""
+
+#: ../../changelog.rst:395
+msgid "Fix a crash in project list when one of them has no end year"
+msgstr ""
+
+#: ../../changelog.rst:396
+msgid "Fix drapping with no-data DEM values"
+msgstr ""
+
+#: ../../changelog.rst:397
+msgid "Fix nav pills to choose language in forms"
+msgstr ""
+
+#: ../../changelog.rst:401
+msgid "2.32.0 (2019-12-13)"
+msgstr ""
+
+#: ../../changelog.rst:405
+msgid ""
+"Add DISPLAY_SRID into settings to allow user to choose it's own format "
+"for GPS coordinates"
+msgstr ""
+
+#: ../../changelog.rst:406
+msgid ""
+"Make some fields optional (class Trail, Intervention, Project, "
+"OrdererdTrekChild, POI)"
+msgstr ""
+
+#: ../../changelog.rst:407
+msgid "Sort dropdown lists"
+msgstr ""
+
+#: ../../changelog.rst:408
+msgid "Document settings"
+msgstr ""
+
+#: ../../changelog.rst:412
+msgid "2.31.0 (2019-12-06)"
+msgstr ""
+
+#: ../../changelog.rst:416
+msgid "Sync mobile data from web UI"
+msgstr ""
+
+#: ../../changelog.rst:417
+msgid "The SHOW_LABELS setting allows to hide status labels on map"
+msgstr ""
+
+#: ../../changelog.rst:421
+msgid "2.30.0 (2019-11-26)"
+msgstr ""
+
+#: ../../changelog.rst:423 ../../changelog.rst:1145 ../../changelog.rst:1304
+#: ../../changelog.rst:1598 ../../changelog.rst:1664 ../../changelog.rst:1920
+#: ../../changelog.rst:1955 ../../changelog.rst:2061 ../../changelog.rst:2141
+#: ../../changelog.rst:2307 ../../changelog.rst:2396
+msgid "**Breaking changes**"
+msgstr ""
+
+#: ../../changelog.rst:425
+msgid "Remove support of Ubuntu 14.04 Trusty"
+msgstr ""
+
+#: ../../changelog.rst:429
+msgid "Move from Python 2 to Python 3"
+msgstr ""
+
+#: ../../changelog.rst:433
+msgid "Fix PDF generation for not published treks"
+msgstr ""
+
+#: ../../changelog.rst:437
+msgid "2.29.15 (2019-11-12)"
+msgstr ""
+
+#: ../../changelog.rst:441
+msgid "Fix install (use a version of venusian that is compatible with Python 2)"
+msgstr ""
+
+#: ../../changelog.rst:445
+msgid "2.29.14 (2019-11-04)"
+msgstr ""
+
+#: ../../changelog.rst:449
+msgid "Do not check structure for excluded POIs"
+msgstr ""
+
+#: ../../changelog.rst:453
+msgid "2.29.13 (2019-10-30)"
+msgstr ""
+
+#: ../../changelog.rst:457
+msgid "Do not set structure by default when creating elements in dropdown lists."
+msgstr ""
+
+#: ../../changelog.rst:458
+msgid "Trek duration is now optional"
+msgstr ""
+
+#: ../../changelog.rst:459
+msgid "Automatically disable empty filters in API for mobile v3"
+msgstr ""
+
+#: ../../changelog.rst:460
+msgid "Add support for Tourinsoft v3 in addition to v2"
+msgstr ""
+
+#: ../../changelog.rst:461
+msgid "Add more links form/to sensitive areas"
+msgstr ""
+
+#: ../../changelog.rst:462
+msgid "Add more unit tests"
+msgstr ""
+
+#: ../../changelog.rst:466
+msgid "Fix SEO for static page titles"
+msgstr ""
+
+#: ../../changelog.rst:467
+msgid "Fix TouristicContentParser deletion having type1/2 with same values"
+msgstr ""
+
+#: ../../changelog.rst:468
+msgid "Fix serialization of MultiPolygon sensitive areas"
+msgstr ""
+
+#: ../../changelog.rst:472
+msgid "2.29.12 (2019-10-23)"
+msgstr ""
+
+#: ../../changelog.rst:476
+msgid "Show completeness on dive detail page"
+msgstr ""
+
+#: ../../changelog.rst:477
+msgid "Add practice field to trek and dive completeness"
+msgstr ""
+
+#: ../../changelog.rst:481
+msgid ""
+"Fix multiple sensitive areas on treks with settings "
+"SENSITIVE_AREA_INTERSECTION_MARGIN = 0"
+msgstr ""
+
+#: ../../changelog.rst:482
+msgid "Fix multiple sensitive areas on dives"
+msgstr ""
+
+#: ../../changelog.rst:486
+msgid "2.29.11 (2019-10-17)"
+msgstr ""
+
+#: ../../changelog.rst:490
+msgid "Fix filter still available after come back to list"
+msgstr ""
+
+#: ../../changelog.rst:491
+msgid ""
+"Add settings allowing to change permission on voluminous datas. "
+"Voluminous datas are not stocked at the same place"
+msgstr ""
+
+#: ../../changelog.rst:495
+msgid "2.29.10 (2019-10-08)"
+msgstr ""
+
+#: ../../changelog.rst:499
+msgid "Do not set username as attachment author by default"
+msgstr ""
+
+#: ../../changelog.rst:503
+msgid "Don't crash sync_rando with PIL.Image.DecompressionBombError"
+msgstr ""
+
+#: ../../changelog.rst:504
+msgid "Fix mode selection when adding/editing an attachment"
+msgstr ""
+
+#: ../../changelog.rst:505
+msgid "Fix authenticated parsers"
+msgstr ""
+
+#: ../../changelog.rst:509
+msgid "2.29.9 (2019-10-02)"
+msgstr ""
+
+#: ../../changelog.rst:513
+msgid "Fix sync_rando : sensitive area with multi polygons"
+msgstr ""
+
+#: ../../changelog.rst:517
+msgid "2.29.8 (2019-09-26)"
+msgstr ""
+
+#: ../../changelog.rst:519 ../../changelog.rst:531 ../../changelog.rst:562
+#: ../../changelog.rst:574 ../../changelog.rst:586 ../../changelog.rst:598
+#: ../../changelog.rst:618 ../../changelog.rst:636 ../../changelog.rst:651
+#: ../../changelog.rst:659 ../../changelog.rst:675 ../../changelog.rst:688
+#: ../../changelog.rst:696 ../../changelog.rst:715 ../../changelog.rst:758
+#: ../../changelog.rst:771 ../../changelog.rst:828
+msgid "**Minor Changes**"
+msgstr ""
+
+#: ../../changelog.rst:521
+msgid "Increase path name field length"
+msgstr ""
+
+#: ../../changelog.rst:525
+msgid "Fix csv_display signage with not ascii character"
+msgstr ""
+
+#: ../../changelog.rst:529
+msgid "2.29.7 (2019-09-25)"
+msgstr ""
+
+#: ../../changelog.rst:533
+msgid "Add pois services tourism on sync_rando"
+msgstr ""
+
+#: ../../changelog.rst:534
+msgid "Add endpoints api for diving"
+msgstr ""
+
+#: ../../changelog.rst:538
+msgid "Fix is_public() call checking if the object is ppublic or not."
+msgstr ""
+
+#: ../../changelog.rst:539
+msgid "Remove duplicate description detail diving"
+msgstr ""
+
+#: ../../changelog.rst:543
+msgid "2.29.6 (2019-09-19)"
+msgstr ""
+
+#: ../../changelog.rst:547
+msgid "Fix sync_rando command with diving"
+msgstr ""
+
+#: ../../changelog.rst:551
+msgid "2.29.5 (2019-09-13)"
+msgstr ""
+
+#: ../../changelog.rst:555
+msgid "Sync POIs related to dives"
+msgstr ""
+
+#: ../../changelog.rst:556
+msgid "Fix sync of manual PDF (again)"
+msgstr ""
+
+#: ../../changelog.rst:560
+msgid "2.29.4 (2019-09-09)"
+msgstr ""
+
+#: ../../changelog.rst:564
+msgid "Add reviews in dives module"
+msgstr ""
+
+#: ../../changelog.rst:568
+msgid "Fix length should be length_2d in pdfs"
+msgstr ""
+
+#: ../../changelog.rst:572
+msgid "2.29.3 (2019-08-28)"
+msgstr ""
+
+#: ../../changelog.rst:576
+msgid "Allow to override nginx port in etc/settings.ini"
+msgstr ""
+
+#: ../../changelog.rst:580
+msgid "Fix sync of manual PDF"
+msgstr ""
+
+#: ../../changelog.rst:584
+msgid "2.29.2 (2019-08-28)"
+msgstr ""
+
+#: ../../changelog.rst:588
+msgid "Add a command to import dives"
+msgstr ""
+
+#: ../../changelog.rst:590
+msgid "**Bug Fixes**"
+msgstr ""
+
+#: ../../changelog.rst:592
+msgid "Fix crash when a dive is not a point"
+msgstr ""
+
+#: ../../changelog.rst:596
+msgid "2.29.1 (2019-08-26)"
+msgstr ""
+
+#: ../../changelog.rst:600
+msgid "Show treks related to dives"
+msgstr ""
+
+#: ../../changelog.rst:604
+msgid "Fix retrieval of content-length of attachments with HTTPS"
+msgstr ""
+
+#: ../../changelog.rst:605
+msgid "Fix detection of hardcoded SRID in migrations"
+msgstr ""
+
+#: ../../changelog.rst:606
+msgid "Fix Est/West swap in diving module"
+msgstr ""
+
+#: ../../changelog.rst:607
+msgid "Fix version of more-itertools"
+msgstr ""
+
+#: ../../changelog.rst:608
+msgid "Fix missing difficulty and technical levels in dive detail page and PDF"
+msgstr ""
+
+#: ../../changelog.rst:612
+msgid "2.29.0 (2019-08-20)"
+msgstr ""
+
+#: ../../changelog.rst:616
+msgid "Diving module (optional, see manual to enable)"
+msgstr ""
+
+#: ../../changelog.rst:620
+msgid "Improve mobile sync"
+msgstr ""
+
+#: ../../changelog.rst:621
+msgid "Do not automatically zoom over level 16"
+msgstr ""
+
+#: ../../changelog.rst:625
+msgid "Fix black map screenshots (after a manual cache deletion)"
+msgstr ""
+
+#: ../../changelog.rst:626
+msgid "Fix related POI order with dynamic segmentation disabled"
+msgstr ""
+
+#: ../../changelog.rst:630
+msgid "2.28.0 (2019-08-09)"
+msgstr ""
+
+#: ../../changelog.rst:634
+msgid "Geotrek without dynamic segmentation is back"
+msgstr ""
+
+#: ../../changelog.rst:638
+msgid "Add a settings allowing to remove certain items from the left menu"
+msgstr ""
+
+#: ../../changelog.rst:639
+msgid "Serve attachment with 'Topoguide' type as public PDF"
+msgstr ""
+
+#: ../../changelog.rst:643
+msgid "Fix missing pictograms for mobile app"
+msgstr ""
+
+#: ../../changelog.rst:644
+msgid "Translate feedback acknoledgment email"
+msgstr ""
+
+#: ../../changelog.rst:645
+msgid "Fix sync_mobile command for itinerancy"
+msgstr ""
+
+#: ../../changelog.rst:649
+msgid "2.27.12 (2019-07-22)"
+msgstr ""
+
+#: ../../changelog.rst:653
+msgid "Add itinerancy mobile"
+msgstr ""
+
+#: ../../changelog.rst:657
+msgid "2.27.11 (2019-07-17)"
+msgstr ""
+
+#: ../../changelog.rst:661
+msgid "Change condition's on_delete for SET_NULL"
+msgstr ""
+
+#: ../../changelog.rst:662
+msgid ""
+"Add the possibility to add Multipoint with one Point on commands "
+"loadinfrastructure/loadsignage"
+msgstr ""
+
+#: ../../changelog.rst:666
+msgid ""
+"Fix choices fields, should only take in account existing (not deleted) "
+"elements"
+msgstr ""
+
+#: ../../changelog.rst:667
+msgid "Fix delete Organism"
+msgstr ""
+
+#: ../../changelog.rst:668
+msgid "Fix sensitivity parser with MultiPolygon"
+msgstr ""
+
+#: ../../changelog.rst:669
+msgid "Fix profile and languages"
+msgstr ""
+
+#: ../../changelog.rst:673
+msgid "2.27.10 (2019-07-10)"
+msgstr ""
+
+#: ../../changelog.rst:677
+msgid "Set OpenTopoMap as default map background"
+msgstr ""
+
+#: ../../changelog.rst:678
+msgid "Resize information desk type pictograms in mobile API"
+msgstr ""
+
+#: ../../changelog.rst:682
+msgid "Fix delete intervention type"
+msgstr ""
+
+#: ../../changelog.rst:686
+msgid "2.27.9 (2019-07-01)"
+msgstr ""
+
+#: ../../changelog.rst:690
+msgid "Add ambiance field to trek detail endpoint in mobile API"
+msgstr ""
+
+#: ../../changelog.rst:694
+msgid "2.27.8 (2019-06-28)"
+msgstr ""
+
+#: ../../changelog.rst:698
+msgid "Add primary color setting for PDF"
+msgstr ""
+
+#: ../../changelog.rst:699
+msgid "Allow to override practices pictogram color in custom trek PDF template"
+msgstr ""
+
+#: ../../changelog.rst:703
+msgid "2.27.7 (2019-06-26)"
+msgstr ""
+
+#: ../../changelog.rst:707
+msgid "Fix public PDF overflow"
+msgstr ""
+
+#: ../../changelog.rst:708
+msgid "Resize category and POI pictograms for mobile app"
+msgstr ""
+
+#: ../../changelog.rst:709
+msgid "Convert pictograms from SVG to PNG for mobile app"
+msgstr ""
+
+#: ../../changelog.rst:710
+msgid "Fix structure (or not) related scrolldowns validation"
+msgstr ""
+
+#: ../../changelog.rst:711
+msgid "Remove unvisible paths in remove_duplicate_paths command"
+msgstr ""
+
+#: ../../changelog.rst:712
+msgid "Fix list of additional layers in layer selector"
+msgstr ""
+
+#: ../../changelog.rst:713
+msgid "Don't reset excluded POIs when saving treks"
+msgstr ""
+
+#: ../../changelog.rst:717
+msgid "Allow to merge multiple comment columns when importing paths"
+msgstr ""
+
+#: ../../changelog.rst:718
+msgid "Add color field to touristic contents categories (for mobile app only)"
+msgstr ""
+
+#: ../../changelog.rst:719
+msgid "Handle invalid geometries when importing districts"
+msgstr ""
+
+#: ../../changelog.rst:723
+msgid "2.27.6 (2019-06-04)"
+msgstr ""
+
+#: ../../changelog.rst:727
+msgid "Fix mobile API"
+msgstr ""
+
+#: ../../changelog.rst:731
+msgid "2.27.5 (2019-05-29)"
+msgstr ""
+
+#: ../../changelog.rst:735
+msgid "Fix regulatory sensitive area parser"
+msgstr ""
+
+#: ../../changelog.rst:736
+msgid "Fix handling of parser errors"
+msgstr ""
+
+#: ../../changelog.rst:740
+msgid "2.27.4 (2019-05-27)"
+msgstr ""
+
+#: ../../changelog.rst:744
+msgid "Fix crash with --srid option of loadpaths command"
+msgstr ""
+
+#: ../../changelog.rst:745
+msgid "Add option portal in sync_mobile for the treks"
+msgstr ""
+
+#: ../../changelog.rst:746
+msgid "Fix encoding error on watermarks"
+msgstr ""
+
+#: ../../changelog.rst:747
+msgid "Fix bad references to sync_mobile in sync_rando command"
+msgstr ""
+
+#: ../../changelog.rst:751
+msgid "2.27.3 (2019-05-23)"
+msgstr ""
+
+#: ../../changelog.rst:755
+msgid "Allow to set order of filters in mobile API"
+msgstr ""
+
+#: ../../changelog.rst:756
+msgid "Add ascent and district filters to mobile API"
+msgstr ""
+
+#: ../../changelog.rst:760
+msgid "Replace text by an id in url of pictures with watermarks"
+msgstr ""
+
+#: ../../changelog.rst:761
+msgid "Change default settings watermark"
+msgstr ""
+
+#: ../../changelog.rst:763 ../../changelog.rst:903 ../../changelog.rst:1947
+#: ../../changelog.rst:2218 ../../changelog.rst:2252
+msgid "**Documentation**"
+msgstr ""
+
+#: ../../changelog.rst:765
+msgid "Add PDF overriding section"
+msgstr ""
+
+#: ../../changelog.rst:769
+msgid "2.27.2 (2019-05-14)"
+msgstr ""
+
+#: ../../changelog.rst:773
+msgid "Add points_reference by treks in api mobile"
+msgstr ""
+
+#: ../../changelog.rst:777
+msgid "Remove public pdf poi"
+msgstr ""
+
+#: ../../changelog.rst:778
+msgid "Fix filter cities without paths"
+msgstr ""
+
+#: ../../changelog.rst:782
+msgid "2.27.1 (2019-05-06)"
+msgstr ""
+
+#: ../../changelog.rst:786
+msgid "Fix api mobile with only sensitivity app"
+msgstr ""
+
+#: ../../changelog.rst:790
+msgid "2.27.0 (2019-05-02)"
+msgstr ""
+
+#: ../../changelog.rst:794
+msgid "Add watermark on pictures"
+msgstr ""
+
+#: ../../changelog.rst:795
+msgid "Allow to change structure of an object with permission by_pass_structure"
+msgstr ""
+
+#: ../../changelog.rst:799
+msgid "Fix a floating point computation problem in SQL trigger"
+msgstr ""
+
+#: ../../changelog.rst:800
+msgid "Fix trails in detail of intervention and opposite"
+msgstr ""
+
+#: ../../changelog.rst:801
+msgid "Fix color on restricted area"
+msgstr ""
+
+#: ../../changelog.rst:805
+msgid "2.26.5 (2019-04-19)"
+msgstr ""
+
+#: ../../changelog.rst:809
+msgid "Add slug to mobile API"
+msgstr ""
+
+#: ../../changelog.rst:810
+msgid "Fix crash with empty images"
+msgstr ""
+
+#: ../../changelog.rst:814
+msgid "2.26.4 (2019-04-18)"
+msgstr ""
+
+#: ../../changelog.rst:818
+msgid "Fix migration tourism 0004"
+msgstr ""
+
+#: ../../changelog.rst:822
+msgid "2.26.3 (2019-04-12)"
+msgstr ""
+
+#: ../../changelog.rst:826
+msgid "Fix parsers delete datas"
+msgstr ""
+
+#: ../../changelog.rst:830
+msgid "Add command loaddistrict, loadcities, loadpaths"
+msgstr ""
+
+#: ../../changelog.rst:834
+msgid "2.26.2 (2019-04-10)"
+msgstr ""
+
+#: ../../changelog.rst:838
+msgid "Fix sync_rando command (BadZipfile exception)"
+msgstr ""
+
+#: ../../changelog.rst:839
+msgid "Fix nginx and Django conf when SSL is enabled"
+msgstr ""
+
+#: ../../changelog.rst:840
+msgid "Fix restricted area layers"
+msgstr ""
+
+#: ../../changelog.rst:844
+msgid "2.26.1 (2019-04-03)"
+msgstr ""
+
+#: ../../changelog.rst:848
+msgid "Fix blade form"
+msgstr ""
+
+#: ../../changelog.rst:849
+msgid "Fix sync_mobile, sync_rando with url https and http"
+msgstr ""
+
+#: ../../changelog.rst:853
+msgid "2.26.0 (2019-04-01)"
+msgstr ""
+
+#: ../../changelog.rst:857
+msgid "New API for mobile app v3"
+msgstr ""
+
+#: ../../changelog.rst:861
+msgid "Fix signage type pictograms"
+msgstr ""
+
+#: ../../changelog.rst:862
+msgid "Some cosmetics on tourism detail pages (clickable links)"
+msgstr ""
+
+#: ../../changelog.rst:863
+msgid "Fix Tourinsoft opening period parsing (multiple periods)"
+msgstr ""
+
+#: ../../changelog.rst:864
+msgid "Fix Bad Status Line exception"
+msgstr ""
+
+#: ../../changelog.rst:868
+msgid "2.25.3 (2019-03-26)"
+msgstr ""
+
+#: ../../changelog.rst:872
+msgid "Fix Tourinsoft parsers one time again (practical info for events)"
+msgstr ""
+
+#: ../../changelog.rst:876
+msgid "2.25.2 (2019-03-26)"
+msgstr ""
+
+#: ../../changelog.rst:880
+msgid "Fix Tourinsoft parsers again (postal address)"
+msgstr ""
+
+#: ../../changelog.rst:884
+msgid "2.25.1 (2019-03-25)"
+msgstr ""
+
+#: ../../changelog.rst:888
+msgid "Fix Tourinsoft parsers"
+msgstr ""
+
+#: ../../changelog.rst:892
+msgid "2.25.0 (2019-03-25)"
+msgstr ""
+
+#: ../../changelog.rst:894
+msgid "**New features / Performances**"
+msgstr ""
+
+#: ../../changelog.rst:896
+msgid "Add the possibility to load layers (do not load them automatically)"
+msgstr ""
+
+#: ../../changelog.rst:900
+msgid "Add Touristic Content TourInSoft Parser"
+msgstr ""
+
+#: ../../changelog.rst:901
+msgid "Add tool testing ign keys without ggp3"
+msgstr ""
+
+#: ../../changelog.rst:905
+msgid "How to update IGN urls"
+msgstr ""
+
+#: ../../changelog.rst:909
+msgid "2.24.8 (2019-03-15)"
+msgstr ""
+
+#: ../../changelog.rst:913
+msgid "Fix bug parsers filetype not related with structure"
+msgstr ""
+
+#: ../../changelog.rst:917
+msgid "2.24.7 (2019-03-13)"
+msgstr ""
+
+#: ../../changelog.rst:921
+msgid "Add elevation on sensible areas"
+msgstr ""
+
+#: ../../changelog.rst:925
+msgid "Fix retry sync_rando tiles when tiles does not exist (landez 2.4.1)"
+msgstr ""
+
+#: ../../changelog.rst:929
+msgid "2.24.6 (2019-03-07)"
+msgstr ""
+
+#: ../../changelog.rst:933
+msgid "When updating interventions, stake field is no more required"
+msgstr ""
+
+#: ../../changelog.rst:934
+msgid "Fix duplicates in year filters in intervention module"
+msgstr ""
+
+#: ../../changelog.rst:935
+msgid "Configurable blade code"
+msgstr ""
+
+#: ../../changelog.rst:936
+msgid "Allow letters in blade number"
+msgstr ""
+
+#: ../../changelog.rst:937
+msgid "Improve signage templates"
+msgstr ""
+
+#: ../../changelog.rst:938
+msgid "Add \"On signage/infrastructure\" filter on intervention list"
+msgstr ""
+
+#: ../../changelog.rst:942
+msgid "2.24.5 (2019-03-06)"
+msgstr ""
+
+#: ../../changelog.rst:944 ../../changelog.rst:985 ../../changelog.rst:1040
+#: ../../changelog.rst:1562
+msgid "**Performances**"
+msgstr ""
+
+#: ../../changelog.rst:946
+msgid "Add index to date_update columns"
+msgstr ""
+
+#: ../../changelog.rst:950
+msgid "2.24.4 (2019-03-01)"
+msgstr ""
+
+#: ../../changelog.rst:954
+msgid "Fix get attachments with crop"
+msgstr ""
+
+#: ../../changelog.rst:958
+msgid "2.24.3 (2019-02-28)"
+msgstr ""
+
+#: ../../changelog.rst:962
+msgid "Fix get attachments using generic foreign and not url"
+msgstr ""
+
+#: ../../changelog.rst:963
+msgid "Fix merge path"
+msgstr ""
+
+#: ../../changelog.rst:967
+msgid "2.24.2 (2019-02-26)"
+msgstr ""
+
+#: ../../changelog.rst:971
+msgid "Fix attachments and history linked with signage and infrastructure"
+msgstr ""
+
+#: ../../changelog.rst:975
+msgid "2.24.1 (2019-02-12)"
+msgstr ""
+
+#: ../../changelog.rst:979
+msgid "Fix install.sh (pin cairocffi version)"
+msgstr ""
+
+#: ../../changelog.rst:980
+msgid "Fix routing on paths with sharp angles"
+msgstr ""
+
+#: ../../changelog.rst:981
+msgid "Fix loadrestrictedareas command"
+msgstr ""
+
+#: ../../changelog.rst:982
+msgid "Fix altimetry on straight portions of paths"
+msgstr ""
+
+#: ../../changelog.rst:983
+msgid "Various signage fixes"
+msgstr ""
+
+#: ../../changelog.rst:987
+msgid ""
+"Allow client side caching with systematic revalidation for Layer, "
+"JsonList and graph views"
+msgstr ""
+
+#: ../../changelog.rst:988
+msgid "Remove validation of history bar"
+msgstr ""
+
+#: ../../changelog.rst:989
+msgid "Don't bringToFront() every single feature on map"
+msgstr ""
+
+#: ../../changelog.rst:990
+msgid ""
+"Do not show bullets at path extremities anymore by default. Set "
+"SHOW_EXTREMITIES setting to True in custom.py enable them."
+msgstr ""
+
+#: ../../changelog.rst:992
+msgid "Remove networks and trails columns in path list"
+msgstr ""
+
+#: ../../changelog.rst:996
+msgid "2.24.0 (2019-01-28)"
+msgstr ""
+
+#: ../../changelog.rst:1000
+msgid "Bulk path deletion"
+msgstr ""
+
+#: ../../changelog.rst:1004
+msgid "2.23.0 (2019-01-24)"
+msgstr ""
+
+#: ../../changelog.rst:1008
+msgid "Signage blades management"
+msgstr ""
+
+#: ../../changelog.rst:1009
+msgid "Add gpx and kml export for path detail view"
+msgstr ""
+
+#: ../../changelog.rst:1010
+msgid "Allow to load local GPX/Geojson file in list views"
+msgstr ""
+
+#: ../../changelog.rst:1014
+msgid "Fix sensitive areas API v2"
+msgstr ""
+
+#: ../../changelog.rst:1015
+msgid "Fix migrations if infrastructure app not is not installed"
+msgstr ""
+
+#: ../../changelog.rst:1019
+msgid "2.22.10 (2019-01-09)"
+msgstr ""
+
+#: ../../changelog.rst:1023
+msgid "Fix duplicated results in API v2 with sensitive area filters"
+msgstr ""
+
+#: ../../changelog.rst:1027
+msgid "2.22.9 (2019-01-09)"
+msgstr ""
+
+#: ../../changelog.rst:1031
+msgid "Separate Infrastructure and Signage models"
+msgstr ""
+
+#: ../../changelog.rst:1032
+msgid "Create parser touristic event for apidae"
+msgstr ""
+
+#: ../../changelog.rst:1033
+msgid "Refactor ApidaeParser"
+msgstr ""
+
+#: ../../changelog.rst:1037
+msgid "Add italian translations that are visible on Geotrek-rando"
+msgstr ""
+
+#: ../../changelog.rst:1038
+msgid "Fix permissions attachments paperclip"
+msgstr ""
+
+#: ../../changelog.rst:1042
+msgid "Improve map's performances"
+msgstr ""
+
+#: ../../changelog.rst:1046
+msgid "2.22.8 (2019-01-03)"
+msgstr ""
+
+#: ../../changelog.rst:1050
+msgid "Now, empty portal field means \"all portals\" instead of \"no portal\""
+msgstr ""
+
+#: ../../changelog.rst:1054
+msgid "2.22.7 (2019-01-03)"
+msgstr ""
+
+#: ../../changelog.rst:1058
+msgid "Fix command loadinfrastructure"
+msgstr ""
+
+#: ../../changelog.rst:1062
+msgid "2.22.6 (2019-01-02)"
+msgstr ""
+
+#: ../../changelog.rst:1066
+msgid "Index path draft field"
+msgstr ""
+
+#: ../../changelog.rst:1067
+msgid "Add eid field to load_infrastructure command"
+msgstr ""
+
+#: ../../changelog.rst:1068
+msgid "Add loadrestrictedarea command"
+msgstr ""
+
+#: ../../changelog.rst:1069
+msgid "Install postgis package"
+msgstr ""
+
+#: ../../changelog.rst:1073
+msgid "2.22.5 (2018-12-19)"
+msgstr ""
+
+#: ../../changelog.rst:1077
+msgid "Fix DB migration"
+msgstr ""
+
+#: ../../changelog.rst:1081
+msgid "2.22.4 (2018-12-19)"
+msgstr ""
+
+#: ../../changelog.rst:1085
+msgid ""
+"Replace \\u2028 and \\u2029 by \\n in synced (geo)json files (fix "
+"Geotrek-mobile crash)"
+msgstr ""
+
+#: ../../changelog.rst:1089
+msgid "Add EID field to all models and increase its length"
+msgstr ""
+
+#: ../../changelog.rst:1093
+msgid "2.22.3 (2018-12-14)"
+msgstr ""
+
+#: ../../changelog.rst:1097
+msgid "Don't publish deleted infrastructures/signages"
+msgstr ""
+
+#: ../../changelog.rst:1098
+msgid "Add default pictograms to published infrastructures/signages"
+msgstr ""
+
+#: ../../changelog.rst:1102
+msgid "2.22.2 (2018-12-10)"
+msgstr ""
+
+#: ../../changelog.rst:1106
+msgid "Fix bugs with HTTPS access"
+msgstr ""
+
+#: ../../changelog.rst:1107
+msgid "Fix for some modules to edit attributes and not the geometry"
+msgstr ""
+
+#: ../../changelog.rst:1111
+msgid "add options to sync signages and infrastructures"
+msgstr ""
+
+#: ../../changelog.rst:1112
+msgid "sync global signages and infrastructures"
+msgstr ""
+
+#: ../../changelog.rst:1116
+msgid "2.22.1 (2018-11-27)"
+msgstr ""
+
+#: ../../changelog.rst:1120
+msgid "Fix trekking form with pois_excluded"
+msgstr ""
+
+#: ../../changelog.rst:1121
+msgid ""
+"Give the possibility to get type of infrastructures and signages without "
+"structure"
+msgstr ""
+
+#: ../../changelog.rst:1125
+msgid "2.22.0 (2018-11-27)"
+msgstr ""
+
+#: ../../changelog.rst:1129
+msgid "Allow to publish signage and infrastructure"
+msgstr ""
+
+#: ../../changelog.rst:1130
+msgid "Allow to exclude POIs from a trek"
+msgstr ""
+
+#: ../../changelog.rst:1131
+msgid "New access rights to edit draft path"
+msgstr ""
+
+#: ../../changelog.rst:1132
+msgid "New access rights to edit attributes and not the geometry"
+msgstr ""
+
+#: ../../changelog.rst:1133
+msgid ""
+"Allow to remove duplicate path in database : command "
+"remove_duplicate_paths"
+msgstr ""
+
+#: ../../changelog.rst:1137
+msgid "Fix snap on crossing point : take all paths easier"
+msgstr ""
+
+#: ../../changelog.rst:1138
+msgid "Fix a clash between current url and SYNC_RANDO_OPTIONS"
+msgstr ""
+
+#: ../../changelog.rst:1139
+msgid "Fix screamshotter when SSL is enabled"
+msgstr ""
+
+#: ../../changelog.rst:1143
+msgid "2.21.1 (2018-09-18)"
+msgstr ""
+
+#: ../../changelog.rst:1147
+msgid ""
+"Remove type1 from trek API when SPLIT_TREKS_CATEGORIES_BY_PRACTICE is not"
+" set"
+msgstr ""
+
+#: ../../changelog.rst:1148
+msgid ""
+"Rename Trek category label to Hike in API. You can override this in "
+"geotrek/locale/<language code>/LC_MESSAGES/django.po files"
+msgstr ""
+
+#: ../../changelog.rst:1153
+msgid "Fix crash in log entries view"
+msgstr ""
+
+#: ../../changelog.rst:1157
+msgid "Save column sort by module"
+msgstr ""
+
+#: ../../changelog.rst:1158
+msgid "Rename SITRA to APIDAE"
+msgstr ""
+
+#: ../../changelog.rst:1162
+msgid "2.21.0 (2018-09-04)"
+msgstr ""
+
+#: ../../changelog.rst:1166
+msgid "Path deletion warning page now shows linked topologies"
+msgstr ""
+
+#: ../../changelog.rst:1167
+msgid "Allow to add Dailymotion video attachments"
+msgstr ""
+
+#: ../../changelog.rst:1168
+msgid ""
+"Add a command to unset structure in lists of choices and group choices "
+"with the same name"
+msgstr ""
+
+#: ../../changelog.rst:1173
+msgid "Fix Sync_rando View"
+msgstr ""
+
+#: ../../changelog.rst:1174
+msgid "Fix loaddem"
+msgstr ""
+
+#: ../../changelog.rst:1175
+msgid "Fix creation of Youtube/Soundcloud attachments"
+msgstr ""
+
+#: ../../changelog.rst:1176
+msgid "Fix cancellation when editing geometries"
+msgstr ""
+
+#: ../../changelog.rst:1177
+msgid "Show which structure choices are related to"
+msgstr ""
+
+#: ../../changelog.rst:1178
+msgid "Add confort and stake filters to path list"
+msgstr ""
+
+#: ../../changelog.rst:1179
+msgid "Fix sync of touristic contents for mobile app"
+msgstr ""
+
+#: ../../changelog.rst:1183
+msgid "2.20.1 (2018-07-16)"
+msgstr ""
+
+#: ../../changelog.rst:1187
+msgid "Fix Completed Filter in Touristic Event"
+msgstr ""
+
+#: ../../changelog.rst:1190
+msgid "2.20.0 (2018-06-27)"
+msgstr ""
+
+#: ../../changelog.rst:1194
+msgid ""
+"Allow to share glossaries between structure (just keep structure field "
+"empty)"
+msgstr ""
+
+#: ../../changelog.rst:1195
+msgid "Allow to import infrastructures, not only signages"
+msgstr ""
+
+#: ../../changelog.rst:1196
+msgid "Allow to split treks by itinerancy"
+msgstr ""
+
+#: ../../changelog.rst:1197
+msgid ""
+"Path deletion does not delete the related point topologies anymore. "
+"Instead point topologies are linked to the nearest remaining path."
+msgstr ""
+
+#: ../../changelog.rst:1199
+msgid "Keep inode and mtime when synced file don't change"
+msgstr ""
+
+#: ../../changelog.rst:1203
+msgid "Optional img-responsive class on flatpage images"
+msgstr ""
+
+#: ../../changelog.rst:1207
+msgid "Fix virtualenv install"
+msgstr ""
+
+#: ../../changelog.rst:1208
+msgid "Upgrade celery to 4.1.1"
+msgstr ""
+
+#: ../../changelog.rst:1209
+msgid ""
+"Fix the bug which remove a path when we merge 2 paths with a 3rd path on "
+"the point of merge. (ref  #1747)"
+msgstr ""
+
+#: ../../changelog.rst:1213
+msgid "2.19.1 (2018-05-28)"
+msgstr ""
+
+#: ../../changelog.rst:1217
+msgid "Update APIDAE API URL"
+msgstr ""
+
+#: ../../changelog.rst:1218
+msgid "Fix filename encoding errors in import"
+msgstr ""
+
+#: ../../changelog.rst:1222
+msgid "2.19.0 (2018-05-22)"
+msgstr ""
+
+#: ../../changelog.rst:1226
+msgid "Allow to specify encoding when importing data"
+msgstr ""
+
+#: ../../changelog.rst:1230
+msgid "2.18.5 (2018-05-07)"
+msgstr ""
+
+#: ../../changelog.rst:1234
+msgid "Fix related structure when creating new objects"
+msgstr ""
+
+#: ../../changelog.rst:1238
+msgid "Show related structure on all detail pages"
+msgstr ""
+
+#: ../../changelog.rst:1242
+msgid "2.18.4 (2018-05-02)"
+msgstr ""
+
+#: ../../changelog.rst:1246
+msgid "Fix sync of deleted sensitive areas"
+msgstr ""
+
+#: ../../changelog.rst:1247
+msgid "Fix touristiccontents.geojson crash when reservation_system is None"
+msgstr ""
+
+#: ../../changelog.rst:1251
+msgid "Add Ubuntu 18.04 Bionic Beaver support"
+msgstr ""
+
+#: ../../changelog.rst:1255
+msgid "2.18.3 (2018-04-27)"
+msgstr ""
+
+#: ../../changelog.rst:1259
+msgid "Fix imports when enabling only sensitivity app"
+msgstr ""
+
+#: ../../changelog.rst:1263
+msgid "2.18.2 (2018-04-27)"
+msgstr ""
+
+#: ../../changelog.rst:1265 ../../changelog.rst:1309
+msgid "**Preventive maintainance**"
+msgstr ""
+
+#: ../../changelog.rst:1267
+msgid "Upgrade to Django 1.11"
+msgstr ""
+
+#: ../../changelog.rst:1268 ../../changelog.rst:1312
+msgid "Upgrade several python dependencies"
+msgstr ""
+
+#: ../../changelog.rst:1272
+msgid ""
+"Allow user with can_bypass_structure permission to set or update the "
+"related structure on sensitive areas"
+msgstr ""
+
+#: ../../changelog.rst:1277
+msgid "Put back filter widgets in two columns (#1663)"
+msgstr ""
+
+#: ../../changelog.rst:1278
+msgid "Do not include (possibly forged) structure field in post requests"
+msgstr ""
+
+#: ../../changelog.rst:1279
+msgid "Fix geojson format in sensitive areas API"
+msgstr ""
+
+#: ../../changelog.rst:1280
+msgid "Fix filtering by practices in sensitive areas API"
+msgstr ""
+
+#: ../../changelog.rst:1281
+msgid "Fix sync_rando when sensitivity app is not enabled"
+msgstr ""
+
+#: ../../changelog.rst:1282
+msgid "Adapt BiodivParser to API modifications"
+msgstr ""
+
+#: ../../changelog.rst:1283
+msgid ""
+"Order sensitive areas by decreasing area in API to be able to clic on "
+"each of them"
+msgstr ""
+
+#: ../../changelog.rst:1284
+msgid "Set ownership in parsers depending on logged user"
+msgstr ""
+
+#: ../../changelog.rst:1285
+msgid "Pagination requires ordering in v2 API"
+msgstr ""
+
+#: ../../changelog.rst:1289
+msgid "2.18.1 (2018-03-26)"
+msgstr ""
+
+#: ../../changelog.rst:1293
+msgid "Fix distribution of tables in schemas"
+msgstr ""
+
+#: ../../changelog.rst:1294
+msgid "Allow to reset type1/type2 in TouristicContentSitraParser"
+msgstr ""
+
+#: ../../changelog.rst:1298
+msgid "Do not truncate install.log"
+msgstr ""
+
+#: ../../changelog.rst:1302
+msgid "2.18.0 (2018-03-22)"
+msgstr ""
+
+#: ../../changelog.rst:1306
+msgid ""
+"Drop support of Ubuntu Precise 12.04, please upgrade to Trusty 14.04 or "
+"Xenial 16.04 before upgrading Geotrek-admin"
+msgstr ""
+
+#: ../../changelog.rst:1311
+msgid "Upgrade to Django 1.9"
+msgstr ""
+
+#: ../../changelog.rst:1316
+msgid "Fix path duplication in path split trigger"
+msgstr ""
+
+#: ../../changelog.rst:1320
+msgid "Show total path length in path list"
+msgstr ""
+
+#: ../../changelog.rst:1324
+msgid "2.17.3 (2018-03-23)"
+msgstr ""
+
+#: ../../changelog.rst:1326 ../../changelog.rst:2714 ../../changelog.rst:2724
+#: ../../changelog.rst:2777 ../../changelog.rst:2795
+msgid "** Bug fixes **"
+msgstr ""
+
+#: ../../changelog.rst:1328
+msgid "Fix install"
+msgstr ""
+
+#: ../../changelog.rst:1332
+msgid "2.17.2 (2018-02-07)"
+msgstr ""
+
+#: ../../changelog.rst:1336
+msgid ""
+"Use id rather than french name for practices and structure in sensitive "
+"areas API"
+msgstr ""
+
+#: ../../changelog.rst:1337
+msgid "Add permission to import sensitive areas"
+msgstr ""
+
+#: ../../changelog.rst:1341
+msgid "2.17.1 (2018-02-02)"
+msgstr ""
+
+#: ../../changelog.rst:1345
+msgid ""
+"Implantation year on signages and infrastructures is now a filter with "
+"current existing values"
+msgstr ""
+
+#: ../../changelog.rst:1346
+msgid "Trek form field 'practice' is moved to first panel"
+msgstr ""
+
+#: ../../changelog.rst:1347
+msgid "Add sensitive areas to public trek PDF"
+msgstr ""
+
+#: ../../changelog.rst:1348
+msgid "Do not show paths on PDF"
+msgstr ""
+
+#: ../../changelog.rst:1349
+msgid "Add SENSITIVE_AREA_INTERSECTION_MARGIN setting"
+msgstr ""
+
+#: ../../changelog.rst:1353
+msgid "Fix snapping"
+msgstr ""
+
+#: ../../changelog.rst:1354
+msgid "Fix import of sensitive areas when languages lists do not match"
+msgstr ""
+
+#: ../../changelog.rst:1355
+msgid "Fix trail links in project detail view"
+msgstr ""
+
+#: ../../changelog.rst:1356
+msgid "Add 'approved' field in touristic content and event exports"
+msgstr ""
+
+#: ../../changelog.rst:1357
+msgid "Fix service type with specials character in trek detail"
+msgstr ""
+
+#: ../../changelog.rst:1358
+msgid "Fix bbox filtering in sensitive areas API"
+msgstr ""
+
+#: ../../changelog.rst:1359
+msgid "Add CORS header to sensitive areas API"
+msgstr ""
+
+#: ../../changelog.rst:1360
+msgid "Filter on spatial extent when importing from Biodiv'sport"
+msgstr ""
+
+#: ../../changelog.rst:1361
+msgid "Fix celery task runner version"
+msgstr ""
+
+#: ../../changelog.rst:1365
+msgid "2.17.0 (2018-01-15)"
+msgstr ""
+
+#: ../../changelog.rst:1369
+msgid "Sensitive Areas"
+msgstr ""
+
+#: ../../changelog.rst:1373
+msgid "2.16.1 (2018-01-10)"
+msgstr ""
+
+#: ../../changelog.rst:1377
+msgid "Fix encoding errors while generating static versions of rando pages"
+msgstr ""
+
+#: ../../changelog.rst:1378
+msgid "SEO for static versions of rando pages"
+msgstr ""
+
+#: ../../changelog.rst:1379
+msgid "Disable template caching (fix ODT generation)"
+msgstr ""
+
+#: ../../changelog.rst:1383
+msgid "2.16.0 (2017-12-21)"
+msgstr ""
+
+#: ../../changelog.rst:1387
+msgid "Create static versions of rando pages with opengraph data (Facebook)"
+msgstr ""
+
+#: ../../changelog.rst:1388
+msgid "Add external id field to POI form"
+msgstr ""
+
+#: ../../changelog.rst:1392
+msgid "Fix download of python packages for pypi.python.org (SSL is now required)"
+msgstr ""
+
+#: ../../changelog.rst:1393
+msgid "API v2 : Fix full URL pictures in nested serializers"
+msgstr ""
+
+#: ../../changelog.rst:1394
+msgid "Fix network SVG (add viewbox) to make them visible in Geotrek-rando"
+msgstr ""
+
+#: ../../changelog.rst:1395
+msgid "Hide file parsers form if no one is available"
+msgstr ""
+
+#: ../../changelog.rst:1399
+msgid "2.15.2 (2017-09-28)"
+msgstr ""
+
+#: ../../changelog.rst:1403
+msgid ""
+"Fix existing path split in particular cases where postgis doesn't see "
+"real intersections."
+msgstr ""
+
+#: ../../changelog.rst:1404
+msgid "Fix project and intervention detail template."
+msgstr ""
+
+#: ../../changelog.rst:1405
+msgid "Fix synchronization of POI media other than images"
+msgstr ""
+
+#: ../../changelog.rst:1406
+msgid "Include pois, parking and reference points to compute PDF map zoom"
+msgstr ""
+
+#: ../../changelog.rst:1410
+msgid "2.15.1 (2017-08-23)"
+msgstr ""
+
+#: ../../changelog.rst:1414
+msgid "Add es translation for PDF"
+msgstr ""
+
+#: ../../changelog.rst:1415
+msgid "Add mailssl setting"
+msgstr ""
+
+#: ../../changelog.rst:1419
+msgid "Fix APIDAE import illustrations"
+msgstr ""
+
+#: ../../changelog.rst:1420
+msgid "Fix double import parsers"
+msgstr ""
+
+#: ../../changelog.rst:1421
+msgid "Fix cirkwi export"
+msgstr ""
+
+#: ../../changelog.rst:1422
+msgid "Select only published POIs in GPX and KML files"
+msgstr ""
+
+#: ../../changelog.rst:1423
+msgid "Remove deprecated experimental setting"
+msgstr ""
+
+#: ../../changelog.rst:1424
+msgid "Fix HTML tags & entities in feedback email"
+msgstr ""
+
+#: ../../changelog.rst:1428
+msgid "2.15.0 (2017-07-13)"
+msgstr ""
+
+#: ../../changelog.rst:1432
+msgid ""
+"API v2 Beta 1. Optimized multilingual filtered endpoints for paths, "
+"treks, tours and pois."
+msgstr ""
+
+#: ../../changelog.rst:1433
+msgid ""
+"See HTML doc and examples in /api/v2/. Authentication with Basic HTTP "
+"(https://en.wikipedia.org/wiki/Basic_access_authentication)."
+msgstr ""
+
+#: ../../changelog.rst:1434
+msgid "Don't use it in production without HTTPS"
+msgstr ""
+
+#: ../../changelog.rst:1438
+msgid "Fix pdf default public templates (weasyprint)"
+msgstr ""
+
+#: ../../changelog.rst:1439
+msgid "Fix screamshotter standalone install (map screenshots)"
+msgstr ""
+
+#: ../../changelog.rst:1443
+msgid "2.14.3 (2017-07-03)"
+msgstr ""
+
+#: ../../changelog.rst:1447
+msgid "Cirkwi export fixes and improvements"
+msgstr ""
+
+#: ../../changelog.rst:1451
+msgid "2.14.2 (2017-06-21)"
+msgstr ""
+
+#: ../../changelog.rst:1455
+msgid "Fix attachments edition"
+msgstr ""
+
+#: ../../changelog.rst:1459
+msgid "2.14.1 (2017-06-22)"
+msgstr ""
+
+#: ../../changelog.rst:1463
+msgid "Refactor signals pre / post migrate according Django 1.8"
+msgstr ""
+
+#: ../../changelog.rst:1464 ../../changelog.rst:1586
+msgid "Update translations"
+msgstr ""
+
+#: ../../changelog.rst:1465
+msgid "Fix path splitting"
+msgstr ""
+
+#: ../../changelog.rst:1466
+msgid "Fix AutoLogin Middleware with mapentity 3.1.4"
+msgstr ""
+
+#: ../../changelog.rst:1470
+msgid "2.14.0"
+msgstr ""
+
+#: ../../changelog.rst:1472
+msgid "**WARNING!**"
+msgstr ""
+
+#: ../../changelog.rst:1474
+msgid "Upgrade to version 2.14.0 is only possible from version 2.13.0"
+msgstr ""
+
+#: ../../changelog.rst:1478
+msgid ""
+"Upgrade to Django 1.8. This is a big step, migrations are reset, please "
+"backup before upgrade."
+msgstr ""
+
+#: ../../changelog.rst:1479
+msgid "Ability to skip attachment download in parsers and use external links."
+msgstr ""
+
+#: ../../changelog.rst:1483
+msgid ""
+"Possibility to exclude pois in cirkwi xml export by adding ?withoutpois=1"
+" to url (http://XXXXX/api/cirkwi/circuits.xml?withoutpois=1"
+msgstr ""
+
+#: ../../changelog.rst:1484
+msgid ""
+"Add MOBILE_TILES_EXTENSION setting (for compatibility with old mobile "
+"apps, set it to 'png')"
+msgstr ""
+
+#: ../../changelog.rst:1485
+msgid "API optimization"
+msgstr ""
+
+#: ../../changelog.rst:1486
+msgid "Disable auto size for service icon in trek description."
+msgstr ""
+
+#: ../../changelog.rst:1490 ../../changelog.rst:1521
+msgid "Fix topologies and cities intersections"
+msgstr ""
+
+#: ../../changelog.rst:1494
+msgid "2.13.0 (2017-03-02)"
+msgstr ""
+
+#: ../../changelog.rst:1498
+msgid ""
+"MOBILE_TILES_URL settings is now a list which can be used to merge "
+"different layers in mobile application"
+msgstr ""
+
+#: ../../changelog.rst:1503
+msgid "2.12.0 (2017-02-16)"
+msgstr ""
+
+#: ../../changelog.rst:1507
+msgid "add loadsignage command"
+msgstr ""
+
+#: ../../changelog.rst:1511
+msgid "add field implantation_year to model BaseInfrastructure"
+msgstr ""
+
+#: ../../changelog.rst:1512
+msgid "add field owner to model LandEdge"
+msgstr ""
+
+#: ../../changelog.rst:1513
+msgid "add field agreement to model LandEdge"
+msgstr ""
+
+#: ../../changelog.rst:1517
+msgid "2.11.5 (2017-02-06)"
+msgstr ""
+
+#: ../../changelog.rst:1525
+msgid "2.11.4 (2017-02-01)"
+msgstr ""
+
+#: ../../changelog.rst:1529
+msgid "Remove deprecated datasource (replaced by import parsers)"
+msgstr ""
+
+#: ../../changelog.rst:1530
+msgid "Stop install.sh if make update or wget fails"
+msgstr ""
+
+#: ../../changelog.rst:1531
+msgid "Create database with right owner if user exists but database does not"
+msgstr ""
+
+#: ../../changelog.rst:1532
+msgid "Make sure supervisor service is started after install"
+msgstr ""
+
+#: ../../changelog.rst:1533
+msgid "Fix HTML entities in feedback email"
+msgstr ""
+
+#: ../../changelog.rst:1534
+msgid "Fix cirkwi export for treks with multilinestring geom"
+msgstr ""
+
+#: ../../changelog.rst:1538
+msgid "Add filter usages on paths"
+msgstr ""
+
+#: ../../changelog.rst:1539
+msgid "Add filters name and description on infrastructures and signages"
+msgstr ""
+
+#: ../../changelog.rst:1540
+msgid "Add picture to PDF for feedback reports (only in Weasyprint mode)"
+msgstr ""
+
+#: ../../changelog.rst:1544
+msgid "2.11.3 (2016-11-15)"
+msgstr ""
+
+#: ../../changelog.rst:1548
+msgid "Upgrade mapentity (fix map centering in PDF exports)"
+msgstr ""
+
+#: ../../changelog.rst:1549
+msgid "Fix cirkwi export when trek geom is not a linestring"
+msgstr ""
+
+#: ../../changelog.rst:1553
+msgid "2.11.2 (2016-09-15)"
+msgstr ""
+
+#: ../../changelog.rst:1557
+msgid "Do not synchronize not-published treks with published but deleted parents"
+msgstr ""
+
+#: ../../changelog.rst:1558
+msgid "Allow to specify portal in touristic content parsers"
+msgstr ""
+
+#: ../../changelog.rst:1559
+msgid "Fix import of type1 in HebergementsSitraParser"
+msgstr ""
+
+#: ../../changelog.rst:1560
+msgid "Fix source and portal missing in shapefile exports"
+msgstr ""
+
+#: ../../changelog.rst:1564
+msgid "Improve performances of DEM computation for huge treks"
+msgstr ""
+
+#: ../../changelog.rst:1568
+msgid "2.11.1 (2016-08-17)"
+msgstr ""
+
+#: ../../changelog.rst:1572
+msgid "Fix slug URL for \"oe\" ligature"
+msgstr ""
+
+#: ../../changelog.rst:1573
+msgid "Improve zoom of map captures in PDF"
+msgstr ""
+
+#: ../../changelog.rst:1577
+msgid "2.11.0 (2016-08-02)"
+msgstr ""
+
+#: ../../changelog.rst:1581
+msgid "Fix weasyprint install"
+msgstr ""
+
+#: ../../changelog.rst:1582
+msgid "Fix label displayed twice with Sitra Parser"
+msgstr ""
+
+#: ../../changelog.rst:1587
+msgid "Update import documentation"
+msgstr ""
+
+#: ../../changelog.rst:1588
+msgid "Record source is no nore structure related"
+msgstr ""
+
+#: ../../changelog.rst:1592
+msgid "ability to filter synchronized content with different portals"
+msgstr ""
+
+#: ../../changelog.rst:1596
+msgid "2.10.4 (2016-05-19)"
+msgstr ""
+
+#: ../../changelog.rst:1600
+msgid ""
+"Deprecate MAPENTITY_WEASYPRINT setting. Now public PDF use Weasyprint "
+"HTML templates and private PDF use legacy ODT template."
+msgstr ""
+
+#: ../../changelog.rst:1605
+msgid "Improve altitude profile computation (increase smoothing)"
+msgstr ""
+
+#: ../../changelog.rst:1606
+msgid "Improve HTML templates for public exports"
+msgstr ""
+
+#: ../../changelog.rst:1607
+msgid "Improve SITRA parser"
+msgstr ""
+
+#: ../../changelog.rst:1608
+msgid "Allow to use source variable in PDF templates"
+msgstr ""
+
+#: ../../changelog.rst:1612
+msgid "Fix comparison of zip files to keep mtime when nothing changed"
+msgstr ""
+
+#: ../../changelog.rst:1613
+msgid "Upgrade simplekml lib (should fix KML exports)"
+msgstr ""
+
+#: ../../changelog.rst:1617
+msgid "2.10.3 (2016-05-11)"
+msgstr ""
+
+#: ../../changelog.rst:1621
+msgid "Update default pictograms for touristic content categories"
+msgstr ""
+
+#: ../../changelog.rst:1622
+msgid "Update default pictograms for themes"
+msgstr ""
+
+#: ../../changelog.rst:1626
+msgid "Workaround a bun in supervisor init script"
+msgstr ""
+
+#: ../../changelog.rst:1627
+msgid "Fix multilinestring instead of linestring in trek shapefile parser"
+msgstr ""
+
+#: ../../changelog.rst:1631
+msgid "2.10.2 (2016-04-12)"
+msgstr ""
+
+#: ../../changelog.rst:1635
+msgid "Add source filter to touristic contents/events"
+msgstr ""
+
+#: ../../changelog.rst:1636
+msgid "Allow installation as root (not recommended, use with caution)"
+msgstr ""
+
+#: ../../changelog.rst:1640
+msgid "Restore contents deleted and then created again in EspritParcParser"
+msgstr ""
+
+#: ../../changelog.rst:1641
+msgid "Add a warning if type1/type2 is not created in EspritParcParser"
+msgstr ""
+
+#: ../../changelog.rst:1642
+msgid "Replace input by textarea in flatpage form"
+msgstr ""
+
+#: ../../changelog.rst:1646
+msgid "2.10.1 (2016-03-17)"
+msgstr ""
+
+#: ../../changelog.rst:1650
+msgid ""
+"Allow access to information desks in API (and so to map capture and PDF) "
+"for unpublished treks"
+msgstr ""
+
+#: ../../changelog.rst:1654
+msgid "Parsers improvements"
+msgstr ""
+
+#: ../../changelog.rst:1658
+msgid "2.10.0 (2016-03-03)"
+msgstr ""
+
+#: ../../changelog.rst:1662
+msgid "Add support for Ubuntu 15.04 Vivid"
+msgstr ""
+
+#: ../../changelog.rst:1666
+msgid ""
+"Remove TileCache service (you should set up tiles source with "
+"LEAFLET_CONFIG variable in `geotrek/settings/custom.py` now)"
+msgstr ""
+
+#: ../../changelog.rst:1667
+msgid ""
+"Run supervisor as root (you should now run `sudo supervisorctl` instead "
+"of `./bin/supervisor`)"
+msgstr ""
+
+#: ../../changelog.rst:1668
+msgid "Move nginx and supervisor logs to system dir `/var/log/`"
+msgstr ""
+
+#: ../../changelog.rst:1672
+msgid "Update default pictograms for difficulty levels"
+msgstr ""
+
+#: ../../changelog.rst:1676
+msgid "Fix sync_rando after deleting a trek with children"
+msgstr ""
+
+#: ../../changelog.rst:1680
+msgid "2.9.3 (2016-02-25)"
+msgstr ""
+
+#: ../../changelog.rst:1684
+msgid "Fix line break at start of contact in EspritParcParser"
+msgstr ""
+
+#: ../../changelog.rst:1688
+msgid "Add parameters.json and themes.json files to API"
+msgstr ""
+
+#: ../../changelog.rst:1692
+msgid "2.9.2 (2016-02-17)"
+msgstr ""
+
+#: ../../changelog.rst:1696
+msgid "Increase web link size"
+msgstr ""
+
+#: ../../changelog.rst:1700
+msgid "Fix path split"
+msgstr ""
+
+#: ../../changelog.rst:1701
+msgid "Fix attachment parsing with same document type for several structures"
+msgstr ""
+
+#: ../../changelog.rst:1705
+msgid "2.9.1 (2016-02-10)"
+msgstr ""
+
+#: ../../changelog.rst:1709
+msgid "Don't forget to sync touristic contents/events media when skipping PDF"
+msgstr ""
+
+#: ../../changelog.rst:1710
+msgid "Don't delete attachments of other objects when importing"
+msgstr ""
+
+#: ../../changelog.rst:1711
+msgid "Don't delete other objects when constant fields are set in parsers"
+msgstr ""
+
+#: ../../changelog.rst:1715
+msgid "2.9.0 (2016-02-04)"
+msgstr ""
+
+#: ../../changelog.rst:1719
+msgid "Add parser for brand \"Esprit Parc National\""
+msgstr ""
+
+#: ../../changelog.rst:1723
+msgid "Set user structure as related structure for all new objects"
+msgstr ""
+
+#: ../../changelog.rst:1727
+msgid "2.8.1 (2016-01-29)"
+msgstr ""
+
+#: ../../changelog.rst:1731
+msgid "Synchronize information desk thumbnails"
+msgstr ""
+
+#: ../../changelog.rst:1735
+msgid "2.8.0 (2016-01-28)"
+msgstr ""
+
+#: ../../changelog.rst:1739
+msgid "Use POI pictures in PDF if the trek has no picture itself"
+msgstr ""
+
+#: ../../changelog.rst:1740
+msgid "Use a placeholder in PDF if there is no picture"
+msgstr ""
+
+#: ../../changelog.rst:1741
+msgid "Parser to import touristic contents from SITRA"
+msgstr ""
+
+#: ../../changelog.rst:1742
+msgid "Add list of all information desks to API"
+msgstr ""
+
+#: ../../changelog.rst:1746
+msgid "Allow NULL values for id_externe fields in database"
+msgstr ""
+
+#: ../../changelog.rst:1747
+msgid "Fix missing elements (eg. POI enumeration) on trek map capture"
+msgstr ""
+
+#: ../../changelog.rst:1748
+msgid "Prevent overlaping controls at bottom of list view"
+msgstr ""
+
+#: ../../changelog.rst:1749
+msgid "Translation of column names in shapefiles export"
+msgstr ""
+
+#: ../../changelog.rst:1750
+msgid "UTF-8 and truncated alerts in shapefile export"
+msgstr ""
+
+#: ../../changelog.rst:1754
+msgid "2.7.2 (2016-01-26)"
+msgstr ""
+
+#: ../../changelog.rst:1758
+msgid "Synchronize touristic events with no end date"
+msgstr ""
+
+#: ../../changelog.rst:1759
+msgid "Fix PDF synchronization (eg. missing list of POI)"
+msgstr ""
+
+#: ../../changelog.rst:1763
+msgid "2.7.1 (2016-01-18)"
+msgstr ""
+
+#: ../../changelog.rst:1767
+msgid "Fix random z-index on forced layer polygon"
+msgstr ""
+
+#: ../../changelog.rst:1768
+msgid "Fix pretty duration"
+msgstr ""
+
+#: ../../changelog.rst:1772
+msgid "2.7.0 (2016-01-14)"
+msgstr ""
+
+#: ../../changelog.rst:1776
+msgid "New button to add Youtube videos in flat pages"
+msgstr ""
+
+#: ../../changelog.rst:1780
+msgid "Fix iframe inclusion in flatpages."
+msgstr ""
+
+#: ../../changelog.rst:1781
+msgid "Fix double column buttons in gridmanager."
+msgstr ""
+
+#: ../../changelog.rst:1782
+msgid "Fix validation on flatpages for combo external_url + content."
+msgstr ""
+
+#: ../../changelog.rst:1783
+msgid "Fix responsive layout for provided templates in flatpages."
+msgstr ""
+
+#: ../../changelog.rst:1784
+msgid "Fix event link to closest visible path only"
+msgstr ""
+
+#: ../../changelog.rst:1785
+msgid "Do not log anymore an error when submitting a form with an empty geometry"
+msgstr ""
+
+#: ../../changelog.rst:1789
+msgid "2.6.0 (2015-12-30)"
+msgstr ""
+
+#: ../../changelog.rst:1793
+msgid "Customization of practices ordering"
+msgstr ""
+
+#: ../../changelog.rst:1797
+msgid "Synchronize record source pictograms"
+msgstr ""
+
+#: ../../changelog.rst:1798
+msgid "Add buttons to attachment update form"
+msgstr ""
+
+#: ../../changelog.rst:1799
+msgid "Fix timestamps in database when connection with timezone other than UTC"
+msgstr ""
+
+#: ../../changelog.rst:1803
+msgid "2.5.2 (2015-12-29)"
+msgstr ""
+
+#: ../../changelog.rst:1807
+msgid "Fix hyphenation language in public PDF templates"
+msgstr ""
+
+#: ../../changelog.rst:1808
+msgid "Add parents to trek public PDF template"
+msgstr ""
+
+#: ../../changelog.rst:1809
+msgid "Fix numbering style in trek public PDF template"
+msgstr ""
+
+#: ../../changelog.rst:1810
+msgid "Show points of reference over other features on trek detail map"
+msgstr ""
+
+#: ../../changelog.rst:1814
+msgid "2.5.1 (2015-12-18)"
+msgstr ""
+
+#: ../../changelog.rst:1818
+msgid ""
+"Trek public PDF fixes (size of service pictos, style of numbered lists, "
+"stages)"
+msgstr ""
+
+#: ../../changelog.rst:1822
+msgid "2.5.0 (2015-12-08)"
+msgstr ""
+
+#: ../../changelog.rst:1826
+msgid ""
+"Order has been added to flatpages which is reflected in the export for "
+"geotrek-rando frontend."
+msgstr ""
+
+#: ../../changelog.rst:1827
+msgid "Added 2 templates buttons for flatpages creating two layouts"
+msgstr ""
+
+#: ../../changelog.rst:1828
+msgid "Option to add pois pictures to trek ones in Geotrek-Rando"
+msgstr ""
+
+#: ../../changelog.rst:1832
+msgid "Generate tiles zip files for all children of published treks"
+msgstr ""
+
+#: ../../changelog.rst:1833
+msgid "Fix URL of video/audio media in API"
+msgstr ""
+
+#: ../../changelog.rst:1834
+msgid "Fix default filtering of past touristic events in UI"
+msgstr ""
+
+#: ../../changelog.rst:1838
+msgid "2.4.4 (2015-12-02)"
+msgstr ""
+
+#: ../../changelog.rst:1842
+msgid "Show pending import/sync tasks"
+msgstr ""
+
+#: ../../changelog.rst:1845
+msgid "2.4.3 (2015-11-27)"
+msgstr ""
+
+#: ../../changelog.rst:1849
+msgid "Fix filtering by source in sync_rando for flatpages and tiles too"
+msgstr ""
+
+#: ../../changelog.rst:1853
+msgid "2.4.2 (2015-11-26)"
+msgstr ""
+
+#: ../../changelog.rst:1857
+msgid "Fix permissions of sync rando output directory"
+msgstr ""
+
+#: ../../changelog.rst:1858
+msgid "Fix filtering by source in sync_rando"
+msgstr ""
+
+#: ../../changelog.rst:1862
+msgid "2.4.1 (2015-11-25)"
+msgstr ""
+
+#: ../../changelog.rst:1866
+msgid "Condition field of infrastructures is no more required"
+msgstr ""
+
+#: ../../changelog.rst:1867
+msgid "Fix zipfile detection at import."
+msgstr ""
+
+#: ../../changelog.rst:1868
+msgid "Fix error handling at import (raise exception to browser)."
+msgstr ""
+
+#: ../../changelog.rst:1872
+msgid "2.4.0 (2015-11-18)"
+msgstr ""
+
+#: ../../changelog.rst:1876
+msgid "Paths can be merged"
+msgstr ""
+
+#: ../../changelog.rst:1877
+msgid "Add trek parents to API"
+msgstr ""
+
+#: ../../changelog.rst:1878
+msgid "Allow to sync public web site from web interface"
+msgstr ""
+
+#: ../../changelog.rst:1879
+msgid "Add begin and end dates to touristic events list"
+msgstr ""
+
+#: ../../changelog.rst:1880
+msgid "Filter conmpleted touristic events by default"
+msgstr ""
+
+#: ../../changelog.rst:1884
+msgid "Prevent concurrent imports and/or synchronization"
+msgstr ""
+
+#: ../../changelog.rst:1885
+msgid "Fix rendering of HTML markup in weasyprint templates"
+msgstr ""
+
+#: ../../changelog.rst:1886
+msgid "Fix missing publication field in some cases"
+msgstr ""
+
+#: ../../changelog.rst:1890
+msgid "2.3.0 (2015-11-09)"
+msgstr ""
+
+#: ../../changelog.rst:1894
+msgid "Sync rando now synchronizes touristic contents and events."
+msgstr ""
+
+#: ../../changelog.rst:1895
+msgid "Sync rando now exports only future events based on current date."
+msgstr ""
+
+#: ../../changelog.rst:1896
+msgid "Sync rando now synchronizes touristic content categories."
+msgstr ""
+
+#: ../../changelog.rst:1900
+msgid ""
+"Added a custom validation to accept url only contribution in flatpages "
+"without content."
+msgstr ""
+
+#: ../../changelog.rst:1901
+msgid "Sync rando now handles crashes when it calls django views."
+msgstr ""
+
+#: ../../changelog.rst:1905
+msgid "2.2.0 (2015-10-09)"
+msgstr ""
+
+#: ../../changelog.rst:1909
+msgid "Added normalisation for altimetry's json export"
+msgstr ""
+
+#: ../../changelog.rst:1910
+msgid "Clarify 2D/3D lengths (fixes #1400)"
+msgstr ""
+
+#: ../../changelog.rst:1914
+msgid "Change plural on accessibility label for admin filter"
+msgstr ""
+
+#: ../../changelog.rst:1918
+msgid "2.1.0 (2015-09-29)"
+msgstr ""
+
+#: ../../changelog.rst:1922
+msgid ""
+"Instead of storing the parent of a trek, Geotrek now stores the children "
+"of a trek. This allows to use the same trek in several parents and to "
+"order them. WARNING! Existing parent/child relation are lost. You will "
+"have to set them again after upgrade. Fixes #1479"
+msgstr ""
+
+#: ../../changelog.rst:1929
+msgid "Add trek infos (aka services for now)"
+msgstr ""
+
+#: ../../changelog.rst:1930
+msgid "Add email sent to reporting user after submit"
+msgstr ""
+
+#: ../../changelog.rst:1931
+msgid "Handle multiple reservation systems (fixes #1488)"
+msgstr ""
+
+#: ../../changelog.rst:1932
+msgid "Add an option to sync_rando to filter by source (fixes #1480)"
+msgstr ""
+
+#: ../../changelog.rst:1933
+msgid "Add add condition field to infrastructure table (fixes #1494)"
+msgstr ""
+
+#: ../../changelog.rst:1934
+msgid "New Geotrek logo"
+msgstr ""
+
+#: ../../changelog.rst:1938
+msgid "Reload supervisor configuration after Geotrek upgrade"
+msgstr ""
+
+#: ../../changelog.rst:1939
+msgid "Fix projection of waypoints in GPX exports"
+msgstr ""
+
+#: ../../changelog.rst:1940
+msgid ""
+"Prevent unnecessary save for geom fields if they are not updated. This "
+"prevents triggering geom recalculation in postgres."
+msgstr ""
+
+#: ../../changelog.rst:1942
+msgid "Fix crash in case of missing or invalid picture"
+msgstr ""
+
+#: ../../changelog.rst:1943
+msgid "Fix feedback API"
+msgstr ""
+
+#: ../../changelog.rst:1944
+msgid "Unzip eggs to fix templates not found error"
+msgstr ""
+
+#: ../../changelog.rst:1945
+msgid "Various parsers (import system) fixes and improvements"
+msgstr ""
+
+#: ../../changelog.rst:1949
+msgid "Document server migration"
+msgstr ""
+
+#: ../../changelog.rst:1953
+msgid "2.0.0 (2015-07-20)"
+msgstr ""
+
+#: ../../changelog.rst:1957
+msgid "Rework API URL schemas"
+msgstr ""
+
+#: ../../changelog.rst:1961
+msgid "Static API to disconnect Geotrek-rando from Geotrek-Admin (fixes #1428)"
+msgstr ""
+
+#: ../../changelog.rst:1962
+msgid "Build zip files for mobile application"
+msgstr ""
+
+#: ../../changelog.rst:1963
+msgid "Trek / Touristic content association distance depending on trek practice"
+msgstr ""
+
+#: ../../changelog.rst:1964
+msgid "Option to hide published treks nearby topologies"
+msgstr ""
+
+#: ../../changelog.rst:1965
+msgid "Add previous/next treks and category slugs to geojson API"
+msgstr ""
+
+#: ../../changelog.rst:1966
+msgid "Add external id in trekking/tourism detail pages and exports"
+msgstr ""
+
+#: ../../changelog.rst:1967
+msgid "Zip touristic contents as POI for mobile app v1"
+msgstr ""
+
+#: ../../changelog.rst:1968
+msgid "Add external id field on Path"
+msgstr ""
+
+#: ../../changelog.rst:1969
+msgid "Order intersections in Geotrek light mode"
+msgstr ""
+
+#: ../../changelog.rst:1970
+msgid "Add reservation id field for touristic contents"
+msgstr ""
+
+#: ../../changelog.rst:1971
+msgid "Integration of WeasyPrint to generate PDF from HTML/CSS instead of ODT"
+msgstr ""
+
+#: ../../changelog.rst:1975
+msgid "Remove HTTP calls to SoundCloud API at serialization"
+msgstr ""
+
+#: ../../changelog.rst:1976
+msgid "Allow DEM to partially cover spatial extent"
+msgstr ""
+
+#: ../../changelog.rst:1980
+msgid "0.35.1 (2015-07-17)"
+msgstr ""
+
+#: ../../changelog.rst:1984
+msgid "Fix installation on ubuntu 12.04 with recent updates"
+msgstr ""
+
+#: ../../changelog.rst:1988
+msgid "0.35.0 (2015-07-10)"
+msgstr ""
+
+#: ../../changelog.rst:1992
+msgid "Add an import framework"
+msgstr ""
+
+#: ../../changelog.rst:1996
+msgid "Fix a crash in appy pod (PDF generation)"
+msgstr ""
+
+#: ../../changelog.rst:1997
+msgid "Fix login with restricted access to some contents"
+msgstr ""
+
+#: ../../changelog.rst:1998
+msgid "Fix buildout bootstrap arguments"
+msgstr ""
+
+#: ../../changelog.rst:2002
+msgid "0.34.0 (2015-05-20)"
+msgstr ""
+
+#: ../../changelog.rst:2006
+msgid "Itinerancy (parent/children treks)"
+msgstr ""
+
+#: ../../changelog.rst:2007
+msgid "Allow to choose ordering of categories for Geotrek-Rando"
+msgstr ""
+
+#: ../../changelog.rst:2008
+msgid "Bootstrap grid editor for flatpages"
+msgstr ""
+
+#: ../../changelog.rst:2009
+msgid "Approved touristic contents and events"
+msgstr ""
+
+#: ../../changelog.rst:2010
+msgid "Option to split trek category by practice or accessibility"
+msgstr ""
+
+#: ../../changelog.rst:2014
+msgid "Fix duration notation"
+msgstr ""
+
+#: ../../changelog.rst:2015
+msgid "Flatten altimetry profiles"
+msgstr ""
+
+#: ../../changelog.rst:2019
+msgid "Show accessibility in trek detail page (fixes #1399)"
+msgstr ""
+
+#: ../../changelog.rst:2023
+msgid "0.33.4 (2015-04-07)"
+msgstr ""
+
+#: ../../changelog.rst:2027
+msgid "Ensure trek duration is a positive number"
+msgstr ""
+
+#: ../../changelog.rst:2028
+msgid "Fix cirkwi exports (second try)"
+msgstr ""
+
+#: ../../changelog.rst:2029
+msgid "Fix public PDF templates"
+msgstr ""
+
+#: ../../changelog.rst:2033
+msgid "0.33.3 (2015-04-01)"
+msgstr ""
+
+#: ../../changelog.rst:2037
+msgid "Fix systematic crash in PDF conversions"
+msgstr ""
+
+#: ../../changelog.rst:2041
+msgid "0.33.2 (2015-04-01)"
+msgstr ""
+
+#: ../../changelog.rst:2045
+msgid "Remove italian from fixtures"
+msgstr ""
+
+#: ../../changelog.rst:2046
+msgid "Fix crash when generating two PDF in parallel"
+msgstr ""
+
+#: ../../changelog.rst:2050
+msgid "0.33.1 (2015-03-25)"
+msgstr ""
+
+#: ../../changelog.rst:2054
+msgid "Fix flat pages crash"
+msgstr ""
+
+#: ../../changelog.rst:2055
+msgid "N to N source field (rel #1354)"
+msgstr ""
+
+#: ../../changelog.rst:2059
+msgid "0.33.0 (2015-03-25)"
+msgstr ""
+
+#: ../../changelog.rst:2063
+msgid ""
+"A new permission \"Can publish ...\" is required to publish treks, pois, "
+"touristic contents and touristic events. Grant it to your users and "
+"groups if need be"
+msgstr ""
+
+#: ../../changelog.rst:2066
+msgid "DB table ``l_b_source`` is renamed as ``l_b_source_troncon``"
+msgstr ""
+
+#: ../../changelog.rst:2070
+msgid "Publication workflow (fixes #1018)"
+msgstr ""
+
+#: ../../changelog.rst:2071
+msgid "Allow to add links to Youtube or Soundcloud media as attachment"
+msgstr ""
+
+#: ../../changelog.rst:2072
+msgid "Make pictograms optional in some places when not required by Geotrek-Rando"
+msgstr ""
+
+#: ../../changelog.rst:2073
+msgid ""
+"Add source for treks, touristic contents and touristic events (fixes "
+"#1354)"
+msgstr ""
+
+#: ../../changelog.rst:2074
+msgid ""
+"Add external id field for treks, pois, touristic contents and touristic "
+"events"
+msgstr ""
+
+#: ../../changelog.rst:2075
+msgid "Group cirkwi matchings in admin site (fixes #1402)"
+msgstr ""
+
+#: ../../changelog.rst:2079
+msgid "Fix projection of OSM link in feedback email"
+msgstr ""
+
+#: ../../changelog.rst:2080
+msgid "Fix language in cirkwi exports"
+msgstr ""
+
+#: ../../changelog.rst:2084
+msgid "0.32.2 (2015-03-06)"
+msgstr ""
+
+#: ../../changelog.rst:2088
+msgid "Home now redirects to treks list in light version (without topologies)"
+msgstr ""
+
+#: ../../changelog.rst:2089
+msgid "Fix Cirkwi export in light version"
+msgstr ""
+
+#: ../../changelog.rst:2090
+msgid "Fix SRID in database migrations"
+msgstr ""
+
+#: ../../changelog.rst:2091
+msgid "Add signage type filter again (fixes #1352)"
+msgstr ""
+
+#: ../../changelog.rst:2092
+msgid "Add missing date filters to touristic events list"
+msgstr ""
+
+#: ../../changelog.rst:2096
+msgid "0.32.1 (2015-03-04)"
+msgstr ""
+
+#: ../../changelog.rst:2100
+msgid "Fix creation of a loop topology with two paths (fixes #1026)"
+msgstr ""
+
+#: ../../changelog.rst:2104
+msgid "0.32.0 (2015-03-04)"
+msgstr ""
+
+#: ../../changelog.rst:2108
+msgid ""
+"Export to cirkwi/espace loisirs IGN. After upgrade, run ``bin/django "
+"loaddata cirkwi`` to load data cirkwi tags and categories"
+msgstr ""
+
+#: ../../changelog.rst:2110
+msgid "Wysiwyg editor for static web pages"
+msgstr ""
+
+#: ../../changelog.rst:2114
+msgid "Hide not published static pages in public REST API"
+msgstr ""
+
+#: ../../changelog.rst:2118
+msgid "0.31.0 (2015-03-02)"
+msgstr ""
+
+#: ../../changelog.rst:2122
+msgid "Add support of Ubuntu 14.04 to installer"
+msgstr ""
+
+#: ../../changelog.rst:2123
+msgid "Public PDF for touristic contents/events (fixes #1206)"
+msgstr ""
+
+#: ../../changelog.rst:2124
+msgid "Add treks close to other treks in REST API"
+msgstr ""
+
+#: ../../changelog.rst:2125
+msgid ""
+"Add pictograms for trek accessibilities, touristic content types and "
+"touristic event types"
+msgstr ""
+
+#: ../../changelog.rst:2130
+msgid "Show edit button when having bypass structure permission"
+msgstr ""
+
+#: ../../changelog.rst:2131
+msgid "Export missing fields in list exports (fixes #1167)"
+msgstr ""
+
+#: ../../changelog.rst:2132
+msgid ""
+"Fix formating of float and boolean values in list exports (fixes #1366, "
+"#1380)"
+msgstr ""
+
+#: ../../changelog.rst:2133
+msgid "Fix french translation"
+msgstr ""
+
+#: ../../changelog.rst:2134
+msgid "Allow anonymous access to altimetry API for public objects"
+msgstr ""
+
+#: ../../changelog.rst:2135
+msgid "Hide not published and deleted items in public REST API"
+msgstr ""
+
+#: ../../changelog.rst:2139
+msgid "0.30.0 (2015-02-19)"
+msgstr ""
+
+#: ../../changelog.rst:2143
+msgid ""
+"Trek practice (formerly usage) is no single valued so if a trek has "
+"multiple usages only one will be kept after upgrade. Others will be "
+"**lost**!"
+msgstr ""
+
+#: ../../changelog.rst:2145
+msgid ""
+"After upgrade, run ``make load_data`` to load fixtures for "
+"accessibilities or create them by hand. You should clean-up the list of "
+"practices by hand."
+msgstr ""
+
+#: ../../changelog.rst:2147
+msgid ""
+"Don't forget to set up permissions to administrate practices and "
+"accessibilities."
+msgstr ""
+
+#: ../../changelog.rst:2152
+msgid "Split trek usage field into practice and accessibility"
+msgstr ""
+
+#: ../../changelog.rst:2153
+msgid "Treks and POIs are now structure related"
+msgstr ""
+
+#: ../../changelog.rst:2154
+msgid "Allow anonymous access to media related to published items"
+msgstr ""
+
+#: ../../changelog.rst:2155
+msgid "Check model read permission to give access to media"
+msgstr ""
+
+#: ../../changelog.rst:2156
+msgid "Add a settings to set up CORS (cross-origin resource sharing)"
+msgstr ""
+
+#: ../../changelog.rst:2157
+msgid "Allow to get POIs for a specific trek in REST API"
+msgstr ""
+
+#: ../../changelog.rst:2158
+msgid ""
+"Consistent REST API (type1, type2, category for treks, touristic contents"
+" and touristic events)"
+msgstr ""
+
+#: ../../changelog.rst:2163
+msgid "Ensure path snapping is done on the closest point and is idempotent"
+msgstr ""
+
+#: ../../changelog.rst:2164
+msgid "Fix language of PNG elevation charts"
+msgstr ""
+
+#: ../../changelog.rst:2165
+msgid "Fix logo on login page"
+msgstr ""
+
+#: ../../changelog.rst:2166
+msgid "Fix logs rotation"
+msgstr ""
+
+#: ../../changelog.rst:2167
+msgid "Fix permissions creation"
+msgstr ""
+
+#: ../../changelog.rst:2171
+msgid "0.29.0 (2015-02-04)"
+msgstr ""
+
+#: ../../changelog.rst:2175
+msgid "GeoJSON API with all properties for Trek and Tourism"
+msgstr ""
+
+#: ../../changelog.rst:2179
+msgid "Fix permissions required to sync static Web pages"
+msgstr ""
+
+#: ../../changelog.rst:2180
+msgid "Fix geom computation on line topologies with offset"
+msgstr ""
+
+#: ../../changelog.rst:2184
+msgid "0.28.8 (2014-12-22)"
+msgstr ""
+
+#: ../../changelog.rst:2188
+msgid "Fix altimetry sampling for segment with 0 length (rel #1337)"
+msgstr ""
+
+#: ../../changelog.rst:2192
+msgid "0.28.7 (2014-12-22)"
+msgstr ""
+
+#: ../../changelog.rst:2196
+msgid "Fix altimetry trigger when TREKKING_TOPOLOGY_ENABLED is set to False"
+msgstr ""
+
+#: ../../changelog.rst:2200
+msgid "0.28.6 (2014-12-18)"
+msgstr ""
+
+#: ../../changelog.rst:2204
+msgid ""
+"Fix 3D length shorter than 2D length (run sql command ``UPDATE "
+"l_t_troncon SET geom=geom;`` after upgrade to update altimetry "
+"informations of existing geometries)"
+msgstr ""
+
+#: ../../changelog.rst:2205
+msgid "Fix translation of \"Information desks\" in public trek PDF"
+msgstr ""
+
+#: ../../changelog.rst:2206
+msgid ""
+"Fix prepare_map_images and prepare_elevation_charts commands failing for "
+"deleted objects and for objects without geom"
+msgstr ""
+
+#: ../../changelog.rst:2210
+msgid "0.28.5 (2014-12-09)"
+msgstr ""
+
+#: ../../changelog.rst:2214
+msgid "Fix DEM optimizations when minimum elevation is zero (fixes #1291)"
+msgstr ""
+
+#: ../../changelog.rst:2215
+msgid "Fix regression for translations of tourism (fixes #1315)"
+msgstr ""
+
+#: ../../changelog.rst:2216
+msgid "Fix duplicate entries with year filter (fixes #1324)"
+msgstr ""
+
+#: ../../changelog.rst:2220
+msgid "French user manual first step about general interface"
+msgstr ""
+
+#: ../../changelog.rst:2224
+msgid "Set PostgreSQL search_path at user level (fixes #1311)"
+msgstr ""
+
+#: ../../changelog.rst:2225
+msgid "Show 3D and 2D length in detail pages (fixes #1101)"
+msgstr ""
+
+#: ../../changelog.rst:2226
+msgid ""
+"Show length and elevation infos in trail and all statuts detail pages "
+"(fixes #1222)"
+msgstr ""
+
+#: ../../changelog.rst:2227
+msgid "Show trail length in list and exports (fixes #1282)"
+msgstr ""
+
+#: ../../changelog.rst:2228
+msgid "Replace stake by length in path list (fixes #956, fixes #1281)"
+msgstr ""
+
+#: ../../changelog.rst:2229
+msgid "Add subcontracting in intervention filter (fixes #1144)"
+msgstr ""
+
+#: ../../changelog.rst:2230
+msgid "Add missing fields in project filter (fixes #219, fixes #910)"
+msgstr ""
+
+#: ../../changelog.rst:2231
+msgid "Show status in interventions table among detail pages (fixes #1193)"
+msgstr ""
+
+#: ../../changelog.rst:2232
+msgid "Add missing field in projects exports (ref #1167)"
+msgstr ""
+
+#: ../../changelog.rst:2233
+msgid "Add length column to land module lists"
+msgstr ""
+
+#: ../../changelog.rst:2234
+msgid ""
+"Number of workers and request timeout can be now configured in "
+"``settings.ini``"
+msgstr ""
+
+#: ../../changelog.rst:2235
+msgid "Various improvements on trek public template, by Camille Monchicourt"
+msgstr ""
+
+#: ../../changelog.rst:2239
+msgid "0.28.4 (2014-11-21)"
+msgstr ""
+
+#: ../../changelog.rst:2243
+msgid ""
+"Fix mouse position indicator on ``/tools/extents/`` page when map tiles "
+"have Google projection"
+msgstr ""
+
+#: ../../changelog.rst:2244
+msgid "Fix missing filters in trails list (fixes #1297)"
+msgstr ""
+
+#: ../../changelog.rst:2245
+msgid "Fix infrastructure main type filter (fixes #1096)"
+msgstr ""
+
+#: ../../changelog.rst:2246
+msgid "Fix flatpage creation without external url in adminsite"
+msgstr ""
+
+#: ../../changelog.rst:2247
+msgid "Fix path detail page where deleted objects were shown (fixes #1302)"
+msgstr ""
+
+#: ../../changelog.rst:2248
+msgid "Fix position of POIs on trek detail maps (fixes #1209)"
+msgstr ""
+
+#: ../../changelog.rst:2249
+msgid "Fix TinyMCE not preserving colors (fixes #1170)"
+msgstr ""
+
+#: ../../changelog.rst:2250
+msgid ""
+"Raise validation error instead of crashing when submitted topology is "
+"empty (fixes #1272)"
+msgstr ""
+
+#: ../../changelog.rst:2254
+msgid "Fix mention of MAP_STYLES (ref #1226)"
+msgstr ""
+
+#: ../../changelog.rst:2256
+msgid "**Changes in experimental features**"
+msgstr ""
+
+#: ../../changelog.rst:2258
+msgid "Renamed *usage* to *type* in touristic events (fixes #1289)"
+msgstr ""
+
+#: ../../changelog.rst:2262
+msgid "0.28.3 (2014-11-12)"
+msgstr ""
+
+#: ../../changelog.rst:2266
+msgid "Fix upload form author/legend format (fixes #1293)"
+msgstr ""
+
+#: ../../changelog.rst:2267
+msgid "Fixes history list (ref #1276)"
+msgstr ""
+
+#: ../../changelog.rst:2268
+msgid "Prevent email to be sent twice on conversion error. Use info instead."
+msgstr ""
+
+#: ../../changelog.rst:2269
+msgid "Fix paperclip translations missing (fixes #1294)"
+msgstr ""
+
+#: ../../changelog.rst:2270
+msgid "Fix filetypes not being filtered by structure (fixes #1292)"
+msgstr ""
+
+#: ../../changelog.rst:2271
+msgid "Fix apparence of multiple-choices in forms (fixes #1295)"
+msgstr ""
+
+#: ../../changelog.rst:2275
+msgid "0.28.2 (2014-11-05)"
+msgstr ""
+
+#: ../../changelog.rst:2279
+msgid "Fix upgrade of django-leaflet to 0.15.0 (overlay layers)"
+msgstr ""
+
+#: ../../changelog.rst:2280
+msgid ""
+"Fix apparence of overlay layers for tourism when experimental features "
+"are disabled"
+msgstr ""
+
+#: ../../changelog.rst:2281
+msgid "Fix plural in tourism translation"
+msgstr ""
+
+#: ../../changelog.rst:2282
+msgid "Fix unit tests"
+msgstr ""
+
+#: ../../changelog.rst:2283
+msgid ""
+"Run this command to set the default information desk type with the "
+"original pictogram (or select a pictogram from the adminsite)"
+msgstr ""
+
+#: ../../changelog.rst:2294
+msgid "0.28.1 (2014-11-05)"
+msgstr ""
+
+#: ../../changelog.rst:2298
+msgid "Fix deployment when tourism is not enabled"
+msgstr ""
+
+#: ../../changelog.rst:2299
+msgid "Fix default duration when invalid value is filled (fixes #1279)"
+msgstr ""
+
+#: ../../changelog.rst:2300
+msgid ""
+"Fix year filters for intervention, infrastructure and project (fixes "
+"#1287)"
+msgstr ""
+
+#: ../../changelog.rst:2301
+msgid "Fix list filters not being restored (fixes #1236)"
+msgstr ""
+
+#: ../../changelog.rst:2305
+msgid "0.28.0 (2014-11-04)"
+msgstr ""
+
+#: ../../changelog.rst:2309
+msgid ""
+"Before running install, run this SQL command to add a column for file "
+"attachments :"
+msgstr ""
+
+#: ../../changelog.rst:2318
+msgid ""
+"Information desks now have a type (*Maison du parc*, *Tourist office*, "
+"...) with the ability to set dedicated pictograms (fixes #1192)."
+msgstr ""
+
+#: ../../changelog.rst:2320
+msgid ""
+"Ability to control which picture will be used in trek, using clicks on "
+"stars in attachments list (fixes #1117)"
+msgstr ""
+
+#: ../../changelog.rst:2322
+msgid ""
+"Ability to edit attachments from detail pages directly (fixes #177, the "
+"5th oldest issue!)"
+msgstr ""
+
+#: ../../changelog.rst:2323
+msgid "Add missing columns in intervention exports (fixes #1167)"
+msgstr ""
+
+#: ../../changelog.rst:2324
+msgid ""
+"Add ability (for super-admin) to add/change/delete zoning objects in "
+"Adminsite (ref #1246)"
+msgstr ""
+
+#: ../../changelog.rst:2325
+msgid ""
+"Add ability to have paths records in database that will not appear in "
+"Geotrek lists and maps. Just set column ``visible`` to false in "
+"``l_t_troncon`` table."
+msgstr ""
+
+#: ../../changelog.rst:2327
+msgid "Add ability to add external overlay tile layers (fixes #1203)"
+msgstr ""
+
+#: ../../changelog.rst:2331
+msgid "Fix position of attachment upload form on small screens"
+msgstr ""
+
+#: ../../changelog.rst:2332
+msgid "Clearer action message in object history table"
+msgstr ""
+
+#: ../../changelog.rst:2333
+msgid "Prevent image ratio warning from disappearing (fixes #1225)"
+msgstr ""
+
+#: ../../changelog.rst:2334
+msgid "Touristic contents"
+msgstr ""
+
+#: ../../changelog.rst:2335
+msgid "Touristic events"
+msgstr ""
+
+#: ../../changelog.rst:2337 ../../changelog.rst:2430 ../../changelog.rst:2549
+#: ../../changelog.rst:2685 ../../changelog.rst:3023
+msgid "**Internal changes**"
+msgstr ""
+
+#: ../../changelog.rst:2339
+msgid "Upgraded Chosen library for dropdown form fields"
+msgstr ""
+
+#: ../../changelog.rst:2340
+msgid ""
+"Set ``valide`` column default value to false on paths table "
+"``l_t_troncon`` (fixes #1217)"
+msgstr ""
+
+#: ../../changelog.rst:2341
+msgid ""
+"All information desks are now available in GeoJSON (*will be useful to "
+"show them all at once on Geotrek-rando*)."
+msgstr ""
+
+#: ../../changelog.rst:2343
+msgid ""
+"All tables and functions are now stored in different schemas. It allows "
+"to distinguish Geotrek objects from *postgreSQL* and *PostGIS*, and to "
+"grant user privileges by schema. It is also easier to browse objects in "
+"*pgAdmin* and *QGis*."
+msgstr ""
+
+#: ../../changelog.rst:2347
+msgid ""
+"**Caution**: if you created additional database users, you may have to "
+"change their ``search_path`` and/or their ``USAGE`` privilege."
+msgstr ""
+
+#: ../../changelog.rst:2350
+msgid "**Experimental features**"
+msgstr ""
+
+#: ../../changelog.rst:2352
+msgid ""
+"We introduced models for touristic contents and events. In order to load "
+"example values for categories and types, run the following commands:"
+msgstr ""
+
+#: ../../changelog.rst:2360
+msgid ""
+"We introduced models for static pages, allowing edition of public static "
+"Web pages from Geotrek adminsite."
+msgstr ""
+
+#: ../../changelog.rst:2363
+msgid ""
+"In order to enable those features under construction, add ``experimental "
+"= True`` in ``etc/settings.ini``. Note that none of them are used in "
+"*Geotrek-rando* yet."
+msgstr ""
+
+#: ../../changelog.rst
+msgid "notes"
+msgstr ""
+
+#: ../../changelog.rst:2368
+msgid ""
+"Give related permissions to the managers group in order to allow edition "
+"(``add_flatpage``, ``change_flatpage``, ``delete_flatpage``,"
+msgstr ""
+
+#: ../../changelog.rst:2370
+msgid "``add_touristiccontent`` ...)."
+msgstr ""
+
+#: ../../changelog.rst:2374
+msgid "0.27.2 (2010-10-14)"
+msgstr ""
+
+#: ../../changelog.rst:2378
+msgid ""
+"Fix elevation info not being computed when intervention is created (ref "
+"#1221)"
+msgstr ""
+
+#: ../../changelog.rst:2379
+msgid "Fix list of values for infrastructure and signage types (fixes #1223)"
+msgstr ""
+
+#: ../../changelog.rst:2380
+msgid ""
+"Signages can now be lines if setting SIGNAGE_LINE_ENABLED is True (fixes "
+"#1141)"
+msgstr ""
+
+#: ../../changelog.rst:2381
+msgid "Fix HTML tags in PDF exports (fixes #1235)"
+msgstr ""
+
+#: ../../changelog.rst:2382
+msgid "Fix regression with Geotrek light"
+msgstr ""
+
+#: ../../changelog.rst:2386
+msgid "0.27.1 (2010-10-13)"
+msgstr ""
+
+#: ../../changelog.rst:2390
+msgid "Fix problems in forms, prevent Javascript errors"
+msgstr ""
+
+#: ../../changelog.rst:2394
+msgid "0.27.0 (2010-10-09)"
+msgstr ""
+
+#: ../../changelog.rst:2398
+msgid ""
+"Attribute for single information desk was removed (was used in **Geotrek-"
+"rando** < 1.29)"
+msgstr ""
+
+#: ../../changelog.rst:2399
+msgid "Renamed setting ``TREK_PUBLISHED_BY_LANG`` to ``PUBLISHED_BY_LANG``"
+msgstr ""
+
+#: ../../changelog.rst:2400
+msgid ""
+"Renamed setting ``TREK_EXPORT_MAP_IMAGE_SIZE`` to "
+"``EXPORT_MAP_IMAGE_SIZE``, ``TREK_EXPORT_HEADER_IMAGE_SIZE`` to "
+"``EXPORT_HEADER_IMAGE_SIZE`` and ``TREK_COMPLETENESS_FIELDS`` to "
+"``COMPLETENESS_FIELDS``. They are now a dictionnary by object type (`see "
+"example "
+"<https://github.com/makinacorpus/Geotrek/blob/v0.27dev0/geotrek/settings/base.py#L443-L449>`_)"
+msgstr ""
+
+#: ../../changelog.rst:2407
+msgid "POI publication is now controlled like treks"
+msgstr ""
+
+#: ../../changelog.rst:2408
+msgid "POI now have a public PDF too"
+msgstr ""
+
+#: ../../changelog.rst:2409
+msgid ""
+"Introduced ``VIEWPORT_MARGIN`` setting to control list page viewport "
+"margin around spatial extent from ``settings.ini`` (default: 0.1 degree)"
+msgstr ""
+
+#: ../../changelog.rst:2414
+msgid ""
+"After upgrading, mark all POIs as published in the languages of your "
+"choice ::"
+msgstr ""
+
+#: ../../changelog.rst:2421
+msgid "Add missing credit for main picture in trek PDF (fixes #1178)"
+msgstr ""
+
+#: ../../changelog.rst:2422
+msgid ""
+"Paths module is now removed from user interface in *Geotrek-light* mode. "
+"(i.e. with ``TREKKING_TOPOLOGY_ENABLED = False``)"
+msgstr ""
+
+#: ../../changelog.rst:2424
+msgid "Make sure text fields are cleared (fixes #1207)"
+msgstr ""
+
+#: ../../changelog.rst:2425
+msgid "Intervention subcontracting was missing in detail pages (fixes #1201)"
+msgstr ""
+
+#: ../../changelog.rst:2426
+msgid "Make sure TLS is disabled when ``mailtls`` is False in settings"
+msgstr ""
+
+#: ../../changelog.rst:2427
+msgid "Fix list of POIs in path detail pages (fixes #1213)"
+msgstr ""
+
+#: ../../changelog.rst:2428
+msgid "Fix highlight from map for project list page (fixes #1180)"
+msgstr ""
+
+#: ../../changelog.rst:2432
+msgid "Extracted the trek publication to a generic and reusable notion"
+msgstr ""
+
+#: ../../changelog.rst:2433
+msgid ""
+"Complete refactor of Trek JSON API, now taking advantage of Django REST "
+"framework instead of custom code"
+msgstr ""
+
+#: ../../changelog.rst:2435
+msgid "Added read/write REST API on all entities"
+msgstr ""
+
+#: ../../changelog.rst:2436
+msgid "Refactored URLs declaration for altimetry and publishable entities"
+msgstr ""
+
+#: ../../changelog.rst:2437
+msgid ""
+"Change editable status of topology paths in Django forms, since it was "
+"posing problems with Django-rest-framework"
+msgstr ""
+
+#: ../../changelog.rst:2439
+msgid "Add elevation profile SVG URL in trek detail JSON (fixes #1205)"
+msgstr ""
+
+#: ../../changelog.rst:2440
+msgid ""
+"Simplified upgrade commands for ``etc/`` and ``var/``, and mention "
+"advanced configuration file"
+msgstr ""
+
+#: ../../changelog.rst:2445
+msgid "0.26.3 (2014-09-15)"
+msgstr ""
+
+#: ../../changelog.rst:2449
+msgid "Fix pretty trek duration when duration is between 24 and 48H (fixes #1188)"
+msgstr ""
+
+#: ../../changelog.rst:2450
+msgid ""
+"Invalidate projet maps captures when interventions change, and treks maps"
+" when POIs change (fixes #1181)"
+msgstr ""
+
+#: ../../changelog.rst:2455
+msgid "0.26.2 (2014-08-22)"
+msgstr ""
+
+#: ../../changelog.rst:2459
+msgid "Fix search among attached files in Adminsite (fixes #1172)"
+msgstr ""
+
+#: ../../changelog.rst:2463
+msgid "0.26.1 (2014-08-21)"
+msgstr ""
+
+#: ../../changelog.rst:2467
+msgid ""
+"Upgrade *django-mapentity* for bug fix in ODT export and list of values "
+"in detail pages"
+msgstr ""
+
+#: ../../changelog.rst:2472
+msgid "0.26.0 (2014-08-21)"
+msgstr ""
+
+#: ../../changelog.rst:2476
+msgid ""
+"Interventions in project detail page is now shown as a simple table (ref "
+"#214)"
+msgstr ""
+
+#: ../../changelog.rst:2477
+msgid ""
+"A generic system for interaction between objects attributes and details "
+"map was developped. It works with project interactions, topologies paths,"
+" etc. (ref #214)"
+msgstr ""
+
+#: ../../changelog.rst:2479
+msgid "Show enumeration of interventions in project PDF exports (fixes #960)"
+msgstr ""
+
+#: ../../changelog.rst:2480
+msgid "Number of POIs in now limited to 14 items in trek export (ref #1120)"
+msgstr ""
+
+#: ../../changelog.rst:2481
+msgid ""
+"Number of information desks in now limited to 2 items in trek export (ref"
+" #1120). See settings ``TREK_EXPORT_INFORMATION_DESK_LIST_LIMIT`` and "
+"``TREK_EXPORT_POI_LIST_LIMIT``"
+msgstr ""
+
+#: ../../changelog.rst:2483
+msgid "Justify texts of POIs in trek export, now converted to plain text."
+msgstr ""
+
+#: ../../changelog.rst:2484
+msgid ""
+"Trek export geometries are now translucid red by default (see "
+"``MAP_STYLES`` setting) (ref #1120)"
+msgstr ""
+
+#: ../../changelog.rst:2485
+msgid ""
+"Paths apparence in trek exports are now controlled by MAP_STYLES setting "
+"too."
+msgstr ""
+
+#: ../../changelog.rst:2486
+msgid ""
+"Images attachments are now resized to 800x800 for publication (instead of"
+" 500x500)"
+msgstr ""
+
+#: ../../changelog.rst:2487
+msgid "Clarify intervention cost by function and mandays (fixes #1169)"
+msgstr ""
+
+#: ../../changelog.rst:2491
+msgid "Fix paths layer not being shown in detail pages (fixes #1161)"
+msgstr ""
+
+#: ../../changelog.rst:2492
+msgid ""
+"Fix position of point topologies when closest path is not perpendicular "
+"(fixes #1156)"
+msgstr ""
+
+#: ../../changelog.rst:2493
+msgid "Prevent parking to be cropped on map exports (fixes #1006)"
+msgstr ""
+
+#: ../../changelog.rst:2495
+msgid "**Upgrades notes**"
+msgstr ""
+
+#: ../../changelog.rst:2497
+msgid "Since the map export have changed, empty the cache :"
+msgstr ""
+
+#: ../../changelog.rst:2505
+msgid "0.25.2 (2014-08-14)"
+msgstr ""
+
+#: ../../changelog.rst:2509
+msgid "Fix translation of Job in intervention form (fixes #1090)"
+msgstr ""
+
+#: ../../changelog.rst:2510
+msgid "Fix form error when no geometry is provided (fixes #1082)"
+msgstr ""
+
+#: ../../changelog.rst:2511
+msgid "Show attachments in adminsite (fixes #1162)"
+msgstr ""
+
+#: ../../changelog.rst:2512
+msgid "Fix JSON formatting of object attachment lists in API"
+msgstr ""
+
+#: ../../changelog.rst:2516
+msgid "0.25.1 (2014-08-01)"
+msgstr ""
+
+#: ../../changelog.rst:2520
+msgid "Fix Geotrek CSS not being deployed properly"
+msgstr ""
+
+#: ../../changelog.rst:2521
+msgid "Fix trek relationships causing errors for PDF export"
+msgstr ""
+
+#: ../../changelog.rst:2525
+msgid "0.25.0 (2014-08-01)"
+msgstr ""
+
+#: ../../changelog.rst:2529
+msgid "Added projection file EPSG:32622 (fixes #1150)"
+msgstr ""
+
+#: ../../changelog.rst:2530
+msgid "Now log addition and suppression of attachments in history"
+msgstr ""
+
+#: ../../changelog.rst:2531
+msgid ""
+"Added notion of points of reference for treks (fixes #1105). (Can be "
+"disabled with ``TREK_POINTS_OF_REFERENCE_ENABLED = False``)"
+msgstr ""
+
+#: ../../changelog.rst:2533
+msgid "Edit the parking location directly on the trek map (ref #387)"
+msgstr ""
+
+#: ../../changelog.rst:2534
+msgid "Show enumeration of POIs in trek PDF exports (fixes #871)"
+msgstr ""
+
+#: ../../changelog.rst:2536 ../../changelog.rst:2560 ../../changelog.rst:2569
+#: ../../changelog.rst:2583 ../../changelog.rst:3008 ../../changelog.rst:3039
+#: ../../changelog.rst:3054 ../../changelog.rst:3083 ../../changelog.rst:3171
+#: ../../changelog.rst:3203
+msgid "**BUG fixes**"
+msgstr ""
+
+#: ../../changelog.rst:2538
+msgid "Fix permission check to see attachments (fixes #1147, ref #1146)"
+msgstr ""
+
+#: ../../changelog.rst:2539
+msgid "Fix grouping of interventions in detail pages (fixes #1145)"
+msgstr ""
+
+#: ../../changelog.rst:2540
+msgid "Fix project total intervention cost (fixes #958)"
+msgstr ""
+
+#: ../../changelog.rst:2541
+msgid "Fix history entries not being saved when using formsets (fixes #1139)"
+msgstr ""
+
+#: ../../changelog.rst:2542
+msgid ""
+"Fix postal code being saved as integer (fixes #1138). Existing records "
+"will have a leading zero when shorter than 5 charaters."
+msgstr ""
+
+#: ../../changelog.rst:2544
+msgid "Fix bug when form of intervention on infrastracture is not valid"
+msgstr ""
+
+#: ../../changelog.rst:2545
+msgid "Limit height of layer switcher on small screens (fixes #1136)"
+msgstr ""
+
+#: ../../changelog.rst:2546
+msgid ""
+"Get rid of next parameter when redirecting to login when permission "
+"missing (fixes #1142)"
+msgstr ""
+
+#: ../../changelog.rst:2547
+msgid ""
+"Fix apparence of main menu when permissions are missing to view logbook "
+"and admin (ref #1142)"
+msgstr ""
+
+#: ../../changelog.rst:2551
+msgid "Rework display of lists in detail pages, better factorization"
+msgstr ""
+
+#: ../../changelog.rst:2552
+msgid "Removed links in logbook list for certain models"
+msgstr ""
+
+#: ../../changelog.rst:2553
+msgid "Display messages in login page too (useful for redirections)"
+msgstr ""
+
+#: ../../changelog.rst:2554
+msgid ""
+"Support edition of several fields on the same map, via django-leaflet new"
+" feature (fixes #53)"
+msgstr ""
+
+#: ../../changelog.rst:2558
+msgid "0.24.3 (2014-06-27)"
+msgstr ""
+
+#: ../../changelog.rst:2562
+msgid "Fix cursor not removed when terminating topology (fixes #1134)"
+msgstr ""
+
+#: ../../changelog.rst:2563
+msgid "Fix information desk geometry hard-coded SRID"
+msgstr ""
+
+#: ../../changelog.rst:2567
+msgid "0.24.2 (2014-06-27)"
+msgstr ""
+
+#: ../../changelog.rst:2571
+msgid "Fix EPSG:32620 projection file"
+msgstr ""
+
+#: ../../changelog.rst:2572
+msgid "Fix JS error when path layer is not on map"
+msgstr ""
+
+#: ../../changelog.rst:2573
+msgid ""
+"Fix start and end markers not shown as snapped on path edition (fixes "
+"#1116)"
+msgstr ""
+
+#: ../../changelog.rst:2574
+msgid "Fix groups not shown in Adminsite with external authent (fixes #1118)"
+msgstr ""
+
+#: ../../changelog.rst:2575
+msgid ""
+"Use markers as mouse icons for topology creation, use resize cursors as "
+"fallback only (fixes #1100)"
+msgstr ""
+
+#: ../../changelog.rst:2577
+msgid "Minor changes in trek print template (ref #1120)"
+msgstr ""
+
+#: ../../changelog.rst:2581
+msgid "0.24.1 (2014-06-26)"
+msgstr ""
+
+#: ../../changelog.rst:2585
+msgid "Fix SVG files for difficulty pictograms"
+msgstr ""
+
+#: ../../changelog.rst:2586
+msgid "Fix group fixtures for \"Rédacteurs\" (fixes #1128)"
+msgstr ""
+
+#: ../../changelog.rst:2587
+msgid "Fix tab \"None\" in list view (fixes #1127)"
+msgstr ""
+
+#: ../../changelog.rst:2588
+msgid "Fix external datasources icons in Admin (fixes #1132)"
+msgstr ""
+
+#: ../../changelog.rst:2589
+msgid "Fix information desk maps in Admin forms (fixes #1130)"
+msgstr ""
+
+#: ../../changelog.rst:2590
+msgid "Fix topology edition when two forced passages on same path (fixes #1131)"
+msgstr ""
+
+#: ../../changelog.rst:2594
+msgid "Ordered log entries by date descending (ref #1123)"
+msgstr ""
+
+#: ../../changelog.rst:2595
+msgid "Renamed \"Data sources\" by \"External data sources\" (fixes #1125)"
+msgstr ""
+
+#: ../../changelog.rst:2596
+msgid "Renamed \"Foncier\" to \"Statuts\" (fixes #1126)"
+msgstr ""
+
+#: ../../changelog.rst:2600
+msgid "0.24.0 (2014-06-23)"
+msgstr ""
+
+#: ../../changelog.rst:2602 ../../changelog.rst:2786
+msgid "** Breaking changes **"
+msgstr ""
+
+#: ../../changelog.rst:2604
+msgid ""
+"POI icons shall now have a solid background, since no background is added"
+" in trek detail map anymore."
+msgstr ""
+
+#: ../../changelog.rst:2607
+msgid ""
+"Pictograms fields were added to trek difficulty, route, network. You can "
+"use the images provided in the ``trekking/fixtures/upload/`` folder."
+msgstr ""
+
+#: ../../changelog.rst:2612
+msgid "Just before upgrading, delete the following folders ::"
+msgstr ""
+
+#: ../../changelog.rst:2616
+msgid ""
+"After upgrading, mark all treks as published in the languages of your "
+"choice ::"
+msgstr ""
+
+#: ../../changelog.rst:2624
+msgid "Public TREK export - hide block label if value is empty (fixes #873)"
+msgstr ""
+
+#: ../../changelog.rst:2625
+msgid "Add POIs on trek GPX (fixes #774)"
+msgstr ""
+
+#: ../../changelog.rst:2626
+msgid "Close list filter when click outside (fixes #916)"
+msgstr ""
+
+#: ../../changelog.rst:2627
+msgid "Rename recurrent field to subcontracting on intervention (fixes #911)"
+msgstr ""
+
+#: ../../changelog.rst:2628
+msgid "Rename comments field to description on intervention (fixes #927)"
+msgstr ""
+
+#: ../../changelog.rst:2629 ../../changelog.rst:2742
+msgid "Show object type in ODT export (fixes #1000)"
+msgstr ""
+
+#: ../../changelog.rst:2630
+msgid "Show paths extremities on map (fixes #355)"
+msgstr ""
+
+#: ../../changelog.rst:2631
+msgid ""
+"Ability to reuse topology when adding objects from detail pages (fixes "
+"#574, fixes #998)"
+msgstr ""
+
+#: ../../changelog.rst:2632
+msgid "Command to generate all elevation charts (fixes #799)"
+msgstr ""
+
+#: ../../changelog.rst:2633
+msgid "SITRA support in Tourism datasources (fixes #1064)"
+msgstr ""
+
+#: ../../changelog.rst:2634
+msgid "Added status field on feedback reports (fixes #1075)"
+msgstr ""
+
+#: ../../changelog.rst:2635
+msgid "Show restricted areas by type in layer switcher (fixes #961)"
+msgstr ""
+
+#: ../../changelog.rst:2636
+msgid ""
+"Publication status is now controlled by language (fixes #1003). Previous "
+"behaviour can restored by setting ``TREK_PUBLISHED_BY_LANG``` to False."
+msgstr ""
+
+#: ../../changelog.rst:2638
+msgid "Added publication date on trek (ref #1003)"
+msgstr ""
+
+#: ../../changelog.rst:2639
+msgid "Ability to see a trek in the different published languages (ref #1003)"
+msgstr ""
+
+#: ../../changelog.rst:2640
+msgid "A trek can now have several information desks (fixes #1001)"
+msgstr ""
+
+#: ../../changelog.rst:2641
+msgid "Information desks are now shown in trek detail map (fixes #1001)"
+msgstr ""
+
+#: ../../changelog.rst:2642
+msgid ""
+"Information desks now have optional photo and position, as well as some "
+"additional fields (fixes #1001)"
+msgstr ""
+
+#: ../../changelog.rst:2644
+msgid "Disabled marker cluster in trek detail map"
+msgstr ""
+
+#: ../../changelog.rst:2645
+msgid "Remove background and halo effect on POI icons"
+msgstr ""
+
+#: ../../changelog.rst:2646
+msgid ""
+"Added 3 new settings to control trek detail map icons size "
+"(``TREK_ICON_SIZE_POI``, ``TREK_ICON_SIZE_PARKING``, "
+"``TREK_ICON_SIZE_INFORMATION_DESK``)"
+msgstr ""
+
+#: ../../changelog.rst:2649
+msgid "**Minor features**"
+msgstr ""
+
+#: ../../changelog.rst:2651
+msgid "Intervention disorders is not mandatory anymore (fixes #661)"
+msgstr ""
+
+#: ../../changelog.rst:2652
+msgid "Improved details in trek form, use Chosen for many-to-many widgets"
+msgstr ""
+
+#: ../../changelog.rst:2653
+msgid "Documented the configuration of map layers apparence"
+msgstr ""
+
+#: ../../changelog.rst:2654
+msgid "Show layers colors in layer switcher"
+msgstr ""
+
+#: ../../changelog.rst:2655
+msgid "Detail page : replace \"Maintenance\" by \"Works\" (fixes #889)"
+msgstr ""
+
+#: ../../changelog.rst:2656
+msgid ""
+"Detail page : interventions on paths are now grouped together, and a "
+"small icon is shown (fixes #735)"
+msgstr ""
+
+#: ../../changelog.rst:2658
+msgid "Detail page : show intervention costs (ref #958, fixes #764)"
+msgstr ""
+
+#: ../../changelog.rst:2659
+msgid "Show project intervention total costs (fixes #958)"
+msgstr ""
+
+#: ../../changelog.rst:2660
+msgid ""
+"Allow to override the Trek public document template (see *advanced "
+"configuration* in docs)"
+msgstr ""
+
+#: ../../changelog.rst:2662
+msgid "Close calendar after date choice in intervention form (fixes #928)"
+msgstr ""
+
+#: ../../changelog.rst:2663
+msgid "Renamed Attachment submit button (fixes #925)"
+msgstr ""
+
+#: ../../changelog.rst:2664
+msgid ""
+"Added a new setting ``PATH_SNAPPING_DISTANCE`` to control paths snapping "
+"distance in database (default: 1m)"
+msgstr ""
+
+#: ../../changelog.rst:2666
+msgid ""
+"Allow to disable trails notion (fixes #997) (see *advanced configuration*"
+" in docs)"
+msgstr ""
+
+#: ../../changelog.rst:2668
+msgid ""
+"Show POI name on hover instead of category in trek detail pages (fixes "
+"#1004)"
+msgstr ""
+
+#: ../../changelog.rst:2669
+msgid "Form tabs are now always visible while scrolling (fixes #926)"
+msgstr ""
+
+#: ../../changelog.rst:2670
+msgid "New URL to obtain the attached filelist of an object"
+msgstr ""
+
+#: ../../changelog.rst:2671
+msgid "Remove float notation in altimetry altitude labels"
+msgstr ""
+
+#: ../../changelog.rst:2672
+msgid "Control altimetry profiles font using ``ALTIMETRIC_PROFILE_FONT`` setting"
+msgstr ""
+
+#: ../../changelog.rst:2673
+msgid "Add pictograms to routes and networks (fixes #1102)"
+msgstr ""
+
+#: ../../changelog.rst:2677
+msgid "Fixed Signage and Infrastructure year filter label (fixes #293)"
+msgstr ""
+
+#: ../../changelog.rst:2678
+msgid "Fixed paths layers not always shown below other layers (fixes #912)"
+msgstr ""
+
+#: ../../changelog.rst:2679
+msgid "Clarify legend and title for attachments (fixes #888)"
+msgstr ""
+
+#: ../../changelog.rst:2680
+msgid "Fixed cannot clear trek fields in database (fixes #1095)"
+msgstr ""
+
+#: ../../changelog.rst:2681
+msgid "Fixed missing translation of \"Load local file\" (fixes #1085)"
+msgstr ""
+
+#: ../../changelog.rst:2682
+msgid "POI types are displayed as such in adminsite"
+msgstr ""
+
+#: ../../changelog.rst:2683
+msgid "Fix duplicate authors in history list in detail pages"
+msgstr ""
+
+#: ../../changelog.rst:2687
+msgid "Added pictogram on difficulty, useful for *Geotrek-mobile* (fixes #1109)"
+msgstr ""
+
+#: ../../changelog.rst:2688
+msgid "Added experimental *Geotrek-light* support (ref #1019)"
+msgstr ""
+
+#: ../../changelog.rst:2692
+msgid "0.23.5 (2014-06-19)"
+msgstr ""
+
+#: ../../changelog.rst:2696
+msgid "Fix crash when TourInFrance has malformed website or phone"
+msgstr ""
+
+#: ../../changelog.rst:2697
+msgid "Fix translations not being installed"
+msgstr ""
+
+#: ../../changelog.rst:2701
+msgid "0.23.4 (2014-06-18)"
+msgstr ""
+
+#: ../../changelog.rst:2705
+msgid ""
+"Fix massive upgrade bug, where new migrations were ignored. Due to "
+"migration operation introduction in 0.22 installation script."
+msgstr ""
+
+#: ../../changelog.rst:2708
+msgid ""
+"Special thanks to Noël Martinon, Félix Merzeau, Gil Deluermoz and Camille"
+" Montchicourt for their patience on this."
+msgstr ""
+
+#: ../../changelog.rst:2712
+msgid "0.23.3 (2014-06-18)"
+msgstr ""
+
+#: ../../changelog.rst:2716
+msgid "Fix static files compression when using Google Mercator projection in maps"
+msgstr ""
+
+#: ../../changelog.rst:2717
+msgid ""
+"Fix intermediary points order in topology de/serialization, and remove "
+"useless topology serialization optimizations (fixes #1031)"
+msgstr ""
+
+#: ../../changelog.rst:2722
+msgid "0.23.2 (2014-06-13)"
+msgstr ""
+
+#: ../../changelog.rst:2726
+msgid "Fixed land records not shown in detail pages"
+msgstr ""
+
+#: ../../changelog.rst:2727
+msgid "Fixed JSON DEM area extent for treks"
+msgstr ""
+
+#: ../../changelog.rst:2728
+msgid "Fixed targets list for tourism datasources (fixes #1091)"
+msgstr ""
+
+#: ../../changelog.rst:2729
+msgid ""
+"Cache tourism datasources for one day (setting "
+"``CACHE_TIMEOUT_TOURISM_DATASOURCES``)"
+msgstr ""
+
+#: ../../changelog.rst:2730
+msgid "Fix crashes with TourInFrance sources"
+msgstr ""
+
+#: ../../changelog.rst:2731
+msgid "Add link to OSM in feedback email (fixes #1089, #1093)"
+msgstr ""
+
+#: ../../changelog.rst:2732
+msgid "Fix feedback email translation (fixes #1087)"
+msgstr ""
+
+#: ../../changelog.rst:2733
+msgid ""
+"Fix problem with permission check \"read attachment\" in detail page "
+"(fixes #1092)"
+msgstr ""
+
+#: ../../changelog.rst:2734
+msgid "Fix measure control appearing twice in forms (fixes #1078)"
+msgstr ""
+
+#: ../../changelog.rst:2735
+msgid "Fix 404 on download buttons from list views"
+msgstr ""
+
+#: ../../changelog.rst:2736
+msgid "Fix POI translated fields not tabbed (fixes #1065)"
+msgstr ""
+
+#: ../../changelog.rst:2737
+msgid "Fix missing translation of \"Add a new POI\" (fixes #1086)"
+msgstr ""
+
+#: ../../changelog.rst:2738
+msgid "Fix invalid snapping when save path without editing geometry (fixes #1099)"
+msgstr ""
+
+#: ../../changelog.rst:2739
+msgid "Add missing properties in feedback report detail page."
+msgstr ""
+
+#: ../../changelog.rst:2740
+msgid "Hide all modules information in report detail page."
+msgstr ""
+
+#: ../../changelog.rst:2741
+msgid "Add missing translations of feedback module."
+msgstr ""
+
+#: ../../changelog.rst:2745 ../../changelog.rst:2826
+msgid "** Internal changes **"
+msgstr ""
+
+#: ../../changelog.rst:2747
+msgid "Upgraded to Mapentity 1.4.0"
+msgstr ""
+
+#: ../../changelog.rst:2748
+msgid "Upgraded to Leaflet 0.7.3"
+msgstr ""
+
+#: ../../changelog.rst:2750
+msgid "** Installation **"
+msgstr ""
+
+#: ../../changelog.rst:2752
+msgid ""
+"Fixed content types migration of land to zoning apps (Thanks Noël "
+"Martinon)"
+msgstr ""
+
+#: ../../changelog.rst:2754
+msgid ""
+"UbuntuGIS stable maintainers have *upgraded* (sic) GDAL to 1.10.0. "
+"Upgrading GDAL is painful, and PostGIS packages may have to be "
+"reinstalled (data shouldn't be lost though). *Remember it was recommended"
+" to run PostGIS on a different server*."
+msgstr ""
+
+#: ../../changelog.rst:2761
+msgid ""
+"On June 2th 2014, the Ubuntu GIS stable repository switched from "
+"``libgdal1`` to ``libgdal1h``. It broke the deployment script of many "
+"projects, including *Geotrek*."
+msgstr ""
+
+#: ../../changelog.rst:2765
+msgid ""
+"It is a good thing, since it paves the way for the last Ubuntu LTS "
+"release (14.04). However, it breaks the *Long Term Support* philosophy of"
+" the previous one (12.04), supposed to be supported until 2019."
+msgstr ""
+
+#: ../../changelog.rst:2767
+msgid "**Morality** : we cannot trust the *Ubuntu GIS stable* repository anymore."
+msgstr ""
+
+#: ../../changelog.rst:2769
+msgid ""
+"Regarding *Geotrek*, such upgrades of Ubuntu packages is not supposed to "
+"be covered by its installation script. If you face any problems, please "
+"refer to the community or commercial support (such as *Makina Corpus* for"
+" example)."
+msgstr ""
+
+#: ../../changelog.rst:2775
+msgid "0.23.1 (2014-05-22)"
+msgstr ""
+
+#: ../../changelog.rst:2779
+msgid "Fixed regression when editing topologies without modification"
+msgstr ""
+
+#: ../../changelog.rst:2780
+msgid "Fixed widget for Trails to allow linear topologies only"
+msgstr ""
+
+#: ../../changelog.rst:2784
+msgid "0.23 (2014-05-22)"
+msgstr ""
+
+#: ../../changelog.rst:2788
+msgid "Read all release notes carefully."
+msgstr ""
+
+#: ../../changelog.rst:2790
+msgid ""
+"Trails are now managed as topologies (fixes #370). Existing trails "
+"geometries are likely to be **LOST** (*see below*)"
+msgstr ""
+
+#: ../../changelog.rst:2792
+msgid "Rename ``mailadmin`` to ``mailadmins`` in ``etc/settings.ini``"
+msgstr ""
+
+#: ../../changelog.rst:2793
+msgid "Permission systems has been refactored (*see below*)"
+msgstr ""
+
+#: ../../changelog.rst:2797
+msgid "Force browser cache revalidation of geojson data (fixes #843)"
+msgstr ""
+
+#: ../../changelog.rst:2798
+msgid "Force browser cache revalidation for path graph (fixes #1029)"
+msgstr ""
+
+#: ../../changelog.rst:2799
+msgid "Fix deletion porblems in AdminSite (fixes #1008)"
+msgstr ""
+
+#: ../../changelog.rst:2800
+msgid "Trek advised parking and public transport are translatable (fixes #1024)"
+msgstr ""
+
+#: ../../changelog.rst:2801
+msgid ""
+"Fix missing translation \"no filters\" and \"current criterias\" (fixes "
+"#884)"
+msgstr ""
+
+#: ../../changelog.rst:2802
+msgid "Fix PDF versions of documents not being translated (fixes #1028)"
+msgstr ""
+
+#: ../../changelog.rst:2804
+msgid "** New features **"
+msgstr ""
+
+#: ../../changelog.rst:2806
+msgid ""
+"Command to import shapefile with points into POI as topologies (fixes "
+"#952)"
+msgstr ""
+
+#: ../../changelog.rst:2807
+msgid "Add views to serve DEM on object area as JSON (*Geotrek-Rando 3D*)"
+msgstr ""
+
+#: ../../changelog.rst:2808
+msgid ""
+"New tourism module : external datasources can be configured from "
+"Adminsite (*GeoJSON, TourInFrance, ...*) and added to maps (by module, or"
+" published on *Geotrek-rando*...)"
+msgstr ""
+
+#: ../../changelog.rst:2810
+msgid "Show number of attached files in tab (fixes #743)"
+msgstr ""
+
+#: ../../changelog.rst:2811
+msgid "New permission to control download of attachments"
+msgstr ""
+
+#: ../../changelog.rst:2812
+msgid "New permission to allow users or groups to bypass structure restrictions"
+msgstr ""
+
+#: ../../changelog.rst:2813
+msgid ""
+"Add a setting to serve attached files as download (default: True) (fixes "
+"#976)"
+msgstr ""
+
+#: ../../changelog.rst:2814
+msgid "Track objects creations, changes and deletions (fixes #300)"
+msgstr ""
+
+#: ../../changelog.rst:2815
+msgid "Added a reader group (fixes #495)"
+msgstr ""
+
+#: ../../changelog.rst:2816
+msgid "Topologies are not recreated if user did not edit field (fixes #833)"
+msgstr ""
+
+#: ../../changelog.rst:2817
+msgid "Added static file for projection EPSG:32620"
+msgstr ""
+
+#: ../../changelog.rst:2818
+msgid "Show land objects in menu (fixes #942)"
+msgstr ""
+
+#: ../../changelog.rst:2819
+msgid "Documented configuration of custom projections (fixes #1037)"
+msgstr ""
+
+#: ../../changelog.rst:2820
+msgid "Buttons in the list menu to add new objects easily"
+msgstr ""
+
+#: ../../changelog.rst:2821
+msgid "Add fullscreen button on maps (fixes #904)"
+msgstr ""
+
+#: ../../changelog.rst:2822
+msgid "Add all controls on detail map (fixes #907)"
+msgstr ""
+
+#: ../../changelog.rst:2823
+msgid "Add a button to close filters (fixes #424)"
+msgstr ""
+
+#: ../../changelog.rst:2824
+msgid ""
+"Added new sections in documention : *FAQ*, *User-manal* and *Advanced "
+"configuration*"
+msgstr ""
+
+#: ../../changelog.rst:2828
+msgid "Enabled database connection pooling in production"
+msgstr ""
+
+#: ../../changelog.rst:2829
+msgid "An error is raised if SRID has not unit in meters (fixes #921)"
+msgstr ""
+
+#: ../../changelog.rst:2830
+msgid "Zoning and land modules are now splitted (fixes #954)"
+msgstr ""
+
+#: ../../changelog.rst:2831
+msgid ""
+"Complete refactor of geographical form fields. Now uses *django-"
+"mapentity* from its own repository instead of internal orphan branch."
+msgstr ""
+
+#: ../../changelog.rst:2833
+msgid ""
+"Complete refactor of maps initialization, without inline preprocessed "
+"JavaScript"
+msgstr ""
+
+#: ../../changelog.rst:2834
+msgid ""
+"Rely on Django permissions to control access to detail, list and exports "
+"(fixes #675)"
+msgstr ""
+
+#: ../../changelog.rst:2835
+msgid "Core and altimetry modules are now splitted (fixes #996)"
+msgstr ""
+
+#: ../../changelog.rst:2836
+msgid "Renamed treks POIs GeoJSON properties"
+msgstr ""
+
+#: ../../changelog.rst:2840
+msgid ""
+"Before upgrading, backup your trail records and geometries, using pgAdmin"
+" ::"
+msgstr ""
+
+#: ../../changelog.rst:2849
+msgid ""
+"Before upgrade, rename ``mailadmin`` to ``mailadmins`` and add a new line"
+" ``mailmanagers`` in ``etc/settings.ini``. See *Email settings* section "
+"in documentation."
+msgstr ""
+
+#: ../../changelog.rst:2853
+msgid "Just before upgrading, delete the following folders  ::"
+msgstr ""
+
+#: ../../changelog.rst:2859
+msgid ""
+"After upgrading, load the default permissions of the previous groups, "
+"otherwise users won't have access to their modules ::"
+msgstr ""
+
+#: ../../changelog.rst:2865
+msgid ""
+"After upgrading, make sure *Active* is checked for the user "
+"*__internal__* otherwise screenshotting won't work."
+msgstr ""
+
+#: ../../changelog.rst:2868
+msgid "After upgrading, load basic data for the new module ::"
+msgstr ""
+
+#: ../../changelog.rst:2872
+msgid ""
+"After upgrading, make sure the user specified in *Geotrek-rando* is in "
+"the group *Geotrek-rando*, or has at least the following permissions in "
+"the AdminSite :"
+msgstr ""
+
+#: ../../changelog.rst:2876
+msgid "``paperclip | attachment | Can read attachments``"
+msgstr ""
+
+#: ../../changelog.rst:2877
+msgid "``trekking | Trek | Can read Trek``"
+msgstr ""
+
+#: ../../changelog.rst:2878
+msgid "``trekking | Trek | Can export Trek``"
+msgstr ""
+
+#: ../../changelog.rst:2879
+msgid "``trekking | POI | Can read POI``"
+msgstr ""
+
+#: ../../changelog.rst:2880
+msgid "``trekking | POI | Can export POI``"
+msgstr ""
+
+#: ../../changelog.rst:2881
+msgid "``feedback | Report | Can add report``"
+msgstr ""
+
+#: ../../changelog.rst:2883
+msgid ""
+"After upgrading, compare visually the resulting migrated trails using "
+"QGis, by opening both layers ``l_v_sentier`` and ``backup_sentiers``."
+msgstr ""
+
+#: ../../changelog.rst:2888
+msgid "0.22.6 (2014-04-27)"
+msgstr ""
+
+#: ../../changelog.rst:2890
+msgid ""
+"Remove hard-coded mentions of EPSG:2154 in database initial migrations "
+"(fixes #1020)"
+msgstr ""
+
+#: ../../changelog.rst:2892
+msgid "Fix version download and unzip in installation script."
+msgstr ""
+
+#: ../../changelog.rst:2894
+msgid ""
+"Thanks Noël Martinon, from Guadeloupe National Park, for reporting both "
+"issues."
+msgstr ""
+
+#: ../../changelog.rst:2898
+msgid "0.22.5 (2014-03-19)"
+msgstr ""
+
+#: ../../changelog.rst:2900
+msgid "Fix compilation of translations (ref #970)"
+msgstr ""
+
+#: ../../changelog.rst:2901
+msgid "Fix distinction between languages and translated languages (fixes #968)"
+msgstr ""
+
+#: ../../changelog.rst:2902
+msgid "Fix history tabs not being shown after upgrade to Django 1.6 (fixes #975)"
+msgstr ""
+
+#: ../../changelog.rst:2903
+msgid "Fix regression on land layer label colors (fixes #980)"
+msgstr ""
+
+#: ../../changelog.rst:2904
+msgid "Fix attached files not shown after file upload/delete (fixes #933)"
+msgstr ""
+
+#: ../../changelog.rst:2905
+msgid "Fix links being removed from trek descriptions (fixes #981)"
+msgstr ""
+
+#: ../../changelog.rst:2906
+msgid "Fix missing thumbnail in trek and POI detail pages"
+msgstr ""
+
+#: ../../changelog.rst:2907
+msgid "Fix black background on map captures (fixes #979)"
+msgstr ""
+
+#: ../../changelog.rst:2908
+msgid "Increased scale text size on map captures (fixes #850)"
+msgstr ""
+
+#: ../../changelog.rst:2909
+msgid "Show map attributions on map captures (fixes #852)"
+msgstr ""
+
+#: ../../changelog.rst:2910
+msgid "Fix aspect ratios of map in trek public documents (fixes #849)"
+msgstr ""
+
+#: ../../changelog.rst:2911
+msgid "Fix objects list not being filtered on map extent (fixes #982)"
+msgstr ""
+
+#: ../../changelog.rst:2912
+msgid "Fix coherence of map layer when text search in objects list (fixes #702)"
+msgstr ""
+
+#: ../../changelog.rst:2913
+msgid "Fix number of results not refresh on text search (fixes #865)"
+msgstr ""
+
+#: ../../changelog.rst:2915
+msgid "Added north arrow in map image exports (fixes #851)"
+msgstr ""
+
+#: ../../changelog.rst:2916
+msgid ""
+"Removed darker effect on backgrounds for map image exports, and added "
+"internal advanced setting ``MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = "
+"True``"
+msgstr ""
+
+#: ../../changelog.rst:2921
+msgid "0.22.4 (2014-03-06)"
+msgstr ""
+
+#: ../../changelog.rst:2923
+msgid "Fix install.sh not compiling locale messages (fixes #965)"
+msgstr ""
+
+#: ../../changelog.rst:2924
+msgid ""
+"Moved trek completeness fields to setting `TREK_COMPLETENESS_FIELDS`. "
+"Duration and difficulty were added, arrival was removed (fixes #967)"
+msgstr ""
+
+#: ../../changelog.rst:2926
+msgid "Fix regression about source locale messages (fixes #970)"
+msgstr ""
+
+#: ../../changelog.rst:2927
+msgid "Fix regression link `Back to application` lost from adminsite (fixes #971)"
+msgstr ""
+
+#: ../../changelog.rst:2928
+msgid "Serve uploaded files as attachments (fixes #972)"
+msgstr ""
+
+#: ../../changelog.rst:2929
+msgid "Remove help texts being shown from filter forms (fixes #966)"
+msgstr ""
+
+#: ../../changelog.rst:2930
+msgid "Fix form pills for translated languages (fixes #968)"
+msgstr ""
+
+#: ../../changelog.rst:2933
+msgid "0.22.3 (2014-02-17)"
+msgstr ""
+
+#: ../../changelog.rst:2935
+msgid "Fix install.sh help not being shown"
+msgstr ""
+
+#: ../../changelog.rst:2936
+msgid ""
+"Fix screenshots being empty if deployed behind reverse proxy with rool "
+"url (fixes #687)"
+msgstr ""
+
+#: ../../changelog.rst:2937
+msgid "Fix GPX file layer circle marker size (fixes #930)"
+msgstr ""
+
+#: ../../changelog.rst:2938
+msgid "Remove JS libraries from login page"
+msgstr ""
+
+#: ../../changelog.rst:2939
+msgid "Fix install.log being removed during installation"
+msgstr ""
+
+#: ../../changelog.rst:2940
+msgid "Fix execution characters being shown during DB backup prompt"
+msgstr ""
+
+#: ../../changelog.rst:2941
+msgid "Fix PhantomJS and CasperJS installation and deployment"
+msgstr ""
+
+#: ../../changelog.rst:2942
+msgid "Added more automatic frontend tests"
+msgstr ""
+
+#: ../../changelog.rst:2943
+msgid "Default allowed hosts is now `*`"
+msgstr ""
+
+#: ../../changelog.rst:2946
+msgid "0.22.2 (2014-02-14)"
+msgstr ""
+
+#: ../../changelog.rst:2948
+msgid "Fix secured media URLs when using a non empty `rooturl` setting"
+msgstr ""
+
+#: ../../changelog.rst:2949
+msgid "Fix proxy errors by disabling keep-alive (fixes #906)"
+msgstr ""
+
+#: ../../changelog.rst:2952
+msgid "0.22.1 (2014-02-13)"
+msgstr ""
+
+#: ../../changelog.rst:2954
+msgid ""
+"Prevent install script to delete existing media files from disk in some "
+"situations."
+msgstr ""
+
+#: ../../changelog.rst:2958
+msgid "0.22 (2014-02-12)"
+msgstr ""
+
+#: ../../changelog.rst:2960
+msgid "**Before upgrade**"
+msgstr ""
+
+#: ../../changelog.rst:2962
+msgid "Backup your database."
+msgstr ""
+
+#: ../../changelog.rst:2963
+msgid ""
+"If you upgrade in the same application folder, first delete the `geotrek`"
+" sub-folder."
+msgstr ""
+
+#: ../../changelog.rst:2965
+msgid "Use `install.sh` to upgrade (`make deploy` won't be enough)"
+msgstr ""
+
+#: ../../changelog.rst:2966
+msgid "After upgrade, make sure the following query returns only ~23 results:"
+msgstr ""
+
+#: ../../changelog.rst:2968
+msgid "SELECT COUNT(*) FROM south_migrationhistory;"
+msgstr ""
+
+#: ../../changelog.rst:2971
+msgid "**BREAKING changes**"
+msgstr ""
+
+#: ../../changelog.rst:2973
+msgid "For upgrades, Geotrek 0.21 is required."
+msgstr ""
+
+#: ../../changelog.rst:2974
+msgid "Uploaded files are now restricted to authenticated users (fixes #729)"
+msgstr ""
+
+#: ../../changelog.rst:2978
+msgid "*Geotrek-rando* 1.23 or higher is required to synchronize content."
+msgstr ""
+
+#: ../../changelog.rst:2980
+msgid "**NEW features**"
+msgstr ""
+
+#: ../../changelog.rst:2982
+msgid ""
+"In list view, click on map brings to detail page, mouse over highlights "
+"in list."
+msgstr ""
+
+#: ../../changelog.rst:2983
+msgid "Show path icon if intervention is not on infrastructure (fixes #909)"
+msgstr ""
+
+#: ../../changelog.rst:2984
+msgid "Add spanish translation"
+msgstr ""
+
+#: ../../changelog.rst:2985
+msgid "Add photographie into default attachments filetype"
+msgstr ""
+
+#: ../../changelog.rst:2986
+msgid ""
+"Map location combobox (Cities, Districts, Areas) are not shown if empty "
+"or disabled."
+msgstr ""
+
+#: ../../changelog.rst:2987
+msgid "Several database views have been created (fixes #934)"
+msgstr ""
+
+#: ../../changelog.rst:2988
+msgid "Remove dots from path icon (fixes #939)"
+msgstr ""
+
+#: ../../changelog.rst:2989
+msgid ""
+"Intervention, infrastructure and project filters list of years is now "
+"dynamic (fixes #948)"
+msgstr ""
+
+#: ../../changelog.rst:2990
+msgid ""
+"Application available languages (*english*, *french*, *italian*, "
+"*spanish*) are now distinct from translated content languages "
+"(`languages` value in :file:`settings.ini`)"
+msgstr ""
+
+#: ../../changelog.rst:2993
+msgid "Minor changes"
+msgstr ""
+
+#: ../../changelog.rst:2995
+msgid "Improved apparence of map controls"
+msgstr ""
+
+#: ../../changelog.rst:2996
+msgid "Improved apparence of path intermediary points"
+msgstr ""
+
+#: ../../changelog.rst:2997
+msgid "Improved apparence of form validation buttons"
+msgstr ""
+
+#: ../../changelog.rst:2998
+msgid "Add auto-generated docs at /admin/doc/"
+msgstr ""
+
+#: ../../changelog.rst:2999
+msgid "Nicer installation script output"
+msgstr ""
+
+#: ../../changelog.rst:3001
+msgid "Installation script"
+msgstr ""
+
+#: ../../changelog.rst:3003
+msgid "Scan and ortho attributions can now be set using `scan_attributions` and"
+msgstr ""
+
+#: ../../changelog.rst:3004
+msgid "Propose to backup DB before Geotrek upgrade (fixes #804)"
+msgstr ""
+
+#: ../../changelog.rst:3005
+msgid ""
+"Settings edition prompt only happens at first install "
+"`ortho_attributions` in *settings.ini*."
+msgstr ""
+
+#: ../../changelog.rst:3010 ../../changelog.rst:3185
+msgid "Fix convert urls behind reverse proxy with prefix"
+msgstr ""
+
+#: ../../changelog.rst:3011
+msgid ""
+"Fix deployment problem if ``layercolor_others`` not overidden in "
+"settings.ini"
+msgstr ""
+
+#: ../../changelog.rst:3012
+msgid ""
+"Fix topology kinds to be 'INTERVENTION' for intervention without "
+"signage/infrastructure"
+msgstr ""
+
+#: ../../changelog.rst:3013
+msgid "Fix restricted areas types display in admin (fixes #943)"
+msgstr ""
+
+#: ../../changelog.rst:3014
+msgid "Fix list ordering of trek relationships and web links (fixes #929)"
+msgstr ""
+
+#: ../../changelog.rst:3015
+msgid "Fix nginx log files being already empty after logrotate (fixes #932)"
+msgstr ""
+
+#: ../../changelog.rst:3016
+msgid "Fix project add button when no permission"
+msgstr ""
+
+#: ../../changelog.rst:3020
+msgid ""
+"List of restricted areas is not shown on map by default anymore. Restore "
+"previous behaviour with advanced setting `LAND_BBOX_AREAS_ENABLED` as "
+"True."
+msgstr ""
+
+#: ../../changelog.rst:3025
+msgid "Upgrade to Django 1.6 (fixes #938)"
+msgstr ""
+
+#: ../../changelog.rst:3026
+msgid "Upgrade to Leaflet 0.7"
+msgstr ""
+
+#: ../../changelog.rst:3027
+msgid "Upgrade a great number to python and JavaScript libraries"
+msgstr ""
+
+#: ../../changelog.rst:3028
+msgid ""
+"An internal user (with login permission) is used to authenticate the "
+"Conversion and Capture services."
+msgstr ""
+
+#: ../../changelog.rst:3030
+msgid "Installation script is modular (standalone, geotrek only, ...)"
+msgstr ""
+
+#: ../../changelog.rst:3031
+msgid "Developement server now listens on all interfaces by default"
+msgstr ""
+
+#: ../../changelog.rst:3032
+msgid ""
+"Database migrations were resetted, no postgres `FATAL ERROR` message will"
+" be emitted on fresh install anymore (fixes #937). See *Troubleshooting* "
+"in documentation."
+msgstr ""
+
+#: ../../changelog.rst:3037
+msgid "0.21.2 (2014-02-04)"
+msgstr ""
+
+#: ../../changelog.rst:3041
+msgid ""
+"Warn on tiling landscape/portrait spatial extent only if map with local "
+"projection"
+msgstr ""
+
+#: ../../changelog.rst:3042
+msgid ""
+"Safety check on thumbnailing if images are missing from disk (*useful for"
+" troubleshooting, when importing existing dumps*)."
+msgstr ""
+
+#: ../../changelog.rst:3044
+msgid "Fix overlapping filter if no records present (fixes #931)"
+msgstr ""
+
+#: ../../changelog.rst:3048
+msgid "0.21.1 (2013-12-11)"
+msgstr ""
+
+#: ../../changelog.rst:3050 ../../changelog.rst:3076
+msgid "**Improvements**"
+msgstr ""
+
+#: ../../changelog.rst:3052
+msgid ""
+"Smooth DEM drapping, improving altimetric information and profiles (fixes"
+" #840, ref #776)"
+msgstr ""
+
+#: ../../changelog.rst:3056
+msgid "Signage forms are now restricted by structure (fixes #917)"
+msgstr ""
+
+#: ../../changelog.rst:3057
+msgid ""
+"Fix geometries computation when path split occurs on return topology "
+"(fixes #899)"
+msgstr ""
+
+#: ../../changelog.rst:3058
+msgid "Add title on links in list views (fixes #913)"
+msgstr ""
+
+#: ../../changelog.rst:3059
+msgid "Prevent horizontal scroll on forms, caused by textareas (fixes #914)"
+msgstr ""
+
+#: ../../changelog.rst:3060
+msgid "Fix empty 3d geometry of point topologies with offset (fixes #918)"
+msgstr ""
+
+#: ../../changelog.rst:3064
+msgid ""
+"In order to recompute all paths topologies altimetry information, you can"
+" perform the following queries:"
+msgstr ""
+
+#: ../../changelog.rst:3067
+msgid ""
+"``UPDATE l_t_troncon SET geom = geom;`` ``UPDATE e_t_evenement SET "
+"decallage = decallage;``"
+msgstr ""
+
+#: ../../changelog.rst:3070
+msgid ""
+"Reading information from rasters is costly. Be prepared to wait for a "
+"while."
+msgstr ""
+
+#: ../../changelog.rst:3074
+msgid "0.21 (2013-11-28)"
+msgstr ""
+
+#: ../../changelog.rst:3078
+msgid "Increase height of multiple select (fixes #891)"
+msgstr ""
+
+#: ../../changelog.rst:3079
+msgid "Add project field in intervention filter (fixes #896)"
+msgstr ""
+
+#: ../../changelog.rst:3080
+msgid "Many minor improvements for infrastructures in adminsite (fixes #886)"
+msgstr ""
+
+#: ../../changelog.rst:3081
+msgid "Add category in intervention filter (fixes #887)"
+msgstr ""
+
+#: ../../changelog.rst:3085
+msgid "Fix KML coordinates not being in 3D."
+msgstr ""
+
+#: ../../changelog.rst:3086
+msgid "GPX now has trek description (fixes #775)"
+msgstr ""
+
+#: ../../changelog.rst:3087
+msgid "Order overlapping topologies by order of progression (fixes #777)"
+msgstr ""
+
+#: ../../changelog.rst:3088
+msgid "Improved TinyMCE configuration, for resize and cleanup (fixes #351, #711)"
+msgstr ""
+
+#: ../../changelog.rst:3089
+msgid "Changed trek duration interval for notion of days (fixes #880)"
+msgstr ""
+
+#: ../../changelog.rst:3090
+msgid "Show city departure in trek public export (fixes #881)"
+msgstr ""
+
+#: ../../changelog.rst:3091
+msgid "Document customization of TinyMCE config (fixes #882)"
+msgstr ""
+
+#: ../../changelog.rst:3092
+msgid "Fix 404 error on path delete (fixes #900)"
+msgstr ""
+
+#: ../../changelog.rst:3093
+msgid "Fix project constraints not being displayed in details (fixes #893)"
+msgstr ""
+
+#: ../../changelog.rst:3094
+msgid "Fix organism translation in project form (fixes #892)"
+msgstr ""
+
+#: ../../changelog.rst:3095
+msgid "Fix apparence of forms on small screen (fixes #744, #902)"
+msgstr ""
+
+#: ../../changelog.rst:3096
+msgid "Fix modify button being hidden to editors (fixes #901)"
+msgstr ""
+
+#: ../../changelog.rst:3097
+msgid "Fix overlap between map controls and label (fixes #883)"
+msgstr ""
+
+#: ../../changelog.rst:3098
+msgid "Fix translation of district in list filters (fixes #890)"
+msgstr ""
+
+#: ../../changelog.rst:3099
+msgid "Fix integrity error on land intersection on path update (fixes #897)"
+msgstr ""
+
+#: ../../changelog.rst:3100
+msgid "Fix form layout problems (fixes #712, #879)"
+msgstr ""
+
+#: ../../changelog.rst:3103
+msgid "0.20.9 (2013-10-30)"
+msgstr ""
+
+#: ../../changelog.rst:3105
+msgid "Fix altimetric profile if topology geometry is wrong (fixes #875)"
+msgstr ""
+
+#: ../../changelog.rst:3106
+msgid "Fix apparence of creation button in intervention list (fixes #877)"
+msgstr ""
+
+#: ../../changelog.rst:3107
+msgid ""
+"Fix topology geometries that were sampled like paths 3D geometry (fixes "
+"#878)"
+msgstr ""
+
+#: ../../changelog.rst:3108
+msgid "Fix topology lines geometries join in some situations (ref #722)"
+msgstr ""
+
+#: ../../changelog.rst:3109
+msgid "Fix topology not well displayed if start/end on intersection (fixes #874)"
+msgstr ""
+
+#: ../../changelog.rst:3112
+msgid "0.20.8 (2013-10-22)"
+msgstr ""
+
+#: ../../changelog.rst:3114
+msgid "Public trek export : Fix various layout regressions (ref #848)"
+msgstr ""
+
+#: ../../changelog.rst:3115
+msgid "Public trek export : Show POI theme pictogram (fixes #858)"
+msgstr ""
+
+#: ../../changelog.rst:3116
+msgid "Public trek export : full width for information desk frame (fixes #856)"
+msgstr ""
+
+#: ../../changelog.rst:3117
+msgid ""
+"Public trek export : add footer with trek title and page numbers (fixes "
+"#861)"
+msgstr ""
+
+#: ../../changelog.rst:3118
+msgid "Public trek export : add floating picture in POI detail (fixes #860)"
+msgstr ""
+
+#: ../../changelog.rst:3119
+msgid "Public trek export : fix POI thumbnails missing (fixes #869)"
+msgstr ""
+
+#: ../../changelog.rst:3120
+msgid "Fix point offset lost on path update (fixes #867)"
+msgstr ""
+
+#: ../../changelog.rst:3121
+msgid "Fix reconnect point topologies with offset to closest path (fixes #868)"
+msgstr ""
+
+#: ../../changelog.rst:3124
+msgid "0.20.7 (2013-10-16)"
+msgstr ""
+
+#: ../../changelog.rst:3126
+msgid "Fix topology geometry 3D being draped twice (fixes #863)"
+msgstr ""
+
+#: ../../changelog.rst:3127
+msgid "Altimetric profile : Show max distance and round values (fixes #853)"
+msgstr ""
+
+#: ../../changelog.rst:3128
+msgid "Altimetric profile : Add settings for colors (fixes #854)"
+msgstr ""
+
+#: ../../changelog.rst:3129
+msgid "Public trek export : POIs list in two columns (fixes #855)"
+msgstr ""
+
+#: ../../changelog.rst:3130
+msgid "Public trek export : POIs details without column break (fixes #857)"
+msgstr ""
+
+#: ../../changelog.rst:3131
+msgid "Public trek export : Show pictures attributions (fixes #859)"
+msgstr ""
+
+#: ../../changelog.rst:3132
+msgid "Public trek export : Use 10pt fonts in every text blocks (fixes #848)"
+msgstr ""
+
+#: ../../changelog.rst:3136
+msgid "# Empty profiles cache rm -rf var/media/profiles/*"
+msgstr ""
+
+#: ../../changelog.rst:3141
+msgid "0.20.6 (2013-10-14)"
+msgstr ""
+
+#: ../../changelog.rst:3143
+msgid "Remove 3D from JS WKT serializer"
+msgstr ""
+
+#: ../../changelog.rst:3144
+msgid "Safety check if path is less than 1m"
+msgstr ""
+
+#: ../../changelog.rst:3145
+msgid "Remove mentions of 2154 projection in schema migrations"
+msgstr ""
+
+#: ../../changelog.rst:3146
+msgid "Fix performance issues in altimetric JSON (fixes #845)"
+msgstr ""
+
+#: ../../changelog.rst:3147
+msgid "Fix filter forms missing from Trek and POI lists (fixes #847)"
+msgstr ""
+
+#: ../../changelog.rst:3148
+msgid "Fix empty Nginx log files (fixes #846)"
+msgstr ""
+
+#: ../../changelog.rst:3152
+msgid "0.20.5 (2013-10-09)"
+msgstr ""
+
+#: ../../changelog.rst:3154
+msgid "Fix migration of draping utility function"
+msgstr ""
+
+#: ../../changelog.rst:3157
+msgid "0.20.4 (2013-10-09)"
+msgstr ""
+
+#: ../../changelog.rst:3159
+msgid "Fix sort stake by id (level) (fixes #835)"
+msgstr ""
+
+#: ../../changelog.rst:3160
+msgid "Rename stake to maintenance stake (fixes #834)"
+msgstr ""
+
+#: ../../changelog.rst:3161
+msgid "Add validity to path filter (fixes #836)"
+msgstr ""
+
+#: ../../changelog.rst:3162
+msgid "Do not redrape topology geometries, use path 3D geometry (fixes #832)"
+msgstr ""
+
+#: ../../changelog.rst:3163
+msgid "Fix document export of Trail objects (fixes #839)"
+msgstr ""
+
+#: ../../changelog.rst:3164
+msgid "Fix trail helpers for land layers (fixes #838, ref #842)"
+msgstr ""
+
+#: ../../changelog.rst:3165
+msgid "Fix install on fresh folder, missing folder ``lib/src`` (fixes #844)"
+msgstr ""
+
+#: ../../changelog.rst:3169
+msgid "0.20.3 (2013-09-30)"
+msgstr ""
+
+#: ../../changelog.rst:3173
+msgid "Fix typo in french translation of Properties (fixes #815)"
+msgstr ""
+
+#: ../../changelog.rst:3174
+msgid ""
+"Fix missing description from infrastructure/signage detail page (fixes "
+"#816)"
+msgstr ""
+
+#: ../../changelog.rst:3175
+msgid ""
+"Fix Cities / Districts / Restricted Areas in project detail page (fixes "
+"#817)"
+msgstr ""
+
+#: ../../changelog.rst:3176
+msgid "Fix only deleted topology can have geom = NULL (fixes #818)"
+msgstr ""
+
+#: ../../changelog.rst:3177
+msgid ""
+"Fix geometries not editable in QGis by switching path and topologies "
+"geometries to 2D (fixes #688)"
+msgstr ""
+
+#: ../../changelog.rst:3179
+msgid ""
+"Fix altimetric sampling precision setting not taken in account in SQL "
+"(ref #776)"
+msgstr ""
+
+#: ../../changelog.rst:3183
+msgid "0.20.2 (2013-08-27)"
+msgstr ""
+
+#: ../../changelog.rst:3186
+msgid "Fix Trek public print conversion"
+msgstr ""
+
+#: ../../changelog.rst:3187
+msgid "Fix display of trek length in public document (one decimal only)"
+msgstr ""
+
+#: ../../changelog.rst:3188
+msgid "Fix altimetric graph delaying map display in detail pages"
+msgstr ""
+
+#: ../../changelog.rst:3192
+msgid "# Empty maps captures cache rm -rf var/media/maps/trek-*"
+msgstr ""
+
+#: ../../changelog.rst:3197
+msgid "0.20.1 (2013-08-26)"
+msgstr ""
+
+#: ../../changelog.rst:3199
+msgid "Add DB index for start and end columns"
+msgstr ""
+
+#: ../../changelog.rst:3200
+msgid "Merge gunicorn logs with respective applications logs"
+msgstr ""
+
+#: ../../changelog.rst:3201
+msgid "Lower logging level in production (WARNING -> INFO)"
+msgstr ""
+
+#: ../../changelog.rst:3205
+msgid "Fix deployment error with application's TITLE"
+msgstr ""
+
+#: ../../changelog.rst:3206
+msgid "Fix deployment errors with mandatory external authent values"
+msgstr ""
+
+#: ../../changelog.rst:3207
+msgid "Fix trek export layout: fit map image and altimetric profile in one page."
+msgstr ""
+
+#: ../../changelog.rst:3211
+msgid "0.20 (2013-08-23)"
+msgstr ""
+
+#: ../../changelog.rst:3213
+msgid ""
+"Edit difficulty id in Admin site, mainly used to order difficulty levels "
+"(fixes #771)"
+msgstr ""
+
+#: ../../changelog.rst:3214
+msgid ""
+"Use explicit list of fields in forms, instead of excluding model fields "
+"(fixes #736). Issue #712 was closed too, since most suspected cause was "
+"field listings. Please re-open if problem re-appears."
+msgstr ""
+
+#: ../../changelog.rst:3217
+msgid "Fix timeout on POI Shapefile and CSV exports (fixes #672)"
+msgstr ""
+
+#: ../../changelog.rst:3218
+msgid "Altimetric profiles are now computed in PostGIS (fixes #778, #779)"
+msgstr ""
+
+#: ../../changelog.rst:3219
+msgid ""
+"Positive and negative ascents are now computed using more DEM resolution "
+"(fixes #776)"
+msgstr ""
+
+#: ../../changelog.rst:3223
+msgid ""
+"Setting ``PROFILE_MAXSIZE`` was replaced by "
+"``ALTIMETRIC_PROFILE_PRECISION`` which controls sampling precision in "
+"meters (default: 20 meters)"
+msgstr ""
+
+#: ../../changelog.rst:3226
+msgid "Altimetric profiles were removed from object map images"
+msgstr ""
+
+#: ../../changelog.rst:3227
+msgid "Altimetric profiles are now plotted using SVG"
+msgstr ""
+
+#: ../../changelog.rst:3228
+msgid ""
+"Altimetric profiles are now inserted into path documents and trek public "
+"printouts (ref #626)"
+msgstr ""
+
+#: ../../changelog.rst:3229
+msgid ""
+"Fix deletion of associated interventions when editing infrastructures "
+"(fixes #783)"
+msgstr ""
+
+#: ../../changelog.rst:3230
+msgid ""
+"Latest record is updated (*touch*) when a DELETE is performed on table "
+"(refreshs cache) (fixes #698)"
+msgstr ""
+
+#: ../../changelog.rst:3232
+msgid "Reworked settings mechanism to follow Django best practices"
+msgstr ""
+
+#: ../../changelog.rst:3236
+msgid ""
+"Replace all computed values from ``etc/settings.ini``. For example, "
+"replace \"60 * 60\" by 3600. (You can increase this value to several "
+"hours by the way)"
+msgstr ""
+
+#: ../../changelog.rst:3239
+msgid "Allow server host to capture pages (fixes #733)"
+msgstr ""
+
+#: ../../changelog.rst:3240
+msgid "Adjust map capture according to geometry aspect ratio (fixes #627)"
+msgstr ""
+
+#: ../../changelog.rst:3241
+msgid "Always show path layer in detail pages (fixes #781)"
+msgstr ""
+
+#: ../../changelog.rst:3242
+msgid "Fix restore of topology on loop paths (fixes #760)"
+msgstr ""
+
+#: ../../changelog.rst:3243
+msgid ""
+"Fix topology construction when loop is formed by two convergent paths "
+"(fixes #768)"
+msgstr ""
+
+#: ../../changelog.rst:3244
+msgid ""
+"Added small tool page at ``/tools/extents/`` to visualize configured "
+"extents (ref #732)"
+msgstr ""
+
+#: ../../changelog.rst:3245
+msgid ""
+"Removed setting ``spatial_extent_wgs84``, now computed automatically from"
+" ``spatial_extent``, with a padding of 10%."
+msgstr ""
+
+#: ../../changelog.rst:3250
+msgid ""
+"Have a look at ``conf/settings.ini.sample`` to clean-up unnecessary "
+"values from your settings file."
+msgstr ""
+
+#: ../../changelog.rst:3253
+msgid "Fix paths offset for portrait spatial extent (fixes #732)"
+msgstr ""
+
+#: ../../changelog.rst:3254
+msgid "Rely on Tilecache default max resolution formulae (fixes #732)"
+msgstr ""
+
+#: ../../changelog.rst:3255
+msgid ""
+"Due to bug in Leaflet/Proj4Leaflet "
+"(https://github.com/kartena/Proj4Leaflet/issues/37) landscape spatial "
+"extents are not supported. Please adjust spatial_extent to be a portrait "
+"or square, or application will raise *ImproperlyConfiguredError*."
+msgstr ""
+
+#: ../../changelog.rst:3258
+msgid "Reload map objects on zoom out too (fixes #435)"
+msgstr ""
+
+#: ../../changelog.rst:3259
+msgid "Fix computation of *min_elevation* for point topologies (fixes #808)"
+msgstr ""
+
+#: ../../changelog.rst:3263
+msgid ""
+"In order to recompute all paths topologies altimetry information, you can"
+" perform the following query: ``UPDATE e_t_evenement SET decallage = "
+"decallage;``. Reading information from rasters is costly. Be prepared to "
+"wait for a while."
+msgstr ""
+
+#: ../../changelog.rst:3269
+msgid "0.19.1 (2013-07-15)"
+msgstr ""
+
+#: ../../changelog.rst:3271
+msgid "Restore ``pk`` property in Trek GeoJSON layer"
+msgstr ""
+
+#: ../../changelog.rst:3275
+msgid "0.19 (2013-07-12)"
+msgstr ""
+
+#: ../../changelog.rst:3277
+msgid "Intervention length field (readonly if geometry is line)"
+msgstr ""
+
+#: ../../changelog.rst:3278
+msgid "Fix apparence bug if no rights to add treks and pois (fixes #713)"
+msgstr ""
+
+#: ../../changelog.rst:3279
+msgid "Fix extremities snapping (fixes #718)"
+msgstr ""
+
+#: ../../changelog.rst:3280
+msgid "Show information desk in trek detail page (fixes #719)"
+msgstr ""
+
+#: ../../changelog.rst:3281
+msgid "Fix topology adjustments after path split (fixes #720)"
+msgstr ""
+
+#: ../../changelog.rst:3282
+msgid ""
+"On edition show global line orientation instead of individual paths "
+"(fixes #679)"
+msgstr ""
+
+#: ../../changelog.rst:3283
+msgid "Fix invalid topology if trek goes twice on same path (fixes #671)"
+msgstr ""
+
+#: ../../changelog.rst:3284
+msgid "Overlapping is now more precise (fixes #710)"
+msgstr ""
+
+#: ../../changelog.rst:3285
+msgid "Reworked trek print layout"
+msgstr ""
+
+#: ../../changelog.rst:3286
+msgid "Fix topology building if paths are taken twice (fixes #722)"
+msgstr ""
+
+#: ../../changelog.rst:3287
+msgid "Fix tiling offset with horizontal bboxes"
+msgstr ""
+
+#: ../../changelog.rst:3288
+msgid "Fix display of POI layer by default on list (fixes #696)"
+msgstr ""
+
+#: ../../changelog.rst:3289
+msgid "Fix translation of not validated paths (fixes #730)"
+msgstr ""
+
+#: ../../changelog.rst:3290
+msgid "Fix error if topology is required and empty (fixes #745)"
+msgstr ""
+
+#: ../../changelog.rst:3291
+msgid "Fix duplication of N-N relations on path split (fixes #738)"
+msgstr ""
+
+#: ../../changelog.rst:3292
+msgid "Fix project map in detail page (fixes #734)"
+msgstr ""
+
+#: ../../changelog.rst:3293
+msgid "Fix project listed deleted interventions (fixes #739)"
+msgstr ""
+
+#: ../../changelog.rst:3294
+msgid "Fix project listed infrastructures through interventions (fixes #740)"
+msgstr ""
+
+#: ../../changelog.rst:3295
+msgid "Fix saving intervention form on infrastructure"
+msgstr ""
+
+#: ../../changelog.rst:3296
+msgid ""
+"Repair serializing of properties after upgrade of django-geojson (fixes "
+"#755)"
+msgstr ""
+
+#: ../../changelog.rst:3297
+msgid ""
+"Added ``public_transport`` and ``advised_parking`` to trek JSON detail "
+"API (fixes #758)"
+msgstr ""
+
+#: ../../changelog.rst:3298
+msgid "Repair land layers colors after upgrade of django-geojson"
+msgstr ""
+
+#: ../../changelog.rst:3299
+msgid "Upgraded to django-geojson 2.0"
+msgstr ""
+
+#: ../../changelog.rst:3300
+msgid "Upgraded to Django 1.5"
+msgstr ""
+
+#: ../../changelog.rst:3304
+msgid ""
+"Specify allowed host (server IP) in ``etc/settings.ini`` (*for example*):"
+" * ``host = 45.56.78.90`` Empty object caches: * ``sudo "
+"/etc/init.d/memcached restart`` * ``rm -rf ./var/cache/*``"
+msgstr ""
+
+#: ../../changelog.rst:3312
+msgid "0.18 (2013-06-06)"
+msgstr ""
+
+#: ../../changelog.rst:3314
+msgid "Add pretty trek duration in JSON"
+msgstr ""
+
+#: ../../changelog.rst:3315
+msgid "Add information desk field in Trek (fixes #624)"
+msgstr ""
+
+#: ../../changelog.rst:3319
+msgid "0.17 (2013-05-17)"
+msgstr ""
+
+#: ../../changelog.rst:3321
+msgid ""
+"Show trek duration as human readable in minutes, hours and days (fixes "
+"#471, #683)"
+msgstr ""
+
+#: ../../changelog.rst:3322
+msgid ""
+"Fix hover on paths that interfered with clic for topology creation (fixes"
+" #680)"
+msgstr ""
+
+#: ../../changelog.rst:3323
+msgid "Run API urls on different workers (ref #672)"
+msgstr ""
+
+#: ../../changelog.rst:3324
+msgid "Fix redirect to root url after logout (fixes #264)"
+msgstr ""
+
+#: ../../changelog.rst:3325
+msgid "Fix redirect to next after login (fixes #381)"
+msgstr ""
+
+#: ../../changelog.rst:3326
+msgid "Switch to Memcached instead of local memory in production"
+msgstr ""
+
+#: ../../changelog.rst:3327
+msgid "Move secret key to settings.ini"
+msgstr ""
+
+#: ../../changelog.rst:3328
+msgid "Relate paperclip FileType to Structure (fixes #256)"
+msgstr ""
+
+#: ../../changelog.rst:3329
+msgid "Relate PhysicalTypes to Structure (fixes #255)"
+msgstr ""
+
+#: ../../changelog.rst:3330
+msgid "Relate Organisms to Structure (fixes #263)"
+msgstr ""
+
+#: ../../changelog.rst:3331
+msgid "Compute max_resolution automatically"
+msgstr ""
+
+#: ../../changelog.rst:3332
+msgid "Fix creation and edition of interventions on infrastructures (fixes #678)"
+msgstr ""
+
+#: ../../changelog.rst:3333
+msgid "Change default objects color to yellow"
+msgstr ""
+
+#: ../../changelog.rst:3334
+msgid "Restored Italian translations"
+msgstr ""
+
+#: ../../changelog.rst:3335
+msgid "Fix regex for RAISE NOTICE (fixes #673)"
+msgstr ""
+
+#: ../../changelog.rst:3336
+msgid "Initial public version"
+msgstr ""
+
+#: ../../changelog.rst:3338
+msgid "See project history in `docs/history.rst` (French)."
+msgstr ""
+

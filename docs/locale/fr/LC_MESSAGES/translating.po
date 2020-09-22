@@ -1,0 +1,147 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2013-2014, Makina Corpus
+# This file is distributed under the same license as the Geotrek package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Geotrek 2.38\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-09-22 16:32+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: ../../translating.rst:3
+msgid "TRANSLATING"
+msgstr "TRADUCTIONS"
+
+#: ../../translating.rst:5
+msgid "Geotrek can be translated online here: https://weblate.makina-corpus.net/"
+msgstr "Les traductions peuvent se faire en ligne sur https://weblate.makina-"
+
+#: ../../translating.rst:9
+msgid "Getting started"
+msgstr "Commencer à traduire"
+
+#: ../../translating.rst:11 ../../translating.rst:16
+msgid "Create an account"
+msgstr "Créer un compte"
+
+#: ../../translating.rst:12 ../../translating.rst:35
+msgid "Browse by project"
+msgstr "Naviguer par projet"
+
+#: ../../translating.rst:13 ../../translating.rst:52
+msgid "Browse by language"
+msgstr "Naviguer par langue"
+
+#: ../../translating.rst:18
+msgid "Click on \"Register\""
+msgstr "Cliquer sur “S’inscrire”"
+
+#: ../../translating.rst:20
+msgid "Fill the register form"
+msgstr "Remplir le formulaire d’inscription"
+
+#: ../../translating.rst:25
+msgid "Validate your email"
+msgstr "Valider l’email"
+
+#: ../../translating.rst:27
+msgid "Fill the password"
+msgstr "Saisir le mot de passe"
+
+#: ../../translating.rst:29
+msgid "Then connect to weblate"
+msgstr "Se connecter"
+
+#: ../../translating.rst:31
+msgid ""
+"`Official documentation "
+"<https://docs.weblate.org/en/latest/user/profile.html>`__ to create an "
+"account and manage your profile."
+msgstr ""
+"`Documentation officielle "
+"<https://docs.weblate.org/en/latest/user/profile.html>`__ pour la "
+"création de compte et la gestion du profil."
+
+#: ../../translating.rst:37
+msgid "Go to “Project > Browse all projects”"
+msgstr "Aller dans “Projet > Parcourir tous les projets”"
+
+#: ../../translating.rst:42
+msgid "Sélect the project you want to translate"
+msgstr "Sélectionner le projet auquel contribuer dans la liste"
+
+#: ../../translating.rst:44
+msgid "Click on tab “Languages”"
+msgstr "Aller dans l’onglet “Langues”"
+
+#: ../../translating.rst:46
+msgid "Choose the language to translate"
+msgstr "Choisir la langue à traduire"
+
+#: ../../translating.rst:54
+msgid "Go to “Languages > Browse all languages”"
+msgstr "Aller dans “Langues > Parcourir toutes les langues”"
+
+#: ../../translating.rst:55
+msgid "Choose the language you want to translate"
+msgstr ""
+
+#: ../../translating.rst:56
+msgid "Select the project to translate"
+msgstr "Sélectionner le projet à traduire"
+
+#: ../../translating.rst:58
+msgid "And let's go!"
+msgstr "Et c’est parti !"
+
+#: ../../translating.rst:60
+msgid ""
+"`Weblate official documentation "
+"<https://docs.weblate.org/en/latest/user/translating.html>`__ for "
+"translation."
+msgstr ""
+"`Documentation officielle "
+"<https://docs.weblate.org/en/latest/user/translating.html>`__ de l’outil "
+"Weblate pour la traduction."
+
+#: ../../translating.rst:64
+msgid "Translation features"
+msgstr "Fonctionnalités pour la traduction"
+
+#: ../../translating.rst:66
+msgid ""
+"Weblate shows all translation by language and by module. Errors and left "
+"to translate can be displayed easily."
+msgstr ""
+"Weblate permet une vue d’ensemble des traductions par langue et par "
+"module. Il est possible d'afficher les erreurs de traduction ainsi que le"
+" reste à traduire."
+
+#: ../../translating.rst:69
+msgid ""
+"Weblate can identify problematic translations as chains between projects,"
+" punctuation inconsistancy."
+msgstr ""
+"Weblate permet de détecter automatiquement les incohérences, par "
+"exempleentre les autres modules projets, les ponctuations"
+
+#: ../../translating.rst:74
+msgid "Other occurrences in all components allows to check consistency."
+msgstr ""
+"La liste des autres occurrences dans les autres composants permet de "
+"vérifier la cohérence."
+
+#: ../../translating.rst:79
+msgid "Each translation generate a permalink (picto |image|)."
+msgstr ""
+"Chaque traduction génère un lien permanent (picto |image| à droite de "
+"“Traduction”)."
