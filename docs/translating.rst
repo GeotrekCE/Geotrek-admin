@@ -1,86 +1,81 @@
 ============
-TRADUCTIONS
+TRANSLATING
 ============
 
-Les traductions peuvent se faire en ligne sur
+Geotrek can be translated online here:
 https://weblate.makina-corpus.net/
 
-Commencer à traduire
---------------------
+Getting started
+---------------
 
--  Créer un compte
--  Naviguer par projet
--  Naviguer par langue
+-  Create an account
+-  Browse by project
+-  Browse by language
 
-Créer un compte
-~~~~~~~~~~~~~~~
+Create an account
+~~~~~~~~~~~~~~~~~
 
--  Cliquer sur “S’inscrire”
+-  Click on "Register"
 
--  Remplir le formulaire d’inscription
+-  Fill the register form
 
    .. figure:: ./images/translating/weblate-create-account.png
       :alt: image
 
--  Valider l’email
+-  Validate your email
 
--  Saisir le mot de passe
+-  Fill the password
 
--  Se connecter
+-  Then connect to weblate
 
-`Documentation
-officielle <https://docs.weblate.org/en/latest/user/profile.html>`__
-pour la création de compte et la gestion du profil.
+`Official documentation <https://docs.weblate.org/en/latest/user/profile.html>`__
+to create an account and manage your profile.
 
-Naviguer par projet
+Browse by project
 ~~~~~~~~~~~~~~~~~~~
 
--  Aller dans “Projet > Parcourir tous les projets”
+-  Go to “Project > Browse all projects”
 
    .. figure:: ./images/translating/weblate-project-menu.png
       :alt: image
 
--  Sélectionner le projet auquel contribuer dans la liste
+-  Sélect the project you want to translate
 
--  Aller dans l’onglet “Langues”
+-  Click on tab “Languages”
 
--  Choisir la langue à traduire
+-  Choose the language to translate
 
    .. figure:: ./images/translating/weblate-list-of-languages.png
       :alt: image
 
-Naviguer par langue
+Browse by language
 ~~~~~~~~~~~~~~~~~~~
 
--  Aller dans “Langues > Parcourir toutes les langues”
--  Choisir la langue à traduire
--  Sélectionner le projet à traduire
+-  Go to “Languages > Browse all languages”
+-  Choose the language you want to translate
+-  Select the project to translate
 
-Et c’est parti !
+And let's go!
 
-`Documentation
-officielle <https://docs.weblate.org/en/latest/user/translating.html>`__
-de l’outil Weblate pour la traduction.
+`Weblate official documentation <https://docs.weblate.org/en/latest/user/translating.html>`__
+for translation.
 
-Fonctionnalités de traduction
------------------------------
+Translation features
+--------------------
 
-Weblate permet une vue d’ensemble des traductions par langue et par module.
-Il est possible d'afficher les erreurs de traduction ainsi que le reste à traduire.
+Weblate shows all translation by language and by module.
+Errors and left to translate can be displayed easily.
 
-Weblate permet de détecter automatiquement les points à vérifier, tels que
-des incohérences incohérences entre les autres modules projets, les ponctuations
+Weblate can identify problematic translations as chains between projects, punctuation inconsistancy.
 
 .. figure:: ./images/translating/weblate-check.png
    :alt: image
 
-La liste des autres occurrences dans les autres composants permet de vérifier
-la cohérence.
+Other occurrences in all components allows to check consistency.
 
 .. figure:: ./images/translating/weblate-check-list-occurrences.png
    :alt: image
 
-Chaque traduction génère un lien permanent (picto |image| à droite de
-“Traduction”).
+Each translation generate a permalink (picto |image|).
 
 .. |image| image:: ./images/translating/link.png
