@@ -407,12 +407,6 @@ class Command(BaseCommand):
         self.sync_kml(lang, trek)
         self.sync_trek_meta(lang, trek)
         self.sync_pdf(lang, trek, TrekDocumentPublic.as_view(model=type(trek)))
-        if settings.USE_BOOKLET_PDF:
-            modelname = trek._meta.model_name
-            name_pdf = os.path.join('api', lang, '{modelname}s'.format(modelname=modelname), str(trek.pk))
-            original_pdf = os.path.join(self.tmp_root, name_pdf, '{obj.slug}.pdf'.format(obj=trek))
-            self.change_pdf_booklet(original_pdf)
-
         self.sync_profile_json(lang, trek)
         if not self.skip_profile_png:
             self.sync_profile_png(lang, trek, zipfile=self.zipfile)
@@ -838,20 +832,6 @@ class Command(BaseCommand):
         self.sync_pictograms('**', tourism_models.TouristicContentCategory)
         self.sync_pictograms('**', tourism_models.TouristicContentType)
         self.sync_pictograms('**', tourism_models.TouristicEventType)
-
-    def change_pdf_booklet(self, name_1):
-        from pdfimpose import options
-        import pdfimpose
-        arguments = options.process_options(['--size', '2x1', name_1])
-        for x in arguments["pages"]:
-            x.pdf.strict = False
-        new_pdf = pdfimpose._legacy_pypdf_impose(
-            matrix=pdfimpose.ImpositionMatrix(arguments["fold"], arguments["bind"]),
-            pages=arguments["pages"],
-            last=arguments["last"]
-        )
-        with open(name_1, "wb") as outfile:
-            new_pdf.write(outfile)
 
     def get_params_portal(self, params):
         if self.portal:
