@@ -1,9 +1,11 @@
+from io import BytesIO
 import os
 import logging
 import shutil
 import datetime
 import hashlib
-from tempfile import NamedTemporaryFile, TemporaryFile
+
+from pdfimpose import PageList
 
 from django.conf import settings
 from django.db.models import Manager as DefaultManager
@@ -407,21 +409,17 @@ class AddPropertyMixin(object):
 
 def transform_pdf_booklet_callback(response):
     content = response.content
-    pdf = NamedTemporaryFile(mode='w+b')
-    pdf.write(content)
-    from pdfimpose import options
+    content_b = BytesIO(content)
     import pdfimpose
 
-    arguments = options.process_options(['--size', '2x1', pdf.name])
-    for x in arguments["pages"]:
+    pages = PageList([content_b])
+    for x in pages:
         x.pdf.strict = False
     new_pdf = pdfimpose._legacy_pypdf_impose(
-        matrix=pdfimpose.ImpositionMatrix(arguments["fold"], arguments["bind"]),
-        pages=arguments["pages"],
-        last=arguments["last"]
+        matrix=pdfimpose.ImpositionMatrix([pdfimpose.Direction.horizontal], 'left'),
+        pages=pages,
+        last=0
     )
-    pdf.close()
-    pdf_out = TemporaryFile(mode='w+b')
-    new_pdf.write(pdf_out)
-    pdf_out.seek(0)
-    response.content = pdf_out.read()
+    result = BytesIO()
+    new_pdf.write(result)
+    response.content = result.getvalue()
