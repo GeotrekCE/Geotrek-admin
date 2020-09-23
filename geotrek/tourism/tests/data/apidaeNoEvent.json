@@ -1,0 +1,15 @@
+{
+  "query" : {
+    "selectionIds" : [ 69627 ],
+    "searchFields" : "NOM_DESCRIPTION_CRITERES",
+    "first" : 0,
+    "count" : 100,
+    "order" : "IDENTIFIANT",
+    "asc" : true,
+    "responseFields" : [ "id", "nom", "ouverture.periodeEnClair", "ouverture.periodesOuvertures", "informationsFeteEtManifestation", "presentation.descriptifCourt", "presentation.descriptifDetaille", "localisation.adresse", "localisation.geolocalisation.geoJson.coordinates", "localisation.geolocalisation.complement.libelleFr", "informations.moyensCommunication", "informations.structureGestion.nom.libelleFr", "descriptionTarif.tarifsEnClair", "descriptionTarif.modesPaiement", "prestations", "gestion.dateModification", "gestion.membreProprietaire.nom", "illustrations" ],
+    "apiKey" : "34wq2Iid",
+    "projetId" : 3367
+  },
+  "numFound" : 0,
+  "formatVersion" : "v002"
+}

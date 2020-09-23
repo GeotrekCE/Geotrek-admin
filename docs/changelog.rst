@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix APIDAE parser when there is no element
 
 
 2.38.1 (2020-09-22)
