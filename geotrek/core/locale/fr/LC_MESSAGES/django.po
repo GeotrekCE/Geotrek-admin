@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-08-29 11:38+0200\n"
-"PO-Revision-Date: 2020-09-22 15:57+0000\n"
+"PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/"
 "geotrek-admin/core/fr/>\n"
@@ -26,7 +26,7 @@ msgid "Topology is empty."
 msgstr "La topologie est vide."
 
 msgid "Topology is not valid."
-msgstr "L'événement n'est pas valide."
+msgstr "La topologie n'est pas valide."
 
 #, python-format
 msgid "Topology %s does not exist."
