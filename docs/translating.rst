@@ -79,3 +79,28 @@ Other occurrences in all components allows to check consistency.
 Each translation generate a permalink (picto |image|).
 
 .. |image| image:: ./images/translating/link.png
+
+Release translations (only for github repository managers)
+----------------------------------------------------------
+
+Weblate send new translations to `translations` branch in Github, dedicated to translations.
+When new translations chains are validated, manager has to send the manually to Github.
+
+For each release, `translations` branch must be merged into master before building the release.
+
+Send modifications to Github repository
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- In component, click "Manage > Repository maintenance"
+- Click "Commit" to save translation in local repository
+- Click "Push" to send local commits to `translations` branch in Github repository
+
+Add translations to next release
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1. In **Github**, merge `translations` branch into `master`, and update changelog.
+
+2. After releasing, in **Weblate**, rebase the branche :
+
+    - In the component, click "Manage > Repository maintenance"
+    - Click "Rebase" to rebase `translations` branch onto `master`

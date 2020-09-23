@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek 2.38\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-22 16:32+0200\n"
+"POT-Creation-Date: 2020-09-23 17:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -145,3 +145,73 @@ msgid "Each translation generate a permalink (picto |image|)."
 msgstr ""
 "Chaque traduction génère un lien permanent (picto |image| à droite de "
 "“Traduction”)."
+
+#: ../../translating.rst:84
+msgid "Release translations (only for github repository managers)"
+msgstr "Publier les traductions (seulement pour les mainteneurs du dépôt Github)"
+
+#: ../../translating.rst:86
+msgid ""
+"Weblate send new translations to `translations` branch in Github, "
+"dedicated to translations. When new translations chains are validated, "
+"manager has to send the manually to Github."
+msgstr ""
+"Weblate envoie les traductions nouvelles vers la branche `translations` "
+"dans Github, dédiée aux traductions. Lorsque des nouvelles traductions "
+"sont validées, le mainteneur doit les envoyer manuellement vers Github."
+
+#: ../../translating.rst:89
+msgid ""
+"For each release, `translations` branch must be merged into master before"
+" building the release."
+msgstr ""
+"À chaque nouvelle version, il faut fusionner la branche `translations` "
+"dans master avant de publier la version."
+
+#: ../../translating.rst:92
+msgid "Send modifications to Github repository"
+msgstr "Envoyer les modifications vers le dépôt Github"
+
+#: ../../translating.rst:94
+msgid "In component, click \"Manage > Repository maintenance\""
+msgstr "Dans le composant, cliquer sur \"Gérer > Maintenance du dépôt\""
+
+#: ../../translating.rst:95
+msgid "Click \"Commit\" to save translation in local repository"
+msgstr ""
+"Cliquer sur \"Enregistrer\" pour enregistrer les traductions dans le "
+"dépôt local"
+
+#: ../../translating.rst:96
+msgid ""
+"Click \"Push\" to send local commits to `translations` branch in Github "
+"repository"
+msgstr ""
+"Cliquer sur \"Pousser\" pour envoyer les modifications locale vers la "
+"branche translation du dépôt sur github"
+
+#: ../../translating.rst:99
+msgid "Add translations to next release"
+msgstr "Ajouter les traductions à la prochaine version"
+
+#: ../../translating.rst:101
+msgid ""
+"In **Github**, merge `translations` branch into `master`, and update "
+"changelog."
+msgstr ""
+"Dans **Github**, fusionner la branche `translations` dans la branche "
+"master, et mettre à jour le fichier changelog."
+
+#: ../../translating.rst:103
+msgid "After releasing, in **Weblate**, rebase the branche :"
+msgstr "Après la release, dans **Weblate**, \"refonder\" (rebaser) la branche :"
+
+#: ../../translating.rst:105
+msgid "In the component, click \"Manage > Repository maintenance\""
+msgstr "Dans le composant, cliquer sur \"Gérer > Maintenance du dépôt\""
+
+#: ../../translating.rst:106
+msgid "Click \"Rebase\" to rebase `translations` branch onto `master`"
+msgstr ""
+"Cliquer sur \"Refonder\" pour effectuer un rebase de la branche "
+"`translations` sur `master`"
