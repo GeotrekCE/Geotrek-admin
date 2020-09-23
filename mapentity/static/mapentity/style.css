@@ -247,6 +247,7 @@ select[multiple] {
    max-height: calc( 100vh - 120px );
    overflow-y: auto;
    overflow-x: hidden;
+   margin: 0;
 }
 
 .leaflet-control-layers input[type="checkbox"] {
@@ -339,6 +340,7 @@ tr.selected-row td {
 #list-panel {
     margin-left: 60px;
     padding: 4px;
+    height: calc(100vh - 40px);
 }
 @media (max-height: 960px) {
     #list-panel {
