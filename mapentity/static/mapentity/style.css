@@ -340,7 +340,7 @@ tr.selected-row td {
 #list-panel {
     margin-left: 60px;
     padding: 4px;
-    height: calc(100vh - 40px);
+    height: calc(100vh - 50px);
 }
 @media (max-height: 960px) {
     #list-panel {
@@ -473,7 +473,7 @@ div.dataTables_paginate {
     }
 
     .dataTables_wrapper {
-        height: calc( 100% - 100px);
+        height: calc( 100% - 120px);
     }
     #list-download-toolbar{
         padding-top: 50px;
