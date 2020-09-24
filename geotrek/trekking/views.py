@@ -23,6 +23,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
 from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.mixins import transform_pdf_booklet_callback
 from geotrek.common.models import Attachment, RecordSource, TargetPortal
 from geotrek.common.views import FormsetMixin, MetaMixin, PublicOrReadPermMixin, DocumentPublic, MarkupPublic
 from geotrek.core.models import AltimetryMixin
@@ -221,6 +222,12 @@ class TrekDocumentPublic(TrekDocumentPublicMixin, DocumentPublic):
         if settings.USE_BOOKLET_PDF:
             suffix = suffix_for(self.template_name_suffix, "_booklet_pdf", "html")
             self.template_name = smart_get_template(self.model, suffix)
+
+    def get(self, request, pk, slug, lang=None):
+        response = super(TrekDocumentPublic, self).get(request, pk, slug)
+        if settings.USE_BOOKLET_PDF:
+            response.add_post_render_callback(transform_pdf_booklet_callback)
+        return response
 
 
 class TrekMarkupPublic(TrekDocumentPublicMixin, MarkupPublic):

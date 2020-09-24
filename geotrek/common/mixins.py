@@ -1,8 +1,11 @@
+from io import BytesIO
 import os
 import logging
 import shutil
 import datetime
 import hashlib
+
+from pdfimpose import PageList
 
 from django.conf import settings
 from django.db.models import Manager as DefaultManager
@@ -402,3 +405,21 @@ class AddPropertyMixin(object):
             raise AttributeError("%s has already an attribute %s" % (cls, name))
         setattr(cls, name, property(func))
         setattr(cls, '%s_verbose_name' % name, verbose_name)
+
+
+def transform_pdf_booklet_callback(response):
+    content = response.content
+    content_b = BytesIO(content)
+    import pdfimpose
+
+    pages = PageList([content_b])
+    for x in pages:
+        x.pdf.strict = False
+    new_pdf = pdfimpose._legacy_pypdf_impose(
+        matrix=pdfimpose.ImpositionMatrix([pdfimpose.Direction.horizontal], 'left'),
+        pages=pages,
+        last=0
+    )
+    result = BytesIO()
+    new_pdf.write(result)
+    response.content = result.getvalue()
