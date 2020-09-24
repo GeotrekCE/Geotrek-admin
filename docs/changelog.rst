@@ -2,12 +2,13 @@
 CHANGELOG
 =========
 
-2.38.2.dev0
+2.38.2 (2020-09-24)
 -------------------
 
 **Bug fixes**
 
 - Fix APIDAE parser when there is no element
+- Fix booklet generation with pdfimpose
 
 
 2.38.1 (2020-09-22)
