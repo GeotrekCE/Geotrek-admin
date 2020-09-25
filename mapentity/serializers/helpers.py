@@ -22,6 +22,8 @@ def field_as_string(obj, field, ascii=False):
             value = (_('no'), _('yes'))[value]
         if isinstance(value, float) or isinstance(value, int):
             value = number_format(value)
+        if isinstance(value, list) or isinstance(value, QuerySet):
+            value = ", ".join([str(val) for val in value])
     return smart_plain_text(value, ascii)
 
 
