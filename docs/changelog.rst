@@ -9,6 +9,10 @@ CHANGELOG
 
 -
 
+**Doc improvements**
+
+- Add doc for translating
+
 
 2.38.2 (2020-09-24)
 -------------------
@@ -17,7 +21,6 @@ CHANGELOG
 
 - Fix APIDAE parser when there is no element
 - Fix booklet generation with pdfimpose
-
 
 2.38.1 (2020-09-22)
 -------------------
