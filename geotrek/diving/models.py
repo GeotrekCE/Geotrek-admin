@@ -159,6 +159,10 @@ class Dive(NoDeleteMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, St
     def get_create_label(cls):
         return _("Add a new dive")
 
+    @property
+    def levels_display(self):
+        return ", ".join([str(level) for level in self.levels.all()])
+
 
 Topology.add_property('dives', lambda self: intersecting(Dive, self), _("Dives"))
 Topology.add_property('published_dives', lambda self: intersecting(Dive, self).filter(published=True), _("Published dives"))
