@@ -243,11 +243,11 @@ select[multiple] {
     z-index: -1;
 }
 
-@media(max-height: 800px) {
-    .leaflet-control-layers-group {
-        max-height: 150px;
-        overflow-y: auto;
-    }
+.leaflet-control-layers-list {
+   max-height: calc( 100vh - 120px );
+   overflow-y: auto;
+   overflow-x: hidden;
+   margin: 0;
 }
 
 .leaflet-control-layers input[type="checkbox"] {
@@ -340,12 +340,11 @@ tr.selected-row td {
 #list-panel {
     margin-left: 60px;
     padding: 4px;
-    height: 95%;
+    height: calc(100vh - 50px);
 }
-
 @media (max-height: 960px) {
     #list-panel {
-        margin-left: 34px;
+        margin-left: 48px;
     }
 }
 
@@ -380,11 +379,13 @@ tr.selected-row td {
     top: 0px;
     left: 0;
     width: 60px;
+    max-height: calc(100vh - 50px);
+    overflow-y: auto;
 }
 
 @media (max-height: 960px) {
     #entitylist {
-        width: 32px;
+        width: 44px;
     }
 }
 
@@ -441,7 +442,7 @@ tr.selected-row td {
 
 /* Datatables customization for filters and pagination */
 .dataTables_wrapper {
-    height: inherit;
+    height: calc( 100% - 60px);
 }
 
 #list-download-toolbar,
@@ -471,6 +472,9 @@ div.dataTables_paginate {
         left: 130px;
     }
 
+    .dataTables_wrapper {
+        height: calc( 100% - 120px);
+    }
     #list-download-toolbar{
         padding-top: 50px;
     }
