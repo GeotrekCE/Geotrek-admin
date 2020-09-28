@@ -1,3 +1,4 @@
+import csv
 import os
 from io import StringIO
 import datetime
@@ -400,6 +401,42 @@ class TrekViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
         form = self.get_form(response)
         self.assertEqual(form.data['parking_location'], bad_data['parking_location'])
+
+    def test_list_in_csv(self):
+        if self.model is None:
+            return  # Abstract test should not run
+
+        self.login()
+
+        polygon = 'SRID=%s;MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))' % settings.SRID
+        self.city = CityFactory(geom=polygon, name="Trifouilli")
+        self.city_2 = CityFactory(geom=polygon, name="Refouilli")
+        self.district = DistrictFactory(geom=polygon, name="District")
+
+        trek_args = {'name': 'Step 2',
+                     'points_reference': MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID),
+                     'parking_location': Point(0, 0, srid=settings.SRID)}
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            path1 = PathFactory.create(geom='SRID=%s;LINESTRING(0 0, 1 0)' % settings.SRID)
+            self.trek = TrekFactory.create(
+                paths=[path1],
+                **trek_args
+            )
+        else:
+            self.trek = TrekFactory.create(
+                geom='SRID=%s;LINESTRING(0 0, 1 0)' % settings.SRID,
+                **trek_args
+            )
+        fmt = 'csv'
+        response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get('Content-Type'), 'text/csv')
+
+        # Read the csv
+        reader = csv.DictReader(StringIO(response.content.decode("utf-8")), delimiter=',')
+        for row in reader:
+            self.assertEqual(row['Cities'], "Trifouilli, Refouilli")
+            self.assertEqual(row['Districts'], self.district.name)
 
 
 class TrekViewsLiveTests(CommonLiveTest):
