@@ -406,6 +406,8 @@ class Command(BaseCommand):
         self.sync_gpx(lang, trek)
         self.sync_kml(lang, trek)
         self.sync_trek_meta(lang, trek)
+        if settings.USE_BOOKLET_PDF:
+            self.sync_pdf(lang, trek, TrekDocumentPublic.as_view(model=type(trek)))
         self.sync_pdf(lang, trek, TrekDocumentPublic.as_view(model=type(trek)))
         self.sync_profile_json(lang, trek)
         if not self.skip_profile_png:

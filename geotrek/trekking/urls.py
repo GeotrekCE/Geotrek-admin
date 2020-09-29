@@ -9,7 +9,7 @@ from mapentity.registry import MapEntityOptions
 
 from . import models
 from .views import (
-    TrekDocumentPublic, TrekMapImage, TrekMarkupPublic,
+    TrekDocumentPublic, TrekBookletDocumentPublic, TrekMapImage, TrekMarkupPublic,
     TrekGPXDetail, TrekKMLDetail, WebLinkCreatePopup,
     CirkwiTrekView, CirkwiPOIView, TrekPOIViewSet,
     SyncRandoRedirect, TrekServiceViewSet, sync_view,
@@ -44,6 +44,7 @@ class TrekEntityOptions(AltimetryEntityOptions, PublishableEntityOptions):
     preprocess attributes.
     """
     document_public_view = TrekDocumentPublic
+    document_public_booklet_view = TrekBookletDocumentPublic
     markup_public_view = TrekMarkupPublic
 
 

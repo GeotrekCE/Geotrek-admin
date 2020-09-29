@@ -14,11 +14,11 @@ from django.utils import timezone
 from django.views import static
 from django.utils.translation import ugettext as _
 from django.views.generic import TemplateView
-from mapentity.helpers import api_bbox
+from mapentity.helpers import api_bbox, smart_get_template, suffix_for
 from mapentity.registry import registry
 from mapentity import views as mapentity_views
-
 from geotrek.celery import app as celery_app
+from geotrek.common.mixins import transform_pdf_booklet_callback
 from geotrek.common.utils import sql_extent
 from geotrek.common.models import FileType, Attachment, TargetPortal
 from geotrek import __version__
@@ -188,6 +188,18 @@ class DocumentPublicMixin(object):
 
 class DocumentPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views.MapEntityDocumentWeasyprint):
     pass
+
+
+class DocumentBookletPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views.MapEntityDocumentWeasyprint):
+    def __init__(self, *args, **kwargs):
+        super(DocumentBookletPublic, self).__init__(*args, **kwargs)
+        suffix = suffix_for(self.template_name_suffix, "_booklet_pdf", "html")
+        self.template_name = smart_get_template(self.model, suffix)
+
+    def get(self, request, pk, slug, lang=None):
+        response = super(DocumentBookletPublic, self).get(request, pk, slug)
+        response.add_post_render_callback(transform_pdf_booklet_callback)
+        return response
 
 
 class MarkupPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views.MapEntityMarkupWeasyprint):
