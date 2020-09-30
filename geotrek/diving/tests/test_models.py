@@ -1,10 +1,7 @@
 from django.test import TestCase
 
 from geotrek.common.tests import TranslationResetMixin
-from geotrek.diving.models import Dive
-from geotrek.diving.factories import DiveFactory, DivingManagerFactory, PracticeFactory, LevelFactory
-
-from mapentity.factories import SuperUserFactory
+from geotrek.diving.factories import DiveFactory, LevelFactory
 
 
 class DiveTest(TranslationResetMixin, TestCase):
