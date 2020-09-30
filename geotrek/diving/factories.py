@@ -20,6 +20,30 @@ class PracticeFactory(factory.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image()
 
 
+class LevelFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Level
+
+    name = "Level"
+    description = "<p>Description</p>"
+    pictogram = get_dummy_uploaded_image('level.png')
+
+
+class DiveWithLevelsFactory(StructureRelatedDefaultFactory):
+    class Meta:
+        model = models.Dive
+
+    name = "Dive"
+    practice = factory.SubFactory(PracticeFactory)
+    geom = 'POINT(0 0)'
+    published = True
+
+    @factory.post_generation
+    def levels(obj, create, extracted=None, **kwargs):
+        if create:
+            obj.levels.add(LevelFactory.create().pk)
+
+
 class DiveFactory(StructureRelatedDefaultFactory):
     class Meta:
         model = models.Dive
@@ -63,12 +87,3 @@ class DifficultyFactory(factory.DjangoModelFactory):
 
     name = "Difficulty"
     pictogram = get_dummy_uploaded_image('difficulty.png')
-
-
-class LevelFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = models.Level
-
-    name = "Level"
-    description = "<p>Description</p>"
-    pictogram = get_dummy_uploaded_image('level.png')
