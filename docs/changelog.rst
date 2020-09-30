@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix incorrect display of levels in dive list
 
 **Doc improvements**
 
