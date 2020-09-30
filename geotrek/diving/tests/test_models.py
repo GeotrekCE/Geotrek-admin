@@ -14,6 +14,5 @@ class DiveTest(TranslationResetMixin, TestCase):
         l1 = LevelFactory.create()
         l2 = LevelFactory.create()
         d = DiveFactory()
-        d.levels.add(l1)
-        d.levels.add(l2)
+        d.levels.set([l1, l2])
         self.assertEquals(d.levels_display, "{0}, {1}".format(l1, l2))
