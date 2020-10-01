@@ -209,11 +209,6 @@ class MapEntityDocumentBase(ModelViewMixin, DetailView):
 
 
 class MapEntityBookletDocumentBase(MapEntityDocumentBase):
-
-    @view_permission_required()
-    def dispatch(self, *args, **kwargs):
-        return super(MapEntityBookletDocumentBase, self).dispatch(*args, **kwargs)
-
     @classmethod
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_BOOKLET_DOCUMENT
