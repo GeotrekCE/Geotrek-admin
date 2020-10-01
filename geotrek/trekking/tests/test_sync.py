@@ -655,7 +655,6 @@ class SyncPdfBookletTest(VarTmpTestCase):
         super().setUp()
         self.trek_1 = TrekFactory.create(published=True)
 
-    @override_settings()
     def test_sync_pdfs_booklet(self, event, content, dive, trek):
         output = StringIO()
         with override_settings(USE_BOOKLET_PDF=False):
