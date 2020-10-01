@@ -14,7 +14,7 @@ from django.utils import timezone
 from django.views import static
 from django.utils.translation import ugettext as _
 from django.views.generic import TemplateView
-from mapentity.helpers import api_bbox, smart_get_template, suffix_for
+from mapentity.helpers import api_bbox
 from mapentity.registry import registry
 from mapentity import views as mapentity_views
 from geotrek.celery import app as celery_app
