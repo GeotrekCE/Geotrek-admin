@@ -186,23 +186,32 @@ class DocumentPublicMixin(object):
         return context
 
 
-class DocumentPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views.MapEntityDocumentWeasyprint):
-    pass
+class BookletDocumentPublicMixin(DocumentPublicMixin):
 
-
-class DocumentBookletPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views.MapEntityDocumentWeasyprint):
-    def __init__(self, *args, **kwargs):
-        super(DocumentBookletPublic, self).__init__(*args, **kwargs)
-        suffix = suffix_for(self.template_name_suffix, "_booklet_pdf", "html")
-        self.template_name = smart_get_template(self.model, suffix)
+    # Override view_permission_required
+    def dispatch(self, *args, **kwargs):
+        return super(mapentity_views.MapEntityDocumentBase, self).dispatch(*args, **kwargs)
 
     def get(self, request, pk, slug, lang=None):
-        response = super(DocumentBookletPublic, self).get(request, pk, slug)
+        response = super(BookletDocumentPublicMixin, self).get(request, pk, slug)
         response.add_post_render_callback(transform_pdf_booklet_callback)
         return response
 
 
+class DocumentPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views.MapEntityDocumentWeasyprint):
+    pass
+
+
+class DocumentBookletPublic(PublicOrReadPermMixin, BookletDocumentPublicMixin, mapentity_views.MapEntityBookletDocumentWeasyprint):
+    pass
+
+
 class MarkupPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views.MapEntityMarkupWeasyprint):
+    pass
+
+
+class BookletDocumentPublic(PublicOrReadPermMixin, BookletDocumentPublicMixin,
+                            mapentity_views.MapEntityBookletDocumentWeasyprint):
     pass
 
 
