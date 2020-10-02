@@ -189,7 +189,7 @@ class DocumentPublicMixin(object):
 class BookletMixin(object):
 
     def get(self, request, pk, slug, lang=None):
-        response = super(BookletMixin, self).get(request, pk, slug)
+        response = super().get(request, pk, slug)
         response.add_post_render_callback(transform_pdf_booklet_callback)
         return response
 
