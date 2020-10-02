@@ -34,7 +34,7 @@ class SyncRandoTestCase(TestCase):
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_flatpages_sources_portal_filter(self, mock_stdout):
-        command = FakeSyncCommand(portal=[self.portal.name], source=[self.source.name])
+        command = FakeSyncCommand(portal=self.portal.name, source=[self.source.name])
         synchro = SyncRando(command)
         synchro.sync('en')
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'flatpages.geojson')))

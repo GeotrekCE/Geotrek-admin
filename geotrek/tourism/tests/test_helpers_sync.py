@@ -70,7 +70,7 @@ class SyncRandoTestCase(TestCase):
             geom='SRID=%s;POINT(700001 6600001)' % settings.SRID, sources=(self.source,),
             portals=(self.portal,), published=True)
 
-        command = FakeSyncCommand(portal=[self.portal.name], source=[self.source.name])
+        command = FakeSyncCommand(portal=self.portal.name, source=[self.source.name])
         synchro = SyncRando(command)
         with patch('geotrek.tourism.helpers_sync.SyncRando.sync_event', side_effect=side_effect_sync_event):
             with patch('geotrek.tourism.helpers_sync.SyncRando.sync_content', side_effect=side_effect_sync_content):
@@ -99,7 +99,7 @@ class SyncRandoTestCase(TestCase):
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_sync_event_portal_source(self, stdout, mock_prepare_event, mock_prepare_content):
-        command = FakeSyncCommand(portal=[self.portal.name], source=[self.source.name])
+        command = FakeSyncCommand(portal=self.portal.name, source=[self.source.name])
         synchro = SyncRando(command)
         synchro.sync_event('fr', self.touristic_event)
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'touristicevents',
@@ -108,7 +108,7 @@ class SyncRandoTestCase(TestCase):
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_sync_content_portal_source(self, stdout, mock_prepare_event, mock_prepare_content):
-        command = FakeSyncCommand(portal=[self.portal.name], source=[self.source.name])
+        command = FakeSyncCommand(portal=self.portal.name, source=[self.source.name])
         synchro = SyncRando(command)
         synchro.sync_content('fr', self.touristic_content)
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'touristiccontents',

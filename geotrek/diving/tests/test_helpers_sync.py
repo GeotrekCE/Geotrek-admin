@@ -66,7 +66,7 @@ class SyncRandoTestCase(TestCase):
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_sync_detail_portal_source(self, stdout, mock_prepare):
-        command = FakeSyncCommand(portal=[self.portal_b.name], source=[self.source_b.name])
+        command = FakeSyncCommand(portal=self.portal_b.name, source=[self.source_b.name])
         synchro = SyncRando(command)
         synchro.sync_detail('fr', self.dive)
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'dives',
@@ -93,7 +93,7 @@ class SyncRandoTestCase(TestCase):
     def test_sync_language_portal_source(self, stdout, mock_prepare):
         def side_effect_sync(lang, dive):
             self.assertEqual(dive, self.dive_portal_source)
-        command = FakeSyncCommand(portal=[self.portal_a.name], source=[self.source_a.name])
+        command = FakeSyncCommand(portal=self.portal_a.name, source=[self.source_a.name])
         synchro = SyncRando(command)
         with patch('geotrek.diving.helpers_sync.SyncRando.sync_detail', side_effect=side_effect_sync) as mock_dive:
             synchro.sync('en')

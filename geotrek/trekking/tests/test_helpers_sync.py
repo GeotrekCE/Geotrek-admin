@@ -21,7 +21,6 @@ class SyncRandoTestCase(TestCase):
     def setUpClass(cls):
         super(SyncRandoTestCase, cls).setUpClass()
         cls.trek = TrekWithPublishedPOIsFactory.create(published=True)
-        cls.trek_fr = TrekFactory.create(published_fr=True)
         cls.information_desks = InformationDeskFactory.create()
         cls.trek.information_desks.add(cls.information_desks)
         cls.attachment = AttachmentFactory.create(content_object=cls.trek,
@@ -32,7 +31,7 @@ class SyncRandoTestCase(TestCase):
 
         cls.portal_a = TargetPortalFactory()
         cls.portal_b = TargetPortalFactory()
-
+        cls.trek_fr = TrekFactory.create(published_fr=True, sources=(cls.source_b,))
         cls.trek_sb = TrekFactory.create(sources=(cls.source_b,),
                                          published=True)
 
@@ -93,7 +92,7 @@ class SyncRandoTestCase(TestCase):
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_sync_detail_portal_source(self, stdout, mock_prepare):
-        command = FakeSyncCommand(portal=[self.portal_b.name], source=[self.source_b.name])
+        command = FakeSyncCommand(portal=self.portal_b.name, source=[self.source_b.name])
         synchro = SyncRando(command)
         synchro.sync_detail('fr', self.trek)
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp_sync_rando', 'api', 'fr', 'treks',
@@ -119,10 +118,12 @@ class SyncRandoTestCase(TestCase):
     def test_sync_language_portal_source(self, stdout, mock_prepare):
         def side_effect_sync(lang, trek):
             self.assertEqual(trek, self.trek_fr)
-        command = FakeSyncCommand(portal=[self.portal_b.name], source=[self.source_b.name])
+        command = FakeSyncCommand(portal=self.portal_a.name, source=[self.source_b.name])
         synchro = SyncRando(command)
-        with patch('geotrek.trekking.helpers_sync.SyncRando.sync_detail', side_effect=side_effect_sync):
+        with patch('geotrek.trekking.helpers_sync.SyncRando.sync_detail', side_effect=side_effect_sync) as mock_trek:
             synchro.sync('fr')
+        self.assertEqual(len(mock_trek.call_args_list), 1)
+        mock_trek.assert_called_with('fr', self.trek_fr)
 
     def tearDown(self):
         if os.path.exists(os.path.join('var', 'tmp_sync_rando')):
