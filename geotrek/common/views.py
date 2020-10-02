@@ -186,14 +186,10 @@ class DocumentPublicMixin(object):
         return context
 
 
-class BookletDocumentPublicMixin(DocumentPublicMixin):
-
-    # Override view_permission_required
-    def dispatch(self, *args, **kwargs):
-        return super(mapentity_views.MapEntityDocumentBase, self).dispatch(*args, **kwargs)
+class BookletMixin(object):
 
     def get(self, request, pk, slug, lang=None):
-        response = super(BookletDocumentPublicMixin, self).get(request, pk, slug)
+        response = super(BookletMixin, self).get(request, pk, slug)
         response.add_post_render_callback(transform_pdf_booklet_callback)
         return response
 
@@ -202,16 +198,12 @@ class DocumentPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views
     pass
 
 
-class DocumentBookletPublic(PublicOrReadPermMixin, BookletDocumentPublicMixin, mapentity_views.MapEntityBookletDocumentWeasyprint):
+class DocumentBookletPublic(PublicOrReadPermMixin, DocumentPublicMixin, BookletMixin,
+                            mapentity_views.MapEntityBookletDocumentWeasyprint):
     pass
 
 
 class MarkupPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views.MapEntityMarkupWeasyprint):
-    pass
-
-
-class BookletDocumentPublic(PublicOrReadPermMixin, BookletDocumentPublicMixin,
-                            mapentity_views.MapEntityBookletDocumentWeasyprint):
     pass
 
 

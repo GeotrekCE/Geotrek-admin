@@ -422,13 +422,13 @@ msgid "Public print"
 msgstr "Stampa pubblica"
 
 msgid "Public print booklet"
-msgstr "Stampa pubblica A5"
+msgstr "Stampa pubblica opuscolo"
 
 msgid "Print"
 msgstr "Stampa"
 
 msgid "Print booklet"
-msgstr "Stampa A5"
+msgstr "Stampa opuscolo"
 
 msgid "Attributes"
 msgstr "Attributi"

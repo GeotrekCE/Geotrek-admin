@@ -218,7 +218,7 @@ class TrekDocumentPublic(TrekDocumentPublicMixin, DocumentPublic):
     pass
 
 
-class TrekBookletDocumentPublic(TrekDocumentPublicMixin, DocumentBookletPublic):
+class TrekDocumentBookletPublic(TrekDocumentPublicMixin, DocumentBookletPublic):
     pass
 
 

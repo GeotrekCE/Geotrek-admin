@@ -209,9 +209,7 @@ class MapEntityDocumentBase(ModelViewMixin, DetailView):
 
 
 class MapEntityBookletDocumentBase(MapEntityDocumentBase):
-    @classmethod
-    def get_entity_kind(cls):
-        return mapentity_models.ENTITY_BOOKLET_DOCUMENT
+    pass
 
 
 class MapEntityWeasyprint(MapEntityDocumentBase):

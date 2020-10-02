@@ -492,13 +492,13 @@ msgid "Public print"
 msgstr "Impression grand public"
 
 msgid "Public print booklet"
-msgstr "Impression grand public A5"
+msgstr "Impression livret grand public"
 
 msgid "Print"
 msgstr "Impr."
 
 msgid "Print booklet"
-msgstr "Impr. A5"
+msgstr "Impr. livret"
 
 msgid "yes,no"
 msgstr "oui,non"

@@ -33,7 +33,7 @@ from geotrek.tourism import views as tourism_views
 from geotrek.trekking import models as trekking_models
 from geotrek.trekking.views import (TrekViewSet, POIViewSet, TrekPOIViewSet,
                                     TrekGPXDetail, TrekKMLDetail, TrekServiceViewSet,
-                                    ServiceViewSet, TrekDocumentPublic, TrekBookletDocumentPublic, TrekMeta,
+                                    ServiceViewSet, TrekDocumentPublic, TrekDocumentBookletPublic, TrekMeta,
                                     TrekInfrastructureViewSet, TrekSignageViewSet,)
 if 'geotrek.diving' in settings.INSTALLED_APPS:
     from geotrek.diving import models as diving_models
@@ -407,7 +407,7 @@ class Command(BaseCommand):
         self.sync_kml(lang, trek)
         self.sync_trek_meta(lang, trek)
         if settings.USE_BOOKLET_PDF:
-            self.sync_pdf(lang, trek, TrekBookletDocumentPublic.as_view(model=type(trek)))
+            self.sync_pdf(lang, trek, TrekDocumentBookletPublic.as_view(model=type(trek)))
         else:
             self.sync_pdf(lang, trek, TrekDocumentPublic.as_view(model=type(trek)))
         self.sync_profile_json(lang, trek)

@@ -167,7 +167,7 @@ class MapEntityOptions(object):
             mapentity_models.ENTITY_DELETE: r'^{modelname}/delete/(?P<pk>\d+)/$',
             mapentity_models.ENTITY_MARKUP: r'^{modelname}/markup/(?P<pk>\d+)/$',
         }
-        kind_to_urlpath[mapentity_models.ENTITY_BOOKLET_DOCUMENT] = r'^document/booklet/{modelname}-(?P<pk>\d+).pdf$'
+
         if app_settings['MAPENTITY_WEASYPRINT']:
             kind_to_urlpath[mapentity_models.ENTITY_DOCUMENT] = r'^document/{modelname}-(?P<pk>\d+).pdf$'
         else:
