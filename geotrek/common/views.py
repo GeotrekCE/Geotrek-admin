@@ -199,7 +199,7 @@ class DocumentPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views
 
 
 class DocumentBookletPublic(PublicOrReadPermMixin, DocumentPublicMixin, BookletMixin,
-                            mapentity_views.MapEntityBookletDocumentWeasyprint):
+                            mapentity_views.MapEntityDocumentWeasyprint):
     pass
 
 

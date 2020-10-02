@@ -167,12 +167,10 @@ class MapEntityOptions(object):
             mapentity_models.ENTITY_DELETE: r'^{modelname}/delete/(?P<pk>\d+)/$',
             mapentity_models.ENTITY_MARKUP: r'^{modelname}/markup/(?P<pk>\d+)/$',
         }
-
         if app_settings['MAPENTITY_WEASYPRINT']:
             kind_to_urlpath[mapentity_models.ENTITY_DOCUMENT] = r'^document/{modelname}-(?P<pk>\d+).pdf$'
         else:
             kind_to_urlpath[mapentity_models.ENTITY_DOCUMENT] = r'^document/{modelname}-(?P<pk>\d+).odt$'
-
         url_path = kind_to_urlpath[view_kind]
         url_path = url_path.format(modelname=self.modelname)
         return url_path
