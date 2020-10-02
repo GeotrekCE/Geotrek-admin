@@ -1,6 +1,3 @@
-from urllib.parse import urljoin
-
-
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models.functions import Transform
@@ -11,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
-from django.views.generic import CreateView, ListView, DetailView, TemplateView
+from django.views.generic import CreateView, ListView, DetailView
 from django.views.generic.detail import BaseDetailView
 from mapentity.helpers import alphabet_enumeration
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
