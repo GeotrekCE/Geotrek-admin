@@ -336,9 +336,6 @@ class PublishableMixin(BasePublishableMixin):
     def name_csv_display(self):
         return self.name
 
-    def get_markup_public_url(self):
-        raise NotImplementedError
-
     def is_complete(self):
         """It should also have a description, etc.
         """

@@ -1,7 +1,7 @@
 from django.urls import path, converters, register_converter
 from mapentity.registry import MapEntityOptions
 
-from .views import (JSSettings, admin_check_extents, DocumentPublic, import_view, import_update_json,
+from .views import (JSSettings, admin_check_extents, DocumentPublic, DocumentBookletPublic, import_view, import_update_json,
                     ThemeViewSet, MarkupPublic)
 
 
@@ -23,6 +23,7 @@ urlpatterns = [
 
 class PublishableEntityOptions(MapEntityOptions):
     document_public_view = DocumentPublic
+    document_public_booklet_view = DocumentBookletPublic
     markup_public_view = MarkupPublic
 
     def scan_views(self, *args, **kwargs):
@@ -30,6 +31,9 @@ class PublishableEntityOptions(MapEntityOptions):
         """
         views = super(PublishableEntityOptions, self).scan_views(*args, **kwargs)
         publishable_views = [
+            path('api/<lang:lang>/{name}s/<int:pk>/<slug:slug>_booklet.pdf'.format(name=self.modelname),
+                 self.document_public_booklet_view.as_view(model=self.model),
+                 name="%s_booklet_printable" % self.modelname),
             path('api/<lang:lang>/{name}s/<int:pk>/<slug:slug>.pdf'.format(name=self.modelname),
                  self.document_public_view.as_view(model=self.model),
                  name="%s_printable" % self.modelname),

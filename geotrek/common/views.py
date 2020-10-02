@@ -17,8 +17,8 @@ from django.views.generic import TemplateView
 from mapentity.helpers import api_bbox
 from mapentity.registry import registry
 from mapentity import views as mapentity_views
-
 from geotrek.celery import app as celery_app
+from geotrek.common.mixins import transform_pdf_booklet_callback
 from geotrek.common.utils import sql_extent
 from geotrek.common.models import FileType, Attachment, TargetPortal
 from geotrek import __version__
@@ -186,7 +186,20 @@ class DocumentPublicMixin(object):
         return context
 
 
+class BookletMixin(object):
+
+    def get(self, request, pk, slug, lang=None):
+        response = super().get(request, pk, slug)
+        response.add_post_render_callback(transform_pdf_booklet_callback)
+        return response
+
+
 class DocumentPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views.MapEntityDocumentWeasyprint):
+    pass
+
+
+class DocumentBookletPublic(PublicOrReadPermMixin, DocumentPublicMixin, BookletMixin,
+                            mapentity_views.MapEntityDocumentWeasyprint):
     pass
 
 

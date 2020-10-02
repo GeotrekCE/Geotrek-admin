@@ -491,8 +491,14 @@ msgstr "KML"
 msgid "Public print"
 msgstr "Impression grand public"
 
+msgid "Public print booklet"
+msgstr "Impression livret grand public"
+
 msgid "Print"
 msgstr "Impr."
+
+msgid "Print booklet"
+msgstr "Impr. livret"
 
 msgid "yes,no"
 msgstr "oui,non"

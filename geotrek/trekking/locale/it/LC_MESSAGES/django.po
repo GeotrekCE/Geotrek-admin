@@ -421,8 +421,14 @@ msgstr "Geotrek è un'applicazione web che ti permette di preparare il tuo pross
 msgid "Public print"
 msgstr "Stampa pubblica"
 
+msgid "Public print booklet"
+msgstr "Stampa pubblica opuscolo"
+
 msgid "Print"
 msgstr "Stampa"
+
+msgid "Print booklet"
+msgstr "Stampa opuscolo"
 
 msgid "Attributes"
 msgstr "Attributi"
