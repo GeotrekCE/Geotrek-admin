@@ -22,6 +22,10 @@ To make output less or more verbose, you can use the ``--verbose`` option.
 
 Since version 2.4.0 of Geotrek-admin, you can also launch the command ``sync_rando`` from the web interface. You can add synchronization options with advanced configuration setting ``SYNC_RANDO_OPTIONS = {}``.
 
+For example, if you add this line in ``/opt/geotrek-admin/var/conf/custom.py`` you will skip generation of map tiles files during the synchronisation :
+``SYNC_RANDO_OPTIONS = {'skip_tiles': True}``
+
+
 Automatic synchronization
 -------------------------
 
