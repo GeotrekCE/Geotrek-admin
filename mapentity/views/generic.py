@@ -208,10 +208,6 @@ class MapEntityDocumentBase(ModelViewMixin, DetailView):
         return context
 
 
-class MapEntityBookletDocumentBase(MapEntityDocumentBase):
-    pass
-
-
 class MapEntityWeasyprint(MapEntityDocumentBase):
 
     def __init__(self, *args, **kwargs):
@@ -234,27 +230,6 @@ class MapEntityWeasyprint(MapEntityDocumentBase):
         return context
 
 
-class MapEntityBookletWeasyprint(MapEntityBookletDocumentBase):
-    def __init__(self, *args, **kwargs):
-        super(MapEntityBookletWeasyprint, self).__init__(*args, **kwargs)
-
-        suffix = suffix_for(self.template_name_suffix, "_booklet_pdf", "html")
-        self.template_name = smart_get_template(self.model, suffix)
-        if not self.template_name:
-            raise TemplateDoesNotExist(name_for(self.model._meta.app_label,
-                                                self.model._meta.object_name.lower(), suffix))
-        self.template_attributes = smart_get_template(self.model, suffix_for(self.template_name_suffix,
-                                                                             "_attributes", "html"))
-        self.template_css = smart_get_template(self.model, suffix_for(self.template_name_suffix, "_pdf", "css"))
-
-    def get_context_data(self, **kwargs):
-        context = super(MapEntityBookletWeasyprint, self).get_context_data(**kwargs)
-        context['map_path'] = self.get_object().get_map_image_path()
-        context['template_attributes'] = self.template_attributes
-        context['template_css'] = self.template_css
-        return context
-
-
 class MapEntityDocumentWeasyprint(MapEntityWeasyprint, WeasyTemplateResponseMixin):
     pass
 
@@ -264,10 +239,6 @@ class MapEntityMarkupWeasyprint(MapEntityWeasyprint):
     @classmethod
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_MARKUP
-
-
-class MapEntityBookletDocumentWeasyprint(MapEntityBookletWeasyprint, WeasyTemplateResponseMixin):
-    pass
 
 
 class MapEntityDocumentOdt(MapEntityDocumentBase):
