@@ -52,7 +52,7 @@ class OrganismAdmin(MergeActionMixin, admin.ModelAdmin):
 
 class FileTypeAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ('type', 'structure')
-    search_fields = ('type', 'structure')
+    search_fields = ('type', 'structure__name')
     list_filter = ('structure',)
     merge_field = 'type'
 
