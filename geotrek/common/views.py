@@ -203,7 +203,7 @@ class DocumentPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views
 
 class DocumentBookletPublic(PublicOrReadPermMixin, DocumentPublicMixin, BookletMixin,
                             mapentity_views.MapEntityDocumentWeasyprint):
-    pass
+    template_name_suffix = "_public_booklet"
 
 
 class MarkupPublic(PublicOrReadPermMixin, DocumentPublicMixin, mapentity_views.MapEntityMarkupWeasyprint):
