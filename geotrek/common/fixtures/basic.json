@@ -192,19 +192,5 @@
         "fields": {
             "name": "OpenSystem"
         }
-    },
-    {
-        "pk": 2,
-        "model": "common.reservationsystem",
-        "fields": {
-            "name": "FFCAM"
-        }
-    },
-    {
-        "pk": 3,
-        "model": "common.reservationsystem",
-        "fields": {
-            "name": "Gites de France"
-        }
     }
 ]
