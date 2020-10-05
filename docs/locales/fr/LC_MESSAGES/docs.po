@@ -9338,47 +9338,47 @@ msgstr ""
 
 #: ../../translating.rst:3
 msgid "TRANSLATING"
-msgstr ""
+msgstr "TRADUCTIONS"
 
 #: ../../translating.rst:5
 msgid "Geotrek can be translated online here: https://weblate.makina-corpus.net/"
-msgstr ""
+msgstr "Les traductions peuvent se faire en ligne sur https://weblate.makina-"
 
 #: ../../translating.rst:9
 msgid "Getting started"
-msgstr ""
+msgstr "Commencer à traduire"
 
 #: ../../translating.rst:11 ../../translating.rst:16
 msgid "Create an account"
-msgstr ""
+msgstr "Créer un compte"
 
 #: ../../translating.rst:12 ../../translating.rst:35
 msgid "Browse by project"
-msgstr ""
+msgstr "Naviguer par projet"
 
 #: ../../translating.rst:13 ../../translating.rst:52
 msgid "Browse by language"
-msgstr ""
+msgstr "Naviguer par langue"
 
 #: ../../translating.rst:18
 msgid "Click on \"Register\""
-msgstr ""
+msgstr "Cliquer sur “S’inscrire”"
 
 #: ../../translating.rst:20
 msgid "Fill the register form"
-msgstr ""
+msgstr "Remplir le formulaire d’inscription"
 
 #: ../../translating.rst:25
 msgid "Validate your email"
-msgstr ""
+msgstr "Valider l’email"
 
 #: ../../translating.rst:27
 msgid "Fill the password"
-msgstr ""
+msgstr "Saisir le mot de passe"
 
 #: ../../translating.rst:29
 msgid "Then connect to weblate"
-msgstr ""
+msgstr "Se connecter"
 
 #: ../../translating.rst:31
 msgid ""
@@ -9386,26 +9386,29 @@ msgid ""
 "<https://docs.weblate.org/en/latest/user/profile.html>`__ to create an "
 "account and manage your profile."
 msgstr ""
+"`Documentation officielle "
+"<https://docs.weblate.org/en/latest/user/profile.html>`__ pour la "
+"création de compte et la gestion du profil."
 
 #: ../../translating.rst:37
 msgid "Go to “Project > Browse all projects”"
-msgstr ""
+msgstr "Aller dans “Projet > Parcourir tous les projets”"
 
 #: ../../translating.rst:42
 msgid "Sélect the project you want to translate"
-msgstr ""
+msgstr "Sélectionner le projet auquel contribuer dans la liste"
 
 #: ../../translating.rst:44
 msgid "Click on tab “Languages”"
-msgstr ""
+msgstr "Aller dans l’onglet “Langues”"
 
 #: ../../translating.rst:46
 msgid "Choose the language to translate"
-msgstr ""
+msgstr "Choisir la langue à traduire"
 
 #: ../../translating.rst:54
 msgid "Go to “Languages > Browse all languages”"
-msgstr ""
+msgstr "Aller dans “Langues > Parcourir toutes les langues”"
 
 #: ../../translating.rst:55
 msgid "Choose the language you want to translate"
@@ -9413,11 +9416,11 @@ msgstr ""
 
 #: ../../translating.rst:56
 msgid "Select the project to translate"
-msgstr ""
+msgstr "Sélectionner le projet à traduire"
 
 #: ../../translating.rst:58
 msgid "And let's go!"
-msgstr ""
+msgstr "Et c’est parti !"
 
 #: ../../translating.rst:60
 msgid ""
@@ -9425,34 +9428,46 @@ msgid ""
 "<https://docs.weblate.org/en/latest/user/translating.html>`__ for "
 "translation."
 msgstr ""
+"`Documentation officielle "
+"<https://docs.weblate.org/en/latest/user/translating.html>`__ de l’outil "
+"Weblate pour la traduction."
 
 #: ../../translating.rst:64
 msgid "Translation features"
-msgstr ""
+msgstr "Fonctionnalités pour la traduction"
 
 #: ../../translating.rst:66
 msgid ""
 "Weblate shows all translation by language and by module. Errors and left "
 "to translate can be displayed easily."
 msgstr ""
+"Weblate permet une vue d’ensemble des traductions par langue et par "
+"module. Il est possible d'afficher les erreurs de traduction ainsi que le"
+" reste à traduire."
 
 #: ../../translating.rst:69
 msgid ""
 "Weblate can identify problematic translations as chains between projects,"
 " punctuation inconsistancy."
 msgstr ""
+"Weblate permet de détecter automatiquement les incohérences, par "
+"exempleentre les autres modules projets, les ponctuations"
 
 #: ../../translating.rst:74
 msgid "Other occurrences in all components allows to check consistency."
 msgstr ""
+"La liste des autres occurrences dans les autres composants permet de "
+"vérifier la cohérence."
 
 #: ../../translating.rst:79
 msgid "Each translation generate a permalink (picto |image|)."
 msgstr ""
+"Chaque traduction génère un lien permanent (picto |image| à droite de "
+"“Traduction”)."
 
 #: ../../translating.rst:84
 msgid "Release translations (only for github repository managers)"
-msgstr ""
+msgstr "Publier les traductions (seulement pour les mainteneurs du dépôt Github)"
 
 #: ../../translating.rst:86
 msgid ""
@@ -9460,52 +9475,65 @@ msgid ""
 "dedicated to translations. When new translations chains are validated, "
 "manager has to send the manually to Github."
 msgstr ""
+"Weblate envoie les traductions nouvelles vers la branche `translations` "
+"dans Github, dédiée aux traductions. Lorsque des nouvelles traductions "
+"sont validées, le mainteneur doit les envoyer manuellement vers Github."
 
 #: ../../translating.rst:89
 msgid ""
 "For each release, `translations` branch must be merged into master before"
 " building the release."
 msgstr ""
+"À chaque nouvelle version, il faut fusionner la branche `translations` "
+"dans master avant de publier la version."
 
 #: ../../translating.rst:92
 msgid "Send modifications to Github repository"
-msgstr ""
+msgstr "Envoyer les modifications vers le dépôt Github"
 
 #: ../../translating.rst:94
 msgid "In component, click \"Manage > Repository maintenance\""
-msgstr ""
+msgstr "Dans le composant, cliquer sur \"Gérer > Maintenance du dépôt\""
 
 #: ../../translating.rst:95
 msgid "Click \"Commit\" to save translation in local repository"
 msgstr ""
+"Cliquer sur \"Enregistrer\" pour enregistrer les traductions dans le "
+"dépôt local"
 
 #: ../../translating.rst:96
 msgid ""
 "Click \"Push\" to send local commits to `translations` branch in Github "
 "repository"
 msgstr ""
+"Cliquer sur \"Pousser\" pour envoyer les modifications locale vers la "
+"branche translation du dépôt sur github"
 
 #: ../../translating.rst:99
 msgid "Add translations to next release"
-msgstr ""
+msgstr "Ajouter les traductions à la prochaine version"
 
 #: ../../translating.rst:101
 msgid ""
 "In **Github**, merge `translations` branch into `master`, and update "
 "changelog."
 msgstr ""
+"Dans **Github**, fusionner la branche `translations` dans la branche "
+"master, et mettre à jour le fichier changelog."
 
 #: ../../translating.rst:103
 msgid "After releasing, in **Weblate**, rebase the branche :"
-msgstr ""
+msgstr "Après la release, dans **Weblate**, \"refonder\" (rebaser) la branche :"
 
 #: ../../translating.rst:105
 msgid "In the component, click \"Manage > Repository maintenance\""
-msgstr ""
+msgstr "Dans le composant, cliquer sur \"Gérer > Maintenance du dépôt\""
 
 #: ../../translating.rst:106
 msgid "Click \"Rebase\" to rebase `translations` branch onto `master`"
 msgstr ""
+"Cliquer sur \"Refonder\" pour effectuer un rebase de la branche "
+"`translations` sur `master`"
 
 #: ../../user-manual.rst:3
 msgid "USER MANUAL"
