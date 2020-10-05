@@ -1,3 +1,6 @@
+import sphinx.transforms.i18n
+import sphinx.util.i18n
+
 # Geotrek documentation build configuration file, created by
 # sphinx-quickstart on Wed May 15 09:50:19 2013.
 #
@@ -9,10 +12,17 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+# -- Path setup --------------------------------------------------------------
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 # sys.path.insert(0, os.path.abspath('.'))
+
+# Hacky way to have all localized content in single domain
+sphinx.transforms.i18n.docname_to_domain = (
+    sphinx.util.i18n.docname_to_domain
+) = lambda docname, compact: "docs"
 
 # -- General configuration -----------------------------------------------------
 
