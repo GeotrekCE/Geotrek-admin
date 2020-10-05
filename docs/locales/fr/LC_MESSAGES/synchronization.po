@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek 2.38\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-22 12:11+0200\n"
+"POT-Creation-Date: 2020-10-05 15:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.6.0\n"
+"Generated-By: Babel 2.8.0\n"
 
 #: ../../synchronization.rst:3
 msgid "SYNCHRONIZATION"
@@ -53,29 +53,37 @@ msgid ""
 "options with advanced configuration setting ``SYNC_RANDO_OPTIONS = {}``."
 msgstr ""
 
-#: ../../synchronization.rst:26
+#: ../../synchronization.rst:25
+msgid ""
+"For example, if you add this line in ``/opt/geotrek-"
+"admin/var/conf/custom.py`` you will skip generation of map tiles files "
+"during the synchronisation : ``SYNC_RANDO_OPTIONS = {'skip_tiles': "
+"True}``"
+msgstr ""
+
+#: ../../synchronization.rst:30
 msgid "Automatic synchronization"
 msgstr ""
 
-#: ../../synchronization.rst:28
+#: ../../synchronization.rst:32
 msgid ""
 "You can set up automatic synchronization by creating a file "
 "``/etc/crond.d/geotrek_sync`` that contains:"
 msgstr ""
 
-#: ../../synchronization.rst:34
+#: ../../synchronization.rst:38
 msgid "This example will automatically synchronize data a 3 am every day."
 msgstr ""
 
-#: ../../synchronization.rst:38
+#: ../../synchronization.rst:42
 msgid "Synchronization options"
 msgstr ""
 
-#: ../../synchronization.rst:70
+#: ../../synchronization.rst:74
 msgid "Synchronization filtered by source and portal"
 msgstr ""
 
-#: ../../synchronization.rst:72
+#: ../../synchronization.rst:76
 msgid ""
 "You can filter treks, touristic contents, touristic events and static "
 "pages by source(s). For example, if you created 3 sources records named "
@@ -84,7 +92,7 @@ msgid ""
 "can synchronize with:"
 msgstr ""
 
-#: ../../synchronization.rst:78
+#: ../../synchronization.rst:82
 msgid ""
 "Multiple sources are separated with comas (without space before or after "
 "coma). Do not forget to add double quotes after and before the parameter "
@@ -93,50 +101,50 @@ msgid ""
 " to publish several distinct web portals."
 msgstr ""
 
-#: ../../synchronization.rst:81
+#: ../../synchronization.rst:85
 msgid ""
 "You can do exactly the same with ``Target_Portal`` field value. It will "
 "include objects associated to the selected portal + those without portal."
 msgstr ""
 
-#: ../../synchronization.rst:90
+#: ../../synchronization.rst:94
 msgid "Synchronization filtered by touristic content categories"
 msgstr ""
 
-#: ../../synchronization.rst:92
+#: ../../synchronization.rst:96
 msgid ""
 "In Geotrek-mobile, you can choose to also include touristic content per "
 "trek. You must specify ID categories :"
 msgstr ""
 
-#: ../../synchronization.rst:98
+#: ../../synchronization.rst:102
 msgid ""
 "Multiple categories are separated with comas (without space before or "
 "after coma)."
 msgstr ""
 
-#: ../../synchronization.rst:102
+#: ../../synchronization.rst:106
 msgid "Synchronization with a distant Geotrek-Rando serveur"
 msgstr ""
 
-#: ../../synchronization.rst:104
+#: ../../synchronization.rst:108
 msgid ""
 "If your server hosts both Geotrek-admin and Geotrek-rando, you just have "
 "to configure Geotrek-rando so it uses the directory chosen above. Be sure"
 " NGINX or Apache will have access rights to read these data."
 msgstr ""
 
-#: ../../synchronization.rst:107
+#: ../../synchronization.rst:111
 msgid ""
 "If you have separated servers, you have to copy files, for example with "
 "``rsync`` command:"
 msgstr ""
 
-#: ../../synchronization.rst:115
+#: ../../synchronization.rst:119
 msgid "Mobile app v3"
 msgstr ""
 
-#: ../../synchronization.rst:117
+#: ../../synchronization.rst:121
 msgid ""
 "The mobile app v3 has its own API and synchronization command called "
 "sync_mobile."
