@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-01 08:01+0000\n"
-"PO-Revision-Date: 2020-04-22 07:48+0000\n"
+"PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
-"Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
-"admin/common/fr/>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/"
+"geotrek-admin/common/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.0.1\n"
+"X-Generator: Weblate 4.1.1\n"
 
 msgid "Merge"
 msgstr "Fusionner"
@@ -73,7 +73,7 @@ msgstr "Supprimé"
 
 #, python-format
 msgid "Image {} invalid or missing from disk: {}."
-msgstr "L'image {} est invalide ou absente du disque: {}."
+msgstr "L'image {} est invalide ou absente du disque : {}."
 
 msgid "Thumbnail"
 msgstr "Miniature"
@@ -310,8 +310,8 @@ msgstr[1] "%(n)s enregistrements non modifiés."
 #, python-format
 msgid "%(n)s warning:"
 msgid_plural "%(n)s warnings:"
-msgstr[0] "%(n)s avertissement:"
-msgstr[1] "%(n)s avertissements:"
+msgstr[0] "%(n)s avertissement :"
+msgstr[1] "%(n)s avertissements :"
 
 msgid "Draft"
 msgstr "Brouillon"
@@ -320,13 +320,13 @@ msgid "Object is published but"
 msgstr "L'objet est publié mais"
 
 msgid "looks incomplete;"
-msgstr "semble incomplet;"
+msgstr "semble incomplet ;"
 
 msgid "has invalid geometry;"
-msgstr "a une géométrie invalide;"
+msgstr "a une géométrie invalide ;"
 
 msgid "Topology is not valid."
-msgstr "L'événement n'est pas valide"
+msgstr "La topologie n'est pas valide."
 
 msgid "Invalid geometry value."
 msgstr "Pointeur de géométrie invalide."
@@ -363,19 +363,19 @@ msgid "Description on Geotrek Rando"
 msgstr "Description sur Geotrek Rando"
 
 msgid "Facebook ID"
-msgstr ""
+msgstr "ID Facebook"
 
 msgid "Facebook image url"
-msgstr ""
+msgstr "URL de l'image Facebook"
 
 msgid "Url of the facebook image"
 msgstr "Url de l'image facebook"
 
 msgid "Facebook image height"
-msgstr ""
+msgstr "Hauteur de l'image Facebook"
 
 msgid "Facebook image width"
-msgstr ""
+msgstr "Largeur de l'image Facebook"
 
 msgid "Facebook image's width"
 msgstr "Largeur de l'image facebook"
