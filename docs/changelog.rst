@@ -2,16 +2,23 @@
 CHANGELOG
 =========
 
-2.38.3.dev0
+2.38.3 (2020-10-05)
 -------------------
 
 **Bug fixes**
 
-- Fix incorrect display of levels in dive list
+- Fix diving levels display on lists
+- Fix scrollable leaflet right control layer
+- Fix lists in csv (#2286)
 
 **Doc improvements**
 
 - Add doc for translating
+- Update synchronization with sync_rando options (Thanks JeanLenormand)
+
+**New Feature**
+
+- Show booklet pdf version on detail view
 
 
 2.38.2 (2020-09-24)

@@ -20,6 +20,7 @@ Makina Corpus
 * Michaël Viadere
 * Bastien Potiron
 * Emmanuelle Helly
+* Jean Lenormand
 
 .. image:: http://depot.makina-corpus.org/public/logo.gif
     :target: http://www.makina-corpus.com
