@@ -149,14 +149,14 @@ add the following code:
     # Enable diving module
     INSTALLED_APPS += ('geotrek.diving', )
 
-Then run ``make env_standalone deploy``.
+Then run ``sudo geotrek migrate; sudo service geotrek restart``.
 
 You can also insert diving minimal data (default practices, difficulties, levels and group permissions values):
 
 ::
 
-    ./bin/django loaddata geotrek/diving/fixtures/basic.json
-    cp geotrek/diving/fixtures/upload/* var/media/upload/
+    sudo geotrek loaddata geotrek/diving/fixtures/basic.json
+    cp /opt/geotrek-admin/geotrek/diving/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
 
 WYSIWYG editor configuration
 ----------------------------

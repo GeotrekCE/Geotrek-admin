@@ -4,15 +4,15 @@ from django.utils.translation import ugettext_lazy as _
 
 from geotrek.authent.models import Structure
 from geotrek.common.tests import CommonLiveTest, CommonTest
-from geotrek.diving.models import Dive
-from geotrek.diving.factories import DiveFactory, DivingManagerFactory, PracticeFactory
+from geotrek.diving.models import Dive, Level
+from geotrek.diving.factories import DiveWithLevelsFactory, DiveFactory, DivingManagerFactory, PracticeFactory
 
 from mapentity.factories import SuperUserFactory
 
 
 class DiveViewsTests(CommonTest):
     model = Dive
-    modelfactory = DiveFactory
+    modelfactory = DiveWithLevelsFactory
     userfactory = DivingManagerFactory
     expected_json_geom = {
         'type': 'Point',
@@ -40,7 +40,12 @@ class DiveViewsTests(CommonTest):
             'facilities': '',
             'filelist_url': '/paperclip/get/diving/dive/{}/'.format(self.obj.pk),
             'files': [],
-            'levels': [],
+            'levels': [
+                {'description': '<p>Description</p>',
+                 'id': Level.objects.first().pk,
+                 'label': 'Level',
+                 'pictogram': '/media/upload/level.png'}
+            ],
             'map_image_url': '/image/dive-{}-en.png'.format(self.obj.pk),
             'name': 'Dive',
             'owner': '',
