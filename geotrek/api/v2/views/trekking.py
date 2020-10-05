@@ -2,14 +2,21 @@ from django.conf import settings
 from django.db.models import F
 from django.db.models.aggregates import Count
 from rest_framework import response, decorators
+from django_filters.rest_framework.backends import DjangoFilterBackend
 
 from geotrek.api.v2 import serializers as api_serializers, \
-    viewsets as api_viewsets
+    viewsets as api_viewsets, filters as api_filters
 from geotrek.api.v2.functions import Transform, Length, Length3D
 from geotrek.trekking import models as trekking_models
 
 
 class TrekViewSet(api_viewsets.GeotrekViewset):
+    filter_backends = (DjangoFilterBackend,
+                       api_filters.GeotrekQueryParamsFilter,
+                       api_filters.GeotrekInBBoxFilter,
+                       api_filters.GeotrekDistanceToPointFilter,
+                       api_filters.GeotrekPublishedFilter,
+                       api_filters.GeotrekTrekQueryParamsFilter)
     serializer_class = api_serializers.TrekListSerializer
     serializer_detail_class = api_serializers.TrekDetailSerializer
     queryset = trekking_models.Trek.objects.existing() \

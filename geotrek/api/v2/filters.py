@@ -5,9 +5,12 @@ from functools import reduce
 from coreapi.document import Field
 from django.conf import settings
 from django.db.models.query_utils import Q
+from django.contrib.gis.db.models import Union
 from django.utils.translation import ugettext as _
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import InBBOXFilter, DistanceToPointFilter
+
+from geotrek.zoning.models import City, District
 
 
 class GeotrekQueryParamsFilter(BaseFilterBackend):
@@ -143,3 +146,120 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
                                 description=_('Structure id.'),
                                 example='5')
         return field_period, field_practices, field_structure
+
+
+class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        duration_min = request.GET.get('duration_min', None)
+        if duration_min is not None:
+            qs = qs.filter(duration__gte=duration_min)
+        duration_max = request.GET.get('duration_max', None)
+        if duration_max is not None:
+            qs = qs.filter(duration__lte=duration_max)
+        length_min = request.GET.get('length_min', None)
+        if length_min is not None:
+            qs = qs.filter(length__gte=length_min)
+        length_max = request.GET.get('length_max', None)
+        if length_max is not None:
+            qs = qs.filter(length__lte=length_max)
+        difficulty_min = request.GET.get('difficulty_min', None)
+        if difficulty_min is not None:
+            qs = qs.filter(difficulty__cirkwi_level__gte=difficulty_min)
+        difficulty_max = request.GET.get('difficulty_max', None)
+        if difficulty_max is not None:
+            qs = qs.filter(difficulty__cirkwi_level__lte=difficulty_max)
+        ascent_min = request.GET.get('ascent_min', None)
+        if ascent_min is not None:
+            qs = qs.filter(ascent__gte=ascent_min)
+        ascent_max = request.GET.get('ascent_max', None)
+        if ascent_max is not None:
+            qs = qs.filter(ascent__lte=ascent_max)
+        city = request.GET.get('city', None)
+        if city is not None:
+            cities_list = [int(c) for c in city.split(',')]
+            union_geom = City.objects.filter(
+                reduce(operator.or_, (Q(**{'code': c}) for c in cities_list))
+            ).aggregate(Union('geom'))['geom__union']
+            qs = qs.filter(geom__intersects=union_geom)
+        district = request.GET.get('district', None)
+        if district is not None:
+            districts_list = [int(d) for d in district.split(',')]
+            union_geom = District.objects.filter(
+                reduce(operator.or_, (Q(**{'pk': d}) for d in districts_list))
+            ).aggregate(Union('geom'))['geom__union']
+            qs = qs.filter(geom__intersects=union_geom)
+        structure = request.GET.get('structure', None)
+        if structure is not None:
+            qs = qs.filter(structure__pk=structure)
+        accessibilities = request.GET.get('accessibilities', None)
+        if accessibilities is not None:
+            list_accessibilities = [int(a) for a in accessibilities.split(',')]
+            qs = qs.filter(accessibilities__in=list_accessibilities)
+        return qs
+
+    def get_schema_fields(self, view):
+        field_duration_min = Field(
+            name='duration_min', required=False,
+            description=_('Set minimum duration for a trek'),
+            example=2.5, type='integer'
+        )
+        field_duration_max = Field(
+            name='duration_max', required=False,
+            description=_('Set maximum duration for a trek'),
+            example=7.5, type='integer'
+        )
+        field_length_min = Field(
+            name='length_min', required=False,
+            description=_('Set minimum length for a trek'),
+            example=5500, type='integer'
+        )
+        field_length_max = Field(
+            name='length_max', required=False,
+            description=_('Set maximum length for a trek'),
+            example=18000, type='integer'
+        )
+        field_difficulty_min = Field(
+            name='difficulty_min', required=False,
+            description=_('Set minimum difficulty for a trek. Difficulty usually goes from 1 (very easy) to 4 (difficult)'),
+            example=3, type='integer'
+        )
+        field_difficulty_max = Field(
+            name='difficulty_max', required=False,
+            description=_('Set maximum difficulty for a trek. Difficulty usually goes from 1 (very easy) to 4 (difficult)'),
+            example=4, type='integer'
+        )
+        field_ascent_min = Field(
+            name='ascent_min', required=False,
+            description=_('Set minimum ascent for a trek'),
+            example=250, type='integer'
+        )
+        field_ascent_max = Field(
+            name='ascent_max', required=False,
+            description=_('Set maximum ascent for a trek'),
+            example=1200, type='integer'
+        )
+        field_city = Field(
+            name='city', required=False,
+            description=_('Code (pk) of a city to filter by. Can be multiple cities split by a comma'),
+            example='31006,31555,31017', type='string'
+        )
+        field_district = Field(
+            name='district', required=False,
+            description=_('Pk of a district to filter by. Can be multiple districts split by a comma'),
+            example='2273,2270', type='string'
+        )
+        field_structure = Field(
+            name='structure', required=False,
+            description=_('Pk of a structure to filter by'),
+            example=4, type='integer'
+        )
+        field_accessibilities = Field(
+            name='accessibilities', required=False,
+            description=_('Pk a the accessibilities to filter by, separated by commas'),
+            example='1,2', type='string'
+        )
+        return field_duration_min, field_duration_max, field_length_min,\
+            field_length_max, field_difficulty_min, field_difficulty_max, \
+            field_ascent_min, field_ascent_max, field_city, field_district, \
+            field_structure, field_accessibilities
