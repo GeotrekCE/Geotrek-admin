@@ -18,9 +18,8 @@ class SyncRandoTestCase(TestCase):
         cls.source = RecordSourceFactory()
 
         cls.portal = TargetPortalFactory()
-        cls.flatpage_s_p = FlatPageFactory.create(published=True, title="test")
-        cls.flatpage_s_p.source.add(cls.source)
-        cls.flatpage_s_p.portal.add(cls.portal)
+        cls.flatpage_s_p = FlatPageFactory.create(published=True, title="test", portals=(cls.portal,),
+                                                  sources=(cls.source,))
         cls.flatpage_s_p.save()
 
     @patch('sys.stdout', new_callable=StringIO)

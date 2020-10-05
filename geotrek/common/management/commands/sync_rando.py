@@ -370,6 +370,7 @@ class Command(BaseCommand):
             params = {}
             if self.source:
                 params['source'] = self.source[0]
+            self.get_params_portal(params)
             self.sync_object_view(lang, obj, view, '{obj.slug}.pdf', params=params, slug=obj.slug)
 
     def sync(self):

@@ -7,16 +7,21 @@ import shutil
 from io import StringIO
 import zipfile
 
+from django.conf import settings
 from django.test import TestCase
 from django.contrib.gis.geos import LineString
 from django.core import management
 from django.core.management.base import CommandError
-from django.http import HttpResponse
+from django.http import HttpResponse, StreamingHttpResponse
 from django.test.utils import override_settings
 
 from geotrek.common.factories import FileTypeFactory, RecordSourceFactory, TargetPortalFactory, AttachmentFactory, ThemeFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.factories import PathFactory
+from geotrek.infrastructure.factories import InfrastructureFactory
+from geotrek.sensitivity.factories import SensitiveAreaFactory, SportPracticeFactory
+from geotrek.signage.factories import SignageFactory
+from geotrek.tourism.factories import InformationDeskFactory, TouristicContentFactory, TouristicEventFactory
 from geotrek.trekking.factories import TrekFactory, TrekWithPublishedPOIsFactory
 from geotrek.trekking import models as trekking_models
 
@@ -295,3 +300,94 @@ class SyncTest(VarTmpTestCase):
                                 skip_pdf=False, skip_tiles=True, stdout=output)
         self.assertFalse(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek.pk), '%s.pdf' % self.trek.slug)))
         self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'en', 'treks', str(trek.pk), '%s.pdf' % trek.slug)))
+
+
+class SyncComplexTest(VarTmpTestCase):
+    def setUp(self):
+        super().setUp()
+        self.information_desks = InformationDeskFactory.create()
+        self.trek = TrekWithPublishedPOIsFactory.create(published=True)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            InfrastructureFactory.create(paths=[(self.trek.paths.first(), 0, 0)], name="INFRA_1")
+            SignageFactory.create(paths=[(self.trek.paths.first(), 0, 0)], name="SIGNA_1")
+        else:
+            InfrastructureFactory.create(geom='SRID=2154;POINT(700000 6600000)', name="INFRA_1")
+            SignageFactory.create(geom='SRID=2154;POINT(700000 6600000)', name="SIGNA_1")
+        area = SensitiveAreaFactory.create(published=True)
+        area.species.practices.add(SportPracticeFactory.create(name='Terrestre'))
+        area.save()
+        self.touristic_content = TouristicContentFactory(
+            geom='SRID=%s;POINT(700001 6600001)' % settings.SRID, published=True)
+        self.touristic_event = TouristicEventFactory(
+            geom='SRID=%s;POINT(700001 6600001)' % settings.SRID, published=True)
+        self.attachment_touristic_content = AttachmentFactory.create(content_object=self.touristic_content,
+                                                                     attachment_file=get_dummy_uploaded_image())
+        self.attachment_touristic_event = AttachmentFactory.create(content_object=self.touristic_event,
+                                                                   attachment_file=get_dummy_uploaded_image())
+        self.touristic_content_without_attachment = TouristicContentFactory(
+            geom='SRID=%s;POINT(700002 6600002)' % settings.SRID, published=True)
+        self.touristic_event_without_attachment = TouristicEventFactory(
+            geom='SRID=%s;POINT(700002 6600002)' % settings.SRID, published=True)
+
+    def get_coordinates(self, geojsonfilename):
+        with open(os.path.join('var', 'tmp', 'api', 'en', geojsonfilename), 'r') as f:
+            geojsonfile = json.load(f)
+            if geojsonfile['features']:
+                coordinates = geojsonfile['features'][0]['geometry']['coordinates']
+                return coordinates
+            return None
+
+    def test_sync_geom_4326(self):
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000',
+                                with_signages=True, with_infrastructures=True, with_dives=True,
+                                skip_tiles=True, skip_pdf=True, languages='en', verbosity=2,
+                                content_categories="1", with_events=True, stdout=StringIO())
+        geojson_files = [
+            'infrastructures.geojson',
+            'touristiccontents.geojson',
+            'touristicevents.geojson',
+            'sensitiveareas.geojson',
+            'signages.geojson',
+            'services.geojson',
+        ]
+        for geojsonfilename in geojson_files:
+            with self.subTest(line=geojsonfilename):
+                coordinates = self.get_coordinates(geojsonfilename)
+                if coordinates:
+                    if isinstance(coordinates[0], float):
+                        self.assertTrue(coordinates[0] < 90)
+                    elif isinstance(coordinates[0][0], float):
+                        self.assertTrue(coordinates[0][0] < 90)
+                    elif isinstance(coordinates[0][0][0], float):
+                        self.assertTrue(coordinates[0][0][0] < 90)
+
+    @override_settings(SPLIT_TREKS_CATEGORIES_BY_PRACTICE=False, SPLIT_DIVES_CATEGORIES_BY_PRACTICE=False)
+    def test_sync_with_multipolygon_sensitive_area(self):
+        area = SensitiveAreaFactory.create(geom='MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))', published=True)
+        area.species.practices.add(SportPracticeFactory.create(name='Terrestre'))
+        area.save()
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), with_signages=True, with_infrastructures=True,
+                                with_dives=True, with_events=True, content_categories="1", url='http://localhost:8000',
+                                skip_tiles=True, skip_pdf=True, verbosity=2, languages='en', stdout=StringIO())
+        with open(os.path.join('var', 'tmp', 'api', 'en', 'sensitiveareas.geojson'), 'r') as f:
+            area = json.load(f)
+            # there are 2 areas
+            self.assertEqual(len(area['features']), 2)
+
+    @override_settings(SPLIT_TREKS_CATEGORIES_BY_PRACTICE=False, SPLIT_DIVES_CATEGORIES_BY_PRACTICE=False)
+    def test_sync_picture_missing_from_disk(self):
+        os.remove(self.information_desks.photo.path)
+        output = StringIO()
+        management.call_command('sync_rando', 'var/tmp', with_signages=True, with_infrastructures=True,
+                                with_dives=True, with_events=True, content_categories="1", url='http://localhost:8000',
+                                skip_tiles=True, skip_pdf=True, languages='en', verbosity=2, stdout=output)
+        self.assertIn('Done', output.getvalue())
+
+    @mock.patch('geotrek.trekking.views.TrekViewSet.list')
+    def test_streaminghttpresponse(self, mocke):
+        output = StringIO()
+        mocke.return_value = StreamingHttpResponse()
+        trek = TrekWithPublishedPOIsFactory.create(published_fr=True)
+        management.call_command('sync_rando', os.path.join('var', 'tmp'), url='http://localhost:8000', skip_pdf=True,
+                                skip_tiles=True, languages='fr', verbosity=2, stdout=output)
+        self.assertTrue(os.path.exists(os.path.join('var', 'tmp', 'api', 'fr', 'treks', str(trek.pk), 'profile.png')))
