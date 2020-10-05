@@ -1,0 +1,1282 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2013-2014, Makina Corpus
+# This file is distributed under the same license as the Geotrek package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Geotrek 2.38\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-09-22 12:11+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: ../../advanced-configuration.rst:5
+msgid "ADVANCED CONFIGURATION"
+msgstr ""
+
+#: ../../advanced-configuration.rst:8
+msgid "Custom setting file"
+msgstr ""
+
+#: ../../advanced-configuration.rst:10
+msgid ""
+"Geotrek configuration is done in ``/opt/geotrek-"
+"admin/var/conf/custom.py`` file. The list of all overridable setting and "
+"default values can be found `there <https://github.com/GeotrekCE/Geotrek-"
+"admin/blob/master/geotrek/settings/base.py>`_."
+msgstr ""
+
+#: ../../advanced-configuration.rst:14
+msgid "After any change in ``custom.py``, run:"
+msgstr ""
+
+#: ../../advanced-configuration.rst:22
+msgid "Disable modules and components"
+msgstr ""
+
+#: ../../advanced-configuration.rst:24
+msgid ""
+"In order to disable a full set of features, in the custom settings file, "
+"add the following code:"
+msgstr ""
+
+#: ../../advanced-configuration.rst:35
+msgid "In order to remove notion of trails:"
+msgstr ""
+
+#: ../../advanced-configuration.rst:41
+msgid "In order to remove zoning combo-boxes on list map:"
+msgstr ""
+
+#: ../../advanced-configuration.rst
+msgid "notes"
+msgstr ""
+
+#: ../../advanced-configuration.rst:51
+msgid ""
+"By doing so, some software upgrades may not be as smooth as usual. Never "
+"forget to mention this customization if you ask for community support."
+msgstr ""
+
+#: ../../advanced-configuration.rst:56
+msgid "Feedback settings"
+msgstr ""
+
+#: ../../advanced-configuration.rst:59
+msgid "Send acknowledge email"
+msgstr ""
+
+#: ../../advanced-configuration.rst:65
+msgid ""
+"If false, no mail will be sent to the sender of any feedback on Rando web"
+" site"
+msgstr ""
+
+#: ../../advanced-configuration.rst:68
+msgid "Suricate support"
+msgstr ""
+
+#: ../../advanced-configuration.rst:70
+msgid ""
+"It is possible to send report saved to Suricate API (deactivated by "
+"default)."
+msgstr ""
+
+#: ../../advanced-configuration.rst:72
+msgid "In order to activate suricate reports:"
+msgstr ""
+
+#: ../../advanced-configuration.rst:74
+msgid "Set your account settings in `custom.py`:"
+msgstr ""
+
+#: ../../advanced-configuration.rst:87
+msgid "Load lists for category, activity and problem magnitude :"
+msgstr ""
+
+#: ../../advanced-configuration.rst:93
+msgid ""
+"To make these lists available for your Geotrek-rando, run `sync_rando` "
+"(see :ref:`synchronization <synchronization>`)"
+msgstr ""
+
+#: ../../advanced-configuration.rst:97
+msgid "Anonymize feedback reports"
+msgstr ""
+
+#: ../../advanced-configuration.rst:99
+msgid ""
+"To be compliant to GDPR, you cannot keep personnal data infinitely, and "
+"should notice your users on how many time you keep their email."
+msgstr ""
+
+#: ../../advanced-configuration.rst:102
+msgid ""
+"A django command is available to anonymize reports, by default older than"
+" 365 days."
+msgstr ""
+
+#: ../../advanced-configuration.rst:109
+msgid "Or if you want to erase emails for reports older than 90 days"
+msgstr ""
+
+#: ../../advanced-configuration.rst:117
+msgid "Sensitive areas"
+msgstr ""
+
+#: ../../advanced-configuration.rst:120
+msgid ""
+"In order to enable sensitivity module, in the custom settings file, add "
+"the following code:"
+msgstr ""
+
+#: ../../advanced-configuration.rst:128
+msgid "The following settings are related to sensitive areas:"
+msgstr ""
+
+#: ../../advanced-configuration.rst:142
+msgid "Diving"
+msgstr ""
+
+#: ../../advanced-configuration.rst:144
+msgid ""
+"In order to enable diving module, in the custom settings file, add the "
+"following code:"
+msgstr ""
+
+#: ../../advanced-configuration.rst:152
+msgid "Then run ``make env_standalone deploy``."
+msgstr ""
+
+#: ../../advanced-configuration.rst:154
+msgid ""
+"You can also insert diving minimal data (default practices, difficulties,"
+" levels and group permissions values):"
+msgstr ""
+
+#: ../../advanced-configuration.rst:162
+msgid "WYSIWYG editor configuration"
+msgstr ""
+
+#: ../../advanced-configuration.rst:164
+msgid "Text form fields are enhanced using `TinyMCE <http://tinymce.com>`_."
+msgstr ""
+
+#: ../../advanced-configuration.rst:166
+msgid ""
+"Its configuration can be customized using advanced settings (see above "
+"paragraph)."
+msgstr ""
+
+#: ../../advanced-configuration.rst:168
+msgid ""
+"For example, in order to control which buttons are to be shown, and which"
+" tags are to be kept when cleaning-up, add this bloc :"
+msgstr ""
+
+#: ../../advanced-configuration.rst:178
+msgid "This will apply to all text fields."
+msgstr ""
+
+#: ../../advanced-configuration.rst:180
+msgid ""
+"For more information on configuration entries available, please refer to "
+"the official documentation of *TinyMCE version 3*."
+msgstr ""
+
+#: ../../advanced-configuration.rst:185
+msgid "View attachments in the browser"
+msgstr ""
+
+#: ../../advanced-configuration.rst:187
+msgid ""
+"Attached files are downloaded by default by browser, with the following "
+"line, files will be opened in the browser :"
+msgstr ""
+
+#: ../../advanced-configuration.rst:196
+msgid "Change or add WMTS tiles layers (IGN, OSM, Mapbox...)"
+msgstr ""
+
+#: ../../advanced-configuration.rst:198
+msgid ""
+"By default, you have 2 basemaps layers in your Geotrek-admin (OSM and OSM"
+" black and white)."
+msgstr ""
+
+#: ../../advanced-configuration.rst:200
+msgid "You can change or add more basemaps layers."
+msgstr ""
+
+#: ../../advanced-configuration.rst:202
+msgid "Specify the tiles URLs this way in your custom Django setting file:"
+msgstr ""
+
+#: ../../advanced-configuration.rst:211
+msgid "Example with IGN and OSM basemaps :"
+msgstr ""
+
+#: ../../advanced-configuration.rst:225
+msgid ""
+"To use IGN Geoportail WMTS tiles API, you need an API key with "
+"subscribing on http://professionnels.ign.fr/visualisation. Choose "
+"WebMercator WMTS tiles."
+msgstr ""
+
+#: ../../advanced-configuration.rst:228
+msgid "External authent"
+msgstr ""
+
+#: ../../advanced-configuration.rst:230
+msgid "You can authenticate user against a remote database table or view."
+msgstr ""
+
+#: ../../advanced-configuration.rst:232
+msgid ""
+"To enable this feature, fill these fields in ``/opt/geotrek-"
+"admin/var/conf/custom.py``:"
+msgstr ""
+
+#: ../../advanced-configuration.rst:248
+msgid "Expected columns in table/view are :"
+msgstr ""
+
+#: ../../advanced-configuration.rst:250
+msgid "username : string (*unique*)"
+msgstr ""
+
+#: ../../advanced-configuration.rst:251
+msgid "first_name : string"
+msgstr ""
+
+#: ../../advanced-configuration.rst:252
+msgid "last_name : string"
+msgstr ""
+
+#: ../../advanced-configuration.rst:253
+msgid "password : string (simple md5 encoded, or full hashed and salted password)"
+msgstr ""
+
+#: ../../advanced-configuration.rst:254
+msgid "email : string"
+msgstr ""
+
+#: ../../advanced-configuration.rst:255
+msgid ""
+"level : integer (1: readonly, 2: redactor, 3: path manager, 4: trekking "
+"manager, 6: administrator)"
+msgstr ""
+
+#: ../../advanced-configuration.rst:256
+msgid "structure : string"
+msgstr ""
+
+#: ../../advanced-configuration.rst:257
+msgid "lang : string (language code)"
+msgstr ""
+
+#: ../../advanced-configuration.rst:261
+msgid ""
+"The schema used in ``AUTHENT_TABLENAME`` must be in the user search_path "
+"(``ALTER USER $geotrek_db_user SET search_path=public,userschema;``)"
+msgstr ""
+
+#: ../../advanced-configuration.rst:263
+msgid "User management will be disabled from Administration backoffice."
+msgstr ""
+
+#: ../../advanced-configuration.rst:265
+msgid ""
+"In order to disable remote login, just comment *AUTHENTICATION_BACKENDS* "
+"line in settings file, and restart instance (see paragraph above)."
+msgstr ""
+
+#: ../../advanced-configuration.rst:268
+msgid ""
+"Geotrek can support many types of users authentication (LDAP, oauth, "
+"...), contact us for more details."
+msgstr ""
+
+#: ../../advanced-configuration.rst:273
+msgid "Map layers colors and style"
+msgstr ""
+
+#: ../../advanced-configuration.rst:275
+msgid ""
+"All layers colors can be customized from the settings. See `Leaflet "
+"reference <http://leafletjs.com/reference.html#path>`_ for vectorial "
+"layer style."
+msgstr ""
+
+#: ../../advanced-configuration.rst:279
+msgid "To apply these style changes, re-run ``sudo systemctl restart geotrek``."
+msgstr ""
+
+#: ../../advanced-configuration.rst:285
+msgid "Or change just one parameter (the opacity for example) :"
+msgstr ""
+
+#: ../../advanced-configuration.rst:292
+msgid ""
+"Regarding colors that depend from database content, such as land layers "
+"(physical types, work management...) or restricted areas. We use a "
+"specific setting that receives a list of colors :"
+msgstr ""
+
+#: ../../advanced-configuration.rst:301
+msgid ""
+"See the default values in ``geotrek/settings/base.py`` for the complete "
+"list of available styles."
+msgstr ""
+
+#: ../../advanced-configuration.rst:304
+msgid "**Restart** the application for changes to take effect."
+msgstr ""
+
+#: ../../advanced-configuration.rst:308
+msgid "External raster layers"
+msgstr ""
+
+#: ../../advanced-configuration.rst:310
+msgid ""
+"It is possible to add overlay tiles layer on maps. For example, it can be"
+" useful to:"
+msgstr ""
+
+#: ../../advanced-configuration.rst:312
+msgid "Get the cadastral parcels on top of satellite images"
+msgstr ""
+
+#: ../../advanced-configuration.rst:313
+msgid ""
+"Home made layers (*with Tilemill or QGisMapserver for example*). Like the"
+" park center borders, traffic maps, IGN BDTopo® or even the Geotrek paths"
+" that are marked as invisible in the database!"
+msgstr ""
+
+#: ../../advanced-configuration.rst:317
+msgid "In ``custom.py``, just add the following lines:"
+msgstr ""
+
+#: ../../advanced-configuration.rst:327
+msgid "Expected properties"
+msgstr ""
+
+#: ../../advanced-configuration.rst:329
+msgid "For ``GeoJSON`` files, you can provide the following properties :"
+msgstr ""
+
+#: ../../advanced-configuration.rst:331
+msgid "``title``: string"
+msgstr ""
+
+#: ../../advanced-configuration.rst:332
+msgid "``description``: string"
+msgstr ""
+
+#: ../../advanced-configuration.rst:333
+msgid "``website``: string"
+msgstr ""
+
+#: ../../advanced-configuration.rst:334
+msgid "``phone``: string"
+msgstr ""
+
+#: ../../advanced-configuration.rst:335
+msgid "``pictures``: list of objects with ``url`` and ``copyright`` attributes"
+msgstr ""
+
+#: ../../advanced-configuration.rst:336
+msgid "``category``: object with ``id`` and ``label`` attributes"
+msgstr ""
+
+#: ../../advanced-configuration.rst:340
+msgid "Disable darker map backgrounds"
+msgstr ""
+
+#: ../../advanced-configuration.rst:342
+msgid ""
+"Since IGN map backgrounds are very dense and colourful, a dark opacity is"
+" applied. In order to disable, change this MapEntity setting :"
+msgstr ""
+
+#: ../../advanced-configuration.rst:351
+msgid "Configure Social network"
+msgstr ""
+
+#: ../../advanced-configuration.rst:354
+msgid "Facebook configuration"
+msgstr ""
+
+#: ../../advanced-configuration.rst:356
+msgid ""
+"When a content is shared to Facebook in Geotrek-rando, it needs static "
+"html files built by synchronization (thanks to option ``--rando-url``)."
+msgstr ""
+
+#: ../../advanced-configuration.rst:359
+msgid ""
+"In Facebook developper dashboard, create a Facebook app dedicated to "
+"Geotrek-rando and activate it."
+msgstr ""
+
+#: ../../advanced-configuration.rst:363
+msgid "In ``custom.py`` set Facebook App ID:"
+msgstr ""
+
+#: ../../advanced-configuration.rst:369
+msgid "you can also override these settings:"
+msgstr ""
+
+#: ../../advanced-configuration.rst:378
+msgid "Override translations"
+msgstr ""
+
+#: ../../advanced-configuration.rst:380
+msgid ""
+"You can override default translation files available in each module (for "
+"example those from trekking module available in ``<geotrek-admin-"
+"folder>/geotrek/trekking/locale/fr/LC_MESSAGES/django.po``)."
+msgstr ""
+
+#: ../../advanced-configuration.rst:382
+msgid ""
+"Don't edit these default files, use them to find which words you want to "
+"override."
+msgstr ""
+
+#: ../../advanced-configuration.rst:384
+msgid "Create the custom translations destination folder:"
+msgstr ""
+
+#: ../../advanced-configuration.rst:391
+msgid ""
+"Then create a ``django.po`` file in this directory. You can do one folder"
+" and one ``django.po`` file for each language (example  ``<geotrek-admin-"
+"folder>/geotrek/locale/fr/LC_MESSAGES/django.po`` for French translation "
+"overriding)"
+msgstr ""
+
+#: ../../advanced-configuration.rst:393
+msgid "Override the translations that you want in these files."
+msgstr ""
+
+#: ../../advanced-configuration.rst:395
+msgid "Example of content for the French translation overriding:"
+msgstr ""
+
+#: ../../advanced-configuration.rst:425
+msgid "Apply changes :"
+msgstr ""
+
+#: ../../advanced-configuration.rst:433
+msgid ""
+"WARNING: Documentation to be updated. Geotrek-admin now uses Weasyprint "
+"to create public PDF based on HTML templates and no more on ODT "
+"templates. Default HTML templates are in ``geotrek/trekking/templates/`` "
+"and can be copied in ``var/conf/extra_templates/`` with same path and "
+"file names to be overriden."
+msgstr ""
+
+#: ../../advanced-configuration.rst:436
+msgid ""
+"Copy the file ``geotrek/trekking/templates/trekking/trek_public.odt`` to "
+"``var/conf/extra_templates/trekking/trek_public.odt``."
+msgstr ""
+
+#: ../../advanced-configuration.rst:440
+msgid "Override public pdf templates"
+msgstr ""
+
+#: ../../advanced-configuration.rst:442
+msgid ""
+"PDF are generated from html printed, using `Django templating "
+"<https://docs.djangoproject.com/en/1.11/ref/templates/>`_. Trekkings, "
+"touristic contents and events can be exported in pdf files."
+msgstr ""
+
+#: ../../advanced-configuration.rst:445
+msgid "Treks : ``geotrek/trekking/templates/trekking/trek_public_pdf.html``"
+msgstr ""
+
+#: ../../advanced-configuration.rst:446
+msgid ""
+"touristic contents : "
+"``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``"
+msgstr ""
+
+#: ../../advanced-configuration.rst:447
+msgid ""
+"touristic events : "
+"``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``"
+msgstr ""
+
+#: ../../advanced-configuration.rst:449
+msgid ""
+"Overriden templates have to be located in "
+"``var/media/templates/<appname>``, with appname = trekking or tourism. To"
+" override trekking pdf for example, copy the file "
+"``geotrek/trekking/templates/trekking/trek_public_pdf.html`` to "
+"``var/media/templates/trekking/trek_public_pdf.html``."
+msgstr ""
+
+#: ../../advanced-configuration.rst:453
+#, python-format
+msgid ""
+"These templates derive from base templates, which content is organized in"
+" blocks. To override for example the description block of trek pdf, copy "
+"and change the ``{% block description }…{% endblock description %}`` in "
+"your ``var/media/templates/trekking/trek_public_pdf.html``."
+msgstr ""
+
+#: ../../advanced-configuration.rst:457
+msgid ""
+"It is also possible to use color defined for practice for pictogram by "
+"adding in your "
+"``geotrek/trekking/templates/trekking/trek_public_pdf.html`` file :"
+msgstr ""
+
+#: ../../advanced-configuration.rst:464
+msgid ""
+"CSS can be overriden like html templates : copy them to "
+"``var/media/templates/trekking/`` or ``var/media/templates/tourism/`` "
+"folder"
+msgstr ""
+
+#: ../../advanced-configuration.rst:468
+msgid ""
+"The default template may change in the future versions. You will be in "
+"charge of porting the modification to your copy."
+msgstr ""
+
+#: ../../advanced-configuration.rst:471
+msgid ""
+"Test your modifications by exporting a trek or a content to pdf from "
+"Geotrek-admin application. To get your modifications available for Rando "
+"application, launch the ``sync_rando`` command."
+msgstr ""
+
+#: ../../advanced-configuration.rst:476
+msgid "Custom font in public document template"
+msgstr ""
+
+#: ../../advanced-configuration.rst:478
+msgid ""
+"In order to use custom fonts in trek PDF, it is necessary to install the "
+"font files on the server."
+msgstr ""
+
+#: ../../advanced-configuration.rst:481
+msgid ""
+"*Microsoft* fonts like *Arial* and *Verdana* can be installed via the "
+"package manager ::"
+msgstr ""
+
+#: ../../advanced-configuration.rst:486
+msgid ""
+"For specific fonts, copy the ``.ttf`` (or ``.otf``) files into the folder"
+" ``/usr/local/share/fonts/custom/`` as root, and run the following "
+"command ::"
+msgstr ""
+
+#: ../../advanced-configuration.rst:491
+msgid "For more information, check out Ubuntu documentation."
+msgstr ""
+
+#: ../../advanced-configuration.rst:495
+msgid "Custom colors in public document template"
+msgstr ""
+
+#: ../../advanced-configuration.rst:497
+msgid ""
+"Trek export geometries are translucid red by default. In order to control"
+" the apparence of objects in public trek exports, use the following "
+"setting :"
+msgstr ""
+
+#: ../../advanced-configuration.rst:504
+msgid "See *Leaflet* reference documentation for detail about layers apparence."
+msgstr ""
+
+#: ../../advanced-configuration.rst:507
+msgid "Primary color in PDF templates"
+msgstr ""
+
+#: ../../advanced-configuration.rst:509
+msgid ""
+"You can override ``PRIMARY_COLOR`` to change emphase text in PDF export. "
+"Beware of contrast, white colour is used for text so we advise you to "
+"avoid light colour."
+msgstr ""
+
+#: ../../advanced-configuration.rst:513
+msgid "Custom logos"
+msgstr ""
+
+#: ../../advanced-configuration.rst:515
+msgid "You might also need to deploy logo images in the following places :"
+msgstr ""
+
+#: ../../advanced-configuration.rst:517
+msgid "``var/conf/extra_static/images/favicon.png``"
+msgstr ""
+
+#: ../../advanced-configuration.rst:518
+msgid "``var/conf/extra_static/images/logo-login.png``"
+msgstr ""
+
+#: ../../advanced-configuration.rst:519
+msgid "``var/conf/extra_static/images/logo-header.png``"
+msgstr ""
+
+#: ../../advanced-configuration.rst:523
+msgid "Copyright on pictures"
+msgstr ""
+
+#: ../../advanced-configuration.rst:525
+msgid ""
+"If you want copyright added to your pictures, change "
+"``THUMBNAIL_COPYRIGHT_FORMAT`` to this :"
+msgstr ""
+
+#: ../../advanced-configuration.rst:531
+msgid "You can also add `{legend}`."
+msgstr ""
+
+#: ../../advanced-configuration.rst:539
+msgid "Share services between several Geotrek instances"
+msgstr ""
+
+#: ../../advanced-configuration.rst:541
+msgid ""
+"As explained :ref:`in the design section <design-section>`, *Geotrek* "
+"relies on several services. They are generic and reusable, and can thus "
+"be shared between several instances, in order to save system resources "
+"for example."
+msgstr ""
+
+#: ../../advanced-configuration.rst:545
+msgid ""
+"A simple way to achieve this is to install one instance with everything "
+"as usual (*standalone*), and plug the other instances on its underlying "
+"services."
+msgstr ""
+
+#: ../../advanced-configuration.rst:550
+msgid "Capture and conversion"
+msgstr ""
+
+#: ../../advanced-configuration.rst:551
+msgid "If you want to use external services,"
+msgstr ""
+
+#: ../../advanced-configuration.rst:553
+msgid "In ``.env``, add following variables:"
+msgstr ""
+
+#: ../../advanced-configuration.rst:562
+msgid ""
+"Then, you can delete all screamshotter and convertit references in "
+"docker-compose.yml"
+msgstr ""
+
+#: ../../advanced-configuration.rst:566
+msgid "Shutdown useless services"
+msgstr ""
+
+#: ../../advanced-configuration.rst:568
+msgid ""
+"Now that your instances point the shared server. You can shutdown the "
+"useless services on each instance."
+msgstr ""
+
+#: ../../advanced-configuration.rst:571
+msgid "Start by stopping everything :"
+msgstr ""
+
+#: ../../advanced-configuration.rst:579
+msgid "Control number of workers and request timeouts"
+msgstr ""
+
+#: ../../advanced-configuration.rst:581
+msgid ""
+"By default, the application runs on 4 processes, and timeouts after 30 "
+"seconds."
+msgstr ""
+
+#: ../../advanced-configuration.rst:583
+msgid ""
+"To control those values, edit and fix your docker-compose.yml file in web"
+" and api section"
+msgstr ""
+
+#: ../../advanced-configuration.rst:585
+msgid ""
+"To know how many workers you should set, please refer to `gunicorn "
+"documentation <http://gunicorn-docs.readthedocs.org/en/latest/design.html"
+"#how-many-workers>`_."
+msgstr ""
+
+#: ../../advanced-configuration.rst:591
+msgid "Global Settings"
+msgstr ""
+
+#: ../../advanced-configuration.rst:596
+msgid "**Options before install**"
+msgstr ""
+
+#: ../../advanced-configuration.rst:598
+msgid "**Spatial reference identifier** ::"
+msgstr ""
+
+#: ../../advanced-configuration.rst:603
+msgid ""
+"Spatial reference identifier of your database. 2154 is RGF93 / Lambert-93"
+" - France"
+msgstr ""
+
+#: ../../advanced-configuration.rst:605
+msgid "*It should not be change after any creation of geometries.*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:607
+msgid "*Choose wisely with epsg.io for example*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:609
+msgid "**Spatial Extent** ::"
+msgstr ""
+
+#: ../../advanced-configuration.rst:614
+msgid "Boundingbox of your project : x minimum , y minimum , xmax, y max"
+msgstr ""
+
+#: ../../advanced-configuration.rst:626
+msgid "*It should not be changed after install*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:629
+msgid "**Dynamic segmentation** ::"
+msgstr ""
+
+#: ../../advanced-configuration.rst:634
+msgid "Use dynamic segmentation or not."
+msgstr ""
+
+#: ../../advanced-configuration.rst:636
+msgid "*Do not change it after install, or dump your database*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:638
+msgid "**First Structure** ::"
+msgstr ""
+
+#: ../../advanced-configuration.rst:643
+msgid "Name for your default structure."
+msgstr ""
+
+#: ../../advanced-configuration.rst:645
+msgid "*This one can be changed, except it's tricky.*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:647
+msgid "*First change the name in the admin (authent/structure),*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:648
+msgid "*Stop your instance admin.*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:649
+msgid "*Change in the settings*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:650
+msgid "*Re-run the server.*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:652 ../../advanced-configuration.rst:747
+msgid "**Translations** ::"
+msgstr ""
+
+#: ../../advanced-configuration.rst:657
+msgid ""
+"Languages of your project. It will be used to generate fields for "
+"translations. (ex: description_fr, description_en)"
+msgstr ""
+
+#: ../../advanced-configuration.rst:659
+msgid ""
+"*You won't be able to change it easily, avoid to add any languages and do"
+" not remove any.*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:662
+msgid "**Options admin**"
+msgstr ""
+
+#: ../../advanced-configuration.rst:664
+msgid "**Map config** ::"
+msgstr ""
+
+#: ../../advanced-configuration.rst:683
+msgid "Configuration of the tiles."
+msgstr ""
+
+#: ../../advanced-configuration.rst:685
+msgid "*If you want to change it,* *Change the array like that :*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:692
+msgid "*It's the same for the overlay but use only transparent tiles*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:700
+msgid "You can define the max_zoom the user can zoom for all tiles."
+msgstr ""
+
+#: ../../advanced-configuration.rst:702
+msgid ""
+"*It can be interesting when your tiles can't go to a zoom. For example "
+"opentopomap is 17.*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:704
+msgid "**Enable Apps** ::"
+msgstr ""
+
+#: ../../advanced-configuration.rst:709
+msgid "Show Flatpages on menu or not. Flatpages are used in Geotrek Rando."
+msgstr ""
+
+#: ../../advanced-configuration.rst:717
+msgid "Show TouristicContents and TouristicEvents on menu or not."
+msgstr ""
+
+#: ../../advanced-configuration.rst:725
+msgid "Show Trails on menu or not."
+msgstr ""
+
+#: ../../advanced-configuration.rst:733
+msgid "Show land on menu or not."
+msgstr ""
+
+#: ../../advanced-configuration.rst:743
+msgid "Show filter bbox by zoning."
+msgstr ""
+
+#: ../../advanced-configuration.rst:752
+msgid "Language of your interface."
+msgstr ""
+
+#: ../../advanced-configuration.rst:754
+msgid "**Geographical CRUD** ::"
+msgstr ""
+
+#: ../../advanced-configuration.rst:759
+msgid "Minimum distance to merge 2 paths in unit of SRID"
+msgstr ""
+
+#: ../../advanced-configuration.rst:761
+msgid ""
+"*Change the distance. Better to keep it like this. Not used when "
+"TREKKING_TOPOLOGY_ENABLED = True*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:767
+msgid "Distance of snapping for the cursor in pixels on map leaflet."
+msgstr ""
+
+#: ../../advanced-configuration.rst:774
+msgid "Minimum distance to merge 2 paths."
+msgstr ""
+
+#: ../../advanced-configuration.rst:776
+msgid ""
+"*Change the distance. Should be higher or the same as "
+"PATH_SNAPPING_DISTANCE*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:778
+msgid "*Used when TREKKING_TOPOLOGY_ENABLED = True*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:797
+msgid "Color of the different layers on the map"
+msgstr ""
+
+#: ../../advanced-configuration.rst:799 ../../advanced-configuration.rst:827
+msgid "*To change any map_style do as following :*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:806 ../../advanced-configuration.rst:834
+msgid "*For color : use color picker for example*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:822
+msgid "Color of the different layers on the top right for landing."
+msgstr ""
+
+#: ../../advanced-configuration.rst:824
+msgid ""
+"For land, physical, competence, signagemanagement, workmanagement should "
+"have 5 values."
+msgstr ""
+
+#: ../../advanced-configuration.rst:825
+msgid ""
+"For restricted Area : add as many color as your number of restricted area"
+" type"
+msgstr ""
+
+#: ../../advanced-configuration.rst:842
+msgid "Points of reference are enabled on form of treks."
+msgstr ""
+
+#: ../../advanced-configuration.rst:850
+msgid ""
+"Land objects are added on other objects (path for example) with offset, "
+"avoiding overlay."
+msgstr ""
+
+#: ../../advanced-configuration.rst:852
+msgid ""
+"*You should not change it to avoid overlay except if you want to have "
+"more overlay.* *You can do for example for :*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:876
+msgid "All settings used for generate altimetric profile."
+msgstr ""
+
+#: ../../advanced-configuration.rst:878
+msgid ""
+"*All this settings can be modify but you need to check the result every "
+"time*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:880
+msgid "*The only one modified most of the time is ALTIMETRIC_PROFILE_COLOR*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:882
+msgid "**Signage and Blade** ::"
+msgstr ""
+
+#: ../../advanced-configuration.rst:887
+msgid "Type of the blade code (str or int)"
+msgstr ""
+
+#: ../../advanced-configuration.rst:889
+msgid "*It can be str or int.*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:891
+msgid "*If you have an integer code : int*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:893
+msgid "*If you have an string code : str*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:901
+msgid ""
+"Correspond of the format of blades. Show N3-1 for the blade 1 of the "
+"signage N3."
+msgstr ""
+
+#: ../../advanced-configuration.rst:903
+msgid "*If you want to change : move information under bracket*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:905
+msgid "*You can also remove one element between bracket*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:907
+msgid "*You can do for exemple :* *\"CD99.{signagecode}.{bladenumber}\"*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:910
+msgid "*It will display : CD99.XIDNZEIU.01 (first blade of XIDNZEIU)*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:912 ../../advanced-configuration.rst:929
+msgid "*signagecode is the code of the signage*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:913 ../../advanced-configuration.rst:930
+msgid "*bladenumber is the number of the blade*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:921
+msgid ""
+"Correspond of the format showed on export of lines. Used in csv of "
+"signage."
+msgstr ""
+
+#: ../../advanced-configuration.rst:923
+msgid ""
+"*Similar with above* *You can do for example :* "
+"*\"CD99.{signagecode}-{bladenumber}.{linenumber}\"*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:927
+msgid ""
+"*It will display : CD99.XIDNZEIU-01.02 (second line of the first blade of"
+" XIDNZEIU)*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:931
+msgid "*linenumber is the number of the line*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:934
+msgid "**Screenshots** ::"
+msgstr ""
+
+#: ../../advanced-configuration.rst:943
+msgid "Show objects on maps of pdf"
+msgstr ""
+
+#: ../../advanced-configuration.rst:951
+msgid "Size in px of the capture."
+msgstr ""
+
+#: ../../advanced-configuration.rst:953
+msgid ""
+"*Be careful with your pdfs.* *If you change this value, pdfs will be "
+"rendered differently*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:957
+msgid "**Synchro Geotrek-Rando** ::"
+msgstr ""
+
+#: ../../advanced-configuration.rst:962
+msgid "Path on your server where the datas for rando website will be generated"
+msgstr ""
+
+#: ../../advanced-configuration.rst:964 ../../advanced-configuration.rst:1128
+msgid ""
+"*if you want to modify it, do not forget to import os at the top of the "
+"file.* *Check* `import Python "
+"<https://docs.python.org/3/reference/import.html>`_ *, if you need any "
+"information*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:971
+msgid "Add a thumbnail on every picture for geotrek-rando"
+msgstr ""
+
+#: ../../advanced-configuration.rst:974
+msgid "*Example :*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:976
+msgid "*\"{title}-:-{author}-:-{legend}\"*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:978
+msgid ""
+"*Will display title of the picture, author* *and the legend :* *Puy de "
+"Dômes-:-Paul Paul-:-Beautiful sunrise on Puy de Dômes\"*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:988
+msgid "Size of the thumbnail."
+msgstr ""
+
+#: ../../advanced-configuration.rst:996
+msgid ""
+"Distance to which tourist contents, tourist events, treks, pois, services"
+" will be displayed"
+msgstr ""
+
+#: ../../advanced-configuration.rst:998
+msgid "*This distance can be changed by practice for treks in the admin.*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1006
+msgid "Distance to which dives will be displayed."
+msgstr ""
+
+#: ../../advanced-configuration.rst:1014
+msgid "Limit of the number of pois on treks pdf."
+msgstr ""
+
+#: ../../advanced-configuration.rst:1016
+msgid "*14 is already a huge amount of POI, but it's possible to add more*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1024
+msgid "Limit of the number of information desks on treks pdf."
+msgstr ""
+
+#: ../../advanced-configuration.rst:1026
+msgid "*You can put -1 if you want all the information desks*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1034
+msgid "On the Rando web site, treks practices will be displayed separately"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1036
+msgid "*Field order for each practices in admin will be take in account*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1044
+msgid "On the Rando web site, accessibilites will be displayed separately"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1052
+msgid ""
+"On the Rando web site, if a trek has a children it will be displayed "
+"separately"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1060
+msgid "On the Rando web site, dives practices will be displayed separately"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1068
+msgid "On the 'Rando' web site, treks near other are hide"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1076
+msgid "Options of the sync_rando command in Geotrek-admin interface."
+msgstr ""
+
+#: ../../advanced-configuration.rst:1084
+msgid ""
+"It enables correlated pictures on Gotrek-Rando to be displayed in the "
+"slideshow"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1093
+msgid "Primary color of your pdf"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1093
+msgid "*check : \"color picker\"*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1101
+msgid ""
+"On rando web site, only pdf imported with filetype \"Topoguide\" will be "
+"used and not autogenerated."
+msgstr ""
+
+#: ../../advanced-configuration.rst:1113
+msgid "Order of all the objects without practices on 'Rando' web site"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1115
+msgid "*All the settings about order are the order inside rando web site.*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1117
+msgid ""
+"*Practices of diving, treks and categories of touristic contents are "
+"taken in account*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1121
+msgid "**Synchro Geotrek-Mobile** ::"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1126
+msgid "Path on your server wehre the datas for mobile"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1137
+msgid "Options of the sync_mobile command"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1145
+msgid "URL's Tiles used for the mobile."
+msgstr ""
+
+#: ../../advanced-configuration.rst:1147
+msgid "*Change for ign :*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1164
+msgid "Intervals of the mobile for the length filter"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1166
+msgid "*Interval's key is in meters.* *You can add new intervals*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1190
+msgid "Intervals of the mobile for the ascent filter"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1192
+msgid "*Do the same as above*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1204
+msgid "Intervals of the mobile for the duration filter"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1206
+msgid ""
+"*Check MOBILE_LENGTH_INTERVALS comment to use it, here interval "
+"correspond to 1 unit of hour*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1225
+msgid "List of all the filters enabled on mobile."
+msgstr ""
+
+#: ../../advanced-configuration.rst:1227
+msgid ""
+"*Remove any of the filters if you don't want one of them. It's useless to"
+" add other one.*"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1235
+msgid ""
+"Use booklet for PDF. During the synchro, pois details will be removed, "
+"and the pages will be merged. It is possible to customize the pdf, with "
+"trek_public_booklet_pdf.html."
+msgstr ""
+
+#: ../../advanced-configuration.rst:1238
+msgid "**Custom SQL**"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1240
+msgid ""
+"Put your custom SQL in a file name `/opt/geotrek-"
+"admin/var/conf/extra_sql/<app name>/<pre or post>_<script name>.sql"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1242
+msgid "app name is the name of the Django application, eg. trekking or tourism"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1243
+msgid ""
+"pre_… scripts are executed before Django migrations and post_… scripts "
+"after"
+msgstr ""
+
+#: ../../advanced-configuration.rst:1244
+msgid ""
+"script are executed in INSTALLED_APPS order, then by alphabetical order "
+"of script names"
+msgstr ""
+
+#~ msgid "CONFIGURATION AVANCÉE"
+#~ msgstr ""
+

@@ -1,0 +1,65 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2013-2014, Makina Corpus
+# This file is distributed under the same license as the Geotrek package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Geotrek 2.38\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-09-22 12:11+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+#: ../../docker.rst:5
+msgid "DOCKER"
+msgstr ""
+
+#: ../../docker.rst:7
+msgid ""
+"Docker is an alternative installation method, recommended for experts "
+"only. It allows to install several instances of Geotrek-admin on the same"
+" serveur, and to install it on other distributions than Ubuntu Linux "
+"18.04."
+msgstr ""
+
+#: ../../docker.rst:13
+msgid "Installation"
+msgstr ""
+
+#: ../../docker.rst:15
+msgid ""
+"1. Install docker and docker-compose, either from your distribution or "
+"from upstream packages (cf. https://docs.docker.com/install/) 1. Download"
+" the code from https://github.com/GeotrekCE/Geotrek-admin/releases"
+msgstr ""
+
+#: ../../docker.rst:18
+msgid "or checkout it with git from https://github.com/GeotrekCE/Geotrek-admin/"
+msgstr ""
+
+#: ../../docker.rst:19
+msgid ""
+"1. Unzip the tarball 1. Copy docker-compose-prod.yml to docker-"
+"compose.yml and edit to feed your needs if necessary 1. Copy .env-"
+"prod.dist to .env and edit to feed your needs if necessary 1. Create user"
+" and database, enable postgis extension 1. Run docker-compose run --rm "
+"web update.sh 1. Run docker-compose up"
+msgstr ""
+
+#: ../../docker.rst:28
+msgid "Management commands"
+msgstr ""
+
+#: ../../docker.rst:30
+msgid ""
+"Replace `sudo geotrek …` command by `cd <install directory>; docker-"
+"compose run --rm ./manage.py …`"
+msgstr ""
+
