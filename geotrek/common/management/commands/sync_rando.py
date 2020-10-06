@@ -237,13 +237,14 @@ class Command(BaseCommand):
         self.sync_object_view(lang, obj, view, 'dem.json')
 
     def sync_metas(self, lang, metaview, obj=None):
+        params = {'rando_url': self.rando_url, 'lang': lang}
+        self.get_params_portal(params)
         if obj:
             name = os.path.join('meta', lang, obj.rando_url, 'index.html')
-            self.sync_view(lang, metaview.as_view(), name, pk=obj.pk,
-                           params={'rando_url': self.rando_url})
+            self.sync_view(lang, metaview.as_view(), name, pk=obj.pk, params=params)
         else:
             name = os.path.join('meta', lang, 'index.html')
-            self.sync_view(lang, metaview.as_view(), name, params={'rando_url': self.rando_url, 'lang': lang})
+            self.sync_view(lang, metaview.as_view(), name, params=params)
 
     def sync_file(self, lang, name, src_root, url, zipfile=None):
         url = url.strip('/')
