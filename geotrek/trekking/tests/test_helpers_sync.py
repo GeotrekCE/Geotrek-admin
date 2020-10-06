@@ -93,16 +93,16 @@ class SyncRandoTestCase(TestCase):
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_sync_detail_booklet(self, stdout, mock_prepare):
-        command = FakeSyncCommand(skip_dem=True, skip_pdf=True, skip_profile_png=True)
+        command = FakeSyncCommand(skip_dem=True, skip_profile_png=True)
         synchro = SyncRando(command)
         with override_settings(USE_BOOKLET_PDF=False):
-            synchro.sync_detail('fr', self.trek)
-            first_file = os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek.pk),
+            synchro.sync_detail('en', self.trek)
+            first_file = os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'treks', str(self.trek.pk),
                                       '%s.pdf' % self.trek.slug)
             size_first = os.stat(first_file).st_size
         with override_settings(USE_BOOKLET_PDF=True):
-            synchro.sync_detail('fr', self.trek)
-            second_file = os.path.join('var', 'tmp', 'api', 'en', 'treks', str(self.trek.pk),
+            synchro.sync_detail('en', self.trek)
+            second_file = os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'treks', str(self.trek.pk),
                                        '%s.pdf' % self.trek.slug)
             size_second = os.stat(second_file).st_size
         self.assertLess(size_first, size_second)
