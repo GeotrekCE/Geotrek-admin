@@ -1,3 +1,5 @@
+import os
+
 from django.test import TestCase
 from django.conf import settings
 from django.test.utils import override_settings
@@ -5,7 +7,7 @@ from django.test.utils import override_settings
 from geotrek.core import factories as core_factories
 from geotrek.tourism import factories as tourism_factories
 from geotrek.trekking import factories as trekking_factories
-from geotrek.tourism.factories import InformationDeskTypeFactory
+from geotrek.tourism.factories import InformationDeskFactory, InformationDeskTypeFactory
 
 import datetime
 
@@ -16,6 +18,27 @@ class InformationDeskTypeTest(TestCase):
 
     def test_str(self):
         self.assertEqual(str(self.type_informationdesk), "Office")
+
+
+class InformationDeskTest(TestCase):
+    def setUp(self):
+        self.type_informationdesk = InformationDeskTypeFactory(label="Office")
+        self.information_desk = InformationDeskFactory(name="Test")
+
+    def test_str(self):
+        self.assertEqual(str(self.type_informationdesk), "Office")
+
+    def test_thumbnail_no_photo(self):
+        self.information_desk.photo = None
+        self.information_desk.save()
+        self.assertIsNone(self.information_desk.thumbnail)
+
+    def test_thumbnail_photo(self):
+        self.assertIsNotNone(self.information_desk.thumbnail)
+
+    def test_thumbnail_photo_not_on_disk(self):
+        os.remove(os.path.join(settings.MEDIA_ROOT, str(self.information_desk.photo)))
+        self.assertIsNone(self.information_desk.thumbnail)
 
 
 class TourismRelations(TestCase):

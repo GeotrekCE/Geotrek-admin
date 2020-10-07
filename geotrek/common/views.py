@@ -6,14 +6,16 @@ from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.utils import DatabaseError
-from django.http import HttpResponse, HttpResponseNotFound
 from django.utils import translation
+from django.http import JsonResponse, HttpResponse, HttpResponseNotFound
 from django_celery_results.models import TaskResult
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views import static
 from django.utils.translation import ugettext as _
 from django.views.generic import TemplateView
+from django.views.generic import RedirectView, View
+
 from mapentity.helpers import api_bbox
 from mapentity.registry import registry
 from mapentity import views as mapentity_views
@@ -38,9 +40,10 @@ from datetime import timedelta
 from .utils.import_celery import create_tmp_destination, discover_available_parsers
 
 from .tasks import import_datas, import_datas_from_web
-from .forms import ImportDatasetForm, ImportDatasetFormWithFile
+from .forms import ImportDatasetForm, ImportDatasetFormWithFile, SyncRandoForm
 from .models import Theme
 from .serializers import ThemeSerializer
+from .tasks import launch_sync_rando
 
 
 class MetaMixin(object):
@@ -406,6 +409,14 @@ class ThemeViewSet(viewsets.ModelViewSet):
         return qs.order_by('id')
 
 
+class ParametersView(View):
+    def get(request, *args, **kwargs):
+        response = {
+            'geotrek_admin_version': settings.VERSION,
+        }
+        return JsonResponse(response)
+
+
 @login_required
 def last_list(request):
     last = request.session.get('last_list')  # set in MapEntityList
@@ -416,6 +427,78 @@ def last_list(request):
         if entity.menu and request.user.has_perm(entity.model.get_permission_codename('list')):
             return redirect(entity.url_list)
     return redirect('trekking:trek_list')
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def sync_view(request):
+    """
+    Custom views to view / track / launch a sync rando
+    """
+
+    return render(request,
+                  'common/sync_rando.html',
+                  {'form': SyncRandoForm(), },
+                  )
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def sync_update_json(request):
+    """
+    get info from sync_rando celery_task
+    """
+    results = []
+    threshold = timezone.now() - timedelta(seconds=60)
+    for task in TaskResult.objects.filter(date_done__gte=threshold, status='PROGRESS'):
+        json_results = json.loads(task.result)
+        if json_results.get('name', '').startswith('geotrek.trekking'):
+            results.append({
+                'id': task.task_id,
+                'result': json_results or {'current': 0,
+                                           'total': 0},
+                'status': task.status
+            })
+    i = celery_app.control.inspect(['celery@geotrek'])
+    try:
+        reserved = i.reserved()
+    except redis.exceptions.ConnectionError:
+        reserved = None
+    tasks = [] if reserved is None else reversed(reserved['celery@geotrek'])
+    for task in tasks:
+        if task['name'].startswith('geotrek.trekking'):
+            results.append(
+                {
+                    'id': task['id'],
+                    'result': {'current': 0, 'total': 0},
+                    'status': 'PENDING',
+                }
+            )
+    for task in TaskResult.objects.filter(date_done__gte=threshold, status='FAILURE').order_by('-date_done'):
+        json_results = json.loads(task.result)
+        if json_results.get('name', '').startswith('geotrek.trekking'):
+            results.append({
+                'id': task.task_id,
+                'result': json_results or {'current': 0,
+                                           'total': 0},
+                'status': task.status
+            })
+
+    return HttpResponse(json.dumps(results),
+                        content_type="application/json")
+
+
+class SyncRandoRedirect(RedirectView):
+    http_method_names = ['post']
+    pattern_name = 'common:sync_randos_view'
+
+    @method_decorator(login_required)
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
+    def post(self, request, *args, **kwargs):
+        url = "{scheme}://{host}".format(scheme='https' if self.request.is_secure() else 'http',
+                                         host=self.request.get_host())
+        self.job = launch_sync_rando.delay(url=url)
+        return super(SyncRandoRedirect, self).post(request, *args, **kwargs)
 
 
 home = last_list

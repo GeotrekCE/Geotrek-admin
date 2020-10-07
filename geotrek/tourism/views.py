@@ -270,7 +270,7 @@ class TouristicContentViewSet(MapEntityViewSet):
             qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
 
         if 'portal' in self.request.GET:
-            qs = qs.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
+            qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
 
         qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
         return qs
@@ -292,7 +292,7 @@ class TouristicEventViewSet(MapEntityViewSet):
             qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
 
         if 'portal' in self.request.GET:
-            qs = qs.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
+            qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
 
         qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
         return qs
@@ -341,7 +341,7 @@ class TrekTouristicContentViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(source__name__in=self.request.GET['source'].split(','))
 
         if 'portal' in self.request.GET:
-            queryset = queryset.filter(portal__name__in=self.request.GET['portal'].split(','))
+            queryset = queryset.filter(portal__name=self.request.GET['portal'])
 
         return queryset.annotate(api_geom=Transform("geom", settings.API_SRID))
 
@@ -361,7 +361,7 @@ class TrekTouristicEventViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(source__name__in=self.request.GET['source'].split(','))
 
         if 'portal' in self.request.GET:
-            queryset = queryset.filter(portal__name__in=self.request.GET['portal'].split(','))
+            queryset = queryset.filter(portal__name=self.request.GET['portal'])
 
         return queryset.annotate(api_geom=Transform("geom", settings.API_SRID))
 
@@ -389,7 +389,7 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
                 queryset = queryset.filter(source__name__in=self.request.GET['source'].split(','))
 
             if 'portal' in self.request.GET:
-                queryset = queryset.filter(portal__name__in=self.request.GET['portal'].split(','))
+                queryset = queryset.filter(portal__name=self.request.GET['portal'])
 
             return queryset.annotate(api_geom=Transform("geom", settings.API_SRID))
 
@@ -411,7 +411,7 @@ if 'geotrek.diving' in settings.INSTALLED_APPS:
             if 'source' in self.request.GET:
                 queryset = queryset.filter(source__name__in=self.request.GET['source'].split(','))
             if 'portal' in self.request.GET:
-                queryset = queryset.filter(portal__name__in=self.request.GET['portal'].split(','))
+                queryset = queryset.filter(portal__name=self.request.GET['portal'])
             return queryset.annotate(api_geom=Transform("geom", settings.API_SRID))
 
 

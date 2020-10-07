@@ -211,5 +211,5 @@ class FlatPageViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self, *args, **kwargs):
         qs = FlatPage.objects.filter(target__in=['mobile', 'all'], published=True).order_by('order')
         if self.request.GET.get('portal', '') != '':
-            qs = qs.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
+            qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
         return qs

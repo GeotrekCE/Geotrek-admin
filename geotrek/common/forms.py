@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.core.exceptions import FieldDoesNotExist
+from django.urls import reverse
 from django.utils.text import format_lazy
 from django.utils.translation import ugettext_lazy as _
 
@@ -187,3 +188,23 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
                 _("File must be of ZIP type."), code='invalid')
         # Reset position for further use.
         z.seek(0)
+
+
+class SyncRandoForm(forms.Form):
+    """
+    Sync Rando View Form
+    """
+
+    @property
+    def helper(self):
+        helper = FormHelper()
+        helper.form_id = 'form-sync'
+        helper.form_action = reverse('common:sync_randos')
+        helper.form_class = 'search'
+        # submit button with boostrap attributes, disabled by default
+        helper.add_input(Submit('sync-web', _("Launch Sync"),
+                                **{'data-toggle': "modal",
+                                   'data-target': "#confirm-submit",
+                                   'disabled': 'disabled'}))
+
+        return helper

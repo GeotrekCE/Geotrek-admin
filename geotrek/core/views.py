@@ -10,7 +10,7 @@ from django.urls import reverse
 from django.shortcuts import redirect
 from django.views.decorators.http import last_modified as cache_last_modified
 from django.views.decorators.cache import cache_control
-from django.views.generic import View, TemplateView
+from django.views.generic import TemplateView
 from django.utils.translation import ugettext as _
 from django.core.cache import caches
 from django.views.generic.detail import BaseDetailView
@@ -416,11 +416,3 @@ def merge_path(request):
             response = {'error': '%s' % exc, }
 
     return JsonResponse(response)
-
-
-class ParametersView(View):
-    def get(request, *args, **kwargs):
-        response = {
-            'geotrek_admin_version': settings.VERSION,
-        }
-        return JsonResponse(response)

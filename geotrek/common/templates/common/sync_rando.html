@@ -20,7 +20,7 @@
 		}
 
 		function get_sync_infos() {
-			$.get("{% url 'trekking:sync_randos_state' %}",
+			$.get("{% url 'common:sync_randos_state' %}",
 			      function(response) {
 
 			    	  // test if sync_rando run

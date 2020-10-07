@@ -2,7 +2,7 @@ from django.urls import path, converters, register_converter
 from mapentity.registry import MapEntityOptions
 
 from .views import (JSSettings, admin_check_extents, DocumentPublic, DocumentBookletPublic, import_view, import_update_json,
-                    ThemeViewSet, MarkupPublic)
+                    ThemeViewSet, MarkupPublic, sync_view, sync_update_json, SyncRandoRedirect)
 
 
 class LangConverter(converters.StringConverter):
@@ -17,6 +17,9 @@ urlpatterns = [
     path('tools/extents/', admin_check_extents, name='check_extents'),
     path('commands/import-update.json', import_update_json, name='import_update_json'),
     path('commands/import', import_view, name='import_dataset'),
+    path('commands/sync', SyncRandoRedirect.as_view(), name='sync_randos'),
+    path('commands/syncview', sync_view, name='sync_randos_view'),
+    path('commands/statesync/', sync_update_json, name='sync_randos_state'),
     path('api/<lang:lang>/themes.json', ThemeViewSet.as_view({'get': 'list'}), name="themes_json"),
 ]
 

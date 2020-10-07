@@ -1,4 +1,6 @@
 import factory
+import os
+from zipfile import ZipFile
 
 from geotrek.authent.factories import UserFactory
 from geotrek.common.models import Attachment
@@ -6,6 +8,38 @@ from geotrek.common.utils.testdata import (dummy_filefield_as_sequence,
                                            get_dummy_uploaded_file)
 
 from . import models
+
+from geotrek.common.management.commands.sync_rando import Command
+
+from django.test.client import RequestFactory
+
+
+class FakeSyncCommand(Command):
+    categories = '1'
+    verbosity = 2
+    host = 'localhost:8000'
+    secure = True
+    with_infrastructures = True
+    with_signages = True
+    with_events = True
+    rando_url = 'localhost:3000'
+
+    def __init__(self, portal='', source='', skip_dem=False, skip_pdf=False, skip_profile_png=False):
+        super(FakeSyncCommand, self).__init__(stdout=None, stderr=None, no_color=False, force_color=False)
+        self.dst_root = os.path.join('var', 'tmp')
+        self.tmp_root = os.path.join(os.path.dirname(self.dst_root), 'tmp_sync_rando')
+        zipname = os.path.join('zip', 'tiles', 'global.zip')
+        global_file = os.path.join(self.tmp_root, zipname)
+        dirname = os.path.dirname(global_file)
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
+        self.zipfile = ZipFile(os.path.join(self.tmp_root, 'zip', 'tiles', 'global.zip'), 'w')
+        self.factory = RequestFactory()
+        self.source = source
+        self.portal = portal
+        self.skip_dem = skip_dem
+        self.skip_pdf = skip_pdf
+        self.skip_profile_png = skip_profile_png
 
 
 class OrganismFactory(factory.DjangoModelFactory):

@@ -35,7 +35,7 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
             queryset = queryset.annotate(count_parents=Count('trek_parents')).\
                 exclude(Q(count_parents__gt=0) & Q(published=False))
         if 'portal' in self.request.GET:
-            queryset = queryset.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
+            queryset = queryset.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
         return queryset.annotate(start_point=Transform(StartPoint('geom'), settings.API_SRID),
                                  end_point=Transform(EndPoint('geom'), settings.API_SRID)). \
             filter(Q(**{'published_{lang}'.format(lang=lang): True})

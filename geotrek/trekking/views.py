@@ -1,20 +1,15 @@
-from datetime import timedelta
-import json
-import redis
-
 from django.conf import settings
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models.functions import Transform
 from django.db.models import Q
 from django.db.models.query import Prefetch
 from django.http import HttpResponse, Http404
-from django.shortcuts import get_object_or_404, render
-from django.utils import timezone, translation
+from django.shortcuts import get_object_or_404
+from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.html import escape
-from django.views.generic import CreateView, ListView, RedirectView, DetailView
+from django.views.generic import CreateView, ListView, DetailView
 from django.views.generic.detail import BaseDetailView
-from django_celery_results.models import TaskResult
 from mapentity.helpers import alphabet_enumeration
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityFormat, MapEntityDetail, MapEntityMapImage,
@@ -28,9 +23,7 @@ from geotrek.common.views import (FormsetMixin, MetaMixin, PublicOrReadPermMixin
                                   DocumentBookletPublic, MarkupPublic)
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
-from geotrek.trekking.forms import SyncRandoForm
 from geotrek.zoning.models import District, City, RestrictedArea
-from geotrek.celery import app as celery_app
 
 from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
@@ -43,21 +36,6 @@ from geotrek.infrastructure.models import Infrastructure
 from geotrek.signage.models import Signage
 from geotrek.infrastructure.serializers import InfrastructureGeojsonSerializer
 from geotrek.signage.serializers import SignageGeojsonSerializer
-
-from .tasks import launch_sync_rando
-
-
-class SyncRandoRedirect(RedirectView):
-    http_method_names = ['post']
-    pattern_name = 'trekking:sync_randos_view'
-
-    @method_decorator(login_required)
-    @method_decorator(user_passes_test(lambda u: u.is_superuser))
-    def post(self, request, *args, **kwargs):
-        url = "{scheme}://{host}".format(scheme='https' if self.request.is_secure() else 'http',
-                                         host=self.request.get_host())
-        self.job = launch_sync_rando.delay(url=url)
-        return super(SyncRandoRedirect, self).post(request, *args, **kwargs)
 
 
 class FlattenPicturesMixin(object):
@@ -387,7 +365,7 @@ class TrekViewSet(MapEntityViewSet):
             qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
 
         if 'portal' in self.request.GET:
-            qs = qs.filter(Q(portal__name__in=self.request.GET['portal'].split(',')) | Q(portal=None))
+            qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
 
         qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
 
@@ -548,65 +526,6 @@ class CirkwiPOIView(ListView):
         pois = self.get_queryset()
         serializer.serialize(pois)
         return response
-
-
-@login_required
-@user_passes_test(lambda u: u.is_superuser)
-def sync_view(request):
-    """
-    Custom views to view / track / launch a sync rando
-    """
-
-    return render(request,
-                  'trekking/sync_rando.html',
-                  {'form': SyncRandoForm(), },
-                  )
-
-
-@login_required
-@user_passes_test(lambda u: u.is_superuser)
-def sync_update_json(request):
-    """
-    get info from sync_rando celery_task
-    """
-    results = []
-    threshold = timezone.now() - timedelta(seconds=60)
-    for task in TaskResult.objects.filter(date_done__gte=threshold, status='PROGRESS'):
-        json_results = json.loads(task.result)
-        if json_results.get('name', '').startswith('geotrek.trekking'):
-            results.append({
-                'id': task.task_id,
-                'result': json_results or {'current': 0,
-                                           'total': 0},
-                'status': task.status
-            })
-    i = celery_app.control.inspect(['celery@geotrek'])
-    try:
-        reserved = i.reserved()
-    except redis.exceptions.ConnectionError:
-        reserved = None
-    tasks = [] if reserved is None else reversed(reserved['celery@geotrek'])
-    for task in tasks:
-        if task['name'].startswith('geotrek.trekking'):
-            results.append(
-                {
-                    'id': task['id'],
-                    'result': {'current': 0, 'total': 0},
-                    'status': 'PENDING',
-                }
-            )
-    for task in TaskResult.objects.filter(date_done__gte=threshold, status='FAILURE').order_by('-date_done'):
-        json_results = json.loads(task.result)
-        if json_results.get('name', '').startswith('geotrek.trekking'):
-            results.append({
-                'id': task.task_id,
-                'result': json_results or {'current': 0,
-                                           'total': 0},
-                'status': task.status
-            })
-
-    return HttpResponse(json.dumps(results),
-                        content_type="application/json")
 
 
 # Translations for public PDF
