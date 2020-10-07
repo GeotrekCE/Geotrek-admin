@@ -159,10 +159,13 @@ class MapEntityTest(TestCase):
         if self.model is None:
             return  # Abstract test should not run
         self.login()
-        self.modelfactory.create()
+        obj = self.modelfactory.create()
         response = self.client.get(self.model.get_format_list_url() + '?format=gpx')
         parsed = BeautifulSoup(response.content, 'lxml')
-        self.assertGreater(len(parsed.findAll('ele')), 0)
+        if hasattr(obj, 'geom_3d'):
+            self.assertGreater(len(parsed.findAll('ele')), 0)
+        else:
+            self.assertEqual(len(parsed.findAll('ele')), 0)
 
     def test_no_basic_format_fail(self):
         if self.model is None:
