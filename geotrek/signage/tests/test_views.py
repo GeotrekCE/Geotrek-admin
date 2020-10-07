@@ -123,6 +123,15 @@ class BladeViewsTest(CommonTest):
         response = self.client.post(Blade.get_add_url() + '?signage=%s' % signa.pk, data)
         self.assertEqual(response.status_code, 302)
 
+    def test_delete_redirection(self):
+        self.login()
+        signage = SignageFactory.create()
+        blade = BladeFactory.create(signage=signage)
+
+        response = self.client.post(Blade.get_delete_url(blade))
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, signage.get_detail_url(), status_code=302)
+
     def test_structure_is_set(self):
         self.login()
 
