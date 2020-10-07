@@ -1063,7 +1063,9 @@ class TrekGPXTest(TrekkingManagerTest):
 
     def test_gpx_trek_as_track_points(self):
         self.assertEqual(len(self.parsed.findAll('trk')), 1)
-        self.assertEqual(len(self.parsed.findAll('trkpt')), 2)
+        self.assertEqual(len(self.parsed.findAll('trkpt')), 7)
+        # 2 pois 7 treks
+        self.assertEqual(len(self.parsed.findAll('ele')), 9)
 
     def test_gpx_translated_using_another_language(self):
         track = self.parsed.findAll('trk')[0]
