@@ -31,7 +31,7 @@ django-leaflet==0.27.0
 django-modeltranslation==0.13.4
 django-multiselectfield==0.1.5
 django-rest-swagger==2.2.0  # TODO: deprecated, replace with drf-yasg
-django-tinymce==2.8.0
+django-tinymce==3.1.0
 django-weasyprint==0.5.4
 djangorestframework==3.11.0
 djangorestframework-gis==0.15
