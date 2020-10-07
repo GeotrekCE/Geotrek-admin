@@ -599,6 +599,7 @@ class PathKmlGPXTest(TestCase):
     def test_gpx_trek_as_track_points(self):
         self.assertEqual(len(self.gpx_parsed.findAll('trk')), 1)
         self.assertEqual(len(self.gpx_parsed.findAll('trkpt')), 2)
+        self.assertEqual(len(self.gpx_parsed.findAll('ele')), 2)
 
     def test_kml_is_served_with_content_type(self):
         self.assertEqual(self.kml_response.status_code, 200)
@@ -724,6 +725,7 @@ class TrailKmlGPXTest(TestCase):
     def test_gpx_trek_as_track_points(self):
         self.assertEqual(len(self.gpx_parsed.findAll('trk')), 1)
         self.assertEqual(len(self.gpx_parsed.findAll('trkpt')), 2)
+        self.assertEqual(len(self.gpx_parsed.findAll('ele')), 2)
 
     def test_kml_is_served_with_content_type(self):
         self.assertEqual(self.kml_response.status_code, 200)

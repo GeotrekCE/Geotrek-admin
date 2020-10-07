@@ -6,6 +6,7 @@ import os
 import shutil
 import time
 from datetime import datetime
+from bs4 import BeautifulSoup
 from urllib.parse import quote
 
 from freezegun import freeze_time
@@ -153,6 +154,18 @@ class MapEntityTest(TestCase):
         for fmt in ('csv', 'shp', 'gpx'):
             response = self.client.get(self.model.get_format_list_url() + '?format=' + fmt)
             self.assertEqual(response.status_code, 200, u"")
+
+    def test_gpx_elevation(self):
+        if self.model is None:
+            return  # Abstract test should not run
+        self.login()
+        obj = self.modelfactory.create()
+        response = self.client.get(self.model.get_format_list_url() + '?format=gpx')
+        parsed = BeautifulSoup(response.content, 'lxml')
+        if hasattr(obj, 'geom_3d'):
+            self.assertGreater(len(parsed.findAll('ele')), 0)
+        else:
+            self.assertEqual(len(parsed.findAll('ele')), 0)
 
     def test_no_basic_format_fail(self):
         if self.model is None:

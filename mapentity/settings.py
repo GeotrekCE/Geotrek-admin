@@ -20,6 +20,7 @@ app_settings = dict({
     'MAP_CAPTURE_SIZE': 800,
     'MAP_CAPTURE_MAX_RATIO': 1.25,
     'GEOM_FIELD_NAME': 'geom',
+    'GPX_FIELD_NAME': 'geom',
     'DATE_UPDATE_FIELD_NAME': 'date_update',
     'MAP_BACKGROUND_FOGGED': False,
     'MAP_FIT_MAX_ZOOM': 18,
