@@ -44,9 +44,10 @@ class GPXSerializer(Serializer):
         objupdate = obj.get_date_update()
         if objupdate:
             description += _('Modified') + ': ' + humanize_timesince(objupdate)
-
-        geom_field = self.options.pop('geom_field', app_settings['GEOM_FIELD_NAME'])
+        geom_field = self.options.pop('gpx_field', app_settings['GPX_FIELD_NAME'])
         geom = getattr(obj, geom_field, None)
+        if not geom:
+            geom = getattr(obj, app_settings['GEOM_FIELD_NAME'], None)
         if geom:
             assert geom.srid == settings.SRID, "Invalid SRID (!= %s)" % settings.SRID
             self.geomToGPX(geom, name, description)

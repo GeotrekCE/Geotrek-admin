@@ -146,7 +146,7 @@ class MapEntityFormat(BaseListView, ListView):
         serializer = mapentity_serializers.GPXSerializer()
         response = HttpResponse(content_type='application/gpx+xml')
         serializer.serialize(self.get_queryset(), model=self.get_model(), stream=response,
-                             geom_field=app_settings['GEOM_FIELD_NAME'])
+                             gpx_field=app_settings['GPX_FIELD_NAME'])
         return response
 
 

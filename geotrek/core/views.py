@@ -131,7 +131,7 @@ class PathGPXDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
         gpx_serializer = GPXSerializer()
         response = HttpResponse(content_type='application/gpx+xml')
         response['Content-Disposition'] = 'attachment; filename="%s.gpx"' % self.object
-        gpx_serializer.serialize([self.object], stream=response, geom_field='geom_3d')
+        gpx_serializer.serialize([self.object], stream=response, gpx_field='geom_3d')
         return response
 
 
