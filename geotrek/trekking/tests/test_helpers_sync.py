@@ -105,7 +105,8 @@ class SyncRandoTestCase(TestCase):
             second_file = os.path.join('var', 'tmp_sync_rando', 'api', 'en', 'treks', str(self.trek.pk),
                                        '%s.pdf' % self.trek.slug)
             size_second = os.stat(second_file).st_size
-        self.assertLess(size_first, size_second)
+        # Removed POI
+        self.assertGreater(size_first, size_second)
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_sync_detail_portal_source(self, stdout, mock_prepare):
