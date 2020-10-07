@@ -15,8 +15,7 @@
     "type" : "FETE_ET_MANIFESTATION",
     "id" : 323154,
     "nom" : {
-      "libelleFr" : "Cols Réservés 2019 : Montée de Chabre (Laragne)",
-      "libelleEn" : "Nom EN"
+      "libelleFr" : "Cols Réservés 2019 : Montée de Chabre (Laragne)"
     },
     "gestion" : {
       "dateModification" : "2018-11-30T08:42:14.436+0000",
@@ -128,13 +127,10 @@
     },
     "presentation" : {
       "descriptifCourt" : {
-        "libelleFr" : "Une des ascensions mythiques du sud des Hautes Alpes ! La Montée de Chabre est réservée aux amoureux de la \"petite reine\", c'est gratuit, sans inscription, ouvert à tous et le ravitaillement est offert !",
-        "libelleEn" : "Descriptif Court EN"
-
+        "libelleFr" : "Une des ascensions mythiques du sud des Hautes Alpes ! La Montée de Chabre est réservée aux amoureux de la \"petite reine\", c'est gratuit, sans inscription, ouvert à tous et le ravitaillement est offert !"
       },
       "descriptifDetaille" : {
-        "libelleFr" : "Le département des Hautes-Alpes ferme la circulation de 10 grands cols aux véhicules motorisés pour les réserver aux cyclistes. Lors de l’événement \"Cols Réservés\", deux semaines leur sont dédiées.\r\n\r\nCap au sud du département à la découverte des cols insoupçonnés (mais costauds !). Les cyclistes découvrent des boucles moins renommées mais tout aussi séduisantes. Venez profiter de la Montée de Chabre qui sera réservée aux cyclistes de 9h à 12h à partir de l'embranchement de la route de Pomet.",
-        "libelleEn" : "Descriptif Detaillé EN"
+        "libelleFr" : "Le département des Hautes-Alpes ferme la circulation de 10 grands cols aux véhicules motorisés pour les réserver aux cyclistes. Lors de l’événement \"Cols Réservés\", deux semaines leur sont dédiées.\r\n\r\nCap au sud du département à la découverte des cols insoupçonnés (mais costauds !). Les cyclistes découvrent des boucles moins renommées mais tout aussi séduisantes. Venez profiter de la Montée de Chabre qui sera réservée aux cyclistes de 9h à 12h à partir de l'embranchement de la route de Pomet."
       }
     },
     "localisation" : {
@@ -169,20 +165,17 @@
         "elementReferenceType" : "PrestationService",
         "id" : 687,
         "libelleFr" : "Le plus grand des services",
-        "libelleEn" : "English Service",
         "ordre" : 271
       }, {
         "elementReferenceType" : "PrestationService",
         "id" : 687,
         "libelleFr" : "Un autre grand service",
-        "libelleEn" : "Other Service",
         "ordre" : 271
       }],
       "animauxAcceptes" : "NON_DISPONIBLE",
       "animauxAcceptesSupplement" : "NON_DISPONIBLE",
       "languesParlees" : [ {
-        "libelleFr" : "Français",
-        "libelleEn" : "French"
+        "libelleFr" : "Français"
       }]
     },
     "ouverture" : {
@@ -203,32 +196,27 @@
     },
     "descriptionTarif" : {
       "tarifsEnClair" : {
-        "libelleFr" : "Gratuit.",
-        "libelleEn" : "Free."
+        "libelleFr" : "Gratuit."
       },
       "modesPaiement" : [ {
         "elementReferenceType" : "ModePaiement",
         "id" : 1271,
         "libelleFr" : "Chèque",
-        "libelleEn" : "Chèque",
         "ordre" : 9
       }, {
         "elementReferenceType" : "ModePaiement",
         "id" : 1274,
         "libelleFr" : "Chèque Vacances",
-        "libelleEn" : "Holiday Vouchers",
         "ordre" : 14
       }, {
         "elementReferenceType" : "ModePaiement",
         "id" : 1277,
         "libelleFr" : "Espèces",
-        "libelleEn" : "Cash",
         "ordre" : 18
       }, {
         "elementReferenceType" : "ModePaiement",
         "id" : 1268,
         "libelleFr" : "Carte bancaire/crédit",
-        "libelleEn" : "Credit Card",
         "ordre" : 4
       } ]
     },

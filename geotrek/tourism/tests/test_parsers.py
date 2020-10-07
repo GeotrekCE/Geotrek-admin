@@ -328,7 +328,7 @@ class ParserTests(TranslationResetMixin, TestCase):
     @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_event_apidae(self, mocked):
         def mocked_json():
-            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeEvent.json')
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeEventFr.json')
             with open(filename, 'r') as f:
                 return json.load(f)
         mocked.return_value.status_code = 200
@@ -343,14 +343,12 @@ class ParserTests(TranslationResetMixin, TestCase):
         event = TouristicEvent.objects.get()
         self.assertEqual(event.eid, "323154")
         self.assertEqual(event.name_fr, "Cols Réservés 2019 : Montée de Chabre (Laragne)")
-        self.assertEqual(event.name, "Nom EN")
-        self.assertEqual(event.name_en, "Nom EN")
-        self.assertEqual(event.description_en, "Descriptif Detaillé EN")
-        self.assertEqual(event.description, "Descriptif Detaillé EN")
+        self.assertEqual(event.name, '')
+        self.assertEqual(event.description, '')
         self.assertEqual(event.description_fr[:31], "Le département des Hautes-Alpes")
         self.assertEqual(event.description_teaser_fr[:18], "Une des ascensions")
-        self.assertEqual(event.description_teaser_en, "Descriptif Court EN")
-        self.assertEqual(event.description_teaser, "Descriptif Court EN")
+        self.assertEqual(event.description_teaser_en, None)
+        self.assertEqual(event.description_teaser, '')
         self.assertEqual(event.contact[:21], "Châteauneuf de Chabre")
         self.assertEqual(event.email, "LeGrandTim@mail.fr")
         self.assertEqual(event.website, "http://www.LeGrandTim.fr")
@@ -366,16 +364,57 @@ class ParserTests(TranslationResetMixin, TestCase):
                       event.practical_info_fr)
         self.assertIn("><br><b>Services:</b><br>Le plus grand des services, Un autre grand service<br>",
                       event.practical_info_fr)
-        self.assertIn("><br><b>Services:</b><br>English Service, Other Service<br>",
-                      event.practical_info_en)
-        self.assertIn("><br><b>Services:</b><br>English Service, Other Service<br>",
-                      event.practical_info)
-        self.assertIn("<b>Openning:</b><br>Tuesday, August 6, 2019 from 9am to noon.<br>", event.practical_info_en)
         self.assertIn("<b>Ouverture:</b><br>Mardi 6 août 2019 de 9h à midi.<br>", event.practical_info_fr)
-        self.assertIn("<b>Spoken languages:</b><br>French<br><br>", event.practical_info_en)
-        self.assertIn("<b>Spoken languages:</b><br>French<br><br>", event.practical_info)
         self.assertIn("<b>Langues Parlées:</b><br>Français<br>", event.practical_info_fr)
         self.assertIn("<b>Accès:</b><br>TestFr<br>", event.practical_info_fr)
+        self.assertTrue(event.published)
+        self.assertEqual(event.organizer, 'Toto')
+        self.assertEqual(str(event.meeting_time), '09:00:00')
+        self.assertEqual(event.type.type, 'Sports')
+        self.assertQuerysetEqual(
+            event.themes.all(),
+            ['<Theme: Cyclisme>', '<Theme: Sports cyclistes>']
+        )
+        self.assertEqual(Attachment.objects.count(), 3)
+
+    @mock.patch('requests.get')
+    def test_create_event_apidae_empty_languagefr(self, mocked):
+        def mocked_json():
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeEventEn.json')
+            with open(filename, 'r') as f:
+                return json.load(f)
+        mocked.return_value.status_code = 200
+        mocked.return_value.json = mocked_json
+        mocked.return_value.content = b'Fake image'
+        FileType.objects.create(type="Photographie")
+        self.assertEqual(TouristicEvent.objects.count(), 0)
+        output = io.StringIO()
+        call_command('import', 'geotrek.tourism.parsers.TouristicEventApidaeParser', verbosity=2, stdout=output)
+        self.assertEqual(TouristicEvent.objects.count(), 1)
+        event = TouristicEvent.objects.get()
+        self.assertEqual(event.eid, "323154")
+        self.assertEqual(event.name_fr, None)
+        self.assertEqual(event.name, "Nom EN")
+        self.assertEqual(event.name_en, "Nom EN")
+        self.assertEqual(event.description_en, "Descriptif Detaillé EN")
+        self.assertEqual(event.description, "Descriptif Detaillé EN")
+        self.assertEqual(event.description_fr, None)
+        self.assertEqual(event.description_teaser_fr, None)
+        self.assertEqual(event.description_teaser_en, "Descriptif Court EN")
+        self.assertEqual(event.description_teaser, "Descriptif Court EN")
+        self.assertEqual(event.contact[:21], "Châteauneuf de Chabre")
+        self.assertEqual(event.email, "LeGrandTim@mail.fr")
+        self.assertEqual(event.website, "http://www.LeGrandTim.fr")
+        self.assertEqual(round(event.geom.x), 922920)
+        self.assertEqual(round(event.geom.y), 6357103)
+        self.assertNotIn("><br><b>Services:</b><br>Le plus grand des services, Un autre grand service<br>",
+                         event.practical_info_fr)
+        self.assertNotIn("<b>Langues Parlées:</b><br>Français<br>", event.practical_info_fr)
+
+        self.assertIn("><br><b>Services:</b><br>English Service, Other Service<br>",
+                      event.practical_info_en)
+        self.assertIn("<b>Openning:</b><br>Tuesday, August 6, 2019 from 9am to noon.<br>", event.practical_info_en)
+        self.assertIn("<b>Spoken languages:</b><br>French<br><br>", event.practical_info_en)
         self.assertIn("<b>Access:</b><br>TestEn<br>", event.practical_info_en)
         self.assertTrue(event.published)
         self.assertEqual(event.organizer, 'Toto')
@@ -390,7 +429,7 @@ class ParserTests(TranslationResetMixin, TestCase):
     @mock.patch('geotrek.common.parsers.requests.get')
     def test_create_event_apidae_constant_fields(self, mocked):
         def mocked_json():
-            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeEvent.json')
+            filename = os.path.join(os.path.dirname(__file__), 'data', 'apidaeEventFr.json')
             with open(filename, 'r') as f:
                 return json.load(f)
         mocked.return_value.status_code = 200
