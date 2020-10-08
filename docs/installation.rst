@@ -83,8 +83,11 @@ If you are not confident with the ``install.sh`` script, or if you are having tr
     The Geotrek-admin Python application is located in ``/opt/geotrek-admin/lib/python3.6/site-packages/geotrek`` directory
 
 
-Upgrade from Geotrek-admin >= 2.33
-----------------------------------
+Upgrade
+-------
+
+From Geotrek-admin >= 2.33
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To upgrade the whole server, including Geotrek-admin, run:
 
@@ -106,8 +109,8 @@ To upgrade only Geotrek-admin and its dependencies, run:
    apt-get install geotrek-admin
 
 
-Upgrade from Geotrek-admin <= 2.32
-----------------------------------
+From Geotrek-admin >= 2.32
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 First of all, make sure your current Geotrek-admin version works correctly.
 Especially, after an upgrade of the Ubuntu distribution, you will have to run ``./install.sh``

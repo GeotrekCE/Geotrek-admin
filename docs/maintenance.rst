@@ -88,3 +88,21 @@ Access your database securely on your local machine (QGIS)
 
 Instead of opening your database to the world (by opening the 5432 port for
 example), you can use `SSH tunnels <http://www.postgresql.org/docs/9.3/static/ssh-tunnels.html>`_.
+
+
+Major evolutions from version 2.33
+----------------------------------
+
+From version 2.33, Geotrek-admin is packaged in a debian package. This mean several things :
+
+- a system user ``geotrek`` is created on install ;
+
+- base code is located in ``/opt/geotrek-admin`` folder ;
+
+- ``geotrek`` is the new command, replacing ``bin/django``, and must be run in root (system user ``geotrek`` is used after) ;
+
+- there is no more ``settings.ini`` but an ``env`` file with environment variables ;
+
+- configuration files (custom.py et env), parsers and all customisation files (templates and translations) are now located in ``/opt/geotrek-admin/var/conf`` ;
+
+- we advise you to configure data synchronization in ``/opt/geotrek-admin/var``
