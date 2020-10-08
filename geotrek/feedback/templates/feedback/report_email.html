@@ -1,12 +1,16 @@
 {% load i18n l10n %}
 {% autoescape off %}
 {% blocktrans with email=report.email %}{{email}} has sent a feedback.{% endblocktrans %}
+
 {% trans "Activity" %} : {{report.activity}}
 {% if report.comment %}{% blocktrans with comment=report.comment|striptags %}Comment : {{comment}}{% endblocktrans %}{% endif %}
 {% trans "Category" %} : {{report.category}}
 {% trans "Problem magnitude" %} : {{report.problem_magnitude}}
+
 {% if report.geom %}{% blocktrans with lat=report.geom_wgs84.y|stringformat:".6f" lng=report.geom_wgs84.x|stringformat:".6f" %}
 Lat : {{lat}} / Lon : {{lng}}
 http://www.openstreetmap.org/?mlat={{lat}}&mlon={{lng}}
 {% endblocktrans %}{% endif %}
+
+{% trans "Link to the report" %} : {{report.full_url}}
 {% endautoescape %}

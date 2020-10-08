@@ -12,6 +12,7 @@ from geotrek.common.mixins import PicturesMixin
 from mapentity.models import MapEntityMixin
 
 from geotrek.common.mixins import TimeStampedModelMixin
+from geotrek.trekking.models import Trek
 
 from .helpers import send_report_managers, post_report_to_suricate
 
@@ -60,6 +61,11 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
                              default=None,
                              verbose_name=_("Location"),
                              srid=settings.SRID)
+    related_trek = models.ForeignKey(Trek,
+                                     null=True,
+                                     blank=True,
+                                     on_delete=models.CASCADE,
+                                     verbose_name=_('Related trek'))
     context_content_type = models.ForeignKey(ContentType,
                                              on_delete=models.CASCADE,
                                              null=True,

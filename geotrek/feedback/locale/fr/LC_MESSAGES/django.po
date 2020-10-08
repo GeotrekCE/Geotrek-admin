@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-22 13:18+0000\n"
+"POT-Creation-Date: 2020-10-08 14:32+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,46 +21,77 @@ msgstr ""
 msgid "Feedback"
 msgstr "Retours utilisateurs"
 
-#: helpers.py:7
+#: helpers.py:14
+#, python-brace-format
 msgid "Feedback from {email}"
 msgstr "Signalement de {email}"
 
 #: models.py:25
+msgid "New"
+msgstr "Nouveau"
+
+#: models.py:34
 msgid "Email"
 msgstr "Email"
 
-#: models.py:28
+#: models.py:37
 msgid "Comment"
 msgstr "Commentaire"
 
-#: models.py:34 models.py:101 models.py:105
-#: templates/feedback/report_email.html:4
+#: models.py:42 models.py:132 models.py:139
+#: templates/feedback/report_email.html:5
+msgid "Activity"
+msgstr "Activité"
+
+#: models.py:47 models.py:148 models.py:155
+#: templates/feedback/report_email.html:7
 msgid "Category"
 msgstr "Catégorie"
 
-#: models.py:40 models.py:114 models.py:118 models.py:119
+#: models.py:52 models.py:177 models.py:184
+#: templates/feedback/report_email.html:8
+msgid "Problem magnitude"
+msgstr "Amplitude du problème"
+
+#: models.py:58 models.py:164 models.py:168 models.py:169
 msgid "Status"
 msgstr "Statut"
 
-#: models.py:44
+#: models.py:62
 msgid "Location"
 msgstr "Emplacement"
 
-#: models.py:58
+#: models.py:68 templates/feedback/report_email.html:15
+msgid "Related trek"
+msgstr "Itinéraire associé"
+
+#: models.py:81
 msgid "Report"
 msgstr "Signalement"
 
-#: models.py:59
+#: models.py:82
 msgid "Reports"
 msgstr "Signalements"
 
-#: models.py:76
+#: models.py:99
 msgid "Add a new feedback"
 msgstr "Créer un signalement"
 
-#: models.py:106
+#: models.py:134 models.py:150 models.py:179
+msgid "Suricate id"
+msgstr "ID Suricate"
+
+#: models.py:140
+msgid "Activities"
+msgstr "Activités"
+
+#: models.py:156
 msgid "Categories"
 msgstr "Catégories"
+
+#: models.py:185
+msgid "Problem magnitudes"
+msgstr "Amplitudes des problèmes"
 
 #: templates/feedback/report_detail_attributes.html:6
 msgid "Attributes"
@@ -71,15 +102,16 @@ msgid "Map"
 msgstr "Carte"
 
 #: templates/feedback/report_email.html:3
+#, python-format
 msgid "%(email)s has sent a feedback."
 msgstr "%(email)s a signalé un problème."
 
-#: templates/feedback/report_email.html:5
+#: templates/feedback/report_email.html:6
 #, python-format
 msgid "Comment : %(comment)s"
 msgstr "Commentaire : %(comment)s"
 
-#: templates/feedback/report_email.html:6
+#: templates/feedback/report_email.html:10
 #, python-format
 msgid ""
 "\n"
@@ -90,15 +122,15 @@ msgstr ""
 "Lat : %(lat)s / Lon : %(lng)s\n"
 "http://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
 
-#: tests/test_views.py:49
+#: tests/test_views.py:66
 msgid "Invalid geometry value."
 msgstr "Géométrie invalide"
 
-#: views.py:62
+#: views.py:102
 msgid "Geotrek : Signal a mistake"
 msgstr "Geotrek : signalement d'un problème"
 
-#: views.py:63
+#: views.py:103
 msgid ""
 "Hello,\n"
 "\n"
