@@ -1281,3 +1281,18 @@ List of all the filters enabled on mobile.
     SEND_REPORT_ACK = True
 
 If false, no mail will be sent to the sender of any feedback on Geotrek-rando website
+
+::
+
+    USE_BOOKLET_PDF = True
+
+Use booklet for PDF. During the synchro, pois details will be removed, and the pages will be merged.
+It is possible to customize the pdf, with trek_public_booklet_pdf.html.
+
+**Custom SQL**
+
+Put your custom SQL in a file name `/opt/geotrek-admin/var/conf/extra_sql/<app name>/<pre or post>_<script name>.sql
+
+* app name is the name of the Django application, eg. trekking or tourism
+* pre_… scripts are executed before Django migrations and post_… scripts after
+* script are executed in INSTALLED_APPS order, then by alphabetical order of script names
