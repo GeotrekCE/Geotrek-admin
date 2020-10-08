@@ -109,7 +109,7 @@ To upgrade only Geotrek-admin and its dependencies, run:
    apt-get install geotrek-admin
 
 
-From Geotrek-admin >= 2.32
+From Geotrek-admin <= 2.32
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 First of all, make sure your current Geotrek-admin version works correctly.
@@ -121,6 +121,9 @@ Then, go inside your existing Geotrek-admin installation directory and run the d
 ::
 
    curl https://packages.geotrek.fr/migrate.sh | bash
+
+
+Check if ``SPATIAL_EXTENT`` is well set in ``/opt/geotrek-admin/var/conf/custom.py`` (see Advanced configuration section)
 
 .. note ::
 
