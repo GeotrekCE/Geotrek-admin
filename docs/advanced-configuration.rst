@@ -30,7 +30,7 @@ is available at http://server/tools/extents/.
 
 .. note ::
 
-    Administrator privileges are required.	
+    Administrator privileges are required.
 
 
 Email settings
@@ -51,7 +51,7 @@ be sent to the managers:
 
 ::
 
-    sudo geotrek test_managers_emails	
+    sudo geotrek test_managers_emails
 
 
 Disable modules and components
@@ -165,7 +165,7 @@ The following settings are related to sensitive areas:
 .. code-block :: python
 
     SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT = True
-    
+
     # Default radius of sensitivity bubbles when not specified for species
     SENSITIVITY_DEFAULT_RADIUS = 100  # meters
 
@@ -230,7 +230,7 @@ files will be opened in the browser :
 Change or add WMTS tiles layers (IGN, OSM, Mapbox...)
 -----------------------------------------------------
 
-By default, you have 2 basemaps layers in your Geotrek-admin (OSM and OSM black and white). 
+By default, you have 2 basemaps layers in your Geotrek-admin (OSM and OSM black and white).
 
 You can change or add more basemaps layers.
 
@@ -243,7 +243,7 @@ Specify the tiles URLs this way in your custom Django setting file:
         ('OpenTopoMap', 'http://a.tile.opentopomap.org/{z}/{x}/{y}.png', 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)'),
     ]
 
-Example with IGN and OSM basemaps : 
+Example with IGN and OSM basemaps :
 
 .. code-block :: python
 
@@ -263,7 +263,7 @@ To use IGN Geoportail WMTS tiles API, you need an API key with subscribing on ht
 External authent
 ----------------
 
-You can authenticate user against a remote database table or view. 
+You can authenticate user against a remote database table or view.
 
 To enable this feature, fill these fields in ``/opt/geotrek-admin/var/conf/custom.py``:
 
@@ -295,7 +295,7 @@ Expected columns in table/view are :
 .. note ::
 
     The schema used in ``AUTHENT_TABLENAME`` must be in the user search_path (``ALTER USER $geotrek_db_user SET search_path=public,userschema;``)
-    
+
     User management will be disabled from Administration backoffice.
 
     In order to disable remote login, just comment *AUTHENTICATION_BACKENDS* line in settings
@@ -414,16 +414,16 @@ you can also override these settings:
 Override translations
 ---------------------
 
-Translations are managed by https://weblate.makina-corpus.net/ where you can contribute. 
-But you can also override default translation files available in each module 
+Translations are managed by https://weblate.makina-corpus.net/ where you can contribute.
+But you can also override default translation files available in each module
 (for example those from trekking module available in ``/opt/geotrek-admin/lib/python3.6/site-packages/geotrek/trekking/locale/fr/LC_MESSAGES/django.po``).
 
 Don't edit these default files, use them to find which words you want to override.
 
 Create the custom translations destination folder:
 
-Create a ``django.po`` file in ``/opt/geotrek-admin/var/conf/extra_locale`` directory. 
-You can do one folder and one ``django.po`` file for each language 
+Create a ``django.po`` file in ``/opt/geotrek-admin/var/conf/extra_locale`` directory.
+You can do one folder and one ``django.po`` file for each language
 (example ``/opt/geotrek-admin/var/conf/extra_locale/fr/LC_MESSAGES/django.po`` for French translation overriding)
 
 Override the translations that you want in these files.
@@ -451,14 +451,14 @@ Example of content for the French translation overriding:
     "Plural-Forms: nplurals=2; plural=(n > 1);\n"
     "Project-Id-Version: \n"
     "X-Generator: Poedit 1.5.4\n"
-      
+
     msgid "City"
     msgstr "Région"
 
     msgid "District"
     msgstr "Pays"
 
-Apply changes (French translation in this example) : 
+Apply changes (French translation in this example) :
 
 ::
 
