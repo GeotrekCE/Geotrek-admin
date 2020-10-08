@@ -13,14 +13,14 @@ Makina Corpus
 * Simon Thépot
 * Chloé Morisset
 * Frédéric Bonifas
+* Benjamin Marguin
+* Eric Brehault
 * Célian Garcia
 * Gaël Utard
 * Jean-Etienne Castagnede
 * Timothée de Montety
-* Michaël Viadere
 * Bastien Potiron
 * Emmanuelle Helly
-* Jean Lenormand
 
 .. image:: http://depot.makina-corpus.org/public/logo.gif
     :target: http://www.makina-corpus.com
@@ -29,6 +29,13 @@ Parc national des Ecrins
 ------------------------
 
 * Camille Monchicourt
+
+Others
+------
+
+* Michaël Viadere
+* Guillaume Boitel
+* Jean Lenormand
 
 Credits
 -------
