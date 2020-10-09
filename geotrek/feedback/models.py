@@ -94,6 +94,17 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
                                                                  self,
                                                                  self)
 
+    @property
+    def full_url(self):
+        try:
+            return '{}{}'.format(
+                settings.ALLOWED_HOSTS[0],
+                self.get_detail_url()
+            )
+        except KeyError:
+            # Do not display url if there is no ALLOWED_HOSTS
+            return ""
+
     @classmethod
     def get_create_label(cls):
         return _("Add a new feedback")

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-08 14:32+0000\n"
+"POT-Creation-Date: 2020-10-09 09:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,22 +38,22 @@ msgstr "Email"
 msgid "Comment"
 msgstr "Commentaire"
 
-#: models.py:42 models.py:132 models.py:139
+#: models.py:42 models.py:142 models.py:149
 #: templates/feedback/report_email.html:5
 msgid "Activity"
 msgstr "Activité"
 
-#: models.py:47 models.py:148 models.py:155
+#: models.py:47 models.py:158 models.py:165
 #: templates/feedback/report_email.html:7
 msgid "Category"
 msgstr "Catégorie"
 
-#: models.py:52 models.py:177 models.py:184
+#: models.py:52 models.py:187 models.py:194
 #: templates/feedback/report_email.html:8
 msgid "Problem magnitude"
 msgstr "Amplitude du problème"
 
-#: models.py:58 models.py:164 models.py:168 models.py:169
+#: models.py:58 models.py:174 models.py:178 models.py:179
 msgid "Status"
 msgstr "Statut"
 
@@ -61,7 +61,7 @@ msgstr "Statut"
 msgid "Location"
 msgstr "Emplacement"
 
-#: models.py:68 templates/feedback/report_email.html:15
+#: models.py:68 templates/feedback/report_email.html:16
 msgid "Related trek"
 msgstr "Itinéraire associé"
 
@@ -73,23 +73,23 @@ msgstr "Signalement"
 msgid "Reports"
 msgstr "Signalements"
 
-#: models.py:99
+#: models.py:109
 msgid "Add a new feedback"
 msgstr "Créer un signalement"
 
-#: models.py:134 models.py:150 models.py:179
+#: models.py:144 models.py:160 models.py:189
 msgid "Suricate id"
 msgstr "ID Suricate"
 
-#: models.py:140
+#: models.py:150
 msgid "Activities"
 msgstr "Activités"
 
-#: models.py:156
+#: models.py:166
 msgid "Categories"
 msgstr "Catégories"
 
-#: models.py:185
+#: models.py:195
 msgid "Problem magnitudes"
 msgstr "Amplitudes des problèmes"
 
@@ -121,6 +121,10 @@ msgstr ""
 "\n"
 "Lat : %(lat)s / Lon : %(lng)s\n"
 "http://www.openstreetmap.org/?mlat=%(lat)s&mlon=%(lng)s\n"
+
+#: templates/feedback/report_email.html:15
+msgid "Link to the report"
+msgstr "Lien vers le signalement"
 
 #: tests/test_views.py:66
 msgid "Invalid geometry value."
