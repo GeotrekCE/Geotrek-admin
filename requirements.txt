@@ -28,7 +28,7 @@ django-extensions==2.2.9
 django-filter==2.4.0
 django-geojson==3.1.0
 git+https://github.com/chibisov/drf-extensions.git@19efac2ede0eef82aac4785d47a405454fb48225#egg=rest_framework_extensions
-django-leaflet==0.27.0
+git+https://github.com/GeotrekCE/django-leaflet.git@leaflet1.x#egg=django-leaflet
 django-modeltranslation==0.15.2
 django-multiselectfield==0.1.5
 django-rest-swagger==2.2.0  # TODO: deprecated, replace with drf-yasg
