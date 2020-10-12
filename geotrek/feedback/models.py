@@ -3,8 +3,6 @@ import logging
 
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -66,16 +64,6 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
                                      blank=True,
                                      on_delete=models.CASCADE,
                                      verbose_name=_('Related trek'))
-    context_content_type = models.ForeignKey(ContentType,
-                                             on_delete=models.CASCADE,
-                                             null=True,
-                                             blank=True,
-                                             editable=False)
-    context_object_id = models.PositiveIntegerField(null=True,
-                                                    blank=True,
-                                                    editable=False)
-    context_object = GenericForeignKey('context_content_type',
-                                       'context_object_id')
 
     class Meta:
         verbose_name = _("Report")

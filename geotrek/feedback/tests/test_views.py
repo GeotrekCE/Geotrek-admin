@@ -56,7 +56,7 @@ class ReportViewsTest(CommonTest):
             'activity': self.obj.activity.pk,
             'category': self.obj.category.pk,
             'comment': self.obj.comment,
-            'context_object': None,
+            'related_trek': None,
             'email': self.obj.email,
             'status': None,
             'problem_magnitude': self.obj.problem_magnitude.pk

@@ -12,7 +12,7 @@ class ReportSerializer(rest_serializers.ModelSerializer):
         id_field = 'id'
         fields = ('id', 'email', 'activity', 'comment', 'category',
                   'status', 'problem_magnitude', 'related_trek',
-                  'geom', 'context_object')
+                  'geom')
         extra_kwargs = {
             'geom': {'write_only': True},
         }
