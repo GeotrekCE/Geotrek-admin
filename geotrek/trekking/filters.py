@@ -10,7 +10,7 @@ class TrekFilterSet(MapEntityFilterSet):
     class Meta:
         model = Trek
         fields = ['published', 'difficulty', 'duration', 'themes', 'networks',
-                  'practice', 'accessibilities', 'route', 'is_park_centered',
+                  'practice', 'accessibilities', 'route', 'labels',
                   'structure', 'source', 'portal', 'reservation_system']
 
 

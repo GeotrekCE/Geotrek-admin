@@ -7,6 +7,8 @@ from django.utils import translation
 
 from geotrek.common.models import TargetPortal
 
+if 'geotrek.trekking' in settings.INSTALLED_APPS:
+    from geotrek.trekking.models import LabelTrek
 
 logger = logging.getLogger(__name__)
 
@@ -29,5 +31,17 @@ class Command(BaseCommand):
                     **{'description_{}'.format(lang): ''}
                 ).update(**{'description_{}'.format(lang): _('Geotrek is a web app allowing you to prepare your '
                                                              'next trekking trip !')})
-
+                if 'geotrek.trekking' in settings.INSTALLED_APPS:
+                    self.stdout.write("LabelTrek")
+                    LabelTrek.objects.filter(
+                        **{'label_{}'.format(lang): ''}
+                    ).update(**{'label_{}'.format(lang): _('Is in the midst of the park')})
+                    LabelTrek.objects.filter(
+                        **{'description_{}'.format(lang): ''}
+                    ).update(**{'description_{}'.format(lang): _('This hike is in the core of the national park')})
+                    LabelTrek.objects.filter(
+                        **{'advice_{}'.format(lang): ''}
+                    ).update(**{'advice_{}'.format(lang): _('The national park is an unrestricted natural area but '
+                                                            'subjected to regulations which must be known '
+                                                            'by all visitors.')})
         self.stdout.write("Done.")

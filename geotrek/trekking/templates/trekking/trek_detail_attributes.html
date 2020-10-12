@@ -39,10 +39,16 @@
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
-        <tr>
-            <th>{{ trek|verbose:"is_park_centered" }}</th>
-            <td>{{ trek.is_park_centered|yesno:_("yes,no") }}</td>
-        </tr>
+        {% for label in labels %}
+            <tr>
+                <th>{{ label.label }}</th>
+                {% if label in trek.labels.all %}
+                    <td>{% trans "yes" %}</td>
+                {% else %}
+                    <td>{% trans "no" %}</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
         <tr>
             <th>{{ trek|verbose:"description_teaser" }}</th>
             <td>{% if trek.description_teaser %}{{ trek.description_teaser|safe }}

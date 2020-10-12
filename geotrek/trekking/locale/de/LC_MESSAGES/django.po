@@ -647,3 +647,15 @@ msgstr "Wander"
 
 msgid "Excluded POIs"
 msgstr "Ausgeschlossene POI"
+
+msgid "Trekking Label"
+msgstr ""
+
+msgid "Trekking Labels"
+msgstr ""
+
+msgid "Advice linked with the label"
+msgstr ""
+
+msgid "Description of the label"
+msgstr ""

@@ -89,8 +89,6 @@ class TrekFactory(TopologyFactory):
     disabled_infrastructure = "<p>Disabled infrastructure</p>"
     duration = 1.5  # hour
 
-    is_park_centered = False
-
     advised_parking = "<p>Advised parking</p>"
     parking_location = Point(1, 1)
 
