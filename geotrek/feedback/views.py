@@ -92,7 +92,7 @@ class ReportViewSet(mapentity_views.MapEntityViewSet):
         for file in request._request.FILES.values():
             Attachment.objects.create(
                 filetype=FileType.objects.get_or_create(type=settings.REPORT_FILETYPE)[0],
-                content_type=ContentType.objects.get(id=feedback_models.Report.get_content_type_id()),
+                content_type=ContentType.objects.get_for_model(feedback_models.Report),
                 object_id=response.data.get('id'),
                 creator=creator,
                 attachment_file=file

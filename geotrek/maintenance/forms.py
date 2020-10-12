@@ -11,6 +11,7 @@ from crispy_forms.layout import Fieldset, Layout, Div, HTML
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
+from geotrek.core.models import Topology
 from geotrek.core.widgets import TopologyReadonlyWidget
 from geotrek.maintenance.widgets import InterventionWidget
 
@@ -173,7 +174,7 @@ class InterventionForm(InterventionBaseForm):
         cleaned_data = super(InterventionForm, self).clean()
         if not cleaned_data.get('target_id') and cleaned_data.get('topology'):
             cleaned_data['target_id'] = cleaned_data['topology'].pk
-            ct = ContentType.objects.get(app_label='core', model='topology')
+            ct = ContentType.objects.get_for_model(Topology)
             cleaned_data['target_type'] = ct
         return cleaned_data
 
