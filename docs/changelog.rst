@@ -9,6 +9,10 @@ CHANGELOG
 
 -
 
+**Doc improvements**
+
+- Add info about what's new in 2.33
+- Change commands and so according to 2.33 [camillemonchicourt]
 
 2.38.3 (2020-10-05)
 -------------------

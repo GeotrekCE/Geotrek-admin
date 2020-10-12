@@ -7,7 +7,7 @@ ADVANCED CONFIGURATION
 Custom setting file
 -------------------
 
-Geotrek configuration is done in ``/opt/geotrek-admin/var/conf/custom.py`` file.
+Geotrek-admin advanced configuration is done in ``/opt/geotrek-admin/var/conf/custom.py`` file.
 The list of all overridable setting and default values can be found
 `there <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
 
@@ -17,11 +17,47 @@ After any change in ``custom.py``, run:
 
     sudo service geotrek restart
 
+.. note ::
+
+    Don't override the ``os.getenv()`` settings as they are managed with Basic configuration.
+
+
+Spatial extents
+---------------
+
+In order to check your configuration of spatial extents, a small tool
+is available at http://server/tools/extents/.
+
+.. note ::
+
+    Administrator privileges are required.
+
+
+Email settings
+--------------
+
+Geotrek-admin will send emails:
+
+* to administrators when internal errors occur
+* to managers when a feedback report is created
+
+Email configuration takes place in ``/opt/geotrek-admin/var/conf/custom.py``, where you control
+recipients emails (``ADMINS``, ``MAIL_MANAGERS``) and email server configuration.
+
+Set configuration settings in ``geotrek/settings/custom.py.dist`` template file.
+
+You can test your configuration with the following command. A fake email will
+be sent to the managers:
+
+::
+
+    sudo geotrek test_managers_emails
+
 
 Disable modules and components
 ------------------------------
 
-In order to disable a full set of features, in the custom settings file,
+In order to disable a full set of modules, in the custom settings file,
 add the following code:
 
 .. code-block :: python
@@ -46,7 +82,7 @@ In order to remove zoning combo-boxes on list map:
     LAND_BBOX_DISTRICTS_ENABLED = True
     LAND_BBOX_AREAS_ENABLED = False
 
-:notes:
+.. note ::
 
     By doing so, some software upgrades may not be as smooth as usual.
     Never forget to mention this customization if you ask for community support.
@@ -114,8 +150,7 @@ Or if you want to erase emails for reports older than 90 days
 
 
 Sensitive areas
-----------------------
-
+---------------
 
 In order to enable sensitivity module, in the custom settings file,
 add the following code:
@@ -130,7 +165,7 @@ The following settings are related to sensitive areas:
 .. code-block :: python
 
     SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT = True
-    
+
     # Default radius of sensitivity bubbles when not specified for species
     SENSITIVITY_DEFAULT_RADIUS = 100  # meters
 
@@ -195,7 +230,7 @@ files will be opened in the browser :
 Change or add WMTS tiles layers (IGN, OSM, Mapbox...)
 -----------------------------------------------------
 
-By default, you have 2 basemaps layers in your Geotrek-admin (OSM and OSM black and white). 
+By default, you have 2 basemaps layers in your Geotrek-admin (OSM and OSM black and white).
 
 You can change or add more basemaps layers.
 
@@ -208,7 +243,7 @@ Specify the tiles URLs this way in your custom Django setting file:
         ('OpenTopoMap', 'http://a.tile.opentopomap.org/{z}/{x}/{y}.png', 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)'),
     ]
 
-Example with IGN and OSM basemaps : 
+Example with IGN and OSM basemaps :
 
 .. code-block :: python
 
@@ -224,10 +259,11 @@ Example with IGN and OSM basemaps :
 
 To use IGN Geoportail WMTS tiles API, you need an API key with subscribing on http://professionnels.ign.fr/visualisation. Choose WebMercator WMTS tiles.
 
+
 External authent
 ----------------
 
-You can authenticate user against a remote database table or view. 
+You can authenticate user against a remote database table or view.
 
 To enable this feature, fill these fields in ``/opt/geotrek-admin/var/conf/custom.py``:
 
@@ -256,16 +292,16 @@ Expected columns in table/view are :
 * structure : string
 * lang : string (language code)
 
-:notes:
+.. note ::
 
     The schema used in ``AUTHENT_TABLENAME`` must be in the user search_path (``ALTER USER $geotrek_db_user SET search_path=public,userschema;``)
-    
+
     User management will be disabled from Administration backoffice.
 
     In order to disable remote login, just comment *AUTHENTICATION_BACKENDS* line in settings
     file, and restart instance (see paragraph above).
 
-    Geotrek can support many types of users authentication (LDAP, oauth, ...), contact us
+    Geotrek-admin can support many types of users authentication (LDAP, oauth, ...), contact us
     for more details.
 
 
@@ -348,7 +384,7 @@ applied. In order to disable, change this MapEntity setting :
 
 
 Configure Social network
------------------------------
+------------------------
 
 Facebook configuration
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -374,21 +410,21 @@ you can also override these settings:
     FACEBOOK_IMAGE_WIDTH = 200
     FACEBOOK_IMAGE_HEIGHT = 200
 
-Override translations
-----------------------------
 
-You can override default translation files available in each module (for example those from trekking module available in ``<geotrek-admin-folder>/geotrek/trekking/locale/fr/LC_MESSAGES/django.po``).
+Override translations
+---------------------
+
+Translations are managed by https://weblate.makina-corpus.net/ where you can contribute.
+But you can also override default translation files available in each module
+(for example those from trekking module available in ``/opt/geotrek-admin/lib/python3.6/site-packages/geotrek/trekking/locale/fr/LC_MESSAGES/django.po``).
 
 Don't edit these default files, use them to find which words you want to override.
 
 Create the custom translations destination folder:
 
-::
-
-     cd  <geotrek-admin-folder>/geotrek/
-     mkdir -p locale/en/LC_MESSAGES
-
-Then create a ``django.po`` file in this directory. You can do one folder and one ``django.po`` file for each language (example  ``<geotrek-admin-folder>/geotrek/locale/fr/LC_MESSAGES/django.po`` for French translation overriding)
+Create a ``django.po`` file in ``/opt/geotrek-admin/var/conf/extra_locale`` directory.
+You can do one folder and one ``django.po`` file for each language
+(example ``/opt/geotrek-admin/var/conf/extra_locale/fr/LC_MESSAGES/django.po`` for French translation overriding)
 
 Override the translations that you want in these files.
 
@@ -415,47 +451,43 @@ Example of content for the French translation overriding:
     "Plural-Forms: nplurals=2; plural=(n > 1);\n"
     "Project-Id-Version: \n"
     "X-Generator: Poedit 1.5.4\n"
-      
+
     msgid "City"
     msgstr "Région"
 
     msgid "District"
     msgstr "Pays"
 
-Apply changes : 
+Apply changes (French translation in this example) :
 
 ::
 
-    cd <geotrek-admin-folder>
-    make env_standalone deploy
+    cd /opt/geotrek-admin/var/conf/extra_locale
+    sudo chown geotrek. fr/LC_MESSAGES/
+    sudo geotrek compilemessages
+    sudo service geotrek restart
 
 
-WARNING: Documentation to be updated. Geotrek-admin now uses Weasyprint to create public PDF based on HTML templates
-and no more on ODT templates. Default HTML templates are in ``geotrek/trekking/templates/`` and can be copied in ``var/conf/extra_templates/`` with same path and file names to be overriden.
-
-Copy the file ``geotrek/trekking/templates/trekking/trek_public.odt`` to
-``var/conf/extra_templates/trekking/trek_public.odt``.
-
-Override public pdf templates
+Override public PDF templates
 -----------------------------
 
-PDF are generated from html printed, using `Django templating <https://docs.djangoproject.com/en/1.11/ref/templates/>`_.
-Trekkings, touristic contents and events can be exported in pdf files.
+PDF are generated from HTML templates, using `Django templating <https://docs.djangoproject.com/en/1.11/ref/templates/>`_.
+Trekkings, touristic contents and events can be exported in PDF files.
 
 - Treks : ``geotrek/trekking/templates/trekking/trek_public_pdf.html``
-- touristic contents : ``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``
-- touristic events : ``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``
+- Touristic contents : ``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``
+- Touristic events : ``geotrek/tourism/templates/tourism/touristiccontent_public_pdf.html``
 
-Overriden templates have to be located in ``var/media/templates/<appname>``, with appname = trekking or tourism.
-To override trekking pdf for example, copy the file ``geotrek/trekking/templates/trekking/trek_public_pdf.html``
-to ``var/media/templates/trekking/trek_public_pdf.html``.
+Overriden templates have to be located in ``/opt/geotrek-admin/var/conf/extra_templates/<appname>``, with ``<appname>`` = ``trekking`` or ``tourism``.
+To override trekking PDF for example, copy the file ``geotrek/trekking/templates/trekking/trek_public_pdf.html``
+to ``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html``.
 
 These templates derive from base templates, which content is organized in blocks.
-To override for example the description block of trek pdf, copy and change the ``{% block description }…{% endblock description %}``
-in your ``var/media/templates/trekking/trek_public_pdf.html``.
+To override for example the description block of trek PDF, copy and change the ``{% block description }…{% endblock description %}``
+in your ``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html``.
 
 It is also possible to use color defined for practice for pictogram by adding in your
-``geotrek/trekking/templates/trekking/trek_public_pdf.html`` file :
+``/opt/geotrek-admin/var/conf/extra_templates/trekking/trek_public_pdf.html`` file :
 
 ::
 
@@ -468,7 +500,7 @@ CSS can be overriden like html templates : copy them to ``var/media/templates/tr
     The default template may change in the future versions. You will be
     in charge of porting the modification to your copy.
 
-Test your modifications by exporting a trek or a content to pdf from Geotrek-admin application.
+Test your modifications by exporting a trek or a content to PDF from Geotrek-admin application.
 To get your modifications available for Rando application, launch the ``sync_rando`` command.
 
 
@@ -479,12 +511,16 @@ In order to use custom fonts in trek PDF, it is necessary to install the
 font files on the server.
 
 *Microsoft* fonts like *Arial* and *Verdana* can be installed via the package
-manager ::
+manager:
+
+::
 
     sudo apt-get install ttf-mscorefonts-installer
 
 For specific fonts, copy the ``.ttf`` (or ``.otf``) files into the folder
-``/usr/local/share/fonts/custom/`` as root, and run the following command ::
+``/usr/local/share/fonts/custom/`` as root, and run the following command:
+
+::
 
     fc-cache
 
@@ -495,7 +531,7 @@ Custom colors in public document template
 -----------------------------------------
 
 Trek export geometries are translucid red by default. In order to control the
-apparence of objects in public trek exports, use the following setting :
+apparence of objects in public trek PDF exports, use the following setting:
 
 ::
 
@@ -503,11 +539,13 @@ apparence of objects in public trek exports, use the following setting :
 
 See *Leaflet* reference documentation for detail about layers apparence.
 
+
 Primary color in PDF templates
 ------------------------------
 
 You can override ``PRIMARY_COLOR`` to change emphase text in PDF export.
 Beware of contrast, white colour is used for text so we advise you to avoid light colour.
+
 
 Custom logos
 ------------
@@ -528,7 +566,7 @@ If you want copyright added to your pictures, change ``THUMBNAIL_COPYRIGHT_FORMA
 
     THUMBNAIL_COPYRIGHT_FORMAT = "{title} {author}"
 
-You can also add `{legend}`.
+You can also add ``{legend}``.
 
 ::
 
@@ -538,7 +576,7 @@ You can also add `{legend}`.
 Share services between several Geotrek instances
 ------------------------------------------------
 
-As explained :ref:`in the design section <design-section>`, *Geotrek* relies
+As explained :ref:`in the design section <design-section>`, *Geotrek-admin* relies
 on several services. They are generic and reusable, and can thus be shared
 between several instances, in order to save system resources for example.
 
@@ -548,9 +586,8 @@ as usual (*standalone*), and plug the other instances on its underlying services
 
 Capture and conversion
 ~~~~~~~~~~~~~~~~~~~~~~
-If you want to use external services,
 
-In ``.env``, add following variables:
+If you want to use external services, in ``.env``, add following variables:
 
 .. code-block :: bash
 
@@ -559,7 +596,7 @@ In ``.env``, add following variables:
     CONVERSION_HOST=x.x.x.x
     CONVERSION_PORT=XX
 
-Then, you can delete all screamshotter and convertit references in docker-compose.yml
+Then, you can delete all screamshotter and convertit references in ``docker-compose.yml``.
 
 
 Shutdown useless services
@@ -580,62 +617,33 @@ Control number of workers and request timeouts
 
 By default, the application runs on 4 processes, and timeouts after 30 seconds.
 
-To control those values, edit and fix your docker-compose.yml file in web and api section
+To control those values, edit and fix your ``docker-compose.yml`` file in web and api section.
 
 To know how many workers you should set, please refer to `gunicorn documentation <http://gunicorn-docs.readthedocs.org/en/latest/design.html#how-many-workers>`_.
 
 
+================
+SETTINGS DETAILS
+================
 
-===============
-Global Settings
-===============
-
-|
-
-**Options before install**
---------------------------
+Basic settings
+--------------
 
 **Spatial reference identifier**
+
 ::
 
     SRID = 2154
 
-Spatial reference identifier of your database. 2154 is RGF93 / Lambert-93 - France
+Spatial reference identifier of your database. Default 2154 is RGF93 / Lambert-93 - France
 
 *It should not be change after any creation of geometries.*
 
 *Choose wisely with epsg.io for example*
 
-**Spatial Extent**
-::
 
-    SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
+**Default Structure**
 
-Boundingbox of your project : x minimum , y minimum , xmax, y max
-
-::
-
-        4 ^
-          |
-    1     |     3
-    <-----+----->
-          |
-          |
-        2 v
-
-*It should not be changed after install*
-
-
-**Dynamic segmentation**
-::
-
-    TREKKING_TOPOLOGY_ENABLED = True
-
-Use dynamic segmentation or not.
-
-   *Do not change it after install, or dump your database*
-
-**First Structure**
 ::
 
     DEFAULT_STRUCTURE_NAME = "GEOTEAM"
@@ -650,6 +658,7 @@ Name for your default structure.
    * *Re-run the server.*
 
 **Translations**
+
 ::
 
    MODELTRANSLATION_LANGUAGES = ('en', 'fr', 'it', 'es')
@@ -658,10 +667,41 @@ Languages of your project. It will be used to generate fields for translations. 
 
    *You won't be able to change it easily, avoid to add any languages and do not remove any.*
 
-**Options admin**
+Advanced settings
 -----------------
 
-**Map config**
+**Spatial Extent**
+
+::
+
+    SPATIAL_EXTENT = (105000, 6150000, 1100000, 7150000)
+
+Boundingbox of your project : x minimum , y minimum , x max, y max
+
+::
+
+        4 ^
+          |
+    1     |     3
+    <-----+----->
+          |
+          |
+        2 v
+
+*It should not be changed after installation.*
+
+**Dynamic segmentation**
+
+::
+
+    TREKKING_TOPOLOGY_ENABLED = True
+
+Use dynamic segmentation or not.
+
+*Do not change it after installation, or dump your database.*
+
+**Map configuration**
+
 ::
 
     LEAFLET_CONFIG['TILES'] = [
@@ -683,13 +723,13 @@ Languages of your project. It will be used to generate fields for translations. 
 Configuration of the tiles.
 
     *If you want to change it,*
-    *Change the array like that :*
+    *Change the array like that:*
 
     ::
 
         LEAFLET_CONFIG['TILES'] = [('NAME_OF_TILE', 'URL', 'COPYRIGHT'), ...]
 
-    *It's the same for the overlay but use only transparent tiles*
+    *It's the same for the overlay but use only transparent tiles.*
 
 |
 
@@ -699,14 +739,15 @@ Configuration of the tiles.
 
 You can define the max_zoom the user can zoom for all tiles.
 
-    *It can be interesting when your tiles can't go to a zoom. For example opentopomap is 17.*
+    *It can be interesting when your tiles can't go to a zoom. For example OpenTopoMap is 17.*
 
 **Enable Apps**
+
 ::
 
     FLATPAGES_ENABLED = True
 
-Show Flatpages on menu or not. Flatpages are used in Geotrek Rando.
+Show Flatpages on menu or not. Flatpages are used in Geotrek-rando.
 
 |
 
@@ -745,6 +786,7 @@ Show filter bbox by zoning.
 .. image:: images/options/zoning_bboxs.png
 
 **Translations**
+
 ::
 
     LANGUAGE_CODE = 'fr'
@@ -752,19 +794,20 @@ Show filter bbox by zoning.
 Language of your interface.
 
 **Geographical CRUD**
+
 ::
 
     PATH_SNAPPING_DISTANCE = 2.0
 
 Minimum distance to merge 2 paths in unit of SRID
 
-    *Change the distance. Better to keep it like this. Not used when TREKKING_TOPOLOGY_ENABLED = True*
+    *Change the distance. Better to keep it like this. Not used when ``TREKKING_TOPOLOGY_ENABLED = True``.*
 
 ::
 
     SNAP_DISTANCE = 30
 
-Distance of snapping for the cursor in pixels on map leaflet.
+Distance of snapping for the cursor in pixels on Leaflet map.
 
 
 ::
@@ -796,14 +839,14 @@ Minimum distance to merge 2 paths.
 
 Color of the different layers on the map
 
-    *To change any map_style do as following :*
+    *To change any map_style do as following:*
 
     ::
 
         MAP_STYLES['path'] = {'weigth': 2, 'opacity': 2.0, 'color': 'yellow'}*
         MAP_STYLES['city']['opacity'] = 0.8*
 
-    *For color : use color picker for example*
+    *For color: use color picker for example*
 
 |
 
@@ -822,7 +865,7 @@ Color of the different layers on the map
 Color of the different layers on the top right for landing.
 
     * For land, physical, competence, signagemanagement, workmanagement should have 5 values.
-    * For restricted Area : add as many color as your number of restricted area type
+    * For restricted Area: add as many color as your number of restricted area type
 
     *To change any map_style do as following :*
 
@@ -831,7 +874,7 @@ Color of the different layers on the top right for landing.
         COLORS_POOL['restrictedarea'] = ['plum', 'violet', 'yellow', 'red', '#79a8f3']
         MAP_STYLES['city']['opacity'] = 0.8*
 
-    *For color : use color picker for example*
+    *For color: use color picker for example*
 
 |
 
@@ -880,6 +923,7 @@ All settings used for generate altimetric profile.
     *The only one modified most of the time is ALTIMETRIC_PROFILE_COLOR*
 
 **Signage and Blade**
+
 ::
 
     BLADE_CODE_TYPE = int
@@ -932,6 +976,7 @@ Correspond of the format showed on export of lines. Used in csv of signage.
 
 
 **Screenshots**
+
 ::
 
     SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT = True
@@ -940,7 +985,7 @@ Correspond of the format showed on export of lines. Used in csv of signage.
     SHOW_SIGNAGES_ON_MAP_SCREENSHOT = True
     SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT = True
 
-Show objects on maps of pdf
+Show objects on maps of PDF
 
 |
 
@@ -948,20 +993,21 @@ Show objects on maps of pdf
 
     MAP_CAPTURE_SIZE = 800
 
-Size in px of the capture.
+Size in pixels of the capture.
 
     *Be careful with your pdfs.*
     *If you change this value, pdfs will be rendered differently*
 
 
-**Synchro Geotrek-Rando**
+**Synchro Geotrek-rando**
+
 ::
 
     SYNC_RANDO_ROOT = os.path.join(VAR_DIR, 'data')
 
-Path on your server where the datas for rando website will be generated
+Path on your server where the datas for Geotrek-rando website will be generated
 
-    *if you want to modify it, do not forget to import os at the top of the file.*
+    *If you want to modify it, do not forget to import os at the top of the file.*
     *Check* `import Python <https://docs.python.org/3/reference/import.html>`_ *, if you need any information*
 
 ::
@@ -1031,7 +1077,7 @@ Limit of the number of information desks on treks pdf.
 
     SPLIT_TREKS_CATEGORIES_BY_PRACTICE = False
 
-On the Rando web site, treks practices will be displayed separately
+On the Geotrek-rando website, treks practices will be displayed separately
 
     *Field order for each practices in admin will be take in account*
 
@@ -1041,7 +1087,7 @@ On the Rando web site, treks practices will be displayed separately
 
     SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False
 
-On the Rando web site, accessibilites will be displayed separately
+On the Geotrek-rando website, accessibilites will be displayed separately
 
 |
 
@@ -1049,7 +1095,7 @@ On the Rando web site, accessibilites will be displayed separately
 
     SPLIT_TREKS_CATEGORIES_BY_ITINERANCY = False
 
-On the Rando web site, if a trek has a children it will be displayed separately
+On the Geotrek-rando website, if a trek has a children it will be displayed separately
 
 |
 
@@ -1057,7 +1103,7 @@ On the Rando web site, if a trek has a children it will be displayed separately
 
     SPLIT_DIVES_CATEGORIES_BY_PRACTICE = True
 
-On the Rando web site, dives practices will be displayed separately
+On the Geotrek-rando website, dives practices will be displayed separately
 
 |
 
@@ -1065,7 +1111,7 @@ On the Rando web site, dives practices will be displayed separately
 
     HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = False
 
-On the 'Rando' web site, treks near other are hide
+On the Geotrek-rando website, treks near other are hide
 
 |
 
@@ -1081,7 +1127,7 @@ Options of the sync_rando command in Geotrek-admin interface.
 
     TREK_WITH_POIS_PICTURES = False
 
-It enables correlated pictures on Gotrek-Rando to be displayed in the slideshow
+It enables correlated pictures on Gotrek-rando to be displayed in the slideshow
 
 |
 
@@ -1089,7 +1135,7 @@ It enables correlated pictures on Gotrek-Rando to be displayed in the slideshow
 
     PRIMARY_COLOR = "#7b8c12"
 
-Primary color of your pdf
+Primary color of your PDF
     *check : "color picker"*
 
 |
@@ -1098,7 +1144,7 @@ Primary color of your pdf
 
     ONLY_EXTERNAL_PUBLIC_PDF = False
 
-On rando web site, only pdf imported with filetype "Topoguide"
+On Geotrek-rando website, only PDF imported with filetype "Topoguide"
 will be used and not autogenerated.
 
 |
@@ -1110,22 +1156,23 @@ will be used and not autogenerated.
     DIVE_CATEGORY_ORDER = 10
     TOURISTIC_EVENT_CATEGORY_ORDER = 99
 
-Order of all the objects without practices on 'Rando' web site
+Order of all the objects without practices on Geotrek-rando website
 
-    *All the settings about order are the order inside rando web site.*
+    *All the settings about order are the order inside Geotrek-rando website.*
 
     *Practices of diving, treks and categories of touristic contents are taken in account*
 
 |
 
-**Synchro Geotrek-Mobile**
+**Synchro Geotrek-mobile**
+
 ::
 
     SYNC_MOBILE_ROOT = os.path.join(VAR_DIR, 'mobile')
 
 Path on your server wehre the datas for mobile
 
-    *if you want to modify it, do not forget to import os at the top of the file.*
+    *If you want to modify it, do not forget to import os at the top of the file.*
     *Check* `import Python <https://docs.python.org/3/reference/import.html>`_ *, if you need any information*
 
 |
@@ -1144,7 +1191,7 @@ Options of the sync_mobile command
 
 URL's Tiles used for the mobile.
 
-    *Change for ign :*
+    *Change for IGN:*
 
     ::
 
@@ -1163,7 +1210,7 @@ URL's Tiles used for the mobile.
 
 Intervals of the mobile for the length filter
 
-    *Interval's key is in meters.*
+    *Interval key is in meters.*
     *You can add new intervals*
 
     ::
@@ -1226,7 +1273,14 @@ List of all the filters enabled on mobile.
 
     *Remove any of the filters if you don't want one of them. It's useless to add other one.*
 
-|
+
+
+**Other settings**
+::
+
+    SEND_REPORT_ACK = True
+
+If false, no mail will be sent to the sender of any feedback on Geotrek-rando website
 
 ::
 

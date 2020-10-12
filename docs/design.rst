@@ -10,7 +10,7 @@ Architecture
 .. image :: images/architecture-1.0.jpg
     :width: 50%
 
-* **Geotrek**, the web application
+* **Geotrek-admin**, the web application
 * **Convertit**, a Web API to convert document and image formats (*.odt to .doc*, *.svg to .png*)
 * **Screamshotter**, a Web API to perform Web pages screenshots (*map image exports*).
 
@@ -31,12 +31,12 @@ A generic application in charge of:
 * Document export
 * Shapefile/GPX/CSV serializers
 
-For a Django model, we use the registry to activate all views and menus :
+For a Django model, we use the registry to activate all views and menus:
 
 .. image :: images/mapentity.jpg
     :width: 50%
 
-Business specific notions are implemented in Geotrek respective applications:
+Business specific notions are implemented in Geotrek-admin respective applications:
 
 * **common**: shared concepts between all applications (*Organism*, *utils*, ...)
 * **authent**: groups, user, profile and structure notions. Optional external authent backend.
@@ -53,7 +53,7 @@ Django conventions twists
 
 We have a couple of Django conventions infringements:
 
-* SQL triggers everywhere: since Geotrek database is to become the central storage
+* SQL triggers everywhere: since Geotrek-admin database is to become the central storage
   component of all park organisation data, it has to behave consistently whether data is
   modified through the Web application or raw access tools (pgadmin, QGIS).
   (For example, insertion & update timestamps, geometry computation or DEM wrapping.)
