@@ -18,7 +18,8 @@ from geotrek.core.models import Topology, Path, Trail
 from geotrek.common.models import Organism
 from geotrek.common.mixins import TimeStampedModelMixin, NoDeleteMixin, AddPropertyMixin, NoDeleteManager
 from geotrek.common.utils import classproperty
-
+from geotrek.infrastructure.models import Infrastructure
+from geotrek.signage.models import Signage
 
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
@@ -234,7 +235,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     @classmethod
     def get_interventions(cls, obj):
-        blade_content_type = ContentType.objects.get(model='blade')
+        blade_content_type = ContentType.objects.get_for_model(Blade)
         if settings.TREKKING_TOPOLOGY_ENABLED:
             topologies = list(Topology.overlapping(obj).values_list('pk', flat=True))
         else:
@@ -248,7 +249,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     @classmethod
     def path_interventions(cls, path):
-        blade_content_type = ContentType.objects.get(model='blade')
+        blade_content_type = ContentType.objects.get_for_model(Blade)
         topologies = list(Topology.objects.filter(aggregations__path=path).values_list('pk', flat=True))
         qs = Q(target_id__in=topologies) & ~Q(target_type=blade_content_type)
         if 'geotrek.signage' in settings.INSTALLED_APPS:
@@ -266,13 +267,13 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     @property
     def signages(self):
-        if self.target_type == ContentType.objects.get(model='signage'):
+        if self.target_type == ContentType.objects.get_for_model(Signage):
             return [self.target]
         return []
 
     @property
     def infrastructures(self):
-        if self.target_type == ContentType.objects.get(model='infrastructure'):
+        if self.target_type == ContentType.objects.get_for_model(Infrastructure):
             return [self.target]
         return []
 
@@ -427,13 +428,13 @@ class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
     @property
     def signages(self):
         from geotrek.signage.models import Signage
-        target_ids = self.interventions.existing().filter(target_type=ContentType.objects.get(model='signage')).values_list('target_id', flat=True)
+        target_ids = self.interventions.existing().filter(target_type=ContentType.objects.get_for_model(Signage)).values_list('target_id', flat=True)
         return list(Signage.objects.filter(topo_object__in=target_ids))
 
     @property
     def infrastructures(self):
         from geotrek.infrastructure.models import Infrastructure
-        target_ids = list(self.interventions.existing().filter(target_type=ContentType.objects.get(model='infrastructure')).values_list('target_id', flat=True))
+        target_ids = list(self.interventions.existing().filter(target_type=ContentType.objects.get_for_model(Infrastructure)).values_list('target_id', flat=True))
         return list(Infrastructure.objects.filter(topo_object__in=target_ids))
 
     @classproperty

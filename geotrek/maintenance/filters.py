@@ -29,7 +29,7 @@ class PolygonTopologyFilter(PolygonFilter):
         if not value:
             return qs
         lookup = self.lookup_expr
-        blade_content_type = ContentType.objects.get(model='blade')
+        blade_content_type = ContentType.objects.get_for_model(Blade)
         topologies = list(Topology.objects.filter(**{'geom__%s' % lookup: value}).values_list('id', flat=True))
         topologies_intervention = Intervention.objects.existing().filter(target_id__in=topologies).exclude(
             target_type=blade_content_type).distinct('pk').values_list('id', flat=True)

@@ -9,7 +9,7 @@ from django.test import TestCase, override_settings
 from geotrek.common.factories import AttachmentFactory, ThemeFactory
 from geotrek.common.models import Attachment, FileType, Theme
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.trekking.models import DifficultyLevel, Trek
+from geotrek.trekking.models import DifficultyLevel, POI, Trek
 from geotrek.trekking.factories import DifficultyLevelFactory, POIFactory, TrekFactory
 
 from mapentity.factories import SuperUserFactory
@@ -51,7 +51,7 @@ class AttachmentAdminTest(TestCase):
         self.login()
         list_url = reverse('admin:common_attachment_changelist')
         data = {
-            'content_type': ContentType.objects.get(model='poi').pk
+            'content_type': ContentType.objects.get_for_model(POI).pk
         }
 
         response = self.client.get(list_url, data)

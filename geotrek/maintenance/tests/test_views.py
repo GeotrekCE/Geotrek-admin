@@ -19,8 +19,10 @@ from geotrek.common.tests import TranslationResetMixin
 from geotrek.maintenance.models import Intervention, InterventionStatus, Project
 from geotrek.maintenance.views import ProjectFormatList
 from geotrek.core.factories import PathFactory, TopologyFactory
+from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import BladeFactory, SignageFactory
+from geotrek.signage.models import Signage
 from geotrek.maintenance.factories import (InterventionFactory, InfrastructureInterventionFactory,
                                            InterventionDisorderFactory, InterventionStatusFactory,
                                            ProjectFactory, ContractorFactory, InterventionJobFactory,
@@ -92,7 +94,7 @@ class InterventionViewsTest(CommonTest):
 
         response = self.client.get('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
                                                                        signa.pk,
-                                                                       ContentType.objects.get(model='signage').pk
+                                                                       ContentType.objects.get_for_model(Signage).pk
                                                                        ))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, signage)
@@ -103,7 +105,7 @@ class InterventionViewsTest(CommonTest):
         data['target_id'] = signa.pk
         response = self.client.post('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
                                                                         signa.pk,
-                                                                        ContentType.objects.get(model='signage').pk
+                                                                        ContentType.objects.get_for_model(Signage).pk
                                                                         ),
                                     data)
         self.assertEqual(response.status_code, 302)
@@ -170,7 +172,7 @@ class InterventionViewsTest(CommonTest):
 
         response = self.client.get('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
                                                                        signa.pk,
-                                                                       ContentType.objects.get(model='signage').pk
+                                                                       ContentType.objects.get_for_model(Signage).pk
                                                                        ))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, signage)
@@ -183,7 +185,7 @@ class InterventionViewsTest(CommonTest):
         data.pop('status')
         response = self.client.post('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
                                                                         signa.pk,
-                                                                        ContentType.objects.get(model='signage').pk
+                                                                        ContentType.objects.get_for_model(Signage).pk
                                                                         ),
                                     data)
         self.assertEqual(response.status_code, 200)
@@ -213,7 +215,7 @@ class InterventionViewsTest(CommonTest):
             'manday_set-MAX_NUM_FORMS': '',
         })
         # Form URL is modified in form init
-        formurl = '%s?target_id=%s&target_type=%s' % (intervention.get_update_url(), signa.pk, ContentType.objects.get(model='signage').pk)
+        formurl = '%s?target_id=%s&target_type=%s' % (intervention.get_update_url(), signa.pk, ContentType.objects.get_for_model(Signage).pk)
         response = self.client.post(formurl, data)
         self.assertEqual(response.status_code, 302)
 
@@ -254,7 +256,7 @@ class InterventionViewsTest(CommonTest):
 
         response = self.client.get('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
                                                                        infra.pk,
-                                                                       ContentType.objects.get(model='infrastructure').pk))
+                                                                       ContentType.objects.get_for_model(Infrastructure).pk))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, infrastr)
         form = response.context['form']
@@ -264,7 +266,7 @@ class InterventionViewsTest(CommonTest):
         data['target_id'] = infra.pk
         response = self.client.post('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
                                                                         infra.pk,
-                                                                        ContentType.objects.get(model='infrastructure').pk),
+                                                                        ContentType.objects.get_for_model(Infrastructure).pk),
                                     data)
         self.assertEqual(response.status_code, 302)
 
@@ -279,7 +281,7 @@ class InterventionViewsTest(CommonTest):
 
         response = self.client.get('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
                                                                        infra.pk,
-                                                                       ContentType.objects.get(model='infrastructure').pk))
+                                                                       ContentType.objects.get_for_model(Infrastructure).pk))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, infrastr)
         form = response.context['form']
@@ -291,7 +293,7 @@ class InterventionViewsTest(CommonTest):
         data.pop('status')
         response = self.client.post('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
                                                                         infra.pk,
-                                                                        ContentType.objects.get(model='infrastructure').pk), data)
+                                                                        ContentType.objects.get_for_model(Infrastructure).pk), data)
         self.assertEqual(response.status_code, 200)
 
     def test_update_form_on_infrastructure(self):
@@ -321,7 +323,7 @@ class InterventionViewsTest(CommonTest):
         # Form URL is modified in form init
         formurl = '%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
                                                       infra.pk,
-                                                      ContentType.objects.get(model='infrastructure').pk)
+                                                      ContentType.objects.get_for_model(Infrastructure).pk)
         response = self.client.post(formurl, data)
         self.assertEqual(response.status_code, 302)
 
