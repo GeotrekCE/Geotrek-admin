@@ -191,7 +191,7 @@
       <div class="inner-title">
         <h2>{% trans "All useful information" %}</h2>
       </div>
-      {% for label in object.labels %}
+      {% for label in object.labels.all %}
         <div class="advice">
           <div class="advice-title">
             <div class="advice-icon">

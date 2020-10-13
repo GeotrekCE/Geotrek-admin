@@ -7,8 +7,7 @@ from django.conf import settings
 def move_is_park_centered(apps, schema_editor):
     Trek = apps.get_model('trekking', 'Trek')
     LabelTrek = apps.get_model('trekking', 'LabelTrek')
-    with open(os.path.join(settings.STATIC_ROOT, 'trekking', 'information.svg'), 'r') as f:
-        is_park_centered = LabelTrek.objects.create(pictogram=f)
+    is_park_centered = LabelTrek.objects.create()
 
     for trek in Trek.objects.filter(is_park_centered=True):
         trek.labels.add(is_park_centered.id)
