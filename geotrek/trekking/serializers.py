@@ -103,6 +103,12 @@ class WebLinkSerializer(TranslatedModelSerializer):
         fields = ('id', 'name', 'category', 'url')
 
 
+class LabelTrekSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+    class Meta:
+        model = trekking_models.LabelTrek
+        fields = ('id', 'pictogram', 'label', 'description', 'advice', 'filter_rando')
+
+
 class CloseTrekSerializer(TranslatedModelSerializer):
     category_id = rest_serializers.ReadOnlyField(source='prefixed_category_id')
 
@@ -157,6 +163,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     usages = PracticeSerializer(many=True)  # Rando v1 compat
     accessibilities = AccessibilitySerializer(many=True)
     web_links = WebLinkSerializer(many=True)
+    labels = LabelTrekSerializer(many=True)
     relationships = TrekRelationshipSerializer(many=True, source='published_relationships')
     treks = CloseTrekSerializer(many=True, source='published_treks')
     source = RecordSourceSerializer(many=True)

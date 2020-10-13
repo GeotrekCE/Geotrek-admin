@@ -67,6 +67,17 @@ class WebLinkFactory(factory.DjangoModelFactory):
     category = factory.SubFactory(WebLinkCategoryFactory)
 
 
+class LabelTrekFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.LabelTrek
+
+    label = "Label"
+    pictogram = get_dummy_uploaded_image('label.png')
+    description = "Description label"
+    advice = "Advice label"
+    filter_rando = True
+
+
 class TrekFactory(TopologyFactory):
     class Meta:
         model = models.Trek

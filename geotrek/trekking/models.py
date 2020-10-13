@@ -615,6 +615,8 @@ class LabelTrek(PictogramMixin):
                                    help_text=_("Description of the label"), default='')
     advice = models.TextField(verbose_name=_("Advices"), blank=True,
                               help_text=_("Advice linked with the label"), default='')
+    filter_rando = models.BooleanField(verbose_name=_("Filter rando"), help_text=_("Show filters portal"),
+                                       default=False)
 
     class Meta:
         verbose_name = _("Trekking Label")

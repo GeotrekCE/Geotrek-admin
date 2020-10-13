@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('label', models.CharField(max_length=128, verbose_name='Label')),
                 ('description', models.TextField(default='', blank=True, help_text='Description of the label', verbose_name='Description')),
                 ('advice', models.TextField(default='', blank=True, help_text='Advice linked with the label', verbose_name='Advices')),
-
+                ('filter_rando', models.BooleanField(default=False, help_text='Show filters portal', verbose_name='Filter rando'))
             ],
             options={
                 'verbose_name': 'Trekking Label',

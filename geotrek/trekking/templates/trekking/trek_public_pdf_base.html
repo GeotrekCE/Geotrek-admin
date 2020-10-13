@@ -191,17 +191,17 @@
       <div class="inner-title">
         <h2>{% trans "All useful information" %}</h2>
       </div>
-      {% if object.is_park_centered %}
+      {% for label in object.labels.all %}
         <div class="advice">
           <div class="advice-title">
             <div class="advice-icon">
-              <img src="file://{{ STATIC_ROOT}}/trekking/information.svg">
+              <img src="file://{{ label.pictogram.path }}">
             </div>
-            {% trans "This hike is in the core of the national park" %}
+            {{ label.description|safe }}
           </div>
-          <div class="advice-content">{% trans "The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors." %}</div>
+          <div class="advice-content">{{ label.advice|safe }}</div>
         </div>
-      {% endif %}
+      {% endfor %}
       {% if object.advice %}
         <div class="advice">
           <div class="advice-title">
