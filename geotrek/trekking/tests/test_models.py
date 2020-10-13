@@ -467,4 +467,4 @@ class MapImageExtentTest(TestCase):
 class LabelTrekTest(TestCase):
     def test_str(self):
         label = LabelTrekFactory.create(label="foo")
-        self.assertEqual(label, "foo")
+        self.assertEqual(str(label), "foo")
