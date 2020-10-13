@@ -191,11 +191,15 @@
       <div class="inner-title">
         <h2>{% trans "All useful information" %}</h2>
       </div>
-      {% for label in object.labels.all %}
+      {% for label in object.labels %}
         <div class="advice">
           <div class="advice-title">
             <div class="advice-icon">
-              <img src="file://{{ label.pictogram.path }}">
+              {% if label.pictogram %}
+                <img src="file://{{ label.pictogram.path }}">
+              {% else %}
+                <img src="file://{{ STATIC_ROOT }}/trekking/information.svg">
+              {% endif %}
             </div>
             {{ label.description|safe }}
           </div>
