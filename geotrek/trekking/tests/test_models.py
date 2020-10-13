@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.core.factories import PathFactory
 from geotrek.zoning.factories import DistrictFactory, CityFactory
-from geotrek.trekking.factories import (POIFactory, TrekFactory,
+from geotrek.trekking.factories import (LabelTrekFactory, POIFactory, TrekFactory,
                                         TrekWithPOIsFactory, ServiceFactory)
 from geotrek.trekking.models import Trek, OrderedTrekChild
 
@@ -462,3 +462,9 @@ class MapImageExtentTest(TestCase):
         self.assertAlmostEqual(lat_min, -5.983856309208769)
         self.assertAlmostEqual(lng_max, 3.001303976720215)
         self.assertAlmostEqual(lat_max, 46.50090044234927)
+
+
+class LabelTrekTest(TestCase):
+    def test_str(self):
+        label = LabelTrekFactory.create(label="foo")
+        self.assertEqual(label, "foo")
