@@ -47,7 +47,7 @@ class DifficultyLevelTO(TranslationOptions):
 
 
 class LabelTrekTO(TranslationOptions):
-    fields = ('label', 'description', 'advice')
+    fields = ('name', 'description', 'advice')
 
 
 class WebLinkTO(TranslationOptions):

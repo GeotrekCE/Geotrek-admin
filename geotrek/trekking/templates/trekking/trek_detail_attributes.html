@@ -41,7 +41,7 @@
         </tr>
         {% for label in labels %}
             <tr>
-                <th>{{ label.label }}</th>
+                <th>{{ label.name }}</th>
                 {% if label in trek.labels.all %}
                     <td>{% trans "yes" %}</td>
                 {% else %}

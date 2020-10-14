@@ -106,7 +106,7 @@ class WebLinkSerializer(TranslatedModelSerializer):
 class LabelTrekSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
     class Meta:
         model = trekking_models.LabelTrek
-        fields = ('id', 'pictogram', 'label', 'description', 'advice', 'filter_rando')
+        fields = ('id', 'pictogram', 'name', 'description', 'advice', 'filter_rando')
 
 
 class CloseTrekSerializer(TranslatedModelSerializer):

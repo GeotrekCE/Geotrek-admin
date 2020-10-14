@@ -610,7 +610,7 @@ class DifficultyLevel(OptionalPictogramMixin):
 
 class LabelTrek(PictogramMixin):
 
-    label = models.CharField(verbose_name=_("Label"), max_length=128)
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
     description = models.TextField(verbose_name=_("Description"), blank=True,
                                    help_text=_("Description of the label"), default='')
     advice = models.TextField(verbose_name=_("Advices"), blank=True,
@@ -621,10 +621,10 @@ class LabelTrek(PictogramMixin):
     class Meta:
         verbose_name = _("Trekking Label")
         verbose_name_plural = _("Trekking Labels")
-        ordering = ['label']
+        ordering = ['name']
 
     def __str__(self):
-        return self.label
+        return self.name
 
 
 class WebLinkManager(models.Manager):

@@ -35,8 +35,8 @@ class Command(BaseCommand):
                 if 'geotrek.trekking' in settings.INSTALLED_APPS:
                     self.stdout.write("LabelTrek")
                     LabelTrek.objects.filter(
-                        Q(**{'label_{}'.format(lang): ''}) | Q(**{'label_{}'.format(lang): None})
-                    ).update(**{'label_{}'.format(lang): _('Is in the midst of the park')})
+                        Q(**{'name_{}'.format(lang): ''}) | Q(**{'name_{}'.format(lang): None})
+                    ).update(**{'name_{}'.format(lang): _('Is in the midst of the park')})
                     LabelTrek.objects.filter(
                         Q(**{'description_{}'.format(lang): ''}) | Q(**{'description_{}'.format(lang): None})
                     ).update(**{'description_{}'.format(lang): _('This hike is in the core of the national park')})

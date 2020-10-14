@@ -870,7 +870,7 @@ class TrekJSONDetailTest(TrekJSONSetUp):
         self.assertDictEqual(self.result['labels'][0],
                              {"id": self.label.id,
                               "pictogram": os.path.join(settings.MEDIA_URL, self.label.pictogram.name),
-                              "label": self.label.label,
+                              "name": self.label.name,
                               "description": self.label.description,
                               "advice": self.label.advice,
                               "filter_rando": self.label.filter_rando})
