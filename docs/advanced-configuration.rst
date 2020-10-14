@@ -688,7 +688,8 @@ Boundingbox of your project : x minimum , y minimum , x max, y max
           |
         2 v
 
-*It should not be changed after installation.*
+*If you extend spatial extent, don't forget to load a new DEM that covers all the zone.*
+*If you shrink spatial extent, be sure there is no element in the removed zone or you will no more be able to see and edit it.*
 
 **Dynamic segmentation**
 
