@@ -109,7 +109,8 @@ class DifficultyLevelAdmin(MergeActionMixin, TranslationAdmin):
 
 
 class LabelTrekAdmin(TranslationAdmin):
-    list_display = ('name', 'description', )
+    list_display = ('pictogram_img', 'name', 'description', 'filter_rando')
+    list_display_links = ('name',)
     search_fields = ('name', 'description', )
 
 
