@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Geotrek 2.38\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-12 14:31+0000\n"
-"PO-Revision-Date: 2020-10-13 15:49+0000\n"
+"PO-Revision-Date: 2020-10-15 12:19+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/"
 "geotrek-admin/doc-installation/fr/>\n"
@@ -22,7 +22,7 @@ msgstr ""
 
 #: ../../installation.rst:3
 msgid "INSTALLATION"
-msgstr ""
+msgstr "INSTALLATION"
 
 #: ../../installation.rst:5
 msgid ""
@@ -33,10 +33,15 @@ msgid ""
 "instance, please follow :ref:`the dedicated procedure <development-"
 "section>`."
 msgstr ""
+"Ces instructions sont adaptées pour installer facilement Geotrek-admin sur "
+"un serveur dédié Ubuntu Bionic 18.04 LTS en production. Pour d'autres "
+"distributions, préférez la :ref:`méthode avec Docker <docker-section>`. Elle "
+"demande plus de compétences techniques. Enfin, pour une instance de "
+"développement, suivez :ref:`la procédure dédiée <development-section>`."
 
 #: ../../installation.rst:11
 msgid "Requirements"
-msgstr ""
+msgstr "Pré-requis"
 
 #: ../../installation.rst:13
 msgid "A first estimation of minimal required system resources are:"
