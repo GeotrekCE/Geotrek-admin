@@ -34,10 +34,11 @@ You can set up automatic synchronization by creating a file ``/etc/crond.d/geotr
 
 ::
 
-    0 3 * * * root geotrek sync_rando /opt/geotrek-admin/var/data
+    0 3 * * * root /usr/sbin/geotrek sync_rando /opt/geotrek-admin/var/data
 
 This example will automatically synchronize data a 3 am every day.
 
+Note: it is required to give the full path to the geotrek command since cron set the PATH only to `bin:/usr/bin`.
 
 Synchronization options
 -----------------------
