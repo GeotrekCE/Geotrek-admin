@@ -39,7 +39,7 @@ class ReportJsonList(mapentity_views.MapEntityJsonList, ReportList):
 class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
     columns = [
         'id', 'email', 'activity', 'comment', 'category',
-        'problem_magnitude', 'status',
+        'problem_magnitude', 'status', 'related_trek',
         'date_insert', 'date_update',
     ]
 

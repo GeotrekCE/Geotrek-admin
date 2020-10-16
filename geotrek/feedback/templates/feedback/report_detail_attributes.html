@@ -30,6 +30,10 @@
             <th>{{ report|verbose:"status" }}</th>
             <td>{{ report.status }}</td>
         </tr>
+        <tr>
+            <th>{{ report|verbose:"related_trek" }}</th>
+            <td>{{ report.related_trek }}</td>
+        </tr>
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 {% endblock attributes %}

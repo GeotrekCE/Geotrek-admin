@@ -3,8 +3,6 @@ import logging
 
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -12,6 +10,7 @@ from geotrek.common.mixins import PicturesMixin
 from mapentity.models import MapEntityMixin
 
 from geotrek.common.mixins import TimeStampedModelMixin
+from geotrek.trekking.models import Trek
 
 from .helpers import send_report_managers, post_report_to_suricate
 
@@ -60,16 +59,11 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
                              default=None,
                              verbose_name=_("Location"),
                              srid=settings.SRID)
-    context_content_type = models.ForeignKey(ContentType,
-                                             on_delete=models.CASCADE,
-                                             null=True,
-                                             blank=True,
-                                             editable=False)
-    context_object_id = models.PositiveIntegerField(null=True,
-                                                    blank=True,
-                                                    editable=False)
-    context_object = GenericForeignKey('context_content_type',
-                                       'context_object_id')
+    related_trek = models.ForeignKey(Trek,
+                                     null=True,
+                                     blank=True,
+                                     on_delete=models.CASCADE,
+                                     verbose_name=_('Related trek'))
 
     class Meta:
         verbose_name = _("Report")
@@ -87,6 +81,17 @@ class Report(MapEntityMixin, PicturesMixin, TimeStampedModelMixin):
                                                                  self.get_detail_url(),
                                                                  self,
                                                                  self)
+
+    @property
+    def full_url(self):
+        try:
+            return '{}{}'.format(
+                settings.ALLOWED_HOSTS[0],
+                self.get_detail_url()
+            )
+        except KeyError:
+            # Do not display url if there is no ALLOWED_HOSTS
+            return ""
 
     @classmethod
     def get_create_label(cls):
