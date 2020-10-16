@@ -1,0 +1,18 @@
+{% extends "admin/base_site.html" %}
+{% block extrahead %}
+    <style>
+        .pictogram_png, .pictogram_jpg, .pictogram_jpeg, .pictogram_svg {
+            background-image: linear-gradient(45deg, #808080 25%, transparent 25%), linear-gradient(-45deg, #808080 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #808080 75%), linear-gradient(-45deg, transparent 75%, #808080 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+        .pictogram_png, .pictogram_jpg, .pictogram_jpeg {
+            max-width: 200px;
+            max-height: 200px;
+        }
+        .pictogram_svg {
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+{% endblock %}

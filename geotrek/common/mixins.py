@@ -380,7 +380,10 @@ class PictogramMixin(models.Model):
         abstract = True
 
     def pictogram_img(self):
-        return mark_safe('<img src="%s" />' % (self.pictogram.url if self.pictogram else ""))
+        return mark_safe('<img src="%s" class="pictogram_%s"/>' % (self.pictogram.url,
+                                                                   os.path.splitext(self.pictogram.name)[1][1:])
+                         if self.pictogram else "No pictogram")
+
     pictogram_img.short_description = _("Pictogram")
 
     def get_pictogram_url(self):
