@@ -2,12 +2,13 @@
 CHANGELOG
 =========
 
-2.38.4.dev0
+2.38.4 (2020-10-16)
 -------------------
 
-**Bug fixes**
+** New Features **
 
--
+- Add relation between a Report and a Trek
+- Change Report mail template to link the related Report in admin
 
 **Doc improvements**
 
