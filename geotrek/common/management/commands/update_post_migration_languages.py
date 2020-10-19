@@ -38,9 +38,6 @@ class Command(BaseCommand):
                         Q(**{'name_{}'.format(lang): ''}) | Q(**{'name_{}'.format(lang): None})
                     ).update(**{'name_{}'.format(lang): _('Is in the midst of the park')})
                     LabelTrek.objects.filter(
-                        Q(**{'description_{}'.format(lang): ''}) | Q(**{'description_{}'.format(lang): None})
-                    ).update(**{'description_{}'.format(lang): _('This hike is in the core of the national park')})
-                    LabelTrek.objects.filter(
                         Q(**{'advice_{}'.format(lang): ''}) | Q(**{'advice_{}'.format(lang): None})
                     ).update(**{'advice_{}'.format(lang): _('The national park is an unrestricted natural area but '
                                                             'subjected to regulations which must be known '

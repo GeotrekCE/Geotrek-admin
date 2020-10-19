@@ -73,7 +73,6 @@ class LabelTrekFactory(factory.DjangoModelFactory):
 
     name = "Label"
     pictogram = get_dummy_uploaded_image('label.png')
-    description = "Description label"
     advice = "Advice label"
     filter_rando = True
 
