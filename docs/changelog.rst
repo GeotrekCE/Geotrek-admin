@@ -13,15 +13,22 @@ CHANGELOG
 2.38.4 (2020-10-16)
 -------------------
 
-** New Features **
+**New Features**
 
 - Add relation between a Report and a Trek
 - Change Report mail template to link the related Report in admin
+
+**Minor Changes**
+
+- Handle Z coordinates on GPX files
+- Force size pictograms in admin
 
 **Doc improvements**
 
 - Add info about what's new in 2.33
 - Change commands and so according to 2.33 [camillemonchicourt]
+- Fix doc about spatial extent setting
+
 
 2.38.3 (2020-10-05)
 -------------------
