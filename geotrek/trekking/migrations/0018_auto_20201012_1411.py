@@ -28,6 +28,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='trek',
             name='labels',
-            field=models.ManyToManyField(blank=True, related_name='labels', to='trekking.LabelTrek', verbose_name='Label'),
+            field=models.ManyToManyField(blank=True, related_name='labels', to='trekking.LabelTrek', verbose_name='Labels'),
         ),
     ]

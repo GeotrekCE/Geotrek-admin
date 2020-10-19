@@ -659,3 +659,6 @@ msgstr ""
 
 msgid "Description of the label"
 msgstr ""
+
+msgid "Labels"
+msgstr ""

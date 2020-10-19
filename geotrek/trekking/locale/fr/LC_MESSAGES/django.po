@@ -349,6 +349,9 @@ msgstr "Lien web"
 msgid "Label"
 msgstr "Label"
 
+msgid "Labels"
+msgstr "Étiquettes""
+
 msgid "Web link category"
 msgstr "Lien web"
 
