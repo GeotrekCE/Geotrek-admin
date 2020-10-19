@@ -612,7 +612,7 @@ class LabelTrek(PictogramMixin):
 
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     advice = models.TextField(verbose_name=_("Advices"), blank=True,
-                              help_text=_("Advice linked with the label"), default='')
+                              help_text=_("Advice linked to the label"), default='')
     filter_rando = models.BooleanField(verbose_name=_("Filter rando"), help_text=_("Show filters portal"),
                                        default=False)
 

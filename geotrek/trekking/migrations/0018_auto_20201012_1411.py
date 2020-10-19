@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('pictogram', models.FileField(max_length=512, null=True, upload_to='upload', verbose_name='Pictogram')),
                 ('name', models.CharField(max_length=128, verbose_name='Name')),
-                ('advice', models.TextField(default='', blank=True, help_text='Advice linked with the label', verbose_name='Advices')),
+                ('advice', models.TextField(default='', blank=True, help_text='Advice linked to the label', verbose_name='Advices')),
                 ('filter_rando', models.BooleanField(default=False, help_text='Show filters portal', verbose_name='Filter rando'))
             ],
             options={

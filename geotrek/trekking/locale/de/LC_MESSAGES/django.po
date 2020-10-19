@@ -654,7 +654,7 @@ msgstr ""
 msgid "Trekking Labels"
 msgstr ""
 
-msgid "Advice linked with the label"
+msgid "Advice linked to the label"
 msgstr ""
 
 msgid "Description of the label"

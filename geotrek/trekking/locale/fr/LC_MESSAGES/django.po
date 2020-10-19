@@ -657,8 +657,8 @@ msgstr "Étiquette de randonnée"
 msgid "Trekking Labels"
 msgstr "Étiquettes de randonnée"
 
-msgid "Advice linked with the label"
-msgstr "Conseils liés à l'étiquette"
+msgid "Advice linked to the label"
+msgstr "Recommandations liés à l'étiquette"
 
 msgid "Description of the label"
 msgstr "Description de l'étiquette"
