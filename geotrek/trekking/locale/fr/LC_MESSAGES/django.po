@@ -350,7 +350,7 @@ msgid "Label"
 msgstr "Label"
 
 msgid "Labels"
-msgstr "Étiquettes""
+msgstr "Étiquettes"
 
 msgid "Web link category"
 msgstr "Lien web"
