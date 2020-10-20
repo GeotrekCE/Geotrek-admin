@@ -192,10 +192,18 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
         structure = request.GET.get('structure', None)
         if structure is not None:
             qs = qs.filter(structure__pk=structure)
-        accessibilities = request.GET.get('accessibilities', None)
+        accessibilities = request.GET.get('accessibility', None)
         if accessibilities is not None:
             list_accessibilities = [int(a) for a in accessibilities.split(',')]
             qs = qs.filter(accessibilities__in=list_accessibilities)
+        themes = request.GET.get('theme', None)
+        if themes is not None:
+            list_themes = [int(t) for t in themes.split(',')]
+            qs = qs.filter(themes__in=list_themes)
+        portals = request.GET.get('portal', None)
+        if portals is not None:
+            list_portals = [int(p) for p in portals.split(',')]
+            qs = qs.filter(portal__in=list_portals)
         return qs
 
     def get_schema_fields(self, view):
@@ -255,11 +263,21 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
             example=4, type='integer'
         )
         field_accessibilities = Field(
-            name='accessibilities', required=False,
-            description=_('Pk a the accessibilities to filter by, separated by commas'),
+            name='accessibility', required=False,
+            description=_('Pk of the accessibilities to filter by, separated by commas'),
             example='1,2', type='string'
+        )
+        field_themes = Field(
+            name='theme', required=False,
+            description=_('Pk of the themes to filter by, separated by commas'),
+            example='9,14', type='string'
+        )
+        field_portals = Field(
+            name='portal', required=False,
+            description=_('Pk of the portals to filter by, separated by commas'),
+            example='3,7', type='string'
         )
         return field_duration_min, field_duration_max, field_length_min,\
             field_length_max, field_difficulty_min, field_difficulty_max, \
             field_ascent_min, field_ascent_max, field_city, field_district, \
-            field_structure, field_accessibilities
+            field_structure, field_accessibilities, field_themes, field_portals
