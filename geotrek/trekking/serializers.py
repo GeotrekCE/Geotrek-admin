@@ -103,6 +103,12 @@ class WebLinkSerializer(TranslatedModelSerializer):
         fields = ('id', 'name', 'category', 'url')
 
 
+class LabelTrekSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+    class Meta:
+        model = trekking_models.LabelTrek
+        fields = ('id', 'pictogram', 'name', 'advice', 'filter_rando')
+
+
 class CloseTrekSerializer(TranslatedModelSerializer):
     category_id = rest_serializers.ReadOnlyField(source='prefixed_category_id')
 
@@ -157,6 +163,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     usages = PracticeSerializer(many=True)  # Rando v1 compat
     accessibilities = AccessibilitySerializer(many=True)
     web_links = WebLinkSerializer(many=True)
+    labels = LabelTrekSerializer(many=True)
     relationships = TrekRelationshipSerializer(many=True, source='published_relationships')
     treks = CloseTrekSerializer(many=True, source='published_treks')
     source = RecordSourceSerializer(many=True)
@@ -221,8 +228,8 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
         fields = ('id', 'departure', 'arrival', 'duration', 'duration_pretty',
                   'description', 'description_teaser', 'networks', 'advice',
                   'ambiance', 'difficulty', 'information_desks', 'themes',
-                  'practice', 'accessibilities', 'usages', 'access', 'route',
-                  'public_transport', 'advised_parking', 'web_links', 'is_park_centered',
+                  'labels', 'practice', 'accessibilities', 'usages', 'access', 'route',
+                  'public_transport', 'advised_parking', 'web_links',
                   'disabled_infrastructure', 'parking_location', 'relationships',
                   'points_reference', 'gpx', 'kml', 'source', 'portal',
                   'type2', 'category', 'structure', 'treks', 'reservation_id', 'reservation_system',

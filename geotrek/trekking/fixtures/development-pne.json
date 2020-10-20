@@ -3,12 +3,12 @@
     "pk": 9000,
     "model": "trekking.trek",
     "fields": {
-        "is_park_centered": false,
         "name_fr": "name 0",
         "description_teaser_fr": null,
         "ambiance": "<p>ambiance 0</p>",
         "practice": null,
         "themes": [],
+        "labels": [],
         "access_en": "<p>access 0</p>",
         "arrival_en": "arrival 0",
         "departure_en": "departure 0",

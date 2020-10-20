@@ -28,7 +28,7 @@ from geotrek.zoning.models import District, City, RestrictedArea
 from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
                     WebLinkCreateFormPopup, ServiceForm)
-from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild
+from .models import LabelTrek, Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
                           CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer,
                           TrekGeojsonSerializer, POIGeojsonSerializer, ServiceGeojsonSerializer)
@@ -73,7 +73,7 @@ class TrekFormatList(MapEntityFormat, TrekList):
         'duration_pretty', 'description', 'description_teaser',
         'networks', 'advice', 'ambiance', 'difficulty', 'information_desks',
         'themes', 'practice', 'accessibilities', 'access', 'route',
-        'public_transport', 'advised_parking', 'web_links', 'is_park_centered',
+        'public_transport', 'advised_parking', 'web_links', 'labels',
         'disabled_infrastructure', 'parking_location', 'points_reference',
         'related', 'children', 'parents', 'pois', 'review', 'published',
         'publication_date', 'date_insert', 'date_update',
@@ -126,6 +126,7 @@ class TrekDetail(MapEntityDetail):
     def get_context_data(self, *args, **kwargs):
         context = super(TrekDetail, self).get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
+        context['labels'] = LabelTrek.objects.all()
         return context
 
 

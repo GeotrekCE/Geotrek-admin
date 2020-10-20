@@ -629,3 +629,18 @@ msgstr "%s min"
 
 msgid "Geographical location"
 msgstr "Posizione geografica"
+
+msgid "Trekking Label"
+msgstr "Etichetta de Itinerario"
+
+msgid "Trekking Labels"
+msgstr "Etichette de Itinerario"
+
+msgid "Advice linked to the label"
+msgstr ""
+
+msgid "Description of the label"
+msgstr ""
+
+msgid "Labels"
+msgstr "Etichette"

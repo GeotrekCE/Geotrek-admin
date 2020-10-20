@@ -30,7 +30,7 @@ DETAIL_TREK_GEOJSON_STRUCTURE = sorted([
 TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'name', 'slug', 'accessibilities', 'description_teaser', 'cities', 'districts', 'description', 'departure', 'arrival',
     'access', 'advised_parking', 'advice', 'difficulty', 'length', 'ascent', 'descent', 'route', 'duration',
-    'is_park_centered', 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'pictures',
+    'labels', 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'pictures',
     'information_desks', 'departure_city', 'arrival_city', 'parking_location', 'profile', 'points_reference',
     'ambiance', 'children',
 ])

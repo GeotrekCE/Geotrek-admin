@@ -27,3 +27,9 @@ msgstr "Wandelen"
 
 msgid "Excluded POIs"
 msgstr "Uitgesloten POI"
+
+msgid "Trekking Label"
+msgstr ""
+
+msgid "Trekking Labels"
+msgstr ""

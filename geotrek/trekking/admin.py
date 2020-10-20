@@ -8,7 +8,7 @@ from django.contrib import admin
 from geotrek.common.admin import MergeActionMixin
 from .models import (
     POIType, TrekNetwork, Practice, Accessibility, Route, DifficultyLevel,
-    WebLink, WebLinkCategory, Trek, ServiceType,
+    WebLink, WebLinkCategory, Trek, ServiceType, LabelTrek
 )
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
@@ -108,6 +108,12 @@ class DifficultyLevelAdmin(MergeActionMixin, TranslationAdmin):
         return super(DifficultyLevelAdmin, self).response_change(request, obj)
 
 
+class LabelTrekAdmin(TranslationAdmin):
+    list_display = ('pictogram_img', 'name', 'filter_rando')
+    list_display_links = ('name',)
+    search_fields = ('name', )
+
+
 class WebLinkAdmin(MergeActionMixin, TranslationAdmin):
     list_display = ('name', 'url', )
     search_fields = ('name', 'url', )
@@ -141,6 +147,7 @@ trek_admin_to_register = [
     (WebLink, WebLinkAdmin),
     (WebLinkCategory, WebLinkCategoryAdmin),
     (ServiceType, ServiceTypeAdmin),
+    (LabelTrek, LabelTrekAdmin),
 ]
 
 for model, model_admin in trek_admin_to_register:

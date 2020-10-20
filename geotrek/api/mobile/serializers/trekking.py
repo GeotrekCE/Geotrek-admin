@@ -136,7 +136,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             fields = (
                 'id', 'pk', 'name', 'slug', 'accessibilities', 'description_teaser', 'cities', 'profile',
                 'description', 'departure', 'arrival', 'duration', 'access', 'advised_parking', 'advice',
-                'difficulty', 'length', 'ascent', 'descent', 'route', 'is_park_centered', 'parking_location',
+                'difficulty', 'length', 'ascent', 'descent', 'route', 'labels', 'parking_location',
                 'min_elevation', 'max_elevation', 'themes', 'networks', 'practice', 'difficulty',
                 'geometry', 'pictures', 'information_desks', 'cities', 'departure_city', 'arrival_city',
                 'points_reference', 'districts', 'ambiance', 'children',

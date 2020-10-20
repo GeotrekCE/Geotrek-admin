@@ -39,7 +39,7 @@ from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import SignageFactory
 from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.models import POI, Trek, Service, OrderedTrekChild
-from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
+from geotrek.trekking.factories import (LabelTrekFactory, POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
                                         TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
                                         TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
                                         TrekWithServicesFactory, TrekWithInfrastructuresFactory,
@@ -216,7 +216,7 @@ class TrekViewsTest(CommonTest):
             'files': [],
             'gpx': '/api/en/treks/{}/trek.gpx'.format(self.obj.pk),
             'information_desks': [],
-            'is_park_centered': False,
+            'labels': [],
             'kml': '/api/en/treks/{}/trek.kml'.format(self.obj.pk),
             'length': 141.42135623731,
             'map_image_url': '/image/trek-{}-en.png'.format(self.obj.pk),
@@ -307,7 +307,7 @@ class TrekViewsTest(CommonTest):
             'disabled_infrastructure_fr': '',
             'disabled_infrastructure_en': '',
             'duration': '0',
-            'is_park_centered': '',
+            'labels': [],
             'advised_parking': 'Very close',
             'parking_location': 'POINT (1.0 1.0)',
             'public_transport': 'huh',
@@ -722,6 +722,9 @@ class TrekJSONSetUp(TrekkingManagerTest):
         self.weblink = WebLinkFactory.create()
         self.trek.web_links.add(self.weblink)
 
+        self.label = LabelTrekFactory.create()
+        self.trek.labels.add(self.label)
+
         self.source = RecordSourceFactory.create()
         self.trek.source.add(self.source)
 
@@ -862,6 +865,14 @@ class TrekJSONDetailTest(TrekJSONSetUp):
                              {"id": self.theme.id,
                               "pictogram": os.path.join(settings.MEDIA_URL, self.theme.pictogram.name),
                               "label": self.theme.label})
+
+    def test_labels(self):
+        self.assertDictEqual(self.result['labels'][0],
+                             {"id": self.label.id,
+                              "pictogram": os.path.join(settings.MEDIA_URL, self.label.pictogram.name),
+                              "name": self.label.name,
+                              "advice": self.label.advice,
+                              "filter_rando": self.label.filter_rando})
 
     def test_weblinks(self):
         self.assertDictEqual(self.result['web_links'][0],

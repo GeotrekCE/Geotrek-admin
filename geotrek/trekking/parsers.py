@@ -32,7 +32,6 @@ class TrekParser(DurationParserMixin, AttachmentParserMixin, ShapeParser):
     eid = 'name'
     constant_fields = {
         'published': True,
-        'is_park_centered': False,
         'deleted': False,
     }
     natural_keys = {

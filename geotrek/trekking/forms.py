@@ -109,7 +109,6 @@ class TrekForm(BaseTrekForm):
                     'name',
                     'review',
                     'published',
-                    'is_park_centered',
                     'departure',
                     'arrival',
                     'duration',
@@ -131,6 +130,7 @@ class TrekForm(BaseTrekForm):
                     'public_transport',
                     'advice',
                     'themes',
+                    'labels',
                     'networks',
                     'accessibilities',
                     'web_links',
@@ -251,7 +251,7 @@ class TrekForm(BaseTrekForm):
 
     class Meta(BaseTrekForm.Meta):
         fields = BaseTrekForm.Meta.fields + \
-            ['structure', 'name', 'review', 'published', 'is_park_centered', 'departure',
+            ['structure', 'name', 'review', 'published', 'labels', 'departure',
              'arrival', 'duration', 'difficulty', 'route', 'ambiance',
              'access', 'description_teaser', 'description', 'points_reference',
              'disabled_infrastructure', 'advised_parking', 'parking_location',

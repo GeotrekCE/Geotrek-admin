@@ -37,7 +37,6 @@ describe('Create trek', () => {
     cy.get("a[href='#name_fr']").click()
     cy.get("input[name='name_fr']").type('Randonnée numéro 1')
     cy.get("input[id='id_review']").click()
-    cy.get("input[id='id_is_park_centered']").click()
     cy.get("input[id='id_departure_en']").type('Departure')
     cy.get("a[href='#departure_fr']").click()
     cy.get("input[id='id_departure_fr']").type('Départ')
