@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.38.5-dev0
+2.38.5 (2020-10-20)
 -------------------
 
-**Bug fixes**
+**New Features**
 
--
+- Create new label for trekking, move inside_park to this label
 
 
 2.38.4 (2020-10-16)
