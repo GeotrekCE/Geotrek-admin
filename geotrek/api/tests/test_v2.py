@@ -38,7 +38,7 @@ TREK_DETAIL_JSON_STRUCTURE = sorted([
     'arrival', 'ascent', 'create_datetime', 'departure', 'descent', 'description', 'description_teaser',
     'difficulty', 'duration', 'id', 'length_2d', 'length_3d', 'max_elevation', 'min_elevation',
     'name', 'networks', 'themes', 'update_datetime', 'geometry', 'pictures', 'practice', 'external_id', 'second_external_id',
-    'published'
+    'published', 'accessibilities'
 ])
 
 TOUR_DETAIL_JSON_STRUCTURE = sorted(TREK_DETAIL_JSON_STRUCTURE + ['steps'])

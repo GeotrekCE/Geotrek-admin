@@ -8,12 +8,14 @@ from .authent import StructureViewSet  # noqa
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from .core import PathViewSet  # noqa
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
-    from .trekking import TrekViewSet, TourViewSet, POIViewSet  # noqa
+    from .trekking import TrekViewSet, TourViewSet, POIViewSet, ThemeViewSet, AccessibilityViewSet  # noqa
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     from .sensitivity import SensitiveAreaViewSet  # noqa
     from .sensitivity import SportPracticeViewSet  # noqa
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     from .tourism import TouristicContentViewSet  # noqa
+if 'geotrek.zoning' in settings.INSTALLED_APPS:
+    from .zoning import CityViewSet, DistrictViewSet  # noqa
 
 
 class SwaggerSchemaView(APIView):

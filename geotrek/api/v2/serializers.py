@@ -21,6 +21,8 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
     from geotrek.trekking import models as trekking_models
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     from geotrek.sensitivity import models as sensitivity_models
+if 'geotrek.zoning' in settings.INSTALLED_APPS:
+    from geotrek.zoning import models as zoning_models
 
 
 class BaseGeoJSONSerializer(geo_serializers.GeoFeatureModelSerializer):
@@ -81,14 +83,9 @@ def override_serializer(format_output, dimension, base_serializer_class):
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     class TrekThemeSerializer(serializers.ModelSerializer):
-        label = serializers.SerializerMethodField(read_only=True)
-
-        def get_label(self, obj):
-            return get_translation_or_dict('label', self, obj)
-
         class Meta:
             model = trekking_models.Theme
-            fields = ('id', 'label', 'pictogram')
+            fields = ('id',)
 
     class TrekNetworkSerializer(serializers.ModelSerializer):
         label = serializers.SerializerMethodField(read_only=True)
@@ -120,7 +117,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.Practice
             fields = ('id', 'name', 'order', 'pictogram',)
 
-    class DifficultySerializer(serializers.ModelSerializer):
+    class TrekDifficultySerializer(serializers.ModelSerializer):
         label = serializers.SerializerMethodField(read_only=True)
 
         def get_label(self, obj):
@@ -129,6 +126,11 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         class Meta:
             model = trekking_models.DifficultyLevel
             fields = ('id', 'label', 'cirkwi_level', 'pictogram')
+
+    class TrekAccessibilitySerializer(serializers.ModelSerializer):
+        class Meta:
+            model = trekking_models.Accessibility
+            fields = ('id',)
 
 
 class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -191,7 +193,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         name = serializers.SerializerMethodField(read_only=True)
         description = serializers.SerializerMethodField(read_only=True)
         description_teaser = serializers.SerializerMethodField(read_only=True)
-        difficulty = DifficultySerializer(read_only=True)
+        difficulty = TrekDifficultySerializer(read_only=True)
         departure = serializers.SerializerMethodField(read_only=True)
         arrival = serializers.SerializerMethodField(read_only=True)
         themes = TrekThemeSerializer(many=True, read_only=True)
@@ -238,16 +240,17 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'id', 'url', 'name', 'description_teaser',
                 'description', 'departure', 'arrival', 'duration',
                 'difficulty', 'length_2d', 'length_3d', 'ascent', 'descent',
-                'min_elevation', 'max_elevation', 'themes', 'networks', 'practice',
-                'external_id', 'second_external_id', 'published',
-                'geometry', 'update_datetime', 'create_datetime'
+                'min_elevation', 'max_elevation', 'themes',
+                'networks', 'practice', 'external_id', 'second_external_id',
+                'published', 'geometry', 'update_datetime', 'create_datetime'
             )
 
     class TrekDetailSerializer(TrekListSerializer):
         pictures = AttachmentSerializer(many=True, )
+        accessibilities = TrekAccessibilitySerializer(many=True, read_only=True)
 
         class Meta(TrekListSerializer.Meta):
-            fields = tuple((field for field in TrekListSerializer.Meta.fields if field != 'url')) + ('pictures',)
+            fields = tuple((field for field in TrekListSerializer.Meta.fields if field != 'url')) + ('pictures', 'accessibilities')
 
     class TourListSerializer(TrekListSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:tour-detail')
@@ -330,6 +333,26 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         class Meta(POIListSerializer.Meta):
             fields = tuple((field for field in POIListSerializer.Meta.fields if field != 'url')) + ('pictures',)
 
+    class ThemeSerializer(serializers.ModelSerializer):
+        label = serializers.SerializerMethodField(read_only=True)
+
+        def get_label(self, obj):
+            return get_translation_or_dict('label', self, obj)
+
+        class Meta:
+            model = trekking_models.Theme
+            fields = ('id', 'label', 'pictogram')
+
+    class AccessibilitySerializer(serializers.ModelSerializer):
+        name = serializers.SerializerMethodField(read_only=True)
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        class Meta:
+            model = trekking_models.Accessibility
+            fields = ('id', 'name', 'pictogram')
+
 
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     class SensitiveAreaListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -403,6 +426,21 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
             fields = (
                 'id', 'name'
             )
+
+if 'geotrek.zoning' in settings.INSTALLED_APPS:
+    class CitySerializer(serializers.ModelSerializer):
+        geom = geo_serializers.GeometryField(read_only=True, source="geom2d_transformed", precision=7)
+
+        class Meta:
+            model = zoning_models.City
+            fields = ('code', 'name', 'published', 'geom')
+
+    class DistrictsSerializer(serializers.ModelSerializer):
+        geom = geo_serializers.GeometryField(read_only=True, source="geom2d_transformed", precision=7)
+
+        class Meta:
+            model = zoning_models.District
+            fields = ('id', 'name', 'published', 'geom')
 
 
 class StructureSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

@@ -21,7 +21,7 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
     serializer_detail_class = api_serializers.TrekDetailSerializer
     queryset = trekking_models.Trek.objects.existing() \
         .select_related('topo_object', 'difficulty', 'practice') \
-        .prefetch_related('topo_object__aggregations', 'themes', 'networks', 'attachments') \
+        .prefetch_related('topo_object__aggregations', 'themes', 'accessibilities', 'networks', 'attachments') \
         .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID),
                   geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),
                   length_2d_m=Length('geom'),
@@ -152,3 +152,15 @@ class POIViewSet(api_viewsets.GeotrekViewset):
             many=True,
             context={'request': request}).data
         return response.Response(data)
+
+
+class ThemeViewSet(api_viewsets.GeotrekViewset):
+    serializer_class = api_serializers.ThemeSerializer
+    serializer_detail_class = api_serializers.ThemeSerializer
+    queryset = trekking_models.Theme.objects.all()
+
+
+class AccessibilityViewSet(api_viewsets.GeotrekViewset):
+    serializer_class = api_serializers.AccessibilitySerializer
+    serializer_detail_class = api_serializers.AccessibilitySerializer
+    queryset = trekking_models.Accessibility.objects.all()
