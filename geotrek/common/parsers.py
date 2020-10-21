@@ -642,6 +642,10 @@ class AttachmentParserMixin(object):
                     if author != attachment.author or legend != attachment.legend:
                         attachment.author = author
                         attachment.legend = legend
+                        if len(legend) > 128:
+                            attachment.legend = attachment.legend[:127]
+                            if ' ' in attachment.legend:
+                                attachment.legend = ' '.join(attachment.legend.split(' ')[:-1])
                         attachment.save()
                         updated = True
                     break
@@ -655,12 +659,11 @@ class AttachmentParserMixin(object):
             attachment.filetype = self.filetype
             attachment.creator = self.creator
             attachment.author = author
+            attachment.legend = legend
             if len(legend) > 128:
                 attachment.legend = attachment.legend[:127]
                 if ' ' in attachment.legend:
                     attachment.legend = ' '.join(attachment.legend.split(' ')[:-1])
-            else:
-                attachment.legend = legend
 
             if (parsed_url.scheme in ('http', 'https') and self.download_attachments) or parsed_url.scheme == 'ftp':
                 content = self.download_attachment(url)
