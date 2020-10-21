@@ -132,6 +132,26 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.Accessibility
             fields = ('id',)
 
+    class TrekLabelSerializer(serializers.ModelSerializer):
+        name = serializers.SerializerMethodField(read_only=True)
+        advice = serializers.SerializerMethodField(read_only=True)
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        def get_advice(self, obj):
+            return get_translation_or_dict('advice', self, obj)
+
+        class Meta:
+            model = trekking_models.LabelTrek
+            fields = ('id', 'pictogram', 'name', 'advice', 'filter_rando')
+
+
+class TrekReservationSystemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = common_models.ReservationSystem
+        fields = ('id', 'name')
+
 
 class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     url = serializers.FileField(source='attachment_file')
@@ -248,9 +268,52 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
     class TrekDetailSerializer(TrekListSerializer):
         pictures = AttachmentSerializer(many=True, )
         accessibilities = TrekAccessibilitySerializer(many=True, read_only=True)
+        labels = TrekLabelSerializer(many=True)
+        gpx = serializers.SerializerMethodField('get_gpx_url')
+        kml = serializers.SerializerMethodField('get_kml_url')
+        advice = serializers.SerializerMethodField(read_only=True)
+        advised_parking = serializers.SerializerMethodField(read_only=True)
+        parking_location = serializers.SerializerMethodField(read_only=True)
+        children = serializers.ReadOnlyField(source='children_id')
+        parents = serializers.ReadOnlyField(source='parents_id')
+        public_transport = serializers.SerializerMethodField(read_only=True)
+        elevation_area_url = serializers.SerializerMethodField()
+        elevation_svg_url = serializers.SerializerMethodField()
+        altimetric_profile = serializers.SerializerMethodField('get_altimetric_profile_url')
+        reservation_system = TrekReservationSystemSerializer(many=False, read_only=True)
+
+        def get_gpx_url(self, obj):
+            return reverse('trekking:trek_gpx_detail', kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
+
+        def get_kml_url(self, obj):
+            return reverse('trekking:trek_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
+
+        def get_advice(self, obj):
+            return get_translation_or_dict('advice', self, obj)
+
+        def get_advised_parking(self, obj):
+            return get_translation_or_dict('advised_parking', self, obj)
+
+        def get_parking_location(self, obj):
+            if not obj.parking_location:
+                return None
+            point = obj.parking_location.transform(settings.API_SRID, clone=True)
+            return [round(point.x, 7), round(point.y, 7)]
+
+        def get_public_transport(self, obj):
+            return get_translation_or_dict('public_transport', self, obj)
+
+        def get_elevation_area_url(self, obj):
+            return reverse('trekking:trek_elevation_area', kwargs={'lang': get_language(), 'pk': obj.pk})
+
+        def get_elevation_svg_url(self, obj):
+            return reverse('trekking:trek_profile_svg', kwargs={'lang': get_language(), 'pk': obj.pk})
+
+        def get_altimetric_profile_url(self, obj):
+            return reverse('trekking:trek_profile', kwargs={'lang': get_language(), 'pk': obj.pk})
 
         class Meta(TrekListSerializer.Meta):
-            fields = tuple((field for field in TrekListSerializer.Meta.fields if field != 'url')) + ('pictures', 'accessibilities')
+            fields = tuple((field for field in TrekListSerializer.Meta.fields if field != 'url')) + ('pictures', 'accessibilities', 'labels', 'advice', 'advised_parking', 'parking_location', 'gpx', 'kml', 'children', 'parents', 'public_transport', 'elevation_area_url', 'elevation_svg_url', 'altimetric_profile', 'reservation_system')
 
     class TourListSerializer(TrekListSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:tour-detail')
