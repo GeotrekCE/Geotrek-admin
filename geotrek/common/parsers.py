@@ -656,7 +656,9 @@ class AttachmentParserMixin(object):
             attachment.creator = self.creator
             attachment.author = author
             if len(legend) > 128:
-                attachment.legend = ' '.join(attachment.legend[:127].split(' ')[:-1])
+                attachment.legend = attachment.legend[:127]
+                if ' ' in attachment.legend:
+                    attachment.legend = ' '.join(attachment.legend.split(' ')[:-1])
             else:
                 attachment.legend = legend
 
