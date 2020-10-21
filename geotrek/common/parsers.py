@@ -3,6 +3,7 @@ import re
 import requests
 import logging
 from requests.auth import HTTPBasicAuth
+import textwrap
 import xlrd
 import xml.etree.ElementTree as ET
 from functools import reduce
@@ -641,11 +642,7 @@ class AttachmentParserMixin(object):
                     attachments_to_delete.remove(attachment)
                     if author != attachment.author or legend != attachment.legend:
                         attachment.author = author
-                        attachment.legend = legend
-                        if len(legend) > 128:
-                            attachment.legend = attachment.legend[:127]
-                            if ' ' in attachment.legend:
-                                attachment.legend = ' '.join(attachment.legend.split(' ')[:-1])
+                        attachment.legend = textwrap.shorten(legend, width=127)
                         attachment.save()
                         updated = True
                     break
@@ -659,11 +656,7 @@ class AttachmentParserMixin(object):
             attachment.filetype = self.filetype
             attachment.creator = self.creator
             attachment.author = author
-            attachment.legend = legend
-            if len(legend) > 128:
-                attachment.legend = attachment.legend[:127]
-                if ' ' in attachment.legend:
-                    attachment.legend = ' '.join(attachment.legend.split(' ')[:-1])
+            attachment.legend = textwrap.shorten(legend, width=127)
 
             if (parsed_url.scheme in ('http', 'https') and self.download_attachments) or parsed_url.scheme == 'ftp':
                 content = self.download_attachment(url)
