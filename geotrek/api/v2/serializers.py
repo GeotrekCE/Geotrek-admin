@@ -333,25 +333,33 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         class Meta(POIListSerializer.Meta):
             fields = tuple((field for field in POIListSerializer.Meta.fields if field != 'url')) + ('pictures',)
 
-    class ThemeSerializer(serializers.ModelSerializer):
+    class ThemeSerializer(TrekThemeSerializer):
         label = serializers.SerializerMethodField(read_only=True)
 
         def get_label(self, obj):
             return get_translation_or_dict('label', self, obj)
 
-        class Meta:
-            model = trekking_models.Theme
+        class Meta(TrekThemeSerializer.Meta):
             fields = ('id', 'label', 'pictogram')
 
-    class AccessibilitySerializer(serializers.ModelSerializer):
+    class AccessibilitySerializer(TrekAccessibilitySerializer):
         name = serializers.SerializerMethodField(read_only=True)
 
         def get_name(self, obj):
             return get_translation_or_dict('name', self, obj)
 
-        class Meta:
-            model = trekking_models.Accessibility
+        class Meta(TrekAccessibilitySerializer.Meta):
             fields = ('id', 'name', 'pictogram')
+
+    class RouteSerializer(serializers.ModelSerializer):
+        route = serializers.SerializerMethodField(read_only=True)
+
+        def get_route(self, obj):
+            return get_translation_or_dict('route', self, obj)
+
+        class Meta:
+            model = trekking_models.Route
+            fields = ('id', 'route', 'pictogram')
 
 
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
@@ -449,3 +457,25 @@ class StructureSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         fields = (
             'id', 'name'
         )
+
+
+class TargetPortalListSerializer(serializers.ModelSerializer):
+    title = serializers.SerializerMethodField(read_only=True)
+    description = serializers.SerializerMethodField(read_only=True)
+
+    def get_title(self, obj):
+        return get_translation_or_dict('title', self, obj)
+
+    def get_description(self, obj):
+        return get_translation_or_dict('description', self, obj)
+
+    class Meta:
+        model = common_models.TargetPortal
+        fields = (
+            'id', 'name', 'website', 'title', 'description'
+        )
+
+
+class TargetPortalDetailSerializer(TargetPortalListSerializer):
+    class Meta(TargetPortalListSerializer.Meta):
+        fields = tuple((field for field in TargetPortalListSerializer.Meta.fields if field != 'url')) + ('facebook_id', 'facebook_image_url')

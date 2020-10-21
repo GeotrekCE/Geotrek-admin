@@ -6,6 +6,7 @@ from geotrek.api.v2 import views as api_views
 
 router = routers.DefaultRouter()
 router.register('structure', api_views.StructureViewSet, basename='structure')
+router.register('portal', api_views.TargetPortalViewSet, basename='portal')
 if 'geotrek.core' in settings.INSTALLED_APPS:
     router.register('path', api_views.PathViewSet, basename='path')
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
@@ -14,6 +15,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
     router.register('tour', api_views.TourViewSet, basename='tour')
     router.register('theme', api_views.ThemeViewSet, basename='theme')
     router.register('accessibility', api_views.AccessibilityViewSet, basename='accessibility')
+    router.register('route', api_views.RouteViewSet, basename='route')
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     router.register('touristiccontent', api_views.TouristicContentViewSet, basename='touristiccontent')
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
