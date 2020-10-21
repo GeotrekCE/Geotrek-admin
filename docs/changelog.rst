@@ -25,6 +25,7 @@ CHANGELOG
 **Bug fixes**
 
 - Fix tooltip hidden on module bar (change layout mode to display flex)
+- Truncate attachment legend too long in AttachmentParserMixin
 
 **Doc improvements**
 
