@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db.models import F, Case, When
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic.detail import BaseDetailView
 from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityLayer, MapEntityList, MapEntityDetail,
                              MapEntityDelete, MapEntityViewSet, MapEntityFormat, LastModifiedMixin)
@@ -15,7 +16,7 @@ from geotrek.authent.decorators import same_structure_required
 from geotrek.common.views import PublicOrReadPermMixin
 from .filters import SensitiveAreaFilterSet
 from .forms import SensitiveAreaForm, RegulatorySensitiveAreaForm
-from .models import SensitiveArea, Species
+from .models import SensitiveArea, Species, SportPractice
 from .serializers import SensitiveAreaSerializer, SensitiveAreaGeojsonSerializer
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
@@ -180,4 +181,22 @@ class SensitiveAreaKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetai
         area = self.get_object()
         response = HttpResponse(area.kml(),
                                 content_type='application/vnd.google-earth.kml+xml')
+        return response
+
+class SensitiveAreaOpenAirDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
+    queryset = SensitiveArea.objects.existing()
+
+    def render_to_response(self, context):
+        area = self.get_object()
+        aerial_practice=SportPractice.objects.get(name='Aerien')
+        is_aerial = aerial_practice.species_set.filter(id=area.id).exists()
+        if is_aerial:
+            result = area.openair()
+            response = HttpResponse(result, content_type='application/octet-stream; charset=UTF-8')
+            response['Content-Disposition'] = 'inline; filename=sensitivearea_openair_' + str(area.id) + '.txt'
+            return response
+        else:
+            message = _('This is not an aerial area')
+            response = HttpResponse(message, content_type='text/plain; charset=UTF-8')
+
         return response
