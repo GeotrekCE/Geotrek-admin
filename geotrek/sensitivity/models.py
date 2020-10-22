@@ -15,6 +15,7 @@ from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins import (OptionalPictogramMixin, NoDeleteMixin, TimeStampedModelMixin, AddPropertyMixin)
 from geotrek.common.utils import intersecting, classproperty
 from geotrek.core.models import simplify_coords
+from pyopenair.factory import wkt2openair
 
 
 class SportPractice(models.Model):
@@ -176,6 +177,38 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
         line.style.linestyle.color = simplekml.Color.red  # Red
         line.style.linestyle.width = 4  # pixels
         return kml.kml()
+
+    def openair(self):
+        """Exports sensitivearea into OpenAir format"""
+        geom = self.geom
+        if geom.geom_type == 'Point':
+            geom = geom.buffer(self.species.radius or settings.SENSITIVITY_DEFAULT_RADIUS, 4)
+        if self.species.radius:
+            geometry = ()
+            for coords in geom.coords[0]:
+                coords += (self.species.radius, )
+                geometry += (coords, )
+            geom = GEOSGeometry(Polygon(geometry), srid=settings.SRID)
+        geom = geom.transform(4326, clone=True)  # KML uses WGS84
+        geom = geom.simplify(0.001, preserve_topology=True)
+        wkt = geom.wkt
+        openair = wkt2openair(wkt, self.species.name)
+        print('OPENAIR', openair)
+        return openair
+
+    @property
+    def wgs84_geom(self):
+        geom = self.geom
+        if geom.geom_type == 'Point':
+            geom = geom.buffer(self.species.radius or settings.SENSITIVITY_DEFAULT_RADIUS, 4)
+        if self.species.radius:
+            geometry = ()
+            for coords in geom.coords[0]:
+                coords += (self.species.radius, )
+                geometry += (coords, )
+            geom = GEOSGeometry(Polygon(geometry), srid=settings.SRID)
+        geom = geom.transform(4326, clone=True)  # KML uses WGS84
+        return geom
 
     def is_public(self):
         return self.published
