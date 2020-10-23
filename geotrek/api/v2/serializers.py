@@ -286,11 +286,11 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
     class InformationDeskSerializer(serializers.ModelSerializer):
         type = InformationDeskTypeSerializer()
-        title = serializers.SerializerMethodField(read_only=True)
+        name = serializers.SerializerMethodField(read_only=True)
         description = serializers.SerializerMethodField(read_only=True)
 
-        def get_title(self, obj):
-            return get_translation_or_dict('title', self, obj)
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
 
         def get_description(self, obj):
             return get_translation_or_dict('description', self, obj)
@@ -422,11 +422,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         portal = TargetPortalListSerializer(many=True)
         source = RecordSourceSerializer(many=True)
         relationships = TrekRelationshipSerializer(many=True, source='published_relationships')
-
-        def __init__(self, instance=None, *args, **kwargs):
-            super(TrekDetailSerializer, self).__init__(instance, *args, **kwargs)
-            if 'geotrek.tourism' in settings.INSTALLED_APPS:
-                self.fields['information_desks'] = InformationDeskSerializer(many=True)
+        information_desks = InformationDeskSerializer(many=True)
 
         def get_gpx_url(self, obj):
             return build_url(self, reverse('trekking:trek_gpx_detail', kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug}))
