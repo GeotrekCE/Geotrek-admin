@@ -7,8 +7,9 @@ from rest_framework import serializers
 from rest_framework.relations import HyperlinkedIdentityField
 from rest_framework_gis import serializers as geo_serializers
 
-from geotrek.api.v2.functions import Transform, Length, Length3D
-from geotrek.api.v2.utils import get_translation_or_dict
+from geotrek.api.v2.functions import Length, Length3D, Transform
+from geotrek.api.v2.utils import build_url, get_translation_or_dict
+from geotrek.authent import models as authent_models
 from geotrek.common import models as common_models
 from geotrek.core.models import simplify_coords
 from geotrek.authent import models as authent_models
@@ -223,6 +224,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         second_external_id = serializers.CharField(source='eid2')
         create_datetime = serializers.SerializerMethodField(read_only=True)
         update_datetime = serializers.SerializerMethodField(read_only=True)
+        thumbnail = serializers.SerializerMethodField(read_only=True, source='pictures')
 
         def get_update_datetime(self, obj):
             return obj.topo_object.date_update
@@ -254,13 +256,23 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         def get_length_3d(self, obj):
             return round(obj.length_3d_m, 1)
 
+        def get_thumbnail(self, obj):
+            for picture in obj.pictures:
+                return {
+                    'author': picture.author,
+                    'title': picture.title,
+                    'legend': picture.legend,
+                    'url': build_url(self, picture.attachment_file.url),
+                }
+            return {}
+
         class Meta:
             model = trekking_models.Trek
             fields = (
                 'id', 'url', 'name', 'description_teaser',
                 'description', 'departure', 'arrival', 'duration',
                 'difficulty', 'length_2d', 'length_3d', 'ascent', 'descent',
-                'min_elevation', 'max_elevation', 'themes',
+                'min_elevation', 'max_elevation', 'themes', 'thumbnail',
                 'networks', 'practice', 'external_id', 'second_external_id',
                 'published', 'geometry', 'update_datetime', 'create_datetime'
             )
