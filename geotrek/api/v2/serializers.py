@@ -1,7 +1,11 @@
+import json
+
 from django.conf import settings
-from django.urls import reverse
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import F
-from django.utils.translation import get_language, ugettext_lazy as _
+from django.urls import reverse
+from django.utils.translation import get_language
+from django.utils.translation import ugettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
 from rest_framework import serializers
 from rest_framework.relations import HyperlinkedIdentityField
@@ -12,7 +16,6 @@ from geotrek.api.v2.utils import build_url, get_translation_or_dict
 from geotrek.authent import models as authent_models
 from geotrek.common import models as common_models
 from geotrek.core.models import simplify_coords
-from geotrek.authent import models as authent_models
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from geotrek.core import models as core_models
@@ -147,6 +150,54 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.LabelTrek
             fields = ('id', 'pictogram', 'name', 'advice', 'filter_rando')
 
+    class RouteSerializer(serializers.ModelSerializer):
+        route = serializers.SerializerMethodField(read_only=True)
+
+        def get_route(self, obj):
+            return get_translation_or_dict('route', self, obj)
+
+        class Meta:
+            model = trekking_models.Route
+            fields = ('id', 'route', 'pictogram')
+
+    class CloseTrekSerializer(serializers.ModelSerializer):
+        category_id = serializers.ReadOnlyField(source='prefixed_category_id')
+
+        class Meta:
+            model = trekking_models.Trek
+            fields = ('id', 'category_id')
+
+    class RelatedTrekSerializer(serializers.ModelSerializer):
+        pk = serializers.ReadOnlyField(source='id')
+        category_slug = serializers.SerializerMethodField(read_only=True)
+        name = serializers.SerializerMethodField(read_only=True)
+
+        class Meta:
+            model = trekking_models.Trek
+            fields = ('id', 'pk', 'slug', 'name', 'category_slug')
+
+        def get_category_slug(self, obj):
+            if settings.SPLIT_TREKS_CATEGORIES_BY_ITINERANCY and obj.children.exists():
+                # Translators: This is a slug (without space, accent or special char)
+                return _('itinerancy')
+            if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and obj.practice:
+                return obj.practice.slug
+            else:
+                # Translators: This is a slug (without space, accent or special char)
+                return _('trek')
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+    class TrekRelationshipSerializer(serializers.ModelSerializer):
+        published = serializers.ReadOnlyField(source='trek_b.published')
+        trek = RelatedTrekSerializer(source='trek_b')
+
+        class Meta:
+            model = trekking_models.TrekRelationship
+            fields = ('has_common_departure', 'has_common_edge', 'is_circuit_step',
+                      'trek', 'published')
+
 
 class TrekReservationSystemSerializer(serializers.ModelSerializer):
     class Meta:
@@ -154,14 +205,52 @@ class TrekReservationSystemSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
+class ContentTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContentType
+        fields = ('id', 'name')
+
+
+class StructureSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    class Meta:
+        model = authent_models.Structure
+        fields = (
+            'id', 'name'
+        )
+
+
+class TargetPortalListSerializer(serializers.ModelSerializer):
+    title = serializers.SerializerMethodField(read_only=True)
+    description = serializers.SerializerMethodField(read_only=True)
+
+    def get_title(self, obj):
+        return get_translation_or_dict('title', self, obj)
+
+    def get_description(self, obj):
+        return get_translation_or_dict('description', self, obj)
+
+    class Meta:
+        model = common_models.TargetPortal
+        fields = (
+            'id', 'name', 'website', 'title', 'description'
+        )
+
+
+class RecordSourceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = common_models.RecordSource
+        fields = ('name', 'website', 'pictogram')
+
+
 class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     url = serializers.FileField(source='attachment_file')
+    content_type = ContentTypeSerializer(many=False)
 
     class Meta:
         model = common_models.Attachment
         fields = (
             'url', 'author', 'title', 'legend',
-            'starred', 'date_insert', 'date_update'
+            'starred', 'date_insert', 'date_update', 'content_type'
         )
 
 
@@ -184,6 +273,34 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
         class Meta(TouristicContentListSerializer.Meta):
             fields = tuple(field for field in TouristicContentListSerializer.Meta.fields if field != 'url') + ('pictures',)
+
+    class InformationDeskTypeSerializer(serializers.ModelSerializer):
+        label = serializers.SerializerMethodField(read_only=True)
+
+        def get_label(self, obj):
+            return get_translation_or_dict('label', self, obj)
+
+        class Meta:
+            model = tourism_models.InformationDeskType
+            fields = ('id', 'pictogram', 'label')
+
+    class InformationDeskSerializer(serializers.ModelSerializer):
+        type = InformationDeskTypeSerializer()
+        title = serializers.SerializerMethodField(read_only=True)
+        description = serializers.SerializerMethodField(read_only=True)
+
+        def get_title(self, obj):
+            return get_translation_or_dict('title', self, obj)
+
+        def get_description(self, obj):
+            return get_translation_or_dict('description', self, obj)
+
+        class Meta:
+            model = tourism_models.InformationDesk
+            geo_field = 'geom'
+            fields = ('name', 'description', 'phone', 'email', 'website',
+                      'photo_url', 'street', 'postal_code', 'municipality',
+                      'latitude', 'longitude', 'type')
 
 
 if 'geotrek.core' in settings.INSTALLED_APPS:
@@ -278,7 +395,9 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             )
 
     class TrekDetailSerializer(TrekListSerializer):
-        pictures = AttachmentSerializer(many=True, )
+        pictures = AttachmentSerializer(many=True)
+        videos = serializers.ReadOnlyField(source='serializable_videos')
+        files = serializers.ReadOnlyField(source='serializable_files')
         accessibilities = TrekAccessibilitySerializer(many=True, read_only=True)
         labels = TrekLabelSerializer(many=True)
         gpx = serializers.SerializerMethodField('get_gpx_url')
@@ -293,12 +412,27 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         elevation_svg_url = serializers.SerializerMethodField()
         altimetric_profile = serializers.SerializerMethodField('get_altimetric_profile_url')
         reservation_system = TrekReservationSystemSerializer(many=False, read_only=True)
+        route = RouteSerializer()
+        points_reference = serializers.SerializerMethodField(read_only=True)
+        category = serializers.SerializerMethodField()
+        structure = StructureSerializer()
+        treks = CloseTrekSerializer(many=True, source='published_treks')
+        previous = serializers.ReadOnlyField(source='previous_id')
+        next = serializers.ReadOnlyField(source='next_id')
+        portal = TargetPortalListSerializer(many=True)
+        source = RecordSourceSerializer(many=True)
+        relationships = TrekRelationshipSerializer(many=True, source='published_relationships')
+
+        def __init__(self, instance=None, *args, **kwargs):
+            super(TrekDetailSerializer, self).__init__(instance, *args, **kwargs)
+            if 'geotrek.tourism' in settings.INSTALLED_APPS:
+                self.fields['information_desks'] = InformationDeskSerializer(many=True)
 
         def get_gpx_url(self, obj):
-            return reverse('trekking:trek_gpx_detail', kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
+            return build_url(self, reverse('trekking:trek_gpx_detail', kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug}))
 
         def get_kml_url(self, obj):
-            return reverse('trekking:trek_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
+            return build_url(self, reverse('trekking:trek_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug}))
 
         def get_advice(self, obj):
             return get_translation_or_dict('advice', self, obj)
@@ -316,16 +450,56 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return get_translation_or_dict('public_transport', self, obj)
 
         def get_elevation_area_url(self, obj):
-            return reverse('trekking:trek_elevation_area', kwargs={'lang': get_language(), 'pk': obj.pk})
+            return build_url(self, reverse('trekking:trek_elevation_area', kwargs={'lang': get_language(), 'pk': obj.pk}))
 
         def get_elevation_svg_url(self, obj):
-            return reverse('trekking:trek_profile_svg', kwargs={'lang': get_language(), 'pk': obj.pk})
+            return build_url(self, reverse('trekking:trek_profile_svg', kwargs={'lang': get_language(), 'pk': obj.pk}))
 
         def get_altimetric_profile_url(self, obj):
-            return reverse('trekking:trek_profile', kwargs={'lang': get_language(), 'pk': obj.pk})
+            return build_url(self, reverse('trekking:trek_profile', kwargs={'lang': get_language(), 'pk': obj.pk}))
+
+        def get_points_reference(self, obj):
+            if not obj.points_reference:
+                return None
+            geojson = obj.points_reference.transform(settings.API_SRID, clone=True).geojson
+            return json.loads(geojson)
+
+        def get_category(self, obj):
+            if settings.SPLIT_TREKS_CATEGORIES_BY_ITINERANCY and obj.children.exists():
+                data = {
+                    'id': 'I',
+                    'label': _("Itinerancy"),
+                    'pictogram': '/static/trekking/itinerancy.svg',
+                    # Translators: This is a slug (without space, accent or special char)
+                    'slug': _('itinerancy'),
+                }
+            elif settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and obj.practice:
+                data = {
+                    'id': obj.practice.prefixed_id,
+                    'label': obj.practice.name,
+                    'pictogram': obj.practice.get_pictogram_url(),
+                    'slug': obj.practice.slug,
+                }
+            else:
+                data = {
+                    'id': trekking_models.Practice.id_prefix,
+                    'label': _("Hike"),
+                    'pictogram': '/static/trekking/trek.svg',
+                    # Translators: This is a slug (without space, accent or special char)
+                    'slug': _('trek'),
+                }
+            if settings.SPLIT_TREKS_CATEGORIES_BY_ITINERANCY and obj.children.exists():
+                data['order'] = settings.ITINERANCY_CATEGORY_ORDER
+            elif settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE:
+                data['order'] = obj.practice and obj.practice.order
+            else:
+                data['order'] = settings.TREK_CATEGORY_ORDER
+            if not settings.SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY:
+                data['type2_label'] = obj._meta.get_field('accessibilities').verbose_name
+            return data
 
         class Meta(TrekListSerializer.Meta):
-            fields = tuple((field for field in TrekListSerializer.Meta.fields if field != 'url')) + ('pictures', 'accessibilities', 'labels', 'advice', 'advised_parking', 'parking_location', 'gpx', 'kml', 'children', 'parents', 'public_transport', 'elevation_area_url', 'elevation_svg_url', 'altimetric_profile', 'reservation_system')
+            fields = tuple((field for field in TrekListSerializer.Meta.fields if field != 'url')) + ('pictures', 'videos', 'files', 'accessibilities', 'labels', 'advice', 'advised_parking', 'parking_location', 'gpx', 'kml', 'children', 'parents', 'public_transport', 'elevation_area_url', 'elevation_svg_url', 'altimetric_profile', 'reservation_system', 'duration_pretty', 'ambiance', 'access', 'route', 'disabled_infrastructure', 'points_reference', 'category', 'structure', 'treks', 'previous', 'next', 'portal', 'source', 'information_desks', 'relationships')
 
     class TourListSerializer(TrekListSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:tour-detail')
@@ -426,16 +600,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         class Meta(TrekAccessibilitySerializer.Meta):
             fields = ('id', 'name', 'pictogram')
 
-    class RouteSerializer(serializers.ModelSerializer):
-        route = serializers.SerializerMethodField(read_only=True)
-
-        def get_route(self, obj):
-            return get_translation_or_dict('route', self, obj)
-
-        class Meta:
-            model = trekking_models.Route
-            fields = ('id', 'route', 'pictogram')
-
 
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     class SensitiveAreaListSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -524,31 +688,6 @@ if 'geotrek.zoning' in settings.INSTALLED_APPS:
         class Meta:
             model = zoning_models.District
             fields = ('id', 'name', 'published', 'geom')
-
-
-class StructureSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    class Meta:
-        model = authent_models.Structure
-        fields = (
-            'id', 'name'
-        )
-
-
-class TargetPortalListSerializer(serializers.ModelSerializer):
-    title = serializers.SerializerMethodField(read_only=True)
-    description = serializers.SerializerMethodField(read_only=True)
-
-    def get_title(self, obj):
-        return get_translation_or_dict('title', self, obj)
-
-    def get_description(self, obj):
-        return get_translation_or_dict('description', self, obj)
-
-    class Meta:
-        model = common_models.TargetPortal
-        fields = (
-            'id', 'name', 'website', 'title', 'description'
-        )
 
 
 class TargetPortalDetailSerializer(TargetPortalListSerializer):
