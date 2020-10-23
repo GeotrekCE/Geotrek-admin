@@ -27,4 +27,4 @@ Installation
 Management commands
 -------------------
 
-Replace ``sudo geotrek …`` commands by ``cd <install directory>; docker-compose run --rm ./manage.py …``
+Replace ``sudo geotrek …`` commands by ``cd <install directory>; docker-compose run --rm web ./manage.py …``
