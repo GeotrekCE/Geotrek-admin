@@ -3,9 +3,7 @@ import os
 from django.views.generic.edit import BaseDetailView
 from django.http import HttpResponse, Http404
 from django.core.exceptions import PermissionDenied
-from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
-from django.utils.decorators import method_decorator
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.views import static
@@ -26,11 +24,7 @@ class HttpSVGResponse(HttpResponse):
         super(HttpSVGResponse, self).__init__(content, **kwargs)
 
 
-class ElevationChart(LastModifiedMixin, BaseDetailView):
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(ElevationChart, self).dispatch(*args, **kwargs)
+class ElevationChart(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
 
     def render_to_response(self, context, **response_kwargs):
         return HttpSVGResponse(self.get_object().get_elevation_profile_svg(self.kwargs['lang']),

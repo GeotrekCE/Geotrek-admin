@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.db.models import F, Case, When
 from django_filters.rest_framework.backends import DjangoFilterBackend
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from geotrek.api.v2 import serializers as api_serializers, \
     viewsets as api_viewsets
@@ -17,7 +16,6 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekViewset):
         GeotrekInBBoxFilter,
         GeotrekSensitiveAreaFilter,
     )
-    permission_classes = [IsAuthenticatedOrReadOnly]
     authentication_classes = []
     bbox_filter_field = 'geom2d_transformed'
     bbox_filter_include_overlapping = True
@@ -62,7 +60,6 @@ class SportPracticeViewSet(api_viewsets.GeotrekViewset):
         DjangoFilterBackend,
         GeotrekQueryParamsFilter,
     )
-    permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = api_serializers.SportPracticeListSerializer
     serializer_detail_class = api_serializers.SportPracticeListSerializer
     authentication_classes = []
