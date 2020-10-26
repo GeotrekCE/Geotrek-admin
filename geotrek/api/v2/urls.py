@@ -7,15 +7,18 @@ from geotrek.api.v2 import views as api_views
 router = routers.DefaultRouter()
 router.register('structure', api_views.StructureViewSet, basename='structure')
 router.register('portal', api_views.TargetPortalViewSet, basename='portal')
+router.register('theme', api_views.ThemeViewSet, basename='theme')
 if 'geotrek.core' in settings.INSTALLED_APPS:
     router.register('path', api_views.PathViewSet, basename='path')
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     router.register('trek', api_views.TrekViewSet, basename='trek')
     router.register('poi', api_views.POIViewSet, basename='poi')
     router.register('tour', api_views.TourViewSet, basename='tour')
-    router.register('theme', api_views.ThemeViewSet, basename='theme')
     router.register('accessibility', api_views.AccessibilityViewSet, basename='accessibility')
     router.register('route', api_views.RouteViewSet, basename='route')
+    router.register('difficulty', api_views.DifficultyViewSet, basename='difficulty')
+    router.register('network', api_views.NetworksViewSet, basename='network')
+    router.register('practice', api_views.PracticeViewSet, basename='practice')
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     router.register('touristiccontent', api_views.TouristicContentViewSet, basename='touristiccontent')
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:

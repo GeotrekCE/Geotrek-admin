@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.db.models import F
 from django.db.models.aggregates import Count
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from rest_framework import response, decorators
 from django_filters.rest_framework.backends import DjangoFilterBackend
 
@@ -31,32 +33,15 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
 
     @decorators.action(detail=False, methods=['get'])
     def practices(self, request, *args, **kwargs):
-        """
-        Get all practices list
-        """
-        data = api_serializers.TrekPracticeSerializer(trekking_models.Practice.objects.all(),
-                                                      many=True,
-                                                      context={'request': request}).data
-        return response.Response(data)
+        return HttpResponseRedirect(reverse('apiv2:practice-list', args=args))
 
     @decorators.action(detail=False, methods=['get'])
     def networks(self, request, *args, **kwargs):
-        """
-        Get all networks list
-        """
-        data = api_serializers.TrekNetworkSerializer(trekking_models.TrekNetwork.objects.all(),
-                                                     many=True,
-                                                     context={'request': request}).data
-        return response.Response(data)
+        return HttpResponseRedirect(reverse('apiv2:network-list', args=args))
 
     @decorators.action(detail=False, methods=['get'])
     def difficulties(self, request, *args, **kwargs):
-        """
-        Get all difficulties list
-        """
-        qs = trekking_models.DifficultyLevel.objects.all()
-        data = api_serializers.TrekDifficultySerializer(qs, many=True, context={'request': request}).data
-        return response.Response(data)
+        return HttpResponseRedirect(reverse('apiv2:difficulty-list', args=args))
 
 
 class TourViewSet(TrekViewSet):
@@ -64,6 +49,24 @@ class TourViewSet(TrekViewSet):
     serializer_detail_class = api_serializers.TourDetailSerializer
     queryset = TrekViewSet.queryset.annotate(count_children=Count('trek_children')) \
         .filter(count_children__gt=0)
+
+
+class PracticeViewSet(api_viewsets.GeotrekViewset):
+    serializer_class = api_serializers.TrekPracticeSerializer
+    serializer_detail_class = api_serializers.TrekPracticeInTrekSerializer
+    queryset = trekking_models.Practice.objects.all()
+
+
+class NetworksViewSet(api_viewsets.GeotrekViewset):
+    serializer_class = api_serializers.TrekNetworkSerializer
+    serializer_detail_class = api_serializers.TrekNetworkSerializer
+    queryset = trekking_models.TrekNetwork.objects.all()
+
+
+class DifficultyViewSet(api_viewsets.GeotrekViewset):
+    serializer_class = api_serializers.TrekDifficultySerializer
+    serializer_detail_class = api_serializers.TrekDifficultySerializer
+    queryset = trekking_models.DifficultyLevel.objects.all()
 
 
 class POIViewSet(api_viewsets.GeotrekViewset):
@@ -98,12 +101,6 @@ class POIViewSet(api_viewsets.GeotrekViewset):
             many=True,
             context={'request': request}).data
         return response.Response(data)
-
-
-class ThemeViewSet(api_viewsets.GeotrekViewset):
-    serializer_class = api_serializers.ThemeSerializer
-    serializer_detail_class = api_serializers.ThemeSerializer
-    queryset = trekking_models.Theme.objects.all()
 
 
 class AccessibilityViewSet(api_viewsets.GeotrekViewset):

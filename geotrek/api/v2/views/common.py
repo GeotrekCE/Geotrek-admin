@@ -7,3 +7,9 @@ class TargetPortalViewSet(api_viewsets.GeotrekViewset):
     serializer_class = api_serializers.TargetPortalListSerializer
     serializer_detail_class = api_serializers.TargetPortalDetailSerializer
     queryset = common_models.TargetPortal.objects.all()
+
+
+class ThemeViewSet(api_viewsets.GeotrekViewset):
+    serializer_class = api_serializers.ThemeSerializer
+    serializer_detail_class = api_serializers.ThemeSerializer
+    queryset = common_models.Theme.objects.all()
