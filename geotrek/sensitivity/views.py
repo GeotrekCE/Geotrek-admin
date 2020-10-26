@@ -1,19 +1,20 @@
 import json
 import logging
+from datetime import datetime
+
 from django.conf import settings
 from django.db.models import F, Case, When
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.detail import BaseDetailView
-from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityLayer, MapEntityList, MapEntityDetail,
-                             MapEntityDelete, MapEntityViewSet, MapEntityFormat, LastModifiedMixin)
 from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.api.v2.functions import Transform, Buffer, GeometryType, Area
 from geotrek.authent.decorators import same_structure_required
-
 from geotrek.common.views import PublicOrReadPermMixin
+from mapentity.views import (MapEntityCreate, MapEntityUpdate, MapEntityLayer, MapEntityList, MapEntityDetail,
+                             MapEntityDelete, MapEntityViewSet, MapEntityFormat, LastModifiedMixin)
 from .filters import SensitiveAreaFilterSet
 from .forms import SensitiveAreaForm, RegulatorySensitiveAreaForm
 from .models import SensitiveArea, Species, SportPractice
@@ -183,15 +184,21 @@ class SensitiveAreaKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetai
                                 content_type='application/vnd.google-earth.kml+xml')
         return response
 
+
 class SensitiveAreaOpenAirDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
     queryset = SensitiveArea.objects.existing()
 
     def render_to_response(self, context):
         area = self.get_object()
-        aerial_practice=SportPractice.objects.get(name='Aerien')
+        file_header = """* This file has been produced from GeoTrek sensitivity (https://geotrek.fr/) module from website {scheme}://{domain}
+* Usint pyopenair library (https://github.com/lpoaura/pyopenair)
+* This file was created on:  {timestamp}
+     
+        """.format(scheme=self.request.scheme, domain=self.request.META['HTTP_HOST'], timestamp=datetime.now())
+        aerial_practice = SportPractice.objects.get(name='Aerien')
         is_aerial = aerial_practice.species_set.filter(id=area.id).exists()
         if is_aerial:
-            result = area.openair()
+            result = file_header + area.openair()
             response = HttpResponse(result, content_type='application/octet-stream; charset=UTF-8')
             response['Content-Disposition'] = 'inline; filename=sensitivearea_openair_' + str(area.id) + '.txt'
             return response
