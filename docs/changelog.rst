@@ -2,13 +2,24 @@
 CHANGELOG
 =========
 
-
-2.38.6.dev0
+2.38.7.dev0
 -------------------
 
 **Bug fixes**
 
 -
+
+
+2.38.6 (2020-10-20)
+-------------------
+
+**Bug fixes**
+
+- Fix middleware interfaces without ipv4
+
+**Minor Changes**
+
+- Pictogram for trek's label is optional
 
 
 2.38.5 (2020-10-20)

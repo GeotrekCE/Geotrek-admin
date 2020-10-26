@@ -608,7 +608,7 @@ class DifficultyLevel(OptionalPictogramMixin):
         super(DifficultyLevel, self).save(*args, **kwargs)
 
 
-class LabelTrek(PictogramMixin):
+class LabelTrek(OptionalPictogramMixin):
 
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     advice = models.TextField(verbose_name=_("Advices"), blank=True,
