@@ -2,12 +2,18 @@
 CHANGELOG
 =========
 
-2.38.7.dev0
+2.39.0 (2020-10-27)
 -------------------
 
-**Bug fixes**
+**New Features**
 
--
+- Modification of API V2 routes
+- Add some filtering on Treks in API V2
+
+**Doc improvements**
+
+- Fix doc development command line
+- Improving docs : advanced configuration / synchronisation
 
 
 2.38.6 (2020-10-20)
