@@ -28,13 +28,17 @@ class SpeciesSerializer(TranslatedModelSerializer, PictogramSerializerMixin):
 class SensitiveAreaSerializer(TranslatedModelSerializer):
     species = SpeciesSerializer()
     kml_url = rest_serializers.SerializerMethodField(read_only=True)
+    openair_url = rest_serializers.SerializerMethodField(read_only=True)
 
     def get_kml_url(self, obj):
         return reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
 
+    def get_openair_url(self, obj):
+        return reverse('sensitivity:sensitivearea_openair_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
+
     class Meta:
         model = sensitivity_models.SensitiveArea
-        fields = ('id', 'species', 'description', 'contact', 'published', 'publication_date', 'kml_url')
+        fields = ('id', 'species', 'description', 'contact', 'published', 'publication_date', 'kml_url', 'openair_url')
 
 
 class SensitiveAreaGeojsonSerializer(GeoFeatureModelSerializer, SensitiveAreaSerializer):

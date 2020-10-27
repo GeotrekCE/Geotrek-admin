@@ -1,10 +1,8 @@
 from django.conf import settings
 from django.urls import path, register_converter
 
-from mapentity.registry import registry
-
 from geotrek.common.urls import PublishableEntityOptions, LangConverter
-
+from mapentity.registry import registry
 from . import models
 from . import serializers
 from . import views

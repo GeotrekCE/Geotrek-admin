@@ -346,6 +346,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
         geometry = geo_serializers.GeometryField(read_only=True, source="geom2d_transformed", precision=7)
         species_id = serializers.SerializerMethodField(read_only=True)
         kml_url = serializers.SerializerMethodField(read_only=True)
+        openair_url = serializers.SerializerMethodField(read_only=True)
 
         def get_name(self, obj):
             return get_translation_or_dict('name', self, obj.species)
@@ -371,11 +372,21 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
             url = reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
             return self.context['request'].build_absolute_uri(url)
 
+
+        def get_openair_url(self, obj):
+            aerial_practice = sensitivity_models.SportPractice.objects.get(name='Aerien')
+            is_aerial = aerial_practice.species_set.filter(id=obj.pk).exists()
+            if is_aerial:
+                url = reverse('sensitivity:sensitivearea_openair_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
+                return self.context['request'].build_absolute_uri(url)
+            else:
+                return None
+
         class Meta:
             model = sensitivity_models.SensitiveArea
             fields = (
                 'id', 'url', 'name', 'elevation', 'description', 'period', 'contact', 'practices', 'info_url',
-                'published', 'structure', 'species_id', 'kml_url',
+                'published', 'structure', 'species_id', 'kml_url','openair_url',
                 'geometry', 'update_datetime', 'create_datetime'
             )
 
