@@ -16,6 +16,12 @@ After any change in ``custom.py``, run:
 ::
 
     sudo service geotrek restart
+    
+Sometimes you must also run :
+
+::
+
+    sudo dpkg-reconfigure -u geotrek-admin
 
 .. note ::
 
@@ -172,6 +178,11 @@ The following settings are related to sensitive areas:
     # Buffer around treks to intersects sensitive areas
     SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters
 
+To take these changes into account, you need to run :
+
+::
+
+    sudo dpkg-reconfigure -u geotrek-admin
 
 Diving
 ------
