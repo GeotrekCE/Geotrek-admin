@@ -30,7 +30,7 @@ For example, if you add this line in ``/opt/geotrek-admin/var/conf/custom.py`` y
 Automatic synchronization
 -------------------------
 
-You can set up automatic synchronization by creating a file ``/etc/crond.d/geotrek_sync`` that contains:
+You can set up automatic synchronization by creating a file ``/etc/cron.d/geotrek_sync`` that contains:
 
 ::
 
