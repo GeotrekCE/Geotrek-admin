@@ -8,11 +8,10 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-08-29 11:38+0200\n"
-"PO-Revision-Date: 2020-09-23 07:02+0000\n"
-"Last-Translator: Camille Monchicourt <camille.monchicourt@ecrins-parcnational"
-".fr>\n"
-"Language-Team: French <https://weblate.makina-corpus.net/projects/"
-"geotrek-admin/api/fr/>\n"
+"PO-Revision-Date: 2020-10-20 16:33+0000\n"
+"Last-Translator: Bastien Potiron <bastien.potiron@makina-corpus.com>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
+"admin/api/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -25,6 +24,15 @@ msgstr "Synchronisation des medias…"
 
 msgid "Language"
 msgstr "Langue"
+
+msgid "Sync mobile ended"
+msgstr "Synchro mobile terminé"
+
+msgid "Launch Sync Mobile"
+msgstr "Lancer la synchro mobile"
+
+msgid "Init sync ..."
+msgstr "Synchronisation des media…"
 
 msgid "Show all difficulties"
 msgstr "Afficher toutes les difficultés"
@@ -131,6 +139,33 @@ msgstr "Types de contenu touristique"
 msgid "Touristic event types"
 msgstr "Types d'événements touristiques"
 
+msgid "Launch Sync"
+msgstr "Lancer la synchro mobile"
+
+msgid "Sync verifications"
+msgstr "Vérification de la synchronisation"
+
+msgid "Sync in progress"
+msgstr "Synchronisation en cours"
+
+msgid "An error occured"
+msgstr "Une erreur s'est produite"
+
+msgid "Mobile sync"
+msgstr "Synchro mobile"
+
+msgid "Confirmation"
+msgstr "Durée"
+
+msgid "Are you sure you want to sync ?"
+msgstr "Êtes-vous certain de vouloir synchroniser ?"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Sync"
+msgstr "Synchro"
+
 msgid "Set geometry dimension (2 by default for 2D, 3 for 3D)"
 msgstr ""
 "Définit la dimension géométrique (2 par défaut pour la 2D, 3 pour la 3D)"
@@ -143,12 +178,12 @@ msgstr "Format de sortie. json par défaut, geojson disponible"
 
 msgid "Limit required fields to increase performances. Ex : id,url,geometry"
 msgstr ""
-"Limiter les champs de sortie pour améliorer les performances. Ex : id,url,geometry"
+"Limiter les champs de sortie pour améliorer les performances. Ex : id,url,"
 "geometry"
 
 msgid "Omit specified fields to increase performance. Ex: url,category"
 msgstr ""
-"Supprimer des champs de sortie pour améliorer les performances. Ex : url,category"
+"Supprimer des champs de sortie pour améliorer les performances. Ex : url,"
 "category"
 
 msgid ""
@@ -173,8 +208,9 @@ msgstr ""
 msgid ""
 "Period of occupancy. Month numbers (1-12) separated by comas. any = occupied "
 "at any time in the year. ignore = occupied or not."
-msgstr "Période d'occupation. NUméros de mois (1-12) séparés par des virgules. any = occupé"
-"à n'importe quel moment de l'année. ignore = occupé ou non."
+msgstr ""
+"Période d'occupation. Numéros de mois (1-12) séparés par des virgules. any = "
+"occupéà n'importe quel moment de l'année. ignore = occupé ou non."
 
 msgid "Practices ids separated by comas."
 msgstr "Id des pratiques séparés par des virgules."
@@ -182,14 +218,59 @@ msgstr "Id des pratiques séparés par des virgules."
 msgid "Structure id."
 msgstr "Id de la structure."
 
+msgid "Set minimum duration for a trek"
+msgstr "Définit la durée minimale d'un itinéraire"
+
+msgid "Set maximum duration for a trek"
+msgstr "Définit la durée maximale d'un itinéraire"
+
+msgid "Set minimum length for a trek"
+msgstr "Définit la longueur minimale d'un itinéraire"
+
+msgid "Set maximum length for a trek"
+msgstr "Définit la longueur maximale d'un itinéraire"
+
+msgid ""
+"Set minimum difficulty for a trek. Difficulty usually goes from 1 (very "
+"easy) to 4 (difficult)"
+msgstr ""
+"Définit la difficulté minimale d'un itinéraire. La difficulté va généralement de 1 (très "
+"facile) à 4 (difficile)"
+
+msgid ""
+"Set maximum difficulty for a trek. Difficulty usually goes from 1 (very "
+"easy) to 4 (difficult)"
+msgstr ""
+"Définit la difficulté maximale d'un itinéraire. La difficulté va généralement de 1 (très "
+"facile) à 4 (difficile)"
+
+msgid "Set minimum ascent for a trek"
+msgstr "Définit le dénivelé positif minimal d'un itinéraire"
+
+msgid "Set maximum ascent for a trek"
+msgstr "Définit le dénivelé positif maximal d'un itinéraire"
+
+msgid ""
+"Code (pk) of a city to filter by. Can be multiple cities split by a comma"
+msgstr ""
+"Code (pk) d'une ville utilisée pour filtrer.Peut être plusieurs villes séparées par une virgule"
+
+msgid ""
+"Pk of a district to filter by. Can be multiple districts split by a comma"
+msgstr ""
+"Pk d'un district utilisé pour filtrer. Peu être plusieurs districts, séparés par une virugule"
+
+msgid "Pk of a structure to filter by"
+msgstr "Pk d'une structure avec laquelle filtrer"
+
+msgid "Pk of the accessibilities to filter by, separated by commas"
+msgstr "Id des pratiques séparés par des virgules."
+
+msgid "Pk of the themes to filter by, separated by commas"
+msgstr "Id des pratiques séparés par des virgules."
+
+msgid "Pk of the portals to filter by, separated by commas"
+msgstr "Id des pratiques séparés par des virgules."
+
 msgid "External ID"
 msgstr "ID externe"
-
-msgid "Mobile sync"
-msgstr "Synchro mobile"
-
-msgid "Sync mobile ended"
-msgstr "Synchro mobile terminé"
-
-msgid "Launch Sync Mobile"
-msgstr "Lancer la synchro mobile"
