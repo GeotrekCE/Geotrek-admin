@@ -183,6 +183,14 @@ class PathUpdate(MapEntityUpdate):
             return super(MapEntityUpdate, self).dispatch(*args, **kwargs)
         return super(PathUpdate, self).dispatch(*args, **kwargs)
 
+    def get_form_kwargs(self):
+        kwargs = super(PathUpdate, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        path = self.get_object()
+        if path.draft and self.request.user.has_perm('core.delete_draft_path'):
+            kwargs['can_delete'] = True
+        return kwargs
+
 
 class MultiplePathDelete(TemplateView):
     template_name = "core/multiplepath_confirm_delete.html"
