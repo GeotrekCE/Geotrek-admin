@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.39.1.dev0
+2.39.1 (2020-10-28)
 -------------------
 
 **Bug fixes**
 
-- 
+- Fix delete draft permission should allow use delete button
 
 
 2.39.0 (2020-10-27)
