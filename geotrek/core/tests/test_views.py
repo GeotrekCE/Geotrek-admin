@@ -136,6 +136,24 @@ class PathViewsTest(CommonTest):
             p.delete()
         super(PathViewsTest, self)._post_add_form()
 
+    def test_draft_permission_detail(self):
+        path = PathFactory(name="DRAFT_PATH", draft=True)
+        user = UserFactory(password='booh')
+        p = user.profile
+        p.save()
+        perm_add_draft_path = Permission.objects.get(codename='add_draft_path')
+        perm_delete_draft_path = Permission.objects.get(codename='delete_draft_path')
+        perm_change_draft_path = Permission.objects.get(codename='change_draft_path')
+        perm_read_path = Permission.objects.get(codename='read_path')
+        user.user_permissions.add(perm_delete_draft_path)
+        user.user_permissions.add(perm_read_path)
+        user.user_permissions.add(perm_change_draft_path)
+        user.user_permissions.add(perm_add_draft_path)
+        self.client.login(username=user.username, password='booh')
+        response = self.client.get(path.get_update_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, path.get_delete_url())
+
     def test_structurerelated_filter(self):
         def test_structure(structure, stake):
             user = self.userfactory(password='booh')
