@@ -22,7 +22,7 @@ Installation
 6. Create user and database, enable PostGIS extension
 7. Run ``docker-compose run --rm web update.sh``
 8. Run ``docker-compose up``
-
+9. Install NGINX (or equivalent) and add a configuration file (taking inspiration from ``nginx.conf.in``)
 
 Management commands
 -------------------
