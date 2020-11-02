@@ -192,8 +192,16 @@ class SensitiveArea(MapEntityMixin, StructureRelated, TimeStampedModelMixin, NoD
         geom = geom.transform(4326, clone=True)  # KML uses WGS84
         geom = geom.simplify(0.001, preserve_topology=True)
         wkt = geom.wkt
-        openair = wkt2openair(wkt, self.species.name)
-        print('OPENAIR', openair)
+        openair = wkt2openair(
+            wkt = wkt, 
+            an = self.species.name, 
+            ac = 'ZSM', 
+            ah_unit='m', 
+            ah_alti = self.species.radius or settings.SENSITIVITY_DEFAULT_RADIUS, 
+            ah_mode='AGL', 
+            al_mode='SFC', 
+            comment=self.species.name + ' (published on '+self.publication_date.strftime("%d/%m/%Y")+')'
+            )
         return openair
 
     @property
