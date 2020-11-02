@@ -191,12 +191,9 @@ class SensitiveAreaOpenAirDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseD
     def render_to_response(self, context):
         area = self.get_object()
         file_header = """* This file has been produced from GeoTrek sensitivity (https://geotrek.fr/) module from website {scheme}://{domain}
-* Usint pyopenair library (https://github.com/lpoaura/pyopenair)
-* This file was created on:  {timestamp}
-     
-        """.format(scheme=self.request.scheme, domain=self.request.META['HTTP_HOST'], timestamp=datetime.now())
-        aerial_practice = SportPractice.objects.get(name='Aerien')
-        is_aerial = aerial_practice.species_set.filter(id=area.id).exists()
+* Using pyopenair library (https://github.com/lpoaura/pyopenair)
+* This file was created on:  {timestamp}\n\n""".format(scheme=self.request.scheme, domain=self.request.META['HTTP_HOST'], timestamp=datetime.now())
+        is_aerial = area.species.practices.filter(name='Aerien').exists()
         if is_aerial:
             result = file_header + area.openair()
             response = HttpResponse(result, content_type='application/octet-stream; charset=UTF-8')
