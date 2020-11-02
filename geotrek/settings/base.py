@@ -645,6 +645,8 @@ SWAGGER_SETTINGS = {
 
 SENSITIVITY_DEFAULT_RADIUS = 100  # meters
 SENSITIVE_AREA_INTERSECTION_MARGIN = 500  # meters (always used)
+SENSITIVITY_DEFAULT_ELEVATION = 300 # meters, only used when to generate openair files when sport practice is "Aerial" and elevation is null
+
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
     'django.contrib.auth.hashers.UnsaltedMD5PasswordHasher',  # Used for extern authent
