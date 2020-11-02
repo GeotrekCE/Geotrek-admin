@@ -374,7 +374,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
 
 
         def get_openair_url(self, obj):
-            is_aerial = obj.species.practices.filter(name='Aerien').exists()
+            is_aerial = obj.species.practices.filter(name__in=settings.SENSITIVITY_OPENAIR_SPORT_PRACTICES).exists()
             if is_aerial:
                 url = reverse('sensitivity:sensitivearea_openair_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
                 return self.context['request'].build_absolute_uri(url)

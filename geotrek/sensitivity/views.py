@@ -7,6 +7,7 @@ from django.db.models import F, Case, When
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _
+from django.views.generic import ListView
 from django.views.generic.detail import BaseDetailView
 from rest_framework import permissions as rest_permissions, viewsets
 
@@ -193,7 +194,8 @@ class SensitiveAreaOpenAirDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseD
         file_header = """* This file has been produced from GeoTrek sensitivity (https://geotrek.fr/) module from website {scheme}://{domain}
 * Using pyopenair library (https://github.com/lpoaura/pyopenair)
 * This file was created on:  {timestamp}\n\n""".format(scheme=self.request.scheme, domain=self.request.META['HTTP_HOST'], timestamp=datetime.now())
-        is_aerial = area.species.practices.filter(name='Aerien').exists()
+        print('QUERY', settings.SENSITIVITY_OPENAIR_SPORT_PRACTICES)
+        is_aerial = area.species.practices.filter(name__in=settings.SENSITIVITY_OPENAIR_SPORT_PRACTICES).exists()
         if is_aerial:
             result = file_header + area.openair()
             response = HttpResponse(result, content_type='application/octet-stream; charset=UTF-8')
@@ -203,4 +205,24 @@ class SensitiveAreaOpenAirDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseD
             message = _('This is not an aerial area')
             response = HttpResponse(message, content_type='text/plain; charset=UTF-8')
 
+        return response
+
+class SensitiveAreaOpenAirList(PublicOrReadPermMixin, ListView):
+
+    def get_queryset(self):
+        aerial_practice = SportPractice.objects.filter(name__in=settings.SENSITIVITY_OPENAIR_SPORT_PRACTICES)
+        return SensitiveArea.objects.filter(species__practices__in=aerial_practice)
+
+    def render_to_response(self, context):
+        areas = self.get_queryset()
+        file_header = """* This file has been produced from GeoTrek sensitivity (https://geotrek.fr/) module from website {scheme}://{domain}
+* Using pyopenair library (https://github.com/lpoaura/pyopenair)
+* This file was created on:  {timestamp}\n\n""".format(scheme=self.request.scheme, domain=self.request.META['HTTP_HOST'], timestamp=datetime.now())
+        airspace_list = []
+        for a in areas:
+            airspace_list.append(a.openair())
+        airspace_core = '\n'.join(airspace_list)
+        airspace_file = file_header + airspace_core
+        response = HttpResponse(airspace_file, content_type='application/octet-stream; charset=UTF-8')
+        response['Content-Disposition'] = 'inline; filename=sensitivearea_openair.txt'
         return response

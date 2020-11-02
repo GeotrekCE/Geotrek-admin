@@ -24,6 +24,8 @@ urlpatterns = [
          views.SensitiveAreaKMLDetail.as_view(), name="sensitivearea_kml_detail"),
     path('api/<lang:lang>/sensitiveareas/<int:pk>/openair',
          views.SensitiveAreaOpenAirDetail.as_view(), name="sensitivearea_openair_detail"),
+    path('api/<lang:lang>/sensitiveareas/openair',
+         views.SensitiveAreaOpenAirList.as_view(), name="sensitivearea_openair_list"),
 ]
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     urlpatterns.append(path('api/<lang:lang>/treks/<int:pk>/sensitiveareas.geojson',
