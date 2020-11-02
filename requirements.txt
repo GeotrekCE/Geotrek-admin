@@ -11,7 +11,7 @@ chardet==3.0.4
 coreapi==2.3.3
 coreschema==0.0.4
 coverage==4.5.3
-cryptography==2.8
+cryptography==3.2
 cssselect2==0.2.2
 defusedxml==0.6.0
 Django==2.2.*
