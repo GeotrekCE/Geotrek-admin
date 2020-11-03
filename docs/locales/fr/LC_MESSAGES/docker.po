@@ -60,6 +60,6 @@ msgstr ""
 #: ../../docker.rst:30
 msgid ""
 "Replace `sudo geotrek …` command by `cd <install directory>; docker-"
-"compose run --rm ./manage.py …`"
+"compose run --rm web ./manage.py …`"
 msgstr ""
 
