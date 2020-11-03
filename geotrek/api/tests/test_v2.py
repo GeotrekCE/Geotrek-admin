@@ -231,11 +231,8 @@ class BaseApiTest(TestCase):
     def get_poi_detail(self, id_poi, params=None):
         return self.client.get(reverse('apiv2:poi-detail', args=(id_poi,)), params)
 
-    def get_poi_all_types_list(self, params=None):
-        return self.client.get(reverse('apiv2:poi-all-types'), params)
-
-    def get_poi_used_types_list(self, params=None):
-        return self.client.get(reverse('apiv2:poi-used-types'), params)
+    def get_poi_type(self, params=None):
+        return self.client.get(reverse('apiv2:poi-type-list'), params)
 
     def get_path_list(self, params=None):
         return self.client.get(reverse('apiv2:path-list'), params)
@@ -498,7 +495,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_route_list()
         json_response = response.json()
         self.assertEqual(response.status_code, 200)
-        self.assertEquals(len(json_response['results']), trek_models.Route.objects.count())
+        self.assertEquals(len(json_response), trek_models.Route.objects.count())
 
     def test_route_detail(self):
         response = self.get_route_detail(self.route.pk)
@@ -510,7 +507,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_accessibility_list()
         json_response = response.json()
         self.assertEqual(response.status_code, 200)
-        self.assertEquals(len(json_response['results']), trek_models.Accessibility.objects.count())
+        self.assertEquals(len(json_response), trek_models.Accessibility.objects.count())
 
     def test_accessibility_detail(self):
         response = self.get_accessibility_detail(self.accessibility.pk)
@@ -528,7 +525,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_portal_list()
         json_response = response.json()
         self.assertEqual(response.status_code, 200)
-        self.assertEquals(len(json_response['results']), common_models.TargetPortal.objects.count())
+        self.assertEquals(len(json_response), common_models.TargetPortal.objects.count())
 
     def test_portal_detail(self):
         response = self.get_portal_detail(self.portal.pk)
@@ -650,12 +647,8 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
         self.assertEqual(len(json_response.get('geometry').get('coordinates')), 3)
 
-    def test_poi_type_all_list(self):
-        response = self.get_poi_used_types_list()
-        self.assertEqual(response.status_code, 200)
-
-    def test_poi_type_used_list(self):
-        response = self.get_poi_all_types_list()
+    def test_poi_type(self):
+        response = self.get_poi_type()
         self.assertEqual(response.status_code, 200)
 
     def test_poi_unpublished_detail_filter_published_false(self):

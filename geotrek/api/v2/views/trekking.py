@@ -3,8 +3,10 @@ from django.db.models import F
 from django.db.models.aggregates import Count
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from rest_framework import response, decorators
+from rest_framework import decorators
 from django_filters.rest_framework.backends import DjangoFilterBackend
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from geotrek.api.v2 import serializers as api_serializers, \
     viewsets as api_viewsets, filters as api_filters
@@ -51,22 +53,25 @@ class TourViewSet(TrekViewSet):
         .filter(count_children__gt=0)
 
 
-class PracticeViewSet(api_viewsets.GeotrekViewset):
+class PracticeViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = api_serializers.TrekPracticeSerializer
     serializer_detail_class = api_serializers.TrekPracticeInTrekSerializer
     queryset = trekking_models.Practice.objects.all()
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
-class NetworksViewSet(api_viewsets.GeotrekViewset):
+class NetworksViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = api_serializers.TrekNetworkSerializer
     serializer_detail_class = api_serializers.TrekNetworkSerializer
     queryset = trekking_models.TrekNetwork.objects.all()
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
-class DifficultyViewSet(api_viewsets.GeotrekViewset):
+class DifficultyViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = api_serializers.TrekDifficultySerializer
     serializer_detail_class = api_serializers.TrekDifficultySerializer
     queryset = trekking_models.DifficultyLevel.objects.all()
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class POIViewSet(api_viewsets.GeotrekViewset):
@@ -80,36 +85,23 @@ class POIViewSet(api_viewsets.GeotrekViewset):
         .order_by('pk')  # Required for reliable pagination
     filterset_fields = ('type',)
 
-    @decorators.action(detail=False, methods=['get'])
-    def all_types(self, request, *args, **kwargs):
-        """
-        Get all POI types
-        """
-        data = api_serializers.POITypeSerializer(trekking_models.POIType.objects.all(),
-                                                 many=True,
-                                                 context={'request': request}).data
-        return response.Response(data)
 
-    @decorators.action(detail=False, methods=['get'])
-    def used_types(self, request, *args, **kwargs):
-        """
-        Get POI types used by POI instances
-        """
-        data = api_serializers.POITypeSerializer(
-            trekking_models.POIType.objects.filter(pk__in=trekking_models.POI.objects.existing()
-                                                   .values_list('type_id', flat=True)),
-            many=True,
-            context={'request': request}).data
-        return response.Response(data)
+class POITypesViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = api_serializers.POITypeSerializer
+    serializer_detail_class = api_serializers.POITypeSerializer
+    queryset = trekking_models.POIType.objects.all()
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
-class AccessibilityViewSet(api_viewsets.GeotrekViewset):
+class AccessibilityViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = api_serializers.AccessibilitySerializer
     serializer_detail_class = api_serializers.AccessibilitySerializer
     queryset = trekking_models.Accessibility.objects.all()
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
-class RouteViewSet(api_viewsets.GeotrekViewset):
+class RouteViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = api_serializers.RouteSerializer
     serializer_detail_class = api_serializers.RouteSerializer
     queryset = trekking_models.Route.objects.all()
+    permission_classes = [IsAuthenticatedOrReadOnly]

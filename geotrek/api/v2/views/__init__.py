@@ -9,7 +9,7 @@ from .common import TargetPortalViewSet, ThemeViewSet  # noqa
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from .core import PathViewSet  # noqa
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
-    from .trekking import TrekViewSet, TourViewSet, POIViewSet, AccessibilityViewSet, RouteViewSet, DifficultyViewSet, NetworksViewSet, PracticeViewSet  # noqa
+    from .trekking import TrekViewSet, TourViewSet, POIViewSet, POITypesViewSet, AccessibilityViewSet, RouteViewSet, DifficultyViewSet, NetworksViewSet, PracticeViewSet  # noqa
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     from .sensitivity import SensitiveAreaViewSet  # noqa
     from .sensitivity import SportPracticeViewSet  # noqa
