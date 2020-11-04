@@ -6,25 +6,25 @@ from geotrek.api.v2 import serializers as api_serializers, \
     viewsets as api_viewsets
 from geotrek.api.v2.functions import Transform, Buffer, GeometryType, Area
 from geotrek.sensitivity import models as sensitivity_models
-from ..filters import GeotrekQueryParamsFilter, GeotrekInBBoxFilter, GeotrekSensitiveAreaFilter
+from ..filters import GeotrekQueryParamsFilter, GeotrekQueryParamsDimensionFilter, GeotrekInBBoxFilter, GeotrekSensitiveAreaFilter
 
 
-class SensitiveAreaViewSet(api_viewsets.GeotrekViewset):
+class SensitiveAreaViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = (
         DjangoFilterBackend,
         GeotrekQueryParamsFilter,
+        GeotrekQueryParamsDimensionFilter,
         GeotrekInBBoxFilter,
         GeotrekSensitiveAreaFilter,
     )
-    authentication_classes = []
     bbox_filter_field = 'geom2d_transformed'
     bbox_filter_include_overlapping = True
 
     def get_serializer_class(self):
         if 'bubble' in self.request.GET:
-            base_serializer_class = api_serializers.BubbleSensitiveAreaListSerializer
+            base_serializer_class = api_serializers.BubbleSensitiveAreaSerializer
         else:
-            base_serializer_class = api_serializers.SensitiveAreaListSerializer
+            base_serializer_class = api_serializers.SensitiveAreaSerializer
         format_output = self.request.query_params.get('format', 'json')
         dimension = self.request.query_params.get('dim', '2')
         return api_serializers.override_serializer(format_output, dimension, base_serializer_class)
@@ -55,14 +55,8 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekViewset):
         return response
 
 
-class SportPracticeViewSet(api_viewsets.GeotrekViewset):
-    filter_backends = (
-        DjangoFilterBackend,
-        GeotrekQueryParamsFilter,
-    )
-    serializer_class = api_serializers.SportPracticeListSerializer
-    serializer_detail_class = api_serializers.SportPracticeListSerializer
-    authentication_classes = []
+class SportPracticeViewSet(api_viewsets.GeotrekViewSet):
+    serializer_class = api_serializers.SportPracticeSerializer
 
     def get_queryset(self):
         queryset = sensitivity_models.SportPractice.objects.all()

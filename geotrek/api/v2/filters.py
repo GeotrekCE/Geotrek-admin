@@ -18,20 +18,28 @@ class GeotrekQueryParamsFilter(BaseFilterBackend):
         return queryset
 
     def get_schema_fields(self, view):
-        field_dim = Field(name='dim', required=False,
-                          description=_('Set geometry dimension (2 by default for 2D, 3 for 3D)'),
-                          example=3, type='integer')
         field_language = Field(name='language', required=False,
                                description=_("Set language for translation. 'all' by default"),
                                example="fr")
         field_format = Field(name='format', required=False,
-                             description=_("Set output format (json / geojson). JSON by default"),
+                             description=_("Set output format (json / geojson). JSON by default. Please note taht only the endpoints containing geographical informations can handle the geojson format."),
                              example="geojson")
         field_fields = Field(name='fields', required=False,
                              description=_("Limit required fields to increase performances. Ex : id,url,geometry"))
         field_omit = Field(name='omit', required=False,
                            description=_("Omit specified fields to increase performance. Ex: url,category"))
-        return field_dim, field_language, field_format, field_fields, field_omit
+        return field_language, field_format, field_fields, field_omit
+
+
+class GeotrekQueryParamsDimensionFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        return queryset
+
+    def get_schema_fields(self, view):
+        field_dim = Field(name='dim', required=False,
+                          description=_('Set geometry dimension (2 by default for 2D, 3 for 3D)'),
+                          example=3, type='integer')
+        return field_dim,
 
 
 class GeotrekInBBoxFilter(InBBOXFilter):

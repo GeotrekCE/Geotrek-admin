@@ -7,9 +7,8 @@ from geotrek.api.v2.functions import Transform
 from geotrek.tourism import models as tourism_models
 
 
-class TouristicContentViewSet(api_viewsets.GeotrekViewset):
-    serializer_class = api_serializers.TouristicContentListSerializer
-    serializer_detail_class = api_serializers.TouristicContentDetailSerializer
+class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
+    serializer_class = api_serializers.TouristicContentSerializer
     queryset = tourism_models.TouristicContent.objects.existing()\
         .select_related('category', 'reservation_system') \
         .prefetch_related('source', 'themes', 'type1', 'type2') \

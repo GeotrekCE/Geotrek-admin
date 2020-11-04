@@ -7,12 +7,11 @@ from geotrek.api.v2.functions import Transform, Length, Length3D
 from geotrek.core import models as core_models
 
 
-class PathViewSet(api_viewsets.GeotrekViewset):
+class PathViewSet(api_viewsets.GeotrekGeometricViewset):
     """
     Use HTTP basic authentication to access this endpoint.
     """
-    serializer_class = api_serializers.PathListSerializer
-    serializer_detail_class = api_serializers.PathListSerializer
+    serializer_class = api_serializers.PathSerializer
     queryset = core_models.Path.objects.all() \
         .select_related('comfort', 'source', 'stake') \
         .prefetch_related('usages', 'networks') \
