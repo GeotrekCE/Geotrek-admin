@@ -1,16 +1,16 @@
-from datetime import date
 import operator
+from datetime import date
 from functools import reduce
 
 from coreapi.document import Field
 from django.conf import settings
-from django.db.models.query_utils import Q
 from django.contrib.gis.db.models import Union
+from django.core.exceptions import FieldError
+from django.db.models.query_utils import Q
 from django.utils.translation import ugettext as _
-from rest_framework.filters import BaseFilterBackend
-from rest_framework_gis.filters import InBBOXFilter, DistanceToPointFilter
-
 from geotrek.zoning.models import City, District
+from rest_framework.filters import BaseFilterBackend
+from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
 
 class GeotrekQueryParamsFilter(BaseFilterBackend):
@@ -77,49 +77,31 @@ class GeotrekPublishedFilter(BaseFilterBackend):
     """
 
     def filter_queryset(self, request, queryset, view):
-        if not hasattr(queryset.model, 'published'):
-            return queryset
         qs = queryset
-        published = request.GET.get('published', 'true')
+        language = request.GET.get('language', 'all')
 
-        if published.lower() == 'true':
-            published = True
-        elif published.lower() == 'false':
-            published = False
-        else:
-            published = None
-        if published is not None:
-            language = request.GET.get('language', 'all')
+        # if language, check language published. Else, if true one language must me published, if false none
+        try:
+            if language == 'all':
+                filters = list()
+                for lang in settings.MODELTRANSLATION_LANGUAGES:
+                    filters.append(Q(**{'published_{}'.format(lang): True}))
 
-            if published:
-                # if language, check language published. Else, if true one language must me published, if false none
-                if language == 'all':
-                    filters = list()
-                    for lang in settings.MODELTRANSLATION_LANGUAGES:
-                        filters.append(Q(**{'published_{}'.format(lang): published}))
+                qs = qs.filter(reduce(operator.or_, filters))
 
-                    qs = qs.filter(reduce(operator.or_, filters))
-
-                else:
-                    qs = qs.filter(**{'published_{}'.format(language): published})
             else:
-                if language == 'all':
-                    filters = {}
-                    for lang in settings.MODELTRANSLATION_LANGUAGES:
-                        filters.update({'published_{}'.format(lang): False})
+                qs = qs.filter(**{'published_{}'.format(language): True})
+        except FieldError:
+            # the model doesn't have a translated published field
+            qs = queryset
+        try:
+            # try to filter for model with published field but not translated
+            qs = qs.filter(published=True)
+        except FieldError:
+            # the model doesn't have a published field
+            qs = queryset
 
-                    qs = qs.filter(**filters)
-
-                else:
-                    qs = qs.filter(**{'published_{}'.format(language): published})
         return qs
-
-    def get_schema_fields(self, view):
-        field_published = Field(name='published', required=False,
-                                description=_('Publication state. If language specified, only language published are filterted. true/false/all. true by default.'),
-                                type='boolean',
-                                example='true')
-        return field_published,
 
 
 class GeotrekSensitiveAreaFilter(BaseFilterBackend):
