@@ -662,15 +662,15 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
 
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
     class CitySerializer(serializers.ModelSerializer):
-        geom = geo_serializers.GeometryField(read_only=True, source="geom2d_transformed", precision=7)
+        geometry = geo_serializers.GeometryField(read_only=True, source="geom", precision=7)
 
         class Meta:
             model = zoning_models.City
-            fields = ('code', 'name', 'published', 'geom')
+            fields = ('code', 'name', 'published', 'geometry')
 
     class DistrictsSerializer(serializers.ModelSerializer):
-        geom = geo_serializers.GeometryField(read_only=True, source="geom2d_transformed", precision=7)
+        geometry = geo_serializers.GeometryField(read_only=True, source="geom", precision=7)
 
         class Meta:
             model = zoning_models.District
-            fields = ('id', 'name', 'published', 'geom')
+            fields = ('id', 'name', 'published', 'geometry')
