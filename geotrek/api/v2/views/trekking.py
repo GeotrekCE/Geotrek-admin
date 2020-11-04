@@ -33,18 +33,6 @@ class TrekViewSet(api_viewsets.GeotrekViewset):
         .order_by('pk')  # Required for reliable pagination
     filterset_fields = ('difficulty', 'themes', 'networks', 'practice')
 
-    @decorators.action(detail=False, methods=['get'])
-    def practices(self, request, *args, **kwargs):
-        return HttpResponseRedirect(reverse('apiv2:practice-list', args=args))
-
-    @decorators.action(detail=False, methods=['get'])
-    def networks(self, request, *args, **kwargs):
-        return HttpResponseRedirect(reverse('apiv2:network-list', args=args))
-
-    @decorators.action(detail=False, methods=['get'])
-    def difficulties(self, request, *args, **kwargs):
-        return HttpResponseRedirect(reverse('apiv2:difficulty-list', args=args))
-
 
 class TourViewSet(TrekViewSet):
     serializer_class = api_serializers.TourListSerializer
