@@ -13,7 +13,7 @@ if 'geotrek.core' in settings.INSTALLED_APPS:
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     router.register('trek', api_views.TrekViewSet, basename='trek')
     router.register('poi', api_views.POIViewSet, basename='poi')
-    router.register('poi-type', api_views.POITypesViewSet, basename='poi-type')
+    router.register('poi-type', api_views.POITypeViewSet, basename='poi-type')
     router.register('tour', api_views.TourViewSet, basename='tour')
     router.register('accessibility', api_views.AccessibilityViewSet, basename='accessibility')
     router.register('route', api_views.RouteViewSet, basename='route')

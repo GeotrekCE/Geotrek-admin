@@ -222,6 +222,7 @@ class StructureSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 class TargetPortalSerializer(serializers.ModelSerializer):
     title = serializers.SerializerMethodField(read_only=True)
     description = serializers.SerializerMethodField(read_only=True)
+    facebook_image_url = serializers.SerializerMethodField(read_only=True)
 
     def get_title(self, obj):
         return get_translation_or_dict('title', self, obj)
@@ -229,11 +230,15 @@ class TargetPortalSerializer(serializers.ModelSerializer):
     def get_description(self, obj):
         return get_translation_or_dict('description', self, obj)
 
+    def get_facebook_image_url(self, obj):
+        return build_url(self, obj.facebook_image_url) if obj.facebook_image_url else ""
+
     class Meta:
         model = common_models.TargetPortal
         fields = (
             'id', 'name', 'website', 'title', 'description',
-            'facebook_id', 'facebook_image_url'
+            'facebook_id', 'facebook_image_url', 'facebook_image_width',
+            'facebook_image_height'
         )
 
 
@@ -284,12 +289,16 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         type = InformationDeskTypeSerializer()
         name = serializers.SerializerMethodField(read_only=True)
         description = serializers.SerializerMethodField(read_only=True)
+        photo_url = serializers.SerializerMethodField(read_only=True)
 
         def get_name(self, obj):
             return get_translation_or_dict('name', self, obj)
 
         def get_description(self, obj):
             return get_translation_or_dict('description', self, obj)
+
+        def get_photo_url(self, obj):
+            return build_url(self, obj.photo_url) if obj.photo_url else ""
 
         class Meta:
             model = tourism_models.InformationDesk
@@ -448,7 +457,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 data = {
                     'id': 'I',
                     'label': _("Itinerancy"),
-                    'pictogram': '/static/trekking/itinerancy.svg',
+                    'pictogram': build_url(self, '/static/trekking/itinerancy.svg'),
                     # Translators: This is a slug (without space, accent or special char)
                     'slug': _('itinerancy'),
                 }
@@ -456,14 +465,14 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 data = {
                     'id': obj.practice.prefixed_id,
                     'label': obj.practice.name,
-                    'pictogram': obj.practice.get_pictogram_url(),
+                    'pictogram': build_url(self, obj.practice.get_pictogram_url()),
                     'slug': obj.practice.slug,
                 }
             else:
                 data = {
                     'id': trekking_models.Practice.id_prefix,
                     'label': _("Hike"),
-                    'pictogram': '/static/trekking/trek.svg',
+                    'pictogram': build_url(self, '/static/trekking/trek.svg'),
                     # Translators: This is a slug (without space, accent or special char)
                     'slug': _('trek'),
                 }
@@ -625,7 +634,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
 
         def get_kml_url(self, obj):
             url = reverse('sensitivity:sensitivearea_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk})
-            return self.context['request'].build_absolute_uri(url)
+            return build_url(self, url)
 
         class Meta:
             model = sensitivity_models.SensitiveArea

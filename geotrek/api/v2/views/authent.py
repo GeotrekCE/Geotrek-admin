@@ -2,7 +2,7 @@ from geotrek.api.v2 import serializers as api_serializers, viewsets as api_views
 from geotrek.authent import models as authent_models
 
 
-class StructureViewSet(api_viewsets.GeotrekViewset):
+class StructureViewSet(api_viewsets.GeotrekViewSet):
     """
     Use HTTP basic authentication to access this endpoint.
     """

@@ -5,7 +5,6 @@ from functools import reduce
 from coreapi.document import Field
 from django.conf import settings
 from django.contrib.gis.db.models import Union
-from django.core.exceptions import FieldError
 from django.db.models.query_utils import Q
 from django.utils.translation import ugettext as _
 from geotrek.zoning.models import City, District
@@ -21,14 +20,11 @@ class GeotrekQueryParamsFilter(BaseFilterBackend):
         field_language = Field(name='language', required=False,
                                description=_("Set language for translation. 'all' by default"),
                                example="fr")
-        field_format = Field(name='format', required=False,
-                             description=_("Set output format (json / geojson). JSON by default. Please note taht only the endpoints containing geographical informations can handle the geojson format."),
-                             example="geojson")
         field_fields = Field(name='fields', required=False,
                              description=_("Limit required fields to increase performances. Ex : id,url,geometry"))
         field_omit = Field(name='omit', required=False,
                            description=_("Omit specified fields to increase performance. Ex: url,category"))
-        return field_language, field_format, field_fields, field_omit
+        return field_language, field_fields, field_omit
 
 
 class GeotrekQueryParamsDimensionFilter(BaseFilterBackend):
@@ -36,10 +32,13 @@ class GeotrekQueryParamsDimensionFilter(BaseFilterBackend):
         return queryset
 
     def get_schema_fields(self, view):
+        field_format = Field(name='format', required=False,
+                             description=_("Set output format (json / geojson). JSON by default. Please note that only the endpoints containing geographical informations can handle the geojson format."),
+                             example="geojson")
         field_dim = Field(name='dim', required=False,
                           description=_('Set geometry dimension (2 by default for 2D, 3 for 3D)'),
                           example=3, type='integer')
-        return field_dim,
+        return field_format, field_dim
 
 
 class GeotrekInBBoxFilter(InBBOXFilter):
@@ -79,27 +78,26 @@ class GeotrekPublishedFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         qs = queryset
         language = request.GET.get('language', 'all')
+        associated_published_fields = [f.name for f in qs.model._meta.get_fields() if f.name.startswith('published')]
 
-        # if language, check language published. Else, if true one language must me published, if false none
-        try:
+        # if the model of the queryset published field is not translated
+        if len(associated_published_fields) == 1:
+            qs = qs.filter(published=True)
+        elif len(associated_published_fields) > 1:
+            # the published field of the queryset model is translated
             if language == 'all':
+                # no language specified. Check for all.
                 filters = list()
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    filters.append(Q(**{'published_{}'.format(lang): True}))
-
-                qs = qs.filter(reduce(operator.or_, filters))
-
+                    field_name = 'published_{}'.format(lang)
+                    if field_name in associated_published_fields:
+                        filters.append(Q(**{field_name: True}))
+                if filters:
+                    qs = qs.filter(reduce(operator.or_, filters))
             else:
-                qs = qs.filter(**{'published_{}'.format(language): True})
-        except FieldError:
-            # the model doesn't have a translated published field
-            qs = queryset
-        try:
-            # try to filter for model with published field but not translated
-            qs = qs.filter(published=True)
-        except FieldError:
-            # the model doesn't have a published field
-            qs = queryset
+                # one language is specified
+                field_name = 'published_{}'.format(language)
+                qs = qs.filter(Q(**{field_name: True}))
 
         return qs
 

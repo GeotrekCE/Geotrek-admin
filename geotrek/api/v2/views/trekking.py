@@ -9,7 +9,7 @@ from geotrek.trekking import models as trekking_models
 
 
 class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = tuple((e for e in api_viewsets.GeotrekGeometricViewset.filter_backends)) + (api_filters.GeotrekTrekQueryParamsFilter,)
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekTrekQueryParamsFilter,)
     serializer_class = api_serializers.TrekSerializer
     queryset = trekking_models.Trek.objects.existing() \
         .select_related('topo_object') \
@@ -27,17 +27,17 @@ class TourViewSet(TrekViewSet):
         .filter(count_children__gt=0)
 
 
-class PracticeViewSet(api_viewsets.GeotrekViewset):
+class PracticeViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.TrekPracticeSerializer
     queryset = trekking_models.Practice.objects.all()
 
 
-class NetworksViewSet(api_viewsets.GeotrekViewset):
+class NetworksViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.TrekNetworkSerializer
     queryset = trekking_models.TrekNetwork.objects.all()
 
 
-class DifficultyViewSet(api_viewsets.GeotrekViewset):
+class DifficultyViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.TrekDifficultySerializer
     queryset = trekking_models.DifficultyLevel.objects.all()
 
@@ -53,16 +53,16 @@ class POIViewSet(api_viewsets.GeotrekGeometricViewset):
     filterset_fields = ('type',)
 
 
-class POITypesViewSet(api_viewsets.GeotrekViewset):
+class POITypeViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.POITypeSerializer
     queryset = trekking_models.POIType.objects.all()
 
 
-class AccessibilityViewSet(api_viewsets.GeotrekViewset):
+class AccessibilityViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.AccessibilitySerializer
     queryset = trekking_models.Accessibility.objects.all()
 
 
-class RouteViewSet(api_viewsets.GeotrekViewset):
+class RouteViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.RouteSerializer
     queryset = trekking_models.Route.objects.all()

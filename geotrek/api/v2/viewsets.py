@@ -7,7 +7,7 @@ from geotrek.api.v2 import pagination as api_pagination, filters as api_filters
 from geotrek.api.v2.serializers import override_serializer
 
 
-class GeotrekViewset(viewsets.ReadOnlyModelViewSet):
+class GeotrekViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,
                        api_filters.GeotrekQueryParamsFilter,
                        api_filters.GeotrekPublishedFilter)
@@ -23,13 +23,11 @@ class GeotrekViewset(viewsets.ReadOnlyModelViewSet):
         }
 
 
-class GeotrekGeometricViewset(GeotrekViewset):
-    filter_backends = (DjangoFilterBackend,
-                       api_filters.GeotrekQueryParamsFilter,
-                       api_filters.GeotrekQueryParamsDimensionFilter,
-                       api_filters.GeotrekInBBoxFilter,
-                       api_filters.GeotrekDistanceToPointFilter,
-                       api_filters.GeotrekPublishedFilter)
+class GeotrekGeometricViewset(GeotrekViewSet):
+    filter_backends = GeotrekViewSet.filter_backends + \
+        (api_filters.GeotrekQueryParamsDimensionFilter,
+            api_filters.GeotrekInBBoxFilter,
+            api_filters.GeotrekDistanceToPointFilter)
     distance_filter_field = 'geometry'
     distance_filter_convert_meters = True
     renderer_classes = viewsets.ReadOnlyModelViewSet.renderer_classes
