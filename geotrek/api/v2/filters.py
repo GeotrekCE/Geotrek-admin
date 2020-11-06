@@ -7,9 +7,12 @@ from django.conf import settings
 from django.contrib.gis.db.models import Union
 from django.db.models.query_utils import Q
 from django.utils.translation import ugettext as _
-from geotrek.zoning.models import City, District
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
+
+from geotrek.core.helpers import TopologyHelper
+from geotrek.trekking.models import Trek
+from geotrek.zoning.models import City, District
 
 
 class GeotrekQueryParamsFilter(BaseFilterBackend):
@@ -139,13 +142,19 @@ class GeotrekPOIFilter(BaseFilterBackend):
         type = request.GET.get('type', None)
         if type is not None:
             qs = qs.filter(type=type)
+        trek = request.GET.get('trek', None)
+        if trek is not None:
+            qs = TopologyHelper.overlapping(qs, Trek.objects.get(pk=trek))
         return qs
 
     def get_schema_fields(self, view):
         type = Field(name='type', required=False,
                      description=_("Limit to POIs that contains a specific POI Type"),
                      example=5)
-        return type,
+        trek = Field(name='trek', required=False,
+                     description=_("Id of a trek. It will show only the POIs related to this trek"),
+                     example=970)
+        return type, trek
 
 
 class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
