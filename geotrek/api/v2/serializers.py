@@ -86,12 +86,7 @@ def override_serializer(format_output, dimension, base_serializer_class):
 
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
-    class TrekThemeSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = trekking_models.Theme
-            fields = ('id',)
-
-    class TrekNetworkSerializer(serializers.ModelSerializer):
+    class NetworkSerializer(serializers.ModelSerializer):
         label = serializers.SerializerMethodField(read_only=True)
 
         def get_label(self, obj):
@@ -101,17 +96,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.TrekNetwork
             fields = ('id', 'label', 'pictogram')
 
-    class TrekPracticeInTrekSerializer(serializers.ModelSerializer):
-        name = serializers.SerializerMethodField(read_only=True)
-
-        def get_name(self, obj):
-            return get_translation_or_dict('name', self, obj)
-
-        class Meta:
-            model = trekking_models.Practice
-            fields = ('id', 'name', 'pictogram',)
-
-    class TrekPracticeSerializer(serializers.ModelSerializer):
+    class PracticeSerializer(serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)
 
         def get_name(self, obj):
@@ -130,11 +115,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         class Meta:
             model = trekking_models.DifficultyLevel
             fields = ('id', 'label', 'cirkwi_level', 'pictogram')
-
-    class TrekAccessibilitySerializer(serializers.ModelSerializer):
-        class Meta:
-            model = trekking_models.Accessibility
-            fields = ('id',)
 
     class TrekLabelSerializer(serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)
@@ -336,12 +316,8 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         name = serializers.SerializerMethodField(read_only=True)
         description = serializers.SerializerMethodField(read_only=True)
         description_teaser = serializers.SerializerMethodField(read_only=True)
-        difficulty = TrekDifficultySerializer(read_only=True)
         departure = serializers.SerializerMethodField(read_only=True)
         arrival = serializers.SerializerMethodField(read_only=True)
-        themes = TrekThemeSerializer(many=True, read_only=True)
-        networks = TrekNetworkSerializer(many=True, read_only=True)
-        practice = TrekPracticeInTrekSerializer(read_only=True)
         external_id = serializers.CharField(source='eid')
         second_external_id = serializers.CharField(source='eid2')
         create_datetime = serializers.SerializerMethodField(read_only=True)
@@ -350,7 +326,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         pictures = AttachmentSerializer(many=True)
         videos = serializers.ReadOnlyField(source='serializable_videos')
         files = serializers.ReadOnlyField(source='serializable_files')
-        accessibilities = TrekAccessibilitySerializer(many=True, read_only=True)
         labels = TrekLabelSerializer(many=True)
         gpx = serializers.SerializerMethodField('get_gpx_url')
         kml = serializers.SerializerMethodField('get_kml_url')
@@ -364,14 +339,11 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         elevation_svg_url = serializers.SerializerMethodField()
         altimetric_profile = serializers.SerializerMethodField('get_altimetric_profile_url')
         reservation_system = TrekReservationSystemSerializer(many=False, read_only=True)
-        route = RouteSerializer()
         points_reference = serializers.SerializerMethodField(read_only=True)
         category = serializers.SerializerMethodField()
-        structure = StructureSerializer()
         treks = CloseTrekSerializer(many=True, source='published_treks')
         previous = serializers.ReadOnlyField(source='previous_id')
         next = serializers.ReadOnlyField(source='next_id')
-        portal = TargetPortalSerializer(many=True)
         source = RecordSourceSerializer(many=True)
         relationships = TrekRelationshipSerializer(many=True, source='published_relationships')
         information_desks = InformationDeskSerializer(many=True)
@@ -577,22 +549,24 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'pictures'
             )
 
-    class ThemeSerializer(TrekThemeSerializer):
+    class ThemeSerializer(serializers.ModelSerializer):
         label = serializers.SerializerMethodField(read_only=True)
 
         def get_label(self, obj):
             return get_translation_or_dict('label', self, obj)
 
-        class Meta(TrekThemeSerializer.Meta):
+        class Meta:
+            model = trekking_models.Theme
             fields = ('id', 'label', 'pictogram')
 
-    class AccessibilitySerializer(TrekAccessibilitySerializer):
+    class AccessibilitySerializer(serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)
 
         def get_name(self, obj):
             return get_translation_or_dict('name', self, obj)
 
-        class Meta(TrekAccessibilitySerializer.Meta):
+        class Meta:
+            model = trekking_models.Accessibility
             fields = ('id', 'name', 'pictogram')
 
 

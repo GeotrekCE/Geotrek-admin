@@ -28,12 +28,12 @@ class TourViewSet(TrekViewSet):
 
 
 class PracticeViewSet(api_viewsets.GeotrekViewSet):
-    serializer_class = api_serializers.TrekPracticeSerializer
+    serializer_class = api_serializers.PracticeSerializer
     queryset = trekking_models.Practice.objects.all()
 
 
 class NetworksViewSet(api_viewsets.GeotrekViewSet):
-    serializer_class = api_serializers.TrekNetworkSerializer
+    serializer_class = api_serializers.NetworkSerializer
     queryset = trekking_models.TrekNetwork.objects.all()
 
 
