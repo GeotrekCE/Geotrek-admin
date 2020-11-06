@@ -43,6 +43,7 @@ class DifficultyViewSet(api_viewsets.GeotrekViewSet):
 
 
 class POIViewSet(api_viewsets.GeotrekGeometricViewset):
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekPOIFilter,)
     serializer_class = api_serializers.POISerializer
     queryset = trekking_models.POI.objects.existing() \
         .select_related('topo_object', 'type', ) \
@@ -50,7 +51,6 @@ class POIViewSet(api_viewsets.GeotrekGeometricViewset):
         .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID),
                   geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
         .order_by('pk')  # Required for reliable pagination
-    filterset_fields = ('type',)
 
 
 class POITypeViewSet(api_viewsets.GeotrekViewSet):

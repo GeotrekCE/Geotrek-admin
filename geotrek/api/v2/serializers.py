@@ -520,7 +520,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         create_datetime = serializers.SerializerMethodField(read_only=True)
         update_datetime = serializers.SerializerMethodField(read_only=True)
         geometry = geo_serializers.GeometryField(read_only=True, source="geom2d_transformed", precision=7)
-        type = POITypeSerializer(read_only=True)
         pictures = AttachmentSerializer(many=True, )
 
         def get_published(self, obj):

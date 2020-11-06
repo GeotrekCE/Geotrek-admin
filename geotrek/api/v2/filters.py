@@ -136,6 +136,21 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
         return field_period, field_practices, field_structure
 
 
+class GeotrekPOIFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        type = request.GET.get('type', None)
+        if type is not None:
+            qs = qs.filter(type=type)
+        return qs
+
+    def get_schema_fields(self, view):
+        type = Field(name='type', required=False,
+                     description=_("Limit to POIs that contains a specific POI Type"),
+                     example=5)
+        return type,
+
+
 class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         qs = queryset
