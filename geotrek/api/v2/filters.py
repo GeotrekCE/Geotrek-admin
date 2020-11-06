@@ -36,7 +36,7 @@ class GeotrekQueryParamsDimensionFilter(BaseFilterBackend):
 
     def get_schema_fields(self, view):
         field_format = Field(name='format', required=False,
-                             description=_("Set output format (json / geojson). JSON by default. Please note that only the endpoints containing geographical informations can handle the geojson format."),
+                             description=_("Set output format (json / geojson). JSON by default"),
                              example="geojson")
         return field_format,
 
