@@ -32,5 +32,6 @@ if 'geotrek.zoning' in settings.INSTALLED_APPS:
 app_name = 'apiv2'
 urlpatterns = [
     path('', api_views.SwaggerSchemaView.as_view(), name="schema"),
+    path('config/', api_views.ConfigView.as_view(), name='config'),
     path('', include(router.urls))
 ]

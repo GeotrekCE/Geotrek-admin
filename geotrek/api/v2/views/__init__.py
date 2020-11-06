@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework_swagger import renderers
 
 from django.conf import settings
+from django.contrib.gis.geos import Polygon
 from .authent import StructureViewSet  # noqa
 from .common import TargetPortalViewSet, ThemeViewSet  # noqa
 if 'geotrek.core' in settings.INSTALLED_APPS:
@@ -36,3 +37,18 @@ class SwaggerSchemaView(APIView):
         schema = generator.get_schema(request=request)
 
         return response.Response(schema)
+
+
+class ConfigView(APIView):
+    """
+    Configuration endpoint that gives the BBox used in the Geotrek configuration
+    """
+    permission_classes = [permissions.AllowAny, ]
+
+    def get(self, request, *args, **kwargs):
+        bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
+        bbox.srid = settings.SRID
+        bbox.transform(settings.API_SRID)
+        return response.Response({
+            'bbox': bbox.extent
+        })
