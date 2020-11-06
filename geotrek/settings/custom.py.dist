@@ -27,7 +27,7 @@
 #     ('manager1', 'manager1@geotrek.fr'), # change with tuple ('your name', 'your@address.mail')
 # )
 
-# or MANAGERS = ADMIN
+# or MANAGERS = ADMINS
 # used to send report mail
 
 # TIME_ZONE="Europe/Paris"
@@ -44,8 +44,8 @@
 # EMAIL_HOST_USER =
 # EMAIL_HOST_PASSWORD =
 # EMAIL_HOST_PORT =
-# EMAIL_USE_TLS = FALSE
-# EMAIL_USE_SSL = FALSE
+# EMAIL_USE_TLS = False
+# EMAIL_USE_SSL = False
 
 #
 # External authent if required
