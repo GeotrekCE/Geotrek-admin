@@ -249,7 +249,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
     class TouristicContentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:touristiccontent-detail')
         category = TouristicContentCategorySerializer()
-        geometry = geo_serializers.GeometryField(read_only=True, source="geom2d_transformed", precision=7)
+        geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
 
         class Meta:
             model = tourism_models.TouristicContent
@@ -291,7 +291,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 if 'geotrek.core' in settings.INSTALLED_APPS:
     class PathSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:trek-detail')
-        geometry = geo_serializers.GeometryField(read_only=True, source="geom2d_transformed", precision=7)
+        geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
         length_2d = serializers.SerializerMethodField(read_only=True)
         length_3d = serializers.SerializerMethodField(read_only=True)
 
@@ -310,7 +310,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
     class TrekSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:trek-detail')
         published = serializers.SerializerMethodField(read_only=True)
-        geometry = geo_serializers.GeometryField(read_only=True, source="geom2d_transformed", precision=7)
+        geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
         length_2d = serializers.SerializerMethodField(read_only=True)
         length_3d = serializers.SerializerMethodField(read_only=True)
         name = serializers.SerializerMethodField(read_only=True)
@@ -489,12 +489,11 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             qs = obj.children \
                 .select_related('topo_object', 'difficulty') \
                 .prefetch_related('topo_object__aggregations', 'themes', 'networks', 'attachments') \
-                .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID),
-                          geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),
+                .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),
                           length_2d_m=Length('geom'),
                           length_3d_m=Length3D('geom_3d'))
             FinalClass = override_serializer(self.context.get('request').GET.get('format'),
-                                             self.context.get('request').GET.get('dim'),
+                                             3,
                                              TrekSerializer)
             return FinalClass(qs, many=True, context=self.context).data
 
@@ -519,7 +518,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         published = serializers.SerializerMethodField(read_only=True)
         create_datetime = serializers.SerializerMethodField(read_only=True)
         update_datetime = serializers.SerializerMethodField(read_only=True)
-        geometry = geo_serializers.GeometryField(read_only=True, source="geom2d_transformed", precision=7)
+        geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
         pictures = AttachmentSerializer(many=True, )
 
         def get_published(self, obj):
@@ -581,7 +580,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
         structure = serializers.CharField(source='structure.name')
         create_datetime = serializers.DateTimeField(source='date_insert')
         update_datetime = serializers.DateTimeField(source='date_update')
-        geometry = geo_serializers.GeometryField(read_only=True, source="geom2d_transformed", precision=7)
+        geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         species_id = serializers.SerializerMethodField(read_only=True)
         kml_url = serializers.SerializerMethodField(read_only=True)
 

@@ -14,8 +14,7 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
     queryset = trekking_models.Trek.objects.existing() \
         .select_related('topo_object') \
         .prefetch_related('topo_object__aggregations', 'accessibilities', 'attachments') \
-        .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID),
-                  geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),
+        .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID),
                   length_2d_m=Length('geom'),
                   length_3d_m=Length3D('geom_3d')) \
         .order_by('pk')  # Required for reliable pagination
@@ -48,8 +47,7 @@ class POIViewSet(api_viewsets.GeotrekGeometricViewset):
     queryset = trekking_models.POI.objects.existing() \
         .select_related('topo_object', 'type', ) \
         .prefetch_related('topo_object__aggregations', 'attachments') \
-        .annotate(geom2d_transformed=Transform(F('geom'), settings.API_SRID),
-                  geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
+        .annotate(geom3d_transformed=Transform(F('geom_3d'), settings.API_SRID)) \
         .order_by('pk')  # Required for reliable pagination
 
 

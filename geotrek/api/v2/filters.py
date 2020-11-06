@@ -35,10 +35,7 @@ class GeotrekQueryParamsDimensionFilter(BaseFilterBackend):
         field_format = Field(name='format', required=False,
                              description=_("Set output format (json / geojson). JSON by default. Please note that only the endpoints containing geographical informations can handle the geojson format."),
                              example="geojson")
-        field_dim = Field(name='dim', required=False,
-                          description=_('Set geometry dimension (2 by default for 2D, 3 for 3D)'),
-                          example=3, type='integer')
-        return field_format, field_dim
+        return field_format,
 
 
 class GeotrekInBBoxFilter(InBBOXFilter):
