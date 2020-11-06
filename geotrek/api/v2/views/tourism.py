@@ -19,3 +19,8 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
         base_serializer_class = super(TouristicContentViewSet, self).get_serializer_class()
         format_output = self.request.query_params.get('format', 'json')
         return api_serializers.override_serializer(format_output, 2, base_serializer_class)
+
+
+class InformationDeskViewSet(api_viewsets.GeotrekViewSet):
+    serializer_class = api_serializers.InformationDeskSerializer
+    queryset = tourism_models.InformationDesk.objects.all()

@@ -116,7 +116,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.DifficultyLevel
             fields = ('id', 'label', 'cirkwi_level', 'pictogram')
 
-    class TrekLabelSerializer(serializers.ModelSerializer):
+    class LabelTrekSerializer(serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)
         advice = serializers.SerializerMethodField(read_only=True)
 
@@ -326,7 +326,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         pictures = AttachmentSerializer(many=True)
         videos = serializers.ReadOnlyField(source='serializable_videos')
         files = serializers.ReadOnlyField(source='serializable_files')
-        labels = TrekLabelSerializer(many=True)
         gpx = serializers.SerializerMethodField('get_gpx_url')
         kml = serializers.SerializerMethodField('get_kml_url')
         advice = serializers.SerializerMethodField(read_only=True)
@@ -346,7 +345,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         next = serializers.ReadOnlyField(source='next_id')
         source = RecordSourceSerializer(many=True)
         relationships = TrekRelationshipSerializer(many=True, source='published_relationships')
-        information_desks = InformationDeskSerializer(many=True)
 
         def get_update_datetime(self, obj):
             return obj.topo_object.date_update

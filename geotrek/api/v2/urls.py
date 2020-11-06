@@ -13,15 +13,17 @@ if 'geotrek.core' in settings.INSTALLED_APPS:
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     router.register('trek', api_views.TrekViewSet, basename='trek')
     router.register('poi', api_views.POIViewSet, basename='poi')
-    router.register('poi-type', api_views.POITypeViewSet, basename='poi-type')
+    router.register('poitype', api_views.POITypeViewSet, basename='poitype')
     router.register('tour', api_views.TourViewSet, basename='tour')
     router.register('accessibility', api_views.AccessibilityViewSet, basename='accessibility')
     router.register('route', api_views.RouteViewSet, basename='route')
     router.register('difficulty', api_views.DifficultyViewSet, basename='difficulty')
     router.register('network', api_views.NetworksViewSet, basename='network')
     router.register('practice', api_views.PracticeViewSet, basename='practice')
+    router.register('labeltrek', api_views.LabelTrekViewSet, basename='labeltrek')
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     router.register('touristiccontent', api_views.TouristicContentViewSet, basename='touristiccontent')
+    router.register('informationdesk', api_views.InformationDeskViewSet, basename='informationdesk')
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     router.register('sensitivearea', api_views.SensitiveAreaViewSet, basename='sensitivearea')
     router.register('sportpractice', api_views.SportPracticeViewSet, basename='sportpractice')

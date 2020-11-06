@@ -64,3 +64,8 @@ class AccessibilityViewSet(api_viewsets.GeotrekViewSet):
 class RouteViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.RouteSerializer
     queryset = trekking_models.Route.objects.all()
+
+
+class LabelTrekViewSet(api_viewsets.GeotrekViewSet):
+    serializer_class = api_serializers.LabelTrekSerializer
+    queryset = trekking_models.LabelTrek.objects.all()
