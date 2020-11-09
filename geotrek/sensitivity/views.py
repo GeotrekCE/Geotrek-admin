@@ -194,7 +194,6 @@ class SensitiveAreaOpenAirDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseD
         file_header = """* This file has been produced from GeoTrek sensitivity (https://geotrek.fr/) module from website {scheme}://{domain}
 * Using pyopenair library (https://github.com/lpoaura/pyopenair)
 * This file was created on:  {timestamp}\n\n""".format(scheme=self.request.scheme, domain=self.request.META['HTTP_HOST'], timestamp=datetime.now())
-        print('QUERY', settings.SENSITIVITY_OPENAIR_SPORT_PRACTICES)
         is_aerial = area.species.practices.filter(name__in=settings.SENSITIVITY_OPENAIR_SPORT_PRACTICES).exists()
         if is_aerial:
             result = file_header + area.openair()
