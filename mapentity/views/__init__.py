@@ -16,6 +16,7 @@ from .generic import (
 )
 from .api import (
     MapEntityLayer,
+    MapEntityTileLayer,
     MapEntityJsonList,
     MapEntityViewSet
 )
@@ -36,6 +37,7 @@ from .logentry import LogEntryList
 
 MAPENTITY_GENERIC_VIEWS = [
     MapEntityLayer,
+    MapEntityTileLayer,
     MapEntityList,
     MapEntityJsonList,
     MapEntityFormat,
@@ -65,6 +67,7 @@ __all__ = [
     'MapEntityDelete',
 
     'MapEntityLayer',
+    'MapEntityTileLayer',
     'MapEntityJsonList',
     'MapEntityViewSet',
 

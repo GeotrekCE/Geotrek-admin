@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="//unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
 </head>
 <body>
-    <div id="map" style="height: 800px; width: 1900px;">
+    <div id="map" style="height: 800px; width: 100%;">
     </div>
     <script type="text/javascript" src="//unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
     <script type="text/javascript" src="{% static 'common/js/leaflet.geojson.grid.js' %}"></script>
@@ -32,7 +32,7 @@
             osm.addTo(map);
 
             // path grid layer
-            const tiles_path = new L.GeoJSONTileLayer('/api/path/path.geojson?tiles={z}/{x}/{y}', {
+            const tiles_path = new L.GeoJSONTileLayer('/api/path/{z}/{x}/{y}.geojson', {
                 minZoom: 3,
                 maxZoom: 18,
                 style: {
@@ -46,7 +46,7 @@
             });
 
             // trek grid layer
-            const tiles_trek = new L.GeoJSONTileLayer('/api/trek/trek.geojson?tiles={z}/{x}/{y}', {
+            const tiles_trek = new L.GeoJSONTileLayer('/api/trek/{z}/{x}/{y}.geojson', {
                 minZoom: 3,
                 maxZoom: 18,
                 style:{
@@ -57,7 +57,7 @@
             });
 
             // city grid layer
-            const tiles_city = new L.GeoJSONTileLayer('/api/city/city.geojson?tiles={z}/{x}/{y}', {
+            const tiles_city = new L.GeoJSONTileLayer('/api/city/{z}/{x}/{y}.geojson', {
                 minZoom: 3,
                 maxZoom: 18,
                 style: {

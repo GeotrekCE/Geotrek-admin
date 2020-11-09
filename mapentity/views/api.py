@@ -1,8 +1,12 @@
 import logging
+from math import pi
+import mercantile
 
+from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
+from django.contrib.gis.geos import Polygon
+from django.db.models import Func, Q
 from django.core.exceptions import FieldDoesNotExist
-from django.db.models import F, Q
 from django.views.generic.list import ListView
 
 from djgeojson.views import GeoJSONLayerView
@@ -29,7 +33,6 @@ class MapEntityLayer(FilterListMixin, ModelViewMixin, GeoJSONLayerView):
     force2d = True
     srid = API_SRID
     precision = app_settings.get('GEOJSON_PRECISION')
-    geometry_field = 'simplified_geom'
 
     def __init__(self, *args, **kwargs):
         super(MapEntityLayer, self).__init__(*args, **kwargs)
@@ -46,7 +49,7 @@ class MapEntityLayer(FilterListMixin, ModelViewMixin, GeoJSONLayerView):
         return mapentity_models.ENTITY_LAYER
 
     @view_permission_required()
-    @view_cache_latest()
+    # @view_cache_latest()
     def dispatch(self, *args, **kwargs):
         return super(MapEntityLayer, self).dispatch(*args, **kwargs)
 
@@ -54,9 +57,37 @@ class MapEntityLayer(FilterListMixin, ModelViewMixin, GeoJSONLayerView):
     def render_to_response(self, context, **response_kwargs):
         return super(MapEntityLayer, self).render_to_response(context, **response_kwargs)
 
+
+class MapEntityTileLayer(MapEntityLayer):
+    geometry_field = 'simplified_geom'
+
+    @classmethod
+    def get_entity_kind(cls):
+        return mapentity_models.ENTITY_TILE_LAYER
+
     def get_queryset(self):
-        return super().get_queryset().annotate(api_geom=Transform(self.geometry_field_db, API_SRID)).\
-            annotate(simplified_geom=F(self.geometry_field_db))
+        qs = super().get_queryset()
+        qs = qs.filter(geom__intersects=self.bbox)
+        return qs.annotate(simplified_geom=Func('geom', 2 * self.pixel_size, function='ST_SimplifyPreserveTopology'))
+
+    @property
+    def pixel_size(self):
+        tile_pixel_size = 512
+        equatorial_radius_wgs84 = 6378137
+        circumference = 2 * pi * equatorial_radius_wgs84
+        return circumference / tile_pixel_size / 2 ** int(self.kwargs['z'])
+
+    @property
+    def bbox(self):
+        # define bounds from x y z and create polygon from bounds
+        bounds = mercantile.bounds(int(self.kwargs['x']), int(self.kwargs['y']), int(self.kwargs['z']))
+        west, south = mercantile.xy(bounds.west, bounds.south)
+        east, north = mercantile.xy(bounds.east, bounds.north)
+        bbox = Polygon.from_bbox((west, south, east, north))
+        bbox.srid = 3857  # WGS84 SRID
+        # transform the polygon to match with db srid
+        bbox.transform(settings.SRID)
+        return bbox
 
 
 class MapEntityJsonList(JSONResponseMixin, BaseListView, ListView):

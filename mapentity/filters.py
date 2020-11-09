@@ -1,83 +1,42 @@
-import mercantile
-from math import pi
-from rest_framework.exceptions import ParseError
-
 from django.db.models.fields.related import ManyToOneRel
-from django.db.models import Func
 from django.conf import settings
 
 from django_filters import FilterSet, Filter
 from django_filters.filterset import get_model_field
 from django.contrib.gis import forms
-from django.contrib.gis.geos import Polygon
 
-from .settings import app_settings
+from .settings import app_settings, API_SRID
+from .widgets import HiddenGeometryWidget
 
 
 class PolygonFilter(Filter):
 
-    field_class = forms.CharField
+    field_class = forms.PolygonField
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('field_name', app_settings['GEOM_FIELD_NAME'])
-        kwargs.setdefault('widget', forms.HiddenInput)
+        kwargs.setdefault('widget', HiddenGeometryWidget)
         kwargs.setdefault('lookup_expr', 'intersects')
-        self.tolerance = 0
         super(PolygonFilter, self).__init__(*args, **kwargs)
 
-    def _compute_pixel_size(self, zoom):
-        tile_pixel_size = 512
-        equatorial_radius_wgs84 = 6378137
-        circumference = 2 * pi * equatorial_radius_wgs84
-        return circumference / tile_pixel_size / 2 ** int(zoom)
 
-    def get_polygon_from_value(self, value):
-        # Parse coordinates from parameter
-        try:
-            z, x, y = (int(n) for n in value.split(','))
-        except ValueError:
-            return ""
+class PythonPolygonFilter(PolygonFilter):
 
-        # define bounds from x y z and create polygon from bounds
-        bounds = mercantile.bounds(int(x), int(y), int(z))
-        west, south = mercantile.xy(bounds.west, bounds.south)
-        east, north = mercantile.xy(bounds.east, bounds.north)
-        bbox = Polygon.from_bbox((west, south, east, north))
-        bbox.srid = 3857  # WGS84 SRID
-        # compute the tolerance to simplify the geometries
-        if not self.tolerance:
-            self.tolerance = self._compute_pixel_size(z)
-        # transform the polygon to match with db srid
-        bbox.transform(settings.SRID)
-        return bbox
-
-
-class TileFilter(PolygonFilter):
     def filter(self, qs, value):
         if not value:
             return qs
-        bbox = self.get_polygon_from_value(value)
-        if bbox:
-            qs = qs.filter(geom__intersects=bbox)
-        return qs.annotate(simplified_geom=Func('geom', 2 * self.tolerance, function='ST_SimplifyPreserveTopology'))
-
-
-class PythonTileFilter(PolygonFilter):
-    def filter(self, qs, value):
-        if not value:
-            return qs
+        if not value.srid:
+            value.srid = API_SRID
+        value.transform(settings.SRID)
         filtered = []
         for o in qs.all():
             geom = getattr(o, self.field_name)
             if geom and geom.valid and not geom.empty:
-                if getattr(geom, self.lookup_expr)(self.get_polygon_from_value(value)):
+                if getattr(geom, self.lookup_expr)(value):
                     filtered.append(o.pk)
             else:
                 filtered.append(o.pk)
-        qs = qs.filter(pk__in=filtered)
-        for index in range(len(qs)):
-            qs[index].geom = qs[index].geom.simplify(2 * self.tolerance, preserve_topology=True)
-        return qs
+        return qs.filter(pk__in=filtered)
 
 
 class BaseMapEntityFilterSet(FilterSet):
@@ -131,7 +90,7 @@ class BaseMapEntityFilterSet(FilterSet):
 
 
 class MapEntityFilterSet(BaseMapEntityFilterSet):
-    tiles = TileFilter()
+    bbox = PolygonFilter()
 
     class Meta:
-        fields = ['tiles']
+        fields = ['bbox']

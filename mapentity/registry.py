@@ -157,6 +157,7 @@ class MapEntityOptions(object):
     def _url_path(self, view_kind):
         kind_to_urlpath = {
             mapentity_models.ENTITY_LAYER: r'^api/{modelname}/{modelname}.geojson$',
+            mapentity_models.ENTITY_TILE_LAYER: r'^api/{modelname}/(?P<z>\d+)/(?P<x>\d+)/(?P<y>\d+).geojson$',
             mapentity_models.ENTITY_LIST: r'^{modelname}/list/$',
             mapentity_models.ENTITY_JSON_LIST: r'^api/{modelname}/{modelname}s.json$',
             mapentity_models.ENTITY_FORMAT_LIST: r'^{modelname}/list/export/$',
