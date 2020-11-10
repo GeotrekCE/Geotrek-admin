@@ -1,6 +1,9 @@
 build:
 	docker build -t geotrek .
 
+build-focal:
+	docker build -t geotrek -f DockerfileFocal .
+
 build-no-cache:
 	docker build -t geotrek --no-cache .
 
