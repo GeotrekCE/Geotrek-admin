@@ -2,7 +2,7 @@ import os
 
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.utils.translation import get_language, ugettext_lazy as _
+from django.utils.translation import get_language, gettext_lazy as _
 from django.urls import reverse
 
 from mapentity.helpers import is_file_uptodate, convertit_download, smart_urljoin

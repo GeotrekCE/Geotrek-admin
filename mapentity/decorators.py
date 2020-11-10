@@ -3,7 +3,7 @@ from functools import wraps
 from django.utils.decorators import available_attrs, method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.http import last_modified as cache_last_modified
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import PermissionDenied
 from django.core.cache import caches
 from django.contrib.auth.decorators import user_passes_test

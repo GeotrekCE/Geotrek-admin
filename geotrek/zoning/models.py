@@ -6,7 +6,7 @@
 """
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from geotrek.common.utils import uniquify, intersecting
 from geotrek.maintenance.models import Intervention, Project
 from geotrek.tourism.models import TouristicContent, TouristicEvent

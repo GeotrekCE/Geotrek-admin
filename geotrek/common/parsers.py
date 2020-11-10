@@ -22,7 +22,7 @@ from django.contrib.gis.geos import Point
 from django.core.files.base import ContentFile
 from django.template.loader import render_to_string
 from django.utils import translation
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.utils.encoding import force_text
 from django.conf import settings
 from paperclip.models import attachment_upload

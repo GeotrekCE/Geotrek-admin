@@ -16,7 +16,7 @@ from django.db.models import Q
 from django.http import StreamingHttpResponse
 from django.test.client import RequestFactory
 from django.utils import translation
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from geotrek.common.models import FileType  # NOQA
 from geotrek.common import models as common_models
 from geotrek.flatpages.models import FlatPage

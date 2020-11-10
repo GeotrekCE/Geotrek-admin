@@ -3,7 +3,7 @@ import logging
 
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils.formats import date_format
 
 from colorfield.fields import ColorField

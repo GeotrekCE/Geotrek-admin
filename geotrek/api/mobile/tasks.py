@@ -5,7 +5,7 @@ import os
 from celery import shared_task, current_task
 from django.conf import settings
 from django.core.management import call_command
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from geotrek.common.tasks import GeotrekImportTask
 

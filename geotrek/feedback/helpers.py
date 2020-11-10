@@ -5,7 +5,7 @@ import requests
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.core.mail import mail_managers
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 logger = logging.getLogger(__name__)
 

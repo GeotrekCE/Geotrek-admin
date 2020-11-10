@@ -22,7 +22,7 @@ from django.utils import html
 from django.utils.encoding import force_text
 from django.utils.http import http_date
 from django.utils.timezone import utc
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from ..factories import SuperUserFactory
 from ..forms import MapEntityForm

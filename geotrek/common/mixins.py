@@ -12,7 +12,7 @@ from django.db.models import Manager as DefaultManager
 from django.db import models
 from django.db.models import Q
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext as _
 from django.template.defaultfilters import slugify
 
 from easy_thumbnails.exceptions import InvalidImageFormatError

@@ -9,7 +9,7 @@ from django.utils.encoding import smart_str
 from django.utils.formats import number_format
 from django.utils.functional import Promise, curry
 from django.utils.html import strip_tags
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 def field_as_string(obj, field, ascii=False):

@@ -16,7 +16,7 @@ from django.contrib.gis.geos.collections import GeometryCollection
 from django.core.serializers.base import Serializer
 from django.core.exceptions import FieldDoesNotExist
 from django.utils.encoding import smart_str
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from osgeo import ogr, osr
 

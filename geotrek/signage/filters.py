@@ -1,5 +1,5 @@
 from django_filters import CharFilter, ModelChoiceFilter
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from geotrek.authent.models import Structure
 from geotrek.core.models import Topology

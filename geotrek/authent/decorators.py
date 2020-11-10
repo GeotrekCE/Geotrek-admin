@@ -3,7 +3,7 @@ from functools import wraps
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils.decorators import available_attrs
 
 

@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib import admin
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.db import transaction
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 from . import models as common_models

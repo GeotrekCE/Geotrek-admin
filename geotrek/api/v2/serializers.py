@@ -7,7 +7,7 @@ from django.conf import settings
 from django.db.models import F
 from django.urls import reverse
 from django.utils.translation import get_language
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
 from PIL.Image import DecompressionBombError
 from rest_framework import serializers

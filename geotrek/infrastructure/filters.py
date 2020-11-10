@@ -1,4 +1,4 @@
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django_filters import CharFilter
 
 from geotrek.common.filters import StructureRelatedFilterSet, ValueFilter

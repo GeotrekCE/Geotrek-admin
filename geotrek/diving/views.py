@@ -190,4 +190,4 @@ class DiveServiceViewSet(viewsets.ModelViewSet):
         return dive.services.filter(type__published=True).annotate(api_geom=Transform("geom", settings.API_SRID))
 
 # Translations for public PDF
-# translation.ugettext_noop("...")
+# translation.gettext_noop("...")

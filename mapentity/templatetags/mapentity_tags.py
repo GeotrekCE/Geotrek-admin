@@ -7,7 +7,7 @@ from django.core.exceptions import FieldDoesNotExist
 from django.template import Context
 from django.template.exceptions import TemplateDoesNotExist
 from django.utils.timezone import now
-from django.utils.translation import ugettext, ungettext
+from django.utils.translation import gettext, ungettext
 
 from ..helpers import alphabet_enumeration
 
@@ -118,7 +118,7 @@ def humanize_timesince(date):
     if (num_minutes > 0):
         return ungettext(u"%d minute ago", u"%d minutes ago", num_minutes) % num_minutes
 
-    return ugettext(u"just a few seconds ago")
+    return gettext(u"just a few seconds ago")
 
 
 @register.inclusion_tag('mapentity/_detail_valuelist_fragment.html')

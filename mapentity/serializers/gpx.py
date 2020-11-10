@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
 from django.core.serializers.base import Serializer
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.contrib.gis.geos.collections import GeometryCollection
 from django.contrib.gis.geos import Point, LineString, Polygon
 
