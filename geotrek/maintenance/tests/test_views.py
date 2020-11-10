@@ -580,7 +580,7 @@ class ExportTest(TranslationResetMixin, TestCase):
         self.assertEqual(layer_line.geom_type.name, 'LineString')
 
         for layer in [layer_point, layer_line]:
-            self.assertEqual(layer.srs.name, 'RGF93_Lambert_93')
+            self.assertEqual(layer.srs.name, 'RGF93 / Lambert-93')
             self.assertCountEqual(layer.fields, [
                 'id', 'name', 'period', 'type', 'domain', 'constraint',
                 'global_cos', 'interventi', 'interven_1', 'comments',
