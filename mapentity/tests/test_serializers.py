@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.conf import settings
 from django.contrib.gis import gdal
 from django.contrib.gis.gdal import DataSource
+from django.contrib.gis.geos import Point
 from django.http import HttpResponse
 from django.test.utils import override_settings
 from django.utils import translation
@@ -140,7 +141,8 @@ class ShapefileSerializer(TestCase):
         ds = DataSource(shape_write(dives, Dive, ['id', 'name'], get_geom, 'POINT', 2154, 3812))
         layer = ds[0]
         for feature in layer:
-            self.assertEqual(feature.geom.wkt, 'POINT (-315454.738110134 -6594196.36395464)')
+            self.assertAlmostEqual(feature.geom.x, -315454.73811014)
+            self.assertAlmostEqual(feature.geom.y, -6594196.36395467)
 
 
 class CSVSerializerTests(TestCase):
