@@ -5,7 +5,6 @@ from django.test import TestCase
 from django.conf import settings
 from django.contrib.gis import gdal
 from django.contrib.gis.gdal import DataSource
-from django.contrib.gis.geos import Point
 from django.http import HttpResponse
 from django.test.utils import override_settings
 from django.utils import translation

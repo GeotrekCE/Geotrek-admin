@@ -9,7 +9,6 @@ from django.views.decorators.http import last_modified as cache_last_modified
 from ..registry import registry
 from ..filters import MapEntityFilterSet
 from ..forms import MapEntityForm
-from ..serializers import json_django_dumps
 
 logger = logging.getLogger(__name__)
 
