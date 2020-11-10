@@ -1,6 +1,6 @@
 from functools import wraps
 
-from django.utils.decorators import available_attrs, method_decorator
+from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.http import last_modified as cache_last_modified
 from django.utils.translation import gettext_lazy as _
@@ -131,7 +131,7 @@ def save_history():
     session.
     """
     def decorator(view_func):
-        @wraps(view_func, assigned=available_attrs(view_func))
+        @wraps(view_func)
         def _wrapped_view(self, request, *args, **kwargs):
             result = view_func(self, request, *args, **kwargs)
 
