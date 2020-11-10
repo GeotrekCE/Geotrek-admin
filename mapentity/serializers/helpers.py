@@ -4,7 +4,7 @@ import json
 from django.core.serializers import serialize
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models.query import QuerySet
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.encoding import smart_str
 from django.utils.formats import number_format
 from django.utils.functional import Promise, curry
@@ -52,14 +52,14 @@ class DjangoJSONEncoder(DjangoJSONEncoder):
     def default(self, obj):
         # https://docs.djangoproject.com/en/dev/topics/serialization/#id2
         if isinstance(obj, Promise):
-            return force_text(obj)
+            return force_str(obj)
         if isinstance(obj, QuerySet):
             # `default` must return a python serializable
             # structure, the easiest way is to load the JSON
             # string produced by `serialize` and return it
 
             return json.loads(serialize('json', obj))
-        return force_text(obj)
+        return force_str(obj)
 
 
 # partial function, we can now use dumps(my_dict) instead

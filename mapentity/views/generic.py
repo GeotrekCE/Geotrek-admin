@@ -7,7 +7,7 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils.translation import gettext_lazy as _
 from django.utils.decorators import method_decorator
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.views import static
 from django.views.generic.detail import DetailView
 from django.views.generic import View
@@ -45,7 +45,7 @@ def log_action(request, object, action_flag):
         user_id=request.user.pk,
         content_type_id=object.get_content_type_id(),
         object_id=object.pk,
-        object_repr=force_text(object),
+        object_repr=force_str(object),
         action_flag=action_flag
     )
 

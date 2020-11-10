@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.test import TestCase
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.formats import localize
 
 from mapentity.models import LogEntry, ADDITION, DELETION
@@ -26,7 +26,7 @@ class LogEntryTest(TestCase):
             user_id=user.pk,
             content_type_id=object.get_content_type_id(),
             object_id=object.pk,
-            object_repr=force_text(object),
+            object_repr=force_str(object),
             action_flag=ADDITION
         )
         self.assertEqual('Added', logentry.action_flag_display)
@@ -40,7 +40,7 @@ class LogEntryTest(TestCase):
             user_id=user.pk,
             content_type_id=object.get_content_type_id(),
             object_id=object.pk,
-            object_repr=force_text(object),
+            object_repr=force_str(object),
             action_flag=DELETION
         )
         object.delete()
