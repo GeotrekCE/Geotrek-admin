@@ -220,7 +220,7 @@ class SensitiveAreaOpenAirList(PublicOrReadPermMixin, ListView):
         airspace_list = []
         for a in areas:
             airspace_list.append(a.openair())
-        airspace_core = '\n'.join(airspace_list)
+        airspace_core = '\n\n'.join(airspace_list)
         airspace_file = file_header + airspace_core
         response = HttpResponse(airspace_file, content_type='application/octet-stream; charset=UTF-8')
         response['Content-Disposition'] = 'inline; filename=sensitivearea_openair.txt'
