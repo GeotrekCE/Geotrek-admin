@@ -8,7 +8,7 @@ from django.db import DEFAULT_DB_ALIAS
 from django.db.utils import ProgrammingError
 from django.utils.translation import gettext as _
 from django.views.generic.base import View
-from django.conf.urls import url, include
+from django.conf.urls import include, re_path
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import auth
 from django.contrib.auth.models import Permission
@@ -179,11 +179,11 @@ class MapEntityOptions(object):
         view_kind = view_class.get_entity_kind()
         url_path = self._url_path(view_kind)
         url_name = self.url_shortname(view_kind)
-        return url(url_path, view_class.as_view(), name=url_name)
+        return re_path(url_path, view_class.as_view(), name=url_name)
 
     def __view_classes_to_url(self, *view_classes):
         return [self.url_for(view_class) for view_class in view_classes] + \
-               [url(app_settings['DRF_API_URL_PREFIX'], include(self.rest_router.urls))]
+               [re_path(app_settings['DRF_API_URL_PREFIX'], include(self.rest_router.urls))]
 
     def url_shortname(self, kind):
         assert kind in mapentity_models.ENTITY_KINDS
