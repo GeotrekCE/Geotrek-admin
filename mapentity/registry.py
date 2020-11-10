@@ -203,8 +203,6 @@ class Registry(object):
     def register(self, model, options=None, menu=None):
         """ Register model and returns URL patterns
         """
-        from .signals import post_register
-
         # Ignore models from not installed apps
         if not model._meta.installed:
             return []
@@ -225,7 +223,6 @@ class Registry(object):
             options.menu = menu
 
         self.registry[model] = options
-        post_register.send(sender=self, app_label=options.app_label, model=model)
 
         try:
             self.content_type_ids.append(model.get_content_type_id())
