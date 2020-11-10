@@ -100,3 +100,4 @@ xlrd==1.1.0
 xmltodict==0.12.0
 zipp==3.0.0
 pdfimpose==1.1.0
+pyopenair==1.0.0
