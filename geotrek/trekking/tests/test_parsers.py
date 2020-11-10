@@ -98,11 +98,9 @@ class TrekParserFilterGeomTests(TestCase):
 
 
 WKT = (
-    b'LINESTRING ('
-    b'356392.8992765 6689612.1026167, 356466.0587727 6689740.1317350, 356411.1891506 6689868.1608532, '
-    b'356566.6530798 6689904.7406012, 356712.9720721 6689804.1462941, 356703.8271351 6689703.5519869, '
-    b'356621.5227019 6689639.5374278, 356612.3777649 6689511.5083096, 356447.7688986 6689502.3633725'
-    b')'
+    b'LINESTRING (356392.89928 6689612.10262, 356466.05877 6689740.13174, 356411.18915 6689868.16086, '
+    b'356566.65308 6689904.74060, 356712.97207 6689804.14630, 356703.82714 6689703.55199, '
+    b'356621.52270 6689639.53743, 356612.37777 6689511.50831, 356447.76890 6689502.36337)'
 )
 
 
@@ -124,4 +122,4 @@ class TrekParserTests(TestCase):
         self.assertEqual(trek.difficulty, self.difficulty)
         self.assertEqual(trek.route, self.route)
         self.assertQuerysetEqual(trek.themes.all(), [repr(t) for t in self.themes], ordered=False)
-        self.assertEqual(WKTWriter(precision=7).write(trek.geom), WKT)
+        self.assertEqual(WKTWriter(precision=5).write(trek.geom), WKT)
