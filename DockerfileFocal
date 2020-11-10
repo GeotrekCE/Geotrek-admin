@@ -42,7 +42,7 @@ RUN apt-get update && apt-get install -y \
     apt-get install -y --no-install-recommends postgis && \
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
-COPY requirements.txt requirements.txt
+COPY requirements-focal.txt requirements.txt
 RUN python3 -m venv env
 RUN env/bin/pip install -U setuptools==45.2.0
 RUN env/bin/pip install --no-cache-dir wheel
