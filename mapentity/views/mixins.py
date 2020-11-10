@@ -1,3 +1,4 @@
+import json
 import logging
 
 from django.contrib.contenttypes.fields import GenericRelation
@@ -39,7 +40,7 @@ class JSONResponseMixin(object):
 
     def convert_context_to_json(self, context):
         "Convert the context dictionary into a JSON object"
-        return json_django_dumps(context)
+        return json.dumps(context)
 
 
 class LastModifiedMixin(object):

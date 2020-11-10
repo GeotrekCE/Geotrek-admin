@@ -1,3 +1,4 @@
+from functools import partial
 import html
 import json
 
@@ -7,7 +8,7 @@ from django.db.models.query import QuerySet
 from django.utils.encoding import force_str
 from django.utils.encoding import smart_str
 from django.utils.formats import number_format
-from django.utils.functional import Promise, curry
+from django.utils.functional import Promise
 from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
 
@@ -64,4 +65,4 @@ class DjangoJSONEncoder(DjangoJSONEncoder):
 
 # partial function, we can now use dumps(my_dict) instead
 # of dumps(my_dict, cls=DjangoJSONEncoder)
-json_django_dumps = curry(json.dumps, cls=DjangoJSONEncoder)
+json_django_dumps = partial(json.dumps, cls=DjangoJSONEncoder)
