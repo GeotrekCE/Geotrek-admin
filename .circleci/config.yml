@@ -181,35 +181,35 @@ workflows:
               only: /[0-9]+\.[0-9]+\.[0-9]+/
       - docker_test_18_04:
           requires:
-            - docker_image
+            - docker_image_18_04
           filters:
             tags:
               only: /[0-9]+\.[0-9]+\.[0-9]+/
       - docker_test_nds_18_04:
           requires:
-            - docker_image
+            - docker_image_18_04
           filters:
             tags:
               only: /[0-9]+\.[0-9]+\.[0-9]+/
       - docker_test_js_18_04:
           requires:
-            - docker_image
+            - docker_image_18_04
           filters:
             tags:
               only: /[0-9]+\.[0-9]+\.[0-9]+/
       - docker_test_integration_18_04:
           requires:
-            - docker_image
+            - docker_image_18_04
           filters:
             tags:
               only: /[0-9]+\.[0-9]+\.[0-9]+/
       - docker_publish_18_04:
           requires:
             - codestyle
-            - docker_test
-            - docker_test_nds
-            - docker_test_js
-            - docker_test_integration
+            - docker_test_18_04
+            - docker_test_nds_18_04
+            - docker_test_js_18_04
+            - docker_test_integration_18_04
           filters:
             tags:
               only: /[0-9]+\.[0-9]+\.[0-9]+/
@@ -222,11 +222,11 @@ workflows:
       - ubuntu_publish_18_04:
           requires:
             - codestyle
-            - ubuntu_package
-            - docker_test
-            - docker_test_nds
-            - docker_test_js
-            - docker_test_integration
+            - ubuntu_package_18_04
+            - docker_test_18_04
+            - docker_test_nds_18_04
+            - docker_test_js_18_04
+            - docker_test_integration_18_04
           filters:
             tags:
               only: /[0-9]+\.[0-9]+\.[0-9]+/
@@ -238,7 +238,7 @@ workflows:
               only: /[0-9]+\.[0-9]+\.[0-9]+/
       - docker_test_20_04:
           requires:
-            - docker_image
+            - docker_image_20_04
           filters:
             tags:
               only: /[0-9]+\.[0-9]+\.[0-9]+/
