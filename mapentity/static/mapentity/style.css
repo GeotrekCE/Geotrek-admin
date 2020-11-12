@@ -323,13 +323,28 @@ tr.selected-row td {
     width: 100%;
 }
 
-/* Layout (based on "Conflicting position" trick) */
-#container {position: absolute; top: 39px; bottom: 0; left: 0; right: 0;}
-#panelleft {position: absolute; top: 2px; bottom: 0; width: 50%; left: 0;}
-#panelright {position: absolute; top: 2px; bottom: 0; width: 50%; right: 0;}
+/* Layout using Flexbox */
+#container,
+#panelleft,
+#panelright {
+    position: relative;
+}
+#panelleft,
+#panelright {
+    width: 50%;
+}
+#container,
+#panelleft {
+    display: flex;
+}
 
-#mainmap {position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px;}
-
+#mainmap {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
 
 .map-panel.detail {position: absolute; top: 2px; bottom: 0px; right: 0px;}
 #detailmap {height: 100%;}
@@ -338,13 +353,15 @@ tr.selected-row td {
 /***** Entity List ******/
 
 #list-panel {
-    margin-left: 60px;
     padding: 4px;
     height: calc(100vh - 50px);
+    width: calc(100% - 60px);
+    flex-grow: 1;
 }
+
 @media (max-height: 960px) {
     #list-panel {
-        margin-left: 48px;
+        width: calc(100% - 44px);
     }
 }
 
@@ -375,11 +392,9 @@ tr.selected-row td {
 
 /* Left menu */
 #entitylist {
-    position: absolute;
-    top: 0px;
-    left: 0;
     width: 60px;
     max-height: calc(100vh - 50px);
+    overflow-y: auto;
 }
 
 @media (max-height: 960px) {
