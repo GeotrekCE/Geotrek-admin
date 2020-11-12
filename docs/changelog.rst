@@ -9,6 +9,11 @@ CHANGELOG
 
 -
 
+**Doc improvements**
+
+- Reorganize index
+- Add sphinx container for dev mode
+
 
 2.39.1 (2020-10-28)
 -------------------
