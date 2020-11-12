@@ -1,1 +1,4 @@
-Sphinx==1.8.5
+Sphinx
+sphinx-autobuild
+sphinx-intl
+sphinx-rtd-theme

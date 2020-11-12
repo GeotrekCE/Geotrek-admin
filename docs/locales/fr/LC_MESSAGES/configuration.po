@@ -8,167 +8,214 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek 2.38\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-22 12:11+0200\n"
+"POT-Creation-Date: 2020-11-12 14:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.6.0\n"
+"Generated-By: Babel 2.8.0\n"
 
 #: ../../configuration.rst:3
 msgid "CONFIGURATION"
 msgstr ""
 
 #: ../../configuration.rst:7
-msgid "Configuration update"
+msgid "Basic configuration update"
 msgstr ""
 
 #: ../../configuration.rst:9
-msgid "To update server name, or set workers number or timeout, run:"
-msgstr ""
-
-#: ../../configuration.rst:17
-msgid "Nginx configuration"
-msgstr ""
-
-#: ../../configuration.rst:19
 msgid ""
-"Nginx configuration is controlled by Geotrek and will be erased at each "
-"upgrade. Do not modify ``/etc/nginx/sites-available/geotrek.conf`` or "
-"``/etc/nginx/sites-enable/geotrek.conf``. Modify ``/opt/geotrek-"
-"admin/var/conf/nginx.conf.in`` instead. To update nginx.conf, then run:"
+"To update basic configuration (server name, database connection, "
+"languages, or set workers number or timeout), run:"
 msgstr ""
 
-#: ../../configuration.rst:29
-msgid "Spatial extents"
-msgstr ""
-
-#: ../../configuration.rst:31
+#: ../../configuration.rst:15
 msgid ""
-"In order to check your configuration of spatial extents, a small tool is "
-"available at http://server/tools/extents/."
+"The basic configuration is stored in ``/opt/geotrek-admin/var/conf/env`` "
+"file, not to be changed manually. This file also contains the PostgreSQL "
+"authentification details, if you need to access your Geotrek-admin "
+"database."
 msgstr ""
 
-#: ../../configuration.rst
-msgid "notes"
+#: ../../configuration.rst:20
+msgid "NGINX configuration"
 msgstr ""
 
-#: ../../configuration.rst:36
-msgid "Administrator privileges are required."
+#: ../../configuration.rst:22
+msgid ""
+"NGINX configuration is controlled by Geotrek-admin and will be erased at "
+"each upgrade. Do not modify ``/etc/nginx/sites-available/geotrek.conf`` "
+"or ``/etc/nginx/sites-enable/geotrek.conf``. Modify ``/opt/geotrek-"
+"admin/var/conf/nginx.conf.in`` instead. To update ``nginx.conf``, then "
+"run:"
 msgstr ""
 
-#: ../../configuration.rst:40
+#: ../../configuration.rst:32
 msgid "Users management"
 msgstr ""
 
-#: ../../configuration.rst:42
+#: ../../configuration.rst:34
 msgid ""
-"Geotrek relies on Django authentication and permissions system : Users "
-"belong to groups and permissions can be assigned at user or group-level."
+"Geotrek-admin relies on Django authentication and permissions system. "
+"Users belong to groups. Permissions can be assigned at user or group-"
+"level."
 msgstr ""
 
-#: ../../configuration.rst:45
+#: ../../configuration.rst:37
 msgid ""
 "The whole configuration of user, groups and permissions is available in "
 "the *AdminSite*, if you did not enable *External authent* (see below)."
 msgstr ""
 
-#: ../../configuration.rst:48
-msgid "By default four groups are created :"
+#: ../../configuration.rst:40
+msgid "By default four groups are created:"
 msgstr ""
 
-#: ../../configuration.rst:50
+#: ../../configuration.rst:42
 msgid "Readers"
 msgstr ""
 
-#: ../../configuration.rst:51
+#: ../../configuration.rst:43
 msgid "Path managers"
 msgstr ""
 
-#: ../../configuration.rst:52
+#: ../../configuration.rst:44
 msgid "Trek managers"
 msgstr ""
 
-#: ../../configuration.rst:53
+#: ../../configuration.rst:45
 msgid "Editor"
 msgstr ""
 
-#: ../../configuration.rst:55
+#: ../../configuration.rst:47
 msgid ""
 "Once the application is installed, it is possible to modify the default "
 "permissions of these existing groups, create new ones etc..."
 msgstr ""
 
-#: ../../configuration.rst:58
+#: ../../configuration.rst:50
 msgid ""
 "If you want to allow the users to access the *AdminSite*, give them the "
 "*staff* status using the dedicated checkbox."
 msgstr ""
 
-#: ../../configuration.rst:63
+#: ../../configuration.rst:55
 msgid "Database users"
 msgstr ""
 
-#: ../../configuration.rst:65
+#: ../../configuration.rst:57
 msgid ""
-"It is not safe to use the ``geotrek`` user in QGis, or to give its "
+"It is not safe to use the ``geotrek`` user in QGIS, or to give its "
 "password to many collaborators."
 msgstr ""
 
-#: ../../configuration.rst:68
+#: ../../configuration.rst:60
 msgid ""
 "A wise approach, is to create a *read-only* user, or with specific "
 "permissions."
 msgstr ""
 
-#: ../../configuration.rst:70
-msgid "With *pgAdmin*, you can create database users like this :"
+#: ../../configuration.rst:62
+msgid "With *pgAdmin*, you can create database users like this:"
 msgstr ""
 
-#: ../../configuration.rst:79
+#: ../../configuration.rst:71
 msgid "And give them permissions by schema :"
 msgstr ""
 
-#: ../../configuration.rst:89
-msgid "You can also create groups, etc. See postgresql documentation."
+#: ../../configuration.rst:81
+msgid "You can also create groups, etc. See PostgreSQL documentation."
 msgstr ""
 
-#: ../../configuration.rst:93
-msgid "Email settings"
-msgstr ""
-
-#: ../../configuration.rst:95
-msgid "Geotrek will send emails :"
-msgstr ""
-
-#: ../../configuration.rst:97
-msgid "to administrators when internal errors occur"
-msgstr ""
-
-#: ../../configuration.rst:98
-msgid "to managers when a feedback report is created"
-msgstr ""
-
-#: ../../configuration.rst:100
-msgid ""
-"Email configuration takes place in ``/opt/geotrek-"
-"admin/var/conf/custom.py``, where you control recipients emails "
-"(``ADMINS``, ``MAIL_MANAGERS``) and email server configuration."
-msgstr ""
-
-#: ../../configuration.rst:103
-msgid ""
-"You can test you configuration with the following command. A fake email "
-"will be sent to the managers :"
-msgstr ""
-
-#: ../../configuration.rst:112
+#: ../../configuration.rst:85
 msgid "Advanced Configuration"
 msgstr ""
 
-#: ../../configuration.rst:114
+#: ../../configuration.rst:87
 msgid "See :ref:`advanced configuration <advanced-configuration-section>`..."
 msgstr ""
+
+#~ msgid "Configuration update"
+#~ msgstr ""
+
+#~ msgid "To update server name, or set workers number or timeout, run:"
+#~ msgstr ""
+
+#~ msgid "Nginx configuration"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Nginx configuration is controlled by "
+#~ "Geotrek and will be erased at each"
+#~ " upgrade. Do not modify ``/etc/nginx"
+#~ "/sites-available/geotrek.conf`` or ``/etc/nginx"
+#~ "/sites-enable/geotrek.conf``. Modify ``/opt/geotrek-"
+#~ "admin/var/conf/nginx.conf.in`` instead. To update"
+#~ " nginx.conf, then run:"
+#~ msgstr ""
+
+#~ msgid "Spatial extents"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "In order to check your configuration "
+#~ "of spatial extents, a small tool "
+#~ "is available at http://server/tools/extents/."
+#~ msgstr ""
+
+#~ msgid "notes"
+#~ msgstr ""
+
+#~ msgid "Administrator privileges are required."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Geotrek relies on Django authentication "
+#~ "and permissions system : Users belong"
+#~ " to groups and permissions can be "
+#~ "assigned at user or group-level."
+#~ msgstr ""
+
+#~ msgid "By default four groups are created :"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "It is not safe to use the "
+#~ "``geotrek`` user in QGis, or to "
+#~ "give its password to many collaborators."
+#~ msgstr ""
+
+#~ msgid "With *pgAdmin*, you can create database users like this :"
+#~ msgstr ""
+
+#~ msgid "You can also create groups, etc. See postgresql documentation."
+#~ msgstr ""
+
+#~ msgid "Email settings"
+#~ msgstr ""
+
+#~ msgid "Geotrek will send emails :"
+#~ msgstr ""
+
+#~ msgid "to administrators when internal errors occur"
+#~ msgstr ""
+
+#~ msgid "to managers when a feedback report is created"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Email configuration takes place in "
+#~ "``/opt/geotrek-admin/var/conf/custom.py``, where you"
+#~ " control recipients emails (``ADMINS``, "
+#~ "``MAIL_MANAGERS``) and email server "
+#~ "configuration."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "You can test you configuration with "
+#~ "the following command. A fake email "
+#~ "will be sent to the managers :"
+#~ msgstr ""
 

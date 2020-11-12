@@ -132,7 +132,7 @@ In order to activate suricate reports:
 
         geotrek loaddata geotrek/feedback/fixtures/basic.json
 
-3. To make these lists available for your Geotrek-rando, run `sync_rando` (see :ref:`synchronization <synchronization>`)
+3. To make these lists available for your Geotrek-rando, run `sync_rando` (see :ref:`synchronization <synchronization-section>`)
 
 
 Anonymize feedback reports
@@ -1303,8 +1303,8 @@ It is possible to customize the pdf, with trek_public_booklet_pdf.html.
 
 **Custom SQL**
 
-Put your custom SQL in a file name `/opt/geotrek-admin/var/conf/extra_sql/<app name>/<pre or post>_<script name>.sql
+Put your custom SQL in a file name ``/opt/geotrek-admin/var/conf/extra_sql/<app name>/<pre or post>_<script name>.sql``
 
 * app name is the name of the Django application, eg. trekking or tourism
-* pre_… scripts are executed before Django migrations and post_… scripts after
+* ``pre_``… scripts are executed before Django migrations and ``post_``… scripts after
 * script are executed in INSTALLED_APPS order, then by alphabetical order of script names

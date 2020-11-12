@@ -56,6 +56,13 @@ services:
         aliases:
           - ${SERVER_NAME}
 
+  sphinx:
+    build: docs
+    volumes:
+      - ./docs:/docs
+    ports:
+      - 8800:8800
+
 volumes:
   postgres:
   redis:

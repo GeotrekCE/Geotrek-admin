@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek 2.38\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-22 12:11+0200\n"
+"POT-Creation-Date: 2020-11-12 14:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.6.0\n"
+"Generated-By: Babel 2.8.0\n"
 
 #: ../../loading-data.rst:5
 msgid "LOADING DATA"
@@ -54,7 +54,7 @@ msgid "Not overlapping"
 msgstr ""
 
 #: ../../loading-data.rst:24
-msgid "If possible :"
+msgid "If possible:"
 msgstr ""
 
 #: ../../loading-data.rst:26
@@ -70,7 +70,7 @@ msgid "Data source"
 msgstr ""
 
 #: ../../loading-data.rst:30
-msgid "Formats: Shapefile or pure SQL dump SQL (CREATE TABLE + INSERT)"
+msgid "Formats: Shapefile or pure SQL dump (CREATE TABLE + INSERT)"
 msgstr ""
 
 #: ../../loading-data.rst:34
@@ -107,7 +107,7 @@ msgstr ""
 
 #: ../../loading-data.rst:50
 msgid ""
-"`In QGIS "
+"In `QGIS "
 "<http://docs.qgis.org/latest/en/docs/training_manual/processing/cutting_merging.html>`_,"
 " you can visualize your DEM, or merge several tiles together (in *Raster*"
 " > *Misc* > *Merge*)."
@@ -116,24 +116,56 @@ msgstr ""
 #: ../../loading-data.rst:53
 msgid ""
 "Generate a GeoTIFF, and upload both files (``.tif`` + ``.tfw``) on the "
-"server. And use the Geotrek command to load it into PostGIS :"
+"server. And use the Geotrek-admin command to load it into PostGIS :"
 msgstr ""
 
-#: ../../loading-data.rst
-msgid "note"
-msgstr ""
-
-#: ../../loading-data.rst:64
+#: ../../loading-data.rst:63
 msgid ""
 "This command makes use of *GDAL* and ``raster2pgsql`` internally. It "
 "therefore supports all GDAL raster input formats. You can list these "
 "formats with the command ``raster2pgsql -G``."
 msgstr ""
 
-#: ../../loading-data.rst:70
+#: ../../loading-data.rst:69
 msgid ""
 "If you only have a ``.tif`` file, you can generate the ``.tfw`` file with"
-" the command ``gdal_translate -co \"TFW=YES\" in.tif out.tif``. It will "
-"generate a new ``.tif`` file with its ``.tfw`` metadata file."
+" the command ``gdal_translate -co \"TFW=YES\" in.tif out.tif``."
 msgstr ""
+
+#: ../../loading-data.rst:70
+msgid "It will generate a new ``.tif`` file with its ``.tfw`` metadata file."
+msgstr ""
+
+#~ msgid "If possible :"
+#~ msgstr ""
+
+#~ msgid "Formats: Shapefile or pure SQL dump SQL (CREATE TABLE + INSERT)"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "`In QGIS "
+#~ "<http://docs.qgis.org/latest/en/docs/training_manual/processing/cutting_merging.html>`_,"
+#~ " you can visualize your DEM, or "
+#~ "merge several tiles together (in "
+#~ "*Raster* > *Misc* > *Merge*)."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Generate a GeoTIFF, and upload both "
+#~ "files (``.tif`` + ``.tfw``) on the "
+#~ "server. And use the Geotrek command "
+#~ "to load it into PostGIS :"
+#~ msgstr ""
+
+#~ msgid "note"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "If you only have a ``.tif`` file,"
+#~ " you can generate the ``.tfw`` file"
+#~ " with the command ``gdal_translate -co "
+#~ "\"TFW=YES\" in.tif out.tif``. It will "
+#~ "generate a new ``.tif`` file with "
+#~ "its ``.tfw`` metadata file."
+#~ msgstr ""
 
