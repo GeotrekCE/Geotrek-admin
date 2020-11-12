@@ -65,6 +65,7 @@ class MapEntityOptions(object):
         # Filter to views inherited from MapEntity base views
         picked = []
         rest_viewset = None
+        tile_view = None
         list_view = None
 
         for name, view in inspect.getmembers(views_module):
@@ -79,6 +80,8 @@ class MapEntityOptions(object):
                         if view_model is self.model:
                             if issubclass(view, mapentity_views.MapEntityViewSet):
                                 rest_viewset = view
+                            elif issubclass(view, mapentity_views.MapEntityTileLayer):
+                                tile_view = view
                             elif issubclass(view, mapentity_views.MapEntityList):
                                 picked.append(view)
                                 list_view = view
@@ -123,6 +126,18 @@ class MapEntityOptions(object):
 
         self.rest_router.register(self.modelname + 's', rest_viewset, basename=self.modelname)
 
+        # Dynamically define tile view
+        if tile_view is None:
+            _queryset = self.get_queryset()
+            _serializer = self.get_tile_serializer()
+
+            class dynamic_tile_view(mapentity_views.MapEntityTileLayer):
+                queryset = _queryset
+                serializer_class = _serializer
+            tile_view = dynamic_tile_view
+
+        picked.append(tile_view)
+
         # Returns Django URL patterns
         return self.__view_classes_to_url(*picked)
 
@@ -148,6 +163,20 @@ class MapEntityOptions(object):
                 geo_field = 'api_geom'
                 id_field = 'id'
                 exclude = []
+
+        return Serializer
+
+    def get_tile_serializer(self):
+        _model = self.model
+
+        class Serializer(GeoFeatureModelSerializer):
+            api_geom = GeometryField(read_only=True, precision=7)
+
+            class Meta:
+                model = _model
+                geo_field = "api_geom"
+                id_field = 'id'
+                fields = ('id', )
 
         return Serializer
 

@@ -37,7 +37,6 @@ from .logentry import LogEntryList
 
 MAPENTITY_GENERIC_VIEWS = [
     MapEntityLayer,
-    MapEntityTileLayer,
     MapEntityList,
     MapEntityJsonList,
     MapEntityFormat,

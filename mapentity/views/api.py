@@ -11,6 +11,8 @@ from django.views.generic.list import ListView
 
 from djgeojson.views import GeoJSONLayerView
 from rest_framework import viewsets
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 
 from mapentity import models as mapentity_models
 from ..settings import API_SRID, app_settings
@@ -58,17 +60,18 @@ class MapEntityLayer(FilterListMixin, ModelViewMixin, GeoJSONLayerView):
         return super(MapEntityLayer, self).render_to_response(context, **response_kwargs)
 
 
-class MapEntityTileLayer(MapEntityLayer):
-    geometry_field = 'simplified_geom'
+class MapEntityTileLayer(ListAPIView):
+    permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
 
     @classmethod
     def get_entity_kind(cls):
         return mapentity_models.ENTITY_TILE_LAYER
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        qs = self.queryset
         qs = qs.filter(geom__intersects=self.bbox)
-        return qs.annotate(simplified_geom=Func('geom', 2 * self.pixel_size, function='ST_SimplifyPreserveTopology'))
+        # qs = qs.filter(length__gte=2 * self.pixel_size)
+        return qs.annotate(api_geom=Transform(Func('geom', self.pixel_size, function='ST_SimplifyPreserveTopology'), API_SRID))
 
     @property
     def pixel_size(self):

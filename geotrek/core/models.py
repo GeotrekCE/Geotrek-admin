@@ -58,7 +58,7 @@ class PathInvisibleManager(models.Manager):
 
 class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
            TimeStampedModelMixin, StructureRelated):
-    geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
+    geom = models.LineStringField(srid=settings.SRID)
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=False,
                                            editable=False)
     valid = models.BooleanField(default=True, verbose_name=_("Validity"),
