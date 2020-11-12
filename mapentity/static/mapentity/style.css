@@ -380,7 +380,6 @@ tr.selected-row td {
     left: 0;
     width: 60px;
     max-height: calc(100vh - 50px);
-    overflow-y: auto;
 }
 
 @media (max-height: 960px) {
