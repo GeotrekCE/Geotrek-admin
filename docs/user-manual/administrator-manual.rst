@@ -1,0 +1,5 @@
+=====================
+Administration manual
+=====================
+
+*Coming soon*
