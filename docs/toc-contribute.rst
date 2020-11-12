@@ -1,6 +1,6 @@
 .. toctree::
     :caption: Contribute
-    :maxdepth: 1
+    :maxdepth: 2
 
     translating
     development

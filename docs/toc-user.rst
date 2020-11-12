@@ -1,6 +1,6 @@
 .. toctree::
     :caption: User manual
-    :maxdepth: 1
+    :maxdepth: 2
 
     user-manual.rst
     faq.rst

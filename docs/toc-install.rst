@@ -1,6 +1,6 @@
 .. toctree::
     :caption: Installation & configuration
-    :maxdepth: 1
+    :maxdepth: 2
 
     installation
     loading-data
