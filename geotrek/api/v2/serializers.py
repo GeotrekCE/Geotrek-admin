@@ -45,42 +45,20 @@ class BaseGeoJSONSerializer(geo_serializers.GeoFeatureModelSerializer):
         auto_bbox = True
 
 
-def override_serializer(format_output, dimension, base_serializer_class):
+def override_serializer(format_output, base_serializer_class):
     """
     Override Serializer switch output format and dimension data
     """
     if format_output == 'geojson':
-        if dimension == '3':
-            class GeneratedGeo3DSerializer(BaseGeoJSONSerializer,
-                                           base_serializer_class):
-                geometry = geo_serializers.GeometryField(read_only=True, source='geom3d_transformed', precision=7)
+        class GeneratedGeoSerializer(BaseGeoJSONSerializer,
+                                     base_serializer_class):
+            class Meta(BaseGeoJSONSerializer.Meta,
+                       base_serializer_class.Meta):
+                pass
 
-                class Meta(BaseGeoJSONSerializer.Meta,
-                           base_serializer_class.Meta):
-                    pass
-
-            final_class = GeneratedGeo3DSerializer
-
-        else:
-            class GeneratedGeoSerializer(BaseGeoJSONSerializer,
-                                         base_serializer_class):
-                class Meta(BaseGeoJSONSerializer.Meta,
-                           base_serializer_class.Meta):
-                    pass
-
-            final_class = GeneratedGeoSerializer
+        final_class = GeneratedGeoSerializer
     else:
-        if dimension == '3':
-            class Generated3DSerializer(base_serializer_class):
-                geometry = geo_serializers.GeometryField(read_only=True, source='geom3d_transformed', precision=7)
-
-                class Meta(base_serializer_class.Meta):
-                    pass
-
-            final_class = Generated3DSerializer
-
-        else:
-            final_class = base_serializer_class
+        final_class = base_serializer_class
 
     return final_class
 
@@ -503,7 +481,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                           length_2d_m=Length('geom'),
                           length_3d_m=Length3D('geom_3d'))
             FinalClass = override_serializer(self.context.get('request').GET.get('format'),
-                                             3,
                                              TrekSerializer)
             return FinalClass(qs, many=True, context=self.context).data
 

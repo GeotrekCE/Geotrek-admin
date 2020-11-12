@@ -35,4 +35,4 @@ class GeotrekGeometricViewset(GeotrekViewSet):
     def get_serializer_class(self):
         base_serializer_class = super(GeotrekGeometricViewset, self).get_serializer_class()
         format_output = self.request.query_params.get('format', 'json')
-        return override_serializer(format_output, 3, base_serializer_class)
+        return override_serializer(format_output, base_serializer_class)

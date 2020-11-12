@@ -5,7 +5,6 @@ from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
 from django.db import connection
 from django.contrib.gis.geos import Point
-from django.db.models import Model
 from django.db.models.query import QuerySet
 
 from geotrek.common.utils import sqlfunction, uniquify

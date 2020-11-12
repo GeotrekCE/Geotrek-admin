@@ -26,7 +26,7 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekGeometricViewset):
         else:
             base_serializer_class = api_serializers.SensitiveAreaSerializer
         format_output = self.request.query_params.get('format', 'json')
-        return api_serializers.override_serializer(format_output, 2, base_serializer_class)
+        return api_serializers.override_serializer(format_output, base_serializer_class)
 
     def get_queryset(self):
         queryset = sensitivity_models.SensitiveArea.objects.existing() \
