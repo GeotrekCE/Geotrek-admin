@@ -210,11 +210,12 @@ class TopologyHelper(object):
         return json.dumps(objdict)
 
     @classmethod
-    def overlapping(cls, klass, queryset):
+    def overlapping(cls, all_objects, queryset):
         from .models import Path, Topology, PathAggregation
 
-        all_objects = klass.objects.existing()
-        is_generic = klass.KIND == Topology.KIND
+        if not isinstance(all_objects, QuerySet):
+            all_objects = all_objects.objects.existing()
+        is_generic = all_objects.model.KIND == Topology.KIND
         single_input = isinstance(queryset, QuerySet)
 
         if single_input:
@@ -248,7 +249,7 @@ class TopologyHelper(object):
             'aggregations_table': PathAggregation._meta.db_table,
             'paths_table': Path._meta.db_table,
             'topology_list': ','.join(topology_pks),
-            'extra_condition': 'true' if is_generic else "kind = '%s'" % klass.KIND
+            'extra_condition': 'true' if is_generic else "kind = '%s'" % all_objects.model.KIND
         }
 
         cursor = connection.cursor()

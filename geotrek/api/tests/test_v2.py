@@ -1,5 +1,5 @@
+from django.contrib.auth.models import User
 from django.urls import reverse
-from django.db.models import Count
 from django.test.client import Client
 from django.test.testcases import TestCase
 from django.contrib.gis.geos import MultiPoint, Point
@@ -29,66 +29,42 @@ GEOJSON_STRUCTURE = sorted([
     'properties'
 ])
 
-TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'arrival', 'ascent', 'create_datetime', 'departure', 'descent', 'description', 'description_teaser',
-    'difficulty', 'duration', 'id', 'length_2d', 'length_3d', 'max_elevation', 'min_elevation',
-    'name', 'networks', 'themes', 'update_datetime', 'url', 'practice', 'external_id', 'second_external_id', 'published', 'thumbnail'
+TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted([
+    'id', 'access', 'accessibilities', 'advice', 'advised_parking',
+    'altimetric_profile', 'ambiance', 'arrival', 'ascent',
+    'category', 'children', 'create_datetime', 'departure',
+    'descent', 'description', 'description_teaser', 'difficulty',
+    'disabled_infrastructure', 'duration', 'duration_pretty',
+    'elevation_area_url', 'elevation_svg_url', 'external_id',
+    'files', 'gpx', 'information_desks', 'kml',
+    'labels', 'length_2d', 'length_3d', 'max_elevation',
+    'min_elevation', 'name', 'networks', 'next', 'parents',
+    'parking_location', 'pictures', 'points_reference', 'portal',
+    'practice', 'previous', 'public_transport', 'published',
+    'relationships', 'reservation_system', 'route',
+    'second_external_id', 'source', 'structure', 'themes',
+    'thumbnail', 'treks', 'update_datetime', 'url', 'videos'
 ])
 
-PATH_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted(['comments', 'length_2d', 'length_3d', 'name', 'url'])
+PATH_PROPERTIES_GEOJSON_STRUCTURE = sorted(['comments', 'length_2d', 'length_3d', 'name', 'url'])
 
-TOUR_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted(TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE + ['count_children'])
+TOUR_PROPERTIES_GEOJSON_STRUCTURE = sorted(TREK_PROPERTIES_GEOJSON_STRUCTURE + ['count_children', 'steps'])
 
-TREK_DETAIL_JSON_STRUCTURE = sorted([
-    'arrival', 'ascent', 'create_datetime', 'departure', 'descent', 'description', 'description_teaser',
-    'difficulty', 'duration', 'id', 'length_2d', 'length_3d', 'max_elevation', 'min_elevation',
-    'name', 'networks', 'themes', 'update_datetime', 'geometry', 'pictures', 'practice', 'external_id', 'second_external_id',
-    'published', 'accessibilities', 'labels', 'advice', 'advised_parking',
-    'parking_location', 'gpx', 'kml', 'children', 'parents', 'public_transport',
-    'elevation_area_url', 'elevation_svg_url', 'altimetric_profile', 'reservation_system',
-    'duration_pretty', 'ambiance', 'access', 'route', 'disabled_infrastructure', 'points_reference', 'category', 'structure', 'treks', 'previous', 'next', 'portal', 'source', 'information_desks', 'relationships', 'files', 'videos', 'thumbnail'
-])
-
-TOUR_DETAIL_JSON_STRUCTURE = sorted(TREK_DETAIL_JSON_STRUCTURE + ['steps'])
-
-
-TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'id', 'arrival', 'ascent', 'create_datetime', 'departure', 'descent', 'description', 'description_teaser',
-    'difficulty', 'duration', 'length_2d', 'length_3d', 'max_elevation', 'min_elevation',
-    'name', 'networks', 'themes', 'update_datetime', 'pictures', 'practice', 'external_id', 'second_external_id',
-    'published', 'elevation_area_url', 'elevation_svg_url', 'altimetric_profile', 'reservation_system',
-    'accessibilities', 'labels', 'advice', 'advised_parking',
-    'parking_location', 'gpx', 'kml', 'children', 'parents', 'public_transport',
-    'duration_pretty', 'ambiance', 'access', 'route', 'disabled_infrastructure', 'points_reference', 'category', 'structure', 'treks', 'previous', 'next', 'portal', 'source', 'information_desks', 'relationships', 'files', 'videos', 'thumbnail'
-])
-
-TOUR_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted(TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE + ['steps'])
-
-POI_LIST_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'create_datetime', 'description', 'type', 'external_id', 'id', 'name', 'update_datetime', 'url', 'published'
-])
-
-POI_DETAIL_JSON_STRUCTURE = sorted([
-    'create_datetime', 'description',
-    'id', 'external_id', 'type',
-    'name', 'update_datetime', 'geometry', 'pictures', 'published'
-])
-
-POI_DETAIL_PROPERTIES_GEOJSON_STRUCTURE = sorted([
-    'id', 'create_datetime', 'description', 'external_id', 'type',
-    'name', 'update_datetime', 'pictures', 'published'
+POI_PROPERTIES_GEOJSON_STRUCTURE = sorted([
+    'id', 'create_datetime', 'description', 'external_id',
+    'name', 'pictures', 'published', 'type', 'update_datetime', 'url'
 ])
 
 TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted([
-    'approved', 'category', 'description', 'description_teaser', 'geometry', 'id', 'pictures'
+    'id', 'approved', 'category', 'description', 'description_teaser', 'geometry', 'pictures', 'url'
 ])
 
 CITY_PROPERTIES_JSON_STRUCTURE = sorted([
-    'code', 'name', 'published'
+    'code', 'geometry', 'name', 'published'
 ])
 
 DISTRICT_PROPERTIES_JSON_STRUCTURE = sorted([
-    'id', 'name', 'published'
+    'id', 'geometry', 'name', 'published'
 ])
 
 ROUTE_PROPERTIES_JSON_STRUCTURE = sorted([
@@ -104,10 +80,18 @@ ACCESSIBILITY_PROPERTIES_JSON_STRUCTURE = sorted([
 ])
 
 TARGET_PORTAL_PROPERTIES_JSON_STRUCTURE = sorted([
-    'id', 'name', 'website', 'title', 'description', 'facebook_id', 'facebook_image_url'
+    'id', 'name', 'website', 'title', 'description', 'facebook_id', 'facebook_image_url', 'facebook_image_height', 'facebook_image_width'
 ])
 
 STRUCTURE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
+
+TREK_LABEL_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'advice', 'filter_rando', 'name', 'pictogram'])
+
+INFORMATION_DESK_PROPERTIES_JSON_STRUCTURE = sorted([
+    'description', 'email', 'latitude', 'longitude',
+    'municipality', 'name', 'phone', 'photo_url',
+    'postal_code', 'street', 'type', 'website'
+])
 
 
 class BaseApiTest(TestCase):
@@ -119,7 +103,6 @@ class BaseApiTest(TestCase):
     def setUpTestData(cls):
         cls.client = Client()
         cls.nb_treks = 15
-        cls.nb_pois = 55
         cls.theme = common_factory.ThemeFactory.create()
         cls.network = trek_factory.TrekNetworkFactory.create()
         cls.label = trek_factory.LabelTrekFactory()
@@ -129,8 +112,8 @@ class BaseApiTest(TestCase):
         cls.treks[0].labels.add(cls.label)
         trek_models.TrekRelationship(trek_a=cls.treks[0], trek_b=cls.treks[1]).save()
         information_desk_type = tourism_factory.InformationDeskTypeFactory()
-        info_desk = tourism_factory.InformationDeskFactory(type=information_desk_type)
-        cls.treks[0].information_desks.add(info_desk)
+        cls.info_desk = tourism_factory.InformationDeskFactory(type=information_desk_type)
+        cls.treks[0].information_desks.add(cls.info_desk)
         cls.attachment_1 = common_factory.AttachmentFactory.create(content_object=cls.treks[0], attachment_file=get_dummy_uploaded_image())
         cls.treks[3].parking_location = None
         cls.treks[3].points_reference = MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID)
@@ -152,6 +135,8 @@ class BaseApiTest(TestCase):
         cls.portal = common_factory.TargetPortalFactory(id=16)
         cls.structure = authent_factory.StructureFactory(id=8)
         cls.nb_treks += 2  # add parent and 1 child published
+        cls.poi_type = trek_factory.POITypeFactory()
+        cls.poi = trek_factory.POIFactory()
 
     def get_trek_list(self, params=None):
         return self.client.get(reverse('apiv2:trek-list'), params)
@@ -168,20 +153,11 @@ class BaseApiTest(TestCase):
     def get_difficulties_list(self, params=None):
         return self.client.get(reverse('apiv2:difficulty-list'), params)
 
-    def get_trek_difficulties_list(self, params=None):
-        return self.client.get(reverse('apiv2:trek-difficulties'), params)
-
     def get_practices_list(self, params=None):
         return self.client.get(reverse('apiv2:practice-list'), params)
 
-    def get_trek_practices_list(self, params=None):
-        return self.client.get(reverse('apiv2:trek-practices'), params)
-
     def get_networks_list(self, params=None):
         return self.client.get(reverse('apiv2:network-list'), params)
-
-    def get_trek_networks_list(self, params=None):
-        return self.client.get(reverse('apiv2:trek-networks'), params)
 
     def get_themes_list(self, params=None):
         return self.client.get(reverse('apiv2:theme-list'), params)
@@ -231,11 +207,8 @@ class BaseApiTest(TestCase):
     def get_poi_detail(self, id_poi, params=None):
         return self.client.get(reverse('apiv2:poi-detail', args=(id_poi,)), params)
 
-    def get_poi_all_types_list(self, params=None):
-        return self.client.get(reverse('apiv2:poi-all-types'), params)
-
-    def get_poi_used_types_list(self, params=None):
-        return self.client.get(reverse('apiv2:poi-used-types'), params)
+    def get_poi_type(self, params=None):
+        return self.client.get(reverse('apiv2:poitype-list'), params)
 
     def get_path_list(self, params=None):
         return self.client.get(reverse('apiv2:path-list'), params)
@@ -249,6 +222,21 @@ class BaseApiTest(TestCase):
     def get_touristiccontent_detail(self, id_content, params=None):
         return self.client.get(reverse('apiv2:touristiccontent-detail', args=(id_content,)), params)
 
+    def get_treklabel_list(self, params=None):
+        return self.client.get(reverse('apiv2:labeltrek-list'), params)
+
+    def get_treklabel_detail(self, id_label, params=None):
+        return self.client.get(reverse('apiv2:labeltrek-detail', args=(id_label,)), params)
+
+    def get_informationdesk_list(self, params=None):
+        return self.client.get(reverse('apiv2:informationdesk-list'), params)
+
+    def get_informationdesk_detail(self, id_infodesk, params=None):
+        return self.client.get(reverse('apiv2:informationdesk-detail', args=(id_infodesk,)), params)
+
+    def get_config(self, params=None):
+        return self.client.get(reverse('apiv2:config', params))
+
 
 class APIAccessAnonymousTestCase(BaseApiTest):
     """
@@ -261,27 +249,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
     def test_path_list(self):
         response = self.get_path_list()
-        self.assertEqual(response.status_code, 200)
-        json_response = response.json()
-        self.assertEqual(sorted(json_response.keys()),
-                         PAGINATED_JSON_STRUCTURE)
-        self.assertEqual(len(json_response.get('results')), path_models.Path.objects.all().count())
-        self.assertEqual(len(json_response.get('results')[0].get('geometry').get('coordinates')[0]),
-                         2)
-        response = self.get_path_list({'format': 'geojson', 'dim': '3'})
-        json_response = response.json()
-
-        # test geojson format
-        self.assertEqual(sorted(json_response.keys()),
-                         PAGINATED_GEOJSON_STRUCTURE)
-
-        self.assertEqual(len(json_response.get('features')),
-                         path_models.Path.objects.all().count(), json_response)
-        # test dim 3 ok
-        self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')[0]), 3)
-
-        self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
-                         PATH_LIST_PROPERTIES_GEOJSON_STRUCTURE)
+        self.assertEqual(response.status_code, 401)
 
     def test_trek_list(self):
         response = self.get_trek_list()
@@ -296,12 +264,12 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         # trek count is ok
         self.assertEqual(len(json_response.get('results')), self.nb_treks)
 
-        # test dim 2 ok
+        # test dim 3 by default for treks
         self.assertEqual(len(json_response.get('results')[0].get('geometry').get('coordinates')[0]),
-                         2)
+                         3)
 
-        # regenrate with geojson 3D
-        response = self.get_trek_list({'format': 'geojson', 'dim': '3'})
+        # regenrate with geojson
+        response = self.get_trek_list({'format': 'geojson'})
         json_response = response.json()
 
         # test geojson format
@@ -310,14 +278,12 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
         self.assertEqual(len(json_response.get('features')),
                          self.nb_treks, json_response)
-        # test dim 3 ok
-        self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')[0]), 3)
 
         self.assertEqual(sorted(json_response.get('features')[0].keys()),
                          GEOJSON_STRUCTURE)
 
         self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
-                         TREK_LIST_PROPERTIES_GEOJSON_STRUCTURE)
+                         TREK_PROPERTIES_GEOJSON_STRUCTURE)
 
     def test_trek_list_filters(self):
         response = self.get_trek_list({
@@ -356,12 +322,8 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         # trek count is ok
         self.assertEqual(len(json_response.get('results')), 2)  # Two parents
 
-        # test dim 2 ok
-        self.assertEqual(len(json_response.get('results')[0].get('geometry').get('coordinates')[0]),
-                         2)
-
-        # regenrate with geojson 3D
-        response = self.get_tour_list({'format': 'geojson', 'dim': '3'})
+        # regenrate with geojson
+        response = self.get_tour_list({'format': 'geojson'})
         json_response = response.json()
 
         # test geojson format
@@ -375,38 +337,9 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(sorted(json_response.get('features')[0].keys()), GEOJSON_STRUCTURE)
 
         self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
-                         TOUR_LIST_PROPERTIES_GEOJSON_STRUCTURE)
+                         TOUR_PROPERTIES_GEOJSON_STRUCTURE)
 
         self.assertEqual(json_response.get('features')[0].get('properties').get('count_children'), 1)
-
-    def test_trek_detail(self):
-        id_trek = trek_models.Trek.objects.annotate(
-            count_parents=Count('trek_parents'), count_children=Count('trek_children')
-        ).exclude(count_parents__gt=0).exclude(count_children__gt=0).order_by('?').first().pk
-        response = self.get_trek_detail(id_trek)
-        # test response code
-        self.assertEqual(response.status_code, 200)
-
-        json_response = response.json()
-        # test default structure
-        self.assertEqual(sorted(json_response.keys()),
-                         TREK_DETAIL_JSON_STRUCTURE)
-
-        response = self.get_trek_detail(id_trek, {'format': "geojson", "dim": "3"})
-        json_response = response.json()
-
-        self.assertEqual(sorted(json_response.keys()),
-                         GEOJSON_STRUCTURE)
-
-        self.assertEqual(sorted(json_response.get('properties').keys()),
-                         TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
-
-        # calls to cover all cases of fields to display
-        response = self.get_trek_detail(self.treks[0].id)
-        self.assertEqual(response.status_code, 200)
-
-        response = self.get_trek_detail(self.treks[3].id)
-        self.assertEqual(response.status_code, 200)
 
     @override_settings(SPLIT_TREKS_CATEGORIES_BY_ITINERANCY=True)
     def test_trek_detail_categories_split_itinerancy(self):
@@ -418,49 +351,13 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_trek_detail(self.treks[0].id)
         self.assertEqual(response.status_code, 200)
 
-    def test_tour_detail(self):
-        response = self.get_tour_detail(self.parent.pk)
-        # test response code
-        self.assertEqual(response.status_code, 200)
-
-        json_response = response.json()
-        # test default structure
-        self.assertEqual(sorted(json_response.keys()),
-                         TOUR_DETAIL_JSON_STRUCTURE)
-
-        response = self.get_tour_detail(self.parent.pk, {'format': "geojson", "dim": "3"})
-        json_response = response.json()
-
-        self.assertEqual(sorted(json_response.keys()),
-                         GEOJSON_STRUCTURE)
-        self.assertEqual(sorted(json_response.get('properties').get('steps').get('features')[0].get('properties').keys()),
-                         TREK_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
-        self.assertEqual(json_response.get('properties').get('steps').get('features')[0].get('properties').get('id'),
-                         self.child2.pk)
-        self.assertEqual(json_response.get('properties').get('steps').get('features')[1].get('properties').get('id'),
-                         self.child1.pk)
-        self.assertEqual(sorted(json_response.get('properties').keys()),
-                         TOUR_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
-
-    def test_trek_difficulties_list(self):
-        response = self.get_trek_difficulties_list()
-        self.assertEquals(response.status_code, 302)
-
     def test_difficulty_list(self):
         response = self.get_difficulties_list()
         self.assertEqual(response.status_code, 200)
 
-    def test_trek_practices_list(self):
-        response = self.get_trek_practices_list()
-        self.assertEquals(response.status_code, 302)
-
     def test_practice_list(self):
         response = self.get_practices_list()
         self.assertEqual(response.status_code, 200)
-
-    def test_trek_network_list(self):
-        response = self.get_trek_networks_list()
-        self.assertEquals(response.status_code, 302)
 
     def test_network_list(self):
         response = self.get_networks_list()
@@ -540,7 +437,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_structure_list()
         json_response = response.json()
         self.assertEqual(response.status_code, 200)
-        self.assertEquals(len(json_response), authent_models.Structure.objects.count())
+        self.assertEquals(len(json_response['results']), authent_models.Structure.objects.count())
 
     def test_structure_detail(self):
         response = self.get_structure_detail(self.structure.pk)
@@ -562,12 +459,8 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(len(json_response.get('results')),
                          trek_models.POI.objects.all().count())
 
-        # test dim 2 ok
-        self.assertEqual(len(json_response.get('results')[0].get('geometry').get('coordinates')),
-                         2)
-
-        # regenrate with geojson 3D
-        response = self.get_poi_list({'format': 'geojson', 'dim': '3'})
+        # regenerate with geojson 3D
+        response = self.get_poi_list({'format': 'geojson'})
         json_response = response.json()
 
         # test geojson format
@@ -584,109 +477,29 @@ class APIAccessAnonymousTestCase(BaseApiTest):
                          GEOJSON_STRUCTURE)
 
         self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
-                         POI_LIST_PROPERTIES_GEOJSON_STRUCTURE)
+                         POI_PROPERTIES_GEOJSON_STRUCTURE)
 
-    def test_poi_detail(self):
-        id_poi = trek_models.POI.objects.order_by('?').first().pk
-        response = self.get_poi_detail(id_poi)
-        # test response code
+        response = self.get_poi_list({'type': self.poi_type.pk, 'trek': self.treks[0].pk})
         self.assertEqual(response.status_code, 200)
 
-        json_response = response.json()
-        # test default structure
-
-        self.assertEqual(sorted(json_response.keys()),
-                         POI_DETAIL_JSON_STRUCTURE)
-
-        self.assertEqual(len(json_response.get('geometry').get('coordinates')), 2)
-
-    def test_poi_detail_3d(self):
-        id_poi = trek_models.POI.objects.order_by('?').first().pk
-
-        response = self.get_poi_detail(id_poi, {'format': "json", "dim": "3"})
-        json_response = response.json()
-
-        self.assertEqual(len(json_response.get('geometry').get('coordinates')), 3)
-
-        self.assertEqual(sorted(json_response.keys()),
-                         POI_DETAIL_JSON_STRUCTURE)
-
-    def test_poi_detail_geojson_3d(self):
-        id_poi = trek_models.POI.objects.order_by('?').first().pk
-
-        response = self.get_poi_detail(id_poi, {'format': "geojson", "dim": "3"})
-        json_response = response.json()
-
-        self.assertEqual(len(json_response.get('geometry').get('coordinates')), 3)
-
-        self.assertEqual(sorted(json_response.keys()),
-                         GEOJSON_STRUCTURE)
-
-        self.assertEqual(sorted(json_response.get('properties').keys()),
-                         POI_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
-
-    def test_poi_detail_geojson(self):
-        id_poi = trek_models.POI.objects.order_by('?').first().pk
-
-        response = self.get_poi_detail(id_poi, {'format': "geojson"})
-        json_response = response.json()
-
-        self.assertEqual(len(json_response.get('geometry').get('coordinates')), 2)
-
-        self.assertEqual(sorted(json_response.keys()),
-                         GEOJSON_STRUCTURE)
-
-        self.assertEqual(sorted(json_response.get('properties').keys()),
-                         POI_DETAIL_PROPERTIES_GEOJSON_STRUCTURE)
-
-    def test_poi_detail_json_dim_3d(self):
-        id_poi = trek_models.POI.objects.order_by('?').first().pk
-
-        response = self.get_poi_detail(id_poi, {'format': "json", "dim": "3"})
-        json_response = response.json()
-
-        self.assertEqual(sorted(json_response.keys()),
-                         POI_DETAIL_JSON_STRUCTURE)
-
-        self.assertEqual(len(json_response.get('geometry').get('coordinates')), 3)
-
-    def test_poi_type_all_list(self):
-        response = self.get_poi_used_types_list()
+    def test_poi_type(self):
+        response = self.get_poi_type()
         self.assertEqual(response.status_code, 200)
 
-    def test_poi_type_used_list(self):
-        response = self.get_poi_all_types_list()
+    def test_poi_published_detail(self):
+        id_poi = trek_factory.POIFactory.create(published_fr=True, published=False)
+        response = self.get_poi_detail(id_poi.pk)
         self.assertEqual(response.status_code, 200)
 
-    def test_poi_unpublished_detail_filter_published_false(self):
+    def test_poi_not_published_detail_lang_en(self):
+        id_poi = trek_factory.POIFactory.create(published_fr=True, published=False)
+        response = self.get_poi_detail(id_poi.pk, {'language': 'en'})
+        self.assertEqual(response.status_code, 404)
+
+    def test_poi_not_published_detail(self):
         id_poi = trek_factory.POIFactory.create(published=False)
-        response = self.get_poi_detail(id_poi.pk, {'published': 'false'})
-        self.assertEqual(response.status_code, 200)
-
-    def test_poi_published_detail_filter_published_false(self):
-        id_poi = trek_factory.POIFactory.create(published_fr=True, published=False)
-        response = self.get_poi_detail(id_poi.pk, {'published': 'false'})
+        response = self.get_poi_detail(id_poi.pk)
         self.assertEqual(response.status_code, 404)
-
-    def test_poi_published_detail_filter_published_false_lang_en(self):
-        id_poi = trek_factory.POIFactory.create(published_fr=True, published=False)
-        response = self.get_poi_detail(id_poi.pk, {'published': 'false', 'language': 'en'})
-        self.assertEqual(response.status_code, 200)
-
-    def test_poi_published_detail_filter_published_false_lang_fr(self):
-        id_poi = trek_factory.POIFactory.create(published_fr=True, published=False)
-        response = self.get_poi_detail(id_poi.pk, {'published': 'false', 'language': 'fr'})
-        self.assertEqual(response.status_code, 404)
-
-    def test_poi_published_detail_filter_published_true_lang_fr(self):
-        id_poi = trek_factory.POIFactory.create(published_fr=True, published=False)
-        response = self.get_poi_detail(id_poi.pk, {'published': 'true', 'language': 'fr'})
-        self.assertEqual(response.status_code, 200)
-
-    def test_poi_published_detail_filter_published_ok(self):
-        id_poi = trek_factory.POIFactory.create(published_fr=True, published=False)
-        response = self.get_poi_detail(id_poi.pk, {'published': 'ok', 'language': 'fr'})
-        self.assertEqual(response.status_code, 200)
 
     def test_touristiccontent_detail(self):
         response = self.get_touristiccontent_detail(self.content.pk)
@@ -709,6 +522,82 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(len(json_response.get('results')),
                          tourism_models.TouristicContent.objects.all().count())
 
+    def test_treklabels_list(self):
+        response = self.get_treklabel_list()
+        json_response = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertEquals(len(json_response['results']), trek_models.LabelTrek.objects.count())
+
+    def test_treklabels_detail(self):
+        response = self.get_treklabel_detail(self.label.pk)
+        json_response = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertEquals(sorted(json_response.keys()), TREK_LABEL_PROPERTIES_JSON_STRUCTURE)
+
+    def test_informationdesk_list(self):
+        response = self.get_informationdesk_list()
+        json_response = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertEquals(len(json_response['results']), tourism_models.InformationDesk.objects.count())
+
+    def test_informationdesk_detail(self):
+        response = self.get_informationdesk_detail(self.info_desk.pk)
+        json_response = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertEquals(sorted(json_response.keys()), INFORMATION_DESK_PROPERTIES_JSON_STRUCTURE)
+
+    def test_config(self):
+        response = self.get_config()
+        self.assertEqual(response.status_code, 200)
+
+        json_response = response.json()
+        self.assertEqual(sorted(json_response.keys()), ['bbox'])
+
+
+class APIAccessAdministratorTestCase(BaseApiTest):
+    """
+    TestCase for administrator API profile
+    """
+    @classmethod
+    def setUpTestData(cls):
+        #  created user
+        cls.administrator = User.objects.create(username="administrator", is_superuser=True,
+                                                is_staff=True, is_active=True)
+        cls.administrator.set_password('administrator')
+        cls.administrator.save()
+        cls.administrator.refresh_from_db()
+
+        BaseApiTest.setUpTestData()
+
+    def login(self):
+        """
+        Override base class login method, used before all function request 'get_api_element'
+        """
+        self.client.login(username="administrator", password="administrator")
+
+    def test_path_list(self):
+        self.login()
+        response = self.get_path_list()
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(sorted(json_response.keys()),
+                         PAGINATED_JSON_STRUCTURE)
+        self.assertEqual(len(json_response.get('results')), path_models.Path.objects.all().count())
+        response = self.get_path_list({'format': 'geojson'})
+        json_response = response.json()
+
+        # test geojson format
+        self.assertEqual(sorted(json_response.keys()),
+                         PAGINATED_GEOJSON_STRUCTURE)
+
+        self.assertEqual(len(json_response.get('features')),
+                         path_models.Path.objects.all().count(), json_response)
+        # test dim 3 ok
+        self.assertEqual(len(json_response.get('features')[0].get('geometry').get('coordinates')[0]), 3)
+
+        self.assertEqual(sorted(json_response.get('features')[0].get('properties').keys()),
+                         PATH_PROPERTIES_GEOJSON_STRUCTURE)
+
 
 class APISwaggerTestCase(BaseApiTest):
     """
@@ -722,7 +611,7 @@ class APISwaggerTestCase(BaseApiTest):
     def test_schema_fields(self):
         response = self.client.get(reverse('apiv2:schema'))
         self.assertContains(response, 'Filter elements contained in bbox formatted like SW-lng,SW-lat,NE-lng,NE-lat')
-        self.assertContains(response, 'Publication state. If language specified, ')
-        self.assertContains(response, 'only language published are filterted. true/false/all. true by default.')
+        self.assertContains(response, 'Set language for translation. \'all\' by default')
+        self.assertContains(response, 'Set minimum difficulty for a trek. Difficulty usually goes ')
         self.assertContains(response, 'Reference point to compute distance LNG,LAT')
         self.assertContains(response, 'Practices ids separated by comas.')

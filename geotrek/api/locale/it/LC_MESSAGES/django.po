@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-25 09:25+0200\n"
+"POT-Creation-Date: 2020-11-06 16:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,52 +18,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "Set geometry dimension (2 by default for 2D, 3 for 3D)"
+msgid "Medias syncing ..."
 msgstr ""
 
-msgid "Set language for translation. 'all' by default"
+msgid "Language"
 msgstr ""
 
-msgid "Set output format (json / geojson). JSON by default"
+msgid "Sync mobile ended"
 msgstr ""
 
-msgid "Limit required fields to increase performances. Ex : id,url,geometry"
+msgid "Launch Sync Mobile"
 msgstr ""
 
-msgid "Omit specified fields to increase performance. Ex: url,category"
-msgstr ""
-
-msgid ""
-"Filter elements contained in bbox formatted like SW-lng,SW-lat,NE-lng,NE-lat"
-msgstr ""
-
-msgid "Max distance in meters between point and elements"
-msgstr ""
-
-msgid "Reference point to compute distance LNG,LAT"
-msgstr ""
-
-msgid ""
-"Publication state. If language specified, only language published are "
-"filterted. true / false"
-msgstr ""
-
-msgid "External ID"
-msgstr ""
-
-msgid "Difficulties"
-msgstr ""
-
-msgid "Lengths"
-msgstr ""
-
-msgid "Durations"
-msgstr ""
-
-msgid "Show all cities"
-msgstr ""
-
-msgid "Hide all cities"
+msgid "Init sync ..."
 msgstr ""
 
 msgid "Show all difficulties"
@@ -72,10 +39,28 @@ msgstr ""
 msgid "Hide all difficulties"
 msgstr ""
 
+msgid "Show all lengths"
+msgstr ""
+
+msgid "Hide all lengths"
+msgstr ""
+
+msgid "Show all ascents"
+msgstr ""
+
+msgid "Hide all ascents"
+msgstr ""
+
 msgid "Show all districts"
 msgstr ""
 
 msgid "Hide all districts"
+msgstr ""
+
+msgid "Show all cities"
+msgstr ""
+
+msgid "Hide all cities"
 msgstr ""
 
 msgid "Show all accessibilities"
@@ -90,6 +75,12 @@ msgstr ""
 msgid "Hide all practices"
 msgstr ""
 
+msgid "Show all durations"
+msgstr ""
+
+msgid "Hide all durations"
+msgstr ""
+
 msgid "Show all themes"
 msgstr ""
 
@@ -102,27 +93,178 @@ msgstr ""
 msgid "Hide all routes"
 msgstr ""
 
-msgid "Show all lengths"
+msgid "Length"
 msgstr ""
 
-msgid "Hide all lengths"
+msgid "Ascent"
 msgstr ""
 
-msgid "Show all durations"
+msgid "Duration"
 msgstr ""
 
-msgid "Hide all durations"
+msgid "Difficulty"
+msgstr ""
+
+msgid "Practice"
+msgstr ""
+
+msgid "Accessibilities"
+msgstr ""
+
+msgid "Route"
+msgstr ""
+
+msgid "Themes"
+msgstr ""
+
+msgid "Networks"
 msgstr ""
 
 msgid "Information Desks Types"
 msgstr ""
 
+msgid "Districts"
+msgstr ""
+
+msgid "Cities"
+msgstr ""
+
+msgid "POI types"
+msgstr ""
+
+msgid "Touristic content types"
+msgstr ""
+
+msgid "Touristic event types"
+msgstr ""
+
+msgid "Launch Sync"
+msgstr ""
+
+msgid "Sync verifications"
+msgstr ""
+
+msgid "Sync in progress"
+msgstr ""
+
+msgid "An error occured"
+msgstr ""
+
 msgid "Mobile sync"
 msgstr ""
 
-msgid "Sync mobile ended"
+msgid "Confirmation"
 msgstr ""
 
-msgid "Launch Sync Mobile"
+msgid "Are you sure you want to sync ?"
 msgstr ""
 
+msgid "Cancel"
+msgstr ""
+
+msgid "Sync"
+msgstr ""
+
+msgid "Set language for translation. 'all' by default"
+msgstr ""
+
+msgid "Limit required fields to increase performances. Ex : id,url,geometry"
+msgstr ""
+
+msgid "Omit specified fields to increase performance. Ex: url,category"
+msgstr ""
+
+msgid "Set output format (json / geojson). JSON by default"
+msgstr ""
+
+msgid ""
+"Filter elements contained in bbox formatted like SW-lng,SW-lat,NE-lng,NE-lat"
+msgstr ""
+
+msgid "Max distance in meters between point and elements"
+msgstr ""
+
+msgid "Reference point to compute distance LNG,LAT"
+msgstr ""
+
+msgid ""
+"Period of occupancy. Month numbers (1-12) separated by comas. any = occupied "
+"at any time in the year. ignore = occupied or not."
+msgstr ""
+
+msgid "Practices ids separated by comas."
+msgstr ""
+
+msgid "Structure id."
+msgstr ""
+
+msgid "Limit to POIs that contains a specific POI Type"
+msgstr ""
+
+msgid "Id of a trek. It will show only the POIs related to this trek"
+msgstr ""
+
+msgid "Set minimum duration for a trek"
+msgstr ""
+
+msgid "Set maximum duration for a trek"
+msgstr ""
+
+msgid "Set minimum length for a trek"
+msgstr ""
+
+msgid "Set maximum length for a trek"
+msgstr ""
+
+msgid ""
+"Set minimum difficulty for a trek. Difficulty usually goes from 1 (very "
+"easy) to 4 (difficult)"
+msgstr ""
+
+msgid ""
+"Set maximum difficulty for a trek. Difficulty usually goes from 1 (very "
+"easy) to 4 (difficult)"
+msgstr ""
+
+msgid "Set minimum ascent for a trek"
+msgstr ""
+
+msgid "Set maximum ascent for a trek"
+msgstr ""
+
+msgid ""
+"Code (pk) of a city to filter by. Can be multiple cities split by a comma"
+msgstr ""
+
+msgid ""
+"Pk of a district to filter by. Can be multiple districts split by a comma"
+msgstr ""
+
+msgid "Pk of a structure to filter by"
+msgstr ""
+
+msgid "Pk of the accessibilities to filter by, separated by commas"
+msgstr ""
+
+msgid "Pk of the themes to filter by, separated by commas"
+msgstr ""
+
+msgid "Pk of the portals to filter by, separated by commas"
+msgstr ""
+
+#. Translators: This is a slug (without space, accent or special char)
+msgid "itinerancy"
+msgstr ""
+
+#. Translators: This is a slug (without space, accent or special char)
+msgid "trek"
+msgstr ""
+
+msgid "Itinerancy"
+msgstr ""
+
+msgid "Hike"
+msgstr ""
+
+msgid "External ID"
+msgstr ""

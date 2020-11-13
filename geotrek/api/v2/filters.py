@@ -1,15 +1,17 @@
-from datetime import date
 import operator
+from datetime import date
 from functools import reduce
 
 from coreapi.document import Field
 from django.conf import settings
-from django.db.models.query_utils import Q
 from django.contrib.gis.db.models import Union
+from django.db.models.query_utils import Q
 from django.utils.translation import ugettext as _
 from rest_framework.filters import BaseFilterBackend
-from rest_framework_gis.filters import InBBOXFilter, DistanceToPointFilter
+from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
+from geotrek.core.helpers import TopologyHelper
+from geotrek.trekking.models import Trek
 from geotrek.zoning.models import City, District
 
 
@@ -18,20 +20,25 @@ class GeotrekQueryParamsFilter(BaseFilterBackend):
         return queryset
 
     def get_schema_fields(self, view):
-        field_dim = Field(name='dim', required=False,
-                          description=_('Set geometry dimension (2 by default for 2D, 3 for 3D)'),
-                          example=3, type='integer')
         field_language = Field(name='language', required=False,
                                description=_("Set language for translation. 'all' by default"),
                                example="fr")
-        field_format = Field(name='format', required=False,
-                             description=_("Set output format (json / geojson). JSON by default"),
-                             example="geojson")
         field_fields = Field(name='fields', required=False,
                              description=_("Limit required fields to increase performances. Ex : id,url,geometry"))
         field_omit = Field(name='omit', required=False,
                            description=_("Omit specified fields to increase performance. Ex: url,category"))
-        return field_dim, field_language, field_format, field_fields, field_omit
+        return field_language, field_fields, field_omit
+
+
+class GeotrekQueryParamsDimensionFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        return queryset
+
+    def get_schema_fields(self, view):
+        field_format = Field(name='format', required=False,
+                             description=_("Set output format (json / geojson). JSON by default"),
+                             example="geojson")
+        return field_format,
 
 
 class GeotrekInBBoxFilter(InBBOXFilter):
@@ -69,49 +76,30 @@ class GeotrekPublishedFilter(BaseFilterBackend):
     """
 
     def filter_queryset(self, request, queryset, view):
-        if not hasattr(queryset.model, 'published'):
-            return queryset
         qs = queryset
-        published = request.GET.get('published', 'true')
+        language = request.GET.get('language', 'all')
+        associated_published_fields = [f.name for f in qs.model._meta.get_fields() if f.name.startswith('published')]
 
-        if published.lower() == 'true':
-            published = True
-        elif published.lower() == 'false':
-            published = False
-        else:
-            published = None
-        if published is not None:
-            language = request.GET.get('language', 'all')
-
-            if published:
-                # if language, check language published. Else, if true one language must me published, if false none
-                if language == 'all':
-                    filters = list()
-                    for lang in settings.MODELTRANSLATION_LANGUAGES:
-                        filters.append(Q(**{'published_{}'.format(lang): published}))
-
+        # if the model of the queryset published field is not translated
+        if len(associated_published_fields) == 1:
+            qs = qs.filter(published=True)
+        elif len(associated_published_fields) > 1:
+            # the published field of the queryset model is translated
+            if language == 'all':
+                # no language specified. Check for all.
+                filters = list()
+                for lang in settings.MODELTRANSLATION_LANGUAGES:
+                    field_name = 'published_{}'.format(lang)
+                    if field_name in associated_published_fields:
+                        filters.append(Q(**{field_name: True}))
+                if filters:
                     qs = qs.filter(reduce(operator.or_, filters))
-
-                else:
-                    qs = qs.filter(**{'published_{}'.format(language): published})
             else:
-                if language == 'all':
-                    filters = {}
-                    for lang in settings.MODELTRANSLATION_LANGUAGES:
-                        filters.update({'published_{}'.format(lang): False})
+                # one language is specified
+                field_name = 'published_{}'.format(language)
+                qs = qs.filter(Q(**{field_name: True}))
 
-                    qs = qs.filter(**filters)
-
-                else:
-                    qs = qs.filter(**{'published_{}'.format(language): published})
         return qs
-
-    def get_schema_fields(self, view):
-        field_published = Field(name='published', required=False,
-                                description=_('Publication state. If language specified, only language published are filterted. true/false/all. true by default.'),
-                                type='boolean',
-                                example='true')
-        return field_published,
 
 
 class GeotrekSensitiveAreaFilter(BaseFilterBackend):
@@ -146,6 +134,27 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
                                 description=_('Structure id.'),
                                 example='5')
         return field_period, field_practices, field_structure
+
+
+class GeotrekPOIFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        type = request.GET.get('type', None)
+        if type is not None:
+            qs = qs.filter(type=type)
+        trek = request.GET.get('trek', None)
+        if trek is not None:
+            qs = TopologyHelper.overlapping(qs, Trek.objects.get(pk=trek))
+        return qs
+
+    def get_schema_fields(self, view):
+        type = Field(name='type', required=False,
+                     description=_("Limit to POIs that contains a specific POI Type"),
+                     example=5)
+        trek = Field(name='trek', required=False,
+                     description=_("Id of a trek. It will show only the POIs related to this trek"),
+                     example=970)
+        return type, trek
 
 
 class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
