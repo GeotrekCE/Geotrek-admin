@@ -8,6 +8,8 @@ router = routers.DefaultRouter()
 router.register('structure', api_views.StructureViewSet, basename='structure')
 router.register('portal', api_views.TargetPortalViewSet, basename='portal')
 router.register('theme', api_views.ThemeViewSet, basename='theme')
+router.register('source', api_views.SourceViewSet, basename='source')
+router.register('reservationsystem', api_views.ReservationSystemViewSet, basename='reservationsystem')
 if 'geotrek.core' in settings.INSTALLED_APPS:
     router.register('path', api_views.PathViewSet, basename='path')
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
@@ -20,7 +22,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
     router.register('difficulty', api_views.DifficultyViewSet, basename='difficulty')
     router.register('network', api_views.NetworksViewSet, basename='network')
     router.register('practice', api_views.PracticeViewSet, basename='practice')
-    router.register('labeltrek', api_views.LabelTrekViewSet, basename='labeltrek')
+    router.register('treklabel', api_views.TrekLabelViewSet, basename='treklabel')
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     router.register('touristiccontent', api_views.TouristicContentViewSet, basename='touristiccontent')
     router.register('informationdesk', api_views.InformationDeskViewSet, basename='informationdesk')

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-06 16:54+0000\n"
+"POT-Creation-Date: 2020-11-13 17:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -232,24 +232,29 @@ msgstr ""
 msgid "Set maximum ascent for a trek"
 msgstr ""
 
-msgid ""
-"Code (pk) of a city to filter by. Can be multiple cities split by a comma"
+msgid "Id of a city to filter by. Can be multiple cities split by a comma"
 msgstr ""
 
 msgid ""
-"Pk of a district to filter by. Can be multiple districts split by a comma"
+"Id of a district to filter by. Can be multiple districts split by a comma"
 msgstr ""
 
-msgid "Pk of a structure to filter by"
+msgid "Id of a structure to filter by"
 msgstr ""
 
-msgid "Pk of the accessibilities to filter by, separated by commas"
+msgid "Id of the accessibilities to filter by, separated by commas"
 msgstr ""
 
-msgid "Pk of the themes to filter by, separated by commas"
+msgid "Id of the themes to filter by, separated by commas"
 msgstr ""
 
-msgid "Pk of the portals to filter by, separated by commas"
+msgid "Id of the portals to filter by, separated by commas"
+msgstr ""
+
+msgid "Id of the type of route to filter by"
+msgstr ""
+
+msgid "Id of the trek label to filter by, separated by commas"
 msgstr ""
 
 #. Translators: This is a slug (without space, accent or special char)
@@ -258,12 +263,6 @@ msgstr ""
 
 #. Translators: This is a slug (without space, accent or special char)
 msgid "trek"
-msgstr ""
-
-msgid "Itinerancy"
-msgstr ""
-
-msgid "Hike"
 msgstr ""
 
 msgid "External ID"

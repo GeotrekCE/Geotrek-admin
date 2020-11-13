@@ -32,18 +32,15 @@ GEOJSON_STRUCTURE = sorted([
 TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'access', 'accessibilities', 'advice', 'advised_parking',
     'altimetric_profile', 'ambiance', 'arrival', 'ascent',
-    'category', 'children', 'create_datetime', 'departure',
-    'descent', 'description', 'description_teaser', 'difficulty',
-    'disabled_infrastructure', 'duration', 'duration_pretty',
-    'elevation_area_url', 'elevation_svg_url', 'external_id',
-    'files', 'gpx', 'information_desks', 'kml',
-    'labels', 'length_2d', 'length_3d', 'max_elevation',
-    'min_elevation', 'name', 'networks', 'next', 'parents',
-    'parking_location', 'pictures', 'points_reference', 'portal',
-    'practice', 'previous', 'public_transport', 'published',
-    'relationships', 'reservation_system', 'route',
-    'second_external_id', 'source', 'structure', 'themes',
-    'thumbnail', 'treks', 'update_datetime', 'url', 'videos'
+    'children', 'create_datetime', 'departure', 'descent', 'description',
+    'description_teaser', 'difficulty', 'disabled_infrastructure',
+    'duration', 'elevation_area_url', 'elevation_svg_url', 'external_id',
+    'files', 'gpx', 'information_desks', 'kml', 'labels', 'length_2d',
+    'length_3d', 'max_elevation', 'min_elevation', 'name', 'networks',
+    'next', 'parents', 'parking_location', 'pictures', 'points_reference',
+    'portal', 'practice', 'previous', 'public_transport', 'published',
+    'reservation_system', 'route', 'second_external_id', 'source', 'structure',
+    'themes', 'thumbnail', 'update_datetime', 'url', 'videos'
 ])
 
 PATH_PROPERTIES_GEOJSON_STRUCTURE = sorted(['comments', 'length_2d', 'length_3d', 'name', 'url'])
@@ -60,7 +57,7 @@ TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted([
 ])
 
 CITY_PROPERTIES_JSON_STRUCTURE = sorted([
-    'code', 'geometry', 'name', 'published'
+    'id', 'geometry', 'name', 'published'
 ])
 
 DISTRICT_PROPERTIES_JSON_STRUCTURE = sorted([
@@ -93,6 +90,10 @@ INFORMATION_DESK_PROPERTIES_JSON_STRUCTURE = sorted([
     'postal_code', 'street', 'type', 'website'
 ])
 
+SOURCE_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'pictogram', 'website'])
+
+RESRVATION_SYSTEM_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'id'])
+
 
 class BaseApiTest(TestCase):
     """
@@ -105,7 +106,7 @@ class BaseApiTest(TestCase):
         cls.nb_treks = 15
         cls.theme = common_factory.ThemeFactory.create()
         cls.network = trek_factory.TrekNetworkFactory.create()
-        cls.label = trek_factory.LabelTrekFactory()
+        cls.label = trek_factory.LabelTrekFactory(id=23)
         cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(cls.nb_treks)
         cls.treks[0].themes.add(cls.theme)
         cls.treks[0].networks.add(cls.network)
@@ -130,13 +131,25 @@ class BaseApiTest(TestCase):
         cls.city = zoning_factory.CityFactory(code=31000)
         cls.district = zoning_factory.DistrictFactory(id=420)
         cls.accessibility = trek_factory.AccessibilityFactory(id=4)
-        cls.route = trek_factory.RouteFactory()
+        cls.route = trek_factory.RouteFactory(id=680)
         cls.theme = common_factory.ThemeFactory(id=15)
         cls.portal = common_factory.TargetPortalFactory(id=16)
         cls.structure = authent_factory.StructureFactory(id=8)
         cls.nb_treks += 2  # add parent and 1 child published
         cls.poi_type = trek_factory.POITypeFactory()
         cls.poi = trek_factory.POIFactory()
+        cls.source = common_factory.RecordSourceFactory()
+        cls.reservation_system = common_factory.ReservationSystemFactory()
+
+    def check_number_elems_response(self, response, model):
+        json_response = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertEquals(len(json_response['results']), model.objects.count())
+
+    def check_structure_response(self, response, structure):
+        json_response = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertEquals(sorted(json_response.keys()), structure)
 
     def get_trek_list(self, params=None):
         return self.client.get(reverse('apiv2:trek-list'), params)
@@ -223,16 +236,28 @@ class BaseApiTest(TestCase):
         return self.client.get(reverse('apiv2:touristiccontent-detail', args=(id_content,)), params)
 
     def get_treklabel_list(self, params=None):
-        return self.client.get(reverse('apiv2:labeltrek-list'), params)
+        return self.client.get(reverse('apiv2:treklabel-list'), params)
 
     def get_treklabel_detail(self, id_label, params=None):
-        return self.client.get(reverse('apiv2:labeltrek-detail', args=(id_label,)), params)
+        return self.client.get(reverse('apiv2:treklabel-detail', args=(id_label,)), params)
 
     def get_informationdesk_list(self, params=None):
         return self.client.get(reverse('apiv2:informationdesk-list'), params)
 
     def get_informationdesk_detail(self, id_infodesk, params=None):
         return self.client.get(reverse('apiv2:informationdesk-detail', args=(id_infodesk,)), params)
+
+    def get_source_list(self, params=None):
+        return self.client.get(reverse('apiv2:source-list'), params)
+
+    def get_source_detail(self, id_source, params=None):
+        return self.client.get(reverse('apiv2:source-detail', args=(id_source,)), params)
+
+    def get_reservationsystem_list(self, params=None):
+        return self.client.get(reverse('apiv2:reservationsystem-list'), params)
+
+    def get_reservationsystem_detail(self, id_reservationsystem, params=None):
+        return self.client.get(reverse('apiv2:reservationsystem-detail', args=(id_reservationsystem,)), params)
 
     def get_config(self, params=None):
         return self.client.get(reverse('apiv2:config', params))
@@ -300,7 +325,9 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             'structure': '8',
             'accessibility': '4',
             'theme': '15',
-            'portal': '16'
+            'portal': '16',
+            'label': '23',
+            'route': '68'
         })
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -368,82 +395,82 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertContains(response, self.theme.label)
 
     def test_city_list(self):
-        response = self.get_city_list()
-        json_response = response.json()
-        self.assertEqual(response.status_code, 200)
-        self.assertEquals(len(json_response['results']), zoning_models.City.objects.count())
+        self.check_number_elems_response(
+            self.get_city_list(),
+            zoning_models.City
+        )
 
     def test_city_detail(self):
-        response = self.get_city_detail(self.city.pk)
-        json_response = response.json()
-        self.assertEqual(response.status_code, 200)
-        self.assertEquals(sorted(json_response.keys()), CITY_PROPERTIES_JSON_STRUCTURE)
+        self.check_structure_response(
+            self.get_city_detail(self.city.pk),
+            CITY_PROPERTIES_JSON_STRUCTURE
+        )
 
     def test_district_list(self):
-        response = self.get_district_list()
-        json_response = response.json()
-        self.assertEqual(response.status_code, 200)
-        self.assertEquals(len(json_response['results']), zoning_models.District.objects.count())
+        self.check_number_elems_response(
+            self.get_district_list(),
+            zoning_models.District
+        )
 
     def test_district_detail(self):
-        response = self.get_district_detail(self.district.pk)
-        json_response = response.json()
-        self.assertEqual(response.status_code, 200)
-        self.assertEquals(sorted(json_response.keys()), DISTRICT_PROPERTIES_JSON_STRUCTURE)
+        self.check_structure_response(
+            self.get_district_detail(self.district.pk),
+            DISTRICT_PROPERTIES_JSON_STRUCTURE
+        )
 
     def test_route_list(self):
-        response = self.get_route_list()
-        json_response = response.json()
-        self.assertEqual(response.status_code, 200)
-        self.assertEquals(len(json_response['results']), trek_models.Route.objects.count())
+        self.check_number_elems_response(
+            self.get_route_list(),
+            trek_models.Route
+        )
 
     def test_route_detail(self):
-        response = self.get_route_detail(self.route.pk)
-        json_response = response.json()
-        self.assertEqual(response.status_code, 200)
-        self.assertEquals(sorted(json_response.keys()), ROUTE_PROPERTIES_JSON_STRUCTURE)
+        self.check_structure_response(
+            self.get_route_detail(self.route.pk),
+            ROUTE_PROPERTIES_JSON_STRUCTURE
+        )
 
     def test_accessibility_list(self):
-        response = self.get_accessibility_list()
-        json_response = response.json()
-        self.assertEqual(response.status_code, 200)
-        self.assertEquals(len(json_response['results']), trek_models.Accessibility.objects.count())
+        self.check_number_elems_response(
+            self.get_accessibility_list(),
+            trek_models.Accessibility
+        )
 
     def test_accessibility_detail(self):
-        response = self.get_accessibility_detail(self.accessibility.pk)
-        json_response = response.json()
-        self.assertEqual(response.status_code, 200)
-        self.assertEquals(sorted(json_response.keys()), ACCESSIBILITY_PROPERTIES_JSON_STRUCTURE)
+        self.check_structure_response(
+            self.get_accessibility_detail(self.accessibility.pk),
+            ACCESSIBILITY_PROPERTIES_JSON_STRUCTURE
+        )
 
     def test_theme_detail(self):
-        response = self.get_themes_detail(self.theme.pk)
-        json_response = response.json()
-        self.assertEqual(response.status_code, 200)
-        self.assertEquals(sorted(json_response.keys()), THEME_PROPERTIES_JSON_STRUCTURE)
+        self.check_structure_response(
+            self.get_themes_detail(self.theme.pk),
+            THEME_PROPERTIES_JSON_STRUCTURE
+        )
 
     def test_portal_list(self):
-        response = self.get_portal_list()
-        json_response = response.json()
-        self.assertEqual(response.status_code, 200)
-        self.assertEquals(len(json_response['results']), common_models.TargetPortal.objects.count())
+        self.check_number_elems_response(
+            self.get_portal_list(),
+            common_models.TargetPortal
+        )
 
     def test_portal_detail(self):
-        response = self.get_portal_detail(self.portal.pk)
-        json_response = response.json()
-        self.assertEqual(response.status_code, 200)
-        self.assertEquals(sorted(json_response.keys()), TARGET_PORTAL_PROPERTIES_JSON_STRUCTURE)
+        self.check_structure_response(
+            self.get_portal_detail(self.portal.pk),
+            TARGET_PORTAL_PROPERTIES_JSON_STRUCTURE
+        )
 
     def test_structure_list(self):
-        response = self.get_structure_list()
-        json_response = response.json()
-        self.assertEqual(response.status_code, 200)
-        self.assertEquals(len(json_response['results']), authent_models.Structure.objects.count())
+        self.check_number_elems_response(
+            self.get_structure_list(),
+            authent_models.Structure
+        )
 
     def test_structure_detail(self):
-        response = self.get_structure_detail(self.structure.pk)
-        json_response = response.json()
-        self.assertEqual(response.status_code, 200)
-        self.assertEquals(sorted(json_response.keys()), STRUCTURE_PROPERTIES_JSON_STRUCTURE)
+        self.check_structure_response(
+            self.get_structure_detail(self.structure.pk),
+            STRUCTURE_PROPERTIES_JSON_STRUCTURE
+        )
 
     def test_poi_list(self):
         response = self.get_poi_list()
@@ -502,12 +529,10 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.status_code, 404)
 
     def test_touristiccontent_detail(self):
-        response = self.get_touristiccontent_detail(self.content.pk)
-        self.assertEqual(response.status_code, 200)
-        json_response = response.json()
-        # test default structure
-        self.assertEqual(sorted(json_response.keys()),
-                         TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE)
+        self.check_structure_response(
+            self.get_touristiccontent_detail(self.content.pk),
+            TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE
+        )
 
     def test_touristiccontent_list(self):
         response = self.get_touristiccontent_list()
@@ -523,28 +548,52 @@ class APIAccessAnonymousTestCase(BaseApiTest):
                          tourism_models.TouristicContent.objects.all().count())
 
     def test_treklabels_list(self):
-        response = self.get_treklabel_list()
-        json_response = response.json()
-        self.assertEqual(response.status_code, 200)
-        self.assertEquals(len(json_response['results']), trek_models.LabelTrek.objects.count())
+        self.check_number_elems_response(
+            self.get_treklabel_list(),
+            trek_models.LabelTrek
+        )
 
     def test_treklabels_detail(self):
-        response = self.get_treklabel_detail(self.label.pk)
-        json_response = response.json()
-        self.assertEqual(response.status_code, 200)
-        self.assertEquals(sorted(json_response.keys()), TREK_LABEL_PROPERTIES_JSON_STRUCTURE)
+        self.check_structure_response(
+            self.get_treklabel_detail(self.label.pk),
+            TREK_LABEL_PROPERTIES_JSON_STRUCTURE
+        )
 
     def test_informationdesk_list(self):
-        response = self.get_informationdesk_list()
-        json_response = response.json()
-        self.assertEqual(response.status_code, 200)
-        self.assertEquals(len(json_response['results']), tourism_models.InformationDesk.objects.count())
+        self.check_number_elems_response(
+            self.get_informationdesk_list(),
+            tourism_models.InformationDesk
+        )
 
     def test_informationdesk_detail(self):
-        response = self.get_informationdesk_detail(self.info_desk.pk)
-        json_response = response.json()
-        self.assertEqual(response.status_code, 200)
-        self.assertEquals(sorted(json_response.keys()), INFORMATION_DESK_PROPERTIES_JSON_STRUCTURE)
+        self.check_structure_response(
+            self.get_informationdesk_detail(self.info_desk.pk),
+            INFORMATION_DESK_PROPERTIES_JSON_STRUCTURE
+        )
+
+    def test_source_list(self):
+        self.check_number_elems_response(
+            self.get_source_list(),
+            common_models.RecordSource
+        )
+
+    def test_source_detail(self):
+        self.check_structure_response(
+            self.get_source_detail(self.source.pk),
+            SOURCE_PROPERTIES_JSON_STRUCTURE
+        )
+
+    def test_reservationsystem_list(self):
+        self.check_number_elems_response(
+            self.get_reservationsystem_list(),
+            common_models.ReservationSystem
+        )
+
+    def test_reservationsystem_detail(self):
+        self.check_structure_response(
+            self.get_reservationsystem_detail(self.reservation_system.pk),
+            RESRVATION_SYSTEM_PROPERTIES_JSON_STRUCTURE
+        )
 
     def test_config(self):
         response = self.get_config()

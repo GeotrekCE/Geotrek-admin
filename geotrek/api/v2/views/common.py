@@ -10,3 +10,13 @@ class TargetPortalViewSet(api_viewsets.GeotrekViewSet):
 class ThemeViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.ThemeSerializer
     queryset = common_models.Theme.objects.all()
+
+
+class SourceViewSet(api_viewsets.GeotrekViewSet):
+    serializer_class = api_serializers.RecordSourceSerializer
+    queryset = common_models.RecordSource.objects.all()
+
+
+class ReservationSystemViewSet(api_viewsets.GeotrekViewSet):
+    serializer_class = api_serializers.ReservationSystemSerializer
+    queryset = common_models.ReservationSystem.objects.all()

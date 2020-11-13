@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-06 16:54+0000\n"
+"POT-Creation-Date: 2020-11-13 17:33+0000\n"
 "PO-Revision-Date: 2020-10-20 16:33+0000\n"
 "Last-Translator: Bastien Potiron <bastien.potiron@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
@@ -246,41 +246,40 @@ msgstr "Définit le dénivelé positif minimal d'un itinéraire"
 msgid "Set maximum ascent for a trek"
 msgstr "Définit le dénivelé positif maximal d'un itinéraire"
 
-msgid ""
-"Code (pk) of a city to filter by. Can be multiple cities split by a comma"
+msgid "Id of a city to filter by. Can be multiple cities split by a comma"
 msgstr ""
-"Code (pk) d'une ville utilisée pour filtrer. Peut être plusieurs villes "
+"Id d'une ville utilisée pour filtrer. Peut être plusieurs villes "
 "séparées par une virgule"
 
 msgid ""
-"Pk of a district to filter by. Can be multiple districts split by a comma"
+"Id of a district to filter by. Can be multiple districts split by a comma"
 msgstr ""
-"Pk d'un district utilisé pour filtrer. Peut être plusieurs districts, "
+"Id d'un district utilisé pour filtrer. Peut être plusieurs districts, "
 "séparés par une virugule"
 
-msgid "Pk of a structure to filter by"
-msgstr "Pk d'une structure avec laquelle filtrer"
+msgid "Id of a structure to filter by"
+msgstr "Id d'une structure avec laquelle filtrer"
 
-msgid "Pk of the accessibilities to filter by, separated by commas"
+msgid "Id of the accessibilities to filter by, separated by commas"
 msgstr "Id des pratiques séparés par des virgules."
 
-msgid "Pk of the themes to filter by, separated by commas"
+msgid "Id of the themes to filter by, separated by commas"
 msgstr "Id des thèmes séparés par des virgules."
 
-msgid "Pk of the portals to filter by, separated by commas"
+msgid "Id of the portals to filter by, separated by commas"
 msgstr "Id des portails séparés par des virgules."
+
+msgid "Id of the type of route to filter by"
+msgstr "Id d'un parcours (circuit, aller-retour ...)"
+
+msgid "Id of the trek label to filter by, separated by commas"
+msgstr "Id des labels d'itinéraire séparés par des virgules."
 
 msgid "itinerancy"
 msgstr "itinérance"
 
 msgid "trek"
 msgstr "itinéraire"
-
-msgid "Itinerancy"
-msgstr "Itinérance"
-
-msgid "Hike"
-msgstr "Randonnée"
 
 msgid "External ID"
 msgstr "ID externe"
