@@ -60,8 +60,9 @@ class MapEntityLayer(FilterListMixin, ModelViewMixin, GeoJSONLayerView):
         return super(MapEntityLayer, self).render_to_response(context, **response_kwargs)
 
 
-class MapEntityTileLayer(ListAPIView):
+class MapEntityTileLayer(ModelViewMixin, ListAPIView):
     permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
+    model = None
 
     @classmethod
     def get_entity_kind(cls):

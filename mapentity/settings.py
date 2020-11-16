@@ -122,6 +122,9 @@ _LEAFLET_PLUGINS = OrderedDict([
         'css': 'mapentity/Leaflet.groupedlayercontrol/src/leaflet.groupedlayercontrol.css',
         'js': 'mapentity/Leaflet.groupedlayercontrol/src/leaflet.groupedlayercontrol.js'
     }),
+    ('leaflet.geojson.grid', {
+        'js': 'mapentity/leaflet.geojson.grid.js',
+    }),
     ('mapentity', {
         'js': ['mapentity/mapentity.js',
                'mapentity/mapentity.forms.js'],

@@ -9,6 +9,7 @@
         layer: null,
         features: null,
         cache: null,
+        ajaxCount: 0,
 
         //
         // Leaflet layer methods
@@ -16,6 +17,7 @@
         initialize(url, options) {
             this.url = url;
             this.layer = new L.GeoJSON(null, options);
+            this.layer.loading = true;
             this.features = {};
             this.cache = {};
             L.GridLayer.prototype.initialize.call(this, options);
@@ -92,9 +94,20 @@
         },
 
         _ajaxRequest: function(method, url, data, callback) {
+            var tilelayer = this;
+            if (tilelayer.ajaxCount++ === 0) {
+                // For Leaflet.Spin
+                tilelayer.layer.loading = true;
+                tilelayer.layer.fire('data:loading');
+            }
             var request = new XMLHttpRequest();
             request.open(method, url, true);
             request.onreadystatechange = function() {
+                if (request.readyState === 4 && --tilelayer.ajaxCount === 0) {
+                    // For Leaflet.Spin
+                    tilelayer.layer.loading = false;
+                    tilelayer.layer.fire('data:loaded');
+                }
                 if (request.readyState === 4 && request.status === 200) {
                     callback(JSON.parse(request.responseText));
                 }

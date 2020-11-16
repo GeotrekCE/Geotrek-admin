@@ -97,8 +97,8 @@ MapEntity.GeometryField.TopologyField = MapEntity.GeometryField.extend({
         }
     },
 
-    buildObjectsLayer: function () {
-        this._objectsLayer = MapEntity.GeometryField.prototype.buildObjectsLayer.call(this);
+    buildObjectsLayer: function (url) {
+        this._objectsLayer = MapEntity.GeometryField.prototype.buildObjectsLayer.call(this, url);
         this._pathsLayer = this.buildPathsLayer(this._objectsLayer);
         this._pathsLayer.on('loaded', this._loadTopologyGraph, this);
         return this._objectsLayer;

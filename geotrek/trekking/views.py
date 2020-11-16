@@ -11,7 +11,7 @@ from django.utils.html import escape
 from django.views.generic import CreateView, ListView, DetailView
 from django.views.generic.detail import BaseDetailView
 from mapentity.helpers import alphabet_enumeration
-from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
+from mapentity.views import (MapEntityLayer, MapEntityTileLayer, MapEntityList, MapEntityJsonList,
                              MapEntityFormat, MapEntityDetail, MapEntityMapImage,
                              MapEntityDocument, MapEntityCreate, MapEntityUpdate,
                              MapEntityDelete, LastModifiedMixin, MapEntityViewSet)
@@ -56,6 +56,10 @@ class TrekLayer(MapEntityLayer):
     properties = ['name', 'published']
     queryset = Trek.objects.existing()
     geometry_field_db = 'geom'
+
+
+class TrekTileLayer(MapEntityTileLayer):
+    queryset = Trek.objects.existing()
 
 
 class TrekList(FlattenPicturesMixin, MapEntityList):

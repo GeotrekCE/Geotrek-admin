@@ -71,7 +71,7 @@ class MapEntityOptions(object):
         for name, view in inspect.getmembers(views_module):
             if inspect.isclass(view) and issubclass(view, View):
                 # Pick-up views
-                if hasattr(view, 'get_entity_kind') or issubclass(view, mapentity_views.MapEntityViewSet):
+                if hasattr(view, 'get_entity_kind') or issubclass(view, mapentity_views.MapEntityViewSet) or issubclass(view, mapentity_views.MapEntityTileLayer):
                     try:
                         view_model = view.model or view.queryset.model
                     except AttributeError:
@@ -128,13 +128,14 @@ class MapEntityOptions(object):
 
         # Dynamically define tile view
         if tile_view is None:
-            _queryset = self.get_queryset()
-            _serializer = self.get_tile_serializer()
-
             class dynamic_tile_view(mapentity_views.MapEntityTileLayer):
-                queryset = _queryset
-                serializer_class = _serializer
+                pass
             tile_view = dynamic_tile_view
+
+        if not tile_view.queryset:
+            tile_view.queryset = self.get_queryset()
+        if not tile_view.serializer_class:
+            tile_view.serializer_class = self.get_tile_serializer()
 
         picked.append(tile_view)
 

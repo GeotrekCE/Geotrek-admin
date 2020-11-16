@@ -1,4 +1,19 @@
-L.ObjectsLayer = L.GeoJSON.extend({
+L.SingleObjectLayer = L.GeoJSON.extend({
+    options: {
+        styles: {
+            'default': {'color': 'blue', 'weight': 2, 'opacity': 0.8},
+            highlight: {'color': 'red', 'weight': 5, 'opacity': 1},
+            select: {'color': 'red', 'weight': 7, 'opacity': 1}
+        },
+        pointToLayer: function (geojson, latlng) {
+            return new L.CircleMarker(latlng);
+        }
+    },
+
+    includes: L.Evented.prototype,
+});
+
+L.ObjectsLayer = L.GeoJSONTileLayer.extend({
     options: {
         indexing: true,
         highlight: true,
@@ -12,7 +27,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
 
     includes: L.Evented.prototype,
 
-    initialize: function (geojson, options) {
+    initialize: function (url, options) {
         // Pointers to all layers by pk - immutable
         this._objects = {};
         // Hold the currently visible layers (subset of _objects)
@@ -44,14 +59,15 @@ L.ObjectsLayer = L.GeoJSON.extend({
         this.options.styles = L.Util.extend({}, this.options.styles);
         this.options.styles['default'] = L.Util.extend({}, this.options.style);
 
+        L.GeoJSONTileLayer.prototype.initialize.call(this, url, this.options);
 
         // Highlight on mouse over, using global events
         if (this.options.highlight) {
-            this.on('mouseover', function(e) {
+            this.layer.on('mouseover', function(e) {
                 var pk = this.getPk(e.layer);
                 $(window).trigger('entity:mouseover', {pk: pk, modelname: options.modelname});
             }, this);
-            this.on('mouseout', function(e) {
+            this.layer.on('mouseout', function(e) {
                 var pk = this.getPk(e.layer);
                 $(window).trigger('entity:mouseout', {pk: pk, modelname: options.modelname});
             }, this);
@@ -69,28 +85,11 @@ L.ObjectsLayer = L.GeoJSON.extend({
             }
         }, this));
 
-
         // Optionnaly make them clickable
         if (this.options.objectUrl) {
-            this.on('click', function(e) {
-                window.location = this.options.objectUrl(e.layer.properties, e.layer);
+            this.layer.on('click', function(e) {
+                window.location = this.options.objectUrl(e.layer.feature.id);
             }, this);
-        }
-
-        var dataurl = null;
-        if (typeof(geojson) == 'string') {
-            dataurl = geojson;
-            geojson = null;
-        }
-        L.GeoJSON.prototype.initialize.call(this, geojson, this.options);
-
-        // Fire Leaflet.Spin events
-        this.on('loaded loading', function (e) {
-            this.fire('data:' + e.type);
-        }, this);
-
-        if (dataurl) {
-            this.load(dataurl);
         }
     },
 
@@ -107,29 +106,6 @@ L.ObjectsLayer = L.GeoJSON.extend({
                 l.properties = geojson.properties;
             });
         }
-    },
-
-    load: function (url) {
-        console.log("load", url)
-        var jsonLoad = function (data) {
-            var features = jQuery.grep(data.features, function(obj, i) {
-                return obj.geometry !== null;
-            });
-            data.features = features;
-            this.addData(data);
-            this.loading = false;
-            this.fire('loaded');
-        };
-        var jsonError = function () {
-            this.loading = false;
-            this.fire('loaded');
-            console.error("Could not load url '" + url + "'");
-            if (this._map) $(this._map._container).addClass('map-error');
-        };
-        this.loading = true;
-        this.fire('loading');
-        $.getJSON(url, L.Util.bind(jsonLoad, this))
-         .error(L.Util.bind(jsonError, this));
     },
 
     getLayer: function (pk) {
@@ -149,32 +125,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
 
     // Show all layers matching the pks
     updateFromPks: function(pks) {
-        var self = this,
-            new_objects = {},
-            already_added_layer,
-            to_add_layer;
-
-        // Gather all layer to see in new objects
-        // Remove them from _current_objects if they are already shown
-        // This way _current_objects will only contain layer to be removed
-        $.each(pks, function(idx, to_add_pk) {
-            already_added_layer = self._current_objects[to_add_pk];
-            if (already_added_layer) {
-                new_objects[to_add_pk] = already_added_layer;
-                delete self._current_objects[to_add_pk];
-            } else {
-                to_add_layer = new_objects[to_add_pk] = self._objects[to_add_pk];
-                // list can be ready before map, on first load
-                if (to_add_layer) self.addLayer(to_add_layer);
-            }
-        });
-
-        // Remove all remaining layers
-        $.each(self._current_objects, function(pk, layer) {
-            self.removeLayer(layer);
-        });
-
-        self._current_objects = new_objects;
+        console.log("Should filter map features again");
     },
 
     getCurrentLayers: function () {
@@ -202,7 +153,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
             this.fire('highlight', {layer: layer});
         }
         else {
-            this.resetStyle(layer);
+            this.layer.resetStyle(layer);
         }
     },
 

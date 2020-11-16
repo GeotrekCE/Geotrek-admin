@@ -96,6 +96,7 @@ class JSSettings(JSONResponseMixin, TemplateView):
 
         dictsettings['urls']['static'] = settings.STATIC_URL
         dictsettings['urls']['layer'] = '{}{}'.format(root_url, options._url_path(mapentity_models.ENTITY_LAYER)[1:-1])
+        dictsettings['urls']['tile'] = root_url + 'api/modelname/{z}/{x}/{y}.geojson'
         dictsettings['urls']['detail'] = '{}modelname/0/'.format(root_url)
         dictsettings['urls']['format_list'] = '{}{}'.format(
             root_url, options._url_path(mapentity_models.ENTITY_FORMAT_LIST)[1:-1]

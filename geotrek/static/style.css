@@ -238,7 +238,7 @@ body.screamshot #altitudegraph {
 
 
 .poi-marker-icon img {
-    max-width: 100% !important;
+    width: 100%;
 }
 
 .leaflet-marker-icon.point-reference {

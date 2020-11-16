@@ -1,8 +1,8 @@
-MapEntity.pathsLayer = function buildPathLayer(options) {
+MapEntity.pathsLayer = function buildPathLayer(url, options) {
     var options = options || {};
     options.style = L.Util.extend(options.style || {}, window.SETTINGS.map.styles.path);
 
-    var pathsLayer = new L.ObjectsLayer(null, options);
+    var pathsLayer = new L.ObjectsLayer(url, options);
 
     // Show paths extremities
     if (window.SETTINGS.showExtremities) {
@@ -21,67 +21,19 @@ $(window).on('entity:map', function (e, data) {
     var is_form_view = /add|update/.test(data.viewname);
 
     if (!is_form_view && (data.viewname == 'detail' || data.modelname != 'path')) {
-
-        var pathsLayer = MapEntity.pathsLayer({
+        var pathsLayer = MapEntity.pathsLayer(window.SETTINGS.urls.tile.replace(new RegExp('modelname', 'g'), 'path'), {
             indexing: false,
             style: { clickable: false },
             modelname: 'path',
             no_draft: data.modelname != 'path',
         });
+
         if (data.viewname == 'detail'){
-            pathsLayer.load(window.SETTINGS.urls.path_layer);
             pathsLayer.addTo(map);
         };
         pathsLayer.on('loaded', function () {
             if (pathsLayer._map)
                 pathsLayer.bringToBack();
-        });
-
-        map.on('layeradd', function (e) {
-            // Start ajax loading at last
-            url = window.SETTINGS.urls.path_layer
-
-            var options = e.layer.options || {'modelname': 'None'};
-            if (! loaded_path){
-                if (options.modelname == 'path' && data.viewname != 'detail'){
-                    e.layer.load(url + '?no_draft=true', true);
-                    loaded_path = true;
-                };
-
-            }
-
-            if (e.layer === pathsLayer) {
-
-                if (!e.layer._map) {
-                    return;
-                }
-                if (e.layer.loading) {
-                    e.layer.on('loaded', function () {
-                        if (!e.layer._map) {
-                            return;
-                        }
-                        e.layer.bringToBack();
-                    });
-                }
-                else {
-                    e.layer.bringToBack();
-                }
-            }
-            else {
-                if (e.layer instanceof L.ObjectsLayer) {
-                    if (e.layer.loading) {
-                        e.layer.on('loaded', function () {
-                            if (!e.layer._map) {
-                                return;
-                            }
-                            e.layer.bringToFront();
-                        });
-                    }
-                    else {
-                        e.layer.bringToFront();
-                    }
-                }
-            }
         });
 
         var style = pathsLayer.options.style;
