@@ -9,7 +9,7 @@ from django.test.utils import override_settings
 from geotrek.authent import factories as authent_factory, models as authent_models
 from geotrek.core import factories as core_factory, models as path_models
 from geotrek.common import factories as common_factory, models as common_models
-from geotrek.common.utils.testdata import get_dummy_uploaded_image
+from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_uploaded_file, get_dummy_uploaded_document
 from geotrek.trekking import factories as trek_factory, models as trek_models
 from geotrek.tourism import factories as tourism_factory, models as tourism_models
 from geotrek.zoning import factories as zoning_factory, models as zoning_models
@@ -31,16 +31,16 @@ GEOJSON_STRUCTURE = sorted([
 
 TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'access', 'accessibilities', 'advice', 'advised_parking',
-    'altimetric_profile', 'ambiance', 'arrival', 'ascent',
+    'altimetric_profile', 'ambiance', 'arrival', 'ascent', 'attachments',
     'children', 'create_datetime', 'departure', 'descent', 'description',
     'description_teaser', 'difficulty', 'disabled_infrastructure',
     'duration', 'elevation_area_url', 'elevation_svg_url', 'external_id',
-    'files', 'gpx', 'information_desks', 'kml', 'labels', 'length_2d',
+    'gpx', 'information_desks', 'kml', 'labels', 'length_2d',
     'length_3d', 'max_elevation', 'min_elevation', 'name', 'networks',
-    'next', 'parents', 'parking_location', 'pictures', 'points_reference',
+    'next', 'parents', 'parking_location', 'points_reference',
     'portal', 'practice', 'previous', 'public_transport', 'published',
     'reservation_system', 'route', 'second_external_id', 'source', 'structure',
-    'themes', 'thumbnail', 'update_datetime', 'url', 'videos'
+    'themes', 'thumbnail', 'update_datetime', 'url'
 ])
 
 PATH_PROPERTIES_GEOJSON_STRUCTURE = sorted(['comments', 'length_2d', 'length_3d', 'name', 'url'])
@@ -115,7 +115,12 @@ class BaseApiTest(TestCase):
         information_desk_type = tourism_factory.InformationDeskTypeFactory()
         cls.info_desk = tourism_factory.InformationDeskFactory(type=information_desk_type)
         cls.treks[0].information_desks.add(cls.info_desk)
-        cls.attachment_1 = common_factory.AttachmentFactory.create(content_object=cls.treks[0], attachment_file=get_dummy_uploaded_image())
+        common_factory.AttachmentFactory.create(content_object=cls.treks[0], attachment_file=get_dummy_uploaded_image())
+        common_factory.AttachmentFactory.create(content_object=cls.treks[0], attachment_file=get_dummy_uploaded_file())
+        common_factory.AttachmentFactory.create(content_object=cls.treks[0], attachment_file=get_dummy_uploaded_document())
+        common_factory.AttachmentFactory(content_object=cls.treks[0], attachment_file='', attachment_video='https://www.youtube.com/embed/Jm3anSjly0Y?wmode=opaque')
+        common_factory.AttachmentFactory(content_object=cls.treks[0], attachment_file='', attachment_video='', attachment_link='https://geotrek.fr/assets/img/logo.svg')
+        common_factory.AttachmentFactory(content_object=cls.treks[0], attachment_file='', attachment_video='', attachment_link='')
         cls.treks[3].parking_location = None
         cls.treks[3].points_reference = MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID)
         cls.treks[3].save()
@@ -327,7 +332,8 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             'theme': '15',
             'portal': '16',
             'label': '23',
-            'route': '68'
+            'route': '68',
+            'q': 'test string'
         })
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -546,6 +552,12 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         # touristiccontent count is ok
         self.assertEqual(len(json_response.get('results')),
                          tourism_models.TouristicContent.objects.all().count())
+
+        response = self.get_touristiccontent_list({
+            'near_trek': self.treks[0].pk
+        })
+        #  test response code
+        self.assertEqual(response.status_code, 200)
 
     def test_treklabels_list(self):
         self.check_number_elems_response(

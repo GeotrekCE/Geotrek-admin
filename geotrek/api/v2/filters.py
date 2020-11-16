@@ -10,6 +10,7 @@ from django.utils.translation import ugettext as _
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
+from geotrek.common.utils import intersecting
 from geotrek.core.helpers import TopologyHelper
 from geotrek.trekking.models import Trek
 from geotrek.zoning.models import City, District
@@ -157,6 +158,23 @@ class GeotrekPOIFilter(BaseFilterBackend):
         return type, trek
 
 
+class GeotrekTouristicContentFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        trek = request.GET.get('near_trek', None)
+        if trek is not None:
+            contents_intersecting = intersecting(qs.model, Trek.objects.get(pk=trek))
+            # qs = qs.intersecting(contents_intersecting)  #FIXME: cannot intersect MultilingualQuerySet
+            qs = contents_intersecting.order_by('id')
+        return qs
+
+    def get_schema_fields(self, view):
+        near_trek = Field(name='near_trek', required=False,
+                          description=_("Id of a trek. It will show only the touristics contents related to this trek"),
+                          example=808)
+        return near_trek,
+
+
 class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         qs = queryset
@@ -220,6 +238,12 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
         if labels is not None:
             list_labels = [int(label) for label in labels.split(',')]
             qs = qs.filter(portal__in=list_labels)
+        q = request.GET.get('q', None)
+        if q is not None:
+            qs = qs.filter(
+                Q(name__icontains=q) | Q(description__icontains=q)
+                | Q(description_teaser__icontains=q) | Q(ambiance__icontains=q)
+            )
         return qs
 
     def get_schema_fields(self, view):
@@ -303,8 +327,13 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
             description=_('Id of the trek label to filter by, separated by commas'),
             example='1', type='string'
         )
+        field_q = Field(
+            name='q', required=False,
+            description=_('Search field that returns treks contianing data matching the string'),
+            example='query string', type='string'
+        )
         return field_accessibilities, field_ascent_max, field_ascent_min, \
             field_city, field_difficulty_max, field_difficulty_min, \
             field_district, field_duration_max, field_duration_min, field_label, \
-            field_length_max, field_length_min, field_portals, field_route, \
-            field_structure, field_themes
+            field_length_max, field_length_min, field_portals, field_q, \
+            field_route, field_structure, field_themes

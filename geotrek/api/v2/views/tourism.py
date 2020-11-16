@@ -2,12 +2,13 @@ from django.conf import settings
 from django.db.models import F
 
 from geotrek.api.v2 import serializers as api_serializers, \
-    viewsets as api_viewsets
+    filters as api_filters, viewsets as api_viewsets
 from geotrek.api.v2.functions import Transform
 from geotrek.tourism import models as tourism_models
 
 
 class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
+    filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekTouristicContentFilter,)
     serializer_class = api_serializers.TouristicContentSerializer
     queryset = tourism_models.TouristicContent.objects.existing()\
         .select_related('category', 'reservation_system') \

@@ -1,12 +1,15 @@
 import json
 
+from easy_thumbnails.alias import aliases
+from easy_thumbnails.exceptions import InvalidImageFormatError
+from easy_thumbnails.files import get_thumbnailer
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
 from django.db.models import F
 from django.urls import reverse
 from django.utils.translation import get_language
 from django.utils.translation import ugettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
+from PIL.Image import DecompressionBombError
 from rest_framework import serializers
 from rest_framework.relations import HyperlinkedIdentityField
 from rest_framework_gis import serializers as geo_serializers
@@ -118,48 +121,10 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.Route
             fields = ('id', 'pictogram', 'route')
 
-    class RelatedTrekSerializer(serializers.ModelSerializer):
-        category_slug = serializers.SerializerMethodField(read_only=True)
-        name = serializers.SerializerMethodField(read_only=True)
-
-        class Meta:
-            model = trekking_models.Trek
-            fields = ('id', 'category_slug', 'name', 'slug')
-
-        def get_category_slug(self, obj):
-            if settings.SPLIT_TREKS_CATEGORIES_BY_ITINERANCY and obj.children.exists():
-                # Translators: This is a slug (without space, accent or special char)
-                return _('itinerancy')
-            if settings.SPLIT_TREKS_CATEGORIES_BY_PRACTICE and obj.practice:
-                return obj.practice.slug
-            else:
-                # Translators: This is a slug (without space, accent or special char)
-                return _('trek')
-
-        def get_name(self, obj):
-            return get_translation_or_dict('name', self, obj)
-
-    class TrekRelationshipSerializer(serializers.ModelSerializer):
-        published = serializers.ReadOnlyField(source='trek_b.published')
-        trek = RelatedTrekSerializer(source='trek_b')
-
-        class Meta:
-            model = trekking_models.TrekRelationship
-            fields = (
-                'has_common_departure', 'has_common_edge',
-                'is_circuit_step', 'published', 'trek'
-            )
-
 
 class ReservationSystemSerializer(serializers.ModelSerializer):
     class Meta:
         model = common_models.ReservationSystem
-        fields = ('id', 'name')
-
-
-class ContentTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ContentType
         fields = ('id', 'name')
 
 
@@ -201,14 +166,47 @@ class RecordSourceSerializer(serializers.ModelSerializer):
 
 
 class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    url = serializers.FileField(source='attachment_file')
-    content_type = ContentTypeSerializer(many=False)
+    url = serializers.SerializerMethodField(read_only=True)
+    type = serializers.SerializerMethodField(read_only=True)
+    thumbnail = serializers.SerializerMethodField(read_only=True)
+    backend = serializers.SerializerMethodField(read_only=True)
+
+    def get_url(self, obj):
+        if obj.attachment_file:
+            return build_url(self, obj.attachment_file.url)
+        if obj.attachment_video:
+            return obj.attachment_video
+        if obj.attachment_link:
+            return obj.attachment_link
+        return ""
+
+    def get_type(self, obj):
+        if obj.is_image or obj.attachment_link:
+            return "image"
+        if obj.attachment_video != '':
+            return "video"
+        return "file"
+
+    def get_thumbnail(self, obj):
+        thumbnailer = get_thumbnailer(obj.attachment_file)
+        try:
+            thumbnail = thumbnailer.get_thumbnail(aliases.get('small-square'))
+        except (IOError, InvalidImageFormatError, DecompressionBombError):
+            return ""
+        thumbnail.author = obj.author
+        thumbnail.legend = obj.legend
+        return build_url(self, thumbnail.url)
+
+    def get_backend(self, obj):
+        if obj.attachment_video != '':
+            return type(obj).__name__.replace('Backend', '')
+        return ""
 
     class Meta:
         model = common_models.Attachment
         fields = (
-            'author', 'content_type', 'date_insert', 'date_update',
-            'legend', 'starred', 'title', 'url'
+            'author', 'backend', 'thumbnail',
+            'legend', 'title', 'url', "type"
         )
 
 
@@ -224,6 +222,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         url = HyperlinkedIdentityField(view_name='apiv2:touristiccontent-detail')
         category = TouristicContentCategorySerializer()
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
+        pictures = AttachmentSerializer(many=True)
 
         class Meta:
             model = tourism_models.TouristicContent
@@ -305,9 +304,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         create_datetime = serializers.SerializerMethodField(read_only=True)
         update_datetime = serializers.SerializerMethodField(read_only=True)
         thumbnail = serializers.SerializerMethodField(read_only=True, source='pictures')
-        pictures = AttachmentSerializer(many=True)
-        videos = serializers.ReadOnlyField(source='serializable_videos')
-        files = serializers.ReadOnlyField(source='serializable_files')
+        attachments = AttachmentSerializer(many=True)
         gpx = serializers.SerializerMethodField('get_gpx_url')
         kml = serializers.SerializerMethodField('get_kml_url')
         advice = serializers.SerializerMethodField(read_only=True)
@@ -403,18 +400,18 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.Trek
             fields = (
                 'id', 'access', 'accessibilities', 'advice', 'advised_parking',
-                'altimetric_profile', 'ambiance', 'arrival', 'ascent',
+                'altimetric_profile', 'ambiance', 'arrival', 'ascent', 'attachments',
                 'children', 'create_datetime', 'departure', 'descent',
                 'description', 'description_teaser', 'difficulty',
                 'disabled_infrastructure', 'duration', 'elevation_area_url',
-                'elevation_svg_url', 'external_id', 'files', 'geometry', 'gpx',
+                'elevation_svg_url', 'external_id', 'geometry', 'gpx',
                 'information_desks', 'kml', 'labels', 'length_2d', 'length_3d',
                 'max_elevation', 'min_elevation', 'name', 'networks', 'next',
-                'parents', 'parking_location', 'pictures', 'points_reference',
+                'parents', 'parking_location', 'points_reference',
                 'portal', 'practice', 'previous', 'public_transport',
                 'published', 'reservation_system', 'route',
                 'second_external_id', 'source', 'structure', 'themes',
-                'thumbnail', 'update_datetime', 'url', 'videos'
+                'thumbnail', 'update_datetime', 'url'
             )
 
     class TourSerializer(TrekSerializer):
