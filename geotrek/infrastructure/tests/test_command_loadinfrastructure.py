@@ -163,12 +163,6 @@ class InfrastructureCommandTest(TestCase):
         self.assertIn("Update : name with eid eid1", output.getvalue())
         self.assertEqual(Infrastructure.objects.count(), 2)
 
-    def test_fail_import(self):
-        filename = os.path.join(os.path.dirname(__file__), 'data', 'infrastructure.shp')
-        with mock.patch.dict(sys.modules, {'osgeo': None}):
-            with self.assertRaisesRegex(CommandError, 'GDAL Python bindings are not available. Can not proceed.'):
-                call_command('loadinfrastructure', filename, verbosity=0)
-
     def test_fail_structure_default_do_not_exist(self):
         output = StringIO()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'infrastructure.shp')

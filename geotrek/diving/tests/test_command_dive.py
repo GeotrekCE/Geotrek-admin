@@ -78,12 +78,6 @@ class DiveCommandTest(TestCase):
         self.assertIn('An error occured, rolling back operations.', output.getvalue())
         self.assertEqual(Dive.objects.count(), 0)
 
-    def test_fail_import(self):
-        filename = os.path.join(os.path.dirname(__file__), 'data', 'infrastructure.shp')
-        with mock.patch.dict(sys.modules, {'osgeo': None}):
-            with self.assertRaisesRegex(CommandError, 'GDAL Python bindings are not available. Can not proceed.'):
-                call_command('loaddive', filename, verbosity=0)
-
     def test_no_file_fail(self):
         with self.assertRaisesRegex(CommandError, "File does not exists at: toto.shp"):
             call_command('loaddive', 'toto.shp')

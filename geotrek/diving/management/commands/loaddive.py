@@ -28,11 +28,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         verbosity = options.get('verbosity')
-        try:
-            from osgeo import gdal, ogr, osr  # NOQA
-
-        except ImportError:
-            raise CommandError('GDAL Python bindings are not available. Can not proceed.')
 
         filename = options['point_layer']
 
