@@ -9,6 +9,7 @@ from django.utils.timezone import make_aware, utc
 from geotrek.tourism.factories import TouristicEventFactory
 
 from datetime import datetime, timedelta
+import json
 import os
 import shutil
 
@@ -111,8 +112,11 @@ class LatLngBoundsTest(TestCase):
             '{% load mapentity_tags %}'
             '{{ object|latlngbounds }}'
         ).render(Context({'object': object_event}))
-        self.assertEqual('[[-5.983856309208756, -1.3630812101178977], '
-                         '[-5.983856309208756, -1.3630812101178977]]', out)
+        json_out = json.loads(out)
+        self.assertAlmostEqual(json_out[0][0], -5.9838563092087576)
+        self.assertAlmostEqual(json_out[0][1], -1.363081210117898)
+        self.assertAlmostEqual(json_out[1][0], -5.9838563092087576)
+        self.assertAlmostEqual(json_out[1][1], -1.363081210117898)
 
 
 class FieldVerboseNameTest(TestCase):

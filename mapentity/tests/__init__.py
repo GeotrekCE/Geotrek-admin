@@ -310,7 +310,11 @@ class MapEntityTest(TestCase):
                                                           modelname=self.model._meta.model_name)
         response = self.client.get(list_url)
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, [{'id': self.obj.pk, **self.get_expected_json_attrs()}])
+        content_json = response.json()
+        if hasattr(self, 'length'):
+            length = content_json[0].pop('length')
+            self.assertAlmostEqual(length, self.length)
+        self.assertEqual(content_json, [{'id': self.obj.pk, **self.get_expected_json_attrs()}])
 
     @freeze_time("2020-03-17")
     def test_api_geojson_list_for_model(self):
@@ -325,7 +329,11 @@ class MapEntityTest(TestCase):
                                                              modelname=self.model._meta.model_name)
         response = self.client.get(list_url)
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
+        content_json = response.json()
+        if hasattr(self, 'length'):
+            length = content_json['features'][0]['properties'].pop('length')
+            self.assertAlmostEqual(length, self.length)
+        self.assertEqual(content_json, {
             'type': 'FeatureCollection',
             'features': [{
                 'id': self.obj.pk,
@@ -349,7 +357,12 @@ class MapEntityTest(TestCase):
                                                             id=self.obj.pk)
         response = self.client.get(detail_url)
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {'id': self.obj.pk, **self.get_expected_json_attrs()})
+
+        content_json = response.json()
+        if hasattr(self, 'length'):
+            length = content_json.pop('length')
+            self.assertAlmostEqual(length, self.length)
+        self.assertEqual(content_json, {'id': self.obj.pk, **self.get_expected_json_attrs()})
 
     @freeze_time("2020-03-17")
     def test_api_geojson_detail_for_model(self):
@@ -365,7 +378,11 @@ class MapEntityTest(TestCase):
                                                                     id=self.obj.pk)
         response = self.client.get(detail_url)
         self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {
+        content_json = response.json()
+        if hasattr(self, 'length'):
+            length = content_json['properties'].pop('length')
+            self.assertAlmostEqual(length, self.length)
+        self.assertEqual(content_json, {
             'id': self.obj.pk,
             'type': 'Feature',
             'geometry': self.expected_json_geom,
