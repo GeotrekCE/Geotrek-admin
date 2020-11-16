@@ -1,8 +1,5 @@
 build:
-	docker build -t geotrek .
-
-build-focal:
-	docker build -t geotrek -f DockerfileFocal .
+	docker build -t geotrek . --build-arg TAG=$(TAG)
 
 build-no-cache:
 	docker build -t geotrek --no-cache .
