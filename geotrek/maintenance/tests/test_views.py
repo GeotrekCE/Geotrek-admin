@@ -9,7 +9,7 @@ from django.contrib.gis import gdal
 from django.test import TestCase
 
 from geotrek.common.tests import CommonTest
-from mapentity.serializers.shapefile import ZipShapeSerializer, shapefile_files
+from mapentity.serializers.shapefile import ZipShapeSerializer
 
 from geotrek.authent.factories import PathManagerFactory
 from geotrek.core.factories import StakeFactory
@@ -569,21 +569,23 @@ class ExportTest(TranslationResetMixin, TestCase):
         # instanciate the class based view 'abnormally' to use create_shape directly
         # to avoid making http request, authent and reading from a zip
         pfl = ZipShapeSerializer()
+        shapefiles = pfl.path_directory
         devnull = open(os.devnull, "wb")
         pfl.serialize(Project.objects.all(), stream=devnull, delete=False,
                       fields=ProjectFormatList.columns)
-        self.assertEqual(len(pfl.layers), 2)
-
-        layer_point, layer_line = [gdal.DataSource(layer)[0] for layer in pfl.layers.values()]
+        shapefiles = [shapefile for shapefile in os.listdir(shapefiles) if shapefile[-3:] == "shp"]
+        datasources = [gdal.DataSource(os.path.join(pfl.path_directory, s)) for s in shapefiles]
+        layer_line, layer_point = [ds[0] for ds in datasources]
+        self.assertEqual(len(datasources), 2)
 
         self.assertEqual(layer_point.geom_type.name, 'MultiPoint')
         self.assertEqual(layer_line.geom_type.name, 'LineString')
 
         for layer in [layer_point, layer_line]:
-            self.assertEqual(layer.srs.name, 'RGF93 / Lambert-93')
+            self.assertEqual(layer.srs.name, 'RGF93_Lambert_93')
             self.assertCountEqual(layer.fields, [
                 'id', 'name', 'period', 'type', 'domain', 'constraint',
-                'global_cos', 'interventi', 'interven_1', 'comments',
+                'global_cos', 'interventi', 'comments',
                 'contractor', 'project_ow', 'project_ma', 'founders',
                 'related_st', 'insertion_', 'update_dat',
                 'cities', 'districts', 'restricted'
@@ -601,8 +603,3 @@ class ExportTest(TranslationResetMixin, TestCase):
         for feature in layer_line:
             self.assertEqual(str(feature['id']), str(proj.pk))
             self.assertTrue(feature.geom.geos.equals(it_line.geom))
-
-        # Clean-up temporary shapefiles
-        for layer_file in pfl.layers.values():
-            for subfile in shapefile_files(layer_file):
-                os.remove(subfile)

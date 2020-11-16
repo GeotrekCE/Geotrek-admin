@@ -1,5 +1,6 @@
-import os
+from tempfile import TemporaryDirectory
 from io import StringIO
+import os
 
 from django.test import TestCase
 from django.conf import settings
@@ -10,7 +11,7 @@ from django.test.utils import override_settings
 from django.utils import translation
 
 from mapentity.serializers import ZipShapeSerializer, CSVSerializer
-from mapentity.serializers.shapefile import shapefile_files, shape_write, info_from_geo_field, geo_field_from_model
+from mapentity.serializers.shapefile import shape_write, info_from_geo_field, geo_field_from_model
 from mapentity.settings import app_settings
 
 from geotrek.core.models import Path
@@ -37,23 +38,19 @@ class ShapefileSerializer(TestCase):
         self.serializer.serialize(Dive.objects.all(), stream=response,
                                   fields=['id', 'name'], delete=False)
 
-    def tearDown(self):
-        for layer_file in self.serializer.layers.values():
-            for subfile in shapefile_files(layer_file):
-                os.remove(subfile)
-
     def getShapefileLayers(self):
-        shapefiles = self.serializer.layers.values()
-        datasources = [gdal.DataSource(s) for s in shapefiles]
+        shapefiles = self.serializer.path_directory
+        shapefiles = [shapefile for shapefile in os.listdir(shapefiles) if shapefile[-3:] == "shp"]
+        datasources = [gdal.DataSource(os.path.join(self.serializer.path_directory, s)) for s in shapefiles]
         layers = [ds[0] for ds in datasources]
         return layers
 
     def test_serializer_creates_one_layer_per_type(self):
-        self.assertEqual(len(self.serializer.layers), 6)
+        self.assertEqual(len(self.getShapefileLayers()), 6)
 
     def test_each_layer_has_records_by_type(self):
-        layer_point, layer_linestring, layer_polygon, layer_multipoint, \
-            layer_multilinestring, layer_multipolygon = self.getShapefileLayers()
+        layer_multipolygon, layer_linestring, layer_multilinestring, layer_point, \
+            layer_multipoint, layer_polygon = self.getShapefileLayers()
         self.assertEqual(len(layer_point), 1)
         self.assertEqual(len(layer_linestring), 1)
         self.assertEqual(len(layer_multipoint), 1)
@@ -71,8 +68,8 @@ class ShapefileSerializer(TestCase):
             self.assertCountEqual(layer.fields, ['id', 'name'])
 
     def test_geometries_come_from_records(self):
-        layer_point, layer_linestring, layer_polygon, layer_multipoint, \
-            layer_multilinestring, layer_multipolygon = self.getShapefileLayers()
+        layer_multipolygon, layer_linestring, layer_multilinestring, layer_point, \
+            layer_multipoint, layer_polygon = self.getShapefileLayers()
         feature = layer_point[0]
         self.assertEqual(str(feature['id']), str(self.point1.pk))
         self.assertTrue(feature.geom.geos.equals(self.point1.geom))
@@ -137,7 +134,11 @@ class ShapefileSerializer(TestCase):
         geo_field = geo_field_from_model(Dive, 'geom')
         get_geom, geom_type, srid = info_from_geo_field(geo_field)
         dives = [dive for dive in Dive.objects.all() if dive.geom.geom_type == 'Point']
-        ds = DataSource(shape_write(dives, Dive, ['id', 'name'], get_geom, 'POINT', 2154, 3812))
+        with TemporaryDirectory(dir=app_settings['TEMP_DIR']) as tmp_directory:
+            shape_write(tmp_directory,
+                        dives, Dive, ['id', 'name'], get_geom, 'Point', 2154, 3812)
+            ds = DataSource(os.path.join(tmp_directory, os.listdir(tmp_directory)[2]))
+
         layer = ds[0]
         for feature in layer:
             self.assertAlmostEqual(feature.geom.x, -315454.73811014)
