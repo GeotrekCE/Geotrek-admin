@@ -19,10 +19,18 @@ jobs:
     machine: true
     steps:
       - checkout
-      - run: TAG=bionic-3.6 make build
+      - run: TAG=focal-3.8 make build
       - run: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
       - run: docker tag geotrek:latest geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - run: docker push geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
+  docker_image_18_04:
+    machine: true
+    steps:
+      - checkout
+      - run: TAG=bionic-3.6 make build
+      - run: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
+      - run: docker tag geotrek:latest geotrekce/circleci-admin:18$CIRCLE_WORKFLOW_ID
+      - run: docker push geotrekce/circleci-admin:18$CIRCLE_WORKFLOW_ID
   docker_test:
     machine: true
     environment:
@@ -40,6 +48,17 @@ jobs:
           file: var/coverage.xml
           flags: test
           when: on_success
+  docker_test_18_04:
+    machine: true
+    environment:
+      LANG: C.UTF-8
+    steps:
+      - checkout
+      - run: cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
+      - run: docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
+      - run: docker pull geotrekce/circleci-admin:18$CIRCLE_WORKFLOW_ID
+      - run: docker-compose run web update.sh
+      - run: docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2
   docker_test_nds:
     machine: true
     environment:
@@ -154,9 +173,19 @@ workflows:
           filters:
             tags:
               only: /[0-9]+\.[0-9]+\.[0-9]+/
+      - docker_image_18_04:
+          filters:
+            tags:
+              only: /[0-9]+\.[0-9]+\.[0-9]+/
       - docker_test:
           requires:
             - docker_image
+          filters:
+            tags:
+              only: /[0-9]+\.[0-9]+\.[0-9]+/
+      - docker_test_18_04:
+          requires:
+            - docker_image_18_04
           filters:
             tags:
               only: /[0-9]+\.[0-9]+\.[0-9]+/
