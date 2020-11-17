@@ -10,8 +10,8 @@ from geotrek.zoning.parsers import CityParser
 
 
 WKT = (
-    b'MULTIPOLYGON (((309716.28141 6698350.20218, 330923.90239 6728938.11705, '
-    b'341391.76660 6698214.25589, 309716.28141 6698350.20218)))'
+    b'MULTIPOLYGON (((309716.2814 6698350.2022, 330923.9024 6728938.1171, '
+    b'341391.7666 6698214.2559, 309716.2814 6698350.2022)))'
 )
 
 
@@ -22,7 +22,7 @@ class CityParserTest(TestCase):
         city = City.objects.get()
         self.assertEqual(city.code, "99999")
         self.assertEqual(city.name, "Trifouilli-les-Oies")
-        self.assertEqual(WKTWriter(precision=5).write(city.geom), WKT)
+        self.assertEqual(WKTWriter(precision=4).write(city.geom), WKT)
 
     def test_wrong_geom(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'line.geojson')
