@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-
-from collections import OrderedDict
 import fiona
 from fiona.crs import from_epsg
 from io import BytesIO
