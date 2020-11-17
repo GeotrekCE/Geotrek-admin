@@ -4,10 +4,9 @@ from unittest.mock import patch
 from unittest import skipIf
 
 from django.conf import settings
-from django.core.management.base import CommandError
 from django.core.management import call_command
 from django.test import TestCase
-from django.contrib.gis.geos import GEOSGeometry, WKTWriter
+from django.contrib.gis.geos import GEOSGeometry
 
 from geotrek.core.factories import PathFactory
 from geotrek.trekking.models import POI
