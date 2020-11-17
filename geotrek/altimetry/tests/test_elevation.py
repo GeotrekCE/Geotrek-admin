@@ -486,4 +486,3 @@ class CommandLoadDemTest(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
         with self.assertRaisesRegex(CommandError, 'Caught Exception: raster2pgsql failed with exit code 1'):
             call_command('loaddem', filename, '--replace', verbosity=0)
-
