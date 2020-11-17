@@ -1,4 +1,3 @@
-import json
 import logging
 
 from django.contrib.contenttypes.fields import GenericRelation
@@ -9,6 +8,7 @@ from django.views.decorators.http import last_modified as cache_last_modified
 from ..registry import registry
 from ..filters import MapEntityFilterSet
 from ..forms import MapEntityForm
+from ..serializers import json_django_dumps
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +39,7 @@ class JSONResponseMixin(object):
 
     def convert_context_to_json(self, context):
         "Convert the context dictionary into a JSON object"
-        return json.dumps(context)
+        return json_django_dumps(context)
 
 
 class LastModifiedMixin(object):

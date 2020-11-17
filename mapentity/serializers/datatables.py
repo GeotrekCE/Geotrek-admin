@@ -17,7 +17,7 @@ class DatatablesSerializer(Serializer):
             else:
                 modelfield = model._meta.get_field(field)
                 if isinstance(modelfield, ForeignKey):
-                    getters[field] = lambda obj, field: (str(getattr(obj, field)) or _("None"))
+                    getters[field] = lambda obj, field: (getattr(obj, field) or _("None"))
                 elif isinstance(modelfield, ManyToManyField):
                     getters[field] = lambda obj, field: (getattr(obj, field).all() or _("None"))
                 else:
@@ -25,7 +25,7 @@ class DatatablesSerializer(Serializer):
                         value = getattr(obj, field)
                         if isinstance(value, float) and math.isnan(value):
                             value = 0.0
-                        return str(value)
+                        return value
                     getters[field] = fixfloat
         # Build list with fields
         map_obj_pk = []
