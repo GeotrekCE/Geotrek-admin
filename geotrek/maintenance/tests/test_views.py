@@ -575,13 +575,15 @@ class ExportTest(TranslationResetMixin, TestCase):
                       fields=ProjectFormatList.columns)
         shapefiles = [shapefile for shapefile in os.listdir(shapefiles) if shapefile[-3:] == "shp"]
         datasources = [gdal.DataSource(os.path.join(pfl.path_directory, s)) for s in shapefiles]
-        layer_line, layer_point = [ds[0] for ds in datasources]
+        layers = [ds[0] for ds in datasources]
+
         self.assertEqual(len(datasources), 2)
+        geom_type_layer = {layer.geom_type.name: layer for layer in layers}
+        geom_types = geom_type_layer.keys()
+        self.assertIn('MultiPoint', geom_types)
+        self.assertIn('LineString', geom_types)
 
-        self.assertEqual(layer_point.geom_type.name, 'MultiPoint')
-        self.assertEqual(layer_line.geom_type.name, 'LineString')
-
-        for layer in [layer_point, layer_line]:
+        for layer in layers:
             self.assertEqual(layer.srs.name, 'RGF93_Lambert_93')
             self.assertCountEqual(layer.fields, [
                 'id', 'name', 'period', 'type', 'domain', 'constraint',
@@ -591,15 +593,15 @@ class ExportTest(TranslationResetMixin, TestCase):
                 'cities', 'districts', 'restricted'
             ])
 
-        self.assertEqual(len(layer_point), 1)
-        self.assertEqual(len(layer_line), 1)
+        self.assertEqual(len(layers[0]), 1)
+        self.assertEqual(len(layers[1]), 1)
 
-        for feature in layer_point:
+        for feature in geom_type_layer['MultiPoint']:
             self.assertEqual(str(feature['id']), str(proj.pk))
             self.assertEqual(len(feature.geom.geos), 1)
             self.assertAlmostEqual(feature.geom.geos[0].x, it_point.geom.x)
             self.assertAlmostEqual(feature.geom.geos[0].y, it_point.geom.y)
 
-        for feature in layer_line:
+        for feature in geom_type_layer['MultiLinestring']:
             self.assertEqual(str(feature['id']), str(proj.pk))
             self.assertTrue(feature.geom.geos.equals(it_line.geom))

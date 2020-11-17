@@ -68,29 +68,29 @@ class ShapefileSerializer(TestCase):
             self.assertCountEqual(layer.fields, ['id', 'name'])
 
     def test_geometries_come_from_records(self):
-        layer_multipolygon, layer_linestring, layer_multilinestring, layer_point, \
-            layer_multipoint, layer_polygon = self.getShapefileLayers()
-        feature = layer_point[0]
+        layers = self.getShapefileLayers()
+        geom_type_layer = {layer.name: layer for layer in layers}
+        feature = geom_type_layer['Point'][0]
         self.assertEqual(str(feature['id']), str(self.point1.pk))
         self.assertTrue(feature.geom.geos.equals(self.point1.geom))
 
-        feature = layer_multipoint[0]
+        feature = geom_type_layer['MultiPoint'][0]
         self.assertEqual(str(feature['id']), str(self.multipoint.pk))
         self.assertTrue(feature.geom.geos.equals(self.multipoint.geom))
 
-        feature = layer_linestring[0]
+        feature = geom_type_layer['LineString'][0]
         self.assertEqual(str(feature['id']), str(self.line1.pk))
         self.assertTrue(feature.geom.geos.equals(self.line1.geom))
 
-        feature = layer_multilinestring[0]
+        feature = geom_type_layer['MultiLineString'][0]
         self.assertEqual(str(feature['id']), str(self.multiline.pk))
         self.assertTrue(feature.geom.geos.equals(self.multiline.geom))
 
-        feature = layer_polygon[0]
+        feature = geom_type_layer['Polygon'][0]
         self.assertEqual(str(feature['id']), str(self.polygon.pk))
         self.assertTrue(feature.geom.geos.equals(self.polygon.geom))
 
-        feature = layer_multipolygon[0]
+        feature = geom_type_layer['MultiPolygon'][0]
         self.assertEqual(str(feature['id']), str(self.multipolygon.pk))
         self.assertTrue(feature.geom.geos.equals(self.multipolygon.geom))
 
@@ -137,7 +137,7 @@ class ShapefileSerializer(TestCase):
         with TemporaryDirectory(dir=app_settings['TEMP_DIR']) as tmp_directory:
             shape_write(tmp_directory,
                         dives, Dive, ['id', 'name'], get_geom, 'Point', 2154, 3812)
-            ds = DataSource(os.path.join(tmp_directory, os.listdir(tmp_directory)[2]))
+            ds = DataSource(os.path.join(tmp_directory, 'Point.shp'))
 
         layer = ds[0]
         for feature in layer:
