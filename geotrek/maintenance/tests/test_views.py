@@ -602,6 +602,6 @@ class ExportTest(TranslationResetMixin, TestCase):
             self.assertAlmostEqual(feature.geom.geos[0].x, it_point.geom.x)
             self.assertAlmostEqual(feature.geom.geos[0].y, it_point.geom.y)
 
-        for feature in geom_type_layer['MultiLinestring']:
+        for feature in geom_type_layer['MultiLineString']:
             self.assertEqual(str(feature['id']), str(proj.pk))
             self.assertTrue(feature.geom.geos.equals(it_line.geom))
