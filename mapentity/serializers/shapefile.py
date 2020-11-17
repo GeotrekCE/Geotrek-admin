@@ -136,9 +136,9 @@ def shape_write(shape_directory, iterable, model, columns, get_geom, geom_type, 
             try:
                 f = model._meta.get_field(field)
                 if f.one_to_many:
-                    c = f.field.model._meta.verbose_name_plural
+                    c = _(f.field.model._meta.verbose_name_plural)
                 else:
-                    c = f.verbose_name
+                    c = _(f.verbose_name)
             except FieldDoesNotExist:
                 c = _(field.title())
 

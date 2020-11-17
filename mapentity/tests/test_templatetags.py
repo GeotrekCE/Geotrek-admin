@@ -163,6 +163,9 @@ class MediasFallbackExistTest(TestCase):
 
 
 class TimeSinceTest(TestCase):
+    def setUp(self):
+        translation.activate('en')
+
     def test_time_since_years(self):
         date = make_aware(datetime.now() - timedelta(days=800), utc)
         object_event = TouristicEventFactory.create(begin_date=date)
