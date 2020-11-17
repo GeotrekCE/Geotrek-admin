@@ -22,17 +22,18 @@ class LoadPOITest(TestCase):
 
     def test_command_shows_number_of_objects(self):
         output = StringIO()
-        call_command('loadpoi', self.filename, verbosity=1, stdout=output)
+        call_command('loadpoi', self.filename, verbosity=1, name_field='name', type_field='type', stdout=output)
+        print()
         self.assertIn('2 objects found', output.getvalue())
 
     def test_create_pois_is_executed(self):
         with patch.object(Command, 'create_poi') as mocked:
-            self.cmd.handle(point_layer=self.filename, verbosity=0, encoding='utf-8')
+            self.cmd.handle(point_layer=self.filename, verbosity=0, name_field='name', type_field='type', encoding='utf-8')
             self.assertEqual(mocked.call_count, 2)
 
     def test_create_pois_receives_geometries(self):
         with patch.object(Command, 'create_poi') as mocked:
-            self.cmd.handle(point_layer=self.filename, verbosity=0, encoding='utf-8')
+            self.cmd.handle(point_layer=self.filename, verbosity=0, name_field='name', type_field='type', encoding='utf-8')
             call1 = mocked.call_args_list[0][0]
             call2 = mocked.call_args_list[1][0]
             self.assertAlmostEqual(call1[0].x, -1.3630867, places=7)
@@ -43,7 +44,7 @@ class LoadPOITest(TestCase):
 
     def test_create_pois_receives_fields_names_and_types(self):
         with patch.object(Command, 'create_poi') as mocked:
-            self.cmd.handle(point_layer=self.filename, verbosity=0, encoding='utf-8')
+            self.cmd.handle(point_layer=self.filename, verbosity=0, name_field='name', type_field='type', encoding='utf-8')
             call1 = mocked.call_args_list[0][0]
             call2 = mocked.call_args_list[1][0]
             self.assertEqual(call1[1], 'pont')
@@ -51,22 +52,21 @@ class LoadPOITest(TestCase):
             self.assertEqual(call1[2], 'équipement')
             self.assertEqual(call2[2], 'signaletique')
 
-    def test_create_pois_receives_null_if_field_missing(self):
-        self.cmd.field_name = 'name2'
+    def test_create_pois_name_default_if_field_missing(self):
         with patch.object(Command, 'create_poi') as mocked:
-            self.cmd.handle(point_layer=self.filename, verbosity=0, encoding='utf-8')
+            self.cmd.handle(point_layer=self.filename, verbosity=0, name_default='test', type_field='type', encoding='utf-8')
             call1 = mocked.call_args_list[0][0]
-            self.assertEqual(call1[1], 'POI 1')
+            self.assertEqual(call1[1], 'test')
 
     def test_pois_are_created(self):
         geom = GEOSGeometry('POINT(1 1)', srid=4326)
         before = len(POI.objects.all())
-        self.cmd.create_poi(geom, 'bridge', 'infra')
+        self.cmd.create_poi(geom, 'bridge', 'infra', 'description')
         after = len(POI.objects.all())
         self.assertEqual(after - before, 1)
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_pois_are_attached_to_paths(self):
         geom = GEOSGeometry('POINT(1 1)', srid=4326)
-        poi = self.cmd.create_poi(geom, 'bridge', 'infra')
+        poi = self.cmd.create_poi(geom, 'bridge', 'infra', 'description')
         self.assertEqual([self.path], list(poi.paths.all()))
