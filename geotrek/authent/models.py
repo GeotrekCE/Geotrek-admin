@@ -81,10 +81,6 @@ class UserProfile(StructureRelated):
     """
     user = models.OneToOneField(User, unique=True, on_delete=models.CASCADE)
 
-    language = models.CharField(_("Language"), max_length=10,
-                                choices=settings.LANGUAGES,
-                                default=settings.LANGUAGE_CODE)
-
     class Meta:
         verbose_name = _("User's profile")
         verbose_name_plural = _("User's profiles")
