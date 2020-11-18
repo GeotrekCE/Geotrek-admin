@@ -9,8 +9,6 @@ from django.utils.translation import LANGUAGE_SESSION_KEY
 
 from mapentity.factories import SuperUserFactory
 
-from geotrek.authent.models import UserProfile
-
 
 @override_settings(LOGIN_URL='/login/')
 class LoginTestCase(TestCase):
@@ -25,34 +23,6 @@ class UserProfileTest(TestCase):
         self.user = SuperUserFactory(password="Bar")
         success = self.client.login(username=self.user.username, password="Bar")
         self.assertTrue(success)
-
-    def test_profile(self):
-        self.assertTrue(isinstance(self.user.profile, UserProfile))
-
-        self.assertEqual(self.user.profile.structure.name, settings.DEFAULT_STRUCTURE_NAME)
-        self.assertEqual(self.user.profile.language, settings.LANGUAGE_CODE)
-
-    def test_language(self):
-        response = self.client.get(reverse('core:path_list'))
-        self.assertEqual(200, response.status_code)
-        self.assertContains(response, "Logout")
-
-        # Change user lang
-        self.assertNotEqual(settings.LANGUAGE_CODE, "fr")
-        userprofile = UserProfile.objects.get(user=self.user)
-        userprofile.language = "fr"
-        userprofile.save()
-        self.assertEqual(self.user.profile.language, "fr")
-        # No effect if no logout
-        response = self.client.get(reverse('core:path_list'))
-        self.assertContains(response, "Logout")
-
-        self.client.logout()
-
-        self.client.login(username=self.user.username, password="Bar")
-        response = self.client.get(reverse('core:path_list'))
-        self.assertEqual(self.client.session[LANGUAGE_SESSION_KEY], "fr")
-        self.assertContains(response, "Déconnexion")
 
     def test_link_to_adminsite_visible_to_staff(self):
         self.assertTrue(self.user.is_staff)

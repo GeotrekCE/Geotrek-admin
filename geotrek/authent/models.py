@@ -90,10 +90,3 @@ class UserProfile(StructureRelated):
 
 
 User.profile = reify(lambda u: UserProfile.objects.get_or_create(user=u)[0])
-
-
-@receiver(user_logged_in)
-def lang(sender, **kwargs):
-    """ Set user's language in session when he logs in. """
-    lang_code = kwargs['user'].profile.language
-    kwargs['request'].session[LANGUAGE_SESSION_KEY] = lang_code
