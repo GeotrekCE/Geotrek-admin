@@ -1,8 +1,10 @@
-import os.path
+import os
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from django.contrib.gis.geos import GEOSGeometry, Point
+from django.contrib.gis.gdal import DataSource
+from django.contrib.gis.geos import Point
+from django.db import transaction
 
 from geotrek.core.helpers import TopologyHelper
 from geotrek.trekking.models import POI, POIType
@@ -11,45 +13,79 @@ from geotrek.trekking.models import POI, POIType
 class Command(BaseCommand):
     help = 'Load a layer with point geometries in a model\n'
     can_import_settings = True
-    field_name = 'name'
-    field_poitype = 'type'
+    counter = 0
 
     def add_arguments(self, parser):
         parser.add_argument('point_layer')
+        parser.add_argument('--encoding', '-e', action='store', dest='encoding', default='utf-8', help='File encoding, default utf-8')
+        parser.add_argument('--name-field', '-n', action='store', dest='name_field', help='Name of the field that contains the name attribute. Required or use --name-default instead.')
+        parser.add_argument('--type-field', '-t', action='store', dest='type_field', help='Name of the field that contains the POI Type attribute. Required or use --type-default instead.')
+        parser.add_argument('--description-field', '-d', action='store', dest='description_field', help='Name of the field that contains the description of the POI (optional)')
+        parser.add_argument('--name-default', action='store', dest='name_default', help='Default value for POI name. Use only if --name-field is not set')
+        parser.add_argument('--type-default', action='store', dest='type_default', help='Default value for POI Type. Use only if --type-field is not set')
 
     def handle(self, *args, **options):
-        try:
-            from osgeo import gdal, ogr, osr  # NOQA
-        except ImportError:
-            msg = 'GDAL Python bindings are not available. Can not proceed.'
-            raise CommandError(msg)
-
         filename = options['point_layer']
 
         if not os.path.exists(filename):
             raise CommandError('File does not exists at: %s' % filename)
 
-        ogrdriver = ogr.GetDriverByName("ESRI Shapefile")
-        datasource = ogrdriver.Open(filename)
-        layer = datasource.GetLayer()
-        count = layer.GetFeatureCount()
-        if options['verbosity'] >= 1:
-            self.stdout.write('%s objects found' % count)
+        data_source = DataSource(filename, encoding=options.get('encoding'))
 
-        for i in range(count):
-            feature = layer.GetFeature(i)
-            featureGeom = feature.GetGeometryRef()
-            geometry = GEOSGeometry(featureGeom.ExportToWkt())
-            name = feature.GetFieldAsString(self.field_name)
-            poitype = feature.GetFieldAsString(self.field_poitype)
-            self.create_poi(geometry, name, poitype)
+        verbosity = options.get('verbosity')
+        field_name = options.get('name_field')
+        field_poitype = options.get('type_field')
+        field_description = options.get('description_field')
 
-    def create_poi(self, geometry, name, poitype):
+        sid = transaction.savepoint()
+
+        try:
+            for layer in data_source:
+                if verbosity >= 1:
+                    self.stdout.write("- Layer '{}' with {} objects found".format(layer.name, layer.num_feat))
+                available_fields = layer.fields
+
+                if (field_name and field_name not in available_fields)\
+                        or (not field_name and not options.get('name_default')):
+                    self.stdout.write(self.style.ERROR(
+                        "Field '{}' not found in data source.".format(field_name)))
+                    self.stdout.write(self.style.ERROR(
+                        "Set it with --name-field, or set a default value with --name-default"))
+                    break
+                if (field_poitype and field_poitype not in available_fields)\
+                        or (not field_poitype and not options.get('type_default')):
+                    self.stdout.write(self.style.ERROR(
+                        "Field '{}' not found in data source.".format(field_poitype)))
+                    self.stdout.write(self.style.ERROR(
+                        "Set it with --type-field, or set a default value with --type-default"))
+                    break
+
+                for feature in layer:
+                    feature_geom = feature.geom
+                    name = feature.get(field_name) if field_name in available_fields else options.get('name_default')
+                    poitype = feature.get(field_poitype) if field_poitype in available_fields else options.get('type_default')
+                    description = feature.get(field_description) if field_description in available_fields else ""
+                    self.create_poi(feature_geom, name, poitype, description)
+                    if verbosity >= 2:
+                        self.stdout.write(self.style.NOTICE("{} POI created.".format(name)))
+
+            transaction.savepoint_commit(sid)
+            if verbosity >= 2:
+                self.stdout.write(self.style.NOTICE("{} objects created.".format(self.counter)))
+
+        except Exception:
+            self.stdout.write(self.style.ERROR("An error occured, rolling back operations."))
+            transaction.savepoint_rollback(sid)
+            raise
+
+    def create_poi(self, geometry, name, poitype, description):
         poitype, created = POIType.objects.get_or_create(label=poitype)
-        poi = POI.objects.create(name=name, type=poitype)
+        poi = POI.objects.create(name=name, type=poitype, description=description)
         if settings.TREKKING_TOPOLOGY_ENABLED:
             # Use existing topology helpers to transform a Point(x, y)
             # to a path aggregation (topology)
+            geometry = geometry.transform(settings.API_SRID, clone=True)
+            geometry.coord_dim = 2
             serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
             topology = TopologyHelper.deserialize(serialized)
             # Move deserialization aggregations to the POI
@@ -59,4 +95,6 @@ class Command(BaseCommand):
                 raise TypeError
             poi.geom = Point(geometry.x, geometry.y, srid=settings.SRID)
             poi.save()
+        self.counter += 1
+
         return poi
