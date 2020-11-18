@@ -5,9 +5,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.dispatch import receiver
-from django.contrib.auth.signals import user_logged_in
-from django.utils.translation import LANGUAGE_SESSION_KEY
 
 from geotrek.common.utils import reify
 

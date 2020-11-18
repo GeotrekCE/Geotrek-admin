@@ -5,7 +5,6 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.conf import settings
 from django.urls import reverse
-from django.utils.translation import LANGUAGE_SESSION_KEY
 
 from mapentity.factories import SuperUserFactory
 
