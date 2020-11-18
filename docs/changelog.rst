@@ -2,8 +2,13 @@
 CHANGELOG
 =========
 
-2.39.2.dev0
+2.40.0 (2020-11-18)
 -------------------
+
+**New Features**
+
+- Handle different file formats in loadpoi command (all formats supported by gdal)
+- Improve API V2 filters and endpoints
 
 **Bug fixes**
 
@@ -13,6 +18,7 @@ CHANGELOG
 
 - Reorganize index
 - Add sphinx container for dev mode
+- Improve custom dist to give right templates of values in parameters
 
 
 2.39.1 (2020-10-28)
