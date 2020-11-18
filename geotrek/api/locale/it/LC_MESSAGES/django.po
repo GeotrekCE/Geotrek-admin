@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-13 17:33+0000\n"
+"POT-Creation-Date: 2020-11-18 13:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -204,6 +204,10 @@ msgstr ""
 msgid "Id of a trek. It will show only the POIs related to this trek"
 msgstr ""
 
+msgid ""
+"Id of a trek. It will show only the touristics contents related to this trek"
+msgstr ""
+
 msgid "Set minimum duration for a trek"
 msgstr ""
 
@@ -257,12 +261,7 @@ msgstr ""
 msgid "Id of the trek label to filter by, separated by commas"
 msgstr ""
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "itinerancy"
-msgstr ""
-
-#. Translators: This is a slug (without space, accent or special char)
-msgid "trek"
+msgid "Search field that returns treks contianing data matching the string"
 msgstr ""
 
 msgid "External ID"
