@@ -1,16 +1,15 @@
 import os
 from io import StringIO
+from unittest import skipIf, mock
 from unittest.mock import patch
-from unittest import skipIf
 
 from django.conf import settings
+from django.contrib.gis.geos import GEOSGeometry
 from django.core.management import call_command
 from django.test import TestCase
-from django.contrib.gis.geos import GEOSGeometry
-
 from geotrek.core.factories import PathFactory
-from geotrek.trekking.models import POI
 from geotrek.trekking.management.commands.loadpoi import Command
+from geotrek.trekking.models import POI
 
 
 class LoadPOITest(TestCase):
@@ -22,9 +21,27 @@ class LoadPOITest(TestCase):
 
     def test_command_shows_number_of_objects(self):
         output = StringIO()
-        call_command('loadpoi', self.filename, verbosity=1, name_field='name', type_field='type', stdout=output)
-        print()
+        call_command('loadpoi', self.filename, verbosity=2, name_field='name', type_field='type', stdout=output)
         self.assertIn('2 objects found', output.getvalue())
+
+    def test_command_fail_type_missing(self):
+        output = StringIO()
+        call_command('loadpoi', self.filename, verbosity=1, name_field='name', stdout=output)
+        self.assertIn('Set it with --type-field, or set a default', output.getvalue())
+
+    def test_command_fail_name_missing(self):
+        output = StringIO()
+        call_command('loadpoi', self.filename, verbosity=1, type_field='type', stdout=output)
+        self.assertIn('Set it with --name-field, or set a default', output.getvalue())
+
+    @mock.patch('geotrek.trekking.management.commands.loadpoi.Command.create_poi')
+    def test_command_fail_rollback(self, mocke):
+        mocke.side_effect = Exception('This is a test')
+        output = StringIO()
+        with self.assertRaises(Exception):
+            call_command('loadpoi', self.filename, verbosity=1, name_field='name', type_field='type', stdout=output)
+        self.assertIn('An error occured, rolling back operations.', output.getvalue())
+        self.assertEqual(POI.objects.count(), 0)
 
     def test_create_pois_is_executed(self):
         with patch.object(Command, 'create_poi') as mocked:
