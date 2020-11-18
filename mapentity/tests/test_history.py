@@ -20,12 +20,13 @@ User = get_user_model()
 class TestActionsHistory(TestCase):
     def setUp(self):
         self.client = Client()
+        self.structure = Structure.objects.create()
         self.user = User.objects.create_superuser('test', 'email@corp.com', 'booh')
         self.client.login(username='test', password='booh')
 
     def test_create_view_logs_addition(self):
         self.client.post('/touristicevent/add/', data={
-            'structure': Structure.objects.first().pk,
+            'structure': self.structure.pk,
             'name_en': 'test',
             'geom': '{"type": "Point", "coordinates": [0, 0]}',
             'model': 'touristicevent',

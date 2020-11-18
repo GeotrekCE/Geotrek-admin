@@ -152,6 +152,7 @@ class InfrastructureTypeAdminTest(AuthentFixturesTest):
 
 class InfrastructureConditionAdminTest(AuthentFixturesTest):
     def setUp(self):
+        StructureFactory.create()
         self.user = SuperUserFactory.create(password='booh')
         self.infra = InfrastructureConditionFactory.create()
 
