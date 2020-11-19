@@ -39,7 +39,7 @@ Browse by project
    .. figure:: ./images/translating/weblate-project-menu.png
       :alt: image
 
--  Sélect Geotrek-admin project
+-  Select Geotrek-admin project
 
 -  Click on tab “Languages”
 
@@ -51,6 +51,8 @@ Browse by project
 
 Browse by language
 ~~~~~~~~~~~~~~~~~~~
+
+You could also choose language first
 
 -  Go to “Languages > Browse all languages”
 -  Choose the language you want to translate

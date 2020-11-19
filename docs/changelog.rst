@@ -9,6 +9,10 @@ CHANGELOG
 
 - 
 
+**Doc improvements**
+
+- Update translation
+
 
 2.40.0 (2020-11-18)
 -------------------
