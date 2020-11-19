@@ -9,9 +9,11 @@ msgstr ""
 "Project-Id-Version: Geotrek 2.38\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-12 14:31+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2020-11-20 16:19+0000\n"
+"Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/"
+"geotrek-admin/doc-development/fr/>\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,7 +21,7 @@ msgstr ""
 
 #: ../../development.rst:5
 msgid "DEVELOPMENT"
-msgstr ""
+msgstr "DÉVELOPPEMENT"
 
 #: ../../development.rst:8
 msgid "Quickstart"
@@ -31,15 +33,15 @@ msgstr ""
 
 #: ../../development.rst:25
 msgid "Contribution guide"
-msgstr ""
+msgstr "Guide de contributions"
 
 #: ../../development.rst:28
 msgid "Conventions"
-msgstr ""
+msgstr "Conventions"
 
 #: ../../development.rst:30
 msgid "Use flake8"
-msgstr ""
+msgstr "Utiliser flake8"
 
 #: ../../development.rst:31
 msgid "KISS & DRY as much as possible"
@@ -54,10 +56,14 @@ msgid ""
 "Commits messages are explicit and mention issue number (``(ref #12)`` or "
 "``(fixes #23)``)"
 msgstr ""
+"Les messages de commit doivent être explicite et mentionner le numéro de "
+"l'issue (``(ref #12)`` ou ``(fixes #23)``)"
 
 #: ../../development.rst:34
 msgid "Features are developed in a branch and merged from Github pull-requests."
 msgstr ""
+"Les fonctionnalités doivent être développées dans une branche, et fusionnée "
+"à l'aide des pull-requests Github."
 
 #: ../../development.rst:38
 msgid "Definition of done"
@@ -65,7 +71,7 @@ msgstr ""
 
 #: ../../development.rst:40
 msgid "``docs/changelog.rst`` is up-to-date"
-msgstr ""
+msgstr "``docs/changelog.rst`` est à jour"
 
 #: ../../development.rst:41
 msgid "A unit-test covers the bugfix or the new feature"
