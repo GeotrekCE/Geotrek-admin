@@ -82,7 +82,7 @@ jobs:
       - checkout
       - run: cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
       - run: echo 'LANGUAGES=en fr' >> .env
-      - run: echo 'MAIN_LANGUAGE_CODE=en' >> .env
+      - run: echo 'LANGUAGE_CODE=en' >> .env
       - run: docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
       - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest

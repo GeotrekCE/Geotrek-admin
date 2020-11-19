@@ -3,7 +3,7 @@ describe('Login from home page / admin page', () => {
     cy.visit('http://localhost:8000')
     cy.url().should('include', '/login/?next=/')
     cy.get('form')
-    cy.contains("Nom d'utilisateur :")
+    cy.contains("Username :")
     cy.get('[name="username"]')
     })
 
@@ -36,7 +36,7 @@ describe('Login from home page / admin page', () => {
     cy.visit('http://localhost:8000/admin')
     cy.url().should('include', '/login/?next=/')
     cy.get('form')
-    cy.contains("Nom d'utilisateur :")
+    cy.contains("Username :")
     cy.get('[name="username"]')
   })
 

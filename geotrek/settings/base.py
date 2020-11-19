@@ -122,7 +122,7 @@ LANGUAGES = (
     ('it', _('Italian')),
     ('es', _('Spanish')),
 )
-LANGUAGE_CODE = os.getenv('MAIN_LANGUAGE_CODE', 'fr')
+LANGUAGE_CODE = os.getenv('LANGUAGE_CODE', 'fr')
 
 MODELTRANSLATION_LANGUAGES = os.getenv('LANGUAGES', 'fr en').split(' ')
 MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
