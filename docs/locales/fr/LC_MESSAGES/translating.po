@@ -26,9 +26,10 @@ msgstr "TRADUCTIONS"
 #: ../../translating.rst:5
 #, fuzzy
 msgid ""
-"Geotrek-admin can be translated online here: `https://weblate.makina-"
-"corpus.net/projects/geotrek-admin/`_"
-msgstr "Les traductions peuvent se faire en ligne sur https://weblate.makina-"
+"Geotrek-admin can be translated online here:"
+"`https://weblate.makina-corpus.net/projects/geotrek-admin/`_"
+msgstr "Les traductions peuvent se faire en ligne sur :"
+"`https://weblate.makina-corpus.net/projects/geotrek-admin/`_"
 
 #: ../../translating.rst:9
 msgid "Getting started"
