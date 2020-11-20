@@ -702,6 +702,14 @@ Boundingbox of your project : x minimum , y minimum , x max, y max
 *If you extend spatial extent, don't forget to load a new DEM that covers all the zone.*
 *If you shrink spatial extent, be sure there is no element in the removed zone or you will no more be able to see and edit it.*
 
+**API**
+
+::
+    API_IS_PUBLIC = True
+
+Choose if you want the API V2 to be available for everyone without authentication. This API provides access to promotion content (Treks, POIs, Touristic Contents ...). Set to False if Geotrek is intended to be used only for managing content and not promoting them.
+Note that this setting does not impact the Path endpoints, which means that the Paths informations will always need authentication to be display in the API, regardless of this setting.
+
 **Dynamic segmentation**
 
 ::

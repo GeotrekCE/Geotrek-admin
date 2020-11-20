@@ -1,7 +1,9 @@
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import viewsets, renderers
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+
+from django.conf import settings
 
 from geotrek.api.v2 import pagination as api_pagination, filters as api_filters
 from geotrek.api.v2.serializers import override_serializer
@@ -12,7 +14,7 @@ class GeotrekViewSet(viewsets.ReadOnlyModelViewSet):
                        api_filters.GeotrekQueryParamsFilter,
                        api_filters.GeotrekPublishedFilter)
     pagination_class = api_pagination.StandardResultsSetPagination
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, ] if settings.API_IS_PUBLIC else [IsAuthenticated, ]
     authentication_classes = [BasicAuthentication, SessionAuthentication]
     renderer_classes = [renderers.JSONRenderer, renderers.BrowsableAPIRenderer]
 
