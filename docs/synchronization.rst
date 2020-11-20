@@ -129,4 +129,13 @@ Geotrek-mobile app v3
 
 The Geotrek-mobile app v3 has its own API and synchronization command called ``sync_mobile``.
 
-It has similar parameters as ``sync_rando``.
+It has similar parameters as ``sync_rando``:
+
+::
+
+    sudo geotrek sync_mobile [-h] [--languages LANGUAGES] [--portal PORTAL]
+                           [--skip-tiles] [--url URL] [--indent INDENT]
+                           [--version] [-v {0,1,2,3}] [--settings SETTINGS]
+                           [--pythonpath PYTHONPATH] [--traceback]
+                           [--no-color] [--force-color]
+                           path
