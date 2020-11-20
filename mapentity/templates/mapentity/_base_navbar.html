@@ -81,6 +81,19 @@
               {% endif %}
 
               <li class="divider"></li>
+              {% get_current_language as LANGUAGE_CODE %}
+              {% get_available_languages as LANGUAGES %}
+              {% get_language_info_list for LANGUAGES as languages %}
+              {% for language in languages %}
+                  <li>
+                    <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+                      <input name="next" type="hidden" value="{{ redirect_to }}">
+                      <button type="submit" name="language" value="{{ language.code }}" href="#" class="language-menu-item">{{ language.name_local }} ({{ language.code }})</a>
+                    </form>
+                  </li>
+              {% endfor %}
+
+              <li class="divider"></li>
               <li><a href="{% url 'logout' %}"><i class="icon-off"></i> {% trans "Logout" %}</a></li>
            </ul>
         </li>
