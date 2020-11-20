@@ -10,7 +10,7 @@ L.ObjectsLayer = L.GeoJSON.extend({
         }
     },
 
-    includes: L.Mixin.Events,
+    includes: L.Evented.prototype,
 
     initialize: function (geojson, options) {
         // Pointers to all layers by pk - immutable

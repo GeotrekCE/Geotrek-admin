@@ -234,7 +234,7 @@ L.ActivableMarker = L.Marker.extend({
 
 
 L.Handler.MultiPath = L.Handler.extend({
-    includes: L.Mixin.Events,
+    includes: L.Evented.prototype,
 
     initialize: function (map, guidesLayer, options) {
         this.map = map;
@@ -842,7 +842,7 @@ Geotrek.PointOnPolyline = function (marker) {
     this.percent_distance = null;
     this._activated = false;
 
-    this.events = L.Util.extend({}, L.Mixin.Events);
+    this.events = L.Util.extend({}, L.Evented.prototype);
 
     this.markerEvents = {
         'move': function onMove (e) {
