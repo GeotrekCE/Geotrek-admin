@@ -61,4 +61,3 @@ class UserProfileFactory(StructureRelatedDefaultFactory):
         model = core_models.UserProfile
 
     user = factory.SubFactory(UserFactory)
-    language = 'fr'

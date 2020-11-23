@@ -1196,8 +1196,7 @@ class TemplateTagsTest(TestCase):
 class TrekViewsSameStructureTests(AuthentFixturesTest):
     def setUp(self):
         profile = UserProfileFactory.create(user__username='homer',
-                                            user__password='dooh',
-                                            language='en')
+                                            user__password='dooh')
         self.user = profile.user
         self.user.groups.add(Group.objects.get(name="Référents communication"))
         self.client.login(username='homer', password='dooh')

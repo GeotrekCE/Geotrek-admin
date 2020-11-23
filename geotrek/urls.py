@@ -28,6 +28,7 @@ urlpatterns = [
     path('paperclip/', include('paperclip.urls')),
     path('admin/doc/', include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
+    path('i18n/', include('django.conf.urls.i18n')),
 ]
 
 if 'geotrek.core' in settings.INSTALLED_APPS:

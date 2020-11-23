@@ -20,7 +20,6 @@
         "pk": 1,
         "model": "authent.userprofile",
         "fields": {
-            "language": "en",
             "user": [
                 "admin"
             ],
@@ -48,7 +47,6 @@
         "pk": 2,
         "model": "authent.userprofile",
         "fields": {
-            "language": "fr",
             "user": [
                 "sheldon"
             ],

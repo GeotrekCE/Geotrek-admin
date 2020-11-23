@@ -9,7 +9,7 @@ from mapentity.models import LogEntry
 from mapentity.registry import app_settings
 from mapentity.views.generic import log_action
 
-from geotrek.authent.models import Structure
+from geotrek.authent.factories import StructureFactory
 from geotrek.tourism.factories import TouristicEventFactory
 from geotrek.tourism.models import TouristicEvent
 
@@ -20,12 +20,13 @@ User = get_user_model()
 class TestActionsHistory(TestCase):
     def setUp(self):
         self.client = Client()
+        self.structure = StructureFactory.create()
         self.user = User.objects.create_superuser('test', 'email@corp.com', 'booh')
         self.client.login(username='test', password='booh')
 
     def test_create_view_logs_addition(self):
         self.client.post('/touristicevent/add/', data={
-            'structure': Structure.objects.first().pk,
+            'structure': self.structure.pk,
             'name_en': 'test',
             'geom': '{"type": "Point", "coordinates": [0, 0]}',
             'model': 'touristicevent',
@@ -40,7 +41,7 @@ class TestActionsHistory(TestCase):
     def test_update_view_logs_change(self):
         obj = TouristicEventFactory.create()
         self.client.post('/touristicevent/edit/{0}/'.format(obj.pk), data={
-            'structure': Structure.objects.first().pk,
+            'structure': StructureFactory.create().pk,
             'name_en': 'test',
             'geom': '{"type": "Point", "coordinates": [0, 0]}',
             'model': 'touristicevent',
@@ -63,7 +64,7 @@ class TestActionsHistory(TestCase):
     def test_anonymous_action(self):
         self.client.logout()
         self.client.post('/touristicevent/add/', data={
-            'structure': Structure.objects.first().pk,
+            'structure': StructureFactory.create().pk,
             'name_en': 'test',
             'geom': '{"type": "Point", "coordinates": [0, 0]}',
             'model': 'touristicevent',
