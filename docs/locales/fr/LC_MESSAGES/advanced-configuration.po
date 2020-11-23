@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek 2.38\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-12 15:17+0000\n"
+"POT-Creation-Date: 2020-11-23 10:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -825,7 +825,7 @@ msgstr ""
 msgid "*Re-run the server.*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:671 ../../advanced-configuration.rst:800
+#: ../../advanced-configuration.rst:671 ../../advanced-configuration.rst:808
 msgid "**Translations**"
 msgstr ""
 
@@ -862,266 +862,289 @@ msgid ""
 msgstr ""
 
 #: ../../advanced-configuration.rst:705
-msgid "**Dynamic segmentation**"
+msgid "**API**"
 msgstr ""
 
-#: ../../advanced-configuration.rst:711
-msgid "Use dynamic segmentation or not."
+#: ../../advanced-configuration.rst:708
+msgid "::"
+msgstr ""
+
+#: ../../advanced-configuration.rst:708
+msgid "API_IS_PUBLIC = True"
+msgstr ""
+
+#: ../../advanced-configuration.rst:710
+msgid ""
+"Choose if you want the API V2 to be available for everyone without "
+"authentication. This API provides access to promotion content (Treks, "
+"POIs, Touristic Contents ...). Set to False if Geotrek is intended to be "
+"used only for managing content and not promoting them. Note that this "
+"setting does not impact the Path endpoints, which means that the Paths "
+"informations will always need authentication to be display in the API, "
+"regardless of this setting."
 msgstr ""
 
 #: ../../advanced-configuration.rst:713
+msgid "**Dynamic segmentation**"
+msgstr ""
+
+#: ../../advanced-configuration.rst:719
+msgid "Use dynamic segmentation or not."
+msgstr ""
+
+#: ../../advanced-configuration.rst:721
 msgid "*Do not change it after installation, or dump your database.*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:715
+#: ../../advanced-configuration.rst:723
 msgid "**Map configuration**"
 msgstr ""
 
-#: ../../advanced-configuration.rst:735
+#: ../../advanced-configuration.rst:743
 msgid "Configuration of the tiles."
 msgstr ""
 
-#: ../../advanced-configuration.rst:737
+#: ../../advanced-configuration.rst:745
 msgid "*If you want to change it,* *Change the array like that:*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:744
+#: ../../advanced-configuration.rst:752
 msgid "*It's the same for the overlay but use only transparent tiles.*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:752
+#: ../../advanced-configuration.rst:760
 msgid "You can define the max_zoom the user can zoom for all tiles."
 msgstr ""
 
-#: ../../advanced-configuration.rst:754
+#: ../../advanced-configuration.rst:762
 msgid ""
 "*It can be interesting when your tiles can't go to a zoom. For example "
 "OpenTopoMap is 17.*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:756
+#: ../../advanced-configuration.rst:764
 msgid "**Enable Apps**"
 msgstr ""
 
-#: ../../advanced-configuration.rst:762
+#: ../../advanced-configuration.rst:770
 msgid "Show Flatpages on menu or not. Flatpages are used in Geotrek-rando."
 msgstr ""
 
-#: ../../advanced-configuration.rst:770
+#: ../../advanced-configuration.rst:778
 msgid "Show TouristicContents and TouristicEvents on menu or not."
 msgstr ""
 
-#: ../../advanced-configuration.rst:778
+#: ../../advanced-configuration.rst:786
 msgid "Show Trails on menu or not."
 msgstr ""
 
-#: ../../advanced-configuration.rst:786
+#: ../../advanced-configuration.rst:794
 msgid "Show land on menu or not."
 msgstr ""
 
-#: ../../advanced-configuration.rst:796
+#: ../../advanced-configuration.rst:804
 msgid "Show filter bbox by zoning."
 msgstr ""
 
-#: ../../advanced-configuration.rst:806
+#: ../../advanced-configuration.rst:814
 msgid "Language of your interface."
 msgstr ""
 
-#: ../../advanced-configuration.rst:808
+#: ../../advanced-configuration.rst:816
 msgid "**Geographical CRUD**"
 msgstr ""
 
-#: ../../advanced-configuration.rst:814
+#: ../../advanced-configuration.rst:822
 msgid "Minimum distance to merge 2 paths in unit of SRID"
 msgstr ""
 
-#: ../../advanced-configuration.rst:816
+#: ../../advanced-configuration.rst:824
 msgid ""
 "*Change the distance. Better to keep it like this. Not used when "
 "``TREKKING_TOPOLOGY_ENABLED = True``.*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:822
+#: ../../advanced-configuration.rst:830
 msgid "Distance of snapping for the cursor in pixels on Leaflet map."
 msgstr ""
 
-#: ../../advanced-configuration.rst:829
+#: ../../advanced-configuration.rst:837
 msgid "Minimum distance to merge 2 paths."
 msgstr ""
 
-#: ../../advanced-configuration.rst:831
+#: ../../advanced-configuration.rst:839
 msgid ""
 "*Change the distance. Should be higher or the same as "
 "PATH_SNAPPING_DISTANCE*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:833
+#: ../../advanced-configuration.rst:841
 msgid "*Used when TREKKING_TOPOLOGY_ENABLED = True*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:852
+#: ../../advanced-configuration.rst:860
 msgid "Color of the different layers on the map"
 msgstr ""
 
-#: ../../advanced-configuration.rst:854
+#: ../../advanced-configuration.rst:862
 msgid "*To change any map_style do as following:*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:861 ../../advanced-configuration.rst:889
+#: ../../advanced-configuration.rst:869 ../../advanced-configuration.rst:897
 msgid "*For color: use color picker for example*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:877
+#: ../../advanced-configuration.rst:885
 msgid "Color of the different layers on the top right for landing."
 msgstr ""
 
-#: ../../advanced-configuration.rst:879
+#: ../../advanced-configuration.rst:887
 msgid ""
 "For land, physical, competence, signagemanagement, workmanagement should "
 "have 5 values."
 msgstr ""
 
-#: ../../advanced-configuration.rst:880
+#: ../../advanced-configuration.rst:888
 msgid ""
 "For restricted Area: add as many color as your number of restricted area "
 "type"
 msgstr ""
 
-#: ../../advanced-configuration.rst:882
+#: ../../advanced-configuration.rst:890
 msgid "*To change any map_style do as following :*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:897
+#: ../../advanced-configuration.rst:905
 msgid "Points of reference are enabled on form of treks."
 msgstr ""
 
-#: ../../advanced-configuration.rst:905
+#: ../../advanced-configuration.rst:913
 msgid ""
 "Land objects are added on other objects (path for example) with offset, "
 "avoiding overlay."
 msgstr ""
 
-#: ../../advanced-configuration.rst:907
+#: ../../advanced-configuration.rst:915
 msgid ""
 "*You should not change it to avoid overlay except if you want to have "
 "more overlay.* *You can do for example for :*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:931
+#: ../../advanced-configuration.rst:939
 msgid "All settings used for generate altimetric profile."
 msgstr ""
 
-#: ../../advanced-configuration.rst:933
+#: ../../advanced-configuration.rst:941
 msgid ""
 "*All this settings can be modify but you need to check the result every "
 "time*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:935
+#: ../../advanced-configuration.rst:943
 msgid "*The only one modified most of the time is ALTIMETRIC_PROFILE_COLOR*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:937
+#: ../../advanced-configuration.rst:945
 msgid "**Signage and Blade**"
 msgstr ""
 
-#: ../../advanced-configuration.rst:943
+#: ../../advanced-configuration.rst:951
 msgid "Type of the blade code (str or int)"
 msgstr ""
 
-#: ../../advanced-configuration.rst:945
+#: ../../advanced-configuration.rst:953
 msgid "*It can be str or int.*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:947
+#: ../../advanced-configuration.rst:955
 msgid "*If you have an integer code : int*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:949
+#: ../../advanced-configuration.rst:957
 msgid "*If you have an string code : str*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:957
+#: ../../advanced-configuration.rst:965
 msgid ""
 "Correspond of the format of blades. Show N3-1 for the blade 1 of the "
 "signage N3."
 msgstr ""
 
-#: ../../advanced-configuration.rst:959
+#: ../../advanced-configuration.rst:967
 msgid "*If you want to change : move information under bracket*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:961
+#: ../../advanced-configuration.rst:969
 msgid "*You can also remove one element between bracket*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:963
+#: ../../advanced-configuration.rst:971
 msgid "*You can do for exemple :* *\"CD99.{signagecode}.{bladenumber}\"*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:966
+#: ../../advanced-configuration.rst:974
 msgid "*It will display : CD99.XIDNZEIU.01 (first blade of XIDNZEIU)*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:968 ../../advanced-configuration.rst:985
+#: ../../advanced-configuration.rst:976 ../../advanced-configuration.rst:993
 msgid "*signagecode is the code of the signage*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:969 ../../advanced-configuration.rst:986
+#: ../../advanced-configuration.rst:977 ../../advanced-configuration.rst:994
 msgid "*bladenumber is the number of the blade*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:977
+#: ../../advanced-configuration.rst:985
 msgid ""
 "Correspond of the format showed on export of lines. Used in csv of "
 "signage."
 msgstr ""
 
-#: ../../advanced-configuration.rst:979
+#: ../../advanced-configuration.rst:987
 msgid ""
 "*Similar with above* *You can do for example :* "
 "*\"CD99.{signagecode}-{bladenumber}.{linenumber}\"*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:983
+#: ../../advanced-configuration.rst:991
 msgid ""
 "*It will display : CD99.XIDNZEIU-01.02 (second line of the first blade of"
 " XIDNZEIU)*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:987
+#: ../../advanced-configuration.rst:995
 msgid "*linenumber is the number of the line*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:990
+#: ../../advanced-configuration.rst:998
 msgid "**Screenshots**"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1000
+#: ../../advanced-configuration.rst:1008
 msgid "Show objects on maps of PDF"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1008
+#: ../../advanced-configuration.rst:1016
 msgid "Size in pixels of the capture."
 msgstr ""
 
-#: ../../advanced-configuration.rst:1010
+#: ../../advanced-configuration.rst:1018
 msgid ""
 "*Be careful with your pdfs.* *If you change this value, pdfs will be "
 "rendered differently*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1014
+#: ../../advanced-configuration.rst:1022
 msgid "**Synchro Geotrek-rando**"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1020
+#: ../../advanced-configuration.rst:1028
 msgid ""
 "Path on your server where the datas for Geotrek-rando website will be "
 "generated"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1022 ../../advanced-configuration.rst:1187
+#: ../../advanced-configuration.rst:1030 ../../advanced-configuration.rst:1195
 msgid ""
 "*If you want to modify it, do not forget to import os at the top of the "
 "file.* *Check* `import Python "
@@ -1129,217 +1152,218 @@ msgid ""
 "information*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1029
+#: ../../advanced-configuration.rst:1037
 msgid "Add a thumbnail on every picture for geotrek-rando"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1032
+#: ../../advanced-configuration.rst:1040
 msgid "*Example :*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1034
+#: ../../advanced-configuration.rst:1042
 msgid "*\"{title}-:-{author}-:-{legend}\"*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1036
+#: ../../advanced-configuration.rst:1044
 msgid ""
 "*Will display title of the picture, author* *and the legend :* *Puy de "
 "Dômes-:-Paul Paul-:-Beautiful sunrise on Puy de Dômes\"*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1046
+#: ../../advanced-configuration.rst:1054
 msgid "Size of the thumbnail."
 msgstr ""
 
-#: ../../advanced-configuration.rst:1054
+#: ../../advanced-configuration.rst:1062
 msgid ""
 "Distance to which tourist contents, tourist events, treks, pois, services"
 " will be displayed"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1056
+#: ../../advanced-configuration.rst:1064
 msgid "*This distance can be changed by practice for treks in the admin.*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1064
+#: ../../advanced-configuration.rst:1072
 msgid "Distance to which dives will be displayed."
 msgstr ""
 
-#: ../../advanced-configuration.rst:1072
+#: ../../advanced-configuration.rst:1080
 msgid "Limit of the number of pois on treks pdf."
 msgstr ""
 
-#: ../../advanced-configuration.rst:1074
+#: ../../advanced-configuration.rst:1082
 msgid "*14 is already a huge amount of POI, but it's possible to add more*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1082
+#: ../../advanced-configuration.rst:1090
 msgid "Limit of the number of information desks on treks pdf."
 msgstr ""
 
-#: ../../advanced-configuration.rst:1084
+#: ../../advanced-configuration.rst:1092
 msgid "*You can put -1 if you want all the information desks*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1092
+#: ../../advanced-configuration.rst:1100
 msgid "On the Geotrek-rando website, treks practices will be displayed separately"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1094
+#: ../../advanced-configuration.rst:1102
 msgid "*Field order for each practices in admin will be take in account*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1102
+#: ../../advanced-configuration.rst:1110
 msgid "On the Geotrek-rando website, accessibilites will be displayed separately"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1110
+#: ../../advanced-configuration.rst:1118
 msgid ""
 "On the Geotrek-rando website, if a trek has a children it will be "
 "displayed separately"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1118
+#: ../../advanced-configuration.rst:1126
 msgid "On the Geotrek-rando website, dives practices will be displayed separately"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1126
+#: ../../advanced-configuration.rst:1134
 msgid "On the Geotrek-rando website, treks near other are hide"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1134
+#: ../../advanced-configuration.rst:1142
 msgid "Options of the sync_rando command in Geotrek-admin interface."
 msgstr ""
 
-#: ../../advanced-configuration.rst:1142
+#: ../../advanced-configuration.rst:1150
 msgid ""
 "It enables correlated pictures on Gotrek-rando to be displayed in the "
 "slideshow"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1151
+#: ../../advanced-configuration.rst:1159
 msgid "Primary color of your PDF"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1151
+#: ../../advanced-configuration.rst:1159
 msgid "*check : \"color picker\"*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1159
+#: ../../advanced-configuration.rst:1167
 msgid ""
 "On Geotrek-rando website, only PDF imported with filetype \"Topoguide\" "
 "will be used and not autogenerated."
 msgstr ""
 
-#: ../../advanced-configuration.rst:1171
+#: ../../advanced-configuration.rst:1179
 msgid "Order of all the objects without practices on Geotrek-rando website"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1173
+#: ../../advanced-configuration.rst:1181
 msgid "*All the settings about order are the order inside Geotrek-rando website.*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1175
+#: ../../advanced-configuration.rst:1183
 msgid ""
 "*Practices of diving, treks and categories of touristic contents are "
 "taken in account*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1179
+#: ../../advanced-configuration.rst:1187
 msgid "**Synchro Geotrek-mobile**"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1185
+#: ../../advanced-configuration.rst:1193
 msgid "Path on your server wehre the datas for mobile"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1196
+#: ../../advanced-configuration.rst:1204
 msgid "Options of the sync_mobile command"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1204
+#: ../../advanced-configuration.rst:1212
 msgid "URL's Tiles used for the mobile."
 msgstr ""
 
-#: ../../advanced-configuration.rst:1206
+#: ../../advanced-configuration.rst:1214
 msgid "*Change for IGN:*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1223
+#: ../../advanced-configuration.rst:1231
 msgid "Intervals of the mobile for the length filter"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1225
+#: ../../advanced-configuration.rst:1233
 msgid "*Interval key is in meters.* *You can add new intervals*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1249
+#: ../../advanced-configuration.rst:1257
 msgid "Intervals of the mobile for the ascent filter"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1251
+#: ../../advanced-configuration.rst:1259
 msgid "*Do the same as above*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1263
+#: ../../advanced-configuration.rst:1271
 msgid "Intervals of the mobile for the duration filter"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1265
+#: ../../advanced-configuration.rst:1273
 msgid ""
 "*Check MOBILE_LENGTH_INTERVALS comment to use it, here interval "
 "correspond to 1 unit of hour*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1284
+#: ../../advanced-configuration.rst:1292
 msgid "List of all the filters enabled on mobile."
 msgstr ""
 
-#: ../../advanced-configuration.rst:1286
+#: ../../advanced-configuration.rst:1294
 msgid ""
 "*Remove any of the filters if you don't want one of them. It's useless to"
 " add other one.*"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1290
+#: ../../advanced-configuration.rst:1298
 msgid "**Other settings** ::"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1295
+#: ../../advanced-configuration.rst:1303
 msgid ""
 "If false, no mail will be sent to the sender of any feedback on Geotrek-"
 "rando website"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1301
+#: ../../advanced-configuration.rst:1309
 msgid ""
 "Use booklet for PDF. During the synchro, pois details will be removed, "
 "and the pages will be merged. It is possible to customize the pdf, with "
 "trek_public_booklet_pdf.html."
 msgstr ""
 
-#: ../../advanced-configuration.rst:1304
+#: ../../advanced-configuration.rst:1312
 msgid "**Custom SQL**"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1306
+#: ../../advanced-configuration.rst:1314
 msgid ""
 "Put your custom SQL in a file name ``/opt/geotrek-"
 "admin/var/conf/extra_sql/<app name>/<pre or post>_<script name>.sql``"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1308
+#: ../../advanced-configuration.rst:1316
 msgid "app name is the name of the Django application, eg. trekking or tourism"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1309
+#: ../../advanced-configuration.rst:1317
 msgid ""
 "``pre_``… scripts are executed before Django migrations and ``post_``… "
 "scripts after"
 msgstr ""
 
-#: ../../advanced-configuration.rst:1310
+#: ../../advanced-configuration.rst:1318
 msgid ""
 "script are executed in INSTALLED_APPS order, then by alphabetical order "
 "of script names"
 msgstr ""
+
