@@ -2,8 +2,8 @@
 TRANSLATING
 ============
 
-Geotrek can be translated online here:
-https://weblate.makina-corpus.net/
+Geotrek-admin can be translated online here:
+`https://weblate.makina-corpus.net/projects/geotrek-admin/`_
 
 Getting started
 ---------------
@@ -39,7 +39,7 @@ Browse by project
    .. figure:: ./images/translating/weblate-project-menu.png
       :alt: image
 
--  Sélect the project you want to translate
+-  Select Geotrek-admin project
 
 -  Click on tab “Languages”
 
@@ -48,12 +48,22 @@ Browse by project
    .. figure:: ./images/translating/weblate-list-of-languages.png
       :alt: image
 
+
 Browse by language
 ~~~~~~~~~~~~~~~~~~~
+
+You could also choose language first
 
 -  Go to “Languages > Browse all languages”
 -  Choose the language you want to translate
 -  Select the project to translate
+
+
+Select a coponent to translate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-  Select a component (a module or a piece of documentation)
+-  Click on "Translate" to start translating
 
 And let's go!
 
@@ -79,6 +89,8 @@ Other occurrences in all components allows to check consistency.
 Each translation generate a permalink (picto |image|).
 
 .. |image| image:: ./images/translating/link.png
+
+Weblate has a "Zen mode" showing only chains to translate.
 
 Release translations (only for github repository managers)
 ----------------------------------------------------------
