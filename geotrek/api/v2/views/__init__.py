@@ -6,11 +6,11 @@ from rest_framework_swagger import renderers
 from django.conf import settings
 from django.contrib.gis.geos import Polygon
 from .authent import StructureViewSet  # noqa
-from .common import TargetPortalViewSet, ThemeViewSet  # noqa
+from .common import TargetPortalViewSet, ThemeViewSet, SourceViewSet, ReservationSystemViewSet  # noqa
 if 'geotrek.core' in settings.INSTALLED_APPS:
     from .core import PathViewSet  # noqa
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
-    from .trekking import TrekViewSet, TourViewSet, POIViewSet, POITypeViewSet, AccessibilityViewSet, RouteViewSet, DifficultyViewSet, NetworksViewSet, PracticeViewSet, LabelTrekViewSet  # noqa
+    from .trekking import TrekViewSet, TourViewSet, POIViewSet, POITypeViewSet, AccessibilityViewSet, RouteViewSet, DifficultyViewSet, NetworksViewSet, PracticeViewSet, TrekLabelViewSet  # noqa
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     from .sensitivity import SensitiveAreaViewSet  # noqa
     from .sensitivity import SportPracticeViewSet  # noqa

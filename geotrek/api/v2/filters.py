@@ -10,6 +10,7 @@ from django.utils.translation import ugettext as _
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
+from geotrek.common.utils import intersecting
 from geotrek.core.helpers import TopologyHelper
 from geotrek.trekking.models import Trek
 from geotrek.zoning.models import City, District
@@ -157,6 +158,23 @@ class GeotrekPOIFilter(BaseFilterBackend):
         return type, trek
 
 
+class GeotrekTouristicContentFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        trek = request.GET.get('near_trek', None)
+        if trek is not None:
+            contents_intersecting = intersecting(qs.model, Trek.objects.get(pk=trek))
+            # qs = qs.intersecting(contents_intersecting)  #FIXME: cannot intersect MultilingualQuerySet
+            qs = contents_intersecting.order_by('id')
+        return qs
+
+    def get_schema_fields(self, view):
+        near_trek = Field(name='near_trek', required=False,
+                          description=_("Id of a trek. It will show only the touristics contents related to this trek"),
+                          example=808)
+        return near_trek,
+
+
 class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         qs = queryset
@@ -213,6 +231,19 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
         if portals is not None:
             list_portals = [int(p) for p in portals.split(',')]
             qs = qs.filter(portal__in=list_portals)
+        route = request.GET.get('route', None)
+        if route is not None:
+            qs = qs.filter(route__pk=route)
+        labels = request.GET.get('label', None)
+        if labels is not None:
+            list_labels = [int(label) for label in labels.split(',')]
+            qs = qs.filter(portal__in=list_labels)
+        q = request.GET.get('q', None)
+        if q is not None:
+            qs = qs.filter(
+                Q(name__icontains=q) | Q(description__icontains=q)
+                | Q(description_teaser__icontains=q) | Q(ambiance__icontains=q)
+            )
         return qs
 
     def get_schema_fields(self, view):
@@ -258,35 +289,51 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
         )
         field_city = Field(
             name='city', required=False,
-            description=_('Code (pk) of a city to filter by. Can be multiple cities split by a comma'),
+            description=_('Id of a city to filter by. Can be multiple cities split by a comma'),
             example='31006,31555,31017', type='string'
         )
         field_district = Field(
             name='district', required=False,
-            description=_('Pk of a district to filter by. Can be multiple districts split by a comma'),
+            description=_('Id of a district to filter by. Can be multiple districts split by a comma'),
             example='2273,2270', type='string'
         )
         field_structure = Field(
             name='structure', required=False,
-            description=_('Pk of a structure to filter by'),
+            description=_('Id of a structure to filter by'),
             example=4, type='integer'
         )
         field_accessibilities = Field(
             name='accessibility', required=False,
-            description=_('Pk of the accessibilities to filter by, separated by commas'),
+            description=_('Id of the accessibilities to filter by, separated by commas'),
             example='1,2', type='string'
         )
         field_themes = Field(
             name='theme', required=False,
-            description=_('Pk of the themes to filter by, separated by commas'),
+            description=_('Id of the themes to filter by, separated by commas'),
             example='9,14', type='string'
         )
         field_portals = Field(
             name='portal', required=False,
-            description=_('Pk of the portals to filter by, separated by commas'),
+            description=_('Id of the portals to filter by, separated by commas'),
             example='3,7', type='string'
         )
-        return field_duration_min, field_duration_max, field_length_min,\
-            field_length_max, field_difficulty_min, field_difficulty_max, \
-            field_ascent_min, field_ascent_max, field_city, field_district, \
-            field_structure, field_accessibilities, field_themes, field_portals
+        field_route = Field(
+            name='route', required=False,
+            description=_('Id of the type of route to filter by'),
+            example='1', type='string'
+        )
+        field_label = Field(
+            name='label', required=False,
+            description=_('Id of the trek label to filter by, separated by commas'),
+            example='1', type='string'
+        )
+        field_q = Field(
+            name='q', required=False,
+            description=_('Search field that returns treks contianing data matching the string'),
+            example='query string', type='string'
+        )
+        return field_accessibilities, field_ascent_max, field_ascent_min, \
+            field_city, field_difficulty_max, field_difficulty_min, \
+            field_district, field_duration_max, field_duration_min, field_label, \
+            field_length_max, field_length_min, field_portals, field_q, \
+            field_route, field_structure, field_themes

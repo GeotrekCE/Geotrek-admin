@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-06 16:54+0000\n"
+"POT-Creation-Date: 2020-11-18 13:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -204,6 +204,10 @@ msgstr ""
 msgid "Id of a trek. It will show only the POIs related to this trek"
 msgstr ""
 
+msgid ""
+"Id of a trek. It will show only the touristics contents related to this trek"
+msgstr ""
+
 msgid "Set minimum duration for a trek"
 msgstr ""
 
@@ -232,38 +236,32 @@ msgstr ""
 msgid "Set maximum ascent for a trek"
 msgstr ""
 
-msgid ""
-"Code (pk) of a city to filter by. Can be multiple cities split by a comma"
+msgid "Id of a city to filter by. Can be multiple cities split by a comma"
 msgstr ""
 
 msgid ""
-"Pk of a district to filter by. Can be multiple districts split by a comma"
+"Id of a district to filter by. Can be multiple districts split by a comma"
 msgstr ""
 
-msgid "Pk of a structure to filter by"
+msgid "Id of a structure to filter by"
 msgstr ""
 
-msgid "Pk of the accessibilities to filter by, separated by commas"
+msgid "Id of the accessibilities to filter by, separated by commas"
 msgstr ""
 
-msgid "Pk of the themes to filter by, separated by commas"
+msgid "Id of the themes to filter by, separated by commas"
 msgstr ""
 
-msgid "Pk of the portals to filter by, separated by commas"
+msgid "Id of the portals to filter by, separated by commas"
 msgstr ""
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "itinerancy"
+msgid "Id of the type of route to filter by"
 msgstr ""
 
-#. Translators: This is a slug (without space, accent or special char)
-msgid "trek"
+msgid "Id of the trek label to filter by, separated by commas"
 msgstr ""
 
-msgid "Itinerancy"
-msgstr ""
-
-msgid "Hike"
+msgid "Search field that returns treks contianing data matching the string"
 msgstr ""
 
 msgid "External ID"
