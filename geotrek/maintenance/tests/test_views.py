@@ -578,10 +578,10 @@ class ExportTest(TranslationResetMixin, TestCase):
         layers = [ds[0] for ds in datasources]
 
         self.assertEqual(len(datasources), 2)
-        geom_type_layer = {layer.geom_type.name: layer for layer in layers}
+        geom_type_layer = {layer.name: layer for layer in layers}
         geom_types = geom_type_layer.keys()
         self.assertIn('MultiPoint', geom_types)
-        self.assertIn('LineString', geom_types)
+        self.assertIn('MultiLineString', geom_types)
 
         for layer in layers:
             self.assertEqual(layer.srs.name, 'RGF93_Lambert_93')
