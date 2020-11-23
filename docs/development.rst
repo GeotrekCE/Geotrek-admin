@@ -58,7 +58,7 @@ Release
 On master branch:
 
 * If need be, merge ``translations`` branch managed with https://weblate.makina-corpus.net
-* Update files *VERSION*, *docs/conf.py* and *docs/changelog.rst* to remove ``~dev0`` suffix
+* Update files *VERSION*, *docs/conf.py* and *docs/changelog.rst* to remove ``.dev0`` suffix
 * Run ``dch -r -D bionic``, remove ``~dev0`` suffix in version and save
 * Commit with message 'Release x.y.z' to merge in ``master`` branch before release
 * Add git tag X.Y.Z
