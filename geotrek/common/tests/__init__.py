@@ -29,10 +29,6 @@ class TranslationResetMixin(object):
 class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
     api_prefix = '/api/en/'
 
-    def setUp(self):
-        super(CommonTest, self).setUp()
-        StructureFactory.create()
-
     def get_bad_data(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             return {'topology': 'doh!'}, _('Topology is not valid.')

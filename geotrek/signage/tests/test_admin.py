@@ -9,7 +9,6 @@ from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.signage.factories import (SealingFactory, SignageTypeFactory, BladeColorFactory,
                                        BladeDirectionFactory, BladeTypeFactory)
 from geotrek.signage.models import SignageType, Sealing, Color, Direction, BladeType
-from geotrek.authent.models import Structure
 from geotrek.authent.factories import StructureFactory
 
 from mapentity.factories import SuperUserFactory, UserFactory
@@ -99,7 +98,7 @@ class SealingAdminNoBypassTest(AuthentFixturesTest):
     def test_sealing_can_be_change(self):
         self.login()
         change_url = reverse('admin:signage_sealing_change', args=[self.sealing.pk])
-        response = self.client.post(change_url, {'label': 'coucou', 'structure': Structure.objects.first().pk})
+        response = self.client.post(change_url, {'label': 'coucou', 'structure': StructureFactory.create().pk})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Sealing.objects.get(pk=self.sealing.pk).label, 'coucou')
 
@@ -207,7 +206,7 @@ class BladeTypeAdminNoBypassTest(AuthentFixturesTest):
     def test_bladetype_can_be_change(self):
         self.login()
         change_url = reverse('admin:signage_bladetype_change', args=[self.bladetype.pk])
-        response = self.client.post(change_url, {'label': 'coucou', 'structure': Structure.objects.first().pk})
+        response = self.client.post(change_url, {'label': 'coucou', 'structure': StructureFactory.create().pk})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(BladeType.objects.get(pk=self.bladetype.pk).label, 'coucou')
 

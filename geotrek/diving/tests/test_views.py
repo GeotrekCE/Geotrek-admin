@@ -2,7 +2,7 @@ from django.urls import reverse
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
-from geotrek.authent.models import Structure
+from geotrek.authent.factories import StructureFactory
 from geotrek.common.tests import CommonLiveTest, CommonTest
 from geotrek.diving.models import Dive, Level
 from geotrek.diving.factories import DiveWithLevelsFactory, DiveFactory, DivingManagerFactory, PracticeFactory
@@ -86,7 +86,7 @@ class DiveViewsTests(CommonTest):
 
     def get_good_data(self):
         return {
-            'structure': Structure.objects.first().pk,
+            'structure': StructureFactory.create().pk,
             'name_en': 'test',
             'practice': PracticeFactory.create().pk,
             'geom': '{"type": "Point", "coordinates":[0, 0]}',

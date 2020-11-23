@@ -8,7 +8,6 @@ from django.test import TestCase
 from geotrek.authent.tests import AuthentFixturesTest
 from geotrek.infrastructure.factories import InfrastructureTypeFactory, InfrastructureConditionFactory
 from geotrek.infrastructure.models import InfrastructureType, InfrastructureCondition
-from geotrek.authent.models import Structure
 from geotrek.authent.factories import StructureFactory
 
 from mapentity.factories import SuperUserFactory, UserFactory
@@ -100,7 +99,7 @@ class InfrastructureConditionAdminNoBypassTest(TestCase):
     def test_infrastructurecondition_can_be_change(self):
         self.login()
         change_url = reverse('admin:infrastructure_infrastructurecondition_change', args=[self.infra.pk])
-        response = self.client.post(change_url, {'label': 'coucou', 'structure': Structure.objects.first().pk})
+        response = self.client.post(change_url, {'label': 'coucou', 'structure': StructureFactory.create().pk})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(InfrastructureCondition.objects.get(pk=self.infra.pk).label, 'coucou')
 
@@ -152,7 +151,6 @@ class InfrastructureTypeAdminTest(AuthentFixturesTest):
 
 class InfrastructureConditionAdminTest(AuthentFixturesTest):
     def setUp(self):
-        StructureFactory.create()
         self.user = SuperUserFactory.create(password='booh')
         self.infra = InfrastructureConditionFactory.create()
 
@@ -168,7 +166,7 @@ class InfrastructureConditionAdminTest(AuthentFixturesTest):
         self.login()
 
         change_url = reverse('admin:infrastructure_infrastructurecondition_change', args=[self.infra.pk])
-        response = self.client.post(change_url, {'label': 'coucou', 'structure': Structure.objects.first().pk})
+        response = self.client.post(change_url, {'label': 'coucou', 'structure': StructureFactory.create().pk})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(InfrastructureCondition.objects.get(pk=self.infra.pk).label, 'coucou')
 

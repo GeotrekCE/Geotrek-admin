@@ -3,7 +3,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 import filecmp
-from geotrek.authent.models import Structure
+from geotrek.authent.factories import StructureFactory
 from geotrek.authent.factories import TrekkingManagerFactory
 from geotrek.common.factories import AttachmentFactory
 from geotrek.common.tests import CommonTest
@@ -83,7 +83,7 @@ class TouristicContentViewsTests(CommonTest):
 
     def get_good_data(self):
         return {
-            'structure': Structure.objects.first().pk,
+            'structure': StructureFactory.create().pk,
             'name_en': 'test',
             'category': TouristicContentCategoryFactory.create().pk,
             'geom': '{"type": "Point", "coordinates":[0, 0]}',
@@ -189,7 +189,7 @@ class TouristicEventViewsTests(CommonTest):
 
     def get_good_data(self):
         return {
-            'structure': Structure.objects.first().pk,
+            'structure': StructureFactory.create().pk,
             'name_en': 'test',
             'geom': '{"type": "Point", "coordinates":[0, 0]}',
         }
