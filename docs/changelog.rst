@@ -2,12 +2,17 @@
 CHANGELOG
 =========
 
-2.40.1.dev0
+2.40.1 (2020-11-23)
 -------------------
 
-**New Features**
+**Bug fixes**
 
-- 
+- Fix dive pictogram (fix PDF crash)
+
+**Minor Changes**
+
+- Remove language from user profile. Now you can switch language from menu.
+- More API v2 improvements (trek endpoint, new API_IS_PUBLIC setting)
 
 **Doc improvements**
 
