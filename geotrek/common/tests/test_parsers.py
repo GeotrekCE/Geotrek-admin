@@ -161,7 +161,6 @@ class AttachmentParserTests(TestCase):
         call_command('import', 'geotrek.common.tests.test_parsers.AttachmentLegendParser', filename, verbosity=0)
         organism = Organism.objects.get()
         attachment = Attachment.objects.get()
-        # import pdb; pdb.set_trace()
         self.assertEqual(attachment.content_object, organism)
         self.assertEqual(attachment.legend,
                          '{0}'.format(('Legend ' * 18).rstrip()))
