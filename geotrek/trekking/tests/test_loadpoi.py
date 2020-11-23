@@ -4,16 +4,9 @@ from unittest import skipIf, mock
 from unittest.mock import patch
 
 from django.conf import settings
-<<<<<<< HEAD
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.management import call_command
 from django.test import TestCase
-=======
-from django.core.management import call_command
-from django.test import TestCase
-from django.contrib.gis.geos import GEOSGeometry
-
->>>>>>> Remove useless imports
 from geotrek.core.factories import PathFactory
 from geotrek.trekking.management.commands.loadpoi import Command
 from geotrek.trekking.models import POI
