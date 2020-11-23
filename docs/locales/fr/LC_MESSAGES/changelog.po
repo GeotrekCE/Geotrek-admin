@@ -6353,19 +6353,3 @@ msgstr ""
 #: ../../changelog.rst:3455
 msgid "See project history in `docs/history.rst` (French)."
 msgstr ""
-
-#~ msgid "2.38.1.dev0"
-#~ msgstr ""
-
-#~ msgid "Add translation documentation"
-#~ msgstr ""
-
-#~ msgid "2.38.2.dev0"
-#~ msgstr ""
-
-#~ msgid "2.38.3.dev0"
-#~ msgstr ""
-
-#~ msgid "2.39.2.dev0"
-#~ msgstr ""
-

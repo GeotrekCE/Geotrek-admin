@@ -145,29 +145,3 @@ msgid ""
 "we advise you to configure data synchronization in ``/opt/geotrek-"
 "admin/var``"
 msgstr ""
-
-#~ msgid "Create empty database :"
-#~ msgstr ""
-
-#~ msgid "Restore backup :"
-#~ msgstr ""
-
-#~ msgid "Extract media and configuration files :"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Follow fresh installation method. Choose "
-#~ "to manage database by yourself."
-#~ msgstr ""
-
-#~ msgid "Access your database securely on your local machine (QGis)"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Instead of opening your database to "
-#~ "the world (by opening the port "
-#~ "5432 for example), you can use "
-#~ "`SSH tunnels <http://www.postgresql.org/docs/9.3/static"
-#~ "/ssh-tunnels.html>`_."
-#~ msgstr ""
-
