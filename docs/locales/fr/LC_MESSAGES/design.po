@@ -183,30 +183,3 @@ msgstr ""
 #: ../../design.rst:76
 msgid "Snap paths extremities"
 msgstr ""
-
-#~ msgid "**Geotrek**, the web application"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "For a Django model, we use the "
-#~ "registry to activate all views and "
-#~ "menus :"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Business specific notions are implemented "
-#~ "in Geotrek respective applications:"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "SQL triggers everywhere: since Geotrek "
-#~ "database is to become the central "
-#~ "storage component of all park "
-#~ "organisation data, it has to behave "
-#~ "consistently whether data is modified "
-#~ "through the Web application or raw "
-#~ "access tools (pgadmin, QGIS). (For "
-#~ "example, insertion & update timestamps, "
-#~ "geometry computation or DEM wrapping.)"
-#~ msgstr ""
-
