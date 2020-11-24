@@ -37,6 +37,13 @@ class AttachmentParser(AttachmentParserMixin, OrganismEidParser):
     non_fields = {'attachments': 'photo'}
 
 
+class AttachmentLegendParser(AttachmentParser):
+
+    def filter_attachments(self, src, val):
+        (url, legend, author) = val.split(', ')
+        return [(url, legend, author)]
+
+
 class ParserTests(TestCase):
     def test_bad_parser_class(self):
         with self.assertRaisesRegex(CommandError, "Failed to import parser class 'DoesNotExist'"):
@@ -143,6 +150,20 @@ class AttachmentParserTests(TestCase):
         self.assertEqual(attachment.content_object, organism)
         self.assertEqual(attachment.attachment_file.name,
                          'paperclip/common_organism/{pk}/{ti}.png'.format(pk=organism.pk, ti='ti' * 64))
+        self.assertEqual(attachment.filetype, self.filetype)
+        self.assertTrue(os.path.exists(attachment.attachment_file.path), True)
+
+    @mock.patch('requests.get')
+    def test_attachment_long_legend(self, mocked):
+        mocked.return_value.status_code = 200
+        mocked.return_value.content = ''
+        filename = os.path.join(os.path.dirname(__file__), 'data', 'organism4.xls')
+        call_command('import', 'geotrek.common.tests.test_parsers.AttachmentLegendParser', filename, verbosity=0)
+        organism = Organism.objects.get()
+        attachment = Attachment.objects.get()
+        self.assertEqual(attachment.content_object, organism)
+        self.assertEqual(attachment.legend,
+                         '{0}'.format(('Legend ' * 18).rstrip()))
         self.assertEqual(attachment.filetype, self.filetype)
         self.assertTrue(os.path.exists(attachment.attachment_file.path), True)
 
