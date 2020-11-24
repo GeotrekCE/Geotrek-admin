@@ -14,7 +14,7 @@ Build-Depends:
  libffi-dev (>= 3),
  libxml2-dev (>= 2.9.2),
  libxslt1-dev (>= 1.1.28),
- libz-dev
+ zlib1g-dev (>= 1.2.11)
 
 Package: geotrek-admin
 Architecture: any
