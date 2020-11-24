@@ -100,17 +100,15 @@ class InterventionViewsTest(CommonTest):
                                                                        ))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, signage)
-        form = response.context['form']
-        self.assertEqual(form.initial['target_id'], str(signa.pk))
         # Should be able to save form successfully
         data = self.get_good_data()
-        data['target_id'] = signa.pk
         response = self.client.post('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
                                                                         signa.pk,
                                                                         ContentType.objects.get_for_model(Signage).pk
                                                                         ),
                                     data)
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(signa, Intervention.objects.get().target)
 
     def test_detail_target_objects(self):
         self.login()
@@ -178,10 +176,7 @@ class InterventionViewsTest(CommonTest):
                                                                        ))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, signage)
-        form = response.context['form']
-        self.assertEqual(form.initial['target_id'], str(signa.pk))
         data = self.get_good_data()
-        data['target_id'] = signa.pk
 
         # If form invalid, it should not fail
         data.pop('status')
@@ -191,6 +186,7 @@ class InterventionViewsTest(CommonTest):
                                                                         ),
                                     data)
         self.assertEqual(response.status_code, 200)
+        self.assertFalse(Intervention.objects.exists())
 
     def test_update_form_on_signage(self):
         self.login()
@@ -210,7 +206,6 @@ class InterventionViewsTest(CommonTest):
         data = form.initial
         data['disorders'] = data['disorders'][0].pk
         data['project'] = ''
-        data['target_id'] = form.fields['target_id'].initial  # because it is set after form init, not form.initial :(
         data.update(**{
             'manday_set-TOTAL_FORMS': '0',
             'manday_set-INITIAL_FORMS': '0',
@@ -261,11 +256,8 @@ class InterventionViewsTest(CommonTest):
                                                                        ContentType.objects.get_for_model(Infrastructure).pk))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, infrastr)
-        form = response.context['form']
-        self.assertEqual(form.initial['target_id'], str(infra.pk))
         # Should be able to save form successfully
         data = self.get_good_data()
-        data['target_id'] = infra.pk
         response = self.client.post('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
                                                                         infra.pk,
                                                                         ContentType.objects.get_for_model(Infrastructure).pk),
@@ -286,10 +278,7 @@ class InterventionViewsTest(CommonTest):
                                                                        ContentType.objects.get_for_model(Infrastructure).pk))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, infrastr)
-        form = response.context['form']
-        self.assertEqual(form.initial['target_id'], str(infra.pk))
         data = self.get_good_data()
-        data['target_id'] = infra.pk
 
         # If form invalid, it should not fail
         data.pop('status')
@@ -316,7 +305,6 @@ class InterventionViewsTest(CommonTest):
         data = form.initial
         data['disorders'] = data['disorders'][0].pk
         data['project'] = ''
-        data['target_id'] = form.fields['target_id'].initial  # because it is set after form init, not form.initial :(
         data.update(**{
             'manday_set-TOTAL_FORMS': '0',
             'manday_set-INITIAL_FORMS': '0',
