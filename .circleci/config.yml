@@ -76,6 +76,17 @@ jobs:
           file: var/coverage.xml
           flags: test_nds
           when: on_success
+  docker_test_nds_18_04:
+    machine: true
+    environment:
+      LANG: C.UTF-8
+    steps:
+      - checkout
+      - run: cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
+      - run: docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
+      - run: docker pull geotrekce/circleci-admin:18$CIRCLE_WORKFLOW_ID
+      - run: docker-compose run web update.sh
+      - run: docker-compose run -e ENV=tests_nds web coverage run ./manage.py test -v 2
   docker_test_js:
     docker:
       - image: geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
@@ -135,12 +146,27 @@ jobs:
       - run: docker push geotrekce/admin:latest
   ubuntu_package:
     docker:
+      - image: ubuntu:focal
+    environment:
+      LANG: C.UTF-8
+    steps:
+      - checkout
+      - run: grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/~dev0/-focal~dev<< pipeline.number >>/' debian/changelog
+      - run: grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION && grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION | xargs -I '{}' sed -i 's/{}/{}-focal/' debian/changelog
+      - run: apt-get update -q && apt-get install -q -y dpkg-dev debhelper dh-virtualenv git python3 python3-venv python3-dev libgdal-dev libffi-dev libxml2-dev libxslt1-dev
+      - run: dpkg-buildpackage -uc -us -b
+      - persist_to_workspace:
+          root: /root
+          paths: geotrek-admin_*_amd64.deb
+  ubuntu_package_18_04:
+    docker:
       - image: ubuntu:bionic
     environment:
       LANG: C.UTF-8
     steps:
       - checkout
-      - run: grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/~dev0/~dev<< pipeline.number >>/' debian/changelog
+      - run: grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/~dev0/-bionic~dev<< pipeline.number >>/' debian/changelog
+      - run: grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION && grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION | xargs -I '{}' sed -i 's/{}/{}-bionic/' debian/changelog
       - run: apt-get update -q && apt-get install -q -y dpkg-dev debhelper dh-virtualenv git python3 python3-venv python3-dev libgdal-dev libffi-dev libxml2-dev libxslt1-dev
       - run: dpkg-buildpackage -uc -us -b
       - persist_to_workspace:
@@ -195,6 +221,12 @@ workflows:
           filters:
             tags:
               only: /[0-9]+\.[0-9]+\.[0-9]+/
+      - docker_test_nds_18_04:
+          requires:
+            - docker_image
+          filters:
+            tags:
+              only: /[0-9]+\.[0-9]+\.[0-9]+/
       - docker_test_js:
           requires:
             - docker_image
@@ -223,12 +255,19 @@ workflows:
           filters:
             tags:
               only: /[0-9]+\.[0-9]+\.[0-9]+/
+      - ubuntu_package_18_04:
+          filters:
+            tags:
+              only: /[0-9]+\.[0-9]+\.[0-9]+/
       - ubuntu_publish:
           requires:
             - codestyle
             - ubuntu_package
+            - ubuntu_package_18_04
             - docker_test
+            - docker_test_18_04
             - docker_test_nds
+            - docker_test_nds_18_04
             - docker_test_js
             - docker_test_integration
           filters:
