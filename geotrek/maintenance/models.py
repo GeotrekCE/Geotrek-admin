@@ -148,7 +148,7 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     def target_csv_display(self):
         if self.on_existing_target:
             return "%s: %s (%s)" % (
-                _(self.target.kind.capitalize()),
+                _(self.target._meta.verbose_name),
                 self.target,
                 self.target.pk)
         return ''
