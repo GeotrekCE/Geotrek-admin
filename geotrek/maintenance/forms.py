@@ -53,7 +53,9 @@ class FundingForm(forms.ModelForm):
 FundingFormSet = inlineformset_factory(Project, Project.founders.through, form=FundingForm, extra=1)
 
 
-class InterventionBaseForm(CommonForm):
+class InterventionForm(CommonForm):
+    """ An intervention can be a Point or a Line """
+
     target_id = forms.IntegerField(required=False,
                                    widget=forms.HiddenInput())
     target_type = forms.ModelChoiceField(required=False,
@@ -114,10 +116,6 @@ class InterventionBaseForm(CommonForm):
             ['structure', 'name', 'date', 'status', 'disorders', 'type', 'description', 'subcontracting', 'length', 'width',
              'height', 'stake', 'project', 'material_cost', 'heliport_cost', 'subcontract_cost', 'target_type', 'target_id',
              'topology']
-
-
-class InterventionForm(InterventionBaseForm):
-    """ An intervention can be a Point or a Line """
 
     def __init__(self, *args, **kwargs):
         super(InterventionForm, self).__init__(*args, **kwargs)
