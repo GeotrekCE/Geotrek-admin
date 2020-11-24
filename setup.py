@@ -35,7 +35,6 @@ setup(
         # pinned by requirements.txt
         'psycopg2',
         'docutils',
-        'GDAL',
         'Pillow',
         'easy-thumbnails',
         'simplekml',
@@ -58,6 +57,7 @@ setup(
         'drf-extensions',
         'django-colorfield',
         'factory_boy',
+        'Fiona'
     ],
     cmdclass={"build": BuildCommand},
     include_package_data=True,
