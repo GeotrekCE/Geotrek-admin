@@ -29,8 +29,8 @@ jobs:
       - checkout
       - run: TAG=bionic-3.6 make build
       - run: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
-      - run: docker tag geotrek:latest geotrekce/circleci-admin:18$CIRCLE_WORKFLOW_ID
-      - run: docker push geotrekce/circleci-admin:18$CIRCLE_WORKFLOW_ID
+      - run: docker tag geotrek:latest geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
+      - run: docker push geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
   docker_test:
     machine: true
     environment:
@@ -56,7 +56,7 @@ jobs:
       - checkout
       - run: cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
       - run: docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
-      - run: docker pull geotrekce/circleci-admin:18$CIRCLE_WORKFLOW_ID
+      - run: docker pull geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
       - run: docker-compose run web update.sh
       - run: docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2
   docker_test_nds:
@@ -84,7 +84,7 @@ jobs:
       - checkout
       - run: cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
       - run: docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
-      - run: docker pull geotrekce/circleci-admin:18$CIRCLE_WORKFLOW_ID
+      - run: docker pull geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
       - run: docker-compose run web update.sh
       - run: docker-compose run -e ENV=tests_nds web coverage run ./manage.py test -v 2
   docker_test_js:
