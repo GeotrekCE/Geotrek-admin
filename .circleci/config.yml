@@ -151,6 +151,7 @@ jobs:
       LANG: C.UTF-8
     steps:
       - checkout
+      - run: xargs
       - run: grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/~dev0/.ubuntu20.04~dev<< pipeline.number >>/' debian/changelog
       - run: grep -v '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION | xargs -I '{}' sed -i 's/{}/{}.ubuntu20.04/' debian/changelog & sed -i 's/RELEASED/focal/' debian/changelog
       - run: apt-get update -q
