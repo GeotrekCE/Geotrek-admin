@@ -1,5 +1,5 @@
 build:
-	docker build -t geotrek . --build-arg TAG=$(TAG)
+	docker build -t geotrek . --build-arg BASE_IMAGE_TAG=$(BASE_IMAGE_TAG)
 
 build-no-cache:
 	docker build -t geotrek --no-cache .

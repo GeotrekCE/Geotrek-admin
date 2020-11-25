@@ -1,5 +1,5 @@
-ARG TAG=focal-3.8
-FROM makinacorpus/geodjango:${TAG}
+ARG BASE_IMAGE_TAG=focal-3.8
+FROM makinacorpus/geodjango:${BASE_IMAGE_TAG}
 
 ENV ENV=prod
 ENV SERVER_NAME="localhost"

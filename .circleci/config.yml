@@ -19,7 +19,7 @@ jobs:
     machine: true
     steps:
       - checkout
-      - run: TAG=focal-3.8 make build
+      - run: BASE_IMAGE_TAG=focal-3.8 make build
       - run: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
       - run: docker tag geotrek:latest geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - run: docker push geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
@@ -27,7 +27,7 @@ jobs:
     machine: true
     steps:
       - checkout
-      - run: TAG=bionic-3.6 make build
+      - run: BASE_IMAGE_TAG=bionic-3.6 make build
       - run: echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_LOGIN" --password-stdin
       - run: docker tag geotrek:latest geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
       - run: docker push geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
