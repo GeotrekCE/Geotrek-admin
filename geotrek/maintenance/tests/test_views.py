@@ -9,7 +9,7 @@ from django.contrib.gis import gdal
 from django.test import TestCase
 
 from geotrek.common.tests import CommonTest
-from mapentity.serializers.shapefile import ZipShapeSerializer, shapefile_files
+from mapentity.serializers.shapefile import ZipShapeSerializer
 
 from geotrek.authent.factories import PathManagerFactory
 from geotrek.core.factories import StakeFactory
@@ -569,40 +569,39 @@ class ExportTest(TranslationResetMixin, TestCase):
         # instanciate the class based view 'abnormally' to use create_shape directly
         # to avoid making http request, authent and reading from a zip
         pfl = ZipShapeSerializer()
+        shapefiles = pfl.path_directory
         devnull = open(os.devnull, "wb")
         pfl.serialize(Project.objects.all(), stream=devnull, delete=False,
                       fields=ProjectFormatList.columns)
-        self.assertEqual(len(pfl.layers), 2)
+        shapefiles = [shapefile for shapefile in os.listdir(shapefiles) if shapefile[-3:] == "shp"]
+        datasources = [gdal.DataSource(os.path.join(pfl.path_directory, s)) for s in shapefiles]
+        layers = [ds[0] for ds in datasources]
 
-        layer_point, layer_line = [gdal.DataSource(layer)[0] for layer in pfl.layers.values()]
+        self.assertEqual(len(datasources), 2)
+        geom_type_layer = {layer.name: layer for layer in layers}
+        geom_types = geom_type_layer.keys()
+        self.assertIn('MultiPoint', geom_types)
+        self.assertIn('MultiLineString', geom_types)
 
-        self.assertEqual(layer_point.geom_type.name, 'MultiPoint')
-        self.assertEqual(layer_line.geom_type.name, 'LineString')
-
-        for layer in [layer_point, layer_line]:
+        for layer in layers:
             self.assertEqual(layer.srs.name, 'RGF93_Lambert_93')
             self.assertCountEqual(layer.fields, [
                 'id', 'name', 'period', 'type', 'domain', 'constraint',
-                'global_cos', 'interventi', 'interven_1', 'comments',
+                'global_cos', 'interventi', 'comments',
                 'contractor', 'project_ow', 'project_ma', 'founders',
                 'related_st', 'insertion_', 'update_dat',
                 'cities', 'districts', 'restricted'
             ])
 
-        self.assertEqual(len(layer_point), 1)
-        self.assertEqual(len(layer_line), 1)
+        self.assertEqual(len(layers[0]), 1)
+        self.assertEqual(len(layers[1]), 1)
 
-        for feature in layer_point:
+        for feature in geom_type_layer['MultiPoint']:
             self.assertEqual(str(feature['id']), str(proj.pk))
             self.assertEqual(len(feature.geom.geos), 1)
             self.assertAlmostEqual(feature.geom.geos[0].x, it_point.geom.x)
             self.assertAlmostEqual(feature.geom.geos[0].y, it_point.geom.y)
 
-        for feature in layer_line:
+        for feature in geom_type_layer['MultiLineString']:
             self.assertEqual(str(feature['id']), str(proj.pk))
             self.assertTrue(feature.geom.geos.equals(it_line.geom))
-
-        # Clean-up temporary shapefiles
-        for layer_file in pfl.layers.values():
-            for subfile in shapefile_files(layer_file):
-                os.remove(subfile)

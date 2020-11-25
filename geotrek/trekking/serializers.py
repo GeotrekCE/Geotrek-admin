@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.urls import reverse
 from django.utils import translation
-from django.utils.translation import get_language, ugettext_lazy as _
+from django.utils.translation import get_language, gettext_lazy as _
 from django.utils.timezone import utc, make_aware
 from django.utils.xmlutils import SimplerXMLGenerator
 from rest_framework import serializers as rest_serializers

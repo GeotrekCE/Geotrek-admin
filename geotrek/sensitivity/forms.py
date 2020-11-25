@@ -2,7 +2,7 @@ from django import forms
 from .models import SensitiveArea, SportPractice, Species
 from geotrek.common.forms import CommonForm
 from django.core.validators import MinValueValidator
-from django.utils.translation import pgettext, ugettext as _
+from django.utils.translation import pgettext, gettext as _
 from mapentity.widgets import MapWidget
 
 

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.conf import settings
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from geotrek.flatpages import models as flatpages_models
 from geotrek.flatpages.views import FlatPageCreate, FlatPageUpdate

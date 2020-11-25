@@ -22,8 +22,8 @@ from django.contrib.gis.geos import Point
 from django.core.files.base import ContentFile
 from django.template.loader import render_to_string
 from django.utils import translation
-from django.utils.translation import ugettext as _
-from django.utils.encoding import force_text
+from django.utils.translation import gettext as _
+from django.utils.encoding import force_str
 from django.conf import settings
 from paperclip.models import attachment_upload
 
@@ -99,12 +99,12 @@ class Parser(object):
 
         if self.fields is None:
             self.fields = {
-                f.name: force_text(f.verbose_name)
+                f.name: force_str(f.verbose_name)
                 for f in self.model._meta.fields
                 if not isinstance(f, TranslationField)
             }
             self.m2m_fields = {
-                f.name: force_text(f.verbose_name)
+                f.name: force_str(f.verbose_name)
                 for f in self.model._meta.many_to_many
             }
 

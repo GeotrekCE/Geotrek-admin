@@ -6,7 +6,7 @@ from coreapi.document import Field
 from django.conf import settings
 from django.contrib.gis.db.models import Union
 from django.db.models.query_utils import Q
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 

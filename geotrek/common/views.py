@@ -12,7 +12,7 @@ from django_celery_results.models import TaskResult
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views import static
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 from django.views.generic import RedirectView, View
 

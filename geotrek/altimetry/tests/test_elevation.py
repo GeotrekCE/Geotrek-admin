@@ -6,7 +6,6 @@ from django.db import connections, DEFAULT_DB_ALIAS
 from django.contrib.gis.geos import MultiLineString, LineString, Point
 from django.core.management import call_command
 from django.core.management.base import CommandError
-from django.test.utils import override_settings
 from django.utils import translation
 
 from geotrek.core.models import Path, Topology
@@ -14,7 +13,6 @@ from geotrek.core.factories import TopologyFactory
 from geotrek.altimetry.helpers import AltimetryHelper
 
 import os
-import sys
 from io import StringIO
 
 
@@ -45,16 +43,16 @@ class ElevationTest(TestCase):
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_elevation_profile(self):
         profile = self.path.get_elevation_profile()
-        self.assertEqual(len(profile), 7)
-        self.assertEqual(profile[0][0], 0.0)
-        self.assertEqual(profile[-1][0], 125.0)
-        self.assertEqual(profile[0][3], 6.0)
-        self.assertEqual(profile[1][3], 8.0)
-        self.assertEqual(profile[2][3], 10.0)
-        self.assertEqual(profile[3][3], 13.0)
-        self.assertEqual(profile[4][3], 18.0)
-        self.assertEqual(profile[5][3], 20.0)
-        self.assertEqual(profile[6][3], 22.0)
+        self.assertAlmostEqual(len(profile), 7)
+        self.assertAlmostEqual(profile[0][0], 0.0)
+        self.assertAlmostEqual(profile[-1][0], 125.0)
+        self.assertAlmostEqual(profile[0][3], 6.0)
+        self.assertAlmostEqual(profile[1][3], 8.0)
+        self.assertAlmostEqual(profile[2][3], 10.0)
+        self.assertAlmostEqual(profile[3][3], 13.0)
+        self.assertAlmostEqual(profile[4][3], 18.0)
+        self.assertAlmostEqual(profile[5][3], 20.0)
+        self.assertAlmostEqual(profile[6][3], 22.0)
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_elevation_limits(self):
@@ -430,15 +428,6 @@ class SamplingTestTopology(TestCase):
 
 
 class CommandLoadDemTest(TestCase):
-    """
-    TODO: We will need to replace raster management with geodjango (>= py3 / django 2.0).
-    """
-    def test_fail_import(self):
-        filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
-        with mock.patch.dict(sys.modules, {'osgeo': None}):
-            with self.assertRaisesRegex(CommandError, 'GDAL Python bindings are not available. Can not proceed.'):
-                call_command('loaddem', filename, '--replace', verbosity=0)
-
     def test_success(self):
         output_stdout = StringIO()
         conn = connections[DEFAULT_DB_ALIAS]
@@ -447,11 +436,10 @@ class CommandLoadDemTest(TestCase):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
         call_command('loaddem', filename, '--replace', verbosity=2, stdout=output_stdout)
         self.assertIn('DEM successfully loaded.', output_stdout.getvalue())
-        self.assertIn('DEM successfully clipped/projected.', output_stdout.getvalue())
         self.assertIn('Everything looks fine, we can start loading DEM', output_stdout.getvalue())
         conn = connections[DEFAULT_DB_ALIAS]
         cur = conn.cursor()
-        cur.execute('SELECT ST_Value(rast, ST_SetSRID(ST_MakePoint(602500, 6650000), 2154)) FROM mnt;')
+        cur.execute('SELECT ST_Value(rast, ST_SetSRID(ST_MakePoint(605600, 6650000), 2154)) FROM mnt;')
         self.assertAlmostEqual(cur.fetchone()[0], 343.600006103516)
         cur.execute('DROP TABLE mnt;')
 
@@ -477,12 +465,6 @@ class CommandLoadDemTest(TestCase):
         with self.assertRaisesRegex(CommandError, 'DEM format is not recognized by GDAL.'):
             call_command('loaddem', filename, verbosity=0)
 
-    @override_settings(SPATIAL_EXTENT=(0, 0, 0, 0))
-    def test_bbox_not_intersect(self):
-        filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
-        with self.assertRaisesRegex(CommandError, 'DEM file does not match project extent'):
-            call_command('loaddem', filename, '--replace', verbosity=0)
-
     @mock.patch('geotrek.altimetry.management.commands.loaddem.Command.call_command_system')
     def test_fail_raster2pgsql_first(self, sp):
         def command_fail_raster(cmd, **kwargs):
@@ -495,17 +477,6 @@ class CommandLoadDemTest(TestCase):
             call_command('loaddem', filename, '--replace', verbosity=0)
 
     @mock.patch('geotrek.altimetry.management.commands.loaddem.Command.call_command_system')
-    def test_fail_gdalwarp(self, sp):
-        def command_fail_gdalwarp(cmd, **kwargs):
-            if 'gdalwarp' in cmd:
-                return 1
-            return 0
-        sp.side_effect = command_fail_gdalwarp
-        filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
-        with self.assertRaisesRegex(CommandError, 'Caught Exception: gdalwarp failed with exit code 1'):
-            call_command('loaddem', filename, '--replace', verbosity=0)
-
-    @mock.patch('geotrek.altimetry.management.commands.loaddem.Command.call_command_system')
     def test_fail_raster2pgsql_second(self, sp):
         def command_fail_raster(cmd, **kwargs):
             if 'raster2pgsql -c -C -I -M -t' in cmd:
@@ -514,16 +485,4 @@ class CommandLoadDemTest(TestCase):
         sp.side_effect = command_fail_raster
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
         with self.assertRaisesRegex(CommandError, 'Caught Exception: raster2pgsql failed with exit code 1'):
-            call_command('loaddem', filename, '--replace', verbosity=0)
-
-    @mock.patch('osgeo.gdal.Dataset.GetProjection', return_value='')
-    def test_fail_projection(self, sp):
-        filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
-        with self.assertRaisesRegex(CommandError, 'DEM coordinate system is unknown.'):
-            call_command('loaddem', filename, '--replace', verbosity=0)
-
-    @mock.patch('osgeo.gdal.Dataset.GetGeoTransform', return_value=None)
-    def test_fail_extent(self, sp):
-        filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
-        with self.assertRaisesRegex(CommandError, 'DEM extent is unknown.'):
             call_command('loaddem', filename, '--replace', verbosity=0)

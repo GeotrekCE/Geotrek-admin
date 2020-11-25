@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.gis.forms.fields import GeometryField
 from django.db.models import Max
 from django.forms.models import inlineformset_factory
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from leaflet.forms.widgets import LeafletWidget
 

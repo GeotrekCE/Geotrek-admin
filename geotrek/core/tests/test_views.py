@@ -4,7 +4,7 @@ from unittest import skipIf, mock
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import Permission
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 from django.contrib.gis.geos import LineString, Point, Polygon, MultiPolygon
 from django.test import TestCase
@@ -95,6 +95,7 @@ class PathViewsTest(CommonTest):
         'type': 'LineString',
         'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]],
     }
+    length = 141.42135623731
 
     def get_expected_json_attrs(self):
         return {
@@ -104,7 +105,6 @@ class PathViewsTest(CommonTest):
             'descent': 0,
             'draft': False,
             'eid': None,
-            'length': 141.42135623731,
             'max_elevation': 0,
             'min_elevation': 0,
             'name': self.obj.name,

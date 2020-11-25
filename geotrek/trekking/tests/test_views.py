@@ -174,6 +174,7 @@ class TrekViewsTest(CommonTest):
     modelfactory = TrekFactory
     userfactory = TrekkingManagerFactory
     expected_json_geom = {'type': 'LineString', 'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]]}
+    length = 141.42135623731
 
     def get_expected_json_attrs(self):
         return {
@@ -218,7 +219,6 @@ class TrekViewsTest(CommonTest):
             'information_desks': [],
             'labels': [],
             'kml': '/api/en/treks/{}/trek.kml'.format(self.obj.pk),
-            'length': 141.42135623731,
             'map_image_url': '/image/trek-{}-en.png'.format(self.obj.pk),
             'max_elevation': 0,
             'min_elevation': 0,

@@ -11,7 +11,7 @@ from django.shortcuts import redirect
 from django.views.decorators.http import last_modified as cache_last_modified
 from django.views.decorators.cache import cache_control
 from django.views.generic import TemplateView
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.core.cache import caches
 from django.views.generic.detail import BaseDetailView
 from django.http import HttpResponseRedirect

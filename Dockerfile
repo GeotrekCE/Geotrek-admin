@@ -1,4 +1,5 @@
-FROM makinacorpus/geodjango:bionic-3.6
+ARG BASE_IMAGE_TAG=focal-3.8
+FROM makinacorpus/geodjango:${BASE_IMAGE_TAG}
 
 ENV ENV=prod
 ENV SERVER_NAME="localhost"
@@ -36,6 +37,7 @@ RUN apt-get update && apt-get install -y \
     libxslt-dev \
     libcairo2 \
     libpango1.0-0 \
+    libpangocairo-1.0-0 \
     libgdk-pixbuf2.0-dev \
     libffi-dev && \
     apt-get install -y --no-install-recommends postgis && \

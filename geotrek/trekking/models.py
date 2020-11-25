@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db.models import F, Value
 from django.template.defaultfilters import slugify
-from django.utils.translation import get_language, ugettext, ugettext_lazy as _
+from django.utils.translation import get_language, gettext, gettext_lazy as _
 from django.urls import reverse
 
 import simplekml
@@ -423,15 +423,15 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
             settings.LEAFLET_CONFIG['TILES'][0][0],
         ]
         if settings.SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT:
-            maplayers.append(ugettext("Sensitive area"))
+            maplayers.append(gettext("Sensitive area"))
         if settings.SHOW_POIS_ON_MAP_SCREENSHOT:
-            maplayers.append(ugettext("POIs"))
+            maplayers.append(gettext("POIs"))
         if settings.SHOW_SERVICES_ON_MAP_SCREENSHOT:
-            maplayers.append(ugettext("Services"))
+            maplayers.append(gettext("Services"))
         if settings.SHOW_SIGNAGES_ON_MAP_SCREENSHOT:
-            maplayers.append(ugettext("Signages"))
+            maplayers.append(gettext("Signages"))
         if settings.SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT:
-            maplayers.append(ugettext("Infrastructures"))
+            maplayers.append(gettext("Infrastructures"))
         return {"maplayers": maplayers}
 
 

@@ -6,7 +6,7 @@ from geotrek.core.forms import TopologyForm
 from leaflet.forms.widgets import LeafletWidget
 
 from .models import Infrastructure
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from crispy_forms.layout import Div
 
