@@ -2,12 +2,24 @@
 CHANGELOG
 =========
 
-2.40.2.dev0
+2.41.0 (2020-11-25)
 -------------------
+
+**New Feature**
+
+- Allow to install geotrek on ubuntu 20.04 and 18.04
+
+**Maintenance**
+
+- Upgrade from Django 2.2 to Django 3.1
+
+**Minor Changes**
+
+- Names of file in shapefiles changed
 
 **Bug fixes**
 
--
+- Truncate attachment legend too long in AttachmentParserMixin
 
 
 2.40.1 (2020-11-23)
@@ -38,7 +50,6 @@ CHANGELOG
 **Bug fixes**
 
 - Fix tooltip hidden on module bar (change layout mode to display flex)
-- Truncate attachment legend too long in AttachmentParserMixin
 
 **Doc improvements**
 
