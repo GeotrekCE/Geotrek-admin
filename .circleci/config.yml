@@ -152,7 +152,7 @@ jobs:
     steps:
       - checkout
       - run: grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/~dev0/.ubuntu20.04~dev<< pipeline.number >>/' debian/changelog
-      - run: grep -v '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION | xargs -I '{}' sed -i 's/{}/{}.ubuntu20.04/' debian/changelog
+      - run: grep -v '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION | xargs -I '{}' sed -i 's/{}/{}.ubuntu20.04/' debian/changelog & sed -i 's/UNRELEASED/focal/' debian/changelog
       - run: apt-get update -q
       - run: DEBIAN_FRONTEND=noninteractive apt-get install -q -y software-properties-common
       - run: add-apt-repository ppa:jyrki-pulliainen/dh-virtualenv
