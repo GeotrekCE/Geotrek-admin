@@ -54,6 +54,7 @@ Create an empty database (``geotrekdb`` in this example):
 
     sudo -u postgres psql -c "CREATE DATABASE geotrekdb OWNER geotrek ENCODING 'UTF8' TEMPLATE template0;"
     sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION postgis;"
+    sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION postgis_raster;"
 
 
 Restore backup:
