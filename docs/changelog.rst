@@ -2,12 +2,14 @@
 CHANGELOG
 =========
 
-2.41.2.dev0
+2.41.2 (2020-11-27)
 -------------------
 
 **Bug fixes**
 
--
+- Do not create point edges on zone borders (fix some crash when adding paths)
+- Enable postgis_raster extension when creating a new DB in Ubuntu 20.04 package
+
 
 2.41.1 (2020-11-25)
 -------------------
