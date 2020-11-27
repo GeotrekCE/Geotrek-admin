@@ -18,6 +18,12 @@ CHANGELOG
 - Do not create point edges on zone borders (fix some crash when adding paths)
 - Enable postgis_raster extension when creating a new DB in Ubuntu 20.04 package
 
+**WARNING!**
+
+- Geotrek Ubuntu repository changed to managed two versions (18.04 and 20.04) in parallel.
+  If you already installed Geotrek Ubuntu package before you should run once
+  'sudo apt-get update  --allow-releaseinfo-change' to accept these changes.
+
 
 2.41.1 (2020-11-25)
 -------------------

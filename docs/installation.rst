@@ -93,8 +93,15 @@ To upgrade the whole server, including Geotrek-admin, run:
 
 ::
 
-   apt-get update
-   apt-get upgrade
+   sudo apt-get update
+   sudo apt-get upgrade
+
+If your current version is <= 2.40.1 you should run instead:
+
+::
+
+   sudo apt-get update  --allow-releaseinfo-change'
+   sudo apt-get upgrade
 
 To prevent upgrading Geotrek-admin with the whole distribution, you can run:
 
@@ -106,7 +113,7 @@ To upgrade only Geotrek-admin and its dependencies, run:
 
 ::
 
-   apt-get install geotrek-admin
+   sudo apt-get install geotrek-admin
 
 
 From Geotrek-admin <= 2.32
