@@ -90,6 +90,31 @@ class ZoningLayersUpdateTest(TestCase):
         self.assertEqual(p4.aggregations.count(), 2)
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    def test_city_with_path_ends_on_border(self):
+        """
+                 |    |
+                 |p1  |p2
+                 |    |
+        +--------+----+---+
+        |                 |
+        |                 | City
+        |                 |
+        +-----------------+
+        """
+        # Create a path before city to test one trigger
+        p1 = PathFactory(geom=LineString((1, 1), (1, 2)))
+        p1.save()
+        c = City(code='005178', name='Trifouillis-les-marmottes',
+                 geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)),
+                                           srid=settings.SRID)))
+        c.save()
+        # Create a path after city to the the another trigger
+        p2 = PathFactory(geom=LineString((1.5, 2), (1.5, 1)))
+        p2.save()
+        self.assertEqual(p1.city_edges.count(), 0)
+        self.assertEqual(p2.city_edges.count(), 0)
+
+    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_city_with_topo(self):
         """
         +-----------------+

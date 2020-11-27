@@ -102,7 +102,7 @@ BEGIN
     -- Note: Column names differ between commune, secteur and zonage, we can not use an elegant loop.
 
     -- Commune
-    FOR rec IN EXECUTE 'SELECT id, ST_LineLocatePoint($1, COALESCE(ST_StartPoint(geom), geom)) as pk_a, CASE WHEN ST_EQUALS(ST_EndPoint(geom), ST_StartPoint($1)) THEN 1 ELSE ST_LineLocatePoint($1, COALESCE(ST_EndPoint(geom), geom)) END as pk_b FROM (SELECT code AS id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM zoning_city WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
+    FOR rec IN EXECUTE 'SELECT id, ST_LineLocatePoint($1, COALESCE(ST_StartPoint(geom), geom)) as pk_a, CASE WHEN ST_EQUALS(ST_EndPoint(geom), ST_StartPoint($1)) THEN 1 ELSE ST_LineLocatePoint($1, COALESCE(ST_EndPoint(geom), geom)) END as pk_b FROM (SELECT code AS id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM zoning_city WHERE ST_Intersects(geom, $1)) AS sub WHERE ST_GeometryType(geom)=''ST_LineString''' USING NEW.geom
     LOOP
         INSERT INTO core_topology (date_insert, date_update, kind, "offset", length, geom, deleted) VALUES (now(), now(), 'CITYEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
         INSERT INTO core_pathaggregation (path_id, topo_object_id, start_position, end_position) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
@@ -110,7 +110,7 @@ BEGIN
     END LOOP;
 
     -- Secteur
-    FOR rec IN EXECUTE 'SELECT id, ST_LineLocatePoint($1,COALESCE(ST_StartPoint(geom), geom)) as pk_a, CASE WHEN ST_EQUALS(ST_EndPoint(geom), ST_StartPoint($1)) THEN 1 ELSE ST_LineLocatePoint($1, COALESCE(ST_EndPoint(geom), geom)) END as pk_b FROM (SELECT id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM zoning_district WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
+    FOR rec IN EXECUTE 'SELECT id, ST_LineLocatePoint($1,COALESCE(ST_StartPoint(geom), geom)) as pk_a, CASE WHEN ST_EQUALS(ST_EndPoint(geom), ST_StartPoint($1)) THEN 1 ELSE ST_LineLocatePoint($1, COALESCE(ST_EndPoint(geom), geom)) END as pk_b FROM (SELECT id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM zoning_district WHERE ST_Intersects(geom, $1)) AS sub WHERE ST_GeometryType(geom)=''ST_LineString''' USING NEW.geom
     LOOP
         INSERT INTO core_topology (date_insert, date_update, kind, "offset", length, geom, deleted) VALUES (now(), now(), 'DISTRICTEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
         INSERT INTO core_pathaggregation (path_id, topo_object_id, start_position, end_position) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
@@ -118,7 +118,7 @@ BEGIN
     END LOOP;
 
     -- Zonage
-    FOR rec IN EXECUTE 'SELECT id, ST_LineLocatePoint($1, COALESCE(ST_StartPoint(geom), geom)) as pk_a, CASE WHEN ST_EQUALS(ST_EndPoint(geom), ST_StartPoint($1)) THEN 1 ELSE ST_LineLocatePoint($1, COALESCE(ST_EndPoint(geom), geom)) END as pk_b FROM (SELECT id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM zoning_restrictedarea WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
+    FOR rec IN EXECUTE 'SELECT id, ST_LineLocatePoint($1, COALESCE(ST_StartPoint(geom), geom)) as pk_a, CASE WHEN ST_EQUALS(ST_EndPoint(geom), ST_StartPoint($1)) THEN 1 ELSE ST_LineLocatePoint($1, COALESCE(ST_EndPoint(geom), geom)) END as pk_b FROM (SELECT id, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS geom FROM zoning_restrictedarea WHERE ST_Intersects(geom, $1)) AS sub WHERE ST_GeometryType(geom)=''ST_LineString''' USING NEW.geom
     LOOP
         INSERT INTO core_topology (date_insert, date_update, kind, "offset", length, geom, deleted) VALUES (now(), now(), 'RESTRICTEDAREAEDGE', 0, 0, NEW.geom, FALSE) RETURNING id INTO eid;
         INSERT INTO core_pathaggregation (path_id, topo_object_id, start_position, end_position) VALUES (NEW.id, eid, least(rec.pk_a, rec.pk_b), greatest(rec.pk_a, rec.pk_b));
@@ -162,7 +162,7 @@ BEGIN
     END IF;
 
     -- Add new topology
-    FOR rec IN EXECUTE 'SELECT id, egeom AS geom, ST_LineLocatePoint(tgeom, ST_StartPoint(egeom)) AS pk_a, CASE WHEN ST_EQUALS(ST_EndPoint(tgeom), ST_StartPoint(egeom)) THEN 1 ELSE ST_LineLocatePoint(tgeom, ST_EndPoint(egeom)) END AS pk_b FROM (SELECT id, geom AS tgeom, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS egeom FROM core_path WHERE ST_Intersects(geom, $1)) AS sub' USING NEW.geom
+    FOR rec IN EXECUTE 'SELECT id, egeom AS geom, ST_LineLocatePoint(tgeom, ST_StartPoint(egeom)) AS pk_a, CASE WHEN ST_EQUALS(ST_EndPoint(tgeom), ST_StartPoint(egeom)) THEN 1 ELSE ST_LineLocatePoint(tgeom, ST_EndPoint(egeom)) END AS pk_b FROM (SELECT id, geom AS tgeom, (ST_Dump(ST_Multi(ST_Intersection(geom, $1)))).geom AS egeom FROM core_path WHERE ST_Intersects(geom, $1)) AS sub WHERE ST_GeometryType(egeom)=''ST_LineString''' USING NEW.geom
     LOOP
         IF rec.pk_a IS NOT NULL AND rec.pk_b IS NOT NULL THEN
             INSERT INTO core_topology (date_insert, date_update, kind, "offset", length, geom, deleted) VALUES (now(), now(), kind_name, 0, 0, rec.geom, FALSE) RETURNING id INTO eid;
