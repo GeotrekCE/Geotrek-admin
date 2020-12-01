@@ -1,6 +1,7 @@
 import operator
 from datetime import date
 from functools import reduce
+import coreschema
 
 from coreapi.document import Field
 from django.conf import settings
@@ -21,14 +22,24 @@ class GeotrekQueryParamsFilter(BaseFilterBackend):
         return queryset
 
     def get_schema_fields(self, view):
-        field_language = Field(name='language', required=False, location='query',
-                               description=_("Set language for translation. 'all' by default"),
-                               example="fr")
-        field_fields = Field(name='fields', required=False, location='query',
-                             description=_("Limit required fields to increase performances. Ex : id,url,geometry"))
-        field_omit = Field(name='omit', required=False, location='query',
-                           description=_("Omit specified fields to increase performance. Ex: url,category"))
-        return field_language, field_fields, field_omit
+        return (
+            Field(
+                name='language', required=False, location='query', schema=coreschema.String(
+                    title=_("Language"),
+                    description=_("Set language for translation. Default: all. Example: fr")
+                )
+            ), Field(
+                name='fields', required=False, location='query', schema=coreschema.String(
+                    title=_("Fields"),
+                    description=_("Limit required fields to increase performances. Example: id,url,geometry")
+                )
+            ), Field(
+                name='omit', required=False, location='query', schema=coreschema.String(
+                    title=_("Omit"),
+                    description=_("Omit specified fields to increase performance. Example: url,category")
+                )
+            ),
+        )
 
 
 class GeotrekQueryParamsDimensionFilter(BaseFilterBackend):
@@ -36,10 +47,14 @@ class GeotrekQueryParamsDimensionFilter(BaseFilterBackend):
         return queryset
 
     def get_schema_fields(self, view):
-        field_format = Field(name='format', required=False, location='query',
-                             description=_("Set output format (json / geojson). JSON by default"),
-                             example="geojson")
-        return field_format,
+        return (
+            Field(
+                name='format', required=False, location='query', schema=coreschema.String(
+                    title=_("Format"),
+                    description=_("Set output format (json / geojson). Default: json. Example: geojson")
+                )
+            ),
+        )
 
 
 class GeotrekInBBoxFilter(InBBOXFilter):
@@ -48,11 +63,15 @@ class GeotrekInBBoxFilter(InBBOXFilter):
     """
 
     def get_schema_fields(self, view):
-        field_in_bbox = Field(name=self.bbox_param, required=False, location='query',
-                              description=_('Filter elements contained in bbox formatted like SW-lng,SW-lat,NE-lng,NE-lat'),
-                              example='1.15,46.1,1.56,47.6')
-
-        return field_in_bbox,
+        return (
+            Field(
+                name=self.bbox_param, required=False, location='query', schema=coreschema.String(
+                    title=_("In bbox"),
+                    description=_('Filter elements contained in bbox formatted like SW-lng,SW-lat,NE-lng,NE-lat.'
+                                  'Example: 1.15,46.1,1.56,47.6')
+                )
+            ),
+        )
 
 
 class GeotrekDistanceToPointFilter(DistanceToPointFilter):
@@ -61,14 +80,19 @@ class GeotrekDistanceToPointFilter(DistanceToPointFilter):
     """
 
     def get_schema_fields(self, view):
-        field_dist = Field(name=self.dist_param, required=False, location='query',
-                           description=_('Max distance in meters between point and elements'),
-                           type='number',
-                           example='XXX')
-        field_point = Field(name=self.point_param, required=False, location='query',
-                            description=_('Reference point to compute distance LNG,LAT'),
-                            example='1.2563,46.5214', )
-        return field_dist, field_point
+        return (
+            Field(
+                name=self.dist_param, required=False, location='query', schema=coreschema.Integer(
+                    title=_("Distance"),
+                    description=_('Max distance in meters between point and elements')
+                )
+            ), Field(
+                name=self.point_param, required=False, location='query', schema=coreschema.String(
+                    title=_("Point"),
+                    description=_('Reference point to compute distance LNG,LAT. Example: 1.2563,46.5214'),
+                )
+            ),
+        )
 
 
 class GeotrekPublishedFilter(BaseFilterBackend):
@@ -125,16 +149,26 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
         return qs.distinct()
 
     def get_schema_fields(self, view):
-        field_period = Field(name='period', required=False, location='query',
-                             description=_('Period of occupancy. Month numbers (1-12) separated by comas. any = occupied at any time in the year. ignore = occupied or not.'),
-                             example='7,8 for july and august')
-        field_practices = Field(name='practices', required=False, location='query',
-                                description=_('Practices ids separated by comas.'),
-                                example='1,3')
-        field_structure = Field(name='structure', required=False, location='query',
-                                description=_('Structure id.'),
-                                example='5')
-        return field_period, field_practices, field_structure
+        return (
+            Field(
+                name='period', required=False, location='query', schema=coreschema.String(
+                    title=_("Period"),
+                    description=_('Period of occupancy. Month numbers (1-12) separated by comas.'
+                                  ' any = occupied at any time in the year. ignore = occupied or not.'
+                                  ' Example: 7,8 for july and august')
+                )
+            ), Field(
+                name='practices', required=False, location='query', schema=coreschema.String(
+                    title=_("Practices"),
+                    description=_('Practices ids separated by comas. Example: 1,3')
+                )
+            ), Field(
+                name='structure', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Structure"),
+                    description=_('Structure id. Example: 5')
+                )
+            ),
+        )
 
 
 class GeotrekPOIFilter(BaseFilterBackend):
@@ -149,13 +183,19 @@ class GeotrekPOIFilter(BaseFilterBackend):
         return qs
 
     def get_schema_fields(self, view):
-        type = Field(name='type', required=False, location='query',
-                     description=_("Limit to POIs that contains a specific POI Type"),
-                     example=5)
-        trek = Field(name='trek', required=False, location='query',
-                     description=_("Id of a trek. It will show only the POIs related to this trek"),
-                     example=970)
-        return type, trek
+        return (
+            Field(
+                name='type', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Type"),
+                    description=_("Limit to POIs that contains a specific POI Type")
+                )
+            ), Field(
+                name='trek', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Trek"),
+                    description=_("Id of a trek. It will show only the POIs related to this trek")
+                )
+            ),
+        )
 
 
 class GeotrekTouristicContentFilter(BaseFilterBackend):
@@ -169,10 +209,14 @@ class GeotrekTouristicContentFilter(BaseFilterBackend):
         return qs
 
     def get_schema_fields(self, view):
-        near_trek = Field(name='near_trek', required=False, location='query',
-                          description=_("Id of a trek. It will show only the touristics contents related to this trek"),
-                          example=808)
-        return near_trek,
+        return (
+            Field(
+                name='near_trek', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Near trek"),
+                    description=_("Id of a trek. It will show only the touristics contents related to this trek")
+                )
+            ),
+        )
 
 
 class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
@@ -247,93 +291,91 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
         return qs
 
     def get_schema_fields(self, view):
-        field_duration_min = Field(
-            name='duration_min', required=False, location='query',
-            description=_('Set minimum duration for a trek'),
-            example=2.5, type='integer'
+        return (
+            Field(
+                name='duration_min', required=False, location='query', schema=coreschema.Number(
+                    title=_("Duration min"),
+                    description=_('Set minimum duration for a trek')
+                )
+            ), Field(
+                name='duration_max', required=False, location='query', schema=coreschema.Number(
+                    title=_("Duration max"),
+                    description=_('Set maximum duration for a trek')
+                )
+            ), Field(
+                name='length_min', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Length min"),
+                    description=_('Set minimum length for a trek')
+                )
+            ), Field(
+                name='length_max', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Length max"),
+                    description=_('Set maximum length for a trek')
+                )
+            ), Field(
+                name='difficulty_min', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Difficulty min"),
+                    description=_('Set minimum difficulty for a trek. Difficulty usually goes from 1 (very easy) to 4 (difficult)')
+                )
+            ), Field(
+                name='difficulty_max', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Difficulty max"),
+                    description=_('Set maximum difficulty for a trek. Difficulty usually goes from 1 (very easy) to 4 (difficult)')
+                )
+            ), Field(
+                name='ascent_min', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Ascent min"),
+                    description=_('Set minimum ascent for a trek')
+                )
+            ), Field(
+                name='ascent_max', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Ascent max"),
+                    description=_('Set maximum ascent for a trek')
+                )
+            ), Field(
+                name='city', required=False, location='query', schema=coreschema.String(
+                    title=_("City"),
+                    description=_('Id of a city to filter by. Can be multiple cities split by a comma. Example: 31006,31555,31017')
+                )
+            ), Field(
+                name='district', required=False, location='query', schema=coreschema.String(
+                    title=_("District"),
+                    description=_('Id of a district to filter by. Can be multiple districts split by a comma. Example: 2273,2270')
+                )
+            ), Field(
+                name='structure', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Structure"),
+                    description=_('Id of a structure to filter by')
+                )
+            ), Field(
+                name='accessibility', required=False, location='query', schema=coreschema.String(
+                    title=_("Accessibility"),
+                    description=_('Id of the accessibilities to filter by, separated by commas. Example: 1,2')
+                )
+            ), Field(
+                name='theme', required=False, location='query', schema=coreschema.String(
+                    title=_("Theme"),
+                    description=_('Id of the themes to filter by, separated by commas. Example: 9,14')
+                )
+            ), Field(
+                name='portal', required=False, location='query', schema=coreschema.String(
+                    title=_("Portal"),
+                    description=_('Id of the portals to filter by, separated by commas. Example: 3,7')
+                )
+            ), Field(
+                name='route', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Route"),
+                    description=_('Id of the type of route to filter by')
+                )
+            ), Field(
+                name='label', required=False, location='query', schema=coreschema.String(
+                    title=_("Label"),
+                    description=_('Id of the trek label to filter by, separated by commas')
+                )
+            ), Field(
+                name='q', required=False, location='query', schema=coreschema.String(
+                    title=_("Query string"),
+                    description=_('Search field that returns treks containing data matching the string')
+                )
+            ),
         )
-        field_duration_max = Field(
-            name='duration_max', required=False, location='query',
-            description=_('Set maximum duration for a trek'),
-            example=7.5, type='integer'
-        )
-        field_length_min = Field(
-            name='length_min', required=False, location='query',
-            description=_('Set minimum length for a trek'),
-            example=5500, type='integer'
-        )
-        field_length_max = Field(
-            name='length_max', required=False, location='query',
-            description=_('Set maximum length for a trek'),
-            example=18000, type='integer'
-        )
-        field_difficulty_min = Field(
-            name='difficulty_min', required=False, location='query',
-            description=_('Set minimum difficulty for a trek. Difficulty usually goes from 1 (very easy) to 4 (difficult)'),
-            example=3, type='integer'
-        )
-        field_difficulty_max = Field(
-            name='difficulty_max', required=False, location='query',
-            description=_('Set maximum difficulty for a trek. Difficulty usually goes from 1 (very easy) to 4 (difficult)'),
-            example=4, type='integer'
-        )
-        field_ascent_min = Field(
-            name='ascent_min', required=False, location='query',
-            description=_('Set minimum ascent for a trek'),
-            example=250, type='integer'
-        )
-        field_ascent_max = Field(
-            name='ascent_max', required=False, location='query',
-            description=_('Set maximum ascent for a trek'),
-            example=1200, type='integer'
-        )
-        field_city = Field(
-            name='city', required=False, location='query',
-            description=_('Id of a city to filter by. Can be multiple cities split by a comma'),
-            example='31006,31555,31017', type='string'
-        )
-        field_district = Field(
-            name='district', required=False, location='query',
-            description=_('Id of a district to filter by. Can be multiple districts split by a comma'),
-            example='2273,2270', type='string'
-        )
-        field_structure = Field(
-            name='structure', required=False, location='query',
-            description=_('Id of a structure to filter by'),
-            example=4, type='integer'
-        )
-        field_accessibilities = Field(
-            name='accessibility', required=False, location='query',
-            description=_('Id of the accessibilities to filter by, separated by commas'),
-            example='1,2', type='string'
-        )
-        field_themes = Field(
-            name='theme', required=False, location='query',
-            description=_('Id of the themes to filter by, separated by commas'),
-            example='9,14', type='string'
-        )
-        field_portals = Field(
-            name='portal', required=False, location='query',
-            description=_('Id of the portals to filter by, separated by commas'),
-            example='3,7', type='string'
-        )
-        field_route = Field(
-            name='route', required=False, location='query',
-            description=_('Id of the type of route to filter by'),
-            example='1', type='string'
-        )
-        field_label = Field(
-            name='label', required=False, location='query',
-            description=_('Id of the trek label to filter by, separated by commas'),
-            example='1', type='string'
-        )
-        field_q = Field(
-            name='q', required=False, location='query',
-            description=_('Search field that returns treks contianing data matching the string'),
-            example='query string', type='string'
-        )
-        return field_accessibilities, field_ascent_max, field_ascent_min, \
-            field_city, field_difficulty_max, field_difficulty_min, \
-            field_district, field_duration_max, field_duration_min, field_label, \
-            field_length_max, field_length_min, field_portals, field_q, \
-            field_route, field_structure, field_themes
