@@ -46,7 +46,7 @@ setup(
         'pytz',
         'djangorestframework-gis',
         'drf-dynamic-fields',
-        'django-rest-swagger',
+        'drf-yasg',
         'django-embed-video',
         'xlrd',
         'landez',

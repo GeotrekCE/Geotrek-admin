@@ -289,7 +289,7 @@ PROJECT_APPS += (
     'leaflet',  # After mapentity to allow it to patch settings
     'rest_framework',
     'rest_framework_gis',
-    'rest_framework_swagger',
+    'drf_yasg',
     'embed_video',
     'django_celery_results',
     'colorfield',
@@ -743,8 +743,6 @@ THUMBNAIL_COPYRIGHT_SIZE = 15
 
 REST_FRAMEWORK = {
     'UNICODE_JSON': False,
-    # ensure autoschema compatibility while using deprecated django-rest-swagger
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }
 
 ENABLED_MOBILE_FILTERS = [
