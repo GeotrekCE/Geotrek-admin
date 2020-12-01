@@ -1,10 +1,9 @@
 from django.conf import settings
 from django.urls import path, include
-from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
-from rest_framework import permissions, routers
+from rest_framework import routers
 
 from geotrek.api.v2 import views as api_views
+
 
 router = routers.DefaultRouter()
 router.register('structure', api_views.StructureViewSet, basename='structure')
@@ -35,21 +34,10 @@ if 'geotrek.zoning' in settings.INSTALLED_APPS:
     router.register('city', api_views.CityViewSet, basename='city')
     router.register('district', api_views.DistrictViewSet, basename='district')
 
-
-schema_view = get_schema_view(
-    openapi.Info(
-        title="Geotrek API v2",
-        default_version='v2',
-        description="New Geotrek API.",
-    ),
-    urlconf='geotrek.api.v2.urls',
-    public=True,
-    permission_classes=(permissions.AllowAny,),
-)
-
 app_name = 'apiv2'
-urlpatterns = [
-    path('api/v2/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('api/v2/config/', api_views.ConfigView.as_view(), name='config'),
-    path('api/v2/', include(router.urls)),
+_urlpatterns = [
+    path('', api_views.schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('config/', api_views.ConfigView.as_view(), name='config'),
+    path('', include(router.urls)),
 ]
+urlpatterns = [path('api/v2/', include(_urlpatterns))]
