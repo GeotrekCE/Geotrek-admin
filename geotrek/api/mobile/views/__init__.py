@@ -1,7 +1,6 @@
-from rest_framework import response, permissions
-from rest_framework.schemas import SchemaGenerator
-from rest_framework.views import APIView
-from rest_framework_swagger import renderers
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from rest_framework import permissions
 
 from django.conf import settings
 from .common import SettingsView  # noqa
@@ -11,20 +10,13 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
     from .common import FlatPageViewSet  # noqa
 
 
-class SwaggerSchemaView(APIView):
-    permission_classes = (permissions.AllowAny,)
-    renderer_classes = [
-        renderers.OpenAPIRenderer,
-        renderers.SwaggerUIRenderer,
-    ]
-
-    def get(self, request):
-        generator = SchemaGenerator(
-            title='Geotrek API mobile',
-            urlconf='geotrek.api.mobile.urls',
-            url='/api/mobile',
-            description="Mobile Geotrek API."
-        )
-        schema = generator.get_schema(request=request)
-
-        return response.Response(schema)
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Geotrek API mobile",
+        default_version='v1',
+        description="Mobile Geotrek API.",
+    ),
+    urlconf='geotrek.api.mobile.urls',
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)

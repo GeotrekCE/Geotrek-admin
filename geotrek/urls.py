@@ -56,9 +56,9 @@ if 'geotrek.feedback' in settings.INSTALLED_APPS:
 if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     urlpatterns.append(path('', include('geotrek.sensitivity.urls')))
 if 'geotrek.api' in settings.INSTALLED_APPS:
-    urlpatterns.append(path('api/v2/', include('geotrek.api.v2.urls')))
+    urlpatterns.append(path('', include('geotrek.api.v2.urls')))
     if 'geotrek.flatpages' in settings.INSTALLED_APPS and 'geotrek.trekking' in settings.INSTALLED_APPS and 'geotrek.tourism' in settings.INSTALLED_APPS:
-        urlpatterns.append(path('api/mobile/', include('geotrek.api.mobile.urls')))
+        urlpatterns.append(path('', include('geotrek.api.mobile.urls')))
 
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

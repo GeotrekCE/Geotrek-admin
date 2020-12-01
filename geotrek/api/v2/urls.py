@@ -4,6 +4,7 @@ from rest_framework import routers
 
 from geotrek.api.v2 import views as api_views
 
+
 router = routers.DefaultRouter()
 router.register('structure', api_views.StructureViewSet, basename='structure')
 router.register('portal', api_views.TargetPortalViewSet, basename='portal')
@@ -34,8 +35,9 @@ if 'geotrek.zoning' in settings.INSTALLED_APPS:
     router.register('district', api_views.DistrictViewSet, basename='district')
 
 app_name = 'apiv2'
-urlpatterns = [
-    path('', api_views.SwaggerSchemaView.as_view(), name="schema"),
+_urlpatterns = [
+    path('', api_views.schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('config/', api_views.ConfigView.as_view(), name='config'),
-    path('', include(router.urls))
+    path('', include(router.urls)),
 ]
+urlpatterns = [path('api/v2/', include(_urlpatterns))]

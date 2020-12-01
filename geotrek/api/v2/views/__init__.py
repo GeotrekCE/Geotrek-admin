@@ -1,7 +1,7 @@
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 from rest_framework import response, permissions
-from rest_framework.schemas import SchemaGenerator
 from rest_framework.views import APIView
-from rest_framework_swagger import renderers
 
 from django.conf import settings
 from django.contrib.gis.geos import Polygon
@@ -20,23 +20,16 @@ if 'geotrek.zoning' in settings.INSTALLED_APPS:
     from .zoning import CityViewSet, DistrictViewSet  # noqa
 
 
-class SwaggerSchemaView(APIView):
-    permission_classes = (permissions.AllowAny,)
-    renderer_classes = [
-        renderers.OpenAPIRenderer,
-        renderers.SwaggerUIRenderer,
-    ]
-
-    def get(self, request):
-        generator = SchemaGenerator(
-            title='Geotrek API v2',
-            urlconf='geotrek.api.v2.urls',
-            url='/api/v2',
-            description="New Geotrek API."
-        )
-        schema = generator.get_schema(request=request)
-
-        return response.Response(schema)
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Geotrek API v2",
+        default_version='v2',
+        description="New Geotrek API.",
+    ),
+    urlconf='geotrek.api.v2.urls',
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
 
 
 class ConfigView(APIView):

@@ -670,9 +670,13 @@ class APISwaggerTestCase(BaseApiTest):
         BaseApiTest.setUpTestData()
 
     def test_schema_fields(self):
-        response = self.client.get(reverse('apiv2:schema'))
+        response = self.client.get('/api/v2/?format=openapi')
         self.assertContains(response, 'Filter elements contained in bbox formatted like SW-lng,SW-lat,NE-lng,NE-lat')
-        self.assertContains(response, 'Set language for translation. \'all\' by default')
+        self.assertContains(response, 'Set language for translation. Default: all. Example: fr')
         self.assertContains(response, 'Set minimum difficulty for a trek. Difficulty usually goes ')
         self.assertContains(response, 'Reference point to compute distance LNG,LAT')
         self.assertContains(response, 'Practices ids separated by comas.')
+
+    def test_swagger_ui(self):
+        response = self.client.get('/api/v2/')
+        self.assertContains(response, 'swagger')
