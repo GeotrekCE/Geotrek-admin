@@ -30,6 +30,8 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
     from geotrek.sensitivity import models as sensitivity_models
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
     from geotrek.zoning import models as zoning_models
+if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+    from geotrek.outdoor import models as outdoor_models
 
 
 class BaseGeoJSONSerializer(geo_serializers.GeoFeatureModelSerializer):
@@ -593,3 +595,15 @@ if 'geotrek.zoning' in settings.INSTALLED_APPS:
         class Meta:
             model = zoning_models.District
             fields = ('id', 'geometry', 'name', 'published')
+
+
+if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+    class SiteSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        url = HyperlinkedIdentityField(view_name='apiv2:site-detail')
+        geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
+
+        class Meta:
+            model = outdoor_models.Site
+            fields = (
+                'id', 'name', 'description', 'geometry', 'url'
+            )
