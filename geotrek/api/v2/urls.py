@@ -6,7 +6,7 @@ from rest_framework import permissions, routers
 
 from geotrek.api.v2 import views as api_views
 
-router = routers.SimpleRouter()
+router = routers.DefaultRouter()
 router.register('structure', api_views.StructureViewSet, basename='structure')
 router.register('portal', api_views.TargetPortalViewSet, basename='portal')
 router.register('theme', api_views.ThemeViewSet, basename='theme')

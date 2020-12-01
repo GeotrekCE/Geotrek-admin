@@ -7,7 +7,7 @@ from rest_framework import permissions, routers
 from geotrek.api.mobile import views as api_mobile
 from geotrek.api.mobile.views_sync import SyncMobileRedirect, sync_mobile_view, sync_mobile_update_json
 
-router = routers.SimpleRouter()
+router = routers.DefaultRouter()
 if 'geotrek.flatpages' in settings.INSTALLED_APPS:
     router.register('flatpages', api_mobile.FlatPageViewSet, basename='flatpage')
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
