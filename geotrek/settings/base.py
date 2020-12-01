@@ -741,10 +741,6 @@ THUMBNAIL_COPYRIGHT_FORMAT = ""
 
 THUMBNAIL_COPYRIGHT_SIZE = 15
 
-REST_FRAMEWORK = {
-    'UNICODE_JSON': False,
-}
-
 ENABLED_MOBILE_FILTERS = [
     'practice',
     'difficulty',
