@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.urls import path, re_path, include
+from django.urls import path, include
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions, routers
@@ -49,9 +49,7 @@ schema_view = get_schema_view(
 
 app_name = 'apiv2'
 urlpatterns = [
-    re_path(r'^api/v2.json$', schema_view.without_ui(cache_timeout=0), {'format': '.json'}, name='schema-json'),
-    re_path(r'^api/v2/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    re_path(r'^api/v2/doc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('api/v2/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('api/v2/config/', api_views.ConfigView.as_view(), name='config'),
     path('api/v2/', include(router.urls)),
 ]

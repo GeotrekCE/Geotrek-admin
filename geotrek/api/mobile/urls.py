@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.urls import path, re_path, include
+from django.urls import path, include
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions, routers
@@ -26,9 +26,7 @@ schema_view = get_schema_view(
 
 app_name = 'apimobile'
 urlpatterns = [
-    re_path(r'^api/mobile.json$', schema_view.without_ui(cache_timeout=0), {'format': '.json'}, name='schema-json'),
-    re_path(r'^api/mobile/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    re_path(r'^api/mobile/doc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('api/mobile/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('api/mobile/', include(router.urls)),
     path('api/mobile/settings/', api_mobile.SettingsView.as_view(), name='settings'),
     path('api/mobile/commands/sync', SyncMobileRedirect.as_view(), name='sync_mobiles'),
