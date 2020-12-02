@@ -20,3 +20,11 @@ class Site(AddPropertyMixin, MapEntityMixin, StructureRelated,
 
     def __str__(self):
         return self.name
+
+    @property
+    def name_display(self):
+        return '<a data-pk="{pk}" href="{url}" title="{name}">{name}</a>'.format(
+            pk=self.pk,
+            url=self.get_detail_url(),
+            name=self.name
+        )
