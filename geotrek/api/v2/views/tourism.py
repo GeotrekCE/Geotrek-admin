@@ -16,11 +16,6 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
         .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
         .order_by('pk')  # Required for reliable pagination
 
-    def get_serializer_class(self):
-        base_serializer_class = super(TouristicContentViewSet, self).get_serializer_class()
-        format_output = self.request.query_params.get('format', 'json')
-        return api_serializers.override_serializer(format_output, base_serializer_class)
-
 
 class InformationDeskViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.InformationDeskSerializer
