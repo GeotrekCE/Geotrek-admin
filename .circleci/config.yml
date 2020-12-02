@@ -226,7 +226,7 @@ workflows:
               only: /[0-9]+\.[0-9]+\.[0-9]+/
       - docker_test_nds_18_04:
           requires:
-            - docker_image
+            - docker_image_18_04
           filters:
             tags:
               only: /[0-9]+\.[0-9]+\.[0-9]+/
