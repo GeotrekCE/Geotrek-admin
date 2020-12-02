@@ -7,7 +7,7 @@ from django.core.exceptions import FieldDoesNotExist
 from django.template import Context
 from django.template.exceptions import TemplateDoesNotExist
 from django.utils.timezone import now
-from django.utils.translation import gettext, ungettext
+from django.utils.translation import gettext, ngettext
 
 from ..helpers import alphabet_enumeration
 
@@ -101,22 +101,22 @@ def humanize_timesince(date):
 
     num_years = delta.days // 365
     if (num_years > 0):
-        return ungettext(u"%d year ago", u"%d years ago", num_years) % num_years
+        return ngettext(u"%d year ago", u"%d years ago", num_years) % num_years
 
     num_weeks = delta.days // 7
     if (num_weeks > 0):
-        return ungettext(u"%d week ago", u"%d weeks ago", num_weeks) % num_weeks
+        return ngettext(u"%d week ago", u"%d weeks ago", num_weeks) % num_weeks
 
     if (delta.days > 0):
-        return ungettext(u"%d day ago", u"%d days ago", delta.days) % delta.days
+        return ngettext(u"%d day ago", u"%d days ago", delta.days) % delta.days
 
     num_hours = delta.seconds // 3600
     if (num_hours > 0):
-        return ungettext(u"%d hour ago", u"%d hours ago", num_hours) % num_hours
+        return ngettext(u"%d hour ago", u"%d hours ago", num_hours) % num_hours
 
     num_minutes = delta.seconds // 60
     if (num_minutes > 0):
-        return ungettext(u"%d minute ago", u"%d minutes ago", num_minutes) % num_minutes
+        return ngettext(u"%d minute ago", u"%d minutes ago", num_minutes) % num_minutes
 
     return gettext(u"just a few seconds ago")
 
