@@ -10,6 +10,8 @@ CELERY_ALWAYS_EAGER = True
 
 # TEST_EXCLUDE = ('django',)
 
+ALLOWED_HOSTS = ['localhost']
+
 INSTALLED_APPS += (
     'geotrek.diving',
     'geotrek.sensitivity',
@@ -17,7 +19,8 @@ INSTALLED_APPS += (
     'drf_yasg',
 )
 
-LOGGING['handlers']['console']['level'] = 'CRITICAL'
+LOGGING['loggers']['']['handlers'] = ('log_file', )
+LOGGING['handlers']['log_file']['level'] = 'INFO'
 
 LANGUAGE_CODE = 'en'
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'
