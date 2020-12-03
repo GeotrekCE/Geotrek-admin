@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from io import BytesIO
 import json
 import logging
 import mimetypes
@@ -161,8 +162,9 @@ def map_screenshot(request):
         width = context.get('viewport', {}).get('width')
         height = context.get('viewport', {}).get('height')
 
-        response = HttpResponse()
-        capture_image(map_url, response, width=width, height=height, selector=selector)
+        stream = BytesIO()
+        capture_image(map_url, stream, width=width, height=height, selector=selector)
+        response = HttpResponse(stream.getvalue(), content_type='image/png')
         response['Content-Disposition'] = 'attachment; filename=%s.png' % datetime.now().strftime('%Y%m%d-%H%M%S')
         return response
 
