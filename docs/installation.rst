@@ -100,7 +100,7 @@ If your current version is <= 2.40.1 you should run instead:
 
 ::
 
-   sudo apt-get update  --allow-releaseinfo-change'
+   sudo apt-get update  --allow-releaseinfo-change
    sudo apt-get upgrade
 
 To prevent upgrading Geotrek-admin with the whole distribution, you can run:
