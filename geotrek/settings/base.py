@@ -788,7 +788,7 @@ with open(env_settings_file, 'r') as f:
 
 # Override with custom settings
 custom_settings_file = os.getenv('CUSTOM_SETTINGS_FILE')
-if custom_settings_file:
+if custom_settings_file and 'tests' not in ENV:
     with open(custom_settings_file, 'r') as f:
         exec(f.read())
 
