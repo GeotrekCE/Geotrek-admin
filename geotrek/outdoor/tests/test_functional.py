@@ -25,6 +25,7 @@ class SiteViewsTests(CommonTest):
     def get_good_data(self):
         return {
             'structure': StructureFactory.create().pk,
-            'name': 'test',
+            'name_en': 'test en',
+            'name_fr': 'test fr',
             'geom': '{"type": "Point", "coordinates":[0, 0]}',
         }
