@@ -2,12 +2,16 @@
 CHANGELOG
 =========
 
-2.41.3.dev0
+2.42.0 (2020-12-04)
 -------------------
+
+**New Feature**
+
+- Minimal outdoor module (see documentation to enable)
 
 **Bug fixes**
 
--
+- Fix API v2 swagger
 
 
 2.41.2 (2020-11-27)
