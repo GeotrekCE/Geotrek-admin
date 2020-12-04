@@ -13,13 +13,13 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
 
 class SiteLayer(MapEntityLayer):
     properties = ['name']
-    queryset = Site.objects.existing()
+    queryset = Site.objects.all()
 
 
 class SiteList(MapEntityList):
     columns = ['id', 'name']
     filterform = SiteFilterSet
-    queryset = Site.objects.existing()
+    queryset = Site.objects.all()
 
 
 class SiteJsonList(MapEntityJsonList, SiteList):
@@ -27,7 +27,7 @@ class SiteJsonList(MapEntityJsonList, SiteList):
 
 
 class SiteDetail(MapEntityDetail):
-    queryset = Site.objects.existing()
+    queryset = Site.objects.all()
 
     def get_context_data(self, *args, **kwargs):
         context = super(SiteDetail, self).get_context_data(*args, **kwargs)
@@ -41,7 +41,7 @@ class SiteCreate(MapEntityCreate):
 
 
 class SiteUpdate(MapEntityUpdate):
-    queryset = Site.objects.existing()
+    queryset = Site.objects.all()
     form_class = SiteForm
 
     @same_structure_required('outdoor:site_detail')
@@ -64,6 +64,4 @@ class SiteViewSet(MapEntityViewSet):
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
-        qs = Site.objects.existing()
-        qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
-        return qs
+        return Site.objects.annotate(api_geom=Transform("geom", settings.API_SRID))

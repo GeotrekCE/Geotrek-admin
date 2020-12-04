@@ -10,6 +10,6 @@ from geotrek.outdoor import models as outdoor_models
 class SiteViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekSiteFilter,)
     serializer_class = api_serializers.SiteSerializer
-    queryset = outdoor_models.Site.objects.existing()\
+    queryset = outdoor_models.Site.objects \
         .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
         .order_by('pk')  # Required for reliable pagination
