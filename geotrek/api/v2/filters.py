@@ -391,7 +391,7 @@ class GeotrekSiteFilter(BaseFilterBackend):
     def get_schema_fields(self, view):
         return (
             Field(
-                name='q', required=False, schema=coreschema.String(
+                name='q', required=False, location='query', schema=coreschema.String(
                     title=_("Query string"),
                     description=_('Search field that returns sites containing data matching the string')
                 )
