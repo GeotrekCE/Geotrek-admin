@@ -85,7 +85,7 @@ def uniquify(values):
     return unique
 
 
-def intersecting(cls, obj, distance=None, ordering=True):
+def intersecting(cls, obj, distance=None, ordering=True, field='geom'):
     """
     Small helper to filter all model instances by geometry intersection
     """
@@ -97,9 +97,9 @@ def intersecting(cls, obj, distance=None, ordering=True):
     if distance is None:
         distance = obj.distance(cls)
     if distance:
-        qs = qs.filter(geom__dwithin=(obj.geom, Distance(m=distance)))
+        qs = qs.filter(**{'{}__dwithin'.format(field): (obj.geom, Distance(m=distance))})
     else:
-        qs = qs.filter(geom__intersects=obj.geom)
+        qs = qs.filter(**{'{}__intersects'.format(field): obj.geom})
         if obj.geom.geom_type == 'LineString' and ordering:
             # FIXME: move transform from DRF viewset to DRF itself and remove transform here
             ewkt = obj.geom.transform(settings.SRID, clone=True).ewkt

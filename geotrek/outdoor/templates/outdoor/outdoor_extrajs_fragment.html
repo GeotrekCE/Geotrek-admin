@@ -1,0 +1,6 @@
+{% load static outdoor_tags %}
+
+{% is_outdoor_enabled as enabled %}
+{% if enabled %}
+<script type="text/javascript" src="{% static "outdoor/main.js" %}"></script>
+{% endif %}

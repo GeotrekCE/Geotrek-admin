@@ -324,6 +324,10 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
     def extent(self):
         return self.geom.transform(settings.API_SRID, clone=True).extent if self.geom else None
 
+    def distance(self, to_cls):
+        """Distance to associate this path to another class"""
+        return None
+
 
 class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDeleteMixin):
     paths = models.ManyToManyField(Path, through='PathAggregation', verbose_name=_("Path"))
