@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-04 10:48+0000\n"
+"POT-Creation-Date: 2020-12-04 17:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-msgid "Location"
-msgstr "Emplacement"
+msgid "Outdoor"
+msgstr "Outdoor"
 
 msgid "Name"
 msgstr "Nom"
+
+msgid "Practice"
+msgstr "Pratique"
+
+msgid "Practices"
+msgstr "Pratiques"
+
+msgid "Location"
+msgstr "Emplacement"
 
 msgid "Description"
 msgstr "Description"
@@ -65,11 +74,44 @@ msgstr "Secteurs"
 msgid "Restricted areas"
 msgstr "Zonages réglementaires"
 
-msgid "Outdoor"
-msgstr "Outdoor"
+msgid "Description teaser"
+msgstr "Chapeau"
+
+msgid "A brief summary (map pop-ups)"
+msgstr "Bref résumé"
+
+msgid "Complete description"
+msgstr "Description complète"
+
+msgid "Ambiance"
+msgstr "Ambiance"
+
+msgid "Main attraction and interest"
+msgstr "Attraction principal et intérêts"
+
+msgid "Advice"
+msgstr "Recommandations"
+
+msgid "Risks, danger, best period, ..."
+msgstr "Risques, danger, meilleure période, ..."
+
+msgid "Period"
+msgstr "Période"
+
+msgid "Practice site"
+msgstr "Site de pratique"
+
+msgid "Practice sites"
+msgstr "Sites de pratique"
 
 msgid "Add a new site"
 msgstr "Ajouter un nouveau site"
+
+msgid "Attributes"
+msgstr "Informations"
+
+msgid "None"
+msgstr "Aucun(e)"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"
