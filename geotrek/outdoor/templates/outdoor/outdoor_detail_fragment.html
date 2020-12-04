@@ -1,0 +1,22 @@
+{% load i18n geotrek_tags mapentity_tags outdoor_tags %}
+
+{% is_outdoor_enabled as enabled %}
+{% if enabled %}
+
+<h3>{% trans "Outdoor" %}</h3>
+<table class="table">
+    <tr>
+        <th>{% trans "Sites" %}</th>
+        <td>
+            {% if perms.outdoor.add_site %}
+            <p class="autohide"><a href="{% url 'outdoor:site_add' %}" class="btn btn-mini btn-success">
+                <i class="icon-plus icon-white"></i> {% trans "Add a new site" %}</a>
+            </p>
+            {% endif %}
+
+            {% valuelist object.sites field='name' %}
+        </td>
+    </tr>
+</table>
+
+{% endif %}

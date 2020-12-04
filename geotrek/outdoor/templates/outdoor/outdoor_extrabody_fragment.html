@@ -1,0 +1,13 @@
+{% load i18n outdoor_tags %}
+
+{% is_outdoor_enabled as enabled %}
+{% if enabled %}
+
+<script type="text/javascript">
+    MapEntity.i18n['Outdoor'] = "{% trans "Outdoor" %}";
+    MapEntity.i18n['site'] = "{% trans "Site" %}";
+
+    window.SETTINGS.urls['site_layer'] = "{% url "outdoor:site_layer" %}";
+</script>
+
+{% endif %}

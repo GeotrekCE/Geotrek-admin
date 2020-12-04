@@ -1,0 +1,75 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-12-04 10:48+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Location"
+msgstr "Emplacement"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "External id"
+msgstr "ID externe"
+
+msgid "Site"
+msgstr "Site"
+
+msgid "Sites"
+msgstr "Sites"
+
+msgid "Treks"
+msgstr "Itinéraires"
+
+msgid "POIs"
+msgstr "POI"
+
+msgid "Trails"
+msgstr "Sentiers"
+
+msgid "Infrastructures"
+msgstr "Aménagements"
+
+msgid "Signages"
+msgstr "Signalétiques"
+
+msgid "Touristic contents"
+msgstr "Contenus touristiques"
+
+msgid "Touristic events"
+msgstr "Événements touristiques"
+
+msgid "Cities"
+msgstr "Communes"
+
+msgid "Districts"
+msgstr "Secteurs"
+
+msgid "Restricted areas"
+msgstr "Zonages réglementaires"
+
+msgid "Outdoor"
+msgstr "Outdoor"
+
+msgid "Add a new site"
+msgstr "Ajouter un nouveau site"
+
+msgid "Invalid geometry value."
+msgstr "Valeur de géométrie invalide"

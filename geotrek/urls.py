@@ -43,6 +43,8 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
     urlpatterns.append(path('', include('geotrek.signage.urls')))
 if 'geotrek.maintenance' in settings.INSTALLED_APPS:
     urlpatterns.append(path('', include('geotrek.maintenance.urls')))
+if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+    urlpatterns.append(path('', include('geotrek.outdoor.urls')))
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     urlpatterns.append(path('', include('geotrek.trekking.urls')))
 if 'geotrek.diving' in settings.INSTALLED_APPS:

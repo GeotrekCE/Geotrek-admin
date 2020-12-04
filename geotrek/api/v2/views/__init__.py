@@ -18,6 +18,8 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
     from .tourism import TouristicContentViewSet, InformationDeskViewSet  # noqa
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
     from .zoning import CityViewSet, DistrictViewSet  # noqa
+if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+    from .outdoor import SiteViewSet  # noqa
 
 
 schema_view = get_schema_view(

@@ -204,6 +204,26 @@ You can also insert diving minimal data (default practices, difficulties, levels
     sudo geotrek loaddata geotrek/diving/fixtures/basic.json
     cp /opt/geotrek-admin/geotrek/diving/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
 
+Outdoor
+-------
+
+In order to enable outdoor module, in the custom settings file,
+add the following code:
+
+.. code-block :: python
+
+    # Enable outdoor module
+    INSTALLED_APPS += ('geotrek.outdoor', )
+
+Then run ``sudo geotrek migrate; sudo service geotrek restart``.
+
+You can also insert outdoor minimal data:
+
+::
+
+    sudo geotrek loaddata geotrek/outdoor/fixtures/basic.json
+    cp /opt/geotrek-admin/geotrek/outdoor/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
+
 WYSIWYG editor configuration
 ----------------------------
 

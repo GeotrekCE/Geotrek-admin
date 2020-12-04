@@ -379,3 +379,21 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
                 )
             ),
         )
+
+
+class GeotrekSiteFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        q = request.GET.get('q', None)
+        if q is not None:
+            queryset = queryset.filter(name__icontains=q)
+        return queryset
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='q', required=False, location='query', schema=coreschema.String(
+                    title=_("Query string"),
+                    description=_('Search field that returns sites containing data matching the string')
+                )
+            ),
+        )

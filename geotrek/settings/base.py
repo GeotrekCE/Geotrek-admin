@@ -524,6 +524,7 @@ REPORT_MODEL_ENABLED = True
 DIVE_MODEL_ENABLED = True
 TOURISTICCONTENT_MODEL_ENABLED = True
 TOURISTICEVENT_MODEL_ENABLED = True
+SITE_MODEL_ENABLED = True
 # This model is necessary for most of the other. Can be add in case if the paths will not be change by anyone.
 PATH_MODEL_ENABLED = True
 
@@ -787,7 +788,7 @@ with open(env_settings_file, 'r') as f:
 
 # Override with custom settings
 custom_settings_file = os.getenv('CUSTOM_SETTINGS_FILE')
-if custom_settings_file:
+if custom_settings_file and 'tests' not in ENV:
     with open(custom_settings_file, 'r') as f:
         exec(f.read())
 

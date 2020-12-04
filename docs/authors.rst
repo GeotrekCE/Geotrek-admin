@@ -50,3 +50,4 @@ Credits
 * *Climbing* designed by Eric Milet from the Noun Project
 * *Box Office* designed by Alessio Damiano from the Noun Project
 * *Steep Descent* designed by Sergey Patutin from the Noun Project
+* *Landscape* by Adrien Coquet from the Noun Project

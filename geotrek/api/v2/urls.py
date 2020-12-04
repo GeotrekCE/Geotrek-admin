@@ -33,6 +33,8 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
     router.register('city', api_views.CityViewSet, basename='city')
     router.register('district', api_views.DistrictViewSet, basename='district')
+if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+    router.register('site', api_views.SiteViewSet, basename='site')
 
 app_name = 'apiv2'
 _urlpatterns = [

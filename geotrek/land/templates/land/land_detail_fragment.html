@@ -2,6 +2,8 @@
 
 {% is_topology_model model as is_topology_model %}
 
+{% if appname != "outdoor" %}
+
 <h3>{% trans "Land" %}</h3>
 <table class="table">
     {% if modelname != "landedge" %}
@@ -79,3 +81,5 @@
     </tr>
     {% endif %}
 </table>
+
+{% endif %}

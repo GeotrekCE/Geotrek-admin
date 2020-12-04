@@ -13,6 +13,7 @@ from geotrek.common.utils.testdata import get_dummy_uploaded_image, get_dummy_up
 from geotrek.trekking import factories as trek_factory, models as trek_models
 from geotrek.tourism import factories as tourism_factory, models as tourism_models
 from geotrek.zoning import factories as zoning_factory, models as zoning_models
+from geotrek.outdoor import factories as outdoor_factory, models as outdoor_models
 
 PAGINATED_JSON_STRUCTURE = sorted([
     'count', 'next', 'previous', 'results',
@@ -92,7 +93,9 @@ INFORMATION_DESK_PROPERTIES_JSON_STRUCTURE = sorted([
 
 SOURCE_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'pictogram', 'website'])
 
-RESRVATION_SYSTEM_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'id'])
+RESERVATION_SYSTEM_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'id'])
+
+SITE_PROPERTIES_JSON_STRUCTURE = sorted(['description', 'geometry', 'id', 'name', 'url'])
 
 
 class BaseApiTest(TestCase):
@@ -145,6 +148,7 @@ class BaseApiTest(TestCase):
         cls.poi = trek_factory.POIFactory()
         cls.source = common_factory.RecordSourceFactory()
         cls.reservation_system = common_factory.ReservationSystemFactory()
+        cls.site = outdoor_factory.SiteFactory()
 
     def check_number_elems_response(self, response, model):
         json_response = response.json()
@@ -263,6 +267,12 @@ class BaseApiTest(TestCase):
 
     def get_reservationsystem_detail(self, id_reservationsystem, params=None):
         return self.client.get(reverse('apiv2:reservationsystem-detail', args=(id_reservationsystem,)), params)
+
+    def get_site_list(self, params=None):
+        return self.client.get(reverse('apiv2:site-list'), params)
+
+    def get_site_detail(self, id_site, params=None):
+        return self.client.get(reverse('apiv2:site-detail', args=(id_site,)), params)
 
     def get_config(self, params=None):
         return self.client.get(reverse('apiv2:config', params))
@@ -604,8 +614,27 @@ class APIAccessAnonymousTestCase(BaseApiTest):
     def test_reservationsystem_detail(self):
         self.check_structure_response(
             self.get_reservationsystem_detail(self.reservation_system.pk),
-            RESRVATION_SYSTEM_PROPERTIES_JSON_STRUCTURE
+            RESERVATION_SYSTEM_PROPERTIES_JSON_STRUCTURE
         )
+
+    def test_site_list(self):
+        self.check_number_elems_response(
+            self.get_site_list(),
+            outdoor_models.Site
+        )
+
+    def test_site_detail(self):
+        self.check_structure_response(
+            self.get_site_detail(self.site.pk),
+            SITE_PROPERTIES_JSON_STRUCTURE
+        )
+
+    def test_site_list_filters(self):
+        response = self.get_site_list({
+            'q': 'test string'
+        })
+        #  test response code
+        self.assertEqual(response.status_code, 200)
 
     def test_config(self):
         response = self.get_config()
