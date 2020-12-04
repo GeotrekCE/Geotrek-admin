@@ -63,5 +63,50 @@
             "site"
         ]
     }
+},
+{
+    "model": "outdoor.practice",
+    "pk": 1,
+    "fields": {
+        "name": "Escalade",
+        "name_fr": "Escalade",
+        "name_en": "Climbing"
+    }
+},
+{
+    "model": "outdoor.practice",
+    "pk": 2,
+    "fields": {
+        "name": "Eau vive",
+        "name_fr": "Eau vive",
+        "name_en": "White water"
+    }
+},
+{
+    "model": "outdoor.practice",
+    "pk": 3,
+    "fields": {
+        "name": "Alpinisme",
+        "name_fr": "Alpinisme",
+        "name_en": "Mountaineering"
+    }
+},
+{
+    "model": "outdoor.practice",
+    "pk": 4,
+    "fields": {
+        "name": "Via ferrata",
+        "name_fr": "Via ferrata",
+        "name_en": "Via ferrata"
+    }
+},
+{
+    "model": "outdoor.practice",
+    "pk": 5,
+    "fields": {
+        "name": "Vol libre",
+        "name_fr": "Vol libre",
+        "name_en": "Hang-gliding"
+    }
 }
 ]

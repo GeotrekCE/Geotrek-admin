@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.utils.translation import gettext_lazy as _
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins import TimeStampedModelMixin, AddPropertyMixin
+from geotrek.common.mixins import TimeStampedModelMixin, AddPropertyMixin, BasePublishableMixin
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Path, Topology, Trail
 from geotrek.infrastructure.models import Infrastructure
@@ -11,6 +11,18 @@ from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.trekking.models import Trek, POI
 from geotrek.zoning.models import City, District, RestrictedArea
 from mapentity.models import MapEntityMixin
+
+
+class Practice(models.Model):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+
+    class Meta:
+        verbose_name = _("Practice")
+        verbose_name_plural = _("Practices")
+        ordering = ('name', )
+
+    def __str__(self):
+        return self.name
 
 
 class Site(AddPropertyMixin, MapEntityMixin, StructureRelated,
@@ -57,3 +69,26 @@ Site.add_property('touristic_events', lambda self: intersecting(TouristicEvent, 
 Site.add_property('cities', lambda self: intersecting(City, self, distance=0), _("Cities"))
 Site.add_property('districts', lambda self: intersecting(District, self, distance=0), _("Districts"))
 Site.add_property('areas', lambda self: intersecting(RestrictedArea, self, distance=0), _("Restricted areas"))
+
+
+class SitePractice(BasePublishableMixin, models.Model):
+    site = models.ForeignKey('Site', related_name="site_practices", on_delete=models.CASCADE,
+                             verbose_name=_("Site"))
+    practice = models.ForeignKey('Practice', related_name="site_practices", on_delete=models.PROTECT,
+                                 verbose_name=_("Practice"))
+    description_teaser = models.TextField(verbose_name=_("Description teaser"), blank=True,
+                                          help_text=_("A brief summary (map pop-ups)"))
+    description = models.TextField(verbose_name=_("Description"), blank=True,
+                                   help_text=_("Complete description"))
+    ambiance = models.TextField(verbose_name=_("Ambiance"), blank=True,
+                                help_text=_("Main attraction and interest"))
+    advice = models.TextField(verbose_name=_("Advice"), blank=True,
+                              help_text=_("Risks, danger, best period, ..."))
+    period = models.CharField(verbose_name=_("Period"), max_length=1024, blank=True)
+
+    class Meta:
+        verbose_name = _("Practice site")
+        verbose_name_plural = _("Practice sites")
+
+    def __str__(self):
+        return "{} - {}".format(self.site, self.practice)
