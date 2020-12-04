@@ -1,11 +1,14 @@
+from django.conf import settings
+from django.contrib.gis.db.models.functions import Transform
+from rest_framework import permissions as rest_permissions
 from geotrek.authent.decorators import same_structure_required
-from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.outdoor.filters import SiteFilterSet
 from geotrek.outdoor.forms import SiteForm
 from geotrek.outdoor.models import Site
+from geotrek.outdoor.serializers import SiteSerializer, SiteGeojsonSerializer
 from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
                              MapEntityDetail, MapEntityCreate, MapEntityUpdate,
-                             MapEntityDelete)
+                             MapEntityDelete, MapEntityViewSet)
 
 
 class SiteLayer(MapEntityLayer):
@@ -32,7 +35,7 @@ class SiteDetail(MapEntityDetail):
         return context
 
 
-class SiteCreate(CreateFromTopologyMixin, MapEntityCreate):
+class SiteCreate(MapEntityCreate):
     model = Site
     form_class = SiteForm
 
@@ -52,3 +55,15 @@ class SiteDelete(MapEntityDelete):
     @same_structure_required('outdoor:site_detail')
     def dispatch(self, *args, **kwargs):
         return super(SiteDelete, self).dispatch(*args, **kwargs)
+
+
+class SiteViewSet(MapEntityViewSet):
+    model = Site
+    serializer_class = SiteSerializer
+    geojson_serializer_class = SiteGeojsonSerializer
+    permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        qs = Site.objects.existing()
+        qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
+        return qs
