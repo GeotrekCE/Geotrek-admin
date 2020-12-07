@@ -132,9 +132,9 @@ class MapEntityOptions(object):
                 pass
             tile_view = dynamic_tile_view
 
-        if not tile_view.queryset:
+        if tile_view.queryset is None:
             tile_view.queryset = self.get_queryset()
-        if not tile_view.serializer_class:
+        if tile_view.serializer_class is None:
             tile_view.serializer_class = self.get_tile_serializer()
 
         picked.append(tile_view)
