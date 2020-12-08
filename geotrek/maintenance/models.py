@@ -109,12 +109,6 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
         super(Intervention, self).save(*args, **kwargs)
 
-        # Set kind of Intervention topology
-        if self.target and not self.on_existing_target:
-            topology_kind = self._meta.object_name.upper()
-            self.target.kind = topology_kind
-            self.target.save(update_fields=['kind'])
-
         # Invalidate project map
         if self.project:
             try:
@@ -123,10 +117,6 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                 pass
 
         self.reload()
-
-    @property
-    def on_existing_target(self):
-        return bool(self.target)
 
     @classproperty
     def target_verbose_name(cls):
@@ -146,12 +136,10 @@ class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
 
     @property
     def target_csv_display(self):
-        if self.on_existing_target:
-            return "%s: %s (%s)" % (
-                _(self.target._meta.verbose_name),
-                self.target,
-                self.target.pk)
-        return ''
+        return "%s: %s (%s)" % (
+            _(self.target._meta.verbose_name),
+            self.target,
+            self.target.pk)
 
     @property
     def in_project(self):
