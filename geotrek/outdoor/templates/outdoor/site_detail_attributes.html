@@ -14,7 +14,7 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"description" }}</th>
-            <td>{% if object.description %}{ object.description|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+            <td>{% if object.description %}{{ object.description|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{% trans "External id" %}</th>
