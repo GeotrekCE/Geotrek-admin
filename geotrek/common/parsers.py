@@ -556,7 +556,7 @@ class AtomParser(Parser):
 class AttachmentParserMixin(object):
     download_attachments = True
     base_url = ''
-    delete_attachments = False
+    delete_attachments = True
     filetype_name = "Photographie"
     non_fields = {
         'attachments': _("Attachments"),

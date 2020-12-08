@@ -131,3 +131,10 @@ To get help about a command:
     sudo geotrek help <subcommand>
     
 Example: ``sudo geotrek help loadpoi``
+
+Delete attachment from disk
+---------------------------
+
+When an attachment (eg. pictures) is removed, its file is not automatically removed from disk.
+You have to run `sudo geotrek clean_attachments` manually or in a cron to remove old files.
+After that, you should run `sudo geotrek thumbnail_cleanup` to remove old thumbnails.
