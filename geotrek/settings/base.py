@@ -831,12 +831,14 @@ ENV = os.getenv('ENV', 'prod')
 assert ENV in ('prod', 'dev', 'tests', 'tests_nds')
 env_settings_file = os.path.join(os.path.dirname(__file__), 'env_{}.py'.format(ENV))
 with open(env_settings_file, 'r') as f:
+    print("Read env configuration from {}".format(env_settings_file))
     exec(f.read())
 
 # Override with custom settings
 custom_settings_file = os.getenv('CUSTOM_SETTINGS_FILE')
 if custom_settings_file and 'tests' not in ENV:
     with open(custom_settings_file, 'r') as f:
+        print("Read custom configuration from {}".format(env_settings_file))
         exec(f.read())
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
