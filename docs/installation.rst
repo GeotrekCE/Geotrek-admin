@@ -147,7 +147,7 @@ Check if ``SPATIAL_EXTENT`` is well set in ``/opt/geotrek-admin/var/conf/custom.
 
 Server migration
 ----------------
-It is a new installation with an additional backup/restore and a file transfert in between. The commands below are examples to adapt to your actual configuration (server names, database configuration).
+It is a new installation with an additional backup/restore and a file transfert in between. The commands below are examples to adapt to your actual configuration (server names, database configuration). These commands apply to versions >= 2.33. If your version is below 2.33, please check the doc of your version. 
 
 Backup settings, media files and database on the old server:
 
@@ -155,7 +155,7 @@ Backup settings, media files and database on the old server:
 
 	cd Geotrek
 	sudo -u postgres pg_dump -Fc geotrekdb > geotrekdb.backup
-	tar cvzf data.tgz geotrekdb.backup /opt/geotrek-admin/var/conf/parsers.py /opt/geotrek-admin/var/conf/custom.py /opt/geotrek-admin/var/media/ 
+	tar cvzf data.tgz geotrekdb.backup /opt/geotrek-admin/var/conf/ /opt/geotrek-admin/var/media/ 
 	
 Restore files on the new server:
 ::
