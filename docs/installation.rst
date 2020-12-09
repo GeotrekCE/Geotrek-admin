@@ -153,14 +153,13 @@ Backup settings, media files and database on the old server:
 
 ::
 
-	cd Geotrek
 	sudo -u postgres pg_dump -Fc geotrekdb > geotrekdb.backup
 	tar cvzf data.tgz geotrekdb.backup /opt/geotrek-admin/var/conf/ /opt/geotrek-admin/var/media/ 
 	
 Restore files on the new server:
 ::
 
-	scp old_server:Geotrek/data.tgz .
+	scp old_server_ip:path/to/data.tgz .
 	tar xvzf data.tgz
 
 Troubleshooting
