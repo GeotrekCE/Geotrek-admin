@@ -174,8 +174,11 @@ class TopologyHelper(object):
 
     @classmethod
     def serialize(cls, topology, with_pk=True):
-        # Point topology
-        if topology.ispoint():
+        if not topology.aggregations.exists():
+            # Empty topology
+            return ''
+        elif topology.ispoint():
+            # Point topology
             point = topology.geom.transform(settings.API_SRID, clone=True)
             objdict = dict(kind=topology.kind, lng=point.x, lat=point.y)
             if with_pk:

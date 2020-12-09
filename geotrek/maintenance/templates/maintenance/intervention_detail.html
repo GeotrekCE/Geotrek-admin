@@ -90,13 +90,10 @@
                 {% endif %}
             </td>
         </tr>
-
-        {% if intervention.on_existing_target %}
         <tr>
             <th>{% trans "Related object" %}</th>
             <td>{{ intervention.target_display|safe }}</td>
         </tr>
-        {% endif %}
         <tr>
             <th>{% trans "Dimensions" %}</th>
             <td>{% trans "H:" %} {{ intervention.height|stringformat:".2f" }}m ,
