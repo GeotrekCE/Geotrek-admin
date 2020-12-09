@@ -118,6 +118,10 @@ Import from a file
 
 You can also use some of Geotrek commands to import data from a file.
 
+Possible data are e.g.: POI, infrastructures, signages, cities, districts, restricted areas.
+
+You must use these commands to import spatial data because of the dynamic segmentation, which will not be computed if you enter the data manually. 
+
 To list all Geotrek commands available:
 
 ::
