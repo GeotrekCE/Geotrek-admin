@@ -37,12 +37,13 @@ jobs:
       LANG: C.UTF-8
     steps:
       - checkout
+      - run: echo "import multiprocessing; print(multiprocessing.cpu_count())" | python
       - run: cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
       - run: docker run -p 5432:5432 --env-file .env -d postgis/postgis:11-2.5
       - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
       - run: docker-compose run web update.sh
-      - run: docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2
+      - run: docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2 --parallel 4
       - run: docker-compose run web coverage xml -o var/coverage.xml
       - codecov/upload:
           file: var/coverage.xml
@@ -59,7 +60,7 @@ jobs:
       - run: docker pull geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
       - run: docker tag geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
       - run: docker-compose run web update.sh
-      - run: docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2
+      - run: docker-compose run -e ENV=tests web coverage run ./manage.py test -v 2 --parallel 4
   docker_test_nds:
     machine: true
     environment:
@@ -71,7 +72,7 @@ jobs:
       - run: docker pull geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
       - run: docker tag geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
       - run: docker-compose run web update.sh
-      - run: docker-compose run -e ENV=tests_nds web coverage run ./manage.py test -v 2
+      - run: docker-compose run -e ENV=tests_nds web coverage run ./manage.py test -v 2 --parallel 4
       - run: docker-compose run web coverage xml -o var/coverage.xml
       - codecov/upload:
           file: var/coverage.xml
@@ -88,7 +89,7 @@ jobs:
       - run: docker pull geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID
       - run: docker tag geotrekce/circleci-admin:18.04-$CIRCLE_WORKFLOW_ID geotrekce/admin:latest
       - run: docker-compose run web update.sh
-      - run: docker-compose run -e ENV=tests_nds web coverage run ./manage.py test -v 2
+      - run: docker-compose run -e ENV=tests_nds web coverage run ./manage.py test -v 2 --parallel 4
   docker_test_js:
     docker:
       - image: geotrekce/circleci-admin:$CIRCLE_WORKFLOW_ID
