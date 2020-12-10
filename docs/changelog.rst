@@ -10,6 +10,9 @@ CHANGELOG
 - Old attachments are now deleted by default in parser.  Add `delete_attachment = False`
   attribute to your parsers to keep old behaviour.
 
+**Bug fixes**
+
+- Fix height on map when editing an object
 
 2.42.0 (2020-12-04)
 -------------------

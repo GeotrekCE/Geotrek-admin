@@ -337,6 +337,9 @@ tr.selected-row td {
 #panelleft {
     display: flex;
 }
+#container {
+    height: calc(100vh - 41px);
+}
 
 #mainmap {
     position: absolute;
