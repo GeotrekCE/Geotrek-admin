@@ -133,7 +133,6 @@ CREATE FUNCTION {# geotrek.core #}.elevation_path_iu() RETURNS trigger SECURITY 
 DECLARE
     elevation elevation_infos;
 BEGIN
-    RAISE WARNING '████████████████████ PATH % ████████████████████', NEW.id;
     SELECT * FROM ft_elevation_infos(NEW.geom, {{ ALTIMETRIC_PROFILE_STEP }}) INTO elevation;
     -- Update path geometry
     NEW.geom_3d := elevation.draped;

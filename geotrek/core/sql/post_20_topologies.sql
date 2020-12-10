@@ -144,7 +144,6 @@ BEGIN
     END IF;
 
     IF t_count > 0 THEN
-        RAISE WARNING '████████████████████ TOPOLOGY % ████████████████████', topology_id;
         SELECT * FROM ft_elevation_infos(egeom_3d, {{ ALTIMETRIC_PROFILE_STEP }}) INTO elevation;
         UPDATE core_topology SET geom = ST_Force2D(egeom),
                                  geom_3d = ST_Force3DZ(elevation.draped),
