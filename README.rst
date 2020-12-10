@@ -34,7 +34,7 @@ Documentation
 
 * More info at http://geotrek.fr (*french*)
 * `Installation and configuration instructions <http://geotrek.readthedocs.org>`_
-* Help us translate `on Transifex <https://www.transifex.com/organization/makina-corpus>`_
+* Help us translate `on Weblate <https://weblate.makina-corpus.net/>`_
 
 License
 -------
