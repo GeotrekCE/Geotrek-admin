@@ -2,17 +2,19 @@
 CHANGELOG
 =========
 
-2.42.1.dev0
+2.43.0 (2020-12-10)
 -------------------
 
 **BREAKING CHANGES**
 
-- Old attachments are now deleted by default in parser.  Add `delete_attachment = False`
-  attribute to your parsers to keep old behaviour.
+- Old attachments are now deleted by default in parser. Add `delete_attachment = False`
+  attribute to your parsers if you want to keep old behaviour (unlikely).
 
 **Bug fixes**
 
-- Fix height on map when editing an object
+- Fix creation of interventions with their own topology
+- Fix height of map on detail/create/update pages
+
 
 2.42.0 (2020-12-04)
 -------------------
