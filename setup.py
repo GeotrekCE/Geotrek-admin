@@ -26,7 +26,7 @@ setup(
     version=open(os.path.join(here, 'VERSION')).read().strip(),
     author='Makina Corpus',
     author_email='geobi@makina-corpus.com',
-    url='http://makina-corpus.com',
+    url='https://makina-corpus.com',
     description="Geotrek",
     long_description=(open(os.path.join(here, 'README.rst')).read() + '\n\n'
                       + open(os.path.join(here, 'docs', 'changelog.rst')).read()),
