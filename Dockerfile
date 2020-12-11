@@ -14,9 +14,6 @@ ENV CONVERSION_HOST="convertit"
 ENV CAPTURE_HOST="screamshotter"
 ENV CUSTOM_SETTINGS_FILE="/opt/geotrek-admin/var/conf/custom.py"
 
-ARG CPLUS_INCLUDE_PATH=/usr/include/gdal
-ARG C_INCLUDE_PATH=/usr/include/gdal
-
 WORKDIR /opt/geotrek-admin
 
 # Install postgis because raster2pgsl is required by manage.py loaddem
@@ -46,7 +43,7 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt requirements.txt
 RUN python3 -m venv env
 RUN env/bin/pip install -U setuptools==45.2.0
-RUN env/bin/pip install --no-cache-dir -r requirements.txt
+RUN env/bin/pip install --no-cache-dir -r requirements.txt -U
 
 COPY geotrek/ geotrek/
 COPY mapentity/ mapentity/
