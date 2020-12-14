@@ -27,7 +27,7 @@ class Practice(models.Model):
 
 class Site(AddPropertyMixin, MapEntityMixin, StructureRelated,
            TimeStampedModelMixin):
-    geom = models.GeometryField(verbose_name=_("Location"), srid=settings.SRID)
+    geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     description = models.TextField(verbose_name=_("Description"), blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
