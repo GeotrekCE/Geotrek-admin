@@ -7,7 +7,6 @@ from geotrek.outdoor.models import Site, Practice, SitePractice
 class SiteForm(CommonForm):
     practices = forms.ModelMultipleChoiceField(
         queryset=Practice.objects.all(),
-        widget=forms.CheckboxSelectMultiple(),
         required=False
     )
 
@@ -17,8 +16,8 @@ class SiteForm(CommonForm):
         Div(
             'structure',
             'name',
-            'description',
             'practices',
+            'description',
             'eid',
         )
     ]
