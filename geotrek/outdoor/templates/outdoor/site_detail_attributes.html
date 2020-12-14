@@ -13,6 +13,10 @@
             <td>{{ object.name }}</td>
         </tr>
         <tr>
+            <th>{% trans "Practices" %}</th>
+            <td>{% valuelist object.site_practices.all field="practice" %}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"description" }}</th>
             <td>{% if object.description %}{{ object.description|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
