@@ -33,8 +33,8 @@ class Site(AddPropertyMixin, MapEntityMixin, StructureRelated,
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     class Meta:
-        verbose_name = _("Site")
-        verbose_name_plural = _("Sites")
+        verbose_name = _("Outdoor site")
+        verbose_name_plural = _("Outdoor sites")
         ordering = ('name', )
 
     def __str__(self):
@@ -73,7 +73,7 @@ Site.add_property('areas', lambda self: intersecting(RestrictedArea, self, dista
 
 class SitePractice(BasePublishableMixin, models.Model):
     site = models.ForeignKey('Site', related_name="site_practices", on_delete=models.CASCADE,
-                             verbose_name=_("Site"))
+                             verbose_name=_("Outdoor site"))
     practice = models.ForeignKey('Practice', related_name="site_practices", on_delete=models.PROTECT,
                                  verbose_name=_("Practice"))
     description_teaser = models.TextField(verbose_name=_("Description teaser"), blank=True,
