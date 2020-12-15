@@ -7,7 +7,7 @@ from django.utils.translation import get_language
 from rest_framework import serializers as rest_serializers
 from rest_framework import serializers as rest_fields
 
-from .models import Theme, RecordSource, TargetPortal, FileType, Attachment
+from .models import Theme, RecordSource, TargetPortal, FileType, Attachment, Label
 
 
 class TranslatedModelSerializer(rest_serializers.ModelSerializer):
@@ -84,3 +84,11 @@ class TargetPortalSerializer(rest_serializers.ModelSerializer):
     class Meta:
         model = TargetPortal
         fields = ('name', 'website')
+
+
+class LabelSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+    filter_rando = rest_serializers.ReadOnlyField(source='filter')
+
+    class Meta:
+        model = Label
+        fields = ('id', 'pictogram', 'name', 'advice', 'filter_rando')

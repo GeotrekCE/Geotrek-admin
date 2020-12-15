@@ -115,7 +115,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
     portal = models.ManyToManyField('common.TargetPortal',
                                     blank=True, related_name='treks',
                                     verbose_name=_("Portal"))
-    labels = models.ManyToManyField('LabelTrek', related_name='labels',
+    labels = models.ManyToManyField('common.Label', related_name='labels',
                                     verbose_name=_("Labels"),
                                     blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
@@ -606,23 +606,6 @@ class DifficultyLevel(OptionalPictogramMixin):
             except IndexError:
                 self.id = 1
         super(DifficultyLevel, self).save(*args, **kwargs)
-
-
-class LabelTrek(OptionalPictogramMixin):
-
-    name = models.CharField(verbose_name=_("Name"), max_length=128)
-    advice = models.TextField(verbose_name=_("Advices"), blank=True,
-                              help_text=_("Advice linked to the label"), default='')
-    filter_rando = models.BooleanField(verbose_name=_("Filter rando"), help_text=_("Show filters portal"),
-                                       default=False)
-
-    class Meta:
-        verbose_name = _("Trekking Label")
-        verbose_name_plural = _("Trekking Labels")
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
 
 
 class WebLinkManager(models.Manager):

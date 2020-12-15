@@ -140,3 +140,18 @@ class ReservationSystem(models.Model):
         verbose_name = _("Reservation system")
         verbose_name_plural = _("Reservation systems")
         ordering = ('name',)
+
+
+class Label(OptionalPictogramMixin):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    advice = models.TextField(verbose_name=_("Advice"), blank=True)
+    filter = models.BooleanField(verbose_name=_("Filter"), default=False,
+                                 help_text=_("Show this label as a filter in public portal"))
+
+    class Meta:
+        verbose_name = _("Label")
+        verbose_name_plural = _("Labels")
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name

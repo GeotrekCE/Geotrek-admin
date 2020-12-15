@@ -20,7 +20,7 @@ from geotrek.common.serializers import (
     PictogramSerializerMixin, ThemeSerializer,
     TranslatedModelSerializer, PicturesSerializerMixin,
     PublishableSerializerMixin, RecordSourceSerializer,
-    TargetPortalSerializer
+    TargetPortalSerializer, LabelSerializer,
 )
 from geotrek.authent.serializers import StructureSerializer
 
@@ -103,12 +103,6 @@ class WebLinkSerializer(TranslatedModelSerializer):
         fields = ('id', 'name', 'category', 'url')
 
 
-class LabelTrekSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
-    class Meta:
-        model = trekking_models.LabelTrek
-        fields = ('id', 'pictogram', 'name', 'advice', 'filter_rando')
-
-
 class CloseTrekSerializer(TranslatedModelSerializer):
     category_id = rest_serializers.ReadOnlyField(source='prefixed_category_id')
 
@@ -163,7 +157,7 @@ class TrekSerializer(PublishableSerializerMixin, PicturesSerializerMixin,
     usages = PracticeSerializer(many=True)  # Rando v1 compat
     accessibilities = AccessibilitySerializer(many=True)
     web_links = WebLinkSerializer(many=True)
-    labels = LabelTrekSerializer(many=True)
+    labels = LabelSerializer(many=True)
     relationships = TrekRelationshipSerializer(many=True, source='published_relationships')
     treks = CloseTrekSerializer(many=True, source='published_treks')
     source = RecordSourceSerializer(many=True)

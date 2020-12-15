@@ -83,7 +83,7 @@ TARGET_PORTAL_PROPERTIES_JSON_STRUCTURE = sorted([
 
 STRUCTURE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
 
-TREK_LABEL_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'advice', 'filter_rando', 'name', 'pictogram'])
+TREK_LABEL_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'advice', 'filter', 'name', 'pictogram'])
 
 INFORMATION_DESK_PROPERTIES_JSON_STRUCTURE = sorted([
     'description', 'email', 'latitude', 'longitude',
@@ -109,7 +109,7 @@ class BaseApiTest(TestCase):
         cls.nb_treks = 15
         cls.theme = common_factory.ThemeFactory.create()
         cls.network = trek_factory.TrekNetworkFactory.create()
-        cls.label = trek_factory.LabelTrekFactory(id=23)
+        cls.label = common_factory.LabelFactory(id=23)
         cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(cls.nb_treks)
         cls.treks[0].themes.add(cls.theme)
         cls.treks[0].networks.add(cls.network)
@@ -244,11 +244,11 @@ class BaseApiTest(TestCase):
     def get_touristiccontent_detail(self, id_content, params=None):
         return self.client.get(reverse('apiv2:touristiccontent-detail', args=(id_content,)), params)
 
-    def get_treklabel_list(self, params=None):
-        return self.client.get(reverse('apiv2:treklabel-list'), params)
+    def get_label_list(self, params=None):
+        return self.client.get(reverse('apiv2:label-list'), params)
 
-    def get_treklabel_detail(self, id_label, params=None):
-        return self.client.get(reverse('apiv2:treklabel-detail', args=(id_label,)), params)
+    def get_label_detail(self, id_label, params=None):
+        return self.client.get(reverse('apiv2:label-detail', args=(id_label,)), params)
 
     def get_informationdesk_list(self, params=None):
         return self.client.get(reverse('apiv2:informationdesk-list'), params)
@@ -569,15 +569,15 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         #  test response code
         self.assertEqual(response.status_code, 200)
 
-    def test_treklabels_list(self):
+    def test_labels_list(self):
         self.check_number_elems_response(
-            self.get_treklabel_list(),
-            trek_models.LabelTrek
+            self.get_label_list(),
+            common_models.Label
         )
 
-    def test_treklabels_detail(self):
+    def test_labels_detail(self):
         self.check_structure_response(
-            self.get_treklabel_detail(self.label.pk),
+            self.get_label_detail(self.label.pk),
             TREK_LABEL_PROPERTIES_JSON_STRUCTURE
         )
 

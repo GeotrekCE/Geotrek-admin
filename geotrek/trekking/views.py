@@ -18,7 +18,7 @@ from mapentity.views import (MapEntityLayer, MapEntityList, MapEntityJsonList,
 from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.models import Attachment, RecordSource, TargetPortal
+from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
 from geotrek.common.views import (FormsetMixin, MetaMixin, PublicOrReadPermMixin, DocumentPublic,
                                   DocumentBookletPublic, MarkupPublic)
 from geotrek.core.models import AltimetryMixin
@@ -28,7 +28,7 @@ from geotrek.zoning.models import District, City, RestrictedArea
 from .filters import TrekFilterSet, POIFilterSet, ServiceFilterSet
 from .forms import (TrekForm, TrekRelationshipFormSet, POIForm,
                     WebLinkCreateFormPopup, ServiceForm)
-from .models import LabelTrek, Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild
+from .models import Trek, POI, WebLink, Service, TrekRelationship, OrderedTrekChild
 from .serializers import (TrekGPXSerializer, TrekSerializer, POISerializer,
                           CirkwiTrekSerializer, CirkwiPOISerializer, ServiceSerializer,
                           TrekGeojsonSerializer, POIGeojsonSerializer, ServiceGeojsonSerializer)
@@ -126,7 +126,7 @@ class TrekDetail(MapEntityDetail):
     def get_context_data(self, *args, **kwargs):
         context = super(TrekDetail, self).get_context_data(*args, **kwargs)
         context['can_edit'] = self.get_object().same_structure(self.request.user)
-        context['labels'] = LabelTrek.objects.all()
+        context['labels'] = Label.objects.all()
         return context
 
 

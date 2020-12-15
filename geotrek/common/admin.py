@@ -109,6 +109,12 @@ class ReservationSystemAdmin(MergeActionMixin, admin.ModelAdmin):
     merge_field = 'name'
 
 
+class LabelAdmin(TranslationAdmin):
+    list_display = ('pictogram_img', 'name', 'filter')
+    list_display_links = ('name',)
+    search_fields = ('name', )
+
+
 admin.site.register(common_models.Organism, OrganismAdmin)
 admin.site.register(common_models.Attachment, AttachmentAdmin)
 admin.site.register(common_models.FileType, FileTypeAdmin)
@@ -116,3 +122,4 @@ admin.site.register(common_models.Theme, ThemeAdmin)
 admin.site.register(common_models.RecordSource, RecordSourceAdmin)
 admin.site.register(common_models.TargetPortal, TargetPortalAdmin)
 admin.site.register(common_models.ReservationSystem, ReservationSystemAdmin)
+admin.site.register(common_models.Label, LabelAdmin)

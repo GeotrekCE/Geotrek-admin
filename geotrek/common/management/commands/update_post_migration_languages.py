@@ -6,10 +6,7 @@ from django.db.models import Q
 from django.utils.translation import gettext as _
 from django.utils import translation
 
-from geotrek.common.models import TargetPortal
-
-if 'geotrek.trekking' in settings.INSTALLED_APPS:
-    from geotrek.trekking.models import LabelTrek
+from geotrek.common.models import TargetPortal, Label
 
 logger = logging.getLogger(__name__)
 
@@ -33,11 +30,11 @@ class Command(BaseCommand):
                 ).update(**{'description_{}'.format(lang): _('Geotrek is a web app allowing you to prepare your '
                                                              'next trekking trip !')})
                 if 'geotrek.trekking' in settings.INSTALLED_APPS:
-                    self.stdout.write("LabelTrek")
-                    LabelTrek.objects.filter(
+                    self.stdout.write("Label")
+                    Label.objects.filter(
                         Q(**{'name_{}'.format(lang): ''}) | Q(**{'name_{}'.format(lang): None})
                     ).update(**{'name_{}'.format(lang): _('Is in the midst of the park')})
-                    LabelTrek.objects.filter(
+                    Label.objects.filter(
                         Q(**{'advice_{}'.format(lang): ''}) | Q(**{'advice_{}'.format(lang): None})
                     ).update(**{'advice_{}'.format(lang): _('The national park is an unrestricted natural area but '
                                                             'subjected to regulations which must be known '
