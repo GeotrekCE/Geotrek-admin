@@ -25,8 +25,8 @@ class Practice(models.Model):
         return self.name
 
 
-class Site(AddPropertyMixin, MapEntityMixin, StructureRelated,
-           TimeStampedModelMixin, PublishableMixin):
+class Site(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
+           TimeStampedModelMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
     practice = models.ForeignKey('Practice', related_name="sites", on_delete=models.PROTECT,
                                  verbose_name=_("Practice"), null=True, blank=True)

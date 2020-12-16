@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+{% load i18n geotrek_tags mapentity_tags static %}
+
+{% settings_value "PRIMARY_COLOR" as primary_color %}
+
+<html lang="en">
+  <head>
+    {% block style %}
+      <style type="text/css">
+        {% include template_css %}
+
+        .intro-left .teaser,
+        .meta-items-title,
+        .advice-title,
+        .elevation-title,
+        .half-block h2,
+        .block h2,
+        .information-desks h2 {
+          color: {{ primary_color }};
+        }
+
+      </style>
+    {% endblock style %}
+  </head>
+  <body>
+    {% block body %}
+      <header>
+        <div class="logo">
+          <img src="file://{% media_static_fallback_path "upload/logo-header.png" "images/logo-header.png" %}" alt="">
+        </div>
+        <div class="url">
+          {% block url %}
+            <div class="main">rando.geotrek.fr</div>
+            <div class="geo">{% trans "Powered by geotrek.fr" %}</div>
+          {% endblock %}
+        </div>
+      </header>
+      <div class="gray">
+        {% if object.practice %}
+          <div class="main-icon category-S{{ object.practice.pk }}">
+            <img src="file://{{ object.practice.pictogram.path }}" alt="">
+          </div>
+        {% endif %}
+        <div class="main-title">
+          <h1>{{ object.name }}</h1>
+          <h2>{% block main_title_h2 %}
+                {{ object.districts.0.name }}{% if object.districts and object.city %} - {% endif %}{{ object.city }}
+              {% endblock %}
+          </h2>
+        </div>
+        <hr>
+        {% if object.picture_print %}
+          <div class="main-picture" style="background-image: url('file://{{ object.picture_print.path }}');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
+          {% if object.picture_print.legend or object.picture_print.author %}
+            <legend>
+              {% trans "Attribution" %} :
+              {{ object.picture_print.legend }}
+              {% if object.picture_print.author %}({{ object.picture_print.author }}){% endif %}
+            </legend>
+          {% endif %}
+        {% else %}
+          <div class="main-picture" style="background-image: url('file://{% media_static_fallback_path "upload/placeholder.png" "images/placeholder.png" %}');"></div><div class="main-map" style="background-image: url('file://{{ map_path }}');"></div>
+        {% endif %}
+      </div>
+      <div class="intro">
+        <div class="intro-left">
+          {% if object.description_teaser %}
+            <section class="teaser text-content">
+              {{ object.description_teaser|safe }}
+            </section>
+          {% endif %}
+        </div>
+        <div class="meta-items">
+          <div class="meta-items-title">{% trans "Useful information" %}</div>
+          <section class="meta-items-list">
+            {% if object.practice %}
+              <span class="meta-item">
+                <span class="meta-item-label">{% trans "Practice" %}</span>
+                <span class="meta-item-value">{{ object.practice }}</span>
+              </span>
+            {% endif %}
+            <div class="lists">
+              {% if object.themes.all %}
+                <span class="meta-item">
+                  <span class="meta-item-label">{% trans "Themes" %}</span>
+                  {% for theme in object.themes.all %}<span class="meta-item-value">{{ theme.label }}</span>{% endfor %}
+                </span>
+              {% endif %}
+            </div>
+          </section>
+        </div>
+      </div>
+      {% block description %}
+        {% if object.description %}
+          <div class="inner-title">
+            <h2>{% trans "Description" %}</h2>
+          </div>
+          <section class="description">
+            <div class="text-content">{{ object.description|safe }}</div>
+          </section>
+        {% endif %}
+      {% endblock description %}
+      <div class="inner-title">
+        <h2>{% trans "Geographical location" %}</h2>
+      </div>
+      <div class="full-map">
+        <img src="file://{{ map_path }}" alt="">
+      </div>
+      <div class="inner-title">
+        <h2>{% trans "All useful information" %}</h2>
+      </div>
+      {% if object.practical_info %}
+        <div class="advice">
+          <div class="advice-title">
+            {% trans "Practical info" %}
+          </div>
+          <div class="advice-content">{{ object.practical_info | safe }}</div>
+        </div>
+      {% endif %}
+      {% block source %}
+        {% if object.source.all %}
+          <section class="half-block source">
+            <h2>{% trans "Source" %}</h2>
+            {% for s in object.source.all %}
+               <div class="text-content">
+                 {% if s.pictogram %}<img src="file://{{ s.pictogram.path }}">{% endif %}
+                 {{ s.name }}
+               </div>
+            {% endfor %}
+          </section>
+        {% endif %}
+      {% endblock source %}
+    {% endblock body %}
+    {% block footer %}
+      <div id="footer">
+        <div class="text">{% now 'SHORT_DATE_FORMAT' %} &#8226; {{ object.name }} &#8226;</div>
+      </div>
+    {% endblock footer %}
+  </body>
+</html>
