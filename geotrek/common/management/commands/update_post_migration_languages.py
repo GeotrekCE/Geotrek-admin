@@ -29,14 +29,13 @@ class Command(BaseCommand):
                     **{'description_{}'.format(lang): ''}
                 ).update(**{'description_{}'.format(lang): _('Geotrek is a web app allowing you to prepare your '
                                                              'next trekking trip !')})
-                if 'geotrek.trekking' in settings.INSTALLED_APPS:
-                    self.stdout.write("Label")
-                    Label.objects.filter(
-                        Q(**{'name_{}'.format(lang): ''}) | Q(**{'name_{}'.format(lang): None})
-                    ).update(**{'name_{}'.format(lang): _('Is in the midst of the park')})
-                    Label.objects.filter(
-                        Q(**{'advice_{}'.format(lang): ''}) | Q(**{'advice_{}'.format(lang): None})
-                    ).update(**{'advice_{}'.format(lang): _('The national park is an unrestricted natural area but '
-                                                            'subjected to regulations which must be known '
-                                                            'by all visitors.')})
+                self.stdout.write("Label is park centered")
+                Label.objects.filter(pk=1).filter(
+                    Q(**{'name_{}'.format(lang): ''}) | Q(**{'name_{}'.format(lang): None})
+                ).update(**{'name_{}'.format(lang): _('Is in the midst of the park')})
+                Label.objects.filter(pk=1).filter(
+                    Q(**{'advice_{}'.format(lang): ''}) | Q(**{'advice_{}'.format(lang): None})
+                ).update(**{'advice_{}'.format(lang): _('The national park is an unrestricted natural area but '
+                                                        'subjected to regulations which must be known '
+                                                        'by all visitors.')})
         self.stdout.write("Done.")

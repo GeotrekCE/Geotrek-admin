@@ -638,7 +638,7 @@ class WebLink(models.Model):
 
 class WebLinkCategory(PictogramMixin):
 
-    label = models.CharField(verbose_name=_("Label"), max_length=128)
+    label = models.CharField(verbose_name=_("Name"), max_length=128)
 
     class Meta:
         verbose_name = _("Web link category")
@@ -747,7 +747,7 @@ if 'geotrek.signage' in settings.INSTALLED_APPS:
 
 class POIType(PictogramMixin):
 
-    label = models.CharField(verbose_name=_("Label"), max_length=128)
+    label = models.CharField(verbose_name=_("Name"), max_length=128)
     cirkwi = models.ForeignKey('cirkwi.CirkwiPOICategory', verbose_name=_("Cirkwi POI category"), null=True, blank=True, on_delete=models.CASCADE)
 
     class Meta:
