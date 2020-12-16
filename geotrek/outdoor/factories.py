@@ -2,8 +2,15 @@ import factory
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
 from geotrek.authent.factories import StructureRelatedDefaultFactory
-from geotrek.outdoor.models import Site
+from geotrek.outdoor.models import Site, Practice
 from mapentity.factories import UserFactory
+
+
+class PracticeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Practice
+
+    name = "Practice"
 
 
 class SiteFactory(StructureRelatedDefaultFactory):
@@ -11,7 +18,14 @@ class SiteFactory(StructureRelatedDefaultFactory):
         model = Site
 
     name = "Site"
+    practice = factory.SubFactory(PracticeFactory)
     description = "Blah"
+    description_teaser = "More blah"
+    ambiance = "Party time!"
+    advice = "Warning!"
+    period = "Summer"
+    published = True
+    eid = "42"
     geom = 'GEOMETRYCOLLECTION(POINT(0 0))'
 
 
@@ -19,7 +33,7 @@ class OutdoorManagerFactory(UserFactory):
     is_staff = True
 
     @factory.post_generation
-    def create_Outdoor_manager(obj, create, extracted, **kwargs):
+    def create_outdoor_manager(obj, create, extracted, **kwargs):
         for model in (Site, ):
             content_type = ContentType.objects.get_for_model(model)
             for action in ('add', 'change', 'delete', 'read', 'export'):

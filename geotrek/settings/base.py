@@ -494,6 +494,7 @@ EXPORT_HEADER_IMAGE_SIZE = {
     'dive': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
     'touristiccontent': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
     'touristicevent': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
+    'site': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
 }
 
 COMPLETENESS_FIELDS = {

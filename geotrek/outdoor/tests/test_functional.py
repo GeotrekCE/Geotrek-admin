@@ -16,8 +16,36 @@ class SiteViewsTests(CommonTest):
 
     def get_expected_json_attrs(self):
         return {
-            'name': 'Site',
+            'advice': 'Warning!',
+            'ambiance': 'Party time!',
+            'areas': [],
+            'cities': [],
             'description': 'Blah',
+            'description_teaser': 'More blah',
+            'districts': [],
+            'eid': '42',
+            'filelist_url': '/paperclip/get/outdoor/site/{}/'.format(self.obj.pk),
+            'map_image_url': '/image/site-{}.png'.format(self.obj.pk),
+            'name': 'Site',
+            'period': 'Summer',
+            'practice': {
+                'id': self.obj.practice.pk,
+                'name': 'Practice',
+            },
+            'printable': '/api/en/sites/{}/site.pdf'.format(self.obj.pk),
+            'publication_date': '2020-03-17',
+            'published': True,
+            'published_status': [
+                {'lang': 'en', 'language': 'English', 'status': True},
+                {'lang': 'es', 'language': 'Spanish', 'status': False},
+                {'lang': 'fr', 'language': 'French', 'status': False},
+                {'lang': 'it', 'language': 'Italian', 'status': False},
+            ],
+            'slug': 'site',
+            'structure': {
+                'id': self.obj.structure.pk,
+                'name': 'My structure',
+            },
         }
 
     def get_bad_data(self):
