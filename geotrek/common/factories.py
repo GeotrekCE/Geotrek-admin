@@ -5,6 +5,7 @@ from zipfile import ZipFile
 from geotrek.authent.factories import UserFactory
 from geotrek.common.models import Attachment
 from geotrek.common.utils.testdata import (dummy_filefield_as_sequence,
+                                           get_dummy_uploaded_image,
                                            get_dummy_uploaded_file)
 
 from . import models
@@ -103,3 +104,13 @@ class ReservationSystemFactory(factory.DjangoModelFactory):
         model = models.ReservationSystem
 
     name = factory.Sequence(lambda n: "Reservation system %s" % n)
+
+
+class LabelFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = models.Label
+
+    name = "Label"
+    pictogram = get_dummy_uploaded_image('label.png')
+    advice = "Advice label"
+    filter = True

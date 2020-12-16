@@ -99,20 +99,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.DifficultyLevel
             fields = ('id', 'cirkwi_level', 'label', 'pictogram')
 
-    class TrekLabelSerializer(serializers.ModelSerializer):
-        name = serializers.SerializerMethodField(read_only=True)
-        advice = serializers.SerializerMethodField(read_only=True)
-
-        def get_name(self, obj):
-            return get_translation_or_dict('name', self, obj)
-
-        def get_advice(self, obj):
-            return get_translation_or_dict('advice', self, obj)
-
-        class Meta:
-            model = trekking_models.LabelTrek
-            fields = ('id', 'advice', 'filter_rando', 'name', 'pictogram')
-
     class RouteSerializer(serializers.ModelSerializer):
         route = serializers.SerializerMethodField(read_only=True)
 
@@ -210,6 +196,21 @@ class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
             'author', 'backend', 'thumbnail',
             'legend', 'title', 'url', "type"
         )
+
+
+class LabelSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField(read_only=True)
+    advice = serializers.SerializerMethodField(read_only=True)
+
+    def get_name(self, obj):
+        return get_translation_or_dict('name', self, obj)
+
+    def get_advice(self, obj):
+        return get_translation_or_dict('advice', self, obj)
+
+    class Meta:
+        model = common_models.Label
+        fields = ('id', 'advice', 'filter', 'name', 'pictogram')
 
 
 if 'geotrek.tourism' in settings.INSTALLED_APPS:

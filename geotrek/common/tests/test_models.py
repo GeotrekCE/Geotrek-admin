@@ -1,3 +1,4 @@
+from geotrek.common.factories import LabelFactory
 from geotrek.common.models import Theme
 from django.core.files import File
 from django.test import TestCase
@@ -24,3 +25,9 @@ class ThemeModelTest(TestCase):
         for f in os.listdir(self.directory):
             if f not in self.files:
                 os.remove(os.path.join(self.directory, f))
+
+
+class LabelTest(TestCase):
+    def test_str(self):
+        label = LabelFactory.create(name="foo")
+        self.assertEqual(str(label), "foo")

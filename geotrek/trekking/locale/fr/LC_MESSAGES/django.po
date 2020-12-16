@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-01 08:00+0000\n"
+"POT-Creation-Date: 2020-12-16 11:08+0000\n"
 "PO-Revision-Date: 2020-09-22 15:57+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
-"Language-Team: French <https://weblate.makina-corpus.net/projects/"
-"geotrek-admin/trekking/fr/>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
+"admin/trekking/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -72,24 +72,6 @@ msgstr "Annuler"
 msgid "Create"
 msgstr "Créer"
 
-msgid "Launch Sync"
-msgstr "Lancer la synchro"
-
-msgid "Global tiles syncing ..."
-msgstr "Synchro des tuiles globales..."
-
-msgid "Trek tiles syncing ..."
-msgstr "Synchro des tuiles de randonnées..."
-
-msgid "Tiles synced ..."
-msgstr "Tuiles synchronisées..."
-
-msgid "Language"
-msgstr "Langue"
-
-msgid "Sync ended"
-msgstr "Synchro terminée"
-
 msgid "Departure"
 msgstr "Départ"
 
@@ -137,12 +119,6 @@ msgstr "Durée"
 
 msgid "In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)"
 msgstr "En heures (1.5 = 1 h 30, 24 = 1 jour, 48 = 2 jours)"
-
-msgid "Is in the midst of the park"
-msgstr "En coeur de parc"
-
-msgid "Crosses center of park"
-msgstr "Traverse le coeur du parc"
 
 msgid "Advised parking"
 msgstr "Parking conseillé"
@@ -212,6 +188,9 @@ msgstr "Source"
 
 msgid "Portal"
 msgstr "Portail"
+
+msgid "Labels"
+msgstr "Étiquettes"
 
 msgid "External id"
 msgstr "ID externe"
@@ -346,12 +325,6 @@ msgstr "Catégorie"
 msgid "Web link"
 msgstr "Lien web"
 
-msgid "Label"
-msgstr "Label"
-
-msgid "Labels"
-msgstr "Étiquettes"
-
 msgid "Web link category"
 msgstr "Lien web"
 
@@ -429,16 +402,6 @@ msgstr "Itinérance"
 msgid "Hike"
 msgstr "Randonnée"
 
-msgid "Init sync ..."
-msgstr "Début de synchro"
-
-msgid "Geotrek Rando"
-msgstr "Geotrek Rando"
-
-msgid "Geotrek is a web app allowing you to prepare your next trekking trip !"
-msgstr ""
-"Geotrek est une web app permettant de préparer à l'avance ses randonnées !"
-
 msgid "Attributes"
 msgstr "Informations"
 
@@ -464,27 +427,6 @@ msgstr ""
 "Vos images doivent avoir le même ratio (height/width) pour une meilleure "
 "integration dans le portail public."
 
-msgid "Sync verifications"
-msgstr "Vérification des synchros"
-
-msgid "Sync in progress"
-msgstr "Synchronisation en cours"
-
-msgid "An error occured"
-msgstr "Une erreur est survenue"
-
-msgid "Public web site sync"
-msgstr "Synchro du site web public"
-
-msgid "Confirmation"
-msgstr "Confirmation"
-
-msgid "Are you sure you want to sync ?"
-msgstr "Etes-vous certain de vouloir lancer la synchro ?"
-
-msgid "Sync"
-msgstr "Sync"
-
 msgid "GPX"
 msgstr "GPX"
 
@@ -494,17 +436,20 @@ msgstr "KML"
 msgid "Public print"
 msgstr "Impression grand public"
 
-msgid "Public print booklet"
-msgstr "Impression livret grand public"
-
 msgid "Print"
 msgstr "Impr."
+
+msgid "Public print booklet"
+msgstr "Impression livret grand public"
 
 msgid "Print booklet"
 msgstr "Impr. livret"
 
-msgid "yes,no"
-msgstr "oui,non"
+msgid "yes"
+msgstr "oui"
+
+msgid "no"
+msgstr "non"
 
 msgid "Child of:"
 msgstr "Enfant de:"
@@ -569,16 +514,6 @@ msgstr "Sur votre chemin..."
 msgid "All useful information"
 msgstr "Toutes les infos pratiques"
 
-msgid "This hike is in the core of the national park"
-msgstr "Cet itinéraire est dans le cœur du Parc national"
-
-msgid ""
-"The national park is an unrestricted natural area but subjected to "
-"regulations which must be known by all visitors."
-msgstr ""
-"Le Parc national est un territoire naturel, ouvert à tous, mais soumis à une "
-"réglementation qu’il est utile de connaître pour préparer son séjour"
-
 msgid "Advices"
 msgstr "Recommandations"
 
@@ -629,6 +564,9 @@ msgstr "Ajouter un POI"
 msgid "Add a new service"
 msgstr "Ajouter un service"
 
+msgid "Sync"
+msgstr "Sync"
+
 msgid "Add Web link"
 msgstr "Ajouter un lien web"
 
@@ -651,20 +589,12 @@ msgstr "%s min"
 msgid "Geographical location"
 msgstr "Situation géographique"
 
-msgid "Trekking Label"
-msgstr "Étiquette de randonnée"
+msgid ""
+"The national park is an unrestricted natural area but subjected to "
+"regulations which must be known by all visitors."
+msgstr ""
+"Le Parc national est un territoire naturel, ouvert à tous, mais soumis à une "
+"réglementation qu’il est utile de connaître pour préparer son séjour"
 
-msgid "Trekking Labels"
-msgstr "Étiquettes de randonnée"
-
-msgid "Advice linked to the label"
-msgstr "Recommandations liés à l'étiquette"
-
-msgid "Description of the label"
-msgstr "Description de l'étiquette"
-
-msgid "Filter rando"
-msgstr "Filtre rando"
-
-msgid "Show filters portal"
-msgstr "Afficher le filtre sur le portail"
+msgid "This hike is in the core of the national park"
+msgstr "Cet itinéraire est dans le cœur du Parc national"

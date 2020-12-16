@@ -26,7 +26,7 @@ from unittest import util as testutil
 
 from mapentity.factories import SuperUserFactory
 
-from geotrek.common.factories import (AttachmentFactory, ThemeFactory,
+from geotrek.common.factories import (AttachmentFactory, ThemeFactory, LabelFactory,
                                       RecordSourceFactory, TargetPortalFactory)
 from geotrek.common.tests import CommonTest, CommonLiveTest, TranslationResetMixin
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
@@ -39,7 +39,7 @@ from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import SignageFactory
 from geotrek.zoning.factories import DistrictFactory, CityFactory
 from geotrek.trekking.models import POI, Trek, Service, OrderedTrekChild
-from geotrek.trekking.factories import (LabelTrekFactory, POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
+from geotrek.trekking.factories import (POIFactory, POITypeFactory, TrekFactory, TrekWithPOIsFactory,
                                         TrekNetworkFactory, WebLinkFactory, AccessibilityFactory,
                                         TrekRelationshipFactory, ServiceFactory, ServiceTypeFactory,
                                         TrekWithServicesFactory, TrekWithInfrastructuresFactory,
@@ -722,7 +722,7 @@ class TrekJSONSetUp(TrekkingManagerTest):
         self.weblink = WebLinkFactory.create()
         self.trek.web_links.add(self.weblink)
 
-        self.label = LabelTrekFactory.create()
+        self.label = LabelFactory.create()
         self.trek.labels.add(self.label)
 
         self.source = RecordSourceFactory.create()
@@ -872,7 +872,7 @@ class TrekJSONDetailTest(TrekJSONSetUp):
                               "pictogram": os.path.join(settings.MEDIA_URL, self.label.pictogram.name),
                               "name": self.label.name,
                               "advice": self.label.advice,
-                              "filter_rando": self.label.filter_rando})
+                              "filter_rando": self.label.filter})
 
     def test_weblinks(self):
         self.assertDictEqual(self.result['web_links'][0],
