@@ -38,11 +38,11 @@ msgstr "Description"
 msgid "External id"
 msgstr "ID externe"
 
-msgid "Site"
-msgstr "Site"
+msgid "Outdoor site"
+msgstr "Site outdoor"
 
-msgid "Sites"
-msgstr "Sites"
+msgid "Outdoor sites"
+msgstr "Sites outdoor"
 
 msgid "Treks"
 msgstr "Itinéraires"

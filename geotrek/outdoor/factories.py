@@ -12,7 +12,7 @@ class SiteFactory(StructureRelatedDefaultFactory):
 
     name = "Site"
     description = "Blah"
-    geom = 'POINT(0 0)'
+    geom = 'GEOMETRYCOLLECTION(POINT(0 0))'
 
 
 class OutdoorManagerFactory(UserFactory):

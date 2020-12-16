@@ -9,7 +9,10 @@ class SiteViewsTests(CommonTest):
     model = Site
     modelfactory = SiteFactory
     userfactory = OutdoorManagerFactory
-    expected_json_geom = {'type': 'Point', 'coordinates': [-1.3630812, -5.9838563]}
+    expected_json_geom = {
+        'type': 'GeometryCollection',
+        'geometries': [{'type': 'Point', 'coordinates': [-1.3630812, -5.9838563]}],
+    }
 
     def get_expected_json_attrs(self):
         return {
@@ -27,5 +30,5 @@ class SiteViewsTests(CommonTest):
             'structure': StructureFactory.create().pk,
             'name_en': 'test en',
             'name_fr': 'test fr',
-            'geom': '{"type": "Point", "coordinates":[0, 0]}',
+            'geom': '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates":[0, 0]}]}',
         }
