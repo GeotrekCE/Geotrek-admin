@@ -115,7 +115,7 @@ class Trek(Topology, StructureRelated, PicturesMixin, PublishableMixin, MapEntit
     portal = models.ManyToManyField('common.TargetPortal',
                                     blank=True, related_name='treks',
                                     verbose_name=_("Portal"))
-    labels = models.ManyToManyField('common.Label', related_name='labels',
+    labels = models.ManyToManyField('common.Label', related_name='treks',
                                     verbose_name=_("Labels"),
                                     blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)

@@ -18,11 +18,18 @@ class SiteForm(CommonForm):
             'ambiance',
             'advice',
             'period',
+            'labels',
+            'themes',
+            'portal',
+            'source',
+            'information_desks',
+            'web_links',
             'eid',
         )
     ]
 
     class Meta:
         fields = ['geom', 'structure', 'name', 'review', 'published', 'practice', 'description',
-                  'description_teaser', 'ambiance', 'advice', 'period', 'eid']
+                  'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
+                  'portal', 'source', 'information_desks', 'web_links', 'eid']
         model = Site

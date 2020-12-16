@@ -25,9 +25,12 @@ class SiteViewsTests(CommonTest):
             'districts': [],
             'eid': '42',
             'filelist_url': '/paperclip/get/outdoor/site/{}/'.format(self.obj.pk),
+            'information_desks': [],
+            'labels': [],
             'map_image_url': '/image/site-{}.png'.format(self.obj.pk),
             'name': 'Site',
             'period': 'Summer',
+            'portal': [],
             'practice': {
                 'id': self.obj.practice.pk,
                 'name': 'Practice',
@@ -42,10 +45,13 @@ class SiteViewsTests(CommonTest):
                 {'lang': 'it', 'language': 'Italian', 'status': False},
             ],
             'slug': 'site',
+            'source': [],
             'structure': {
                 'id': self.obj.structure.pk,
                 'name': 'My structure',
             },
+            'themes': [],
+            'web_links': [],
         }
 
     def get_bad_data(self):

@@ -3,8 +3,12 @@ from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.serializers import StructureSerializer
-from geotrek.common.serializers import PublishableSerializerMixin, TranslatedModelSerializer
+from geotrek.common.serializers import (PublishableSerializerMixin, TranslatedModelSerializer,
+                                        LabelSerializer, ThemeSerializer, TargetPortalSerializer,
+                                        RecordSourceSerializer)
 from geotrek.outdoor.models import Practice, Site
+from geotrek.tourism.serializers import InformationDeskSerializer
+from geotrek.trekking.serializers import WebLinkSerializer
 from geotrek.zoning.serializers import ZoningSerializerMixin
 
 
@@ -17,11 +21,18 @@ class PracticeSerializer(ModelSerializer):
 class SiteSerializer(PublishableSerializerMixin, ZoningSerializerMixin, TranslatedModelSerializer):
     practice = PracticeSerializer()
     structure = StructureSerializer()
+    labels = LabelSerializer(many=True)
+    themes = ThemeSerializer(many=True)
+    portal = TargetPortalSerializer(many=True)
+    source = RecordSourceSerializer(many=True)
+    information_desks = InformationDeskSerializer(many=True)
+    web_links = WebLinkSerializer(many=True)
 
     class Meta:
         model = Site
         fields = ('id', 'structure', 'name', 'practice', 'description', 'description_teaser',
-                  'ambiance', 'advice', 'period', 'eid') + \
+                  'ambiance', 'advice', 'period', 'labels', 'themes', 'portal', 'source',
+                  'information_desks', 'web_links', 'eid') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields
 
