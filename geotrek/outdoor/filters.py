@@ -6,5 +6,5 @@ class SiteFilterSet(StructureRelatedFilterSet):
     class Meta(StructureRelatedFilterSet.Meta):
         model = Site
         fields = StructureRelatedFilterSet.Meta.fields + [
-            'practice', 'labels', 'themes', 'portal', 'source', 'information_desks', 'web_links',
+            'practice', 'labels', 'themes', 'portal', 'source', 'information_desks', 'web_links', 'type',
         ]

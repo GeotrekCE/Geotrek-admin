@@ -73,6 +73,10 @@
             </td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"type" }}</th>
+            <td>{% if object.type %}{{ object.type }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
             <th>{% trans "External id" %}</th>
             <td>{% if object.eid %}{{ object.eid }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>

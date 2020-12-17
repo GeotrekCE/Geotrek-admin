@@ -19,3 +19,9 @@ class OutdoorPracticeViewSet(api_viewsets.GeotrekGeometricViewset):
     serializer_class = api_serializers.OutdoorPracticeSerializer
     queryset = outdoor_models.Practice.objects \
         .order_by('pk')  # Required for reliable pagination
+
+
+class SiteTypeViewSet(api_viewsets.GeotrekGeometricViewset):
+    serializer_class = api_serializers.SiteTypeSerializer
+    queryset = outdoor_models.SiteType.objects \
+        .order_by('pk')  # Required for reliable pagination

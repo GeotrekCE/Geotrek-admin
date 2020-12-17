@@ -2,7 +2,7 @@ import factory
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
 from geotrek.authent.factories import StructureRelatedDefaultFactory
-from geotrek.outdoor.models import Site, Practice
+from geotrek.outdoor.models import Site, Practice, SiteType
 from mapentity.factories import UserFactory
 
 
@@ -11,6 +11,14 @@ class PracticeFactory(factory.DjangoModelFactory):
         model = Practice
 
     name = "Practice"
+
+
+class SiteTypeFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = SiteType
+
+    name = "Site type"
+    practice = factory.SubFactory(PracticeFactory)
 
 
 class SiteFactory(StructureRelatedDefaultFactory):
@@ -25,6 +33,7 @@ class SiteFactory(StructureRelatedDefaultFactory):
     advice = "Warning!"
     period = "Summer"
     published = True
+    type = factory.SubFactory(SiteTypeFactory)
     eid = "42"
     geom = 'GEOMETRYCOLLECTION(POINT(0 0))'
 

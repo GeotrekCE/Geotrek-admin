@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-04 17:16+0000\n"
+"POT-Creation-Date: 2020-12-17 15:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,11 +29,71 @@ msgstr "Pratique"
 msgid "Practices"
 msgstr "Pratiques"
 
+msgid "Site type"
+msgstr "Site type"
+
+msgid "Site types"
+msgstr "Site types"
+
 msgid "Location"
 msgstr "Emplacement"
 
 msgid "Description"
 msgstr "Description"
+
+msgid "Complete description"
+msgstr "Description complète"
+
+msgid "Description teaser"
+msgstr "Chapeau"
+
+msgid "A brief summary (map pop-ups)"
+msgstr "Bref résumé"
+
+msgid "Ambiance"
+msgstr "Ambiance"
+
+msgid "Main attraction and interest"
+msgstr "Attraction principal et intérêts"
+
+msgid "Advice"
+msgstr "Recommandations"
+
+msgid "Risks, danger, best period, ..."
+msgstr "Risques, danger, meilleure période, ..."
+
+msgid "Period"
+msgstr "Période"
+
+msgid "Labels"
+msgstr "Étiquettes"
+
+msgid "Themes"
+msgstr "Thèmes"
+
+msgid "Main theme(s)"
+msgstr "Thème(s) principal(aux)"
+
+msgid "Information desks"
+msgstr "Lieux de renseignement"
+
+msgid "Where to obtain information"
+msgstr "Où obtenir des informations"
+
+msgid "Portal"
+msgstr "Portail"
+
+msgid "Source"
+msgstr "Source"
+
+msgid "Web links"
+msgstr "Liens web"
+
+msgid "External resources"
+msgstr "Ressources externes"
+
+msgid "Type"
+msgstr "Type"
 
 msgid "External id"
 msgstr "ID externe"
@@ -43,6 +103,12 @@ msgstr "Site outdoor"
 
 msgid "Outdoor sites"
 msgstr "Sites outdoor"
+
+msgid "Add a new outdoor site"
+msgstr "Ajouter un nouveau site outdoor"
+
+msgid "Sites"
+msgstr "Sites"
 
 msgid "Treks"
 msgstr "Itinéraires"
@@ -68,50 +134,44 @@ msgstr "Événements touristiques"
 msgid "Cities"
 msgstr "Communes"
 
+msgid "Published cities"
+msgstr "Communes publiées"
+
 msgid "Districts"
 msgstr "Secteurs"
+
+msgid "Published districts"
+msgstr "Secteurs publiés"
 
 msgid "Restricted areas"
 msgstr "Zonages réglementaires"
 
-msgid "Description teaser"
-msgstr "Chapeau"
-
-msgid "A brief summary (map pop-ups)"
-msgstr "Bref résumé"
-
-msgid "Complete description"
-msgstr "Description complète"
-
-msgid "Ambiance"
-msgstr "Ambiance"
-
-msgid "Main attraction and interest"
-msgstr "Attraction principal et intérêts"
-
-msgid "Advice"
-msgstr "Recommandations"
-
-msgid "Risks, danger, best period, ..."
-msgstr "Risques, danger, meilleure période, ..."
-
-msgid "Period"
-msgstr "Période"
-
-msgid "Practice site"
-msgstr "Site de pratique"
-
-msgid "Practice sites"
-msgstr "Sites de pratique"
-
-msgid "Add a new site"
-msgstr "Ajouter un nouveau site"
+msgid "Published areas"
+msgstr "Zonages réglementaires publiés"
 
 msgid "Attributes"
 msgstr "Informations"
 
 msgid "None"
 msgstr "Aucun(e)"
+
+msgid "Powered by geotrek.fr"
+msgstr "Propulsé par geotrek.fr"
+
+msgid "Attribution"
+msgstr "Crédit photo"
+
+msgid "Useful information"
+msgstr "Infos pratiques"
+
+msgid "Geographical location"
+msgstr "Situation géographique"
+
+msgid "All useful information"
+msgstr "Toutes les infos pratiques"
+
+msgid "Practical info"
+msgstr "Informations pratiques"
 
 msgid "Invalid geometry value."
 msgstr "Valeur de géométrie invalide"

@@ -25,6 +25,20 @@ class Practice(models.Model):
         return self.name
 
 
+class SiteType(models.Model):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    practice = models.ForeignKey('Practice', related_name="types", on_delete=models.PROTECT,
+                                 verbose_name=_("Practice"), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _("Site type")
+        verbose_name_plural = _("Site types")
+        ordering = ('name', )
+
+    def __str__(self):
+        return self.name
+
+
 class Site(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
            TimeStampedModelMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
@@ -54,6 +68,8 @@ class Site(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
                                     verbose_name=_("Source"))
     web_links = models.ManyToManyField('trekking.WebLink', related_name="sites", blank=True, verbose_name=_("Web links"),
                                        help_text=_("External resources"))
+    type = models.ForeignKey(SiteType, related_name="sites", on_delete=models.PROTECT,
+                             verbose_name=_("Type"), null=True, blank=True)
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     class Meta:
@@ -75,6 +91,10 @@ class Site(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
     def distance(self, to_cls):
         """Distance to associate this site to another class"""
         return None
+
+    @classmethod
+    def get_create_label(cls):
+        return _("Add a new outdoor site")
 
 
 Path.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))

@@ -24,6 +24,7 @@ class SiteForm(CommonForm):
             'source',
             'information_desks',
             'web_links',
+            'type',
             'eid',
         )
     ]
@@ -31,5 +32,5 @@ class SiteForm(CommonForm):
     class Meta:
         fields = ['geom', 'structure', 'name', 'review', 'published', 'practice', 'description',
                   'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
-                  'portal', 'source', 'information_desks', 'web_links', 'eid']
+                  'portal', 'source', 'information_desks', 'web_links', 'type', 'eid']
         model = Site

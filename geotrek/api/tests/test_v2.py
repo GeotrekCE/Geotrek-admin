@@ -103,6 +103,8 @@ SITE_PROPERTIES_JSON_STRUCTURE = sorted([
 
 OUTDOORPRACTICE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
 
+SITETYPE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'practice'])
+
 
 class BaseApiTest(TestCase):
     """
@@ -285,6 +287,12 @@ class BaseApiTest(TestCase):
 
     def get_outdoorpractice_detail(self, id_practice, params=None):
         return self.client.get(reverse('apiv2:outdoor-practice-detail', args=(id_practice,)), params)
+
+    def get_sitetype_list(self, params=None):
+        return self.client.get(reverse('apiv2:sitetype-list'), params)
+
+    def get_sitetype_detail(self, id_type, params=None):
+        return self.client.get(reverse('apiv2:sitetype-detail', args=(id_type,)), params)
 
     def get_config(self, params=None):
         return self.client.get(reverse('apiv2:config', params))
@@ -658,6 +666,18 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_structure_response(
             self.get_outdoorpractice_detail(self.site.practice.pk),
             OUTDOORPRACTICE_PROPERTIES_JSON_STRUCTURE
+        )
+
+    def test_sitetype_list(self):
+        self.check_number_elems_response(
+            self.get_sitetype_list(),
+            outdoor_models.SiteType
+        )
+
+    def test_sitetype_detail(self):
+        self.check_structure_response(
+            self.get_sitetype_detail(self.site.type.pk),
+            SITETYPE_PROPERTIES_JSON_STRUCTURE
         )
 
     def test_config(self):

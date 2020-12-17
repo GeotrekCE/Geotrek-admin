@@ -36,6 +36,7 @@ if 'geotrek.zoning' in settings.INSTALLED_APPS:
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     router.register('site', api_views.SiteViewSet, basename='site')
     router.register('outdoorpractice', api_views.OutdoorPracticeViewSet, basename='outdoor-practice')
+    router.register('sitetype', api_views.SiteTypeViewSet, basename='sitetype')
 
 app_name = 'apiv2'
 _urlpatterns = [

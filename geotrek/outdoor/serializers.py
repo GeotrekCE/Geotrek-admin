@@ -18,6 +18,12 @@ class PracticeSerializer(ModelSerializer):
         fields = ('id', 'name')
 
 
+class SiteTypeSerializer(ModelSerializer):
+    class Meta:
+        model = Practice
+        fields = ('id', 'name')
+
+
 class SiteSerializer(PublishableSerializerMixin, ZoningSerializerMixin, TranslatedModelSerializer):
     practice = PracticeSerializer()
     structure = StructureSerializer()
@@ -27,12 +33,13 @@ class SiteSerializer(PublishableSerializerMixin, ZoningSerializerMixin, Translat
     source = RecordSourceSerializer(many=True)
     information_desks = InformationDeskSerializer(many=True)
     web_links = WebLinkSerializer(many=True)
+    type = SiteTypeSerializer()
 
     class Meta:
         model = Site
         fields = ('id', 'structure', 'name', 'practice', 'description', 'description_teaser',
                   'ambiance', 'advice', 'period', 'labels', 'themes', 'portal', 'source',
-                  'information_desks', 'web_links', 'eid') + \
+                  'information_desks', 'web_links', 'type', 'eid') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields
 
