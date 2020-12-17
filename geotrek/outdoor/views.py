@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from rest_framework import permissions as rest_permissions
 from geotrek.authent.decorators import same_structure_required
+from geotrek.common.views import DocumentPublic, MarkupPublic
 from geotrek.outdoor.filters import SiteFilterSet
 from geotrek.outdoor.forms import SiteForm
 from geotrek.outdoor.models import Site
@@ -65,3 +66,22 @@ class SiteViewSet(MapEntityViewSet):
 
     def get_queryset(self):
         return Site.objects.annotate(api_geom=Transform("geom", settings.API_SRID))
+
+
+class SiteDocumentPublicMixin(object):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        content = self.get_object()
+
+        context['headerimage_ratio'] = settings.EXPORT_HEADER_IMAGE_SIZE['touristiccontent']
+        context['object'] = context['content'] = content
+
+        return context
+
+
+class SiteDocumentPublic(SiteDocumentPublicMixin, DocumentPublic):
+    pass
+
+
+class SiteMarkupPublic(SiteDocumentPublicMixin, MarkupPublic):
+    pass

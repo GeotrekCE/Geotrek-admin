@@ -486,6 +486,7 @@ EXPORT_MAP_IMAGE_SIZE = {
     'poi': (18.2, 18.2),
     'touristiccontent': (18.2, 18.2),
     'touristicevent': (18.2, 18.2),
+    'site': (18.2, 18.2),
 }
 
 EXPORT_HEADER_IMAGE_SIZE = {
@@ -494,6 +495,7 @@ EXPORT_HEADER_IMAGE_SIZE = {
     'dive': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
     'touristiccontent': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
     'touristicevent': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
+    'site': (10.7, 5.35),  # Keep ratio of THUMBNAIL_ALIASES['print']
 }
 
 COMPLETENESS_FIELDS = {

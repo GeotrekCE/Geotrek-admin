@@ -13,12 +13,28 @@
             <td>{{ object.name }}</td>
         </tr>
         <tr>
-            <th>{% trans "Practices" %}</th>
-            <td>{% valuelist object.site_practices.all field="practice" %}</td>
+            <th>{{ object|verbose:"practice" }}</th>
+            <td>{% if object.practice %}{{ object.practice }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"description" }}</th>
             <td>{% if object.description %}{{ object.description|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description_teaser" }}</th>
+            <td>{% if object.description_teaser %}{{ object.description_teaser|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"ambiance" }}</th>
+            <td>{% if object.ambiance %}{{ object.ambiance|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"advice" }}</th>
+            <td>{% if object.advice %}{{ object.advice|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"period" }}</th>
+            <td>{% if object.period %}{{ object.period }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{% trans "External id" %}</th>
