@@ -10,6 +10,7 @@ class SiteForm(CommonForm):
         Div(
             'structure',
             'name',
+            'parent',
             'review',
             'published',
             'practice',
@@ -32,5 +33,5 @@ class SiteForm(CommonForm):
     class Meta:
         fields = ['geom', 'structure', 'name', 'review', 'published', 'practice', 'description',
                   'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
-                  'portal', 'source', 'information_desks', 'web_links', 'type', 'eid']
+                  'portal', 'source', 'information_desks', 'web_links', 'type', 'parent', 'eid']
         model = Site

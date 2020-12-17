@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from rest_framework import permissions as rest_permissions
@@ -65,7 +66,12 @@ class SiteViewSet(MapEntityViewSet):
     permission_classes = [rest_permissions.DjangoModelPermissionsOrAnonReadOnly]
 
     def get_queryset(self):
-        return Site.objects.annotate(api_geom=Transform("geom", settings.API_SRID))
+        qs = Site.objects.filter(published=True)
+        if 'source' in self.request.GET:
+            qs = qs.filter(source__name__in=self.request.GET['source'].split(','))
+        if 'portal' in self.request.GET:
+            qs = qs.filter(Q(portal__name=self.request.GET['portal']) | Q(portal=None))
+        return qs.annotate(api_geom=Transform("geom", settings.API_SRID))
 
 
 class SiteDocumentPublicMixin(object):
