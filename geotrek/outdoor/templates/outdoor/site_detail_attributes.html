@@ -37,6 +37,42 @@
             <td>{% if object.period %}{{ object.period }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"labels" }}</th>
+            <td>
+                {% valuelist object.labels.all %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"themes" }}</th>
+            <td>
+                {% valuelist object.themes.all %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"web_links" }}</th>
+            <td>
+                {% valuelist object.web_links.all %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"information_desks" }}</th>
+            <td>
+                {% valuelist object.information_desks.all %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"source" }}</th>
+            <td>
+                {% valuelist object.source.all %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"portal" }}</th>
+            <td>
+                {% valuelist object.portal.all %}
+            </td>
+        </tr>
+        <tr>
             <th>{% trans "External id" %}</th>
             <td>{% if object.eid %}{{ object.eid }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>

@@ -39,6 +39,21 @@ class Site(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
     advice = models.TextField(verbose_name=_("Advice"), blank=True,
                               help_text=_("Risks, danger, best period, ..."))
     period = models.CharField(verbose_name=_("Period"), max_length=1024, blank=True)
+    labels = models.ManyToManyField('common.Label', related_name='sites', blank=True,
+                                    verbose_name=_("Labels"))
+    themes = models.ManyToManyField('common.Theme', related_name="sites", blank=True, verbose_name=_("Themes"),
+                                    help_text=_("Main theme(s)"))
+    information_desks = models.ManyToManyField('tourism.InformationDesk', related_name='sites',
+                                               blank=True, verbose_name=_("Information desks"),
+                                               help_text=_("Where to obtain information"))
+    portal = models.ManyToManyField('common.TargetPortal',
+                                    blank=True, related_name='sites',
+                                    verbose_name=_("Portal"))
+    source = models.ManyToManyField('common.RecordSource',
+                                    blank=True, related_name='sites',
+                                    verbose_name=_("Source"))
+    web_links = models.ManyToManyField('trekking.WebLink', related_name="sites", blank=True, verbose_name=_("Web links"),
+                                       help_text=_("External resources"))
     eid = models.CharField(verbose_name=_("External id"), max_length=1024, blank=True, null=True)
 
     class Meta:

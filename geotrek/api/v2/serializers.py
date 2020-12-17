@@ -599,6 +599,16 @@ if 'geotrek.zoning' in settings.INSTALLED_APPS:
 
 
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+    class OutdoorPracticeSerializer(serializers.ModelSerializer):
+        name = serializers.SerializerMethodField(read_only=True)
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        class Meta:
+            model = outdoor_models.Practice
+            fields = ('id', 'name')
+
     class SiteSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:site-detail')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
@@ -606,5 +616,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
         class Meta:
             model = outdoor_models.Site
             fields = (
-                'id', 'name', 'description', 'geometry', 'url'
+                'id', 'geometry', 'url', 'structure', 'name', 'practice', 'description',
+                'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
+                'portal', 'source', 'information_desks', 'web_links', 'eid',
             )

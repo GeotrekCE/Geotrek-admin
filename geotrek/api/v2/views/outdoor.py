@@ -13,3 +13,9 @@ class SiteViewSet(api_viewsets.GeotrekGeometricViewset):
     queryset = outdoor_models.Site.objects \
         .annotate(geom_transformed=Transform(F('geom'), settings.API_SRID)) \
         .order_by('pk')  # Required for reliable pagination
+
+
+class OutdoorPracticeViewSet(api_viewsets.GeotrekGeometricViewset):
+    serializer_class = api_serializers.OutdoorPracticeSerializer
+    queryset = outdoor_models.Practice.objects \
+        .order_by('pk')  # Required for reliable pagination

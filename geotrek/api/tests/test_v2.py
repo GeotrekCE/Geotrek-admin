@@ -95,7 +95,13 @@ SOURCE_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'pictogram', 'website'])
 
 RESERVATION_SYSTEM_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'id'])
 
-SITE_PROPERTIES_JSON_STRUCTURE = sorted(['description', 'geometry', 'id', 'name', 'url'])
+SITE_PROPERTIES_JSON_STRUCTURE = sorted([
+    'advice', 'ambiance', 'description', 'description_teaser', 'eid', 'geometry', 'id',
+    'information_desks', 'labels', 'name', 'period', 'portal', 'practice', 'source',
+    'structure', 'themes', 'url', 'web_links'
+])
+
+OUTDOORPRACTICE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
 
 
 class BaseApiTest(TestCase):
@@ -273,6 +279,12 @@ class BaseApiTest(TestCase):
 
     def get_site_detail(self, id_site, params=None):
         return self.client.get(reverse('apiv2:site-detail', args=(id_site,)), params)
+
+    def get_outdoorpractice_list(self, params=None):
+        return self.client.get(reverse('apiv2:outdoor-practice-list'), params)
+
+    def get_outdoorpractice_detail(self, id_practice, params=None):
+        return self.client.get(reverse('apiv2:outdoor-practice-detail', args=(id_practice,)), params)
 
     def get_config(self, params=None):
         return self.client.get(reverse('apiv2:config', params))
@@ -635,6 +647,18 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         })
         #  test response code
         self.assertEqual(response.status_code, 200)
+
+    def test_outdoorpractice_list(self):
+        self.check_number_elems_response(
+            self.get_outdoorpractice_list(),
+            outdoor_models.Practice
+        )
+
+    def test_outdoorpractice_detail(self):
+        self.check_structure_response(
+            self.get_outdoorpractice_detail(self.site.practice.pk),
+            OUTDOORPRACTICE_PROPERTIES_JSON_STRUCTURE
+        )
 
     def test_config(self):
         response = self.get_config()
