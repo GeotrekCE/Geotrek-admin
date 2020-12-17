@@ -10,4 +10,11 @@
     window.SETTINGS.urls['site_layer'] = "{% url "outdoor:site_layer" %}";
 </script>
 
+{% if modelname == "site" %}
+    <script type="application/json" id="practices-types">
+        {% site_practices as practices %}
+        {{ practices|safe }}
+    </script>
+{% endif %}
+
 {% endif %}

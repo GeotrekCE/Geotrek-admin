@@ -51,6 +51,10 @@ class SiteViewsTests(CommonTest):
                 'name': 'My structure',
             },
             'themes': [],
+            'type': {
+                'id': self.obj.type.pk,
+                'name': 'Site type'
+            },
             'web_links': [],
         }
 
