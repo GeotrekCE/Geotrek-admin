@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-18 09:57+0000\n"
+"POT-Creation-Date: 2020-12-18 15:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -185,8 +185,14 @@ msgstr "Zonages réglementaires publiés"
 msgid "Attributes"
 msgstr "Informations"
 
+msgid "Ancestors"
+msgstr "Ancêtres"
+
 msgid "None"
 msgstr "Aucun(e)"
+
+msgid "Children"
+msgstr "Enfants"
 
 msgid "Powered by geotrek.fr"
 msgstr "Propulsé par geotrek.fr"
