@@ -37,6 +37,14 @@
             <td>{% if object.period %}{{ object.period }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
+            <th>{{ object|verbose:"orientation" }}</th>
+            <td>{% if object.orientation %}{{ object.get_orientation_display }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"wind" }}</th>
+            <td>{% if object.wind %}{{ object.get_wind_display }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"labels" }}</th>
             <td>
                 {% valuelist object.labels.all %}

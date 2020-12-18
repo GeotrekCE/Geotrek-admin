@@ -40,6 +40,22 @@ class SiteType(models.Model):
         return self.name
 
 
+class OrientationField(models.CharField):
+    def __init__(self, *args, **kwargs):
+        kwargs['max_length'] = 2
+        kwargs['choices'] = (
+            ('N', _("↑ N")),
+            ('S', _("↓ S")),
+            ('E', _("→ E")),
+            ('W', _("← W")),
+            ('NE', _("↗ NE")),
+            ('NW', _("↖ NW")),
+            ('SE', _("↘ SE")),
+            ('SW', _("↙ SW")),
+        )
+        return super().__init__(*args, **kwargs)
+
+
 class Site(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
            TimeStampedModelMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
@@ -56,6 +72,8 @@ class Site(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
     advice = models.TextField(verbose_name=_("Advice"), blank=True,
                               help_text=_("Risks, danger, best period, ..."))
     period = models.CharField(verbose_name=_("Period"), max_length=1024, blank=True)
+    orientation = OrientationField(verbose_name=_("Orientation"), blank=True)
+    wind = OrientationField(verbose_name=_("Wind"), blank=True)
     labels = models.ManyToManyField('common.Label', related_name='sites', blank=True,
                                     verbose_name=_("Labels"))
     themes = models.ManyToManyField('common.Theme', related_name="sites", blank=True, verbose_name=_("Themes"),

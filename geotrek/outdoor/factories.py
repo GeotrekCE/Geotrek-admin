@@ -32,6 +32,8 @@ class SiteFactory(StructureRelatedDefaultFactory):
     ambiance = "Party time!"
     advice = "Warning!"
     period = "Summer"
+    orientation = 'SW'
+    wind = 'N'
     published = True
     type = factory.SubFactory(SiteTypeFactory)
     eid = "42"

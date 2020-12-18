@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-17 15:56+0000\n"
+"POT-Creation-Date: 2020-12-18 09:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,8 +35,35 @@ msgstr "Site type"
 msgid "Site types"
 msgstr "Site types"
 
+msgid "↑ N"
+msgstr "↑ N"
+
+msgid "↓ S"
+msgstr "↓ S"
+
+msgid "→ E"
+msgstr "→ E"
+
+msgid "← W"
+msgstr "← O"
+
+msgid "↗ NE"
+msgstr "↗ NE"
+
+msgid "↖ NW"
+msgstr "↖ NO"
+
+msgid "↘ SE"
+msgstr "↘ SE"
+
+msgid "↙ SW"
+msgstr "↙ SO"
+
 msgid "Location"
 msgstr "Emplacement"
+
+msgid "Parent"
+msgstr "Parent"
 
 msgid "Description"
 msgstr "Description"
@@ -64,6 +91,12 @@ msgstr "Risques, danger, meilleure période, ..."
 
 msgid "Period"
 msgstr "Période"
+
+msgid "Orientation"
+msgstr "Orientation"
+
+msgid "Wind"
+msgstr "Vent"
 
 msgid "Labels"
 msgstr "Étiquettes"
