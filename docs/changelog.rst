@@ -2,12 +2,13 @@
 CHANGELOG
 =========
 
-2.43.2.dev0
+2.44.0 (2020-12-18)
 -------------------
 
-**Bug fixes**
+**New Feature**
 
--
+- Add new fields to outdoor sites
+- Allow geometrycollection for site geometry
 
 
 2.43.1 (2020-12-10)
