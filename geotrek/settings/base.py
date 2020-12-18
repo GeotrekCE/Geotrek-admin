@@ -293,6 +293,7 @@ PROJECT_APPS += (
     'embed_video',
     'django_celery_results',
     'colorfield',
+    'mptt',
 )
 
 INSTALLED_APPS = PROJECT_APPS + (

@@ -13,6 +13,14 @@
             <td>{{ object.name }}</td>
         </tr>
         <tr>
+            <th>{% trans "Ancestors" %}</th>
+            <td>{% if object.parent %}{% valuelist object.get_ancestors field='name_display' %}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Children" %}</th>
+            <td>{% if object.children.exists %}{% valuelist object.get_children field='name_display' %}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"practice" }}</th>
             <td>{% if object.practice %}{{ object.practice }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>

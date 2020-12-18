@@ -12,6 +12,7 @@ from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.trekking.models import Trek, POI
 from geotrek.zoning.models import City, District, RestrictedArea
 from mapentity.models import MapEntityMixin
+from mptt.models import MPTTModel, TreeForeignKey
 
 
 class Practice(models.Model):
@@ -57,10 +58,10 @@ class OrientationField(models.CharField):
 
 
 class Site(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
-           TimeStampedModelMixin):
+           TimeStampedModelMixin, MPTTModel):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
-    parent = models.ForeignKey('Site', related_name="children", on_delete=models.PROTECT,
-                               verbose_name=_("Parent"), null=True, blank=True)
+    parent = TreeForeignKey('Site', related_name="children", on_delete=models.PROTECT,
+                            verbose_name=_("Parent"), null=True, blank=True)
     practice = models.ForeignKey('Practice', related_name="sites", on_delete=models.PROTECT,
                                  verbose_name=_("Practice"), null=True, blank=True)
     description = models.TextField(verbose_name=_("Description"), blank=True,
@@ -97,6 +98,9 @@ class Site(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
         verbose_name = _("Outdoor site")
         verbose_name_plural = _("Outdoor sites")
         ordering = ('name', )
+
+    class MPTTMeta:
+        order_insertion_by = ['name']
 
     def __str__(self):
         return self.name
