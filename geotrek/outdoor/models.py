@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins import TimeStampedModelMixin, AddPropertyMixin, PublishableMixin
@@ -42,6 +43,8 @@ class SiteType(models.Model):
 class Site(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
            TimeStampedModelMixin):
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
+    parent = models.ForeignKey('Site', related_name="children", on_delete=models.PROTECT,
+                               verbose_name=_("Parent"), null=True, blank=True)
     practice = models.ForeignKey('Practice', related_name="sites", on_delete=models.PROTECT,
                                  verbose_name=_("Practice"), null=True, blank=True)
     description = models.TextField(verbose_name=_("Description"), blank=True,
@@ -95,6 +98,15 @@ class Site(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
     @classmethod
     def get_create_label(cls):
         return _("Add a new outdoor site")
+
+    @property
+    def published_children(self):
+        if not settings.PUBLISHED_BY_LANG:
+            return self.children.filter(published=True)
+        q = Q()
+        for lang in settings.MODELTRANSLATION_LANGUAGES:
+            q |= Q(**{'published_{}'.format(lang): True})
+        return self.children.filter(q)
 
 
 Path.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))

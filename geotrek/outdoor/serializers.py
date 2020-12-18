@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, ReadOnlyField
 from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
@@ -34,12 +34,13 @@ class SiteSerializer(PublishableSerializerMixin, ZoningSerializerMixin, Translat
     information_desks = InformationDeskSerializer(many=True)
     web_links = WebLinkSerializer(many=True)
     type = SiteTypeSerializer()
+    children = ReadOnlyField(source='published_children')
 
     class Meta:
         model = Site
         fields = ('id', 'structure', 'name', 'practice', 'description', 'description_teaser',
                   'ambiance', 'advice', 'period', 'labels', 'themes', 'portal', 'source',
-                  'information_desks', 'web_links', 'type', 'eid') + \
+                  'information_desks', 'web_links', 'type', 'parent', 'children', 'eid') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields
 

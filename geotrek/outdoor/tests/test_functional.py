@@ -19,6 +19,7 @@ class SiteViewsTests(CommonTest):
             'advice': 'Warning!',
             'ambiance': 'Party time!',
             'areas': [],
+            'children': [],
             'cities': [],
             'description': 'Blah',
             'description_teaser': 'More blah',
@@ -29,6 +30,7 @@ class SiteViewsTests(CommonTest):
             'labels': [],
             'map_image_url': '/image/site-{}.png'.format(self.obj.pk),
             'name': 'Site',
+            'parent': None,
             'period': 'Summer',
             'portal': [],
             'practice': {
