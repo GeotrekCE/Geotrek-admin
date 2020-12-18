@@ -355,7 +355,7 @@ msgid "All useful information"
 msgstr "Toutes les informations pratiques"
 
 msgid "None"
-msgstr "Aucun"
+msgstr "Aucun(e)"
 
 msgid "Date"
 msgstr "Date"
