@@ -20,7 +20,6 @@ class BuildCommand(distutils.command.build.build):
                 copy(path, os.path.join(curdir, self.build_lib, subdir, path))
             os.chdir(curdir)
 
-
 setup(
     name='geotrek',
     version=open(os.path.join(here, 'VERSION')).read().strip(),
@@ -40,6 +39,7 @@ setup(
         'simplekml',
         'pygal',
         'django-extended-choices',
+        'django-mptt',
         'django-multiselectfield',
         'geojson',
         'tif2geojson',
