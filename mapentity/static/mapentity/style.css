@@ -125,82 +125,26 @@ select[multiple] {
 
 /**** Navigation bar ****/
 
-#entitylist-dropdown {
-    margin-right: 5px;
+#entitylist-dropdown button:first-child {
+    padding-left: calc(0.75rem + 8px);
+}
+#entitylist-dropdown .dropdown-item {
+    padding: 0.25rem 1rem;
 }
 
-#entitylist-dropdown ul > li {
-    position: relative;
+#entitylist-dropdown .dropdown-item {
+    display: flex;
+    flex: row nowrap;
+    justify-content: space-between;
 }
 
-#entitylist-dropdown ul > li > a:first-child {
-    padding-right: 70px;
-    text-align: left;
+#entitylist-dropdown .dropdown-item .entitylist-add-btn {
+    margin-left: 1rem;
 }
 
-#entitylist-dropdown ul > li > div.add-btn {
-    position: absolute;
-    right: 8px;
-    top: 2px;
+#entitylist-dropdown .dropdown-item.active a {
+    color: #FFF;
 }
-
-.navbar {
-    margin-bottom: 0px;
-}
-
-.navbar .brand {
-    padding-top: 7px;
-    padding-right: 5px;
-}
-
-.navbar-inner {
-    padding-left: 5px;
-    padding-right: 5px;
-    border: 0px;
-    border-bottom: 1px solid #d4d4d4;
-
-    -webkit-border-radius: 0px;
-    -moz-border-radius: 0px;
-    border-radius: 0px;
-
-    -moz-box-shadow: 0 0px 0px;
-    -webkit-box-shadow: 0 0px 0px;
-    box-shadow: 0 0px 0px;
-}
-
-.navbar .nav > li.history > a,
-.navbar .nav > li.history button:first-child {
-    padding-left: 18px;
-    padding-right: 10px;
-}
-
-.navbar .nav > li.history.active > a,
-.navbar .nav > li.history.active > a:hover,
-.navbar .nav > li.history > a:hover {
-    border-bottom: 1px solid white;
-    margin-bottom: -1px;
-    border-left: 1px solid #d4d4d4;
-    border-right: 1px solid #d4d4d4;
-    background-color: white;
-    box-shadow: 0px -3px 3px 1px rgba(0, 0, 0, 0.125);
-}
-
-.navbar .nav > li.history > a,
-.navbar .nav > li.history button:first-child {
-    background-position-x: 2px;
-    background-position-y: 50%;
-    background-repeat: no-repeat;
-}
-
-.navbar .nav > li.history.first > a {
-    font-weight: bolder;
-    font-size: 16px;
-}
-
-.navbar .nav .close {
-    float: none;
-}
-
 /**** Maps ****/
 
 .map-fogged .leaflet-container {
