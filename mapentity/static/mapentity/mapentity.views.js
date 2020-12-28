@@ -40,7 +40,7 @@ $(window).on('entity:view:list', function (e, data) {
 
 
     // Show tooltips on left menu
-    $('#entitylist a').tooltip({'placement': 'right'});
+    $('#entitylist .nav-link').tooltip({ placement: 'right', boundary: 'window' });
 
     // Trigger a call to the format url
     $('#list-download-toolbar button').on('click', function () {
@@ -60,7 +60,7 @@ $(window).on('entity:view:list', function (e, data) {
     // Hardcore Datatables customizations
     $('li.next a').html($('li.next a').html().replace('Next', ''));
     $('li.prev a').html($('li.prev a').html().replace('Previous', ''));
-    $('#objects-list_filter input').attr('placeHolder', tr("Search"));
+    $('#objects-list_filter input').attr('placeHolder', tr("Search")).addClass('form-control');
     $('#objects-list_filter label').contents().filter(function() {return this.nodeType === 3;/*Node.TEXT_NODE*/}).remove();
 
 });

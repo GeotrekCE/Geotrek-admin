@@ -282,9 +282,6 @@ body.screamshot #altitudegraph {
 
 /* Touristic content */
 
-.categories-filter .btn {
-    height: 20px;
-}
 .categories-filter .btn img {
     margin-top: -4px;
     max-height: 28px;

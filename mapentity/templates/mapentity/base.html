@@ -15,7 +15,7 @@
         <link rel="stylesheet" href="{% static 'bootstrap-4.5.3/css/bootstrap.min.css' %}" />>
     {% endif %}
     <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/datepicker.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'mapentity/dataTables/css/dataTables.bootstrap.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'DataTables-1.10.23/css/dataTables.bootstrap4.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'mapentity/chosen/chosen.css' %}">
     {% leaflet_css plugins="ALL" %}
 
@@ -80,7 +80,7 @@
 
     {% block container %}
     <div id="container" class="container-fluid {% if MAP_BACKGROUND_FOGGED %}map-fogged{% endif %}">
-        <div class="row-fluid">
+        <div class="row">
             {% block mainpanel %}
             {% endblock mainpanel %}
         </div><!--/row-->

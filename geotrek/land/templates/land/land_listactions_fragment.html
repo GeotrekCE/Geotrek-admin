@@ -1,8 +1,8 @@
 {% load i18n %}
 
 {% if appname == "land" %}
-<div class="btn-group">
-    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+<div class="btn-group mr-2">
+    <a class="btn btn-light dropdown-toggle" data-toggle="dropdown" href="#">
         <strong>
             {% if modelname == 'landedge' %}{% trans "Land types" %}{% endif %}
             {% if modelname == 'physicaledge' %}{% trans "Physical types" %}{% endif %}
@@ -10,14 +10,13 @@
             {% if modelname == 'signagemanagementedge' %}{% trans "Signage management" %}{% endif %}
             {% if modelname == 'workmanagementedge' %}{% trans "Work management" %}{% endif %}
         </strong>
-        <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
-        {% if modelname != 'landedge' %}<li><a href="{% url 'land:landedge_list' %}">{% trans "Land types" %}</a></li>{% endif %}
-        {% if modelname != 'physicaledge' %}<li><a href="{% url 'land:physicaledge_list' %}">{% trans "Physical types" %}</a></li>{% endif %}
-        {% if modelname != 'competenceedge' %}<li><a href="{% url 'land:competenceedge_list' %}">{% trans "Competence paths" %}</a></li>{% endif %}
-        {% if modelname != 'signagemanagementedge' %}<li><a href="{% url 'land:signagemanagementedge_list' %}">{% trans "Signage management" %}</a></li>{% endif %}
-        {% if modelname != 'workmanagementedge' %}<li><a href="{% url 'land:workmanagementedge_list' %}">{% trans "Work management" %}</a></li>{% endif %}
+        {% if modelname != 'landedge' %}<li class="dropdown-item"><a href="{% url 'land:landedge_list' %}">{% trans "Land types" %}</a></li>{% endif %}
+        {% if modelname != 'physicaledge' %}<li class="dropdown-item"><a href="{% url 'land:physicaledge_list' %}">{% trans "Physical types" %}</a></li>{% endif %}
+        {% if modelname != 'competenceedge' %}<li class="dropdown-item"><a href="{% url 'land:competenceedge_list' %}">{% trans "Competence paths" %}</a></li>{% endif %}
+        {% if modelname != 'signagemanagementedge' %}<li class="dropdown-item"><a href="{% url 'land:signagemanagementedge_list' %}">{% trans "Signage management" %}</a></li>{% endif %}
+        {% if modelname != 'workmanagementedge' %}<li class="dropdown-item"><a href="{% url 'land:workmanagementedge_list' %}">{% trans "Work management" %}</a></li>{% endif %}
     </ul>
 </div>
 {% endif %}

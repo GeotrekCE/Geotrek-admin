@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block change_style %}
-	<script>
+<script>
 		style_others = window.SETTINGS.map.styles.others;
 		window.SETTINGS.map.styles.others = function(feature) {
 			if (feature.properties.draft){
@@ -16,9 +16,9 @@
 
 {% block extrahead %}
 
-    {% csrf_token %}
+{% csrf_token %}
 
-    <script type="text/javascript">
+<script type="text/javascript">
 
         $(function(){
             $('span#nbresults').replaceWith(' <span class="badge"><span id="nbresults">?</span><span id="sumPath"></span></span>')
@@ -78,60 +78,59 @@
 
 {% block mainactions %}
 
-    {% if perms.core.add_path or perms.core.add_draft_path %}
-	<a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus icon-white"></i> {{ create_label }}</a>
-    {% else %}
-    <span class="btn disabled" href="#"><i class="icon-plus icon-white"></i> {{ create_label }}</span>
-    {% endif %}
+<div class="btn-group mr-2">
+  {% if perms.core.add_path or perms.core.add_draft_path %}
+  <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus icon-white"></i> {{ create_label }}</a>
+  {% else %}
+  <span class="btn disabled" href="#"><i class="icon-plus icon-white"></i> {{ create_label }}</span>
+  {% endif %}
 
-    <div id="wait_lightbox" style="display: none;">
-		<div class="progress progress-striped active">
-			<div class="bar" style="width: 100%;"></div>
-		</div>
-	</div>
+  <div id="wait_lightbox" style="display: none;">
+    <div class="progress progress-striped active">
+      <div class="bar" style="width: 100%;"></div>
+    </div>
+  </div>
+</div>
 
-	{% if perms.core.change_path %}
-	<div class="btn-group btn-danger">
-		<a class="btn btn-primary" href="#"><i class="icon-cog icon-white"></i> Actions</a>
-		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
-		<ul class="dropdown-menu">
-			<li>
-			    <a href="#confirm-merge" id="btn-merge" role="button" data-toggle="modal">
-			        <i class="icon-pencil"></i> {% trans "Merge" %}</a>
-			</li>
-			<li>
-				<a href="#delete" id="btn-delete" role="button">
-			        <i class="icon-trash"></i> {% trans "Delete" %}</a>
-			</li>
-		</ul>
-	</div>
-	{% endif %}
+{% if perms.core.change_path %}
+<div class="btn-group btn-danger mr-2">
+  <a class="btn btn-primary" href="#"><i class="icon-cog icon-white"></i> Actions</a>
+  <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+  <ul class="dropdown-menu">
+    <li class="dropdown-item">
+      <a href="#confirm-merge" id="btn-merge" role="button" data-toggle="modal">
+        <i class="icon-pencil"></i> {% trans "Merge" %}</a>
+    </li>
+    <li class="dropdown-item">
+      <a href="#delete" id="btn-delete" role="button">
+        <i class="icon-trash"></i> {% trans "Delete" %}</a>
+    </li>
+  </ul>
+</div>
+{% endif %}
 
-	<div class="modal fade" id="confirm-merge" tabindex="-1" role="dialog" aria-labelledby="confirm-mergeLabel" aria-hidden="true">
-	    <div class="modal-dialog">
-	        <div class="modal-content">
-	            <div class="modal-header">
-	                <h4>{% trans "Merge paths" %}</h4>
-	            </div>
-	            <div class="modal-body">
-	                <h4></h4>
-	            </div>
-	  			<div class="modal-footer">test
-		            <button type="button" class="btn btn-default" data-dismiss="modal">
-		                {% trans "Cancel" %}
-		            </button>
-		            <button type="button" id="btn-confirm" class="btn btn-success success">
-		                {% trans "Merge" %}
-		            </button>
-		        </div>
-	    	</div>
-		</div>
-	</div>
+<div class="modal fade" id="confirm-merge" tabindex="-1" role="dialog" aria-labelledby="confirm-mergeLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>{% trans "Merge paths" %}</h4>
+      </div>
+      <div class="modal-body">
+        <h4></h4>
+      </div>
+      <div class="modal-footer">test
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          {% trans "Cancel" %}
+        </button>
+        <button type="button" id="btn-confirm" class="btn btn-success success">
+          {% trans "Merge" %}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock mainactions %}
 {% block mainlist %}
-	{{ block.super }}
-<div class="" id="test">
-	<h4></h4>
-</div>
+{{ block.super }}
 {% endblock %}

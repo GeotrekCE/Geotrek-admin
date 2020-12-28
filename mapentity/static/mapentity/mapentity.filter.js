@@ -83,21 +83,7 @@ MapEntity.TogglableFilter = L.Class.extend({
     },
 
     tip: function () {
-        return this.popover.data('popover').$tip;
-    },
-
-    htip: function () {
-        return this.hover.data('popover').$tip;
-    },
-
-    __reposition: function (tip) {
-        // Adjust position nicely along filter button
-        var btnleft = this.$button.position().left,
-            btnwidth = this.$button.width(),
-            btntop = this.$button.position().top,
-            btnheight = this.$button.height();
-        tip.css('left', btnleft + btnwidth/2 - tip.width()/2);
-        tip.css('top', btntop + btnheight + 10);
+        return this.popover.data('bs.popover').$tip;
     },
 
     showinfo: function () {
@@ -105,10 +91,6 @@ MapEntity.TogglableFilter = L.Class.extend({
         if (this.visible)
             return;
         this.hover.popover('show');
-        // Adjust popover width
-        this.htip()
-            .width(this.htip().find('.popover-title').outerWidth());
-        this.__reposition(this.htip());
     },
 
     hideinfo: function () {

@@ -1,21 +1,9 @@
 body {
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    padding: 0; margin: 0;
 }
 
 .container-fluid {
     padding-left: 0;
     padding-right: 0;
-}
-
-/***** SPAN 6 *****/
-.row-fluid > .span6 > .pull-right {
-    margin-top: 5px;
-    /*margin-right: 5px;*/
-    padding-right: 12px;
-
 }
 
 /***** Bootstrap customizations ******/
@@ -145,6 +133,38 @@ select[multiple] {
 #entitylist-dropdown .dropdown-item.active a {
     color: #FFF;
 }
+
+/**** Layout ****/
+
+#container,
+#panelleft,
+#panelright {
+    position: relative;
+}
+#panelleft,
+#panelright {
+    width: 50%;
+}
+#container,
+#panelleft {
+    display: flex;
+}
+#container {
+    height: calc(100vh - 56px);
+}
+
+#mainmap {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+.map-panel.detail {position: absolute; top: 2px; bottom: 0px; right: 0px;}
+#detailmap {height: 100%;}
+
+
 /**** Maps ****/
 
 .map-fogged .leaflet-container {
@@ -267,43 +287,15 @@ tr.selected-row td {
     width: 100%;
 }
 
-/* Layout using Flexbox */
-#container,
-#panelleft,
-#panelright {
-    position: relative;
-}
-#panelleft,
-#panelright {
-    width: 50%;
-}
-#container,
-#panelleft {
-    display: flex;
-}
-#container {
-    height: calc(100vh - 41px);
-}
-
-#mainmap {
-    position: absolute;
-    top: 0px;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
-}
-
-.map-panel.detail {position: absolute; top: 2px; bottom: 0px; right: 0px;}
-#detailmap {height: 100%;}
-
-
 /***** Entity List ******/
 
 #list-panel {
     padding: 4px;
-    height: calc(100vh - 50px);
+    height: calc(100vh - 60px);
     width: calc(100% - 60px);
     flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 @media (max-height: 960px) {
@@ -335,93 +327,41 @@ tr.selected-row td {
 }
 
 
-
-
-/* Left menu */
+/*** Left menu ***/
 #entitylist {
-    width: 60px;
+    width: 40px;
     max-height: calc(100vh - 50px);
     overflow-y: auto;
 }
 
-@media (max-height: 960px) {
-    #entitylist {
-        width: 44px;
-    }
+#entitylist .nav-item img {
+    opacity: 0.5;
+    max-width: 100%;
 }
 
-#entitylist ul {
-    margin-bottom: 0;
+#entitylist .nav-link {
+    padding: 0.5rem .5rem;
 }
 
-#entitylist li img {
-    opacity: 0.3;
-}
-
-#entitylist li.active img, #entitylist li a:hover img {
+#entitylist .nav-link.active img,
+#entitylist .nav-link:hover img {
     opacity: 1.0;
 }
 
-#entitylist a {
-    padding: 0px;
-}
-
-#entitylist .nav-pills.nav-stacked > li > a {
-    margin-bottom: 0;
-}
-
-#entitylist .nav-pills > li > a {
-    border-radius: 0px;
-    -moz-border-radius: 0px;
-    border-bottom: 1px solid #DDDDDD;
-    border-right: 1px solid #DDDDDD;
-    margin-bottom: 0px;
-    margin-top: 0px;
-    background-color: #F3F3F3;
-}
-
-#entitylist .nav-pills > .active > a,
-#entitylist .nav-pills > .active > a:hover {
-    border-right: 1px solid #fff;
-    background-color: #fff;
-    color: #333333;
-}
-
-#entitylist .nav-pills > li > a > img  {
-    padding-bottom: 4px;
-}
-
-@media (max-height: 960px) {
-    #entitylist .nav-pills > li > a > img  {
-        width: 30px;
-    }
-}
-
-
-
-
 
 /* Datatables customization for filters and pagination */
+
 .dataTables_wrapper {
-    height: calc( 100% - 60px);
+    flex-grow: 1;
 }
-
-#list-download-toolbar,
-#objects-list_filter,
-div.dataTables_paginate {
-    position: absolute;
-    bottom: 5px;
+div.dataTables_wrapper div.dataTables_paginate {
+    float: right;
 }
-div.dataTables_paginate {
-    bottom: 0px;
+div.dataTables_wrapper div.dataTables_filter {
+    text-align: left;
 }
-
-#list-download-toolbar {
-    padding-bottom: 10px;
-}
-
-div.dataTables_paginate {
-    right: 5px;
+div.dataTables_wrapper div.dataTables_filter input {
+    margin-left: 0;
 }
 
 #objects-list_filter {
@@ -432,25 +372,9 @@ div.dataTables_paginate {
     #objects-list_filter {
         left: 130px;
     }
-
-    .dataTables_wrapper {
-        height: calc( 100% - 120px);
-    }
-    #list-download-toolbar{
-        padding-top: 50px;
-    }
-
-    #list-download-toolbar,
-    #objects-list_filter,
-    #objects-list_filter label,
-    div.dataTables_paginate {
-        position: inherit;
-        float: none;
-        text-align: center;
-    }
 }
 
-
+*/
 
 
 /* Filters popover */
