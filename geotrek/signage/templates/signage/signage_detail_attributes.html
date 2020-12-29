@@ -98,7 +98,7 @@
             <p style="text-align: right">
                 {% if perms.signage.add_blade %}
                     {% if user.profile.structure == object.structure or perms.authent.can_bypass_structure %}
-                        <a href="{% url 'signage:blade_add' %}{% if modelname == "signage" %}?signage={{ object.pk}}{% endif %}" class="btn btn-mini btn-success">
+                        <a href="{% url 'signage:blade_add' %}{% if modelname == "signage" %}?signage={{ object.pk}}{% endif %}" class="btn btn-light btn-sm btn-success">
                             <i class="icon-plus icon-white"></i> {% trans "Add a new blade" %}
                         </a>
                     {% else %}

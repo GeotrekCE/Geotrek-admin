@@ -18,7 +18,7 @@
                 <a href="{% url entity.url_list %}">
                   <img src="{% static entity.icon_small %}"/> {{ entity.label }}
                 </a>
-                <a class="entitylist-add-btn btn btn-sm btn-success btn-mini" title="{% trans 'Add' %}" href="{% url entity.url_add %}">+</a>
+                <a class="entitylist-add-btn btn btn-sm btn-success btn-light btn-sm" title="{% trans 'Add' %}" href="{% url entity.url_add %}">+</a>
               </li>
             {% endif %}
           {% endfor %}
@@ -29,8 +29,8 @@
     {% block toolbar %}
       {% for item in request.session.history %}
           {% if forloop.first and viewname != "list" %}
-              <li class="{{ modelname }} active history first">
-                  <a href="{{ item.path }}">
+              <li class="{{ modelname }} nav-item history first">
+                  <a class="nav-link active" href="{{ item.path }}">
                       <span class="content">{% if title|lower %}{{ title }}{% else %}{{ item.title }}{% endif %}</span>
                       {% if viewname == "detail" %}
                          <button class="close hidden">&times;</button>
@@ -38,8 +38,8 @@
                   </a>
               </li>
           {% else %}
-              <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %} {{ item.modelname }} history">
-                  <a href="{{ item.path }}" title="{{ item.title }}">
+              <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %} {{ item.modelname }} nav-item history">
+                  <a class="nav-link" href="{{ item.path }}" title="{{ item.title }}">
                       <span class="content">{{ item.title|truncatechars:12 }}</span>
                       <button class="close hidden">&times;</button>
                   </a>

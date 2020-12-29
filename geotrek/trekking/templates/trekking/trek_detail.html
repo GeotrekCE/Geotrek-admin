@@ -6,10 +6,10 @@
   </div>
 
   <div class="btn-group pull-right">
-    <a class="btn btn-mini" href="{% url 'trekking:trek_gpx_detail' LANGUAGE_CODE object.pk object.slug %}"><img src="{% static "paperclip/fileicons/gpx.png" %}"/> {% trans "GPX" %}</a>
-    <a class="btn btn-mini" href="{% url 'trekking:trek_kml_detail' LANGUAGE_CODE object.pk object.slug %}"><img src="{% static "paperclip/fileicons/kml.png" %}"/> {% trans "KML" %}</a>
-    <a class="btn btn-mini" href="{% url 'trekking:trek_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans "Public print" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print" %}</a>
-    <a class="btn btn-mini" href="{% url 'trekking:trek_booklet_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans "Public print booklet" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print booklet" %}</a>
+    <a class="btn btn-light btn-sm" href="{% url 'trekking:trek_gpx_detail' LANGUAGE_CODE object.pk object.slug %}"><img src="{% static "paperclip/fileicons/gpx.png" %}"/> {% trans "GPX" %}</a>
+    <a class="btn btn-light btn-sm" href="{% url 'trekking:trek_kml_detail' LANGUAGE_CODE object.pk object.slug %}"><img src="{% static "paperclip/fileicons/kml.png" %}"/> {% trans "KML" %}</a>
+    <a class="btn btn-light btn-sm" href="{% url 'trekking:trek_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans "Public print" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print" %}</a>
+    <a class="btn btn-light btn-sm" href="{% url 'trekking:trek_booklet_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans "Public print booklet" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print booklet" %}</a>
 {% endblock download %}
 
 

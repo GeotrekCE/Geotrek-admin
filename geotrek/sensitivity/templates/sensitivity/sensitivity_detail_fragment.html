@@ -6,7 +6,7 @@
         <th>{% trans "Sensitive areas" %}</th>
         <td>
             {% if perms.sensitivity.add_sensitivearea %}
-            <p class="autohide"><a href="{% url 'sensitivity:sensitivearea_add' %}" class="btn btn-mini btn-success">
+            <p class="autohide"><a href="{% url 'sensitivity:sensitivearea_add' %}" class="btn btn-light btn-sm btn-success">
                 <i class="icon-plus icon-white"></i> {% trans "Add a sensitive area (Species)" %}</a>
             </p>
             {% endif %}

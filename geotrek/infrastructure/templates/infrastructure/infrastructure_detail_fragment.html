@@ -7,7 +7,7 @@
         <td>
             {% if perms.infrastructure.add_infrastructure %}
                 {% is_topology_model model as is_topology_model %}
-                <p class="autohide"><a href="{% url 'infrastructure:infrastructure_add' %}{% if is_topology_model %}?topology={{ object.pk}}{% endif %}" class="btn btn-mini btn-success">
+                <p class="autohide"><a href="{% url 'infrastructure:infrastructure_add' %}{% if is_topology_model %}?topology={{ object.pk}}{% endif %}" class="btn btn-light btn-sm btn-success">
                     <i class="icon-plus icon-white"></i> {% trans "Add a new infrastructure" %}</a>
                 </p>
             {% endif %}

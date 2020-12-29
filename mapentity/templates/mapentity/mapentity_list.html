@@ -5,7 +5,7 @@
 
 
 {% block container %}
-<div id="container">
+<div id="container" class="list-container">
 
   <!-- List Panel -->
   <div id="panelleft">
@@ -58,9 +58,9 @@
 
       <div id="list-download-toolbar">
         <div class="btn-group {% if not can_export %}disabled{% endif %}">
-          <button class="btn btn-light btn-mini" name="csv" title="{% trans 'CSV' %}"><img src="{% static 'paperclip/fileicons/csv.png' %}"></button>
-          <button class="btn btn-light btn-mini" name="shp" title="{% trans 'Shapefile' %}"><img src="{% static 'paperclip/fileicons/shp.png' %}"></button>
-          <button class="btn btn-light btn-mini" name="gpx" title="{% trans 'GPX' %}"><img src="{% static 'paperclip/fileicons/gpx.png' %}"></button>
+          <button class="btn btn-light btn-sm" name="csv" title="{% trans 'CSV' %}"><img src="{% static 'paperclip/fileicons/csv.png' %}"></button>
+          <button class="btn btn-light btn-sm" name="shp" title="{% trans 'Shapefile' %}"><img src="{% static 'paperclip/fileicons/shp.png' %}"></button>
+          <button class="btn btn-light btn-sm" name="gpx" title="{% trans 'GPX' %}"><img src="{% static 'paperclip/fileicons/gpx.png' %}"></button>
         </div>
       </div>
       {% endblock mainlist %}

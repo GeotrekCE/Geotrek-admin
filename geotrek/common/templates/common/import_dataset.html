@@ -10,7 +10,7 @@
 {% endblock toolbar %}
 
 {% block mainpanel %}
-<div id="import-forms" class="span3 offset2">
+<div id="import-forms" class="col-sm-3">
 	{% block mainform %}
 	{% if form %}
 		{% crispy form form.helper %}
@@ -28,7 +28,7 @@
 	{% endif %}
 	{% endblock mainform %}
 </div>
-<div id="progress-bars" class="span5">
+<div id="progress-bars" class="col-sm-5">
 </div>
 
 <script id="import-template" type="text/template">

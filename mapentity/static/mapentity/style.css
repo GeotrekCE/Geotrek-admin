@@ -1,10 +1,3 @@
-body {
-}
-
-.container-fluid {
-    padding-left: 0;
-    padding-right: 0;
-}
 
 /***** Bootstrap customizations ******/
 
@@ -136,7 +129,7 @@ select[multiple] {
 
 /**** Layout ****/
 
-#container,
+.list-container,
 #panelleft,
 #panelright {
     position: relative;
@@ -145,14 +138,13 @@ select[multiple] {
 #panelright {
     width: 50%;
 }
-#container,
+.list-container,
 #panelleft {
     display: flex;
 }
-#container {
+.list-container {
     height: calc(100vh - 56px);
 }
-
 #mainmap {
     position: absolute;
     top: 0px;
@@ -161,9 +153,7 @@ select[multiple] {
     right: 0px;
 }
 
-.map-panel.detail {position: absolute; top: 2px; bottom: 0px; right: 0px;}
 #detailmap {height: 100%;}
-
 
 /**** Maps ****/
 
@@ -454,13 +444,22 @@ span.filter-info {
 /***** Entity detail ******/
 
 
-.details-panel {
-    padding-left: 40px;
+
+.details-panel .download-group {
+    margin: .75rem 0;
+    text-align: right;
 }
 
-.details-panel .table {
-    table-layout: fixed;
-    margin-right: 10px;
+.details-panel .nav-tabs {
+    margin-left: 50px;
+}
+
+.details-panel .tabbable {
+    padding-left: 30px;
+}
+
+.details-panel .tab-content > .tab-pane.active {
+    padding: 15px 5px;
 }
 
 .details-panel table.blades {
@@ -516,21 +515,9 @@ span.filter-info {
     background-color: rgba(240, 240, 240, 0.5);
 }
 
-.download-group {
-    clear: both;
-    line-height: 35px;
-    display: block;
-    height: 35px;
+.map-panel {
+    min-height: calc(100vh - 65px);
 }
-
-.details-panel .nav-tabs {
-    margin-left: 40px;
-}
-
-.details-panel .nav-tabs li:first-child {
-    margin-left: 10px;
-}
-
 .map-panel .leaflet-control-attribution {
     display: none;
 }
