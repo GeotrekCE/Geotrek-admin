@@ -168,7 +168,9 @@ class MapEntityForm(TranslatedModelForm):
         fieldslayout = self.__replace_translatable_fields(fieldslayout)
 
         has_geomfield = len(self.geomfields) > 0
-        leftpanel_css = "col-" + ('4' if has_geomfield else '12')
+        leftpanel_css = "col-12"
+        if has_geomfield:
+            leftpanel_css = "col-12 col-sm-6 col-lg-5 col-xl-4"
         if self.leftpanel_scrollable:
             leftpanel_css += " scrollable"
 
@@ -182,13 +184,13 @@ class MapEntityForm(TranslatedModelForm):
         if has_geomfield:
             rightpanel = (Div(
                 *self.geomfields,
-                css_class="col-8",
+                css_class="col-12 col-sm-6 col-lg-7 col-xl-8",
                 css_id="geomfield"
             ),)
 
         formactions = FormActions(
             *actions,
-            css_class="form-actions d-flex justify-content-end col-12"
+            css_class="form-actions d-flex justify-content-end"
         )
 
         # Main form layout
