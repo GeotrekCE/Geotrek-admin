@@ -127,6 +127,11 @@ select[multiple] {
     color: #FFF;
 }
 
+#historylist .nav-link {
+    padding-left: 18px;
+    padding-right: 10px;
+}
+
 /**** Layout ****/
 
 .list-container,
@@ -198,7 +203,7 @@ select[multiple] {
 }
 
 .leaflet-control-layers-list {
-   max-height: calc( 100vh - 120px );
+   max-height: calc( 100vh - 160px );
    overflow-y: auto;
    overflow-x: hidden;
    margin: 0;
@@ -595,43 +600,31 @@ body.screamshot .leaflet-control-scale-line {
 
 /***** Entity form ******/
 
+/*
+ * Field and labels
+ */
+
 .form-panel {
-    margin-top: 10px;
+    flex-basis: 100%;
 }
-
-.form-panel > form {
-    padding-left: 10px;
-    margin-bottom: 0px;
-}
-
-.form-panel .form-actions {
-    position: absolute;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
-    margin: 0px;
-    padding: 10px;
-    height: 30px;
-}
-
 .form-panel .scrollable {
-    margin-bottom: 55px;
+    height: calc(100vh - 140px - 1rem);
+    padding-bottom: 20px;
 }
-
-.form-panel .tab-content .nav {
-    margin-bottom: 5px;
-}
-
-.form-panel .nav-tabs .error {
-    color: #B94A48;
+.form-actions {
+    background-color: var(--light);
+    padding-top: .5rem;
+    padding-bottom: .5rem;
 }
 
 label.requiredField {
     font-weight: bold;
 }
-
 label.requiredField .asteriskField {
     color: red;
+}
+.form-panel .nav-tabs .error {
+    color: #B94A48;
 }
 
 .help-inline {
@@ -641,12 +634,9 @@ label.requiredField .asteriskField {
 .form-horizontal .control-group {
     margin-bottom: 5px;
 }
-
-
 .form-horizontal .control-label {
     width: 140px;
 }
-
 .form-horizontal .controls {
     margin-left: 145px;
 }
@@ -656,7 +646,6 @@ label.requiredField .asteriskField {
     .form-horizontal .control-label {
         width: 95px;
     }
-
     .form-horizontal .controls {
         margin-left: 100px;
     }
@@ -740,18 +729,12 @@ fieldset.formset .form-row:last-of-type a.delete-row {
     display: none;
 }
 
+/* Form layout */
 
-
-#geomfield {
-    position: absolute;
-    top: 2px;
-    bottom: 51px;
-    right: 0px;
-}
 #geomfield .leaflet-container,
 #geomfield .control-group,
 #geomfield .controls {
-    height: 100%;
+    height: calc(100vh - 120px);
     margin-left: 0;
 }
 
@@ -763,12 +746,6 @@ fieldset.formset .form-row:last-of-type a.delete-row {
 /* Tired of bootstrap ?
 TODO: please help;
  */
-#modelfields.span4 {
-    width: 33%;
-}
-#geomfield.span8 {
-    width: 66%;
-}
 
 #geomfield label.control-label {
     position: absolute;

@@ -52,11 +52,11 @@ class TranslatedModelForm(forms.ModelForm):
             # Add translated fields (e.g. `name_fr`, `name_en`...)
             for translated_language in app_settings['TRANSLATED_LANGUAGES']:
                 lang = translated_language[0]
-                name = '%s_%s' % (modelfield, lang)
+                name = '{0}_{1}'.format(modelfield, lang)
                 # Add to form.fields{}
                 translated = copy.deepcopy(native)
                 translated.required = native.required and (lang == settings.MODELTRANSLATION_DEFAULT_LANGUAGE)
-                translated.label = "%s [%s]" % (translated.label, lang)
+                translated.label = u"{0} [{1}]".format(translated.label, lang)
                 self.fields[name] = translated
                 # Keep track of replacements
                 self._translated.setdefault(modelfield, []).append(name)
@@ -84,10 +84,10 @@ class SubmitButton(HTML):
 
     def __init__(self, divid, label):
         content = ("""
-            <a id="%s" class="btn btn-success pull-right offset1"
+            <a id="{0}" class="btn btn-success"
                onclick="javascript:$(this).parents('form').submit();">
-                <i class="icon-white icon-ok-sign"></i> %s
-            </a>""" % (divid, label))
+                <i class="icon-white icon-ok-sign"></i> {1}
+            </a>""".format(divid, label))
         super().__init__(content)
 
 
@@ -142,18 +142,20 @@ class MapEntityForm(TranslatedModelForm):
         is_creation = self.instance.pk is None
 
         actions = [
+            Button('cancel', _('Cancel'), css_class="btn btn-light mr-2"),
             SubmitButton('save_changes', _('Create') if is_creation else _('Save changes')),
-            Button('cancel', _('Cancel'), css_class="pull-right offset1"),
         ]
 
         # Generic behaviour
         if not is_creation:
             self.helper.form_action = self.instance.get_update_url()
             # Put delete url in Delete button
-            actions.insert(0, HTML('<a class="btn %s delete" href="%s"><i class="icon-white icon-trash"></i> %s</a>' % (
-                'btn-danger' if self.can_delete else 'disabled',
-                self.instance.get_delete_url() if self.can_delete else '#',
-                _("Delete"))))
+            actions.insert(0, HTML(
+                """<a class="btn {0} delete mr-auto" href="{1}"><i class="icon-white icon-trash"></i> {2}</a>""".format(
+                    'btn-danger' if self.can_delete else 'disabled',
+                    self.instance.get_delete_url() if self.can_delete else '#',
+                    _("Delete")
+                )))
         else:
             self.helper.form_action = self.instance.get_add_url()
 
@@ -166,7 +168,7 @@ class MapEntityForm(TranslatedModelForm):
         fieldslayout = self.__replace_translatable_fields(fieldslayout)
 
         has_geomfield = len(self.geomfields) > 0
-        leftpanel_css = "span" + ('4' if has_geomfield else '12')
+        leftpanel_css = "col-" + ('4' if has_geomfield else '12')
         if self.leftpanel_scrollable:
             leftpanel_css += " scrollable"
 
@@ -180,9 +182,14 @@ class MapEntityForm(TranslatedModelForm):
         if has_geomfield:
             rightpanel = (Div(
                 *self.geomfields,
-                css_class="span8",
+                css_class="col-8",
                 css_id="geomfield"
             ),)
+
+        formactions = FormActions(
+            *actions,
+            css_class="form-actions d-flex justify-content-end col-12"
+        )
 
         # Main form layout
         self.helper.help_text_inline = True
@@ -192,11 +199,11 @@ class MapEntityForm(TranslatedModelForm):
                 Div(
                     leftpanel,
                     *rightpanel,
-                    css_class="row-fluid"
+                    css_class="row"
                 ),
                 css_class="container-fluid"
             ),
-            FormActions(*actions, css_class="form-actions"),
+            formactions,
         )
 
     def __replace_translatable_fields(self, fieldslayout):
@@ -216,7 +223,7 @@ class MapEntityForm(TranslatedModelForm):
     def __tabbed_layout_for_field(self, field):
         fields = []
         for replacement in self._translated[field]:
-            active = "active" if replacement.endswith('_%s' % settings.MODELTRANSLATION_DEFAULT_LANGUAGE) else ""
+            active = "active" if replacement.endswith('_{0}'.format(settings.MODELTRANSLATION_DEFAULT_LANGUAGE)) else ""
             fields.append(Div(replacement,
                               css_class="tab-pane " + active,
                               css_id=replacement))
@@ -225,8 +232,11 @@ class MapEntityForm(TranslatedModelForm):
             HTML("""
             <ul class="nav nav-pills">
             {{% for lang in TRANSLATED_LANGUAGES %}}
-                <li {{% if lang.0 == '{lang_code}'""" """ %}}class="active"{{% endif %}}><a href="#{field}_{{{{ lang.0 }}}}"
-                    data-toggle="tab">{{{{ lang.0 }}}}</a></li>
+                <li class="nav-item">
+                    <a class="nav-link{{% if lang.0 == '{lang_code}'""" """ %}} active{{% endif %}}" href="#{field}_{{{{ lang.0 }}}}"
+                        data-toggle="tab">{{{{ lang.0 }}}}
+                    </a>
+                </li>
             {{% endfor %}}
             </ul>
             """.format(lang_code=settings.MODELTRANSLATION_DEFAULT_LANGUAGE, field=field)),
@@ -252,14 +262,14 @@ class AttachmentForm(BaseAttachmentForm):
             form_actions = [
                 Submit('submit_attachment',
                        _('Submit attachment'),
-                       css_class="btn-primary offset1")
+                       css_class="btn-primary")
             ]
         else:
             form_actions = [
                 Button('cancel', _('Cancel'), css_class=""),
                 Submit('submit_attachment',
                        _('Update attachment'),
-                       css_class="btn-primary offset1")
+                       css_class="btn-primary")
             ]
 
         self.helper.form_action = self.form_url

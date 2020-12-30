@@ -1,8 +1,8 @@
 {% load static i18n mapentity_tags %}
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <ul id="historylist" class="navbar-nav mr-auto">
+<nav class="navbar navbar-expand-lg navbar-light">
+  <ul class="navbar-nav mr-2">
     {% if request.user.is_authenticated %}
-    <li class="history nav-item {% if viewname == 'list' %}{{ modelname }} active{% endif %}">
+    <li class="nav-item {% if viewname == 'list' %}{{ modelname }} active{% endif %}">
       <div id="entitylist-dropdown" class="btn-group">
         <button class="btn btn-light" onclick="javascript:location='{% url 'home' %}';">
           {% trans "List" %} <span id="nbresults" class="badge badge-secondary">?</span>
@@ -18,7 +18,7 @@
                 <a href="{% url entity.url_list %}">
                   <img src="{% static entity.icon_small %}"/> {{ entity.label }}
                 </a>
-                <a class="entitylist-add-btn btn btn-sm btn-success btn-light btn-sm" title="{% trans 'Add' %}" href="{% url entity.url_add %}">+</a>
+                <a class="entitylist-add-btn btn btn-sm btn-success btn-sm" title="{% trans 'Add' %}" href="{% url entity.url_add %}">+</a>
               </li>
             {% endif %}
           {% endfor %}
@@ -26,10 +26,12 @@
       </div>
     </li>
     {% endif %}
+  </ul>
+  <ul id="historylist" class="navbar-nav flex-grow-1{% if request.session.history %} nav-tabs{% endif %}">
     {% block toolbar %}
       {% for item in request.session.history %}
           {% if forloop.first and viewname != "list" %}
-              <li class="{{ modelname }} nav-item history first">
+              <li class="{{ modelname }} nav-item history first mr-1">
                   <a class="nav-link active" href="{{ item.path }}">
                       <span class="content">{% if title|lower %}{{ title }}{% else %}{{ item.title }}{% endif %}</span>
                       {% if viewname == "detail" %}
@@ -38,10 +40,10 @@
                   </a>
               </li>
           {% else %}
-              <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %} {{ item.modelname }} nav-item history">
+              <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %} {{ item.modelname }} nav-item history mr-1">
                   <a class="nav-link" href="{{ item.path }}" title="{{ item.title }}">
                       <span class="content">{{ item.title|truncatechars:12 }}</span>
-                      <button class="close hidden">&times;</button>
+                      <button class="close d-none">&times;</button>
                   </a>
               </li>
           {% endif %}

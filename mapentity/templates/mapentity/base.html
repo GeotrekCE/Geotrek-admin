@@ -21,7 +21,8 @@
 
     <style>
     {% for entity in allowed_entities %}
-        .form-panel.{{ entity.modelname }}, .details-panel.{{ entity.modelname }} {
+        .form-panel.{{ entity.modelname }},
+        .details-panel.{{ entity.modelname }} {
             background: url({% static entity.icon_big %}) no-repeat;
         }
         li.history.{{ entity.modelname }} > a,
