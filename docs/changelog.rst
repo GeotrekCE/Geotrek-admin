@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix migrations if some outdoor sites were created before
 
 
 2.44.0 (2020-12-18)
