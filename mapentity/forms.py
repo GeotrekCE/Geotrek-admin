@@ -170,7 +170,7 @@ class MapEntityForm(TranslatedModelForm):
         has_geomfield = len(self.geomfields) > 0
         leftpanel_css = "col-12"
         if has_geomfield:
-            leftpanel_css = "col-12 col-sm-6 col-lg-5 col-xl-4"
+            leftpanel_css = "col-12 col-sm-6 col-lg-5"
         if self.leftpanel_scrollable:
             leftpanel_css += " scrollable"
 
@@ -184,7 +184,7 @@ class MapEntityForm(TranslatedModelForm):
         if has_geomfield:
             rightpanel = (Div(
                 *self.geomfields,
-                css_class="col-12 col-sm-6 col-lg-7 col-xl-8",
+                css_class="col-12 col-sm-6 col-lg-7",
                 css_id="geomfield"
             ),)
 
@@ -196,6 +196,9 @@ class MapEntityForm(TranslatedModelForm):
         # Main form layout
         self.helper.help_text_inline = True
         self.helper.form_class = 'form-horizontal'
+        self.helper.form_style = "default"
+        self.helper.label_class = 'control-label col-sm-auto'
+        self.helper.field_class = 'controls col-sm-auto'
         self.helper.layout = Layout(
             Div(
                 Div(

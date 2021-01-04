@@ -627,18 +627,26 @@ label.requiredField .asteriskField {
     color: #B94A48;
 }
 
-.help-inline {
-    font-size: 0.7em;
-}
-
-.form-horizontal .control-group {
-    margin-bottom: 5px;
+/* Overrides crispy styles to have correct horizontal forms in bootstrap4
+    (see also in mapentity/forms.py helpers attributes, form should be inline display)
+*/
+.form-horizontal .form-group.row {
+    margin-left: 0;
+    margin-right: 0;
 }
 .form-horizontal .control-label {
     width: 140px;
+    flex-shrink: 0;
+    text-align: right;
+}
+.form-horizontal .form-group .controls:first-child {
+    margin-left: 140px;
 }
 .form-horizontal .controls {
-    margin-left: 145px;
+    flex-grow: 1;
+}
+.form-horizontal .controls span {
+    font-size: .75rem;
 }
 
 @media (max-width: 1280px) {
@@ -646,12 +654,12 @@ label.requiredField .asteriskField {
     .form-horizontal .control-label {
         width: 95px;
     }
-    .form-horizontal .controls {
-        margin-left: 100px;
+    .form-horizontal .form-group .controls:first-child {
+        margin-left: 95px;
     }
 }
 
-.translatable:hover, .control-group:hover {
+.translatable:hover, .form-group:hover {
     background-color: rgba(240, 240, 240, 0.5);
 }
 
@@ -678,30 +686,17 @@ label.requiredField .asteriskField {
  * Multilang pills
  */
 
-.translatable {
-    margin-bottom: 7px;
-}
-
 .form-panel .translatable .nav {
-    margin-bottom: 0px;
-}
-
-.translatable .nav-pills li a {
-    padding-top: 2px;
-    padding-bottom: 2px;
+    margin-bottom: .25rem;
 }
 
 .translatable .nav-pills {
     margin-left: 145px;
 }
 
-.translatable .controls > .radio:first-child,
-.translatable .controls > .checkbox:first-child {
-    padding-top: 0px;
-}
-
-.form-horizontal .translatable .control-group {
-    margin-bottom: 0px;
+.translatable .nav-link {
+    padding: 0.15rem .5rem;
+    font-size: small;
 }
 
 @media (max-width: 1280px) {
