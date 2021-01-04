@@ -151,7 +151,7 @@ class MapEntityForm(TranslatedModelForm):
             self.helper.form_action = self.instance.get_update_url()
             # Put delete url in Delete button
             actions.insert(0, HTML(
-                """<a class="btn {0} delete mr-auto" href="{1}"><i class="icon-white icon-trash"></i> {2}</a>""".format(
+                """<a class="btn {0} delete" href="{1}"><i class="icon-white icon-trash"></i> {2}</a>""".format(
                     'btn-danger' if self.can_delete else 'disabled',
                     self.instance.get_delete_url() if self.can_delete else '#',
                     _("Delete")

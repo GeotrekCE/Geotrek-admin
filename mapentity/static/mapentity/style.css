@@ -623,9 +623,6 @@ label.requiredField {
 label.requiredField .asteriskField {
     color: red;
 }
-.form-panel .nav-tabs .error {
-    color: #B94A48;
-}
 
 /* Overrides crispy styles to have correct horizontal forms in bootstrap4
     (see also in mapentity/forms.py helpers attributes, form should be inline display)
@@ -727,13 +724,13 @@ fieldset.formset .form-row:last-of-type a.delete-row {
 /* Form layout */
 
 #geomfield .leaflet-container,
-#geomfield .control-group,
+#geomfield .form-group,
 #geomfield .controls {
     height: calc(100vh - 120px);
     margin-left: 0;
 }
 
-#geomfield .control-group.error .help-block {
+#geomfield .form-group.error .help-block {
     z-index: 1;
     position: absolute;
 }

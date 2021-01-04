@@ -435,12 +435,12 @@ class DetailViewTest(BaseTest):
 
         app_settings['MAPENTITY_WEASYPRINT'] = tmp
 
-        self.assertContains(response, '<a class="btn btn-mini" target="_blank" href="/document/touristicevent-{}.odt">\
+        self.assertContains(response, '<a class="btn btn-light btn-sm" target="_blank" href="/document/touristicevent-{}.odt">\
 <img src="/static/paperclip/fileicons/odt.png"/> ODT</a>'.format(self.object.pk))
-        self.assertContains(response, '<a class="btn btn-mini" target="_blank" \
+        self.assertContains(response, '<a class="btn btn-light btn-sm" target="_blank" \
 href="/convert/?url=/document/touristicevent-{}.odt&to=doc">\
 <img src="/static/paperclip/fileicons/doc.png"/> DOC</a>'.format(self.object.pk))
-        self.assertContains(response, '<a class="btn btn-mini" target="_blank" \
+        self.assertContains(response, '<a class="btn btn-light btn-sm" target="_blank" \
 href="/convert/?url=/document/touristicevent-{}.odt">\
 <img src="/static/paperclip/fileicons/pdf.png"/> PDF</a>'.format(self.object.pk))
 
@@ -455,15 +455,15 @@ href="/convert/?url=/document/touristicevent-{}.odt">\
         app_settings['MAPENTITY_WEASYPRINT'] = tmp
 
         if app_settings['MAPENTITY_WEASYPRINT']:
-            self.assertContains(response, '<a class="btn btn-mini" target="_blank" href="/document/touristicevent-{}.pdf">\
+            self.assertContains(response, '<a class="btn btn-light btn-sm" target="_blank" href="/document/touristicevent-{}.pdf">\
 <img src="/static/paperclip/fileicons/pdf.png"/> PDF</a>'.format(self.object.pk))
         else:
-            self.assertContains(response, '<a class="btn btn-mini" target="_blank" href="/document/touristicevent-{}.odt">\
+            self.assertContains(response, '<a class="btn btn-light btn-sm" target="_blank" href="/document/touristicevent-{}.odt">\
 <img src="/static/paperclip/fileicons/pdf.png"/> PDF</a>'.format(self.object.pk))
-        self.assertNotContains(response, '<a class="btn btn-mini" target="_blank" \
+        self.assertNotContains(response, '<a class="btn btn-light btn-sm" target="_blank" \
 href="/convert/?url=/document/touristicevent-{}.odt&to=doc">\
 <img src="/static/paperclip/fileicons/doc.png"/> DOC</a>'.format(self.object.pk))
-        self.assertNotContains(response, '<a class="btn btn-mini" target="_blank" \
+        self.assertNotContains(response, '<a class="btn btn-light btn-sm" target="_blank" \
 href="/document/touristicevent-{}.odt"><img src="/static/paperclip/fileicons/odt.png"/> ODT</a>'.format(self.object.pk))
 
 
