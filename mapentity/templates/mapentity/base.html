@@ -16,7 +16,7 @@
     {% else %}
         <link rel="stylesheet" href="{% static 'bootstrap-4.5.3/css/bootstrap.min.css' %}" />>
     {% endif %}
-    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/datepicker.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-datepicker-1.9.0/css/bootstrap-datepicker.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'DataTables-1.10.23/css/dataTables.bootstrap4.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'mapentity/chosen/chosen.css' %}">
     {% leaflet_css plugins="ALL" %}
@@ -107,9 +107,9 @@
         {% endif %}
         <script src="{% static 'mapentity/jquery.hoverIntent.js' %}"></script>
         <script src="{% static 'paperclip/bootstrap-confirm.js' %}"></script>
-        <script src="{% static 'bootstrap/js/bootstrap-datepicker.js' %}"></script>
+        <script src="{% static 'bootstrap-datepicker-1.9.0/js/bootstrap-datepicker.js' %}"></script>
         {% for lang in LANGUAGES %}
-            {% if lang.0 != 'en' %}<script type="text/javascript" src="{% get_static_prefix %}bootstrap/js/locales/bootstrap-datepicker.{{ lang.0 }}.js"  charset="UTF-8"></script>{% endif %}
+            {% if lang.0 != 'en' %}<script type="text/javascript" src="{% get_static_prefix %}bootstrap-datepicker-1.9.0/locales/bootstrap-datepicker.{{ lang.0 }}.min.js"  charset="UTF-8"></script>{% endif %}
         {% endfor %}
 
         {% leaflet_js plugins="ALL" %}
