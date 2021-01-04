@@ -17,10 +17,17 @@ class Migration(migrations.Migration):
             name='site',
             options={'ordering': ('name',), 'verbose_name': 'Outdoor site', 'verbose_name_plural': 'Outdoor sites'},
         ),
-        migrations.AlterField(
-            model_name='site',
-            name='geom',
-            field=django.contrib.gis.db.models.fields.GeometryCollectionField(srid=settings.SRID, verbose_name='Location'),
+        migrations.SeparateDatabaseAndState(
+            database_operations=[
+                migrations.RunSQL('ALTER TABLE "outdoor_site" ALTER COLUMN "geom" TYPE geometry(GeometryCollection,2154) USING ST_ForceCollection(geom);')
+            ],
+            state_operations=[
+                migrations.AlterField(
+                    model_name='site',
+                    name='geom',
+                    field=django.contrib.gis.db.models.fields.GeometryCollectionField(srid=settings.SRID, verbose_name='Location'),
+                ),
+            ]
         ),
         migrations.AlterField(
             model_name='sitepractice',
