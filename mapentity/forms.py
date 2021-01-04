@@ -20,6 +20,8 @@ from .models import ENTITY_PERMISSION_UPDATE_GEOM
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.translator import translator, NotRegistered
 
+FormActions.template = 'crispy_forms/layout/formactions.html'
+
 
 class TranslatedModelForm(forms.ModelForm):
     """
@@ -142,7 +144,7 @@ class MapEntityForm(TranslatedModelForm):
         is_creation = self.instance.pk is None
 
         actions = [
-            Button('cancel', _('Cancel'), css_class="btn btn-light mr-2"),
+            Button('cancel', _('Cancel'), css_class="btn btn-light ml-auto mr-2"),
             SubmitButton('save_changes', _('Create') if is_creation else _('Save changes')),
         ]
 
@@ -177,7 +179,7 @@ class MapEntityForm(TranslatedModelForm):
         leftpanel = Div(
             *fieldslayout,
             css_class=leftpanel_css,
-            css_id="modelfields"
+            css_id="modelfields",
         )
 
         rightpanel = tuple()
@@ -190,15 +192,15 @@ class MapEntityForm(TranslatedModelForm):
 
         formactions = FormActions(
             *actions,
-            css_class="form-actions d-flex justify-content-end"
+            css_class="form-actions"
         )
 
         # Main form layout
         self.helper.help_text_inline = True
         self.helper.form_class = 'form-horizontal'
         self.helper.form_style = "default"
-        self.helper.label_class = 'control-label col-sm-auto'
-        self.helper.field_class = 'controls col-sm-auto'
+        self.helper.label_class = 'control-label col-md-auto'
+        self.helper.field_class = 'controls col-md-auto'
         self.helper.layout = Layout(
             Div(
                 Div(
@@ -262,6 +264,9 @@ class AttachmentForm(BaseAttachmentForm):
         self.helper.form_tag = True
         self.helper.form_class = 'attachment form-horizontal'
         self.helper.help_text_inline = True
+        self.helper.form_style = "default"
+        self.helper.label_class = 'control-label col-md-3'
+        self.helper.field_class = 'controls col-md-9'
 
         if self.is_creation:
             form_actions = [

@@ -615,6 +615,7 @@ body.screamshot .leaflet-control-scale-line {
     background-color: var(--light);
     padding-top: .5rem;
     padding-bottom: .5rem;
+    display: flex;
 }
 
 label.requiredField {
@@ -631,28 +632,35 @@ label.requiredField .asteriskField {
     margin-left: 0;
     margin-right: 0;
 }
-.form-horizontal .control-label {
-    width: 140px;
-    flex-shrink: 0;
-    text-align: right;
-}
-.form-horizontal .form-group .controls:first-child {
-    margin-left: 140px;
-}
 .form-horizontal .controls {
     flex-grow: 1;
 }
 .form-horizontal .controls span {
     font-size: .75rem;
 }
+.form-horizontal .form-actions .control-label {
+    display: none;
+}
 
-@media (max-width: 1280px) {
+@media (min-width: 768px) {
 
     .form-horizontal .control-label {
         width: 95px;
+        flex-shrink: 0;
+        text-align: right;
     }
     .form-horizontal .form-group .controls:first-child {
         margin-left: 95px;
+    }
+}
+
+@media (min-width: 1280px) {
+
+    .form-horizontal .control-label {
+        width: 140px;
+    }
+    .form-horizontal .form-group .controls:first-child {
+        margin-left: 140px;
     }
 }
 
@@ -755,7 +763,7 @@ TODO: please help;
     padding-left: 1em;
     padding-right: 1em;
     border: solid 1px lightgray;
-    width: 460px;
+    max-width: 640px;
     margin-left: auto;
     margin-right: auto;
 }
