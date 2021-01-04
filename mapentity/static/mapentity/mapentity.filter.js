@@ -75,7 +75,7 @@ MapEntity.TogglableFilter = L.Class.extend({
                     }
                 });
 
-                self.popover.on('hidden', function () {
+                self.popover.on('hidden.bs.popover', function () {
                     $(document).off('click.outside');
                 });
             }
@@ -83,7 +83,7 @@ MapEntity.TogglableFilter = L.Class.extend({
     },
 
     tip: function () {
-        return this.popover.data('bs.popover').$tip;
+        return $(this.popover.data('bs.popover').tip);
     },
 
     showinfo: function () {
@@ -139,8 +139,6 @@ MapEntity.TogglableFilter = L.Class.extend({
             // Adjust popover width
             this.tip()
                 .width(this.tip().find('#filters-panel form').outerWidth());
-
-            this.__reposition(this.tip());
         }
     },
 
