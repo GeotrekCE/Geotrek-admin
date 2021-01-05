@@ -224,6 +224,11 @@ You can also insert outdoor minimal data:
     sudo geotrek loaddata geotrek/outdoor/fixtures/basic.json
     cp /opt/geotrek-admin/geotrek/outdoor/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
 
+
+Note: outdoor module is not compatible with PostGIS <= 2.4 that is included in Ubuntu 18.04.
+You should either upgrade to Ubuntu 20.04 or upgrade postGIS to 2.5 with
+https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa
+
 WYSIWYG editor configuration
 ----------------------------
 
