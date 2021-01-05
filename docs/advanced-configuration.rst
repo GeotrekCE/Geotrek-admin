@@ -215,7 +215,7 @@ add the following code:
     # Enable outdoor module
     INSTALLED_APPS += ('geotrek.outdoor', )
 
-Then run ``sudo geotrek migrate; sudo service geotrek restart``.
+Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
 
 You can also insert outdoor minimal data:
 
