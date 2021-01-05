@@ -2,6 +2,7 @@ from django.db.models.fields.related import ManyToOneRel
 from django.conf import settings
 
 from django_filters import FilterSet, Filter
+from django_filters.fields import ChoiceField
 from django_filters.filterset import get_model_field
 from django.contrib.gis import forms
 
@@ -42,6 +43,9 @@ class PythonPolygonFilter(PolygonFilter):
 class BaseMapEntityFilterSet(FilterSet):
     def __init__(self, *args, **kwargs):
         super(BaseMapEntityFilterSet, self).__init__(*args, **kwargs)
+        for filter_ in self.filters.values():
+            if filter_.field_class == ChoiceField:
+                filter_.extra.setdefault('empty_label', filter_.label)
         self.__bypass_labels()
 
     def __bypass_labels(self):
