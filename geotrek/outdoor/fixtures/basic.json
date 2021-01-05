@@ -1,66 +1,14 @@
 [
 {
-    "model": "auth.group_permissions",
+    "model": "auth.group",
     "fields": {
-        "group": [
-            "Référents sentiers"
-        ],
-        "permission": [
-            "add_site",
-            "outdoor",
-            "site"
-        ]
-    }
-},
-{
-    "model": "auth.group_permissions",
-    "fields": {
-        "group": [
-            "Référents sentiers"
-        ],
-        "permission": [
-            "change_site",
-            "outdoor",
-            "site"
-        ]
-    }
-},
-{
-    "model": "auth.group_permissions",
-    "fields": {
-        "group": [
-            "Référents sentiers"
-        ],
-        "permission": [
-            "delete_site",
-            "outdoor",
-            "site"
-        ]
-    }
-},
-{
-    "model": "auth.group_permissions",
-    "fields": {
-        "group": [
-            "Référents sentiers"
-        ],
-        "permission": [
-            "read_site",
-            "outdoor",
-            "site"
-        ]
-    }
-},
-{
-    "model": "auth.group_permissions",
-    "fields": {
-        "group": [
-            "Référents sentiers"
-        ],
-        "permission": [
-            "export_site",
-            "outdoor",
-            "site"
+        "name": "Outdoor",
+        "permissions": [
+            ["add_site", "outdoor", "site"],
+            ["change_site", "outdoor", "site"],
+            ["delete_site", "outdoor", "site"],
+            ["read_site", "outdoor", "site"],
+            ["export_site", "outdoor", "site"]
         ]
     }
 },

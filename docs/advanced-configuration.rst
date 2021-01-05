@@ -215,14 +215,13 @@ add the following code:
     # Enable outdoor module
     INSTALLED_APPS += ('geotrek.outdoor', )
 
-Then run ``sudo geotrek migrate; sudo service geotrek restart``.
+Then run ``sudo dpkg-reconfigure -pcritical geotrek-admin``.
 
 You can also insert outdoor minimal data:
 
 ::
 
-    sudo geotrek loaddata geotrek/outdoor/fixtures/basic.json
-    cp /opt/geotrek-admin/geotrek/outdoor/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
+    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/outdoor/fixtures/basic.json
 
 
 Note: outdoor module is not compatible with PostGIS <= 2.4 that is included in Ubuntu 18.04.
