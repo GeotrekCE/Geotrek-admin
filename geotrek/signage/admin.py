@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from geotrek.common.admin import MergeActionMixin
+from geotrek.common.mixins import MergeActionMixin
 from geotrek.signage.models import SignageType, Color, Sealing, Direction, BladeType
 
 

@@ -3,7 +3,7 @@ from django.utils.translation import gettext as _
 
 from leaflet.admin import LeafletGeoAdmin
 
-from geotrek.common.admin import MergeActionMixin
+from geotrek.common.mixins import MergeActionMixin
 from geotrek.zoning import models as zoning_models
 
 

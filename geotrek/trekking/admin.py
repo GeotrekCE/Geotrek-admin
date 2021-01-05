@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.contrib import admin
 
-from geotrek.common.admin import MergeActionMixin
+from geotrek.common.mixins import MergeActionMixin
 from .models import (
     POIType, TrekNetwork, Practice, Accessibility, Route, DifficultyLevel,
     WebLink, WebLinkCategory, Trek, ServiceType
