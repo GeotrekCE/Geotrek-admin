@@ -71,9 +71,7 @@ class MapEntityRestPermissions(rest_permissions.DjangoModelPermissions):
     }
 
 
-class MapEntityMixin(models.Model):
-    attachments = GenericRelation(settings.PAPERCLIP_ATTACHMENT_MODEL)
-
+class BaseMapEntityMixin(models.Model):
     _entity = None
     capture_map_image_waitfor = '.leaflet-tile-loaded'
 
@@ -266,7 +264,14 @@ class MapEntityMixin(models.Model):
         return False
 
 
-class LogEntry(MapEntityMixin, BaseLogEntry):
+class MapEntityMixin(BaseMapEntityMixin):
+    attachments = GenericRelation(settings.PAPERCLIP_ATTACHMENT_MODEL)
+
+    class Meta(BaseMapEntityMixin.Meta):
+        pass
+
+
+class LogEntry(BaseMapEntityMixin, BaseLogEntry):
     geom = None
     object_verbose_name = _("object")
 
