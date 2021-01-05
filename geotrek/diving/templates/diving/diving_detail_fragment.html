@@ -6,8 +6,8 @@
         <th>{% trans "Dives" %}</th>
         <td>
             {% if perms.diving.add_dive %}
-            <p class="autohide"><a href="{% url 'diving:dive_add' %}" class="btn btn-light btn-sm btn-success">
-                <i class="bi bi-plus"></i> {% trans "Add a new dive" %}</a>
+            <p class="autohide"><a href="{% url 'diving:dive_add' %}" class="btn btn-sm btn-success">
+                <i class="bi bi-plus-circle-fill"></i> {% trans "Add a new dive" %}</a>
             </p>
             {% endif %}
 

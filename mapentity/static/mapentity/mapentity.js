@@ -31,8 +31,8 @@ $(document).ready(function (e) {
 
     // Auto-hide elements
     $('.autohide').parents().hover(
-        function() { $(this).children(".autohide").show(); },
-        function() { $(this).children(".autohide").hide(); }
+        function() { $(this).children(".autohide").addClass('hover'); },
+        function() { $(this).children(".autohide").removeClass('hover'); }
     );
 
 

@@ -6,8 +6,8 @@
             <th>{% trans "Signages" %}</th>
             <td>
                 {% if perms.signage.add_signage %}
-                <p class="autohide"><a href="{% url 'signage:signage_add' %}" class="btn btn-light btn-sm btn-success">
-                    <i class="bi bi-plus"></i> {% trans "Add a new signage" %}</a>
+                <p class="autohide"><a href="{% url 'signage:signage_add' %}" class="btn btn-sm btn-success">
+                    <i class="bi bi-plus-circle-fill"></i> {% trans "Add a new signage" %}</a>
                 </p>
                 {% endif %}
                 {% valuelist object.signages field='name' %}

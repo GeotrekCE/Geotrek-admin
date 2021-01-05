@@ -23,7 +23,7 @@
             {% is_course_model model as is_course_model %}
             {% if perms.maintenance.add_intervention %}
             <p class="autohide"><a href="{% url 'maintenance:intervention_add' %}{% if is_topology_model or is_blade_model or is_site_model or is_course_model %}?target_id={{ object.pk }}&target_type={{ object.get_content_type_id }}{% endif %}" class="btn btn-light btn-sm btn-success">
-                <i class="bi bi-plus"></i> {% trans "Add a new intervention" %}</a>
+                <i class="bi bi-plus-circle-fill"></i> {% trans "Add a new intervention" %}</a>
             </p>
             {% endif %}
 

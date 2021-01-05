@@ -27,8 +27,8 @@
         <td>
             {% if perms.core.add_trail %}
                 {% is_topology_model model as is_topology_model %}
-                <p class="autohide"><a href="{% url 'core:trail_add' %}{% if is_topology_model %}?topology={{ object.pk}}{% endif %}" class="btn btn-light btn-success">
-                    <i class="bi bi-plus"></i> {% trans "Add a new trail" %}</a>
+                <p class="autohide"><a href="{% url 'core:trail_add' %}{% if is_topology_model %}?topology={{ object.pk}}{% endif %}" class="btn btn-sm btn-success">
+                    <i class="bi bi-plus-circle-fill"></i> {% trans "Add a new trail" %}</a>
                 </p>
             {% endif %}
 

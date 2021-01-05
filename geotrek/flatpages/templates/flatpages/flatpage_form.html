@@ -8,14 +8,8 @@
     <link rel="stylesheet" href="{% static 'mapentity/chosen/chosen.css' %}">
     <title>{% trans 'Flat page' %} {{ object }}</title>
     <style>
-    .form-actions {
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        left: 0;
-        right: 0;
-        padding-left: 15px;
-        padding-right: 15px;
+    .form-panel {
+        background-color: #FFF;
     }
     .form-panel .scrollable {
         height: calc(100vh - 120px);
@@ -29,7 +23,7 @@
     }
     </style>
 </head>
-<body>
+<body class="bg-light">
 <div class="container form-panel">
     <h1>{% trans 'Flat page' %}
         {% if object %}
