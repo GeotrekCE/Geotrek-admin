@@ -80,9 +80,9 @@
 
 <div class="btn-group mr-2">
   {% if perms.core.add_path or perms.core.add_draft_path %}
-  <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="icon-plus icon-white"></i> {{ create_label }}</a>
+  <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="bi bi-plus"></i> {{ create_label }}</a>
   {% else %}
-  <span class="btn disabled" href="#"><i class="icon-plus icon-white"></i> {{ create_label }}</span>
+  <span class="btn disabled" href="#"><i class="bi bi-plus"></i> {{ create_label }}</span>
   {% endif %}
 
   <div id="wait_lightbox" style="display: none;">
@@ -94,16 +94,16 @@
 
 {% if perms.core.change_path %}
 <div class="btn-group btn-danger mr-2">
-  <a class="btn btn-primary" href="#"><i class="icon-cog icon-white"></i> Actions</a>
+  <a class="btn btn-primary" href="#"><i class="bi bi-gear-fill"></i> Actions</a>
   <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
   <ul class="dropdown-menu">
     <li class="dropdown-item">
       <a href="#confirm-merge" id="btn-merge" role="button" data-toggle="modal">
-        <i class="icon-pencil"></i> {% trans "Merge" %}</a>
+        <i class="bi bi-bezier"></i> {% trans "Merge" %}</a>
     </li>
     <li class="dropdown-item">
       <a href="#delete" id="btn-delete" role="button">
-        <i class="icon-trash"></i> {% trans "Delete" %}</a>
+        <i class="bi bi-trash"></i> {% trans "Delete" %}</a>
     </li>
   </ul>
 </div>

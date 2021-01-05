@@ -1213,7 +1213,7 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         self.assertContains(response,
                             '<a class="btn btn-primary ml-auto" '
                             'href="/trek/edit/{pk}/">'
-                            '<i class="icon-pencil icon-white"></i> '
+                            '<i class="bi bi-pencil-square"></i> '
                             'Update</a>'.format(pk=self.content1.pk),
                             html=True)
 
@@ -1222,7 +1222,7 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         response = self.client.get(url)
         self.assertContains(response,
                             '<span class="btn ml-auto disabled" href="#">'
-                            '<i class="icon-pencil"></i> Update</span>',
+                            '<i class="bi bi-pencil-square"></i> Update</span>',
                             html=True)
 
     def test_edit_button_bypass_structure(self):
@@ -1232,7 +1232,7 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         self.assertContains(response,
                             '<a class="btn btn-primary ml-auto" '
                             'href="/trek/edit/{pk}/">'
-                            '<i class="icon-pencil icon-white"></i> '
+                            '<i class="bi bi-pencil-square"></i> '
                             'Update</a>'.format(pk=self.content2.pk),
                             html=True)
 

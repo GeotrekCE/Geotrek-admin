@@ -58,7 +58,7 @@
       <a href="#" class="nav-link dropdown-toggle"
         id="navbarDropdownUsermenuLink" role="button" data-toggle="dropdown"
         aria-haspopup="true" aria-expanded="false">
-        <i class="icon-user"></i>
+        <i class="bi bi-person-fill"></i>
         {{ request.user }}
         {% smart_include "usermenu" %}
       </a>
@@ -96,7 +96,7 @@
         {% endfor %}
 
         <li class="dropdown-divider"></li>
-        <li class="dropdown-item"><a href="{% url 'logout' %}"><i class="icon-off"></i> {% trans "Logout" %}</a></li>
+        <li class="dropdown-item"><a href="{% url 'logout' %}"><i class="bi bi-power"></i> {% trans "Logout" %}</a></li>
       </ul>
     </li>
     {% endif %}

@@ -23,22 +23,22 @@
   <div class="tabbable">
     <ul class="nav nav-tabs">
       <li id="tab-properties" class="nav-item">
-        <a class="nav-link {% if activetab != 'attachments' %}active{% endif %}" href="#properties" data-toggle="tab"><i class="icon-tasks"></i> {% trans "Properties" %}
+        <a class="nav-link {% if activetab != 'attachments' %}active{% endif %}" href="#properties" data-toggle="tab"><i class="bi bi-list-task"></i> {% trans "Properties" %}
           {% smart_include "propertiestab" %}
         </a>
       </li>
       <li id="tab-attachments" class="nav-item">
-        <a class="nav-link {% if activetab == 'attachments' %}active{% endif %}" href="#attachments" data-toggle="tab"><i class="icon-file"></i> {% trans "Attached files" %} ({{ object.attachments.count }})</a>
+        <a class="nav-link {% if activetab == 'attachments' %}active{% endif %}" href="#attachments" data-toggle="tab"><i class="bi bi-file-earmark"></i> {% trans "Attached files" %} ({{ object.attachments.count }})</a>
       </li>
       {% if ACTION_HISTORY_ENABLED %}
       <li id="tab-history" class="nav-item">
-        <a class="nav-link" href="#history" data-toggle="tab"><i class="icon-time"></i> {% trans "History" %}</a>
+        <a class="nav-link" href="#history" data-toggle="tab"><i class="bi bi-clock-history"></i> {% trans "History" %}</a>
       </li>
       {% endif %}
       {% if can_edit %}
-      <a class="btn btn-primary ml-auto" href="{{ object.get_update_url }}"><i class="icon-pencil icon-white"></i> {% trans "Update" %}</a>
+      <a class="btn btn-primary ml-auto" href="{{ object.get_update_url }}"><i class="bi bi-pencil-square"></i> {% trans "Update" %}</a>
       {% else %}
-      <span class="btn disabled ml-auto" href="#"><i class="icon-pencil"></i> {% trans "Update" %}</span>
+      <span class="btn disabled ml-auto" href="#"><i class="bi bi-pencil-square"></i> {% trans "Update" %}</span>
       {% endif %}
     </ul>
     <div class="tab-content scrollable">

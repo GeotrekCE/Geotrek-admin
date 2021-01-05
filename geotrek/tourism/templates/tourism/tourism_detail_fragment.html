@@ -10,7 +10,7 @@
         <td>
             {% if perms.tourism.add_touristiccontent %}
             <p class="autohide"><a href="{% url 'tourism:touristiccontent_add' %}" class="btn btn-light btn-success">
-                <i class="icon-plus icon-white"></i> {% trans "Add a new touristic content" %}</a>
+                <i class="bi bi-plus"></i> {% trans "Add a new touristic content" %}</a>
             </p>
             {% endif %}
 
@@ -22,7 +22,7 @@
         <td>
             {% if perms.tourism.add_touristicevent %}
             <p class="autohide"><a href="{% url 'tourism:touristicevent_add' %}" class="btn btn-light btn-success">
-                <i class="icon-plus icon-white"></i> {% trans "Add a new touristic event" %}</a>
+                <i class="bi bi-plus"></i> {% trans "Add a new touristic event" %}</a>
             </p>
             {% endif %}
 

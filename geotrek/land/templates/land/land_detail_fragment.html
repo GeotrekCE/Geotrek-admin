@@ -12,7 +12,7 @@
         <td>
             {% if perms.land.add_landedge %}
             <p class="autohide"><a href="{% url 'land:landedge_add' %}{% if is_topology_model %}?topology={{ object.pk}}{% endif %}" class="btn btn-light btn-sm btn-success">
-                <i class="icon-plus icon-white"></i> {% trans "Add a new land edge" %}</a>
+                <i class="bi bi-plus"></i> {% trans "Add a new land edge" %}</a>
             </p>
             {% endif %}
 
@@ -27,7 +27,7 @@
         <td>
             {% if perms.land.add_physicaledge %}
             <p class="autohide"><a href="{% url 'land:physicaledge_add' %}{% if is_topology_model %}?topology={{ object.pk}}{% endif %}" class="btn btn-light btn-sm btn-success">
-                <i class="icon-plus icon-white"></i> {% trans "Add a new physical edge" %}</a>
+                <i class="bi bi-plus"></i> {% trans "Add a new physical edge" %}</a>
             </p>
             {% endif %}
 
@@ -42,7 +42,7 @@
         <td>
             {% if perms.land.add_competenceedge %}
             <p class="autohide"><a href="{% url 'land:competenceedge_add' %}{% if is_topology_model %}?topology={{ object.pk}}{% endif %}" class="btn btn-light btn-sm btn-success">
-                <i class="icon-plus icon-white"></i> {% trans "Add a new competence edge" %}</a>
+                <i class="bi bi-plus"></i> {% trans "Add a new competence edge" %}</a>
             </p>
             {% endif %}
 
@@ -57,7 +57,7 @@
         <td>
             {% if perms.land.add_workmanagementedge %}
             <p class="autohide"><a href="{% url 'land:workmanagementedge_add' %}{% if is_topology_model %}?topology={{ object.pk}}{% endif %}" class="btn btn-light btn-sm btn-success">
-                <i class="icon-plus icon-white"></i> {% trans "Add a new work management edge" %}</a>
+                <i class="bi bi-plus"></i> {% trans "Add a new work management edge" %}</a>
             </p>
             {% endif %}
 
@@ -72,7 +72,7 @@
         <td>
             {% if perms.land.add_signagemanagementedge %}
             <p class="autohide"><a href="{% url 'land:signagemanagementedge_add' %}{% if is_topology_model %}?topology={{ object.pk}}{% endif %}" class="btn btn-light btn-sm btn-success">
-                <i class="icon-plus icon-white"></i> {% trans "Add a new signage management edge" %}</a>
+                <i class="bi bi-plus"></i> {% trans "Add a new signage management edge" %}</a>
             </p>
             {% endif %}
 

@@ -431,13 +431,14 @@ div.dataTables_wrapper div.dataTables_filter input {
 
 #filters-close {
     position: absolute;
-    right: 3px;
+    right: -20px;
+    top: -25px;
 }
 
 #filters-close a {
-    width: 20px;
-    height: 20px;
     padding: 4px;
+    font-size: 20px;
+    color: #666;
 }
 
 .popover {

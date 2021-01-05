@@ -88,7 +88,7 @@ class SubmitButton(HTML):
         content = ("""
             <a id="{0}" class="btn btn-success"
                onclick="javascript:$(this).parents('form').submit();">
-                <i class="icon-white icon-ok-sign"></i> {1}
+                <i class="bi bi-check-circle-fill"></i> {1}
             </a>""".format(divid, label))
         super().__init__(content)
 
@@ -153,7 +153,7 @@ class MapEntityForm(TranslatedModelForm):
             self.helper.form_action = self.instance.get_update_url()
             # Put delete url in Delete button
             actions.insert(0, HTML(
-                """<a class="btn {0} delete" href="{1}"><i class="icon-white icon-trash"></i> {2}</a>""".format(
+                """<a class="btn {0} delete" href="{1}"><i class="bi bi-trash"></i> {2}</a>""".format(
                     'btn-danger' if self.can_delete else 'disabled',
                     self.instance.get_delete_url() if self.can_delete else '#',
                     _("Delete")

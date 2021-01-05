@@ -102,10 +102,10 @@ class TrekForm(BaseTrekForm):
             HTML(
                 """<ul class="nav nav-tabs">
     <li id="tab-main" class="nav-item">
-        <a class="nav-link active" href="#main" data-toggle="tab"><i class="icon-certificate"></i> {0}</a>
+        <a class="nav-link active" href="#main" data-toggle="tab"><i class="bi bi-card-list"></i> {0}</a>
     </li>
     <li id="tab-advanced" class="nav-item">
-        <a class="nav-link" href="#advanced" data-toggle="tab"><i class="icon-tasks"></i> {1}</a>
+        <a class="nav-link" href="#advanced" data-toggle="tab"><i class="bi bi-list-ul"></i> {1}</a>
     </li>
 </ul>""".format(_("Main"), _("Advanced"))),
             Div(

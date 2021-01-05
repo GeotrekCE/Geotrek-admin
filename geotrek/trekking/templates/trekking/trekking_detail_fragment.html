@@ -8,7 +8,7 @@
             {% if perms.trekking.add_trek %}
             {% is_topology_model model as is_topology_model %}
             <p class="autohide"><a href="{% url 'trekking:trek_add' %}{% if is_topology_model %}?topology={{ object.pk}}{% endif %}" class="btn btn-light btn-sm btn-success">
-                <i class="icon-plus icon-white"></i> {% trans "Add a new trek" %}</a>
+                <i class="bi bi-plus"></i> {% trans "Add a new trek" %}</a>
             </p>
             {% endif %}
 
@@ -23,7 +23,7 @@
         <td>
             {% if perms.trekking.add_poi %}
             <p class="autohide"><a href="{% url 'trekking:poi_add' %}" class="btn btn-light btn-sm btn-success">
-                <i class="icon-plus icon-white"></i> {% trans "Add a new poi" %}</a>
+                <i class="bi bi-plus"></i> {% trans "Add a new poi" %}</a>
             </p>
             {% endif %}
 
@@ -43,7 +43,7 @@
         <td>
             {% if perms.trekking.add_service %}
             <p class="autohide"><a href="{% url 'trekking:service_add' %}" class="btn btn-light btn-sm btn-success">
-                <i class="icon-plus icon-white"></i> {% trans "Add a new service" %}</a>
+                <i class="bi bi-plus"></i> {% trans "Add a new service" %}</a>
             </p>
             {% endif %}
 
