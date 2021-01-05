@@ -267,8 +267,8 @@ class BaseMapEntityMixin(models.Model):
 class MapEntityMixin(BaseMapEntityMixin):
     attachments = GenericRelation(settings.PAPERCLIP_ATTACHMENT_MODEL)
 
-    class Meta(BaseMapEntityMixin.Meta):
-        pass
+    class Meta:
+        abstract = True
 
 
 class LogEntry(BaseMapEntityMixin, BaseLogEntry):
