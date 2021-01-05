@@ -2,62 +2,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- FIXME: upgrade mapentity to boostrap 3 to remove customizations here -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'bootstrap-4.5.3/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'flatpages/css/jquery.gridmanager.css' %}">
     <link rel="stylesheet" href="{% static 'mapentity/style.css' %}"/>
     <link rel="stylesheet" href="{% static 'mapentity/chosen/chosen.css' %}">
+    <title>{% trans 'Flat page' %} {{ object }}</title>
     <style>
-        .form-horizontal .control-label {
-            float: left;
-        }
-
-        .form-horizontal .checkbox {
-            margin-left: 145px;
-        }
-
-        .help-block {
-            display: inline-block;
-            font-size: 0.7em;
-        }
-
-        .nav-pills {
-            margin-bottom: 2px;
-        }
-
-        .nav-pills > li > a {
-            margin-bottom: 2px;
-        }
-
-        .form-panel .form-actions {
-            position: relative;
-            padding: 0;
-            top: -40px;
-        }
-
-        #button-id-cancel {
-            margin-right: 10px;
-        }
-
-        #modelfields {
-            overflow: visible;
-        }
-
-        .form-horizontal .tab-pane .form-group {
-            margin-left: 0;
-            margin-right: 0;
-        }
+    .form-actions {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        left: 0;
+        right: 0;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    .form-panel .scrollable {
+        height: calc(100vh - 120px);
+    }
+    #modelfields .chosen-container {
+        max-width: 580px;
+    }
+    /* Override jquery.gridmanager CSS to adapt to Bootstrap4 */
+    #gm-canvas .gm-tools {
+        flex-basis: 100%;
+    }
     </style>
 </head>
 <body>
 <div class="container form-panel">
+    <h1>{% trans 'Flat page' %}
+        {% if object %}
+            {{ object }}
+        {% else %}
+            ({% trans 'creation' %})
+        {% endif %}
+    </h1>
     <!--         <div class="row"> -->
-    {% crispy form form.helper 'bootstrap3' %}
+    {% crispy form form.helper 'bootstrap4' %}
     <!--         </div> -->
 </div>
 <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
 <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/tinymce/4.1.2/tinymce.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/tinymce/4.1.2/jquery.tinymce.min.js"></script>
 <script src="{% static 'flatpages/js/jquery.gridmanager.js' %}"></script>
