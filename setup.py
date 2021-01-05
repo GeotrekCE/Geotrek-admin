@@ -56,6 +56,7 @@ setup(
         'Fiona',
         # mapentity requirements
         'netifaces',
+        'cairocffi',
         'BeautifulSoup4',
         'Django',
         'gpxpy',
