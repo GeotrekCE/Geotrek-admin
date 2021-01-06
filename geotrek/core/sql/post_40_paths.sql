@@ -53,7 +53,7 @@ BEGIN
     SELECT COUNT(*) INTO t_count
     FROM core_path
     WHERE pid != id
-      AND ST_GeometryType(ST_intersection(geom, line)) IN ('ST_LineString', 'ST_MultiLineString');
+      AND ST_GeometryType(ST_intersection(geom, line)) IN ('ST_LineString', 'ST_MultiLineString') AND NOT ST_IsEmpty(ST_intersection(geom, line));
       -- not extremity touching
       -- AND ST_Touches(geom, line) = false
       -- not crossing
