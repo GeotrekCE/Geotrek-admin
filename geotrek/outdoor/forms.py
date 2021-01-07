@@ -15,20 +15,20 @@ class SiteForm(CommonForm):
             'review',
             'published',
             'practice',
-            'description',
+            'type',
             'description_teaser',
             'ambiance',
+            'description',
             'advice',
             'period',
             'orientation',
             'wind',
             'labels',
             'themes',
-            'portal',
-            'source',
             'information_desks',
             'web_links',
-            'type',
+            'portal',
+            'source',
             'eid',
         )
     ]
@@ -56,7 +56,7 @@ class SiteForm(CommonForm):
                         required=False,
                         initial=ratings[0] if ratings else None
                     )
-                    self.fieldslayout[0].insert(9, fieldname)
+                    self.fieldslayout[0].insert(10, fieldname)
 
     def save(self, *args, **kwargs):
         site = super().save(self, *args, **kwargs)
