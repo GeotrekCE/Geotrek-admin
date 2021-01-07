@@ -1,4 +1,5 @@
 from crispy_forms.layout import Div
+from django import forms
 from geotrek.common.forms import CommonForm
 from geotrek.outdoor.models import Site
 
@@ -44,3 +45,36 @@ class SiteForm(CommonForm):
         if self.instance.pk:
             descendants = self.instance.get_descendants(include_self=True).values_list('pk', flat=True)
             self.fields['parent'].queryset = Site.objects.exclude(pk__in=descendants)
+        if self.instance.practice:
+            for scale in self.instance.practice.rating_scales.all():
+                for bound in ('min', 'max'):
+                    ratings = getattr(self.instance, 'ratings_' + bound).filter(scale=scale)
+                    fieldname = 'rating_scale_{}{}'.format(bound, scale.pk)
+                    self.fields[fieldname] = forms.ModelChoiceField(
+                        label="{} {}".format(scale.name, bound),
+                        queryset=scale.ratings.all(),
+                        required=False,
+                        initial=ratings[0] if ratings else None
+                    )
+                    self.fieldslayout[0].insert(9, fieldname)
+
+    def save(self, *args, **kwargs):
+        site = super().save(self, *args, **kwargs)
+
+        # Save ratings
+        if site.practice:
+            for bound in ('min', 'max'):
+                field = getattr(site, 'ratings_' + bound)
+                to_remove = list(field.exclude(scale__practice=site.practice).values_list('pk', flat=True))
+                to_add = []
+                for scale in site.practice.rating_scales.all():
+                    rating = self.cleaned_data.get('rating_scale{}'.format(scale.pk))
+                    if rating:
+                        to_remove += list(field.filter(scale=scale).exclude(pk=rating.pk).values_list('pk', flat=True))
+                        to_add.append(rating.pk)
+                    else:
+                        to_remove += list(field.filter(scale=scale).values_list('pk', flat=True))
+                field.remove(*to_remove)
+                field.add(*to_add)
+
+        return site

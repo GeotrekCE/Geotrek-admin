@@ -40,6 +40,18 @@
             <th>{{ object|verbose:"advice" }}</th>
             <td>{% if object.advice %}{{ object.advice|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
+        {% for rating in object.ratings_min.all %}
+            <tr>
+                <th>{{ rating.scale.name }}</th>
+                <td>{{ rating.name }}</td>
+            </tr>
+        {% endfor %}
+        {% for rating in object.ratings_max.all %}
+            <tr>
+                <th>{{ rating.scale.name }}</th>
+                <td>{{ rating.name }}</td>
+            </tr>
+        {% endfor %}
         <tr>
             <th>{{ object|verbose:"period" }}</th>
             <td>{% if object.period %}{{ object.period }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
