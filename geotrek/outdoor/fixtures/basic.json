@@ -25,9 +25,9 @@
     "model": "outdoor.practice",
     "pk": 2,
     "fields": {
-        "name": "Eau vive",
-        "name_fr": "Eau vive",
-        "name_en": "White water"
+        "name": "Canoë-kayak",
+        "name_fr": "Canoë-kayak",
+        "name_en": "Canoe-kayak"
     }
 },
 {
@@ -55,6 +55,15 @@
         "name": "Vol libre",
         "name_fr": "Vol libre",
         "name_en": "Hang-gliding"
+    }
+},
+{
+    "model": "outdoor.practice",
+    "pk": 6,
+    "fields": {
+        "name": "Canyoning",
+        "name_fr": "Canyoning",
+        "name_en": "Canyoning"
     }
 }
 ]
