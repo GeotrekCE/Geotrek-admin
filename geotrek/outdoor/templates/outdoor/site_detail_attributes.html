@@ -25,8 +25,8 @@
             <td>{% if object.practice %}{{ object.practice }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"description" }}</th>
-            <td>{% if object.description %}{{ object.description|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+            <th>{{ object|verbose:"type" }}</th>
+            <td>{% if object.type %}{{ object.type }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"description_teaser" }}</th>
@@ -35,6 +35,10 @@
         <tr>
             <th>{{ object|verbose:"ambiance" }}</th>
             <td>{% if object.ambiance %}{{ object.ambiance|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description" }}</th>
+            <td>{% if object.description %}{{ object.description|safe }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{{ object|verbose:"advice" }}</th>
@@ -77,21 +81,15 @@
             </td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"web_links" }}</th>
-            <td>
-                {% valuelist object.web_links.all %}
-            </td>
-        </tr>
-        <tr>
             <th>{{ object|verbose:"information_desks" }}</th>
             <td>
                 {% valuelist object.information_desks.all %}
             </td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"source" }}</th>
+            <th>{{ object|verbose:"web_links" }}</th>
             <td>
-                {% valuelist object.source.all %}
+                {% valuelist object.web_links.all %}
             </td>
         </tr>
         <tr>
@@ -101,8 +99,10 @@
             </td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"type" }}</th>
-            <td>{% if object.type %}{{ object.type }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+            <th>{{ object|verbose:"source" }}</th>
+            <td>
+                {% valuelist object.source.all %}
+            </td>
         </tr>
         <tr>
             <th>{% trans "External id" %}</th>
