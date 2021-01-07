@@ -47,7 +47,7 @@ class SiteForm(CommonForm):
             self.fields['parent'].queryset = Site.objects.exclude(pk__in=descendants)
         if self.instance.practice:
             for scale in self.instance.practice.rating_scales.all():
-                for bound in ('min', 'max'):
+                for bound in ('max', 'min'):
                     ratings = getattr(self.instance, 'ratings_' + bound).filter(scale=scale)
                     fieldname = 'rating_scale_{}{}'.format(bound, scale.pk)
                     self.fields[fieldname] = forms.ModelChoiceField(
