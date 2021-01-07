@@ -142,7 +142,7 @@ class BaseMapEntityMixin(models.Model):
         image_path = self.get_map_image_path()
         if os.path.exists(image_path):
             os.unlink(image_path)
-        super(MapEntityMixin, self).delete(*args, **kwargs)
+        super().delete(*args, **kwargs)
 
     @classmethod
     def get_layer_url(cls):
