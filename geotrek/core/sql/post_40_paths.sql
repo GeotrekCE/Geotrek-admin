@@ -45,23 +45,10 @@ DECLARE
     t_count integer;
     tolerance float;
 BEGIN
-    -- Note: I gave up with the idea of checking almost overlap/touch.
-
-    -- tolerance := 1.0;
-    -- Crossing and extremity touching is OK.
-    -- Overlapping and --almost overlapping-- is KO.
     SELECT COUNT(*) INTO t_count
     FROM core_path
     WHERE pid != id
-      AND ST_GeometryType(ST_intersection(geom, line)) IN ('ST_LineString', 'ST_MultiLineString');
-      -- not extremity touching
-      -- AND ST_Touches(geom, line) = false
-      -- not crossing
-      -- AND ST_GeometryType(ST_intersection(geom, line)) NOT IN ('ST_Point', 'ST_MultiPoint')
-      -- overlap is a line
-      -- AND ST_GeometryType(ST_intersection(geom, ST_buffer(line, tolerance))) IN ('ST_LineString', 'ST_MultiLineString')
-      -- not almost touching, at most twice
-      -- AND       ST_Length(ST_intersection(geom, ST_buffer(line, tolerance))) > (4 * tolerance);
+    AND NOT ST_IsEmpty(ST_CollectionExtract(ST_intersection(geom, line), 2));
     RETURN t_count = 0;
 END;
 $$ LANGUAGE plpgsql;
