@@ -611,6 +611,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
 
     class RatingSerializer(serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)
+        description = serializers.SerializerMethodField(read_only=True)
 
         def get_name(self, obj):
             return get_translation_or_dict('name', self, obj)
