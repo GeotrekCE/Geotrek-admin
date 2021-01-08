@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.contrib import admin
+from django.utils.html import format_html
+from django.utils.translation import gettext as _
 from geotrek.common.admin import MergeActionMixin
 from geotrek.outdoor.models import Practice, SiteType, RatingScale, Rating
 
@@ -34,7 +36,13 @@ class RatingScaleAdmin(MergeActionMixin, TranslationAdmin):
 
 @admin.register(Rating)
 class RatingAdmin(MergeActionMixin, TranslationAdmin):
-    list_display = ('name', 'scale', 'order', 'color')
+    list_display = ('name', 'scale', 'order', 'color_markup')
     list_filter = ('scale', 'scale__practice')
     search_fields = ('name', 'description', 'scale__name')
     merge_field = 'name'
+
+    def color_markup(self, obj):
+        if not obj.color:
+            return ''
+        return format_html('<span style="color: {code};">⬤</span> {code}', code=obj.color)
+    color_markup.short_description = _("Color")
