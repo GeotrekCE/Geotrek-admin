@@ -42,7 +42,7 @@ msgid "Ratings"
 msgstr "Cotations"
 
 msgid "Scale"
-msgstr "Cotation"
+msgstr "Échelle"
 
 msgid "Description"
 msgstr "Description"

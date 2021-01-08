@@ -34,7 +34,7 @@ class RatingScale(models.Model):
                                  verbose_name=_("Practice"))
 
     def __str__(self):
-        return "{}: {}".format(self.practice.name, self.name)
+        return "{} ({})".format(self.name, self.practice.name)
 
     class Meta:
         verbose_name = _("Rating scale")
