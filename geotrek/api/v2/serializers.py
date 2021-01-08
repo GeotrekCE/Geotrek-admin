@@ -599,6 +599,29 @@ if 'geotrek.zoning' in settings.INSTALLED_APPS:
 
 
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:
+    class RatingScaleSerializer(serializers.ModelSerializer):
+        name = serializers.SerializerMethodField(read_only=True)
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        class Meta:
+            model = outdoor_models.RatingScale
+            fields = ('id', 'name', 'practice')
+
+    class RatingSerializer(serializers.ModelSerializer):
+        name = serializers.SerializerMethodField(read_only=True)
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        def get_description(self, obj):
+            return get_translation_or_dict('description', self, obj)
+
+        class Meta:
+            model = outdoor_models.Rating
+            fields = ('id', 'name', 'description', 'scale', 'order', 'color')
+
     class OutdoorPracticeSerializer(serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)
 
@@ -629,5 +652,5 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
                 'id', 'geometry', 'url', 'structure', 'name', 'practice', 'description',
                 'description_teaser', 'ambiance', 'advice', 'period', 'labels', 'themes',
                 'portal', 'source', 'information_desks', 'web_links', 'eid',
-                'orientation', 'wind',
+                'orientation', 'wind', 'ratings_min', 'ratings_max',
             )

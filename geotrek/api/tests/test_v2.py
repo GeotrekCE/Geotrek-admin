@@ -98,7 +98,7 @@ RESERVATION_SYSTEM_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'id'])
 SITE_PROPERTIES_JSON_STRUCTURE = sorted([
     'advice', 'ambiance', 'description', 'description_teaser', 'eid', 'geometry', 'id',
     'information_desks', 'labels', 'name', 'period', 'portal', 'practice', 'source',
-    'structure', 'themes', 'url', 'web_links', 'orientation', 'wind',
+    'structure', 'themes', 'url', 'web_links', 'orientation', 'wind', 'ratings_min', 'ratings_max',
 ])
 
 OUTDOORPRACTICE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
@@ -753,3 +753,125 @@ class APISwaggerTestCase(BaseApiTest):
     def test_swagger_ui(self):
         response = self.client.get('/api/v2/')
         self.assertContains(response, 'swagger')
+
+
+class RatingScaleTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.practice1 = outdoor_factory.PracticeFactory()
+        cls.practice2 = outdoor_factory.PracticeFactory()
+        cls.scale1 = outdoor_factory.RatingScaleFactory(name='AAA', practice=cls.practice1)
+        cls.scale2 = outdoor_factory.RatingScaleFactory(name='AAA', practice=cls.practice2)
+        cls.scale3 = outdoor_factory.RatingScaleFactory(name='BBB', practice=cls.practice2)
+
+    def test_list(self):
+        response = self.client.get('/api/v2/ratingscale/')
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'count': 3,
+            'next': None,
+            'previous': None,
+            'results': [{
+                'id': self.scale1.pk,
+                'name': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
+                'practice': self.practice1.pk,
+            }, {
+                'id': self.scale2.pk,
+                'name': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
+                'practice': self.practice2.pk,
+            }, {
+                'id': self.scale3.pk,
+                'name': {'en': 'BBB', 'es': None, 'fr': None, 'it': None},
+                'practice': self.practice2.pk,
+            }]
+        })
+
+    def test_detail(self):
+        response = self.client.get('/api/v2/ratingscale/{}/'.format(self.scale1.pk))
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': self.scale1.pk,
+            'name': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
+            'practice': self.practice1.pk,
+        })
+
+    def test_filter_q(self):
+        response = self.client.get('/api/v2/ratingscale/?q=A')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        for scale in response.json()['results']:
+            self.assertEqual(scale['name']['en'], 'AAA')
+
+    def test_filter_practice(self):
+        response = self.client.get('/api/v2/ratingscale/?practice={}'.format(self.practice2.pk))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        for scale in response.json()['results']:
+            self.assertEqual(scale['practice'], self.practice2.pk)
+
+
+class RatingTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.scale1 = outdoor_factory.RatingScaleFactory(name='BBB')
+        cls.scale2 = outdoor_factory.RatingScaleFactory(name='AAA')
+        cls.rating1 = outdoor_factory.RatingFactory(name='AAA', scale=cls.scale1)
+        cls.rating2 = outdoor_factory.RatingFactory(name='AAA', scale=cls.scale2)
+        cls.rating3 = outdoor_factory.RatingFactory(name='BBB', scale=cls.scale2)
+
+    def test_list(self):
+        response = self.client.get('/api/v2/rating/')
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'count': 3,
+            'next': None,
+            'previous': None,
+            'results': [{
+                'color': '',
+                'description': {'en': None, 'es': None, 'fr': None, 'it': None},
+                'id': self.rating1.pk,
+                'name': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
+                'order': None,
+                'scale': self.scale1.pk,
+            }, {
+                'color': '',
+                'description': {'en': None, 'es': None, 'fr': None, 'it': None},
+                'id': self.rating2.pk,
+                'name': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
+                'order': None,
+                'scale': self.scale2.pk,
+            }, {
+                'color': '',
+                'description': {'en': None, 'es': None, 'fr': None, 'it': None},
+                'id': self.rating3.pk,
+                'name': {'en': 'BBB', 'es': None, 'fr': None, 'it': None},
+                'order': None,
+                'scale': self.scale2.pk,
+            }]
+        })
+
+    def test_detail(self):
+        response = self.client.get('/api/v2/rating/{}/'.format(self.rating1.pk))
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {
+            'id': self.rating1.pk,
+            'color': '',
+            'description': {'en': None, 'es': None, 'fr': None, 'it': None},
+            'name': {'en': 'AAA', 'es': None, 'fr': None, 'it': None},
+            'order': None,
+            'scale': self.scale1.pk,
+        })
+
+    def test_filter_q(self):
+        response = self.client.get('/api/v2/rating/?q=BBB')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        for rating in response.json()['results']:
+            self.assertNotEqual(rating['name']['en'] == 'BBB', rating['scale'] == self.scale1.pk)
+
+    def test_filter_scale(self):
+        response = self.client.get('/api/v2/rating/?scale={}'.format(self.scale2.pk))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['count'], 2)
+        for rating in response.json()['results']:
+            self.assertEqual(rating['scale'], self.scale2.pk)

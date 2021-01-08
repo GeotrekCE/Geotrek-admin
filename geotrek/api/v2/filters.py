@@ -397,3 +397,57 @@ class GeotrekSiteFilter(BaseFilterBackend):
                 )
             ),
         )
+
+
+class GeotrekRatingScaleFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        q = request.GET.get('q', None)
+        if q is not None:
+            queryset = queryset.filter(name__icontains=q)
+        practice = request.GET.get('practice', None)
+        if practice is not None:
+            queryset = queryset.filter(practice__pk=practice)
+        return queryset
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='q', required=False, location='query', schema=coreschema.String(
+                    title=_("Query string"),
+                    description=_('Search field that returns rating scales containing data matching the string')
+                )
+            ), Field(
+                name='practice', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Practice"),
+                    description=_('Id of a practice to filter by')
+                )
+            ),
+        )
+
+
+class GeotrekRatingFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        q = request.GET.get('q', None)
+        if q is not None:
+            queryset = queryset.filter(
+                Q(name__icontains=q) | Q(description__icontains=q) | Q(scale__name__icontains=q)
+            )
+        scale = request.GET.get('scale', None)
+        if scale is not None:
+            queryset = queryset.filter(scale__pk=scale)
+        return queryset
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name='q', required=False, location='query', schema=coreschema.String(
+                    title=_("Query string"),
+                    description=_('Search field that returns rating scales containing data matching the string')
+                )
+            ), Field(
+                name='scale', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Rating scale"),
+                    description=_('Id of a rating scale to filter by')
+                )
+            ),
+        )
