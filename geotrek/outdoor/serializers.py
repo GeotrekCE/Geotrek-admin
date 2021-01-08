@@ -41,7 +41,7 @@ class SiteSerializer(PublishableSerializerMixin, ZoningSerializerMixin, Translat
         fields = ('id', 'structure', 'name', 'practice', 'description', 'description_teaser',
                   'ambiance', 'advice', 'period', 'labels', 'themes', 'portal', 'source',
                   'information_desks', 'web_links', 'type', 'parent', 'children', 'eid',
-                  'orientation', 'wind') + \
+                  'orientation', 'wind', 'ratings_min', 'ratings_max') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields
 

@@ -59,6 +59,8 @@ class SiteViewsTests(CommonTest):
                 'name': 'Site type'
             },
             'web_links': [],
+            'ratings_min': [],
+            'ratings_max': [],
             'wind': 'N',
         }
 
