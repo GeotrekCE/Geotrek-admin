@@ -68,7 +68,7 @@ class SiteForm(CommonForm):
                 to_remove = list(field.exclude(scale__practice=site.practice).values_list('pk', flat=True))
                 to_add = []
                 for scale in site.practice.rating_scales.all():
-                    rating = self.cleaned_data.get('rating_scale{}'.format(scale.pk))
+                    rating = self.cleaned_data.get('rating_scale_{}{}'.format(bound, scale.pk))
                     if rating:
                         to_remove += list(field.filter(scale=scale).exclude(pk=rating.pk).values_list('pk', flat=True))
                         to_add.append(rating.pk)
