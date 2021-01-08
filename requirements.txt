@@ -3,7 +3,7 @@ appy-python-3==2020.11.24
 beautifulsoup4==4.9.0
 billiard==3.6.3.0
 cairocffi==0.9.0
-CairoSVG==2.4.2
+CairoSVG==2.5.1
 celery==4.4.2
 certifi==2019.11.28
 cffi==1.14.3
