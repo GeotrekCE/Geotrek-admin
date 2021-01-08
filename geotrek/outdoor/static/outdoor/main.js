@@ -42,15 +42,19 @@ function update_site_types() {
     var $select = $('#id_type');
     var selected = $select.val() || [];
 
-    var types_values = practice ? practices[practice]['type_values'] : {};
+    var types = practice ? practices[practice]['types'] : {};
 
     // Hide type field if no values for this practice
-    $('#div_id_type').toggle(Object.keys(types_values).length > 0);
+    $('#div_id_type').toggle(Object.keys(types).length > 0);
 
     // Refresh options list for types, depending on practice
     $select.empty();
-    for(var type_id in types_values) {
-        var type_name = types_values[type_id];
+    $('<option/>')
+        .text('---------')
+        .attr('value', '')
+        .appendTo($select);
+    for(var type_id in types) {
+        var type_name = types[type_id];
         $('<option/>')
             .text(type_name)
             .attr('value', type_id)
