@@ -2,12 +2,28 @@
 CHANGELOG
 =========
 
-2.44.1.dev0
+2.45.0 (2021-01-10)
 -------------------
+
+HAPPY NEW YEAR!
+
+**Security fixes**
+
+- Upgrade cairosvg and lxml libraries
 
 **Bug fixes**
 
 - Fix migrations if some outdoor sites were created before
+- Fix missing placeholders for orientations in filter
+- Fix outdoor fixtures
+- Fix doc to enable outdoor
+- Fix path edition with PostGIS 3 (on Ubuntu 20.04)
+- Allow site type to be blank
+
+**New Feature**
+
+- Add min/max ratings for outdoor sites
+- Reorder outdoor site fields
 
 
 2.44.0 (2020-12-18)
