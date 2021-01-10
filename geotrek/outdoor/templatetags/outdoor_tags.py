@@ -16,9 +16,19 @@ def is_outdoor_enabled():
 def site_practices():
     practices = {
         str(practice.pk): {
-            'type_values': {
+            'types': {
                 str(type.pk): type.name
                 for type in practice.types.all()
+            },
+            'scales': {
+                str(scale.pk): {
+                    'name': scale.name,
+                    'ratings': {
+                        str(rating.pk): rating.name
+                        for rating in scale.ratings.all()
+                    },
+                }
+                for scale in practice.rating_scales.all()
             },
         }
         for practice in Practice.objects.all()

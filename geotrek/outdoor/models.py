@@ -1,3 +1,4 @@
+from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.db.models import Q
@@ -25,6 +26,38 @@ class Practice(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class RatingScale(models.Model):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    practice = models.ForeignKey(Practice, related_name="rating_scales", on_delete=models.PROTECT,
+                                 verbose_name=_("Practice"))
+
+    def __str__(self):
+        return "{} ({})".format(self.name, self.practice.name)
+
+    class Meta:
+        verbose_name = _("Rating scale")
+        verbose_name_plural = _("Rating scales")
+        ordering = ('practice', 'name')
+
+
+class Rating(models.Model):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    scale = models.ForeignKey(RatingScale, related_name="ratings", on_delete=models.PROTECT,
+                              verbose_name=_("Scale"))
+    description = models.TextField(verbose_name=_("Description"), blank=True)
+    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
+                                help_text=_("Alphabetical order if blank"))
+    color = ColorField(verbose_name=_("Color"), blank=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("Rating")
+        verbose_name_plural = _("Ratings")
+        ordering = ('order', 'name')
 
 
 class SiteType(models.Model):
@@ -72,6 +105,8 @@ class Site(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
                                 help_text=_("Main attraction and interest"))
     advice = models.TextField(verbose_name=_("Advice"), blank=True,
                               help_text=_("Risks, danger, best period, ..."))
+    ratings_min = models.ManyToManyField(Rating, related_name='sites_min', blank=True)
+    ratings_max = models.ManyToManyField(Rating, related_name='sites_max', blank=True)
     period = models.CharField(verbose_name=_("Period"), max_length=1024, blank=True)
     orientation = OrientationField(verbose_name=_("Orientation"), blank=True)
     wind = OrientationField(verbose_name=_("Wind"), blank=True)
