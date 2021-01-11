@@ -125,7 +125,13 @@ MapEntity.TogglableFilter = L.Class.extend({
         var i = '';
         for (var k in this.fields) {
             var f = this.fields[k];
-            i += p.replace('%name%', f.label).replace('%value%', f.value);
+            var value = f.value;
+            value = value.replace(/&/g, '&amp;');
+            value = value.replace(/</g, '&lt;');
+            value = value.replace(/>/g, '&gt;');
+            value = value.replace(/">"/g, '&quot;');
+            value = value.replace(/'>'/g, '&#x27;');
+            i += p.replace('%name%', f.label).replace('%value%', value);
         }
         return i;
     },
