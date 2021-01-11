@@ -288,7 +288,6 @@ PROJECT_APPS += (
     'leaflet',  # After mapentity to allow it to patch settings
     'rest_framework',
     'rest_framework_gis',
-    'drf_yasg',
     'embed_video',
     'django_celery_results',
     'colorfield',

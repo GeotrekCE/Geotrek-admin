@@ -41,8 +41,10 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
     router.register('rating', api_views.RatingViewSet, basename='rating')
 
 app_name = 'apiv2'
-_urlpatterns = [
-    path('', api_views.schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+_urlpatterns = []
+if 'drf_yasg' in settings.INSTALLED_APPS:
+    _urlpatterns.append(path('', api_views.schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'))
+_urlpatterns += [
     path('config/', api_views.ConfigView.as_view(), name='config'),
     path('', include(router.urls)),
 ]

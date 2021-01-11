@@ -11,8 +11,10 @@ if 'geotrek.flatpages' in settings.INSTALLED_APPS:
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
     router.register('treks', api_mobile.TrekViewSet, basename='treks')
 app_name = 'apimobile'
-_urlpatterns = [
-    path('', api_mobile.schema_view.with_ui('swagger', cache_timeout=0), name='schema'),
+_urlpatterns = []
+if 'drf_yasg' in settings.INSTALLED_APPS:
+    _urlpatterns.append(path('', api_mobile.schema_view.with_ui('swagger', cache_timeout=0), name='schema'))
+_urlpatterns += [
     path('', include(router.urls)),
     path('settings/', api_mobile.SettingsView.as_view(), name='settings'),
     path('commands/sync', SyncMobileRedirect.as_view(), name='sync_mobiles'),
