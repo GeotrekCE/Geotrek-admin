@@ -11,6 +11,7 @@ CHANGELOG
 - Hide nginx version
 - Disable swagger (API v2 documentation) by default.
   To enable it, see swagger item in advanced documentation page.
+- Fix XSS in filter popover
 
 **Bug fixes**
 
