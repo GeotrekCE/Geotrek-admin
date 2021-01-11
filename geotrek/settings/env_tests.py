@@ -12,6 +12,7 @@ INSTALLED_APPS += (
     'geotrek.diving',
     'geotrek.sensitivity',
     'geotrek.outdoor',
+    'drf_yasg',
 )
 
 LOGGING['handlers']['console']['level'] = 'CRITICAL'
