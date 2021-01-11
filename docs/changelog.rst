@@ -5,6 +5,10 @@ CHANGELOG
 2.45.1.dev0
 -------------------
 
+**Security fixes**
+
+- Enable XFrameOptionsMiddleware
+
 **Bug fixes**
 
 -
