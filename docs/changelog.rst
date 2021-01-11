@@ -8,6 +8,7 @@ CHANGELOG
 **Security fixes**
 
 - Enable XFrameOptionsMiddleware
+- Hide nginx version
 
 **Bug fixes**
 
