@@ -12,6 +12,7 @@ server {
     listen ${NGINX_PORT};
     server_name ${SERVER_NAME};
     server_name_in_redirect on;
+    server_tokens off;
 
     access_log /var/log/nginx/geotrek_access.log;
     error_log /var/log/nginx/geotrek_error.log;
