@@ -228,6 +228,20 @@ Note: outdoor module is not compatible with PostGIS <= 2.4 that is included in U
 You should either upgrade to Ubuntu 20.04 or upgrade postGIS to 2.5 with
 https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa
 
+Swagger
+-------
+
+In order to enable swagger module to auto-document API `/api/v2/`, in the custom settings file,
+add the following code:
+
+.. code-block :: python
+
+    # Enable API v2 documentation
+    INSTALLED_APPS += ('drf_yasg', )
+
+Then run ``sudo geotrek restart``.
+
+
 WYSIWYG editor configuration
 ----------------------------
 

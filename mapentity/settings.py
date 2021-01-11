@@ -71,7 +71,6 @@ REST_FRAMEWORK_DEFAULT_CONFIG = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'mapentity.renderers.GeoJSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
     ],
 }
 REST_FRAMEWORK_DEFAULT_CONFIG.update(getattr(settings, 'REST_FRAMEWORK', {}))
