@@ -16,7 +16,7 @@ class GeotrekViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = api_pagination.StandardResultsSetPagination
     permission_classes = [IsAuthenticatedOrReadOnly, ] if settings.API_IS_PUBLIC else [IsAuthenticated, ]
     authentication_classes = [BasicAuthentication, SessionAuthentication]
-    renderer_classes = [renderers.JSONRenderer, renderers.BrowsableAPIRenderer]
+    renderer_classes = [renderers.JSONRenderer]
 
     def get_serializer_context(self):
         return {
