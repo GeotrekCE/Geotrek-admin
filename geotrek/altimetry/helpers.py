@@ -10,7 +10,6 @@ from django.db import connection
 import pygal
 from pygal.style import LightSolarizedStyle
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -140,8 +139,10 @@ class AltimetryHelper(object):
         if height < precision or width < precision:
             precision = min([height, width])
         cursor = connection.cursor()
-        cursor.execute("SELECT 1 FROM information_schema.tables WHERE table_name='altimetry_dem'")
-        if cursor.rowcount == 0:
+        cursor.execute("SELECT count(*) FROM altimetry_dem LIMIT 1;")
+        result = cursor.fetchall()
+        count = result[0][0]
+        if count == 0:
             logger.warning("No DEM present")
             return {}
 
