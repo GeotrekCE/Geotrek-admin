@@ -6,11 +6,14 @@ $(document).ready(function (e) {
     // Scrollable panels
     var fillmax = function () {
         $('.scrollable').each(function () {
-            var top = $(this).offset().top,
-                height = $(window).height() - top - parseFloat($(this).css('margin-top'))
-                                                  - parseFloat($(this).css('margin-bottom'));
-            $(this).css('max-height', height + 'px');
-
+            if ($(window).width() >= 992) {
+                var top = $(this).offset().top,
+                    height = $(window).height() - top - parseFloat($(this).css('margin-top'))
+                                                      - parseFloat($(this).css('margin-bottom'));
+                $(this).css('max-height', height + 'px');
+            } else {
+                $(this).css('max-height', 'none')
+            }
         });
     };
 

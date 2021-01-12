@@ -1,10 +1,6 @@
 
 /***** Bootstrap customizations ******/
 
-.groupfields {
-    margin-bottom: 15px;
-}
-
 .dropdown-menu {
     z-index: 9999;
 }
@@ -131,21 +127,15 @@ select[multiple] {
 
 /**** Layout ****/
 
-.list-container,
-#panelleft,
-#panelright {
-    position: relative;
-}
-#panelleft,
-#panelright {
-    width: 50%;
-}
-.list-container,
-#panelleft {
-    display: flex;
-}
+.map-panel,
 .list-container {
     height: calc(100vh - 65px);
+}
+#panelleft {
+    padding-left: 0;
+}
+#panelright {
+    padding: 0;
 }
 #mainmap {
     position: absolute;
@@ -154,8 +144,8 @@ select[multiple] {
     left: 0px;
     right: 0px;
 }
+#detailmap { height: 100%; }
 
-#detailmap {height: 100%;}
 
 /**** Maps ****/
 
@@ -284,7 +274,6 @@ tr.selected-row td {
 #list-panel {
     padding: 4px;
     height: calc(100vh - 65px);
-    width: calc(100% - 60px);
     flex-grow: 1;
     display: flex;
     flex-direction: column;
@@ -321,9 +310,17 @@ tr.selected-row td {
 
 /*** Left menu ***/
 #entitylist {
-    width: 40px;
-    max-height: calc(100vh - 65px);
-    overflow-y: auto;
+    width: 0;
+    overflow: hidden;
+}
+
+@media (min-width: 768px) {
+    #entitylist {
+        width: 40px;
+        max-height: calc(100vh - 65px);
+        overflow-x: none;
+        overflow-y: auto;
+    }
 }
 
 #entitylist .nav-item img {
@@ -458,12 +455,13 @@ span.filter-info {
     text-align: right;
 }
 
-.details-panel .nav-tabs {
-    margin-left: 50px;
-}
-
-.details-panel .tabbable {
-    padding-left: 30px;
+@media (min-width: 992px) {
+    .details-panel .nav-tabs {
+        margin-left: 50px;
+    }
+    .details-panel .tabbable {
+        padding-left: 30px;
+    }
 }
 
 .details-panel .tab-content > .tab-pane.active {
@@ -523,9 +521,6 @@ span.filter-info {
     background-color: rgba(240, 240, 240, 0.5);
 }
 
-.map-panel {
-    min-height: calc(100vh - 65px);
-}
 .map-panel .leaflet-control-attribution {
     display: none;
 }
@@ -614,6 +609,7 @@ body.screamshot .leaflet-control-scale-line {
     height: calc(100vh - 140px - 1rem);
     padding-bottom: 20px;
 }
+
 .form-actions {
     background-color: var(--light);
     padding: .5rem 15px;
@@ -777,4 +773,15 @@ TODO: please help;
 
 .file-attachment-form form {
     margin-bottom: 0px;
+}
+
+/* Form for mobile */
+@media (max-width: 767px) {
+    .form-panel {
+        padding-bottom: 60px;
+    }
+    .form-panel .scrollable {
+            height: auto;
+            overflow: inherit;
+    }
 }

@@ -4,8 +4,8 @@
 {% block title %}{{ object }} | {{ block.super }}{% endblock title %}
 
 {% block mainpanel %}
-<div class="details-panel detail col-12 col-sm-7 {{ modelname }}">
-
+<div class="details-panel detail col-12 col-lg-7 {{ modelname }}">
+  <h1 class="sr-only">{{ object }}</h1>
   <div class="download-group">
     <div class="btn-group">
       {% block download %}
@@ -23,16 +23,19 @@
   <div class="tabbable">
     <ul class="nav nav-tabs">
       <li id="tab-properties" class="nav-item">
-        <a class="nav-link {% if activetab != 'attachments' %}active{% endif %}" href="#properties" data-toggle="tab"><i class="bi bi-list-task"></i> {% trans "Properties" %}
+        <a class="nav-link {% if activetab != 'attachments' %}active{% endif %}" href="#properties" data-toggle="tab"><i class="bi bi-list-task"></i>
+          <span class="d-none d-sm-inline">{% trans "Properties" %}</span>
           {% smart_include "propertiestab" %}
         </a>
       </li>
       <li id="tab-attachments" class="nav-item">
-        <a class="nav-link {% if activetab == 'attachments' %}active{% endif %}" href="#attachments" data-toggle="tab"><i class="bi bi-file-earmark"></i> {% trans "Attached files" %} ({{ object.attachments.count }})</a>
+        <a class="nav-link {% if activetab == 'attachments' %}active{% endif %}" href="#attachments" data-toggle="tab"><i class="bi bi-file-earmark"></i>
+          <span class="d-none d-sm-inline">{% trans "Attached files" %} ({{ object.attachments.count }})</span></a>
       </li>
       {% if ACTION_HISTORY_ENABLED %}
       <li id="tab-history" class="nav-item">
-        <a class="nav-link" href="#history" data-toggle="tab"><i class="bi bi-clock-history"></i> {% trans "History" %}</a>
+        <a class="nav-link" href="#history" data-toggle="tab"><i class="bi bi-clock-history"></i>
+          <span class="d-none d-sm-inline">{% trans "History" %}</span></a>
       </li>
       {% endif %}
       {% if can_edit %}
@@ -90,9 +93,9 @@
       {% endif %}
     </div>
   </div>
-</div><!-- col-sm-7 -->
+</div><!-- col-md-7 -->
 
-<div class="map-panel detail col-12 col-sm-5" {% if mapwidth and mapheight %}style="width: {{ mapwidth }}px; height: {{ mapheight }}px;"{% endif %}>
+<div class="map-panel detail col-12 col-lg-5" {% if mapwidth and mapheight %}style="width: {{ mapwidth }}px; height: {{ mapheight }}px;"{% endif %}>
   {% block mappanel %}
   {% if object.get_geom %}
   {% include "mapentity/mapgeometry_fragment.html" with mapname="detailmap" %}
@@ -100,6 +103,6 @@
   <p class="nomap">{{ empty_map_message }}</p>
   {% endif %}
   {% endblock mappanel %}
-</div><!-- col-sm-5 -->
+</div><!-- col-md-5 -->
 
 {% endblock mainpanel %}

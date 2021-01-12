@@ -5,80 +5,82 @@
 
 
 {% block container %}
-<div id="container" class="list-container">
+<div id="container" class="container-fluid list-container">
 
-  <!-- List Panel -->
-  <div id="panelleft">
+  <div class="row">
+    <!-- List Panel -->
+    <div class="col-12 col-md-6 d-flex" id="panelleft">
 
-    <!-- Modules Panel -->
-    <div id="entitylist">
-      <ul class="nav flex-column">
-        {% for entity in allowed_entities %}
-        {% if entity.menu %}
-        <li class="nav-item">
-          <a class="nav-link {% if entity.modelname == modelname %}active{% endif %}"
-              href="{% url entity.url_list %}" title="{{ entity.label }}">
-            <img src="{% static entity.icon %}"/>
-          </a>
-        </li>
-        {% endif %}
-        {% endfor %}
-      </ul>
-    </div>
-
-    <div id="list-panel">
-
-      <div class="btn-toolbar">
-        {% block mainactions %}
-        <div class="btn-group mr-2">
-          {% if can_add %}
-          <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="bi bi-plus"></i> {{ create_label }}</a>
-          {% else %}
-          <span class="btn disabled" href="#"><i class="bi bi-plus"></i> {{ create_label }}</span>
+      <!-- Modules Panel -->
+      <div id="entitylist">
+        <ul class="nav flex-column">
+          {% for entity in allowed_entities %}
+          {% if entity.menu %}
+          <li class="nav-item">
+            <a class="nav-link {% if entity.modelname == modelname %}active{% endif %}"
+                href="{% url entity.url_list %}" title="{{ entity.label }}">
+              <span class="sr-only">{{ entity.label }}</span>
+              <img src="{% static entity.icon %}"/>
+            </a>
+          </li>
           {% endif %}
-        </div>
-        {% endblock mainactions %}
-
-        {% smart_include "listactions" %}
-        {% include "mapentity/_mapentity_list_filter.html" %}
-      </div>
-
-      {% block mainlist %}
-      <table id="objects-list" class="table table-striped table-bordered">
-        <thead>
-        <tr>
-          {% for field in columns %}
-          <th>{{ model|verbose:field }}</th>
           {% endfor %}
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
+        </ul>
+      </div>
 
-      <div id="list-download-toolbar">
-        <div class="btn-group {% if not can_export %}disabled{% endif %}">
-          <button class="btn btn-light btn-sm" name="csv" title="{% trans 'CSV' %}"><img src="{% static 'paperclip/fileicons/csv.png' %}"></button>
-          <button class="btn btn-light btn-sm" name="shp" title="{% trans 'Shapefile' %}"><img src="{% static 'paperclip/fileicons/shp.png' %}"></button>
-          <button class="btn btn-light btn-sm" name="gpx" title="{% trans 'GPX' %}"><img src="{% static 'paperclip/fileicons/gpx.png' %}"></button>
+      <div id="list-panel">
+
+        <div class="btn-toolbar">
+          {% block mainactions %}
+          <div class="btn-group mr-2">
+            {% if can_add %}
+            <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="bi bi-plus"></i> {{ create_label }}</a>
+            {% else %}
+            <span class="btn disabled" href="#"><i class="bi bi-plus"></i> {{ create_label }}</span>
+            {% endif %}
+          </div>
+          {% endblock mainactions %}
+
+          {% smart_include "listactions" %}
+          {% include "mapentity/_mapentity_list_filter.html" %}
         </div>
+
+        {% block mainlist %}
+        <table id="objects-list" class="table table-striped table-bordered">
+          <thead>
+          <tr>
+            {% for field in columns %}
+            <th>{{ model|verbose:field }}</th>
+            {% endfor %}
+          </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+
+        <div id="list-download-toolbar">
+          <div class="btn-group {% if not can_export %}disabled{% endif %}">
+            <button class="btn btn-light btn-sm" name="csv" title="{% trans 'CSV' %}"><img src="{% static 'paperclip/fileicons/csv.png' %}"></button>
+            <button class="btn btn-light btn-sm" name="shp" title="{% trans 'Shapefile' %}"><img src="{% static 'paperclip/fileicons/shp.png' %}"></button>
+            <button class="btn btn-light btn-sm" name="gpx" title="{% trans 'GPX' %}"><img src="{% static 'paperclip/fileicons/gpx.png' %}"></button>
+          </div>
+        </div>
+        {% endblock mainlist %}
       </div>
-      {% endblock mainlist %}
+    </div>
+
+    <!-- Map Panel -->
+    <div class="col-12 col-md-6" id="panelright">
+      <div class="map-panel">
+        {% block mainmap %}
+        <div id="maphead">
+          {% smart_include "maphead" %}
+        </div>
+        <div id="mainmap"/>
+        {% endblock mainmap %}
+      </div>
     </div>
   </div>
-
-  <!-- Map Panel -->
-  <div id="panelright">
-    <div class="map-panel">
-      {% block mainmap %}
-      <div id="maphead">
-        {% smart_include "maphead" %}
-      </div>
-      <div id="mainmap"/>
-      {% endblock mainmap %}
-    </div>
-  </div>
-
 </div>
 {% endblock container %}
 

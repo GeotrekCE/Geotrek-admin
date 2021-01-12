@@ -151,14 +151,14 @@ span.aggregation {
 }
 
 #altitudegraph {
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
     background-color: white;
     border-radius: 5px;
     border: 1px solid #d4d4d4;
     padding: 5px;
-    width: 30%;
+    width: 50%;
 }
 
 #altitudegraph h4 {

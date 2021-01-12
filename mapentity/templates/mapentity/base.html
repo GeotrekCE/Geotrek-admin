@@ -109,7 +109,7 @@
         <script src="{% static 'mapentity/jquery.hoverIntent.js' %}"></script>
         <script src="{% static 'paperclip/bootstrap-confirm.js' %}"></script>
         {% for lang in LANGUAGES %}
-            {% if lang.0 != 'en' %}<script type="text/javascript" src="{% get_static_prefix %}bootstrap-datepicker-1.9.0/locales/bootstrap-datepicker.{{ lang.0 }}.min.js"  charset="UTF-8"></script>{% endif %}
+            {% if lang.0 != 'en' %}<script type="text/javascript" src="{% get_static_prefix %}vendor/bootstrap-datepicker-1.9.0/locales/bootstrap-datepicker.{{ lang.0 }}.min.js"  charset="UTF-8"></script>{% endif %}
         {% endfor %}
 
         {% leaflet_js plugins="ALL" %}

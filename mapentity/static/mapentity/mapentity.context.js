@@ -33,7 +33,6 @@ MapEntity.Context = new function() {
         context['fullurl'] = window.location.toString();
         context['url'] = window.location.pathname.toString();
         context['viewport'] = {'width': $(window).width(), 'height': $(window).height()};
-        context['mapsize'] = {'width': $('.map-panel').width(), 'height': $('.map-panel').height()};
 
         // Mark timestamp
         context['timestamp'] = new Date().getTime();
@@ -99,17 +98,6 @@ MapEntity.Context = new function() {
             console.warn("No context found.");
             map.fitBounds(map.options.maxBounds);
             return;  // No context, no restore.
-        }
-
-        if (context.mapsize) {
-            // Override min-height style
-            map._container.style.minHeight = '0';
-            // Force map size
-            if (context.mapsize.width && context.mapsize.width > 0)
-                $('.map-panel').width(context.mapsize.width);
-            if (context.mapsize.height && context.mapsize.height > 0)
-                $('.map-panel').height(context.mapsize.height);
-            map.invalidateSize();
         }
 
         if (filter && context.filter) {
