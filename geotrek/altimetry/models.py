@@ -102,5 +102,5 @@ class AltimetryMixin(models.Model):
 
 
 class Dem(models.Model):
-    rid = models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True, db_column='rid')
     rast = models.RasterField(srid=settings.SRID)
