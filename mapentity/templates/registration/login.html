@@ -1,19 +1,23 @@
 {% extends "mapentity/base_site.html" %}
-{% load i18n mapentity_tags %}
+{% load i18n crispy_forms_tags mapentity_tags %}
 
 {% block content %}
-<div class="col-12 col-sm-8">
-    <img src="{% media_static_fallback "upload/logo-login.png" "images/logo-login.png" %}" />
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+            <img src="{% media_static_fallback 'upload/logo-login.png' 'images/logo-login.png' %}" />
+            <form action="" method="post" class="login-form">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="text-right">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+            </form>
 
-    <form action="" method="post" class="form-horizontal">
-        {% csrf_token %}
-        {{ form }}
-        <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Login</button>
+            <p>Version {{ VERSION }}</p>
         </div>
-    </form>
 
-    <p>Version {{ VERSION}}</p>
+    </div>
 </div>
 {% endblock content %}
 
