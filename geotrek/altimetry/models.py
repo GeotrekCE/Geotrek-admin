@@ -99,3 +99,8 @@ class AltimetryMixin(models.Model):
                            to_type='image/png',
                            headers={'Accept-Language': language})
         return True
+
+
+class Dem(models.Model):
+    rid = models.AutoField(primary_key=True)
+    rast = models.RasterField(srid=settings.SRID)
