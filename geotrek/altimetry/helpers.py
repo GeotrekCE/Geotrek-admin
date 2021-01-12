@@ -140,7 +140,7 @@ class AltimetryHelper(object):
         if height < precision or width < precision:
             precision = min([height, width])
         cursor = connection.cursor()
-        cursor.execute("SELECT 1 FROM information_schema.tables WHERE table_name='mnt'")
+        cursor.execute("SELECT 1 FROM information_schema.tables WHERE table_name='altimetry_dem'")
         if cursor.rowcount == 0:
             logger.warning("No DEM present")
             return {}
@@ -165,9 +165,9 @@ class AltimetryHelper(object):
                     FROM lines, columns
                 ),
                 draped AS (
-                    SELECT id, ST_Value(mnt.rast, p.geom)::int AS altitude
-                    FROM mnt, points2d AS p
-                    WHERE ST_Intersects(mnt.rast, p.geom)
+                    SELECT id, ST_Value(altimetry_dem.rast, p.geom)::int AS altitude
+                    FROM altimetry_dem, points2d AS p
+                    WHERE ST_Intersects(altimetry_dem.rast, p.geom)
                 ),
                 all_draped AS (
                     SELECT geomll, geom, altitude

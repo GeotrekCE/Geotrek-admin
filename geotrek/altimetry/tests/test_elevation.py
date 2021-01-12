@@ -1,13 +1,15 @@
 from django.conf import settings
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from unittest import SkipTest, skipIf, mock
 
-from django.db import connections, DEFAULT_DB_ALIAS
+from django.db import connection
 from django.contrib.gis.geos import MultiLineString, LineString, Point
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.utils import translation
 
+from geotrek.altimetry.functions import RasterValue
+from geotrek.altimetry.models import Dem
 from geotrek.core.models import Path, Topology
 from geotrek.core.factories import TopologyFactory
 from geotrek.altimetry.helpers import AltimetryHelper
@@ -20,17 +22,15 @@ class ElevationTest(TestCase):
 
     def setUp(self):
         # Create a simple fake DEM
-        conn = connections[DEFAULT_DB_ALIAS]
-        cur = conn.cursor()
-        cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
-        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))', [settings.SRID])
-        cur.execute('UPDATE mnt SET rast = ST_AddBand(rast, \'16BSI\')')
-        demvalues = [[0, 0, 3, 5], [2, 2, 10, 15], [5, 15, 20, 25], [20, 25, 30, 35], [30, 35, 40, 45]]
-        for y in range(0, 5):
-            for x in range(0, 4):
-                cur.execute('UPDATE mnt SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.path = Path.objects.create(geom=LineString((78, 117), (3, 17)))
+        with connection.cursor() as cur:
+            cur.execute('INSERT INTO altimetry_dem (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))', [settings.SRID])
+            cur.execute('UPDATE altimetry_dem SET rast = ST_AddBand(rast, \'16BSI\')')
+            demvalues = [[0, 0, 3, 5], [2, 2, 10, 15], [5, 15, 20, 25], [20, 25, 30, 35], [30, 35, 40, 45]]
+            for y in range(0, 5):
+                for x in range(0, 4):
+                    cur.execute('UPDATE altimetry_dem SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
+            if settings.TREKKING_TOPOLOGY_ENABLED:
+                self.path = Path.objects.create(geom=LineString((78, 117), (3, 17)))
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_elevation_path(self):
@@ -151,15 +151,13 @@ class ElevationProfileTest(TestCase):
 
 class AreaTestCase(TestCase):
     def _fill_raster(self):
-        conn = connections[DEFAULT_DB_ALIAS]
-        cur = conn.cursor()
-        cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
-        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))', [settings.SRID])
-        cur.execute('UPDATE mnt SET rast = ST_AddBand(rast, \'16BSI\')')
-        demvalues = [[0, 0, 3, 5], [2, 2, 10, 15], [5, 15, 20, 25], [20, 25, 30, 35], [30, 35, 40, 45]]
-        for y in range(0, 5):
-            for x in range(0, 4):
-                cur.execute('UPDATE mnt SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
+        with connection.cursor() as cur:
+            cur.execute('INSERT INTO altimetry_dem (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))', [settings.SRID])
+            cur.execute('UPDATE altimetry_dem SET rast = ST_AddBand(rast, \'16BSI\')')
+            demvalues = [[0, 0, 3, 5], [2, 2, 10, 15], [5, 15, 20, 25], [20, 25, 30, 35], [30, 35, 40, 45]]
+            for y in range(0, 5):
+                for x in range(0, 4):
+                    cur.execute('UPDATE altimetry_dem SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
 
 
 class ElevationAreaTest(AreaTestCase):
@@ -244,16 +242,14 @@ class LengthTest(TestCase):
 
     def setUp(self):
         # Create a simple fake DEM
-        conn = connections[DEFAULT_DB_ALIAS]
-        cur = conn.cursor()
-        cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
-        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))', [settings.SRID])
-        cur.execute('UPDATE mnt SET rast = ST_AddBand(rast, \'16BSI\')')
-        demvalues = [[0, 0, 3, 5], [2, 2, 10, 15], [5, 15, 20, 25], [20, 25, 30, 35], [30, 35, 40, 45]]
-        for y in range(0, 5):
-            for x in range(0, 4):
-                cur.execute('UPDATE mnt SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
-        self.path = Path.objects.create(geom=LineString((1, 101), (81, 101), (81, 99)))
+        with connection.cursor() as cur:
+            cur.execute('INSERT INTO altimetry_dem (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))', [settings.SRID])
+            cur.execute('UPDATE altimetry_dem SET rast = ST_AddBand(rast, \'16BSI\')')
+            demvalues = [[0, 0, 3, 5], [2, 2, 10, 15], [5, 15, 20, 25], [20, 25, 30, 35], [30, 35, 40, 45]]
+            for y in range(0, 5):
+                for x in range(0, 4):
+                    cur.execute('UPDATE altimetry_dem SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, demvalues[y][x]])
+            self.path = Path.objects.create(geom=LineString((1, 101), (81, 101), (81, 99)))
 
     def test_2dlength_is_preserved(self):
         self.assertEqual(self.path.geom_3d.length, self.path.geom.length)
@@ -274,12 +270,9 @@ class SamplingTestPath(TestCase):
         if self.model is None:
             SkipTest()
         # Create a fake empty DEM to prevent trigger optimisation to skip sampling
-        conn = connections[DEFAULT_DB_ALIAS]
-        cur = conn.cursor()
-        cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
-        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))',
-                    [settings.SRID])
-        cur.execute('UPDATE mnt SET rast = ST_AddBand(rast, \'16BSI\')')
+        with connection.cursor() as cur:
+            cur.execute('INSERT INTO altimetry_dem (rast) VALUES (ST_AddBand(ST_MakeEmptyRaster(100, 100, 0, 100, 25, -25, 0, 0, %s), \'16BSI\'))',
+                        [settings.SRID])
 
     def test_0_first(self):
         path = self.model.objects.create(geom=LineString((0, 0), (0, 0), (0, 1)))
@@ -355,12 +348,10 @@ class SamplingTestTopology(TestCase):
         if self.model is None:
             SkipTest()
         # Create a fake empty DEM to prevent trigger optimisation to skip sampling
-        conn = connections[DEFAULT_DB_ALIAS]
-        cur = conn.cursor()
-        cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
-        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))',
-                    [settings.SRID])
-        cur.execute('UPDATE mnt SET rast = ST_AddBand(rast, \'16BSI\')')
+        with connection.cursor() as cur:
+            cur.execute('INSERT INTO altimetry_dem (rast) VALUES (ST_MakeEmptyRaster(100, 125, 0, 125, 25, -25, 0, 0, %s))',
+                        [settings.SRID])
+            cur.execute('UPDATE altimetry_dem SET rast = ST_AddBand(rast, \'16BSI\')')
 
     def test_0_first(self):
         path = self.model.objects.create(geom=LineString((0, 0), (0, 0), (0, 1)))
@@ -427,33 +418,26 @@ class SamplingTestTopology(TestCase):
         self.assertEqual(len(path.geom_3d.coords), 7)
 
 
-class CommandLoadDemTest(TestCase):
+class CommandLoadDemTest(TransactionTestCase):
+    def tearDown(self) -> None:
+        Dem.objects.all().delete()
+
     def test_success(self):
         output_stdout = StringIO()
-        conn = connections[DEFAULT_DB_ALIAS]
-        cur = conn.cursor()
-        cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
         call_command('loaddem', filename, '--replace', verbosity=2, stdout=output_stdout)
         self.assertIn('DEM successfully loaded.', output_stdout.getvalue())
         self.assertIn('Everything looks fine, we can start loading DEM', output_stdout.getvalue())
-        conn = connections[DEFAULT_DB_ALIAS]
-        cur = conn.cursor()
-        cur.execute('SELECT ST_Value(rast, ST_SetSRID(ST_MakePoint(605600, 6650000), 2154)) FROM mnt;')
-        self.assertAlmostEqual(cur.fetchone()[0], 343.600006103516)
-        cur.execute('DROP TABLE mnt;')
+        dems = Dem.objects.all().annotate(int=RasterValue('rast', Point(x=605600, y=6650000, srid=2154)))
+        value = dems.first()
+        self.assertAlmostEqual(value.int, 343.600006103516)
 
-    def test_fail_table_mnt(self):
-        """
-        The table mnt already exist
-        """
-        conn = connections[DEFAULT_DB_ALIAS]
-        cur = conn.cursor()
-        cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
+    def test_fail_table_altimetry_dem(self):
+        """ DEM data already exist """
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
+        call_command('loaddem', filename, verbosity=0)
         with self.assertRaisesRegex(CommandError, 'DEM file exists, use --replace to overwrite'):
             call_command('loaddem', filename, verbosity=0)
-        cur.execute('DROP TABLE mnt;')
 
     def test_fail_no_file(self):
         filename = os.path.join(os.path.dirname(__file__), 'data', 'no.tif')
@@ -479,7 +463,7 @@ class CommandLoadDemTest(TestCase):
     @mock.patch('geotrek.altimetry.management.commands.loaddem.Command.call_command_system')
     def test_fail_raster2pgsql_second(self, sp):
         def command_fail_raster(cmd, **kwargs):
-            if 'raster2pgsql -c -C -I -M -t' in cmd:
+            if 'raster2pgsql -a -M -t' in cmd:
                 return 1
             return 0
         sp.side_effect = command_fail_raster
