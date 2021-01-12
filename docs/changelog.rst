@@ -5,6 +5,10 @@ CHANGELOG
 2.44.1.dev0
 -------------------
 
+**Database change**
+
+- "mnt" DEM table is now managed by django. It was renamed with altimetry_dem label. Data coming from mnt will be copied to new table.
+
 **Bug fixes**
 
 - Fix migrations if some outdoor sites were created before
@@ -489,9 +493,9 @@ No changes. Just force a new build in CI
 
 **Upgrade notes**
 
-- The installation method has been totally rewritten with an Ubuntu packaging (``apt install geotrek-admin``), only available for Ubuntu 18.04 actually. 
-- If you upgrade from Geotrek-admin <= 2.32, then apply the dedicated migration script. See https://geotrek.readthedocs.io/en/master/installation.html#upgrade-from-geotrek-admin-2-32. 
-- Geotrek-admin is now automatically installed in ``/opt/geotrek-admin/`` directory and the advanced configuration file moved to ``/opt/geotrek-admin/var/conf/custom.py``. See advanced configuration documentation for details. 
+- The installation method has been totally rewritten with an Ubuntu packaging (``apt install geotrek-admin``), only available for Ubuntu 18.04 actually.
+- If you upgrade from Geotrek-admin <= 2.32, then apply the dedicated migration script. See https://geotrek.readthedocs.io/en/master/installation.html#upgrade-from-geotrek-admin-2-32.
+- Geotrek-admin is now automatically installed in ``/opt/geotrek-admin/`` directory and the advanced configuration file moved to ``/opt/geotrek-admin/var/conf/custom.py``. See advanced configuration documentation for details.
 - The automatic NGINX configuration can be overriden in ``/opt/geotrek-admin/var/conf/nginx.conf.in`` file. See NGINX configuration documentation for details.
 
 
