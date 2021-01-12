@@ -120,6 +120,9 @@ select[multiple] {
     color: #FFF;
 }
 
+#historylist {
+    width: 100%;
+}
 #historylist .nav-link {
     padding-left: 18px;
     padding-right: 10px;
@@ -282,6 +285,7 @@ tr.selected-row td {
 @media (max-height: 960px) {
     #list-panel {
         width: calc(100% - 44px);
+        height: auto;
     }
 }
 
@@ -311,12 +315,15 @@ tr.selected-row td {
 /*** Left menu ***/
 #entitylist {
     width: 0;
+    position: absolute;
     overflow: hidden;
 }
 
 @media (min-width: 768px) {
     #entitylist {
+        position: static;
         width: 40px;
+        height: auto;
         max-height: calc(100vh - 65px);
         overflow-x: none;
         overflow-y: auto;

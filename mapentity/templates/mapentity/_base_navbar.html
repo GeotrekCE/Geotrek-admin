@@ -1,41 +1,45 @@
 {% load static i18n mapentity_tags %}
 <nav class="navbar navbar-expand-lg navbar-light">
-  <ul class="navbar-nav mr-2">
-      {% if request.user.is_authenticated %}
-      <li class="nav-item {% if viewname == 'list' %}{{ modelname }} active{% endif %}">
-        <div id="entitylist-dropdown" class="btn-group">
-          <button class="btn btn-light" onclick="javascript:location='{% url 'home' %}';">
-            {% trans "List" %} <span id="nbresults" class="badge badge-secondary">?</span>
-          </button>
-          <button class="btn btn-light dropdown-toggle dropdown-toggle-split"
-                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="sr-only">{% trans "Quick access" %}</span>
-          </button>
-          <ul class="dropdown-menu">
-            {% for entity in allowed_entities %}
-              {% if entity.menu %}
-                <li class="dropdown-item {% if entity.modelname == modelname %}active{% endif %}">
-                  <a href="{% url entity.url_list %}">
-                    <img src="{% static entity.icon_small %}"/> {{ entity.label }}
-                  </a>
-                  <a class="entitylist-add-btn btn btn-sm btn-success btn-sm" title="{% trans 'Add' %}" href="{% url entity.url_add %}">+</a>
-                </li>
-              {% endif %}
-            {% endfor %}
-          </ul>
-        </div>
-      </li>
-      {% endif %}
-    </ul>
-  <button class="navbar-toggler" type="button"
-          data-toggle="collapse" data-target="#navbarTogglerMain"
-          aria-controls="navbarTogglerMain" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+  <div class="d-flex">
+    <ul class="navbar-nav mr-2">
+        {% if request.user.is_authenticated %}
+        <li class="nav-item {% if viewname == 'list' %}{{ modelname }} active{% endif %}">
+          <div id="entitylist-dropdown" class="btn-group">
+            <button class="btn btn-light" onclick="javascript:location='{% url 'home' %}';">
+              {% trans "List" %} <span id="nbresults" class="badge badge-secondary">?</span>
+            </button>
+            <button class="btn btn-light dropdown-toggle dropdown-toggle-split"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="sr-only">{% trans "Quick access" %}</span>
+            </button>
+            <ul class="dropdown-menu">
+              {% for entity in allowed_entities %}
+                {% if entity.menu %}
+                  <li class="dropdown-item {% if entity.modelname == modelname %}active{% endif %}">
+                    <a href="{% url entity.url_list %}">
+                      <img src="{% static entity.icon_small %}"/> {{ entity.label }}
+                    </a>
+                    <a class="entitylist-add-btn btn btn-sm btn-success btn-sm" title="{% trans 'Add' %}" href="{% url entity.url_add %}">+</a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
+        </li>
+        {% endif %}
+      </ul>
+    {% if request.session.history %}
+    <button class="navbar-toggler" type="button"
+            data-toggle="collapse" data-target="#navbarTogglerHistory"
+            aria-controls="navbarTogglerHistory" aria-expanded="false" aria-label="Toggle navigation history">
+      <i class="bi bi-bookmarks"></i>
+    </button>
+    {% endif %}
+  </div>
 
-  <div class="collapse navbar-collapse" id="navbarTogglerMain">
+  <div class="collapse navbar-collapse" id="navbarTogglerHistory">
 
-    <ul id="historylist" class="navbar-nav flex-grow-1{% if request.session.history %} nav-tabs{% endif %}">
+    <ul id="historylist" class="navbar-nav {% if request.session.history %} nav-tabs{% endif %}">
       {% block toolbar %}
         {% for item in request.session.history %}
             {% if forloop.first and viewname != "list" %}
@@ -59,7 +63,9 @@
       {% endblock toolbar %}
     </ul>
 
-    <ul class="navbar-nav">
+  </div>
+
+  <ul class="navbar-nav">
       {% if request.user.is_authenticated %}
       <li class="divider-vertical"></li>
       <li class="dropdown">
@@ -109,5 +115,5 @@
       </li>
       {% endif %}
     </ul>
-  </div>
+
 </nav>
