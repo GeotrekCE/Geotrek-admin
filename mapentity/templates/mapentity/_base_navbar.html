@@ -1,104 +1,113 @@
 {% load static i18n mapentity_tags %}
 <nav class="navbar navbar-expand-lg navbar-light">
   <ul class="navbar-nav mr-2">
-    {% if request.user.is_authenticated %}
-    <li class="nav-item {% if viewname == 'list' %}{{ modelname }} active{% endif %}">
-      <div id="entitylist-dropdown" class="btn-group">
-        <button class="btn btn-light" onclick="javascript:location='{% url 'home' %}';">
-          {% trans "List" %} <span id="nbresults" class="badge badge-secondary">?</span>
-        </button>
-        <button class="btn btn-light dropdown-toggle dropdown-toggle-split"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span class="sr-only">{% trans "Quick access" %}</span>
-        </button>
-        <ul class="dropdown-menu">
-          {% for entity in allowed_entities %}
-            {% if entity.menu %}
-              <li class="dropdown-item {% if entity.modelname == modelname %}active{% endif %}">
-                <a href="{% url entity.url_list %}">
-                  <img src="{% static entity.icon_small %}"/> {{ entity.label }}
-                </a>
-                <a class="entitylist-add-btn btn btn-sm btn-success btn-sm" title="{% trans 'Add' %}" href="{% url entity.url_add %}">+</a>
-              </li>
+      {% if request.user.is_authenticated %}
+      <li class="nav-item {% if viewname == 'list' %}{{ modelname }} active{% endif %}">
+        <div id="entitylist-dropdown" class="btn-group">
+          <button class="btn btn-light" onclick="javascript:location='{% url 'home' %}';">
+            {% trans "List" %} <span id="nbresults" class="badge badge-secondary">?</span>
+          </button>
+          <button class="btn btn-light dropdown-toggle dropdown-toggle-split"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="sr-only">{% trans "Quick access" %}</span>
+          </button>
+          <ul class="dropdown-menu">
+            {% for entity in allowed_entities %}
+              {% if entity.menu %}
+                <li class="dropdown-item {% if entity.modelname == modelname %}active{% endif %}">
+                  <a href="{% url entity.url_list %}">
+                    <img src="{% static entity.icon_small %}"/> {{ entity.label }}
+                  </a>
+                  <a class="entitylist-add-btn btn btn-sm btn-success btn-sm" title="{% trans 'Add' %}" href="{% url entity.url_add %}">+</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+      </li>
+      {% endif %}
+    </ul>
+  <button class="navbar-toggler" type="button"
+          data-toggle="collapse" data-target="#navbarTogglerMain"
+          aria-controls="navbarTogglerMain" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarTogglerMain">
+
+    <ul id="historylist" class="navbar-nav flex-grow-1{% if request.session.history %} nav-tabs{% endif %}">
+      {% block toolbar %}
+        {% for item in request.session.history %}
+            {% if forloop.first and viewname != "list" %}
+                <li class="{{ modelname }} nav-item history first mr-1">
+                    <a class="nav-link active" href="{{ item.path }}">
+                        <span class="content">{% if title|lower %}{{ title }}{% else %}{{ item.title }}{% endif %}</span>
+                        {% if viewname == "detail" %}
+                           <button class="close hidden">&times;</button>
+                        {% endif %}
+                    </a>
+                </li>
+            {% else %}
+                <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %} {{ item.modelname }} nav-item history mr-1">
+                    <a class="nav-link" href="{{ item.path }}" title="{{ item.title }}">
+                        <span class="content">{{ item.title|truncatechars:12 }}</span>
+                        <button class="close d-none">&times;</button>
+                    </a>
+                </li>
             {% endif %}
-          {% endfor %}
-        </ul>
-      </div>
-    </li>
-    {% endif %}
-  </ul>
-  <ul id="historylist" class="navbar-nav flex-grow-1{% if request.session.history %} nav-tabs{% endif %}">
-    {% block toolbar %}
-      {% for item in request.session.history %}
-          {% if forloop.first and viewname != "list" %}
-              <li class="{{ modelname }} nav-item history first mr-1">
-                  <a class="nav-link active" href="{{ item.path }}">
-                      <span class="content">{% if title|lower %}{{ title }}{% else %}{{ item.title }}{% endif %}</span>
-                      {% if viewname == "detail" %}
-                         <button class="close hidden">&times;</button>
-                      {% endif %}
-                  </a>
-              </li>
-          {% else %}
-              <li class="{% if forloop.first %}{% block nav-detail %}{% endblock nav-detail %}{% endif %} {{ item.modelname }} nav-item history mr-1">
-                  <a class="nav-link" href="{{ item.path }}" title="{{ item.title }}">
-                      <span class="content">{{ item.title|truncatechars:12 }}</span>
-                      <button class="close d-none">&times;</button>
-                  </a>
-              </li>
-          {% endif %}
-      {% endfor %}
-    {% endblock toolbar %}
-  </ul>
-
-  <ul class="navbar-nav">
-    {% if request.user.is_authenticated %}
-    <li class="divider-vertical"></li>
-    <li class="dropdown">
-      <a href="#" class="nav-link dropdown-toggle"
-        id="navbarDropdownUsermenuLink" role="button" data-toggle="dropdown"
-        aria-haspopup="true" aria-expanded="false">
-        <i class="bi bi-person-fill"></i>
-        {{ request.user }}
-        {% smart_include "usermenu" %}
-      </a>
-      <ul class="dropdown-menu" aria-labelledby="navbarDropdownUsermenuLink">
-
-        {% smart_include "menuentries" %}
-
-        {% if request.user.is_staff %}
-        <li class="dropdown-item"><a href="{% url 'admin:index' %}">{% trans "Admin" %}</a></li>
-        {% else %}
-        <li class="dropdown-item" class="disabled"><a href="#">{% trans "Admin" %}</a></li>
-        {% endif %}
-
-        {% if ACTION_HISTORY_ENABLED %}
-          {% if 'admin.read_logentry' in perms %}
-          <li class="dropdown-item"><a class="{% block nav-logbook %}{% endblock nav-logbook %}" href="{% url 'mapentity:logentry_list' %}">{% trans "Logbook" %}</a></li>
-          {% else %}
-          <li class="dropdown-item" class="disabled"><a href="#">{% trans "Logbook" %}</a></li>
-          {% endif %}
-        {% endif %}
-
-        <li class="dropdown-divider"></li>
-        {% get_current_language as LANGUAGE_CODE %}
-        {% get_available_languages as LANGUAGES %}
-        {% get_language_info_list for LANGUAGES as languages %}
-        {% for language in languages %}
-          <li>
-            <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
-              <input name="next" type="hidden" value="{{ redirect_to }}">
-              <button type="submit" name="language" value="{{ language.code }}"
-                      class="language-menu-item {% if language.code == LANGUAGE_CODE  %}active{% endif %}">
-                {{ language.name_local }} ({{ language.code }})</button>
-            </form>
-          </li>
         {% endfor %}
+      {% endblock toolbar %}
+    </ul>
 
-        <li class="dropdown-divider"></li>
-        <li class="dropdown-item"><a href="{% url 'logout' %}"><i class="bi bi-power"></i> {% trans "Logout" %}</a></li>
-      </ul>
-    </li>
-    {% endif %}
-  </ul>
+    <ul class="navbar-nav">
+      {% if request.user.is_authenticated %}
+      <li class="divider-vertical"></li>
+      <li class="dropdown">
+        <a href="#" class="nav-link dropdown-toggle"
+          id="navbarDropdownUsermenuLink" role="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          <i class="bi bi-person-fill"></i>
+          {{ request.user }}
+          {% smart_include "usermenu" %}
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdownUsermenuLink">
+
+          {% smart_include "menuentries" %}
+
+          {% if request.user.is_staff %}
+          <li class="dropdown-item"><a href="{% url 'admin:index' %}">{% trans "Admin" %}</a></li>
+          {% else %}
+          <li class="dropdown-item" class="disabled"><a href="#">{% trans "Admin" %}</a></li>
+          {% endif %}
+
+          {% if ACTION_HISTORY_ENABLED %}
+            {% if 'admin.read_logentry' in perms %}
+            <li class="dropdown-item"><a class="{% block nav-logbook %}{% endblock nav-logbook %}" href="{% url 'mapentity:logentry_list' %}">{% trans "Logbook" %}</a></li>
+            {% else %}
+            <li class="dropdown-item" class="disabled"><a href="#">{% trans "Logbook" %}</a></li>
+            {% endif %}
+          {% endif %}
+
+          <li class="dropdown-divider"></li>
+          {% get_current_language as LANGUAGE_CODE %}
+          {% get_available_languages as LANGUAGES %}
+          {% get_language_info_list for LANGUAGES as languages %}
+          {% for language in languages %}
+            <li>
+              <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+                <input name="next" type="hidden" value="{{ redirect_to }}">
+                <button type="submit" name="language" value="{{ language.code }}"
+                        class="language-menu-item {% if language.code == LANGUAGE_CODE  %}active{% endif %}">
+                  {{ language.name_local }} ({{ language.code }})</button>
+              </form>
+            </li>
+          {% endfor %}
+
+          <li class="dropdown-divider"></li>
+          <li class="dropdown-item"><a href="{% url 'logout' %}"><i class="bi bi-power"></i> {% trans "Logout" %}</a></li>
+        </ul>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
 </nav>
