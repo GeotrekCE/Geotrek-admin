@@ -419,9 +419,10 @@ class SamplingTestTopology(TestCase):
 
 
 class CommandLoadDemTest(TransactionTestCase):
-    def tearDown(self) -> None:
-        Dem.objects.all().delete()
-
+    """
+    Load dem command test
+    Use of TransactionTestCase to avoid nesting transaction caused by raster2pgsql generated sql file import.
+    """
     def test_success(self):
         output_stdout = StringIO()
         filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
