@@ -53,7 +53,7 @@ class Command(BaseCommand):
         if settings.SRID != rst.srs.srid:
             rst = rst.transform(settings.SRID)
 
-        dem_exists = Dem.objects.all().exists()
+        dem_exists = Dem.objects.exists()
 
         # Obtain replace mode
         replace = options['replace']
