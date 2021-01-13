@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Dem',
             fields=[
-                ('rid', models.AutoField(primary_key=True, serialize=False)),
+                ('id', models.AutoField(primary_key=True, serialize=False, db_column='rid')),
                 ('rast', django.contrib.gis.db.models.fields.RasterField(srid=settings.SRID)),
             ],
         ),
