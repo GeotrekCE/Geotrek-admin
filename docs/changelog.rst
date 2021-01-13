@@ -5,6 +5,10 @@ CHANGELOG
 2.45.1.dev0
 -------------------
 
+**Database change**
+
+- "mnt" DEM table is now managed by django. It was renamed with altimetry_dem label. Data coming from mnt will be copied to new table.
+
 **Security fixes**
 
 - Enable XFrameOptionsMiddleware
@@ -20,10 +24,6 @@ CHANGELOG
 
 2.45.0 (2021-01-10)
 -------------------
-
-**Database change**
-
-- "mnt" DEM table is now managed by django. It was renamed with altimetry_dem label. Data coming from mnt will be copied to new table.
 
 HAPPY NEW YEAR!
 
