@@ -102,5 +102,5 @@ class AltimetryMixin(models.Model):
 
 
 class Dem(models.Model):
-    id = models.AutoField(primary_key=True, db_column='rid')
+    id = models.AutoField(primary_key=True, db_column='rid')  # rid is id column name used by raster2pgsql
     rast = models.RasterField(srid=settings.SRID)
