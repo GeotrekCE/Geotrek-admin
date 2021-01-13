@@ -138,13 +138,6 @@ class AltimetryHelper(object):
             precision = int(width / max_resolution)
         if height < precision or width < precision:
             precision = min([height, width])
-        cursor = connection.cursor()
-        cursor.execute("SELECT count(*) FROM altimetry_dem LIMIT 1;")
-        result = cursor.fetchall()
-        count = result[0][0]
-        if count == 0:
-            logger.warning("No DEM present")
-            return {}
 
         sql = """
             -- Author: Celian Garcia
@@ -193,12 +186,17 @@ class AltimetryHelper(object):
             FROM extent_latlng, resolution, all_draped;
         """.format(xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax,
                    srid=settings.SRID, precision=precision)
+        cursor = connection.cursor()
         cursor.execute(sql)
         result = cursor.fetchall()
         first = result[0]
         envelop_native, envelop, center_z, min_z, max_z, resolution_w, resolution_h, a = first
         envelop = GEOSGeometry(envelop, srid=4326)
         envelop_native = GEOSGeometry(envelop_native, srid=settings.SRID)
+
+        if center_z is None:
+            logger.warning("No DEM present")
+            return {}
 
         altitudes = []
         row = []

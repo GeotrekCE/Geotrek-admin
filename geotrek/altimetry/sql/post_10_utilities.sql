@@ -136,22 +136,17 @@ CREATE FUNCTION {# geotrek.altimetry #}.add_point_elevation(geom geometry) RETUR
 DECLARE
     ele integer;
     geom3d geometry;
-    dem_count integer;
 BEGIN
     ele := coalesce(ST_Z(geom)::integer, 0);
     IF ele > 0 THEN
         RETURN geom;
     END IF;
 
-    -- Ensure we have a DEM
-    SELECT count(*) FROM altimetry_dem LIMIT 1 INTO dem_count;
-    IF dem_count > 0 THEN
-        SELECT ST_Value(rast, 1, geom)::integer INTO ele
-        FROM altimetry_dem
-        WHERE ST_Intersects(rast, geom);
-        IF NOT FOUND OR ele IS NULL THEN
-            ele := 0;
-        END IF;
+    SELECT ST_Value(rast, 1, geom)::integer INTO ele
+    FROM altimetry_dem
+    WHERE ST_Intersects(rast, geom);
+    IF NOT FOUND OR ele IS NULL THEN
+        ele := 0;
     END IF;
 
     geom3d := ST_MakePoint(ST_X(geom), ST_Y(geom), ele);
@@ -169,11 +164,9 @@ DECLARE
     last_ele integer;
     last_last_ele integer;
     result elevation_infos;
-    dem_count integer;
 BEGIN
     -- Skip if no DEM (speed-up tests)
-    SELECT count(*) FROM altimetry_dem LIMIT 1 INTO dem_count;
-    IF dem_count = 0 THEN
+    IF NOT EXISTS (SELECT 1 FROM altimetry_dem) THEN
         SELECT ST_Force3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
         RETURN result;
     END IF;
@@ -236,11 +229,9 @@ DECLARE
     points3d_simplified geometry[];
     result elevation_infos;
     previous_geom geometry;
-    dem_count integer;
 BEGIN
     -- Skip if no DEM (speed-up tests)
-    SELECT count(*) FROM altimetry_dem LIMIT 1 INTO dem_count;
-    IF dem_count = 0 THEN
+    IF NOT EXISTS (SELECT 1 FROM altimetry_dem) THEN
         SELECT ST_Force3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
         RETURN result;
     END IF;
