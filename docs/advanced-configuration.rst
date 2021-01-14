@@ -130,7 +130,7 @@ In order to activate suricate reports:
 
     .. code-block :: python
 
-        geotrek loaddata geotrek/feedback/fixtures/basic.json
+        geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/basic.json
 
 3. To make these lists available for your Geotrek-rando, run `sync_rando` (see :ref:`synchronization <synchronization-section>`)
 
@@ -201,7 +201,7 @@ You can also insert diving minimal data (default practices, difficulties, levels
 
 ::
 
-    sudo geotrek loaddata lib/python*/site-packages/geotrek/diving/fixtures/basic.json
+    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/basic.json
     cp /opt/geotrek-admin/lib/python*/site-packages/geotrek/diving/fixtures/upload/* /opt/geotrek-admin/var/media/upload/
 
 Outdoor
@@ -221,7 +221,7 @@ You can also insert outdoor minimal data:
 
 ::
 
-    sudo geotrek loaddata lib/python*/site-packages/geotrek/outdoor/fixtures/basic.json
+    sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/outdoor/fixtures/basic.json
 
 
 Note: outdoor module is not compatible with PostGIS <= 2.4 that is included in Ubuntu 18.04.
