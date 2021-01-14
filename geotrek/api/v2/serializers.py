@@ -69,7 +69,7 @@ def override_serializer(format_output, base_serializer_class):
 
 
 if 'geotrek.trekking' in settings.INSTALLED_APPS:
-    class NetworkSerializer(serializers.ModelSerializer):
+    class NetworkSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField(read_only=True)
 
         def get_label(self, obj):
@@ -79,7 +79,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.TrekNetwork
             fields = ('id', 'label', 'pictogram')
 
-    class PracticeSerializer(serializers.ModelSerializer):
+    class PracticeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)
 
         def get_name(self, obj):
@@ -89,7 +89,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.Practice
             fields = ('id', 'name', 'order', 'pictogram',)
 
-    class TrekDifficultySerializer(serializers.ModelSerializer):
+    class TrekDifficultySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField(read_only=True)
 
         def get_label(self, obj):
@@ -99,7 +99,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.DifficultyLevel
             fields = ('id', 'cirkwi_level', 'label', 'pictogram')
 
-    class RouteSerializer(serializers.ModelSerializer):
+    class RouteSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         route = serializers.SerializerMethodField(read_only=True)
 
         def get_route(self, obj):
@@ -110,7 +110,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             fields = ('id', 'pictogram', 'route')
 
 
-class ReservationSystemSerializer(serializers.ModelSerializer):
+class ReservationSystemSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = common_models.ReservationSystem
         fields = ('id', 'name')
@@ -124,7 +124,7 @@ class StructureSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         )
 
 
-class TargetPortalSerializer(serializers.ModelSerializer):
+class TargetPortalSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     title = serializers.SerializerMethodField(read_only=True)
     description = serializers.SerializerMethodField(read_only=True)
     facebook_image_url = serializers.SerializerMethodField(read_only=True)
@@ -147,7 +147,7 @@ class TargetPortalSerializer(serializers.ModelSerializer):
         )
 
 
-class RecordSourceSerializer(serializers.ModelSerializer):
+class RecordSourceSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = common_models.RecordSource
         fields = ('name', 'pictogram', 'website')
@@ -198,7 +198,7 @@ class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         )
 
 
-class LabelSerializer(serializers.ModelSerializer):
+class LabelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     name = serializers.SerializerMethodField(read_only=True)
     advice = serializers.SerializerMethodField(read_only=True)
 
@@ -234,7 +234,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 'description_teaser', 'geometry', 'pictures', 'url'
             )
 
-    class InformationDeskTypeSerializer(serializers.ModelSerializer):
+    class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField(read_only=True)
 
         def get_label(self, obj):
@@ -244,7 +244,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             model = tourism_models.InformationDeskType
             fields = ('id', 'label', 'pictogram')
 
-    class InformationDeskSerializer(serializers.ModelSerializer):
+    class InformationDeskSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         type = InformationDeskTypeSerializer()
         name = serializers.SerializerMethodField(read_only=True)
         description = serializers.SerializerMethodField(read_only=True)
@@ -486,7 +486,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'update_datetime', 'url'
             )
 
-    class ThemeSerializer(serializers.ModelSerializer):
+    class ThemeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField(read_only=True)
 
         def get_label(self, obj):
@@ -496,7 +496,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.Theme
             fields = ('id', 'label', 'pictogram')
 
-    class AccessibilitySerializer(serializers.ModelSerializer):
+    class AccessibilitySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)
 
         def get_name(self, obj):
@@ -582,7 +582,7 @@ if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
             )
 
 if 'geotrek.zoning' in settings.INSTALLED_APPS:
-    class CitySerializer(serializers.ModelSerializer):
+    class CitySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, source="geom", precision=7)
         id = serializers.ReadOnlyField(source='code')
 
@@ -590,7 +590,7 @@ if 'geotrek.zoning' in settings.INSTALLED_APPS:
             model = zoning_models.City
             fields = ('id', 'geometry', 'name', 'published')
 
-    class DistrictsSerializer(serializers.ModelSerializer):
+    class DistrictsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(read_only=True, source="geom", precision=7)
 
         class Meta:
@@ -599,7 +599,7 @@ if 'geotrek.zoning' in settings.INSTALLED_APPS:
 
 
 if 'geotrek.outdoor' in settings.INSTALLED_APPS:
-    class RatingScaleSerializer(serializers.ModelSerializer):
+    class RatingScaleSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)
 
         def get_name(self, obj):
@@ -609,7 +609,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             model = outdoor_models.RatingScale
             fields = ('id', 'name', 'practice')
 
-    class RatingSerializer(serializers.ModelSerializer):
+    class RatingSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)
         description = serializers.SerializerMethodField(read_only=True)
 
@@ -623,7 +623,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             model = outdoor_models.Rating
             fields = ('id', 'name', 'description', 'scale', 'order', 'color')
 
-    class OutdoorPracticeSerializer(serializers.ModelSerializer):
+    class OutdoorPracticeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)
 
         def get_name(self, obj):
@@ -633,7 +633,7 @@ if 'geotrek.outdoor' in settings.INSTALLED_APPS:
             model = outdoor_models.Practice
             fields = ('id', 'name')
 
-    class SiteTypeSerializer(serializers.ModelSerializer):
+    class SiteTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField(read_only=True)
 
         def get_name(self, obj):
