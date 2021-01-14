@@ -17,7 +17,7 @@ ENV CUSTOM_SETTINGS_FILE="/opt/geotrek-admin/var/conf/custom.py"
 WORKDIR /opt/geotrek-admin
 
 # Install postgis because raster2pgsl is required by manage.py loaddem
-RUN apt-get update && apt-get install -y \
+RUN apt-get update -qq && apt-get install -y -qq  \
     unzip \
     sudo \
     less \
