@@ -23,6 +23,8 @@ MODELTRANSLATION_LANGUAGES = ('en', 'es', 'fr', 'it')
 
 LAND_BBOX_AREAS_ENABLED = True
 
+TIME_ZONE = "UTC"
+
 
 class DisableMigrations():
     def __contains__(self, item):
