@@ -41,9 +41,9 @@ RUN apt-get update && apt-get install -y \
     apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
 
 COPY requirements.txt requirements.txt
-RUN python3 -m venv env
-RUN env/bin/pip install -U setuptools==45.2.0
-RUN env/bin/pip install --no-cache-dir -r requirements.txt
+RUN python3 -m venv /opt/venv
+RUN /opt/venv/bin/pip install -U pip setuptools wheel
+RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt -U
 
 COPY geotrek/ geotrek/
 COPY mapentity/ mapentity/
@@ -52,8 +52,8 @@ COPY VERSION VERSION
 COPY .coveragerc .coveragerc
 COPY docker/* /usr/local/bin/
 
-RUN cd geotrek; ENV=dev CONVERSION_HOST=localhost CAPTURE_HOST=localhost CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp ../env/bin/python ../manage.py compilemessages; cd ..
-RUN cd mapentity; ENV=dev CONVERSION_HOST=localhost CAPTURE_HOST=localhost CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp ../env/bin/python ../manage.py compilemessages; cd ..
+RUN cd geotrek; ENV=dev CONVERSION_HOST=localhost CAPTURE_HOST=localhost CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp /opt/venv/bin/python ../manage.py compilemessages; cd ..
+RUN cd mapentity; ENV=dev CONVERSION_HOST=localhost CAPTURE_HOST=localhost CUSTOM_SETTINGS_FILE= SECRET_KEY=tmp /opt/venv/bin/python ../manage.py compilemessages; cd ..
 
 EXPOSE 8000
 ENTRYPOINT ["/bin/sh", "-e", "/usr/local/bin/entrypoint.sh"]
