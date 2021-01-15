@@ -103,7 +103,7 @@ jobs:
     steps:
       - run: apt-get update -q && apt-get install -q -y npm
       - run: mkdir -p var/conf/extra_static
-      - run: ./env/bin/python manage.py collectstatic --noinput
+      - run: /opt/venv/bin/python manage.py collectstatic --noinput
       - run: npm install geotrek/jstests
       - run: ./node_modules/.bin/mocha-phantomjs geotrek/jstests/index.html
   docker_test_integration:

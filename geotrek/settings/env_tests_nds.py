@@ -3,4 +3,3 @@ with open(tests_settings_file, 'r') as f:
     exec(f.read())
 
 TREKKING_TOPOLOGY_ENABLED = False
-CELERY_ALWAYS_EAGER = True
