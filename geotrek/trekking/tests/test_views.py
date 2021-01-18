@@ -1038,13 +1038,12 @@ class TrekGPXTest(TrekkingManagerTest):
         # Create a simple fake DEM
         conn = connections[DEFAULT_DB_ALIAS]
         cur = conn.cursor()
-        cur.execute('CREATE TABLE mnt (rid serial primary key, rast raster)')
-        cur.execute('INSERT INTO mnt (rast) VALUES (ST_MakeEmptyRaster(10, 10, 700040, 6600040, 10, 10, 0, 0, %s))',
+        cur.execute('INSERT INTO altimetry_dem (rast) VALUES (ST_MakeEmptyRaster(10, 10, 700040, 6600040, 10, 10, 0, 0, %s))',
                     [settings.SRID])
-        cur.execute('UPDATE mnt SET rast = ST_AddBand(rast, \'16BSI\')')
+        cur.execute('UPDATE altimetry_dem SET rast = ST_AddBand(rast, \'16BSI\')')
         for y in range(0, 1):
             for x in range(0, 1):
-                cur.execute('UPDATE mnt SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, 42])
+                cur.execute('UPDATE altimetry_dem SET rast = ST_SetValue(rast, %s, %s, %s::float)', [x + 1, y + 1, 42])
 
         self.login()
 

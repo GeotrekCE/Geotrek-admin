@@ -5,7 +5,6 @@ from django.conf import settings
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.db.utils import DatabaseError
 from django.utils import translation
 from django.http import JsonResponse, HttpResponse, HttpResponseNotFound
 from django_celery_results.models import TaskResult
@@ -256,13 +255,9 @@ def admin_check_extents(request):
     """
     path_extent_native = sql_extent("SELECT ST_Extent(geom) FROM core_path;")
     path_extent = api_bbox(path_extent_native)
-    try:
-        dem_extent_native = sql_extent(
-            "SELECT ST_Extent(rast::geometry) FROM mnt;")
-        dem_extent = api_bbox(dem_extent_native)
-    except DatabaseError:  # mnt table missing
-        dem_extent_native = None
-        dem_extent = None
+    dem_extent_native = sql_extent(
+        "SELECT ST_Extent(rast::geometry) FROM altimetry_dem;")
+    dem_extent = api_bbox(dem_extent_native)
     tiles_extent_native = settings.SPATIAL_EXTENT
     tiles_extent = api_bbox(tiles_extent_native)
     viewport_native = settings.LEAFLET_CONFIG['SPATIAL_EXTENT']
