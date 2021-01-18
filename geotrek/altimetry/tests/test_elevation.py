@@ -1,21 +1,14 @@
 from django.conf import settings
-from django.test import TestCase, TransactionTestCase
-from unittest import SkipTest, skipIf, mock
+from django.test import TestCase
+from unittest import SkipTest, skipIf
 
 from django.db import connection
 from django.contrib.gis.geos import MultiLineString, LineString, Point
-from django.core.management import call_command
-from django.core.management.base import CommandError
 from django.utils import translation
 
-from geotrek.altimetry.functions import RasterValue
-from geotrek.altimetry.models import Dem
 from geotrek.core.models import Path, Topology
 from geotrek.core.factories import TopologyFactory
 from geotrek.altimetry.helpers import AltimetryHelper
-
-import os
-from io import StringIO
 
 
 class ElevationTest(TestCase):
@@ -416,58 +409,3 @@ class SamplingTestTopology(TestCase):
     def test_51m(self):
         path = self.model.objects.create(geom=LineString((0, 0), (0, self.step * 2 + 1), (0, self.step * 4 + 2)))
         self.assertEqual(len(path.geom_3d.coords), 7)
-
-
-class CommandLoadDemTest(TransactionTestCase):
-    """
-    Load dem command test
-    Use of TransactionTestCase to avoid nesting transaction caused by raster2pgsql generated sql file import.
-    """
-    def test_success(self):
-        output_stdout = StringIO()
-        filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
-        call_command('loaddem', filename, '--replace', verbosity=2, stdout=output_stdout)
-        self.assertIn('DEM successfully loaded.', output_stdout.getvalue())
-        self.assertIn('Everything looks fine, we can start loading DEM', output_stdout.getvalue())
-        dems = Dem.objects.all().annotate(int=RasterValue('rast', Point(x=605600, y=6650000, srid=2154)))
-        value = dems.first()
-        self.assertAlmostEqual(value.int, 343.600006103516)
-
-    def test_fail_table_altimetry_dem(self):
-        """ DEM data already exist """
-        filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
-        call_command('loaddem', filename, verbosity=0)
-        with self.assertRaisesRegex(CommandError, 'DEM file exists, use --replace to overwrite'):
-            call_command('loaddem', filename, verbosity=0)
-
-    def test_fail_no_file(self):
-        filename = os.path.join(os.path.dirname(__file__), 'data', 'no.tif')
-        with self.assertRaisesRegex(CommandError, 'DEM file does not exists at: %s' % filename):
-            call_command('loaddem', filename, verbosity=0)
-
-    def test_fail_wrong_format(self):
-        filename = os.path.join(os.path.dirname(__file__), 'data', 'test.xml')
-        with self.assertRaisesRegex(CommandError, 'DEM format is not recognized by GDAL.'):
-            call_command('loaddem', filename, verbosity=0)
-
-    @mock.patch('geotrek.altimetry.management.commands.loaddem.Command.call_command_system')
-    def test_fail_raster2pgsql_first(self, sp):
-        def command_fail_raster(cmd, **kwargs):
-            if 'raster2pgsql -G > /dev/null' in cmd:
-                return 1
-            return 0
-        sp.side_effect = command_fail_raster
-        filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
-        with self.assertRaisesRegex(CommandError, 'Caught Exception: raster2pgsql failed with exit code 1'):
-            call_command('loaddem', filename, '--replace', verbosity=0)
-
-    @mock.patch('geotrek.altimetry.management.commands.loaddem.Command.call_command_system')
-    def test_fail_raster2pgsql_second(self, sp):
-        def command_fail_raster(cmd, **kwargs):
-            if 'raster2pgsql -a -M -t' in cmd:
-                return 1
-            return 0
-        sp.side_effect = command_fail_raster
-        filename = os.path.join(os.path.dirname(__file__), 'data', 'elevation.tif')
-        with self.assertRaisesRegex(CommandError, 'Caught Exception: raster2pgsql failed with exit code 1'):
-            call_command('loaddem', filename, '--replace', verbosity=0)
