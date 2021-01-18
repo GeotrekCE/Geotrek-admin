@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('common', '0012_reservationsystem'),
+        ('tourism', '0012_auto_20200708_1448'),
         ('trekking', '0015_auto_20200406_1412'),
     ]
 
