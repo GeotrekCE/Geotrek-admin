@@ -1,3 +1,4 @@
+import json
 import logging
 import functools
 
@@ -577,8 +578,44 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
         super(Topology, self).save(*args, **kwargs)
         self.reload()
 
-    def serialize(self, **kwargs):
-        return TopologyHelper.serialize(self, **kwargs)
+    def serialize(self, with_pk=True):
+        if not self.aggregations.exists():
+            # Empty topology
+            return ''
+        elif self.ispoint():
+            # Point topology
+            point = self.geom.transform(settings.API_SRID, clone=True)
+            objdict = dict(kind=self.kind, lng=point.x, lat=point.y)
+            if with_pk:
+                objdict['pk'] = self.pk
+            if settings.TREKKING_TOPOLOGY_ENABLED and self.offset == 0:
+                objdict['snap'] = self.aggregations.all()[0].path.pk
+        else:
+            # Line topology
+            # Fetch properly ordered aggregations
+            aggregations = self.aggregations.select_related('path').all()
+            objdict = []
+            current = {}
+            ipath = 0
+            for i, aggr in enumerate(aggregations):
+                last = i == len(aggregations) - 1
+                intermediary = aggr.start_position == aggr.end_position
+
+                if with_pk:
+                    current.setdefault('pk', self.pk)
+                current.setdefault('kind', self.kind)
+                current.setdefault('offset', self.offset)
+                if not intermediary:
+                    current.setdefault('paths', []).append(aggr.path.pk)
+                    current.setdefault('positions', {})[ipath] = (aggr.start_position, aggr.end_position)
+                ipath = ipath + 1
+
+                subtopology_done = 'paths' in current and (intermediary or last)
+                if subtopology_done:
+                    objdict.append(current)
+                    current = {}
+                    ipath = 0
+        return json.dumps(objdict)
 
     @classmethod
     def deserialize(cls, serialized):
