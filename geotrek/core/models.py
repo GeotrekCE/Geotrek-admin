@@ -19,7 +19,7 @@ from geotrek.common.utils.postgresql import debug_pg_notices
 from geotrek.altimetry.models import AltimetryMixin
 
 from .helpers import PathHelper, TopologyHelper
-from django.db import connections, DEFAULT_DB_ALIAS
+from django.db import connection, connections, DEFAULT_DB_ALIAS
 
 from django.contrib.gis.geos import Point
 
@@ -174,7 +174,20 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         """
         Returns the point snapped (i.e closest) to the path line geometry.
         """
-        return PathHelper.snap(self, point)
+        if not self.pk:
+            raise ValueError("Cannot compute snap on unsaved path")
+        if point.srid != self.geom.srid:
+            point.transform(self.geom.srid)
+        cursor = connection.cursor()
+        sql = """
+        WITH p AS (SELECT ST_ClosestPoint(geom, '%(ewkt)s'::geometry) AS geom
+                   FROM %(table)s
+                   WHERE id = '%(pk)s')
+        SELECT ST_X(p.geom), ST_Y(p.geom) FROM p
+        """ % {'ewkt': point.ewkt, 'table': self._meta.db_table, 'pk': self.pk}
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        return Point(*result[0], srid=self.geom.srid)
 
     def reload(self):
         # Update object's computed values (reload from database)

@@ -271,23 +271,6 @@ class TopologyHelper(object):
 
 class PathHelper(object):
     @classmethod
-    def snap(cls, path, point):
-        if not path.pk:
-            raise ValueError("Cannot compute snap on unsaved path")
-        if point.srid != path.geom.srid:
-            point.transform(path.geom.srid)
-        cursor = connection.cursor()
-        sql = """
-        WITH p AS (SELECT ST_ClosestPoint(geom, '%(ewkt)s'::geometry) AS geom
-                   FROM %(table)s
-                   WHERE id = '%(pk)s')
-        SELECT ST_X(p.geom), ST_Y(p.geom) FROM p
-        """ % {'ewkt': point.ewkt, 'table': path._meta.db_table, 'pk': path.pk}
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        return Point(*result[0], srid=path.geom.srid)
-
-    @classmethod
     def interpolate(cls, path, point):
         if not path.pk:
             raise ValueError("Cannot compute interpolation on unsaved path")
