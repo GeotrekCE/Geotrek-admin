@@ -618,6 +618,31 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
         return json.dumps(objdict)
 
     @classmethod
+    def _topologypoint(cls, lng, lat, kind=None, snap=None):
+        """
+        Receives a point (lng, lat) with API_SRID, and returns
+        a topology objects with a computed path aggregation.
+        """
+        from .models import Path
+        from .factories import TopologyFactory
+        # Find closest path
+        point = Point(lng, lat, srid=settings.API_SRID)
+        point.transform(settings.SRID)
+        if snap is None:
+            closest = Path.closest(point)
+            position, offset = closest.interpolate(point)
+        else:
+            closest = Path.objects.get(pk=snap)
+            position, offset = closest.interpolate(point)
+            offset = 0
+        # We can now instantiante a Topology object
+        topology = TopologyFactory.create(paths=[(closest, position, position)], kind=kind, offset=offset)
+        point = Point(point.x, point.y, srid=settings.SRID)
+        topology.geom = point
+        topology.save()
+        return topology
+
+    @classmethod
     def deserialize(cls, serialized):
         return TopologyHelper.deserialize(serialized)
 
