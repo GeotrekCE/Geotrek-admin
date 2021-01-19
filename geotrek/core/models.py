@@ -14,12 +14,13 @@ from mapentity.serializers import plain_text
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.mixins import (TimeStampedModelMixin, NoDeleteMixin,
                                    AddPropertyMixin)
-from geotrek.common.utils import classproperty, sqlfunction
+from geotrek.common.utils import classproperty, sqlfunction, uniquify
 from geotrek.common.utils.postgresql import debug_pg_notices
 from geotrek.altimetry.models import AltimetryMixin
 
 from .helpers import TopologyHelper
 from django.db import connection, connections, DEFAULT_DB_ALIAS
+from django.db.models.query import QuerySet
 
 from django.contrib.gis.geos import Point
 
@@ -436,10 +437,60 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
         return aggr
 
     @classmethod
-    def overlapping(cls, topologies):
+    def overlapping(cls, queryset, all_objects=None):
         """ Return a Topology queryset overlapping specified topologies.
         """
-        return TopologyHelper.overlapping(cls, topologies)
+        if all_objects is None:
+            all_objects = cls.objects.existing()
+        is_generic = all_objects.model.KIND == Topology.KIND
+        single_input = isinstance(queryset, QuerySet)
+
+        if single_input:
+            topology_pks = [str(pk) for pk in queryset.values_list('pk', flat=True)]
+        else:
+            topology_pks = [str(queryset.pk)]
+
+        if len(topology_pks) == 0:
+            return all_objects.filter(pk__in=[])
+
+        sql = """
+        WITH topologies AS (SELECT id FROM %(topology_table)s WHERE id IN (%(topology_list)s)),
+        -- Concerned aggregations
+             aggregations AS (SELECT * FROM %(aggregations_table)s a, topologies t
+                              WHERE a.topo_object_id = t.id),
+        -- Concerned paths along with (start, end)
+             paths_aggr AS (SELECT a.start_position AS start, a.end_position AS end, p.id, a.order AS order
+                            FROM %(paths_table)s p, aggregations a
+                            WHERE a.path_id = p.id
+                            ORDER BY a.order)
+        -- Retrieve primary keys
+        SELECT t.id
+        FROM %(topology_table)s t, %(aggregations_table)s a, paths_aggr pa
+        WHERE a.path_id = pa.id AND a.topo_object_id = t.id
+          AND least(a.start_position, a.end_position) <= greatest(pa.start, pa.end)
+          AND greatest(a.start_position, a.end_position) >= least(pa.start, pa.end)
+          AND %(extra_condition)s
+        ORDER BY (pa.order + CASE WHEN pa.start > pa.end THEN (1 - a.start_position) ELSE a.start_position END);
+        """ % {
+            'topology_table': Topology._meta.db_table,
+            'aggregations_table': PathAggregation._meta.db_table,
+            'paths_table': Path._meta.db_table,
+            'topology_list': ','.join(topology_pks),
+            'extra_condition': 'true' if is_generic else "kind = '%s'" % all_objects.model.KIND
+        }
+
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        pk_list = uniquify([row[0] for row in result])
+
+        # Return a QuerySet and preserve pk list order
+        # http://stackoverflow.com/a/1310188/141895
+        ordering = 'CASE %s END' % ' '.join(['WHEN %s.id=%s THEN %s' % (Topology._meta.db_table, id_, i)
+                                             for i, id_ in enumerate(pk_list)])
+        queryset = all_objects.filter(pk__in=pk_list).extra(
+            select={'ordering': ordering}, order_by=('ordering',))
+        return queryset
 
     def mutate(self, other, delete=True):
         """

@@ -12,7 +12,7 @@ from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
 from geotrek.common.utils import intersecting
-from geotrek.core.helpers import TopologyHelper
+from geotrek.core.models import Topology
 from geotrek.trekking.models import Trek
 from geotrek.zoning.models import City, District
 
@@ -179,7 +179,7 @@ class GeotrekPOIFilter(BaseFilterBackend):
             qs = qs.filter(type=type)
         trek = request.GET.get('trek', None)
         if trek is not None:
-            qs = TopologyHelper.overlapping(qs, Trek.objects.get(pk=trek))
+            qs = Topology.overlapping(Trek.objects.get(pk=trek), qs)
         return qs
 
     def get_schema_fields(self, view):
