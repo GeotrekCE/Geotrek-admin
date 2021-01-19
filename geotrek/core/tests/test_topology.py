@@ -97,7 +97,8 @@ class TopologyTest(TestCase):
         self.assertEqual(Path.include_invisible.count(), 2)
 
         # create topo on visible path
-        topology = Topology._topologypoint(0, 0, None).reload()
+        topology = Topology._topologypoint(0, 0, None)
+        topology.save()
 
         # because FK and M2M are used with default manager only, others tests are in SQL
         conn = connections[DEFAULT_DB_ALIAS]
@@ -120,7 +121,8 @@ class TopologyTest(TestCase):
         self.assertNotIn(path_unvisible.pk, [ele['id_path'] for ele in datas], "{}".format(datas))
 
         # new topo on invible path
-        topology = Topology._topologypoint(0, 3, None).reload()
+        topology = Topology._topologypoint(0, 3, None)
+        topology.save()
 
         cur.execute(
             """
@@ -240,13 +242,6 @@ class TopologyMutateTest(TestCase):
         topology1.mutate(topology2)
         self.assertEqual(topology1.offset, 14.5)
         self.assertEqual(len(topology1.paths.all()), 1)
-        # topology2 does not exist anymore
-        self.assertEqual(len(Topology.objects.filter(pk=topology2.pk)), 0)
-        # Without deletion
-        topology3 = TopologyFactory.create()
-        topology1.mutate(topology3, delete=False)
-        # topology3 still exists
-        self.assertEqual(len(Topology.objects.filter(pk=topology3.pk)), 1)
 
     def test_mutate_intersection(self):
         # Mutate a Point topology at an intersection, and make sure its aggregations
@@ -367,6 +362,7 @@ class TopologyPointTest(TestCase):
         poi = Point(10, 10, srid=settings.SRID)
         poi.transform(settings.API_SRID)
         poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
+        poitopo.save()
         self.assertAlmostEqual(0.5, poitopo.aggregations.all()[0].start_position, places=6)
         self.assertAlmostEqual(10, poitopo.offset, places=6)
 
@@ -384,6 +380,7 @@ class TopologyPointTest(TestCase):
         poi = Point(0, 2.5, srid=settings.SRID)
         poi.transform(settings.API_SRID)
         poitopo = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
+        poitopo.save()
         self.assertAlmostEqual(0.5, poitopo.aggregations.all()[0].start_position, places=6)
         self.assertAlmostEqual(0, poitopo.offset, places=6)
         self.assertAlmostEqual(0, poitopo.geom.x, places=6)
@@ -427,6 +424,7 @@ class TopologyPointTest(TestCase):
         self.assertEqual(1, len(Path.objects.all()))
 
         father = Topology.deserialize({'lat': -1, 'lng': -1})
+        father.save()
 
         poi = Point(500, 600, srid=settings.SRID)
         poi.transform(settings.API_SRID)

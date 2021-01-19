@@ -3,6 +3,10 @@ import logging
 import functools
 
 import simplekml
+
+from modelcluster.models import ClusterableModel
+from modelcluster.fields import ParentalKey
+
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Distance
 from django.conf import settings
@@ -59,7 +63,7 @@ class PathInvisibleManager(models.Manager):
 
 
 class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMixin,
-           TimeStampedModelMixin, StructureRelated):
+           TimeStampedModelMixin, StructureRelated, ClusterableModel):
     geom = models.LineStringField(srid=settings.SRID, spatial_index=True)
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=True,
                                            editable=False)
@@ -99,6 +103,10 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
     include_invisible = PathInvisibleManager()
 
     is_reversed = False
+
+    @property
+    def topology_set(self):
+        return Topology.objects.filter(aggregations__path=self)
 
     @property
     def length_2d(self):
@@ -367,7 +375,8 @@ class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMix
         return None
 
 
-class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDeleteMixin):
+class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin,
+               TimeStampedModelMixin, NoDeleteMixin, ClusterableModel):
     paths = models.ManyToManyField(Path, through='PathAggregation', verbose_name=_("Path"))
     offset = models.FloatField(default=0.0, verbose_name=_("Offset"))  # in SRID units
     kind = models.CharField(editable=False, verbose_name=_("Kind"), max_length=32)
@@ -388,6 +397,10 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin, TimeStam
         super(Topology, self).__init__(*args, **kwargs)
         if not self.pk and not self.kind:
             self.kind = self.__class__.KIND
+
+    @property
+    def paths(self):
+        return Path.objects.filter(aggregations__topo_object=self)
 
     @property
     def length_2d(self):
@@ -421,12 +434,11 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin, TimeStam
         """
         Shortcut function to add paths into this topology.
         """
-        from .factories import PathAggregationFactory
-        aggr = PathAggregationFactory.create(topo_object=self,
-                                             path=path,
-                                             start_position=start,
-                                             end_position=end,
-                                             order=order)
+        aggr = PathAggregation.objects.create(topo_object=self,
+                                              path=path,
+                                              start_position=start,
+                                              end_position=end,
+                                              order=order)
 
         if self.deleted:
             self.deleted = False
@@ -493,7 +505,7 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin, TimeStam
             select={'ordering': ordering}, order_by=('ordering',))
         return queryset
 
-    def mutate(self, other, delete=True):
+    def mutate(self, other):
         """
         Take alls attributes of the other topology specified and
         save them into this one. Optionnally deletes the other.
@@ -524,8 +536,6 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin, TimeStam
             for aggr in aggrs
         ])
         self.reload()
-        if delete:
-            other.delete(force=True)  # Really delete it from database
         return self
 
     def reload(self):
@@ -623,8 +633,6 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin, TimeStam
         Receives a point (lng, lat) with API_SRID, and returns
         a topology objects with a computed path aggregation.
         """
-        from .models import Path
-        from .factories import TopologyFactory
         # Find closest path
         point = Point(lng, lat, srid=settings.API_SRID)
         point.transform(settings.SRID)
@@ -636,10 +644,17 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin, TimeStam
             position, offset = closest.interpolate(point)
             offset = 0
         # We can now instantiante a Topology object
-        topology = TopologyFactory.create(paths=[(closest, position, position)], kind=kind, offset=offset)
+        topology = Topology(kind=kind, offset=offset)
+        aggr = PathAggregation(
+            topo_object=topology,
+            path=closest,
+            start_position=position,
+            end_position=position
+        )
+        topology.aggregations = [aggr]
+        closest.aggregations.add(aggr)
         point = Point(point.x, point.y, srid=settings.SRID)
         topology.geom = point
-        topology.save()
         return topology
 
     @classmethod
@@ -672,7 +687,6 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin, TimeStam
 
         Deserialize normally and create a topology from the geojson
         """
-        from .models import Path, Topology, PathAggregation
         try:
             return Topology.objects.get(pk=int(serialized))
         except Topology.DoesNotExist:
@@ -680,7 +694,7 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin, TimeStam
         except (TypeError, ValueError):
             pass  # value is not integer, thus should be deserialized
         if not settings.TREKKING_TOPOLOGY_ENABLED:
-            return Topology.objects.create(kind='TMP', geom=GEOSGeometry(serialized, srid=settings.API_SRID))
+            return Topology(kind='TMP', geom=GEOSGeometry(serialized, srid=settings.API_SRID))
         objdict = serialized
         if isinstance(serialized, str):
             try:
@@ -718,7 +732,7 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin, TimeStam
                 pass
 
         offset = objdict[0].get('offset', 0.0)
-        topology = Topology.objects.create(kind='TMP', offset=offset)
+        topology = Topology(kind='TMP', offset=offset)
         try:
             counter = 0
             for j, subtopology in enumerate(objdict):
@@ -733,13 +747,15 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin, TimeStam
                     idx = str(i)
                     start_position, end_position = positions.get(idx, (0.0, 1.0))
                     path = Path.objects.get(pk=path)
-                    aggrs.append(PathAggregation(
+                    aggr = PathAggregation(
                         path=path,
                         topo_object=topology,
                         start_position=start_position,
                         end_position=end_position,
                         order=counter
-                    ))
+                    )
+                    aggrs.append(aggr)
+                    path.aggregations.add(aggr)
                     if not last_topo and last_path:
                         counter += 1
                         # Intermediary marker.
@@ -761,18 +777,19 @@ class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin, TimeStam
                         elif len(paths) == 1:
                             pos = end_position
                         assert pos >= 0, "Invalid position (%s, %s)." % (start_position, end_position)
-                        aggrs.append(PathAggregation(
+                        aggr = PathAggregation(
                             path=path,
                             topo_object=topology,
                             start_position=pos,
                             end_position=pos,
                             order=counter
-                        ))
+                        )
+                        aggrs.append(aggr)
+                        path.aggregations.add(aggr)
                     counter += 1
-                PathAggregation.objects.bulk_create(aggrs)
+                topology.aggregations.add(*aggrs)
         except (AssertionError, ValueError, KeyError, Path.DoesNotExist) as e:
             raise ValueError("Invalid serialized topology : %s" % e)
-        topology.save()
         return topology
 
     def distance(self, to_cls):
@@ -786,12 +803,12 @@ class PathAggregationManager(models.Manager):
 
 
 class PathAggregation(models.Model):
-    path = models.ForeignKey(Path, null=False,
-                             verbose_name=_("Path"),
-                             related_name="aggregations",
-                             on_delete=models.DO_NOTHING)  # The CASCADE behavior is enforced at DB-level (see file ../sql/30_topologies_paths.sql)
-    topo_object = models.ForeignKey(Topology, null=False, related_name="aggregations", on_delete=models.CASCADE,
-                                    verbose_name=_("Topology"))
+    path = ParentalKey(Path, null=False,
+                       verbose_name=_("Path"),
+                       related_name="aggregations",
+                       on_delete=models.DO_NOTHING)  # The CASCADE behavior is enforced at DB-level (see file ../sql/30_topologies_paths.sql)
+    topo_object = ParentalKey(Topology, null=False, related_name="aggregations", on_delete=models.CASCADE,
+                              verbose_name=_("Topology"))
     start_position = models.FloatField(verbose_name=_("Start position"), db_index=True)
     end_position = models.FloatField(verbose_name=_("End position"), db_index=True)
     order = models.IntegerField(default=0, blank=True, null=True, verbose_name=_("Order"))

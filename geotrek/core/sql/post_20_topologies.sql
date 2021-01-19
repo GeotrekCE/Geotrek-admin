@@ -8,7 +8,6 @@ ALTER TABLE core_topology ALTER COLUMN geom_need_update SET DEFAULT FALSE;
 
 ALTER TABLE core_topology DROP CONSTRAINT IF EXISTS e_t_evenement_geom_not_empty;
 ALTER TABLE core_topology DROP CONSTRAINT IF EXISTS core_topology_geom_not_empty;
-ALTER TABLE core_topology ADD CONSTRAINT core_topology_geom_not_empty CHECK (deleted OR (geom IS NOT NULL));
 
 
 -------------------------------------------------------------------------------

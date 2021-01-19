@@ -555,7 +555,8 @@ class ExportTest(TranslationResetMixin, TestCase):
         lng, lat = tuple(Point(1, 1, srid=settings.SRID).transform(settings.API_SRID, clone=True))
 
         closest_path = PathFactory(geom=LineString(Point(0, 0), Point(1, 0), srid=settings.SRID))
-        topo_point = Topology._topologypoint(lng, lat, None).reload()
+        topo_point = Topology._topologypoint(lng, lat, None)
+        topo_point.save()
 
         self.assertEqual(topo_point.paths.get(), closest_path)
 
