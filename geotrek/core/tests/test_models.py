@@ -3,7 +3,7 @@ from unittest import skipIf
 
 from django.test import TestCase
 from django.conf import settings
-from django.contrib.gis.geos import LineString
+from django.contrib.gis.geos import LineString, Point
 from django.db import IntegrityError
 
 from geotrek.common.utils import dbnow
@@ -92,6 +92,32 @@ class PathTest(TestCase):
         self.assertAlmostEqual(lat_min, 46.499999999999936)
         self.assertAlmostEqual(lng_max, 3.0013039767202154)
         self.assertAlmostEqual(lat_max, 46.50090044234927)
+
+
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+class InterpolateTest(TestCase):
+    def test_interpolate_not_saved(self):
+        p = Path()
+        with self.assertRaisesRegex(ValueError, "Cannot compute interpolation on unsaved path"):
+            p.interpolate(Point(0, 0))
+
+    def test_interpolate_reproj(self):
+        p = PathFactory.create()
+        self.assertEqual(p.interpolate(Point(3, 46.5, srid=4326)), (0, 0))
+
+
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+class SnapTest(TestCase):
+    def test_snap_not_saved(self):
+        p = Path()
+        with self.assertRaisesRegex(ValueError, "Cannot compute snap on unsaved path"):
+            p.snap(Point(0, 0))
+
+    def test_snap_reproj(self):
+        p = PathFactory.create()
+        snap = p.snap(Point(3, 46.5, srid=4326))
+        self.assertEqual(snap.x, 700000)
+        self.assertEqual(snap.y, 6600000)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
