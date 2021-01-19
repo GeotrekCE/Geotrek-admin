@@ -3,6 +3,7 @@
     :maxdepth: 2
 
     installation
+    troubleshooting
     loading-data
     configuration
     advanced-configuration
