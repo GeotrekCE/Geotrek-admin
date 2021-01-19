@@ -150,21 +150,21 @@ class PathGeometryTest(TestCase):
     def test_overlap_geometry(self):
         PathFactory.create(geom=LineString((0, 0), (60, 0)))
         p = PathFactory.create(geom=LineString((40, 0), (50, 0)))
-        self.assertTrue(p.is_overlap())
+        self.assertFalse(p.check_path_not_overlap(p.geom, p.pk))
         # Overlaping twice
         p = PathFactory.create(geom=LineString((20, 1), (20, 0), (25, 0), (25, 1),
                                                (30, 1), (30, 0), (35, 0), (35, 1)))
-        self.assertTrue(p.is_overlap())
+        self.assertFalse(p.check_path_not_overlap(p.geom, p.pk))
 
         # But crossing is ok
         p = PathFactory.create(geom=LineString((6, 1), (6, 3)))
-        self.assertFalse(p.is_overlap())
+        self.assertTrue(p.check_path_not_overlap(p.geom, p.pk))
         # Touching is ok too
         p = PathFactory.create(geom=LineString((5, 1), (5, 0)))
-        self.assertFalse(p.is_overlap())
+        self.assertTrue(p.check_path_not_overlap(p.geom, p.pk))
         # Touching twice is ok too
         p = PathFactory.create(geom=LineString((2.5, 0), (3, 1), (3.5, 0)))
-        self.assertFalse(p.is_overlap())
+        self.assertTrue(p.check_path_not_overlap(p.geom, p.pk))
 
     def test_snapping(self):
         # Sinosoid line

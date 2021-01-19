@@ -14,11 +14,11 @@ from mapentity.serializers import plain_text
 from geotrek.authent.models import StructureRelated, StructureOrNoneRelated
 from geotrek.common.mixins import (TimeStampedModelMixin, NoDeleteMixin,
                                    AddPropertyMixin)
-from geotrek.common.utils import classproperty
+from geotrek.common.utils import classproperty, sqlfunction
 from geotrek.common.utils.postgresql import debug_pg_notices
 from geotrek.altimetry.models import AltimetryMixin
 
-from .helpers import PathHelper, TopologyHelper
+from .helpers import TopologyHelper
 from django.db import connection, connections, DEFAULT_DB_ALIAS
 
 from django.contrib.gis.geos import Point
@@ -150,8 +150,16 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
             qs = qs.exclude(pk=exclude.pk)
         return qs.exclude(visible=False).annotate(distance=Distance('geom', point)).order_by('distance')[0]
 
-    def is_overlap(self):
-        return not PathHelper.disjoint(self.geom, self.pk)
+    @classmethod
+    def check_path_not_overlap(cls, geom, pk):
+        """
+        Returns True if this path does not overlap another.
+        TODO: this could be a constraint at DB-level. But this would mean that
+        path never ever overlap, even during trigger computation, like path splitting...
+        """
+        wkt = "ST_GeomFromText('%s', %s)" % (geom, settings.SRID)
+        disjoint = sqlfunction('SELECT * FROM check_path_not_overlap', str(pk), wkt)
+        return disjoint[0]
 
     def reverse(self):
         """

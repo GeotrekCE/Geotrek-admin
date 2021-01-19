@@ -7,7 +7,7 @@ from django.db import connection
 from django.contrib.gis.geos import Point
 from django.db.models.query import QuerySet
 
-from geotrek.common.utils import sqlfunction, uniquify
+from geotrek.common.utils import uniquify
 
 
 logger = logging.getLogger(__name__)
@@ -267,16 +267,3 @@ class TopologyHelper(object):
         queryset = all_objects.filter(pk__in=pk_list).extra(
             select={'ordering': ordering}, order_by=('ordering',))
         return queryset
-
-
-class PathHelper(object):
-    @classmethod
-    def disjoint(cls, geom, pk):
-        """
-        Returns True if this path does not overlap another.
-        TODO: this could be a constraint at DB-level. But this would mean that
-        path never ever overlap, even during trigger computation, like path splitting...
-        """
-        wkt = "ST_GeomFromText('%s', %s)" % (geom, settings.SRID)
-        disjoint = sqlfunction('SELECT * FROM check_path_not_overlap', str(pk), wkt)
-        return disjoint[0]
