@@ -11,7 +11,6 @@ from geotrek.common.utils import dbnow
 from geotrek.core.factories import (PathFactory, PathAggregationFactory,
                                     TopologyFactory)
 from geotrek.core.models import Path, Topology, PathAggregation
-from geotrek.core.helpers import TopologyHelper
 
 
 def dictfetchall(cursor):
@@ -98,7 +97,7 @@ class TopologyTest(TestCase):
         self.assertEqual(Path.include_invisible.count(), 2)
 
         # create topo on visible path
-        topology = TopologyHelper._topologypoint(0, 0, None).reload()
+        topology = Topology._topologypoint(0, 0, None).reload()
 
         # because FK and M2M are used with default manager only, others tests are in SQL
         conn = connections[DEFAULT_DB_ALIAS]
@@ -121,7 +120,7 @@ class TopologyTest(TestCase):
         self.assertNotIn(path_unvisible.pk, [ele['id_path'] for ele in datas], "{}".format(datas))
 
         # new topo on invible path
-        topology = TopologyHelper._topologypoint(0, 3, None).reload()
+        topology = Topology._topologypoint(0, 3, None).reload()
 
         cur.execute(
             """

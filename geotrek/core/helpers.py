@@ -67,7 +67,7 @@ class TopologyHelper(object):
                     except (Topology.DoesNotExist, ValueError):
                         pass
 
-                return cls._topologypoint(lng, lat, kind, snap=objdict.get('snap'))
+                return Topology._topologypoint(lng, lat, kind, snap=objdict.get('snap'))
             else:
                 objdict = [objdict]
 
