@@ -168,7 +168,22 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         Returns position ([0.0-1.0]) and offset (distance) of the point
         along this path.
         """
-        return PathHelper.interpolate(self, point)
+        if not self.pk:
+            raise ValueError("Cannot compute interpolation on unsaved path")
+        if point.srid != self.geom.srid:
+            point.transform(self.geom.srid)
+        cursor = connection.cursor()
+        sql = """
+        SELECT position, distance
+        FROM ft_path_interpolate(%(pk)s, ST_GeomFromText('POINT(%(x)s %(y)s)',%(srid)s))
+             AS (position FLOAT, distance FLOAT)
+        """ % {'pk': self.pk,
+               'x': point.x,
+               'y': point.y,
+               'srid': self.geom.srid}
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        return result[0]
 
     def snap(self, point):
         """

@@ -271,25 +271,6 @@ class TopologyHelper(object):
 
 class PathHelper(object):
     @classmethod
-    def interpolate(cls, path, point):
-        if not path.pk:
-            raise ValueError("Cannot compute interpolation on unsaved path")
-        if point.srid != path.geom.srid:
-            point.transform(path.geom.srid)
-        cursor = connection.cursor()
-        sql = """
-        SELECT position, distance
-        FROM ft_path_interpolate(%(pk)s, ST_GeomFromText('POINT(%(x)s %(y)s)',%(srid)s))
-             AS (position FLOAT, distance FLOAT)
-        """ % {'pk': path.pk,
-               'x': point.x,
-               'y': point.y,
-               'srid': path.geom.srid}
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        return result[0]
-
-    @classmethod
     def disjoint(cls, geom, pk):
         """
         Returns True if this path does not overlap another.
