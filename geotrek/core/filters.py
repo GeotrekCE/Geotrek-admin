@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
-from django_filters import CharFilter, ModelChoiceFilter
+from django_filters import CharFilter
 
 from .models import Topology, Path, Trail
 
@@ -9,6 +9,7 @@ from geotrek.infrastructure.filters import InfrastructureFilterSet
 from geotrek.signage.filters import SignageFilterSet
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 from geotrek.maintenance import models as maintenance_models
+from geotrek.zoning.filters import add_filters_zoning
 
 
 class TopologyFilter(RightFilter):
@@ -73,6 +74,9 @@ class PathFilterSet(StructureRelatedFilterSet):
             ['valid', 'length', 'networks', 'usages', 'comfort', 'stake', 'draft', ]
 
 
+add_filters_zoning(PathFilterSet)
+
+
 class TrailFilterSet(StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     departure = CharFilter(label=_('Departure'), lookup_expr='icontains')
@@ -83,6 +87,9 @@ class TrailFilterSet(StructureRelatedFilterSet):
         model = Trail
         fields = StructureRelatedFilterSet.Meta.fields + \
             ['name', 'departure', 'arrival', 'comments']
+
+
+add_filters_zoning(TrailFilterSet)
 
 
 class TopologyFilterTrail(TopologyFilter):

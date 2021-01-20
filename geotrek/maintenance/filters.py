@@ -10,6 +10,8 @@ from geotrek.common.filters import (
     StructureRelatedFilterSet, YearFilter, YearBetweenFilter)
 from geotrek.common.filters import RightFilter
 from geotrek.common.widgets import YearSelect
+from geotrek.zoning.filters import add_filters_zoning
+from geotrek.zoning.models import City, District
 
 from .models import Intervention, Project
 
@@ -25,13 +27,17 @@ class InterventionYearTargetFilter(YearFilter):
         }).distinct()
 
 
-class PolygonTopologyFilter(PolygonFilter):
+class PolygonInterventionFilterMixin(object):
+    def get_geom(self, value):
+        return value
+
     def filter(self, qs, value):
         if not value:
             return qs
         lookup = self.lookup_expr
+
         blade_content_type = ContentType.objects.get_for_model(Blade)
-        topologies = list(Topology.objects.filter(**{'geom__%s' % lookup: value}).values_list('id', flat=True))
+        topologies = list(Topology.objects.filter(**{'geom__%s' % lookup: self.get_geom(value)}).values_list('id', flat=True))
         topologies_intervention = Intervention.objects.existing().filter(target_id__in=topologies).exclude(
             target_type=blade_content_type).distinct('pk').values_list('id', flat=True)
 
@@ -44,6 +50,32 @@ class PolygonTopologyFilter(PolygonFilter):
             interventions.extend(blades_intervention)
         qs = qs.filter(pk__in=interventions)
         return qs
+
+
+class PolygonTopologyFilter(PolygonInterventionFilterMixin, PolygonFilter):
+    pass
+
+
+class ProjectIntersectionFilterCity(PolygonInterventionFilterMixin, RightFilter):
+    model = City
+
+    def __init__(self, *args, **kwargs):
+        super(ProjectIntersectionFilterCity, self).__init__(*args, **kwargs)
+        self.lookup_expr = 'intersects'
+
+    def get_geom(self, value):
+        return value.geom
+
+
+class ProjectIntersectionFilterDistrict(PolygonInterventionFilterMixin, RightFilter):
+    model = District
+
+    def __init__(self, *args, **kwargs):
+        super(ProjectIntersectionFilterDistrict, self).__init__(*args, **kwargs)
+        self.lookup_expr = 'intersects'
+
+    def get_geom(self, value):
+        return value.geom
 
 
 class InterventionYearSelect(YearSelect):
@@ -89,3 +121,10 @@ class ProjectFilterSet(StructureRelatedFilterSet):
             'in_year', 'type', 'domain', 'contractors', 'project_owner',
             'project_manager', 'founders'
         ]
+
+
+ProjectFilterSet.add_filters({
+        'city': ProjectIntersectionFilterCity(label=_('City'), required=False),
+        'district': ProjectIntersectionFilterDistrict(label=_('District'), required=False),
+})
+add_filters_zoning(InterventionFilterSet)

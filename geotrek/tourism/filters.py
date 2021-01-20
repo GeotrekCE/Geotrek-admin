@@ -1,12 +1,12 @@
 from django.utils.translation import gettext_lazy as _
 
-import django_filters
 import django_filters.rest_framework
 from django.db.models import Q
 from geotrek.common.filters import StructureRelatedFilterSet
 from django.utils.datetime_safe import datetime
 
 from .models import TouristicContent, TouristicEvent
+from geotrek.zoning.filters import add_filters_zoning
 
 
 class TouristicContentFilterSet(StructureRelatedFilterSet):
@@ -80,3 +80,7 @@ class TouristicEventApiFilterSet(django_filters.rest_framework.FilterSet):
         return queryset.filter(
             Q(end_date__isnull=True) | Q(end_date__gte=value)
         )
+
+
+add_filters_zoning(TouristicContentFilterSet)
+add_filters_zoning(TouristicEventFilterSet)

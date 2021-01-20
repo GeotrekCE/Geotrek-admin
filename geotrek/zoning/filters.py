@@ -23,12 +23,8 @@ class IntersectionFilterDistrict(IntersectionFilter):
     model = District
 
 
-TouristicContentFilterSet.add_filters({
-    'city': IntersectionFilterCity(label=_('City'), required=False),
-    'district': IntersectionFilterDistrict(label=_('District'), required=False),
-})
-
-TouristicEventFilterSet.add_filters({
-    'city': IntersectionFilterCity(label=_('City'), required=False),
-    'district': IntersectionFilterDistrict(label=_('District'), required=False),
-})
+def add_filters_zoning(filter_set):
+    filter_set.add_filters({
+        'city': IntersectionFilterCity(label=_('City'), required=False),
+        'district': IntersectionFilterDistrict(label=_('District'), required=False),
+    })

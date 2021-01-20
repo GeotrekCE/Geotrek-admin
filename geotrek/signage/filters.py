@@ -7,6 +7,7 @@ from geotrek.common.filters import StructureRelatedFilterSet, ValueFilter
 from geotrek.maintenance.filters import InterventionYearTargetFilter
 from geotrek.signage.models import Signage, Blade
 from geotrek.signage.widgets import SignageYearSelect, SignageImplantationYearSelect
+from geotrek.zoning.filters import add_filters_zoning
 
 from mapentity.filters import MapEntityFilterSet, PolygonFilter
 
@@ -47,3 +48,6 @@ class BladeFilterSet(MapEntityFilterSet):
     class Meta(MapEntityFilterSet.Meta):
         model = Blade
         fields = MapEntityFilterSet.Meta.fields + ['structure', 'number', 'direction', 'type', 'color', 'condition']
+
+
+add_filters_zoning(SignageFilterSet)

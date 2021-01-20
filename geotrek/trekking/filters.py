@@ -1,6 +1,7 @@
 from django.utils.translation import gettext_lazy as _
 from mapentity.filters import MapEntityFilterSet
 from geotrek.core.filters import TopologyFilter
+from geotrek.zoning.filters import add_filters_zoning
 
 from .models import Trek, POI, Service
 
@@ -12,6 +13,9 @@ class TrekFilterSet(MapEntityFilterSet):
         fields = ['published', 'difficulty', 'duration', 'themes', 'networks',
                   'practice', 'accessibilities', 'route', 'labels',
                   'structure', 'source', 'portal', 'reservation_system']
+
+
+add_filters_zoning(TrekFilterSet)
 
 
 class POITrekFilter(TopologyFilter):
@@ -26,7 +30,13 @@ class POIFilterSet(MapEntityFilterSet):
         fields = ['published', 'type', 'trek', 'structure']
 
 
+add_filters_zoning(POIFilterSet)
+
+
 class ServiceFilterSet(MapEntityFilterSet):
     class Meta:
         model = Service
         fields = ['type', 'structure']
+
+
+add_filters_zoning(ServiceFilterSet)
