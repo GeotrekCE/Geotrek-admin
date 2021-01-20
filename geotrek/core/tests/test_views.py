@@ -292,7 +292,7 @@ class PathViewsTest(CommonTest):
         city = CityFactory(code='09000', geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)), srid=settings.SRID)))
         city2 = CityFactory(code='09001', geom=MultiPolygon(
             Polygon(((0, 0), (1000, 0), (1000, 1000), (0, 1000), (0, 0)), srid=settings.SRID)))
-        self.assertEqual(p1.aggregations.count(), 1)
+        self.assertEqual(p1.cities.count(), 1)
         response = self.client.get('/api/path/paths.json?city=%s' % city.code)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['sumPath'], 0.0)
@@ -306,7 +306,7 @@ class PathViewsTest(CommonTest):
         district = DistrictFactory(geom=MultiPolygon(Polygon(((200, 0), (300, 0), (300, 100), (200, 100), (200, 0)), srid=settings.SRID)))
         district2 = DistrictFactory(geom=MultiPolygon(
             Polygon(((0, 0), (1000, 0), (1000, 1000), (0, 1000), (0, 0)), srid=settings.SRID)))
-        self.assertEqual(p1.aggregations.count(), 1)
+        self.assertEqual(p1.districts.count(), 1)
         response = self.client.get('/api/path/paths.json?district=%s' % district.pk)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['sumPath'], 0.0)
