@@ -24,29 +24,9 @@ class Migration(migrations.Migration):
             field=models.CharField(max_length=128, verbose_name='Name'),
         ),
         migrations.AlterField(
-            model_name='cityedge',
-            name='city',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='zoning.City', verbose_name='City'),
-        ),
-        migrations.AlterField(
-            model_name='cityedge',
-            name='topo_object',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='core.Topology'),
-        ),
-        migrations.AlterField(
             model_name='district',
             name='name',
             field=models.CharField(max_length=128, verbose_name='Name'),
-        ),
-        migrations.AlterField(
-            model_name='districtedge',
-            name='district',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='zoning.District', verbose_name='District'),
-        ),
-        migrations.AlterField(
-            model_name='districtedge',
-            name='topo_object',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='core.Topology'),
         ),
         migrations.AlterField(
             model_name='restrictedarea',
@@ -59,16 +39,6 @@ class Migration(migrations.Migration):
             field=models.CharField(max_length=250, verbose_name='Name'),
         ),
         migrations.AlterField(
-            model_name='restrictedareaedge',
-            name='restricted_area',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='zoning.RestrictedArea', verbose_name='Restricted area'),
-        ),
-        migrations.AlterField(
-            model_name='restrictedareaedge',
-            name='topo_object',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='core.Topology'),
-        ),
-        migrations.AlterField(
             model_name='restrictedareatype',
             name='name',
             field=models.CharField(max_length=200, verbose_name='Name'),
@@ -78,23 +48,11 @@ class Migration(migrations.Migration):
             table=None,
         ),
         migrations.AlterModelTable(
-            name='cityedge',
-            table=None,
-        ),
-        migrations.AlterModelTable(
             name='district',
             table=None,
         ),
         migrations.AlterModelTable(
-            name='districtedge',
-            table=None,
-        ),
-        migrations.AlterModelTable(
             name='restrictedarea',
-            table=None,
-        ),
-        migrations.AlterModelTable(
-            name='restrictedareaedge',
             table=None,
         ),
         migrations.AlterModelTable(
