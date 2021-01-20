@@ -1,3 +1,4 @@
+from django_filters import FilterSet
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.filters import RightFilter
@@ -23,8 +24,6 @@ class IntersectionFilterDistrict(IntersectionFilter):
     model = District
 
 
-def add_filters_zoning(filter_set):
-    filter_set.add_filters({
-        'city': IntersectionFilterCity(label=_('City'), required=False),
-        'district': IntersectionFilterDistrict(label=_('District'), required=False),
-    })
+class ZoningFilterSet(FilterSet):
+    city = IntersectionFilterCity(label=_('City'), required=False)
+    district = IntersectionFilterDistrict(label=_('District'), required=False)

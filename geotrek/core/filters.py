@@ -9,7 +9,7 @@ from geotrek.infrastructure.filters import InfrastructureFilterSet
 from geotrek.signage.filters import SignageFilterSet
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 from geotrek.maintenance import models as maintenance_models
-from geotrek.zoning.filters import add_filters_zoning
+from geotrek.zoning.filters import ZoningFilterSet
 
 
 class TopologyFilter(RightFilter):
@@ -63,7 +63,7 @@ class TopologyFilter(RightFilter):
             return qs.filter(pk__in=[topo.pk for topo in overlapping])
 
 
-class PathFilterSet(StructureRelatedFilterSet):
+class PathFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     length = OptionalRangeFilter(label=_('length'))
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     comments = CharFilter(label=_('Comments'), lookup_expr='icontains')
@@ -74,10 +74,7 @@ class PathFilterSet(StructureRelatedFilterSet):
             ['valid', 'length', 'networks', 'usages', 'comfort', 'stake', 'draft', ]
 
 
-add_filters_zoning(PathFilterSet)
-
-
-class TrailFilterSet(StructureRelatedFilterSet):
+class TrailFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     departure = CharFilter(label=_('Departure'), lookup_expr='icontains')
     arrival = CharFilter(label=_('Arrival'), lookup_expr='icontains')
@@ -87,9 +84,6 @@ class TrailFilterSet(StructureRelatedFilterSet):
         model = Trail
         fields = StructureRelatedFilterSet.Meta.fields + \
             ['name', 'departure', 'arrival', 'comments']
-
-
-add_filters_zoning(TrailFilterSet)
 
 
 class TopologyFilterTrail(TopologyFilter):

@@ -6,10 +6,10 @@ from geotrek.common.filters import StructureRelatedFilterSet
 from django.utils.datetime_safe import datetime
 
 from .models import TouristicContent, TouristicEvent
-from geotrek.zoning.filters import add_filters_zoning
+from geotrek.zoning.filters import ZoningFilterSet
 
 
-class TouristicContentFilterSet(StructureRelatedFilterSet):
+class TouristicContentFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     class Meta(StructureRelatedFilterSet.Meta):
         model = TouristicContent
         fields = StructureRelatedFilterSet.Meta.fields + [
@@ -54,7 +54,7 @@ class CompletedFilter(django_filters.BooleanFilter):
         return queryset
 
 
-class TouristicEventFilterSet(StructureRelatedFilterSet):
+class TouristicEventFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     after = AfterFilter(label=_("After"))
     before = BeforeFilter(label=_("Before"))
     completed = CompletedFilter(label=_("Completed"))
@@ -80,7 +80,3 @@ class TouristicEventApiFilterSet(django_filters.rest_framework.FilterSet):
         return queryset.filter(
             Q(end_date__isnull=True) | Q(end_date__gte=value)
         )
-
-
-add_filters_zoning(TouristicContentFilterSet)
-add_filters_zoning(TouristicEventFilterSet)

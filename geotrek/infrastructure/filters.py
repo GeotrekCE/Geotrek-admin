@@ -5,10 +5,10 @@ from geotrek.common.filters import StructureRelatedFilterSet, ValueFilter
 from geotrek.infrastructure.widgets import InfrastructureYearSelect, InfrastructureImplantationYearSelect
 from geotrek.maintenance.filters import InterventionYearTargetFilter
 from .models import Infrastructure
-from geotrek.zoning.filters import add_filters_zoning
+from geotrek.zoning.filters import ZoningFilterSet
 
 
-class InfrastructureFilterSet(StructureRelatedFilterSet):
+class InfrastructureFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     description = CharFilter(label=_('Description'), lookup_expr='icontains')
     implantation_year = ValueFilter(field_name='implantation_year',
@@ -26,6 +26,3 @@ class InfrastructureFilterSet(StructureRelatedFilterSet):
         model = Infrastructure
         fields = StructureRelatedFilterSet.Meta.fields + ['type__type', 'type', 'condition', 'implantation_year',
                                                           'intervention_year', 'published']
-
-
-add_filters_zoning(InfrastructureFilterSet)

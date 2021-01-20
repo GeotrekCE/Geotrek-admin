@@ -10,7 +10,7 @@ from geotrek.common.filters import (
     StructureRelatedFilterSet, YearFilter, YearBetweenFilter)
 from geotrek.common.filters import RightFilter
 from geotrek.common.widgets import YearSelect
-from geotrek.zoning.filters import add_filters_zoning
+from geotrek.zoning.filters import ZoningFilterSet
 from geotrek.zoning.models import City, District
 
 from .models import Intervention, Project
@@ -85,7 +85,7 @@ class InterventionYearSelect(YearSelect):
         return Intervention.objects.all_years()
 
 
-class InterventionFilterSet(StructureRelatedFilterSet):
+class InterventionFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     ON_CHOICES = (('infrastructure', _("Infrastructure")), ('signage', _("Signage")), ('blade', _("Blade")),
                   ('topology', _("Path")), ('trek', _("Trek")), ('poi', _("POI")), ('service', _("Service")),
                   ('trail', _("Trail")))
@@ -114,6 +114,8 @@ class ProjectFilterSet(StructureRelatedFilterSet):
     in_year = YearBetweenFilter(field_name=('begin_year', 'end_year'),
                                 widget=ProjectYearSelect,
                                 label=_("Year of activity"))
+    city = ProjectIntersectionFilterCity(label=_('City'), required=False)
+    district = ProjectIntersectionFilterDistrict(label=_('District'), required=False)
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Project
@@ -121,10 +123,3 @@ class ProjectFilterSet(StructureRelatedFilterSet):
             'in_year', 'type', 'domain', 'contractors', 'project_owner',
             'project_manager', 'founders'
         ]
-
-
-ProjectFilterSet.add_filters({
-        'city': ProjectIntersectionFilterCity(label=_('City'), required=False),
-        'district': ProjectIntersectionFilterDistrict(label=_('District'), required=False),
-})
-add_filters_zoning(InterventionFilterSet)
