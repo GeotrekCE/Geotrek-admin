@@ -21,6 +21,7 @@ from geotrek.common.mixins import (NoDeleteMixin, TimeStampedModelMixin,
                                    AddPropertyMixin)
 from geotrek.common.models import Theme, ReservationSystem
 from geotrek.common.utils import intersecting
+from geotrek.zoning.mixins import ZoningPropertiesMixin
 
 from extended_choices import Choices
 
@@ -210,7 +211,7 @@ class TouristicContentType2(TouristicContentType):
         verbose_name_plural = _("Second list types")
 
 
-class TouristicContent(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
+class TouristicContent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
                        TimeStampedModelMixin, PicturesMixin, NoDeleteMixin):
     """ A generic touristic content (accomodation, museum, etc.) in the park
     """
@@ -315,7 +316,7 @@ class TouristicEventType(OptionalPictogramMixin):
         return self.type
 
 
-class TouristicEvent(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
+class TouristicEvent(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
                      PicturesMixin, TimeStampedModelMixin, NoDeleteMixin):
     """ A touristic event (conference, workshop, etc.) in the park
     """

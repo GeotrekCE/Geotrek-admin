@@ -15,6 +15,7 @@ from geotrek.common.models import Theme
 from geotrek.common.utils import intersecting, format_coordinates, spatial_reference
 from geotrek.core.models import Topology
 from geotrek.trekking.models import POI, Service, Trek
+from geotrek.zoning.mixins import ZoningPropertiesMixin
 
 
 class Practice(PictogramMixin):
@@ -98,7 +99,7 @@ class Level(OptionalPictogramMixin):
         super(Level, self).save(*args, **kwargs)
 
 
-class Dive(NoDeleteMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
+class Dive(ZoningPropertiesMixin, NoDeleteMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
            TimeStampedModelMixin, PicturesMixin):
     description_teaser = models.TextField(verbose_name=_("Description teaser"), blank=True,
                                           help_text=_("A brief summary"))
