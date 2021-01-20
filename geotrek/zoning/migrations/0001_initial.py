@@ -32,8 +32,7 @@ class Migration(migrations.Migration):
                 'db_table': 'f_t_commune',
                 'verbose_name': 'City edge',
                 'verbose_name_plural': 'City edges',
-            },
-            bases=('core.topology',),
+            }
         ),
         migrations.CreateModel(
             name='District',
@@ -58,8 +57,7 @@ class Migration(migrations.Migration):
                 'db_table': 'f_t_secteur',
                 'verbose_name': 'District edge',
                 'verbose_name_plural': 'District edges',
-            },
-            bases=('core.topology',),
+            }
         ),
         migrations.CreateModel(
             name='RestrictedArea',
@@ -84,8 +82,7 @@ class Migration(migrations.Migration):
                 'db_table': 'f_t_zonage',
                 'verbose_name': 'Restricted area edge',
                 'verbose_name_plural': 'Restricted area edges',
-            },
-            bases=('core.topology',),
+            }
         ),
         migrations.CreateModel(
             name='RestrictedAreaType',
