@@ -8,6 +8,7 @@ from mapentity.filters import PolygonFilter, PythonPolygonFilter
 from geotrek.core.models import Topology
 from geotrek.common.filters import (
     StructureRelatedFilterSet, YearFilter, YearBetweenFilter)
+from geotrek.common.filters import RightFilter
 from geotrek.common.widgets import YearSelect
 
 from .models import Intervention, Project

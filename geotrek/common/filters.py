@@ -1,6 +1,6 @@
 from django.utils.translation import gettext_lazy as _
 
-from django_filters import RangeFilter, Filter
+from django_filters import RangeFilter, Filter, ModelChoiceFilter
 from mapentity.filters import MapEntityFilterSet
 
 
@@ -51,6 +51,22 @@ class YearBetweenFilter(YearFilter):
             '%s__gte' % end: year,
         })
         return qs
+
+
+class RightFilter(ModelChoiceFilter):
+    model = None
+    queryset = None
+
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('queryset', self.get_queryset())
+        super(RightFilter, self).__init__(*args, **kwargs)
+        self.field.widget.attrs['class'] = self.field.widget.attrs.get('class', '') + 'right-filter'
+        self.field.widget.renderer = None
+
+    def get_queryset(self, request=None):
+        if self.queryset is not None:
+            return self.queryset
+        return self.model.objects.all()
 
 
 class StructureRelatedFilterSet(MapEntityFilterSet):

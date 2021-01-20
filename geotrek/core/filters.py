@@ -4,28 +4,14 @@ from django_filters import CharFilter, ModelChoiceFilter
 
 from .models import Topology, Path, Trail
 
-from geotrek.common.filters import OptionalRangeFilter, StructureRelatedFilterSet
+from geotrek.common.filters import OptionalRangeFilter, StructureRelatedFilterSet, RightFilter
 from geotrek.infrastructure.filters import InfrastructureFilterSet
 from geotrek.signage.filters import SignageFilterSet
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 from geotrek.maintenance import models as maintenance_models
 
 
-class TopologyFilter(ModelChoiceFilter):
-    model = None
-    queryset = None
-
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault('queryset', self.get_queryset())
-        super(TopologyFilter, self).__init__(*args, **kwargs)
-        self.field.widget.attrs['class'] = self.field.widget.attrs.get('class', '') + ' topology-filter'
-        self.field.widget.renderer = None
-
-    def get_queryset(self, request=None):
-        if self.queryset is not None:
-            return self.queryset
-        return self.model.objects.all()
-
+class TopologyFilter(RightFilter):
     def filter(self, qs, value):
         """Overrides parent filter() method completely.
         """
