@@ -5,8 +5,6 @@ from django.contrib.gis.geos import Polygon, MultiPolygon
 
 from mapentity.helpers import bbox_split_srid_2154
 
-from geotrek.core.factories import TopologyFactory
-
 from . import models
 
 

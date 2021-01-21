@@ -263,9 +263,9 @@ class ZoningLayersUpdateTest(TestCase):
         +-----------------+    -
         """
         # Fake restricted areas
-        ra1 = RestrictedAreaFactory.create(geom=MultiPolygon(
+        RestrictedAreaFactory.create(geom=MultiPolygon(
             Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)))))
-        ra2 = RestrictedAreaFactory.create(geom=MultiPolygon(
+        RestrictedAreaFactory.create(geom=MultiPolygon(
             Polygon(((0, 1), (2, 1), (2, 2), (0, 2), (0, 1)))))
 
         # Fake city
