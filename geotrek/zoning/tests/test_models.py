@@ -1,9 +1,8 @@
 from unittest import skipIf
 from django.test import TestCase
 from django.conf import settings
-from django.contrib.gis.geos import LineString, Polygon, MultiPolygon
+from django.contrib.gis.geos import LineString, Polygon, Point, MultiPolygon
 
-from geotrek.core.models import Topology
 from geotrek.core.factories import PathFactory
 from geotrek.signage.factories import SignageFactory
 from geotrek.zoning.models import City
@@ -103,9 +102,12 @@ class ZoningLayersUpdateTest(TestCase):
                  geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)),
                                            srid=settings.SRID)))
         c.save()
-        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5)))
-        p.save()
-        signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5)))
+            p.save()
+            signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+        else:
+            signage = SignageFactory.create(geom=Point(1, 1.5, srid=settings.SRID))
         self.assertEqual(signage.cities.count(), 1)
 
     def test_city_with_topo_2(self):
@@ -122,9 +124,12 @@ class ZoningLayersUpdateTest(TestCase):
                  geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)),
                                            srid=settings.SRID)))
         c.save()
-        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5)))
-        p.save()
-        signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5)))
+            p.save()
+            signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+        else:
+            signage = SignageFactory.create(geom=Point(1, 1.5, srid=settings.SRID))
         self.assertEqual(signage.cities.count(), 0)
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -141,9 +146,12 @@ class ZoningLayersUpdateTest(TestCase):
                  geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)),
                                            srid=settings.SRID)))
         c.save()
-        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5)))
-        p.save()
-        signage = SignageFactory.create(paths=[(p, 1, 1)])
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5)))
+            p.save()
+            signage = SignageFactory.create(paths=[(p, 1, 1)])
+        else:
+            signage = SignageFactory.create(geom=Point(1.5, 0.5, srid=settings.SRID))
         self.assertEqual(signage.cities.count(), 1)
 
     def test_city_with_topo_on_loop(self):
@@ -161,9 +169,12 @@ class ZoningLayersUpdateTest(TestCase):
                  geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)),
                                            srid=settings.SRID)))
         c.save()
-        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)))
-        p.save()
-        signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)))
+            p.save()
+            signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+        else:
+            signage = SignageFactory.create(geom=Point(1.5, 1.5, srid=settings.SRID))
         self.assertEqual(signage.cities.count(), 1)
 
     def test_city_with_topo_on_loop_2(self):
@@ -180,9 +191,12 @@ class ZoningLayersUpdateTest(TestCase):
                  geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)),
                                            srid=settings.SRID)))
         c.save()
-        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)))
-        p.save()
-        signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)))
+            p.save()
+            signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+        else:
+            signage = SignageFactory.create(geom=Point(1.5, 1.5, srid=settings.SRID))
         self.assertEqual(signage.cities.count(), 0)
 
     def test_city_with_topo_on_loop_3(self):
@@ -199,9 +213,12 @@ class ZoningLayersUpdateTest(TestCase):
                  geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)),
                                            srid=settings.SRID)))
         c.save()
-        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)))
-        p.save()
-        signage = SignageFactory.create(paths=[(p, 0.75, 0.75)])
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)))
+            p.save()
+            signage = SignageFactory.create(paths=[(p, 0.75, 0.75)])
+        else:
+            signage = SignageFactory.create(geom=Point(1.5, 0.5, srid=settings.SRID))
         self.assertEqual(signage.cities.count(), 1)
 
     def test_couches_sig_link(self):
@@ -216,9 +233,9 @@ class ZoningLayersUpdateTest(TestCase):
         +-----------------+    -
         """
         # Fake restricted areas
-        ra1 = RestrictedAreaFactory.create(geom=MultiPolygon(
+        RestrictedAreaFactory.create(geom=MultiPolygon(
             Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)))))
-        ra2 = RestrictedAreaFactory.create(geom=MultiPolygon(
+        RestrictedAreaFactory.create(geom=MultiPolygon(
             Polygon(((0, 1), (2, 1), (2, 2), (0, 2), (0, 1)))))
 
         # Fake city
