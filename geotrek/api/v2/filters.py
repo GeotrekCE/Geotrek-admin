@@ -288,6 +288,10 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
                 Q(name__icontains=q) | Q(description__icontains=q)
                 | Q(description_teaser__icontains=q) | Q(ambiance__icontains=q)
             )
+        practices = request.GET.get('practice', None)
+        if practices is not None:
+            list_practices = [int(p) for p in practices.split(',')]
+            qs = qs.filter(practice__in=list_practices)
         return qs
 
     def get_schema_fields(self, view):
@@ -376,6 +380,11 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
                 name='q', required=False, location='query', schema=coreschema.String(
                     title=_("Query string"),
                     description=_('Search field that returns treks containing data matching the string')
+                )
+            ), Field(
+                name='practice', required=False, location='query', schema=coreschema.String(
+                    title=_("Practice"),
+                    description=_('Id of the trek practice to filter by, separated by commas')
                 )
             ),
         )

@@ -363,7 +363,8 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             'portal': '16',
             'label': '23',
             'route': '68',
-            'q': 'test string'
+            'q': 'test string',
+            'practice': '1'
         })
         #  test response code
         self.assertEqual(response.status_code, 200)
