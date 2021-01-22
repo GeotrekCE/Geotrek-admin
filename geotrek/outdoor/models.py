@@ -32,6 +32,8 @@ class RatingScale(models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     practice = models.ForeignKey(Practice, related_name="rating_scales", on_delete=models.PROTECT,
                                  verbose_name=_("Practice"))
+    order = models.IntegerField(verbose_name=_("Order"), null=True, blank=True,
+                                help_text=_("Within a practice. Alphabetical order if blank"))
 
     def __str__(self):
         return "{} ({})".format(self.name, self.practice.name)
@@ -39,7 +41,7 @@ class RatingScale(models.Model):
     class Meta:
         verbose_name = _("Rating scale")
         verbose_name_plural = _("Rating scales")
-        ordering = ('practice', 'name')
+        ordering = ('practice', 'order', 'name')
 
 
 class Rating(models.Model):

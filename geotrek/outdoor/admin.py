@@ -28,7 +28,7 @@ class SiteTypeAdmin(MergeActionMixin, TranslationAdmin):
 
 @admin.register(RatingScale)
 class RatingScaleAdmin(MergeActionMixin, TranslationAdmin):
-    list_display = ('name', 'practice')
+    list_display = ('name', 'practice', 'order')
     list_filter = ('practice', )
     search_fields = ('name', )
     merge_field = 'name'

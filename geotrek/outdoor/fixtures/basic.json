@@ -1,6 +1,7 @@
 [
 {
     "model": "auth.group",
+    "pk": 8,
     "fields": {
         "name": "Outdoor",
         "permissions": [
@@ -83,6 +84,7 @@
         "name": "Caractère vertical",
         "name_fr": "Caractère vertical",
         "name_en": null,
+        "order": 1,
         "practice": 6
     }
 },
@@ -93,6 +95,7 @@
         "name": "Caractère aquatique",
         "name_fr": "Caractère aquatique",
         "name_en": null,
+        "order": 2,
         "practice": 6
     }
 },
@@ -103,6 +106,7 @@
         "name": "Engagement / envergure",
         "name_fr": "Engagement / envergure",
         "name_en": null,
+        "order": 3,
         "practice": 6
     }
 },
@@ -133,6 +137,7 @@
         "name": "Cotation globale",
         "name_fr": "Cotation globale",
         "name_en": null,
+        "order": 1,
         "practice": 3
     }
 },
@@ -143,6 +148,7 @@
         "name": "Engagement / éloignement",
         "name_fr": "Engagement / éloignement",
         "name_en": null,
+        "order": 2,
         "practice": 3
     }
 },
