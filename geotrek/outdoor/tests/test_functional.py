@@ -30,7 +30,7 @@ class SiteViewsTests(CommonTest):
             'labels': [],
             'map_image_url': '/image/site-{}.png'.format(self.obj.pk),
             'name': 'Site',
-            'orientation': 'SW',
+            'orientation': ['S', 'SW'],
             'parent': None,
             'period': 'Summer',
             'portal': [],
@@ -61,7 +61,7 @@ class SiteViewsTests(CommonTest):
             'web_links': [],
             'ratings_min': [],
             'ratings_max': [],
-            'wind': 'N',
+            'wind': ['N'],
         }
 
     def get_bad_data(self):
