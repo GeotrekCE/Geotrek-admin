@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.translation import gettext as _
 from geotrek.common.admin import MergeActionMixin
-from geotrek.outdoor.models import Practice, SiteType, RatingScale, Rating
+from geotrek.outdoor.models import Sector, Practice, SiteType, RatingScale, Rating
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.admin import TranslationAdmin
@@ -11,9 +11,17 @@ else:
     TranslationAdmin = admin.ModelAdmin
 
 
+@admin.register(Sector)
+class SectorAdmin(MergeActionMixin, TranslationAdmin):
+    list_display = ('name', )
+    search_fields = ('name', )
+    merge_field = 'name'
+
+
 @admin.register(Practice)
 class PracticeAdmin(MergeActionMixin, TranslationAdmin):
-    list_display = ('name', )
+    list_display = ('name', 'sector')
+    list_filter = ('sector', )
     search_fields = ('name', )
     merge_field = 'name'
 

@@ -21,6 +21,10 @@
             <td>{% if object.children.exists %}{% valuelist object.get_children field='name_display' %}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
+            <th>{% trans "Sector" %}</th>
+            <td>{% if object.practice.sector %}{{ object.practice.sector }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+        </tr>
+        <tr>
             <th>{{ object|verbose:"practice" }}</th>
             <td>{% if object.practice %}{{ object.practice }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>

@@ -1,5 +1,5 @@
 from django.conf import settings
-from geotrek.outdoor.models import Site, Practice, SiteType, RatingScale, Rating
+from geotrek.outdoor.models import Site, Practice, SiteType, RatingScale, Rating, Sector
 from modeltranslation.translator import translator, TranslationOptions
 
 
@@ -7,6 +7,10 @@ class SiteTO(TranslationOptions):
     fields = ('name', 'description', 'description_teaser', 'ambiance', 'advice', 'period') + (
         ('published',) if settings.PUBLISHED_BY_LANG else tuple())
     fallback_undefined = {'published': None}
+
+
+class SectorTO(TranslationOptions):
+    fields = ('name', )
 
 
 class PracticeTO(TranslationOptions):
@@ -26,6 +30,7 @@ class RatingTO(TranslationOptions):
 
 
 translator.register(Site, SiteTO)
+translator.register(Sector, SectorTO)
 translator.register(Practice, PracticeTO)
 translator.register(SiteType, SiteTypeTO)
 translator.register(RatingScale, RatingScaleTO)

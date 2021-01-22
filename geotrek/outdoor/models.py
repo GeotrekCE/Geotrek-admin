@@ -17,8 +17,22 @@ from mapentity.models import MapEntityMixin
 from mptt.models import MPTTModel, TreeForeignKey
 
 
+class Sector(models.Model):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+
+    class Meta:
+        verbose_name = _("Sector")
+        verbose_name_plural = _("Sectors")
+        ordering = ('name', )
+
+    def __str__(self):
+        return self.name
+
+
 class Practice(models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
+    sector = models.ForeignKey(Sector, related_name="practices", on_delete=models.PROTECT,
+                               verbose_name=_("Sector"), null=True, blank=True)
 
     class Meta:
         verbose_name = _("Practice")

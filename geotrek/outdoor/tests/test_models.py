@@ -1,4 +1,4 @@
-from geotrek.outdoor.factories import SiteFactory, RatingScaleFactory
+from geotrek.outdoor.factories import SiteFactory, RatingScaleFactory, SectorFactory
 from django.test import TestCase, override_settings
 
 
@@ -16,6 +16,12 @@ class SiteTest(TestCase):
         SiteFactory(name='child2', parent=parent, published_en=True)
         SiteFactory(name='child3', parent=parent, published_fr=True)
         self.assertQuerysetEqual(parent.published_children, ['<Site: child2>', '<Site: child3>'])
+
+
+class SectorTest(TestCase):
+    def test_sector_str(self):
+        sector = SectorFactory.create(name='Baz')
+        self.assertEqual(str(sector), 'Baz')
 
 
 class RatingScaleTest(TestCase):
