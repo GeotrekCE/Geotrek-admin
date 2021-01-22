@@ -42,6 +42,8 @@ class SiteForm(CommonForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['orientation'].widget = forms.SelectMultiple(choices=Site.ORIENTATION_CHOICES)
+        self.fields['wind'].widget = forms.SelectMultiple(choices=Site.ORIENTATION_CHOICES)
         if self.instance.pk:
             descendants = self.instance.get_descendants(include_self=True).values_list('pk', flat=True)
             self.fields['parent'].queryset = Site.objects.exclude(pk__in=descendants)

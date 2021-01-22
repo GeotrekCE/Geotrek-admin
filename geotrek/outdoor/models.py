@@ -1,4 +1,5 @@
 from colorfield.fields import ColorField
+from multiselectfield import MultiSelectField
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.db.models import Q
@@ -76,24 +77,19 @@ class SiteType(models.Model):
         return self.name
 
 
-class OrientationField(models.CharField):
-    def __init__(self, *args, **kwargs):
-        kwargs['max_length'] = 2
-        kwargs['choices'] = (
-            ('N', _("↑ N")),
-            ('S', _("↓ S")),
-            ('E', _("→ E")),
-            ('W', _("← W")),
-            ('NE', _("↗ NE")),
-            ('NW', _("↖ NW")),
-            ('SE', _("↘ SE")),
-            ('SW', _("↙ SW")),
-        )
-        return super().__init__(*args, **kwargs)
-
-
 class Site(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
            TimeStampedModelMixin, MPTTModel):
+    ORIENTATION_CHOICES = (
+        ('N', _("↑ N")),
+        ('NE', _("↗ NE")),
+        ('E', _("→ E")),
+        ('SE', _("↘ SE")),
+        ('S', _("↓ S")),
+        ('SW', _("↙ SW")),
+        ('W', _("← W")),
+        ('NW', _("↖ NW")),
+    )
+
     geom = models.GeometryCollectionField(verbose_name=_("Location"), srid=settings.SRID)
     parent = TreeForeignKey('Site', related_name="children", on_delete=models.PROTECT,
                             verbose_name=_("Parent"), null=True, blank=True)
@@ -110,8 +106,8 @@ class Site(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
     ratings_min = models.ManyToManyField(Rating, related_name='sites_min', blank=True)
     ratings_max = models.ManyToManyField(Rating, related_name='sites_max', blank=True)
     period = models.CharField(verbose_name=_("Period"), max_length=1024, blank=True)
-    orientation = OrientationField(verbose_name=_("Orientation"), blank=True)
-    wind = OrientationField(verbose_name=_("Wind"), blank=True)
+    orientation = MultiSelectField(verbose_name=_("Orientation"), blank=True, max_length=20, choices=ORIENTATION_CHOICES)
+    wind = MultiSelectField(verbose_name=_("Wind"), blank=True, max_length=20, choices=ORIENTATION_CHOICES)
     labels = models.ManyToManyField('common.Label', related_name='sites', blank=True,
                                     verbose_name=_("Labels"))
     themes = models.ManyToManyField('common.Theme', related_name="sites", blank=True, verbose_name=_("Themes"),
