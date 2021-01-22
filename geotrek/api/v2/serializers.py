@@ -301,6 +301,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         description = serializers.SerializerMethodField(read_only=True)
         description_teaser = serializers.SerializerMethodField(read_only=True)
         departure = serializers.SerializerMethodField(read_only=True)
+        departure_geom = serializers.SerializerMethodField(read_only=True)
         arrival = serializers.SerializerMethodField(read_only=True)
         external_id = serializers.CharField(source='eid')
         second_external_id = serializers.CharField(source='eid2')
@@ -322,6 +323,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         points_reference = serializers.SerializerMethodField(read_only=True)
         previous = serializers.ReadOnlyField(source='previous_id')
         next = serializers.ReadOnlyField(source='next_id')
+        cities = serializers.SerializerMethodField(read_only=True)
 
         def get_update_datetime(self, obj):
             return obj.topo_object.date_update
@@ -340,6 +342,9 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         def get_departure(self, obj):
             return get_translation_or_dict('departure', self, obj)
+
+        def get_departure_geom(self, obj):
+            return obj.geom_3d.array[0]
 
         def get_arrival(self, obj):
             return get_translation_or_dict('arrival', self, obj)
@@ -399,22 +404,28 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             geojson = obj.points_reference.transform(settings.API_SRID, clone=True).geojson
             return json.loads(geojson)
 
+        def get_cities(self, obj):
+            cities = []
+            for c in obj.published_cities:
+                cities.append(c.code)
+            return cities
+
         class Meta:
             model = trekking_models.Trek
             fields = (
                 'id', 'access', 'accessibilities', 'advice', 'advised_parking',
-                'altimetric_profile', 'ambiance', 'arrival', 'ascent', 'attachments',
-                'children', 'create_datetime', 'departure', 'descent',
-                'description', 'description_teaser', 'difficulty',
-                'disabled_infrastructure', 'duration', 'elevation_area_url',
-                'elevation_svg_url', 'external_id', 'geometry', 'gpx',
-                'information_desks', 'kml', 'labels', 'length_2d', 'length_3d',
-                'max_elevation', 'min_elevation', 'name', 'networks', 'next',
-                'parents', 'parking_location', 'points_reference',
-                'portal', 'practice', 'previous', 'public_transport',
-                'published', 'reservation_system', 'route',
-                'second_external_id', 'source', 'structure', 'themes',
-                'thumbnail', 'update_datetime', 'url'
+                'altimetric_profile', 'ambiance', 'arrival', 'ascent',
+                'attachments', 'children', 'cities', 'create_datetime',
+                'departure', 'departure_geom', 'descent', 'description',
+                'description_teaser', 'difficulty', 'disabled_infrastructure',
+                'duration', 'elevation_area_url', 'elevation_svg_url',
+                'external_id', 'geometry', 'gpx', 'information_desks', 'kml',
+                'labels', 'length_2d', 'length_3d', 'max_elevation',
+                'min_elevation', 'name', 'networks', 'next', 'parents',
+                'parking_location', 'points_reference', 'portal', 'practice',
+                'previous', 'public_transport', 'published',
+                'reservation_system', 'route', 'second_external_id', 'source',
+                'structure', 'themes', 'thumbnail', 'update_datetime', 'url'
             )
 
     class TourSerializer(TrekSerializer):
