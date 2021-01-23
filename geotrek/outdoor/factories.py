@@ -2,8 +2,15 @@ import factory
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
 from geotrek.authent.factories import StructureRelatedDefaultFactory
-from geotrek.outdoor.models import Site, Practice, SiteType, RatingScale, Rating
+from geotrek.outdoor.models import Site, Practice, SiteType, RatingScale, Rating, Sector
 from mapentity.factories import UserFactory
+
+
+class SectorFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Sector
+
+    name = "Sector"
 
 
 class PracticeFactory(factory.DjangoModelFactory):

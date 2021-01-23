@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-06 16:08+0000\n"
+"POT-Creation-Date: 2021-01-22 15:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+msgid "Color"
+msgstr "Couleur"
+
 msgid "Outdoor"
 msgstr "Outdoor"
 
 msgid "Name"
 msgstr "Nom"
+
+msgid "Sector"
+msgstr "Filière"
+
+msgid "Sectors"
+msgstr "Filières"
 
 msgid "Practice"
 msgstr "Pratique"
@@ -29,17 +38,17 @@ msgstr "Pratique"
 msgid "Practices"
 msgstr "Pratiques"
 
+msgid "Order"
+msgstr "Ordre"
+
+msgid "Within a practice. Alphabetical order if blank"
+msgstr "Au sein d'une pratique. Ordre alphabétique si vide"
+
 msgid "Rating scale"
 msgstr "Échelle de cotation"
 
 msgid "Rating scales"
 msgstr "Échelles de cotation"
-
-msgid "Rating"
-msgstr "Cotation"
-
-msgid "Ratings"
-msgstr "Cotations"
 
 msgid "Scale"
 msgstr "Échelle"
@@ -47,44 +56,44 @@ msgstr "Échelle"
 msgid "Description"
 msgstr "Description"
 
-msgid "Order"
-msgstr "Ordre"
-
 msgid "Alphabetical order if blank"
 msgstr "Ordre alphabétique si vide"
 
-msgid "Color"
-msgstr "Couleur"
+msgid "Rating"
+msgstr "Cotation"
+
+msgid "Ratings"
+msgstr "Cotations"
 
 msgid "Site type"
-msgstr "Site type"
+msgstr "Type de site"
 
 msgid "Site types"
-msgstr "Site types"
+msgstr "Types de site"
 
 msgid "↑ N"
 msgstr "↑ N"
 
-msgid "↓ S"
-msgstr "↓ S"
+msgid "↗ NE"
+msgstr "↗ NE"
 
 msgid "→ E"
 msgstr "→ E"
 
-msgid "← W"
-msgstr "← O"
-
-msgid "↗ NE"
-msgstr "↗ NE"
-
-msgid "↖ NW"
-msgstr "↖ NO"
-
 msgid "↘ SE"
 msgstr "↘ SE"
 
+msgid "↓ S"
+msgstr "↓ S"
+
 msgid "↙ SW"
 msgstr "↙ SO"
+
+msgid "← W"
+msgstr "← O"
+
+msgid "↖ NW"
+msgstr "↖ NO"
 
 msgid "Location"
 msgstr "Emplacement"

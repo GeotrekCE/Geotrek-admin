@@ -14,6 +14,15 @@
     }
 },
 {
+    "model": "outdoor.sector",
+    "pk": 1,
+    "fields": {
+        "name": "Eau vive",
+        "name_fr": "Eau vive",
+        "name_en": "White water"
+    }
+},
+{
     "model": "outdoor.practice",
     "pk": 1,
     "fields": {
@@ -26,6 +35,7 @@
     "model": "outdoor.practice",
     "pk": 2,
     "fields": {
+        "sector": 1,
         "name": "Canoë-kayak",
         "name_fr": "Canoë-kayak",
         "name_en": "Canoe-kayak"
@@ -62,6 +72,7 @@
     "model": "outdoor.practice",
     "pk": 6,
     "fields": {
+        "sector": 1,
         "name": "Canyoning",
         "name_fr": "Canyoning",
         "name_en": "Canyoning"
