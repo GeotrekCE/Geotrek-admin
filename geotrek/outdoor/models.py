@@ -5,7 +5,7 @@ from django.contrib.gis.db import models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from geotrek.authent.models import StructureRelated
-from geotrek.common.mixins import TimeStampedModelMixin, AddPropertyMixin, PublishableMixin
+from geotrek.common.mixins import TimeStampedModelMixin, AddPropertyMixin, PublishableMixin, OptionalPictogramMixin
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Path, Topology, Trail
 from geotrek.infrastructure.models import Infrastructure
@@ -29,7 +29,7 @@ class Sector(models.Model):
         return self.name
 
 
-class Practice(models.Model):
+class Practice(OptionalPictogramMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     sector = models.ForeignKey(Sector, related_name="practices", on_delete=models.PROTECT,
                                verbose_name=_("Sector"), null=True, blank=True)
@@ -59,7 +59,7 @@ class RatingScale(models.Model):
         ordering = ('practice', 'order', 'name')
 
 
-class Rating(models.Model):
+class Rating(OptionalPictogramMixin, models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     scale = models.ForeignKey(RatingScale, related_name="ratings", on_delete=models.PROTECT,
                               verbose_name=_("Scale"))
