@@ -7,6 +7,13 @@ from geotrek.api.v2.functions import Transform
 from geotrek.tourism import models as tourism_models
 
 
+class TouristicContentCategoryViewSet(api_viewsets.GeotrekViewSet):
+    serializer_class = api_serializers.TouristicContentCategorySerializer
+    queryset = tourism_models.TouristicContentCategory.objects \
+        .prefetch_related('types') \
+        .order_by('pk')  # Required for reliable pagination
+
+
 class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = api_viewsets.GeotrekGeometricViewset.filter_backends + (api_filters.GeotrekTouristicContentFilter,)
     serializer_class = api_serializers.TouristicContentSerializer
