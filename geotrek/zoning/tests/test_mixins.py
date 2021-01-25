@@ -22,38 +22,38 @@ class ZoningPropertiesMixinTest(TestCase):
     def test_cities(self):
         city = CityFactory.create(published=False)
 
-        self.assertEqual(self.path.cities.first(), self.city)
+        self.assertQuerysetEqual(self.path.cities, [repr(city), repr(self.city)], ordered=False)
         self.assertEqual(self.path.cities.count(), 2)
-        self.assertEqual(self.path.published_cities.first(), self.city)
+        self.assertQuerysetEqual(self.path.published_cities, [repr(city), repr(self.city)], ordered=False)
         self.assertEqual(self.path.published_cities.count(), 2)
 
-        self.assertEqual(self.trek.cities.last(), city)
+        self.assertQuerysetEqual(self.trek.cities, [repr(city), repr(self.city)], ordered=False)
         self.assertEqual(self.trek.cities.count(), 2)
-        self.assertEqual(self.trek.published_cities.last(), self.city)
+        self.assertQuerysetEqual(self.trek.published_cities, [repr(self.city)], ordered=False)
         self.assertEqual(self.trek.published_cities.count(), 1)
 
     def test_districts(self):
         district = DistrictFactory.create(published=False)
 
-        self.assertEqual(self.path.districts.first(), self.district)
+        self.assertQuerysetEqual(self.path.districts, [repr(district), repr(self.district)], ordered=False)
         self.assertEqual(self.path.districts.count(), 2)
-        self.assertEqual(self.path.published_districts.first(), self.district)
+        self.assertQuerysetEqual(self.path.published_districts, [repr(district), repr(self.district)], ordered=False)
         self.assertEqual(self.path.published_districts.count(), 2)
 
-        self.assertEqual(self.trek.districts.last(), district)
+        self.assertQuerysetEqual(self.trek.districts, [repr(district), repr(self.district)], ordered=False)
         self.assertEqual(self.trek.districts.count(), 2)
-        self.assertEqual(self.trek.published_districts.last(), self.district)
+        self.assertQuerysetEqual(self.trek.published_districts, [repr(self.district)], ordered=False)
         self.assertEqual(self.trek.published_districts.count(), 1)
 
     def test_areas(self):
         area = RestrictedAreaFactory.create(published=False)
 
-        self.assertEqual(self.path.areas.first(), self.area)
+        self.assertQuerysetEqual(self.path.areas, [repr(area), repr(self.area)], ordered=False)
         self.assertEqual(self.path.areas.count(), 2)
-        self.assertEqual(self.path.published_areas.first(), self.area)
+        self.assertQuerysetEqual(self.path.published_areas, [repr(area), repr(self.area)], ordered=False)
         self.assertEqual(self.path.published_areas.count(), 2)
 
-        self.assertEqual(self.trek.areas.last(), area)
+        self.assertQuerysetEqual(self.trek.areas, [repr(area), repr(self.area)], ordered=False)
         self.assertEqual(self.trek.areas.count(), 2)
-        self.assertEqual(self.trek.published_areas.last(), self.area)
+        self.assertQuerysetEqual(self.trek.published_areas, [repr(self.area)], ordered=False)
         self.assertEqual(self.trek.published_areas.count(), 1)
