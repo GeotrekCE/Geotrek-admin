@@ -18,6 +18,7 @@ class PracticeFactory(factory.DjangoModelFactory):
         model = Practice
 
     name = "Practice"
+    sector = factory.SubFactory(SectorFactory)
 
 
 class RatingScaleFactory(factory.DjangoModelFactory):

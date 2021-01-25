@@ -190,6 +190,18 @@ class Site(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
                 return Practice.objects.filter(id=ancestor.practice_id)
 
     @property
+    def super_sectors(self):
+        "Return sectors of itself and its descendants if exits. Else return practice of nearest ascendant."
+        sectors_id = self.get_descendants(include_self=True) \
+            .exclude(practice=None) \
+            .values_list('practice__sector_id', flat=True)
+        if sectors_id:
+            return Sector.objects.filter(id__in=sectors_id)  # Sorted and unique
+        for ancestor in self.get_ancestors(ascending=True):
+            if ancestor.practice:
+                return Sector.objects.filter(id=ancestor.practice.sector_id)
+
+    @property
     def super_orientation(self):
         "Return orientation of itself and its descendants if exits. Else return orientation of nearest ascendant."
         orientation = set(sum(self.get_descendants(include_self=True).values_list('orientation', flat=True), []))

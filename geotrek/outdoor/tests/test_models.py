@@ -23,12 +23,14 @@ class SiteSuperTest(TestCase):
     def setUpTestData(cls):
         cls.parent = SiteFactory(
             practice__name='Bbb',
+            practice__sector__name='Bxx',
             orientation=['N', 'S'],
             wind=['N', 'S']
         )
         cls.child = SiteFactory(
             parent=cls.parent,
             practice__name='Aaa',
+            practice__sector__name='Axx',
             orientation=['E', 'S'],
             wind=['E', 'S']
         )
@@ -50,6 +52,12 @@ class SiteSuperTest(TestCase):
 
     def test_super_practices_ascendants(self):
         self.assertQuerysetEqual(self.grandchild2.super_practices, ['<Practice: Aaa>'])
+
+    def test_super_sectors_descendants(self):
+        self.assertQuerysetEqual(self.parent.super_sectors, ['<Sector: Axx>', '<Sector: Bxx>'])
+
+    def test_super_sectors_ascendants(self):
+        self.assertQuerysetEqual(self.grandchild2.super_sectors, ['<Sector: Axx>'])
 
     def test_super_orientation_descendants(self):
         self.assertEqual(self.parent.super_orientation, ['N', 'E', 'S'])

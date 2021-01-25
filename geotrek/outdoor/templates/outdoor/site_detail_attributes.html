@@ -21,8 +21,16 @@
             <td>{% if object.children.exists %}{% valuelist object.get_children field='name_display' %}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
-            <th>{% trans "Sector" %}</th>
-            <td>{% if object.practice.sector %}{{ object.practice.sector }}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
+            <th>{% trans "Sectors" %}</th>
+            <td>
+                {% for sector in object.super_sectors %}
+                    {% if forloop.first %}<ul>{% endif %}
+                        <li{% if sector.pk != object.practice.sector.pk %} style="font-style: italic;"{% endif %}>{{ sector }}</li>
+                    {% if forloop.last %}</ul>{% endif %}
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
         </tr>
         <tr>
             <th>{% trans "Practices" %}</th>
