@@ -1,7 +1,7 @@
 from django import template
 from django.conf import settings
 import json
-from geotrek.outdoor.models import Practice
+from geotrek.outdoor.models import Practice, Site
 
 
 register = template.Library()
@@ -34,3 +34,8 @@ def site_practices():
         for practice in Practice.objects.all()
     }
     return json.dumps(practices)
+
+
+@register.filter
+def orientation_display(orientation):
+    return dict(Site.ORIENTATION_CHOICES)[orientation]
