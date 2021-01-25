@@ -12,7 +12,7 @@ from geotrek.infrastructure.models import Infrastructure
 from geotrek.signage.models import Signage
 from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.trekking.models import Trek, POI
-from geotrek.zoning.models import City, District, RestrictedArea
+from geotrek.zoning.mixins import ZoningPropertiesMixin
 from mapentity.models import MapEntityMixin
 from mptt.models import MPTTModel, TreeForeignKey
 
@@ -91,7 +91,7 @@ class SiteType(models.Model):
         return self.name
 
 
-class Site(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
+class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
            TimeStampedModelMixin, MPTTModel):
     ORIENTATION_CHOICES = (
         ('N', _("↑ N")),
@@ -235,9 +235,3 @@ Site.add_property('infrastructures', lambda self: intersecting(Infrastructure, s
 Site.add_property('signages', lambda self: intersecting(Signage, self), _("Signages"))
 Site.add_property('touristic_contents', lambda self: intersecting(TouristicContent, self), _("Touristic contents"))
 Site.add_property('touristic_events', lambda self: intersecting(TouristicEvent, self), _("Touristic events"))
-Site.add_property('cities', lambda self: intersecting(City, self, distance=0), _("Cities"))
-Site.add_property('published_cities', lambda self: [city for city in self.cities if city.published], _("Published cities"))
-Site.add_property('districts', lambda self: intersecting(District, self, distance=0), _("Districts"))
-Site.add_property('published_districts', lambda self: [district for district in self.districts if district.published], _("Published districts"))
-Site.add_property('areas', lambda self: intersecting(RestrictedArea, self, distance=0), _("Restricted areas"))
-Site.add_property('published_areas', lambda self: [area for area in self.areas if area.published], _("Published areas"))
