@@ -405,10 +405,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             return json.loads(geojson)
 
         def get_cities(self, obj):
-            cities = []
-            for c in obj.published_cities:
-                cities.append(c.code)
-            return cities
+            return [city.code for city in obj.published_cities]
 
         class Meta:
             model = trekking_models.Trek
