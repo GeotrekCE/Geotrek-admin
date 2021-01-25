@@ -177,14 +177,37 @@ class Site(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
             q |= Q(**{'published_{}'.format(lang): True})
         return self.children.filter(q)
 
+    @property
     def super_practices(self):
         "Return practices of itself and its descendants if exits. Else return practice of nearest ascendant."
-        id_set = set(self.get_descendants(include_self=True).values_list('practice_id', flat=True))
-        if (id_set):
-            return Practice.objects.filter(id__in=id_set)  # Sorted
+        practices_id = self.get_descendants(include_self=True) \
+            .exclude(practice=None) \
+            .values_list('practice_id', flat=True)
+        if practices_id:
+            return Practice.objects.filter(id__in=practices_id)  # Sorted and unique
         for ancestor in self.get_ancestors(ascending=True):
             if ancestor.practice:
-                return ancestor.practice
+                return Practice.objects.filter(id=ancestor.practice_id)
+
+    @property
+    def super_orientation(self):
+        "Return orientation of itself and its descendants if exits. Else return orientation of nearest ascendant."
+        orientation = set(sum(self.get_descendants(include_self=True).values_list('orientation', flat=True), []))
+        if orientation:
+            return [o for o, _o in self.ORIENTATION_CHOICES if o in orientation]  # Sorting
+        for ancestor in self.get_ancestors(ascending=True):
+            if ancestor.orientation:
+                return ancestor.orientation
+
+    @property
+    def super_wind(self):
+        "Return wind of itself and its descendants if exits. Else return wind of nearest ascendant."
+        wind = set(sum(self.get_descendants(include_self=True).values_list('wind', flat=True), []))
+        if wind:
+            return [o for o, _o in self.ORIENTATION_CHOICES if o in wind]  # Sorting
+        for ancestor in self.get_ancestors(ascending=True):
+            if ancestor.wind:
+                return ancestor.wind
 
 
 Path.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))

@@ -18,6 +18,52 @@ class SiteTest(TestCase):
         self.assertQuerysetEqual(parent.published_children, ['<Site: child2>', '<Site: child3>'])
 
 
+class SiteSuperTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.parent = SiteFactory(
+            practice__name='Bbb',
+            orientation=['N', 'S'],
+            wind=['N', 'S']
+        )
+        cls.child = SiteFactory(
+            parent=cls.parent,
+            practice__name='Aaa',
+            orientation=['E', 'S'],
+            wind=['E', 'S']
+        )
+        cls.grandchild1 = SiteFactory(
+            parent=cls.child,
+            practice=cls.parent.practice,
+            orientation=cls.parent.orientation,
+            wind=cls.parent.wind
+        )
+        cls.grandchild2 = SiteFactory(
+            parent=cls.child,
+            practice=None,
+            orientation=[],
+            wind=[]
+        )
+
+    def test_super_practices_descendants(self):
+        self.assertQuerysetEqual(self.parent.super_practices, ['<Practice: Aaa>', '<Practice: Bbb>'])
+
+    def test_super_practices_ascendants(self):
+        self.assertQuerysetEqual(self.grandchild2.super_practices, ['<Practice: Aaa>'])
+
+    def test_super_orientation_descendants(self):
+        self.assertEqual(self.parent.super_orientation, ['N', 'E', 'S'])
+
+    def test_super_orientation_ascendants(self):
+        self.assertEqual(self.grandchild2.super_orientation, ['E', 'S'])
+
+    def test_super_wind_descendants(self):
+        self.assertEqual(self.parent.super_wind, ['N', 'E', 'S'])
+
+    def test_super_wind_ascendants(self):
+        self.assertEqual(self.grandchild2.super_wind, ['E', 'S'])
+
+
 class SectorTest(TestCase):
     def test_sector_str(self):
         sector = SectorFactory.create(name='Baz')
