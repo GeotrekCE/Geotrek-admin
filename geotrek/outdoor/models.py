@@ -177,6 +177,15 @@ class Site(AddPropertyMixin, PublishableMixin, MapEntityMixin, StructureRelated,
             q |= Q(**{'published_{}'.format(lang): True})
         return self.children.filter(q)
 
+    def super_practices(self):
+        "Return practices of itself and its descendants if exits. Else return practice of nearest ascendant."
+        id_set = set(self.get_descendants(include_self=True).values_list('practice_id', flat=True))
+        if (id_set):
+            return Practice.objects.filter(id__in=id_set)  # Sorted
+        for ancestor in self.get_ancestors(ascending=True):
+            if ancestor.practice:
+                return ancestor.practice
+
 
 Path.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
 Topology.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))
