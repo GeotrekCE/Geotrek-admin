@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.test import TestCase
 
 from geotrek.core.factories import PathFactory
@@ -8,12 +9,15 @@ from geotrek.zoning.factories import CityFactory, DistrictFactory, RestrictedAre
 class ZoningPropertiesMixinTest(TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.city = CityFactory.create()
+        super(ZoningPropertiesMixinTest, cls).setUpClass()
+        cls.city = CityFactory.create(name="???")
         cls.district = DistrictFactory.create()
         cls.area = RestrictedAreaFactory.create()
         cls.path = PathFactory.create(geom='SRID=2154;LINESTRING(200000 300000, 1100000 1200000)')
-        cls.trek = TrekFactory.create(paths=[cls.path], published=False)
-        super(ZoningPropertiesMixinTest, cls).setUpClass()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            cls.trek = TrekFactory.create(paths=[cls.path], published=False)
+        else:
+            cls.trek = TrekFactory.create(geom='SRID=2154;LINESTRING(200000 300000, 1100000 1200000)', published=False)
 
     def test_cities(self):
         city = CityFactory.create(published=False)

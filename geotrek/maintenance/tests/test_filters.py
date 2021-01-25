@@ -243,36 +243,40 @@ class ProjectIntersectionFilterCityTest(TestCase):
     @classmethod
     def setUpClass(cls):
         super(ProjectIntersectionFilterCityTest, cls).setUpClass()
-        cls.path_in = PathFactory.create(geom=LineString((0, 0), (2, 1), srid=settings.SRID))
-        cls.path_out = PathFactory.create(geom=LineString((5, 5), (4, 4), srid=settings.SRID))
-        cls.topo_in = TopologyFactory.create(paths=[cls.path_in])
-        cls.topo_out = TopologyFactory.create(paths=[cls.path_out])
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            cls.path_in = PathFactory.create(geom=LineString((0, 0), (2, 1), srid=settings.SRID))
+            cls.path_out = PathFactory.create(geom=LineString((5, 5), (4, 4), srid=settings.SRID))
+            cls.topo_in = TopologyFactory.create(paths=[cls.path_in])
+            cls.topo_out = TopologyFactory.create(paths=[cls.path_out])
+        else:
+            cls.topo_in = TopologyFactory.create(geom=LineString((0, 0), (2, 1), srid=settings.SRID))
+            cls.topo_out = TopologyFactory.create(geom=LineString((5, 5), (4, 4), srid=settings.SRID))
         cls.intervention_in = InterventionFactory.create(target=cls.topo_in)
         cls.intervention_out = InterventionFactory.create(target=cls.topo_out)
-        cls.geom_district = MultiPolygon(Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)), srid=settings.SRID))
+        cls.geom_zoning = MultiPolygon(Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)), srid=settings.SRID))
 
     def test_filter_in_city(self):
-        filter = ProjectFilterSet(data={'city': CityFactory.create(geom=self.geom_district)})
+        filter = ProjectFilterSet(data={'city': CityFactory.create(geom=self.geom_zoning)})
         project_in = ProjectFactory.create()
         project_in.interventions.add(self.intervention_in)
         self.assertIn(project_in, filter.qs)
         self.assertEqual(len(filter.qs), 1)
 
     def test_filter_in_district(self):
-        filter = ProjectFilterSet(data={'district': DistrictFactory.create(geom=self.geom_district)})
+        filter = ProjectFilterSet(data={'district': DistrictFactory.create(geom=self.geom_zoning)})
         project_in = ProjectFactory.create()
         project_in.interventions.add(self.intervention_in)
         self.assertIn(project_in, filter.qs)
         self.assertEqual(len(filter.qs), 1)
 
     def test_filter_out_city(self):
-        filter = ProjectFilterSet(data={'city': CityFactory.create(geom=self.geom_district)})
+        filter = ProjectFilterSet(data={'city': CityFactory.create(geom=self.geom_zoning)})
         project_out = ProjectFactory.create()
         project_out.interventions.add(self.intervention_out)
         self.assertEqual(len(filter.qs), 0)
 
     def test_filter_out_district(self):
-        filter = ProjectFilterSet(data={'district': DistrictFactory.create(geom=self.geom_district)})
+        filter = ProjectFilterSet(data={'district': DistrictFactory.create(geom=self.geom_zoning)})
         project_out = ProjectFactory.create()
         project_out.interventions.add(self.intervention_out)
         self.assertEqual(len(filter.qs), 0)
