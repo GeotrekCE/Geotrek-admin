@@ -2,12 +2,13 @@
 CHANGELOG
 =========
 
-2.45.1.dev0
+2.46.0 (2021-01-25)
 -------------------
 
 **Database change**
 
-- "mnt" DEM table is now managed by django. It was renamed with altimetry_dem label. Data coming from mnt will be copied to new table.
+- "mnt" DEM table is now managed by django. It was renamed with altimetry_dem label.
+  Data coming from mnt will be copied to new table.
 
 **Security fixes**
 
@@ -19,7 +20,19 @@ CHANGELOG
 
 **Bug fixes**
 
--
+- Fix impossibility to add paths on Ubuntu 20.04 (PostGIS 3)
+- Fix doc that explains how to load fixtures
+
+**New Feature**
+
+- Allow to select API v2 fields for all endpoints
+- Optimize development environment
+- Add an order field on rating scales
+- Allow multiple cardinal points for wind and orientation
+- Add sectors for outdoor sites
+- Add pictograms to outdoor practices and ratings
+- Compute outdoor site sector, practice, orientation and wind
+  from childs and parents
 
 
 2.45.0 (2021-01-10)
