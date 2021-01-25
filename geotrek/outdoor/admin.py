@@ -20,7 +20,7 @@ class SectorAdmin(MergeActionMixin, TranslationAdmin):
 
 @admin.register(Practice)
 class PracticeAdmin(MergeActionMixin, TranslationAdmin):
-    list_display = ('name', 'sector')
+    list_display = ('name', 'sector', 'pictogram_img')
     list_filter = ('sector', )
     search_fields = ('name', )
     merge_field = 'name'
@@ -44,7 +44,7 @@ class RatingScaleAdmin(MergeActionMixin, TranslationAdmin):
 
 @admin.register(Rating)
 class RatingAdmin(MergeActionMixin, TranslationAdmin):
-    list_display = ('name', 'scale', 'order', 'color_markup')
+    list_display = ('name', 'scale', 'order', 'color_markup', 'pictogram_img')
     list_filter = ('scale', 'scale__practice')
     search_fields = ('name', 'description', 'scale__name')
     merge_field = 'name'
