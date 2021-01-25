@@ -223,6 +223,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
         def get_types(self, obj):
             return [{
+                'id': obj.id * 100 + i,
                 'label': getattr(obj, 'type{}_label'.format(i)),
                 'values': [{
                     'id': t.id,
@@ -235,13 +236,50 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         url = HyperlinkedIdentityField(view_name='apiv2:touristiccontent-detail')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         pictures = AttachmentSerializer(many=True)
+        create_datetime = serializers.DateTimeField(source='date_update')
+        update_datetime = serializers.DateTimeField(source='date_insert')
+        external_id = serializers.IntegerField(source='eid')
+        types = serializers.SerializerMethodField(read_only=True)
+        cities = serializers.SerializerMethodField(read_only=True)
+        attachments = AttachmentSerializer(many=True)
+        name = serializers.SerializerMethodField(read_only=True)
+        description = serializers.SerializerMethodField(read_only=True)
+        description_teaser = serializers.SerializerMethodField(read_only=True)
+        practical_info = serializers.SerializerMethodField(read_only=True)
 
         class Meta:
             model = tourism_models.TouristicContent
             fields = (
-                'id', 'approved', 'category', 'description',
-                'description_teaser', 'geometry', 'pictures', 'url'
+                'id', 'attachments', 'approved', 'category', 'description',
+                'description_teaser', 'geometry', 'pictures',
+                'practical_info', 'url', 'cities', 'create_datetime',
+                'external_id', 'name', 'portal', 'published',
+                'source', 'structure', 'themes', 'thumbnail',
+                'update_datetime', 'types', 'contact', 'email',
+                'website', 'reservation_system', 'reservation_id',
             )
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        def get_description(self, obj):
+            return get_translation_or_dict('description', self, obj)
+
+        def get_description_teaser(self, obj):
+            return get_translation_or_dict('description_teaser', self, obj)
+
+        def get_practical_info(self, obj):
+            return get_translation_or_dict('practical_info', self, obj)
+
+        def get_types(self, obj):
+            return {
+                obj.category.id * 100 + i: [
+                    t.id for t in getattr(obj, 'type{}'.format(i)).all()
+                ] for i in (1, 2)
+            }
+
+        def get_cities(self, obj):
+            return [city.code for city in obj.published_cities]
 
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField(read_only=True)

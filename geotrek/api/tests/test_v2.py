@@ -54,7 +54,10 @@ POI_PROPERTIES_GEOJSON_STRUCTURE = sorted([
 ])
 
 TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted([
-    'id', 'approved', 'category', 'description', 'description_teaser', 'geometry', 'pictures', 'url'
+    'approved', 'attachments', 'category', 'cities', 'contact', 'create_datetime', 'description',
+    'description_teaser', 'email', 'external_id', 'geometry', 'id', 'name', 'pictures', 'portal',
+    'practical_info', 'published', 'reservation_id', 'reservation_system', 'source', 'structure',
+    'themes', 'thumbnail', 'types', 'update_datetime', 'url', 'website',
 ])
 
 CITY_PROPERTIES_JSON_STRUCTURE = sorted([
