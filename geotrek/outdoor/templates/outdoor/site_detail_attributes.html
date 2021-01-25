@@ -13,7 +13,7 @@
             <td>{{ object.name }}</td>
         </tr>
         <tr>
-            <th>{% trans "Ancestors" %}</th>
+            <th>{% trans "Parents" %}</th>
             <td>{% if object.parent %}{% valuelist object.get_ancestors field='name_display' %}{% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>

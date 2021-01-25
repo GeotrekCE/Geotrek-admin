@@ -218,8 +218,8 @@ msgstr "Zonages réglementaires publiés"
 msgid "Attributes"
 msgstr "Informations"
 
-msgid "Ancestors"
-msgstr "Ancêtres"
+msgid "Parents"
+msgstr "Parents"
 
 msgid "None"
 msgstr "Aucun(e)"
