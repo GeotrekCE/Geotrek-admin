@@ -48,7 +48,11 @@ class PolygonInterventionFilterMixin(object):
                                                                          target_type=blade_content_type).values_list('id',
                                                                                                                      flat=True)
             interventions.extend(blades_intervention)
-        qs = qs.filter(pk__in=interventions)
+        if hasattr(self, 'lookup_queryset_in'):
+            lookup_queryset = self.lookup_queryset_in
+        else:
+            lookup_queryset = 'pk__in'
+        qs = qs.filter(**{'%s' % lookup_queryset: interventions})
         return qs
 
 
@@ -62,6 +66,7 @@ class ProjectIntersectionFilterCity(PolygonInterventionFilterMixin, RightFilter)
     def __init__(self, *args, **kwargs):
         super(ProjectIntersectionFilterCity, self).__init__(*args, **kwargs)
         self.lookup_expr = 'intersects'
+        self.lookup_queryset_in = 'interventions__in'
 
     def get_geom(self, value):
         return value.geom
@@ -73,6 +78,7 @@ class ProjectIntersectionFilterDistrict(PolygonInterventionFilterMixin, RightFil
     def __init__(self, *args, **kwargs):
         super(ProjectIntersectionFilterDistrict, self).__init__(*args, **kwargs)
         self.lookup_expr = 'intersects'
+        self.lookup_queryset_in = 'interventions__in'
 
     def get_geom(self, value):
         return value.geom
