@@ -11,7 +11,6 @@ from geotrek.common.utils import dbnow
 from geotrek.core.factories import (PathFactory, PathAggregationFactory,
                                     TopologyFactory)
 from geotrek.core.models import Path, Topology, PathAggregation
-from geotrek.core.helpers import TopologyHelper
 
 
 def dictfetchall(cursor):
@@ -98,7 +97,7 @@ class TopologyTest(TestCase):
         self.assertEqual(Path.include_invisible.count(), 2)
 
         # create topo on visible path
-        topology = TopologyHelper._topologypoint(0, 0, None).reload()
+        topology = Topology._topologypoint(0, 0, None).reload()
 
         # because FK and M2M are used with default manager only, others tests are in SQL
         conn = connections[DEFAULT_DB_ALIAS]
@@ -121,7 +120,7 @@ class TopologyTest(TestCase):
         self.assertNotIn(path_unvisible.pk, [ele['id_path'] for ele in datas], "{}".format(datas))
 
         # new topo on invible path
-        topology = TopologyHelper._topologypoint(0, 3, None).reload()
+        topology = Topology._topologypoint(0, 3, None).reload()
 
         cur.execute(
             """
@@ -161,6 +160,40 @@ class TopologyTest(TestCase):
         pks = [p.pk for p in [p1, p2, p3]]
         Topology.deserialize('{"paths": %s, "positions": {"0": [0.3, 1.0], "2": [0.0, 0.7]}, "offset": 1}' % pks)
         self.assertEqual(Path.objects.count(), 3)
+
+    def test_topology_deserialize_point(self):
+        PathFactory.create(geom=LineString((699999, 6600001), (700001, 6600001)))
+        topology = Topology.deserialize('{"lat": 46.5, "lng": 3}')
+        self.assertEqual(topology.offset, -1)
+        self.assertEqual(topology.aggregations.count(), 1)
+        self.assertEqual(topology.aggregations.get().start_position, .5)
+        self.assertEqual(topology.aggregations.get().end_position, .5)
+
+    def test_topology_deserialize_point_with_snap(self):
+        path = PathFactory.create(geom=LineString((699999, 6600001), (700001, 6600001)))
+        topology = Topology.deserialize('{"lat": 46.5, "lng": 3, "snap": %s}' % path.pk)
+        self.assertEqual(topology.offset, 0)
+        self.assertEqual(topology.aggregations.count(), 1)
+        self.assertEqual(topology.aggregations.get().start_position, .5)
+        self.assertEqual(topology.aggregations.get().end_position, .5)
+
+    def test_topology_deserialize_inexistant(self):
+        with self.assertRaises(Topology.DoesNotExist):
+            Topology.deserialize('4012999999')
+
+    def test_topology_deserialize_inexistant_point(self):
+        PathFactory.create(geom=LineString((699999, 6600001), (700001, 6600001)))
+        Topology.deserialize('{"lat": 46.5, "lng": 3, "pk": 4012999999}')
+
+    def test_topology_deserialize_inexistant_line(self):
+        path = PathFactory.create(geom=LineString((699999, 6600001), (700001, 6600001)))
+        Topology.deserialize(
+            '[{"pk": 4012999999, "paths": [%s], "positions": {"0": [0.0, 1.0]}, "offset": 1}]' % path.pk
+        )
+
+    def test_topology_deserialize_invalid(self):
+        with self.assertRaises(ValueError):
+            Topology.deserialize('[{"paths": [4012999999], "positions": {}, "offset": 1}]')
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')

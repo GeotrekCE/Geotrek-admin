@@ -8,7 +8,7 @@ from django.db import transaction
 
 from geotrek.authent.models import default_structure
 from geotrek.authent.models import Structure
-from geotrek.core.helpers import TopologyHelper
+from geotrek.core.models import Topology
 from geotrek.signage.models import Signage, SignageType
 from geotrek.infrastructure.models import InfrastructureCondition
 from django.conf import settings
@@ -202,7 +202,7 @@ class Command(BaseCommand):
                 geometry = geometry.transform(settings.API_SRID, clone=True)
                 geometry.coord_dim = 2
                 serialized = '{"lng": %s, "lat": %s}' % (geometry.x, geometry.y)
-                topology = TopologyHelper.deserialize(serialized)
+                topology = Topology.deserialize(serialized)
                 infra.mutate(topology)
             except IndexError:
                 raise GEOSException('Invalid Geometry type.')

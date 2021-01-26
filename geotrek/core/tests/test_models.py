@@ -3,7 +3,7 @@ from unittest import skipIf
 
 from django.test import TestCase
 from django.conf import settings
-from django.contrib.gis.geos import LineString
+from django.contrib.gis.geos import LineString, Point
 from django.db import IntegrityError
 
 from geotrek.common.utils import dbnow
@@ -95,6 +95,32 @@ class PathTest(TestCase):
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+class InterpolateTest(TestCase):
+    def test_interpolate_not_saved(self):
+        p = Path()
+        with self.assertRaisesRegex(ValueError, "Cannot compute interpolation on unsaved path"):
+            p.interpolate(Point(0, 0))
+
+    def test_interpolate_reproj(self):
+        p = PathFactory.create()
+        self.assertEqual(p.interpolate(Point(3, 46.5, srid=4326)), (0, 0))
+
+
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+class SnapTest(TestCase):
+    def test_snap_not_saved(self):
+        p = Path()
+        with self.assertRaisesRegex(ValueError, "Cannot compute snap on unsaved path"):
+            p.snap(Point(0, 0))
+
+    def test_snap_reproj(self):
+        p = PathFactory.create()
+        snap = p.snap(Point(3, 46.5, srid=4326))
+        self.assertEqual(snap.x, 700000)
+        self.assertEqual(snap.y, 6600000)
+
+
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TrailTest(TestCase):
     def test_no_trail_csv(self):
         p1 = PathFactory.create()
@@ -150,21 +176,21 @@ class PathGeometryTest(TestCase):
     def test_overlap_geometry(self):
         PathFactory.create(geom=LineString((0, 0), (60, 0)))
         p = PathFactory.create(geom=LineString((40, 0), (50, 0)))
-        self.assertTrue(p.is_overlap())
+        self.assertFalse(p.check_path_not_overlap(p.geom, p.pk))
         # Overlaping twice
         p = PathFactory.create(geom=LineString((20, 1), (20, 0), (25, 0), (25, 1),
                                                (30, 1), (30, 0), (35, 0), (35, 1)))
-        self.assertTrue(p.is_overlap())
+        self.assertFalse(p.check_path_not_overlap(p.geom, p.pk))
 
         # But crossing is ok
         p = PathFactory.create(geom=LineString((6, 1), (6, 3)))
-        self.assertFalse(p.is_overlap())
+        self.assertTrue(p.check_path_not_overlap(p.geom, p.pk))
         # Touching is ok too
         p = PathFactory.create(geom=LineString((5, 1), (5, 0)))
-        self.assertFalse(p.is_overlap())
+        self.assertTrue(p.check_path_not_overlap(p.geom, p.pk))
         # Touching twice is ok too
         p = PathFactory.create(geom=LineString((2.5, 0), (3, 1), (3.5, 0)))
-        self.assertFalse(p.is_overlap())
+        self.assertTrue(p.check_path_not_overlap(p.geom, p.pk))
 
     def test_snapping(self):
         # Sinosoid line

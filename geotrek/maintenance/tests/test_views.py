@@ -14,13 +14,13 @@ from mapentity.serializers.shapefile import ZipShapeSerializer
 
 from geotrek.authent.factories import PathManagerFactory, StructureFactory
 from geotrek.core.factories import StakeFactory
-from geotrek.core.helpers import TopologyHelper
 from geotrek.core.models import PathAggregation
 from geotrek.common.factories import OrganismFactory
 from geotrek.common.tests import TranslationResetMixin
 from geotrek.maintenance.models import Intervention, InterventionStatus, Project
 from geotrek.maintenance.views import ProjectFormatList
 from geotrek.core.factories import PathFactory, TopologyFactory
+from geotrek.core.models import Topology
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import BladeFactory, SignageFactory
@@ -555,7 +555,7 @@ class ExportTest(TranslationResetMixin, TestCase):
         lng, lat = tuple(Point(1, 1, srid=settings.SRID).transform(settings.API_SRID, clone=True))
 
         closest_path = PathFactory(geom=LineString(Point(0, 0), Point(1, 0), srid=settings.SRID))
-        topo_point = TopologyHelper._topologypoint(lng, lat, None).reload()
+        topo_point = Topology._topologypoint(lng, lat, None).reload()
 
         self.assertEqual(topo_point.paths.get(), closest_path)
 
