@@ -26,4 +26,6 @@ class Migration(migrations.Migration):
             name='geom',
             field=django.contrib.gis.db.models.fields.GeometryField(default=None, editable=False, null=True, srid=settings.SRID),
         ),
+        migrations.RunSQL('CREATE INDEX core_path_start_point_idx ON core_path USING gist(ST_StartPoint(geom));'),
+        migrations.RunSQL('CREATE INDEX core_path_end_point_idx ON core_path USING gist(ST_EndPoint(geom));')
     ]

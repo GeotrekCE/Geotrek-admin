@@ -25,4 +25,12 @@ class Migration(migrations.Migration):
         migrations.RunSQL('DROP INDEX IF EXISTS l_t_troncon_geom_3d_idx;'),
         migrations.RunSQL('DROP INDEX IF EXISTS core_path_geom_3d_idx;'),
         migrations.RunSQL('DROP INDEX IF EXISTS core_path_geom_cadastre_idx;'),
+
+        migrations.RunSQL('DROP INDEX IF EXISTS troncons_start_point_idx;'),
+        migrations.RunSQL('DROP INDEX IF EXISTS l_t_troncon_start_point_idx;'),
+        migrations.RunSQL('DROP INDEX IF EXISTS core_path_start_point_idx;'),
+
+        migrations.RunSQL('DROP INDEX IF EXISTS troncons_end_point_idx;'),
+        migrations.RunSQL('DROP INDEX IF EXISTS l_t_troncon_end_point_idx;'),
+        migrations.RunSQL('DROP INDEX IF EXISTS core_path_end_point_idx;'),
     ]

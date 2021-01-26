@@ -34,14 +34,6 @@ DROP FUNCTION IF EXISTS ft_topologies_paths_junction_point_iu() CASCADE;
 
 -- 40
 
-DROP INDEX IF EXISTS troncons_start_point_idx;
-DROP INDEX IF EXISTS l_t_troncon_start_point_idx;
-DROP INDEX IF EXISTS core_path_start_point_idx;
-
-DROP INDEX IF EXISTS troncons_end_point_idx;
-DROP INDEX IF EXISTS l_t_troncon_end_point_idx;
-DROP INDEX IF EXISTS core_path_end_point_idx;
-
 DROP FUNCTION IF EXISTS check_path_not_overlap(integer, geometry) CASCADE;
 
 DROP FUNCTION IF EXISTS update_evenement_geom_when_troncon_changes() CASCADE;
