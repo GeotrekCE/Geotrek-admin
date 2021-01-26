@@ -11,7 +11,7 @@ MapEntity.TogglableFilter = L.Class.extend({
         this.visible = false;
         this.popover = $('#filters-popover')
                           .popover({
-                              placement: 'bottom',
+                              placement: 'right',
                               html: true,
                               content: '',
                               title: 'Useless'
@@ -37,6 +37,7 @@ MapEntity.TogglableFilter = L.Class.extend({
                 $('form#mainfilter select[multiple]').trigger('chosen:updated');
             }, 1);
         });
+
         // Make sure filter-set class is added if a choice is selected.
         $('#mainfilter select[multiple]').chosen().on('change', function (e) {
             var $target = $(e.target),
@@ -166,7 +167,6 @@ MapEntity.TogglableFilter = L.Class.extend({
                 return $(node).text()
             }).join(', ')
         }
-
         if (set) {
             this.fields[name] = {name: name, val:val, value:value, label:label};
         }
