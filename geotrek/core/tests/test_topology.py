@@ -161,6 +161,40 @@ class TopologyTest(TestCase):
         Topology.deserialize('{"paths": %s, "positions": {"0": [0.3, 1.0], "2": [0.0, 0.7]}, "offset": 1}' % pks)
         self.assertEqual(Path.objects.count(), 3)
 
+    def test_topology_deserialize_point(self):
+        PathFactory.create(geom=LineString((699999, 6600001), (700001, 6600001)))
+        topology = Topology.deserialize('{"lat": 46.5, "lng": 3}')
+        self.assertEqual(topology.offset, -1)
+        self.assertEqual(topology.aggregations.count(), 1)
+        self.assertEqual(topology.aggregations.get().start_position, .5)
+        self.assertEqual(topology.aggregations.get().end_position, .5)
+
+    def test_topology_deserialize_point_with_snap(self):
+        path = PathFactory.create(geom=LineString((699999, 6600001), (700001, 6600001)))
+        topology = Topology.deserialize('{"lat": 46.5, "lng": 3, "snap": %s}' % path.pk)
+        self.assertEqual(topology.offset, 0)
+        self.assertEqual(topology.aggregations.count(), 1)
+        self.assertEqual(topology.aggregations.get().start_position, .5)
+        self.assertEqual(topology.aggregations.get().end_position, .5)
+
+    def test_topology_deserialize_inexistant(self):
+        with self.assertRaises(Topology.DoesNotExist):
+            Topology.deserialize('4012999999')
+
+    def test_topology_deserialize_inexistant_point(self):
+        PathFactory.create(geom=LineString((699999, 6600001), (700001, 6600001)))
+        Topology.deserialize('{"lat": 46.5, "lng": 3, "pk": 4012999999}')
+
+    def test_topology_deserialize_inexistant_line(self):
+        path = PathFactory.create(geom=LineString((699999, 6600001), (700001, 6600001)))
+        Topology.deserialize(
+            '[{"pk": 4012999999, "paths": [%s], "positions": {"0": [0.0, 1.0]}, "offset": 1}]' % path.pk
+        )
+
+    def test_topology_deserialize_invalid(self):
+        with self.assertRaises(ValueError):
+            Topology.deserialize('[{"paths": [4012999999], "positions": {}, "offset": 1}]')
+
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
 class TopologyDeletionTest(TestCase):
