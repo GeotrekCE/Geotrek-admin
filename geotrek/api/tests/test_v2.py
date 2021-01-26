@@ -38,7 +38,7 @@ TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'disabled_infrastructure', 'duration', 'elevation_area_url', 'elevation_svg_url',
     'external_id', 'gpx', 'information_desks', 'kml', 'labels', 'length_2d',
     'length_3d', 'max_elevation', 'min_elevation', 'name', 'networks',
-    'next', 'parents', 'parking_location', 'points_reference',
+    'next', 'parents', 'parking_location', 'pdf', 'points_reference',
     'portal', 'practice', 'previous', 'public_transport', 'published',
     'reservation_system', 'route', 'second_external_id', 'source', 'structure',
     'themes', 'thumbnail', 'update_datetime', 'url'
@@ -55,9 +55,9 @@ POI_PROPERTIES_GEOJSON_STRUCTURE = sorted([
 
 TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted([
     'approved', 'attachments', 'category', 'cities', 'contact', 'create_datetime', 'description',
-    'description_teaser', 'email', 'external_id', 'geometry', 'id', 'name', 'pictures', 'portal',
-    'practical_info', 'published', 'reservation_id', 'reservation_system', 'source', 'structure',
-    'themes', 'thumbnail', 'types', 'update_datetime', 'url', 'website',
+    'description_teaser', 'email', 'external_id', 'geometry', 'id', 'name', 'pdf',
+    'pictures', 'portal', 'practical_info', 'published', 'reservation_id', 'reservation_system',
+    'source', 'structure', 'themes', 'thumbnail', 'types', 'update_datetime', 'url', 'website',
 ])
 
 CITY_PROPERTIES_JSON_STRUCTURE = sorted([

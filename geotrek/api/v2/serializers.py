@@ -5,9 +5,9 @@ from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
 from django.conf import settings
 from django.db.models import F
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from django.utils.translation import get_language
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import get_language, gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
 from PIL.Image import DecompressionBombError
 from rest_framework import serializers
@@ -246,6 +246,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         description = serializers.SerializerMethodField(read_only=True)
         description_teaser = serializers.SerializerMethodField(read_only=True)
         practical_info = serializers.SerializerMethodField(read_only=True)
+        pdf = serializers.SerializerMethodField('get_pdf_url')
 
         class Meta:
             model = tourism_models.TouristicContent
@@ -253,7 +254,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 'id', 'attachments', 'approved', 'category', 'description',
                 'description_teaser', 'geometry', 'pictures',
                 'practical_info', 'url', 'cities', 'create_datetime',
-                'external_id', 'name', 'portal', 'published',
+                'external_id', 'name', 'pdf', 'portal', 'published',
                 'source', 'structure', 'themes', 'thumbnail',
                 'update_datetime', 'types', 'contact', 'email',
                 'website', 'reservation_system', 'reservation_id',
@@ -280,6 +281,14 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
 
         def get_cities(self, obj):
             return [city.code for city in obj.published_cities]
+
+        def get_pdf_url(self, obj):
+            if settings.ONLY_EXTERNAL_PUBLIC_PDF:
+                file_type = get_object_or_404(common_models.FileType, type="Topoguide")
+                if not common_models.Attachment.objects.attachments_for_object_only_type(obj, file_type).exists():
+                    return None
+            urlname = 'tourism:touristiccontent_{}printable'.format('booklet_' if settings.USE_BOOKLET_PDF else '')
+            return reverse(urlname, kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
 
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField(read_only=True)
@@ -358,6 +367,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         attachments = AttachmentSerializer(many=True)
         gpx = serializers.SerializerMethodField('get_gpx_url')
         kml = serializers.SerializerMethodField('get_kml_url')
+        pdf = serializers.SerializerMethodField('get_pdf_url')
         advice = serializers.SerializerMethodField(read_only=True)
         advised_parking = serializers.SerializerMethodField(read_only=True)
         parking_location = serializers.SerializerMethodField(read_only=True)
@@ -421,6 +431,14 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         def get_kml_url(self, obj):
             return build_url(self, reverse('trekking:trek_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug}))
 
+        def get_pdf_url(self, obj):
+            if settings.ONLY_EXTERNAL_PUBLIC_PDF:
+                file_type = get_object_or_404(common_models.FileType, type="Topoguide")
+                if not common_models.Attachment.objects.attachments_for_object_only_type(obj, file_type).exists():
+                    return None
+            return reverse('trekking:trek_{}printable'.format('booklet_' if settings.USE_BOOKLET_PDF else ''),
+                           kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
+
         def get_advice(self, obj):
             return get_translation_or_dict('advice', self, obj)
 
@@ -466,7 +484,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'external_id', 'geometry', 'gpx', 'information_desks', 'kml',
                 'labels', 'length_2d', 'length_3d', 'max_elevation',
                 'min_elevation', 'name', 'networks', 'next', 'parents',
-                'parking_location', 'points_reference', 'portal', 'practice',
+                'parking_location', 'pdf', 'points_reference', 'portal', 'practice',
                 'previous', 'public_transport', 'published',
                 'reservation_system', 'route', 'second_external_id', 'source',
                 'structure', 'themes', 'thumbnail', 'update_datetime', 'url'
