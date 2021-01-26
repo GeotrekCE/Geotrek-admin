@@ -10,7 +10,7 @@ class ZoningPropertiesMixinTest(TestCase):
     @classmethod
     def setUpClass(cls):
         super(ZoningPropertiesMixinTest, cls).setUpClass()
-        cls.city = CityFactory.create(name="???")
+        cls.city = CityFactory.create()
         cls.district = DistrictFactory.create()
         cls.area = RestrictedAreaFactory.create()
         cls.path = PathFactory.create(geom='SRID=2154;LINESTRING(200000 300000, 1100000 1200000)')
