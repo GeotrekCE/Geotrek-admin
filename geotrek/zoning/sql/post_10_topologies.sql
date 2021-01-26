@@ -1,13 +1,4 @@
 -------------------------------------------------------------------------------
--- Add spatial index (will boost spatial filters)
--------------------------------------------------------------------------------
-
-CREATE INDEX zoning_city_geom_idx ON zoning_city USING gist(geom);
-CREATE INDEX zoning_district_geom_idx ON zoning_district USING gist(geom);
-CREATE INDEX zoning_restrictedarea_geom_idx ON zoning_restrictedarea USING gist(geom);
-
-
--------------------------------------------------------------------------------
 -- Ensure land layers have valid geometries
 -------------------------------------------------------------------------------
 

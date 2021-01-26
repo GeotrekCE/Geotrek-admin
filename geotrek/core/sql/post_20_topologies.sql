@@ -1,9 +1,3 @@
--------------------------------------------------------------------------------
--- Add spatial index (will boost spatial filters)
--------------------------------------------------------------------------------
-
-CREATE INDEX core_topology_geom_idx ON core_topology USING gist(geom);
-
 ALTER TABLE core_topology ALTER COLUMN "length" SET DEFAULT 0.0;
 ALTER TABLE core_topology ALTER COLUMN slope SET DEFAULT 0.0;
 ALTER TABLE core_topology ALTER COLUMN min_elevation SET DEFAULT 0;
