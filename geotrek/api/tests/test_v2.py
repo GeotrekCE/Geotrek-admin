@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.test.client import Client
 from django.test.testcases import TestCase
-from django.contrib.gis.geos import MultiPoint, Point
+from django.contrib.gis.geos import MultiPoint, Point, LineString
 from django.conf import settings
 from django.test.utils import override_settings
 
@@ -51,6 +51,10 @@ TOUR_PROPERTIES_GEOJSON_STRUCTURE = sorted(TREK_PROPERTIES_GEOJSON_STRUCTURE + [
 POI_PROPERTIES_GEOJSON_STRUCTURE = sorted([
     'id', 'create_datetime', 'description', 'external_id',
     'name', 'pictures', 'published', 'type', 'update_datetime', 'url'
+])
+
+TOURISTIC_CONTENT_CATEGORY_DETAIL_JSON_STRUCTURE = sorted([
+    'id', 'label', 'order', 'pictogram', 'types'
 ])
 
 TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted([
@@ -121,7 +125,8 @@ class BaseApiTest(TestCase):
         cls.theme = common_factory.ThemeFactory.create()
         cls.network = trek_factory.TrekNetworkFactory.create()
         cls.label = common_factory.LabelFactory(id=23)
-        cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(cls.nb_treks)
+        cls.path = core_factory.PathFactory.create(geom=LineString((0, 0), (0, 10)))
+        cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(cls.nb_treks, paths=[(cls.path, 0, 1)], geom=cls.path.geom)
         cls.treks[0].themes.add(cls.theme)
         cls.treks[0].networks.add(cls.network)
         cls.treks[0].labels.add(cls.label)
@@ -138,7 +143,6 @@ class BaseApiTest(TestCase):
         cls.treks[3].parking_location = None
         cls.treks[3].points_reference = MultiPoint([Point(0, 0), Point(1, 1)], srid=settings.SRID)
         cls.treks[3].save()
-        cls.path = core_factory.PathFactory.create()
         cls.parent = trek_factory.TrekFactory.create(published=True, name='Parent')
         cls.child1 = trek_factory.TrekFactory.create(published=False, name='Child 1')
         cls.child2 = trek_factory.TrekFactory.create(published=True, name='Child 2')
@@ -146,9 +150,9 @@ class BaseApiTest(TestCase):
         trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child1, order=2).save()
         trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child2, order=1).save()
         trek_models.OrderedTrekChild(parent=cls.treks[0], child=cls.child2, order=3).save()
-        cls.content = tourism_factory.TouristicContentFactory.create(published=True)
-        cls.city = zoning_factory.CityFactory(code=31000)
-        cls.district = zoning_factory.DistrictFactory(id=420)
+        cls.content = tourism_factory.TouristicContentFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
+        cls.city = zoning_factory.CityFactory(code=31000, geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
+        cls.district = zoning_factory.DistrictFactory(id=420, geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
         cls.accessibility = trek_factory.AccessibilityFactory(id=4)
         cls.route = trek_factory.RouteFactory(id=680)
         cls.theme = common_factory.ThemeFactory(id=15)
@@ -160,6 +164,8 @@ class BaseApiTest(TestCase):
         cls.source = common_factory.RecordSourceFactory()
         cls.reservation_system = common_factory.ReservationSystemFactory()
         cls.site = outdoor_factory.SiteFactory()
+        cls.category = tourism_factory.TouristicContentCategoryFactory()
+        common_factory.FileTypeFactory.create(type='Topoguide')
 
     def check_number_elems_response(self, response, model):
         json_response = response.json()
@@ -248,6 +254,12 @@ class BaseApiTest(TestCase):
 
     def get_path_detail(self, id_path, params=None):
         return self.client.get(reverse('apiv2:path-detail', args=(id_path,)), params)
+
+    def get_touristiccontentcategory_list(self, params=None):
+        return self.client.get(reverse('apiv2:touristiccontentcategory-list'), params)
+
+    def get_touristiccontentcategory_detail(self, id_category, params=None):
+        return self.client.get(reverse('apiv2:touristiccontentcategory-detail', args=(id_category,)), params)
 
     def get_touristiccontent_list(self, params=None):
         return self.client.get(reverse('apiv2:touristiccontent-list'), params)
@@ -407,6 +419,11 @@ class APIAccessAnonymousTestCase(BaseApiTest):
                          TOUR_PROPERTIES_GEOJSON_STRUCTURE)
 
         self.assertEqual(json_response.get('features')[0].get('properties').get('count_children'), 1)
+
+    @override_settings(ONLY_EXTERNAL_PUBLIC_PDF=True)
+    def test_trek_external_pdf(self):
+        response = self.get_trek_detail(self.parent.id)
+        self.assertEqual(response.status_code, 200)
 
     @override_settings(SPLIT_TREKS_CATEGORIES_BY_ITINERANCY=True)
     def test_trek_detail_categories_split_itinerancy(self):
@@ -568,7 +585,26 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_poi_detail(id_poi.pk)
         self.assertEqual(response.status_code, 404)
 
+    def test_touristiccontentcategory_detail(self):
+        self.check_structure_response(
+            self.get_touristiccontentcategory_detail(self.category.pk),
+            TOURISTIC_CONTENT_CATEGORY_DETAIL_JSON_STRUCTURE
+        )
+
+    def test_touristiccontentcategory_list(self):
+        self.check_number_elems_response(
+            self.get_touristiccontentcategory_list(),
+            tourism_models.TouristicContentCategory
+        )
+
     def test_touristiccontent_detail(self):
+        self.check_structure_response(
+            self.get_touristiccontent_detail(self.content.pk),
+            TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE
+        )
+
+    @override_settings(ONLY_EXTERNAL_PUBLIC_PDF=True)
+    def test_touristiccontent_external_pdf(self):
         self.check_structure_response(
             self.get_touristiccontent_detail(self.content.pk),
             TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE
@@ -587,11 +623,41 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(len(json_response.get('results')),
                          tourism_models.TouristicContent.objects.all().count())
 
-        response = self.get_touristiccontent_list({
-            'near_trek': self.treks[0].pk
-        })
-        #  test response code
-        self.assertEqual(response.status_code, 200)
+    def test_touristiccontent_near_trek(self):
+        response = self.get_touristiccontent_list({'near_trek': self.treks[0].pk})
+        self.assertEqual(len(response.json()['results']), 1)
+
+    def test_touristiccontent_categories(self):
+        response = self.get_touristiccontent_list({'categories': self.content.category.pk})
+        self.assertEqual(len(response.json()['results']), 1)
+
+    def test_touristiccontent_types(self):
+        response = self.get_touristiccontent_list({'types': self.content.type1.all()[0].pk})
+        self.assertEqual(len(response.json()['results']), 1)
+
+    def test_touristiccontent_city(self):
+        response = self.get_touristiccontent_list({'city': self.city.pk})
+        self.assertEqual(len(response.json()['results']), 1)
+
+    def test_touristiccontent_district(self):
+        response = self.get_touristiccontent_list({'district': self.district.pk})
+        self.assertEqual(len(response.json()['results']), 1)
+
+    def test_touristiccontent_structure(self):
+        response = self.get_touristiccontent_list({'structure': self.content.structure.pk})
+        self.assertEqual(len(response.json()['results']), 1)
+
+    def test_touristiccontent_theme(self):
+        response = self.get_touristiccontent_list({'theme': self.content.themes.all()[0].pk})
+        self.assertEqual(len(response.json()['results']), 1)
+
+    def test_touristiccontent_portal(self):
+        response = self.get_touristiccontent_list({'portal': self.content.portal.all()[0].pk})
+        self.assertEqual(len(response.json()['results']), 1)
+
+    def test_touristiccontent_q(self):
+        response = self.get_touristiccontent_list({'q': 'Blah CT'})
+        self.assertEqual(len(response.json()['results']), 1)
 
     def test_labels_list(self):
         self.check_number_elems_response(
