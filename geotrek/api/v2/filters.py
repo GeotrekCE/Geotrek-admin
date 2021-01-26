@@ -206,6 +206,44 @@ class GeotrekTouristicContentFilter(BaseFilterBackend):
             contents_intersecting = intersecting(qs.model, Trek.objects.get(pk=trek))
             # qs = qs.intersecting(contents_intersecting)  #FIXME: cannot intersect MultilingualQuerySet
             qs = contents_intersecting.order_by('id')
+        categories = request.GET.get('categories', None)
+        if categories is not None:
+            list_categories = [int(p) for p in categories.split(',')]
+            qs = qs.filter(category__in=list_categories)
+        types = request.GET.get('types', None)
+        if types is not None:
+            list_types = [int(p) for p in types.split(',')]
+            qs = qs.filter(Q(type1__in=list_types) | Q(type2__in=list_types))
+        city = request.GET.get('city', None)
+        if city is not None:
+            cities_list = [int(c) for c in city.split(',')]
+            union_geom = City.objects.filter(
+                reduce(operator.or_, (Q(**{'code': c}) for c in cities_list))
+            ).aggregate(Union('geom'))['geom__union']
+            qs = qs.filter(geom__intersects=union_geom)
+        district = request.GET.get('district', None)
+        if district is not None:
+            districts_list = [int(d) for d in district.split(',')]
+            union_geom = District.objects.filter(
+                reduce(operator.or_, (Q(**{'pk': d}) for d in districts_list))
+            ).aggregate(Union('geom'))['geom__union']
+            qs = qs.filter(geom__intersects=union_geom)
+        structure = request.GET.get('structure', None)
+        if structure is not None:
+            qs = qs.filter(structure__pk=structure)
+        themes = request.GET.get('theme', None)
+        if themes is not None:
+            list_themes = [int(t) for t in themes.split(',')]
+            qs = qs.filter(themes__in=list_themes)
+        portals = request.GET.get('portal', None)
+        if portals is not None:
+            list_portals = [int(p) for p in portals.split(',')]
+            qs = qs.filter(portal__in=list_portals)
+        q = request.GET.get('q', None)
+        if q is not None:
+            qs = qs.filter(
+                Q(name__icontains=q) | Q(description__icontains=q) | Q(description_teaser__icontains=q)
+            )
         return qs
 
     def get_schema_fields(self, view):
@@ -215,7 +253,47 @@ class GeotrekTouristicContentFilter(BaseFilterBackend):
                     title=_("Near trek"),
                     description=_("Id of a trek. It will show only the touristics contents related to this trek")
                 )
-            ),
+            ), Field(
+                name='categories', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Categories"),
+                    description=_("Id of the touristic content categories to filter by, separated by comma")
+                )
+            ), Field(
+                name='types', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Types"),
+                    description=_("Id of the touristic content types to filter by, separated by comma")
+                )
+            ), Field(
+                name='city', required=False, location='query', schema=coreschema.String(
+                    title=_("City"),
+                    description=_('Id of a city to filter by. Can be multiple cities split by a comma. Example: 31006,31555,31017')
+                )
+            ), Field(
+                name='district', required=False, location='query', schema=coreschema.String(
+                    title=_("District"),
+                    description=_('Id of a district to filter by. Can be multiple districts split by a comma. Example: 2273,2270')
+                )
+            ), Field(
+                name='structure', required=False, location='query', schema=coreschema.Integer(
+                    title=_("Structure"),
+                    description=_('Id of a structure to filter by')
+                )
+            ), Field(
+                name='theme', required=False, location='query', schema=coreschema.String(
+                    title=_("Theme"),
+                    description=_('Id of the themes to filter by, separated by commas. Example: 9,14')
+                )
+            ), Field(
+                name='portal', required=False, location='query', schema=coreschema.String(
+                    title=_("Portal"),
+                    description=_('Id of the portals to filter by, separated by commas. Example: 3,7')
+                )
+            ), Field(
+                name='q', required=False, location='query', schema=coreschema.String(
+                    title=_("Query string"),
+                    description=_('Search field that returns touristic contents containing data matching the string')
+                )
+            )
         )
 
 
@@ -288,6 +366,10 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
                 Q(name__icontains=q) | Q(description__icontains=q)
                 | Q(description_teaser__icontains=q) | Q(ambiance__icontains=q)
             )
+        practices = request.GET.get('practice', None)
+        if practices is not None:
+            list_practices = [int(p) for p in practices.split(',')]
+            qs = qs.filter(practice__in=list_practices)
         return qs
 
     def get_schema_fields(self, view):
@@ -376,6 +458,11 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
                 name='q', required=False, location='query', schema=coreschema.String(
                     title=_("Query string"),
                     description=_('Search field that returns treks containing data matching the string')
+                )
+            ), Field(
+                name='practice', required=False, location='query', schema=coreschema.String(
+                    title=_("Practice"),
+                    description=_('Id of the trek practice to filter by, separated by commas')
                 )
             ),
         )

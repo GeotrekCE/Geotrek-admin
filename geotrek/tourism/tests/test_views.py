@@ -151,20 +151,21 @@ class BasicJSONAPITest(TranslationResetMixin):
         polygon = 'SRID=%s;MULTIPOLYGON(((0 0, 0 3, 3 3, 3 0, 0 0)))' % settings.SRID
         self.city = zoning_factories.CityFactory(geom=polygon)
         self.district = zoning_factories.DistrictFactory(geom=polygon)
+        self.portal = common_factories.TargetPortalFactory()
+        self.theme = common_factories.ThemeFactory()
 
-        self.content = self.factory(geom='SRID=%s;POINT(1 1)' % settings.SRID)
+        self.content = self.factory(geom='SRID=%s;POINT(1 1)' % settings.SRID,
+                                    portals=[self.portal], themes=[self.theme])
 
         self.picture = common_factories.AttachmentFactory(content_object=self.content,
                                                           attachment_file=get_dummy_uploaded_image())
         self.document = common_factories.AttachmentFactory(content_object=self.content,
                                                            attachment_file=get_dummy_uploaded_document())
 
-        self.theme = common_factories.ThemeFactory()
         self.content.themes.add(self.theme)
         self.source = common_factories.RecordSourceFactory()
         self.content.source.add(self.source)
 
-        self.portal = common_factories.TargetPortalFactory()
         self.content.portal.add(self.portal)
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path = core_factories.PathFactory(geom='SRID=%s;LINESTRING(0 10, 10 10)' % settings.SRID)
@@ -306,8 +307,8 @@ class TouristicContentAPITest(BasicJSONAPITest, TrekkingManagerTest):
         self.category = self.content.category
         self.type1 = TouristicContentType1Factory(category=self.category)
         self.type2 = TouristicContentType2Factory(category=self.category, pictogram=None)
-        self.content.type1.add(self.type1)
-        self.content.type2.add(self.type2)
+        self.content.type1.set([self.type1])
+        self.content.type2.set([self.type2])
 
     def test_expected_properties(self):
         self.assertEqual(sorted([

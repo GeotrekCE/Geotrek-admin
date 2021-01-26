@@ -5,9 +5,9 @@ from easy_thumbnails.exceptions import InvalidImageFormatError
 from easy_thumbnails.files import get_thumbnailer
 from django.conf import settings
 from django.db.models import F
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from django.utils.translation import get_language
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import get_language, gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
 from PIL.Image import DecompressionBombError
 from rest_framework import serializers
@@ -215,24 +215,80 @@ class LabelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
 if 'geotrek.tourism' in settings.INSTALLED_APPS:
     class TouristicContentCategorySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        types = serializers.SerializerMethodField(read_only=True)
+
         class Meta:
             model = tourism_models.TouristicContentCategory
-            fields = (
-                'id', 'label', 'order', 'pictogram', 'type1_label', 'type2_label'
-            )
+            fields = ('id', 'label', 'order', 'pictogram', 'types')
+
+        def get_types(self, obj):
+            return [{
+                'id': obj.id * 100 + i,
+                'label': getattr(obj, 'type{}_label'.format(i)),
+                'values': [{
+                    'id': t.id,
+                    'label': t.label,
+                    'pictogram': t.pictogram.url if t.pictogram else None,
+                } for t in obj.types.filter(in_list=i)]
+            } for i in (1, 2)]
 
     class TouristicContentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:touristiccontent-detail')
-        category = TouristicContentCategorySerializer()
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         pictures = AttachmentSerializer(many=True)
+        create_datetime = serializers.DateTimeField(source='date_update')
+        update_datetime = serializers.DateTimeField(source='date_insert')
+        external_id = serializers.IntegerField(source='eid')
+        types = serializers.SerializerMethodField(read_only=True)
+        cities = serializers.SerializerMethodField(read_only=True)
+        attachments = AttachmentSerializer(many=True)
+        name = serializers.SerializerMethodField(read_only=True)
+        description = serializers.SerializerMethodField(read_only=True)
+        description_teaser = serializers.SerializerMethodField(read_only=True)
+        practical_info = serializers.SerializerMethodField(read_only=True)
+        pdf = serializers.SerializerMethodField('get_pdf_url')
 
         class Meta:
             model = tourism_models.TouristicContent
             fields = (
-                'id', 'approved', 'category', 'description',
-                'description_teaser', 'geometry', 'pictures', 'url'
+                'id', 'attachments', 'approved', 'category', 'description',
+                'description_teaser', 'geometry', 'pictures',
+                'practical_info', 'url', 'cities', 'create_datetime',
+                'external_id', 'name', 'pdf', 'portal', 'published',
+                'source', 'structure', 'themes', 'thumbnail',
+                'update_datetime', 'types', 'contact', 'email',
+                'website', 'reservation_system', 'reservation_id',
             )
+
+        def get_name(self, obj):
+            return get_translation_or_dict('name', self, obj)
+
+        def get_description(self, obj):
+            return get_translation_or_dict('description', self, obj)
+
+        def get_description_teaser(self, obj):
+            return get_translation_or_dict('description_teaser', self, obj)
+
+        def get_practical_info(self, obj):
+            return get_translation_or_dict('practical_info', self, obj)
+
+        def get_types(self, obj):
+            return {
+                obj.category.id * 100 + i: [
+                    t.id for t in getattr(obj, 'type{}'.format(i)).all()
+                ] for i in (1, 2)
+            }
+
+        def get_cities(self, obj):
+            return [city.code for city in obj.published_cities]
+
+        def get_pdf_url(self, obj):
+            if settings.ONLY_EXTERNAL_PUBLIC_PDF:
+                file_type = get_object_or_404(common_models.FileType, type="Topoguide")
+                if not common_models.Attachment.objects.attachments_for_object_only_type(obj, file_type).exists():
+                    return None
+            urlname = 'tourism:touristiccontent_{}printable'.format('booklet_' if settings.USE_BOOKLET_PDF else '')
+            return reverse(urlname, kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
 
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField(read_only=True)
@@ -301,6 +357,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         description = serializers.SerializerMethodField(read_only=True)
         description_teaser = serializers.SerializerMethodField(read_only=True)
         departure = serializers.SerializerMethodField(read_only=True)
+        departure_geom = serializers.SerializerMethodField(read_only=True)
         arrival = serializers.SerializerMethodField(read_only=True)
         external_id = serializers.CharField(source='eid')
         second_external_id = serializers.CharField(source='eid2')
@@ -310,6 +367,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         attachments = AttachmentSerializer(many=True)
         gpx = serializers.SerializerMethodField('get_gpx_url')
         kml = serializers.SerializerMethodField('get_kml_url')
+        pdf = serializers.SerializerMethodField('get_pdf_url')
         advice = serializers.SerializerMethodField(read_only=True)
         advised_parking = serializers.SerializerMethodField(read_only=True)
         parking_location = serializers.SerializerMethodField(read_only=True)
@@ -322,6 +380,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         points_reference = serializers.SerializerMethodField(read_only=True)
         previous = serializers.ReadOnlyField(source='previous_id')
         next = serializers.ReadOnlyField(source='next_id')
+        cities = serializers.SerializerMethodField(read_only=True)
 
         def get_update_datetime(self, obj):
             return obj.topo_object.date_update
@@ -340,6 +399,9 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         def get_departure(self, obj):
             return get_translation_or_dict('departure', self, obj)
+
+        def get_departure_geom(self, obj):
+            return obj.geom_3d.array[0]
 
         def get_arrival(self, obj):
             return get_translation_or_dict('arrival', self, obj)
@@ -368,6 +430,14 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         def get_kml_url(self, obj):
             return build_url(self, reverse('trekking:trek_kml_detail', kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug}))
+
+        def get_pdf_url(self, obj):
+            if settings.ONLY_EXTERNAL_PUBLIC_PDF:
+                file_type = get_object_or_404(common_models.FileType, type="Topoguide")
+                if not common_models.Attachment.objects.attachments_for_object_only_type(obj, file_type).exists():
+                    return None
+            return reverse('trekking:trek_{}printable'.format('booklet_' if settings.USE_BOOKLET_PDF else ''),
+                           kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
 
         def get_advice(self, obj):
             return get_translation_or_dict('advice', self, obj)
@@ -399,22 +469,25 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             geojson = obj.points_reference.transform(settings.API_SRID, clone=True).geojson
             return json.loads(geojson)
 
+        def get_cities(self, obj):
+            return [city.code for city in obj.published_cities]
+
         class Meta:
             model = trekking_models.Trek
             fields = (
                 'id', 'access', 'accessibilities', 'advice', 'advised_parking',
-                'altimetric_profile', 'ambiance', 'arrival', 'ascent', 'attachments',
-                'children', 'create_datetime', 'departure', 'descent',
-                'description', 'description_teaser', 'difficulty',
-                'disabled_infrastructure', 'duration', 'elevation_area_url',
-                'elevation_svg_url', 'external_id', 'geometry', 'gpx',
-                'information_desks', 'kml', 'labels', 'length_2d', 'length_3d',
-                'max_elevation', 'min_elevation', 'name', 'networks', 'next',
-                'parents', 'parking_location', 'points_reference',
-                'portal', 'practice', 'previous', 'public_transport',
-                'published', 'reservation_system', 'route',
-                'second_external_id', 'source', 'structure', 'themes',
-                'thumbnail', 'update_datetime', 'url'
+                'altimetric_profile', 'ambiance', 'arrival', 'ascent',
+                'attachments', 'children', 'cities', 'create_datetime',
+                'departure', 'departure_geom', 'descent', 'description',
+                'description_teaser', 'difficulty', 'disabled_infrastructure',
+                'duration', 'elevation_area_url', 'elevation_svg_url',
+                'external_id', 'geometry', 'gpx', 'information_desks', 'kml',
+                'labels', 'length_2d', 'length_3d', 'max_elevation',
+                'min_elevation', 'name', 'networks', 'next', 'parents',
+                'parking_location', 'pdf', 'points_reference', 'portal', 'practice',
+                'previous', 'public_transport', 'published',
+                'reservation_system', 'route', 'second_external_id', 'source',
+                'structure', 'themes', 'thumbnail', 'update_datetime', 'url'
             )
 
     class TourSerializer(TrekSerializer):

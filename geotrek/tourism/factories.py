@@ -3,7 +3,7 @@ from django.contrib.gis.geos import Point
 import factory
 
 from geotrek.authent.factories import StructureRelatedDefaultFactory
-from geotrek.common.factories import ReservationSystemFactory
+from geotrek.common.factories import ReservationSystemFactory, TargetPortalFactory, ThemeFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 
 from . import models
@@ -72,6 +72,7 @@ class TouristicContentFactory(StructureRelatedDefaultFactory):
     published = True
     reservation_system = factory.SubFactory(ReservationSystemFactory)
     reservation_id = 'XXXXXXXXX'
+    description = '<p>Blah CT</p>'
 
     @factory.post_generation
     def sources(obj, create, extracted=None, **kwargs):
@@ -86,6 +87,23 @@ class TouristicContentFactory(StructureRelatedDefaultFactory):
             if extracted:
                 for portal in extracted:
                     obj.portal.add(portal)
+            else:
+                obj.portal.add(TargetPortalFactory.create())
+
+    @factory.post_generation
+    def themes(obj, create, extracted=None, **kwargs):
+        if create:
+            if extracted:
+                for theme in extracted:
+                    obj.themes.add(theme)
+            else:
+                obj.themes.add(ThemeFactory.create())
+
+    @factory.post_generation
+    def type1(obj, create, extracted=None, **kwargs):
+        if create:
+            assert not extracted, "Not implemented"
+            obj.type1.add(TouristicContentType1Factory.create())
 
 
 class TouristicEventTypeFactory(factory.DjangoModelFactory):
@@ -121,3 +139,12 @@ class TouristicEventFactory(factory.DjangoModelFactory):
             if extracted:
                 for portal in extracted:
                     obj.portal.add(portal)
+
+    @factory.post_generation
+    def themes(obj, create, extracted=None, **kwargs):
+        if create:
+            if extracted:
+                for theme in extracted:
+                    obj.themes.add(theme)
+            else:
+                obj.themes.add(ThemeFactory.create())
