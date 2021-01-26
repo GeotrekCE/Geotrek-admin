@@ -102,6 +102,9 @@ select[multiple] {
 #entitylist-dropdown button:first-child {
     padding-left: calc(0.75rem + 8px);
 }
+#entitylist-dropdown .dropdown-menu {
+    position: absolute;
+}
 #entitylist-dropdown .dropdown-item {
     padding: 0.25rem 1rem;
 }
@@ -127,6 +130,11 @@ select[multiple] {
     padding-left: 18px;
     padding-right: 10px;
 }
+@media (max-width: 767.98px) {
+    #historylist .nav-link {
+        border-color: white;
+    }
+}
 
 /**** Layout ****/
 
@@ -148,6 +156,13 @@ select[multiple] {
     right: 0px;
 }
 #detailmap { height: 100%; }
+
+/* Navbar fixed */
+
+#container {
+    padding-top: 60px;
+}
+
 
 
 /**** Maps ****/

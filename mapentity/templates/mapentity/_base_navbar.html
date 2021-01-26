@@ -1,5 +1,7 @@
 {% load static i18n mapentity_tags %}
-<nav class="navbar navbar-expand-lg navbar-light">
+
+<nav class="navbar fixed-top navbar-expand-sm navbar-light bg-white">
+
   <div class="d-flex">
     <ul class="navbar-nav mr-2">
         {% if request.user.is_authenticated %}
@@ -28,16 +30,15 @@
         </li>
         {% endif %}
       </ul>
-    {% if request.session.history %}
-    <button class="navbar-toggler" type="button"
-            data-toggle="collapse" data-target="#navbarTogglerHistory"
-            aria-controls="navbarTogglerHistory" aria-expanded="false" aria-label="Toggle navigation history">
-      <i class="bi bi-bookmarks"></i>
-    </button>
-    {% endif %}
   </div>
 
-  <div class="collapse navbar-collapse" id="navbarTogglerHistory">
+  <button class="navbar-toggler" type="button"
+          data-toggle="collapse" data-target="#navbarToggler"
+          aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation history">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarToggler">
 
     <ul id="historylist" class="navbar-nav {% if request.session.history %} nav-tabs{% endif %}">
       {% block toolbar %}
@@ -63,9 +64,7 @@
       {% endblock toolbar %}
     </ul>
 
-  </div>
-
-  <ul class="navbar-nav">
+  <ul class="navbar-nav user-menu">
       {% if request.user.is_authenticated %}
       <li class="divider-vertical"></li>
       <li class="dropdown">
@@ -115,5 +114,7 @@
       </li>
       {% endif %}
     </ul>
+
+  </div>
 
 </nav>
