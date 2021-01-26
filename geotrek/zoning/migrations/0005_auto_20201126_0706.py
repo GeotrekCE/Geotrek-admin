@@ -10,5 +10,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # Empty operation
+        # Remove point edges
+        migrations.RunSQL(
+            "DELETE FROM zoning_cityedge USING core_topology WHERE id=topo_object_id AND ST_GeometryType(geom)='ST_Point';"
+            "DELETE FROM zoning_districtedge USING core_topology WHERE id=topo_object_id AND ST_GeometryType(geom)='ST_Point';"
+            "DELETE FROM zoning_restrictedareaedge USING core_topology WHERE id=topo_object_id AND ST_GeometryType(geom)='ST_Point';",
+            migrations.RunSQL.noop
+        )
     ]
