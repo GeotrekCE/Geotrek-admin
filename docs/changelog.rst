@@ -2,12 +2,19 @@
 CHANGELOG
 =========
 
-2.46.1.dev0
+2.47.0 (2021-01-26)
 -------------------
 
-**Bug fixes**
+**New Feature**
 
--
+- Add cities and departure_geom fields to API v2 trek endpoint
+- Add practice filter to API v2 trek endpoint
+- Add touristiccontentcategory endpoint to API v2 (with types)
+- Add many fields and filters to touristiccontent API v2 endpoint
+
+**Performances**
+
+- Optimize generation of the list of cities in list pages
 
 
 2.46.0 (2021-01-25)
