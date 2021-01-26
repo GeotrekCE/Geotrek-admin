@@ -231,7 +231,7 @@ https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa
 Swagger
 -------
 
-In order to enable swagger module to auto-document API `/api/v2/`, in the custom settings file,
+In order to enable swagger module to auto-document API ``/api/v2/``, in the custom settings file,
 add the following code:
 
 .. code-block :: python
@@ -239,7 +239,7 @@ add the following code:
     # Enable API v2 documentation
     INSTALLED_APPS += ('drf_yasg', )
 
-Then run ``sudo geotrek restart``.
+Then run ``sudo dpkg-reconfigure -u geotrek-admin``.
 
 
 WYSIWYG editor configuration
