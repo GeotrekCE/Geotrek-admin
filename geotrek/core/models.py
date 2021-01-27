@@ -59,8 +59,8 @@ class PathInvisibleManager(models.Manager):
 
 class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
            TimeStampedModelMixin, StructureRelated):
-    geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
-    geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=False,
+    geom = models.LineStringField(srid=settings.SRID, spatial_index=True)
+    geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=True,
                                            editable=False)
     valid = models.BooleanField(default=True, verbose_name=_("Validity"),
                                 help_text=_("Approved by manager"))
@@ -374,7 +374,7 @@ class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDelete
 
     geom = models.GeometryField(editable=(not settings.TREKKING_TOPOLOGY_ENABLED),
                                 srid=settings.SRID, null=True,
-                                default=None, spatial_index=False)
+                                default=None, spatial_index=True)
 
     """ Fake srid attribute, that prevents transform() calls when using Django map widgets. """
     srid = settings.API_SRID

@@ -11,18 +11,6 @@ ALTER TABLE core_path ALTER COLUMN arrival SET DEFAULT '';
 ALTER TABLE core_path ALTER COLUMN valid SET DEFAULT false;
 ALTER TABLE core_path ALTER COLUMN visible SET DEFAULT true;
 
-
--------------------------------------------------------------------------------
--- Add spatial index (will boost spatial filters)
--------------------------------------------------------------------------------
-
-CREATE INDEX core_path_geom_idx ON core_path USING gist(geom);
-CREATE INDEX core_path_start_point_idx ON core_path USING gist(ST_StartPoint(geom));
-CREATE INDEX core_path_end_point_idx ON core_path USING gist(ST_EndPoint(geom));
-CREATE INDEX core_path_geom_cadastre_idx ON core_path USING gist(geom_cadastre);
-CREATE INDEX core_path_geom_3d_idx ON core_path USING gist(geom_3d);
-
-
 -------------------------------------------------------------------------------
 -- Keep dates up-to-date
 -------------------------------------------------------------------------------

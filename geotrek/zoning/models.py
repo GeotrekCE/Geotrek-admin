@@ -37,7 +37,7 @@ class RestrictedAreaManager(models.Manager):
 
 class RestrictedArea(models.Model):
     name = models.CharField(max_length=250, verbose_name=_("Name"))
-    geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
+    geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=True)
     area_type = models.ForeignKey(RestrictedAreaType, verbose_name=_("Restricted area"), on_delete=models.CASCADE)
     published = models.BooleanField(verbose_name=_("Published"), default=True, help_text=_("Visible on Geotrek-rando"))
 
@@ -123,7 +123,7 @@ TouristicEvent.add_property('published_areas', lambda self: [area for area in se
 class City(models.Model):
     code = models.CharField(primary_key=True, max_length=6)
     name = models.CharField(max_length=128, verbose_name=_("Name"))
-    geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
+    geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=True)
     published = models.BooleanField(verbose_name=_("Published"), default=True, help_text=_("Visible on Geotrek-rando"))
 
     class Meta:
@@ -191,7 +191,7 @@ TouristicEvent.add_property('published_cities', lambda self: [city for city in s
 
 class District(models.Model):
     name = models.CharField(max_length=128, verbose_name=_("Name"))
-    geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
+    geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=True)
     published = models.BooleanField(verbose_name=_("Published"), default=True, help_text=_("Visible on Geotrek-rando"))
 
     class Meta:
