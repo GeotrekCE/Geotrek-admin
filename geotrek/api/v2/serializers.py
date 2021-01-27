@@ -235,7 +235,6 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
     class TouristicContentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name='apiv2:touristiccontent-detail')
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
-        pictures = AttachmentSerializer(many=True)
         create_datetime = serializers.DateTimeField(source='date_update')
         update_datetime = serializers.DateTimeField(source='date_insert')
         external_id = serializers.IntegerField(source='eid')
@@ -252,10 +251,10 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             model = tourism_models.TouristicContent
             fields = (
                 'id', 'attachments', 'approved', 'category', 'description',
-                'description_teaser', 'geometry', 'pictures',
+                'description_teaser', 'geometry',
                 'practical_info', 'url', 'cities', 'create_datetime',
                 'external_id', 'name', 'pdf', 'portal', 'published',
-                'source', 'structure', 'themes', 'thumbnail',
+                'source', 'structure', 'themes',
                 'update_datetime', 'types', 'contact', 'email',
                 'website', 'reservation_system', 'reservation_id',
             )
@@ -367,7 +366,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         second_external_id = serializers.CharField(source='eid2')
         create_datetime = serializers.SerializerMethodField(read_only=True)
         update_datetime = serializers.SerializerMethodField(read_only=True)
-        thumbnail = serializers.SerializerMethodField(read_only=True, source='pictures')
         attachments = AttachmentSerializer(many=True)
         gpx = serializers.SerializerMethodField('get_gpx_url')
         kml = serializers.SerializerMethodField('get_kml_url')
@@ -418,16 +416,6 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
 
         def get_length_3d(self, obj):
             return round(obj.length_3d_m, 1)
-
-        def get_thumbnail(self, obj):
-            for picture in obj.pictures:
-                return {
-                    'author': picture.author,
-                    'title': picture.title,
-                    'legend': picture.legend,
-                    'url': build_url(self, picture.attachment_file.url),
-                }
-            return {}
 
         def get_gpx_url(self, obj):
             return build_url(self, reverse('trekking:trek_gpx_detail', kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug}))
@@ -495,7 +483,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 'parking_location', 'pdf', 'points_reference', 'portal', 'practice',
                 'previous', 'public_transport', 'published',
                 'reservation_system', 'route', 'second_external_id', 'source',
-                'structure', 'themes', 'thumbnail', 'update_datetime', 'url'
+                'structure', 'themes', 'update_datetime', 'url'
             )
 
     class TourSerializer(TrekSerializer):
@@ -539,7 +527,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
         create_datetime = serializers.SerializerMethodField(read_only=True)
         update_datetime = serializers.SerializerMethodField(read_only=True)
         geometry = geo_serializers.GeometryField(read_only=True, source="geom3d_transformed", precision=7)
-        pictures = AttachmentSerializer(many=True, )
+        attachments = AttachmentSerializer(many=True)
 
         def get_published(self, obj):
             return get_translation_or_dict('published', self, obj)
@@ -563,7 +551,7 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
             model = trekking_models.POI
             fields = (
                 'id', 'create_datetime', 'description', 'external_id',
-                'geometry', 'name', 'pictures', 'published', 'type',
+                'geometry', 'name', 'attachments', 'published', 'type',
                 'update_datetime', 'url'
             )
 
