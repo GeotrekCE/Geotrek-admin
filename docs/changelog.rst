@@ -2,12 +2,18 @@
 CHANGELOG
 =========
 
-2.47.1.dev0
+2.47.1 (2021-01-27)
 -------------------
 
 **Bug fixes**
 
--
+- Remove thumbnail and pictures attribute from API v2
+- Replace them by the attachments attribute on Trek, POI and Touristic content
+- The pdf attribute now returns an absolute URL
+
+**Performances**
+
+- Do not recreate geometry columns indexes at each upgrade
 
 
 2.47.0 (2021-01-26)
