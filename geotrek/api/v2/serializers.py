@@ -288,7 +288,11 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
                 if not common_models.Attachment.objects.attachments_for_object_only_type(obj, file_type).exists():
                     return None
             urlname = 'tourism:touristiccontent_{}printable'.format('booklet_' if settings.USE_BOOKLET_PDF else '')
-            return reverse(urlname, kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
+            url = reverse(urlname, kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
+            request = self.context.get('request')
+            if request:
+                url = request.build_absolute_uri(url)
+            return url
 
     class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         label = serializers.SerializerMethodField(read_only=True)
@@ -436,8 +440,12 @@ if 'geotrek.trekking' in settings.INSTALLED_APPS:
                 file_type = get_object_or_404(common_models.FileType, type="Topoguide")
                 if not common_models.Attachment.objects.attachments_for_object_only_type(obj, file_type).exists():
                     return None
-            return reverse('trekking:trek_{}printable'.format('booklet_' if settings.USE_BOOKLET_PDF else ''),
-                           kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
+            url = reverse('trekking:trek_{}printable'.format('booklet_' if settings.USE_BOOKLET_PDF else ''),
+                          kwargs={'lang': get_language(), 'pk': obj.pk, 'slug': obj.slug})
+            request = self.context.get('request')
+            if request:
+                url = request.build_absolute_uri(url)
+            return url
 
         def get_advice(self, obj):
             return get_translation_or_dict('advice', self, obj)
