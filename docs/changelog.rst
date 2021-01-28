@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.47.2.dev0
+2.47.2 (2021-01-28)
 -------------------
 
 **Bug fixes**
 
--
+- Fix crash in API v2 for touristics contents with alphanumeric external id
 
 
 2.47.1 (2021-01-27)
