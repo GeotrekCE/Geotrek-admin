@@ -237,7 +237,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
         geometry = geo_serializers.GeometryField(read_only=True, source="geom_transformed", precision=7)
         create_datetime = serializers.DateTimeField(source='date_update')
         update_datetime = serializers.DateTimeField(source='date_insert')
-        external_id = serializers.IntegerField(source='eid')
+        external_id = serializers.CharField(source='eid')
         types = serializers.SerializerMethodField(read_only=True)
         cities = serializers.SerializerMethodField(read_only=True)
         attachments = AttachmentSerializer(many=True)
