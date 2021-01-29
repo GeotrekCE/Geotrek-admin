@@ -249,13 +249,11 @@ class InterventionViewsTest(CommonTest):
             infra = InfrastructureFactory.create()
         else:
             infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700000 6600000)')
-        infrastr = "%s" % infra
 
         response = self.client.get('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
                                                                        infra.pk,
                                                                        ContentType.objects.get_for_model(Infrastructure).pk))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, infrastr)
         # Should be able to save form successfully
         data = self.get_good_data()
         response = self.client.post('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
@@ -271,13 +269,11 @@ class InterventionViewsTest(CommonTest):
             infra = InfrastructureFactory.create()
         else:
             infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700000 6600000)')
-        infrastr = "%s" % infra
 
         response = self.client.get('%s?target_id=%s&target_type=%s' % (Intervention.get_add_url(),
                                                                        infra.pk,
                                                                        ContentType.objects.get_for_model(Infrastructure).pk))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, infrastr)
         data = self.get_good_data()
 
         # If form invalid, it should not fail
@@ -294,12 +290,10 @@ class InterventionViewsTest(CommonTest):
             infra = InfrastructureFactory.create()
         else:
             infra = InfrastructureFactory.create(geom='SRID=2154;POINT (700000 6600000)')
-        infrastr = "%s" % infra
 
         intervention = InterventionFactory.create(target=infra)
         response = self.client.get(intervention.get_update_url())
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, infrastr)
         # Should be able to save form successfully
         form = response.context['form']
         data = form.initial

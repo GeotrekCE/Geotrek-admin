@@ -10,8 +10,6 @@
 """
 import json
 
-from django.template import loader
-from django.conf import settings
 from mapentity.widgets import MapWidget
 
 from .models import Topology
@@ -81,22 +79,3 @@ class PointLineTopologyWidget(PointTopologyWidget, LineTopologyWidget):
     """ A widget allowing to point a position with a marker or a list of paths.
     """
     pass
-
-
-class TopologyReadonlyWidget(BaseTopologyWidget):
-    template_name = "mapentity/mapgeometry_fragment.html"
-
-    def render(self, name, value, attrs=None, renderer=None):
-        """
-        Completely bypass widget rendering, and just render a geometry.
-        """
-        topology = value
-        if isinstance(topology, (str, int)):
-            topology = self.deserialize(topology)
-        if topology:
-            geom = topology.geom
-            geom.transform(settings.API_SRID)
-        else:  # if form invalid
-            geom = None
-        context = {'object': geom, 'mapname': name}
-        return loader.render_to_string(self.template_name, context)
