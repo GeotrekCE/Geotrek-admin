@@ -21,6 +21,9 @@ class SiteTest(TestCase):
 class SiteSuperTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        cls.alone = SiteFactory(
+            practice=None
+        )
         cls.parent = SiteFactory(
             practice__name='Bbb',
             practice__sector__name='Bxx',
@@ -70,6 +73,13 @@ class SiteSuperTest(TestCase):
 
     def test_super_wind_ascendants(self):
         self.assertEqual(self.grandchild2.super_wind, ['E', 'S'])
+
+    def test_super_practices_display(self):
+        self.assertEqual(self.alone.super_practices_display, "")
+        self.assertEqual(self.parent.super_practices_display, "(Aaa), Bbb")
+        self.assertEqual(self.child.super_practices_display, "Aaa, (Bbb)")
+        self.assertEqual(self.grandchild1.super_practices_display, "Bbb")
+        self.assertEqual(self.grandchild2.super_practices_display, "(Aaa)")
 
 
 class SectorTest(TestCase):
