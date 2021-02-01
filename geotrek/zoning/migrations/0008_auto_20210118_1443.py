@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('zoning', '0005_auto_20201126_0706'),
+        ('zoning', '0007_auto_20210126_0956'),
     ]
 
     operations = [
