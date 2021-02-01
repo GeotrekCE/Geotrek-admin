@@ -68,6 +68,7 @@ class TouristicContentViewsTests(CommonTest):
             'reservation_system': self.obj.reservation_system.name,
             'slug': 'touristic-content',
             'source': [],
+            'structure': {'id': self.obj.structure.pk, 'name': 'My structure'},
             'themes': [{
                 'id': self.obj.themes.get().pk,
                 'label': self.obj.themes.get().label,
@@ -174,6 +175,7 @@ class TouristicEventViewsTests(CommonTest):
             'slug': 'touristic-event',
             'source': [],
             'speaker': '',
+            'structure': {'id': self.obj.structure.pk, 'name': 'My structure'},
             'target_audience': None,
             'themes': [{
                 'id': self.obj.themes.get().pk,
