@@ -154,11 +154,7 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
 
     @property
     def name_display(self):
-        return '<a data-pk="{pk}" href="{url}" title="{name}">{name}</a>'.format(
-            pk=self.pk,
-            url=self.get_detail_url(),
-            name=self.name
-        )
+        return "- " * self.level + super().name_display
 
     def distance(self, to_cls):
         """Distance to associate this site to another class"""
@@ -188,6 +184,15 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
         for ancestor in self.get_ancestors(ascending=True):
             if ancestor.practice:
                 return Practice.objects.filter(id=ancestor.practice_id)
+
+    @property
+    def super_practices_display(self):
+        practices = self.super_practices
+        if not practices:
+            return ""
+        verbose = [str(practice) if practice == self.practice else "({})".format(practice) for practice in practices]
+        return ", ".join(verbose)
+    super_practices_verbose_name = _('Pratiques')
 
     @property
     def super_sectors(self):

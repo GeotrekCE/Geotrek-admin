@@ -19,7 +19,7 @@ class SiteLayer(MapEntityLayer):
 
 
 class SiteList(MapEntityList):
-    columns = ['id', 'name']
+    columns = ['id', 'name', 'super_practices', 'lastmod']
     filterform = SiteFilterSet
     queryset = Site.objects.all()
 

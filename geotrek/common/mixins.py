@@ -43,6 +43,12 @@ class TimeStampedModelMixin(models.Model):
         self.date_update = fromdb.date_update
         return self
 
+    @property
+    def lastmod_display(self):
+        return self.date_update.strftime("%Y-%m-%y %H:%M")
+
+    lastmod_verbose_name = _("Modification")
+
 
 class NoDeleteManager(DefaultManager):
     # Use this manager when walking through FK/M2M relationships

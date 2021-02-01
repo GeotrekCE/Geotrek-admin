@@ -28,7 +28,7 @@ class ReportList(mapentity_views.MapEntityList):
     filterform = ReportFilterSet
     columns = [
         'id', 'email', 'activity', 'category',
-        'status', 'date_update',
+        'status', 'lastmod',
     ]
 
 
@@ -40,7 +40,7 @@ class ReportFormatList(mapentity_views.MapEntityFormat, ReportList):
     columns = [
         'id', 'email', 'activity', 'comment', 'category',
         'problem_magnitude', 'status', 'related_trek',
-        'date_insert', 'date_update',
+        'date_insert', 'lastmod',
     ]
 
 
