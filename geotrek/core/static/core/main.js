@@ -100,14 +100,6 @@ $(window).on('entity:map', function (e, data) {
     }
 });
 
-
-$(window).on('entity:view:list', function () {
-    // Move all topology-filters to separate tab
-    $('#mainfilter .topology-filter').parent('p')
-                                     .detach().appendTo('#mainfilter > .right');
-});
-
-
 $(window).on('detailmap:ready', function (e, data) {
     var map = data.map,
         layer = data.layer,

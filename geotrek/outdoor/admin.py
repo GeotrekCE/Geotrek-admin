@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.translation import gettext as _
-from geotrek.common.admin import MergeActionMixin
+from geotrek.common.mixins import MergeActionMixin
 from geotrek.outdoor.models import Sector, Practice, SiteType, RatingScale, Rating
 
 if 'modeltranslation' in settings.INSTALLED_APPS:

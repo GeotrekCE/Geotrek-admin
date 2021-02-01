@@ -8,7 +8,10 @@ from mapentity.filters import PolygonFilter, PythonPolygonFilter
 from geotrek.core.models import Topology
 from geotrek.common.filters import (
     StructureRelatedFilterSet, YearFilter, YearBetweenFilter)
+from geotrek.common.filters import RightFilter
 from geotrek.common.widgets import YearSelect
+from geotrek.zoning.filters import ZoningFilterSet
+from geotrek.zoning.models import City, District
 
 from .models import Intervention, Project
 
@@ -24,13 +27,17 @@ class InterventionYearTargetFilter(YearFilter):
         }).distinct()
 
 
-class PolygonTopologyFilter(PolygonFilter):
+class PolygonInterventionFilterMixin(object):
+    def get_geom(self, value):
+        return value
+
     def filter(self, qs, value):
         if not value:
             return qs
         lookup = self.lookup_expr
+
         blade_content_type = ContentType.objects.get_for_model(Blade)
-        topologies = list(Topology.objects.filter(**{'geom__%s' % lookup: value}).values_list('id', flat=True))
+        topologies = list(Topology.objects.filter(**{'geom__%s' % lookup: self.get_geom(value)}).values_list('id', flat=True))
         topologies_intervention = Intervention.objects.existing().filter(target_id__in=topologies).exclude(
             target_type=blade_content_type).distinct('pk').values_list('id', flat=True)
 
@@ -41,8 +48,40 @@ class PolygonTopologyFilter(PolygonFilter):
                                                                          target_type=blade_content_type).values_list('id',
                                                                                                                      flat=True)
             interventions.extend(blades_intervention)
-        qs = qs.filter(pk__in=interventions)
+        if hasattr(self, 'lookup_queryset_in'):
+            lookup_queryset = self.lookup_queryset_in
+        else:
+            lookup_queryset = 'pk__in'
+        qs = qs.filter(**{'%s' % lookup_queryset: interventions})
         return qs
+
+
+class PolygonTopologyFilter(PolygonInterventionFilterMixin, PolygonFilter):
+    pass
+
+
+class ProjectIntersectionFilterCity(PolygonInterventionFilterMixin, RightFilter):
+    model = City
+
+    def __init__(self, *args, **kwargs):
+        super(ProjectIntersectionFilterCity, self).__init__(*args, **kwargs)
+        self.lookup_expr = 'intersects'
+        self.lookup_queryset_in = 'interventions__in'
+
+    def get_geom(self, value):
+        return value.geom
+
+
+class ProjectIntersectionFilterDistrict(PolygonInterventionFilterMixin, RightFilter):
+    model = District
+
+    def __init__(self, *args, **kwargs):
+        super(ProjectIntersectionFilterDistrict, self).__init__(*args, **kwargs)
+        self.lookup_expr = 'intersects'
+        self.lookup_queryset_in = 'interventions__in'
+
+    def get_geom(self, value):
+        return value.geom
 
 
 class InterventionYearSelect(YearSelect):
@@ -52,7 +91,7 @@ class InterventionYearSelect(YearSelect):
         return Intervention.objects.all_years()
 
 
-class InterventionFilterSet(StructureRelatedFilterSet):
+class InterventionFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     ON_CHOICES = (('infrastructure', _("Infrastructure")), ('signage', _("Signage")), ('blade', _("Blade")),
                   ('topology', _("Path")), ('trek', _("Trek")), ('poi', _("POI")), ('service', _("Service")),
                   ('trail', _("Trail")))
@@ -81,6 +120,8 @@ class ProjectFilterSet(StructureRelatedFilterSet):
     in_year = YearBetweenFilter(field_name=('begin_year', 'end_year'),
                                 widget=ProjectYearSelect,
                                 label=_("Year of activity"))
+    city = ProjectIntersectionFilterCity(label=_('City'), required=False)
+    district = ProjectIntersectionFilterDistrict(label=_('District'), required=False)
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Project

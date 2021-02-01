@@ -18,6 +18,7 @@ from geotrek.common.mixins import (TimeStampedModelMixin, NoDeleteMixin,
 from geotrek.common.utils import classproperty, sqlfunction, uniquify
 from geotrek.common.utils.postgresql import debug_pg_notices
 from geotrek.altimetry.models import AltimetryMixin
+from geotrek.zoning.mixins import ZoningPropertiesMixin
 
 from django.db import connection, connections, DEFAULT_DB_ALIAS
 from django.db.models.query import QuerySet
@@ -57,7 +58,7 @@ class PathInvisibleManager(models.Manager):
 # is explicitly disbaled here (see manual index creation in custom SQL files).
 
 
-class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
+class Path(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMixin,
            TimeStampedModelMixin, StructureRelated):
     geom = models.LineStringField(srid=settings.SRID, spatial_index=True)
     geom_cadastre = models.LineStringField(null=True, srid=settings.SRID, spatial_index=True,
@@ -366,7 +367,7 @@ class Path(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
         return None
 
 
-class Topology(AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDeleteMixin):
+class Topology(ZoningPropertiesMixin, AddPropertyMixin, AltimetryMixin, TimeStampedModelMixin, NoDeleteMixin):
     paths = models.ManyToManyField(Path, through='PathAggregation', verbose_name=_("Path"))
     offset = models.FloatField(default=0.0, verbose_name=_("Offset"))  # in SRID units
     kind = models.CharField(editable=False, verbose_name=_("Kind"), max_length=32)

@@ -5,8 +5,6 @@ from django.contrib.gis.geos import Polygon, MultiPolygon
 
 from mapentity.helpers import bbox_split_srid_2154
 
-from geotrek.core.factories import TopologyFactory
-
 from . import models
 
 
@@ -51,27 +49,3 @@ class RestrictedAreaFactory(factory.DjangoModelFactory):
     name = factory.Sequence(lambda n: "Restricted area name %s" % n)
     geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(next(geom_area_iter)), srid=settings.SRID))
     area_type = factory.SubFactory(RestrictedAreaTypeFactory)
-
-
-class RestrictedAreaEdgeFactory(TopologyFactory):
-
-    class Meta:
-        model = models.RestrictedAreaEdge
-
-    restricted_area = factory.SubFactory(RestrictedAreaFactory)
-
-
-class CityEdgeFactory(TopologyFactory):
-
-    class Meta:
-        model = models.CityEdge
-
-    city = factory.SubFactory(CityFactory)
-
-
-class DistrictEdgeFactory(TopologyFactory):
-
-    class Meta:
-        model = models.DistrictEdge
-
-    district = factory.SubFactory(DistrictFactory)

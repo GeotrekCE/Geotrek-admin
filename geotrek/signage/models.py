@@ -16,6 +16,8 @@ from geotrek.core.models import Topology, Path
 
 from geotrek.infrastructure.models import BaseInfrastructure, InfrastructureCondition
 
+from geotrek.zoning.mixins import ZoningPropertiesMixin
+
 
 class Sealing(StructureOrNoneRelated):
     """ A sealing linked with a signage"""
@@ -159,7 +161,7 @@ class BladeType(StructureOrNoneRelated):
         return self.label
 
 
-class Blade(AddPropertyMixin, MapEntityMixin):
+class Blade(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin):
     signage = models.ForeignKey(Signage, verbose_name=_("Signage"),
                                 on_delete=models.PROTECT)
     number = models.CharField(verbose_name=_("Number"), max_length=250)
@@ -180,6 +182,10 @@ class Blade(AddPropertyMixin, MapEntityMixin):
     class Meta:
         verbose_name = _("Blade")
         verbose_name_plural = _("Blades")
+
+    @property
+    def zoning_property(self):
+        return self.signage
 
     @classproperty
     def geomfield(cls):

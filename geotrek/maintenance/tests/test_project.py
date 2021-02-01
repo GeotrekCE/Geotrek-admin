@@ -9,8 +9,6 @@ from geotrek.maintenance.factories import InterventionFactory, ProjectFactory
 from geotrek.core.factories import TopologyFactory
 from geotrek.land.factories import (SignageManagementEdgeFactory, WorkManagementEdgeFactory,
                                     CompetenceEdgeFactory)
-from geotrek.zoning.factories import (CityEdgeFactory, DistrictEdgeFactory,
-                                      RestrictedAreaEdgeFactory)
 
 
 class ProjectTest(TestCase):
@@ -137,10 +135,6 @@ class ProjectLandTest(TestCase):
         self.workmgt = WorkManagementEdgeFactory.create(paths=[(path, 0.3, 0.7)])
         self.competencemgt = CompetenceEdgeFactory.create(paths=[(path, 0.3, 0.7)])
 
-        self.cityedge = CityEdgeFactory.create(paths=[(path, 0.3, 0.7)])
-        self.districtedge = DistrictEdgeFactory.create(paths=[(path, 0.3, 0.7)])
-        self.restricted = RestrictedAreaEdgeFactory.create(paths=[(path, 0.3, 0.7)])
-
     def test_project_has_signage_management(self):
         self.assertIn(self.signagemgt, self.intervention.signage_edges)
         self.assertIn(self.signagemgt, self.project.signage_edges)
@@ -152,18 +146,3 @@ class ProjectLandTest(TestCase):
     def test_project_has_competence_management(self):
         self.assertIn(self.competencemgt, self.intervention.competence_edges)
         self.assertIn(self.competencemgt, self.project.competence_edges)
-
-    def test_project_has_city_management(self):
-        self.assertIn(self.cityedge, self.intervention.city_edges)
-        self.assertIn(self.cityedge, self.project.city_edges)
-        self.assertIn(self.cityedge.city, self.project.cities)
-
-    def test_project_has_district_management(self):
-        self.assertIn(self.districtedge, self.intervention.district_edges)
-        self.assertIn(self.districtedge, self.project.district_edges)
-        self.assertIn(self.districtedge.district, self.project.districts)
-
-    def test_project_has_restricted_management(self):
-        self.assertIn(self.restricted, self.intervention.area_edges)
-        self.assertIn(self.restricted, self.project.area_edges)
-        self.assertIn(self.restricted.restricted_area, self.project.areas)

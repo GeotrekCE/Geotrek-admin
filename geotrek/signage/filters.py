@@ -7,6 +7,7 @@ from geotrek.common.filters import StructureRelatedFilterSet, ValueFilter
 from geotrek.maintenance.filters import InterventionYearTargetFilter
 from geotrek.signage.models import Signage, Blade
 from geotrek.signage.widgets import SignageYearSelect, SignageImplantationYearSelect
+from geotrek.zoning.filters import ZoningFilterSet
 
 from mapentity.filters import MapEntityFilterSet, PolygonFilter
 
@@ -20,7 +21,7 @@ class PolygonTopologyFilter(PolygonFilter):
         return qs.filter(**{'%s__in' % self.field_name: inner_qs})
 
 
-class SignageFilterSet(StructureRelatedFilterSet):
+class SignageFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     description = CharFilter(label=_('Description'), lookup_expr='icontains')
     implantation_year = ValueFilter(field_name='implantation_year',

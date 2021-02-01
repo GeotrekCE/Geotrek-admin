@@ -20,6 +20,7 @@ from geotrek.common.mixins import TimeStampedModelMixin, NoDeleteMixin, AddPrope
 from geotrek.common.utils import classproperty
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.signage.models import Signage
+from geotrek.zoning.mixins import ZoningPropertiesMixin
 
 if 'geotrek.signage' in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
@@ -31,7 +32,7 @@ class InterventionManager(NoDeleteManager):
             .order_by('-year').values_list('year', flat=True).distinct()
 
 
-class Intervention(AddPropertyMixin, MapEntityMixin, AltimetryMixin,
+class Intervention(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, AltimetryMixin,
                    TimeStampedModelMixin, StructureRelated, NoDeleteMixin):
 
     target_type = models.ForeignKey(ContentType, null=True, on_delete=models.CASCADE)
@@ -360,7 +361,7 @@ class ProjectManager(NoDeleteManager):
         return all_years
 
 
-class Project(AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
+class Project(ZoningPropertiesMixin, AddPropertyMixin, MapEntityMixin, TimeStampedModelMixin,
               StructureRelated, NoDeleteMixin):
 
     name = models.CharField(verbose_name=_("Name"), max_length=128)
