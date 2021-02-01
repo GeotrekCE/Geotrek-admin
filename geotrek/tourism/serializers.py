@@ -5,6 +5,7 @@ from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from django.conf import settings
 from django.utils.translation import gettext as _
 
+from geotrek.authent.serializers import StructureSerializer
 from geotrek.common.serializers import (ThemeSerializer, PublishableSerializerMixin,
                                         PictogramSerializerMixin, RecordSourceSerializer,
                                         PicturesSerializerMixin, TranslatedModelSerializer,
@@ -85,6 +86,7 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
     source = RecordSourceSerializer(many=True)
     portal = TargetPortalSerializer(many=True)
     reservation_system = rest_serializers.ReadOnlyField(source='reservation_system.name', default="")
+    structure = StructureSerializer()
 
     # Nearby
     touristic_contents = CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
@@ -106,7 +108,7 @@ class TouristicContentSerializer(PicturesSerializerMixin, PublishableSerializerM
                   'themes', 'contact', 'email', 'website', 'practical_info',
                   'type1', 'type2', 'touristic_contents', 'touristic_events',
                   'treks', 'pois', 'source', 'portal', 'approved',
-                  'reservation_id', 'reservation_system',) + \
+                  'reservation_id', 'reservation_system', 'structure') + \
             ZoningSerializerMixin.Meta.fields + \
             PublishableSerializerMixin.Meta.fields + \
             PicturesSerializerMixin.Meta.fields
@@ -135,6 +137,7 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
     type = TouristicEventTypeSerializer()
     source = RecordSourceSerializer(many=True)
     portal = TargetPortalSerializer(many=True)
+    structure = StructureSerializer()
 
     # Nearby
     touristic_contents = CloseTouristicContentSerializer(many=True, source='published_touristic_contents')
@@ -157,7 +160,7 @@ class TouristicEventSerializer(PicturesSerializerMixin, PublishableSerializerMix
         model = tourism_models.TouristicEvent
         fields = ('id', 'description_teaser', 'description', 'themes',
                   'begin_date', 'end_date', 'duration', 'meeting_point',
-                  'meeting_time', 'contact', 'email', 'website',
+                  'meeting_time', 'contact', 'email', 'website', 'structure',
                   'organizer', 'speaker', 'type', 'accessibility',
                   'participant_number', 'booking', 'target_audience',
                   'practical_info', 'touristic_contents', 'touristic_events',
