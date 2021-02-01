@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     replaces = [('zoning', '0001_initial'), ('zoning', '0002_auto_20200211_1011'),
                 ('zoning', '0003_auto_20200406_1412'), ('zoning', '0004_auto_20200831_1406'),
                 ('zoning', '0005_auto_20201126_0706'), ('zoning', '0006_clean_spatial_index'),
-                ('zoning', '0007_auto_20210126_0956')]
+                ('zoning', '0007_auto_20210126_0956'), ('zoning', '0008_auto_20210118_1443')]
 
     initial = True
 
