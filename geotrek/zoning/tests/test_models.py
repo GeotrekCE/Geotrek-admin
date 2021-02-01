@@ -40,28 +40,28 @@ class ZoningLayersUpdateTest(TestCase):
                               srid=settings.SRID)))
 
         # There should be automatic link after insert
-        self.assertEqual(p1.cities.count(), 1)
-        self.assertEqual(p2.cities.count(), 2)
-        self.assertEqual(p3.cities.count(), 1)
-        self.assertEqual(p4.cities.count(), 1)
+        self.assertEqual(len(p1.cities), 1)
+        self.assertEqual(len(p2.cities), 2)
+        self.assertEqual(len(p3.cities), 1)
+        self.assertEqual(len(p4.cities), 1)
 
         c1.geom = MultiPolygon(Polygon(((1.5, 0), (2, 0), (2, 4), (1.5, 4), (1.5, 0)),
                                        srid=settings.SRID))
         c1.save()
 
         # Links should have been updated after geom update
-        self.assertEqual(p1.cities.count(), 0)
-        self.assertEqual(p2.cities.count(), 2)
-        self.assertEqual(p3.cities.count(), 1)
-        self.assertEqual(p4.cities.count(), 1)
+        self.assertEqual(len(p1.cities), 0)
+        self.assertEqual(len(p2.cities), 2)
+        self.assertEqual(len(p3.cities), 1)
+        self.assertEqual(len(p4.cities), 1)
 
         c1.delete()
 
         # Links should have been updated after delete
-        self.assertEqual(p1.cities.count(), 0)
-        self.assertEqual(p2.cities.count(), 1)
-        self.assertEqual(p3.cities.count(), 1)
-        self.assertEqual(p4.cities.count(), 1)
+        self.assertEqual(len(p1.cities), 0)
+        self.assertEqual(len(p2.cities), 1)
+        self.assertEqual(len(p3.cities), 1)
+        self.assertEqual(len(p4.cities), 1)
 
     def test_city_with_path_ends_on_border(self):
         """
@@ -84,8 +84,8 @@ class ZoningLayersUpdateTest(TestCase):
         # Create a path after city to the the another trigger
         p2 = PathFactory(geom=LineString((1.5, 2), (1.5, 1)))
         p2.save()
-        self.assertEqual(p1.cities.count(), 1)
-        self.assertEqual(p2.cities.count(), 1)
+        self.assertEqual(len(p1.cities), 1)
+        self.assertEqual(len(p2.cities), 1)
 
     def test_city_with_topo(self):
         """
@@ -108,7 +108,7 @@ class ZoningLayersUpdateTest(TestCase):
             signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
         else:
             signage = SignageFactory.create(geom=Point(1, 1.5, srid=settings.SRID))
-        self.assertEqual(signage.cities.count(), 1)
+        self.assertEqual(len(signage.cities), 1)
 
     def test_city_with_topo_2(self):
         """
@@ -130,7 +130,7 @@ class ZoningLayersUpdateTest(TestCase):
             signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
         else:
             signage = SignageFactory.create(geom=Point(1, 1.5, srid=settings.SRID))
-        self.assertEqual(signage.cities.count(), 0)
+        self.assertEqual(len(signage.cities), 0)
 
     @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
     def test_city_with_topo_3(self):
@@ -152,7 +152,7 @@ class ZoningLayersUpdateTest(TestCase):
             signage = SignageFactory.create(paths=[(p, 1, 1)])
         else:
             signage = SignageFactory.create(geom=Point(1.5, 0.5, srid=settings.SRID))
-        self.assertEqual(signage.cities.count(), 1)
+        self.assertEqual(len(signage.cities), 1)
 
     def test_city_with_topo_on_loop(self):
         """
@@ -175,7 +175,7 @@ class ZoningLayersUpdateTest(TestCase):
             signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
         else:
             signage = SignageFactory.create(geom=Point(1.5, 1.5, srid=settings.SRID))
-        self.assertEqual(signage.cities.count(), 1)
+        self.assertEqual(len(signage.cities), 1)
 
     def test_city_with_topo_on_loop_2(self):
         """
@@ -197,7 +197,7 @@ class ZoningLayersUpdateTest(TestCase):
             signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
         else:
             signage = SignageFactory.create(geom=Point(1.5, 1.5, srid=settings.SRID))
-        self.assertEqual(signage.cities.count(), 0)
+        self.assertEqual(len(signage.cities), 0)
 
     def test_city_with_topo_on_loop_3(self):
         """
@@ -219,7 +219,7 @@ class ZoningLayersUpdateTest(TestCase):
             signage = SignageFactory.create(paths=[(p, 0.75, 0.75)])
         else:
             signage = SignageFactory.create(geom=Point(1.5, 0.5, srid=settings.SRID))
-        self.assertEqual(signage.cities.count(), 1)
+        self.assertEqual(len(signage.cities), 1)
 
     def test_couches_sig_link(self):
         """
@@ -248,8 +248,8 @@ class ZoningLayersUpdateTest(TestCase):
         p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5)))
         p.save()
 
-        self.assertEqual(p.areas.count(), 2)
-        self.assertEqual(p.cities.count(), 1)
+        self.assertEqual(len(p.areas), 2)
+        self.assertEqual(len(p.cities), 1)
 
     def test_couches_sig_link_path_loop(self):
         """
@@ -278,8 +278,8 @@ class ZoningLayersUpdateTest(TestCase):
         p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)))
         p.save()
 
-        self.assertEqual(p.areas.count(), 2)
-        self.assertEqual(p.cities.count(), 1)
+        self.assertEqual(len(p.areas), 2)
+        self.assertEqual(len(p.cities), 1)
 
 
 class ZoningModelsTest(TestCase):

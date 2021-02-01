@@ -9,51 +9,84 @@ from geotrek.zoning.factories import CityFactory, DistrictFactory, RestrictedAre
 class ZoningPropertiesMixinTest(TestCase):
     @classmethod
     def setUpClass(cls):
+        cls.geom_1_wkt = 'SRID=2154;MULTIPOLYGON(((200000 300000, 900000 300000, 900000 1200000, 200000 1200000, ' \
+                         '200000 300000)))'
+        cls.geom_2_wkt = 'SRID=2154;MULTIPOLYGON(((900000 300000, 1100000 300000, 1100000 1200000, 900000 1200000, ' \
+                         '900000 300000)))'
         super(ZoningPropertiesMixinTest, cls).setUpClass()
-        cls.city = CityFactory.create()
-        cls.district = DistrictFactory.create()
-        cls.area = RestrictedAreaFactory.create()
-        cls.path = PathFactory.create(geom='SRID=2154;LINESTRING(200000 300000, 1100000 1200000)')
+        cls.city = CityFactory.create(geom=cls.geom_1_wkt)
+        cls.district = DistrictFactory.create(geom=cls.geom_1_wkt)
+        cls.area = RestrictedAreaFactory.create(geom=cls.geom_1_wkt)
+
+    def setUp(self):
+        self.path = PathFactory.create(geom='SRID=2154;LINESTRING(200000 300000, 1100000 1200000)')
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.trek = TrekFactory.create(paths=[cls.path], published=False)
+            self.trek = TrekFactory.create(paths=[self.path], published=False)
         else:
-            cls.trek = TrekFactory.create(geom='SRID=2154;LINESTRING(200000 300000, 1100000 1200000)', published=False)
+            self.trek = TrekFactory.create(geom='SRID=2154;LINESTRING(200000 300000, 1100000 1200000)', published=False)
 
     def test_cities(self):
-        city = CityFactory.create(published=False)
+        city = CityFactory.create(published=False, geom=self.geom_2_wkt)
 
-        self.assertQuerysetEqual(self.path.cities, [repr(city), repr(self.city)], ordered=False)
-        self.assertEqual(self.path.cities.count(), 2)
-        self.assertQuerysetEqual(self.path.published_cities, [repr(city), repr(self.city)], ordered=False)
-        self.assertEqual(self.path.published_cities.count(), 2)
+        self.assertQuerysetEqual(self.path.cities, [repr(self.city), repr(city)])
+        self.assertEqual(len(self.path.cities), 2)
+        self.assertQuerysetEqual(self.path.published_cities, [repr(self.city), repr(city)])
+        self.assertEqual(len(self.path.published_cities), 2)
 
-        self.assertQuerysetEqual(self.trek.cities, [repr(city), repr(self.city)], ordered=False)
-        self.assertEqual(self.trek.cities.count(), 2)
-        self.assertQuerysetEqual(self.trek.published_cities, [repr(self.city)], ordered=False)
-        self.assertEqual(self.trek.published_cities.count(), 1)
+        self.assertQuerysetEqual(self.trek.cities, [repr(self.city), repr(city)])
+        self.assertEqual(len(self.trek.cities), 2)
+        self.assertQuerysetEqual(self.trek.published_cities, [repr(self.city)],)
+        self.assertEqual(len(self.trek.published_cities), 1)
+
+        # Check reverse order
+        self.path.reverse()
+        self.path.save()
+
+        self.assertQuerysetEqual(self.path.cities, [repr(city), repr(self.city)])
+        self.assertEqual(len(self.path.cities), 2)
+        self.assertQuerysetEqual(self.path.published_cities, [repr(city), repr(self.city)])
+        self.assertEqual(len(self.path.published_cities), 2)
 
     def test_districts(self):
-        district = DistrictFactory.create(published=False)
+        district = DistrictFactory.create(published=False, geom=self.geom_2_wkt)
 
-        self.assertQuerysetEqual(self.path.districts, [repr(district), repr(self.district)], ordered=False)
-        self.assertEqual(self.path.districts.count(), 2)
-        self.assertQuerysetEqual(self.path.published_districts, [repr(district), repr(self.district)], ordered=False)
-        self.assertEqual(self.path.published_districts.count(), 2)
+        self.assertQuerysetEqual(self.path.districts, [repr(self.district), repr(district)])
+        self.assertEqual(len(self.path.districts), 2)
+        self.assertQuerysetEqual(self.path.published_districts, [repr(self.district), repr(district)])
+        self.assertEqual(len(self.path.published_districts), 2)
 
-        self.assertQuerysetEqual(self.trek.districts, [repr(district), repr(self.district)], ordered=False)
-        self.assertEqual(self.trek.districts.count(), 2)
-        self.assertQuerysetEqual(self.trek.published_districts, [repr(self.district)], ordered=False)
-        self.assertEqual(self.trek.published_districts.count(), 1)
+        self.assertQuerysetEqual(self.trek.districts, [repr(self.district), repr(district)])
+        self.assertEqual(len(self.trek.districts), 2)
+        self.assertQuerysetEqual(self.trek.published_districts, [repr(self.district)])
+        self.assertEqual(len(self.trek.published_districts), 1)
+
+        # Check reverse order
+        self.path.reverse()
+        self.path.save()
+
+        self.assertQuerysetEqual(self.path.districts, [repr(district), repr(self.district)])
+        self.assertEqual(len(self.path.districts), 2)
+        self.assertQuerysetEqual(self.path.published_districts, [repr(district), repr(self.district)])
+        self.assertEqual(len(self.path.published_districts), 2)
 
     def test_areas(self):
-        area = RestrictedAreaFactory.create(published=False)
+        area = RestrictedAreaFactory.create(published=False, geom=self.geom_2_wkt)
 
-        self.assertQuerysetEqual(self.path.areas, [repr(area), repr(self.area)], ordered=False)
-        self.assertEqual(self.path.areas.count(), 2)
-        self.assertQuerysetEqual(self.path.published_areas, [repr(area), repr(self.area)], ordered=False)
-        self.assertEqual(self.path.published_areas.count(), 2)
+        self.assertQuerysetEqual(self.path.areas, [repr(self.area), repr(area)])
+        self.assertEqual(len(self.path.areas), 2)
+        self.assertQuerysetEqual(self.path.published_areas, [repr(self.area), repr(area)])
+        self.assertEqual(len(self.path.published_areas), 2)
 
-        self.assertQuerysetEqual(self.trek.areas, [repr(area), repr(self.area)], ordered=False)
-        self.assertEqual(self.trek.areas.count(), 2)
-        self.assertQuerysetEqual(self.trek.published_areas, [repr(self.area)], ordered=False)
-        self.assertEqual(self.trek.published_areas.count(), 1)
+        self.assertQuerysetEqual(self.trek.areas, [repr(self.area), repr(area)])
+        self.assertEqual(len(self.trek.areas), 2)
+        self.assertQuerysetEqual(self.trek.published_areas, [repr(self.area)])
+        self.assertEqual(len(self.trek.published_areas), 1)
+
+        # Check reverse order
+        self.path.reverse()
+        self.path.save()
+
+        self.assertQuerysetEqual(self.path.areas, [repr(area), repr(self.area)])
+        self.assertEqual(len(self.path.areas), 2)
+        self.assertQuerysetEqual(self.path.published_areas, [repr(area), repr(self.area)])
+        self.assertEqual(len(self.path.published_areas), 2)
