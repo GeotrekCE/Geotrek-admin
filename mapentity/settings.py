@@ -84,7 +84,7 @@ _MAP_STYLES = {
     'draw': {'color': '#35FF00', 'opacity': 0.8, 'weight': 3},
     'print': {},
 }
-
+_MAP_STYLES.update(getattr(settings, 'MAP_STYLES', {}))
 
 _LEAFLET_PLUGINS = OrderedDict([
     ('leaflet.overintent', {
