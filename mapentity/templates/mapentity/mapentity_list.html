@@ -31,12 +31,15 @@
       <div id="list-panel">
 
         <div class="btn-toolbar">
+          <h1 class="list-title">{{ objectsname }}</h1>
           {% block mainactions %}
           <div class="btn-group mr-2">
             {% if can_add %}
-            <a class="btn btn-success" href="{{ model.get_add_url }}"><i class="bi bi-plus"></i> {{ create_label }}</a>
+            <a class="btn btn-success" href="{{ model.get_add_url }}">
+              <i class="bi bi-plus"></i> <span class="d-none d-sm-inline">{{ create_label }}</span></a>
             {% else %}
-            <span class="btn disabled" href="#"><i class="bi bi-plus"></i> {{ create_label }}</span>
+            <span class="btn disabled" href="#">
+              <i class="bi bi-plus"></i> <span class="d-none d-sm-inline">{{ create_label }}</span></span>
             {% endif %}
           </div>
           {% endblock mainactions %}

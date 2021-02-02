@@ -7,7 +7,7 @@
         {% if request.user.is_authenticated %}
         <li class="nav-item {% if viewname == 'list' %}{{ modelname }} active{% endif %}">
           <div id="entitylist-dropdown" class="btn-group">
-            <button class="btn btn-light" onclick="javascript:location='{% url 'home' %}';">
+            <button class="btn-list btn btn-light" onclick="javascript:location='{% url 'home' %}';">
               {% trans "List" %} <span id="nbresults" class="badge badge-secondary">?</span>
             </button>
             <button class="btn btn-light dropdown-toggle dropdown-toggle-split"

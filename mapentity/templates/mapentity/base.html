@@ -26,14 +26,18 @@
 
     <style>
     {% for entity in allowed_entities %}
+        .list-panel.{{ entity.modelname }},
         .form-panel.{{ entity.modelname }},
         .details-panel.{{ entity.modelname }} {
-            background: url({% static entity.icon_big %}) no-repeat;
+            background-image: url({% static entity.icon_big %});
         }
         li.history.{{ entity.modelname }} > a,
         li.history.{{ entity.modelname }} button:first-child {
             background: url({% static entity.icon_small %}) no-repeat;
             background-position: left center;
+        }
+        .nav-item.{{ entity.modelname }} .btn-list {
+            background-image: url({% static entity.icon_big %});
         }
     {% endfor %}
     {% if not DEBUG %}
