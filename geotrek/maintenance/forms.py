@@ -11,7 +11,6 @@ from crispy_forms.layout import Fieldset, Layout, Div, HTML
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.models import Topology
-from geotrek.core.widgets import TopologyReadonlyWidget
 
 from .models import Intervention, Project
 
@@ -142,8 +141,7 @@ class InterventionForm(CommonForm):
                     url=self.instance.target.get_detail_url()
             )
             # Topology is readonly
-            self.fields['topology'].required = False
-            self.fields['topology'].widget = TopologyReadonlyWidget()
+            del self.fields['topology']
 
         # Length is not editable in AltimetryMixin
         self.fields['length'].initial = self.instance.length
@@ -155,7 +153,7 @@ class InterventionForm(CommonForm):
         target = self.instance.target
         if not target.pk:
             target.save()
-        topology = self.cleaned_data.pop('topology')
+        topology = self.cleaned_data.get('topology')
         if topology and topology.pk != target.pk:
             target.mutate(topology)
         intervention = super().save(*args, **kwargs, commit=False)

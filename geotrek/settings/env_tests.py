@@ -4,6 +4,8 @@
 
 TEST = True
 
+ALLOWED_HOSTS = ['localhost']
+
 CELERY_ALWAYS_EAGER = True
 
 TEST_EXCLUDE = ('django',)

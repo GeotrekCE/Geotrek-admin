@@ -1118,6 +1118,7 @@ class SplitPathPointTopologyTest(TestCase):
         poi = Point(1, 3, srid=settings.SRID)
         poi.transform(settings.API_SRID)
         topology = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
+        topology.save()
         aggr = topology.aggregations.all()[0]
         position = topology.geom.coords
 
@@ -1153,6 +1154,7 @@ class SplitPathPointTopologyTest(TestCase):
         poi = Point(7, 3, srid=settings.SRID)
         poi.transform(settings.API_SRID)
         topology = Topology.deserialize({'lat': poi.y, 'lng': poi.x})
+        topology.save()
         aggr = topology.aggregations.all()[0]
         position = topology.geom.coords
 
