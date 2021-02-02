@@ -84,7 +84,12 @@ _MAP_STYLES = {
     'draw': {'color': '#35FF00', 'opacity': 0.8, 'weight': 3},
     'print': {},
 }
-_MAP_STYLES.update(getattr(settings, 'MAP_STYLES', {}))
+
+for name, override in getattr(settings, 'MAP_STYLES', {}):
+    # override default MAP_STYLES with given settings
+    merged = _MAP_STYLES.get(name, {})
+    merged.update(override)
+    _MAP_STYLES[name] = merged
 
 _LEAFLET_PLUGINS = OrderedDict([
     ('leaflet.overintent', {
