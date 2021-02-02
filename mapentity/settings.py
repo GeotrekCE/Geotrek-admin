@@ -85,7 +85,7 @@ _MAP_STYLES = {
     'print': {},
 }
 
-for name, override in getattr(settings, 'MAP_STYLES', {}):
+for name, override in getattr(settings, 'MAP_STYLES', {}).items():
     # override default MAP_STYLES with given settings
     merged = _MAP_STYLES.get(name, {})
     merged.update(override)
