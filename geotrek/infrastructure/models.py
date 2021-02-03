@@ -108,9 +108,10 @@ class BaseInfrastructure(BasePublishableMixin, Topology, StructureRelated):
 
 class InfrastructureGISManager(NoDeleteManager):
     """ Overide default typology mixin manager"""
-    def all_implantation_years(self):
-        all_years = self.get_queryset().filter(implantation_year__isnull=False)\
-            .order_by('-implantation_year').values_list('implantation_year', flat=True).distinct('implantation_year')
+    def implantation_year_choices(self):
+        all_years = self.get_queryset().existing().filter(implantation_year__isnull=False) \
+            .order_by('-implantation_year').distinct('implantation_year') \
+            .values_list('implantation_year', 'implantation_year')
         return all_years
 
 

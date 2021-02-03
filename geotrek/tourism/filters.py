@@ -1,20 +1,34 @@
 from django.utils.translation import gettext_lazy as _
 
+from django_filters.filters import ModelMultipleChoiceFilter
 import django_filters.rest_framework
 from django.db.models import Q
 from geotrek.authent.filters import StructureRelatedFilterSet
+from django import forms
 from django.utils.datetime_safe import datetime
 
-from .models import TouristicContent, TouristicEvent
+from .models import TouristicContent, TouristicEvent, TouristicContentType1, TouristicContentType2
 from geotrek.zoning.filters import ZoningFilterSet
 
 
+class TypeField(forms.ModelMultipleChoiceField):
+    def label_from_instance(self, obj):
+        return "{} ({})".format(str(obj), str(obj.category))
+
+
+class TypeFilter(ModelMultipleChoiceFilter):
+    field_class = TypeField
+
+
 class TouristicContentFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
+    type1 = TypeFilter(queryset=TouristicContentType1.objects.all())
+    type2 = TypeFilter(queryset=TouristicContentType2.objects.all())
+
     class Meta(StructureRelatedFilterSet.Meta):
         model = TouristicContent
         fields = StructureRelatedFilterSet.Meta.fields + [
-            'published', 'category', 'themes', 'type1',
-            'type2', 'approved', 'source', 'portal', 'reservation_system',
+            'published', 'category', 'type1', 'type2', 'themes',
+            'approved', 'source', 'portal', 'reservation_system',
         ]
 
 

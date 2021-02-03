@@ -21,11 +21,11 @@ class TestFilter(TopologyFilter):
 
 
 class TopologyFilterTest(TestCase):
-    def test_value_to_edges(self):
+    def test_values_to_edges(self):
         topology = TestFilter()
 
         with self.assertRaises(NotImplementedError):
-            topology.value_to_edges('Value')
+            topology.values_to_edges(['Value'])
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
@@ -39,6 +39,6 @@ class TopologyFilterTrailTest(TestCase):
         qs = PathFilterSet().qs
         self.assertEqual(qs.count(), 2)
 
-        data = {'trail': self.trail}
+        data = {'trail': [self.trail]}
         qs = PathFilterSet(data=data).qs
         self.assertEqual(qs.count(), 1)

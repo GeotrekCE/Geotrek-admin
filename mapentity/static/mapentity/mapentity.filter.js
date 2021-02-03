@@ -32,8 +32,6 @@ MapEntity.TogglableFilter = L.Class.extend({
         });
 
         // Use chosen for multiple values
-        // Remove empty value (set with empty_label in Django for all choice fields)
-        $('#mainfilter select[multiple] option:first-child').remove();
         $("form#mainfilter").bind("reset", function() {
             setTimeout(function() {
                 $('form#mainfilter select[multiple]').trigger('chosen:updated');

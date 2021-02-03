@@ -3,6 +3,7 @@ from multiselectfield import MultiSelectField
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.db.models import Q
+from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins import TimeStampedModelMixin, AddPropertyMixin, PublishableMixin, OptionalPictogramMixin
@@ -175,56 +176,43 @@ class Site(ZoningPropertiesMixin, AddPropertyMixin, PublishableMixin, MapEntityM
 
     @property
     def super_practices(self):
-        "Return practices of itself and its descendants if exits. Else return practice of nearest ascendant."
+        "Return practices of itself and its descendants"
         practices_id = self.get_descendants(include_self=True) \
             .exclude(practice=None) \
             .values_list('practice_id', flat=True)
-        if practices_id:
-            return Practice.objects.filter(id__in=practices_id)  # Sorted and unique
-        for ancestor in self.get_ancestors(ascending=True):
-            if ancestor.practice:
-                return Practice.objects.filter(id=ancestor.practice_id)
+        return Practice.objects.filter(id__in=practices_id)  # Sorted and unique
 
     @property
     def super_practices_display(self):
         practices = self.super_practices
         if not practices:
             return ""
-        verbose = [str(practice) if practice == self.practice else "({})".format(practice) for practice in practices]
+        verbose = [
+            str(practice) if practice == self.practice else "<i>{}</i>".format(escape(practice))
+            for practice in practices
+        ]
         return ", ".join(verbose)
     super_practices_verbose_name = _('Pratiques')
 
     @property
     def super_sectors(self):
-        "Return sectors of itself and its descendants if exits. Else return practice of nearest ascendant."
+        "Return sectors of itself and its descendants"
         sectors_id = self.get_descendants(include_self=True) \
             .exclude(practice=None) \
             .values_list('practice__sector_id', flat=True)
-        if sectors_id:
-            return Sector.objects.filter(id__in=sectors_id)  # Sorted and unique
-        for ancestor in self.get_ancestors(ascending=True):
-            if ancestor.practice:
-                return Sector.objects.filter(id=ancestor.practice.sector_id)
+        return Sector.objects.filter(id__in=sectors_id)  # Sorted and unique
 
     @property
     def super_orientation(self):
-        "Return orientation of itself and its descendants if exits. Else return orientation of nearest ascendant."
+        "Return orientation of itself and its descendants"
         orientation = set(sum(self.get_descendants(include_self=True).values_list('orientation', flat=True), []))
-        if orientation:
-            return [o for o, _o in self.ORIENTATION_CHOICES if o in orientation]  # Sorting
-        for ancestor in self.get_ancestors(ascending=True):
-            if ancestor.orientation:
-                return ancestor.orientation
+        return [o for o, _o in self.ORIENTATION_CHOICES if o in orientation]  # Sorting
 
     @property
     def super_wind(self):
-        "Return wind of itself and its descendants if exits. Else return wind of nearest ascendant."
+        "Return wind of itself and its descendants"
         wind = set(sum(self.get_descendants(include_self=True).values_list('wind', flat=True), []))
-        if wind:
-            return [o for o, _o in self.ORIENTATION_CHOICES if o in wind]  # Sorting
-        for ancestor in self.get_ancestors(ascending=True):
-            if ancestor.wind:
-                return ancestor.wind
+        return [o for o, _o in self.ORIENTATION_CHOICES if o in wind]  # Sorting
 
 
 Path.add_property('sites', lambda self: intersecting(Site, self), _("Sites"))

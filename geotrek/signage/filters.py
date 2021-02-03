@@ -1,13 +1,12 @@
-from django_filters import CharFilter, ModelChoiceFilter
+from django_filters import CharFilter, ModelChoiceFilter, MultipleChoiceFilter
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.authent.models import Structure
 from geotrek.core.models import Topology
 from geotrek.authent.filters import StructureRelatedFilterSet
-from geotrek.common.filters import ValueFilter
-from geotrek.maintenance.filters import InterventionYearTargetFilter
+from geotrek.maintenance.models import Intervention
 from geotrek.signage.models import Signage, Blade
-from geotrek.signage.widgets import SignageYearSelect, SignageImplantationYearSelect
 from geotrek.zoning.filters import ZoningFilterSet
 
 from mapentity.filters import MapEntityFilterSet, PolygonFilter
@@ -25,18 +24,21 @@ class PolygonTopologyFilter(PolygonFilter):
 class SignageFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     description = CharFilter(label=_('Description'), lookup_expr='icontains')
-    implantation_year = ValueFilter(field_name='implantation_year',
-                                    widget=SignageImplantationYearSelect)
-    intervention_year = InterventionYearTargetFilter(widget=SignageYearSelect)
-
-    def __init__(self, *args, **kwargs):
-        super(SignageFilterSet, self).__init__(*args, **kwargs)
+    implantation_year = MultipleChoiceFilter(choices=Signage.objects.implantation_year_choices())
+    intervention_year = MultipleChoiceFilter(label=_("Intervention year"), method='filter_intervention_year',
+                                             choices=Intervention.objects.year_choices())
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Signage
         fields = StructureRelatedFilterSet.Meta.fields + ['type', 'condition', 'implantation_year', 'intervention_year',
                                                           'published', 'code', 'printed_elevation', 'manager',
                                                           'sealing']
+
+    def filter_intervention_year(self, qs, name, value):
+        signage_ct = ContentType.objects.get_for_model(Signage)
+        interventions = Intervention.objects.filter(target_type=signage_ct, date__year__in=value) \
+            .values_list('target_id', flat=True)
+        return qs.filter(id__in=interventions).distinct()
 
 
 class BladeFilterSet(MapEntityFilterSet):
