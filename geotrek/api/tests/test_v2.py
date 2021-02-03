@@ -93,12 +93,12 @@ STRUCTURE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name'])
 TREK_LABEL_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'advice', 'filter', 'name', 'pictogram'])
 
 INFORMATION_DESK_PROPERTIES_JSON_STRUCTURE = sorted([
-    'description', 'email', 'latitude', 'longitude',
+    'id', 'description', 'email', 'latitude', 'longitude',
     'municipality', 'name', 'phone', 'photo_url',
     'postal_code', 'street', 'type', 'website'
 ])
 
-SOURCE_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'pictogram', 'website'])
+SOURCE_PROPERTIES_JSON_STRUCTURE = sorted(['id', 'name', 'pictogram', 'website'])
 
 RESERVATION_SYSTEM_PROPERTIES_JSON_STRUCTURE = sorted(['name', 'id'])
 

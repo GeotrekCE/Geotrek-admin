@@ -150,7 +150,7 @@ class TargetPortalSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 class RecordSourceSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = common_models.RecordSource
-        fields = ('name', 'pictogram', 'website')
+        fields = ('id', 'name', 'pictogram', 'website')
 
 
 class AttachmentSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -322,7 +322,7 @@ if 'geotrek.tourism' in settings.INSTALLED_APPS:
             model = tourism_models.InformationDesk
             geo_field = 'geom'
             fields = (
-                'description', 'email', 'latitude', 'longitude',
+                'id', 'description', 'email', 'latitude', 'longitude',
                 'municipality', 'name', 'phone', 'photo_url',
                 'postal_code', 'street', 'type', 'website'
             )
