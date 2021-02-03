@@ -77,7 +77,7 @@ class JSSettings(JSONResponseMixin, TemplateView):
         dictsettings['debug'] = settings.DEBUG
         dictsettings['map'] = dict(
             extent=getattr(settings, 'LEAFLET_CONFIG', {}).get('SPATIAL_EXTENT'),
-            styles=_MAP_STYLES,
+            styles=app_settings['MAP_STYLES'],
         )
 
         # URLs
