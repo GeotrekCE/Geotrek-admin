@@ -2,7 +2,7 @@ from django.utils.translation import gettext_lazy as _
 
 import django_filters.rest_framework
 from django.db.models import Q
-from geotrek.common.filters import StructureRelatedFilterSet
+from geotrek.authent.filters import StructureRelatedFilterSet
 from django.utils.datetime_safe import datetime
 
 from .models import TouristicContent, TouristicEvent

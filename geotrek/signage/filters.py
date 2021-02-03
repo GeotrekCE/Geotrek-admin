@@ -3,7 +3,8 @@ from django.utils.translation import gettext_lazy as _
 
 from geotrek.authent.models import Structure
 from geotrek.core.models import Topology
-from geotrek.common.filters import StructureRelatedFilterSet, ValueFilter
+from geotrek.authent.filters import StructureRelatedFilterSet
+from geotrek.common.filters import ValueFilter
 from geotrek.maintenance.filters import InterventionYearTargetFilter
 from geotrek.signage.models import Signage, Blade
 from geotrek.signage.widgets import SignageYearSelect, SignageImplantationYearSelect

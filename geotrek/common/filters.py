@@ -1,7 +1,6 @@
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import RangeFilter, Filter, ModelChoiceFilter
-from mapentity.filters import MapEntityFilterSet
 
 
 class OptionalRangeFilter(RangeFilter):
@@ -67,8 +66,3 @@ class RightFilter(ModelChoiceFilter):
         if self.queryset is not None:
             return self.queryset
         return self.model.objects.all()
-
-
-class StructureRelatedFilterSet(MapEntityFilterSet):
-    class Meta(MapEntityFilterSet.Meta):
-        fields = MapEntityFilterSet.Meta.fields + ['structure']

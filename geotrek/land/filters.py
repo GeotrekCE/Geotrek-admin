@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from mapentity.filters import MapEntityFilterSet
 
 from geotrek.common.models import Organism
-from geotrek.common.filters import StructureRelatedFilterSet
+from geotrek.authent.filters import StructureRelatedFilterSet
 
 from geotrek.core.filters import TopologyFilter, PathFilterSet, TrailFilterSet
 from geotrek.infrastructure.filters import InfrastructureFilterSet

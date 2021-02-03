@@ -1,4 +1,4 @@
-from geotrek.common.filters import StructureRelatedFilterSet
+from geotrek.authent.filters import StructureRelatedFilterSet
 from .models import SensitiveArea
 
 

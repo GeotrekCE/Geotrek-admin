@@ -6,9 +6,8 @@ from django_filters import ChoiceFilter
 from mapentity.filters import PolygonFilter, PythonPolygonFilter
 
 from geotrek.core.models import Topology
-from geotrek.common.filters import (
-    StructureRelatedFilterSet, YearFilter, YearBetweenFilter)
-from geotrek.common.filters import RightFilter
+from geotrek.authent.filters import StructureRelatedFilterSet
+from geotrek.common.filters import RightFilter, YearFilter, YearBetweenFilter
 from geotrek.common.widgets import YearSelect
 from geotrek.zoning.filters import ZoningFilterSet
 from geotrek.zoning.models import City, District

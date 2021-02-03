@@ -1,7 +1,8 @@
 from django.utils.translation import gettext_lazy as _
 from django_filters import CharFilter
 
-from geotrek.common.filters import StructureRelatedFilterSet, ValueFilter
+from geotrek.authent.filters import StructureRelatedFilterSet
+from geotrek.common.filters import ValueFilter
 from geotrek.infrastructure.widgets import InfrastructureYearSelect, InfrastructureImplantationYearSelect
 from geotrek.maintenance.filters import InterventionYearTargetFilter
 from .models import Infrastructure
