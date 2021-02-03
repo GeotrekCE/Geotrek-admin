@@ -26,7 +26,7 @@ from mapentity import models as mapentity_models
 from .mixins import JSONResponseMixin, FilterListMixin, ModelViewMixin
 from ..decorators import view_permission_required
 from ..helpers import capture_image
-from ..settings import app_settings, _MAP_STYLES
+from ..settings import app_settings
 
 logger = logging.getLogger(__name__)
 
