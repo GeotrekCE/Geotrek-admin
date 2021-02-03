@@ -1,9 +1,12 @@
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import RangeFilter, Filter, ModelMultipleChoiceFilter
+from .fields import OneLineRangeField
 
 
 class OptionalRangeFilter(RangeFilter):
+    field_class = OneLineRangeField
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.field.fields[0].label = _('min %s') % self.field.label

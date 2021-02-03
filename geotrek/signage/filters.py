@@ -2,6 +2,7 @@ from django_filters import CharFilter, ModelChoiceFilter, MultipleChoiceFilter
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 
+from geotrek.altimetry.filters import AltimetryPointFilterSet
 from geotrek.authent.models import Structure
 from geotrek.core.models import Topology
 from geotrek.core.filters import TopologyFilterTrail, ValidTopologyFilterSet
@@ -22,7 +23,7 @@ class PolygonTopologyFilter(PolygonFilter):
         return qs.filter(**{'%s__in' % self.field_name: inner_qs})
 
 
-class SignageFilterSet(ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
+class SignageFilterSet(AltimetryPointFilterSet, ValidTopologyFilterSet, ZoningFilterSet, StructureRelatedFilterSet):
     name = CharFilter(label=_('Name'), lookup_expr='icontains')
     description = CharFilter(label=_('Description'), lookup_expr='icontains')
     implantation_year = MultipleChoiceFilter(choices=Signage.objects.implantation_year_choices())
