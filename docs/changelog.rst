@@ -2,12 +2,22 @@
 CHANGELOG
 =========
 
-2.47.3.dev0
+2.48.0 (2021-02-03)
 -------------------
 
-**Bug fixes**
+**Performances**
 
--
+- Do not save temporary topologies in database. Sometimes they are not removed and accumulate
+
+**Refactoring**
+
+- Allow to use zoning app independently of others apps
+
+**Minor improvements**
+
+- Add id attribute to source and informationdesk APIv2 endpoints
+- Add structure attribute to touristic contents/events in API v1
+- Add publication, hierarchical level, practices and modification time columns to outdoor site list
 
 
 2.47.2 (2021-01-28)
