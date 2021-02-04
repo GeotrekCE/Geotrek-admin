@@ -383,7 +383,28 @@ MAPENTITY_CONFIG = {
     'MAPENTITY_WEASYPRINT': False,
     'GEOJSON_PRECISION': 7,
     'MAP_FIT_MAX_ZOOM': 16,
-    'GPX_FIELD_NAME': 'geom_3d'
+    'GPX_FIELD_NAME': 'geom_3d',
+    'MAP_STYLES': {
+        'path': {'weight': 2, 'color': '#FF4800', 'opacity': 1.0},
+        'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
+        'city': {'weight': 4, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0},
+        'district': {'weight': 6, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
+        'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
+        'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+        'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
+
+        'detail': {'color': '#ffff00'},
+        'others': {'color': '#ffff00'},
+
+        'print': {
+            'path': {'weight': 1},
+            'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
+                     'arrowColor': 'black', 'arrowSize': 10},
+        }
+    }
 }
 
 DEFAULT_STRUCTURE_NAME = os.getenv('DEFAULT_STRUCTURE', 'My structure')
@@ -447,28 +468,6 @@ COLORS_POOL = {'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '
                                   'darkviolet', 'lightcoral', 'palevioletred',
                                   'MediumVioletRed', 'MediumOrchid', 'Magenta',
                                   'LightSalmon', 'HotPink', 'Fuchsia']}
-
-MAP_STYLES = {
-    'path': {'weight': 2, 'color': '#FF4800', 'opacity': 1.0},
-    'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
-    'city': {'weight': 4, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0},
-    'district': {'weight': 6, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
-    'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
-    'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-    'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
-    'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-    'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-    'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
-
-    'detail': {'color': '#ffff00'},
-    'others': {'color': '#ffff00'},
-
-    'print': {
-        'path': {'weight': 1},
-        'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
-                 'arrowColor': 'black', 'arrowSize': 10},
-    }
-}
 
 LAYER_PRECISION_LAND = 4  # Number of fraction digit
 LAYER_SIMPLIFY_LAND = 10  # Simplification tolerance

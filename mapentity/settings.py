@@ -87,7 +87,7 @@ REST_FRAMEWORK_DEFAULT_CONFIG.update(getattr(settings, 'REST_FRAMEWORK', {}))
 setattr(settings, 'REST_FRAMEWORK', REST_FRAMEWORK_DEFAULT_CONFIG)
 
 for name, override in getattr(settings, 'MAP_STYLES', {}).items():
-    # override default MAP_STYLES with given settings
+    # fallback old settings MAP_STYLES
     merged = app_settings['MAP_STYLES'].get(name, {})
     merged.update(override)
     app_settings['MAP_STYLES'][name] = merged

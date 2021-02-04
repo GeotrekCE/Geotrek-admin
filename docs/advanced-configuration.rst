@@ -16,7 +16,7 @@ After any change in ``custom.py``, run:
 ::
 
     sudo service geotrek restart
-    
+
 Sometimes you must also run :
 
 ::
@@ -365,13 +365,13 @@ layer style.
 
 .. code-block :: python
 
-    MAP_STYLES['path'] = {'color': 'red', 'weight': 5}
+    MAPENTITY_CONFIG['MAP_STYLES']['path'] = {'color': 'red', 'weight': 5}
 
 Or change just one parameter (the opacity for example) :
 
 .. code-block :: python
 
-    MAP_STYLES['city']['opacity'] = 0.8
+    MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8
 
 
 Regarding colors that depend from database content, such as land layers
@@ -584,7 +584,7 @@ apparence of objects in public trek PDF exports, use the following setting:
 
 ::
 
-    MAP_STYLES['print']['path'] = {'weight': 3}
+    MAPENTITY_CONFIG['MAP_STYLES']['print']['path'] = {'weight': 3}
 
 See *Leaflet* reference documentation for detail about layers apparence.
 
@@ -880,20 +880,21 @@ Minimum distance to merge 2 paths.
 
 ::
 
-    MAP_STYLES = {'path': {'weight': 2, 'opacity': 1.0, 'color': '#FF4800'},
-                  'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
-                  'city': {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
-                  'district': {'weight': 6, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
-                  'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
-                  'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-                  'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
-                  'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-                  'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
-                  'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
-                  'print': {'path': {'weight': 1},
-                            'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
-                                     'arrowColor': 'black', 'arrowSize': 10},}
-                  }
+    MAPENTITY_CONFIG['MAP_STYLES'] = {
+        'path': {'weight': 2, 'opacity': 1.0, 'color': '#FF4800'},
+        'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
+        'city': {'weight': 4, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0},
+        'district': {'weight': 6, 'color': 'orange', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
+        'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
+        'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+        'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+        'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
+        'print': {'path': {'weight': 1},
+                  'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
+                           'arrowColor': 'black', 'arrowSize': 10},}
+    }
 
 Color of the different layers on the map
 
@@ -901,8 +902,8 @@ Color of the different layers on the map
 
     ::
 
-        MAP_STYLES['path'] = {'weigth': 2, 'opacity': 2.0, 'color': 'yellow'}*
-        MAP_STYLES['city']['opacity'] = 0.8*
+        MAPENTITY_CONFIG['MAP_STYLES']['path'] = {'weigth': 2, 'opacity': 2.0, 'color': 'yellow'}*
+        MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8*
 
     *For color: use color picker for example*
 
@@ -930,7 +931,7 @@ Color of the different layers on the top right for landing.
     ::
 
         COLORS_POOL['restrictedarea'] = ['plum', 'violet', 'yellow', 'red', '#79a8f3']
-        MAP_STYLES['city']['opacity'] = 0.8*
+        MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8*
 
     *For color: use color picker for example*
 
