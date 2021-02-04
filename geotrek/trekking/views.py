@@ -19,8 +19,9 @@ from rest_framework import permissions as rest_permissions, viewsets
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.models import Attachment, RecordSource, TargetPortal, Label
-from geotrek.common.views import (FormsetMixin, MetaMixin, PublicOrReadPermMixin, DocumentPublic,
+from geotrek.common.views import (FormsetMixin, MetaMixin, DocumentPublic,
                                   DocumentBookletPublic, MarkupPublic)
+from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.zoning.models import District, City, RestrictedArea

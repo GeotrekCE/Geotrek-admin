@@ -1,4 +1,4 @@
-from django.core.exceptions import ValidationError, PermissionDenied
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.conf import settings
@@ -36,6 +36,7 @@ from zipfile import ZipFile
 
 from datetime import timedelta
 
+from .permissions import PublicOrReadPermMixin
 from .utils.import_celery import create_tmp_destination, discover_available_parsers
 
 from .tasks import import_datas, import_datas_from_web
@@ -138,18 +139,6 @@ class FormsetMixin(object):
             context[self.context_name] = self.formset_class(
                 instance=self.object)
         return context
-
-
-class PublicOrReadPermMixin(object):
-
-    def get_object(self, queryset=None):
-        obj = super(PublicOrReadPermMixin, self).get_object(queryset)
-        if not obj.is_public():
-            if not self.request.user.is_authenticated:
-                raise PermissionDenied
-            if not self.request.user.has_perm('%s.read_%s' % (obj._meta.app_label, obj._meta.model_name)):
-                raise PermissionDenied
-        return obj
 
 
 class DocumentPublicMixin(object):
