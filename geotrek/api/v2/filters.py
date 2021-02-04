@@ -203,8 +203,7 @@ class GeotrekTouristicContentFilter(BaseFilterBackend):
         qs = queryset
         trek = request.GET.get('near_trek', None)
         if trek is not None:
-            contents_intersecting = intersecting(qs.model, Trek.objects.get(pk=trek))
-            # qs = qs.intersecting(contents_intersecting)  #FIXME: cannot intersect MultilingualQuerySet
+            contents_intersecting = intersecting(qs, Trek.objects.get(pk=trek))
             qs = contents_intersecting.order_by('id')
         categories = request.GET.get('categories', None)
         if categories is not None:
