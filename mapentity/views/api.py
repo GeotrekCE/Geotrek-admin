@@ -1,6 +1,7 @@
 import logging
 
 from django.contrib.gis.db.models.functions import Transform
+from django.db.models import Func, F
 from django.views.generic.list import ListView
 
 from djgeojson.views import GeoJSONLayerView
@@ -27,6 +28,7 @@ class MapEntityLayer(FilterListMixin, ModelViewMixin, GeoJSONLayerView):
     force2d = True
     srid = API_SRID
     precision = app_settings.get('GEOJSON_PRECISION')
+    geometry_field = 'simplified_geom'
 
     def __init__(self, *args, **kwargs):
         super(MapEntityLayer, self).__init__(*args, **kwargs)
@@ -50,6 +52,10 @@ class MapEntityLayer(FilterListMixin, ModelViewMixin, GeoJSONLayerView):
     @view_cache_response_content()
     def render_to_response(self, context, **response_kwargs):
         return super(MapEntityLayer, self).render_to_response(context, **response_kwargs)
+
+    def get_queryset(self):
+        return super().get_queryset().annotate(api_geom=Transform(self.geometry_field_db, API_SRID)).\
+            annotate(simplified_geom=F(self.geometry_field_db))
 
 
 class MapEntityJsonList(JSONResponseMixin, BaseListView, ListView):

@@ -64,6 +64,7 @@ lxml==4.6.2
 MarkupSafe==1.1.1
 mbutil==0.3.0
 mccabe==0.6.1
+mercantile==1.1.4
 netifaces==0.10.9
 openapi-codec==1.3.2
 paperclip==2.2.6

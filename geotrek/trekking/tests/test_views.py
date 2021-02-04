@@ -140,10 +140,10 @@ class POIViewsTest(CommonTest):
         self.modelfactory.build_batch(1000)
         DistrictFactory.build_batch(10)
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(7):
             self.client.get(self.model.get_jsonlist_url())
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(10):
             self.client.get(self.model.get_format_list_url())
 
     def test_pois_on_treks_do_not_exist(self):

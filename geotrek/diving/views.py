@@ -28,12 +28,14 @@ from geotrek.trekking.views import FlattenPicturesMixin
 class DiveLayer(MapEntityLayer):
     properties = ['name', 'published']
     queryset = Dive.objects.existing()
+    geometry_field_db = 'geom'
 
 
 class DiveList(FlattenPicturesMixin, MapEntityList):
     filterform = DiveFilterSet
     columns = ['id', 'name', 'levels', 'thumbnail']
     queryset = Dive.objects.existing()
+    template_name = 'diving/dive_list.html'
 
 
 class DiveJsonList(MapEntityJsonList, DiveList):

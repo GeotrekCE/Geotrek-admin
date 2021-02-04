@@ -30,6 +30,7 @@ logger = logging.getLogger(__name__)
 class SensitiveAreaLayer(MapEntityLayer):
     queryset = SensitiveArea.objects.existing()
     properties = ['species', 'radius', 'published']
+    geometry_field_db = 'geom'
 
 
 class SensitiveAreaList(MapEntityList):

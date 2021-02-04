@@ -55,12 +55,14 @@ class FlattenPicturesMixin(object):
 class TrekLayer(MapEntityLayer):
     properties = ['name', 'published']
     queryset = Trek.objects.existing()
+    geometry_field_db = 'geom'
 
 
 class TrekList(FlattenPicturesMixin, MapEntityList):
     filterform = TrekFilterSet
     columns = ['id', 'name', 'duration', 'difficulty', 'departure', 'thumbnail']
     queryset = Trek.objects.existing()
+    template_name = 'trekking/trek_list.html'
 
 
 class TrekJsonList(MapEntityJsonList, TrekList):
@@ -240,13 +242,15 @@ class TrekMeta(MetaMixin, DetailView):
 class POILayer(MapEntityLayer):
     queryset = POI.objects.existing()
     properties = ['name', 'published']
+    geometry_field_db = 'geom'
 
 
 class POIList(FlattenPicturesMixin, MapEntityList):
     model = POI
     filterform = POIFilterSet
     columns = ['id', 'name', 'type', 'thumbnail']
-    queryset = model.objects.existing()
+    queryset = POI.objects.existing()
+    template_name = 'trekking/poi_list.html'
 
 
 class POIJsonList(MapEntityJsonList, POIList):
@@ -425,6 +429,7 @@ class TrekInfrastructureViewSet(viewsets.ModelViewSet):
 class ServiceLayer(MapEntityLayer):
     properties = ['label', 'published']
     queryset = Service.objects.existing()
+    geometry_field_db = 'geom'
 
 
 class ServiceList(MapEntityList):

@@ -504,10 +504,10 @@ class ProjectViewsTest(CommonTest):
         # Check that projects without interventions are always present
         self.assertEqual(len(Project.objects.all()), 3)
         self.assertEqual(len(jsonlist('')), 3)
-        self.assertEqual(len(jsonlist('?bbox=POLYGON((1%202%200%2C1%202%200%2C1%202%200%2C1%202%200%2C1%202%200))')), 2)
+        self.assertEqual(len(jsonlist('?tiles=5,16,11')), 2)
 
         # Give a bbox that match intervention, and check that all 3 projects are back
-        bbox = '?bbox=POLYGON((2.9%2046.4%2C%203.1%2046.4%2C%203.1%2046.6%2C%202.9%2046.6%2C%202.9%2046.4))'
+        bbox = '?tiles=5,16,11'
         self.assertEqual(len(jsonlist(bbox)), 3)
 
     def test_deleted_interventions(self):

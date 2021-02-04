@@ -20,6 +20,7 @@ from mapentity.views import MapEntityViewSet
 class InfrastructureLayer(MapEntityLayer):
     queryset = Infrastructure.objects.existing()
     properties = ['name', 'published']
+    geometry_field_db = 'geom'
 
 
 class InfrastructureList(MapEntityList):

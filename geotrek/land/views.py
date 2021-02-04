@@ -12,6 +12,7 @@ from .forms import PhysicalEdgeForm, LandEdgeForm, CompetenceEdgeForm, WorkManag
 class PhysicalEdgeLayer(MapEntityLayer):
     queryset = PhysicalEdge.objects.existing()
     properties = ['color_index', 'name']
+    geometry_field_db = 'geom'
 
 
 class PhysicalEdgeList(MapEntityList):
@@ -57,6 +58,7 @@ class PhysicalEdgeDelete(MapEntityDelete):
 class LandEdgeLayer(MapEntityLayer):
     queryset = LandEdge.objects.existing()
     properties = ['color_index', 'name']
+    geometry_field_db = 'geom'
 
 
 class LandEdgeList(MapEntityList):
@@ -102,6 +104,7 @@ class LandEdgeDelete(MapEntityDelete):
 class CompetenceEdgeLayer(MapEntityLayer):
     queryset = CompetenceEdge.objects.existing()
     properties = ['color_index', 'name']
+    geometry_field_db = 'geom'
 
 
 class CompetenceEdgeList(MapEntityList):
@@ -147,6 +150,7 @@ class CompetenceEdgeDelete(MapEntityDelete):
 class WorkManagementEdgeLayer(MapEntityLayer):
     queryset = WorkManagementEdge.objects.existing()
     properties = ['color_index', 'name']
+    geometry_field_db = 'geom'
 
 
 class WorkManagementEdgeList(MapEntityList):
@@ -192,6 +196,7 @@ class WorkManagementEdgeDelete(MapEntityDelete):
 class SignageManagementEdgeLayer(MapEntityLayer):
     queryset = SignageManagementEdge.objects.existing()
     properties = ['color_index', 'name']
+    geometry_field_db = 'geom'
 
 
 class SignageManagementEdgeList(MapEntityList):

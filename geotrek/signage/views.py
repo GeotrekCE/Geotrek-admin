@@ -31,6 +31,7 @@ class LineMixin(FormsetMixin):
 class SignageLayer(MapEntityLayer):
     queryset = Signage.objects.existing()
     properties = ['name', 'published']
+    geometry_field_db = 'geom'
 
 
 class SignageList(MapEntityList):
@@ -184,6 +185,7 @@ class BladeJsonList(MapEntityJsonList, BladeList):
 class BladeLayer(MapEntityLayer):
     queryset = Blade.objects.all()
     properties = ['number']
+    geometry_field_db = 'signage__geom'
 
 
 class BladeFormatList(MapEntityFormat, BladeList):
