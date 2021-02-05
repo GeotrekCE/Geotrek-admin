@@ -215,18 +215,24 @@ class GeotrekTouristicContentFilter(BaseFilterBackend):
             qs = qs.filter(Q(type1__in=list_types) | Q(type2__in=list_types))
         city = request.GET.get('city', None)
         if city is not None:
-            cities_list = [int(c) for c in city.split(',')]
+            cities_list = city.split(',')
             union_geom = City.objects.filter(
                 reduce(operator.or_, (Q(**{'code': c}) for c in cities_list))
             ).aggregate(Union('geom'))['geom__union']
-            qs = qs.filter(geom__intersects=union_geom)
+            if union_geom:
+                qs = qs.filter(geom__intersects=union_geom)
+            else:
+                qs = qs.none()
         district = request.GET.get('district', None)
         if district is not None:
             districts_list = [int(d) for d in district.split(',')]
             union_geom = District.objects.filter(
                 reduce(operator.or_, (Q(**{'pk': d}) for d in districts_list))
             ).aggregate(Union('geom'))['geom__union']
-            qs = qs.filter(geom__intersects=union_geom)
+            if union_geom:
+                qs = qs.filter(geom__intersects=union_geom)
+            else:
+                qs = qs.none()
         structure = request.GET.get('structure', None)
         if structure is not None:
             qs = qs.filter(structure__pk=structure)
@@ -325,18 +331,24 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
             qs = qs.filter(ascent__lte=ascent_max)
         city = request.GET.get('city', None)
         if city is not None:
-            cities_list = [int(c) for c in city.split(',')]
+            cities_list = city.split(',')
             union_geom = City.objects.filter(
                 reduce(operator.or_, (Q(**{'code': c}) for c in cities_list))
             ).aggregate(Union('geom'))['geom__union']
-            qs = qs.filter(geom__intersects=union_geom)
+            if union_geom:
+                qs = qs.filter(geom__intersects=union_geom)
+            else:
+                qs = qs.none()
         district = request.GET.get('district', None)
         if district is not None:
             districts_list = [int(d) for d in district.split(',')]
             union_geom = District.objects.filter(
                 reduce(operator.or_, (Q(**{'pk': d}) for d in districts_list))
             ).aggregate(Union('geom'))['geom__union']
-            qs = qs.filter(geom__intersects=union_geom)
+            if union_geom:
+                qs = qs.filter(geom__intersects=union_geom)
+            else:
+                qs = qs.none()
         structure = request.GET.get('structure', None)
         if structure is not None:
             qs = qs.filter(structure__pk=structure)

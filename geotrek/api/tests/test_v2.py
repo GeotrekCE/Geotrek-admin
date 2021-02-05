@@ -151,7 +151,7 @@ class BaseApiTest(TestCase):
         trek_models.OrderedTrekChild(parent=cls.parent, child=cls.child2, order=1).save()
         trek_models.OrderedTrekChild(parent=cls.treks[0], child=cls.child2, order=3).save()
         cls.content = tourism_factory.TouristicContentFactory.create(published=True, geom='SRID=2154;POINT(0 0)')
-        cls.city = zoning_factory.CityFactory(code=31000, geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
+        cls.city = zoning_factory.CityFactory(code='01000', geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
         cls.district = zoning_factory.DistrictFactory(id=420, geom='SRID=2154;MULTIPOLYGON(((-1 -1, -1 1, 1 1, 1 -1, -1 -1)))')
         cls.accessibility = trek_factory.AccessibilityFactory(id=4)
         cls.route = trek_factory.RouteFactory(id=680)
@@ -387,6 +387,22 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         # json collection structure is ok
         json_response = response.json()
         self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_list_filters_inexistant_zones(self):
+        response = self.get_trek_list({
+            'city': '99999',
+            'district': '999',
+        })
+        #  test response code
+        self.assertEqual(response.status_code, 200)
+
+        # json collection structure is ok
+        json_response = response.json()
+        self.assertEqual(len(json_response.get('results')), 0)
+
+    def test_trek_city(self):
+        response = self.get_trek_list({'city': self.city.pk})
+        self.assertEqual(len(response.json()['results']), 15)
 
     def test_tour_list(self):
         response = self.get_tour_list()
@@ -639,9 +655,17 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_touristiccontent_list({'city': self.city.pk})
         self.assertEqual(len(response.json()['results']), 1)
 
+    def test_touristiccontent_inexistant_city(self):
+        response = self.get_touristiccontent_list({'city': '99999'})
+        self.assertEqual(len(response.json()['results']), 0)
+
     def test_touristiccontent_district(self):
         response = self.get_touristiccontent_list({'district': self.district.pk})
         self.assertEqual(len(response.json()['results']), 1)
+
+    def test_touristiccontent_inexistant_district(self):
+        response = self.get_touristiccontent_list({'district': 99999})
+        self.assertEqual(len(response.json()['results']), 0)
 
     def test_touristiccontent_structure(self):
         response = self.get_touristiccontent_list({'structure': self.content.structure.pk})
