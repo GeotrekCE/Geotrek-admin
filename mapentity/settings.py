@@ -5,14 +5,6 @@ from django.conf import settings
 
 API_SRID = 4326
 
-_MAP_STYLES = {
-    'detail': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'arrowColor': '#FF5E00', 'arrowSize': 8},
-    'others': {'opacity': 0.9, 'fillOpacity': 0.7, 'color': 'yellow'},
-    'filelayer': {'color': 'red', 'opacity': 1.0, 'fillOpacity': 0.9, 'weight': 2, 'radius': 5},
-    'draw': {'color': '#35FF00', 'opacity': 0.8, 'weight': 3},
-    'print': {},
-}
-
 
 app_settings = dict({
     'TITLE': "",
@@ -42,7 +34,13 @@ app_settings = dict({
     'SENDFILE_HTTP_HEADER': None,
     'DRF_API_URL_PREFIX': r'^api/',
     'MAPENTITY_WEASYPRINT': False,
-    'MAP_STYLES': _MAP_STYLES,
+    'MAP_STYLES': {
+        'detail': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'arrowColor': '#FF5E00', 'arrowSize': 8},
+        'others': {'opacity': 0.9, 'fillOpacity': 0.7, 'color': 'yellow'},
+        'filelayer': {'color': 'red', 'opacity': 1.0, 'fillOpacity': 0.9, 'weight': 2, 'radius': 5},
+        'draw': {'color': '#35FF00', 'opacity': 0.8, 'weight': 3},
+        'print': {},
+    },
 }, **getattr(settings, 'MAPENTITY_CONFIG', {}))
 
 
