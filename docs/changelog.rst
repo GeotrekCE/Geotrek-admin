@@ -2,12 +2,12 @@
 CHANGELOG
 =========
 
-2.48.0+dev
+2.48.1 (2021-02-05)
 -------------------
 
 **Bug fixes**
 
--
+- Fix missing geometry in API v2 touristiccontent endpoint when using near_trek filter
 
 
 2.48.0 (2021-02-03)
