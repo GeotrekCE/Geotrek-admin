@@ -133,7 +133,15 @@ jobs:
       - run: sudo rm /etc/nginx/sites-enabled/default
       - run: sudo nginx -s reload
       - run: npm install cypress
-      - run: ./node_modules/.bin/cypress run
+      - run: ./node_modules/.bin/cypress run --record --key 64a5a9b3-9869-4a2f-91e4-e3cd27c2f564
+
+      - store_artifacts:
+          path: /home/circleci/project/cypress/videos/
+          destination: cypress-videos
+      - store_artifacts:
+          path: /home/circleci/project/cypress/screenshots/
+          destination: cypress-screenshots
+
   docker_publish:
     machine: true
     environment:

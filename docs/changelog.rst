@@ -5,6 +5,10 @@ CHANGELOG
 2.48.1+dev
 -------------------
 
+**Changes**
+
+- MAP_STYLES setting should be now set in MAPENTITY_CONFIG['MAP_STYLES']. A fallback exists to keep configuration from MAP_STYLES.
+
 **Bug fixes**
 
 -

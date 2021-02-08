@@ -214,12 +214,6 @@ class JSSettings(mapentity_views.JSSettings):
 
     def get_context_data(self):
         dictsettings = super(JSSettings, self).get_context_data()
-        # Add geotrek map styles
-        base_styles = dictsettings['map']['styles']
-        for name, override in settings.MAP_STYLES.items():
-            merged = base_styles.get(name, {})
-            merged.update(override)
-            base_styles[name] = merged
         # Add extra stuff (edition, labelling)
         dictsettings['map'].update(
             snap_distance=settings.SNAP_DISTANCE,

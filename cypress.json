@@ -6,5 +6,6 @@
   "screenshotsFolder": "cypress/screenshots",
   "baseUrl": "http://localhost:8000",
   "video": true,
-  "requestTimeout": 50000
+  "requestTimeout": 50000,
+  "projectId": "ktpy7v"
 }
