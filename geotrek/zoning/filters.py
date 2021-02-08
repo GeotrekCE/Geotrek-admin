@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.filters import RightFilter
-from geotrek.zoning.models import City, District
+from geotrek.zoning.models import City, District, RestrictedArea
 
 
 class IntersectionFilter(RightFilter):
@@ -26,6 +26,11 @@ class IntersectionFilterDistrict(IntersectionFilter):
     model = District
 
 
+class IntersectionFilterRestrictedArea(IntersectionFilter):
+    model = RestrictedArea
+
+
 class ZoningFilterSet(FilterSet):
     city = IntersectionFilterCity(label=_('City'), required=False)
     district = IntersectionFilterDistrict(label=_('District'), required=False)
+    area = IntersectionFilterRestrictedArea(label=_('Restricted area'), required=False)
