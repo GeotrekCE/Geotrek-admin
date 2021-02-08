@@ -362,7 +362,7 @@ class ListViewTest(BaseTest):
         response = view(request)
         html = response.render()
         self.assertTrue(b'btn-group disabled' in html.content)
-        self.assertTrue(b'Add a new touristic event</a>' in html.content)
+        self.assertTrue(b'Add a new touristic event</span>' in html.content)
 
 
 class MapEntityLayerViewTest(BaseTest):
