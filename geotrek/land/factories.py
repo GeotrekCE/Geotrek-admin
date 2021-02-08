@@ -6,7 +6,7 @@ from geotrek.common.factories import OrganismFactory
 from . import models
 
 
-class PhysicalTypeFactory(factory.DjangoModelFactory):
+class PhysicalTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.PhysicalType
 
@@ -20,7 +20,7 @@ class PhysicalEdgeFactory(TopologyFactory):
     physical_type = factory.SubFactory(PhysicalTypeFactory)
 
 
-class LandTypeFactory(factory.DjangoModelFactory):
+class LandTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.LandType
 

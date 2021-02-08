@@ -44,8 +44,8 @@ drf-yasg==1.20.0
 easy-thumbnails==2.7
 entrypoints==0.3
 env-file==2019.4.13
-factory-boy==2.8.1
-Faker==4.0.1
+factory-boy==3.2.0
+Faker==6.0.0
 Fiona==1.8.17
 flake8==3.7.9
 freezegun==0.3.15

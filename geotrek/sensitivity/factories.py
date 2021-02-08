@@ -10,14 +10,14 @@ from . import models
 from mapentity.factories import UserFactory
 
 
-class SportPracticeFactory(factory.DjangoModelFactory):
+class SportPracticeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.SportPractice
 
     name = "Practice"
 
 
-class SpeciesFactory(factory.DjangoModelFactory):
+class SpeciesFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Species
 
