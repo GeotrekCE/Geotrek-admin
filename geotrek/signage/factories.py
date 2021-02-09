@@ -7,7 +7,7 @@ from geotrek.infrastructure.factories import InfrastructureConditionFactory
 from . import models
 
 
-class SignageTypeFactory(factory.DjangoModelFactory):
+class SignageTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.SignageType
 
@@ -15,35 +15,35 @@ class SignageTypeFactory(factory.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image('signage_type.png')
 
 
-class SignageTypeNoPictogramFactory(factory.DjangoModelFactory):
+class SignageTypeNoPictogramFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.SignageType
 
     label = "Signage type"
 
 
-class BladeTypeFactory(factory.DjangoModelFactory):
+class BladeTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.BladeType
 
     label = "Blade type"
 
 
-class BladeColorFactory(factory.DjangoModelFactory):
+class BladeColorFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Color
 
     label = "Blade color"
 
 
-class BladeDirectionFactory(factory.DjangoModelFactory):
+class BladeDirectionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Direction
 
     label = "Blade direction"
 
 
-class SealingFactory(factory.DjangoModelFactory):
+class SealingFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Sealing
 
@@ -69,7 +69,7 @@ class SignageNoPictogramFactory(SignageFactory):
     type = factory.SubFactory(SignageTypeNoPictogramFactory)
 
 
-class BladeFactory(factory.DjangoModelFactory):
+class BladeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Blade
 
@@ -87,7 +87,7 @@ class BladeFactory(factory.DjangoModelFactory):
             LineFactory.create(blade=obj)
 
 
-class LineFactory(factory.DjangoModelFactory):
+class LineFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Line
 

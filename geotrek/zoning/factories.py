@@ -17,7 +17,7 @@ geom_district_iter = bbox_split_srid_2154(SPATIAL_EXTENT, by_x=2, by_y=2, cycle=
 geom_area_iter = bbox_split_srid_2154(SPATIAL_EXTENT, by_x=2, by_y=2, cycle=True)
 
 
-class CityFactory(factory.DjangoModelFactory):
+class CityFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.City
 
@@ -26,7 +26,7 @@ class CityFactory(factory.DjangoModelFactory):
     geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(next(geom_city_iter)), srid=settings.SRID))
 
 
-class DistrictFactory(factory.DjangoModelFactory):
+class DistrictFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.District
 
@@ -34,7 +34,7 @@ class DistrictFactory(factory.DjangoModelFactory):
     geom = factory.Sequence(lambda _: MultiPolygon(Polygon.from_bbox(next(geom_district_iter)), srid=settings.SRID))
 
 
-class RestrictedAreaTypeFactory(factory.DjangoModelFactory):
+class RestrictedAreaTypeFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = models.RestrictedAreaType
@@ -42,7 +42,7 @@ class RestrictedAreaTypeFactory(factory.DjangoModelFactory):
     name = factory.Sequence(lambda n: "Restricted name %s" % n)
 
 
-class RestrictedAreaFactory(factory.DjangoModelFactory):
+class RestrictedAreaFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.RestrictedArea
 

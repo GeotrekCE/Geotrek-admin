@@ -6,7 +6,7 @@ from geotrek.core.factories import TopologyFactory, PointTopologyFactory
 from . import models
 
 
-class InfrastructureTypeFactory(factory.DjangoModelFactory):
+class InfrastructureTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.InfrastructureType
 
@@ -15,7 +15,7 @@ class InfrastructureTypeFactory(factory.DjangoModelFactory):
     pictogram = dummy_filefield_as_sequence('infrastructure-type-%s.png')
 
 
-class InfrastructureTypeNoPictogramFactory(factory.DjangoModelFactory):
+class InfrastructureTypeNoPictogramFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.InfrastructureType
 
@@ -23,7 +23,7 @@ class InfrastructureTypeNoPictogramFactory(factory.DjangoModelFactory):
     type = models.INFRASTRUCTURE_TYPES.BUILDING
 
 
-class InfrastructureConditionFactory(factory.DjangoModelFactory):
+class InfrastructureConditionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.InfrastructureCondition
 

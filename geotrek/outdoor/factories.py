@@ -6,14 +6,14 @@ from geotrek.outdoor.models import Site, Practice, SiteType, RatingScale, Rating
 from mapentity.factories import UserFactory
 
 
-class SectorFactory(factory.DjangoModelFactory):
+class SectorFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Sector
 
     name = "Sector"
 
 
-class PracticeFactory(factory.DjangoModelFactory):
+class PracticeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Practice
 
@@ -21,7 +21,7 @@ class PracticeFactory(factory.DjangoModelFactory):
     sector = factory.SubFactory(SectorFactory)
 
 
-class RatingScaleFactory(factory.DjangoModelFactory):
+class RatingScaleFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = RatingScale
 
@@ -29,7 +29,7 @@ class RatingScaleFactory(factory.DjangoModelFactory):
     practice = factory.SubFactory(PracticeFactory)
 
 
-class RatingFactory(factory.DjangoModelFactory):
+class RatingFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Rating
 
@@ -37,7 +37,7 @@ class RatingFactory(factory.DjangoModelFactory):
     scale = factory.SubFactory(RatingScaleFactory)
 
 
-class SiteTypeFactory(factory.DjangoModelFactory):
+class SiteTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = SiteType
 

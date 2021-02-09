@@ -10,7 +10,7 @@ from geotrek.infrastructure.factories import InfrastructureFactory
 from geotrek.signage.factories import SignageFactory
 
 
-class TrekNetworkFactory(factory.DjangoModelFactory):
+class TrekNetworkFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.TrekNetwork
 
@@ -18,7 +18,7 @@ class TrekNetworkFactory(factory.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image('network.png')
 
 
-class PracticeFactory(factory.DjangoModelFactory):
+class PracticeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Practice
 
@@ -26,7 +26,7 @@ class PracticeFactory(factory.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image('practice.png')
 
 
-class AccessibilityFactory(factory.DjangoModelFactory):
+class AccessibilityFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Accessibility
 
@@ -34,7 +34,7 @@ class AccessibilityFactory(factory.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image('accessibility.png')
 
 
-class RouteFactory(factory.DjangoModelFactory):
+class RouteFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Route
 
@@ -42,7 +42,7 @@ class RouteFactory(factory.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image('routes.png')
 
 
-class DifficultyLevelFactory(factory.DjangoModelFactory):
+class DifficultyLevelFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.DifficultyLevel
 
@@ -50,7 +50,7 @@ class DifficultyLevelFactory(factory.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image('difficulty.png')
 
 
-class WebLinkCategoryFactory(factory.DjangoModelFactory):
+class WebLinkCategoryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.WebLinkCategory
 
@@ -58,7 +58,7 @@ class WebLinkCategoryFactory(factory.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image('weblink-category.png')
 
 
-class WebLinkFactory(factory.DjangoModelFactory):
+class WebLinkFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.WebLink
 
@@ -193,7 +193,7 @@ class TrekWithServicesFactory(TrekFactory):
             service2.type.practices.add(obj.practice)
 
 
-class TrekRelationshipFactory(factory.DjangoModelFactory):
+class TrekRelationshipFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.TrekRelationship
 
@@ -205,7 +205,7 @@ class TrekRelationshipFactory(factory.DjangoModelFactory):
     trek_b = factory.SubFactory(TrekFactory)
 
 
-class POITypeFactory(factory.DjangoModelFactory):
+class POITypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.POIType
 
@@ -223,7 +223,7 @@ class POIFactory(PointTopologyFactory):
     published = True
 
 
-class ServiceTypeFactory(factory.DjangoModelFactory):
+class ServiceTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.ServiceType
 

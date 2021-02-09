@@ -9,7 +9,7 @@ from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from . import models
 
 
-class InformationDeskTypeFactory(factory.DjangoModelFactory):
+class InformationDeskTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.InformationDeskType
 
@@ -17,7 +17,7 @@ class InformationDeskTypeFactory(factory.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image()
 
 
-class InformationDeskFactory(factory.DjangoModelFactory):
+class InformationDeskFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.InformationDesk
 
@@ -34,7 +34,7 @@ class InformationDeskFactory(factory.DjangoModelFactory):
     geom = Point(3.14, 42)
 
 
-class TouristicContentCategoryFactory(factory.DjangoModelFactory):
+class TouristicContentCategoryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.TouristicContentCategory
 
@@ -44,7 +44,7 @@ class TouristicContentCategoryFactory(factory.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image('touristiccontent-category.png')
 
 
-class TouristicContentType1Factory(factory.DjangoModelFactory):
+class TouristicContentType1Factory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.TouristicContentType1
 
@@ -53,7 +53,7 @@ class TouristicContentType1Factory(factory.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image('touristiccontent-type1.png')
 
 
-class TouristicContentType2Factory(factory.DjangoModelFactory):
+class TouristicContentType2Factory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.TouristicContentType2
 
@@ -106,7 +106,7 @@ class TouristicContentFactory(StructureRelatedDefaultFactory):
             obj.type1.add(TouristicContentType1Factory.create())
 
 
-class TouristicEventTypeFactory(factory.DjangoModelFactory):
+class TouristicEventTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.TouristicEventType
 
@@ -114,7 +114,7 @@ class TouristicEventTypeFactory(factory.DjangoModelFactory):
     pictogram = get_dummy_uploaded_image('touristicevent-type.png')
 
 
-class TouristicEventFactory(factory.DjangoModelFactory):
+class TouristicEventFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.TouristicEvent
 

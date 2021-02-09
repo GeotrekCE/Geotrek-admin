@@ -27,7 +27,7 @@ class TrekkingManagerFactory(UserFactory):
         obj.groups.add(pathmanager)
 
 
-class StructureFactory(factory.DjangoModelFactory):
+class StructureFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = core_models.Structure
 
@@ -35,7 +35,7 @@ class StructureFactory(factory.DjangoModelFactory):
 
 
 # Abstract
-class StructureRelatedRandomFactory(factory.DjangoModelFactory):
+class StructureRelatedRandomFactory(factory.django.DjangoModelFactory):
     """Create a new structure each time"""
     class Meta:
         model = core_models.StructureRelated
@@ -45,7 +45,7 @@ class StructureRelatedRandomFactory(factory.DjangoModelFactory):
 
 
 # Abstract
-class StructureRelatedDefaultFactory(factory.DjangoModelFactory):
+class StructureRelatedDefaultFactory(factory.django.DjangoModelFactory):
     """Use the default structure"""
     class Meta:
         model = core_models.StructureRelated

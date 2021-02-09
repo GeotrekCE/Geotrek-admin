@@ -39,13 +39,13 @@ def get_dummy_uploaded_file(name='file.pdf'):
     return SimpleUploadedFile(name, b'*' * 300, content_type='application/pdf')
 
 
-class FileTypeFactory(factory.DjangoModelFactory):
+class FileTypeFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = FileType
 
 
-class AttachmentFactory(factory.DjangoModelFactory):
+class AttachmentFactory(factory.django.DjangoModelFactory):
     """
     Create an attachment. You must provide an 'obj' keywords,
     the object (saved in db) to which the attachment will be bound.
